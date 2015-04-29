@@ -1,0 +1,25 @@
+# Mesh Options
+## Select Solid Model
+
+	* Type: Change the Solid Model Kernel. MeshSim has the ability to mesh either a Parasolid model (.xmt_txt) or a Discrete Model (.dsm).
+	* File: Load the solid model to be meshed. You can browse for the file and then the solid will be automatically loaded.
+
+## Script File
+
+	* Meshsim script file: Load or save a script file (.mss). If you have run a previous mesh with the same parameters, you can just load the script file from the run. The script file saves the meshing parameters specified. 
+
+## Basic Options
+
+	* Global max edge size: Specify a global max edge size. This edge size will be targeted for all elements and no element will have a size larger than the specified number. 
+	* Type: Specify to use absolute or relative edge size
+		Absolute - is used to specify a number based on the dimensions of the model. 
+		Relative - is a number between 0 and 1. The actual mesh size will be calculated by multiplying the length of the largest edge of the coordinate-aligned bounding box of the entity by the given parameter.
+
+## Load/Create Mesh
+
+	* Run Mesher: Once all the meshing parameters are specified, run MeshSim within SimVascular.
+	* Load Mesh: Load a previously created mesh for viewing in SimVascular.
+
+## Write Files
+
+	* mesh complete dir: Select the directory in which to place all the mesh files to be written from the mesh. These files are described in the Written Mesh Files of the documentation.

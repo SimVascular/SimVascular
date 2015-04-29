@@ -1,0 +1,1 @@
+set(svlibs_OPEN_URLBASE "http://simvascular.ucsd.edu/sv_lib/") 

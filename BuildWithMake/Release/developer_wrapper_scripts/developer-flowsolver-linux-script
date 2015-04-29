@@ -1,0 +1,35 @@
+#!/bin/bash -f
+
+# NOTE: in the past, needed to use tcsh to set unlimited
+#       stack size.  Using tcsh seems to die when using
+#       ubuntu and mpich2
+#
+#/bin/tcsh -f
+# limit stacksize unlimited 
+
+# simvascular specific additions
+
+export SOFTWARE_PLATFORM=REPLACEME_SOFTWARE_PLATFORM
+export COMPILER_VERSION=REPLACEME_COMPILER_VERSION
+export OPEN_SOFTWARE_BINARIES_TOPLEVEL=REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL
+export LICENSED_SOFTWARE_TOPLEVEL=REPLACEME_LICENSED_SOFTWARE_TOPLEVEL
+export SIMVASCULAR_HOME=REPLACEME_SIMVASCULAR_HOME
+export LES_LICENSE_SERVER=REPLACEME_LES_LICENSE_SERVER
+
+############################################################
+#  YOU SHOULDN'T NEED TO CHANGE ANYTHING BELOW THIS LINE!! #
+############################################################
+
+# 3-D solver environment variables
+export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME/Code/Modules/ThreeDSolver/IncompressibleSolver/Solver
+
+# simvascular addition
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/Code/Lib:$LD_LIBRARY_PATH
+
+# MPICH2 additions
+export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
+
+# intel compiler additions
+export LD_LIBRARY_PATH=$OPEN_SOFTWARE_BINARIES_TOPLEVEL/intel_compiler_libs/intel64:$LD_LIBRARY_PATH
+
+$SIMVASCULAR_HOME/BuildWithMake/Bin/flowsolver.exe $*

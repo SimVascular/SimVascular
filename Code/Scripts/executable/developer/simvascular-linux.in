@@ -1,0 +1,19 @@
+export SIMVASCULAR_RELEASED_MODE=@RELEASE_MODE@
+
+# run the executable
+case "$SIMVASCULAR_BATCH_MODE" in
+"1")
+case "$*" in
+"")
+$SIMVASCULAR_HOME/Bin/@SIMVASCULAR_EXE@
+;;
+*)
+$SIMVASCULAR_HOME/Bin/@SIMVASCULAR_EXE@ $*
+;;
+esac
+;;
+*)
+@GDB@ @GDB_FLAGS@ $SIMVASCULAR_HOME/Bin/@SIMVASCULAR_EXE@ $SIMVASCULAR_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+;;
+esac
+

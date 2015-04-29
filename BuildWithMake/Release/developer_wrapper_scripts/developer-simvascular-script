@@ -1,0 +1,18 @@
+
+# run the executable
+case "$SIMVASCULAR_BATCH_MODE" in
+"1")
+case "$*" in
+"")
+$SIMVASCULAR_HOME/Code/Bin/simvascular.exe
+;;
+*)
+$SIMVASCULAR_HOME/Code/Bin/simvascular.exe $*
+;;
+esac
+;;
+*)
+$SIMVASCULAR_HOME/BuildWithMake/Bin/simvascular.exe $SIMVASCULAR_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+;;
+esac
+

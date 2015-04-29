@@ -1,0 +1,47 @@
+#Level Set
+
+Note for all settings.  Hitting enter while in any of the text boxes will start the levelset computation.
+
+##Seed Parameters
+These parameters modify the location and size of the stating seed. These parameters are show in two variants. On the left, the location and size are standardized, and will be the same across all images.  The settings on the right show the same fields but take into account the physical space of the data.  Updating either setting type will automaticaly update its counterpart.
+
+**Center** This controls the center of the seed referenced from the center of them image as the origin. Decreasing or increasing the X value will move the seed left or right respectively, Decreasing or increasing the Y value will move the seed up or down respectively.
+**Radius** This parameter controls the radius of the seed.  This is taken in the X direction.  Ellipse seeds are not supported.
+
+##Stage 1 Parameters
+These parameters control the growth and stop criteria of the first stage levelset.  Stage 1 levelset is meant to arrive at a approximate solution to initialize stage 2. The result of the first stage is displayed in yellow.
+
+**Blur** These parameters control the image blur on the feature image and the advection image.  If your image has a lot of noise, increasing these values can improve accuracy.  Increased image blur will decrease percision, however.
+**Kthr** This value is the equilibrium curvature of the level set.  A higher value will result in less curvature smoothing.
+
+###Advanced Features
+**Exponent Factor Rise and Fall** These values affect the speed of of the level set when rising on an image gradient, or falling.  A ratio of 1:2 is reccomended. 
+**Max Iterations** This specifies the maximum number of iterations that can be complete before levelset is halted.
+**Max Error** This specifies the maximum RMS error for the levelset stop criteria.
+
+
+##Stage 2 Parameters
+Stage 2 level set is intended to provide a smooth, accurate contour based on the results of stage 1.
+
+**Blur** These parameters control the image blur on the feature image and the advection image.  If your image has a lot of noise, increasing these values can improve accuracy.  Increased image blur will decrease percision, however.
+**Kupp** This specifies the maximum tolerable curvature.
+**Klow** This specifies the minimum tolerable curvature.  When the curvature is too low the levelset will force the levelset to grow, if this setting is set too low, it may result in overshoot.
+
+###Advanced Features
+
+**Max Iterations** This specifies the maximum number of iterations that can be complete before levelset is halted.
+**Max Error** This specifies the maximum RMS error for the levelset stop criteria.
+
+
+##Additional Options
+
+###Display
+These radio buttons control what edge potential image is shown in the 2-D potential window.
+
+###Always Refresh
+These check boxes control the compuation change.  If you modify parameters in stage 1 or seed, the final levelset will not be updated unless these are checked.  Note: modifying a later change will automatically recompute the previous stages.
+
+##Smoothing and Batch Computation
+
+**Fourier Smooth** Use this to smooth the result of the level set.
+**Batch List** You can perform a batch set of segmentations using the current settings by inputting the batch settings in the text box and clicking Run Batch Segmentation.

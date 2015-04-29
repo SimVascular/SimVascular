@@ -1,0 +1,4 @@
+#!/bin/bash -f
+export SIMVASCULAR_BATCH_MODE=1
+
+

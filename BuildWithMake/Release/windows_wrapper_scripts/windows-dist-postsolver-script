@@ -1,0 +1,10 @@
+
+# run the executable
+case "$*" in
+"")
+"$SIMVASCULAR_HOME/postsolver-bin.exe"
+;;
+*)
+"$SIMVASCULAR_HOME/postsolver-bin.exe" $*
+;;
+esac

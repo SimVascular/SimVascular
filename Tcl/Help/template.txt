@@ -1,0 +1,21 @@
+#Header1 Title
+There are three types of headers
+##Header 2
+###Header 3
+
+
+###Headers last till the end of the line
+
+*Topic* There is also a topic class which can be anywhere, and mixed with normal text.
+
+*Linking* We can also link to other help files [template2.txt]
+
+*Spacing* Spacing matters and all new lines are passed so be careful about
+
+
+space ....
+
+
+and new lines!
+
+

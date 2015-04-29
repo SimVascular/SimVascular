@@ -1,0 +1,5 @@
+#define VER_READBCTNODE 0
+#define VER_CORONARY 1
+#define VER_CLOSEDLOOP 1
+#define VER_VARWALL 1
+

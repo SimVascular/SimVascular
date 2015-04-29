@@ -1,0 +1,4 @@
+
+if {![info exists SIMVASCULAR_FULL_VER_NO]} {
+  source $env(SIMVASCULAR_HOME)/Tcl/simvascular_startup.tcl
+}

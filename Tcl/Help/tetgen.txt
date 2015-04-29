@@ -1,0 +1,31 @@
+# Mesh Options
+## Select Solid Model
+
+	* File: Load the solid model to be meshed. You can browse for the file and then the solid will be automatically loaded. Accepted file formats include .vtk(as a polydata),.vtp,.stl, and .ply.
+
+## Script File
+
+	* TetGen script file: Load or save a script file (.tgs). If you have run a previous mesh with the same parameters, you can just load the script file from the run. The script file saves the meshing parameters specified. 
+
+## TetGen Flags
+Specify the TetGen meshing parameters. These parameters apply ONLY to the volumetric meshing operation.
+	* O - Specity the number of times to optomize the mesh. This moves nodes to reach a better quality mesh.
+	* q - Specify a quality measure for the mesh. This number corresponds to the ratio between the radius of the circumsphere of an element and the maximum edge size (See below for figure). This number can be anywhere from 2.0 to 1.1, and a lower number corresponds to a higher quality element. A mesh with a quality ratio 1.0 is not attainable and the mesher will run infinitely.  
+	* T - Apply a tolerance to check whether a point lies on the surface or not (Default is $10^{-8}$).
+	* Y - Preserve the exact surface mesh. If this parameter is used without a surface remeshing, make sure a mesh size that corresponds to the surface mesh is applied.
+	* M - Do not merge facets that are coplanar or have very close vertices.
+	* d - Detect for intersecting facets. This can be helpful if there are regions with close facets.  
+	* C - Check the consistency of the final mesh.
+	* Q - Output nothing to the terminal except for errors.
+	* V - Print out more detailed information from TetGen. This information is viewable in the terminal.
+	* Specify other mesh tags - The full TetGen documentation indicates other possible mesh flags. This is where those can be specified. TetGen documentation can be found here: **FILL THIS IN** 
+
+## Basic Options
+
+	* Estimate Global Edge Size: Based on the areas of the surfaces on your solid, SimVascular will calculate a reasonable mesh edge size. This size is slightly smaller than what may be necessary, but start with this size and slowly increase the size for a larger mesh edge size. 
+	* Set maximum edge size for equilateral triangle - Apply a mesh size. TetGen applies a maximum tetrahedron volume constraint. The value here is an edge size (a). The volume is then computed from this as a tetrahedron with equilateral sides. (i.e. $V = (a^3)/(6*sqrt(2))$)
+	* Run Mesher: Once all the meshing parameters are specified, run TetGen within SimVascular.
+
+## Write Files
+
+	* mesh complete dir: Select the directory in which to place all the mesh files to be written from the mesh. These files are described in the Written Mesh Files of the documentation.

@@ -1,0 +1,7 @@
+
+IF "@MESHSIM_LICENSE_FILE@" == "" IF"@MESHSIM_LICENSE_FILE@" == " "(
+echo "No license key for MeshSim found!!!  Exiting."
+)
+IF "@MESHSIM_LICENSE_FILE@" NEQ "" IF"@MESHSIM_LICENSE_FILE@" NEQ " "(
+"@OUTBIN_DIR@/@WIN_PATH@/@ADAPTOR_EXE@@WIN_EXE@
+)

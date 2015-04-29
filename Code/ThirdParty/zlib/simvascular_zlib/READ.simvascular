@@ -1,0 +1,31 @@
+This directory contains a subset of the zlib library (1.2.3) and
+some custom changes.
+
+We only include enough of the distribution to provide the functionalities
+required.
+
+We would like to thank the zlib team for distributing this library.
+http://www.zlib.net
+
+Added Files
+-----------
+
+CMakeLists.txt
+  -Support building with CMake.
+
+zlib.def
+  -For MS Windows only: used to explicitly list the exports from dll builds.
+
+simvascular_zlib_mangle.h
+  -Mangles symbols exported from the zlib library for use by simvascular.
+
+
+Changed Files
+-------------
+You can search the code for "KITWARE_ZLIB_CHANGE" to find modifications
+vs the original zlib code
+
+zconf.h
+  -Include simvascular_zlib_mangle.h (at the top)
+  -Changed an #if 0 to #ifdef HAVE_UNISTD_H (near middle)
+  -Suppress selected compiler warnings (at the bottom)

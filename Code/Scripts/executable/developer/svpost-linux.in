@@ -1,0 +1,11 @@
+
+# run the executable
+case "$*" in
+"")
+$SIMVASCULAR_HOME/Bin/@POSTSOLVER_EXE@ 
+;;
+*)
+$SIMVASCULAR_HOME/Bin/@POSTSOLVER_EXE@ $*
+;;
+esac
+

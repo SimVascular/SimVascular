@@ -1,0 +1,11 @@
+<CPackWiXPatch>
+    <CPackWiXFragment Id="CM_CP_@SIMVASCULAR_INSTALL_RUNTIME_DIR@.@SIMVASCULAR_EXE@.exe">
+        <Registry Id='regid1' Root='HKLM' Key='Software\SimVascular\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' Name='InstallDir' Action='write' Type='string' Value='[INSTALL_ROOT]' />
+        <Registry Id='regid2' Root='HKLM' Key='Software\SimVascular\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' Name='TimeStamp' Action='write' Type='string' Value='@SIMVASCULAR_RELEASE_TIMESTAMP@' />
+        <Registry Id='regid3' Root='HKLM' Key='Software\SimVascular\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' Name='RunDir' Action='write' Type='string' Value='[INSTALL_ROOT]/@SIMVASCULAR_INSTALL_RUNTIME_DIR@' />
+        <Registry Id='regid4' Root='HKLM' Key='Software\SimVascular\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' Name='TclLibDir' Action='write' Type='string' Value='[INSTALL_ROOT]\@SIMVASCULAR_INSTALL_TCL_LIBRARY_DIR@/tcl8.5' />
+        <Registry Id='regid5' Root='HKLM' Key='Software\SimVascular\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' Name='TkLibDir' Action='write' Type='string' Value='[INSTALL_ROOT]\@SIMVASCULAR_INSTALL_TCL_LIBRARY_DIR@/tk8.5' />
+        <Registry Id='regid7' Root='HKLM' Key='Software\SimVascular\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' Name='HomeDir' Action='write' Type='string' Value='[INSTALL_ROOT]' />
+        @FRAGMENT_INJECTION_STRING@
+    </CPackWiXFragment>
+</CPackWiXPatch>

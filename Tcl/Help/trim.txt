@@ -1,0 +1,15 @@
+# Trimming a PolyData Model
+
+## Cut Surface
+        
+	* Cut with plane -> check on “Show Plane Interactor”
+        move the interactor to the desired position and click “Cut Above” or “Cut Below” 
+                This will cut either above or below the entire plane depending on its orientation shown by the arrows 
+
+        * Cut with box -> check on “Show Box Interactor”
+                expand the box in any direction by clicking and dragging the grey spheres that appear
+                rotate the box by clicking on a face of the box and dragging
+                “Cut With Box” -> cuts all of the model contained inside the box
+
+        * Save model: File I/O -> click “save”
+                name “demo_trimmed.vtp”, make sure it is in the right directory, click save

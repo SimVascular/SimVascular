@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?include "cpack_variables.wxi"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+    xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+    RequiredVersion="3.6.3303.0">
+
+    <Product Id="$(var.CPACK_WIX_PRODUCT_GUID)"
+        Name="$(var.CPACK_PACKAGE_NAME)"
+        Language="1033"
+        Version="$(var.CPACK_PACKAGE_VERSION)"
+        Manufacturer="$(var.CPACK_PACKAGE_VENDOR)"
+        UpgradeCode="$(var.CPACK_WIX_UPGRADE_GUID)">
+
+        <Package InstallerVersion="301" Compressed="yes"/>
+
+        <Media Id="1" Cabinet="media1.cab" EmbedCab="yes"/>
+
+        <MajorUpgrade
+            Schedule="afterInstallInitialize"
+            AllowSameVersionUpgrades="yes"
+            DowngradeErrorMessage="A later version of [ProductName] is already installed. Setup will now exit."/>
+
+            <WixVariable Id="WixUILicenseRtf" Value="$(var.CPACK_WIX_LICENSE_RTF)"/>
+            <Property Id="WIXUI_INSTALLDIR" Value="INSTALL_ROOT"/>
+
+            <?ifdef CPACK_WIX_PRODUCT_ICON?>
+            <Property Id="ARPPRODUCTICON">ProductIcon.ico</Property>
+            <Icon Id="ProductIcon.ico" SourceFile="$(var.CPACK_WIX_PRODUCT_ICON)"/>
+            <?endif?>
+
+            <?ifdef CPACK_WIX_UI_BANNER?>
+            <WixVariable Id="WixUIBannerBmp" Value="$(var.CPACK_WIX_UI_BANNER)"/>
+            <?endif?>
+
+            <?ifdef CPACK_WIX_UI_DIALOG?>
+            <WixVariable Id="WixUIDialogBmp" Value="$(var.CPACK_WIX_UI_DIALOG)"/>
+            <?endif?>
+
+            <DirectoryRef Id="TARGETDIR">
+                <Directory Id="ProgramMenuFolder">
+                    <Directory Id="PROGRAM_MENU_FOLDER" Name="@CPACK_WIX_PROGRAM_MENU_FOLDER@"/>
+                </Directory>
+                <Directory Id="DesktopFolder" Name="Desktop"/>
+            </DirectoryRef>
+
+            <FeatureRef Id="ProductFeature">
+                <ComponentRef Id="CM_SHORTCUT"/>
+                <ComponentRef Id="CM_DESKTOP_SHORTCUT" />
+            </FeatureRef>
+
+
+
+            <DirectoryRef Id="DesktopFolder">
+                <Component Id="CM_DESKTOP_SHORTCUT" Guid="*">
+                    <Shortcut Id="CM_DSP_simvascular.exe" Name="@CPACK_WIX_PROGRAM_MENU_FOLDER@" Target="[#CM_FP_Bin.simvascular.exe]" Arguments="Tcl/SimVascular_2.0/simvascular_startup.tcl" WorkingDirectory="INSTALL_ROOT" Icon="ProductIcon.ico"/>
+                    <RegistryValue Root="HKCU" Key="Software\SimVascular.org\@CPACK_WIX_PROGRAM_MENU_FOLDER@" Name="installed_desktop" Type="integer" Value="1" KeyPath="yes"/>
+                </Component>
+            </DirectoryRef>
+
+            <DirectoryRef Id="PROGRAM_MENU_FOLDER">
+                <Component Id="CM_SHORTCUT" Guid="*">
+                    <Shortcut Id="CM_SP_simvascular.exe" Name="SimVascular" Target="[#CM_FP_Bin.simvascular.exe]"  Arguments="Tcl/SimVascular_2.0/simvascular_startup.tcl" WorkingDirectory="INSTALL_ROOT" Icon="ProductIcon.ico" />
+
+                    <util:InternetShortcut Id="CM_SP_simvascular_ORG" Name="SimVascular.org" Target="http://simvascular.org/"/>
+                    <util:InternetShortcut Id="CM_SP_simvascular_help" Name="Software Guide" Target="http://simvascular.ucsd.edu/docsQuickGuide.html"/>
+                    <util:InternetShortcut Id="CM_SP_simvascular_case" Name="Clinical Case Study Guide" Target="http://simvascular.ucsd.edu/clinicalCase1.html"/>
+
+                    <Shortcut Id="UNINSTALL" Name="Uninstall SimVascular" Description="Uninstalls SimVascular" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]"/>
+                    <RemoveFolder Id="CM_REMOVE_PROGRAM_MENU_FOLDER" On="uninstall"/>
+                    <RegistryValue Root="HKCU" Key="Software\SimVascular.org\@CPACK_WIX_PROGRAM_MENU_FOLDER@" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+                </Component>
+            </DirectoryRef>
+
+            <UIRef Id="WixUI_Minimal" />
+        </Product>
+    </Wix>

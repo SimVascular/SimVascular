@@ -1,0 +1,44 @@
+#!/bin/bash -f
+
+export SIMVASCULAR_HOME=/usr/local/package/REPLACE_SIMVASCULAR_VERSION/REPLACE_TIMESTAMP
+export SIMVASCULAR_RELEASE_BUILD=REPLACE_SIMVASCULAR_PLATFORM
+export SIMVASCULAR_OS=REPLACE_SIMVASCULAR_OS
+
+################################################################
+# YOU PROBABLY DON'T NEED TO CHANGE ANYTHING BELOW THIS LINE.  #
+################################################################
+
+export SIMVASCULAR_STATIC_BUILD=1
+export SIMVASCULAR_RELEASED_MODE=1
+
+# SV additions (parasolid, tcltk, etc.)
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME:$LD_LIBRARY_PATH
+
+# MeshSim license file
+export SIM_LICENSE_FILE=$SIMVASCULAR_HOME/meshsim-license.dat
+
+# Tcl/Tk additions
+export TCL_LIBRARY=$SIMVASCULAR_HOME/lib/REPLACE_TCL_VERSION_NO
+export TK_LIBRARY=$SIMVASCULAR_HOME/lib/REPLACE_TK_VERSION_NO
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/lib:$LD_LIBRARY_PATH
+
+# PARASOLID additions
+export P_SCHEMA=$SIMVASCULAR_HOME/schema
+
+# MPICH2 additions
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/mpi/lib:$LD_LIBRARY_PATH
+
+# intel additions
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/intel_compiler_libs:$LD_LIBRARY_PATH
+
+# need to convert to dos style paths on windows
+case "$SIMVASCULAR_OS" in
+ "windows" )
+export SIMVASCULAR_HOME=`cygpath --windows -t mixed "$SIMVASCULAR_HOME"`
+export TCL_LIBRARY=`cygpath --windows -t mixed "$TCL_LIBRARY"`
+export TK_LIBRARY=`cygpath --windows -t mixed "$TK_LIBRARY"`
+export P_SCHEMA=`cygpath --windows -t mixed "$P_SCHEMA"`
+export SIM_LICENSE_FILE=`cygpath --windows -t mixed "$SIM_LICENSE_FILE"`
+export PATH=$LD_LIBRARY_PATH:$PATH
+;;
+esac

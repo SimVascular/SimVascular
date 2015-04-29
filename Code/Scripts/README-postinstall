@@ -1,0 +1,3 @@
+
+To add SimVascular to your path, you will need to run the post-install script.  
+This script places symbolic links in /usr/local/bin to the simvascular executables.

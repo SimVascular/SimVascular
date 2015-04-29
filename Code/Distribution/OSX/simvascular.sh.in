@@ -1,0 +1,43 @@
+#!/bin/bash -f
+#/bin/tcsh -f
+# limit stacksize unlimited 
+
+export SOFTWARE_PLATFORM=@CLUSTER@
+export COMPILER_VERSION=@COMPILER_VERSION@
+export OPEN_SOFTWARE_BINARIES_TOPLEVEL=@OpenLibs_Bin_Directory@
+export LICENSED_SOFTWARE_TOPLEVEL=@LicensedLibs_Bin_Directory@
+export SIMVASCULAR_HOME=@SimVascular_HOME@
+export LES_LICENSE_SERVER=
+
+############################################################
+#  YOU SHOULDN'T NEED TO CHANGE ANYTHING BELOW THIS LINE!! #
+############################################################
+
+# 3-D solver environment variables
+export FLOWSOLVER_CONFIG=@FLOWSOLVER_CONFIG@/
+
+# simvascular addition
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/Lib:$LD_LIBRARY_PATH
+
+# MPICH2 additions
+export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
+
+# intel compiler additions
+export LD_LIBRARY_PATH=@INTELRUNTIME_LIB_DIR@:$LD_LIBRARY_PATH
+
+@OUTBIN_DIR@/@FLOWSOLVER_EXE@ $*
+# run the executable
+case "$SIMVASCULAR_BATCH_MODE" in
+"1")
+case "$*" in
+"")
+@OUTBIN_DIR@/@SIMVASCULAR_EXE@
+;;
+*)
+@OUTBIN_DIR@/@SIMVASCULAR_EXE@ $*
+;;
+esac
+;;
+*)
+@GDB@ @GDB_FLAGS@ @OUTBIN_DIR@/@SIMVASCULAR_EXE@ @SimVascular_HOME@/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+;;

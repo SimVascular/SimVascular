@@ -1,0 +1,50 @@
+#!/bin/bash -f
+
+# simvascular specific additions
+
+export SOFTWARE_PLATFORM=REPLACEME_SOFTWARE_PLATFORM
+export COMPILER_VERSION=REPLACEME_COMPILER_VERSION
+export SIMVASCULAR_OS=REPLACEME_SIMVASCULAR_OS
+
+# must specify paths in unix style
+export OPEN_SOFTWARE_BINARIES_TOPLEVEL=REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL
+export LICENSED_SOFTWARE_TOPLEVEL=REPLACEME_LICENSED_SOFTWARE_TOPLEVEL
+export SIMVASCULAR_HOME=REPLACEME_SIMVASCULAR_HOME
+
+# MeshSim license file
+export SIM_LICENSE_FILE=REPLACEME_LICENSE_FILE
+export SIM_LICENSE_FILE=$SIMVASCULAR_HOME/Licenses/MeshSim/license.dat
+
+# 3-D solver environment variables
+export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME/Code/Modules/ThreeDSolver/IncompressibleSolver/Solver
+export LES_LICENSE_SERVER=$SIMVASCULAR_HOME/Licenses/LesLib/license.dat
+#export LES_LICENSE_SERVER=foo.bar.edu
+
+################################################################
+# YOU PROBABLY DON'T NEED TO CHANGE ANYTHING BELOW THIS LINE.  #
+#                                                              # 
+# NOTE:  This file needs to be kept current with changes in    #
+# paths found in include.mk                                    #
+#                                                              # 
+################################################################
+
+# simvascular addition
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/Code/Lib:$LD_LIBRARY_PATH
+
+# mpich2 addition
+export LD_LIBRARY_PATH=$OPEN_SOFTWARE_BINARIES_TOPLEVEL/mpich2-1.4.1p1/lib:$LD_LIBRARY_PATH
+
+# need to convert to dos style paths on windows
+case "$SIMVASCULAR_OS" in
+ "windows" )
+export SIMVASCULAR_HOME=`cygpath --windows -t mixed $SIMVASCULAR_HOME`
+export OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath --windows -t mixed $OPEN_SOFTWARE_BINARIES_TOPLEVEL`
+export LICENSED_SOFTWARE_TOPLEVEL=`cygpath --windows -t mixed $OPEN_SOFTWARE_BINARIES_TOPLEVEL`
+export FLOWSOLVER_CONFIG=`cygpath --windows -t mixed $FLOWSOLVER_CONFIG`
+export LES_LICENSE_SERVER=`cygpath --windows -t mixed $LES_LICENSE_SERVER`
+export PATH=$LD_LIBRARY_PATH:$PATH
+;;
+esac
+
+# run the executable
+$OPEN_SOFTWARE_BINARIES_TOPLEVEL/../../unknown/x64/mpich2-1.4p1/bin/mpiexec.exe -np $1 -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG $SIMVASCULAR_HOME/BuildWithMake/Bin/flowsolver.exe $2 $3 $4

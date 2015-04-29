@@ -1,0 +1,7 @@
+
+# 3-D solver environment variables
+export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME
+
+#export LES_LICENSE_SERVER=$SIMVASCULAR_HOME/license.dat
+
+$SIMVASCULAR_HOME/mpiexec.exe -noprompt -user 1 -localroot -localonly -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG  -n $1 $SIMVASCULAR_HOME/flowsolver-bin.exe $2 $3

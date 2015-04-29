@@ -1,0 +1,514 @@
+VTK_DIR	= $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/vtk-6.0.0
+VTK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/vtk-6.0.0/Release
+
+VTK_INCDIRS	= \
+		-I$(VTK_DIR)/Accelerators/Piston \
+		-I$(VTK_DIR)/Charts/Core \
+		-I$(VTK_DIR)/Common/Color \
+		-I$(VTK_DIR)/Common/ComputationalGeometry \
+		-I$(VTK_DIR)/Common/Core \
+		-I$(VTK_DIR)/Common/Core/Testing/Cxx \
+		-I$(VTK_DIR)/Common/DataModel \
+		-I$(VTK_DIR)/Common/ExecutionModel \
+		-I$(VTK_DIR)/Common/Math \
+		-I$(VTK_DIR)/Common/Misc \
+		-I$(VTK_DIR)/Common/System \
+		-I$(VTK_DIR)/Common/Transforms \
+		-I$(VTK_DIR)/Deprecated \
+		-I$(VTK_DIR)/Domains/Chemistry \
+		-I$(VTK_DIR)/Examples/AMR/Cxx \
+		-I$(VTK_DIR)/Examples/Build/vtkLocal \
+		-I$(VTK_DIR)/Examples/Build/vtkMy/Common \
+		-I$(VTK_DIR)/Examples/Build/vtkMy/Imaging \
+		-I$(VTK_DIR)/Examples/Build/vtkMy/Unsorted \
+		-I$(VTK_DIR)/Examples/Charts/Cxx \
+		-I$(VTK_DIR)/Examples/GUI/Cocoa \
+		-I$(VTK_DIR)/Examples/GUI/Qt/Events \
+		-I$(VTK_DIR)/Examples/GUI/Qt/FourPaneViewer \
+		-I$(VTK_DIR)/Examples/GUI/Qt/GraphicsView \
+		-I$(VTK_DIR)/Examples/GUI/Qt/SimpleView \
+		-I$(VTK_DIR)/Examples/GUI/Win32/SampleMFC \
+		-I$(VTK_DIR)/Examples/GUI/Win32/vtkBorland/Package \
+		-I$(VTK_DIR)/Examples/GUI/Win32/vtkBorland/ProjectDemo \
+		-I$(VTK_DIR)/Examples/GUI/Win32/vtkMFC/vtkDLG \
+		-I$(VTK_DIR)/Examples/GUI/Win32/vtkMFC/vtkMDI \
+		-I$(VTK_DIR)/Examples/GUI/Win32/vtkMFC/vtkSDI \
+		-I$(VTK_DIR)/Examples/HyperTree/Cxx/Sphere \
+		-I$(VTK_DIR)/Examples/Infovis/Cxx/CustomLinkView \
+		-I$(VTK_DIR)/Examples/Infovis/Cxx/EasyView \
+		-I$(VTK_DIR)/Examples/Infovis/Cxx/StatsView \
+		-I$(VTK_DIR)/Examples/ParallelProcessing/Generic/Cxx \
+		-I$(VTK_DIR)/Filters/AMR \
+		-I$(VTK_DIR)/Filters/Core \
+		-I$(VTK_DIR)/Filters/Cosmo \
+		-I$(VTK_DIR)/Filters/Extraction \
+		-I$(VTK_DIR)/Filters/FlowPaths \
+		-I$(VTK_DIR)/Filters/General \
+		-I$(VTK_DIR)/Filters/Generic \
+		-I$(VTK_DIR)/Filters/Geometry \
+		-I$(VTK_DIR)/Filters/Hybrid \
+		-I$(VTK_DIR)/Filters/HyperTree \
+		-I$(VTK_DIR)/Filters/Imaging \
+		-I$(VTK_DIR)/Filters/Matlab \
+		-I$(VTK_DIR)/Filters/Modeling \
+		-I$(VTK_DIR)/Filters/Parallel \
+		-I$(VTK_DIR)/Filters/ParallelFlowPaths \
+		-I$(VTK_DIR)/Filters/ParallelFlowPaths/Testing/Cxx \
+		-I$(VTK_DIR)/Filters/ParallelGeometry \
+		-I$(VTK_DIR)/Filters/ParallelImaging \
+		-I$(VTK_DIR)/Filters/ParallelMPI \
+		-I$(VTK_DIR)/Filters/ParallelStatistics \
+		-I$(VTK_DIR)/Filters/Programmable \
+		-I$(VTK_DIR)/Filters/ReebGraph \
+		-I$(VTK_DIR)/Filters/Selection \
+		-I$(VTK_DIR)/Filters/Sources \
+		-I$(VTK_DIR)/Filters/Statistics \
+		-I$(VTK_DIR)/Filters/StatisticsGnuR \
+		-I$(VTK_DIR)/Filters/Texture \
+		-I$(VTK_DIR)/Filters/Verdict \
+		-I$(VTK_DIR)/GUISupport/MFC \
+		-I$(VTK_DIR)/GUISupport/Qt \
+		-I$(VTK_DIR)/GUISupport/Qt/Testing/Cxx \
+		-I$(VTK_DIR)/GUISupport/QtOpenGL \
+		-I$(VTK_DIR)/GUISupport/QtSQL \
+		-I$(VTK_DIR)/GUISupport/QtWebkit \
+		-I$(VTK_DIR)/Geovis/Core \
+		-I$(VTK_DIR)/IO/AMR \
+		-I$(VTK_DIR)/IO/Core \
+		-I$(VTK_DIR)/IO/Core/Testing/Cxx \
+		-I$(VTK_DIR)/IO/EnSight \
+		-I$(VTK_DIR)/IO/Exodus \
+		-I$(VTK_DIR)/IO/Export \
+		-I$(VTK_DIR)/IO/FFMPEG \
+		-I$(VTK_DIR)/IO/GDAL \
+		-I$(VTK_DIR)/IO/Geometry \
+		-I$(VTK_DIR)/IO/Image \
+		-I$(VTK_DIR)/IO/Import \
+		-I$(VTK_DIR)/IO/Infovis \
+		-I$(VTK_DIR)/IO/LSDyna \
+		-I$(VTK_DIR)/IO/LSDyna/private \
+		-I$(VTK_DIR)/IO/Legacy \
+		-I$(VTK_DIR)/IO/MINC \
+		-I$(VTK_DIR)/IO/MPIImage \
+		-I$(VTK_DIR)/IO/MPIParallel \
+		-I$(VTK_DIR)/IO/Movie \
+		-I$(VTK_DIR)/IO/MySQL \
+		-I$(VTK_DIR)/IO/NetCDF \
+		-I$(VTK_DIR)/IO/ODBC \
+		-I$(VTK_DIR)/IO/PLY \
+		-I$(VTK_DIR)/IO/Parallel \
+		-I$(VTK_DIR)/IO/ParallelExodus \
+		-I$(VTK_DIR)/IO/ParallelLSDyna \
+		-I$(VTK_DIR)/IO/ParallelNetCDF \
+		-I$(VTK_DIR)/IO/PostgreSQL \
+		-I$(VTK_DIR)/IO/SQL \
+		-I$(VTK_DIR)/IO/VPIC \
+		-I$(VTK_DIR)/IO/Video \
+		-I$(VTK_DIR)/IO/XML \
+		-I$(VTK_DIR)/IO/XMLParser \
+		-I$(VTK_DIR)/IO/Xdmf2 \
+		-I$(VTK_DIR)/Imaging/Color \
+		-I$(VTK_DIR)/Imaging/Core \
+		-I$(VTK_DIR)/Imaging/Fourier \
+		-I$(VTK_DIR)/Imaging/General \
+		-I$(VTK_DIR)/Imaging/Hybrid \
+		-I$(VTK_DIR)/Imaging/Math \
+		-I$(VTK_DIR)/Imaging/Morphological \
+		-I$(VTK_DIR)/Imaging/Sources \
+		-I$(VTK_DIR)/Imaging/Statistics \
+		-I$(VTK_DIR)/Imaging/Stencil \
+		-I$(VTK_DIR)/Infovis/Boost \
+		-I$(VTK_DIR)/Infovis/BoostGraphAlgorithms \
+		-I$(VTK_DIR)/Infovis/Core \
+		-I$(VTK_DIR)/Infovis/Layout \
+		-I$(VTK_DIR)/Infovis/Parallel \
+		-I$(VTK_DIR)/Interaction/Image \
+		-I$(VTK_DIR)/Interaction/Style \
+		-I$(VTK_DIR)/Interaction/Widgets \
+		-I$(VTK_DIR)/Interaction/Widgets/Testing/Cxx \
+		-I$(VTK_DIR)/Parallel/Core \
+		-I$(VTK_DIR)/Parallel/MPI \
+		-I$(VTK_DIR)/Parallel/MPI/Testing/Cxx \
+		-I$(VTK_DIR)/Rendering/Annotation \
+		-I$(VTK_DIR)/Rendering/Cg \
+		-I$(VTK_DIR)/Rendering/Context2D \
+		-I$(VTK_DIR)/Rendering/Core \
+		-I$(VTK_DIR)/Rendering/FreeType \
+		-I$(VTK_DIR)/Rendering/FreeType/fonts \
+		-I$(VTK_DIR)/Rendering/FreeTypeFontConfig \
+		-I$(VTK_DIR)/Rendering/FreeTypeOpenGL \
+		-I$(VTK_DIR)/Rendering/GL2PS \
+		-I$(VTK_DIR)/Rendering/HybridOpenGL \
+		-I$(VTK_DIR)/Rendering/HybridOpenGL/Testing/Cxx \
+		-I$(VTK_DIR)/Rendering/Image \
+		-I$(VTK_DIR)/Rendering/LOD \
+		-I$(VTK_DIR)/Rendering/Label \
+		-I$(VTK_DIR)/Rendering/Matplotlib \
+		-I$(VTK_DIR)/Rendering/OpenGL \
+		-I$(VTK_DIR)/Rendering/Parallel \
+		-I$(VTK_DIR)/Rendering/Qt \
+		-I$(VTK_DIR)/Rendering/Tk \
+		-I$(VTK_DIR)/Rendering/Volume \
+		-I$(VTK_DIR)/Rendering/Volume/Testing/Cxx \
+		-I$(VTK_DIR)/Rendering/VolumeAMR \
+		-I$(VTK_DIR)/Rendering/VolumeOpenGL \
+		-I$(VTK_DIR)/Testing/Core \
+		-I$(VTK_DIR)/Testing/GenericBridge \
+		-I$(VTK_DIR)/Testing/IOSQL \
+		-I$(VTK_DIR)/Testing/Rendering \
+		-I$(VTK_DIR)/ThirdParty/Cosmo \
+		-I$(VTK_DIR)/ThirdParty/TclTk/internals/tk8.2 \
+		-I$(VTK_DIR)/ThirdParty/TclTk/internals/tk8.3 \
+		-I$(VTK_DIR)/ThirdParty/TclTk/internals/tk8.4 \
+		-I$(VTK_DIR)/ThirdParty/TclTk/internals/tk8.5 \
+		-I$(VTK_DIR)/ThirdParty/TclTk/internals/tk8.6 \
+		-I$(VTK_DIR)/ThirdParty/VPIC \
+		-I$(VTK_DIR)/ThirdParty/alglib/alglib \
+		-I$(VTK_DIR)/ThirdParty/exodusII \
+		-I$(VTK_DIR)/ThirdParty/exodusII/vtkexodusII/include \
+		-I$(VTK_DIR)/ThirdParty/expat/vtkexpat \
+		-I$(VTK_DIR)/ThirdParty/freerange \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/include \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/include/freetype \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/include/freetype/config \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/include/freetype/internal \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/include/freetype/internal/services \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/autofit \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/base \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/bdf \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/cache \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/cff \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/cid \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/gxvalid \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/gzip \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/lzw \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/otvalid \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/pcf \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/pfr \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/psaux \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/pshinter \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/psnames \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/raster \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/sfnt \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/smooth \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/truetype \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/type1 \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/type42 \
+		-I$(VTK_DIR)/ThirdParty/freetype/vtkfreetype/src/winfonts \
+		-I$(VTK_DIR)/ThirdParty/ftgl/demo \
+		-I$(VTK_DIR)/ThirdParty/ftgl/src \
+		-I$(VTK_DIR)/ThirdParty/ftgl/src/NoSTL \
+		-I$(VTK_DIR)/ThirdParty/gl2ps/vtkgl2ps \
+		-I$(VTK_DIR)/ThirdParty/hdf5/vtkhdf5/c++/src \
+		-I$(VTK_DIR)/ThirdParty/hdf5/vtkhdf5/hl/c++/src \
+		-I$(VTK_DIR)/ThirdParty/hdf5/vtkhdf5/hl/src \
+		-I$(VTK_DIR)/ThirdParty/hdf5/vtkhdf5/src \
+		-I$(VTK_DIR)/ThirdParty/jpeg/vtkjpeg \
+		-I$(VTK_DIR)/ThirdParty/jsoncpp/json \
+		-I$(VTK_DIR)/ThirdParty/libproj4/vtklibproj4 \
+		-I$(VTK_DIR)/ThirdParty/libxml2/vtklibxml2 \
+		-I$(VTK_DIR)/ThirdParty/libxml2/vtklibxml2/include \
+		-I$(VTK_DIR)/ThirdParty/libxml2/vtklibxml2/include/libxml \
+		-I$(VTK_DIR)/ThirdParty/mrmpi/mpistubs \
+		-I$(VTK_DIR)/ThirdParty/mrmpi/src \
+		-I$(VTK_DIR)/ThirdParty/netcdf \
+		-I$(VTK_DIR)/ThirdParty/netcdf/vtknetcdf/cxx \
+		-I$(VTK_DIR)/ThirdParty/netcdf/vtknetcdf/include \
+		-I$(VTK_DIR)/ThirdParty/netcdf/vtknetcdf/libdispatch \
+		-I$(VTK_DIR)/ThirdParty/netcdf/vtknetcdf/libsrc \
+		-I$(VTK_DIR)/ThirdParty/netcdf/vtknetcdf/libsrc4 \
+		-I$(VTK_DIR)/ThirdParty/oggtheora/vtkoggtheora \
+		-I$(VTK_DIR)/ThirdParty/oggtheora/vtkoggtheora/libogg-1.1.4/include/ogg \
+		-I$(VTK_DIR)/ThirdParty/oggtheora/vtkoggtheora/libtheora-1.1.1/include/theora \
+		-I$(VTK_DIR)/ThirdParty/oggtheora/vtkoggtheora/libtheora-1.1.1/lib \
+		-I$(VTK_DIR)/ThirdParty/oggtheora/vtkoggtheora/libtheora-1.1.1/lib/x86 \
+		-I$(VTK_DIR)/ThirdParty/oggtheora/vtkoggtheora/libtheora-1.1.1/lib/x86_vc \
+		-I$(VTK_DIR)/ThirdParty/png/vtkpng \
+		-I$(VTK_DIR)/ThirdParty/sqlite/vtksqlite \
+		-I$(VTK_DIR)/ThirdParty/tiff/vtktiff \
+		-I$(VTK_DIR)/ThirdParty/utf8/source \
+		-I$(VTK_DIR)/ThirdParty/utf8/source/utf8 \
+		-I$(VTK_DIR)/ThirdParty/verdict \
+		-I$(VTK_DIR)/ThirdParty/verdict/vtkverdict \
+		-I$(VTK_DIR)/ThirdParty/xdmf2/vtkxdmf2/libsrc \
+		-I$(VTK_DIR)/ThirdParty/xdmf2/vtkxdmf2/libsrc/utils \
+		-I$(VTK_DIR)/Utilities/DICOMParser \
+		-I$(VTK_DIR)/Utilities/KWSys/vtksys \
+		-I$(VTK_DIR)/Utilities/MetaIO/vtkmetaio \
+		-I$(VTK_DIR)/Utilities/ParseOGLExt \
+		-I$(VTK_DIR)/Utilities/ParseOGLExt/headers \
+		-I$(VTK_DIR)/Utilities/ParseOGLExt/headers/GL3 \
+		-I$(VTK_DIR)/Utilities/Python \
+		-I$(VTK_DIR)/Utilities/PythonInterpreter \
+		-I$(VTK_DIR)/Utilities/octree \
+		-I$(VTK_DIR)/Views/Context2D \
+		-I$(VTK_DIR)/Views/Core \
+		-I$(VTK_DIR)/Views/Geovis \
+		-I$(VTK_DIR)/Views/Infovis \
+		-I$(VTK_DIR)/Views/Qt \
+		-I$(VTK_DIR)/Wrapping/Java \
+		-I$(VTK_DIR)/Wrapping/PythonCore \
+		-I$(VTK_DIR)/Wrapping/Tcl \
+		-I$(VTK_DIR)/Wrapping/Tcl/resources \
+		-I$(VTK_DIR)/Wrapping/Tools
+
+VTK_INCDIRS += \
+		-I$(VTK_BINDIR)/CMakeFiles \
+		-I$(VTK_BINDIR)/CMakeTmp/TestExplicitInstantiation \
+		-I$(VTK_BINDIR)/Charts/Core \
+		-I$(VTK_BINDIR)/Common/Color \
+		-I$(VTK_BINDIR)/Common/ComputationalGeometry \
+		-I$(VTK_BINDIR)/Common/Core \
+		-I$(VTK_BINDIR)/Common/DataModel \
+		-I$(VTK_BINDIR)/Common/ExecutionModel \
+		-I$(VTK_BINDIR)/Common/Math \
+		-I$(VTK_BINDIR)/Common/Misc \
+		-I$(VTK_BINDIR)/Common/System \
+		-I$(VTK_BINDIR)/Common/Transforms \
+		-I$(VTK_BINDIR)/Domains/Chemistry \
+		-I$(VTK_BINDIR)/Filters/AMR \
+		-I$(VTK_BINDIR)/Filters/Core \
+		-I$(VTK_BINDIR)/Filters/Extraction \
+		-I$(VTK_BINDIR)/Filters/FlowPaths \
+		-I$(VTK_BINDIR)/Filters/General \
+		-I$(VTK_BINDIR)/Filters/Generic \
+		-I$(VTK_BINDIR)/Filters/Geometry \
+		-I$(VTK_BINDIR)/Filters/Hybrid \
+		-I$(VTK_BINDIR)/Filters/HyperTree \
+		-I$(VTK_BINDIR)/Filters/Imaging \
+		-I$(VTK_BINDIR)/Filters/Modeling \
+		-I$(VTK_BINDIR)/Filters/Parallel \
+		-I$(VTK_BINDIR)/Filters/ParallelImaging \
+		-I$(VTK_BINDIR)/Filters/Programmable \
+		-I$(VTK_BINDIR)/Filters/Selection \
+		-I$(VTK_BINDIR)/Filters/Sources \
+		-I$(VTK_BINDIR)/Filters/Statistics \
+		-I$(VTK_BINDIR)/Filters/Texture \
+		-I$(VTK_BINDIR)/Filters/Verdict \
+		-I$(VTK_BINDIR)/Geovis/Core \
+		-I$(VTK_BINDIR)/IO/AMR \
+		-I$(VTK_BINDIR)/IO/Core \
+		-I$(VTK_BINDIR)/IO/EnSight \
+		-I$(VTK_BINDIR)/IO/Exodus \
+		-I$(VTK_BINDIR)/IO/Export \
+		-I$(VTK_BINDIR)/IO/Geometry \
+		-I$(VTK_BINDIR)/IO/Image \
+		-I$(VTK_BINDIR)/IO/Import \
+		-I$(VTK_BINDIR)/IO/Infovis \
+		-I$(VTK_BINDIR)/IO/LSDyna \
+		-I$(VTK_BINDIR)/IO/LSDyna/private \
+		-I$(VTK_BINDIR)/IO/Legacy \
+		-I$(VTK_BINDIR)/IO/MINC \
+		-I$(VTK_BINDIR)/IO/Movie \
+		-I$(VTK_BINDIR)/IO/NetCDF \
+		-I$(VTK_BINDIR)/IO/PLY \
+		-I$(VTK_BINDIR)/IO/Parallel \
+		-I$(VTK_BINDIR)/IO/SQL \
+		-I$(VTK_BINDIR)/IO/Video \
+		-I$(VTK_BINDIR)/IO/XML \
+		-I$(VTK_BINDIR)/IO/XMLParser \
+		-I$(VTK_BINDIR)/Imaging/Color \
+		-I$(VTK_BINDIR)/Imaging/Core \
+		-I$(VTK_BINDIR)/Imaging/Fourier \
+		-I$(VTK_BINDIR)/Imaging/General \
+		-I$(VTK_BINDIR)/Imaging/Hybrid \
+		-I$(VTK_BINDIR)/Imaging/Math \
+		-I$(VTK_BINDIR)/Imaging/Morphological \
+		-I$(VTK_BINDIR)/Imaging/Sources \
+		-I$(VTK_BINDIR)/Imaging/Statistics \
+		-I$(VTK_BINDIR)/Imaging/Stencil \
+		-I$(VTK_BINDIR)/Infovis/Core \
+		-I$(VTK_BINDIR)/Infovis/Layout \
+		-I$(VTK_BINDIR)/Interaction/Image \
+		-I$(VTK_BINDIR)/Interaction/Style \
+		-I$(VTK_BINDIR)/Interaction/Widgets \
+		-I$(VTK_BINDIR)/Parallel/Core \
+		-I$(VTK_BINDIR)/Rendering/Annotation \
+		-I$(VTK_BINDIR)/Rendering/Context2D \
+		-I$(VTK_BINDIR)/Rendering/Core \
+		-I$(VTK_BINDIR)/Rendering/FreeType \
+		-I$(VTK_BINDIR)/Rendering/FreeTypeOpenGL \
+		-I$(VTK_BINDIR)/Rendering/GL2PS \
+		-I$(VTK_BINDIR)/Rendering/HybridOpenGL \
+		-I$(VTK_BINDIR)/Rendering/Image \
+		-I$(VTK_BINDIR)/Rendering/LOD \
+		-I$(VTK_BINDIR)/Rendering/Label \
+		-I$(VTK_BINDIR)/Rendering/OpenGL \
+		-I$(VTK_BINDIR)/Rendering/OpenGL/Testing/Cxx \
+		-I$(VTK_BINDIR)/Rendering/Tk \
+		-I$(VTK_BINDIR)/Rendering/Volume \
+		-I$(VTK_BINDIR)/Rendering/VolumeAMR \
+		-I$(VTK_BINDIR)/Rendering/VolumeOpenGL \
+		-I$(VTK_BINDIR)/Testing/GenericBridge \
+		-I$(VTK_BINDIR)/Testing/IOSQL \
+		-I$(VTK_BINDIR)/Testing/Rendering \
+		-I$(VTK_BINDIR)/ThirdParty/alglib/alglib \
+		-I$(VTK_BINDIR)/ThirdParty/exodusII/vtkexodusII/include \
+		-I$(VTK_BINDIR)/ThirdParty/expat \
+		-I$(VTK_BINDIR)/ThirdParty/expat/vtkexpat \
+		-I$(VTK_BINDIR)/ThirdParty/freetype \
+		-I$(VTK_BINDIR)/ThirdParty/freetype/vtkfreetype/include \
+		-I$(VTK_BINDIR)/ThirdParty/ftgl \
+		-I$(VTK_BINDIR)/ThirdParty/gl2ps \
+		-I$(VTK_BINDIR)/ThirdParty/hdf5 \
+		-I$(VTK_BINDIR)/ThirdParty/hdf5/vtkhdf5 \
+		-I$(VTK_BINDIR)/ThirdParty/jpeg \
+		-I$(VTK_BINDIR)/ThirdParty/jpeg/vtkjpeg \
+		-I$(VTK_BINDIR)/ThirdParty/libproj4 \
+		-I$(VTK_BINDIR)/ThirdParty/libproj4/vtklibproj4 \
+		-I$(VTK_BINDIR)/ThirdParty/libxml2 \
+		-I$(VTK_BINDIR)/ThirdParty/libxml2/vtklibxml2 \
+		-I$(VTK_BINDIR)/ThirdParty/libxml2/vtklibxml2/libxml \
+		-I$(VTK_BINDIR)/ThirdParty/netcdf/vtknetcdf \
+		-I$(VTK_BINDIR)/ThirdParty/oggtheora \
+		-I$(VTK_BINDIR)/ThirdParty/oggtheora/vtkoggtheora/include \
+		-I$(VTK_BINDIR)/ThirdParty/oggtheora/vtkoggtheora/include/ogg \
+		-I$(VTK_BINDIR)/ThirdParty/oggtheora/vtkoggtheora/include/theora \
+		-I$(VTK_BINDIR)/ThirdParty/png \
+		-I$(VTK_BINDIR)/ThirdParty/png/vtkpng \
+		-I$(VTK_BINDIR)/ThirdParty/tiff \
+		-I$(VTK_BINDIR)/ThirdParty/tiff/vtktiff \
+		-I$(VTK_BINDIR)/ThirdParty/verdict/vtkverdict \
+		-I$(VTK_BINDIR)/Utilities/DICOMParser \
+		-I$(VTK_BINDIR)/Utilities/KWSys/vtksys \
+		-I$(VTK_BINDIR)/Utilities/MaterialLibrary \
+		-I$(VTK_BINDIR)/Utilities/MetaIO/vtkmetaio \
+		-I$(VTK_BINDIR)/Views/Context2D \
+		-I$(VTK_BINDIR)/Views/Core \
+		-I$(VTK_BINDIR)/Views/Geovis \
+		-I$(VTK_BINDIR)/Views/Infovis \
+		-I$(VTK_BINDIR)/Wrapping/Tcl \
+		-I$(VTK_BINDIR)/Utilities/KWSys
+
+ifeq ($(CLUSTER), x64_linux)
+    VTK_LIBDIRS = $(VTK_BINDIR)/lib
+    VTK_BINDIRS = $(VTK_BINDIR)/bin
+    VTK_SO_PATH = $(VTK_BINDIRS)
+    VTK_DLLS    = $(VTK_LIBDIRS)/lib*.$(SOEXT)
+    VTK_LIBS = -L$(VTK_LIBDIRS) \
+	 -lvtkCommonCoreTCL-6.0 -lvtkCommonMathTCL-6.0  \
+	 -lvtkCommonMiscTCL-6.0 -lvtkCommonSystemTCL-6.0  \
+	 -lvtkCommonTransformsTCL-6.0 -lvtkCommonDataModelTCL-6.0  \
+	 -lvtkCommonColorTCL-6.0 -lvtkCommonExecutionModelTCL-6.0  \
+	 -lvtkFiltersCoreTCL-6.0 -lvtkCommonComputationalGeometryTCL-6.0  \
+	 -lvtkFiltersGeneralTCL-6.0 -lvtkImagingCoreTCL-6.0  \
+	 -lvtkImagingFourierTCL-6.0 -lvtkFiltersStatisticsTCL-6.0  \
+	 -lvtkFiltersExtractionTCL-6.0 -lvtkInfovisCoreTCL-6.0  \
+	 -lvtkFiltersGeometryTCL-6.0 -lvtkFiltersSourcesTCL-6.0  \
+	 -lvtkIOCoreTCL-6.0 -lvtkIOImageTCL-6.0  \
+	 -lvtkIOXMLParserTCL-6.0 -lvtkRenderingCoreTCL-6.0  \
+	 -lvtkRenderingFreeTypeTCL-6.0 -lvtkImagingHybridTCL-6.0  \
+	 -lvtkRenderingOpenGLTCL-6.0 -lvtkRenderingContextIIDTCL-6.0  \
+	 -lvtkChartsCoreTCL-6.0 -lvtkIOGeometryTCL-6.0  \
+	 -lvtkIOXMLTCL-6.0 -lvtkDomainsChemistryTCL-6.0  \
+	 -lvtkIOLegacyTCL-6.0 -lvtkParallelCoreTCL-6.0  \
+	 -lvtkFiltersAMRTCL-6.0 -lvtkFiltersFlowPathsTCL-6.0  \
+	 -lvtkFiltersGenericTCL-6.0 -lvtkImagingSourcesTCL-6.0  \
+	 -lvtkFiltersHybridTCL-6.0 -lvtkFiltersHyperTreeTCL-6.0  \
+	 -lvtkImagingGeneralTCL-6.0 -lvtkFiltersImagingTCL-6.0  \
+	 -lvtkFiltersModelingTCL-6.0 -lvtkFiltersParallelTCL-6.0  \
+	 -lvtkFiltersParallelImagingTCL-6.0 -lvtkFiltersProgrammableTCL-6.0  \
+	 -lvtkFiltersSelectionTCL-6.0 -lvtkFiltersTextureTCL-6.0  \
+	 -lvtkFiltersVerdictTCL-6.0 -lvtkInfovisLayoutTCL-6.0  \
+	 -lvtkInteractionStyleTCL-6.0 -lvtkImagingColorTCL-6.0  \
+	 -lvtkRenderingAnnotationTCL-6.0 -lvtkRenderingVolumeTCL-6.0  \
+	 -lvtkInteractionWidgetsTCL-6.0 -lvtkViewsCoreTCL-6.0  \
+	 -lvtkGeovisCoreTCL-6.0 -lvtkIOAMRTCL-6.0  \
+	 -lvtkIOEnSightTCL-6.0 -lvtkIOExodusTCL-6.0  \
+	 -lvtkRenderingGLtoPSTCL-6.0 -lvtkIOExportTCL-6.0  \
+	 -lvtkIOImportTCL-6.0 -lvtkIOInfovisTCL-6.0  \
+	 -lvtkIOLSDynaTCL-6.0 -lvtkIOMINCTCL-6.0  \
+	 -lvtkIOMovieTCL-6.0 -lvtkIONetCDFTCL-6.0  \
+	 -lvtkIOPLYTCL-6.0 -lvtkIOParallelTCL-6.0  \
+	 -lvtkIOSQLTCL-6.0 -lvtkIOVideoTCL-6.0  \
+	 -lvtkImagingMathTCL-6.0 -lvtkImagingMorphologicalTCL-6.0  \
+	 -lvtkImagingStatisticsTCL-6.0 -lvtkImagingStencilTCL-6.0  \
+	 -lvtkInteractionImageTCL-6.0 -lvtkRenderingFreeTypeOpenGLTCL-6.0  \
+	 -lvtkRenderingHybridOpenGLTCL-6.0 -lvtkRenderingImageTCL-6.0  \
+	 -lvtkRenderingLODTCL-6.0 -lvtkRenderingLabelTCL-6.0  \
+	 -lvtkRenderingTkTCL-6.0 -lvtkRenderingVolumeAMRTCL-6.0  \
+	 -lvtkRenderingVolumeOpenGLTCL-6.0 -lvtkViewsContextIIDTCL-6.0  \
+	 -lvtkViewsInfovisTCL-6.0 -lvtkViewsGeovisTCL-6.0  \
+	 -lvtkCommonColorTCL-6.0 -lvtkChartsCore-6.0  \
+	 -lvtkCommonColor-6.0 -lvtkDomainsChemistry-6.0  \
+	 -lvtkFiltersFlowPaths-6.0 -lvtkFiltersGeneric-6.0  \
+	 -lvtkFiltersHyperTree-6.0 -lvtkFiltersParallelImaging-6.0  \
+	 -lvtkFiltersProgrammable-6.0 -lvtkFiltersSelection-6.0  \
+	 -lvtkFiltersTexture-6.0 -lvtkFiltersVerdict-6.0  \
+	 -lvtkverdict-6.0 -lvtkIOAMR-6.0  \
+	 -lvtkIOEnSight-6.0 -lvtkIOExodus-6.0  \
+	 -lvtkRenderingGLtoPSTCL-6.0  \
+	 -lvtkIOExport-6.0 -lvtkRenderingGL2PS-6.0  \
+	 -lvtkgl2ps-6.0 -lvtkIOImport-6.0  \
+	 -lvtkIOInfovis-6.0 -lvtklibxml2-6.0  \
+	 -lvtkIOLSDyna-6.0 -lvtkIOMINC-6.0  \
+	 -lvtkIOMovie-6.0 -lvtkoggtheora-6.0  \
+	 -lvtkIOPLY-6.0 -lvtkFiltersParallelTCL-6.0  \
+	 -lvtkIONetCDFTCL-6.0 -lvtkIOParallel-6.0  \
+	 -lvtkFiltersParallel-6.0 -lvtkIONetCDF-6.0  \
+	 -lvtkNetCDF_cxx-6.0 -lvtkexoIIc-6.0  \
+	 -lvtkNetCDF-6.0 -lvtkhdf5_hl-6.0  \
+	 -lvtkhdf5-6.0 -lvtkIOSQL-6.0  \
+	 -lvtksqlite-6.0 -lvtkIOVideo-6.0  \
+	 -lvtkImagingMath-6.0 -lvtkImagingMorphological-6.0  \
+	 -lvtkImagingStatistics-6.0 -lvtkImagingStencil-6.0  \
+	 -lvtkRenderingFreeTypeOpenGL-6.0 -lvtkRenderingHybridOpenGL-6.0  \
+	 -lvtkRenderingImage-6.0 -lvtkRenderingLOD-6.0  \
+	 -lvtkInteractionImage-6.0 -lvtkFiltersAMRTCL-6.0  \
+	 -lvtkParallelCoreTCL-6.0 -lvtkIOLegacyTCL-6.0  \
+	 -lvtkRenderingVolumeAMR-6.0 -lvtkFiltersAMR-6.0  \
+	 -lvtkParallelCore-6.0 -lvtkIOLegacy-6.0  \
+	 -lvtkRenderingVolumeOpenGL-6.0 -lvtkViewsContext2D-6.0  \
+	 -lvtkGeovisCoreTCL-6.0 -lvtkIOXMLTCL-6.0  \
+	 -lvtkIOGeometryTCL-6.0 -lvtkViewsInfovisTCL-6.0  \
+	 -lvtkRenderingContextIIDTCL-6.0 -lvtkRenderingOpenGLTCL-6.0  \
+	 -lvtkFiltersImagingTCL-6.0 -lvtkInfovisLayoutTCL-6.0  \
+	 -lvtkInfovisCoreTCL-6.0 -lvtkViewsCoreTCL-6.0  \
+	 -lvtkInteractionWidgetsTCL-6.0 -lvtkImagingHybridTCL-6.0  \
+	 -lvtkFiltersHybridTCL-6.0 -lvtkImagingGeneralTCL-6.0  \
+	 -lvtkImagingSourcesTCL-6.0 -lvtkFiltersModelingTCL-6.0  \
+	 -lvtkInteractionStyleTCL-6.0 -lvtkRenderingAnnotationTCL-6.0  \
+	 -lvtkImagingColorTCL-6.0 -lvtkRenderingVolumeTCL-6.0  \
+	 -lvtkRenderingLabelTCL-6.0 -lvtkRenderingFreeTypeTCL-6.0  \
+	 -lvtkRenderingCoreTCL-6.0 -lvtkFiltersExtractionTCL-6.0  \
+	 -lvtkFiltersStatisticsTCL-6.0 -lvtkImagingFourierTCL-6.0  \
+	 -lvtkImagingCoreTCL-6.0 -lvtkFiltersGeometryTCL-6.0  \
+	 -lvtkFiltersSourcesTCL-6.0 -lvtkFiltersGeneralTCL-6.0  \
+	 -lvtkFiltersCoreTCL-6.0 -lvtkCommonComputationalGeometryTCL-6.0  \
+	 -lvtkIOImageTCL-6.0 -lvtkIOXMLParserTCL-6.0  \
+	 -lvtkIOCoreTCL-6.0 -lvtkCommonExecutionModelTCL-6.0  \
+	 -lvtkCommonDataModelTCL-6.0 -lvtkCommonMiscTCL-6.0  \
+	 -lvtkCommonSystemTCL-6.0 -lvtkCommonTransformsTCL-6.0  \
+	 -lvtkCommonMathTCL-6.0 -lvtkCommonCoreTCL-6.0  \
+	 -lvtkViewsGeovis-6.0 -lvtkGeovisCore-6.0  \
+	 -lvtkIOXML-6.0 -lvtkIOGeometry-6.0  \
+	 -lvtkjsoncpp-6.0 -lvtkproj4-6.0  \
+	 -lvtkViewsInfovis-6.0 -lvtkRenderingContext2D-6.0  \
+	 -lvtkRenderingOpenGL-6.0  \
+	 -lGLU -lX11 -lXt -lXext\
+	 -lvtkFiltersImaging-6.0 -lvtkInfovisLayout-6.0  \
+	 -lvtkInfovisCore-6.0 -lvtkViewsCore-6.0  \
+	 -lvtkInteractionWidgets-6.0 -lvtkImagingHybrid-6.0  \
+	 -lvtkFiltersHybrid-6.0 -lvtkImagingGeneral-6.0  \
+	 -lvtkImagingSources-6.0 -lvtkFiltersModeling-6.0  \
+	 -lvtkInteractionStyle-6.0 -lvtkRenderingAnnotation-6.0  \
+	 -lvtkImagingColor-6.0 -lvtkRenderingVolume-6.0  \
+	 -lvtkRenderingLabel-6.0 -lvtkRenderingFreeType-6.0  \
+	 -lvtkRenderingCore-6.0 -lvtkFiltersExtraction-6.0  \
+	 -lvtkFiltersStatistics-6.0 -lvtkImagingFourier-6.0  \
+	 -lvtkImagingCore-6.0 -lvtkalglib-6.0  \
+	 -lvtkFiltersGeometry-6.0 -lvtkFiltersSources-6.0  \
+	 -lvtkFiltersGeneral-6.0 -lvtkFiltersCore-6.0  \
+	 -lvtkCommonComputationalGeometry-6.0 -lvtkIOImage-6.0  \
+	 -lvtkDICOMParser-6.0 -lvtkmetaio-6.0  \
+	 -lvtkpng-6.0 -lvtktiff-6.0  \
+	 -lvtkjpeg-6.0 -lm -lvtkIOXMLParser-6.0  \
+	 -lvtkIOCore-6.0 -lvtkCommonExecutionModel-6.0  \
+	 -lvtkCommonDataModel-6.0 -lvtkCommonMisc-6.0  \
+	 -lvtkCommonSystem-6.0 -lvtkCommonTransforms-6.0  \
+	 -lvtkCommonMath-6.0 -lvtkCommonCore-6.0  \
+	 -lvtksys-6.0 -ldl -lpthread  \
+	 -lvtkexpat-6.0 -lvtkftgl-6.0  \
+	 -lvtkfreetype-6.0 -lvtkzlib-6.0  \
+	 -lGL -lm
+endif

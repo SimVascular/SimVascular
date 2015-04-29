@@ -1,0 +1,258 @@
+<TransferFunctions Type="CT"
+                   Comment="Coronary arteries - Gray"
+                   BlendMode="0"
+                   RelativeVisibleParameterRange="0.179212 0.58423"
+                   RelativeVisibleValueRange="0 1">
+  <VolumeProperty Version="1.13"
+                  InterpolationType="1"
+                  IndependentComponents="1">
+    <Component Index="0"
+               Shade="0"
+               Ambient="0.2"
+               Diffuse="1"
+               Specular="0"
+               SpecularPower="1"
+               ColorChannels="3"
+               DisableGradientOpacity="1"
+               ComponentWeight="1"
+               ScalarOpacityUnitDistance="0.619333">
+      <RGBTransferFunction>
+        <ColorTransferFunction Version="1.8"
+                               Size="6"
+                               Clamping="1"
+                               ColorSpace="1">
+          <Point X="-2048"
+                 Value="0 0 0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="136.47"
+                 Value="0 0 0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="159.215"
+                 Value="0.159804 0.159804 0.159804"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="318.43"
+                 Value="0.764706 0.764706 0.764706"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="478.693"
+                 Value="1 1 1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="3661"
+                 Value="1 1 1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </ColorTransferFunction>
+      </RGBTransferFunction>
+      <ScalarOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="6"
+                           Clamping="1">
+          <Point X="-2048"
+                 Value="0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="136.47"
+                 Value="0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="159.215"
+                 Value="0.258929"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="318.43"
+                 Value="0.571429"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="478.693"
+                 Value="0.776786"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="3661"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </ScalarOpacity>
+      <GradientOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="255"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </GradientOpacity>
+    </Component>
+    <Component Index="1"
+               Shade="0"
+               Ambient="0.2"
+               Diffuse="1"
+               Specular="0"
+               SpecularPower="1"
+               ColorChannels="3"
+               DisableGradientOpacity="1"
+               ComponentWeight="1"
+               ScalarOpacityUnitDistance="0.619333">
+      <RGBTransferFunction>
+        <ColorTransferFunction Version="1.8"
+                               Size="2"
+                               Clamping="1"
+                               ColorSpace="0">
+          <Point X="0"
+                 Value="0 0 0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="1024"
+                 Value="1 1 1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </ColorTransferFunction>
+      </RGBTransferFunction>
+      <ScalarOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="1024"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </ScalarOpacity>
+      <GradientOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="255"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </GradientOpacity>
+    </Component>
+    <Component Index="2"
+               Shade="0"
+               Ambient="0.2"
+               Diffuse="1"
+               Specular="0"
+               SpecularPower="1"
+               ColorChannels="3"
+               DisableGradientOpacity="1"
+               ComponentWeight="1"
+               ScalarOpacityUnitDistance="0.619333">
+      <RGBTransferFunction>
+        <ColorTransferFunction Version="1.8"
+                               Size="2"
+                               Clamping="1"
+                               ColorSpace="0">
+          <Point X="0"
+                 Value="0 0 0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="1024"
+                 Value="1 1 1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </ColorTransferFunction>
+      </RGBTransferFunction>
+      <ScalarOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="1024"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </ScalarOpacity>
+      <GradientOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="255"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </GradientOpacity>
+    </Component>
+    <Component Index="3"
+               Shade="0"
+               Ambient="0.2"
+               Diffuse="1"
+               Specular="0"
+               SpecularPower="1"
+               ColorChannels="3"
+               DisableGradientOpacity="1"
+               ComponentWeight="1"
+               ScalarOpacityUnitDistance="0.619333">
+      <RGBTransferFunction>
+        <ColorTransferFunction Version="1.8"
+                               Size="2"
+                               Clamping="1"
+                               ColorSpace="0">
+          <Point X="0"
+                 Value="0 0 0"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="1024"
+                 Value="1 1 1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </ColorTransferFunction>
+      </RGBTransferFunction>
+      <ScalarOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="1024"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </ScalarOpacity>
+      <GradientOpacity>
+        <PiecewiseFunction Version="1.7"
+                           Size="2"
+                           Clamping="1">
+          <Point X="0"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+          <Point X="255"
+                 Value="1"
+                 MidPoint="0.5"
+                 Sharpness="0"/>
+        </PiecewiseFunction>
+      </GradientOpacity>
+    </Component>
+  </VolumeProperty>
+</TransferFunctions>

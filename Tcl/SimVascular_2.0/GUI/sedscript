@@ -1,0 +1,4 @@
+:a;N;$!ba;s/\\\n    / /g
+s/-cursor {size_nw_se}//g
+s/-cursor {ibeam}//g
+s/-cursor {xterm}//g

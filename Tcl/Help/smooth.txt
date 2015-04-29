@@ -1,0 +1,27 @@
+# Smoothing a PolyData Model
+
+Selecting any of the following surface operators will edit the entire surface of the model
+
+## Surface Operators summary
+
+        Smooth Poly Data Model: 
+                smooths the bumps and ridges of the model
+                Laplacian Smooth -> Relax Factor -> Choose between .01 and .05 
+
+
+        Butterfly Subdivision:
+                Divides the meshing triangles based on number placed in “Num Divisions”
+                For example, to divide each triangle in half: Num Divisions = 1
+                This creates a finer mesh made up of smaller triangles
+
+
+        Decimate Surface:
+                Based on target rate, makes the meshing triangles bigger
+                
+
+        WindowSync Smooth:
+                Smooths more than Laplacian smooth
+                still smooths caps of arteries
+
+        Densify:
+                divides triangles based on “Num Divisions”

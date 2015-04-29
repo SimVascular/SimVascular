@@ -1,0 +1,77 @@
+# Advanced Mesh Options
+## Meshing Specified by Face
+To add local size meshing and boundary layer meshing, select a face in the 3D viewing window by holding the cursor over the object and pressing "p". Then follow the steps below to add the features.
+
+### Local Size and Curvature
+	* Type: Select the mesh edge size type and apply it to the selected part of the model. 
+		- Local Max Edge Size: Specify maximum edge size for selected part of the model. If this local edge size is coarser than the global edge size, the global edge size will be used. 
+		- Local Max Curvature Size: Specify maximum curvature size for selected part of the model.
+		- Local Min Curvature Size: Specify minimum curvature size for selected patt of the model. If this local curvature size is larger than the global curvature minimum, the global minimum curvature will be used.
+	* Size Type: Select absolute or relative
+		- Absolute - is used to specify a number based on the dimensions of the model. 
+		- Relative - is a number between 0 and 1. The actual mesh size will be calculated by multiplying the length of the largest edge of the coordinate-aligned bounding box of the entity by the given parameter.
+	* Size: Enter the desired global or local mesh edge size.
+	* Add Face Meshing: Create the macro for setting a local or global edge size (can be viewed by expanding the Meshing Parameters pane at the bottom of the tab).
+
+### Boundary Layer Meshing
+There are found different types of boundary layer meshing and can be applied on selected parts of the model.
+
+	* Type: Select one of the options from the dropdown menu
+		- Geometric Growth of Layer Thickness: Apply a gradation factor based on initial layer thickness and number of desired layers. In the **Params:** box, specify the following.
+			- Params: |First Layer Height| |Total Height| 
+		- Relative Height Gradation (type 2): Prescribe the initial layer thickness and a gradation factor (i.e. to increase the next layer size by a factor of 2, apply a gradation factor of 0.5).
+			- Params: |First Layer Height| |Gradation Factor (0<g<1)|
+		- User Specified Heights: Specify the number of layers desired and apply a height for every individual layer. Each layer thickness is designated with the letter *t* and *n* is the number of layers.
+			- Params: |t<sub>0</sub>| |t<sub>1</sub>| ... |t<sub>n-1</sub>|
+		- Relative Height Gradation (specify gradation factor): Apply only a gradation factor. The initial layer height will then be the global or local max edge size multiplied by the gradation factor (i.e. To have an initial layer half the size of the mesh size, apply a factor of 0.5).
+			- Params: |Gradation Factor(0<g<1)| 
+	* Direction: Specify the direction of the boundary layer. Both will cause the boundary layer to grow in both directions from the original geometry. Negative will cause the boundary layer to go inward, and positive will cause the boundary layer to go outward.
+	* num Layers: Specify the number of boundary layers. This needs to specified for every type of boundary layer meshing!
+	* Size: Currently, this entry box does not have any effect. Any number placed in this box will have no effect.
+
+## Global Size and Curvature
+
+	* Type:
+		- Global Max Edge Size: Specify maximum edge size for the entire model. 
+		- Global Max Curvature Size: Specify maximum curvature size for the entire model.
+		- Global Min Curvature Size: Specify minimum curvature size for the entire model.
+	* Size Type: Select absolute or relative.
+		- Absolute - is used to specify a number based on the dimensions of the model. 
+		- Relative - is a number between 0 and 1. The actual mesh size will be calculated by multiplying the length of the largest edge of the coordinate-aligned bounding box of the entity by the given parameter.
+	* Size: Specify a global max edge size.
+
+## Spatial Options
+
+### Sphere Refinement 
+
+	* size: Specify the mesh edge size of the spherically selected area. Can be smaller or larger than the global mesh size.
+	* radius: Specify the radius of the sphere bounding the elements to be refined.
+	* center pt: Specify the center of the sphere bounding the elements to be refined.
+
+### Cylinder Refinement
+	* size: Specify the mesh edge size of the cylindrically selected area. Can be smaller or larger than the global mesh size.
+	* radius: Specify the radius of the circular ends of the cylinder.
+	* center pt: Specify the center of the cylinder. The center of the cylinder is located along the center line of the circular ends midway along the length of the cylinder.  
+	* length: Specify the length of the cylinder. The center will be midway along this length.
+	* normal: Specify the direction from the center the cylinder is to be extruded (i.e. Along the x axis would be 1.0 0.0 0.0).
+
+## Mesh Control Options
+
+### Surface Options
+	* Generate Surface Mesh: Generate a surface mesh if this optiion is selected (Default ON). If this option is not selected, it will not do a surface remeshing before created a volumetric mesh.
+	* Optimize Surface Mesh: Specify whether or not optimization is to be used (Default ON). Turning off optimization will result in a mesh that will not meet any specified shape metric for the mesh. 
+	* Fix Surface Mesh: This currently has no functionality.
+	* Constrain Surface: This also has no functionality currently.
+
+### Volume Options
+	* Generate Volume Mesh: Generate a volume mesh if this option is selected (Default ON). If this option is not selected, it will only do a surface remeshing.
+	* Optimize Volume Mesh: Specify whether or not optimization is to be used (Default ON). 
+	* Smooth Volume Mesh: Specify whether or not smoothing is to be used (Default ON). The number of smoothing operations to be performed is specified by the **Num. Optimization Passes**.
+
+### Miscellaneous Options
+	* Write Mesh Statistics: At the end of the meshing operations, display the meshing statistics in the terminal (Default OFF).
+
+### Specify the number of optimization passes that the mesher will take on the solid. Mesh optimization consists of two operations: Optimization - changes the mesh connectivity. Smoothing - moves vertices to an optimal location. The number of optimization passes refers to the number of smoothing operations to perform (if smoothing is turned on).
+
+## Meshing Parameters
+Displays the current macro for the specified meshing parameters. These parameters are written to the .mss script file when the mesh is run.

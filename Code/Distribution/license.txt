@@ -1,0 +1,35 @@
+SIMVASCULAR COMPONENTS SVMODEL, SVMESH, SVPRE, AND SVPOST ARE PROVIDED UNDER THE FULL BSD LICENSE SUBJECT TO THE TERMS BELOW:
+Copyright © 1998-2007 Stanford University, Charles Taylor, Nathan Wilson, Ken Wang. See SimVascular Acknowledgements file for additional contributors to the source code. 
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: 
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. 
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+THE SIMVASCULAR SOLVER, INCLUDING SVSOLVER AND SVLS, IS PROVIDED UNDER A MODIFIED BSD-LICENSE SUBJECT TO THE PERMISSIONS BELOW:
+This software is Copyright © 2014-2015 The Regents of the University of California. All Rights Reserved. Permission to copy, modify, and distribute this software and its documentation for educational, research and non-profit purposes, without fee, and without a written agreement is hereby granted, provided that the above copyright notice, this paragraph and the following three paragraphs appear in all copies. 
+
+Permission to make commercial use of this software may be obtained by contacting: 
+
+Technology Transfer Office
+9500 Gilman Drive, Mail Code 0910
+University of California
+La Jolla, CA 92093-0910
+(858) 534-5815
+invent@ucsd.edu 
+
+This software program and documentation are copyrighted by The Regents of the University of California. The software program and documentation are supplied "as is", without any accompanying services from The Regents. The Regents does not warrant that the operation of the program will be uninterrupted or error-free. The end-user understands that the program was developed for research purposes and is advised not to rely exclusively on the program for any reason. 
+
+IN NO EVENT SHALL THE UNIVERSITY OF CALIFORNIA BE LIABLE TO ANY PARTY FOR DIRECT, INDIRECT, SPECIAL, INCIDENTAL, OR CONSEQUENTIAL DAMAGES, INCLUDING LOST PROFITS, ARISING OUT OF THE USE OF THIS SOFTWARE AND ITS DOCUMENTATION, EVEN IF THE UNIVERSITY OF CALIFORNIA HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. THE UNIVERSITY OF CALIFORNIA SPECIFICALLY DISCLAIMS ANY WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE. THE SOFTWARE PROVIDED HEREUNDER IS ON AN "AS IS" BASIS, AND THE UNIVERSITY OF CALIFORNIA HAS NO OBLIGATIONS TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
+
+LICENSING TERMS FOR EXTERNAL OPEN SOURCE PACKAGES
+ITK: http://www.itk.org/ITK/project/license.html
+VTK: http://www.vtk.org/VTK/project/license.html
+Tetgen: http://wias-berlin.de/software/tetgen/1.5/agpl-3.0-standalone.html
+
+COMMERCIAL COMPONENTS
+MeshSim users should contact simmetrix for licensing information.
+
+ADDITIONAL LICENSE INFORMATION
+Please see the additional license information contained in the SimVascular source code.

@@ -1,0 +1,23 @@
+#!/bin/sh
+# the next line restarts using tclsh \
+exec /usr/bin/tclsh "$0" $0 $*
+
+set lexec [lindex $argv 0] 
+set myexec [file tail $lexec]
+set allvers [glob -nocomplain [file dirname $lexec]/../package/REPLACE_SIMVASCULAR_VERSION/*]
+set dirnames {}
+foreach i $allvers {
+  if [file isdirectory $i] {
+    lappend dirnames [file tail $i]
+  }
+}
+if {[llength $dirnames] == 0} {
+  return -code error "ERROR: installation of simvascular not found!"
+}
+
+set dirnames [lsort -integer $dirnames]
+set mostrecent [lindex $dirnames end]
+
+exec bash -c "[file dirname $lexec]/../package/REPLACE_SIMVASCULAR_VERSION/$mostrecent/$myexec [lrange $argv 1 end]" >&@ stdout
+
+exit

@@ -1,0 +1,9 @@
+# PolyData Solid Model Operations
+## Load and Save Model
+	* Select the directory in which to load a .vtp,.stl,or .vtk polydata solid model or save the updated solid model.
+
+## Update Solid Model
+	* A solid model can be created using the Boolean tab or a solid model can be loaded. After obtaining a solid model, perform solid model operations in the different tabs. When switching between tabs, press the Update Solid Model button to set the current solid and use operations from other tabs or save the solid.
+
+## Restore Solid Model
+	* When performing PolyData operations, revert to the current updated solid. This is only possible if an operation has been performed after using "Update Solid Model". For example, a solid is created with the Boolean operations, the solid is updated, then smoothing operations are performed. To revert back to the un-smoothed solid, press the "Restore Solid Model" button.

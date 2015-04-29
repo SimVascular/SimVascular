@@ -1,0 +1,26 @@
+# Advanced Mesh Options
+## Boundary Layer Meshing
+
+	* Use Boundary Layer: In order to use a boundary layer, you must click "Select Boundary Layer Surfaces" and select all walls to be a part of the boundary layer. In addition, a boundary layer cannot be created without both the volume and surface mesh options selected in the Mesh Options Tab.
+	* Portion of Edge Size: Specify the portion of the edge size give in the Mesh Options Tab to use as the size for the initial boundary layer (typically this is a value between zero and one.
+	* Num Layers: Input the number of layers desired. Too many layers can cause self intersections on smaller vessels, so be careful.
+	* Layer Decreasing Ratio: Specify the amount the decrease the size between successive boundary layers. This gradation factor is multiplied by the previous layer to get the thickness of the new layer. In order to decrease the layers by a factor of 2, apply a decreasing ratio of 0.5. 
+
+HELPFUL HINT: If you do not select all the walls for the boundary layer, your output mesh will only contain the domain of the wall that you selected.
+
+## Local Size
+
+	* Select a Surface: In the 3-D Window, hover over a surface in which you would like to specify a local mesh edge size, and hit "p". After highlighting a surface enter a mesh edge size and hit "Add Local Mesh Size".
+	* Size: Enter a value to specify the mesh edge size on a specific surface. 
+	* Add Local Mesh Size: This will update the Meshing Parameters and add the local mesh size to the surface. You can specify a different mesh edge size to each surface of the model; however, make sure that it is not too drastic of a different between surfaces as you will be left with poor quality elements at the interface. If you do not specify a local mesh size for a surface, the global mesh edge size will be used for that surface. 
+
+## Radius Based Meshing
+
+	IMPORTANT: You must have only one wall surface on your model to use this feature!!
+	* Use Centerline Radius: Select this check box to base your mesh edge size on the centerline radius. This will compute the centerlines and find the distance to these centerlines prior to meshing. These values will be normalized by the smallest value and then multiplied by the global max edge size given in the "Mesh Options" tab. 
+
+## Refinement
+
+	* Sphere Refinement: In order to do spherical refinement, this box must be checked. When you check this box, the meshing solid and a sphere will appear. The sphere must be moved to set the spherical refinement! 
+	* Sphere Radius: Apply a radius for the refining sphere. Enter a number into the box and hit ENTER. The sphere size will not update unless the ENTER button is pressed! (After setting the radius, make sure to adjust the refinement sphere to the correct location. The radius is set when the sphere is moved.
+	* Refinement Factor: Specify the amount to refine the elements that lie within the bounds of the sphere. This factor is multiplied by the edge size given in the Mesh Options Tab to get the new size for the refined area. 

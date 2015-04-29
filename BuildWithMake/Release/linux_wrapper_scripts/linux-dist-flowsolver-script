@@ -1,0 +1,10 @@
+
+# on windows, use a file
+#export LES_LICENSE_SERVER=$SIMVASCULAR_HOME/Licenses/LesLib/license.dat
+# on linux, point to a server
+#export LES_LICENSE_SERVER=foo.bar.edu
+
+# config file for solver
+export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME
+
+$SIMVASCULAR_HOME/flowsolver-bin.exe $*
