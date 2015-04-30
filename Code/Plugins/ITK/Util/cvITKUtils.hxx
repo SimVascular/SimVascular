@@ -283,7 +283,7 @@ void itkGenerateFeatureImageDistance(TImageType* itkInputImage,
 
 template <typename TImageType>
 void itkGenerateFeatureImageThreshold(TImageType* itkInputImage,
-		typename TImageType::Pointer outImage,double thres=.5)
+		typename TImageType::Pointer outImage,double thres)
 {
 	typedef itk::RescaleIntensityImageFilter<TImageType,TImageType> RescaleInputFilterType;
 	typedef itk::BinaryThresholdImageFilter<TImageType,TImageType> ThresholdFilterType;
