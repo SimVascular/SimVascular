@@ -780,17 +780,19 @@ int cvAdapt::Adapt(//time step
     cout<<"\n Reading files:"<<endl;
 
     // attaching the solution to the original mesh
-    cout<<" ..."<<solution_file_<<" (for \"solution and error\")"<<endl;
+    cout<<" ..."<<solution_file_<<" (for \"solution\")"<<endl;
     double *sol;
     readArrayFromFile(solution_file_,"solution",sol);
     attachArray(sol,mesh,phasta_solution,ndof,poly);
     delete [] sol;
 
     // read ybar (and compute/use hessians of ybar) 
-    //cout<<" ..."<<error_indicator_file_<<" (for \""<<error_tag<<"\")"<<endl<<endl;
+    cout<<" ..."<<error_indicator_file_<<" (for \""<<error_tag<<"\")"<<endl<<endl;
     double *error_indicator;
-    //readArrayFromFile(error_indicator_file_,error_tag,error_indicator);
-    readArrayFromFile(solution_file_,error_tag,error_indicator);
+    readArrayFromFile(error_indicator_file_,error_tag,error_indicator);
+    // undoing change to read only from solution file
+    //    readArrayFromFile(solution_file_,error_tag,error_indicator);
+
     attachArray(error_indicator,mesh,errorIndicatorID,nvar,poly);
     delete [] error_indicator;
 
