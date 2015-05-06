@@ -754,7 +754,6 @@ Licenses/ExternalOpenSourcePackages/README-external-licenses-unrestrictive.txt -
 Licenses/LesLib/README-LESLIB.txt -text
 Licenses/MeshSim/README-MESHSIM.txt -text
 /README-extra.md -text
-/README.txt -text
 Release/dcmtk/dcmdump-win32.exe -text
 Release/dcmtk/dcmodify-win32.exe -text
 Release/dicom2/dicom2-linux.exe -text
