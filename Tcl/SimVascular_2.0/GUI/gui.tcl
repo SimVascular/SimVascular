@@ -29823,8 +29823,10 @@ proc guiMMadaptMesh {} {
   set ascflag                $guiMMvars(phasta_format)
   set model_file             $gFilenames(atdb_solid_file)
   set mesh_file              $gFilenames(mesh_file)
-  set solution_file          [file join $guiMMvars(error_input_dir) $gFilenames(solution_file)] 
+  set solution_file          [file join $guiMMvars(error_input_dir) $gFilenames(solution_file)]
+  # gui has been hard wired to only let use create a combo result and error file 
   #set error_file             [file join $guiMMvars(error_input_dir) $gFilenames(error_file)]
+  set error_file             [file join $guiMMvars(error_input_dir) $gFilenames(solution_file)]
   set out_mesh_file          $gFilenames(adapted_mesh_file)
   set out_solution_file      $gFilenames(adapted_solution_file)
   set stepNumber             $guiMMvars(error_step_number)
@@ -29846,7 +29848,7 @@ proc guiMMadaptMesh {} {
   file delete [file join [pwd] adaptor_done_running]
   set fp [open [file join [pwd] run_adaptor.log] w]
   puts $fp "Start running adaptor..."
-  puts $fp "exec $cvadapt -model_file $model_file\n -mesh_file $mesh_file\n -solution_file $solution_file\n -out_mesh_file $out_mesh_file\n -out_solution_file $out_solution_file\n  -out_sn $stepNumber\n -ratio $reductionRatio\n  -hmax $maxCoarseFactor\n -hmin $maxRefineFactor\n -discrete_model_flag $discreteFlag\n -sphere_refinement [lindex $gOptions(adaptor_sphere) 0] [lindex $gOptions(adaptor_sphere) 1] [lindex $gOptions(adaptor_sphere) 2] [lindex $gOptions(adaptor_sphere) 3] [lindex $gOptions(adaptor_sphere) 4]"
+  puts $fp "exec $cvadapt -model_file $model_file\n -mesh_file $mesh_file\n -solution_file $solution_file\n -error_indicator_file $error_file\n -out_mesh_file $out_mesh_file\n -out_solution_file $out_solution_file\n  -out_sn $stepNumber\n -ratio $reductionRatio\n  -hmax $maxCoarseFactor\n -hmin $maxRefineFactor\n -discrete_model_flag $discreteFlag\n -sphere_refinement [lindex $gOptions(adaptor_sphere) 0] [lindex $gOptions(adaptor_sphere) 1] [lindex $gOptions(adaptor_sphere) 2] [lindex $gOptions(adaptor_sphere) 3] [lindex $gOptions(adaptor_sphere) 4]"
   close $fp
 
   catch {unset ::tail_adaptorlog}
@@ -29856,7 +29858,7 @@ proc guiMMadaptMesh {} {
   tail [file join [pwd] run_adaptor.log] .+ 1000 ::tail_adaptorlog
   trace variable ::tail_adaptorlog w guiMMadaptMesh_handle
 
-  catch {exec $cvadapt -model_file $model_file -mesh_file $mesh_file -solution_file $solution_file -out_mesh_file $out_mesh_file -out_solution_file $out_solution_file  -out_sn $stepNumber -ratio $reductionRatio  -hmax $maxCoarseFactor -hmin $maxRefineFactor -discrete_model_flag $discreteFlag -sphere_refinement [lindex $gOptions(adaptor_sphere) 0] [lindex $gOptions(adaptor_sphere) 1] [lindex $gOptions(adaptor_sphere) 2] [lindex $gOptions(adaptor_sphere) 3] [lindex $gOptions(adaptor_sphere) 4] &; } msg
+  catch {exec $cvadapt -model_file $model_file -mesh_file $mesh_file -solution_file $solution_file -error_indicator_file $error_file -out_mesh_file $out_mesh_file -out_solution_file $out_solution_file  -out_sn $stepNumber -ratio $reductionRatio  -hmax $maxCoarseFactor -hmin $maxRefineFactor -discrete_model_flag $discreteFlag -sphere_refinement [lindex $gOptions(adaptor_sphere) 0] [lindex $gOptions(adaptor_sphere) 1] [lindex $gOptions(adaptor_sphere) 2] [lindex $gOptions(adaptor_sphere) 3] [lindex $gOptions(adaptor_sphere) 4] &; } msg
   tk_messageBox -message "Launched adaptor in background!" -title "cvadaptor started" -icon info -type ok
 }
 
