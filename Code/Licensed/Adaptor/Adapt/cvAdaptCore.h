@@ -154,9 +154,6 @@ class cvAdaptCore {
   long FindCubicRoots (const double coeff[4], double x[3]);
   long NullSpace (const double *a, double *result, double eps, long n);
 
-  double* InterpolateSolution (pRegion region, double xi[3], 
-                               int ndof,pMeshDataId modes ); 
-
   void display_region ( pRegion region );
   int inverseMap ( pRegion region, double* qpt, double* pt );
   void ModifyHessiansAtBdry(pMesh mesh);
@@ -219,12 +216,6 @@ class cvAdaptCore {
 
   // build the linear system
   void buildSystem (pRegion region, double* eltMatrix);
-
-  // arguments are :
-  // mesh mod. type, look at file MeshSimAdapt.h
-  // data containing mesh entities created, deleted or reshaped
-  // userData used to set a pointer to be passed in callback function
-  void phastaTransfer ( MeshModType mtype, pMeshChanges mco, void *userData);
 
   // reconstruct the element gradient
   void elementGradient (pRegion region, double* elementGradient);

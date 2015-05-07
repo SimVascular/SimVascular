@@ -38,6 +38,10 @@
  *
  *=========================================================================*/
 
+#include "vtkSmartPointer.h"
+#include "vtkPointLocator.h"
+#include "vtkXMLUnstructuredGridWriter.h"
+
 #include "cvAdaptCore.h" 
 
 #ifdef USE_PARASOLID
@@ -60,6 +64,8 @@
   #include "SimModel.h"
   #include "SimDiscrete.h"
 #endif
+
+#include "cvMeshSimMeshObject.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -87,6 +93,7 @@ class cvAdapt : public cvAdaptCore {
     solution_file_[0]='\0';
     error_indicator_file_[0]='\0';
     out_mesh_file_[0]='\0';
+    out_mesh_vtu_file_[0]='\0';
     out_solution_file_[0]='\0';
     sphere_[0] = -1;
     adaptSimLog.open("adaptor.log");
@@ -103,17 +110,12 @@ class cvAdapt : public cvAdaptCore {
   char solution_file_[1024];
   char error_indicator_file_[1024];
   char out_mesh_file_[1024];
+  char out_mesh_vtu_file_[1024];
   char out_solution_file_[1024];
 
   double sphere_[5];
  
 };
-
-extern "C" {
-  void cstylePhastaTransfer( MeshModType mtype, pMeshChanges mco, void *userData) {
-    (static_cast<cvAdapt*>(userData))->phastaTransfer(mtype,mco,userData);
-  }
-}
 
 char argv0_[1024];
 
@@ -174,6 +176,7 @@ void printUsage(char* argv0) {
     printf("        -solution_file         : input solution      (e.g. restart.x.1) \n");
     printf("        -error_indicator_file  : error file          (e.g. ybar.x.0) \n");
     printf("        -out_mesh_file         : adapted mesh        (e.g. adapted.sms) \n");
+    printf("        -out_mesh_vtu_file     : adapted mesh        (e.g. adapted.vtu) \n");
     printf("        -out_solution_file     : adapted restart     (e.g. adapted-restart.x.1) \n");
     printf("        -out_sn                : output step number  (e.g. reset to zero)\n");
     printf("        -nvar                  : number of soln vars (default is 5)\n");
@@ -270,6 +273,10 @@ int main(int argc,char* argv[])
       iarg++;
       adaptor->out_mesh_file_[0]='\0';
       strcpy(adaptor->out_mesh_file_,argv[iarg]);
+    } else if (tmpstr=="-out_mesh_vtu_file") {
+      iarg++;
+      adaptor->out_mesh_vtu_file_[0]='\0';
+      strcpy(adaptor->out_mesh_vtu_file_,argv[iarg]);
     } else if (tmpstr=="-out_solution_file") {
       iarg++;
       adaptor->out_solution_file_[0]='\0';
@@ -757,15 +764,39 @@ int cvAdapt::Adapt(//time step
   cout<<endl;
 
   nshg=M_numVertices(mesh);
-  phasta_solution = MD_newMeshDataId("restart solution");
+
+  //
+  //  find the points in the initial mesh
+  //
+
+  vtkSmartPointer<vtkPoints> inPoints = 
+    vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkPolyData> inPD = 
+    vtkSmartPointer<vtkPolyData>::New();
+
+  inPoints->SetNumberOfPoints(nshg);
+
+  int i;
+
+  VIter myViter = M_vertexIter(mesh);
+  for (i = 0; i < nshg; i++) {
+    pPoint point = V_point (VIter_next(myViter));
+    //int nodenumber = P_id (point);
+    int nodenumber = i + 1;
+    P_setID(point,nodenumber);  
+    double x = P_x (point);
+    double y = P_y (point);
+    double z = P_z (point);  
+    inPoints->SetPoint(nodenumber-1,x,y,z);
+  } // i 
+  VIter_delete(myViter);
+
+  inPD->Initialize();
+  inPD->SetPoints(inPoints);
+
   errorIndicatorID = MD_newMeshDataId("error indicator");
 
-#ifdef DEBUG_MESHSIM_MSA_CALLBACK
-  pseudoNodeID_ = MD_newMeshDataId("pseudo_node_id");
-#endif
-
   modes = MD_newMeshDataId("number of modes");// required for higher order
-
 
   pMSAdapt simAdapter; 
 
@@ -783,8 +814,7 @@ int cvAdapt::Adapt(//time step
     cout<<" ..."<<solution_file_<<" (for \"solution\")"<<endl;
     double *sol;
     readArrayFromFile(solution_file_,"solution",sol);
-    attachArray(sol,mesh,phasta_solution,ndof,poly);
-    delete [] sol;
+    //   attachArray(sol,mesh,phasta_solution,ndof,poly);
 
     // read ybar (and compute/use hessians of ybar) 
     cout<<" ..."<<error_indicator_file_<<" (for \""<<error_tag<<"\")"<<endl<<endl;
@@ -810,8 +840,6 @@ int cvAdapt::Adapt(//time step
     }
     VIter_delete(vIter);
  
-    MSA_setCallback(simAdapter, cstylePhastaTransfer,9,(void*)this);// 8 for regions, 1 for vertices
-
     // calculating hessians for ybar field
     // first reconstruct gradients and then the hessians 
     // also deals with boundary issues &
@@ -832,36 +860,7 @@ int cvAdapt::Adapt(//time step
 
   pProgress progressAdapt = Progress_new();
 
-#ifdef DEBUG_MESHSIM_MSA_CALLBACK
-  // set dummy node id so we can see if we can track an int 
-  int dummy_node_id = 1;
-  pVertex vertex;
-  vIter = M_vertexIter( mesh );
-  while (vertex = VIter_next( vIter ) ) {
-    EN_attachDataInt( (pEntity)vertex, pseudoNodeID_, dummy_node_id++ );
-  }
-  VIter_delete( vIter );
-
-  vIter = M_vertexIter( mesh );
-  while (vertex = VIter_next( vIter ) ) {
-     dummy_node_id = -1;
-     EN_getDataInt( (pEntity)vertex, pseudoNodeID_, &dummy_node_id );
-     fprintf(stdout,"before MSA_adapt %i\n",dummy_node_id);
-  }
-  VIter_delete( vIter );
-#endif
-
   MSA_adapt(simAdapter, progressAdapt);
-
-#ifdef DEBUG_MESHSIM_MSA_CALLBACK
-  vIter = M_vertexIter( mesh );
-  while (vertex = VIter_next( vIter ) ) {
-     dummy_node_id = -1;
-     EN_getDataInt( (pEntity)vertex, pseudoNodeID_, &dummy_node_id );
-     fprintf(stdout,"after MSA_adapt %i\n",dummy_node_id);
-  }
-  VIter_delete( vIter );
-#endif
 
   Progress_delete(progressAdapt);
 
@@ -872,9 +871,6 @@ int cvAdapt::Adapt(//time step
   int dimfilter = 12;
   MS_ensureInteriorVertices(mesh,dimfilter,progressFix);
   Progress_delete(progressFix);
-
-  cout<<"fixing solution transfer\n";
-  fix4SolutionTransfer(mesh);
 
   printf("-- Adaptation Done...\n");
   printf(" Total # of elements: %d\n", M_numRegions(mesh));
@@ -888,37 +884,181 @@ int cvAdapt::Adapt(//time step
   M_write(mesh,out_mesh_file_,smsver, progressWriteMesh);
   Progress_delete(progressWriteMesh);
 
-  // we need this when we employ solution transfer
-  // writing out the solution into a restart file
-//JM 26/9
-  printf(" Writing out solution...\n\n");
-  int nshg_fine = M_numVertices(mesh);
+  double xyz[3];
+  vtkIdType pointId;
+  vtkIdType closestPoint;
+
+  vtkSmartPointer<vtkPoints> outPoints = 
+    vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkDoubleArray> inSolution = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkDoubleArray> outSolution = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkPointLocator> locator = 
+    vtkSmartPointer<vtkPointLocator>::New();
+
+  // build solution vector for old nodes
+
+  cout<<"project solution from old mesh to new mesh using nearest point...\n";
+
+  inSolution->SetNumberOfComponents(nvar);
+  inSolution->Allocate(nshg,10000);
+  inSolution->SetNumberOfTuples(nshg);
+
+  int count = 0;
+
+  for (pointId = 0;pointId < nshg;pointId++)
+  {
+    for (i=0;i<nvar;i++)
+    { 
+      inSolution->InsertComponent(pointId,i,sol[count++]);
+    }
+  }
   
-  double* solution;
-  getAttachedArray(solution,mesh,phasta_solution,ndof,poly);
-  
+  int nshg_adapted = M_numVertices(mesh);
+
+  vtkIntArray* gid = vtkIntArray::New();
+  gid->SetNumberOfComponents(1);
+  gid->Allocate(nshg_adapted,1000);
+  gid->SetNumberOfTuples(nshg_adapted);
+  gid->SetName("GlobalNodeID");
+
+  outSolution->SetNumberOfComponents(nvar);
+  outSolution->Allocate(nshg_adapted,10000);
+  outSolution->SetNumberOfTuples(nshg_adapted);
+  outSolution->SetName("solution");
+
+  outPoints->SetNumberOfPoints(nshg_adapted);
+
+  myViter = M_vertexIter(mesh);
+  for (i = 0; i < nshg_adapted; i++) {
+    pPoint point = V_point (VIter_next(myViter));
+    //int nodenumber = P_id (point);
+    int nodenumber = i + 1;
+    P_setID(point,nodenumber);  
+    double x = P_x (point);
+    double y = P_y (point);
+    double z = P_z (point);
+    //fprintf(stdout,"%i %lf %lf %lf\n",nodenumber,x,y,z);  
+    outPoints->SetPoint(nodenumber-1,x,y,z);
+    gid->SetTuple1(nodenumber-1,nodenumber);
+  } // i 
+  VIter_delete(myViter);
+
+  locator->SetDataSet(inPD);
+  locator->BuildLocator();
+
+  count = 0;
+
+  double* adapted_solution = new double[nshg_adapted*nvar];
+
+  for (pointId=0;pointId<nshg_adapted;pointId++)
+  {
+    outPoints->GetPoint(pointId,xyz);
+    closestPoint = locator->FindClosestPoint(xyz);
+    for (i=0;i<nvar;i++)
+    {
+      double solncomp = inSolution->GetComponent(closestPoint,i);
+      outSolution->SetComponent(pointId,i,solncomp);
+      adapted_solution[i*nshg_adapted+pointId] = solncomp;
+    }
+  }
+
   writeArrayToFile(out_solution_file_,"solution","binary","write",
-                   nshg_fine,ndof,lstep,solution);
+                   nshg_adapted,ndof,lstep,adapted_solution);
 
-  delete [] solution;
+  int neltot = M_numRegions(mesh);
 
-  cleanAttachedData(mesh,phasta_solution,0);
+  vtkSmartPointer<vtkUnstructuredGrid> ug = 
+    vtkSmartPointer<vtkUnstructuredGrid>::New();
+  //  vtkSmartPointer<vtkIdList> ptids = 
+  //  vtkSmartPointer<vtkIdList>::New();
+  vtkIdList* ptids = vtkIdList::New();
+ 
+  vtkSmartPointer<vtkIntArray> eid = 
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> rid = 
+    vtkSmartPointer<vtkIntArray>::New();
 
-  MD_deleteMeshDataId(phasta_solution);
+  ug->SetPoints(outPoints);
+  ug->GetPointData()->AddArray(gid);
+  ug->GetPointData()->AddArray(outSolution);
+
+  ptids->Allocate(10,10);
+  ptids->Initialize();
+  ptids->SetNumberOfIds(4);
+
+  eid->SetNumberOfComponents(1);
+  eid->Allocate(neltot,1000);
+  eid->Initialize();
+  eid->SetName("GlobalElementID");
+
+  rid->SetNumberOfComponents(1);
+  rid->Allocate(neltot,1000);
+  rid->Initialize();
+  rid->SetName("ModelRegionID");
+
+  // only for linear tets
+
+  pRegion myelement = NULL;
+  RIter myRIter = M_regionIter(mesh);
+
+  // only allow one model region for now
+  int curMdlRegID = 1;
+
+  while ((myelement = RIter_next(myRIter)) != NULL) {
+    // the elements are numbered from 1 to N.
+    int curElemID = EN_id((pEntity)myelement)+1;
+    pPList vert_list = R_vertices (myelement,MY_MESHSIM_VERTEX_ORDERING);
+    int num_elem_verts = PList_size (vert_list);
+    // must be linear
+    if (num_elem_verts != 4) {
+      exit(-1);
+    }
+    for (i = 0; i < num_elem_verts; i++) {
+        pVertex vertex = (pVertex)PList_item (vert_list, i);
+        // vtk nodes must start at zero
+        ptids->SetId(i,P_id(V_point(vertex))-1);
+    } // i
+    PList_delete(vert_list);      
+    ug->InsertNextCell(VTK_TETRA,ptids);
+    eid->InsertNextTuple1(curElemID);
+    rid->InsertNextTuple1(curMdlRegID);
+  }
+
+  ptids->Delete();
+   
+  ug->GetCellData()->AddArray(rid);
+  ug->GetCellData()->SetScalars(eid);
+  ug->GetCellData()->SetActiveScalars("GlobalElementID");
+  ug->GetCellData()->CopyAllOn();
+
+  if (out_mesh_vtu_file_[0] != '\0') {
+    vtkXMLUnstructuredGridWriter *ugwriter = vtkXMLUnstructuredGridWriter::New();
+    ugwriter->SetCompressorTypeToZLib();
+    //vtkUnstructuredGridWriter *ugwriter = vtkUnstructuredGridWriter::New();
+    //ugwriter->SetFileTypeToASCII();
+    ugwriter->EncodeAppendedDataOff();
+    ugwriter->SetInputDataObject(ug);
+    ugwriter->SetFileName(out_mesh_vtu_file_);
+    ugwriter->Write();
+    ugwriter->Delete();
+  }
+  //eid->Delete();
+
   MD_deleteMeshDataId(errorIndicatorID);
   MD_deleteMeshDataId(modes);
-
-#ifdef DEBUG_MESHSIM_MSA_CALLBACK
-  MD_deleteMeshDataId(pseudoNodeID_);
-#endif
 
   MSA_delete(simAdapter);
   M_release(mesh);
 
   GM_release(model);
-  //SimParasolid_stop(1);  
 
-  MS_exit();    
+  MS_exit();
+
+  delete [] sol;
+
+  delete [] adapted_solution;
 
   return 1;
 }
