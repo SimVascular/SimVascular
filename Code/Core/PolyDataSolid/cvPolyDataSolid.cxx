@@ -50,6 +50,7 @@
 #include "cv_sys_geom.h"
 #include <string.h>
 #include <assert.h>
+#include "vtkCubeSource.h"
 
 #ifdef USE_GTS
   #include "vtkSurfaceBooleanOperations.h"
@@ -731,5 +732,34 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
   fprintf(stderr,"Must have VMTK to be able to remesh caps\n");
   return CV_ERROR;
 #endif
+}
+
+// ----------------
+// MakeBox3d
+// ----------------
+/** 
+ * Creates a 3D Box
+ * @param dims
+ * @param ctr
+ * @return *result: a box is created
+ */
+
+int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
+{
+  if ( geom_ != NULL ) {
+    return CV_ERROR;
+  }
+  geom_ = vtkPolyData::New();
+
+vtkSmartPointer<vtkCubeSource> cube = vtkSmartPointer<vtkCubeSource>::New();
+cube->SetCenter(ctr[0], ctr[1], ctr[2]);
+cube->SetXLength(dims[0]);
+cube->SetYLength(dims[1]);
+cube->SetZLength(dims[2]);
+cube->Update();
+
+geom_->DeepCopy(cube->GetOutput());
+
+  return CV_OK;
 }
 
