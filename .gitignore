@@ -1,0 +1,9 @@
+.project
+Code/Core/.cproject
+Code/Core/.project
+Code/Modules/ThreeDSolver/.cproject
+Code/Modules/ThreeDSolver/.project
+Code/Modules/ThreeDSolver/.settings/
+Tcl/.buildpath
+Tcl/.project
+

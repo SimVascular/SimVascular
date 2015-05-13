@@ -45,7 +45,8 @@
 #include <string.h>
 
 #include "cmd.h"
-
+#include <vector>
+using namespace std;
 // globals
 char* oformat = "binary";
 //char* oformat = "ascii";
@@ -98,6 +99,20 @@ double  Displacement_nuvw_       = 0;
 double  Displacement_thickness_  = 0;
 double  Displacement_kcons_      = 0;
 double  Displacement_pressure_   = 0;
+
+double rho_=0.0;
+double mu_=0.0;
+int bctShape_=0;
+double bctPeriod_=0.0;
+int bctPointNum_=0;
+int bctModeNum_=0;
+int bctPreserve_=1;
+int bctFlip_=0;
+int bctMerge_=0;
+int bctNodeNumTotal_=0;
+int bctPointNumMax_=0;
+
+vector<BCTData> vbct;
 
 int main(int argc, char *argv[]) {
 

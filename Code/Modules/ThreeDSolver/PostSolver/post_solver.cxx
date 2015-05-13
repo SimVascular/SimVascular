@@ -2123,69 +2123,6 @@ int main(int argc, char* argv[])
 
         grid=createGrid(nshgtot,xglobal,neltot,ien);
 
-//        grid = vtkUnstructuredGrid::New();
-//        grid->Allocate(neltot,1000);
-//
-//        // nodes
-//
-//        cout << "Create vtkPoints with " << nshgtot << " nodes." << endl;
-//
-//        pts = vtkPoints::New();
-//        pts->Allocate(nshgtot,1000);
-//        pts->SetNumberOfPoints(nshgtot);
-//
-//        vtkIntArray* gid = vtkIntArray::New();
-//        gid->SetNumberOfComponents(1);
-//        gid->Allocate(nshgtot,1000);
-//        gid->SetNumberOfTuples(nshgtot);
-//        gid->SetName("GlobalNodeID");
-//
-//        for( i=0; i< nshgtot; i++ ) {
-//            pts->SetPoint(i,xglobal[0*nshgtot+i],xglobal[1*nshgtot+i],xglobal[2*nshgtot+i]);
-//            // global ids start at 1
-//            gid->SetTuple1(i,i+1);
-//        }
-//
-//        grid->SetPoints(pts);
-//        grid->GetPointData()->AddArray(gid);
-//
-//        pts->Delete();
-//        gid->Delete();
-//
-//        // elements
-//
-//        cout << "Create tets for " << neltot << " elements." << endl;
-//
-//        vtkIdList* ptids = vtkIdList::New();
-//        ptids->Allocate(10,10);
-//        ptids->Initialize();
-//        ptids->SetNumberOfIds(4);
-//
-//        vtkIntArray* eid = vtkIntArray::New();
-//        eid->SetNumberOfComponents(1);
-//        eid->Allocate(neltot,1000);
-//        eid->SetNumberOfTuples(neltot);
-//        eid->SetName("GlobalElementID");
-//
-//
-//        for(i=0; i< neltot; i++){
-//            //for(j=0; j < nendx; j++) gzprintf(frest,"%d  ",ien[j*neltot+i]);
-//            ptids->SetId(0,ien[0*neltot+i]-1);
-//            ptids->SetId(1,ien[1*neltot+i]-1);
-//            ptids->SetId(2,ien[2*neltot+i]-1);
-//            ptids->SetId(3,ien[3*neltot+i]-1);
-//            grid->InsertNextCell(VTK_TETRA,ptids);
-//            eid->SetTuple1(i,i+1);
-//        }
-//
-//        ptids->Delete();
-//
-//        grid->GetCellData()->SetScalars(eid);
-//        grid->GetCellData()->SetActiveScalars("GlobalElementID");
-//        grid->GetCellData()->CopyAllOn();
-//
-//        eid->Delete();
-
     }
 
     if(RequestedWallFilter){

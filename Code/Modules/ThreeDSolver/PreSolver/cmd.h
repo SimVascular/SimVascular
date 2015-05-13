@@ -51,6 +51,12 @@
 #include <string.h>
 #include <stdarg.h>
 
+//#include <vector>
+//using namespace std;
+
+#include "vtkPolyData.h"
+#include "vtkDoubleArray.h"
+
 #ifdef WIN32
 #define CALLTYPE __cdecl
 #else
@@ -61,6 +67,15 @@ typedef struct Cmd {
   char *name;
   int (*pt2Function)(char*);
 } Cmd;
+
+typedef enum {WOMERSLEY=0,PARABOLIC=1,PLUG=2} BCTShapeType;
+
+typedef struct{
+    int pointNum;
+    double* t;
+    vtkPolyData* pd;
+    vtkDoubleArray** mapped_data;
+} BCTData;
 
 extern int cmd_input; 
 extern FILE *fp_input;
@@ -197,6 +212,17 @@ int CALLTYPE cmd_set_Initial_Evw(char*);
 int CALLTYPE cmd_set_Initial_Evw_vtp(char*);
 #endif
 
-//int CALLTYPE cmd_set_scalar_BCs(char *cmd);
+int CALLTYPE cmd_fluid_density(char*);
+int CALLTYPE cmd_fluid_viscosity(char*);
+int CALLTYPE cmd_bct_analytical_shape(char*);
+int CALLTYPE cmd_bct_period(char*);
+int CALLTYPE cmd_bct_point_number(char*);
+int CALLTYPE cmd_bct_fourier_mode_number(char*);
+int CALLTYPE cmd_bct_preserve_flow(char*);
+int CALLTYPE cmd_bct_flip(char*);
+int CALLTYPE cmd_bct_create(char*);
+int CALLTYPE cmd_bct_merge_on(char*);
+int CALLTYPE cmd_bct_write_dat(char*);
+int CALLTYPE cmd_bct_write_vtp(char*);
 
 #endif // CMD_H

@@ -51,6 +51,7 @@
 #define gzeof feof
 #endif
 
+#include <vector>
 using namespace std;
 
 //
@@ -113,6 +114,7 @@ int parseDouble(char *cmd, double *num);
 int parseDouble2(char *cmd, double *num);
 int parseDouble3(char *cmd, double *v1, double *v2, double *v3);
 int parseCmdStr(char *cmd, char *mystr);
+int parseCmdStr2(char *cmd, char *mystr);
 int parseNum2(char *cmd, int *num);
 int check_node_order(int n0, int n1, int n2, int n3, int elementId, int *k0,
 		int *k1, int *k2, int *k3);
@@ -120,7 +122,8 @@ int check_node_order(int n0, int n1, int n2, int n3, int elementId, int *k0,
 void siftDownEdges(int **edges, int root, int bottom, int array_size);
 //int createMeshForDispCalc(char *cmd);
 void siftDownKentriesCalcMesh(int **ids, int root, int bottom, int array_size);
-
+int create_bct(BCTData& bct,char *faceFile, char *flowFile,double rho, double mu, int shape,
+        double period, int pointNum,int modeNum, int preserve, int flip);
 extern gzFile fp_;
 extern char buffer_[MAXCMDLINELENGTH];
 
@@ -145,6 +148,20 @@ extern char buffer_[MAXCMDLINELENGTH];
 #include "vtkUnstructuredGridReader.h"
 #include "vtkXMLPolyDataReader.h"
 #include "vtkPolyDataReader.h"
+#include "vtkAppendPolyData.h"
+
+extern double rho_;
+extern double mu_;
+extern int bctShape_;
+extern double bctPeriod_;
+extern int bctPointNum_;
+extern int bctModeNum_;
+extern int bctPreserve_;
+extern int bctFlip_;
+extern int bctMerge_;
+extern int bctNodeNumTotal_;
+extern int bctPointNumMax_;
+extern vector<BCTData> vbct;
 
 // =========
 //   Cross
@@ -2104,4 +2121,100 @@ int cmd_set_Initial_Evw_vtp(char *cmd) {
     return CV_OK;
 }
 #endif
+
+
+int cmd_bct_create(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_create.\n");
+
+    char faceFile[MAXPATHLEN];
+    parseCmdStr(cmd,faceFile);
+
+    char flowFile[MAXPATHLEN];
+    parseCmdStr2(cmd,flowFile);
+
+    debugprint(stddbg,"  Create BCT for (%s) with (%s)\n",faceFile,flowFile);
+
+    BCTData bct;
+
+    if(create_bct(bct,faceFile,flowFile,rho_,mu_,bctShape_,bctPeriod_,bctPointNum_,bctModeNum_,bctPreserve_,bctFlip_)==CV_ERROR){
+        return CV_ERROR;
+    }
+
+    bctNodeNumTotal_+=bct.pd->GetNumberOfPoints();
+    if(bct.pointNum>bctPointNumMax_){
+        bctPointNumMax_=bct.pointNum;
+    }
+
+    vbct.push_back(bct);
+
+    debugprint(stddbg,"Exiting cmd_bct_create.\n");
+    return CV_OK;
+}
+
+int cmd_bct_write_vtp(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_write_vtp.\n");
+
+    vtkAppendPolyData* appendFilter=NULL;
+
+    if(bctMerge_==1 && vbct.size()>1){
+        appendFilter =vtkAppendPolyData::New();
+
+    }
+    for(int n=0;n<vbct.size();n++){
+        BCTData bct=vbct[n];
+        vtkPolyData* pd=bct.pd;
+        double* t=bct.t;
+        int pointNum=bct.pointNum;
+        int nodeNum=pd->GetNumberOfPoints();
+
+        char vel_name[40];
+        for(int j=0;j<pointNum;j++){
+            sprintf(vel_name,"velocity_%06.4f",t[j]);
+            bct.mapped_data[j]->SetName(vel_name);
+            pd->GetPointData()->AddArray(bct.mapped_data[j]);
+        }
+        sprintf(vel_name,"velocity_%06.4f",t[pointNum]);
+        vtkDoubleArray* mdata=vtkDoubleArray::New();
+        mdata->DeepCopy(bct.mapped_data[0]);
+        mdata->SetName(vel_name);
+        pd->GetPointData()->AddArray(mdata);
+
+        if(bctMerge_!=1 || vbct.size()==1){
+            char bct_name[40]="bct.vtp";
+            if(vbct.size()>1){
+                sprintf(bct_name,"bct%d.vtp",n+1);
+            }
+
+            vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
+            polywriter->SetCompressorTypeToZLib();
+            polywriter->EncodeAppendedDataOff();
+            polywriter->SetInputDataObject(pd);
+            polywriter->SetFileName(bct_name);
+            polywriter->Write();
+            polywriter->Delete();
+        }else{
+            appendFilter->AddInputData(pd);
+        }
+
+    }
+
+    if(bctMerge_==1 && vbct.size()>1){
+        appendFilter->Update();
+        vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
+        polywriter->SetCompressorTypeToZLib();
+        polywriter->EncodeAppendedDataOff();
+        polywriter->SetInputDataObject(appendFilter->GetOutput());
+        polywriter->SetFileName("bct.vtp");
+        polywriter->Write();
+        polywriter->Delete();
+
+        appendFilter->Delete();
+
+    }
+
+    debugprint(stddbg,"Exiting cmd_bct_write_vtp.\n");
+    return CV_OK;
+}
 
