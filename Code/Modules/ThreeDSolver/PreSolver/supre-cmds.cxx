@@ -65,6 +65,11 @@ void  bzero(void* ptr, size_t sz) {
 #endif
 #include <time.h>
 
+#include <vector>
+using namespace std;
+
+#include "vtkPointData.h"
+
 // =========
 //   Cross
 // =========
@@ -169,6 +174,18 @@ int createMeshForDispCalc(char *cmd);
 extern gzFile fp_;
 extern char buffer_[MAXCMDLINELENGTH];
 
+extern double rho_;
+extern double mu_;
+extern int bctShape_;
+extern double bctPeriod_;
+extern int bctPointNum_;
+extern int bctModeNum_;
+extern int bctPreserve_;
+extern int bctFlip_;
+extern int bctMerge_;
+extern int bctNodeNumTotal_;
+extern int bctPointNumMax_;
+extern vector<BCTData> vbct;
 
 int cmd_ascii_format(char*) {
 
@@ -2339,3 +2356,213 @@ int writeGEOMBCDAT(char* filename) {
 
 }
 
+int cmd_fluid_density(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_fluid_density.\n");
+
+    if (parseDouble(cmd, &rho_) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"  Fluid Density = %lf\n",rho_);
+
+    debugprint(stddbg,"Exiting cmd_fluid_density.\n");
+    return CV_OK;
+}
+
+int cmd_fluid_viscosity(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_fluid_viscosity.\n");
+
+    if (parseDouble(cmd, &mu_) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"  Fluid Viscosity = %lf\n",mu_);
+
+    debugprint(stddbg,"Exiting cmd_fluid_viscosity.\n");
+    return CV_OK;
+}
+
+int cmd_bct_analytical_shape(char *cmd){
+
+    debugprint(stddbg,"Entering cmd_bct_analytical_shape.\n");
+
+    char shapeType[MAXSTRINGLENGTH];
+    parseCmdStr(cmd,shapeType);
+
+    if(strcmp(shapeType,"womersley")==0){
+        bctShape_=WOMERSLEY;
+    }else if(strcmp(shapeType,"parabolic")==0){
+        bctShape_=PARABOLIC;
+    }else if(strcmp(shapeType,"plug")==0){
+        bctShape_=PLUG;
+    }else{
+        fprintf(stderr,"ERROR: No such BCT Analytical Shape: (%s)\n",shapeType);
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"  BCT Analytical Shape is %s\n",mu_);
+
+    debugprint(stddbg,"Exiting cmd_bct_analytical_shape.\n");
+    return CV_OK;
+}
+
+int cmd_bct_period(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_period.\n");
+
+    if (parseDouble(cmd, &bctPeriod_) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"  BCT Period = %lf\n",bctPeriod_);
+
+    debugprint(stddbg,"Exiting cmd_bct_period.\n");
+    return CV_OK;
+}
+
+int cmd_bct_point_number(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_point_number.\n");
+
+    if (parseNum(cmd, &bctPointNum_) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"  BCT point number in period: %i\n",bctPointNum_);
+
+    debugprint(stddbg,"Exiting cmd_bct_point_number.\n");
+    return CV_OK;
+
+}
+
+int cmd_bct_fourier_mode_number(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_fourier_mode_number.\n");
+
+    if (parseNum(cmd, &bctModeNum_) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"  BCT Fourier mode number: %i\n",bctModeNum_);
+
+    debugprint(stddbg,"Exiting cmd_bct_fourier_mode_number.\n");
+    return CV_OK;
+
+}
+
+int cmd_bct_preserve_flow(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_preserve_flow.\n");
+
+    bctPreserve_=1;
+
+    debugprint(stddbg,"  BCT preserves flow\n");
+
+    debugprint(stddbg,"Exiting cmd_bct_preserve_flow.\n");
+    return CV_OK;
+
+}
+
+int cmd_bct_flip(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_flip.\n");
+
+    bctFlip_=1;
+
+    debugprint(stddbg,"  BCT normal flipped.\n");
+
+    debugprint(stddbg,"Exiting cmd_bct_flip.\n");
+    return CV_OK;
+
+}
+
+int cmd_bct_merge_on(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_merge_on.\n");
+
+    bctMerge_=1;
+
+    debugprint(stddbg,"  Will merge all BCT files to one.\n");
+
+    debugprint(stddbg,"Exiting cmd_bct_merge_on.\n");
+    return CV_OK;
+
+}
+
+int cmd_bct_write_dat(char *cmd) {
+
+    debugprint(stddbg,"Entering cmd_bct_write_dat.\n");
+
+    FILE* fp = NULL;
+
+    if(vbct.size()==1){
+        bctMerge_=1;
+    }
+
+    if(bctMerge_==1){
+        char bct_name[]="bct.dat";
+        fp=fopen(bct_name,"w");
+        if(fp==NULL){
+            fprintf(stderr, "ERROR: could not open file (%s).\n", bct_name);
+            return CV_ERROR;
+        }
+        fprintf(fp,"%d %d\n",bctNodeNumTotal_,bctPointNumMax_+1);
+
+    }
+
+    for(int n=0;n<vbct.size();n++){
+        BCTData bct=vbct[n];
+        vtkPolyData* pd=bct.pd;
+        double* t=bct.t;
+        int pointNum=bct.pointNum;
+        int nodeNum=pd->GetNumberOfPoints();
+
+        if(bctMerge_!=1){
+            char bct_name[40];
+            sprintf(bct_name,"bct%d.dat",n+1);
+            fp=fopen(bct_name,"w");
+            if(fp==NULL){
+                fprintf(stderr, "ERROR: could not open file (%s).\n", bct_name);
+                return CV_ERROR;
+            }
+            fprintf(fp,"%d %d\n",nodeNum,pointNum+1);
+        }
+
+        for(int i=0;i<nodeNum;i++){
+            double pt[3];
+            pd->GetPoint(i,pt);
+            int nodeID=pd->GetPointData()->GetScalars()->GetTuple1(i);
+
+//            fprintf(stdout,"working on node %d of %d.\n",i,nodeNum);
+
+            fprintf(fp,"%e %e %e %d %d\n",pt[0],pt[1],pt[2],pointNum+1,nodeID);
+
+            double vel[3];
+            for(int j=0;j<pointNum;j++){
+
+                bct.mapped_data[j]->GetTuple(i,vel);
+                fprintf(fp,"%e %e %e %e\n",vel[0],vel[1],vel[2],t[j]);
+
+            }
+            bct.mapped_data[0]->GetTuple(i,vel);
+            fprintf(fp,"%e %e %e %e\n",vel[0],vel[1],vel[2],t[pointNum]);
+
+        }
+
+        if(bctMerge_!=1){
+            fclose(fp);
+            fp=NULL;
+        }
+
+    }
+
+
+    if(bctMerge_==1){
+        fclose(fp);
+    }
+
+    debugprint(stddbg,"Exiting cmd_bct_write_dat.\n");
+    return CV_OK;
+}

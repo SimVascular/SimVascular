@@ -125,6 +125,18 @@ static Cmd cmd_table[] = {
   {"set_surface_initial_Evw", cmd_set_Initial_Evw},
   {"set_surface_initial_Evw_vtp", cmd_set_Initial_Evw_vtp},
 #endif
+  {"fluid_density", cmd_fluid_density},
+  {"fluid_viscosity", cmd_fluid_viscosity},
+  {"bct_analytical_shape", cmd_bct_analytical_shape},
+  {"bct_period", cmd_bct_period},
+  {"bct_point_number", cmd_bct_point_number},
+  {"bct_fourier_mode_number", cmd_bct_fourier_mode_number},
+  {"bct_preserve_flow", cmd_bct_preserve_flow},
+  {"bct_flip", cmd_bct_flip},
+  {"bct_create", cmd_bct_create},
+  {"bct_merge_on", cmd_bct_merge_on},
+  {"bct_write_dat", cmd_bct_write_dat},
+  {"bct_write_vtp", cmd_bct_write_vtp},
   {NULL,       NULL}};
 
 int debugprint(FILE* fp,char *fmt, ...)
@@ -162,7 +174,7 @@ int cmd_proc (char *cmd, int *ok) {
   ***  body  ***
   **************/
 
-  if (cmd[0] == '#' || cmd[0] == '\n') {
+  if (cmd[0] == '#' || cmd[0] == '\n' || cmd[0] == '\r') {
     return CV_OK;
     }
 
