@@ -118,7 +118,7 @@ if(NOT SimVascular_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
 	set_env_string_concat(TK_LIBRARY "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_TCL_LIBRARY_DIR}/tk8.5" install_script_string)
 endif()
 
-configure_file(${SimVascular_SOURCE_DIR}/Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
+configure_file(${SimVascular_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
 set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")
 set(PREAMBLE_INSTALL_FILE "${TEMP_DIR}/install-preample")
 set(EXE_FILE_STRING "")

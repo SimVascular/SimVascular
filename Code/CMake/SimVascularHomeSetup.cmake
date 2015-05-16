@@ -37,12 +37,8 @@ if(NOT SimVascular_BINARY_HOME)
 endif()
 
 set(SimVascular_HOME ${SimVascular_BINARY_HOME})
-
-set(SimVascular_SOURCE_RELEASE_DIR ${SimVascular_SOURCE_HOME}/Release)
-set(SimVascular_BINARY_RELEASE_DIR ${SimVascular_BINARY_HOME}/Release)
-set(SimVascular_RELEASE_DIR ${SimVascular_SOURCE_RELEASE_DIR})
-
-#file(COPY ${SimVascular_SOURCE_RELEASE_DIR} DESTINATION ${SimVascular_BINARY_HOME})
+set(SimVascular_DISTRIBUTION_DIR ${SimVascular_SOURCE_HOME}/Distribution)
+set(SimVascular_BINARY_DISTRIBUTION_DIR ${SimVascular_BINARY_HOME}/Distribution)
 
 mark_as_superbuild(VARS
 	SimVascular_SOURCE_HOME:PATH
@@ -51,7 +47,5 @@ mark_as_superbuild(VARS
 	SimVascular_SOURCE_TCL_DIR:PATH
 	SimVascular_BINARY_TCL_DIR:PATH
 	SimVascular_TCL:PATH
-	SimVascular_SOURCE_RELEASE_DIR:PATH
-	SimVascular_BINARY_RELEASE_DIR:PATH
-	SimVascular_RELEASE_DIR:PATH
+	SimVascular_DISTRIBUTION_DIR:PATH
 	)

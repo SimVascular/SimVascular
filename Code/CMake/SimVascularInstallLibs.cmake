@@ -228,7 +228,7 @@ foreach(exe ${EXTERNAL_EXES})
 
     find_program(EXTERNALEXE_${_EXE}
         NAMES ${_${_EXE}_NAMES}
-        PATHS ${SimVascular_RELEASE_DIR}/dicom2 ${SimVascular_RELEASE_DIR}/dcmtk
+        PATHS ${SimVascular_DISTRIBUTION_DIR}/dicom2 ${SimVascular_DISTRIBUTION_DIR}/dcmtk
         )
     
     if(NOT EXTERNALEXE_${_EXE})

@@ -24,10 +24,6 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# set(SimVascular_SOURCE_TCL_DIR @SimVascular_SOURCE_TCL_DIR@)
-# set(SimVascular_RELEASE_DIR @SimVascular_RELEASE_DIR@)
-# set(TEMP_DIR @TEMP_DIR@)
-# set(TCL_TCLSH @TCL_TCLSH@)
 
 file(REMOVE_RECURSE ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
 	file(COPY ${SimVascular_SOURCE_TCL_DIR} DESTINATION ${TEMP_DIR})
@@ -72,7 +68,7 @@ file(REMOVE_RECURSE ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
 
 	exec_program(${TCL_TCLSH} 
 		ARGS 
-		${SimVascular_RELEASE_DIR}/tcl_helper_scripts/create_tclIndex.tcl 
+		${SimVascular_SOURCE_DIR}/../Distribution/create_tclIndex.tcl 
 		${TEMP_DIR}/Tcl/SimVascular_2.0/
 		OUTPUT_VARIABLE TCLOUT
 		)

@@ -31,18 +31,18 @@
 /*! \mainpage SimVascular Documentation
  *
  *
- * \section cvsim_main_sec 
+ * \section sim_main_sec Description
  *
  * Software for modeling and simulating blood flow. 
  * 
  * \section useful_sec Useful Links
  *
+ * <br>
+ * <a href="http://www.simvascular.org">  SimVascular.org </a>
+ * <br>
  * <a href="http://www.vtk.org"> VTK </a>
  * <br>
  * <a href="http://www.itk.org"> ITK </a>
- * <br>
- * <a href="http://www.tcl.tk">  Tcl/Tk </a>
- * <br>
  * 
  * <br>
  *
