@@ -1192,14 +1192,14 @@ int geom_bbox( vtkPolyData* pd, double bbox[]){
             bbox[4] = bbox[5] = pt[2];
         }
 
-        bbox[0] = fmin( bbox[0], pt[0]);
-        bbox[1] = fmax( bbox[1], pt[0]);
+        bbox[0] = std::min( bbox[0], pt[0]);
+        bbox[1] = std::max( bbox[1], pt[0]);
 
-        bbox[2] = fmin( bbox[2], pt[1]);
-        bbox[3] = fmax( bbox[3], pt[1]);
+        bbox[2] = std::min( bbox[2], pt[1]);
+        bbox[3] = std::max( bbox[3], pt[1]);
 
-        bbox[4] = fmin( bbox[4], pt[2]);
-        bbox[5] = fmax( bbox[5], pt[2]);
+        bbox[4] = std::min( bbox[4], pt[2]);
+        bbox[5] = std::max( bbox[5], pt[2]);
     }
 
     return CV_OK;
