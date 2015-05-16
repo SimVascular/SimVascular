@@ -96,14 +96,14 @@ endif
 #	-rm -f tclscript
 
 pre-build:
-	cd ../Code/Core/UI;$(MAKE) pre
+	cd ../Code/Source/UI;$(MAKE) pre
 	mkdir -p Bin
 	mkdir -p Lib
-	touch ../Code/Core/Include/simvascular_options.h
-	touch ../Code/Core/Include/simvascular_version.h
-	touch ../Code/Modules/ThreeDSolver/cvFlowsolverOptions.h
-	-echo "#include \"tetgen.h\"" > ../Code/Plugins/TetGenMeshObject/simvascular_tetgen.h
-	-echo "#include \"tetgen.h\"" > ../Code/Plugins/TetAdapt/simvascular_tetgen.h
+	touch ../Code/Source/Include/simvascular_options.h
+	touch ../Code/Source/Include/simvascular_version.h
+	touch ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
+	-echo "#include \"tetgen.h\"" > ../Code/Source/Mesh/TetGenMeshObject/simvascular_tetgen.h
+	-echo "#include \"tetgen.h\"" > ../Code/Source/Mesh/TetGenAdapt/simvascular_tetgen.h
 
 shared-build:
 	for i in ${LIBDIRS}; do ( \

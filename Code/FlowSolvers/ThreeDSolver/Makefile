@@ -49,15 +49,15 @@ else
 endif
 
 ifeq ($(MAKE_WITH_THREEDSOLVER),1)
-	THREED_SUBDIRS += IncompressibleSolver 
+	THREED_SUBDIRS += svSolver 
 endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
   ifeq ($(MAKE_WITH_PRESOLVER),1)
-	THREED_SUBDIRS += PreSolver
+	THREED_SUBDIRS += svPre
   endif
   ifeq ($(MAKE_WITH_POSTSOLVER),1)
-	THREED_SUBDIRS += PostSolver
+	THREED_SUBDIRS += svPost
   endif
 endif
 

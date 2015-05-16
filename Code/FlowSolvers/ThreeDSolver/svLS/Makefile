@@ -43,7 +43,7 @@
 # DAMAGE.
 
 
-TOP=../../../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 

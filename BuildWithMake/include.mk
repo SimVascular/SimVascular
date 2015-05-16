@@ -51,10 +51,10 @@ NO_DEPEND = 1
 # CLUSTER = { x86_cygwin, x64_cygwin, x64_linux }
 # -----------------------------------------------------------
 
-#CLUSTER = x64_cygwin
-#COMPILER_VERSION = vs10sp1
-CLUSTER = x64_linux
-COMPILER_VERSION = gnu
+CLUSTER = x64_cygwin
+COMPILER_VERSION = vs10sp1
+#CLUSTER = x64_linux
+#COMPILER_VERSION = gnu
 
 -include $(TOP)/cluster_overrides.mk
 
@@ -91,7 +91,7 @@ MESHSIM_USE_SIMVASCULAR_USE_WIN32_REGISTRY = 0
 # -------------------------------------
 
 MAKE_WITH_TETGEN = 1
-MAKE_WITH_TETADAPTOR = 1
+MAKE_WITH_TETGEN_ADAPTOR = 1
 
 # ----------------------------------------------
 # Control inclusion of leslib
@@ -123,7 +123,7 @@ MAKE_WITH_SOLVERIO = 1
 MAKE_WITH_THREEDSOLVER = 1
 MAKE_WITH_PRESOLVER = 1
 MAKE_WITH_POSTSOLVER = 1
-MAKE_WITH_ADAPTOR = 1
+MAKE_WITH_MESHSIM_ADAPTOR = 1
 BUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT = 0
 
 # -----------------------------------------------------
@@ -413,27 +413,27 @@ endif
 # Local lib directories
 # ---------------------
 
-LIBDIRS = ../Code/Core/Globals \
-	  ../Code/Core/Utils \
-	  ../Code/Core/Repository \
-	  ../Code/Core/Image \
-	  ../Code/Core/Geometry \
-	  ../Code/Core/LevelSet \
-	  ../Code/Core/SolidModel \
-	  ../Code/Core/PostProcessing \
-	  ../Code/Core/MeshObject \
-	  ../Code/Core/PolyDataSolid
+LIBDIRS = ../Code/Source/Common/Globals \
+	  ../Code/Source/Common/Utils \
+	  ../Code/Source/Common/Repository \
+	  ../Code/Source/Common/Geometry \
+	  ../Code/Source/ImageProcessing \
+	  ../Code/Source/PostProcessing \
+	  ../Code/Source/Mesh/MeshObject \
+	  ../Code/Source/Model/SolidModel \
+	  ../Code/Source/Segementation/cvLevelSet \
+	  ../Code/Source/Model/PolyDataSolidModel
 
 ifeq ($(MAKE_WITH_ITK),1)
-     LIBDIRS += ../Code/Plugins/ITK ../Code/Plugins/ITK/Util
+     LIBDIRS += ../Code/Source/Segmentation/ITK ../Code/Source/Segmentation/ITK/Util
 endif
 
 ifeq ($(MAKE_WITH_TETGEN),1)
-     LIBDIRS += ../Code/Plugins/TetGenMeshObject
+     LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
 endif
 
 ifeq ($(MAKE_WITH_VMTK),1)
-     LIBDIRS += ../Code/Plugins/VMTK
+     LIBDIRS += ../Code/ThirdParty/vmtk
 endif
 
 #  solid modeling
@@ -445,7 +445,7 @@ ifeq ($(EXCLUDE_SOLID_MODEL),0)
     endif
 
     ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-        LIBDIRS += ../Code/Licensed/MeshSimDiscreteSolidModel
+        LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
     endif
 
 endif
@@ -453,31 +453,31 @@ endif
 # meshing
 
 ifeq ($(MAKE_WITH_MESHSIM),1)
-     LIBDIRS += ../Code/Licensed/MeshSimMeshObject
+     LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
 endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  EXECDIRS = ../Code/Core/UI
+  EXECDIRS = ../Code/Source/UI
 else
   EXECDIRS = 
 endif
 
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),0)
-  LIBDIRS += ../Code/Modules/ThreeDSolver
-  SOLVERIO_INCDIR = -I $(TOP)/../Code/Modules/ThreeDSolver/SolverIO
-  THREEDSOLVER_INCDIR = -I $(TOP)/../Code/Modules/ThreeDSolver
+  LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
+  SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
+  THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
   # must build solver before adaptor because of SolverIO
-  ifeq ($(MAKE_WITH_ADAPTOR),1)
-     EXECDIRS += ../Code/Licensed/Adaptor
+  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+     EXECDIRS += ../Code/Source/Mesh/MeshSimAdapt
   endif
-  ifeq ($(MAKE_WITH_TETADAPTOR),1)
-     EXECDIRS += ../Code/Plugins/TetAdapt
+  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+     EXECDIRS += ../Code/Source/Mesh/TetGenAdapt
   endif
 else
   ifeq ($(MAKE_WITH_THREEDSOLVER),1)
-     LIBDIRS = ../Code/Modules/ThreeDSolver
-     SOLVERIO_INCDIR = -I $(TOP)/../Code/Modules/ThreeDSolver/SolverIO
-     THREEDSOLVER_INCDIR = -I $(TOP)/../Code/Modules/ThreeDSolver
+     LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
+     SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
+     THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
   else
      LIBDIRS = 		
   endif
@@ -489,13 +489,13 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 # Local include directories
 # -------------------------
 
-LOCAL_SUBDIRS   = $(LIBDIRS) ../Code/Core/Include
+LOCAL_SUBDIRS   = $(LIBDIRS) ../Code/Source/Include
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 LOCAL_LIBDIR	=  -L$(TOP)/Lib
 LOCAL_LIBS	=  $(LOCAL_LIBDIR) -lsimvascular_utils
 
 ifeq ($(MAKE_WITH_ITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Plugins/ITK/Include
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segementation/ITK/Include
 endif
 
 # Link flags, which also need to be dealt with conditionally depending

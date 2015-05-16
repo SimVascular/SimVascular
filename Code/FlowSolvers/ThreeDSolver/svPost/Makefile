@@ -54,7 +54,7 @@ OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
 
 TARGET_EXE = postsolver.exe
 
-static: $(TOP)/Bin/$(TARGET_EXE)
+static: createOptionFile $(TOP)/Bin/$(TARGET_EXE)
 
 $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS) \
@@ -67,6 +67,12 @@ $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 ifndef NO_DEPEND
 -include $(DEPS)
 endif
+
+createOptionFile:
+	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
+	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
+	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
+	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
 
 clean:
 	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done

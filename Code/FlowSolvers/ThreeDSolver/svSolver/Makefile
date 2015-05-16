@@ -42,7 +42,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 
-TOP=../../../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -156,10 +156,10 @@ ifndef NO_DEPEND
 endif
 
 createOptionFile:
-	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" >> $(TOP)/../Code/Modules/ThreeDSolver/cvFlowsolverOptions.h
-	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/Modules/ThreeDSolver/cvFlowsolverOptions.h
-	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/Modules/ThreeDSolver/cvFlowsolverOptions.h
-	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/Modules/ThreeDSolver/cvFlowsolverOptions.h
+	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 
 clean:
 	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
