@@ -4,3 +4,12 @@ Code/Core/.project
 Tcl/.buildpath
 Tcl/.project
 
+!Code/Core/ImageProcessing/.project
+!Code/Core/PostProcessing/.project
+!Code/Core/Segementation/ITK/ITKCode/.project
+!Code/Core/Segementation/ITK/Include/.project
+!Code/Core/Segementation/ITK/Util/.project
+!Code/Core/Segementation/ITK/.project
+!Code/Core/Segementation/cvLevelSet/.project
+!Code/Core/Segementation/.project
+!Code/ThirdParty/vmtk/.project
