@@ -5,10 +5,10 @@ Tcl/.project
 !Code/ThirdParty/vmtk/.project
 !Code/Source/ImageProcessing/.project
 !Code/Source/PostProcessing/.project
-!Code/Source/Segementation/ITK/ITKCode/.project
-!Code/Source/Segementation/ITK/Include/.project
-!Code/Source/Segementation/ITK/Util/.project
-!Code/Source/Segementation/ITK/.project
-!Code/Source/Segementation/cvLevelSet/.project
-!Code/Source/Segementation/.project
 Code/Source/.cproject
+!Code/Source/Segmentation/ITK/ITKCode/.project
+!Code/Source/Segmentation/ITK/Include/.project
+!Code/Source/Segmentation/ITK/Util/.project
+!Code/Source/Segmentation/ITK/.project
+!Code/Source/Segmentation/cvLevelSet/.project
+!Code/Source/Segmentation/.project

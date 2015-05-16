@@ -10,7 +10,7 @@
 # 
 # See SimVascular Acknowledgements file for additional
 # contributors to the source code. 
-# 
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
 # "Software"), to deal in the Software without restriction, including 
@@ -30,7 +30,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -38,12 +38,26 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS) -I./Include -I./Util -I./ITKCode
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) \
+	   $(VTK_INCDIRS)
 
-HDRS	=  cvITKLevelSet.h
+HDRS	= cvLevelSet.h cvLevelSetNode.h \
+	  cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h \
+          cvLevelSetSparseGrid.h \
+	  cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
+          cvLevelSetVelocityConstant.h \
+	  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h \
+          cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h \
+          cvLevelSetVelocityImage.h
 
-CXXSRCS	=  cvITKLevelSet.cxx
+CXXSRCS	= cvLevelSet.cxx cvLevelSetNode.cxx \
+	  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx \
+          cvLevelSetSparseGrid.cxx \
+	  cvLevelSetVelocity.cxx cvLevelSetVelocityKGI.cxx \
+          cvLevelSetVelocityConstant.cxx \
+	  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx \
+          cvLevelSetVelocityExponentialDecay.cxx \
+          cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
 
 SRCS	= $(CXXSRCS)
 
@@ -51,21 +65,31 @@ DEPS	= $(CXXSRCS:.cxx=.d)
 
 OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
 
-TARGET_LIB = lib_lib_simvascular_cvitk.$(STATICEXT)
+TARGET_LIB = lib_lib_simvascular_lset.$(STATICEXT)
 
-DLLHDRS = $(HDRS) cv_ITKLset_init.h
-DLLSRCS = $(CXXSRCS) cv_ITKLset_init.cxx
+DLLHDRS = $(HDRS) cv_LsetCore_init.h
+DLLSRCS = $(CXXSRCS) cv_LsetCore_init.cxx
 DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
 ifeq ($(CLUSTER),x64_linux)
 DLLLIBS = -l_simvascular_globals
 else
 DLLLIBS = lib_simvascular_globals.$(STATICEXT)
 endif
+TARGET_SHARED = lib_simvascular_lsetcore.$(SOEXT)
 
-TARGET_SHARED = lib_simvascular_cvitk.$(SOEXT)
+DLLHDRS2 = $(HDRS) cv_LsetV_init.h
+DLLSRCS2 = $(CXXSRCS) cv_LsetV_init.cxx
+DLLOBJS2 = $(DLLSRCS2:.cxx=.$(OBJECTEXT))
+TARGET_SHARED2 = lib_simvascular_lsetv.$(SOEXT)
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS2 = -l_simvascular_globals
+else
+DLLLIBS2 = lib_simvascular_globals.$(STATICEXT)
+endif
 
 # -------
 # Targets
 # -------
 
 include $(TOP)/targetlib.mk
+

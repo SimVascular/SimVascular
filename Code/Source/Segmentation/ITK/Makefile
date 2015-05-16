@@ -39,10 +39,11 @@ include $(TOP)/include.mk
 # --------------
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS) -I../Include -I.. -I../Util
+           $(ITK_INCDIRS) -I./Include -I./Util -I./ITKCode
 
-HDRS	=  cvITKUtils.h
-CXXSRCS	=  cvITKUtils.cxx
+HDRS	=  cvITKLevelSet.h
+
+CXXSRCS	=  cvITKLevelSet.cxx
 
 SRCS	= $(CXXSRCS)
 
@@ -50,18 +51,18 @@ DEPS	= $(CXXSRCS:.cxx=.d)
 
 OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
 
-TARGET_LIB = lib_lib_simvascular_itkutils.$(STATICEXT)
+TARGET_LIB = lib_lib_simvascular_cvitk.$(STATICEXT)
 
-DLLHDRS = $(HDRS) cv_ITKUtils_init.h
-DLLSRCS = $(CXXSRCS) cv_ITKUtils_init.cxx
+DLLHDRS = $(HDRS) cv_ITKLset_init.h
+DLLSRCS = $(CXXSRCS) cv_ITKLset_init.cxx
 DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
 ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_itkutils
+DLLLIBS = -l_simvascular_globals
 else
 DLLLIBS = lib_simvascular_globals.$(STATICEXT)
 endif
 
-TARGET_SHARED = lib_simvascular_itkutils.$(SOEXT)
+TARGET_SHARED = lib_simvascular_cvitk.$(SOEXT)
 
 # -------
 # Targets
