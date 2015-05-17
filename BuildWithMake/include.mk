@@ -421,7 +421,7 @@ LIBDIRS = ../Code/Source/Common/Globals \
 	  ../Code/Source/PostProcessing \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Segementation/cvLevelSet \
+	  ../Code/Source/Segmentation/cvLevelSet \
 	  ../Code/Source/Model/PolyDataSolidModel
 
 ifeq ($(MAKE_WITH_ITK),1)
@@ -495,7 +495,7 @@ LOCAL_LIBDIR	=  -L$(TOP)/Lib
 LOCAL_LIBS	=  $(LOCAL_LIBDIR) -lsimvascular_utils
 
 ifeq ($(MAKE_WITH_ITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segementation/ITK/Include
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
 endif
 
 # Link flags, which also need to be dealt with conditionally depending
