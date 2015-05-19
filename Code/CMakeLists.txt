@@ -91,8 +91,7 @@ set(TET_ADAPTOR_EXE "svtetadapt")
 
 #-----------------------------------------------------------------------------
 # start internal cache variables
-set(SIMVASCULAR_INCLUDE_DIRS CACHE INTERNAL "" FORCE)
-
+set(SIMVASCULAR_INCLUDE_DIRS "")
 set(SIMVASCULAR_CORE_LIBRARY_DIRS "")
 set(SIMVASCULAR_CORE_EXECUTABLE_DIRS "")
 
@@ -383,18 +382,18 @@ endif()
 #-----------------------------------------------------------------------------
 # Basic Core Libs
 set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} 
-	"Core/Common/Globals"
-	"Core/Common/Utils"
-	"Core/Common/Repository"
-	"Core/Common/Image"
-	"Core/Common/Geometry"
-	"Core/Common/LevelSet"
-	"Core/Model/SolidModel"
-	"Core/Common/PostProcessing"
-	"Core/Mesh/MeshObject"
-	"Core/Model/PolyDataSolid")
+	"Source/Common/Globals"
+	"Source/Common/Utils"
+	"Source/Common/Repository"
+	"Source/ImageProcessing"
+	"Source/Common/Geometry"
+	"Source/Legacy/LevelSet"
+	"Source/Model/SolidModel"
+	"Source/PostProcessing"
+	"Source/Mesh/MeshObject"
+	"Source/Model/PolyDataSolidModel")
 
-set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Core/UI")
+set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/UI")
 
 #-----------------------------------------------------------------------------
 # We can not begin enabling libraries
@@ -482,20 +481,20 @@ if(Plugin_TETGEN)
 	else()
 		message(FATAL_ERROR "Unknown Tetgen versions, please specify!")
 	endif()
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Core/Mesh/TetGenMeshObject")
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
 else()
 	unset(TETGEN_LIBRARY CACHE)
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Core/Mesh/TetAdapt")
+	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/TetAdapt")
 endif()
 
 #-----------------------------------------------------------------------------
 # VMTK
 if(Plugin_VMTK)
 	set(USE_VMTK ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Core/Mesh/VMTK")
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -503,16 +502,16 @@ endif()
 if(Plugin_ITK)
 	simvascular_external(ITK DOWNLOADABLE)
 	set(USE_ITK ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Core/Common/ITK")
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
 endif()
 
 #---
 if(Licensed_ADAPTOR)
-	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Core/Mesh/Adapt")
+	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/MeshSimAdapt")
 endif()
 
 if(Licensed_MESHSIM OR Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Core/Mesh/MeshSimMeshObject")
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
 endif()
 
 
@@ -881,44 +880,35 @@ add_definitions(${GLOBAL_DEFINES})
 #-----------------------------------------------------------------------------
 # Add Local Includes
 set(LOCAL_LIBDIR Lib)
-
-set(SIMVASCULAR_INCLUDE_DIRS "" CACHE INTERNAL "" FORCE)
 set(SIMVASCULAR_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
 
 #-----------------------------------------------------------------------------
 # Include the Core subdirs 
 # These are handled here because other sub directories depend on them
-add_subdirectory(Core/Include)
-include_directories(
-	${SimVascular_SOURCE_DIR}/Core/Include 
-	${SimVascular_BINARY_DIR}/Core/Include)
-add_subdirectory(FlowSolvers/Include)
-include_directories(
-	${SimVascular_SOURCE_DIR}/FlowSolvers/Include 
-	${SimVascular_BINARY_DIR}/FlowSolvers/Include)
+# set
+set(SIMVASCULAR_INCLUDE_DIRS 
+			 	"Source/Include"
+			 	"FlowSolvers/Include"
+			 	)
+
+foreach(dir ${SIMVASCULAR_INCLUDE_DIRS})
+	add_subdirectory(${dir})
+	include_directories(${SimVascular_SOURCE_DIR}/${dir} 
+						${SimVascular_BINARY_DIR}/${dir})
+endforeach()
+
 foreach(dir ${SIMVASCULAR_CORE_LIBRARY_DIRS})
 	include_directories("${dir}")
 endforeach()
+
+
 
 #-----------------------------------------------------------------------------
 # Add directories
 # Modules
 if(BUILD_ThreeDSolver)
 	add_subdirectory(FlowSolvers)
-endif()
-
-if(NOT SimVascular_ONLY_BUILD_FLOWSOLVER)
-	# Plugin
-	#add_subdirectory(Plugins)
-	# Licensed
-	#add_subdirectory(Licensed)
-	# Now include any subdirectories that needed to be added
-	dev_message("Including Extra directories for UI")
-	foreach(dir ${SIMVASCULAR_INCLUDE_DIRS})
-		dev_message("	${dir}")
-		include_directories(${dir})
-	endforeach()
 endif()
 
 if(NOT SimVascular_ONLY_BUILD_FLOWSOLVER)

@@ -1,0 +1,2 @@
+This contains a subset of vmtk files (vmtk.org) with few custom changes for use in simvascular.
+We've added two source files cv_VMTK_utils.h and cv_VMTK_utils.cxx and written a new CMakelists.txt to interface with our libaries. 

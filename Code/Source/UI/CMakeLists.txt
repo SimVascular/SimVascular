@@ -5,35 +5,35 @@ UNSET(OPTLIBS)
 
 if(NOT BUILD_SHARED_LIBS)
 	SET(CXXSRCS ${CXXSRCS} 
-		 ${SimVascular_SOURCE_DIR}/Core/Common/Geometry/cv_geom_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/PostProcessing/cv_post_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/Image/cv_image_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/Repository/cv_repos_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Model/SolidModel/cv_solid_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/LevelSet/cv_LsetCore_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/LevelSet/cv_LsetV_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/Utils/cv_get_tcl_interp_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Mesh/MeshObject/cv_mesh_init.cxx
-                 ${SimVascular_SOURCE_DIR}/Core/Common/Utils/cv_math_init.cxx
-		 ${SimVascular_SOURCE_DIR}/Core/Model/PolyDataSolid/cv_polydatasolid_init.cxx)
+		 ${SimVascular_SOURCE_DIR}/Source/Common/Geometry/cv_geom_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/PostProcessing/cv_post_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/ImageProcessing/cv_image_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Common/Repository/cv_repos_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Model/SolidModel/cv_solid_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetCore_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetV_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Common/Utils/cv_get_tcl_interp_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Mesh/MeshObject/cv_mesh_init.cxx
+                 ${SimVascular_SOURCE_DIR}/Source/Common/Utils/cv_math_init.cxx
+		 ${SimVascular_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
 endif()
 
 if(Plugin_TETGEN)
 	include_directories(${TETGEN_INCLUDE_DIR})
 	SET(CXXSRCS ${CXXSRCS}
-	${SimVascular_SOURCE_DIR}/Core/Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx)
+	${SimVascular_SOURCE_DIR}/Source/Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tetgen_mesh)
 endif()
 
 if(Licensed_MESHSIM)
 	SET(CXXSRCS ${CXXSRCS} 
-	${SimVascular_SOURCE_DIR}/Core/Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx)
+	${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_mesh)
 endif()
 
 if(Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
 	SET(CXXSRCS ${CXXSRCS} 
-	${SimVascular_SOURCE_DIR}/Core/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)
+	${SimVascular_SOURCE_DIR}/Source/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_discrete)
 endif()
 
@@ -44,10 +44,10 @@ if(Licensed_PARASOLID)
 endif()
 
 if(Plugin_ITK)
-	include_directories(${SimVascular_SOURCE_DIR}/Core/Common/ITK/Include)
-	include_directories(${SimVascular_SOURCE_DIR}/Core/Common/ITK/Util)
-	SET(CXXSRCS ${CXXSRCS} ${SimVascular_SOURCE_DIR}/Core/Common/ITK/cv_ITKLset2d_init.cxx
-							${SimVascular_SOURCE_DIR}/Core/Common/ITK/Util/cv_ITKUtils_init.cxx)
+	include_directories(${SimVascular_SOURCE_DIR}/Source/Segmentation/ITK/Include)
+	include_directories(${SimVascular_SOURCE_DIR}/Source/Segmentation/ITK/Util)
+	SET(CXXSRCS ${CXXSRCS} ${SimVascular_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset2d_init.cxx
+							${SimVascular_SOURCE_DIR}/Source/Segmentation/ITK/Util/cv_ITKUtils_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_cvitk lib_simvascular_itkutils)
   endif()
 
