@@ -421,7 +421,7 @@ LIBDIRS = ../Code/Source/Common/Globals \
 	  ../Code/Source/PostProcessing \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Segmentation/cvLevelSet \
+	  ../Code/Source/Legacy/LevelSet \
 	  ../Code/Source/Model/PolyDataSolidModel
 
 ifeq ($(MAKE_WITH_ITK),1)

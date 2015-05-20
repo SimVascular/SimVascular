@@ -53,8 +53,8 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                    ../ImageProcessing/cv_image_init.cxx \
                    ../Common/Repository/cv_repos_init.cxx \
                    ../Model/SolidModel/cv_solid_init.cxx \
-                   ../Segmentation/cvLevelSet/cv_LsetCore_init.cxx \
-                   ../Segmentation/cvLevelSet/cv_LsetV_init.cxx \
+                   ../Legacy/LevelSet/cv_LsetCore_init.cxx \
+                   ../Legacy/LevelSet/cv_LsetV_init.cxx \
                    ../Common/Utils/cv_get_tcl_interp_init.cxx \
                    ../Mesh/MeshObject/cv_mesh_init.cxx \
                    ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
