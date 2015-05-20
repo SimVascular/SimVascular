@@ -70,6 +70,7 @@ set TkInteractor_StillUpdateRate 0.0
 
 proc BindTkRenderWidget {widget} {
     global tcl_platform
+    bind .guiCV <Key-Return> {ChangeWaitVar}
     bind $widget <Any-ButtonPress> {StartMotion %W %x %y}
     bind $widget <Any-ButtonRelease> {EndMotion %W %x %y}
     bind $widget <B1-Motion> {vis_interactorRotate %W %x %y}
@@ -204,6 +205,11 @@ proc UpdateRenderer {widget x y} {
    
     set LastX $x
     set LastY $y
+}
+
+proc ChangeWaitVar {} {
+  global gWaitVar
+  set gWaitVar 1
 }
 
 proc Enter {widget x y} {
@@ -714,6 +720,7 @@ proc PickActor {widget x y} {
     }
 
     Render $widget
+    guiSV_model_update_actor_selection $PickedAssembly
 
 }
 

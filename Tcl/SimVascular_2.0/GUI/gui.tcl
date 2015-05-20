@@ -12079,38 +12079,38 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0.m
   menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
-  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0.m add command  -command {smasherGUIreadModel}  -label {Read Model}
-  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0.m add command  -command {smasherGUIwriteModel}  -label {Save Model}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0.m add command  -command {guiSV_model_load_model}  -label {Read Model}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0.m add command  -command {guiSV_model_save_model}  -label {Save Model}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5
-  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m}  -text {none}  -textvariable {smasherInputName}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5
+  #ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m}  -text {none}  -textvariable {smasherInputName}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m
-  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}
-  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {none}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {None}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preop_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Preop Solid}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preop_trimmed1}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Trimmed 1 Solid}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preop_trimmed2}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Trimmed 2 Solid}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {blend_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Blended Solid}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preblend_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Pre Blend Solid}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {atdb_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Mesh Solid}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {trimmed_discrete_model}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Discrete Model}
-  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {polydata_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {PolyData Solid}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m
+  #menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}
+  #.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {none}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {None}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preop_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Preop Solid}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preop_trimmed1}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Trimmed 1 Solid}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preop_trimmed2}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Trimmed 2 Solid}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {blend_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Blended Solid}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {preblend_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Pre Blend Solid}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {atdb_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Mesh Solid}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {trimmed_discrete_model}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {Discrete Model}
+  ##.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {polydata_solid}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {PolyData Solid}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton1
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton1
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton2
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete}
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton2
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton3
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton3  -variable {gOptions(meshing_solid_kernel)}  -value {PolyData}  -text {PolyData}
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton3
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton3  -variable {gOptions(meshing_solid_kernel)}  -value {PolyData}  -text {PolyData}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tlabel3
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tlabel3  -font {Helvetica 10}  -relief {flat}  -text {Solid Model Type:}
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tlabel3
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tlabel3  -font {Helvetica 10}  -relief {flat}  -text {Solid Model Type:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19  -borderwidth {0}  -relief {flat}  -width {619}  -height {274}
@@ -12131,7 +12131,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.entry0  -font {Helvetica 10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.button6
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.button6  -command {smasherSetSurfId}  -text {Set Value}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.button6  -command {guiSV_model_set_att_name}  -text {Set Value}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5  -borderwidth {0}  -relief {flat}  -width {440}  -height {35}
@@ -12172,52 +12172,121 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.label10
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.label10  -font {Helvetica 10}  -relief {flat}  -text {Entity Properties}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3  -borderwidth {0}  -relief {flat}  -width {370}  -height {98}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3  -borderwidth {0}  -relief {flat}  -width {370}  -height {98}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7  -width {190}  -height {73}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7  -width {190}  -height {73}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.label10
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.label10  -font {helvetica 10}  -text {Opacity (%)}  -width {12}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.label10
+  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.label10  -font {helvetica 10}  -text {Opacity (%)}  -width {12}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11
-  scale .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11  -command {smasherGUIopacity}  -font {helvetica 10}  -orient {horizontal}  -relief {raised}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11
+  #scale .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11  -command {smasherGUIopacity}  -font {helvetica 10}  -orient {horizontal}  -relief {raised}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.button14
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.button14  -command {smasherGUIupdateColor}  -text {Change Color}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.button14
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.button14  -command {smasherGUIupdateColor}  -text {Change Color}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide  -command {smasherGUIhideFace}  -text {HIDE}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide  -command {smasherGUIhideFace}  -text {HIDE}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide0
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide0  -command {smasherGUIcalcFaceArea}  -text {Calc Area}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide0
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide0  -command {smasherGUIcalcFaceArea}  -text {Calc Area}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.label13
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.label13  -font {Helvetica 10}  -text {Selected Face Properties}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.label13
+  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.label13  -font {Helvetica 10}  -text {Selected Face Properties}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.label7
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.label7  -font {Helvetica 10}  -text {Face Ids}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.label7
+  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.label7  -font {Helvetica 10}  -text {Face Ids}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3
-  ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1 xview}  -orient {horizontal}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3
+  #ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1 xview}  -orient {horizontal}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2
-  ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1 yview}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2
+  #ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1 yview}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1
-  listbox .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1  -exportselection {0}  -font {helvetica 10}  -height {1}  -relief {raised}  -xscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3 set}  -yscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2 set}
-  # bindings
-  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1 <ButtonRelease-1> {smasherGUIupdateSel %W}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1
+  #listbox .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1  -exportselection {0}  -font {helvetica 10}  -height {1}  -relief {raised}  -xscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3 set}  -yscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2 set}
+  ## bindings
+  #bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1 <ButtonRelease-1> {smasherGUIupdateSel %W}
+  #
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11  -borderwidth {0}  -relief {flat}  -width {30}  -height {80}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1  -width {270}  -height {188}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.treeview1
+  ttk::treeview .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.treeview1  -show {tree}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.tscrollbar0
+  ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.tscrollbar0  -command {guiSV_model_tree_scroll}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2  -width {270}  -height {188}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.tlabel1
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.tlabel1  -font {Helvetica 10}  -relief {flat}  -anchor {center}  -text {Visualization}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9.m}  -text {Model Visualization}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9.m
+  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9.m add command  -command {guiSV_model_display_selected_full_model 1}  -label {Display as Full Model}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9.m add command  -command {guiSV_model_display_selected_models_all_faces 1}  -label {Display as Faces}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9.m add command  -command {guiSV_model_display_selected_full_model 0}  -label {Do Not Display Model}
+
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10.m}  -text {Face Visualization}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10.m
+  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10.m add command  -command {guiSV_model_display_selected_faces 1}  -label {Display Face}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10.m add command  -command {guiSV_model_display_selected_faces 0}  -label {Do Not Display Face}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m}  -text {Color and Opacity}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m
+  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m add command  -command {guiSV_model_change_selected_color}  -label {Change Selected Color}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m add cascade  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m}  -label {Change Selected Opacity}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.frame27.top.tframe1.frame0.menubutton1.m.m
+  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m add command -command {guiSV_model_change_selected_opacity 1.0}   -label {opaque (1.0)}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m add command -command {guiSV_model_change_selected_opacity 0.75}  -label {semi-transparent (0.75)}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m add command -command {guiSV_model_change_selected_opacity 0.5}   -label {semi-transparent (0.5)}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m add command -command {guiSV_model_change_selected_opacity 0.33}  -label {semi-transparent (0.33)}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11.m.m add command -command {guiSV_model_change_selected_opacity 0.2}   -label {semi-transparent (0.2)}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.tlabel2
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.tlabel2  -font {Helvetica 10}  -relief {flat}  -anchor {center}  -text {Operations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m}  -text {Model Operations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m
+  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_delete_selected_models}  -label {Delete Selected Models}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13.m}  -text {Face Operations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13.m
+  menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13.m add command  -command {guiSV_model_calc_selected_face_area}  -label {Calculate Selected Area}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12246,11 +12315,11 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button12
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button12  -command {createPREOPmodelCreateModel}  -text {Create Pre-Op Solid Model}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15  -command {createPREOPmodelSaveModel}  -text {Save Model}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15  -command {createPREOPmodelSaveModel}  -text {Save Model}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.entry0  -font {Helvetica 10}  -textvariable {gFilenames(preop_solid_file)}  
+  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.entry0  -font {Helvetica 10}  -textvariable {gFilenames(preop_solid_file)}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame8  -borderwidth {0}  -relief {flat}  -width {336}  -height {74}
@@ -12275,31 +12344,31 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0  -borderwidth {0}  -relief {flat}  -width {479}  -height {86}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0  -borderwidth {0}  -relief {flat}  -width {479}  -height {86}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0  -width {497}  -height {28}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0  -width {497}  -height {28}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0.button2
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0.button2  -command {guiFNMloadSolidModel preblend_solid_file preblend_solid}  -text {Load}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0.button2
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0.button2  -command {guiFNMloadSolidModel preblend_solid_file preblend_solid}  -text {Load}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9  -width {497}  -height {28}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9  -width {497}  -height {28}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.label24
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -text {Solid model file:}  -width {20}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.label24
+  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -text {Solid model file:}  -width {20}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(preblend_solid_file)}  
-  # bindings
-  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0
+  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(preblend_solid_file)}  
+  ## bindings
+  #bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.button1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.button1  -command {guiBLENDSbrowseFileSolid preblend_solid_file preblend_solid}  -text {Browse}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.button1
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.button1  -command {guiBLENDSbrowseFileSolid preblend_solid_file preblend_solid}  -text {Browse}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.label17
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.label17  -font {Helvetica 10}  -borderwidth {0}  -text {Solid Model for Blending}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.label17
+  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.label17  -font {Helvetica 10}  -borderwidth {0}  -text {Solid Model for Blending}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1  -borderwidth {0}  -relief {flat}  -width {479}  -height {80}
@@ -12337,24 +12406,24 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0  -width {497}  -height {28}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button1  -command {guiBLENDSsaveModel}  -text {Save}
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button1  -command {guiBLENDSsaveModel}  -text {Save}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button3
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button3  -command {guiBLENDSblend}  -text {Blend Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button3  -command {guiSV_model_blend_selected_models}  -text {Blend Model}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9  -width {497}  -height {28}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9  -width {497}  -height {28}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.label24
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -text {Solid model file:}  -width {20}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.label24
+  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -text {Solid model file:}  -width {20}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(blend_solid_file)}  
-  # bindings
-  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0
+  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(blend_solid_file)}  
+  ## bindings
+  #bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.button1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.button1  -command {guiBLENDSbrowseFileSolid blend_solid_file blend_solid}  -text {Browse}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.button1
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.button1  -command {guiBLENDSbrowseFileSolid blend_solid_file blend_solid}  -text {Browse}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.label17
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.label17  -font {Helvetica 10}  -borderwidth {0}  -text {Blended Solid Model}
@@ -12398,25 +12467,25 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.tlabel6  -font {Helvetica 10}  -relief {flat}  -text {Trim a Parasolid Model with PCMRI Location}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.button17
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.button17  -command {createPREOPmodelTrim}  -text {Trim Solid Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.button17  -command {guiSV_model_trim_model}  -text {Trim Solid Model}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20  -width {440}  -height {31}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20  -width {440}  -height {31}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.button8
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.button8  -command {guiTMwriteTrimModel1}  -text {Save Trimmed Model 1}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.button8
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.button8  -command {guiTMwriteTrimModel1}  -text {Save Trimmed Model 1}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.entry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.entry8  -font {Helvetica 10}  -textvariable {gFilenames(preop_trimmed1_file)}  
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.entry8
+  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.entry8  -font {Helvetica 10}  -textvariable {gFilenames(preop_trimmed1_file)}  
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23  -width {440}  -height {31}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23  -width {440}  -height {31}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.button8
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.button8  -command {guiTMwriteTrimModel2}  -text {Save Trimmed Model 2}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.button8
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.button8  -command {guiTMwriteTrimModel2}  -text {Save Trimmed Model 2}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.entry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.entry8  -font {Helvetica 10}  -textvariable {gFilenames(preop_trimmed2_file)}  
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.entry8
+  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.entry8  -font {Helvetica 10}  -textvariable {gFilenames(preop_trimmed2_file)}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12424,51 +12493,51 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2
-  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2  -text {Load PolyData [-]}  -height {25}
-  # bindings
-  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2 <Button-1> {guiCV_squeezer_labelframe .frame1 %W}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2
+  #ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2  -text {Load PolyData [-]}  -height {25}
+  ## bindings
+  #bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2 <Button-1> {guiCV_squeezer_labelframe .frame1 %W}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1  -width {270}  -height {188}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1  -width {270}  -height {188}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9  -width {270}  -height {188}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9  -width {270}  -height {188}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.entry4
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.entry4  -font {Helvetica 10}  -textvariable {gFilenames(polydata_solid_file)}  
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.entry4
+  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.entry4  -font {Helvetica 10}  -textvariable {gFilenames(polydata_solid_file)}  
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.tbutton7
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.tbutton7  -command {guiPDloadSolidModel polydata_solid_file}  -text {Load}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.tbutton7
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.tbutton7  -command {guiPDloadSolidModel polydata_solid_file}  -text {Load}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5  -width {270}  -height {188}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5  -width {270}  -height {188}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5.tbutton8
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5.tbutton8  -command {guiPDsaveSolidModel}  -text {Save}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5.tbutton8
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5.tbutton8  -command {guiPDsaveSolidModel}  -text {Save}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3
-  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3  -text {Update PolyData Object [-]}  -width {250}  -height {25}
-  # bindings
-  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3 <Button-1> {guiCV_squeezer_labelframe .frame17 %W}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3
+  #ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3  -text {Update PolyData Object [-]}  -width {250}  -height {25}
+  ## bindings
+  #bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3 <Button-1> {guiCV_squeezer_labelframe .frame17 %W}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4 
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4 
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton22
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton22  -command {guiPDupdateSolidModel}  -text {Update Solid Model}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton22
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton22  -command {guiPDupdateSolidModel}  -text {Update Solid Model}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton23
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton23  -command {guiPDrestoreSolidModel}  -text {Restore Solid Model}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton23
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton23  -command {guiPDrestoreSolidModel}  -text {Restore Solid Model}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5 
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5 
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5.tbutton1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5.tbutton1  -command {guiSVHELPshow polydata.txt}  -text {What's This?}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5.tbutton1
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5.tbutton1  -command {guiSVHELPshow polydata.txt}  -text {What's This?}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16
   ttk::notebook .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16
@@ -12800,7 +12869,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe9.frame8  -borderwidth {0}  -relief {flat}  -width {440}  -height {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe9.frame8.button7
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe9.frame8.button7  -command {guiBOUNDARIESselectCombineFace}  -text {Select and Combine Faces}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe9.frame8.button7  -command {guiBOUNDARIEScombineSelectedFaces}  -text {Combine Selected Faces}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe10
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe10  -text {Remesh Faces [-]}  -height {25}
@@ -12823,7 +12892,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe9.tbutton5
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe9.tbutton5  -command {guiBOUNDARIESremeshSurfaces remeshFaceSize}  -text {Select and Remesh Faces}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe9.tbutton5  -command {guiBOUNDARIESremeshSelectedFaces}  -text {Remesh Selected Faces}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11  -text {Delete Faces [-]}  -height {25}
@@ -12834,7 +12903,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11.tframe9.tbutton5
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11.tframe9.tbutton5  -command {guiBOUNDARIESdeleteRegions}  -text {Select and Delete Faces}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11.tframe9.tbutton5  -command {guiBOUNDARIESdeleteSelectedFaces}  -text {Delete Selected Faces}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11.tframe9.tbutton6
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe11.tframe9.tbutton6  -command {guiBOUNDARIESfillWithIds}  -text {Fill Holes With Ids}
@@ -12850,22 +12919,22 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe12.tframe9.tbutton5
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe12.tframe9.tbutton5  -command {guiSVHELPshow faceextraction.txt}  -text {Help}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3
-  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3  -text {Model Faces}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3
+  #ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3  -text {Model Faces}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame
-  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame
+  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3
-  ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1 xview}  -orient {horizontal}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3
+  #ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1 xview}  -orient {horizontal}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2
-  ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1 yview}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2
+  #ttk::scrollbar .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2  -command {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1 yview}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1
-  listbox .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1  -borderwidth {0}  -exportselection {0}  -font {helvetica 10}  -height {1}  -relief {flat}  -xscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3 set}  -yscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2 set}
-  # bindings
-  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1 <ButtonRelease-1> {smasherGUIupdateSel %W}
+  ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1
+  #listbox .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1  -borderwidth {0}  -exportselection {0}  -font {helvetica 10}  -height {1}  -relief {flat}  -xscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3 set}  -yscrollcommand {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2 set}
+  ## bindings
+  #bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1 <ButtonRelease-1> {smasherGUIupdateSel %W}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12962,7 +13031,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4  -command {guiBOOLEANallBoolean}  -text {Boolean}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4  -command {guiBOOLEANallBoolean}  -text {Create Pre-Op Solid Model}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8  -text {Helper [+]}  -width {152}  -height {25}
@@ -19201,34 +19270,35 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9  -expand 1  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10 -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19  -expand 1  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1  -fill both -side right
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19  -expand 1  -fill both -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2  -expand 1  -fill x  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2  -expand 1  -fill x  -side top
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0  -fill both -side bottom
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.label6  -fill x  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5  -expand 1  -fill x  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5  -expand 1  -fill x  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton0  -fill x  -side left
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton3  -side right
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton2  -side right
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tradiobutton1  -side right
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.tframe0.tlabel3  -side right
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton3  -side right
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton2  -side right
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton1  -side right
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tlabel3  -side right
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3  -expand 1  -fill both  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1  -expand 1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.label10  -fill both
@@ -19253,28 +19323,44 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame6.label5  -fill both  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame6.label11
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.label13  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8  -expand 1  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7  -expand 1  -fill both
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1  -fill both -side left -expand 1
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2  -fill both -side right
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.label10  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11  -expand 1  -fill both
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.treeview1  -fill both -side left -expand 1
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.tscrollbar0  -fill y -side right
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.button14  -expand 1  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide  -expand 1  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide0  -expand 1  -fill both  -side left
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.tlabel1  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton9  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton10  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton11  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.tlabel2  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13  -fill both
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.label13  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8  -expand 1  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7  -expand 1  -fill both
+
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.label10  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11  -expand 1  -fill both
+
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.button14  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide0  -expand 1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.label7  -fill x
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.label7  -fill x
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame  -expand 1  -fill both  -side left
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2  -fill y  -side right
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1  -expand 1  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3  -fill x  -side bottom
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar2  -fill y  -side right
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1  -expand 1  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.scrollbar3  -fill x  -side bottom
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1  -expand 1  -fill both
@@ -19299,8 +19385,8 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button12  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.entry0  -expand 1  -fill both  -side right
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.entry0  -expand 1  -fill both  -side right
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame8
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame8.label10  -fill both
@@ -19314,23 +19400,23 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame18  -expand 1  -fill both
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.label17  -expand 1  -fill x
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9  -expand 1  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0  -expand 1  -fill both
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.label17  -expand 1  -fill x
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9  -expand 1  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0  -expand 1  -fill both
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0.button2  -expand 1  -fill both  -side left
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame0.button2  -expand 1  -fill both  -side left
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.label24  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0  -expand 1  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.button1  -fill both  -side left
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.label24  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.entry0  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame0.frame9.button1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1.label16  -expand 1  -fill x
@@ -19348,17 +19434,17 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.label17  -expand 1  -fill x
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9  -expand 1  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9  -expand 1  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button3  -expand 1  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button1  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame0.button1  -expand 1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.label24  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0  -expand 1  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.button1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.label24  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.entry0  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame2.frame9.button1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame18
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame18.frame10  -fill x
@@ -19382,52 +19468,52 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.tlabel6
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.button17  -anchor w  -fill y
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.button8  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.entry8  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.button8  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame20.entry8  -expand 1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.button8  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.entry8  -expand 1  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.button8  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4.tframe9.frame23.entry8  -expand 1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2  -expand 1  -fill both -side top
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3  -fill x
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2  -expand 1  -fill both -side top
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3  -fill x
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16  -expand 1  -fill both
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1  -fill x
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1  -fill x
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9  -fill both -expand 1
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5  -fill both
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9  -fill both -expand 1
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5  -fill both
  
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.entry4  -fill both -expand 1 -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.tbutton7  -fill both 
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.entry4  -fill both -expand 1 -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame9.tbutton7  -fill both 
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5.tbutton8  -fill both -side right
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe2.frame1.frame5.tbutton8  -fill both -side right
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17 -fill both
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17 -fill both
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4 -fill both -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5 -fill both -side right
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4 -fill both -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5 -fill both -side right
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton22 -side left -expand 1 -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton23 -side right
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton22 -side left -expand 1 -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame4.tbutton23 -side right
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5.tbutton1 -side left -expand 1 -fill both
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.tframe17.frame5.tbutton1 -side left -expand 1 -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1  -fill x
@@ -19608,8 +19694,8 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe7.tframe1.tbutton1  -fill x  -side right
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3  -expand 1  -fill both  -side left
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9  -fill both  -side left
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3  -expand 1  -fill both  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9  -fill both  -side left -expand 1
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame22  -fill both
@@ -19668,13 +19754,13 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe12.tframe9
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tframe9.frame19.tframe1.tlabelframe12.tframe9.tbutton5  -fill x  -side right
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame  -expand 1  -fill both  -side left
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame  -expand 1  -fill both  -side left
 
-  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2  -fill y  -side right
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1  -expand 1  -fill both
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3  -fill x  -side bottom
+  ## pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar2  -fill y  -side right
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1  -expand 1  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.scrollbar3  -fill x  -side bottom
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0  -fill both
@@ -26463,55 +26549,60 @@ proc gui3DchangeSurface { operation} {
   global smasherInputName
   global guiPDvars
   global gPolyDataFaceNames
+  global gOptions
 
-  set obj $gui3Dvars(polydata_change_obj)
-  set Bobj $gui3Dvars(polydata_change_backup_obj)
-
-  catch {repos_delete -obj $Bobj}
-  if {$guiPDvars(updatedSolid) == 1} {
-     if {[catch {$smasherInputName GetPolyData -result $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before changing 3D surface"
-      return
-    }
-  } else {
-     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before performing a smoothing operation"
-      return
-    }
+  set kernel $gOptions(meshing_solid_kernel)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Kernel must be PolyData for operation"
   }
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model allowed for operation"
+  }
+  set newmodel "[string trim $model]_[string trim $operation]"
+  catch {repos_delete -obj $newmodel}
+  if {[model_create $kernel $newmodel] != 1} {
+    guiSV_model_delete_model $kernel $newmodel
+    model_create $kernel $newmodel
+  }
+  solid_copy -src $model -dst $newmodel
 
+  set modelpd /models/$kernel/$model 
+  set obj /models/$kernel/$newmodel
+  catch {repos_delete -obj $modelpd}
   catch {repos_delete -obj $obj}
+  $model GetPolyData -result $modelpd
 
   if {$operation == "smooth"} {
      set relax $gui3Dvars(smooth_smooth_relax_factor)
      set num   $gui3Dvars(smooth_smooth_num_iters)
-     geom_smooth $Bobj $relax $num $obj
+     geom_smooth $modelpd $relax $num $obj
 
   } elseif {$operation == "syncsmooth"} {
      set band  $gui3Dvars(smooth_syncsmooth_pass_band_value)
      set num   $gui3Dvars(smooth_syncsmooth_num_iters)
-     geom_syncsmooth $Bobj $band $num $obj 
+     geom_syncsmooth $modelpd $band $num $obj 
 
   } elseif {$operation == "butterfly"} {
      set num   $gui3Dvars(smooth_butterfly_divisions)
-     geom_butterfly $Bobj $num $obj
+     geom_butterfly $modelpd $num $obj
 
   } elseif {$operation == "densify"} {
      set num   $gui3Dvars(smooth_densify_divisions)
-     geom_densify $Bobj $num $obj  
+     geom_densify $modelpd $num $obj  
 
   } elseif {$operation == "quadratic_decimate"} {
      set target  $gui3Dvars(smooth_quad_target)
-     geom_quadraticDecimation $Bobj $target $obj 
+     geom_quadraticDecimation $modelpd $target $obj 
 
   } elseif {$operation == "fill_holes"} {
-     geom_fillHoles $Bobj $obj
+     geom_fillHoles $modelpd $obj
 
   } elseif {$operation == "largest"} {
-     geom_largestConnected $Bobj $obj
+     geom_largestConnected $modelpd $obj
 
   } elseif {$operation == "undo"} {
-     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
+     if {[catch {geom_copy -src $obj -dst $modelpd} errmsg] != 0} {
       tk_messageBox -title "Solid Undo Error"  -type ok -message "WARNING: There was an issue performing undo operation"
       return
     }
@@ -26521,11 +26612,8 @@ proc gui3DchangeSurface { operation} {
      return -code error "ERROR:  invalid ($operation)."
   }
 
-  set guiPDvars(updatedSolid) 0
-  crd_ren gRenWin_3D_ren1
-  global gui3Dvars
-  set gui3Dvars(smooth_num_tris) [[repos_exportToVtk -src $obj] GetNumberOfCells]
-  gui3DvisSmooth no
+  guiSV_model_update_new_solid $kernel $model $newmodel
+
 }
 
 
@@ -28035,45 +28123,6 @@ proc guiBOUNDARIESdeleteRegions {} {
   }
   set guiPDvars(updatedSolid) 1
 }
-
-
-# Procedure: guiBOUNDARIESextract
-proc guiBOUNDARIESextract {} {
-  global gOptions
-  global smasherInputName
-  global guiMMvars
-  global guiPDvars
-
-  set extraction_angle $guiPDvars(angleForBoundaries)
-  if {$smasherInputName == "none"} {
-    tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load the solid prior to extracting the faces"
-    return
-  }
-
-  if {$gOptions(meshing_solid_kernel) == "PolyData"} {
-    global gPolyDataFaceNames
-    global gPolyDataFaceNamesInfo
-    catch {unset gPolyDataFaceNames}
-    catch {unset gPolyDataFaceNamesInfo}
-
-    puts "Running Boundary Extraction Filter..."
-    $smasherInputName GetBoundaryFaces -angle $extraction_angle
-    puts "Got Boundaries"
-
-    set allids [$smasherInputName GetFaceIds]
-    foreach id $allids {
-      set gPolyDataFaceNames($id) "noname_$id"
-    }
-  } else {
-    return -code error "Solid Must be of type PolyData"
-  } 
-
-  crd_ren gRenWin_3D_ren1
-  smasherGUIupdateViewWindow
-  set guiPDvars(vis_full_pd) 0
-  set guiPDvars(updatedSolid) 1
-}
-
 
 # Procedure: guiPDloadSolidModel
 proc guiPDloadSolidModel {fn} {
@@ -38095,6 +38144,24 @@ proc guiTMwriteTrimModel2 {} {
 proc guiTRIMaddCutBox {} {
    global guiTRIMvars
    global symbolicName
+   global gOptions
+
+   set kernel $gOptions(meshing_solid_kernel)
+   if {$kernel != "PolyData"} {
+     return -code error "ERROR: Kernel must be PolyData for operation"
+   }
+   set model [guiSV_model_get_tree_current_models_selected]
+   if {[llength $model] != 1} {
+     return -code error "ERROR: Only one model allowed to be trimmed at a time"
+   }
+   set newmodel "[string trim $model]_boxtrimmed"
+   catch {repos_delete -obj $newmodel}
+   if {[model_create $kernel $newmodel] != 1} {
+     guiSV_model_delete_model $kernel $newmodel
+     catch {repos_delete -obj /models/$kernel/$newmodel}
+     model_create $kernel $newmodel
+   }
+   solid_copy -src $model -dst $newmodel
 
    set offset $guiTRIMvars(plane_offset)
    set side inside
@@ -38104,7 +38171,9 @@ proc guiTRIMaddCutBox {} {
    set tbox $symbolicName(guiTRIMcutFileTB)
    $tbox insert end "\# planes side offset pt1x pt1y pt1z nrm1x nrm1y nrm1z pt2x...\n"
    $tbox insert end "box_planes $side $offset $vals\n"
-   guiTRIMcreateCutBox $side $offset $vals
+   guiTRIMcreateCutBox $model $newmodel $side $offset $vals
+
+   guiSV_model_update_new_solid $kernel $model $newmodel
 }
 
 
@@ -38112,6 +38181,24 @@ proc guiTRIMaddCutBox {} {
 proc guiTRIMaddCutPlane { side} {
    global guiTRIMvars
    global symbolicName
+   global gOptions
+
+   set kernel $gOptions(meshing_solid_kernel)
+   if {$kernel != "PolyData"} {
+     return -code error "ERROR: Kernel must be PolyData for operation"
+   }
+   set model [guiSV_model_get_tree_current_models_selected]
+   if {[llength $model] != 1} {
+     return -code error "ERROR: Only one model allowed to be trimmed at a time"
+   }
+   set newmodel "[string trim $model]_boxtrimmed"
+   catch {repos_delete -obj $newmodel}
+   if {[model_create $kernel $newmodel] != 1} {
+     guiSV_model_delete_model $kernel $newmodel
+     catch {repos_delete -obj /models/$kernel/$newmodel}
+     model_create $kernel $newmodel
+   }
+   solid_copy -src $model -dst $newmodel
 
    set tbox $symbolicName(guiTRIMcutFileTB)
    set topRight $guiTRIMvars(plane_p1)
@@ -38121,7 +38208,9 @@ proc guiTRIMaddCutPlane { side} {
    $tbox insert end "\# plane side offset topRight botRight topLeft\n"
    $tbox insert end "plane $side $offset $topRight $botRight $topLeft\n"
 
-   guiTRIMcreateCutPlane $side
+   guiTRIMcreateCutPlane $model $newmodel $side
+
+   guiSV_model_update_new_solid $kernel $model $newmodel
 }
 
 
@@ -38696,6 +38785,19 @@ proc guiTRIMvis { flag} {
   global gRen3d
   global guiPDvars
   global smasherInputName
+  global gOptions
+
+  set kernel $gOptions(meshing_solid_kernel)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Kernel must be PolyData for operation"
+  }
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model should be selected to show interactor"
+  }
+  set modelpd /models/$kernel/$model
+  catch {repos_delete -obj $modelpd}
+  $model GetPolyData -result $modelpd
 
   set ren $gRen3d
 
@@ -38707,28 +38809,12 @@ proc guiTRIMvis { flag} {
     set gRen3dFreeze 1
   }
 
-  set obj $gui3Dvars(polydata_change_obj)
-  set Bobj $gui3Dvars(polydata_change_backup_obj)
-
-  catch {repos_delete -obj $Bobj}
-  if {$guiPDvars(updatedSolid) == 1} {
-     if {[catch {$smasherInputName GetPolyData -result $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before viewing"
-      return
-    }
-  } else {
-     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before viewing"
-      return
-    }
-  }
-
   if {$flag == "vis_boxInteractor"} {
     if {$guiTRIMvars(vis_boxInteractor) == 0} {
       catch {vis_boxWidgetRm $gRen3d guiTRIM}
     } else {
       catch {vis_boxWidgetRm $gRen3d guiTRIM}
-      vis_boxWidgetAdd $gRen3d [repos_exportToVtk -src $Bobj] guiTRIM  guiTRIMboxEnableInteraction  guiTRIMboxBeginInteraction  guiTRIMboxInteract  guiTRIMboxEndInteraction
+      vis_boxWidgetAdd $gRen3d [repos_exportToVtk -src $modelpd] guiTRIM  guiTRIMboxEnableInteraction  guiTRIMboxBeginInteraction  guiTRIMboxInteract  guiTRIMboxEndInteraction
       vis_boxWidgetOn $gRen3d guiTRIM
       vis_boxWidgetRotateOn $gRen3d guiTRIM
     }
@@ -38739,37 +38825,37 @@ proc guiTRIMvis { flag} {
       catch {vis_planeWidgetRm $gRen3d guiTRIM}
     } else {
       catch {vis_planeWidgetRm $gRen3d guiTRIM}
-      vis_planeWidgetAdd $gRen3d [repos_exportToVtk -src $Bobj] guiTRIM  guiTRIMplaneEnableInteraction  guiTRIMplaneBeginInteraction  guiTRIMplaneInteract  guiTRIMplaneEndInteraction
+      vis_planeWidgetAdd $gRen3d [repos_exportToVtk -src $modelpd] guiTRIM  guiTRIMplaneEnableInteraction  guiTRIMplaneBeginInteraction  guiTRIMplaneInteract  guiTRIMplaneEndInteraction
       vis_planeWidgetOn $gRen3d guiTRIM
     }
   }
 
-  if {$flag == "vis_initial_surface"} {
-    if {$guiTRIMvars(vis_initial_surface) == 0} {
-      catch {vis_pRm $gRen3d $obj}
-    } else {
-      catch {vis_pRm $gRen3d $obj}
-      vis_pRepos $gRen3d $obj
-      set actor [vis_pGetActor $ren $obj]
-      [$actor GetMapper] ScalarVisibilityOn
-      [$actor GetMapper] SetLookupTable gBlueToRedLUT
-      [$actor GetMapper] SetScalarRange $guiTRIMvars(area_min_value) $guiTRIMvars(area_max_value)
-    }
-  }
+  #if {$flag == "vis_initial_surface"} {
+  #  if {$guiTRIMvars(vis_initial_surface) == 0} {
+  #    catch {vis_pRm $gRen3d $obj}
+  #  } else {
+  #    catch {vis_pRm $gRen3d $obj}
+  #    vis_pRepos $gRen3d $obj
+  #    set actor [vis_pGetActor $ren $obj]
+  #    [$actor GetMapper] ScalarVisibilityOn
+  #    [$actor GetMapper] SetLookupTable gBlueToRedLUT
+  #    [$actor GetMapper] SetScalarRange $guiTRIMvars(area_min_value) $guiTRIMvars(area_max_value)
+  #  }
+  #}
 
-  if {$flag == "vis_cut_surface"} {
-    crd_ren gRenWin_3D_ren1
-    if {$guiTRIMvars(vis_cut_surface) == 0} {
-      catch {vis_pRm $gRen3d $Bobj}
-    } else {
-      catch {vis_pRm $gRen3d $Bobj}
-      vis_pRepos $gRen3d $Bobj
-      set actor [vis_pGetActor $ren $Bobj]
-      [$actor GetMapper] ScalarVisibilityOn
-      [$actor GetMapper] SetLookupTable gBlueToRedLUT
-      [$actor GetMapper] SetScalarRange $guiTRIMvars(area_min_value) $guiTRIMvars(area_max_value)
-    }
-  }
+  #if {$flag == "vis_cut_surface"} {
+  #  crd_ren gRenWin_3D_ren1
+  #  if {$guiTRIMvars(vis_cut_surface) == 0} {
+  #    catch {vis_pRm $gRen3d $Bobj}
+  #  } else {
+  #    catch {vis_pRm $gRen3d $Bobj}
+  #    vis_pRepos $gRen3d $Bobj
+  #    set actor [vis_pGetActor $ren $Bobj]
+  #    [$actor GetMapper] ScalarVisibilityOn
+  #    [$actor GetMapper] SetLookupTable gBlueToRedLUT
+  #    [$actor GetMapper] SetScalarRange $guiTRIMvars(area_min_value) $guiTRIMvars(area_max_value)
+  #  }
+  #}
 
   if {$alreadyfrozen == 0} {
     set gRen3dFreeze 0
@@ -46059,6 +46145,13 @@ proc mainGUI {} {
   $tv insert {} 0 -id .groups.all -text "2D Group Surfaces" -open 0
   $tv insert {} 1 -id .groups.3d -text "3D Surfaces" -open 0
 
+  set tv $symbolicName(guiSV_model_tree)
+  bind $tv <<TreeviewOpen>> [list guiSV_model_fillTree $tv]
+  bind $tv <<TreeviewSelect>> [list guiSV_model_selectTree $tv]
+  $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
+  $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
+  $tv insert {} 1 -id .models.Parasolid -text "Parasolid" -open 0
+
   global symbolicName
   global guiTRIMvars
   global gRen3d
@@ -48904,8 +48997,8 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10.tframe21)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.frame17)} {1}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.frame17_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tlabelframe3.frame17 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.frame17)} {1}
+#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.frame17_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tlabelframe3.frame17 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe8.tframe9)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe8.tframe9_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe8 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe1)} {1}
@@ -49729,6 +49822,8 @@ global {lsGUIctrY}
 set {lsGUIctrY} {0}
 global {lsGUIcurrentGroup}
 set {lsGUIcurrentGroup} {}
+global {lsGUIcurrentModel}
+set {lsGUIcurrentModel} {}
 global {lsGUIcurrentPathLabel}
 set {lsGUIcurrentPathLabel} {blank}
 global {lsGUIcurrentPathName}
@@ -49900,6 +49995,8 @@ set {symbolicName(guiSVIMG_opacity_canvas)} {.guiCV.tframe3.tpanedwindow4.tframe
 set {symbolicName(guiSVIMG_red_canvas)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe0.tframe12.canvas7}
 set {symbolicName(guiSV_group_tree)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.frame27.top.tframe0.tframe0.treeview1}
 set {symbolicName(guiSV_group_tree_scrollbar)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.frame27.top.tframe0.tframe0.tscrollbar0}
+set {symbolicName(guiSV_model_tree)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.treeview1}
+set {symbolicName(guiSV_model_tree_scrollbar)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.tscrollbar0}
 set {symbolicName(guiSV_path_tree)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe4.tframe0.treeview1}
 set {symbolicName(guiSV_path_tree_scrollbar)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe4.tframe0.tscrollbar0}
 set {symbolicName(guiTRIMcutFileTB)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe14.tframe15.frame.text2}
@@ -49914,7 +50011,7 @@ set {symbolicName(lsRenWinMag)} {.guiCV.tframe3.tpanedwindow4.tframe5.tpanedwind
 set {symbolicName(lsRenWinPot)} {.guiCV.tframe3.tpanedwindow4.tframe5.tpanedwindow45.tframe36.tpanedwindow0.tframe2.tpanedwindow5.tframe7.f1}
 set {symbolicName(meshsimDiscreteModelListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe14.tframe1.tlabelframe3.frame.listbox1}
 set {symbolicName(meshsimFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tlabelframe3.frame.listbox1}
-set {symbolicName(polydataFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1}
+#set {symbolicName(polydataFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.frame.listbox1}
 set {symbolicName(tetgenFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame3.frame5.frame.listbox1}
 set {symbolicName(resampleGUI_sliderx)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame1.frame4.scale20}
 set {symbolicName(resampleGUI_slidery)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame1.frame22.scale20}
@@ -49943,7 +50040,7 @@ set {symbolicName(results_tab_right_plots_menu)} {.guiCV.tframe3.tpanedwindow4.t
 set {symbolicName(root)} {.}
 set {symbolicName(smasherAttNameLabel)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0}
 set {symbolicName(smasherEntityIdLabel)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame2.entry0}
-set {symbolicName(smasherFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1}
+#set {symbolicName(smasherFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1}
 set {symbolicName(smasherGUIhideButton)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide}
 set {symbolicName(smasherOpacityScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11}
 set {symbolicName(svhelp_textbox)} {.svhelp.frame0.frame.text2}
