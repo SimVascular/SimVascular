@@ -962,7 +962,8 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
   //Create a new mesh sizing function and call TGenUtils to compute function.
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementSphere(polydatasolid_,"MeshSizingFunction",
-	size,radius,center,meshoptions_.secondarrayfunction) != CV_OK)
+	size,radius,center,meshoptions_.secondarrayfunction,
+	meshoptions_.maxedgesize) != CV_OK)
   {
     return CV_ERROR;
   }

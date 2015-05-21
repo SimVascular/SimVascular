@@ -65,9 +65,17 @@ proc model_create {kernel name} {
     #@r status (0 if model already existed, 1 if it was created).
     global gModel
     global gKernel
+
+    set dotsplit [split $name "."]
+    set slashsplit [split $name "/"]
+    if {[llength $dotsplit] > 1 || [llength $slashsplit] > 1} {
+      return -code error "ERROR: Cannot give name containing '.' or '/', give different name"
+    }
     if {[model_exists $name]} {
       if {$gKernel($name) == $kernel} {
         return 0
+      } else {
+	return -code error "ERROR: Cannot give same name to models of different kernel types"
       }
     }
     set gModel($name) {}
@@ -417,6 +425,10 @@ proc guiSV_model_selectTree { args} {
 
   set firstmodel [lindex [split [lindex $children 0] "."] 3]
   set firstchild [lindex [split [lindex $children 0] "."] 4]
+  if {[llength $children] == 1} {
+    puts "In here $children"
+    guiSV_model_virtual_pick_actor $firstmodel $firstchild
+  }
   $symbolicName(smasherAttNameLabel) delete 0 end
   $symbolicName(smasherAttNameLabel) insert 0 $firstchild
   $symbolicName(smasherEntityIdLabel) config -state normal
@@ -2274,7 +2286,6 @@ proc guiSV_model_copy_model {kernel model newname op} {
       catch {unset gPolyDataFaceNames}
       set faceids [$newmodel GetFaceIds]
       foreach id $faceids {
-	puts "Settinggnngngngng $id"
 	set gPolyDataFaceNames($id) [model_idface $kernel $model $id]
       }
     }
@@ -2401,13 +2412,24 @@ proc guiSV_model_create_model_polydata {} {
   tk_messageBox -title "Solid Unions Complete"  -type ok -message "Number of Free Edges: [lindex $rtnstr 0]\n (Free edges are okay for open surfaces)\n Number of Bad Edges: [lindex $rtnstr 1]"
 }
 
-#proc testView {name} {
-#  global CurrentRenderer
-#
-#  set actor $CurrentRenderer/models/PolyData/$name
-#  VirtualPickActor $name
-#}
-#
+proc guiSV_model_virtual_pick_actor {model face} {
+  global CurrentRenderer
+  global gRen3d
+  global gKernel
+  set kernel $gKernel($model)
+
+  if {$face == ""} {
+  set actor [vis_pGetActor $gRen3d /models/$kernel/$model]
+  } else {
+  set actor [vis_pGetActor $gRen3d /models/$kernel/$model/$face]
+  }
+  if {$actor == ""} {
+    return
+  }
+  VirtualPickActor $actor
+  vis_render $gRen3d
+}
+
 # Procedure: guiSV_model_create_model_parasolid
 proc guiSV_model_create_model_parasolid {} {
    global symbolicName
