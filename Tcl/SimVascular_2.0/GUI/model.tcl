@@ -134,11 +134,15 @@ proc model_set_color {name color} {
 proc model_get_color {name} {
     global gModelColor
     global gOptions
+    puts "HERERERE"
     if {![model_exists $name]} {return 0}
+    puts "HERERERE"
 
     if {[lsearch -exact [array names gModelColor] $name] < 0} {
       set gModelColor($name) $gOptions(color_for_model)
     } 
+    puts "HERERERE"
+    puts "$gModelColor($name)"
       
     return $gModelColor($name)
 }
@@ -407,6 +411,10 @@ proc guiSV_model_selectTree { args} {
        return
     }
   }
+  if {[guiSV_model_get_tree_current_models_selected] == ""} {
+    return
+  }
+
   set firstmodel [lindex [split [lindex $children 0] "."] 3]
   set firstchild [lindex [split [lindex $children 0] "."] 4]
   $symbolicName(smasherAttNameLabel) delete 0 end
@@ -477,6 +485,10 @@ proc guiSV_model_set_att_name {} {
    vis_pRm $gRen3d $oldpd
    catch {repos_delete -obj $facepd}
    set faceid [lindex [$tv item .models.$kernel.$modelname.$currname -values] 1]
+   if {$kernel == "Parasolid"} {
+     puts "SETTINTING IT"
+     $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
+   }
    $modelname GetFacePolyData -face $faceid -result $facepd
    foreach key [repos_getLabelKeys -obj $oldpd] {
      set value [repos_getLabel -obj $oldpd -key $key]
@@ -697,7 +709,7 @@ proc guiSV_model_load_model {} {
     }
   }
 
-  guiSV_model_display_only_given_model $kernel $inputName $withFaces
+  guiSV_model_display_only_given_model $inputName $withFaces
 }
 
 # Procedure: guiSV_model_save_model
@@ -1043,6 +1055,11 @@ proc guiSV_model_display_model_all_faces {showFlag kernel model} {
   foreach face $faces {
     guiSV_model_display_model_face $showFlag $kernel $model $face
   }
+  if {$showFlag == 0} {
+    guiSV_model_set_col_value $kernel.$model 2 ""
+  } else {
+    guiSV_model_set_col_value $kernel.$model 2 "X"
+  }
 }
 
 proc guiSV_model_display_selected_faces {showFlag} {
@@ -1098,43 +1115,52 @@ proc guiSV_model_display_selected_full_model {showFlag} {
   }
 }
 
-proc guiSV_model_display_only_given_model {kernel modelname withFaces} {
+proc guiSV_model_display_only_given_model {modelname withFaces} {
   global symbolicName
   global gRen3d
+  global gKernel
 
   set tv $symbolicName(guiSV_model_tree)
   set models [model_names]
   foreach model $models {
+    set kernel $gKernel($model)
     if {$model == $modelname} {
       if {$withFaces} {
-	crd_ren gRenWin_3D_ren1 
-	guiSV_model_display_model_all_faces 1 $kernel $modelname
-	guiSV_model_set_col_value $kernel.$modelname 2 "X"
-	guiSV_model_set_col_value $kernel.$modelname 0 ""
-	vis_renReset $gRen3d
+	guiSV_model_display_model_all_faces 1 $kernel $model
+	guiSV_model_set_col_value $kernel.$model 2 "X"
+	guiSV_model_set_col_value $kernel.$model 0 ""
       } else {
-	guiSV_model_display_model 1 $kernel $modelname
-	guiSV_model_set_col_value $kernel.$modelname 2 ""
-	guiSV_model_set_col_value $kernel.$modelname 0 "X"
+	guiSV_model_display_model 1 $kernel $model
+	guiSV_model_set_col_value $kernel.$model 2 ""
+	guiSV_model_set_col_value $kernel.$model 0 "X"
       } 
     } else {
-      guiSV_model_display_model 0 $kernel $modelname
-      guiSV_model_display_model_all_faces 0 $kernel $modelname
-      guiSV_model_set_col_value $kernel.$modelname 2 ""
-      guiSV_model_set_col_value $kernel.$modelname 0 ""
+      guiSV_model_display_model 0 $kernel $model
+      guiSV_model_display_model_all_faces 0 $kernel $model
+      guiSV_model_set_col_value $kernel.$model 2 ""
+      guiSV_model_set_col_value $kernel.$model 0 ""
     }
-    vis_renReset $gRen3d
   }
-
+  vis_renReset $gRen3d
 }
 
 proc guiSV_model_display_object {object} { 
   global symbolicName
+  global gOptions
   global gRen3d
 
-  set modelcolor [model_get_color $object]
+  set spstr [split $object "/"]
+  if {[llength $spstr] == 2} {
+    set modelcolor $gOptions(color_for_model)
+    set opacity $gOptions(opacity_for_model)
+  } else {
+    set modelcolor $gOptions(color_for_faces)
+    set opacity $gOptions(opacity_for_faces)
+  }
   if { [lsearch -exact [repos_getLabelKeys -obj /models/$object] color] < 0 } { 
     repos_setLabel -obj /models/$object -key color -value $modelcolor}
+  if { [lsearch -exact [repos_getLabelKeys -obj /models/$object] opacity] < 0 } { 
+    repos_setLabel -obj /models/$object -key opacity -value $opacity}
   gdscGeneralView $gRen3d /models/$object
 }
 
@@ -1276,6 +1302,9 @@ proc guiSV_model_change_selected_opacity {opacity} {
 	    if { [lsearch -exact [repos_getLabelKeys -obj $modelpd] color] >= 0 } {
 	      set tmpColor [repos_getLabel -obj $modelpd -key color]
 	      if {$tmpColor != 0} {
+		if {[llength $tmpColor] == 1} {
+		  set tmpColor [winfo rgb . $tmpColor]
+		}
 		$PrePickedProperty SetColor [lindex $tmpColor 0] [lindex $tmpColor 1] [lindex $tmpColor 2]
 	      }
 	    }
@@ -1310,6 +1339,9 @@ proc guiSV_model_change_selected_opacity {opacity} {
 	    if { [lsearch -exact [repos_getLabelKeys -obj $facepd] color] >= 0 } {
 	      set tmpColor [repos_getLabel -obj $facepd -key color]
 	      if {$tmpColor != 0} {
+		if {[llength $tmpColor] == 1} {
+		  set tmpColor [winfo rgb . $tmpColor]
+		}
 		$PrePickedProperty SetColor [lindex $tmpColor 0] [lindex $tmpColor 1] [lindex $tmpColor 2]
 	      }
 	    }
@@ -1372,7 +1404,7 @@ proc guiSV_model_remove_all_faces {kernel model} {
   }
 }
 
-proc guiSV_model_delete_selected_models {} {
+proc guiSV_model_delete_selected_model {} {
   global symbolicName
   global gOptions
 
@@ -1401,6 +1433,74 @@ proc guiSV_model_delete_model {kernel model} {
   catch {$tv delete .models.$kernel.$model} 
   catch {repos_delete -obj /models/$kernel/$model}
 }
+
+# Procedure: guiVMTKCenterlines
+proc guiVMTKCenterlines {} {
+  global gOptions
+  global gObjects
+  global guiPDvars
+  global gPolyDataFaceNames
+  global symbolicName
+
+  set tv $symbolicName(guiSV_model_tree)
+  set gOptions(meshing_solid_kernel) PolyData
+  set kernel $gOptions(meshing_solid_kernel)
+  
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model can be used for centerline extraction"
+  }
+
+  global gWaitVar
+  set gWaitVar 0
+  tk_messageBox -title "Extract Centerlines"  -type ok -message "Extracting the centerlines requires the walls to be defined:\n 1. Click 'OK'\n 2. Select the wals in the Model Object list using ctrl-click or shift-click\n 3. Hit 'Enter' on your keyboard"
+  vwait gWaitVar
+
+  set selected [guiSV_model_get_tree_current_faces_selected]
+  set faces {}
+  foreach name $selected {
+    if {[lindex $name 1] != ""} {
+      lappend faces [lindex $name 1]
+    }
+  }
+  set all_faces [model_get $model]
+  set deletelist {}
+  foreach face $all_faces {
+    if {[lsearch -exact $faces $face] == -1} { 
+      lappend deletelist [lindex [$tv item .models.$kernel.$model.$face -values] 1] 
+    }
+  }
+
+  set firstsolid /models/$kernel/$model
+  set newsolid /tmp/polydata/newsolid
+  set finalsolid /tmp/polydata/finalsolid
+  catch {repos_delete -obj $firstsolid}
+  catch {repos_delete -obj $newsolid}
+  catch {repos_delete -obj $finalsolid}
+
+  $model GetPolyData -result $firstsolid
+
+  PolyDataDeleteRegions $model $deletelist
+
+  set cappedsolid [PolyDataVMTKGetCenterIds $model solid]
+
+  set polylist [PolyDataVMTKCenterlines $cappedsolid $model solid]
+  crd_ren gRenWin_3D_ren1
+  set guiPDvars(vis_centerlines) 1
+  guiPDvisObj centerlines no
+
+  set no_ids [geom_cap -src [lindex $polylist 0] -result $newsolid -captype 0]
+
+  geom_mapandcorrectids -src $firstsolid -new $newsolid -result $finalsolid -srcarrayname "ModelFaceID" -newarrayname "CenterlineCapID"
+  
+  $model SetVtkPolyData -obj $firstsolid
+  guiSV_model_display_model_all_faces 0 $kernel $model
+  guiSV_model_display_model 1 $kernel $model
+  guiSV_model_change_selected_opacity 0.2
+
+  return $finalsolid
+}
+
 
 # Procedure: guiBOUNDARIESextract
 proc guiBOUNDARIESextract {} {
@@ -1448,10 +1548,8 @@ proc guiBOUNDARIESextract {} {
   set modelpd /models/$kernel/$newmodel
   catch {repos_delete -obj $modelpd}
   $newmodel GetPolyData -result $modelpd
-  guiSV_model_display_selected_full_model 0
-  guiSV_model_display_object $kernel/$newmodel
   guiSV_model_update_tree
-  guiSV_model_set_col_value $kernel.$newmodel 0 "X"
+  guiSV_model_display_only_given_model $newmodel 1
   $tv selection set .models.$kernel.$newmodel
 }
 
@@ -1475,6 +1573,8 @@ proc guiBOUNDARIEScombineSelectedFaces {} {
   if {[llength $model] != 1} {
     return -code error "ERROR: One model needs to be selected for face extraction"
   }
+  set newmodel [string trim $model]_facescombined
+  guiSV_model_copy_model $kernel $model $newmodel 0
   set faces {}
   foreach name $selected {
     if {[lindex $name 1] != ""} {
@@ -1486,7 +1586,7 @@ proc guiBOUNDARIEScombineSelectedFaces {} {
   set one 0
   foreach face $faces {
     set two {-1}
-    set faceid [lindex [$tv item .models.$kernel.$model.$face -values] 1]
+    set faceid [lindex [$tv item .models.$kernel.$newmodel.$face -values] 1]
     if {$iter == 0} {
       set one $faceid
     } else {
@@ -1494,22 +1594,21 @@ proc guiBOUNDARIEScombineSelectedFaces {} {
     }
     if {$iter > 0 && $two != {-1}} {
       puts "Combining $one and $two"
-      CombinePolyDataFaces $model $one $two
-      catch {$tv delete .models.$kernel.$model.$face}
-      catch [repos_delete -obj /models/$kernel/$model/$face]
-      model_remove $model $face
+      CombinePolyDataFaces $newmodel $one $two
+      catch {$tv delete .models.$kernel.$newmodel.$face}
+      catch [repos_delete -obj /models/$kernel/$newmodel/$face]
+      model_remove $newmodel $face
     }
     incr iter
   }
 
-  set all_faces [model_get $model]
+  set all_faces [model_get $newmodel]
   foreach face $all_faces {
-    catch [repos_delete -obj /models/$kernel/$model/$face]
+    catch [repos_delete -obj /models/$kernel/$newmodel/$face]
   }
   guiSV_model_update_tree
-  guiSV_model_display_model_all_faces 1 $kernel $model
-
-  set guiPDvars(updatedSolid) 1
+  guiSV_model_display_model_all_faces 1 $kernel $newmodel
+  $tv selection set .models.$kernel.$newmodel
 }
 
 # Procedure: guiBOUNDARIESremeshSelectedFaces
@@ -1535,31 +1634,32 @@ proc guiBOUNDARIESremeshSelectedFaces {} {
     if {[llength $model] != 1} {
       return -code error "ERROR: One model needs to be selected for face extraction"
     }
+    set newmodel [string trim $model]_facesremeshed
+    guiSV_model_copy_model $kernel $model $newmodel 0
     set faces {}
     foreach name $selected {
       if {[lindex $name 1] != ""} {
 	lappend faces [lindex $name 1]
       }
     }
-    set all_faces [model_get $model]
+    set all_faces [model_get $newmodel]
     set excludelist {}
     foreach face $all_faces {
-      catch {repos_delete -obj /models/$kernel/$model/$face}
+      catch {repos_delete -obj /models/$kernel/$newmodel/$face}
       if {[lsearch -exact $faces $face] == -1} {
-	set faceid [lindex [$tv item .models.$kernel.$model.$face -values] 1]
+	set faceid [lindex [$tv item .models.$kernel.$newmodel.$face -values] 1]
 	lappend excludelist $faceid
       }
     }
   } else {
     return
   }
-  PolyDataRemeshSurfaces $model $excludelist
+  PolyDataRemeshSurfaces $newmodel $excludelist
 
-  guiSV_model_display_selected_full_model 0
-  catch {repos_delete -obj /models/$kernel/$model}
-  guiSV_model_display_model_all_faces 1 $kernel $model
-
-  set guiPDvars(updatedSolid) 1
+  catch {repos_delete -obj /models/$kernel/$newmodel}
+  $newmodel GetPolyData -result /models/$kernel/$newmodel
+  guiSV_model_display_only_given_model $newmodel 1
+  $tv selection set .models.$kernel.$newmodel
 }
 
 # Procedure: guiBOUNDARIESdeleteSelectedFaces
@@ -1585,33 +1685,36 @@ proc guiBOUNDARIESdeleteSelectedFaces {} {
     if {[llength $model] != 1} {
       return -code error "ERROR: One model needs to be selected for face extraction"
     }
+    set newmodel [string trim $model]_facesdeleted
+    guiSV_model_copy_model $kernel $model $newmodel 0
     set faces {}
     foreach name $selected {
       if {[lindex $name 1] != ""} {
 	lappend faces [lindex $name 1]
       }
     }
-    guiSV_model_display_selected_full_model 0
-    catch {repos_delete -obj /models/$kernel/$model}
-    set all_faces [model_get $model]
+    catch {repos_delete -obj /models/$kernel/$newmodel}
+    set all_faces [model_get $newmodel]
     set deletelist {}
     foreach face $all_faces {
       if {[lsearch -exact $faces $face] != -1} {
-	set faceid [lindex [$tv item .models.$kernel.$model.$face -values] 1]
+	set faceid [lindex [$tv item .models.$kernel.$newmodel.$face -values] 1]
 	lappend deletelist $faceid
-	catch {$tv delete .models.$kernel.$model.$face}
-	catch [repos_delete -obj /models/$kernel/$model/$face]
-	model_remove $model $face
+	catch {$tv delete .models.$kernel.$newmodel.$face}
+	catch [repos_delete -obj /models/$kernel/$newmodel/$face]
+	model_remove $newmodel $face
       }
     }
   } else {
     return
   }
 
-  PolyDataDeleteRegions $model $deletelist
+  PolyDataDeleteRegions $newmodel $deletelist
 
-  guiSV_model_display_model_all_faces 1 $kernel $model
-  set guiPDvars(updatedSolid) 1
+  catch {repos_delete -obj /models/$kernel/$newmodel}
+  $newmodel GetPolyData -result /models/$kernel/$newmodel
+  guiSV_model_display_only_given_model $newmodel 1
+  $tv selection set .models.$kernel.$newmodel
 }
 
 # Procedure: guiBOUNDARIESfillWithIds
@@ -1635,42 +1738,46 @@ proc guiBOUNDARIESfillWithIds {} {
   if {[llength $model] != 1} {
     return -code error "ERROR: One model needs to be selected for face extraction"
   }
-  guiSV_model_display_selected_full_model 0
-  set all_faces [model_get $model]
+  set newmodel [string trim $model]_filled
+  guiSV_model_copy_model $kernel $model $newmodel 0
+
+  set all_faces [model_get $newmodel]
   set maxid 0
   foreach face $all_faces {
-    set faceid [lindex [$tv item .models.$kernel.$model.$face -values] 1]
+    set faceid [lindex [$tv item .models.$kernel.$newmodel.$face -values] 1]
     if {$faceid > $maxid} {
       set maxid $faceid
     }
   }
 
-  set tmppd /models/$kernel/$model 
+  set tmppd /models/$kernel/$newmodel 
   set fillpd /guiBOUNDARIES/tmppd 
   catch {repos_delete -obj $tmppd}
   catch {repos_delete -obj $fillpd}
 
-  $model GetPolyData -result $tmppd
+  $newmodel GetPolyData -result $tmppd
 
   set filltype 2
   geom_fillHolesWithIds $tmppd $fillpd $maxid $filltype
 
-  $model SetVtkPolyData -obj $fillpd
-  set newids [$model GetFaceIds]
+  $newmodel SetVtkPolyData -obj $fillpd
+  set newids [$newmodel GetFaceIds]
   foreach id $newids {
     if {$id > $maxid} {
-      model_add $model "noname_$id" "noname_$id"
+      model_add $newmodel "noname_$id" "noname_$id"
     }
   }
   guiSV_model_update_tree
   foreach id $newids {
     if {$id > $maxid} {
-      guiSV_model_set_col_value $kernel.$model.noname_$id 1 $id
+      guiSV_model_set_col_value $kernel.$newmodel.noname_$id 1 $id
     }
   }
 
-  catch {repos_delete -obj /models/$kernel/$model}
-  guiSV_model_display_model_all_faces 1 $kernel $model
+  catch {repos_delete -obj /models/$kernel/$newmodel}
+  $newmodel GetPolyData -result /models/$kernel/$newmodel
+  guiSV_model_display_only_given_model $newmodel 1
+  $tv selection set .models.$kernel.$newmodel
 }
 
 proc guiTRIMcreateCutBox { model newmodel side offset vals} {
@@ -1864,17 +1971,20 @@ proc guiSV_model_update_new_solid {kernel model newmodel} {
 
 proc guiSV_model_new_surface_name {{cmd 0}} {
   global symbolicName
+  global guiSVvars
 
+  set guiSVvars(models_entry_model_name) ""
+  global gWaitVar
+  set gWaitVar 0
   set tv $symbolicName(guiSV_model_tree)
   set x [winfo rootx $tv]
   set y [winfo rooty $tv]
   set selected [guiSV_group_get_tree_current_groups_selected]
-  if {$selected != "" || $cmd == "new" || $cmd == "0"} {
-    ShowWindow.svModelWindow $cmd
-    move_window .svModelWindow $x $y
-    return
-  }
-  return -code error "What!"
+  ShowWindow.svModelWindow $cmd
+  move_window .svModelWindow $x $y
+  vwait gWaitVar
+  DestroyWindow.svModelWindow
+  return $guiSVvars(models_entry_model_name)
 }
 
 proc ShowWindow.svModelWindow { {cmd 0}} {
@@ -1902,8 +2012,8 @@ proc ShowWindow.svModelWindow { {cmd 0}} {
   ttk::entry .svModelWindow.tframe6.frame1.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(models_entry_model_name)}  -width {30}
 
   ttk::button .svModelWindow.tframe6.frame1.frame2.tbutton0  -command {ChangeWaitVar}  -text {Enter}
-  ttk::button .svModelWindow.tframe6.frame1.frame2.tbutton1  -command {}  -text {Rename Model}
-  ttk::button .svModelWindow.tframe6.frame1.frame2.tbutton2  -command {}  -text {Duplicate Model}
+  ttk::button .svModelWindow.tframe6.frame1.frame2.tbutton1  -command {ChangeWaitVar}  -text {Rename Model}
+  ttk::button .svModelWindow.tframe6.frame1.frame2.tbutton2  -command {ChangeWaitVar}  -text {Duplicate Model}
   ttk::button .svModelWindow.tframe6.frame1.frame2.tbutton4  -command {}  -text {Copy Members}
   
   
@@ -1926,11 +2036,11 @@ proc ShowWindow.svModelWindow { {cmd 0}} {
 
   if { $cmd == "rename"} {
     pack configure .svModelWindow.tframe6.frame1.frame2.tbutton1  -side left
-    bind .svModelWindow.tframe6.frame1.frame2.entry10 <Key-Return> {}
+    bind .svModelWindow.tframe6.frame1.frame2.entry10 <Key-Return> {ChangeWaitVar}
     wm title .svModelWindow {Rename Model}
   } elseif {$cmd == "duplicate"} {
     wm title .svModelWindow {Duplicate Model}
-    bind .svModelWindow.tframe6.frame1.frame2.entry10 <Key-Return> {}
+    bind .svModelWindow.tframe6.frame1.frame2.entry10 <Key-Return> {ChangeWaitVar}
     pack configure .svModelWindow.tframe6.frame1.frame2.tbutton2  -side left
   } elseif {$cmd == "copymembers"} {
     wm title .svModelWindow {Copy Members}
@@ -2115,9 +2225,404 @@ proc guiSV_model_trim_model {} {
 
 }
 
+proc guiSV_model_copy_selected_model {} {
+  global gOptions
+  global symbolicName
+
+  set kernel $gOptions(meshing_solid_kernel)
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model can be copied at a time"
+  }
+  
+  guiSV_model_copy_model $kernel $model "" copy
+}
+
+proc guiSV_model_copy_model {kernel model newname op} {
+  global gOptions
+  global symbolicName
+
+  if {$newname == ""} {
+    set newmodel [guiSV_model_new_surface_name $op]
+  } else {
+    set newmodel $newname
+  }
+
+  if {$model == $newmodel} {
+    return -code error "ERROR: Cannot copy to same name!"
+  }
+  catch {repos_delete -obj $newmodel}
+  if {[model_create $kernel $newmodel] != 1} {
+    guiSV_model_delete_model $kernel $model
+    catch {repos_delete -obj /models/$kernel/$newmodel}
+    model_create $kernel $newmodel
+  }
+  solid_copy -src $model -dst $newmodel
+  set addfaces 0
+  if {$kernel == "Parasolid"} {
+    set addfaces 1
+  } elseif {$kernel == "PolyData"} {
+    if [guiSV_model_check_array_exists $newmodel 1 "ModelFaceID"] {
+      set addfaces 1
+    }
+  }
+
+  if {$addfaces == 1} {
+    if {$kernel == "PolyData"} {
+      catch {unset gPolyDataFaceNames}
+      set faceids [$newmodel GetFaceIds]
+      foreach id $faceids {
+	puts "Settinggnngngngng $id"
+	set gPolyDataFaceNames($id) [model_idface $kernel $model $id]
+      }
+    }
+    guiSV_model_add_faces_to_tree $kernel $newmodel
+  }
+  guiSV_model_update_tree
+}
+
+proc guiSV_model_rename_selected_model {} {
+  global gOptions
+  global symbolicName
+
+  set kernel $gOptions(meshing_solid_kernel)
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model can be copied at a time"
+  }
+  
+  guiSV_model_rename_model $kernel $model
+}
+
+proc guiSV_model_rename_model {kernel model} {
+  global gOptions
+  global symbolicName
+
+  guiSV_model_copy_model $kernel $model "" rename
+  guiSV_model_delete_model $kernel $model
+}
+
+# Procedure: guiSV_model_create_model_polydata
+proc guiSV_model_create_model_polydata {} {
+  global gRen3d
+  global guiPDvars
+  global gui3Dvars
+  global gOptions
+  global guiSVvars
+
+  global guiBOOLEANvars
+  set gOptions(meshing_solid_kernel) PolyData
+  set kernel $gOptions(meshing_solid_kernel)
+
+  set ordered_names    $guiBOOLEANvars(selected_groups)
+  set ordered_names2    $guiBOOLEANvars(selected_seg3d)
+  set sampling_default $guiBOOLEANvars(sampling_default)
+  set lin_multiplier   $guiBOOLEANvars(linear_sampling_along_length_multiplier)
+  set useLinearSampleAlongLength   $guiBOOLEANvars(use_linear_sampling_along_length)
+  set numModes         $guiBOOLEANvars(num_modes_for_FFT)
+  array set overrides  $guiBOOLEANvars(sampling_overrides)
+  set useFFT           $guiBOOLEANvars(use_FFT)
+  set sample_per_segment $guiBOOLEANvars(sampling_along_length_multiplier)
+  set addCaps          $guiBOOLEANvars(add_caps_to_vessels)
+  set noInterOut       $guiBOOLEANvars(no_inter_output)
+  set tol 	       $guiBOOLEANvars(tolerance)
+
+
+  set model [guiSV_model_new_surface_name 0]
+  catch {repos_delete -obj $model}
+  if {[model_create $kernel $model] != 1} {
+    guiSV_model_delete_model $kernel $model
+    catch {repos_delete -obj /models/$kernel/$model}
+    model_create $kernel $model
+  }
+
+  foreach grp $ordered_names {
+
+    set numOutPtsInSegs $sampling_default
+
+    if [info exists overrides($grp)] {
+      set numOutPtsInSegs $overrides($grp)
+      puts "overriding default ($sampling_default) with ($numOutPtsInSegs) for ($grp)."
+    }
+ 
+    set vecFlag 0
+ 
+    set numSegs [llength [group_get $grp]]
+
+    set numOutPtsAlongLength [expr $sample_per_segment * $numSegs]
+
+    set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
+   
+    puts "num pts along length: $numPtsInLinearSampleAlongLength"
+
+    set outPD /guiGROUPS/polydatasurface/$grp
+    catch {repos_delete -obj $outPD}
+
+    solid_setKernel -name PolyData
+    polysolid_c_create_vessel_from_group $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
+
+  }
+
+  if {[llength $ordered_names] ==0 && [llength $ordered_names2] == 0} {
+      tk_messageBox -title "Select Surfaces on Segmentation Tab"  -type ok -message "Please select surfaces for boolean on segmentation tab"
+      return
+  }
+  for {set i 0} {$i < [llength $ordered_names]} {incr i} {
+    lappend vessel_names /guiGROUPS/polydatasurface/[lindex $ordered_names $i]
+    lappend names [lindex $ordered_names $i]
+  }
+  global gSeg3D
+  for {set i 0} {$i < [llength $ordered_names2]} {incr i} {
+    set name [lindex $ordered_names2 $i]
+    lappend names $name
+    if {![check_surface_for_capids $gSeg3D($name)]} {
+      puts "vessel $name doesn't have CapIDs, setting to -1"
+      set_capids_for_pd $gSeg3D($name)
+    }
+    lappend vessel_names $gSeg3D($name)
+
+  }
+  puts $vessel_names
+
+  geom_all_union -srclist $vessel_names -intertype $noInterOut -result $model -tolerance $tol
+  set pdobject /models/$kernel/$model
+  catch {repos_delete -obj $pdobject}
+  $model GetPolyData -result $pdobject
+  set rtnstr [geom_checksurface -src $pdobject -tolerance $tol] 
+
+  set_facenames_as_groupnames $model $names $addCaps
+  #set_facenames_as_groupnames $myresult $names 0
+
+  guiSV_model_add_faces_to_tree $kernel $model
+  guiSV_model_display_only_given_model $model 1
+
+  tk_messageBox -title "Solid Unions Complete"  -type ok -message "Number of Free Edges: [lindex $rtnstr 0]\n (Free edges are okay for open surfaces)\n Number of Bad Edges: [lindex $rtnstr 1]"
+}
+
 #proc testView {name} {
 #  global CurrentRenderer
 #
 #  set actor $CurrentRenderer/models/PolyData/$name
 #  VirtualPickActor $name
 #}
+#
+# Procedure: guiSV_model_create_model_parasolid
+proc guiSV_model_create_model_parasolid {} {
+   global symbolicName
+   global createPREOPgrpKeptSelections
+   global gFilenames
+   global gObjects
+   global gLoftedSolids
+   global gOptions
+
+   set gOptions(meshing_solid_kernel) Parasolid
+   solid_setKernel -name $gOptions(meshing_solid_kernel)
+   set kernel $gOptions(meshing_solid_kernel)
+
+   set tv $symbolicName(guiSV_group_tree)
+  set children [$tv children {}]
+
+   if {[lsearch -exact $children .groups.all] >= 0} {
+     set children [$tv children .groups.all]
+     if {$children == ""} {
+       return
+     }
+   }
+
+   set createPREOPgrpKeptSelections {}
+   puts "children: $children"
+   
+    foreach child $children {
+      if {[lindex [$tv item $child -values] 0] == "X"} {
+  lappend createPREOPgrpKeptSelections [string range $child 12 end]
+      }
+    }
+
+   set modelname [guiSV_model_new_surface_name 0]
+   catch {repos_delete -obj $modelname}
+   if {[model_create $kernel $modelname] != 1} {
+     guiSV_model_delete_model $kernel $modelname
+     catch {repos_delete -obj /models/$kernel/$modelname}
+     model_create $kernel $modelname
+   }
+   guiSV_model_update_tree
+
+    #set modelname $gObjects(preop_solid)
+
+   if {[llength $createPREOPgrpKeptSelections] == 0} {
+      puts "No solid models selected.  Nothing done!"
+      return
+   }
+
+   puts "Will union together the following SolidModel objects:"
+   puts "  $createPREOPgrpKeptSelections"
+
+   if {[repos_exists -obj $modelname] == 1} {
+      puts "Warning:  object $modelname existed and is being replaced."
+      repos_delete -obj $modelname
+   }
+
+    if {[repos_exists -obj /models/$kernel/$modelname] == 1} {
+      repos_delete -obj /model/$kernel/$modelname
+    }
+
+    # for convenience, we offer to make any missing solid models for the
+    # the user.  In general, people shouldn't do this, but what can you
+    # do?
+
+    set recreateAllChoice [tk_messageBox -title "Recreate all vessels?"  -message "Recreate all solids?"  -icon question -type yesno]
+
+    foreach i $createPREOPgrpKeptSelections {
+      set cursolid ""
+
+      if {$cursolid == "" || [repos_exists -obj $cursolid] == 0 || $recreateAllChoice == "yes"} {
+         # solid  doesn't exist for current object, ask to create
+         set choice [tk_messageBox -title "Missing capped solid branch!"  -message "Create missing solids using defaults?"  -icon question -type yesnocancel]
+         switch -- $choice {
+           yes {
+              # create solids
+              foreach j $createPREOPgrpKeptSelections {
+                set cursolid ""
+    catch {set cursolid $gLoftedSolids($j)}
+      if {$cursolid == "" || [repos_exists -obj $cursolid] == 0 || $recreateAllChoice == "yes"} {
+                  # loft solid from group
+                  global gPathBrowser
+                  set keepgrp $gPathBrowser(currGroupName)
+                  set gPathBrowser(currGroupName) $j
+                  #puts "align"
+                  #vis_img_SolidAlignProfiles;
+                  #puts "fit"
+                  #vis_img_SolidFitCurves;
+                  #puts "loft"
+                  #vis_img_SolidLoftSurf;
+                  #vis_img_SolidCapSurf;
+                  # set it back to original
+                  global gRen3dFreeze
+                  set oldFreeze $gRen3dFreeze
+                  set gRen3dFreeze 1
+                  nateAFLB
+                  set gRen3dFreeze $oldFreeze
+                  set gPathBrowser(currGroupName) $keepgrp
+    }
+              }
+              break
+     }
+           cancel {
+              return -code error "Missing solid branches.  Create preop model failed."
+     }
+           no {
+              return -code error "Missing solid braches.  Create preop model failed."
+     }
+         }
+
+      } elseif {[repos_type -obj $cursolid] != "SolidModel"} {
+         puts  "ERROR: Expected SolidModel for $cursolid."
+         return -code error "ERROR: Expected SolidModel for $cursolid."
+      }
+    }
+
+    set shortname [lindex $createPREOPgrpKeptSelections 0]
+    set cursolid $gLoftedSolids($shortname)
+    solid_copy -src $cursolid -dst $modelname
+    puts "copy $cursolid to preop model."
+
+    foreach i [lrange $createPREOPgrpKeptSelections 1 end] {
+      set cursolid $gLoftedSolids($i)
+      puts "union $cursolid into preop model."
+      if {[repos_type -obj $cursolid] != "SolidModel"} {
+         puts "Warning:  $cursolid is being ignored."
+         continue
+      }
+       solid_union -result /tmp/preop/$modelname -a $modelname -b $cursolid
+       repos_delete -obj $modelname
+       solid_copy -src /tmp/preop/$modelname -dst $modelname
+       repos_delete -obj /tmp/preop/$modelname
+    }
+
+    if {[repos_exists -obj /tmp/preop/$modelname] == 1} {
+      repos_delete -obj /tmp/preop/$modelname
+    }
+
+    crd_ren gRenWin_3D_ren1
+    set pretty_names {}
+    set all_ids {}
+    foreach i [$modelname GetFaceIds] {
+      catch {lappend pretty_names [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+      lappend all_ids $i
+    }
+    set isdups 0
+    if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
+     set isdups 1
+     set duplist [lsort -dictionary $pretty_names]
+     foreach i [lsort -unique $pretty_names] {
+        set idx [lsearch -exact $duplist $i]
+        set duplist [lreplace $duplist $idx $idx]
+     }
+     set msg "Duplicate faces found!\n\n"
+     set duplistids {}
+     foreach dup $duplist {
+       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
+       lappend duplistids $id
+     }
+     for {set i 0} {$i < [llength $duplist]} {incr i} {
+       set dup [lindex $duplist $i]
+       set dupid [lindex $duplistids $i]
+       set newname [string trim $dup]_2
+       set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+     }
+  }
+
+  guiSV_model_add_faces_to_tree $kernel $modelname
+  guiSV_model_display_only_given_model $modelname 1
+  if {$isdups == 1} {
+    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+  }
+}
+
+proc guiSV_model_create_discrete_model_from_polydata {} {
+  global guiTRIMvars
+  global symoblicName
+  global gOptions 
+  global gKernel 
+
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+  }
+  if {$gKernel($model) != "PolyData"} {
+    return -code error "ERROR: Must use PolyData to create Discrete Model"
+  }
+  set modelpd /models/PolyData/$model
+  catch {repos_delete -obj $modelpd}
+  $model GetPolyData -result $modelpd
+
+  set gOptions(meshing_solid_kernel) Discrete
+  set kernel Discrete
+  solid_setKernel -name $kernel
+
+  set newmodel [guiSV_model_new_surface_name 0]
+  set newmodelpd /models/$kernel/$newmodel
+  catch {repos_delete -obj $newmodel}
+  if {[model_create $kernel $newmodel] != 1} {
+    guiSV_model_delete_model $kernel $newmodel
+    catch {repos_delete -obj $newmodelpd}
+    model_create $kernel $newmodel
+  }
+
+  if [catch {solid_poly3dSolid -result $newmodel -src $modelpd -facet Union -angle $guiTRIMvars(discrete_angle)} msg] {
+    return -code error "ERROR creating solid ($msg)"
+  }
+  tk_messageBox -message "Model creation complete.\nModel has [llength [$outModel GetFaceIds]] faces."
+  #$outModel WriteNative -file $fn
+  global gDiscreteModelFaceNames
+  global gPolyDataFaceNames
+  set allids [$newmodel GetFaceIds]
+  foreach id $allids {
+#     set gDiscreteModelFaceNames($id) "noname_$id"
+#      set gDiscreteModelFaceNames($id) $gPolyDataFaceNames($id)
+      set gDiscreteModelFaceNames($id) [model_faceid PolyData $model $id)
+  }
+  guiSV_model_add_faces_to_tree $kernel $newmodel
+  guiSV_model_display_only_given_model $newmodel 1
+}

@@ -5071,10 +5071,10 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tradiobutton1
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}  -command {solid_setKernel -name Parasolid}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tradiobutton2
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete}  -command {solid_setKernel -name Discrete}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tlabel3
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.tframe0.tlabel3  -font {Helvetica 10}  -relief {flat}  -text {Type:}  -width {8}
@@ -5655,10 +5655,10 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tradiobutton1
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}  -command {solid_setKernel -name Parasolid}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tradiobutton2
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete} -command {solid_setKernel -name Discrete}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tlabel3
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0.tlabel3  -font {Helvetica 10}  -relief {flat}  -text {Solid Model Type:}  -width {20}
@@ -12101,13 +12101,13 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton1
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton1  -variable {gOptions(meshing_solid_kernel)}  -value {Parasolid}  -text {Parasolid} -command {solid_setKernel -name Parasolid}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton2
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton2  -variable {gOptions(meshing_solid_kernel)}  -value {Discrete}  -text {Discrete} -command {solid_setKernel -name Discrete}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton3
-  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton3  -variable {gOptions(meshing_solid_kernel)}  -value {PolyData}  -text {PolyData}
+  ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tradiobutton3  -variable {gOptions(meshing_solid_kernel)}  -value {PolyData}  -text {PolyData} -command {solid_setKernel -name PolyData}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tlabel3
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.tframe0.tlabel3  -font {Helvetica 10}  -relief {flat}  -text {Solid Model Type:}
@@ -12141,9 +12141,11 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0  -font {Helvetica 10}  
+  #bindings
+  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0 <Key-Return> {guiSV_model_set_att_name}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.button7
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.button7  -command {smasherSetAttName}  -text {Set Value}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.button7  -command {guiSV_model_set_att_name}  -text {Set Value}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9  -borderwidth {0}  -relief {flat}  -width {440}  -height {26}
@@ -12170,7 +12172,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.label0  -font {Helvetica 10}  -borderwidth {0}  -text {Parasolid}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.label10
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.label10  -font {Helvetica 10}  -relief {flat}  -text {Entity Properties}
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.label10  -font {Helvetica 10}  -relief {flat}  -text {Change Face Name}
 
   ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3
   #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3  -borderwidth {0}  -relief {flat}  -width {370}  -height {98}
@@ -12279,7 +12281,9 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m
   menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}  -tearoff {0}
-  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_delete_selected_models}  -label {Delete Selected Models}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_delete_selected_model}  -label {Delete Selected Model}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_copy_selected_model}  -label {Copy Selected Model}
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_rename_selected_model}  -label {Rename Selected Model}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13.m}  -text {Face Operations}
@@ -12294,7 +12298,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1
   ttk::notebook .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13
@@ -12313,7 +12317,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1  -width {229}  -height {121}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button12
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button12  -command {createPREOPmodelCreateModel}  -text {Create Pre-Op Solid Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button12  -command {guiSV_model_create_model_parasolid}  -text {Create Pre-Op Solid Model}
 
   ## build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15
   #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5.frame1.button15  -command {createPREOPmodelSaveModel}  -text {Save Model}
@@ -12999,7 +13003,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1.tcheckbutton5
-  ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1.tcheckbutton5  -variable {guiPDvars(vis_full_pd)}  -command {guiDELETEvis}  -text {Show solid without face regions to delete cells}
+  #ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1.tcheckbutton5  -variable {guiPDvars(vis_full_pd)}  -command {guiDELETEvis}  -text {Show solid without face regions to delete cells}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -13031,7 +13035,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4  -command {guiBOOLEANallBoolean}  -text {Create Pre-Op Solid Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4  -command {guiSV_model_create_model_polydata}  -text {Create Pre-Op Solid Model}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8  -text {Helper [+]}  -width {152}  -height {25}
@@ -13044,8 +13048,22 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1.tbutton1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1.tbutton1  -command {guiSVHELPshow boolean.txt}  -text {Help}
 
-  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11
+  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11  -text {Create Discrete Model [-]} -width {30}  -height {30}
+  # bindings
+  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11 <Button-1> {guiCV_squeezer_labelframe .tframe2 %W}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tbutton1
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tbutton1  -command {guiSV_model_create_discrete_model_from_polydata} -text {Create Discrete Model from Selected PolyData}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe9
   ttk::frame .guiCV.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -19371,10 +19389,15 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13  -expand 1  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13 -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1  -expand 1  -fill both
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2 -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3 -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe4 -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tframe5  -expand 1  -fill both
@@ -19805,7 +19828,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe2.tlabel2  -expand 1  -fill both  -side bottom
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1
-  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1.tcheckbutton5  -expand 1  -fill both
+  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe1.tcheckbutton5  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe3
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe0.tlabelframe1.frame4.tframe3.tbutton4  -fill both  -side left
@@ -19832,6 +19855,16 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1.tbutton1  -fill x  -side right
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11 -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2  -expand 1  -fill both
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2  -expand 1  -fill both
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tbutton1 -fill both
 
   # pack master .guiCV.tframe9
   pack configure .guiCV.tframe9.tsizegrip10  -fill both  -side right
@@ -26123,150 +26156,6 @@ proc createPREOPloadsaveVolXMLFile {} {
 }
 
 
-# Procedure: createPREOPmodelCreateModel
-proc createPREOPmodelCreateModel {} {
-   global symbolicName
-   global createPREOPgrpKeptSelections
-   global gFilenames
-   global gObjects
-   global gLoftedSolids
-   global gOptions
-
-   set gOptions(meshing_solid_kernel) Parasolid
-   solid_setKernel -name $gOptions(meshing_solid_kernel)
-
-   set tv $symbolicName(guiSV_group_tree)
-  set children [$tv children {}]
-
-   if {[lsearch -exact $children .groups.all] >= 0} {
-     set children [$tv children .groups.all]
-     if {$children == ""} {
-       return
-     }
-   }
-
-   set createPREOPgrpKeptSelections {}
-   puts "children: $children"
-   
-    foreach child $children {
-      if {[lindex [$tv item $child -values] 0] == "X"} {
-  lappend createPREOPgrpKeptSelections [string range $child 12 end]
-      }
-    }
-
-    set modelname $gObjects(preop_solid)
-
-   if {[llength $createPREOPgrpKeptSelections] == 0} {
-      puts "No solid models selected.  Nothing done!"
-      return
-   }
-
-   puts "Will union together the following SolidModel objects:"
-   puts "  $createPREOPgrpKeptSelections"
-
-   if {[repos_exists -obj $modelname] == 1} {
-      puts "Warning:  object $modelname existed and is being replaced."
-      repos_delete -obj $modelname
-   }
-
-    if {[repos_exists -obj /tmp/preop/$modelname] == 1} {
-      repos_delete -obj /tmp/preop/$modelname
-    }
-
-    # for convenience, we offer to make any missing solid models for the
-    # the user.  In general, people shouldn't do this, but what can you
-    # do?
-
-    set recreateAllChoice [tk_messageBox -title "Recreate all vessels?"  -message "Recreate all solids?"  -icon question -type yesno]
-
-    foreach i $createPREOPgrpKeptSelections {
-      set cursolid ""
-
-      if {$cursolid == "" || [repos_exists -obj $cursolid] == 0 || $recreateAllChoice == "yes"} {
-         # solid  doesn't exist for current object, ask to create
-         set choice [tk_messageBox -title "Missing capped solid branch!"  -message "Create missing solids using defaults?"  -icon question -type yesnocancel]
-         switch -- $choice {
-           yes {
-              # create solids
-              foreach j $createPREOPgrpKeptSelections {
-                set cursolid ""
-    catch {set cursolid $gLoftedSolids($j)}
-      if {$cursolid == "" || [repos_exists -obj $cursolid] == 0 || $recreateAllChoice == "yes"} {
-                  # loft solid from group
-                  global gPathBrowser
-                  set keepgrp $gPathBrowser(currGroupName)
-                  set gPathBrowser(currGroupName) $j
-                  #puts "align"
-                  #vis_img_SolidAlignProfiles;
-                  #puts "fit"
-                  #vis_img_SolidFitCurves;
-                  #puts "loft"
-                  #vis_img_SolidLoftSurf;
-                  #vis_img_SolidCapSurf;
-                  # set it back to original
-                  global gRen3dFreeze
-                  set oldFreeze $gRen3dFreeze
-                  set gRen3dFreeze 1
-                  nateAFLB
-                  set gRen3dFreeze $oldFreeze
-                  set gPathBrowser(currGroupName) $keepgrp
-    }
-              }
-              break
-     }
-           cancel {
-              return -code error "Missing solid branches.  Create preop model failed."
-     }
-           no {
-              return -code error "Missing solid braches.  Create preop model failed."
-     }
-         }
-
-      } elseif {[repos_type -obj $cursolid] != "SolidModel"} {
-         puts  "ERROR: Expected SolidModel for $cursolid."
-         return -code error "ERROR: Expected SolidModel for $cursolid."
-      }
-    }
-
-    set shortname [lindex $createPREOPgrpKeptSelections 0]
-    set cursolid $gLoftedSolids($shortname)
-    solid_copy -src $cursolid -dst $modelname
-    puts "copy $cursolid to preop model."
-
-    foreach i [lrange $createPREOPgrpKeptSelections 1 end] {
-      set cursolid $gLoftedSolids($i)
-      puts "union $cursolid into preop model."
-      if {[repos_type -obj $cursolid] != "SolidModel"} {
-         puts "Warning:  $cursolid is being ignored."
-         continue
-      }
-       solid_union -result /tmp/preop/$modelname -a $modelname -b $cursolid
-       repos_delete -obj $modelname
-       solid_copy -src /tmp/preop/$modelname -dst $modelname
-       repos_delete -obj /tmp/preop/$modelname
-    }
-
-    if {[repos_exists -obj /tmp/preop/$modelname] == 1} {
-      repos_delete -obj /tmp/preop/$modelname
-    }
-
-    set pretty_names {}
-    foreach i [$modelname GetFaceIds] {
-      catch {lappend pretty_names [$modelname GetFaceAttr -attr gdscName -faceId $i]}
-    }
-    if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
-     set duplist [lsort -dictionary $pretty_names]
-     foreach i [lsort -unique $pretty_names] {
-        set idx [lsearch -exact $duplist $i]
-        set duplist [lreplace $duplist $idx $idx]
-     }
-     set msg "Duplicate faces found!\n\n"
-     foreach dup $duplist {
-       set msg "$msg  name: $dup\n"
-     }
-     tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
-  }
-}
 
 
 # Procedure: createPREOPmodelSaveModel
@@ -26612,6 +26501,7 @@ proc gui3DchangeSurface { operation} {
      return -code error "ERROR:  invalid ($operation)."
   }
 
+  $newmodel SetVtkPolyData -obj $obj
   guiSV_model_update_new_solid $kernel $model $newmodel
 
 }
@@ -27962,99 +27852,6 @@ proc guiBOOLEANboolean {} {
   tk_messageBox -title "Solid Unions Complete"  -type ok -message "Number of Free Edges: [lindex $rtnstr 0]\n (Free edges are okay for open surfaces)\n Number of Bad Edges: [lindex $rtnstr 1]"
 }
 
-# Procedure: guiBOOLEANallBoolean
-proc guiBOOLEANallBoolean {} {
-  global gRen3d
-  global guiPDvars
-  global gui3Dvars
-  global gOptions
-
-  global guiBOOLEANvars
-  set gOptions(meshing_solid_kernel) PolyData
-
-  set ordered_names    $guiBOOLEANvars(selected_groups)
-  set ordered_names2    $guiBOOLEANvars(selected_seg3d)
-  set sampling_default $guiBOOLEANvars(sampling_default)
-  set lin_multiplier   $guiBOOLEANvars(linear_sampling_along_length_multiplier)
-  set useLinearSampleAlongLength   $guiBOOLEANvars(use_linear_sampling_along_length)
-  set numModes         $guiBOOLEANvars(num_modes_for_FFT)
-  array set overrides  $guiBOOLEANvars(sampling_overrides)
-  set useFFT           $guiBOOLEANvars(use_FFT)
-  set sample_per_segment $guiBOOLEANvars(sampling_along_length_multiplier)
-  set addCaps          $guiBOOLEANvars(add_caps_to_vessels)
-  set noInterOut       $guiBOOLEANvars(no_inter_output)
-  set tol 	       $guiBOOLEANvars(tolerance)
-
-  foreach grp $ordered_names {
-
-    set numOutPtsInSegs $sampling_default
-
-    if [info exists overrides($grp)] {
-      set numOutPtsInSegs $overrides($grp)
-      puts "overriding default ($sampling_default) with ($numOutPtsInSegs) for ($grp)."
-    }
- 
-    set vecFlag 0
- 
-    set numSegs [llength [group_get $grp]]
-
-    set numOutPtsAlongLength [expr $sample_per_segment * $numSegs]
-
-    set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
-   
-    puts "num pts along length: $numPtsInLinearSampleAlongLength"
-
-    set outPD /guiGROUPS/polydatasurface/$grp
-    catch {repos_delete -obj $outPD}
-
-    solid_setKernel -name PolyData
-    polysolid_c_create_vessel_from_group $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
-
-  }
-
-  set myresult /guiBOOLEAN/solid
-  catch {repos_delete -obj $myresult}
-
-  if {[llength $ordered_names] ==0 && [llength $ordered_names2] == 0} {
-      tk_messageBox -title "Select Surfaces on Segmentation Tab"  -type ok -message "Please select surfaces for boolean on segmentation tab"
-      return
-  }
-  for {set i 0} {$i < [llength $ordered_names]} {incr i} {
-    lappend vessel_names /guiGROUPS/polydatasurface/[lindex $ordered_names $i]
-    lappend names [lindex $ordered_names $i]
-  }
-  global gSeg3D
-  for {set i 0} {$i < [llength $ordered_names2]} {incr i} {
-    set name [lindex $ordered_names2 $i]
-    lappend names $name
-    if {![check_surface_for_capids $gSeg3D($name)]} {
-      puts "vessel $name doesn't have CapIDs, setting to -1"
-      set_capids_for_pd $gSeg3D($name)
-    }
-    lappend vessel_names $gSeg3D($name)
-
-  }
-  puts $vessel_names
-
-  geom_all_union -srclist $vessel_names -intertype $noInterOut -result $myresult -tolerance $tol
-  set pdobject /guiBOOLEAN/pd
-  catch {repos_delete -obj $pdobject}
-  $myresult GetPolyData -result $pdobject
-  set rtnstr [geom_checksurface -src $pdobject -tolerance $tol] 
-
-  set_facenames_as_groupnames $myresult $names $addCaps
-  #set_facenames_as_groupnames $myresult $names 0
-
-  crd_ren gRenWin_3D_ren1
-  global smasherInputName
-  set smasherInputName $myresult
-  smasherGUIupdateViewWindow
-  set guiPDvars(updatedSolid) 1
-
-  tk_messageBox -title "Solid Unions Complete"  -type ok -message "Number of Free Edges: [lindex $rtnstr 0]\n (Free edges are okay for open surfaces)\n Number of Bad Edges: [lindex $rtnstr 1]"
-}
-
-
 # Procedure: guiBOOLEANloadPreviousParams
 proc guiBOOLEANloadPreviousParams {} {
   set fn [tk_getOpenFile -filetypes {{"PolyData Booleans File" {.bool}} {"All Files" *}}  -title "Read PolyData Booleans File" -initialdir [pwd]]
@@ -28063,7 +27860,6 @@ proc guiBOOLEANloadPreviousParams {} {
      source $fn
   }
 }
-
 
 # Procedure: guiBOOLEANsave
 proc guiBOOLEANsave {} {
@@ -31278,7 +31074,6 @@ proc guiPDvisObj { pdobject pressed} {
         vis_pRm $gRen3d $obj
       } else {
   if [repos_exists -obj $obj] {
-          crd_ren gRenWin_3D_ren1
     set actor [vis_pRepos $gRen3d $obj]
 #   [$actor GetProperty] SetRepresentationToWireframe
           vis_render $gRen3d
@@ -41954,52 +41749,6 @@ proc guiVISvolFlowSliceDisplaySphere {} {
 }
 
 
-# Procedure: guiVMTKCenterlines
-proc guiVMTKCenterlines {} {
-  global gOptions
-  global gObjects
-  global guiPDvars
-  global gPolyDataFaceNames
-
-  set gOptions(meshing_solid_kernel) PolyData
-
-  if {[array size gPolyDataFaceNames] == 0} {
-    tk_messageBox -title "Extract Boundaries"  -type ok -message "WARNING: You extract the boundaries before doing a centerline extraction"
-    return
-  }
-
-  set firstsolid /tmp/polydata/firstsolid
-  set newsolid /tmp/polydata/newsolid
-  set finalsolid /tmp/polydata/finalsolid
-  catch {repos_delete -obj $firstsolid}
-  catch {repos_delete -obj $newsolid}
-  catch {repos_delete -obj $finalsolid}
-
-  set solid $gObjects(polydata_solid)
-  $solid GetPolyData -result $firstsolid
-
-  PolyDataThreshold $solid
-
-  set cappedsolid [PolyDataVMTKGetCenterIds $solid solid]
-
-  set polylist [PolyDataVMTKCenterlines $cappedsolid $gObjects(polydata_solid) solid]
-  crd_ren gRenWin_3D_ren1
-  set guiPDvars(vis_centerlines) 1
-  guiPDvisObj centerlines no
-
-  set no_ids [geom_cap -src [lindex $polylist 0] -result $newsolid -captype 0]
-
-  geom_mapandcorrectids -src $firstsolid -new $newsolid -result $finalsolid -srcarrayname "ModelFaceID" -newarrayname "CenterlineCapID"
-  
-  set smasherInputName $solid
-  $solid SetVtkPolyData -obj $firstsolid
-
-  smasherGUIupdateViewWindow
-
-  return $finalsolid
-}
-
-
 # Procedure: guiVOLRENupdate
 proc guiVOLRENupdate { type pt args} {
 
@@ -47032,7 +46781,7 @@ proc smasherGUIupdateSel { curselection} {
  set smasherEntityIdentifier $identifier
 
  # update all the faces listboxes to have the same selection
- foreach lb {smasherFacesListbox meshsimFacesListbox meshsimDiscreteModelListbox polydataFacesListbox tetgenFacesListbox} {
+ foreach lb {meshsimFacesListbox meshsimDiscreteModelListbox polydataFacesListbox tetgenFacesListbox} {
   $symbolicName($lb) selection clear 0 end
   $symbolicName($lb) selection set $selected_id
   $symbolicName($lb) activate $selected_id
@@ -47056,7 +46805,7 @@ proc smasherGUIupdateViewWindow {} {
  }
  set sortme [lsort -dictionary $sortme]
 
- foreach lb {smasherFacesListbox meshsimFacesListbox meshsimDiscreteModelListbox polydataFacesListbox tetgenFacesListbox} {
+ foreach lb {meshsimFacesListbox meshsimDiscreteModelListbox polydataFacesListbox tetgenFacesListbox} {
    $symbolicName($lb) delete 0 end
    foreach i $sortme {
      $symbolicName($lb) insert end "[lindex $i 1]/[lindex $i 2] ([lindex $i 0])"
@@ -49017,6 +48766,8 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe9.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe9 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe7.tframe1)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe7.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe5 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2)} {1}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40.frame5)} {0}
@@ -49555,6 +49306,7 @@ set {guiSVvars(path_quantification_window_size_path2)} {0.5}
 set {guiSVvars(path_quantification_window_size_refpath)} {0.5}
 set {guiSVvars(path_quantification_window_size_twistpath)} {0.5}
 set {guiSVvars(path_squeeze)} {0}
+set {guiSVvars(models_entry_model_name)} {blank}
 set {guiSVvars(solids_entry_group_name)} {blank}
 set {guiSVvars(last_2d_view_toggle)} {0}
 set {guiSVvars(showSegSlice)} {0}
