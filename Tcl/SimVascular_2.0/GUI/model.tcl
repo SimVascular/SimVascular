@@ -738,11 +738,12 @@ proc guiSV_model_save_model {} {
     }
     puts "Done writing file."
   } elseif {$solid_kernel == "Discrete"} {
+    set fn $model
     package require md5
     set fn [tk_getSaveFile -filetypes {{DISCRETE *.dsm} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $smasherInputName]
     if {$fn == ""} return 
     puts "Writing discrete model ($fn)"
-    $smasherInputName WriteNative -file $fn
+    $model WriteNative -file $fn
     puts "Done writing discrete model."
     puts "Writing file ($fn.facenames)"
     set mymd5 [::md5::md5 -hex -file $fn]
@@ -750,7 +751,7 @@ proc guiSV_model_save_model {} {
     fconfigure $fp -translation lf
     global gDiscreteModelFaceNames
     global gDiscreteModelFaceNamesInfo
-    set allids [lsort -integer [array names gDiscreteModelFaceNames]]
+    set allids [$model GetFaceIds]
     puts $fp "\# user defined face id to name mapping for model file ($fn)"
     set timestamp [clock seconds]
     puts $fp "\# timestamp: $timestamp  ([clock format $timestamp])"
@@ -763,7 +764,8 @@ proc guiSV_model_save_model {} {
     puts $fp "set gDiscreteModelFaceNamesInfo(model_file_name) \{[file tail $fn]\}"
     puts $fp ""
     foreach id $allids {
-      puts $fp "set gDiscreteModelFaceNames($id) \{$gDiscreteModelFaceNames($id)\}"
+      set face [model_idface $solid_kernel $model $id]
+      puts $fp "set gDiscreteModelFaceNames($id) \{$face\}"
     }
     close $fp
     puts "Done writing facenames file."
@@ -2613,7 +2615,7 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
   if [catch {solid_poly3dSolid -result $newmodel -src $modelpd -facet Union -angle $guiTRIMvars(discrete_angle)} msg] {
     return -code error "ERROR creating solid ($msg)"
   }
-  tk_messageBox -message "Model creation complete.\nModel has [llength [$outModel GetFaceIds]] faces."
+  tk_messageBox -message "Model creation complete.\nModel has [llength [$newmodel GetFaceIds]] faces."
   #$outModel WriteNative -file $fn
   global gDiscreteModelFaceNames
   global gPolyDataFaceNames
@@ -2621,7 +2623,7 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
   foreach id $allids {
 #     set gDiscreteModelFaceNames($id) "noname_$id"
 #      set gDiscreteModelFaceNames($id) $gPolyDataFaceNames($id)
-      set gDiscreteModelFaceNames($id) [model_faceid PolyData $model $id)
+      set gDiscreteModelFaceNames($id) [model_idface PolyData $model $id]
   }
   guiSV_model_add_faces_to_tree $kernel $newmodel
   guiSV_model_display_only_given_model $newmodel 1
