@@ -46,8 +46,7 @@
 
 #include <stdio.h>
 
-// why is this included here?  NMW 2015-05-16
-//#include "cvFlowsolverOptions.h"
+#include "cvFlowsolverOptions.h"
 
 #ifdef USE_ZLIB
    #include "simvascular_zlib.h"

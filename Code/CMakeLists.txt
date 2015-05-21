@@ -487,7 +487,7 @@ else()
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/TetAdapt")
+	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/TetGenAdapt")
 endif()
 
 #-----------------------------------------------------------------------------
