@@ -740,6 +740,7 @@ proc guiSV_model_save_model {} {
   global symbolicName
   global smasherInputName
   global gFilenames
+  global gKernel
 
   set tv $symbolicName(guiSV_model_tree)
   set model [guiSV_model_get_tree_current_models_selected]
@@ -747,7 +748,8 @@ proc guiSV_model_save_model {} {
   if {[llength $model] != 1} {
     return -code error "Only one model can be written at a time!"
   }
-  set solid_kernel $gOptions(meshing_solid_kernel)
+  set kernel $gKernel($model)
+  solid_setKernel -name $kernel
 
   if {$solid_kernel == "Parasolid"} {
     set fn [tk_getSaveFile -filetypes {{PARASOLID *.xmt_txt} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $model]
@@ -2455,6 +2457,7 @@ proc guiSV_model_create_model_polydata {} {
   set addCaps          $guiBOOLEANvars(add_caps_to_vessels)
   set noInterOut       $guiBOOLEANvars(no_inter_output)
   set tol 	       $guiBOOLEANvars(tolerance)
+  set spline           $guiBOOLEANvars(spline_type)
 
 
   set model [guiSV_model_new_surface_name 0]
@@ -2488,7 +2491,7 @@ proc guiSV_model_create_model_polydata {} {
     catch {repos_delete -obj $outPD}
 
     solid_setKernel -name PolyData
-    polysolid_c_create_vessel_from_group $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
+    polysolid_c_create_vessel_from_group $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $spline $outPD
 
   }
 

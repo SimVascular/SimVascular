@@ -1243,7 +1243,7 @@ proc lsGUIloftGroup {group} {
 
     solid_setKernel -name PolyData
     #polysolid_c_create_vessel_from_group $group $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
-    polysolid_c_create_vessel_from_group $group $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
+    polysolid_c_create_vessel_from_group $group $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $outPD
 
     foreach key [array names localKeys] {
 		repos_setLabel -obj $outPD -key $key -value $localKeys($key)

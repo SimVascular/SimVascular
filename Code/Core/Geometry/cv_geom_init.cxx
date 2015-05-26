@@ -3572,8 +3572,9 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
   int useFFT;
   int useLinearSampleAlongLength;
   int numLinearPtsAlongLength;
+  int splineType = 0;
 
-  int table_size = 8;
+  int table_size = 9;
   ARG_Entry arg_table[] = {
     { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
@@ -3583,6 +3584,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
     { "-numModes", INT_Type, &numModes, NULL, REQUIRED, 0, { 0 } },
     { "-useFFT", INT_Type, &useFFT, NULL, REQUIRED, 0, { 0 } },
     { "-useLinearSampleAlongLength", INT_Type, &useLinearSampleAlongLength, NULL, REQUIRED, 0, { 0 } },
+    { "-splineType", INT_Type, &useLinearSampleAlongLength, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3637,7 +3639,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( sys_geom_loft_solid( srcs, numSrcs,useLinearSampleAlongLength,useFFT,
 			  numOutPtsAlongLength,numOutPtsInSegs,
-			  numLinearPtsAlongLength,numModes,
+			  numLinearPtsAlongLength,numModes,splineType,
 			  (cvPolyData**)(&dst) )
        != CV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );

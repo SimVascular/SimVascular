@@ -118,6 +118,9 @@ public:
   vtkSetMacro(NumOutPtsAlongLength,int);
   vtkGetMacro(NumOutPtsAlongLength,int);
 
+  vtkSetMacro(SplineType,int);
+  vtkGetMacro(SplineType,int);
+
 //ETX
 protected:
   vtkLoftPolyDataSolid();
@@ -166,6 +169,7 @@ protected:
   int NumModes;
   int NumOutPtsInSegs;
   int NumOutPtsAlongLength;
+  int SplineType;
 
 private:
   vtkLoftPolyDataSolid(const vtkLoftPolyDataSolid&);  // Not implemented.

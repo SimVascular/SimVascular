@@ -49090,6 +49090,7 @@ set {guiBOOLEANvars(use_FFT)} {0}
 set {guiBOOLEANvars(use_linear_sampling_along_length)} {1}
 set {guiBOOLEANvars(no_inter_output)} {1}
 set {guiBOOLEANvars(tolerance)} {1e-6}
+set {guiBOOLEANvars(spline_type)} {0}
 global {guiCVIMGvars}
 set {guiCVIMGvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4)} {0}
 set {guiCVIMGvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4)} {0}
