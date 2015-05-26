@@ -219,6 +219,21 @@ int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
+
+int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
+
+int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
+
+int Geom_LocalSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
+
+int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
+
+int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
 #ifdef USE_GTS
 int Geom_Union_GTSCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
@@ -369,6 +384,16 @@ int Geom_Init( Tcl_Interp *interp )
  Tcl_CreateCommand( interp, "geom_checksurface", Geom_CheckSurfaceCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_set_ids_for_caps", Geom_CapIdSetCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_local_decimation", Geom_LocalDecimationCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_local_laplacian_smooth", Geom_LocalLaplacianSmoothCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_local_subdivision", Geom_LocalSubdivisionCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_set_array_for_local_op_sphere", Geom_SetArrayForLocalOp_SphereCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face", Geom_SetArrayForLocalOp_FaceCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #ifdef USE_GTS 
   Tcl_CreateCommand( interp, "geom_union_gts", Geom_Union_GTSCmd,
@@ -860,6 +885,389 @@ int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   delete [] doublecaps;
+  return TCL_OK;
+}
+
+// ----------------
+// Geom_SetArrayForLocalOp_FaceCmd
+// ----------------
+
+int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  char *arrayName = 0; 
+  char *outArray = "LocalOpsArray";
+  int dataType = 1;
+  ARG_List values;
+
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 6;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-array", STRING_Type, &arrayName, NULL, REQUIRED, 0, { 0 } },
+    { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  if (values.argc == 0) {
+      ARG_FreeListArgvs( table_size, arg_table);
+      return CV_OK;
+  }
+
+  int nvals = 0;
+  int *vals = new int[values.argc];
+
+  if ( ARG_ParseTclListStatic( interp, values, INT_Type, vals, values.argc, &nvals )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+  // Do work of command:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  if ( sys_geom_set_array_for_local_op_face( (cvPolyData*)src,(cvPolyData**)(&dst),arrayName,vals,nvals,outArray,dataType)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
+    delete [] vals;
+    return TCL_ERROR;
+  }
+
+  delete [] vals;
+
+  vtkPolyData *geom = ((cvPolyData*)(dst))->GetVtkPolyData();
+  fprintf(stdout,"Check %d\n",geom->GetNumberOfPoints());
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+// ----------------
+// Geom_SetArrayForLocalOp_SphereCmd
+// ----------------
+
+int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  double radius;
+  char *outArray = "LocalOpsArray";
+  int dataType = 1;
+  double ctr[3];
+  int nctr;
+  ARG_List ctrList;
+
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 6;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
+    { "-center", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  if ( ARG_ParseTclListStatic( interp, ctrList, DOUBLE_Type, ctr, 3, &nctr )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+
+  if ( nctr != 3 ) {
+    Tcl_SetResult( interp, "sphere requires a 3D center coordinate",
+		   TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  if ( sys_geom_set_array_for_local_op_sphere( (cvPolyData*)src,(cvPolyData**)(&dst),radius,ctr,outArray,dataType)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  vtkPolyData *geom = ((cvPolyData*)(dst))->GetVtkPolyData();
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+// ----------------
+// Geom_LocalDecimationCmd
+// ----------------
+
+int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  char *pointArrayName = 0; 
+  char *cellArrayName = 0;
+  double target = 0.25;
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 5;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-target", DOUBLE_Type, &target, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+  if ( sys_geom_local_quadric_decimation( (cvPolyData*)src, (cvPolyData**)(&dst),target,
+			  pointArrayName,cellArrayName)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  char *pointArrayName = 0; 
+  char *cellArrayName = 0;
+  int numiters = 100;
+  double relax = 0.01;
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 6;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-relax", DOUBLE_Type, &relax, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+  if ( sys_geom_local_laplacian_smooth( (cvPolyData*)src, (cvPolyData**)(&dst),
+			  numiters,relax,
+			  pointArrayName,cellArrayName)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+int Geom_LocalSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  char *pointArrayName = 0; 
+  char *cellArrayName = 0;
+  int numiters = 100;
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 5;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+  if ( sys_geom_local_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
+			  numiters,pointArrayName,cellArrayName)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
   return TCL_OK;
 }
 

@@ -52,6 +52,10 @@
 #include "vtkThreshold.h"
 #include "vtkConnectivityFilter.h"
 #include "vtkDataSetSurfaceFilter.h"
+
+#include "vtkLocalQuadricDecimation.h"
+#include "vtkLocalSmoothPolyDataFilter.h"
+#include "vtkLocalLinearSubdivisionFilter.h"
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
@@ -3214,6 +3218,412 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     if (vec != NULL) vec->Delete();
 
     return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_set_array_for_local_op_sphere */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ *  
+ *  @brief Function to set a boolean array on the surface for local mesh operations.
+ *  Points are set based on cells or points in spherical region. If based on cells,
+ *  cell is determine to be in sphere if the centroid of the cell is within the sphere.
+ *  @param *pd The input polydata on which to set an array 
+ *  @param **outpd polydata that contains the output surface with new array
+ *  @param radius radius of the sphere
+ *  @param *center center of the sphere
+ *  @param *outarray This contains the arrayname holding the boolean array
+ *  @param datatype This indicates whether the input array is point data (0) 
+ *  or cell data (1)
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,double radius,double *center,char *outarrayname,int datatype)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Adding array in sphere\n");
+  fprintf(stdout,"Out Array Name: %s\n",outarrayname);
+  fprintf(stdout,"Radius: %.3f\n",radius);
+  fprintf(stdout,"Center: %.3f %.3f %.3f\n",center[0],center[1],center[2]);
+  fprintf(stdout,"Datatype: %d\n",datatype);
+
+  vtkNew(vtkPolyData,tmp);
+  tmp->DeepCopy(geom);
+  tmp->BuildLinks();
+  vtkNew(vtkIntArray,newArray);
+  newArray->SetName(outarrayname);
+  if (datatype == 0)
+  {
+    double pt[3];
+    int numPoints = tmp->GetNumberOfPoints();
+    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    {
+      newArray->SetNumberOfTuples(numPoints);
+      for (vtkIdType id=0;id < numPoints;id++)
+	newArray->InsertValue(id,0);
+    }
+    else 
+      newArray = vtkIntArray::SafeDownCast(tmp->GetPointData()->GetArray(outarrayname));
+    for (vtkIdType id=0; id < numPoints;id++)
+    {
+      tmp->GetPoint(id,pt);
+      double dist = sqrt(pow(pt[0] - center[0],2) + 
+	                 pow(pt[1] - center[1],2) + 
+			 pow(pt[2] - center[2],2));
+      if (dist <= radius)
+	newArray->InsertValue(id,1);
+    }
+    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+      tmp->GetPointData()->RemoveArray(outarrayname);
+    tmp->GetPointData()->AddArray(newArray);
+  } 
+  else
+  {
+    double centroid[3];
+    vtkIdType npts,*pts;
+    int numCells = tmp->GetNumberOfCells();
+    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    {
+      newArray->SetNumberOfTuples(numCells);
+      for (vtkIdType id=0;id < numCells;id++)
+	newArray->InsertValue(id,0);
+    }
+    else 
+      newArray = vtkIntArray::SafeDownCast(tmp->GetCellData()->GetArray(outarrayname));
+    for (vtkIdType id=0; id < numCells;id++)
+    {
+      tmp->GetCellPoints(id,npts,pts);
+      vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+      vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+      for (int i=0;i<npts;i++)
+      {
+	polyPtIds->InsertValue(i,i);
+	polyPts->InsertNextPoint(tmp->GetPoint(pts[i]));
+      }
+      vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+      double dist = sqrt(pow(centroid[0] - center[0],2) + 
+	                 pow(centroid[1] - center[1],2) + 
+			 pow(centroid[2] - center[2],2));
+      if (dist <= radius)
+	newArray->InsertValue(id,1);
+    }
+    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+      tmp->GetCellData()->RemoveArray(outarrayname);
+    tmp->GetCellData()->AddArray(newArray);
+  }
+  result = new cvPolyData(tmp);
+  *outpd = result;
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_set_array_for_local_op_face */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ *  
+ *  @brief Function to set a boolean array on the surface for local mesh operations.
+ *  Points are set based on an id of a given array
+ *  @param *pd The input polydata on which to set an array 
+ *  @param **outpd polydata that contains the output surface with new array
+ *  @param *arrayname array on which to look for the given values
+ *  @param *values ids to looks for in the given array name. Cells with this 
+ *  id are given a value of 1
+ *  @param *outarray This contains the arrayname holding the boolean array
+ *  @param datatype This indicates whether the input array is point data (0) 
+ *  or cell data (1)
+ *  values indication with cells to decimate
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char *inarrayname,int *vals,int nvals,char *outarrayname,int datatype)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Adding array on face\n");
+  fprintf(stdout,"Given Array Name: %s\n",inarrayname);
+  fprintf(stdout,"Target Array Name: %s\n",outarrayname);
+  fprintf(stdout,"Array Type: %d\n",datatype);
+  fprintf(stdout,"Number of Ids: %d\n",nvals);
+
+  double range[2];
+  int max;
+  int *wantval = new int[max];
+  int value=0;
+  vtkNew(vtkPolyData,tmp);
+  tmp->DeepCopy(geom);
+  vtkNew(vtkIntArray,newArray);
+  newArray->SetName(outarrayname);
+  if (datatype == 0)
+  {
+    if (PlyDtaUtils_PDCheckArrayName(tmp,0,inarrayname) != CV_OK)
+    {
+      fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
+      return CV_ERROR;
+    }
+    int numPoints = tmp->GetNumberOfPoints();
+    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    {
+      newArray->SetNumberOfTuples(numPoints);
+      for (vtkIdType id=0;id< numPoints;id++)
+	newArray->InsertValue(id,0);
+    }
+    else
+      newArray = vtkIntArray::SafeDownCast(tmp->GetPointData()->GetArray(outarrayname));
+    tmp->GetPointData()->GetArray(inarrayname)->GetRange(range);
+    max = range[1];
+    wantval =  new int[max];
+    for (int i=0; i< max; i++)
+      wantval[i] = 0;
+    for (int i=0; i< nvals; i++)
+      wantval[*vals+i] = 1;
+
+    for (vtkIdType id=0;id < numPoints; id++)
+    {
+	value = (int)tmp->GetPointData()->GetArray(inarrayname)->GetTuple1(id);
+      
+      if (wantval[value])
+	newArray->InsertValue(id,1);
+      else 
+	newArray->InsertValue(id,0);
+    }
+    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+      tmp->GetPointData()->RemoveArray(outarrayname);
+    tmp->GetPointData()->AddArray(newArray);
+    delete [] wantval;
+  } 
+  else
+  {
+    if (PlyDtaUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
+    {
+      fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
+      return CV_ERROR;
+    }
+    int numCells = tmp->GetNumberOfCells();
+    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    {
+      newArray->SetNumberOfTuples(numCells);
+      for (vtkIdType id=0;id< numCells;id++)
+	newArray->InsertValue(id,0);
+    }
+    else
+      newArray = vtkIntArray::SafeDownCast(tmp->GetCellData()->GetArray(outarrayname));
+    tmp->GetCellData()->GetArray(inarrayname)->GetRange(range);
+    max = range[1];
+    wantval =  new int[max];
+    for (int i=0; i< max; i++)
+      wantval[i] = 0;
+    for (int i=0; i< nvals; i++)
+      wantval[*vals+i] = 1;
+    vtkNew(vtkIntArray,newArray);
+    newArray->SetName(outarrayname);
+
+    for (int id=0;id < numCells; id++)
+    {
+	value = (int)tmp->GetCellData()->GetArray(inarrayname)->GetTuple1(id);
+      
+      if (wantval[value])
+	newArray->InsertValue(id,1);
+    }
+    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+      tmp->GetCellData()->RemoveArray(outarrayname);
+    tmp->GetCellData()->AddArray(newArray);
+    delete [] wantval;
+  }
+  result = new cvPolyData(tmp);
+  *outpd = result;
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_local_decimation */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ *  
+ *  @brief Function to perform a decimation operation on only a portion 
+ *  of a polydata
+ *  @param *pd The input polydata on which to perform decimation 
+ *  @param **outpd The output polydata surface
+ *  @param *pointarrayname This contains the arrayname holding the boolean
+ *  values indication with points to decimate
+ *  @param *cellarrayname This contains the arrayname holding the boolean
+ *  values indication with cells to decimate
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double target,
+		char *pointarrayname, char *cellarrayname)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Running local decimation\n");
+  fprintf(stdout,"Target Decimation: %.4f\n",target);
+  fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
+  fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  try {
+    vtkNew(vtkLocalQuadricDecimation,decimator);
+    decimator->SetInputData(geom);
+    if (pointarrayname != 0) 
+    {
+      decimator->SetDecimatePointArrayName(pointarrayname);
+      decimator->UsePointArrayOn();
+    }
+    if (cellarrayname != 0) 
+    {
+      decimator->SetDecimateCellArrayName(cellarrayname);
+      decimator->UseCellArrayOn();
+    }
+    decimator->SetTargetReduction(target);
+    decimator->Update();
+
+    result = new cvPolyData( decimator->GetOutput());
+    *outpd = result;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in local decimation.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_local_laplacian_smooth */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ *  
+ *  @brief Function to perform a smoothing operation on only a portion 
+ *  of a polydata
+ *  @param *pd The input polydata on which to perform decimation 
+ *  @param **outpd The output polydata surface
+ *  @param numiters number of iterations of smoothing to perform
+ *  @param relax relaxation factor for smoothing
+ *  @param *pointarrayname This contains the arrayname holding the boolean
+ *  values indication with points to smooth
+ *  @param *cellarrayname This contains the arrayname holding the boolean
+ *  values indication with cells to smooth
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numiters,
+		double relax,char *pointarrayname, char *cellarrayname)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Running local smoothing\n");
+  fprintf(stdout,"Num Iters: %d\n",numiters);
+  fprintf(stdout,"Relax: %.4f\n",relax);
+  fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
+  fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  try {
+    vtkNew(vtkLocalSmoothPolyDataFilter,smoother);
+    smoother->SetInputData(geom);
+    if (pointarrayname != 0) 
+    {
+      smoother->SetSmoothPointArrayName(pointarrayname);
+      smoother->UsePointArrayOn();
+    }
+    if (cellarrayname != 0) 
+    {
+      smoother->SetSmoothCellArrayName(cellarrayname);
+      smoother->UseCellArrayOn();
+    }
+    smoother->SetNumberOfIterations(numiters);
+    smoother->SetRelaxationFactor(relax);
+    smoother->Update();
+
+    result = new cvPolyData( smoother->GetOutput());
+    *outpd = result;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in local smoothing.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_local_subdivision */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ *  
+ *  @brief Function to perform a subdivision operation on only a portion 
+ *  of a polydata
+ *  @param *pd The input polydata on which to perform decimation 
+ *  @param **outpd The output polydata surface
+ *  @param numiters number of iterations of subdivision to perform
+ *  @param *pointarrayname This contains the arrayname holding the boolean
+ *  values indication with points to subdivide
+ *  @param *cellarrayname This contains the arrayname holding the boolean
+ *  values indication with cells to subdivide
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_local_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
+		char *pointarrayname, char *cellarrayname)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Running local subdivision\n");
+  fprintf(stdout,"Num Iters: %d\n",numiters);
+  fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
+  fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  try {
+    vtkNew(vtkLocalLinearSubdivisionFilter,subdivider);
+    subdivider->SetInputData(geom);
+    if (pointarrayname != 0) 
+    {
+      subdivider->SetSubdividePointArrayName(pointarrayname);
+      subdivider->UsePointArrayOn();
+    }
+    if (cellarrayname != 0) 
+    {
+      subdivider->SetSubdivideCellArrayName(cellarrayname);
+      subdivider->UseCellArrayOn();
+    }
+    subdivider->SetNumberOfSubdivisions(numiters);
+    subdivider->Update();
+
+    result = new cvPolyData( subdivider->GetOutput());
+    *outpd = result;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in local subdivision.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
 }
 
 #ifdef USE_VMTK

@@ -406,6 +406,7 @@ model_add $newname $newobjname $orgid
 proc guiSV_model_selectTree { args} {
   global symbolicName
   global gOptions
+  global gKernel
 
   set kernel $gOptions(meshing_solid_kernel)
   #puts "args: $args"
@@ -425,8 +426,14 @@ proc guiSV_model_selectTree { args} {
 
   set firstmodel [lindex [split [lindex $children 0] "."] 3]
   set firstchild [lindex [split [lindex $children 0] "."] 4]
+  if {$firstmodel == ""} {
+    return
+  }
+  set kernel $gKernel($firstmodel)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+  # Do actor stuff!
   if {[llength $children] == 1} {
-    puts "In here $children"
     guiSV_model_virtual_pick_actor $firstmodel $firstchild
   }
   $symbolicName(smasherAttNameLabel) delete 0 end
@@ -434,7 +441,6 @@ proc guiSV_model_selectTree { args} {
   $symbolicName(smasherEntityIdLabel) config -state normal
   $symbolicName(smasherEntityIdLabel) delete 0 end
 
-  # Do actor stuff!
   if {$firstchild != ""} {
     set id [lindex [$tv item .models.$kernel.$firstmodel.$firstchild -values] 1]
     if {$kernel == "Parasolid"} {
@@ -474,8 +480,9 @@ proc guiSV_model_set_att_name {} {
  global smasherFaceNames
  global gOptions
  global gRen3d
+ global gKernel
 
- set kernel $gOptions(meshing_solid_kernel)
+ #set kernel $gOptions(meshing_solid_kernel)
  set faceId [file dirname [$symbolicName(smasherEntityIdLabel) get]]
 
  set name [$symbolicName(smasherAttNameLabel) get]
@@ -484,6 +491,9 @@ proc guiSV_model_set_att_name {} {
  if {[llength $selected] != 1} {
    return -code error "ERROR: Only one face can be selected to rename it"
  }
+ set kernel $gKernel($selected)
+ set gOptions(meshing_solid_kernel) $kernel
+ solid_setKernel -name $kernel
 
  set modelname [lindex [lindex $selected 0] 0]
  set currname [lindex [lindex $selected 0] 1]
@@ -498,7 +508,6 @@ proc guiSV_model_set_att_name {} {
    catch {repos_delete -obj $facepd}
    set faceid [lindex [$tv item .models.$kernel.$modelname.$currname -values] 1]
    if {$kernel == "Parasolid"} {
-     puts "SETTINTING IT"
      $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
    }
    $modelname GetFacePolyData -face $faceid -result $facepd
@@ -557,6 +566,7 @@ proc guiSV_model_get_tree_current_models_selected {} {
 
   global symbolicName
   global gOptions
+  global gKernel
 
   set kernel $gOptions(meshing_solid_kernel)
   set splitlength [expr [string length $kernel] + 9]
@@ -571,10 +581,10 @@ proc guiSV_model_get_tree_current_models_selected {} {
   }
   array set selected {}
   foreach i $children {
-    if [regexp .models.$kernel. $i] {
-      set grp "[lindex [split [string range $i $splitlength end] "."] 0]"
+    #if [regexp .models.$kernel. $i] {
+      set grp "[lindex [split $i "."] 3]"
       set selected($grp) 1
-    } 
+    #} 
   }
   set allselected [lsort -dictionary [array names selected]]
   return $allselected
@@ -596,8 +606,9 @@ proc guiSV_model_get_tree_current_faces_selected {} {
   # only want terminal nodes of tree
   set rtfaces {}
   foreach i $children {
+    set kernel [lindex [split $i "."] 2]
+    puts "$kernel"
     set tree_str ".models.$kernel"
-    puts "$tree_str"
     set tree_str_len [string length $tree_str]
     if [regexp $tree_str $i] {
       if {[$tv children $i] != ""} {
@@ -640,12 +651,13 @@ proc guiSV_model_load_model {} {
    global gFilenames
    global gRen3d
 
-   if {$gOptions(meshing_solid_kernel) == "Parasolid"} {
-     set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {"All Files" *.*}} -title "Choose Solid Model"]
-   } elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
-     set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
-   } elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
-     set fn [tk_getOpenFile -filetypes {{vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
+   set kernel $gOptions(meshing_solid_kernel)
+   if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData"} {
+     set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
+   #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
+   #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
+   #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
+   #  set fn [tk_getOpenFile -filetypes {{vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
    } else {
      set fn [tk_getOpenFile -filetypes {{"All Files" *.*}} -title "Choose Solid Model"]
    }
@@ -890,8 +902,11 @@ proc guiSV_model_get_face_ids_from_tree {modelname} {
   global gPolyDataFaceNames
   global gOptions
   global symbolicName
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
+  set kernel $gKernel($modelname)
+  set gOptions(meshing_solid_kernel) $kernel
   set tv $symbolicName(guiSV_model_tree)
   set faces [model_get $model]
 
@@ -1032,12 +1047,16 @@ proc guiSV_model_display_selected_models_all_faces {showFlag} {
   global symbolicName
   global gOptions
   global gRen3d
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree)
   set selection [guiSV_model_get_tree_current_models_selected]
 
   foreach model $selection {
+    set kernel $gKernel($model)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
     set faces [model_get $model]
     if {$faces == ""} {
       return -code error "There are no faces on object"
@@ -1080,8 +1099,9 @@ proc guiSV_model_display_selected_faces {showFlag} {
   global gOptions
   global symbolicName
   global gRen3d
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree)
   set model [guiSV_model_get_tree_current_models_selected]
   set faces [guiSV_model_get_tree_current_faces_selected]
@@ -1102,6 +1122,9 @@ proc guiSV_model_display_selected_faces {showFlag} {
 
   set names [model_get $model]
   foreach name $names {
+    set kernel $gKernel($model)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $model
     if {[$tv exists .models.$kernel.$model.$name] == 1} {
       if {[lsearch -exact $testfaces $name] != -1} {
 	guiSV_model_display_model_face $showFlag $kernel $model $name
@@ -1115,12 +1138,16 @@ proc guiSV_model_display_selected_full_model {showFlag} {
   global symbolicName
   global gOptions
   global gRen3d
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree)
   set selection [guiSV_model_get_tree_current_models_selected]
 
   foreach model $selection {
+    set kernel $gKernel($model)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
     guiSV_model_display_model $showFlag $kernel $model
     if {[llength [model_get $model]] != 0} {
       guiSV_model_set_col_value $kernel.$model 2 ""
@@ -1138,6 +1165,8 @@ proc guiSV_model_display_only_given_model {modelname withFaces} {
   set models [model_names]
   foreach model $models {
     set kernel $gKernel($model)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
     if {$model == $modelname} {
       if {$withFaces} {
 	guiSV_model_display_model_all_faces 1 $kernel $model
@@ -1203,6 +1232,7 @@ proc guiSV_model_update_actor_selection {actorname} {
   }
 
   set kernel [lindex $namesplit 2]
+  set gOptions(meshing_solid_kernel) $kernel
   if {!($kernel == "PolyData" || $kernel == "Parasolid" || $kernel == "Discrete")} {
     puts "Actor not of valid solid kernel type"
     return
@@ -1227,9 +1257,10 @@ proc guiSV_model_change_selected_color {} {
   global gRen3d
   global PrePickedProperty
   global gOptions
+  global gKernel
 
   set tv $symbolicName(guiSV_model_tree)
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
 
   set color [tk_chooseColor]
   if {$color == ""} return
@@ -1241,6 +1272,9 @@ proc guiSV_model_change_selected_color {} {
   set selected [guiSV_model_get_tree_current_models_selected]
   if {$selected != ""} {
     foreach model $selected {
+      set kernel $gKernel($model)
+      set gOptions(meshing_solid_kernel) $kernel
+      solid_setKernel -name $kernel
       set modelpd /models/$kernel/$model
       set modelShow [lindex [$tv item .models.$kernel.$model -values] 0]
       if {$modelShow == "X"} {
@@ -1272,6 +1306,9 @@ proc guiSV_model_change_selected_color {} {
     for {set i 0} {$i < [llength $faces]} {incr i} {
       set face [lindex $faces $i]
       set model [lindex $models $i]
+      set kernel $gKernel($model)
+      set gOptions(meshing_solid_kernel) $kernel
+      solid_setKernel -name $kernel
       set facepd /models/$kernel/$model/$face
       set faceShow [lindex [$tv item .models.$kernel.$model.$face -values] 2]
       if {$faceShow == "X"} {
@@ -1299,12 +1336,16 @@ proc guiSV_model_change_selected_opacity {opacity} {
   global gRen3d
   global PrePickedProperty
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree)
   set selected [guiSV_model_get_tree_current_models_selected]
   if {$selected != ""} {
     foreach model $selected {
+      set kernel $gKernel($model)
+      set gOptions(meshing_solid_kernel) $kernel
+      solid_setKernel -name $kernel
       set modelpd /models/$kernel/$model
       set modelShow [lindex [$tv item .models.$kernel.$model -values] 0]
       if {$modelShow == "X"} {
@@ -1342,6 +1383,9 @@ proc guiSV_model_change_selected_opacity {opacity} {
     for {set i 0} {$i < [llength $faces]} {incr i} {
       set face [lindex $faces $i]
       set model [lindex $models $i]
+      set kernel $gKernel($model)
+      set gOptions(meshing_solid_kernel) $kernel
+      solid_setKernel -name $kernel
       set facepd /models/$kernel/$model/$face
       set faceShow [lindex [$tv item .models.$kernel.$model.$face -values] 2]
       if {$faceShow == "X"} {
@@ -1373,8 +1417,9 @@ proc guiSV_model_calc_selected_face_area {} {
   global gRen3d
   global smasherEntityIdentifier
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree)
   set objects [guiSV_model_get_tree_current_faces_selected]
   set models {}
@@ -1390,6 +1435,9 @@ proc guiSV_model_calc_selected_face_area {} {
   for {set i 0} {$i < [llength $faces]} {incr i} {
     set face [lindex $faces $i]
     set model [lindex $models $i]
+    set kernel $gKernel($model)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
     set facepd /models/$kernel/$model/$face
     if {![repos_exists -obj $facepd]} {
       return -code error "ERROR: Selected object does not exist"
@@ -1403,9 +1451,13 @@ proc guiSV_model_calc_selected_face_area {} {
 
 proc guiSV_model_remove_all_faces {kernel model} {
   global symbolicName
+  global gKernel
   set tv $symbolicName(guiSV_model_tree)
 
   foreach object $model {
+    set kernel $gKernel($object)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
     set faces [model_get $object]
     if {$faces != ""} {
       guiSV_model_display_model_all_faces 0 $kernel $object
@@ -1421,13 +1473,17 @@ proc guiSV_model_remove_all_faces {kernel model} {
 proc guiSV_model_delete_selected_model {} {
   global symbolicName
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree) 
   set models [guiSV_model_get_tree_current_models_selected]
 
   guiSV_model_display_selected_full_model 0
   foreach model $models {
+    set kernel $gKernel($model)
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
     guiSV_model_delete_model $kernel $model
   }
   guiSV_model_update_tree
@@ -1435,7 +1491,11 @@ proc guiSV_model_delete_selected_model {} {
 
 proc guiSV_model_delete_model {kernel model} {
   global symbolicName
-  set tv $symbolicName(guiSV_model_tree) 
+  global gRen3d
+  set tv $symbolicName(guiSV_model_tree)
+  if {[vis_pExists $gRen3d /models/$kernel/$model]} {
+    guiSV_model_display_model 0 $kernel $model 
+  }
   set faces [model_get $model]
   if {[llength $faces] != 0} {
     foreach face $faces {
@@ -1455,15 +1515,22 @@ proc guiVMTKCenterlines {} {
   global guiPDvars
   global gPolyDataFaceNames
   global symbolicName
+  global gKernel
 
   set tv $symbolicName(guiSV_model_tree)
   set gOptions(meshing_solid_kernel) PolyData
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
     return -code error "ERROR: Only one model can be used for centerline extraction"
   }
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Solid must be of type PolyData for centerline extraction"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
 
   global gWaitVar
   set gWaitVar 0
@@ -1523,14 +1590,23 @@ proc guiBOUNDARIESextract {} {
   global guiMMvars
   global guiPDvars
   global symbolicName
+  global gKernel
 
   set tv $symbolicName(guiSV_model_tree)
   set extraction_angle $guiPDvars(angleForBoundaries)
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
     return -code error "ERROR: Only one model allowed for extraction at a time"
   }
+
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Solid must be of type PolyData for centerline extraction"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
   set newmodel "[string trim $model]_facesextracted"
   catch {repos_delete -obj $newmodel}
   if {[model_create $kernel $newmodel] != 1} {
@@ -1540,24 +1616,20 @@ proc guiBOUNDARIESextract {} {
   }
   solid_copy -src $model -dst $newmodel
 
-  if {$kernel == "PolyData"} {
-    global gPolyDataFaceNames
-    global gPolyDataFaceNamesInfo
-    catch {unset gPolyDataFaceNames}
-    catch {unset gPolyDataFaceNamesInfo}
+  global gPolyDataFaceNames
+  global gPolyDataFaceNamesInfo
+  catch {unset gPolyDataFaceNames}
+  catch {unset gPolyDataFaceNamesInfo}
 
-    puts "Running Boundary Extraction Filter..."
-    $newmodel GetBoundaryFaces -angle $extraction_angle
-    puts "Got Boundaries"
+  puts "Running Boundary Extraction Filter..."
+  $newmodel GetBoundaryFaces -angle $extraction_angle
+  puts "Got Boundaries"
 
-    set allids [$newmodel GetFaceIds]
-    foreach id $allids {
-      set gPolyDataFaceNames($id) "noname_$id"
-    }
-    guiSV_model_add_faces_to_tree $kernel $newmodel
-  } else {
-    return -code error "Solid Must be of type PolyData"
-  } 
+  set allids [$newmodel GetFaceIds]
+  foreach id $allids {
+    set gPolyDataFaceNames($id) "noname_$id"
+  }
+  guiSV_model_add_faces_to_tree $kernel $newmodel
 
   set modelpd /models/$kernel/$newmodel
   catch {repos_delete -obj $modelpd}
@@ -1567,7 +1639,6 @@ proc guiBOUNDARIESextract {} {
   $tv selection set .models.$kernel.$newmodel
 }
 
-
 # Procedure: guiBOUNDARIEScombineSelectedFaces
 proc guiBOUNDARIEScombineSelectedFaces {} {
   global gOptions
@@ -1575,18 +1646,22 @@ proc guiBOUNDARIEScombineSelectedFaces {} {
   global gPolyDataFaceNames
   global smasherInputName
   global symbolicName
-  set gOptions(meshing_solid_kernel) PolyData
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
-  if {$kernel != "PolyData"} {
-    return -code error "ERROR: Solid kernel must be of type PolyData"
-  }
+  #set kernel $gOptions(meshing_solid_kernel)
   set tv $symbolicName(guiSV_model_tree)
   set model [guiSV_model_get_tree_current_models_selected]
   set selected [guiSV_model_get_tree_current_faces_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: One model needs to be selected for face extraction"
+    return -code error "ERROR: One model needs to be selected to combine faces"
   }
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Solid kernel must be of type PolyData"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
   set newmodel [string trim $model]_facescombined
   guiSV_model_copy_model $kernel $model $newmodel 0
   set faces {}
@@ -1632,13 +1707,11 @@ proc guiBOUNDARIESremeshSelectedFaces {} {
   global gPolyDataFaceNames
   global smasherInputName
   global symbolicName
-  set gOptions(meshing_solid_kernel) PolyData
+  global gKernel
+
+  #set gOptions(meshing_solid_kernel) PolyData
   set tv $symbolicName(guiSV_model_tree)
     
-  set kernel $gOptions(meshing_solid_kernel)
-  if {$kernel != "PolyData"} {
-    return -code error "ERROR: Solid kernel must be of type PolyData"
-  }
   set yesno [tk_messageBox -default yes  -message "Select remesh size before running remesh. Continue?"  -title "Set Mesh Size"  -type yesno]
 
   if {$yesno == "yes"} {
@@ -1646,8 +1719,16 @@ proc guiBOUNDARIESremeshSelectedFaces {} {
     set selected [guiSV_model_get_tree_current_faces_selected]
 
     if {[llength $model] != 1} {
-      return -code error "ERROR: One model needs to be selected for face extraction"
+      return -code error "ERROR: One model needs to be selected to remesh faces"
     }
+    #set kernel $gOptions(meshing_solid_kernel)
+    set kernel $gKernel($model)
+    if {$kernel != "PolyData"} {
+      return -code error "ERROR: Solid kernel must be of type PolyData"
+    }
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
+
     set newmodel [string trim $model]_facesremeshed
     guiSV_model_copy_model $kernel $model $newmodel 0
     set faces {}
@@ -1683,22 +1764,28 @@ proc guiBOUNDARIESdeleteSelectedFaces {} {
   global gPolyDataFaceNames
   global smasherInputName
   global symbolicName
+  global gKernel
+
   set gOptions(meshing_solid_kernel) PolyData
   set tv $symbolicName(guiSV_model_tree)
 
-  set kernel $gOptions(meshing_solid_kernel)
-  if {$kernel != "PolyData"} {
-    return -code error "ERROR: Solid kernel must be of type PolyData"
-  }
   set yesno [tk_messageBox -default yes  -message "This will remove these faces from the full solid model completely. Continue?"  -title "Continue?"  -type yesno]
 
   if {$yesno == "yes"} {
     set model [guiSV_model_get_tree_current_models_selected]
-    set selected [guiSV_model_get_tree_current_faces_selected]
-
     if {[llength $model] != 1} {
       return -code error "ERROR: One model needs to be selected for face extraction"
     }
+    #set kernel $gOptions(meshing_solid_kernel)
+    set kernel $gKernel($model)
+    if {$kernel != "PolyData"} {
+      return -code error "ERROR: Solid kernel must be of type PolyData"
+    }
+    set gOptions(meshing_solid_kernel) $kernel
+    solid_setKernel -name $kernel
+
+    set selected [guiSV_model_get_tree_current_faces_selected]
+
     set newmodel [string trim $model]_facesdeleted
     guiSV_model_copy_model $kernel $model $newmodel 0
     set faces {}
@@ -1739,11 +1826,8 @@ proc guiBOUNDARIESfillWithIds {} {
   global smasherInputName
   global gui3Dvars
   global symbolicName
+  global gKernel
   
-  set kernel $gOptions(meshing_solid_kernel)
-  if {$kernel != "PolyData"} {
-    return -code error "ERROR: Must be using PolyData for this operation"
-  }
   set tv $symbolicName(guiSV_model_tree)
 
   set model [guiSV_model_get_tree_current_models_selected]
@@ -1752,6 +1836,15 @@ proc guiBOUNDARIESfillWithIds {} {
   if {[llength $model] != 1} {
     return -code error "ERROR: One model needs to be selected for face extraction"
   }
+
+  #set kernel $gOptions(meshing_solid_kernel)
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Must be using PolyData for this operation"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
   set newmodel [string trim $model]_filled
   guiSV_model_copy_model $kernel $model $newmodel 0
 
@@ -1798,8 +1891,16 @@ proc guiTRIMcreateCutBox { model newmodel side offset vals} {
   global guiWSSvars
   global gRen3d
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  #set kernel $gOptions(meshing_solid_kernel)
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Solid kernel sould be PolyData for operation"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
   set obj /models/$kernel/$newmodel
   set modelpd /models/$kernel/$model
 
@@ -1867,11 +1968,14 @@ proc guiTRIMcreateCutPlane { model newmodel side} {
   global guiPDvars
   global smasherInputName
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  set kernel $gKernel($model)
   if {$kernel != "PolyData"} {
     return -code error "ERROR: Solid kernel sould be PolyData for operation"
   }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
 
   set obj /models/$kernel/$newmodel
   set modelpd /models/$kernel/$model
@@ -1953,8 +2057,12 @@ proc guiTRIMcreateCutPlane { model newmodel side} {
 proc guiSV_model_update_new_solid {kernel model newmodel} {
   global symbolicName
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
+  set kernel $gKernel($model)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
   set tv $symbolicName(guiSV_model_tree)
 
   set addfaces 0
@@ -2094,18 +2202,20 @@ proc guiSV_model_blend_selected_models {} {
   global gObjects
   global symbolicName
   global gOptions
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
-  if {$kernel != "Parasolid"} {
-    return -code error "ERROR: Solid kernel must be Parasolid for operation"
-  }
-  solid_setKernel -name $kernel
 
   set tv $symbolicName(guiSV_model_tree)
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
     return -code error "ERROR: Can only blend one Parasolid model at a time"
   }
+  set kernel $gKernel($model)
+  if {$kernel != "Parasolid"} {
+    return -code error "ERROR: Solid kernel must be Parasolid for operation"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
 
   set newmodel "[string trim $model]_blended"
 
@@ -2242,12 +2352,15 @@ proc guiSV_model_trim_model {} {
 proc guiSV_model_copy_selected_model {} {
   global gOptions
   global symbolicName
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
     return -code error "ERROR: Only one model can be copied at a time"
   }
+  set kernel $gKernel($model)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
   
   guiSV_model_copy_model $kernel $model "" copy
 }
@@ -2297,12 +2410,15 @@ proc guiSV_model_copy_model {kernel model newname op} {
 proc guiSV_model_rename_selected_model {} {
   global gOptions
   global symbolicName
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
     return -code error "ERROR: Only one model can be copied at a time"
   }
+  set kernel $gKernel($model)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
   
   guiSV_model_rename_model $kernel $model
 }
@@ -2326,6 +2442,8 @@ proc guiSV_model_create_model_polydata {} {
   global guiBOOLEANvars
   set gOptions(meshing_solid_kernel) PolyData
   set kernel $gOptions(meshing_solid_kernel)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
 
   set ordered_names    $guiBOOLEANvars(selected_groups)
   set ordered_names2    $guiBOOLEANvars(selected_seg3d)
@@ -2442,6 +2560,8 @@ proc guiSV_model_create_model_parasolid {} {
    set gOptions(meshing_solid_kernel) Parasolid
    solid_setKernel -name $gOptions(meshing_solid_kernel)
    set kernel $gOptions(meshing_solid_kernel)
+   set gOptions(meshing_solid_kernel) $kernel
+   solid_setKernel -name $kernel
 
    set tv $symbolicName(guiSV_group_tree)
   set children [$tv children {}]
@@ -2623,6 +2743,7 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
 
   set gOptions(meshing_solid_kernel) Discrete
   set kernel Discrete
+  set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
   set newmodel [guiSV_model_new_surface_name 0]
@@ -2649,4 +2770,37 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
   }
   guiSV_model_add_faces_to_tree $kernel $newmodel
   guiSV_model_display_only_given_model $newmodel 1
+}
+
+proc guiSV_model_create_local_surface_macro {type} {
+  global gui3Dvars
+  global symbolicName
+  global gKernel
+  set tv $symbolicName(guiSV_model_tree)
+
+  set addstr {}
+  if {$type == "sphere"} {
+    set addstr "sphere $gui3Dvars(sphereRadius) $gui3Dvars(sphereCenter) ActiveCells 1\n"
+  } elseif {$type == "faces"} {
+    set model [guiSV_model_get_tree_current_models_selected]
+    if {[llength $model] != 1} {
+      return -code error "ERROR: Only one model can be selected for local operations" 
+    }
+    set kernel $gKernel($model)
+    set selected [guiSV_model_get_tree_current_faces_selected]
+    set changelist {}
+    foreach name $selected {
+      if {[lindex $name 1] != ""} {
+	set face [lindex $name 1]
+	lappend changelist [lindex [$tv item .models.$kernel.$model.$face -values] 1] 
+      }
+    }
+    set addstr "faces [lrange $changelist 0 end] ModelFaceID ActiveCells 1\n"
+  } elseif {$type == "cells"} {
+    set addstr "cells [lrange something 0 end] ActiveCells\n"
+  } else {
+    return -code error "Invalid type to create local operation macro"
+  }
+
+  $symbolicName(guiLocalSurfaceOperationParametersTextBox) insert end $addstr
 }
