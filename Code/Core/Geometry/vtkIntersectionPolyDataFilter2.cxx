@@ -485,13 +485,6 @@ int vtkIntersectionPolyDataFilter2::Impl
 int vtkIntersectionPolyDataFilter2::Impl
 ::SplitMesh(int inputIndex, vtkPolyData *output, vtkPolyData *intersectionLines)
 {
-  vtkSmartPointer<vtkIntArray> TouchedCellArray = 
-    vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> TouchedPointArray = 
-    vtkSmartPointer<vtkIntArray>::New();
-  TouchedCellArray->SetNumberOfComponents(1);
-  TouchedPointArray->SetNumberOfComponents(1);
-
   vtkPolyData *input = this->Mesh[inputIndex];
   IntersectionMapType *intersectionMap = this->IntersectionMap[inputIndex];
   vtkCellData *inCD  = input->GetCellData();
@@ -528,7 +521,6 @@ int vtkIntersectionPolyDataFilter2::Impl
     input->GetPoints()->GetPoint(ptId, pt);
     output->GetPoints()->InsertNextPoint(pt);
     outPD->CopyData(inPD, ptId, ptId);
-    TouchedPointArray->InsertTuple1(ptId,-2);
     BoundaryPoints[inputIndex]->InsertValue(ptId,0);
     }
 
@@ -551,7 +543,6 @@ int vtkIntersectionPolyDataFilter2::Impl
     cell->EvaluatePosition(pt, closestPt, subId, pcoords, dist2, weights);
     outPD->InterpolatePoint(input->GetPointData(), newPtId, cell->PointIds,
                             weights);
-    TouchedPointArray->InsertTuple1(newPtId,-2);
     BoundaryPoints[inputIndex]->InsertValue(newPtId,0);
     }
 
@@ -621,7 +612,6 @@ int vtkIntersectionPolyDataFilter2::Impl
         // Just insert the cell and copy the cell data
         newId = newPolys->InsertNextCell(3, pts);
         outCD->CopyData(inCD, cellIdX, newId);
-	TouchedCellArray->InsertTuple1(newId,-2);
         }
       else
         {
@@ -672,24 +662,11 @@ int vtkIntersectionPolyDataFilter2::Impl
             }
 
           outCD->CopyData(inCD, cellIdX, newId); // Duplicate cell data
-	  TouchedCellArray->InsertTuple1(newId,1);
-	  for (int i=0;i<npts;i++)
-	  {
-	    TouchedPointArray->InsertTuple1(ptIds[i],1);
-	  }
-
           }
         splitCells->Delete();
         }
       } // for (cells->InitTraversal(); ...
     }
-  TouchedCellArray->SetName("VisitedCells");
-  outCD->AddArray(TouchedCellArray);
-  outCD->SetActiveScalars("VisitedCells");
-
-  TouchedPointArray->SetName("VisitedPoints");
-  outPD->AddArray(TouchedPointArray);
-  outPD->SetActiveScalars("VisitedPoints");
 
   return 1;
 }

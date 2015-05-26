@@ -433,15 +433,13 @@ proc guiSV_model_selectTree { args} {
   set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
   # Do actor stuff!
-  if {[llength $children] == 1} {
-    guiSV_model_virtual_pick_actor $firstmodel $firstchild
-  }
   $symbolicName(smasherAttNameLabel) delete 0 end
   $symbolicName(smasherAttNameLabel) insert 0 $firstchild
   $symbolicName(smasherEntityIdLabel) config -state normal
   $symbolicName(smasherEntityIdLabel) delete 0 end
 
   if {$firstchild != ""} {
+    guiSV_model_virtual_pick_actor $firstmodel $firstchild
     set id [lindex [$tv item .models.$kernel.$firstmodel.$firstchild -values] 1]
     if {$kernel == "Parasolid"} {
       catch {set identifier [$firstmodel GetFaceAttr -attr identifier -faceId $id]}
@@ -2776,6 +2774,9 @@ proc guiSV_model_create_local_surface_macro {type} {
   global gui3Dvars
   global symbolicName
   global gKernel
+  global gNumPickedCells
+  global gPickedCellIds
+
   set tv $symbolicName(guiSV_model_tree)
 
   set addstr {}
@@ -2797,7 +2798,11 @@ proc guiSV_model_create_local_surface_macro {type} {
     }
     set addstr "faces [lrange $changelist 0 end] ModelFaceID ActiveCells 1\n"
   } elseif {$type == "cells"} {
-    set addstr "cells [lrange something 0 end] ActiveCells\n"
+    set changelist {}
+    for {set i 1} {$i <= $gNumPickedCells} {incr i} {
+      lappend changelist $gPickedCellIds($i)
+    }
+    set addstr "cells [lrange $changelist 0 end] ActiveCells 1\n"
   } else {
     return -code error "Invalid type to create local operation macro"
   }

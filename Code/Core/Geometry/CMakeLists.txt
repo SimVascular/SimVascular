@@ -48,7 +48,8 @@ SET(CXXSRCS	cv_sys_geom.cxx cv_ggems.cxx
 	vtkLocalQuadricDecimation.cxx
 	vtkLocalInterpolatingSubdivisionFilter.cxx
 	vtkLocalLinearSubdivisionFilter.cxx
-	vtkLocalSmoothPolyDataFilter.cxx)
+	vtkLocalSmoothPolyDataFilter.cxx
+	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx)
 SET(HDRS cv_sys_geom.h cv_ggems.h 
 	cv_spline.h cv_integrate_surface.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
@@ -60,7 +61,8 @@ SET(HDRS cv_sys_geom.h cv_ggems.h
 	vtkLocalQuadricDecimation.h
 	vtkLocalInterpolatingSubdivisionFilter.h
 	vtkLocalLinearSubdivisionFilter.h
-	vtkLocalSmoothPolyDataFilter.h)
+	vtkLocalSmoothPolyDataFilter.h
+	vtkCGSmooth.h svMath.h sparse_matrix.h)
 
 if(SimVascular_USE_GTS)
 	SET(CXXSRCS  ${CXXSRCS} vtkSurfaceBooleanOperations.cxx)

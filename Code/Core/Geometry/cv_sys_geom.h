@@ -170,11 +170,16 @@ int sys_geom_set_array_for_local_op_sphere(cvPolyData *pd,cvPolyData **outpd, do
 int sys_geom_set_array_for_local_op_face(cvPolyData *pd,cvPolyData **outpd, char *inarrayname,
     int *vals, int nvals,char *outarrayname,int datatype);
 
+int sys_geom_set_array_for_local_op_cells(cvPolyData *pd,cvPolyData **outpd, int *vals, int nvals,char *outarrayname,int datatype);
+
 int sys_geom_local_quadric_decimation(cvPolyData *pd,cvPolyData **outpd, double target,
     char *pointarrayname, char *cellarrayname);
 
 int sys_geom_local_laplacian_smooth(cvPolyData *pd,cvPolyData **outpd, int numiters,
     double relax,char *pointarrayname, char *cellarrayname);
+
+int sys_geom_local_constrain_smooth(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    double constrainfactor,int numcgsolves,char *pointarrayname, char *cellarrayname);
 
 int sys_geom_local_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
     char *pointarrayname, char *cellarrayname);

@@ -103,7 +103,7 @@ proc BindTkRenderWidget {widget} {
     bind $widget <KeyPress-4> {CameraRoll %W %x %y -10}
     bind $widget <KeyPress-k> {PrintCameraView %W %x %y}
     bind $widget <KeyPress-l> {RenderCameraView %W %x %y}
-    bind $widget <Control-KeyPress-c> {PickPolyDataCell %W %x %y 1 0}
+    bind $widget <KeyPress-C> {PickPolyDataCell %W %x %y 1 0}
     bind $widget <KeyPress-h> {PickPolyDataPoint %W %x %y 0 0}
     bind $widget <Control-KeyPress-h> {PickPolyDataPoint %W %x %y 1 0}
 # hack that assumes you've used code similar to vis_initTKgr to create
@@ -876,9 +876,10 @@ proc PickPolyDataCell {widget x y add delete} {
         set count 0
 	for {set i 1} {$i <= $gNumPickedCells} {incr i} {
 	  if {$cellId == $gPickedCellIds($i)} {
-	    catch {$CurrentRenderer RemoveActor newActor_$cellId}
-	    catch {newActor_$cellId Delete}
-	    set deletedActor 1
+	    #catch {$CurrentRenderer RemoveActor newActor_$cellId}
+	    #catch {newActor_$cellId Delete}
+	    #set deletedActor 1
+	    return
 	  } else {
 	    incr count
 	    set tempCellIds($count) $gPickedCellIds($i)

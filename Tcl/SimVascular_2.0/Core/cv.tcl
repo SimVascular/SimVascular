@@ -148,6 +148,8 @@ proc geom_localOperation {operation inPd outPd} {
   global gui3Dvars
   global gKernel
   global symbolicName
+  global gPickedCellIds
+  global gNumPickedCells
   set tv $symbolicName(guiSV_model_tree)
   set tbox $symbolicName(guiLocalSurfaceOperationParametersTextBox)
   set gui3Dvars(localControlAttributes) [$tbox get 0.0 end]
@@ -157,6 +159,7 @@ proc geom_localOperation {operation inPd outPd} {
   catch {repos_delete -obj $tmp1Pd}
   geom_copy -src $inPd -dst $tmp1Pd
 
+  set cell_lines 0
   set broke [split $gui3Dvars(localControlAttributes) "\n"]
   for {set i 0} {$i < [llength $broke]} {incr i} {
     set trimmed [string trim [lindex $broke $i]]
@@ -177,11 +180,20 @@ proc geom_localOperation {operation inPd outPd} {
 	if {$changelist == ""} {return }
         geom_set_array_for_local_op_face -src $tmp1Pd -result $tmp2Pd -array $inarray -values $changelist -outarray $outarray -datatype $datatype
       } elseif {$cmd == "cells"} {
-	return -code "Not implemented yet"
+	set changelist [lrange $trimmed 1 end-2]
+	set outarray [lindex $trimmed end-1]
+	set datatype [lindex $trimmed end]
+        if {$gNumPickedCells != 0} {
+          geom_set_array_for_local_op_cells -src $tmp1Pd -result $tmp2Pd -values $changelist -outarray $outarray -datatype $datatype
+	}
+	set cell_lines 1
       }
       catch {repos_delete -obj $tmp1Pd}
       geom_copy -src $tmp2Pd -dst $tmp1Pd
     }
+  }
+  if {$cell_lines} {
+    $symbolicName(guiLocalSurfaceOperationParametersTextBox) delete 0.0 end
   }
 
   if {$operation == "local_quadric_decimation"} {
@@ -194,9 +206,16 @@ proc geom_localOperation {operation inPd outPd} {
   } elseif {$operation == "local_subdivision"} {
     set iters $gui3Dvars(local_linear_subdivisions)
     geom_local_subdivision -src $tmp2Pd -result $outPd -numiters $iters -cellarray "ActiveCells"
+  } elseif {$operation == "local_constrain_smooth"} {
+    set iters $gui3Dvars(local_cgsmooth_num_iters)
+    set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
+    puts "Iters $iters"
+    geom_local_constrain_smooth -src $tmp2Pd -result $outPd -numiters $iters -constrainfactor $constrain -cellarray "ActiveCells"
   } else {
     return -code error "ERROR: Invalid local surface operation"
   }
+  set delete 1
+  PickPolyDataCell widget x y add $delete
 }
 
 proc geom_fillHoles {inPd outPd} {
