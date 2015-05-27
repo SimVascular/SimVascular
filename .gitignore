@@ -12,3 +12,4 @@ Code/Source/.cproject
 !Code/Source/Segmentation/ITK/.project
 !Code/Source/Segmentation/cvLevelSet/.project
 !Code/Source/Segmentation/.project
+!BuildWithMake/Release/tmp/.project
