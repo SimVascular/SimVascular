@@ -751,7 +751,7 @@ proc guiSV_model_save_model {} {
   set kernel $gKernel($model)
   solid_setKernel -name $kernel
 
-  if {$solid_kernel == "Parasolid"} {
+  if {$kernel == "Parasolid"} {
     set fn [tk_getSaveFile -filetypes {{PARASOLID *.xmt_txt} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $model]
     if {$fn == ""} return 
     puts "Writing file $fn."
@@ -761,7 +761,7 @@ proc guiSV_model_save_model {} {
       $model WriteNative -file $fn
     }
     puts "Done writing file."
-  } elseif {$solid_kernel == "Discrete"} {
+  } elseif {$kernel == "Discrete"} {
     set fn $model
     package require md5
     set fn [tk_getSaveFile -filetypes {{DISCRETE *.dsm} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $smasherInputName]
@@ -788,12 +788,12 @@ proc guiSV_model_save_model {} {
     puts $fp "set gDiscreteModelFaceNamesInfo(model_file_name) \{[file tail $fn]\}"
     puts $fp ""
     foreach id $allids {
-      set face [model_idface $solid_kernel $model $id]
+      set face [model_idface $kernel $model $id]
       puts $fp "set gDiscreteModelFaceNames($id) \{$face\}"
     }
     close $fp
     puts "Done writing facenames file."
-  } elseif {$solid_kernel == "PolyData"} {
+  } elseif {$kernel == "PolyData"} {
       set fn $model
       set fn [tk_getSaveFile -defaultextension {.vtp} -filetypes {{vtkPolyData *.vtp} {VTK *.vtk} {vtkUnstructuredGrid *.vtu} {STL *.stl}  {PLY *.ply} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
       package require md5
@@ -820,7 +820,7 @@ proc guiSV_model_save_model {} {
 	puts $fp "set gPolyDataFaceNamesInfo(model_file_name) \{[file tail $fn]\}"
 	puts $fp ""
 	foreach id $allids {
-	  set face [model_idface $solid_kernel $model $id]
+	  set face [model_idface $kernel $model $id]
           puts $fp "set gPolyDataFaceNames($id) \{$face\}"
         }
         close $fp
@@ -2811,4 +2811,49 @@ proc guiSV_model_create_local_surface_macro {type} {
   }
 
   $symbolicName(guiLocalSurfaceOperationParametersTextBox) insert end $addstr
+}
+
+proc guiSV_model_send_selected_to_3D_segmentation {} {
+  global symbolicName
+  global gKernel
+  global gOptions
+  global gSeg3D
+
+  set tv $symbolicName(guiSV_group_tree)
+  set selected [guiSV_model_get_tree_current_models_selected]
+  foreach model $selected {
+    set kernel $gKernel($model)
+    if {$kernel != "PolyData"} {
+      puts "Only can turn a PolyData surface into a 3D seed surface, skipping!"
+      continue
+    }
+    set objName [string trim $model]_3D
+    catch {repos_delete -obj $objName}
+    $model GetPolyData -result $objName
+    if {[seg3d_add $model $objName] !=0} {
+
+      set yesno [tk_messageBox -default no  \
+      -message "Do you want to replace $model? with this surface? This cannot be undone." \
+      -title "Confirm overwrite surface"  -type yesno]
+      switch -- $yesno {
+	yes {
+	  puts "forcing"
+	  seg3d_addForce $model $model
+	}
+	no {
+	 return
+        }
+      }
+
+    }
+    repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
+    repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
+    guiSV_group_update_tree
+    DestroyWindow.svSaveSegWindow
+    guiSV_model_display_selected_full_model 0
+
+    $tv see .groups.3d.$model
+    $tv selection set .groups.3d.$model
+    guiSV_solid_display_selected_groups 1
+  }
 }
