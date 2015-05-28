@@ -105,7 +105,7 @@
   Number of Force Surfaces: 0                             
   Surface ID's for Force Calculation: NODEFAULT           
   Force Calculation Method: Velocity Based      # Velocity Based,Residual Based
-  Update Wall Coordinates: False                # True, False
+  Apply Wall Deformation: False                # True, False
 }
 
 # =============
