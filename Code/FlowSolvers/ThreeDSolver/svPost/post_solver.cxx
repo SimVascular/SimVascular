@@ -159,6 +159,7 @@ private:
     double *xglobal_;
     int *ien_;
     int **ncorpd2d_;
+    int **ecorpd2d_;
     double *wplocal_;
     double *wpglobal_;
     double *matprops_;
@@ -219,6 +220,13 @@ PostSolver::~PostSolver() {
         }
         delete [] ncorpd2d_;
     }
+    if (ecorpd2d_ != NULL) {
+        for(int i=0; i< numprocs_; i++) {
+            delete [] ecorpd2d_[i];
+        }
+        delete [] ecorpd2d_;
+    }
+
     if (wplocal_ != NULL) {
         delete [] wplocal_;
     }
@@ -366,6 +374,8 @@ int PostSolver::ReadConnectivity() {
     xlocal_ = new double [ 3*maxnshg_ ];
 
     ncorpd2d_ = new int* [numprocs_];
+    ecorpd2d_ = new int* [numprocs_];
+    bool realGlobalElementID=true;
 
     nendx = nen;
     if(nen>4) nendx=8;  /* DX thinks of things as ALL tets or hexes ONLY */
@@ -391,6 +401,8 @@ int PostSolver::ReadConnectivity() {
         nshgl=iarray[0];
         readheader_(&igeom,"number of interior tpblocks",(void*)iarray,&ione_,"integer",iotype_);
         nelblk=iarray[0];
+        readheader_(&igeom,"number of interior elements",(void*)iarray,&ione_,"integer",iotype_);
+        numel=iarray[0];
 
         /* read coordinates and fill into global array */
         readheader_(&igeom,"co-ordinates",(void*)intfromfile,&itwo_,"double",iotype_);
@@ -406,10 +418,24 @@ int PostSolver::ReadConnectivity() {
             np=intfromfile[0];
             ncorpd2d_[i] = new int[np];
             readdatablock_(&igeom,"mode number map from partition to global",(void*)ncorpd2d_[i],&np,"integer",iotype_);
+
+            intfromfile[0]=0;
+            readheader_(&igeom,"element number map from partition to global",(void*)intfromfile,&ione_,"integer",iotype_);
+            numel=intfromfile[0];
+            if(numel>0){
+                ecorpd2d_[i] = new int[numel];
+                readdatablock_(&igeom,"element number map from partition to global",(void*)ecorpd2d_[i],&numel,"integer",iotype_);
+            }else{
+                realGlobalElementID=false;
+            }
+
         } else {
             ncorpd2d_[i] = new int [nshgl];
             for(j=0; j< nshgl ; j++)
                 ncorpd2d_[i][j]=j+1;
+            ecorpd2d_[i] = new int [numel];
+            for(j=0; j< numel ; j++)
+                ecorpd2d_[i][j]=j+1;
         }
 
         /* map it to global numbering */
@@ -418,7 +444,7 @@ int PostSolver::ReadConnectivity() {
                 xglobal_[k*nshgtot_+ncorpd2d_[i][j]-1] = xlocal_[k*nshgl+j];
 
         /*read connectivity data */
-        for(k=0; k< nelblk; k++){
+        for(k=0; k< nelblk; k++){//nelblk is always 1
             /* keyphrase identifying interior connectivity element block */
             readheader_(&igeom,"connectivity interior",(void*)intfromfile,&iseven_,"integer",iotype_);
             neltp  =intfromfile[0];
@@ -433,24 +459,35 @@ int PostSolver::ReadConnectivity() {
             /* now read the array */
             readdatablock_(&igeom,"connectivity interior",(void*)tmpent,&itmpentsiz,"integer", iotype_);
 
-
-            /* Now we need to bring ien_ to the global numbering */
-            for(l=0; l< neltp; l++){
-                for(j=0; j<nshl ; j++){
-                    gnum=nelsofar+j*neltot_+l;
-                    opnum=tmpent[j*neltp+l];
-                    ien_[gnum]=ncorpd2d_[i][opnum-1];
+            if(realGlobalElementID){
+                for(l=0; l< neltp; l++){
+                    for(j=0; j<nshl ; j++){
+                        gnum=j*neltot_+ecorpd2d_[i][l]-1;
+                        opnum=tmpent[j*neltp+l];
+                        ien_[gnum]=ncorpd2d_[i][opnum-1];
+                    }
                 }
+            }else{
+                /* Now we need to bring ien_ to the global numbering */
+                for(l=0; l< neltp; l++){
+                    for(j=0; j<nshl ; j++){
+                        gnum=nelsofar+j*neltot_+l;
+                        opnum=tmpent[j*neltp+l];
+                        ien_[gnum]=ncorpd2d_[i][opnum-1];
+                    }
 
-                /* pad to largest nendx since dx has to treat pyr and wedg as
-	   degenerate hex */
-                opnum=ien_[gnum];  /* hijack opnum to keep last real node */
-                for(j=nshl; j<nendx ; j++){
-                    gnum=nelsofar+j*neltot_+l;
-                    ien_[gnum]=opnum;
+                    /* pad to largest nendx since dx has to treat pyr and wedg as
+                       degenerate hex */
+                    opnum=ien_[gnum];  /* hijack opnum to keep last real node */
+                    for(j=nshl; j<nendx ; j++){
+                        gnum=nelsofar+j*neltot_+l;
+                        ien_[gnum]=opnum;
+                    }
                 }
+                nelsofar+=neltp;
+
             }
-            nelsofar+=neltp;
+
             delete [] tmpent;
         }
         closefile_( &igeom, "read" );

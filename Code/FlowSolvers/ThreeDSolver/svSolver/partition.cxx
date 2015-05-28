@@ -369,6 +369,9 @@ Partition_Problem( int  numProcs,
 
     vector< Block_Map >  ien( numProcs );
 
+    vector< map< int, int > > ecorp( numProcs ) ;
+    int* epcount=new int[numProcs]();
+
     int* vcount= new int [numProcs];
     int* ecount= new int [numProcs];
     int* fcount= new int [numProcs];
@@ -376,7 +379,7 @@ Partition_Problem( int  numProcs,
     for( int e=0; e < numProcs; e++ ) 
         vcount[e] = ecount[e] = fcount[e]= 1;
 
-    for( int b = 0; b < nblock ; b++ ) {
+    for( int b = 0; b < nblock ; b++ ) {//nblock is always 1 since only one block for linear tetrahedron
 
         readheader_( &igeombc, "connectivity interior?", (void*)iarray,
                      &iseven, "integer", iformat );
@@ -407,6 +410,9 @@ Partition_Problem( int  numProcs,
 
             ien[pid][CurrentBlock].push_back( element );
 
+            ecorp[pid][epcount[pid]] = gid+1 ;
+            epcount[pid]++;
+
             for( vector< int >::iterator iter = element.begin();
                  iter != element.end();
                  iter++ ) {
@@ -422,6 +428,8 @@ Partition_Problem( int  numProcs,
         delete [] ient;
         delete [] ient_sms;
     }
+
+    delete [] epcount;
 
     /* At this point the values stored in vcount ecount and fcount are 1 more 
      * than  the number of vertices edges and faces respectively , sp we need 
@@ -1519,8 +1527,29 @@ Partition_Problem( int  numProcs,
                          (void*)(fncorp), &nitems, "integer", oformat );
 
         delete [] fncorp ;
+
+        isize=ecorp[a].size();
+        nitems=1;
+        iarray[0]=ecorp[a].size();
+        writeheader_( &fgeom, " element number map from partition to global",
+                      (void*)iarray, &nitems, &isize, "integer", oformat );
+
+        int* fecorp = new int [  ecorp[a].size() ];
+        count = 0;
+        for( map< int, int>::iterator iter = ecorp[a].begin();
+             iter != ecorp[a].end();
+             iter++ )
+            fecorp[count++] = (*iter).second ;
+
+        nitems = count;
+        writedatablock_( &fgeom, " element number map from partition to global",
+                         (void*)(fecorp), &nitems, "integer", oformat );
+
+        delete [] fecorp ;
+
         closefile_( &fgeom, "append" );
         ncorp[a].clear();
+        ecorp[a].clear();
     } 
 
     for( int a=0; a< numProcs; a++ ){

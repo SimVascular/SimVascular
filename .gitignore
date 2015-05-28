@@ -1,6 +1,7 @@
 .project
 Tcl/.buildpath
 Tcl/.project
+Code/FlowSolvers/.cproject
 
 !Code/ThirdParty/vmtk/.project
 !Code/Source/ImageProcessing/.project
