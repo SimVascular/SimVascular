@@ -113,7 +113,7 @@ int input_fform(char inpfname[])
         	if(myrank==0){
         	cerr << " ERROR: Invalid BCT File Type." << endl;
         	}
-        	exit(-2);
+        	return 001;
         }
 
         inpdat.BCTFileNumber = inp.GetValue("Number of BCT Files","1",false,true);
@@ -127,7 +127,7 @@ int input_fform(char inpfname[])
         	if(myrank==0){
         	cerr << " ERROR: Invalid BCT Matching Type." << endl;
         	}
-        	exit(-2);
+        	return 001;
         }
 
         nomodule.bcttimescale = inp.GetValue("BCT Time Scale Factor","1.0",false,true);
@@ -207,6 +207,25 @@ int input_fform(char inpfname[])
           aerfrc.nsrflist[ivec[i]] = 1;
       }
       ivec.erase(ivec.begin(),ivec.end());
+
+
+      strvalue=(string)inp.GetValue("Force Calculation Method","Velocity Based",false,true);
+      if( strvalue =="Velocity Based" ){
+          inpdat.tractionMethod=0;
+      }else if ( strvalue =="Residual Based" ){
+          inpdat.tractionMethod=1;
+      }else{
+          if(myrank==0){
+              cerr << " ERROR: Invalid Force Calculation Method." << endl;
+          }
+          return 001;
+      }
+
+      if(inpdat.tractionMethod==0){
+          strvalue=(string)inp.GetValue("Apply Wall Deformation","False",false,true);
+          (strvalue=="True")? nomodule.applyWallDeformation = 1: nomodule.applyWallDeformation = 0;
+      }
+
     }
 
     if(nomodule.numCalcSrfs=inp.GetValue("Number of Surfaces which Output Pressure and Flow","0",false,true)){
@@ -367,7 +386,7 @@ int input_fform(char inpfname[])
     }else{
       if(myrank==0){
         cerr << " ERROR: Invalid Linear Solver Type." << endl;
-        exit(-2);
+        return 001;
       }
     }
     //GMRES sparse is assumed default and has the value of 10, MFG 20,
@@ -385,7 +404,7 @@ int input_fform(char inpfname[])
       if(myrank==0){
         cerr << " ERROR: Invalid svLS Type." << endl;
       }
-      exit(-2);
+      return 001;
     }
 
     //    inpdat.niter[0] = inp.GetValue("Number of Solves per Time Step");
@@ -756,6 +775,21 @@ int input_fform(char inpfname[])
     }
     for(i=0; i< sequence.seqsize; i++){
       sequence.stepseq[i] = ivec[i];
+    }
+
+    // ============================
+    // Task Control
+    // ============================
+    strvalue=(string)inp.GetValue("Solver Task","Full Simulation",false,true);
+    if( strvalue =="Full Simulation" ){
+        inpdat.solverTask=0;
+    }else if ( strvalue =="Only Partition" ){
+        inpdat.solverTask=1;
+    }else{
+        if(myrank==0){
+            cerr << " ERROR: Invalid Solver Task." << endl;
+        }
+        return 001;
     }
 
     // ==================

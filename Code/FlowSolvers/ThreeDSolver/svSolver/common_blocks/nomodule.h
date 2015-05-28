@@ -54,6 +54,7 @@ c      \\Common Block variables for "no module"
        INTEGER Lagrange, numLagrangeSrfs,nsrflistLagrange(0:MAXSURF),
      & iLagfile
        INTEGER MinNumIter,ideformwall, ivarwallprop
+       INTEGER applyWallDeformation
        INTEGER iwallmassfactor,iwallstiffactor,
      & nProps
        INTEGER iGenInitialization,iGenFromFile
@@ -82,7 +83,7 @@ c                 ===================================
      &            Lagrange, numLagrangeSrfs,
      &            nsrflistLagrange,iLagfile,
      &            MinNumIter,
-     &            ideformwall, 
+     &            ideformwall, applyWallDeformation,
 c                 ADDED FOR CONSISTENCY - VARWALL
      &            ivarwallprop, 
 c                 ===============================

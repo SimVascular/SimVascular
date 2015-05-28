@@ -104,6 +104,8 @@
   List of Output Surfaces: NODEFAULT 
   Number of Force Surfaces: 0                             
   Surface ID's for Force Calculation: NODEFAULT           
+  Force Calculation Method: Velocity Based      # Velocity Based,Residual Based
+  Update Wall Coordinates: False                # True, False
 }
 
 # =============
@@ -216,4 +218,11 @@
   Residual Criteria: 0.01 
   Minimum Required Iterations: 3 
   Step Construction  : 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 # Sequence of 0 and 1
+}
+
+# ============================
+# Task Control
+# ============================
+{
+  Solver Task: Full Simulation          # Full Simulation, Only Partition
 }

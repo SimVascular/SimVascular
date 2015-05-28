@@ -292,6 +292,8 @@ extern "C" {
     int BCTMatchingFlag;
     int svLSType;
     int BCTFileNumber;
+    int tractionMethod;
+    int solverTask;
   } inpdat ;
 
   extern struct { 
@@ -520,6 +522,7 @@ extern "C" {
     int iLagfile;
     int MinNumIter;
     int ideformwall;
+    int applyWallDeformation;
     // VARWALL
     int ivarwallprop;
     // =======

@@ -7494,6 +7494,9 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widge .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.checkbutton1
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.checkbutton1 -variable {guiPOSTvars(recalc_wall_stress)} -text {Recalculate Wall Stresses} -width {25}
 
+  # build widge .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.checkbutton2
+  ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.checkbutton2 -variable {guiPOSTvars(apply_wall_deformation)} -text {Apply Wall Deformation} -width {25}
+
   # build widge .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.label1
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.label1 -font {Helvetica 10}  -relief {flat} -justify {right} -text {Viscosity:}
 
@@ -16699,6 +16702,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame2
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.checkbutton1 -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.checkbutton2 -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.label1 -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.entry1   -side left
 
@@ -31440,6 +31444,7 @@ proc guiPOSTconvertFilesToVTK {} {
   set calcws {}
   set muflag {}
   set mu {}
+  set applywd {}
 
   if {$guiPOSTvars(wall_filter)} {
     set wallfile [string trim $guiPOSTvars(meshFaceFile)]
@@ -31471,9 +31476,13 @@ proc guiPOSTconvertFilesToVTK {} {
         }
       }
       set calcws "-calcws"
+      
+      if {$guiPOSTvars(apply_wall_deformation)} {
+        set applywd "-applywd"
+      }
     }
   }
-  set cmdstr "-all -indir \"$indir\" -outdir \"$outdir\" $vtkcombo $simunitsflag -start $start -stop $stop -incr $increment $makevtu $vtufn $makevtp $vtpfn $wallflag $wallfile $calcws $muflag $mu"
+  set cmdstr "-all -indir \"$indir\" -outdir \"$outdir\" $vtkcombo $simunitsflag -start $start -stop $stop -incr $increment $makevtu $vtufn $makevtp $vtpfn $wallflag $wallfile $calcws $applywd $muflag $mu"
   
   puts "executing cvpostsolver with cmdstr: $cmdstr"
 
@@ -49057,6 +49066,7 @@ set {guiPOSTvars(wss_flag)} {0}
 set {guiPOSTvars(wall_filter)} {0}
 set {guiPOSTvars(meshFaceFile)} {}
 set {guiPOSTvars(recalc_wall_stress)} {0}
+set {guiPOSTvars(apply_wall_deformation)} {0}
 set {guiPOSTvars(mu)} {}
 global {guiPPchooserAttachX}
 set {guiPPchooserAttachX} {0}

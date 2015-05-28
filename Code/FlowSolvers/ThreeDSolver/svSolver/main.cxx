@@ -266,9 +266,11 @@ int main( int argc, char *argv[] ) {
             closefile_( &igeombc, "append" );
         }
 
-        input(&size,&myrank);
-        /* now we can start the solver */
-        proces();
+        if(inpdat.solverTask==0){
+            input(&size,&myrank);
+            /* now we can start the solver */
+            proces();
+        }
     }
     else{
         printf("error during reading ascii input \n");

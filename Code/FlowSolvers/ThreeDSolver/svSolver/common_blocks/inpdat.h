@@ -61,9 +61,11 @@ c
 c
         REAL*8 epstol(8), Delt(MAXTS), CFLfl(MAXTS), CFLsl(MAXTS),rhoinf(MAXTS),deltol(MAXTS,2)
         INTEGER nstep(MAXTS),niter(MAXTS),impl(MAXTS),LHSupd(6),loctim(MAXTS)
-        INTEGER svLSFlag,BCTFlag,BCTMatchingFlag,svLSType,BCTFileNumber
+        INTEGER svLSFlag,BCTFlag,BCTMatchingFlag,svLSType,BCTFileNumber,tractionMethod
+        INTEGER solverTask
         common /inpdat/ epstol,  Delt,    CFLfl,
      &                  CFLsl,   nstep,   niter,
      &                  impl,    rhoinf,
      &                  LHSupd,  loctim,  deltol,
-     &                  svLSFlag,BCTFlag,BCTMatchingFlag,svLSType,BCTFileNumber
+     &                  svLSFlag,BCTFlag,BCTMatchingFlag,svLSType,BCTFileNumber,tractionMethod,
+     &                  solverTask

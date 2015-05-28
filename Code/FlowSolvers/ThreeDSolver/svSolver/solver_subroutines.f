@@ -1736,7 +1736,7 @@ c         fnamer = 'boundary flux'
 c         call Write_boundaryflux(myrank,lstep,nshg,ndof,rtmp(:,1:ndof))
 
 c     wallss vectors into the restart file(s)
-         if( iowflux .eq. 1) then
+c         if( iowflux .eq. 1) then
             call openfile(  fname2,  'append?'//CHAR(0), irstin )
             
             fnamer = 'wall shear stresses'        
@@ -1758,7 +1758,7 @@ c     wall shear stresses vectors  are in wallssVec
      &           'double'//CHAR(0), iotype)
             
             call closefile( irstin, "append"//CHAR(0) )         
-         endif! iowflux
+c         endif! iowflux
 
       endif
 c     
@@ -1882,7 +1882,9 @@ c      do i = 1, nshg
                 numflx = numflx + 1
                 nodflx(numflx) = i
                 if(ideformwall.eq.1) then
+                  if(applyWallDeformation.eq.1) then
                     xnew(i,:)=x(i,:)+u(i,:)
+                  endif
                 endif
              endif
           enddo

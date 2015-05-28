@@ -759,7 +759,7 @@ int GetWallElements(int neltot,int* ien, const char* wallfn, int* wallElementNum
     return CV_OK;
 }
 
-int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements,double* xglobal,double* dglobal,double* qglobal,double mu,
+int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements, bool applyWD, double* xglobal,double* dglobal,double* qglobal,double mu,
         double** tglobal, double** wglobal){
     int nsd=3;
     double* sA=new double[nshgtot]();
@@ -778,7 +778,7 @@ int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements,doubl
     int n1,n2,i,j;
 
     double* x=new double[nshgtot*nsd]();
-    if(dglobal==NULL){
+    if(dglobal==NULL || !applyWD){
         for (int n1=0; n1< nshgtot; n1++) {
             for(int i=0;i<3;i++){
                 x[i*nshgtot+n1]=xglobal[i*nshgtot+n1];
@@ -1707,6 +1707,7 @@ int main(int argc, char* argv[])
     bool RequestedWallprops  = false;
     bool RequestedWSS  = false;
     bool RequestedCalcWS= false;
+    bool RequestedApplyWD= false;
     bool RequestedWallFilter = false;
     bool RequestedVTU = false;
     bool RequestedVTP = false;
@@ -1757,6 +1758,7 @@ int main(int argc, char* argv[])
             cout << "  -wss                : Reduce Wall Shear Stress"<<endl;
             cout << "  -wfilter filename   : output wall data only on specified wall"<<endl;
             cout << "  -calcws             : Recalculate wall stress on specified wall"<<endl;
+            cout << "  -applywd            : Apply wall deformation during wall stress calculation"<<endl;
             cout << "  -ybar               : Reduce ybar field"<<endl;
             cout << "  -nonbinary          : Read/Write files in ASCII format" <<endl;
             //cout << "  -none               : do not reduce everything found"<<endl;
@@ -1843,6 +1845,9 @@ int main(int argc, char* argv[])
         }
         else if(tmpstr=="-calcws"){
             RequestedCalcWS = true;
+        }
+        else if(tmpstr=="-applywd"){
+            RequestedApplyWD = true;
         }
         else if(tmpstr=="-rho"){
             iarg++;
@@ -2265,7 +2270,7 @@ int main(int argc, char* argv[])
                     cout << "ERROR: no solution found for wall stress calculation!" << endl;
                     return 1;
                 }
-                if ( (CalculateWallStress(nshgtot,wallElementNum,wallElements,xglobal,dglobal,qglobal,mu,&tglobal,&wglobal)) == CV_ERROR ) {
+                if ( (CalculateWallStress(nshgtot,wallElementNum,wallElements,RequestedApplyWD,xglobal,dglobal,qglobal,mu,&tglobal,&wglobal)) == CV_ERROR ) {
                     return 1;
                 }
             }

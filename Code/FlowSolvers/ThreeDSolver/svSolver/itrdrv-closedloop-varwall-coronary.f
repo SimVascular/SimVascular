@@ -891,11 +891,18 @@ c
 c
 c.... compute the consistent boundary flux
 c
-           if(nsrfCM.ne.0) then
+           if(nsrfCM.gt.0) then
+             if(tractionMethod.eq.0) then
                 call newBflux ( yold,      acold,      uold,    x,
      &                      shp,       shgl,       shpb,   
      &                      shglb,     ilwork,     iBC,
      &                      BC,        iper)
+             else if(tractionMethod.eq.1) then
+                call Bflux ( yold,      acold,      uold,     x,
+     &                      shp,       shgl,       shpb,
+     &                      shglb,     ilwork,     iBC,
+     &                      BC,        iper)
+             endif
            endif
 
 c....  print out results.
