@@ -49400,7 +49400,7 @@ set {guiMMvars(phasta_format)} {}
 set {guiMMvars(viewMeshVtkFlag)} {0}
 global {guiPDvars}
 set {guiPDvars(angleForBoundaries)} {50}
-set {guiPDvars(centerlines)} {/tmp/polydata/centerlines}
+set {guiPDvars(centerlines)} {}
 set {guiPDvars(distance)} {/tmp/polydata/distance}
 set {guiPDvars(remeshFaceSize)} {1.0}
 set {guiPDvars(selected_groups)} {}

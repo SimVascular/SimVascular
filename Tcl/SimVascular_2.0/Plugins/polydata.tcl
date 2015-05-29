@@ -354,6 +354,7 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
   global gObjects
   global gPolyDataFaceNames
   global gCenterlineIds
+  global guiPDvars
 
   set kernel $gOptions(meshing_solid_kernel)
 
@@ -362,13 +363,14 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
   }
 
   set originalsolid /tmp/polydata/originalsolid
-  set centerlines /tmp/polydata/centerlines
+  set centerlines [string trim $original]_centerlines
   set voronoi /tmp/polydata/voronoi
   set distance /tmp/polydata/distance
   catch {repos_delete -obj $originalsolid}
   catch {repos_delete -obj $centerlines}
   catch {repos_delete -obj $voronoi}
   catch {repos_delete -obj $distance}
+  set guiPDvars(centerlines) $centerlines
 
   if {$objType == "solid"} {
     $original GetPolyData -result $originalsolid

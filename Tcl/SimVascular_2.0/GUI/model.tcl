@@ -2857,3 +2857,38 @@ proc guiSV_model_send_selected_to_3D_segmentation {} {
     guiSV_solid_display_selected_groups 1
   }
 }
+
+proc guiSV_model_convert_centerlines_to_pathlines {} {
+  global guiSVvars
+  global guiPDvars
+  global symbolicName 
+  set tv $symbolicName(guiSV_path_tree)
+
+  set centerlines $guiPDvars(centerlines)
+  set centerlinepd /tmp/polydata/centerlines 
+  catch {$centerlinepd Delete}
+  vtkPolyData $centerlinepd
+  set centerlinepd [repos_exportToVtk -src $centerlines]
+  $centerlinepd BuildLinks 0
+
+  set numLines [$centerlinepd GetNumberOfLines]
+
+  #$centerlinepd BuildLinks
+  for {set i 0} {$i < $numLines} {incr i} {
+    set guiSVvars(path_entry_path_id) $i
+    set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
+    guiSV_path_insert_new_path
+    $tv selection set .paths.all.$i
+
+    set pointids /tmp/vtk/pointids
+    catch {$pointids Delete}
+    vtkIdList $pointids
+    $centerlinepd GetCellPoints $i $pointids
+
+    for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
+      set id [$pointids GetId $j]
+      set pt [$centerlinepd GetPoint $id]
+      guiPPchooserAddSpecifiedPoint $pt
+    }
+  }
+}
