@@ -1191,10 +1191,14 @@ int cmd_append_varwallprop(char *cmd) {
         return CV_ERROR;
     }
 
-
-
     int filenum = -1;
-    openfile_ (filename, "append", &filenum);
+
+    if(filename[0]=='\0'){
+        openfile_ ("geombc.dat.1", "append", &filenum);
+    }else{
+        openfile_ (filename, "append", &filenum);
+    }
+
     if (filenum < 0) {
         fprintf(stderr,"ERROR:  could not open file (%s)\n",filename);
         return CV_ERROR;
@@ -1627,15 +1631,8 @@ int cmd_write_geombcdat(char *cmd) {
     // enter
     debugprint(stddbg,"Entering cmd_write_geombcdat.\n");
 
-    // parse command string
-    int n = 0;
-    int end = 0;
-    char ignored[MAXSTRINGLENGTH];
-    ignored[0]='\0';
-    cmd_token_get (&n, cmd, ignored, &end);
     char infile[MAXPATHLEN];
-    infile[0]='\0';
-    cmd_token_get (&n, cmd, infile, &end);
+    parseCmdStr(cmd,infile);
 
     // do work
     if(infile[0]=='\0'){
@@ -1698,15 +1695,20 @@ int cmd_append_displacements(char *cmd) {
     parseCmdStr(cmd,filename);
 
     // some simple validity checks
-    if (numNodes_ == 0 || numSolnVars_ == 0 || DisplacementSolution_ == NULL) {
+    if (numNodes_ == 0 || numSolnVars_ == 0 || dispsoln_ == NULL) {
         fprintf(stderr,"ERROR:  Not all required info set!\n");
         return CV_ERROR;
     }
 
     int i;
-
     int filenum = -1;
-    openfile_ (filename, "append", &filenum);
+
+    if(filename[0]=='\0'){
+        openfile_ ("restart.0.1", "append", &filenum);
+    }else{
+        openfile_ (filename, "append", &filenum);
+    }
+
     if (filenum < 0) {
         fprintf(stderr,"ERROR:  could not open file (%s)\n",filename);
         return CV_ERROR;
@@ -1740,7 +1742,6 @@ int cmd_append_displacements(char *cmd) {
     debugprint(stddbg,"Exiting cmd_append_displacements.\n");
     return CV_OK;
 }
-
 
 int cmd_read_displacements(char *cmd) {
 

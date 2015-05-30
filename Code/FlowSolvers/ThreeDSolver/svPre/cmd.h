@@ -134,13 +134,15 @@ int CALLTYPE cmd_read_velocity_vtu(char*);
 int CALLTYPE cmd_read_displacements_vtu(char*);
 int CALLTYPE cmd_read_accelerations_vtu(char*);
 int CALLTYPE cmd_read_varwallprop_vtu(char*);
+int CALLTYPE cmd_set_surface_id_vtp(char*);
 int CALLTYPE cmd_noslip_vtp(char*);
 int CALLTYPE cmd_prescribed_velocities_vtp(char*);
 int CALLTYPE cmd_zero_pressure_vtp(char*);
 int CALLTYPE cmd_pressure_vtp(char*);
 int CALLTYPE cmd_deformable_wall_vtp(char*);
-int CALLTYPE cmd_set_surface_id_vtp(char*);
+int CALLTYPE cmd_deformable_wall_vtp_simple(char*);
 int CALLTYPE cmd_fix_free_edge_nodes_vtp(char*);
+int CALLTYPE cmd_create_mesh_deformable_vtp(char*);
 //
 //  General commands
 //
@@ -160,7 +162,6 @@ int CALLTYPE cmd_initial_velocity(char*);
 int CALLTYPE cmd_deformable_wall(char*);
 int CALLTYPE cmd_fix_free_edge_nodes(char*);
 int CALLTYPE cmd_create_mesh_deformable(char*);
-int CALLTYPE cmd_create_mesh_deformable_vtp(char*);
 int CALLTYPE cmd_deformable_direct_solve(char*);
 int CALLTYPE cmd_deformable_iterative_solve(char*);
 #if(VER_VARWALL == 1)
@@ -210,6 +211,7 @@ int CALLTYPE cmd_set_Evw_BCs(char*);
 int CALLTYPE cmd_set_Evw_BCs_vtp(char*);
 int CALLTYPE cmd_set_Initial_Evw(char*);
 int CALLTYPE cmd_set_Initial_Evw_vtp(char*);
+int CALLTYPE cmd_varwallprop_write_vtp(char*);
 #endif
 
 int CALLTYPE cmd_fluid_density(char*);

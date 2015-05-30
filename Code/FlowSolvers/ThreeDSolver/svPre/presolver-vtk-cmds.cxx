@@ -1512,29 +1512,6 @@ int cmd_pressure_vtp(char *cmd) {
 	return CV_OK;
 }
 
-int cmd_deformable_wall_vtp(char *cmd) {
-
-    // enter
-    debugprint(stddbg, "Entering cmd_deformable_wall.\n");
-
-    // do work
-    double value = 0.0;
-    int setSurfID = 0;
-    int surfID = 0;
-    int setCode = 1;
-    // should use bits and not ints here!!
-    int code = 16;
-
-    if (setBoundaryFacesWithCodeVTK(cmd ,setSurfID, surfID, setCode, code,
-    		value) == CV_ERROR) {
-        return CV_ERROR;
-    }
-
-    // cleanup
-    debugprint(stddbg, "Exiting cmd_deformable_wall.\n");
-    return CV_OK;
-}
-
 int cmd_set_surface_id_vtp(char *cmd) {
 
 	// enter
@@ -1564,6 +1541,31 @@ int cmd_set_surface_id_vtp(char *cmd) {
 	return CV_OK;
 }
 
+
+
+int cmd_deformable_wall_vtp_simple(char *cmd) {
+
+    // enter
+    debugprint(stddbg, "Entering cmd_deformable_wall.\n");
+
+    // do work
+    double value = 0.0;
+    int setSurfID = 0;
+    int surfID = 0;
+    int setCode = 1;
+    // should use bits and not ints here!!
+    int code = 16;
+
+    if (setBoundaryFacesWithCodeVTK(cmd ,setSurfID, surfID, setCode, code,
+            value) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    // cleanup
+    debugprint(stddbg, "Exiting cmd_deformable_wall.\n");
+    return CV_OK;
+}
+
 int cmd_fix_free_edge_nodes_vtp(char *cmd) {
 
     // enter
@@ -1571,48 +1573,48 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
 
     int i,j;
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
 
-	pd->GetPointData()->SetActiveScalars("GlobalNodeID");
-	pd->GetCellData()->SetActiveScalars("GlobalElementID");
+    pd->GetPointData()->SetActiveScalars("GlobalNodeID");
+    pd->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	vtkIdList* ptids = vtkIdList::New();
-	ptids->Allocate(10, 10);
-	ptids->Initialize();
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
 
-	vtkCellArray *cells = pd->GetPolys();
-	cells->InitTraversal();
+    vtkCellArray *cells = pd->GetPolys();
+    cells->InitTraversal();
 
-	vtkIntArray* gids = NULL;
-	gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
-			"GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    vtkIntArray* gids = NULL;
+    gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
+            "GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
     int numEle = cells->GetNumberOfCells();
     if (numEle == 0) {
@@ -1627,19 +1629,19 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
     int elementId;
     int numEdges = 0;
 
-	for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
+    for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
 
-		ptids->Reset();
-		cells->GetCell(4 * icell, ptids);
-		if (ptids->GetNumberOfIds() != 3) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
-		n0 = gids->GetTuple1(ptids->GetId(0));
-		n1 = gids->GetTuple1(ptids->GetId(1));
-		n2 = gids->GetTuple1(ptids->GetId(2));
+        ptids->Reset();
+        cells->GetCell(4 * icell, ptids);
+        if (ptids->GetNumberOfIds() != 3) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
+        n0 = gids->GetTuple1(ptids->GetId(0));
+        n1 = gids->GetTuple1(ptids->GetId(1));
+        n2 = gids->GetTuple1(ptids->GetId(2));
 
         // stuff edges into array
 
@@ -1763,9 +1765,9 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
       }
     }
 
-	// cleanup
-	ptids->Delete();
-	reader->Delete();
+    // cleanup
+    ptids->Delete();
+    reader->Delete();
     delete [] edges[0];
     delete [] edges[1];
 
@@ -1975,6 +1977,17 @@ int cmd_create_mesh_deformable_vtp(char *cmd) {
     return CV_OK;
 }
 
+int cmd_deformable_wall_vtp(char *cmd) {
+
+    if(cmd_deformable_wall_vtp_simple(cmd)==CV_OK
+            &&  cmd_create_mesh_deformable_vtp(cmd)==CV_OK
+            &&  cmd_create_mesh_deformable_vtp(cmd)==CV_OK){
+        return CV_OK;
+    }else{
+        return CV_ERROR;
+    }
+}
+
 #if(VER_VARWALL == 1)
 int cmd_set_scalar_BCs_vtp(char *cmd) {
 
@@ -2119,6 +2132,95 @@ int cmd_set_Initial_Evw_vtp(char *cmd) {
     // cleanup
     debugprint(stddbg,"Exiting cmd_set_Initial_Evw_vtp.\n");
     return CV_OK;
+}
+
+int cmd_varwallprop_write_vtp(char *cmd) {
+
+    // enter
+    debugprint(stddbg,"Entering cmd_varwallprop_write_vtp.\n");
+
+    char outfile[MAXPATHLEN];
+
+    // do work
+    parseCmdStr(cmd,outfile);
+
+    // some simple validity checks
+    if (numNodes_ == 0 || numSolnVars_ == 0) {
+        fprintf(stderr,"ERROR:  Not all required info set!\n");
+        return CV_ERROR;
+    }
+
+    int i,j;
+    double scalarval;
+
+    FILE *fp = NULL;
+    fp = fopen(outfile,"w");
+    if (fp == NULL) {
+        fprintf(stderr,"ERROR: could not open file (%s)\n",outfile);
+        return CV_ERROR;
+    }
+
+   if (ThicknessSolution_== NULL && EvwSolution_ == NULL ) {
+        fprintf(stderr,"ERROR: Both ThicknessSolution_ and EvwSolution_ are not computed  (%s)\n",outfile);
+        return CV_ERROR;
+    }
+
+    fprintf(fp,"# vtk DataFile Version 3.0\n");
+    fprintf(fp,"vtk output\n");
+    fprintf(fp,"ASCII\n");
+    fprintf(fp,"DATASET UNSTRUCTURED_GRID\n");
+    fprintf(fp,"POINTS %i float\n",numNodes_);
+    for (i = 0; i < numNodes_; i++) {
+        double x = nodes_[0*numNodes_+i];
+        double y = nodes_[1*numNodes_+i];
+        double z = nodes_[2*numNodes_+i];
+        fprintf(fp,"%lf %lf %lf\n",x,y,z);
+    }
+    fprintf(fp,"CELLS %i %i\n",numElements_,5*numElements_);
+    for (i = 0; i < numElements_; i++) {
+    //global id -1 to get correct index
+    fprintf(fp,"4 %i %i %i %i\n",elements_[numElements_*0+i]-1,elements_[numElements_*1+i]-1,
+            elements_[numElements_*2+i]-1,elements_[numElements_*3+i]-1);
+
+    }
+
+    fprintf(fp,"CELL_TYPES %i \n",numElements_);
+    for (i = 0; i < numElements_; i++) {
+    fprintf(fp,"%i \n",10);
+    }
+    fprintf(fp,"POINT_DATA %i\n",numNodes_);
+
+
+    if (ThicknessSolution_ != NULL) {
+     fprintf(fp,"SCALARS thickness double\n");
+     fprintf(fp,"LOOKUP_TABLE default\n");
+    for (i = 0; i < numNodes_; i++) {
+       scalarval=ThicknessSolution_[i];
+      // printf("%lf\n",scalarval);
+        fprintf(fp,"%lf\n",scalarval);
+    }
+
+    }
+
+   if (EvwSolution_ != NULL) {
+    fprintf(fp,"SCALARS Young_Mod double\n");
+    fprintf(fp,"LOOKUP_TABLE default\n");
+    for (i = 0; i < numNodes_; i++) {
+
+       scalarval=EvwSolution_[i];
+      // printf("%lf\n",scalarval);
+        fprintf(fp,"%lf\n",scalarval);
+    }
+
+    }
+
+    fclose(fp);
+
+    // cleanup
+    debugprint(stddbg,"Exiting cmd_varwallprop_write_vtp.\n");
+
+    return CV_OK;
+
 }
 #endif
 
