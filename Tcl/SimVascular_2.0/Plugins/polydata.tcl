@@ -431,6 +431,7 @@ proc set_capids_for_pd {pd {value -1}} {
   }
   [[repos_exportToVtk -src $pd] GetCellData] AddArray $capArray
 }
+
 proc check_surface_for_capids {pd} {
 
   return [[[repos_exportToVtk -src $pd] GetCellData] HasArray "CapID"]

@@ -187,6 +187,13 @@ proc geom_localOperation {operation inPd outPd} {
           geom_set_array_for_local_op_cells -src $tmp1Pd -result $tmp2Pd -values $changelist -outarray $outarray -datatype $datatype
 	}
 	set cell_lines 1
+      } elseif {$cmd == "blend"} {
+	set faceids [lrange $trimmed 1 end-4]
+	set radius [lindex $trimmed end-3]
+	set splitarray [lindex $trimmed end-2]
+	set outarray [lindex $trimmed end-1]
+	set datatype [lindex $trimmed end]
+	geom_set_array_for_local_op_face_blend -src $tmp1Pd -result $tmp2Pd -values $faceids -radius $radius -array $splitarray -outarray $outarray -datatype $datatype
       }
       catch {repos_delete -obj $tmp1Pd}
       geom_copy -src $tmp2Pd -dst $tmp1Pd

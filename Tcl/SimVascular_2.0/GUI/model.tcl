@@ -142,15 +142,11 @@ proc model_set_color {name color} {
 proc model_get_color {name} {
     global gModelColor
     global gOptions
-    puts "HERERERE"
     if {![model_exists $name]} {return 0}
-    puts "HERERERE"
 
     if {[lsearch -exact [array names gModelColor] $name] < 0} {
       set gModelColor($name) $gOptions(color_for_model)
     } 
-    puts "HERERERE"
-    puts "$gModelColor($name)"
       
     return $gModelColor($name)
 }
@@ -489,12 +485,16 @@ proc guiSV_model_set_att_name {} {
  if {[llength $selected] != 1} {
    return -code error "ERROR: Only one face can be selected to rename it"
  }
- set kernel $gKernel($selected)
- set gOptions(meshing_solid_kernel) $kernel
- solid_setKernel -name $kernel
-
  set modelname [lindex [lindex $selected 0] 0]
  set currname [lindex [lindex $selected 0] 1]
+ set names [model_get $modelname]
+ if {[lsearch -exact $names $name] != -1} {
+   return -code error "Cannot have two faces with the same name!"
+ }
+
+ set kernel $gKernel($modelname)
+ set gOptions(meshing_solid_kernel) $kernel
+ solid_setKernel -name $kernel
 
  set tv $symbolicName(guiSV_model_tree)
  set id [model_itemix $modelname $currname]
@@ -2058,6 +2058,7 @@ proc guiSV_model_update_new_solid {kernel model newmodel} {
   global symbolicName
   global gOptions
   global gKernel
+  global gPolyDataFaceNames
 
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2806,6 +2807,21 @@ proc guiSV_model_create_local_surface_macro {type} {
       lappend changelist $gPickedCellIds($i)
     }
     set addstr "cells [lrange $changelist 0 end] ActiveCells 1\n"
+  } elseif {$type == "blend"} {
+    set model [guiSV_model_get_tree_current_models_selected]
+    if {[llength $model] != 1} {
+      return -code error "ERROR: Only one model can be selected for local operations" 
+    }
+    set kernel $gKernel($model)
+    set selected [guiSV_model_get_tree_current_faces_selected]
+    set faceids {}
+    foreach name $selected {
+      if {[lindex $name 1] != ""} {
+	set face [lindex $name 1]
+	lappend faceids [lindex [$tv item .models.$kernel.$model.$face -values] 1] 
+      }
+    }
+    set addstr "blend [lrange $faceids 0 end] $gui3Dvars(blendSphereRadius) ModelFaceID ActiveCells 1\n"
   } else {
     return -code error "Invalid type to create local operation macro"
   }
@@ -2862,6 +2878,7 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
   global guiSVvars
   global guiPDvars
   global symbolicName 
+  global gPathPoints
   set tv $symbolicName(guiSV_path_tree)
 
   set centerlines $guiPDvars(centerlines)
@@ -2869,16 +2886,23 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
   catch {$centerlinepd Delete}
   vtkPolyData $centerlinepd
   set centerlinepd [repos_exportToVtk -src $centerlines]
-  $centerlinepd BuildLinks 0
+  #$centerlinepd BuildLinks 0
 
+  set currentPaths [$tv children .paths.all]
+  set maxid 0
+  foreach path $currentPaths {
+    set checkid [lindex [split $path "."] end]
+    puts "IDDD! $checkid"
+    if {$checkid > $maxid} { set maxid $checkid }
+  }
   set numLines [$centerlinepd GetNumberOfLines]
 
-  #$centerlinepd BuildLinks
+  incr maxid
   for {set i 0} {$i < $numLines} {incr i} {
-    set guiSVvars(path_entry_path_id) $i
+    set guiSVvars(path_entry_path_id) $maxid
     set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
     guiSV_path_insert_new_path
-    $tv selection set .paths.all.$i
+    $tv selection set .paths.all.$maxid
 
     set pointids /tmp/vtk/pointids
     catch {$pointids Delete}
@@ -2888,7 +2912,15 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
     for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
       set id [$pointids GetId $j]
       set pt [$centerlinepd GetPoint $id]
-      guiPPchooserAddSpecifiedPoint $pt
+      #guiPPchooserAddSpecifiedPoint $pt
+      set maxnum [llength [$tv children .paths.all.$maxid]]
+      set gPathPoints($maxid,$maxnum) $pt
+      $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+      set gPathPoints($maxid,splinePts) {}
     }
+    guiSV_path_update_tree
+    $tv selection set .paths.all.$maxid
+    guiPPchooserSplinePts $maxid
+    incr maxid
   }
 }

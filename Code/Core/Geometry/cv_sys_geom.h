@@ -172,6 +172,9 @@ int sys_geom_set_array_for_local_op_face(cvPolyData *pd,cvPolyData **outpd, char
 
 int sys_geom_set_array_for_local_op_cells(cvPolyData *pd,cvPolyData **outpd, int *vals, int nvals,char *outarrayname,int datatype);
 
+int sys_geom_set_array_for_local_op_face_blend(cvPolyData *pd,cvPolyData **outpd, char *inarrayname,
+    int *vals, int nvals,double radius,char *outarrayname,int datatype);
+
 int sys_geom_local_quadric_decimation(cvPolyData *pd,cvPolyData **outpd, double target,
     char *pointarrayname, char *cellarrayname);
 

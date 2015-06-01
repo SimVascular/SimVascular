@@ -57,6 +57,9 @@
 #include "vtkLocalSmoothPolyDataFilter.h"
 #include "vtkLocalLinearSubdivisionFilter.h"
 #include "vtkCGSmooth.h"
+#include "vtkFindSeparateRegions.h"
+#include "vtkGetSphereRegions.h"
+
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
@@ -3389,7 +3392,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
     for (int i=0; i< max; i++)
       wantval[i] = 0;
     for (int i=0; i< nvals; i++)
-      wantval[(*vals+i)-1] = 1;
+      wantval[vals[i]-1] = 1;
 
     for (vtkIdType id=0;id < numPoints; id++)
     {
@@ -3425,7 +3428,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
     for (int i=0; i< max; i++)
       wantval[i] = 0;
     for (int i=0; i< nvals; i++)
-      wantval[(*vals+i)-1] = 1;
+      wantval[vals[i]-1] = 1;
 
     for (int id=0;id < numCells; id++)
     {
@@ -3496,7 +3499,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
     for (int i=0; i< numPoints; i++)
       wantval[i] = 0;
     for (int i=0; i< nvals; i++)
-      wantval[(*vals+i)-1] = 1;
+      wantval[vals[i]-1] = 1;
 
     for (vtkIdType id=0;id < numPoints; id++)
     {
@@ -3523,7 +3526,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
     for (int i=0; i< numCells; i++)
       wantval[i] = 0;
     for (int i=0; i< nvals; i++)
-      wantval[(*vals+i)-1] = 1;
+      wantval[vals[i]-1] = 1;
 
     for (int id=0;id < numCells; id++)
     {
@@ -3537,6 +3540,86 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
   }
   result = new cvPolyData(tmp);
   *outpd = result;
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_set_array_for_local_op_face_blend */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ *  
+ *  @brief Function to set a boolean array on the surface for local mesh operations.
+ *  Points are set based on an id of a given array
+ *  @param *pd The input polydata on which to set an array 
+ *  @param **outpd polydata that contains the output surface with new array
+ *  @param *arrayname array on which to look for the given values
+ *  @param *values ids to looks for in the given array name. Cells with this 
+ *  id are given a value of 1
+ *  @param *outarray This contains the arrayname holding the boolean array
+ *  @param datatype This indicates whether the input array is point data (0) 
+ *  or cell data (1)
+ *  values indication with cells to decimate
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outpd,char *inarrayname,int *vals,int nvals,double radius,char *outarrayname,int datatype)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Adding face blend\n");
+  fprintf(stdout,"Given Array Name: %s\n",inarrayname);
+  fprintf(stdout,"Target Array Name: %s\n",outarrayname);
+  fprintf(stdout,"Array Type: %d\n",datatype);
+  fprintf(stdout,"Number of Ids: %d\n",nvals);
+  fprintf(stdout,"Radius: %.4f\n",radius);
+
+  double range[2];
+  int max;
+  int value=0;
+  int *wantval;
+  vtkNew(vtkPolyData,tmp);
+  tmp->DeepCopy(geom);
+  vtkNew(vtkIntArray,newArray);
+  newArray->SetName(outarrayname);
+  if (datatype == 0)
+  {
+    fprintf(stderr,"Sorry, this functionality is not currently available");
+    delete [] wantval;
+  } 
+  else
+  {
+    if (PlyDtaUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
+    {
+      fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
+      return CV_ERROR;
+    }
+    vtkNew(vtkIdList,targetCells);
+    for (int i=0; i< nvals; i++)
+      targetCells->InsertNextId((vals[i]));
+    vtkNew(vtkFindSeparateRegions,separator);
+    separator->SetInputData(tmp);
+    separator->SetOutPointArrayName("BoundaryPoints");
+    separator->SetArrayName(inarrayname);
+    separator->SetCellIds(targetCells);
+    separator->Update();
+
+    vtkNew(vtkGetSphereRegions,sphereSetter);
+    sphereSetter->SetInputData(separator->GetOutput());
+    sphereSetter->SetOutCellArrayName(outarrayname);
+    sphereSetter->SetCellArrayName(inarrayname);
+    sphereSetter->SetPointArrayName("BoundaryPoints");
+    sphereSetter->SetSphereRadius(radius);
+    sphereSetter->Update();
+
+    result = new cvPolyData(sphereSetter->GetOutput());
+    *outpd = result;
+  }
 
   return CV_OK;
 }

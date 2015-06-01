@@ -240,6 +240,9 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
+
+int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
 #ifdef USE_GTS
 int Geom_Union_GTSCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
@@ -404,6 +407,8 @@ int Geom_Init( Tcl_Interp *interp )
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face", Geom_SetArrayForLocalOp_FaceCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_cells", Geom_SetArrayForLocalOp_CellsCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face_blend", Geom_SetArrayForLocalOp_BlendCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #ifdef USE_GTS 
   Tcl_CreateCommand( interp, "geom_union_gts", Geom_Union_GTSCmd,
@@ -1147,6 +1152,98 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   if ( sys_geom_set_array_for_local_op_cells( (cvPolyData*)src,(cvPolyData**)(&dst),vals,nvals,outArray,dataType)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
+    delete [] vals;
+    return TCL_ERROR;
+  }
+
+  delete [] vals;
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+// ----------------
+// Geom_SetArrayForLocalOp_BlendCmd
+// ----------------
+
+int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  char *arrayName = 0; 
+  char *outArray = "LocalOpsArray";
+  int dataType = 1;
+  double radius;
+  ARG_List values;
+
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 7;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-array", STRING_Type, &arrayName, NULL, REQUIRED, 0, { 0 } },
+    { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
+    { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  if (values.argc == 0) {
+      ARG_FreeListArgvs( table_size, arg_table);
+      return CV_OK;
+  }
+
+  int nvals = 0;
+  int *vals = new int[values.argc];
+
+  if ( ARG_ParseTclListStatic( interp, values, INT_Type, vals, values.argc, &nvals )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+  // Do work of command:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  if ( sys_geom_set_array_for_local_op_face_blend( (cvPolyData*)src,(cvPolyData**)(&dst),arrayName,vals,nvals,radius,outArray,dataType)
        != CV_OK ) {
     Tcl_SetResult( interp, "error creating array on surface", TCL_STATIC );
     delete [] vals;
@@ -3584,7 +3681,7 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
     { "-numModes", INT_Type, &numModes, NULL, REQUIRED, 0, { 0 } },
     { "-useFFT", INT_Type, &useFFT, NULL, REQUIRED, 0, { 0 } },
     { "-useLinearSampleAlongLength", INT_Type, &useLinearSampleAlongLength, NULL, REQUIRED, 0, { 0 } },
-    { "-splineType", INT_Type, &useLinearSampleAlongLength, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-splineType", INT_Type, &splineType, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
