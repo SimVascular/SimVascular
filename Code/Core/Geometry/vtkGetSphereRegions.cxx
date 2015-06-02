@@ -359,13 +359,27 @@ int vtkGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
 
   vtkSmartPointer<vtkIntArray> sphereCells = 
     vtkSmartPointer<vtkIntArray>::New();
-  vtkIdType npts,*pts;
-  double centroid[3];
-  for (vtkIdType cellId=0;cellId < pd->GetNumberOfCells();cellId++)
+  int numArrays = pd->GetCellData()->GetNumberOfArrays();
+  int exists = 0;
+  for (int i=0;i<numArrays;i++)
   {
-    sphereCells->InsertValue(cellId,0);
+    if (!strcmp(pd->GetCellData()->GetArrayName(i),
+	  this->OutCellArrayName))
+    {
+      exists = 1;
+    }
+  }
+  if (exists)
+    sphereCells = vtkIntArray::SafeDownCast(pd->GetCellData()->GetArray(this->OutCellArrayName));
+  else
+  {
+    sphereCells->SetNumberOfTuples(pd->GetNumberOfCells());
+    for (vtkIdType id=0;id< pd->GetNumberOfCells();id++)
+      sphereCells->InsertValue(id,0);
   }
 
+  vtkIdType npts,*pts;
+  double centroid[3];
   for (vtkIdType cellId=0;cellId < pd->GetNumberOfCells();cellId++)
   {
     pd->GetCellPoints(cellId,npts,pts);
@@ -392,6 +406,8 @@ int vtkGetSphereRegions::SetSphereRegions(vtkPolyData *pd, vtkPolyData *lines,
   delete [] xz;
   delete [] radius;
 
+  if (exists)
+    pd->GetCellData()->RemoveArray(this->OutCellArrayName);
   sphereCells->SetName(this->OutCellArrayName);
   pd->GetCellData()->AddArray(sphereCells);
 

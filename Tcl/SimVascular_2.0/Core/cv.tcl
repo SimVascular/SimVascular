@@ -203,24 +203,32 @@ proc geom_localOperation {operation inPd outPd} {
     $symbolicName(guiLocalSurfaceOperationParametersTextBox) delete 0.0 end
   }
 
+  set tmp3Pd /tmp/model/local/third
+  catch {repos_delete -obj $tmp3Pd}
   if {$operation == "local_quadric_decimation"} {
     set target $gui3Dvars(local_quad_target)
-    geom_local_decimation -src $tmp2Pd -result $outPd -target $target -cellarray "ActiveCells"
+    geom_local_decimation -src $tmp2Pd -result $tmp3Pd -target $target -cellarray "ActiveCells"
   } elseif {$operation == "local_laplacian_smooth"} {
     set iters $gui3Dvars(local_smooth_num_iters)
     set relax $gui3Dvars(local_smooth_relax_factor)
-    geom_local_laplacian_smooth -src $tmp2Pd -result $outPd -numiters $iters -relax $relax -cellarray "ActiveCells"
+    geom_local_laplacian_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -relax $relax -cellarray "ActiveCells"
   } elseif {$operation == "local_subdivision"} {
     set iters $gui3Dvars(local_linear_subdivisions)
-    geom_local_subdivision -src $tmp2Pd -result $outPd -numiters $iters -cellarray "ActiveCells"
+    geom_local_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
   } elseif {$operation == "local_constrain_smooth"} {
     set iters $gui3Dvars(local_cgsmooth_num_iters)
     set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
-    puts "Iters $iters"
-    geom_local_constrain_smooth -src $tmp2Pd -result $outPd -numiters $iters -constrainfactor $constrain -cellarray "ActiveCells"
+    geom_local_constrain_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -constrainfactor $constrain -cellarray "ActiveCells"
   } else {
     return -code error "ERROR: Invalid local surface operation"
   }
+
+  set removeTmp /tmp/model/local/fourth
+  catch {repos_delete -obj $removeTmp}
+  catch {repos_delete -obj $outPd}
+  set removeTmp [repos_exportToVtk -src $tmp3Pd]
+  [$removeTmp GetCellData] RemoveArray "ActiveCells"
+  repos_importVtkPd -src $removeTmp -dst $outPd
   set delete 1
   PickPolyDataCell widget x y add $delete
 }
