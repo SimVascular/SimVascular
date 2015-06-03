@@ -143,6 +143,7 @@ int CALLTYPE cmd_deformable_wall_vtp(char*);
 int CALLTYPE cmd_deformable_wall_vtp_simple(char*);
 int CALLTYPE cmd_fix_free_edge_nodes_vtp(char*);
 int CALLTYPE cmd_create_mesh_deformable_vtp(char*);
+int CALLTYPE cmd_wall_displacements_write_vtp(char*);
 //
 //  General commands
 //
@@ -169,7 +170,7 @@ int CALLTYPE cmd_deformable_iterative_solve_var_prop(char*);
 #endif
 int CALLTYPE cmd_deformable_write_vtk_mesh(char*);
 #if(VER_VARWALL == 1)
-int CALLTYPE cmd_varthickness_write_vtk_mesh(char*);
+int CALLTYPE cmd_varwallprop_write_vtk(char*);
 #endif
 int CALLTYPE cmd_deformable_write_feap(char*);
 int CALLTYPE cmd_deformable_Evw(char*);

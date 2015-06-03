@@ -1316,10 +1316,10 @@ int cmd_deformable_write_vtk_mesh(char *cmd) {
 }
 
 #if(VER_VARWALL == 1)
-int cmd_varthickness_write_vtk_mesh(char *cmd) {
+int cmd_varwallprop_write_vtk(char *cmd) {
 
     // enter
-    debugprint(stddbg,"Entering cmd_thickness_write_vtk_mesh.\n");
+    debugprint(stddbg,"Entering cmd_varwallprop_write_vtk.\n");
 
     char outfile[MAXPATHLEN];
 
@@ -1336,7 +1336,12 @@ int cmd_varthickness_write_vtk_mesh(char *cmd) {
     double scalarval;
 
     FILE *fp = NULL;
-    fp = fopen(outfile,"w");
+    if(outfile[0]=='\0'){
+        fp = fopen("varwallprop.vtk","w");
+    }else{
+        fp = fopen(outfile,"w");
+    }
+
     if (fp == NULL) {
         fprintf(stderr,"ERROR: could not open file (%s)\n",outfile);
         return CV_ERROR;
@@ -1399,7 +1404,7 @@ int cmd_varthickness_write_vtk_mesh(char *cmd) {
     fclose(fp);
 
     // cleanup
-    debugprint(stddbg,"Exiting cmd_thickness_write_vtk_mesh.\n");
+    debugprint(stddbg,"Exiting cmd_varwallprop_write_vtk.\n");
 
     return CV_OK;
 

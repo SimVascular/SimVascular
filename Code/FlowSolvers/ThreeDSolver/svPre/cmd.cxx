@@ -77,7 +77,7 @@ static Cmd cmd_table[] = {
   {"set_surface_thickness", cmd_set_thickness_BCs},
   {"set_surface_Evw", cmd_set_Evw_BCs},
   {"set_surface_initial_Evw", cmd_set_Initial_Evw},
-  {"varthickness_write_vtk_mesh", cmd_varthickness_write_vtk_mesh},
+  {"varwallprop_write_vtk", cmd_varwallprop_write_vtk},
 #endif
   {"mesh_vtu",      cmd_mesh_vtu},
   {"mesh_and_adjncy_vtu",      cmd_mesh_and_adjncy_vtu},
@@ -109,6 +109,7 @@ static Cmd cmd_table[] = {
   {"deformable_kcons",cmd_deformable_kcons},
   {"deformable_direct_solve", cmd_deformable_direct_solve},
   {"deformable_solve", cmd_deformable_iterative_solve},
+  {"wall_displacements_write_vtp", cmd_wall_displacements_write_vtp},
   {"append_displacements",cmd_append_displacements},
   #if(VER_VARWALL == 1)
   {"read_varwallprop_restart",cmd_read_restart_varwallprop},

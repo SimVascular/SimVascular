@@ -143,6 +143,8 @@ public:
 
     int ParseRestartFile( int stepNumber, const char* field , int *numval, double **myglobal);
 
+    int ExistRestartFile (int stepNumber);
+
     int SetInputFileType(const char* iotype);
 
     // CTEST: Compare Residual Files
@@ -1116,6 +1118,26 @@ int PostSolver::ExportYBar(int stepnumber, int numy, double* yglobal, const char
 
 }
 
+int PostSolver::ExistRestartFile( int stepNumber) {
+    int i;
+    char filename[255];
+    filename[0]='\0';
+    FILE* inputfile;
+
+    for(i=0; i<numprocs_; i++){
+        sprintf(filename,"%srestart.%d.%d",indir_,stepNumber, i+1);
+        inputfile=fopen(filename,"r");
+        if(inputfile==NULL){
+            return CV_ERROR;
+        }else{
+            fclose(inputfile);
+        }
+    }
+
+    return CV_OK;
+}
+
+
 int PostSolver::ParseRestartFile( int stepNumber, const char* field , int *numval, double **myglobal) {
 
     // We loop over the processors and read each processors
@@ -1344,7 +1366,7 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
             osi->SetTuple1(i,osival);
         }
 
-        fprintf(stdout,"found traction and adding mean, pulse, osi.");
+        fprintf(stdout,"found traction and adding mean, pulse, osi.\n");
 
         pd->GetPointData()->AddArray(shearmean);
         pd->GetPointData()->AddArray(shearpulse);
@@ -1399,7 +1421,7 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
             osi_wss->SetTuple1(i,osival);
         }
 
-        fprintf(stdout,"found wss and adding mean, pulse, osi.");
+        fprintf(stdout,"found wss and adding mean, pulse, osi.\n");
 
         pd->GetPointData()->AddArray(shearmean_wss);
         pd->GetPointData()->AddArray(shearpulse_wss);
@@ -2205,7 +2227,7 @@ int main(int argc, char* argv[])
             RequestedSolution = true;
             RequestedInPlaneTraction = true;
             RequestedDisplacements  = true;
-            RequestedWallprops  = true;
+            //RequestedWallprops  = true;
             RequestedWSS  = true;
             RequestedTimeDeriv = true;
             RequestedYbar=true;
@@ -2250,11 +2272,11 @@ int main(int argc, char* argv[])
 
         if (RequestedWallprops) {
             if(wpglobal==NULL){
-                if ( (pp->ParseRestartFile( 0 , "varwallprop" , &numd, &wpglobal)) == CV_ERROR ) {
+                if ( pp->ExistRestartFile(0) ==CV_ERROR || (pp->ParseRestartFile( 0 , "varwallprop" , &numd, &wpglobal)) == CV_ERROR  ) {
                     if (RequestedAll) {
                         RequestedWallprops = false;
                     } else {
-                        cout << "ERROR reading wall properties in step " << 0 << "!" << endl;
+                        cout << "ERROR reading wall properties from restart.0.x!" << endl;
                         return 1;
                     }
                 }
@@ -2845,7 +2867,6 @@ int main(int argc, char* argv[])
 
             }
 
-
             if (((RequestedVTU == true) && (RequestedVTKcombo == false)) ||
                     ((RequestedVTU == true) && (RequestedVTKcombo == true) && (stepnumber == sn_stop))) {
 
@@ -2867,7 +2888,6 @@ int main(int argc, char* argv[])
                 ugwriter->Delete();
 
             }
-
         }
 
         // need to remove arrays here for non-combo case!!
@@ -2895,6 +2915,7 @@ int main(int argc, char* argv[])
         wglobal = NULL;
         aglobal = NULL;
         yglobal = NULL;
+
     }
 
     if (grid != NULL) grid->Delete();
