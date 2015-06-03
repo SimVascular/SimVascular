@@ -3996,7 +3996,6 @@ int Geom_CopyCmd( ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
-
 // ------------------
 // Geom_ReorderPgnCmd
 // ------------------

@@ -2854,7 +2854,7 @@ proc guiSV_model_send_selected_to_3D_segmentation {} {
       switch -- $yesno {
 	yes {
 	  puts "forcing"
-	  seg3d_addForce $model $model
+	  seg3d_addForce $model $objName
 	}
 	no {
 	 return
@@ -2892,7 +2892,6 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
   set maxid 0
   foreach path $currentPaths {
     set checkid [lindex [split $path "."] end]
-    puts "IDDD! $checkid"
     if {$checkid > $maxid} { set maxid $checkid }
   }
   set numLines [$centerlinepd GetNumberOfLines]
@@ -2924,3 +2923,4 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
     incr maxid
   }
 }
+

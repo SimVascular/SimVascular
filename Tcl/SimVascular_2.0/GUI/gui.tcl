@@ -740,6 +740,9 @@ proc ShowWindow.guiCV { args} {
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.checkbutton40
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.checkbutton40  -variable {guiVIB(show_isosurface)}  -command {volGUIupdateIsosurfaceUserCheck guiVIB}  -text {isosurface}
 
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.button4
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.button4  -command {guiSV_group_make_isosurface_3D_surface}  -text {Send Isosurface to 3D Surface}
+
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.label47
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.label47  -font {Helvetica 10}  -text {Visualization Options}
 
@@ -13225,6 +13228,12 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe4.tframe10.tbutton14
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe4.tframe10.tbutton14  -command {guiPDsaveVoronoi}  -text {Save Voronoi}
 
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5.tbutton4
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5.tbutton4  -command {guiSV_model_convert_centerlines_to_pathlines}  -text {Convert Centerlines to Pathlines}
+
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1  -text {Delete Cells and Fill Holes [-]}  -height {25}
   # bindings
@@ -13486,6 +13495,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.checkbutton39  -expand 1  -fill both  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.checkbutton40  -expand 1  -fill both  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.button4  -expand 1  -fill both  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.tframe1  -fill both
@@ -20222,6 +20232,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe8  -expand 1  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe4  -expand 1  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe8
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe8.tbutton4  -fill both  -side left
@@ -20237,6 +20248,9 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe4.tframe10
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe4.tframe10.tcheckbutton14  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe4.tframe10.tbutton14  -fill both
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5.tbutton4 -expand 1 -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1.frame4  -fill both
@@ -47734,6 +47748,7 @@ proc volGUIupdateColorMaps { context} {
 
 # Procedure: volGUIupdateIsosurface
 proc volGUIupdateIsosurface { context} {
+  global gui3Dvars
 
   upvar #0 $context guiVars
 
@@ -47836,6 +47851,51 @@ proc volGUIupdateIsosurface { context} {
     catch {vis_pRm $ren $contourpd}
     catch {vis_lodRm $ren $contourpd}
   }
+  set gui3Dvars(smoothIsosurface) $contourpd
+  set gui3Dvars(min_thr_value) $thresholdValue
+}
+
+proc guiSV_group_make_isosurface_3D_surface {} {
+  global symbolicName
+  global gKernel
+  global gOptions
+  global gSeg3D
+  global gui3Dvars
+
+  set tv $symbolicName(guiSV_group_tree)
+  set contourpd $gui3Dvars(smoothIsosurface)
+  set objName Isosurface_$gui3Dvars(min_thr_value)
+  catch {repos_delete -obj $objName}
+  if {[repos_exists -obj $contourpd] == 0} {
+    return -code error "ERROR: Show isosurface to convert 3D Surface"
+  }
+  geom_copy -src $contourpd -dst $objName
+  if {[seg3d_add $objName $objName] !=0} {
+
+    set yesno [tk_messageBox -default no  \
+    -message "Do you want to replace $objName? with this surface? This cannot be undone." \
+    -title "Confirm overwrite surface"  -type yesno]
+    switch -- $yesno {
+      yes {
+	puts "forcing"
+	seg3d_addForce $objName $objName
+      }
+      no {
+       return
+      }
+    }
+
+  }
+  repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
+  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
+  guiSV_group_update_tree
+  DestroyWindow.svSaveSegWindow
+  guiSV_model_display_selected_full_model 0
+
+  $tv see .groups.3d.$objName
+  $tv selection set .groups.3d.$objName
+  guiSV_solid_display_selected_groups 1
+  set guiVars(show_isosurface) 0
 }
 
 
@@ -49141,6 +49201,8 @@ set {gui3Dvars(sphereBounds)} {1}
 set {gui3Dvars(sphereCenter)} {0 0 0}
 set {gui3Dvars(blendSphereRadius)} {1.0}
 set {gui3Dvars(localControlAttributes)} {}
+set {gui3Dvars(smoothIsosurface)} {/models/pd/isosurface}
+set {gui3Dvars(min_thr_value)} {0}
 global {guiABC}
 set {guiABC(bct_dat_file)} {bct.dat}
 set {guiABC(bct_vtp_file)} {bct.vtp}
