@@ -857,6 +857,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
     catch {repos_delete -obj $facepd}
     if {[catch {$modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize} errmsg] == 0} {
       model_add $modelname $facename $facename
+      puts "added face $facename to $modelname"
     } else {
       puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize"
       puts $errmsg
@@ -2387,6 +2388,8 @@ proc guiSV_model_copy_selected_model {} {
 proc guiSV_model_copy_model {kernel model newname op} {
   global gOptions
   global symbolicName
+  global gPolyDataFaceNames
+  global gDiscreteModelFaceNames
 
   if {$newname == ""} {
     set newmodel [guiSV_model_new_surface_name $op]
@@ -2411,6 +2414,8 @@ proc guiSV_model_copy_model {kernel model newname op} {
     if [guiSV_model_check_array_exists $newmodel 1 "ModelFaceID"] {
       set addfaces 1
     }
+  } elseif {$kernel == "Discrete"} {
+    set addfaces 1
   }
 
   if {$addfaces == 1} {
@@ -2419,6 +2424,12 @@ proc guiSV_model_copy_model {kernel model newname op} {
       set faceids [$newmodel GetFaceIds]
       foreach id $faceids {
 	set gPolyDataFaceNames($id) [model_idface $kernel $model $id]
+      }
+    } elseif {$kernel == "Discrete"} {
+      catch {unset gDiscreteModelFaceNames}
+      set faceids [$newmodel GetFaceIds]
+      foreach id $faceids {
+	set gDiscreteModelFaceNames($id) [model_idface $kernel $model $id]
       }
     }
     guiSV_model_add_faces_to_tree $kernel $newmodel
