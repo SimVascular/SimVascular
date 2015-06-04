@@ -1148,7 +1148,9 @@ proc guiSV_model_display_selected_full_model {showFlag} {
     set kernel $gKernel($model)
     set gOptions(meshing_solid_kernel) $kernel
     solid_setKernel -name $kernel
-    guiSV_model_display_model $showFlag $kernel $model
+    if {[repos_exists -obj $model]} {
+      guiSV_model_display_model $showFlag $kernel $model
+    }
     if {[llength [model_get $model]] != 0} {
       guiSV_model_set_col_value $kernel.$model 2 ""
       guiSV_model_display_model_all_faces 0 $kernel $model

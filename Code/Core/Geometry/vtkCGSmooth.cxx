@@ -423,8 +423,8 @@ int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
 
   svMath::conjugate_gradient(A,&b[0],this->NumGradientSolves,&x[0]);
   //Not necessary, just to check how well satisfied
-  std::vector<double> c(totalEqs);
-  A.multiply_column(&x[0],&c[0]);
+  //std::vector<double> c(totalEqs);
+  //A.multiply_column(&x[0],&c[0]);
 
   vtkSmartPointer<vtkPoints> newPoints = 
     vtkSmartPointer<vtkPoints>::New();

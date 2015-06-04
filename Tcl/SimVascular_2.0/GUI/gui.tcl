@@ -4896,13 +4896,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Sampling:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11
-  #ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6
-  #ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_overrides)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_overrides)}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7
-  #ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Sampling Overrides:}
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Sampling Overrides:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11  -text {Longitdunial Sampling Rules [-]}  -width {293}  -height {25}
@@ -15708,15 +15708,15 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19  -fill both
-  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tlabel7  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tentry6  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11
-  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7  -side left
-  #pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6  -expand 1  -fill x  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6  -expand 1  -fill x  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10  -fill x  -side bottom
