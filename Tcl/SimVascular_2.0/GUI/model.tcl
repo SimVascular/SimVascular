@@ -868,16 +868,32 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
   }
   if {[llength [lsort -unique $smasherFaceNames]] != [llength $smasherFaceNames]} {
      puts "uh oh, duplicate faces!"
-     set duplist [lsearch -dictionary $smasherFaceNames]
-     foreach i [lsort -unique $smasherFaceNames] {
+     set pretty_names {}
+     set all_ids {}
+     foreach i [$modelname GetFaceIds] {
+       catch {lappend pretty_names [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+       lappend all_ids $i
+     }
+     set duplist [lsort -dictionary $pretty_names]
+     foreach i [lsort -unique $pretty_names] {
         set idx [lsearch -exact $duplist $i]
         set duplist [lreplace $duplist $idx $idx]
      }
      set msg "Duplicate faces found!\n\n"
+     set duplistids {}
      foreach dup $duplist {
-       set msg "$msg  name: $dup\n"
+       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
+       lappend duplistids $id
+     }
+     for {set i 0} {$i < [llength $duplist]} {incr i} {
+       set dup [lindex $duplist $i]
+       set dupid [lindex $duplistids $i]
+       set newname [string trim $dup]_2
+       set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
      }
      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+     guiSV_model_add_faces_to_tree $kernel $modelname
   }
 
   guiSV_model_update_tree
