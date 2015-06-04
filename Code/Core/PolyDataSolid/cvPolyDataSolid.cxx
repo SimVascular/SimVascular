@@ -44,6 +44,7 @@
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
 #include "vtkBooleanOperationPolyDataFilter2.h"
+#include "vtkCubeSource.h"
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_utils.h"
 #include "cv_misc_utils.h"
@@ -133,6 +134,32 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
 
   return CV_OK;
 }
+
+// -----------
+// MakeBox3d
+// -----------
+/** 
+ * @brief use VTKCubeSource to make cube 
+ */
+
+int cvPolyDataSolid::MakeBox3d( double dims[], double ctr[] )
+{
+  if ( geom_ != NULL ) {
+    return CV_ERROR;
+  }
+
+  vtkSmartPointer<vtkCubeSource> makeCube = 
+    vtkSmartPointer<vtkCubeSource>::New();
+  makeCube->SetCenter(ctr);
+  makeCube->SetXLength(dims[0]);
+  makeCube->SetYLength(dims[1]);
+  makeCube->SetZLength(dims[2]);
+  makeCube->Update();
+  geom_ = vtkPolyData::New();
+  geom_->DeepCopy(makeCube->GetOutput());
+
+  return CV_OK;
+}	
 
 // -----------
 // SetVtkPolyDataObject

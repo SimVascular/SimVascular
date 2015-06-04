@@ -5605,7 +5605,7 @@ int Geom_DistanceToCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( sys_geom_distancetocenterlines( (cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)(&distanceDst) )
        != CV_OK ) {
-    Tcl_SetResult( interp, "error creating centerlines", TCL_STATIC );
+    Tcl_SetResult( interp, "error getting distance to centerlines", TCL_STATIC );
     return TCL_ERROR;
   }
 
@@ -5681,7 +5681,7 @@ int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( sys_geom_cap( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst), &numIds,&ids,captype )
        != CV_OK ) {
-    Tcl_SetResult( interp, "error creating centerlines", TCL_STATIC );
+    Tcl_SetResult( interp, "error capping model", TCL_STATIC );
     return TCL_ERROR;
   }
 
@@ -5768,7 +5768,7 @@ int Geom_CapWIdsCmd( ClientData clientData, Tcl_Interp *interp,
   if ( sys_geom_cap_with_ids( (cvPolyData*)geomSrc, (cvPolyData**)(&cappedDst)
 	,fillId,num_filled,filltype)
        != CV_OK ) {
-    Tcl_SetResult( interp, "error creating centerlines", TCL_STATIC );
+    Tcl_SetResult( interp, "error capping model", TCL_STATIC );
     return TCL_ERROR;
   }
 

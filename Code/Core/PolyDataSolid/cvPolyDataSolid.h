@@ -90,7 +90,7 @@ public:
   int MakeEllipse( double xr, double yr, double ctr[] ) {return CV_ERROR;} 
   int MakeBox2d( double dims[], double ctr[] ) {return CV_ERROR;} 
 
-  int MakeBox3d( double dims[], double ctr[] ) {return CV_ERROR;} 
+  int MakeBox3d( double dims[], double ctr[] ); 
   int MakeSphere( double r, double ctr[] ) {return CV_ERROR;} 
   int MakeEllipsoid( double r[], double ctr[] ) {return CV_ERROR;} 
   int MakeCylinder( double r, double length, double ctr[],
