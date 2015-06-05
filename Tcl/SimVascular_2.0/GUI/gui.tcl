@@ -29181,7 +29181,7 @@ proc guiFNMsetDefaultFilenames {} {
   set gFilenames(spectrum_usrNBC1_file) usrNBC1.var
   set gFilenames(spectrum_usrNBC2_file) usrNBC2.var
   set gFilenames(spectrum_usrNBC3_file) usrNBC3.var
-  set gFilenames(supre_script_file) $root.cvpre
+  set gFilenames(supre_script_file) $root.svpre
   set gFilenames(tagged_pixels_file) tagged_pixels
   set gFilenames(vcalc_flow_file) $root.flow
   set gFilenames(cuts_file) $root.cuts
@@ -31215,7 +31215,7 @@ proc guiPDvisObj { pdobject pressed} {
 # Procedure: guiPHASTAbrowseSupreFile
 proc guiPHASTAbrowseSupreFile {} {
   global gFilenames
-  set fn [tk_getOpenFile -filetypes { {"supre" .supre} {"cvpre" .cvpre} {"all files" *}} -title "cvPreSolver File" -initialfile $gFilenames(supre_script_file)]
+  set fn [tk_getOpenFile -filetypes { {"svpre" .svpre} {"cvpre" .cvpre} {"all files" *}} -title "svPreSolver File" -initialfile $gFilenames(supre_script_file)]
   if {$fn != ""} {
     set gFilenames(supre_script_file) $fn
   }
@@ -48581,7 +48581,7 @@ set {gFilenames(solution_file)} {restart.x.0}
 set {gFilenames(spectrum_usrNBC1_file)} {usrNBC1.var}
 set {gFilenames(spectrum_usrNBC2_file)} {usrNBC2.var}
 set {gFilenames(spectrum_usrNBC3_file)} {usrNBC3.var}
-set {gFilenames(supre_script_file)} {foo.supre}
+set {gFilenames(supre_script_file)} {foo.svpre}
 set {gFilenames(surface_mesh_file)} {foo.vtp}
 set {gFilenames(tagged_pixels_file)} {tagged_pixels}
 set {gFilenames(tet_mesh_script_file)} {foo}

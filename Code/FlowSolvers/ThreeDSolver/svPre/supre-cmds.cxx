@@ -664,6 +664,8 @@ int cmd_deformable_wall(char *cmd) {
         return CV_ERROR;
     }
 
+    dispsoln_ = new double[3*numNodes_]();
+
     // cleanup
     debugprint(stddbg,"Exiting cmd_deformable_wall.\n");
     return CV_OK;
@@ -1922,6 +1924,7 @@ int writeRESTARTDAT(char* filename) {
     int nsd, lstep, nshg;
 
     if (dispsoln_ != NULL) {
+
       nsd = 3;
       lstep = 0;
       nshg = numNodes_;

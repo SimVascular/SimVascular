@@ -107,8 +107,8 @@ static Cmd cmd_table[] = {
   {"deformable_thickness",cmd_deformable_thickness},
   {"deformable_pressure",cmd_deformable_pressure},
   {"deformable_kcons",cmd_deformable_kcons},
-  {"deformable_direct_solve", cmd_deformable_direct_solve},
-  {"deformable_solve", cmd_deformable_iterative_solve},
+  {"deformable_direct_solve_displacements", cmd_deformable_direct_solve},
+  {"deformable_solve_displacements", cmd_deformable_iterative_solve},
   {"wall_displacements_write_vtp", cmd_wall_displacements_write_vtp},
   {"append_displacements",cmd_append_displacements},
   #if(VER_VARWALL == 1)

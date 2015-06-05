@@ -1562,6 +1562,8 @@ int cmd_deformable_wall_vtp_simple(char *cmd) {
         return CV_ERROR;
     }
 
+    dispsoln_ = new double[3*numNodes_]();
+
     // cleanup
     debugprint(stddbg, "Exiting cmd_deformable_wall.\n");
     return CV_OK;
