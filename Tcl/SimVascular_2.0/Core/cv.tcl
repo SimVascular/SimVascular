@@ -205,17 +205,17 @@ proc geom_localOperation {operation inPd outPd} {
 
   set tmp3Pd /tmp/model/local/third
   catch {repos_delete -obj $tmp3Pd}
-  if {$operation == "local_quadric_decimation"} {
+  if {$operation == "lDec"} {
     set target $gui3Dvars(local_quad_target)
     geom_local_decimation -src $tmp2Pd -result $tmp3Pd -target $target -cellarray "ActiveCells"
-  } elseif {$operation == "local_laplacian_smooth"} {
+  } elseif {$operation == "lLap"} {
     set iters $gui3Dvars(local_smooth_num_iters)
     set relax $gui3Dvars(local_smooth_relax_factor)
     geom_local_laplacian_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -relax $relax -cellarray "ActiveCells"
-  } elseif {$operation == "local_subdivision"} {
+  } elseif {$operation == "lSub"} {
     set iters $gui3Dvars(local_linear_subdivisions)
     geom_local_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
-  } elseif {$operation == "local_constrain_smooth"} {
+  } elseif {$operation == "lCon"} {
     set iters $gui3Dvars(local_cgsmooth_num_iters)
     set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
     geom_local_constrain_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -constrainfactor $constrain -cellarray "ActiveCells"

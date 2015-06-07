@@ -12288,6 +12288,8 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_copy_selected_model}  -label {Copy Selected Model}
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_rename_selected_model}  -label {Rename Selected Model}
 
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton12.m add command  -command {guiSV_model_get_older_version_selected_model}  -label {Get Model Backup}
+
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame2.menubutton13.m}  -text {Face Operations}
 
@@ -12581,7 +12583,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_butterfly_divisions)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tbutton18
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tbutton18  -command {gui3DchangeSurface butterfly}  -text {Subdivide}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tbutton18  -command {gui3DchangeSurface gBut}  -text {Subdivide}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14  -text {Densify [+]}  -width {261}  -height {25}
@@ -12604,7 +12606,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_densify_divisions)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tbutton18
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tbutton18  -command {gui3DchangeSurface butterfly}  -text {Subdivide}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tbutton18  -command {gui3DchangeSurface gBut}  -text {Subdivide}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15  -text {Decimate Surface [-]}  -width {261}  -height {25}
@@ -12627,7 +12629,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_quad_target)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface quadratic_decimate}  -text {Decimate}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface gDec}  -text {Decimate}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16  -text {Laplacian Smooth [-]}  -width {261}  -height {25}
@@ -12659,7 +12661,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_smooth_relax_factor)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface smooth}  -text {Smooth}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface gSm}  -text {Smooth}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17  -text {WindowSync Smooth [+]}  -width {261}  -height {25}
@@ -12691,7 +12693,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_syncsmooth_pass_band_value)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tbutton4  -command {gui3DchangeSurface syncsmooth}  -text {Smooth}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tbutton4  -command {gui3DchangeSurface gSSm}  -text {Smooth}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1  -text {Global Operators [-]}  -width {198}  -height {25}
@@ -12705,10 +12707,10 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14.tbutton20
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14.tbutton20  -command {gui3DchangeSurface largest}  -text {Select Largest Region}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14.tbutton20  -command {gui3DchangeSurface larg}  -text {Select Largest Region}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14.tbutton0
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14.tbutton0  -command {gui3DchangeSurface fill_holes}  -text {Fill Holes}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21.tframe14.tbutton0  -command {gui3DchangeSurface fill}  -text {Fill Holes}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10  -text {Helper [+]}  -width {198}  -height {25}
@@ -12753,7 +12755,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_quad_target)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface local_quadric_decimation}  -text {Locally Decimate}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface lDec}  -text {Locally Decimate}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16  -text {Laplacian Smooth [-]}  -width {261}  -height {25}
@@ -12785,7 +12787,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_smooth_relax_factor)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface local_laplacian_smooth}  -text {Locally Laplacian Smooth}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface lLap}  -text {Locally Laplacian Smooth}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18  -text {Constrain Smooth [-]}  -width {261}  -height {25}
@@ -12817,7 +12819,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_cgsmooth_constrain_factor)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface local_constrain_smooth}  -text {Locally Constrain Smooth}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface lCon}  -text {Locally Constrain Smooth}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17  -text {Linear Subdivision [-]}  -width {261}  -height {25}
@@ -12840,7 +12842,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_linear_subdivisions)}  -width {10}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface local_subdivision}  -text {Locally Subdivide}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface lSub}  -text {Locally Subdivide}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1  -text {Local Region Selection [-]}  -width {265}  -height {25}
@@ -13264,7 +13266,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1.frame4.tframe3.tbutton4  -command {PolyDataDeleteCells}  -text {Delete Selected Cells}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1.frame4.tframe3.tbutton5
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1.frame4.tframe3.tbutton5  -command {gui3DchangeSurface fill_holes}  -text {Fill Holes}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1.frame4.tframe3.tbutton5  -command {gui3DchangeSurface fill}  -text {Fill Holes}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -26947,66 +26949,70 @@ proc gui3DchangeSurface { operation} {
   set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
-  set newmodel "[string trim $model]_[string trim $operation]"
-  catch {repos_delete -obj $newmodel}
-  if {[model_create $kernel $newmodel] != 1} {
-    guiSV_model_delete_model $kernel $newmodel
-    model_create $kernel $newmodel
-  }
-  solid_copy -src $model -dst $newmodel
+  #set oldmodel "[string trim $model]_[string trim $operation]"
+  set oldmodel "[string trim $model]_backup"
+  set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
+  catch {repos_delete -obj $oldmodel}
+  #if {[model_create $kernel $oldmodel] != 1} {
+  #  guiSV_model_delete_model $kernel $oldmodel
+  #  model_create $kernel $oldmodel
+  #}
+  solid_copy -src $model -dst $oldmodel
 
   set modelpd /models/$kernel/$model 
-  set obj /models/$kernel/$newmodel
+  set obj /models/$kernel/$oldmodel
   catch {repos_delete -obj $modelpd}
   catch {repos_delete -obj $obj}
   $model GetPolyData -result $modelpd
 
-  if {$operation == "smooth"} {
+  if {$operation == "gSm"} {
      set relax $gui3Dvars(smooth_smooth_relax_factor)
      set num   $gui3Dvars(smooth_smooth_num_iters)
      geom_smooth $modelpd $relax $num $obj
 
-  } elseif {$operation == "syncsmooth"} {
+  } elseif {$operation == "gSSm"} {
      set band  $gui3Dvars(smooth_syncsmooth_pass_band_value)
      set num   $gui3Dvars(smooth_syncsmooth_num_iters)
      geom_syncsmooth $modelpd $band $num $obj 
 
-  } elseif {$operation == "butterfly"} {
+  } elseif {$operation == "gBut"} {
      set num   $gui3Dvars(smooth_butterfly_divisions)
      geom_butterfly $modelpd $num $obj
 
-  } elseif {$operation == "densify"} {
+  } elseif {$operation == "gDen"} {
      set num   $gui3Dvars(smooth_densify_divisions)
      geom_densify $modelpd $num $obj  
 
-  } elseif {$operation == "quadratic_decimate"} {
+  } elseif {$operation == "gDec"} {
      set target  $gui3Dvars(smooth_quad_target)
      geom_quadraticDecimation $modelpd $target $obj 
 
-  } elseif {$operation == "fill_holes"} {
+  } elseif {$operation == "fill"} {
      geom_fillHoles $modelpd $obj
 
-  } elseif {$operation == "largest"} {
+  } elseif {$operation == "larg"} {
      geom_largestConnected $modelpd $obj
 
-  } elseif {$operation == "local_quadric_decimation"} {
+  } elseif {$operation == "lDec"} {
      geom_localOperation $operation $modelpd $obj
 
-  } elseif {$operation == "local_subdivision"} {
+  } elseif {$operation == "lSub"} {
      geom_localOperation $operation $modelpd $obj
 
-  } elseif {$operation == "local_laplacian_smooth"} {
+  } elseif {$operation == "lLap"} {
      geom_localOperation $operation $modelpd $obj
 
-  } elseif {$operation == "local_constrain_smooth"} {
+  } elseif {$operation == "lCon"} {
      geom_localOperation $operation $modelpd $obj
 
   } else {
      return -code error "ERROR:  invalid ($operation)."
   }
 
-  $newmodel SetVtkPolyData -obj $obj
-  guiSV_model_update_new_solid $kernel $model $newmodel
+  $model SetVtkPolyData -obj $obj
+  guiSV_model_update_tree
+  guiSV_model_update_view_model $kernel $model
+  #guiSV_model_update_new_solid $kernel $model $newmodel
 }
 
 
@@ -38458,14 +38464,16 @@ proc guiTRIMaddCutBox {} {
    set gOptions(meshing_solid_kernel) $kernel
    solid_setKernel -name $kernel
 
-   set newmodel "[string trim $model]_boxtrimmed"
-   catch {repos_delete -obj $newmodel}
-   if {[model_create $kernel $newmodel] != 1} {
-     guiSV_model_delete_model $kernel $newmodel
-     catch {repos_delete -obj /models/$kernel/$newmodel}
-     model_create $kernel $newmodel
-   }
-   solid_copy -src $model -dst $newmodel
+   #set oldmodel "[string trim $model]_boxtrimmed"
+   set oldmodel "[string trim $model]_backup"
+   set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
+   catch {repos_delete -obj $oldmodel}
+   #if {[model_create $kernel $oldmodel] != 1} {
+   #  guiSV_model_delete_model $kernel $oldmodel
+   #  catch {repos_delete -obj /models/$kernel/$oldmodel}
+   #  model_create $kernel $oldmodel
+   #}
+   solid_copy -src $model -dst $oldmodel
 
    set offset $guiTRIMvars(plane_offset)
    set side inside
@@ -38475,9 +38483,13 @@ proc guiTRIMaddCutBox {} {
    set tbox $symbolicName(guiTRIMcutFileTB)
    $tbox insert end "\# planes side offset pt1x pt1y pt1z nrm1x nrm1y nrm1z pt2x...\n"
    $tbox insert end "box_planes $side $offset $vals\n"
-   guiTRIMcreateCutBox $model $newmodel $side $offset $vals
+   guiTRIMcreateCutBox $model $side $offset $vals
+   guiSV_model_update_tree
+   guiSV_model_update_view_model $kernel $model
 
-   guiSV_model_update_new_solid $kernel $model $newmodel
+   guiSV_model_update_tree
+   guiSV_model_update_view_model $kernel $model
+   #guiSV_model_update_new_solid $kernel $model $oldmodel
 }
 
 
@@ -38499,14 +38511,16 @@ proc guiTRIMaddCutPlane { side} {
    if {[llength $model] != 1} {
      return -code error "ERROR: Only one model allowed to be trimmed at a time"
    }
-   set newmodel "[string trim $model]_boxtrimmed"
-   catch {repos_delete -obj $newmodel}
-   if {[model_create $kernel $newmodel] != 1} {
-     guiSV_model_delete_model $kernel $newmodel
-     catch {repos_delete -obj /models/$kernel/$newmodel}
-     model_create $kernel $newmodel
-   }
-   solid_copy -src $model -dst $newmodel
+   #set oldmodel "[string trim $model]_boxtrimmed"
+   set oldmodel "[string trim $model]_backup"
+   set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
+   catch {repos_delete -obj $oldmodel}
+   #if {[model_create $kernel $oldmodel] != 1} {
+   #  guiSV_model_delete_model $kernel $oldmodel
+   #  catch {repos_delete -obj /models/$kernel/$oldmodel}
+   #  model_create $kernel $oldmodel
+   #}
+   solid_copy -src $model -dst $oldmodel
 
    set tbox $symbolicName(guiTRIMcutFileTB)
    set topRight $guiTRIMvars(plane_p1)
@@ -38516,9 +38530,11 @@ proc guiTRIMaddCutPlane { side} {
    $tbox insert end "\# plane side offset topRight botRight topLeft\n"
    $tbox insert end "plane $side $offset $topRight $botRight $topLeft\n"
 
-   guiTRIMcreateCutPlane $model $newmodel $side
+   guiTRIMcreateCutPlane $model $side
 
-   guiSV_model_update_new_solid $kernel $model $newmodel
+   guiSV_model_update_tree
+   guiSV_model_update_view_model $kernel $model
+   #guiSV_model_update_new_solid $kernel $model $oldmodel
 }
 
 
@@ -38578,106 +38594,106 @@ proc guiTRIMbrowseSeg {} {
 }
 
 
-# Procedure: guiTRIMcreateCutBox
-proc guiTRIMcreateCutBox { side offset vals} {
-
-  global gui3Dvars
-  global guiTRIMvars
-  global gRen3d
-  global guiPDvars
-  global smasherInputName
-
-  set obj $gui3Dvars(polydata_change_obj)
-  set Bobj $gui3Dvars(polydata_change_backup_obj)
-
-  catch {repos_delete -obj $Bobj}
-  if {$guiPDvars(updatedSolid) == 1} {
-     if {[catch {$smasherInputName GetPolyData -result $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before cutting with box"
-      return
-    }
-  } else {
-     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before cutting with box"
-      return
-    }
-  }
-
-  set clipper tmp-guiTRIM-clipper
-  set impPlanes guiTRIMcreateCutBox-ImpPlanes
-
-  catch {$clipper Delete}
-  catch {$impPlanes Delete}
-
-  # create the implicit cut box
-  vtkPlanes $impPlanes
-  $impPlanes SetBounds 0 1 0 1 0 1
-  set pts [$impPlanes GetPoints]
-  set nrms [$impPlanes GetNormals]
-
-  for {set i 0} {$i < 6} {incr i} {
-    set pt [lrange $vals [expr 6*$i] [expr 6*$i + 2]]
-    set nrm [lrange $vals [expr 3+6*$i] [expr 3+6*$i +2]]
-    #puts "pt: $pt  nrm: $nrm"
-    eval $pts SetPoint $i $pt
-    eval $nrms SetTuple3 $i $nrm 
-  }
-
-  # do the clipping
-  #puts "Using clipper..."
-  catch {$clipper Delete}
-  vtkClipPolyData $clipper
-  $clipper SetInputDataObject [repos_exportToVtk -src $Bobj]
-  $clipper GenerateClippedOutputOn
-  $clipper SetClipFunction $impPlanes
-  $clipper SetValue $offset
-  $clipper Update
-
-  global gRen3d
-
-  set ren $gRen3d
-
-  global gRen3dFreeze
-  if {$gRen3dFreeze > 0} {
-    set alreadyfrozen 1
-  } else {
-    set alreadyfrozen 0
-    set gRen3dFreeze 1
-  }
-
-  #if {$guiTRIMvars(vis_cut_surface) != 0} {
-  #  vis_pRm $gRen3d $obj
-  #}
-
-  set triangulator tmp-guiTRIM-triangulator
-  catch {$triangulator Delete}
-  vtkTriangleFilter $triangulator
-
-  if {$side == "inside"} {
-    $triangulator SetInputDataObject [$clipper GetOutput]
-  } else {
-    $triangulator SetInputDataObject [$clipper GetClippedOutput]
-  }
-  $triangulator Update
-
-  catch {repos_delete -obj $obj}
-  repos_importVtkPd -src [$triangulator GetOutput] -dst $obj
-
-  global guiTRIMvars
-  set guiTRIMvars(num_tris) [[repos_exportToVtk -src $obj] GetNumberOfCells]
-
-  set guiPDvars(updatedSolid) 0
-  guiTRIMvis vis_cut_surface
-
-  $triangulator Delete
-  $clipper Delete
-  $impPlanes Delete
-
-  if {$alreadyfrozen == 0} {
-    set gRen3dFreeze 0
-    vis_render $ren
-  }
-}
+## Procedure: guiTRIMcreateCutBox
+#proc guiTRIMcreateCutBox { side offset vals} {
+#
+#  global gui3Dvars
+#  global guiTRIMvars
+#  global gRen3d
+#  global guiPDvars
+#  global smasherInputName
+#
+#  set obj $gui3Dvars(polydata_change_obj)
+#  set Bobj $gui3Dvars(polydata_change_backup_obj)
+#
+#  catch {repos_delete -obj $Bobj}
+#  if {$guiPDvars(updatedSolid) == 1} {
+#     if {[catch {$smasherInputName GetPolyData -result $Bobj} errmsg] != 0} {
+#      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before cutting with box"
+#      return
+#    }
+#  } else {
+#     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
+#      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before cutting with box"
+#      return
+#    }
+#  }
+#
+#  set clipper tmp-guiTRIM-clipper
+#  set impPlanes guiTRIMcreateCutBox-ImpPlanes
+#
+#  catch {$clipper Delete}
+#  catch {$impPlanes Delete}
+#
+#  # create the implicit cut box
+#  vtkPlanes $impPlanes
+#  $impPlanes SetBounds 0 1 0 1 0 1
+#  set pts [$impPlanes GetPoints]
+#  set nrms [$impPlanes GetNormals]
+#
+#  for {set i 0} {$i < 6} {incr i} {
+#    set pt [lrange $vals [expr 6*$i] [expr 6*$i + 2]]
+#    set nrm [lrange $vals [expr 3+6*$i] [expr 3+6*$i +2]]
+#    #puts "pt: $pt  nrm: $nrm"
+#    eval $pts SetPoint $i $pt
+#    eval $nrms SetTuple3 $i $nrm 
+#  }
+#
+#  # do the clipping
+#  #puts "Using clipper..."
+#  catch {$clipper Delete}
+#  vtkClipPolyData $clipper
+#  $clipper SetInputDataObject [repos_exportToVtk -src $Bobj]
+#  $clipper GenerateClippedOutputOn
+#  $clipper SetClipFunction $impPlanes
+#  $clipper SetValue $offset
+#  $clipper Update
+#
+#  global gRen3d
+#
+#  set ren $gRen3d
+#
+#  global gRen3dFreeze
+#  if {$gRen3dFreeze > 0} {
+#    set alreadyfrozen 1
+#  } else {
+#    set alreadyfrozen 0
+#    set gRen3dFreeze 1
+#  }
+#
+#  #if {$guiTRIMvars(vis_cut_surface) != 0} {
+#  #  vis_pRm $gRen3d $obj
+#  #}
+#
+#  set triangulator tmp-guiTRIM-triangulator
+#  catch {$triangulator Delete}
+#  vtkTriangleFilter $triangulator
+#
+#  if {$side == "inside"} {
+#    $triangulator SetInputDataObject [$clipper GetOutput]
+#  } else {
+#    $triangulator SetInputDataObject [$clipper GetClippedOutput]
+#  }
+#  $triangulator Update
+#
+#  catch {repos_delete -obj $obj}
+#  repos_importVtkPd -src [$triangulator GetOutput] -dst $obj
+#
+#  global guiTRIMvars
+#  set guiTRIMvars(num_tris) [[repos_exportToVtk -src $obj] GetNumberOfCells]
+#
+#  set guiPDvars(updatedSolid) 0
+#  guiTRIMvis vis_cut_surface
+#
+#  $triangulator Delete
+#  $clipper Delete
+#  $impPlanes Delete
+#
+#  if {$alreadyfrozen == 0} {
+#    set gRen3dFreeze 0
+#    vis_render $ren
+#  }
+#}
 
 
 # Procedure: guiTRIMcreateCutPlane
@@ -39095,12 +39111,25 @@ proc guiTRIMvis { flag} {
   global smasherInputName
   global gOptions
 
+  set visflag 0
+  if {$flag == "vis_boxInteractor" && $guiTRIMvars(vis_boxInteractor)} {
+    set visflag 1
+  } 
+  if {$flag == "vis_planeInteractor" && $guiTRIMvars(vis_planeInteractor)} {
+    set visflag 1
+  } 
   set kernel $gOptions(meshing_solid_kernel)
   if {$kernel != "PolyData"} {
     return -code error "ERROR: Kernel must be PolyData for operation"
   }
   set model [guiSV_model_get_tree_current_models_selected]
-  if {[llength $model] != 1} {
+  if {[llength $model] != 1 && $visflag == 1} {
+    if {$flag == "vis_boxInteractor"} {
+      set guiTRIMvars(vis_boxInteractor) 0
+    }
+    if {$flag == "vis_planeInteractor"} {
+      set guiTRIMvars(vis_planeInteractor) 0
+    }
     return -code error "ERROR: Only one model should be selected to show interactor"
   }
   set modelpd /models/$kernel/$model
@@ -50276,6 +50305,10 @@ global {smasherInputName}
 set {smasherInputName} {none}
 global {smasherNumItems}
 set {smasherNumItems} {5}
+global {gDetached}
+set {gDetached} {}
+global {gSelectDetached}
+set {gSelectDetached} {}
 
 # please don't modify the following
 # variables. They are needed by xf.
