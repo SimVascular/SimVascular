@@ -2810,30 +2810,32 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
   set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
-  set oldmodel [guiSV_model_new_surface_name 0]
-  set oldmodelpd /models/$kernel/$oldmodel
-  catch {repos_delete -obj $oldmodel}
-  if {[model_create $kernel $oldmodel] != 1} {
-    guiSV_model_delete_model $kernel $oldmodel
-    catch {repos_delete -obj $oldmodelpd}
-    model_create $kernel $oldmodel
+  set newmodel [guiSV_model_new_surface_name 0]
+  set newmodelpd /models/$kernel/$newmodel
+  catch {repos_delete -obj $newmodel}
+  if {[model_create $kernel $newmodel] != 1} {
+    guiSV_model_delete_model $kernel $newmodel
+    catch {repos_delete -obj $newmodelpd}
+    model_create $kernel $newmodel
   }
 
-  if [catch {solid_poly3dSolid -result $oldmodel -src $modelpd -facet Union -angle $guiTRIMvars(discrete_angle)} msg] {
+  if [catch {solid_poly3dSolid -result $newmodel -src $modelpd -facet Union -angle $guiTRIMvars(discrete_angle)} msg] {
     return -code error "ERROR creating solid ($msg)"
   }
-  tk_messageBox -message "Model creation complete.\nModel has [llength [$oldmodel GetFaceIds]] faces."
+  tk_messageBox -message "Model creation complete.\nModel has [llength [$newmodel GetFaceIds]] faces."
   #$outModel WriteNative -file $fn
   global gDiscreteModelFaceNames
   global gPolyDataFaceNames
-  set allids [$oldmodel GetFaceIds]
+  set allids [$newmodel GetFaceIds]
   foreach id $allids {
+    puts "IDS $id"
 #     set gDiscreteModelFaceNames($id) "noname_$id"
 #      set gDiscreteModelFaceNames($id) $gPolyDataFaceNames($id)
+    puts "NAME [model_idface PolyData $model $id]"
       set gDiscreteModelFaceNames($id) [model_idface PolyData $model $id]
   }
-  guiSV_model_add_faces_to_tree $kernel $oldmodel
-  guiSV_model_display_only_given_model $oldmodel 1
+  guiSV_model_add_faces_to_tree $kernel $newmodel
+  guiSV_model_display_only_given_model $newmodel 1
 }
 
 proc guiSV_model_create_local_surface_macro {type} {
