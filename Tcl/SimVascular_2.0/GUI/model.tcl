@@ -883,7 +883,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
      set msg "Duplicate faces found!\n\n"
      set duplistids {}
      foreach dup $duplist {
-       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
+       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] 0]]
        lappend duplistids $id
      }
      for {set i 0} {$i < [llength $duplist]} {incr i} {
@@ -892,9 +892,22 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
        set newname [string trim $dup]_2
        set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
        $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       set facepd /models/$kernel/$modelname/$newname 
+       catch {repos_delete -obj $facepd}
+       if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize} errmsg] == 0} {
+         model_add $modelname $newname $newname
+         puts "added face $newname to $modelname"
+       } else {
+         puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize"
+         puts $errmsg
+         set errorFaceName {}
+         catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
+         tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize)\n"
+         #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
+       }
      }
      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
-     guiSV_model_add_faces_to_tree $kernel $modelname
+     #guiSV_model_add_faces_to_tree $kernel $modelname
   }
 
   guiSV_model_update_tree
@@ -1132,6 +1145,7 @@ proc guiSV_model_display_selected_faces {showFlag} {
   if {[llength $model] != 1} {
     return -code error "ERROR: Only one model can be selected to edit face visualization at a time"
   }
+  set kernel $gKernel($model)
   set check [lindex [$tv item .models.$kernel.$model -values] 2]
   if {$check != "X"} {
     return -code error "ERROR: Model must be displayed as faces to toggle viewing of individual faces"
@@ -1141,7 +1155,7 @@ proc guiSV_model_display_selected_faces {showFlag} {
   foreach name $names {
     set kernel $gKernel($model)
     set gOptions(meshing_solid_kernel) $kernel
-    solid_setKernel -name $model
+    solid_setKernel -name $kernel
     if {[$tv exists .models.$kernel.$model.$name] == 1} {
       if {[lsearch -exact $testfaces $name] != -1} {
 	guiSV_model_display_model_face $showFlag $kernel $model $name
