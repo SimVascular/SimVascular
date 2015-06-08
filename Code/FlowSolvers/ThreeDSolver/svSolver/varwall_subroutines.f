@@ -1408,8 +1408,11 @@ c
 
       DO i = 1,npro
         k = 0
-        DO j=1,nshl
-         IF (rlocal(i,j,1)>0.0D0 .AND. k<4) THEN
+c        DO j=1,nshl
+c         IF (rlocal(i,j,1)>0.0D0 .AND. k<4) THEN
+c         some element may have all four nodes on the wall
+        DO j=1,nshlb
+          IF (rlocal(i,j,1)>0.0D0) THEN
             k=k+1
             f(k,:)=rlocal(i,j,:)
           END IF

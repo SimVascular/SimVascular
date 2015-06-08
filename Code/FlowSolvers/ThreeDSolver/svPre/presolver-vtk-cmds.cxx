@@ -95,8 +95,9 @@ extern double Displacement_pressure_;
 
 #if(VER_VARWALL == 1)
 extern double* gBC_;
-extern double* EvwSolution_;
 extern double* wallpropsoln_;
+extern double* ThicknessSolution_;
+extern double* EvwSolution_;
 #endif
 
 int writeGEOMBCDAT(char* filename);
@@ -1512,29 +1513,6 @@ int cmd_pressure_vtp(char *cmd) {
 	return CV_OK;
 }
 
-int cmd_deformable_wall_vtp(char *cmd) {
-
-    // enter
-    debugprint(stddbg, "Entering cmd_deformable_wall.\n");
-
-    // do work
-    double value = 0.0;
-    int setSurfID = 0;
-    int surfID = 0;
-    int setCode = 1;
-    // should use bits and not ints here!!
-    int code = 16;
-
-    if (setBoundaryFacesWithCodeVTK(cmd ,setSurfID, surfID, setCode, code,
-    		value) == CV_ERROR) {
-        return CV_ERROR;
-    }
-
-    // cleanup
-    debugprint(stddbg, "Exiting cmd_deformable_wall.\n");
-    return CV_OK;
-}
-
 int cmd_set_surface_id_vtp(char *cmd) {
 
 	// enter
@@ -1564,6 +1542,33 @@ int cmd_set_surface_id_vtp(char *cmd) {
 	return CV_OK;
 }
 
+
+
+int cmd_deformable_wall_vtp_simple(char *cmd) {
+
+    // enter
+    debugprint(stddbg, "Entering cmd_deformable_wall.\n");
+
+    // do work
+    double value = 0.0;
+    int setSurfID = 0;
+    int surfID = 0;
+    int setCode = 1;
+    // should use bits and not ints here!!
+    int code = 16;
+
+    if (setBoundaryFacesWithCodeVTK(cmd ,setSurfID, surfID, setCode, code,
+            value) == CV_ERROR) {
+        return CV_ERROR;
+    }
+
+    dispsoln_ = new double[3*numNodes_]();
+
+    // cleanup
+    debugprint(stddbg, "Exiting cmd_deformable_wall.\n");
+    return CV_OK;
+}
+
 int cmd_fix_free_edge_nodes_vtp(char *cmd) {
 
     // enter
@@ -1571,48 +1576,48 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
 
     int i,j;
 
-	// parse command string for filename
-	char polyfn[MAXPATHLEN];
-	polyfn[0] = '\0';
-	parseCmdStr(cmd, polyfn);
+    // parse command string for filename
+    char polyfn[MAXPATHLEN];
+    polyfn[0] = '\0';
+    parseCmdStr(cmd, polyfn);
 
-	// check file exists
-	FILE* fp = NULL;
-	if ((fp = fopen(polyfn, "r")) == NULL) {
-		fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
-		return CV_ERROR;
-	} else {
-		fclose(fp);
-	}
+    // check file exists
+    FILE* fp = NULL;
+    if ((fp = fopen(polyfn, "r")) == NULL) {
+        fprintf(stderr, "ERROR: could not open file (%s).", polyfn);
+        return CV_ERROR;
+    } else {
+        fclose(fp);
+    }
 
-	// read file
-	vtkPolyData* pd = NULL;
-	vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
-	reader->SetFileName(polyfn);
-	reader->Update();
-	pd = reader->GetOutput();
-	if (pd == NULL) {
-		fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
-		return CV_ERROR;
-	}
+    // read file
+    vtkPolyData* pd = NULL;
+    vtkXMLPolyDataReader* reader = vtkXMLPolyDataReader::New();
+    reader->SetFileName(polyfn);
+    reader->Update();
+    pd = reader->GetOutput();
+    if (pd == NULL) {
+        fprintf(stderr, "ERROR: problem parsing file (%s).", polyfn);
+        return CV_ERROR;
+    }
 
-	pd->GetPointData()->SetActiveScalars("GlobalNodeID");
-	pd->GetCellData()->SetActiveScalars("GlobalElementID");
+    pd->GetPointData()->SetActiveScalars("GlobalNodeID");
+    pd->GetCellData()->SetActiveScalars("GlobalElementID");
 
-	vtkIdList* ptids = vtkIdList::New();
-	ptids->Allocate(10, 10);
-	ptids->Initialize();
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10, 10);
+    ptids->Initialize();
 
-	vtkCellArray *cells = pd->GetPolys();
-	cells->InitTraversal();
+    vtkCellArray *cells = pd->GetPolys();
+    cells->InitTraversal();
 
-	vtkIntArray* gids = NULL;
-	gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
-			"GlobalNodeID"));
-	if (gids == NULL) {
-		fprintf(stderr, "ERROR: problem finding GlobalNodeID");
-		return CV_ERROR;
-	}
+    vtkIntArray* gids = NULL;
+    gids = static_cast<vtkIntArray*>(pd->GetPointData()->GetArray(
+            "GlobalNodeID"));
+    if (gids == NULL) {
+        fprintf(stderr, "ERROR: problem finding GlobalNodeID");
+        return CV_ERROR;
+    }
 
     int numEle = cells->GetNumberOfCells();
     if (numEle == 0) {
@@ -1627,19 +1632,19 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
     int elementId;
     int numEdges = 0;
 
-	for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
+    for (int icell = 0; icell < cells->GetNumberOfCells(); icell++) {
 
-		ptids->Reset();
-		cells->GetCell(4 * icell, ptids);
-		if (ptids->GetNumberOfIds() != 3) {
-			fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
-					ptids->GetNumberOfIds());
-			return CV_ERROR;
-		}
-		elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
-		n0 = gids->GetTuple1(ptids->GetId(0));
-		n1 = gids->GetTuple1(ptids->GetId(1));
-		n2 = gids->GetTuple1(ptids->GetId(2));
+        ptids->Reset();
+        cells->GetCell(4 * icell, ptids);
+        if (ptids->GetNumberOfIds() != 3) {
+            fprintf(stderr, "ERROR:  invalid number of ids in cell (%i)!",
+                    ptids->GetNumberOfIds());
+            return CV_ERROR;
+        }
+        elementId = pd->GetCellData()->GetScalars()->GetTuple1(icell);
+        n0 = gids->GetTuple1(ptids->GetId(0));
+        n1 = gids->GetTuple1(ptids->GetId(1));
+        n2 = gids->GetTuple1(ptids->GetId(2));
 
         // stuff edges into array
 
@@ -1763,9 +1768,9 @@ int cmd_fix_free_edge_nodes_vtp(char *cmd) {
       }
     }
 
-	// cleanup
-	ptids->Delete();
-	reader->Delete();
+    // cleanup
+    ptids->Delete();
+    reader->Delete();
     delete [] edges[0];
     delete [] edges[1];
 
@@ -1975,6 +1980,148 @@ int cmd_create_mesh_deformable_vtp(char *cmd) {
     return CV_OK;
 }
 
+int cmd_deformable_wall_vtp(char *cmd) {
+
+    if(cmd_deformable_wall_vtp_simple(cmd)==CV_OK
+            &&  cmd_fix_free_edge_nodes_vtp(cmd)==CV_OK
+            &&  cmd_create_mesh_deformable_vtp(cmd)==CV_OK){
+        return CV_OK;
+    }else{
+        return CV_ERROR;
+    }
+}
+
+vtkUnstructuredGrid* createGrid(int nshgtot,double* xglobal,int neltot, int* ien){
+    int i;
+    vtkPoints* pts = NULL;
+    vtkUnstructuredGrid* grid = NULL;
+
+    grid = vtkUnstructuredGrid::New();
+    grid->Allocate(neltot,1000);
+
+    pts = vtkPoints::New();
+    pts->Allocate(nshgtot,1000);
+    pts->SetNumberOfPoints(nshgtot);
+
+    vtkIntArray* gid = vtkIntArray::New();
+    gid->SetNumberOfComponents(1);
+    gid->Allocate(nshgtot,1000);
+    gid->SetNumberOfTuples(nshgtot);
+    gid->SetName("GlobalNodeID");
+
+    for( i=0; i< nshgtot; i++ ) {
+        pts->SetPoint(i,xglobal[0*nshgtot+i],xglobal[1*nshgtot+i],xglobal[2*nshgtot+i]);
+        gid->SetTuple1(i,i+1);
+    }
+
+    grid->SetPoints(pts);
+    grid->GetPointData()->AddArray(gid);
+
+    pts->Delete();
+    gid->Delete();
+
+    vtkIdList* ptids = vtkIdList::New();
+    ptids->Allocate(10,10);
+    ptids->Initialize();
+    ptids->SetNumberOfIds(4);
+
+    vtkIntArray* eid = vtkIntArray::New();
+    eid->SetNumberOfComponents(1);
+    eid->Allocate(neltot,1000);
+    eid->SetNumberOfTuples(neltot);
+    eid->SetName("GlobalElementID");
+
+
+    for(i=0; i< neltot; i++){
+        ptids->SetId(0,ien[0*neltot+i]-1);
+        ptids->SetId(1,ien[1*neltot+i]-1);
+        ptids->SetId(2,ien[2*neltot+i]-1);
+        ptids->SetId(3,ien[3*neltot+i]-1);
+        grid->InsertNextCell(VTK_TETRA,ptids);
+        eid->SetTuple1(i,i+1);
+    }
+
+    ptids->Delete();
+
+    grid->GetCellData()->SetScalars(eid);
+    grid->GetCellData()->SetActiveScalars("GlobalElementID");
+    grid->GetCellData()->CopyAllOn();
+
+    eid->Delete();
+
+    return grid;
+}
+
+int cmd_wall_displacements_write_vtp(char *cmd) {
+
+    // enter
+    debugprint(stddbg,"Entering cmd_wall_displacements_write_vtp.\n");
+
+    char outfile[MAXPATHLEN];
+
+    // do work
+    parseCmdStr(cmd,outfile);
+
+    // some simple validity checks
+    if (numNodes_ == 0 || numSolnVars_ == 0) {
+        fprintf(stderr,"ERROR:  Not all required info set!\n");
+        return CV_ERROR;
+    }
+
+    if (dispsoln_== NULL) {
+         fprintf(stderr,"ERROR: Displacements not computed.\n");
+         return CV_ERROR;
+    }
+
+    int i;
+
+    vtkUnstructuredGrid* grid =createGrid(numNodes_,nodes_,numElements_,elements_);
+
+
+    vtkDoubleArray *disp = vtkDoubleArray::New();
+    disp->SetNumberOfComponents(3);
+    disp->Allocate(numNodes_,10000);
+    disp->SetNumberOfTuples(numNodes_);
+    disp->SetName("displacement");
+    for(i=0; i< numNodes_; i++){
+        disp->SetTuple3(i,dispsoln_[0*numNodes_+i],dispsoln_[1*numNodes_+i],dispsoln_[2*numNodes_+i]);
+    }
+
+    grid->GetPointData()->AddArray(disp);
+
+    disp->Delete();
+
+    vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
+    surfFilt->MergingOff();
+    surfFilt->SetInputDataObject(grid);
+    surfFilt->Update();
+    vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+    cleaner->PointMergingOff();
+    cleaner->PieceInvariantOff();
+    cleaner->SetInputDataObject(surfFilt->GetOutput());
+    cleaner->Update();
+
+    vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
+    polywriter->SetCompressorTypeToZLib();
+    polywriter->EncodeAppendedDataOff();
+    polywriter->SetInputDataObject(cleaner->GetOutput());
+    if(outfile[0]=='\0'){
+        polywriter->SetFileName("displacement.vtp");
+    }else{
+        polywriter->SetFileName(outfile);
+    }
+    polywriter->Write();
+    polywriter->Delete();
+    cleaner->Delete();
+    surfFilt->Delete();
+    grid->Delete();
+
+    debugprint(stddbg,"Exiting cmd_wall_displacements_write_vtp.\n");
+
+    return CV_OK;
+
+}
+
 #if(VER_VARWALL == 1)
 int cmd_set_scalar_BCs_vtp(char *cmd) {
 
@@ -2119,6 +2266,92 @@ int cmd_set_Initial_Evw_vtp(char *cmd) {
     // cleanup
     debugprint(stddbg,"Exiting cmd_set_Initial_Evw_vtp.\n");
     return CV_OK;
+}
+
+int cmd_varwallprop_write_vtp(char *cmd) {
+
+    // enter
+    debugprint(stddbg,"Entering cmd_varwallprop_write_vtp.\n");
+
+    char outfile[MAXPATHLEN];
+
+    // do work
+    parseCmdStr(cmd,outfile);
+
+    // some simple validity checks
+    if (numNodes_ == 0 || numSolnVars_ == 0) {
+        fprintf(stderr,"ERROR:  Not all required info set!\n");
+        return CV_ERROR;
+    }
+
+    if (ThicknessSolution_== NULL && EvwSolution_ == NULL ) {
+         fprintf(stderr,"ERROR: Both ThicknessSolution_ and EvwSolution_ are not computed.\n");
+         return CV_ERROR;
+    }
+
+    int i;
+
+    vtkUnstructuredGrid* grid =createGrid(numNodes_,nodes_,numElements_,elements_);
+
+    if (ThicknessSolution_ != NULL) {
+        vtkDoubleArray *thickness = vtkDoubleArray::New();
+        thickness->SetNumberOfComponents(1);
+        thickness->Allocate(numNodes_,10000);
+        thickness->SetNumberOfTuples(numNodes_);
+        thickness->SetName("thickness");
+        for(i=0; i< numNodes_; i++){
+            thickness->SetTuple1(i,ThicknessSolution_[i]);
+        }
+
+        grid->GetPointData()->AddArray(thickness);
+
+        thickness->Delete();
+    }
+
+    if (EvwSolution_ != NULL) {
+        vtkDoubleArray *Evw = vtkDoubleArray::New();
+        Evw->SetNumberOfComponents(1);
+        Evw->Allocate(numNodes_,10000);
+        Evw->SetNumberOfTuples(numNodes_);
+        Evw->SetName("Young_Mod");
+        for(i=0; i< numNodes_; i++){
+            Evw->SetTuple1(i,EvwSolution_[i]);
+        }
+
+        grid->GetPointData()->AddArray(Evw);
+
+        Evw->Delete();
+    }
+
+    vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
+    surfFilt->MergingOff();
+    surfFilt->SetInputDataObject(grid);
+    surfFilt->Update();
+    vtkCleanPolyData* cleaner = vtkCleanPolyData::New();
+    cleaner->PointMergingOff();
+    cleaner->PieceInvariantOff();
+    cleaner->SetInputDataObject(surfFilt->GetOutput());
+    cleaner->Update();
+
+    vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
+    polywriter->SetCompressorTypeToZLib();
+    polywriter->EncodeAppendedDataOff();
+    polywriter->SetInputDataObject(cleaner->GetOutput());
+    if(outfile[0]=='\0'){
+        polywriter->SetFileName("varwallprop.vtp");
+    }else{
+        polywriter->SetFileName(outfile);
+    }
+    polywriter->Write();
+    polywriter->Delete();
+    cleaner->Delete();
+    surfFilt->Delete();
+    grid->Delete();
+
+    debugprint(stddbg,"Exiting cmd_varwallprop_write_vtp.\n");
+
+    return CV_OK;
+
 }
 #endif
 

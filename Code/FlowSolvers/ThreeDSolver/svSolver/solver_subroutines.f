@@ -1904,7 +1904,7 @@ c      do i = 1, nshg
                nshl   = lcblkb(9,iblk)
                npro   = lcblkb(1,iblk+1) - iel
                call calculateWallStresses(sA,sTF,sSF,xnew,vnew,
-     &          mienb(iblk)%p)
+     &          mienb(iblk)%p,miBCB(iblk)%p)
             enddo
          endif
 
@@ -1914,12 +1914,36 @@ c      do i = 1, nshg
              call commu (sSF, ilwork, nsd, 'in ')
          endif
 
-          do i = 1, numnp
+         do j= 1,nshg
+           if ((btest(iBC(j),10))) then
+            i = iper(j)
+            sA(i,1) = sA(i,1) + sA(j,1)
+            sTF(i,:) =  sTF(i,:) + sTF(j,:)
+            sSF(i,:) =  sSF(i,:) + sSF(j,:)
+           endif
+         enddo
+
+         do j= 1,nshg
+           if ((btest(iBC(j),10))) then
+            i = iper(j)
+            sA(j,1) = sA(i,1)
+            sTF(j,:) = sTF(i,:)
+            sSF(j,:) = sSF(i,:)
+           endif
+         enddo
+
+         if(numpe > 1) then
+             call commu (sA, ilwork, 1   , 'out')
+             call commu (sTF, ilwork, nsd, 'out')
+             call commu (sSF, ilwork, nsd, 'out')
+         endif
+
+         do i = 1, numnp
              if (invflx(i) .ne. 0 .AND. sA(i,1).ne.zero) then
                 walltsVec(i,:) = sTF(i,:)/sA(i,1)
                 wallssVec(i,:) = sSF(i,:)/sA(i,1)
              endif
-          enddo
+         enddo
 
          itmp = 1
          if (lstep .gt. 0) itmp = int(log10(float(lstep)))+1
@@ -2011,15 +2035,17 @@ c
 
 !> This routine calculate wall stresses on the flux nodes
 
-      subroutine calculateWallStresses(sA, sTF, sSF, x, vv, ienb)
+      subroutine calculateWallStresses(sA, sTF, sSF, x, vv, ienb, iBCB)
 
         include "global.h"
+        include "common_blocks/aerfrc.h"
         include "common_blocks/conpar.h"
+        include "common_blocks/genpar.h"
         include "common_blocks/propar.h"
         include "common_blocks/shpdat.h"
         include "common_blocks/matdat.h"
 
-      integer   ienb(npro, nshl)
+      integer   ienb(npro, nshl), iBCB(npro,ndiBCB)
       real*8    sA(nshg,1), sTF(nshg,nsd), sSF(nshg,nsd),
      &          vv(nshg,nsd),x(numnp,nsd)
 
@@ -2035,6 +2061,10 @@ c
       rmu = datmat(1,2,1)
 
       do n1=1, npro
+
+        if (nsrflist(iBCB(n1,2)).ne.1) then
+          cycle
+        end if
 
         nid(1:nshl)=ienb(n1,:)
 
