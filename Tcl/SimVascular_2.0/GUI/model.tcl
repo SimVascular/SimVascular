@@ -2827,12 +2827,13 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
   global gDiscreteModelFaceNames
   global gPolyDataFaceNames
   set allids [$newmodel GetFaceIds]
+  puts "HERERERRRRE $allids"
   foreach id $allids {
-    puts "IDS $id"
-#     set gDiscreteModelFaceNames($id) "noname_$id"
-#      set gDiscreteModelFaceNames($id) $gPolyDataFaceNames($id)
-    puts "NAME [model_idface PolyData $model $id]"
+    if {[model_idface PolyData $model $id] == -1} {
+      set gDiscreteModelFaceNames($id) "noname_$id"
+    } else {
       set gDiscreteModelFaceNames($id) [model_idface PolyData $model $id]
+    }
   }
   guiSV_model_add_faces_to_tree $kernel $newmodel
   guiSV_model_display_only_given_model $newmodel 1
