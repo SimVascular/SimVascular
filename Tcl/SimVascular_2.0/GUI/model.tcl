@@ -2827,7 +2827,6 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
   global gDiscreteModelFaceNames
   global gPolyDataFaceNames
   set allids [$newmodel GetFaceIds]
-  puts "HERERERRRRE $allids"
   foreach id $allids {
     if {[model_idface PolyData $model $id] == -1} {
       set gDiscreteModelFaceNames($id) "noname_$id"
