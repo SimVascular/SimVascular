@@ -130,7 +130,7 @@ static Cmd cmd_table[] = {
   {"bct_period", cmd_bct_period},
   {"bct_point_number", cmd_bct_point_number},
   {"bct_fourier_mode_number", cmd_bct_fourier_mode_number},
-  {"bct_preserve_flow", cmd_bct_preserve_flow},
+//  {"bct_preserve_flow", cmd_bct_preserve_flow},
   {"bct_flip", cmd_bct_flip},
   {"bct_create", cmd_bct_create},
   {"bct_merge_on", cmd_bct_merge_on},

@@ -1143,13 +1143,113 @@ int cmd_Transient_Laplace_Evw(char *cmd) {
     return CV_OK;
 }
 
-int cmd_append_varwallprop(char *cmd) {
+//int cmd_append_varwallprop(char *cmd) {
+//
+//  // enter
+//  debugprint(stddbg,"Entering cmd_append_varwallprop.\n");
+//
+//
+//  int i,size,nsd,nshg;
+//
+//  if (wallpropsoln_ == NULL) {
+//
+//    nsd = 2;
+//    nshg = numNodes_;
+//    size = nsd*nshg;
+//
+//    wallpropsoln_ = new double[size];
+//
+//    // zeros everywhere
+//    for (i = 0; i < size; i++) {
+//      wallpropsoln_[i] = 0.0;
+//    }
+//
+//  }
+//
+//  // stick in displacements
+//  for (i = 0; i < DisplacementNumNodes_; i++) {
+//    int nid = DisplacementNodeMap_[i];
+//  //  wallpropsoln_[numNodes_*0+nid-1] = WallpropSolution_[2*i+0];
+//  //  wallpropsoln_[numNodes_*1+nid-1] = WallpropSolution_[2*i+1];
+//    //test! temporary
+////    wallpropsoln_[numNodes_*0+nid-1] = Displacement_thickness_ ;
+//    wallpropsoln_[numNodes_*0+nid-1] = ThicknessSolution_[nid-1];
+//    wallpropsoln_[numNodes_*1+nid-1] = EvwSolution_[nid-1];
+//
+//  }
+//
+//
+//      // enter
+//    debugprint(stddbg,"Entering append_wallprops.\n");
+//
+//    char filename[MAXPATHLEN];
+//
+//    // do work
+//    parseCmdStr(cmd,filename);
+//
+//    // some simple validity checks
+//    if (numNodes_ == 0 || DisplacementNumNodes_ == 0 || wallpropsoln_ == NULL) {
+//        fprintf(stderr,"ERROR:  Not all required info set!\n");
+//        return CV_ERROR;
+//    }
+//
+//    int filenum = -1;
+//
+//    if(filename[0]=='\0'){
+//        openfile_ ("geombc.dat.1", "append", &filenum);
+//    }else{
+//        openfile_ (filename, "append", &filenum);
+//    }
+//
+//    if (filenum < 0) {
+//        fprintf(stderr,"ERROR:  could not open file (%s)\n",filename);
+//        return CV_ERROR;
+//    }
+//
+//
+//    int lstep = 0;
+//
+//
+//    // fprintf(stdout,"check nsd nshg numNodes %i %i %i \n",nsd,nshg,numNodes_ );
+//    // append to file
+//    int nitems = 3;
+//
+//    int iarray[3];
+//    iarray[ 0 ] = nshg;
+//    iarray[ 1 ] = nsd;
+//    iarray[ 2 ] = lstep;
+//
+//    writeheader_( &filenum, "varwallprop ",
+//                  ( void* )iarray, &nitems, &size,"double", oformat );
+//
+//
+//    nitems = size;
+//    writedatablock_( &filenum, "varwallprop ",
+//                     ( void* )(wallpropsoln_), &nitems, "double", oformat );
+//
+//    closefile_( &filenum,"append");
+//
+//    delete wallpropsoln_;
+//
+//    // cleanup
+//    debugprint(stddbg,"Exiting cmd_append_varwallprop.\n");
+//    return CV_OK;
+//
+//}
+
+int append_varwallprop_to_file(char *filename) {
 
   // enter
-  debugprint(stddbg,"Entering cmd_append_varwallprop.\n");
+  debugprint(stddbg,"Entering append_varwallprop_to_file.\n");
 
 
   int i,size,nsd,nshg;
+
+  // some simple validity checks
+  if (numNodes_ == 0 || DisplacementNumNodes_ == 0 ) {
+      fprintf(stderr,"ERROR:  Not all required info set!\n");
+      return CV_ERROR;
+  }
 
   if (wallpropsoln_ == NULL) {
 
@@ -1178,28 +1278,8 @@ int cmd_append_varwallprop(char *cmd) {
 
   }
 
-
-      // enter
-    debugprint(stddbg,"Entering append_wallprops.\n");
-
-    char filename[MAXPATHLEN];
-
-    // do work
-    parseCmdStr(cmd,filename);
-
-    // some simple validity checks
-    if (numNodes_ == 0 || DisplacementNumNodes_ == 0 || wallpropsoln_ == NULL) {
-        fprintf(stderr,"ERROR:  Not all required info set!\n");
-        return CV_ERROR;
-    }
-
     int filenum = -1;
-
-    if(filename[0]=='\0'){
-        openfile_ ("geombc.dat.1", "append", &filenum);
-    }else{
-        openfile_ (filename, "append", &filenum);
-    }
+    openfile_ (filename, "append", &filenum);
 
     if (filenum < 0) {
         fprintf(stderr,"ERROR:  could not open file (%s)\n",filename);
@@ -1232,8 +1312,29 @@ int cmd_append_varwallprop(char *cmd) {
     delete wallpropsoln_;
 
     // cleanup
-    debugprint(stddbg,"Exiting cmd_append_varwallprop.\n");
+    debugprint(stddbg,"Exiting append_varwallprop_to_file.\n");
     return CV_OK;
+
+}
+
+int cmd_append_varwallprop(char *cmd) {
+
+    if (ThicknessSolution_== NULL || EvwSolution_ == NULL ) {
+         fprintf(stderr,"ERROR: Both ThicknessSolution_ and EvwSolution_ have not been computed.\n");
+         return CV_ERROR;
+     }
+
+    char filename[MAXPATHLEN];
+
+    // do work
+    parseCmdStr(cmd,filename);
+
+
+    if(filename[0]=='\0'){
+        return append_varwallprop_to_file("geombc.dat.1");
+    }else{
+        return append_varwallprop_to_file(filename);
+    }
 
 }
 #endif
@@ -2361,6 +2462,12 @@ int writeGEOMBCDAT(char* filename) {
 
     closefile_ (&filenum,"write");
 
+#if(VER_VARWALL == 1)
+    if (ThicknessSolution_!= NULL && EvwSolution_ != NULL ) {
+        return append_varwallprop_to_file(filename);
+    }
+#endif
+
     return CV_OK;
 
 }
@@ -2461,18 +2568,18 @@ int cmd_bct_fourier_mode_number(char *cmd) {
 
 }
 
-int cmd_bct_preserve_flow(char *cmd) {
-
-    debugprint(stddbg,"Entering cmd_bct_preserve_flow.\n");
-
-    bctPreserve_=1;
-
-    debugprint(stddbg,"  BCT preserves flow\n");
-
-    debugprint(stddbg,"Exiting cmd_bct_preserve_flow.\n");
-    return CV_OK;
-
-}
+//int cmd_bct_preserve_flow(char *cmd) {
+//
+//    debugprint(stddbg,"Entering cmd_bct_preserve_flow.\n");
+//
+//    bctPreserve_=1;
+//
+//    debugprint(stddbg,"  BCT preserves flow\n");
+//
+//    debugprint(stddbg,"Exiting cmd_bct_preserve_flow.\n");
+//    return CV_OK;
+//
+//}
 
 int cmd_bct_flip(char *cmd) {
 

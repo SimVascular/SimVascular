@@ -1740,6 +1740,7 @@ int main(int argc, char* argv[])
     bool RequestedTimeDeriv = false;
     bool RequestedYbar = false;
     bool RequestedFlowSolverFormat = false;
+    bool RequestedOnlyLastStep = false;
     bool RequestedNewSn = false;
     bool RequestedASCIIFormat = false;
     bool RequestedReadResidual = false;
@@ -1765,6 +1766,7 @@ int main(int argc, char* argv[])
             cout << "  -newsn stepnumber   : override step number in file"<<endl;
             cout << "  -incr increment     : Specify increment between steps"<< endl;
             cout << "  -ph                 : Write flowsolver-format file restart.<stepnumber>.0"<<endl;
+            cout << "  -laststep           : Only write last step to file restart.<stepnumber>.0"<<endl;
             cout << "  -vis file_prefix    : Write Vis-format results file" <<endl;
             cout << "  -vismesh filename   : Write Vis-format mesh file" <<endl;
             cout << "  -vtu prefix or file : Write VTK XML UnstructuredGrid" <<endl;
@@ -1887,6 +1889,9 @@ int main(int argc, char* argv[])
         }
         else if(tmpstr=="-ph"){
             RequestedFlowSolverFormat = true;
+        }
+        else if(tmpstr=="-laststep"){
+            RequestedOnlyLastStep = true;
         }
         else if(tmpstr=="-none"){
             RequestedAll = false;
@@ -2339,13 +2344,17 @@ int main(int argc, char* argv[])
         // Export in Flowsolver format
         // ===========================
         if (RequestedFlowSolverFormat){
-            cout << "Exporting Flowsolver restart file...";
 
-            pp->ExportFlowSolverFileFormat(stepnumber,newstepnumber,RequestedNewSn,
-                    RequestedSolution,RequestedTimeDeriv,RequestedDisplacements,RequestedYbar,
-                    qglobal,aglobal,dglobal,yglobal,numy,outdir);
+            if(!RequestedOnlyLastStep || (RequestedOnlyLastStep&&stepnumber==sn_stop)) {
 
-            cout << "Done." << endl;
+                cout << "Exporting Flowsolver restart file...";
+
+                pp->ExportFlowSolverFileFormat(stepnumber,newstepnumber,RequestedNewSn,
+                        RequestedSolution,RequestedTimeDeriv,RequestedDisplacements,RequestedYbar,
+                        qglobal,aglobal,dglobal,yglobal,numy,outdir);
+
+                cout << "Done." << endl;
+            }
         }
 
         // =============================

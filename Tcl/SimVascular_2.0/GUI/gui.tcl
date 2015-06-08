@@ -7445,7 +7445,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16  -width {146}  -height {80}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.label23
-  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.label23  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -justify {right}  -text {options:}  -width {15}
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.label23  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -justify {right}  -text {options:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton1
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton1  -variable {guiPOSTvars(write_vtu_results)}  -text {Volume Mesh}
@@ -7455,6 +7455,9 @@ img_guessVolParams $gImageVol(filename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton3
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton3  -variable {guiPOSTvars(combine_results)}  -text {Single File}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton31
+  ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton31  -variable {guiPOSTvars(reduce_last_step)}  -text {Last Step to restart.x.0}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tlabel1
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {  Sim Units:}
@@ -16684,6 +16687,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton1  -fill both  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton2  -fill both  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton3  -fill both  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton31  -fill both  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tlabel1  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tmenubutton0  -side left
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16.tcheckbutton4  -fill both  -side left
@@ -31401,6 +31405,11 @@ proc guiPOSTconvertFilesToVTK {} {
      set vtkcombo "-vtkcombo"
   }
 
+  set laststep {}
+  if {$guiPOSTvars(reduce_last_step)} {
+    set laststep "-ph -laststep"
+  }
+
   set sim_units $guiPOSTvars(sim_units)
 
   if {$sim_units == "mm"} {
@@ -31482,7 +31491,7 @@ proc guiPOSTconvertFilesToVTK {} {
       }
     }
   }
-  set cmdstr "-all -indir \"$indir\" -outdir \"$outdir\" $vtkcombo $simunitsflag -start $start -stop $stop -incr $increment $makevtu $vtufn $makevtp $vtpfn $wallflag $wallfile $calcws $applywd $muflag $mu"
+  set cmdstr "-all -indir \"$indir\" -outdir \"$outdir\" $vtkcombo $simunitsflag -start $start -stop $stop -incr $increment $makevtu $vtufn $makevtp $vtpfn $laststep $wallflag $wallfile $calcws $applywd $muflag $mu"
   
   puts "executing cvpostsolver with cmdstr: $cmdstr"
 
@@ -47993,15 +48002,17 @@ proc wormGUIwritePHASTA {prompt_user_for_dir} {
 
   #set file directory to save
   if {$prompt_user_for_dir} {
-    set initialdirectory [file dirname $gFilenames(bct_dat_file)]
+    #set initialdirectory [file dirname $gFilenames(bct_dat_file)]
+    set initialdirectory [file dirname $guiABC(bct_dat_file)]
+
     set fdir [tk_chooseDirectory -mustexist 1 -title "Select Save Location for BCT Files" -initialdir $initialdirectory ]
 
     if {$fdir == ""} { 
        puts "User Cancelled."
        return
     }
-    set guiABC(bct_dat_file) [file join $fdir $guiABC(bct_dat_file)]
-    set guiABC(bct_vtp_file) [file join $fdir $guiABC(bct_vtp_file)]
+    set guiABC(bct_dat_file) [file join $fdir $gFilenames(bct_dat_file)]
+    set guiABC(bct_vtp_file) [file join $fdir $gFilenames(bct_vtp_file)]
   }
 
   # read in vtk mesh face file
@@ -48553,6 +48564,7 @@ set {gFilenames(atdb_file)} {foo.atdb}
 set {gFilenames(atdb_solid_file)} {foo-blended.xmt_txt}
 set {gFilenames(baseline_regions_dir)} {baseline_regions}
 set {gFilenames(bct_dat_file)} {bct.dat}
+set {gFilenames(bct_vtp_file)} {bct.vtp}
 set {gFilenames(numstart_file)} {numstart.dat}
 set {gFilenames(blend_file)} {foo.blends}
 set {gFilenames(blend_solid_file)} {foo-blended.xmt_txt}
@@ -49034,6 +49046,7 @@ set {guiPHASTAvars(numProcs)} {1}
 set {guiPHASTAvars(time_increment)} {0.1}
 global {guiPOSTvars}
 set {guiPOSTvars(combine_results)} {0}
+set {guiPOSTvars(reduce_last_step)} {0}
 set {guiPOSTvars(displacement_flag)} {0}
 set {guiPOSTvars(in_prefix)} {foo}
 set {guiPOSTvars(increment)} {1}

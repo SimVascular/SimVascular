@@ -221,7 +221,7 @@ int CALLTYPE cmd_bct_analytical_shape(char*);
 int CALLTYPE cmd_bct_period(char*);
 int CALLTYPE cmd_bct_point_number(char*);
 int CALLTYPE cmd_bct_fourier_mode_number(char*);
-int CALLTYPE cmd_bct_preserve_flow(char*);
+//int CALLTYPE cmd_bct_preserve_flow(char*);
 int CALLTYPE cmd_bct_flip(char*);
 int CALLTYPE cmd_bct_create(char*);
 int CALLTYPE cmd_bct_merge_on(char*);
