@@ -13327,6 +13327,15 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tbutton1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tbutton1  -command {guiSV_model_create_discrete_model_from_polydata} -text {Create Discrete Model from Selected PolyData}
 
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tlabel1
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tlabel1  -font {Helvectica 10}  -relief {flat}  -text {Extraction Angle (Only used if PolyData does not already have faces):}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tentry1
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tentry1  -font {Helvetica 10}  -textvariable {guiTRIMvars(discrete_angle)}  
+
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
@@ -20311,6 +20320,11 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tbutton1 -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4 -fill both
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tlabel1 -fill both -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tentry1 -fill both -side right
 
   # pack master .guiCV.tframe9
   pack configure .guiCV.tframe9.tsizegrip10  -fill both  -side right
