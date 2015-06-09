@@ -68,8 +68,8 @@ proc model_create {kernel name} {
 
     set dotsplit [split $name "."]
     set slashsplit [split $name "/"]
-    if {[llength $dotsplit] > 1 || [llength $slashsplit] > 1} {
-      return -code error "ERROR: Cannot give name containing '.' or '/', give different name"
+    if {[llength $dotsplit] > 1 || [llength $slashsplit] > 1 || $name == ""} {
+      return -code error "ERROR: Cannot give name that is blank or contains '.' or '/', give different name"
     }
     if {[model_exists $name]} {
       if {$gKernel($name) == $kernel} {
