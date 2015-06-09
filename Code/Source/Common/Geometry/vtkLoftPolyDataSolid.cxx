@@ -53,6 +53,9 @@
 #include "vtkSmartPointer.h"
 #include "vtkIntArray.h"
 #include "vtkCardinalSpline.h"
+#include "vtkKochanekSpline.h"
+#include "vtkParametricSpline.h"
+#include "vtkSpline.h"
 
 #include "cv_polydatasolid_utils.h"
 #include <string>
@@ -74,6 +77,8 @@ vtkLoftPolyDataSolid::vtkLoftPolyDataSolid()
 
   this->NumOutPtsInSegs = 30;
   this->NumOutPtsAlongLength = 60;
+
+  this->SplineType = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -304,12 +309,33 @@ int vtkLoftPolyDataSolid::FillInputPortInformation(
 int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
     vtkPolyData *outputPD)
 {
-  vtkSmartPointer<vtkCardinalSpline> splineX = 
-    vtkSmartPointer<vtkCardinalSpline>::New();
-  vtkSmartPointer<vtkCardinalSpline> splineY = 
-    vtkSmartPointer<vtkCardinalSpline>::New();
-  vtkSmartPointer<vtkCardinalSpline> splineZ = 
-    vtkSmartPointer<vtkCardinalSpline>::New();
+  vtkSpline *splineX;
+  vtkSpline *splineY;
+  vtkSpline *splineZ;
+  if (this->SplineType == 0)
+  {
+    //vtkSmartPointer<vtkCardinalSpline> splineX = 
+    //  vtkSmartPointer<vtkCardinalSpline>::New();
+    //vtkSmartPointer<vtkCardinalSpline> splineY = 
+    //  vtkSmartPointer<vtkCardinalSpline>::New();
+    //vtkSmartPointer<vtkCardinalSpline> splineZ = 
+    //  vtkSmartPointer<vtkCardinalSpline>::New();
+    splineX = vtkCardinalSpline::New();
+    splineY = vtkCardinalSpline::New();
+    splineZ = vtkCardinalSpline::New();
+  }
+  else if (this->SplineType == 1) 
+  {
+    //vtkSmartPointer<vtkKochanekSpline> splineX = 
+    //  vtkSmartPointer<vtkKochanekSpline>::New();
+    //vtkSmartPointer<vtkKochanekSpline> splineY = 
+    //  vtkSmartPointer<vtkKochanekSpline>::New();
+    //vtkSmartPointer<vtkKochanekSpline> splineZ = 
+    //  vtkSmartPointer<vtkKochanekSpline>::New();
+    splineX = vtkKochanekSpline::New();
+    splineY = vtkKochanekSpline::New();
+    splineZ = vtkKochanekSpline::New();
+  }
        
   double t;
   double tmpPt[3];
@@ -495,6 +521,9 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
     sampledPts[j]->Delete();
   }
   delete [] sampledPts;
+  splineX->Delete();
+  splineY->Delete();
+  splineZ->Delete();
 
   return 1;
 }

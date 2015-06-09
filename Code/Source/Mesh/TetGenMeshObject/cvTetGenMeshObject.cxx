@@ -434,6 +434,9 @@ int cvTetGenMeshObject::SetVolumeMeshFlag(int value)
 
 int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
 
+  //No longer need to write adjacency
+  return CV_OK;
+
   if (filename == NULL) {
         return CV_ERROR;
   }
@@ -523,7 +526,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
   }
   else
   {
-    fprintf(stdout,"No volumemesh, not writing adjacency file\n");
+  //  fprintf(stdout,"No volumemesh, not writing adjacency file\n");
     return CV_OK;
   }
 }
@@ -959,7 +962,8 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
   //Create a new mesh sizing function and call TGenUtils to compute function.
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementSphere(polydatasolid_,"MeshSizingFunction",
-	size,radius,center,meshoptions_.secondarrayfunction) != CV_OK)
+	size,radius,center,meshoptions_.secondarrayfunction,
+	meshoptions_.maxedgesize) != CV_OK)
   {
     return CV_ERROR;
   }

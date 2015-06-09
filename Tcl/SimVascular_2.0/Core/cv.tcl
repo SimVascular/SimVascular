@@ -144,6 +144,94 @@ proc geom_butterfly {inPd numDivs outPd} {
 
 }
 
+proc geom_localOperation {operation inPd outPd} {
+  global gui3Dvars
+  global gKernel
+  global symbolicName
+  global gPickedCellIds
+  global gNumPickedCells
+  set tv $symbolicName(guiSV_model_tree)
+  set tbox $symbolicName(guiLocalSurfaceOperationParametersTextBox)
+  set gui3Dvars(localControlAttributes) [$tbox get 0.0 end]
+  
+  set tmp1Pd /tmp/models/local/first
+  set tmp2Pd /tmp/models/local/second
+  catch {repos_delete -obj $tmp1Pd}
+  geom_copy -src $inPd -dst $tmp1Pd
+
+  set cell_lines 0
+  set broke [split $gui3Dvars(localControlAttributes) "\n"]
+  for {set i 0} {$i < [llength $broke]} {incr i} {
+    set trimmed [string trim [lindex $broke $i]]
+    if {$trimmed != ""} {
+      catch {repos_delete -obj $tmp2Pd}
+      set cmd [lindex $trimmed 0]
+      if {$cmd == "sphere"} {
+	set radius [lindex $trimmed 1]
+	set center [lrange $trimmed 2 end-2]
+	set outarray [lindex $trimmed end-1]
+	set datatype [lindex $trimmed end]
+        geom_set_array_for_local_op_sphere -src $tmp1Pd -result $tmp2Pd -radius $radius -center $center -outarray $outarray -datatype $datatype
+      } elseif {$cmd == "faces"} {
+	set changelist [lrange $trimmed 1 end-3] 
+	set inarray [lindex $trimmed end-2]
+	set outarray [lindex $trimmed end-1]
+	set datatype [lindex $trimmed end]
+	if {$changelist == ""} {return }
+        geom_set_array_for_local_op_face -src $tmp1Pd -result $tmp2Pd -array $inarray -values $changelist -outarray $outarray -datatype $datatype
+      } elseif {$cmd == "cells"} {
+	set changelist [lrange $trimmed 1 end-2]
+	set outarray [lindex $trimmed end-1]
+	set datatype [lindex $trimmed end]
+        if {$gNumPickedCells != 0} {
+          geom_set_array_for_local_op_cells -src $tmp1Pd -result $tmp2Pd -values $changelist -outarray $outarray -datatype $datatype
+	}
+	set cell_lines 1
+      } elseif {$cmd == "blend"} {
+	set faceids [lrange $trimmed 1 end-4]
+	set radius [lindex $trimmed end-3]
+	set splitarray [lindex $trimmed end-2]
+	set outarray [lindex $trimmed end-1]
+	set datatype [lindex $trimmed end]
+	geom_set_array_for_local_op_face_blend -src $tmp1Pd -result $tmp2Pd -values $faceids -radius $radius -array $splitarray -outarray $outarray -datatype $datatype
+      }
+      catch {repos_delete -obj $tmp1Pd}
+      geom_copy -src $tmp2Pd -dst $tmp1Pd
+    }
+  }
+  if {$cell_lines} {
+    $symbolicName(guiLocalSurfaceOperationParametersTextBox) delete 0.0 end
+  }
+
+  set tmp3Pd /tmp/model/local/third
+  catch {repos_delete -obj $tmp3Pd}
+  if {$operation == "lDec"} {
+    set target $gui3Dvars(local_quad_target)
+    geom_local_decimation -src $tmp2Pd -result $tmp3Pd -target $target -cellarray "ActiveCells"
+  } elseif {$operation == "lLap"} {
+    set iters $gui3Dvars(local_smooth_num_iters)
+    set relax $gui3Dvars(local_smooth_relax_factor)
+    geom_local_laplacian_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -relax $relax -cellarray "ActiveCells"
+  } elseif {$operation == "lSub"} {
+    set iters $gui3Dvars(local_linear_subdivisions)
+    geom_local_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
+  } elseif {$operation == "lCon"} {
+    set iters $gui3Dvars(local_cgsmooth_num_iters)
+    set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
+    geom_local_constrain_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -constrainfactor $constrain -cellarray "ActiveCells"
+  } else {
+    return -code error "ERROR: Invalid local surface operation"
+  }
+
+  set removeTmp /tmp/model/local/fourth
+  catch {repos_delete -obj $removeTmp}
+  catch {repos_delete -obj $outPd}
+  set removeTmp [repos_exportToVtk -src $tmp3Pd]
+  [$removeTmp GetCellData] RemoveArray "ActiveCells"
+  repos_importVtkPd -src $removeTmp -dst $outPd
+  set delete 1
+  PickPolyDataCell widget x y add $delete
+}
 
 proc geom_fillHoles {inPd outPd} {
 

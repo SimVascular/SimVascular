@@ -120,6 +120,9 @@ set gOptions(opacity_for_new_surface) .8
 set gOptions(color_for_model) darkred
 set gOptions(opacity_for_model) 1
 
+set gOptions(color_for_faces) firebrick
+set gOptions(opacity_for_faces) 1
+
 solid_setKernel -name $gOptions(meshing_solid_kernel)
 
 global gPathBrowser

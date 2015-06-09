@@ -136,8 +136,6 @@ public:
   vtkIntArray *BoundaryCellArray[2];
   vtkIntArray *BooleanArray[2];
   vtkIntArray *NewCellIds[2];
-  vtkIntArray *OrientedCellArray[2];
-  vtkIntArray *FalsePositiveArray[2];
 
   vtkIdType *checked[2];
   vtkIdType *checkedcarefully[2];
@@ -161,8 +159,6 @@ vtkBooleanOperationPolyDataFilter2::Impl::Impl() :
     this->BooleanArray[i] = vtkIntArray::New();
     this->BoundaryPointArray[i] = vtkIntArray::New();
     this->BoundaryCellArray[i] = vtkIntArray::New();
-    this->OrientedCellArray[i] = vtkIntArray::New();
-    this->FalsePositiveArray[i] = vtkIntArray::New();
     this->NewCellIds[i] = vtkIntArray::New();
 
     this->checked[i] = NULL;
@@ -188,8 +184,6 @@ vtkBooleanOperationPolyDataFilter2::Impl::~Impl()
     this->BooleanArray[i]->Delete();
     this->BoundaryPointArray[i]->Delete();
     this->BoundaryCellArray[i]->Delete();
-    this->OrientedCellArray[i]->Delete();
-    this->FalsePositiveArray[i]->Delete();
     this->NewCellIds[i]->Delete();
 
     //if (this->checked[i] != NULL)
@@ -405,7 +399,6 @@ int vtkBooleanOperationPolyDataFilter2::Impl::FindRegionTipToe(
 		{
 	          //std::cout<<"False positive! "<<nei<<endl;
 		  neiIds->InsertNextId(nei);
-		  this->FalsePositiveArray[inputIndex]->InsertValue(nei,1);
 		}
 		//else
 		  //std::cout<<"I have not been added because false"<<endl;
@@ -475,8 +468,6 @@ void vtkBooleanOperationPolyDataFilter2::Impl::Initialize()
     //Allocate space for each Boundary Array and the fill array
     this->BoundaryPointArray[i]->SetNumberOfTuples(numPts);
     this->BoundaryCellArray[i]->SetNumberOfTuples(numPolys);
-    this->OrientedCellArray[i]->SetNumberOfTuples(numPolys);
-    this->FalsePositiveArray[i]->SetNumberOfTuples(numPolys);
     this->BooleanArray[i]->SetNumberOfTuples(numPolys);
     this->checked[i] = new vtkIdType[numPolys];
     this->checkedcarefully[i] = new vtkIdType[numPolys];
@@ -490,8 +481,6 @@ void vtkBooleanOperationPolyDataFilter2::Impl::Initialize()
     for (int j=0;j<numPolys;j++)
     {
       this->BoundaryCellArray[i]->InsertValue(j,0);
-      this->OrientedCellArray[i]->InsertValue(j,0);
-      this->FalsePositiveArray[i]->InsertValue(j,0);
       this->BooleanArray[i]->InsertValue(j,0);
       this->checked[i][j] = 0;
       this->checkedcarefully[i][j] = 0;
@@ -527,20 +516,6 @@ void vtkBooleanOperationPolyDataFilter2::Impl::Initialize()
   this->Mesh[0]->GetPointData()->SetActiveScalars("BoundaryPoints");
   this->Mesh[1]->GetPointData()->AddArray(this->BoundaryPointArray[1]);
   this->Mesh[1]->GetPointData()->SetActiveScalars("BoundaryPoints");
-
-  this->OrientedCellArray[0]->SetName("OrientedCells");
-  this->OrientedCellArray[1]->SetName("OrientedCells");
-  this->Mesh[0]->GetCellData()->AddArray(this->OrientedCellArray[0]);
-  this->Mesh[0]->GetCellData()->SetActiveScalars("OrientedCells");
-  this->Mesh[1]->GetCellData()->AddArray(this->OrientedCellArray[1]);
-  this->Mesh[1]->GetCellData()->SetActiveScalars("OrientedCells");
-
-  this->FalsePositiveArray[0]->SetName("FalsePositive");
-  this->FalsePositiveArray[1]->SetName("FalsePositive");
-  this->Mesh[0]->GetCellData()->AddArray(this->FalsePositiveArray[0]);
-  this->Mesh[0]->GetCellData()->SetActiveScalars("FalsePositive");
-  this->Mesh[1]->GetCellData()->AddArray(this->FalsePositiveArray[1]);
-  this->Mesh[1]->GetCellData()->SetActiveScalars("FalsePositive");
 }
 
 void vtkBooleanOperationPolyDataFilter2::Impl::GetBooleanRegions(
@@ -581,8 +556,6 @@ void vtkBooleanOperationPolyDataFilter2::Impl::GetBooleanRegions(
 	  this->CheckCellsCareful->Reset();
 	  this->CheckCellsCareful2->Reset();
 	}
-	this->OrientedCellArray[inputIndex]->
-	  InsertValue(outputCellId0,sign1);
       }
       if (this->checkedcarefully[inputIndex][outputCellId1] == 0)
       {
@@ -597,8 +570,6 @@ void vtkBooleanOperationPolyDataFilter2::Impl::GetBooleanRegions(
 	  this->CheckCellsCareful->Reset();
 	  this->CheckCellsCareful2->Reset();
 	}
-	this->OrientedCellArray[inputIndex]->
-	  InsertValue(outputCellId1,sign2);
       }
     }
   }

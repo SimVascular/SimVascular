@@ -752,7 +752,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
  */
 
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
-    std::string sizingFunctionArrayName,double size,double radius, double *center,int secondarray)
+    std::string sizingFunctionArrayName,double size,double radius, double *center,int secondarray,double maxedgesize)
 { 
   int numPts;
   double dist;
@@ -792,10 +792,13 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
 	pow(pts[1]-center[1],2)+
 	pow(pts[2]-center[2],2));
 
+    //set value to new size
     if (dist <= radius)
-    {
-      //set value to reduced size
         meshSizeArray->SetValue(pointId,size);
+    else 
+    {
+      if (meshSizeArray->GetValue(pointId) == 0) 
+        meshSizeArray->SetValue(pointId,maxedgesize);
     }
   }
   

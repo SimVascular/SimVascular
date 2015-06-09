@@ -473,7 +473,7 @@ proc guiTGmeshCoarsenPercent { percent} {
   set guiTGvars(meshCoarsenPercent) $percent
 }
 
-proc guiTETGENvis {type} {
+proc guiSPHEREvis {type} {
 
   global gRenWin_3D_vars
   global guiTGvars
@@ -482,57 +482,59 @@ proc guiTETGENvis {type} {
   global gOptions
   global smasherInputName
   global gInteractorRen
+  global gui3Dvars
 
-  set object $gObjects(polydata_solid)
   set useLOD $gRenWin_3D_vars(solid_use_LOD)
-  set smasherInputName $object
+  set object ""
+  set solid ""
+  set show 0
+  if {$type == "tetgen"} {
+    set show $guiTGvars(showSphere)
+    set object $gObjects(polydata_solid)
+    set smasherInputName $object
   
-  set solid /solid/sphereinteractor/pd
-#  set solid /gRenWin_3D/meshing_solid/pd
+    set solid /solid/sphereinteractor/pd
+  } elseif {$type == "model"} {
+    set show $gui3Dvars(showSphere)
+    set object [guiSV_model_get_tree_current_models_selected]
+    if {[llength $object] != 1} {
+      set gui3Dvars(showSphere) 0
+      return -code error "ERROR: Only one model can be selected for sphere visual"
+    }
+    global gKernel
+    set solid /models/$gKernel($object)/$object
+  }
+
   if {[repos_exists -obj $object] == 1} {
      catch {repos_delete -obj $solid}
-     if {$gOptions(facet_max_edge_size) == ""} {
-       $object GetPolyData -result $solid
-     } else {
-       $object GetPolyData -result $solid  -max_edge_size $gOptions(facet_max_edge_size)
-     }
+     $object GetPolyData -result $solid
 
-     if {$useLOD == 1} {
-       vis_lodRepos $gRen3d $solid
-     } else {
-       vis_pRepos $gRen3d $solid
-     }
-  }
-  set ren $gRen3d
-
-#  global gRen3dFreeze
-#  if {$gRen3dFreeze > 0} {
-#    set alreadyfrozen 1
-#  } else {
-#    set alreadyfrozen 0
-#    set gRen3dFreeze 1
-#  }
-
-  if {$type == "sphere"} {
-    if {$guiTGvars(showSphere) == 0} {
-      catch {vis_sphereWidgetRm $gRen3d guiREFINE}
+    if {$useLOD == 1} {
+      vis_lodRepos $gRen3d $solid
     } else {
-      catch {vis_sphereWidgetRm $gRen3d guiREFINE}
-      vis_sphereWidgetAdd $gRen3d [repos_exportToVtk -src $solid] guiREFINE guiREFINEsphereEnableInteraction guiREFINEsphereBeginInteraction guiREFINEsphereInteract guiREFINEsphereEndInteraction
-      vis_sphereWidgetOn $gRen3d guiREFINE
-      vis_sphereWidgetScaleOn $gRen3d guiREFINE
-      set guiTGvars(sphereCenter) [vis_sphereWidgetGetCenter $gInteractorRen guiREFINE]
-      set guiTGvars(sphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE]))/10000}]
-      set guiTGvars(setSphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE]))/10000}]
+      vis_pRepos $gRen3d $solid
+    }
+
+    if {$show == 0} {
+      catch {vis_sphereWidgetRm $gRen3d guiREFINE_$type}
+    } else {
+      catch {vis_sphereWidgetRm $gRen3d guiREFINE_$type}
+      vis_sphereWidgetAdd $gRen3d [repos_exportToVtk -src $solid] guiREFINE_$type guiREFINEsphereEnableInteraction guiREFINEsphereBeginInteraction "guiREFINEsphereInteract $type" guiREFINEsphereEndInteraction
+      vis_sphereWidgetOn $gRen3d guiREFINE_$type
+      vis_sphereWidgetScaleOn $gRen3d guiREFINE_$type
+      if {$type == "tetgen"} {
+	set guiTGvars(sphereCenter) [vis_sphereWidgetGetCenter $gInteractorRen guiREFINE_$type]
+	set guiTGvars(sphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE_$type]))/10000}]
+	set guiTGvars(setSphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE_$type]))/10000}]
+      } elseif {$type == "model"} {
+	set gui3Dvars(sphereCenter) [vis_sphereWidgetGetCenter $gInteractorRen guiREFINE_$type]
+	set gui3Dvars(sphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE_$type]))/10000}]
+	set gui3Dvars(setSphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE_$type]))/10000}]
+      }
     }
   }
 
-#  if {$alreadyfrozen == 0} {
-#    set gRen3dFreeze 0
-#    vis_render $ren
-#  }
-  crd_ren gRenWin_3D_ren1
-  smasherGUIupdateViewWindow
+  #smasherGUIupdateViewWindow
 }
 
 proc guiREFINEsphereEnableInteraction {} {
@@ -546,12 +548,19 @@ proc guiREFINEsphereBeginInteraction {} {
   set gInteractorInteracting 1
 }
 
-proc guiREFINEsphereInteract {} {
+proc guiREFINEsphereInteract {type} {
   global gInteractorRen
   global guiTGvars
-  set guiTGvars(sphereBounds) [vis_sphereWidgetGetBB $gInteractorRen guiREFINE]
-  set guiTGvars(sphereCenter) [vis_sphereWidgetGetCenter $gInteractorRen guiREFINE]
-  set guiTGvars(sphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE]))/10000}]
+  global gui3Dvars
+  if {$type == "tetgen"} {
+    set guiTGvars(sphereBounds) [vis_sphereWidgetGetBB $gInteractorRen guiREFINE_$type]
+    set guiTGvars(sphereCenter) [vis_sphereWidgetGetCenter $gInteractorRen guiREFINE_$type]
+    set guiTGvars(sphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE_$type]))/10000}]
+  } elseif {$type == "model"} {
+    set gui3Dvars(sphereBounds) [vis_sphereWidgetGetBB $gInteractorRen guiREFINE_$type]
+    set gui3Dvars(sphereCenter) [vis_sphereWidgetGetCenter $gInteractorRen guiREFINE_$type]
+    set gui3Dvars(sphereRadius) [expr {double(round(10000*[vis_sphereWidgetGetRadius $gInteractorRen guiREFINE_$type]))/10000}]
+  }
 }
 
 proc guiREFINEsphereEndInteraction {} {
@@ -559,13 +568,19 @@ proc guiREFINEsphereEndInteraction {} {
   set gInteractorInteracting 0
 }
 
-proc guiREFINEsetRefineSphereRadius {} {
+proc guiREFINEsetRefineSphereRadius {type} {
   global gInteractorRen
   global guiTGvars
+  global gui3Dvars
   global gRen3d
 
-  set guiTGvars(sphereRadius) $guiTGvars(setSphereRadius)
-  vis_sphereWidgetSetRadius $gInteractorRen guiREFINE $guiTGvars(setSphereRadius)
+  if {$type == "tetgen"} {
+    set guiTGvars(sphereRadius) $guiTGvars(setSphereRadius)
+    vis_sphereWidgetSetRadius $gInteractorRen guiREFINE_$type $guiTGvars(setSphereRadius)
+  } elseif {$type == "model"} {
+    set gui3Dvars(sphereRadius) $gui3Dvars(setSphereRadius)
+    vis_sphereWidgetSetRadius $gInteractorRen guiREFINE_$type $gui3Dvars(setSphereRadius)
+  }
   vis_render $gRen3d
 }
 
@@ -684,7 +699,7 @@ proc guiMMreadTetGenScriptFile {} {
        set guiTGvars(sphereRadius) [lindex $line 2]
        set guiTGvars(setSphereRadius) [lindex $line 2]
        set guiTGvars(sphereCenter) [lrange $line 3 5]
-       guiREFINEsetRefineSphereRadius
+       guiREFINEsetRefineSphereRadius "tetgen"
      } elseif {$cmd == "logon"} {
        # automatically generated
      } elseif {$cmd == "logoff"} {

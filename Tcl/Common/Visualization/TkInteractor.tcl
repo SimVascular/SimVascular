@@ -70,6 +70,7 @@ set TkInteractor_StillUpdateRate 0.0
 
 proc BindTkRenderWidget {widget} {
     global tcl_platform
+    bind .guiCV <Key-Return> {ChangeWaitVar}
     bind $widget <Any-ButtonPress> {StartMotion %W %x %y}
     bind $widget <Any-ButtonRelease> {EndMotion %W %x %y}
     bind $widget <B1-Motion> {vis_interactorRotate %W %x %y}
@@ -102,7 +103,7 @@ proc BindTkRenderWidget {widget} {
     bind $widget <KeyPress-4> {CameraRoll %W %x %y -10}
     bind $widget <KeyPress-k> {PrintCameraView %W %x %y}
     bind $widget <KeyPress-l> {RenderCameraView %W %x %y}
-    bind $widget <Control-KeyPress-c> {PickPolyDataCell %W %x %y 1 0}
+    bind $widget <KeyPress-C> {PickPolyDataCell %W %x %y 1 0}
     bind $widget <KeyPress-h> {PickPolyDataPoint %W %x %y 0 0}
     bind $widget <Control-KeyPress-h> {PickPolyDataPoint %W %x %y 1 0}
 # hack that assumes you've used code similar to vis_initTKgr to create
@@ -204,6 +205,11 @@ proc UpdateRenderer {widget x y} {
    
     set LastX $x
     set LastY $y
+}
+
+proc ChangeWaitVar {} {
+  global gWaitVar
+  set gWaitVar 1
 }
 
 proc Enter {widget x y} {
@@ -711,10 +717,123 @@ proc PickActor {widget x y} {
 
 	}
 
+      guiSV_model_update_actor_selection $PickedAssembly
     }
 
     Render $widget
 
+}
+
+proc VirtualPickActor {actor} {
+    global CurrentRenderer RendererFound
+    global PickedAssembly PrePickedProperty WindowY
+    global PickedAssemblyRenderer
+    global gActorPicked
+
+    # first try to grab an actor, then a prop if no actor found
+    set assembly $actor
+    if {$assembly == ""} {
+      set assembly [ActorPicker GetViewProp]
+    }
+    set PickedAssemblyRenderer $CurrentRenderer
+    #puts "assembly: $assembly"
+
+    # if current picked assembly has been deleted somehow,
+    # reset the pick.  That is, if the tcl command
+    # (i.e. vtk object) doesn't exist, reset the pick.
+    if {$PickedAssembly != "" && [info commands $PickedAssembly] == ""} {
+      set gActorPicked 1
+      set PickedAssembly ""
+      if {$PrePickedProperty != ""} {
+        # release hold on the property
+        $PrePickedProperty UnRegister $PrePickedProperty
+        set PrePickedProperty ""
+      }
+      # make sure the selected color still exists
+      if {[info commands PickedProperty] == ""} {
+        vtkProperty PickedProperty
+      }
+      PickedProperty SetColor 1 1 0
+      PickedProperty SetOpacity 1
+      return
+    }
+
+    if { $PickedAssembly != "" && $PrePickedProperty != "" } {
+        set gActorPicked 1
+        # need to check if object is a lod obj
+        if {[$PickedAssembly GetClassName] == "vtkLODProp3D"} {
+          set first [string first act $PickedAssembly]
+          set last [expr $first + 2]
+          set property [string replace $PickedAssembly $first $last prop]
+          # need to reset property for all actors in lod obj
+          set propCol PickActorPropCollection
+	  catch {$propCol Delete}
+          vtkPropCollection $propCol
+          $PickedAssembly GetActors $propCol
+
+          for {set i 0} {$i < [$propCol GetNumberOfItems]} {incr i} {
+             set actor [$propCol GetItemAsObject $i]
+             $actor SetProperty $PrePickedProperty
+	  }
+
+	} else {
+
+          $PickedAssembly SetProperty $PrePickedProperty
+
+	}
+
+        # release hold on the property
+        $PrePickedProperty UnRegister $PrePickedProperty
+        set PrePickedProperty ""
+    }
+
+    # make sure the selected color still exists
+    if {[info commands PickedProperty] == ""} {
+      vtkProperty PickedProperty
+    }
+    PickedProperty SetColor 1 1 0
+    PickedProperty SetOpacity 1
+
+    if { $assembly != "" } {
+
+        set PickedAssembly $assembly
+        set gActorPicked 1
+
+        if {[$PickedAssembly GetClassName] == "vtkLODProp3D"} {
+          set first [string first act $PickedAssembly]
+          set last [expr $first + 2]
+          set property [string replace $PickedAssembly $first $last prop]
+
+          set PrePickedProperty $property
+          # hold onto the property
+          $PrePickedProperty Register $PrePickedProperty
+
+          # need to reset property for all actors in lod obj
+          set propCol PickActorPropCollection
+	  catch {$propCol Delete}
+          vtkPropCollection $propCol
+          $PickedAssembly GetActors $propCol
+
+          for {set i 0} {$i < [$propCol GetNumberOfItems]} {incr i} {
+             set actor [$propCol GetItemAsObject $i]
+             $actor SetProperty PickedProperty
+	  }
+
+	} else {
+
+          global guiRWH
+          set guiRWH(actor) $PickedAssembly
+          set guiRWH(render) $CurrentRenderer
+          guiLaunchRenWinHelper
+
+          set PrePickedProperty [$PickedAssembly GetProperty]
+          # hold onto the property
+          $PrePickedProperty Register $PrePickedProperty
+          $PickedAssembly SetProperty PickedProperty
+
+	}
+
+    }
 }
 
 proc PickPolyDataCell {widget x y add delete} {
@@ -757,9 +876,10 @@ proc PickPolyDataCell {widget x y add delete} {
         set count 0
 	for {set i 1} {$i <= $gNumPickedCells} {incr i} {
 	  if {$cellId == $gPickedCellIds($i)} {
-	    catch {$CurrentRenderer RemoveActor newActor_$cellId}
-	    catch {newActor_$cellId Delete}
-	    set deletedActor 1
+	    #catch {$CurrentRenderer RemoveActor newActor_$cellId}
+	    #catch {newActor_$cellId Delete}
+	    #set deletedActor 1
+	    return
 	  } else {
 	    incr count
 	    set tempCellIds($count) $gPickedCellIds($i)

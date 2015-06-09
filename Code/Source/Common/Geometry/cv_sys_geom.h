@@ -121,7 +121,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts );
 
 int sys_geom_loft_solid(cvPolyData **srcs,int numSrcs,int useLinearSampleAlongLength,
 		int useFFT,int numOutPtsAlongLength, int numOutPtsInSegs,
-		int numLinearPtsAlongLength,int numModes,cvPolyData **dst );
+		int numLinearPtsAlongLength,int numModes,int splineType,cvPolyData **dst );
 
 int sys_geom_2DWindingNum( cvPolyData *pgn );
 
@@ -163,6 +163,29 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
 
 int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar scflag,
                             sys_geom_math_vector vflag, cvPolyData **dst );
+
+int sys_geom_set_array_for_local_op_sphere(cvPolyData *pd,cvPolyData **outpd, double radius,
+    double *center,char *outarrayname,int datatype);
+
+int sys_geom_set_array_for_local_op_face(cvPolyData *pd,cvPolyData **outpd, char *inarrayname,
+    int *vals, int nvals,char *outarrayname,int datatype);
+
+int sys_geom_set_array_for_local_op_cells(cvPolyData *pd,cvPolyData **outpd, int *vals, int nvals,char *outarrayname,int datatype);
+
+int sys_geom_set_array_for_local_op_face_blend(cvPolyData *pd,cvPolyData **outpd, char *inarrayname,
+    int *vals, int nvals,double radius,char *outarrayname,int datatype);
+
+int sys_geom_local_quadric_decimation(cvPolyData *pd,cvPolyData **outpd, double target,
+    char *pointarrayname, char *cellarrayname);
+
+int sys_geom_local_laplacian_smooth(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    double relax,char *pointarrayname, char *cellarrayname);
+
+int sys_geom_local_constrain_smooth(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    double constrainfactor,int numcgsolves,char *pointarrayname, char *cellarrayname);
+
+int sys_geom_local_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    char *pointarrayname, char *cellarrayname);
 
 #ifdef USE_VMTK
 int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,

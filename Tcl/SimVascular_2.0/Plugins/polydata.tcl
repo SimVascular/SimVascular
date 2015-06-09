@@ -63,14 +63,11 @@ proc guiMMextractBoundaries {} {
   smasherGUIupdateViewWindow
 }
 
-proc CombinePolyDataFaces {faceid1 faceid2} {
+proc CombinePolyDataFaces {solid faceid1 faceid2} {
   global gOptions
   global gObjects
-  global gPolyDataFaceNames
-  global smasherInputName
 
   set kernel $gOptions(meshing_solid_kernel)
-  set solid $gObjects(polydata_solid)
 
   if {$kernel == "PolyData"} {
     $solid CombineFaces -targetface $faceid1 -loseface $faceid2
@@ -124,54 +121,52 @@ proc PolyDataDeleteCells {} {
   global gObjects
   global gui3Dvars
   global smasherInputName
-
-  set obj $gui3Dvars(polydata_change_obj)
-  set Bobj $gui3Dvars(polydata_change_backup_obj)
-
-  catch {repos_delete -obj $Bobj}
-  if {$guiPDvars(updatedSolid) == 1} {
-     if {[catch {$smasherInputName GetPolyData -result $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before changing 3D surface"
-      return
-    }
-  } else {
-     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
-      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before performing a smoothing operation"
-      return
-    }
-  }
+  global symbolicName
 
   set kernel $gOptions(meshing_solid_kernel)
-  set solid $gObjects(polydata_solid)
-  $solid SetVtkPolyData -obj $Bobj
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Solid kernel must be PolyData for operation"
+  }
+  set tv $symbolicName(guiSV_model_tree)
+
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "error: one model can be selected to delete cells"
+  }
+  if {[lindex [$tv item .models.$kernel.$model -values] 0] != "X"} {
+    return -code error "error: model must be visualized as full model to delete cells"
+  }
+  set kernel $gOptions(meshing_solid_kernel)
 
   if {$kernel != "PolyData"} {
     return -code error "PolyData needs to be used to delete cells"
   }
 
-  if {$guiPDvars(vis_full_pd) != 1} {
-    return -code error "Full PolyData must be visualized to be able to delete cells"
-  }
-  
   set deleteList {}
   for {set i 1} {$i <= $gNumPickedCells} {incr i} {
     lappend deleteList $gPickedCellIds($i)
   }
 
   if {$gNumPickedCells != 0} {
+    set modelpd /models/$kernel/$model   
+
+    catch {repos_delete -obj $modelpd}
+    $model GetPolyData -result $modelpd
+
+    set operation "cellsdeleted"
+    set newmodel [string trim $model]_[string trim $operation]
+    set obj /models/$kernel/$newmodel 
+    catch {repos_delete -obj $newmodel}
+    catch {repos_delete -obj /models/$kernel/$newmodel}
+    model_create $kernel $newmodel
+    solid_copy -src $model -dst $newmodel
+
     set delete 1
     PickPolyDataCell widget x y add $delete
-    $solid DeleteFaces -faces $deleteList
+    $newmodel DeleteFaces -faces $deleteList
+    $newmodel GetPolyData -result $obj
 
-    crd_ren gRenWin_3D_ren1
-    guiMMloadPolyData $solid
-
-    set newobj /tmp/celldelete/polydata
-    catch {repos_delete -obj $newobj}
-
-    $solid GetPolyData -result $newobj
-    set gui3Dvars(polydata_change_obj) $newobj
-    set guiPDvars(updatedSolid) 0
+    guiSV_model_update_new_solid $kernel $model $newmodel
 
   } else {
     return -code error "No Cells selected to Delete"
@@ -207,7 +202,7 @@ proc PolyDataFillHoles {} {
   guiMMloadPolyData $solid
 }
 
-proc PolyDataRemeshSurfaces {sizeName} {
+proc PolyDataRemeshSurfaces {solid excludelist} {
   global gOptions
   global gObjects
   global guiPDvars
@@ -216,41 +211,14 @@ proc PolyDataRemeshSurfaces {sizeName} {
   global smasherInputName
   
   set kernel $gOptions(meshing_solid_kernel)
-  set solid $gObjects(polydata_solid)
-  set size $guiPDvars($sizeName)
+  set size $guiPDvars(remeshFaceSize)
 
-  if {$kernel != "PolyData"} {
-    return -code error "Invalid solid kernel ($gOptions(meshing_solid_kernel))"
-  }
-  set iter 0
-  set faceIds [$solid GetFaceIds]
-  set checklist {}
-  set excluded {-1}
-  foreach id $faceIds {
-    set foundid {-1}
-    foreach name $guiPDvars(selected_groups) {
-      if {$name == $gPolyDataFaceNames($id)} { 
-	set foundid 1
-      }
-    }
-    if {$foundid == -1} {
-      lappend excludelist $id
-      set excluded 1
-    }
-  }
-  if {$excluded == -1} {
-    lappend excludelist $excluded
-  }
-	    	
   $solid RemeshFace -excludelist $excludelist -size $size
 
   set guiPDvars(selected_groups) {}
-  crd_ren gRenWin_3D_ren1
-  set smasherInputName $solid
-  smasherGUIupdateViewWindow
 }
 
-proc PolyDataDeleteRegions {} {
+proc PolyDataDeleteRegions {solid deletelist} {
   global gOptions
   global gObjects
   global guiPDvars
@@ -258,32 +226,14 @@ proc PolyDataDeleteRegions {} {
   global gPolyDataFaceNames
   
   set kernel $gOptions(meshing_solid_kernel)
-  set solid $gObjects(polydata_solid)
 
   if {$kernel != "PolyData"} {
     return -code error "Invalid solid kernel ($gOptions(meshing_solid_kernel)), must be PolyData"
   }
 
-  foreach name $guiPDvars(selected_groups) {
-    set foundid {-1}
-    set faceids [$solid GetFaceIds]
-    foreach id $faceids {
-      if {$name == $gPolyDataFaceNames($id)} { 
-	set faceid $id
-	set foundid 1
-      }
-    }
-    if {$foundid == -1} {
-      return -code error "ERROR: no face with id found"
-    } else {
-      $solid DeleteRegion -regionid $faceid
-    }
+  foreach id $deletelist {
+    $solid DeleteRegion -regionid $id
   }
-
-  set guiPDvars(selected_groups) {}
-  crd_ren gRenWin_3D_ren1
-  set smasherInputName $solid
-  smasherGUIupdateViewWindow
 }
 
 proc return_pd_region_names {} {
@@ -404,6 +354,7 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
   global gObjects
   global gPolyDataFaceNames
   global gCenterlineIds
+  global guiPDvars
 
   set kernel $gOptions(meshing_solid_kernel)
 
@@ -412,13 +363,14 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
   }
 
   set originalsolid /tmp/polydata/originalsolid
-  set centerlines /tmp/polydata/centerlines
+  set centerlines [string trim $original]_centerlines
   set voronoi /tmp/polydata/voronoi
   set distance /tmp/polydata/distance
   catch {repos_delete -obj $originalsolid}
   catch {repos_delete -obj $centerlines}
   catch {repos_delete -obj $voronoi}
   catch {repos_delete -obj $distance}
+  set guiPDvars(centerlines) $centerlines
 
   if {$objType == "solid"} {
     $original GetPolyData -result $originalsolid
@@ -479,6 +431,7 @@ proc set_capids_for_pd {pd {value -1}} {
   }
   [[repos_exportToVtk -src $pd] GetCellData] AddArray $capArray
 }
+
 proc check_surface_for_capids {pd} {
 
   return [[[repos_exportToVtk -src $pd] GetCellData] HasArray "CapID"]

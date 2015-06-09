@@ -404,7 +404,7 @@ proc polysolid_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength 
 
 }
 
-proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps outPD} {
+proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps splineType outPD} {
   
     #puts "Vec Flag: $vecFlag"
     #puts "UseLinearSampleAlongLength $useLinearSampleAlongLength"
@@ -483,7 +483,7 @@ proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLengt
       lappend all_segs $profile/sample
     }
 
-    geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD
+    geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD -splineType $splineType
 
     if {$addCaps} {
       polysolid_orient_closed_vessel $unorientedPD $outPD
