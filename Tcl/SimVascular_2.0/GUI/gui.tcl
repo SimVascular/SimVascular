@@ -50343,6 +50343,7 @@ global {gDetached}
 set {gDetached} {}
 global {gSelectDetached}
 set {gSelectDetached} {}
+global CurrentRenderer
 
 # please don't modify the following
 # variables. They are needed by xf.
