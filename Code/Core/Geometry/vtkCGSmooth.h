@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- * Copyright (c) 2014 The Regents of the University of California.
+ * Copyright (c) 2014-2015 The Regents of the University of California.
  * All Rights Reserved. 
  *
  * Permission is hereby granted, free of charge, to any person obtaining
