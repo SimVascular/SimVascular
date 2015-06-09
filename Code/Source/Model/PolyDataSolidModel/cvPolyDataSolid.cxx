@@ -137,32 +137,6 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
 }
 
 // -----------
-// MakeBox3d
-// -----------
-/** 
- * @brief use VTKCubeSource to make cube 
- */
-
-int cvPolyDataSolid::MakeBox3d( double dims[], double ctr[] )
-{
-  if ( geom_ != NULL ) {
-    return CV_ERROR;
-  }
-
-  vtkSmartPointer<vtkCubeSource> makeCube = 
-    vtkSmartPointer<vtkCubeSource>::New();
-  makeCube->SetCenter(ctr);
-  makeCube->SetXLength(dims[0]);
-  makeCube->SetYLength(dims[1]);
-  makeCube->SetZLength(dims[2]);
-  makeCube->Update();
-  geom_ = vtkPolyData::New();
-  geom_->DeepCopy(makeCube->GetOutput());
-
-  return CV_OK;
-}	
-
-// -----------
 // SetVtkPolyDataObject
 // -----------
 /** 
