@@ -95,6 +95,7 @@ proc model_delete {kernel name} {
     #@r status (0 if model didn't exist, 1 if it was deleted).
     global gModel
     global gKernel
+    global gDetached
     global symbolicName
     if {![model_exists $name]} {
 	return 0
@@ -104,6 +105,11 @@ proc model_delete {kernel name} {
 
     set tv $symbolicName(guiSV_model_tree)
     catch {$tv delete .models.$kernel.$name}
+
+    set loc [lsearch -exact $gDetached $name]
+    if {$loc != -1} {
+      set gDetached [lreplace $gDetached $loc $loc]
+    }
     return 1
 }
 
@@ -1532,8 +1538,8 @@ proc guiSV_model_delete_model {kernel model} {
   set faces [model_get $model]
   if {[llength $faces] != 0} {
     foreach face $faces {
-      catch [$tv delete .models.$kernel.$model.$face]
-      catch [repos_delete -obj /models/$kernel/$model/$face]
+      catch {[$tv delete .models.$kernel.$model.$face]}
+      catch {repos_delete -obj /models/$kernel/$model/$face}
     }
   }
   model_delete $kernel $model
@@ -1568,7 +1574,7 @@ proc guiVMTKCenterlines {} {
 
   global gWaitVar
   set gWaitVar 0
-  tk_messageBox -title "Extract Centerlines"  -type ok -message "Extracting the centerlines requires the walls to be defined:\n 1. Click 'OK'\n 2. Select the wals in the Model Object list using ctrl-click or shift-click\n 3. Hit 'Enter' on your keyboard"
+  tk_messageBox -title "Extract Centerlines"  -type ok -message "Extracting the centerlines requires the walls to be defined:\n 1. Click 'OK'\n 2. Select the walls in the Model Object list using ctrl-click or shift-click\n 3. Hit 'Enter' on your keyboard"
   vwait gWaitVar
 
   set selected [guiSV_model_get_tree_current_faces_selected]
@@ -1642,15 +1648,12 @@ proc guiBOUNDARIESextract {} {
   solid_setKernel -name $kernel
 
   #set oldmodel "[string trim $model]_facesextracted"
-  set oldmodel "[string trim $model]_backup"
-  set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
-  catch {repos_delete -obj $oldmodel}
+  guiSV_model_add_to_backup_list $kernel $model
   #if {[model_create $kernel $oldmodel] != 1} {
   #  guiSV_model_delete_model $kernel $oldmodel
   #  catch {repos_delete -obj /models/$kernel/$oldmodel}
   #  model_create $kernel $oldmodel
   #}
-  solid_copy -src $model -dst $oldmodel
 
   global gPolyDataFaceNames
   global gPolyDataFaceNamesInfo
@@ -1698,10 +1701,7 @@ proc guiBOUNDARIEScombineSelectedFaces {} {
   solid_setKernel -name $kernel
 
   #set oldmodel [string trim $model]_facescombined
-  set oldmodel "[string trim $model]_backup"
-  set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
-  catch {repos_delete -obj $oldmodel}
-  solid_copy -src $model -dst $oldmodel
+  guiSV_model_add_to_backup_list $kernel $model
   #guiSV_model_copy_model $kernel $model $oldmodel 0
   set faces {}
   foreach name $selected {
@@ -1770,11 +1770,8 @@ proc guiBOUNDARIESremeshSelectedFaces {} {
     solid_setKernel -name $kernel
 
     #set oldmodel [string trim $model]_facesremeshed
-    set oldmodel [string trim $model]_backup
-    set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
+    guiSV_model_add_to_backup_list $kernel $model
     #guiSV_model_copy_model $kernel $model $oldmodel 0
-    catch {repos_delete -obj $oldmodel}
-    solid_copy -src $model -dst $oldmodel
     set faces {}
     foreach name $selected {
       if {[lindex $name 1] != ""} {
@@ -1828,10 +1825,7 @@ proc guiBOUNDARIESdeleteSelectedFaces {} {
 
     set selected [guiSV_model_get_tree_current_faces_selected]
 
-    set oldmodel [string trim $model]_backup
-    set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
-    catch {repos_delete -obj $oldmodel}
-    solid_copy -src $model -dst $oldmodel
+    guiSV_model_add_to_backup_list $kernel $model
     #guiSV_model_copy_model $kernel $model $oldmodel 0
     set faces {}
     foreach name $selected {
@@ -1889,10 +1883,7 @@ proc guiBOUNDARIESfillWithIds {} {
   solid_setKernel -name $kernel
 
   #set oldmodel [string trim $model]_filled
-  set oldmodel [string trim $model]_backup
-  set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
-  catch {repos_delete -obj $oldmodel}
-  solid_copy -src $model -dst $oldmodel
+  guiSV_model_add_to_backup_list $kernel $model
   #guiSV_model_copy_model $kernel $model $oldmodel 0
 
   set all_faces [model_get $model]
@@ -2271,10 +2262,7 @@ proc guiSV_model_blend_selected_models {} {
   solid_setKernel -name $kernel
 
   #set oldmodel "[string trim $model]_blended"
-  set oldmodel "[string trim $model]_backup"
-  set oldmodel [guiSV_model_add_to_backup_list $kernel $oldmodel]
-  catch {repos_delete -obj $oldmodel}
-  solid_copy -src $model -dst $oldmodel
+  guiSV_model_add_to_backup_list $kernel $model
   #model_create $kernel $oldmodel
   set faceids [$model GetFaceIds]
   foreach id $faceids {
@@ -2435,7 +2423,7 @@ proc guiSV_model_copy_model {kernel model newname op} {
   }
   catch {repos_delete -obj $oldmodel}
   if {[model_create $kernel $oldmodel] != 1} {
-    guiSV_model_delete_model $kernel $model
+    guiSV_model_delete_model $kernel $oldmodel
     catch {repos_delete -obj /models/$kernel/$oldmodel}
     model_create $kernel $oldmodel
   }
@@ -2457,6 +2445,7 @@ proc guiSV_model_copy_model {kernel model newname op} {
       set faceids [$oldmodel GetFaceIds]
       foreach id $faceids {
 	set gPolyDataFaceNames($id) [model_idface $kernel $model $id]
+	puts "Check $gPolyDataFaceNames($id)"
       }
     } elseif {$kernel == "Discrete"} {
       catch {unset gDiscreteModelFaceNames}
@@ -2992,15 +2981,18 @@ proc guiSV_model_add_to_backup_list {kernel model} {
   global gDetached
   global symbolicName
 
-  set name [string trim $kernel]_$model
+  set backmodel "[string trim $model]_backup"
+
+  set name [string trim $kernel]_$backmodel
   set inlist [lsearch -exact -all -regexp $gDetached $name]
   if {$inlist != -1} {
     set name "[string trim $name]_[llength $inlist]"
   }
+
   if {[llength $gDetached] > 9} {
     set first [lindex $gDetached 0]
     catch {repos_delete -obj $first}
-    set gDetached [lreplace $gDetached 0 0]
+    model_delete $kernel $first
     set last [lindex $gDetached [lindex $inlist end-1]] 
     set num [expr [lindex [split $last "_"] end]+1]
     set loc [string last "_" $last]
@@ -3008,7 +3000,34 @@ proc guiSV_model_add_to_backup_list {kernel model} {
     set name "[string trim $start]$num"
   }
   lappend gDetached $name
-  return $name
+
+  catch {repos_delete -obj $name}
+  puts "copying to $name"
+  solid_copy -src $model -dst $name
+  model_create $kernel $name 
+
+  set tv $symbolicName(guiSV_model_tree)
+  $tv insert .models.$kernel end -id .models.$kernel.$name -text "$name" -values {}
+  if {$kernel == "PolyData"} {
+    if {[guiSV_model_check_array_exists $name 1 "ModelFaceID"]} {
+      foreach id [$name GetFaceIds] {
+	set facename [model_idface $kernel $model $id]
+	model_add $name $facename $facename
+	$tv insert .models.$kernel.$name end -id .models.$kernel.$name.$facename -text "$facename"
+        guiSV_model_set_col_value $kernel.$name.$facename 1 $id
+      }
+    }
+  } else {
+    foreach id [$name GetFaceIds] {
+      set facename [model_idface $kernel $model $id]
+      model_add $name $facename $facename
+      $tv insert .models.$kernel.$name end -id .models.$kernel.$name.$facename -text "$facename"
+    }
+  }
+
+  $tv detach .models.$kernel.$name
+
+  puts "test [repos_exists -obj $name]"
 }
 
 proc guiSV_model_update_view_model {kernel model} {
@@ -3135,6 +3154,7 @@ proc guiSV_model_get_older_version_model {kernel model} {
   global gDetached
   global gSelectDetached
   global gPolyDataFaceNames
+  global symbolicName
 
   set name [string trim $kernel]_$model
   set inlist [lsearch -exact -all -regexp $gDetached $name]
@@ -3145,26 +3165,9 @@ proc guiSV_model_get_older_version_model {kernel model} {
   set backups [get_backup_versions $kernel $model]
   ::swaplist::swaplist .guiCV.get_backup_versions gSelectDetached [lsort -dictionary [get_backup_versions $kernel $model]] $gSelectDetached -title {Select Backup Version} -llabel {Options} -rlabel {Selected}
 
+  set tv $symbolicName(guiSV_model_tree)
   foreach oldmodel $gSelectDetached {
-    set withfaces 0
-    if {$kernel == "Parasolid"} {
-      set withfaces 1
-    }
-    if {$kernel == "PolyData" && [guiSV_model_check_array_exists $oldmodel 1 "ModelFaceID"]} {
-      set withfaces 1
-      catch {unset gPolyDataFaceNames}
-      foreach id [$oldmodel GetFaceIds] {
-	set gPolyDataFaceNames($id) "noname_$id"
-      }
-    }
-    if {[model_create $kernel $oldmodel] != 1} {
-      guiSV_model_delete_model $kernel $oldmodel
-      catch {repos_delete -obj /models/$kernel/$oldmodel}
-      model_create $kernel $oldmodel
-    }
-    if {$withfaces == 1} {
-      guiSV_model_add_faces_to_tree $kernel $oldmodel
-    }
+    $tv move .models.$kernel.$oldmodel .models.$kernel end
   }
   guiSV_model_update_tree
   set gSelectDetached {}
@@ -3185,3 +3188,22 @@ proc get_backup_versions {kernel model} {
   }
   return $return_mods
  } 
+
+proc guiSV_model_undo {} {
+  global gDetached
+
+  if {[llength $gDetached] == 0} {
+    return
+  }
+  set model [lindex $gDetached end]
+  set loc [string first "_" $model]
+  set loc2 [string first "_" $model [expr [string length $model]-9]]
+  set kernel [string range $model 0 [expr $loc-1]]
+  set name [string range $model [expr $loc+1] [expr $loc2-1]]
+  if {$kernel == "Discrete"} {
+    return -code error "Function is not available for Discrete Kernel"
+  }
+  guiSV_model_copy_model $kernel $model $name rename
+  guiSV_model_update_view_model $kernel $name
+  guiSV_model_delete_model $kernel $model
+}
