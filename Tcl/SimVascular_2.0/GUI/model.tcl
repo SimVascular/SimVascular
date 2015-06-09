@@ -1531,6 +1531,7 @@ proc guiSV_model_delete_selected_model {} {
 proc guiSV_model_delete_model {kernel model} {
   global symbolicName
   global gRen3d
+
   set tv $symbolicName(guiSV_model_tree)
   if {[vis_pExists $gRen3d /models/$kernel/$model]} {
     guiSV_model_display_model 0 $kernel $model 
@@ -1540,6 +1541,7 @@ proc guiSV_model_delete_model {kernel model} {
     foreach face $faces {
       catch {[$tv delete .models.$kernel.$model.$face]}
       catch {repos_delete -obj /models/$kernel/$model/$face}
+      vis_pRm $gRen3d /models/$kernel/$model/$model/$face
     }
   }
   model_delete $kernel $model
@@ -3002,7 +3004,6 @@ proc guiSV_model_add_to_backup_list {kernel model} {
   lappend gDetached $name
 
   catch {repos_delete -obj $name}
-  puts "copying to $name"
   solid_copy -src $model -dst $name
   model_create $kernel $name 
 
@@ -3019,15 +3020,17 @@ proc guiSV_model_add_to_backup_list {kernel model} {
     }
   } else {
     foreach id [$name GetFaceIds] {
-      set facename [model_idface $kernel $model $id]
+      if {$kernel == "Parasolid"} {
+        catch {set facename [$model GetFaceAttr -attr gdscName -faceId $id]}
+      } else {
+        set facename [model_idface $kernel $model $id]
+      }
       model_add $name $facename $facename
       $tv insert .models.$kernel.$name end -id .models.$kernel.$name.$facename -text "$facename"
     }
   }
 
   $tv detach .models.$kernel.$name
-
-  puts "test [repos_exists -obj $name]"
 }
 
 proc guiSV_model_update_view_model {kernel model} {
