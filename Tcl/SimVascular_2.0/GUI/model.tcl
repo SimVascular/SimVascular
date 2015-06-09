@@ -2991,8 +2991,8 @@ proc guiSV_model_add_to_backup_list {kernel model} {
     set name "[string trim $name]_[llength $inlist]"
   }
 
-  if {[llength $gDetached] > 9} {
-    set first [lindex $gDetached 0]
+  if {[llength $inlist] > 9} {
+    set first [lindex $inlist 0]
     catch {repos_delete -obj $first}
     model_delete $kernel $first
     set last [lindex $gDetached [lindex $inlist end-1]] 
