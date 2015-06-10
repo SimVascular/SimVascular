@@ -8449,7 +8449,7 @@ ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.fram
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame41.tcheckbutton1  -variable {guiABC(preserve_flow_by_scaling)}  -text {Preserve Flow}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame41.tcheckbutton3
-  ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame41.tcheckbutton3  -variable {guiABC(create_vtp_file)}  -text {Create Vtk}  -width {20}
+  ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame41.tcheckbutton3  -variable {guiABC(create_vtp_file)}  -text {Create Vtp}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}

@@ -2456,14 +2456,6 @@ int create_bct(BCTData& bct,char *faceFile, char *flowFile,double rho, double mu
     }
 
 //    fprintf(stdout,"rotated nrm: %.15e %.15e %.15e\n",rotated_norm[0],rotated_norm[1],rotated_norm[2]);
-    vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
-    polywriter->SetCompressorTypeToZLib();
-    polywriter->EncodeAppendedDataOff();
-    polywriter->SetInputDataObject(flat_pd);
-    polywriter->SetFileName("flatface_new.vtp");
-    polywriter->Write();
-    polywriter->Delete();
-
 
     double outwardUnitNormal[3];
     if(rotated_norm[2]>0){
