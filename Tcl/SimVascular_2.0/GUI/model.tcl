@@ -1571,7 +1571,7 @@ proc guiSV_model_delete_model {kernel model} {
     foreach face $faces {
       catch {[$tv delete .models.$kernel.$model.$face]}
       catch {repos_delete -obj /models/$kernel/$model/$face}
-      vis_pRm $gRen3d /models/$kernel/$model/$model/$face
+      vis_pRm $gRen3d /models/$kernel/$model/$face
     }
   }
   model_delete $kernel $model
