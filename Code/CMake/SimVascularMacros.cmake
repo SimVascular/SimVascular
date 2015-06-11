@@ -361,3 +361,14 @@ macro(simvascular_add_executable TARGET_NAME)
 
 endmacro()
 
+function(sv_list_match resultVar str)
+  set(result)
+  foreach(ITR ${ARGN})
+  dev_message("${str} ITR: ${ITR}")
+    if(ITR MATCHES "${str}")
+      list(APPEND result ${ITR})
+    endif()
+  endforeach()
+  set(${resultVar} ${result} PARENT_SCOPE)
+endfunction()
+
