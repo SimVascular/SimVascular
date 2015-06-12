@@ -591,7 +591,6 @@ proc guiSV_model_check_array_exists {model datatype arrayname} {
       }
     }
   }
-  puts "Exist $exists"
   return $exists
 }
 
@@ -3017,19 +3016,19 @@ proc guiSV_model_add_to_backup_list {kernel model} {
 
   set name [string trim $kernel]_$backmodel
   set inlist [lsearch -exact -all -regexp $gDetached $name]
-  if {$inlist != -1} {
-    set name "[string trim $name]_[llength $inlist]"
-  }
-
-  if {[llength $inlist] > 9} {
-    set first [lindex $inlist 0]
-    catch {repos_delete -obj $first}
-    model_delete $kernel $first
-    set last [lindex $gDetached [lindex $inlist end-1]] 
+  if {$inlist != ""} {
+    set first [lindex $gDetached [lindex $inlist 0]]
+    set last [lindex $gDetached [lindex $inlist end]] 
     set num [expr [lindex [split $last "_"] end]+1]
     set loc [string last "_" $last]
     set start [string range $last 0 $loc]
     set name "[string trim $start]$num"
+    if {[llength $inlist] > 9} {
+      catch {repos_delete -obj $first}
+      model_delete $kernel $first
+    }
+  } else {
+    set name "[string trim $name]_0"
   }
   lappend gDetached $name
 
@@ -3230,7 +3229,7 @@ proc guiSV_model_undo {} {
   }
   set model [lindex $gDetached end]
   set loc [string first "_" $model]
-  set loc2 [string first "_" $model [expr [string length $model]-9]]
+  set loc2 [string first "_" $model [expr [string length $model]-10]]
   set kernel [string range $model 0 [expr $loc-1]]
   set name [string range $model [expr $loc+1] [expr $loc2-1]]
   if {$kernel == "Discrete"} {
