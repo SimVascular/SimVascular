@@ -98,6 +98,7 @@ static Cmd cmd_table[] = {
   {"pressure_vtp", cmd_pressure_vtp},
   {"write_restart", cmd_write_restartdat},
   {"write_geombc", cmd_write_geombcdat},
+  {"write_numstart", cmd_write_numstartdat},
   {"deformable_wall_vtp_simple", cmd_deformable_wall_vtp_simple},
   {"fix_free_edge_nodes_vtp", cmd_fix_free_edge_nodes_vtp},
   {"deformable_create_mesh_vtp", cmd_create_mesh_deformable_vtp},

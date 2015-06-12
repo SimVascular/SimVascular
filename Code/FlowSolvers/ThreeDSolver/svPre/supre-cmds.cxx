@@ -1754,6 +1754,35 @@ int cmd_write_geombcdat(char *cmd) {
     return CV_OK;
 }
 
+int cmd_write_numstartdat(char *cmd) {
+
+    // enter
+    debugprint(stddbg,"Entering cmd_write_numstartdat.\n");
+
+    char str[MAXSTRINGLENGTH];
+    parseCmdStr(cmd,str);
+    int start_time_step=0;
+
+    if(str[0]!='\0'){
+        if (parseNum(cmd, &start_time_step) == CV_ERROR) {
+            return CV_ERROR;
+        }
+    }
+
+    FILE* fp = NULL;
+    fp = fopen("numstart.dat","w");
+    if(fp!=NULL){
+        fprintf(fp,"%d\n",start_time_step);
+        fclose(fp);
+    }else{
+        fprintf(stderr,"ERROR:  could not open numstart.dat!\n");
+        return CV_ERROR;
+    }
+
+    debugprint(stddbg,"Exiting cmd_write_numstartdat.\n");
+    return CV_OK;
+}
+
 int writeCommonHeader(int *filenum) {
 
     int magic_number = 362436;

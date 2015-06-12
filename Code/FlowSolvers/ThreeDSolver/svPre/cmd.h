@@ -199,6 +199,7 @@ int CALLTYPE cmd_read_displacements(char*);
 //
 int CALLTYPE cmd_write_restartdat(char*);
 int CALLTYPE cmd_write_geombcdat(char*);
+int CALLTYPE cmd_write_numstartdat(char*);
 int CALLTYPE cmd_append_displacements(char*);
 
 #if(VER_VARWALL == 1)
