@@ -122,24 +122,23 @@ proc PolyDataDeleteCells {} {
   global gui3Dvars
   global smasherInputName
   global symbolicName
+  global model
+  global gKernel
 
-  set kernel $gOptions(meshing_solid_kernel)
-  if {$kernel != "PolyData"} {
-    return -code error "ERROR: Solid kernel must be PolyData for operation"
-  }
   set tv $symbolicName(guiSV_model_tree)
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
     return -code error "error: one model can be selected to delete cells"
   }
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "ERROR: Solid kernel must be PolyData for operation"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
   if {[lindex [$tv item .models.$kernel.$model -values] 0] != "X"} {
     return -code error "error: model must be visualized as full model to delete cells"
-  }
-  set kernel $gOptions(meshing_solid_kernel)
-
-  if {$kernel != "PolyData"} {
-    return -code error "PolyData needs to be used to delete cells"
   }
 
   set deleteList {}
@@ -150,23 +149,18 @@ proc PolyDataDeleteCells {} {
   if {$gNumPickedCells != 0} {
     set modelpd /models/$kernel/$model   
 
-    catch {repos_delete -obj $modelpd}
-    $model GetPolyData -result $modelpd
+    if {[repos_exists -obj $modelpd] == 0} {
+      $model GetPolyData -result $modelpd
+    }
 
-    set operation "cellsdeleted"
-    set newmodel [string trim $model]_[string trim $operation]
-    set obj /models/$kernel/$newmodel 
-    catch {repos_delete -obj $newmodel}
-    catch {repos_delete -obj /models/$kernel/$newmodel}
-    model_create $kernel $newmodel
-    solid_copy -src $model -dst $newmodel
+    guiSV_model_add_to_backup_list $kernel $model
 
     set delete 1
     PickPolyDataCell widget x y add $delete
-    $newmodel DeleteFaces -faces $deleteList
-    $newmodel GetPolyData -result $obj
+    $model DeleteFaces -faces $deleteList
 
-    guiSV_model_update_new_solid $kernel $model $newmodel
+    guiSV_model_update_tree
+    guiSV_model_update_view_model $kernel $model
 
   } else {
     return -code error "No Cells selected to Delete"
