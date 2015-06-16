@@ -3042,6 +3042,9 @@ proc guiSV_model_add_to_backup_list {kernel model} {
     if {[guiSV_model_check_array_exists $name 1 "ModelFaceID"]} {
       foreach id [$name GetFaceIds] {
 	set facename [model_idface $kernel $model $id]
+	if {$facename == -1} {
+	  set facename "noname_$id"
+	}
 	model_add $name $facename $facename
 	$tv insert .models.$kernel.$name end -id .models.$kernel.$name.$facename -text "$facename"
         guiSV_model_set_col_value $kernel.$name.$facename 1 $id
