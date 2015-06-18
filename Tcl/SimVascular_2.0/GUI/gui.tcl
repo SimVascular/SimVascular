@@ -27886,7 +27886,7 @@ proc gui3DrunLS {} {
           if {$numSegs > 1} {
             polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength \
                                                   $numPtsInLinearSampleAlongLength $useFFT $numModes \
-                                                  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $inPD
+                                                  $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $inPD
             lappend initPDs $inPD
           }
         }
