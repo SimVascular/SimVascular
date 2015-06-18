@@ -48,25 +48,39 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
 	   $(SHAPES_INCDIR) $(GLIB_INCDIR) $(GTS_INCDIR)
 
 
-HDRS	= cv_sys_geom.h cv_ggems.h cv_spline.h cv_integrate_surface.h \
-	  vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h \
-	  vtkSurfaceVectors.h \
-          vtkBooleanOperationPolyDataFilter2.h vtkIntersectionPolyDataFilter2.h \
-          vtkFillHolesFilterWithIds.h vtkMultiplePolyDataIntersectionFilter.h \
-	  vtkLoftPolyDataSolid.h
-
-
+HDRS	= cv_sys_geom.h cv_ggems.h \
+	cv_spline.h cv_integrate_surface.h \
+	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h \
+	vtkSurfaceVectors.h vtkIntersectionPolyDataFilter2.h \
+	vtkBooleanOperationPolyDataFilter2.h \
+	vtkMultiplePolyDataIntersectionFilter.h \
+	vtkFillHolesFilterWithIds.h \
+	vtkLoftPolyDataSolid.h \
+	vtkLocalQuadricDecimation.h \
+	vtkLocalInterpolatingSubdivisionFilter.h \
+	vtkLocalLinearSubdivisionFilter.h \
+	vtkLocalSmoothPolyDataFilter.h \
+	vtkCGSmooth.h svMath.h sparse_matrix.h \
+	vtkFindSeparateRegions.h vtkGetSphereRegions.h
 
 ifeq ($(MAKE_WITH_GTS),1)
   HDRS +=  vtkSurfaceBooleanOperations.h
 endif
 
-CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx cv_spline.cxx cv_integrate_surface.cxx \
-	  vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx \
-	  vtkSurfaceVectors.cxx \
-          vtkBooleanOperationPolyDataFilter2.cxx vtkIntersectionPolyDataFilter2.cxx \
-          vtkFillHolesFilterWithIds.cxx vtkMultiplePolyDataIntersectionFilter.cxx \
-	  vtkLoftPolyDataSolid.cxx
+CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
+	cv_spline.cxx cv_integrate_surface.cxx \
+	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx \
+	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx \
+	vtkBooleanOperationPolyDataFilter2.cxx \
+	vtkMultiplePolyDataIntersectionFilter.cxx \
+	vtkFillHolesFilterWithIds.cxx \
+	vtkLoftPolyDataSolid.cxx \
+	vtkLocalQuadricDecimation.cxx \
+	vtkLocalInterpolatingSubdivisionFilter.cxx \
+	vtkLocalLinearSubdivisionFilter.cxx \
+	vtkLocalSmoothPolyDataFilter.cxx \
+	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx \
+	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
 
 ifeq ($(MAKE_WITH_GTS),1)
   CXXSRCS +=  vtkSurfaceBooleanOperations.cxx
