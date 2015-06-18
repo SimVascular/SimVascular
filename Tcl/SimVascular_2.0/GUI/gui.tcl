@@ -48407,7 +48407,7 @@ proc wormGUIsetupForMultipleFaces {} {
       set guiABC(flow_rate_file) "$guiABC(flow_rate_file)/\$facename.flow"
   }
   # setup output filenames
-  foreach outfile {spectrum_x_file spectrum_y_file spectrum_z_file bct_dat_file} {
+  foreach outfile {spectrum_x_file spectrum_y_file spectrum_z_file bct_dat_file bct_vtp_file} {
     if {$guiABC($outfile) == ""} {
       set guiABC($outfile) "$outfile.\$facename"
     } else {
@@ -48449,6 +48449,7 @@ proc wormGUIwriteMultipleFaces {} {
   set org_spectrum_y_file $guiABC(spectrum_y_file)
   set org_spectrum_z_file $guiABC(spectrum_z_file)
   set org_bct_dat_file $guiABC(bct_dat_file)
+  set org_bct_vtp_file $guiABC(bct_vtp_file)
   # get all the named faces, then check for existence of flow file
   foreach id [$solid GetFaceIds] {
     set guiABC(mesh_face_file) $org_mesh_face_file
@@ -48458,6 +48459,7 @@ proc wormGUIwriteMultipleFaces {} {
     set guiABC(spectrum_y_file) $org_spectrum_y_file
     set guiABC(spectrum_z_file) $org_spectrum_z_file
     set guiABC(bct_dat_file) $org_bct_dat_file
+    set guiABC(bct_vtp_file) $org_bct_vtp_file
     set facename {}
     set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
     if {$facename != ""} {
@@ -48476,6 +48478,7 @@ proc wormGUIwriteMultipleFaces {} {
       eval set guiABC(spectrum_y_file) $guiABC(spectrum_y_file)
       eval set guiABC(spectrum_z_file) $guiABC(spectrum_z_file)
       eval set guiABC(bct_dat_file) $guiABC(bct_dat_file)
+      eval set guiABC(bct_vtp_file) $guiABC(bct_vtp_file)
       puts "   do face $facename"
       wormGUIwritePHASTA 0
       wormGUIwriteSpectrum
@@ -48490,6 +48493,7 @@ proc wormGUIwriteMultipleFaces {} {
   set guiABC(spectrum_y_file) $org_spectrum_y_file
   set guiABC(spectrum_z_file) $org_spectrum_z_file
   set guiABC(bct_dat_file) $org_bct_dat_file
+  set guiABC(bct_vtp_file) $org_bct_vtp_file
 }
 
 
