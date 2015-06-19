@@ -22060,84 +22060,6 @@ proc DestroyWindow.svSaveSegWindow {} {# xf ignore me 7
 }
 
 
-
-# procedure to show window ShowWindow.guiSELECTGROUPS
-proc ShowWindow.guiSELECTGROUPS { args} {
-# xf ignore me 7
-
-  # build widget .guiSELECTGROUPS
-  if {"[info procs XFEdit]" != ""} {
-    catch "XFDestroy .guiSELECTGROUPS"
-  } {
-    catch "destroy .guiSELECTGROUPS"
-  }
-  toplevel .guiSELECTGROUPS   -background {white}
-
-  # Window manager configurations
-  wm positionfrom .guiSELECTGROUPS program
-  wm sizefrom .guiSELECTGROUPS program
-  wm maxsize .guiSELECTGROUPS 1280 1024
-  wm minsize .guiSELECTGROUPS 108 100
-  wm protocol .guiSELECTGROUPS WM_DELETE_WINDOW {XFProcError {Application windows can not be destroyed.
-Please use the "Current widget path:" to show/hide windows.}}
-  wm title .guiSELECTGROUPS {Select a Group}
-
-
-  # build widget .guiSELECTGROUPS.frame
-ttk::frame .guiSELECTGROUPS.frame  -width {256} -height {245} 
-  # build widget .guiSELECTGROUPS.frame.scrollbar3
-  ttk::scrollbar .guiSELECTGROUPS.frame.scrollbar3  -command {.guiSELECTGROUPS.frame.listbox1 xview}  -orient {horizontal}
-
-  # build widget .guiSELECTGROUPS.frame.scrollbar2
-  ttk::scrollbar .guiSELECTGROUPS.frame.scrollbar2  -command {.guiSELECTGROUPS.frame.listbox1 yview}
-
-  # build widget .guiSELECTGROUPS.frame.listbox1
-  listbox .guiSELECTGROUPS.frame.listbox1  -font {Helvetica 10}  -relief {raised}  -xscrollcommand {.guiSELECTGROUPS.frame.scrollbar3 set}  -yscrollcommand {.guiSELECTGROUPS.frame.scrollbar2 set}
-  # bindings
-  bind .guiSELECTGROUPS.frame.listbox1 <Double-Button-1> {guiSELECTGROUPSdone}
-
-  # build widget .guiSELECTGROUPS.frame17
-ttk::frame .guiSELECTGROUPS.frame17  -width {256} -height {66} 
-  # build widget .guiSELECTGROUPS.frame17.button18
-  ttk::button .guiSELECTGROUPS.frame17.button18  -command {guiSELECTGROUPScancel}  -text {CANCEL}  -takefocus {ttk::takefocus}
-
-  # build widget .guiSELECTGROUPS.frame17.button19
-  ttk::button .guiSELECTGROUPS.frame17.button19  -command {guiSELECTGROUPSdone}  -text {DONE}  -takefocus {ttk::takefocus}
-
-  # pack master .guiSELECTGROUPS.frame
-  pack configure .guiSELECTGROUPS.frame.scrollbar2  -fill y  -side right
-  pack configure .guiSELECTGROUPS.frame.listbox1  -expand 1  -fill both
-  pack configure .guiSELECTGROUPS.frame.scrollbar3  -fill x  -side bottom
-
-  # pack master .guiSELECTGROUPS.frame17
-  pack configure .guiSELECTGROUPS.frame17.button18  -expand 1  -fill both  -side left
-  pack configure .guiSELECTGROUPS.frame17.button19  -expand 1  -fill both  -side left
-
-  # pack master .guiSELECTGROUPS
-  pack configure .guiSELECTGROUPS.frame  -expand 1  -fill both
-  pack configure .guiSELECTGROUPS.frame17  -fill both
-
-  if {"[info procs XFEdit]" != ""} {
-    catch "XFMiscBindWidgetTree .guiSELECTGROUPS"
-    after 2 "catch {XFEditSetShowWindows}"
-  }
-}
-
-proc DestroyWindow.guiSELECTGROUPS {} {# xf ignore me 7
-  if {"[info procs XFEdit]" != ""} {
-    if {"[info commands .guiSELECTGROUPS]" != ""} {
-      global xfShowWindow.guiSELECTGROUPS
-      set xfShowWindow.guiSELECTGROUPS 0
-      XFEditSetPath .
-      after 2 "XFSaveAsProc .guiSELECTGROUPS; XFEditSetShowWindows"
-    }
-  } {
-    catch "destroy .guiSELECTGROUPS"
-    update
-  }
-}
-
-
 # procedure to show window ShowWindow.guiSELECTGROUPS
 proc ShowWindow.guiSELECTGROUPS { args} {
 # xf ignore me 7
@@ -50865,6 +50787,12 @@ set xfShowWindow.lsGUIselectPath 0
 
 global xfShowWindow.svmessage
 set xfShowWindow.svmessage 0
+
+global xfShowWindow.svGroupWindow
+set xfShowWindow.svGroupWindow 0
+
+global xfShowWindow.svSaveSegWindow
+set xfShowWindow.svSaveSegWindow 0
 
 # load default bindings.
 if {[info exists env(XF_BIND_FILE)] &&
