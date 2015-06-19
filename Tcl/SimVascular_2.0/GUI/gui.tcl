@@ -34,6 +34,325 @@ package require tile
 
 
 
+# procedure to show window .guiDICOM
+proc ShowWindow.guiDICOM {args} {# xf ignore me 7
+
+  # build widget .guiDICOM
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFDestroy .guiDICOM"
+  } {
+    catch "destroy .guiDICOM"
+  }
+  toplevel .guiDICOM 
+
+  # Window manager configurations
+  wm positionfrom .guiDICOM program
+  wm sizefrom .guiDICOM program
+  wm maxsize .guiDICOM 1920 1059
+  wm minsize .guiDICOM 124 100
+  wm protocol .guiDICOM WM_DELETE_WINDOW {XFProcError {Application windows can not be destroyed.
+Please use the "Current widget path:" to show/hide windows.}}
+  wm title .guiDICOM {Load DICOM Data}
+
+
+  # build widget .guiDICOM.tlabelframe17
+  ttk::labelframe .guiDICOM.tlabelframe17 \
+    -text {Select Original DICOM Data Directory [-]} \
+    -width {436} \
+    -height {25}
+  # bindings
+  bind .guiDICOM.tlabelframe17 <Button-1> {guiCV_squeezer_labelframe .frame0 %W}
+
+  # build widget .guiDICOM.tlabelframe17.frame0
+  ttk::frame .guiDICOM.tlabelframe17.frame0 \
+    -borderwidth {0} \
+    -relief {flat} \
+    -width {479} \
+    -height {86}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.frame9
+  ttk::frame .guiDICOM.tlabelframe17.frame0.frame9 \
+    -width {497} \
+    -height {28}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.frame9.label24
+  ttk::label .guiDICOM.tlabelframe17.frame0.frame9.label24 \
+    -font {Helvetica 10} \
+    -borderwidth {0} \
+    -relief {flat} \
+    -text {Directory:} \
+    -width {10}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.frame9.entry0
+  ttk::entry .guiDICOM.tlabelframe17.frame0.frame9.entry0 \
+    -font {Helvetica 10} \
+    -textvariable {guiDICOMvars(original_dicom_dir)} \
+    -width {40} \
+    -cursor {ibeam}
+  # bindings
+  bind .guiDICOM.tlabelframe17.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.frame9.button1
+  ttk::button .guiDICOM.tlabelframe17.frame0.frame9.button1 \
+    -command {guiDICOM_select_original_dicom_dir} \
+    -text {Select}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.tframe0
+  ttk::frame .guiDICOM.tlabelframe17.frame0.tframe0 \
+    -borderwidth {0} \
+    -relief {flat} \
+    -width {30} \
+    -height {30}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.tframe0.tlabel3
+  ttk::label .guiDICOM.tlabelframe17.frame0.tframe0.tlabel3 \
+    -font {Helvetica 10} \
+    -relief {flat} \
+    -width {10}
+
+  # build widget .guiDICOM.tlabelframe17.frame0.tframe0.tcheckbutton2
+  ttk::checkbutton .guiDICOM.tlabelframe17.frame0.tframe0.tcheckbutton2 \
+    -variable {guiDICOMvars(recursive_dir_search)} \
+    -text {Recursive Directory Search}
+
+  # build widget .guiDICOM.tlabelframe3
+  ttk::labelframe .guiDICOM.tlabelframe3 \
+    -text {Select Sorted DICOM Output Directory [-]} \
+    -width {472} \
+    -height {25}
+  # bindings
+  bind .guiDICOM.tlabelframe3 <Button-1> {guiCV_squeezer_labelframe .frame0 %W}
+
+  # build widget .guiDICOM.tlabelframe3.frame0
+  ttk::frame .guiDICOM.tlabelframe3.frame0 \
+    -borderwidth {0} \
+    -relief {flat} \
+    -width {479} \
+    -height {86}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.frame9
+  ttk::frame .guiDICOM.tlabelframe3.frame0.frame9 \
+    -width {497} \
+    -height {28}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.frame9.label24
+  ttk::label .guiDICOM.tlabelframe3.frame0.frame9.label24 \
+    -font {Helvetica 10} \
+    -borderwidth {0} \
+    -relief {flat} \
+    -text {Directory:} \
+    -width {10}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.frame9.entry0
+  ttk::entry .guiDICOM.tlabelframe3.frame0.frame9.entry0 \
+    -font {Helvetica 10} \
+    -textvariable {guiDICOMvars(output_sorted_dicom_dir)} \
+    -width {40} \
+    -cursor {ibeam}
+  # bindings
+  bind .guiDICOM.tlabelframe3.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.frame9.button1
+  ttk::button .guiDICOM.tlabelframe3.frame0.frame9.button1 \
+    -command {guiDICOM_select_output_sorted_dicom_dir} \
+    -text {Select}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.tframe0
+  ttk::frame .guiDICOM.tlabelframe3.frame0.tframe0 \
+    -borderwidth {0} \
+    -relief {flat} \
+    -width {30} \
+    -height {30}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.tframe0.tlabel3
+  ttk::label .guiDICOM.tlabelframe3.frame0.tframe0.tlabel3 \
+    -font {Helvetica 10} \
+    -relief {flat} \
+    -width {10}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.tframe0.tbutton5
+  ttk::button .guiDICOM.tlabelframe3.frame0.tframe0.tbutton5 \
+    -command {guiDICOMsortFiles} \
+    -text {sort!}
+
+  # build widget .guiDICOM.tlabelframe3.frame0.tframe0.tlabel6
+  ttk::label .guiDICOM.tlabelframe3.frame0.tframe0.tlabel6 \
+    -font {Helvetica 10} \
+    -relief {flat} \
+    -text {  (NOTE: Only works on Windows & Linux!)}
+
+  # build widget .guiDICOM.tlabelframe7
+  ttk::labelframe .guiDICOM.tlabelframe7 \
+    -text {Load Single Volume From DICOM Data [-]} \
+    -width {443} \
+    -height {25}
+  # bindings
+  bind .guiDICOM.tlabelframe7 <Button-1> {guiCV_squeezer_labelframe .frame0 %W}
+
+  # build widget .guiDICOM.tlabelframe7.frame0
+  ttk::frame .guiDICOM.tlabelframe7.frame0 \
+    -borderwidth {0} \
+    -relief {flat} \
+    -width {479} \
+    -height {86}
+
+  # build widget .guiDICOM.tlabelframe7.frame0.frame9
+  ttk::frame .guiDICOM.tlabelframe7.frame0.frame9 \
+    -width {497} \
+    -height {28}
+
+  # build widget .guiDICOM.tlabelframe7.frame0.frame9.label24
+  ttk::label .guiDICOM.tlabelframe7.frame0.frame9.label24 \
+    -font {Helvetica 10} \
+    -borderwidth {0} \
+    -relief {flat} \
+    -text {Directory:} \
+    -width {10}
+
+  # build widget .guiDICOM.tlabelframe7.frame0.frame9.entry0
+  ttk::entry .guiDICOM.tlabelframe7.frame0.frame9.entry0 \
+    -font {Helvetica 10} \
+    -textvariable {gImageVol(data_dirname)} \
+    -width {40} \
+    -cursor {ibeam}
+  # bindings
+  bind .guiDICOM.tlabelframe7.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
+
+  # build widget .guiDICOM.tlabelframe7.frame0.frame9.tbutton5
+  ttk::button .guiDICOM.tlabelframe7.frame0.frame9.tbutton5 \
+    -command {guiCVloadDICOM} \
+    -text {Select & Load}
+
+  # build widget .guiDICOM.tframe1
+  ttk::frame .guiDICOM.tframe1 \
+    -borderwidth {0} \
+    -relief {flat} \
+    -width {40} \
+    -height {30}
+
+  # build widget .guiDICOM.tframe1.tbutton0
+  ttk::button .guiDICOM.tframe1.tbutton0 \
+      -text {CLOSE} -command {DestroyWindow.guiDICOM}
+
+  # pack master .guiDICOM.tlabelframe17
+  pack configure .guiDICOM.tlabelframe17.frame0 \
+    -fill x \
+    -side bottom
+
+  # pack master .guiDICOM.tlabelframe17.frame0
+  pack configure .guiDICOM.tlabelframe17.frame0.frame9 \
+    -expand 1 \
+    -fill both
+  pack configure .guiDICOM.tlabelframe17.frame0.tframe0 \
+    -fill both
+
+  # pack master .guiDICOM.tlabelframe17.frame0.frame9
+  pack configure .guiDICOM.tlabelframe17.frame0.frame9.label24 \
+    -fill both \
+    -side left
+  pack configure .guiDICOM.tlabelframe17.frame0.frame9.entry0 \
+    -expand 1 \
+    -fill both \
+    -side left
+  pack configure .guiDICOM.tlabelframe17.frame0.frame9.button1 \
+    -fill both \
+    -side left
+
+  # pack master .guiDICOM.tlabelframe17.frame0.tframe0
+  pack configure .guiDICOM.tlabelframe17.frame0.tframe0.tlabel3 \
+    -side left
+  pack configure .guiDICOM.tlabelframe17.frame0.tframe0.tcheckbutton2 \
+    -fill both \
+    -side left
+
+  # pack master .guiDICOM.tlabelframe3
+  pack configure .guiDICOM.tlabelframe3.frame0 \
+    -fill x \
+    -side bottom
+
+  # pack master .guiDICOM.tlabelframe3.frame0
+  pack configure .guiDICOM.tlabelframe3.frame0.frame9 \
+    -expand 1 \
+    -fill both
+  pack configure .guiDICOM.tlabelframe3.frame0.tframe0 \
+    -fill both
+
+  # pack master .guiDICOM.tlabelframe3.frame0.frame9
+  pack configure .guiDICOM.tlabelframe3.frame0.frame9.label24 \
+    -fill both \
+    -side left
+  pack configure .guiDICOM.tlabelframe3.frame0.frame9.entry0 \
+    -expand 1 \
+    -fill both \
+    -side left
+  pack configure .guiDICOM.tlabelframe3.frame0.frame9.button1 \
+    -fill both \
+    -side left
+
+  # pack master .guiDICOM.tlabelframe3.frame0.tframe0
+  pack configure .guiDICOM.tlabelframe3.frame0.tframe0.tlabel3 \
+    -side left
+  pack configure .guiDICOM.tlabelframe3.frame0.tframe0.tbutton5 \
+    -side left
+  pack configure .guiDICOM.tlabelframe3.frame0.tframe0.tlabel6 \
+    -side left
+
+  # pack master .guiDICOM.tlabelframe7
+  pack configure .guiDICOM.tlabelframe7.frame0 \
+    -fill x \
+    -side bottom
+
+  # pack master .guiDICOM.tlabelframe7.frame0
+  pack configure .guiDICOM.tlabelframe7.frame0.frame9 \
+    -expand 1 \
+    -fill both
+
+  # pack master .guiDICOM.tlabelframe7.frame0.frame9
+  pack configure .guiDICOM.tlabelframe7.frame0.frame9.label24 \
+    -fill both \
+    -side left
+  pack configure .guiDICOM.tlabelframe7.frame0.frame9.entry0 \
+    -expand 1 \
+    -fill both \
+    -side left
+  pack configure .guiDICOM.tlabelframe7.frame0.frame9.tbutton5 \
+    -side left
+
+  # pack master .guiDICOM.tframe1
+  pack configure .guiDICOM.tframe1.tbutton0 \
+    -side left
+
+  # pack master .guiDICOM
+  pack configure .guiDICOM.tlabelframe17 \
+    -fill both
+  pack configure .guiDICOM.tlabelframe3 \
+    -fill both
+  pack configure .guiDICOM.tlabelframe7 \
+    -fill both
+  pack configure .guiDICOM.tframe1 \
+    -fill x
+
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFMiscBindWidgetTree .guiDICOM"
+    after 2 "catch {XFEditSetShowWindows}"
+  }
+}
+
+proc DestroyWindow.guiDICOM {} {# xf ignore me 7
+  if {"[info procs XFEdit]" != ""} {
+    if {"[info commands .guiDICOM]" != ""} {
+      global xfShowWindow.guiDICOM
+      set xfShowWindow.guiDICOM 0
+      XFEditSetPath .
+      after 2 "XFSaveAsProc .guiDICOM; XFEditSetShowWindows"
+    }
+  } {
+    catch "destroy .guiDICOM"
+    update
+  }
+}
+
+
 # procedure to show window ShowWindow.guiCV
 proc ShowWindow.guiCV { args} {
 # xf ignore me 7
@@ -67,7 +386,7 @@ proc ShowWindow.guiCV { args} {
   .guiCV.tframe2.tmenubutton0.m add separator
   .guiCV.tframe2.tmenubutton0.m add command  -command {guiCVloadVTI}  -label {Load Image (VTI)}
   .guiCV.tframe2.tmenubutton0.m add command  -command {guiCVloadMha}  -label {Load Image (MetaImage)}
-  .guiCV.tframe2.tmenubutton0.m add command  -command {guiCVloadDICOM}  -label {Load Images (DICOM)}
+  .guiCV.tframe2.tmenubutton0.m add command  -command {ShowWindow.guiDICOM}  -label {Load Images (DICOM)}
   .guiCV.tframe2.tmenubutton0.m add separator
   .guiCV.tframe2.tmenubutton0.m add command  -command {guiPPloadPaths}  -label {Load Paths}
   .guiCV.tframe2.tmenubutton0.m add command  -command {guiPPsavePaths}  -label {Save Paths}
@@ -4634,9 +4953,7 @@ img_guessVolParams $gImageVol(filename)}
 
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1 -borderwidth {0}  -relief {flat}  -width {300}  -height {10}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Filter Type: } -width {18}
-  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.menubutton0 \
-                      -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.menubutton0.m} \
-                      -text {Type1}  -textvariable {gui3Dvars(ls_edge_prox_type)}  -width {12}
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.menubutton0  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.menubutton0.m}  -text {Type1}  -textvariable {gui3Dvars(ls_edge_prox_type)}  -width {12}
   #Edge Prox. Filter Type Menu
   menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.menubutton0.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line1.menubutton0.m add radiobutton  -value {RationalPoly}  -variable {gui3Dvars(ls_edge_prox_type)}  -command {itk3dLS_updateEdgeImage 0}  -label {Rational Polynomial}
@@ -4665,9 +4982,7 @@ img_guessVolParams $gImageVol(filename)}
 
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1 -borderwidth {0}  -relief {flat}  -width {300}  -height {10}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Level Set Type: } -width {18}
-  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.menubutton0 \
-                      -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.menubutton0.m} \
-                      -text {Type1}  -textvariable {gui3Dvars(ls_ls_type)}  -width {12}
+  ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.menubutton0  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.menubutton0.m}  -text {Type1}  -textvariable {gui3Dvars(ls_ls_type)}  -width {12}
   #Level SetType Menu
   menu .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.menubutton0.m  -activeborderwidth {1}  -borderwidth {1}  -font {Helvetica 10}
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line1.menubutton0.m add radiobutton  -value {LaplFastEdge}  -variable {gui3Dvars(ls_ls_type)}  -command {lsGUI3dSwapLSPanel}  -label {Laplacian Fast Edge Grower}
@@ -21567,184 +21882,6 @@ proc DestroyWindow.guiPPselectPath {} {# xf ignore me 7
   }
 }
 
-proc ShowWindow.svGroupWindow { {cmd 0}} {
-
-  # build widget .lsGUIselectPath
-  if {"[info procs XFEdit]" != ""} {
-    catch "XFDestroy .svGroupWindow"
-  } {
-    catch "destroy .svGroupWindow"
-  }
-  toplevel .svGroupWindow -background {white}
-
-    # Window manager configurations
-  wm positionfrom .svGroupWindow program
-  wm sizefrom .svGroupWindow program
-  wm maxsize .svGroupWindow 1280 1024
-  wm minsize .svGroupWindow 150 10
-  wm protocol .svGroupWindow WM_DELETE_WINDOW {DestroyWindow.svGroupWindow}
-
-
-  ttk::frame .svGroupWindow.tframe6  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
-  ttk::frame .svGroupWindow.tframe6.frame1  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
-  ttk::frame .svGroupWindow.tframe6.frame1.frame2  -width {769}  -height {10}
-  ttk::label .svGroupWindow.tframe6.frame1.frame2.label9  -font {Helvetica 10}  -relief {flat}  -text {Group Name:}  -width {12}
-  ttk::entry .svGroupWindow.tframe6.frame1.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(groups_entry_group_name)}  -width {30}
-
-  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton0  -command {guiSV_group_new_group}  -text {Create Group}
-  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton1  -command {guiSV_group_rename_group}  -text {Rename Group}
-  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton2  -command {guiSV_group_duplicate_group}  -text {Duplicate Group}
-  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton4  -command {guiSV_group_copy_members}  -text {Copy Members}
-  
-  
-  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton3  -command {DestroyWindow.svGroupWindow}  -text {Cancel}
-
-  pack configure .svGroupWindow.tframe6  -fill both -ipadx 5 -ipady 5
-
-  # pack master .svGroupWindow.tframe6
-  pack configure .svGroupWindow.tframe6.frame1  -fill both
-  #pack configure .svGroupWindow.tframe6.tframe0  -fill both
-
-
-  # pack master .svGroupWindow.tframe6.frame1
-  pack configure .svGroupWindow.tframe6.frame1.frame2  -expand 1  -fill both
-  # pack configure .svGroupWindow.tframe6.frame1.frame1  -fill both
-
-  # pack master .svGroupWindow.tframe6.frame1.frame2
-  pack configure .svGroupWindow.tframe6.frame1.frame2.label9  -fill both  -side left
-  pack configure .svGroupWindow.tframe6.frame1.frame2.entry10  -expand 1  -fill both  -side left
-
-  if { $cmd == "rename"} {
-    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton1  -side left
-    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_rename_group}
-    wm title .svGroupWindow {Rename Group}
-  } elseif {$cmd == "duplicate"} {
-    wm title .svGroupWindow {Duplicate Group}
-    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_duplicate_group}
-    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton2  -side left
-  } elseif {$cmd == "copymembers"} {
-    wm title .svGroupWindow {Copy Members}
-    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_copy_members}
-    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton4  -side left
-  } else {
-    wm title .svGroupWindow {New Contour Group}
-    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_new_group}
-    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton0  -side left
-  }
-
-  pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton3  -side left
-  focus .svGroupWindow.tframe6.frame1.frame2.entry10
-
-
-  if {"[info procs XFEdit]" != ""} {
-    catch "XFMiscBindWidgetTree .svGroupWindow"
-    after 2 "catch {XFEditSetShowWindows}"
-  }
-
-
-}
-
-proc DestroyWindow.svGroupWindow {} {# xf ignore me 7
-  if {"[info procs XFEdit]" != ""} {
-    if {"[info commands .svGroupWindow]" != ""} {
-      global xfShowWindow.svGroupWindow
-      set xfShowWindow.svGroupWindow 0
-      XFEditSetPath .
-      after 2 "XFSaveAsProc .svGroupWindow; XFEditSetShowWindows"
-    }
-  } else {
-    catch "destroy .svGroupWindow"
-    update
-  }
-}
-
-proc ShowWindow.svSaveSegWindow { {args 0}} {
-
-  global guiSVvars
-  # build widget .lsGUIselectPath
-  if {"[info procs XFEdit]" != ""} {
-    catch "XFDestroy .svSaveSegWindow"
-  } {
-    catch "destroy .svSaveSegWindow"
-  }
-  toplevel .svSaveSegWindow   -background {white}
-
-    # Window manager configurations
-  wm positionfrom .svSaveSegWindow program
-  wm sizefrom .svSaveSegWindow program
-  wm maxsize .svSaveSegWindow 1280 1024
-  wm minsize .svSaveSegWindow 150 60
-  wm protocol .svSaveSegWindow WM_DELETE_WINDOW {DestroyWindow.svSaveSegWindow}
-
-  
-
-  ttk::frame .svSaveSegWindow.tframe6  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
-  ttk::frame .svSaveSegWindow.tframe6.frame1  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
-  ttk::frame .svSaveSegWindow.tframe6.frame1.frame2  -width {769}  -height {10}
-  ttk::label .svSaveSegWindow.tframe6.frame1.frame2.label9  -font {Helvetica 10}  -relief {flat}  -text {Group Name:}  -width {12}
-  ttk::entry .svSaveSegWindow.tframe6.frame1.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(groups_entry_seg3d_name)}  -width {30}
-
-  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton0  -command {guiSV_seg3d_new_seg}  -text {Save Segmenation}
-  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton1  -command {guiSV_seg3d_rename_seg}  -text {Rename Segmenation}
-  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton2  -command {guiSV_seg3d_duplicate_seg}  -text {Duplicate Segmenation}
-
-
-  #bind .svGroupWindow.tframe6.frame1.frame1.entry9 <Key-Return> {guiGROUPSUpdateSource}
-  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton3  -command {DestroyWindow.svSaveSegWindow}  -text {Cancel}
-
-  pack configure .svSaveSegWindow.tframe6  -fill both -ipadx 5 -ipady 5
-
-  # pack master .svGroupWindow.tframe6
-  pack configure .svSaveSegWindow.tframe6.frame1  -fill both
-
-
-  # pack master .svGroupWindow.tframe6.frame1
-  pack configure .svSaveSegWindow.tframe6.frame1.frame2  -expand 1  -fill both
-
-  # pack master .svGroupWindow.tframe6.frame1.frame2
-  pack configure .svSaveSegWindow.tframe6.frame1.frame2.label9  -fill both  -side left
-  pack configure .svSaveSegWindow.tframe6.frame1.frame2.entry10  -expand 1  -fill both  -side left
-
-  if { $args == "rename"} {
-    pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton1  -side left
-    bind .svSaveSegWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_seg3d_rename_seg}
-    wm title .svSaveSegWindow {Rename Segmenation}
-  } elseif {$args == "duplicate"} {
-    wm title .svSaveSegWindow {Duplicate Segmentation}
-    bind .svSaveSegWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_seg3d_duplicate_seg}
-    pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton2  -side left
-  } else {
-    wm title .svSaveSegWindow {Save Segmentation}
-    bind .svSaveSegWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_seg3d_new_seg}
-    pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton0  -side left
-  }
-
-  pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton3  -side left
-  focus .svSaveSegWindow.tframe6.frame1.frame2.entry10
-
-  if {"[info procs XFEdit]" != ""} {
-    catch "XFMiscBindWidgetTree .svSaveSegWindow"
-    after 2 "catch {XFEditSetShowWindows}"
-  }
-
-
-}
-
-proc DestroyWindow.svSaveSegWindow {} {# xf ignore me 7
-  if {"[info procs XFEdit]" != ""} {
-    if {"[info commands .svGroupWindow]" != ""} {
-      global xfShowWindow.svSaveSegWindow
-      set xfShowWindow.svSaveSegWindow 0
-      XFEditSetPath .
-      after 2 "XFSaveAsProc .svSaveSegWindow; XFEditSetShowWindows"
-    }
-  } else {
-    catch "destroy .svSaveSegWindow"
-    update
-  }
-}
-
-
 
 # procedure to show window ShowWindow.guiSELECTGROUPS
 proc ShowWindow.guiSELECTGROUPS { args} {
@@ -22020,6 +22157,14 @@ proc ShowWindow. {args} {# xf ignore me 7
     catch "XFMiscBindWidgetTree ."
     after 2 "catch {XFEditSetShowWindows}"
   }
+}
+
+
+# Procedure: addSmasherSolidLabel
+proc addSmasherSolidLabel { name} {
+  global smasherInputName
+  puts "$name"
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {"$name"}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {"$name"}
 }
 
 
@@ -26679,8 +26824,6 @@ proc createPREOPloadsaveVolXMLFile {} {
 }
 
 
-
-
 # Procedure: createPREOPmodelSaveModel
 proc createPREOPmodelSaveModel {} {
 
@@ -26728,6 +26871,21 @@ proc createPREOPmodelTrim {} {
       }
     }
   }
+}
+
+
+# Procedure: force_reload_tree
+proc force_reload_tree { {args "0"}} {
+
+  global symbolicName
+  set tv $symbolicName(guiSV_group_tree)
+
+  catch {$tv delete .groups.3d}
+  catch {$tv delete .groups.all}
+  $tv insert {} 0 -id .groups.all -text "2D Group Surfaces" -open 0
+  $tv insert {} 1 -id .groups.3d -text "3D Surfaces" -open 0
+
+  guiSV_group_update_tree
 }
 
 
@@ -26886,37 +27044,6 @@ proc gui3DaddSeed {} {
   $tbox insert end "sphere $r [lindex $ctr 0] [lindex $ctr 1] [lindex $ctr 2]\n"
 
   gui3DchooserShowAllSeeds not_clicked $r [lindex $ctr 0] [lindex $ctr 1] [lindex $ctr 2]
-}
-
-proc gui3dchangeSeedColor {} {
-  global gui3Dvars
-  global gRen3d
-  set color [tk_chooseColor]
-  if {$color == ""} return
-  set r [expr (0x[string range $color 1 2])/255.0]
-  set g [expr (0x[string range $color 3 4])/255.0]
-  set b [expr (0x[string range $color 5 6])/255.0]
-  set gui3Dvars(vis_seed_color) "$r $g $b "
-  gui3DchooserShowAllSeedsRefresh
-}
-
-proc gui3DchooserShowAllSeedsRefresh { } {
-  global gui3Dvars
-    global gRen3d
-    set spheres $gui3Dvars(displayed_spheres)
-  set pds     $gui3Dvars(displayed_pds)
-  set len [llength $pds]
-  for {set i 0} {$i < $len} {incr i} {
-    set ss  [lindex $spheres $i]
-    set pd  [lindex $pds $i]
-    ::vis::polyRm $gRen3d $pd
-    $ss Delete
-  }
-  set gui3Dvars(displayed_spheres) ""
-  set gui3Dvars(displayed_pds) ""
-
-  gui3DchooserShowAllSeeds clicked
-
 }
 
 
@@ -27142,6 +27269,26 @@ proc gui3DchooserShowAllSeeds { clicked args} {
   }
   set ::vis::frozen($gRen3d) $state
   vis_render $gRen3d
+}
+
+
+# Procedure: gui3DchooserShowAllSeedsRefresh
+proc gui3DchooserShowAllSeedsRefresh {} {
+  global gui3Dvars
+    global gRen3d
+    set spheres $gui3Dvars(displayed_spheres)
+  set pds     $gui3Dvars(displayed_pds)
+  set len [llength $pds]
+  for {set i 0} {$i < $len} {incr i} {
+    set ss  [lindex $spheres $i]
+    set pd  [lindex $pds $i]
+    ::vis::polyRm $gRen3d $pd
+    $ss Delete
+  }
+  set gui3Dvars(displayed_spheres) ""
+  set gui3Dvars(displayed_pds) ""
+
+  gui3DchooserShowAllSeeds clicked
 }
 
 
@@ -27884,9 +28031,7 @@ proc gui3DrunLS {} {
           set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
 
           if {$numSegs > 1} {
-            polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength \
-                                                  $numPtsInLinearSampleAlongLength $useFFT $numModes \
-                                                  $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $inPD
+            polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength  $numPtsInLinearSampleAlongLength $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $inPD
             lappend initPDs $inPD
           }
         }
@@ -28111,6 +28256,20 @@ proc gui3DvisSmooth { pressed} {
       [$actor GetProperty] SetRepresentationToWireframe
       vis_render $gRen3d
   }
+}
+
+
+# Procedure: gui3dchangeSeedColor
+proc gui3dchangeSeedColor {} {
+  global gui3Dvars
+  global gRen3d
+  set color [tk_chooseColor]
+  if {$color == ""} return
+  set r [expr (0x[string range $color 1 2])/255.0]
+  set g [expr (0x[string range $color 3 4])/255.0]
+  set b [expr (0x[string range $color 5 6])/255.0]
+  set gui3Dvars(vis_seed_color) "$r $g $b "
+  gui3DchooserShowAllSeedsRefresh
 }
 
 
@@ -28384,6 +28543,7 @@ proc guiBOOLEANboolean {} {
   tk_messageBox -title "Solid Unions Complete"  -type ok -message "Number of Free Edges: [lindex $rtnstr 0]\n (Free edges are okay for open surfaces)\n Number of Bad Edges: [lindex $rtnstr 1]"
 }
 
+
 # Procedure: guiBOOLEANloadPreviousParams
 proc guiBOOLEANloadPreviousParams {} {
   set fn [tk_getOpenFile -filetypes {{"PolyData Booleans File" {.bool}} {"All Files" *}}  -title "Read PolyData Booleans File" -initialdir [pwd]]
@@ -28392,6 +28552,7 @@ proc guiBOOLEANloadPreviousParams {} {
      source $fn
   }
 }
+
 
 # Procedure: guiBOOLEANsave
 proc guiBOOLEANsave {} {
@@ -28452,152 +28613,6 @@ proc guiBOUNDARIESdeleteRegions {} {
   set guiPDvars(updatedSolid) 1
 }
 
-# Procedure: guiPDloadSolidModel
-proc guiPDloadSolidModel {fn} {
-  global gOptions
-  global gRen3d
-  global gui3Dvars
-  global smasherInputName
-  global gObjects
-
-  set gOptions(meshing_solid_kernel) PolyData
-
-  smasherGUIreadModel
-
-  set obj /tmp/load/polydata
-  catch {repos_delete -obj $obj}
-  $smasherInputName GetPolyData -result $obj
-  set gObjects(polydata_solid) $smasherInputName
-  set gui3Dvars(polydata_change_obj) $obj
-
-  vis_renReset $gRen3d
-  vis_render $gRen3d
-}
-
-# Procedure: guiPDsaveSolidModel
-proc guiPDsaveSolidModel {} {
-  global gOptions
-  set gOptions(meshing_solid_kernel) PolyData
-
-  smasherGUIwriteModel
-}
-
-# Procedure: guiPDupdateSolidModel
-proc guiPDupdateSolidModel {} {
-  global gui3Dvars
-  global guiPDvars
-  global smasherInputName
-  global gPolyDataFaceNames
-  global gRen3d
-  global gOptions
-  global gObjects
-
-  set obj /tmp/update/solid
-  catch {repos_delete -obj $obj}
-
-  if {$guiPDvars(updatedSolid) == 1} {
-     $smasherInputName GetPolyData -result $obj
-  } else {
-     set obj $gui3Dvars(polydata_change_obj)
-  }
-
-  $smasherInputName SetVtkPolyData -obj $obj
-  set gObjects(polydata_solid) $smasherInputName
-
-  set guiPDvars(updatedSolid) 1
-
-  set faceids [$smasherInputName GetFaceIds]
-  if {[llength $faceids] == 0} {
-    catch {unset gPolyDataFaceNames}
-  }
-
-  crd_ren gRenWin_3D_ren1
-  if {[array size gPolyDataFaceNames] != 0} {
-    smasherGUIupdateViewWindow
-  } else {
-    gui3DvisSmooth no
-  }
-  vis_renReset $gRen3d
-  vis_render $gRen3d
-}
-
-# Procedure: guiPDrestoreSolidModel
-proc guiPDrestoreSolidModel {} {
-  global gui3Dvars
-  global guiPDvars
-  global smasherInputName
-  global gPolyDataFaceNames
-  global gRen3d
-  global gObjects
-
-  set obj $gui3Dvars(polydata_change_obj)
-
-  set guiPDvars(updatedSolid) 1
-
-  set faceids [$smasherInputName GetFaceIds]
-  if {[llength $faceids] == 0} {
-    catch {unset gPolyDataFaceNames}
-  }
-
-  crd_ren gRenWin_3D_ren1
-  if {[array size gPolyDataFaceNames] != 0} {
-    smasherGUIupdateViewWindow
-  } else {
-    catch {repos_delete -obj $obj}
-    $smasherInputName GetPolyData -result $obj
-    set gui3Dvars(polydata_change_obj) $obj
-    set gObjects(polydata_solid) $smasherInputName
-    gui3DvisSmooth no
-  }
-  vis_renReset $gRen3d
-  vis_render $gRen3d
-}
-
-# Procedure: guiBOUNDARIESremeshSurfaces
-proc guiBOUNDARIESremeshSurfaces { sizeName} {
-  global gOptions
-  global guiPDvars
-  global gPolyDataFaceNames
-  global smasherInputName
-  set gOptions(meshing_solid_kernel) PolyData
-    
-  set yesno [tk_messageBox -default yes  -message "Select remesh size before running remesh. Continue?"  -title "Set Mesh Size"  -type yesno]
-
-  if {$smasherInputName == "none"} {
-    tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load the solid and extract the boundaries before remeshing faces"
-    return
-  }
-  if {$yesno == yes} {
-    set all_names [return_pd_region_names]
-      set run [::swaplist::swaplist .guiCV.select_boundary_groups guiPDvars(selected_groups) [lsort -dictionary [return_pd_region_names]] $guiPDvars(selected_groups)]
-
-    if {$run == 1} {
-      PolyDataRemeshSurfaces $sizeName
-    }
-  }
-  set guiPDvars(updatedSolid) 1
-}
-
-# Procedure: guiBOUNDARIESselectCombineFace
-proc guiBOUNDARIESselectCombineFace {} {
-  global gOptions
-  global guiPDvars
-  global gPolyDataFaceNames
-  global smasherInputName
-  set gOptions(meshing_solid_kernel) PolyData
-
-  if {$smasherInputName == "none"} {
-    tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load the solid and extract the boundaries before combining faces"
-    return
-  }
-  set all_names [return_pd_region_names]
-    set run [::swaplist::swaplist .guiCV.select_boundary_groups guiPDvars(selected_groups) [lsort -dictionary [return_pd_region_names]] $guiPDvars(selected_groups)]
-
-  if {$run == 1} {
-    PolyDataCombine
-  }
-  set guiPDvars(updatedSolid) 1
-}
 
 # Procedure: guiBOUNDARIESfillWithIds
 proc guiBOUNDARIESfillWithIds {} {
@@ -28644,6 +28659,54 @@ proc guiBOUNDARIESfillWithIds {} {
 
   crd_ren gRenWin_3D_ren1
   smasherGUIupdateViewWindow
+  set guiPDvars(updatedSolid) 1
+}
+
+
+# Procedure: guiBOUNDARIESremeshSurfaces
+proc guiBOUNDARIESremeshSurfaces { sizeName} {
+  global gOptions
+  global guiPDvars
+  global gPolyDataFaceNames
+  global smasherInputName
+  set gOptions(meshing_solid_kernel) PolyData
+    
+  set yesno [tk_messageBox -default yes  -message "Select remesh size before running remesh. Continue?"  -title "Set Mesh Size"  -type yesno]
+
+  if {$smasherInputName == "none"} {
+    tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load the solid and extract the boundaries before remeshing faces"
+    return
+  }
+  if {$yesno == yes} {
+    set all_names [return_pd_region_names]
+      set run [::swaplist::swaplist .guiCV.select_boundary_groups guiPDvars(selected_groups) [lsort -dictionary [return_pd_region_names]] $guiPDvars(selected_groups)]
+
+    if {$run == 1} {
+      PolyDataRemeshSurfaces $sizeName
+    }
+  }
+  set guiPDvars(updatedSolid) 1
+}
+
+
+# Procedure: guiBOUNDARIESselectCombineFace
+proc guiBOUNDARIESselectCombineFace {} {
+  global gOptions
+  global guiPDvars
+  global gPolyDataFaceNames
+  global smasherInputName
+  set gOptions(meshing_solid_kernel) PolyData
+
+  if {$smasherInputName == "none"} {
+    tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load the solid and extract the boundaries before combining faces"
+    return
+  }
+  set all_names [return_pd_region_names]
+    set run [::swaplist::swaplist .guiCV.select_boundary_groups guiPDvars(selected_groups) [lsort -dictionary [return_pd_region_names]] $guiPDvars(selected_groups)]
+
+  if {$run == 1} {
+    PolyDataCombine
+  }
   set guiPDvars(updatedSolid) 1
 }
 
@@ -29054,22 +29117,6 @@ if {$guiCVvars($widget)} {
 }
 }
 
-# Procedure: guiCV_swapframes
-proc guiCV_swapframes {frame1 frame2} {
-global guiCVvars
-
-if {![info exists guiCVvars($frame2\_pack_info)]} {
-   set guiCVvars($frame2\_pack_info) "-fill both"
-  }
-
-pack forget $frame1
-
-#todo: more opts, check that frame2 exists
-array set opts $guiCVvars($frame2\_pack_info)
-pack configure $frame2 -fill $opts(-fill)
-
-
-}
 
 # Procedure: guiCV_squeezer_labelframe
 proc guiCV_squeezer_labelframe { frame widget} {
@@ -29115,6 +29162,22 @@ proc guiCV_squeezer_labelframe { frame widget} {
     } 
     $widget configure -text "$orgtext \[\+\]" 
   }
+}
+
+
+# Procedure: guiCV_swapframes
+proc guiCV_swapframes { frame1 frame2} {
+global guiCVvars
+
+if {![info exists guiCVvars($frame2\_pack_info)]} {
+   set guiCVvars($frame2\_pack_info) "-fill both"
+  }
+
+pack forget $frame1
+
+#todo: more opts, check that frame2 exists
+array set opts $guiCVvars($frame2\_pack_info)
+pack configure $frame2 -fill $opts(-fill)
 }
 
 
@@ -29232,6 +29295,65 @@ proc guiDELETEvis {} {
     vwait waitvar
     guiMMloadPolyData $solid
   }
+}
+
+
+# Procedure: guiDICOM_select_original_dicom_dir
+proc guiDICOM_select_original_dicom_dir {} {
+
+  global guiDICOMvars
+
+  set dir [tk_chooseDirectory -mustexist 1 -title "Select Original DICOM Data Directory" -initialdir [pwd]]
+
+  if {$dir == ""} return
+
+  if {![file isdirectory $dir]} {
+     return -code error "ERROR:  ($dir) is not a directory!"
+  }
+ 
+  set guiDICOMvars(original_dicom_dir) $dir
+
+  set guiDICOMvars(original_dicom_files) {}
+
+  if {$guiDICOMvars(recursive_dir_search)} {
+    set files [file_find $dir *]
+  } else {
+    set files [glob [file join $dir *]]
+  }
+
+  set just_files {}
+  foreach i [file_find $dir *] {
+      if  {[file isdirectory $i]} continue
+        lappend just_files $i
+  }
+
+  set guiDICOMvars(original_dicom_files) [lsort -dictionary $just_files]
+}
+
+
+# Procedure: guiDICOM_select_output_sorted_dicom_dir
+proc guiDICOM_select_output_sorted_dicom_dir {} {
+
+  global guiDICOMvars
+
+  set dir [tk_chooseDirectory -mustexist 0 -title "Select Original DICOM Data Directory" -initialdir [pwd]]
+
+  if {$dir == ""} return
+
+  set guiDICOMvars(output_sorted_dicom_dir) $dir
+
+#  if {[file isdirectory $dir]} {
+#     return -code error "ERROR:  ($dir) must not exist!"
+#  }
+
+}
+
+
+# Procedure: guiDICOMsortFiles
+proc guiDICOMsortFiles {} {
+  global guiDICOMvars
+  cd $guiDICOMvars(output_sorted_dicom_dir)
+  dicom_sortFiles $guiDICOMvars(original_dicom_files)
 }
 
 
@@ -30758,20 +30880,6 @@ proc guiMMlaunchInternal {} {
    }
 }
 
-proc guiMMprintMeshStats {} {
-
-  global gObjects
-
-  puts "Printing Mesh Statistics"
-  set meshstats [$gObjects(mesh_object) Print]
-  set messagetext "Meshing Done.  Statistics:\n\n"
-  foreach i $meshstats {
-    set messagetext "$messagetext\n[format "%-20s\t%-15i" [lindex $i 0] [lindex $i 1]]"
-  }
-  tk_messageBox -message $messagetext -title "Mesh Statistics" -icon info -type ok
-
-}
-
 
 # Procedure: guiMMloadPolyData
 proc guiMMloadPolyData { object} {
@@ -30896,6 +31004,21 @@ proc guiMMmodelSaveModel {} {
   }
 
   $modelname WriteNative -file [file rootname $filename]
+}
+
+
+# Procedure: guiMMprintMeshStats
+proc guiMMprintMeshStats {} {
+
+  global gObjects
+
+  puts "Printing Mesh Statistics"
+  set meshstats [$gObjects(mesh_object) Print]
+  set messagetext "Meshing Done.  Statistics:\n\n"
+  foreach i $meshstats {
+    set messagetext "$messagetext\n[format "%-20s\t%-15i" [lindex $i 0] [lindex $i 1]]"
+  }
+  tk_messageBox -message $messagetext -title "Mesh Statistics" -icon info -type ok
 }
 
 
@@ -31551,6 +31674,62 @@ proc guiMMwriteSpectrumSolver {} {
 }
 
 
+# Procedure: guiPDloadSolidModel
+proc guiPDloadSolidModel { fn} {
+  global gOptions
+  global gRen3d
+  global gui3Dvars
+  global smasherInputName
+  global gObjects
+
+  set gOptions(meshing_solid_kernel) PolyData
+
+  smasherGUIreadModel
+
+  set obj /tmp/load/polydata
+  catch {repos_delete -obj $obj}
+  $smasherInputName GetPolyData -result $obj
+  set gObjects(polydata_solid) $smasherInputName
+  set gui3Dvars(polydata_change_obj) $obj
+
+  vis_renReset $gRen3d
+  vis_render $gRen3d
+}
+
+
+# Procedure: guiPDrestoreSolidModel
+proc guiPDrestoreSolidModel {} {
+  global gui3Dvars
+  global guiPDvars
+  global smasherInputName
+  global gPolyDataFaceNames
+  global gRen3d
+  global gObjects
+
+  set obj $gui3Dvars(polydata_change_obj)
+
+  set guiPDvars(updatedSolid) 1
+
+  set faceids [$smasherInputName GetFaceIds]
+  if {[llength $faceids] == 0} {
+    catch {unset gPolyDataFaceNames}
+  }
+
+  crd_ren gRenWin_3D_ren1
+  if {[array size gPolyDataFaceNames] != 0} {
+    smasherGUIupdateViewWindow
+  } else {
+    catch {repos_delete -obj $obj}
+    $smasherInputName GetPolyData -result $obj
+    set gui3Dvars(polydata_change_obj) $obj
+    set gObjects(polydata_solid) $smasherInputName
+    gui3DvisSmooth no
+  }
+  vis_renReset $gRen3d
+  vis_render $gRen3d
+}
+
+
 # Procedure: guiPDsaveCenterlines
 proc guiPDsaveCenterlines {} {
 
@@ -31573,6 +31752,15 @@ proc guiPDsaveCenterlines {} {
 }
 
 
+# Procedure: guiPDsaveSolidModel
+proc guiPDsaveSolidModel {} {
+  global gOptions
+  set gOptions(meshing_solid_kernel) PolyData
+
+  smasherGUIwriteModel
+}
+
+
 # Procedure: guiPDsaveVoronoi
 proc guiPDsaveVoronoi {} {
 
@@ -31592,6 +31780,46 @@ proc guiPDsaveVoronoi {} {
   }
 
   repos_writeXMLPolyData $voronoipd $fn
+}
+
+
+# Procedure: guiPDupdateSolidModel
+proc guiPDupdateSolidModel {} {
+  global gui3Dvars
+  global guiPDvars
+  global smasherInputName
+  global gPolyDataFaceNames
+  global gRen3d
+  global gOptions
+  global gObjects
+
+  set obj /tmp/update/solid
+  catch {repos_delete -obj $obj}
+
+  if {$guiPDvars(updatedSolid) == 1} {
+     $smasherInputName GetPolyData -result $obj
+  } else {
+     set obj $gui3Dvars(polydata_change_obj)
+  }
+
+  $smasherInputName SetVtkPolyData -obj $obj
+  set gObjects(polydata_solid) $smasherInputName
+
+  set guiPDvars(updatedSolid) 1
+
+  set faceids [$smasherInputName GetFaceIds]
+  if {[llength $faceids] == 0} {
+    catch {unset gPolyDataFaceNames}
+  }
+
+  crd_ren gRenWin_3D_ren1
+  if {[array size gPolyDataFaceNames] != 0} {
+    smasherGUIupdateViewWindow
+  } else {
+    gui3DvisSmooth no
+  }
+  vis_renReset $gRen3d
+  vis_render $gRen3d
 }
 
 
@@ -31776,15 +32004,6 @@ proc guiPOSTcalcFlowsFromVTK {} {
   vtx_TemporalFlowThruFaces $vtkFileName $mesh_surface_vtk_filenames $skipWalls $sim_units $outFlowFileName $outPressureFileName $outAveragesFileName $outAveragesUnitsFileName
 }
 
-# Procedure: guiPOSTselectMeshFaceFile
-proc guiPOSTselectMeshFaceFile {} {
-  global guiPOSTvars
-  set filename [tk_getOpenFile -filetypes {{{vtkPolyData file} {.vtk .VTK .vtp .VTP}} {{all files} *} } -title "Select Wall File"]
-  if {$filename != ""} {
-    set guiPOSTvars(meshFaceFile) $filename
-  }
-  return
-}
 
 # Procedure: guiPOSTconvertFilesToVTK
 proc guiPOSTconvertFilesToVTK {} {
@@ -32022,6 +32241,17 @@ proc guiPOSTselectMeshCompleteDir {} {
 
   if {$curdir == ""} return
   set gFilenames(complete_mesh_dir) $curdir
+}
+
+
+# Procedure: guiPOSTselectMeshFaceFile
+proc guiPOSTselectMeshFaceFile {} {
+  global guiPOSTvars
+  set filename [tk_getOpenFile -filetypes {{{vtkPolyData file} {.vtk .VTK .vtp .VTP}} {{all files} *} } -title "Select Wall File"]
+  if {$filename != ""} {
+    set guiPOSTvars(meshFaceFile) $filename
+  }
+  return
 }
 
 
@@ -34904,8 +35134,7 @@ proc guiPPsmoothSmoothPath {} {
   }
 
   if { [string trim $targetID] == "" } {
-    set answer [tk_messageBox -title "No New ID Specified" \
-    -type yesno -message "You did not specify a new Path ID. Do you wish to overwrite the Path ID: $pathId? This cannot be undone."]
+    set answer [tk_messageBox -title "No New ID Specified"  -type yesno -message "You did not specify a new Path ID. Do you wish to overwrite the Path ID: $pathId? This cannot be undone."]
   }
 
   switch -- $answer {
@@ -36855,6 +37084,25 @@ proc guiSVMSGshow { msg} {
   $tbox insert end $msg
 }
 
+
+# Procedure: guiSV_copy_selected_members
+proc guiSV_copy_selected_members {} {
+  global symbolicName
+  set segs [guiSV_group_get_tree_current_members_selected]
+  foreach seg $segs {
+    set id [lindex $seg 1]
+    set grp [lindex $seg 0]
+    puts "id: $id grp: $grp"
+
+    if {![string is integer "$id"]} { puts "$grp $id not a contour" 
+    } else {
+      set obj /group/$grp/$id
+      #puts "is contour $grp $id"
+    }
+  }
+}
+
+
 # Procedure: guiSV_delete_selected_members
 proc guiSV_delete_selected_members {} {
  global symbolicName
@@ -36895,6 +37143,88 @@ if {$guiSVvars(file_squeeze_vol_opt)} {
 } {
   pack forget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4
 }
+}
+
+
+# Procedure: guiSV_group_change_selected_color
+proc guiSV_group_change_selected_color {} {
+
+  global gRen3d
+  global guiGROUPSvars
+  global symbolicName
+  global gRen3d
+
+  set tv $symbolicName(guiSV_group_tree)
+
+  set color [tk_chooseColor]
+  if {$color == ""} return
+  set r [expr (0x[string range $color 1 2])/255.0]
+  set g [expr (0x[string range $color 3 4])/255.0]
+  set b [expr (0x[string range $color 5 6])/255.0]
+  set color "$r $g $b"
+
+  set selected [guiSV_group_get_tree_current_groups_selected]
+  if {$selected == ""} return
+
+  foreach grp $selected {
+    set grpcolor groups_get_color
+    foreach member [group_get $grp] {
+      catch {repos_clearLabel -obj $member -key color}
+      repos_setLabel -obj $member -key color -value $color
+      group_set_color $grp $color
+       #gdscGeneralView $gRen3d $member
+      }
+    set groupShow [lindex [$tv item .groups.all.$grp -values] 2]
+    if {$groupShow == "X"} { 
+      guiSV_group_display_selected_groups 1
+    }
+  }
+}
+
+
+# Procedure: guiSV_group_copy_members
+proc guiSV_group_copy_members {} {
+
+  global guiSVvars
+  set name $guiSVvars(groups_entry_group_name)
+
+  set segs [guiSV_group_get_tree_current_members_selected]
+  if {$segs == ""} {
+    catch {DestroyWindow.svGroupWindow}
+    return
+  }
+  set need_group [group_exists $name]
+  if {![group_exists $name]} {
+    set yesno [tk_messageBox -default no -message "Group $name does not exist. Would you like to create it?" -title "Create Group"  -type yesno]
+    switch -- $yesno {
+      yes {}
+      no {
+          catch {DestroyWindow.svGroupWindow}
+          return
+      }
+    }
+  }
+
+  if {[group_create $name] != "0"} {puts "group created $name"}
+  
+  foreach seg $segs {
+    set id [lindex $seg 1]
+    set grp [lindex $seg 0]
+
+    set newobjname /group/$name/$id
+    set oldobjname /group/$grp/$id
+
+    group_copy_member $oldobjname $grp $name
+    }
+
+  guiSV_group_update_tree
+  global symbolicName
+  set tv $symbolicName(guiSV_group_tree)
+  $tv see .groups.all.$name
+  $tv selection set .groups.all.$name
+  lsGUIloftGroup $name
+  guiSV_solid_display_selected_groups 1
+  catch {DestroyWindow.svGroupWindow}
 }
 
 
@@ -36981,6 +37311,7 @@ proc guiSV_group_deselect_groups_for_lofting {} {
   }
 }
 
+
 # Procedure: guiSV_group_display_selected_groups
 proc guiSV_group_display_selected_groups { showFlag} {
   global gRen3d
@@ -37017,39 +37348,32 @@ proc guiSV_group_display_selected_groups { showFlag} {
 }
 
 
-proc guiSV_group_change_selected_color {} {
+# Procedure: guiSV_group_duplicate_group
+proc guiSV_group_duplicate_group {} {
 
-  global gRen3d
-  global guiGROUPSvars
-  global symbolicName
-  global gRen3d
+  global lsGUIcurrentGroup
+  set name $lsGUIcurrentGroup
 
-  set tv $symbolicName(guiSV_group_tree)
+  global guiSVvars
+  set newname $guiSVvars(groups_entry_group_name)
 
-  set color [tk_chooseColor]
-  if {$color == ""} return
-  set r [expr (0x[string range $color 1 2])/255.0]
-  set g [expr (0x[string range $color 3 4])/255.0]
-  set b [expr (0x[string range $color 5 6])/255.0]
-  set color "$r $g $b"
+  group_create $newname
 
-  set selected [guiSV_group_get_tree_current_groups_selected]
-  if {$selected == ""} return
-
-  foreach grp $selected {
-    set grpcolor groups_get_color
-    foreach member [group_get $grp] {
-      catch {repos_clearLabel -obj $member -key color}
-      repos_setLabel -obj $member -key color -value $color
-      group_set_color $grp $color
-       #gdscGeneralView $gRen3d $member
-      }
-    set groupShow [lindex [$tv item .groups.all.$grp -values] 2]
-    if {$groupShow == "X"} { 
-      guiSV_group_display_selected_groups 1
+  set items [group_get $name]
+  foreach i $items {
+    
+        group_copy_member $i $name $newname
     }
-  }
+
+  guiSV_group_update_tree
+  global symbolicName
+  set tv $symbolicName(guiSV_group_tree)
+  $tv see .groups.all.$newname
+  $tv selection set .groups.all.$newname
+
+  DestroyWindow.svGroupWindow
 }
+
 
 # Procedure: guiSV_group_fillTree
 proc guiSV_group_fillTree { args} {
@@ -37074,30 +37398,6 @@ proc guiSV_group_get_tree_current_groups_selected {} {
   foreach i $children {
     if [regexp .groups.all. $i] {
       set selected([lindex [split [string range $i 12 end] .] 0]) 1
-    } 
-  }
-  set allselected [lsort -dictionary [array names selected]]
-  puts "selected $allselected"
-  return $allselected
-}
-
-# Procedure: guiSV_group_get_tree_current_groups_selected
-proc guiSV_group_get_tree_current_surfaces_selected {} {
-
-  global symbolicName
-
-  set tv $symbolicName(guiSV_group_tree)
-  set children [$tv select]
-
-  if {[lsearch -exact $children .groups.3d] >= 0} {
-    set children [$tv children .groups.3d]
-    if {$children == ""} {
-       return
-    }
-  }
-  foreach i $children {
-    if [regexp .groups.3d. $i] {
-      set selected([lindex [split [string range $i 11 end] .] 0]) 1
     } 
   }
   set allselected [lsort -dictionary [array names selected]]
@@ -37140,6 +37440,31 @@ proc guiSV_group_get_tree_current_members_selected {} {
 }
 
 
+# Procedure: guiSV_group_get_tree_current_surfaces_selected
+proc guiSV_group_get_tree_current_surfaces_selected {} {
+
+  global symbolicName
+
+  set tv $symbolicName(guiSV_group_tree)
+  set children [$tv select]
+
+  if {[lsearch -exact $children .groups.3d] >= 0} {
+    set children [$tv children .groups.3d]
+    if {$children == ""} {
+       return
+    }
+  }
+  foreach i $children {
+    if [regexp .groups.3d. $i] {
+      set selected([lindex [split [string range $i 11 end] .] 0]) 1
+    } 
+  }
+  set allselected [lsort -dictionary [array names selected]]
+  puts "selected $allselected"
+  return $allselected
+}
+
+
 # Procedure: guiSV_group_load_groups
 proc guiSV_group_load_groups {} {
 
@@ -37158,6 +37483,49 @@ proc guiSV_group_load_groups {} {
 
   # update displayed group tree
   guiSV_group_update_tree
+}
+
+
+# Procedure: guiSV_group_make_isosurface_3D_surface
+proc guiSV_group_make_isosurface_3D_surface {} {
+  global symbolicName
+  global gKernel
+  global gOptions
+  global gSeg3D
+  global gui3Dvars
+
+  set tv $symbolicName(guiSV_group_tree)
+  set contourpd $gui3Dvars(smoothIsosurface)
+  set objName Isosurface_$gui3Dvars(min_thr_value)
+  catch {repos_delete -obj $objName}
+  if {[repos_exists -obj $contourpd] == 0} {
+    return -code error "ERROR: Show isosurface to convert 3D Surface"
+  }
+  geom_copy -src $contourpd -dst $objName
+  if {[seg3d_add $objName $objName] !=0} {
+
+    set yesno [tk_messageBox -default no   -message "Do you want to replace $objName? with this surface? This cannot be undone."  -title "Confirm overwrite surface"  -type yesno]
+    switch -- $yesno {
+      yes {
+	puts "forcing"
+	seg3d_addForce $objName $objName
+      }
+      no {
+       return
+      }
+    }
+
+  }
+  repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
+  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
+  guiSV_group_update_tree
+  DestroyWindow.svSaveSegWindow
+  guiSV_model_display_selected_full_model 0
+
+  $tv see .groups.3d.$objName
+  $tv selection set .groups.3d.$objName
+  guiSV_solid_display_selected_groups 1
+  set guiVars(show_isosurface) 0
 }
 
 
@@ -37202,134 +37570,6 @@ proc guiSV_group_rename_group {} {
   $tv see .groups.all.$newname
   $tv selection set .groups.all.$newname
   DestroyWindow.svGroupWindow
-
-}
-
-# Procedure: guiSV_group_duplicate_group
-proc guiSV_group_duplicate_group {} {
-
-  global lsGUIcurrentGroup
-  set name $lsGUIcurrentGroup
-
-  global guiSVvars
-  set newname $guiSVvars(groups_entry_group_name)
-
-  group_create $newname
-
-  set items [group_get $name]
-  foreach i $items {
-    
-        group_copy_member $i $name $newname
-    }
-
-  guiSV_group_update_tree
-  global symbolicName
-  set tv $symbolicName(guiSV_group_tree)
-  $tv see .groups.all.$newname
-  $tv selection set .groups.all.$newname
-
-  DestroyWindow.svGroupWindow
-
-}
-
-
-# Procedure: guiSV_group_rename_seg3d
-proc guiSV_seg3d_rename_seg {} {
-
-  global guiSVvars
-  global gui3Dvars
-  global gSeg3D
-  set newname $guiSVvars(groups_entry_seg3d_name)
-  set name [lindex [guiSV_group_get_tree_current_surfaces_selected] 0]
-
-  if {$name == ""} return
-  if {$newname == ""} return
-  set segPd $gSeg3D($name)
-
-  if {[seg3d_add $newname $segPd] !=0} {
-
-    set yesno [tk_messageBox -default no  \
-    -message "Do you want to replace $newname with this surface? This cannot be undone." \
-    -title "Confirm overwrite surface"  -type yesno]
-    switch -- $yesno {
-      yes {
-        puts "forcing"
-        seg3d_addForce $newname $segPd
-      }
-      no {
-       return
-     }
-   }
-
-  }
-
-  seg3d_delete $name
-  global gRen3d
-  if {[vis_pExists $gRen3d $segPd]} {
-           vis_pRm $gRen3d $segPd
-         }
-  
-
-  set objName $gSeg3D($newname)
-  guiSV_group_update_tree
-
-  DestroyWindow.svSaveSegWindow
-  
-  guiSV_group_update_tree
-  global symbolicName
-  set tv $symbolicName(guiSV_group_tree)
-  $tv see .groups.3d.$newname
-  $tv selection set .groups.3d.$newname
-  DestroyWindow.svSaveSegWindow
-
-}
-
-# Procedure: guiSV_seg3d_duplicate_seg
-proc guiSV_seg3d_duplicate_seg {} {
-
-    global guiSVvars
-  global gui3Dvars
-  global gSeg3D
-  set newname $guiSVvars(groups_entry_seg3d_name)
-  set name [lindex [guiSV_group_get_tree_current_surfaces_selected] 0]
-
-  if {$name == ""} return
-  if {$newname == ""} return
-  set segPd $gSeg3D($name)
-
-  if {[seg3d_add $newname $segPd] !=0} {
-    set yesno [tk_messageBox -default no  \
-    -message "Do you want to replace $newname with this surface? This cannot be undone." \
-    -title "Confirm overwrite surface"  -type yesno]
-    switch -- $yesno {
-      yes {
-        puts "forcing"
-        seg3d_addForce $newname $segPd
-      }
-      no {
-       return
-     }
-   }
-
-  }
-  global gRen3d
-  if {[vis_pExists $gRen3d $segPd]} {
-           vis_pRm $gRen3d $segPd
-         }
-  
-
-  set objName $gSeg3D($newname)
-  guiSV_group_update_tree
-
-  DestroyWindow.svSaveSegWindow
-  
-  guiSV_group_update_tree
-  global symbolicName
-  set tv $symbolicName(guiSV_group_tree)
-  $tv see .groups.3d.$newname
-  $tv selection set .groups.3d.$newname
-  DestroyWindow.svSaveSegWindow
-
 }
 
 
@@ -37405,79 +37645,6 @@ proc guiSV_group_selectTree { args} {
   }
 }
 
-# Procedure: guiSV_group_new_group
-proc guiSV_seg3d_new_seg {} {
-  global guiSVvars
-  global gui3Dvars
-  global gSeg3D
-  set name $guiSVvars(groups_entry_seg3d_name)
-
-  set inPd $gui3Dvars(ls_finalSegmentation)
-  catch {normals Delete}
-  vtkPolyDataNormals normals
-  normals SetInputData [repos_exportToVtk -src $inPd]
-  normals FlipNormalsOn
-  normals Update
-  catch {cleaner Delete}
-  vtkCleanPolyData cleaner
-  cleaner ConvertPolysToLinesOff
-  cleaner PointMergingOff
-  cleaner ConvertLinesToPointsOff
-  cleaner SetInputDataObject [normals GetOutput]
-  cleaner Update
-
-  set segPd $inPd/fliped
-  set tmpPd $inPd/tmp
-  catch {repos_delete -obj $segPd}
-  catch {repos_delete -obj $tmpPd}
-  repos_importVtkPd -src [cleaner GetOutput] -dst $tmpPd
-  
-
-  geom_smooth $tmpPd .01 50 $segPd
-
-  catch {cleaner Delete}
-  catch {normals Delete}
-  if {$name == ""} return
-
-  if {[seg3d_add $name $segPd] !=0} {
-
-    set yesno [tk_messageBox -default no  \
-    -message "Do you want to replace $name? with this surface? This cannot be undone." \
-    -title "Confirm overwrite surface"  -type yesno]
-    switch -- $yesno {
-      yes {
-        puts "forcing"
-        seg3d_addForce $name $segPd
-      }
-      no {
-       return
-     }
-   }
-
-  }
-
-  set objName $gSeg3D($name)
-  global gOptions
-  repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
-  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
-
-  guiSV_group_update_tree
-  DestroyWindow.svSaveSegWindow
-  global symbolicName
-  set tv $symbolicName(guiSV_group_tree)
-
-  global gRen3d
-  if {[vis_pExists $gRen3d $gui3Dvars(ls_finalSegmentation)]} {
-           vis_pRm $gRen3d $gui3Dvars(ls_finalSegmentation)
-         }
-
-  set tv $symbolicName(guiSV_group_tree)
-  $tv see .groups.3d.$name
-  $tv selection set .groups.3d.$name
-  guiSV_solid_display_selected_groups 1
-
-}
-
 
 # Procedure: guiSV_group_tree_scroll
 proc guiSV_group_tree_scroll { args} {
@@ -37491,6 +37658,7 @@ proc guiSV_group_tree_update_scrollbar { args} {
   global symbolicName
   eval $symbolicName(guiSV_group_tree_scrollbar) set $args
 }
+
 
 # Procedure: guiSV_group_update_tree
 proc guiSV_group_update_tree {} {
@@ -37568,20 +37736,6 @@ proc guiSV_group_update_tree {} {
   }
 }
 
-proc force_reload_tree {{args 0}} {
-
-  global symbolicName
-  set tv $symbolicName(guiSV_group_tree)
-
-  catch {$tv delete .groups.3d}
-  catch {$tv delete .groups.all}
-  $tv insert {} 0 -id .groups.all -text "2D Group Surfaces" -open 0
-  $tv insert {} 1 -id .groups.3d -text "3D Surfaces" -open 0
-
-  guiSV_group_update_tree
-}
-
-
 
 # Procedure: guiSV_group_use_selected_groups_for_lofting
 proc guiSV_group_use_selected_groups_for_lofting {} {
@@ -37616,185 +37770,8 @@ proc guiSV_group_use_selected_groups_for_lofting {} {
 set tmp {}
 foreach element $guiBOOLEANvars(selected_seg3d) {dict set tmp $element 1}
 set guiBOOLEANvars(selected_seg3d) [dict keys $tmp]
-  
 }
 
-# Procedure: guiSV_solid_display_selected_groups
-proc guiSV_solid_display_selected_groups {showFlag} {
-  global symbolicName
-  global gRen3d
-  global gOptions
-
-  set tv $symbolicName(guiSV_group_tree)
-  set selected [guiSV_group_get_tree_current_groups_selected]
-  if {$selected != ""} {
-    foreach grp $selected {
-       set col1var "[lindex [$tv item .groups.all.$grp -values] 0]"
-       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"  
-       set col3var "[lindex [$tv item .groups.all.$grp -values] 2]" 
-       #Hard coding here! The faint hearted should look away!
-       set objName /guiGROUPS/polydatasurface/$grp
-       if {$showFlag} {
-         if {[vis_pExists $gRen3d $objName] != 1} {
-              lsGUIloftGroup $grp
-         } else {
-          gdscGeneralView $gRen3d $objName
-         }
-         $tv item .groups.all.$grp -values [list $col1var "X" $col3var]
-
-       } else { 
-         if {[vis_pExists $gRen3d $objName]} {
-           vis_pRm $gRen3d $objName
-         }
-
-         $tv item .groups.all.$grp -values [list $col1var "" $col3var]
-       }
-       vis_render $gRen3d
-    }
-  }
-  #jtm solid display
-  global gSeg3D
-  set selected [guiSV_group_get_tree_current_surfaces_selected]
-  if {$selected != ""} {
-  foreach grp $selected {
-       set col1var "[lindex [$tv item .groups.3d.$grp -values] 0]" 
-       set col2var "[lindex [$tv item .groups.3d.$grp -values] 1]"
-       set col3var "[lindex [$tv item .groups.3d.$grp -values] 2]" 
-       #Hard coding here! The faint hearted should look away!
-       set objName $gSeg3D($grp)
-       if {$showFlag} {
-        puts $objName
-        if {[vis_pExists $gRen3d $objName]} {
-           vis_pRm $gRen3d $objName
-         }
-        if {![repos_keyInUse $objName color]} {
-          repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
-        }
-        if {![repos_keyInUse $objName opacity]} {
-          repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
-        }
-
-        gdscGeneralView $gRen3d $objName 
-        $tv item .groups.3d.$grp -values [list $col1var "X" $col3var]
-
-       } else { 
-         if {[vis_pExists $gRen3d $objName]} {
-           vis_pRm $gRen3d $objName
-         }
-
-         $tv item .groups.3d.$grp -values [list $col1var "" $col3var]
-       }
-
-       vis_render $gRen3d
-    }
-  }
-}
-
-proc guiSV_solid_change_selected_opacity {opacity} {
-  global gRen3d
-  global guiGROUPSvars
-  global symbolicName
-  global gRen3d
-
-  set tv $symbolicName(guiSV_group_tree)
-  set selected [guiSV_group_get_tree_current_groups_selected]
-  if {$selected != ""} {
-    foreach grp $selected {
-      set objName /guiGROUPS/polydatasurface/$grp
-      if {[repos_exists -obj $objName]} {
-        catch {repos_clearLabel -obj $objName -key opacity}
-        repos_setLabel -obj $objName -key opacity -value "$opacity"
-        gdscGeneralView $gRen3d $objName
-      }
-    }
-  }
-
-  global gSeg3D
-  set selected [guiSV_group_get_tree_current_surfaces_selected]
-  if {$selected != ""} {
-  foreach grp $selected {
-      set objName $gSeg3D($grp)
-      if {[repos_exists -obj $objName]} {
-        catch {repos_clearLabel -obj $objName -key opacity}
-        repos_setLabel -obj $objName -key opacity -value "$opacity"
-        gdscGeneralView $gRen3d $objName
-      }
-    }
-  }
-  vis_render $gRen3d
-}
-
-proc guiSV_solid_change_selected_color {} {
-  global gRen3d
-  global guiGROUPSvars
-  global symbolicName
-  global gRen3d
-
-  set tv $symbolicName(guiSV_group_tree)
-
-  set color [tk_chooseColor]
-  if {$color == ""} return
-  set r [expr (0x[string range $color 1 2])/255.0]
-  set g [expr (0x[string range $color 3 4])/255.0]
-  set b [expr (0x[string range $color 5 6])/255.0]
-
-  set selected [guiSV_group_get_tree_current_groups_selected]
-  if {$selected != ""} {
-    foreach grp $selected {
-      set objName /guiGROUPS/polydatasurface/$grp
-      if {[repos_exists -obj $objName]} {
-          catch {repos_clearLabel -obj $objName -key color}
-          repos_setLabel -obj $objName -key color -value "$r $g $b"
-          gdscGeneralView $gRen3d $objName
-        }
-    }
-  }
-
-  global gSeg3D
-  set selected [guiSV_group_get_tree_current_surfaces_selected]
-  if {$selected != ""} {
-  foreach grp $selected {
-      set objName $gSeg3D($grp)
-      if {[repos_exists -obj $objName]} {
-        catch {repos_clearLabel -obj $objName -key color}
-        repos_setLabel -obj $objName -key color -value "$r $g $b"
-        gdscGeneralView $gRen3d $objName
-      }
-    }
-  }
-  vis_render $gRen3d
-
-  global lsGUImagWindow
-  global lsGUIpotWindow
-  if {$lsGUImagWindow(showSegSlice) == "1" || $lsGUIpotWindow(showSegSlice) == "1"} {
-    lsGUIchangeFrame 0
-  }
-}
-
-# Procedure: guiSV_solid_loft_selected
-proc guiSV_solid_loft_selected {} {
-  global gRen3d
-  global guiGROUPSvars
-  global symbolicName
-  global gRen3d
-
-  set tv $symbolicName(guiSV_group_tree)
-  set selected [guiSV_group_get_tree_current_groups_selected]
-  if {$selected != ""} {
-    foreach grp $selected {
-       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"  
-       #Hard coding here! The faint hearted should look away!
-       set objName /guiGROUPS/polydatasurface/$grp
-       lsGUIloftGroup $grp
-       if {$col2var == "X"} {
-         gdscGeneralView $gRen3d $objName
-       } else {
-         vis_pRm $gRen3d $objName
-       }
-       vis_render $gRen3d
-    }
-  }
-}
 
 # Procedure: guiSV_info_selected_members
 proc guiSV_info_selected_members {} {
@@ -37830,72 +37807,6 @@ proc guiSV_info_selected_members {} {
   }
 }
 
-proc guiSV_copy_selected_members {} {
-  global symbolicName
-  set segs [guiSV_group_get_tree_current_members_selected]
-  foreach seg $segs {
-    set id [lindex $seg 1]
-    set grp [lindex $seg 0]
-    puts "id: $id grp: $grp"
-
-    if {![string is integer "$id"]} { puts "$grp $id not a contour" 
-    } else {
-      set obj /group/$grp/$id
-      #puts "is contour $grp $id"
-    }
-  }
-}
-
-
-
-
-
-proc guiSV_group_copy_members {} {
-
-  global guiSVvars
-  set name $guiSVvars(groups_entry_group_name)
-
-  set segs [guiSV_group_get_tree_current_members_selected]
-  if {$segs == ""} {
-    catch {DestroyWindow.svGroupWindow}
-    return
-  }
-  set need_group [group_exists $name]
-  if {![group_exists $name]} {
-    set yesno [tk_messageBox -default no\
-          -message "Group $name does not exist. Would you like to create it?"\
-          -title "Create Group"  -type yesno]
-    switch -- $yesno {
-      yes {}
-      no {
-          catch {DestroyWindow.svGroupWindow}
-          return
-      }
-    }
-  }
-
-  if {[group_create $name] != "0"} {puts "group created $name"}
-  
-  foreach seg $segs {
-    set id [lindex $seg 1]
-    set grp [lindex $seg 0]
-
-    set newobjname /group/$name/$id
-    set oldobjname /group/$grp/$id
-
-    group_copy_member $oldobjname $grp $name
-    }
-
-  guiSV_group_update_tree
-  global symbolicName
-  set tv $symbolicName(guiSV_group_tree)
-  $tv see .groups.all.$name
-  $tv selection set .groups.all.$name
-  lsGUIloftGroup $name
-  guiSV_solid_display_selected_groups 1
-  catch {DestroyWindow.svGroupWindow}
-
-}
 
 # Procedure: guiSV_path_change_name
 proc guiSV_path_change_name {} {
@@ -38224,6 +38135,355 @@ proc guiSV_path_update_tree {} {
 }
 
 
+# Procedure: guiSV_seg3d_duplicate_seg
+proc guiSV_seg3d_duplicate_seg {} {
+
+    global guiSVvars
+  global gui3Dvars
+  global gSeg3D
+  set newname $guiSVvars(groups_entry_seg3d_name)
+  set name [lindex [guiSV_group_get_tree_current_surfaces_selected] 0]
+
+  if {$name == ""} return
+  if {$newname == ""} return
+  set segPd $gSeg3D($name)
+
+  if {[seg3d_add $newname $segPd] !=0} {
+    set yesno [tk_messageBox -default no   -message "Do you want to replace $newname with this surface? This cannot be undone."  -title "Confirm overwrite surface"  -type yesno]
+    switch -- $yesno {
+      yes {
+        puts "forcing"
+        seg3d_addForce $newname $segPd
+      }
+      no {
+       return
+     }
+   }
+
+  }
+  global gRen3d
+  if {[vis_pExists $gRen3d $segPd]} {
+           vis_pRm $gRen3d $segPd
+         }
+  
+
+  set objName $gSeg3D($newname)
+  guiSV_group_update_tree
+
+  DestroyWindow.svSaveSegWindow
+  
+  guiSV_group_update_tree
+  global symbolicName
+  set tv $symbolicName(guiSV_group_tree)
+  $tv see .groups.3d.$newname
+  $tv selection set .groups.3d.$newname
+  DestroyWindow.svSaveSegWindow
+}
+
+
+# Procedure: guiSV_seg3d_new_seg
+proc guiSV_seg3d_new_seg {} {
+  global guiSVvars
+  global gui3Dvars
+  global gSeg3D
+  set name $guiSVvars(groups_entry_seg3d_name)
+
+  set inPd $gui3Dvars(ls_finalSegmentation)
+  catch {normals Delete}
+  vtkPolyDataNormals normals
+  normals SetInputData [repos_exportToVtk -src $inPd]
+  normals FlipNormalsOn
+  normals Update
+  catch {cleaner Delete}
+  vtkCleanPolyData cleaner
+  cleaner ConvertPolysToLinesOff
+  cleaner PointMergingOff
+  cleaner ConvertLinesToPointsOff
+  cleaner SetInputDataObject [normals GetOutput]
+  cleaner Update
+
+  set segPd $inPd/fliped
+  set tmpPd $inPd/tmp
+  catch {repos_delete -obj $segPd}
+  catch {repos_delete -obj $tmpPd}
+  repos_importVtkPd -src [cleaner GetOutput] -dst $tmpPd
+  
+
+  geom_smooth $tmpPd .01 50 $segPd
+
+  catch {cleaner Delete}
+  catch {normals Delete}
+  if {$name == ""} return
+
+  if {[seg3d_add $name $segPd] !=0} {
+
+    set yesno [tk_messageBox -default no   -message "Do you want to replace $name? with this surface? This cannot be undone."  -title "Confirm overwrite surface"  -type yesno]
+    switch -- $yesno {
+      yes {
+        puts "forcing"
+        seg3d_addForce $name $segPd
+      }
+      no {
+       return
+     }
+   }
+
+  }
+
+  set objName $gSeg3D($name)
+  global gOptions
+  repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
+  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
+
+  guiSV_group_update_tree
+  DestroyWindow.svSaveSegWindow
+  global symbolicName
+  set tv $symbolicName(guiSV_group_tree)
+
+  global gRen3d
+  if {[vis_pExists $gRen3d $gui3Dvars(ls_finalSegmentation)]} {
+           vis_pRm $gRen3d $gui3Dvars(ls_finalSegmentation)
+         }
+
+  set tv $symbolicName(guiSV_group_tree)
+  $tv see .groups.3d.$name
+  $tv selection set .groups.3d.$name
+  guiSV_solid_display_selected_groups 1
+}
+
+
+# Procedure: guiSV_seg3d_rename_seg
+proc guiSV_seg3d_rename_seg {} {
+
+  global guiSVvars
+  global gui3Dvars
+  global gSeg3D
+  set newname $guiSVvars(groups_entry_seg3d_name)
+  set name [lindex [guiSV_group_get_tree_current_surfaces_selected] 0]
+
+  if {$name == ""} return
+  if {$newname == ""} return
+  set segPd $gSeg3D($name)
+
+  if {[seg3d_add $newname $segPd] !=0} {
+
+    set yesno [tk_messageBox -default no   -message "Do you want to replace $newname with this surface? This cannot be undone."  -title "Confirm overwrite surface"  -type yesno]
+    switch -- $yesno {
+      yes {
+        puts "forcing"
+        seg3d_addForce $newname $segPd
+      }
+      no {
+       return
+     }
+   }
+
+  }
+
+  seg3d_delete $name
+  global gRen3d
+  if {[vis_pExists $gRen3d $segPd]} {
+           vis_pRm $gRen3d $segPd
+         }
+  
+
+  set objName $gSeg3D($newname)
+  guiSV_group_update_tree
+
+  DestroyWindow.svSaveSegWindow
+  
+  guiSV_group_update_tree
+  global symbolicName
+  set tv $symbolicName(guiSV_group_tree)
+  $tv see .groups.3d.$newname
+  $tv selection set .groups.3d.$newname
+  DestroyWindow.svSaveSegWindow
+}
+
+
+# Procedure: guiSV_solid_change_selected_color
+proc guiSV_solid_change_selected_color {} {
+  global gRen3d
+  global guiGROUPSvars
+  global symbolicName
+  global gRen3d
+
+  set tv $symbolicName(guiSV_group_tree)
+
+  set color [tk_chooseColor]
+  if {$color == ""} return
+  set r [expr (0x[string range $color 1 2])/255.0]
+  set g [expr (0x[string range $color 3 4])/255.0]
+  set b [expr (0x[string range $color 5 6])/255.0]
+
+  set selected [guiSV_group_get_tree_current_groups_selected]
+  if {$selected != ""} {
+    foreach grp $selected {
+      set objName /guiGROUPS/polydatasurface/$grp
+      if {[repos_exists -obj $objName]} {
+          catch {repos_clearLabel -obj $objName -key color}
+          repos_setLabel -obj $objName -key color -value "$r $g $b"
+          gdscGeneralView $gRen3d $objName
+        }
+    }
+  }
+
+  global gSeg3D
+  set selected [guiSV_group_get_tree_current_surfaces_selected]
+  if {$selected != ""} {
+  foreach grp $selected {
+      set objName $gSeg3D($grp)
+      if {[repos_exists -obj $objName]} {
+        catch {repos_clearLabel -obj $objName -key color}
+        repos_setLabel -obj $objName -key color -value "$r $g $b"
+        gdscGeneralView $gRen3d $objName
+      }
+    }
+  }
+  vis_render $gRen3d
+
+  global lsGUImagWindow
+  global lsGUIpotWindow
+  if {$lsGUImagWindow(showSegSlice) == "1" || $lsGUIpotWindow(showSegSlice) == "1"} {
+    lsGUIchangeFrame 0
+  }
+}
+
+
+# Procedure: guiSV_solid_change_selected_opacity
+proc guiSV_solid_change_selected_opacity { opacity} {
+  global gRen3d
+  global guiGROUPSvars
+  global symbolicName
+  global gRen3d
+
+  set tv $symbolicName(guiSV_group_tree)
+  set selected [guiSV_group_get_tree_current_groups_selected]
+  if {$selected != ""} {
+    foreach grp $selected {
+      set objName /guiGROUPS/polydatasurface/$grp
+      if {[repos_exists -obj $objName]} {
+        catch {repos_clearLabel -obj $objName -key opacity}
+        repos_setLabel -obj $objName -key opacity -value "$opacity"
+        gdscGeneralView $gRen3d $objName
+      }
+    }
+  }
+
+  global gSeg3D
+  set selected [guiSV_group_get_tree_current_surfaces_selected]
+  if {$selected != ""} {
+  foreach grp $selected {
+      set objName $gSeg3D($grp)
+      if {[repos_exists -obj $objName]} {
+        catch {repos_clearLabel -obj $objName -key opacity}
+        repos_setLabel -obj $objName -key opacity -value "$opacity"
+        gdscGeneralView $gRen3d $objName
+      }
+    }
+  }
+  vis_render $gRen3d
+}
+
+
+# Procedure: guiSV_solid_display_selected_groups
+proc guiSV_solid_display_selected_groups { showFlag} {
+  global symbolicName
+  global gRen3d
+  global gOptions
+
+  set tv $symbolicName(guiSV_group_tree)
+  set selected [guiSV_group_get_tree_current_groups_selected]
+  if {$selected != ""} {
+    foreach grp $selected {
+       set col1var "[lindex [$tv item .groups.all.$grp -values] 0]"
+       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"  
+       set col3var "[lindex [$tv item .groups.all.$grp -values] 2]" 
+       #Hard coding here! The faint hearted should look away!
+       set objName /guiGROUPS/polydatasurface/$grp
+       if {$showFlag} {
+         if {[vis_pExists $gRen3d $objName] != 1} {
+              lsGUIloftGroup $grp
+         } else {
+          gdscGeneralView $gRen3d $objName
+         }
+         $tv item .groups.all.$grp -values [list $col1var "X" $col3var]
+
+       } else { 
+         if {[vis_pExists $gRen3d $objName]} {
+           vis_pRm $gRen3d $objName
+         }
+
+         $tv item .groups.all.$grp -values [list $col1var "" $col3var]
+       }
+       vis_render $gRen3d
+    }
+  }
+  #jtm solid display
+  global gSeg3D
+  set selected [guiSV_group_get_tree_current_surfaces_selected]
+  if {$selected != ""} {
+  foreach grp $selected {
+       set col1var "[lindex [$tv item .groups.3d.$grp -values] 0]" 
+       set col2var "[lindex [$tv item .groups.3d.$grp -values] 1]"
+       set col3var "[lindex [$tv item .groups.3d.$grp -values] 2]" 
+       #Hard coding here! The faint hearted should look away!
+       set objName $gSeg3D($grp)
+       if {$showFlag} {
+        puts $objName
+        if {[vis_pExists $gRen3d $objName]} {
+           vis_pRm $gRen3d $objName
+         }
+        if {![repos_keyInUse $objName color]} {
+          repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
+        }
+        if {![repos_keyInUse $objName opacity]} {
+          repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
+        }
+
+        gdscGeneralView $gRen3d $objName 
+        $tv item .groups.3d.$grp -values [list $col1var "X" $col3var]
+
+       } else { 
+         if {[vis_pExists $gRen3d $objName]} {
+           vis_pRm $gRen3d $objName
+         }
+
+         $tv item .groups.3d.$grp -values [list $col1var "" $col3var]
+       }
+
+       vis_render $gRen3d
+    }
+  }
+}
+
+
+# Procedure: guiSV_solid_loft_selected
+proc guiSV_solid_loft_selected {} {
+  global gRen3d
+  global guiGROUPSvars
+  global symbolicName
+  global gRen3d
+
+  set tv $symbolicName(guiSV_group_tree)
+  set selected [guiSV_group_get_tree_current_groups_selected]
+  if {$selected != ""} {
+    foreach grp $selected {
+       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"  
+       #Hard coding here! The faint hearted should look away!
+       set objName /guiGROUPS/polydatasurface/$grp
+       lsGUIloftGroup $grp
+       if {$col2var == "X"} {
+         gdscGeneralView $gRen3d $objName
+       } else {
+         vis_pRm $gRen3d $objName
+       }
+       vis_render $gRen3d
+    }
+  }
+}
+
+
 # Procedure: guiSetMeshKernel
 proc guiSetMeshKernel { kernel} {
   global gOptions
@@ -38342,6 +38602,42 @@ proc guiTETGEN_use_radius {} {
   }
 }
 
+
+# Procedure: guiTETGENcreateMeshMacro
+proc guiTETGENcreateMeshMacro { type} {
+
+  global guiMMvars
+  global guiTGvars
+  global symbolicName
+  set addstr {}
+
+
+  if {$type == "localSize"} {
+    global symbolicName
+    set facename ""
+    set facename [$symbolicName(smasherAttNameLabel) get]
+    if {$facename == ""} {
+       return -code error "ERROR: facename cannot be blank!"
+    }
+    set addstr "localSize $facename 0 $guiTGvars(localMeshSize)\n"
+  } elseif {$type == "boundaryLayer"} {
+    global symbolicName
+    set facename ""
+    set facename [$symbolicName(smasherAttNameLabel) get]
+    if {$facename == ""} {
+       return -code error "ERROR: facename cannot be blank!"
+    }
+    set addstr "boundaryLayer $facename $guiTGvars(numsublayers) $guiTGvars(blthicknessratio) $guiTGvars(sublayerratio)\n" 
+  } elseif {$type == "sphereRefinement"} {
+    set addstr "sphereRefinement $guiTGvars(refinementSize) $guiTGvars(sphereRadius) $guiTGvars(sphereCenter)\n"
+  } else {
+    return -code error "ERROR: invalid code ($type)."
+  }
+
+  $symbolicName(guiTETGENmeshControlAttributesTextBox) insert end $addstr
+}
+
+
 # Procedure: guiTETGENestimateMeshSize
 proc guiTETGENestimateMeshSize {} {
   global guiTGvars
@@ -38388,46 +38684,15 @@ proc guiTETGENestimateMeshSize {} {
   set guiTGvars(meshMaxEdgeSize) $edgesize
 }
 
-# Procedure: guiTETGENcreateMeshMacro
-proc guiTETGENcreateMeshMacro { type} {
 
-  global guiMMvars
-  global guiTGvars
-  global symbolicName
-  set addstr {}
-
-
-  if {$type == "localSize"} {
-    global symbolicName
-    set facename ""
-    set facename [$symbolicName(smasherAttNameLabel) get]
-    if {$facename == ""} {
-       return -code error "ERROR: facename cannot be blank!"
-    }
-    set addstr "localSize $facename 0 $guiTGvars(localMeshSize)\n"
-  } elseif {$type == "boundaryLayer"} {
-    global symbolicName
-    set facename ""
-    set facename [$symbolicName(smasherAttNameLabel) get]
-    if {$facename == ""} {
-       return -code error "ERROR: facename cannot be blank!"
-    }
-    set addstr "boundaryLayer $facename $guiTGvars(numsublayers) $guiTGvars(blthicknessratio) $guiTGvars(sublayerratio)\n" 
-  } elseif {$type == "sphereRefinement"} {
-    set addstr "sphereRefinement $guiTGvars(refinementSize) $guiTGvars(sphereRadius) $guiTGvars(sphereCenter)\n"
-  } else {
-    return -code error "ERROR: invalid code ($type)."
-  }
-
-  $symbolicName(guiTETGENmeshControlAttributesTextBox) insert end $addstr
-}
-
+# Procedure: guiTETGENselectWalls
 proc guiTETGENselectWalls {} {
   global guiTGvars
   global gPolyDataFaceNames
   set all_grps [return_pd_region_names]
     ::swaplist::swaplist .guiCV.select_wall_faces guiTGvars(wallFaces) [lsort -dictionary [return_pd_region_names]] $guiTGvars(wallFaces) -title {Select Walls} -llabel {Not Walls} -rlabel {Walls}
 }
+
 
 # Procedure: guiTMwriteTrimModel1
 proc guiTMwriteTrimModel1 {} {
@@ -38621,108 +38886,6 @@ proc guiTRIMbrowseSeg {} {
    }
   return
 }
-
-
-## Procedure: guiTRIMcreateCutBox
-#proc guiTRIMcreateCutBox { side offset vals} {
-#
-#  global gui3Dvars
-#  global guiTRIMvars
-#  global gRen3d
-#  global guiPDvars
-#  global smasherInputName
-#
-#  set obj $gui3Dvars(polydata_change_obj)
-#  set Bobj $gui3Dvars(polydata_change_backup_obj)
-#
-#  catch {repos_delete -obj $Bobj}
-#  if {$guiPDvars(updatedSolid) == 1} {
-#     if {[catch {$smasherInputName GetPolyData -result $Bobj} errmsg] != 0} {
-#      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before cutting with box"
-#      return
-#    }
-#  } else {
-#     if {[catch {geom_copy -src $obj -dst $Bobj} errmsg] != 0} {
-#      tk_messageBox -title "Load Solid Model Please"  -type ok -message "WARNING: You need to load a solid model before cutting with box"
-#      return
-#    }
-#  }
-#
-#  set clipper tmp-guiTRIM-clipper
-#  set impPlanes guiTRIMcreateCutBox-ImpPlanes
-#
-#  catch {$clipper Delete}
-#  catch {$impPlanes Delete}
-#
-#  # create the implicit cut box
-#  vtkPlanes $impPlanes
-#  $impPlanes SetBounds 0 1 0 1 0 1
-#  set pts [$impPlanes GetPoints]
-#  set nrms [$impPlanes GetNormals]
-#
-#  for {set i 0} {$i < 6} {incr i} {
-#    set pt [lrange $vals [expr 6*$i] [expr 6*$i + 2]]
-#    set nrm [lrange $vals [expr 3+6*$i] [expr 3+6*$i +2]]
-#    #puts "pt: $pt  nrm: $nrm"
-#    eval $pts SetPoint $i $pt
-#    eval $nrms SetTuple3 $i $nrm 
-#  }
-#
-#  # do the clipping
-#  #puts "Using clipper..."
-#  catch {$clipper Delete}
-#  vtkClipPolyData $clipper
-#  $clipper SetInputDataObject [repos_exportToVtk -src $Bobj]
-#  $clipper GenerateClippedOutputOn
-#  $clipper SetClipFunction $impPlanes
-#  $clipper SetValue $offset
-#  $clipper Update
-#
-#  global gRen3d
-#
-#  set ren $gRen3d
-#
-#  global gRen3dFreeze
-#  if {$gRen3dFreeze > 0} {
-#    set alreadyfrozen 1
-#  } else {
-#    set alreadyfrozen 0
-#    set gRen3dFreeze 1
-#  }
-#
-#  #if {$guiTRIMvars(vis_cut_surface) != 0} {
-#  #  vis_pRm $gRen3d $obj
-#  #}
-#
-#  set triangulator tmp-guiTRIM-triangulator
-#  catch {$triangulator Delete}
-#  vtkTriangleFilter $triangulator
-#
-#  if {$side == "inside"} {
-#    $triangulator SetInputDataObject [$clipper GetOutput]
-#  } else {
-#    $triangulator SetInputDataObject [$clipper GetClippedOutput]
-#  }
-#  $triangulator Update
-#
-#  catch {repos_delete -obj $obj}
-#  repos_importVtkPd -src [$triangulator GetOutput] -dst $obj
-#
-#  global guiTRIMvars
-#  set guiTRIMvars(num_tris) [[repos_exportToVtk -src $obj] GetNumberOfCells]
-#
-#  set guiPDvars(updatedSolid) 0
-#  guiTRIMvis vis_cut_surface
-#
-#  $triangulator Delete
-#  $clipper Delete
-#  $impPlanes Delete
-#
-#  if {$alreadyfrozen == 0} {
-#    set gRen3dFreeze 0
-#    vis_render $ren
-#  }
-#}
 
 
 # Procedure: guiTRIMcreateCutPlane
@@ -43513,6 +43676,7 @@ proc lsGUI_hand_toggle_show_cursor { widget x y} {
   }
 }
 
+
 # Procedure: lsGUIaddToGroup
 proc lsGUIaddToGroup { type} {
 
@@ -43612,6 +43776,8 @@ proc lsGUIaddToGroup { type} {
     guiSV_group_display_selected_groups 1
   }
 }
+
+
 # Procedure: lsGUIaddToGroupBatch
 proc lsGUIaddToGroupBatch { type} {
 
@@ -43635,6 +43801,7 @@ proc lsGUIaddToGroupBatch { type} {
       lsGUIaddToGroup $type
   }
 }
+
 
 # Procedure: lsGUIalignAllProfiles
 proc lsGUIalignAllProfiles {} {
@@ -44220,7 +44387,7 @@ proc lsGUIfourierSmoothBatch { choice} {
 
 
 # Procedure: lsGUIfourierSmoothSeg
-proc lsGUIfourierSmoothSeg { type {batch 0}} {
+proc lsGUIfourierSmoothSeg { type {batch "0"}} {
 
   global symbolicName
   global lsGUIcurrentPathNumber
@@ -46294,7 +46461,7 @@ proc lsGUIupdatePath {} {
 
 
 # Procedure: lsGUIupdatePositionScale
-proc lsGUIupdatePositionScale { {value 0}} {
+proc lsGUIupdatePositionScale { {value "0"}} {
 
   global symbolicName
   global lsGUIcurrentPathNumber
@@ -46398,6 +46565,7 @@ proc lsGUIupdatePotWindow {} {
 # Procedure: mainGUI
 proc mainGUI {} {
 
+    global symbolicName
     global tcl_platform
     global guiMAINvars
     if {$tcl_platform(platform) == "windows"} {
@@ -46412,7 +46580,7 @@ proc mainGUI {} {
     }
 
     ShowWindow.guiCV
-    # wm geometry .guiCV 1000x700+100+100
+    wm geometry .guiCV 1000x500+360+170
 
     guiFNMsetDefaultFilenames
     global gFilenames
@@ -47005,6 +47173,7 @@ proc smasherGUIopacity { scale} {
   vis_render $gRen3d
 }
 
+
 # Procedure: smasherGUIreadModel
 proc smasherGUIreadModel {} {
 
@@ -47091,12 +47260,6 @@ proc smasherGUIreadModel {} {
   addSmasherSolidLabel $smasherInputName
 }
 
-# Procedure: addSmasherSolidLabel
-proc addSmasherSolidLabel {name} {
-  global smasherInputName
-  puts "$name"
-  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame1.frame2.tmenubutton5.m add radiobutton  -value {"$name"}  -variable {smasherInputName}  -command {smasherGUIupdateViewWindow}  -label {"$name"}
-}
 
 # Procedure: smasherGUIsmashIt
 proc smasherGUIsmashIt {} {
@@ -47914,49 +48077,6 @@ proc volGUIupdateIsosurface { context} {
   set gui3Dvars(min_thr_value) $thresholdValue
 }
 
-proc guiSV_group_make_isosurface_3D_surface {} {
-  global symbolicName
-  global gKernel
-  global gOptions
-  global gSeg3D
-  global gui3Dvars
-
-  set tv $symbolicName(guiSV_group_tree)
-  set contourpd $gui3Dvars(smoothIsosurface)
-  set objName Isosurface_$gui3Dvars(min_thr_value)
-  catch {repos_delete -obj $objName}
-  if {[repos_exists -obj $contourpd] == 0} {
-    return -code error "ERROR: Show isosurface to convert 3D Surface"
-  }
-  geom_copy -src $contourpd -dst $objName
-  if {[seg3d_add $objName $objName] !=0} {
-
-    set yesno [tk_messageBox -default no  \
-    -message "Do you want to replace $objName? with this surface? This cannot be undone." \
-    -title "Confirm overwrite surface"  -type yesno]
-    switch -- $yesno {
-      yes {
-	puts "forcing"
-	seg3d_addForce $objName $objName
-      }
-      no {
-       return
-      }
-    }
-
-  }
-  repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
-  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
-  guiSV_group_update_tree
-  DestroyWindow.svSaveSegWindow
-  guiSV_model_display_selected_full_model 0
-
-  $tv see .groups.3d.$objName
-  $tv selection set .groups.3d.$objName
-  guiSV_solid_display_selected_groups 1
-  set guiVars(show_isosurface) 0
-}
-
 
 # Procedure: volGUIupdateIsosurfaceUserCheck
 proc volGUIupdateIsosurfaceUserCheck { context} {
@@ -48498,7 +48618,7 @@ proc wormGUIwriteMultipleFaces {} {
 
 
 # Procedure: wormGUIwritePHASTA
-proc wormGUIwritePHASTA {prompt_user_for_dir} {
+proc wormGUIwritePHASTA { prompt_user_for_dir} {
 
   global gFilenames
   global guiABC
@@ -49068,6 +49188,8 @@ set {gBC(voi_x0)} {}
 set {gBC(voi_x1)} {}
 set {gBC(voi_y0)} {}
 set {gBC(voi_y1)} {}
+global {gDetached}
+set {gDetached} {}
 global {gFilenames}
 set {gFilenames(3d_fast_seg_file)} {fast-3d.vtk}
 set {gFilenames(3d_fast_seg_params)} {fast-3d.params}
@@ -49084,12 +49206,10 @@ set {gFilenames(atdb_solid_file)} {foo-blended.xmt_txt}
 set {gFilenames(baseline_regions_dir)} {baseline_regions}
 set {gFilenames(bct_dat_file)} {bct.dat}
 set {gFilenames(bct_vtp_file)} {bct.vtp}
-set {gFilenames(numstart_file)} {numstart.dat}
 set {gFilenames(blend_file)} {foo.blends}
 set {gFilenames(blend_solid_file)} {foo-blended.xmt_txt}
 set {gFilenames(complete_mesh_dir)} {mesh-complete}
 set {gFilenames(cuts_file)} {foo.cuts}
-#set {gFilenames(error_file)} {ybar.x.0}
 set {gFilenames(groups_dir)} {groups}
 set {gFilenames(inflow_mesh_face_file)} {inflow_mesh_face.vtk}
 set {gFilenames(mapped_inlet_mesh_dir)} {inflow-mesh-face-vel}
@@ -49098,6 +49218,7 @@ set {gFilenames(mesh_faces_dir)} {mesh-surfaces}
 set {gFilenames(mesh_file)} {foo}
 set {gFilenames(mesh_out_prefix)} {foo}
 set {gFilenames(mesh_script_file)} {foo}
+set {gFilenames(numstart_file)} {numstart.dat}
 set {gFilenames(path_file)} {foo.paths}
 set {gFilenames(patient_file)} {foo.patient}
 set {gFilenames(phase_contrast_geometric)} {}
@@ -49144,7 +49265,6 @@ set {gObjects(preblend_solid)} {preblend_solid}
 set {gObjects(preop_solid)} {preop_solid}
 set {gObjects(preop_trimmed1)} {preop_trimmed1}
 set {gObjects(preop_trimmed2)} {preop_trimmed2}
-
 global {gRen3dFreeze}
 set {gRen3dFreeze} {0}
 global {gRenWin_3D_vars}
@@ -49155,7 +49275,10 @@ set {gRenWin_3D_vars(show_preop_solid)} {0}
 set {gRenWin_3D_vars(show_trimmed1_solid)} {0}
 set {gRenWin_3D_vars(show_trimmed2_solid)} {0}
 set {gRenWin_3D_vars(solid_use_LOD)} {0}
+global {gSelectDetached}
+set {gSelectDetached} {}
 global {gui3Dvars}
+set {gui3Dvars(blendSphereRadius)} {1.0}
 set {gui3Dvars(chooserAttachX)} {0}
 set {gui3Dvars(chooserAttachY)} {0}
 set {gui3Dvars(chooserAttachZ)} {0}
@@ -49172,6 +49295,8 @@ set {gui3Dvars(chooserYscale)} {1}
 set {gui3Dvars(chooserYvar)} {0}
 set {gui3Dvars(chooserZscale)} {1}
 set {gui3Dvars(chooserZvar)} {0}
+set {gui3Dvars(displayed_pds)} {}
+set {gui3Dvars(displayed_spheres)} {}
 set {gui3Dvars(fast_fmm_start_time)} {-50.0}
 set {gui3Dvars(fast_fmm_stop_time)} {5.0}
 set {gui3Dvars(fast_ls_curvature_scaling)} {2}
@@ -49186,6 +49311,13 @@ set {gui3Dvars(fast_sigmod_min_value)} {0.0}
 set {gui3Dvars(fast_vis_fmm)} {0}
 set {gui3Dvars(fast_vis_ls)} {0}
 set {gui3Dvars(loaded_seeds_file_text)} {# simvascular_seeds_file_format 1.0}
+set {gui3Dvars(localControlAttributes)} {}
+set {gui3Dvars(local_cgsmooth_constrain_factor)} {0.7}
+set {gui3Dvars(local_cgsmooth_num_iters)} {5}
+set {gui3Dvars(local_linear_subdivisions)} {1}
+set {gui3Dvars(local_quad_target)} {0.25}
+set {gui3Dvars(local_smooth_num_iters)} {100}
+set {gui3Dvars(local_smooth_relax_factor)} {0.01}
 set {gui3Dvars(ls_GoodnessStop)} {0.975}
 set {gui3Dvars(ls_GridFactor)} {2.0}
 set {gui3Dvars(ls_Klow)} {0.0}
@@ -49196,10 +49328,21 @@ set {gui3Dvars(ls_MaxSteps)} {40}
 set {gui3Dvars(ls_calcDecayConstBy)} {multiply}
 set {gui3Dvars(ls_calcPotConstBy)} {multiply}
 set {gui3Dvars(ls_checkGoodnessFrequency)} {10}
+set {gui3Dvars(ls_edge_prox_exponent)} {25}
+set {gui3Dvars(ls_edge_prox_kappa)} {15}
+set {gui3Dvars(ls_edge_prox_sigma)} {.2}
+set {gui3Dvars(ls_edge_prox_type)} {RationalPoly}
 set {gui3Dvars(ls_finalGrid)} {/gui3D/lset/final/grid}
 set {gui3Dvars(ls_finalSegmentation)} {/gui3D/lset/final/pd}
+set {gui3Dvars(ls_image_show_option)} {image}
 set {gui3Dvars(ls_init_option)} {seeds}
 set {gui3Dvars(ls_init_option_combine)} {append}
+set {gui3Dvars(ls_ls_adv)} {1}
+set {gui3Dvars(ls_ls_curv)} {0}
+set {gui3Dvars(ls_ls_iso)} {.5}
+set {gui3Dvars(ls_ls_numiter)} {1000}
+set {gui3Dvars(ls_ls_prop)} {1}
+set {gui3Dvars(ls_ls_type)} {LaplFastEdge}
 set {gui3Dvars(ls_pFactor)} {0.33}
 set {gui3Dvars(ls_potentialValueDecay)} {100}
 set {gui3Dvars(ls_potentialValuePotential)} {100}
@@ -49214,14 +49357,20 @@ set {gui3Dvars(ls_use_dense_grid)} {1}
 set {gui3Dvars(ls_volume)} {volume_image}
 set {gui3Dvars(maxSeedRadius)} {10.0}
 set {gui3Dvars(minSeedRadius)} {0.0}
+set {gui3Dvars(min_thr_value)} {0}
 set {gui3Dvars(pixelValue)} {0}
+set {gui3Dvars(polydata_change_backup_obj)} {/gui3D/changing/backup/pd}
+set {gui3Dvars(polydata_change_obj)} {/gui3D/changing/pd}
 set {gui3Dvars(radius)} {10}
+set {gui3Dvars(seed_move_type)} {free}
+set {gui3Dvars(setSphereRadius)} {1}
+set {gui3Dvars(showSphere)} {0}
+set {gui3Dvars(show_seed_default)} {0}
+set {gui3Dvars(smoothIsosurface)} {/models/pd/isosurface}
 set {gui3Dvars(smooth_backup_obj)} {/gui3D/smooth/backup/pd}
 set {gui3Dvars(smooth_butterfly_divisions)} {2}
 set {gui3Dvars(smooth_densify_divisions)} {2}
 set {gui3Dvars(smooth_obj)} {/gui3D/smooth/pd}
-set {gui3Dvars(polydata_change_obj)} {/gui3D/changing/pd}
-set {gui3Dvars(polydata_change_backup_obj)} {/gui3D/changing/backup/pd}
 set {gui3Dvars(smooth_org_segment)} {level_set}
 set {gui3Dvars(smooth_quad_target)} {0.25}
 set {gui3Dvars(smooth_smooth_num_iters)} {100}
@@ -49229,6 +49378,9 @@ set {gui3Dvars(smooth_smooth_relax_factor)} {0.01}
 set {gui3Dvars(smooth_syncsmooth_num_iters)} {40}
 set {gui3Dvars(smooth_syncsmooth_pass_band_value)} {0.01}
 set {gui3Dvars(smooth_vis_surface)} {1}
+set {gui3Dvars(sphereBounds)} {1}
+set {gui3Dvars(sphereCenter)} {0 0 0}
+set {gui3Dvars(sphereRadius)} {1}
 set {gui3Dvars(sphere_opacity)} {0.5}
 set {gui3Dvars(sphere_pd)} {}
 set {gui3Dvars(sphere_source)} {}
@@ -49236,39 +49388,6 @@ set {gui3Dvars(userMaxR)} {1.5}
 set {gui3Dvars(userMinR)} {0.0}
 set {gui3Dvars(vis_all_seeds)} {0}
 set {gui3Dvars(vis_seed_color)} {0 1 0}
-
-set {gui3Dvars(displayed_spheres)} {}
-set {gui3Dvars(displayed_pds)} {}
-set {gui3Dvars(show_seed_default)} {0}
-#jtmg3d
-set {gui3Dvars(ls_image_show_option)} {image}
-set {gui3Dvars(seed_move_type)} {free}
-set {gui3Dvars(ls_edge_prox_type)} {RationalPoly}
-set {gui3Dvars(ls_edge_prox_sigma)} {.2}
-set {gui3Dvars(ls_edge_prox_kappa)} {15}
-set {gui3Dvars(ls_edge_prox_exponent)} {25}
-set {gui3Dvars(ls_ls_type)} {LaplFastEdge}
-set {gui3Dvars(ls_ls_numiter)} {1000}
-set {gui3Dvars(ls_ls_adv)} {1}
-set {gui3Dvars(ls_ls_curv)} {0}
-set {gui3Dvars(ls_ls_prop)} {1}
-set {gui3Dvars(ls_ls_iso)} {.5}
-set {gui3Dvars(local_quad_target)} {0.25}
-set {gui3Dvars(local_smooth_num_iters)} {100}
-set {gui3Dvars(local_smooth_relax_factor)} {0.01}
-set {gui3Dvars(local_linear_subdivisions)} {1}
-set {gui3Dvars(local_quad_target)} {0.25}
-set {gui3Dvars(local_cgsmooth_num_iters)} {5}
-set {gui3Dvars(local_cgsmooth_constrain_factor)} {0.7}
-set {gui3Dvars(showSphere)} {0}
-set {gui3Dvars(setSphereRadius)} {1}
-set {gui3Dvars(sphereRadius)} {1}
-set {gui3Dvars(sphereBounds)} {1}
-set {gui3Dvars(sphereCenter)} {0 0 0}
-set {gui3Dvars(blendSphereRadius)} {1.0}
-set {gui3Dvars(localControlAttributes)} {}
-set {gui3Dvars(smoothIsosurface)} {/models/pd/isosurface}
-set {gui3Dvars(min_thr_value)} {0}
 global {guiABC}
 set {guiABC(bct_dat_file)} {bct.dat}
 set {guiABC(bct_vtp_file)} {bct.vtp}
@@ -49290,17 +49409,17 @@ set {guiABC(viscosity)} {0.004 g/(mm*s)}
 global {guiBOOLEANvars}
 set {guiBOOLEANvars(add_caps_to_vessels)} {1}
 set {guiBOOLEANvars(linear_sampling_along_length_multiplier)} {10}
+set {guiBOOLEANvars(no_inter_output)} {1}
 set {guiBOOLEANvars(num_modes_for_FFT)} {20}
 set {guiBOOLEANvars(sampling_along_length_multiplier)} {6}
 set {guiBOOLEANvars(sampling_default)} {30}
 set {guiBOOLEANvars(sampling_overrides)} {}
 set {guiBOOLEANvars(selected_groups)} {}
 set {guiBOOLEANvars(selected_seg3d)} {}
+set {guiBOOLEANvars(spline_type)} {0}
+set {guiBOOLEANvars(tolerance)} {1e-6}
 set {guiBOOLEANvars(use_FFT)} {0}
 set {guiBOOLEANvars(use_linear_sampling_along_length)} {1}
-set {guiBOOLEANvars(no_inter_output)} {1}
-set {guiBOOLEANvars(tolerance)} {1e-6}
-set {guiBOOLEANvars(spline_type)} {0}
 global {guiCVIMGvars}
 set {guiCVIMGvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4)} {0}
 set {guiCVIMGvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4)} {0}
@@ -49321,9 +49440,6 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1.tlabelframe6.tframe8)} {1}
-#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe14.tframe1.tframe0.tlabelframe2.tframe7)} {1}
-#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe14.tframe1.tframe0.tlabelframe6.tframe8)} {1}
-#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe14.tframe1.tlabelframe2.tframe7)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe16.frame1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27)} {1}
@@ -49349,14 +49465,28 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe99.frame5)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe99.frame5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe99 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40.frame5)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40.frame5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe10.frame1)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe10.frame1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe10 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11.frame1)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11.frame1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe3.frame5)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe3.frame5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe3 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.tlabelframe18.frame5)} {1}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0.tframe12)} {1}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0.tframe12_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe14.tframe4)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe14.tframe4.tlabelframe11 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
@@ -49365,12 +49495,11 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe2.tframe2_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe2 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9.tframe2)} {1}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9.tframe2_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9.tframe2)} {1}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9.tframe2_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13)} {1}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13)} {0}
@@ -49386,16 +49515,13 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tlabelframe1.tframe21)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tlabelframe1.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe1.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19.tframe21)} {1}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10.tframe21)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe10 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.frame17)} {1}
-#set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.tlabelframe3.frame17_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tlabelframe3.frame17 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19.tframe21)} {1}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19.tframe21_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe19 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe8.tframe9)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe8.tframe9_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe8 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13)} {1}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13)} {1}
@@ -49404,6 +49530,7 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe0.tframe1)} {1}
@@ -49414,38 +49541,30 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe4.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe4 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe5.tframe1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe5.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe5 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe7.tframe1)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe7.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe5 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe11.tframe1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe11.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe11 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9.tframe1)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe7.tframe1)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe7.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe5 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40.frame5)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40.frame5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe10.frame1)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe10.frame1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe10 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe3.frame5)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe3.frame5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe3 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11.frame1)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11.frame1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10_pack_info)} {-in guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1 -anchor nw -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5_pack_info)} {-in guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1 -anchor nw -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
-
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1)} {0}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
-
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframePATH_pack_info)} {-fill both}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ_pack_info)} {-fill both}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0.tframe12)} {1}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0.tframe12_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
+set {guiCVvars(.guiDICOM.tlabelframe17.frame0)} {1}
+set {guiCVvars(.guiDICOM.tlabelframe17.frame0_pack_info)} {-in .guiDICOM.tlabelframe17 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiDICOM.tlabelframe3.frame0)} {1}
+set {guiCVvars(.guiDICOM.tlabelframe3.frame0_pack_info)} {-in .guiDICOM.tlabelframe3 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiDICOM.tlabelframe7.frame0)} {1}
+set {guiCVvars(.guiDICOM.tlabelframe7.frame0_pack_info)} {-in .guiDICOM.tlabelframe7 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(show_tab_3d_fast_segment)} {1}
 set {guiCVvars(show_tab_3d_ls_segment)} {1}
 set {guiCVvars(show_tab_create_vessel_legacy_level_set)} {0}
@@ -49481,11 +49600,11 @@ set {guiCVvars(show_tab_main_paths)} {1}
 set {guiCVvars(show_tab_main_pcmri)} {0}
 set {guiCVvars(show_tab_main_simulations)} {1}
 set {guiCVvars(show_tab_main_solids)} {1}
-set {guiCVvars(show_tab_model_parasolid)} {0}
-set {guiCVvars(show_tab_model_polydata)} {1}
-set {guiCVvars(show_tab_model_discrete)} {0}
 set {guiCVvars(show_tab_meshing_meshsim)} {0}
 set {guiCVvars(show_tab_meshing_tetgen)} {1}
+set {guiCVvars(show_tab_model_discrete)} {0}
+set {guiCVvars(show_tab_model_parasolid)} {0}
+set {guiCVvars(show_tab_model_polydata)} {1}
 set {guiCVvars(show_tab_paths_quantification)} {0}
 set {guiCVvars(show_tab_simulations_vis_wss)} {0}
 set {guiCVvars(show_tabs_legacy_level_set)} {0}
@@ -49494,6 +49613,10 @@ global {guiCVwmHeight}
 set {guiCVwmHeight} {0}
 global {guiCVwmWidth}
 set {guiCVwmWidth} {0}
+global {guiDICOMvars}
+set {guiDICOMvars(original_dicom_dir)} {}
+set {guiDICOMvars(original_dicom_files)} {}
+set {guiDICOMvars(recursive_dir_search)} {1}
 global {guiFILTvars}
 set {guiFILTvars(aniso_diffusion_threshold)} {500}
 set {guiFILTvars(aniso_mag_grad_thr_flag)} {0}
@@ -49514,13 +49637,13 @@ set {guiFILTvars(volume)} {volume_image}
 global {guiGROUPSvars}
 set {guiGROUPSvars(InputGroup)} {}
 set {guiGROUPSvars(OutputGroup)} {}
+set {guiGROUPSvars(loft_segs)} {1}
 set {guiGROUPSvars(prevHighlightedDest)} {}
 set {guiGROUPSvars(prevHighlightedSrc)} {}
 set {guiGROUPSvars(show_image_slice)} {0}
 set {guiGROUPSvars(show_spline)} {0}
 set {guiGROUPSvars(show_surface)} {0}
 set {guiGROUPSvars(surface_opacity)} {1}
-set {guiGROUPSvars(loft_segs)} {1}
 global {guiMAINvars}
 set {guiMAINvars(theme)} {}
 global {guiMMvars}
@@ -49583,13 +49706,13 @@ set {guiPDvars(centerlines)} {}
 set {guiPDvars(distance)} {/tmp/polydata/distance}
 set {guiPDvars(remeshFaceSize)} {1.0}
 set {guiPDvars(selected_groups)} {}
+set {guiPDvars(updatedSolid)} {1}
+set {guiPDvars(useGTS)} {0}
 set {guiPDvars(vis_centerlines)} {0}
 set {guiPDvars(vis_full_pd)} {0}
 set {guiPDvars(vis_voronoi)} {0}
 set {guiPDvars(voronoi)} {/tmp/polydata/voronoi}
 set {guiPDvars(wall_id)} {-1}
-set {guiPDvars(useGTS)} {0}
-set {guiPDvars(updatedSolid)} {1}
 global {guiPHASTAvars}
 set {guiPHASTAvars(cmd_make_all_ebc)} {file_append [glob mesh-surfaces/*.ebc.gz] all.ebc.gz}
 set {guiPHASTAvars(cmd_make_all_nbc)} {file_append [glob mesh-surfaces/*.nbc.gz] all.nbc.gz}
@@ -49599,19 +49722,23 @@ set {guiPHASTAvars(final_time)} {1.0}
 set {guiPHASTAvars(numProcs)} {1}
 set {guiPHASTAvars(time_increment)} {0.1}
 global {guiPOSTvars}
+set {guiPOSTvars(apply_wall_deformation)} {0}
 set {guiPOSTvars(combine_results)} {0}
-set {guiPOSTvars(reduce_last_step)} {0}
 set {guiPOSTvars(displacement_flag)} {0}
 set {guiPOSTvars(in_prefix)} {foo}
 set {guiPOSTvars(increment)} {1}
 set {guiPOSTvars(input_dir)} {.}
 set {guiPOSTvars(look_for_vtp)} {1}
+set {guiPOSTvars(meshFaceFile)} {}
+set {guiPOSTvars(mu)} {}
 set {guiPOSTvars(open_inventor_flag)} {0}
 set {guiPOSTvars(out_prefix)} {foo}
 set {guiPOSTvars(output_dir)} {.}
 set {guiPOSTvars(phasta_format)} {}
 set {guiPOSTvars(polydata_flag)} {0}
 set {guiPOSTvars(pressure_flag)} {1}
+set {guiPOSTvars(recalc_wall_stress)} {0}
+set {guiPOSTvars(reduce_last_step)} {0}
 set {guiPOSTvars(restartFilesDir)} {.}
 set {guiPOSTvars(scale_factor)} {1.0}
 set {guiPOSTvars(sim_units)} {cm}
@@ -49625,16 +49752,12 @@ set {guiPOSTvars(vis_format)} {.gz}
 set {guiPOSTvars(vtkFlowFile)} {all_results.vtu}
 set {guiPOSTvars(wall_displacement_flag)} {0}
 set {guiPOSTvars(wall_displacement_real_flag)} {0}
+set {guiPOSTvars(wall_filter)} {0}
 set {guiPOSTvars(wall_nbc_file)} {}
 set {guiPOSTvars(wall_velocity_flag)} {0}
 set {guiPOSTvars(write_vtp_results)} {1}
 set {guiPOSTvars(write_vtu_results)} {1}
 set {guiPOSTvars(wss_flag)} {0}
-set {guiPOSTvars(wall_filter)} {0}
-set {guiPOSTvars(meshFaceFile)} {}
-set {guiPOSTvars(recalc_wall_stress)} {0}
-set {guiPOSTvars(apply_wall_deformation)} {0}
-set {guiPOSTvars(mu)} {}
 global {guiPPchooserAttachX}
 set {guiPPchooserAttachX} {0}
 global {guiPPchooserAttachY}
@@ -49863,8 +49986,10 @@ set {guiSELECTGROUPSvars(callbackFunction)} {}
 set {guiSELECTGROUPSvars(selectedGroup)} {}
 global {guiSVvars}
 set {guiSVvars(file_squeeze_vol_opt)} {0}
-set {guiSVvars(groups_entry_group_name)} {}
 set {guiSVvars(groups_entry_3d_name)} {}
+set {guiSVvars(groups_entry_group_name)} {}
+set {guiSVvars(last_2d_view_toggle)} {0}
+set {guiSVvars(models_entry_model_name)} {blank}
 set {guiSVvars(path_copy_point)} {}
 set {guiSVvars(path_entry_number_spline_pts)} {100}
 set {guiSVvars(path_entry_path_id)} {0}
@@ -49964,24 +50089,24 @@ set {guiSVvars(path_quantification_window_size_path2)} {0.5}
 set {guiSVvars(path_quantification_window_size_refpath)} {0.5}
 set {guiSVvars(path_quantification_window_size_twistpath)} {0.5}
 set {guiSVvars(path_squeeze)} {0}
-set {guiSVvars(models_entry_model_name)} {blank}
-set {guiSVvars(solids_entry_group_name)} {blank}
-set {guiSVvars(last_2d_view_toggle)} {0}
 set {guiSVvars(showSegSlice)} {0}
-global guiCACHED2Dvars
-
+set {guiSVvars(solids_entry_group_name)} {blank}
 global {guiTGvars}
 set {guiTGvars(blthicknessratio)} {0.5}
 set {guiTGvars(functionBasedMeshingName)} {""}
+set {guiTGvars(localMeshSize)} {1.0}
 set {guiTGvars(meshCoarsenPercent)} {1.0}
+set {guiTGvars(meshControlAttributes)} {}
 set {guiTGvars(meshMaxEdgeSize)} {1.00}
 set {guiTGvars(meshOptimization)} {3.0}
 set {guiTGvars(meshQuality)} {1.4}
 set {guiTGvars(meshTetGenOptions)} {}
 set {guiTGvars(meshTolerance)} {1e-8}
+set {guiTGvars(meshWallFirst)} {0}
 set {guiTGvars(numsublayers)} {2}
 set {guiTGvars(refinementSize)} {1.0}
 set {guiTGvars(setSphereRadius)} {1}
+set {guiTGvars(showSphere)} {0}
 set {guiTGvars(sphereBounds)} {1}
 set {guiTGvars(sphereCenter)} {0 0 0}
 set {guiTGvars(sphereRadius)} {1}
@@ -49999,12 +50124,8 @@ set {guiTGvars(useMeshTetGenOptions)} {0}
 set {guiTGvars(useMeshTolerance)} {0}
 set {guiTGvars(useNoMerging)} {0}
 set {guiTGvars(useQuiet)} {0}
-set {guiTGvars(showSphere)} {0}
 set {guiTGvars(useVerbose)} {0}
-set {guiTGvars(meshControlAttributes)} {}
-set {guiTGvars(localMeshSize)} {1.0}
 set {guiTGvars(wallFaces)} {}
-set {guiTGvars(meshWallFirst)} {0}
 global {guiTRIMvars}
 set {guiTRIMvars(area_max_value)} {1.0}
 set {guiTRIMvars(area_min_value)} {0.0}
@@ -50187,6 +50308,7 @@ set {guiWSSvars(vis_cut_surface)} {0}
 set {guiWSSvars(vis_initial_surface)} {0}
 set {guiWSSvars(vis_planeInteractor)} {0}
 global {itklsGUIParams}
+set {itklsGUIParams(GACls)} {0}
 set {itklsGUIParams(advSigma1)} {0.0}
 set {itklsGUIParams(advSigma2)} {0}
 set {itklsGUIParams(expFall)} {0.5}
@@ -50206,11 +50328,9 @@ set {itklsGUIParams(phyRadius)} {0}
 set {itklsGUIParams(recompSeed)} {1}
 set {itklsGUIParams(recompStg1)} {1}
 set {itklsGUIParams(recompStg2)} {1}
+set {itklsGUIParams(showDistanceMap)} {0}
 set {itklsGUIParams(showPot)} {Stg1}
 set {itklsGUIParams(useEdgeImage)} {0}
-set {itklsGUIParams(GACls)} {0}
-set {itklsGUIParams(showDistanceMap)} {0}
-
 global {itklsGUIParamsBatch}
 set {itklsGUIParamsBatch(addToGroup)} {0}
 set {itklsGUIParamsBatch(posList)} {begin-end by 5}
@@ -50281,11 +50401,11 @@ set {lsGUImagWindow(showInitSphere)} {0}
 set {lsGUImagWindow(showIntermediateLS)} {0}
 set {lsGUImagWindow(showLS)} {0}
 set {lsGUImagWindow(showMeshWarp)} {0}
+set {lsGUImagWindow(showSegSlice)} {0}
 set {lsGUImagWindow(showSelectedThr)} {0}
 set {lsGUImagWindow(showThr)} {0}
 set {lsGUImagWindow(showWarp)} {0}
 set {lsGUImagWindow(showWindow)} {0}
-set {lsGUImagWindow(showSegSlice)} {0}
 set {lsGUImagWindow(warpFactor)} {0.01}
 global {lsGUInumFacetsForSurface}
 set {lsGUInumFacetsForSurface} {20}
@@ -50303,11 +50423,11 @@ set {lsGUIpotWindow(ren)} {}
 set {lsGUIpotWindow(showInitSphere)} {0}
 set {lsGUIpotWindow(showIntermediateLS)} {0}
 set {lsGUIpotWindow(showLS)} {0}
+set {lsGUIpotWindow(showSegSlice)} {0}
 set {lsGUIpotWindow(showSelectedThr)} {0}
 set {lsGUIpotWindow(showThr)} {0}
 set {lsGUIpotWindow(showWarp)} {0}
 set {lsGUIpotWindow(showWindow)} {0}
-set {lsGUIpotWindow(showSegSlice)} {0}
 set {lsGUIpotWindow(warpFactor)} {0.01}
 global {lsGUIpreviousPathNumber}
 set {lsGUIpreviousPathNumber} {-1}
@@ -50343,11 +50463,6 @@ global {smasherInputName}
 set {smasherInputName} {none}
 global {smasherNumItems}
 set {smasherNumItems} {5}
-global {gDetached}
-set {gDetached} {}
-global {gSelectDetached}
-set {gSelectDetached} {}
-global CurrentRenderer
 
 # please don't modify the following
 # variables. They are needed by xf.
@@ -50366,6 +50481,8 @@ set {symbolicName(gui3DchooserYscale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpa
 set {symbolicName(gui3DchooserZscale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ.frame12.scale10}
 set {symbolicName(gui3DseedsTB)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame5.line1.text56}
 set {symbolicName(gui3DsphereScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.scale10}
+set {symbolicName(gui3d_seed_move_frame_path)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframePATH}
+set {symbolicName(gui3d_seed_move_frame_xyz)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ}
 set {symbolicName(guiBLENDSscript)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame18.frame20.frame.text2}
 set {symbolicName(guiCV_notebook_2D)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0}
 set {symbolicName(guiCV_notebook_3D)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0}
@@ -50381,9 +50498,9 @@ set {symbolicName(guiCV_notebook_paths)} {.guiCV.tframe3.tpanedwindow4.tframe6.t
 set {symbolicName(guiCV_notebook_simulations)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0}
 set {symbolicName(guiGROUPSDstLB)} {.guiSV.frame2.frame3.notebook6.tframe9.notebook0.tframe2.tframe7.frame5.frame14.frame.listbox1}
 set {symbolicName(guiGROUPSSrcLB)} {.guiSV.frame2.frame3.notebook6.tframe9.notebook0.tframe2.tframe7.frame5.frame13.frame.listbox1}
+set {symbolicName(guiLocalSurfaceOperationParametersTextBox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.tframe1.tlabelframe14.tframe15.frame.text2}
 set {symbolicName(guiMMblFaceNamesMenu)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.frame2.frame6.menubutton11.m}
 set {symbolicName(guiMMmeshControlAttributesTextBox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe14.tframe15.frame.text2}
-set {symbolicName(guiTETGENmeshControlAttributesTextBox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11.tframe1.frame.text2}
 set {symbolicName(guiMMmeshScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.frame5.frame15.frame28.frame19.scale52}
 set {symbolicName(guiMMsizeFaceNamesMenu)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame0.frame2.frame6.menubutton11.m}
 set {symbolicName(guiPHASTAsupreScript)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe1.frame0.frame.text2}
@@ -50414,20 +50531,20 @@ set {symbolicName(guiSV_model_tree)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpane
 set {symbolicName(guiSV_model_tree_scrollbar)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe11.frame1.tscrollbar0}
 set {symbolicName(guiSV_path_tree)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe4.tframe0.treeview1}
 set {symbolicName(guiSV_path_tree_scrollbar)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe4.tframe0.tscrollbar0}
+set {symbolicName(guiTETGENmeshControlAttributesTextBox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe11.tframe1.frame.text2}
 set {symbolicName(guiTRIMcutFileTB)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe14.tframe15.frame.text2}
 set {symbolicName(guiVISstepScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.frame22.frame23.scale7}
 set {symbolicName(guiWSScutFileTB)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame5.text56}
 set {symbolicName(guiWSSfaceLB)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame2.frame23.frame25.frame.listbox1}
 set {symbolicName(gui_major_tabs)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6}
-set {symbolicName(lsGUIpathPositionScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.frame31.frame7.scale15}
 set {symbolicName(lsGUI3dseedpathPositionScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframePATH.frame7.scale15}
+set {symbolicName(lsGUIpathPositionScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.frame31.frame7.scale15}
 set {symbolicName(lsGUIselectPathLB)} {.lsGUIselectPath.frame8.frame.listbox1}
 set {symbolicName(lsRenWinMag)} {.guiCV.tframe3.tpanedwindow4.tframe5.tpanedwindow45.tframe36.tpanedwindow0.tframe2.tpanedwindow5.tframe6.f1}
 set {symbolicName(lsRenWinPot)} {.guiCV.tframe3.tpanedwindow4.tframe5.tpanedwindow45.tframe36.tpanedwindow0.tframe2.tpanedwindow5.tframe7.f1}
-#set {symbolicName(meshsimDiscreteModelListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe14.tframe1.tlabelframe3.frame.listbox1}
+set {symbolicName(main_left_right_panedwindow)} {.guiCV.tframe3.tpanedwindow4}
+set {symbolicName(main_top_bottom_right_panedwindow)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0}
 set {symbolicName(meshsimFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tlabelframe3.frame.listbox1}
-#set {symbolicName(polydataFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tlabelframe3.frame.listbox1}
-set {symbolicName(tetgenFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame3.frame5.frame.listbox1}
 set {symbolicName(resampleGUI_sliderx)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame1.frame4.scale20}
 set {symbolicName(resampleGUI_slidery)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame1.frame22.scale20}
 set {symbolicName(resampleGUI_sliderz)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame1.frame23.scale20}
@@ -50455,21 +50572,15 @@ set {symbolicName(results_tab_right_plots_menu)} {.guiCV.tframe3.tpanedwindow4.t
 set {symbolicName(root)} {.}
 set {symbolicName(smasherAttNameLabel)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0}
 set {symbolicName(smasherEntityIdLabel)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame2.entry0}
-#set {symbolicName(smasherFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe3.frame.listbox1}
 set {symbolicName(smasherGUIhideButton)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame8.hide}
 set {symbolicName(smasherOpacityScale)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame3.frame7.scale11}
 set {symbolicName(svhelp_textbox)} {.svhelp.frame0.frame.text2}
 set {symbolicName(svmessage_textbox)} {.svmessage.frame0.frame.text2}
+set {symbolicName(tetgenFacesListbox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame3.frame5.frame.listbox1}
 set {symbolicName(tkcon)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe3}
 set {symbolicName(volGUI_sliderx)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame1.frame4.scale20}
 set {symbolicName(volGUI_slidery)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame1.frame22.scale20}
 set {symbolicName(volGUI_sliderz)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame1.frame23.scale20}
-set {symbolicName(guiLocalSurfaceOperationParametersTextBox)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.tframe1.tlabelframe14.tframe15.frame.text2}
-#jtm symbolicname
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ_pack_info)} {-fill both}
-set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframePATH_pack_info)} {-fill both}
-set {symbolicName(gui3d_seed_move_frame_xyz)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ}
-set {symbolicName(gui3d_seed_move_frame_path)} {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframePATH}
 global {xfWmSetPosition}
 set {xfWmSetPosition} {}
 global {xfWmSetSize}
@@ -50482,6 +50593,9 @@ ShowWindow.
 
 global xfShowWindow.guiCV
 set xfShowWindow.guiCV 0
+
+global xfShowWindow.guiDICOM
+set xfShowWindow.guiDICOM 0
 
 global xfShowWindow.guiPPselectPath
 set xfShowWindow.guiPPselectPath 0

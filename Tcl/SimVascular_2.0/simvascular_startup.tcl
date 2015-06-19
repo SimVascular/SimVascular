@@ -358,6 +358,19 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   vwait tkcon_delay_done
   guiCV_display_windows 3d_only
 
+  set topbottom $symbolicName(main_top_bottom_right_panedwindow)
+  set leftright $symbolicName(main_left_right_panedwindow)
+
+  set w [winfo width $leftright]
+  #puts "width: $w"
+  set sash0 300
+  puts "sashpos: [$leftright sashpos 0 $sash0]"
+
+  set h [winfo height $topbottom]
+  #puts "height: $h"
+  set sash0 320
+  puts "sashpos: [$topbottom sashpos 0 $sash0]"
+
   if {[info exists env(SIMVASCULAR_REDIRECT_STDERR_STDOUT)]} {
   proc handle { args } {
        puts -nonewline [ set [ lindex $args 0 ] ]
