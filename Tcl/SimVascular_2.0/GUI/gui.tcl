@@ -21882,6 +21882,261 @@ proc DestroyWindow.guiPPselectPath {} {# xf ignore me 7
   }
 }
 
+proc ShowWindow.svGroupWindow { {cmd 0}} {
+
+  # build widget .lsGUIselectPath
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFDestroy .svGroupWindow"
+  } {
+    catch "destroy .svGroupWindow"
+  }
+  toplevel .svGroupWindow -background {white}
+
+    # Window manager configurations
+  wm positionfrom .svGroupWindow program
+  wm sizefrom .svGroupWindow program
+  wm maxsize .svGroupWindow 1280 1024
+  wm minsize .svGroupWindow 150 10
+  wm protocol .svGroupWindow WM_DELETE_WINDOW {DestroyWindow.svGroupWindow}
+
+
+  ttk::frame .svGroupWindow.tframe6  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
+  ttk::frame .svGroupWindow.tframe6.frame1  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
+  ttk::frame .svGroupWindow.tframe6.frame1.frame2  -width {769}  -height {10}
+  ttk::label .svGroupWindow.tframe6.frame1.frame2.label9  -font {Helvetica 10}  -relief {flat}  -text {Group Name:}  -width {12}
+  ttk::entry .svGroupWindow.tframe6.frame1.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(groups_entry_group_name)}  -width {30}
+
+  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton0  -command {guiSV_group_new_group}  -text {Create Group}
+  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton1  -command {guiSV_group_rename_group}  -text {Rename Group}
+  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton2  -command {guiSV_group_duplicate_group}  -text {Duplicate Group}
+  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton4  -command {guiSV_group_copy_members}  -text {Copy Members}
+  
+  
+  ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton3  -command {DestroyWindow.svGroupWindow}  -text {Cancel}
+
+  pack configure .svGroupWindow.tframe6  -fill both -ipadx 5 -ipady 5
+
+  # pack master .svGroupWindow.tframe6
+  pack configure .svGroupWindow.tframe6.frame1  -fill both
+  #pack configure .svGroupWindow.tframe6.tframe0  -fill both
+
+
+  # pack master .svGroupWindow.tframe6.frame1
+  pack configure .svGroupWindow.tframe6.frame1.frame2  -expand 1  -fill both
+  # pack configure .svGroupWindow.tframe6.frame1.frame1  -fill both
+
+  # pack master .svGroupWindow.tframe6.frame1.frame2
+  pack configure .svGroupWindow.tframe6.frame1.frame2.label9  -fill both  -side left
+  pack configure .svGroupWindow.tframe6.frame1.frame2.entry10  -expand 1  -fill both  -side left
+
+  if { $cmd == "rename"} {
+    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton1  -side left
+    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_rename_group}
+    wm title .svGroupWindow {Rename Group}
+  } elseif {$cmd == "duplicate"} {
+    wm title .svGroupWindow {Duplicate Group}
+    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_duplicate_group}
+    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton2  -side left
+  } elseif {$cmd == "copymembers"} {
+    wm title .svGroupWindow {Copy Members}
+    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_copy_members}
+    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton4  -side left
+  } else {
+    wm title .svGroupWindow {New Contour Group}
+    bind .svGroupWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_group_new_group}
+    pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton0  -side left
+  }
+
+  pack configure .svGroupWindow.tframe6.frame1.frame2.tbutton3  -side left
+  focus .svGroupWindow.tframe6.frame1.frame2.entry10
+
+
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFMiscBindWidgetTree .svGroupWindow"
+    after 2 "catch {XFEditSetShowWindows}"
+  }
+
+
+}
+
+proc DestroyWindow.svGroupWindow {} {# xf ignore me 7
+  if {"[info procs XFEdit]" != ""} {
+    if {"[info commands .svGroupWindow]" != ""} {
+      global xfShowWindow.svGroupWindow
+      set xfShowWindow.svGroupWindow 0
+      XFEditSetPath .
+      after 2 "XFSaveAsProc .svGroupWindow; XFEditSetShowWindows"
+    }
+  } else {
+    catch "destroy .svGroupWindow"
+    update
+  }
+}
+
+proc ShowWindow.svSaveSegWindow { {args 0}} {
+
+  global guiSVvars
+  # build widget .lsGUIselectPath
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFDestroy .svSaveSegWindow"
+  } {
+    catch "destroy .svSaveSegWindow"
+  }
+  toplevel .svSaveSegWindow   -background {white}
+
+    # Window manager configurations
+  wm positionfrom .svSaveSegWindow program
+  wm sizefrom .svSaveSegWindow program
+  wm maxsize .svSaveSegWindow 1280 1024
+  wm minsize .svSaveSegWindow 150 60
+  wm protocol .svSaveSegWindow WM_DELETE_WINDOW {DestroyWindow.svSaveSegWindow}
+
+  
+
+  ttk::frame .svSaveSegWindow.tframe6  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
+  ttk::frame .svSaveSegWindow.tframe6.frame1  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
+  ttk::frame .svSaveSegWindow.tframe6.frame1.frame2  -width {769}  -height {10}
+  ttk::label .svSaveSegWindow.tframe6.frame1.frame2.label9  -font {Helvetica 10}  -relief {flat}  -text {Group Name:}  -width {12}
+  ttk::entry .svSaveSegWindow.tframe6.frame1.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(groups_entry_seg3d_name)}  -width {30}
+
+  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton0  -command {guiSV_seg3d_new_seg}  -text {Save Segmenation}
+  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton1  -command {guiSV_seg3d_rename_seg}  -text {Rename Segmenation}
+  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton2  -command {guiSV_seg3d_duplicate_seg}  -text {Duplicate Segmenation}
+
+
+  #bind .svGroupWindow.tframe6.frame1.frame1.entry9 <Key-Return> {guiGROUPSUpdateSource}
+  ttk::button .svSaveSegWindow.tframe6.frame1.frame2.tbutton3  -command {DestroyWindow.svSaveSegWindow}  -text {Cancel}
+
+  pack configure .svSaveSegWindow.tframe6  -fill both -ipadx 5 -ipady 5
+
+  # pack master .svGroupWindow.tframe6
+  pack configure .svSaveSegWindow.tframe6.frame1  -fill both
+
+
+  # pack master .svGroupWindow.tframe6.frame1
+  pack configure .svSaveSegWindow.tframe6.frame1.frame2  -expand 1  -fill both
+
+  # pack master .svGroupWindow.tframe6.frame1.frame2
+  pack configure .svSaveSegWindow.tframe6.frame1.frame2.label9  -fill both  -side left
+  pack configure .svSaveSegWindow.tframe6.frame1.frame2.entry10  -expand 1  -fill both  -side left
+
+  if { $args == "rename"} {
+    pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton1  -side left
+    bind .svSaveSegWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_seg3d_rename_seg}
+    wm title .svSaveSegWindow {Rename Segmenation}
+  } elseif {$args == "duplicate"} {
+    wm title .svSaveSegWindow {Duplicate Segmentation}
+    bind .svSaveSegWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_seg3d_duplicate_seg}
+    pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton2  -side left
+  } else {
+    wm title .svSaveSegWindow {Save Segmentation}
+    bind .svSaveSegWindow.tframe6.frame1.frame2.entry10 <Key-Return> {guiSV_seg3d_new_seg}
+    pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton0  -side left
+  }
+
+  pack configure .svSaveSegWindow.tframe6.frame1.frame2.tbutton3  -side left
+  focus .svSaveSegWindow.tframe6.frame1.frame2.entry10
+
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFMiscBindWidgetTree .svSaveSegWindow"
+    after 2 "catch {XFEditSetShowWindows}"
+  }
+
+
+}
+
+proc DestroyWindow.svSaveSegWindow {} {# xf ignore me 7
+  if {"[info procs XFEdit]" != ""} {
+    if {"[info commands .svGroupWindow]" != ""} {
+      global xfShowWindow.svSaveSegWindow
+      set xfShowWindow.svSaveSegWindow 0
+      XFEditSetPath .
+      after 2 "XFSaveAsProc .svSaveSegWindow; XFEditSetShowWindows"
+    }
+  } else {
+    catch "destroy .svSaveSegWindow"
+    update
+  }
+}
+
+
+
+# procedure to show window ShowWindow.guiSELECTGROUPS
+proc ShowWindow.guiSELECTGROUPS { args} {
+# xf ignore me 7
+
+  # build widget .guiSELECTGROUPS
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFDestroy .guiSELECTGROUPS"
+  } {
+    catch "destroy .guiSELECTGROUPS"
+  }
+  toplevel .guiSELECTGROUPS   -background {white}
+
+  # Window manager configurations
+  wm positionfrom .guiSELECTGROUPS program
+  wm sizefrom .guiSELECTGROUPS program
+  wm maxsize .guiSELECTGROUPS 1280 1024
+  wm minsize .guiSELECTGROUPS 108 100
+  wm protocol .guiSELECTGROUPS WM_DELETE_WINDOW {XFProcError {Application windows can not be destroyed.
+Please use the "Current widget path:" to show/hide windows.}}
+  wm title .guiSELECTGROUPS {Select a Group}
+
+
+  # build widget .guiSELECTGROUPS.frame
+ttk::frame .guiSELECTGROUPS.frame  -width {256} -height {245} 
+  # build widget .guiSELECTGROUPS.frame.scrollbar3
+  ttk::scrollbar .guiSELECTGROUPS.frame.scrollbar3  -command {.guiSELECTGROUPS.frame.listbox1 xview}  -orient {horizontal}
+
+  # build widget .guiSELECTGROUPS.frame.scrollbar2
+  ttk::scrollbar .guiSELECTGROUPS.frame.scrollbar2  -command {.guiSELECTGROUPS.frame.listbox1 yview}
+
+  # build widget .guiSELECTGROUPS.frame.listbox1
+  listbox .guiSELECTGROUPS.frame.listbox1  -font {Helvetica 10}  -relief {raised}  -xscrollcommand {.guiSELECTGROUPS.frame.scrollbar3 set}  -yscrollcommand {.guiSELECTGROUPS.frame.scrollbar2 set}
+  # bindings
+  bind .guiSELECTGROUPS.frame.listbox1 <Double-Button-1> {guiSELECTGROUPSdone}
+
+  # build widget .guiSELECTGROUPS.frame17
+ttk::frame .guiSELECTGROUPS.frame17  -width {256} -height {66} 
+  # build widget .guiSELECTGROUPS.frame17.button18
+  ttk::button .guiSELECTGROUPS.frame17.button18  -command {guiSELECTGROUPScancel}  -text {CANCEL}  -takefocus {ttk::takefocus}
+
+  # build widget .guiSELECTGROUPS.frame17.button19
+  ttk::button .guiSELECTGROUPS.frame17.button19  -command {guiSELECTGROUPSdone}  -text {DONE}  -takefocus {ttk::takefocus}
+
+  # pack master .guiSELECTGROUPS.frame
+  pack configure .guiSELECTGROUPS.frame.scrollbar2  -fill y  -side right
+  pack configure .guiSELECTGROUPS.frame.listbox1  -expand 1  -fill both
+  pack configure .guiSELECTGROUPS.frame.scrollbar3  -fill x  -side bottom
+
+  # pack master .guiSELECTGROUPS.frame17
+  pack configure .guiSELECTGROUPS.frame17.button18  -expand 1  -fill both  -side left
+  pack configure .guiSELECTGROUPS.frame17.button19  -expand 1  -fill both  -side left
+
+  # pack master .guiSELECTGROUPS
+  pack configure .guiSELECTGROUPS.frame  -expand 1  -fill both
+  pack configure .guiSELECTGROUPS.frame17  -fill both
+
+  if {"[info procs XFEdit]" != ""} {
+    catch "XFMiscBindWidgetTree .guiSELECTGROUPS"
+    after 2 "catch {XFEditSetShowWindows}"
+  }
+}
+
+proc DestroyWindow.guiSELECTGROUPS {} {# xf ignore me 7
+  if {"[info procs XFEdit]" != ""} {
+    if {"[info commands .guiSELECTGROUPS]" != ""} {
+      global xfShowWindow.guiSELECTGROUPS
+      set xfShowWindow.guiSELECTGROUPS 0
+      XFEditSetPath .
+      after 2 "XFSaveAsProc .guiSELECTGROUPS; XFEditSetShowWindows"
+    }
+  } {
+    catch "destroy .guiSELECTGROUPS"
+    update
+  }
+}
+
 
 # procedure to show window ShowWindow.guiSELECTGROUPS
 proc ShowWindow.guiSELECTGROUPS { args} {
@@ -28031,7 +28286,9 @@ proc gui3DrunLS {} {
           set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
 
           if {$numSegs > 1} {
-            polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength  $numPtsInLinearSampleAlongLength $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $inPD
+            polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength \
+                                                 $numPtsInLinearSampleAlongLength $useFFT $numModes\
+                                                 $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $inPD
             lappend initPDs $inPD
           }
         }
