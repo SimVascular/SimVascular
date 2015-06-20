@@ -171,8 +171,10 @@ endif()
 # General Library Options
 option(SimVascular_USE_ZLIB "Use ZLib" ON)
 option(SimVascular_USE_MPICH2 "Use MPICH2" ON)
+option(SimVascular_USE_DUMMY_MPICH2 "Use Dummy MPICH2" OFF)
 mark_as_superbuild(SimVascular_USE_ZLIB)
 mark_as_superbuild(SimVascular_USE_MPICH2)
+mark_as_superbuild(SimVascular_USE_DUMMY_MPICH2)
 
 option(SimVascular_USE_GLIB "Use GLIB Library" OFF)
 option(SimVascular_USE_GTS "Use GTS Library" OFF)
@@ -727,30 +729,37 @@ endif()
 # Enable MPI
 if(USE_MPI OR SimVascular_USE_MPI)
 	set(USE_MPI ON)
-	simvascular_external(MPI SYSTEM_DEFAULT SHARED_LIB)
-	if(MPI_FOUND)
-		get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
-	endif()
-	if(WIN32)
-		find_library(MPI_fmpich2_LIBRARY NAMES fmpich2 HINTS ${MPI_LIBRARY_DIR})
-		set(MPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY} ${MPI_fmpich2_LIBRARY} ${MPI_CXX_LIBRARIES})
-		#message("${MPI_EXTRA_LIBRARY}")
-	endif()
+	if (NOT SimVascular_USE_DUMMY_MPICH2)
+		simvascular_external(MPI SYSTEM_DEFAULT SHARED_LIB)
+		if(MPI_FOUND)
+			get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
+		endif()
+		if(WIN32)
+			find_library(MPI_fmpich2_LIBRARY NAMES fmpich2 HINTS ${MPI_LIBRARY_DIR})
+			set(MPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY} ${MPI_fmpich2_LIBRARY} ${MPI_CXX_LIBRARIES})
+			#message("${MPI_EXTRA_LIBRARY}")
+		endif()
 
-	mark_as_superbuild(
-		VARS 
-		MPI_Fortran_COMPILER:FILEPATH 
-		MPI_C_COMPILER:FILEPATH
-		MPI_CXX_COMPILER:FILEPATH
-		MPIEXEC
-		ALL_PROJECTS)
+		mark_as_superbuild(
+			VARS 
+			MPI_Fortran_COMPILER:FILEPATH 
+			MPI_C_COMPILER:FILEPATH
+			MPI_CXX_COMPILER:FILEPATH
+			MPIEXEC
+			ALL_PROJECTS)
 
-	include_directories(${MPI_Fortran_INCLUDE_PATH})
-	if(SimVascular_DEVELOPER_OUTPUT)
-		#getListOfVarsPrefix("MPI" _VARLIST)
-		#print_vars(_VARLIST)
+		include_directories(${MPI_Fortran_INCLUDE_PATH})
+		if(SimVascular_DEVELOPER_OUTPUT)
+			#getListOfVarsPrefix("MPI" _VARLIST)
+			#print_vars(_VARLIST)
+		endif()
+
+		set(svMPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY})
+		set(svMPI_Fortran_LIBRARIES ${MPI_Fortran_LIBRARIES})
+	else()
+		set(svMPI_EXTRA_LIBRARY lib_extra_simvascular_dummympi)
+		set(svMPI_Fortran_LIBRARIES lib_fortran_simvascular_dummympi)
 	endif()
-
 endif()
 
 #-----------------------------------------------------------------------------

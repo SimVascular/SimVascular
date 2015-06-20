@@ -104,7 +104,7 @@ else()# dummy leslib
 endif()
 ADD_LIBRARY(flowsolver_fortran_lib ${FSRCS})
 #SET_TARGET_PROPERTIES(flowsolver_fortran_lib PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${MPI_EXTRA_LIBRARY} ${MPI_Fortran_LIBRARIES})
+TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
 
 set(HDRS Input.h ValType.h common_c.h)
 
@@ -125,7 +125,7 @@ endif()
 TARGET_LINK_LIBRARIES(${FLOWSOLVER_EXE} flowsolver_fortran_lib 
                       ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
                       ${METIS_LIBRARY} ${SVLS_LIBRARY}
-                      ${MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
+                      ${svMPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
                       ${NSPCG_LIBRARY} lib_simvascular_solverio
                       ${VTKLIB}
                       )
