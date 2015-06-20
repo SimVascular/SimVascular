@@ -14,3 +14,6 @@ Code/Source/.cproject
 !Code/Source/Segmentation/cvLevelSet/.project
 !Code/Source/Segmentation/.project
 !BuildWithMake/Release/tmp/.project
+!BuildWithMake/Lib/.project
+!BuildWithMake/Bin/.project
+!Code/FlowSolvers/ThreeDSolver/dummyMPI/.project

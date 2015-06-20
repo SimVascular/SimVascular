@@ -48,6 +48,10 @@ else
   THREED_SUBDIRS =
 endif
 
+ifeq ($(MAKE_WITH_DUMMY_MPI),1)
+  THREED_SUBDIRS += dummyMPI
+endif
+
 ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
 	THREED_SUBDIRS += svLS 
 endif
