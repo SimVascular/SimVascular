@@ -198,7 +198,6 @@ macro(simvascular_third_party _pkg)
 	CMAKE_PARSE_ARGUMENTS("simvascular_third_party" 
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-
 	set(${_upper}_SUBDIR ThirdParty/${_pkg})
 	if(simvascular_third_party_SYSTEM_DEFAULT)
 		option(SimVascular_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
@@ -217,6 +216,7 @@ macro(simvascular_third_party _pkg)
 		set(${_upper}_LIBRARY)
 	else()
 		if(NOT SimVascular_SUPERBUILD)
+			set(${_upper}_LIBRARY_NAME lib_simvascular_${_lower})
 			add_subdirectory(${${_upper}_SUBDIR}/simvascular_${_lower})
 		endif()
 	endif()

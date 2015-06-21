@@ -1,0 +1,2 @@
+log2 now conflicts on linux, renamed metislog2 in rename.h
+

@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
-#include "spMatrix.h"
+#include "simvascular_sparse.h"
 
 // general utility
 int debugprint(FILE* ,char* , ...);

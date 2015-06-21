@@ -1,0 +1,4 @@
+ifort -O2 -c nspcg*.f
+mkdir -p ../../binaries/linux/x64/nspcg
+ar rv ../../binaries/linux/x64/nspcg/libnspcg.a *.o
+
