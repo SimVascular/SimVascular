@@ -1,0 +1,10 @@
+This contains metis 4.0.1 with few custom changes for use in simvascular.
+This package is distributed under its own license agreement.
+We include them here for convience, without modification, except for the notes below.
+
+Changed Files
+-------------
+CMakeList.txt
+    Change to library name when compiling as part of the thirdparty directory.
+Lib/CMakeList.txt
+    Change to library name when compiling as part of the thirdparty directory.
