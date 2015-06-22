@@ -31,7 +31,7 @@
 #ifndef __simvascular_tetgen_h
 #define __simvascular_tetgen_h
 
-/* Use the zlib library configured for SimVascular.  */
+/* Use the tetgen library configured for SimVascular.  */
 #cmakedefine SimVascular_USE_SYSTEM_TETGEN
 #ifdef SimVascular_USE_SYSTEM_TETGEN
 #include <tetgen.h>
