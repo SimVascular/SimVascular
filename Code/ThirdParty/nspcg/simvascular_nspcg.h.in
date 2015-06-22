@@ -28,12 +28,12 @@
  *
  *=========================================================================*/
  
-#ifndef __simvascular_sparse_h
-#define __simvascular_sparse_h
+#ifndef __simvascular_nspcg_h
+#define __simvascular_nspcg_h
 
 /* Use the zlib library configured for SimVascular.  */
-#cmakedefine SimVascular_USE_SYSTEM_SPARSE
-#ifdef SimVascular_USE_SYSTEM_SPARSE
+#cmakedefine SimVascular_USE_SYSTEM_NSPCG
+#ifdef SimVascular_USE_SYSTEM_NSPCG
 #include <spMatrix.h>
 #else
 #include <simvascular_sparse/spMatrix.h>
