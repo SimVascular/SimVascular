@@ -104,7 +104,7 @@ public:
   // Routines promoted to abstract class from concrete implementation
   virtual int LoadModel(char *filename) = 0;
   virtual int GetBoundaryFaces(double angle) = 0;
-  virtual int LoadMesh(char *filename) = 0;
+  virtual int LoadMesh(char *filename,char *surfilename) = 0;
   virtual int NewMesh() = 0;
   
   virtual int SetSurfaceMeshFlag(int value) = 0;

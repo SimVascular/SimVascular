@@ -127,6 +127,8 @@ class cvTetAdaptCore {
   // just take the value from any adjacent vertex
   void fix4SolutionTransfer (vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int nVar);
 
+void modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd);
+
   // recover gradients from a VTKFilter
   void gradientsFromFilter (vtkUnstructuredGrid *mesh);
 

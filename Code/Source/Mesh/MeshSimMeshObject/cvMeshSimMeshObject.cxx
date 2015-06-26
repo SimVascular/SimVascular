@@ -1248,7 +1248,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 }
 
 
-int cvMeshSimMeshObject::LoadMesh(char *filename) {
+int cvMeshSimMeshObject::LoadMesh(char *filename,char *surfilename) {
 
   if (filename == NULL) {
     return CV_ERROR;

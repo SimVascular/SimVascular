@@ -2637,11 +2637,13 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 {
   cvMeshObject *geom = (cvMeshObject *)clientData;
   char *FileName;
+  char *SurfFileName = 0;
   char *usage;
 
-  int table_sz = 1;
+  int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-surfile", STRING_Type, &SurfFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -2657,7 +2659,7 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
   // Do work of command:
 
   // read in the results file
-  if (geom->LoadMesh(FileName) == CV_ERROR) {
+  if (geom->LoadMesh(FileName,SurfFileName) == CV_ERROR) {
       Tcl_AppendResult( interp, "error opening logfile ", (char *)NULL);
       return TCL_ERROR;
   }

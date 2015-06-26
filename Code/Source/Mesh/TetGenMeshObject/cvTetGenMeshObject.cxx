@@ -623,20 +623,27 @@ int cvTetGenMeshObject::GetBoundaryFaces(double angle)
  * @note If a current volume
  * mesh exists, the current volumemesh is deleted and the new one is loaded
  */
-int cvTetGenMeshObject::LoadMesh(char *filename) {
+int cvTetGenMeshObject::LoadMesh(char *filename,char *surfilename) {
 
   if (filename == NULL) {
     return CV_ERROR;
   }
 
   if (volumemesh_ != NULL)
-  {
     volumemesh_->Delete();
-  }
 
+  volumemesh_ = vtkUnstructuredGrid::New();
   if (TGenUtils_LoadMesh(filename,volumemesh_) != CV_OK)
-  {
     return CV_ERROR;
+
+  if (surfilename != 0)
+  {
+    if (surfacemesh_ != NULL)
+      surfacemesh_->Delete();
+
+    surfacemesh_ = vtkPolyData::New();
+    if (PlyDtaUtils_ReadNative(surfilename,surfacemesh_) != CV_OK)
+      return CV_ERROR;
   }
 
   return CV_OK;
@@ -1306,9 +1313,6 @@ int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
     originalpolydata_->GetCellData()->GetArray("ModelFaceID")->GetRange(range);
     max = range[1];
     
-
-#ifdef USE_TETGEN
-
     for(i=0;i<max;i++)
     { 
       tmpstr[0] = '\0';
@@ -1317,11 +1321,7 @@ int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
       rtnstr[0]='\0';
       sprintf(rtnstr,"%s",tmpstr);
     }
-#else
 
-    return CV_ERROR;
-
-#endif
   }
 
   return CV_OK;

@@ -100,7 +100,7 @@ class cvTetGenMeshObject : public cvMeshObject {
 
   int LoadModel(char *filename);
   int GetBoundaryFaces(double angle);
-  int LoadMesh(char *filename);
+  int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
 
   int SetSurfaceMeshFlag(int value);

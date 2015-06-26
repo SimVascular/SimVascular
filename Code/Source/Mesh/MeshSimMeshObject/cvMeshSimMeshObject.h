@@ -101,7 +101,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   // create the mesh
   int LoadModel(char *filename);
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
-  int LoadMesh(char *filename);
+  int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
   
   int SetSurfaceMeshFlag(int value);

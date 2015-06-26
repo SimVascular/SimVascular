@@ -39,8 +39,11 @@
 #include "vtkDoubleArray.h"
 #include "vtkSmartPointer.h"
 #include "vtkPointLocator.h"
+#include "vtkCellLocator.h"
+#include "vtkGenericCell.h"
 #include "vtkPointData.h"
 #include "vtkCellData.h"
+#include "vtkPolygon.h"
 #include "vtkIdList.h"
 #include "vtkTetra.h"
 
@@ -367,7 +370,82 @@ void cvTetAdaptCore::fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstruc
 
   outmesh->GetPointData()->AddArray(outSolution);
   outmesh->GetPointData()->SetActiveScalars("solution");
-}                
+}
+
+void cvTetAdaptCore::modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
+{
+  int i,j,k; 
+  int subId;    
+  int maxIndex; 
+  int temp;
+  int flag = 1;  
+  int count;
+  int bigcount;
+  vtkIdType npts;
+  vtkIdType *pts;
+  double distance;
+  double mappingPt[3];
+  double closestPt[3];
+  double tolerance = 1.0;
+  double minmax[2];
+  double centroid[3];
+  int range; 
+  vtkIdType closestCell;
+  vtkIdType cellId;
+  vtkIdType currentValue;
+  vtkIdType realValue;
+  vtkSmartPointer<vtkCellLocator> locator = 
+    vtkSmartPointer<vtkCellLocator>::New();
+  vtkSmartPointer<vtkGenericCell> genericCell =
+    vtkSmartPointer<vtkGenericCell>::New();
+  vtkSmartPointer<vtkIntArray> currentRegionsInt = 
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> realRegions = 
+    vtkSmartPointer<vtkIntArray>::New();
+
+  outpd->BuildLinks();
+  inpd->BuildLinks();
+  locator->SetDataSet(inpd);
+  locator->BuildLocator();
+
+  realRegions = static_cast<vtkIntArray*>(inpd->GetCellData()->GetScalars("ModelFaceID"));
+
+  range = minmax[1]-minmax[0];
+  int *mapper;
+  mapper = new int[1+range];
+  
+  for (i=0;i<range+1;i++)
+  {
+    mapper[i] = -1;
+  }
+
+  fprintf(stdout,"Mapping Cells\n");;
+  for (cellId=0;cellId<outpd->GetNumberOfCells();cellId++)
+  {
+      outpd->GetCellPoints(cellId,npts,pts);
+      vtkSmartPointer<vtkPoints> polyPts = vtkSmartPointer<vtkPoints>::New();
+      vtkSmartPointer<vtkIdTypeArray> polyPtIds = vtkSmartPointer<vtkIdTypeArray>::New();
+      for (i=0;i<npts;i++)
+      {
+	polyPtIds->InsertValue(i,i);
+	polyPts->InsertNextPoint(outpd->GetPoint(pts[i]));
+      }
+      vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+      locator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	  subId,distance);
+      currentRegionsInt->InsertValue(cellId,realRegions->GetValue(closestCell));
+  }
+  fprintf(stdout,"Done\n");;
+
+  outpd->GetCellData()->RemoveArray("ModelFaceID");
+  currentRegionsInt->SetName("ModelFaceID");
+  outpd->GetCellData()->AddArray(currentRegionsInt);
+
+  outpd->GetCellData()->SetActiveScalars("ModelFaceID");
+  
+  delete [] mapper;
+}
 
 // -----------------------------
 // gradientsFromFilter()
@@ -1109,7 +1187,6 @@ int cvTetAdaptCore::convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceM
   vtkSmartPointer<vtkCellArray> adaptFaces = vtkSmartPointer<vtkCellArray>::New();
   vtkSmartPointer<vtkIntArray> adaptGlobalNodeIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> adaptGlobalElementIds = vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> boundaryScalars = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIdList> adaptTetPointIds = vtkSmartPointer<vtkIdList>::New();
   vtkSmartPointer<vtkIntArray> vtpAdaptPointIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> vtpAdaptFaceIds = vtkSmartPointer<vtkIntArray>::New();
@@ -1178,13 +1255,13 @@ int cvTetAdaptCore::convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceM
   mesh->SetPoints(adaptPoints);
   mesh->SetCells(VTK_TETRA, adaptTets);
 
-  adaptGlobalNodeIds->SetName("GlobalNodeId");
+  adaptGlobalNodeIds->SetName("GlobalNodeID");
   mesh->GetPointData()->AddArray(adaptGlobalNodeIds);
-  mesh->GetPointData()->SetActiveScalars("GlobalNodeId");
+  mesh->GetPointData()->SetActiveScalars("GlobalNodeID");
 
-  adaptGlobalElementIds->SetName("GlobalElementId");
+  adaptGlobalElementIds->SetName("GlobalElementID");
   mesh->GetCellData()->AddArray(adaptGlobalElementIds);
-  mesh->GetCellData()->SetActiveScalars("GlobalElementId");
+  mesh->GetCellData()->SetActiveScalars("GlobalElementID");
 
   fprintf(stderr,"Converting Faces to VTK Structures...\n");
   facePointIds->SetNumberOfIds(3);
@@ -1214,11 +1291,6 @@ int cvTetAdaptCore::convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceM
     {
       vtpAdaptFaceIds->InsertValue(i,adaptGlobalElementIds->GetValue(outmesh->adjtetlist[2*i+1]));
     }
-
-    if (outmesh->trifacemarkerlist != NULL)
-    {
-      boundaryScalars->InsertValue(i,outmesh->trifacemarkerlist[i]);
-    }
   }
 
   //Create a polydata grid and link scalar information to nodes and elements
@@ -1232,10 +1304,6 @@ int cvTetAdaptCore::convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceM
   vtpAdaptFaceIds->SetName("GlobalElementID");
   surfaceMesh->GetCellData()->AddArray(vtpAdaptFaceIds);
   surfaceMesh->GetCellData()->SetActiveScalars("GlobalElementID");
-
-  boundaryScalars->SetName("ModelFaceID");
-  surfaceMesh->GetCellData()->AddArray(boundaryScalars);
-  surfaceMesh->GetCellData()->SetActiveScalars("ModelFaceID");
 
   delete [] pointMapping;
   delete [] pointOnSurface;

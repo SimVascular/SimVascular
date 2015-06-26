@@ -587,6 +587,8 @@ int cvTetAdapt::Adapt(//time step
   //Convert adapted mesh back to VTK Structures
   convertToVTK(outputug,outputpd,&outmesh);
 
+  modelFaceIDTransfer(inputpd,outputpd);
+
   //Interpolate solution onto new mesh
   fix4SolutionTransfer(inputug,outputug,ndof);
 
