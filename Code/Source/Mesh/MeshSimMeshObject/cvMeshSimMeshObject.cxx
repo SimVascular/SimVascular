@@ -349,7 +349,7 @@ int cvMeshSimMeshObject::Update() {
 
   // load the mesh
   if (!meshloaded_) {
-    if (LoadMesh(meshFileName_) == CV_ERROR) {
+    if (LoadMesh(meshFileName_,"dummy") == CV_ERROR) {
       fprintf(stderr,"ERROR: could not mesh!\n");
       return CV_ERROR;
     }
