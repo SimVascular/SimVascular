@@ -1147,6 +1147,9 @@ int cvTetAdaptCore::runAdaptor(tetgenio *inmesh,tetgenio *outmesh)
   newtgb->quality=1;
   newtgb->neighout=2;
   newtgb->verbose=1;
+  //newtgb->coarsen=1;
+  //newtgb->coarsen_param=8;
+  //newtgb->coarsen_percent=1;
 #if USE_TETGEN143
   newtgb->goodratio = 4.0;
   newtgb->goodangle = 0.88;
