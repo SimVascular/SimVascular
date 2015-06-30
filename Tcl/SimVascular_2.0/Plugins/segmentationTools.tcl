@@ -39,10 +39,13 @@ proc seg_writeVolumeMha {name fname} {
 proc seg_convertModeltoVolume { {objName temp} } { 
 
 	global smasherInputName
+  global gKernel
 	set modelPd pd_$objName
 
+  set model [lindex [model_names] 0]
+
 	catch {repos_delete -obj $modelPd}
-	$smasherInputName GetPolyData -result $modelPd
+	$model GetPolyData -result $modelPd
 	itkutils_PdToVol -src $modelPd -dst $objName -ref volume_image
 	catch {repos_delete -obj $modelPd}
 }
@@ -63,16 +66,55 @@ $smasherInputName GetPolyData -result $modelPd
 repos_writeXMLPolyData $modelPd $fn
 }
 
-proc seg_reSaveModelPolydata {} {
-    global gFilenames
-    set fnOrg $gFilenames(generic_solid_file)
-    set basename [file rootname $fnOrg]
+# proc seg_reSaveModelPolydata {{fn ""}} {
+    
+#     global gFilenames
+#     if {$fn == ""} {
+#       set fnOrg $gFilenames(generic_solid_file)
+#       set basename [file rootname $fnOrg]
+#       set fn $basename.vtp
+#     }
+#     if {$fn == ""} return
 
-    set fn $basename.vtp
-    puts "saving as $fn"
-    puts "Warning Face names will not be saved!"
-    seg_saveSmasherPolyData $fn
+#     puts "saving as $fn"
+#     puts "Warning Face names will not be saved!"
+#     seg_saveSmasPolyData $fn
+# }
+
+proc seg_reSaveModelParasolidAsPolydata { {model ""}} {
+
+  if {$model == ""} {
+    set model [lindex [model_names] 0]
+  }
+  global gFilenames
+  set fn_base $gFilenames(generic_solid_file)
+  if {$fn_base == ""} return
+  set basename [file rootname $fn_base]
+  set fn $basename.vtp
+
+  set modelpd /models/parasolid/$model
+
+
+  set modelPd /tmp/pd-$model
+  catch {repos_delete -obj $modelPd}
+  $model GetPolyData -result $modelPd
+  repos_writeXMLPolyData $modelPd $fn
 }
+
+
+proc seg_SavePathsAsPolyData { {pathsIds -1} } {
+
+  seg_AppendSplines $pathsIds
+  global gFilenames
+  set pathfn_base $gFilenames(path_file)
+  if {$pathfn_base == ""} return
+  set pathfn_base [file rootname $pathfn_base]
+  set pathfn $pathfn_base-paths.vtp
+  set splinesPd /tmp/splinesPd
+  repos_writeXMLPolyData $splinesPd $pathfn
+
+}
+
 
 proc seg_convertPdtoVolume { pd {objName temp} } { 
 
@@ -365,6 +407,68 @@ proc seg_ShowSplines { {pathIds -1} } {
   return GDSC_OK
 }
 
+proc seg_AppendSplines { {pathIds -1} } {
+  global gPathPoints
+  global symbolicName
+  global gRen3d
+
+  # find the current list of paths to choose from
+  if {$pathIds == "-1"} {
+    set names [lsort -dictionary [array names gPathPoints *,name]]
+    set allPathIds {}
+    foreach n $names {
+      set busted [split [string trim $n] ,]
+      lappend allPathIds [lindex $busted 0]
+    }
+  } else {
+    set allPathIds $pathIds
+    }
+  # do show path stuff
+  global gRen3dFreeze
+  set gRen3dFreeze 1
+
+  global gOptions
+  set color green
+  set thick $gOptions(line_width_for_all_splines)
+
+  set splinePds {}
+  foreach id $allPathIds {
+
+    set splinePd /tmp/guiPPchooser/spline/$id
+    catch {repos_delete -obj $splinePd}
+    catch {vis_pRm $gRen3d $splinePd}
+
+    if {[info exists gPathPoints($id,splinePts)] == 0} {
+      continue
+    }
+
+    set splinePts $gPathPoints($id,splinePts)
+
+    if {[llength $splinePts] < 2} {
+      continue
+    }
+
+    path_MakePolyData $splinePts $splinePd
+    lappend splinePds $splinePd
+    
+     # repos_setLabel -obj $splinePd -key color -value $color
+     # gdscGeneralView $gRen3d $splinePd
+     # set myact [vis_pGetActor $gRen3d $splinePd]
+     # set myprop [$myact GetProperty]
+     # $myprop SetLineWidth $thick
+     # $myprop SetInterpolationToFlat
+  }
+
+  set splinesPd /tmp/splinesPd
+  catch {repos_delete -obj $splinesPd}
+  puts "Appending PDs"
+  geom_appendPds $splinePds $splinesPd
+  gdscGeneralView $gRen3d $splinesPd
+  set gRen3dFreeze 0
+  vis_render $gRen3d
+  return GDSC_OK
+}
+
 proc seg_PrintSelectedGroups {} {
 	global symbolicName
 	set tv $symbolicName(guiSV_group_tree)
@@ -384,25 +488,39 @@ proc seg_PrintSelectedGroups {} {
 		}
 	}
 	puts "$selected_groups"
-
-
 }
 
-proc seg_writeSegData {imagename segtype pathIds} {
+proc seg_writeSegData { {pathIds -1} } {
 
-set distfn "$imagename-dist-$segtype.mha"
-set segfn "$imagename-seg-$segtype.mha"
-set imgfn "$imagename-image.mha"
 
-puts "distfn $distfn"
+global gFilenames
+set segfn_base $gFilenames(generic_solid_file)
+if {$segfn_base == ""} return
+set seg_basename [file rootname $segfn_base]
+set segfn $seg_basename.mha
+
+# set distfn_base $gFilenames(path_file)
+# if {$distfn_base == ""} return
+# set distfn_base [file rootname $distfn_base]
+# set distfn $distfn_base.vtp
+
+global gImageVol
+set imgfn_base $gImageVol(xml_filename)
+if {$imgfn_base == ""} return
+set imgfn_base [file rootname $imgfn_base]
+set imgfn $imgfn_base.mha
+
+
+
+#puts "distfn $distfn"
 puts "segfn $segfn"
 puts "imgfn $imgfn"
 
 
-seg_convertModeltoVolume $imagename-pd
-seg_writeVolumeMha $imagename-pd $segfn
+seg_convertModeltoVolume tmp-pd
+seg_writeVolumeMha tmp-pd $segfn
 seg_writeVolumeMha volume_image $imgfn
-seg_writeAllPathDistanceMap $distfn "$pathIds"
+#seg_writeAllPathDistanceMap $distfn "$pathIds"
 
 }
 
@@ -759,8 +877,8 @@ proc seg_writeSliceSegEdgeTIFF {pathId posList {fnamebase tmp} {pathfn .} } {
 
 
 
-  proc seg_writeTIFF {img filename {rescale 0} {usestat 0} } {
-        
+proc seg_writeTIFF {img filename {rescale 0} {usestat 0} } {
+      
   set directory [file path $filename]
   file mkdir $directory
 
@@ -774,7 +892,7 @@ proc seg_writeSliceSegEdgeTIFF {pathId posList {fnamebase tmp} {pathfn .} } {
     set range "[stat GetMinimum] [stat GetMaximum]"
   }
 
-  
+
   puts "$filename $img $range, min, max [stat GetMinimum] [stat GetMaximum]"
 
   catch {caster Delete}
@@ -799,8 +917,106 @@ proc seg_writeSliceSegEdgeTIFF {pathId posList {fnamebase tmp} {pathfn .} } {
   writer SetFileName $ffname 
   writer SetInputData [caster GetOutput]
   writer Write
-  
+
   writer Delete
   caster Delete
   #ITKLevelSet_WriteImage -src $img -fname $ffname
+}
+
+
+
+proc seg_LoadAll {imgfn pathfn modelfn} {
+
+  puts $imgfn
+  puts $pathfn
+  puts $modelfn
+
+
+  # Load image
+  if {$imgfn == ""} return
+  global gImageVol
+  if {[file extension $imgfn] == ".vti"} {
+      set gImageVol(xml_filename) "$imgfn"
   }
+  createPREOPloadsaveLoadVol 
+
+  ## Load Model
+  if {$modelfn == ""} return
+  guiSV_model_load_model "$modelfn"
+
+  ## Load paths
+
+  if {$pathfn == ""} return
+  global gFilenames
+  set gFilenames(path_file) "$pathfn"
+  guiFNMloadHandPaths
+  after 100
+
+}
+
+proc seg_3DRenForScreen { } {
+  global gRen3d
+  global CurrentRenderer
+  set CurrentRenderer $gRen3d
+  guiCV_display_windows "3d_only"
+  set win .guiCV.tframe3.tpanedwindow4
+  $win sashpos 0 1000
+
+  vis_renSetBackground $gRen3d .9 .9  .9
+
+  set  widget ".guiCV.tframe3.tpanedwindow4.tframe5.tpanedwindow45.tframe36.tpanedwindow0.tframe1.pane0.pane1.f3.r1"
+  UpdateRenderer $widget 0 0
+}
+
+
+proc seg_takeScreenShots {{num 0}} {
+  global gRen3d
+  global CurrentRenderer
+  set CurrentRenderer $gRen3d
+  global CurrentCamera
+  global gSavedView
+  set  widget ".guiCV.tframe3.tpanedwindow4.tframe5.tpanedwindow45.tframe36.tpanedwindow0.tframe1.pane0.pane1.f3.r1"
+
+  set outstr "widget {$widget} FocalPoint {[$CurrentCamera GetFocalPoint]} Position {[$CurrentCamera GetPosition]} ViewUp {[$CurrentCamera GetViewUp]}"
+  global gSavedView
+  array set gSavedView $outstr
+  if {$num == "0"} {
+  set gSavedView(Position) {0 1000 0}
+  set gSavedView(ViewUp) {0 1 0}
+  }
+  if {$num == "1"} {
+  set gSavedView(Position) {1000 0 0}
+  set gSavedView(ViewUp) {0 0 1}
+  }
+  if {$num == "2"} {
+  set gSavedView(Position) {0 0 1000}
+  set gSavedView(ViewUp) {1 0 0}
+  }
+  
+  global gFilenames
+  set fn_base $gFilenames(generic_solid_file)
+  if {$fn_base == ""} return
+  set basename [file rootname $fn_base]
+  set fn $basename-$num.jpg
+  puts $fn
+  RenderCameraView $widget 0 0
+  Reset $widget 0 0
+  $CurrentRenderer ResetCamera
+  puts "take screen"
+  global gRen3d
+  vis_renSetBackground $gRen3d .99 .99  .99
+  vis_renWriteJPEG $gRen3d $fn
+  after 100
+
+}
+
+proc seg_extractParasolidStuff {} {
+  seg_3DRenForScreen
+  seg_SavePathsAsPolyData
+  seg_takeScreenShots 0
+  seg_takeScreenShots 1
+  seg_takeScreenShots 2
+  seg_reSaveModelParasolidAsPolydata
+  seg_writeSegData
+  puts "Done!!"
+}

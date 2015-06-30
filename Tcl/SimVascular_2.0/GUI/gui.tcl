@@ -48,6 +48,7 @@ proc ShowWindow.guiCV { args} {
   wm positionfrom .guiCV program
   wm sizefrom .guiCV program
   wm maxsize .guiCV 2560 1600
+  #wm minsize .guiCV 1890 1155
   wm minsize .guiCV 124 95
   wm protocol .guiCV WM_DELETE_WINDOW {mainGUIexit}
   wm title .guiCV {SimVascular}
@@ -739,8 +740,8 @@ proc ShowWindow.guiCV { args} {
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.checkbutton40  -variable {guiVIB(show_isosurface)}  -command {volGUIupdateIsosurfaceUserCheck guiVIB}  -text {isosurface}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.button4
+  #ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.button4  -command {seg_extractParasolidStuff}  -text {Extract Seg Data}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.frame38.button4  -command {guiSV_group_make_isosurface_3D_surface}  -text {Send Isosurface to 3D Surface}
-
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.label47
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame43.frame44.label47  -font {Helvetica 10}  -text {Visualization Options}
 

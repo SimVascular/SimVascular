@@ -327,6 +327,8 @@ proc RenderCameraView {widget x y} {
     Render $widget
 
 }
+
+
 proc Pan {widget x y} {
     global CurrentRenderer CurrentCamera
     global WindowCenterX WindowCenterY LastX LastY

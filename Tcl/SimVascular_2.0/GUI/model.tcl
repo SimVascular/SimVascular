@@ -676,7 +676,7 @@ proc guiSV_model_get_kernel_type {ext} {
 }
 
 # Procedure: guiSV_model_load_model
-proc guiSV_model_load_model {} {
+proc guiSV_model_load_model { {fn "" } } {
 
    global gOptions
    global gObjects
@@ -685,16 +685,17 @@ proc guiSV_model_load_model {} {
    global gRen3d
 
    set kernel $gOptions(meshing_solid_kernel)
-   if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData"} {
-     set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
-   #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
-   #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
-   #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
-   #  set fn [tk_getOpenFile -filetypes {{vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
-   } else {
-     set fn [tk_getOpenFile -filetypes {{"All Files" *.*}} -title "Choose Solid Model"]
+   if {$fn == ""} {
+     if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData"} {
+       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
+     #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
+     #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
+     #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
+     #  set fn [tk_getOpenFile -filetypes {{vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
+     } else {
+       set fn [tk_getOpenFile -filetypes {{"All Files" *.*}} -title "Choose Solid Model"]
+     }
    }
-
   if {$fn == ""} return
 
   set inputName [lindex [split [file tail $fn] "."] 0] 
