@@ -163,6 +163,9 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
+int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] );
+
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
 			      int argc, CONST84 char *argv[] );
 
@@ -378,6 +381,8 @@ int Solid_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   Tcl_CreateCommand( interp, "geom_all_union", Geom_All_UnionCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "model_convert_parasolid_to_polydata", Model_Convert_Para_To_PolyCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   return TCL_OK;
@@ -2930,6 +2935,7 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
+// -------------
 // Geom_All_UnionCmd
 // -------------
 
@@ -3018,6 +3024,118 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
     delete [] srcs;
+    delete geom;
+    return TCL_ERROR;
+  }
+
+  vtkPolyData *dstPd;
+  dstPd = dst->GetVtkPolyData();
+  geom->SetVtkPolyDataObject(dstPd);
+  if ( !( gRepository->Register( dstName, geom ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete geom;
+    delete [] srcs;
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  // Make a new Tcl command:
+  Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
+  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), Solid_ObjectCmd,
+		     (ClientData)geom, DeleteSolid );
+
+  return TCL_OK;
+}
+
+// -------------
+// Geom_All_UnionCmd
+// -------------
+
+int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  int numFaces;
+  int interT;
+  ARG_List faceList;
+  char *srcName;
+  char *dstName;
+  cvRepositoryData *face;
+  cvPolyData *dst;
+  RepositoryDataT type;
+  cvPolyData **faces;
+  cvSolidModel *geom;
+
+  int table_size = 3;
+  ARG_Entry arg_table[] = {
+    { "-model", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-facelist", LIST_Type, &faceList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, $dstName, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  numFaces = faceList.argc;
+
+  // Foreach src obj, check that it is in the repository and of the
+  // correct type (i.e. cvSolidModel).  Also build up the array of
+  // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
+
+  facess = new cvPolyData * [numSrcs];
+
+  for (int i = 0; i < numSrcs; i++ ) {
+    face = gRepository->GetObject( faceList.argv[i] );
+    if ( face == NULL ) {
+      Tcl_AppendResult( interp, "couldn't find object ", faceList.argv[i],
+			(char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] faces;
+      return TCL_ERROR;
+    }
+    type = face->GetType();
+    if ( type != POLY_DATA_T ) {
+      Tcl_AppendResult( interp, "object ", faceList.argv[i],
+			" not of type cvPolyData", (char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] faces;
+      return TCL_ERROR;
+    }
+    faces[i] = (cvPolyData *) face;
+  }
+
+  // We're done with the src object names:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  // Make sure the specified result object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    delete [] faces;
+    return TCL_ERROR;
+  }
+
+  // Instantiate the new solid:
+  geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
+  if ( geom == NULL ) {
+    delete [] faces;
+    return TCL_ERROR;
+  }
+
+  if ( sys_geom_all_union( faces, numSrcs,interT,tolerance,(cvPolyData**)(&dst) )
+       != CV_OK ) {
+    Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
+    delete dst;
+    delete [] faces;
     delete geom;
     return TCL_ERROR;
   }

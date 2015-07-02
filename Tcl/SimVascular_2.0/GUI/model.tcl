@@ -2823,8 +2823,9 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
     return -code error "ERROR: Must use PolyData to create Discrete Model"
   }
   set modelpd /models/PolyData/$model
-  catch {repos_delete -obj $modelpd}
-  $model GetPolyData -result $modelpd
+  if {[repos_exists -obj $modelpd]} {
+    $model GetPolyData -result $modelpd
+  }
 
   set gOptions(meshing_solid_kernel) Discrete
   set kernel Discrete
@@ -3242,4 +3243,38 @@ proc guiSV_model_undo {} {
   guiSV_model_copy_model $kernel $model $name rename
   guiSV_model_update_view_model $kernel $name
   guiSV_model_delete_model $kernel $model
+}
+
+proc guiSV_model_create_polydata_solid_from_parasolid {} {
+  global guiTRIMvars
+  global symoblicName
+  global gOptions 
+  global gKernel 
+
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+  }
+  if {$gKernel($model) != "Parasolid"} {
+    return -code error "ERROR: Must use a Parasolid model to create PolyData Model"
+  }
+  set modelpd /models/$kernel/$model
+  if {[repos_exists -obj $modelpd] != 1} {
+    $model GetPolyData -result $modelpd
+  }
+
+  set gOptions(meshing_solid_kernel) $kernel
+  set kernel $kernel
+  solid_setKernel -name $kernel
+
+  set facevtklist {}
+  foreach faceid [$modelpd GetFaceIds] { 
+    catch {set facename [$modelpd GetFaceAttr -attr gdscName -faceId $faceid]}
+    set $facepd /models/$kernel/$facename
+    if {[repos_exists -obj $facepd] != 1} {
+      $modelpd GetFacePolyData -faceid $faceid -result $facepd
+    }
+    lappend facevtklist $facepd
+  }
+  model_convert_parasolid_to_polydata -model $modelpd -faces $facevtklist
 }
