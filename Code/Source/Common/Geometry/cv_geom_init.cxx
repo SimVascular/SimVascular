@@ -5532,6 +5532,7 @@ int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   if ( !( gRepository->Register( voronoiName, voronoiDst ) ) ) {
     Tcl_AppendResult( interp, "error registering obj ", voronoiName,
 		      " in repository", (char *)NULL );
+    delete linesDst;
     delete voronoiDst;
     return TCL_ERROR;
   }

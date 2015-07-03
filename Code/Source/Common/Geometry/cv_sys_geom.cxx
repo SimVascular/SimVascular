@@ -536,6 +536,69 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
   return CV_OK;
 }
 
+/* -------------- */
+/* sys_geom_all_union */
+/* -------------- */
+
+int sys_geom_all_union( cvPolyData *model, cvPolyData **faces,int numFaces,int *ids,cvPolyData **dst )
+{
+  cvPolyData *result = NULL;
+  *dst = NULL;
+  vtkIdType cellId = 0;
+  vtkIdType npts;
+  vtkIdType *pts;
+  int subId = 0;
+  double distance;
+  double centroid[3];
+  double closestPt[3];
+  vtkNew(vtkGenericCell,genericCell);
+
+  vtkPolyData *fullPd = model->GetVtkPolyData();
+  vtkNew(vtkAppendPolyDataFilter,appender);
+  vtkNew(vtkPolyData,facePd);
+  for (int i=0;i<numFaces;i++)
+  {
+    vtkPolyData *newPd = faces[i]->GetVtkPolyData();
+    vtkNew(vtkIntArray,scalarArray);
+    scalarArray->SetName("ModelFaceID");
+    for (vtkIdType cellId=0;cellId<newPd->GetNumberOfCells();newPd++)
+      scalarArray->InsertNextValue(ids[i]);
+    newPd->GetCellData()->AddArray(scalarArray);
+    appender->AddInputData(newPd);
+  }
+  appender->Update();
+  facePd->DeepCopy(appender->GetOutput());
+
+  vtkNew(vtkCellLocator,cellLocator);
+  cellLocator->SetDataSet(facePd);
+  cellLocator->BuildLocator();
+  vtkNew(vtkIntArray,newIdArray);
+  newIdArray->SetName("ModelFaceID");
+  for (vtkIdType cellId=0;cellId<fullPd->GetNumberOfCells();cellId++)
+  {
+    fullPd->GetCellPoints(cellId,npts,pts);
+
+    vtkNew(vtkPoints,polyPts);
+    vtkNew(vtkIdTypeArray,polyPtIds);
+    for (int i=0;i<npts;i++)
+    {
+      polyPtIds->InsertValue(i,i);
+      polyPts->InsertNextPoint(newcopy->GetPoint(pts[i]));
+    }
+    vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
+
+    cellLocator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
+	  subId,distance);
+    vtkIdType faceValue = facePd->GetCellData()->GetValue(closestCell);
+    newIdArray->InsertValue(cellId,faceValue);
+  }
+  fullPd->GetCellData()->AddArray(newIdArray);
+  result = new cvPolyData( fullPd);
+  *dst = result;
+
+  return CV_OK;
+}
+
 /* ------------------ */
 /* sys_geom_intersect */
 /* ------------------ */
