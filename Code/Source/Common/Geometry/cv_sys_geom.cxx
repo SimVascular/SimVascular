@@ -52,6 +52,7 @@
 #include "vtkThreshold.h"
 #include "vtkConnectivityFilter.h"
 #include "vtkDataSetSurfaceFilter.h"
+#include "vtkAppendPolyData.h"
 
 #include "vtkLocalQuadricDecimation.h"
 #include "vtkLocalSmoothPolyDataFilter.h"
@@ -537,14 +538,15 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
 }
 
 /* -------------- */
-/* sys_geom_all_union */
+/* sys_geom_assign_ids_based_on_faces */
 /* -------------- */
 
-int sys_geom_all_union( cvPolyData *model, cvPolyData **faces,int numFaces,int *ids,cvPolyData **dst )
+int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,int numFaces,int *ids,cvPolyData **dst )
 {
   cvPolyData *result = NULL;
   *dst = NULL;
   vtkIdType cellId = 0;
+  vtkIdType closestCell;
   vtkIdType npts;
   vtkIdType *pts;
   int subId = 0;
@@ -554,7 +556,7 @@ int sys_geom_all_union( cvPolyData *model, cvPolyData **faces,int numFaces,int *
   vtkNew(vtkGenericCell,genericCell);
 
   vtkPolyData *fullPd = model->GetVtkPolyData();
-  vtkNew(vtkAppendPolyDataFilter,appender);
+  vtkNew(vtkAppendPolyData,appender);
   vtkNew(vtkPolyData,facePd);
   for (int i=0;i<numFaces;i++)
   {
@@ -574,6 +576,9 @@ int sys_geom_all_union( cvPolyData *model, cvPolyData **faces,int numFaces,int *
   cellLocator->BuildLocator();
   vtkNew(vtkIntArray,newIdArray);
   newIdArray->SetName("ModelFaceID");
+  vtkNew(vtkIntArray,oldIdArray);
+  oldIdArray = vtkIntArray::SafeDownCast(facePd->GetCellData()->GetArray("ModelFaceID"));
+
   for (vtkIdType cellId=0;cellId<fullPd->GetNumberOfCells();cellId++)
   {
     fullPd->GetCellPoints(cellId,npts,pts);
@@ -583,13 +588,13 @@ int sys_geom_all_union( cvPolyData *model, cvPolyData **faces,int numFaces,int *
     for (int i=0;i<npts;i++)
     {
       polyPtIds->InsertValue(i,i);
-      polyPts->InsertNextPoint(newcopy->GetPoint(pts[i]));
+      polyPts->InsertNextPoint(fullPd->GetPoint(pts[i]));
     }
     vtkPolygon::ComputeCentroid(polyPtIds,polyPts,centroid);
 
     cellLocator->FindClosestPoint(centroid,closestPt,genericCell,closestCell,
 	  subId,distance);
-    vtkIdType faceValue = facePd->GetCellData()->GetValue(closestCell);
+    vtkIdType faceValue = oldIdArray->GetValue(closestCell);
     newIdArray->InsertValue(cellId,faceValue);
   }
   fullPd->GetCellData()->AddArray(newIdArray);

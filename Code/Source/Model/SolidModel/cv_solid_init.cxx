@@ -3066,7 +3066,7 @@ int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   char *dstName;
   cvRepositoryData *face;
   cvPolyData *dst;
-  cvRepositoryData *pd;
+  cvRepositoryData *model;
   RepositoryDataT type;
   cvPolyData **faces;
   cvSolidModel *geom;
@@ -3076,7 +3076,7 @@ int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
     { "-model", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-facelist", LIST_Type, &faceList, NULL, REQUIRED, 0, { 0 } },
     { "-ids", LIST_Type, &idList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, $dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3104,9 +3104,9 @@ int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   // correct type (i.e. cvSolidModel).  Also build up the array of
   // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
 
-  faces = new cvPolyData * [numSrcs];
+  faces = new cvPolyData * [numFaces];
 
-  for (int i = 0; i < numSrcs; i++ ) {
+  for (int i = 0; i < numFaces; i++ ) {
     face = gRepository->GetObject( faceList.argv[i] );
     if ( face == NULL ) {
       Tcl_AppendResult( interp, "couldn't find object ", faceList.argv[i],
@@ -3145,14 +3145,14 @@ int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Retrieve cvPolyData source:
-  pd = gRepository->GetObject( srcName );
-  if ( pd == NULL ) {
+  model = gRepository->GetObject( srcName );
+  if ( model == NULL ) {
     Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
     delete [] faces;
     delete [] allids;
     return TCL_ERROR;
   }
-  type = pd->GetType();
+  type = model->GetType();
   if ( type != POLY_DATA_T ) {
     Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
 		      (char *)NULL );
@@ -3172,7 +3172,7 @@ int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( sys_geom_assign_ids_based_on_faces(model,faces,numFaces,allids,(cvPolyData**)(&dst) )
+  if ( sys_geom_assign_ids_based_on_faces((cvPolyData *)model,faces,numFaces,allids,(cvPolyData**)(&dst) )
        != CV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
