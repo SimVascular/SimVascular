@@ -3258,23 +3258,49 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
   if {$gKernel($model) != "Parasolid"} {
     return -code error "ERROR: Must use a Parasolid model to create PolyData Model"
   }
+  set kernel $gKernel($model)
   set modelpd /models/$kernel/$model
+  solid_setKernel -name Parasolid
   if {[repos_exists -obj $modelpd] != 1} {
     $model GetPolyData -result $modelpd
   }
 
-  set gOptions(meshing_solid_kernel) $kernel
-  set kernel $kernel
-  solid_setKernel -name $kernel
-
   set facevtklist {}
-  foreach faceid [$modelpd GetFaceIds] { 
-    catch {set facename [$modelpd GetFaceAttr -attr gdscName -faceId $faceid]}
-    set $facepd /models/$kernel/$facename
+  set facenames {}
+  set idlist {}
+  foreach faceid [$model GetFaceIds] { 
+    catch {set facename [$model GetFaceAttr -attr gdscName -faceId $faceid]}
+    lappend facenames $facename
+    set facepd /models/$kernel/$facename
     if {[repos_exists -obj $facepd] != 1} {
-      $modelpd GetFacePolyData -faceid $faceid -result $facepd
+      $model GetFacePolyData -face $faceid -result $facepd
     }
     lappend facevtklist $facepd
+    lappend idlist $faceid
   }
-  model_convert_parasolid_to_polydata -model $modelpd -faces $facevtklist
+
+  set gOptions(meshing_solid_kernel) PolyData
+  set kernel PolyData
+  solid_setKernel -name $kernel
+
+  set newmodel [guiSV_model_new_surface_name 0]
+  set newmodelpd /models/$kernel/$newmodel
+  catch {repos_delete -obj $newmodel}
+  if {[model_create $kernel $newmodel] != 1} {
+    guiSV_model_delete_model $kernel $newmodel
+    catch {repos_delete -obj $newmodelpd}
+    model_create $kernel $newmodel
+  }
+
+  model_convert_parasolid_to_polydata -model $modelpd -facelist $facevtklist -ids $idlist -result $newmodel
+
+  global gPolyDataFaceNames
+  set allids [$newmodel GetFaceIds]
+  foreach id $allids {
+    set loc [lsearch -exact $idlist $id] 
+    set newname [lindex $facenames $loc]
+    set gPolyDataFaceNames($id) $newname
+  }
+  guiSV_model_add_faces_to_tree $kernel $newmodel
+  guiSV_model_display_only_given_model $newmodel 1
 }

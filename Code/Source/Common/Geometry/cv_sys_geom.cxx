@@ -556,6 +556,7 @@ int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,in
   vtkNew(vtkGenericCell,genericCell);
 
   vtkPolyData *fullPd = model->GetVtkPolyData();
+  fullPd->BuildLinks();
   vtkNew(vtkAppendPolyData,appender);
   vtkNew(vtkPolyData,facePd);
   for (int i=0;i<numFaces;i++)
@@ -563,7 +564,7 @@ int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,in
     vtkPolyData *newPd = faces[i]->GetVtkPolyData();
     vtkNew(vtkIntArray,scalarArray);
     scalarArray->SetName("ModelFaceID");
-    for (vtkIdType cellId=0;cellId<newPd->GetNumberOfCells();newPd++)
+    for (vtkIdType cellId=0;cellId<newPd->GetNumberOfCells();cellId++)
       scalarArray->InsertNextValue(ids[i]);
     newPd->GetCellData()->AddArray(scalarArray);
     appender->AddInputData(newPd);
