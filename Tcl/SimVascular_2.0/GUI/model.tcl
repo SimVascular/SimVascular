@@ -3262,8 +3262,9 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
   set modelpd /models/$kernel/$model
   solid_setKernel -name Parasolid
   if {[repos_exists -obj $modelpd] != 1} {
-    $model GetPolyData -result $modelpd
-  }
+    catch {repos_delete -obj $modelpd}
+    $model GetPolyData -result $modelpd -max_edge_size $gOptions(facet_max_edge_size)
+  #}
 
   set facevtklist {}
   set facenames {}
@@ -3273,7 +3274,8 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
     lappend facenames $facename
     set facepd /models/$kernel/$facename
     if {[repos_exists -obj $facepd] != 1} {
-      $model GetFacePolyData -face $faceid -result $facepd
+      catch {repos_delete -obj $facepd}
+      $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $gOptions(facet_max_edge_size)
     }
     lappend facevtklist $facepd
     lappend idlist $faceid
