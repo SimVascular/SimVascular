@@ -493,6 +493,7 @@ Code/Source/UI/cv_VTK_init.cxx -text
 Code/Source/UI/cv_VTK_init.h -text
 Code/Source/UI/gdscInit.cxx -text
 Code/Source/UI/main.cxx -text
+Code/ThirdParty/nspcg/simvascular_nspcg/Makefile -text
 Code/ThirdParty/tetgen/CMakeLists.txt -text
 Code/ThirdParty/tetgen/simvascular_tetgen.h.in -text
 Code/ThirdParty/tetgen/simvascular_tetgen/CMakeLists.txt -text
