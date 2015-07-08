@@ -30,9 +30,6 @@ BuildWithMake/MakeHelpers/mpich2-1.4p1.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/mpich2-1.4p1.x86_cygwin.mk -text
 BuildWithMake/MakeHelpers/mpich2.usr.local.x64_linux.mk -text
 BuildWithMake/MakeHelpers/mpich2.usr.x64_linux.mk -text
-BuildWithMake/MakeHelpers/nspcg.x64_cygwin.mk -text
-BuildWithMake/MakeHelpers/nspcg.x64_linux.mk -text
-BuildWithMake/MakeHelpers/nspcg.x86_cygwin.mk -text
 BuildWithMake/MakeHelpers/parasolid-24.0.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/parasolid-24.0.x64_linux.mk -text
 BuildWithMake/MakeHelpers/parasolid-24.0.x86_cygwin.mk -text
@@ -41,9 +38,6 @@ BuildWithMake/MakeHelpers/parasolid-26.1.x64_linux.mk -text
 BuildWithMake/MakeHelpers/rules.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/rules.x64_linux.mk -text
 BuildWithMake/MakeHelpers/rules.x86_cygwin.mk -text
-BuildWithMake/MakeHelpers/sparse-1.4.x64_cygwin.mk -text
-BuildWithMake/MakeHelpers/sparse-1.4.x64_linux.mk -text
-BuildWithMake/MakeHelpers/sparse-1.4.x86_cygwin.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x64_linux.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x86_cygwin.mk -text
