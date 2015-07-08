@@ -493,7 +493,9 @@ Code/Source/UI/cv_VTK_init.cxx -text
 Code/Source/UI/cv_VTK_init.h -text
 Code/Source/UI/gdscInit.cxx -text
 Code/Source/UI/main.cxx -text
+Code/ThirdParty/nspcg/Makefile -text
 Code/ThirdParty/nspcg/simvascular_nspcg/Makefile -text
+Code/ThirdParty/sparse/Makefile -text
 Code/ThirdParty/sparse/simvascular_sparse/Makefile -text
 Code/ThirdParty/tetgen/CMakeLists.txt -text
 Code/ThirdParty/tetgen/simvascular_tetgen.h.in -text
@@ -574,8 +576,10 @@ Code/ThirdParty/vmtk/vtkvmtkVoronoiDiagram3D.cxx -text
 Code/ThirdParty/vmtk/vtkvmtkVoronoiDiagram3D.h -text
 Code/ThirdParty/vmtk/vtkvmtkWin32Header.h -text
 Code/ThirdParty/zlib/CMakeLists.txt -text
+Code/ThirdParty/zlib/Makefile -text
 Code/ThirdParty/zlib/simvascular_zlib.h.in -text
 Code/ThirdParty/zlib/simvascular_zlib/CMakeLists.txt -text
+Code/ThirdParty/zlib/simvascular_zlib/Makefile -text
 Code/ThirdParty/zlib/simvascular_zlib/READ.simvascular -text
 Code/ThirdParty/zlib/simvascular_zlib/adler32.c -text
 Code/ThirdParty/zlib/simvascular_zlib/compress.c -text

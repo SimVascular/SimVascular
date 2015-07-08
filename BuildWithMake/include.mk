@@ -462,6 +462,10 @@ else
   EXECDIRS = 
 endif
 
+#
+#  override other options to build solver only!
+#
+
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),0)
   LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
   SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
@@ -544,14 +548,57 @@ LFLAGS     += -l_lib_simvascular_lset \
 	      $(VTK_LIBS)
 endif
 
-##### ifeq ($(MAKE_WITH_ITK),1)
-#####        CXXFLAGS += $(ITK_INCDIR)
-#####	LFLAGS    += $(ITK_LIBS) $(ITK_LIBS)
-#####  endif
+#
+# ThirdParty software that must be built
+# from source if used.
+#
 
-##### ifeq ($(MAKE_WITH_ZLIB),1)
-#####	LFLAGS += $(ZLIB_LIBS)
-##### endif
+# -----------------------------------------
+# ***  Optional Open Source Packages    ***
+# ***   (less restrictive licenses)     ***
+# *** (e.g. MIT or BSD or Apache 2.0)   ***
+# -----------------------------------------
+
+# ------
+# Sparse
+# ------
+
+ifeq ($(MAKE_WITH_SPARSE),1)
+  LIBDIRS += ../Code/ThirdParty/sparse
+  SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
+  SPARSE_INCDIR  = -I $(SPARSE_TOP)
+  ifeq ($(CLUSTER),x64_cygwin)
+    SPARSE_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_sparse.lib
+  endif
+  ifeq ($(CLUSTER),x64_linux)
+    SPARSE_LIBS    = -L $(TOP)/lib -l_lib_simvascular_sparse
+  endif
+endif
+
+# -----------------------------------------
+# ***  Optional Open Source Packages    ***
+# ***           (LGPL code)             ***
+# -----------------------------------------
+
+# ------
+# NSPCG
+# ------
+
+ifeq ($(MAKE_WITH_NSPCG),1)
+  LIBDIRS += ../Code/ThirdParty/nspcg
+  NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
+  NSPCG_INCDIR  = -I $(NSPCG_TOP)
+  ifeq ($(CLUSTER),x64_cygwin)
+    NSPCG_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_nspcg.lib
+  endif
+  ifeq ($(CLUSTER),x64_linux)
+    NSPCG_LIBS    = -L $(TOP)/lib -l_lib_simvascular_nspcg
+  endif
+endif
+
+#
+# ThirdParty software included from /sv_extern
+#
 
 # ---------------------------------------
 # ***  Required Open Source Packages  ***
@@ -716,22 +763,6 @@ ifeq ($(MAKE_WITH_MPICH2),1)
 
 endif
 
-# ------
-# Sparse
-# ------
-
-ifeq ($(MAKE_WITH_SPARSE),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/sparse-1.4.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/sparse-1.4.x64_linux.mk
-  endif
-
-endif
-
 # -----------------------------------------
 # ***  Optional Open Source Packages    ***
 # ***           (GPL code)              ***
@@ -818,27 +849,6 @@ ifeq ($(MAKE_WITH_METIS),1)
 
   ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/metis-4.0.1.x64_linux.mk
-  endif
-
-endif
-
-# -----------------------------------------
-# ***  Optional Open Source Packages    ***
-# ***           (LGPL code)             ***
-# -----------------------------------------
-
-# ------
-# NSPCG
-# ------
-
-ifeq ($(MAKE_WITH_NSPCG),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/nspcg.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/nspcg.x64_linux.mk
   endif
 
 endif
