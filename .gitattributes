@@ -32,9 +32,6 @@ BuildWithMake/MakeHelpers/meshsim-9.0-141018.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/meshsim-9.0-141018.x64_linux.mk -text
 BuildWithMake/MakeHelpers/meshsim-9.0-150304.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/meshsim-9.0-150304.x64_linux.mk -text
-BuildWithMake/MakeHelpers/metis-4.0.1.x64_cygwin.mk -text
-BuildWithMake/MakeHelpers/metis-4.0.1.x64_linux.mk -text
-BuildWithMake/MakeHelpers/metis-4.0.1.x86_cygwin.mk -text
 BuildWithMake/MakeHelpers/mpich2-1.4p1.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/mpich2-1.4p1.x86_cygwin.mk -text
 BuildWithMake/MakeHelpers/mpich2.usr.local.x64_linux.mk -text
@@ -50,13 +47,8 @@ BuildWithMake/MakeHelpers/rules.x86_cygwin.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x64_linux.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x86_cygwin.mk -text
-BuildWithMake/MakeHelpers/tetgen-1.5.0.x64_cygwin.mk -text
-BuildWithMake/MakeHelpers/tetgen-1.5.0.x64_linux.mk -text
 BuildWithMake/MakeHelpers/vtk-6.0.0.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/vtk-6.0.0.x64_linux.mk -text
-BuildWithMake/MakeHelpers/zlib-1.2.3.x64_linux.mk -text
-BuildWithMake/MakeHelpers/zlib-1.2.3.x86_cygwin.mk -text
-BuildWithMake/MakeHelpers/zlib-1.2.6.x64_cygwin.mk -text
 BuildWithMake/Makefile -text
 BuildWithMake/README-build-linux.txt -text
 BuildWithMake/README-build-windows.txt -text

@@ -564,7 +564,7 @@ endif
 # ------
 
 ifeq ($(MAKE_WITH_SPARSE),1)
-  LIBDIRS += ../Code/ThirdParty/sparse
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/sparse
   SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
   SPARSE_INCDIR  = -I $(SPARSE_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
@@ -580,7 +580,7 @@ endif
 # ----
 
 ifeq ($(MAKE_WITH_ZLIB),1)
-  LIBDIRS += ../Code/ThirdParty/zlib
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/zlib
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
@@ -601,7 +601,7 @@ endif
 # ------
 
 ifeq ($(MAKE_WITH_NSPCG),1)
-  LIBDIRS += ../Code/ThirdParty/nspcg
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/nspcg
   NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
   NSPCG_INCDIR  = -I $(NSPCG_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
@@ -620,7 +620,7 @@ endif
 ifeq ($(MAKE_WITH_TETGEN),1)
   TETGEN150       = 1
   GLOBAL_DEFINES += -DTETLIBRARY
-  LIBDIRS += ../Code/ThirdParty/tetgen
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tetgen
   TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
   TETGEN_INCDIR  = -I $(TETGEN_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
@@ -630,6 +630,39 @@ ifeq ($(MAKE_WITH_TETGEN),1)
     TETGEN_LIBS    = -L $(TOP)/lib -l_lib_simvascular_tetgen
   endif
 endif
+
+# ----
+# svLS
+# ----
+
+ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
+    SVLS_DEFS   = 
+    SVLS_INCDIR = -I ../svLS
+    SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_dummy_svLS.$(STATICEXT)
+endif
+
+ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
+    SVLS_DEFS   = 
+    SVLS_INCDIR = -I ../svLS
+    SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_svLS.$(STATICEXT)
+endif
+
+# -----
+# Metis
+# -----
+
+ifeq ($(MAKE_WITH_METIS),1)
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/metis
+  METIS_TOP = $(TOP)/../Code/ThirdParty/metis
+  METIS_INCDIR  = -I $(METIS_TOP)
+  ifeq ($(CLUSTER),x64_cygwin)
+    METIS_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_metis.lib
+  endif
+  ifeq ($(CLUSTER),x64_linux)
+    METIS_LIBS    = -L $(TOP)/lib -l_lib_simvascular_metis
+  endif
+endif
+
 
 #
 # ThirdParty software included from /sv_extern
@@ -744,39 +777,6 @@ endif
 # ***  Optional Open Source Packages    ***
 # ***  (not free for commercial use)    ***
 # -----------------------------------------
-
-# ----
-# svLS
-# ----
-
-ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
-    SVLS_DEFS   = 
-    SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_dummy_svLS.$(STATICEXT)
-endif
-
-ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
-    SVLS_DEFS   = 
-    SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_svLS.$(STATICEXT)
-endif
-
-# -----
-# Metis
-# -----
-
-ifeq ($(MAKE_WITH_METIS),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/metis-4.0.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/metis-4.0.1.x64_linux.mk
-  endif
-
-endif
-
 
 # --------------------------------------
 # ***  Optional Commercial Packages  ***

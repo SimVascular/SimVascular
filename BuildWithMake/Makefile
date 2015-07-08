@@ -104,6 +104,9 @@ pre-build:
 	touch ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
 
 shared-build:
+	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) lib ) ; done
 	for i in ${LIBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) lib ) ; done
@@ -115,6 +118,9 @@ shared-build:
 	  $(MAKE) ) ; done
 
 static-build:
+	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) lib ) ; done
 	for i in ${LIBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) lib ) ; done
