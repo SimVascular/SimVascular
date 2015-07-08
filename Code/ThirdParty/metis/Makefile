@@ -24,46 +24,53 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../../BuildWithMake
+TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-# ==============
-# Compiler flags
-# ==============
+METIS_SUBDIRS = simvascular_metis/Lib
 
-# --------------
-# Compiler flags
-# --------------
+lib:	createHeaderFile libsubdirs
 
-CCFLAGS = $(GLOBAL_CCFLAGS) -I .
+shared:
 
-HDRS	= defs.h macros.h metis.h \
-          proto.h rename.h struct.h
+libsubdirs:
+	@for i in ${METIS_SUBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE)) ; done
 
-CSRCS	= coarsen.c fm.c initpart.c match.c ccgraph.c memory.c \
-       pmetis.c pqueue.c refine.c util.c timing.c debug.c \
-       bucketsort.c graph.c stat.c kmetis.c kwayrefine.c \
-       kwayfm.c balance.c ometis.c srefine.c sfm.c separator.c \
-       mincover.c mmd.c mesh.c meshpart.c frename.c fortran.c \
-       myqsort.c compress.c parmetis.c estmem.c \
-       mpmetis.c mcoarsen.c mmatch.c minitpart.c mbalance.c \
-       mrefine.c mutil.c mfm.c mkmetis.c mkwayrefine.c mkwayfmh.c \
-       mrefine2.c minitpart2.c mbalance2.c mfm2.c \
-       kvmetis.c kwayvolrefine.c kwayvolfm.c subdomains.c
+clean:
+	for i in ${METIS_SUBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) clean ) ; done
 
-SRCS	= $(CSRCS)
+veryclean: clean
+	rm -f simvascular_metis.h
+	rm -f metis_defs.h
+	rm -f metis_macros.h
+	rm -f metis.h
+	rm -f metis_proto.h
+	rm -f metis_rename.h
+	rm -f metis_struct.h
+	for i in ${METIS_SUBDIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) veryclean ) ; done
 
-DEPS	= $(CSRCS:.c=.d)
-
-OBJS	= $(CSRCS:.c=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_metis.$(STATICEXT)
-
-# =======
-# Targets
-# =======
-
-include $(TOP)/targetlib.mk
-
-
+createHeaderFile:
+	rm -f simvascular_metis.h
+	rm -f metis_defs.h
+	rm -f metis_macros.h
+	rm -f metis.h
+	rm -f metis_proto.h
+	rm -f metis_rename.h
+	rm -f metis_struct.h
+	@echo "#ifndef __simvascular_metis_h" > simvascular_metis.h
+	@echo "#define __simvascular_metis_h" >> simvascular_metis.h
+	@echo "#include <metis.h>" >> simvascular_metis.h
+	@echo "#endif" >> simvascular_metis.h
+	cp -f simvascular_metis/Lib/defs.h metis_defs.h
+	cp -f simvascular_metis/Lib/macros.h metis_macros.h
+	cp -f simvascular_metis/Lib/metis-wrapper.h metis.h
+	cp -f simvascular_metis/Lib/proto.h metis_proto.h
+	cp -f simvascular_metis/Lib/rename.h metis_rename.h
+	cp -f simvascular_metis/Lib/struct.h metis_struct.h

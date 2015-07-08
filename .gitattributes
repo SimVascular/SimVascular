@@ -496,6 +496,8 @@ Code/Source/UI/cv_VTK_init.cxx -text
 Code/Source/UI/cv_VTK_init.h -text
 Code/Source/UI/gdscInit.cxx -text
 Code/Source/UI/main.cxx -text
+Code/ThirdParty/metis/Makefile -text
+Code/ThirdParty/metis/simvascular_metis/Lib/Makefile.metis.org -text
 Code/ThirdParty/nspcg/Makefile -text
 Code/ThirdParty/nspcg/simvascular_nspcg/Makefile -text
 Code/ThirdParty/sparse/Makefile -text

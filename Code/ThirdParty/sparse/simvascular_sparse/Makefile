@@ -36,7 +36,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CFLAGS = $(GLOBAL_CFLAGS) $(LOCAL_INCDIR)
+CCFLAGS = $(GLOBAL_CCFLAGS)
 
 HDRS	= spConfig.h spDefs.h spMatrix.h
 

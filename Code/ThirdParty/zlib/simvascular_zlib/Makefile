@@ -36,7 +36,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CFLAGS = $(GLOBAL_CFLAGS) $(LOCAL_INCDIR)
+CCFLAGS = $(GLOBAL_CCFLAGS)
 
 HDRS	= crc32.h deflate.h inffast.h inflate.h inftrees.h \
 	  trees.h zlib.h zutil.h
