@@ -575,6 +575,22 @@ ifeq ($(MAKE_WITH_SPARSE),1)
   endif
 endif
 
+# ----
+# zlib
+# ----
+
+ifeq ($(MAKE_WITH_ZLIB),1)
+  LIBDIRS += ../Code/ThirdParty/zlib
+  ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
+  ZLIB_INCDIR  = -I $(ZLIB_TOP)
+  ifeq ($(CLUSTER),x64_cygwin)
+    ZLIB_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_zlib.lib
+  endif
+  ifeq ($(CLUSTER),x64_linux)
+    ZLIB_LIBS    = -L $(TOP)/lib -l_lib_simvascular_zlib
+  endif
+endif
+
 # -----------------------------------------
 # ***  Optional Open Source Packages    ***
 # ***           (LGPL code)             ***
@@ -593,6 +609,25 @@ ifeq ($(MAKE_WITH_NSPCG),1)
   endif
   ifeq ($(CLUSTER),x64_linux)
     NSPCG_LIBS    = -L $(TOP)/lib -l_lib_simvascular_nspcg
+  endif
+endif
+
+# -----------------------------------------
+# ***  Optional Open Source Packages    ***
+# ***  (not free for commercial use)    ***
+# -----------------------------------------
+
+ifeq ($(MAKE_WITH_TETGEN),1)
+  TETGEN150       = 1
+  GLOBAL_DEFINES += -DTETLIBRARY
+  LIBDIRS += ../Code/ThirdParty/tetgen
+  TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
+  TETGEN_INCDIR  = -I $(TETGEN_TOP)
+  ifeq ($(CLUSTER),x64_cygwin)
+    TETGEN_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_tetgen.lib
+  endif
+  ifeq ($(CLUSTER),x64_linux)
+    TETGEN_LIBS    = -L $(TOP)/lib -l_lib_simvascular_tetgen
   endif
 endif
 
@@ -629,85 +664,6 @@ ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/vtk-6.0.0.x64_linux.mk
 endif
 
-# --------------------------------------
-# ***  Optional Commercial Packages  ***
-# --------------------------------------
-
-# ---------
-# Parasolid
-# ---------
-
-ifeq ($(MAKE_WITH_PARASOLID),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
-  endif
-
-endif
-
-# -------
-# MeshSim
-# -------
-
-ifeq ($(MAKE_WITH_MESHSIM),1)
-
-  ifeq ($(MAKE_WITH_PARASOLID),1)
-    MESHSIM_MODELER=parasolid
-  endif
-
-  SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150304.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150304.x64_linux.mk
-  endif
-
-endif
-
-# ------
-# LesLib
-# ------
-
-ifeq ($(MAKE_WITH_BINARY_LESLIB),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/leslib-1.5.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/leslib-1.5.x64_linux.mk
-  endif
-
-endif
-
-ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
-
-  LESLIB_INCDIR = 
-  LESLIB_LIBS   = 
-
-  ifeq ($(CLUSTER), x86_cygwin)
-    LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN
-    LESLIB_LIBS   = 
-  endif
-
-  ifeq ($(CLUSTER), x64_cygwin)
-    LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN -DACUSIM_WIN64
-    LESLIB_LIBS   = 
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-    LESLIB_DEFS   = -DACUSIM_LINUX
-  endif
-
-endif
-
 # -----------------------------------------
 # ***  Optional Open Source Packages    ***
 # ***   (less restrictive licenses)     ***
@@ -726,22 +682,6 @@ ifeq ($(MAKE_WITH_ITK),1)
 
   ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/itk-4.5.2.x64_linux.mk
-  endif
-
-endif
-
-# ----
-# zlib
-# ----
-
-ifeq ($(MAKE_WITH_ZLIB),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/zlib-1.2.6.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/zlib-1.2.3.x64_linux.mk
   endif
 
 endif
@@ -821,22 +761,6 @@ ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
     SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_svLS.$(STATICEXT)
 endif
 
-# ------
-# TetGen
-# ------
-
-ifeq ($(MAKE_WITH_TETGEN),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/tetgen-1.5.0.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/tetgen-1.5.0.x64_linux.mk
-  endif
-
-endif
-
 # -----
 # Metis
 # -----
@@ -849,6 +773,86 @@ ifeq ($(MAKE_WITH_METIS),1)
 
   ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/metis-4.0.1.x64_linux.mk
+  endif
+
+endif
+
+
+# --------------------------------------
+# ***  Optional Commercial Packages  ***
+# --------------------------------------
+
+# ---------
+# Parasolid
+# ---------
+
+ifeq ($(MAKE_WITH_PARASOLID),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/parasolid-26.1.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
+  endif
+
+endif
+
+# -------
+# MeshSim
+# -------
+
+ifeq ($(MAKE_WITH_MESHSIM),1)
+
+  ifeq ($(MAKE_WITH_PARASOLID),1)
+    MESHSIM_MODELER=parasolid
+  endif
+
+  SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/meshsim-9.0-150304.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/meshsim-9.0-150304.x64_linux.mk
+  endif
+
+endif
+
+# ------
+# LesLib
+# ------
+
+ifeq ($(MAKE_WITH_BINARY_LESLIB),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/leslib-1.5.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/leslib-1.5.x64_linux.mk
+  endif
+
+endif
+
+ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
+
+  LESLIB_INCDIR = 
+  LESLIB_LIBS   = 
+
+  ifeq ($(CLUSTER), x86_cygwin)
+    LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN
+    LESLIB_LIBS   = 
+  endif
+
+  ifeq ($(CLUSTER), x64_cygwin)
+    LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN -DACUSIM_WIN64
+    LESLIB_LIBS   = 
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+    LESLIB_DEFS   = -DACUSIM_LINUX
   endif
 
 endif

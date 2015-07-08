@@ -102,8 +102,6 @@ pre-build:
 	touch ../Code/Source/Include/simvascular_options.h
 	touch ../Code/Source/Include/simvascular_version.h
 	touch ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
-	-echo "#include \"tetgen.h\"" > ../Code/Source/Mesh/TetGenMeshObject/simvascular_tetgen.h
-	-echo "#include \"tetgen.h\"" > ../Code/Source/Mesh/TetGenAdapt/simvascular_tetgen.h
 
 shared-build:
 	for i in ${LIBDIRS}; do ( \

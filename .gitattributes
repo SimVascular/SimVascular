@@ -492,9 +492,11 @@ Code/ThirdParty/nspcg/simvascular_nspcg/Makefile -text
 Code/ThirdParty/sparse/Makefile -text
 Code/ThirdParty/sparse/simvascular_sparse/Makefile -text
 Code/ThirdParty/tetgen/CMakeLists.txt -text
+Code/ThirdParty/tetgen/Makefile -text
 Code/ThirdParty/tetgen/simvascular_tetgen.h.in -text
 Code/ThirdParty/tetgen/simvascular_tetgen/CMakeLists.txt -text
 Code/ThirdParty/tetgen/simvascular_tetgen/LICENSE -text
+Code/ThirdParty/tetgen/simvascular_tetgen/Makefile -text
 Code/ThirdParty/tetgen/simvascular_tetgen/README -text
 Code/ThirdParty/tetgen/simvascular_tetgen/README.simvascular -text
 Code/ThirdParty/tetgen/simvascular_tetgen/example.poly -text
