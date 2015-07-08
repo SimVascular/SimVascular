@@ -3250,6 +3250,7 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
   global symoblicName
   global gOptions 
   global gKernel 
+  global guiSVvars
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
@@ -3259,12 +3260,12 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
     return -code error "ERROR: Must use a Parasolid model to create PolyData Model"
   }
   set kernel $gKernel($model)
-  set modelpd /models/$kernel/$model
+  set modelpd /tmp/models/$kernel/$model
   solid_setKernel -name Parasolid
-  if {[repos_exists -obj $modelpd] != 1} {
+  if {[repos_exists -obj $modelpd] == 1} {
     catch {repos_delete -obj $modelpd}
-    $model GetPolyData -result $modelpd -max_edge_size $gOptions(facet_max_edge_size)
-  #}
+  }
+  $model GetPolyData -result $modelpd -max_edge_size $guiSVvars(facet_max_edge_size)
 
   set facevtklist {}
   set facenames {}
@@ -3272,11 +3273,11 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
   foreach faceid [$model GetFaceIds] { 
     catch {set facename [$model GetFaceAttr -attr gdscName -faceId $faceid]}
     lappend facenames $facename
-    set facepd /models/$kernel/$facename
-    if {[repos_exists -obj $facepd] != 1} {
+    set facepd /tmp/models/$kernel/$model/$facename
+    if {[repos_exists -obj $facepd] == 1} {
       catch {repos_delete -obj $facepd}
-      $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $gOptions(facet_max_edge_size)
     }
+    $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
     lappend facevtklist $facepd
     lappend idlist $faceid
   }

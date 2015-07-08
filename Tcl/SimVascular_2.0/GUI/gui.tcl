@@ -12335,7 +12335,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tlabel1  -font {Helvetica 10}  -text {Cell Edge Size: }  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tentry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tentry1  -font {Helvetica 10}  -textvariable {gOptions(facet_max_edge_size)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tentry1  -font {Helvetica 10}  -textvariable {guiSVvars(facet_max_edge_size)}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -49753,6 +49753,7 @@ set {guiSVvars(path_quantification_window_size_twistpath)} {0.5}
 set {guiSVvars(path_squeeze)} {0}
 set {guiSVvars(showSegSlice)} {0}
 set {guiSVvars(solids_entry_group_name)} {blank}
+set {guiSVvars(facet_max_edge_size)} {1.0}
 global {guiTGvars}
 set {guiTGvars(blthicknessratio)} {0.5}
 set {guiTGvars(functionBasedMeshingName)} {""}
