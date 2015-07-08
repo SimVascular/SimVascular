@@ -17,3 +17,4 @@ Code/Source/.cproject
 !BuildWithMake/Lib/.project
 !BuildWithMake/Bin/.project
 !Code/FlowSolvers/ThreeDSolver/dummyMPI/.project
+!BuildWithMake/CygwinHelpers/.project

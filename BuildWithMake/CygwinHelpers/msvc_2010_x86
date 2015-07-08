@@ -1,0 +1,52 @@
+#
+#  Microsoft Visual Studio 2010 x86 (installed with 64-bit Windows 7)
+#
+
+export VSINSTALLDIR=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0
+export VCINSTALLDIR=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0/VC
+
+export FrameworkDir32=/cygdrive/c/Windows/Microsoft.NET/Framework
+export FrameworkVersion32=v4.0.30319
+export Framework35Version=v3.5
+
+export FrameworkDir=$FrameworkDir32
+export FrameworkVersion=$FrameworkVersion32
+
+# SDK vars
+
+export WindowsSdkDir=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ SDKs/Windows/v7.0A
+
+PATH=$WindowsSdkDir/bin/NETFX\ 4.0\ Tools:$WindowsSdkDir/bin:$PATH
+INCLUDE=`cygpath -w "$WindowsSdkDir\Include"`\;$INCLUDE
+LIB=`cygpath -w "$WindowsSdkDir\Lib"`\;$LIB
+
+export DevEnvDir=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0/Common7/IDE
+
+PATH=$VSINSTALLDIR/Team\ Tools/Performance\ Tools:$PATH
+PATH=/cygdrive/c/Program\ Files/HTML\ Help\ Workshop:$PATH
+PATH=/cygdrive/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop:$PATH
+PATH=$VCINSTALLDIR/VCPackages:$PATH
+PATH=$FrameworkDir/$Framework35Version:$PATH
+PATH=$FrameworkDir/$FrameworkVersion:$PATH
+PATH=$VSINSTALLDIR/Common7/Tools:$PATH
+PATH=$VCINSTALLDIR/BIN:$PATH
+PATH=$DevEnvDir:$PATH
+
+export DevEnvDir=`cygpath -w "$DevEnvDir"`
+
+# set INCLUDE
+
+INCLUDE=`cygpath -w "$VCINSTALLDIR/ATLMFC/INCLUDE"`\;$INCLUDE
+INCLUDE=`cygpath -w "$VCINSTALLDIR/INCLUDE"`\;$INCLUDE
+
+# set LIB
+
+LIB=`cygpath -w "$VCINSTALLDIR/ATLMFC/LIB"`\;$LIB
+LIB=`cygpath -w "$VCINSTALLDIR/LIB"`\;$LIB
+
+# set LIBPATH
+
+LIBPATH=`cygpath -w "$VCINSTALLDIR/ATLMFC/LIB"`\;$LIBPATH
+LIBPATH=`cygpath -w "$VCINSTALLDIR/LIB"`\;$LIBPATH
+LIBPATH=`cygpath -w "$FrameworkDir/$Framework35Version"`\;$LIBPATH
+LIBPATH=`cygpath -w "$FrameworkDir/$FrameworkVersion"`\;$LIBPATH

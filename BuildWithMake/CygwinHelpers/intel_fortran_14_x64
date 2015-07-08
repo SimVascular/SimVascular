@@ -1,0 +1,26 @@
+export INTEL_COMPILER_ROOT=/cygdrive/c/Program\ Files\ \(x86\)/Intel/Composer\ XE\ 2013\ SP1
+
+export TARGET_ARCH=intel64
+export TARGET_VS_ARCH=amd64
+export ARCH_PATH=intel64
+#export ARCH_PATH_MPI=em64t
+
+#export BUNDLE_NAME="Intel(R) Parallel Studio XE 2013 SP1"
+#export PRODUCT_NAME="Intel Composer XE 2013 SP1"
+#export PRODUCT_NAME_FULL="Intel(R) Composer XE 2013 SP1 Update 2 (package 176)"
+#export WIN_TITLE=$PRODUCT_NAME
+#export WIN_TITLE_ARCH="Intel(R) 64"
+#export WIN_TITLE_VS="Visual Studio 2010"
+#export WIN_TITLE="$WIN_TITLE $WIN_TITLE_ARCH $WIN_TITLE_VS"
+
+export PATH=$INTEL_COMPILER_ROOT/bin/$TARGET_ARCH:$INTEL_COMPILER_ROOT/redist/$ARCH_PATH/compiler:$PATH
+export PATH=$PATH:$INTEL_COMPILER_ROOT/redist/$ARCH_PATH/mpirt
+
+export LIB=`cygpath -w "$INTEL_COMPILER_ROOT/compiler/lib"`\;`cygpath -w "$INTEL_COMPILER_ROOT/compiler/lib/$ARCH_PATH"`\;$LIB
+
+#set MIC_LD_LIBRARY_PATH=%INTEL_COMPILER_ROOT%\compiler\lib\mic;%MIC_LD_LIBRARY_PATH%
+
+export INCLUDE=`cygpath -w "$INTEL_COMPILER_ROOT/compiler/include"`\;`cygpath -w "$INTEL_COMPILER_ROOT/compiler/include/$ARCH_PATH"`\;$INCLUDE
+
+INTEL_LICENSE_FILE=/cygdrive/c/Program\ Files\ \(x86\)/Common\ Files/Intel/Licenses
+export INTEL_LICENSE_FILE=`cygpath -m "$INTEL_LICENSE_FILE"`

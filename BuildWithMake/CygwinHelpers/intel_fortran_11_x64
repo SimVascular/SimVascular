@@ -1,0 +1,11 @@
+
+IFORT_COMPILER11=/cygdrive/c/Program\ Files\ \(x86\)/Intel/Compiler/11.1/067
+INTEL_LICENSE_FILE=/cygdrive/c/Program\ Files\ \(x86\)/Common\ Files/Intel/Licenses
+
+PATH=$IFORT_COMPILER11/Bin/intel64:$PATH
+ 
+LIB=`cygpath -w "$IFORT_COMPILER11/Lib/intel64"`\;$LIB
+INCLUDE=`cygpath -w "$IFORT_COMPILER11/Include"`\;`cygpath -w "$IFORT_COMPILER11/Include/Intel64"`\;$INCLUDE
+
+export IFORT_COMPILER11=`cygpath -m "$IFORT_COMPILER11"`
+export INTEL_LICENSE_FILE=`cygpath -m "$INTEL_LICENSE_FILE"`

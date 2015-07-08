@@ -1,0 +1,15 @@
+
+# Intel Fortran 11 compiler
+
+IFORT_COMPILER11=/cygdrive/c/Program\ Files\ \(x86\)/Intel/Compiler/11.1/067
+#INTEL_SHARED=/cygdrive/c/Program\ Files\ \(x86\)/Common\ Files/Intel/Shared\ Files
+INTEL_LICENSE_FILE=/cygdrive/c/Program\ Files\ \(x86\)/Common\ Files/Intel/Licenses
+
+PATH=$IFORT_COMPILER11/Bin/ia32:$PATH
+
+LIB=`cygpath -w "$IFORT_COMPILER11/Lib/ia32"`\;$LIB
+INCLUDE=`cygpath -w "$IFORT_COMPILER11/Include"`\;`cygpath -w "$IFORT_COMPILER11/Include/ia32"`\;$INCLUDE
+
+export IFORT_COMPILER11=`cygpath -m "$IFORT_COMPILER11"`
+#export INTEL_SHARED=`cygpath -m "$INTEL_SHARED"`
+export INTEL_LICENSE_FILE=`cygpath -m "$INTEL_LICENSE_FILE"`
