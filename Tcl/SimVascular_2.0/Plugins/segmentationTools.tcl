@@ -29,7 +29,12 @@
 #===========================================================================    
 
 proc seg_writeVolumeMha {name fname} {
-	vtkMetaImageWriter writer
+	catch {writer Delete}
+  vtkMetaImageWriter writer
+  set sp [[repos_exportToVtk -src $name] GetSpacing]
+  set ext [[repos_exportToVtk -src $name] GetExtent]
+  puts $sp
+  puts $ext
 	writer SetInputData [repos_exportToVtk -src $name]
 	writer SetFileName $fname
 	writer Write
@@ -45,8 +50,10 @@ proc seg_convertModeltoVolume { {objName temp} } {
   set model [lindex [model_names] 0]
 
 	catch {repos_delete -obj $modelPd}
+  catch {repos_delete -obj $objName}
 	$model GetPolyData -result $modelPd
 	itkutils_PdToVol -src $modelPd -dst $objName -ref volume_image
+
 	catch {repos_delete -obj $modelPd}
 }
 
@@ -504,21 +511,21 @@ set segfn $seg_basename.mha
 # set distfn_base [file rootname $distfn_base]
 # set distfn $distfn_base.vtp
 
-global gImageVol
-set imgfn_base $gImageVol(xml_filename)
-if {$imgfn_base == ""} return
-set imgfn_base [file rootname $imgfn_base]
-set imgfn $imgfn_base.mha
-
-
 
 #puts "distfn $distfn"
-puts "segfn $segfn"
-puts "imgfn $imgfn"
+
+
 
 
 seg_convertModeltoVolume tmp-pd
+puts "segfn $segfn"
 seg_writeVolumeMha tmp-pd $segfn
+global gImageVol
+set imgfn_base $gImageVol(xml_filename)
+if {$imgfn_base == ""} return
+puts "imgfn $imgfn"
+set imgfn_base [file rootname $imgfn_base]
+set imgfn $imgfn_base.mha
 seg_writeVolumeMha volume_image $imgfn
 #seg_writeAllPathDistanceMap $distfn "$pathIds"
 
@@ -938,6 +945,9 @@ proc seg_LoadAll {imgfn pathfn modelfn} {
   if {[file extension $imgfn] == ".vti"} {
       set gImageVol(xml_filename) "$imgfn"
   }
+  if {[file extension $imgfn] == ".mha"} {
+      set gImageVol(mha_filename) "$imgfn"
+  }
   createPREOPloadsaveLoadVol 
 
   ## Load Model
@@ -951,6 +961,9 @@ proc seg_LoadAll {imgfn pathfn modelfn} {
   set gFilenames(path_file) "$pathfn"
   guiFNMloadHandPaths
   after 100
+
+  #seg_extractParasolidStuff
+  #mainGUIexit 1
 
 }
 
