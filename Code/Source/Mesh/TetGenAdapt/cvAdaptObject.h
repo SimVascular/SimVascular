@@ -74,6 +74,7 @@ class cvMeshObject : public cvRepositoryData {
 
   static char* GetKernelName( KernelType kernel );
   static KernelType GetKernelType( const char* kernel_name );
+  static int SetKernel(cvAdaptObject::KernelType kernel_type);
 
   static cvAdaptObject* DefaultInstantiateAdaptobject( Tcl_Interp *interp=NULL);
 
@@ -87,35 +88,23 @@ class cvMeshObject : public cvRepositoryData {
   //Load Operations
   virtual int LoadModel(char *fileName)=0;
   virtual int LoadMesh(char *fileName)=0;
-  int LoadFromRestart(char *fileName,char *name,double **array);
-  virtual int SetModel(vtkPolyData *newModel)=0;
-  virtual int SetMesh(vtkUnstructuredGrid *newMesh)=0;
+  virtual int LoadSolutionFromFile(char *fileName)=0;
+  virtual int LoadErrorFromFile(char *fileName)=0;
+  virtual int LoadHessiansFromFile(char *fileName)=0;
+  virtual int LoadYbarFromFile(char *fileName)=0;
 
   //Setup Operations
-  void SetNumberOfVariables(int nvar) {nvar_ = nvar;}
-  void SetStrategy(int strategy) {strategy_ = strategy;}
-  void SetRatio(double ratio) {ratio_ = ratio;}
-  void SetMaxRefinementSize(double hmax) {hmax = hmax_;}
-  void SetMinRefinementSize(double hmin) {hmin = hmin_;}
-  void SetTimeStep(int timestep) {timestep_ = timestep;}
+  virtual int SetAdaptOptions(char *flags,double value)=0;
+  virtual int SetErrorMetric()=0;
+  virtual int SetupMesh()=0;
   
   //Adapt Operations
-  int SetHessians();
-  int ConvertToTetGen(); //TODO
-  int ConvertToVTK();   //TODO
-  virtual int RunAdaptor();
-  virtual int AdaptMesh();
+  virtual int RunAdaptor()=0;
+  virtual int PrintStats()=0;
 
-  //Helper Functions
-  int GetHessiansFromSolution();
-  int GetHessiansFromRestart();
-  int SetSizeFieldUsingHessians();
-  virtual int GradientsFromPatch();
-  virtual int HessiansFromPatch();
-  virual int SmoothHessians();
-  int GradientsFromFilter();
-  int HessiansFromFilter();
-  int AttachArray(double *valueArray, vtkUnstructuredGrid *mesh,std::string dataName, int nVar, int poly);
+  //Post Operations
+  virtual int GetAdaptedMesh()=0;
+  virtual int TransferSolution()=0;
 
   //Write Operations
   virtual int WriteAdaptedModel(char *fileName)=0;
@@ -125,27 +114,7 @@ class cvMeshObject : public cvRepositoryData {
 protected:
   
 private:
-  vtkUnstructuredGrid *inmesh_;
-  vtkUnstructuredGrid *outmesh_;
-  vtkPolyData *insurface_mesh;
-  vtkPolyData *outsurface_mesh;
-
   KernelType adapt_kernel_;
-  int poly_=1;
-  int sn_=0;
-  int strategy_=1;
-  double ratio_=0.2;
-  int nvar_=5;
-  double hmax_=1;
-  double hmin_=1;
-  int timestep_=0;
-
-  double *sol_;
-  double *error_indicator_;
-  double *hessians_;
-
-
-
 };
 
 #endif // _CVADAPTOBJECT_H

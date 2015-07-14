@@ -81,14 +81,6 @@ cvAdaptObject::cvAdaptObject( KernelType t )
 {
   kernel_ = t;
 
-  inmesh_ = NULL;
-  outmesh_ = NULL;
-  insurface_mesh_ = NULL;
-  outsurface_mesh_ = NULL;
-
-  sol_ = NULL;
-  error_indicator_ = NULL;
-  hessians_ = NULL;
 }
 
 cvAdaptObject::~cvAdaptObject() 
@@ -96,161 +88,20 @@ cvAdaptObject::~cvAdaptObject()
   ;
 }
 
-// -----------------------
-// SetHessians
-// -----------------------
-int cvAdaptObject::SetHessians()
+cvAdaptObject::SetKernel(cvAdaptObjec::KernelType kernel_type)
 {
-  if (inmesh_ == NULL)
-  {
-    fprint(stderr,"Error: Mesh must be loaded to set hessians\n");
-    return CV_ERROR;
-  }
-  vtkIdType numPoints = inmesh_->GetNumberOfPoints();
+  switch (kernel_type) {
+    case cvAdaptObject::KERNEL_TETGEN:
+      gCurrentKernel = cvAdaptObject::KERNEL_TETGEN;
 
-  switch(strategy) {
-  //this code processes for both if strategy == 1 || strategy ==2
-  //Right now the only implemented adaptation is for isotropic meshing. 
-  //TetGen only has the ability to specify one size metric at each node 
-  //within the mesh, so anisotropic meshing is not capable at this moment.
-  //Strategies 1 and 2 implement isotropic adaptation 
-  case 1 :
-  case 2 : { //isotropic adaptation
-    cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
-    
-    char error_tag[28];
-    if(strategy == 1) {
-      cout<<"\nUsing ybar to compute hessians...\n"<<endl;
-      sprintf(error_tag,"ybar");
-    }
-    else if (strategy == 2) {
-      cout<<"\nUsing numerical/computed hessians (i.e, from phasta)...\n"<<endl;
-      sprintf(error_tag,"hessains");
-    }
-    
-    cout<<"\n Reading file:"<<endl;
-    cout<<" ..."<<solution_file_<<" (for \"solution and error\")"<<endl;
-    //cout<<" ..."<<error_indicator_file_<<" (for \""<<error_tag<<"\")"<<endl;
-
-    if(strategy==1) {
-      // attaching the solution to the original mesh
-      if (this->LoadFromRestart(solution_file_,"solution",&sol_))
-      {
-        fprint(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
-      if (this->AttachArray(sol_,inmesh_,name,nvar_,poly_) != CV_OK)
-      {
-        fprint(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
-
-      // read ybar (and compute/use hessians of ybar) 
-      if (this->LoadFromRestart(solution_file_,"error",&error_indicator_) != CV_OK)
-      {
-        fprint(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
-      if (this->AttachArray(error_indicator_,inmesh_,name,nvar_,poly_) != CV_OK)
-      {
-        fprint(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
-      // calculating hessians for ybar field
-      // first reconstruct gradients and then the hessians 
-      // also deals with boundary issues &
-      // applies smoothing procedure for hessians
-      // (simple average : arithmetic mean)
-      hessiansFromSolution(inputug,lstep);
-    }
-    else if (strategy == 2) { // cannot use analytic hessian in this case
-      // use the hessians computed from phasta
-      double *hessians;
-      if (this->LoadFromRestart(solution_file_,error_tag,&hessians))
-      {
-        fprint(stderr,"Error: Error when attaching solution to mesh\n");
-        return CV_ERROR;
-      }
-      if (hessians_ != NULL)
-	delete [] hessians_;
-      double *hessians_ = new double[nshg*6];
-      getHessiansFromPhasta(hessians,inputug,nvar,hessians_);
-      delete [] hessians;
-      if (this->AttachArray(hessians_,inmesh_,"hessians",6,poly_) != CV_OK)
-      return 0;
-    }
-    setSizeFieldUsingHessians(inputug,&inmesh,factor,hmax,hmin);
+    case cvAdaptObject::KERNEL_MESHSIM:
+      gCurrentKernel = cvAdaptObject::KERNEL_MESHSIM;
+      
+     default:
+      return CV_ERROR;
   }
-  break;
-  case 3:
-  case 4: { // anisotropic adaptation (tag driven)
-    cout<<"Strategy has not been implemented"<<endl;
-    return 0;
-  }
-  break;
-  case 5:
-  case 6: { //anisotropic adaptation (size-field driven)
-    cout<<"Strategy has not been implemented"<<endl;
-    return 0;
-  }
-  break;
-  default : {
-    if(strategy<0) {
-      cout<<"This is default case but has not been implemented"<<endl;
-
-    }
-    else {
-      cout<<"\nSpecify a correct (adaptation) strategy (adapt.cc)"<<endl;
-      exit(-1);
-    }
-  }
-  break;
-  }
-
   return CV_OK;
-}
-
-// -----------------------
-// LoadFromRestart
-// -----------------------
-cvAdaptObject::LoadFromRestart(char *fileName,char *name,double **array)
-{
-  if (*array != NULL)
-    delete [] *array;
-  if (inmesh_ == NULL)
-  {
-    fprint(stderr,"Error: Mesh must be loaded to load and attach the solution from restart\n");
-    return CV_ERROR;
-  }
-
-  readArrayFromFile(fileName,name,*array);
-
-  return CV_OK;
-}
-
-
-// -----------------------
-// LoadHessianFromRestart
-// -----------------------
-cvAdaptObject::LoadHessianFromRestart(char *fileName)
-{
-  if (sol != NULL)
-    delete [] sol;
-  if (inmesh_ == NULL)
-  {
-    fprint(stderr,"Error: Mesh must be loaded to load and attach the solution from restart\n");
-    return CV_ERROR;
-  }
-
-  readArrayFromFile(fileName,"solution",sol);
-  if (this->AttachArray(sol,inmesh_,"solution",nvar_,poly_) != CV_OK)
-  {
-    fprint(stderr,"Error: Error when attaching sollution to mesh\n");
-    return CV_ERROR;
-  }
-
-  return CV_OK;
-}
+}	
 
 int cvAdaptObject::AttachArray(double *valueArray, 
     vtkUnstructuredGrid *mesh,std::string dataName, int nVar, int poly)
