@@ -2,6 +2,7 @@
 BuildWithMake/CygwinHelpers/intel_fortran_12_x64 -text
 BuildWithMake/CygwinHelpers/intel_fortran_14_x64 -text
 BuildWithMake/CygwinHelpers/msvc_2010_x64 -text
+BuildWithMake/CygwinHelpers/msvc_2013_x64 -text
 BuildWithMake/Docs/Doxygen/mainpage.cxx -text
 BuildWithMake/Docs/Makefile -text
 BuildWithMake/Docs/flowsolver.Doxyfile -text
