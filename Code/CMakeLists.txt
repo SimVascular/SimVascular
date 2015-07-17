@@ -877,7 +877,7 @@ if(Plugin_TETGEN)
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	set(USE_Fortran ON)
+	#set(USE_Fortran ON)
 	set(ThreeDSolver_BUILD_SolverIO ON)
 endif()
 

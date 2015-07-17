@@ -28,8 +28,6 @@
  *
  *=========================================================================*/
 
-#include "cvTetAdaptCore.h" 
-
 #include "cvAdaptObject.h"
 #include "cvTetGenAdapt.h"
 #include "AdaptHelpers.h"

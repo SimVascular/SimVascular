@@ -36,6 +36,7 @@ set(HDRS AdaptHelpers.h cvAdaptObject.h cvTetGenAdapt.h cv_adapt_utils.h eispack
 SET(CXXSRCS cvAdaptObject.cxx cvTetGenAdapt.cxx AdaptHelpers.cxx cv_adapt_utils.cxx eispack.cxx newMain.cxx)
 #SET(FSRCS pythag.f tred2EISPACK.f tql2.f)
 #add_library(lib_tet_adaptor ${FSRCS})
+add_library(lib_tet_adaptor ${CXXSRCS})
 
 simvascular_add_executable(${TET_ADAPTOR_EXE} 
   SRCS ${CXXSRCS}
