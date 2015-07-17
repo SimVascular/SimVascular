@@ -41,7 +41,9 @@
 //#include "sys/param.h"
 #define MAXPATHLEN 1024
 
+#include "cvFactoryRegistrar.h"
 #include "cvRepositoryData.h"
+#include "cvPolyData.h"
 
 #ifdef USE_ZLIB
 #include "simvascular_zlib.h"
@@ -70,19 +72,20 @@ enum KernelType {
   KERNEL_TETGEN,
 };
 
-class cvMeshObject : public cvRepositoryData {
+class cvAdaptObject {
 
-  static char* GetKernelName( KernelType kernel );
-  static KernelType GetKernelType( const char* kernel_name );
-  static int SetKernel(cvAdaptObject::KernelType kernel_type);
+public:
+  cvAdaptObject( KernelType t );
+  virtual ~cvAdaptObject();
 
-  static cvAdaptObject* DefaultInstantiateAdaptobject( Tcl_Interp *interp=NULL);
-
+  KernelType GetKernel() const {return adapt_kernel_;}
+  static cvAdaptObject* ExecutableAdaptObject(KernelType t);
+  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL);
   static KernelType gCurrentKernel;
   static cvFactoryRegistrar gRegistrar;
 
   //Copy Operation
-  virtual void cvAdaptObject *Copy() const = 0;
+  virtual cvAdaptObject *Copy() const = 0;
   virtual int Copy( const cvAdaptObject& src) = 0;
 
   //Load Operations
@@ -94,8 +97,8 @@ class cvMeshObject : public cvRepositoryData {
   virtual int LoadYbarFromFile(char *fileName)=0;
 
   //Setup Operations
-  virtual int SetAdaptOptions(char *flags,double value)=0;
-  virtual int SetErrorMetric()=0;
+  virtual int SetAdaptOptions(char *flag,double value)=0;
+  virtual int SetErrorMetric(char *solution_file)=0;
   virtual int SetupMesh()=0;
   
   //Adapt Operations
@@ -110,8 +113,6 @@ class cvMeshObject : public cvRepositoryData {
   virtual int WriteAdaptedModel(char *fileName)=0;
   virtual int WriteAdaptedMesh(char *fileName)=0;
   virtual int WriteAdaptedSolution(char *fileName)=0;
-
-protected:
   
 private:
   KernelType adapt_kernel_;

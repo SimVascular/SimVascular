@@ -28,7 +28,18 @@
  *
  *=========================================================================*/
 
-#include "cvTetAdaptCore.h"
+/** @file cv_adapt_utils.cxx
+ *  @brief The implementations of functions in cv_adapt_utils
+ *
+ *  @author Adam Updegrove
+ *  @author updega2@gmail.com 
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu 
+ */
+
+#include "SimVascular.h"
+
+#include "cv_adapt_utils.h"
 
 #include "vtkXMLUnstructuredGridWriter.h"
 #include "vtkDataSetSurfaceFilter.h"
@@ -47,15 +58,8 @@
 #include "vtkIdList.h"
 #include "vtkTetra.h"
 
-// Modify mesh-metric to take special care
-// like in parallel plates (i.e, w=f(y)) 
-// if a user wants different hmax in x-direction
-// other examples can be situations where
-// user don't want to have one mesh edge 
-// connecting two geometric model edges (like no dofs)
-void cvTetAdaptCore::ModifyMetric(vtkIdType vertex, double dir[3][3], double* h){
+#include "eispack.h"
 
-}
 
 // -----------------------------
 // SmoothHessians()
@@ -65,7 +69,7 @@ void cvTetAdaptCore::ModifyMetric(vtkIdType vertex, double dir[3][3], double* h)
  * @note This smooths the hessians by patch method
  */
 // 
-void cvTetAdaptCore::SmoothHessians(vtkUnstructuredGrid *mesh)
+int AdaptUtils_SmoothHessians(vtkUnstructuredGrid *mesh)
 {
   int i,j,k;
   int numVerts;
@@ -99,7 +103,7 @@ void cvTetAdaptCore::SmoothHessians(vtkUnstructuredGrid *mesh)
   nodalHessians = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("hessians"));
 
   //Have no purpose for point mapping here
-  getSurfaceBooleans(mesh,pointOnSurface,NULL);
+  AdaptUtils_getSurfaceBooleans(mesh,pointOnSurface,NULL);
 
   for (pointId=0;pointId<numVerts;pointId++)
   {
@@ -150,6 +154,8 @@ void cvTetAdaptCore::SmoothHessians(vtkUnstructuredGrid *mesh)
   mesh->GetPointData()->SetActiveScalars("averagehessians");
 
   delete [] pointOnSurface;
+
+  return CV_OK;
 }
 
 // -----------------------------
@@ -163,7 +169,7 @@ void cvTetAdaptCore::SmoothHessians(vtkUnstructuredGrid *mesh)
  * of the symmetric hessian matrix
  */
 // 
-void cvTetAdaptCore::getHessiansFromPhasta(double *hessiansFromPhasta, 
+int AdaptUtils_getHessiansFromPhasta(double *hessiansFromPhasta, 
       vtkUnstructuredGrid *mesh,int nvar, double *hessians)
 {
   int i,j;
@@ -177,6 +183,7 @@ void cvTetAdaptCore::getHessiansFromPhasta(double *hessiansFromPhasta,
    } 
   }
 
+  return CV_OK;
 }
 // 
 // -----------------------------
@@ -189,7 +196,7 @@ void cvTetAdaptCore::getHessiansFromPhasta(double *hessiansFromPhasta,
  * @note called in setSizeFieldUsingHessians (sizefield.cc)
  */
 // 
-void cvTetAdaptCore::getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3][3])
+int AdaptUtils_getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3][3])
 {
   if (Hessians->GetNumberOfComponents() == 0)
   {
@@ -202,6 +209,8 @@ void cvTetAdaptCore::getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3
   T[1][1] = Hessians->GetComponent(v,3);
   T[1][2] = T[2][1] = Hessians->GetComponent(v,4);
   T[2][2] = Hessians->GetComponent(v,5);
+
+  return CV_OK;
 }
 
 //
@@ -215,7 +224,7 @@ void cvTetAdaptCore::getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3
  * @note called in setSizeFieldUsingHessians (sizefield.cc)
  */
 // 
-void cvTetAdaptCore::attachArray( double *valueArray, 
+int AdaptUtils_attachArray( double *valueArray, 
 		  vtkUnstructuredGrid *mesh, 
 		  std::string dataName,
 		  int nVar, 
@@ -258,6 +267,7 @@ void cvTetAdaptCore::attachArray( double *valueArray,
   mesh->GetPointData()->AddArray(nodeDataArray);
   mesh->GetPointData()->SetActiveScalars(dataName.c_str());
 
+  return CV_OK;
 }
 
 // -----------------------------
@@ -272,16 +282,16 @@ void cvTetAdaptCore::attachArray( double *valueArray,
  * @param poly This is the polynomial order of the data (currently only 1)
  */
 
-void cvTetAdaptCore::getAttachedArray( double *&valueArray,
+int AdaptUtils_getAttachedArray( double *&valueArray,
                        vtkUnstructuredGrid *mesh,
 		       std::string dataName,
                        int nVar,
                        int poly)
 {     
   if(poly!=1) {
-      adaptSimLog << "\nError in getAttachedData()"<< endl;
-      adaptSimLog << "Polynomial order [" << poly << "] NOT supported" << endl;
-      exit(-1);
+      fprintf(stderr,"\nError in getAttachedData()\n");
+      fprintf(stderr,"Polynomial order %d NOT supported\n",poly);
+      return CV_ERROR;
   }
 
   int i;
@@ -302,23 +312,11 @@ void cvTetAdaptCore::getAttachedArray( double *&valueArray,
       valueArray[pointId+i*nshg] = solutionArray->GetComponent(pointId,i);
     }
   } 
+  return CV_OK;
 }
 
 // -----------------------------
-// phastaTransfer()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-void cvTetAdaptCore::phastaTransfer( int mtype, int mco, void *userData)  {
-
-}
-
-// -----------------------------
-// phastaTransfer()
+// fix4SolutionTransfer()
 // -----------------------------
 /** 
  * @brief This function interpolates the solution from the old mesh onto the 
@@ -328,7 +326,7 @@ void cvTetAdaptCore::phastaTransfer( int mtype, int mco, void *userData)  {
  * @param nVar This is the number of components in the solutions array
  * @note This takes the solution from the closest node
  */
-void cvTetAdaptCore::fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int nVar)
+int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int nVar)
 {
   int i;
   int numVerts;
@@ -370,9 +368,11 @@ void cvTetAdaptCore::fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstruc
 
   outmesh->GetPointData()->AddArray(outSolution);
   outmesh->GetPointData()->SetActiveScalars("solution");
+
+  return CV_OK;
 }
 
-void cvTetAdaptCore::modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
+int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
 {
   int i,j,k; 
   int subId;    
@@ -419,7 +419,7 @@ void cvTetAdaptCore::modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
     mapper[i] = -1;
   }
 
-  fprintf(stdout,"Mapping Cells\n");;
+  fprintf(stdout,"Mapping Cells\n");
   for (cellId=0;cellId<outpd->GetNumberOfCells();cellId++)
   {
       outpd->GetCellPoints(cellId,npts,pts);
@@ -436,7 +436,7 @@ void cvTetAdaptCore::modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
 	  subId,distance);
       currentRegionsInt->InsertValue(cellId,realRegions->GetValue(closestCell));
   }
-  fprintf(stdout,"Done\n");;
+  fprintf(stdout,"Done\n");
 
   outpd->GetCellData()->RemoveArray("ModelFaceID");
   currentRegionsInt->SetName("ModelFaceID");
@@ -445,6 +445,8 @@ void cvTetAdaptCore::modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
   outpd->GetCellData()->SetActiveScalars("ModelFaceID");
   
   delete [] mapper;
+
+  return CV_OK;
 }
 
 // -----------------------------
@@ -455,7 +457,7 @@ void cvTetAdaptCore::modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
  * @param mesh The mesh with the attached field data information (speed)
  */
 
-void cvTetAdaptCore::gradientsFromFilter(vtkUnstructuredGrid *mesh)
+int AdaptUtils_gradientsFromFilter(vtkUnstructuredGrid *mesh)
 { 
   int numPoints;
   vtkIdType vtkId;
@@ -491,6 +493,8 @@ void cvTetAdaptCore::gradientsFromFilter(vtkUnstructuredGrid *mesh)
   //The new mesh has gradient field data attached to it
   mesh->DeepCopy(calcGradient->GetOutput());
   mesh->GetCellData()->RemoveArray("errorforvtk");
+
+  return CV_OK;
 }
 
 // -----------------------------
@@ -501,7 +505,7 @@ void cvTetAdaptCore::gradientsFromFilter(vtkUnstructuredGrid *mesh)
  * @param mesh The mesh with the attached gradient field data 
  */
 
-void cvTetAdaptCore::hessiansFromFilter(vtkUnstructuredGrid *mesh)
+int AdaptUtils_hessiansFromFilter(vtkUnstructuredGrid *mesh)
 {
   vtkSmartPointer<vtkGradientFilter> calcHessian = 
     vtkSmartPointer<vtkGradientFilter>::New();
@@ -534,6 +538,8 @@ void cvTetAdaptCore::hessiansFromFilter(vtkUnstructuredGrid *mesh)
 
   mesh->GetPointData()->AddArray(Hessians);
   mesh->GetPointData()->SetActiveScalars("hessians");
+
+  return CV_OK;
 }
 
 // -----------------------------
@@ -545,7 +551,7 @@ void cvTetAdaptCore::hessiansFromFilter(vtkUnstructuredGrid *mesh)
  * @note hessian  returned : 6-component (symmetric)
  * @note u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
  */
-void cvTetAdaptCore::hessiansFromSolution(vtkUnstructuredGrid *mesh,int stepNumber)
+int AdaptUtils_hessiansFromSolution(vtkUnstructuredGrid *mesh)
 {  
   // compute the hessain field from the solution
 
@@ -555,57 +561,31 @@ void cvTetAdaptCore::hessiansFromSolution(vtkUnstructuredGrid *mesh,int stepNumb
   // recover gradients from vtk filter
   // attaches gradient to vertices
   // gradient attached via nodalgradientID
-  gradientsFromFilter(mesh);
+  if (AdaptUtils_gradientsFromFilter(mesh) != CV_OK)
+  {
+    fprintf(stderr,"Error in setting gradients\n");
+    return CV_ERROR;
+  }
   
   // recover hessians from vtk filter
   // attaches hessian to vertices
   // hessian attached via  nodalhessianID
   // hessian  attached : 6-component (symmetric)
   // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
-  hessiansFromFilter(mesh);
+  if (AdaptUtils_hessiansFromFilter(mesh) != CV_OK)
+  {
+    fprintf(stderr,"Error in setting hessians\n");
+    return CV_ERROR;
+  }
 
-  SmoothHessians(mesh);
+  if (AdaptUtils_SmoothHessians(mesh) != CV_OK)
+  {
+    fprintf(stderr,"Error in setting hessians\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
 }
-
-// this routine tags/marks the mesh entities for refinement (i.e., tag driven)
-// as of now only tags the edges (later, may introduce other choices)
-// tags entities for refinement which have error values greater than threshold
-// as of now do not use hmin and hmax
-// can introduce one more factor to compute threshold for coarsening
-// -----------------------------
-// applyMarkingStrategy()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-int cvTetAdaptCore::applyMarkingStrategy(vtkUnstructuredGrid *mesh, int simAdapter,
-		     double factor, double hmin, double hmax,
-		     double &totalError, double &maxError, double &minError,
-		     double &threshold, int option) 
-{
-  return CV_ERROR;
-}
-  
-
-// -----------------------------
-// getErrorThreshold()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-double cvTetAdaptCore::getErrorThreshold(vtkUnstructuredGrid *mesh, double factor,
-		  double &totalError, 
-		  double &maxError, double &minError,
-		  int option)
-{
-  return CV_ERROR;
-} 
 
 // option is to decide how to compute the error value
 // (i.e., use 3 EI for flow problem or use 1 EI for scalar problem)
@@ -618,7 +598,7 @@ double cvTetAdaptCore::getErrorThreshold(vtkUnstructuredGrid *mesh, double facto
  * @param
  * @param
  */
-double cvTetAdaptCore::getErrorValue(double *nodalValues, int option) {
+double AdaptUtils_getErrorValue(double *nodalValues, int option) {
 
   double errorValue = 0.;
 
@@ -638,7 +618,7 @@ double cvTetAdaptCore::getErrorValue(double *nodalValues, int option) {
     }
     break;
   default :
-    adaptSimLog<<"\nSpecify correct `option' to compute error value in getErrorValue(...)"<<endl;
+    fprintf(stderr,"\nSpecify correct `option' to compute error value in getErrorValue(...)\n");
     break;
   }
   return errorValue;
@@ -656,7 +636,7 @@ double cvTetAdaptCore::getErrorValue(double *nodalValues, int option) {
  * @param hmax This is the maximum edge length acceptable for the mesh
  * @param hmin This is the minimum edge length acceptable for the mesh
  */
-void cvTetAdaptCore::setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
+int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
 			       tetgenio *inmesh,
 			       double factor,
 			       double hmax,
@@ -676,7 +656,8 @@ void cvTetAdaptCore::setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   double emean; 	  // emean = etot / nv
   double elocmax=0.;	  // max local error
   double elocmin=1.e20;   // min local error
-  double z[3][3];
+  //double z[3][3];
+  double z[9];
   vtkIdType pointId,averageHessian;
 
   vtkSmartPointer<vtkDoubleArray> averageHessians = 
@@ -697,31 +678,46 @@ void cvTetAdaptCore::setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   {
     mesh->GetPoint(pointId,xyz);
 
-    getHessian(averageHessians,pointId,T);
+    if (AdaptUtils_getHessian(averageHessians,pointId,T) != CV_OK)
+    {
+      fprintf(stderr,"Error when getting hessian\n");
+      return CV_OK;
+    }
 
     double eigenVals[3];
     double e[3];
-    double Tfoo[3][3];
+    //double Tfoo[3][3];
+    double Tfoo[9];
 
-    // copy T into temporary buffer
+    //copy T into temporary buffer
+    //for (j=0;j<3;j++)
+    //{
+    //  for (k=0;k<3;k++)
+    //  {
+    //    Tfoo[j][k] = T[j][k];
+    //  }
+    //}
     for (j=0;j<3;j++)
     {
       for (k=0;k<3;k++)
       {
-	Tfoo[j][k] = T[j][k];
+        Tfoo[j*3+k] = T[j][k];
       }
     }
     
-    mytred(&three,&three,Tfoo,eigenVals,e,z);
+    //mytred(&three,&three,Tfoo,eigenVals,e,z);
+    tred2(three,Tfoo,eigenVals,e,z);
 
-    tql2(&three,&three,eigenVals,e,z,&ierr);
+    //tql2(&three,&three,eigenVals,e,z,&ierr);
+    ierr = tql2(three,eigenVals,e,z);
 
     for (j=0;j<3;j++)
     {
       hess[i].h[j] = eigenVals[j];
       for (k=0;k<3;k++)
       {
-	hess[i].dir[j][k]=z[j][k];
+	//hess[i].dir[j][k]=z[j][k];
+	hess[i].dir[j][k]=z[j*3+k];
       }
     }
 
@@ -739,7 +735,7 @@ void cvTetAdaptCore::setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
     // estimate relative interpolation error
     // needed for scaling metric field (mesh size field)
     // to get an idea refer Appendix A in Li's thesis
-    eloc=maxLocalError(mesh,pointId,T);
+    eloc=AdaptUtils_maxLocalError(mesh,pointId,T);
     etot += eloc;
     if( eloc>elocmax )  elocmax=eloc;
     if( eloc<elocmin )  elocmin=eloc;
@@ -761,16 +757,16 @@ void cvTetAdaptCore::setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   printf("\n towards uniform local error distribution of %f\n", eloc);
   printf("   with max edge length=%f; min edge length=%f\n\n",hmax,hmin);
 
-  adaptSimLog<<"Strategy chosen is isotropic adaptation, i.e., size-field driven"<<endl;
-  adaptSimLog<<"Info on relative interpolation error :"<<endl;
-  adaptSimLog<<"total : "<<etot<<endl;
-  adaptSimLog<<"mean : "<<emean<<endl;
-  adaptSimLog<<"factor : "<<factor<<endl;
-  adaptSimLog<<"min. local : "<<elocmin<<endl;
-  adaptSimLog<<"max. local : "<<elocmax<<endl;
-  adaptSimLog<<"towards uniform local error distribution of "<<eloc<<endl;
-  adaptSimLog<<"with min. edge length : "<<hmin<<endl;
-  adaptSimLog<<"with max. edge length : "<<hmax<<endl;
+  fprintf(stderr,"Strategy chosen is isotropic adaptation, i.e., size-field driven\n");
+  fprintf(stderr,"Info on relative interpolation error :\n");
+  fprintf(stderr,"total : %.4f\n",etot);
+  fprintf(stderr,"mean : %.4f\n",emean);
+  fprintf(stderr,"factor : %.4f\n",factor);
+  fprintf(stderr,"min. local : %.4f\n",elocmin);;
+  fprintf(stderr,"max. local : %.4f\n",elocmax);
+  fprintf(stderr,"towards uniform local error distribution of %.4f\n",eloc);
+  fprintf(stderr,"with min. edge length : %.4f\n",hmin);
+  fprintf(stderr,"with max. edge length : %.4f\n",hmax);
 
   int foundHmin = 0;
   int foundHmax = 0;
@@ -830,24 +826,26 @@ void cvTetAdaptCore::setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
     
     i++;
   }
-  adaptSimLog<<"Nodes with hmin into effect : "<<hminCount<<endl;
-  adaptSimLog<<"Nodes with hmax into effect : "<<hmaxCount<<endl;
-  adaptSimLog<<"Nodes with both hmin/hmax into effect : "<<bothHminHmaxCount<<endl;
-  adaptSimLog<<"Nodes ignored in boundary layer : "<<bdryNumNodes<<endl<<endl;
+  fprintf(stderr,"Nodes with hmin into effect : %.4f\n",hminCount);
+  fprintf(stderr,"Nodes with hmax into effect : %.4f\n",hmaxCount);
+  fprintf(stderr,"Nodes with both hmin/hmax into effect : %.4f\n",bothHminHmaxCount);
+  fprintf(stderr,"Nodes ignored in boundary layer : %.4f\n",bdryNumNodes);;
 
   delete [] hess;
+
+  return CV_OK;
 }
 
 // max relative interpolation error at a vertex
 // -----------------------------
-// getErrorValue()
+// maxLocalError()
 // -----------------------------
 /** 
  * @brief This returns the maximum relative interpolation error at a vertex
  * @param vertex This is the vertex where the max local error is calculated
  * @param H This is the Hessian matrix that the error is calculated for
  */
-double cvTetAdaptCore::maxLocalError(vtkUnstructuredGrid *mesh,vtkIdType vertex, double H[3][3])
+double AdaptUtils_maxLocalError(vtkUnstructuredGrid *mesh,vtkIdType vertex, double H[3][3])
 {     
   int i;
   int listCount=0;
@@ -887,7 +885,7 @@ double cvTetAdaptCore::maxLocalError(vtkUnstructuredGrid *mesh,vtkIdType vertex,
   for (pointId = 0;pointId<fullPointList->GetNumberOfIds();pointId++)
   {
     mesh->GetPoint(fullPointList->GetId(pointId),xyz[1]);
-    locE = E_error(xyz,H);
+    locE = AdaptUtils_E_error(xyz,H);
     if ( locE > maxLocE )
     {
       maxLocE=locE;
@@ -907,7 +905,7 @@ double cvTetAdaptCore::maxLocalError(vtkUnstructuredGrid *mesh,vtkIdType vertex,
  * edge
  * @param H This contains the Hessian information
  */
-double cvTetAdaptCore::E_error(double xyz[2][3], double H[3][3])
+double AdaptUtils_E_error(double xyz[2][3], double H[3][3])
 {
   int i,j;
   double locE=0;
@@ -925,79 +923,6 @@ double cvTetAdaptCore::E_error(double xyz[2][3], double H[3][3])
 }
 
 // -----------------------------
-// setIsotopicSizeField()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-
-void cvTetAdaptCore::setIsotropicSizeField(vtkUnstructuredGrid *mesh,
-			   int simAdapter,
-			   double factor,
-			   double hmax, 
-			   double hmin,
-			   int option)
-{
-}
-
-// -----------------------------
-// setManualSizeField()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-
-void cvTetAdaptCore::setManualSizeField(vtkUnstructuredGrid *mesh,
-		   int simAdapter, 
-        	   int strategy) {
-}
-
-
-// tag the entities to be refinement (for isotropic refinement)
-// factor is used to evaluate the threshold for refinement
-// as of now do not use hmin and hmax 
-// -----------------------------
-// tagEntitiesForRefinement()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-void cvTetAdaptCore::tagEntitiesForRefinement(vtkUnstructuredGrid *mesh,
-			      int simAdapter,
-			      double factor,
-			      double hmax, 
-			      double hmin,
-			      int option)
-{
-}
-
-////////////////////////////////////////////
-// write in MEDIT format                  //
-// for visualization of mesh-metric field //
-////////////////////////////////////////////
-// -----------------------------
-// writeMEDITSizeField()
-// -----------------------------
-/** 
- * @brief
- * @param 
- * @param
- * @param
- */
-void cvTetAdaptCore::writeMEDITSizeField(Hessian* hess, vtkUnstructuredGrid *mesh)
-{
-}
-
-// -----------------------------
 // convertToTetGen()
 // -----------------------------
 /** 
@@ -1009,7 +934,7 @@ void cvTetAdaptCore::writeMEDITSizeField(Hessian* hess, vtkUnstructuredGrid *mes
  * @param inmesh This is the tegen mesh object to be transferred to
  */
 
-int cvTetAdaptCore::convertToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *inmesh)
+int AdaptUtils_convertToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *inmesh)
 {
   int numTets,numPolys;
   int numPoints,numSurfacePoints;
@@ -1064,7 +989,6 @@ int cvTetAdaptCore::convertToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
   }
   
   return CV_OK;
-
 }
 // -----------------------------
 // getSurfaceBooleans()
@@ -1080,7 +1004,7 @@ int cvTetAdaptCore::convertToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
  * the surface mesh and the volumetric mesh
  */
 
-int cvTetAdaptCore::getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface,int *pointMapper)
+int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface,int *pointMapper)
 {
   int vCount = 0;
   int numVerts;
@@ -1124,7 +1048,7 @@ int cvTetAdaptCore::getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSu
     }
   }
 
-  return 1;
+  return CV_OK;
 }
 
 // -----------------------------
@@ -1136,7 +1060,7 @@ int cvTetAdaptCore::getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSu
  * @param outmesh This is the new adapted mesh as a tetgen object
  */
 
-int cvTetAdaptCore::runAdaptor(tetgenio *inmesh,tetgenio *outmesh)
+int AdaptUtils_runAdaptor(tetgenio *inmesh,tetgenio *outmesh)
 {
   cout<<"Starting Adaptive Mesh..."<<endl;
 
@@ -1161,7 +1085,6 @@ int cvTetAdaptCore::runAdaptor(tetgenio *inmesh,tetgenio *outmesh)
   cout<<"Done with Adaptive Mesh..."<<endl;
 
   return CV_OK;
-
 }
 
 // -----------------------------
@@ -1175,7 +1098,7 @@ int cvTetAdaptCore::runAdaptor(tetgenio *inmesh,tetgenio *outmesh)
  * @param outmesh This is the tetgen object returned from tetgen
  */
 
-int cvTetAdaptCore::convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *outmesh)
+int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *outmesh)
 {
   int count;
   int numAdaptPts;
@@ -1312,6 +1235,4 @@ int cvTetAdaptCore::convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceM
   delete [] pointOnSurface;
 
   return CV_OK;
-
 }
-

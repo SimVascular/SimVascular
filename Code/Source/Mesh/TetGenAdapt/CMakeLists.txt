@@ -32,14 +32,14 @@
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 include_directories(${TETGEN_INCLUDE_DIR})
-set(HDRS AdaptHelpers.h cvTetAdaptCore.h)
-SET(CXXSRCS cvTetAdaptCore.cxx AdaptHelpers.cxx main.cxx)
-SET(FSRCS pythag.f tred2EISPACK.f tql2.f)
-add_library(lib_tet_adaptor ${FSRCS})
+set(HDRS AdaptHelpers.h cvAdaptObject.h cvTetGenAdapt.h cv_adapt_utils.h eispack.h)
+SET(CXXSRCS cvAdaptObject.cxx cvTetGenAdapt.cxx AdaptHelpers.cxx cv_adapt_utils.cxx eispack.cxx newMain.cxx)
+#SET(FSRCS pythag.f tred2EISPACK.f tql2.f)
+#add_library(lib_tet_adaptor ${FSRCS})
 
 simvascular_add_executable(${TET_ADAPTOR_EXE} 
   SRCS ${CXXSRCS}
-  DEV_SCRIPT_NAME "mytetadapter" 
+  DEV_SCRIPT_NAME "mytetadaptor" 
   INSTALL_SCRIPT_NAME "svtetadapt"
   INSTALL_COMPONENT PluginExecutables
   INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
