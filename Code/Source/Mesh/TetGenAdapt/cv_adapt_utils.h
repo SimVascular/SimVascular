@@ -56,6 +56,34 @@
 #include "AdaptHelpers.h"
 #include "simvascular_tetgen.h"
 
+// standard includes
+#include <stdlib.h>
+#include <stdio.h>
+#include <algorithm>
+#include <math.h>
+#include <iostream>
+#include <string>
+#include <fstream>
+#include <time.h>
+#include <vector>
+#include <map>
+
+#ifndef WIN32
+#include <strings.h>
+#include <unistd.h>
+#endif
+#ifdef WIN32
+  #include <direct.h>
+  #define chdir _chdir
+  #define M_PI 3.14159265353846f
+  void  bzero(void* ptr, size_t sz);
+#endif
+
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#define MAX(x,y) ((x)<(y) ? (y) : (x))
+
+#include "cvSolverIO.h"
+
 struct Hessian {
     double h[3];
     double dir[3][3];
@@ -155,5 +183,28 @@ int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface
 int AdaptUtils_runAdaptor(tetgenio *inmesh,tetgenio *outmesh);
 
 int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *outmesh);
+
+// to read parameters from a phasta file (filename)
+// parameters correspond to nshg & nvar, i.e., size of field-array
+// these parameters are used as reference values 
+// (sometimes needed before reading the field-array)
+void AdaptUtils_readParametersFromFile (char *filename, char *fieldName,
+		       int &nshg, int &numVars);
+
+// to read array from a phasta file (filename)
+// memory is allocated HERE for 'valueArray'
+// `fieldName' tells which block to read like solution, error etc.
+void AdaptUtils_readArrayFromFile ( char *filename, char *fieldName,
+		  double *&valueArray);
+
+// to write array to a phasta file (filename)
+// NOTE: array should be transposed!!!
+// `fieldName' tells in which block to write like solution, error etc.
+// `outputFormat' tells in which format to write, i.e., binary/ascii
+// `mode' : "write", "appeand" etc.
+void AdaptUtils_writeArrayToFile ( char *filename, char *fieldName,
+		  char *outputFormat, char *mode,
+		  int nshg, int numVars,
+		  int stepNumber, double *valueArray); 
 
 #endif //__CV_ADAPT_UTILS_H

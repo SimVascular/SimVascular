@@ -183,7 +183,7 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
   if (sol_ != NULL)
     delete [] sol_;
 
-  readArrayFromFile(fileName,"solution",sol_);
+  AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
 
   return CV_OK;
 }
@@ -196,7 +196,7 @@ int cvTetGenAdapt::LoadErrorFromFile(char *fileName)
   if (error_indicator_ != NULL)
     delete [] error_indicator_;
 
-  readArrayFromFile(fileName,"ybar",error_indicator_);
+  AdaptUtils_readArrayFromFile(fileName,"ybar",error_indicator_);
 
   return CV_OK;
 }
@@ -209,7 +209,7 @@ int cvTetGenAdapt::LoadHessiansFromFile(char *fileName)
   if (hessians_ != NULL)
     delete [] hessians_;
 
-  readArrayFromFile(fileName,"hessians",hessians_);
+  AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_);
 
   return CV_OK;
 }
@@ -223,7 +223,7 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
   if (error_indicator_ != NULL)
     delete [] error_indicator_;
 
-  readArrayFromFile(fileName,"error",error_indicator_);
+  AdaptUtils_readArrayFromFile(fileName,"error",error_indicator_);
 
   return CV_OK;
 }
@@ -572,7 +572,7 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
     return CV_ERROR;
   }
   int numPoints = outmesh_->GetNumberOfPoints();
-  writeArrayToFile(fileName,"solution","binary","write",numPoints,
+  AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
       options.ndof_,options.timestep_,solution);
 
   delete [] solution;
