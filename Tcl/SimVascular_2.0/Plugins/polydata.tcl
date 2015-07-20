@@ -207,6 +207,9 @@ proc PolyDataRemeshSurfaces {solid excludelist} {
   set kernel $gOptions(meshing_solid_kernel)
   set size $guiPDvars(remeshFaceSize)
 
+  if {[llength $excludelist] == 0} {
+    lappend excludelist 0
+  }
   $solid RemeshFace -excludelist $excludelist -size $size
 
   set guiPDvars(selected_groups) {}

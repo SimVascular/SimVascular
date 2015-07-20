@@ -47,6 +47,8 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvPolyD
 
 int sys_geom_all_union( cvPolyData **src,int numSrcs,int nointerbool,double tolerance, cvPolyData **dst );
 
+int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,int numFaces,int *ids,cvPolyData **dst );
+
 int sys_geom_intersect( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvPolyData **dst );
 
 int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvPolyData **dst );

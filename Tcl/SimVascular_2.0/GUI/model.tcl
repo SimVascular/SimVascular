@@ -2823,8 +2823,9 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
     return -code error "ERROR: Must use PolyData to create Discrete Model"
   }
   set modelpd /models/PolyData/$model
-  catch {repos_delete -obj $modelpd}
-  $model GetPolyData -result $modelpd
+  if {[repos_exists -obj $modelpd]} {
+    $model GetPolyData -result $modelpd
+  }
 
   set gOptions(meshing_solid_kernel) Discrete
   set kernel Discrete
@@ -3242,4 +3243,128 @@ proc guiSV_model_undo {} {
   guiSV_model_copy_model $kernel $model $name rename
   guiSV_model_update_view_model $kernel $name
   guiSV_model_delete_model $kernel $model
+}
+
+proc guiSV_model_create_polydata_solid_from_parasolid {} {
+  global guiTRIMvars
+  global symoblicName
+  global gOptions 
+  global gKernel 
+  global guiSVvars
+
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+  }
+  if {$gKernel($model) != "Parasolid"} {
+    return -code error "ERROR: Must use a Parasolid model to create PolyData Model"
+  }
+  set kernel $gKernel($model)
+  set modelpd /tmp/models/$kernel/$model
+  solid_setKernel -name Parasolid
+  if {[repos_exists -obj $modelpd] == 1} {
+    catch {repos_delete -obj $modelpd}
+  }
+  $model GetPolyData -result $modelpd -max_edge_size $guiSVvars(facet_max_edge_size)
+
+  set facevtklist {}
+  set facenames {}
+  set idlist {}
+  foreach faceid [$model GetFaceIds] { 
+    catch {set facename [$model GetFaceAttr -attr gdscName -faceId $faceid]}
+    lappend facenames $facename
+    set facepd /tmp/models/$kernel/$model/$facename
+    if {[repos_exists -obj $facepd] == 1} {
+      catch {repos_delete -obj $facepd}
+    }
+    $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
+    lappend facevtklist $facepd
+    lappend idlist $faceid
+  }
+
+  set gOptions(meshing_solid_kernel) PolyData
+  set kernel PolyData
+  solid_setKernel -name $kernel
+
+  set newmodel [guiSV_model_new_surface_name 0]
+  set newmodelpd /models/$kernel/$newmodel
+  if {[model_create $kernel $newmodel] != 1} {
+    guiSV_model_delete_model $kernel $newmodel
+    catch {repos_delete -obj $newmodelpd}
+    model_create $kernel $newmodel
+  }
+
+  model_name_model_from_polydata_names -model $modelpd -facelist $facevtklist -ids $idlist -result $newmodel
+
+  global gPolyDataFaceNames
+  set allids [$newmodel GetFaceIds]
+  foreach id $allids {
+    set loc [lsearch -exact $idlist $id] 
+    set newname [lindex $facenames $loc]
+    set gPolyDataFaceNames($id) $newname
+  }
+  guiSV_model_add_faces_to_tree $kernel $newmodel
+  guiSV_model_display_only_given_model $newmodel 1
+}
+
+proc guiSV_model_name_model_from_polydata {newmodel refmodel} {
+  global guiSVvars
+  global gOptions
+  global gKernel
+
+  set kernel $gKernel($refmodel)
+  set modelpd /tmp/models/$kernel/$refmodel
+  solid_setKernel -name $kernel
+  if {[repos_exists -obj $modelpd] == 1} {
+    catch {repos_delete -obj $modelpd}
+  }
+
+  if {$kernel == "Parasolid"} {
+    $refmodel GetPolyData -result $modelpd -max_edge_side $guiSVvars(facet_max_edge_size)
+  } else {
+    $refmodel GetPolyData -result $modelpd
+  }
+
+  set facevtklist {}
+  set facenames {}
+  set idlist {}
+  foreach faceid [$refmodel GetFaceIds] { 
+    set facename {}
+    if {$kernel == "Parasolid"} {
+      catch {set facename [$refmodel GetFaceAttr -attr gdscName -faceId $faceid]}
+    } else {
+      set facename [model_idface $kernel $refmodel $faceid] 
+    }
+    lappend facenames $facename
+    set facepd /tmp/models/$kernel/$refmodel/$facename
+    if {[repos_exists -obj $facepd] == 1} {
+      catch {repos_delete -obj $facepd}
+    }
+    $refmodel GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
+    lappend facevtklist $facepd
+    lappend idlist $faceid
+  }
+
+  set kernel $gKernel($newmodel)
+  solid_setKernel -name $kernel
+  set newmodelpd /tmp/models/$kernel/$newmodel
+  catch {repos_delete -obj $newmodelpd}
+  $newmodel GetPolyData -result $newmodelpd
+  guiSV_model_delete_model $kernel $newmodel
+
+  model_name_model_from_polydata_names -model $newmodelpd -facelist $facevtklist -ids $idlist -result $newmodel
+
+  model_create $kernel $newmodel
+
+  global gPolyDataFaceNames
+  set allids [$newmodel GetFaceIds]
+  foreach id $allids {
+    set loc [lsearch -exact $idlist $id] 
+    set newname [lindex $facenames $loc]
+    set gPolyDataFaceNames($id) $newname
+  }
+  guiSV_model_add_faces_to_tree $kernel $newmodel
+  guiSV_model_display_only_given_model $newmodel 1
+
+
 }
