@@ -67,20 +67,23 @@ cvTetGenAdapt::cvTetGenAdapt()
   outsurface_mesh_ = NULL;
 
   options.poly_ = 1;
-  options.sn_ = 0;
   options.strategy_ = 1;
   options.ratio_ = 0.2;
   options.nvar_ = 5;
   options.hmax_ = 1;
   options.hmin_ = 1;
-  options.timestep_ = 0;
+  options.instep_ = 0;
+  options.outstep_ = 0;
   options.ndof_=5;
 
   mesher_input_.firstnumber = 0;
   mesher_output_.firstnumber = 0;
 
+  sol_array_ = NULL;
+  hessians_array_ = NULL;
+  ybar_array_ = NULL;
+
   sol_ = NULL;
-  error_indicator_ = NULL;
   hessians_ = NULL;
   ybar_ = NULL;
 }
@@ -94,7 +97,6 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 
 cvTetGenAdapt::~cvTetGenAdapt()
 {
-  fprintf(stdout,"I'm dying!");
   if (inmesh_ != NULL)
     inmesh_->Delete();
   if (outmesh_ != NULL)
@@ -104,14 +106,19 @@ cvTetGenAdapt::~cvTetGenAdapt()
   if (outsurface_mesh_ != NULL)
     outsurface_mesh_->Delete();
 
+  if (sol_array_ != NULL)
+    sol_array_->Delete();
+  if (hessians_array_ != NULL)
+    hessians_array_->Delete();
+  if (ybar_array_ != NULL)
+    ybar_array_->Delete();
+
   if (sol_ != NULL)
     delete [] sol_;
-  if (error_indicator_ != NULL)
-    delete [] error_indicator_;
-  if (hessians_ != NULL)
-    delete [] hessians_;
   if (ybar_ != NULL)
     delete [] ybar_;
+  if (hessians_ != NULL)
+    delete [] hessians_;
 }
 
 cvAdaptObject *cvTetGenAdapt::Copy() const
@@ -175,9 +182,9 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
   return CV_OK;
 }
 
-// -----------------------
-//  LoadSolutionFromFile
-// -----------------------
+// ---------------
+//  LoadSolution
+// ---------------
 int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 {
   if (sol_ != NULL)
@@ -188,23 +195,23 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
   return CV_OK;
 }
 
-// -----------------------
-//  LoadErrorFromFile
-// -----------------------
-int cvTetGenAdapt::LoadErrorFromFile(char *fileName)
+// ---------------
+//  LoadYbar
+// ---------------
+int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 {
-  if (error_indicator_ != NULL)
-    delete [] error_indicator_;
+  if (ybar_ != NULL)
+    delete [] ybar_;
 
-  AdaptUtils_readArrayFromFile(fileName,"ybar",error_indicator_);
+  AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_);
 
   return CV_OK;
 }
 
-// -----------------------
-//  LoadHessiansFromFile
-// -----------------------
-int cvTetGenAdapt::LoadHessiansFromFile(char *fileName)
+// ---------------
+//  LoadHessian
+// ---------------
+int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 {
   if (hessians_ != NULL)
     delete [] hessians_;
@@ -214,16 +221,43 @@ int cvTetGenAdapt::LoadHessiansFromFile(char *fileName)
   return CV_OK;
 }
 
-
-// -----------------------
-//  LoadYbarFromFile
-// -----------------------
-int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
+// ---------------
+//  ReadSolution
+// ---------------
+int cvTetGenAdapt::ReadSolutionFromMesh()
 {
-  if (error_indicator_ != NULL)
-    delete [] error_indicator_;
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+    return CV_ERROR;
+  }
 
-  AdaptUtils_readArrayFromFile(fileName,"error",error_indicator_);
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
+    return CV_ERROR;
+
+  if (sol_array_ != NULL)
+    sol_array_->Delete();
+
+  int numPoints = inmesh_->GetNumberOfPoints();
+  sol_array_ = vtkDoubleArray::New();
+  sol_array_->SetNumberOfComponents(options.nvar_);
+
+  return CV_OK;
+}
+
+// ---------------
+//  ReadYbar
+// ---------------
+int cvTetGenAdapt::ReadYbarFromMesh()
+{
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+    return CV_ERROR;
+  }
+
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+    return CV_ERROR;
 
   return CV_OK;
 }
@@ -244,8 +278,11 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   if (!strncmp(flag,"poly",4)) {
     options.poly_ = (int) value;
   }
-  else if (!strncmp(flag,"sn",2)) {
-    options.sn_ = (int) value;
+  else if (!strncmp(flag,"instep",6)) {
+    options.instep_ = (int) value;
+  }
+  else if (!strncmp(flag,"outstep",6)) {
+    options.outstep_ = (int) value;
   }
   else if (!strncmp(flag,"strategy",8)) {
     options.strategy_ = (int) value;
@@ -262,9 +299,6 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   else if (!strncmp(flag,"hmin",4)) {
     options.hmin_ = (double) value;
   }
-  else if (!strncmp(flag,"timestep",8)) {
-    options.timestep_ = (int) value;
-  }
   else if (!strncmp(flag,"ndof",8)) {
     options.ndof_ = (int) value;
   }
@@ -278,7 +312,7 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
 // -----------------------
 //  SetErrorMetric
 // -----------------------
-int cvTetGenAdapt::SetErrorMetric(char *solution_file)
+int cvTetGenAdapt::SetErrorMetric()
 {
   //fprintf(stderr,"Check values\n");
   //fprintf(stderr,"Poly: %d\n",options.poly_);
@@ -287,7 +321,6 @@ int cvTetGenAdapt::SetErrorMetric(char *solution_file)
   //fprintf(stderr,"NVar: %d\n",options.nvar_);
   //fprintf(stderr,"Hmax: %.4f\n",options.hmax_);
   //fprintf(stderr,"Hmin: %.4f\n",options.hmin_);
-  //fprintf(stderr,"timestep: %d\n",options.timestep_);
   //fprintf(stderr,"Ndof: %d\n",options.ndof_);
   if (inmesh_ == NULL)
   {
@@ -315,36 +348,8 @@ int cvTetGenAdapt::SetErrorMetric(char *solution_file)
       cout<<"\nUsing numerical/computed hessians (i.e, from phasta)...\n"<<endl;
       sprintf(error_tag,"hessains");
     }
-    
-    cout<<"\n Reading file:"<<endl;
-    cout<<" ..."<<solution_file<<" (for \"solution and error\")"<<endl;
-    //cout<<" ..."<<error_indicator_file_<<" (for \""<<error_tag<<"\")"<<endl;
 
     if(options.strategy_==1) {
-      // attaching the solution to the original mesh
-      if (this->LoadSolutionFromFile(solution_file) != CV_OK)
-      {
-        fprintf(stderr,"Error: Error when attaching solution to mesh\n");
-        return CV_ERROR;
-      }
-      if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
-      {
-        fprintf(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
-
-      fprintf(stderr,"Do we get here!\n");
-      // read ybar (and compute/use hessians of ybar) 
-      if (this->LoadErrorFromFile(solution_file) != CV_OK)
-      {
-        fprintf(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
-      if (AdaptUtils_attachArray(error_indicator_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
-      {
-        fprintf(stderr,"Error: Error when attaching sollution to mesh\n");
-        return CV_ERROR;
-      }
       // calculating hessians for ybar field
       // first reconstruct gradients and then the hessians 
       // also deals with boundary issues &
@@ -358,19 +363,6 @@ int cvTetGenAdapt::SetErrorMetric(char *solution_file)
     }
     else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
       // use the hessians computed from phasta
-      double *hessians;
-      if (this->LoadHessiansFromFile(solution_file) != CV_OK)
-      {
-        fprintf(stderr,"Error: Error when attaching solution to mesh\n");
-        return CV_ERROR;
-      }
-      if (hessians_ != NULL)
-	delete [] hessians_;
-      double *hessians_ = new double[numPoints*6];
-      AdaptUtils_getHessiansFromPhasta(hessians,inmesh_,options.nvar_,hessians_);
-      delete [] hessians;
-      if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",6,options.poly_) != CV_OK)
-      return 0;
     }
     if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,&mesher_input_,options.ratio_,options.hmax_,options.hmin_) != CV_OK)
     {
@@ -573,7 +565,7 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
   }
   int numPoints = outmesh_->GetNumberOfPoints();
   AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
-      options.ndof_,options.timestep_,solution);
+      options.ndof_,options.outstep_,solution);
 
   delete [] solution;
   return CV_OK;

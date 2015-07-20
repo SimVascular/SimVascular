@@ -30,16 +30,6 @@
 
 #include "cvAdaptObject.h"
 #include "cvTetGenAdapt.h"
-#include "AdaptHelpers.h"
-
-#include "vtkXMLUnstructuredGridReader.h"
-#include "vtkXMLUnstructuredGridWriter.h"
-#include "vtkXMLPolyDataReader.h"
-#include "vtkXMLPolyDataWriter.h"
-#include "vtkGradientFilter.h"
-#include "vtkDoubleArray.h"
-#include "vtkPointData.h"
-#include "vtkSmartPointer.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -62,6 +52,7 @@ void printUsage(char* argv0) {
     printf("        -out_surface_mesh_file : adapted surface mesh(e.g. adapted.vtp) \n");
     printf("        -out_mesh_file         : adapted mesh        (e.g. adapted.vtu) \n");
     printf("        -out_solution_file     : adapted restart     (e.g. adapted-restart.x.1) \n");
+    printf("        -in_sn                 : input step number   (e.g. number at last restart)\n"); 
     printf("        -out_sn                : output step number  (e.g. reset to zero)\n"); 
     printf("        -strategy              : always set to 1     (default is 1)\n");
     printf("        -nvar                  : number of soln vars (default is 5)\n");
@@ -94,7 +85,8 @@ int main(int argc,char* argv[])
   cvAdaptObject *Adaptor;
   Adaptor = cvAdaptObject::ExecutableAdaptObject(KERNEL_TETGEN);
 
-  int sn=0;
+  int in_sn=0;
+  int out_sn=0;
   int strategy=1;
   double ratio=0.2;
   int nvar=5;
@@ -146,10 +138,14 @@ int main(int argc,char* argv[])
       iarg++;
       out_solution_file_[0]='\0';
       strcpy(out_solution_file_,argv[iarg]);
+    } else if (tmpstr=="-in_sn") {
+      iarg++;
+      in_sn = atoi(argv[iarg]);
+      Adaptor->SetAdaptOptions("instep",in_sn);
     } else if (tmpstr=="-out_sn") {
       iarg++;
-      sn = atoi(argv[iarg]);
-      Adaptor->SetAdaptOptions("sn",sn);
+      out_sn = atoi(argv[iarg]);
+      Adaptor->SetAdaptOptions("outstep",out_sn);
     } else if (tmpstr=="-strategy") {
       iarg++;
       strategy = atoi(argv[iarg]);
@@ -368,8 +364,24 @@ int main(int argc,char* argv[])
 //  }
 //#endif
 
+   //Adaptor->CheckOptions();
+  //Load or read information based on strategy
+  if (strategy == 1)
+  {
+    Adaptor->ReadSolutionFromMesh();
+    Adaptor->ReadYbarFromMesh();
+  }
+  else if (strategy == 2)
+  {
+    Adaptor->LoadHessianFromFile(solution_file_);
+  }
+  else 
+  {
+    fprintf(stderr,"Invalid strategy\n");
+    exit(0);
+  }
   //Set Error based on input strategy
-  Adaptor->SetErrorMetric(solution_file_);
+  Adaptor->SetErrorMetric();
   //Set mesh using given options and for mesh kernel
   Adaptor->SetupMesh();
   //Adapt

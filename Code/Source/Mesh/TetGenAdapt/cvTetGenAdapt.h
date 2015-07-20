@@ -79,13 +79,13 @@ class cvTetGenAdapt: public cvAdaptObject {
 
   typedef struct AdaptOptions {
     int poly_;
-    int sn_;
     int strategy_;
     double ratio_;
     int nvar_;
     double hmax_;
     double hmin_;
-    int timestep_;
+    int instep_;
+    int outstep_;
     int ndof_;
   }  AdaptOptions;
 
@@ -102,13 +102,15 @@ public:
   int LoadModel(char *fileName);
   int LoadMesh(char *fileName);
   int LoadSolutionFromFile(char *fileName);
-  int LoadErrorFromFile(char *fileName);
-  int LoadHessiansFromFile(char *fileName);
   int LoadYbarFromFile(char *fileName);
+  int LoadHessianFromFile(char *fileName);
+  int ReadSolutionFromMesh();
+  int ReadYbarFromMesh();
 
   //Setup Operations
   int SetAdaptOptions(char *flag,double value);
-  int SetErrorMetric(char *solution_file);
+  int CheckOptions() {return CV_ERROR;}
+  int SetErrorMetric();
   int SetupMesh();
 
   //Adapt Operations
@@ -133,10 +135,13 @@ private:
   tetgenio mesher_input_;
   tetgenio mesher_output_;
 
+  vtkDoubleArray *sol_array_;
+  vtkDoubleArray *ybar_array_;
+  vtkDoubleArray *hessians_array_;
+
   double *sol_;
-  double *error_indicator_;
-  double *hessians_;
   double *ybar_;
+  double *hessians_;
 
   AdaptOptions options;
 };

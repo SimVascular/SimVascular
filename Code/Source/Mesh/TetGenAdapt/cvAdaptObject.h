@@ -92,13 +92,15 @@ public:
   virtual int LoadModel(char *fileName)=0;
   virtual int LoadMesh(char *fileName)=0;
   virtual int LoadSolutionFromFile(char *fileName)=0;
-  virtual int LoadErrorFromFile(char *fileName)=0;
-  virtual int LoadHessiansFromFile(char *fileName)=0;
   virtual int LoadYbarFromFile(char *fileName)=0;
+  virtual int LoadHessianFromFile(char *fileName)=0;
+  virtual int ReadSolutionFromMesh()=0;
+  virtual int ReadYbarFromMesh()=0;
 
   //Setup Operations
   virtual int SetAdaptOptions(char *flag,double value)=0;
-  virtual int SetErrorMetric(char *solution_file)=0;
+  virtual int CheckOptions()=0;
+  virtual int SetErrorMetric()=0;
   virtual int SetupMesh()=0;
   
   //Adapt Operations
