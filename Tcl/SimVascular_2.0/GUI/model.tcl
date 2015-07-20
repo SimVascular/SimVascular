@@ -3307,7 +3307,7 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
   guiSV_model_display_only_given_model $newmodel 1
 }
 
-proc guiSV_model_name_model_from_polydata {newmodel refmodel} {
+proc guiSV_model_name_faces_from_reference {newmodel refmodel} {
   global guiSVvars
   global gOptions
   global gKernel
