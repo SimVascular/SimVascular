@@ -382,7 +382,7 @@ int Solid_Init( Tcl_Interp *interp )
 
   Tcl_CreateCommand( interp, "geom_all_union", Geom_All_UnionCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "model_convert_parasolid_to_polydata", Model_Convert_Para_To_PolyCmd,
+  Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Model_Convert_Para_To_PolyCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   return TCL_OK;
