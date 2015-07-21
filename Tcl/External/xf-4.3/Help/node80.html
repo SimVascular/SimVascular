@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>The script files</TITLE>
+<META NAME="description" CONTENT="The script files">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1764" HREF="node81.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1762" HREF="node79.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1758" HREF="node79.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1766" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1767" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1765" HREF="node81.html">XF User's Guide</A>
+<B>Up:</B> <A NAME="tex2html1763" HREF="node79.html">xftutorial</A>
+<B> Previous:</B> <A NAME="tex2html1759" HREF="node79.html">xftutorial</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00881000000000000000">The script files</A></H2>
+<P>
+The script files must contain input following certain rules.
+One of the script files must define a global list named
+chapterList. This list contains a list of lists. The first
+element of the lists is the title of the chapter, followed
+by the underline position of the menu item, and the script
+name of this chapter. To insert a separator, an empty list
+is inserted.
+<P>
+Each script file must define two variables first. The first
+variable ``<EM><i>&lt;</i>chapter<i>&gt;</i>Last<EM></EM></EM>'' specifies the last
+accessible page number. The second variable
+``<EM><i>&lt;</i>chapter<i>&gt;</i>LastSectionDone<EM></EM></EM>'' is an
+internal counter initialized with -1.
+<P>
+Each page is represented by three variables. The first
+variable ``<EM><i>&lt;</i>chapter<i>&gt;</i>Name<i>&lt;</i>pagenumber<i>&gt;</i><EM></EM></EM>''
+contains the name of the page. The second variable
+``<EM><i>&lt;</i>chapter<i>&gt;</i>Text<i>&lt;</i>pagenumber<i>&gt;</i><EM></EM></EM>'' contains
+the text to display. The third variable
+``<EM><i>&lt;</i>chapter<i>&gt;</i>Command<i>&lt;</i>pagenumber<i>&gt;</i><EM></EM></EM>''
+contains the command to be executed. This command is sent to
+the application that uses the tutorial.
+<P>
+<A NAME=1127>&#160;</A>
+<P>
+    <BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

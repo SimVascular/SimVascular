@@ -1,0 +1,255 @@
+# tutorial
+global packingLast
+set packingLast 8
+global packingLastSectionDone
+set packingLastSectionDone -1
+
+
+set packingName0 {Packing}
+set packingText0 {\
+This chapter tries to introduce you into the usage of the
+packer. The packer organizes the children of a widget by
+packing them around the edges of the parent. The first child
+is placed against one side of the window, occupying the
+entire span of the window along that side. This reduces the
+space remaining for other children as if the side had been
+moved in by the size of the first child. Then the next child
+is placed against one side of the remaining cavity, and so
+on until all children have been placed or there is no space
+left in the cavity. ((Copyright) by John Ousterhout :-).
+
+To give you a basic idea, we will now play a little with the
+options that are available with the packer. Please be
+patient... the initialization will take some time...}
+
+set packingCommand0 {\
+XFMiscClearInterpreter
+global xfConf xfPath
+set xfConf(saveInterval) 0
+set xfConf(onlyOneWindow) 0
+set xfConf(externalEditor) ""
+set xfConf(geometry) packer
+set xfConf(newPacker) 0
+source "$xfPath(src)/xfpacking.tcl"
+wm geometry . 300x300
+frame .frame -relief raised -borderwidth 1
+frame .frame.frame1 -relief raised -borderwidth 1
+frame .frame.frame2 -relief raised -borderwidth 1
+button .frame.frame1.button1 -text .frame1.button1
+button .frame.frame1.button2 -text .frame1.button2
+button .frame.frame1.button3 -text .frame1.button3
+button .frame.frame2.button1 -text .frame2.button1
+button .frame.frame2.button2 -text .frame2.button2
+button .frame.frame2.button3 -text .frame2.button3
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame .frame.frame1 {top} .frame.frame2 {top}
+pack append . .frame "top fill expand"
+XFPacking . config Toplevel
+update idletasks}
+
+
+set packingName1 {Packing - left}
+set packingText1 {\
+The widget structure contains one top frame. This frame has
+two children frames. Each children frame has three children
+of the class button.
+
+Now all children are just packed "top". This means they are
+placed against the top edge of the parent. Let's see what
+happens if we pack the both frames left. They are standing
+one beside the other, packed to the left edge of the
+parent.}
+
+set packingCommand1 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+XFPackingMakeMaster .frame config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks}
+
+
+set packingName2 {Packing - expand}
+set packingText2 {\
+To make a child filling the remaining space in the parent
+you can specify "expand". You see, that the left frame now
+occupies the complete horizontal space. The right frame only
+occupies the minimal space it requires.}
+
+set packingCommand2 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set packingName3 {Packing - pad}
+set packingText3 {\
+If a child should have a border, you can specify a pad. This
+means, that the widget requests an additional amount of
+space. You see, that the right frame now has some kind of
+border.}
+
+set packingCommand3 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.chldframe.pad.pad1.pad1 set 10
+update idletasks
+.xfPackingToplevel.frame2.chldframe.pad.pad2.pad2 set 10
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks}
+
+
+set packingName4 {Packing - frame}
+set packingText4 {\
+The left frame occupies the complete remaining space.  The
+frame itself only uses a part of the occupied space. To
+place the frame inside of the occupied space you can use the
+frame option. We now place the left frame in the upper left
+corner.}
+
+set packingCommand4 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.frame.f1.nw invoke
+update idletasks}
+
+
+set packingName5 {Packing - fill}
+set packingText5 {\
+Now we force the left frame to use the complete occupied
+space for displaying the frame. You see that the frame fills
+out the complete occupied space.}
+
+set packingCommand5 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.filly invoke
+update idletasks}
+
+
+set packingName6 {Packing - misc}
+set packingText6 {\
+Now we pack the last button in the first frame to the
+bottom. You see that the button now is displayed at the
+bottom of the frame.}
+
+set packingCommand6 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 6
+update idletasks
+XFPackingMakeMaster .frame.frame1 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 2
+update idletasks
+XFPackingGetPacking .frame.frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.bottom invoke
+update idletasks}
+
+
+set packingName7 {Packing - misc}
+set packingText7 {\
+Finally we set the first button in the left frame to expand
+and let him use the complete space for displaying the button
+(fill). You see that the first button now occupies the
+complete remaining space in the left frame.}
+
+set packingCommand7 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame.frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.filly invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set packingName8 {Packing - misc}
+set packingText8 {\
+That was all...}
+
+set packingCommand8 {
+.xfPackingToplevel.frame1.ok configure -state active
+update idletasks
+.xfPackingToplevel.frame1.ok configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame1.ok invoke
+update idletasks}
+

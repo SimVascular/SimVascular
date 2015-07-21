@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>The Implementation of XF</TITLE>
+<META NAME="description" CONTENT="The Implementation of XF">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1375" HREF="node51.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1373" HREF="main.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1367" HREF="node49.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1377" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1378" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1376" HREF="node51.html">The generated code</A>
+<B>Up:</B> <A NAME="tex2html1374" HREF="main.html">No Title</A>
+<B> Previous:</B> <A NAME="tex2html1368" HREF="node49.html">Levels for procedures and </A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00600000000000000000">The Implementation of XF</A></H1>
+<P>
+The idea of manipulating an application with an interface
+builder while it is running was taken from <EM>BYO</EM>
+. This
+approach has the advantage that it reduces the amount of
+data that have to be used to store the contents of the
+currently developed application. As all changes are directly
+applied to the program, the program itself contains all
+information which is necessary to create a <EM>Tcl/Tk </EM>
+ file
+containing the program definition. <EM>BYO </EM>
+ achieves this by
+using a <EM>Tk </EM>
+ feature to communicate with the application
+running in a different interpreter (see figure <A HREF="node50.html#figBYOdesign"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>). This approach allows the simultaneous manipulation
+of several applications.
+<P>
+<P><A NAME="794">&#160;</A><A NAME="figBYOdesign">&#160;</A> <IMG WIDTH=241 HEIGHT=168 ALIGN=BOTTOM ALT="figure792" SRC="img19.gif"  > <BR>
+<STRONG>Figure:</STRONG> BYO design<BR>
+<P>
+<P>
+<EM>XF </EM>
+ chooses a different approach. It uses one interpreter
+for both programs (<EM>XF </EM>
+ and the application to be built). The
+name spaces of both programs (variables, procedures and
+widgets) are separated by naming convention (see figure
+<A HREF="node50.html#figXFdesign"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>). This was originally done to reduce the
+communication traffic, and to reduce the complexity of the
+application. As the approach of <EM>BYO </EM>
+ is more flexible, <EM>XF </EM>
+<P>
+will probably be adapted to (also) support the manipulation
+of an external application.
+<P>
+<P><A NAME="800">&#160;</A><A NAME="figXFdesign">&#160;</A> <IMG WIDTH=268 HEIGHT=168 ALIGN=BOTTOM ALT="figure798" SRC="img20.gif"  > <BR>
+<STRONG>Figure:</STRONG> XF design<BR>
+<P>
+<P>
+It is very important that the developer is supported as much
+as possible. New widgets are created with reasonable default
+parameters to prevent the need of changing every newly
+created widget. Nevertheless, every aspect of the
+application can be changed with <EM>XF</EM>
+. If this is not
+possible in a certain situation, or the user does not want
+so much support, it is always possible to change the code
+directly (by hand in an editor). While many interface
+builders don't allow the manipulation of the generated code, 
+directly changed code can be reused with <EM>XF </EM>
+ without any
+restriction.
+<P>
+To allow the extension of <EM>XF</EM>
+, there are several well
+defined internal interfaces, where additional features (like
+new layouting dialogs or new widget configuration dialogs)
+can be added. Furthermore, the user is able to adapt most
+aspects of <EM>XF </EM>
+ via interactive dialogs. This includes the
+menubar and iconbar layout, the bindings that are used to
+manipulate the application program and various aspects of 
+the <EM>XF </EM>
+ dialog boxes.
+<P>
+The design of the interface of <EM>XF </EM>
+ itself was also a very
+important task. Like most interface builders, <EM>XF </EM>
+ displays
+the available widget classes in some kind of main window.
+From here, all features of <EM>XF </EM>
+ are activated. The various
+features are implemented as additional dialogs which are
+popped up when they are activated. All configuration and
+layouting dialogs are nonmodal, so that the user can change
+parameters and the layout of various widgets simultaneously.
+<P>
+<BR> <HR>
+<UL> 
+<LI> <A NAME="tex2html1379" HREF="node51.html#SECTION00610000000000000000">The generated code</A>
+<LI> <A NAME="tex2html1380" HREF="node52.html#SECTION00620000000000000000">Extending XF</A>
+<UL> 
+<LI> <A NAME="tex2html1381" HREF="node53.html#SECTION00621000000000000000">Supporting new widgets</A>
+<UL> 
+<LI> <A NAME="tex2html1382" HREF="node54.html#SECTION00621100000000000000">XFAdd.<i>&lt;</i>WidgetClass<i>&gt;</i></A>
+<LI> <A NAME="tex2html1383" HREF="node55.html#SECTION00621200000000000000">XFAddTmp.<i>&lt;</i>WidgetClass<i>&gt;</i></A>
+<LI> <A NAME="tex2html1384" HREF="node56.html#SECTION00621300000000000000">XFConfig.<i>&lt;</i>WidgetClass<i>&gt;</i></A>
+<LI> <A NAME="tex2html1385" HREF="node57.html#SECTION00621400000000000000">XFSaveWidget.<i>&lt;</i>WidgetClass<i>&gt;</i></A>
+<LI> <A NAME="tex2html1386" HREF="node58.html#SECTION00621500000000000000">XFSaveSpecial.<i>&lt;</i>WidgetClass<i>&gt;</i></A>
+</UL> 
+<LI> <A NAME="tex2html1387" HREF="node59.html#SECTION00622000000000000000">Initializations at startup</A>
+<LI> <A NAME="tex2html1388" HREF="node60.html#SECTION00623000000000000000">Adding procedures named XFProc</A>
+</UL>
+</UL>
+<BR> <HR><A NAME="tex2html1375" HREF="node51.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1373" HREF="main.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1367" HREF="node49.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1377" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1378" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1376" HREF="node51.html">The generated code</A>
+<B>Up:</B> <A NAME="tex2html1374" HREF="main.html">No Title</A>
+<B> Previous:</B> <A NAME="tex2html1368" HREF="node49.html">Levels for procedures and </A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,98 @@
+# tutorial
+global designLast
+set designLast 3
+global designLastSectionDone
+set designLastSectionDone -1
+
+
+set designName0 {Application design}
+set designText0 {\
+Usually the construction of an application begins with
+a deep meditation on the purpose and the look alike of
+the planned application (ahem... so much for the
+theory. In real life you call XF and play around with
+it's features :-).
+
+Typically a Tcl/Tk application has one main dialog
+window. From here you activate (display) other dialog
+windows and activate the different features of your
+application. Writing applications without such a main
+dialog window is hard with Tcl/Tk, as there is one
+window that is always displayed. This window is
+named ".". It is the root for all other windows
+(widgets) in your application. Destroying this
+window, destroys the application. This can affect
+the way of your dialog handling and should be
+considered when you plan your application.}
+
+
+set designName1 {Application design}
+set designText1 {\
+The main window (you remember: the one named "." :-)
+contains a combination of widgets that form the
+interface. For dialog components that do not need to
+be in the main dialog window, you can use additional
+toplevel widgets. A toplevel widget is almost the
+same as the main window. It is managed by the window
+manager and can contain widgets. The difference to
+the main window is that these windows can be removed
+when they are no longer needed.
+
+The different toplevel windows contain structures of
+sub widgets. Widgets can contain widgets, and this
+combination of widgets forms the interface of your
+application. Widgets are organized/accessed via their
+names. A widget that is the child of another widget
+is accessed by concatenating the names of the parents
+separated by a point. The widget named "button1", that
+is a children of the frame "frame1", is accessed with
+the name ".frame1.button1".}
+
+
+set designName2 {Application design}
+set designText2 {\
+To organize the layout of your application you can
+use the packer and/or the placer. The packer allows
+you to pack all widgets in some kind of stack. You
+append the widgets to the already packed widgets.
+The placer allows you to specify the position and
+size of each widget directly.
+
+You should play with these two ways of layouting.
+In most cases you will find, that the packer is
+more powerful (at least this is my opinion). It
+is possible, but not recommended, to combine the
+two layouting methods in the same toplevel window.
+The combination of both methods should only be
+used by the experienced user, as it is necessary
+that both concepts are really understood in their
+effects.}
+
+
+set designName3 {Application design}
+set designText3 {\
+It is recommended that you read the manual page
+for the packer/placer and/or the chapter in this
+tutorial that describes the usage of these
+layouting methods. Without any knowledge about
+this, it could happen that you get frustrated
+when you use XF (and that would be annoying for
+you and for me :-).
+
+The functionality of you application is bound to
+the widget, and is activated via these. The
+functionality of the program is normally
+implemented by using Tcl/Tk. Here your Tcl/Tk
+experience is needed (respectively: here you
+gain Tcl/Tk experience :-).
+
+This step by step approach is idealized. You will
+never really work this way. There are always
+changes to the widget structure, layout or
+functionality that occur in the middle of your
+work, due to enhancements or necessary changes.
+Nevertheless this view of designing and
+implementing applications with XF can be
+a helpful baseline for your work.}
+
+

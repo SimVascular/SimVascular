@@ -1,0 +1,145 @@
+# Program: xf
+# Description: handle scrollbar widgets
+#
+# $Header: Scrollbar[2.3] Wed Mar 10 11:59:16 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(scrollbar) 4
+
+##########
+# Procedure: XFAdd.Scrollbar
+# Description: add a scrollbar
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Scrollbar {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Scrollbar..."
+  set xfName [XFMiscGetUniqueName $xfName scrollbar]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      scrollbar .$xfName
+    } {
+      scrollbar .$xfName
+    }
+    .$xfName set 100 20 1 10
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      scrollbar $xfStatus(path).$xfName
+    } {
+      scrollbar $xfStatus(path).$xfName
+    }
+    $xfStatus(path).$xfName set 100 20 1 10
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Scrollbar...done"
+}
+
+##########
+# Procedure: XFConfig.Scrollbar4
+# Description: configure a scrollbar
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Scrollbar4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName scrollbar$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Scrollbar..."
+
+  # building widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x420 \
+    "Scrollbar parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFScrollbarSetScrollbar4 parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFScrollbarSetScrollbar4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 \
+    XFScrollbarSetScrollbar4
+  XFElementOrient $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFScrollbarSetScrollbar4
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFScrollbarSetScrollbar4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass width \
+    width Width Width pixels 100 XFScrollbarSetScrollbar4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass command \
+    command Command "Command" XFScrollbarSetScrollbar4
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {background borderwidth command orient relief width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFScrollbarSetScrollbar4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Scrollbar...done"
+}
+
+##########
+# Procedure: XFScrollbarSetScrollbar4
+# Description: set scrollbar parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFScrollbarSetScrollbar4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW command \
+    [.xf${xfClass}Config4.params1.params2.command.command get]
+  XFMiscSetResource $xfW orient $xfMisc(orient)
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.width.width get]
+}
+
+# eof
+

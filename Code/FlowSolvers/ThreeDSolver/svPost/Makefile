@@ -69,7 +69,7 @@ ifndef NO_DEPEND
 endif
 
 createOptionFile:
-	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
+	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
 	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
 	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
 	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
@@ -84,4 +84,5 @@ veryclean: clean
 	for fn in *.pdb; do /bin/rm -f $$fn; done
 	for fn in *.exp; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	/bin/rm -f cvFlowsolverOptions.h
 

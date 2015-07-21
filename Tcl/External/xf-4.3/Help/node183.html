@@ -1,0 +1,70 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>TextBox, TextBoxFd, TextBoxFile</TITLE>
+<META NAME="description" CONTENT="TextBox, TextBoxFd, TextBoxFile">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html3182" HREF="node184.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3180" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3174" HREF="node182.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3184" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3185" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3183" HREF="node184.html">YesNoBox</A>
+<B>Up:</B> <A NAME="tex2html3181" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3175" HREF="node182.html">ReadBox</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION0010215000000000000000">TextBox, TextBoxFd, TextBoxFile</A></H2>
+<P>
+<A NAME=2206>&#160;</A>
+<A NAME=2207>&#160;</A>
+<A NAME=2208>&#160;</A>
+This template defines three new procedures named TextBox,
+TextBoxFd and TextBoxFile. Calling this procedures pops up a
+dialog box to display several lines of text in a text
+widget. These boxes can be modal or not. If the dialog box
+is modal, the procedure returns the number of the pressed
+button.  Otherwise the specified command is evaluated. The
+displayed text, a filename or an open file descriptor can be
+passed on. The procedure gets the following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=10 HEIGHT=4 ALIGN=BOTTOM ALT="tabular2209" SRC="img127.gif"  > <P>
+<P>
+<P>
+To configure the different aspects of the text box, there
+exists a global array named textBox. A default value of
+``-'' means that the Tk default value is used. This array
+contains elements that control the text box (color, font
+etc.):
+<P>
+
+Array element          &amp; Default &amp; Purpose <BR>
+
+<P>
+<P> <IMG WIDTH=286 HEIGHT=35 ALIGN=BOTTOM ALT="supertabular2214" SRC="img128.gif"  > <P>
+<P>
+<P>
+A small example of an invocation may look like this:
+<P>
+<TT>
+<PRE><TT> 
+		TextBox ''Text message''
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2225">&#160;</A><A NAME="figTextBox">&#160;</A> <IMG WIDTH=454 HEIGHT=325 ALIGN=BOTTOM ALT="figure2223" SRC="img129.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template TextBox<BR>
+<P>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

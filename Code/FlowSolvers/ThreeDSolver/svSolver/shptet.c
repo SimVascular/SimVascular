@@ -46,7 +46,7 @@
 
 int TetShapeAndDrv(int p,double par[3],double N[],double dN[][3]);
 
-#ifdef CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define SHPTET shptet_
 #endif
 

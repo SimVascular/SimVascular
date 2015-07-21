@@ -59,6 +59,7 @@
 #include <direct.h>
 #define chdir _chdir
 #define getpid _getpid
+#include <errno.h>
 #include <process.h>
 #else
 #include <unistd.h>
@@ -69,7 +70,7 @@
 #define proces PROCES
 #endif
 
-#ifdef CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 #define input input_
 #define proces proces_
 #endif
@@ -111,8 +112,8 @@ piarray( void* iarray , int start, int end ) {
 }
 
 extern "C" {
-  FILE *simvascular_flowsolver_stdout;
-  FILE *simvascular_flowsolver_stderr;
+  FILE *simvascular_flowsolver_stdout = NULL;
+  FILE *simvascular_flowsolver_stderr = NULL;
 }
 
 extern "C" int main( int argc, char *argv[] );
@@ -125,9 +126,6 @@ int main( int argc, char *argv[] ) {
     // do we need this?
     //ios::sync_with_stdio();
 
-    MPI_Init(&argc,&argv);
-    MPI_Comm_size (MPI_COMM_WORLD, &size);
-    MPI_Comm_rank (MPI_COMM_WORLD, &myrank);
 #if (defined WIN32)
     if(argc > 3 ){
       if( myrank == 0 ) {
@@ -148,23 +146,12 @@ int main( int argc, char *argv[] ) {
      
             std::cout << "Debugger Process initiating" << std::endl;
             strstream exec_string;
-         
-#if ( defined decalp )
-            exec_string <<"xterm -e idb " 
-                        << " -pid "<< parent_pid <<" "<< argv[0] << std::endl;
-#endif
+
 #if ( defined LINUX )
             exec_string <<"idb -gui" 
                         << " -pid "<< parent_pid <<" "<< argv[0] << std::endl;
 #endif
-#if ( defined SUN4 )
-            exec_string <<"xterm -e dbx " 
-                        << " - "<< parent_pid <<" "<< argv[0] << std::endl;
-#endif
-#if ( defined IRIX )
-            exec_string <<"xterm -e dbx " 
-                        << " -p "<< parent_pid <<" "<< argv[0] << std::endl;
-#endif
+
             system( exec_string.str() );
             exit(0);
         }
@@ -173,6 +160,53 @@ int main( int argc, char *argv[] ) {
 
 #endif
 
+#ifdef WIN32
+
+  MPI_Init(&argc,&argv);
+  MPI_Comm_size (MPI_COMM_WORLD, &size);
+  MPI_Comm_rank (MPI_COMM_WORLD, &myrank);
+    	
+  int rslt;
+  char systemcmd[2048];
+  systemcmd[0]='\0';
+
+  //if (myrank == 1) {
+    char* flowsolver_mount_shared_drive = NULL;
+    flowsolver_mount_shared_drive = getenv("FLOWSOLVER_MOUNT_SHARED_DRIVE");
+
+    if (flowsolver_mount_shared_drive) {
+      rslt = system(flowsolver_mount_shared_drive);
+      fprintf(stdout,"system call (%s)  rslt (%i)\n",flowsolver_mount_shared_drive,rslt);
+      fflush(stdout);fflush(stderr);
+    }
+  //}
+  
+  char* flowsolver_map_shared_directory = NULL;
+  flowsolver_map_shared_directory = getenv("FLOWSOLVER_MAP_SHARED_DIRECTORY");
+
+  if(flowsolver_map_shared_directory != NULL) {
+      std::cout << "Changing to shared directory \("
+                << flowsolver_map_shared_directory << "\)" << std::endl;
+      fflush(stdout);
+      fflush(stderr);
+      if(_chdir( flowsolver_map_shared_directory ) )
+        {
+           switch (errno)
+           {
+           case ENOENT:
+             fprintf(stderr, "Unable to locate the directory: %s\n", flowsolver_map_shared_directory );
+             break;
+           case EINVAL:
+             fprintf(stderr, "Invalid buffer.\n");
+             break;
+           default:
+             fprintf(stderr, "Unknown error.\n");
+           }
+        } 
+  }
+
+#endif
+    
     /* Input data  */
     if(argc > 1 ){
         strcpy(inpfilename,argv[1]);
@@ -183,39 +217,39 @@ int main( int argc, char *argv[] ) {
    setvbuf(stdout, NULL, _IONBF, 0);
    setvbuf(stderr, NULL, _IONBF, 0);
 
-#ifdef BUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT
+   //#ifdef BUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT
 
     char stdoutFileName[1024];
     stdoutFileName[0]='\0';
     if(argc > 2) {
       sprintf(stdoutFileName,"%s.%05i.txt",argv[2],myrank);
-    } else {
-      sprintf(stdoutFileName,"%s.%05i.txt","stdout_stderr",myrank);
+  
+      simvascular_flowsolver_stdout = freopen( stdoutFileName, "a", stdout );
+      // Note: freopen is deprecated; consider using freopen_s instead
+
+      if( simvascular_flowsolver_stdout == NULL ) {
+        fprintf( stdout, "error on reassigning stdout\n" );
+        fflush ( stdout );
+      } else {
+        setvbuf(simvascular_flowsolver_stdout, NULL, _IONBF, 0);
+      }
+
+      simvascular_flowsolver_stderr = freopen( stdoutFileName, "a", stderr );
+      // Note: freopen is deprecated; consider using freopen_s instead
+
+      if( simvascular_flowsolver_stderr == NULL ) {
+        fprintf( stderr, "error on reassigning stderr\n" );
+        fflush ( stderr );
+      } else {
+        setvbuf(simvascular_flowsolver_stderr, NULL, _IONBF, 0);
+      }
     }
 
-    simvascular_flowsolver_stdout = freopen( stdoutFileName, "a", stdout );
-    // Note: freopen is deprecated; consider using freopen_s instead
+    //#endif
 
-    if( simvascular_flowsolver_stdout == NULL ) {
-      fprintf( stdout, "error on reassigning stdout\n" );
-      fflush ( stdout );
-    } else {
-      setvbuf(simvascular_flowsolver_stdout, NULL, _IONBF, 0);
-    }
+    fprintf(stdout,"\nThe process ID for myrank (%i) is (%d).\n\n", myrank, getpid());
+    fflush(stdout);
 
-    simvascular_flowsolver_stderr = freopen( stdoutFileName, "a", stderr );
-    // Note: freopen is deprecated; consider using freopen_s instead
-
-    if( simvascular_flowsolver_stderr == NULL ) {
-      fprintf( stderr, "error on reassigning stderr\n" );
-      fflush ( stderr );
-    } else {
-      setvbuf(simvascular_flowsolver_stderr, NULL, _IONBF, 0);
-    }
-
-#endif
-
-//    fprintf(stdout,"\nThe process ID for myrank (%i) is (%d).\n\n", myrank, getpid());
     if( myrank == 0 ){
     	fprintf(stdout,"\nThe number of processes is %d.\n\n", size);
     }
@@ -245,6 +279,7 @@ int main( int argc, char *argv[] ) {
                  }
             }
         }else{
+            /*  shouldn't alter geombc.dat.1 from solver!
             int igeombc;
             openfile_( "geombc.dat.1", "append", &igeombc );
 
@@ -253,17 +288,18 @@ int main( int argc, char *argv[] ) {
             int nitems = 1 ;
             iarray[0] = size;
 
-            writeheader_( &igeombc, "material properties ", (void*)iarray, &nitems, &size,
+		       writeheader_( &igeombc, "material properties ", (void*)iarray, &nitems, &size,
                           "double", cvsolver_iotype);
 
             double matprops[10];
             nitems = size;
             matprops[0]=matdat.datmat[0][0][0];
             matprops[1]=matdat.datmat[0][1][0];
-            writedatablock_( &igeombc, "material properties ", (void*)matprops, &nitems,
-                             "double", cvsolver_iotype);
+		       writedatablock_( &igeombc, "material properties ", (void*)matprops, &nitems,
+					"double", cvsolver_iotype);
 
-            closefile_( &igeombc, "append" );
+		       closefile_( &igeombc, "append" );
+             */
         }
 
         if(inpdat.solverTask==0){
@@ -277,5 +313,24 @@ int main( int argc, char *argv[] ) {
     }
     
     MPI_Finalize();
+
+    if (simvascular_flowsolver_stdout != NULL) fclose(simvascular_flowsolver_stdout);
+	// for now, redirecting stdout / stderr to one file!
+    //fclose(simvascular_flowsolver_stderr);
+    
+    if (myrank == 1) {
+    char* flowsolver_unmount_shared_drive = NULL;
+    flowsolver_unmount_shared_drive = getenv("FLOWSOLVER_UNMOUNT_SHARED_DRIVE");
+
+    if (flowsolver_unmount_shared_drive) {
+      rslt = system(flowsolver_unmount_shared_drive);
+      fprintf(stdout,"system call (%s)  rslt (%i)\n",flowsolver_unmount_shared_drive,rslt);
+      fflush(stdout);fflush(stderr);
+    }
+    }
+
+    fflush(stdout);
+    fflush(stderr);
+    
     return ierr;
 }

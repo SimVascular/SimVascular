@@ -1,0 +1,77 @@
+Thanks to the people listed here for their help or their software :-):
+
+---------------------
+The XF program is based upon the (great) TCL/TK package from:
+John Ousterhout
+University of California at Berkeley
+ouster@sprite.berkeley.edu.
+
+---------------------
+
+my little sister for massive spellchecking!!
+
+special thanks to:
+Bill Swartz (TimberWolf Systems, Inc.) - patching XF for Tk 4.0
+Mac Cody                               - patching XF for Tk 4.0
+
+a little less special thanks (but only a little :-) to:
+
+Andreas Lampen (TU Berlin)	- parts of the module load
+				  code
+Andreas Wolf
+Andrew Wu
+Axel Mahler (TU Berlin)		- FIRST USER!
+Bill Swartz
+BYO Development Team            - they wrote BYO :-)
+Clifford Beshers
+Cuong Bui
+Dan Wallach
+Darren Platt
+David Ascher
+David M Clarke			- the alias function
+David Richardson		- his hierQuery program was
+				  the basis for the widget
+				  tree code
+De Clarke
+Dennis LaBelle                  - Windows adaptions
+Drew Whitehouse
+Harvey Chinn
+Huiban Cristian-Mugurel
+Hume Smith			- massive testing
+Joachim Luegger
+Joe
+Juergen Nickelsen (TU Berlin)	- the template: MListbox
+J L Hamel                       - Windows adaptions
+Karl Lehenbauer			- beta testing
+Klaus Peter
+Larry Schwimmer
+Lionel Mallet			- the template: MListbox2
+Lol Grant
+Magnus Homann
+Mario J. Silva			- the template: fileselect
+Mark C. Carroll			- beta testing
+Mark Costlow			- the template: EntryLLS
+Michael Krueger
+Michael Moore			- parts of the application
+				  default handling
+Olaf Bigalk
+Olaf Gerloff
+R. James Noble         		- he posted the popup menu
+                       		  code and is member of the
+                      		  BYO team
+Sean McLinden
+Steve Gaede
+Thomas Funke
+Thomas M. Breuel
+Tim MacKenzie
+Walter Zimmer
+Wilfried Koch (TU Berlin)
+Yoshiyuki Nishinaka		- Japanization
+
+...
+hopefully YOU with additional ideas !!!
+
+I hope I have not forgotten someone. If I did, sorry :-). Send
+me a note and I will add you. If you (one of the people
+mentioned above) do not want to be mentioned send me a mail.
+

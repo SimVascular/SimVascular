@@ -1,0 +1,151 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>XF User's Guide</TITLE>
+<META NAME="description" CONTENT="XF User's Guide">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1776" HREF="node82.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1774" HREF="main.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1768" HREF="node80.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1778" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1779" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1777" HREF="node82.html">Main</A>
+<B>Up:</B> <A NAME="tex2html1775" HREF="main.html">No Title</A>
+<B> Previous:</B> <A NAME="tex2html1769" HREF="node80.html">The script files</A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00900000000000000000">XF User's Guide</A></H1>
+<P>
+The functionality of <EM>XF </EM>
+ is mainly accessed via the menubar
+and/or the iconbar of the main <EM>XF </EM>
+ window. The items in the
+menubar and the iconbar usually call one of the procedures
+that <EM>XF </EM>
+ offers for external access. These procedures are
+named in a special way. They begin with <EM>XFProc<EM></EM></EM>,
+followed by the real name of the procedure. The following
+sections describe the procedures that are available. They
+are grouped by functionality as it is represented by the
+menubuttons in the main <EM>XF </EM>
+ window. Some procedures are
+not used in the default menubar, or are placed in another
+menu. The menu structure may be adapted by the user, so the
+structure of this chapter does not have to match the
+concrete menu structure.
+<P>
+It is possible to add new functionality to <EM>XF </EM>
+ by writing a
+module that contains procedures following this naming
+convention. This module should be added to the directory
+where the <EM>XF </EM>
+ source is located. To make the procedures
+accessible, the tclIndex file in this directory must contain
+the procedure names followed by the new module name. The
+procedures can be attached to menu items in the menubar
+configuration, or to icons in the iconbar configuration.
+<P>
+<BR> <HR>
+<UL> 
+<LI> <A NAME="tex2html1780" HREF="node82.html#SECTION00910000000000000000">Main</A>
+<UL> 
+<LI> <A NAME="tex2html1781" HREF="node83.html#SECTION00911000000000000000">XFProcMain</A>
+</UL> 
+<LI> <A NAME="tex2html1782" HREF="node84.html#SECTION00920000000000000000">File</A>
+<UL> 
+<LI> <A NAME="tex2html1783" HREF="node85.html#SECTION00921000000000000000">XFProcFileEnterTCL</A>
+<LI> <A NAME="tex2html1784" HREF="node86.html#SECTION00922000000000000000">XFProcFileInsert</A>
+<LI> <A NAME="tex2html1785" HREF="node87.html#SECTION00923000000000000000">XFProcFileNew</A>
+<LI> <A NAME="tex2html1786" HREF="node88.html#SECTION00924000000000000000">XFProcFileLoad</A>
+<LI> <A NAME="tex2html1787" HREF="node89.html#SECTION00925000000000000000">XFProcFileQuit</A>
+<LI> <A NAME="tex2html1788" HREF="node90.html#SECTION00926000000000000000">XFProcFileSave</A>
+<LI> <A NAME="tex2html1789" HREF="node91.html#SECTION00927000000000000000">XFProcFileSaveAs</A>
+</UL> 
+<LI> <A NAME="tex2html1790" HREF="node92.html#SECTION00930000000000000000">Configuration</A>
+<UL> 
+<LI> <A NAME="tex2html1791" HREF="node93.html#SECTION00931000000000000000">XFProcConfAddCurrentItem</A>
+<LI> <A NAME="tex2html1792" HREF="node94.html#SECTION00932000000000000000">XFProcConfBinding</A>
+<LI> <A NAME="tex2html1793" HREF="node95.html#SECTION00933000000000000000">XFProcConfBindingAll</A>
+<LI> <A NAME="tex2html1794" HREF="node96.html#SECTION00934000000000000000">XFProcConfBindingClass</A>
+<LI> <A NAME="tex2html1795" HREF="node97.html#SECTION00935000000000000000">XFProcConfConfigure</A>
+<LI> <A NAME="tex2html1796" HREF="node98.html#SECTION00936000000000000000">XFProcConfGeometryDefault</A>
+<LI> <A NAME="tex2html1797" HREF="node99.html#SECTION00937000000000000000">XFProcConfInsertTemplate</A>
+<LI> <A NAME="tex2html1798" HREF="node100.html#SECTION00938000000000000000">XFProcConfInsertWidgetDefault</A>
+<LI> <A NAME="tex2html1799" HREF="node101.html#SECTION00939000000000000000">XFProcConfInsertWidgetConfig</A>
+<LI> <A NAME="tex2html1800" HREF="node102.html#SECTION009310000000000000000">XFProcConfLayout</A>
+<LI> <A NAME="tex2html1801" HREF="node103.html#SECTION009311000000000000000">XFProcConfPacking</A>
+<LI> <A NAME="tex2html1802" HREF="node104.html#SECTION009312000000000000000">XFProcConfParametersDefault</A>
+<LI> <A NAME="tex2html1803" HREF="node105.html#SECTION009313000000000000000">XFProcConfParametersGeneral</A>
+<LI> <A NAME="tex2html1804" HREF="node106.html#SECTION009314000000000000000">XFProcConfParametersGroups</A>
+<LI> <A NAME="tex2html1805" HREF="node107.html#SECTION009315000000000000000">XFProcConfParametersSmall</A>
+<LI> <A NAME="tex2html1806" HREF="node108.html#SECTION009316000000000000000">XFProcConfParametersSpecial</A>
+<LI> <A NAME="tex2html1807" HREF="node109.html#SECTION009317000000000000000">XFProcConfPlacing</A>
+</UL> 
+<LI> <A NAME="tex2html1808" HREF="node110.html#SECTION00940000000000000000">Edit</A>
+<UL> 
+<LI> <A NAME="tex2html1809" HREF="node111.html#SECTION00941000000000000000">XFProcEditClearCut</A>
+<LI> <A NAME="tex2html1810" HREF="node112.html#SECTION00942000000000000000">XFProcEditCopy</A>
+<LI> <A NAME="tex2html1811" HREF="node113.html#SECTION00943000000000000000">XFProcEditCut</A>
+<LI> <A NAME="tex2html1812" HREF="node114.html#SECTION00944000000000000000">XFProcEditDelete</A>
+<LI> <A NAME="tex2html1813" HREF="node115.html#SECTION00945000000000000000">XFProcEditLoadCut</A>
+<LI> <A NAME="tex2html1814" HREF="node116.html#SECTION00946000000000000000">XFProcEditLoadTemplate</A>
+<LI> <A NAME="tex2html1815" HREF="node117.html#SECTION00947000000000000000">XFProcEditMakeAProc</A>
+<LI> <A NAME="tex2html1816" HREF="node118.html#SECTION00948000000000000000">XFProcEditPaste</A>
+<LI> <A NAME="tex2html1817" HREF="node119.html#SECTION00949000000000000000">XFProcEditSaveCut</A>
+<LI> <A NAME="tex2html1818" HREF="node120.html#SECTION009410000000000000000">XFProcEditSaveCutAsTemplate</A>
+<LI> <A NAME="tex2html1819" HREF="node121.html#SECTION009411000000000000000">XFProcEditShowCut</A>
+</UL> 
+<LI> <A NAME="tex2html1820" HREF="node122.html#SECTION00950000000000000000">Programming</A>
+<UL> 
+<LI> <A NAME="tex2html1821" HREF="node123.html#SECTION00951000000000000000">XFProcProgCommands</A>
+<LI> <A NAME="tex2html1822" HREF="node124.html#SECTION00952000000000000000">XFProcProgEditScript</A>
+<LI> <A NAME="tex2html1823" HREF="node125.html#SECTION00953000000000000000">XFProcProgEndSrc</A>
+<LI> <A NAME="tex2html1824" HREF="node126.html#SECTION00954000000000000000">XFProcProgErrors</A>
+<LI> <A NAME="tex2html1825" HREF="node127.html#SECTION00955000000000000000">XFProcProgGlobals</A>
+<LI> <A NAME="tex2html1826" HREF="node128.html#SECTION00956000000000000000">XFProcProgProcs</A>
+<LI> <A NAME="tex2html1827" HREF="node129.html#SECTION00957000000000000000">XFProcProgShowScript</A>
+<LI> <A NAME="tex2html1828" HREF="node130.html#SECTION00958000000000000000">XFProcProgStartupSrc</A>
+<LI> <A NAME="tex2html1829" HREF="node131.html#SECTION00959000000000000000">XFProcProgWidgetTree</A>
+</UL> 
+<LI> <A NAME="tex2html1830" HREF="node132.html#SECTION00960000000000000000">Misc</A>
+<UL> 
+<LI> <A NAME="tex2html1831" HREF="node133.html#SECTION00961000000000000000">XFProcMiscAliases</A>
+<LI> <A NAME="tex2html1832" HREF="node134.html#SECTION00962000000000000000">XFProcMiscAppDefaults</A>
+<LI> <A NAME="tex2html1833" HREF="node135.html#SECTION00963000000000000000">XFProcMiscEdge</A>
+<LI> <A NAME="tex2html1834" HREF="node136.html#SECTION00964000000000000000">XFProcMiscHardcopy</A>
+<LI> <A NAME="tex2html1835" HREF="node137.html#SECTION00965000000000000000">XFProcMiscModules</A>
+<LI> <A NAME="tex2html1836" HREF="node138.html#SECTION00966000000000000000">XFProcMiscPixmaps</A>
+<LI> <A NAME="tex2html1837" HREF="node139.html#SECTION00967000000000000000">XFProcMiscSaveEdge</A>
+<LI> <A NAME="tex2html1838" HREF="node140.html#SECTION00968000000000000000">XFProcMiscTestProgram</A>
+</UL> 
+<LI> <A NAME="tex2html1839" HREF="node141.html#SECTION00970000000000000000">Options</A>
+<UL> 
+<LI> <A NAME="tex2html1840" HREF="node142.html#SECTION00971000000000000000">XFProcOptionsBindings</A>
+<LI> <A NAME="tex2html1841" HREF="node143.html#SECTION00972000000000000000">XFProcOptionsGeneral</A>
+<LI> <A NAME="tex2html1842" HREF="node144.html#SECTION00973000000000000000">XFProcOptionsIconBar</A>
+<LI> <A NAME="tex2html1843" HREF="node145.html#SECTION00974000000000000000">XFProcOptionsInterpreter</A>
+<LI> <A NAME="tex2html1844" HREF="node146.html#SECTION00975000000000000000">XFProcOptionsMenuBar</A>
+<LI> <A NAME="tex2html1845" HREF="node147.html#SECTION00976000000000000000">XFProcOptionsPathFile</A>
+<LI> <A NAME="tex2html1846" HREF="node148.html#SECTION00977000000000000000">XFProcOptionsSaveClassBindings</A>
+<LI> <A NAME="tex2html1847" HREF="node149.html#SECTION00978000000000000000">XFProcOptionsSaveModuleList</A>
+<LI> <A NAME="tex2html1848" HREF="node150.html#SECTION00979000000000000000">XFProcOptionsSaveOptions</A>
+<LI> <A NAME="tex2html1849" HREF="node151.html#SECTION009710000000000000000">XFProcOptionsSavePositions</A>
+<LI> <A NAME="tex2html1850" HREF="node152.html#SECTION009711000000000000000">XFProcOptionsSource</A>
+<LI> <A NAME="tex2html1851" HREF="node153.html#SECTION009712000000000000000">XFProcOptionsVersion</A>
+<LI> <A NAME="tex2html1852" HREF="node154.html#SECTION009713000000000000000">XFProcOptionsWindow</A>
+</UL> 
+<LI> <A NAME="tex2html1853" HREF="node155.html#SECTION00980000000000000000">Help</A>
+<UL> 
+<LI> <A NAME="tex2html1854" HREF="node156.html#SECTION00981000000000000000">XFProcHelpAbout</A>
+<LI> <A NAME="tex2html1855" HREF="node157.html#SECTION00982000000000000000">XFProcHelpHelp</A>
+<LI> <A NAME="tex2html1856" HREF="node158.html#SECTION00983000000000000000">XFProcHelpTutorial</A>
+</UL>
+</UL>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

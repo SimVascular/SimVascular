@@ -49,22 +49,21 @@ struct Hessian {
   typedef struct Hessian Hessian;  
 
 extern "C" {
-
   // for solving linear system (small)
   // the last array is the right hand side
   // it is being passed as a reference  and overridden
   // to contain the linear system's solution !
-  #ifndef WIN32
-    void mytred_(int*,int*,double[3][3],double*,double*,double[3][3]);
-    #define mytred mytred_  
-    void tql2_(int*,int*,double*,double*,double[3][3],int*);
+  #ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+    #define mytred mytred_
     #define tql2 tql2_    
-  #else
-     void MYTRED(int*,int*,double[3][3],double*,double*,double[3][3]);
-     void TQL2(int*,int*,double*,double*,double[3][3],int*);
+  #elif CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
     #define mytred MYTRED
     #define tql2 TQL2
+  #else
+    // error, need to specify wrapping! 
   #endif
+    void mytred(int*,int*,double[3][3],double*,double*,double[3][3]); 
+    void tql2(int*,int*,double*,double*,double[3][3],int*);
 };
 
 

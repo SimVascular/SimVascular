@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>KeysymBox</TITLE>
+<META NAME="description" CONTENT="KeysymBox">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html3134" HREF="node180.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3132" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3126" HREF="node178.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3136" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3137" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3135" HREF="node180.html">MakeMButton</A>
+<B>Up:</B> <A NAME="tex2html3133" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3127" HREF="node178.html">IsADirIsAFile, IsASymlink</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION0010211000000000000000">KeysymBox</A></H2>
+<P>
+<A NAME=2096>&#160;</A>
+This template defines a new procedure named KeysymBox.
+Calling this procedure pops up a dialog box to select a
+keysym. The keysym can be selected from a list, or keypress
+keysyms can be entered via an example area. The procedure
+gets the following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=724 HEIGHT=474 ALIGN=BOTTOM ALT="tabular2097" SRC="img114.gif"  > <P>
+<P>
+<P>
+To configure the different aspects of the keysym box, there exists a
+global array named keysymBox. A default value of ``-'' means that the
+Tk default value is used. This array contains elements that control
+the keysym box (color, font etc.):
+<P>
+<P>
+<P> <IMG WIDTH=521 HEIGHT=349 ALIGN=BOTTOM ALT="tabular2100" SRC="img115.gif"  > <P>
+<P>
+<P>
+A small example of an invocation may look like this:
+<P>
+<TT>
+<PRE><TT> 
+		KeysymBox ''/usr/local/lib/Keysyms''
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2111">&#160;</A><A NAME="figKeysymBox">&#160;</A> <IMG WIDTH=323 HEIGHT=331 ALIGN=BOTTOM ALT="figure2109" SRC="img116.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template KeysymBox<BR>
+<P>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

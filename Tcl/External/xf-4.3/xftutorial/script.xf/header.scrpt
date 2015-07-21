@@ -1,0 +1,25 @@
+# tutorial
+global headerLast
+set headerLast 1
+global headerLastSectionDone
+set headerLastSectionDone -1
+
+set headerText0 {\
+.TL
+XF - a tutorial
+.AU
+Sven Delmas
+(garfield@cs.tu-berlin.de)
+Axel Mahler
+(axel@cs.tu-berlin.de)
+.AI
+Techn. Univ. Berlin
+Germany
+.AB
+XF is an interface builder based upon the Tcl/Tk package from John
+Ousterhout. This tutorial tries to introduce you into the working
+with XF. To use XF for more than just prototyping (creating a
+graphical interface without functionality) it is necessary that
+you can write Tcl code. This should be no problem, as Tcl is very
+easy to learn and to use.
+.AE}

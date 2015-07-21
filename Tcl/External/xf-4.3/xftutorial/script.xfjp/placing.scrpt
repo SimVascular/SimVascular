@@ -1,0 +1,341 @@
+# tutorial
+global placingLast
+set placingLast 5
+global placingLastSectionDone
+set placingLastSectionDone -1
+
+
+set placingName0 {place の使い方}
+set placingText0 {\
+本章では、place の使い方を紹介します。place は、明
+示的に絶対的な位置と大きさを指定して、"master" と
+呼ばれるウィンドウ上に "slave" と呼ばれるウィンド
+ウを配置します。また、"rubber-sheet placement" と
+呼ばれる、master に対する slave の相対的な位置と大
+きさを指定する方法も提供しています。これは、master
+の大きさが変更された場合に、それに応じて slave の
+位置と大きさも変更されるというものです。place では
+この２つの方法を混合して用いることができるので、例
+えば slave が固定の幅と高さを持ち、かつ master の
+中央に位置するというような指定も可能です。
+
+place の指定は、ダイアログ・ウィンドウからも行うこ
+とができますし、ディフォルトでは (Mod1-Button1) に
+定義された操作で直接指定することもできます。マウス
+を用いた指定の方法では、ウィジェットのボーダーを動
+かして大きさを指定し、ウィジェットの真ん中を動かし
+て位置を指定します。このマウスによる指定は、メニュー
+"Configuration" の "Layout" の項目を選択して、レイ
+アウトのダイアログ・ウィンドウが表示されている間の
+み有効です。ただし、"Options" の "General options"
+から、レイアウトのダイアログ・ウィンドウが表示され
+ていない間でもマウスによる指定を有効にすることも可
+能です。
+
+基本的な概念を理解していただくために、まずは place
+で指定することのできるオプションを使ってみましょう。}
+
+set placingCommand0 {\
+XFMiscClearInterpreter
+global xfConf xfPath
+set xfConf(saveInterval) 0
+set xfConf(onlyOneWindow) 0
+set xfConf(externalEditor) ""
+set xfConf(geometry) packer
+set xfConf(newPacker) 0
+source "$xfPath(src)/xfpacking.tcl"
+wm geometry . 300x300
+frame .frame -relief raised -borderwidth 1
+frame .frame.frame1 -relief raised -borderwidth 1
+frame .frame.frame2 -relief raised -borderwidth 1
+button .frame.frame1.button1 -text .frame1.button1
+button .frame.frame1.button2 -text .frame1.button2
+button .frame.frame1.button3 -text .frame1.button3
+button .frame.frame2.button1 -text .frame2.button1
+button .frame.frame2.button2 -text .frame2.button2
+button .frame.frame2.button3 -text .frame2.button3
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame .frame.frame1 {top} .frame.frame2 {top}
+pack append . .frame "top fill expand"
+XFPlacing . config Toplevel
+update idletasks}
+
+
+set placingName1 {place の使い方}
+set placingText1 {\
+まず、２つの frame をそれぞれ配置します。最初の 
+frame に対しては (0,0) の座標を指定して左上の角に
+配置し、２つめの frame に対しては、相対位置 (0.5,
+0.5) を指定して親ウィジェットの中央に配置すること
+にします。}
+
+set placingCommand1 {\
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+.xfPlacingToplevel.functions.master configure -state active
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.master invoke
+update idletasks
+.xfPlacingToplevel.functions.master configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 2
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 6
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 6
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 2
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 50
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 50
+update idletasks}
+
+
+set placingName2 {place の使い方}
+set placingText2 {\
+２つめの frame は中央に配置されていますが、現在の
+状態ではその左上の角が親ウィジェットの中央に来るよ
+うに配置さています。frame 自体が中央に来るようにす
+るためには、anchor オプションの "C" ボタンを選択し
+て下さい。}
+
+set placingCommand2 {\
+.xfPlacingToplevel.frame2.anchor.f2.c invoke
+update idletasks}
+
+
+set placingName3 {place の使い方}
+set placingText3 {\
+ここでお見せする機能は、それが何のために、どうやっ
+て起きているのかを理解せずには、非常に使い辛いもの
+です。いくつもの子供を持つ親のウィジェットが、元々 
+pack されていなかったりして座標情報（幅と高さ）が
+与えられていない場合を考えると、この機能は子供の配
+置の指定を pack から place に変更する時に効力を発
+揮します。この場合、親のウィジェットはどんどん小さ
+くなって行きます。これは pack された子供が親の大き
+さに影響を及ぼすのに対して、place された子供は親の
+大きさとは無関係であるためです。従って、packされた
+子供のウィジェットが少なくなれば少なくなるほど、親
+のウィジェットはどんどん小さくなって行きます。}
+
+# we want to manipulate frame.frame2...
+set placingCommand3 {\
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 2
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 6
+}
+update idletasks
+.xfPlacingToplevel.functions.master configure -state active
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.master invoke
+update idletasks
+.xfPlacingToplevel.functions.master configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 3
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 7
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame.frame2 Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 10
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 10
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 4
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 8
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame.frame2 Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 50
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 50
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 5
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 9
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame.frame2 Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 80
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 80
+update idletasks}
+
+
+set placingName4 {place の使い方}
+set placingText4 {\
+全ての子供が表示できるように親ウィジェットの大きさ
+を変更するには、pack された親ウィジェットを expand
+するか、あるいは place を用いて明示的に幅と高さを
+指定することによって行います。}
+
+set placingCommand4 {\
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+.xfPlacingToplevel.functions.master configure -state active
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.master invoke
+update idletasks
+.xfPlacingToplevel.functions.master configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPlacingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPlacingGetPlacing .frame Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.geo.geo1 set 50
+update idletasks
+.xfPlacingToplevel.frame2.geo.geo2 set 50
+update idletasks}
+
+
+set placingName5 {place の使い方}
+set placingText5 {\
+以上で、place の使い方の説明を終ります。}
+
+set placingCommand5 {
+.xfPlacingToplevel.frame1.ok activate
+update idletasks
+.xfPlacingToplevel.frame1.ok configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame1.ok invoke
+update idletasks}
+

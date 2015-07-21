@@ -1,0 +1,1412 @@
+# Program: xf
+# Description: handle toplevel widgets
+#
+# $Header: Toplevel[2.3] Wed Mar 10 11:59:24 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(toplevel) 2
+
+##########
+# Procedure: XFAdd.Toplevel
+# Description: add a toplevel
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Toplevel {xfW xfName xfType} {
+  global xfConf
+  global xfStatus
+
+  XFEditSetStatus "Inserting Toplevel..."
+  set xfName [XFMiscGetUniqueName $xfName top]
+  toplevel .$xfName
+  if {"$xfType" == "add"} {
+    wm geometry .$xfName 300x300
+    wm maxsize .$xfName 1000 1000
+    wm minsize .$xfName 10 10
+  }
+  wm title .$xfName $xfName
+
+  XFMiscBindWidgetTree .$xfName
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Toplevel...done"
+}
+
+##########
+# Procedure: XFAddTmp.Toplevel
+# Description: add a tmp toplevel
+# Arguments: none
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAddTmp.Toplevel {} {
+  global xfStatus
+
+  catch "destroy .xfEdit.tmplt"
+  if {[catch "[string tolower $xfStatus(type)] .xfEdit.tmplt"]} {
+    XFProcConfConfigure undefined "" "" $xfStatus(type) add
+  } {
+    wm withdraw .xfEdit.tmplt
+    XFProcConfConfigure .xfEdit.tmplt "" "" $xfStatus(type) add
+  }
+  XFEditSetShowWindows
+}
+
+##########
+# Procedure: XFConfig.Toplevel4
+# Description: configure a toplevel
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Toplevel4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfAppDefToplevels
+  global xfMisc
+  global xfStatus
+  global xfWmSetPosition
+  global xfWmSetSize
+
+  set xfMisc(topappdef) 0
+  set xfMisc(topsetpos) 0
+  set xfMisc(toppos) user
+  set xfMisc(topsetsize) 0
+  set xfMisc(topsize) program
+
+  if {"$xfType" == "add"} {
+    set xfName top$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Toplevel..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x670 \
+    "Toplevel parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFToplevelSetToplevel4 parameters $xfName 4
+  XFTmpltLabledEntry .xf${xfClass}Config4.params1.params2 \
+    title "Title:"
+  XFMiscInitElement .xf${xfClass}Config4 title
+  pack append .xf${xfClass}Config4.params1.params2 \
+              .xf${xfClass}Config4.params1.params2.title {top fillx pady 6}
+
+  if {"$xfType" == "add" || "$xfW" != "."} {
+    XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+      background Background "Background" XFToplevelSetToplevel4
+    XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+      borderWidth BorderWidth "Border width" "pixels" 40 XFToplevelSetToplevel4
+    XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass \
+      XFToplevelSetToplevel4
+  }
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame9 0
+
+  checkbutton .xf${xfClass}Config4.params1.params2.frame9.appdef \
+    -text "Parse application default" \
+    -variable xfMisc(topappdef) \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  XFElementScaleDouble $xfW .xf${xfClass}Config4 $xfType \
+    $xfClass maxsize "Max size" "Width" "Height" [winfo screenwidth .] \
+    [winfo screenheight .] xfMisc(topsetmaxsize)
+
+  XFElementScaleDouble $xfW .xf${xfClass}Config4 $xfType \
+    $xfClass minsize "Min size" "Width" "Height" [winfo screenwidth .] \
+    [winfo screenheight .] xfMisc(topsetminsize)
+
+  XFElementScaleDouble $xfW .xf${xfClass}Config4 $xfType \
+    $xfClass pos "Position" "X" "Y" [winfo screenwidth .] \
+      [winfo screenheight .] xfMisc(topsetpos)
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame11 0
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame4 0
+
+  label .xf${xfClass}Config4.params1.params2.frame4.message3 \
+    -anchor e \
+    -relief flat \
+    -width $xfStatus(elementWidth) \
+    -text {Position from:}
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame4.posProgram \
+    -text "Program" \
+    -variable xfMisc(toppos) \
+    -value posProgram \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame4.posUser \
+    -text "User" \
+    -variable xfMisc(toppos) \
+    -value posUser \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame4.posUnset \
+    -text "Unset" \
+    -variable xfMisc(toppos) \
+    -value posUnset \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  XFElementScaleDouble $xfW .xf${xfClass}Config4 $xfType \
+    $xfClass size "Size" "Width" "Height" [winfo screenwidth .] \
+      [winfo screenheight .] xfMisc(topsetsize)
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame12 0
+
+#  checkbutton .xf${xfClass}Config4.params1.params2.frame12.setsize \
+#    -text "Set window size" \
+#    -variable xfMisc(topsetsize) \
+#    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame3 0
+
+  label .xf${xfClass}Config4.params1.params2.frame3.message2 \
+    -anchor e \
+    -relief flat \
+    -width $xfStatus(elementWidth) \
+    -text {Size from:}
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame3.sizeProgram \
+    -text "Program" \
+    -variable xfMisc(topsize) \
+    -value sizeProgram \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame3.sizeUser \
+    -text "User" \
+    -variable xfMisc(topsize) \
+    -value sizeUser \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame3.sizeUnset \
+    -text "Unset" \
+    -variable xfMisc(topsize) \
+    -value sizeUnset \
+    -command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  button .xf${xfClass}Config4.additional.more \
+    -text {More} \
+    -command "XFProcConfConfigure $xfW 6 .xf${xfClass}Config4 $xfClass $xfType"
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.title.title insert 0 $xfName
+    .xf${xfClass}Config4.params1.params2.size.size1.size1 set 300
+    .xf${xfClass}Config4.params1.params2.size.size2.size2 set 300
+    .xf${xfClass}Config4.params1.params2.maxsize.maxsize1.maxsize1 set 1000
+    .xf${xfClass}Config4.params1.params2.maxsize.maxsize2.maxsize2 set 1000
+    .xf${xfClass}Config4.params1.params2.minsize.minsize1.minsize1 set 10
+    .xf${xfClass}Config4.params1.params2.minsize.minsize2.minsize2 set 10
+    .xf${xfClass}Config4.params1.params2.frame3.sizeProgram select
+    .xf${xfClass}Config4.params1.params2.frame4.posProgram select
+  } {
+    if {[lsearch $xfAppDefToplevels $xfW] != -1} {
+      .xf${xfClass}Config4.params1.params2.frame9.appdef select
+    }
+    if {[lsearch $xfWmSetPosition $xfW] != -1} {
+#      .xf${xfClass}Config4.params1.params2.frame11.setpos select
+       set xfMisc(topsetpos) 1
+    }
+    if {[lsearch $xfWmSetSize $xfW] != -1} {
+#      .xf${xfClass}Config4.params1.params2.frame12.setsize select
+       set xfMisc(topsetsize) 1
+    }
+    .xf${xfClass}Config4.params1.params2.title.title insert 0 \
+      [wm title $xfW]
+    .xf${xfClass}Config4.params1.params2.size.size1.size1 set \
+      [winfo width $xfW]
+    .xf${xfClass}Config4.params1.params2.size.size2.size2 set \
+      [winfo height $xfW]
+    .xf${xfClass}Config4.params1.params2.pos.pos1.pos1 set \
+      [winfo x $xfW]
+    .xf${xfClass}Config4.params1.params2.pos.pos2.pos2 set \
+      [winfo y $xfW]
+    if {[llength [wm minsize $xfW]] == 2} {
+      .xf${xfClass}Config4.params1.params2.minsize.minsize1.minsize1 set \
+        [lindex [wm minsize $xfW] 0]
+      .xf${xfClass}Config4.params1.params2.minsize.minsize2.minsize2 set \
+        [lindex [wm minsize $xfW] 1]
+      set xfMisc(topsetminsize) 1
+    } {
+      set xfMisc(topsetminsize) 0
+    }
+    if {[llength [wm maxsize $xfW]] == 2} {
+      .xf${xfClass}Config4.params1.params2.maxsize.maxsize1.maxsize1 set \
+        [lindex [wm maxsize $xfW] 0]
+      .xf${xfClass}Config4.params1.params2.maxsize.maxsize2.maxsize2 set \
+        [lindex [wm maxsize $xfW] 1]
+      set xfMisc(topsetmaxsize) 1
+    } {
+      set xfMisc(topsetmaxsize) 0
+    }
+    case [wm sizefrom $xfW] in {
+      {program window} {
+        .xf${xfClass}Config4.params1.params2.frame3.sizeProgram select
+      }
+      {user} {
+        .xf${xfClass}Config4.params1.params2.frame3.sizeUser select
+      }
+      {default} {
+        .xf${xfClass}Config4.params1.params2.frame3.sizeUnset select
+      }
+    }
+    case [wm positionfrom $xfW] in {
+      {program window} {
+        .xf${xfClass}Config4.params1.params2.frame4.posProgram select
+      }
+      {user} {
+        .xf${xfClass}Config4.params1.params2.frame4.posUser select
+      }
+      {default} {
+        .xf${xfClass}Config4.params1.params2.frame4.posUnset select
+      }
+    }
+  }
+
+  XFMiscSetResource .xf${xfClass}Config4.params1.params2.size.size1.size1 \
+    command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config4.params1.params2.size.size2.size2 \
+    command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config4.params1.params2.pos.pos1.pos1 \
+    command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config4.params1.params2.pos.pos2.pos2 \
+    command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config4.params1.params2.minsize.minsize1.minsize1 \
+      command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config4.params1.params2.minsize.minsize2.minsize2 \
+      command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config4.params1.params2.minsize.label1 \
+      command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config4.params1.params2.maxsize.maxsize1.maxsize1 \
+      command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config4.params1.params2.maxsize.maxsize2.maxsize2 \
+      command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config4.params1.params2.maxsize.label1 \
+      command "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  .xf${xfClass}Config4.leave.cancel config \
+    -command "
+      global xfMisc
+      if {\[info exists xfMisc($xfClass,saveValue)\]} {
+        foreach xfCounter \$xfMisc($xfClass,saveValue) {
+          catch \"$xfW config -\[lindex \$xfCounter 0\] \\\"\[lindex \$xfCounter 1\]\\\"\"
+        }
+      }
+      if {\[info exists xfMisc($xfClass,saveWm)\]} {
+        if {\"[string tolower $xfClass]\" == \"toplevel\"} {
+          foreach xfCounter \$xfMisc($xfClass,saveWm) {
+            if {\"\[lindex \$xfCounter 0\]\" == \"maxsize\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"minsize\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"aspect\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"grid\"} {
+              catch \"wm \[lindex \$xfCounter 0\] $xfW \[lindex \$xfCounter 1\]\"
+            } {
+              catch \"wm \[lindex \$xfCounter 0\] $xfW \\\"\[lindex \$xfCounter 1\]\\\"\"
+            }
+          }
+        }
+      }
+      destroy .xf${xfClass}Config4"
+
+  # save old values
+  if {"$xfW" != "."} {
+    XFElementSave $xfW $xfClass {background borderwidth relief}
+  } {
+    XFElementSave $xfW $xfClass {}
+  }
+
+  set xfMisc($xfClass,saveWm) ""
+  foreach xfCounter {title geometry maxsize minsize positionfrom sizefrom} {
+    set xfValue [wm $xfCounter $xfW]
+    if {"$xfValue" == ""} {
+      case $xfCounter {
+        {postitionfrom} {
+          set xfValue program
+        }
+        {sizefrom} {
+          set xfValue user
+        }
+      }
+    }
+    set xfTmpValue $xfCounter
+    lappend xfTmpValue $xfValue
+    lappend xfMisc($xfClass,saveWm) $xfTmpValue
+  }
+
+  # packing
+  if {"$xfType" != "add"} {
+    pack after .xf${xfClass}Config4.additional.params \
+               .xf${xfClass}Config4.additional.more {left fill expand}
+  }
+
+  pack append .xf${xfClass}Config4.params1.params2.frame9 \
+              .xf${xfClass}Config4.params1.params2.frame9.appdef {top frame center}
+#  pack append .xf${xfClass}Config4.params1.params2.frame11 \
+#              .xf${xfClass}Config4.params1.params2.frame11.setpos {top frame center}
+#  pack append .xf${xfClass}Config4.params1.params2.frame12 \
+#              .xf${xfClass}Config4.params1.params2.frame12.setsize {top frame center}
+  pack append .xf${xfClass}Config4.params1.params2.frame3 \
+              .xf${xfClass}Config4.params1.params2.frame3.message2 {left} \
+              .xf${xfClass}Config4.params1.params2.frame3.sizeProgram {left fillx expand} \
+              .xf${xfClass}Config4.params1.params2.frame3.sizeUser {left fillx expand} \
+              .xf${xfClass}Config4.params1.params2.frame3.sizeUnset {left fillx expand}
+  pack append .xf${xfClass}Config4.params1.params2.frame4 \
+              .xf${xfClass}Config4.params1.params2.frame4.message3 {left} \
+              .xf${xfClass}Config4.params1.params2.frame4.posProgram {left fillx expand} \
+              .xf${xfClass}Config4.params1.params2.frame4.posUser {left fillx expand} \
+              .xf${xfClass}Config4.params1.params2.frame4.posUnset {left fillx expand}
+  pack append .xf${xfClass}Config4.params1.params2 \
+              .xf${xfClass}Config4.params1.params2.frame9 {top fill pady 6} \
+              .xf${xfClass}Config4.params1.params2.maxsize {top fillx pady 6} \
+              .xf${xfClass}Config4.params1.params2.minsize {top fillx pady 6} \
+              .xf${xfClass}Config4.params1.params2.pos {top fillx pady 6} \
+              .xf${xfClass}Config4.params1.params2.frame11 {top fill pady 6} \
+              .xf${xfClass}Config4.params1.params2.frame4 {top fill pady 6} \
+              .xf${xfClass}Config4.params1.params2.size {top fillx pady 6} \
+              .xf${xfClass}Config4.params1.params2.frame12 {top fill pady 6} \
+              .xf${xfClass}Config4.params1.params2.frame3 {top fill pady 6}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFToplevelSetToplevel4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Toplevel...done"
+}
+
+##########
+# Procedure: XFConfig.Toplevel5
+# Description: configure a toplevel
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Toplevel5 {xfW xfType xfClass {xfLeader ""}} {
+  global xfBind
+  global xfMisc
+  global xfStatus
+
+  set xfMisc(topfocus) passive
+  set xfMisc(iconify) 0
+
+  set xfName [XFMiscPathName $xfW]
+  XFEditSetStatus "Calling parameter setting for Toplevel..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config5 400x560 \
+    "Toplevel parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config5 $xfType $xfClass \
+    XFToplevelSetToplevel5 parameters $xfName 5
+  XFElementScaleDouble $xfW .xf${xfClass}Config5 $xfType \
+    $xfClass ratio1 "Aspect ratio" "minNumer" "maxNumer" \
+      [winfo screenwidth .] [winfo screenheight .]
+  XFElementScaleDouble $xfW .xf${xfClass}Config5 $xfType \
+    $xfClass ratio2 "Aspect ratio" "minDenom" "maxDenom" \
+      [winfo screenwidth .] [winfo screenheight .]
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame3 0
+
+  label .xf${xfClass}Config5.params1.params2.frame3.message1 \
+    -anchor e \
+    -relief flat \
+    -width $xfStatus(elementWidth) \
+    -text {Focus Model:}
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame3.active \
+    -text "Active" \
+    -variable xfMisc(topfocus) \
+    -value Active \
+    -command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame3.passive \
+    -text "Passive" \
+    -variable xfMisc(topfocus) \
+    -value Passive \
+    -command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+
+  XFElementScaleDouble $xfW .xf${xfClass}Config5 $xfType \
+    $xfClass base "Grid base" "Width" "Height" 400 400
+  XFElementScaleDouble $xfW .xf${xfClass}Config5 $xfType \
+    $xfClass incr "Grid increment" "Width" "Height" 100 100
+
+  XFTmpltLabledEntry .xf${xfClass}Config5.params1.params2 \
+    iconbitmap "Icon bitmap:"
+  XFMiscInitElement .xf${xfClass}Config5 iconbitmap
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame2 0
+
+  checkbutton .xf${xfClass}Config5.params1.params2.frame2.iconify \
+    -text "Iconify" \
+    -variable xfMisc(iconify) \
+    -command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+
+  XFTmpltLabledEntry .xf${xfClass}Config5.params1.params2 \
+    iconmask "Icon mask:"
+  XFMiscInitElement .xf${xfClass}Config5 iconmask
+
+  XFTmpltLabledEntry .xf${xfClass}Config5.params1.params2 \
+    iconname "Icon name:"
+  XFMiscInitElement .xf${xfClass}Config5 iconname
+
+  XFElementScaleDouble $xfW .xf${xfClass}Config5 $xfType \
+    $xfClass iconpos "Icon position" "X" "Y" \
+      [winfo screenwidth .] [winfo screenheight .]
+
+  XFTmpltLabledEntry .xf${xfClass}Config5.params1.params2 \
+    iconwin "Icon window:"
+  XFMiscInitElement .xf${xfClass}Config5 iconwin
+
+  button .xf${xfClass}Config5.additional.more \
+    -text {More} \
+    -command "XFProcConfConfigure $xfW 6 .xf${xfClass}Config5 $xfClass $xfType"
+
+  if {[llength [wm aspect $xfW]] == 4} {
+    .xf${xfClass}Config5.params1.params2.ratio1.ratio11.ratio11 set \
+      [lindex [wm aspect $xfW] 0]
+    .xf${xfClass}Config5.params1.params2.ratio2.ratio21.ratio21 set \
+      [lindex [wm aspect $xfW] 1]
+    .xf${xfClass}Config5.params1.params2.ratio1.ratio12.ratio12 set \
+      [lindex [wm aspect $xfW] 2]
+    .xf${xfClass}Config5.params1.params2.ratio2.ratio22.ratio22 set \
+      [lindex [wm aspect $xfW] 3]
+  }
+  case [wm focusmodel $xfW] in {
+    {active} {
+      .xf${xfClass}Config5.params1.params2.frame3.active select
+    }
+    {passive} {
+      .xf${xfClass}Config5.params1.params2.frame3.passive select
+    }
+    {default} {
+      .xf${xfClass}Config5.params1.params2.frame3.passive select
+    }
+  }
+  if {[llength [wm grid $xfW]] == 4} {
+    .xf${xfClass}Config5.params1.params2.base.base1.base1 set \
+      [lindex [wm grid $xfW] 0]
+    .xf${xfClass}Config5.params1.params2.base.base2.base2 set \
+      [lindex [wm grid $xfW] 1]
+    .xf${xfClass}Config5.params1.params2.incr.incr1.incr1 set \
+      [lindex [wm grid $xfW] 2]
+    .xf${xfClass}Config5.params1.params2.incr.incr2.incr2 set \
+      [lindex [wm grid $xfW] 3]
+  }
+  .xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap insert 0 \
+    [wm iconbitmap $xfW]
+  .xf${xfClass}Config5.params1.params2.iconmask.iconmask insert 0 \
+    [wm iconmask $xfW]
+  .xf${xfClass}Config5.params1.params2.iconname.iconname insert 0 \
+    [wm iconname $xfW]
+  if {[llength [wm iconposition $xfW]] == 2} {
+    .xf${xfClass}Config5.params1.params2.iconpos.iconpos1.iconpos1 set \
+      [lindex [wm iconposition $xfW] 0]
+    .xf${xfClass}Config5.params1.params2.iconpos.iconpos2.iconpos2 set \
+      [lindex [wm iconposition $xfW] 1]
+  }
+  .xf${xfClass}Config5.params1.params2.iconwin.iconwin insert 0 \
+    [wm iconwindow $xfW]
+
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.ratio1.ratio11.ratio11 \
+      command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.ratio1.ratio12.ratio12 \
+      command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.ratio2.ratio21.ratio21 \
+      command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.ratio2.ratio22.ratio22 \
+      command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config5.params1.params2.base.base1.base1 \
+    command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config5.params1.params2.base.base2.base2 \
+    command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config5.params1.params2.incr.incr1.incr1 \
+    command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource .xf${xfClass}Config5.params1.params2.incr.incr2.incr2 \
+    command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.iconpos.iconpos1.iconpos1 \
+      command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.iconpos.iconpos2.iconpos2 \
+      command "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+
+  .xf${xfClass}Config5.leave.cancel config \
+    -command "
+      global xfMisc
+      if {\[info exists xfMisc($xfClass,saveValue)\]} {
+        foreach xfCounter \$xfMisc($xfClass,saveValue) {
+          catch \"$xfW config -\[lindex \$xfCounter 0\] \\\"\[lindex \$xfCounter 1\]\\\"\"
+        }
+      }
+      if {\[info exists xfMisc($xfClass,saveWm)\]} {
+        if {\"[string tolower $xfClass]\" == \"toplevel\"} {
+          foreach xfCounter \$xfMisc($xfClass,saveWm) {
+            if {\"\[lindex \$xfCounter 0\]\" == \"maxsize\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"minsize\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"aspect\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"grid\"} {
+              catch \"wm \[lindex \$xfCounter 0\] $xfW \[lindex \$xfCounter 1\]\"
+            } {
+              catch \"wm \[lindex \$xfCounter 0\] $xfW \\\"\[lindex \$xfCounter 1\]\\\"\"
+            }
+          }
+        }
+      }
+      destroy .xf${xfClass}Config5"
+
+  XFElementSave $xfW $xfClass {}
+
+  set xfMisc($xfClass,saveWm) ""
+  foreach xfCounter {aspect focusmodel grid iconbitmap iconmask iconname iconposition iconwindow} {
+    set xfValue [wm $xfCounter $xfW]
+    if {"$xfValue" == ""} {
+      case $xfCounter {
+        {focusmodel} {
+          set xfValue passive
+        }
+      }
+    }
+    set xfTmpValue $xfCounter
+    lappend xfTmpValue $xfValue
+    lappend xfMisc($xfClass,saveWm) $xfTmpValue
+  }
+
+  # bindings
+  bind .xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap $xfBind(configure) \
+      "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap"  
+
+  bind .xf${xfClass}Config5.params1.params2.iconmask.iconmask $xfBind(configure) \
+      "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.iconmask.iconmask"  
+
+  # packing
+  pack after .xf${xfClass}Config5.additional.params \
+             .xf${xfClass}Config5.additional.more {left fill expand}
+  pack append .xf${xfClass}Config5.params1.params2.frame2 \
+              .xf${xfClass}Config5.params1.params2.frame2.iconify {top frame center}
+  pack append .xf${xfClass}Config5.params1.params2.frame3 \
+              .xf${xfClass}Config5.params1.params2.frame3.message1 {left} \
+              .xf${xfClass}Config5.params1.params2.frame3.active {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame3.passive {left fillx expand}
+  pack append .xf${xfClass}Config5.params1.params2 \
+              .xf${xfClass}Config5.params1.params2.ratio1 {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.ratio2 {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.frame3 {top fill pady 6} \
+              .xf${xfClass}Config5.params1.params2.base {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.incr {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.iconbitmap {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.frame2 {top fill pady 6} \
+              .xf${xfClass}Config5.params1.params2.iconmask {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.iconname {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.iconpos {top fillx pady 6} \
+              .xf${xfClass}Config5.params1.params2.iconwin {top fillx pady 6}
+  pack append .xf${xfClass}Config5 \
+              .xf${xfClass}Config5.pathname {top fill frame center} \
+              .xf${xfClass}Config5.leave {bottom fill} \
+              .xf${xfClass}Config5.additional {bottom fill} \
+              .xf${xfClass}Config5.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config5.params1.params2 \
+    "XFToplevelSetToplevel5 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Toplevel...done"
+}
+
+##########
+# Procedure: XFConfig.Toplevel6
+# Description: configure a toplevel
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Toplevel6 {xfW xfType xfClass {xfLeader ""}} {
+  global xfBind
+  global xfMisc
+  global xfStatus
+
+  set xfMisc(topDisplayType) start
+  set xfMisc(oldTopDisplayType) start
+  set xfMisc($xfClass,saveTopProc) ""
+  set xfMisc(overrideredirect) 0
+  set xfName [XFMiscPathName $xfW]
+  XFEditSetStatus "Calling parameter setting for Toplevel..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config6 400x480 \
+    "Toplevel parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config6 $xfType $xfClass \
+    XFToplevelSetToplevel6 parameters $xfName 6
+
+  XFTmpltLabledEntry .xf${xfClass}Config6.params1.params2 \
+    client "Client:"
+  XFMiscInitElement .xf${xfClass}Config6 client
+  XFTmpltLabledEntry .xf${xfClass}Config6.params1.params2 \
+    command "Command:"
+  XFMiscInitElement .xf${xfClass}Config6 command
+  XFTmpltLabledEntry .xf${xfClass}Config6.params1.params2 \
+    group "Group:"
+  XFMiscInitElement .xf${xfClass}Config6 group
+  XFTmpltFrame .xf${xfClass}Config6.params1.params2.frame2 0
+  checkbutton .xf${xfClass}Config6.params1.params2.frame2.over \
+    -text "Overrideredirect" \
+    -variable xfMisc(overrideredirect) \
+    -command "XFToplevelSetToplevel6 $xfW 0 $xfClass"
+
+  XFTmpltLabledEntry .xf${xfClass}Config6.params1.params2 \
+    transient "Transient:"
+  XFMiscInitElement .xf${xfClass}Config6 transient
+
+  label .xf${xfClass}Config6.params1.params2.mess \
+    -text "Startup: ShowWindow$xfW (code before widget creation)"
+  XFTmpltText .xf${xfClass}Config6.params1.params2 text 0
+
+  XFTmpltFrame .xf${xfClass}Config6.params1.params2.frame3 0
+
+  radiobutton .xf${xfClass}Config6.params1.params2.frame3.start \
+    -text "Startup" \
+    -variable xfMisc(topDisplayType) \
+    -value start \
+    -command "XFToplevelCreateProcs $xfW $xfClass"
+
+  radiobutton .xf${xfClass}Config6.params1.params2.frame3.middle \
+    -text "Middle" \
+    -variable xfMisc(topDisplayType) \
+    -value middle \
+    -command "XFToplevelCreateProcs $xfW $xfClass"
+
+  radiobutton .xf${xfClass}Config6.params1.params2.frame3.end \
+    -text "End" \
+    -variable xfMisc(topDisplayType) \
+    -value end \
+    -command "XFToplevelCreateProcs $xfW $xfClass"
+
+  XFTmpltFrame .xf${xfClass}Config6.params1.params2.frame4 0
+
+  radiobutton .xf${xfClass}Config6.params1.params2.frame4.delete \
+    -text "DELETE_WINDOW" \
+    -variable xfMisc(topDisplayType) \
+    -value delete \
+    -command "XFToplevelCreateProcs $xfW $xfClass"
+
+  radiobutton .xf${xfClass}Config6.params1.params2.frame4.save \
+    -text "SAVE_YOURSELF" \
+    -variable xfMisc(topDisplayType) \
+    -value save \
+    -command "XFToplevelCreateProcs $xfW $xfClass"
+
+  radiobutton .xf${xfClass}Config6.params1.params2.frame4.focus \
+    -text "TAKE_FOCUS" \
+    -variable xfMisc(topDisplayType) \
+    -value focus \
+    -command "XFToplevelCreateProcs $xfW $xfClass"
+
+  button .xf${xfClass}Config6.additional.more \
+    -text {Special} \
+    -command "XFProcConfConfigure $xfW 5 .xf${xfClass}Config6 $xfClass $xfType"
+
+  .xf${xfClass}Config6.params1.params2.client.client insert 0 \
+    [wm client $xfW]
+  .xf${xfClass}Config6.params1.params2.command.command insert 0 \
+    [wm command $xfW]
+  .xf${xfClass}Config6.params1.params2.group.group insert 0 \
+    [wm group $xfW]
+  if {[wm overrideredirect $xfW]} {
+    .xf${xfClass}Config6.params1.params2.frame2.over select
+  }
+  .xf${xfClass}Config6.params1.params2.transient.transient insert 0 \
+    [wm transient $xfW]
+
+  .xf${xfClass}Config6.leave.cancel config \
+    -command "
+      global xfMisc
+      if {\[info exists xfMisc($xfClass,saveValue)\]} {
+        foreach xfCounter \$xfMisc($xfClass,saveValue) {
+          catch \"$xfW config -\[lindex \$xfCounter 0\] \\\"\[lindex \$xfCounter 1\]\\\"\"
+        }
+      }
+      if {\[info exists xfMisc($xfClass,saveWm)\]} {
+        if {\"[string tolower $xfClass]\" == \"toplevel\"} {
+          foreach xfCounter \$xfMisc($xfClass,saveWm) {
+            if {\"\[lindex \$xfCounter 0\]\" == \"maxsize\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"minsize\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"aspect\" ||
+                \"\[lindex \$xfCounter 0\]\" == \"grid\"} {
+              catch \"wm \[lindex \$xfCounter 0\] $xfW \[lindex \$xfCounter 1\]\"
+            } {
+              catch \"wm \[lindex \$xfCounter 0\] $xfW \\\"\[lindex \$xfCounter 1\]\\\"\"
+            }
+          }
+        }
+      }
+      XFToplevelCreateProcs $xfW $xfClass old
+      destroy .xf${xfClass}Config6"
+
+  # save old values
+  XFElementSave $xfW $xfClass {}
+
+  set xfMisc($xfClass,saveWm) ""
+  foreach xfCounter {client command group overrideredirect transient} {
+    set xfValue [wm $xfCounter $xfW]
+    set xfTmpValue $xfCounter
+    lappend xfTmpValue $xfValue
+    lappend xfMisc($xfClass,saveWm) $xfTmpValue
+  }
+
+  if {"[info procs StartupSrc$xfW]" != ""} {
+    lappend xfMisc($xfClass,saveTopProc) [info body StartupSrc$xfW]
+  } {
+    lappend xfMisc($xfClass,saveTopProc) ""
+  }
+  if {"[info procs MiddleSrc$xfW]" != ""} {
+    lappend xfMisc($xfClass,saveTopProc) [info body MiddleSrc$xfW]
+  } {
+    lappend xfMisc($xfClass,saveTopProc) ""
+  }
+  if {"[info procs EndSrc$xfW]" != ""} {
+    lappend xfMisc($xfClass,saveTopProc) [info body EndSrc$xfW]
+  } {
+    lappend xfMisc($xfClass,saveTopProc) ""
+  }
+  lappend xfMisc($xfClass,saveTopProc) [wm protocol $xfW WM_DELETE_WINDOW]
+  lappend xfMisc($xfClass,saveTopProc) [wm protocol $xfW WM_SAVE_YOURSELF]
+  lappend xfMisc($xfClass,saveTopProc) [wm protocol $xfW WM_TAKE_FOCUS]
+
+  XFToplevelShowProcs $xfW $xfClass
+
+  # packing
+  pack after .xf${xfClass}Config6.additional.params \
+             .xf${xfClass}Config6.additional.more {left fill expand}
+  pack append .xf${xfClass}Config6.params1.params2.frame3 \
+              .xf${xfClass}Config6.params1.params2.frame3.start {left fill expand} \
+              .xf${xfClass}Config6.params1.params2.frame3.middle {left fill expand} \
+              .xf${xfClass}Config6.params1.params2.frame3.end {left fill expand}
+  pack append .xf${xfClass}Config6.params1.params2.frame2 \
+              .xf${xfClass}Config6.params1.params2.frame2.over {top frame center}
+  pack append .xf${xfClass}Config6.params1.params2.frame4 \
+              .xf${xfClass}Config6.params1.params2.frame4.delete {left fill expand} \
+              .xf${xfClass}Config6.params1.params2.frame4.save {left fill expand} \
+              .xf${xfClass}Config6.params1.params2.frame4.focus {left fill expand}
+  pack append .xf${xfClass}Config6.params1.params2 \
+              .xf${xfClass}Config6.params1.params2.client {top fillx pady 6} \
+              .xf${xfClass}Config6.params1.params2.command {top fillx pady 6} \
+              .xf${xfClass}Config6.params1.params2.group {top fillx pady 6} \
+              .xf${xfClass}Config6.params1.params2.frame2 {top fillx pady 6} \
+              .xf${xfClass}Config6.params1.params2.transient {top fillx pady 6} \
+              .xf${xfClass}Config6.params1.params2.mess {top fillx pady 6} \
+              .xf${xfClass}Config6.params1.params2.frame4 {bottom fill} \
+              .xf${xfClass}Config6.params1.params2.frame3 {bottom fill} \
+              .xf${xfClass}Config6.params1.params2.text {top fill expand}
+  pack append .xf${xfClass}Config6 \
+              .xf${xfClass}Config6.pathname {top fill frame center} \
+              .xf${xfClass}Config6.leave {bottom fill} \
+              .xf${xfClass}Config6.additional {bottom fill} \
+              .xf${xfClass}Config6.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config6.params1.params2 \
+    "XFToplevelSetToplevel6 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Toplevel...done"
+}
+
+##########
+# Procedure: XFSaveWidget.Toplevel
+# Description: save toplevel window
+# Arguments: xfOutFile - the output file
+#            xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveWidget.Toplevel {xfOutFile xfW} {
+  global xfConf
+  global xfWmSetPosition
+  global xfWmSetSize
+
+  if {"$xfW" != "."} {
+    set xfType [string tolower [winfo class $xfW]]
+
+    # what are we doing here ?
+    puts $xfOutFile "\n  # build widget $xfW"
+
+    # destroy any existing toplevel with that name
+    puts $xfOutFile "  if {\"\[info procs XFEdit\]\" != \"\"} {"
+    puts $xfOutFile "    catch \"XFDestroy $xfW\""
+    puts $xfOutFile "  } {"
+    puts $xfOutFile "    catch \"destroy $xfW\""
+    puts $xfOutFile "  }"
+    puts $xfOutFile "  $xfType $xfW " nonewline
+    XFSaveWidgetResource $xfOutFile $xfW
+    puts $xfOutFile ""
+  }
+
+  if {"[winfo class $xfW]" == "Toplevel" || "$xfW" == "."} {
+    # toplevel wm options
+    puts $xfOutFile "\n  # Window manager configurations"
+    set xfWmInfo [wm positionfrom $xfW]
+    if {"$xfWmInfo" != ""} {
+      if {"$xfWmInfo" == "program" || "$xfWmInfo" == "window"} {
+        puts $xfOutFile "  wm positionfrom $xfW program"
+      } {
+        if {"$xfWmInfo" == "user"} {
+          puts $xfOutFile "  wm positionfrom $xfW user"
+        } {
+          puts $xfOutFile "  wm positionfrom $xfW \"\""
+        }
+      }
+    } {
+      puts $xfOutFile "  wm positionfrom $xfW \"\""
+    }
+    set xfWmInfo [wm sizefrom $xfW]
+    if {"$xfWmInfo" != ""} {
+      if {"$xfWmInfo" == "program" || "$xfWmInfo" == "window"} {
+        puts $xfOutFile "  wm sizefrom $xfW program"
+      } {
+        if {"$xfWmInfo" == "user"} {
+          puts $xfOutFile "  wm sizefrom $xfW user"
+        } {
+          puts $xfOutFile "  wm sizefrom $xfW \"\""
+        }
+      }
+    } {
+      puts $xfOutFile "  wm sizefrom $xfW \"\""
+    }
+    set xfWmInfo [wm grid $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm grid $xfW $xfWmInfo"
+    }
+    if {[lsearch $xfWmSetPosition $xfW] != -1 &&
+        [lsearch $xfWmSetSize $xfW] != -1} {
+      set xfWmInfo [wm geometry $xfW]
+      if {"$xfWmInfo" != ""} {
+        puts $xfOutFile "  wm geometry $xfW $xfWmInfo"
+      }
+    } {
+      if {[lsearch $xfWmSetPosition $xfW] != -1} {
+        set xfWmInfo [wm geometry $xfW]
+        set xfParseGeo [XFMiscParseGeometry $xfWmInfo]
+        if {"$xfWmInfo" != ""} {
+          puts $xfOutFile "  wm geometry $xfW [lindex $xfParseGeo 2][lindex $xfParseGeo 3]"
+        }
+      } {
+        if {[lsearch $xfWmSetSize $xfW] != -1} {
+          set xfWmInfo [wm geometry $xfW]
+          set xfParseGeo [XFMiscParseGeometry $xfWmInfo]
+          if {"$xfWmInfo" != ""} {
+            puts $xfOutFile "  wm geometry $xfW [lindex $xfParseGeo 0]x[lindex $xfParseGeo 1]"
+          }
+        }
+      }
+    }
+    set xfWmInfo [wm aspect $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm aspect $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm client $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm client $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm command $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm command $xfW {$xfWmInfo}"
+    }
+    set xfWmInfo [wm focusmodel $xfW]
+    if {"$xfWmInfo" == "active"} {
+      puts $xfOutFile "  wm focusmodel $xfW active"
+    }
+    set xfWmInfo [wm group $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm group $xfW $xfWmInfo"
+    }
+    if {[winfo ismapped $xfW] == 0} {
+      puts $xfOutFile "  update idletask\n  wm iconify $xfW"
+    }
+    set xfWmInfo [wm iconbitmap $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm iconbitmap $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm iconmask $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm iconmask $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm iconname $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm iconname $xfW {$xfWmInfo}"
+    }
+    set xfWmInfo [wm iconposition $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm iconposition $xfW $xfWmInfo"
+    }
+#FIX    set xfWmInfo [wm iconwindow $xfW]
+#    if {"$xfWmInfo" != ""} {
+#      puts $xfOutFile "  wm iconwindow $xfW $xfWmInfo"
+#    }
+    set xfWmInfo [wm maxsize $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm maxsize $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm minsize $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm minsize $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm overrideredirect $xfW]
+    if {$xfWmInfo == 1} {
+      puts $xfOutFile "  wm overrideredirect $xfW $xfWmInfo"
+    }
+    set xfWmInfo [wm protocol $xfW WM_DELETE_WINDOW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm protocol $xfW WM_DELETE_WINDOW {$xfWmInfo}"
+    }
+    set xfWmInfo [wm protocol $xfW WM_SAVE_YOURSELF]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm protocol $xfW WM_SAVE_YOURSELF {$xfWmInfo}"
+    }
+    set xfWmInfo [wm protocol $xfW WM_TAKE_FOCUS]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm protocol $xfW WM_TAKE_FOCUS {$xfWmInfo}"
+    }
+    set xfWmInfo [wm title $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm title $xfW {$xfWmInfo}"
+    }
+    set xfWmInfo [wm transient $xfW]
+    if {"$xfWmInfo" != ""} {
+      puts $xfOutFile "  wm transient $xfW $xfWmInfo"
+    }
+  }
+  puts $xfOutFile ""
+}
+
+##########
+# Procedure: XFToplevelCreateProcs
+# Description: create the source procedures for toplevel
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+#            xfType - the type of setting (old = undo)
+# Returns: none
+# Sideeffects: none
+##########
+proc XFToplevelCreateProcs {xfW xfClass {xfType ""}} {
+  global xfMisc
+
+  if {"$xfType" != "old"} {
+    set xfTmpValue \
+      [XFMiscGetText .xf${xfClass}Config6.params1.params2.text.text]
+    case $xfMisc(oldTopDisplayType) {
+      {start} {
+        if {"$xfTmpValue" != ""} {
+          if {[catch "proc StartupSrc$xfW {} {$xfTmpValue}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          catch "rename StartupSrc$xfW {}"
+        }
+      }
+      {middle} {
+        if {"$xfTmpValue" != ""} {
+          if {[catch "proc MiddleSrc$xfW {} {$xfTmpValue}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          catch "rename MiddleSrc$xfW {}"
+        }
+      }
+      {end} {
+        if {"$xfTmpValue" != ""} {
+          if {[catch "proc EndSrc$xfW {} {$xfTmpValue}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          catch "rename EndSrc$xfW {}"
+        }
+      }
+      {delete} {
+        if {"$xfTmpValue" != ""} {
+          if {[catch "wm protocol $xfW WM_DELETE_WINDOW {$xfTmpValue}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          catch "wm protocol $xfW WM_DELETE_WINDOW {}"
+        }
+      }
+      {save} {
+        if {"$xfTmpValue" != ""} {
+          if {[catch "wm protocol $xfW WM_SAVE_YOURSELF {$xfTmpValue}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          catch "wm protocol $xfW WM_SAVE_YOURSELF {}"
+        }
+      }
+      {focus} {
+        if {"$xfTmpValue" != ""} {
+          if {[catch "wm protocol $xfW WM_TAKE_FOCUS {$xfTmpValue}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          catch "wm protocol $xfW WM_TAKE_FOCUS {}"
+        }
+      }
+    }
+    set xfMisc(oldTopDisplayType) $xfMisc(topDisplayType)
+    XFToplevelShowProcs $xfW $xfClass
+  } {
+    set xfTmpValue [lindex $xfMisc($xfClass,saveTopProc) 0]
+    if {"$xfTmpValue" != ""} {
+      if {[catch "proc StartupSrc$xfW {} {$xfTmpValue}" xfResult]} {
+        XFProcError "$xfResult"
+      }
+    } {
+      catch "rename StartupSrc$xfW {}"
+    }
+    set xfTmpValue [lindex $xfMisc($xfClass,saveTopProc) 1]
+    if {"$xfTmpValue" != ""} {
+      if {[catch "proc MiddleSrc$xfW {} {$xfTmpValue}" xfResult]} {
+        XFProcError "$xfResult"
+      }
+    } {
+      catch "rename MiddleSrc$xfW {}"
+    }
+    set xfTmpValue [lindex $xfMisc($xfClass,saveTopProc) 2]
+    if {"$xfTmpValue" != ""} {
+      if {[catch "proc EndSrc$xfW {} {$xfTmpValue}" xfResult]} {
+        XFProcError "$xfResult"
+      }
+    } {
+      catch "rename EndSrc$xfW {}"
+    }
+    set xfTmpValue [lindex $xfMisc($xfClass,saveTopProc) 3]
+    if {"$xfTmpValue" != ""} {
+      if {[catch "wm protocol $xfW WM_DELETE_WINDOW {$xfTmpValue}" xfResult]} {
+        XFProcError "$xfResult"
+      }
+    } {
+      catch "wm protocol $xfW WM_DELETE {}"
+    }
+    set xfTmpValue [lindex $xfMisc($xfClass,saveTopProc) 4]
+    if {"$xfTmpValue" != ""} {
+      if {[catch "wm protocol $xfW WM_SAVE_YOURSELF {$xfTmpValue}" xfResult]} {
+        XFProcError "$xfResult"
+      }
+    } {
+      catch "wm protocol $xfW WM_SAVE_YOURSELF {}"
+    }
+    set xfTmpValue [lindex $xfMisc($xfClass,saveTopProc) 5]
+    if {"$xfTmpValue" != ""} {
+      if {[catch "wm protocol $xfW WM_TAKE_FOCUS {$xfTmpValue}" xfResult]} {
+        XFProcError "$xfResult"
+      }
+    } {
+      catch "wm protocol $xfW WM_TAKE_FOCUS {}"
+    }
+    unset xfMisc($xfClass,saveTopProc)
+  }
+}
+
+##########
+# Procedure: XFToplevelShowProcs
+# Description: show current procedures
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFToplevelShowProcs {xfW xfClass} {
+  global xfMisc
+
+  set xfTmpText ""
+  case $xfMisc(topDisplayType) {
+    {start} {
+      if {"[info procs StartupSrc$xfW]" != ""} {
+        set xfTmpText [info body StartupSrc$xfW]
+      }
+      .xf${xfClass}Config6.params1.params2.mess configure \
+        -text "Startup: ShowWindow$xfW (code before widget creation)"
+    }
+    {middle} {
+      if {"[info procs MiddleSrc$xfW]" != ""} {
+        set xfTmpText [info body MiddleSrc$xfW]
+      }
+      .xf${xfClass}Config6.params1.params2.mess configure \
+        -text "Middle: ShowWindow$xfW (code before packing)"
+    }
+    {end} {
+      if {"[info procs EndSrc$xfW]" != ""} {
+        set xfTmpText [info body EndSrc$xfW]
+      }
+      .xf${xfClass}Config6.params1.params2.mess configure \
+        -text "End: ShowWindow$xfW (code after packing)"
+    }
+    {delete} {
+      set xfTmpText [wm protocol $xfW WM_DELETE_WINDOW]
+      .xf${xfClass}Config6.params1.params2.mess configure \
+        -text "WM_DELETE_PROTOCOL command"
+    }
+    {save} {
+      set xfTmpText [wm protocol $xfW WM_SAVE_YOURSELF]
+      .xf${xfClass}Config6.params1.params2.mess configure \
+        -text "WM_SAVE_YOURSELF command"
+    }
+    {focus} {
+      set xfTmpText [wm protocol $xfW WM_TAKE_FOCUS]
+      .xf${xfClass}Config6.params1.params2.mess configure \
+        -text "WM_TAKE_FOCUS command"
+    }
+  }
+  XFMiscSetText .xf${xfClass}Config6.params1.params2.text.text $xfTmpText
+}
+
+##########
+# Procedure: XFToplevelSetToplevel4
+# Description: set the WM parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFToplevelSetToplevel4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfAppDefToplevels
+  global xfConf
+  global xfMisc
+  global xfWmSetPosition
+  global xfWmSetSize
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == "" && "$xfW" != "."} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  if {"$xfW" != "."} {
+    XFMiscSetResource $xfW background \
+      [.xf${xfClass}Config4.params1.params2.bg.bg get]
+    XFMiscSetResource $xfW borderwidth \
+      [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+    XFMiscSetResource $xfW relief $xfMisc(relief)
+  }
+
+  set xfGeometryString ""
+  catch "wm title $xfW \"[.xf${xfClass}Config4.params1.params2.title.title get]\""
+  if {$xfMisc(topsetsize) &&
+      ([.xf${xfClass}Config4.params1.params2.size.size1.size1 get] > 0 ||
+       [.xf${xfClass}Config4.params1.params2.size.size2.size2 get] > 0)} {
+   append xfGeometryString [.xf${xfClass}Config4.params1.params2.size.size1.size1 get] x [.xf${xfClass}Config4.params1.params2.size.size2.size2 get]
+  }
+  if {$xfMisc(topsetpos) &&
+      ([.xf${xfClass}Config4.params1.params2.pos.pos1.pos1 get] >= 0 ||
+       [.xf${xfClass}Config4.params1.params2.pos.pos2.pos2 get] >= 0)} {
+    append xfGeometryString + [.xf${xfClass}Config4.params1.params2.pos.pos1.pos1 get] + [.xf${xfClass}Config4.params1.params2.pos.pos2.pos2 get]
+  }
+  if {"$xfGeometryString" != ""} {
+    catch "wm geometry $xfW $xfGeometryString"
+  }
+  if {$xfMisc(topsetminsize)} {
+    catch "wm minsize $xfW [.xf${xfClass}Config4.params1.params2.minsize.minsize1.minsize1 get] \
+                         [.xf${xfClass}Config4.params1.params2.minsize.minsize2.minsize2 get]"
+  } {
+    wm minsize $xfW 1 1
+  }
+  if {$xfMisc(topsetmaxsize)} {
+    catch "wm maxsize $xfW [.xf${xfClass}Config4.params1.params2.maxsize.maxsize1.maxsize1 get] \
+                         [.xf${xfClass}Config4.params1.params2.maxsize.maxsize2.maxsize2 get]"
+  } {
+    wm maxsize $xfW 1 1
+  }
+  if {"$xfMisc(topsize)" == "sizeProgram"} {
+    catch "wm sizefrom $xfW program"
+  } {
+    if {"$xfMisc(topsize)" == "sizeUser"} {
+      catch "wm sizefrom $xfW user"
+    } {
+      catch "wm sizefrom $xfW \"\""
+    }
+  }
+  if {"$xfMisc(toppos)" == "posProgram"} {
+    catch "wm positionfrom $xfW program"
+  } {
+    if {"$xfMisc(toppos)" == "posUser"} {
+      catch "wm positionfrom $xfW user"
+    } {
+      catch "wm positionfrom $xfW \"\""
+    }
+  }
+
+  set xfAppDefIndex [lsearch $xfAppDefToplevels $xfW]
+  if {$xfMisc(topappdef)} {
+    if {$xfAppDefIndex == -1} {
+      lappend xfAppDefToplevels $xfW
+    }
+  } {
+    if {$xfAppDefIndex != -1} {
+      set xfAppDefToplevels [lreplace $xfAppDefToplevels $xfAppDefIndex $xfAppDefIndex]
+    }
+  }
+  set xfWmSetPosIndex [lsearch $xfWmSetPosition $xfW]
+  if {$xfMisc(topsetpos)} {
+    if {$xfWmSetPosIndex == -1} {
+      lappend xfWmSetPosition $xfW
+    }
+  } {
+    if {$xfWmSetPosIndex != -1} {
+      set xfWmSetPosition [lreplace $xfWmSetPosition $xfWmSetPosIndex $xfWmSetPosIndex]
+    }
+  }
+  set xfWmSetSizeIndex [lsearch $xfWmSetSize $xfW]
+  if {$xfMisc(topsetsize)} {
+    if {$xfWmSetSizeIndex == -1} {
+      lappend xfWmSetSize $xfW
+    }
+  } {
+    if {$xfWmSetSizeIndex != -1} {
+      set xfWmSetSize [lreplace $xfWmSetSize $xfWmSetSizeIndex $xfWmSetSizeIndex]
+    }
+  }
+}
+
+##########
+# Procedure: XFToplevelSetToplevel5
+# Description: set the WM parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFToplevelSetToplevel5 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == "" && "$xfW" != "."} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config5.params1.params2.symname.symname get]
+
+  if {[.xf${xfClass}Config5.params1.params2.ratio1.ratio11.ratio11 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.ratio1.ratio12.ratio12 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.ratio2.ratio21.ratio21 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.ratio2.ratio22.ratio22 get] > 0} {
+    catch "wm aspect $xfW [.xf${xfClass}Config5.params1.params2.ratio1.ratio11.ratio11 get] [.xf${xfClass}Config5.params1.params2.ratio2.ratio21.ratio21 get] [.xf${xfClass}Config5.params1.params2.ratio1.ratio12.ratio12 get] [.xf${xfClass}Config5.params1.params2.ratio2.ratio22.ratio22 get]"
+  } {
+    catch "wm aspect $xfW {} {} {} {}"
+  }
+  if {"$xfMisc(topfocus)" == "active"} {
+    catch "wm focus $xfW active"
+  } {
+    catch "wm focus $xfW passive"
+  }
+  if {[.xf${xfClass}Config5.params1.params2.base.base1.base1 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.base.base2.base2 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.incr.incr1.incr1 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.incr.incr2.incr2 get] > 0} {
+    catch "wm grid $xfW [.xf${xfClass}Config5.params1.params2.base.base1.base1 get] [.xf${xfClass}Config5.params1.params2.base.base2.base2 get] [.xf${xfClass}Config5.params1.params2.incr.incr1.incr1 get] [.xf${xfClass}Config5.params1.params2.incr.incr2.incr2 get]"
+  } {
+    if {[wm grid $xfW] != ""} {
+      catch "wm grid $xfW {} {} {} {}"
+    }
+  }
+  if {"[.xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap get]" != ""} {
+    if {"[string index [.xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap get] 0]" == "@"} {
+      catch "wm iconbitmap $xfW [.xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap get]"
+    } {
+      catch "wm iconbitmap $xfW @[.xf${xfClass}Config5.params1.params2.iconbitmap.iconbitmap get]"
+    }
+  } {
+    catch "wm iconbitmap $xfW {}"
+  }
+  if {$xfMisc(iconify)} {
+    catch "wm iconify $xfW"
+  } {
+    catch "wm deiconify $xfW"
+  }
+  if {"[.xf${xfClass}Config5.params1.params2.iconmask.iconmask get]" != ""} {
+    if {"[string index [.xf${xfClass}Config5.params1.params2.iconmask.iconmask get] 0]" == "@"} {
+      catch "wm iconmask $xfW [.xf${xfClass}Config5.params1.params2.iconmask.iconmask get]"
+    } {
+      catch "wm iconmask $xfW @[.xf${xfClass}Config5.params1.params2.iconmask.iconmask get]"
+    }
+  } {
+    catch "wm iconmask $xfW {}"
+  }
+  if {"[.xf${xfClass}Config5.params1.params2.iconname.iconname get]" != ""} {
+    catch "wm iconname $xfW \"[.xf${xfClass}Config5.params1.params2.iconname.iconname get]\""
+  }
+  if {[.xf${xfClass}Config5.params1.params2.iconpos.iconpos1.iconpos1 get] > 0 &&
+      [.xf${xfClass}Config5.params1.params2.iconpos.iconpos2.iconpos2 get] > 0} {
+    catch "wm iconposition $xfW [.xf${xfClass}Config5.params1.params2.iconpos.iconpos1.iconpos1 get] [.xf${xfClass}Config5.params1.params2.iconpos.iconpos2.iconpos2 get]"
+  }
+#FIX
+#  if {"[.xf${xfClass}Config5.params1.params2.iconwin.iconwin get]" != ""} {
+#    catch "wm iconwindow $xfW \"[.xf${xfClass}Config5.params1.params2.iconwin.iconwin get]\""
+#  }
+}
+
+##########
+# Procedure: XFToplevelSetToplevel6
+# Description: set the toplevel parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFToplevelSetToplevel6 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == "" && "$xfW" != "."} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config6.params1.params2.symname.symname get]
+
+  catch "wm client $xfW \"[.xf${xfClass}Config6.params1.params2.client.client get]\""
+  catch "wm command $xfW \"[.xf${xfClass}Config6.params1.params2.command.command get]\""
+  catch "wm overrideredirect $xfW $xfMisc(overrideredirect)"
+  catch "wm group $xfW \"[.xf${xfClass}Config6.params1.params2.group.group get]\""
+  catch "wm transient $xfW \"[.xf${xfClass}Config6.params1.params2.transient.transient get]\""
+
+  XFToplevelCreateProcs $xfW $xfClass
+}
+
+# eof
+

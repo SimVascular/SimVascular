@@ -67,7 +67,7 @@
    #define Z_NULL NULL
 #endif
 
-#ifdef WIN32
+#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
 
 #define openfile_ OPENFILE
 #define closefile_ CLOSEFILE

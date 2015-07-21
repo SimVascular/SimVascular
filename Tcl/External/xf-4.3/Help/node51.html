@@ -1,0 +1,182 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>The generated code</TITLE>
+<META NAME="description" CONTENT="The generated code">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1397" HREF="node52.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1395" HREF="node50.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1389" HREF="node50.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1399" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1400" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1398" HREF="node52.html">Extending XF</A>
+<B>Up:</B> <A NAME="tex2html1396" HREF="node50.html">The Implementation of XF</A>
+<B> Previous:</B> <A NAME="tex2html1390" HREF="node50.html">The Implementation of XF</A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00610000000000000000">The generated code</A></H1>
+<P>
+The source that is created by <EM>XF </EM>
+ has a general layout, and
+contains a certain set of functionality. The produced code
+can be saved into one file, or be splitted into several
+modules. In both cases the general layout and functionality
+is the same.
+<P>
+Apart from the procedures that are written by the user, <EM>XF </EM>
+<P>
+saves a number of procedures that are used to create the
+widget structures, initialize the program or support the
+special <EM>XF </EM>
+ bindings. The creation of most of this code
+can be turned off and on explicitly
+(<EM>Options <i>|</i> Source options<EM></EM></EM>).
+<P>
+<OL><LI> Module inclusion code.<BR>
+If the source has been split into modules, the main file of
+the application begins with code that initializes the module
+load path and parses the commandline options.
+<P>
+<LI> Toplevel creation code.<BR>
+The procedures ``<B>ShowWindow...</B>'', ``<B>
+DestroyWindow...</B>'' etc. are created automatically by <EM>XF</EM>
+,
+to display and hide the various toplevel windows of the
+application. There can also be procedures named ``<B>
+StartupSrc...</B>'', ``<B>MiddleSrc...</B>'' and ``<B>
+EndSrc...</B>''. They are called by the corresponding window
+creation procedure, and can be used to initialize the
+widgets that are inside the displayed toplevel window.
+<P>
+<LI> User defined procedures.<BR>
+If the source is structured into modules, the procedures
+that have been written by the developer are all stored in
+this section. The order can be changed, and the procedures
+can be distributed to different modules.
+<P>
+<LI> Internal procedures.<BR>
+This section contains procedures that <EM>XF </EM>
+ creates to
+produce a running application. The creation of most of these 
+procedures can be turned off and on explicitly
+(<EM>Options <i>|</i> Source options<EM></EM></EM>). The remaining <EM>XF </EM>
+<P>
+internal procedures are all assigned to the level 7 (see
+chapter <A HREF="#UsingXF"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>). If the saving of level 7 is disabled,
+these procedures are not saved. If the source is not
+structured into modules, the user defined and the internal
+procedures are mixed, as <EM>XF </EM>
+ stores all procedures in
+alphabetical order.
+<OL><LI> XFLocalIncludeModule<BR>
+This procedure is called with the name of the module to be
+loaded. The procedure scans through the directories
+specified with the environment variable <B>
+XF_LOAD_PATH</B>, and tries to load this module. In addition
+to that archives are searched for the modules. The user can
+use the environment variable <B>XF_VERSION_SHOW</B> to
+specify the retrieve command (see the description of version
+control).
+<P>
+<LI> XFLocalParseAppDefs, XFLocalLoadAppDefs, XFLocalSetAppDefs<BR>
+These procedures provide full support for the X Resource
+mechanism. The procedure ``<B>XFLocalLoadAppDefs</B>'' gets
+an application class name, and loads the resource stored
+under this name. The procedure ``<B>XFLocalSetAppDefs</B>''
+applies the resources to the specified widget path.
+<P>
+<LI> SymbolicName, SN<BR>
+These two procedures implement the symbolic
+name<A NAME=836>&#160;</A> handling.
+The developer can assign a name to a widget path name. This
+makes the access to this widget easier. Calling these
+procedures with the symbolic name, returns the concrete
+widget path name.
+<P>
+<LI> Alias, Unalias<BR>
+These two procedures implement the alias<A NAME=837>&#160;</A>
+handling. Aliases can be used to access procedures and
+widgets under a different name. The difference from symbolic
+names is that each aliased procedure creates an additional
+procedure, making this approach a little space consuming.
+The alias procedure gets two parameters, first the new alias
+name, and second the procedure that is aliased. Unalias gets
+one parameter, specifying the alias name to be removed.
+<P>
+<LI> GetSelection<BR>
+This procedure is used to implement a safe X selection
+retrieval for the text and entry widget. If the bindings do
+not contain this procedure, it may be deleted.
+<P>
+<LI> MenuPopupAdd, MenuPopupPost, MenuPopupMotion, MenuPopupRelease<BR>
+The procedure ``<B>MenuPopupAdd</B>'' sets the appropriate
+bindings to pop up a menu. The popup menu is attached to the
+widget specified with the first parameter. The second
+parameter specifies the mouse button that activates the
+popup menu (1, 2 or 3). The next parameter specifies the
+widget name of the menu that is to be popped up. The
+following parameter is optional, and can contain a valid
+event modifier. The last parameter can contain a canvas tag
+or id. The menu is attached to this tag or id. The other
+procedures are only used internally.
+<P>
+<LI> NoFunction<BR>
+This procedure does nothing. It can be called with any
+number of parameters.
+</OL>
+<P>
+<LI> StartupSrc, EndSrc.<BR>
+These two procedures contain source that is evaluated during
+the startup of the application program. ``<B>StartupSrc</B>''
+is executed as first code in the application, and ``<B>
+EndSrc</B>'' is executed after all toplevel windows have been
+displayed. The user must add initialization code to one of
+these procedures.
+<P>
+<LI> Invocation of StartupSrc.<BR>
+The startup code is evaluated.
+<P>
+<LI> Initialization of variables.<BR>
+The global variables are initialized with the procedure
+``<B>InitGlobals</B>'', or directly inside the code. The
+developer should initialize important variables directly in
+his initialization code for his application. The values
+assigned in the ``<B>InitGlobals</B>'' procedure represent
+the values when the application was saved.
+<P>
+<LI> Setting of class bindings.<BR>
+If this is specified in the source options, the currently
+defined class bindings are saved into the application code.
+These bindings are initialized at this point.
+<P>
+<LI> Showing the toplevel windows.<BR>
+The toplevel windows that should be displayed are created
+by invoking the appropriate ``<B>ShowWindow...</B>''
+procedure.
+<P>
+<LI> Loading of bindings.<BR>
+The user can specify a <EM>Tcl/Tk </EM>
+ file containing bindings for
+his application. This file can be specified with the
+environment variable <B>XF_BIND_FILE</B>, or the
+commandline option ``-xfbindfile'' when the source contains
+the commandline parsing code.
+<P>
+<LI> Application default handling.<BR>
+The application default file is loaded, and the settings
+are applied to the displayed widgets.
+<LI> Invocation of EndSrc.<BR>
+The end code is evaluated.
+</OL><BR> <HR><A NAME="tex2html1397" HREF="node52.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1395" HREF="node50.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1389" HREF="node50.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1399" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1400" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1398" HREF="node52.html">Extending XF</A>
+<B>Up:</B> <A NAME="tex2html1396" HREF="node50.html">The Implementation of XF</A>
+<B> Previous:</B> <A NAME="tex2html1390" HREF="node50.html">The Implementation of XF</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -48,34 +48,34 @@ CXXSRCS = main.cxx gdscInit.cxx cv_VTK_init.cxx
 
 ifeq ($(MAKE_STATIC_BUILD),1)  
 
-	CXXSRCS += ../Common/Geometry/cv_geom_init.cxx \
-                   ../PostProcessing/cv_post_init.cxx \
-                   ../ImageProcessing/cv_image_init.cxx \
-                   ../Common/Repository/cv_repos_init.cxx \
-                   ../Model/SolidModel/cv_solid_init.cxx \
-                   ../Legacy/LevelSet/cv_LsetCore_init.cxx \
-                   ../Legacy/LevelSet/cv_LsetV_init.cxx \
-                   ../Common/Utils/cv_get_tcl_interp_init.cxx \
-                   ../Mesh/MeshObject/cv_mesh_init.cxx \
-                   ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
-                   ../Common/Utils/cv_math_init.cxx
+  COPIED_CXXSRCS += ../Common/Geometry/cv_geom_init.cxx \
+                    ../PostProcessing/cv_post_init.cxx \
+                    ../ImageProcessing/cv_image_init.cxx \
+                    ../Common/Repository/cv_repos_init.cxx \
+                    ../Model/SolidModel/cv_solid_init.cxx \
+                    ../Legacy/LevelSet/cv_LsetCore_init.cxx \
+                    ../Legacy/LevelSet/cv_LsetV_init.cxx \
+                    ../Common/Utils/cv_get_tcl_interp_init.cxx \
+                    ../Mesh/MeshObject/cv_mesh_init.cxx \
+                    ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
+                    ../Common/Utils/cv_math_init.cxx
 
   ifeq ($(MAKE_WITH_MESHSIM),1)
-	CXXSRCS += ../Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx
+	COPIED_CXXSRCS += ../Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx
   endif
   ifeq ($(MAKE_WITH_TETGEN),1)
-	CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
+	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-	CXXSRCS += ../Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx
+	COPIED_CXXSRCS += ../Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx
   endif
   ifeq ($(MAKE_WITH_PARASOLID),1)
-	CXXSRCS += ../../Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx
+	COPIED_CXXSRCS += ../../Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx
   endif
   ifeq ($(MAKE_WITH_ITK),1)
-	CXXSRCS += ../Segmentation/ITK/Util/cv_ITKUtils_init.cxx
-	CXXSRCS += ../Segmentation/ITK/cv_ITKLset2d_init.cxx
-	CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/Util/cv_ITKUtils_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset2d_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
   endif
 
 	LINKEXPLICITLIBS = ../../../BuildWithMake/Lib/lib_lib_simvascular_post.$(STATICEXT) \
@@ -118,11 +118,11 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 
 endif
 
-SRCS	= $(CXXSRCS)
+SRCS	= $(CXXSRCS) $(COPIED_CXXSRCS)
 
-DEPS	= $(CXXSRCS:.cxx=.d)
+DEPS	= $(SRCS:.cxx=.d)
 
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+OBJS	= $(SRCS:.cxx=.$(OBJECTEXT))
 
 TARGET_EXE = simvascular.exe
 
@@ -133,9 +133,9 @@ TARGET_EXE = simvascular.exe
 
 LINKOBJS = $(foreach name,$(OBJS),$(lastword $(subst /, ,$(name))))
 
-dynamic: pre $(TOP)/Bin/$(TARGET_EXE)
+dynamic: $(TOP)/Bin/$(TARGET_EXE)
 
-static: pre $(TOP)/Bin/$(TARGET_EXE)
+static: $(TOP)/Bin/$(TARGET_EXE)
 
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)
@@ -181,5 +181,6 @@ veryclean: clean
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	for fn in *.lib; do /bin/rm -f $$fn; done
 	for fn in coffbase.txt; do /bin/rm -f $$fn; done
+	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
 
 

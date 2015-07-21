@@ -1,0 +1,254 @@
+# tutorial
+global packingLast
+set packingLast 8
+global packingLastSectionDone
+set packingLastSectionDone -1
+
+
+set packingName0 {pack の使い方}
+set packingText0 {\
+本章では、pack の使い方を紹介します。pack は、親の
+ウィジェット上に子供のウィジェットを配置する方法の
+１つです。最初の子供は、親のウィンドウの上下左右い
+ずれかの辺に沿って、その辺全体を最大限に占有するよ
+うに配置されます。以降の子供も、やはり親のウィンド
+ウの残りの空間の中で、いずれかの辺に沿って配置され
+て行きます。
+
+基本的な概念を理解していただくために、まずは pack 
+で指定することのできるオプションを使ってみましょう。}
+
+set packingCommand0 {\
+XFMiscClearInterpreter
+global xfConf xfPath
+set xfConf(saveInterval) 0
+set xfConf(onlyOneWindow) 0
+set xfConf(externalEditor) ""
+set xfConf(geometry) packer
+set xfConf(newPacker) 0
+source "$xfPath(src)/xfpacking.tcl"
+wm geometry . 300x300
+frame .frame -relief raised -borderwidth 1
+frame .frame.frame1 -relief raised -borderwidth 1
+frame .frame.frame2 -relief raised -borderwidth 1
+button .frame.frame1.button1 -text .frame1.button1
+button .frame.frame1.button2 -text .frame1.button2
+button .frame.frame1.button3 -text .frame1.button3
+button .frame.frame2.button1 -text .frame2.button1
+button .frame.frame2.button2 -text .frame2.button2
+button .frame.frame2.button3 -text .frame2.button3
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame .frame.frame1 {top} .frame.frame2 {top}
+pack append . .frame "top fill expand"
+XFPacking . config Toplevel
+update idletasks}
+
+
+set packingName1 {pack の使い方 - left}
+set packingText1 {\
+このウィジェットの構成は、まず元になる１つの frame 
+があります。その frame 上には２つの子供の frame が
+あり、さらにそれらの子供の frame 上に、それぞれ３
+つの button があります。
+
+今のところ、すべての子供のウィジェットは "top" に
+詰め込まれています。すなわち、子供のウィジェットは、
+親のウィジェットの上の辺に沿って配置されています。
+それでは、２つの frame を "left" に詰め込んでみま
+しょう。２つの frame は、並んで、親のウィジェット
+の左の辺に沿って配置されます。}
+
+set packingCommand1 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+XFPackingMakeMaster .frame config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks}
+
+
+set packingName2 {pack の使い方 - expand}
+set packingText2 {\
+"expand" を指定すると、親の空間を最大限に使うよう
+に子供の大きさを広げることができます。例題では、こ
+の指定によって左の frame は水平方向の空間を最大限
+に使って広げられ、右の frame は必要最小限の空間を
+占有するに留まります。}
+
+set packingCommand2 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set packingName3 {pack の使い方 - pad}
+set packingText3 {\
+子供のウィジェットにボーダーが必要であれば、"pad"
+を用いて指定します。すなわち、ウィジェットの回りに
+空間を付加します。例題では、右の frame にボーダー
+が付加されます。}
+
+set packingCommand3 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.chldframe.pad.pad1.pad1 set 10
+update idletasks
+.xfPackingToplevel.frame2.chldframe.pad.pad2.pad2 set 10
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks}
+
+
+set packingName4 {pack の使い方 - frame}
+set packingText4 {\
+左の frame は使うことのできる空間を最大限に占有し
+ています。frame 自体は、占有している空間の一部分し
+か使っていません。占有された空間中で frame を配置
+するために、"frame"オプションを用いることができま
+す。例題では、左の frame を左上の角に配置します。}
+
+set packingCommand4 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.frame.f1.nw invoke
+update idletasks}
+
+
+set packingName5 {pack の使い方 - fill}
+set packingText5 {\
+ここで、左の frame を占有している空間一杯に広げま
+す。}
+
+set packingCommand5 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.filly invoke
+update idletasks}
+
+
+set packingName6 {pack の使い方 - その他}
+set packingText6 {\
+次に、左の frame の３番目の button を底辺に詰め込
+みます。
+
+表示されましたか？}
+
+set packingCommand6 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 6
+update idletasks
+XFPackingMakeMaster .frame.frame1 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 2
+update idletasks
+XFPackingGetPacking .frame.frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.bottom invoke
+update idletasks}
+
+
+set packingName7 {pack の使い方 - その他}
+set packingText7 {\
+最後に、左の frame の１番目の button を "expand" 
+し、さらに最大限に広げます("fill")。
+
+１番目の button が左の frame の中で、空間を最大限
+に使って広げられたのが見られます。}
+
+set packingCommand7 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame.frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.filly invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set packingName8 {pack の使い方 - その他}
+set packingText8 {\
+以上で、pack の使い方についての説明を終ります。}
+
+set packingCommand8 {
+.xfPackingToplevel.frame1.ok configure -state active
+update idletasks
+.xfPackingToplevel.frame1.ok configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame1.ok invoke
+update idletasks}

@@ -1,0 +1,49 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Widget commands</TITLE>
+<META NAME="description" CONTENT="Widget commands">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html985" HREF="node21.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html983" HREF="node17.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html977" HREF="node19.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html987" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html988" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html986" HREF="node21.html">Widget configuration</A>
+<B>Up:</B> <A NAME="tex2html984" HREF="node17.html">Tk</A>
+<B> Previous:</B> <A NAME="tex2html978" HREF="node19.html">Inserting widgets</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00423000000000000000">Widget commands</A></H2>
+<P>
+<A NAME=483>&#160;</A>
+Each widget class has a set of commands (<EM>widget
+commands</EM>) which are special to that widget class. To invoke
+a widget command for a specific widget, the <EM>Tcl </EM>
+ command
+representing the widget is called. This command invocation
+is followed by the widget command name to be executed and
+optional parameters. All widget classes have the widget
+command <B>configure</B> which is used to configure the
+widget. There are several widget class specific commands,
+like the <B>flash</B> command for button widgets. The
+widget command invocation looks like this:
+<P>
+<P>
+<TT>
+<PRE><TT> 
+		.b1 configure -background blue
+<P>
+		.b1 flash
+<P>
+</TT></PRE>
+</TT>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

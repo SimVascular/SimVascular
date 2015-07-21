@@ -1,0 +1,195 @@
+# Program: xf
+# Description: handle message widgets
+#
+# $Header: Message[2.3] Wed Mar 10 11:59:06 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(message) 4
+
+##########
+# Procedure: XFAdd.Message
+# Description: add a message
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Message {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Message..."
+  set xfName [XFMiscGetUniqueName $xfName message]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      message .$xfName \
+        -text "$xfName" \
+        -aspect 1500 \
+        -relief raised
+    } {
+      message .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      message $xfStatus(path).$xfName \
+        -text "$xfName" \
+        -aspect 1500 \
+        -relief raised
+    } {
+      message $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Message...done"
+}
+
+##########
+# Procedure: XFConfig.Message4
+# Description: configure a message
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Message4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName message$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Message..."
+
+  # building widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x630 \
+    "Message parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFMessageSetMessage4 parameters $xfName 4
+  XFElementAspect $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFMessageSetMessage4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType  $xfClass bg \
+    background Background "Background" XFMessageSetMessage4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 \
+    XFMessageSetMessage4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFMessageSetMessage4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFMessageSetMessage4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFMessageSetMessage4
+  XFElementJustify $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFMessageSetMessage4
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass \
+     XFMessageSetMessage4
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFMessageSetMessage4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass width \
+    width Width Width pixels 100 XFMessageSetMessage4
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.justify.left select
+  }
+
+  label .xf${xfClass}Config4.params1.params2.textMess \
+    -relief flat \
+    -anchor c \
+    -text "Text:"
+
+  if {"$xfType" == "add"} {
+    XFTmpltText .xf${xfClass}Config4.params1.params2 text 0 $xfName
+  } {
+    XFTmpltText .xf${xfClass}Config4.params1.params2 text 0 \
+      [lindex [$xfW configure -text] 4]
+  }
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {aspect background borderwidth font kanjifont foreground justify relief text textvariable width}
+  } {
+    XFElementSave $xfW $xfClass {aspect background borderwidth font foreground justify relief text textvariable width}
+  }
+
+  # packing
+  pack append .xf${xfClass}Config4.params1.params2 \
+              .xf${xfClass}Config4.params1.params2.textMess {top fillx padx 6} \
+              .xf${xfClass}Config4.params1.params2.text {top fill expand}
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFMessageSetMessage4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Message...done"
+}
+
+##########
+# Procedure: XFMessageSetMessage4
+# Description: set message parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMessageSetMessage4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW aspect \
+    [.xf${xfClass}Config4.params1.params2.aspect.aspect get]
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  XFMiscSetResource $xfW justify $xfMisc(justify)
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  XFMiscSetResource $xfW text \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.text.text]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.width.width get]
+}
+
+# eof
+

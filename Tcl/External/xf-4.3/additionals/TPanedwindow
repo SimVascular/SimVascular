@@ -1,0 +1,153 @@
+# Program: xf
+# Description: handle TPanedwindow widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tpanedwindow) 4
+
+##########
+# Procedure: XFAdd.TPanedwindow
+# Description: add a TPanedwindow
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TPanedwindow {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TPanedwindow..."
+  set xfName [XFMiscGetUniqueName $xfName tpanedwindow]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TPanedwindow: .$xfName"
+      ttk::panedwindow .$xfName
+    } {
+      puts "attempt to create TPanedwindow: .$xfName"
+      ttk::panedwindow .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TPanedwindow: $xfStatus(path).$xfName"
+      ttk::panedwindow $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TPanedwindow: $xfStatus(path).$xfName"
+      ttk::panedwindow $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TPanedwindow...done"
+}
+
+##########
+# Procedure: XFConfig.TPanedwindow4
+# Description: configure a TPanedwindow
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TPanedwindow4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TPanedwindow$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TPanedwindow..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TPanedwindow parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTPanedwindowSetTPanedwindow4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTPanedwindowSetTPanedwindow4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TPanedwindow...done"
+}
+
+##########
+# Procedure: XFTPanedwindowSetTPanedwindow4
+# Description: set TPanedwindow parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTPanedwindowSetTPanedwindow4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+##########
+# Procedure: XFSaveSpecial.TPanedwindow
+# Description: 
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.TPanedwindow {xfW} {
+
+  set result "  \#  pane settings for $xfW\n"
+
+  foreach mypane [$xfW panes] {
+    set result "$result  $xfW add $mypane\n"
+    foreach xfCounter [$xfW pane $mypane] {
+      # only handle options with 5 items per option entry
+      if {[llength $xfCounter] == 2} {
+         set result "$result  $xfW pane $mypane [lindex $xfCounter 0] \{[lindex $xfCounter 1]\}\n"
+      }
+    }
+  }
+  set result "$result\n"
+
+  return $result
+
+}
+
+# eof
+

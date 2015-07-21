@@ -1,0 +1,73 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>XFProcMain</TITLE>
+<META NAME="description" CONTENT="XFProcMain">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1876" HREF="node84.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1874" HREF="node82.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1870" HREF="node82.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1878" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1879" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1877" HREF="node84.html">File</A>
+<B>Up:</B> <A NAME="tex2html1875" HREF="node82.html">Main</A>
+<B> Previous:</B> <A NAME="tex2html1871" HREF="node82.html">Main</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00911000000000000000">XFProcMain</A></H2>
+<P>
+<A NAME=1143>&#160;</A>
+This procedure is automatically called when <EM>XF </EM>
+ is started.
+The procedure pops up the main <EM>XF </EM>
+ window. This window
+provides access to the functionality.
+<P>
+<P><A NAME="1146">&#160;</A><A NAME="figTheprocedureXFProcMain">&#160;</A> <IMG WIDTH=392 HEIGHT=312 ALIGN=BOTTOM ALT="figure1144" SRC="img34.gif"  > <BR>
+<STRONG>Figure:</STRONG> The procedure XFProcMain<BR>
+<P>
+<P>
+The main window is structured in several parts. At the top,
+there is a menubar and an iconbar. Both call the procedures
+that implement the various dialogs. They can be configured
+by the user.
+<P>
+Below the iconbar, a status line shows the status of the 
+program, and a small label shows the status of the cut
+buffer.
+<P>
+The label (<TT>Current widget path:<TT></TT></TT>) has a menu
+attached to it, that contains a list of all toplevels. This
+menu is used to show/display the toplevels. The widget path
+right beside this label has menus attached to the dots,
+containing all children of the widget left from the dot. The
+user can navigate through the widget tree with these menus.
+<P>
+The three lists that occupy most of the space of the main
+window, contain the class names (and template names) that
+can be inserted into the application. A double click with
+the left mouse button inserts the widget with default
+parameters. A double click with the right mouse button
+inserts the widget after calling a parameter dialog. The two
+buttons at the bottom do the same as the double clicking.
+With the slider, the number of inserted widgets can be
+selected.
+<P>
+The left list contains the widgets that are part of the
+standard <EM>Tk </EM>
+ distribution. The middle list contains
+additional widgets that have been added to the interpreter,
+and the right list contains the templates. Templates are
+complex widget structures and procedures that can be
+inserted and used as if the user wrote them himself.
+<P>
+<A NAME=1150>&#160;</A>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

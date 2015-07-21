@@ -135,7 +135,7 @@ typedef struct _Usr* UsrHd ;
 
 #define ramg_interface  RAMG_INTERFACE
 
-#elif CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+#elif CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 
 #define	usrNew		usrnew_
 #define getSol          getsol_

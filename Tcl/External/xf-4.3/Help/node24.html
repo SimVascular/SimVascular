@@ -1,0 +1,96 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>The packer</TITLE>
+<META NAME="description" CONTENT="The packer">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1033" HREF="node25.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1031" HREF="node22.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1027" HREF="node23.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1035" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1036" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1034" HREF="node25.html">Other Tk commands</A>
+<B>Up:</B> <A NAME="tex2html1032" HREF="node22.html">Geometry handling</A>
+<B> Previous:</B> <A NAME="tex2html1028" HREF="node23.html">The placer</A>
+<BR> <HR> <P>
+<H3><A NAME="SECTION00425200000000000000">The packer</A></H3>
+<P>
+<A NAME=526>&#160;</A>
+The <EM>packer</EM> is much more powerful than the placer. The
+children of a widget are automatically arranged around the
+edges of the parent's cavity. The user can control where,
+and how the children are packed, but the layout itself is
+done by the packer. This is done in several steps:
+<P>
+<P>
+
+=1cm
+pictures/tclTk/packerSide.ips
+Pick a side of the parent widget (<EM>master</EM>).<BR>
+The widget (<EM>slave</EM>) that is packed into the master<BR>
+is packed to this side of the master.
+<P>
+<P>
+<P>
+
+=1cm
+pictures/tclTk/packerSlice.ips
+Slice off a frame for slave.<BR>
+This means, that the packer reserves a area in<BR>
+the master for the slave. This frame occupies the<BR>
+complete side of the master.
+<P>
+<P>
+<P>
+
+=1cm
+pictures/tclTk/packerChld.ips
+Possibly grow slave to fill frame.<BR>
+If the packing options specify it, the slave widget<BR>
+is resized to fill the frame in one or both axis.
+<P>
+<P>
+<P>
+
+=1cm
+pictures/tclTk/packerSlave.ips
+Position slave in frame.<BR>
+The slave is packed into the master. The position<BR>
+inside the reserved frame can be specified.
+<P>
+<P>
+<P>
+When all this is done, the widget occurs in the parent.
+Here is a small example of a layout, created with the
+packer. First the code to pack the widgets:
+<P>
+<P>
+<TT>
+<PRE><TT> 
+		pack append . .b1 {bottom fillx}
+<P>
+		pack append . .s1 {left filly}
+<P>
+		pack append . .l1 {right fill expand}
+<P>
+</TT></PRE>
+</TT>
+<P>
+<P>
+The resulting layout (as shown in figure <A HREF="node24.html#figPackedwidgets"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>) has a button packed to the bottom of the parent
+filling the complete width of the parent. The scrollbar is
+packed to the left side and occupies the height of the
+parent, and the listbox uses the rest of the available
+space.
+<P>
+<P><A NAME="551">&#160;</A><A NAME="figPackedwidgets">&#160;</A> <IMG WIDTH=148 HEIGHT=170 ALIGN=BOTTOM ALT="figure549" SRC="img17.gif"  > <BR>
+<STRONG>Figure:</STRONG> Packed widgets<BR>
+<P><BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Retrieving modules</TITLE>
+<META NAME="description" CONTENT="Retrieving modules">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1673" HREF="node73.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1671" HREF="node70.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1667" HREF="node71.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1675" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1676" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1674" HREF="node73.html">xfappdef</A>
+<B>Up:</B> <A NAME="tex2html1672" HREF="node70.html">ShapeTools</A>
+<B> Previous:</B> <A NAME="tex2html1668" HREF="node71.html">Saving procedures</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00832000000000000000">Retrieving modules</A></H2>
+<P>
+When <EM>XF </EM>
+ is used in a developer group, writing on different
+parts of the same program, shared access and version control
+get important. <EM>XF </EM>
+ tries to support the distributed
+development process.
+<P>
+The <EM>ShapeTools<EM></EM></EM> concept of distributed development
+is based upon the sharing of one global source archive. All 
+pieces of code that are intended to be publically available
+are checked-in into this database.
+<P>
+<EM>XF </EM>
+ supports this public access. When the application is
+started and loads a code module, <EM>XF </EM>
+ tries to locate the
+module by scanning through the path names listed in the
+environment variable <B>XF_LOAD_PATH<EM></B></EM>. This variable
+contains a list of path names separated by ``<B>:</B>'' where
+modules for this application can be found. If the code
+module is not found, <EM>XF </EM>
+ retrieves the last checked-in
+version of the module from the <EM>ShapeTools<EM></EM></EM> archive.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

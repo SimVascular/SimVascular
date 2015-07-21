@@ -1,0 +1,30 @@
+*BitmapIcon:true
+*Menufreeze:true
+*Panefont:8x13
+*SelectionFont:8x13
+*Customization:-co
+xterm*BorderWidth:1
+xterm*autoRaise:true
+xterm*visualBell:true
+xterm*scrollBar:true
+xterm*scrollInput:true
+xterm*scrollKey:true
+xterm*saveLines:400
+xterm*panespread:.25
+xterm.windowGeometry:=80x32+5+5
+xterm*background:LightGoldenrodYellow
+xterm*foreground:black
+xterm*font:*courier-bold-r*14*
+xterm*boldFont:*courier-bold-o*14*
+xterm*cursorColor:red
+emacs*BorderWidth:1
+emacs*background:LightGoldenrodYellow
+emacs*foreground:black
+emacs*font:*courier-bold-r*14*
+XConsole*consoleLog:/tmp/conslog
+XConsole*text.translations:#replace \n\
+     <Btn1Down>:	select-start() \n\
+     <Btn1Motion>:	extend-adjust() \n\
+     <Btn1Up>:	extend-end(PRIMARY, CUT_BUFFER0)
+XConsole*background:LightGoldenrodYellow
+XConsole*foreground:black

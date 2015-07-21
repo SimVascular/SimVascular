@@ -1,0 +1,121 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>MenuBar</TITLE>
+<META NAME="description" CONTENT="MenuBar">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html3158" HREF="node182.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3156" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3150" HREF="node180.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3160" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3161" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3159" HREF="node182.html">ReadBox</A>
+<B>Up:</B> <A NAME="tex2html3157" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3151" HREF="node180.html">MakeMButton</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION0010213000000000000000">MenuBar</A></H2>
+<P>
+<A NAME=2138>&#160;</A>
+<A NAME=2139>&#160;</A>
+<A NAME=2140>&#160;</A>
+This template defines a new feature, that supports user
+changeable menu bars. The usage of this feature is more
+complex than it is for most other templates. Your code must
+contain a number of menubutton creations. These menubuttons
+need not be widget tree siblings, but is only possible to
+configure one set of sibling menubuttons at a time. After a
+set of menubuttons has been created, the procedure
+<EM>MenuBarInit<EM></EM></EM> is called. This procedure takes the
+following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=523 HEIGHT=99 ALIGN=BOTTOM ALT="tabular2142" SRC="img119.gif"  > <P>
+<P>
+<P>
+This will load and initialize the menubar. To call the
+menubar configuration, the procedure <EM>MenuBarConf<EM></EM></EM> is
+called. This procedure gets the following parameter:
+<P>
+<P>
+<P> <IMG WIDTH=519 HEIGHT=275 ALIGN=BOTTOM ALT="tabular2147" SRC="img120.gif"  > <P>
+<P>
+<P>
+This pops up a dialog window in which all aspects of the
+menubar can be modified. Select the menubutton to configure
+from the upper right list. Setting the label to an empty
+string hides the menubutton. To configure a menu, the lower
+right list is used. A new menu is created when a menubutton
+is inserted that uses this menu. Select the menu to change,
+and press the <TT>Modify menu<TT></TT></TT> button. When all changes
+are done, the modified menubar should be saved to the local
+user-specific file by pressing the <TT>Save<TT></TT></TT> button.
+<P>
+To configure the different aspects of the menubar, there
+exists a global array named menuBar. A default value of
+``-'' means that the Tk default value is used. This array
+contains elements that control the menubar (color, font
+etc.):
+<P>
+<P>
+<P> <IMG WIDTH=574 HEIGHT=338 ALIGN=BOTTOM ALT="tabular2152" SRC="img121.gif"  > <P>
+<P>
+<P>
+A small example of an initialization may look like this:
+<P>
+<TT>
+<PRE><TT> 
+		frame .myMenuBar
+<P>
+		menubutton .myMenuBar.file -text {File}
+<P>
+		menubutton .myMenuBar.misc -text {Misc}
+<P>
+		menubutton .myMenuBar.help -text {Help}
+<P>
+		MenuBarInit  <IMG WIDTH=500 HEIGHT=272 ALIGN=BOTTOM ALT="tex2html_wrap_inline2564" SRC="img122.gif"  > /.local-menubar /usr/local/lib/global-menubar
+<P>
+		pack append .myMenuBar .myMenuBar.file {left} .myMenuBar.misc {left}
+.myMenuBar.help {right}
+<P>
+		pack append . .myMenuBar {top fill}
+<P>
+</TT></PRE>
+</TT>
+<P>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2163">&#160;</A><A NAME="figMenuBar">&#160;</A> <IMG WIDTH=166 HEIGHT=113 ALIGN=BOTTOM ALT="figure2161" SRC="img123.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template MenuBar (initialization)<BR>
+<P>
+<P>
+A small example of an invocation of the configuration may
+look like this:
+<P>
+<TT>
+<PRE><TT> 
+		MenuBarConf .menuBar
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2174">&#160;</A><A NAME="figMenuBarConf">&#160;</A> <IMG WIDTH=317 HEIGHT=86 ALIGN=BOTTOM ALT="figure2172" SRC="img124.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template MenuBar (configuration)<BR>
+<P>
+<P>
+<BR> <HR><A NAME="tex2html3158" HREF="node182.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3156" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3150" HREF="node180.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3160" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3161" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3159" HREF="node182.html">ReadBox</A>
+<B>Up:</B> <A NAME="tex2html3157" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3151" HREF="node180.html">MakeMButton</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

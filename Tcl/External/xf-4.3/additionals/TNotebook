@@ -1,0 +1,151 @@
+# Program: xf
+# Description: handle TNotebook widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tnotebook) 4
+
+##########
+# Procedure: XFAdd.TNotebook
+# Description: add a TNotebook
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TNotebook {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TNotebook..."
+  set xfName [XFMiscGetUniqueName $xfName notebook]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TNotebook: .$xfName"
+      ttk::notebook .$xfName
+    } {
+      puts "attempt to create TNotebook: .$xfName"
+      ttk::notebook .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TNotebook: $xfStatus(path).$xfName"
+      ttk::notebook $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TNotebook: $xfStatus(path).$xfName"
+      ttk::notebook $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TNotebook...done"
+}
+
+##########
+# Procedure: XFConfig.TNotebook4
+# Description: configure a TNotebook
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TNotebook4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TNotebook$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TNotebook..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TNotebook parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTNotebookSetTNotebook4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {height width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTNotebookSetTNotebook4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TNotebook...done"
+}
+
+##########
+# Procedure: XFTNotebookSetTNotebook4
+# Description: set TNotebook parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTNotebookSetTNotebook4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+##########
+# Procedure: XFSaveSpecial.TNotebook
+# Description: save entry
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.TNotebook {xfW} {
+
+  set result "  \#  tab settings for $xfW\n"
+
+  foreach mytab [$xfW tabs] {
+    set result "$result  $xfW add $mytab\n"
+    array set flags [$xfW tab $mytab]
+    foreach i [array names flags] {
+      set result "$result  $xfW tab $mytab $i \{$flags($i)\}\n"
+    }
+  }
+  set result "$result\n"
+
+  return $result
+
+}
+
+# eof
+

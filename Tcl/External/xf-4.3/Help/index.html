@@ -1,0 +1,1198 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Type"
+content="text/html; charset=iso-8859-1">
+<meta name="description" content="No Title">
+<meta name="keywords" content="main">
+<meta name="resource-type" content="document">
+<meta name="distribution" content="global">
+<meta name="GENERATOR" content="Microsoft FrontPage Express 2.0">
+<title>No Title</title>
+<link rel="STYLESHEET" href="main.css">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+</head>
+
+<body lang="EN">
+
+<hr>
+
+<p><a href="node1.html" name="tex2html331"></a></p>
+
+<p><a href="node1.html" name="tex2html331"><img
+src="next_motif.gif" alt="next" width="37" height="24"></a>&nbsp;<img
+src="up_motif_gr.gif" alt="up" width="26" height="24">&nbsp;<img
+src="previous_motif_gr.gif" alt="previous" width="63" height="24">&nbsp;<a
+href="node1.html" name="tex2html333"></a><a href="node1.html"
+name="tex2html333"><img src="contents_motif.gif" alt="contents"
+width="65" height="24"></a>&nbsp;<a href="node194.html"
+name="tex2html334"></a><a href="node194.html" name="tex2html334"><img
+src="index_motif.gif" alt="index" width="43" height="24"></a> <br>
+<b>Next:</b>&nbsp;<a href="node1.html" name="tex2html332"></a><a
+href="node1.html" name="tex2html332">Contents</a> <br>
+</p>
+
+<hr>
+
+<p>XF </p>
+
+<p>An interactive Interface Builder (Draft) </p>
+
+<p>Technische Universität Berlin <br>
+Institut für Angewandte Informatik <br>
+Fachbereich 13 (Informatik) <br>
+Lehrgebiet Softwaretechnik <br>
+written by: <br>
+Sven Delmas <br>
+garfield@cs.tu-berlin.de <br>
+<b>Abstract</b> </p>
+
+<p><i>XF </i>is an integrated programming environment that
+supports the development of graphical user interfaces. The
+described programming system enables developers who don't want to
+dive into the complex task of window system programming, to
+construct sophisticated graphical applications in a very short
+time. <i>XF </i>takes advantage of <i>Tk</i> , a&nbsp;<img
+src="img1.gif" alt="tex2html_wrap_inline2340" align="center"
+width="67" height="26"><i> </i>-like widget set that is
+accessible through <i>Tcl</i> , a very efficient interpreted
+programming language. The flexibility of this approach allows to
+build or modify application programs while they are running. This
+makes it possible to test the effect of modifications immediately
+without incurring costly re-compilation cycles. </p>
+
+<p>Many users of <i>XF </i>have reported that the tool is very
+easy to use, and allows rapid construction of graphical
+interfaces. Nevertheless it does not restrict the developer when
+he wants to manipulate the graphical interface in more detail.
+Support for libraries of reusable interface components and
+functions leads to further reductions of the development time,
+and also supports a standardized look &amp; feel. It is possible
+to merge external code into the application, and to reuse
+pre-existing code. Berlin, 19 October. 1993 </p>
+
+<p>Acknowledgments </p>
+
+<p>I owe gratitude to many people who supported and inspired me
+when implementing the program and writing this paper. </p>
+
+<p>Special thanks to Wilfried Koch and Axel Mahler who both
+attended my work and made suggestions for <i>XF </i>and the
+paper. Andreas Lampen, who also contributed many ideas, both for
+the paper and for <i>XF</i> . Many people around the world who
+have used <i>XF </i>and reported bugs, suggestions and comments
+on the program. </p>
+
+<p>The <i>BYO </i>team, that developed <i>BYO </i>which was the
+trigger for the development of <i>XF</i> . This program contains
+the basic concept for <i>XF</i> , and showed how easy it is to
+write a powerful interface builder based upon <i>Tcl/Tk</i> . </p>
+
+<p>Very special thanks to John Ousterhout, the inventor of <i>Tcl/Tk</i>
+. The power and flexibility of these packages made the
+development of <i>XF </i>possible (and his answers to my
+questions and suggestions). </p>
+
+<p>My sister Britta. She corrected my numerous spelling errors,
+and my lousy English, partially supported by ispell. And finally
+a big (unnamed) soda pop producer, for providing the coffein that
+was necessary to keep my brain going (The choice of an old
+generation). </p>
+
+<p>Sven Delmas <br>
+</p>
+
+<hr>
+
+<ul>
+    <li><a href="node1.html#SECTION00100000000000000000"
+        name="tex2html335"></a><a
+        href="node1.html#SECTION00100000000000000000"
+        name="tex2html335">Contents</a></li>
+    <li><a href="node2.html#SECTION00200000000000000000"
+        name="tex2html336"></a><a
+        href="node2.html#SECTION00200000000000000000"
+        name="tex2html336">Introduction</a></li>
+    <li><ul>
+            <li><a href="node3.html#SECTION00210000000000000000"
+                name="tex2html337"></a><a
+                href="node3.html#SECTION00210000000000000000"
+                name="tex2html337">Interface builders</a></li>
+            <li><a href="node4.html#SECTION00220000000000000000"
+                name="tex2html338"></a><a
+                href="node4.html#SECTION00220000000000000000"
+                name="tex2html338">Terminology</a></li>
+            <li><a href="node5.html#SECTION00230000000000000000"
+                name="tex2html339"></a><a
+                href="node5.html#SECTION00230000000000000000"
+                name="tex2html339">Roadmap</a></li>
+        </ul>
+    </li>
+    <li><a href="node6.html#SECTION00300000000000000000"
+        name="tex2html340"></a><a
+        href="node6.html#SECTION00300000000000000000"
+        name="tex2html340">The Design of XF</a></li>
+    <li><ul>
+            <li><a href="node7.html#SECTION00310000000000000000"
+                name="tex2html341"></a><a
+                href="node7.html#SECTION00310000000000000000"
+                name="tex2html341">Interface builders</a></li>
+            <li><a href="node8.html#SECTION00320000000000000000"
+                name="tex2html342"></a><a
+                href="node8.html#SECTION00320000000000000000"
+                name="tex2html342">Existing interface builders</a></li>
+            <li><a href="node9.html#SECTION00330000000000000000"
+                name="tex2html343"></a><a
+                href="node9.html#SECTION00330000000000000000"
+                name="tex2html343">The XF design</a></li>
+        </ul>
+    </li>
+    <li><a href="node10.html#SECTION00400000000000000000"
+        name="tex2html344"></a><a
+        href="node10.html#SECTION00400000000000000000"
+        name="tex2html344">Tcl/Tk</a></li>
+    <li><ul>
+            <li><a href="node11.html#SECTION00410000000000000000"
+                name="tex2html345"></a><a
+                href="node11.html#SECTION00410000000000000000"
+                name="tex2html345">Tcl</a></li>
+            <li><ul>
+                    <li><a
+                        href="node12.html#SECTION00411000000000000000"
+                        name="tex2html346"></a><a
+                        href="node12.html#SECTION00411000000000000000"
+                        name="tex2html346">Syntax</a></li>
+                    <li><a
+                        href="node13.html#SECTION00412000000000000000"
+                        name="tex2html347"></a><a
+                        href="node13.html#SECTION00412000000000000000"
+                        name="tex2html347">Datatypes</a></li>
+                    <li><a
+                        href="node14.html#SECTION00413000000000000000"
+                        name="tex2html348"></a><a
+                        href="node14.html#SECTION00413000000000000000"
+                        name="tex2html348">Variables</a></li>
+                    <li><a
+                        href="node15.html#SECTION00414000000000000000"
+                        name="tex2html349"></a><a
+                        href="node15.html#SECTION00414000000000000000"
+                        name="tex2html349">Commands</a></li>
+                    <li><a
+                        href="node16.html#SECTION00415000000000000000"
+                        name="tex2html350"></a><a
+                        href="node16.html#SECTION00415000000000000000"
+                        name="tex2html350">Quoting</a></li>
+                </ul>
+            </li>
+            <li><a href="node17.html#SECTION00420000000000000000"
+                name="tex2html351"></a><a
+                href="node17.html#SECTION00420000000000000000"
+                name="tex2html351">Tk</a></li>
+            <li><ul>
+                    <li><a
+                        href="node18.html#SECTION00421000000000000000"
+                        name="tex2html352"></a><a
+                        href="node18.html#SECTION00421000000000000000"
+                        name="tex2html352">Widget classes</a></li>
+                    <li><a
+                        href="node19.html#SECTION00422000000000000000"
+                        name="tex2html353"></a><a
+                        href="node19.html#SECTION00422000000000000000"
+                        name="tex2html353">Inserting widgets</a></li>
+                    <li><a
+                        href="node20.html#SECTION00423000000000000000"
+                        name="tex2html354"></a><a
+                        href="node20.html#SECTION00423000000000000000"
+                        name="tex2html354">Widget commands</a></li>
+                    <li><a
+                        href="node21.html#SECTION00424000000000000000"
+                        name="tex2html355"></a><a
+                        href="node21.html#SECTION00424000000000000000"
+                        name="tex2html355">Widget configuration</a></li>
+                    <li><a
+                        href="node22.html#SECTION00425000000000000000"
+                        name="tex2html356"></a><a
+                        href="node22.html#SECTION00425000000000000000"
+                        name="tex2html356">Geometry handling</a></li>
+                    <li><ul>
+                            <li><a
+                                href="node23.html#SECTION00425100000000000000"
+                                name="tex2html357"></a><a
+                                href="node23.html#SECTION00425100000000000000"
+                                name="tex2html357">The placer</a></li>
+                            <li><a
+                                href="node24.html#SECTION00425200000000000000"
+                                name="tex2html358"></a><a
+                                href="node24.html#SECTION00425200000000000000"
+                                name="tex2html358">The packer</a></li>
+                        </ul>
+                    </li>
+                    <li><a
+                        href="node25.html#SECTION00426000000000000000"
+                        name="tex2html359"></a><a
+                        href="node25.html#SECTION00426000000000000000"
+                        name="tex2html359">Other Tk commands</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="node26.html#SECTION00500000000000000000"
+        name="tex2html360"></a><a
+        href="node26.html#SECTION00500000000000000000"
+        name="tex2html360">Using XF</a></li>
+    <li><ul>
+            <li><a href="node27.html#SECTION00510000000000000000"
+                name="tex2html361"></a><a
+                href="node27.html#SECTION00510000000000000000"
+                name="tex2html361">The first steps</a></li>
+            <li><ul>
+                    <li><a href="xfcmdline.html">Command line
+                        start up options</a></li>
+                    <li><a
+                        href="node28.html#SECTION00511000000000000000"
+                        name="tex2html362"></a><a
+                        href="node28.html#SECTION00511000000000000000"
+                        name="tex2html362">Overview</a></li>
+                    <li><a
+                        href="node29.html#SECTION00512000000000000000"
+                        name="tex2html363"></a><a
+                        href="node29.html#SECTION00512000000000000000"
+                        name="tex2html363">Inserting widgets into
+                        the widget tree</a></li>
+                    <li><a
+                        href="node30.html#SECTION00513000000000000000"
+                        name="tex2html364"></a><a
+                        href="node30.html#SECTION00513000000000000000"
+                        name="tex2html364">Layouting widgets</a></li>
+                    <li><ul>
+                            <li><a
+                                href="node31.html#SECTION00513100000000000000"
+                                name="tex2html365"></a><a
+                                href="node31.html#SECTION00513100000000000000"
+                                name="tex2html365">Layouting with
+                                the placer</a></li>
+                            <li><a
+                                href="node32.html#SECTION00513200000000000000"
+                                name="tex2html366"></a><a
+                                href="node32.html#SECTION00513200000000000000"
+                                name="tex2html366">Layouting with
+                                the packer</a></li>
+                        </ul>
+                    </li>
+                    <li><a
+                        href="node33.html#SECTION00514000000000000000"
+                        name="tex2html367"></a><a
+                        href="node33.html#SECTION00514000000000000000"
+                        name="tex2html367">Configuring widgets</a></li>
+                    <li><a
+                        href="node34.html#SECTION00515000000000000000"
+                        name="tex2html368"></a><a
+                        href="node34.html#SECTION00515000000000000000"
+                        name="tex2html368">Procedures</a></li>
+                </ul>
+            </li>
+            <li><a href="node35.html#SECTION00520000000000000000"
+                name="tex2html369"></a><a
+                href="node35.html#SECTION00520000000000000000"
+                name="tex2html369">XF and Tcl/Tk</a></li>
+            <li><ul>
+                    <li><a
+                        href="node36.html#SECTION00521000000000000000"
+                        name="tex2html370"></a><a
+                        href="node36.html#SECTION00521000000000000000"
+                        name="tex2html370">Text widgets</a></li>
+                    <li><a
+                        href="node37.html#SECTION00522000000000000000"
+                        name="tex2html371"></a><a
+                        href="node37.html#SECTION00522000000000000000"
+                        name="tex2html371">Entry widgets</a></li>
+                    <li><a
+                        href="node38.html#SECTION00523000000000000000"
+                        name="tex2html372"></a><a
+                        href="node38.html#SECTION00523000000000000000"
+                        name="tex2html372">Scale widgets</a></li>
+                    <li><a
+                        href="node39.html#SECTION00524000000000000000"
+                        name="tex2html373"></a><a
+                        href="node39.html#SECTION00524000000000000000"
+                        name="tex2html373">Checkbutton widgets</a></li>
+                    <li><a
+                        href="node40.html#SECTION00525000000000000000"
+                        name="tex2html374"></a><a
+                        href="node40.html#SECTION00525000000000000000"
+                        name="tex2html374">Radiobutton widgets</a></li>
+                    <li><a href="drawtools.html">Canvas widget</a></li>
+                    <li><a
+                        href="node41.html#SECTION00526000000000000000"
+                        name="tex2html375"></a><a
+                        href="node41.html#SECTION00526000000000000000"
+                        name="tex2html375">Send</a></li>
+                </ul>
+            </li>
+            <li><a href="node42.html#SECTION00530000000000000000"
+                name="tex2html376"></a><a
+                href="node42.html#SECTION00530000000000000000"
+                name="tex2html376">XF constraints</a></li>
+            <li><ul>
+                    <li><a
+                        href="node43.html#SECTION00531000000000000000"
+                        name="tex2html377"></a><a
+                        href="node43.html#SECTION00531000000000000000"
+                        name="tex2html377">Restrictions</a></li>
+                    <li><a
+                        href="node44.html#SECTION00532000000000000000"
+                        name="tex2html378"></a><a
+                        href="node44.html#SECTION00532000000000000000"
+                        name="tex2html378">Pitfalls</a></li>
+                </ul>
+            </li>
+            <li><a href="node45.html#SECTION00540000000000000000"
+                name="tex2html379"></a><a
+                href="node45.html#SECTION00540000000000000000"
+                name="tex2html379">Advanced features</a></li>
+            <li><ul>
+                    <li><a
+                        href="node46.html#SECTION00541000000000000000"
+                        name="tex2html380"></a><a
+                        href="node46.html#SECTION00541000000000000000"
+                        name="tex2html380">Templates</a></li>
+                    <li><a
+                        href="node47.html#SECTION00542000000000000000"
+                        name="tex2html381"></a><a
+                        href="node47.html#SECTION00542000000000000000"
+                        name="tex2html381">Toplevel windows</a></li>
+                    <li><a
+                        href="node48.html#SECTION00543000000000000000"
+                        name="tex2html382"></a><a
+                        href="node48.html#SECTION00543000000000000000"
+                        name="tex2html382">Source modules</a></li>
+                    <li><a
+                        href="node49.html#SECTION00544000000000000000"
+                        name="tex2html383"></a><a
+                        href="node49.html#SECTION00544000000000000000"
+                        name="tex2html383">Levels for procedures
+                        and bindings</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="node50.html#SECTION00600000000000000000"
+        name="tex2html384"></a><a
+        href="node50.html#SECTION00600000000000000000"
+        name="tex2html384">The Implementation of XF</a></li>
+    <li><ul>
+            <li><a href="node51.html#SECTION00610000000000000000"
+                name="tex2html385"></a><a
+                href="node51.html#SECTION00610000000000000000"
+                name="tex2html385">The generated code</a></li>
+            <li><a href="node52.html#SECTION00620000000000000000"
+                name="tex2html386"></a><a
+                href="node52.html#SECTION00620000000000000000"
+                name="tex2html386">Extending XF</a></li>
+            <li><ul>
+                    <li><a
+                        href="node53.html#SECTION00621000000000000000"
+                        name="tex2html387"></a><a
+                        href="node53.html#SECTION00621000000000000000"
+                        name="tex2html387">Supporting new widgets</a></li>
+                    <li><ul>
+                            <li><a
+                                href="node54.html#SECTION00621100000000000000"
+                                name="tex2html388"></a><a
+                                href="node54.html#SECTION00621100000000000000"
+                                name="tex2html388">XFAdd.<i>&lt;</i>WidgetClass<i>&gt;</i></a></li>
+                            <li><a
+                                href="node55.html#SECTION00621200000000000000"
+                                name="tex2html389"></a><a
+                                href="node55.html#SECTION00621200000000000000"
+                                name="tex2html389">XFAddTmp.<i>&lt;</i>WidgetClass<i>&gt;</i></a></li>
+                            <li><a
+                                href="node56.html#SECTION00621300000000000000"
+                                name="tex2html390"></a><a
+                                href="node56.html#SECTION00621300000000000000"
+                                name="tex2html390">XFConfig.<i>&lt;</i>WidgetClass<i>&gt;</i></a></li>
+                            <li><a
+                                href="node57.html#SECTION00621400000000000000"
+                                name="tex2html391"></a><a
+                                href="node57.html#SECTION00621400000000000000"
+                                name="tex2html391">XFSaveWidget.<i>&lt;</i>WidgetClass<i>&gt;</i></a></li>
+                            <li><a
+                                href="node58.html#SECTION00621500000000000000"
+                                name="tex2html392"></a><a
+                                href="node58.html#SECTION00621500000000000000"
+                                name="tex2html392">XFSaveSpecial.<i>&lt;</i>WidgetClass<i>&gt;</i></a></li>
+                        </ul>
+                    </li>
+                    <li><a
+                        href="node59.html#SECTION00622000000000000000"
+                        name="tex2html393"></a><a
+                        href="node59.html#SECTION00622000000000000000"
+                        name="tex2html393">Initializations at
+                        startup</a></li>
+                    <li><a
+                        href="node60.html#SECTION00623000000000000000"
+                        name="tex2html394"></a><a
+                        href="node60.html#SECTION00623000000000000000"
+                        name="tex2html394">Adding procedures
+                        named XFProc</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="node61.html#SECTION00700000000000000000"
+        name="tex2html395"></a><a
+        href="node61.html#SECTION00700000000000000000"
+        name="tex2html395">Conclusion</a></li>
+    <li><ul>
+            <li><a href="node62.html#SECTION00710000000000000000"
+                name="tex2html396"></a><a
+                href="node62.html#SECTION00710000000000000000"
+                name="tex2html396">Epilogue</a></li>
+            <li><a href="node63.html#SECTION00720000000000000000"
+                name="tex2html397"></a><a
+                href="node63.html#SECTION00720000000000000000"
+                name="tex2html397">Missing features</a></li>
+        </ul>
+    </li>
+    <li><a href="node64.html#SECTION00800000000000000000"
+        name="tex2html398"></a><a
+        href="node64.html#SECTION00800000000000000000"
+        name="tex2html398">External Tools</a></li>
+    <li><ul>
+            <li><a href="node65.html#SECTION00810000000000000000"
+                name="tex2html399"></a><a
+                href="node65.html#SECTION00810000000000000000"
+                name="tex2html399">Edge</a></li>
+            <li><a href="node66.html#SECTION00820000000000000000"
+                name="tex2html400"></a><a
+                href="node66.html#SECTION00820000000000000000"
+                name="tex2html400">Editors</a></li>
+            <li><ul>
+                    <li><a
+                        href="node67.html#SECTION00821000000000000000"
+                        name="tex2html401"></a><a
+                        href="node67.html#SECTION00821000000000000000"
+                        name="tex2html401">TkEmacs</a></li>
+                    <li><a
+                        href="node68.html#SECTION00822000000000000000"
+                        name="tex2html402"></a><a
+                        href="node68.html#SECTION00822000000000000000"
+                        name="tex2html402">Emacs</a></li>
+                    <li><a
+                        href="node69.html#SECTION00823000000000000000"
+                        name="tex2html403"></a><a
+                        href="node69.html#SECTION00823000000000000000"
+                        name="tex2html403">vi</a></li>
+                </ul>
+            </li>
+            <li><a href="node70.html#SECTION00830000000000000000"
+                name="tex2html404"></a><a
+                href="node70.html#SECTION00830000000000000000"
+                name="tex2html404">ShapeTools</a></li>
+            <li><ul>
+                    <li><a
+                        href="node71.html#SECTION00831000000000000000"
+                        name="tex2html405"></a><a
+                        href="node71.html#SECTION00831000000000000000"
+                        name="tex2html405">Saving procedures</a></li>
+                    <li><a
+                        href="node72.html#SECTION00832000000000000000"
+                        name="tex2html406"></a><a
+                        href="node72.html#SECTION00832000000000000000"
+                        name="tex2html406">Retrieving modules</a></li>
+                </ul>
+            </li>
+            <li><a href="node73.html#SECTION00840000000000000000"
+                name="tex2html407"></a><a
+                href="node73.html#SECTION00840000000000000000"
+                name="tex2html407">xfappdef</a></li>
+            <li><a href="node74.html#SECTION00850000000000000000"
+                name="tex2html408"></a><a
+                href="node74.html#SECTION00850000000000000000"
+                name="tex2html408">xfhardcopy</a></li>
+            <li><ul>
+                    <li><a
+                        href="node75.html#SECTION00851000000000000000"
+                        name="tex2html409"></a><a
+                        href="node75.html#SECTION00851000000000000000"
+                        name="tex2html409">Hardcopy commands</a></li>
+                </ul>
+            </li>
+            <li><a href="node76.html#SECTION00860000000000000000"
+                name="tex2html410"></a><a
+                href="node76.html#SECTION00860000000000000000"
+                name="tex2html410">xfhelp</a></li>
+            <li><ul>
+                    <li><a
+                        href="node77.html#SECTION00861000000000000000"
+                        name="tex2html411"></a><a
+                        href="node77.html#SECTION00861000000000000000"
+                        name="tex2html411">Help pages</a></li>
+                </ul>
+            </li>
+            <li><a href="node78.html#SECTION00870000000000000000"
+                name="tex2html412"></a><a
+                href="node78.html#SECTION00870000000000000000"
+                name="tex2html412">xfpixmap</a></li>
+            <li><a href="node79.html#SECTION00880000000000000000"
+                name="tex2html413"></a><a
+                href="node79.html#SECTION00880000000000000000"
+                name="tex2html413">xftutorial</a></li>
+            <li><ul>
+                    <li><a
+                        href="node80.html#SECTION00881000000000000000"
+                        name="tex2html414"></a><a
+                        href="node80.html#SECTION00881000000000000000"
+                        name="tex2html414">The script files</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="node81.html#SECTION00900000000000000000"
+        name="tex2html415"></a><a
+        href="node81.html#SECTION00900000000000000000"
+        name="tex2html415">XF User's Guide</a></li>
+    <li><ul>
+            <li><a href="node82.html#SECTION00910000000000000000"
+                name="tex2html416"></a><a
+                href="node82.html#SECTION00910000000000000000"
+                name="tex2html416">Main</a></li>
+            <li><ul>
+                    <li><a
+                        href="node83.html#SECTION00911000000000000000"
+                        name="tex2html417"></a><a
+                        href="node83.html#SECTION00911000000000000000"
+                        name="tex2html417">XFProcMain</a></li>
+                </ul>
+            </li>
+            <li><a href="node84.html#SECTION00920000000000000000"
+                name="tex2html418"></a><a
+                href="node84.html#SECTION00920000000000000000"
+                name="tex2html418">File</a></li>
+            <li><ul>
+                    <li><a
+                        href="node85.html#SECTION00921000000000000000"
+                        name="tex2html419"></a><a
+                        href="node85.html#SECTION00921000000000000000"
+                        name="tex2html419">XFProcFileEnterTCL</a></li>
+                    <li><a
+                        href="node86.html#SECTION00922000000000000000"
+                        name="tex2html420"></a><a
+                        href="node86.html#SECTION00922000000000000000"
+                        name="tex2html420">XFProcFileInsert</a></li>
+                    <li><a
+                        href="node87.html#SECTION00923000000000000000"
+                        name="tex2html421"></a><a
+                        href="node87.html#SECTION00923000000000000000"
+                        name="tex2html421">XFProcFileNew</a></li>
+                    <li><a
+                        href="node88.html#SECTION00924000000000000000"
+                        name="tex2html422"></a><a
+                        href="node88.html#SECTION00924000000000000000"
+                        name="tex2html422">XFProcFileLoad</a></li>
+                    <li><a
+                        href="node89.html#SECTION00925000000000000000"
+                        name="tex2html423"></a><a
+                        href="node89.html#SECTION00925000000000000000"
+                        name="tex2html423">XFProcFileQuit</a></li>
+                    <li><a
+                        href="node90.html#SECTION00926000000000000000"
+                        name="tex2html424"></a><a
+                        href="node90.html#SECTION00926000000000000000"
+                        name="tex2html424">XFProcFileSave</a></li>
+                    <li><a
+                        href="node91.html#SECTION00927000000000000000"
+                        name="tex2html425"></a><a
+                        href="node91.html#SECTION00927000000000000000"
+                        name="tex2html425">XFProcFileSaveAs</a></li>
+                </ul>
+            </li>
+            <li><a href="node92.html#SECTION00930000000000000000"
+                name="tex2html426"></a><a
+                href="node92.html#SECTION00930000000000000000"
+                name="tex2html426">Configuration</a></li>
+            <li><ul>
+                    <li><a
+                        href="node93.html#SECTION00931000000000000000"
+                        name="tex2html427"></a><a
+                        href="node93.html#SECTION00931000000000000000"
+                        name="tex2html427">XFProcConfAddCurrentItem</a></li>
+                    <li><a
+                        href="node94.html#SECTION00932000000000000000"
+                        name="tex2html428"></a><a
+                        href="node94.html#SECTION00932000000000000000"
+                        name="tex2html428">XFProcConfBinding</a></li>
+                    <li><a
+                        href="node95.html#SECTION00933000000000000000"
+                        name="tex2html429"></a><a
+                        href="node95.html#SECTION00933000000000000000"
+                        name="tex2html429">XFProcConfBindingAll</a></li>
+                    <li><a
+                        href="node96.html#SECTION00934000000000000000"
+                        name="tex2html430"></a><a
+                        href="node96.html#SECTION00934000000000000000"
+                        name="tex2html430">XFProcConfBindingClass</a></li>
+                    <li><a
+                        href="node97.html#SECTION00935000000000000000"
+                        name="tex2html431"></a><a
+                        href="node97.html#SECTION00935000000000000000"
+                        name="tex2html431">XFProcConfConfigure</a></li>
+                    <li><a
+                        href="node98.html#SECTION00936000000000000000"
+                        name="tex2html432"></a><a
+                        href="node98.html#SECTION00936000000000000000"
+                        name="tex2html432">XFProcConfGeometryDefault</a></li>
+                    <li><a
+                        href="node99.html#SECTION00937000000000000000"
+                        name="tex2html433"></a><a
+                        href="node99.html#SECTION00937000000000000000"
+                        name="tex2html433">XFProcConfInsertTemplate</a></li>
+                    <li><a
+                        href="node100.html#SECTION00938000000000000000"
+                        name="tex2html434"></a><a
+                        href="node100.html#SECTION00938000000000000000"
+                        name="tex2html434">XFProcConfInsertWidgetDefault</a></li>
+                    <li><a
+                        href="node101.html#SECTION00939000000000000000"
+                        name="tex2html435"></a><a
+                        href="node101.html#SECTION00939000000000000000"
+                        name="tex2html435">XFProcConfInsertWidgetConfig</a></li>
+                    <li><a
+                        href="node102.html#SECTION009310000000000000000"
+                        name="tex2html436"></a><a
+                        href="node102.html#SECTION009310000000000000000"
+                        name="tex2html436">XFProcConfLayout</a></li>
+                    <li><a
+                        href="node103.html#SECTION009311000000000000000"
+                        name="tex2html437"></a><a
+                        href="node103.html#SECTION009311000000000000000"
+                        name="tex2html437">XFProcConfPacking</a></li>
+                    <li><a
+                        href="node104.html#SECTION009312000000000000000"
+                        name="tex2html438"></a><a
+                        href="node104.html#SECTION009312000000000000000"
+                        name="tex2html438">XFProcConfParametersDefault</a></li>
+                    <li><a
+                        href="node105.html#SECTION009313000000000000000"
+                        name="tex2html439"></a><a
+                        href="node105.html#SECTION009313000000000000000"
+                        name="tex2html439">XFProcConfParametersGeneral</a></li>
+                    <li><a
+                        href="node106.html#SECTION009314000000000000000"
+                        name="tex2html440"></a><a
+                        href="node106.html#SECTION009314000000000000000"
+                        name="tex2html440">XFProcConfParametersGroups</a></li>
+                    <li><a
+                        href="node107.html#SECTION009315000000000000000"
+                        name="tex2html441"></a><a
+                        href="node107.html#SECTION009315000000000000000"
+                        name="tex2html441">XFProcConfParametersSmall</a></li>
+                    <li><a
+                        href="node108.html#SECTION009316000000000000000"
+                        name="tex2html442"></a><a
+                        href="node108.html#SECTION009316000000000000000"
+                        name="tex2html442">XFProcConfParametersSpecial</a></li>
+                    <li><a
+                        href="node109.html#SECTION009317000000000000000"
+                        name="tex2html443"></a><a
+                        href="node109.html#SECTION009317000000000000000"
+                        name="tex2html443">XFProcConfPlacing</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node110.html#SECTION00940000000000000000"
+                name="tex2html444"></a><a
+                href="node110.html#SECTION00940000000000000000"
+                name="tex2html444">Edit</a></li>
+            <li><ul>
+                    <li><a
+                        href="node111.html#SECTION00941000000000000000"
+                        name="tex2html445"></a><a
+                        href="node111.html#SECTION00941000000000000000"
+                        name="tex2html445">XFProcEditClearCut</a></li>
+                    <li><a
+                        href="node112.html#SECTION00942000000000000000"
+                        name="tex2html446"></a><a
+                        href="node112.html#SECTION00942000000000000000"
+                        name="tex2html446">XFProcEditCopy</a></li>
+                    <li><a
+                        href="node113.html#SECTION00943000000000000000"
+                        name="tex2html447"></a><a
+                        href="node113.html#SECTION00943000000000000000"
+                        name="tex2html447">XFProcEditCut</a></li>
+                    <li><a
+                        href="node114.html#SECTION00944000000000000000"
+                        name="tex2html448"></a><a
+                        href="node114.html#SECTION00944000000000000000"
+                        name="tex2html448">XFProcEditDelete</a></li>
+                    <li><a
+                        href="node115.html#SECTION00945000000000000000"
+                        name="tex2html449"></a><a
+                        href="node115.html#SECTION00945000000000000000"
+                        name="tex2html449">XFProcEditLoadCut</a></li>
+                    <li><a
+                        href="node116.html#SECTION00946000000000000000"
+                        name="tex2html450"></a><a
+                        href="node116.html#SECTION00946000000000000000"
+                        name="tex2html450">XFProcEditLoadTemplate</a></li>
+                    <li><a
+                        href="node117.html#SECTION00947000000000000000"
+                        name="tex2html451"></a><a
+                        href="node117.html#SECTION00947000000000000000"
+                        name="tex2html451">XFProcEditMakeAProc</a></li>
+                    <li><a
+                        href="node118.html#SECTION00948000000000000000"
+                        name="tex2html452"></a><a
+                        href="node118.html#SECTION00948000000000000000"
+                        name="tex2html452">XFProcEditPaste</a></li>
+                    <li><a
+                        href="node119.html#SECTION00949000000000000000"
+                        name="tex2html453"></a><a
+                        href="node119.html#SECTION00949000000000000000"
+                        name="tex2html453">XFProcEditSaveCut</a></li>
+                    <li><a
+                        href="node120.html#SECTION009410000000000000000"
+                        name="tex2html454"></a><a
+                        href="node120.html#SECTION009410000000000000000"
+                        name="tex2html454">XFProcEditSaveCutAsTemplate</a></li>
+                    <li><a
+                        href="node121.html#SECTION009411000000000000000"
+                        name="tex2html455"></a><a
+                        href="node121.html#SECTION009411000000000000000"
+                        name="tex2html455">XFProcEditShowCut</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node122.html#SECTION00950000000000000000"
+                name="tex2html456"></a><a
+                href="node122.html#SECTION00950000000000000000"
+                name="tex2html456">Programming</a></li>
+            <li><ul>
+                    <li><a
+                        href="node123.html#SECTION00951000000000000000"
+                        name="tex2html457"></a><a
+                        href="node123.html#SECTION00951000000000000000"
+                        name="tex2html457">XFProcProgCommands</a></li>
+                    <li><a
+                        href="node124.html#SECTION00952000000000000000"
+                        name="tex2html458"></a><a
+                        href="node124.html#SECTION00952000000000000000"
+                        name="tex2html458">XFProcProgEditScript</a></li>
+                    <li><a
+                        href="node125.html#SECTION00953000000000000000"
+                        name="tex2html459"></a><a
+                        href="node125.html#SECTION00953000000000000000"
+                        name="tex2html459">XFProcProgEndSrc</a></li>
+                    <li><a
+                        href="node126.html#SECTION00954000000000000000"
+                        name="tex2html460"></a><a
+                        href="node126.html#SECTION00954000000000000000"
+                        name="tex2html460">XFProcProgErrors</a></li>
+                    <li><a
+                        href="node127.html#SECTION00955000000000000000"
+                        name="tex2html461"></a><a
+                        href="node127.html#SECTION00955000000000000000"
+                        name="tex2html461">XFProcProgGlobals</a></li>
+                    <li><a
+                        href="node128.html#SECTION00956000000000000000"
+                        name="tex2html462"></a><a
+                        href="node128.html#SECTION00956000000000000000"
+                        name="tex2html462">XFProcProgProcs</a></li>
+                    <li><a
+                        href="node129.html#SECTION00957000000000000000"
+                        name="tex2html463"></a><a
+                        href="node129.html#SECTION00957000000000000000"
+                        name="tex2html463">XFProcProgShowScript</a></li>
+                    <li><a
+                        href="node130.html#SECTION00958000000000000000"
+                        name="tex2html464"></a><a
+                        href="node130.html#SECTION00958000000000000000"
+                        name="tex2html464">XFProcProgStartupSrc</a></li>
+                    <li><a
+                        href="node131.html#SECTION00959000000000000000"
+                        name="tex2html465"></a><a
+                        href="node131.html#SECTION00959000000000000000"
+                        name="tex2html465">XFProcProgWidgetTree</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node132.html#SECTION00960000000000000000"
+                name="tex2html466"></a><a
+                href="node132.html#SECTION00960000000000000000"
+                name="tex2html466">Misc</a></li>
+            <li><ul>
+                    <li><a
+                        href="node133.html#SECTION00961000000000000000"
+                        name="tex2html467"></a><a
+                        href="node133.html#SECTION00961000000000000000"
+                        name="tex2html467">XFProcMiscAliases</a></li>
+                    <li><a
+                        href="node134.html#SECTION00962000000000000000"
+                        name="tex2html468"></a><a
+                        href="node134.html#SECTION00962000000000000000"
+                        name="tex2html468">XFProcMiscAppDefaults</a></li>
+                    <li><a
+                        href="node135.html#SECTION00963000000000000000"
+                        name="tex2html469"></a><a
+                        href="node135.html#SECTION00963000000000000000"
+                        name="tex2html469">XFProcMiscEdge</a></li>
+                    <li><a
+                        href="node136.html#SECTION00964000000000000000"
+                        name="tex2html470"></a><a
+                        href="node136.html#SECTION00964000000000000000"
+                        name="tex2html470">XFProcMiscHardcopy</a></li>
+                    <li><a
+                        href="node137.html#SECTION00965000000000000000"
+                        name="tex2html471"></a><a
+                        href="node137.html#SECTION00965000000000000000"
+                        name="tex2html471">XFProcMiscModules</a></li>
+                    <li><a
+                        href="node138.html#SECTION00966000000000000000"
+                        name="tex2html472"></a><a
+                        href="node138.html#SECTION00966000000000000000"
+                        name="tex2html472">XFProcMiscImages</a></li>
+                    <li><a
+                        href="node139.html#SECTION00967000000000000000"
+                        name="tex2html473"></a><a
+                        href="node139.html#SECTION00967000000000000000"
+                        name="tex2html473">XFProcMiscSaveEdge</a></li>
+                    <li><a
+                        href="node140.html#SECTION00968000000000000000"
+                        name="tex2html474"></a><a
+                        href="node140.html#SECTION00968000000000000000"
+                        name="tex2html474">XFProcMiscTestProgram</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node141.html#SECTION00970000000000000000"
+                name="tex2html475"></a><a
+                href="node141.html#SECTION00970000000000000000"
+                name="tex2html475">Options</a></li>
+            <li><ul>
+                    <li><a
+                        href="node142.html#SECTION00971000000000000000"
+                        name="tex2html476"></a><a
+                        href="node142.html#SECTION00971000000000000000"
+                        name="tex2html476">XFProcOptionsBindings</a></li>
+                    <li><a
+                        href="node143.html#SECTION00972000000000000000"
+                        name="tex2html477"></a><a
+                        href="node143.html#SECTION00972000000000000000"
+                        name="tex2html477">XFProcOptionsGeneral</a></li>
+                    <li><a
+                        href="node144.html#SECTION00973000000000000000"
+                        name="tex2html478"></a><a
+                        href="node144.html#SECTION00973000000000000000"
+                        name="tex2html478">XFProcOptionsIconBar</a></li>
+                    <li><a
+                        href="node145.html#SECTION00974000000000000000"
+                        name="tex2html479"></a><a
+                        href="node145.html#SECTION00974000000000000000"
+                        name="tex2html479">XFProcOptionsInterpreter</a></li>
+                    <li><a
+                        href="node146.html#SECTION00975000000000000000"
+                        name="tex2html480"></a><a
+                        href="node146.html#SECTION00975000000000000000"
+                        name="tex2html480">XFProcOptionsMenuBar</a></li>
+                    <li><a
+                        href="node147.html#SECTION00976000000000000000"
+                        name="tex2html481"></a><a
+                        href="node147.html#SECTION00976000000000000000"
+                        name="tex2html481">XFProcOptionsPathFile</a></li>
+                    <li><a
+                        href="node148.html#SECTION00977000000000000000"
+                        name="tex2html482"></a><a
+                        href="node148.html#SECTION00977000000000000000"
+                        name="tex2html482">XFProcOptionsSaveClassBindings</a></li>
+                    <li><a
+                        href="node149.html#SECTION00978000000000000000"
+                        name="tex2html483"></a><a
+                        href="node149.html#SECTION00978000000000000000"
+                        name="tex2html483">XFProcOptionsSaveModuleList</a></li>
+                    <li><a
+                        href="node150.html#SECTION00979000000000000000"
+                        name="tex2html484"></a><a
+                        href="node150.html#SECTION00979000000000000000"
+                        name="tex2html484">XFProcOptionsSaveOptions</a></li>
+                    <li><a
+                        href="node151.html#SECTION009710000000000000000"
+                        name="tex2html485"></a><a
+                        href="node151.html#SECTION009710000000000000000"
+                        name="tex2html485">XFProcOptionsSavePositions</a></li>
+                    <li><a
+                        href="node152.html#SECTION009711000000000000000"
+                        name="tex2html486"></a><a
+                        href="node152.html#SECTION009711000000000000000"
+                        name="tex2html486">XFProcOptionsSource</a></li>
+                    <li><a
+                        href="node153.html#SECTION009712000000000000000"
+                        name="tex2html487"></a><a
+                        href="node153.html#SECTION009712000000000000000"
+                        name="tex2html487">XFProcOptionsVersion</a></li>
+                    <li><a
+                        href="node154.html#SECTION009713000000000000000"
+                        name="tex2html488"></a><a
+                        href="node154.html#SECTION009713000000000000000"
+                        name="tex2html488">XFProcOptionsWindow</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node155.html#SECTION00980000000000000000"
+                name="tex2html489"></a><a
+                href="node155.html#SECTION00980000000000000000"
+                name="tex2html489">Help</a></li>
+            <li><ul>
+                    <li><a
+                        href="node156.html#SECTION00981000000000000000"
+                        name="tex2html490"></a><a
+                        href="node156.html#SECTION00981000000000000000"
+                        name="tex2html490">XFProcHelpAbout</a></li>
+                    <li><a
+                        href="node157.html#SECTION00982000000000000000"
+                        name="tex2html491"></a><a
+                        href="node157.html#SECTION00982000000000000000"
+                        name="tex2html491">XFProcHelpHelp</a></li>
+                    <li><a
+                        href="node158.html#SECTION00983000000000000000"
+                        name="tex2html492"></a><a
+                        href="node158.html#SECTION00983000000000000000"
+                        name="tex2html492">XFProcHelpTutorial</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="node159.html#SECTION001000000000000000000"
+        name="tex2html493"></a><a
+        href="node159.html#SECTION001000000000000000000"
+        name="tex2html493">Templates</a></li>
+    <li><ul>
+            <li><a
+                href="node160.html#SECTION001010000000000000000"
+                name="tex2html494"></a><a
+                href="node160.html#SECTION001010000000000000000"
+                name="tex2html494">Combined</a></li>
+            <li><ul>
+                    <li><a
+                        href="node161.html#SECTION001011000000000000000"
+                        name="tex2html495"></a><a
+                        href="node161.html#SECTION001011000000000000000"
+                        name="tex2html495">CanvasLS, CanvasRS</a></li>
+                    <li><a
+                        href="node162.html#SECTION001012000000000000000"
+                        name="tex2html496"></a><a
+                        href="node162.html#SECTION001012000000000000000"
+                        name="tex2html496">EntryL, EntryLLS,
+                        EntryLS, EntryS</a></li>
+                    <li><a
+                        href="node163.html#SECTION001013000000000000000"
+                        name="tex2html497"></a><a
+                        href="node163.html#SECTION001013000000000000000"
+                        name="tex2html497">HypertextLS,
+                        HypertextRS</a></li>
+                    <li><a
+                        href="node164.html#SECTION001014000000000000000"
+                        name="tex2html498"></a><a
+                        href="node164.html#SECTION001014000000000000000"
+                        name="tex2html498">ListboxLS, ListboxRS</a></li>
+                    <li><a
+                        href="node165.html#SECTION001015000000000000000"
+                        name="tex2html499"></a><a
+                        href="node165.html#SECTION001015000000000000000"
+                        name="tex2html499">PhotoLS, PhotoRS</a></li>
+                    <li><a
+                        href="node166.html#SECTION001016000000000000000"
+                        name="tex2html500"></a><a
+                        href="node166.html#SECTION001016000000000000000"
+                        name="tex2html500">TextLS, TextRO,
+                        TextROLS, TextRORS, TextRS</a></li>
+                    <li><a
+                        href="node167.html#SECTION001017000000000000000"
+                        name="tex2html501"></a><a
+                        href="node167.html#SECTION001017000000000000000"
+                        name="tex2html501">TkEmacsLS, TkEmacsRS</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node168.html#SECTION001020000000000000000"
+                name="tex2html502"></a><a
+                href="node168.html#SECTION001020000000000000000"
+                name="tex2html502">Procedures</a></li>
+            <li><ul>
+                    <li><a
+                        href="node169.html#SECTION001021000000000000000"
+                        name="tex2html503"></a><a
+                        href="node169.html#SECTION001021000000000000000"
+                        name="tex2html503">AlertBox, AlertBoxFd,
+                        AlertBoxFile</a></li>
+                    <li><a
+                        href="node170.html#SECTION001022000000000000000"
+                        name="tex2html504"></a><a
+                        href="node170.html#SECTION001022000000000000000"
+                        name="tex2html504">ClearList, ClearText</a></li>
+                    <li><a
+                        href="node171.html#SECTION001023000000000000000"
+                        name="tex2html505"></a><a
+                        href="node171.html#SECTION001023000000000000000"
+                        name="tex2html505">ColorBox</a></li>
+                    <li><a
+                        href="node172.html#SECTION001024000000000000000"
+                        name="tex2html506"></a><a
+                        href="node172.html#SECTION001024000000000000000"
+                        name="tex2html506">CursorBox</a></li>
+                    <li><a
+                        href="node173.html#SECTION001025000000000000000"
+                        name="tex2html507"></a><a
+                        href="node173.html#SECTION001025000000000000000"
+                        name="tex2html507">FSBox</a></li>
+                    <li><a
+                        href="node174.html#SECTION001026000000000000000"
+                        name="tex2html508"></a><a
+                        href="node174.html#SECTION001026000000000000000"
+                        name="tex2html508">FdInList, FileInList,
+                        FdInText, FileInText</a></li>
+                    <li><a
+                        href="node175.html#SECTION001027000000000000000"
+                        name="tex2html509"></a><a
+                        href="node175.html#SECTION001027000000000000000"
+                        name="tex2html509">FontBox</a></li>
+                    <li><a
+                        href="node176.html#SECTION001028000000000000000"
+                        name="tex2html510"></a><a
+                        href="node176.html#SECTION001028000000000000000"
+                        name="tex2html510">IconBar</a></li>
+                    <li><a
+                        href="node177.html#SECTION001029000000000000000"
+                        name="tex2html511"></a><a
+                        href="node177.html#SECTION001029000000000000000"
+                        name="tex2html511">InputBox</a></li>
+                    <li><a
+                        href="node178.html#SECTION0010210000000000000000"
+                        name="tex2html512"></a><a
+                        href="node178.html#SECTION0010210000000000000000"
+                        name="tex2html512">IsADir, IsAFile,
+                        IsASymlink</a></li>
+                    <li><a
+                        href="node179.html#SECTION0010211000000000000000"
+                        name="tex2html513"></a><a
+                        href="node179.html#SECTION0010211000000000000000"
+                        name="tex2html513">KeysymBox</a></li>
+                    <li><a
+                        href="node180.html#SECTION0010212000000000000000"
+                        name="tex2html514"></a><a
+                        href="node180.html#SECTION0010212000000000000000"
+                        name="tex2html514">MakeMButton</a></li>
+                    <li><a
+                        href="node181.html#SECTION0010213000000000000000"
+                        name="tex2html515"></a><a
+                        href="node181.html#SECTION0010213000000000000000"
+                        name="tex2html515">MenuBar</a></li>
+                    <li><a
+                        href="node182.html#SECTION0010214000000000000000"
+                        name="tex2html516"></a><a
+                        href="node182.html#SECTION0010214000000000000000"
+                        name="tex2html516">ReadBox</a></li>
+                    <li><a
+                        href="node183.html#SECTION0010215000000000000000"
+                        name="tex2html517"></a><a
+                        href="node183.html#SECTION0010215000000000000000"
+                        name="tex2html517">TextBox, TextBoxFd,
+                        TextBoxFile</a></li>
+                    <li><a
+                        href="node184.html#SECTION0010216000000000000000"
+                        name="tex2html518"></a><a
+                        href="node184.html#SECTION0010216000000000000000"
+                        name="tex2html518">YesNoBox</a></li>
+                    <li><a
+                        href="node185.html#SECTION0010217000000000000000"
+                        name="tex2html519"></a><a
+                        href="node185.html#SECTION0010217000000000000000"
+                        name="tex2html519">fileselect</a></li>
+                </ul>
+            </li>
+            <li><a
+                href="node186.html#SECTION001030000000000000000"
+                name="tex2html520"></a><a
+                href="node186.html#SECTION001030000000000000000"
+                name="tex2html520">Widgets</a></li>
+            <li><ul>
+                    <li><a
+                        href="node187.html#SECTION001031000000000000000"
+                        name="tex2html521"></a><a
+                        href="node187.html#SECTION001031000000000000000"
+                        name="tex2html521">MListbox</a></li>
+                    <li><a
+                        href="node188.html#SECTION001032000000000000000"
+                        name="tex2html522"></a><a
+                        href="node188.html#SECTION001032000000000000000"
+                        name="tex2html522">MListbox2</a></li>
+                    <li><a
+                        href="node189.html#SECTION001033000000000000000"
+                        name="tex2html523"></a><a
+                        href="node189.html#SECTION001033000000000000000"
+                        name="tex2html523">Menubar</a></li>
+                    <li><a
+                        href="node190.html#SECTION001034000000000000000"
+                        name="tex2html524"></a><a
+                        href="node190.html#SECTION001034000000000000000"
+                        name="tex2html524">OptionButtonE,
+                        OptionButtonL</a></li>
+                    <li><a
+                        href="node191.html#SECTION001035000000000000000"
+                        name="tex2html525"></a><a
+                        href="node191.html#SECTION001035000000000000000"
+                        name="tex2html525">Popup1, Popup2,
+                        Popup3, PopupC-1...</a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+    <li><a href="node192.html#SECTION001100000000000000000"
+        name="tex2html526"></a><a
+        href="node192.html#SECTION001100000000000000000"
+        name="tex2html526">List of Figures</a></li>
+    <li><a href="node193.html#SECTION001200000000000000000"
+        name="tex2html527"></a><a
+        href="node193.html#SECTION001200000000000000000"
+        name="tex2html527">References</a></li>
+    <li><a href="node194.html#SECTION001300000000000000000"
+        name="tex2html528"></a><a
+        href="node194.html#SECTION001300000000000000000"
+        name="tex2html528">Index</a></li>
+    <li><a href="node195.html#SECTION001400000000000000000"
+        name="tex2html529"></a><a
+        href="node195.html#SECTION001400000000000000000"
+        name="tex2html529">About this document ...</a></li>
+</ul>
+
+<hr>
+
+<p><a href="node1.html" name="tex2html331"></a></p>
+
+<p><a href="node1.html" name="tex2html331"><img
+src="next_motif.gif" alt="next" width="37" height="24"></a>&nbsp;<img
+src="up_motif_gr.gif" alt="up" width="26" height="24">&nbsp;<img
+src="previous_motif_gr.gif" alt="previous" width="63" height="24">&nbsp;<a
+href="node1.html" name="tex2html333"></a><a href="node1.html"
+name="tex2html333"><img src="contents_motif.gif" alt="contents"
+width="65" height="24"></a>&nbsp;<a href="node194.html"
+name="tex2html334"></a><a href="node194.html" name="tex2html334"><img
+src="index_motif.gif" alt="index" width="43" height="24"></a> <br>
+<b>Next:</b>&nbsp;<a href="node1.html" name="tex2html332"></a><a
+href="node1.html" name="tex2html332">Contents</a> <br>
+</p>
+
+<hr>
+
+<p><br>
+&nbsp; </p>
+
+<hr>
+
+<address>
+    <i>Harry Beker</i> 
+</address>
+
+<p><br>
+<i>Thu Feb 29 18:06:38 MET 1996</i> </p>
+</body>
+</html>

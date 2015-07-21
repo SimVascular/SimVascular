@@ -1,0 +1,99 @@
+# tutorial
+global expertLast
+set expertLast 6
+global expertLastSectionDone
+set expertLastSectionDone -1
+
+
+set expertName0 {Advanced features}
+set expertText0 {\
+Here I will list some of the advanced features.
+This list is not complete, and some users may not
+agree that these are "advanced" features :-).}
+
+
+set expertName1 {Module structure}
+set expertText1 {\
+This dialog allows you to split the contents of
+your application (toplevels and procedures) into
+readable pieces. You just add new module names
+and place the elements into that modules by
+clicking on them. To remove items from a module,
+you just click on this item in the module list.
+
+There is always one module that has the name
+of the application. It contains all toplevels
+and procedures, that were not placed in another
+module.
+
+By selecting the button "Handle Templates" you
+can add procedures and ONE widget path to a
+template. To save this template press the "Save"
+button. This save button can also be used to
+save the complete program.}
+
+
+set expertName2 {Parameters (widget groups)}
+set expertText2 {\
+Here you can specify resource values for selected
+groups of widgets. You can choose widgets by
+selecting them from the left list or by specifying
+a "csh" style expression or a regular expression.
+
+If the button "Clear permanently" is selected,
+the current widget selection is cleared when you
+search for an expression. Otherwise the found
+widgets are appended to the current selection.
+
+To actually set the new resource, you select the
+resource name and enter the value. Then you press
+the button "Set resource".}
+
+
+set expertName3 {Widget tree}
+set expertText3 {\
+Here you see a list containing the complete widget
+tree of your application. The number left from the
+widget name is the level of the widget, and the
+name right from the "=" is the symbolic name.
+
+You can directly set the symbolic name for each
+widget, and you can call each dialog that is
+related to widgets by selecting the widget and
+pressing the popup menu button. This is normally
+the mouse button 2, but this can be configured.}
+
+
+set expertName4 {Dump tree}
+set expertText4 {\
+By selecting this menu item, you get a widget tree
+dump in a format that can be read by edge. Edge
+is a graph layouting and displaying program.}
+
+
+set expertName5 {Hardcopies}
+set expertText5 {\
+Here you can select toplevels and make hardcopies
+from them. The hardcopy is made with an external
+program, so it is necessary that the window is
+visible. You can configure the command that
+creates the hardcopy. There are 6 variables you
+can use to pass informations to the hardcopy
+program.
+
+xfId contains the window-id of the toplevel. xfX,
+xfY, xfWidth and xfHeight contain the position
+and dimension of the toplevel. xfOutputFile
+contains the filename to which the hardcopy will
+be written.}
+
+
+set expertName6 {Security}
+set expertText6 {\
+To make the development with XF more secure
+destructive functions like (destroy and exit)
+are not directly available for the developer.
+If these functions are called as action of
+a button internal procedures get called, so
+that you don't destroy your current
+application.}

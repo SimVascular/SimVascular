@@ -1,0 +1,176 @@
+.\" -*- text -*-
+.\"     xfappdef : a interactive Tk/X Resource editor
+.\"
+.\"     Sven Delmas
+.\"     sven@cimetrix.com
+.\"
+.\"     $Header: xfappdef.1[2.3] Sun Mar  7 17:31:13 1993 garfield@garfield frozen $
+.\"
+.TH XFAPPDEF 1 "Wed Mar 10 16:17:20 1993"
+.SH NAME
+.B
+xfappdef \- interactive Tk/X Resource editor
+.PP
+
+.SH SYNOPSIS
+.B
+xfappdef [xfappdef options] [file]
+.LP
+\fBxfappdef options:\fP
+.LP
+.IP
+.ad l
+.nh
+[\-xfBindPath\ <filename>]
+[\-xfColorFile\ <filename>]
+[\-xfCursorFile\ <filename>]
+[\-xfFontFile\ <filename>]
+[\-xfLoading]
+[\-xfLoadPath\ <pathname>]
+[\-xfModelColor]
+[\-xfModelMono]
+[\-xfNoLoading]
+[\-xfStartup\ <filename>]
+[filename]
+.ad b
+.hy 1
+.PP
+
+.SH DESCRIPTION
+.PP
+XFappdef allows to interactively manipulate an X Resource
+file. It is possible to add and remove resource name
+specifiers. There are menus, where all known program
+classes are listed, and menus showing a set of commonly used
+resource names. For certain resources, there exist special
+dialogs, where the user can interactively select/specify the
+value for a resource. The program has dialogs for Font,
+Color, Cursor File and Pixmap selection.  This program is
+part of the XF distribution and is used to manipulate the
+XF resources, and the resources for the program that is
+build with XF.
+
+.PP
+The upper list contains all resource specifications that are
+given in the application resource file. The two buttons
+below this list control the insertion and deletion of
+resource specifiers. The entry contains the currently
+selected resource specifier, or the name of a resource
+specifier that should be inserted or deleted. The text field
+contains the value of the currently selected resource
+specifier, or the new value to be inserted. The buttons at
+the bottom activate special dialogs that support the setting
+of certain resource types.
+
+.PP
+To load, merge and save the resource file, the menubutton
+(\fBFile\fR) is used. The menubutton (\fBClasses\fR)
+provides access to all application class names that are
+known. By selecting the menubutton (\fBResources\fR), a
+selection of commonly used resource names can be accessed.
+Selecting an application class name or a resource name
+automatically inserts this value into the entry field that
+shows the resource name specifier.
+
+.SH OPTIONS
+.PP
+The following options can be controlled from the command line.
+.\"
+.IP "\fB\-xfBindFile \fIfilename\fR" 15
+This option specifies a file containing class bindings that implement
+a default behavior of all widgets.
+.\"
+.IP "\fB\-xfColorFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+colors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBColors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfCursorFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+cursors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBCursors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfFontFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+fonts. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBFonts\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfLoading" 15
+This option specifies that the program reports the source filenames
+that it loads. This is useful when the program automatically accesses
+archives in the development phase.
+.\"
+.IP "\fB\-xfLoadPath \fIpathname\fR" 15
+This option specifies a list of pathnames (separated by ":") where
+the Tcl source files can be found. In order to find the Tcl source
+files they must be stored in one of these directories. 
+.\"
+.IP "\fB\-xfModelColor" 15
+This option starts the application in color mode.
+.\"
+.IP "\fB\-xfModelMono" 15
+This option starts the application in monochrome mode.
+.\"
+.IP "\fB\-xfNoLoading" 15
+This option specifies that the program does not report the source
+filenames that it loads.
+.\"
+.IP "\fB\-xfStartup \fIfilename\fR" 15
+This option specifies a file containing additional Tcl/Tk code that is
+loaded at startup. 
+.\"
+.IP "\fBfilename\fR" 15
+The file name given at the commandline specifies the X Resource file
+that is to be read and modified.
+
+.SH ENVIRONMENT
+.IP DISPLAY 15
+The default display to be used.
+.IP XF_COLOR_FILE 15
+This variable specifies a file containing a list of all known
+colors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBColors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.IP XF_CURSOR_FILE 15
+This variable specifies a file containing a list of all known
+cursors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBCursors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.IP XF_FONT_FILE 15
+This variable specifies a file containing a list of all known
+fonts. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBFonts\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.IP XF_LOAD_PATH 15
+This variable specifies a list of pathnames (separated by ":") where
+the Tcl source files can be found. In order to find the Tcl source
+files they must be stored in one of these directories.
+.PP
+
+.SH BUGS
+.PP
+.\"
+.IP "\(bu"
+Surely there are many bugs.
+
+.SH "SEE ALSO"
+.PP
+Tcl(3), Tk-manuals(3), XF-documentation
+
+.SH AUTHOR
+.PP
+Sven Delmas
+.br
+TU Berlin, Germany
+.br
+sven@cimetrix.com
+

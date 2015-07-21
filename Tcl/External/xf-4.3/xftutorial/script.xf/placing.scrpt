@@ -1,0 +1,333 @@
+# tutorial
+global placingLast
+set placingLast 5
+global placingLastSectionDone
+set placingLastSectionDone -1
+
+
+set placingName0 {Placing}
+set placingText0 {\
+This chapter tries to introduce you into the usage of the
+placer. The placer provides simple fixed placement of
+windows, where you specify the exact size and location of
+one window, called the slave, within another window, called
+the master. The placer also provides rubber-sheet placement,
+where you specify the size and location of the slave in
+terms of the dimensions of the master, so that the slave
+changes size and location in response to changes in the size
+of the master. Lastly, the placer allows you to mix these
+styles of placement so that, for example, the slave has a
+fixed width and height but is centered inside the master.
+((Copyright) by John Ousterhout :-).
+
+The placer can be used with the placing dialog window or by
+directly placing the widgets with the configured placing
+binding (Mod1-Button1). This binding allows placing and
+sizing. If the widget is touchtched at the border the widget
+is sized. If the widget is toutched at the middle the widget
+is moved. The direct manipulation is only enabled if the
+layout dialog "Configure|Layout" is activated , or layouting
+is allowd without this box "Options|General options".
+
+To give you a basic idea, we will now play a little
+with the options that are available with the placer. Please
+be patient... the initialization will take some time...}
+
+set placingCommand0 {\
+XFMiscClearInterpreter
+global xfConf xfPath
+set xfConf(saveInterval) 0
+set xfConf(onlyOneWindow) 0
+set xfConf(externalEditor) ""
+set xfConf(geometry) packer
+set xfConf(newPacker) 0
+source "$xfPath(src)/xfpacking.tcl"
+wm geometry . 300x300
+frame .frame -relief raised -borderwidth 1
+frame .frame.frame1 -relief raised -borderwidth 1
+frame .frame.frame2 -relief raised -borderwidth 1
+button .frame.frame1.button1 -text .frame1.button1
+button .frame.frame1.button2 -text .frame1.button2
+button .frame.frame1.button3 -text .frame1.button3
+button .frame.frame2.button1 -text .frame2.button1
+button .frame.frame2.button2 -text .frame2.button2
+button .frame.frame2.button3 -text .frame2.button3
+pack append .frame.frame1 .frame.frame1.button1 {top} .frame.frame1.button2 {top} .frame.frame1.button3 {top} 
+pack append .frame.frame2 .frame.frame2.button1 {top} .frame.frame2.button2 {top} .frame.frame2.button3 {top} 
+pack append .frame .frame.frame1 {top} .frame.frame2 {top}
+pack append . .frame "top fill expand"
+XFPlacing . config Toplevel
+update idletasks}
+
+
+set placingName1 {Placing}
+set placingText1 {\
+First we make the both frames to "placed" widgets and place
+the first frame into the upper left corner, by giving it the
+position 0,0. The second frame is placed in the middle of
+the parent by giving it the relative position 0.5,0.5.}
+
+set placingCommand1 {\
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+.xfPlacingToplevel.functions.master configure -state active
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.master invoke
+update idletasks
+.xfPlacingToplevel.functions.master configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 2
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 6
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 6
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 2
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.x.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.pos.posbutt.y.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 50
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 50
+update idletasks}
+
+
+set placingName2 {Placing}
+set placingText2 {\
+The second frame is centered, but this currently means, that
+it's upper left corner is centered. To center the frame
+itself, we select the "C" button for the anchor option.}
+
+set placingCommand2 {\
+.xfPlacingToplevel.frame2.anchor.f2.c invoke
+update idletasks}
+
+
+set placingName3 {Placing}
+set placingText3 {\
+What I show you now is an effect, that can be very
+frustrating if you don't know why and how this happens. If
+the parent of a number of children has no specified geometry
+(width and height) because it was originally packed or the
+parent is still packed, this effect will occur if you change
+the children from packed children to placed children. The
+parent gets smaller and smaller. This is because packed
+children set the size of the parent.  Placed children don't
+request any size from the parent. So the parent gets smaller
+and smaller the less packed children it contains.}
+
+# we want to manipulate frame.frame2...
+set placingCommand3 {\
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 2
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 6
+}
+update idletasks
+.xfPlacingToplevel.functions.master configure -state active
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.master invoke
+update idletasks
+.xfPlacingToplevel.functions.master configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 3
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 7
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame.frame2 Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 10
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 10
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 4
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 8
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame.frame2 Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 50
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 50
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+if {"[lindex [.xfPlacingToplevel.frame2.children.widgets.widgets get 2] 1]" == ".frame.frame2"} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 5
+} {
+  .xfPlacingToplevel.frame2.children.widgets.widgets select set 9
+}
+update idletasks
+.xfPlacingToplevel.functions.child configure -state active
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.child invoke
+update idletasks
+.xfPlacingToplevel.functions.child configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.child configure -relief raised
+update idletasks
+XFPlacingGetPlacing .frame.frame2 Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos1 set 80
+update idletasks
+.xfPlacingToplevel.frame2.pos.pos2 set 80
+update idletasks}
+
+
+set placingName4 {Placing}
+set placingText4 {\
+To give the parent a size that shows all it's children, you
+can either expand the packed parent or specify a width and
+height with the placer for the parent.}
+
+set placingCommand4 {\
+.xfPlacingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPlacingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+.xfPlacingToplevel.functions.master configure -state active
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief sunken
+update idletasks
+.xfPlacingToplevel.functions.master invoke
+update idletasks
+.xfPlacingToplevel.functions.master configure -state normal
+update idletasks
+.xfPlacingToplevel.functions.master configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPlacingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPlacingGetPlacing .frame Toplevel
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.width.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -state active
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel invoke
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -state normal
+update idletasks
+.xfPlacingToplevel.frame2.geo.geobutt.height.rel configure -relief raised
+update idletasks
+.xfPlacingToplevel.frame2.geo.geo1 set 50
+update idletasks
+.xfPlacingToplevel.frame2.geo.geo2 set 50
+update idletasks}
+
+
+set placingName5 {Placing}
+set placingText5 {\
+That was all...}
+
+set placingCommand5 {
+.xfPlacingToplevel.frame1.ok configure -state active
+update idletasks
+.xfPlacingToplevel.frame1.ok configure -relief sunken
+update idletasks
+.xfPlacingToplevel.frame1.ok invoke
+update idletasks}
+

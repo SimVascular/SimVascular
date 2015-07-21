@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Missing features</TITLE>
+<META NAME="description" CONTENT="Missing features">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1548" HREF="node64.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1546" HREF="node61.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1542" HREF="node62.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1550" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1551" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1549" HREF="node64.html">External Tools</A>
+<B>Up:</B> <A NAME="tex2html1547" HREF="node61.html">Conclusion</A>
+<B> Previous:</B> <A NAME="tex2html1543" HREF="node62.html">Epilogue</A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00720000000000000000">Missing features</A></H1>
+<P>
+There are some missing features in <EM>XF</EM>
+. Future releases
+will hopefully contain:
+<P>
+<UL><LI> undo/redo.<BR>
+Allowing an undo/redo in an program like <EM>XF </EM>
+ is almost a
+``must''. This is hard to do, as it can make the program
+slower, and the basic design does not support this.
+<LI> configuration via <EM>send</EM>.<BR>
+Right now, the application that should be modified with <EM>XF </EM>
+<P>
+must be loaded together with <EM>XF</EM>
+. This was a design
+decision. It will be changed to allow the parallel
+manipulation of many applications with one <EM>XF</EM>
+. This gets
+more and more important with the increasing use of <EM>
+send</EM> to connect different <EM>Tcl/Tk </EM>
+ applications.
+<LI> support for specific interface styles.<BR>
+<EM>XF </EM>
+ makes no assumptions (and provides no special support) for
+certain styles of interfaces. One interface style that
+should definitely be supported more is the design of forms.
+This will include an automatic layout, a validation check
+for entered data and an automatic connection between fields
+and forms.
+<LI> drag&amp;drop.<BR>
+The ability to drag&amp;drop widgets and groups of widgets will
+be added in a future release. This will be used to rearrange
+the widget layout, and to define connections between widgets
+(i.e. connecting a scrollbar to a listbox). The problem is
+the drag&amp;drop between different applications/toplevels, and
+the general visualization of this drag&amp;drop. Right now, the
+<EM>Tcl/Tk </EM>
+ distribution does not provide support for this, like
+a general drag&amp;drop protocol.
+<LI> default parameter settings.<BR>
+There should be a way to define default parameter settings
+for widgets. Changes to a default parameter setting should
+be automatically applied to all widgets that where
+configured with this default parameter setting,
+<LI> support for debugging.<BR>
+Right now debugging is not supported. There exists a small
+extension to <EM>Tcl </EM>
+ that allows the debugging of <EM>Tcl </EM>
+<P>
+programs. It should be examined if this feature can be used
+and embedded into <EM>XF</EM>
+.
+<LI> support for other languages &amp; widget sets.<BR>
+<EM>XF </EM>
+ was originally designed to support the development of
+<EM>Tcl/Tk </EM>
+ applications. Of course, this will always be the
+major aim of <EM>XF</EM>
+, as <EM>Tcl/Tk </EM>
+ is used to implement <EM>XF</EM>
+. But
+it should be possible to create C code for parts of the
+application code. It should also be possible to use <EM>XF </EM>
+ as
+a sort of abstract interface builder that is able to
+create code for other widget sets than <EM>Tk </EM>
+ (i.e. <EM> <IMG WIDTH=67 HEIGHT=26 ALIGN=MIDDLE ALT="tex2html_wrap_inline2458" SRC="img26.gif"  > </EM>
+).
+</UL>
+<P>
+<EM>XF </EM>
+ is still in development, and new features are permanently
+added. If a user has specific wishes or finds bugs, he can
+contact me to get this into the next release. With this
+paper, the internal interface is documented, and I hope that
+users will contribute new functionality.
+<P>
+Comments are welcome....
+<P>
+  <BR> <HR><A NAME="tex2html1548" HREF="node64.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1546" HREF="node61.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1542" HREF="node62.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1550" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1551" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1549" HREF="node64.html">External Tools</A>
+<B>Up:</B> <A NAME="tex2html1547" HREF="node61.html">Conclusion</A>
+<B> Previous:</B> <A NAME="tex2html1543" HREF="node62.html">Epilogue</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

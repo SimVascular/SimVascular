@@ -1,0 +1,134 @@
+Frequently asked questions about the INSTALLATION of XF:
+
+Index:
+======
+
+I-1) What do I need for running XF ?
+I-2) How do I install XF ?
+I-3) How do I install the XF help system ?
+I-4) Why does the installation not work on my machine ?
+
+I-5) Do I need shape ?
+I-6) What is shape needed for ?
+I-7) Where can I get shape ?
+I-8) What are the problems with old Tcl/Tk versions and XF ?
+I-9) Where do I get the widget XXX ?
+
+Questions/Answers:
+==================
+
+I-1) What do I need for running XF ?
+        You need Tk 8.0 or later.
+
+
+I-2) How do I install XF ?
+        Please unpack the XF distribution inside the
+        directory where XF should be "officially" located
+        (e.g. /usr/local/lib, or any other directory). The
+        compressed tar file contains a directory tree named
+        "xf/...". The installation procedure will not
+        copy the XF files to another location. When the
+        distribution is unpacked, you have to configure the
+        Makefile. The Makefile contains some file- and path
+        names that must correspond to your system. You only
+        have to adapt the Makefile at the top of the
+        distribution directory tree.
+
+        Now you can type:
+
+                make install
+
+        with a running X11 server. During the installation,
+        the installation procedure needs access to the
+        program "xlsfonts" (part of the X11 core
+        distribution). It is also necessary that it finds:
+
+                rgb.txt (usually under /usr/lib/X11/),
+                cursorfont.h (usually under /usr/include/X11/) and
+                keysymdef.h (usually under /usr/include/X11/)
+
+        at the locations configured via the Makefile. Once
+        the various files (./lib/Colors etc.) have been
+        created from these files, you can modify the created
+        files as you need them (sorting, removing of
+        uninteresting items, etc.).
+
+        The default parameter settings (especially the file
+        and pathnames) should be configured by the user. It
+        is necessary that the user has writing permission to
+        some files and path names. It may also be necessary
+        to remove the old user configuration files.
+
+
+I-3) How do I install the XF help system ?
+        The XF package comes with preformatted html online
+        documentation. You will need an HTML browser
+        to show it. On Windows platforms, XF retrieves the 
+        name of the browser from the registry. On UNIX
+        platforms, XF first attempts to use netscape then
+        mosaic.
+
+
+I-4) Why does the installation not work on my machine ?
+        You should first check if you have writing
+        permission to the directories that you have
+        specified as target directories in the Makefile
+        (something like /usr/local/bin/X11,
+        /usr/local/lib/X11/app-defaults,
+        /usr/local/man/mann etc.).
+
+
+I-5) Do I need shape ?
+        No. The shapeToolkit is not needed for the
+        installation. You can use it in XF to store
+        procedures in a version database instead of storing
+        them into standard UNIX files. But this is only a
+        feature, not a requirement.
+
+
+I-6) What is shape needed for ?
+        The shape toolkit is used for the version control of
+        procedures, and for version control of source
+        modules. The shape toolkit is a collection of
+        programs to support software configuration
+        management in a UNIX environment. It consists of a
+        set of version and attribute control commands and a
+        building tool ("shape"). It should be installed on
+        every "good" system :-).
+
+
+I-7) Where can I get shape ?
+	Shape is available at:
+		ftp.cs.tu-berlin.de (pub/shapeTools/), and on
+		gatekeeper.dec.com (pub/plan/shape)
+
+
+I-8) What are the problems with old Tcl/Tk versions and XF ?
+	It won't run with anything older than Tk 4.0.
+
+
+I-9) Where do I get the widget XXX ?
+	Generally ftp.aud.alcatel.com is a good place to
+	look for it. The following list is not complete, but
+	it directs you to the sites for the widgets that are
+	supported by the distribution:
+
+	- xygraph, barchart and hypertext
+		ftp.aud.alcatel.com:	tcl/contrib/extensions
+		ftp.ibp.fr:		pub/tcl/contrib/extensions
+		nic.funet.fi:		pub/languages/tcl/extensions/
+	        syd.dit.csiro.au:       pub/tk/contrib/extensions/
+		ftp.cs.tu-berlin.de:	pub/tcl/contrib/extensions
+
+	- bargraph, dial, pie and stripchart
+		ftphost.comp.vuw.ac.nz: 
+		ftp.cs.tu-berlin.de:	pub/tcl/local/misc/vuw_meters_widgets.tar.gz
+
+	- TkEmacs
+		ftp.aud.alcatel.com:	tcl/contrib/extensions
+		ftp.ibp.fr:		pub/tcl/contrib/extensions
+		nic.funet.fi:		pub/languages/tcl/extensions/
+	        syd.dit.csiro.au:       pub/tk/contrib/extensions/
+		ftp.cs.tu-berlin.de:	pub/tcl/contrib/extensions
+
+

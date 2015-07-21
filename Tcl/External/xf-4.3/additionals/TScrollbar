@@ -1,0 +1,127 @@
+# Program: xf
+# Description: handle TScrollbar widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tscrollbar) 4
+
+##########
+# Procedure: XFAdd.TScrollbar
+# Description: add a TScrollbar
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TScrollbar {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TScrollbar..."
+  set xfName [XFMiscGetUniqueName $xfName tscrollbar]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TScrollbar: .$xfName"
+      ttk::scrollbar .$xfName
+    } {
+      puts "attempt to create TScrollbar: .$xfName"
+      ttk::scrollbar .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TScrollbar: $xfStatus(path).$xfName"
+      ttk::scrollbar $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TScrollbar: $xfStatus(path).$xfName"
+      ttk::scrollbar $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TScrollbar...done"
+}
+
+##########
+# Procedure: XFConfig.TScrollbar4
+# Description: configure a TScrollbar
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TScrollbar4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TScrollbar$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TScrollbar..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TScrollbar parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTScrollbarSetTScrollbar4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTScrollbarSetTScrollbar4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TScrollbar...done"
+}
+
+##########
+# Procedure: XFTScrollbarSetTScrollbar4
+# Description: set TScrollbar parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTScrollbarSetTScrollbar4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+# eof
+

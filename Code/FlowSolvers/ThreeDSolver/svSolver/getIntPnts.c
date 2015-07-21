@@ -294,7 +294,7 @@ static double pts84[][4] =
 #ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
   #define getintpnts_ GETINTPNTS
 #endif
-/* nothing to be done for CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE case */
+/* nothing to be done for CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE case */
 
 /* return the requested number of interpolation points */
 void getintpnts_(double points[][3], int *npts)

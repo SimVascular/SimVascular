@@ -86,7 +86,7 @@
 
 #endif
 
-#ifdef CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 
 #define workfc workfc_ 
 #define fronts fronts_ 

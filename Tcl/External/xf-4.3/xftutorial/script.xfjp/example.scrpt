@@ -1,0 +1,960 @@
+# tutorial
+global exampleLast
+set exampleLast 27
+global exampleLastSectionDone
+set exampleLastSectionDone -1
+
+
+set exampleName0 {例題}
+set exampleText0 {\
+この例題の章では、XF の操作はすべてチュートリアル
+のプログラムが行います。あなたは XF を直接操作せず
+に、"Next page" ボタンを押して例題を進めて行って下
+さい。
+
+例題として、簡単なディレクトリ・ブラウザを作ってみ
+ます。このアプリケーションは、ディレクトリの階層を
+移動して、ファイルの内容（最初の５０行のみ）を表示
+するものです。
+
+基本的なダイアログの構成要素としては、まず最上部に
+メニュー・バーがあります。メニュー・バーには、１つ
+の menubutton があって、表示されたディレクトリの内
+容を再表示したり、プログラムを終了したりすることが
+できます。
+
+メニュー・バーの下には、２つの label があります。
+１つ目の label には、現在表示されているディレクト
+リの名前が表示されます。この label のディレクトリ
+名は、ディレクトリが変更されるたびに更新されます。
+２つ目の label には、現在表示されているファイルの
+名前が表示されます。
+
+さらにその下には、２つの list が並んでいます。左の
+list には、現在のディレクトリ上のすべてのファイル
+とディレクトリの名前の一覧が表示され、右の list に
+は、現在選ばれているファイルの内容が表示されます。
+
+ディレクトリを移動したり、ファイルの内容を表示する
+ために、左の list 上の項目には、マウスの左ボタンで
+選ばれた時に適当な動作を行う『定義』がなされていま
+す。
+
+以上が、例題となるアプリケーションの基本的な構成で
+す。では、始めましょう。}
+
+set exampleCommand0 {\
+XFMiscClearInterpreter
+global xfConf xfPath
+set xfConf(saveInterval) 0
+set xfConf(onlyOneWindow) 0
+set xfConf(externalEditor) ""
+set xfConf(geometry) packer
+set xfConf(newPacker) 0
+source "$xfPath(src)/xfpacking.tcl"
+global curDir
+set curDir \[pwd\]
+XFEditSetType Frame 0
+update idletasks}
+
+
+set exampleName1 {frame の作成}
+set exampleText1 {\
+まず、作業領域に３つの frame ウィジェットを作りま
+す。これは、XF のメイン・ウィンドウで、左のリスト
+から "Frame" の項目を選んで、ダブル・クリックする
+ことによって行います。
+
+一番上の frame にはメニュー・バーが、中央の frame 
+には現在のディレクトリとファイル名を表示する label
+が、一番下の frame にはディレクトリとファイルの内
+容を表示する listbox が、それぞれ挿入されることに
+なります。}
+
+set exampleCommand1 {\
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.standard.standard select set 4
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks}
+
+
+set exampleName2 {作業領域の大きさの変更}
+set exampleText2 {\
+まず、作業領域をアプリケーションに必要な大きさに変
+更します。これは、ウィンドウ・マネージャから直接変
+更することもできますし、トップレベル・ウィンドウの
+パラメタを設定してやることによっても可能です。}
+
+set exampleCommand2 {\
+wm geometry . 450x250
+update idletasks}
+
+
+set exampleName3 {menubutton の作成}
+set exampleText3 {\
+次に、一番上の frame を現在着目するウィジェットと
+して選びます。これは、マウスの中ボタンでウィジェッ
+トをダブル・クリックするか、あるいは XF のメインの
+編集ウィンドウに表示されたウィジェット・パスのプル
+ダウン・メニューから選ぶこともできます。
+
+さて、XF のメイン・ウィンドウの "standard" リスト
+の中の menubutton の項目をダブル・クリックして、
+menubutton を作成します。この menubutton には２つ
+の項目が含まれます。１つは現在のディレクトリの内容
+を再表示するためもの、もう１つはアプリケーションの
+終了のためのものです。}
+
+set exampleCommand3 {\
+XFEditSetPath .frame0
+XFEditSetType Menubutton 0
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.standard.standard select set 8
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks}
+
+
+set exampleName4 {label の作成}
+set exampleText4 {\
+menubutton を作成した後、中央の frame を選択し、そ
+こに現在のディレクトリ・パスを表示するための label
+ウィジェットを作成します。さらに現在内容が表示され
+ているファイルの名前を表示するための label も作成
+します。ウィジェットの選択や作成は、すでに説明した
+通りです。}
+
+set exampleCommand4 {\
+XFEditSetPath .frame1
+XFEditSetType Label 0
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.standard.standard select set 5
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks}
+
+
+set exampleName5 {listbox の作成}
+set exampleText5 {\
+次に、ディレクトリの内容と選択されたファイルの内容
+を表示するための、２つの listbox を作成します。ま
+ず、XF の編集ウィンドウ上の "Templates" リストから
+"Combined" の項目をダブル・クリックしてサブ・ディ
+レクトリを開きます。さらにその中から、"ListboxLS"
+の項目を選びます。この listbox は、すでに２つの 
+scrollbar が付加されたものであり、ことさら listbox 
+と scrollbar を関係付けたりする必要はありません。}
+
+set exampleCommand5 {\
+XFEditSetPath .frame2
+XFEditSetType Combined 2
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.template.template select set 0
+update idletasks
+XFEditInsertTmplt Combined/
+update idletasks
+XFEditSetType ListboxS 2
+.xfEdit.frame2.template.template select clear 0 end
+update idletasks
+.xfEdit.frame2.template.template select set 9
+update idletasks
+XFEditInsertTmplt ListboxLS
+update idletasks
+XFEditInsertTmplt ListboxLS
+update idletasks}
+
+
+set exampleName6 {ウィジェットのレイアウト}
+set exampleText6 {\
+これで、アプリケーションに必要なウィジェットをすべ
+て作成しました。次はそのレイアウトです。まずは、ア
+プリケーションのトップレベル・ウィンドウを選択し、
+メニューの "Configuration" から "Packing" の項目を
+選択してください。pack のためのウィンドウが表示さ
+れます。
+
+packing のウィンドウには、pack のオプションを指定
+するためのボタン等と、アプリケーションのウィジェッ
+トを表示・選択するための２つのリストがあります。最
+初に packing のウィンドウが表示されると、選ばれた
+ウィジェットとその最初の子供の名前が、リストの中で
+反転して表示されています。
+
+左のリストには、現在のトップレベル・ウィンドウのす
+べての子供が表示されています。この中から、pack す
+るウィジェットの親を選択します。右のリストには、現
+在着目するウィジェットに pack されたすべての子供が
+表示されています。この中から、pack するウィジェッ
+トを選択します。}
+
+set exampleCommand6 {\
+XFEditSetPath .
+.xfEdit.frame1.configMenu.m post [winfo rootx .xfEdit.frame1.configMenu] [expr [winfo rooty .xfEdit.frame1.configMenu]+[winfo height .xfEdit.frame1.configMenu]]
+update idletasks
+.xfEdit.frame1.configMenu.m activate 0
+update idletasks
+.xfEdit.frame1.configMenu.m activate 2
+update idletasks
+.xfEdit.frame1.configMenu.m invoke 2
+update idletasks
+.xfEdit.frame1.configMenu.m unpost
+update idletasks}
+
+
+set exampleName7 {メニュー・バーのレイアウト}
+set exampleText7 {\
+"Children" リストから１番目の frame を選び、pack 
+のオプションの中から "fillx" オプションを選んで、
+この frame が親のウィンドウの幅を埋め尽くすように
+指定します。}
+
+set exampleCommand7 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+XFPackingGetPacking . Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks}
+
+
+set exampleName8 {ディレクトリ・ラベルのレイアウト}
+set exampleText8 {\
+次に２番目の frame を選び、１番目の frame と同じオ
+プションを指定します。この frame もまた、親のウィ
+ンドウの幅を埋め尽くします。}
+
+set exampleCommand8 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+XFPackingGetPacking . Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks}
+
+
+set exampleName9 {表示領域のレイアウト}
+set exampleText9 {\
+３番目の frame を選び、この frame には親のウィンド
+ウの残りの空間（幅も高さも）を埋め尽くすように指定
+します。これは、オプションの "fillx" と "filly"、
+"expand" の３つを指定することによって行います。す
+なわち、ウィジェットは残りの空間一杯に広げられ、そ
+の空間を埋め尽くします。}
+
+set exampleCommand9 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 2
+XFPackingGetPacking . Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.filly invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set exampleName10 {メニュー・バーの子供のレイアウト}
+set exampleText10 {\
+まずは一番上の frame を親として選びます。これは、
+この frame の名前（.frame0）を左のリストの中からマ
+ウスのダブル・クリックで選ぶことによって行います。
+これに従って、"Children" リストの内容が、メニュー・
+バーの子供（menubutton）に変更されます。"Left" の
+オプションを選ぶことによって、menubutton が frame 
+の左端に寄せられます。}
+
+set exampleCommand10 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 13
+update idletasks
+XFPackingMakeMaster .frame0 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame0 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks}
+
+
+set exampleName11 {ディレクトリ・ラベルの子供のレイアウト}
+set exampleText11 {\
+２番目の frame を親として選びます。ファイル名を表
+示するラベルを選択し、右端に配置します。次に、ディ
+レクトリ名を表示するラベルを選択し、左端に配置して、
+さらにそのラベルを frame の残りの空間の幅一杯に広
+げます。}
+
+set exampleCommand11 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 10
+update idletasks
+XFPackingMakeMaster .frame1 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.right invoke
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set exampleName12 {表示領域の子供のレイアウト}
+set exampleText12 {\
+３番目の frame を親として選びます。そして１つ目の
+リストを選択し、左に配置します。さらに２つ目のリス
+トを選択し、同様に左に配置します。そうすると、２つ
+目のリストは、１つ目のリストの右隣に配置されます。
+２つのリストは、共に "fill" オプションが指定されて
+います。さらに右のリストには "expand" が指定され、
+親のウィンドウの残りの空間一杯に広げられます。}
+
+set exampleCommand12 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+XFPackingMakeMaster .frame2 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame2 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame2 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set exampleName13 {menubutton のパラメタの設定}
+set exampleText13 {\
+これでレイアウトが終りました。次は、ウィジェットの
+パラメタの設定です。まず初めに、メニュー・バー上の
+menubutton を取り扱います。これにはまず、メニュー・
+バーの frame（.frame0）を親として選びます。そして、
+packing のウィンドウの "Child parameters" のボタン
+を押すと、パラメタ設定のためのウィンドウが表示され
+ます。あるいは、作業領域上のウィジェットを直接マウ
+スの右ボタンでダブル・クリックしても構いません。}
+
+set exampleCommand13 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 13
+update idletasks
+XFPackingMakeMaster .frame0 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame0 Toplevel
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state active
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief sunken
+update idletasks
+.xfPackingToplevel.additional.chldparameters invoke
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state normal
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief raised
+update idletasks}
+
+
+set exampleName14 {menubutton のパラメタの設定}
+set exampleText14 {\
+まず menubutton のラベルが入力され、次に "Menu" ボ
+タンが押されて、メニューを定義するためのウィンドウ
+が表示されます。}
+
+set exampleCommand14 {\
+.xfMenubuttonConfig4.params1.params2.text.text delete 0 end
+update idletasks
+.xfMenubuttonConfig4.params1.params2.text.text insert end File
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -state active
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -relief sunken
+update idletasks
+.xfMenubuttonConfig4.additional.menu invoke
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -state normal
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -relief raised
+update idletasks}
+
+
+set exampleName15 {プルダウン・メニューの定義}
+set exampleText15 {\
+ここでメニューの項目名と、その項目が選ばれた時に実
+行するコマンドを入力します。入力が終って "Insert" 
+ボタンが押されると、その項目は右側のリストに表示さ
+れます。最初の項目 "Refresh" は、ディレクトリの内
+容を再表示するものです。２つめの項目 "Quit" は、プ
+ログラムの実行を終了するためのものです。}
+
+set exampleCommand15 {\
+global xfStatus
+set xfTmpCounter [expr $xfStatus(menuCounter)-1]
+XFMiscSetText .xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.command.command TkBroRefresh
+update idletasks
+.xfMenubuttonConfig4.leave.ok configure -state active
+update idletasks
+.xfMenubuttonConfig4.leave.ok configure -relief sunken
+update idletasks
+.xfMenubuttonConfig4.leave.ok invoke
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label delete 0 end
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label insert end Refresh
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state active
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief sunken
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert invoke
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state normal
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief raised
+update idletasks
+XFMiscSetText .xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.command.command "destroy .; exit"
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label delete 0 end
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label insert end Quit
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state active
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief sunken
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert invoke
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state normal
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief raised
+update idletasks}
+
+
+set exampleName16 {ディレクトリ・ラベルのパラメタの設定}
+set exampleText16 {\
+次に、ディレクトリ名を表示するためのラベルを取り扱
+います。}
+
+set exampleCommand16 {\
+global xfStatus
+set xfTmpCounter [expr $xfStatus(menuCounter)-1]
+.xfMenuConfig5$xfTmpCounter.leave.ok configure -state active
+update idletasks
+.xfMenuConfig5$xfTmpCounter.leave.ok configure -relief sunken
+update idletasks
+.xfMenuConfig5$xfTmpCounter.leave.ok invoke
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 10
+update idletasks
+XFPackingMakeMaster .frame1 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame1 Toplevel
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state active
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief sunken
+update idletasks
+.xfPackingToplevel.additional.chldparameters invoke
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state normal
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief raised
+update idletasks}
+
+
+set exampleName17 {ディレクトリ・ラベルのパラメタの設定}
+set exampleText17 {\
+ここで、２番目の frame の左側のラベルがディレクト
+リのパス名を表示するように設定します。このラベルに
+は、手続きから容易に参照できるように "dirName" と
+いうシンボリック名が定義されます。さらに、ラベルの
+初期値として "/usr/local..." が与えられます。}
+
+set exampleCommand17 {\
+.xfLabelConfig4.params1.params2.text.text delete 0 end
+update idletasks
+.xfLabelConfig4.params1.params2.text.text insert end /usr/local...
+update idletasks
+.xfLabelConfig4.params1.params2.symname.symname delete 0 end
+update idletasks
+.xfLabelConfig4.params1.params2.symname.symname insert end dirName
+update idletasks}
+
+
+set exampleName18 {その他のパラメタ}
+set exampleText18 {\
+さらにパラメタの設定を続けるわけですが、ここではそ
+のダイアログは省略し、すべてのパラメタの設定が終っ
+たものとします。}
+
+set exampleCommand18 {\
+.frame1 configure -borderwidth 0
+.frame1.label4 configure -anchor w
+.frame2 configure -borderwidth 0
+.frame2.frame.listbox1 configure -geometry 20x10
+XFMiscSetSymbolicName .frame1.label5 fileName
+XFMiscSetSymbolicName .frame2.frame.listbox1 dirList
+XFMiscSetSymbolicName .frame2.frame6.listbox1 contentsList
+update idletasks
+.xfLabelConfig4.leave.ok configure -state active
+update idletasks
+.xfLabelConfig4.leave.ok configure -relief sunken
+update idletasks
+.xfLabelConfig4.leave.ok invoke
+update idletasks
+.xfPackingToplevel.frame1.ok configure -state active
+update idletasks
+.xfPackingToplevel.frame1.ok configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame1.ok invoke
+update idletasks}
+
+
+set exampleName19 {動作の定義}
+set exampleText19 {\
+これでプログラムの大枠ができました。次は、手続きを
+定義して『機能』を追加します。まず初めに、プログラ
+ムの最初、すなわちすべてのウィジェットが作られた直
+後に実行される手続きを定義します。このソースは（メ
+イン・ループに制御が渡される前に実行される最後のソー
+スという意味で）"end source" と呼ばれます。編集ウィ
+ンドウのメニュー "Programming" から "End source" 
+の項目を選んで、コードを入力して下さい。}
+
+set exampleCommand19 {\
+.xfEdit.frame1.infoMenu.m post [winfo rootx .xfEdit.frame1.infoMenu] [expr [winfo rooty .xfEdit.frame1.infoMenu]+[winfo height .xfEdit.frame1.infoMenu]]
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 0
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 1
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 2
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 4
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 5
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 6
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 7
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 8
+update idletasks
+.xfEdit.frame1.infoMenu.m invoke 8
+update idletasks
+.xfEdit.frame1.infoMenu.m unpost
+update idletasks}
+
+
+set exampleName20 {end source の定義}
+set exampleText20 {\
+このソースは、現在のディレクトリ名を保持するための
+"curDir" という名前の大域変数を定義します。その後、
+現在のディレクトリの内容を表示するために、リストの
+内容が更新されます。テストではこの "end source" は
+評価されないので、この時点でテストを実行するために
+は、この大域変数を手で（別の XF のダイアログを用い
+て）定義しなければなりません。}
+
+set exampleCommand20 {\
+XFMiscSetText .xfInfoProc.frame4.text.text "global curDir
+set curDir \[pwd\]
+TkBroRefresh"
+update idletasks}
+
+
+set exampleName21 {手続きについて}
+set exampleText21 {\
+アプリケーションの手続きを定義したり変更したりする
+ためのダイアログ・ウィンドウを呼び出します。編集ウィ
+ンドウのメニュー "Programming" から "Procedures" 
+の項目を選択して下さい。}
+
+set exampleCommand21 {\
+.xfInfoProc.frame1.add configure -state active
+update idletasks
+.xfInfoProc.frame1.add configure -relief sunken
+update idletasks
+.xfInfoProc.frame1.add invoke
+update idletasks
+.xfInfoProc.frame3.ok configure -state active
+update idletasks
+.xfInfoProc.frame3.ok configure -relief sunken
+update idletasks
+.xfInfoProc.frame3.ok invoke
+update idletasks
+.xfEdit.frame1.infoMenu.m post [winfo rootx .xfEdit.frame1.infoMenu] [expr [winfo rooty .xfEdit.frame1.infoMenu]+[winfo height .xfEdit.frame1.infoMenu]]
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 0
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 1
+update idletasks
+.xfEdit.frame1.infoMenu.m invoke 1
+update idletasks
+.xfEdit.frame1.infoMenu.m unpost
+update idletasks}
+
+
+set exampleName22 {ディレクトリの内容を表示するための手続き}
+set exampleText22 {\
+このダイアログ・ウィンドウを用いて、手続きの名前や
+引数、ソースコードなどを定義することができます。こ
+こでは "TkBroRefresh" という名前で、新たにディレク
+トリが読まれた時に、ディレクトリのリストを表示する
+ための手続きを入力しました。}
+
+set exampleCommand22 {\
+XFMiscSetText .xfInfoProc.frame4.text.text "
+global curDir
+
+set list \[exec ls -a\]
+\[SymbolicName dirList\] delete 0 end
+\[SymbolicName contentsList\] delete 0 end
+\[SymbolicName dirName\] configure -text \$curDir
+\[SymbolicName fileName\] configure -text {}
+foreach i \$list {
+  \[SymbolicName dirList\] insert end \$i
+}
+update"
+update idletasks
+.xfInfoProc.current.current delete 0 end
+update idletasks
+.xfInfoProc.current.current insert end TkBroRefresh
+update idletasks
+.xfInfoProc.frame4.args.args delete 0 end
+update idletasks}
+
+
+set exampleName23 {ディレクトリの内容を表示するための手続き}
+set exampleText23 {\
+"Insert" ボタンを押して、手続きを定義します。}
+
+set exampleCommand23 {\
+.xfInfoProc.frame1.add configure -state active
+update idletasks
+.xfInfoProc.frame1.add configure -relief sunken
+update idletasks
+.xfInfoProc.frame1.add invoke
+update idletasks
+.xfInfoProc.frame1.add configure -relief raised
+update idletasks}
+
+
+set exampleName24 {その他の手続き}
+set exampleText24 {\
+さらに手続きの定義を続けるわけですが、ここではその
+ダイアログは省略し、すべての手続きの定義が終ったも
+のとします。}
+
+set exampleCommand24 {\
+proc TkBroOpen {fname} {
+  global curDir
+
+  if {[file isdirectory $fname]} {
+    cd $fname
+    set curDir [pwd]
+    TkBroRefresh
+  } {
+    set thisfile [open $fname r]
+    [SymbolicName contentsList] delete 0 end
+    [SymbolicName fileName] configure -text $fname
+    for { set i 1 } { $i<50 } { incr i } {
+      [SymbolicName contentsList] insert end [ gets $thisfile ]
+    }
+    update
+    close $thisfile
+  }
+}
+update idletasks
+.xfInfoProc.frame3.ok configure -state active
+update idletasks
+.xfInfoProc.frame3.ok configure -relief sunken
+update idletasks
+.xfInfoProc.frame3.ok invoke
+update idletasks}
+
+
+set exampleName25 {リストに対する動作の定義}
+set exampleText25 {\
+ディレクトリの変更やファイルの表示を指示するための
+動作を、ディレクトリの listbox の項目に対して定義
+します。編集ウィンドウのメニュー "Configuration" 
+から "Binding" の項目を選択して、binding のダイア
+ログ・ウィンドウを呼び出して下さい。}
+
+set exampleCommand25 {\
+XFEditSetPath [SymbolicName dirList]
+.xfEdit.frame1.configMenu.m post [winfo rootx .xfEdit.frame1.configMenu] [expr [winfo rooty .xfEdit.frame1.configMenu]+[winfo height .xfEdit.frame1.configMenu]]
+update idletasks
+.xfEdit.frame1.configMenu.m activate 0
+update idletasks
+.xfEdit.frame1.configMenu.m activate 2
+update idletasks
+.xfEdit.frame1.configMenu.m activate 3
+update idletasks
+.xfEdit.frame1.configMenu.m activate 4
+update idletasks
+.xfEdit.frame1.configMenu.m activate 5
+update idletasks
+.xfEdit.frame1.configMenu.m activate 6
+update idletasks
+.xfEdit.frame1.configMenu.m invoke 6
+update idletasks
+.xfEdit.frame1.configMenu.m unpost
+update idletasks}
+
+
+set exampleName26 {リストに対する動作の定義}
+set exampleText26 {\
+まずは、"Current event:" にイベントの名前を入力し
+ます。このイベントが、リストに対して定義する動作を
+引き起こすきっかけとなるものです。動作に関する手続
+きの記述は、ダイアログ・ウィンドウの下部にあるテキ
+スト・フィールドに入力して下さい。この例で定義され
+た手続き "TkBroOpen" は、ディレクトリを変更し、ファ
+イルの内容を表示するものです。}
+
+set exampleCommand26 {\
+XFMiscSetText .xfBindingListbox.value.value "
+TkBroOpen \[%W get \[%W nearest %y\]\]"
+update idletasks
+.xfBindingListbox.current.current delete 0 end
+update idletasks
+.xfBindingListbox.current.current insert end <Button-1>
+update idletasks
+.xfBindingListbox.frame2.insert configure -state active
+update idletasks
+.xfBindingListbox.frame2.insert configure -relief sunken
+update idletasks
+.xfBindingListbox.frame2.insert invoke
+update idletasks
+.xfBindingListbox.frame2.insert configure -state normal
+update idletasks
+.xfBindingListbox.frame2.insert configure -relief raised
+update idletasks}
+
+
+set exampleName27 {終りに}
+set exampleText27 {\
+こうしてアプリケーションが完成したら、編集ウィンド
+ウのメニュー "File" から "Save" または "Save as..." 
+の項目を選択して、プログラムをセーブしましょう。
+
+以上で、例題の章を終ります。
+
+チュートリアルを終了するには、メニュー "File" から 
+"Quit" の項目を選択して下さい。}
+
+set exampleCommand27 {\
+.xfBindingListbox.frame1.ok configure -state active
+update idletasks
+.xfBindingListbox.frame1.ok configure -relief sunken
+update idletasks
+.xfBindingListbox.frame1.ok invoke
+update idletasks}

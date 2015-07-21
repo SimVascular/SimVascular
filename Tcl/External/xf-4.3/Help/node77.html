@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Help pages</TITLE>
+<META NAME="description" CONTENT="Help pages">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1731" HREF="node78.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1729" HREF="node76.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1725" HREF="node76.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1733" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1734" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1732" HREF="node78.html">xfpixmap</A>
+<B>Up:</B> <A NAME="tex2html1730" HREF="node76.html">xfhelp</A>
+<B> Previous:</B> <A NAME="tex2html1726" HREF="node76.html">xfhelp</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00861000000000000000">Help pages</A></H2>
+<P>
+The help pages can be distributed over different directory
+trees. This allows storing global help information in a
+global directory, while the user notes are stored in a local 
+directory. New subtopics are created by creating a
+directory. New help pages can be added by creating a file
+with a .H extension in the help directory. Besides the main
+Help pages, additional help files can be created. They have
+the same name, but a different extension.
+<P>
+Hints have the extension .I, and notes have the extension
+.N. Special help information consists of a Tcl script ending
+with a .S. Special help files allow calling external
+programs, like ghostscript. To display a postscript file,
+the <EM>Tcl </EM>
+ command DisplayPostscript is called. This is a
+built-in that checks if there exists an environment variable
+named <B>XF_HELP_PS_CMD</B>. If this variable exists, this
+is the command that is executed, with the file name as 
+parameter.  Otherwise, ghostscript is started. The variable
+``<B>runPath</B>'' contains the absolute path name of the
+help page, and should precede the filename that is passed on
+to the command.
+<P>
+Help pages can start with two special information lines. One
+line can begin with ``###Title ''. This is the title for
+this help page. The second line can begin with
+``###Keywords ''. This is a list of keywords attached to
+this help page. The following text is the help text that is
+displayed in the help area.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

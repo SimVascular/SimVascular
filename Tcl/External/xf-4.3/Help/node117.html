@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>XFProcEditMakeAProc</TITLE>
+<META NAME="description" CONTENT="XFProcEditMakeAProc">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html2315" HREF="node118.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html2313" HREF="node110.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html2307" HREF="node116.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html2317" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html2318" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html2316" HREF="node118.html">XFProcEditPaste</A>
+<B>Up:</B> <A NAME="tex2html2314" HREF="node110.html">Edit</A>
+<B> Previous:</B> <A NAME="tex2html2308" HREF="node116.html">XFProcEditLoadTemplate</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00947000000000000000">XFProcEditMakeAProc</A></H2>
+<P>
+<A NAME=1338>&#160;</A>
+<A NAME=1339>&#160;</A>
+Calling this procedure creates a procedure from the
+specified widget or the current widget (if no widget was
+specified). The new procedure is named
+V<i>&lt;</i>WidgetClass<i>&gt;</i><i>&lt;</i>pathName<i>&gt;</i>. The widget structure
+remains in the application. Making a widget structure a
+procedure allows it to dynamically reproduce complex widget
+structures. This can be useful for applications where
+several toplevels contain the same sub widget structure. If
+no widget path is specified, the current widget path is used.
+<P>
+The created procedure is called with one parameter to create
+a new instance of the widget tree. This parameter specifies
+the parent name of the widget. The programmer has to
+guarantee that the parent will not contain the same widget
+structure more than once.
+<P>
+The call of the procedure can have additional parameters
+which are used to configure the created widget structure.
+Calling the procedure with a parent name that already
+contains the widget structure allows it to reconfigure the
+widget tree. The parameters are the usual resource pairs.
+First the resource name, and then the new value. The
+resource is set for all widgets that support this resource.
+If a resource is to be set for one specific subwidget, the
+complete pathname is specified as a parameter, followed by
+the usual resourcename/resourcevalue pair. There are three
+special configuration parameters that are only used when the
+widget structure is created. They are named -startupSrc,
+-middleSrc and -endSrc. Each parameter gets one argument.
+The startupSrc is evaluated before any widget is created.
+The middleSrc is evaluated when all widgets are created, but
+before they are mapped. The endSrc is evaluated before the
+procedure is finished.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

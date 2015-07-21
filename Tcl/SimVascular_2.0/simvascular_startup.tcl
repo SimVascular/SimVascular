@@ -310,6 +310,17 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
             }
 
           }
+
+#
+#  use registry to find mpiexec on windows
+#
+
+if {$tcl_platform(platform) == "windows"} {
+  if {![catch {set mpi_install_dir [registry get "HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\MPI" InstallRoot]} msg]} {
+      regsub -all {\\} $mpi_install_dir/bin/mpiexec.exe / gExternalPrograms(mpiexec)
+  }
+}
+
 # -------------------------
 # Launch gui if interactive
 # -------------------------

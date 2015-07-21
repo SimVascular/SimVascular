@@ -66,7 +66,7 @@
   #define Write_Displ   WRITE_DISPL
 #endif
 
-#ifdef CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define Write_Restart write_restart_
   #define Write_Error   write_error_
   #define Write_Displ   write_displ_
@@ -110,10 +110,10 @@ Write_Restart(  int* pid,
     writestring_( &irstou, fname );
 
     bzero( (void*)fname, 255 );
-    gethostname(fname,255);
-    writestring_( &irstou,"# This result was produced on: ");
-    writestring_( &irstou, fname );
-    writestring_( &irstou,"\n");
+    /*gethostname(fname,255);*/
+    writestring_( &irstou,"# This result was produced on: undisclosed\n");
+    /*writestring_( &irstou, fname );*/
+    /*writestring_( &irstou,"\n");*/
 
     bzero( (void*)fname, 255 );
     sprintf(fname,"# %s\n", ctime( &timenow ));

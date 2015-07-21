@@ -1,0 +1,262 @@
+# Program: xf
+# Description: handle listbox widgets
+#
+# $Header: Listbox[2.4] Wed Mar 10 11:58:50 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(listbox) 4
+
+##########
+# Procedure: XFAdd.Listbox
+# Description: add a listbox
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Listbox {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Listbox..."
+  set xfName [XFMiscGetUniqueName $xfName listbox]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      listbox .$xfName \
+        -width 10 \
+        -height 2 \
+        -relief raised
+    } {
+      listbox .$xfName
+    }
+    .$xfName insert 0 "$xfName"
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      listbox $xfStatus(path).$xfName \
+        -width 10 \
+        -height 2 \
+        -relief raised
+    } {
+      listbox $xfStatus(path).$xfName
+    }
+    $xfStatus(path).$xfName insert 0 "$xfName"
+ 
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Listbox...done"
+}
+
+##########
+# Procedure: XFConfig.Listbox4
+# Description: configure a listbox
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Listbox4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+  global xfMisc
+
+  set xfMisc(singleSelection) 0  
+  if {"$xfType" == "add"} {
+    set xfName listbox$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Listbox..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x630 \
+    "Listbox parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFListboxSetListbox4 parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFListboxSetListbox4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 XFListboxSetListbox4
+  XFElementBoolean $xfW .xf${xfClass}Config4 $xfType $xfClass exportSelection \
+    "Export selection" XFListboxSetListbox4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFListboxSetListbox4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFListboxSetListbox4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFListboxSetListbox4
+  XFElementGeometry $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFListboxSetListbox4
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFListboxSetListbox4
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame9 0
+
+  checkbutton .xf${xfClass}Config4.params1.params2.frame9.singlesel \
+    -text "Single selection" \
+    -variable xfMisc(singleSelection) \
+    -command "XFListboxSetListbox4 $xfW 0 $xfClass"
+  pack append .xf${xfClass}Config4.params1.params2.frame9 \
+              .xf${xfClass}Config4.params1.params2.frame9.singlesel {top frame center}
+  pack append .xf${xfClass}Config4.params1.params2 \
+              .xf${xfClass}Config4.params1.params2.frame9 {top fill pady 6}
+
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass xcommand \
+    xScrollCommand XScrollCommand "X scroll command" XFListboxSetListbox4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass ycommand \
+    yScrollCommand YScrollCommand "Y scroll command" XFListboxSetListbox4
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.geo.geo1.geo1 set 10
+    .xf${xfClass}Config4.params1.params2.geo.geo2.geo2 set 2
+  } {
+    if {!("[bind $xfW <B1-Motion>]" == {} ||
+          "[bind $xfW <B1-Motion>]" == {%W select to [%W nearest %y]} ||
+          "[bind $xfW <B1-Motion>]" == {# xf ignore me 9
+  %W select to [%W nearest %y]})} {
+      set xfMisc(singleSelection) 1
+    }
+  }
+
+  label .xf${xfClass}Config4.params1.params2.contentsMess \
+    -relief flat \
+    -anchor c \
+    -text "Current contents of list:"
+
+  set xfContents ""
+  if {"$xfType" == "add"} {
+    set xfContents $xfName
+  } {
+    set xfListLength [$xfW size]
+    set xfCounter 0
+    while {$xfCounter < $xfListLength} {
+      append xfContents "[$xfW get $xfCounter]\n"
+      incr xfCounter 1
+    }
+  }
+  XFTmpltText .xf${xfClass}Config4.params1.params2 contents 0 $xfContents
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {background borderwidth exportselection font kanjifont foreground width height relief xscrollcommand yscrollcommand}
+  } {
+    XFElementSave $xfW $xfClass {background borderwidth exportselection font foreground width height relief xscrollcommand yscrollcommand}
+  }
+
+  # packing
+  pack append .xf${xfClass}Config4.params1.params2 \
+              .xf${xfClass}Config4.params1.params2.contentsMess {top fillx padx 6} \
+              .xf${xfClass}Config4.params1.params2.contents {top fill expand}
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFListboxSetListbox4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Listbox...done"
+}
+
+##########
+# Procedure: XFSaveSpecial.Listbox
+# Description: save listbox
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.Listbox {xfW} {
+
+  set xfCounter 0
+  set xfLast [$xfW size]
+  set xfResult ""
+  while {$xfCounter < $xfLast} {
+    append xfResult "  $xfW insert end \{[$xfW get $xfCounter]\}\n"
+    incr xfCounter 1
+  }
+  return $xfResult
+}
+
+##########
+# Procedure: XFListboxSetListbox4
+# Description: set listbox parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFListboxSetListbox4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW exportselection $xfMisc(exportSelection)
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  if {[.xf${xfClass}Config4.params1.params2.geo.geo1.geo1 get] > 0 &&
+      [.xf${xfClass}Config4.params1.params2.geo.geo2.geo2 get] > 0} {
+    XFMiscSetResource $xfW width \
+      [.xf${xfClass}Config4.params1.params2.geo.geo1.geo1 get]
+    XFMiscSetResource $xfW height \
+      [.xf${xfClass}Config4.params1.params2.geo.geo2.geo2 get]
+  }
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  XFMiscSetResource $xfW xscrollcommand \
+    [.xf${xfClass}Config4.params1.params2.xcommand.xcommand get]
+  XFMiscSetResource $xfW yscrollcommand \
+    [.xf${xfClass}Config4.params1.params2.ycommand.ycommand get]
+  
+  XFMiscClearList $xfW
+  set xfContents [string trim [XFMiscGetText .xf${xfClass}Config4.params1.params2.contents.contents]]
+  foreach xfCounter [split $xfContents [format "%s" "\n"]] {
+    $xfW insert end $xfCounter
+  }
+
+  if {$xfMisc(singleSelection)} {
+    bind $xfW <B1-Motion> {%W select anchor [%W nearest %y]} 
+    bind $xfW <Shift-1> {%W select anchor [%W nearest %y]}
+    bind $xfW <Shift-B1-Motion> {%W select anchor [%W nearest %y]}
+  } {
+    bind $xfW <B1-Motion> {}
+    bind $xfW <Shift-1> {}
+    bind $xfW <Shift-B1-Motion> {}
+  }
+}
+
+# eof
+

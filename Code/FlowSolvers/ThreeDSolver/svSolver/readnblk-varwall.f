@@ -118,9 +118,9 @@ c
 c
 c.... try opening restart.latest.proc before trying restart.stepno.proc
 c
-      call openfile(  fnamelr,  'read?'//CHAR(0), irstin )
+      call openfile(  fnamelr,  'read'//CHAR(0), irstin )
       if ( irstin .eq. 0 )
-     &   call openfile( fnamer, 'read?'//CHAR(0), irstin )
+     &   call openfile( fnamer, 'read'//CHAR(0), irstin )
 ! either one will work
 c
 c.... input the geometry parameters

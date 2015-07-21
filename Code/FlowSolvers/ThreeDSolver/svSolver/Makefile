@@ -64,6 +64,8 @@ CXXSRCS = Cinput.cxx ValType.cxx input_fform.cxx \
 CSRCS    = getIntPnts.c ShapeFunctions_uniformP.c \
           shptet.c symtri.c symtet.c
 
+#CSRCS  += missing_mingw_and_CL.c
+
 # solver io files
 CSRCS   += write_restart_files.c
 
@@ -145,9 +147,10 @@ static: createOptionFile $(TOP)/Bin/$(TARGET_EXE)
 
 $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS)  $(SOLVER_STCKSZ) \
-             $(OBJS) $(METIS_LIBS) $(LESLIB_LIBS) $(SVLS_LIBS) $(MPICH_LIBS) $(F90_LIBS) $(CXX_LIBS) \
+             $(OBJS) \
              $(TOP)/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
-	     $(ZLIB_LIBS)  $(VTK_LIBS)
+	     $(ZLIB_LIBS) $(VTK_LIBS) $(METIS_LIBS) $(LESLIB_LIBS) \
+             $(SVLS_LIBS) $(MPICH_LIBS) $(F90_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	mv $(TARGET_EXE)* $(TOP)/Bin
 
@@ -156,7 +159,7 @@ ifndef NO_DEPEND
 endif
 
 createOptionFile:
-	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
@@ -171,4 +174,5 @@ veryclean: clean
 	for fn in *.pdb; do /bin/rm -f $$fn; done
 	for fn in *.exp; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	/bin/rm -f cvFlowsolverOptions.h
 

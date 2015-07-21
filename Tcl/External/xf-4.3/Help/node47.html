@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Toplevel windows</TITLE>
+<META NAME="description" CONTENT="Toplevel windows">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1341" HREF="node48.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1339" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1333" HREF="node46.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1343" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1344" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1342" HREF="node48.html">Source modules</A>
+<B>Up:</B> <A NAME="tex2html1340" HREF="node45.html">Advanced features</A>
+<B> Previous:</B> <A NAME="tex2html1334" HREF="node46.html">Templates</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00542000000000000000">Toplevel windows</A></H2>
+<P>
+<A NAME=743>&#160;</A>
+Toplevel windows (including the main <EM>Tk </EM>
+ window ``.'')
+contain the widgets that form the interface. The main
+<EM>Tk </EM>
+ window ``.'' is the root of the widget tree. An
+application usually contains various dialog components
+implementing different aspects of the program. They have to
+be displayed depending on the current status of the program.
+This makes it important to be able to hide/show toplevel
+windows.
+<P>
+The main <EM>Tk </EM>
+ window ``.'' can be hidden with the command:
+``<TT>wm withdraw .<TT></TT></TT>''. To display the window, the
+command: ``<TT>wm deiconify .<TT></TT></TT>'' is called. This also
+works for the other toplevel windows, but <EM>XF </EM>
+ provides an
+additional way to show/hide the toplevel windows. Each 
+window can be displayed with the automatically created
+procedure ShowWindow.<i>&lt;</i>toplevelName<i>&gt;</i>. To remove a
+window, the procedure DestroyWindow.<i>&lt;</i>toplevelName<i>&gt;</i>
+is called.
+<P>
+When the code for the application is saved, the current
+display status of the toplevel windows is saved. This means
+that when the application is started, the toplevel windows
+that were displayed when the program was saved are
+displayed, and the toplevel windows that where hidden when
+the program was saved are not displayed. To change the
+display status of a window when developing with <EM>XF</EM>
+, the
+menu attached to the label (<EM>Current widget path:<EM></EM></EM>)
+in the main <EM>XF </EM>
+ window can be used.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

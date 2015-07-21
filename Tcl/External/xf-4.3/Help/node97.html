@@ -1,0 +1,45 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>XFProcConfConfigure</TITLE>
+<META NAME="description" CONTENT="XFProcConfConfigure">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html2066" HREF="node98.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html2064" HREF="node92.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html2058" HREF="node96.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html2068" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html2069" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html2067" HREF="node98.html">XFProcConfGeometryDefault</A>
+<B>Up:</B> <A NAME="tex2html2065" HREF="node92.html">Configuration</A>
+<B> Previous:</B> <A NAME="tex2html2059" HREF="node96.html">XFProcConfBindingClass</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00935000000000000000">XFProcConfConfigure</A></H2>
+<P>
+<A NAME=1236>&#160;</A>
+This procedure is usually not called directly. It activates
+the configuration dialog for the currently selected widget,
+or the widget that was passed on as first parameter. The
+second parameter selects the dialog box to be displayed.
+This parameter is a number. 0 calls the packing dialog, 1
+the placing dialog, 2 the default geometry dialog, 3 the
+binding dialog, 4 the default parameter dialog, and 5 the
+special parameter dialog. Each number matches a dialog,
+specified in a widget specific dialog file (from the
+directory ./elements or ./additionals). The next parameter
+should be an empty string. After that follows the widget
+class that is configured, and the type of the configuration
+(add or config). ``Add'' means that a new widget is created
+with default parameters, and ``config'' means that the
+parameter setting dialog is called. For the standard calls
+of this procedure there are wrappers that make the calling
+easier.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,154 @@
+# Program: xf
+# Description: handle TRadiobutton widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tradiobutton) 4
+
+##########
+# Procedure: XFAdd.TRadiobutton
+# Description: add a TRadiobutton
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TRadiobutton {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TRadiobutton..."
+  set xfName [XFMiscGetUniqueName $xfName tradiobutton]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      ttk::radiobutton .$xfName \
+        -text "$xfName"
+    } {
+      ttk::radiobutton .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      ttk::radiobutton $xfStatus(path).$xfName \
+        -text "$xfName"
+    } {
+      ttk::radiobutton $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TRadiobutton...done"
+}
+
+##########
+# Procedure: XFConfig.TRadiobutton4
+# Description: configure a TRadiobutton
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TRadiobutton4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName TRadiobutton$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TRadiobutton..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x570 \
+    "TRadiobutton parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTRadiobuttonSetTRadiobutton4 parameters $xfName 4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTRadiobuttonSetTRadiobutton4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "Label" XFTRadiobuttonSetTRadiobutton4 $xfName
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTRadiobuttonSetTRadiobutton4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass value value Value \
+    "Value" XFTRadiobuttonSetTRadiobutton4 $xfName
+  XFElementVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTRadiobuttonSetTRadiobutton4
+  XFElementTileWidth $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetTButton4
+  XFElementCommand $xfW .xf${xfClass}Config4 $xfType
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {image command text textvariable value variable width}
+  
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTRadiobuttonSetTRadiobutton4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TRadiobutton...done"
+}
+
+##########
+# Procedure: XFTRadiobuttonSetTRadiobutton4
+# Description: set TRadiobutton parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTRadiobuttonSetTRadiobutton4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW command \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.command.command.command]
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW value \
+    [.xf${xfClass}Config4.params1.params2.value.value get]
+  XFMiscSetResource $xfW variable \
+    [.xf${xfClass}Config4.params1.params2.variable.variable get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.widthvar.widthvar get]
+
+}
+
+# eof
+
+

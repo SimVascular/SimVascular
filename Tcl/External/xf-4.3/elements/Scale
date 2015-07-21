@@ -1,0 +1,192 @@
+# Program: xf
+# Description: handle scale widgets
+#
+# $Header: Scale[2.3] Wed Mar 10 11:59:13 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(scale) 4
+
+##########
+# Procedure: XFAdd.Scale
+# Description: add a scale
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Scale {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Scale..."
+  set xfName [XFMiscGetUniqueName $xfName scale]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      scale .$xfName \
+        -relief raised \
+        -orient horizontal
+    } {
+      scale .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      scale $xfStatus(path).$xfName \
+        -relief raised \
+        -orient horizontal
+    } {
+      scale $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Scale...done"
+}
+
+##########
+# Procedure: XFConfig.Scale4
+# Description: configure a scale
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Scale4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName scale$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Scale..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x660 \
+    "Scale parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass  XFScaleSetScale4 \
+    parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFScaleSetScale4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFScaleSetScale4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFScaleSetScale4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFScaleSetScale4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass from \
+    from From "From" "int" 1000 XFScaleSetScale4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass label label \
+    Label "Label" XFScaleSetScale4 $xfName
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass length \
+    length Length "Length" "pixels" 1000 XFScaleSetScale4
+  XFElementOrient $xfW .xf${xfClass}Config4 $xfType $xfClass XFScaleSetScale4
+  XFElementBoolean $xfW .xf${xfClass}Config4 $xfType $xfClass showValue \
+    "Show value" XFScaleSetScale4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass slength \
+    sliderLength SliderLength "Slider length" "pixels" 300 XFScaleSetScale4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass to \
+    to To "To" "int" 5000 XFScaleSetScale4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass width \
+    width Width "Width" "pixels" 200 XFScaleSetScale4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass command \
+    command Command "Command" XFScaleSetScale4
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.label.label delete 0 end
+    .xf${xfClass}Config4.params1.params2.orient.horizontal select
+  }
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {background command font kanjifont foreground from length orient showvalue sliderlength to width}
+  } {
+    XFElementSave $xfW $xfClass {background command font foreground from length orient showvalue sliderlength to width}
+  }
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFScaleSetScale4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Scale...done"
+}
+
+##########
+# Procedure: XFScaleSetScale4
+# Description: set scale parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFScaleSetScale4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW command \
+    [.xf${xfClass}Config4.params1.params2.command.command get]
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  if {[.xf${xfClass}Config4.params1.params2.to.to get] <
+      [.xf${xfClass}Config4.params1.params2.from.from get]} {
+    .xf${xfClass}Config4.params1.params2.to.to set \
+      [expr [.xf${xfClass}Config4.params1.params2.from.from get]+1]
+  }
+  XFMiscSetResource $xfW from \
+    [.xf${xfClass}Config4.params1.params2.from.from get]
+  XFMiscSetResource $xfW label \
+    [.xf${xfClass}Config4.params1.params2.label.label get]
+  XFMiscSetResource $xfW length \
+    [.xf${xfClass}Config4.params1.params2.length.length get]
+  XFMiscSetResource $xfW orient $xfMisc(orient)
+  XFMiscSetResource $xfW showvalue $xfMisc(showValue)
+  XFMiscSetResource $xfW sliderlength \
+    [.xf${xfClass}Config4.params1.params2.slength.slength get]
+  XFMiscSetResource $xfW to \
+    [.xf${xfClass}Config4.params1.params2.to.to get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.width.width get]
+}
+
+# eof
+

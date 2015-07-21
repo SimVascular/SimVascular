@@ -1,0 +1,51 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Levels for procedures and bindings</TITLE>
+<META NAME="description" CONTENT="Levels for procedures and bindings">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1363" HREF="node50.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1361" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1357" HREF="node48.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1365" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1366" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1364" HREF="node50.html">The Implementation of XF</A>
+<B>Up:</B> <A NAME="tex2html1362" HREF="node45.html">Advanced features</A>
+<B> Previous:</B> <A NAME="tex2html1358" HREF="node48.html">Source modules</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00544000000000000000">Levels for procedures and bindings</A></H2>
+<P>
+<A NAME=773>&#160;</A>
+<A NAME=774>&#160;</A>
+To make the handling of bindings and procedures easy to
+survey, they can be assigned to a level. This means that the
+first line of the <EM>Tcl/Tk </EM>
+ command that is bound to an event or
+a procedure name begins with the comment ``# xf ignore me
+<i>&lt;</i>level<i>&gt;</i>''. Such a binding or procedure is handled
+differently than other bindings and procedures. They can be
+hidden in the <EM>XF </EM>
+ dialogs, and they can be ignored when the
+source is saved.
+<P>
+The user can assign 9 levels to bindings and procedures.
+Each level can be turned on and off separately (both for
+displaying and saving). Some levels are used by <EM>XF </EM>
+ already,
+but the remaining levels can be used to categorize
+procedures and event bindings. For event bindings, only the
+level 9 is used by <EM>XF</EM>
+. This level means that the bindings
+are totally ignored. The following table shows the usage of
+the levels for procedures.
+<P>
+<P>
+<P> <IMG WIDTH=461 HEIGHT=371 ALIGN=BOTTOM ALT="tabular775" SRC="img18.gif"  > <P><BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

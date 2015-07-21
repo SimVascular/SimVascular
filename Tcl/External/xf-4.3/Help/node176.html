@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>IconBar</TITLE>
+<META NAME="description" CONTENT="IconBar">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html3098" HREF="node177.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3096" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3090" HREF="node175.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3100" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3101" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3099" HREF="node177.html">InputBox</A>
+<B>Up:</B> <A NAME="tex2html3097" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3091" HREF="node175.html">FontBox</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION001028000000000000000">IconBar</A></H2>
+<P>
+<A NAME=2001>&#160;</A>
+<A NAME=2002>&#160;</A>
+<A NAME=2003>&#160;</A>
+<A NAME=2004>&#160;</A>
+<A NAME=2005>&#160;</A>
+This template defines a new feature that supports user
+changeable icon bars. The usage of this feature is more
+complex than it is for most other templates. An iconbar can
+be part of your toplevel, or it can use its own toplevel. To
+switch between both modes, each iconbar has an icon at the
+right side that toggles between both modes. The icon left
+from this toggle icon pages through the different iconbar
+lines. An iconbar contains lines that are separated by a
+separator.  Your code must contain a frame definition. By
+calling the procedure <EM>IconBarInit<EM></EM></EM>, the iconbar is
+initialized. The procedure takes the following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=502 HEIGHT=361 ALIGN=BOTTOM ALT="tabular2007" SRC="img103.gif"  > <P>
+<P>
+<P>
+This will load and initialize the iconbar. To actually
+display the iconbar you have to call the procedure
+<EM>IconBarShow<EM></EM></EM>. This procedure creates the iconbar.
+The procedure gets the following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=500 HEIGHT=99 ALIGN=BOTTOM ALT="tabular2012" SRC="img104.gif"  > <P>
+<P>
+<P>
+To remove a displayed iconbar, you can call the procedure
+<EM>IconBarRemove<EM></EM></EM>. The procedure gets the following
+parameters:
+<P>
+<P>
+<P> <IMG WIDTH=511 HEIGHT=157 ALIGN=BOTTOM ALT="tabular2016" SRC="img105.gif"  > <P>
+<P>
+<P>
+To modify an existing iconbar, the procedure
+<EM>IconBarConf<EM></EM></EM> is called. This pops up a dialog box
+where bitmaps can be combined with procedure calls, and
+added to the iconbar. The procedure gets the following
+parameters:
+<P>
+<P>
+<P> <IMG WIDTH=519 HEIGHT=238 ALIGN=BOTTOM ALT="tabular2020" SRC="img106.gif"  > <P>
+<P>
+<P>
+To configure the different aspects of the iconbar, there
+exists a global array named iconBar. A default value of
+``-'' means that the Tk default value is used. This array
+contains elements that control the iconbar (color, font
+etc.):
+<P>
+
+Array element          &amp; Default &amp; Purpose <BR>
+
+<P>
+<P> <IMG WIDTH=723 HEIGHT=316 ALIGN=BOTTOM ALT="supertabular2025" SRC="img107.gif"  > <P>
+<P>
+<P>
+A small example of an initialization may look like this:
+<P>
+<TT>
+<PRE><TT> 
+		frame .myIconBar
+<P>
+		IconBarInit  /.local-iconbar /usr/local/lib/global-iconbar
+/usr/local/lib/icons
+<P>
+		IconBarShow default .frame
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2036">&#160;</A><A NAME="figIconBar">&#160;</A> <IMG WIDTH=313 HEIGHT=122 ALIGN=BOTTOM ALT="figure2034" SRC="img108.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template IconBar (initialization)<BR>
+<P>
+<P>
+A small example of an invocation of the configuration may
+look like this:
+<P>
+<TT>
+<PRE><TT> 
+		IconBarConf default .frame {Proc1 Proc2 Proc3}
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2047">&#160;</A><A NAME="figIconBarConf">&#160;</A> <IMG WIDTH=313 HEIGHT=170 ALIGN=BOTTOM ALT="figure2045" SRC="img109.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template IconBar (configuration)<BR>
+<P>
+<P>
+<BR> <HR><A NAME="tex2html3098" HREF="node177.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3096" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3090" HREF="node175.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3100" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3101" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3099" HREF="node177.html">InputBox</A>
+<B>Up:</B> <A NAME="tex2html3097" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3091" HREF="node175.html">FontBox</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

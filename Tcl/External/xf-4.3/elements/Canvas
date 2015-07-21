@@ -1,0 +1,2333 @@
+# Program: xf
+# Description: handle canvas widgets
+#
+# $Header: Canvas[2.3] Wed Mar 10 11:58:33 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+
+set xfDefaultConf(canvas) 5
+
+##########
+# Procedure: XFAdd.Canvas
+# Description: add a canvas
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Canvas {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Canvas..."
+  set xfName [XFMiscGetUniqueName $xfName canvas]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      canvas .$xfName \
+        -width 295 \
+        -height 207 \
+        -relief raised
+    } {
+      canvas .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      canvas $xfStatus(path).$xfName \
+        -width 295 \
+        -height 207 \
+        -relief raised
+    } {
+      canvas $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter) 1
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Canvas...done"
+}
+
+##########
+# Procedure: XFConfig.Canvas4
+# Description: configure a canvas
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Canvas4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName canvas$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Canvas..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x570 \
+    "Canvas parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFCanvasSetCanvas4 parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFCanvasSetCanvas4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 XFCanvasSetCanvas4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass closeenough \
+    closeEnough CloseEnough "Close enough" XFCanvasSetCanvas4
+  XFElementBoolean $xfW .xf${xfClass}Config4 $xfType $xfClass confine \
+    "Confine" XFCanvasSetCanvas4
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass XFCanvasSetCanvas4
+  XFElementSize $xfW .xf${xfClass}Config4 $xfType $xfClass XFCanvasSetCanvas4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass xscrollincrement \
+    xscrollIncrement XScrollIncrement "XScroll increment" XFCanvasSetCanvas4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass yscrollincrement \
+    yscrollIncrement YScrollIncrement "YScroll increment" XFCanvasSetCanvas4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass scrollregion \
+    scrollRegion ScrollRegion "Scroll region" XFCanvasSetCanvas4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass xcommand \
+    xScrollCommand XScrollCommand "X scroll command" XFCanvasSetCanvas4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass ycommand \
+    yScrollCommand YScrollCommand "Y scroll command" XFCanvasSetCanvas4
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.size.size1.size1 set 295
+    .xf${xfClass}Config4.params1.params2.size.size2.size2 set 207
+  }
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {background borderwidth closeenough confine relief width height xscrollincrement yscrollincrement scrollregion xscrollcommand yscrollcommand}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFCanvasSetCanvas4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Canvas...done"
+}
+
+##########
+# Procedure: XFConfig.Canvas5
+# Description: configure a canvas
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Canvas5 {xfW xfType xfClass {xfLeader ""}} {
+  global xfBind
+  global xfConf
+  global xfMisc
+  global xfStatus
+
+  set xfMisc(CurrentCanvasType) "<arc> "
+  set xfMisc(canvanchor) center
+  set xfMisc(canvarrow) none
+  set xfMisc(canvcapstyle) round
+  set xfMisc(canvjoinstyle) round
+  set xfMisc(canvjustify) left
+  set xfMisc(canvsmooth) 0
+  set xfMisc(canvstyle) arc
+  set xfMisc(canvasPos,xfLastX) ""
+  set xfMisc(canvasPos,xfLastY) ""
+  set xfMisc(canvasPos,current) ""
+
+  set xfName [XFMiscPathName $xfW]
+  XFEditSetStatus "Calling parameter setting for Canvas..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config5 600x650 \
+    "Canvas parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config5 $xfType $xfClass \
+    XFCanvasSetCanvas5 parameters $xfName 5
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame1 0
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame1.elements 0
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame1.elements.elem1 0
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 0
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.frame1.children 0
+
+  XFTmpltFrame .xf${xfClass}Config5.params1.params2.commands 0
+
+  menubutton \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries \
+      -text {Canvas entry:} \
+      -underline 0 \
+      -menu ".xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m"
+
+  menu .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m -tearoff 0
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Arc} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<arc> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems arc $xfClass"
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Bitmap} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<bitmap> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems bitmap $xfClass"
+
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Image} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<image> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems image $xfClass"
+
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Line} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<line> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems line $xfClass"
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Oval} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<oval> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems oval $xfClass"
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Polygon} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<polygon> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems polygon $xfClass"
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Rectangle} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<rectangle> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems rectangle $xfClass"
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Text} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<text> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems text $xfClass"
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Window} \
+      -variable xfMisc(CurrentCanvasType) \
+      -value "<window> " \
+      -underline 0 \
+      -command "
+        .xf${xfClass}Config5.params1.params2.frame1.children.items.items select clear 0 end
+        XFCanvasSetItems window $xfClass"
+ 
+  label \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+      -anchor w \
+      -text {Line}
+
+  button .xf${xfClass}Config5.params1.params2.commands.insert \
+    -text {Insert item} \
+    -command "XFCanvasInsertItem $xfW $xfClass"
+
+  button .xf${xfClass}Config5.params1.params2.commands.modify \
+    -text {Modify item} \
+    -command "XFCanvasModifyItem $xfW $xfClass"
+
+  button .xf${xfClass}Config5.params1.params2.commands.delete \
+    -text {Delete item} \
+    -command "XFCanvasDeleteItem $xfW $xfClass"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      tag "Tags:"
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor 0
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.message1 \
+    -relief raised \
+    -text {Anchor:}
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor 0
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1 0
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2 0
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3 0
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.nw \
+    -anchor w \
+    -text {NW} \
+    -variable xfMisc(canvanchor) \
+    -value {nw} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.w \
+    -anchor w \
+    -text {W} \
+    -variable xfMisc(canvanchor) \
+    -value {w} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.sw \
+    -anchor w \
+    -text {SW} \
+    -variable xfMisc(canvanchor) \
+    -value {sw} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.n \
+    -anchor w \
+    -text {N} \
+    -variable xfMisc(canvanchor) \
+    -value {n} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.c \
+    -anchor w \
+    -text {C} \
+    -variable xfMisc(canvanchor) \
+    -value {c} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.s \
+    -anchor w \
+    -text {S} \
+    -variable xfMisc(canvanchor) \
+    -value {s} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.ne \
+    -anchor w \
+    -text {NE} \
+    -variable xfMisc(canvanchor) \
+    -value {ne} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.e \
+    -anchor w \
+    -text {E} \
+    -variable xfMisc(canvanchor) \
+    -value {e} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.se \
+    -anchor w \
+    -text {SE} \
+    -variable xfMisc(canvanchor) \
+    -value {se} \
+    -command ""
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.c select
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow 0
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.message1 \
+    -relief raised \
+    -text {Arrow head:}
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.none \
+    -text {none} \
+    -variable xfMisc(canvarrow) \
+    -anchor w \
+    -value {none} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.first \
+    -text {first} \
+    -variable xfMisc(canvarrow) \
+    -anchor w \
+    -value {first} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.last \
+    -text {last} \
+    -variable xfMisc(canvarrow) \
+    -anchor w \
+    -value {last} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.both \
+    -text {both} \
+    -variable xfMisc(canvarrow) \
+    -anchor w \
+    -value {both} \
+    -command ""
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.none select
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      shape "Arrow shape:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      bg "Background:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      bitmap "Bitmap:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      image "Image:"
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle 0
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.message1 \
+    -relief raised \
+    -text {Cap style:}
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.butt \
+    -text {butt} \
+    -variable xfMisc(canvcapstyle) \
+    -anchor w \
+    -value {butt} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.projecting \
+    -text {projecting} \
+    -variable xfMisc(canvcapstyle) \
+    -anchor w \
+    -value {projecting} \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.round \
+    -text {round} \
+    -variable xfMisc(canvcapstyle) \
+    -anchor w \
+    -value {round} \
+    -command ""
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.butt select
+
+  XFTmpltScale \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 extent \
+      "Extent:" "degree" 360
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent.extent \
+      relief raised
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent.extent \
+      from -360
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      fill "Fill:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      font "Font:"
+
+  if {$xfConf(kanji)} {
+    XFTmpltLabledEntry \
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+        kanjifont "Kanji font:"
+  }
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      fg "Foreground:"
+
+  XFTmpltScale \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 height \
+      "Height:" "pixels" 500
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.height.height \
+      relief raised
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.height.height \
+    set 1
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle 0
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.message1 \
+    -relief raised \
+    -text {Join style:}
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.bevel \
+    -text {bevel} \
+    -variable xfMisc(canvjoinstyle) \
+    -value {bevel} \
+    -anchor w \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.miter \
+    -text {miter} \
+    -variable xfMisc(canvjoinstyle) \
+    -value {miter} \
+    -anchor w \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.round \
+    -text {round} \
+    -variable xfMisc(canvjoinstyle) \
+    -value {round} \
+    -anchor w \
+    -command ""
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.miter select
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify 0
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.message1 \
+    -relief raised \
+    -text {Justify:}
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.left \
+    -text {left} \
+    -variable xfMisc(canvjustify) \
+    -value {left} \
+    -anchor w \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.center \
+    -text {center} \
+    -variable xfMisc(canvjustify) \
+    -value {center} \
+    -anchor w \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.right \
+    -text {right} \
+    -variable xfMisc(canvjustify) \
+    -value {right} \
+    -anchor w \
+    -command ""
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.left select
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      outline "Outline:"
+
+  checkbutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth \
+    -text {Smooth} \
+    -variable xfMisc(canvsmooth) \
+    -anchor w \
+    -command ""
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      splines "Spline steps:"
+
+  XFTmpltScale \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 start \
+      "Start:" "degree" 360
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start \
+      relief raised
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start.start \
+      from -360
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      stipple "Stipple:"
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style 0
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.message1 \
+    -relief raised \
+    -text {Style:}
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.arc \
+    -text {arc} \
+    -variable xfMisc(canvstyle) \
+    -value {arc} \
+    -anchor w \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.chord \
+    -text {chord} \
+    -variable xfMisc(canvstyle) \
+    -value {chord} \
+    -anchor w \
+    -command ""
+
+  radiobutton .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.pieslice \
+    -text {pieslice} \
+    -variable xfMisc(canvstyle) \
+    -value {pieslice} \
+    -anchor w \
+    -command ""
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.pieslice \
+    select
+
+  XFTmpltScale \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 width \
+      "Width:" "pixels" 500
+  XFMiscSetResource \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width \
+      relief raised
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width set 1
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+      window "Window:"
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message1 \
+    -relief raised \
+    -text {Text:}
+
+  XFTmpltText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 text
+  XFMiscSetTextHeight \
+    ".xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text configure" 5
+
+  label .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 \
+    -relief raised \
+    -text {Coordinates:}
+
+  XFTmpltText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 coords
+  XFMiscSetTextHeight \
+    ".xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords configure" 5
+
+  label .xf${xfClass}Config5.params1.params2.frame1.children.message1 \
+    -text {Tags:}
+
+  XFTmpltListbox .xf${xfClass}Config5.params1.params2.frame1.children items
+
+  scale .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+    -orient vertical \
+    -width 8 \
+    -sliderlength 15 \
+    -from 0 \
+    -command "XFCanvasRepositionItem $xfW $xfClass"
+  pack before .xf${xfClass}Config5.params1.params2.frame1.children.items.vscroll \
+              .xf${xfClass}Config5.params1.params2.frame1.children.items.mover {right filly}
+  
+  button .xf${xfClass}Config5.additional.tagbinding \
+    -text {Item binding} \
+    -command "
+      set xfCurSelected \
+        \[.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection\]
+      if {\$xfCurSelected >= 0} {
+        XFBinding $xfW $xfType $xfClass .xf${xfClass}Config5 \
+          \[lindex \[.xf${xfClass}Config5.params1.params2.frame1.children.items.items get \$xfCurSelected\] 1\]
+      }"
+  pack after .xf${xfClass}Config5.additional.binding \
+             .xf${xfClass}Config5.additional.tagbinding {left fill expand}
+
+  XFCanvasReadCanvas $xfW $xfClass
+
+  .xf${xfClass}Config5.leave.ok configure \
+    -command "
+      XFMiscSetSymbolicName $xfW \
+        \[.xf${xfClass}Config5.params1.params2.symname.symname get\]
+      destroy .xf${xfClass}Config5"
+
+  .xf${xfClass}Config5.leave.apply configure \
+    -state disabled
+
+  .xf${xfClass}Config5.leave.applyperm configure \
+    -state disabled
+
+  .xf${xfClass}Config5.leave.cancel configure \
+    -command "destroy .xf${xfClass}Config5"
+
+  case [lindex [.xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 config -text] 4] in {
+    {Arc} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 0
+    }
+    {Bitmap} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 1
+    }
+    {Oval} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 3
+    }
+    {Polygon} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 4
+    }
+    {Rectangle} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 5
+    }
+    {Text} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 6
+    }
+    {Window} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 7
+    }
+    {default} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m invoke 2
+    }
+  }
+
+  XFCanvasSetItem $xfW $xfClass
+
+  XFElementSave $xfW $xfClass {}
+
+  # bindings
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg $xfBind(configure) \
+    "XFProcColorBox background .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg"
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap $xfBind(configure) \
+    "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap"
+
+# MAC do I add something here?
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill $xfBind(configure) \
+    "XFProcColorBox fill .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill"
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg $xfBind(configure) \
+    "XFProcColorBox foreground .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg"
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font $xfBind(configure) \
+    "XFProcFontBox font .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font"
+
+  if {$xfConf(kanji)} {
+    bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont $xfBind(configure) \
+      "XFProcFontBox kanjifont .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont"
+  }
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline $xfBind(configure) \
+    "XFProcColorBox outline .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline"
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple $xfBind(configure) \
+    "XFProcFSBoxPixmap .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple"
+
+  bind .xf${xfClass}Config5.params1.params2.frame1.children.items.items $xfBind(select1) "
+    XFBindSelectOne %W %y
+    XFCanvasSetItem $xfW $xfClass"
+  bind .xf${xfClass}Config5.params1.params2.frame1.children.items.items <ButtonPress-1> "
+    XFBindSelectOne %W %y
+    XFCanvasFlashItem $xfW $xfClass
+    XFCanvasSetItem $xfW $xfClass"
+  bind .xf${xfClass}Config5.params1.params2.frame1.children.items.items <Button1-Motion> "
+    XFBindSelectOne %W %y
+    XFCanvasFlashItem $xfW $xfClass
+    XFCanvasSetItem $xfW $xfClass"
+  bind .xf${xfClass}Config5.params1.params2.frame1.children.items.items <Shift-ButtonPress-1> "
+    XFBindSelectOne %W %y
+    XFCanvasFlashItem $xfW $xfClass
+    XFCanvasSetItem $xfW $xfClass"
+  bind .xf${xfClass}Config5.params1.params2.frame1.children.items.items <Shift-Button1-Motion> "
+    XFBindSelectOne %W %y
+    XFCanvasFlashItem $xfW $xfClass
+    XFCanvasSetItem $xfW $xfClass"
+
+  # packing
+  pack append .xf${xfClass}Config5.params1.params2.commands \
+              .xf${xfClass}Config5.params1.params2.commands.insert {left fill expand} \
+              .xf${xfClass}Config5.params1.params2.commands.modify {left fill expand} \
+              .xf${xfClass}Config5.params1.params2.commands.delete {left fill expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem1 \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries {left fill} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 {left fillx expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1 \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.nw {top fillx} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.w {top fillx} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.sw {top fillx}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2 \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.n {top fillx} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.c {top fillx} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.s {top fillx}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3 \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.ne {top fillx} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.e {top fillx} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.se {top fillx}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1 {left frame center} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2 {left frame center} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3 {left frame center}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.message1 {left frame center} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor {left frame center}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.message1 {left} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.none {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.first {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.last {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.both {left fillx expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.message1 {left} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.butt {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.projecting {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.round {left fillx expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.message1 {left} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.bevel {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.miter {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.round {left fillx expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.message1 {left} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.left {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.center {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.right {left fillx expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.message1 {left} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.arc {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.chord {left fillx expand} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.pieslice {left fillx expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.elements \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem1 {top fill} \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 {top fill expand}
+
+  pack append .xf${xfClass}Config5.params1.params2.frame1.children \
+              .xf${xfClass}Config5.params1.params2.frame1.children.message1 {top frame center} \
+              .xf${xfClass}Config5.params1.params2.frame1.children.items {left fill expand}
+
+  place .xf${xfClass}Config5.params1.params2.frame1.elements \
+    -in .xf${xfClass}Config5.params1.params2.frame1 \
+    -relx 0 \
+    -rely 0 \
+    -relheight 1.0 \
+    -relwidth 0.5
+
+  place .xf${xfClass}Config5.params1.params2.frame1.children \
+    -in .xf${xfClass}Config5.params1.params2.frame1 \
+    -relx 0.5 \
+    -rely 0 \
+    -relheight 1.0 \
+    -relwidth 0.5
+
+  pack append .xf${xfClass}Config5.params1.params2 \
+              .xf${xfClass}Config5.params1.params2.frame1 {top fill expand} \
+              .xf${xfClass}Config5.params1.params2.commands {top fill}
+
+  pack append .xf${xfClass}Config5.params1 \
+              .xf${xfClass}Config5.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config5 \
+              .xf${xfClass}Config5.pathname {top fill frame center} \
+              .xf${xfClass}Config5.leave {bottom fill} \
+              .xf${xfClass}Config5.additional {bottom fill} \
+              .xf${xfClass}Config5.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config5.params1.params2.frame1.elements.elem2
+
+  XFEditSetStatus "Calling parameter setting for Canvas...done"
+}
+
+##########
+# Procedure: XFSaveSpecial.Canvas
+# Description: save canvas
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.Canvas {xfW} {
+  global xfConf
+
+  set xfRetVal ""
+  append xfRetVal "  # build canvas items $xfW\n"
+  foreach xfCounter [$xfW find all] {
+    case [$xfW type $xfCounter] in {
+      {arc} {
+        append xfRetVal "  set xfTmpTag \[$xfW create arc [$xfW coords $xfCounter]\]\n"
+      }
+      {bitmap} {
+        append xfRetVal "  set xfTmpTag \[$xfW create bitmap [$xfW coords $xfCounter]\]\n"
+      }
+      {image} {
+        append xfRetVal "  set xfTmpTag \[$xfW create image [$xfW coords $xfCounter]\]\n"
+      }
+      {line} {
+        append xfRetVal "  set xfTmpTag \[$xfW create line [$xfW coords $xfCounter]\]\n"
+      }
+      {oval} {
+        append xfRetVal "  set xfTmpTag \[$xfW create oval [$xfW coords $xfCounter]\]\n"
+      }
+      {polygon} {
+        append xfRetVal "  set xfTmpTag \[$xfW create polygon [$xfW coords $xfCounter]\]\n"
+      }
+      {rectangle} {
+        append xfRetVal "  set xfTmpTag \[$xfW create rectangle [$xfW coords $xfCounter]\]\n"
+      }
+      {text} {
+        append xfRetVal "  set xfTmpTag \[$xfW create text [$xfW coords $xfCounter]\]\n"
+      }
+      {window} {
+        append xfRetVal "  set xfTmpTag \[$xfW create window [$xfW coords $xfCounter]\]\n"
+      }
+    }
+    set xfFirstConf 1
+    foreach xfOptions [$xfW itemconfigure $xfCounter] {
+      # only handle options with 5 items per option entry
+      if {[llength $xfOptions] == 5} {
+        if {("[lindex $xfCounter 0]" == "-xscrollcommand" ||
+             "[lindex $xfCounter 0]" == "-yscrollcommand") &&
+             "[lindex $xfCounter 4]" == "NoFunction"} {
+          continue
+        }
+        if {"[lindex $xfOptions 3]" != "[lindex $xfOptions 4]"} {
+          if {$xfFirstConf} {
+            append xfRetVal "  $xfW itemconfigure \$xfTmpTag"
+            set xfFirstConf 0
+          }
+          append xfRetVal " \\\n    [lindex $xfOptions 0] {[lindex $xfOptions 4]}"
+        }
+      }
+    }
+    if {$xfFirstConf == 0} {
+      append xfRetVal "\n"
+    }
+
+    # get list of bindings
+    set xfBindList [$xfW bind $xfCounter]
+    if {"$xfBindList" != ""} {
+      foreach xfCounter1 $xfBindList {
+        set xfCommand [$xfW bind $xfCounter $xfCounter1]
+        if {[XFMiscCorrectLevel bindsave $xfCommand]} {
+          append xfRetVal "  $xfW bind \$xfTmpTag $xfCounter1 {$xfCommand}\n"
+        }
+      }
+    }
+  }
+  return $xfRetVal
+}
+
+##########
+# Procedure: XFCanvasDeleteItem
+# Description: delete item from canvas
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasDeleteItem {xfW xfClass} {
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    set xfTag \
+      "[lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1]"
+    catch "$xfW delete \{$xfTag\}"
+   .xf${xfClass}Config5.params1.params2.frame1.children.items.items delete $xfCurSelected
+
+    if {[.xf${xfClass}Config5.params1.params2.frame1.children.items.items size] > 0} {
+      .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+        configure \
+          -to [.xf${xfClass}Config5.params1.params2.frame1.children.items.items size]
+    } {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+      configure -to 1
+    }
+  }
+}
+
+##########
+# Procedure: XFCanvasDrawItem
+# Description: insert coordinates into current coordinate list
+# Arguments: xfW - the widget
+#            xfX - the x position
+#            xfY - the y position
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasDrawItem {xfW xfX xfY} {
+  global xfBind
+  global xfConf
+  global xfMisc
+
+  if {"$xfMisc(canvasPos,xfLastX)" != ""} {
+    return
+  }
+  set xfClass [winfo class $xfW]
+  set xfTmpTag ""
+  set xfCreated 0
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    set xfTmpType [lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 0]
+    set xfTmpTag [lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1]
+  } {
+    set xfTmpType $xfMisc(CurrentCanvasType)
+  }
+
+  set xfTmpX [$xfW canvasx $xfX]
+  set xfTmpY [$xfW canvasy $xfY]
+  case $xfTmpType {
+    {<bitmap*} {
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "$xfTmpX $xfTmpY"
+      if {"$xfTmpTag" == ""} {
+        set xfCreated 1
+        set xfItemType bitmap
+      }
+    }
+    {<image*} {
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "$xfTmpX $xfTmpY"
+      if {"$xfTmpTag" == ""} {
+        set xfCreated 1
+        set xfItemType image
+      }
+    }
+    {<text*} {
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "$xfTmpX $xfTmpY"
+      if {"$xfTmpTag" == ""} {
+        set xfCreated 1
+        set xfItemType text
+      }
+    }
+    {<window*} {
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "$xfTmpX $xfTmpY"
+      if {"$xfTmpTag" == ""} {
+        set xfCreated 1
+        set xfItemType window
+      }
+    }
+    {<line*} {
+      XFMiscInsertText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          " $xfTmpX $xfTmpY "
+      if {"$xfTmpTag" == "" && [llength [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]] >= 4} {
+        set xfCreated 1
+        set xfItemType line
+      }
+    }
+    {<polygon*} {
+      XFMiscInsertText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          " $xfTmpX $xfTmpY "
+       if {"$xfTmpTag" == "" && [llength [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]] >= 6} {
+        set xfCreated 1
+        set xfItemType polygon
+      }
+    }
+    {<arc*} {
+      set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+      regsub -all "\n" $xfCoords " " xfCoords
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "[lindex $xfCoords 0] [lindex $xfCoords 1] $xfTmpX $xfTmpY"
+      if {"$xfTmpTag" == "" && [llength [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]] == 4} {
+        set xfCreated 1
+        set xfItemType arc
+      }
+    }
+    {<oval*} {
+      set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+      regsub -all "\n" $xfCoords " " xfCoords
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "[lindex $xfCoords 0] [lindex $xfCoords 1] $xfTmpX $xfTmpY"
+       if {"$xfTmpTag" == "" && [llength [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]] == 4} {
+        set xfCreated 1
+        set xfItemType oval
+      }
+    }
+    {<rectangle*} {
+      set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+      regsub -all "\n" $xfCoords " " xfCoords
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          "[lindex $xfCoords 0] [lindex $xfCoords 1] $xfTmpX $xfTmpY"
+       if {"$xfTmpTag" == "" && [llength [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]] == 4} {
+        set xfCreated 1
+        set xfItemType rectangle
+      }
+    }
+  }
+
+  if {$xfCreated} {
+    set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+    regsub -all "\n" $xfCoords " " xfCoords
+    if {[catch "$xfW create $xfItemType $xfCoords" xfTmpTag]} {
+      set xfTmpTag ""
+    }
+    if {"$xfItemType" == "text"} {
+      $xfW itemconfig $xfTmpTag -text text
+      XFMiscSetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text text
+    }
+    if {"$xfItemType" == "arc" || "$xfItemType" == "oval" || 
+        "$xfItemType" == "rectangle" || "$xfItemType" == "polygon"} {
+      $xfW itemconfig $xfTmpTag -outline black
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+        delete 0 end
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+        insert 0 black
+    }
+    if {"$xfItemType" == "line" || "$xfItemType" == "polygon"} {
+      $xfW itemconfig $xfTmpTag -fill black
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill \
+        delete 0 end
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill \
+        insert 0 black
+    }
+  }
+  if {"$xfTmpTag" != ""} {
+    set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+    regsub -all "\n" $xfCoords " " xfCoords
+    eval $xfW coords $xfTmpTag $xfCoords
+
+    if {$xfCreated} {
+      .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      insert end "$xfMisc(CurrentCanvasType) $xfTmpTag"
+      $xfW bind $xfTmpTag $xfBind(placing) "# xf ignore me 9
+        XFCanvasPosDown $xfW $xfClass %x %y"
+      $xfW bind $xfTmpTag $xfBind(placingMotion) "# xf ignore me 9
+        XFCanvasPosMove $xfW $xfClass %x %y"
+      $xfW bind $xfTmpTag $xfBind(placingRelease) "# xf ignore me 9
+        XFCanvasPosRelease $xfW $xfClass %x %y"
+      .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+        select anchor end
+      .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+        select set end
+      .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+        configure \
+          -to [.xf${xfClass}Config5.params1.params2.frame1.children.items.items size]
+    }
+  }
+}
+
+##########
+# Procedure: XFCanvasFlashtem
+# Description: flash the selected item
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasFlashItem {xfW xfClass} {
+  global xfConf
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    set xfTmpTag [lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1]
+    set xfBoxTag [eval $xfW create rectangle [$xfW bbox $xfTmpTag] -width 3 -outline $xfConf(flash)]
+    update idletask
+    $xfW delete $xfBoxTag
+  }
+}
+
+##########
+# Procedure: XFCanvasInsertItem
+# Description: insert item into canvas
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+#            xfIndex - the target location in the canvas
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasInsertItem {xfW xfClass {xfIndex ""}} {
+  global xfBind
+  global xfMisc
+
+  if {"$xfIndex" == ""} {
+    set xfIndex end
+  }
+  set xfTag ""
+  set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+  regsub -all "\n" $xfCoords " " xfCoords
+  case $xfMisc(CurrentCanvasType) in {
+    {<arc*} {
+      if {[catch "$xfW create arc $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<bitmap*} {
+      if {[catch "$xfW create bitmap $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<image*} {
+      if {[catch "$xfW create image $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<oval*} {
+      if {[catch "$xfW create oval $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<polygon*} {
+      if {[catch "$xfW create polygon $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<rectangle*} {
+      if {[catch "$xfW create rectangle $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<text*} {
+      if {[catch "$xfW create text $xfCoords -text text" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {<window*} {
+      if {[catch "$xfW create window $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+    {default} {
+      if {[catch "$xfW create line $xfCoords" xfTag]} {
+        XFProcError "$xfTag"
+        set xfTag ""
+      }
+    }
+  }
+
+  if {"$xfTag" != ""} {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      insert end "$xfMisc(CurrentCanvasType) $xfTag"
+    $xfW bind $xfTag $xfBind(placing) "# xf ignore me 9
+      XFCanvasPosDown $xfW $xfClass %x %y"
+    $xfW bind $xfTag $xfBind(placingMotion) "# xf ignore me 9
+      XFCanvasPosMove $xfW $xfClass %x %y"
+    $xfW bind $xfTag $xfBind(placingRelease) "# xf ignore me 9
+      XFCanvasPosRelease $xfW $xfClass %x %y"
+    XFCanvasSetCanvas5 $xfW $xfTag 1 $xfClass
+
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select anchor $xfIndex
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select set $xfIndex 
+  }
+
+  if {[.xf${xfClass}Config5.params1.params2.frame1.children.items.items size] > 0} {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+      configure \
+        -to [.xf${xfClass}Config5.params1.params2.frame1.children.items.items size]
+  } {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+      configure -to 1
+  }
+}
+
+##########
+# Procedure: XFCanvasModifyItem
+# Description: modify item in canvas
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasModifyItem {xfW xfClass} {
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    XFCanvasSetCanvas5 $xfW \
+      "[lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1]" 1 $xfClass
+
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select anchor $xfCurSelected
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select set $xfCurSelected
+  }
+}
+
+##########
+# Procedure: XFCanvasPosDown
+# Description: get item position
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+#            xfX - the x position
+#            xfY - the y position
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasPosDown {xfW xfClass xfX xfY} {
+  global xfMisc
+
+  set xfMisc(canvasPos,xfLastX) [$xfW canvasx $xfX]
+  set xfMisc(canvasPos,xfLastY) [$xfW canvasy $xfY]
+  set xfMisc(canvasPos,current) [$xfW find closest [$xfW canvasx $xfX] [$xfW canvasy $xfY]]
+}
+
+##########
+# Procedure: XFCanvasPosMove
+# Description: move item
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+#            xfX - the x position
+#            xfY - the y position
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasPosMove {xfW xfClass xfX xfY} {
+  global xfMisc
+
+  set xfTmpX [$xfW canvasx $xfX]
+  set xfTmpY [$xfW canvasy $xfY]
+  if {[catch "winfo ismapped .xfCanvasConfig5"] == 0} {
+    $xfW move $xfMisc(canvasPos,current) [expr $xfTmpX-$xfMisc(canvasPos,xfLastX)] \
+      [expr $xfTmpY-$xfMisc(canvasPos,xfLastY)]
+    set xfMisc(canvasPos,xfLastX) $xfTmpX
+    set xfMisc(canvasPos,xfLastY) $xfTmpY
+  }
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    if {"[lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1]" == "$xfMisc(canvasPos,current)"} {
+      set xfCounter 0
+      set xfSetCoords ""
+      set xfCoords [$xfW coords "[lrange [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1 end]"]
+      foreach xfElement $xfCoords {
+        if {$xfCounter == 0} {
+          append xfSetCoords "$xfElement "
+          set xfCounter 1
+        } {
+          append xfSetCoords "$xfElement\n"
+          set xfCounter 0
+        }
+      }
+      XFMiscSetText \
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+          $xfSetCoords 
+    }
+  }
+}
+
+##########
+# Procedure: XFCanvasPosRelease
+# Description: get item position
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+#            xfX - the x position
+#            xfY - the y position
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasPosRelease {xfW xfClass xfX xfY} {
+  global xfMisc
+
+  set xfMisc(canvasPos,xfLastX) ""
+  set xfMisc(canvasPos,xfLastY) ""
+  set xfMisc(canvasPos,current) ""
+}
+
+##########
+# Procedure: XFCanvasReadCanvas
+# Description: read current canvas, and insert it into the lists
+# Arguments: xfW - the widget we configure 
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasReadCanvas {xfW xfClass} {
+  global xfBind
+
+  foreach xfCounter [$xfW find all] {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items insert end "<[$xfW type $xfCounter]> $xfCounter"
+    $xfW bind $xfCounter $xfBind(placing) "# xf ignore me 9
+      XFCanvasPosDown $xfW $xfClass %x %y"
+    $xfW bind $xfCounter $xfBind(placingMotion) "# xf ignore me 9
+      XFCanvasPosMove $xfW $xfClass %x %y"
+    $xfW bind $xfCounter $xfBind(placingRelease) "# xf ignore me 9
+      XFCanvasPosRelease $xfW $xfClass %x %y"
+  }
+
+  if {[.xf${xfClass}Config5.params1.params2.frame1.children.items.items size] > 0} {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select anchor 0
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select set 0
+    XFCanvasSetItem $xfW $xfClass
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+      configure \
+        -to [.xf${xfClass}Config5.params1.params2.frame1.children.items.items size]
+  } {
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.mover \
+      configure -to 1
+  }
+}
+
+##########
+# Procedure: XFCanvasRepositionItem
+# Description: put currently selected item to new position
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+#            xfIgnore - ignore
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasRepositionItem {xfW xfClass {xfIgnore ""}} {
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    set xfNewPos \
+      [.xf${xfClass}Config5.params1.params2.frame1.children.items.mover get]
+    set xfTmpItem \
+      [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected]
+
+    if {$xfNewPos == 0} {
+      $xfW lower [lindex $xfTmpItem 1] [lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get 0] 1]
+    } {
+      if {$xfNewPos >= $xfCurSelected} {
+        $xfW raise [lindex $xfTmpItem 1] [lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfNewPos] 1]
+      } {
+        $xfW raise [lindex $xfTmpItem 1] [lindex [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get [expr $xfNewPos-1]] 1]
+      }
+    }
+
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      delete $xfCurSelected
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      insert $xfNewPos $xfTmpItem
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select anchor $xfNewPos
+    .xf${xfClass}Config5.params1.params2.frame1.children.items.items \
+      select set $xfNewPos
+  }
+}
+
+##########
+# Procedure: XFCanvasSetItem
+# Description: set item fields to values from currently selected item
+# Arguments: xfW - the widget
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasSetItem {xfW xfClass} {
+  global xfMisc
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    case [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] in {
+      {<arc*} {
+        set xfMisc(CurrentCanvasType) "<arc> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 0 -state active
+        XFCanvasSetItems arc $xfClass
+      }
+      {<bitmap*} {
+        set xfMisc(CurrentCanvasType) "<bitmap> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 1 -state active
+        XFCanvasSetItems bitmap $xfClass
+      }
+      {<image*} {
+        set xfMisc(CurrentCanvasType) "<image> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 1 -state active
+        XFCanvasSetItems image $xfClass
+      }
+      {<oval*} {
+        set xfMisc(CurrentCanvasType) "<oval> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 3 -state active
+        XFCanvasSetItems oval $xfClass
+      }
+      {<polygon*} {
+        set xfMisc(CurrentCanvasType) "<polygon> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 4 -state active
+        XFCanvasSetItems polygon $xfClass
+      }
+      {<rectangle*} {
+        set xfMisc(CurrentCanvasType) "<rectangle> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 5 -state active
+        XFCanvasSetItems rectangle $xfClass
+      }
+      {<text*} {
+        set xfMisc(CurrentCanvasType) "<text> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 6 -state active
+        XFCanvasSetItems text $xfClass
+      }
+      {<window*} {
+        set xfMisc(CurrentCanvasType) "<window> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 7 -state active
+        XFCanvasSetItems window $xfClass
+      }
+      {<line*} {
+        set xfMisc(CurrentCanvasType) "<line> "
+        .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 2 -state active
+        XFCanvasSetItems line $xfClass
+      }
+    }
+
+    set xfCounter 0
+    set xfSetCoords ""
+    set xfCoords [$xfW coords "[lrange [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1 end]"]
+    foreach xfElement $xfCoords {
+      if {$xfCounter == 0} {
+        append xfSetCoords "$xfElement "
+        set xfCounter 1
+      } {
+        append xfSetCoords "$xfElement\n"
+        set xfCounter 0
+      }
+    }
+    XFMiscSetText \
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords \
+        $xfSetCoords 
+    foreach xfCounter [$xfW itemconfigure "[lrange [.xf${xfClass}Config5.params1.params2.frame1.children.items.items get $xfCurSelected] 1 end]"] {
+      # only handle options with 5 items per option entry
+      if {[llength $xfCounter] == 5} {
+        case [lindex $xfCounter 0] in {
+          {-anchor} {
+            case [lindex $xfCounter 4] in {
+              {nw} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.nw \
+                  select
+              }
+              {w} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.w \
+                  select
+              }
+              {sw} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f1.sw \
+                select
+              }
+              {n} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.n \
+                select
+              }
+              {c} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.c \
+                select
+              }
+              {s} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.s \
+                select
+              }
+              {ne} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.ne \
+                select
+              }
+              {e} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.e \
+                select
+              }
+              {se} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f3.se \
+                select
+              }
+            }
+          }
+          {-arrow} {
+            case [lindex $xfCounter 4] in {
+              {none} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.none \
+                  select
+              }
+              {first} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.first \
+                  select
+              }
+              {last} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.last \
+                  select
+              }
+              {both} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.both \
+                  select
+              }
+            }
+          }
+          {-arrowshape} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.shape.shape \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.shape.shape \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-background} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-bitmap} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-image} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image.image \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image.image \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-capstyle} {
+            case [lindex $xfCounter 4] in {
+              {butt} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.butt \
+                  select
+              }
+              {projecting} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.projecting \
+                  select
+              }
+              {round} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.round \
+                  select
+              }
+            }
+          }
+          {-extent} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent.extent \
+              set [lindex [split [lindex $xfCounter 4] .] 0]
+          }
+          {-fill} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill insert 0 \
+              [lindex $xfCounter 4]
+          }
+          {-font} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font insert 0 \
+              [lindex $xfCounter 4]
+          }
+          {-kanjifont} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont insert 0 \
+              [lindex $xfCounter 4]
+          }
+          {-foreground} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-height} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.height.height set \
+              [lindex $xfCounter 4]
+          }
+          {-joinstyle} {
+            case [lindex $xfCounter 4] in {
+              {bevel} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.bevel \
+                  select
+              }
+              {miter} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.miter \
+                  select
+              }
+              {round} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.round \
+                  select
+              }
+            }
+          }
+          {-justify} {
+            case [lindex $xfCounter 4] in {
+              {left} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.left \
+                  select
+              }
+              {center} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.center \
+                  select
+              }
+              {right} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.right \
+                  select
+              }
+            }
+          }
+          {-outline} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-start} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start.start \
+              set [lindex [split [lindex $xfCounter 4] .] 0]
+          }
+          {-smooth} {
+            if {[string compare [lindex $xfCounter 4] "on"] == 0 ||
+                [string compare [lindex $xfCounter 4] "1"] == 0 ||
+                [string compare [lindex $xfCounter 4] "true"] == 0} {
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth \
+                select
+            } {
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth \
+                deselect
+            }
+          }
+          {-splinesteps} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines.splines \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines.splines \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-stipple} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-style} {
+            case [lindex $xfCounter 4] in {
+              {arc} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.arc \
+                  select
+              }
+              {chord} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.chord \
+                  select
+              }
+              {pieslice} {
+                .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.pieslice \
+                  select
+              }
+            }
+          }
+          {-tags} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag \
+              insert 0 [lindex $xfCounter 4]
+          }
+          {-text} {
+            XFMiscSetText \
+              .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text \
+                [lindex $xfCounter 4]
+          }
+          {-width} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width set \
+              [lindex $xfCounter 4]
+          }
+          {-window} {
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.window.window \
+              delete 0 end
+            .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.window.window \
+              insert 0 [lindex $xfCounter 4]
+          }
+        }
+      }
+    }
+  }
+}
+
+##########
+# Procedure: XFCanvasSetItems
+# Description: set item fields for currently selected widget
+# Arguments: xfType - the type we want to edit
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasSetItems {xfType xfClass} {
+  global xfConf
+
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.shape
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font
+  if {$xfConf(kanji)} {
+    pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont
+  }
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.height
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.window
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message1
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2
+  pack unpack .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords
+
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor.anchor.f2.c select
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow.none select
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.shape.shape \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap \
+    delete 0 end
+
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image.image \
+    delete 0 end
+
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle.butt \
+    select
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent.extent \
+    set 0
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font \
+    delete 0 end
+  if {$xfConf(kanji)} {
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont \
+      delete 0 end
+  }
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle.miter \
+    select
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify.left \
+    select
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth \
+    deselect
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines.splines \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start.start \
+    set 0
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style.pieslice \
+    select
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag \
+    delete 0 end
+  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width set 1
+  XFMiscSetText \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text
+  XFMiscSetText \
+    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords
+
+  case $xfType in {
+    {arc} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Arc"
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent.extent set -90
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start.start set 90
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+        insert 0 "black"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.style {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {bitmap} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Bitmap"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {image} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Image"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {oval} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Oval"
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+        insert 0 "black"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {polygon} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Polygon"
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill \
+        insert 0 "black"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {rectangle} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Rectangle"
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline \
+        insert 0 "black"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {text} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Text"
+      XFMiscSetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text "text"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font {top fillx}
+      if {$xfConf(kanji)} {
+        pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                    .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont {top fillx} \
+      }
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.justify {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message1 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width set 0
+    }
+    {window} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Window"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.anchor {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.height {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.window {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+    {default} {
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem1.message1 \
+        configure -text "Line"
+      .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill \
+        insert 0 "black"
+
+      pack append .xf${xfClass}Config5.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.arrow {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.shape {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.capstyle {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.joinstyle {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.smooth {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.message2 {top fillx} \
+                  .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords {top fill expand}
+    }
+  }
+  XFBindFormConnect .xf${xfClass}Config5.params1.params2.frame1.elements.elem2
+}
+
+##########
+# Procedure: XFCanvasSetCanvas4
+# Description: set canvas parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasSetCanvas4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  if {"[.xf${xfClass}Config4.params1.params2.closeenough.closeenough get]" != ""} {
+    XFMiscSetResource $xfW closeenough \
+      [.xf${xfClass}Config4.params1.params2.closeenough.closeenough get]
+  }
+  XFMiscSetResource $xfW confine $xfMisc(confine)
+  XFMiscSetResource $xfW height \
+    [.xf${xfClass}Config4.params1.params2.size.size2.size2 get]
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  if {"[.xf${xfClass}Config4.params1.params2.xscrollincrement.xscrollincrement get]" != ""} {
+    XFMiscSetResource $xfW xscrollincrement \
+      [.xf${xfClass}Config4.params1.params2.xscrollincrement.xscrollincrement get]
+  }
+  if {"[.xf${xfClass}Config4.params1.params2.yscrollincrement.yscrollincrement get]" != ""} {
+    XFMiscSetResource $xfW yscrollincrement \
+      [.xf${xfClass}Config4.params1.params2.yscrollincrement.yscrollincrement get]
+  }
+  if {"[.xf${xfClass}Config4.params1.params2.scrollregion.scrollregion get]" != ""} {
+    XFMiscSetResource $xfW scrollregion \
+      [.xf${xfClass}Config4.params1.params2.scrollregion.scrollregion get]
+  }
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.size.size1.size1 get]
+  XFMiscSetResource $xfW xscrollcommand \
+    [.xf${xfClass}Config4.params1.params2.xcommand.xcommand get]
+  XFMiscSetResource $xfW yscrollcommand \
+    [.xf${xfClass}Config4.params1.params2.ycommand.ycommand get]
+}
+
+##########
+# Procedure: XFCanvasSetCanvas5
+# Description: set canvas parameters
+# Arguments: xfW - the widget
+#            xfTag - the tag we modify
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFCanvasSetCanvas5 {xfW xfTag xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  set xfCoords [XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.coords.coords]
+  regsub -all "\n" $xfCoords " " xfCoords
+  if {[catch "$xfW coords \{$xfTag\} $xfCoords" xfResult]} {
+    XFProcError "$xfResult"
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+
+  case [$xfW type "$xfTag"] in {
+    {arc} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -fill \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill get]\}"
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -outline \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline get]\}"
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]" != ""} {
+        if {"[string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get] 0]" == "@"} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -stipple {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -extent [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.extent.extent get] \
+        -start [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.start.start get] \
+        -style $xfMisc(canvstyle) \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\} \
+        -width [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width get]"
+    }
+    {bitmap} {
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg get]" != ""} {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -background \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bg.bg get]\}"
+      }
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap get]" != ""} {
+        if {"[string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap get] 0]" == "@"} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -bitmap \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -bitmap \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -bitmap \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.bitmap.bitmap get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -bitmap {}"
+      }
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg get]" != ""} {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -foreground \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fg.fg get]\}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -anchor $xfMisc(canvanchor) \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\}"
+    }
+    {image} {
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image.image get]" != ""} {
+        catch "$xfW itemconfigure \{$xfTag\} \
+         -image \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.image.image get]\}"
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -image {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -anchor $xfMisc(canvanchor) \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\}"
+    }
+    {line} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+              -arrowshape \"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.shape.shape get]\""
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -fill \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill get]\}"
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -splinesteps \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines.splines get]\}"
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]" != ""} {
+        if {"[string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get] 0]" == "@"} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -stipple {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -arrow $xfMisc(canvarrow) \
+        -capstyle $xfMisc(canvcapstyle) \
+        -joinstyle $xfMisc(canvjoinstyle) \
+        -smooth $xfMisc(canvsmooth) \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\} \
+        -width [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width get]"
+    }
+    {oval} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -fill \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill get]\}"
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -outline \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline get]\}"
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]" != ""} {
+        if {"[string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get] 0]" == "@"} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -stipple {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\} \
+        -width [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width get]"
+    }
+    {polygon} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -fill \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill get]\}"
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -outline \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline get]\}"
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -splinesteps \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.splines.splines get]\}"
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]" != ""} {
+        if {[string compare [string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get] 0] @] == 0} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -stipple {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -smooth $xfMisc(canvsmooth) \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\}"
+    }
+    {rectangle} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -fill \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill get]\}"
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -outline \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.outline.outline get]\}"
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]" != ""} {
+        if {[string compare [string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get] 0] @] == 0} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -stipple {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\} \
+        -width [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width get]"
+    }
+    {text} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -fill \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.fill.fill get]\}"
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font get]" != ""} {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -font \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.font.font get]\}"
+      }
+      if {$xfConf(kanji)} {
+        if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont get]" != ""} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -kanjifont \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.kanjifont.kanjifont get]\}"
+        }
+      }
+      if {"[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]" != ""} {
+        if {"[string index [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get] 0]" == "@"} {
+          catch "$xfW itemconfigure \{$xfTag\} \
+            -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+        } {
+          if {[file exists [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]]} {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{@[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          } {
+            catch "$xfW itemconfigure \{$xfTag\} \
+              -stipple \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.stipple.stipple get]\}"
+          }
+        }
+      } {
+        catch "$xfW itemconfigure \{$xfTag\} \
+          -stipple {}"
+      }
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -anchor $xfMisc(canvanchor) \
+        -justify $xfMisc(canvjustify) \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\} \
+        -text \{[XFMiscGetText .xf${xfClass}Config5.params1.params2.frame1.elements.elem2.text.text]\} \
+        -width [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width get]"
+    }
+    {window} {
+      catch "$xfW itemconfigure \{$xfTag\} \
+        -anchor $xfMisc(canvanchor) \
+        -height [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.height.height get] \
+        -tags \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.tag.tag get]\} \
+        -width [.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.width.width get] \
+        -window \{[.xf${xfClass}Config5.params1.params2.frame1.elements.elem2.window.window get]\}"
+    }
+  }
+}
+
+# eof
+
+
+
+
+
+
+

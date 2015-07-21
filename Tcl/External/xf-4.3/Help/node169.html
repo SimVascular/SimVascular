@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>AlertBox, AlertBoxFd, AlertBoxFile</TITLE>
+<META NAME="description" CONTENT="AlertBox, AlertBoxFd, AlertBoxFile">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html3014" HREF="node170.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3012" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3006" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3016" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3017" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3015" HREF="node170.html">ClearListClearText</A>
+<B>Up:</B> <A NAME="tex2html3013" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3007" HREF="node168.html">Procedures</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION001021000000000000000">AlertBox, AlertBoxFd, AlertBoxFile</A></H2>
+<P>
+<A NAME=1865>&#160;</A>
+<A NAME=1866>&#160;</A>
+<A NAME=1867>&#160;</A>
+This template defines three new procedures named AlertBox,
+AlertBoxFd and AlertBoxFile. Calling one of these procedures
+pops up an alert box. These boxes can be modal or not. If
+the dialog box is modal, the procedure returns the number of
+the pressed button. Otherwise the specified command is
+evaluated. The procedures get the following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=459 HEIGHT=634 ALIGN=BOTTOM ALT="tabular1868" SRC="img85.gif"  > <P>
+<P>
+<P>
+To configure the different aspects of the alert box, there
+exists a global array named alertBox. A default value of
+``-'' means that the Tk default value is used. This array
+contains elements that control the alert box (color, font
+etc.):
+<P>
+<P>
+<P> <IMG WIDTH=237 HEIGHT=362 ALIGN=BOTTOM ALT="tabular1871" SRC="img86.gif"  > <P>
+<P>
+<P>
+A small example of an invocation may look like this:
+<P>
+<TT>
+<PRE><TT> 
+		set result [AlertBox ''This is an alert message!'' '''' <IMG WIDTH=336 HEIGHT=476 ALIGN=MIDDLE ALT="tex2html_wrap_inline2562" SRC="img87.gif"  > 
+<P>
+				200x70 ''Dialog title'' OK Abort Cancel]
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="1882">&#160;</A><A NAME="figAlertBox">&#160;</A> <IMG WIDTH=454 HEIGHT=283 ALIGN=BOTTOM ALT="figure1880" SRC="img88.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template AlertBox<BR>
+<P>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

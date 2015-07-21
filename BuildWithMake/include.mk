@@ -52,8 +52,15 @@ NO_DEPEND = 1
 # -----------------------------------------------------------
 
 CLUSTER = x64_cygwin
-COMPILER_VERSION = vs10sp1
 #CLUSTER = x64_linux
+
+# ---------------------------------------------------------------------
+# COMPILER_VERSION = { vs10sp1, ifort, mingw-gcc, mingw-gfortran, gnu }
+# ---------------------------------------------------------------------
+
+CXX_COMPILER_VERSION = vs10sp1
+FORTRAN_COMPILER_VERSION = ifort
+
 #COMPILER_VERSION = gnu
 
 -include $(TOP)/cluster_overrides.mk
@@ -145,7 +152,7 @@ MAKE_WITH_MPICH2 = 1
 # Build only the 3D Solver
 # -----------------------------------------------------
 
-EXCLUDE_ALL_BUT_THREEDSOLVER = 0
+EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
 
 # -----------------------------------------------------
 # Compile with ITK
@@ -166,15 +173,6 @@ MAKE_WITH_VMTK = 1
 MAKE_WITH_GLIB = 0
 MAKE_WITH_GTS  = 0
 
-#
-# gts currrently only supported on 64-bit windows
-#
-
-ifeq ($(CLUSTER), x64_cygwin)
-  MAKE_WITH_GLIB = 1
-  MAKE_WITH_GTS  = 1
-endif
-
 # -----------------------------------------------------
 # Compile with sparse, metis, nspcg
 # -----------------------------------------------------
@@ -188,13 +186,23 @@ MAKE_WITH_NSPCG = 1
 # -----------------------------------------------------
 
 MAKE_OPTIMIZED = 1
-MAKE_OPTIMIZED_WITH_DEBUG = 1
+LINK_WITH_DEBUG = 1
 
 # -----------------------------------------------------
 # Static link
 # -----------------------------------------------------
 
 MAKE_STATIC_BUILD = 1
+
+# by default don't build most third party
+# if we are only building the flow solver
+ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
+    MAKE_WITH_ITK = 0
+    MAKE_WITH_SPARSE = 0
+    MAKE_WITH_NSPCG = 0
+    MAKE_WITH_VMTK = 0
+    MAKE_WITH_TETGEN = 0
+endif
 
 # if you need to override anything above for a given site, do it here
 # -----------------------------------------------------------------------
@@ -230,10 +238,10 @@ ifeq ($(CLUSTER), x86_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin/sv_extern/bin/win/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin/sv_extern/src
-    OPEN_SOFTWARE_PRECOMPILED_TOPLEVEL =  C:/cygwin/sv_extern/bin/win/unknown/x64
-    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin/sv_extern/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV15/bin/vs12.4/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV15/src
+#    OPEN_SOFTWARE_PRECOMPILED_TOPLEVEL =  
+    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV15/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -356,19 +364,35 @@ endif
 # Platform-specific compiler options
 # ----------------------------------
 
+# 32-bit compilers not generalized, msvc+ifort only!
 ifeq ($(CLUSTER), x86_cygwin)
 	include $(TOP)/MakeHelpers/compiler.msvc2010.x86_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
+  ifeq ($(CXX_COMPILER_VERSION), vs10sp1)
 	include $(TOP)/MakeHelpers/compiler.msvc2010.x64_cygwin.mk
+  endif
+  ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
+	include $(TOP)/MakeHelpers/compiler.ifort.x64_cygwin.mk
+        GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+  endif
+  ifeq ($(CXX_COMPILER_VERSION), mingw-gcc)
+	include $(TOP)/MakeHelpers/compiler.mingw-gcc.x64_cygwin.mk
+  endif
+  ifeq ($(FORTRAN_COMPILER_VERSION), mingw-gfortran)
+	include $(TOP)/MakeHelpers/compiler.mingw-gfortran.x64_cygwin.mk
+        GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+  endif
 endif
 
+# note: linux needs cleaning up!
 ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/compiler.intel.x64_linux.mk
-	ifeq ($(COMPILER_VERSION), gnu)
+	ifeq ($(CXX_COMPILER_VERSION), gnu)
 	  include $(TOP)/MakeHelpers/compiler.gnu.x64_linux.mk
 	endif
+        GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 endif
 
 ifeq ($(SHARED), 1)
@@ -510,7 +534,7 @@ endif
 ifeq ($(CLUSTER),x64_cygwin)
 	LFLAGS 	 = $(GLOBAL_LFLAGS) \
 	           $(TCLTK_LIBS) \
-                   /LIBPATH:$(TOP)/Lib
+                   $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib
 endif
 
 ifeq ($(CLUSTER),x64_linux)
@@ -529,8 +553,7 @@ LFLAGS     += lib_lib_simvascular_lset.lib \
               lib_lib_simvascular_utils.lib \
               lib_lib_simvascular_post.lib \
               lib_lib_simvascular_polydatasolid.lib \
-              lib_lib_simvascular_globals.lib \
-	      $(VTK_LIBS)
+              lib_lib_simvascular_globals.lib
 endif
 
 ifeq ($(CLUSTER),x64_linux)
@@ -544,8 +567,7 @@ LFLAGS     += -l_lib_simvascular_lset \
               -l_lib_simvascular_solid \
               -l_lib_simvascular_globals \
               -l_lib_simvascular_polydatasolid \
-              -l_lib_simvascular_utils \
-	      $(VTK_LIBS)
+              -l_lib_simvascular_utils
 endif
 
 #
@@ -568,7 +590,7 @@ ifeq ($(MAKE_WITH_SPARSE),1)
   SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
   SPARSE_INCDIR  = -I $(SPARSE_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
-    SPARSE_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_sparse.lib
+    SPARSE_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_sparse$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
     SPARSE_LIBS    = -L $(TOP)/lib -l_lib_simvascular_sparse
@@ -584,7 +606,7 @@ ifeq ($(MAKE_WITH_ZLIB),1)
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
-    ZLIB_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_zlib.lib
+    ZLIB_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_zlib$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
     ZLIB_LIBS    = -L $(TOP)/lib -l_lib_simvascular_zlib
@@ -605,7 +627,7 @@ ifeq ($(MAKE_WITH_NSPCG),1)
   NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
   NSPCG_INCDIR  = -I $(NSPCG_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
-    NSPCG_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_nspcg.lib
+    NSPCG_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_nspcg$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
     NSPCG_LIBS    = -L $(TOP)/lib -l_lib_simvascular_nspcg
@@ -624,7 +646,7 @@ ifeq ($(MAKE_WITH_TETGEN),1)
   TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
   TETGEN_INCDIR  = -I $(TETGEN_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
-    TETGEN_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_tetgen.lib
+    TETGEN_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_tetgen$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
     TETGEN_LIBS    = -L $(TOP)/lib -l_lib_simvascular_tetgen
@@ -656,7 +678,7 @@ ifeq ($(MAKE_WITH_METIS),1)
   METIS_TOP = $(TOP)/../Code/ThirdParty/metis
   METIS_INCDIR  = -I $(METIS_TOP)
   ifeq ($(CLUSTER),x64_cygwin)
-    METIS_LIBS    = -LIBPATH:$(TOP)/Lib lib_lib_simvascular_metis.lib
+    METIS_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_metis$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
     METIS_LIBS    = -L $(TOP)/lib -l_lib_simvascular_metis
@@ -678,7 +700,7 @@ endif
 # ------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/tcltk-8.5.11.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -690,7 +712,7 @@ endif
 # ---------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/vtk-6.0.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -710,7 +732,7 @@ endif
 ifeq ($(MAKE_WITH_ITK),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/itk-4.5.2.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/itk-4.8.0.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
@@ -726,7 +748,7 @@ endif
 ifeq ($(MAKE_WITH_MPICH2),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/mpich2-1.4p1.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/msmpi.x64_cygwin.mk
   endif
 
   # on linux, use the OS installed version of mpich2
@@ -811,7 +833,7 @@ ifeq ($(MAKE_WITH_MESHSIM),1)
   SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150304.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/meshsim-9.0-150704.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)

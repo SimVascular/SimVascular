@@ -1,0 +1,153 @@
+# Program: xf
+# Description: handle Panedwindow widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(panedwindow) 4
+
+##########
+# Procedure: XFAdd.Panedwindow
+# Description: add a Panedwindow
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Panedwindow {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Panedwindow..."
+  set xfName [XFMiscGetUniqueName $xfName panedwindow]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create Panedwindow: .$xfName"
+      panedwindow .$xfName
+    } {
+      puts "attempt to create Panedwindow: .$xfName"
+      panedwindow .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create Panedwindow: $xfStatus(path).$xfName"
+      panedwindow $xfStatus(path).$xfName
+    } {
+      puts "attempt to create Panedwindow: $xfStatus(path).$xfName"
+      panedwindow $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Panedwindow...done"
+}
+
+##########
+# Procedure: XFConfig.Panedwindow4
+# Description: configure a Panedwindow
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Panedwindow4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName Panedwindow$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Panedwindow..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "Panedwindow parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFPanedwindowSetPanedwindow4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {height width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFPanedwindowSetPanedwindow4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Panedwindow...done"
+}
+
+##########
+# Procedure: XFPanedwindowSetPanedwindow4
+# Description: set Panedwindow parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFPanedwindowSetPanedwindow4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+##########
+# Procedure: XFSaveSpecial.Panedwindow
+# Description: save entry
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.Panedwindow {xfW} {
+
+  set result "  \#  pane settings for $xfW\n"
+
+  foreach mypane [$xfW panes] {
+    set result "$result  $xfW add $mypane\n"
+    foreach xfCounter [$xfW paneconfigure $mypane] {
+      # only handle options with 5 items per option entry
+      if {[llength $xfCounter] == 5} {
+         set result "$result  $xfW paneconfigure $mypane [lindex $xfCounter 0] \{[lindex $xfCounter 4]\}\n"
+      }
+    }
+  }
+  set result "$result\n"
+
+  return $result
+
+}
+
+# eof
+

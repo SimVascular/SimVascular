@@ -1,0 +1,67 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>XFProcConfBinding</TITLE>
+<META NAME="description" CONTENT="XFProcConfBinding">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html2030" HREF="node95.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html2028" HREF="node92.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html2022" HREF="node93.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html2032" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html2033" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html2031" HREF="node95.html">XFProcConfBindingAll</A>
+<B>Up:</B> <A NAME="tex2html2029" HREF="node92.html">Configuration</A>
+<B> Previous:</B> <A NAME="tex2html2023" HREF="node93.html">XFProcConfAddCurrentItem</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00932000000000000000">XFProcConfBinding</A></H2>
+<P>
+<A NAME=1218>&#160;</A>
+<A NAME=1219>&#160;</A>
+This procedure activates the binding dialog for the
+currently selected widget or the widget that was passed on
+as first parameter. The binding dialog allows the setting of
+bindings for this specific widget.
+<P>
+<P><A NAME="1222">&#160;</A><A NAME="figTheprocedureXFProcConfBinding">&#160;</A> <IMG WIDTH=383 HEIGHT=283 ALIGN=BOTTOM ALT="figure1220" SRC="img39.gif"  > <BR>
+<STRONG>Figure:</STRONG> The procedure XFProcConfBinding<BR>
+<P>
+<P>
+The menubar at the top contains various event patterns that
+are inserted into the event string when the menu item is
+selected. Below the menubar the currently modified widget is
+displayed. Clicking on the name flashes the widget in the
+application.
+<P>
+Below the widget name, a list shows all events that are
+defined for this widget. It is possible to hide events
+(i.e.  all Tk events are hidden). To show/hide an event,
+the first line of the command that is bound to the event
+must contain the string ``# xf ignore me <i>&lt;</i>level<i>&gt;</i>'',
+where level is a number from 0 to 9. Each level can be
+turned on or of separately (both for displaying and saving).
+To display a level, the appropriate checkbutton in the 
+(<TT>Options <i>|</i> General Options<TT></TT></TT>) dialog is toggled.
+<P>
+The entry below the event listbox contains the currently
+selected event, or the new event composed with the menubar
+or by hand. To insert or delete the event, the two buttons
+(<TT>Insert event<TT></TT></TT>) and (<TT>Delete event<TT></TT></TT>) are
+used. The text widget at the bottom shows the <EM>Tcl/Tk </EM>
+ command
+that is bound to the currently selected event, or the new
+command that should be inserted.
+<P>
+The buttons at the bottom allow the calling of other dialog
+boxes for the widget configuration. There are also buttons
+to apply the changes (if they are not applied permanently),
+and to terminate the dialog.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

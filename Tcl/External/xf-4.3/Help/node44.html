@@ -1,0 +1,46 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Pitfalls</TITLE>
+<META NAME="description" CONTENT="Pitfalls">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1303" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1301" HREF="node42.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1297" HREF="node43.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1305" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1306" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1304" HREF="node45.html">Advanced features</A>
+<B>Up:</B> <A NAME="tex2html1302" HREF="node42.html">XF constraints</A>
+<B> Previous:</B> <A NAME="tex2html1298" HREF="node43.html">Restrictions</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00532000000000000000">Pitfalls</A></H2>
+<P>
+<A NAME=713>&#160;</A>
+The following list contains interesting hints, that are not
+really restrictions, but have to be handled carefully.
+<P>
+<UL><LI> Using {} and ''''.<BR>
+<EM>Tcl </EM>
+ commands bound to events or resources can be
+surrounded with {} or ''''. The use of {} is
+much safer, than the use of ''''. The code
+surrounded by '''' is parsed and substitutions are
+performed, when the binding is added or the resource is set.
+This may lead to unwanted results. It is better to use
+global variables to pass parameters into commands bound to
+events or resources.
+<LI> Setting auto_path.<BR>
+If the loaded source sets the auto_path variable, it should
+check if it is started inside of <EM>XF </EM>
+. Manipulating the
+auto_path variable can make <EM>XF </EM>
+ inoperable.
+</UL><BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

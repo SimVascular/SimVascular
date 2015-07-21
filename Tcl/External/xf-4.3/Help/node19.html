@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Inserting widgets</TITLE>
+<META NAME="description" CONTENT="Inserting widgets">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html973" HREF="node20.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html971" HREF="node17.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html965" HREF="node18.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html975" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html976" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html974" HREF="node20.html">Widget commands</A>
+<B>Up:</B> <A NAME="tex2html972" HREF="node17.html">Tk</A>
+<B> Previous:</B> <A NAME="tex2html966" HREF="node18.html">Widget classes</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00422000000000000000">Inserting widgets</A></H2>
+<P>
+<A NAME=464>&#160;</A>
+When widgets are created, they are inserted into the already
+existing <A NAME=465>&#160;</A><EM>widget tree</EM>. The widget
+tree has a root, named ``<B>.</B>''. All inserted widgets are
+children of ``<B>.</B>'', or a descendant of ``<B>.</B>''.
+Usually the higher-level widgets are container widgets (like
+frames) that define a layout structure for the interface,
+and the leaves of the widget tree are the widgets that the
+user uses to interact with the application (like buttons).
+<P>
+An inserted widget has a qualified name, formed by the
+<A NAME=470>&#160;</A><EM>widget path</EM> in the widget tree.
+The name of a widget looks like a (complete) filename in the
+<EM> <IMG WIDTH=71 HEIGHT=13 ALIGN=BOTTOM ALT="tex2html_wrap_inline2370" SRC="img15.gif"  >  </EM>
+ file system. The ``<B>/</B>'' from the filesystem is
+replaced by a ``<B>.</B>''. The widget name reflects the
+location of the widget inside the widget tree.
+<P>
+Depending on the widget class, the user calls a command to
+actually create the widget. The command that is called
+usually is the name of the class in lowercase letters. The
+widget creation command may contain configuration
+parameters that set certain widget resources. The syntax
+of these parameters is described below. To create a button
+as a direct child of the root, the command looks like this:
+<P>
+<P>
+<TT>
+<PRE><TT> 
+		button .b1 -text Quit -command {destroy .}
+<P>
+</TT></PRE>
+</TT>
+<P>
+<P>
+``<B>.b1</B>'' is the widget path of the widget. The
+following options are used to configure the button at the
+creation time. This command creates the widget, and creates
+a new <EM>Tcl </EM>
+ command named ``<B>.b1</B>'', which is used to
+access the widget (e.g. for additional configuration, or
+command invocations for this widget). The widget is not
+displayed when it is created. It is mapped when a geometry
+manager is used to arrange the widget (see below).
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

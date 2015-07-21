@@ -1,0 +1,174 @@
+# Program: xf
+# Description: handle label widgets
+#
+# $Header: Label[2.3] Wed Mar 10 11:58:48 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(label) 4
+
+##########
+# Procedure: XFAdd.Label
+# Description: add a label
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Label {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Label..."
+  set xfName [XFMiscGetUniqueName $xfName label]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      label .$xfName \
+        -text "$xfName" \
+        -relief raised
+    } {
+      label .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      label $xfStatus(path).$xfName \
+        -text "$xfName" \
+        -relief raised
+    } {
+      label $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Label...done"
+}
+
+##########
+# Procedure: XFConfig.Label4
+# Description: configure a label
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Label4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName label$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Label..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "Label parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFLabelSetLabel4 \
+    parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFLabelSetLabel4
+  XFElementBitmap $xfW .xf${xfClass}Config4 $xfType $xfClass XFLabelSetLabel4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass XFLabelSetLabel4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 XFLabelSetLabel4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFLabelSetLabel4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFLabelSetLabel4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFLabelSetLabel4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "Label" XFLabelSetLabel4 $xfName
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass XFLabelSetLabel4
+  XFElementSize $xfW .xf${xfClass}Config4 $xfType $xfClass XFLabelSetLabel4
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFLabelSetLabel4
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {background bitmap borderwidth font image kanjifont foreground relief height text textvariable width}
+  } {
+    XFElementSave $xfW $xfClass {background bitmap borderwidth font image foreground relief height text textvariable width}
+  }
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFLabelSetLabel4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Label...done"
+}
+
+##########
+# Procedure: XFLabelSetLabel4
+# Description: set label parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFLabelSetLabel4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW bitmap \
+    [.xf${xfClass}Config4.params1.params2.bitmap.bitmap get]
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  XFMiscSetResource $xfW height \
+    [.xf${xfClass}Config4.params1.params2.size.size2.size2 get]
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.size.size1.size1 get]
+}
+
+# eof
+

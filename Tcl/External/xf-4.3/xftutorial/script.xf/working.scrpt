@@ -1,0 +1,175 @@
+# tutorial
+global workingLast
+set workingLast 8
+global workingLastSectionDone
+set workingLastSectionDone -1
+
+
+set workingName0 {Working with XF}
+set workingText0 {\
+After starting XF you see an empty toplevel window, and
+a second toplevel with a menubar and some lists. The
+empty toplevel window is your workspace, where you
+build your main dialog window. The second window is the
+XF main edit window. This window gives you access to
+all features of XF.
+
+XF works as a WYSIWYG tool (argh... :-). Probably I
+should name it WYSIWII (What you see is what it is).
+Your workspace is exactly (well almost exactly) your
+application. If you press a button the button action
+is called as if the program would run without XF.}
+
+
+set workingName1 {The XF main edit window}
+set workingText1 {\
+The main edit window is split horizontally into
+several parts. At the top of the window you see a
+menubar where you can activate many features of XF.
+Directly beyond this menubar you see a status line,
+that is currently empty. Right beside this status
+line you see the status of the cut buffer. Now
+follows the current widget path. This widget path
+is the name of the widget that is currently
+selected. All actions (like inserting a new widget,
+calling the widget configuration etc.) affect
+this widget. Below the widget path you see three
+lists. The items in the left list represent
+widget classes that are part of the Tk distribution.
+The middle list represents additional widget
+classes that are available as extensions to the
+standard Tk widget set. They require a modified
+Tk command interpreter. The right list represents
+complex widget structures, that form some kind of
+dialog element. These elements are called
+"templates". Below this list you see the name of
+the class that is currently selected. By pressing
+one of the two buttons below this class name you
+insert a widget of this class into your application.
+The left button "Add with defaults" directly inserts
+the widget class. The right button "Add and
+configure" calls the parameter window for the widget
+class, where you can set the parameters for the widget
+and the name of the widget.}
+
+
+set workingName2 {Inserting widgets}
+set workingText2 {\
+As described above, you can insert widgets into your
+application by pressing one of the two buttons in 
+the main edit window of XF. If you set the scale to
+a number different than one, you can insert these
+much widgets at once. To insert a widget with default
+parameters you can double click with the left mouse
+button directly onto the widget class you want to
+insert. To insert a widget and configure it you can
+double click with the right mouse button.}
+
+
+set workingName3 {Setting widget parameters}
+set workingText3 {\
+To change the parameters of a widget after it was
+inserted, you can select the menu item "Parameters"
+in the "Configuration" menu. This activates the
+parameters setting dialog for the currently
+selected widget. To call the parameter setting
+dialog directly you double click the right mouse
+button over the widget in your application.
+
+The parameter dialog box allows you to set the
+different parameters for the widgets. Each
+widget class has it's own parameter dialog.
+This allows you to set the specific parameters
+for the widget. This may be i.e. the foreground
+color or the font. When we specify the
+functionality (i.e. for buttons) we will do this
+with the "command" parameter. For some parameters 
+(like color, font etc.) there are additional
+dialog boxes, that can be called by double
+clicking the right mouse button over the entry
+field that holds the parameter.}
+
+
+set workingName4 {Layouting with the packer}
+set workingText4 {\
+To define a layout for the different widgets you
+can use the packer and/or the placer. To see a
+detailed description of these layout methods take
+a look on the chapters describing them.
+
+Here I only give a short survey of the packer.
+The packer is activated by calling the menu item
+"Packer" in the "Configuration" menu. You get a
+window with a number of buttons at the top. Two
+sliders followed by two lists and three lines
+of buttons at the bottom. This window gives you
+full access to the packing of Tk. In the left
+list you see all widgets that are children of the
+current toplevel (the toplevel that contains the
+currently configured widget). The right list
+contains the children of the currently configured
+widget. You can specify the packing options for
+each children by selecting it in the right list
+and setting the options above the list to the
+values you want. Each setting you make directly
+results in a relayout of the widget in your
+application.}
+
+
+set workingName5 {Procedures}
+set workingText5 {\
+To add procedures to your application, you
+activate the menu item "Procedures" in the
+"Programming" menu. What you see now is a
+list of all known procedures. Now you can
+add, modify, rename etc. procedures by
+pressing the appropriate button.}
+
+
+set workingName6 {Startup/End source}
+set workingText6 {\
+If your application needs control when your
+program is started (i.e. to parse the argument
+list or to set the contents of a list at
+startup), you can use the startup/end source.
+The startup source is executed as first
+source of the complete application. The end
+source is executed right before the flow 
+control of the program is given to the main
+loop. To define the startup source you select
+the menu item "Startup source" in the menu
+"Programming".}
+
+
+set workingName7 {Cut/paste and templates}
+set workingText7 {\
+XF provides a cut and paste mechanism, that allows
+you to cut any widget structure and paste it into
+your application at any point you wish. The only
+restriction is, that you cannot cut ".". The current
+cut buffer can be displayed as the Tcl/Tk code that
+builds the widget structure or as the widget
+structure itself.
+
+You can save the cut buffer to a file. Saving the
+cut buffer as a template is a special case of this
+saving. A template is a cutbuffer (can be more,
+but that's for experts :-), that is saved to a
+special location (the template directory).}
+
+
+set workingName8 {Toplevels}
+set workingText8 {\
+If your program contains more than one toplevel,
+you probably want to hide some of them when your
+program is started. This can be done with the
+pull down menu that is attached to the label
+"Current widget path:" in the main edit window
+of XF. To display a toplevel window you call the
+procedure ShowWindow.toplevel, where "toplevel"
+is the name of the toplevel. To remove a
+toplevel you call the procedure
+DestroyWindow.toplevel, where "toplevel"
+is the name of the toplevel.}
+
+

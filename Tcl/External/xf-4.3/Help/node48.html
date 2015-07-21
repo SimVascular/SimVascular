@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Source modules</TITLE>
+<META NAME="description" CONTENT="Source modules">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1353" HREF="node49.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1351" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1345" HREF="node47.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1355" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1356" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1354" HREF="node49.html">Levels for procedures and </A>
+<B>Up:</B> <A NAME="tex2html1352" HREF="node45.html">Advanced features</A>
+<B> Previous:</B> <A NAME="tex2html1346" HREF="node47.html">Toplevel windows</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00543000000000000000">Source modules</A></H2>
+<P>
+<A NAME=754>&#160;</A>
+An <EM>XF </EM>
+ generated program can be packed into one file,
+containing the complete code. This is usually done for code
+that will be distributed. It makes the calling easier, and
+reduces the number of files to be installed. To create such
+a file, the menu item (<EM>File <i>|</i> Save as...<EM></EM></EM>) is
+activated.
+<P>
+During the development, it is usually better to have small
+modules that can be handled independently. For example it is
+a good idea to put the external (<EM>XF </EM>
+ created) code into a
+separate module. The code for the widget creation should be
+put into a separate module, preferrably one module for each
+toplevel. Finally the procedures loaded from templates
+should also be stored into modules named after the
+templates. This makes it easier to locate and modify
+different pieces of code when working with an editor.
+<P>
+<A NAME=756>&#160;</A>
+Another aspect of modularization is the working in groups.
+If a program is built by a group of developers, each
+developer can put his code into one or more separate
+modules. These modules are stored locally by each developer,
+giving him full control over the modules. Modules handled by
+the other developers can be retrieved by <EM>XF </EM>
+ at loading
+time. To access the distributed modules, it is necessary to
+set the environment variable <B>XF_LOAD_PATH<B></B></B>. This 
+variable contains a list of directory names separated by
+``:''. Here, <EM>XF </EM>
+ tries to find modules that are part of the
+application. <EM>XF </EM>
+ looks for plain files, and for archives
+using the <EM>ShapeTools</EM>.
+<P>
+By specifying which modules should be saved (with the module
+structure dialog), only the modules that are accessed by the
+developer are updated. Each developer can publish a module
+when it is ready, by moving it to a public directory, or by
+making a check-in into the global archive using <EM>
+ShapeTools</EM>. The global program structure should be
+maintained by one specific administrator, who has control
+over the main module.
+<P>
+<A NAME=760>&#160;</A>
+To distribute the toplevel windows and the procedures into
+different modules, there exists a special dialog box. This
+dialog allows the user to split the contents of his
+application (toplevels and procedures) into readable pieces
+(see figure <A HREF="node137.html#figTheprocedureXFProcMiscModules"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>).
+<P>
+New modules are added by typing the new module name, and
+pressing the button (<EM>Insert module<EM></EM></EM>). To add an
+element to a module, the user clicks on the appropriate item
+in the left list. To remove elements from a module, the user
+double clicks on the item in the right list. There is always
+one module that has the name of the application. It contains
+all toplevels and procedures that were not placed in
+another module.
+<P>
+A module can be made an auto load module with the
+checkbutton labelled (<EM>Auto load<EM></EM></EM>), right beside the
+module name. This means the needed code is generated that
+loads the module when a procedure from that module is
+called.
+<P>
+To support the development in groups, it is possible to
+specify which modules should actually be saved. This is done
+with the checkbutton labelled (<EM>Save module<EM></EM></EM>), right
+beside the module name. This information can be saved to a
+user specific file.
+<P>
+By selecting the button (<EM>Handle Templates<EM></EM></EM>) this
+dialog is switched to the template mode. Here the user can
+select exactly one widget path and an unlimited number of
+procedures to be saved to a template. To save this template
+the (<EM>Save<EM></EM></EM>) button is pressed. This save button can
+also be used to save the complete program (when the template
+mode is not activated).
+<P>
+<BR> <HR><A NAME="tex2html1353" HREF="node49.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1351" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1345" HREF="node47.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1355" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1356" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1354" HREF="node49.html">Levels for procedures and </A>
+<B>Up:</B> <A NAME="tex2html1352" HREF="node45.html">Advanced features</A>
+<B> Previous:</B> <A NAME="tex2html1346" HREF="node47.html">Toplevel windows</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

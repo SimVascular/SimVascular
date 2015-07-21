@@ -1,0 +1,161 @@
+# Program: xf
+# Description: handle TCheckbutton widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tcheckbutton) 4
+
+##########
+# Procedure: XFAdd.TCheckbutton
+# Description: add a TCheckbutton
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TCheckbutton {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TCheckbutton..."
+  set xfName [XFMiscGetUniqueName $xfName tcheckbutton]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      ttk::checkbutton .$xfName \
+        -text "$xfName"
+    } {
+      ttk::checkbutton .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      ttk::checkbutton $xfStatus(path).$xfName \
+        -text "$xfName"
+    } {
+      ttk::checkbutton $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TCheckbutton...done"
+}
+
+##########
+# Procedure: XFConfig.TCheckbutton4
+# Description: configure a TCheckbutton
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TCheckbutton4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName TCheckbutton$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TCheckbutton..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x600 \
+    "TCheckbutton parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTCheckbuttonSetTCheckbutton4 parameters $xfName 4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTCheckbuttonSetTCheckbutton4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "Label" XFTCheckbuttonSetTCheckbutton4 $xfName
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass offvalue \
+    offValue Value "Off value" XFTCheckbuttonSetTCheckbutton4 0
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass onvalue \
+    onValue Value "On value" XFTCheckbuttonSetTCheckbutton4 1
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTCheckbuttonSetTCheckbutton4
+  XFElementVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTCheckbuttonSetTCheckbutton4 
+  XFElementTileWidth $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTCheckbuttonSetTCheckbutton4
+  XFElementCommand $xfW .xf${xfClass}Config4 $xfType
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.variable.variable delete 0 end
+    .xf${xfClass}Config4.params1.params2.variable.variable insert 0 $xfName
+  }
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {image command offvalue onvalue text textvariable variable width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTCheckbuttonSetTCheckbutton4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TCheckbutton...done"
+}
+
+##########
+# Procedure: XFTCheckbuttonSetTCheckbutton4
+# Description: set TCheckbutton parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTCheckbuttonSetTCheckbutton4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW command \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.command.command.command]
+  XFMiscSetResource $xfW offvalue \
+    [.xf${xfClass}Config4.params1.params2.offvalue.offvalue get]
+  XFMiscSetResource $xfW onvalue \
+    [.xf${xfClass}Config4.params1.params2.onvalue.onvalue get]
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW variable \
+    [.xf${xfClass}Config4.params1.params2.variable.variable get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.widthvar.widthvar get]
+}
+
+# eof
+
+

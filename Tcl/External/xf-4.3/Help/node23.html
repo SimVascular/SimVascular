@@ -1,0 +1,59 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>The placer</TITLE>
+<META NAME="description" CONTENT="The placer">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1023" HREF="node24.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1021" HREF="node22.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1015" HREF="node22.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1025" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1026" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1024" HREF="node24.html">The packer</A>
+<B>Up:</B> <A NAME="tex2html1022" HREF="node22.html">Geometry handling</A>
+<B> Previous:</B> <A NAME="tex2html1016" HREF="node22.html">Geometry handling</A>
+<BR> <HR> <P>
+<H3><A NAME="SECTION00425100000000000000">The placer</A></H3>
+<P>
+<A NAME=512>&#160;</A>
+The placer allows the direct specification of
+(absolute/relative) widget coordinates and sizes. It does
+not really make a geometry handling, and leaves the
+responsibility for the layout to the user.  Here is a small
+example of a layout, created with the placer. First, the
+code to place the widgets: 
+<P>
+<P>
+<TT>
+<PRE><TT> 
+		place .b1 -relx .5 -y 30 -width 60 -height 40 -anchor c
+<P>
+		place .s1 -x 0 -y 50 -relwidth .1 -relheight .7
+<P>
+		place .l1 -relx .1 -y 50 -relwidth .9 -relheight .7
+<P>
+</TT></PRE>
+</TT>
+<P>
+<P>
+The resulting layout (as shown in figure <A HREF="node23.html#figPlacedwidgets"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>) has a button at the top, named .b with a fixed
+width (60 pixel) and height (40 pixel), a fixed y position
+(30 pixel) and a relative x position of 50 percent of the
+parent's width. So the button has always the specified size,
+is always 30 pixel away from the top border, and always
+centered in the middle of the parent. The scrollbar and the
+listbox use 70 percent of the parents height and (together)
+the complete width of the parent. They are placed below the
+button.
+<P>
+<P><A NAME="522">&#160;</A><A NAME="figPlacedwidgets">&#160;</A> <IMG WIDTH=177 HEIGHT=253 ALIGN=BOTTOM ALT="figure520" SRC="img16.gif"  > <BR>
+<STRONG>Figure:</STRONG> Placed widgets<BR>
+<P><BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

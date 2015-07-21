@@ -1,0 +1,338 @@
+Frequently asked questions about RUNNING XF:
+
+Index:
+======
+
+R-1) How can I change the path/filenames that are used by XF ?
+R-2) How can I create multiple toplevel windows ?
+R-3) How can I show/hide toplevel windows ?
+R-4) How can I make a widget the "current widget" ?
+R-5) How can I bind actions to buttons ?
+R-6) How can I cut/copy/paste a widget ?
+R-7) How can I delete a widget ?
+R-8) How can I create templates ?
+R-9) How can I change the order of menubutton items ?
+R-10) How can I change the order of packed children ?
+R-11) How can I write my own procedures ?
+R-12) How can I copy/paste between text fields ?
+R-13) How can I retrieve the name of a specific widget ?
+R-14) How can I write source that is evaluated before XF
+      (and the created application) is actually started ?
+R-15) Is there a way to select colors/fonts etc. interactively ?
+R-16) How can I set widget names when they are created ?
+R-17) How can I change widget names ?
+R-18) How can I access global variables in the startup source ?
+R-19) Why is my toplevel window always placed at the same
+      position by the window manager ?
+R-20) What should I do when I get an error message to stderr ?
+R-21) How can I use the mouse to arrange widgets?
+R-22) How can I set the values of sliders more accurately ?
+R-23) How can I create menubars ?
+R-24) Why is the xftutorial not running ?
+R-25) How can I make my X server secure ?
+R-26) I get "bad geometry" errors when I start XF, what is wrong ?
+R-27) I get "couldn't find "true" to execute" when I call the help ?
+
+Questions/Answers:
+==================
+
+R-1) How can I change the path/filenames that are used by XF ?
+        To change path/filenames that XF uses (i.e. if you
+        don't have writing permission), call the pull-down
+        menu item (Options | Path/file names).
+
+
+R-2) How can I create multiple toplevel windows ?
+        To create multiple toplevel windows you select the
+        item "Toplevel" from the "Standard" widget list.
+
+
+R-3) How can I show/hide toplevel windows ?
+        To display an XF created toplevel window, you should
+        use the automatically created function:
+
+                ShowWindow.toplevel
+
+        To remove an XF created toplevel window, you should
+        use the automatically created function: 
+
+                DestroyWindow.toplevel
+
+        where "toplevel" is the name of the toplevel window
+        that should be displayed or removed . When you are
+        running XF, please display and remove the toplevel
+        windows with the XF menu attached to the label
+        (Current widget path).
+
+
+R-4) How can I make a widget the "current widget" ?
+        Making a widget the "current widget" means that
+        actions like inserting a new widget or calling
+        parameter setting will apply to this widget.
+
+        To make a certain widget the "current widget", you
+        can double click the middle mouse button on the
+        widget, or select the widget from the pull-down
+        menus that are bound to the single elements of the
+        displayed (Current widget path).  These menus allow
+        you to walk through the complete widget hierarchy.
+
+        P.S. The "<Double-B2>" selection does not work for
+        menubuttons due to binding collisions (You can
+        change the binding if you want).
+
+
+R-5) How can I bind actions to buttons ?
+        To bind an action (procedure) to a button, first you
+        create the button, and then you call the parameter
+        setting for this button (either by making the button
+        the current widget (R-4) and selecting the menu item
+        (Configuration | Parameters), or by a double click
+        with your right mouse button on the button widget).
+
+        Now you can edit the command string in the text
+        field at the bottom of the parameter window.
+
+
+R-6) How can I cut/copy/paste a widget ?
+        To cut/copy a widget, make it the current widget
+        (R-4), and select the menu item (Edit | Cut) or
+        (Edit | Copy). To paste the cutbuffer to the current
+        widget, select the menu item (Edit | Paste). When you
+        cut/copy/paste widgets, please keep in mind that the
+        widget names change. If the widget names are used in
+        commands, the commands must be adapted. If you refer
+        to the widgets via symbolic names, the symbolic name
+        must be attached again to the new widget.
+
+
+R-7) How can I delete a widget ?
+        To delete the "current widget", you have to select
+        the menu item (Edit | Delete).
+  
+
+R-8) How can I create templates ?
+        To make a template, you simply put the widget
+        structure you want to save into the cut buffer. Then
+        you select the menu item (Edit | Save Cutbuffer
+        (tmplt)). It is also possible to select (Misc | Module
+        structure). Here you have a checkbutton at the
+        bottom, where you can specify that you want to
+        handle templates. Now you can select procedures and
+        a widget path. If you click (Save), the currently
+        selected procedures and the widget path are saved to
+        a file.
+
+
+R-9) How can I change the order of menubutton items ?
+        To change the position of a menu item in a menu, you
+        select the menu item in the item list of the menu,
+        and then slide the scale at right side of the
+        children list.
+
+
+R-10) How can I change the order of packed children ?
+        To change the position of a widget in a packed
+        parent, you select the widget in the children list,
+        and then slide the scale at right side of the
+        children list.
+
+
+R-11) How can I write my own procedures ?
+        There is a menu item (Programming | Procedures) which
+        gives you a window that allows full access to
+        procedures. When inserting new procedures, the
+        procedure list is rescanned. This takes some time,
+        and you should not click around during this time.
+        This would probably activate the editing for the
+        wrong procedure. The rescan can be turned off.
+
+
+R-12) How can I copy/paste between text fields ?
+        To select the text of an entry/text field, you simply
+        press the left mouse button over the text, and move
+        the mouse with the pressed button. To insert the
+        selected text into another entry/text field, type
+        "<Control-v>" or "<Control-y>".
+
+
+R-13) How can I retrieve the name of a specific widget ?
+        To get the name of a specific widget, you can press
+        "<Modifier1-B2>" (may be changed by you). This brings
+        up a small window with the name of the widget under
+        the mouse pointer. The name is inserted into
+        the selection buffer as well, so you can insert the name
+        into text fields by pressing "<Control-v>" or
+        "<Control-y>".
+
+
+R-14) How can I write source that is evaluated before XF
+      (and the created application) is actually started ?
+        This question sounds a bit complicated :-), but this
+        is what is wanted:
+
+                including external modules at application
+                startup,
+                parsing of passed arguments,
+                something else ...:-).
+
+        To insert source to the very beginning of the
+        application, you create a procedure named:
+
+                StartupSrc,
+
+        by selecting the menu item
+        (Programming | Startup source).
+
+        To insert source to the beginning of the
+        application after the toplevel widgets have been
+        created, you create a procedure named:
+
+                EndSrc,
+
+        by selecting the menu item (Programming | End source).
+
+
+R-15) Is there a way to select colors/fonts etc. interactively ?
+        YES :-). To call a window with a color, font,
+        cursor, keysym, pixmap or file selection, you just
+        have to double click the right mouse button in the
+        entry field that will contain the resource value.
+
+
+R-16) How can I set widget names when they are created ?
+        To define a reasonable widget name when the widget
+        is created, you can use the button (Configure and
+        add) to create the widget. It is also possible to
+        set an option under (Options | General options). This
+        option is named (Ask for widget name on
+        insertion). If this option is selected, XF asks
+        you for a widget name before a new widget (or
+        template) is inserted.
+
+
+R-17) How can I change widget names ?
+        It is not possible to change the widget name
+        directly. But (!!!) you can use symbolic names to
+        access widget paths. Such a symbolic name makes you
+        independent from concrete widget hierarchies, and
+        the name can reflect the usage of the widget. There
+        is also a new feature named alias in XF. Here you
+        can define a new name for an already existing
+        command. To call the alias handling select
+        (Misc | Aliases).
+
+
+R-18) How can I access global variables in the startup source ?
+        To access global variables in the startup source
+        (like "auto_path" etc.), you have to make them
+        available with the global command ("global
+        auto_path").
+
+
+R-19) Why is my toplevel window always placed at the same
+      position by the window manager ?
+	Your toplevel is placed at the position you (or the
+	author of the program) gave the toplevel. To make
+	the window manager place your window, call the
+	parameter setting for the toplevel, and toggle the
+	switch (Set window position) and/or (Set window
+	size).
+
+
+R-20) What should I do when I get an error message to stderr ?
+	If there occur errors during the work with XF that are
+	producing output to stderr, these errors are mirrored
+	to the file xferrors in the XF tmp directory. If you
+	can say that they are caused by XF or you are not
+	sure, please send me the file so that I can locate
+	the problem.
+
+
+R-21) How can I use the mouse to arrange widgets?
+	Drag them with modifier1-button1 (Meta-Left Button
+	on Sun Sparcs). If you start dragging on the border,
+	this will start the resizing. You may want to set
+	default geometry to Placer, and allow layouting
+	without the layout window, both in
+	(Options | General).
+
+       
+R-22) How can I set the values of sliders more accurately ?
+	Many sliders have to cover a wide range. The value
+	of a slider can be set with the cursor keys.
+
+R-23) How can I create menubars ?
+	To define a menubar, you create menubuttons that
+	are all children of one frame. A menubutton is only
+	handled by XF if the underline resource is set to
+	something different than -1. 
+
+R-24) Why is the xftutorial not running ?
+	Usually, there are two reasons why the XF tutorial
+	is not running.
+
+	The first reason is that you probably started
+	xftutorial from the shell. Please run xftutrial from
+	inside XF by selecting the menu item
+	(Help | Tutorial).
+
+	The second reason may be that your X server is not
+	secure, leading to an error message like this:
+        "X server insecure...". In this case, take a look at
+        the answer to question R-25.
+
+R-25) How can I make my X server secure ?
+	Create the "~/.Xauthority" file on the systems you
+	want to use with Tk (use the tool xauth(1X)).
+	Disable xhost access, and restart the X server with
+	the -auth <fileName> option, or under xdm(1X). Some
+	users, on OpenWindows systems, have reported that
+	they need to log off and back on again to get the
+	window system to recognize the "~/.Xauthority" file.
+
+	If you use xdm(1X), the "~/.Xauthority" file will be
+	modified automatically. If you call the X server by
+	hand, you have to add certain keys to the file using
+	xauth(1X). This will look about like this:
+	
+		key=`xauthkey`
+		xauth add ${HOST}:0  . $key
+		xauth add ${HOST}/unix:0  . $key
+		xinit $HOME/.xinitrc -- -auth $HOME/.Xauthority
+
+	The program xauthkey is not part of the standard X
+	system. You just need a way to create a hexdecimal
+	random number. This can also be done by hand
+	interactively. My "~/.Xauthority" file looked (a long
+	time ago) like this (call "xauth list" to view the
+	file):
+
+                garfield:0  MIT-MAGIC-COOKIE-1  1234abcdef
+                garfield/unix:0  MIT-MAGIC-COOKIE-1  1234abcdef
+
+	If you still have problems, maybe the client that
+	cannot connect to your server has no access to your
+	"~/.Xauthority" file, or the display name you use is
+	not the same as in your "~/.Xauthority" file. If you
+	still have trouble, build your Tk with the security
+	flag disabled (SECURITY_FLAGS in the Makefile) or
+	take a deep look into the X security documentation.
+
+R-26) I get "bad geometry" errors when I start XF, what is wrong ?
+	You probably have a default geometry specification
+	in your "~/.Xdefaults" file. This may look like
+	"*geometry: +0+0" or something similar. Please
+	remove this line, as it applies to all widgets in
+	your Tk application (like XF), and causes this
+	error.
+
+R-27) I get "couldn't find "true" to execute" when I call the help ?
+	On some systems the unix command true(1) does
+	not exist. This causes trouble when you try to
+	run a external program. XF uses this unix command
+	to prevent noumerous of subprocesses. Please make
+	a dummy shell script (or a symbolic link to annother
+	small program), so XF can call this command (with a
+	minimum of overhead).
+

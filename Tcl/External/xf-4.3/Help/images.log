@@ -1,0 +1,473 @@
+This is TeX, Version 3.1415 (C version 6.1) (format=latex 95.1.5)  29 FEB 1996 18:08
+**&latex images.tex
+(images.tex
+LaTeX2e <1994/12/01>
+
+(/usr/local/lib/texmf/tex/latex/base/latex209.def
+File: latex209.def 1994/11/28 v0.39 Standard LaTeX file
+Entering LaTeX 2.09 compatibility mode.
+\footheight=\dimen102
+\@maxsep=\dimen103
+\@dblmaxsep=\dimen104
+(/usr/local/lib/texmf/tex/latex/base/tracefnt.sty
+Package: tracefnt 1994/11/18 v2.3m Standard LaTeX package (font tracing)
+\tracingfonts=\count82
+LaTeX Info: Redefining \selectfont on input line 101.
+)
+\symbold=\mathgroup4
+\symsans=\mathgroup5
+\symtypewriter=\mathgroup6
+\symitalic=\mathgroup7
+\symsmallcaps=\mathgroup8
+\symslanted=\mathgroup9
+LaTeX Font Info:    Redeclaring math alphabet \mathbf on input line 200.
+LaTeX Font Info:    Redeclaring math alphabet \mathsf on input line 201.
+LaTeX Font Info:    Redeclaring math alphabet \mathtt on input line 202.
+LaTeX Font Info:    Redeclaring math alphabet \mathit on input line 208.
+LaTeX Info: Redefining \em on input line 218.
+(/usr/local/lib/texmf/tex/latex/base/latexsym.sty
+Package: latexsym 1994/09/25 v2.1f Standard LaTeX package (lasy symbols)
+\symlasy=\mathgroup10
+LaTeX Font Info:    Overwriting symbol font `lasy' in version `bold'
+(Font)                  U/lasy/m/n --> U/lasy/b/n on input line 47.
+)
+LaTeX Font Info:    Redeclaring math delimiter \lgroup on input line 283.
+LaTeX Font Info:    Redeclaring math delimiter \rgroup on input line 285.
+LaTeX Font Info:    Redeclaring math delimiter \bracevert on input line 287.
+) (/usr/local/lib/texmf/tex/latex/base/report.cls
+Document Class: report 1994/12/09 v1.2x Standard LaTeX document class
+(/usr/local/lib/texmf/tex/latex/base/size10.clo
+File: size10.clo 1994/12/09 v1.2x Standard LaTeX file (size option)
+)
+\c@part=\count83
+\c@chapter=\count84
+\c@section=\count85
+\c@subsection=\count86
+\c@subsubsection=\count87
+\c@paragraph=\count88
+\c@subparagraph=\count89
+\c@figure=\count90
+\c@table=\count91
+\abovecaptionskip=\skip41
+\belowcaptionskip=\skip42
+Compatibility mode: definition of \rm ignored.
+Compatibility mode: definition of \sf ignored.
+Compatibility mode: definition of \tt ignored.
+Compatibility mode: definition of \bf ignored.
+Compatibility mode: definition of \it ignored.
+Compatibility mode: definition of \sl ignored.
+Compatibility mode: definition of \sc ignored.
+LaTeX Info: Redefining \cal on input line 515.
+LaTeX Info: Redefining \mit on input line 516.
+\bibindent=\dimen105
+) (/usr/local/lib/texmf/tex/latex/base/makeidx.sty
+Package: makeidx 1994/11/11 v1.0i Standard LaTeX package
+) (/tmp/xf-doc/supertab.sty
+\maxsize=\dimen106
+\actsize=\dimen107
+\twocolsize=\dimen108
+\parboxheight=\dimen109
+\addspace=\dimen110
+\midlineheight=\dimen111
+\pargcorrection=\dimen112
+\computedimens=\dimen113
+\tabparbox=\box26
+\tabularwidth=\dimen114
+) (/usr/local/lib/texmf/tex/dvips/epsf.tex
+\epsffilein=\read1
+\epsfxsize=\dimen115
+\epsfysize=\dimen116
+\epsftsize=\dimen117
+\epsfrsize=\dimen118
+\epsftmp=\dimen119
+\pspoints=\dimen120
+)
+\@indexfile=\write3
+Writing index file images.idx
+\lthtmlwrite=\write4
+\sizebox=\box27
+No file images.aux.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 249.
+LaTeX Font Info:    ... okay on input line 249.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 249.
+LaTeX Font Info:    ... okay on input line 249.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 249.
+LaTeX Font Info:    ... okay on input line 249.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 249.
+LaTeX Font Info:    ... okay on input line 249.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 249.
+LaTeX Font Info:    ... okay on input line 249.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 249.
+LaTeX Font Info:    ... okay on input line 249.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 259.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 259.
+LaTeX Font Info:    Try loading font information for U+lasy on input line 259.
+(/usr/local/lib/texmf/tex/latex/base/Ulasy.fd
+File: Ulasy.fd 1994/09/25 v2.1fLaTeX symbol font definitions
+)
+latex2htmlSize :tex2html_wrap_inline2340: 8.41226pt::1.94444pt.
+[1
+
+
+]
+latex2htmlSize :tex2html_wrap_inline2342: 8.41226pt::0.0pt.
+[2
+
+]
+latex2htmlSize :tex2html_wrap_inline2350: 8.41226pt::0.0pt.
+[3
+
+]
+latex2htmlSize :tex2html_wrap_inline2352: 8.41226pt::1.94444pt.
+[4
+
+]
+latex2htmlSize :tex2html_wrap_inline2354: 8.41226pt::1.94444pt.
+[5
+
+]
+latex2htmlSize :tex2html_wrap_inline2356: 8.41226pt::1.94444pt.
+[6
+
+]
+latex2htmlSize :tex2html_wrap_inline2358: 8.41226pt::1.94444pt.
+[7
+
+] [8
+
+] [9
+
+]
+latex2htmlSize :tex2html_wrap_inline2360: 8.41226pt::1.94444pt.
+[10
+
+]
+latex2htmlSize :tex2html_wrap_inline2362: 8.41226pt::0.0pt.
+[11
+
+]
+latex2htmlSize :tex2html_wrap_inline2364: 8.41226pt::0.0pt.
+[12
+
+]
+latex2htmlSize :tex2html_wrap_inline2366: 7.5pt::2.5pt.
+[13
+
+]
+latex2htmlSize :tex2html_wrap_inline2368: 8.41226pt::1.94444pt.
+[14
+
+]
+latex2htmlSize :tex2html_wrap_inline2370: 8.41226pt::0.0pt.
+[15
+
+] [16
+
+] [17
+
+] [18
+
+] [19
+
+] [20
+
+] [21
+
+]
+latex2htmlSize :tex2html_wrap_inline2450: 8.41226pt::0.0pt.
+[22
+
+]
+latex2htmlSize :tex2html_wrap_inline2452: 8.41226pt::0.0pt.
+[23
+
+]
+latex2htmlSize :tex2html_wrap_inline2454: 8.41226pt::0.0pt.
+[24
+
+]
+latex2htmlSize :tex2html_wrap_inline2456: 8.41226pt::0.83333pt.
+[25
+
+]
+latex2htmlSize :tex2html_wrap_inline2458: 8.41226pt::1.94444pt.
+[26
+
+] [27
+
+] [28
+
+] [29
+
+] [30
+
+] [31
+
+] [32
+
+] [33
+
+] [34
+
+] [35
+
+] [36
+
+] [37
+
+] [38
+
+] [39
+
+] [40
+
+] [41
+
+] [42
+
+] [43
+
+] [44
+
+] [45
+
+] [46
+
+] [47
+
+] [48
+
+] [49
+
+] [50
+
+] [51
+
+] [52
+
+] [53
+
+] [54
+
+] [55
+
+] [56
+
+] [57
+
+] [58
+
+] [59
+
+] [60
+
+] [61
+
+] [62
+
+] [63
+
+] [64
+
+] [65
+
+] [66
+
+] [67
+
+] [68
+
+] [69
+
+] [70
+
+]
+Underfull \hbox (badness 10000) in paragraph at lines 1395--1402
+[]\OT1/cmr/m/n/10 If this
+ []
+
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 1424
+.
+(/usr/local/lib/texmf/tex/latex/base/OMScmr.fd
+File: OMScmr.fd 1994/12/02 v2.3e Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 1424.
+
+[71
+
+] [72
+
+] [73
+
+] [74
+
+] [75
+
+] [76
+
+] [77
+
+] [78
+
+] [79
+
+] [80
+
+] [81
+
+] [82
+
+] [83
+
+] [84
+
+] [85
+
+] [86
+
+] [87
+
+] [88
+
+] [89
+
+] [90
+
+] [91
+
+]
+latex2htmlSize :tex2html_wrap_inline2562: 7.5pt::2.5pt.
+[92
+
+] [93
+
+] [94
+
+] [95
+
+] [96
+
+] [97
+
+] [98
+
+] [99
+
+] [100
+
+] [101
+
+] [102
+
+] [103
+
+] [104
+
+] [105
+
+] [106
+
+] [107
+
+] [108
+
+] [109
+
+] [110
+
+] [111
+
+] [112
+
+] [113
+
+] [114
+
+] [115
+
+] [116
+
+] [117
+
+] [118
+
+] [119
+
+] [120
+
+] [121
+
+] [122
+
+] [123
+
+] [124
+
+] [125
+
+] [126
+
+]
+latex2htmlSize :tex2html_wrap_inline2564: 3.66875pt::0.0pt.
+[127
+
+] [128
+
+] [129
+
+] [130
+
+] [131
+
+] [132
+
+] [133
+
+] [134
+
+] [135
+
+] [136
+
+] [137
+
+] [138
+
+] [139
+
+]
+latex2htmlSize :tex2html_wrap_inline2566: 8.41226pt::1.94444pt.
+[140
+
+] [141
+
+]
+latex2htmlSize :tex2html_wrap_inline2568: 8.41226pt::1.94444pt.
+[142
+
+] [143
+
+] [144
+
+] [145
+
+] [146
+
+] (images.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
+Here is how much of TeX's memory you used:
+ 893 strings out of 10955
+ 10116 string characters out of 73510
+ 52839 words of memory out of 262141
+ 3503 multiletter control sequences out of 9500
+ 9298 words of font info for 35 fonts, out of 100000 for 255
+ 30 hyphenation exceptions out of 607
+ 19i,9n,19p,306b,276s stack positions out of 300i,40n,60p,3000b,4000s
+
+Output written on images.dvi (146 pages, 93084 bytes).

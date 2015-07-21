@@ -80,6 +80,7 @@ cvsolverIO::~cvsolverIO () {
 int cvsolverIO::openFile (const char *filename, const char *mode) {
 
     filePointer_=Z_NULL ;
+
     fname_ = StringStripper( filename );
     mode_ = StringStripper( mode );
 
@@ -89,6 +90,10 @@ int cvsolverIO::openFile (const char *filename, const char *mode) {
         filePointer_ = gzopen( fname_ , "wb" );
     else if( cscompare( mode_, "append" ) )
         filePointer_ = gzopen( fname_ , "ab" );
+    else {
+        fprintf(stdout,"ERROR: invalid mode! [%s].\n",mode_);
+        return CVSOLVER_IO_ERROR;
+    }
 
     //delete [] fname;
     //delete [] imode;
@@ -259,6 +264,15 @@ int cvsolverIO::readDataBlock ( const char* keyphrase,
     }
 
     size_t type_size = typeSize( datatype );
+
+    if (type_size == 0) {
+        fprintf(stderr,"ERROR: Requested data type invalid!! \n");
+        fprintf(stderr,"Header: %s\n", LastHeaderKey_);
+        fprintf(stderr,"DataBlock: %s\n", keyphrase);
+        fprintf(stderr,"Please recheck read sequence\n");
+        return CVSOLVER_IO_ERROR;
+    }
+    
     isBinary( iotype );
     
     if ( binary_format_ ) {
@@ -354,7 +368,15 @@ int cvsolverIO::writeHeader (const char* keyphrase,
 
     isBinary( iotype );
     size_t type_size = typeSize( datatype );
-    
+
+    if (type_size == 0) {
+        fprintf(stderr,"ERROR: Requested data type invalid!! \n");
+        fprintf(stderr,"Header: %s\n", LastHeaderKey_);
+        fprintf(stderr,"DataBlock: %s\n", keyphrase);
+        fprintf(stderr,"Please recheck write sequence\n");
+        return CVSOLVER_IO_ERROR; 
+    }
+
     int size_of_nextblock = 
         ( binary_format_ ) ? type_size*( ndataItems )+sizeof( char ) : ndataItems ;
     
@@ -405,6 +427,14 @@ int cvsolverIO::writeDataBlock (const char* keyphrase,
    
     int header_type = type_of_data_;
     size_t type_size=typeSize( datatype );
+
+    if (type_size == 0) {
+        fprintf(stderr,"ERROR: Requested data type invalid!! \n");
+        fprintf(stderr,"Header: %s\n", LastHeaderKey_);
+        fprintf(stderr,"DataBlock: %s\n", keyphrase);
+        fprintf(stderr,"Please recheck write datablock sequence\n");
+        return CVSOLVER_IO_ERROR; 
+    }
 
     if ( header_type != type_of_data_ ) {
         fprintf(stderr, "header and datablock differ on typeof data in the block for \n");

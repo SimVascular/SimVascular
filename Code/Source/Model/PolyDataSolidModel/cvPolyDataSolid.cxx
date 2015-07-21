@@ -354,11 +354,11 @@ int cvPolyDataSolid::GetFaceAttribute(char *attr,int faceid, char **value)
   //Not sure if this procedure is needed currently
   if ( geom_ == NULL ) {
       *value = NULL;
-      return CV_OK;
+      return CV_ERROR;
   }
 
-  int result = 1;
-  return result;
+  *value = NULL;
+  return CV_ERROR;
 }
 
 
@@ -372,11 +372,11 @@ int cvPolyDataSolid::SetFaceAttribute(char *attr,int faceid, char *value)
 
   if ( geom_ == NULL ) {
       *value = NULL;
-      return CV_OK;
+      return CV_ERROR;
   }
 
-  int result = 1;
-  return result;
+  *value = NULL;
+  return CV_ERROR;
 }
 
 // ----------------

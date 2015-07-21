@@ -48,7 +48,7 @@
   #define usrnew_ USRNEW      
 #endif
 
-/* nothing to be done for CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE case */
+/* nothing to be done for CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE case */
 
 typedef	int	Integer	;		/* integer type			*/
 typedef	double	Real ;			/* real    type			*/

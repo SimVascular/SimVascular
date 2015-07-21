@@ -1,0 +1,2762 @@
+\batchmode
+\documentstyle[makeidx,supertab]{report}
+\makeatletter
+
+\input{epsf}
+
+
+
+
+\oddsidemargin .3cm
+\evensidemargin -.3cm
+\topmargin -1.2cm
+\textheight 22.5cm
+\textwidth 16cm
+
+\setcounter{topnumber}{5}
+\setcounter{totalnumber}{5}
+\setcounter{bottomnumber}{5}
+
+
+
+
+
+
+
+
+
+\hyphenation{
+Con-fig-u-ra-tion
+In-ter-pret-er
+Brow-ser
+Objekt-browser
+Objekt-browsers 
+Soft-ware
+icon-bar
+menu-bar
+wid-get
+scroll-bar
+top-level
+fore-ground
+back-ground
+STONE-Be-nutz-ungs-ober-flae-che
+Be-nutz-ungs-ober-flae-che
+pop-ped
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\makeindex
+
+
+\def\mymedskip{\medskip}
+
+\def\myclearpage{\clearpage}
+
+\def\epsftmpsize#1{0.9#1}
+
+\def\epsfsize#1#2{
+  \ifdim\epsftmpsize#1>\hsize\hsize\else\epsftmpsize#1\fi}
+
+\newcommand {\XF}{{\em XF }}
+
+\newcommand {\XFS}{{\em XF}}
+
+\newcommand {\XASK}{{\em XASK }}
+
+\newcommand {\XASKS}{{\em XASK}}
+
+\newcommand {\BYO}{{\em BYO }}
+
+\newcommand {\BYOS}{{\em BYO}}
+
+\newcommand {\TCL}{{\em Tcl }}
+
+\newcommand {\TCLS}{{\em Tcl}}
+
+\newcommand {\TK}{{\em Tk }}
+
+\newcommand {\TKS}{{\em Tk}}
+
+\newcommand {\TCLTK}{{\em Tcl/Tk }}
+
+\newcommand {\TCLTKS}{{\em Tcl/Tk}}
+
+\newcommand {\PACKER}{{\em packer }}
+
+\newcommand {\PACKERS}{{\em packer}}
+
+\newcommand {\PLACER}{{\em placer }}
+
+\newcommand {\PLACERS}{{\em placer}}
+
+\newcommand {\ATFSLONGSHORT}{{\em Attributed File System}}
+
+\newcommand {\ATFSLONG}{{\em Attributed File System }}
+
+\newcommand {\ATFSSHORT}{{\em AtFS}}
+
+\newcommand {\ATFS}{{\em AtFS }}
+
+\newcommand {\OBJBROWSHORT}{{\em Objekt\-browser}}
+
+\newcommand {\OBJBROWS}{{\em Objekt\-browsers }}
+
+\newcommand {\OBJBROW}{{\em Objekt\-browser }}
+
+\newcommand {\SDESSHORT}{{\em SPU's }}
+
+\newcommand {\SDESHORT}{{\em SPU}}
+
+\newcommand {\SDESLONGNORM}{Soft\-ware-Pro\-duk\-tions\-um\-ge\-bungen }
+
+\newcommand {\SDESLONG}{{\em Soft\-ware-Pro\-duk\-tions\-um\-ge\-bungen }}
+
+\newcommand {\SDELONG}{{\em Soft\-ware-Pro\-duk\-tions\-um\-ge\-bung }}
+
+\newcommand {\SDES}{{\em SPU's }}
+
+\newcommand {\SDE}{{\em SPU }}
+
+\newcommand {\SOFTOBJSSHORT}{{\em Software\-objekts}}
+
+\newcommand {\SOFTOBJESHORT}{{\em Software\-objekte}}
+
+\newcommand {\SOFTOBJSHORT}{{\em Software\-objekt}}
+
+\newcommand {\SOFTOBJENSHORT}{{\em Software\-objekten}}
+
+\newcommand {\SOFTOBJS}{{\em Software\-objekts }}
+
+\newcommand {\SOFTOBJEN}{{\em Software\-objekten }}
+
+\newcommand {\SOFTOBJE}{{\em Software\-objekte }}
+
+\newcommand {\SOFTOBJ}{{\em Software\-objekt }}
+
+\newcommand {\STAGESHORT}{{\sc Stage}}
+
+\newcommand {\STAGE}{{\sc Stage }}
+
+\newcommand {\STONESHORT}{{\em Stone}}
+
+\newcommand {\STONE}{{\em Stone }}
+
+\newcommand {\HPES}{{\em HP Encapsulator$^{TM}$}}
+
+\newcommand {\HPE}{{\em HP Encapsulator$^{TM}$ }}
+
+\newcommand {\XWSS}{{\em X window system$^{TM}$}}
+
+\newcommand {\XWS}{{\em X window sys\-tem$^{TM}$ }}
+
+\newcommand {\UNIXS}{{\em $UNIX^{TM}$}}
+
+\newcommand {\UNIX}{{\em $UNIX^{TM}$ }}
+
+\newcommand {\MOTIFS}{{\em $Motif^{TM}$}}
+
+\newcommand {\MOTIF}{{\em $Motif^{TM}$ }}
+
+\newcommand {\DOSS}{{\em $MS-DOS^{TM}$}}
+
+\newcommand {\DOS}{{\em $MS-DOS^{TM}$ }}
+
+\newcommand {\BOFL}{{Be\-nut\-zungs\-ober\-fl"a\-che }}
+
+\newcommand {\BOFLS}{{Be\-nut\-zungs\-ober\-fl"a\-chen }}
+
+\newcommand {\BOFLSHORT}{{Be\-nut\-zungs\-ober\-fl"a\-che}}
+
+\newcommand {\BOFLSSHORT}{{Be\-nut\-zungs\-ober\-fl"a\-chen}}
+
+\makeatother
+\newenvironment{tex2html_wrap}{}{}
+\newwrite\lthtmlwrite
+\def\lthtmltypeout#1{{\let\protect\string\immediate\write\lthtmlwrite{#1}}}%
+\newbox\sizebox
+\begin{document}
+\pagestyle{empty}
+\setcounter{topnumber}{5}
+\setcounter{totalnumber}{5}
+\setcounter{bottomnumber}{5}
+\setcounter{topnumber}{5}
+\setcounter{totalnumber}{5}
+\setcounter{bottomnumber}{5}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2340: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{chapter}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2342: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{chapter}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2350: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{section}
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2352: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2354: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2356: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2358: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6cm
+  \epsffile{pictures/design/BYO.ips}}
+  
+  \label{fig:BYO design}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6cm
+  \epsffile{pictures/design/XF.ips}}
+  
+  \label{fig:XF design}
+\end{figure}
+}
+
+\stepcounter{chapter}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2360: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$UNIX^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2362: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2364: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$\backslash$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2366: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2368: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$UNIX^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2370: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/tclTk/placer1.ps}}
+  
+  \label{fig:Placed widgets}
+\end{figure}
+}
+
+\stepcounter{subsubsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6cm
+  \epsffile{pictures/tclTk/packer1.ps}}
+  
+  \label{fig:Packed widgets}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{chapter}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|p{8.5cm}|} \hline
+Level & Purpose\\  \hline
+1     & Not used by {\em XF}
+.\\  \hline
+2     & Not used by {\em XF}
+.\\  \hline
+3     & Not used by {\em XF}
+.\\  \hline
+4     & Procedures that are used to implement the {\em XF }
+ alias
+         feature get this level. They should be saved, but it
+         is not necessary to display them.\\  \hline
+5     & The main template procedures (those which are called
+         by the user) have this level.\\  \hline
+6     & The supporting template procedures (those which are
+         not called by the user) have this level. They should
+         not be displayed.\\  \hline
+7     & Procedures that are used by the {\em XF }
+ generated code
+         get this level. They should be saved, but it is not
+         necessary to display them.\\  \hline
+8     & {\em Tk }
+ procedures that are to be saved get this level.
+         Right now no procedure has this level.\\  \hline
+9     & Procedures that have this level are totally ignored
+         by {\em XF}
+.\\  \hline
+\end{tabular}
+}
+
+\stepcounter{chapter}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6cm
+  \epsffile{pictures/design/BYO.ips}}
+  
+  \label{fig:BYO design}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6cm
+  \epsffile{pictures/design/XF.ips}}
+  
+  \label{fig:XF design}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{8.5cm}|}
+0      & Activates the packing dialog for this widget.\\  \hline
+1      & Activates the placing dialog for this widget.\\  \hline
+2      & Activates the default geometry handling dialog for
+         this widget.\\  \hline
+3      & Activates the binding dialog for this widget.\\  \hline
+4      & Activates the default parameter dialog for this
+         widget. This dialog should cover the most important
+         resources of the widget.\\  \hline
+5      & Activates the special parameter dialog for this
+         widget. This dialog is used to implement special
+         features, like drawing for canvas widgets.\\  \hline
+\end{supertabular}
+}
+
+\stepcounter{subsubsection}
+\stepcounter{subsubsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{chapter}
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2450: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2452: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$UNIX^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2454: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$MS-DOS^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2456: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2458: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+\stepcounter{chapter}
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/external/edge.ps}}
+  
+  \label{fig:The edge program}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9.5cm
+  \epsffile{pictures/external/xfappdef.ps}}
+  
+  \label{fig:The xfappdef program}
+\end{figure}
+}
+
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=8.5cm
+  \epsffile{pictures/external/xfhardcopy.ps}}
+  
+  \label{fig:The xfhardcopy program}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{8.5cm}|} \hline
+Variable name & Contents\\  \hline
+height        & The height of the selected widget\\  \hline
+id            & The X window id of the selected widget\\  \hline
+outputFile    & The name of the specified output file\\  \hline
+rootx         & The absolute x position of the widget\\  \hline
+rooty         & The absolute y position of the widget\\  \hline
+widget        & The {\em Tk }
+ widget name of the selected widget\\  \hline
+width         & The width of the selected widget\\  \hline
+x             & The relative x position of the widget\\  \hline
+y             & The relative y position of the widget\\  \hline
+\end{tabular}
+}
+
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12cm
+  \epsffile{pictures/external/xfhelp.ps}}
+  
+  \label{fig:The xfhelp program}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12.5cm
+  \epsffile{pictures/external/xfpixmap.ps}}
+  
+  \label{fig:The xfpixmap program}
+\end{figure}
+}
+
+\stepcounter{section}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \label{fig:The xftutorial program}
+  \centerline{
+  \epsfysize=11cm
+  \epsffile{pictures/external/xftutorial.ps}}
+  
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{chapter}
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=11cm
+  \epsffile{pictures/dialog/main.ps}}
+  
+  \label{fig:The procedure XFProcMain}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/dialog/read.ps}}
+  
+  \label{fig:The procedure XFProcFileEnterTCL}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/dialog/new.ps}}
+  
+  \label{fig:The procedure XFProcFileNew}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=8cm
+  \epsffile{pictures/dialog/load.ps}}
+  
+  \label{fig:The procedure XFProcFileLoad}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/dialog/quit.ps}}
+  
+  \label{fig:The procedure XFProcFileQuit}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=10cm
+  \epsffile{pictures/dialog/binding.ps}}
+  
+  \label{fig:The procedure XFProcConfBinding}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/dialog/layout.ps}}
+  
+  \label{fig:The procedure XFProcConfLayout}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=10.5cm
+  \epsffile{pictures/dialog/packing.ps}}
+  
+  \label{fig:The procedure XFProcConfPacking}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9.5cm
+  \epsffile{pictures/dialog/general.ps}}
+  
+  \label{fig:The procedure XFProcConfParametersGeneral}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/dialog/groups.ps}}
+  
+  \label{fig:The procedure XFProcConfParametersGroups}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/dialog/params.ps}}
+  
+  \label{fig:The procedure XFProcConfParametersSmall}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12.5cm
+  \epsffile{pictures/dialog/placing.ps}}
+  
+  \label{fig:The procedure XFProcConfPlacing}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=4.5cm
+  \epsffile{pictures/dialog/cuttree.ps}}
+  
+  \label{fig:The procedure XFProcEditShowCut (tree)}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/dialog/cutscript.ps}}
+  
+  \label{fig:The procedure XFProcEditShowCut (script)}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12.5cm
+  \epsffile{pictures/dialog/commands.ps}}
+  
+  \label{fig:The procedure XFProcProgCommands}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=3cm
+  \epsffile{pictures/dialog/procSave.ps}}
+  
+  \label{fig:The procedure XFProcProgCommands (saving)}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7.5cm
+  \epsffile{pictures/dialog/procLoad.ps}}
+  
+  \label{fig:The procedure XFProcProgCommands (loading)}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/dialog/editScript.ps}}
+  
+  \label{fig:The procedure XFProcProgEditScript}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=5cm
+  \epsffile{pictures/dialog/errors.ps}}
+  
+  \label{fig:The procedure XFProcProgErrors}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=10cm
+  \epsffile{pictures/dialog/globals.ps}}
+  
+  \label{fig:The procedure XFProcProgGlobals}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12.5cm
+  \epsffile{pictures/dialog/procs.ps}}
+  
+  \label{fig:The procedure XFProcProgProcs}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/dialog/showScript.ps}}
+  
+  \label{fig:The procedure XFProcProgShowScript}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=10.5cm
+  \epsffile{pictures/dialog/widgetTree.ps}}
+  
+  \label{fig:The procedure XFProcProgWidgetTree}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=10cm
+  \epsffile{pictures/dialog/alias.ps}}
+  
+  \label{fig:The procedure XFProcMiscAliases}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7.5cm
+  \epsffile{pictures/dialog/modules.ps}}
+  
+  \label{fig:The procedure XFProcMiscModules}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/dialog/pixmaps.ps}}
+  
+  \label{fig:The procedure XFProcMiscPixmaps}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/dialog/optBind.ps}}
+  
+  \label{fig:The procedure XFProcOptionsBindings}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{6.8cm}|}
+Call configuration     & This is the binding to activate
+                         parameter setting. This event works
+                         for each widget in the application,
+                         and also for some parameter setting
+                         fields in the {\em XF }
+ parameter
+                         dialogs.\\  \hline
+Select current widget  & This event is used to make one
+                         widget in the application the
+                         current widget.\\  \hline
+Primary select         & This is the primary (usually used)
+                         select event.\\  \hline
+Secondary select       & This is the alternative for the
+                         primary select. This is only used
+                         when the primary select is already
+                         used (almost never required).\\  \hline
+Third select           & This is the alternative for the
+                         primary and secondary select.\\  \hline
+Show widget name       & This event allows it to display
+                         the widget name of the widget under
+                         the mouse pointer in a dialog box
+                         (the name is also inserted into the
+                         cutbuffer, so it can be pasted).\\  \hline
+Remove widget name     & This event must correspond to the
+                         ``Show widget name'' event. This
+                         event removes the dialog box
+                         showing the widget name.\\  \hline
+Begin widget moving    & This event starts the interactive
+                         placing or sizing of a widget. It
+                         must correspond to the other
+                         moving and sizing events.\\  \hline
+Move widget            & This event is the moving event that
+                         is used to update the widget
+                         position during the moving. It must
+                         correspond to the other
+                         moving and sizing events.\\  \hline
+End widget moving      & This event ends the interactive
+                         placing or sizing of a widget. It
+                         must correspond to the other
+                         moving and sizing events.\\  \hline
+Popup menu (mouse nr.) & This is the number of the mouse
+                         button that should be used to
+                         display a popup menu. Popup menus
+                         are available in the widget tree.\\ 
+\end{supertabular}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=13.5cm
+  \epsffile{pictures/dialog/optGeneral.ps}}
+  
+  \label{fig:The procedure XFProcOptionsGeneral}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{6.5cm}|}
+Auto save                    & The interval slider specifies
+                               the interval between two auto
+                               saves. The file number slider
+                               specifies the number of
+                               backup files to be created.
+                               The backup files are created
+                               in the temporary directory,
+                               and they start with an ``as''.\\  \hline 
+Ask for widget name...       & This checkbutton activates a
+                               dialog box, where the user
+                               can enter a widget name
+                               before a widget is inserted.\\  \hline
+Mac like bindings (partially)& This checkbutton activates
+                               bindings for entry and text
+                               widgets which emulate certain
+                               Mac functionalities (Meta-c,
+                               Meta-x and Meta-v).\\  \hline
+Default geometry manager     & Depending on these buttons,
+                               new widgets are inserted
+                               using the packer or the
+                               placer.\\  \hline
+Allow layouting without...   & If this checkbutton is true,
+                               layouting of the widgets is
+                               only allowed when the layout
+                               dialog box is popped up (to
+                               prevent erroneous geometry
+                               changes). Otherwise the
+                               layouting is always
+                               possible.\\  \hline
+Default geometry manager     & Depending on these buttons,
+                               new widgets are displayed,
+                               using the packer or the
+                               placer.\\  \hline
+Layout border width          & With this slider, the sizing
+                               border of widgets can be
+                               specified. This border is
+                               used to size widgets, while
+                               the remaining inner area is
+                               used to move the widget.\\  \hline
+GridX/GridY                  & With these sliders, a grid
+                               can be defined for widgets
+                               that are layouted with the
+                               placer.\\  \hline
+Scrollbar side               & Depending on these buttons,
+                               scrollbars are displayed left
+                               from the controlled widgets
+                               or right.\\  \hline
+Save options on exit         & If this checkbutton is true,
+                               the {\em XF }
+ options are saved
+                               when the program is stopped.\\  \hline
+Save positions on exit       & If this checkbutton is true,
+                               the {\em XF }
+ window positions are
+                               saved when the program is
+                               stopped.\\  \hline
+Binding show levels          & These checkbuttons specify
+                               which levels of bindings are
+                               displayed in the binding
+                               dialog. The level of a
+                               binding is specified by the
+                               string ``\# xf ignore me
+                               $<$level$>$'' at the
+                               beginning of the {\em Tcl/Tk }
+
+                               command.\\  \hline
+Procedure show levels        & These checkbuttons specify
+                               which levels of procedures
+                               are displayed in the
+                               procedure dialogs. The level
+                               of a procedure is specified
+                               by the string ``\# xf ignore
+                               me $<$level$>$'' at the
+                               beginning of the {\em Tcl/Tk }
+
+                               command.\\  \hline
+Bitmap editor                & This entry contains the
+                               command that is invoked to
+                               start an external bitmap
+                               editor. The editor command
+                               must contain the string
+                               \$xfFileName at the position
+                               where the filename which is
+                               to be edited should be
+                               substituted.\\  \hline
+Pixmap editor                & This entry contains the
+                               command that is invoked to
+                               start an external pixmap
+                               editor. The editor command
+                               must contain the string
+                               \$xfFileName at the position
+                               where the filename which is
+                               to be edited should be
+                               substituted.\\  \hline
+Editor                       & This entry contains the
+                               command that is invoked to
+                               start an external editor. The
+                               editor command must contain
+                               the string \$xfFileName at
+                               the position where the
+                               filename which is to be
+                               edited should be
+                               substituted.\\  \hline
+Message font                 & This font is used in {\em XF }
+
+                               message boxes. All other
+                               dialogs are using the default
+                               font.\\  \hline
+Flash color                  & This color is used to
+                               highlight the selected
+                               widget.\\ 
+\end{supertabular}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=4.7cm
+  \epsffile{pictures/dialog/optInterp.ps}}
+  
+  \label{fig:The procedure XFProcOptionsInterpreter}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{6.8cm}|}
+Motif look \& feel       & This checkbutton toggles the
+                          global variable tk\_strict\-Motif
+                          which is used to make the behavior
+                          of {\em Tk }
+ more motif-like.\\  \hline
+Interpreter has tkEmacs & Only when this checkbutton is
+                          selected, the tkEmacs widget is
+                          used for editing {\em Tcl/Tk }
+ source.
+                          Otherwise, an existing tkEmacs
+                          widget is ignored.\\  \hline
+Tk handles Kanji Fonts  & This checkbutton enables the kanji
+                          font support.\\  \hline
+Interpreter             & This is the name of the
+                          interpreter which is inserted at
+                          the beginning of the created code
+                          to allow the execution of this
+                          {\em Tcl/Tk }
+ code.\\  \hline
+Interpreter (editor)    & This is the name of the
+                          interpreter that is used to run
+                          external editors. Usually, this is
+                          the standard wish. To allow the
+                          use of special extensions in future
+                          versions, this name is adaptable.\\  \hline
+Interpreter (testing)   & This is the name of the
+                          interpreter that is used to test
+                          the scripts. Usually, this is the
+                          standard wish. To allow the use of
+                          special extensions in future
+                          versions, this name is adaptable.\\  \hline
+Interpreter (tutorial)  & This is the name of the
+                          interpreter that is used to run
+                          the tutorial. Usually, this is the
+                          standard wish. To allow the use of
+                          special extensions in future
+                          versions, this name is adaptable.\\  \hline
+\end{supertabular}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12.5cm
+  \epsffile{pictures/dialog/optPath.ps}}
+  
+  \label{fig:The procedure XFProcOptionsPathFile}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{7.8cm}|}
+XF path           & This pathname is pointing at the root of
+                    the installed {\em XF }
+ distribution.\\  \hline
+Additionals path  & This pathname is pointing at the
+                    directory where the sources for the
+                    support of additional widgets are
+                    located.\\  \hline
+Elements path     & This pathname is pointing at the
+                    directory where the sources for the
+                    support of the standard {\em Tk }
+ widgets are
+                    located.\\  \hline
+Help path         & This is a list of pathnames separated by
+                    ``:'' containing the help pages for
+                    the help program.\\  \hline 
+Icon path         & This is a list of pathnames separated by
+                    ``:'' containing the icons for the
+                    iconbar.\\  \hline
+Library path      & This pathname points at the directory
+                    where the library files of {\em XF }
+ are
+                    located.\\  \hline
+Module load path  & This is a list of pathnames separated by
+                    ``:'' pointing at directories where
+                    {\em XF }
+ can find modules that should be
+                    loaded. If these directories contain
+                    tclIndex files, the auto loading
+                    facility of {\em Tcl }
+ also uses this
+                    pathname.\\  \hline
+Procedures path   & This pathname is pointing at the
+                    directory where the {\em Tcl/Tk }
+ procedures
+                    can be stored.\\  \hline
+Source path       & This pathname is pointing at the 
+                    directory where the {\em XF }
+ sources are
+                    located.\\  \hline
+Template path     & This is a list of pathnames separated by
+                    ``:'' pointing at directories where
+                    templates can be found and stored.\\  \hline
+Tmp path          & This pathname is pointing at the 
+                    directory where {\em XF }
+ can store temporary
+                    data. This includes the auto save
+                    files.\\  \hline
+AppDef file       & This filename specifies the application
+                    default file that {\em XF }
+ should load at
+                    startup. This file can contain standard
+                    X resource specifications\\  \hline
+Binding file      & This filename specifies the file
+                    containing class bindings. These
+                    bindings can be changed and saved with
+                    {\em XF}
+. If the class bindings are
+                    significant for the application, they
+                    should be included directly in the
+                    application source with an option in
+                    ({\tt Options $|$ Source options\tt}).\\  \hline
+Color file        & This filename specifies the file
+                    that contains the color\-names for the
+                    color selection box. This file is
+                    created automatically when {\em XF }
+ is
+                    installed.\\  \hline
+Config file       & This filename specifies the
+                    configuration file for {\em XF}
+. This
+                    filename can be specified with a
+                    commandline option when {\em XF }
+ is
+                    started (-xfconfig).\\  \hline
+Cursor file       & This filename specifies the file
+                    that contains the cursor\-names for the
+                    cursor selection box. This file is
+                    created automatically when {\em XF }
+ is
+                    installed.\\  \hline
+Font file         & This filename specifies the file
+                    that contains the font\-names for the
+                    font selection box. This file is
+                    created automatically when {\em XF }
+ is
+                    installed.\\  \hline
+Iconbar file      & This filename specifies the
+                    iconbar configuration file.\\  \hline
+Keysym file       & This filename specifies the file
+                    that contais the keysym\-names for the
+                    keysym selection box. This file is
+                    created automatically when {\em XF }
+ is
+                    installed.\\  \hline
+Menubar file      & This filename specifies the
+                    menubar configuration file.\\  \hline
+Position file     & This filename specifies the
+                    window position file for {\em XF}
+. This file
+                    contains the window positions of the {\em XF }
+
+                    dialog boxes.\\  \hline
+Startup file      & This filename specifies the
+                    startup file. This file is evaluated
+                    when {\em XF }
+ is started. Here, the user can
+                    make local extensions to {\em XF}
+.\\  \hline
+TkEmacs editor    & This is the name of the emacs that is
+                    called by the tkEmacs widget. Usually,
+                    this value is not changed.\\  \hline
+TkEmacs lisp file & This is the name of the emacs lisp code
+                    that is loaded by the tkEmacs widget.
+                    Usually, this value is not changed.\\ 
+\end{supertabular}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=12.5cm
+  \epsffile{pictures/dialog/optSource.ps}}
+  
+  \label{fig:The procedure XFProcOptionsSource}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{6.2cm}|}
+Application default code     & If this checkbutton is
+                               selected, {\em XF }
+ will create
+                               code that allows the parsing
+                               of application default files.
+                               The code searches in the
+                               application default
+                               directories for a file
+                               matching the application
+                               name, and parses it.\\  \hline
+Form support code            & If this checkbutton is true,
+                               {\em XF }
+ will create code that
+                               supports formulars. The code
+                               allows the automatic
+                               connection of text/entry
+                               widgets, and handles the
+                               geometry of these widgets.\\  \hline
+Commandline parsing code     & If this checkbutton is true,
+                               {\em XF }
+ will create code that
+                               parses the commandline
+                               options for some special {\em XF }
+
+                               extensions.\\  \hline
+Pixmap preloading code       & If this checkbutton is true,
+                               {\em XF }
+ will create code that
+                               uses the TkPixmap extension
+                               {\em pinfo\em} to include the
+                               bitmaps/pixmaps that are used
+                               by the application into the
+                               code.\\  \hline
+Class bindings               & If this checkbutton is true,
+                               {\em XF }
+ will include the class
+                               bindings into the created
+                               code.\\  \hline
+Create tclIndex file         & If this checkbutton is true,
+                               {\em XF }
+ will create a tclIndex
+                               file for those modules that
+                               are specified to be auto
+                               loadable.\\  \hline 
+Create shell script          & If this checkbutton is true,
+                               {\em XF }
+ will create a shell
+                               script for calling the
+                               resulting application.\\  \hline
+Bindings are surrounded...   & Depending on these buttons,
+                               {\em XF }
+ will enclose the {\em Tcl/Tk }
+
+                               commands bound to an event in
+                               \{\} or ''''. Please use
+                               \{\}, for the enclosing in
+                               '''' may lead into trouble.\\  \hline
+Procedures are surrounded... & Depending on these buttons,
+                               {\em XF }
+ will enclose the {\em Tcl/Tk }
+
+                               commands bound to a resource
+                               (like the -command resource
+                               for buttons) in \{\} or ''''.
+                               Please use \{\}, for the
+                               enclosing in '''' may lead
+                               into trouble.\\  \hline
+Binding save levels          & These checkbuttons specify
+                               which levels of bindings are
+                               saved. The level of a
+                               binding is specified by the
+                               string ``\# xf ignore me
+                               $<$level$>$'' at the
+                               beginning of the {\em Tcl/Tk }
+
+                               command.\\  \hline
+Procedure save levels        & These checkbuttons specify
+                               which levels of the
+                               procedures are saved. The
+                               level of a procedure is
+                               specified by the string ``\#
+                               xf ignore me $<$level$>$'' at
+                               the beginning of the {\em Tcl/Tk }
+
+                               command.\\  \hline
+Comment layout               & Depending on the radiobuttons
+                               below the text widget, the
+                               text widget allows the
+                               adaption of the comments that
+                               are inserted in the code by
+                               {\em XF}
+. These comments can
+                               contain several variables.
+                               These are: programName,
+                               moduleName, tclVersion,
+                               tkVersion, xfVersion,
+                               magicCookie and procedureName.\\ 
+\end{supertabular}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/dialog/optVersion.ps}}
+  
+  \label{fig:The procedure XFProcOptionsVersion}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{7.5cm}|}
+Use version control     & This checkbutton allows it to
+                          disable the use of the version
+                          control system.\\  \hline
+List                    & This command is executed to get a
+                          name list of all objects in the
+                          version system. Before this
+                          command is executed, {\em XF }
+ changes
+                          into the correct directory.\\  \hline
+List (long)             & This command is executed to get a
+                          detailed information on one
+                          specific object in the version
+                          system. The object is identified
+                          with a version number. Before this
+                          command is executed, {\em XF }
+ changes
+                          into the correct directory.\\  \hline
+List default (long)     & This command is executed to get a
+                          detailed information on one
+                          specific object in the version
+                          system. The object is the default
+                          object that is used when no
+                          explicit version number is given.
+                          Before this command is executed,
+                          {\em XF }
+ changes into the correct
+                          directory.\\  \hline
+Retrieve                & This command is executed to
+                          retrieve one specific object from
+                          the version system. The object is
+                          identified with a version number.
+                          Before this command is executed,
+                          {\em XF }
+ changes into the correct
+                          directory.\\  \hline
+Retrieve default        & This command is executed to
+                          retrieve one specific object from
+                          the version system. The object is
+                          the default object that is used
+                          when no explicit version number is
+                          given. Before this command is
+                          executed, {\em XF }
+ changes into the
+                          correct directory.\\  \hline
+Remove                  & This command is executed to
+                          remove a retrieved object. Before
+                          this command is executed, {\em XF }
+
+                          changes into the correct
+                          directory.\\  \hline
+Save                    & This command is executed to
+                          save an object into the version
+                          system. Before this command is
+                          executed, {\em XF }
+ changes into the
+                          correct directory.\\  \hline
+Save with comment       & This command is executed to
+                          save an object into the version
+                          system. It also takes a message
+                          that is attached to that object.
+                          Before this command is executed,
+                          {\em XF }
+ changes into the correct
+                          directory.\\  \hline
+Show                    & This command is executed to
+                          show the contents of one specific
+                          object from the version system.
+                          The object is identified with a
+                          version number. Before this
+                          command is executed, {\em XF }
+ changes
+                          into the correct directory.\\  \hline
+Show default            & This command is executed to
+                          show the contents of one specific
+                          object from the version system.
+                          The object is the default object
+                          that is used when no explicit
+                          version number is given. Before
+                          this command is executed, {\em XF }
+
+                          changes into the correct
+                          directory.\\  \hline
+Test                    & This command is executed to
+                          check if the version control
+                          system is installed on the
+                          machine.\\ 
+\end{supertabular}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/dialog/optWindow.ps}}
+  
+  \label{fig:The procedure XFProcOptionsWindow}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|p{5.5cm}|}
+Automatic window placing      & This checkbutton toggles the
+                                placing policy of {\em XF}
+.
+                                Automatic placing means,
+                                that the position of the
+                                dialog boxes is set by {\em XF }
+
+                                at startup. The changes that
+                                the user makes are stored.\\  \hline
+Automatic window sizing       & This checkbutton toggles the
+                                sizing policy of {\em XF}
+.
+                                Automatic sizing means,
+                                that the size of the dialog
+                                boxes is set by {\em XF }
+ at
+                                startup. The changes that 
+                                the user makes are stored.\\  \hline
+Automatic window stacking     & This checkbutton toggles the
+                                placing/sizing policy of
+                                {\em XF}
+. Automatic stacking means
+                                that the size and position
+                                of some dialog boxes are set
+                                to the size and position of
+                                a ``leading'' window. This
+                                can only be done for
+                                parameter dialogs.\\  \hline
+One window per window class   & This checkbutton toggles the
+                                dialog box creation policy
+                                of {\em XF}
+. If only one window
+                                per window class is allowed,
+                                {\em XF }
+ will use an already
+                                existing toplevel of the
+                                same window class to display
+                                dialog boxes.\\  \hline
+Automatic root window placing & If this checkbutton is true,
+                                the main application window
+                                is placed to the position
+                                +0+0 on startup.\\  \hline
+Hide edit lists               & If this checkbutton is true,
+                                the main {\em XF }
+ window does not
+                                contain the widget listboxes.\\  \hline
+Hide iconbar                  & If this checkbutton is true,
+                                the main {\em XF }
+ window does not
+                                contain the icon\-bar.\\  \hline
+Hide menubar                  & If this checkbutton is true,
+                                the main {\em XF }
+ window does not
+                                contain the menu\-bar.\\  \hline
+Hide path name                & If this checkbutton is true,
+                                the main {\em XF }
+ window does not
+                                contain the current widget
+                                path.\\  \hline
+Hide status line              & If this checkbutton is true,
+                                the main {\em XF }
+ window does not
+                                contain the status line.\\  \hline
+Show iconbar as toplevel      & If this checkbutton is true,
+                                the icon\-bar of the
+                                main {\em XF }
+ window is displayed
+                                as a separate toplevel at the
+                                {\em XF }
+ startup.\\ 
+\end{supertabular}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[hbt]
+  \centerline{
+  \epsfysize=5cm
+  \epsffile{pictures/dialog/about.ps}}
+  
+  \label{fig:The procedure XFProcHelpAbout}
+\end{figure}
+}
+
+\stepcounter{subsection}
+\stepcounter{subsection}
+\stepcounter{chapter}
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=10cm
+  \epsffile{pictures/templates/CanvasLS.ps}}
+  
+  \label{fig:CanvasLS}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=1cm
+  \epsffile{pictures/templates/EntryL.ps}}
+  
+  \label{fig:EntryL}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=1cm
+  \epsffile{pictures/templates/EntryLLS.ps}}
+  
+  \label{fig:EntryLLS}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=1cm
+  \epsffile{pictures/templates/EntryLS.ps}}
+  
+  \label{fig:EntryLS}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=1cm
+  \epsffile{pictures/templates/EntryS.ps}}
+  
+  \label{fig:EntryS}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=14cm
+  \epsffile{pictures/templates/HypertextLS.ps}}
+  
+  \label{fig:HypertextLS}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=8cm
+  \epsffile{pictures/templates/ListboxLS.ps}}
+  
+  \label{fig:ListboxLS}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/templates/PhotoLS.ps}}
+  
+  \label{fig:PhotoLS}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=10cm
+  \epsffile{pictures/templates/TextLS.ps}}
+  
+  \label{fig:TextLS}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=9cm
+  \epsffile{pictures/templates/TkEmacsLS.ps}}
+  
+  \label{fig:TkEmacsLS}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name    & Opt. & Purpose\\  \hline
+alertBoxMessage   & y    & The message, file or file
+                           descriptor that is displayed.\\  \hline
+alertBoxCommand	  & y    & The command to execute when OK is
+                           pressed. The dialog box is not modal
+                           (non blocking) when this parameter
+                           is not an empty string.\\  \hline
+alertBoxGeometry  & y    & This is the geometry of the dialog
+                           box.\\  \hline
+alertBoxTitle     & y    & This is the title bar of the
+                           dialog box.\\  \hline
+args              & y    & Any additional parameters are
+                           interpreted as a button label.
+                           The dialog box is modal
+                           (blocking), and the return value
+                           of the procedure is the number of
+                           the pressed button.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element     & Default   & Purpose\\  \hline
+activeBackground  & -         & The active background color.\\  \hline
+activeForeground  & -         & The active foreground color.\\  \hline
+after             & 0         & Invokes the first button after
+                                n seconds. The dialog box 
+                                is removed.\\  \hline
+anchor            & nw        & The anchor of the message widget.\\  \hline
+background        & -         & The background color.\\  \hline
+font              & -         & The font.\\  \hline
+foreground        & -         & The foreground color.\\  \hline
+justify           & center    & The justification of the
+                                widget displaying the
+                                message.\\  \hline
+toplevelName      & .alertBox & This variable contains the
+                                name of the toplevel widget.
+                                It makes it possible to
+                                popup multiple dialog boxes
+                                at the same time.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$\backslash$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2562: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=4.2cm
+  \epsffile{pictures/templates/AlertBox.ps}}
+  
+  \label{fig:AlertBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name & Opt. & Purpose \\  \hline
+listWidget     & n    & The list/text widget that should be
+                        cleared \\  \hline
+\end{tabular}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.7cm}|} \hline
+Parameter name    & Opt. & Purpose\\  \hline
+colorBoxFileColor & y    & The file containing a list of
+                           colors.\\  \hline
+colorBoxMessage   & y    & The message to be displayed. If
+                           the parameter contains the
+                           patterns *foreground* or
+                           *background*, the appropriate
+                           resource is set in the demo
+                           widget, and in the target
+                           widget.\\  \hline
+colorBoxEntryW    & y    & This is the entry widget where
+                           the selected color is to be
+                           inserted.\\  \hline
+colorBoxTargetW   & y    & This is the widget that is
+                           configured. If this parameter is
+                           specified, the selected color is
+                           applied to the widget.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element          & Default & Purpose\\  \hline
+activeBackground       & -       & The active background
+                                   color.\\  \hline
+activeForeground       & -       & The active foreground
+                                   color.\\  \hline
+background             & -       & The background color.\\  \hline
+font                   & -       & The font.\\  \hline
+foreground             & -       & The foreground color.\\  \hline
+palette                & ''''    & A list of color names.\\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color.\\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color.\\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6cm
+  \epsffile{pictures/templates/ColorBox.ps}}
+  
+  \label{fig:ColorBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.3cm}|} \hline
+Parameter name      & Opt. & Purpose \\  \hline
+cursorBoxFileCursor & y    & The file containing a list of
+                             cursors. \\  \hline 
+cursorBoxFileColor  & y    & The file containing a list of
+                             colors. \\  \hline
+cursorBoxMessage    & y    & The resource name that is 
+                             configured. \\  \hline
+cursorBoxEntryW     & y    & This is the entry widget where
+                             the selected cursor is
+                             inserted. \\  \hline
+cursorBoxTargetW    & y    & This is the widget that is
+                             configured. If this parameter
+                             is specified, the selected
+                             cursor is applied to the widget
+                             immediately. \\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element          & Default & Purpose\\  \hline
+activeBackground       & -       & The active background
+                                   color.\\  \hline
+activeForeground       & -       & The active foreground
+                                   color.\\  \hline
+background             & -       & The background color.\\  \hline
+font                   & -       & The font.\\  \hline
+foreground             & -       & The foreground color.\\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color.\\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color.\\  \hline
+scrollSide             & right   & The side of the scrollbar.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6.3cm
+  \epsffile{pictures/templates/CursorBox.ps}}
+  
+  \label{fig:CursorBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name    & Opt. & Purpose \\  \hline
+fsBoxMessage      & y    & The message to be displayed. \\  \hline
+fsBoxFileName     & y    & This is a file name that is
+                           inserted in the file name
+                           selection field, as a default
+                           value \\  \hline
+fsBoxActionOk     & y    & This is the Tcl script that is
+                           evaluated when the OK button is
+                           pressed. To access the selected
+                           file and path name, access the
+                           global variable fsBox described
+                           below. If no commands are
+                           specified, the dialog box is
+                           modal.\\  \hline
+fsBoxActionCancel & y    & This is the Tcl script that is
+                           evaluated when the Cancel button
+                           is pressed. To access the
+                           selected file and path name,
+                           access the global variable fsBox
+                           described below. If no commands
+                           are specified, the dialog box is
+                           modal.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|l|p{5.5cm}|}
+activeBackground       & -       & The active background
+                                   color. \\  \hline
+activeForeground       & -       & The active foreground
+                                   color. \\  \hline
+background             & -       & The background color. \\  \hline
+font                   & -       & The font. \\  \hline
+foreground             & -       & The foreground color. \\  \hline
+name                   & ''''    & The name of the selected
+                                   file. \\  \hline
+path                   & ''''    & The path name of the
+                                   selected file. \\  \hline
+pattern                & ''''    & The display selection
+                                   pattern. \\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color. \\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color. \\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar. \\  \hline 
+showPixmaps            & 0       & If this variable is 1,
+                                   the selected files are
+                                   interpreted as picture
+                                   files, and are displayed
+                                   in an area right from the
+                                   file list. \\  \hline
+\end{supertabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=8cm
+  \epsffile{pictures/templates/FSBox.ps}}
+  
+  \label{fig:FSBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name & Opt. & Purpose \\  \hline
+listWidget     & n    & The list widget where the file
+                        contents are inserted. \\  \hline
+fileInFile     & y    & The filename/filedescriptor that is
+                        to be inserted. \\  \hline
+\end{tabular}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.7cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+fontBoxFileFont & y    & The file containing a list of
+                         fonts.\\  \hline 
+fontBoxResource & y    & The resource name that is
+                         configured.\\  \hline
+fontBoxEntryW   & y    & This is the entry widget where the
+                         selected font is inserted.\\  \hline
+fontBoxTargetW  & y    & This is the widget that is
+                         configured. If this parameters is
+                         specified, the selected font is
+                         applied to the widget
+                         immediately.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element          & Default & Purpose\\  \hline
+activeBackground       & -       & The active background
+                                   color.\\  \hline
+activeForeground       & -       & The active foreground
+                                   color.\\  \hline
+background             & -       & The background color.\\  \hline
+font                   & -       & The font.\\  \hline
+font-demo              & -       & The demo string.\\  \hline
+foreground             & -       & The foreground color.\\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color.\\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color.\\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar.\\  \hline 
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=7cm
+  \epsffile{pictures/templates/FontBox.ps}}
+  
+  \label{fig:FontBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+iconBarUserFile & n    & This file contains the user
+                         specific iconbar configuration.
+                         This file is written when the user
+                         presses the {\tt Save\tt} button.\\  \hline
+iconBarFile     & n    & This file contains the
+                         fallback iconbar definition. This
+                         file is usually global for all
+                         users.\\  \hline
+iconBarIcons    & n    & A list of path names separated by
+                         ``:''. In thse path names, the 
+                         bitmaps for the icon bar can be
+                         found.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+iconBarName     & n    & The icon bar name. The name
+                         identifies a set of icons. An
+                         application can contain several
+                         iconbars, each under a unique
+                         name.\\  \hline
+iconBarPath     & y    & The widget path name where the
+                         iconbar is located. If the path
+                         name is empty, a toplevel is
+                         created.\\  \hline
+iconBarStatus   & y    & The status of the iconbar. An
+                         iconbar can have the status
+                         ``child'', which means, that it is
+                         inserted to the widget path defined
+                         by the previous parameter. The
+                         status ``toplevel'' means that the
+                         iconbar is displayed in a separate
+                         toplevel.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+iconBarName     & n    & The icon bar name. The name
+                         identifies a set of icons. An
+                         application can contain several
+                         iconbars, each under a unique
+                         name.\\  \hline
+iconBarPath     & y    & The widget path name where the
+                         iconbar should be inserted. If the
+                         path name is not empty, the
+                         children of this widget are
+                         destroyed.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+iconBarName     & n    & The icon bar name. The name
+                         identifies a set of icons. An
+                         application can contain several
+                         iconbars, each under a unique
+                         name.\\  \hline
+iconBarPath     & y    & The widget path name where the
+                         iconbar is located.\\  \hline
+iconBarProcs    & y    & A list of procedure names that can
+                         be used in the iconbar. This does
+                         not restrict the usage of other
+                         procedures, but it gives an
+                         impression of the available
+                         functionality.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|l|p{5.5cm}|}
+activeBackground       & -       & The active background
+                                   color.\\  \hline
+activeForeground       & -       & The active foreground
+                                   color.\\  \hline
+background             & -       & The background color.\\  \hline
+barBorder              & 2       & The iconbar border
+                                   width.\\  \hline
+barIgnoreSep           & 0       & The iconbar separators
+                                   are ignored.\\  \hline
+barRelief              & sunken  & The iconbar relief.\\  \hline
+font                   & -       & The font.\\  \hline
+foreground             & -       & The foreground color.\\  \hline
+iconBorder             & 2       & The icon border width.\\  \hline
+iconHeight             & 20      & The icon height.\\  \hline
+iconOffset             & 0       & The icon offset.\\  \hline
+iconRelief             & 2       & The icon relief.\\  \hline
+iconWidth              & 20      & The icon width.\\  \hline
+label                  & ''''    & The label where the
+                                   description is
+                                   displayed.\\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color.\\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color.\\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar.\\  \hline
+\end{supertabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=1.2cm
+  \epsffile{pictures/templates/IconBar.ps}}
+  
+  \label{fig:IconBar}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=10.5cm
+  \epsffile{pictures/templates/IconBarConf.ps}}
+  
+  \label{fig:IconBarConf}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.3cm}|} \hline
+Parameter name    & Opt. & Purpose\\  \hline
+inputBoxMessage   & y    & The message to be displayed.\\  \hline
+inputBoxCmdOk     & y    & The Tcl script that is
+                           evaluated when the button
+                           ({\tt OK\tt}) is pressed.
+                           To access the inserted text,
+                           the variable
+                           input\-Box(top\-level\-Name,
+                           input\-One) or
+                           input\-Box(top\-level\-Name,
+                           input\-Multi) (no spaces)
+                           is used. If no commands are
+                           specified, the dialog box is
+                           modal.\\  \hline 
+inputBoxCmdCancel & y    & The Tcl script that is
+                           evaluated when the button
+                           ({\tt Cancel\tt}) is
+                           pressed. To access the
+                           inserted text, the variable
+                           input\-Box(top\-level\-Name,
+                           input\-One) or
+                           input\-Box(top\-level\-Name,
+                           input\-Multi) (no spaces) is
+                           used. If no commands are
+                           specified, the dialog box is
+                           modal.\\  \hline
+inputBoxGeometry  & y    & The geometry of the toplevel.\\  \hline 
+inputBoxTitle     & y    & The title of the toplevel.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|l|p{4.7cm}|}
+activeBackground        & -         & The active background
+                                      color.\\  \hline
+activeForeground        & -         & The active foreground
+                                      color.\\  \hline
+anchor                  & n         & The anchor of the
+                                      widget that displays
+                                      the message.\\  \hline
+background              & -         & The background
+                                      color.\\  \hline 
+font                    & -         & The font.\\  \hline
+foreground              & -         & The foreground
+                                      color.\\  \hline
+scrollActiveForeground  & -         & The active foreground
+                                      color of the scrollbar.\\  \hline 
+scrollBackground        & -         & The background color
+                                      of the scrollbar.\\  \hline
+scrollForeground        & -         & The foreground color
+                                      of the scrollbar.\\  \hline
+scrollSide              & right     & The side of the
+                                      scrollbar.\\  \hline
+toplevelName            & .inputBox & This variable contains
+                                      the top\-level widget
+                                      name. It makes it
+                                      possible to popup
+                                      multiple dialog boxes
+                                      at the same time.\\  \hline
+toplevelName,inputOne   & ''''      & ``toplevelName'' is
+                                      replaced by the name
+                                      of the toplevel. This
+                                      variable contains the
+                                      text of the one line
+                                      input box.\\  \hline
+toplevelName,inputMulti & ''''      & ``toplevelName'' is
+                                      replaced by the name
+                                      of the toplevel. This
+                                      variable contains the
+                                      text of the multiple
+                                      line input box.\\  \hline
+\end{supertabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/templates/InputBox.ps}}
+  
+  \label{fig:InputBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name & Opt. & Purpose \\  \hline
+pathName       & n    & The path/file name to check. \\ 
+                        \hline 
+\end{tabular}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6cm}|} \hline
+Parameter name      & Opt. & Purpose\\  \hline
+keysymBoxFileKeysym & y    & The file containing a list of
+                             keysyms.\\  \hline
+keysymBoxMessage    & y    & The message to display.\\  \hline 
+keysymBoxEntryW     & y    & The entry widget where the
+                             selected keysym is inserted.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element          & Default & Purpose\\  \hline
+activeBackground       & -       & The active background
+                                   color.\\  \hline
+activeForeground       & -       & The active foreground
+                                   color.\\  \hline
+background             & -       & The background color.\\  \hline
+font                   & -       & The font. \\  \hline
+foreground             & -       & The foreground color.\\  \hline
+overwrite              & 0       & New events are inserted
+                                   into the entry widget, or
+                                   overwrite the current
+                                   event.\\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color.\\  \hline 
+scrollForeground       & -       & The scrollbar foreground
+                                   color.\\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=7.5cm
+  \epsffile{pictures/templates/KeysymBox.ps}}
+  
+  \label{fig:KeysymBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name & Opt. & Purpose \\  \hline
+widgetName     & n    & The name of the menubutton that is
+                        to be created.\\  \hline
+buttonLabel    & n    & The label of the menubutton.\\  \hline
+itemType       & n    & The type of the menu items that are
+                        created. Valid types are command,
+                        check and radio.\\  \hline
+itemList       & n    & The list of menu item names that are
+                        to be created. If itemType is check
+                        or radio, and the itemFunctions are
+                        empty, these are also the names of
+                        the associated variable.\\  \hline
+itemFunctions  & y    & This list contains one or more
+                        command or variable names. They are
+                        attached to the created menu
+                        items.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/templates/MakeMButton.ps}}
+  
+  \label{fig:MakeMButton}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+menuBarUserFile & n    & This file contains the
+                         user-specific menubar
+                         configuration. This file is written
+                         when the user presses the
+                         {\tt Save\tt} button.\\  \hline
+menuBarFile     & n    & This file contains the fallback
+                         menubar definition. This file is
+                         usually global for all users.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name & Opt. & Purpose \\  \hline
+menuBarConfig  & n    & The widget path name, containing the
+                        menubuttons to be configured.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element          & Default & Purpose\\  \hline
+activeBackground       & -       & The active background
+                                   color.\\  \hline
+activeForeground       & -       & The active foreground
+                                   color.\\  \hline
+background             & -       & The background color.\\  \hline
+font                   & -       & The font.\\  \hline
+foreground             & -       & The foreground color.\\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color.\\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color.\\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$\sim$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2564: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=.8cm
+  \epsffile{pictures/templates/MenuBar.ps}}
+  
+  \label{fig:MenuBar}
+\end{figure}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=11.5cm
+  \epsffile{pictures/templates/MenuBarConf.ps}}
+  
+  \label{fig:MenuBarConf}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element          & Default & Purpose \\  \hline
+activeBackground       & -       & The active background
+                                   color. \\  \hline
+activeForeground       & -       & The active foreground
+                                   color. \\  \hline
+background             & -       & The background color. \\  \hline
+font                   & -       & The font. \\  \hline
+foreground             & -       & The foreground color. \\  \hline
+scrollActiveForeground & -       & The active foreground
+                                   color of the scrollbar.\\  \hline 
+scrollBackground       & -       & The scrollbar background
+                                   color. \\  \hline
+scrollForeground       & -       & The scrollbar foreground
+                                   color. \\  \hline
+scrollSide             & right   & The side of the
+                                   scrollbar. \\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/templates/ReadBox.ps}}
+  
+  \label{fig:ReadBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose\\  \hline
+textBoxMessage  & y    & The message, file or file
+                         descriptor that is displayed.\\  \hline
+textBoxCommand  & y    & The command to be executed when OK
+                         is pressed. The dialog box is not
+                         modal (non blocking) when this
+                         parameter is not an empty
+                         string.\\  \hline
+textBoxGeometry & y    & This is the geometry of the dialog
+                         box.\\  \hline 
+textBoxTitle    & y    & This is the title bar of the dialog
+                         box.\\  \hline 
+args            & y    & Any additional parameters are
+                         interpreted as a button label. The
+                         dialog box is modal (blocking).
+                         The return value of TextBox
+                         is the number of the pressed
+                         button.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{supertabular}{|l|l|p{5.3cm}|}
+activeBackground       & -        & The active background
+                                    color.\\  \hline
+activeForeground       & -        & The active foreground
+                                    color.\\  \hline
+background             & -        & The background color.\\  \hline
+font                   & -        & The font.\\  \hline
+foreground             & -        & The foreground color.\\  \hline
+scrollActiveForeground & -        & The active foreground
+                                    color of the scrollbar.\\  \hline 
+scrollBackground       & -        & The scrollbar background
+                                    color.\\  \hline
+scrollForeground       & -        & The scrollbar foreground
+                                    color.\\  \hline
+scrollSide             & right    & The side of the
+                                    scrollbar.\\  \hline
+state                  & disabled & The state of the text
+                                    widget. Disabled means,
+                                    that no input from the
+                                    user is allowed. Normal
+                                    means that the user can
+                                    type text.\\  \hline
+toplevelName           & .textBox & The toplevel name. This
+                                    variable makes it
+                                    possible to popup
+                                    several dialog boxes at
+                                    the same time.\\  \hline
+\end{supertabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=3.3cm
+  \epsffile{pictures/templates/TextBox.ps}}
+  
+  \label{fig:TextBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name   & Opt. & Purpose\\  \hline
+yesNoBoxMessage  & y    & The message to be displayed.\\  \hline
+yesNoBoxGeometry & y    & The geometry of the yes/no box.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{5.5cm}|} \hline
+Array element    & Default & Purpose \\  \hline
+activeBackground & -       & The active background
+                             color.\\  \hline
+activeForeground & -       & The active foreground
+                             color.\\  \hline
+afterNo          & 0       & Invokes the no button after
+                             n seconds. The dialog box
+                             is removed.\\  \hline
+afterYes         & 0       & Invokes the yes button after
+                             n seconds. The dialog box
+                             is removed.\\  \hline
+anchor           & nw      & The anchor of the message
+                             widget.\\  \hline
+background       & -       & The background color.\\  \hline
+font             & -       & The font.\\  \hline
+foreground       & -       & The foreground color.\\  \hline
+justify          & center  & The justification of the
+                             widget displaying the
+                             message.\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=4cm
+  \epsffile{pictures/templates/YesNoBox.ps}}
+  
+  \label{fig:YesNoBox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{tabular}{|l|l|p{6.5cm}|} \hline
+Parameter name  & Opt. & Purpose \\  \hline
+cmd             & y    & This command is evaluated when
+                         the OK button is pressed\\  \hline
+purpose         & y    & This is the message of the
+                         file selector box\\  \hline
+w               & y    & This is the toplevel path
+                         name\\  \hline
+\end{tabular}
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=6.5cm
+  \epsffile{pictures/templates/fileselect.ps}}
+  
+  \label{fig:fileselect}
+\end{figure}
+}
+
+\stepcounter{section}
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2566: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=5cm
+  \epsffile{pictures/templates/MListbox.ps}}
+  
+  \label{fig:MListbox}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \setbox\sizebox=\hbox{$Motif^{TM}$}\lthtmltypeout{latex2htmlSize :tex2html_wrap_inline2568: \the\ht\sizebox::\the\dp\sizebox.}\box\sizebox
+}
+
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=5cm
+  \epsffile{pictures/templates/MListbox2.ps}}
+  
+  \label{fig:MListbox2}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=.8cm
+  \epsffile{pictures/templates/Menubar.ps}}
+  
+  \label{fig:Menubar}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=.9cm
+  \epsffile{pictures/templates/OptionButtonE.ps}}
+  
+  \label{fig:OptionButtonE}
+\end{figure}
+}
+
+\stepcounter{subsection}
+{\newpage
+\clearpage
+\samepage \begin{figure}[ht]
+  \centerline{
+  \epsfysize=3.5cm
+  \epsffile{pictures/templates/Popup1.ps}}
+  
+  \label{fig:Popup1}
+\end{figure}
+}
+
+\stepcounter{chapter}
+
+\end{document}

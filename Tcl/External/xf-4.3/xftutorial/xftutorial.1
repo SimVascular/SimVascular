@@ -1,0 +1,171 @@
+.\" -*- text -*-
+.\"     xftutorial : a interactive Tk tutorial program
+.\"
+.\"     Sven Delmas
+.\"     sven@cimetrix.com
+.\"
+.\"     $Header: xftutorial.1[2.4] Sun Mar  7 20:54:18 1993 garfield@garfield frozen $
+.\"
+.TH XFTUTORIAL 1 "Wed Mar 10 16:25:45 1993"
+.SH NAME
+.B
+xftutorial \- interactive Tk tutorial program
+.PP
+
+.SH SYNOPSIS
+.B
+xftutorial [xftutorial options]
+.LP
+\fBxftutorial options:\fP
+.LP
+.IP
+.ad l
+.nh
+[\-xfBindPath\ <filename>]
+[\-xfColorFile\ <filename>]
+[\-xfCursorFile\ <filename>]
+[\-xfFontFile\ <filename>]
+[\-xfLoading]
+[\-xfLoadPath\ <pathname>]
+[\-xfModelColor]
+[\-xfModelMono]
+[\-xfNoLoading]
+[\-xfStartup\ <filename>]
+scriptPath
+targetInterpreter
+.ad b
+.hy 1
+.PP
+
+.SH DESCRIPTION
+.PP
+XFtutorial allows to interactively introduce a user to
+the usage of a Tcl/Tk program. The developer writes a
+tutorial script, leading the user through the functionality
+of the program. This program is part of the XF distribution,
+and is used to introduce the user into the handling of XF.
+
+.PP
+
+The menubutton (\fBFile\fR) contains an item to print the
+current help page, and to quit the program. The menubutton
+(\fB Chapters\fR) contains all chapters that are available.
+The text area displays the current help text. Below this
+area, there are three buttons that control the paging of the
+tutorial. Tutorial pages can have actions attached to them,
+which are performed when the next page is selected, or the
+Perform action button is pressed.
+
+.SH "THE SCRIPT FILES"
+The script files must contain input following certain rules.
+One of the script files must define a global list named
+chapterList. This list contains a list of lists. The first
+element of the lists is the title of the chapter, followed
+by the underline position of the menu item, and the script
+name of this chapter. To insert a separator, an empty list
+is inserted.
+
+.PP
+Each script file must define two variables first. The first
+variable (\fB<chapter>Last\fR) specifies the last accessible
+page number. The second variable
+(\fB<chapter>LastSectionDone\fR) is an internal counter
+initialized with -1.
+
+.PP
+Each page is represented by three variables. The first
+variable (\fB<chapter>Name<pagenumber>\fR) contains the name
+of the page. The second variable
+(\fB<chapter>Text<pagenumber>\fR) contains the text to
+display. And the third variable
+(\fB<chapter>Command<pagenumber>\fR) contains the command to
+be executed. This command is sent to the application that
+uses the tutorial.
+
+.SH OPTIONS
+.PP
+The following options can be controlled from the command line.
+.\"
+.IP "\fB\-xfBindFile \fIfilename\fR" 15
+This option specifies a file containing class bindings that implement
+a default behavior of all widgets.
+.\"
+.IP "\fB\-xfColorFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+colors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBColors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfCursorFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+cursors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBCursors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfFontFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+fonts. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBFonts\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfLoading" 15
+This option specifies that the program reports the source filenames
+that it loads. This is useful when the program automatically accesses
+archives in the development phase.
+.\"
+.IP "\fB\-xfLoadPath \fIpathname\fR" 15
+This option specifies a list of pathnames (separated by ":") where
+the Tcl source files can be found. In order to find the Tcl source
+files they must be stored in one of these directories. 
+.\"
+.IP "\fB\-xfModelColor" 15
+This option starts the application in color mode.
+.\"
+.IP "\fB\-xfModelMono" 15
+This option starts the application in monochrome mode.
+.\"
+.IP "\fB\-xfNoLoading" 15
+This option specifies that the program does not report the source
+filenames that it loads.
+.\"
+.IP "\fB\-xfStartup \fIfilename\fR" 15
+This option specifies a file containing additional Tcl/Tk code that is
+loaded at startup. 
+.\"
+.IP "\fBscriptPath\fR" 15
+This option specifies the directory where the script files are located.
+.\"
+.IP "\fBtargetInterpreter\fR" 15
+This option specifies the interpreter that is the target for the
+tutorial. 
+
+.SH ENVIRONMENT
+.IP DISPLAY
+The default display to be used.
+.IP XF_LOAD_PATH 15
+This variable specifies a list of pathnames (separated by ":") where
+the Tcl source files can be found. In order to find the Tcl source
+files they must be stored in one of these directories. 
+.PP
+
+.SH BUGS
+.PP
+.\"
+.IP "\(bu"
+Surely there are many bugs.
+
+.SH "SEE ALSO"
+.PP
+Tcl(3), Tk-manuals(3), XF-documentation
+
+.SH AUTHOR
+.PP
+Sven Delmas
+.br
+TU Berlin, Germany
+.br
+sven@cimetrix.com
+

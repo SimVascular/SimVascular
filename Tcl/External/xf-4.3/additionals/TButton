@@ -1,0 +1,145 @@
+# Program: xf
+# Description: handle TButton widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tbutton) 4
+
+##########
+# Procedure: XFAdd.TButton
+# Description: add a TButton
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TButton {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TButton..."
+  set xfName [XFMiscGetUniqueName $xfName tbutton]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      ttk::button .$xfName \
+        -text "$xfName"
+    } {
+      ttk::button .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      ttk::button $xfStatus(path).$xfName \
+        -text "$xfName"
+    } {
+      ttk::button $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TButton...done"
+}
+
+##########
+# Procedure: XFConfig.TButton4
+# Description: configure a TButton
+# Arguments: xfW - the widget
+#            xfType - config type (add or config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TButton4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName TButton$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TButton..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x570 \
+    "TButton parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTButtonSetTButton4 parameters $xfName 4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTButtonSetTButton4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "Label" XFTButtonSetTButton4 $xfName
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTButtonSetTButton4
+  XFElementTileWidth $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetTButton4
+  XFElementCommand $xfW .xf${xfClass}Config4 $xfType
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {command text textvariable width}
+  XFElementSave $xfW $xfClass {command image text textvariable width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTButtonSetTButton4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TButton...done"
+}
+
+##########
+# Procedure: XFTButtonSetTButton4
+# Description: set TButton parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTButtonSetTButton4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW command \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.command.command.command]
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.widthvar.widthvar get]
+}
+
+# eof
+
+

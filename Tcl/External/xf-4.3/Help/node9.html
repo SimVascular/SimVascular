@@ -1,0 +1,158 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>The XF design</TITLE>
+<META NAME="description" CONTENT="The XF design">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html829" HREF="node10.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html827" HREF="node6.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html823" HREF="node8.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html831" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html832" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html830" HREF="node10.html">Tcl/Tk</A>
+<B>Up:</B> <A NAME="tex2html828" HREF="node6.html">The Design of XF</A>
+<B> Previous:</B> <A NAME="tex2html824" HREF="node8.html">Existing interface builders</A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00330000000000000000">The XF design</A></H1>
+<P>
+Thanks to the great flexibility and the simple handling of
+<EM>Tcl/Tk</EM>
+, and a very instructive and conceptionally clean
+predecessor (named <EM>BYO</EM>
+), it was easy to implement
+<EM>XF</EM>
+. There exists no real design of <EM>XF</EM>
+. It was inspired
+by the simple (but very powerful) concept of <EM>BYO</EM>
+, and a
+further development that I have done named <EM>XASK</EM>
+. This
+program provided a simple language for building a certain
+type of simple graphical interfaces. These interfaces were
+connected with traditional (non graphical) applications. As
+there was no interface builder for this system and the
+language was very limited, the arrival of <EM>Tcl/Tk </EM>
+ and <EM>BYO </EM>
+<P>
+lead to the decision to switch to this more powerful
+environment.
+<P>
+Three points were most important for the design of <EM>XF</EM>
+. The
+programm was supposed to be able to manipulate a running
+application. This was important because this is the only way
+to guarantee that the user really gets what he wants, and
+can test the application without having to compile it or to
+switch to a simulation mode. This restricted the choice of
+implementation languages, as the application must be open
+for modifications while it is running. One way would have
+been to simulate the running application by writing an
+interpreter for the implementation language (like C). The
+other way was to use an interpreted language. The second
+alternative was chosen. At this point, there were two
+alternative languages available. The first language was
+<EM>Tcl/Tk</EM>
+, a package containing a scripting language and a
+<EM> <IMG WIDTH=67 HEIGHT=26 ALIGN=MIDDLE ALT="tex2html_wrap_inline2358" SRC="img7.gif"  > </EM>
+-like widget set. The second language was elk, a
+scheme interpreter with an interface to the X toolkit and
+widget set based upon the X toolkit (This system is part of
+the X contributed software). Due to a greater acceptance in
+the community (and greater acceptance by the author of
+<EM>XF</EM>
+), <EM>Tcl </EM>
+ was chosen.
+<P>
+The idea of manipulating an application with an interface
+builder while it is running was taken from <EM>BYO</EM>
+. This
+approach has the advantage that it reduces the amount of
+data that has to be used to store the contents of the
+currently developed application. As all changes are directly
+applied to the program, the program itself contains all
+information which is necessary to create a <EM>Tcl/Tk </EM>
+ file
+containing the program definition. <EM>BYO </EM>
+ achieves this by
+using a <EM>Tk </EM>
+ feature to communicate with the application
+running in a different interpreter (see figure <A HREF="node50.html#figBYOdesign"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>). This approach allows the simultaneous manipulation
+of several applications.
+<P>
+<P><A NAME="349">&#160;</A><A NAME="figBYOdesign">&#160;</A> <IMG WIDTH=241 HEIGHT=168 ALIGN=BOTTOM ALT="figure347" SRC="img8.gif"  > <BR>
+<STRONG>Figure:</STRONG> BYO design<BR>
+<P>
+<P>
+<EM>XF </EM>
+ chooses a different approach. It uses one interpreter
+for both programs (<EM>XF </EM>
+ and the application to be built). The
+name spaces of both programs (variables, procedures and
+widgets) are separated by naming convention (see figure
+<A HREF="node50.html#figXFdesign"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>). This was originally done to reduce the
+communication traffic, and to reduce the complexity of the
+application. As the approach of <EM>BYO </EM>
+ is more flexible, <EM>XF </EM>
+<P>
+will probably be adapted to (also) support this type of
+manipulating an external application.
+<P>
+<P><A NAME="355">&#160;</A><A NAME="figXFdesign">&#160;</A> <IMG WIDTH=268 HEIGHT=168 ALIGN=BOTTOM ALT="figure353" SRC="img9.gif"  > <BR>
+<STRONG>Figure:</STRONG> XF design<BR>
+<P>
+<P>
+The second very important point was that the developer is
+supported as much as possible. Newly created widgets are
+created with reasonable default parameters, to prevent the
+need of changing every newly created widget. Nevertheless,
+every aspect of the application can be changed with <EM>XF</EM>
+. If
+this is not possible in a certain situation, or the user
+does not want so much support, it is always possible to
+change the code directly (by hand in an editor). While many
+interface builders don't allow the manipulation of the
+generated code, directly changed code can be reused with <EM>XF </EM>
+<P>
+without any restriction.
+<P>
+The third important point for the design of <EM>XF </EM>
+ was to
+allow the extension of <EM>XF </EM>
+. There are several well defined
+internal interfaces, where additional features (like new
+layouting dialogs, or new widget configuration dialogs) can
+be added to <EM>XF</EM>
+. Furthermore, the user is able to adapt
+most aspects of <EM>XF </EM>
+ via interactive dialogs. This includes
+the menubar and iconbar layout, the bindings that are used
+to manipulate the application program and various aspects of
+the <EM>XF </EM>
+ dialog boxes.
+<P>
+The design of the interface of <EM>XF </EM>
+ itself was also a very
+important task. Like most interface builders, <EM>XF </EM>
+ displays
+the available widget classes in some kind of main window.
+From here, all features of <EM>XF </EM>
+ are activated. The various
+features are implemented as additional dialogs, that are
+popped up when they are activated. All configuration and
+layouting dialogs are nonmodal, so that the user can change
+parameters and the layout of various widgets simultaneously.
+<P>
+  <BR> <HR><A NAME="tex2html829" HREF="node10.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html827" HREF="node6.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html823" HREF="node8.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html831" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html832" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html830" HREF="node10.html">Tcl/Tk</A>
+<B>Up:</B> <A NAME="tex2html828" HREF="node6.html">The Design of XF</A>
+<B> Previous:</B> <A NAME="tex2html824" HREF="node8.html">Existing interface builders</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

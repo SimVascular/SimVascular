@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>XFAdd.<i>&lt;</i>WidgetClass<i>&gt;</i></TITLE>
+<META NAME="description" CONTENT="XFAdd.&lt;WidgetClass&gt;">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1444" HREF="node55.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1442" HREF="node53.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1436" HREF="node53.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1446" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1447" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1445" HREF="node55.html">XFAddTmp.<i>&lt;</i>WidgetClass<i>&gt;</i></A>
+<B>Up:</B> <A NAME="tex2html1443" HREF="node53.html">Supporting new widgets</A>
+<B> Previous:</B> <A NAME="tex2html1437" HREF="node53.html">Supporting new widgets</A>
+<BR> <HR> <P>
+<H3><A NAME="SECTION00621100000000000000">XFAdd.<i>&lt;</i>WidgetClass<i>&gt;</i></A></H3>
+<P>
+Each new support file must contain a procedure named
+``<B>XFAdd.<i>&lt;</i>WidgetClass<i>&gt;</i></B>''. All exported
+procedures in the support file end with the widget class
+name. This procedure inserts a widget of that class to the
+application. It gets three parameters. The first parameter
+can be ignored (set to ''''). The second parameter is an
+optional widget name. This is not the complete widget path,
+only the preferred name of the widget at the insertation
+level. The last parameter is set to ``<B>add</B>'' or ``<B>
+config</B>''. ``<B>add</B>'' means that the widget is inserted
+with default parameters, and ``<B>config</B>'' means that the 
+widget will be configured by the user.
+<P>
+The procedure has to guarantee that the widget name is
+unique. To create a unique widget name, the procedure
+``<B>XFMiscGetUniqueName</B>'' can be used. After
+inserting the widget into the current widget path
+(``<B>xfStatus(path)</B>''), the new widget must be placed,
+using the procedure ``<B>XFMiscPositionWidget</B>''. This
+procedure gets the complete widget path name as parameter.
+The procedure ``<B>XFMiscBindWidgetTree</B>'' also gets
+the widget path name, as this is required to set the <EM>XF </EM>
+<P>
+internal bindings for that widget. Finally the procedure
+``<B>XFEditSetPath</B>'' should be called, to update the
+<EM>XF </EM>
+ internal lists. This procedure gets the current widget
+path as parameter.
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

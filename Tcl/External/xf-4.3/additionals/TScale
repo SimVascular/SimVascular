@@ -1,0 +1,130 @@
+# Program: xf
+# Description: handle TScale widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tscale) 4
+
+##########
+# Procedure: XFAdd.TScale
+# Description: add a TScale
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TScale {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TScale..."
+  set xfName [XFMiscGetUniqueName $xfName tscale]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TScale: .$xfName"
+      ttk::scale .$xfName
+    } {
+      puts "attempt to create TScale: .$xfName"
+      ttk::scale .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TScale: $xfStatus(path).$xfName"
+      ttk::scale $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TScale: $xfStatus(path).$xfName"
+      ttk::scale $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TScale...done"
+}
+
+##########
+# Procedure: XFConfig.TScale4
+# Description: configure a TScale
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TScale4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TScale$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TScale..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TScale parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTScaleSetTScale4 \
+    parameters $xfName 4
+
+  XFElementCommand $xfW .xf${xfClass}Config4 $xfType
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {command}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTScaleSetTScale4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TScale...done"
+}
+
+##########
+# Procedure: XFTScaleSetTScale4
+# Description: set TScale parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTScaleSetTScale4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+  XFMiscSetResource $xfW command \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.command.command.command]
+}
+
+# eof
+

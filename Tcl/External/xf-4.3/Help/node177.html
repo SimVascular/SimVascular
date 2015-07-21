@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>InputBox</TITLE>
+<META NAME="description" CONTENT="InputBox">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html3110" HREF="node178.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html3108" HREF="node168.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html3102" HREF="node176.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html3112" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html3113" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html3111" HREF="node178.html">IsADirIsAFile, IsASymlink</A>
+<B>Up:</B> <A NAME="tex2html3109" HREF="node168.html">Procedures</A>
+<B> Previous:</B> <A NAME="tex2html3103" HREF="node176.html">IconBar</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION001029000000000000000">InputBox</A></H2>
+<P>
+<A NAME=2060>&#160;</A>
+<A NAME=2061>&#160;</A>
+This template defines two new procedures named InputBoxOne
+and InputBoxMulti. Calling this procedures pops up a dialog
+box to make textual input. The procedure InputBoxOne allows
+one line of text, and the procedure InputBoxMulti allows
+several lines of text. The input boxes can be modal or not.
+If they are modal, the entered string is returned.
+Otherwise, the specified command is evaluated. The procedure
+gets the following parameters:
+<P>
+<P>
+<P> <IMG WIDTH=500 HEIGHT=175 ALIGN=BOTTOM ALT="tabular2062" SRC="img110.gif"  > <P>
+<P>
+<P>
+To configure the different aspects of the input box, there exists a
+global array named inputBox. A default value of ``-'' means that the
+Tk default value is used. This array contains elements that control
+the input box (color, font etc.):
+<P>
+
+Array element          &amp; Default &amp; Purpose <BR>
+
+<P>
+<P> <IMG WIDTH=500 HEIGHT=214 ALIGN=BOTTOM ALT="supertabular2069" SRC="img111.gif"  > <P>
+<P>
+<P>
+A small example of an invocation may look like this:
+<P>
+<TT>
+<PRE><TT> 
+		InputBoxMulti
+<P>
+</TT></PRE>
+</TT>
+<P>
+This would create the following dialog box:
+<P>
+<P><A NAME="2080">&#160;</A><A NAME="figInputBox">&#160;</A> <IMG WIDTH=323 HEIGHT=264 ALIGN=BOTTOM ALT="figure2078" SRC="img112.gif"  > <BR>
+<STRONG>Figure:</STRONG> The template InputBox<BR>
+<P>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

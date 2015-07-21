@@ -1,0 +1,251 @@
+# Program: xf
+# Description: handle TMenubutton widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tmenubutton) 4
+
+##########
+# Procedure: XFAdd.TMenubutton
+# Description: add a TMenubutton
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TMenubutton {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TMenubutton..."
+  set xfName [XFMiscGetUniqueName $xfName tmenubutton]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      ttk::menubutton .$xfName \
+        -text "$xfName" \
+        -menu .$xfName.m
+    } {
+      ttk::menubutton .$xfName
+    }
+    menu .$xfName.m
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      ttk::menubutton $xfStatus(path).$xfName \
+        -text "$xfName" \
+        -menu $xfStatus(path).$xfName.m
+    } {
+      ttk::menubutton $xfStatus(path).$xfName
+    }
+    menu $xfStatus(path).$xfName.m
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TMenubutton...done"
+}
+
+##########
+# Procedure: XFConfig.TMenubutton4
+# Description: configure a TMenubutton
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TMenubutton4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfMisc
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName TMenubutton$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TMenubutton..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x510 \
+    "TMenubutton parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTMenubuttonSetTMenubutton4 parameters $xfName 4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTMenubuttonSetTMenubutton4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "Label" XFTMenubuttonSetTMenubutton4 $xfName
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass menu menu Menu \
+    "Name of menu" XFTMenubuttonSetTMenubutton4
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTMenubuttonSetTMenubutton4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass underline \
+    underline Underline "Underline" "Underline" 150 \
+      XFTMenubuttonSetTMenubutton4
+  .xf${xfClass}Config4.params1.params2.underline.underline configure \
+    -from -1
+  XFElementTileWidth $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetTMenubutton4
+
+  if {"$xfStatus(path)" == "."} {
+    set xfMisc(tmpTMenubuttonName) ".$xfName.m"
+  } {
+    set xfMisc(tmpTMenubuttonName) "$xfStatus(path).$xfName.m"
+  }
+  if {"$xfType" == "add"} {
+    if {"$xfStatus(path)" == "."} {
+      .xf${xfClass}Config4.params1.params2.menu.menu insert 0 \
+        ".$xfName.m"
+    } {
+      .xf${xfClass}Config4.params1.params2.menu.menu insert 0 \
+        "$xfStatus(path).$xfName.m"
+    }
+    .xf${xfClass}Config4.params1.params2.underline.underline set -1
+  } {
+    .xf${xfClass}Config4.params1.params2.underline.underline set \
+      [lindex [$xfW config -underline] 4]
+
+    button .xf${xfClass}Config4.additional.menu \
+      -text {Menu} \
+      -command "
+        XFTMenubuttonSetTMenubutton4 $xfW 1 $xfClass
+        XFProcConfParametersDefault \
+          \[.xf${xfClass}Config4.params1.params2.menu.menu get\] \
+            .xf${xfClass}Config4"
+    pack before .xf${xfClass}Config4.additional.params \
+                .xf${xfClass}Config4.additional.menu {left fill expand}
+  }
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {image menu text textvariable underline width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTMenubuttonSetTMenubutton4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TMenubutton...done"
+}
+
+##########
+# Procedure: XFSaveSpecial.TMenubutton
+# Description: save TMenubutton
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.TMenubutton {xfW} {
+  global xfMisc
+
+  # create keyboard traversal code
+  if {[lindex [$xfW config -underline] 4] != -1} {
+    if {[llength $xfMisc(menuBarTraversalList)] == 0} {
+      set xfTmpParent [winfo parent $xfW]
+      while {"$xfTmpParent" != "." &&
+             "[winfo class $xfTmpParent]" != "Frame"} {
+        set xfTmpParent [winfo parent $xfTmpParent]
+      }
+      if {"[winfo class $xfTmpParent]" == "Frame"} {
+        set xfMisc(menuBarTraversalList) $xfTmpParent
+        lappend xfMisc(menuBarTraversalList) $xfW
+      }
+    } {
+      lappend xfMisc(menuBarTraversalList) $xfW
+    }
+  }
+  return ""
+}
+
+##########
+# Procedure: XFTMenubuttonSetTMenubutton4
+# Description: set TMenubutton parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTMenubuttonSetTMenubutton4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  if {"[winfo class .xf${xfClass}Config4.params1.params2.name.name]" == "Label"} {
+    set xfTmpName [lindex [.xf${xfClass}Config4.params1.params2.name.name config -text] 4]
+  } {
+    set xfTmpName [.xf${xfClass}Config4.params1.params2.name.name get]
+  }
+  if {"[.xf${xfClass}Config4.params1.params2.menu.menu get]" == "$xfMisc(tmpTMenubuttonName)"} {
+    set xfMisc(tmpTMenubuttonName) "[lindex [.xf${xfClass}Config4.pathname.pathname.pathname config -text] 4].$xfTmpName.m"
+    .xf${xfClass}Config4.params1.params2.menu.menu delete 0 end
+    if {"[lindex [.xf${xfClass}Config4.pathname.pathname.pathname config -text] 4]" == "."} {
+      .xf${xfClass}Config4.params1.params2.menu.menu insert 0 \
+        ".$xfTmpName.m"
+    } {
+      .xf${xfClass}Config4.params1.params2.menu.menu insert 0 \
+        "[lindex [.xf${xfClass}Config4.pathname.pathname.pathname config -text] 4].$xfTmpName.m"
+    }
+  }
+
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW menu \
+    [.xf${xfClass}Config4.params1.params2.menu.menu get]
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW underline \
+    [.xf${xfClass}Config4.params1.params2.underline.underline get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.widthvar.widthvar get]
+
+  set xfTmpMenuBarTraversalList ""
+  if {[lindex [$xfW config -underline] 4] != -1} {
+    set xfTmpParent [winfo parent $xfW]
+    while {"$xfTmpParent" != "." &&
+           "[winfo class $xfTmpParent]" != "Frame"} {
+      set xfTmpParent [winfo parent $xfTmpParent]
+    }
+    if {"[winfo class $xfTmpParent]" == "Frame"} {
+      set xfTmpMenuBarTraversalList $xfTmpParent
+    }
+    foreach xfElement [winfo children $xfTmpParent] {
+      if {"[winfo class $xfElement]" == "TMenubutton"} {
+        if {[lindex [$xfElement config -underline] 4] != -1} {
+          lappend xfTmpMenuBarTraversalList $xfElement
+        }
+      }
+    }
+  }
+}
+
+# eof
+
+

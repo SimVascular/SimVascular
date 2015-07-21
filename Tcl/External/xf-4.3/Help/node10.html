@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Tcl/Tk</TITLE>
+<META NAME="description" CONTENT="Tcl/Tk">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html841" HREF="node11.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html839" HREF="main.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html833" HREF="node9.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html843" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html844" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html842" HREF="node11.html">Tcl</A>
+<B>Up:</B> <A NAME="tex2html840" HREF="main.html">No Title</A>
+<B> Previous:</B> <A NAME="tex2html834" HREF="node9.html">The XF design</A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00400000000000000000">Tcl/Tk</A></H1>
+<P>
+<EM>XF </EM>
+ is implemented by using the <EM>Tcl/Tk </EM>
+ package, and the code
+that is generated is also <EM>Tcl/Tk </EM>
+ code. <EM>Tcl </EM>
+ is very easy
+to learn and yet a powerful shell-like interpreted language.
+<EM>Tk </EM>
+ is a <EM> <IMG WIDTH=67 HEIGHT=26 ALIGN=MIDDLE ALT="tex2html_wrap_inline2360" SRC="img10.gif"  > </EM>
+-like<A NAME="tex2html10" HREF="footnode.html#393"><IMG ALIGN=BOTTOM ALT="gif" SRC=" foot_motif.gif"></A> widget set that
+is accessible via <EM>Tcl</EM>
+. It runs under various
+<EM> <IMG WIDTH=71 HEIGHT=13 ALIGN=BOTTOM ALT="tex2html_wrap_inline2362" SRC="img11.gif"  > </EM>
+<A NAME="tex2html11" HREF="footnode.html#394"><IMG ALIGN=BOTTOM ALT="gif" SRC=" foot_motif.gif"></A> environments, and is based upon the
+<EM>X window system <IMG WIDTH=23 HEIGHT=8 ALIGN=BOTTOM ALT="tex2html_wrap_inline2364" SRC="img12.gif"  > </EM>
+<A NAME="tex2html12" HREF="footnode.html#395"><IMG ALIGN=BOTTOM ALT="gif" SRC=" foot_motif.gif"></A>[#Scheifler90#<tex2html_cite_mark>#1#].
+<P>
+The community of <EM>Tcl/Tk </EM>
+ users is constantly growing.
+Already, a great number of programs and extensions is freely
+available, and there is an increasing number of commercial
+products, as well. One reason for this great success is
+that compared to interfaces implemented with traditional
+widget sets, the code written in <EM>Tcl/Tk </EM>
+ is usually much
+smaller, while the performance is in most cases at least as
+good as with other languages and widget sets. Another
+advantage is that <EM>Tcl/Tk </EM>
+ code is interpreted, so the turn
+around time is zero. Changes to <EM>Tcl/Tk </EM>
+ code (including the
+graphical interface) can be made while the application code
+is interpreted.
+<P>
+The short description of <EM>Tcl/Tk </EM>
+ in this paper is mainly
+based upon the draft of a book from John Ousterhout
+[#Ouster93a#<tex2html_cite_mark>#1#], slides that John Ousterhout used in his
+tutorial at the 7th Annual X Technical Conference
+[#Ouster93b#<tex2html_cite_mark>#1#] and other publications of John 
+Ousterhout [#Ouster91a#<tex2html_cite_mark>#1#], [#Ouster90a#<tex2html_cite_mark>#1#].
+<P>
+When developing applications with <EM>XF</EM>
+, a basic
+understanding of some aspects of <EM>Tcl/Tk </EM>
+ is needed. To
+implement the functionality of the application, the user
+should be able to write <EM>Tcl </EM>
+ code. Although <EM>XF </EM>
+ provides
+support for the interactive design of the graphical
+interface, the user should also know how <EM>Tk </EM>
+ works
+(especially the geometry management).
+<P>
+<BR> <HR>
+<UL> 
+<LI> <A NAME="tex2html845" HREF="node11.html#SECTION00410000000000000000">Tcl</A>
+<UL> 
+<LI> <A NAME="tex2html846" HREF="node12.html#SECTION00411000000000000000">Syntax</A>
+<LI> <A NAME="tex2html847" HREF="node13.html#SECTION00412000000000000000">Datatypes</A>
+<LI> <A NAME="tex2html848" HREF="node14.html#SECTION00413000000000000000">Variables</A>
+<LI> <A NAME="tex2html849" HREF="node15.html#SECTION00414000000000000000">Commands</A>
+<LI> <A NAME="tex2html850" HREF="node16.html#SECTION00415000000000000000">Quoting</A>
+</UL> 
+<LI> <A NAME="tex2html851" HREF="node17.html#SECTION00420000000000000000">Tk</A>
+<UL> 
+<LI> <A NAME="tex2html852" HREF="node18.html#SECTION00421000000000000000">Widget classes</A>
+<LI> <A NAME="tex2html853" HREF="node19.html#SECTION00422000000000000000">Inserting widgets</A>
+<LI> <A NAME="tex2html854" HREF="node20.html#SECTION00423000000000000000">Widget commands</A>
+<LI> <A NAME="tex2html855" HREF="node21.html#SECTION00424000000000000000">Widget configuration</A>
+<LI> <A NAME="tex2html856" HREF="node22.html#SECTION00425000000000000000">Geometry handling</A>
+<UL> 
+<LI> <A NAME="tex2html857" HREF="node23.html#SECTION00425100000000000000">The placer</A>
+<LI> <A NAME="tex2html858" HREF="node24.html#SECTION00425200000000000000">The packer</A>
+</UL> 
+<LI> <A NAME="tex2html859" HREF="node25.html#SECTION00426000000000000000">Other Tk commands</A>
+</UL>
+</UL>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

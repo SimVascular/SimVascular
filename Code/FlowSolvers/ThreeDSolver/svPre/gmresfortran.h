@@ -35,7 +35,7 @@
 #define gmresfortran GMRESFORTRAN
 #endif
 
-#ifdef CV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 #define gmresfortran gmresfortran_
 #endif
 

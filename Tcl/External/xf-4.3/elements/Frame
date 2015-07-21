@@ -1,0 +1,192 @@
+# Program: xf
+# Description: handle frame widgets
+#
+# $Header: Frame[2.3] Wed Mar 10 11:58:46 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(frame) 2
+
+##########
+# Procedure: XFAdd.Frame
+# Description: add a frame
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Frame {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Frame..."
+  set xfName [XFMiscGetUniqueName $xfName frame]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      frame .$xfName \
+        -width 30 -height 30 \
+        -borderwidth 2 \
+        -relief raised
+    } {
+      frame .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName {} {-x 0 -y 0 -width 30 -height 30}
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      frame $xfStatus(path).$xfName \
+        -width 30 -height 30 \
+        -borderwidth 2 \
+        -relief raised
+    } {
+      frame $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName {} {-x 0 -y 0 -width 30 -height 30}
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Frame...done"
+}
+
+##########
+# Procedure: XFConfig.Frame4
+# Description: configure a frame
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Frame4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName frame$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Frame..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x440 \
+    "Frame parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFFrameSetFrame4 parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFFrameSetFrame4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 XFFrameSetFrame4
+  XFElementCursor $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFFrameSetFrame4
+  XFElementGeometry $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFFrameSetFrame4
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFFrameSetFrame4
+  XFElementSize $xfW .xf${xfClass}Config4 $xfType $xfClass XFFrameSetFrame4
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config4.params1.params2.borderwidth.borderwidth set 2
+  }
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {background borderwidth cursor width height relief}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFFrameSetFrame4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Frame...done"
+}
+
+##########
+# Procedure: XFSaveWidget.Frame
+# Description: save frame widget
+# Arguments: xfOutFile - the output file
+#            xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveWidget.Frame {xfOutFile xfW} {
+  global xfConf
+
+  set xfClass [winfo class $xfW]
+  set xfType [string tolower $xfClass]
+
+  # what are we doing here ?
+  puts $xfOutFile "\n  # build widget $xfW"
+  puts $xfOutFile "  $xfType $xfW" nonewline
+  foreach xfCounter [$xfW config] {
+    # only handle options with 5 items per option entry
+    if {[llength $xfCounter] == 5} {
+      if {"[lindex $xfCounter 3]" != "[lindex $xfCounter 4]"} {
+        if {$xfConf(encloseConfigure)} {
+          puts $xfOutFile " \\\n    [lindex $xfCounter 0] {[lindex $xfCounter 4]}" nonewline
+        } {
+          puts $xfOutFile " \\\n    [lindex $xfCounter 0] \"[lindex $xfCounter 4]\"" nonewline
+        }
+      }
+    }
+  }
+  puts $xfOutFile ""
+}
+
+##########
+# Procedure: XFFrameSetFrame4
+# Description: set frame parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFFrameSetFrame4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW cursor \
+    "[.xf${xfClass}Config4.params1.params2.cursor.cursor get]"
+  if {[.xf${xfClass}Config4.params1.params2.geo.geo1.geo1 get] > 0 &&
+      [.xf${xfClass}Config4.params1.params2.geo.geo2.geo2 get] > 0} {
+    XFMiscSetResource $xfW width \
+      [.xf${xfClass}Config4.params1.params2.geo.geo1.geo1 get]
+    XFMiscSetResource $xfW height \
+      [.xf${xfClass}Config4.params1.params2.geo.geo2.geo2 get]
+  } {
+    XFMiscSetResource $xfW height \
+      [.xf${xfClass}Config4.params1.params2.size.size2.size2 get]
+    XFMiscSetResource $xfW width \
+      [.xf${xfClass}Config4.params1.params2.size.size1.size1 get]
+  }
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+}
+
+# eof
+

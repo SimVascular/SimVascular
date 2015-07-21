@@ -5,5 +5,5 @@ ifeq ($(CLUSTER), x64_cygwin)
     PARASOLID_SO_PATH = $(PARASOLID_TOP)/dll
     PARASOLID_DLLS    = $(PARASOLID_SO_PATH)/pskernel.$(SOEXT)
     P_SCHEMA          = $(PARASOLID_TOP)/schema
-    PARASOLID_LIBS    = /LIBPATH:$(PARASOLID_SO_PATH) pskernel.lib
+    PARASOLID_LIBS    = $(LIBPATH_COMPILER_FLAG)$(PARASOLID_SO_PATH) $(LIBFLAG)pskernel.lib
 endif

@@ -1,0 +1,353 @@
+<HTML>
+<HEAD>
+   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+   <META NAME="Template" CONTENT="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+   <META NAME="GENERATOR" CONTENT="Mozilla/4.04 [en] (WinNT; U) [Netscape]">
+   <TITLE>FAQ</TITLE>
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" LINK="#0000FF" VLINK="#800080">
+
+<CENTER>
+<H1>
+XF Frequently Asked Questions (FAQ)</H1></CENTER>
+
+<H2>
+<U>Index</U></H2>
+
+<PRE>R-1)&nbsp; <A HREF="#R-1">How can I change the path/filenames that are used by XF ?
+</A>R-2)&nbsp; <A HREF="#R-2">How can I create multiple toplevel windows ?
+</A>R-3)&nbsp; <A HREF="#R-3">How can I show/hide toplevel windows ?
+</A>R-4)&nbsp; <A HREF="#R-4">How can I make a widget the "current widget" ?
+</A>R-5)&nbsp; <A HREF="#R-5">How can I bind actions to buttons ?
+</A>R-6)&nbsp; <A HREF="#R-6">How can I cut/copy/paste a widget ?
+</A>R-7)&nbsp; <A HREF="#R-7">How can I delete a widget ?
+</A>R-8)&nbsp; <A HREF="#R-8">How can I create templates ?
+</A>R-9)&nbsp; <A HREF="#R-9">How can I change the order of menubutton items ?
+</A>R-10) <A HREF="#R-10">How can I change the order of packed children ?
+</A>R-11) <A HREF="#R-11">How can I write my own procedures ?
+</A>R-12) <A HREF="#R-12">How can I copy/paste between text fields ?
+</A>R-13) <A HREF="#R-13">How can I retrieve the name of a specific widget ?
+</A>R-14) <A HREF="#R-14">How can I write source that is evaluated before the created application is actually started ?
+</A>R-15) <A HREF="#R-15">Is there a way to select colors/fonts etc. interactively ?
+</A>R-16) <A HREF="#R-15">How can I set widget names when they are created ?
+</A>R-17) <A HREF="#R-17">How can I change widget names ?
+</A>R-18) <A HREF="#R-18">How can I access global variables in the startup source ?
+</A>R-19) <A HREF="#R-19">Why is my toplevel window always placed at the same position by the window manager ?
+</A>R-20) <A HREF="#R-20">What should I do when I get an error message to stderr ?
+</A>R-21) <A HREF="#R-21">How can I use the mouse to arrange widgets?
+</A>R-22) <A HREF="#R-22">How can I set the values of sliders more accurately ?
+</A>R-23) <A HREF="#R-23">How can I create menubars ?
+</A>R-24) <A HREF="#R-24">Why doesn't the xftutorial run ?
+</A>R-25) <A HREF="#R-25">How can I make my X server secure ?</A></PRE>
+
+<H2>
+Questions/Answers</H2>
+
+<H3>
+<A NAME="R-1"></A><FONT COLOR="#0000FF">R-1) How can I change the path/filenames
+that are used by XF ?</FONT></H3>
+
+<BLOCKQUOTE>To change path/filenames that XF uses (i.e. if you don't have
+writing permission), call the pull-down menu item (Options | Path/file
+names).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-2"></A><FONT COLOR="#0000FF">R-2) How can I create multiple
+toplevel windows ?</FONT></H3>
+
+<BLOCKQUOTE>To create multiple toplevel windows you select the item "Toplevel"
+from the "Standard" widget list.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-3"></A><FONT COLOR="#0000FF">R-3) How can I show/hide toplevel
+windows ?</FONT></H3>
+
+<BLOCKQUOTE>To display an XF created toplevel window, you should use the
+automatically created function:</BLOCKQUOTE>
+
+<BLOCKQUOTE>ShowWindow.toplevel</BLOCKQUOTE>
+
+<BLOCKQUOTE>To remove an XF created toplevel window, you should use the
+automatically created function:</BLOCKQUOTE>
+
+<BLOCKQUOTE>DestroyWindow.toplevel</BLOCKQUOTE>
+
+<BLOCKQUOTE>where "toplevel" is the name of the toplevel window that should
+be displayed or removed . When you are running XF, please display and remove
+the toplevel windows with the XF menu attached to the label (Current widget
+path).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-4"></A><FONT COLOR="#0000FF">R-4) How can I make a widget the
+"current widget" ?</FONT></H3>
+
+<BLOCKQUOTE>Making a widget the "current widget" means that actions like
+inserting a new widget or calling parameter setting will apply to this
+widget.</BLOCKQUOTE>
+
+<BLOCKQUOTE>To make a certain widget the "current widget", you can double
+click the middle mouse button on the widget, or select the widget from
+the pull-down menus that are bound to the single elements of the displayed
+(Current widget path). These menus allow you to walk through the complete
+widget hierarchy.</BLOCKQUOTE>
+
+<BLOCKQUOTE>P.S. The "&lt;Double-B2>" selection does not work for menubuttons
+due to binding collisions (You can change the binding if you want).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-5"></A><FONT COLOR="#0000FF">R-5) How can I bind actions to
+buttons ?</FONT></H3>
+
+<BLOCKQUOTE>To bind an action (procedure) to a button, first you create
+the button, and then you call the parameter setting for this button (either
+by making the button the current widget (R-4) and selecting the menu item
+(Configuration | Parameters), or by a double click with your right mouse
+button on the button widget).</BLOCKQUOTE>
+
+<BLOCKQUOTE>Now you can edit the command string in the text field at the
+bottom of the parameter window.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-6"></A><FONT COLOR="#0000FF">R-6) How can I cut/copy/paste a
+widget ?</FONT></H3>
+
+<BLOCKQUOTE>To cut/copy a widget, make it the current widget (R-4), and
+select the menu item (Edit | Cut) or (Edit | Copy). To paste the cutbuffer
+to the current widget, select the menu item (Edit | Paste). When you cut/copy/paste
+widgets, please keep in mind that the widget names change. If the widget
+names are used in commands, the commands must be adapted. If you refer
+to the widgets via symbolic names, the symbolic name must be attached again
+to the new widget.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-7"></A><FONT COLOR="#0000FF">R-7) How can I delete a widget
+?</FONT></H3>
+
+<BLOCKQUOTE>To delete the "current widget", you have to select the menu
+item (Edit | Delete).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-8"></A><FONT COLOR="#0000FF">R-8) How can I create templates
+?</FONT></H3>
+
+<BLOCKQUOTE>To make a template, you simply put the widget structure you
+want to save into the cut buffer. Then you select the menu item (Edit |
+Save Cutbuffer (tmplt)). It is also possible to select (Misc | Module structure).
+Here you have a checkbutton at the bottom, where you can specify that you
+want to
+<BR>handle templates. Now you can select procedures and a widget path.
+If you click (Save), the currently selected procedures and the widget path
+are saved to a file.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-9"></A><FONT COLOR="#0000FF">R-9) How can I change the order
+of menubutton items ?</FONT></H3>
+
+<BLOCKQUOTE>To change the position of a menu item in a menu, you select
+the menu item in the item list of the menu, and then slide the scale at
+right side of the children list.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-10"></A><FONT COLOR="#0000FF">R-10) How can I change the order
+of packed children ?</FONT></H3>
+
+<BLOCKQUOTE>To change the position of a widget in a packed parent, you
+select the widget in the children list, and then slide the scale at right
+side of the children list.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-11"></A><FONT COLOR="#0000FF">R-11) How can I write my own procedures
+?</FONT></H3>
+
+<BLOCKQUOTE>There is a menu item (Programming | Procedures) which gives
+you a window that allows full access to procedures. When inserting new
+procedures, the
+<BR>procedure list is rescanned. This takes some time, and you should not
+click around during this time. This would probably activate the editing
+for the
+<BR>wrong procedure. The rescan can be turned off.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-12"></A><FONT COLOR="#0000FF">R-12) How can I copy/paste between
+text fields ?</FONT></H3>
+
+<BLOCKQUOTE>To select the text of an entry/text field, you simply press
+the left mouse button over the text, and move the mouse with the pressed
+button. To insert the selected text into another entry/text field, type
+"&lt;Control-v>" or "&lt;Control-y>".</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-13"></A><FONT COLOR="#0000FF">R-13) How can I retrieve the name
+of a specific widget ?</FONT></H3>
+
+<BLOCKQUOTE>To get the name of a specific widget, you can press "&lt;Modifier1-B2>"
+(may be changed by you). This brings up a small window with the name of
+the widget under the mouse pointer. The name is inserted into the selection
+buffer as well, so you can insert the name into text fields by pressing
+"&lt;Control-v>" or "&lt;Control-y>".</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-14"></A><FONT COLOR="#0000FF">R-14) </FONT><FONT COLOR="#3333FF">How
+can I write source that is evaluated before the created application is
+actually started ?</FONT></H3>
+
+<UL>This question sounds a bit complicated :-), but this is what is wanted:</UL>
+
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; including external modules at application
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; startup,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; parsing of passed arguments,
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; something else ...:-).</PRE>
+
+<BLOCKQUOTE>To insert source to the very beginning of the application,
+you create a procedure named:</BLOCKQUOTE>
+
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; StartupSrc,</PRE>
+
+<BLOCKQUOTE>by selecting the menu item</BLOCKQUOTE>
+
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (Programming | Startup source).</PRE>
+
+<BLOCKQUOTE>To insert source to the beginning of the application after
+the toplevel widgets have been created, you create a procedure named:</BLOCKQUOTE>
+
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; EndSrc,</PRE>
+
+<BLOCKQUOTE>by selecting the menu item (Programming | End source).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-15"></A><FONT COLOR="#0000FF">R-15) Is there a way to select
+colors/fonts etc. interactively ?</FONT></H3>
+
+<BLOCKQUOTE>YES :-). To call a window with a color, font, cursor, keysym,
+pixmap or file selection, you just have to double click the right mouse
+button in the entry field that will contain the resource value.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-16"></A><FONT COLOR="#0000FF">R-16) How can I set widget names
+when they are created ?</FONT></H3>
+
+<BLOCKQUOTE>To define a reasonable widget name when the widget is created,
+you can use the button (Configure and add) to create the widget. It is
+also possible to set an option under (Options | General options). This
+option is named (Ask for widget name on insertion). If this option is selected,
+XF asks you for a widget name before a new widget (or template) is inserted.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-17"></A><FONT COLOR="#0000FF">R-17) How can I change widget
+names ?</FONT></H3>
+
+<BLOCKQUOTE>It is not possible to change the widget name directly. But
+(!!!) you can use symbolic names to access widget paths. Such a symbolic
+name makes you independent from concrete widget hierarchies, and the name
+can reflect the usage of the widget. There is also a new feature named
+alias in XF. Here you can define a new name for an already existing command.
+To call the alias handling select (Misc | Aliases).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-18"></A><FONT COLOR="#0000FF">R-18) How can I access global
+variables in the startup source ?</FONT></H3>
+
+<BLOCKQUOTE>To access global variables in the startup source (like "auto_path"
+etc.), you have to make them available with the global command ("global
+auto_path").</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-19"></A><FONT COLOR="#0000FF">R-19) Why is my toplevel window
+always placed at the same position by the window manager ?</FONT></H3>
+
+<BLOCKQUOTE>Your toplevel is placed at the position you (or the author
+of the program) gave the toplevel. To make the window manager place your
+window, call the parameter setting for the toplevel, and toggle the switch
+(Set window position) and/or (Set window size).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-20"></A><FONT COLOR="#0000FF">R-20) What should I do when I
+get an error message to stderr ?</FONT></H3>
+
+<BLOCKQUOTE>If there occur errors during the work with XF that are producing
+output to stderr, these errors are mirrored to the file xferrors in the
+XF tmp directory. If you can say that they are caused by XF or you are
+not sure, please send me the file so that I can locate the problem.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-21"></A><FONT COLOR="#0000FF">R-21) How can I use the mouse
+to arrange widgets?</FONT></H3>
+
+<BLOCKQUOTE>Drag them with modifier1-button1 (Meta-Left Button on Sun Sparcs).
+If you start dragging on the border, this will start the resizing. You
+may want to set default geometry to Placer, and allow layouting without
+the layout window, both in (Options | General).</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-22"></A><FONT COLOR="#0000FF">R-22) How can I set the values
+of sliders more accurately ?</FONT></H3>
+
+<BLOCKQUOTE>Many sliders have to cover a wide range. The value of a slider
+can be set with the cursor keys.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-23"></A><FONT COLOR="#0000FF">R-23) How can I create menubars
+?</FONT></H3>
+
+<BLOCKQUOTE>
+
+<P>To define a menubar, you create menubuttons that are all children of
+one frame. A menubutton is only handled by XF if the underline resource
+is set to something different than -1.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-24"></A><FONT COLOR="#0000FF">R-24) Why doesn't the xftutorial
+run ?</FONT></H3>
+
+<BLOCKQUOTE>
+
+<P>Usually, there are two reasons why the XF tutorial is not running.</BLOCKQUOTE>
+
+<BLOCKQUOTE>The first reason is that you probably started xftutorial from
+the shell. Please run xftutrial from inside XF by selecting the menu item
+(Help | Tutorial).</BLOCKQUOTE>
+
+<BLOCKQUOTE>The second reason may be that your X server is not secure,
+leading to an error message like this:</BLOCKQUOTE>
+
+<BLOCKQUOTE>"X server insecure..."</BLOCKQUOTE>
+
+<BLOCKQUOTE>In this case, take a look at the answer to question R-25.</BLOCKQUOTE>
+
+<H3>
+<A NAME="R-25"></A><FONT COLOR="#0000FF">R-25) How can I make my X server
+secure ?</FONT></H3>
+
+<BLOCKQUOTE>Create the "~/.Xauthority" file on the systems you want to
+use with Tk (use the tool xauth(1X)). Disable xhost access, and restart
+the X server with
+<BR>the -auth &lt;fileName> option, or under xdm(1X). Some users, on OpenWindows
+systems, have reported that they need to log off and back on again to get
+the window system to recognize the "~/.Xauthority" file.</BLOCKQUOTE>
+
+<BLOCKQUOTE>If you use xdm(1X), the "~/.Xauthority" file will be modified
+automatically. If you call the X server by hand, you have to add certain
+keys to the file using
+<BR>xauth(1X). This will look about like this:</BLOCKQUOTE>
+
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; key=`xauthkey`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xauth add ${HOST}:0&nbsp; . $key
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xauth add ${HOST}/unix:0&nbsp; . $key
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; xinit $HOME/.xinitrc -- -auth $HOME/.Xauthority</PRE>
+
+<BLOCKQUOTE>The program xauthkey is not part of the standard X system.
+You just need a way to create a hexdecimal random number. This can also
+be done by hand interactively. My "~/.Xauthority" file looked (a long time
+ago) like this (call "xauth list" to view the file):</BLOCKQUOTE>
+
+<PRE>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; garfield:0&nbsp; MIT-MAGIC-COOKIE-1&nbsp; 1234abcdef
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; garfield/unix:0&nbsp; MIT-MAGIC-COOKIE-1&nbsp; 1234abcdef</PRE>
+
+<BLOCKQUOTE>If you still have problems, maybe the client that cannot connect
+to your server has no access to your "~/.Xauthority" file, or the display
+name you use is not the same as in your "~/.Xauthority" file. If you still
+have trouble, build your Tk with the security flag disabled (SECURITY_FLAGS
+in the Makefile) or take a deep look into the X security documentation.</BLOCKQUOTE>
+
+</BODY>
+</HTML>

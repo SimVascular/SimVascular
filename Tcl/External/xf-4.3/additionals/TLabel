@@ -1,0 +1,152 @@
+# Program: xf
+# Description: handle label widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tlabel) 4
+
+##########
+# Procedure: XFAdd.TLabel
+# Description: add a label
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TLabel {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TLabel..."
+  set xfName [XFMiscGetUniqueName $xfName tlabel]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      ttk::label .$xfName \
+        -text "$xfName" \
+        -relief raised
+    } {
+      ttk::label .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      ttk::label $xfStatus(path).$xfName \
+        -text "$xfName" \
+        -relief raised
+    } {
+      ttk::label $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TLabel...done"
+}
+
+##########
+# Procedure: XFConfig.TLabel4
+# Description: configure a label
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TLabel4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName label$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TLabel..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TLabel parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTLabelSetTLabel4 \
+    parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFTLabelSetTLabel4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass XFTLabelSetTLabel4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFTLabelSetTLabel4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "TLabel" XFTLabelSetTLabel4 $xfName
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass XFTLabelSetTLabel4
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTLabelSetTLabel4
+  XFElementTileWidth $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFTEntrySetTEntry4
+
+  # save current parameter
+  XFElementSave $xfW $xfClass {background image foreground relief text textvariable width}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTLabelSetTLabel4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TLabel...done"
+}
+
+##########
+# Procedure: XFTLabelSetTLabel4
+# Description: set label parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTLabelSetTLabel4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.widthvar.widthvar get]
+
+}
+
+# eof
+

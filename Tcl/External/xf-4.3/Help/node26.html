@@ -1,0 +1,107 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Using XF</TITLE>
+<META NAME="description" CONTENT="Using XF">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1055" HREF="node27.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1053" HREF="main.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1047" HREF="node25.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1057" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1058" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1056" HREF="node27.html">The first steps</A>
+<B>Up:</B> <A NAME="tex2html1054" HREF="main.html">No Title</A>
+<B> Previous:</B> <A NAME="tex2html1048" HREF="node25.html">Other Tk commands</A>
+<BR> <HR> <P>
+<H1><A NAME="SECTION00500000000000000000">Using XF</A></H1>
+<P>
+<EM>XF </EM>
+ may be used for prototyping, and for the complete
+implementation of an application. To implement a complete
+application, it is necessary that the user is able to write
+<EM>Tcl/Tk </EM>
+ code. <EM>XF </EM>
+ can free the user from a lot of
+implementation work, but still, parts of the functionality
+have to be implemented by him. So, a basic understanding of
+<EM>Tcl/Tk </EM>
+ is required.
+<P>
+First, the user should think about the purpose and the look
+of his application. A rough layout of the application
+should be drawn, where the dialog structure and the
+distribution of dialog components to different toplevel
+(dialog) windows are planned. Of course, it is also possible
+to use <EM>XF </EM>
+ without a concrete idea of the resulting
+application. Widgets can be rearranged at any time to see
+what the resulting interface looks like.
+<P>
+The developer of a graphical user interface must be very
+careful not to overload the application interface with neat
+little features which can confuse the user. Many graphical
+user interfaces tend to be confusing, because the interface
+tries to offer too much functionality/information, or
+presents the functionality/information in a wrong way. A
+graphical user interface is not ``good'', just because it is
+graphical.  It has to be carefully designed and constructed.
+<P>
+The following step-by-step introduction to <EM>XF </EM>
+ is
+idealized. The user will probably never really work this
+way. There are always changes to the widget structure,
+layout or functionality that occur while the work proceeds,
+due to enhancements or necessary changes. Nevertheless, this
+view of designing and implementing applications with <EM>XF </EM>
+ can
+be a helpful baseline for the work. There is a special
+chapter about the dialog components in <EM>XF</EM>
+, where all
+dialogs are explained in detail (see chapter
+<A HREF="#XFUsersGuide"><IMG ALIGN=BOTTOM ALT="gif" SRC=" cross_ref_motif.gif"></A>).
+<P>
+<BR> <HR>
+<UL> 
+<LI> <A NAME="tex2html1059" HREF="node27.html#SECTION00510000000000000000">The first steps</A>
+<UL> 
+<LI> <A NAME="tex2html1060" HREF="node28.html#SECTION00511000000000000000">Start</A>
+<LI> <A NAME="tex2html1061" HREF="node29.html#SECTION00512000000000000000">Inserting widgets into the widget tree</A>
+<LI> <A NAME="tex2html1062" HREF="node30.html#SECTION00513000000000000000">Layouting widgets</A>
+<UL> 
+<LI> <A NAME="tex2html1063" HREF="node31.html#SECTION00513100000000000000">Layouting with the placer</A>
+<LI> <A NAME="tex2html1064" HREF="node32.html#SECTION00513200000000000000">Layouting with the packer</A>
+</UL> 
+<LI> <A NAME="tex2html1065" HREF="node33.html#SECTION00514000000000000000">Configuring widgets</A>
+<LI> <A NAME="tex2html1066" HREF="node34.html#SECTION00515000000000000000">Procedures</A>
+</UL> 
+<LI> <A NAME="tex2html1067" HREF="node35.html#SECTION00520000000000000000">XF and Tcl/Tk</A>
+<UL> 
+<LI> <A NAME="tex2html1068" HREF="node36.html#SECTION00521000000000000000">Text widgets</A>
+<LI> <A NAME="tex2html1069" HREF="node37.html#SECTION00522000000000000000">Entry widgets</A>
+<LI> <A NAME="tex2html1070" HREF="node38.html#SECTION00523000000000000000">Scale widgets</A>
+<LI> <A NAME="tex2html1071" HREF="node39.html#SECTION00524000000000000000">Checkbutton widgets</A>
+<LI> <A NAME="tex2html1072" HREF="node40.html#SECTION00525000000000000000">Radiobutton widgets</A>
+<LI> <A NAME="tex2html1073" HREF="node41.html#SECTION00526000000000000000">Send</A>
+</UL> 
+<LI> <A NAME="tex2html1074" HREF="node42.html#SECTION00530000000000000000">XF constraints</A>
+<UL> 
+<LI> <A NAME="tex2html1075" HREF="node43.html#SECTION00531000000000000000">Restrictions</A>
+<LI> <A NAME="tex2html1076" HREF="node44.html#SECTION00532000000000000000">Pitfalls</A>
+</UL> 
+<LI> <A NAME="tex2html1077" HREF="node45.html#SECTION00540000000000000000">Advanced features</A>
+<UL> 
+<LI> <A NAME="tex2html1078" HREF="node46.html#SECTION00541000000000000000">Templates</A>
+<LI> <A NAME="tex2html1079" HREF="node47.html#SECTION00542000000000000000">Toplevel windows</A>
+<LI> <A NAME="tex2html1080" HREF="node48.html#SECTION00543000000000000000">Source modules</A>
+<LI> <A NAME="tex2html1081" HREF="node49.html#SECTION00544000000000000000">Levels for procedures and bindings</A>
+</UL>
+</UL>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

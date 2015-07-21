@@ -1,0 +1,127 @@
+# Program: xf
+# Description: handle TLabelframe widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tlabelframe) 4
+
+##########
+# Procedure: XFAdd.TLabelframe
+# Description: add a TLabelframe
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TLabelframe {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TLabelframe..."
+  set xfName [XFMiscGetUniqueName $xfName tlabelframe]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TLabelframe: .$xfName"
+      ttk::labelframe .$xfName
+    } {
+      puts "attempt to create TLabelframe: .$xfName"
+      ttk::labelframe .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TLabelframe: $xfStatus(path).$xfName"
+      ttk::labelframe $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TLabelframe: $xfStatus(path).$xfName"
+      ttk::labelframe $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TLabelframe...done"
+}
+
+##########
+# Procedure: XFConfig.TLabelframe4
+# Description: configure a TLabelframe
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TLabelframe4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TLabelframe$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TLabelframe..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TLabelframe parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTLabelframeSetTLabelframe4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTLabelframeSetTLabelframe4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TLabelframe...done"
+}
+
+##########
+# Procedure: XFTLabelframeSetTLabelframe4
+# Description: set TLabelframe parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTLabelframeSetTLabelframe4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+# eof
+

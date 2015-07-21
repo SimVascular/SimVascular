@@ -1,0 +1,176 @@
+# Program: xf
+# Description: handle button widgets
+#
+# $Header: Button[2.3] Wed Mar 10 11:58:30 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(button) 4
+
+##########
+# Procedure: XFAdd.Button
+# Description: add a button
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Button {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Button..."
+  set xfName [XFMiscGetUniqueName $xfName button]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      button .$xfName \
+        -text "$xfName" \
+        -relief raised
+    } {
+      button .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      button $xfStatus(path).$xfName \
+        -text "$xfName" \
+        -relief raised
+    } {
+      button $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Button...done"
+}
+
+##########
+# Procedure: XFConfig.Button4
+# Description: configure a button
+# Arguments: xfW - the widget
+#            xfType - config type (add or config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Button4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  if {"$xfType" == "add"} {
+    set xfName button$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Button..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x570 \
+    "Button parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetButton4 parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFButtonSetButton4
+  XFElementBitmap $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetButton4
+  XFElementImage $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetButton4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFButtonSetButton4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFButtonSetButton4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFButtonSetButton4
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass text text Text \
+    "Label" XFButtonSetButton4 $xfName
+  XFElementSize $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetButton4
+  XFElementTextVariable $xfW .xf${xfClass}Config4 $xfType $xfClass \
+    XFButtonSetButton4
+  XFElementCommand $xfW .xf${xfClass}Config4 $xfType
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {background bitmap command font image kanjifont foreground height text textvariable width}
+  } {
+    XFElementSave $xfW $xfClass {background bitmap command font foreground height text textvariable width}
+    XFElementSave $xfW $xfClass {background bitmap command font image foreground height text textvariable width}
+  }
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFButtonSetButton4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Button...done"
+}
+
+##########
+# Procedure: XFButtonSetButton4
+# Description: set button parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFButtonSetButton4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW bitmap \
+    [.xf${xfClass}Config4.params1.params2.bitmap.bitmap get]
+  XFMiscSetResource $xfW image \
+    [.xf${xfClass}Config4.params1.params2.image.image get]
+  XFMiscSetResource $xfW command \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.command.command.command]
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  XFMiscSetResource $xfW height \
+    [.xf${xfClass}Config4.params1.params2.size.size2.size2 get]
+  XFMiscSetResource $xfW text \
+    [.xf${xfClass}Config4.params1.params2.text.text get]
+  XFMiscSetResource $xfW textvariable \
+    [.xf${xfClass}Config4.params1.params2.textvar.textvar get]
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.size.size1.size1 get]
+}
+
+# eof
+
+

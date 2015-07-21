@@ -1,0 +1,56 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Widget configuration</TITLE>
+<META NAME="description" CONTENT="Widget configuration">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html997" HREF="node22.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html995" HREF="node17.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html989" HREF="node20.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html999" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1000" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html998" HREF="node22.html">Geometry handling</A>
+<B>Up:</B> <A NAME="tex2html996" HREF="node17.html">Tk</A>
+<B> Previous:</B> <A NAME="tex2html990" HREF="node20.html">Widget commands</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00424000000000000000">Widget configuration</A></H2>
+<P>
+<A NAME=494>&#160;</A>
+As described above, all widget classes have a widget command
+named <B>configure</B>. This command gives the user
+access to the widget resources. Usually, widgets have
+resources like: <B>foreground</B>, <B>background</B>,
+<B>font</B>, etc.. To set a specific resource, the <EM>Tcl </EM>
+<P>
+command representing the widget is called, followed by the
+configure widget command. Then follows the resource name.
+Resource names begin with a ``<B>-</B>''. Behind the resource
+name, the new value is specified. If no new value is
+specified, the current value of the resource is returned.
+<P>
+Some widgets (like buttons) have resources that allow it to
+bind functionality to them. The resources have names like
+<B>-command</B>, <B>-xscrollcommand</B> etc.. These
+resources contain <EM>Tcl </EM>
+ scripts which are evaluated when the
+command is activated (for example when a button is pressed).
+<P>
+<P>
+<TT>
+<PRE><TT> 
+		.b1 configure -foreground red
+<P>
+		.b1 configure -command {puts stdout exit}
+<P>
+</TT></PRE>
+</TT>
+<P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

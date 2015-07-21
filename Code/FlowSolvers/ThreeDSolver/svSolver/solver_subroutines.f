@@ -10306,7 +10306,7 @@ c     &          neltp,nenl,ipordl,nshl, ijunk, ijunk, lcsyst)
            iseven=7
            fname1='connectivity interior?'
            call readheader(igeom,fname1,intfromfile,iseven,
-     &                     "integer", iotype)
+     &                     'integer'//CHAR(0), iotype)
            neltp  = intfromfile(1)
            nenl   = intfromfile(2)
            ipordl = intfromfile(3)
@@ -10318,7 +10318,7 @@ c     &          neltp,nenl,ipordl,nshl, ijunk, ijunk, lcsyst)
 c           read(igeom) ientp
            iientpsiz=neltp*nshl
            call readdatablock(igeom,fname1,ientp,iientpsiz,
-     &                     "integer", iotype)
+     &                     'integer'//CHAR(0), iotype)
 
            do n=1,neltp,ibksz 
               nelblk=nelblk+1

@@ -1,0 +1,82 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<!--Converted with LaTeX2HTML .95.3 (Dec 06 1995) by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds -->
+<HTML>
+<HEAD>
+<TITLE>Templates</TITLE>
+<META NAME="description" CONTENT="Templates">
+<META NAME="keywords" CONTENT="main">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<LINK REL=STYLESHEET HREF="main.css">
+</HEAD>
+<BODY LANG="EN">
+ <BR> <HR><A NAME="tex2html1329" HREF="node47.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1327" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1321" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1331" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1332" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1330" HREF="node47.html">Toplevel windows</A>
+<B>Up:</B> <A NAME="tex2html1328" HREF="node45.html">Advanced features</A>
+<B> Previous:</B> <A NAME="tex2html1322" HREF="node45.html">Advanced features</A>
+<BR> <HR> <P>
+<H2><A NAME="SECTION00541000000000000000">Templates</A></H2>
+<P>
+<A NAME=725>&#160;</A>
+<EM>XF </EM>
+ provides the concept of <EM>templates<EM></EM></EM>. Templates
+are files which contain <EM>Tcl/Tk </EM>
+ code defining a widget
+structure and/or procedures (stored as <EM>Tcl/Tk </EM>
+ code). A
+template can be loaded by the user, adding this widget
+structure and/or functionality to the application program.
+The inserted template behaves the same way as any other
+code written by the user. The user can change it, configure
+the inserted widgets etc..
+<P>
+The available templates are shown in the right list of the
+main <EM>XF </EM>
+ window. By double clicking on a list item, the
+selected template is inserted. If the contents of a template
+have changed (e.g. when a new <EM>XF </EM>
+ distribution is
+published), the template can be reloaded by inserting it
+again. This is only necessary when the old template was
+buggy, or the new template provides new functionality.
+<P>
+<EM>XF </EM>
+ comes with a set of templates. There exist three main
+groups of templates named: <EM>Combined<EM></EM></EM>,
+<EM>Procedures<EM></EM></EM> and <EM>Widgets<EM></EM></EM>. The user can
+save widget structures and procedures as new templates. If a
+widget structure is temporarily stored to the cut buffer
+(with the cut/copy functionality), this widget structure can
+be saved with the menu item
+(<EM>Edit <i>|</i> Save Template (cut buffer)<EM></EM></EM>). It is also
+possible to interactively select procedures and a widget
+path to be stored to a template in the module structure
+dialog (<EM>Misc <i>|</i> Modules<EM></EM></EM>).
+<P>
+To reduce the size of the application program, it is
+possible to use a special type of templates. They are called
+autoloadable templates. This type of templates resides in a
+directory <EM>autoProcedures</EM>, where a tclIndex file can be
+found as well. All procedures defined in the templates are
+listed in the tclIndex file, and can be loaded automatically
+(using the <EM>Tcl </EM>
+ auto load feature). The procedures are not
+saved when the program is saved. Instead the user has to add
+the pathname where the templates reside to the environment
+variable <B>XF_LOAD_PATH<B></B></B>. This variable contains a
+list of directory names separated by ``:'', where <EM>XF </EM>
+ can
+find modules that are part of the application program.
+<P>
+<BR> <HR><A NAME="tex2html1329" HREF="node47.html"><IMG ALIGN=BOTTOM ALT="next" SRC=" next_motif.gif"></A>   <A NAME="tex2html1327" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="up" SRC=" up_motif.gif"></A>   <A NAME="tex2html1321" HREF="node45.html"><IMG ALIGN=BOTTOM ALT="previous" SRC=" previous_motif.gif"></A>   <A NAME="tex2html1331" HREF="node1.html"><IMG ALIGN=BOTTOM ALT="contents" SRC=" contents_motif.gif"></A>   <A NAME="tex2html1332" HREF="node194.html"><IMG ALIGN=BOTTOM ALT="index" SRC=" index_motif.gif"></A>   <BR>
+<B> Next:</B> <A NAME="tex2html1330" HREF="node47.html">Toplevel windows</A>
+<B>Up:</B> <A NAME="tex2html1328" HREF="node45.html">Advanced features</A>
+<B> Previous:</B> <A NAME="tex2html1322" HREF="node45.html">Advanced features</A>
+<BR> <HR> <P>
+<BR> <HR>
+<P><ADDRESS>
+<I>Harry Beker <BR>
+Thu Feb 29 18:06:38 MET 1996</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -158,33 +158,33 @@ ifeq ($(CLUSTER), x64_cygwin)
 -I$(ITK_SRC_DIR)/Modules/ThirdParty/DoubleConversion/src/double-conversion
 
    ITK_LIBDIRS = $(ITK_BIN_DIR)/lib/RelWithDebInfo
-   ITK_LIBS =    /LIBPATH:$(ITK_LIBDIRS) \
-ITKBiasCorrection-4.5.lib     ITKIOJPEG-4.5.lib                    ITKOptimizers-4.5.lib \
-ITKBioCell-4.5.lib            ITKIOLSM-4.5.lib                     ITKPath-4.5.lib \
-ITKCommon-4.5.lib             ITKIOMesh-4.5.lib                    itkpng-4.5.lib \
-ITKDICOMParser-4.5.lib        ITKIOMeta-4.5.lib                    ITKPolynomials-4.5.lib \
-itkdouble-conversion-4.5.lib  ITKIOMRC-4.5.lib                     ITKQuadEdgeMesh-4.5.lib \
-ITKEXPAT-4.5.lib              ITKIONIFTI-4.5.lib                   ITKSpatialObjects-4.5.lib \
-ITKFEM-4.5.lib                ITKIONRRD-4.5.lib                    ITKStatistics-4.5.lib \
-itkgdcmCommon-4.5.lib         ITKIOPNG-4.5.lib                     itksys-4.5.lib \
-itkgdcmDICT-4.5.lib           ITKIOSiemens-4.5.lib                 \
-itkgdcmDSED-4.5.lib           ITKIOSpatialObjects-4.5.lib          itkTestDriver.lib \
-itkgdcmIOD-4.5.lib            ITKIOStimulate-4.5.lib               itktestlib-4.5.lib \
-itkgdcmjpeg12-4.5.lib         ITKIOTIFF-4.5.lib                    itktiff-4.5.lib \
-itkgdcmjpeg16-4.5.lib         ITKIOTransformBase-4.5.lib           itkv3p_lsqr-4.5.lib \
-itkgdcmjpeg8-4.5.lib          ITKIOTransformHDF5-4.5.lib           itkv3p_netlib-4.5.lib \
-itkgdcmMSFF-4.5.lib           ITKIOTransformInsightLegacy-4.5.lib  itkvcl-4.5.lib \
-ITKgiftiio-4.5.lib            ITKIOTransformMatlab-4.5.lib         ITKVideoCore-4.5.lib \
-itkhdf5_cpp-4.5.lib           ITKIOVTK-4.5.lib                     ITKVideoIO-4.5.lib \
-itkhdf5-4.5.lib               ITKIOXML-4.5.lib                     itkvnl_algo-4.5.lib \
-ITKIOBioRad-4.5.lib           itkjpeg-4.5.lib                      itkvnl-4.5.lib \
-ITKIOBMP-4.5.lib              ITKKLMRegionGrowing-4.5.lib          ITKVNLInstantiation-4.5.lib \
-ITKIOCSV-4.5.lib              ITKLabelMap-4.5.lib                  ITKVTK-4.5.lib \
-ITKIOGDCM-4.5.lib             ITKMesh-4.5.lib                      ITKVtkGlue-4.5.lib \
-ITKIOGE-4.5.lib               ITKMetaIO-4.5.lib                    ITKWatersheds-4.5.lib \
-ITKIOGIPL-4.5.lib             itkNetlibSlatec-4.5.lib              itkzlib-4.5.lib \
-ITKIOHDF5-4.5.lib             ITKniftiio-4.5.lib                   ITKznz-4.5.lib \
-ITKIOImageBase-4.5.lib        ITKNrrdIO-4.5.lib \
-ITKIOIPL-4.5.lib              itkopenjpeg-4.5.lib
+   ITK_LIBS =    $(LIBPATH_COMPILER_FLAG)$(ITK_LIBDIRS) \
+$(LIBFLAG)ITKBiasCorrection-4.5.lib     $(LIBFLAG)ITKIOJPEG-4.5.lib                    $(LIBFLAG)ITKOptimizers-4.5.lib \
+$(LIBFLAG)ITKBioCell-4.5.lib            $(LIBFLAG)ITKIOLSM-4.5.lib                     $(LIBFLAG)ITKPath-4.5.lib \
+$(LIBFLAG)ITKCommon-4.5.lib             $(LIBFLAG)ITKIOMesh-4.5.lib                    $(LIBFLAG)itkpng-4.5.lib \
+$(LIBFLAG)ITKDICOMParser-4.5.lib        $(LIBFLAG)ITKIOMeta-4.5.lib                    $(LIBFLAG)ITKPolynomials-4.5.lib \
+$(LIBFLAG)itkdouble-conversion-4.5.lib  $(LIBFLAG)ITKIOMRC-4.5.lib                     $(LIBFLAG)ITKQuadEdgeMesh-4.5.lib \
+$(LIBFLAG)ITKEXPAT-4.5.lib              $(LIBFLAG)ITKIONIFTI-4.5.lib                   $(LIBFLAG)ITKSpatialObjects-4.5.lib \
+$(LIBFLAG)ITKFEM-4.5.lib                $(LIBFLAG)ITKIONRRD-4.5.lib                    $(LIBFLAG)ITKStatistics-4.5.lib \
+$(LIBFLAG)itkgdcmCommon-4.5.lib         $(LIBFLAG)ITKIOPNG-4.5.lib                     $(LIBFLAG)itksys-4.5.lib \
+$(LIBFLAG)itkgdcmDICT-4.5.lib           $(LIBFLAG)ITKIOSiemens-4.5.lib                 \
+$(LIBFLAG)itkgdcmDSED-4.5.lib           $(LIBFLAG)ITKIOSpatialObjects-4.5.lib          $(LIBFLAG)itkTestDriver.lib \
+$(LIBFLAG)itkgdcmIOD-4.5.lib            $(LIBFLAG)ITKIOStimulate-4.5.lib               $(LIBFLAG)itktestlib-4.5.lib \
+$(LIBFLAG)itkgdcmjpeg12-4.5.lib         $(LIBFLAG)ITKIOTIFF-4.5.lib                    $(LIBFLAG)itktiff-4.5.lib \
+$(LIBFLAG)itkgdcmjpeg16-4.5.lib         $(LIBFLAG)ITKIOTransformBase-4.5.lib           $(LIBFLAG)itkv3p_lsqr-4.5.lib \
+$(LIBFLAG)itkgdcmjpeg8-4.5.lib          $(LIBFLAG)ITKIOTransformHDF5-4.5.lib           $(LIBFLAG)itkv3p_netlib-4.5.lib \
+$(LIBFLAG)itkgdcmMSFF-4.5.lib           $(LIBFLAG)ITKIOTransformInsightLegacy-4.5.lib  $(LIBFLAG)itkvcl-4.5.lib \
+$(LIBFLAG)ITKgiftiio-4.5.lib            $(LIBFLAG)ITKIOTransformMatlab-4.5.lib         $(LIBFLAG)ITKVideoCore-4.5.lib \
+$(LIBFLAG)itkhdf5_cpp-4.5.lib           $(LIBFLAG)ITKIOVTK-4.5.lib                     $(LIBFLAG)ITKVideoIO-4.5.lib \
+$(LIBFLAG)itkhdf5-4.5.lib               $(LIBFLAG)ITKIOXML-4.5.lib                     $(LIBFLAG)itkvnl_algo-4.5.lib \
+$(LIBFLAG)ITKIOBioRad-4.5.lib           $(LIBFLAG)itkjpeg-4.5.lib                      $(LIBFLAG)itkvnl-4.5.lib \
+$(LIBFLAG)ITKIOBMP-4.5.lib              $(LIBFLAG)ITKKLMRegionGrowing-4.5.lib          $(LIBFLAG)ITKVNLInstantiation-4.5.lib \
+$(LIBFLAG)ITKIOCSV-4.5.lib              $(LIBFLAG)ITKLabelMap-4.5.lib                  $(LIBFLAG)ITKVTK-4.5.lib \
+$(LIBFLAG)ITKIOGDCM-4.5.lib             $(LIBFLAG)ITKMesh-4.5.lib                      $(LIBFLAG)ITKVtkGlue-4.5.lib \
+$(LIBFLAG)ITKIOGE-4.5.lib               $(LIBFLAG)ITKMetaIO-4.5.lib                    $(LIBFLAG)ITKWatersheds-4.5.lib \
+$(LIBFLAG)ITKIOGIPL-4.5.lib             $(LIBFLAG)itkNetlibSlatec-4.5.lib              $(LIBFLAG)itkzlib-4.5.lib \
+$(LIBFLAG)ITKIOHDF5-4.5.lib             $(LIBFLAG)ITKniftiio-4.5.lib                   $(LIBFLAG)ITKznz-4.5.lib \
+$(LIBFLAG)ITKIOImageBase-4.5.lib        $(LIBFLAG)ITKNrrdIO-4.5.lib \
+$(LIBFLAG)ITKIOIPL-4.5.lib              $(LIBFLAG)itkopenjpeg-4.5.lib
 
 endif

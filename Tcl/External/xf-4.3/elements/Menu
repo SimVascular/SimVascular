@@ -1,0 +1,1585 @@
+# Program: xf
+# Description: handle menu widgets
+#
+# $Header: Menu[2.4] Wed Mar 10 11:58:55 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(menu) 5
+global xfStatus
+set xfStatus(menuCounter) 0
+global xfMenuTearoff
+set xfMenuTearoff 0
+
+##########
+# Procedure: XFAdd.Menu
+# Description: add a menu
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Menu {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Menu..."
+  set xfName [XFMiscGetUniqueName $xfName menu]
+  if {"$xfStatus(path)" == "."} {
+    menu .$xfName
+    bind . <3> "tk_popup .$xfName %X %Y"
+
+    XFMiscBindWidgetTree .$xfName
+  } {
+    menu $xfStatus(path).$xfName
+    bind . <3> "tk_popup $xfStatus(path).$xfName %X %Y"
+
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Menu...done"
+}
+
+##########
+# Procedure: XFConfig.Menu4
+# Description: configure a menu
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Menu4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  set xfName [XFMiscPathName $xfW]
+  XFEditSetStatus "Calling parameter setting for Menu..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x570 \
+    "Menu parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFMenuSetMenu4 \
+    parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass abg \
+    activeBackground Background "Active background" XFMenuSetMenu4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass aborderwidth \
+    activeBorderWidth BorderWidth "Active border width" "pixels" 40 \
+    XFMenuSetMenu4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass afg \
+    activeForeground Foreground "Active foreground" XFMenuSetMenu4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFMenuSetMenu4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 XFMenuSetMenu4
+  XFElementCursor $xfW .xf${xfClass}Config4 $xfType $xfClass XFMenuSetMenu4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass dfg \
+    disabledForeground Foreground "Disabled foreground" XFMenuSetMenu4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFMenuSetMenu4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFMenuSetMenu4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFMenuSetMenu4
+  XFElementCommand $xfW .xf${xfClass}Config4 $xfType 1
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {activebackground activeborderwidth activeforeground background borderwidth cursor disabledforeground font kanjifont foreground postcommand}
+  } {
+    XFElementSave $xfW $xfClass {activebackground activeborderwidth activeforeground background borderwidth cursor disabledforeground font foreground postcommand}
+  }
+
+  # packing
+  if {"$xfType" != "add"} {
+    pack unpack .xf${xfClass}Config4.additional.packing
+  }
+
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFMenuSetMenu4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Menu...done"
+}
+
+##########
+# Procedure: XFConfig.Menu5
+# Description: configure a menu
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Menu5 {xfW xfType xfClass {xfLeader ""}} {
+  global xfMenuTearoff
+  global xfBind
+  global xfConf
+  global xfMisc
+  global xfStatus
+
+  set xfMC $xfStatus(menuCounter)
+  set xfMisc(menuStatus,$xfMC) normal
+  set xfMisc(menu,$xfMC,menuDef) ""
+  set xfMisc(menu,$xfMC,saveMenu) ""
+  set xfStatus(menuType,$xfMC) "<command> "
+
+  foreach xfCounter [winfo children .] {
+    if {![catch "winfo ismapped $xfCounter.params1.params2.frame1.elements.elem1"]} {
+      if {"[winfo class $xfCounter.params1.params2.name.name]" == "Label"} {
+        set xfTmpName [lindex [$xfCounter.params1.params2.name.name config -text] 4]
+      } {
+        set xfTmpName [$xfCounter.params1.params2.name.name get]
+      }
+      if {"$xfW" == "[lindex [$xfCounter.pathname.pathname.pathname configure -text] 4].$xfTmpName"} {
+        return
+      }
+    }
+  }
+  # create menu if it does not exist
+  if {"[info commands $xfW]" == ""} {
+    menu $xfW
+  }
+  if {"$xfType" == "add"} {
+    set xfName menu$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Menu..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config5$xfMC 490x600 \
+    "Menu parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config5$xfMC $xfType $xfClass \
+    XFMenuSetMenu5 parameters $xfName 5
+
+  XFTmpltFrame .xf${xfClass}Config5$xfMC.params1.params2.frame1 0
+
+  XFTmpltFrame .xf${xfClass}Config5$xfMC.params1.params2.frame1.children 0
+
+  XFTmpltFrame .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements 0
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1 0
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 0
+
+  XFTmpltFrame .xf${xfClass}Config5$xfMC.params1.params2.commands 0
+
+  menubutton .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries \
+    -text {Menu entry:} \
+    -underline {0} \
+    -menu ".xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m"
+
+  menu .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m -tearoff 0
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Cascadebutton} \
+      -variable xfStatus(menuType,$xfMC) \
+      -value "<cascade> " \
+      -underline 1 \
+      -command "XFMenuSetItems $xfMC cascade $xfClass"
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Checkbutton} \
+      -variable xfStatus(menuType,$xfMC) \
+      -value "<checkbutton> " \
+      -underline 1 \
+      -command "XFMenuSetItems $xfMC check $xfClass"
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Commandbutton} \
+      -variable xfStatus(menuType,$xfMC) \
+      -value "<command> " \
+      -underline 0 \
+      -command "XFMenuSetItems $xfMC command $xfClass"
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Radiobutton} \
+      -variable xfStatus(menuType,$xfMC) \
+      -value "<radiobutton> " \
+      -underline 0 \
+      -command "XFMenuSetItems $xfMC radio $xfClass"
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+    add radiobutton \
+      -label {Separator} \
+      -variable xfStatus(menuType,$xfMC) \
+      -value "<separator> " \
+      -underline 0 \
+      -command "XFMenuSetItems $xfMC separator $xfClass"
+  
+  label \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 \
+      -anchor w \
+      -text {Commandbutton}
+  
+  button .xf${xfClass}Config5$xfMC.params1.params2.commands.insert \
+    -text {Insert} \
+    -command "
+      $xfW config -tearoff 0
+      XFMenuInsertItem $xfMC $xfClass
+      XFMenuHandleCascade $xfW $xfMC $xfClass
+      $xfW config -tearoff $xfMenuTearoff"
+
+  button .xf${xfClass}Config5$xfMC.params1.params2.commands.modify \
+    -text {Modify} \
+    -command "
+      $xfW config -tearoff 0
+      XFMenuModifyItem $xfMC $xfClass
+      XFMenuHandleCascade $xfW $xfMC $xfClass
+      $xfW config -tearoff $xfMenuTearoff"
+
+  button .xf${xfClass}Config5$xfMC.params1.params2.commands.delete \
+    -text {Delete} \
+    -command "
+      $xfW config -tearoff 0
+      XFMenuDeleteItem $xfW $xfMC $xfClass
+      XFMenuSetMenu5 $xfW 0 $xfClass $xfMC
+      $xfW config -tearoff $xfMenuTearoff"
+
+  button .xf${xfClass}Config5$xfMC.params1.params2.commands.down \
+    -state disabled \
+    -text {Cascade down} \
+    -command "
+      XFMenuHandleCascade $xfW $xfMC $xfClass cascade $xfLeader"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      abg "Active bg:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      accelerator "Accelerator:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      bg "Background:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      bitmap "Bitmap:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      image "Image:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      font "Font:"
+
+  if {$xfConf(kanji)} {
+    XFTmpltLabledEntry \
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+        kanjifont "Kanji font:"
+  }
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      label "Label:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      menu "Menu:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      offvalue "Off value:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      onvalue "On value:"
+
+  XFTmpltFrame \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state 0
+
+  label \
+   .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.message1 \
+    -anchor w \
+    -relief raised \
+    -text "State:"
+
+  radiobutton \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.normal \
+    -text "Normal" \
+    -variable xfMisc(menuStatus,$xfMC) \
+    -value {normal}
+
+  radiobutton \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.active \
+    -text "Active" \
+    -variable xfMisc(menuStatus,$xfMC) \
+    -value {active}
+
+  radiobutton \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.disabled \
+    -text "Disabled" \
+    -variable xfMisc(menuStatus,$xfMC) \
+    -value {disabled}
+
+  pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.message1 {left} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.normal {left fillx expand} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.active {left fillx expand} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.disabled {left fillx expand}
+
+  XFTmpltScale \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      underline "Underline:" "" 100
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline.underline \
+    configure \
+      -from -1
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      value "Value:"
+
+  XFTmpltLabledEntry \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+      variable "Variable:"
+
+  label \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.message1 \
+      -relief raised \
+      -text "Command:"
+
+  XFTmpltText .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+    command
+  XFMiscSetTextHeight \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command.command 5
+
+  checkbutton .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.tearoff \
+   -text {Tear-off } -offvalue 0 -onvalue 1 -variable xfMenuTearoff \
+   -command "$xfW config -tearoff \$xfMenuTearoff"
+
+  label .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.message1 \
+    -text {Menu:}
+
+  XFTmpltListbox .xf${xfClass}Config5$xfMC.params1.params2.frame1.children \
+    items
+
+  scale .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover \
+    -orient vertical \
+    -width 8 \
+    -sliderlength 15 \
+    -from 0 \
+    -command "XFScaleProc $xfW $xfMC $xfClass"
+
+  pack before .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.vscroll \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover {right filly}
+  
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config5$xfMC.leave.ok configure \
+      -command "
+        global xfMisc
+        global xfStatus
+        XFMiscSetSymbolicName $xfW \
+          \[.xf${xfClass}Config5$xfMC.params1.params2.symname.symname get\]
+        if {\"\[winfo class .xf${xfClass}Config4.params1.params2.name.name\]\" == \"Label\"} {
+          set xfTmpName \[lindex \[.xf${xfClass}Config5$xfMC.params1.params2.name.name config -text\] 4\]
+        } {
+          set xfTmpName \[.xf${xfClass}Config5$xfMC.params1.params2.name.name get\]
+        }
+        if {\"\$xfTmpName\" != \"\"} {
+          XFAdd.Menu $xfW \$xfTmpName config
+          if {\"\$xfStatus(path)\" == \".\"} {
+            $xfW config -tearoff 0
+            XFMenuSetMenu5 .\$xfTmpName 1 $xfClass $xfMC
+            $xfW config -tearoff $xfMenuTearoff
+          } {
+            $xfW config -tearoff 0
+            XFMenuSetMenu5 \$xfStatus(path).\$xfTmpName 1 $xfClass $xfMC
+            $xfW config -tearoff $xfMenuTearoff
+          }
+        }
+        unset xfMisc(menu,$xfMC,menuDef)
+        unset xfMisc(menu,$xfMC,saveMenu)
+        unset xfStatus(menuType,$xfMC)
+        destroy .xf${xfClass}Config5$xfMC"
+
+    .xf${xfClass}Config5$xfMC.leave.apply configure \
+      -state disabled
+
+    .xf${xfClass}Config5$xfMC.leave.applyperm configure \
+      -state disabled
+
+    .xf${xfClass}Config5$xfMC.leave.cancel configure \
+      -command "
+        global xfMisc
+        global xfStatus
+        unset xfMisc(menu,$xfMC,menuDef)
+        unset xfMisc(menu,$xfMC,saveMenu)
+        unset xfStatus(menuType,$xfMC)
+        destroy .xf${xfClass}Config5$xfMC"
+  } {
+    .xf${xfClass}Config5$xfMC.leave.ok configure \
+      -command "
+        global xfMisc
+        global xfStatus
+        $xfW config -tearoff 0
+        XFMenuSetMenu5 $xfW 1 $xfClass $xfMC
+        $xfW config -tearoff \$xfMenuTearoff
+        unset xfMisc(menu,$xfMC,menuDef)
+        unset xfMisc(menu,$xfMC,saveMenu)
+        unset xfStatus(menuType,$xfMC)
+        destroy .xf${xfClass}Config5$xfMC"
+
+    .xf${xfClass}Config5$xfMC.leave.apply configure \
+      -command "
+        $xfW config -tearoff 0
+        XFMenuSetMenu5 $xfW 1 $xfClass $xfMC
+        $xfW config -tearoff $xfMenuTearoff"
+
+    .xf${xfClass}Config5$xfMC.leave.applyperm configure \
+      -command "
+        $xfW config -tearoff 0
+        XFMenuSetMenu5 $xfW 0 $xfClass $xfMC
+        $xfW config -tearoff $xfMenuTearoff"
+
+    # 11/21/98 - D. LaBelle - Corrected restoration of menu by accounting for tearoff entry
+    .xf${xfClass}Config5$xfMC.leave.cancel configure \
+      -command "
+        global xfMisc
+        global xfStatus
+        set xfCounter 0
+        set xfLast \[$xfW index last\]
+        if {\"\$xfLast\" == \"none\"} {
+          set xfLast -1
+        }
+        $xfW delete 0 end
+        if {\[info exists xfMisc(menu,$xfMC,saveMenu)\]} {
+           foreach xfCounter \$xfMisc(menu,$xfMC,saveMenu) {
+                   if {\"\[lindex \$xfCounter 2\]\" == \"tearoff\"} {
+                       $xfW configure -tearoff 1
+                      } {
+                         catch \"\$xfCounter\"
+                        }
+          }
+        }
+        unset xfMisc(menu,$xfMC,menuDef)
+        unset xfMisc(menu,$xfMC,saveMenu)
+        unset xfStatus(menuType,$xfMC)
+        destroy .xf${xfClass}Config5$xfMC"
+  }
+
+  if {"$xfType" == "add"} {
+    .xf${xfClass}Config5$xfMC.additional.more configure \
+      -state disabled
+    .xf${xfClass}Config5$xfMC.additional.binding configure \
+      -state disabled
+  }
+
+  XFMenuReadMenu $xfW $xfMC $xfClass
+
+  case [lindex [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 config -text] 4] in {
+    {Cascadebutton} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m invoke 0
+    }
+    {Checkbutton} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m invoke 1
+    }
+    {Radiobutton} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m invoke 3
+    }
+    {Separator} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m invoke 4
+    }
+    {default} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m invoke 2
+    }
+  }
+
+  XFMenuSetItem $xfMC $xfClass
+
+  XFElementSave $xfW $xfClass {}
+
+  # bindings
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg.abg $xfBind(configure) \
+    "XFProcColorBox activebackground .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg.abg"
+
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg.bg $xfBind(configure) \
+    "XFProcColorBox  background .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg.bg"
+
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap.bitmap $xfBind(configure) \
+    "XFProcFSBoxPixmap .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap.bitmap"
+
+# MAC do I add something here?
+
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font.font $xfBind(configure) \
+    "XFProcFontBox font .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font.font"
+
+  if {$xfConf(kanji)} {
+    bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont.kanjifont $xfBind(configure) \
+      "XFProcFontBox kanjifont .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont.kanjifont"
+  }
+
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable.variable $xfBind(configure) \
+    "XFProcProgGlobals .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable.variable"
+
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command.command $xfBind(configure) \
+    "XFProcProgCommands .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command.command"
+
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items $xfBind(select1) "
+    XFBindSelectOne %W %y
+    XFMenuSetItem $xfMC $xfClass"
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items <ButtonPress-1> "
+    XFBindSelectOne %W %y
+    XFMenuSetItem $xfMC $xfClass"
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items <Button1-Motion> "
+    XFBindSelectOne %W %y
+    XFMenuSetItem $xfMC $xfClass"
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items <Shift-ButtonPress-1> "
+    XFBindSelectOne %W %y
+    XFMenuSetItem $xfMC $xfClass"
+  bind .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items <Shift-Button1-Motion> "
+    XFBindSelectOne %W %y
+    XFMenuSetItem $xfMC $xfClass"
+
+  # packing
+  pack unpack .xf${xfClass}Config5$xfMC.additional.packing
+  pack append .xf${xfClass}Config5$xfMC.params1.params2.commands \
+              .xf${xfClass}Config5$xfMC.params1.params2.commands.insert {left fill expand} \
+              .xf${xfClass}Config5$xfMC.params1.params2.commands.modify {left fill expand} \
+              .xf${xfClass}Config5$xfMC.params1.params2.commands.delete {left fill expand} \
+              .xf${xfClass}Config5$xfMC.params1.params2.commands.down {left fill expand}
+
+  pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1 \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries {left fill} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 {left fillx expand}
+
+  pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1 {top fill} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 {top fill expand}
+
+  pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.children \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items {bottom fill expand} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.tearoff {left } \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.message1 {left frame center}
+
+  place .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements \
+    -in .xf${xfClass}Config5$xfMC.params1.params2.frame1 \
+    -relx 0 \
+    -rely 0 \
+    -relheight 1.0 \
+    -relwidth 0.5
+
+  place .xf${xfClass}Config5$xfMC.params1.params2.frame1.children \
+    -in .xf${xfClass}Config5$xfMC.params1.params2.frame1 \
+    -relx 0.5 \
+    -rely 0 \
+    -relheight 1.0 \
+    -relwidth 0.5
+
+  pack append .xf${xfClass}Config5$xfMC.params1.params2 \
+              .xf${xfClass}Config5$xfMC.params1.params2.commands {bottom fill} \
+              .xf${xfClass}Config5$xfMC.params1.params2.frame1 {top fill expand}
+  pack append .xf${xfClass}Config5$xfMC.params1 \
+              .xf${xfClass}Config5$xfMC.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config5$xfMC \
+              .xf${xfClass}Config5$xfMC.pathname {top fill frame center} \
+              .xf${xfClass}Config5$xfMC.leave {bottom fill} \
+              .xf${xfClass}Config5$xfMC.additional {bottom fill} \
+              .xf${xfClass}Config5$xfMC.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2
+
+  incr xfStatus(menuCounter)
+  XFEditSetStatus "Calling parameter setting for Menu...done"
+}
+
+proc XFScaleProc {xfW xfMC xfClass dummy} {
+  global xfMenuTearoff
+
+  XFMenuRepositionItem $xfMC $xfClass
+  $xfW config -tearoff 0
+  XFMenuSetMenu5 $xfW 0 $xfClass $xfMC $dummy
+  $xfW config -tearoff $xfMenuTearoff
+}
+
+
+##########
+# Procedure: XFSaveWidget.Menu
+# Description: save menu
+# Arguments: xfOutFile - the output file
+#            xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveWidget.Menu {xfOutFile xfW} {
+  global xfConf
+
+  set xfClass [winfo class $xfW]
+  set xfType [string tolower $xfClass]
+
+  # what are we doing here ?
+  puts $xfOutFile "\n  # build widget $xfW"
+
+  # write widget type and path name
+  puts $xfOutFile "  $xfType $xfW" nonewline
+  XFSaveWidgetResource $xfOutFile $xfW
+  puts $xfOutFile ""
+
+  # get index of last menu item
+  set xfLastMenu [$xfW index last]
+  if {"$xfLastMenu" != "none"} {
+    for {set xfCounter 0} {$xfCounter <= $xfLastMenu} {incr xfCounter 1} {
+
+      if {[XFMenuEntryType $xfW $xfCounter] == "tearoff"} {
+        continue
+      }
+
+      puts $xfOutFile "  $xfW add [XFMenuEntryType $xfW $xfCounter]" nonewline
+      foreach option [$xfW entryconfigure $xfCounter] {
+        # only handle options with 5 items per option entry
+        if {[llength $option] == 5} {
+          if {"[lindex $option 3]" != "[lindex $option 4]"} {
+            puts $xfOutFile " \\\n    [lindex $option 0] {[lindex $option 4]}" nonewline
+          }
+        }
+      }
+      puts $xfOutFile ""
+    }
+  }
+}
+
+##########
+# Procedure: XFMenuDeleteItem
+# Description: delete currently selected item
+# Arguments: xfW - the widget to configure
+#            xfMC - the edit menu counter
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuDeleteItem {xfW xfMC xfClass} {
+  global xfMisc
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    # clean up cascade submenus
+    if {[string match "<cascade>*" \
+          [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCurSelected]] &&
+        "[lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSelected] 8]" != ""} {
+      foreach xfCounter [winfo children $xfW] {
+        if {"$xfCounter" == "[lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSelected] 8]"} {
+          catch "XFDestroy [lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSelected] 8]"
+        }
+      }
+    }
+
+    # delete item from lists
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      delete $xfCurSelected
+    set xfMisc(menu,$xfMC,menuDef) \
+      [lreplace $xfMisc(menu,$xfMC,menuDef) $xfCurSelected $xfCurSelected]
+
+    # reposition the mover
+    if {[.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size] > 0} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover configure \
+        -to [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size]
+    } {
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover configure \
+      -to 1
+    }
+  }
+}
+
+##########
+# Procedure: XFMenuEntryType
+# Description: determine the type of a menu item
+# Arguments: xfW - the widget
+#            xfPosition - index of item in menu
+# Returns: item type
+# Sideeffects: none
+##########
+proc XFMenuEntryType {xfW xfPosition} {
+
+  return [$xfW type $xfPosition]
+
+  if {![catch "$xfW entryconfig $xfPosition -menu"]} {
+    return "cascade"
+  } {
+    if {![catch "$xfW entryconfig $xfPosition -value"]} {
+      return "radiobutton"
+    } {
+      if {![catch "$xfW entryconfig $xfPosition -onvalue"]} {
+        return "checkbutton"
+      } {
+        if {![catch "$xfW entryconfig $xfPosition -command"]} {
+          return "command"
+        } {
+          if {[$xfW type $xfPosition] == "tearoff"} {
+            return "tearoff"
+          } {
+            return "separator"
+          }
+        }
+      }
+    }
+  }
+}
+
+##########
+# Procedure: XFMenuHandleCascade
+# Description: handle cascade items
+# Arguments: xfW - the widget we configure
+#            xfMC - the edit menu counter
+#            xfClass - the class we edit
+#            xfType - the type of handling
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuHandleCascade {xfW xfMC xfClass {xfType ""} {xfLeader ""}} {
+  global xfMisc
+
+  XFMenuSetMenu5 $xfW 0 $xfClass $xfMC
+
+  set xfCreate 1
+  set xfCurSel \
+    [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselect]
+  if {$xfCurSel >= 0 && [string match "<cascade>*" \
+        [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCurSel]] == 1 &&
+      "[lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSel] 8]" != ""} {
+    foreach xfCounter [winfo children $xfW] {
+      if {"$xfCounter" == "[lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSel] 8]"} {
+        set xfCreate 0
+      }
+    }
+    set xfResultCode 0
+    set xfResult ""
+    if {$xfCreate == 1} {
+      set xfResultCode [catch "menu [lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSel] 8]" xfResult]
+    }
+    if {"$xfType" == "cascade"} {
+      if {$xfResultCode != 0} {
+        XFProcError "$xfResult"
+      } {
+        XFConfig.Menu5 [lindex [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSel] 8] \
+          $xfType $xfClass $xfLeader
+      }
+    }
+  }
+}
+
+##########
+# Procedure: XFMenuInsertItem
+# Description: insert currently edited parameters
+# Arguments: xfMC - the edit menu counter
+#            xfClass - the class we configure
+#            xfIndex - the target location in the menu
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuInsertItem {xfMC xfClass {xfIndex ""}} {
+  global xfConf
+  global xfMisc
+  global xfStatus
+
+  if {"$xfIndex" == ""} {
+    set xfIndex [expr [llength $xfMisc(menu,$xfMC,menuDef)]+10]
+  }
+
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items insert $xfIndex \
+      "[set xfStatus(menuType,$xfMC)][.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label.label get]"
+
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items selection clear 0 end
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items selection set $xfIndex
+
+    set xfNewItem ""
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg.abg get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator.accelerator get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg.bg get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap.bitmap get]
+
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image.image get]
+
+    lappend xfNewItem \
+      [XFMiscGetText .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command.command]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font.font get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label.label get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.offvalue.offvalue get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.onvalue.onvalue get]
+    lappend xfNewItem \
+      [set xfMisc(menuStatus,$xfMC)]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline.underline get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.value.value get]
+    lappend xfNewItem \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable.variable get]
+    if {$xfConf(kanji)} {
+      lappend xfNewItem \
+        [.xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont.kanjifont get]
+    }
+    set xfMisc(menu,$xfMC,menuDef) \
+      [linsert $xfMisc(menu,$xfMC,menuDef) $xfIndex $xfNewItem]
+
+  # set mover
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover \
+    configure \
+      -to [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size]
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+    select anchor $xfIndex 
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+    select set $xfIndex 
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselection]
+
+  if {$xfCurSelected >= 0} {
+    case [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCurSelected] in {
+      {<cascade*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state normal
+      }
+      {<check*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+      }
+      {<radio*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+      }
+      {<separator*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+      }
+      {default} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+      }
+    }
+  }
+}
+
+##########
+# Procedure: XFMenuModifyItem
+# Description: modify currently edited item
+# Arguments: xfMC - the edit menu counter
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuModifyItem {xfMC xfClass} {
+  global xfMisc
+
+  set xfIndex [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselect]
+  if {"$xfIndex" != ""} {
+    # delete old item
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      delete $xfIndex
+    set xfMisc(menu,$xfMC,menuDef) \
+      [lreplace $xfMisc(menu,$xfMC,menuDef) $xfIndex $xfIndex]
+
+    # insert again
+    XFMenuInsertItem $xfMC $xfClass $xfIndex
+
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      select anchor $xfIndex 
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      select set $xfIndex 
+  }
+}
+
+##########
+# Procedure: XFMenuReadMenu
+# Description: read current menu, and insert it into the lists
+# Arguments: xfW - the widget we configure 
+#            xfMC - the edit menu counter
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuReadMenu {xfW xfMC xfClass} {
+  global xfConf
+  global xfMisc
+  global xfMenuTearoff
+
+  set xfLast [$xfW index last]
+  if {"$xfLast" == "none"} {
+    set xfLast -1
+  }
+  set xfMenuTearoff 0
+  for {set xfCounter 0} {$xfCounter <= $xfLast} {incr xfCounter 1} {
+    # 11/21/98 - D. LaBelle - Corrected restoration of menu by replacing the following
+    #                         line in order to properly build the menu add commands.
+    # set xfOptionString ""
+    set xfOptionString "$xfW add [$xfW type $xfCounter]"
+    foreach xfOption [$xfW entryconfigure $xfCounter] {
+      if {[llength $xfOption] == 5} {
+        if {"[lindex $xfOption 3]" != "[lindex $xfOption 4]"} {
+          append xfOptionString " [lindex $xfOption 0] {[lindex $xfOption 4]}"
+        }
+      }
+    }
+    set xfNewItem ""
+    lappend xfMisc(menu,$xfMC,saveMenu) $xfOptionString
+    if {"[XFMenuEntryType $xfW $xfCounter]" == "tearoff"} {
+      set xfMenuTearoff 1
+    } elseif {"[XFMenuEntryType $xfW $xfCounter]" == "separator"} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+        insert end "<[XFMenuEntryType $xfW $xfCounter]>"
+      lappend xfNewItem "" "" "" "" "" "" "" "" "" "" "" "" "" ""
+      set xfMisc(menu,$xfMC,menuDef) \
+        [linsert $xfMisc(menu,$xfMC,menuDef) \
+          [expr [llength $xfMisc(menu,$xfMC,menuDef)]+10] $xfNewItem]
+    } {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+        insert end \
+          "<[XFMenuEntryType $xfW $xfCounter]> [lindex [$xfW entryconfigure $xfCounter -label] 4]"
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -activebackground] 4]
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -accelerator] 4]
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -background] 4]
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -bitmap] 4]
+
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -image] 4]
+
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -command] 4]
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -font] 4]
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -label] 4]
+      if {"[XFMenuEntryType $xfW $xfCounter]" == "cascade"} {
+        lappend xfNewItem \
+          [lindex [$xfW entryconfigure $xfCounter -menu] 4]
+      } {
+        lappend xfNewItem ""
+      }
+      if {"[XFMenuEntryType $xfW $xfCounter]" == "checkbutton"} {
+        lappend xfNewItem \
+          [lindex [$xfW entryconfigure $xfCounter -offvalue] 4]
+        lappend xfNewItem \
+          [lindex [$xfW entryconfigure $xfCounter -onvalue] 4]
+      } {
+        lappend xfNewItem ""
+        lappend xfNewItem ""
+      }
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -state] 4]
+      lappend xfNewItem \
+        [lindex [$xfW entryconfigure $xfCounter -underline] 4]
+      if {"[XFMenuEntryType $xfW $xfCounter]" == "radiobutton"} {
+        lappend xfNewItem \
+          [lindex [$xfW entryconfigure $xfCounter -value] 4]
+      } {
+        lappend xfNewItem ""
+      }
+      if {"[XFMenuEntryType $xfW $xfCounter]" == "radiobutton" ||
+          "[XFMenuEntryType $xfW $xfCounter]" == "checkbutton"} {
+        lappend xfNewItem \
+          [lindex [$xfW entryconfigure $xfCounter -variable] 4]
+      } {
+        lappend xfNewItem ""
+      }
+      if {$xfConf(kanji)} {
+        lappend xfNewItem \
+          [lindex [$xfW entryconfigure $xfCounter -kanjifont] 4]
+      }
+      set xfMisc(menu,$xfMC,menuDef) \
+        [linsert $xfMisc(menu,$xfMC,menuDef) [expr [llength $xfMisc(menu,$xfMC,menuDef)]+10] $xfNewItem]
+    }
+  }
+
+  if {[.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size] > 0} {
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      select anchor 0
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      select set 0
+    XFMenuSetItem $xfMC $xfClass
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover \
+      configure \
+        -to [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size]
+  } {
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover \
+      configure \
+        -to 1
+  }
+}
+
+##########
+# Procedure: XFMenuRepositionItem
+# Description: put currently selected item to new position
+# Arguments: xfMC - the edit menu counter
+#            xfClass - the class we configure
+#            xfDummy - nothing
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuRepositionItem {xfMC xfClass {xfDummy ""}} {
+  global xfMisc
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    set xfNewPos \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.mover get]
+    set xfTmpBuff1 \
+      [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCurSelected]
+    set xfNewItem \
+      [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSelected]
+
+    # delete old item
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      delete $xfCurSelected
+    set xfMisc(menu,$xfMC,menuDef) \
+      [lreplace $xfMisc(menu,$xfMC,menuDef) $xfCurSelected $xfCurSelected]
+
+    # insert at new position
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      insert $xfNewPos $xfTmpBuff1
+    set xfMisc(menu,$xfMC,menuDef) \
+      [linsert $xfMisc(menu,$xfMC,menuDef) $xfNewPos $xfNewItem]
+
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      select anchor $xfNewPos
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items \
+      select set $xfNewPos
+  }
+}
+
+##########
+# Procedure: XFMenuSetItem
+# Description: set item fields to values from currently selected item
+# Arguments: xfMC - the edit menu counter
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuSetItem {xfMC xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+  global xfStatus
+
+  set xfCurSelected \
+    [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items curselection]
+  if {$xfCurSelected >= 0} {
+    case [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCurSelected] in {
+      {<cascade*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state normal
+        set xfStatus(menuType,$xfMC) "<cascade> "
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 0 -state active
+        XFMenuSetItems $xfMC cascade $xfClass
+      }
+      {<check*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+        set xfStatus(menuType,$xfMC) "<checkbutton> "
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 1 -state active
+        XFMenuSetItems $xfMC check $xfClass
+      }
+      {<radio*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+        set xfStatus(menuType,$xfMC) "<radiobutton> "
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 3 -state active
+        XFMenuSetItems $xfMC radio $xfClass
+      }
+      {<separator*} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+        set xfStatus(menuType,$xfMC) "<separator> "
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 4 -state active
+        XFMenuSetItems $xfMC separator $xfClass
+      }
+      {default} {
+        .xf${xfClass}Config5$xfMC.params1.params2.commands.down conf \
+          -state disabled
+        set xfStatus(menuType,$xfMC) "<command> "
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.entries.m \
+          entryconfigure 2 -state active
+        XFMenuSetItems $xfMC command $xfClass
+      }
+    }
+
+    # insert values
+    set xfTmpValue [lindex $xfMisc(menu,$xfMC,menuDef) $xfCurSelected]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg.abg \
+      insert 0 [lindex $xfTmpValue 0]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator.accelerator \
+      insert 0 [lindex $xfTmpValue 1]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg.bg \
+      insert 0 [lindex $xfTmpValue 2]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap.bitmap \
+      insert 0 [lindex $xfTmpValue 3]
+
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image.image \
+      insert 0 [lindex $xfTmpValue 4]
+
+    XFMiscSetText .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command.command \
+        [lindex $xfTmpValue 5]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font.font \
+      insert 0 [lindex $xfTmpValue 6]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label.label \
+      insert 0 [lindex $xfTmpValue 7]
+    if {"[lindex $xfTmpValue 8]" != ""} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu \
+        delete 0 end
+    }
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu \
+      insert 0 [lindex $xfTmpValue 8]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.offvalue.offvalue \
+      insert 0 [lindex $xfTmpValue 9]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.onvalue.onvalue \
+      insert 0 [lindex $xfTmpValue 10]
+    set xfMisc(menuStatus,$xfMC) \
+      [lindex $xfTmpValue 11]
+    case [set xfMisc(menuStatus,$xfMC)] in {
+      {active} {
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.active select
+      }
+      {disabled} {
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.disabled select
+      }
+      {default} {
+        .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.normal select
+      }
+    }
+    if {[lindex $xfTmpValue 12] >= 0} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline.underline \
+        set [lindex $xfTmpValue 12]
+    }
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.value.value \
+      insert 0 [lindex $xfTmpValue 13]
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable.variable \
+      insert 0 [lindex $xfTmpValue 14]
+    if {$xfConf(kanji)} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont.kanjifont \
+        insert 0 [lindex $xfTmpValue 15]
+    }
+  }
+}
+
+##########
+# Procedure: XFMenuSetItems
+# Description: set item fields for currently selected widget
+# Arguments: xfMC - the edit menu counter
+#            xfType - the type we want to edit
+#            xfClass - the class we configure
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuSetItems {xfMC xfType xfClass} {
+  global xfConf
+
+  # remove widgets
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap
+
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image
+
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.message1
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font
+  if {$xfConf(kanji)} {
+    pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont
+  }
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.offvalue
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.onvalue
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.value
+  pack unpack .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable
+
+  # clear entry fields
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg.abg \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator.accelerator \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg.bg \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap.bitmap \
+    delete 0 end
+
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image.image \
+    delete 0 end
+
+  XFMiscSetText \
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command.command ""
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font.font \
+    delete 0 end
+  if {$xfConf(kanji)} {
+    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont.kanjifont \
+      delete 0 end
+  }
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label.label \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.offvalue.offvalue \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.onvalue.onvalue \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state.normal \
+    select
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline.underline \
+    set -1
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.value.value \
+    delete 0 end
+  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable.variable \
+    delete 0 end
+
+  case $xfType in {
+    {cascade} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 configure -text Cascadebutton
+
+      if {"[winfo class .xf${xfClass}Config5$xfMC.params1.params2.name.name]" == "Entry"} {
+        if {"[lindex [.xf${xfClass}Config5$xfMC.pathname.pathname.pathname configure -text] 4]" == "."} {
+          .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu insert 0 ".[.xf${xfClass}Config5$xfMC.params1.params2.name.name get].m"
+        } {
+          .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu insert 0 "[lindex [.xf${xfClass}Config5$xfMC.pathname.pathname.pathname configure -text] 4].[.xf${xfClass}Config5$xfMC.params1.params2.name.name get].m"
+        }
+      } {
+        if {"[lindex [.xf${xfClass}Config5$xfMC.pathname.pathname.pathname configure -text] 4]" == "."} {
+          .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu insert 0 ".[lindex [.xf${xfClass}Config5$xfMC.params1.params2.name.name configure -text] 4].m"
+        } {
+          .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu.menu insert 0 "[lindex [.xf${xfClass}Config5$xfMC.pathname.pathname.pathname configure -text] 4].[lindex [.xf${xfClass}Config5$xfMC.params1.params2.name.name configure -text] 4].m"
+        }
+      }
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font {top fillx}
+      if {$xfConf(kanji)} {
+        pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont {top fillx}
+      }
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.menu {top fill} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.message1 {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command {top fill expand}
+    }
+    {check} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 configure -text Checkbutton
+
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font {top fillx}
+      if {$xfConf(kanji)} {
+        pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont {top fillx}
+      }
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.offvalue {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.onvalue {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.message1 {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command {top fill expand}
+    }
+    {radio} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 configure -text Radiobutton
+
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font {top fillx}
+      if {$xfConf(kanji)} {
+        pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont {top fillx}
+      }
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.value {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.variable {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.message1 {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command {top fill expand}
+    }
+    {separator} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 configure -text Separator
+    }
+    {default} {
+      .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem1.message1 configure -text Commandbutton
+
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.label {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.abg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.accelerator {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bg {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.bitmap {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.image {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.font {top fillx}
+      if {$xfConf(kanji)} {
+        pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                    .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.kanjifont {top fillx}
+      }
+      pack append .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2 \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.state {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.underline {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.message1 {top fillx} \
+                  .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2.command {top fill expand}
+    }
+  }
+  XFBindFormConnect .xf${xfClass}Config5$xfMC.params1.params2.frame1.elements.elem2
+}
+
+##########
+# Procedure: XFMenuSetMenu4
+# Description: set menu parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuSetMenu4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW activebackground \
+    [.xf${xfClass}Config4.params1.params2.abg.abg get]
+  XFMiscSetResource $xfW activeborderwidth \
+    [.xf${xfClass}Config4.params1.params2.aborderwidth.aborderwidth get]
+  XFMiscSetResource $xfW activeforeground \
+    [.xf${xfClass}Config4.params1.params2.afg.afg get]
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW cursor \
+    "[.xf${xfClass}Config4.params1.params2.cursor.cursor get]"
+  XFMiscSetResource $xfW disabledforeground \
+    [.xf${xfClass}Config4.params1.params2.dfg.dfg get]
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  XFMiscSetResource $xfW postcommand \
+    [XFMiscGetText .xf${xfClass}Config4.params1.params2.command.command.command]
+}
+
+##########
+# Procedure: XFMenuSetMenu5
+# Description: set menu parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfMC - the edit menu counter
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFMenuSetMenu5 {xfW xfType xfClass xfMC {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config5$xfMC.params1.params2.symname.symname get]
+
+  set xfCounter 0
+  set xfLast [$xfW index last]
+  if {"$xfLast" == "none"} {
+    set xfLast -1
+  }
+
+  while {$xfCounter <= $xfLast} {
+    $xfW delete 0
+    incr xfCounter 1
+  }
+
+  set xfCounter 0
+  set xfLast \
+    [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items size]
+  while {$xfCounter < $xfLast} {
+    set xfTmpValue [lindex $xfMisc(menu,$xfMC,menuDef) $xfCounter]
+    case [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCounter] in {
+      {<cascade*} {
+        catch "$xfW add cascade"
+        catch "$xfW entryconfigure $xfCounter \
+          -accelerator \{[lindex $xfTmpValue 1]\} \
+          -command \{[lindex $xfTmpValue 5]\} \
+          -label \{[lindex $xfTmpValue 7]\} \
+          -menu \{[lindex $xfTmpValue 8]\} \
+          -state [lindex $xfTmpValue 11] \
+          -underline \{[lindex $xfTmpValue 12]\}"
+      }
+      {<check*} {
+        catch "$xfW add checkbutton"
+        catch "$xfW entryconfigure $xfCounter \
+          -accelerator \{[lindex $xfTmpValue 1]\} \
+          -command \{[lindex $xfTmpValue 5]\} \
+          -label \{[lindex $xfTmpValue 7]\} \
+          -state \{[lindex $xfTmpValue 11]\} \
+          -underline \{[lindex $xfTmpValue 12]\}"
+        if {"[lindex $xfTmpValue 9]" != ""} {
+          catch "$xfW entryconfigure $xfCounter \
+            -offvalue \{[lindex $xfTmpValue 9]\}"
+        }
+        if {"[lindex $xfTmpValue 10]" != ""} {
+          catch "$xfW entryconfigure $xfCounter \
+            -onvalue \{[lindex $xfTmpValue 10]\}"
+        }
+        if {"[lindex $xfTmpValue 14]" != ""} {
+          catch "$xfW entryconfigure $xfCounter \
+            -variable \{[lindex $xfTmpValue 14]\}"
+        }
+      }
+      {<radio*} {
+        catch "$xfW add radiobutton"
+        catch "$xfW entryconfigure $xfCounter \
+          -accelerator \{[lindex $xfTmpValue 1]\} \
+          -command \{[lindex $xfTmpValue 5]\} \
+          -label \{[lindex $xfTmpValue 7]\} \
+          -state \{[lindex $xfTmpValue 11]\} \
+          -underline \{[lindex $xfTmpValue 12]\}"
+        if {"[lindex $xfTmpValue 13]" != ""} {
+          catch "$xfW entryconfigure $xfCounter \
+            -value \{[lindex $xfTmpValue 13]\}"
+        }
+        if {"[lindex $xfTmpValue 14]" != ""} {
+          catch "$xfW entryconfigure $xfCounter \
+            -variable \{[lindex $xfTmpValue 14]\}"
+        }
+      }
+      {<separator*} {
+        catch "$xfW add separator"
+      }
+      {<command*} {
+        catch "$xfW add command"
+        catch "$xfW entryconfigure $xfCounter \
+          -accelerator \{[lindex $xfTmpValue 1]\} \
+          -command \{[lindex $xfTmpValue 5]\} \
+          -label \{[lindex $xfTmpValue 7]\} \
+          -state \{[lindex $xfTmpValue 11]\} \
+          -underline \{[lindex $xfTmpValue 12]\}"
+      }
+    }
+
+    if {"[lindex $xfTmpValue 0]" != ""} {
+      catch "$xfW entryconfigure $xfCounter \
+        -activebackground \{[lindex $xfTmpValue 0]\}"
+    }
+    if {"[lindex $xfTmpValue 2]" != ""} {
+      catch "$xfW entryconfigure $xfCounter \
+        -background \{[lindex $xfTmpValue 2]\}"
+    }
+
+    if {"[lindex $xfTmpValue 4]" != ""} {
+      catch "$xfW entryconfigure $xfCounter \
+        -image \{[lindex $xfTmpValue 4]\}"
+    } {
+      if {![string match "<separator*" [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCounter]]} {
+        catch "$xfW entryconfigure $xfCounter -image {}"
+      }
+    }
+
+    if {"[lindex $xfTmpValue 3]" != ""} {
+      if {"[string index [lindex $xfTmpValue 3] 0]" == "@"} {
+        if {[catch "$xfW entryconfigure $xfCounter \
+              -bitmap \{[lindex $xfTmpValue 3]\}" xfResult]} {
+          XFProcError "$xfResult"
+        }
+      } {
+        if {[file exists [lindex $xfTmpValue 3]]} {
+          if {[catch "$xfW entryconfigure $xfCounter \
+                -bitmap \{@[lindex $xfTmpValue 3]\}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        } {
+          if {[catch "$xfW entryconfigure $xfCounter \
+                -bitmap \{[lindex $xfTmpValue 3]\}" xfResult]} {
+            XFProcError "$xfResult"
+          }
+        }
+      }
+    } {
+      if {![string match "<separator*" [.xf${xfClass}Config5$xfMC.params1.params2.frame1.children.items.items get $xfCounter]]} {
+        catch "$xfW entryconfigure $xfCounter -bitmap {}"
+      }
+    }
+    if {"[lindex $xfTmpValue 6]" != ""} {
+      catch "$xfW entryconfigure $xfCounter \
+        -font \{[lindex $xfTmpValue 5]\}"
+    }
+    if {$xfConf(kanji)} {
+      if {"[lindex $xfTmpValue 15]" != ""} {
+        catch "$xfW entryconfigure $xfCounter \
+          -kanjifont \{[lindex $xfTmpValue 14]\}"
+      }
+    }
+    incr xfCounter 1
+  }
+}
+
+# eof
+

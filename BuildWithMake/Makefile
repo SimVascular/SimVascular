@@ -45,9 +45,10 @@ mksedscript:
 	if [ -e sedscript ];then /bin/rm -f sedscript;fi
 	if [ -e myadaptor ];then /bin/rm -f myadaptor;fi
 	if [ -e mytetadaptor ];then /bin/rm -f mytetadaptor;fi
-	if [ -e mysim ];then /bin/rm -f mysim;fi
+	if [ -e sv ];then /bin/rm -f sv;fi
+	if [ -e xfsv ];then /bin/rm -f xfsv;fi
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
-	if [ -e mysim-shared ];then /bin/rm -f mysim;fi
+	if [ -e sv-shared ];then /bin/rm -f sv;fi
 	if [ -e mypost ];then /bin/rm -f mypost;fi
 	-echo "puts \"s+REPLACEME_SOFTWARE_PLATFORM+$(CLUSTER)+g\"" > tclscript 
 	-echo "puts \"s+REPLACEME_COMPILER_VERSION+$(COMPILER_VERSION)+g\"" >> tclscript
@@ -93,7 +94,7 @@ else
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
 endif
 	-/usr/bin/tclsh tclscript > sedscript
-#	-rm -f tclscript
+	-rm -f tclscript
 
 pre-build:
 	cd ../Code/Source/UI;$(MAKE) pre
@@ -105,32 +106,48 @@ pre-build:
 
 shared-build:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
+	  echo "static building directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) lib ) ; done
+	  $(MAKE) lib;fi ) ; done
 	for i in ${LIBDIRS}; do ( \
+	  echo "building lib directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) lib ) ; done
+	  $(MAKE) lib;fi ) ; done
 	for i in ${LIBDIRS}; do ( \
+	  echo "building shared directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) shared ) ; done
+	  $(MAKE) shared;fi ) ; done
 	for i in ${EXECDIRS}; do ( \
+	  echo "building execs ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) ) ; done
+	  $(MAKE);fi ) ; done
 
 static-build:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
+	  echo "static building directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) lib ) ; done
+	  $(MAKE) lib;fi ) ; done
 	for i in ${LIBDIRS}; do ( \
+	  echo "static building directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) lib ) ; done
+	  $(MAKE) lib;fi ) ; done
 	for i in ${EXECDIRS}; do ( \
+	  echo "building execs ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) static ) ; done
+	  $(MAKE) static;fi ) ; done
 
 post-build: mksedscript
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > mysim
-	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-simvascular-script >> mysim
+	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv
+	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-simvascular-script >> sv
+	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > xfsv
+	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-xfsv-script >> xfsv
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > myadaptor
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-adaptor-script >> myadaptor
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > mytetadaptor
@@ -142,7 +159,8 @@ ifeq ($(CLUSTER),x64_linux)
 else
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
 endif
-	-chmod a+rx mysim
+	-chmod a+rx sv
+	-chmod a+rx xfsv
 	-chmod a+rx mysolver
 	-chmod a+rx myadaptor
 	-chmod a+rx mytetadaptor
@@ -150,30 +168,56 @@ endif
 #	-rm -f sedscript
 
 clean:
-	for i in ${SUBDIRS}; do ( \
+	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
+	  echo "cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) clean ) ; done
+	  $(MAKE) NO_DEPEND=1 clean;fi ) ;done
+	for i in ${LIBDIRS}; do ( \
+	  echo "cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE) NO_DEPEND=1 clean;fi ) ; done
+	for i in ${EXECDIRS}; do ( \
+	  echo "cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE) NO_DEPEND=1 clean;fi ) ; done
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
 
 veryclean:
-	for i in ${SUBDIRS}; do ( \
+	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
+	  echo "super cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) NO_DEPEND=1 veryclean ) ; done
+	  $(MAKE) NO_DEPEND=1 veryclean;fi ) ;done
+	for i in ${LIBDIRS}; do ( \
+	  echo "super cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE) NO_DEPEND=1 veryclean;fi ) ; done
+	for i in ${EXECDIRS}; do ( \
+	  echo "super cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE) NO_DEPEND=1 veryclean;fi ) ; done
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Lib/*; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f $$fn; done
 	if [ -e myadaptor ];then /bin/rm -f myadaptor;fi
 	if [ -e mytetadaptor ];then /bin/rm -f myadaptor;fi
-	if [ -e mysim ];then /bin/rm -f mysim;fi
+	if [ -e sv ];then /bin/rm -f sv;fi
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
-	if [ -e mysim-shared ];then /bin/rm -f mysim-shared;fi
-	if [ -e mypost ];then /bin/rm -f mysim-shared;fi
+	if [ -e sv-shared ];then /bin/rm -f sv-shared;fi
+	if [ -e mypost ];then /bin/rm -f sv-shared;fi
 	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/General/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/GUI/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Core/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Plugins/tclIndex
-
-
+	/bin/rm -f  ../Code/Source/Include/simvascular_options.h
+	/bin/rm -f  ../Code/Source/Include/simvascular_version.h
+	/bin/rm -f  ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
+	/bin/rm -f  sedscript
 

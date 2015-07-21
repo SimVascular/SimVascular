@@ -1,0 +1,40 @@
+XF 4.3 modifications by Dennis LaBelle
+--------------------------------------
+
+	General
+	-------
+
+	Simplified the INSTALL process and instructions.
+
+	Updated the INSTALL information file to reflect the current state of XF.
+
+	Removed program abort on bad startup. Error messages will be displayed on the console.
+
+	XF font configuration window now uses new TCL/TK 8.0 font mechanism.
+
+	Added automatic find of default HTML browser for Windows.
+
+	Fixed reporting of geometry in frame configuration window.
+
+	Incorporated information on image support and the canvas Draw Tools pop-up into the XF documentation system.
+
+	Corrected Menu configuration cancellation bug that would delete the menu contents when the CANCEL button was selected.
+
+	Menu tearoff property configuration now works properly from configuration menu.
+
+	Added text search feature to the XF procedures window.
+
+	Procedure list in Procedures window no longer expands. This devotes a greater fraction of the window to the edit portion of the window.
+
+
+	BLT 2.4 support
+	---------------
+
+	Updated support for BLT graph widget to BLT version 2.4g.
+
+	Added support for BLT2.4g bargraph and stripchart widgets.
+
+	Added code generation for automatic loading of extensions. Any TCL extensions loaded at the time of saving under XF will also be loaded by the saved application.
+
+	BLT vectors are now saved if they are associated with a BLT graph, bargraph or stripchart.
+

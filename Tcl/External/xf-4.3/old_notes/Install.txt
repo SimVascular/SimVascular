@@ -1,0 +1,62 @@
+INSTALLING XF
+
+Requirements:
+-------------
+This program is written for TLC/TK 8.0 or later.
+
+
+Installation:
+-------------
+In case of problems and/or general questions, please first
+take a look into the FAQ files that come with this package.
+
+Please unpack the XF distribution inside the directory where
+XF should be "officially" located (e.g. /usr/local/lib, or
+any other directory). The compressed tar file contains a
+directory tree named "xf/...". The installation procedure
+will not copy the XF files to another location. When the
+distribution is unpacked, you have to configure the
+src/xfmain.tcl file. The file contains some path names
+that must correspond to your system. 
+
+
+Installing the help pages:
+--------------------------
+The XF package comes with preformatted html online
+documentation. You will need an HTML browser to show
+it. 
+
+Using:
+------
+Before you start XF, please remove your old XF
+configuration file (~/.xf-config). It may also be necessary
+to remove the other local configuration files (menubar, and
+iconbar definitions). This is important !!!
+
+If you start XF, you get a normal wish window and the main
+editing window of XF. (And the quest begins....:-)
+
+If you have any problems, call the help facility of XF,
+and/or read the FAQ's. Under General (Hints) you will find
+some features and hints that will make life with XF much
+easier.
+
+If there occur errors during the work with XF that are
+producing output to stderr, these errors are mirrored to the
+file xferrors in the XF tmp directory. If you can say that
+they are caused by XF or you are not sure, please send me
+the file so that I can locate the problem.
+
+To use the version control for procedures, you will need the
+shape toolkit. The shape toolkit is a collection of programs
+to support software configuration management in a UNIX
+environment. It consists of a set of version and attribute
+control commands and a building tool ("shape"). It should be
+installed on every "good" system :-). Shape is available at
+ftp.cs.tu-berlin.de. 
+
+Bugs:
+-----
+- still in development (introducing new errors :-)
+
+

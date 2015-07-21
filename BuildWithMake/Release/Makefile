@@ -187,12 +187,12 @@ copy-tcl-libs:
 copy-external-libs:
 	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
 	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
-ifeq ($(MAKE_WITH_MPICH2),1)
-	-mkdir -p $(DIST_DIR)/mpi/lib
-	-cp -f $(MPIEXEC_PATH)/$(MPIEXEC)* $(DIST_DIR)
-	-cp -f $(MPIEXEC_PATH)/*hydra* $(DIST_DIR)
-	-cp -f $(MPICH_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/mpi/lib
-endif
+#ifeq ($(MAKE_WITH_MPICH2),1)
+#	-mkdir -p $(DIST_DIR)/mpi/lib
+#	-cp -f $(MPIEXEC_PATH)/$(MPIEXEC)* $(DIST_DIR)
+#	-cp -f $(MPIEXEC_PATH)/*hydra* $(DIST_DIR)
+#	-cp -f $(MPICH_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/mpi/lib
+#endif
 ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
 	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
@@ -216,6 +216,9 @@ copy-external-libs-windows-only:
 	-cp -f dcmtk/dcmdump-win32.exe $(DIST_DIR)/dcmdump.exe
 	-cp -f dcmtk/dcmodify-win32.exe $(DIST_DIR)/dcmodify.exe
 	-cp $(GLIB_DLLS) $(DIST_DIR)
+ifeq ($(FORTRAN_COMPILER_VERSION),mingw-gfortran)
+	-cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/*.dll $(DIST_DIR)
+endif
 
 copy-external-libs-linux-only:
 	-cp -f dicom2/dicom2-linux.exe $(DIST_DIR)/dicom2

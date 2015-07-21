@@ -569,8 +569,12 @@ void deleteKentries(Kentry *Kentries) {
     delete [] Kentries;
 } 
 
-#ifndef WIN32
+#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+  #define STANNSPCG STANNSPCG 
+#elif CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define STANNSPCG stannspcg_
+#else
+  // error here! 
 #endif
 
 extern "C" int STANNSPCG(int *n,int *ndim,double *coef,int *jcoef1,

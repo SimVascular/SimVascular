@@ -1,0 +1,44 @@
+INSTALLATION UNDER WINDOWS (TM)
+-------------------------------
+
+Installation:
+-------------
+        - Unpack the archive where you want it to reside.
+        - Change the file ./src/xfmain.tcl
+          in this file there is a section marked for 
+          customization. Please adapt the variables there
+          to fit your site.
+        - There are two ways to run xf:
+             in the MS-DOS shell type:
+                wish <xfDir>/xfmain.tcl
+
+             from the desktop register a new icon for xf with the 
+             following command line:
+                wish <xfDir>/xfmain.tcl
+	- To run xfhardcopy and xfappdef you will have to change
+          these files (to call the correct wish). Also copy the
+          files (without the extension) to a directory where they
+          can be found for execution.
+
+
+Setting up Help:
+----------------
+To access the online help you might want to set the environment
+variables HELPTCLTK and HELPXF. This string has to contain a valid
+Tcl command that will get executed and as a result brings up the
+help. A good example for a good setting is given below:
+
+  HELPTCLTK:
+  exec winhlp32.exe D:\users\sven\TCL\doc\tcltk41.hlp &
+  HELPXF: 
+  exec "c:/iexplore/microsoft internet/iexplore.exe" file:$xfPath(base)/Help/index.html &
+
+
+Need more help ?
+----------------
+Well... quite frankly... I am not really an Windows expert... so
+I am not sure if I can help you... maybe it is a good idea to
+ask in the News group of the XF mailing list. Also 
+drlabell@albany.net and hamel@republique.saclay.cea.fr may be able
+to help (they independently ported XF to Windows).
+

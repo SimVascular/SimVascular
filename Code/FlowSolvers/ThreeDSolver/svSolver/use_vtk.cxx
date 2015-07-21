@@ -42,7 +42,7 @@
 #include <iostream>
 #include <algorithm>
 
-#ifdef WIN32
+#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
 #define getnumfrombctvtp_ GETNUMFROMBCTVTP
 #define getdatafrombctvtp_ GETDATAFROMBCTVTP
 #endif

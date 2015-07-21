@@ -10,12 +10,12 @@ ifeq ($(CLUSTER), x64_cygwin)
 	      [ -s $@ ] || rm -f $@'
 
 %.obj: %.cxx
-	$(CXX) $(DEBUG_FLAGS) $(OPT_FLAGS) $(CXXFLAGS) -c $<
+	$(CXX) $(DEBUG_FLAGS) $(OPT_FLAGS) $(CXXFLAGS) -c $< -o $@
 
 %.obj: %.c
-	$(CC) $(DEBUG_FLAGS) $(OPT_FLAGS) $(CCFLAGS) -c $<
+	$(CC) $(DEBUG_FLAGS) $(OPT_FLAGS) $(CCFLAGS) -c $< -o $@
 
 %.obj: %.f
-	$(F90) $(FFLAGS) -c $<
+	$(F90) $(FFLAGS) -c $< -o $@
 
 endif

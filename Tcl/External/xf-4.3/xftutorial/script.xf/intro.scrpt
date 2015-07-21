@@ -1,0 +1,38 @@
+# tutorial
+global chapterList
+set chapterList {
+  {{Introduction} {0} {intro}}
+  {{Application design} {0} {design}}
+  {{Working with XF} {0} {working}}
+  {{Advanced features} {9} {expert}}
+  {}
+  {{Packing} {0} {packing}}
+  {{Placing} {1} {placing}}
+  {{Example} {0} {example}}}
+global introLast
+set introLast 0
+global introLastSectionDone
+set introLastSectionDone -1
+
+
+set introName0 {Introduction}
+set introText0 {\
+The tutorial tries to give you a feeling about how
+to work with XF. The different chapters introduce
+you into the general ideas, the handling and some
+advanced features of XF. There is also a chapter
+where we walk through a "simple sample session"
+with XF, creating a small application.
+
+The program we build is not complete but gives a
+good survey of the features of XF and Tcl/Tk.
+Our sample application will be a small directory
+browser. The basic idea is to have a window, where
+the current directory is displayed, and where you
+can select files and directories to show their
+contents.
+
+During the work with XF you can call a help
+facility. General questions are listed in the FAQ
+files.}
+

@@ -1,0 +1,127 @@
+# Program: xf
+# Description: handle TSizegrip widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tsizegrip) 4
+
+##########
+# Procedure: XFAdd.TSizegrip
+# Description: add a TSizegrip
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TSizegrip {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TSizegrip..."
+  set xfName [XFMiscGetUniqueName $xfName tsizegrip]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TSizegrip: .$xfName"
+      ttk::sizegrip .$xfName
+    } {
+      puts "attempt to create TSizegrip: .$xfName"
+      ttk::sizegrip .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TSizegrip: $xfStatus(path).$xfName"
+      ttk::sizegrip $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TSizegrip: $xfStatus(path).$xfName"
+      ttk::sizegrip $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TSizegrip...done"
+}
+
+##########
+# Procedure: XFConfig.TSizegrip4
+# Description: configure a TSizegrip
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TSizegrip4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TSizegrip$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TSizegrip..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TSizegrip parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTSizegripSetTSizegrip4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTSizegripSetTSizegrip4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TSizegrip...done"
+}
+
+##########
+# Procedure: XFTSizegripSetTSizegrip4
+# Description: set TSizegrip parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTSizegripSetTSizegrip4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+# eof
+

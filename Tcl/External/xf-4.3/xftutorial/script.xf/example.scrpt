@@ -1,0 +1,948 @@
+# tutorial
+global exampleLast
+set exampleLast 27
+global exampleLastSectionDone
+set exampleLastSectionDone -1
+
+
+set exampleName0 {Example}
+set exampleText0 {\
+You should not do anything in XF. The tutorial handles the
+complete dialog with XF. You just have to press the "Next
+page" button (boring isn't it :-).
+
+In this "simple sample session" we build a small directory
+browser. This application allows the user to walk through
+the directory tree and to show the contents of files (the
+first 50 lines).
+
+The basic dialog component will be a menubar at the top
+of the main dialog window. The menubar will contain a 
+menubutton, that allows the user to refresh the displayed
+directory contents and to quit the program.
+
+Below this menubar are two labels. One will display the name
+of the currently displayed directory. This name will be
+updated when the user changes the directory. The second
+label contains the name of the currently displayed file.
+
+The rest of the main dialog window contains two lists, that
+are placed beside each other. The left list contains all
+file and directory names of the current directory, and the
+right list contains the contents of the currently displayed
+file.
+
+To change the directory or to display a file, the items of
+the left list have a "binding" that performs the appropriate
+action when the left mouse button is clicked over them.
+
+This was a short survey on the idea of the program we want
+to build. Now let's begin... Please be patient... the
+initialization will take some time...}
+
+set exampleCommand0 {\
+XFMiscClearInterpreter
+global xfConf xfPath
+set xfConf(saveInterval) 0
+set xfConf(onlyOneWindow) 0
+set xfConf(externalEditor) ""
+set xfConf(geometry) packer
+set xfConf(newPacker) 0
+source "$xfPath(src)/xfpacking.tcl"
+global curDir
+set curDir \[pwd\]
+XFEditSetType Frame 0
+update idletasks}
+
+
+set exampleName1 {Inserting the frames}
+set exampleText1 {\
+First we insert three frame widgets in the workspace by
+double clicking onto the "Frame" item in the left listbox in
+the main XF window.
+
+The top most frame will contain the menubar, the center
+frame will contain the labels to display the current widget
+path and the file name, and the bottom most frame will
+contain the two listboxes to display the directory and the
+file contents.}
+
+set exampleCommand1 {\
+.xfEdit.frame2.additional.additional select clear 0 end 
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.standard.standard select set 4
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks}
+
+
+set exampleName2 {Resizing the workspace}
+set exampleText2 {\
+Now we set the size of the workspace to fit the needs of the
+application. This can be done either by directly setting the
+size with the window manager or by setting the size
+parameters for the toplevel window.}
+
+set exampleCommand2 {\
+wm geometry . 450x250
+update idletasks}
+
+
+set exampleName3 {Inserting the menubutton}
+set exampleText3 {\
+The next step is to select the top most frame as current
+widget. To select the top most frame you can double click
+the middle mouse button over the widget, or you select the
+widget from the pull down menu that is attached to the
+widget path displayed in the main edit window of XF.
+
+Now the menubutton is inserted by double clicking over the
+menubutton item in the "standard" list of the XF main
+window. This menubutton will contain two items. One item to
+refresh the currently displayed directory and one item to
+quit the application.}
+
+set exampleCommand3 {\
+XFEditSetPath .frame0
+XFEditSetType Menubutton 0
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.standard.standard select set 8
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks}
+
+
+set exampleName4 {Inserting the label}
+set exampleText4 {\
+After inserting the menubutton, the center frame is selected
+as the current widget, and the label widget that displays
+the currently displayed directory path is inserted. After
+that a second label is inserted for the file name of the
+displayed file. Selecting and inserting are done as
+described before.}
+
+set exampleCommand4 {\
+XFEditSetPath .frame1
+XFEditSetType Label 0
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.standard.standard select set 5
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks
+.xfEdit.frame5.addDefault configure -state active
+update idletasks
+.xfEdit.frame5.addDefault configure -relief sunken
+update idletasks
+.xfEdit.frame5.addDefault invoke
+update idletasks
+.xfEdit.frame5.addDefault configure -state normal
+update idletasks
+.xfEdit.frame5.addDefault configure -relief raised
+update idletasks}
+
+
+set exampleName5 {Inserting the listboxes}
+set exampleText5 {\
+Now we insert the two listboxes that contain the contents of
+the directory and the contents of the selected file. We
+insert the template "ListboxLS" by double clicking onto the
+"Combined" item in the "templates" list. This opens the
+subdirectory, where the template "ListboxLS" is selected.
+This is a listbox that already has two scrollbars, so that
+we don't have to deal with the handling of listboxes and
+scrollbars.}
+
+set exampleCommand5 {\
+XFEditSetPath .frame2
+XFEditSetType Combined 2
+.xfEdit.frame2.additional.additional select clear 0 end
+.xfEdit.frame2.template.template select clear 0 end
+.xfEdit.frame2.standard.standard select clear 0 end
+.xfEdit.frame2.template.template select set 0
+update idletasks
+XFEditInsertTmplt Combined/
+update idletasks
+XFEditSetType ListboxS 2
+.xfEdit.frame2.template.template select clear 0 end
+update idletasks
+.xfEdit.frame2.template.template select set 9
+update idletasks
+XFEditInsertTmplt ListboxLS
+update idletasks
+XFEditInsertTmplt ListboxLS
+update idletasks}
+
+
+set exampleName6 {Layouting the widgets}
+set exampleText6 {\
+After we have inserted all widgets we currently want to
+insert into the application, we now can layout the window.
+To do this we first make the toplevel window the current
+window. Now we call the packing window for this widget from
+the "Configuration" menu.
+
+By activating the packing window, the first child widget of
+the packed widget is flashed.  The packing window contains
+all packer options in the upper part of the window. The
+lower part of the window contains two lists.
+
+The left list contains all children of the current toplevel
+window. Here you can select the widget for which you want to
+pack the children. The right list contains all packed
+children of the current widget. Here you can select the
+widget you want to pack.}
+
+set exampleCommand6 {\
+XFEditSetPath .
+.xfEdit.frame1.configMenu.m post [winfo rootx .xfEdit.frame1.configMenu] [expr [winfo rooty .xfEdit.frame1.configMenu]+[winfo height .xfEdit.frame1.configMenu]]
+update idletasks
+.xfEdit.frame1.configMenu.m activate 1
+update idletasks
+.xfEdit.frame1.configMenu.m activate 3
+update idletasks
+.xfEdit.frame1.configMenu.m invoke 3
+update idletasks
+.xfEdit.frame1.configMenu.m unpost
+update idletasks}
+
+
+set exampleName7 {Layouting the menubar}
+set exampleText7 {\
+After selecting the first frame in the "children" list, we
+specify that this frame fills the complete width of the
+space he gets from the packer by selecting the "fillx"
+option.}
+
+set exampleCommand7 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+XFPackingGetPacking . Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks}
+
+
+set exampleName8 {Layouting the directory label}
+set exampleText8 {\
+Now the second frame is selected and gets the same
+parameters as the first frame. The frame fills the complete
+width of the space he gets from the packer, too.}
+
+set exampleCommand8 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking . Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks}
+
+
+set exampleName9 {Layouting the display area}
+set exampleText9 {\
+After selecting the third frame (the bottom frame), this
+frame is set to fill the complete remaining space (width and
+height) of the window.  This is done by selecting "fillx",
+"filly" and "expand". This means the widget is expanded to
+use the remaining space, and it fills this space.}
+
+set exampleCommand9 {\
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 2
+update idletasks
+XFPackingGetPacking . Toplevel
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.filly invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.filly configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set exampleName10 {Layouting children of the menubar}
+set exampleText10 {\
+Now we select the top most frame as packing master.  To do
+this you select the frame (.frame0) in the left list of the
+packing window with a double click. You see that the
+"children" list changes and now displays the children of our
+menubar. By clicking on the "left" option, the menubutton is
+displayed at the left side of the frame.}
+
+set exampleCommand10 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 13
+update idletasks
+XFPackingMakeMaster .frame0 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame0 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks}
+
+
+set exampleName11 {Layouting children of the directory label}
+set exampleText11 {\
+Now we select the center frame as packing master. The file
+name label is selected and placed right. After selecting the
+directory label it is placed left and is expanded so that
+the complete remaining space is used by the directory
+label.}
+
+set exampleCommand11 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 10
+update idletasks
+XFPackingMakeMaster .frame1 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.right invoke
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.right configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame1 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state active
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx invoke
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.fill.fillx configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set exampleName12 {Layouting children of the display area}
+set exampleText12 {\
+Now we select the bottom most frame as packing master. The
+first list is selected and packed left. The fill options are
+already set for both frames. The second list is also packed
+left, so that both lists appear one beside the other. The
+right list is set to "expand", so it uses the complete
+remaining space in the parent.}
+
+set exampleCommand12 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 1
+update idletasks
+XFPackingMakeMaster .frame2 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame2 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 1
+update idletasks
+XFPackingGetPacking .frame2 Toplevel
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state active
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.side.left invoke
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.side.left configure -relief raised
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state active
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame2.expand.expand invoke
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -state normal
+update idletasks
+.xfPackingToplevel.frame2.expand.expand configure -relief raised
+update idletasks}
+
+
+set exampleName13 {Parameter setting for menubutton}
+set exampleText13 {\
+The layouting is finished, now we can begin to set the
+parameters for the different widgets. First we configure the
+menubutton in the menubar. To do this we make the menubar
+frame (.frame0) our packing master. Now we press the button
+"Child parameters". To call parameter setting directly you
+can also double click the right mouse button over the widget
+you want to configure.}
+
+set exampleCommand13 {\
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 13
+update idletasks
+XFPackingMakeMaster .frame0 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame0 Toplevel
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state active
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief sunken
+update idletasks
+.xfPackingToplevel.additional.chldparameters invoke
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state normal
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief raised
+update idletasks}
+
+
+set exampleName14 {Parameter setting for menubutton}
+set exampleText14 {\
+First the menubutton label is entered, and then the menu
+definition is called by pressing the button "Menu".}
+
+set exampleCommand14 {\
+.xfMenubuttonConfig4.params1.params2.text.text delete 0 end
+update idletasks
+.xfMenubuttonConfig4.params1.params2.text.text insert end File
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -state active
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -relief sunken
+update idletasks
+.xfMenubuttonConfig4.additional.menu invoke
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -state normal
+update idletasks
+.xfMenubuttonConfig4.additional.menu configure -relief raised
+update idletasks}
+
+
+set exampleName15 {Pull down menu definition}
+set exampleText15 {\
+Here the label of the menu item is inserted, and then the
+command that should be called when the menu item is
+selected. After that, you press the button "Insert". You see
+that the item is inserted in the list beside the parameters.
+The first item we insert will rescan the directory. The
+second menu item will quit the program.}
+
+set exampleCommand15 {\
+global xfStatus
+set xfTmpCounter [expr $xfStatus(menuCounter)-1]
+XFMiscSetText .xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.command.command TkBroRefresh
+update idletasks
+.xfMenubuttonConfig4.leave.ok configure -state active
+update idletasks
+.xfMenubuttonConfig4.leave.ok configure -relief sunken
+update idletasks
+.xfMenubuttonConfig4.leave.ok invoke
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label delete 0 end
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label insert end Refresh
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state active
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief sunken
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert invoke
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state normal
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief raised
+update idletasks
+XFMiscSetText .xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.command.command "destroy .; exit"
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label delete 0 end
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.frame1.elements.elem2.label.label insert end Quit
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state active
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief sunken
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert invoke
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -state normal
+update idletasks
+.xfMenuConfig5$xfTmpCounter.params1.params2.commands.insert configure -relief raised
+update idletasks}
+
+
+set exampleName16 {Parameter setting for directory label}
+set exampleText16 {\
+Now we configure the label that displays the directory
+name.}
+
+set exampleCommand16 {\
+global xfStatus
+set xfTmpCounter [expr $xfStatus(menuCounter)-1]
+.xfMenuConfig5$xfTmpCounter.leave.ok configure -state active
+update idletasks
+.xfMenuConfig5$xfTmpCounter.leave.ok configure -relief sunken
+update idletasks
+.xfMenuConfig5$xfTmpCounter.leave.ok invoke
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.widgets.widgets select set 10
+update idletasks
+XFPackingMakeMaster .frame1 config Toplevel
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select clear 0 end
+update idletasks
+.xfPackingToplevel.frame2.children.childs.childs select set 0
+update idletasks
+XFPackingGetPacking .frame1 Toplevel
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state active
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief sunken
+update idletasks
+.xfPackingToplevel.additional.chldparameters invoke
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -state normal
+update idletasks
+.xfPackingToplevel.additional.chldparameters configure -relief raised
+update idletasks}
+
+
+set exampleName17 {Parameter setting for directory label}
+set exampleText17 {\
+Here we just specify, that the path is to be displayed at
+the left border of the label. The directory label gets
+the symbolic name "dirName" for easy reference in
+procedures, and the label is set to "/usr/local...".}
+
+set exampleCommand17 {\
+.xfLabelConfig4.params1.params2.text.text delete 0 end
+update idletasks
+.xfLabelConfig4.params1.params2.text.text insert end /usr/local...
+update idletasks
+.xfLabelConfig4.params1.params2.symname.symname delete 0 end
+update idletasks
+.xfLabelConfig4.params1.params2.symname.symname insert end dirName
+update idletasks}
+
+
+set exampleName18 {Remaining parameters}
+set exampleText18 {\
+Now we can continue with the next parameters. These
+parameters are set without showing the dialogs. With this
+parameter settings we have set all parameters for now.}
+
+set exampleCommand18 {\
+.frame1 configure -borderwidth 0
+.frame1.label4 configure -anchor w
+.frame2 configure -borderwidth 0
+.frame2.frame.listbox1 configure -width 20 -height 10
+XFMiscSetSymbolicName .frame1.label5 fileName
+XFMiscSetSymbolicName .frame2.frame.listbox1 dirList
+XFMiscSetSymbolicName .frame2.frame6.listbox1 contentsList
+update idletasks
+.xfLabelConfig4.leave.ok configure -state active
+update idletasks
+.xfLabelConfig4.leave.ok configure -relief sunken
+update idletasks
+.xfLabelConfig4.leave.ok invoke
+update idletasks
+.xfPackingToplevel.frame1.ok configure -state active
+update idletasks
+.xfPackingToplevel.frame1.ok configure -relief sunken
+update idletasks
+.xfPackingToplevel.frame1.ok invoke
+update idletasks}
+
+
+set exampleName19 {Defining actions}
+set exampleText19 {\
+What we have now is the skeleton of the program.  Now we add
+the functionality. This is done by defining procedures.
+First we define some code that is executed at the beginning
+of the program, directly after all widgets have been
+created.  This source is called the end source (it is the
+last source that is executed, before flow control is passed
+to the main loop). To enter this code select the menu item
+"Programming|End source".}
+
+set exampleCommand19 {\
+.xfEdit.frame1.infoMenu.m post [winfo rootx .xfEdit.frame1.infoMenu] [expr [winfo rooty .xfEdit.frame1.infoMenu]+[winfo height .xfEdit.frame1.infoMenu]]
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 1
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 2
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 3
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 5
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 6
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 7
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 8
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 9
+update idletasks
+.xfEdit.frame1.infoMenu.m invoke 9
+update idletasks
+.xfEdit.frame1.infoMenu.m unpost
+update idletasks}
+
+
+set exampleName20 {Defining the end source}
+set exampleText20 {\
+This source defines a global variable named "curDir" that
+contains the current directory name. After that the list
+containing the directory is updated to show the contents of
+the current directory. To allow testing at this point, it
+would be necessary to define the global variable by hand
+(with another XF dialog), because this end source is not
+evaluated.}
+
+set exampleCommand20 {\
+XFMiscSetText .xfInfoProc.frame4.text.text "global curDir
+set curDir \[pwd\]
+TkBroRefresh"
+update idletasks}
+
+
+set exampleName21 {Procedure handling}
+set exampleText21 {\
+Now we call the dialog box where the application procedures
+can be added/changed etc. This dialog box is activated by
+selecting the menu item "Procedures|Programming".}
+
+set exampleCommand21 {\
+.xfInfoProc.frame1.add configure -state active
+update idletasks
+.xfInfoProc.frame1.add configure -relief sunken
+update idletasks
+.xfInfoProc.frame1.add invoke
+update idletasks
+.xfInfoProc.frame3.ok configure -state active
+update idletasks
+.xfInfoProc.frame3.ok configure -relief sunken
+update idletasks
+.xfInfoProc.frame3.ok invoke
+update idletasks
+.xfEdit.frame1.infoMenu.m post [winfo rootx .xfEdit.frame1.infoMenu] [expr [winfo rooty .xfEdit.frame1.infoMenu]+[winfo height .xfEdit.frame1.infoMenu]]
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 1
+update idletasks
+.xfEdit.frame1.infoMenu.m activate 2
+update idletasks
+.xfEdit.frame1.infoMenu.m invoke 2
+update idletasks
+.xfEdit.frame1.infoMenu.m unpost
+update idletasks}
+
+
+set exampleName22 {Defining the refresh procedure}
+set exampleText22 {\
+Here we can insert the procedure name, the arguments and the
+source. In this case this is the source that is called when
+the directory is to be read and displayed in the directory
+list.}
+
+set exampleCommand22 {\
+XFMiscSetText .xfInfoProc.frame4.text.text "
+global curDir
+
+set list \[exec ls -a\]
+\[SymbolicName dirList\] delete 0 end
+\[SymbolicName contentsList\] delete 0 end
+\[SymbolicName dirName\] configure -text \$curDir
+\[SymbolicName fileName\] configure -text {}
+foreach i \$list {
+  \[SymbolicName dirList\] insert end \$i
+}
+update"
+update idletasks
+.xfInfoProc.current.current delete 0 end
+update idletasks
+.xfInfoProc.current.current insert end TkBroRefresh
+update idletasks
+.xfInfoProc.frame4.args.args delete 0 end
+update idletasks}
+
+
+set exampleName23 {Defining the refresh procedure}
+set exampleText23 {\
+Now we insert the procedure by pressing the "Insert"
+button.}
+
+set exampleCommand23 {\
+.xfInfoProc.frame1.add configure -state active
+update idletasks
+.xfInfoProc.frame1.add configure -relief sunken
+update idletasks
+.xfInfoProc.frame1.add invoke
+update idletasks
+.xfInfoProc.frame1.add configure -relief raised
+update idletasks}
+
+
+set exampleName24 {Adding additional procedures}
+set exampleText24 {\
+Now we can continue with the next procedures. This
+procedures are added without showing the dialogs.  With this
+the procedure definition is finished.}
+
+set exampleCommand24 {\
+proc TkBroOpen {fname} {
+  global curDir
+
+  if {[file isdirectory $fname]} {
+    cd $fname
+    set curDir [pwd]
+    TkBroRefresh
+  } {
+    set thisfile [open $fname r]
+    [SymbolicName contentsList] delete 0 end
+    [SymbolicName fileName] configure -text $fname
+    for { set i 1 } { $i<50 } { incr i } {
+      [SymbolicName contentsList] insert end [ gets $thisfile ]
+    }
+    update
+    close $thisfile
+  }
+}
+update idletasks
+.xfInfoProc.frame3.ok configure -state active
+update idletasks
+.xfInfoProc.frame3.ok configure -relief sunken
+update idletasks
+.xfInfoProc.frame3.ok invoke
+update idletasks}
+
+
+set exampleName25 {List binding}
+set exampleText25 {\
+To allow directory changing and file displaying it is
+necessary to set the binding for the directory listbox items
+to the procedure that handles this feature. You call the
+binding dialog by selecting the menu item
+"Configuration|Binding".}
+
+set exampleCommand25 {\
+XFEditSetPath [SymbolicName dirList]
+.xfEdit.frame1.configMenu.m post [winfo rootx .xfEdit.frame1.configMenu] [expr [winfo rooty .xfEdit.frame1.configMenu]+[winfo height .xfEdit.frame1.configMenu]]
+update idletasks
+.xfEdit.frame1.configMenu.m activate 1
+update idletasks
+.xfEdit.frame1.configMenu.m activate 3
+update idletasks
+.xfEdit.frame1.configMenu.m activate 4
+update idletasks
+.xfEdit.frame1.configMenu.m activate 5
+update idletasks
+.xfEdit.frame1.configMenu.m activate 6
+update idletasks
+.xfEdit.frame1.configMenu.m activate 7
+update idletasks
+.xfEdit.frame1.configMenu.m invoke 7
+update idletasks
+.xfEdit.frame1.configMenu.m unpost
+update idletasks}
+
+
+set exampleName26 {Insert list binding}
+set exampleText26 {\
+Now we insert the event name we want to add to the list in
+the entry field after the "Current event:" label.  This is
+the event name that will get the new action.  The procedure
+to call when this event is received is inserted in the big
+text field at the bottom of the dialog box. The inserted
+procedure "TkBroOpen" handles the directory changing and
+file showing.}
+
+set exampleCommand26 {\
+XFMiscSetText .xfBindingListbox.value.value "
+TkBroOpen \[%W get \[%W nearest %y\]\]"
+update idletasks
+.xfBindingListbox.current.current delete 0 end
+update idletasks
+.xfBindingListbox.current.current insert end <Button-1>
+update idletasks
+.xfBindingListbox.frame2.insert configure -state active
+update idletasks
+.xfBindingListbox.frame2.insert configure -relief sunken
+update idletasks
+.xfBindingListbox.frame2.insert invoke
+update idletasks
+.xfBindingListbox.frame2.insert configure -state normal
+update idletasks
+.xfBindingListbox.frame2.insert configure -relief raised
+update idletasks}
+
+
+set exampleName27 {The end !?}
+set exampleText27 {\
+Now you would normally save the program... You should try it
+:-). To leave the tutorial select the menu item "File|Quit".
+If you select the quit item in the applications's file menu,
+you will only get a dialog box that says that you would exit
+the program.
+
+Well that's all for now. I hope the tutorial was helpful for
+you... If not send me a mail explaining what you don't
+like.}
+
+set exampleCommand27 {\
+.xfBindingListbox.frame1.ok configure -state active
+update idletasks
+.xfBindingListbox.frame1.ok configure -relief sunken
+update idletasks
+.xfBindingListbox.frame1.ok invoke
+update idletasks}
+

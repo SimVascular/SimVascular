@@ -1,0 +1,245 @@
+# Program: xf
+# Description: handle text widgets
+#
+# $Header: Text[2.3] Wed Mar 10 11:59:19 1993 garfield@garfield frozen $
+
+global xfDefaultConf
+set xfDefaultConf(text) 4
+
+##########
+# Procedure: XFAdd.Text
+# Description: add a text
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.Text {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting Text..."
+  set xfName [XFMiscGetUniqueName $xfName text]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      text .$xfName
+
+      .$xfName insert 1.0 $xfName
+    } {
+      text .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      text $xfStatus(path).$xfName
+
+      $xfStatus(path).$xfName insert 1.0 $xfName
+    } {
+      text $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting Text...done"
+}
+
+##########
+# Procedure: XFConfig.Text4
+# Description: configure a text
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.Text4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfMisc
+  global xfStatus
+
+  set xfMisc(wrap) none
+
+  if {"$xfType" == "add"} {
+    set xfName text$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for Text..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x560 \
+    "Text parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTextSetText4 \
+    parameters $xfName 4
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass bg \
+    background Background "Background" XFTextSetText4
+  XFElementScale $xfW .xf${xfClass}Config4 $xfType $xfClass borderwidth \
+    borderWidth BorderWidth "Border width" "pixels" 40 XFTextSetText4
+  XFElementBoolean $xfW .xf${xfClass}Config4 $xfType $xfClass exportSelection \
+    "Export selection" XFTextSetText4
+  XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass font \
+    font Font "Font" XFTextSetText4
+  if {$xfConf(kanji)} {
+    XFElementFont $xfW .xf${xfClass}Config4 $xfType $xfClass kanjifont \
+      kanjiFont KanjiFont "Kanji font" XFTextSetText4
+  }
+  XFElementColor $xfW .xf${xfClass}Config4 $xfType $xfClass fg \
+    foreground Foreground "Foreground" XFTextSetText4
+  XFElementRelief $xfW .xf${xfClass}Config4 $xfType $xfClass XFTextSetText4
+  XFElementBoolean $xfW .xf${xfClass}Config4 $xfType $xfClass setGrid \
+    "Set grid" XFTextSetText4
+  XFElementSize $xfW .xf${xfClass}Config4 $xfType $xfClass XFTextSetText4
+
+  XFTmpltFrame .xf${xfClass}Config4.params1.params2.frame2 0
+  
+  label .xf${xfClass}Config4.params1.params2.frame2.message1 \
+    -anchor e \
+    -width $xfStatus(elementWidth) \
+    -text "Wrap:"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame2.none \
+    -text "None" \
+    -variable xfMisc(wrap) \
+    -value {none} \
+    -command "XFTextSetText4 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame2.char \
+    -text "Char" \
+    -variable xfMisc(wrap) \
+    -value {char} \
+    -command "XFTextSetText4 $xfW 0 $xfClass"
+
+  radiobutton .xf${xfClass}Config4.params1.params2.frame2.word \
+    -text "Word" \
+    -variable xfMisc(wrap) \
+    -value {word} \
+    -command "XFTextSetText4 $xfW 0 $xfClass"
+
+  pack append .xf${xfClass}Config4.params1.params2.frame2 \
+              .xf${xfClass}Config4.params1.params2.frame2.message1 {left} \
+              .xf${xfClass}Config4.params1.params2.frame2.none {left} \
+              .xf${xfClass}Config4.params1.params2.frame2.char {left} \
+              .xf${xfClass}Config4.params1.params2.frame2.word {left}
+  pack append .xf${xfClass}Config4.params1.params2 \
+              .xf${xfClass}Config4.params1.params2.frame2 {top fillx}
+
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass xscrollcommand \
+    xscrollcommand XScrollCommand "X scroll command" XFTextSetText4
+
+  XFElementText $xfW .xf${xfClass}Config4 $xfType $xfClass yscrollcommand \
+    yscrollcommand YScrollCommand "Y scroll command" XFTextSetText4
+
+  if {"$xfType" != "add"} {
+    case [lindex [$xfW config -wrap] 4] in {
+      {none} {
+        .xf${xfClass}Config4.params1.params2.frame2.none select
+      }
+      {char} {
+        .xf${xfClass}Config4.params1.params2.frame2.char select
+      }
+      {default} {
+        .xf${xfClass}Config4.params1.params2.frame2.word select
+      }
+    }
+  }
+
+  # save current parameter
+  if {$xfConf(kanji)} {
+    XFElementSave $xfW $xfClass {background borderwidth exportselection font kanjifont foreground \
+                                 height relief setgrid width wrap xscrollcommand yscrollcommand}
+  } {
+    XFElementSave $xfW $xfClass {background borderwidth exportselection font foreground height relief setgrid width wrap xscrollcommand yscrollcommand}
+  }
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTextSetText4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for Text...done"
+}
+
+##########
+# Procedure: XFSaveSpecial.Text
+# Description: save text
+# Arguments: xfW - the widget
+# Returns: none
+# Sideeffects: none
+##########
+proc XFSaveSpecial.Text {xfW} {
+
+  set result [XFMiscGetText $xfW]
+  if {"[string index $result [expr [string length $result]-1]]" == "\\"} {
+    return "  $xfW insert end \{$result \}\n"
+  } {
+    return "  $xfW insert end \{$result\}\n"
+  }
+}
+
+##########
+# Procedure: XFTextSetText4
+# Description: set text parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTextSetText4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+  XFMiscSetResource $xfW background \
+    [.xf${xfClass}Config4.params1.params2.bg.bg get]
+  XFMiscSetResource $xfW borderwidth \
+    [.xf${xfClass}Config4.params1.params2.borderwidth.borderwidth get]
+  XFMiscSetResource $xfW exportselection $xfMisc(exportSelection)
+  XFMiscSetResource $xfW font \
+    [.xf${xfClass}Config4.params1.params2.font.font get]
+  if {$xfConf(kanji)} {
+    XFMiscSetResource $xfW kanjifont \
+      [.xf${xfClass}Config4.params1.params2.kanjifont.kanjifont get]
+  }
+  XFMiscSetResource $xfW foreground \
+    [.xf${xfClass}Config4.params1.params2.fg.fg get]
+  XFMiscSetResource $xfW height \
+    [.xf${xfClass}Config4.params1.params2.size.size2.size2 get]
+  XFMiscSetResource $xfW relief $xfMisc(relief)
+  XFMiscSetResource $xfW setgrid $xfMisc(setGrid)
+  XFMiscSetResource $xfW width \
+    [.xf${xfClass}Config4.params1.params2.size.size1.size1 get]
+  XFMiscSetResource $xfW wrap $xfMisc(wrap)
+  XFMiscSetResource $xfW xscrollcommand \
+    [.xf${xfClass}Config4.params1.params2.xscrollcommand.xscrollcommand get]
+  XFMiscSetResource $xfW yscrollcommand \
+    [.xf${xfClass}Config4.params1.params2.yscrollcommand.yscrollcommand get]
+}
+
+# eof
+

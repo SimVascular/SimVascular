@@ -1,0 +1,127 @@
+# Program: xf
+# Description: handle TProgressbar widgets
+#
+
+package require tile
+
+global xfDefaultConf
+set xfDefaultConf(tprogressbar) 4
+
+##########
+# Procedure: XFAdd.TProgressbar
+# Description: add a TProgressbar
+# Arguments: xfW - the widget
+#            xfName - a optional name
+#            xfType - add or config
+# Returns: none
+# Sideeffects: none
+##########
+proc XFAdd.TProgressbar {xfW xfName xfType} {
+  global xfStatus
+
+  XFEditSetStatus "Inserting TProgressbar..."
+  set xfName [XFMiscGetUniqueName $xfName tprogressbar]
+  if {"$xfStatus(path)" == "."} {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TProgressbar: .$xfName"
+      ttk::progressbar .$xfName
+    } {
+      puts "attempt to create TProgressbar: .$xfName"
+      ttk::progressbar .$xfName
+    }
+
+    XFMiscPositionWidget .$xfName
+    XFMiscBindWidgetTree .$xfName
+  } {
+    if {"$xfType" == "add"} {
+      puts "attempt to create TProgressbar: $xfStatus(path).$xfName"
+      ttk::progressbar $xfStatus(path).$xfName
+    } {
+      puts "attempt to create TProgressbar: $xfStatus(path).$xfName"
+      ttk::progressbar $xfStatus(path).$xfName
+    }
+
+    XFMiscPositionWidget $xfStatus(path).$xfName
+    XFMiscBindWidgetTree $xfStatus(path).$xfName
+  }
+
+  incr xfStatus(elementCounter)
+  XFEditSetPath $xfStatus(path)
+  XFEditSetStatus "Inserting TProgressbar...done"
+}
+
+##########
+# Procedure: XFConfig.TProgressbar4
+# Description: configure a TProgressbar
+# Arguments: xfW - the widget
+#            xfType - config type (add config)
+#            xfClass - the class we configure
+#            xfLeader - the leading window
+# Returns: none
+# Sideeffects: none
+##########
+proc XFConfig.TProgressbar4 {xfW xfType xfClass {xfLeader ""}} {
+  global xfConf
+  global xfStatus
+
+  puts "xfType: $xfType  xfClass: $xfClass"
+  if {"$xfType" == "add"} {
+    set xfName TProgressbar$xfStatus(elementCounter)
+  } {
+    set xfName [XFMiscPathName $xfW]
+  }
+  XFEditSetStatus "Calling parameter setting for TProgressbar..."
+
+  # build widget structure
+  XFTmpltToplevel .xf${xfClass}Config4 400x530 \
+    "TProgressbar parameters:[XFMiscPathTail $xfW]" $xfLeader
+
+  XFElementInit $xfW .xf${xfClass}Config4 $xfType $xfClass XFTProgressbarSetTProgressbar4 \
+    parameters $xfName 4
+ 
+  # save current parameter
+  XFElementSave $xfW $xfClass {}
+
+  # packing
+  pack append .xf${xfClass}Config4.params1 \
+              .xf${xfClass}Config4.params1.params2 {left fill expand}
+  pack append .xf${xfClass}Config4 \
+              .xf${xfClass}Config4.pathname {top fill frame center} \
+              .xf${xfClass}Config4.leave {bottom fill} \
+              .xf${xfClass}Config4.additional {bottom fill} \
+              .xf${xfClass}Config4.params1 {top fill expand}
+
+  XFBindFormConnect .xf${xfClass}Config4.params1.params2 \
+    "XFTProgressbarSetTProgressbar4 $xfW 0 $xfClass"
+
+  XFEditSetStatus "Calling parameter setting for TProgressbar...done"
+}
+
+##########
+# Procedure: XFTProgressbarSetTProgressbar4
+# Description: set TProgressbar parameters
+# Arguments: xfW - the widget
+#            xfType - the type of setting (1 = set always, 0 = set
+#                     only if permanent apply is on)
+#            xfClass - the class we configure
+#            xfParam1 - ignored parameter
+# Returns: none
+# Sideeffects: none
+##########
+proc XFTProgressbarSetTProgressbar4 {xfW xfType xfClass {xfParam1 ""}} {
+  global xfConf
+  global xfMisc
+
+  if {$xfType == 0 && !$xfConf(applyParameters)} {
+    return
+  }
+  if {"[info commands $xfW]" == ""} {
+    return
+  }
+  XFMiscSetSymbolicName $xfW \
+    [.xf${xfClass}Config4.params1.params2.symname.symname get]
+
+}
+
+# eof
+

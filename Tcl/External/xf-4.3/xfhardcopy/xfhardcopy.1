@@ -1,0 +1,167 @@
+.\" -*- text -*-
+.\"     xfhardcopy : a interactive Tk hardcopy program
+.\"
+.\"     Sven Delmas
+.\"     sven@cimetrix.com
+.\"
+.\"     $Header: xfhardcopy.1[2.3] Sun Mar  7 17:11:04 1993 garfield@garfield frozen $
+.\"
+.TH XFHARDCOPY 1 "Wed Mar 10 16:19:42 1993"
+.SH NAME
+.B
+xfhardcopy \- interactive Tk hardcopy program
+.PP
+
+.SH SYNOPSIS
+.B
+xfhardcopy [xfhardcopy options]
+.LP
+\fBxfhardcopy options:\fP
+.LP
+.IP
+.ad l
+.nh
+[\-xfBindPath\ <filename>]
+[\-xfColorFile\ <filename>]
+[\-xfCursorFile\ <filename>]
+[\-xfFontFile\ <filename>]
+[\-xfLoading]
+[\-xfLoadPath\ <pathname>]
+[\-xfModelColor]
+[\-xfModelMono]
+[\-xfNoLoading]
+[\-xfStartup\ <filename>]
+.ad b
+.hy 1
+.PP
+
+.SH DESCRIPTION
+.PP
+XFhardcopy allows to interactively select Tk applications
+and path names inside these applications, for dumping to a
+file. The program uses different external programs to
+implement the hardcopy commands (xgrabsc 2.1, xwd), and it
+provides access to the Tk postscript command for canvas
+widgets. If the hardcopy commands that come with the
+distribution do not work or if there exist more appropriate
+programs, the hardcopy commands can be adapted by the user.
+This program is part of the XF distribution, and is used to
+make hardcopies from the program that is built with XF.
+
+.PP
+The Tk application which should be hardcopied can be
+selected from the upper left list, and a widget path inside
+of this application from the upper right list. To make a
+hardcopy of the selected widget tree (application), one of
+the hardcopy commands from the bottom list is selected with
+a double click. By default the hardcopy is written into the
+current directory under the name xfHardCopy. To specify a
+different output file name, the hardcopy is made with the
+menu item named (\fBFile | Hardcopy to...\fR).
+
+.SH "HARDCOPY COMMANDS"
+To modify the currently selected hardcopy command the menu
+item (\fBFile | Modify hardcopy command\fR) is activated.
+The following parameters can occur in the hardcopy commands
+and are substituted when the hardcopy command is activated:
+.\"
+.IP "$height\ \ \ \ \ \ \ \ \ \ \ \ "
+The height of the selected widget
+.IP "$id\ \ \ \ \ \ \ \ \ \ \ \ "
+The X window id of the selected widget
+.IP "$outputFile\ \ \ \ \ \ \ \ \ \ \ \ "
+The name of the specified output file
+.IP "$rootx\ \ \ \ \ \ \ \ \ \ \ \ "
+The absolute x position of the widget
+.IP "$rooty\ \ \ \ \ \ \ \ \ \ \ \ "
+The absolute y position of the widget
+.IP "$widget\ \ \ \ \ \ \ \ \ \ \ \ "
+The Tk widget name of the selected widget
+.IP "$width\ \ \ \ \ \ \ \ \ \ \ \ "
+The width of the selected widget
+.IP "$x\ \ \ \ \ \ \ \ \ \ \ \ "
+The relative x position of the widget
+.IP "$y\ \ \ \ \ \ \ \ \ \ \ \ "
+The relative y position of the widget
+.PP
+
+.SH OPTIONS
+.PP
+The following options can be controlled from the command line.
+.\"
+.IP "\fB\-xfBindFile \fIfilename\fR" 15
+This option specifies a file containing class bindings that implement
+a default behavior of all widgets.
+.\"
+.IP "\fB\-xfColorFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+colors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBColors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfCursorFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+cursors. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBCursors\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfFontFile \fIfilename\fR" 15
+This option specifies a file containing a list of all known
+fonts. This file is automatically created when XF is installed,
+so please set this variable to the location of the \fBFonts\fR
+file of the installed XF (usually in the directory ./lib inside
+the XF distribution).
+.\"
+.IP "\fB\-xfLoading" 15
+This option specifies that the program reports the source filenames
+that it loads. This is useful when the program automatically accesses
+archives in the development phase.
+.\"
+.IP "\fB\-xfLoadPath \fIpathname\fR" 15
+This option specifies a list of pathnames (separated by ":") where
+the Tcl source files can be found. In order to find the Tcl source
+files they must be stored in one of these directories. 
+.\"
+.IP "\fB\-xfModelColor" 15
+This option starts the application in color mode.
+.\"
+.IP "\fB\-xfModelMono" 15
+This option starts the application in monochrome mode.
+.\"
+.IP "\fB\-xfNoLoading" 15
+This option specifies that the program does not report the source
+filenames that it loads.
+.\"
+.IP "\fB\-xfStartup \fIfilename\fR" 15
+This option specifies a file containing additional Tcl/Tk code that is
+loaded at startup. 
+
+.SH ENVIRONMENT
+.IP DISPLAY
+The default display to be used.
+.IP XF_LOAD_PATH 15
+This variable specifies a list of pathnames (separated by ":") where
+the Tcl source files can be found. In order to find the Tcl source
+files they must be stored in one of these directories. 
+.PP
+
+.SH BUGS
+.PP
+.\"
+.IP "\(bu"
+Surely there are many bugs.
+
+.SH "SEE ALSO"
+.PP
+Tcl(3), Tk-manuals(3), XF-documentation
+
+.SH AUTHOR
+.PP
+Sven Delmas
+.br
+TU Berlin, Germany
+.br
+sven@cimetrix.com
+
