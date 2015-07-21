@@ -48,7 +48,7 @@
 NO_DEPEND = 1
 
 # -----------------------------------------------------------
-# CLUSTER = { x86_cygwin, x64_cygwin, x64_linux }
+# CLUSTER = { x64_cygwin, x64_linux }
 # -----------------------------------------------------------
 
 CLUSTER = x64_cygwin
@@ -131,7 +131,6 @@ MAKE_WITH_THREEDSOLVER = 1
 MAKE_WITH_PRESOLVER = 1
 MAKE_WITH_POSTSOLVER = 1
 MAKE_WITH_MESHSIM_ADAPTOR = 1
-BUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT = 0
 
 # -----------------------------------------------------
 # Compile Flowsolver Modules
@@ -198,8 +197,6 @@ MAKE_STATIC_BUILD = 1
 # if we are only building the flow solver
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     MAKE_WITH_ITK = 0
-    MAKE_WITH_SPARSE = 0
-    MAKE_WITH_NSPCG = 0
     MAKE_WITH_VMTK = 0
     MAKE_WITH_TETGEN = 0
 endif
@@ -220,21 +217,11 @@ TARGETDIR = .
 # SVEXTERN_COMPILER_VERSION = {intel_13.0} (linux)
 # -----------------------------------------------------------
 
-ifeq ($(CLUSTER), x86_cygwin)
-  SVEXTERN_COMPILER_VERSION = vs10sp1
-endif
 ifeq ($(CLUSTER), x64_cygwin)
   SVEXTERN_COMPILER_VERSION = vs10sp1
 endif
 ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = intel_13.0
-endif
-
-ifeq ($(CLUSTER), x86_cygwin) 
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin/sv_extern/bin/win/$(SVEXTERN_COMPILER_VERSION)/x86
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin/sv_extern/src
-    OPEN_SOFTWARE_PRECOMPILED_TOPLEVEL =  C:/cygwin/sv_extern/bin/win/unknown/x86
-    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin/sv_extern/licensed
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
@@ -297,17 +284,12 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   GLOBAL_DEFINES += -DCV_STATIC_LINK -DSIMVASCULAR_STATIC_BUILD
 endif
 
-ifeq ($(CLUSTER), x86_cygwin)
-   # some of these global defines are required by parasolid
-   GLOBAL_DEFINES += -DUSE_NOTIMER -DWINDOWS -DWIN32 -D_X86_ -DCYGWIN -DCV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
-endif
-
 ifeq ($(CLUSTER), x64_cygwin)
-   GLOBAL_DEFINES += -DUSE_NOTIMER -DWINDOWS -DWIN32 -DCYGWIN -DCV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+   GLOBAL_DEFINES += -DUSE_NOTIMER -DWINDOWS -DWIN32 -DCYGWIN
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-   GLOBAL_DEFINES += -DUSE_NOTIMER -DUNIX -DCV_WRAP_FORTRAN_LOWERCASE_WITH_UNDERSCORE
+   GLOBAL_DEFINES += -DUSE_NOTIMER -DUNIX
 endif
 
 
@@ -364,11 +346,6 @@ endif
 # Platform-specific compiler options
 # ----------------------------------
 
-# 32-bit compilers not generalized, msvc+ifort only!
-ifeq ($(CLUSTER), x86_cygwin)
-	include $(TOP)/MakeHelpers/compiler.msvc2010.x86_cygwin.mk
-endif
-
 ifeq ($(CLUSTER), x64_cygwin)
   ifeq ($(CXX_COMPILER_VERSION), vs10sp1)
 	include $(TOP)/MakeHelpers/compiler.msvc2010.x64_cygwin.mk
@@ -404,10 +381,6 @@ endif
 # -----------------------
 # Intel Compiler Runtimes
 # -----------------------
-
-ifeq ($(CLUSTER), x86_cygwin)
-    INTEL_COMPILER_SO_PATH  = $(LICENSED_SOFTWARE_TOPLEVEL)/intel_compiler_runtime_libs/2013.1.117/win/ia32
-endif
 
 ifeq ($(CLUSTER), x64_cygwin)
     INTEL_COMPILER_SO_PATH  = $(LICENSED_SOFTWARE_TOPLEVEL)/intel_compiler_runtime_libs/2013.1.117/win/intel64
