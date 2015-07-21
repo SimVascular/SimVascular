@@ -160,13 +160,13 @@ int main( int argc, char *argv[] ) {
 
 #endif
 
+  int rslt;
 #ifdef WIN32
 
   MPI_Init(&argc,&argv);
   MPI_Comm_size (MPI_COMM_WORLD, &size);
   MPI_Comm_rank (MPI_COMM_WORLD, &myrank);
     	
-  int rslt;
   char systemcmd[2048];
   systemcmd[0]='\0';
 
