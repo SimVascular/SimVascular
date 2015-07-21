@@ -2413,7 +2413,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
 
 int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongLength,
 		int useFFT,int numOutPtsAlongLength, int numOutPtsInSegs,
-		int numLinearPtsAlongLength,int numModes,int splineType,cvPolyData **dst )
+		int numLinearPtsAlongLength,int numModes,int splineType,double bias, double tension,double continuity, cvPolyData **dst )
 {
   cvPolyData *result = NULL;
   *dst = NULL;
@@ -2431,6 +2431,9 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
   lofter->SetNumLinearPtsAlongLength(numLinearPtsAlongLength);
   lofter->SetNumModes(numModes);
   lofter->SetSplineType(splineType);
+  lofter->SetBias(bias);
+  lofter->SetTension(tension);
+  lofter->SetContinuity(continuity);
   try {
     lofter->Update();
 
