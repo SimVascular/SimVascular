@@ -30,9 +30,11 @@
  
 # TODO: Remove this! needs to be refactored
 set(lib lib_simvascular_adaptor)
+LIST(APPEND CORELIBS ${lib})
 
-set(HDRS cvAdaptObject.h)
-SET(CXXSRCS cvAdaptObject.cxx)
+set(HDRS cvAdaptObject.h cv_adapt_init.h)
+SET(CXXSRCS cvAdaptObject.cxx cv_adapt_init.cxx)
+
 add_library(${lib} ${CXXSRCS})
 
 target_link_libraries(${lib}
@@ -40,14 +42,10 @@ target_link_libraries(${lib}
 			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES}
-			lib_tet_adaptor
 			lib_simvascular_mesh
-			lib_simvascular_solid			
-			lib_simvascular_sysgeom	
 			lib_simvascular_solverio
 			lib_simvascular_globals 
 			lib_simvascular_utils
-			lib_simvascular_tetgen_mesh
 )
 
 

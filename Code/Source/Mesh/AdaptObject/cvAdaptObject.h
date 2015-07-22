@@ -74,7 +74,7 @@ enum KernelType {
   KERNEL_TETGEN,
 };
 
-class cvAdaptObject {
+class cvAdaptObject : public cvRepositoryData {
 
 public:
   cvAdaptObject( KernelType t );
@@ -82,7 +82,7 @@ public:
 
   KernelType GetKernel() const {return adapt_kernel_;}
   //Instantiation function for executable
-  static cvAdaptObject* ExecutableAdaptObject(KernelType t);
+  //static cvAdaptObject* ExecutableAdaptObject(KernelType t);
   //Instantiation function from SimVascular 
   static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL,KernelType t = KERNEL_TETGEN);
   //Called after Insantiation, create a cvMeshObject

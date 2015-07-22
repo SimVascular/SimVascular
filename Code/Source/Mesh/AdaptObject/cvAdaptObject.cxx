@@ -36,7 +36,7 @@
 #include "SimVascular.h" 
 
 #include "cvAdaptObject.h"
-#include "cvTetGenAdapt.h"
+//#include "cvTetGenAdapt.h"
 #include "cv_misc_utils.h"
 
 #include <string.h>
@@ -48,6 +48,7 @@ KernelType cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
 cvFactoryRegistrar cvAdaptObject::gRegistrar;
 
 cvAdaptObject::cvAdaptObject( KernelType t)
+  : cvRepositoryData( ADAPTOR_T )
 {
   adapt_kernel_ = t;
 }
@@ -57,23 +58,23 @@ cvAdaptObject::~cvAdaptObject()
   ;
 }
 
-// ----------------------------
-// ExecutableAdaptObject
-// ----------------------------
-
-cvAdaptObject* cvAdaptObject::ExecutableAdaptObject(KernelType t)
-{
-  if (t == KERNEL_TETGEN)
-  {
-    cvTetGenAdapt *adaptor = new cvTetGenAdapt;
-    return adaptor;
-  }
-  else 
-  {
-    fprintf(stderr,"Your adaptor name does not exist\n");
-    return 0;
-  }
-}
+//// ----------------------------
+//// ExecutableAdaptObject
+//// ----------------------------
+//
+//cvAdaptObject* cvAdaptObject::ExecutableAdaptObject(KernelType t)
+//{
+//  if (t == KERNEL_TETGEN)
+//  {
+//    cvTetGenAdapt *adaptor = new cvTetGenAdapt;
+//    return adaptor;
+//  }
+//  else 
+//  {
+//    fprintf(stderr,"Your adaptor name does not exist\n");
+//    return 0;
+//  }
+//}
 
 // ----------------------------
 // DefaultInstantiateAdaptObject

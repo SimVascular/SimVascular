@@ -45,8 +45,6 @@
 #ifndef __CV_ADAPT_UTILS_H
 #define __CV_ADAPT_UTILS_H
 
-//#include "cvSolverIO.h"
-
 #include "SimVascular.h"
 #include "cv_misc_utils.h"
 
@@ -81,13 +79,14 @@
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 #define MAX(x,y) ((x)<(y) ? (y) : (x))
 
-#include "cvSolverIO.h"
-
 struct Hessian {
     double h[3];
     double dir[3][3];
   };
-  typedef struct Hessian Hessian;  
+  typedef struct Hessian Hessian;
+
+#include "cvSolverIO.h"
+
 
 //extern "C" {
 //

@@ -29,23 +29,26 @@
  #=========================================================================#
  
 # TODO: Remove this! needs to be refactored
+set(lib lib_simvascular_tet_adaptor)
+LIST(APPEND CORELIBS ${lib})
+
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 include_directories(${TETGEN_INCLUDE_DIR})
-set(HDRS cvTetGenAdapt.h cv_adapt_utils.h eispack.h)
-SET(CXXSRCS cvTetGenAdapt.cxx cv_adapt_utils.cxx eispack.cxx main.cxx)
-#SET(FSRCS pythag.f tred2EISPACK.f tql2.f)
-#add_library(lib_tet_adaptor ${FSRCS})
-add_library(lib_tet_adaptor ${CXXSRCS})
 
-simvascular_add_executable(${TET_ADAPTOR_EXE} 
-  SRCS ${CXXSRCS}
-  DEV_SCRIPT_NAME "mytetadaptor" 
-  INSTALL_SCRIPT_NAME "svtetadapt"
-  INSTALL_COMPONENT PluginExecutables
-  INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+set(HDRS cvTetGenAdapt.h cv_adapt_utils.h cv_tetgen_adapt_init.h eispack.h)
+SET(CXXSRCS cvTetGenAdapt.cxx cv_tetgen_adapt_init.cxx cv_adapt_utils.cxx eispack.cxx)
 
-target_link_libraries(${TET_ADAPTOR_EXE} lib_tet_adaptor
+add_library(${lib} ${CXXSRCS})
+
+#simvascular_add_executable(${TET_ADAPTOR_EXE} 
+#  SRCS ${CXXSRCS}
+#  DEV_SCRIPT_NAME "mytetadaptor" 
+#  INSTALL_SCRIPT_NAME "svtetadapt"
+#  INSTALL_COMPONENT PluginExecutables
+#  INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+
+target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
 			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
@@ -62,7 +65,7 @@ target_link_libraries(${TET_ADAPTOR_EXE} lib_tet_adaptor
 
 
 if(SIMVASCULAR_INSTALL_LIBS)
-  install(TARGETS lib_tet_adaptor
+  install(TARGETS ${lib}
     RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
     LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
     ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries

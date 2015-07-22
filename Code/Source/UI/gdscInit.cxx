@@ -88,6 +88,11 @@
   #include "cv_ITKUtils_init.h"
 #endif
 
+#ifdef USE_TET_ADAPTOR
+  #include "cv_adapt_init.h"
+  #include "cv_tetgen_adapt_init.h"
+#endif
+
 // The following is needed for Windows
 #ifdef GetObject
 #undef GetObject
@@ -230,6 +235,17 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 #endif
 
+#ifdef USE_TET_ADAPTOR
+  if ( Adapt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Adapt_Init\n" );
+    return TCL_ERROR;
+  }
+  if ( TetGenAdapt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on TetGenAdapt_Init\n" );
+    return TCL_ERROR;
+  }
+#endif
+
 #ifdef USE_MESHSIM
   if ( Meshsimmesh_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
@@ -297,7 +313,6 @@ int SimVascular_Init( Tcl_Interp *interp )
         return TCL_ERROR;
       }
 #endif
-
 
 #endif
 
