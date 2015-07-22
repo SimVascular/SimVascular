@@ -206,5 +206,5 @@ void AdaptUtils_writeArrayToFile ( char *filename, char *fieldName,
 		  int nshg, int numVars,
 		  int stepNumber, double *valueArray); 
 
-void AdaptUtils_checkArrayExists(vtkUnstructuredGrid *object,int datatype,std::string arrayname);
+int AdaptUtils_checkArrayExists(vtkUnstructuredGrid *object,int datatype,std::string arrayname);
 #endif //__CV_ADAPT_UTILS_H

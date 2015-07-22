@@ -79,7 +79,7 @@ cvAdaptObject* cvAdaptObject::ExecutableAdaptObject(KernelType t)
 // DefaultInstantiateAdaptObject
 // ----------------------------
 
-cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp )
+cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,KernelType t )
 {
   // Get the adapt object factory registrar associated with this Tcl interpreter.
   cvFactoryRegistrar* adaptObjectRegistrar;
@@ -94,18 +94,41 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp 
   adaptObjectRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "AdaptObjectRegistrar", NULL);
 
   cvAdaptObject* adaptor = NULL;
-  if (cvAdaptObject::gCurrentKernel == KERNEL_TETGEN || 
-      cvAdaptObject::gCurrentKernel == KERNEL_MESHSIM)
+  if (t == KERNEL_TETGEN || 
+      t == KERNEL_MESHSIM)
   {
-
-    adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( cvAdaptObject::gCurrentKernel ));
+    adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
     if (adaptor == NULL) {
 		  fprintf( stdout, "Unable to create solid model kernal (%i)\n",cvAdaptObject::gCurrentKernel);
 		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
     }
+
   } else {
-    fprintf( stdout, "current kernel is not valid (%i)\n",cvAdaptObject::gCurrentKernel);
-    //Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
+    fprintf( stdout, "current kernel is not valid (%i)\n",t);
+    Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
   }
+
+  cvAdaptObject::CreateInternalMesh(interp);
+
   return adaptor;
+}
+
+int cvAdaptObject::CreateInternalMesh(Tcl_Interp *interp)
+{
+  if (cvAdaptObject::gCurrentKernel == KERNEL_TETGEN)
+  {
+    char *dummy = NULL;
+    cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
+    meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,dummy,dummy);
+  }
+  else if (cvAdaptObject::gCurrentKernel == KERNEL_MESHSIM)
+  {
+    char *dummy = NULL;
+    cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("MeshSim");
+    meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,dummy,dummy);
+  }
+  else
+  {
+    Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
+  }
 }

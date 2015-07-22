@@ -44,6 +44,8 @@
 #include "cvFactoryRegistrar.h"
 #include "cvRepositoryData.h"
 #include "cvPolyData.h"
+#include "cvMeshSystem.h"
+#include "cvMeshObject.h"
 
 #ifdef USE_ZLIB
 #include "simvascular_zlib.h"
@@ -80,7 +82,8 @@ public:
 
   KernelType GetKernel() const {return adapt_kernel_;}
   static cvAdaptObject* ExecutableAdaptObject(KernelType t);
-  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL);
+  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL,KernelType t = KERNEL_TETGEN);
+  int CreateInternalMesh(Tcl_Interp *interp);
   static KernelType gCurrentKernel;
   static cvFactoryRegistrar gRegistrar;
 
@@ -118,6 +121,7 @@ public:
   
 private:
   KernelType adapt_kernel_;
+  cvMeshObject *meshobject_;
 };
 
 #endif // _CVADAPTOBJECT_H
