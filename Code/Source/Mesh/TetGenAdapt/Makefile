@@ -81,10 +81,10 @@ $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 else
 $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS) $(LFLAGS) \
-             $(OBJS) $(TETGEN_LIBS) \
-             $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) \
-	     $(TCLTK_LIBS) $(VTK_LIBS) $(ZLIB_LIBS) \
+             $(OBJS) \
              $(TOP)/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
+             $(TETGEN_LIBS) $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) \
+	     $(TCLTK_LIBS) $(VTK_LIBS) $(ZLIB_LIBS) \
              $(F90_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	mv $(TARGET_EXE)* $(TOP)/Bin

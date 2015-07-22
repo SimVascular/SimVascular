@@ -3,10 +3,14 @@ ifeq ($(CLUSTER), x64_cygwin)
     TCL_BASE       = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tcltk-8.5.18
     TK_BASE        = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tcltk-8.5.18
     TCLTK_INCDIR   = -I$(TCL_BASE)/include -I$(TK_BASE)/include
-    TCLTK_LIBDIR   = /LIBPATH:$(TCL_BASE)/lib /LIBPATH:$(TK_BASE)/lib
+    TCLTK_LIBDIR   = $(LIBPATH_COMPILER_FLAG)$(TCL_BASE)/lib $(LIBPATH_COMPILER_FLAG)$(TK_BASE)/lib
     TCLTK_DLLS     = $(TCL_BASE)/bin/tcl85t.$(SOEXT) $(TCL_BASE)/bin/tk85t.$(SOEXT)
-    TCLTK_LIBS     = $(TCLTK_LIBDIR) tcl85t.lib tk85t.lib \
-                     user32.lib advapi32.lib gdi32.lib comdlg32.lib imm32.lib comctl32.lib shell32.lib
+    TCLTK_LIBS     = $(TCLTK_LIBDIR) \
+                     $(LIBFLAG)tcl85t$(LIBLINKEXT) $(LIBFLAG)tk85t$(LIBLINKEXT) \
+                     $(LIBFLAG)user32$(LIBLINKEXT) $(LIBFLAG)advapi32$(LIBLINKEXT) \
+                     $(LIBFLAG)gdi32$(LIBLINKEXT)  $(LIBFLAG)comdlg32$(LIBLINKEXT) \
+                     $(LIBFLAG)imm32$(LIBLINKEXT)  $(LIBFLAG)comctl32$(LIBLINKEXT) \
+                     $(LIBFLAG)shell32$(LIBLINKEXT)
     TKCXIMAGE_BASE = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tkcximage-0.98.9/tcltk-8.5.18
     TKCXIMAGE_DLL  = $(TKCXIMAGE_BASE)/bin/Tkcximage.$(SOEXT)
     TCLTK_SO_PATH  = $(TCL_BASE)/bin

@@ -78,7 +78,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
   endif
 
-	LINKEXPLICITLIBS = ../../../BuildWithMake/Lib/lib_lib_simvascular_post.$(STATICEXT) \
+  LINKEXPLICITLIBS =      ../../../BuildWithMake/Lib/lib_lib_simvascular_post.$(STATICEXT) \
                           ../../../BuildWithMake/Lib/lib_lib_simvascular_image.$(STATICEXT) \
                           ../../../BuildWithMake/Lib/lib_lib_simvascular_repository.$(STATICEXT) \
                           ../../../BuildWithMake/Lib/lib_lib_simvascular_lset.$(STATICEXT) \
@@ -149,8 +149,8 @@ else
 $(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(LFLAGS) $(LINKOBJS) \
         $(LINKEXPLICITLIBS) \
-        $(CXX_LIBS) $(VMTK_LIBS) $(TCLTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) \
-        $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS)
+        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
+        $(ZLIB_LIBS) $(MPICH_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifneq ($(MAKE_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls

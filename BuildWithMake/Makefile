@@ -205,11 +205,12 @@ veryclean:
 	for fn in $(TOP)/Lib/*; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f $$fn; done
 	if [ -e myadaptor ];then /bin/rm -f myadaptor;fi
-	if [ -e mytetadaptor ];then /bin/rm -f myadaptor;fi
+	if [ -e mytetadaptor ];then /bin/rm -f mytetadaptor;fi
 	if [ -e sv ];then /bin/rm -f sv;fi
+	if [ -e xfsv ];then /bin/rm -f xfsv;fi
 	if [ -e mysolver ];then /bin/rm -f mysolver;fi
 	if [ -e sv-shared ];then /bin/rm -f sv-shared;fi
-	if [ -e mypost ];then /bin/rm -f sv-shared;fi
+	if [ -e mypost ];then /bin/rm -f mypost;fi
 	$(RM) $(TOP)/../Tcl/Common/Visualization/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/Vis/tclIndex
 	$(RM) $(TOP)/../Tcl/Common/General/tclIndex

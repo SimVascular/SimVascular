@@ -11,11 +11,11 @@ ifeq ($(CLUSTER), x64_cygwin)
     AR              = x86_64-w64-mingw32-ar -cru  
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     DEBUG_FLAGS     = 
-    OPT_FLAGS       = -fast
+    OPT_FLAGS       = -O2
 else
   ifeq ($(MAKE_OPTIMIZED),1)
     DEBUG_FLAGS     =
-    OPT_FLAGS       = -fast -g
+    OPT_FLAGS       = -O2 -g
   else
     OPT_FLAGS       = 
     DEBUG_FLAGS     = -g

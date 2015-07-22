@@ -517,16 +517,16 @@ ifeq ($(CLUSTER),x64_linux)
 endif
 
 ifeq ($(CLUSTER),x64_cygwin)
-LFLAGS     += lib_lib_simvascular_lset.lib \
-              lib_lib_simvascular_image.lib \
-              lib_lib_simvascular_mesh.lib \
-              lib_lib_simvascular_solid.lib \
-              lib_lib_simvascular_sysgeom.lib \
-              lib_lib_simvascular_repository.lib \
-              lib_lib_simvascular_utils.lib \
-              lib_lib_simvascular_post.lib \
-              lib_lib_simvascular_polydatasolid.lib \
-              lib_lib_simvascular_globals.lib
+LFLAGS     += $(LIBFLAG)lib_lib_simvascular_lset$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_image$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_mesh$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_solid$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_sysgeom$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_repository$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_utils$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_post$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_polydatasolid$(LIBLINKEXT) \
+              $(LIBFLAG)lib_lib_simvascular_globals$(LIBLINKEXT)
 endif
 
 ifeq ($(CLUSTER),x64_linux)

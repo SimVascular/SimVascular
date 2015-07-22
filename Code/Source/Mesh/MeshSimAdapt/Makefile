@@ -99,13 +99,15 @@ $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 else
 $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS) $(LFLAGS) \
-             $(OBJS) $(MESHSIM_LIBS) \
-             $(PARASOLID_LIBS) $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) \
-	     $(TCLTK_LIBS) $(VTK_LIBS) $(ZLIB_LIBS) $(VMTK_LIBS) \
+             $(OBJS) \
              $(TOP)/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
-             $(PARASOLID_LIB_FOR_LINKING) \
              $(TOP)/Lib/lib_lib_simvascular_vmtk.$(STATICEXT) \
-             $(F90_LIBS) $(CXX_LIBS)
+             $(PARASOLID_LIB_FOR_LINKING) \
+             $(MESHSIM_LIBS) \
+             $(PARASOLID_LIBS) $(ZLIB_LIBS) \
+	     $(TCLTK_LIBS) $(VTK_LIBS) $(ZLIB_LIBS) \
+             $(F90_LIBS) $(CXX_LIBS) \
+             $(PARASOLID_LIBS) $(MESHSIM_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	mv $(TARGET_EXE)* $(TOP)/Bin
 endif
