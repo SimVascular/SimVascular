@@ -58,7 +58,34 @@
 #define BUFSIZE 1024
 #define BUF_SIZE 1024
 #endif
- 
+
+#ifdef WIN32
+#ifdef SIMVASCULAR_USE_WIN32_REGISTRY
+#ifdef __MINGW32__
+// imperfect simple work around for missing getenv_s
+// on mingw32 stdlib (no bounds checking!)
+#define getenv_s cv_getenv_s
+errno_t cv_getenv_s( 
+   size_t *pReturnValue,
+   char* buffer,
+   size_t numberOfElements,
+   const char *varname 
+) {
+  *pReturnValue = 0;
+  buffer[0]='\0';
+  char *rtnstr = NULL;
+  rtnstr = getenv(varname);
+  if (rtnstr == NULL) {
+    return 0;
+  }
+  *pReturnValue = strlen(rtnstr);
+  sprintf(buffer,rtnstr);
+  return 0;
+}
+#endif
+#endif
+#endif
+
 // ----
 // main
 // ----

@@ -47,6 +47,33 @@
 #include <stdio.h>
 #endif
 
+#ifdef WIN32
+#ifdef SIMVASCULAR_USE_WIN32_REGISTRY
+#ifdef __MINGW32__
+// imperfect simple work around for missing getenv_s
+// on mingw32 stdlib (no bounds checking!)
+#define getenv_s cv_getenv_s
+errno_t cv_getenv_s( 
+   size_t *pReturnValue,
+   char* buffer,
+   size_t numberOfElements,
+   const char *varname 
+) {
+  *pReturnValue = 0;
+  buffer[0]='\0';
+  char *rtnstr = NULL;
+  rtnstr = getenv(varname);
+  if (rtnstr == NULL) {
+    return 0;
+  }
+  *pReturnValue = strlen(rtnstr);
+  sprintf(buffer,rtnstr);
+  return 0;
+}
+#endif
+#endif
+#endif
+
 // main routine to control mesh adaptation, solution transfer
 
 #include <iostream>
@@ -283,7 +310,7 @@ int main(int argc,char* argv[])
    }
    // Get the value of the LIB environment variable.
    getenv_s( &requiredSize, envvar, requiredSize, "PATH" );
-
+   
    //if( envvar != NULL )
      //printf( "Original PATH variable is: %s\n", envvar );
 
