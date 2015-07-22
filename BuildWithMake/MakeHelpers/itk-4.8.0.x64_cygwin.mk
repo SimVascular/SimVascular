@@ -2,6 +2,7 @@ ifeq ($(CLUSTER), x64_cygwin)
     ITK_SRC_DIR	= $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/itk-4.8.0
     ITK_BIN_DIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/itk-4.8.0
     ITK_DEFS = -D ITK_IO_FACTORY_REGISTER_MANAGER -D MSVC
+    ITK_LIBDIRS = $(ITK_BIN_DIR)/lib/RelWithDebInfo
     ITK_INCDIRS = \
 -I$(ITK_BIN_DIR)/Examples/ITKIOFactoryRegistration \
 -I$(ITK_SRC_DIR)/Modules/Segmentation/Watersheds/include \
@@ -157,36 +158,35 @@ ifeq ($(CLUSTER), x64_cygwin)
 -I$(ITK_BIN_DIR)/Modules/ThirdParty/KWSys/src \
 -I$(ITK_SRC_DIR)/Modules/ThirdParty/DoubleConversion/src/double-conversion
 
-   ITK_LIBDIRS = $(ITK_BIN_DIR)/lib/RelWithDebInfo
-   ITK_LIBS =    /LIBPATH:$(ITK_LIBDIRS) \
-ITKBiasCorrection-4.8.lib     ITKIOJPEG-4.8.lib                    ITKOptimizers-4.8.lib \
-ITKBioCell-4.8.lib            ITKIOLSM-4.8.lib                     ITKPath-4.8.lib \
-ITKCommon-4.8.lib             ITKIOMesh-4.8.lib                    itkpng-4.8.lib \
-ITKDICOMParser-4.8.lib        ITKIOMeta-4.8.lib                    ITKPolynomials-4.8.lib \
-itkdouble-conversion-4.8.lib  ITKIOMRC-4.8.lib                     ITKQuadEdgeMesh-4.8.lib \
-ITKEXPAT-4.8.lib              ITKIONIFTI-4.8.lib                   ITKSpatialObjects-4.8.lib \
-ITKFEM-4.8.lib                ITKIONRRD-4.8.lib                    ITKStatistics-4.8.lib \
-itkgdcmCommon-4.8.lib         ITKIOPNG-4.8.lib                     itksys-4.8.lib \
-itkgdcmDICT-4.8.lib           ITKIOSiemens-4.8.lib                 \
-itkgdcmDSED-4.8.lib           ITKIOSpatialObjects-4.8.lib          \
-itkgdcmIOD-4.8.lib            ITKIOStimulate-4.8.lib               itktestlib-4.8.lib \
-itkgdcmjpeg12-4.8.lib         ITKIOTIFF-4.8.lib                    itktiff-4.8.lib \
-itkgdcmjpeg16-4.8.lib         ITKIOTransformBase-4.8.lib           itkv3p_lsqr-4.8.lib \
-itkgdcmjpeg8-4.8.lib          ITKIOTransformHDF5-4.8.lib           itkv3p_netlib-4.8.lib \
-itkgdcmMSFF-4.8.lib           ITKIOTransformInsightLegacy-4.8.lib  itkvcl-4.8.lib \
-ITKgiftiio-4.8.lib            ITKIOTransformMatlab-4.8.lib         ITKVideoCore-4.8.lib \
-           ITKIOVTK-4.8.lib                     ITKVideoIO-4.8.lib \
-           ITKIOXML-4.8.lib                     itkvnl_algo-4.8.lib \
-ITKIOBioRad-4.8.lib           itkjpeg-4.8.lib                      itkvnl-4.8.lib \
-ITKIOBMP-4.8.lib              ITKKLMRegionGrowing-4.8.lib          ITKVNLInstantiation-4.8.lib \
-ITKIOCSV-4.8.lib              ITKLabelMap-4.8.lib                  ITKVTK-4.8.lib \
-ITKIOGDCM-4.8.lib             ITKMesh-4.8.lib                      ITKVtkGlue-4.8.lib \
-ITKIOGE-4.8.lib               ITKMetaIO-4.8.lib                    ITKWatersheds-4.8.lib \
-ITKIOGIPL-4.8.lib             itkNetlibSlatec-4.8.lib              itkzlib-4.8.lib \
-        ITKniftiio-4.8.lib                   ITKznz-4.8.lib \
-ITKIOImageBase-4.8.lib        ITKNrrdIO-4.8.lib \
-ITKIOIPL-4.8.lib              itkgdcmopenjpeg-4.8.lib	itkgdcmcharls-4.8.lib \
-itkhdf5-4.8.lib itkhdf5_cpp-4.8.lib ITKIOHDF5-4.8.lib
+   ITK_LIBS =    $(LIBPATH_COMPILER_FLAG)$(ITK_LIBDIRS) \
+$(LIBFLAG)ITKBiasCorrection-4.8$(LIBLINKEXT)     $(LIBFLAG)ITKIOJPEG-4.8$(LIBLINKEXT)                    $(LIBFLAG)ITKOptimizers-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKBioCell-4.8$(LIBLINKEXT)            $(LIBFLAG)ITKIOLSM-4.8$(LIBLINKEXT)                     $(LIBFLAG)ITKPath-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKCommon-4.8$(LIBLINKEXT)             $(LIBFLAG)ITKIOMesh-4.8$(LIBLINKEXT)                    $(LIBFLAG)itkpng-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKDICOMParser-4.8$(LIBLINKEXT)        $(LIBFLAG)ITKIOMeta-4.8$(LIBLINKEXT)                    $(LIBFLAG)ITKPolynomials-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkdouble-conversion-4.8$(LIBLINKEXT)  $(LIBFLAG)ITKIOMRC-4.8$(LIBLINKEXT)                     $(LIBFLAG)ITKQuadEdgeMesh-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKEXPAT-4.8$(LIBLINKEXT)              $(LIBFLAG)ITKIONIFTI-4.8$(LIBLINKEXT)                   $(LIBFLAG)ITKSpatialObjects-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKFEM-4.8$(LIBLINKEXT)                $(LIBFLAG)ITKIONRRD-4.8$(LIBLINKEXT)                    $(LIBFLAG)ITKStatistics-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmCommon-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKIOPNG-4.8$(LIBLINKEXT)                     $(LIBFLAG)itksys-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmDICT-4.8$(LIBLINKEXT)           $(LIBFLAG)ITKIOSiemens-4.8$(LIBLINKEXT)                 \
+$(LIBFLAG)itkgdcmDSED-4.8$(LIBLINKEXT)           $(LIBFLAG)ITKIOSpatialObjects-4.8$(LIBLINKEXT)          \
+$(LIBFLAG)itkgdcmIOD-4.8$(LIBLINKEXT)            $(LIBFLAG)ITKIOStimulate-4.8$(LIBLINKEXT)               $(LIBFLAG)itktestlib-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmjpeg12-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKIOTIFF-4.8$(LIBLINKEXT)                    $(LIBFLAG)itktiff-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmjpeg16-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKIOTransformBase-4.8$(LIBLINKEXT)           $(LIBFLAG)itkv3p_lsqr-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmjpeg8-4.8$(LIBLINKEXT)          $(LIBFLAG)ITKIOTransformHDF5-4.8$(LIBLINKEXT)           $(LIBFLAG)itkv3p_netlib-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmMSFF-4.8$(LIBLINKEXT)           $(LIBFLAG)ITKIOTransformInsightLegacy-4.8$(LIBLINKEXT)  $(LIBFLAG)itkvcl-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKgiftiio-4.8$(LIBLINKEXT)            $(LIBFLAG)ITKIOTransformMatlab-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKVideoCore-4.8$(LIBLINKEXT) \
+           $(LIBFLAG)ITKIOVTK-4.8$(LIBLINKEXT)                     $(LIBFLAG)ITKVideoIO-4.8$(LIBLINKEXT) \
+           $(LIBFLAG)ITKIOXML-4.8$(LIBLINKEXT)                     $(LIBFLAG)itkvnl_algo-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOBioRad-4.8$(LIBLINKEXT)           $(LIBFLAG)itkjpeg-4.8$(LIBLINKEXT)                      $(LIBFLAG)itkvnl-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOBMP-4.8$(LIBLINKEXT)              $(LIBFLAG)ITKKLMRegionGrowing-4.8$(LIBLINKEXT)          $(LIBFLAG)ITKVNLInstantiation-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOCSV-4.8$(LIBLINKEXT)              $(LIBFLAG)ITKLabelMap-4.8$(LIBLINKEXT)                  $(LIBFLAG)ITKVTK-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOGDCM-4.8$(LIBLINKEXT)             $(LIBFLAG)ITKMesh-4.8$(LIBLINKEXT)                      $(LIBFLAG)ITKVtkGlue-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOGE-4.8$(LIBLINKEXT)               $(LIBFLAG)ITKMetaIO-4.8$(LIBLINKEXT)                    $(LIBFLAG)ITKWatersheds-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOGIPL-4.8$(LIBLINKEXT)             $(LIBFLAG)itkNetlibSlatec-4.8$(LIBLINKEXT)              $(LIBFLAG)itkzlib-4.8$(LIBLINKEXT) \
+        $(LIBFLAG)ITKniftiio-4.8$(LIBLINKEXT)                   $(LIBFLAG)ITKznz-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOImageBase-4.8$(LIBLINKEXT)        $(LIBFLAG)ITKNrrdIO-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOIPL-4.8$(LIBLINKEXT)              $(LIBFLAG)itkgdcmopenjpeg-4.8$(LIBLINKEXT)	$(LIBFLAG)itkgdcmcharls-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkhdf5-4.8$(LIBLINKEXT) $(LIBFLAG)itkhdf5_cpp-4.8$(LIBLINKEXT) $(LIBFLAG)ITKIOHDF5-4.8$(LIBLINKEXT)
 endif
 
 #      
