@@ -94,12 +94,12 @@ ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
-clean:
+clean: veryclean
+
+veryclean:
 	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
 	for fn in *~; do /bin/rm -f $$fn;done
 	for fn in *.mod; do /bin/rm -f $$fn;done
-
-veryclean: clean
 	for fn in *.d; do /bin/rm -f $$fn; done
 	for fn in *.pdb; do /bin/rm -f $$fn; done
 	for fn in *.exp; do /bin/rm -f $$fn; done

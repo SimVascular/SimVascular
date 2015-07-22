@@ -27,14 +27,13 @@ flowsolverdocs:
 	-rm -f flowsolverdocs
 	-doxygen flowsolver.Doxyfile
 
-clean:
+clean: veryclean
+
+veryclean:
 	if [ -e sedscript ];then /bin/rm -f sedscript;fi
 	if [ -e useme.Doxyfile ];then /bin/rm -f useme.Doxyfile;fi
 	if [ -e cxx_html ];then /bin/rm -Rf cxx_html;fi
 	if [ -e tcl_html ];then /bin/rm -Rf tcl_html;fi
 	if [ -e flowsolverdocs ];then /bin/rm -Rf flowsolverdocs;fi
-
-
-veryclean: clean
 
 #

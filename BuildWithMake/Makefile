@@ -167,23 +167,7 @@ endif
 	-chmod a+rx mypost
 #	-rm -f sedscript
 
-clean:
-	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
-	  echo "cleaning directory ($$i)"; \
-	  if [ -e $$i ];then \
-	  cd $$i; \
-	  $(MAKE) NO_DEPEND=1 clean;fi ) ;done
-	for i in ${LIBDIRS}; do ( \
-	  echo "cleaning directory ($$i)"; \
-	  if [ -e $$i ];then \
-	  cd $$i; \
-	  $(MAKE) NO_DEPEND=1 clean;fi ) ; done
-	for i in ${EXECDIRS}; do ( \
-	  echo "cleaning directory ($$i)"; \
-	  if [ -e $$i ];then \
-	  cd $$i; \
-	  $(MAKE) NO_DEPEND=1 clean;fi ) ; done
-	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
+clean:  veryclean
 
 veryclean:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
