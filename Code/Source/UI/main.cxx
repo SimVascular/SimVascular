@@ -72,14 +72,16 @@ errno_t cv_getenv_s(
    const char *varname 
 ) {
   *pReturnValue = 0;
-  buffer[0]='\0';
   char *rtnstr = NULL;
   rtnstr = getenv(varname);
   if (rtnstr == NULL) {
     return 0;
   }
   *pReturnValue = strlen(rtnstr);
-  sprintf(buffer,rtnstr);
+  if (buffer != NULL) {
+    buffer[0]='\0';
+    sprintf(buffer,rtnstr);
+  }
   return 0;
 }
 #endif

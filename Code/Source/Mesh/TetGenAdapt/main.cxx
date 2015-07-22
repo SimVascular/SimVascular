@@ -60,14 +60,16 @@ errno_t cv_getenv_s(
    const char *varname 
 ) {
   *pReturnValue = 0;
-  buffer[0]='\0';
   char *rtnstr = NULL;
   rtnstr = getenv(varname);
   if (rtnstr == NULL) {
     return 0;
   }
   *pReturnValue = strlen(rtnstr);
-  sprintf(buffer,rtnstr);
+  if (buffer != NULL) {
+    buffer[0]='\0';
+    sprintf(buffer,rtnstr);
+  }
   return 0;
 }
 #endif
@@ -369,52 +371,6 @@ int main(int argc,char* argv[])
 
    //if( envvar != NULL )
      //printf( "New SIMVASCULAR_HOME variable is: %s\n", envvar );
-
-   //
-   //  P_SCHEMA
-   //
-
-   envvar[0]='\0';
-   getenv_s( &requiredSize, NULL, 0, "P_SCHEMA");
-   if (requiredSize >= 4096) {
-     fprintf(stderr,"FATAL ERROR:  p_schema to long!\n");
-     exit(-1);
-   }
-   if (requiredSize > 0) {
-     // Get the value of the p_schema environment variable.
-     getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
-
-     //if( envvar != NULL )
-     // printf( "Original P_SCHEMA variable is: %s\n", envvar );
-   }
-
-   // Attempt to change p_schema. Note that this only affects
-   // the environment variable of the current process. The command
-   // processor's environment is not changed.
-   
-   newvar[0]='\0';
-   sprintf(newvar,"%s/schema",lszValue2);
-   
-   TCHAR  shortpschema[1024]=TEXT(""); 
-   // convert to short filename without spaces
-   if(!GetShortPathName(newvar,shortpschema,1024)) {
-     // Handle an error condition.
-     printf ("GetFullPathName failed (%s) (%d)\n", newvar, GetLastError());
-    _putenv_s( "P_SCHEMA", newvar );
-   } else {
-     //fprintf(stdout,"ShortPathName (%s)\n",shortpschema);
-    _putenv_s( "P_SCHEMA", shortpschema );
-   }
- 
-   getenv_s( &requiredSize, NULL, 0, "P_SCHEMA");
-
-   envvar[0]='\0';
-
-   // Get the new value of the p_schema environment variable. 
-   getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
-
-   //if( envvar != NULL )
-   //   printf( "New P_SCHEMA variable is: %s\n", envvar );
 
 #endif
 
