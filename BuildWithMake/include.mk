@@ -74,7 +74,7 @@ FORTRAN_COMPILER_VERSION = ifort
 # set the value to something other than 1 in global_overrides.mk or 
 # via the make command line.
 
-MAKE_WITH_PARASOLID = 1
+MAKE_WITH_PARASOLID = 0
 
 # You can also exclude the SolidModel module entirely.  Be aware that
 # this leads to the exclusion of certain LevelSet functionality as
@@ -87,8 +87,9 @@ EXCLUDE_SOLID_MODEL = 0
 # Control inclusion of meshSim functions
 # --------------------------------------
 
-MAKE_WITH_MESHSIM = 1
-MAKE_WITH_MESHSIM_DISCRETE_MODEL = 1
+MAKE_WITH_MESHSIM = 0
+MAKE_WITH_MESHSIM_DISCRETE_MODEL = 0
+MAKE_WITH_MESHSIM_ADAPTOR = 0
 MESHSIM_USE_LICENSE_FILE = 1
 MESHSIM_EMBED_LICENSE_KEYS = 0
 MESHSIM_USE_SIMVASCULAR_USE_WIN32_REGISTRY = 0
@@ -130,7 +131,6 @@ MAKE_WITH_SOLVERIO = 1
 MAKE_WITH_THREEDSOLVER = 1
 MAKE_WITH_PRESOLVER = 1
 MAKE_WITH_POSTSOLVER = 1
-MAKE_WITH_MESHSIM_ADAPTOR = 1
 
 # -----------------------------------------------------
 # Compile Flowsolver Modules
