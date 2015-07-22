@@ -81,8 +81,11 @@ public:
   virtual ~cvAdaptObject();
 
   KernelType GetKernel() const {return adapt_kernel_;}
+  //Instantiation function for executable
   static cvAdaptObject* ExecutableAdaptObject(KernelType t);
+  //Instantiation function from SimVascular 
   static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL,KernelType t = KERNEL_TETGEN);
+  //Called after Insantiation, create a cvMeshObject
   int CreateInternalMesh(Tcl_Interp *interp);
   static KernelType gCurrentKernel;
   static cvFactoryRegistrar gRegistrar;
