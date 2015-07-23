@@ -28252,7 +28252,6 @@ proc guiBOUNDARIESfillWithIds {} {
   set guiPDvars(updatedSolid) 1
 }
 
-
 # Procedure: guiBOUNDARIESremeshSurfaces
 proc guiBOUNDARIESremeshSurfaces { sizeName} {
   global gOptions
