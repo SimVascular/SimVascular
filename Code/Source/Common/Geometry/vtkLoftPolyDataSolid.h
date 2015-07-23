@@ -120,6 +120,15 @@ public:
 
   vtkSetMacro(SplineType,int);
   vtkGetMacro(SplineType,int);
+  
+  vtkSetMacro(Bias,double);
+  vtkGetMacro(Bias,double);
+
+  vtkSetMacro(Continuity,double);
+  vtkGetMacro(Continuity,double);
+
+  vtkSetMacro(Tension,double);
+  vtkGetMacro(Tension,double);
 
 //ETX
 protected:
@@ -170,6 +179,10 @@ protected:
   int NumOutPtsInSegs;
   int NumOutPtsAlongLength;
   int SplineType;
+
+  double Bias;
+  double Continuity;
+  double Tension;
 
 private:
   vtkLoftPolyDataSolid(const vtkLoftPolyDataSolid&);  // Not implemented.

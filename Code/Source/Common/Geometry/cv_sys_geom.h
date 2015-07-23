@@ -123,7 +123,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts );
 
 int sys_geom_loft_solid(cvPolyData **srcs,int numSrcs,int useLinearSampleAlongLength,
 		int useFFT,int numOutPtsAlongLength, int numOutPtsInSegs,
-		int numLinearPtsAlongLength,int numModes,int splineType,cvPolyData **dst );
+		int numLinearPtsAlongLength,int numModes,int splineType,double bias,double tension, double continuity,cvPolyData **dst );
 
 int sys_geom_2DWindingNum( cvPolyData *pgn );
 

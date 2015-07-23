@@ -27658,6 +27658,7 @@ proc gui3DrunLS {} {
           set sample_per_segment $guiBOOLEANvars(sampling_along_length_multiplier)
           set addCaps          1
           set noInterOut       1
+	  set splineType       $guiBOOLEANvars(spline_type)
 
           set vecFlag 0
           set numOutPtsInSegs $sampling_default
@@ -27666,7 +27667,7 @@ proc gui3DrunLS {} {
           set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
 
           if {$numSegs > 1} {
-            polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength  $numPtsInLinearSampleAlongLength $useFFT $numModes $numOutPtsInSegs $numOutPtsAlongLength $addCaps 0 $inPD
+            polysolid_c_create_vessel_from_group $grp $vecFlag $useLinearSampleAlongLength  $numPtsInLinearSampleAlongLength $useFFT $numModes $numOutPtsInSegs $numOutPtsAlongLength $addCaps $splineType $inPD
             lappend initPDs $inPD
           }
         }
@@ -28115,6 +28116,7 @@ proc guiBOOLEANboolean {} {
   set sample_per_segment $guiBOOLEANvars(sampling_along_length_multiplier)
   set addCaps          $guiBOOLEANvars(add_caps_to_vessels)
   set tol              $guiBOOLEANvars(tolerance)
+  set splineType       $guiBOOLEANvars(spline_type)
 
   foreach grp $ordered_names {
 
@@ -28138,7 +28140,7 @@ proc guiBOOLEANboolean {} {
     set outPD /guiGROUPS/polydatasurface/$grp
     catch {repos_delete -obj $outPD}
 
-    polysolid_c_create_vessel_from_group $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
+    polysolid_c_create_vessel_from_group $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $splineType $outPD
 
   }
 
@@ -49097,6 +49099,9 @@ set {guiBOOLEANvars(spline_type)} {0}
 set {guiBOOLEANvars(tolerance)} {1e-6}
 set {guiBOOLEANvars(use_FFT)} {0}
 set {guiBOOLEANvars(use_linear_sampling_along_length)} {1}
+set {guiBOOLEANvars(bias)} {0}
+set {guiBOOLEANvars(tension)} {0}
+set {guiBOOLEANvars(continuity)} {0}
 global {guiCVIMGvars}
 set {guiCVIMGvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4)} {0}
 set {guiCVIMGvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4)} {0}

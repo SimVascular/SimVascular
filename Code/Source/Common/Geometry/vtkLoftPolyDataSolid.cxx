@@ -79,6 +79,9 @@ vtkLoftPolyDataSolid::vtkLoftPolyDataSolid()
   this->NumOutPtsAlongLength = 60;
 
   this->SplineType = 0;
+  this->Tension = 0;
+  this->Bias = 0;
+  this->Continuity = 0;
 }
 
 //----------------------------------------------------------------------------
@@ -309,33 +312,42 @@ int vtkLoftPolyDataSolid::FillInputPortInformation(
 int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
     vtkPolyData *outputPD)
 {
-  vtkSpline *splineX;
-  vtkSpline *splineY;
-  vtkSpline *splineZ;
-  if (this->SplineType == 0)
-  {
-    //vtkSmartPointer<vtkCardinalSpline> splineX = 
-    //  vtkSmartPointer<vtkCardinalSpline>::New();
-    //vtkSmartPointer<vtkCardinalSpline> splineY = 
-    //  vtkSmartPointer<vtkCardinalSpline>::New();
-    //vtkSmartPointer<vtkCardinalSpline> splineZ = 
-    //  vtkSmartPointer<vtkCardinalSpline>::New();
-    splineX = vtkCardinalSpline::New();
-    splineY = vtkCardinalSpline::New();
-    splineZ = vtkCardinalSpline::New();
-  }
-  else if (this->SplineType == 1) 
-  {
+  vtkKochanekSpline *splineX;
+  vtkKochanekSpline *splineY;
+  vtkKochanekSpline *splineZ;
+  //if (this->SplineType == 0)
+  //{
+  //  //vtkSmartPointer<vtkCardinalSpline> splineX = 
+  //  //  vtkSmartPointer<vtkCardinalSpline>::New();
+  //  //vtkSmartPointer<vtkCardinalSpline> splineY = 
+  //  //  vtkSmartPointer<vtkCardinalSpline>::New();
+  //  //vtkSmartPointer<vtkCardinalSpline> splineZ = 
+  //  //  vtkSmartPointer<vtkCardinalSpline>::New();
+  //  splineX = vtkCardinalSpline::New();
+  //  splineY = vtkCardinalSpline::New();
+  //  splineZ = vtkCardinalSpline::New();
+  //}
+  //else if (this->SplineType == 1) 
+  //{
     //vtkSmartPointer<vtkKochanekSpline> splineX = 
     //  vtkSmartPointer<vtkKochanekSpline>::New();
     //vtkSmartPointer<vtkKochanekSpline> splineY = 
     //  vtkSmartPointer<vtkKochanekSpline>::New();
     //vtkSmartPointer<vtkKochanekSpline> splineZ = 
     //  vtkSmartPointer<vtkKochanekSpline>::New();
-    splineX = vtkKochanekSpline::New();
+    splineX = vtkKochanekSpline::New(); 
+    splineX->SetDefaultBias(this->Bias); 
+    splineX->SetDefaultTension(this->Tension); 
+    splineX->SetDefaultContinuity(this->Continuity);
     splineY = vtkKochanekSpline::New();
+    splineY->SetDefaultBias(this->Bias); 
+    splineY->SetDefaultTension(this->Tension); 
+    splineY->SetDefaultContinuity(this->Continuity);
     splineZ = vtkKochanekSpline::New();
-  }
+    splineZ->SetDefaultBias(this->Bias); 
+    splineZ->SetDefaultTension(this->Tension); 
+    splineZ->SetDefaultContinuity(this->Continuity);
+  //}
        
   double t;
   double tmpPt[3];

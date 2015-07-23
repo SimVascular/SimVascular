@@ -482,8 +482,12 @@ proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLengt
       geom_sampleLoop -src $profile/aligned -num $numOutPtsInSegs -dst $profile/sample
       lappend all_segs $profile/sample
     }
+    global guiBOOLEANvars
+    set bias             $guiBOOLEANvars(bias)
+    set tension          $guiBOOLEANvars(tension)
+    set continuity       $guiBOOLEANvars(continuity)
 
-    geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD -splineType $splineType
+    geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD -splineType $splineType -bias $bias -tension $tension -continuity $continuity
 
     if {$addCaps} {
       polysolid_orient_closed_vessel $unorientedPD $outPD
