@@ -67,16 +67,17 @@
 // from the ABC.  And then, to use the abstraction, clients use
 // *pointers* or *references* to the ABC.  See Meyers' Effective C++,
 // Item 34.
-
 enum KernelType {
   KERNEL_INVALID,
   KERNEL_MESHSIM,
   KERNEL_TETGEN,
 };
 
+
 class cvAdaptObject : public cvRepositoryData {
 
 public:
+
   cvAdaptObject( KernelType t );
   virtual ~cvAdaptObject();
 
@@ -84,9 +85,9 @@ public:
   //Instantiation function for executable
   //static cvAdaptObject* ExecutableAdaptObject(KernelType t);
   //Instantiation function from SimVascular 
-  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL,KernelType t = KERNEL_TETGEN);
+  static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL, KernelType t = KERNEL_TETGEN);
   //Called after Insantiation, create a cvMeshObject
-  int CreateInternalMesh(Tcl_Interp *interp);
+  //int CreateMeshObject(Tcl_Interp *interp);
   static KernelType gCurrentKernel;
   static cvFactoryRegistrar gRegistrar;
 
@@ -123,8 +124,8 @@ public:
   virtual int WriteAdaptedSolution(char *fileName)=0;
   
 private:
-  KernelType adapt_kernel_;
   cvMeshObject *meshobject_;
+  KernelType adapt_kernel_;
 };
 
 #endif // _CVADAPTOBJECT_H

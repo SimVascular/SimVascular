@@ -61,10 +61,28 @@
 // Prototypes:
 // -----------
 
+int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
+int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
+		     int argc, CONST84 char *argv[] );
+int cvAdapt_PrintStatsCmd( ClientData clientData, Tcl_Interp *interp,
+		     int argc, CONST84 char *argv[] );
+
 // Adapt
 // -----
 int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
+
+static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
+				int argc, CONST84 char *argv[] );
+
+// Helper functions
+// ----------------
+
+static void gdscAdaptPrintMethods( Tcl_Interp *interp );
+
+void DeletegdscAdapt( ClientData clientData );
+
 
 // ----------
 // Adapt_Init
@@ -77,6 +95,12 @@ int Adapt_Init( Tcl_Interp *interp )
   Tcl_SetAssocData( interp, "AdaptObjectRegistrar", NULL, &cvAdaptObject::gRegistrar );
 
   Tcl_CreateCommand( interp, "adapt_registrars", Adapt_RegistrarsListCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+
+  //Callable tcl functions
+  Tcl_CreateCommand( interp, "adapt_newObject", cvAdapt_NewObjectCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "PrintStats", cvAdapt_PrintStatsMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   // Initialize
@@ -118,3 +142,138 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 // GetObject(name) method to get back object pointers for use inside
 // Tcl object method functions.
 
+int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
+		      int argc, CONST84 char *argv[] )
+{
+  char *resultName;
+  char *meshFileName = NULL;  
+  char *solidFileName = NULL;
+
+  char *usage;
+  char *kernelName;
+
+  int table_sz = 3;
+  ARG_Entry arg_table[] = {
+    { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
+    { "-meshfile", STRING_Type, &meshFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Make sure the specified result object does not exist:
+  if ( gRepository->Exists( resultName ) ) {
+    Tcl_AppendResult( interp, "object ", resultName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  kernelName = cvMeshSystem::GetCurrentKernelName();
+  // Instantiate the new mesh:
+  cvAdaptObject *adaptor;
+  //if (kernelName == "TetGen") {
+    Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
+    adaptor = cvAdaptObject::DefaultInstantiateAdaptObject( interp, KERNEL_TETGEN);
+    cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
+  //} else if (kernelName == "MeshSim") {
+  //  Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
+  //  adaptor = cvAdaptObject::DefaultInstantiateAdaptObject( interp, KERNEL_MESHSIM);
+  //  cvAdaptObject::gCurrentKernel = KERNEL_MESHSIM;
+  //} else {
+  //  Tcl_SetResult (interp, "invalid kernel name", TCL_VOLATILE);
+  //}
+
+  if ( adaptor == NULL ) {
+    return TCL_ERROR;
+  }
+
+  // Register the solid:
+  if ( !( gRepository->Register( resultName, adaptor ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", resultName,
+		      " in repository", (char *)NULL );
+    delete adaptor;
+    return TCL_ERROR;
+  }
+
+  // Make a new Tcl command:
+  Tcl_SetResult( interp, adaptor->GetName(), TCL_VOLATILE );
+  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvAdapt_ObjectCmd,
+		     (ClientData)adaptor, DeletegdscAdapt );
+
+  fprintf(stdout,"Printing Stats\n");
+  adaptor->PrintStats();
+  return TCL_OK;
+}
+
+// -------------
+// Adapt_Object
+// -------------
+int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
+		      int argc, CONST84 char *argv[] )
+{
+  if ( argc == 1 ) {
+    gdscAdaptPrintMethods( interp );
+    return TCL_OK;
+  }
+
+  if ( Tcl_StringMatch( argv[1], "PrintStats" ) ) {
+    if ( cvAdapt_PrintStatsMtd( clientData, interp, argc, argv ) != CV_OK ) {
+      return TCL_ERROR;
+    }
+  } else {
+    Tcl_AppendResult( interp, "\"", argv[1],
+		      "\" not a recognized cvMeshObject method", (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+// -------------
+// DeletegdscAdapt
+// -------------
+// This is the deletion call-back for cvAdaptObject object commands.
+
+void DeletegdscAdapt( ClientData clientData ) {
+    cvAdaptObject *geom = (cvAdaptObject *)clientData;
+  
+    gRepository->UnRegister( geom->GetName() );
+}
+
+// ------------
+// gdscAdaptPrintMethods
+// ------------
+
+static void gdscAdaptPrintMethods( Tcl_Interp *interp )
+{
+
+  tcl_printstr(interp, "PrintStats\n");
+  
+  return;
+}
+
+// ----------------
+// cvAdapt_PrintStatsMtd
+// ----------------
+
+static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] )
+{
+  cvAdaptObject *geom = (cvAdaptObject *)clientData;
+
+  if (geom->PrintStats() == CV_OK) {
+    return TCL_OK;
+  } else {
+    return TCL_ERROR;
+  }
+}

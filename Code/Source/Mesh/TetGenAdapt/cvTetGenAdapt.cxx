@@ -454,9 +454,15 @@ int cvTetGenAdapt::RunAdaptor()
 // -----------------------
 int cvTetGenAdapt::PrintStats()
 {
-  printf("-- Adaptation Done...\n");
-  printf(" Total # of elements: %d\n", outmesh_->GetNumberOfCells());
-  printf(" Total # of vertices: %d\n\n", outmesh_->GetNumberOfPoints());
+  fprintf(stdout,"-- Anythign Done...\n");
+  if (outmesh_ != NULL)
+  {
+    printf("-- Adaptation Done...\n");
+    printf(" Total # of elements: %d\n", outmesh_->GetNumberOfCells());
+    printf(" Total # of vertices: %d\n\n", outmesh_->GetNumberOfPoints());
+    return CV_OK;
+  }
+  fprintf(stdout,"-- Adaptation Done...\n");
   return CV_OK;
 }
 
@@ -570,7 +576,4 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
   delete [] solution;
   return CV_OK;
 }
-
-
-
 

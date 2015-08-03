@@ -97,6 +97,7 @@ public:
 
   cvAdaptObject *Copy() const;
   int Copy( const cvAdaptObject& src);
+  int CreateMeshObject(Tcl_Interp *interp);
 
   //Setup Operations
   int LoadModel(char *fileName);
