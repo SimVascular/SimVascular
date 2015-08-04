@@ -111,25 +111,3 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
   return adaptor;
 }
 
-//int cvAdaptObject::CreateMeshObject( Tcl_Interp *interp)
-//{
-//  adapt_kernel_ = cvAdaptObject::gCurrentKernel;
-//  char *dummy = NULL;
-//  if (adapt_kernel_ == KERNEL_TETGEN)
-//  {
-//    cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
-//    meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,dummy,dummy);
-//  }
-//  else if (adapt_kernel_ == KERNEL_MESHSIM)
-//  {
-//    cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("MeshSim");
-//    meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,dummy,dummy);
-//  }
-//  else
-//  {
-//    Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
-//    return CV_ERROR;
-//  }
-//
-//  return CV_OK;
-//}

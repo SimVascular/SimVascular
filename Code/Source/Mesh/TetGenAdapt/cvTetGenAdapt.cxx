@@ -50,6 +50,10 @@
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 
+#include "cvRepository.h"
+#include "cvRepositoryData.h"
+#include "cv_globals.h"
+
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>
@@ -61,6 +65,7 @@
 cvTetGenAdapt::cvTetGenAdapt() 
   : cvAdaptObject(KERNEL_TETGEN)
 {
+  meshobject_ = NULL;
   inmesh_  = NULL;
   outmesh_ = NULL;
   insurface_mesh_ = NULL;
@@ -119,6 +124,9 @@ cvTetGenAdapt::~cvTetGenAdapt()
     delete [] ybar_;
   if (hessians_ != NULL)
     delete [] hessians_;
+
+  if (meshobject_ != NULL)
+    delete meshobject_;
 }
 
 cvAdaptObject *cvTetGenAdapt::Copy() const
@@ -134,6 +142,36 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
   adaptPtr = (cvTetGenAdapt *)( &src );
 
   return CV_OK;
+}
+
+// -----------------------
+//  CreateInternalMeshObject
+// -----------------------
+int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
+{
+  char* mesh_name;
+  if (meshobject_ != NULL)
+  {
+    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
+    return CV_ERROR;
+  }
+
+  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
+  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,"dummy","dummy");
+  if ( meshobject_ == NULL ) {
+    return CV_ERROR;
+  }
+
+  // Register the solid:
+  // TODO ADD NAME WITH ADAPTOR_FILENAME
+  if ( !( gRepository->Register( "dummy_for_now", meshobject_ ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", mesh_name,
+		      " in repository", (char *)NULL );
+    delete meshobject_;
+    return CV_ERROR;
+  }
+
+ return CV_OK;
 }
 
 

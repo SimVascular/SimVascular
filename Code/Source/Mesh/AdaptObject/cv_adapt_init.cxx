@@ -65,8 +65,6 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] );
-int cvAdapt_PrintStatsCmd( ClientData clientData, Tcl_Interp *interp,
-		     int argc, CONST84 char *argv[] );
 
 // Adapt
 // -----
@@ -74,6 +72,8 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
 static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
+				int argc, CONST84 char *argv[] );
+static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
 
 // Helper functions
@@ -101,6 +101,8 @@ int Adapt_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "adapt_newObject", cvAdapt_NewObjectCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "PrintStats", cvAdapt_PrintStatsMtd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "CreateInternalMeshObject", cvAdapt_CreateInternalMeshObjectMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   // Initialize
@@ -146,17 +148,13 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
   char *resultName;
-  char *meshFileName = NULL;  
-  char *solidFileName = NULL;
 
   char *usage;
   char *kernelName;
 
-  int table_sz = 3;
+  int table_sz = 1;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-meshfile", STRING_Type, &meshFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -178,20 +176,21 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
+  KernelType meshType = KERNEL_INVALID;
   kernelName = cvMeshSystem::GetCurrentKernelName();
   // Instantiate the new mesh:
   cvAdaptObject *adaptor;
-  //if (kernelName == "TetGen") {
-    Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
-    adaptor = cvAdaptObject::DefaultInstantiateAdaptObject( interp, KERNEL_TETGEN);
+  if (!strcmp(kernelName,"TetGen")) {
+    meshType = KERNEL_TETGEN;
     cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
-  //} else if (kernelName == "MeshSim") {
-  //  Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
-  //  adaptor = cvAdaptObject::DefaultInstantiateAdaptObject( interp, KERNEL_MESHSIM);
-  //  cvAdaptObject::gCurrentKernel = KERNEL_MESHSIM;
-  //} else {
-  //  Tcl_SetResult (interp, "invalid kernel name", TCL_VOLATILE);
-  //}
+  } else if (!strcmp(kernelName,"MeshSim")) {
+    meshType = KERNEL_MESHSIM;
+    cvAdaptObject::gCurrentKernel = KERNEL_MESHSIM;
+  } else {
+    Tcl_SetResult (interp, "invalid kernel name", TCL_VOLATILE);
+  }
+  Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
+  adaptor = cvAdaptObject::DefaultInstantiateAdaptObject( interp, meshType);
 
   if ( adaptor == NULL ) {
     return TCL_ERROR;
@@ -210,8 +209,6 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvAdapt_ObjectCmd,
 		     (ClientData)adaptor, DeletegdscAdapt );
 
-  fprintf(stdout,"Printing Stats\n");
-  adaptor->PrintStats();
   return TCL_OK;
 }
 
@@ -230,9 +227,13 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     if ( cvAdapt_PrintStatsMtd( clientData, interp, argc, argv ) != CV_OK ) {
       return TCL_ERROR;
     }
+  } else if ( Tcl_StringMatch( argv[1], "CreateInternalMeshObject" ) ) {
+    if ( cvAdapt_CreateInternalMeshObjectMtd( clientData, interp, argc, argv ) != CV_OK ) {
+      return TCL_ERROR;
+    }
   } else {
     Tcl_AppendResult( interp, "\"", argv[1],
-		      "\" not a recognized cvMeshObject method", (char *)NULL );
+		      "\" not a recognized cvAdaptObject method", (char *)NULL );
     return TCL_ERROR;
   }
 
@@ -258,6 +259,7 @@ static void gdscAdaptPrintMethods( Tcl_Interp *interp )
 {
 
   tcl_printstr(interp, "PrintStats\n");
+  tcl_printstr(interp, "CreateInternalMeshObject\n");
   
   return;
 }
@@ -276,4 +278,48 @@ static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
   } else {
     return TCL_ERROR;
   }
+}
+
+// ----------------
+// cvAdapt_CreateInternalMeshObjectMtd
+// ----------------
+int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
+		      int argc, CONST84 char *argv[] )
+{
+// ----------------
+  char *resultName;
+  char *meshFileName = NULL;  
+  char *solidFileName = NULL;
+
+  char *usage;
+
+  int table_sz = 2;
+  ARG_Entry arg_table[] = {
+    { "-meshfile", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+  };
+  usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
+  if ( argc == 2 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 2,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  cvAdaptObject *geom = (cvAdaptObject *)clientData;
+  if ( geom == NULL ) {
+    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
+    return TCL_ERROR;
+  }
+  geom->CreateInternalMeshObject(interp);//, meshFileName, solidFileName );
+
+  // Make a new Tcl command:
+  Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
+
+  return TCL_OK;
 }

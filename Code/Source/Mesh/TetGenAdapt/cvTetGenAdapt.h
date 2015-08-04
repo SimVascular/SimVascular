@@ -97,7 +97,7 @@ public:
 
   cvAdaptObject *Copy() const;
   int Copy( const cvAdaptObject& src);
-  int CreateMeshObject(Tcl_Interp *interp);
+  int CreateInternalMeshObject(Tcl_Interp *interp);
 
   //Setup Operations
   int LoadModel(char *fileName);
@@ -128,6 +128,7 @@ public:
   int WriteAdaptedSolution(char *fileName);
 
 private:
+  cvMeshObject *meshobject_;
   vtkUnstructuredGrid *inmesh_;
   vtkUnstructuredGrid *outmesh_;
   vtkPolyData *insurface_mesh_;

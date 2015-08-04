@@ -87,7 +87,7 @@ public:
   //Instantiation function from SimVascular 
   static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL, KernelType t = KERNEL_TETGEN);
   //Called after Insantiation, create a cvMeshObject
-  //int CreateMeshObject(Tcl_Interp *interp);
+  virtual int CreateInternalMeshObject(Tcl_Interp *interp)=0;
   static KernelType gCurrentKernel;
   static cvFactoryRegistrar gRegistrar;
 
@@ -124,7 +124,6 @@ public:
   virtual int WriteAdaptedSolution(char *fileName)=0;
   
 private:
-  cvMeshObject *meshobject_;
   KernelType adapt_kernel_;
 };
 
