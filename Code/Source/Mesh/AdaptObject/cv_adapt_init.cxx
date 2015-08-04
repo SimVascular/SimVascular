@@ -97,8 +97,8 @@ static int cvAdapt_RunAdaptorMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
-static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
-				int argc, CONST84 char *argv[] );
+static int cvAdapt_GetAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
 static int cvAdapt_TransferSolutionMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *interp,
@@ -160,7 +160,7 @@ int Adapt_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
   Tcl_CreateCommand( interp, "PrintStats", cvAdapt_PrintStatsMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "CreateInternalMeshObject", cvAdapt_CreateInternalMeshObjectMtd,
+  Tcl_CreateCommand( interp, "GetAdaptedMesh", cvAdapt_GetAdaptedMeshMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "TransferSolution", cvAdapt_TransferSolutionMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
@@ -341,8 +341,8 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     if ( cvAdapt_PrintStatsMtd( clientData, interp, argc, argv ) != CV_OK ) {
       return TCL_ERROR;
     }
-  } else if ( Tcl_StringMatch( argv[1], "CreateInternalMeshObject" ) ) {
-    if ( cvAdapt_CreateInternalMeshObjectMtd( clientData, interp, argc, argv ) != CV_OK ) {
+  } else if ( Tcl_StringMatch( argv[1], "GetAdaptedMesh" ) ) {
+    if ( cvAdapt_GetAdaptedMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "TransferSolution" ) ) {
@@ -737,6 +737,10 @@ static int cvAdapt_SetupMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   return TCL_OK;
 }
+
+// ----------------
+// cvAdapt_RunAdaptorMtd
+// ----------------
 static int cvAdapt_RunAdaptorMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
@@ -767,47 +771,47 @@ static int cvAdapt_PrintStatsMtd( ClientData clientData, Tcl_Interp *interp,
 }
 
 // ----------------
-// cvAdapt_CreateInternalMeshObjectMtd
+// cvAdapt_GetAdaptedMeshMtd
 // ----------------
-int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
+int cvAdapt_GetAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
+  cvAdaptObject *geom = (cvAdaptObject *)clientData;
+
+  if (geom->GetAdaptedMesh() == CV_OK) {
+    return TCL_OK;
+  } else {
+    return TCL_ERROR;
+  }
+}
+
 // ----------------
-  char *resultName;
-  char *meshFileName = NULL;  
-  char *solidFileName = NULL;
+// cvAdapt_TransferSolutionMtd
+// ----------------
+int cvAdapt_TransferSolutionMtd( ClientData clientData, Tcl_Interp *interp,
+		      int argc, CONST84 char *argv[] )
+{
+  cvAdaptObject *geom = (cvAdaptObject *)clientData;
+
+  if (geom->TransferSolution() == CV_OK) {
+    return TCL_OK;
+  } else {
+    return TCL_ERROR;
+  }
+}
+
+// ----------------
+// cvAdapt_WriteAdaptedModelMtd
+// ----------------
+static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *fileName = NULL;
 
   char *usage;
 
-  int table_sz = 2;
+  int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-meshfile", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
-  };
-  usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
-  if ( argc == 2 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-			table_sz, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-
-  cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  if ( geom == NULL ) {
-    fprintf(stderr,"Adapt object should already be created! It is NULL\n");
-    return TCL_ERROR;
-  }
-  geom->CreateInternalMeshObject(interp);//, meshFileName, solidFileName );
-
-  // Make a new Tcl command:
-  Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
-
-  return TCL_OK;
     { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
@@ -835,6 +839,9 @@ int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *inte
   return TCL_OK;
 }
 
+// ----------------
+// cvAdapt_WriteAdaptedMeshMtd
+// ----------------
 static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
@@ -870,6 +877,10 @@ static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *inter
   Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
   return TCL_OK;
 }
+
+// ----------------
+// cvAdapt_WriteAdaptedSolutionMtd
+// ----------------
 static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
