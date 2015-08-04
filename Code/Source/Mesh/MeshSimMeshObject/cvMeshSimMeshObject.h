@@ -85,6 +85,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   cvMeshSimMeshObject( const cvMeshSimMeshObject& sm );  // copy constructor
   ~cvMeshSimMeshObject();
 
+  //Set mesh and model file locations
   int SetMeshFileName( const char* meshFileName );
   int SetSolidFileName( const char* solidFileName );
 
@@ -98,37 +99,39 @@ class cvMeshSimMeshObject : public cvMeshObject {
   // the copy command probably doesn't work right!
   cvMeshObject *Copy() const;
 
-  // create the mesh
+  // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
   
+  //Set mesh flags
   int SetSurfaceMeshFlag(int value);
-  int SetSurfaceOptimization(int value);
-  int SetSurfaceSmoothing(int value);
-
   int SetVolumeMeshFlag(int value);   
-  int SetVolumeOptimization(int value);
-  int SetVolumeSmoothing(int value);
   
+  //Set mesh sizes
   int SetGlobalSize(int type, double gsize);
   int SetLocalSize(int type, int id, double size);
 
+  //Set curve sizes and other mesh options
   int SetGlobalCurv(int type, double size);
   int SetLocalCurv(int type, int id, double size);
   int SetGlobalMinCurv(int type, double size);
   int SetLocalMinCurv(int type, int id, double size);
+  int SetMeshOptions(char *flags, double value) {return CV_ERROR;}
+
+  //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
   int SetWalls(int numWalls, int *walls) {return CV_ERROR;}
-  int SetMeshOptions(char *flags, double value) {return CV_ERROR;}
   
+  //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
                             double* center, double *normal);
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size, char *filename) 
     {return CV_ERROR;}
 
+  //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();
   int WriteMesh(char *filename, int smsver);
   int WriteStats(char *filename);
@@ -136,7 +139,6 @@ class cvMeshSimMeshObject : public cvMeshObject {
   //int DeleteModel();
       
   // output visualization files
-  int WriteDataExplorer (char *filename) {return CV_ERROR;}
   int WriteMetisAdjacency (char *filename);
   
   // general queries
@@ -152,12 +154,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   cvPolyData* GetFacePolyData (int orgfaceid);
   int GetModelFaceInfo(char rtnstr[99999]);
   
-  int GetElementsInModelRegion (int region, char* filename);
-
   int GetExteriorElementFacesOnRegion (int region, char* filename);
-  
-  // change elements
-  int GenerateQuadraticElements ();
 
   // helper routines
   int FindFaceNumber (pRegion region, int pseudofaceID, int *facenum);
@@ -173,6 +170,9 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int getIdentForFaceId(int orgfaceid, int *faceID);
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
+
+  //Adapt function
+  int Adapt();
 
   private:
 

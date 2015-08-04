@@ -1755,3 +1755,16 @@ int cvTetGenMeshObject::ResetOriginalRegions(std::string newName,std::string ori
  return CV_OK;   
 }
 
+// --------------------
+//  Adapt
+// --------------------
+/** 
+ * @brief Function to Adapt Mesh based on input adaption features etc.
+ * @return CV_OK if adaptions performs correctly
+ */
+int cvTetGenMeshObject::Adapt()
+{ 
+  fprintf(stdout,"TetGen Adapt what what!\n");
+
+  return CV_OK;
+}

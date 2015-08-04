@@ -91,6 +91,7 @@ class cvTetGenMeshObject : public cvMeshObject {
 
   ~cvTetGenMeshObject();
 
+  //Set mesh and model file locations
   int SetMeshFileName( const char* meshFileName );
   int SetSolidFileName( const char* solidFileName );
 
@@ -98,42 +99,43 @@ class cvTetGenMeshObject : public cvMeshObject {
   int Print();
   cvMeshObject *Copy() const;
 
+  // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
   int GetBoundaryFaces(double angle);
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
 
+  //Set mesh flags
   int SetSurfaceMeshFlag(int value);
-  int SetSurfaceOptimization(int value) {return CV_ERROR;}
-  int SetSurfaceSmoothing(int value) {return CV_ERROR;}
-
   int SetVolumeMeshFlag(int value);   
-  int SetVolumeOptimization(int value) {return CV_ERROR;}
-  int SetVolumeSmoothing(int value) {return CV_ERROR;}
 
+  //Set mesh sizes
   int SetGlobalSize(int type, double gsize) {return CV_ERROR;}
   int SetLocalSize(int type, int id, double size);
 
+  //Set curve sizes and other mesh options
   int SetGlobalCurv(int type, double size) {return CV_ERROR;}
   int SetLocalCurv(int type, int id, double size) {return CV_ERROR;}
   int SetGlobalMinCurv(int type, double size) {return CV_ERROR;}
   int SetLocalMinCurv(int type, int id, double size) {return CV_ERROR;}
   int SetMeshOptions(char *flags,double value);
  
+  //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H); 
   int SetWalls(int numWalls,int *walls); 
   
+  //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
                             double* center, double *normal) {return CV_ERROR;}
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size,char *sizefunctionname);
 
+  //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();
   int WriteMesh(char *filename, int smsver);
   int WriteStats(char *filename);
 
   // output visualization files
-  int WriteDataExplorer (char *filename) {return CV_ERROR;}
   int WriteMetisAdjacency (char *filename);
 
   // general queries
@@ -149,12 +151,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename) {return CV_ERROR;}
   cvPolyData* GetFacePolyData (int orgfaceid);
 
-  int GetElementsInModelRegion (int region, char* filename) {return CV_ERROR;}
-
   int GetExteriorElementFacesOnRegion (int region, char* filename) {return CV_ERROR;} 
-  
-  // change elements
-  int GenerateQuadraticElements () {return CV_ERROR;}
 
   void initNodeTraversal() {return;} 
   void initElementTraversal() {return;} 
@@ -173,6 +170,9 @@ class cvTetGenMeshObject : public cvMeshObject {
   int GenerateMeshSizingFunction();
   int AppendBoundaryLayerMesh();
   int ResetOriginalRegions(std::string originalName,std::string newName);
+
+  //Adapt Function
+  int Adapt();
 
   private:
   char meshFileName_[MAXPATHLEN];

@@ -359,57 +359,6 @@ int cvMeshSimMeshObject::Update() {
   
 }
 
-
-int cvMeshSimMeshObject::GenerateQuadraticElements () {
-
-//
-//  do I just need to skip this???
-//
-
-#ifdef SKIP_GENERATE_QUAD_ELEMENTS
-  // do not recreate midpoint nodes if they already exist.
-  if (quadElem_ == 1) return CV_OK;
-
-  int num_verts = M_numVertices (mesh);
-  
-  // The following code creates midpoints nodes on each element.
-  // This is a "poor mans" quadratic element,
-  
-  //  Code to create isoparametric quadratic elements
-  void *tmp = 0;
-  MEdge *edge;
-  Point *pnt;
-  double d = 0.0, p1[3], p2[3], p0[3];
-  int nodenum = num_verts+1;
- 
-  //For each edge - create a point at the mid point
-  for (;edge = M_nextEdge(mesh, &tmp);) {
-    // Find the mid point location
-    V_coord(E_vertex(edge, 0) , p0);
-    V_coord(E_vertex(edge, 1) , p1);
-    
-    p2[0] = 0.5 * (p0[0] + p1[0]);
-    p2[1] = 0.5 * (p0[1] + p1[1]);
-    p2[2] = 0.5 * (p0[2] + p1[2]);
-
-    pnt = P_new();
-    P_setPos(pnt, p2[0], p2[1], p2[2]);
-    P_setID(pnt,nodenum);
-    nodenum++;
-    numNodes_++;
-    E_setPoint(edge, pnt);
-  }
-
-  quadElem_ = 1;
-
-  return CV_OK;
-#endif
-
-  return CV_ERROR;
-
-}
-
-
 int cvMeshSimMeshObject::GetElementConnectivity(int element) {
 
   int i, k;
@@ -1328,33 +1277,6 @@ int cvMeshSimMeshObject::SetSurfaceMeshFlag(int value) {
 
 }
 
-int cvMeshSimMeshObject::SetSurfaceOptimization(int value) {
-
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  meshoptions_.surface_optimization=value;
-  //MS_setSurfaceOptimization(mesh,value);
-  return CV_OK;
-
-}
-
-int cvMeshSimMeshObject::SetSurfaceSmoothing(int value) {
-
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  // this option is ignored as of version 7.1
-  meshoptions_.surface_smoothing=value;
-  //MS_setSurfaceSmoothing(mesh,value);
-  return CV_OK;
-
-}
-
 int cvMeshSimMeshObject::SetVolumeMeshFlag(int value) {
 
   // must have created mesh
@@ -1364,33 +1286,6 @@ int cvMeshSimMeshObject::SetVolumeMeshFlag(int value) {
 
   // flag currently ignored
   meshoptions_.volume=value;
-  return CV_OK;
-
-}
-
-int cvMeshSimMeshObject::SetVolumeOptimization(int value) {
-
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  meshoptions_.surface_optimization=value;
-  //MS_setVolumeOptimization(mesh,value);
-  return CV_OK;
-
-}
-
-int cvMeshSimMeshObject::SetVolumeSmoothing(int value) {
-
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  // flag currently ignored
-  meshoptions_.volume_smoothing=value;
-  //MS_setVolumeSmoothing(mesh,value);
   return CV_OK;
 
 }
@@ -1668,95 +1563,6 @@ int cvMeshSimMeshObject::SetBoundaryLayer(int type, int id, int side, int nL, do
 
   MS_setBoundaryLayer(case_,pid,side,type,nL,H,mixed,blends,propagate);
   return CV_OK;
-}
-
-//-------------------------
-// Boundary Condition stuff
-
-int cvMeshSimMeshObject::GetElementsInModelRegion (int orgRegionID, char* filename) {
- 
-  // get the region id
-  int regionID = 0;
-
-  if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
-
-#ifdef USE_PARASOLID
-    regionID = GEN_tag(GEN_getGEntityFromParasolidEntity(model,(PK_ENTITY_t)orgRegionID));
-#else
-    return CV_ERROR;
-#endif
-
-  } else {
-
-    return CV_ERROR;
-
-  }
-
-  char elem[255];
-
-  // check and make sure the region exists
-  int foundRegion = 0;
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-      if (regionID == curMdlRegID_) {
-        foundRegion = 1;
-        break;
-      }
-  }
-
-  if (foundRegion == 0) {
-    fprintf(stderr,"ERROR:  Could not find region %i.\n",regionID);
-    return CV_ERROR;
-  }
-
-  if (filename != NULL) {
-    // open the output file 
-    if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-  }
-
-  // output the elements and connectivity in the given region
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    if (regionID == curMdlRegID_) {
-      initElementTraversal();
-      if (quadElem_ == 0) {
-        while (getNextElement() == 1) {
-          if (filename != NULL) {
-            gzprintf(fp_,"%d %d %d %d %d\n",curElemID_, connID_[0],connID_[1],
-                                            connID_[2],connID_[3]);
-          } else {
-            elem[0] = '\0'; 
-            sprintf(elem,"%d %d %d %d %d",curElemID_, connID_[0],connID_[1],
-                                            connID_[2],connID_[3]);
-            Tcl_AppendElement(interp_, elem);
-          }
-        }
-      } else {
-        while (getNextElement() == 1) {
-          if (filename != NULL) {
-            gzprintf(fp_,"%d %d %d %d %d %d %d %d %d %d %d\n",curElemID_, 
-                                       connID_[0],connID_[1],connID_[2],connID_[3],
-                                       connID_[4],connID_[5],connID_[6],connID_[7],
-                                       connID_[8],connID_[9]);
-          } else {
-            elem[0] = '\0'; 
-            sprintf(elem,"%d %d %d %d %d %d %d %d %d %d %d",curElemID_, 
-                                       connID_[0],connID_[1],connID_[2],connID_[3],
-                                       connID_[4],connID_[5],connID_[6],connID_[7],
-                                       connID_[8],connID_[9]);
-            Tcl_AppendElement(interp_, elem);
-          }
-        }
-      }
-    }
-  }
-
-  if (filename != NULL) { 
-    return closeOutputFile();
-  } else {
-    return CV_OK;
-  }
-
 }
 
 int  cvMeshSimMeshObject::GetElementFacesOnModelFace (int orgfaceid, int explicitFaceOut, char* filename) {
@@ -2361,4 +2167,18 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
 
   return num_nodes;
 
+}
+
+// --------------------
+//  Adapt
+// --------------------
+/** 
+ * @brief Function to Adapt Mesh based on input adaption features etc.
+ * @return CV_OK if adaptions performs correctly
+ */
+int cvMeshSimMeshObject::Adapt()
+{ 
+  fprintf(stdout,"MeshSim Adapt what what!\n");
+
+  return CV_OK;
 }
