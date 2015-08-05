@@ -170,6 +170,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int getIdentForFaceId(int orgfaceid, int *faceID);
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
+  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
 
   //Adapt function
   int Adapt();

@@ -279,6 +279,7 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvAdapt_ObjectCmd,
 		     (ClientData)adaptor, DeletegdscAdapt );
 
+  fprintf(stderr,"Looks as if creation worked correctly!\n");
   return TCL_OK;
 }
 
@@ -294,79 +295,79 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( Tcl_StringMatch( argv[1], "CreateInternalMeshObject" ) ) {
-    if ( cvAdapt_CreateInternalMeshObjectMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_CreateInternalMeshObjectMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "LoadModel" ) ) {
-    if ( cvAdapt_LoadModelMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_LoadModelMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "LoadMesh" ) ) {
-    if ( cvAdapt_LoadMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_LoadMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "LoadSolutionFromFile" ) ) {
-    if ( cvAdapt_LoadSolutionFromFileMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_LoadSolutionFromFileMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "LoadYbarFromFile" ) ) {
-    if ( cvAdapt_LoadYbarFromFileMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_LoadYbarFromFileMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "LoadHessianFromFile" ) ) {
-    if ( cvAdapt_LoadHessianFromFileMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_LoadHessianFromFileMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "ReadSolutionFromMesh" ) ) {
-    if ( cvAdapt_ReadSolutionFromMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_ReadSolutionFromMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "ReadYbarFromMesh" ) ) {
-    if ( cvAdapt_ReadYbarFromMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_ReadYbarFromMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "SetAdaptOptions" ) ) {
-    if ( cvAdapt_SetAdaptOptionsMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_SetAdaptOptionsMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "CheckOptions" ) ) {
-    if ( cvAdapt_CheckOptionsMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_CheckOptionsMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "SetErrorMetric" ) ) {
-    if ( cvAdapt_SetErrorMetricMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_SetErrorMetricMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "SetupMesh" ) ) {
-    if ( cvAdapt_SetupMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_SetupMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "RunAdaptor" ) ) {
-    if ( cvAdapt_RunAdaptorMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_RunAdaptorMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "PrintStats" ) ) {
-    if ( cvAdapt_PrintStatsMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_PrintStatsMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "GetAdaptedMesh" ) ) {
-    if ( cvAdapt_GetAdaptedMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_GetAdaptedMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "TransferSolution" ) ) {
-    if ( cvAdapt_TransferSolutionMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_TransferSolutionMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "WriteAdaptedModel" ) ) {
-    if ( cvAdapt_WriteAdaptedModelMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_WriteAdaptedModelMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "WriteAdaptedMesh" ) ) {
-    if ( cvAdapt_WriteAdaptedMeshMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_WriteAdaptedMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "WriteAdaptedSolution" ) ) {
-    if ( cvAdapt_TransferSolutionMtd( clientData, interp, argc, argv ) != CV_OK ) {
+    if ( cvAdapt_TransferSolutionMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else {
@@ -742,6 +743,7 @@ static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp
     return TCL_ERROR;
   }
 
+  fprintf(stderr,"At end of Init Adapt Options\n");
   return TCL_OK;
 }
 

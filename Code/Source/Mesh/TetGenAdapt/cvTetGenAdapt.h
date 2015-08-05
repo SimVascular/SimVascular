@@ -49,7 +49,6 @@
 
 #include "cvAdaptObject.h"
 //#include "cvRepositoryData.h"
-#include "simvascular_tetgen.h"
 
 #ifdef USE_ZLIB
 #include "simvascular_zlib.h"
@@ -130,12 +129,7 @@ public:
 private:
   cvMeshObject *meshobject_;
   vtkUnstructuredGrid *inmesh_;
-  vtkUnstructuredGrid *outmesh_;
   vtkPolyData *insurface_mesh_;
-  vtkPolyData *outsurface_mesh_;
-
-  tetgenio mesher_input_;
-  tetgenio mesher_output_;
 
   vtkDoubleArray *sol_array_;
   vtkDoubleArray *ybar_array_;

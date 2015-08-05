@@ -81,6 +81,7 @@ class cvTetGenMeshObject : public cvMeshObject {
     int functionbasedmeshing;
     int secondarrayfunction;
     int meshwallfirst;
+    int startwithvolume;
   } TGoptions;
 
   public:
@@ -162,6 +163,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   int getNeighborMdlRegIds() {return CV_ERROR;} 
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData);
+  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug);
 
   //These are helper functions for some of the more complicated mesh options
   int GenerateSurfaceRemesh();
@@ -187,6 +189,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   tetgenio *inmesh_;
   tetgenio *outmesh_;
   vtkPolyData *polydatasolid_;
+  vtkUnstructuredGrid *inputug_;
 
   vtkPolyData *originalpolydata_;
   vtkPolyData *surfacemesh_;

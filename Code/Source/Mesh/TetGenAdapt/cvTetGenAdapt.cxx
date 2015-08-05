@@ -67,9 +67,7 @@ cvTetGenAdapt::cvTetGenAdapt()
 {
   meshobject_ = NULL;
   inmesh_  = NULL;
-  outmesh_ = NULL;
   insurface_mesh_ = NULL;
-  outsurface_mesh_ = NULL;
 
   options.poly_ = 1;
   options.strategy_ = 1;
@@ -80,9 +78,6 @@ cvTetGenAdapt::cvTetGenAdapt()
   options.instep_ = 0;
   options.outstep_ = 0;
   options.ndof_=5;
-
-  mesher_input_.firstnumber = 0;
-  mesher_output_.firstnumber = 0;
 
   sol_array_ = NULL;
   hessians_array_ = NULL;
@@ -102,43 +97,27 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 
 cvTetGenAdapt::~cvTetGenAdapt()
 {
-  fprintf(stderr,"Tell Me where I am\n");
   if (inmesh_ != NULL)
     inmesh_->Delete();
-  fprintf(stderr,"dying\n");
-  if (outmesh_ != NULL)
-    outmesh_->Delete();
-  fprintf(stderr,"please\n");
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
-  fprintf(stderr,"It \n");
-  if (outsurface_mesh_ != NULL)
-    outsurface_mesh_->Delete();
-  fprintf(stderr,"would\n");
 
   if (sol_array_ != NULL)
     sol_array_->Delete();
-  fprintf(stderr,"be\n");
   if (hessians_array_ != NULL)
     hessians_array_->Delete();
-  fprintf(stderr,"the\n");
   if (ybar_array_ != NULL)
     ybar_array_->Delete();
-  fprintf(stderr,"most\n");
 
   if (sol_ != NULL)
     delete [] sol_;
-  fprintf(stderr,"helpful\n");
   if (ybar_ != NULL)
     delete [] ybar_;
-  fprintf(stderr,"thing\n");
   if (hessians_ != NULL)
     delete [] hessians_;
-  fprintf(stderr,"on\n");
 
   if (meshobject_ != NULL)
-    delete meshobject_;
-  fprintf(stderr,"this planet\n");
+    gRepository->UnRegister(meshobject_->GetName());
 }
 
 cvAdaptObject *cvTetGenAdapt::Copy() const
@@ -161,7 +140,7 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 // -----------------------
 int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
 {
-  char* mesh_name;
+  char* mesh_name = NULL;
   if (meshobject_ != NULL)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
@@ -171,17 +150,24 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,"dummy","dummy");
   if ( meshobject_ == NULL ) {
+    fprintf(stderr,"Mesh Object is null after instantiation!\n");
     return CV_ERROR;
   }
 
+  mesh_name = "/adapt/internal/meshobject";
+
+  // TODO: Previously had this, but was causing crashing after a few runs.
+  // Didn't check and unregister if didn't work, crashing gone. This 
+  // doesn't seem good. Need to figure out what is really happening.
   // Register the solid:
-  // TODO ADD NAME WITH ADAPTOR_FILENAME
-  if ( !( gRepository->Register( "dummy_for_now", meshobject_ ) ) ) {
-    Tcl_AppendResult( interp, "error registering obj ", mesh_name,
-		      " in repository", (char *)NULL );
-    delete meshobject_;
-    return CV_ERROR;
-  }
+  //if ( !( gRepository->Register(mesh_name, meshobject_ ) ) ) {
+  //  Tcl_AppendResult( interp, "error registering obj ", mesh_name,
+  //      	      " in repository", (char *)NULL );
+  //  fprintf(stderr,"Error when registering\n");
+  //  int unreg_status = gRepository->UnRegister( mesh_name );
+  //  return CV_ERROR;
+  //}
+  gRepository->Register(mesh_name, meshobject_ );
 
  return CV_OK;
 }
@@ -337,6 +323,7 @@ int cvTetGenAdapt::ReadYbarFromMesh()
  */
 int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
 {
+  fprintf(stderr,"At beginning of options\n");
   if (!strncmp(flag,"poly",4)) {
     options.poly_ = (int) value;
   }
@@ -368,6 +355,8 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
     fprintf(stderr,"Flag given is not a valid adapt option\n");
     return CV_ERROR;
   }
+
+  fprintf(stderr,"At end of options\n");
   return CV_OK;
 }
 
@@ -426,7 +415,7 @@ int cvTetGenAdapt::SetErrorMetric()
     else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
       // use the hessians computed from phasta
     }
-    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,&mesher_input_,options.ratio_,options.hmax_,options.hmin_) != CV_OK)
+    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_) != CV_OK)
     {
         fprintf(stderr,"Error: Error when setting size field with hessians\n");
         return CV_ERROR;
@@ -471,17 +460,16 @@ int cvTetGenAdapt::SetupMesh()
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
     return CV_ERROR;
   }
-  //if (sol_ == NULL)
-  //{
-  //  fprintf(stderr,"ERROR: Solution must be loaded prior to runnin the adaptor\n");
-  //  return CV_ERROR;
-  //}
-
-  if (AdaptUtils_convertToTetGen(inmesh_,insurface_mesh_,&mesher_input_) != CV_OK)
+  if (meshobject_ == NULL)
   {
-    fprintf(stderr,"Conversion to TetGen failed\n");
+    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
     return CV_ERROR;
   }
+
+  meshobject_->SetVtkPolyDataObject(insurface_mesh_);
+  meshobject_->SetInputUnstructuredGrid(inmesh_);
+  meshobject_->SetMeshOptions("r",1.0);
+  meshobject_->NewMesh();
 
   return CV_OK;
 }
@@ -496,17 +484,9 @@ int cvTetGenAdapt::RunAdaptor()
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
     return CV_ERROR;
   }
-  //if (sol_ == NULL)
-  //{
-  //  fprintf(stderr,"ERROR: Solution must be loaded prior to runnin the adaptor\n");
-  //  return CV_ERROR;
-  //}
 
-  if (AdaptUtils_runAdaptor(&mesher_input_,&mesher_output_) != CV_OK)
-  {
-    fprintf(stderr,"ERROR: Adapting mesh failed\n");
-    return CV_ERROR;
-  }
+  meshobject_->Adapt();
+  meshobject_->WriteMesh("dummy",0);
 
   return CV_OK;
 }
@@ -516,15 +496,7 @@ int cvTetGenAdapt::RunAdaptor()
 // -----------------------
 int cvTetGenAdapt::PrintStats()
 {
-  fprintf(stdout,"-- Anythign Done...\n");
-  if (outmesh_ != NULL)
-  {
-    printf("-- Adaptation Done...\n");
-    printf(" Total # of elements: %d\n", outmesh_->GetNumberOfCells());
-    printf(" Total # of vertices: %d\n\n", outmesh_->GetNumberOfPoints());
-    return CV_OK;
-  }
-  fprintf(stdout,"-- Adaptation Done...\n");
+  fprintf(stdout,"TODO\n");
   return CV_OK;
 }
 
@@ -533,25 +505,7 @@ int cvTetGenAdapt::PrintStats()
 // -----------------------
 int cvTetGenAdapt::GetAdaptedMesh()
 {
-  if (outmesh_ != NULL)
-    outmesh_->Delete();
-  if (outsurface_mesh_ != NULL)
-    outsurface_mesh_->Delete();
-
-  outmesh_ = vtkUnstructuredGrid::New();
-  outsurface_mesh_ = vtkPolyData::New();
-  if (AdaptUtils_convertToVTK(outmesh_,outsurface_mesh_,&mesher_output_) != CV_OK)
-  {
-    fprintf(stderr,"ERROR: Conversion to vtk structures failed");
-    return CV_ERROR;
-  }
-  
-  if (AdaptUtils_modelFaceIDTransfer(insurface_mesh_,outsurface_mesh_) != CV_OK)
-  {
-    fprintf(stderr,"ERROR: Model ID information transfer failed");
-    return CV_ERROR;
-  }
-
+  fprintf(stdout,"TODO!\n");
   return CV_OK;
 }
 
@@ -560,23 +514,13 @@ int cvTetGenAdapt::GetAdaptedMesh()
 // -----------------------
 int cvTetGenAdapt::TransferSolution()
 {
-  if (inmesh_ == NULL)
-  {
-    fprintf(stderr,"ERROR: Need input mesh to be able to transfer solution\n");
-    return CV_ERROR;
-  }
-  if (outmesh_ == NULL)
-  {
-    fprintf(stderr,"ERROR: Need output mesh to be able to transfer solution\n");
-    return CV_ERROR;
-  }
+  //if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.ndof_) != CV_OK)
+  //{
+  //  fprintf(stderr,"ERROR: Solution was not transferred\n");
+  //  return CV_ERROR;
+  //}
 
-  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.ndof_) != CV_OK)
-  {
-    fprintf(stderr,"ERROR: Solution was not transferred\n");
-    return CV_ERROR;
-  }
-
+  fprintf(stdout,"TODO!\n");
   return CV_OK;
 }
 
@@ -586,17 +530,7 @@ int cvTetGenAdapt::TransferSolution()
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 {
-  if (outsurface_mesh_ == NULL)
-  {
-    fprintf(stderr,"ERROR: Need an existing output surface mesh to write\n");
-    return CV_ERROR;
-  }
-  vtkSmartPointer<vtkXMLPolyDataWriter> pdwriter =
-    vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-  pdwriter->SetInputData(outsurface_mesh_);
-  pdwriter->SetFileName(fileName);
-  pdwriter->Write();
-
+  fprintf(stdout,"TODO!\n");
   return CV_OK;
 }
 
@@ -605,18 +539,7 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 {
-  if (outmesh_ == NULL)
-  {
-    fprintf(stderr,"ERROR: Need an existing output mesh to write\n");
-    return CV_ERROR;
-  }
-  printf("\n Writing out the mesh...\n\n");
-  vtkSmartPointer<vtkXMLUnstructuredGridWriter> ugwriter =
-    vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-  ugwriter->SetInputData(outmesh_);
-  ugwriter->SetFileName(fileName);
-  ugwriter->Write();
-
+  fprintf(stdout,"TODO!\n");
   return CV_OK;
 }
 
@@ -625,19 +548,12 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 {
+  fprintf(stdout,"TODO!\n");
+  //int numPoints = outmesh_->GetNumberOfPoints();
+  //AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
+  //    options.ndof_,options.outstep_,solution);
 
-  double *solution;
-  if (AdaptUtils_getAttachedArray(solution,outmesh_,"solution",
-	options.ndof_,options.poly_) != CV_OK)
-  {
-    fprintf(stderr,"ERROR: Could not attach solution to mesh\n");
-    return CV_ERROR;
-  }
-  int numPoints = outmesh_->GetNumberOfPoints();
-  AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
-      options.ndof_,options.outstep_,solution);
-
-  delete [] solution;
+  //delete [] solution;
   return CV_OK;
 }
 

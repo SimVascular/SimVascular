@@ -637,7 +637,6 @@ double AdaptUtils_getErrorValue(double *nodalValues, int option) {
  * @param hmin This is the minimum edge length acceptable for the mesh
  */
 int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
-			       tetgenio *inmesh,
 			       double factor,
 			       double hmax,
 			       double hmin)
@@ -670,8 +669,12 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   // mesh sizes and directional information
   Hessian *hess = new Hessian[nshg];
 
-  inmesh->numberofpointmtrs = 3;
-  inmesh->pointmtrlist = new REAL[nshg*inmesh->numberofpointmtrs];
+  vtkSmartPointer<vtkDoubleArray> errorMetricArray = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+  errorMetricArray->SetNumberOfComponents(3);
+  errorMetricArray->Allocate(nshg,10000);
+  errorMetricArray->SetNumberOfTuples(nshg);
+  errorMetricArray->SetName("errormetric");
 
   i=0;
   for (pointId=0;pointId<nshg;pointId++)
@@ -821,7 +824,7 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
 
     for (j=0;j<3;j++)
     {
-      inmesh->pointmtrlist[i*3+j] = ABS(hess[i].h[j]);
+      errorMetricArray->SetComponent(i,j,ABS(hess[i].h[j]));
     }
     
     i++;
@@ -832,6 +835,9 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   fprintf(stderr,"Nodes ignored in boundary layer : %.4f\n",bdryNumNodes);;
 
   delete [] hess;
+
+  mesh->GetPointData()->AddArray(errorMetricArray);
+  mesh->GetPointData()->SetActiveScalars("errormetric");
 
   return CV_OK;
 }
@@ -923,74 +929,6 @@ double AdaptUtils_E_error(double xyz[2][3], double H[3][3])
 }
 
 // -----------------------------
-// convertToTetGen()
-// -----------------------------
-/** 
- * @brief Function to convert the current mesh to a tetgen mesh object to be
- * able to remesh
- * @param mesh This is the full mesh to be remeshed
- * @param surfaceMesh This is the intial mesh; If we don't need the final 
- * mesh regions, then we don't have to actually use this
- * @param inmesh This is the tegen mesh object to be transferred to
- */
-
-int AdaptUtils_convertToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *inmesh)
-{
-  int numTets,numPolys;
-  int numPoints,numSurfacePoints;
-  double tetPts[3];
-  tetgenio::facet *f;
-  tetgenio::polygon *p;
-  vtkIdType i,j;
-  vtkIdType npts = 0;
-  vtkIdType *pts = 0;
-  vtkIdType cellId;
-  vtkSmartPointer<vtkPoints> uPoints = vtkSmartPointer<vtkPoints>::New();
-  vtkSmartPointer<vtkCellArray> pPolys = vtkSmartPointer<vtkCellArray>::New();
-  vtkSmartPointer<vtkCellArray> uTets = vtkSmartPointer<vtkCellArray>::New();
-  vtkSmartPointer<vtkIntArray> boundaryScalars = 
-	  vtkSmartPointer<vtkIntArray>::New();
-
-  mesh->BuildLinks();
-  numTets = mesh->GetNumberOfCells();
-  numPoints = mesh->GetNumberOfPoints();
-  uPoints = mesh->GetPoints();
-  uTets = mesh->GetCells();
-
-  numSurfacePoints = surfaceMesh->GetNumberOfPoints();
-  numPolys = surfaceMesh->GetNumberOfPolys();
-  pPolys = surfaceMesh->GetPolys();
-  boundaryScalars = vtkIntArray::SafeDownCast(surfaceMesh->GetCellData()->GetArray("ModelFaceID"));
-
-  cout<<"Num Cells "<<numTets<<endl;
-  cout<<"Num Points "<<numPoints<<endl;
-  inmesh->numberofcorners = 4;
-  inmesh->numberoftetrahedra = numTets;
-  inmesh->numberofpoints = numPoints;
-  inmesh->pointlist = new double[numPoints*3];
-  inmesh->tetrahedronlist = new int[numTets*4];
-
-  cout<<"Converting to Adapt Points..."<<endl;
-  for (i = 0; i < numPoints; i++)
-  {
-    uPoints->GetPoint(i,tetPts);
-    inmesh->pointlist[i*3] = tetPts[0];
-    inmesh->pointlist[i*3+1] = tetPts[1];
-    inmesh->pointlist[i*3+2] = tetPts[2];
-  }
-
-  cout<<"Converting to Adapt Tets..."<<endl;
-  for (i=0,uTets->InitTraversal();uTets->GetNextCell(npts,pts);i++)
-  {
-    for (j = 0;j < npts;j++)
-    {
-      inmesh->tetrahedronlist[i*npts+j] = pts[j];
-    }
-  }
-  
-  return CV_OK;
-}
-// -----------------------------
 // getSurfaceBooleans()
 // -----------------------------
 /** 
@@ -1047,42 +985,6 @@ int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface
       }
     }
   }
-
-  return CV_OK;
-}
-
-// -----------------------------
-// runAdaptor()
-// -----------------------------
-/** 
- * @brief This is a function to run tetgen on the mesh
- * @param inmesh This is the original mesh as a tetgen object
- * @param outmesh This is the new adapted mesh as a tetgen object
- */
-
-int AdaptUtils_runAdaptor(tetgenio *inmesh,tetgenio *outmesh)
-{
-  cout<<"Starting Adaptive Mesh..."<<endl;
-
-  tetgenbehavior* newtgb = new tetgenbehavior;
-
-  newtgb->refine=1;
-  newtgb->metric=1;
-  newtgb->quality=1;
-  newtgb->neighout=2;
-  newtgb->verbose=1;
-  //newtgb->coarsen=1;
-  //newtgb->coarsen_param=8;
-  //newtgb->coarsen_percent=1;
-#if USE_TETGEN143
-  newtgb->goodratio = 4.0;
-  newtgb->goodangle = 0.88;
-  newtgb->useshelles = 1;
-#endif
-
-  tetrahedralize(newtgb, inmesh, outmesh);
-
-  cout<<"Done with Adaptive Mesh..."<<endl;
 
   return CV_OK;
 }

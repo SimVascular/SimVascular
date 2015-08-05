@@ -168,6 +168,7 @@ public:
 
   //Set PolyData object after instantiation
   virtual int SetVtkPolyDataObject(vtkPolyData *newPolyData) = 0;
+  virtual int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) = 0;
 
   //Adapt Functions
   virtual int Adapt() = 0;

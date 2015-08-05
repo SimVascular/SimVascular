@@ -95,7 +95,7 @@ int TGenUtils_Init()
  * @return CV_OK if function completes properly
  */
 
-int TGenUtils_ConvertToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
+int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
     int meshsizingfunction,vtkDoubleArray *meshSizingFunction,
     int useBoundary,std::string markerListArrayName,double maxEdgeSize)
 {
@@ -202,6 +202,84 @@ int TGenUtils_ConvertToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
     }
   }
 
+  return CV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_ConvertVolumeToTetGen()
+// -----------------------------
+/** 
+ * @brief Function to convert the current mesh to a tetgen mesh object to be
+ * able to remesh
+ * @param mesh This is the full mesh to be remeshed
+ * @param surfaceMesh This is the intial mesh; If we don't need the final 
+ * mesh regions, then we don't have to actually use this
+ * @param inmesh This is the tegen mesh object to be transferred to
+ */
+
+int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,
+    tetgenio *inmesh)
+{
+  int numTets,numPolys;
+  int numPoints,numSurfacePoints;
+  double tetPts[3];
+  tetgenio::facet *f;
+  tetgenio::polygon *p;
+  vtkIdType i,j;
+  vtkIdType npts = 0;
+  vtkIdType *pts = 0;
+  vtkIdType cellId;
+  vtkSmartPointer<vtkPoints> uPoints = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkCellArray> pPolys = vtkSmartPointer<vtkCellArray>::New();
+  vtkSmartPointer<vtkCellArray> uTets = vtkSmartPointer<vtkCellArray>::New();
+  vtkIntArray *boundaryScalars;
+  vtkDoubleArray *errorMetricArray;
+
+  mesh->BuildLinks();
+  numTets = mesh->GetNumberOfCells();
+  numPoints = mesh->GetNumberOfPoints();
+  uPoints = mesh->GetPoints();
+  uTets = mesh->GetCells();
+
+  numSurfacePoints = surfaceMesh->GetNumberOfPoints();
+  numPolys = surfaceMesh->GetNumberOfPolys();
+  pPolys = surfaceMesh->GetPolys();
+  boundaryScalars = vtkIntArray::SafeDownCast(surfaceMesh->GetCellData()->GetArray("ModelFaceID"));
+  errorMetricArray = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("errormetric"));
+
+  cout<<"Num Cells "<<numTets<<endl;
+  cout<<"Num Points "<<numPoints<<endl;
+  inmesh->firstnumber = 0;
+  inmesh->numberofcorners = 4;
+  inmesh->numberoftetrahedra = numTets;
+  inmesh->numberofpoints = numPoints;
+  inmesh->pointlist = new double[numPoints*3];
+  inmesh->tetrahedronlist = new int[numTets*4];
+  inmesh->numberofpointmtrs = 3;
+  inmesh->pointmtrlist = new REAL[numPoints*inmesh->numberofpointmtrs];
+
+  cout<<"Converting to Adapt Points..."<<endl;
+  for (i = 0; i < numPoints; i++)
+  {
+    uPoints->GetPoint(i,tetPts);
+    inmesh->pointlist[i*3] = tetPts[0];
+    inmesh->pointlist[i*3+1] = tetPts[1];
+    inmesh->pointlist[i*3+2] = tetPts[2];
+    for (j = 0; j < 3; j++)
+    {
+      inmesh->pointmtrlist[i*3+j] = errorMetricArray->GetComponent(i,j);
+    }
+  }
+
+  cout<<"Converting to Adapt Tets..."<<endl;
+  for (i=0,uTets->InitTraversal();uTets->GetNextCell(npts,pts);i++)
+  {
+    for (j = 0;j < npts;j++)
+    {
+      inmesh->tetrahedronlist[i*npts+j] = pts[j];
+    }
+  }
+  
   return CV_OK;
 }
 

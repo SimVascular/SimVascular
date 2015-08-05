@@ -164,7 +164,7 @@ int AdaptUtils_hessiansFromSolution (vtkUnstructuredGrid *mesh);
 double AdaptUtils_getErrorValue (double *nodalValues, int option);
 
 
-int AdaptUtils_setSizeFieldUsingHessians ( vtkUnstructuredGrid *mesh, tetgenio *inmesh,
+int AdaptUtils_setSizeFieldUsingHessians ( vtkUnstructuredGrid *mesh,
       		           double factor, double hmax,
       		           double hmin);
 
