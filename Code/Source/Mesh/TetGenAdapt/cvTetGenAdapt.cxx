@@ -230,6 +230,12 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 
   AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
 
+  if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Error when attaching solution to mesh\n");
+    return CV_ERROR;
+  }
+
   return CV_OK;
 }
 
@@ -242,6 +248,12 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
     delete [] ybar_;
 
   AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_);
+
+  if (AdaptUtils_attachArray(ybar_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Error when attaching error to mesh\n");
+    return CV_ERROR;
+  }
 
   return CV_OK;
 }
@@ -514,6 +526,8 @@ int cvTetGenAdapt::GetAdaptedMesh()
   if (outsurface_mesh_ != NULL)
     outsurface_mesh_->Delete();
 
+  outmesh_ = vtkUnstructuredGrid::New();
+  outsurface_mesh_ = vtkPolyData::New();
   if (AdaptUtils_convertToVTK(outmesh_,outsurface_mesh_,&mesher_output_) != CV_OK)
   {
     fprintf(stderr,"ERROR: Conversion to vtk structures failed");
