@@ -55,6 +55,7 @@ cvAdaptObject::cvAdaptObject( KernelType t)
 
 cvAdaptObject::~cvAdaptObject()
 {
+  fprintf(stderr,"Is it here where I dye\n");
 }
 
 //// ----------------------------

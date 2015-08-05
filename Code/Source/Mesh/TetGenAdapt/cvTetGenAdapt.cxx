@@ -102,31 +102,43 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 
 cvTetGenAdapt::~cvTetGenAdapt()
 {
+  fprintf(stderr,"Tell Me where I am\n");
   if (inmesh_ != NULL)
     inmesh_->Delete();
+  fprintf(stderr,"dying\n");
   if (outmesh_ != NULL)
     outmesh_->Delete();
+  fprintf(stderr,"please\n");
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
+  fprintf(stderr,"It \n");
   if (outsurface_mesh_ != NULL)
     outsurface_mesh_->Delete();
+  fprintf(stderr,"would\n");
 
   if (sol_array_ != NULL)
     sol_array_->Delete();
+  fprintf(stderr,"be\n");
   if (hessians_array_ != NULL)
     hessians_array_->Delete();
+  fprintf(stderr,"the\n");
   if (ybar_array_ != NULL)
     ybar_array_->Delete();
+  fprintf(stderr,"most\n");
 
   if (sol_ != NULL)
     delete [] sol_;
+  fprintf(stderr,"helpful\n");
   if (ybar_ != NULL)
     delete [] ybar_;
+  fprintf(stderr,"thing\n");
   if (hessians_ != NULL)
     delete [] hessians_;
+  fprintf(stderr,"on\n");
 
   if (meshobject_ != NULL)
     delete meshobject_;
+  fprintf(stderr,"this planet\n");
 }
 
 cvAdaptObject *cvTetGenAdapt::Copy() const
