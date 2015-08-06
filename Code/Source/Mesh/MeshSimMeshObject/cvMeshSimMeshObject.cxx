@@ -1264,47 +1264,6 @@ int cvMeshSimMeshObject::NewMesh() {
 
 }
 
-int cvMeshSimMeshObject::SetSurfaceMeshFlag(int value) {
-
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  // flag currently ignored
-  meshoptions_.surface=value;
-  return CV_OK;
-
-}
-
-int cvMeshSimMeshObject::SetVolumeMeshFlag(int value) {
-
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  // flag currently ignored
-  meshoptions_.volume=value;
-  return CV_OK;
-
-}
-
-int cvMeshSimMeshObject::SetGlobalSize(int type, double gsize) {
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-  meshoptions_.gsize_type=type;
-  meshoptions_.gsize=gsize;
-
-  // old api 5.4: MS_setGlobalMeshSize(mesh,type,gsize);
-  MS_setMeshSize(case_,GM_domain(model),type,gsize,NULL);
-
-  return CV_OK;
-}
-
-
 int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
 
   (*pid) = NULL;
@@ -1338,74 +1297,72 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
 
 }
 
+// --------------------
+//  SetMeshOptions
+// --------------------
+/** 
+ * @brief Function to set the options for meshing. Store temporarily in 
+ * meshoptions_ object until the mesh is run
+ * @param *flag char containing the flag to set
+ * @param value if the flag requires a value, this double contains that 
+ * value to be set
+ * @return *result: CV_ERROR if the mesh doesn't exist. New Mesh must be 
+ * called before the options can be set
+ */
 
-int cvMeshSimMeshObject::SetLocalSize(int type, int id, double size) {
-
+int cvMeshSimMeshObject::SetMeshOptions(char *flags, int id,double value1, double value2) {
   // must have created mesh
   if (mesh == NULL) {
     return CV_ERROR;
   }
 
-  pGEntity pid = NULL;
-  if (MapIDtoPID(id,&pid) == CV_ERROR) {
-    return CV_ERROR;
+  if (!strncmp(flag,"s",1)) {    //Surface flag, on or off
+    meshoptions_.surface=(int)value1;
+  }
+  else if (!strncmp(flag,"v",1)) {    //Volume flag, on or off
+    meshoptions_.volume=(int)value1;
+  }
+   else if (!strncmp(flag,"A",1)) {    //Global edge size, type, size
+    meshoptions_.gsize_type=id;
+    meshoptions_.gsize=value1;
+    // old api 5.4: MS_setGlobalMeshSize(mesh,type,gsize);
+    MS_setMeshSize(case_,GM_domain(model),id,value1,NULL);
+  }
+  else if (!strncmp(flag,"a",1)) {    //Local edge size, surface id, type, size
+    pGEntity pid = NULL;
+    if (MapIDtoPID(id,&pid) == CV_ERROR) {
+      return CV_ERROR;
+    }
+    MS_setMeshSize(case_,pid,(int)value1,value2,NULL);
+  }
+  else if (!strncmp(flag,"C",1)) {  //Global Curv, type, gcurv value
+    meshoptions_.gcurv_type=id;
+    meshoptions_.gcurv=value;
+    MS_setMeshSize(case_,GM_domain(model),id,value,NULL);
+  }
+  else if(!strncmp(flag,"c",1)) {  //Local Curv, surface id, type, gcurv value
+    pGEntity pid = NULL;
+    if (MapIDtoPID(id,&pid) == CV_ERROR) {
+      return CV_ERROR;
+    }
+    MS_setMeshCurv(case_,pid,(int)value1,value2);
+  }
+  else if(!strncmp(flag,"M",1)) {  //Global Curv Min, type, gcurv min value
+    meshoptions_.gmincurv_type=id;
+    meshoptions_.gmincurv=value1;
+    MS_setMinCurvSize(case_,GM_domain(model),id,value1);
+  }
+  else if(!strncmp(flag,"m",1)) {  //Local Curv Min, surface id, type, gcurv min value
+    pGEntity pid = NULL;
+    if (MapIDtoPID(id,&pid) == CV_ERROR) {
+      return CV_ERROR;
+    }
+    MS_setMinCurvSize(case_,pid,(int)value1,value2);
+  }
+  else {
+      fprintf(stderr,"%s: flag is not recognized\n",flag);
   }
 
-  MS_setMeshSize(case_,pid,type,size,NULL);
-  return CV_OK;
-}
-
-
-int cvMeshSimMeshObject::SetLocalCurv(int type, int id, double size) {
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-
-  pGEntity pid = NULL;
-  if (MapIDtoPID(id,&pid) == CV_ERROR) {
-    return CV_ERROR;
-  }
-
-  MS_setMeshCurv(case_,pid,type,size);
-  return CV_OK;
-}
-
-int cvMeshSimMeshObject::SetGlobalCurv(int type, double gcurv) {
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-  meshoptions_.gcurv_type=type;
-  meshoptions_.gcurv=gcurv;
-  MS_setMeshSize(case_,GM_domain(model),type,gcurv,NULL);
-  return CV_OK;
-}
-
-int cvMeshSimMeshObject::SetLocalMinCurv(int type, int id, double size) {
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-  pGEntity pid = NULL;
-  if (MapIDtoPID(id,&pid) == CV_ERROR) {
-    return CV_ERROR;
-  }
-
-  MS_setMinCurvSize(case_,pid,type,size);
-  return CV_OK;
-
-}
-
-int cvMeshSimMeshObject::SetGlobalMinCurv(int type, double gcurv) {
-  // must have created mesh
-  if (mesh == NULL) {
-    return CV_ERROR;
-  }
-  meshoptions_.gmincurv_type=type;
-  meshoptions_.gmincurv=gcurv;
-
-  MS_setMinCurvSize(case_,GM_domain(model),type,gcurv);
   return CV_OK;
 }
 
@@ -2182,3 +2139,181 @@ int cvMeshSimMeshObject::Adapt()
 
   return CV_OK;
 }
+
+/*---------------------------------------------------------------------*
+ *                                                                     *
+ *             ****  WriteSpectrumSolverElements ****                  *
+ *                                                                     *
+ *---------------------------------------------------------------------*/
+
+int cvMeshObject::WriteSpectrumSolverElements (char *filename) {
+
+  // this code assumes there is only 1 material region.
+
+  // open the output file
+  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
+
+  initRegionTraversal();
+  while (getNextRegion() == 1) {
+    initElementTraversal();
+    while (getNextElement() == 1) {
+      // spectrum only supports linear tets
+        gzprintf(fp_,"%d %d %d %d %d\n",curElemID_, connID_[0],connID_[1],connID_[2],connID_[3]);
+    }
+  }
+
+  return closeOutputFile();
+
+}
+
+/*---------------------------------------------------------------------*
+ *                                                                     *
+ *                 ****  WriteSpectrumSolverNodes  ****                *
+ *                                                                     *
+ *---------------------------------------------------------------------*/
+
+int cvMeshObject::WriteSpectrumSolverNodes (char *filename) {
+
+  // This method outputs all of the nodes to a file.
+
+  // open the output file
+  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
+
+  initNodeTraversal();
+
+  while (getNextNode() == 1) {
+    gzprintf(fp_, "  %d  %f  %f  %f \n", nodeID_, nodeX_, nodeY_, nodeZ_);
+  }
+
+  return closeOutputFile();
+
+}
+
+
+/*---------------------------------------------------------------------*
+ *                                                                     *
+ *                 ****  WriteSpectrumVisData  ****                    *
+ *                                                                     *
+ *---------------------------------------------------------------------*/
+
+int cvMeshObject::WriteSpectrumVisData (char *filename) {
+
+  // open the output file
+  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
+
+  char s[80];
+  sprintf (s, "region_%d", 1);
+  gzprintf(fp_, "  region  \"%s\" \n", s);
+
+  gzprintf(fp_, "    time step %d \n", 1);
+  gzprintf(fp_, "    time %g \n", 1.0);
+
+  gzprintf(fp_, "    analysis results \"%s\" \n", "pressure");
+  gzprintf(fp_, "      number of data %d \n", numLinearNodes_);
+  gzprintf(fp_, "      type \"%s\" \n", "nodal");
+  gzprintf(fp_, "      order \"%s\" \n", "scalar");
+  gzprintf(fp_, "      length %d \n", 1);
+  gzprintf(fp_, "      data \n");
+
+  initNodeTraversal();
+
+  while (getNextNode() == 1) {
+    gzprintf(fp_, "  1.0\n", 1.0);
+  }
+
+  gzprintf(fp_, "      end data \n");
+  gzprintf(fp_, "    end analysis results \n");
+
+  gzprintf(fp_, "    analysis results \"velocity\" \n");
+  gzprintf(fp_, "      number of data %d \n",numLinearNodes_);
+  gzprintf(fp_, "      type \"nodal\"\n");
+  gzprintf(fp_, "      order \"vector\"\n");
+  gzprintf(fp_, "      number of components 3\n");
+  gzprintf(fp_, "      components\n");
+  gzprintf(fp_, "      \"x\"\n");
+  gzprintf(fp_, "      \"y\"\n");
+  gzprintf(fp_, "      \"z\"\n");
+  gzprintf(fp_, "      end components\n");
+  gzprintf(fp_, "      length 3\n");
+  gzprintf(fp_, "      data\n");
+
+  initNodeTraversal();
+
+  while (getNextNode() == 1) {
+    gzprintf(fp_, "  0.0 0.0 1.0\n");
+  }
+
+  gzprintf(fp_, "      end data \n");
+  gzprintf(fp_, "    end analysis results \n");
+
+  //gzprintf(fp_, "  end region \n\n");
+  
+  return closeOutputFile();
+
+}
+
+
+/*---------------------------------------------------------------------*
+ *                                                                     *
+ *                 **** WriteSpectrumVisMesh ****                      *
+ *                                                                     *
+ *---------------------------------------------------------------------*/
+
+int cvMeshObject::WriteSpectrumVisMesh (char *filename) {
+
+  // this code assumes there is only 1 material region.
+
+  // open the output file
+  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
+
+  // output the nodes
+  char s[80];
+  gzprintf(fp_, "problem  \"%s\"  \n", "scorec mesh");
+  gzprintf(fp_, "  time information \n");
+  gzprintf(fp_, "    number of time steps %d \n", 1);
+  gzprintf(fp_, "    time steps \n");
+  gzprintf(fp_, "    %d  %g \n", 1, 1.0);
+  gzprintf(fp_, "    end time steps \n");
+  gzprintf(fp_, "  end time information \n\n");
+
+  sprintf (s, "region_%d", 1);
+  gzprintf(fp_, "  region  \"%s\" \n", s);
+  gzprintf(fp_, "    nature \"%s\" \n", "solid");
+
+  gzprintf(fp_, "    number of nodal coordinates %d \n", numLinearNodes_);
+  gzprintf(fp_, "    nodal coordinates \n");
+
+  initNodeTraversal();
+  while (getNextNode() == 1) {
+    gzprintf(fp_, "  %d  %f  %f  %f \n", nodeID_, nodeX_, nodeY_, nodeZ_);
+  }
+  gzprintf(fp_, "    end node coordinates \n");
+
+  // output the elements
+
+  gzprintf(fp_, "    element set \"%s\"  \n", "eset_1");
+  gzprintf(fp_, "      material id 0  \n");
+  gzprintf(fp_, "      nodes per element %d \n", 4);
+  gzprintf(fp_, "      topology \"%s\" \n", "tet");
+  gzprintf(fp_, "      number of elements %d \n", numElements_);
+  gzprintf(fp_, "      connectivity \n" );
+
+
+  initRegionTraversal();
+  while (getNextRegion() == 1) {
+    initElementTraversal();
+    while (getNextElement() == 1) {
+      // spectrum only supports linear tets
+        gzprintf(fp_,"%d %d %d %d %d\n",curElemID_, connID_[0],connID_[1],connID_[2],connID_[3]);
+    }
+  }
+
+  gzprintf(fp_, "      end connectivity \n");
+  gzprintf(fp_, "    end element set \n");
+  gzprintf(fp_, "  end region \n\n");
+  gzprintf(fp_, "end problem  \n");
+
+  return closeOutputFile();
+
+}
+

@@ -104,21 +104,9 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
-  
-  //Set mesh flags
-  int SetSurfaceMeshFlag(int value);
-  int SetVolumeMeshFlag(int value);   
-  
-  //Set mesh sizes
-  int SetGlobalSize(int type, double gsize);
-  int SetLocalSize(int type, int id, double size);
 
   //Set curve sizes and other mesh options
-  int SetGlobalCurv(int type, double size);
-  int SetLocalCurv(int type, int id, double size);
-  int SetGlobalMinCurv(int type, double size);
-  int SetLocalMinCurv(int type, int id, double size);
-  int SetMeshOptions(char *flags, double value) {return CV_ERROR;}
+  int SetMeshOptions(char *flags, int id, double value);
 
   //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
@@ -174,6 +162,15 @@ class cvMeshSimMeshObject : public cvMeshObject {
 
   //Adapt function
   int Adapt();
+
+  //MeshSim only functions
+  // output fe input decks
+  int WriteSpectrumSolverElements (char *filename);
+  int WriteSpectrumSolverNodes (char *filename);
+
+  // output visualization files
+  int WriteSpectrumVisMesh (char *filename); 
+  int WriteSpectrumVisData (char *filename);
 
   private:
 

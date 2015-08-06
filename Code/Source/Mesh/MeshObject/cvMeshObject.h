@@ -100,21 +100,9 @@ public:
   virtual int GetBoundaryFaces(double angle) = 0;
   virtual int LoadMesh(char *filename,char *surfilename) = 0;
   virtual int NewMesh() = 0;
-  
-  //Set mesh flags
-  virtual int SetSurfaceMeshFlag(int value) = 0;
-  virtual int SetVolumeMeshFlag(int value) = 0;   
-  
-  //Set mesh sizes
-  virtual int SetGlobalSize(int type, double gsize) = 0;
-  virtual int SetLocalSize(int type, int id, double size) = 0;
 
   //Set curve sizes and other mesh options
-  virtual int SetGlobalCurv(int type, double size) = 0;
-  virtual int SetLocalCurv(int type, int id, double size) = 0;
-  virtual int SetGlobalMinCurv(int type, double size) = 0;
-  virtual int SetLocalMinCurv(int type, int id, double size) = 0;
-  virtual int SetMeshOptions(char *flags,double value) = 0;
+  virtual int SetMeshOptions(char *flags,int id,double value1,double value2) = 0;
  
   //Set boundary layer and/or specify wall faces
   virtual int SetBoundaryLayer(int type, int id, int side, int nL, double* H) = 0;
@@ -131,16 +119,6 @@ public:
   virtual int WriteMesh(char *filename, int smsver) = 0;
   virtual int WriteStats(char *filename) = 0;
 
-  // output fe input decks
-  int WriteAbaqusInputDeck (char *filename);
-  int WriteProphlexInputDeck (char *filename);
-  int WriteSpectrumSolverElements (char *filename);
-  int WriteSpectrumSolverNodes (char *filename);
-
-  // output visualization files
-  int WriteSpectrumVisMesh (char *filename); 
-  int WriteSpectrumVisData (char *filename);
-  
   //Not necessary anymore, but leaving for now
   virtual int WriteMetisAdjacency (char *filename) = 0;
 

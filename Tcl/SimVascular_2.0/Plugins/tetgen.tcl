@@ -72,7 +72,7 @@ proc guiMMcreateTetGenScriptFile {} {
 
   puts $fp "# start_of_user_meshing_control_parameters"
   if {$guiTGvars(useMeshMaxVolume)} {
-    puts $fp "option a $guiTGvars(meshMaxEdgeSize)"
+    puts $fp "option A $guiTGvars(meshMaxEdgeSize)"
   }
   if {[llength $guiTGvars(wallFaces)] != 0} {
     set guiTGvars(meshWallFirst) 1
@@ -275,7 +275,7 @@ proc mesh_readTGS {filename resObj} {
 	    set regionid $id
 	  }
 	}
-	$resObj SetLocalSize -id $regionid -type [lindex $line 2] -size [lindex $line 3] 
+	$resObj SetMeshOptions -options "a" -id $regionid -value1 [lindex $line 3] 
       } elseif {[lindex $line 0] == "useCenterlineRadius"} {
 	if {$guiTGvars(meshWallFirst) != 1} {
           return -code error "ERROR: Must select wall faces for boundary layer"
@@ -294,7 +294,7 @@ proc mesh_readTGS {filename resObj} {
 	$resObj SetSphereRefinement -size [lindex $line 1] -r [lindex $line 2] -ctr [lrange $line 3 5]
       } elseif {[lindex $line 0] == "wallFaces"} {
 	set guiTGvars(meshWallFirst) 1
-	$resObj SetMeshOptions -options "k" -value 0
+	$resObj SetMeshOptions -options "k" -value1 0
 	set walls {}
 	for {set i 1} {$i < [llength $line]} {incr i} {
 	  set name [lindex $line $i]
@@ -317,11 +317,11 @@ proc mesh_readTGS {filename resObj} {
       } elseif {[lindex $line 0] == "option"} {
 	  if {[llength $line] == 3} {
 	     if {[lindex $line 1] == "surface"} {
-               $resObj SetSurfaceMeshFlag -value [lindex $line 2]
+               $resObj SetMeshOptions -options "s" -value1 [lindex $line 2]
 	     } elseif {[lindex $line 1] == "volume"} {
-               $resObj SetVolumeMeshFlag -value [lindex $line 2]
+               $resObj SetMeshOptions -options "v" -value [lindex $line 2]
      	     } else {
-	       $resObj SetMeshOptions -options [lindex $line 1] -value [lindex $line 2]
+	       $resObj SetMeshOptions -options [lindex $line 1] -value1 [lindex $line 2]
        	    }
 	  } else {
              foreach lineval [lrange $line 1 end] {

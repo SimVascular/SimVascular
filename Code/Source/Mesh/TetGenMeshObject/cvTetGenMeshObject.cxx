@@ -393,42 +393,6 @@ cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
   return result;
 
 }
-
-// -----
-// SetSurfaceMeshFlag
-// -----
-/** 
- * @brief Function to set surface meshing option 
- * @return CV_OK if executed correctly
- */
-int cvTetGenMeshObject::SetSurfaceMeshFlag(int value)
-{
-  if (value == 1)
-  {
-#ifdef USE_VMTK
-    meshoptions_.surfacemeshflag = value;
-#else
-    fprintf(stderr,"Plugin VMTK is not being used!\
-       	In order to use surface meshing, plugin VMTK must be available!\n");
-    return CV_ERROR;
-#endif
-  }
-  return CV_OK;
-}
-
-// -----
-// SetVolumeMeshFlag
-// -----
-/** 
- * @brief Function to set volume meshing option 
- * @return CV_OK if executed correctly
- */
-int cvTetGenMeshObject::SetVolumeMeshFlag(int value)
-{
-  meshoptions_.volumemeshflag = value;
-  return CV_OK;
-}
-
 /** 
  * @brief Function that writes the adjacency between tetrahedral elements 
  * @param *filename char holding the name of the file to be written to 
@@ -769,35 +733,6 @@ int cvTetGenMeshObject::NewMesh() {
 }
 
 // --------------------
-//  SetLocalSize
-// --------------------
-/** 
- * @brief Function to set the region to refine based on region
- * @param size This is the smaller refined of the edges within sphere region.
- * @param radius This is the radius of the refinement sphere.
- * @param center This is the center of the refinement sphere.
- * @return CV_OK if the mesh sizing function based on the circle is computed
- * correctly 
- */
-int cvTetGenMeshObject::SetLocalSize(int type,int id,double size)
-{   
-
-  fprintf(stderr,"Setting local mesh size...\n");
-  //Set meshoptions_ parameters based on input.
-  meshoptions_.functionbasedmeshing = 1;
-
-  //Create a new mesh sizing function and call TGenUtils to compute function.
-  //Store in the member data vtkDouble Array meshsizingfunction
-  if (TGenUtils_SetLocalMeshSize(polydatasolid_,id,size) != CV_OK)
-  {
-    return CV_ERROR;
-  }
-
-  meshoptions_.secondarrayfunction = 1;
-  return CV_OK;
-}
-
-// --------------------
 //  SetMeshOptions
 // --------------------
 /** 
@@ -810,26 +745,46 @@ int cvTetGenMeshObject::SetLocalSize(int type,int id,double size)
  * called before the options can be set
  */
 
-int cvTetGenMeshObject::SetMeshOptions(char *flag,double value) {
+int cvTetGenMeshObject::SetMeshOptions(char *flag,int id, double value1, double value2) {
   // must have created mesh
 //  if (inmesh_ == NULL) {
 //    return CV_ERROR;
 //  }
   
-  if(!strncmp(flag,"a",1)) {
-      meshoptions_.maxedgesize=value;
+  if(!strncmp(flag,"A",1)) {            //Global edge size
+      meshoptions_.maxedgesize=value1;
+  }
+  else if(!strncmp(flag,"a",1)) {
+      meshoptions_.functionbasedmeshing = 1;
+      //Create a new mesh sizing function and call TGenUtils to compute function.
+      //Store in the member data vtkDouble Array meshsizingfunction
+      if (TGenUtils_SetLocalMeshSize(polydatasolid_,id,value1) != CV_OK)
+        return CV_ERROR;
+      meshoptions_.secondarrayfunction = 1;
+  }
+  else if(!strncmp(flag,"s",1)) {
+#ifdef USE_VMTK
+      meshoptions_.surfacemeshflag = value1;
+#else
+      fprintf(stderr,"Plugin VMTK is not being used!\
+	  In order to use surface meshing, plugin VMTK must be available!\n");
+      return CV_ERROR;
+#endif
+  }
+  else if(!strncmp(flag,"v",1)) {
+      meshoptions_.volumemeshflag = value1;
   }
   else if(!strncmp(flag,"q",1)) {
-      meshoptions_.minratio=value;
+      meshoptions_.minratio=value1;
   }
   else if(!strncmp(flag,"O",1)) {
-      meshoptions_.optlevel=(int)value;
+      meshoptions_.optlevel=(int)value1;
   }
   else if(!strncmp(flag,"T",1)) {
-      meshoptions_.epsilon=value;
+      meshoptions_.epsilon=value1;
   }
   else if(!strncmp(flag,"R",1)) {
-      meshoptions_.coarsen_percent=value/100;
+      meshoptions_.coarsen_percent=value1/100;
   }
   else if(!strncmp(flag,"V",1)) {
       meshoptions_.verbose=1;

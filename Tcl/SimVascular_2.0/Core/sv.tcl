@@ -6241,17 +6241,17 @@ proc mesh_readMSS {filename resObj} {
         }
         showArray ids
       } elseif {[lindex $line 0] == "gsize"} {
-        $resObj SetGlobalSize -type $types([string tolower [lindex $line 1]]) -gsize [lindex $line 2]
+        $resObj SetMeshOptions -options "A" -id $types([string tolower [lindex $line 1]]) -value1 [lindex $line 2]
       } elseif {[lindex $line 0] == "size"} {
-        $resObj SetLocalSize -id $ids([lindex $line 1]) -type $types([string tolower [lindex $line 2]]) -size [lindex $line 3]
+        $resObj SetMeshOptions -options "a" -id $ids([lindex $line 1]) -value1 $types([string tolower [lindex $line 2]]) -value2 [lindex $line 3]
       } elseif {[lindex $line 0] == "gcurv"} {
-        $resObj SetGlobalCurv -type $types([string tolower [lindex $line 1]]) -gcurv [lindex $line 2]
+        $resObj SetMeshOptions -options "C" -id $types([string tolower [lindex $line 1]]) -value1 [lindex $line 2]
       } elseif {[lindex $line 0] == "curv"} {
-        $resObj SetLocalCurv -id $ids([lindex $line 1]) -type $types([string tolower [lindex $line 2]]) -curv [lindex $line 3]
+        $resObj SetMeshOptions -options "c" -id $ids([lindex $line 1]) -value1 $types([string tolower [lindex $line 2]]) -value2 [lindex $line 3]
       } elseif {[lindex $line 0] == "gmincurv"} {
-        $resObj SetGlobalMinCurv -type $types([string tolower [lindex $line 1]]) -gcurv [lindex $line 2]
+        $resObj SetMeshOptions -options "M" -id $types([string tolower [lindex $line 1]]) -value1 [lindex $line 2]
       } elseif {[lindex $line 0] == "mincurv"} {
-        $resObj SetLocalMinCurv -id $ids([lindex $line 1]) -type $types([string tolower [lindex $line 2]]) -curv [lindex $line 3]
+        $resObj SetMeshOptions -options "m" -id $ids([lindex $line 1]) -value1 $types([string tolower [lindex $line 2]]) -value2 [lindex $line 3]
       } elseif {[lindex $line 0] == "boundaryLayer"} {
         $resObj SetBoundaryLayer -id $ids([lindex $line 1]) -type [lindex $line 2] \
                                  -side $sides([string tolower [lindex $line 3]]) -nL [lindex $line 4] -H [lrange $line 5 end]
@@ -6267,9 +6267,9 @@ proc mesh_readMSS {filename resObj} {
       } elseif {[lindex $line 0] == "option"} {
 	  if {[llength $line] == 3} {
 	      if {[lindex $line 1] == "surface"} {
-                $resObj SetSurfaceMeshFlag -value [lindex $line 2]
+                $resObj SetMeshOptions -options "s" -value1 [lindex $line 2]
 	      } elseif {[lindex $line 1] == "volume"} {
-                $resObj SetVolumeMeshFlag -value [lindex $line 2]
+                $resObj SetMeshOptions -options "v" -value1 [lindex $line 2]
 	      } else {
 		  return -code error "bad line: \{$line\}"
 	      }

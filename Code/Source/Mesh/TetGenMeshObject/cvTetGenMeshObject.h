@@ -106,20 +106,8 @@ class cvTetGenMeshObject : public cvMeshObject {
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
 
-  //Set mesh flags
-  int SetSurfaceMeshFlag(int value);
-  int SetVolumeMeshFlag(int value);   
-
-  //Set mesh sizes
-  int SetGlobalSize(int type, double gsize) {return CV_ERROR;}
-  int SetLocalSize(int type, int id, double size);
-
   //Set curve sizes and other mesh options
-  int SetGlobalCurv(int type, double size) {return CV_ERROR;}
-  int SetLocalCurv(int type, int id, double size) {return CV_ERROR;}
-  int SetGlobalMinCurv(int type, double size) {return CV_ERROR;}
-  int SetLocalMinCurv(int type, int id, double size) {return CV_ERROR;}
-  int SetMeshOptions(char *flags,double value);
+  int SetMeshOptions(char *flags,int it, double value1,double value2);
  
   //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H); 

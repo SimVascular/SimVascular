@@ -468,7 +468,7 @@ int cvTetGenAdapt::SetupMesh()
 
   meshobject_->SetVtkPolyDataObject(insurface_mesh_);
   meshobject_->SetInputUnstructuredGrid(inmesh_);
-  meshobject_->SetMeshOptions("r",1.0);
+  meshobject_->SetMeshOptions("r",1,0.0,0.0);
   meshobject_->NewMesh();
 
   return CV_OK;
