@@ -3,6 +3,9 @@ ifeq ($(CLUSTER), x64_cygwin)
     ITK_BIN_DIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/itk-4.8.0
     ITK_DEFS = -D ITK_IO_FACTORY_REGISTER_MANAGER -D MSVC
     ITK_LIBDIRS = $(ITK_BIN_DIR)/lib/RelWithDebInfo
+
+    ITK_SYS_LIBS  = $(LIBFLAG)Rpcrt4$(LIBLINKEXT)
+
     ITK_INCDIRS = \
 -I$(ITK_BIN_DIR)/Examples/ITKIOFactoryRegistration \
 -I$(ITK_SRC_DIR)/Modules/Segmentation/Watersheds/include \
@@ -186,7 +189,8 @@ $(LIBFLAG)ITKIOGIPL-4.8$(LIBLINKEXT)             $(LIBFLAG)itkNetlibSlatec-4.8$(
         $(LIBFLAG)ITKniftiio-4.8$(LIBLINKEXT)                   $(LIBFLAG)ITKznz-4.8$(LIBLINKEXT) \
 $(LIBFLAG)ITKIOImageBase-4.8$(LIBLINKEXT)        $(LIBFLAG)ITKNrrdIO-4.8$(LIBLINKEXT) \
 $(LIBFLAG)ITKIOIPL-4.8$(LIBLINKEXT)              $(LIBFLAG)itkgdcmopenjpeg-4.8$(LIBLINKEXT)	$(LIBFLAG)itkgdcmcharls-4.8$(LIBLINKEXT) \
-$(LIBFLAG)itkhdf5-4.8$(LIBLINKEXT) $(LIBFLAG)itkhdf5_cpp-4.8$(LIBLINKEXT) $(LIBFLAG)ITKIOHDF5-4.8$(LIBLINKEXT)
+$(LIBFLAG)itkhdf5-4.8$(LIBLINKEXT) $(LIBFLAG)itkhdf5_cpp-4.8$(LIBLINKEXT) $(LIBFLAG)ITKIOHDF5-4.8$(LIBLINKEXT) \
+$(ITK_SYS_LIBS)
 endif
 
 #      
