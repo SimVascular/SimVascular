@@ -494,6 +494,8 @@ Code/ThirdParty/msmpi/Include/mspms.h -text
 Code/ThirdParty/msmpi/Include/pmidbg.h -text
 Code/ThirdParty/msmpi/Include/x64/mpifptr.h -text
 Code/ThirdParty/msmpi/Include/x86/mpifptr.h -text
+Code/ThirdParty/msmpi/Installers/MSMpiSetup.exe -text
+Code/ThirdParty/msmpi/Installers/msmpisdk.msi -text
 Code/ThirdParty/msmpi/Lib/x64/msmpi.lib -text
 Code/ThirdParty/msmpi/Lib/x64/msmpifec.lib -text
 Code/ThirdParty/msmpi/Lib/x64/msmpifmc.lib -text
