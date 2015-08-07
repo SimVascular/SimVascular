@@ -49797,7 +49797,7 @@ set {guiTGvars(showSphere)} {0}
 set {guiTGvars(sphereBounds)} {1}
 set {guiTGvars(sphereCenter)} {0 0 0}
 set {guiTGvars(sphereRadius)} {1}
-set {guiTGvars(sublayerratio)} {0.6}
+set {guiTGvars(sublayerratio)} {0.8}
 set {guiTGvars(useCenterlineRadius)} {0}
 set {guiTGvars(useCheckConsistency)} {0}
 set {guiTGvars(useFunctionBasedMeshing)} {0}
