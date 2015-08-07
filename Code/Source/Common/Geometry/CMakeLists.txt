@@ -42,6 +42,7 @@ SET(CXXSRCS	cv_sys_geom.cxx cv_ggems.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
 	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx
 	vtkBooleanOperationPolyDataFilter2.cxx
+	vtkDelaunay2D_60.cxx
 	vtkMultiplePolyDataIntersectionFilter.cxx
 	vtkFillHolesFilterWithIds.cxx
 	vtkLoftPolyDataSolid.cxx
@@ -56,6 +57,7 @@ SET(HDRS cv_sys_geom.h cv_ggems.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
 	vtkSurfaceVectors.h vtkIntersectionPolyDataFilter2.h
 	vtkBooleanOperationPolyDataFilter2.h
+	vtkDelaunay2D_60.h
 	vtkMultiplePolyDataIntersectionFilter.h
 	vtkFillHolesFilterWithIds.h
 	vtkLoftPolyDataSolid.h
