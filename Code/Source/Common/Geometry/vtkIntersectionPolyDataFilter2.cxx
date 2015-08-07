@@ -49,7 +49,7 @@
 #include "vtkTriangle.h"
 #include "vtkOBBTree.h"
 #include "vtkTransform.h"
-#include "vtkDelaunay2D.h"
+#include "vtkDelaunay2D_60.h"
 #include "vtkSmartPointer.h"
 #include "vtkInformation.h"
 #include "vtkObjectFactory.h"
@@ -1093,8 +1093,8 @@ vtkCellArray* vtkIntersectionPolyDataFilter2::Impl
 	  vtkSmartPointer<vtkPolygon>::New();
 	this->Orient(newpd,transform,boundary,boundaryPoly);
 
-	vtkSmartPointer< vtkDelaunay2D > del2D =
-	  vtkSmartPointer< vtkDelaunay2D >::New();
+	vtkSmartPointer< vtkDelaunay2D_60 > del2D =
+	  vtkSmartPointer< vtkDelaunay2D_60 >::New();
 	del2D->SetInputData(newpd);
 	del2D->SetSourceData(boundary);
 	del2D->SetTolerance(0.0);
@@ -1115,8 +1115,8 @@ vtkCellArray* vtkIntersectionPolyDataFilter2::Impl
 	      && numoffsets < 20)
 	  {
 	    //std::cout<<"Offset: "<<numoffsets<<endl;
-	    vtkSmartPointer< vtkDelaunay2D > del2Doffset =
-	      vtkSmartPointer< vtkDelaunay2D >::New();
+	    vtkSmartPointer< vtkDelaunay2D_60 > del2Doffset =
+	      vtkSmartPointer< vtkDelaunay2D_60 >::New();
 	    del2Doffset->SetInputData(newpd);
 	    del2Doffset->SetSourceData(boundary);
 	    del2Doffset->SetTolerance(0.0);
@@ -1197,8 +1197,8 @@ vtkCellArray* vtkIntersectionPolyDataFilter2::Impl
     }
     else
     {
-      vtkSmartPointer< vtkDelaunay2D > del2D =
-	vtkSmartPointer< vtkDelaunay2D >::New();
+      vtkSmartPointer< vtkDelaunay2D_60 > del2D =
+	vtkSmartPointer< vtkDelaunay2D_60 >::New();
       del2D->SetInputData(fullpd);
       del2D->SetSourceData(fullpd);
       del2D->SetTolerance(0.0);
