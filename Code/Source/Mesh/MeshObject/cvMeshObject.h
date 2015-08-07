@@ -124,6 +124,7 @@ public:
 
   // general queries
   virtual int GetElementConnectivity(int element) = 0;
+  virtual int GetNodeCoords(int node) = 0;
   virtual cvPolyData *GetPolyData() = 0;
   virtual cvPolyData *GetSolid() = 0;
   virtual cvUnstructuredGrid *GetUnstructuredGrid() = 0;
@@ -134,15 +135,6 @@ public:
   virtual int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename) = 0;
   virtual cvPolyData* GetFacePolyData (int orgfaceid) = 0;
   virtual int GetExteriorElementFacesOnRegion (int region, char* filename) = 0;
-
-  // helper routines
-  virtual void initNodeTraversal() = 0;
-  virtual void initElementTraversal() = 0;
-  virtual void initRegionTraversal() = 0;
-  virtual int getNextNode() = 0;
-  virtual int getNextElement() = 0;
-  virtual int getNextRegion() = 0;
-  virtual int getNeighborMdlRegIds () = 0;
 
   //Set PolyData object after instantiation
   virtual int SetVtkPolyDataObject(vtkPolyData *newPolyData) = 0;

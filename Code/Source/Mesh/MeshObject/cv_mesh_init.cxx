@@ -809,8 +809,6 @@ static int cvMesh_WriteMetisAdjacencyMtd( ClientData clientData, Tcl_Interp *int
 }
 
 
-
-
 // -------------------------------------
 // cvMesh_GetElementFacesOnModelFaceMtd
 // -------------------------------------

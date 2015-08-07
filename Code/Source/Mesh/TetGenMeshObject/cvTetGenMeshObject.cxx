@@ -124,9 +124,11 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.numsublayers=0;
   meshoptions_.blthicknessfactor=0;
   meshoptions_.sublayerratio=0;
-  meshoptions_.sphererefinement=0;
+  meshoptions_.refinement=0;
   meshoptions_.refinedsize=0;
   meshoptions_.sphereradius=0;
+  meshoptions_.cylinderradius=0;
+  meshoptions_.cylinderlength=0;
   meshoptions_.functionbasedmeshing=0;
   meshoptions_.secondarrayfunction=0;
   meshoptions_.meshwallfirst=0;
@@ -134,6 +136,8 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
+    meshoptions_.cylindercenter[i] = 0;
+    meshoptions_.cylindernormal[i] = 0;
   }
 }
 
@@ -500,6 +504,80 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
   }
 }
 
+int cvTetGenMeshObject::GetNodeCoords(int node)
+{
+  if (volumemesh_ == 0)
+  {
+    fprintf(stderr,"Mesh needs to be computed before node coords can be retrieved\n");
+    return CV_ERROR;
+  }
+  nodeID_ = node;
+  nodeX_ = 0; nodeY_ = 0; nodeZ_ = 0;
+  double pts[3];
+
+  volumemesh_->GetPoint(node,pts);
+  nodeX_ = pts[0];
+  nodeY_ = pts[1];
+  nodeZ_ = pts[2];
+
+  return CV_OK;
+}
+
+int cvTetGenMeshObject::GetElementConnectivity(int element)
+{
+  if (volumemesh_ == 0)
+  {
+    fprintf(stderr,"Mesh needs to be computed before node coords can be retrieved\n");
+    return CV_ERROR;
+  }
+  curElemID_ =  element;
+  vtkIdType npts,*pts;
+  vtkIdType p1,p2,p3;
+  vtkIdType meshCellId=0;
+  vtkSmartPointer<vtkIdList> ptIds = 
+    vtkSmartPointer<vtkIdList>::New();
+  vtkSmartPointer<vtkIdList> cellIds = 
+    vtkSmartPointer<vtkIdList>::New();
+  vtkIntArray *globalIds;
+  globalIds = vtkIntArray::SafeDownCast(volumemesh_->GetCellData()->
+    GetScalars("GlobalElementID"));
+  int numCells = volumemesh_->GetNumberOfCells();
+
+    ptIds->SetNumberOfIds(3);
+    for (vtkIdType cellId = 0;cellId<numCells;cellId++)
+    { 
+      meshCellId = globalIds->LookupValue(cellId+1);
+      volumemesh_->GetCellPoints(meshCellId,npts,pts);
+      for (int i=0;i < npts; i++)
+      {
+	p1 = pts[i];
+	p2 = pts[(i+1)%(npts)];
+	p3 = pts[(i+2)%(npts)];
+
+	ptIds->InsertId(0,p1);
+	ptIds->InsertId(1,p2);
+	ptIds->InsertId(2,p3);
+
+	volumemesh_->GetCellNeighbors(meshCellId,ptIds,cellIds);
+
+	//If it is zero, it is a face on the exterior. Otherwise, it has
+	//neighbors
+	if (cellIds->GetNumberOfIds() != 0)
+	{  
+	  curElemNe_[i][0] = -1;
+	  curElemNe_[i][1] = -1;
+	}
+	else 
+	{
+	  curElemNe_[i][0] = cellIds->GetId(0);
+	  curElemNe_[i][1] = cellIds->GetId(0);
+	}
+      }
+    }
+
+  return CV_OK;
+}
+
 // --------------------
 //  LoadModel
 // --------------------
@@ -666,7 +744,7 @@ int cvTetGenMeshObject::NewMesh() {
       useBoundary = 0;
       markerListName = "CellEntityIds";
     }
-    else if (meshoptions_.functionbasedmeshing || meshoptions_.sphererefinement)
+    else if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
     {
       fprintf(stdout,"Using size function\n");
       useSizingFunction = 1;
@@ -683,7 +761,7 @@ int cvTetGenMeshObject::NewMesh() {
     //If using boundary layer mesh, must apply mesh sizing function that is 
     //attached to the polydatasolid from VMTKUtils_ComputeSizingFunction
     if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
-	meshoptions_.sphererefinement)
+	meshoptions_.refinement)
     {
       if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
       {
@@ -921,6 +999,48 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   return CV_OK;
 }
 
+// --------------------
+//  SetCylinderRefinement
+// --------------------
+/** 
+ * @brief Function to set the region to refine based on input cylinder
+ * @param size This is the smaller refined of the edges within cylinder region.
+ * @param radius This is the radius of the refinement cylinder.
+ * @param center This is the center of the refinement cylinder. 
+ * Halfway along the length. 
+ * @param normal This is the normal direction from the center that the length
+ * of the cylinder follows.
+ * @return CV_OK if the mesh sizing function based on the circle is computed
+ * correctly 
+ */
+int cvTetGenMeshObject::SetCylinderRefinement(double size, double radius, 
+    double length, double* center, double *normal)
+{   
+  //Set meshoptions_ parameters based on input.
+  int i;
+  meshoptions_.refinement = 1;
+  meshoptions_.refinedsize = size;
+  meshoptions_.cylinderradius = radius;
+  meshoptions_.cylinderlength = length;
+  for (i=0;i<3;i++)
+  { 
+    meshoptions_.cylindercenter[i] = center[i];
+    meshoptions_.cylindernormal[i] = normal[i];
+  }
+
+  //Create a new mesh sizing function and call TGenUtils to compute function.
+  //Store in the member data vtkDouble Array meshsizingfunction
+  if (TGenUtils_SetRefinementCylinder(polydatasolid_,"MeshSizingFunction",
+	size,radius,center,length,normal,meshoptions_.secondarrayfunction,
+	meshoptions_.maxedgesize) != CV_OK)
+  {
+    return CV_ERROR;
+  }
+
+  meshoptions_.secondarrayfunction = 1;
+  return CV_OK;
+}
+
 
 // --------------------
 //  SetSphereRefinement
@@ -938,7 +1058,7 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
 {   
   //Set meshoptions_ parameters based on input.
   int i;
-  meshoptions_.sphererefinement = 1;
+  meshoptions_.refinement = 1;
   meshoptions_.refinedsize = size;
   meshoptions_.sphereradius = radius;
   for (i=0;i<3;i++)
@@ -1040,7 +1160,7 @@ int cvTetGenMeshObject::GenerateMesh() {
       }
 
       if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing 
-        || meshoptions_.sphererefinement)
+        || meshoptions_.refinement)
       {
 	if (GenerateMeshSizingFunction() != CV_OK)
 	  return CV_ERROR;
@@ -1126,7 +1246,7 @@ int cvTetGenMeshObject::GenerateMesh() {
       tgb->mindihedral = 10.0;
       tgb->nobisect=1;
     }
-    if (meshoptions_.sphererefinement)
+    if (meshoptions_.refinement)
     {
       tgb->quality = 3;
       tgb->metric = 1;
@@ -1380,7 +1500,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   }
   //If doing sphere refinement, we need to base surface mesh on mesh 
   //sizing function
-  if (meshoptions_.sphererefinement || meshoptions_.functionbasedmeshing)
+  if (meshoptions_.refinement || meshoptions_.functionbasedmeshing)
   {
     useSizingFunction = 1;
     if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
@@ -1547,7 +1667,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     trianglesplitfactor = NULL;
     markerListName = "ModelFaceID";
   }
-  if (meshoptions_.functionbasedmeshing || meshoptions_.sphererefinement)
+  if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
   {
     useSizeFunction = 1;
     if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)

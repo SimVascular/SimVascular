@@ -144,7 +144,13 @@ class cvMeshSimMeshObject : public cvMeshObject {
   
   int GetExteriorElementFacesOnRegion (int region, char* filename);
 
-  // helper routines
+  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
+  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
+
+  //Adapt function
+  int Adapt();
+
+  // MESHSIMMESHOBJECT ONLY
   int FindFaceNumber (pRegion region, int pseudofaceID, int *facenum);
   int FindNodesOnElementFace (pFace face, int* nodes);
   void initNodeTraversal();
@@ -157,13 +163,6 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int OutputExteriorElementFaces(pRegion region, int pseudoFaceID, char *filename);
   int getIdentForFaceId(int orgfaceid, int *faceID);
 
-  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
-  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
-
-  //Adapt function
-  int Adapt();
-
-  //MeshSim only functions
   // output fe input decks
   int WriteSpectrumSolverElements (char *filename);
   int WriteSpectrumSolverNodes (char *filename);

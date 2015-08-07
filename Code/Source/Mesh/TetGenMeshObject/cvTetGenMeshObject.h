@@ -74,10 +74,14 @@ class cvTetGenMeshObject : public cvMeshObject {
     int numsublayers;
     double blthicknessfactor;
     double sublayerratio;
-    int sphererefinement;
+    int refinement;
     double refinedsize;
     double sphereradius;
     double spherecenter[3];
+    double cylinderradius;
+    double cylindercenter[3];
+    double cylinderlength;
+    double cylindernormal[3];
     int functionbasedmeshing;
     int secondarrayfunction;
     int meshwallfirst;
@@ -115,7 +119,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   
   //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
-                            double* center, double *normal) {return CV_ERROR;}
+                            double* center, double *normal);
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size,char *sizefunctionname);
 
@@ -128,8 +132,8 @@ class cvTetGenMeshObject : public cvMeshObject {
   int WriteMetisAdjacency (char *filename);
 
   // general queries
-  int GetElementConnectivity(int element) {return CV_ERROR;}
-  int GetNodeCoords(int node) {return CV_ERROR;}  
+  int GetElementConnectivity(int element);
+  int GetNodeCoords(int node);  
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid();
   cvUnstructuredGrid *GetUnstructuredGrid();
@@ -142,27 +146,19 @@ class cvTetGenMeshObject : public cvMeshObject {
 
   int GetExteriorElementFacesOnRegion (int region, char* filename) {return CV_ERROR;} 
 
-  void initNodeTraversal() {return;} 
-  void initElementTraversal() {return;} 
-  void initRegionTraversal() {return;} 
-  int getNextNode() {return CV_ERROR;}
-  int getNextElement() {return CV_ERROR;}
-  int getNextRegion() {return CV_ERROR;} 
-  int getNeighborMdlRegIds() {return CV_ERROR;} 
-
   int SetVtkPolyDataObject(vtkPolyData *newPolyData);
   int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug);
 
-  //These are helper functions for some of the more complicated mesh options
+  //Adapt Function
+  int Adapt();
+
+  //TETGENMESHOBJECT ONLY: These are helper functions for some of the more complicated mesh options
   int GenerateSurfaceRemesh();
   int GenerateBoundaryLayerMesh();
   int GenerateAndMeshCaps();
   int GenerateMeshSizingFunction();
   int AppendBoundaryLayerMesh();
   int ResetOriginalRegions(std::string originalName,std::string newName);
-
-  //Adapt Function
-  int Adapt();
 
   private:
   char meshFileName_[MAXPATHLEN];

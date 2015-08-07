@@ -817,6 +817,98 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 }
 
 // -----------------------------
+// cvTGenUtils_SetRefinementCylinder()
+// -----------------------------
+/** 
+ * @brief computes the distance between each point on surface and center
+ * @brief of cylinder. Then, if inside radius, the meshsizing function at the 
+ * @brief is set to the reduced size, 
+ * @param size This is the smaller refined of the edges within cylinder region.
+ * @param radius This is the radius of the refinement cylinder.
+ * @param center This is the center of the refinement cylinder.
+ * @param length This is the length of the cylinder. Center is half the length.
+ * @param normal This is the normal direction of the length of the cylinder.
+ * It is normalized before being used for compuation.
+ * @return CV_OK if function completes properly
+ */
+
+int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
+    std::string sizingFunctionArrayName,double size,double radius, double *center,
+    double length, double *normal, int secondarray,double maxedgesize)
+{ 
+  int numPts;
+  double disttopoint;
+  double distalonglength;
+  double pts[3];
+  double norm[3];
+  for (int i=0;i < 3;i++)
+    norm[i] = normal[i];
+  vtkIdType pointId;
+  vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New(); 
+
+  //Set sizing function params
+  numPts = polydatasolid->GetNumberOfPoints();
+  if (secondarray)
+  {
+    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    {
+      fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
+		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
+      return CV_ERROR;
+    }
+    meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+  }
+  else
+  {
+    meshSizeArray->SetNumberOfComponents(1);
+    meshSizeArray->Allocate(numPts,1000);
+    meshSizeArray->SetNumberOfTuples(numPts);
+    meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    for (pointId = 0;pointId<numPts;pointId++)
+    {
+      meshSizeArray->SetValue(pointId,0.0);
+    }
+  }
+
+  for (pointId = 0;pointId<numPts;pointId++)
+  {
+    polydatasolid->GetPoint(pointId,pts);
+    //compute distance
+    double pvec[3];
+    double scale;
+    vtkMath::Norm(norm);
+    vtkMath::Subtract(pts,center,pvec);
+    scale = vtkMath::Dot(pvec,norm);
+    vtkMath::MultiplyScalar(norm,scale);
+    disttopoint = sqrt(pow(pts[0]-norm[0],2)+
+	pow(pts[1]-norm[1],2)+
+	pow(pts[2]-norm[2],2));
+
+    distalonglength = sqrt(pow(norm[0]-center[0],2)+
+	pow(norm[1]-center[1],2)+
+	pow(norm[2]-center[2],2));
+
+    //set value to new size
+    if (disttopoint <= radius && distalonglength <= length/2)
+        meshSizeArray->SetValue(pointId,size);
+    else 
+    {
+      if (meshSizeArray->GetValue(pointId) == 0) 
+        meshSizeArray->SetValue(pointId,maxedgesize);
+    }
+  }
+  
+  if (secondarray)
+  {
+    polydatasolid->GetPointData()->RemoveArray(sizingFunctionArrayName.c_str());
+  } 
+  polydatasolid->GetPointData()->AddArray(meshSizeArray);
+  polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
+
+  return CV_OK;
+}
+
+// -----------------------------
 // cvTGenUtils_SetRefinementSphere()
 // -----------------------------
 /** 

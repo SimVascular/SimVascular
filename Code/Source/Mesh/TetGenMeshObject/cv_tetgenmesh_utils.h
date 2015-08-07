@@ -74,6 +74,11 @@ int TGenUtils_WriteVTP(char *filename,vtkPolyData *PData);
 
 int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh);
 
+int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
+    std::string sizingFunctionArrayName,double size,double radius,
+    double* center,double length, double *normal, int secondarray, 
+    double maxedgesize);
+
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,double radius,
     double* center,int secondarray, double maxedgesize);
