@@ -245,25 +245,25 @@ common-post-distribution:
 	-sed -f tmp/sedscript platform_independent_scripts/post-install.sh > $(DIST_DIR)/post-install.sh
 	-sed -f tmp/sedscript platform_independent_scripts/post-solver-install.sh > $(DIST_DIR)/post-solver-install.sh
 	-sed -f tmp/sedscript platform_independent_scripts/generic-launch-script > $(DIST_DIR)/generic_launch_script
-	-chmod a+rx $(DIST_DIR)/*.$(SOEXT)
-	-chmod a+rx $(DIST_DIR)/*.sh
-	-chmod a+rx $(DIST_DIR)/generic_launch_script
-	-chmod a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)
-	-chmod a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
-	-chmod a+rx $(DIST_DIR)/adaptor$(SIMVASCULAR_POSTFIX)
-	-chmod a+rx $(DIST_DIR)/tetadaptor$(SIMVASCULAR_POSTFIX)
-	-chmod a+rx $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
-	-chmod a+rx $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
-	-chmod a+rx $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
-	-chmod a+rx $(DIST_DIR)/*.$(SOEXT)*
-	-chmod a+rx $(DIST_DIR)/*.manifest
-	-chmod -R a+rx $(DIST_DIR)
-	-chmod -R u+w $(DIST_DIR)
+	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)
+	-chmod -f a+rx $(DIST_DIR)/*.sh
+	-chmod -f a+rx $(DIST_DIR)/generic_launch_script
+	-chmod -f a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)
+	-chmod -f a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
+	-chmod -f a+rx $(DIST_DIR)/adaptor$(SIMVASCULAR_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/tetadaptor$(SIMVASCULAR_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)*
+	-chmod -f -R a+rx $(DIST_DIR)
+	-chmod -f -R u+w $(DIST_DIR)
 
 linux-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
 
 windows-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
 
 taritup:
-	-tar --preserve -cvf tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package
+	-mkdir tar_files
+	-tar --preserve-permissions -cvf tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package
 	-gzip tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
