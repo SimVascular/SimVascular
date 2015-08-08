@@ -259,7 +259,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
       set gExternalPrograms(cvtetadaptor) [file join $rundir tetadaptor32$execbinext]
       set gExternalPrograms(cvflowsolver) [file join $rundir flowsolver32$execbinext]
       set gExternalPrograms(cvsolver) [file join $rundir solver32$execext]
-      set gExternalPrograms(mpiexec) [file join $rundir mpiexec$execext]
+      set gExternalPrograms(mpiexec) mpiexec
       set gExternalPrograms(dicom2) [file join $rundir dicom2$execext]
       if {$tcl_platform(platform) == "windows"} {
         set gExternalPrograms(dcmodify) [file join $rundir dcmodify$execext]
@@ -279,7 +279,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
             set gExternalPrograms(cvflowsolver) [file join $executable_home flowsolver$execbinext]
             #    set gExternalPrograms(cvsolver) [file join $simvascular_home solver$execext]
             #    TODO What to do for mpiexec?
-            set gExternalPrograms(mpiexec) [file join $simvascular_home mpiexec$execext]
+            set gExternalPrograms(mpiexec) mpiexec
             set gExternalPrograms(dicom2) [file join $simvascular_home dicom2$execext]
             } else {
               set gExternalPrograms(cvpresolver) [file join $executable_home presolver$execbinext]
@@ -289,7 +289,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
               set gExternalPrograms(cvflowsolver) [file join $simvascular_home mysolver]
               #    set gExternalPrograms(cvsolver) [file join $simvascular_home mysolver$execext]
               #    TODO What to do for mpiexec?
-              set gExternalPrograms(mpiexec) [file join $simvascular_home mpiexec$execext]
+              set gExternalPrograms(mpiexec) mpiexec
               set gExternalPrograms(dicom2) [file join $simvascular_home dicom2$execext]
 
             }
@@ -305,9 +305,9 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
             }
 
             # try and find the default mpiexec on ubuntu
-            if {$tcl_platform(platform) != "windows" && $SIMVASCULAR_RELEASE_BUILD} {
-              set gExternalPrograms(mpiexec) [file join $env(SIMVASCULAR_HOME) [file tail $gExternalPrograms(mpiexec)]]
-            }
+            #if {$tcl_platform(platform) != "windows" && $SIMVASCULAR_RELEASE_BUILD} {
+            #  set gExternalPrograms(mpiexec) [file join $env(SIMVASCULAR_HOME) [file tail $gExternalPrograms(mpiexec)]]
+            #}
 
           }
 
