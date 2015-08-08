@@ -61,7 +61,8 @@ HDRS	= cv_sys_geom.h cv_ggems.h \
 	vtkLocalLinearSubdivisionFilter.h \
 	vtkLocalSmoothPolyDataFilter.h \
 	vtkCGSmooth.h svMath.h sparse_matrix.h \
-	vtkFindSeparateRegions.h vtkGetSphereRegions.h
+	vtkFindSeparateRegions.h vtkGetSphereRegions.h \
+        vtkDelaunay2D_60.h
 
 ifeq ($(MAKE_WITH_GTS),1)
   HDRS +=  vtkSurfaceBooleanOperations.h
@@ -80,7 +81,8 @@ CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
 	vtkLocalLinearSubdivisionFilter.cxx \
 	vtkLocalSmoothPolyDataFilter.cxx \
 	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx \
-	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
+	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx \
+        vtkDelaunay2D_60.cxx
 
 ifeq ($(MAKE_WITH_GTS),1)
   CXXSRCS +=  vtkSurfaceBooleanOperations.cxx

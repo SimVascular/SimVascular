@@ -15,7 +15,8 @@ BuildWithMake/MakeHelpers/compiler.ifort.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/compiler.intel.x64_linux.mk -text
 BuildWithMake/MakeHelpers/compiler.mingw-gcc.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/compiler.mingw-gfortran.x64_cygwin.mk -text
-BuildWithMake/MakeHelpers/compiler.msvc2010.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/compiler.vs10.1.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/compiler.vs12.4.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/glib-2.36.4.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/gts-2010.03.21.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/itk-4.5.2.x64_cygwin.mk -text
@@ -37,6 +38,7 @@ BuildWithMake/MakeHelpers/rules.x64_linux.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.11.x64_linux.mk -text
 BuildWithMake/MakeHelpers/tcltk-8.5.18.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/tcltk-8.5.18.x64_linux.mk -text
 BuildWithMake/MakeHelpers/vtk-6.0.0.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/vtk-6.0.0.x64_linux.mk -text
 BuildWithMake/MakeHelpers/vtk-6.2.0.x64_cygwin.mk -text

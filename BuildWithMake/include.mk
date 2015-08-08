@@ -55,13 +55,12 @@ CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
 
 # ---------------------------------------------------------------------
-# COMPILER_VERSION = { vs10sp1, ifort, mingw-gcc, mingw-gfortran, gnu }
+# CXX_COMPILER_VERSION = { vs10.1, vs12.4, mingw-gcc, gcc}
+# FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
-CXX_COMPILER_VERSION = vs10sp1
+CXX_COMPILER_VERSION = vs12.4
 FORTRAN_COMPILER_VERSION = ifort
-
-#COMPILER_VERSION = gnu
 
 -include $(TOP)/cluster_overrides.mk
 
@@ -218,23 +217,22 @@ TARGETDIR = .
 # -----------------------------------------------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-  SVEXTERN_COMPILER_VERSION = vs10sp1
+  SVEXTERN_COMPILER_VERSION = vs12.4
 endif
 ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = intel_13.0
+  SVEXTERN_COMPILER_VERSION = gcc-4.8
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV15/bin/vs12.4/x64
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV15/bin/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV15/src
-#    OPEN_SOFTWARE_PRECOMPILED_TOPLEVEL =  
     LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV15/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /sv_extern/bin/linux/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /sv_extern/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /sv_extern/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV15/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV15/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /SV15/licensed
 endif
 
 # -------------------------------------------
@@ -242,7 +240,7 @@ endif
 # -------------------------------------------
 
 SIMVASCULAR_MAJOR_VER_NO = "2.0"
-SIMVASCULAR_FULL_VER_NO = "2.0.16"
+SIMVASCULAR_FULL_VER_NO = "2.0.20"
 SIMVASCULAR_USE_WIN32_REGISTRY=0
 SIMVASCULAR_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -347,8 +345,11 @@ endif
 # ----------------------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-  ifeq ($(CXX_COMPILER_VERSION), vs10sp1)
-	include $(TOP)/MakeHelpers/compiler.msvc2010.x64_cygwin.mk
+  ifeq ($(CXX_COMPILER_VERSION), vs10.1)
+	include $(TOP)/MakeHelpers/compiler.vs10.1.x64_cygwin.mk
+  endif
+  ifeq ($(CXX_COMPILER_VERSION), vs12.4)
+	include $(TOP)/MakeHelpers/compiler.vs12.4.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
 	include $(TOP)/MakeHelpers/compiler.ifort.x64_cygwin.mk
@@ -366,7 +367,7 @@ endif
 # note: linux needs cleaning up!
 ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/compiler.intel.x64_linux.mk
-	ifeq ($(CXX_COMPILER_VERSION), gnu)
+	ifeq ($(CXX_COMPILER_VERSION), gcc)
 	  include $(TOP)/MakeHelpers/compiler.gnu.x64_linux.mk
 	endif
         GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
@@ -677,7 +678,7 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/tcltk-8.5.11.x64_linux.mk
+	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_linux.mk
 endif
 
 # ---------------------
@@ -689,7 +690,7 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/vtk-6.0.0.x64_linux.mk
+	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
 endif
 
 # -----------------------------------------
@@ -709,7 +710,7 @@ ifeq ($(MAKE_WITH_ITK),1)
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/itk-4.5.2.x64_linux.mk
+	include $(TOP)/MakeHelpers/itk-4.8.0.x64_linux.mk
   endif
 
 endif
