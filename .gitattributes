@@ -42,6 +42,7 @@ BuildWithMake/MakeHelpers/tcltk-8.5.18.x64_linux.mk -text
 BuildWithMake/MakeHelpers/vtk-6.0.0.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/vtk-6.0.0.x64_linux.mk -text
 BuildWithMake/MakeHelpers/vtk-6.2.0.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/vtk-6.2.0.x64_linux.mk -text
 BuildWithMake/Makefile -text
 BuildWithMake/README-build-linux.txt -text
 BuildWithMake/README-build-windows.txt -text
