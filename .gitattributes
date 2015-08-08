@@ -72,6 +72,7 @@ BuildWithMake/Release/linux_wrapper_scripts/linux-dist-postsolver-script -text
 BuildWithMake/Release/linux_wrapper_scripts/linux-dist-presolver-script -text
 BuildWithMake/Release/linux_wrapper_scripts/linux-dist-simvascular-script -text
 BuildWithMake/Release/linux_wrapper_scripts/linux-dist-tetadaptor-script -text
+BuildWithMake/Release/linux_wrapper_scripts/linux-dist-xfsv-script -text
 BuildWithMake/Release/linux_wrapper_scripts/linux-simvascular-cmdline-script -text
 BuildWithMake/Release/platform_independent_scripts/generic-launch-script -text
 BuildWithMake/Release/platform_independent_scripts/post-install.sh -text

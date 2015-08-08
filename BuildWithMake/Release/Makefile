@@ -169,6 +169,7 @@ copy-sv-tcl-code:
 	-tclsh windows_msi_helpers/prepare_simvascular_tcl_release.tcl $(DIST_DIR)
 	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_startup.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
 	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_vtk_init.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
+	-cp -f $(DIST_DIR)/UnTcl/SimVascular_2.0/launch_xf.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
 	-cp -R $(DIST_DIR)/UnTcl/External $(DIST_DIR)/Tcl
 	-cp -R $(DIST_DIR)/UnTcl/Help $(DIST_DIR)/Tcl
 	-cp $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_logo.jpg $(DIST_DIR)/Tcl/SimVascular_2.0
@@ -232,12 +233,14 @@ generate-wrapper-scripts:
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
+	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/xfsv$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-simvascular-script >> $(DIST_DIR)/$(SIMVASCULAR_VERSION)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-adaptor-script >> $(DIST_DIR)/adaptor$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-tetadaptor-script >> $(DIST_DIR)/tetadaptor$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-flowsolver-script >> $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-presolver-script >> $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-postsolver-script >> $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
+	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-xfsv-script >> $(DIST_DIR)/xfsv$(SIMVASCULAR_POSTFIX)
 	-cp -f $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
 	-cat $(DIST_DIR)/$(SIMVASCULAR_VERSION) >> $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
 
