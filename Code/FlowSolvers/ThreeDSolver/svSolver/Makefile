@@ -148,7 +148,7 @@ static: createOptionFile $(TOP)/Bin/$(TARGET_EXE)
 $(TOP)/Bin/$(TARGET_EXE): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS)  $(SOLVER_STCKSZ) \
              $(OBJS) \
-             $(LIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+             ../../../../BuildWithMake/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
 	     $(ZLIB_LIBS) $(VTK_LIBS) $(METIS_LIBS) $(LESLIB_LIBS) \
              $(SVLS_LIBS) $(MPICH_LIBS) $(F90_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
