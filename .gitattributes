@@ -22,6 +22,7 @@ BuildWithMake/MakeHelpers/gts-2010.03.21.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/itk-4.5.2.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/itk-4.5.2.x64_linux.mk -text
 BuildWithMake/MakeHelpers/itk-4.8.0.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/itk-4.8.0.x64_linux.mk -text
 BuildWithMake/MakeHelpers/leslib-1.5.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/leslib-1.5.x64_linux.mk -text
 BuildWithMake/MakeHelpers/meshsim-9.0-150304.x64_cygwin.mk -text
