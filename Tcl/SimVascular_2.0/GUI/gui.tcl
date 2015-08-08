@@ -35699,6 +35699,7 @@ proc guiRUNSOLVERhandle { args} {
 proc guiRUNSOLVERlaunchSolver { system} {
 
   global guiRUNSOLVERvars
+  global tcl_platform
 
   set user $guiRUNSOLVERvars(user)
 
