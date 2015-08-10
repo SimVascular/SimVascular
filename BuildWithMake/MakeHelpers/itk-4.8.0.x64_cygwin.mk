@@ -4,7 +4,7 @@ ifeq ($(CLUSTER), x64_cygwin)
     ITK_DEFS = -D ITK_IO_FACTORY_REGISTER_MANAGER -D MSVC
     ITK_LIBDIRS = $(ITK_BIN_DIR)/lib/RelWithDebInfo
 
-    ITK_SYS_LIBS  = $(LIBFLAG)Rpcrt4$(LIBLINKEXT)
+    ITK_SYS_LIBS  = $(LIBFLAG)Rpcrt4$(LIBLINKEXT) $(LIBFLAG)Ws2_32$(LIBLINKEXT)
 
     ITK_INCDIRS = \
 -I$(ITK_BIN_DIR)/Examples/ITKIOFactoryRegistration \
@@ -170,13 +170,16 @@ $(LIBFLAG)itkdouble-conversion-4.8$(LIBLINKEXT)  $(LIBFLAG)ITKIOMRC-4.8$(LIBLINK
 $(LIBFLAG)ITKEXPAT-4.8$(LIBLINKEXT)              $(LIBFLAG)ITKIONIFTI-4.8$(LIBLINKEXT)                   $(LIBFLAG)ITKSpatialObjects-4.8$(LIBLINKEXT) \
 $(LIBFLAG)ITKFEM-4.8$(LIBLINKEXT)                $(LIBFLAG)ITKIONRRD-4.8$(LIBLINKEXT)                    $(LIBFLAG)ITKStatistics-4.8$(LIBLINKEXT) \
 $(LIBFLAG)itkgdcmCommon-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKIOPNG-4.8$(LIBLINKEXT)                     $(LIBFLAG)itksys-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmMSFF-4.8$(LIBLINKEXT)        \
 $(LIBFLAG)itkgdcmDICT-4.8$(LIBLINKEXT)           $(LIBFLAG)ITKIOSiemens-4.8$(LIBLINKEXT)                 \
 $(LIBFLAG)itkgdcmDSED-4.8$(LIBLINKEXT)           $(LIBFLAG)ITKIOSpatialObjects-4.8$(LIBLINKEXT)          \
 $(LIBFLAG)itkgdcmIOD-4.8$(LIBLINKEXT)            $(LIBFLAG)ITKIOStimulate-4.8$(LIBLINKEXT)               $(LIBFLAG)itktestlib-4.8$(LIBLINKEXT) \
 $(LIBFLAG)itkgdcmjpeg12-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKIOTIFF-4.8$(LIBLINKEXT)                    $(LIBFLAG)itktiff-4.8$(LIBLINKEXT) \
 $(LIBFLAG)itkgdcmjpeg16-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKIOTransformBase-4.8$(LIBLINKEXT)           $(LIBFLAG)itkv3p_lsqr-4.8$(LIBLINKEXT) \
-$(LIBFLAG)itkgdcmjpeg8-4.8$(LIBLINKEXT)          $(LIBFLAG)ITKIOTransformHDF5-4.8$(LIBLINKEXT)           $(LIBFLAG)itkv3p_netlib-4.8$(LIBLINKEXT) \
-$(LIBFLAG)itkgdcmMSFF-4.8$(LIBLINKEXT)           $(LIBFLAG)ITKIOTransformInsightLegacy-4.8$(LIBLINKEXT)  $(LIBFLAG)itkvcl-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkgdcmjpeg8-4.8$(LIBLINKEXT)          \
+$(LIBFLAG)itkgdcmCommon-4.8$(LIBLINKEXT)         \
+$(LIBFLAG)ITKIOTransformHDF5-4.8$(LIBLINKEXT)           $(LIBFLAG)itkv3p_netlib-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKIOTransformInsightLegacy-4.8$(LIBLINKEXT)  $(LIBFLAG)itkvcl-4.8$(LIBLINKEXT) \
 $(LIBFLAG)ITKgiftiio-4.8$(LIBLINKEXT)            $(LIBFLAG)ITKIOTransformMatlab-4.8$(LIBLINKEXT)         $(LIBFLAG)ITKVideoCore-4.8$(LIBLINKEXT) \
            $(LIBFLAG)ITKIOVTK-4.8$(LIBLINKEXT)                     $(LIBFLAG)ITKVideoIO-4.8$(LIBLINKEXT) \
            $(LIBFLAG)ITKIOXML-4.8$(LIBLINKEXT)                     $(LIBFLAG)itkvnl_algo-4.8$(LIBLINKEXT) \
@@ -189,7 +192,8 @@ $(LIBFLAG)ITKIOGIPL-4.8$(LIBLINKEXT)             $(LIBFLAG)itkNetlibSlatec-4.8$(
         $(LIBFLAG)ITKniftiio-4.8$(LIBLINKEXT)                   $(LIBFLAG)ITKznz-4.8$(LIBLINKEXT) \
 $(LIBFLAG)ITKIOImageBase-4.8$(LIBLINKEXT)        $(LIBFLAG)ITKNrrdIO-4.8$(LIBLINKEXT) \
 $(LIBFLAG)ITKIOIPL-4.8$(LIBLINKEXT)              $(LIBFLAG)itkgdcmopenjpeg-4.8$(LIBLINKEXT)	$(LIBFLAG)itkgdcmcharls-4.8$(LIBLINKEXT) \
-$(LIBFLAG)itkhdf5-4.8$(LIBLINKEXT) $(LIBFLAG)itkhdf5_cpp-4.8$(LIBLINKEXT) $(LIBFLAG)ITKIOHDF5-4.8$(LIBLINKEXT) \
+$(LIBFLAG)itkhdf5-4.8$(LIBLINKEXT) $(LIBFLAG)itkhdf5_cpp-4.8$(LIBLINKEXT) $(LIBFLAG)ITKIOHDF5-4.8$(LIBLINKEXT) $(LIBFLAG)itkhdf5-4.8$(LIBLINKEXT) \
+$(LIBFLAG)ITKEXPAT-4.8$(LIBLINKEXT) \
 $(ITK_SYS_LIBS)
 endif
 
