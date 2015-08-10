@@ -807,7 +807,7 @@ ifeq ($(MAKE_WITH_MESHSIM),1)
   SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150704.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/meshsim-9.0-150704-vs12.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
