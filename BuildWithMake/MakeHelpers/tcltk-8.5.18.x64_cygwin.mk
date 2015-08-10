@@ -10,7 +10,7 @@ ifeq ($(CLUSTER), x64_cygwin)
                      $(LIBFLAG)user32$(LIBLINKEXT) $(LIBFLAG)advapi32$(LIBLINKEXT) \
                      $(LIBFLAG)gdi32$(LIBLINKEXT)  $(LIBFLAG)comdlg32$(LIBLINKEXT) \
                      $(LIBFLAG)imm32$(LIBLINKEXT)  $(LIBFLAG)comctl32$(LIBLINKEXT) \
-                     $(LIBFLAG)shell32$(LIBLINKEXT)
+                     $(LIBFLAG)shell32$(LIBLINKEXT) $(LIBFLAG)Shlwapi$(LIBLINKEXT)
     # Shlwapi was added to make mingw32 compile happy
     TCLTK_LIBS     +=$(LIBFLAG)Shlwapi$(LIBLINKEXT)
     TKCXIMAGE_BASE = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tkcximage-0.98.9/tcltk-8.5.18
