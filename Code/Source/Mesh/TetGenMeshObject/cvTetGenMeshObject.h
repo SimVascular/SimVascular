@@ -151,6 +151,7 @@ class cvTetGenMeshObject : public cvMeshObject {
 
   //Adapt Function
   int Adapt();
+  int SetError(double *error_indicator,int lstep,int factor, double hmax, double hmin) {return CV_ERROR;}
 
   //TETGENMESHOBJECT ONLY: These are helper functions for some of the more complicated mesh options
   int GenerateSurfaceRemesh();

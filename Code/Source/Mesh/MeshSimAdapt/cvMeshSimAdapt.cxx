@@ -28,8 +28,8 @@
  *
  *=========================================================================*/
 
-/** @file cvTetGenAdapt.cxx
- *  @brief The implementations of functions in cvTetGenAdapt
+/** @file cvMeshSimAdapt.cxx
+ *  @brief The implementations of functions in cvMeshSimAdapt
  *
  *  @author Adam Updegrove
  *  @author updega2@gmail.com 
@@ -37,7 +37,7 @@
  *  @author shaddenlab.berkeley.edu 
  */
 
-#include "cvTetGenAdapt.h"
+#include "cvMeshSimAdapt.h"
 
 #include "cv_adapt_utils.h"
 
@@ -62,8 +62,8 @@
 
 #include <iostream>
 
-cvTetGenAdapt::cvTetGenAdapt() 
-  : cvAdaptObject(KERNEL_TETGEN)
+cvMeshSimAdapt::cvMeshSimAdapt() 
+  : cvAdaptObject(KERNEL_MESHSIM)
 {
   meshobject_ = NULL;
   inmesh_  = NULL;
@@ -88,14 +88,14 @@ cvTetGenAdapt::cvTetGenAdapt()
   ybar_ = NULL;
 }
 
-cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
-  : cvAdaptObject( KERNEL_TETGEN)
+cvMeshSimAdapt::cvMeshSimAdapt( const cvMeshSimAdapt& Adapt)
+  : cvAdaptObject( KERNEL_MESHSIM)
 {
   Copy(Adapt);
 }
 
 
-cvTetGenAdapt::~cvTetGenAdapt()
+cvMeshSimAdapt::~cvMeshSimAdapt()
 {
   if (inmesh_ != NULL)
     inmesh_->Delete();
@@ -120,17 +120,17 @@ cvTetGenAdapt::~cvTetGenAdapt()
     gRepository->UnRegister(meshobject_->GetName());
 }
 
-cvAdaptObject *cvTetGenAdapt::Copy() const
+cvAdaptObject *cvMeshSimAdapt::Copy() const
 {
-  cvTetGenAdapt *result = new cvTetGenAdapt( *this );
+  cvMeshSimAdapt *result = new cvMeshSimAdapt( *this );
   return result;
 }
 
-int cvTetGenAdapt::Copy( const cvAdaptObject& src)
+int cvMeshSimAdapt::Copy( const cvAdaptObject& src)
 {
-  cvTetGenAdapt *adaptPtr;
+  cvMeshSimAdapt *adaptPtr;
 
-  adaptPtr = (cvTetGenAdapt *)( &src );
+  adaptPtr = (cvMeshSimAdapt *)( &src );
 
   return CV_OK;
 }
@@ -138,7 +138,7 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
-int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
+int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
 {
   char* mesh_name = NULL;
   if (meshobject_ != NULL)
@@ -147,7 +147,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
     return CV_ERROR;
   }
 
-  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
+  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("MeshSim");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,"dummy","dummy");
   if ( meshobject_ == NULL ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
@@ -176,22 +176,19 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
 // -----------------------
 //  LoadModel
 // -----------------------
-int cvTetGenAdapt::LoadModel(char *fileName)
+int cvMeshSimAdapt::LoadModel(char *fileName)
 {
-  if (insurface_mesh_ != NULL)
-    insurface_mesh_->Delete();
+  if (meshobject_ == NULL)
+  {
+    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+    return CV_ERROR;
+  }
 
-  vtkSmartPointer<vtkXMLPolyDataReader> pdreader = 
-    vtkSmartPointer<vtkXMLPolyDataReader>::New();
-
-  insurface_mesh_ = vtkPolyData::New();
-  pdreader->SetFileName(fileName);
-  pdreader->Update();
-  insurface_mesh_ ->DeepCopy(pdreader->GetOutput());
-  printf("\n-- Loaded Model...\n");
-  printf(" Total # of faces: %d\n", insurface_mesh_->GetNumberOfCells());
-  printf(" Total # of vertices: %d\n", insurface_mesh_->GetNumberOfPoints());
-  insurface_mesh_->BuildLinks();
+  if (meshobject_->LoadModel(fileName) != CV_OK)
+  {
+    fprintf(stderr,"Error loading solid model\n");
+    return CV_ERROR;
+  }
 
   return CV_OK;
 }
@@ -199,21 +196,35 @@ int cvTetGenAdapt::LoadModel(char *fileName)
 // -----------------------
 //  LoadMesh
 // -----------------------
-int cvTetGenAdapt::LoadMesh(char *fileName)
+int cvMeshSimAdapt::LoadMesh(char *fileName)
 {
-  if (inmesh_ != NULL)
-    inmesh_->Delete();
-  vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader = 
-    vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+  const char *extension = strrchr(filename,".");
+  extension = extension+1;
 
-  inmesh_ = vtkUnstructuredGrid::New();
-  ugreader->SetFileName(fileName);
-  ugreader->Update();
-  inmesh_->DeepCopy(ugreader->GetOutput());
-  printf("\n-- Loaded Mesh...\n");
-  printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
-  printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
-  inmesh_->BuildLinks();
+  //if loading vtu, save as member data
+  //else if loading sms, load into meshobject
+  if (!strncmp(extension,"vtu",3)) {
+    if (inmesh_ != NULL)
+      inmesh_->Delete();
+    vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader = 
+      vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+    inmesh_ = vtkUnstructuredGrid::New();
+    ugreader->SetFileName(fileName);
+    ugreader->Update();
+    inmesh_->DeepCopy(ugreader->GetOutput());
+    printf("\n-- Loaded Mesh...\n");
+    printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
+    printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
+    inmesh_->BuildLinks();
+  } else if (!strncmp(extension,"xmx"3)) {
+    if (meshobject_ == NULL)
+    {
+      fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+      return CV_ERROR;
+    }
+    char *dummy = NULL;
+    meshobject_->LoadMesh(fileName,dummy);
+  }
 
   return CV_OK;
 }
@@ -221,7 +232,7 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
 // ---------------
 //  LoadSolution
 // ---------------
-int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
+int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
 {
   if (sol_ != NULL)
     delete [] sol_;
@@ -240,7 +251,7 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 // ---------------
 //  LoadYbar
 // ---------------
-int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
+int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
 {
   if (ybar_ != NULL)
     delete [] ybar_;
@@ -259,7 +270,7 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 // ---------------
 //  LoadHessian
 // ---------------
-int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
+int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
 {
   if (hessians_ != NULL)
     delete [] hessians_;
@@ -272,7 +283,7 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 // ---------------
 //  ReadSolution
 // ---------------
-int cvTetGenAdapt::ReadSolutionFromMesh()
+int cvMeshSimAdapt::ReadSolutionFromMesh()
 {
   if (inmesh_ == NULL)
   {
@@ -296,7 +307,7 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
 // ---------------
 //  ReadYbar
 // ---------------
-int cvTetGenAdapt::ReadYbarFromMesh()
+int cvMeshSimAdapt::ReadYbarFromMesh()
 {
   if (inmesh_ == NULL)
   {
@@ -321,7 +332,7 @@ int cvTetGenAdapt::ReadYbarFromMesh()
  * value to be set
  * @return *result: CV_ERROR if the flag doesn't exist. Else return CV_OK
  */
-int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
+int cvMeshSimAdapt::SetAdaptOptions(char *flag,double value)
 {
   fprintf(stderr,"At beginning of options\n");
   if (!strncmp(flag,"poly",4)) {
@@ -363,7 +374,7 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
 // -----------------------
 //  CheckOptions
 // -----------------------
-int cvTetGenAdapt::CheckOptions() 
+int cvMeshSimAdapt::CheckOptions() 
 {
   fprintf(stderr,"Check values\n");
   fprintf(stderr,"Poly: %d\n",options.poly_);
@@ -380,130 +391,40 @@ int cvTetGenAdapt::CheckOptions()
 // -----------------------
 //  SetErrorMetric
 // -----------------------
-int cvTetGenAdapt::SetErrorMetric()
+int cvMeshSimAdapt::SetErrorMetric()
 {
-  if (inmesh_ == NULL)
-  {
-    fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
-    return CV_ERROR;
-  }
-  int numPoints = inmesh_->GetNumberOfPoints();
-
-  switch(options.strategy_) {
-  //this code processes for both if strategy == 1 || strategy ==2
-  //Right now the only implemented adaptation is for isotropic meshing. 
-  //TetGen only has the ability to specify one size metric at each node 
-  //within the mesh, so anisotropic meshing is not capable at this moment.
-  //Strategies 1 and 2 implement isotropic adaptation 
-  case 1 :
-  case 2 : { //isotropic adaptation
-    cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
-    
-    char error_tag[28];
-    if(options.strategy_ == 1) {
-      cout<<"\nUsing ybar to compute hessians...\n"<<endl;
-      sprintf(error_tag,"ybar");
-    }
-    else if (options.strategy_ == 2) {
-      cout<<"\nUsing numerical/computed hessians (i.e, from phasta)...\n"<<endl;
-      sprintf(error_tag,"hessains");
-    }
-
-    if(options.strategy_==1) {
-      // calculating hessians for ybar field
-      // first reconstruct gradients and then the hessians 
-      // also deals with boundary issues &
-      // applies smoothing procedure for hessians
-      // (simple average : arithmetic mean)
-      if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
-      {
-        fprintf(stderr,"Error: Error when calculating hessians from solution\n");
-        return CV_ERROR;
-      }
-    }
-    else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
-      // use the hessians computed from phasta
-    }
-    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_) != CV_OK)
-    {
-        fprintf(stderr,"Error: Error when setting size field with hessians\n");
-        return CV_ERROR;
-    }
-  }
-  break;
-  case 3:
-  case 4: { // anisotropic adaptation (tag driven)
-    cout<<"Strategy has not been implemented"<<endl;
-    return 0;
-  }
-  break;
-  case 5:
-  case 6: { //anisotropic adaptation (size-field driven)
-    cout<<"Strategy has not been implemented"<<endl;
-    return 0;
-  }
-  break;
-  default : {
-    if(options.strategy_<0) {
-      cout<<"This is default case but has not been implemented"<<endl;
-
-    }
-    else {
-      cout<<"\nSpecify a correct (adaptation) strategy (adapt.cc)"<<endl;
-      exit(-1);
-    }
-  }
-  break;
-  }
-
+  fprintf(stdout,"TODO\n");
   return CV_OK;
 }
 
 // -----------------------
 //  SetUpMesh
 // -----------------------
-int cvTetGenAdapt::SetupMesh()
+int cvMeshSimAdapt::SetupMesh()
 {
-  if (inmesh_ == NULL || insurface_mesh_ == NULL)
-  {
-    fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
-    return CV_ERROR;
-  }
-  if (meshobject_ == NULL)
-  {
-    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
-    return CV_ERROR;
-  }
-
-  meshobject_->SetVtkPolyDataObject(insurface_mesh_);
-  meshobject_->SetInputUnstructuredGrid(inmesh_);
-  meshobject_->SetMeshOptions("r",1,0.0,0.0);
-  meshobject_->NewMesh();
-
+  fprintf(stdout,"TODO\n");
   return CV_OK;
 }
 
 // -----------------------
 //  RunAdaptor
 // -----------------------
-int cvTetGenAdapt::RunAdaptor()
+int cvMeshSimAdapt::RunAdaptor()
 {
-  if (inmesh_ == NULL || insurface_mesh_ == NULL)
+  if (meshobject_ == NULL)
   {
-    fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
+    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
     return CV_ERROR;
   }
-
   meshobject_->Adapt();
-  meshobject_->WriteMesh("dummy",0);
-
+  meshobject_->SetError(ybar_,options.instep_,options.ratio_,options.hmax_,options.hmin_);
   return CV_OK;
 }
 
 // -----------------------
 //  PrintStats
 // -----------------------
-int cvTetGenAdapt::PrintStats()
+int cvMeshSimAdapt::PrintStats()
 {
   fprintf(stdout,"TODO\n");
   return CV_OK;
@@ -512,7 +433,7 @@ int cvTetGenAdapt::PrintStats()
 // -----------------------
 //  GetAdaptedMesh
 // -----------------------
-int cvTetGenAdapt::GetAdaptedMesh()
+int cvMeshSimAdapt::GetAdaptedMesh()
 {
   fprintf(stdout,"TODO!\n");
   return CV_OK;
@@ -521,7 +442,7 @@ int cvTetGenAdapt::GetAdaptedMesh()
 // -----------------------
 //  TransferSolution
 // -----------------------
-int cvTetGenAdapt::TransferSolution()
+int cvMeshSimAdapt::TransferSolution()
 {
   //if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.ndof_) != CV_OK)
   //{
@@ -537,7 +458,7 @@ int cvTetGenAdapt::TransferSolution()
 // -----------------------
 //  WriteAdaptedModel
 // -----------------------
-int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
+int cvMeshSimAdapt::WriteAdaptedModel(char *fileName)
 {
   fprintf(stdout,"TODO!\n");
   return CV_OK;
@@ -546,7 +467,7 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 // -----------------------
 //  WriteAdaptedMesh
 // -----------------------
-int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
+int cvMeshSimAdapt::WriteAdaptedMesh(char *fileName)
 {
   fprintf(stdout,"TODO!\n");
   return CV_OK;
@@ -555,7 +476,7 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 // -----------------------
 //  WriteAdaptedSolution
 // -----------------------
-int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
+int cvMeshSimAdapt::WriteAdaptedSolution(char *fileName)
 {
   fprintf(stdout,"TODO!\n");
   //int numPoints = outmesh_->GetNumberOfPoints();

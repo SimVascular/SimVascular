@@ -142,6 +142,7 @@ public:
 
   //Adapt Functions
   virtual int Adapt() = 0;
+  virtual int SetError(double *error_indicator,int lstep,int factor, double hmax, double hmin) = 0;
 
   int openOutputFile(char* filename);
   int closeOutputFile();

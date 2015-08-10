@@ -147,8 +147,9 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
   int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
 
-  //Adapt function
+  //Adapt functions
   int Adapt();
+  int SetError(double *error_indicator,int lstep,int factor, double hmax, double hmin);
 
   // MESHSIMMESHOBJECT ONLY
   int FindFaceNumber (pRegion region, int pseudofaceID, int *facenum);

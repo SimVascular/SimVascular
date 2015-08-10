@@ -2140,6 +2140,96 @@ int cvMeshSimMeshObject::Adapt()
   return CV_OK;
 }
 
+int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, double hmax, double hmin)
+{
+  errorIndicatorID = MD_newMeshDataId("error indicator");
+
+  modes = MD_newMeshDataId("number of modes");// required for higher order
+
+  pMSAdapt simAdapter;
+
+  cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
+  
+  char error_tag[28];
+  error_tag[0]='\0';
+
+  cout<<"\nUsing ybar to compute hessians...\n"<<endl;
+  sprintf(error_tag,"ybar");
+    
+  cout<<"\n Reading files:"<<endl;
+
+  int poly=1;
+
+  int nvar = 5;
+  attachArray(error_indicator,mesh,errorIndicatorID,nvar,poly);
+
+  simAdapter = MSA_new(mesh,1);
+
+  // need to use only local refinement if boundary layer exists
+  pVertex v;
+  VIter vIter=M_vertexIter(mesh);
+  while(v = VIter_next(vIter)) {
+    if (EN_isBLEntity(v)) {
+      MSA_setLocal(simAdapter,1);
+      cout<<endl<<" ** boundary layer mesh detected, using local refinement **" << endl <<endl;
+      break;
+    }
+  }
+  VIter_delete(vIter);
+ 
+  // calculating hessians for ybar field
+  // first reconstruct gradients and then the hessians 
+  // also deals with boundary issues &
+  // applies smoothing procedure for hessians
+  // (simple average : arithmetic mean)
+
+  hessiansFromSolution(mesh,lstep);
+  
+  // compute mesh size-field using hessian strategy (anisotropic adaptation)
+  // and set it at each vertex
+  int option = 1;
+  double sphere[5];
+  sphere[0] = -1;
+  sphere[1] = 0;
+  sphere[2] = 0;
+  sphere[3] = 0;
+  sphere[4] = 1;
+
+  setSizeFieldUsingHessians(mesh,simAdapter,factor,hmax,hmin,option,sphere);
+  
+
+  // data clean up
+  cleanAttachedData(mesh,errorIndicatorID,0);
+  // adaptation
+
+  pProgress progressAdapt = Progress_new();
+
+  MSA_adapt(simAdapter, progressAdapt);
+
+  Progress_delete(progressAdapt);
+
+  pProgress progressFix = Progress_new();
+  // 7.0+ version
+  // takes case of bad brdy. elements (elements with no interior nodes)
+  // is this the replacement for 7+?
+  int dimfilter = 12;
+  MS_ensureInteriorVertices(mesh,dimfilter,progressFix);
+  Progress_delete(progressFix);
+
+  printf("-- Adaptation Done...\n");
+  printf(" Total # of elements: %d\n", M_numRegions(mesh));
+  printf(" Total # of vertices: %d\n\n", M_numVertices(mesh));
+  printf(" Total # of sol. callbacks: %d\n\n",CBcounter);
+  printf(" Total # of invalid regions in  callbacks: %d\n\n",CBinvalidRegionCount);
+
+  MD_deleteMeshDataId(errorIndicatorID);
+  MD_deleteMeshDataId(modes);
+
+  MSA_delete(simAdapter);
+
+  return CV_OK;
+}
+
 /*---------------------------------------------------------------------*
  *                                                                     *
  *             ****  WriteSpectrumSolverElements ****                  *

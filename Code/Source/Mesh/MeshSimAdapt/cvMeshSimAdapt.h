@@ -28,12 +28,12 @@
  *
  *=========================================================================*/
 
-/** @file cvTetGenAdapt.h
- *  @brief Class provides implementations of the TetGen adaption
+/** @file cvMeshSimAdapt.h
+ *  @brief Class provides implementations of the MeshSim adaption
  *
  *  This is derived from the SolidModel class and provides implementations
  *  of functions to be able to import a solid using vtkReaders, extract 
- *  the boundaries of the solid, and mesh the solid with TetGen.
+ *  the boundaries of the solid, and mesh the solid with MeshSim.
  *
  *  @author Adam Updegrove
  *  @author updega2@gmail.com 
@@ -41,8 +41,8 @@
  *  @author shaddenlab.berkeley.edu 
  */
 
-#ifndef __CVTETGENADAPT_H
-#define __CVTETGENADAPT_H
+#ifndef __CVMESHSIMADAPT_H
+#define __CVMESHSIMADAPT_H
 
 #include "SimVascular.h"
 
@@ -73,7 +73,7 @@
 //
 
 
-class cvTetGenAdapt: public cvAdaptObject {
+class cvMeshSimAdapt: public cvAdaptObject {
 
   typedef struct AdaptOptions {
     int poly_;
@@ -88,10 +88,10 @@ class cvTetGenAdapt: public cvAdaptObject {
   }  AdaptOptions;
 
 public:
-  cvTetGenAdapt();
-  cvTetGenAdapt( const cvTetGenAdapt& Adapt);
+  cvMeshSimAdapt();
+  cvMeshSimAdapt( const cvMeshSimAdapt& Adapt);
 
-  ~cvTetGenAdapt();
+  ~cvMeshSimAdapt();
 
   cvAdaptObject *Copy() const;
   int Copy( const cvAdaptObject& src);
@@ -142,6 +142,6 @@ private:
 };
 
 
-#endif //__CVTETGEN_ADAPT_H
+#endif //__CVMESHSIM_ADAPT_H
 
 
