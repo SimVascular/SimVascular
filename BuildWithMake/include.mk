@@ -55,11 +55,11 @@ CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { vs10.1, vs12.4, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { vs10.1, vs12.5, mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
-CXX_COMPILER_VERSION = vs12.4
+CXX_COMPILER_VERSION = vs12.5
 FORTRAN_COMPILER_VERSION = ifort
 
 -include $(TOP)/cluster_overrides.mk
@@ -217,7 +217,7 @@ TARGETDIR = .
 # -----------------------------------------------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-  SVEXTERN_COMPILER_VERSION = vs12.4
+  SVEXTERN_COMPILER_VERSION = vs12.5
 endif
 ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gcc-4.8
@@ -348,8 +348,8 @@ ifeq ($(CLUSTER), x64_cygwin)
   ifeq ($(CXX_COMPILER_VERSION), vs10.1)
 	include $(TOP)/MakeHelpers/compiler.vs10.1.x64_cygwin.mk
   endif
-  ifeq ($(CXX_COMPILER_VERSION), vs12.4)
-	include $(TOP)/MakeHelpers/compiler.vs12.4.x64_cygwin.mk
+  ifeq ($(CXX_COMPILER_VERSION), vs12.5)
+	include $(TOP)/MakeHelpers/compiler.vs12.5.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
 	include $(TOP)/MakeHelpers/compiler.ifort.x64_cygwin.mk
