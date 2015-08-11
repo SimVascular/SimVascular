@@ -128,7 +128,7 @@ WARN_LOGFILE           =
 # configuration options related to the input files
 #---------------------------------------------------------------------------
 
-INPUT                  = ../Code/Modules/ThreeDSolver/IncompressibleSolver/Solver
+INPUT                  = ../../Code/FlowSolvers/ThreeDSolver/svSolver
 INPUT_ENCODING         = UTF-8
 FILE_PATTERNS          =
 RECURSIVE              = YES
