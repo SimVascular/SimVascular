@@ -31,11 +31,11 @@
 #---------------------------------------------------------------------------
 
 DOXYFILE_ENCODING      = UTF-8
-PROJECT_NAME           = "Simvascular Flowsolver"
-PROJECT_NUMBER         =
-PROJECT_BRIEF          =
+PROJECT_NAME           = "svSolver"
+PROJECT_NUMBER         = REPLACEME_SIMVASCULAR_PROJECT_NUMBER
+PROJECT_BRIEF          = 
 PROJECT_LOGO           =
-OUTPUT_DIRECTORY       = ./flowsolverdocs
+OUTPUT_DIRECTORY       = REPLACEME_SIMVASCULAR_DOX_OUTPUT_DIR
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 BRIEF_MEMBER_DESC      = YES
@@ -172,7 +172,7 @@ IGNORE_PREFIX          =
 #---------------------------------------------------------------------------
 
 GENERATE_HTML          = YES
-HTML_OUTPUT            = html
+HTML_OUTPUT            = flowsolver_html
 HTML_FILE_EXTENSION    = .html
 HTML_HEADER            =
 HTML_FOOTER            =
