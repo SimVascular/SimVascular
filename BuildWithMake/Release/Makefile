@@ -70,7 +70,11 @@ msiclean-licenses:
 	-rm tmp/uuidgen.obj*
 
 msi-licenses:	msiclean-licenses
+ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
+	x86_64-w64-mingw32-gcc -o tmp/uuidgen.exe windows_msi_helpers/uuidgen.c -lole32
+else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
+endif
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs-licenses.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Licenses/MeshSim/license.dat
 	-echo "Run candle..."
@@ -91,7 +95,11 @@ msiclean:
 	-rm tmp/uuidgen.obj*
 
 msi:	msiclean
+ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
+	x86_64-w64-mingw32-gcc -o tmp/uuidgen.exe windows_msi_helpers/uuidgen.c -lole32
+else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
+endif
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) sv$(SIMVASCULAR_POSTFIX) simvascular-bin.exe $(SIMVASCULAR_VERSION) $(SIMVASCULAR_FULL_VER_NO)
 	-echo "Run candle..."

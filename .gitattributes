@@ -9,6 +9,7 @@ BuildWithMake/CygwinHelpers/parse_reg_dir_with_extra_space.sh -text
 BuildWithMake/Docs/Doxygen/mainpage.cxx -text
 BuildWithMake/Docs/Makefile -text
 BuildWithMake/Docs/flowsolver.Doxyfile -text
+BuildWithMake/Docs/index.html -text
 BuildWithMake/Docs/simvascular.Doxyfile -text
 BuildWithMake/Docs/styles.css -text
 BuildWithMake/MakeHelpers/compiler.gnu.x64_linux.mk -text
@@ -26,9 +27,8 @@ BuildWithMake/MakeHelpers/itk-4.8.0.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/itk-4.8.0.x64_linux.mk -text
 BuildWithMake/MakeHelpers/leslib-1.5.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/leslib-1.5.x64_linux.mk -text
-BuildWithMake/MakeHelpers/meshsim-9.0-150304.x64_cygwin.mk -text
-BuildWithMake/MakeHelpers/meshsim-9.0-150304.x64_linux.mk -text
-BuildWithMake/MakeHelpers/meshsim-9.0-150704.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/meshsim-9.0-150704-vs10.x64_cygwin.mk -text
+BuildWithMake/MakeHelpers/meshsim-9.0-150704-vs12.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/meshsim-9.0-150704.x64_linux.mk -text
 BuildWithMake/MakeHelpers/mpich2-1.4p1.x64_cygwin.mk -text
 BuildWithMake/MakeHelpers/mpich2.usr.local.x64_linux.mk -text

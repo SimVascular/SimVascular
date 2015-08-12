@@ -29,8 +29,8 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = simvascular
-PROJECT_NUMBER         = 07.25.2009
+PROJECT_NAME           = SimVascular
+PROJECT_NUMBER         = REPLACEME_SIMVASCULAR_PROJECT_NUMBER
 OUTPUT_DIRECTORY       = REPLACEME_SIMVASCULAR_DOX_OUTPUT_DIR
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -139,7 +139,7 @@ FILE_PATTERNS          = *.c \
 RECURSIVE              = YES
 EXCLUDE                = .svn:OneDSolver
 EXCLUDE_SYMLINKS       = NO
-EXCLUDE_PATTERNS       = */.svn/* */IritSolidModel/* */OneDSolver/*
+EXCLUDE_PATTERNS       = */.svn/* */OneDSolver/* */FlowSolvers/* */ThirdParty/*
 EXAMPLE_PATH           = 
 EXAMPLE_PATTERNS       = *
 EXAMPLE_RECURSIVE      = NO
