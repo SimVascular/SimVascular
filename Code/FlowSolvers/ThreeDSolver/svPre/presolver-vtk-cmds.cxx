@@ -2389,6 +2389,11 @@ int cmd_bct_write_vtp(char *cmd) {
 
     debugprint(stddbg,"Entering cmd_bct_write_vtp.\n");
 
+    char filename[MAXPATHLEN];
+    char newfilename[MAXPATHLEN];
+
+    parseCmdStr(cmd,filename);
+
     vtkAppendPolyData* appendFilter=NULL;
 
     if(bctMerge_==1 && vbct.size()>1){
@@ -2415,16 +2420,33 @@ int cmd_bct_write_vtp(char *cmd) {
         pd->GetPointData()->AddArray(mdata);
 
         if(bctMerge_!=1 || vbct.size()==1){
-            char bct_name[40]="bct.vtp";
+
+            if(filename[0]=='\0'){
+                strcpy(newfilename, "bct.vtp");
+            }else{
+                strcpy(newfilename,filename);
+            }
+
             if(vbct.size()>1){
-                sprintf(bct_name,"bct%d.vtp",n+1);
+
+                if(filename[0]=='\0'){
+                    strcpy(filename, "bct.vtp");
+                }
+
+                strncpy (newfilename, filename, strlen(filename)-4 );
+                newfilename[strlen(filename)-4]='\0';
+
+                char rmdr[40];
+                sprintf(rmdr,"%d.vtp",n+1);
+                strcat(newfilename,rmdr);
+
             }
 
             vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
             polywriter->SetCompressorTypeToZLib();
             polywriter->EncodeAppendedDataOff();
             polywriter->SetInputDataObject(pd);
-            polywriter->SetFileName(bct_name);
+            polywriter->SetFileName(newfilename);
             polywriter->Write();
             polywriter->Delete();
         }else{
@@ -2439,7 +2461,11 @@ int cmd_bct_write_vtp(char *cmd) {
         polywriter->SetCompressorTypeToZLib();
         polywriter->EncodeAppendedDataOff();
         polywriter->SetInputDataObject(appendFilter->GetOutput());
-        polywriter->SetFileName("bct.vtp");
+        if(filename[0]=='\0'){
+            strcpy(filename, "bct.vtp");
+        }
+
+        polywriter->SetFileName(filename);
         polywriter->Write();
         polywriter->Delete();
 

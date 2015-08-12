@@ -165,6 +165,7 @@ int parseDouble(char *cmd, double *num);
 int parseDouble2(char *cmd, double *num);
 int parseDouble3(char *cmd, double *v1, double *v2, double *v3);
 int parseCmdStr(char *cmd, char *mystr);
+int parseCmdStr2(char *cmd, char *mystr);
 int parseNum2(char *cmd, int *num);
 int check_node_order(int n0, int n1, int n2, int n3, int elementId,
                      int *k0,int *k1, int *k2, int *k3);
@@ -1769,8 +1770,15 @@ int cmd_write_numstartdat(char *cmd) {
         }
     }
 
+    char filename[MAXPATHLEN];
+
+    parseCmdStr2(cmd,filename);
+    if(filename[0]=='\0'){
+        strcpy(filename, "numstart.dat");
+    }
+
     FILE* fp = NULL;
-    fp = fopen("numstart.dat","w");
+    fp = fopen(filename,"w");
     if(fp!=NULL){
         fprintf(fp,"%d\n",start_time_step);
         fclose(fp);
@@ -2031,7 +2039,7 @@ int writeRESTARTDAT(char* filename) {
 
     if (soln_ == NULL) {
 
-      soln_ = new double [size];
+      soln_ = new double [size]();
       for (i = 0; i < numNodes_; i++) {
         soln_[i] = init_p_;
       }
@@ -2536,18 +2544,20 @@ int cmd_bct_analytical_shape(char *cmd){
     char shapeType[MAXSTRINGLENGTH];
     parseCmdStr(cmd,shapeType);
 
+    debugprint(stddbg,"111.\n");
+
     if(strcmp(shapeType,"womersley")==0){
-        bctShape_=WOMERSLEY;
+        bctShape_=WOMERSLEY; debugprint(stddbg,"222.\n");
     }else if(strcmp(shapeType,"parabolic")==0){
-        bctShape_=PARABOLIC;
+        bctShape_=PARABOLIC; debugprint(stddbg,"333.\n");
     }else if(strcmp(shapeType,"plug")==0){
-        bctShape_=PLUG;
+        bctShape_=PLUG; debugprint(stddbg,"444.\n");
     }else{
         fprintf(stderr,"ERROR: No such BCT Analytical Shape: (%s)\n",shapeType);
         return CV_ERROR;
     }
 
-    debugprint(stddbg,"  BCT Analytical Shape is %s\n",mu_);
+    debugprint(stddbg,"  BCT Analytical Shape is %s\n",shapeType);
 
     debugprint(stddbg,"Exiting cmd_bct_analytical_shape.\n");
     return CV_OK;
@@ -2640,6 +2650,10 @@ int cmd_bct_write_dat(char *cmd) {
 
     debugprint(stddbg,"Entering cmd_bct_write_dat.\n");
 
+    char filename[MAXPATHLEN];
+
+    parseCmdStr(cmd,filename);
+
     FILE* fp = NULL;
 
     if(vbct.size()==1){
@@ -2647,10 +2661,16 @@ int cmd_bct_write_dat(char *cmd) {
     }
 
     if(bctMerge_==1){
-        char bct_name[]="bct.dat";
-        fp=fopen(bct_name,"w");
+        //char bct_name[]="bct.dat";
+
+        if(filename[0]=='\0'){
+            strcpy(filename, "bct.dat");
+        }
+
+        //fp=fopen(bct_name,"w");
+        fp=fopen(filename,"w");
         if(fp==NULL){
-            fprintf(stderr, "ERROR: could not open file (%s).\n", bct_name);
+            fprintf(stderr, "ERROR: could not open file (%s).\n", filename);
             return CV_ERROR;
         }
         fprintf(fp,"%d %d\n",bctNodeNumTotal_,bctPointNumMax_+1);
@@ -2665,11 +2685,22 @@ int cmd_bct_write_dat(char *cmd) {
         int nodeNum=pd->GetNumberOfPoints();
 
         if(bctMerge_!=1){
-            char bct_name[40];
-            sprintf(bct_name,"bct%d.dat",n+1);
-            fp=fopen(bct_name,"w");
+            if(filename[0]=='\0'){
+                strcpy(filename, "bct.dat");
+            }
+
+            char newfilename[MAXPATHLEN];
+
+            strncpy (newfilename, filename, strlen(filename)-4 );
+            newfilename[strlen(filename)-4]='\0';
+
+            char rmdr[40];
+            sprintf(rmdr,"%d.dat",n+1);
+            strcat(newfilename,rmdr);
+
+            fp=fopen(newfilename,"w");
             if(fp==NULL){
-                fprintf(stderr, "ERROR: could not open file (%s).\n", bct_name);
+                fprintf(stderr, "ERROR: could not open file (%s).\n", filename);
                 return CV_ERROR;
             }
             fprintf(fp,"%d %d\n",nodeNum,pointNum+1);
