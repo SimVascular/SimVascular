@@ -510,13 +510,15 @@ if(Plugin_ITK)
 endif()
 
 #---
-if(Licensed_ADAPTOR)
-	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/MeshSimAdapt")
-endif()
-
 if(Licensed_MESHSIM OR Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
 	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
 endif()
+
+if(Licensed_ADAPTOR)
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+#	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/MeshSimAdapt")
+endif()
+
 
 
 #-----------------------------------------------------------------------------

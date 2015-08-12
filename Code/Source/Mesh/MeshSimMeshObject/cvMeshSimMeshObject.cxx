@@ -58,6 +58,37 @@
   #include "cvMeshSimDiscreteSolidModel.h"
 #endif
 
+//These have been added from ADAPTOR, make sure they are 
+//underneath compiler flags!
+#include "cvAdaptCore.h"
+
+#ifdef WIN32
+#include <windows.h>
+#include <tchar.h>
+#include <stdio.h>
+#endif
+
+#ifdef USE_PARASOLID
+  #include "cv_parasolid_utils.h"
+  #include "parasolid_kernel.h"
+  #include "kernel_interface.h"
+#endif
+
+#ifdef USE_PARASOLID
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
+  #include "SimParasolidInt.h"
+  #include "SimParasolidKrnl.h"
+#endif
+
+#ifdef USE_DISCRETE_MODEL
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
+  #include "MeshSim.h"
+  #include "SimModel.h"
+  #include "SimDiscrete.h"
+#endif
+
 // -----------
 // cvMeshSimMeshObject
 // -----------
@@ -1316,43 +1347,43 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags, int id,double value1, doubl
     return CV_ERROR;
   }
 
-  if (!strncmp(flag,"s",1)) {    //Surface flag, on or off
+  if (!strncmp(flags,"s",1)) {    //Surface flag, on or off
     meshoptions_.surface=(int)value1;
   }
-  else if (!strncmp(flag,"v",1)) {    //Volume flag, on or off
+  else if (!strncmp(flags,"v",1)) {    //Volume flag, on or off
     meshoptions_.volume=(int)value1;
   }
-   else if (!strncmp(flag,"A",1)) {    //Global edge size, type, size
+   else if (!strncmp(flags,"A",1)) {    //Global edge size, type, size
     meshoptions_.gsize_type=id;
     meshoptions_.gsize=value1;
     // old api 5.4: MS_setGlobalMeshSize(mesh,type,gsize);
     MS_setMeshSize(case_,GM_domain(model),id,value1,NULL);
   }
-  else if (!strncmp(flag,"a",1)) {    //Local edge size, surface id, type, size
+  else if (!strncmp(flags,"a",1)) {    //Local edge size, surface id, type, size
     pGEntity pid = NULL;
     if (MapIDtoPID(id,&pid) == CV_ERROR) {
       return CV_ERROR;
     }
     MS_setMeshSize(case_,pid,(int)value1,value2,NULL);
   }
-  else if (!strncmp(flag,"C",1)) {  //Global Curv, type, gcurv value
+  else if (!strncmp(flags,"C",1)) {  //Global Curv, type, gcurv value
     meshoptions_.gcurv_type=id;
-    meshoptions_.gcurv=value;
-    MS_setMeshSize(case_,GM_domain(model),id,value,NULL);
+    meshoptions_.gcurv=value1;
+    MS_setMeshSize(case_,GM_domain(model),id,value1,NULL);
   }
-  else if(!strncmp(flag,"c",1)) {  //Local Curv, surface id, type, gcurv value
+  else if(!strncmp(flags,"c",1)) {  //Local Curv, surface id, type, gcurv value
     pGEntity pid = NULL;
     if (MapIDtoPID(id,&pid) == CV_ERROR) {
       return CV_ERROR;
     }
     MS_setMeshCurv(case_,pid,(int)value1,value2);
   }
-  else if(!strncmp(flag,"M",1)) {  //Global Curv Min, type, gcurv min value
+  else if(!strncmp(flags,"M",1)) {  //Global Curv Min, type, gcurv min value
     meshoptions_.gmincurv_type=id;
     meshoptions_.gmincurv=value1;
     MS_setMinCurvSize(case_,GM_domain(model),id,value1);
   }
-  else if(!strncmp(flag,"m",1)) {  //Local Curv Min, surface id, type, gcurv min value
+  else if(!strncmp(flags,"m",1)) {  //Local Curv Min, surface id, type, gcurv min value
     pGEntity pid = NULL;
     if (MapIDtoPID(id,&pid) == CV_ERROR) {
       return CV_ERROR;
@@ -1360,7 +1391,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags, int id,double value1, doubl
     MS_setMinCurvSize(case_,pid,(int)value1,value2);
   }
   else {
-      fprintf(stderr,"%s: flag is not recognized\n",flag);
+      fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
 
   return CV_OK;

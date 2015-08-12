@@ -54,12 +54,6 @@
 #include "cvRepositoryData.h"
 #include "cv_globals.h"
 
-#ifdef WIN32
-#include <windows.h>
-#include <tchar.h>
-#include <stdio.h>
-#endif
-
 #include <iostream>
 
 cvMeshSimAdapt::cvMeshSimAdapt() 
@@ -198,7 +192,7 @@ int cvMeshSimAdapt::LoadModel(char *fileName)
 // -----------------------
 int cvMeshSimAdapt::LoadMesh(char *fileName)
 {
-  const char *extension = strrchr(filename,".");
+  const char *extension = strrchr(fileName,".");
   extension = extension+1;
 
   //if loading vtu, save as member data
@@ -216,7 +210,7 @@ int cvMeshSimAdapt::LoadMesh(char *fileName)
     printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
     printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
     inmesh_->BuildLinks();
-  } else if (!strncmp(extension,"xmx"3)) {
+  } else if (!strncmp(extension,"sms",3)) {
     if (meshobject_ == NULL)
     {
       fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");

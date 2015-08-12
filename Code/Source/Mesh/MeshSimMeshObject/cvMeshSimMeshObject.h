@@ -106,7 +106,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int NewMesh();
 
   //Set curve sizes and other mesh options
-  int SetMeshOptions(char *flags, int id, double value);
+  int SetMeshOptions(char *flags, int id, double value1,double value2);
 
   //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
