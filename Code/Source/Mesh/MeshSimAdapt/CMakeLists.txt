@@ -34,36 +34,13 @@
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
-SET(CXXSRCS cvAdaptCore.cxx cvMeshSimAdapt.cxx
+SET(CXXSRCS cv_meshsim_adapt_utils.cxx cvMeshSimAdapt.cxx
 	cvAdaptHelpers.cxx cvAdaptSF.cxx)
 
-add_library(${lib} ${CXXSRCS})
 
 
 SET(FSRCS pythag.f tred2EISPACK.f tql2.f lubksb.f ludcmp.f)
-add_library(lib_adaptor ${FSRCS})
-target_link_libraries(lib_adaptor ${MPI_EXTRA_LIBRARY} ${MPI_Fortran_LIBRARIES})
-
-#simvascular_add_executable(${ADAPTOR_EXE} 
-#	SRCS ${CXXSRCS} 
-#	DEV_SCRIPT_NAME "myadaptor" 
-#	INSTALL_SCRIPT_NAME "svadapt"
-#	INSTALL_COMPONENT LicensedExecutables
-#	INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
-
-
-target_link_libraries(lib_adaptor 
-	${GLOBAL_LIBRARIES}
-	${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-	${ZLIB_LIBRARY} ${VTK_LIBRARIES}
-	${TCL_LIBRARY} ${TK_LIBRARY}
-	${INTELRUNTIME_LIBRARIES}
-	lib_simvascular_solid			
-	lib_simvascular_sysgeom	
-	lib_simvascular_solverio 
-	lib_simvascular_globals 
-	lib_simvascular_utils
-	)
+add_library(${lib} ${CXXSRCS} ${FSRCS})
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
@@ -78,7 +55,6 @@ target_link_libraries(${lib}
 			lib_simvascular_utils)
 
 if(Licensed_PARASOLID)
-	target_link_libraries(lib_adaptor lib_simvascular_parasolid)
 	target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
 

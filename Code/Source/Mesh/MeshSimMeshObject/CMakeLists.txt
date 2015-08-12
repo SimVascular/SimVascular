@@ -34,7 +34,6 @@ SET(CXXSRCS cvMeshSimMeshObject.cxx
 add_library(lib_simvascular_meshsim_mesh ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
-include_directories(${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimAdapt/)
 
 target_link_libraries(lib_simvascular_meshsim_mesh
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

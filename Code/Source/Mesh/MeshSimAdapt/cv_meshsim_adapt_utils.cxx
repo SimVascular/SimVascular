@@ -38,9 +38,9 @@
  *
  *=========================================================================*/
 
-#include "cvAdaptCore.h"
+#include "cv_meshsim_adapt_utils.h"
 
-long cvAdaptCore::eigen (double pos[3][3], double e[3][3], double v[3], int checkOrthogonality)
+long eigen (double pos[3][3], double e[3][3], double v[3], int checkOrthogonality)
 {  
   // characteristic polynomial of T : 
   // solve x^3 + (I[2]/I[3])*x^2 + (I[1]/I[3])*x + (I[0]/I[3])*a3 = 0
@@ -110,7 +110,7 @@ long cvAdaptCore::eigen (double pos[3][3], double e[3][3], double v[3], int chec
 	    // for(int icomp=0;icomp<3;icomp++) {
 	    //   e[3][icomp]=factor*e[3][icomp];
 	    // }
-	    // // adaptSimLog<<"Changing orientation for third eigen-vector"<<endl;
+	    // // std::cout<<"Changing orientation for third eigen-vector"<<endl;
 	    // }
 
 	    return nbEigen;
@@ -126,7 +126,7 @@ long cvAdaptCore::eigen (double pos[3][3], double e[3][3], double v[3], int chec
     }
 }
   
-int cvAdaptCore::checkUnitaryOthoganal(double e[3][3], int &factor)
+int checkUnitaryOthoganal(double e[3][3], int &factor)
 {
   int i;
   double dot, n[3];  
@@ -167,12 +167,12 @@ int cvAdaptCore::checkUnitaryOthoganal(double e[3][3], int &factor)
   return 1;
 }
   
-double cvAdaptCore::trace (double pos[3][3])
+double trace (double pos[3][3])
 {
   return pos[0][0] + pos[1][1] + pos[2][2];
 }
 
-double cvAdaptCore::trace2 (double pos[3][3])
+double trace2 (double pos[3][3])
 {
   double a00 =  pos[0][0] * pos[0][0] + 
     pos[1][0] * pos[0][1] + 
@@ -187,7 +187,7 @@ double cvAdaptCore::trace2 (double pos[3][3])
   return a00 + a11 + a22;
 }
 
-double cvAdaptCore::det (double pos[3][3])
+double det (double pos[3][3])
 {
   return pos[0][0] * (pos[1][1] * pos[2][2] - pos[1][2] * pos[2][1]) -
     pos[0][1] * (pos[1][0] * pos[2][2] - pos[1][2] * pos[2][0]) +
@@ -196,7 +196,7 @@ double cvAdaptCore::det (double pos[3][3])
 
 // solve x^2 + b x + c = 0
 // x[2] is always set to be zero
-long cvAdaptCore::FindQuadraticRoots(const double b, const double c, double x[3])
+long FindQuadraticRoots(const double b, const double c, double x[3])
 {
   //    printf("Quadratic roots\n");
   x[2]=0.0;
@@ -213,7 +213,7 @@ long cvAdaptCore::FindQuadraticRoots(const double b, const double c, double x[3]
 }
   
 // solve x^3 + a1 x^2 + a2 x + a3 = 0
-long cvAdaptCore::FindCubicRoots(const double coeff[4], double x[3])
+long FindCubicRoots(const double coeff[4], double x[3])
 {
   double a1 = coeff[2] / coeff[3];
   double a2 = coeff[1] / coeff[3];
@@ -268,7 +268,7 @@ long cvAdaptCore::FindCubicRoots(const double coeff[4], double x[3])
 }
 
   
-long cvAdaptCore::NullSpace(const double *a, double *result, double eps, long n)
+long NullSpace(const double *a, double *result, double eps, long n)
 {
   int r[MAXN], c[MAXN];
   register long i, j, k;
@@ -362,20 +362,20 @@ long cvAdaptCore::NullSpace(const double *a, double *result, double eps, long n)
 }
 
 
-void  cvAdaptCore::display_region( pRegion region ){
+void  display_region( pRegion region ){
 
   double xyz[3];
   pPList vertices = R_vertices( region, 1 );
-  adaptSimLog << "-------------------"<< endl ;
+  std::cout << "-------------------"<< endl ;
   for( int i=0; i<PList_size( vertices ); i++) {
       V_coord( (pVertex)PList_item( vertices, i ), xyz );
-      adaptSimLog << xyz[0] <<" "<< xyz[1]<<" "<<xyz[2]<< endl;
+      std::cout << xyz[0] <<" "<< xyz[1]<<" "<<xyz[2]<< endl;
   }
-  adaptSimLog << "-------------------"<< endl ;
+  std::cout << "-------------------"<< endl ;
 }
 
 
-int cvAdaptCore::inverseMap( pRegion region, 
+int inverseMap( pRegion region, 
             double* qpt,
             double* pt ) {
 
@@ -530,7 +530,7 @@ int cvAdaptCore::inverseMap( pRegion region,
 }
 
 
-void cvAdaptCore::ModifyHessiansAtBdry(pMesh mesh) {
+void ModifyHessiansAtBdry(pMesh mesh,pMeshDataId nodalhessianID) {
   pVertex v;
   VIter vIter=M_vertexIter(mesh);
   while(v = VIter_next(vIter)) {
@@ -560,7 +560,7 @@ void cvAdaptCore::ModifyHessiansAtBdry(pMesh mesh) {
 	double *nodalHessianOther;
 	if(!EN_getDataPtr((pEntity)otherVertex, nodalhessianID,(void**)&nodalHessianOther)){
 	  
-	  adaptSimLog<<"\nerror in :V_Hessian no data attached to OTHER vertex\n";
+	  std::cout<<"\nerror in :V_Hessian no data attached to OTHER vertex\n";
 	  V_info(otherVertex);
 	  exit(0);
 	}
@@ -568,7 +568,7 @@ void cvAdaptCore::ModifyHessiansAtBdry(pMesh mesh) {
 	double *nodalHessianActual;
 	if(!EN_getDataPtr((pEntity)v, nodalhessianID,(void**)&nodalHessianActual)){
 	  
-	  adaptSimLog<<"\nerror in :V_Hessian no data attached to ACTUAL vertex\n";
+	  std::cout<<"\nerror in :V_Hessian no data attached to ACTUAL vertex\n";
 	  exit(0);
 	}
 	
@@ -601,7 +601,7 @@ void cvAdaptCore::ModifyHessiansAtBdry(pMesh mesh) {
 // other examples can be situations where
 // user don't want to have one mesh edge 
 // connecting two geometric model edges (like no dofs)
-void cvAdaptCore::ModifyMetric(pVertex vertex, double dir[3][3], double* h){
+void ModifyMetric(pVertex vertex, double dir[3][3], double* h,pMeshDataId phasta_solution){
   double tol = 1.e-2; 
   double* nodalSolution;
 
@@ -621,7 +621,7 @@ void cvAdaptCore::ModifyMetric(pVertex vertex, double dir[3][3], double* h){
       }
     }
     if(noOtherVertex) { // vertex is on bdry. with no interior vertex around
-      adaptSimLog<<"No interior node : V_info(vertex)"<<endl;
+      std::cout<<"No interior node : V_info(vertex)"<<endl;
       exit(0);
     }
   }
@@ -644,7 +644,7 @@ void cvAdaptCore::ModifyMetric(pVertex vertex, double dir[3][3], double* h){
   
 
 
-void cvAdaptCore::SmoothErrorIndicators(pMesh mesh, int option)
+void SmoothErrorIndicators(pMesh mesh, int option,pMeshDataId errorIndicatorID)
 {
   pVertex v;
   VIter vIter=M_vertexIter(mesh);
@@ -671,7 +671,7 @@ void cvAdaptCore::SmoothErrorIndicators(pMesh mesh, int option)
       // first the "central" vertex
       double *nodalEIs;
       if(!EN_getDataPtr((pEntity)v, errorIndicatorID,(void**)&nodalEIs)){
-	adaptSimLog<<"\nerror in SmoothErrorIndicators: no data attached to  vertex\n";
+	std::cout<<"\nerror in SmoothErrorIndicators: no data attached to  vertex\n";
 	V_info(v);
 	exit(0);
       }
@@ -691,7 +691,7 @@ void cvAdaptCore::SmoothErrorIndicators(pMesh mesh, int option)
                 
 	double *nodalEIs;
 	if(!EN_getDataPtr((pEntity)otherVertex,errorIndicatorID,(void**)&nodalEIs)){
-	  adaptSimLog<<"\nerror in SmoothErrorIndicators: no data attached to OTHER vertex\n";
+	  std::cout<<"\nerror in SmoothErrorIndicators: no data attached to OTHER vertex\n";
 	  V_info(otherVertex);
 	  exit(0);
 	}
@@ -701,11 +701,11 @@ void cvAdaptCore::SmoothErrorIndicators(pMesh mesh, int option)
       }
     }//for( ..i<numEdges...)
     if(!numSurroundingVerts){
-      adaptSimLog<<"\nerror in SmoothErrorIndicators: there is a boundary vertex whose\n"
+      std::cout<<"\nerror in SmoothErrorIndicators: there is a boundary vertex whose\n"
 	  <<"neighbors are exclusively classsified on modelfaces/edges/vertices\n"
 	  <<"and NOT in the interior\n";
       
-      adaptSimLog<<"For the following vertex : "<<endl;
+      std::cout<<"For the following vertex : "<<endl;
       V_info(v);
       exit(0);
     }
@@ -722,7 +722,7 @@ void cvAdaptCore::SmoothErrorIndicators(pMesh mesh, int option)
       // delete the old nodal EI values
       double* oldNodalEIs;
       if(!EN_getDataPtr((pEntity)v,errorIndicatorID,(void**)&oldNodalEIs)){
-	adaptSimLog<<"\nerror in SmoothErrorIndicators: no data attached to OTHER vertex\n";
+	std::cout<<"\nerror in SmoothErrorIndicators: no data attached to OTHER vertex\n";
 	V_info(v);
 	exit(0);
       }
@@ -746,7 +746,7 @@ void cvAdaptCore::SmoothErrorIndicators(pMesh mesh, int option)
 
 
 // simple average over a patch surrounding the vertex    
-void cvAdaptCore::SmoothHessians(pMesh mesh) {
+void SmoothHessians(pMesh mesh,pMeshDataId nodalhessianID) {
 
   pVertex v;
   VIter vIter=M_vertexIter(mesh);
@@ -779,7 +779,7 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
       double *nodalHessian;
       if(!EN_getDataPtr((pEntity)v, nodalhessianID,(void**)&nodalHessian)){
 	
-	adaptSimLog<<"\nerror in SmoothHessians: no data attached to  vertex\n";
+	std::cout<<"\nerror in SmoothHessians: no data attached to  vertex\n";
 	V_info(v);
 	exit(0);
       }
@@ -801,7 +801,7 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
 	double *nodalHessianOther;
 	if(!EN_getDataPtr((pEntity)otherVertex, nodalhessianID,(void**)&nodalHessianOther)){
 	  
-	  adaptSimLog<<"\nerror in SmoothHessians: no data attached to OTHER vertex\n";
+	  std::cout<<"\nerror in SmoothHessians: no data attached to OTHER vertex\n";
 	  V_info(otherVertex);
 	  exit(0);
 	}
@@ -814,11 +814,11 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
     }//for( ..i<numEdges...)
 
     if(!numSurroundingVerts){
-      adaptSimLog<<"\nerror in SmoothHessians: there is a boundary vertex whose\n"
+      std::cout<<"\nerror in SmoothHessians: there is a boundary vertex whose\n"
 	  <<"neighbors are exclusively classsified on modelfaces/edges/vertices\n"
 	  <<"and NOT in the interior\n";
       
-      adaptSimLog<<"For the following vertex : "<<endl;
+      std::cout<<"For the following vertex : "<<endl;
       V_info(v);
       exit(0);
     }
@@ -827,7 +827,7 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
 //        double *nodalHessianSame;
 //        if(!EN_getDataPtr((pEntity)v, nodalhessianID,(void**)&nodalHessianSame)){
 	
-//  	adaptSimLog<<"\nerror in SmoothHessians: no data attached to vertex\n";
+//  	std::cout<<"\nerror in SmoothHessians: no data attached to vertex\n";
 //  	V_info(v);
 //  	exit(0);
 //        } 
@@ -852,7 +852,7 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
     double* oldHessian;
     if(!EN_getDataPtr((pEntity)v, nodalhessianID,(void**)&oldHessian)){
       
-      adaptSimLog<<"\nerror in SmoothHessians: no data attached to OTHER vertex\n";
+      std::cout<<"\nerror in SmoothHessians: no data attached to OTHER vertex\n";
       V_info(v);
       exit(0);
     }
@@ -861,11 +861,11 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
     EN_deleteData((pEntity)v, nodalhessianID);
     
 #ifdef DEBUG
-    //         adaptSimLog<<"\nin SmoothHessians: going to attach\n";
+    //         std::cout<<"\nin SmoothHessians: going to attach\n";
     //         for(int i=0; i<6; i++){
-    //             adaptSimLog<<averageHessian[vCount][i]<<" ";
+    //             std::cout<<averageHessian[vCount][i]<<" ";
     //         }
-    //         adaptSimLog<<"\n";
+    //         std::cout<<"\n";
 #endif//DEBUG
     
     EN_attachDataPtr( (pEntity)v, nodalhessianID, (void *)
@@ -876,7 +876,7 @@ void cvAdaptCore::SmoothHessians(pMesh mesh) {
   VIter_delete(vIter);
 }
   
-void cvAdaptCore::V_AnalyticHessian (pVertex v, double H[3][3], int option)
+void V_AnalyticHessian (pVertex v, double H[3][3], int option)
 {
 
   for(int i=0; i<3; i++) {
@@ -910,11 +910,11 @@ void cvAdaptCore::V_AnalyticHessian (pVertex v, double H[3][3], int option)
 
 
     if(!numSurroundingVerts){
-      adaptSimLog<<"\nerror in V_AnalyticHessian: there is a boundary vertex whose\n"
+      std::cout<<"\nerror in V_AnalyticHessian: there is a boundary vertex whose\n"
 	  <<"neighbors are exclusively classsified on model faces/edges/vertices\n"
 	  <<"and NOT in the interior\n";
       
-      adaptSimLog<<"For the following vertex : "<<endl;
+      std::cout<<"For the following vertex : "<<endl;
       V_info(v);
       exit(0);
     }
@@ -1023,7 +1023,7 @@ void cvAdaptCore::V_AnalyticHessian (pVertex v, double H[3][3], int option)
     }
     break;
     default : {
-      adaptSimLog<<"\nSpecify a correct option (V_AnalyticHessian)"<<endl;
+      std::cout<<"\nSpecify a correct option (V_AnalyticHessian)"<<endl;
       exit(-1); 
     }
     break;
@@ -1035,12 +1035,12 @@ void cvAdaptCore::V_AnalyticHessian (pVertex v, double H[3][3], int option)
 // hessian returned : 6-component (symmetric)
 // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
 // called in setSizeFieldUsingHessians (sizefield.cc)
-void cvAdaptCore::V_Hessian(pVertex v, double T[3][3])
+void V_Hessian(pVertex v, double T[3][3],pMeshDataId nodalhessianID)
 {
   double* nodalHessian;
   
   if(EN_getDataPtr((pEntity)v, nodalhessianID,(void**)&nodalHessian) == NULL){
-    adaptSimLog<<"\nerror in :V_Hessian no data attached to vertex\n";
+    std::cout<<"\nerror in :V_Hessian no data attached to vertex\n";
     exit(0);
   }
   
@@ -1053,7 +1053,7 @@ void cvAdaptCore::V_Hessian(pVertex v, double T[3][3])
 }
 
 
-void cvAdaptCore::V_getHessians(double *hessiansFromPhasta, pMesh mesh, 
+void V_getHessians(double *hessiansFromPhasta, pMesh mesh, 
 	      int nvar, int option, double *hessians) {
 
   int nshg=M_numVertices(mesh);
@@ -1103,7 +1103,7 @@ void cvAdaptCore::V_getHessians(double *hessiansFromPhasta, pMesh mesh,
   }
   break;
   default: {
-    adaptSimLog<<"Specify a correct option (V_getHessians.cc)"<<endl;
+    std::cout<<"Specify a correct option (V_getHessians.cc)"<<endl;
     exit(1);
   }
   break; 
@@ -1121,7 +1121,7 @@ void cvAdaptCore::V_getHessians(double *hessiansFromPhasta, pMesh mesh,
 // for ALL vertices (general dofs) is split into 
 // local entity-level arrays to handle the memory
 // during local mesh modifications 
-void cvAdaptCore::attachArray( double *valueArray, 
+void attachArray( double *valueArray, 
 		  pMesh mesh, 
 		  pMeshDataId dataID,
 		  int nVar, 
@@ -1169,7 +1169,7 @@ void cvAdaptCore::attachArray( double *valueArray,
 
   /* attach region coefficients */
   if (nrm > 0) {
-     adaptSimLog << " No code to attach Region Modes " << endl;
+     std::cout << " No code to attach Region Modes " << endl;
      exit ( -1 );
   }
 
@@ -1183,7 +1183,7 @@ void cvAdaptCore::attachArray( double *valueArray,
 // in restart-writable format 
 // memory is allocated within the function
 // user has to delete the memory
-void cvAdaptCore::getAttachedArray( double *&valueArray,
+void getAttachedArray( double *&valueArray,
                        pMesh mesh,
                        pMeshDataId dataID,
                        int nVar,
@@ -1193,8 +1193,8 @@ void cvAdaptCore::getAttachedArray( double *&valueArray,
 
   int i;
   if(poly!=1) {
-      adaptSimLog << "\nError in getAttachedData() [in attachData.cc]" << endl;
-      adaptSimLog << "Polynomial order [" << poly << "] NOT supported" << endl;
+      std::cout << "\nError in getAttachedData() [in attachData.cc]" << endl;
+      std::cout << "Polynomial order [" << poly << "] NOT supported" << endl;
       exit(-1);
   }
 
@@ -1208,8 +1208,8 @@ void cvAdaptCore::getAttachedArray( double *&valueArray,
   while (vertex = VIter_next( vIter ) ) {
     double *data;
     if(!EN_getDataPtr( (pEntity)vertex, dataID, (void **)&data )) {
-        adaptSimLog << "\nError in getAttachedData() [in attachData.cc]" << endl;
-        adaptSimLog << "Data not attached to vertex [" << EN_id((pEntity)vertex) << "]" << endl;
+        std::cout << "\nError in getAttachedData() [in attachData.cc]" << endl;
+        std::cout << "Data not attached to vertex [" << EN_id((pEntity)vertex) << "]" << endl;
         exit(0);
     }
     for (i=0; i < nVar; i++) valueArray[vCount+i*nshg] = data[i];
@@ -1229,7 +1229,7 @@ void cvAdaptCore::getAttachedArray( double *&valueArray,
 // i.e., for different modes, instead user should call routine
 // for different entities depending on poly. order/mode
 // with this attached data doesn't have to be solution
-void cvAdaptCore::cleanAttachedData(pMesh mesh,
+void cleanAttachedData(pMesh mesh,
 		       pMeshDataId dataID,
 		       int en_type,
 		       int array) {
@@ -1370,14 +1370,14 @@ void cvAdaptCore::cleanAttachedData(pMesh mesh,
     }
     break;
   default :
-    adaptSimLog<< "Check the en_type in cleanAttachedData(...)"<<endl;
+    std::cout<< "Check the en_type in cleanAttachedData(...)"<<endl;
     break;
   }
 }
 
 
 // build the linear system
-void cvAdaptCore::buildSystem(pRegion region, double* eltMatrix)
+void buildSystem(pRegion region, double* eltMatrix)
 {
 
   pPList regionVerts;
@@ -1457,7 +1457,7 @@ void cvAdaptCore::buildSystem(pRegion region, double* eltMatrix)
    
 
 // reconstruct the element gradient
-void cvAdaptCore::elementGradient(pRegion region, double* elementGradient)
+void elementGradient(pRegion region, double* elementGradient,pMeshDataId errorIndicatorID)
 {
   pVertex v;
   double* nodalData;
@@ -1479,7 +1479,7 @@ void cvAdaptCore::elementGradient(pRegion region, double* elementGradient)
     v = (pVertex)PList_item(regionVerts,i);
     if(EN_getDataPtr((pEntity)v, errorIndicatorID,
 		     (void**)&nodalData)==NULL){
-      adaptSimLog<<"\nerror in elementGradient: no data attached to vertex\n";
+      std::cout<<"\nerror in elementGradient: no data attached to vertex\n";
       exit(0);
     }
     fieldVector[i]=nodalData[4];// speed component
@@ -1498,7 +1498,7 @@ void cvAdaptCore::elementGradient(pRegion region, double* elementGradient)
     elementGradient[i] = fieldVector[i+1];
     
 #if  ( defined  DEBUG )
-    //        adaptSimLog<<"\ngradient["<<i<<"] "<<elementGradient[i]<<"\n";
+    //        std::cout<<"\ngradient["<<i<<"] "<<elementGradient[i]<<"\n";
 #endif
   }
  
@@ -1506,7 +1506,7 @@ void cvAdaptCore::elementGradient(pRegion region, double* elementGradient)
 
 
 // reconstruct the element hessian : 6-component (symmetric)
-void cvAdaptCore::elementHessian(pRegion region, double* elemHessian)
+void elementHessian(pRegion region, double* elemHessian,pMeshDataId nodalgradientID)
 {
   pVertex v;
   double* nodalGradient;
@@ -1530,7 +1530,7 @@ void cvAdaptCore::elementHessian(pRegion region, double* elemHessian)
     v = (pVertex)PList_item(regionVerts,i);
     if(EN_getDataPtr((pEntity)v, nodalgradientID,
 		     (void**)&nodalGradient)==NULL){
-      adaptSimLog<<"\nerror in elementHessian: no data attached to vertex\n";
+	    std::cout<<"\nerror in elementHessian: no data attached to vertex"<<endl;
       exit(0);
     }
     fieldVectorX[i]= nodalGradient[0];
@@ -1556,18 +1556,16 @@ void cvAdaptCore::elementHessian(pRegion region, double* elemHessian)
   elemHessian[4] = fieldVectorY[3];// yz
   elemHessian[5] = fieldVectorZ[3];// zz
   
-#if  ( defined  DEBUG )
   //     for(int i=0; i<6; i++) {
-  //         adaptSimLog<<"\nhessian["<<i<<"] "<<elemHessian[i]<<"\n";
+  //         std::cout<<"\nhessian["<<i<<"] "<<elemHessian[i]<<"\n";
   //     }
-#endif
  
 }
    
 
 
 // just take the value from any adjacent vertex
-void cvAdaptCore::fix4SolutionTransfer(pMesh mesh)
+void fix4SolutionTransfer(pMesh mesh,int numVars,pMeshDataId phasta_solution)
 {
 
     VIter vit=M_vertexIter(mesh);
@@ -1602,8 +1600,8 @@ void cvAdaptCore::fix4SolutionTransfer(pMesh mesh)
                 }
             }
             if(!foundVertex){
-                adaptSimLog<<"\nerror in fix4SolutionTransfer:"
-                    <<"all surrounding vertices have no solution\n";
+		    std::cout<<"\nerror in fix4SolutionTransfer:"
+                    <<"all surrounding vertices have no solution"<<endl;
                 exit(0);
             }
         }
@@ -1614,7 +1612,7 @@ void cvAdaptCore::fix4SolutionTransfer(pMesh mesh)
 
 
 // recover gradient at a vertex using patch of elements around it
-void cvAdaptCore::gradientsFromPatch(pMesh mesh)
+void gradientsFromPatch(pMesh mesh,pMeshDataId errorIndicatorID, pMeshDataId nodalgradientID)
 {
   VIter vIter;
   vIter = M_vertexIter(mesh);
@@ -1640,7 +1638,7 @@ void cvAdaptCore::gradientsFromPatch(pMesh mesh)
       patchVolume+=R_volume((pRegion) PList_item(elementPatch,i));
       
       // compute element grad. for each element in the patch at vertex
-      elementGradient( (pRegion)PList_item(elementPatch,i), elemGradient);
+      elementGradient( (pRegion)PList_item(elementPatch,i), elemGradient,errorIndicatorID);
       
       // use element grad. (each component) to recover gradient at vertex
       for(int j=0; j<3; j++) {
@@ -1668,7 +1666,8 @@ void cvAdaptCore::gradientsFromPatch(pMesh mesh)
 // recover hessian using a patch (from gradients)
 // hessian returned : 6-component (symmetric)
 // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
-void cvAdaptCore::hessiansFromPatch(pMesh mesh)
+void hessiansFromPatch(pMesh mesh,pMeshDataId nodalhessianID,
+		pMeshDataId nodalgradientID)
 {
   VIter vIter;
   vIter = M_vertexIter(mesh);
@@ -1693,7 +1692,7 @@ void cvAdaptCore::hessiansFromPatch(pMesh mesh)
       patchVolume+=R_volume((pRegion) PList_item(elementPatch,i));
 
       // compute element hessian (each component) to recover hessian at vertex
-      elementHessian( (pRegion)PList_item(elementPatch,i), elemHessian);
+      elementHessian( (pRegion)PList_item(elementPatch,i), elemHessian,nodalgradientID);
       
       // use element hessian (each component) to recover hessian at vertex
       for(int j=0; j<6; j++) {
@@ -1714,10 +1713,6 @@ void cvAdaptCore::hessiansFromPatch(pMesh mesh)
     PList_delete(elementPatch);
   }//while (vertex = VIter_next(vIter))      
   VIter_delete(vIter);
-
-#if  ( defined  DEBUG )
-  //    writeRestartHessians(mesh);
-#endif//DEBUG      
 }
 
 
@@ -1725,29 +1720,24 @@ void cvAdaptCore::hessiansFromPatch(pMesh mesh)
 // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
 // the nodal data later can be retrieved via
 // nodalHessianID
-void cvAdaptCore::hessiansFromSolution(pMesh mesh,int stepNumber)
+void hessiansFromSolution(pMesh mesh,int stepNumber,pMeshDataId errorIndicatorID,pMeshDataId nodalhessianID,pMeshDataId nodalgradientID)
 {  
-  // compute the hessain field from the solution
-
-  nodalgradientID  =  MD_newMeshDataId( "gradient");
-  nodalhessianID  =  MD_newMeshDataId( "hessian");
-  
   // recover gradients using a patch
   // attaches gradient to vertices
   // gradient attached via nodalgradientID
-  gradientsFromPatch(mesh);
+  gradientsFromPatch(mesh,errorIndicatorID,nodalgradientID);
   
   // recover hessians using a patch (from gradients)
   // attaches hessian to vertices
   // hessian attached via  nodalhessianID
   // hessian  attached : 6-component (symmetric)
   // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
-  hessiansFromPatch(mesh);
+  hessiansFromPatch(mesh,nodalhessianID,nodalgradientID);
 
   // no need to call ModifyHessiansAtBdry 
   // as it is embedded in SmoothHessians
   // ModifyHessiansAtBdry(mesh);
-  SmoothHessians(mesh);
+  SmoothHessians(mesh,nodalhessianID);
 }
 
 
@@ -1756,13 +1746,14 @@ void cvAdaptCore::hessiansFromSolution(pMesh mesh,int stepNumber)
 // tags entities for refinement which have error values greater than threshold
 // as of now do not use hmin and hmax
 // can introduce one more factor to compute threshold for coarsening
-int cvAdaptCore::applyMarkingStrategy(pMesh mesh, pMSAdapt simAdapter,
+int applyMarkingStrategy(pMesh mesh, pMSAdapt simAdapter,
 		     double factor, double hmin, double hmax,
 		     double &totalError, double &maxError, double &minError,
-		     double &threshold, int option) 
+		     double &threshold, int option, pMeshDataId errorIndicatorID) 
 {
   threshold = getErrorThreshold(mesh,factor,totalError,
-				maxError,minError,option);
+				maxError,minError,option,
+				errorIndicatorID);
 
   pEdge edge;    
   double *tagged = new double;
@@ -1773,7 +1764,7 @@ int cvAdaptCore::applyMarkingStrategy(pMesh mesh, pMSAdapt simAdapter,
   while(vertex = VIter_next(vIter)) {
     double *nodalValues;
     if(EN_getDataPtr((pEntity)vertex,errorIndicatorID,(void**)&nodalValues) == NULL) {
-      adaptSimLog<<"\nerror in applyMarkingStrategy(...) : no solution attached to vertex"<<endl;
+	    std::cout<<"\nerror in applyMarkingStrategy(...) : no solution attached to vertex"<<endl;
       exit(0);
     }
     
@@ -1812,10 +1803,10 @@ int cvAdaptCore::applyMarkingStrategy(pMesh mesh, pMSAdapt simAdapter,
 }
   
 
-double cvAdaptCore::getErrorThreshold(pMesh mesh, double factor,
+double getErrorThreshold(pMesh mesh, double factor,
 		  double &totalError, 
 		  double &maxError, double &minError,
-		  int option)
+		  int option,pMeshDataId errorIndicatorID)
 {
   maxError = 0.;
   minError = 1.e15;
@@ -1828,7 +1819,7 @@ double cvAdaptCore::getErrorThreshold(pMesh mesh, double factor,
   while(vertex = VIter_next(vIter)) {
     double *nodalValues;
     if(EN_getDataPtr((pEntity)vertex,errorIndicatorID,(void**)&nodalValues) == NULL) {
-      adaptSimLog<<"\nerror in getErrorThreshold(...) : no error data attached to vertex"<<endl;
+	    std::cout<<"\nerror in getErrorThreshold(...) : no error data attached to vertex"<<endl;
       exit(0);
     }
 
@@ -1857,7 +1848,7 @@ double cvAdaptCore::getErrorThreshold(pMesh mesh, double factor,
 
 // option is to decide how to compute the error value
 // (i.e., use 3 EI for flow problem or use 1 EI for scalar problem)
-double cvAdaptCore::getErrorValue(double *nodalValues, int option) {
+double getErrorValue(double *nodalValues, int option) {
 
   double errorValue = 0.;
 
@@ -1877,7 +1868,7 @@ double cvAdaptCore::getErrorValue(double *nodalValues, int option) {
     }
     break;
   default :
-    adaptSimLog<<"\nSpecify correct `option' to compute error value in getErrorValue(...)"<<endl;
+    std::cout<<"\nSpecify correct `option' to compute error value in getErrorValue(...)"<<endl;
     break;
   }
   return errorValue;
@@ -1888,7 +1879,7 @@ double cvAdaptCore::getErrorValue(double *nodalValues, int option) {
 // parameters correspond to nshg & nvar, i.e., size of field-array
 // these parameters are used as reference values 
 // (sometimes needed before reading the field-array)
-void cvAdaptCore::readParametersFromFile(char *filename,
+void readParametersFromFile(char *filename,
 			    char *fieldName,
 			    int &nshg, 
 			    int &numVars) {
@@ -1921,7 +1912,7 @@ void cvAdaptCore::readParametersFromFile(char *filename,
 // to read array from a phasta file (filename)
 // memory is allocated HERE for 'valueArray'
 // `fieldName' tells which block to read like solution, error etc.
-void cvAdaptCore::readArrayFromFile( char *filename,
+void readArrayFromFile( char *filename,
 			char *fieldName,
 			double *&valueArray) {
   // read file (i.e., restart, error etc.)
@@ -1988,7 +1979,7 @@ void cvAdaptCore::readArrayFromFile( char *filename,
 // `fieldName' tells in which block to write like solution, error etc.
 // `outputFormat' tells in which format to write, i.e., binary/ascii
 // `mode' : "write", "appeand" etc.
-void cvAdaptCore::writeArrayToFile( char *filename,
+void writeArrayToFile( char *filename,
 		       char *fieldName,
 		       char *outputFormat,
 		       char *mode,
@@ -2053,13 +2044,14 @@ void cvAdaptCore::writeArrayToFile( char *filename,
 }
 
 
-void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
+void setSizeFieldUsingHessians(pMesh mesh,
 			       pMSAdapt simAdapter,
 			       double factor,
 			       double hmax,
 			       double hmin,
 			       int option,
-                               double sphere[5])
+                               double sphere[5],pMeshDataId nodalhessianID,
+			       pMeshDataId nodalgradientID)
 {
   int nshg=M_numVertices(mesh);  // only true for linear elements
   double tol=1.e-12;
@@ -2089,7 +2081,7 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
 
     // get hessian of appropriate variable at a `vertex'
     if(option==1) 
-      V_Hessian(vertex,T);
+      V_Hessian(vertex,T,nodalhessianID);
     else
       V_AnalyticHessian(vertex,T,option);
  
@@ -2101,11 +2093,11 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
     // compute eigen values and eigen vectors
 //      int nbEigen = eigen(T,hess[i].dir,hess[i].h);
 
-//      adaptSimLog<<"eigenvals/eigenVecs (eigen-Li)\n";
+//      std::cout<<"eigenvals/eigenVecs (eigen-Li)\n";
 //      for(int j=0; j< 3; j++){
 
-//          adaptSimLog<<hess[i].h[j]<<"\n";
-//          adaptSimLog<<hess[i].dir[0][j]<<" "<<hess[i].dir[1][j]<<" "<<hess[i].dir[2][j]<<"\n";
+//          std::cout<<hess[i].h[j]<<"\n";
+//          std::cout<<hess[i].dir[0][j]<<" "<<hess[i].dir[1][j]<<" "<<hess[i].dir[2][j]<<"\n";
 //      }
         
 
@@ -2116,10 +2108,10 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
 //        printf("       %f %f %f %f %f %f\n\n",T[0][0], 
 //               T[0][1],T[0][2],T[1][1],T[1][2],T[2][2]);
 //      }
-//      adaptSimLog<<"Hessian\n";
+//      std::cout<<"Hessian\n";
     
 //      for(int j=0; j< 3; j++){
-//              adaptSimLog<<T[j][0]<<" "<<T[j][1]<<" "<<T[j][2]<<"\n";
+//              std::cout<<T[j][0]<<" "<<T[j][1]<<" "<<T[j][2]<<"\n";
 //      }
 
     double eigenVals[3];
@@ -2138,7 +2130,7 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
     int three = 3;
     double z[3][3];
     mytred(&three,&three,Tfoo,eigenVals,e,z);
-//    adaptSimLog<<"eigenvals/eigenVecs (tred)\n";
+//    std::cout<<"eigenvals/eigenVecs (tred)\n";
 
     int ierr;
     tql2(&three,&three,eigenVals,e,z,&ierr);
@@ -2152,8 +2144,8 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
 
 //      for(int j=0; j< 3; j++){
 
-//          adaptSimLog<<hess[i].h[j]<<"\n";
-//          adaptSimLog<<hess[i].dir[0][j]<<" "<<hess[i].dir[1][j]<<" "<<hess[i].dir[2][j]<<"\n";
+//          std::cout<<hess[i].h[j]<<"\n";
+//          std::cout<<hess[i].dir[0][j]<<" "<<hess[i].dir[1][j]<<" "<<hess[i].dir[2][j]<<"\n";
 //      }
         
     
@@ -2168,10 +2160,10 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
       printf("       %f %f %f\n", hess[i].h[0],
              hess[i].h[1],hess[i].h[2]);
 
-      adaptSimLog<<"Error: zero maximum eigenvalue !!!"<<endl;
-      adaptSimLog<<hess[i].h[0]<<" "<<hess[i].h[1]<<" "<<hess[i].h[2]<<endl;
-      adaptSimLog<<T[0][0]<<" "<<T[0][1]<<" "<<T[0][2]<<" ";
-      adaptSimLog<<T[1][1]<<" "<<T[1][2]<<" "<<T[2][2]<<endl;
+      std::cout<<"Error: zero maximum eigenvalue !!!"<<endl;
+      std::cout<<hess[i].h[0]<<" "<<hess[i].h[1]<<" "<<hess[i].h[2]<<endl;
+      std::cout<<T[0][0]<<" "<<T[0][1]<<" "<<T[0][2]<<" ";
+      std::cout<<T[1][1]<<" "<<T[1][2]<<" "<<T[2][2]<<endl;
       // exit(1);
       continue;
     }
@@ -2200,24 +2192,24 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
   printf("\n towards uniform local error distribution of %f\n", eloc);
   printf("   with max edge length=%f; min edge length=%f\n\n",hmax,hmin);
 
-  adaptSimLog<<"MeshSim   Library build ID : "<<SimMeshing_buildID()<<endl;
-  adaptSimLog<<"MeshTools Library build ID : "<<SimMeshTools_buildID()<<endl;
-  adaptSimLog<<endl;
+  std::cout<<"MeshSim   Library build ID : "<<SimMeshing_buildID()<<endl;
+  std::cout<<"MeshTools Library build ID : "<<SimMeshTools_buildID()<<endl;
+  std::cout<<endl;
 
-  adaptSimLog<<"Strategy chosen is anisotropic adaptation, i.e., size-field driven"<<endl;
+  std::cout<<"Strategy chosen is anisotropic adaptation, i.e., size-field driven"<<endl;
   if(option==1)
-    adaptSimLog<<"Using numerical/computed hessian... done..."<<endl;
+    std::cout<<"Using numerical/computed hessian... done..."<<endl;
   else
-    adaptSimLog<<"Using analytic hessian... done..."<<endl;
-  adaptSimLog<<"Info on relative interpolation error :"<<endl;
-  adaptSimLog<<"total : "<<etot<<endl;
-  adaptSimLog<<"mean : "<<emean<<endl;
-  adaptSimLog<<"factor : "<<factor<<endl;
-  adaptSimLog<<"min. local : "<<elocmin<<endl;
-  adaptSimLog<<"max. local : "<<elocmax<<endl;
-  adaptSimLog<<"towards uniform local error distribution of "<<eloc<<endl;
-  adaptSimLog<<"with min. edge length : "<<hmin<<endl;
-  adaptSimLog<<"with max. edge length : "<<hmax<<endl;
+    std::cout<<"Using analytic hessian... done..."<<endl;
+  std::cout<<"Info on relative interpolation error :"<<endl;
+  std::cout<<"total : "<<etot<<endl;
+  std::cout<<"mean : "<<emean<<endl;
+  std::cout<<"factor : "<<factor<<endl;
+  std::cout<<"min. local : "<<elocmin<<endl;
+  std::cout<<"max. local : "<<elocmax<<endl;
+  std::cout<<"towards uniform local error distribution of "<<eloc<<endl;
+  std::cout<<"with min. edge length : "<<hmin<<endl;
+  std::cout<<"with max. edge length : "<<hmax<<endl;
 
   int foundHmin = 0;
   int foundHmax = 0;
@@ -2305,21 +2297,21 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
     MSA_setAnisoVertexSize(simAdapter, 
         		   vertex,
         		   hess[i].dir);
-//      adaptSimLog<<"SIZE node "<<i<<"\n";
+//      std::cout<<"SIZE node "<<i<<"\n";
 //      for(int j=0; j< 3; j++)
-//         adaptSimLog<<hess[i].dir[j][0]<<" "<<hess[i].dir[j][1]<<" "<<hess[i].dir[j][2]<<"\n";
-//      adaptSimLog<<"\n";
+//         std::cout<<hess[i].dir[j][0]<<" "<<hess[i].dir[j][1]<<" "<<hess[i].dir[j][2]<<"\n";
+//      std::cout<<"\n";
        
 
     ++i;
   }
   VIter_delete(vit);
 
-  adaptSimLog<<"Nodes with hmin into effect : "<<hminCount<<endl;
-  adaptSimLog<<"Nodes with hmax into effect : "<<hmaxCount<<endl;
-  adaptSimLog<<"Nodes with both hmin/hmax into effect : "<<bothHminHmaxCount<<endl;
-  adaptSimLog<<"Nodes within sphere : "<<insideSphereCount<<endl;
-  adaptSimLog<<"Nodes ignored in boundary layer : "<<bdryNumNodes<<endl<<endl;
+  std::cout<<"Nodes with hmin into effect : "<<hminCount<<endl;
+  std::cout<<"Nodes with hmax into effect : "<<hmaxCount<<endl;
+  std::cout<<"Nodes with both hmin/hmax into effect : "<<bothHminHmaxCount<<endl;
+  std::cout<<"Nodes within sphere : "<<insideSphereCount<<endl;
+  std::cout<<"Nodes ignored in boundary layer : "<<bdryNumNodes<<endl<<endl;
 
   writeMEDITSizeField(hess,mesh);
 
@@ -2335,7 +2327,7 @@ void cvAdaptCore::setSizeFieldUsingHessians(pMesh mesh,
 }
 
 // max relative interpolation error at a vertex
-double cvAdaptCore::maxLocalError(pVertex vertex, double H[3][3])
+double maxLocalError(pVertex vertex, double H[3][3])
 {
   pEdge edge;
   double locE;
@@ -2352,7 +2344,7 @@ double cvAdaptCore::maxLocalError(pVertex vertex, double H[3][3])
 }
 
 // relative interpolation error along an edge
-double cvAdaptCore::E_error(pEdge edge, double H[3][3])
+double E_error(pEdge edge, double H[3][3])
 {
   double xyz[2][3], vec[3];
   double locE=0;
@@ -2375,12 +2367,12 @@ double cvAdaptCore::E_error(pEdge edge, double H[3][3])
 }
 
 
-void cvAdaptCore::setIsotropicSizeField(pMesh mesh,
+void setIsotropicSizeField(pMesh mesh,
 			   pMSAdapt simAdapter,
 			   double factor,
 			   double hmax, 
 			   double hmin,
-			   int option)
+			   int option, pMeshDataId errorIndicatorID)
 {
   // for 3D problems
   int dim = 3;
@@ -2396,7 +2388,7 @@ void cvAdaptCore::setIsotropicSizeField(pMesh mesh,
   while(vertex = VIter_next(vIter)) {
     double *nodalValue;
     if(EN_getDataPtr((pEntity)vertex,errorIndicatorID,(void**)&nodalValue) == NULL) {
-      adaptSimLog<<"\nerror in setIsotropicSizeField(...) : no error data attached to vertex"<<endl;
+      std::cout<<"\nerror in setIsotropicSizeField(...) : no error data attached to vertex"<<endl;
       exit(0);
     }
 
@@ -2415,7 +2407,7 @@ void cvAdaptCore::setIsotropicSizeField(pMesh mesh,
   while(vertex = VIter_next(vIter)) {
     double *nodalValue;
     if(EN_getDataPtr((pEntity)vertex,errorIndicatorID,(void**)&nodalValue) == NULL) {
-      adaptSimLog<<"\nerror in setIsotropicSizeField(...) : no error data attached to vertex"<<endl;
+      std::cout<<"\nerror in setIsotropicSizeField(...) : no error data attached to vertex"<<endl;
       exit(0);
     }
 
@@ -2464,29 +2456,26 @@ void cvAdaptCore::setIsotropicSizeField(pMesh mesh,
   sizes.close();
   adaptFactorFile.close();
 
-  adaptSimLog<<"Info. on adaptation parameters are: "<<endl;
-  adaptSimLog<<"Total Error      : "<<totalError<<endl;
-  adaptSimLog<<"factor           : "<<factor<<endl;
-  adaptSimLog<<"Threshold        : "<<threshold<<endl;
-  adaptSimLog<<"sumOfError       : "<<sumOfError<<endl;
-  adaptSimLog<<"MaxCoarsenFactor : "<<hmax<<endl;
-  adaptSimLog<<"MaxRefineFactor  : "<<hmin<<"\n"<<endl;
+  std::cout<<"Info. on adaptation parameters are: "<<endl;
+  std::cout<<"Total Error      : "<<totalError<<endl;
+  std::cout<<"factor           : "<<factor<<endl;
+  std::cout<<"Threshold        : "<<threshold<<endl;
+  std::cout<<"sumOfError       : "<<sumOfError<<endl;
+  std::cout<<"MaxCoarsenFactor : "<<hmax<<endl;
+  std::cout<<"MaxRefineFactor  : "<<hmin<<"\n"<<endl;
 
-  std::ofstream adaptSimLog("adaptor.log");
-
-  adaptSimLog<<"Strategy chosen is size-field driven for isotropic adaptation"<<endl;  
-  adaptSimLog<<"Info. on adaptation parameters are: "<<endl;
-  adaptSimLog<<"Total Error      : "<<totalError<<endl;
-  adaptSimLog<<"factor           : "<<factor<<endl;  
-  adaptSimLog<<"Threshold        : "<<threshold<<endl;
-  adaptSimLog<<"sumOfError       : "<<sumOfError<<endl;
-  adaptSimLog<<"MaxCoarsenFactor : "<<hmax<<endl;
-  adaptSimLog<<"MaxRefineFactor  : "<<hmin<<endl;
-  adaptSimLog.close();
+  std::cout<<"Strategy chosen is size-field driven for isotropic adaptation"<<endl;  
+  std::cout<<"Info. on adaptation parameters are: "<<endl;
+  std::cout<<"Total Error      : "<<totalError<<endl;
+  std::cout<<"factor           : "<<factor<<endl;  
+  std::cout<<"Threshold        : "<<threshold<<endl;
+  std::cout<<"sumOfError       : "<<sumOfError<<endl;
+  std::cout<<"MaxCoarsenFactor : "<<hmax<<endl;
+  std::cout<<"MaxRefineFactor  : "<<hmin<<endl;
 }
 
 
-void cvAdaptCore::setManualSizeField(pMesh mesh,
+void setManualSizeField(pMesh mesh,
 		   pMSAdapt simAdapter, 
         	   int strategy) {
   double dir[3][3];
@@ -2564,28 +2553,27 @@ void cvAdaptCore::setManualSizeField(pMesh mesh,
     }
     break;
   default :
-    adaptSimLog<<"check strategy [in setManualSizefield(...)]"<<endl;
+    std::cout<<"check strategy [in setManualSizefield(...)]"<<endl;
     exit(-1);
     break; 
   }
 
-  std::ofstream adaptSimLog("adaptor.log");
-  adaptSimLog<<"Strategy chosen for adaptation is size-field driven"<<endl;
-  adaptSimLog<<"Mesh size-field is set manually"<<endl;
-  adaptSimLog<<"Size-field option : "<<option<<endl;
-  adaptSimLog.close();
+  std::cout<<"Strategy chosen for adaptation is size-field driven"<<endl;
+  std::cout<<"Mesh size-field is set manually"<<endl;
+  std::cout<<"Size-field option : "<<option<<endl;
 }
 
 
 // tag the entities to be refinement (for isotropic refinement)
 // factor is used to evaluate the threshold for refinement
 // as of now do not use hmin and hmax 
-void cvAdaptCore::tagEntitiesForRefinement(pMesh mesh,
+void tagEntitiesForRefinement(pMesh mesh,
 			      pMSAdapt simAdapter,
 			      double factor,
 			      double hmax, 
 			      double hmin,
-			      int option)
+			      int option,
+			      pMeshDataId errorIndicatorID)
 {
   double totalError = 0.;
   double maxError = 0.;
@@ -2594,35 +2582,33 @@ void cvAdaptCore::tagEntitiesForRefinement(pMesh mesh,
 
   int edgesTagged = applyMarkingStrategy(mesh,simAdapter,factor,hmax,hmin,
 					 totalError,maxError,minError,
-					 threshold,option);
+					 threshold,option,errorIndicatorID);
 
-  adaptSimLog<<" Info. on adaptation parameters are: "<<endl;
-  adaptSimLog<<" Total Error : "<<totalError<<endl;
-  adaptSimLog<<" Max. Error  : "<<maxError<<endl;
-  adaptSimLog<<" Min. Error  : "<<minError<<endl;
-  adaptSimLog<<" Threshold   : "<<threshold<<endl;
-  adaptSimLog<<" factor : "<<factor<<endl;
-  adaptSimLog<<" hmax   : "<<hmax<<endl;
-  adaptSimLog<<" hmin   : "<<hmin<<endl;
-  adaptSimLog<<"\nNumber of edges tagged to be refined : "<<edgesTagged<<"\n"<<endl;
+  std::cout<<" Info. on adaptation parameters are: "<<endl;
+  std::cout<<" Total Error : "<<totalError<<endl;
+  std::cout<<" Max. Error  : "<<maxError<<endl;
+  std::cout<<" Min. Error  : "<<minError<<endl;
+  std::cout<<" Threshold   : "<<threshold<<endl;
+  std::cout<<" factor : "<<factor<<endl;
+  std::cout<<" hmax   : "<<hmax<<endl;
+  std::cout<<" hmin   : "<<hmin<<endl;
+  std::cout<<"\nNumber of edges tagged to be refined : "<<edgesTagged<<"\n"<<endl;
 
-  ofstream adaptSimLog("adaptor.log");
-  adaptSimLog<<"Strategy chosen for adaptation is tag driven"<<endl;
-  adaptSimLog<<"(i.e., isotropic refinement)"<<endl;
-  adaptSimLog<<"Info. on adaptation parameters are: "<<endl;
-  adaptSimLog<<"Total Error : "<<totalError<<endl;
-  adaptSimLog<<"Max. Error  : "<<maxError<<endl;
-  adaptSimLog<<"Min. Error  : "<<minError<<endl;
-  adaptSimLog<<"Threshold   : "<<threshold<<endl;
-  adaptSimLog<<"factor : "<<factor<<endl;
-  adaptSimLog<<"hmax   : "<<hmax<<endl;
-  adaptSimLog<<"hmin   : "<<hmin<<endl;
-  adaptSimLog<<"\nNumber of edges tagged to be refined : "<<edgesTagged<<endl;
-  adaptSimLog.close();
+  std::cout<<"Strategy chosen for adaptation is tag driven"<<endl;
+  std::cout<<"(i.e., isotropic refinement)"<<endl;
+  std::cout<<"Info. on adaptation parameters are: "<<endl;
+  std::cout<<"Total Error : "<<totalError<<endl;
+  std::cout<<"Max. Error  : "<<maxError<<endl;
+  std::cout<<"Min. Error  : "<<minError<<endl;
+  std::cout<<"Threshold   : "<<threshold<<endl;
+  std::cout<<"factor : "<<factor<<endl;
+  std::cout<<"hmax   : "<<hmax<<endl;
+  std::cout<<"hmin   : "<<hmin<<endl;
+  std::cout<<"\nNumber of edges tagged to be refined : "<<edgesTagged<<endl;
 }
 
 
-void cvAdaptCore::writeMEDITSolution(pMesh mesh)
+void writeMEDITSolution(pMesh mesh,pMeshDataId errorIndicatorID)
 {
   ofstream fout;
   fout.open("sizefield-sol.bb");
@@ -2635,7 +2621,7 @@ void cvAdaptCore::writeMEDITSolution(pMesh mesh)
   while (vertex = VIter_next( vIter ) ) {
     if(EN_getDataPtr((pEntity)vertex, errorIndicatorID,
 		     (void**)&nodalData) == NULL) {
-      adaptSimLog<<"\nerror in writeMEDITSolution : no data attached to vertex\n";
+      std::cout<<"\nerror in writeMEDITSolution : no data attached to vertex\n";
       exit(0);
     }
     fout<<nodalData[4]<<endl;
@@ -2648,7 +2634,7 @@ void cvAdaptCore::writeMEDITSolution(pMesh mesh)
 // write in MEDIT format                  //
 // for visualization of mesh-metric field //
 ////////////////////////////////////////////
-void cvAdaptCore::writeMEDITSizeField(Hessian* hess, pMesh mesh)
+void writeMEDITSizeField(Hessian* hess, pMesh mesh)
 {
     pVertex vertex;
     VIter vIter = M_vertexIter( mesh );
@@ -2765,7 +2751,7 @@ void cvAdaptCore::writeMEDITSizeField(Hessian* hess, pMesh mesh)
 // write out the restart files //
 // which contain the hessians  //
 /////////////////////////////////
-void cvAdaptCore::writeRestartHessians(pMesh mesh )
+void writeRestartHessians(pMesh mesh,pMeshDataId nodalhessianID )
 {
   double* nodalHessian;
   pVertex vertex;
@@ -2790,7 +2776,7 @@ void cvAdaptCore::writeRestartHessians(pMesh mesh )
     }
     // there is no hessian on this vertex
     else{
-      adaptSimLog<<"\nerror in writeRestartHessians: encountered\n"
+      std::cout<<"\nerror in writeRestartHessians: encountered\n"
 	  <<"a vertex that carries no hessian\n";
       exit(0);
     }    
@@ -2864,7 +2850,7 @@ void cvAdaptCore::writeRestartHessians(pMesh mesh )
 }
 
 
-void cvAdaptCore::writeSmoothEIs(pMesh mesh) {
+void writeSmoothEIs(pMesh mesh,pMeshDataId errorIndicatorID) {
 
   int nshg = M_numVertices(mesh);
   double *smoothEIs=new double[nshg];
@@ -2876,7 +2862,7 @@ void cvAdaptCore::writeSmoothEIs(pMesh mesh) {
   while(v = VIter_next(vIter)) {
     double *nodalEIs;
     if(!EN_getDataPtr((pEntity)v, errorIndicatorID,(void**)&nodalEIs)) {
-      adaptSimLog<<"\nerror in writeSmoothEIs: no data attached to  vertex\n";
+      std::cout<<"\nerror in writeSmoothEIs: no data attached to  vertex\n";
       V_info(v);
       exit(0);
     }
@@ -2892,7 +2878,7 @@ void cvAdaptCore::writeSmoothEIs(pMesh mesh) {
 }
 
 
-void cvAdaptCore::attachSolution(char* solfile, 
+void attachSolution(char* solfile, 
                     pMesh mesh, 
                     map<pEntity, double *>& data,
 		            int ndof, 
@@ -2911,7 +2897,8 @@ void cvAdaptCore::attachSolution(char* solfile,
   
     // read solution file
 
-    restart( solfile, q_ji, nshg, ndof );
+    char *iformat = "binary";
+    MSAdaptUtils_restart( solfile, q_ji, nshg, ndof,iformat );
 
     // transpose the solution
 
@@ -2957,13 +2944,13 @@ void cvAdaptCore::attachSolution(char* solfile,
     }
     /* attach region coefficients */
     if (nrm > 0){
-        adaptSimLog << " No code to attach Region Modes " << endl;
+        std::cout << " No code to attach Region Modes " << endl;
         exit ( -1 );
     }
 
     delete [] q;
 }
-void cvAdaptCore::attachSoln( char *solfile, 
+void attachSoln( char *solfile, 
                  pMesh mesh, 
                  pMeshDataId phSol,
                  int ndof, 
@@ -2982,7 +2969,8 @@ void cvAdaptCore::attachSoln( char *solfile,
   
     // read solution file
 
-    restart( solfile, q_ji, nshg, ndof );
+    char *iformat = "binary";
+    MSAdaptUtils_restart( solfile, q_ji, nshg, ndof ,iformat);
 
     // transpose the solution
 
@@ -3028,14 +3016,14 @@ void cvAdaptCore::attachSoln( char *solfile,
     }
     /* attach region coefficients */
     if (nrm > 0) {
-        adaptSimLog << " No code to attach Region Modes " << endl;
+        std::cout << " No code to attach Region Modes " << endl;
         exit ( -1 );
     }
 
     delete[] q;
 }
 
-int cvAdaptCore::attachVPSoln( char *solfile, 
+int attachVPSoln( char *solfile, 
               pMesh mesh, 
               pMeshDataId phSol,
               pMeshDataId modes,
@@ -3046,7 +3034,7 @@ int cvAdaptCore::attachVPSoln( char *solfile,
     int refmap = -1;
     openfile_( "geombc.dat.1", "read", &refmap );
     if ( refmap == -1 ) {
-        adaptSimLog << "file not there " << endl;
+        std::cout << "file not there " << endl;
         exit(0);
     }
     int ifour = 4;
@@ -3071,7 +3059,8 @@ int cvAdaptCore::attachVPSoln( char *solfile,
 
     // read solution file
 
-    int stepno = restart( solfile, q_ji, 0, 0 );
+    char *iformat = "binary";
+    int stepno = MSAdaptUtils_restart( solfile, q_ji, 0, 0 ,iformat);
 
     // transpose the solution
     // q_ji = [ndof][nshg]
@@ -3127,8 +3116,8 @@ int cvAdaptCore::attachVPSoln( char *solfile,
             nem = *(ptr++);
             if ( nem > 0 ) {
                 if ( nem > 1 )  {
-                    adaptSimLog << "face cannot have 2 modes at the moment" << endl;
-                    adaptSimLog << "please check  :" << __FILE__ << endl;
+                    std::cout << "face cannot have 2 modes at the moment" << endl;
+                    std::cout << "please check  :" << __FILE__ << endl;
                     exit(0);
                 }
                 ecounter += nem;
@@ -3152,14 +3141,14 @@ int cvAdaptCore::attachVPSoln( char *solfile,
     return stepno;
 }
 
-void cvAdaptCore::solution( pEntity ent,
+void solution( pEntity ent,
           pMeshDataId phSol,
 	      double** sol ) {
     *sol=0;
     EN_getDataPtr( ent, phSol, (void **)sol );
 }
 
-void cvAdaptCore::numberofmodes( pEntity ent,
+void numberofmodes( pEntity ent,
                pMeshDataId modes,
 	           int* sol ) {
     *sol = 0;
@@ -3167,10 +3156,11 @@ void cvAdaptCore::numberofmodes( pEntity ent,
 }
 
 
-int cvAdaptCore::restart( char filename[], 
+int MSAdaptUtils_restart( char filename[], 
          double* q,
          int nshg, 
-         int nvr ) {
+         int nvr ,
+	 char *iformat) {
 
 	int restart;
   	openfile_( filename , "read",  &restart );
@@ -3191,13 +3181,13 @@ int cvAdaptCore::restart( char filename[],
     // copy the needed part into the array passed in 
 
 	if ( nshg > iarray[0] ) {
-        adaptSimLog << "reading only " << iarray[0] << "modes from restart" << endl;
-        adaptSimLog << nshg << " modes were requested " << endl;
+        std::cout << "reading only " << iarray[0] << "modes from restart" << endl;
+        std::cout << nshg << " modes were requested " << endl;
         nshg = iarray[0];
     }
     if ( nvr  > iarray[1] ) {
-        adaptSimLog << "reading only " << iarray[1] << "vars from restart" << endl;
-        adaptSimLog << nvr << " modes were requested " << endl;
+        std::cout << "reading only " << iarray[1] << "vars from restart" << endl;
+        std::cout << nvr << " modes were requested " << endl;
         nvr  = iarray[1];
     }
     // we are not transposing here, just copying the needed chunk
@@ -3210,7 +3200,7 @@ int cvAdaptCore::restart( char filename[],
 }
 
 
-void cvAdaptCore::check(pMesh mesh)
+void check(pMesh mesh)
 {
   int nv=0, ne=0, nf=0, nr=0, unknown=0;
   

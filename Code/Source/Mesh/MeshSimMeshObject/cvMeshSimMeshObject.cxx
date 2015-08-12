@@ -60,7 +60,7 @@
 
 //These have been added from ADAPTOR, make sure they are 
 //underneath compiler flags!
-#include "cvAdaptCore.h"
+#include "cv_meshsim_adapt_utils.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -2176,6 +2176,8 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
   errorIndicatorID = MD_newMeshDataId("error indicator");
 
   modes = MD_newMeshDataId("number of modes");// required for higher order
+  nodalgradientID = MD_newMeshDataId( "gradient");
+  nodalhessianID = MD_newMeshDataId( "hessian");
 
   pMSAdapt simAdapter;
 
@@ -2214,7 +2216,7 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
   // applies smoothing procedure for hessians
   // (simple average : arithmetic mean)
 
-  hessiansFromSolution(mesh,lstep);
+  hessiansFromSolution(mesh,lstep,errorIndicatorID,nodalhessianID,nodalgradientID);
   
   // compute mesh size-field using hessian strategy (anisotropic adaptation)
   // and set it at each vertex
@@ -2226,11 +2228,9 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
   sphere[3] = 0;
   sphere[4] = 1;
 
-  setSizeFieldUsingHessians(mesh,simAdapter,factor,hmax,hmin,option,sphere);
+  setSizeFieldUsingHessians(mesh,simAdapter,factor,hmax,hmin,option,sphere,nodalhessianID,nodalgradientID);
   
 
-  // data clean up
-  cleanAttachedData(mesh,errorIndicatorID,0);
   // adaptation
 
   pProgress progressAdapt = Progress_new();
@@ -2250,11 +2250,16 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
   printf("-- Adaptation Done...\n");
   printf(" Total # of elements: %d\n", M_numRegions(mesh));
   printf(" Total # of vertices: %d\n\n", M_numVertices(mesh));
-  printf(" Total # of sol. callbacks: %d\n\n",CBcounter);
-  printf(" Total # of invalid regions in  callbacks: %d\n\n",CBinvalidRegionCount);
 
+  // data clean up MOVED FROM BEFORE ADAPT. IF CRASH TRY MOVING BACK!
+  cleanAttachedData(mesh,errorIndicatorID,0);
+  cleanAttachedData(mesh,nodalgradientID,0);
+  cleanAttachedData(mesh,nodalhessianID,0);
+    
   MD_deleteMeshDataId(errorIndicatorID);
   MD_deleteMeshDataId(modes);
+  MD_deleteMeshDataId(nodalgradientID);
+  MD_deleteMeshDataId(nodalhessianID);
 
   MSA_delete(simAdapter);
 
@@ -2267,7 +2272,7 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
  *                                                                     *
  *---------------------------------------------------------------------*/
 
-int cvMeshObject::WriteSpectrumSolverElements (char *filename) {
+int cvMeshSimMeshObject::WriteSpectrumSolverElements (char *filename) {
 
   // this code assumes there is only 1 material region.
 
@@ -2293,7 +2298,7 @@ int cvMeshObject::WriteSpectrumSolverElements (char *filename) {
  *                                                                     *
  *---------------------------------------------------------------------*/
 
-int cvMeshObject::WriteSpectrumSolverNodes (char *filename) {
+int cvMeshSimMeshObject::WriteSpectrumSolverNodes (char *filename) {
 
   // This method outputs all of the nodes to a file.
 
@@ -2317,7 +2322,7 @@ int cvMeshObject::WriteSpectrumSolverNodes (char *filename) {
  *                                                                     *
  *---------------------------------------------------------------------*/
 
-int cvMeshObject::WriteSpectrumVisData (char *filename) {
+int cvMeshSimMeshObject::WriteSpectrumVisData (char *filename) {
 
   // open the output file
   if (openOutputFile(filename) != CV_OK) return CV_ERROR;
@@ -2380,7 +2385,7 @@ int cvMeshObject::WriteSpectrumVisData (char *filename) {
  *                                                                     *
  *---------------------------------------------------------------------*/
 
-int cvMeshObject::WriteSpectrumVisMesh (char *filename) {
+int cvMeshSimMeshObject::WriteSpectrumVisMesh (char *filename) {
 
   // this code assumes there is only 1 material region.
 

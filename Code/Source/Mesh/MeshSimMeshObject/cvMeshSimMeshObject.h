@@ -214,6 +214,13 @@ class cvMeshSimMeshObject : public cvMeshObject {
   pAManager manager_;
   pACase case_;
 
+
+  //IF USING MESHSIM ADAPTOR!!!
+  pMeshDataId errorIndicatorID;
+  pMeshDataId modes;
+  pMeshDataId nodalhessianID;
+  pMeshDataId nodalgradientID;
+  pMeshDataId phasta_solution;
 };
 
 
