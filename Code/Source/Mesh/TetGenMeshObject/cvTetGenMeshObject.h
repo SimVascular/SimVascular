@@ -111,7 +111,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   int NewMesh();
 
   //Set curve sizes and other mesh options
-  int SetMeshOptions(char *flags,int it, double value1,double value2);
+  int SetMeshOptions(char *flags,int numValues, double *values);
  
   //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H); 
@@ -132,7 +132,6 @@ class cvTetGenMeshObject : public cvMeshObject {
   int WriteMetisAdjacency (char *filename);
 
   // general queries
-  int GetElementConnectivity(int element);
   int GetNodeCoords(int node);  
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid();
@@ -140,11 +139,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   int GetModelFaceInfo(char rtnstr[99999]);
 
   // queries for bc's
-  int GetElementNodesOnModelFace (int face, char* filename) {return CV_ERROR;}
-  int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename) {return CV_ERROR;}
   cvPolyData* GetFacePolyData (int orgfaceid);
-
-  int GetExteriorElementFacesOnRegion (int region, char* filename) {return CV_ERROR;} 
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData);
   int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug);

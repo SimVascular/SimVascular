@@ -106,7 +106,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int NewMesh();
 
   //Set curve sizes and other mesh options
-  int SetMeshOptions(char *flags, int id, double value1,double value2);
+  int SetMeshOptions(char *flags, int numValues,double *values);
 
   //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
@@ -130,20 +130,15 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int WriteMetisAdjacency (char *filename);
   
   // general queries
-  int GetElementConnectivity(int element);
   int GetNodeCoords(int node);  
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid() {return CV_ERROR;}
   cvUnstructuredGrid *GetUnstructuredGrid();
 
   // queries for bc's
-  int GetElementNodesOnModelFace (int face, char* filename);
-  int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename);
   cvPolyData* GetFacePolyData (int orgfaceid);
   int GetModelFaceInfo(char rtnstr[99999]);
   
-  int GetExteriorElementFacesOnRegion (int region, char* filename);
-
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
   int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
 
@@ -164,14 +159,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int OutputExteriorElementFaces(pRegion region, int pseudoFaceID, char *filename);
   int getIdentForFaceId(int orgfaceid, int *faceID);
 
-  // output fe input decks
-  int WriteSpectrumSolverElements (char *filename);
-  int WriteSpectrumSolverNodes (char *filename);
-
   // output visualization files
-  int WriteSpectrumVisMesh (char *filename); 
-  int WriteSpectrumVisData (char *filename);
-
   private:
 
   int MapIDtoPID(int id, pGEntity *pid);

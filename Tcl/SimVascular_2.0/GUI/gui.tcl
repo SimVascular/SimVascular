@@ -30965,71 +30965,6 @@ proc guiMMviewSolidVtk {} {
   [$gRen3d GetRenderWindow] Render
 }
 
-
-# Procedure: guiMMwriteAllFaces
-proc guiMMwriteAllFaces {} {
-  global gFilenames
-  global gObjects
-  global gOptions
-
-  set solidkernel $gOptions(meshing_solid_kernel)
-
-  if {$solidkernel == "Parasolid" || $solidkernel == "Discrete"} {
-    set solid $gObjects(atdb_solid)
-  } elseif {$solidkernel == "PolyData"} {
-    set solid $gObjects(polydata_solid)
-  } else {
-    return -code error "ERROR: Invalid solid kernel"
-  }
-
-  set mesh $gObjects(mesh_object)
-  set mydir $gFilenames(mesh_faces_dir)
-
-  if {[file exists $mydir] == 0} {
-    file mkdir $mydir
-  } elseif {[file isdirectory $mydir] == 0} {
-    return -code error "ERROR:  $mydir is not a directory!"
-  }
-
-  set facePD /tmp/guiMMwriteAllFaces/pd
-
-  puts ""
-
-  foreach face [$solid GetFaceIds] {
-
-    puts "Processing face $face."
-
-    # create unique name
-    set name {}
-    catch {set name [$solid GetFaceAttr -attr gdscName -faceId $face]}
-    if {[string trim $name] == ""} {
-      set name "noname_$face"
-    }
-
-    # vtk file
-    catch {repos_delete -obj $facePD}
-    puts "  Getting Mesh Face PolyData (face $face)."
-    $mesh GetFacePolyData -result $facePD -face $face
-    set outfile [file join $mydir $name.vtk]
-    puts "  Writing vtk file $outfile."
-    repos_writeVtkPolyData -file $outfile -type ascii -obj $facePD
-
-    # nodes file
-    set outfile [file join $mydir $name.nbc]
-    puts "  Writing nodes to file $outfile."
-    $mesh GetElementNodesOnModelFace -face $face -file $outfile
-
-    # elements file
-    set outfile [file join $mydir $name.ebc]
-    puts "  Writing element faces to file $outfile."
-    $mesh GetElementFacesOnModelFace -face $face -file $outfile  -explicitFaceOutput 1
-
-  }
-
-  catch  {repos_delete -obj $facePD}
-}
-
-
 # Procedure: guiMMwriteExteriorFaces
 proc guiMMwriteExteriorFaces {} {
   global gFilenames
@@ -31119,98 +31054,30 @@ proc guiMMwriteInflowFace {} {
 }
 
 
-# Procedure: guiMMwriteMultipleFiles
-proc guiMMwriteMultipleFiles {} {
-  global gOptions
-
-  set solidkernel $gOptions(meshing_solid_kernel)
-
-  if {$solidkernel == "Parasolid" || $solidkernel == "Discrete"} {
-    set solid $gObjects(atdb_solid)
-  } elseif {$solidkernel == "PolyData"} {
-    set solid $gObjects(polydata_solid)
-  } else {
-    return -code error "ERROR: Invalid solid kernel"
-  }
-
-  global guiMMvars
-
-  set checks [list   checkAbaqus         checkProphlex       checkSpectrumVis    checkMetisAdjacency]
-
-  set methods [list  WriteABAQUS          WritePROPHLEX        WriteSpectrumVis     WriteMetisAdjacency]
-
-  set ext [list      .inp    .grf    .vis    .xadj]
-
-
-   global gObjects
-   if {[repos_exists -obj $solid] == 0} {
-       set yesno [tk_messageBox -default yes -message "You have not loaded the solid model used for meshing.  Load it now?" -title "Missing Solid Model" -type yesno]   
-       switch -- $yesno {
-         yes {
-               guiFNMloadSolidModel atdb_solid_file atdb_solid
-         }
-         no {
-         }
-       }
-  }
-  if {[repos_exists -obj $solid] == 0} {
-       return -code error "ERROR:  you need to manually load meshing solid first!"
-  }
-
-  for {set i 0} {$i < [llength $checks]} {incr i} {
-    set val $guiMMvars([lindex $checks $i])
-    if {$val == 1} {
-      guiMMwriteOutput [lindex $methods $i] [lindex $ext $i]
-    }
-  }
-
-  if {$guiMMvars(checkSpectrumSolver) == 1} {
-     guiMMwriteSpectrumSolver
-  }
-
-  if {$guiMMvars(checkAllFaces) == 1} {
-     guiMMwriteAllFaces
-  }
-
-  if {$guiMMvars(checkInflowFace) == 1} {
-    guiMMwriteInflowFace
-  }
-
-  if {$guiMMvars(checkSUPRE) == 1} {
-    guiMMwriteSUPRE
-  }
-
-  # must be called last
-  if {$guiMMvars(checkExteriorFaces) == 1} {
-    guiMMwriteExteriorFaces
-  }
-}
-
-
-# Procedure: guiMMwriteOutput
-proc guiMMwriteOutput { method ext} {
-
-  global gFilenames
-  global gObjects
-
-  set meshobject $gObjects(mesh_object)
-
-  if {[repos_exists -obj $meshobject] == 0} {
-    puts "No mesh object loaded.  Nothing done."
-    return
-  }
-
-  set prefix $gFilenames(mesh_out_prefix)
-
-  # this is due to ken, darn it!!
-  if {$method == "WriteSpectrumVis"} {
-     $meshobject $method -filePrefix $prefix
-     puts "File $prefix\_mesh.vis and $prefix\_res1.vis written."
-  } else {
-     $meshobject $method -file $prefix$ext
-     puts "File $prefix$ext written."
-  }
-}
+## Procedure: guiMMwriteOutput
+#proc guiMMwriteOutput { method ext} {
+#
+#  global gFilenames
+#  global gObjects
+#
+#  set meshobject $gObjects(mesh_object)
+#
+#  if {[repos_exists -obj $meshobject] == 0} {
+#    puts "No mesh object loaded.  Nothing done."
+#    return
+#  }
+#
+#  set prefix $gFilenames(mesh_out_prefix)
+#
+#  # this is due to ken, darn it!!
+#  if {$method == "WriteSpectrumVis"} {
+#     $meshobject $method -filePrefix $prefix
+#     puts "File $prefix\_mesh.vis and $prefix\_res1.vis written."
+#  } else {
+#     $meshobject $method -file $prefix$ext
+#     puts "File $prefix$ext written."
+#  }
+#}
 
 
 # Procedure: guiMMwriteSUPRE
@@ -31251,15 +31118,15 @@ proc guiMMwriteSUPRE {} {
 }
 
 
-# Procedure: guiMMwriteSpectrumSolver
-proc guiMMwriteSpectrumSolver {} {
-  global gFilenames
-  global gObjects
-  set mesh $gObjects(mesh_object)
-  set prefix $gFilenames(mesh_out_prefix)
-  $mesh WriteSpectrumSolverElements -file $prefix.connectivity
-  $mesh WriteSpectrumSolverNodes -file $prefix.coordinates
-}
+## Procedure: guiMMwriteSpectrumSolver
+#proc guiMMwriteSpectrumSolver {} {
+#  global gFilenames
+#  global gObjects
+#  set mesh $gObjects(mesh_object)
+#  set prefix $gFilenames(mesh_out_prefix)
+#  $mesh WriteSpectrumSolverElements -file $prefix.connectivity
+#  $mesh WriteSpectrumSolverNodes -file $prefix.coordinates
+#}
 
 
 # Procedure: guiPDloadSolidModel

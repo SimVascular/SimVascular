@@ -102,7 +102,7 @@ public:
   virtual int NewMesh() = 0;
 
   //Set curve sizes and other mesh options
-  virtual int SetMeshOptions(char *flags,int id,double value1,double value2) = 0;
+  virtual int SetMeshOptions(char *flags,int numValues,double *values) = 0;
  
   //Set boundary layer and/or specify wall faces
   virtual int SetBoundaryLayer(int type, int id, int side, int nL, double* H) = 0;
@@ -123,7 +123,6 @@ public:
   virtual int WriteMetisAdjacency (char *filename) = 0;
 
   // general queries
-  virtual int GetElementConnectivity(int element) = 0;
   virtual int GetNodeCoords(int node) = 0;
   virtual cvPolyData *GetPolyData() = 0;
   virtual cvPolyData *GetSolid() = 0;
@@ -131,10 +130,7 @@ public:
   virtual int GetModelFaceInfo(char rtnstr[99999]) = 0;
 
   // queries for bc's
-  virtual int GetElementNodesOnModelFace (int face, char* filename) = 0;
-  virtual int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename) = 0;
   virtual cvPolyData* GetFacePolyData (int orgfaceid) = 0;
-  virtual int GetExteriorElementFacesOnRegion (int region, char* filename) = 0;
 
   //Set PolyData object after instantiation
   virtual int SetVtkPolyDataObject(vtkPolyData *newPolyData) = 0;

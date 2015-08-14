@@ -390,87 +390,6 @@ int cvMeshSimMeshObject::Update() {
   
 }
 
-int cvMeshSimMeshObject::GetElementConnectivity(int element) {
-
-  int i, k;
-  char node[32];
-  int nodenum;
-
-  if (element < 1 || element > numElements_) {
-    fprintf(stderr,"ERROR:  Element number out of range.\n");
-    return CV_ERROR;
-  }
-
-  // 6.3
-  //pRegion region = M_region (mesh, element-1);
-
-  pRegion region = NULL;
-  RIter riter = M_regionIter(mesh);
-  for (i = 0; i <= element-1;i++) {
-    region = RIter_next(riter);
-  }
-  RIter_delete(riter);
-
-  if (region == NULL) {
-    fprintf(stderr,"Error: Element %i out of range.\n",element);
-    return CV_ERROR;
-  }
-
-  // get nodes of element
-  pPList vert_list = R_vertices (region,MY_MESHSIM_VERTEX_ORDERING);
- 
-  for (k = 0; k < PList_size (vert_list); k++){
-    nodenum = P_id (V_point ((pVertex)PList_item (vert_list, k)));
-    node[0] = '\0'; 
-    sprintf(node,"%i",nodenum);
-    Tcl_AppendElement(interp_, node);    
-  }
-    
-  PList_delete(vert_list); 
-
-  // quad nodes
-  if (quadElem_ == 1) {
-    pPList edge_list = R_edges(region,MY_MESHSIM_VERTEX_ORDERING);
-    int numEdges = PList_size (edge_list);
-    if (numEdges != 6) {
-        PList_delete(edge_list);
-        fprintf(stderr,"ERROR: wrong number of edges (%i).\n",numEdges);
-    }
-    // the mapping between mega and prophlex for the additional nodes is as follows:
-    //
-    //   edge    middle node number
-    //   --------------------------
-    //     0            7
-    //     1            5
-    //     2            6
-    //     3            8
-    //     4            9
-    //     5            10
-
-    int holdem[11];
-    int prophlexMap[6] = {7,5,6,8,9,10};
-    for (i = 0; i < numEdges; i++) {
-      pEdge xedge = (pEdge)PList_item (edge_list, i);
-      if (E_numPoints(xedge) != 1) {
-        fprintf(stderr,"ERROR:  no interior point!\n");
-        PList_delete(edge_list);
-        return CV_ERROR;
-      }       
-      nodenum = P_id(E_point(xedge,0)); 
-      holdem[prophlexMap[i]]=nodenum;
-    }
-    for (i = 0; i < numEdges; i++) {    
-      node[0] = '\0'; 
-      sprintf(node,"%i",holdem[5+i]);
-      Tcl_AppendElement(interp_, node);   
-    }
-    PList_delete(edge_list);
-  }
-
-  return CV_OK;
-}
-
-
 int cvMeshSimMeshObject::GetNodeCoords(int node) {
 
   nodeID_ = 0;
@@ -1341,54 +1260,88 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
  * called before the options can be set
  */
 
-int cvMeshSimMeshObject::SetMeshOptions(char *flags, int id,double value1, double value2) {
+int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *values) {
   // must have created mesh
   if (mesh == NULL) {
     return CV_ERROR;
   }
 
-  if (!strncmp(flags,"s",1)) {    //Surface flag, on or off
-    meshoptions_.surface=(int)value1;
+  if (!strncmp(flags,"SurfaceMeshFlag",15)) {    //Surface flag, on or off
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.surface=(int)values[0];
   }
-  else if (!strncmp(flags,"v",1)) {    //Volume flag, on or off
-    meshoptions_.volume=(int)value1;
+  else if (!strncmp(flags,"VolumeMeshFlag",14)) {    //Volume flag, on or off
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.volume=(int)values[0];
   }
-   else if (!strncmp(flags,"A",1)) {    //Global edge size, type, size
-    meshoptions_.gsize_type=id;
-    meshoptions_.gsize=value1;
-    // old api 5.4: MS_setGlobalMeshSize(mesh,type,gsize);
-    MS_setMeshSize(case_,GM_domain(model),id,value1,NULL);
+   else if (!strncmp(flags,"GlobalEdgeSize",14)) {    //Global edge size, type, size
+      if (numValues < 2)
+      {
+	fprintf(stderr,"Must give type (absolute,relative) and edge size\n");
+	return CV_ERROR;
+      }
+      meshoptions_.gsize_type=values[0];
+      meshoptions_.gsize=values[1];
+      // old api 5.4: MS_setGlobalMeshSize(mesh,type,gsize);
+      MS_setMeshSize(case_,GM_domain(model),values[0],values[1],NULL);
   }
-  else if (!strncmp(flags,"a",1)) {    //Local edge size, surface id, type, size
-    pGEntity pid = NULL;
-    if (MapIDtoPID(id,&pid) == CV_ERROR) {
-      return CV_ERROR;
-    }
-    MS_setMeshSize(case_,pid,(int)value1,value2,NULL);
+  else if (!strncmp(flags,"LocalEdgeSize",13)) {    //Local edge size, surface id, type, size
+      if (numValues < 3)
+      {
+	fprintf(stderr,"Must give face id, type (absolute,relative) and edge size\n");
+	return CV_ERROR;
+      }
+      pGEntity pid = NULL;
+      if (MapIDtoPID(values[0],&pid) == CV_ERROR) {
+	return CV_ERROR;
+      }
+      MS_setMeshSize(case_,pid,(int)values[1],values[2],NULL);
   }
-  else if (!strncmp(flags,"C",1)) {  //Global Curv, type, gcurv value
-    meshoptions_.gcurv_type=id;
-    meshoptions_.gcurv=value1;
-    MS_setMeshSize(case_,GM_domain(model),id,value1,NULL);
+  else if (!strncmp(flags,"GlobalCurvature",15)) {  //Global Curv, type, gcurv value
+      if (numValues < 2)
+      {
+	fprintf(stderr,"Must give type (absolute,relative) and curvature\n");
+	return CV_ERROR;
+      }
+      meshoptions_.gcurv_type=values[0];
+      meshoptions_.gcurv=values[1];
+      MS_setMeshSize(case_,GM_domain(model),values[0],values[1],NULL);
   }
-  else if(!strncmp(flags,"c",1)) {  //Local Curv, surface id, type, gcurv value
-    pGEntity pid = NULL;
-    if (MapIDtoPID(id,&pid) == CV_ERROR) {
-      return CV_ERROR;
-    }
-    MS_setMeshCurv(case_,pid,(int)value1,value2);
+  else if(!strncmp(flags,"LocalCurvature",14)) {  //Local Curv, surface id, type, gcurv value
+      if (numValues < 3)
+      {
+	fprintf(stderr,"Must give face id, type (absolute,relative) and curvature\n");
+	return CV_ERROR;
+      }
+      pGEntity pid = NULL;
+      if (MapIDtoPID(values[0],&pid) == CV_ERROR) {
+	return CV_ERROR;
+      }
+      MS_setMeshCurv(case_,pid,(int)values[1],values[2]);
   }
-  else if(!strncmp(flags,"M",1)) {  //Global Curv Min, type, gcurv min value
-    meshoptions_.gmincurv_type=id;
-    meshoptions_.gmincurv=value1;
-    MS_setMinCurvSize(case_,GM_domain(model),id,value1);
+  else if(!strncmp(flags,"GlobalCurvatureMin",18)) {  //Global Curv Min, type, gcurv min value
+      if (numValues < 2)
+      {
+	fprintf(stderr,"Must give type (absolute,relative) and curvature min\n");
+	return CV_ERROR;
+      }
+      meshoptions_.gmincurv_type=values[0];
+      meshoptions_.gmincurv=values[1];
+      MS_setMinCurvSize(case_,GM_domain(model),values[0],values[1]);
   }
-  else if(!strncmp(flags,"m",1)) {  //Local Curv Min, surface id, type, gcurv min value
-    pGEntity pid = NULL;
-    if (MapIDtoPID(id,&pid) == CV_ERROR) {
-      return CV_ERROR;
-    }
-    MS_setMinCurvSize(case_,pid,(int)value1,value2);
+  else if(!strncmp(flags,"LocalCurvatureMin",17)) {  //Local Curv Min, surface id, type, gcurv min value
+      if (numValues < 3)
+      {
+	fprintf(stderr,"Must give face id, type (absolute,relative) and curvature min\n");
+	return CV_ERROR;
+      }
+      pGEntity pid = NULL;
+      if (MapIDtoPID(values[0],&pid) == CV_ERROR) {
+	return CV_ERROR;
+      }
+      MS_setMinCurvSize(case_,pid,(int)values[1],values[2]);
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1552,193 +1505,6 @@ int cvMeshSimMeshObject::SetBoundaryLayer(int type, int id, int side, int nL, do
   MS_setBoundaryLayer(case_,pid,side,type,nL,H,mixed,blends,propagate);
   return CV_OK;
 }
-
-int  cvMeshSimMeshObject::GetElementFacesOnModelFace (int orgfaceid, int explicitFaceOut, char* filename) {
-
-  // get the identifier/tag corresponding to the given parasolid face entity
-  int faceID = 0;
-  if (getIdentForFaceId(orgfaceid,&faceID) == CV_ERROR) {
-      return CV_ERROR;
-  }
-
-  // code for explicitFace only valid for linear tets
-  if (quadElem_ != 0 && explicitFaceOut != 0) {
-      return CV_ERROR;
-  }
-
-  // check to make sure the faceID exists for this model
-  pGFace modelface;
-  int nFace = GM_numFaces(model);
-  int foundFace = 0;
-  GFIter myGFiter;
-  myGFiter = GM_faceIter(model);
-  while (modelface = GFIter_next(myGFiter)) {
-    if(GEN_tag((GEntity*)modelface) == faceID) {foundFace=1;break;}
-  }
-  if (foundFace == 0) {
-    fprintf(stderr,"Error: face id %i not found in model.\n",faceID);
-    return CV_ERROR;
-  }
-  GFIter_delete(myGFiter);
-
-  // Open output file is we're writing one
-  if (filename != NULL) { 
-    if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-  }
-
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    initElementTraversal();
-    while (getNextElement() == 1) {
-      pRegion region = pCurrentMeshRegion_;
-      for (int loopfaces=0;loopfaces < R_numFaces(region);loopfaces++) {
-
-        // Get the element face
-        pFace myface = R_face(region,loopfaces);
-
-        // Get the model tag for the face
-        int facetag=0;
-        pGEntity modelface = F_whatIn(myface);
-        if (modelface != NULL) {
-           facetag=GEN_tag(F_whatIn(myface));
-        }
-
-        /*  only output element face if it is on the model face */
-        if (facetag == faceID && F_whatInType(myface) == Gface) {
-          int realFaceNum = 0;
-          if (FindFaceNumber(region,loopfaces,&realFaceNum) != CV_OK) {
-            if (filename != NULL) closeOutputFile();
-            return CV_ERROR;
-          }         
-          char rtnstr[2048];
-          rtnstr[0] = '\0';
-          if (explicitFaceOut == 0) {
-            sprintf(rtnstr,"%i %i",curElemID_,realFaceNum);
-          } else {
-            // arbitrary unique surface id for spectrum
-            int arbid = curElemID_*4+realFaceNum;
-            if (realFaceNum == 0) {
-              sprintf(rtnstr,"%i %i %i %i %i",curElemID_,arbid,connID_[1],connID_[2],connID_[3]);
-            } else if (realFaceNum == 1) {
-              sprintf(rtnstr,"%i %i %i %i %i",curElemID_,arbid,connID_[0],connID_[3],connID_[2]);
-            } else if (realFaceNum == 2) {
-              sprintf(rtnstr,"%i %i %i %i %i",curElemID_,arbid,connID_[0],connID_[1],connID_[3]);
-            } else if (realFaceNum == 3) {
-              sprintf(rtnstr,"%i %i %i %i %i",curElemID_,arbid,connID_[0],connID_[2],connID_[1]);
-            } else {
-              return CV_ERROR;
-            }
-          }
-          if (filename != NULL) {
-            gzprintf(fp_,"%s\n",rtnstr);
-          } else {
-            Tcl_AppendElement(interp_, rtnstr);
-          }
-
-        }     
-      }
-    }
-  }
- 
-  if (filename != NULL) { 
-    return closeOutputFile();
-  } else {
-    return CV_OK;
-  }
-    
-}
-
-
-int  cvMeshSimMeshObject::GetElementNodesOnModelFace (int orgfaceid, char* filename) {
-
-  int i = 0;
-
-  // get the identifier/tag corresponding to the given parasolid face entity
-  int faceID = 0;
-  if (getIdentForFaceId(orgfaceid,&faceID) == CV_ERROR) {
-      return CV_ERROR;
-  }
-
-  // check to make sure the faceID exists for this model
-  pGFace modelface;
-  int nFace = GM_numFaces(model);
-  int foundFace = 0;
-  GFIter myGFiter;
-  myGFiter = GM_faceIter(model);
-  while (modelface = GFIter_next(myGFiter)) {
-    if(GEN_tag((GEntity*)modelface) == faceID) {foundFace=1;break;}
-  }
-  if (foundFace == 0) {
-    fprintf(stderr,"Error: face id %i not found in model.\n",faceID);
-    return CV_ERROR;
-  }
-  GFIter_delete(myGFiter);
-
-  // Open output file is we're writing one
-  if (filename != NULL) { 
-    if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-  }
-
-  // create a tmp array to track if the node falls on the surface
-  short int *yesno = new short int[numNodes_+1];
-  for (i = 0; i < numNodes_+1; i++) {
-      yesno[i] = 0;
-  }
-
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    initElementTraversal();
-    while (getNextElement() == 1) {
-      pRegion region = pCurrentMeshRegion_;
-      for (int loopfaces=0;loopfaces < R_numFaces(region);loopfaces++) {
-
-        // Get the element face
-        pFace myface = R_face(region,loopfaces);
-
-        // Get the model tag for the face
-        int facetag=0;
-        pGEntity modelface = F_whatIn(myface);
-        if (modelface != NULL) {
-           facetag=GEN_tag(F_whatIn(myface));
-        }
-
-        /*  only output element face if it is on the model face */
-        if (facetag == faceID && F_whatInType(myface) == Gface) {
-          int nodes[20];
-          int num_nodes = FindNodesOnElementFace(myface,nodes);
-          for (int n=0;n < num_nodes; n++) {
-              yesno[nodes[n]] = 1;
-          }
-        }     
-      }
-    }
-  }
-
-  // output the nodes on the surface
-  char rtnstr[255];
-  rtnstr[0] = '\0'; 
-  for (i=0;i < numNodes_; i++) {
-    if (yesno[i] == 1) {
-      sprintf(rtnstr,"%i",i);
-      if (filename != NULL) {
-        gzprintf(fp_,"%s\n",rtnstr);
-      } else {
-        Tcl_AppendElement(interp_, rtnstr);
-      }
-      rtnstr[0] = '\0';
-    }
-  }
-
-  delete [] yesno;
- 
-  if (filename != NULL) { 
-    return closeOutputFile();
-  } else {
-    return CV_OK;
-  }
-    
-}
-
 
 cvPolyData* cvMeshSimMeshObject::GetFacePolyData (int orgfaceid) {
 
@@ -1944,85 +1710,6 @@ int cvMeshSimMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
 
   return CV_OK;
 
-}
-
-
-int cvMeshSimMeshObject::GetExteriorElementFacesOnRegion (int orgRegionID, char* filename) {
-
-  // make sure a valid regionID was specified
-  int foundRegion = 0;
-  initRegionTraversal();
-  int regionID = 0;
-
-  if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
-#ifdef USE_PARASOLID
-    regionID = GEN_tag(GEN_getGEntityFromParasolidEntity(model,(PK_ENTITY_t)orgRegionID));
-#else
-    return CV_ERROR;
-#endif
-  } else {
-    return CV_ERROR;
-  }
-
-  while (getNextRegion() == 1) {
-    if (curMdlRegID_ == regionID) {
-      foundRegion = 1;
-      break;
-    }
-  }
-  if (foundRegion == 0) {
-    fprintf(stderr,"ERROR:  Region %i not found.\n",regionID);
-    return CV_ERROR;
-  }
-
-  // Open output file is we're writing one
-  if (filename != NULL) { 
-    if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-  }
-
-  // loop over all of the material regions, making each a separate object
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    if (curMdlRegID_ != regionID) continue;
-    initElementTraversal();
-    // only output the element face if its on an interface
-    while (getNextElement() == 1) {
-      getNeighborMdlRegIds();
-      if ( (curElemNe_[0][0] != curElemNe_[0][1]) || (curElemNe_[0][0] == -1 && curElemNe_[0][1] == -1) )
-        if (OutputExteriorElementFaces(pCurrentMeshRegion_,0,filename) == CV_ERROR) return CV_ERROR;  
-      if ( (curElemNe_[1][0] != curElemNe_[1][1]) || (curElemNe_[1][0] == -1 && curElemNe_[1][1] == -1) ) 
-        if (OutputExteriorElementFaces(pCurrentMeshRegion_,1,filename) == CV_ERROR) return CV_ERROR;
-      if ( (curElemNe_[2][0] != curElemNe_[2][1]) || (curElemNe_[2][0] == -1 && curElemNe_[2][1] == -1) ) 
-        if (OutputExteriorElementFaces(pCurrentMeshRegion_,2,filename) == CV_ERROR) return CV_ERROR;  
-      if ( (curElemNe_[3][0] != curElemNe_[3][1]) || (curElemNe_[3][0] == -1 && curElemNe_[3][1] == -1) ) 
-        if (OutputExteriorElementFaces(pCurrentMeshRegion_,3,filename) == CV_ERROR) return CV_ERROR;
-    }
-  }
-
-  if (filename != NULL) { 
-    return closeOutputFile();
-  } else {
-    return CV_OK;
-  }
-
-}
-
-
-int cvMeshSimMeshObject::OutputExteriorElementFaces(pRegion region, int pseudoFaceID, char *filename) {
-    int facenum = 0;
-    if (FindFaceNumber(pCurrentMeshRegion_,pseudoFaceID,&facenum) == CV_ERROR) {
-      closeOutputFile();
-      return CV_ERROR;
-    }
-    char rtnstr[32];
-    rtnstr[0]='\0';
-    sprintf(rtnstr,"%i %i",curElemID_,facenum);
-    if (filename != NULL) {
-      gzprintf(fp_,"%s\n", rtnstr);
-    } else {
-      Tcl_AppendElement(interp_, rtnstr);
-    }
-    return CV_OK;
 }
 
 int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *facenum) {
@@ -2264,182 +1951,5 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double facto
   MSA_delete(simAdapter);
 
   return CV_OK;
-}
-
-/*---------------------------------------------------------------------*
- *                                                                     *
- *             ****  WriteSpectrumSolverElements ****                  *
- *                                                                     *
- *---------------------------------------------------------------------*/
-
-int cvMeshSimMeshObject::WriteSpectrumSolverElements (char *filename) {
-
-  // this code assumes there is only 1 material region.
-
-  // open the output file
-  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    initElementTraversal();
-    while (getNextElement() == 1) {
-      // spectrum only supports linear tets
-        gzprintf(fp_,"%d %d %d %d %d\n",curElemID_, connID_[0],connID_[1],connID_[2],connID_[3]);
-    }
-  }
-
-  return closeOutputFile();
-
-}
-
-/*---------------------------------------------------------------------*
- *                                                                     *
- *                 ****  WriteSpectrumSolverNodes  ****                *
- *                                                                     *
- *---------------------------------------------------------------------*/
-
-int cvMeshSimMeshObject::WriteSpectrumSolverNodes (char *filename) {
-
-  // This method outputs all of the nodes to a file.
-
-  // open the output file
-  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-
-  initNodeTraversal();
-
-  while (getNextNode() == 1) {
-    gzprintf(fp_, "  %d  %f  %f  %f \n", nodeID_, nodeX_, nodeY_, nodeZ_);
-  }
-
-  return closeOutputFile();
-
-}
-
-
-/*---------------------------------------------------------------------*
- *                                                                     *
- *                 ****  WriteSpectrumVisData  ****                    *
- *                                                                     *
- *---------------------------------------------------------------------*/
-
-int cvMeshSimMeshObject::WriteSpectrumVisData (char *filename) {
-
-  // open the output file
-  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-
-  char s[80];
-  sprintf (s, "region_%d", 1);
-  gzprintf(fp_, "  region  \"%s\" \n", s);
-
-  gzprintf(fp_, "    time step %d \n", 1);
-  gzprintf(fp_, "    time %g \n", 1.0);
-
-  gzprintf(fp_, "    analysis results \"%s\" \n", "pressure");
-  gzprintf(fp_, "      number of data %d \n", numLinearNodes_);
-  gzprintf(fp_, "      type \"%s\" \n", "nodal");
-  gzprintf(fp_, "      order \"%s\" \n", "scalar");
-  gzprintf(fp_, "      length %d \n", 1);
-  gzprintf(fp_, "      data \n");
-
-  initNodeTraversal();
-
-  while (getNextNode() == 1) {
-    gzprintf(fp_, "  1.0\n", 1.0);
-  }
-
-  gzprintf(fp_, "      end data \n");
-  gzprintf(fp_, "    end analysis results \n");
-
-  gzprintf(fp_, "    analysis results \"velocity\" \n");
-  gzprintf(fp_, "      number of data %d \n",numLinearNodes_);
-  gzprintf(fp_, "      type \"nodal\"\n");
-  gzprintf(fp_, "      order \"vector\"\n");
-  gzprintf(fp_, "      number of components 3\n");
-  gzprintf(fp_, "      components\n");
-  gzprintf(fp_, "      \"x\"\n");
-  gzprintf(fp_, "      \"y\"\n");
-  gzprintf(fp_, "      \"z\"\n");
-  gzprintf(fp_, "      end components\n");
-  gzprintf(fp_, "      length 3\n");
-  gzprintf(fp_, "      data\n");
-
-  initNodeTraversal();
-
-  while (getNextNode() == 1) {
-    gzprintf(fp_, "  0.0 0.0 1.0\n");
-  }
-
-  gzprintf(fp_, "      end data \n");
-  gzprintf(fp_, "    end analysis results \n");
-
-  //gzprintf(fp_, "  end region \n\n");
-  
-  return closeOutputFile();
-
-}
-
-
-/*---------------------------------------------------------------------*
- *                                                                     *
- *                 **** WriteSpectrumVisMesh ****                      *
- *                                                                     *
- *---------------------------------------------------------------------*/
-
-int cvMeshSimMeshObject::WriteSpectrumVisMesh (char *filename) {
-
-  // this code assumes there is only 1 material region.
-
-  // open the output file
-  if (openOutputFile(filename) != CV_OK) return CV_ERROR;
-
-  // output the nodes
-  char s[80];
-  gzprintf(fp_, "problem  \"%s\"  \n", "scorec mesh");
-  gzprintf(fp_, "  time information \n");
-  gzprintf(fp_, "    number of time steps %d \n", 1);
-  gzprintf(fp_, "    time steps \n");
-  gzprintf(fp_, "    %d  %g \n", 1, 1.0);
-  gzprintf(fp_, "    end time steps \n");
-  gzprintf(fp_, "  end time information \n\n");
-
-  sprintf (s, "region_%d", 1);
-  gzprintf(fp_, "  region  \"%s\" \n", s);
-  gzprintf(fp_, "    nature \"%s\" \n", "solid");
-
-  gzprintf(fp_, "    number of nodal coordinates %d \n", numLinearNodes_);
-  gzprintf(fp_, "    nodal coordinates \n");
-
-  initNodeTraversal();
-  while (getNextNode() == 1) {
-    gzprintf(fp_, "  %d  %f  %f  %f \n", nodeID_, nodeX_, nodeY_, nodeZ_);
-  }
-  gzprintf(fp_, "    end node coordinates \n");
-
-  // output the elements
-
-  gzprintf(fp_, "    element set \"%s\"  \n", "eset_1");
-  gzprintf(fp_, "      material id 0  \n");
-  gzprintf(fp_, "      nodes per element %d \n", 4);
-  gzprintf(fp_, "      topology \"%s\" \n", "tet");
-  gzprintf(fp_, "      number of elements %d \n", numElements_);
-  gzprintf(fp_, "      connectivity \n" );
-
-
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    initElementTraversal();
-    while (getNextElement() == 1) {
-      // spectrum only supports linear tets
-        gzprintf(fp_,"%d %d %d %d %d\n",curElemID_, connID_[0],connID_[1],connID_[2],connID_[3]);
-    }
-  }
-
-  gzprintf(fp_, "      end connectivity \n");
-  gzprintf(fp_, "    end element set \n");
-  gzprintf(fp_, "  end region \n\n");
-  gzprintf(fp_, "end problem  \n");
-
-  return closeOutputFile();
-
 }
 

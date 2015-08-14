@@ -523,61 +523,6 @@ int cvTetGenMeshObject::GetNodeCoords(int node)
   return CV_OK;
 }
 
-int cvTetGenMeshObject::GetElementConnectivity(int element)
-{
-  if (volumemesh_ == 0)
-  {
-    fprintf(stderr,"Mesh needs to be computed before node coords can be retrieved\n");
-    return CV_ERROR;
-  }
-  curElemID_ =  element;
-  vtkIdType npts,*pts;
-  vtkIdType p1,p2,p3;
-  vtkIdType meshCellId=0;
-  vtkSmartPointer<vtkIdList> ptIds = 
-    vtkSmartPointer<vtkIdList>::New();
-  vtkSmartPointer<vtkIdList> cellIds = 
-    vtkSmartPointer<vtkIdList>::New();
-  vtkIntArray *globalIds;
-  globalIds = vtkIntArray::SafeDownCast(volumemesh_->GetCellData()->
-    GetScalars("GlobalElementID"));
-  int numCells = volumemesh_->GetNumberOfCells();
-
-    ptIds->SetNumberOfIds(3);
-    for (vtkIdType cellId = 0;cellId<numCells;cellId++)
-    { 
-      meshCellId = globalIds->LookupValue(cellId+1);
-      volumemesh_->GetCellPoints(meshCellId,npts,pts);
-      for (int i=0;i < npts; i++)
-      {
-	p1 = pts[i];
-	p2 = pts[(i+1)%(npts)];
-	p3 = pts[(i+2)%(npts)];
-
-	ptIds->InsertId(0,p1);
-	ptIds->InsertId(1,p2);
-	ptIds->InsertId(2,p3);
-
-	volumemesh_->GetCellNeighbors(meshCellId,ptIds,cellIds);
-
-	//If it is zero, it is a face on the exterior. Otherwise, it has
-	//neighbors
-	if (cellIds->GetNumberOfIds() != 0)
-	{  
-	  curElemNe_[i][0] = -1;
-	  curElemNe_[i][1] = -1;
-	}
-	else 
-	{
-	  curElemNe_[i][0] = cellIds->GetId(0);
-	  curElemNe_[i][1] = cellIds->GetId(0);
-	}
-      }
-    }
-
-  return CV_OK;
-}
-
 // --------------------
 //  LoadModel
 // --------------------
@@ -823,69 +768,88 @@ int cvTetGenMeshObject::NewMesh() {
  * called before the options can be set
  */
 
-int cvTetGenMeshObject::SetMeshOptions(char *flag,int id, double value1, double value2) {
+int cvTetGenMeshObject::SetMeshOptions(char *flag,int numValues,double *values) {
   // must have created mesh
 //  if (inmesh_ == NULL) {
 //    return CV_ERROR;
 //  }
   
-  if(!strncmp(flag,"A",1)) {            //Global edge size
-      meshoptions_.maxedgesize=value1;
+  if(!strncmp(flag,"GlobalEdgeSize",14)) {            //Global edge size
+       if (numValues < 1)
+	 return CV_ERROR;
+      meshoptions_.maxedgesize=values[0];
   }
-  else if(!strncmp(flag,"a",1)) {
+  else if(!strncmp(flag,"LocalEdgeSize",13)) {
+      if (numValues < 2)
+      {
+	fprintf(stderr,"Must give face id and local edge size\n");
+	return CV_ERROR;
+      }
       meshoptions_.functionbasedmeshing = 1;
       //Create a new mesh sizing function and call TGenUtils to compute function.
       //Store in the member data vtkDouble Array meshsizingfunction
-      if (TGenUtils_SetLocalMeshSize(polydatasolid_,id,value1) != CV_OK)
+      if (TGenUtils_SetLocalMeshSize(polydatasolid_,values[0],values[1]) != CV_OK)
         return CV_ERROR;
       meshoptions_.secondarrayfunction = 1;
   }
-  else if(!strncmp(flag,"s",1)) {
+  else if(!strncmp(flag,"SurfaceMeshFlag",15)) {
 #ifdef USE_VMTK
-      meshoptions_.surfacemeshflag = value1;
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.surfacemeshflag = values[0];
 #else
       fprintf(stderr,"Plugin VMTK is not being used!\
 	  In order to use surface meshing, plugin VMTK must be available!\n");
       return CV_ERROR;
 #endif
   }
-  else if(!strncmp(flag,"v",1)) {
-      meshoptions_.volumemeshflag = value1;
+  else if(!strncmp(flag,"VolumeMeshFlag",14)) {
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.volumemeshflag = values[0];
   }
-  else if(!strncmp(flag,"q",1)) {
-      meshoptions_.minratio=value1;
+  else if(!strncmp(flag,"QualityRatio",12)) {//q
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.minratio=values[0];
   }
-  else if(!strncmp(flag,"O",1)) {
-      meshoptions_.optlevel=(int)value1;
+  else if(!strncmp(flag,"Optimization",12)) {//O
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.optlevel=(int)values[0];
   }
-  else if(!strncmp(flag,"T",1)) {
-      meshoptions_.epsilon=value1;
+  else if(!strncmp(flag,"Epsilon",7)) {//T
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.epsilon=values[0];
   }
-  else if(!strncmp(flag,"R",1)) {
-      meshoptions_.coarsen_percent=value1/100;
+  else if(!strncmp(flag,"CoarsenPercent",14)) {//R
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.coarsen_percent=values[0]/100;
   }
-  else if(!strncmp(flag,"V",1)) {
+  else if(!strncmp(flag,"Verbose",7)) {//V
       meshoptions_.verbose=1;
   }
-  else if(!strncmp(flag,"M",1)) {
+  else if(!strncmp(flag,"NoMerge",7)) {//M
       meshoptions_.nomerge=1;
   }
-  else if(!strncmp(flag,"C",1)) {
+  else if(!strncmp(flag,"Check",5)) {//C
       meshoptions_.docheck=1;
   }
-  else if(!strncmp(flag,"Y",1)) {
+  else if(!strncmp(flag,"NoBisect",8)) {//Y
       meshoptions_.nobisect=1;
   }
-  else if(!strncmp(flag,"Q",1)) {
+  else if(!strncmp(flag,"Quiet",5)) {//Q
       meshoptions_.quiet=1;
   }
-  else if(!strncmp(flag,"d",1)) {
+  else if(!strncmp(flag,"Diagnose",8)) {//d
       meshoptions_.diagnose=1;
   }
-  else if(!strncmp(flag,"k",1)) {
+  else if(!strncmp(flag,"MeshWallFirst",13)) {//k
       meshoptions_.meshwallfirst=1;
   }
-  else if(!strncmp(flag,"r",1)) {
+  else if(!strncmp(flag,"StartWithVolume",15)) {//r
       meshoptions_.startwithvolume=1;
   }
   else {

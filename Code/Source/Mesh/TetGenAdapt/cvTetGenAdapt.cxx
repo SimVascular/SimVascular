@@ -475,9 +475,10 @@ int cvTetGenAdapt::SetupMesh()
     return CV_ERROR;
   }
 
+  double dummy=0;
   meshobject_->SetVtkPolyDataObject(insurface_mesh_);
   meshobject_->SetInputUnstructuredGrid(inmesh_);
-  meshobject_->SetMeshOptions("r",1,0.0,0.0);
+  meshobject_->SetMeshOptions("StartWithVolume",0,&dummy);
   meshobject_->NewMesh();
 
   return CV_OK;

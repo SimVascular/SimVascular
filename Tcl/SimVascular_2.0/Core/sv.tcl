@@ -6286,68 +6286,68 @@ proc mesh_readMSS {filename resObj} {
   catch {repos_delete -obj $solid}
 }
 
-proc mesh_checkForAdapt {smsfile solidmodelfile} {
-
-  #@author Nathan Wilson
-  #@c Check that no elements have all nodes falling on exterior surface.
-  #@a smsfile:  simmetrix mesh database
-  #@a solidmodelfile: parasolid model
-
-  set mymesh tmp-mesh_checkForAdapt-mesh
-  set mysolid tmp-mesh_checkForAdapt-solid
-
-  catch {repos_delete -obj $mymesh}
-  catch {repos_delete -obj $mysolid}
-
-  puts "Loading mesh ($smsfile)..."
-  mesh_newObject -result $mymesh -meshfile $smsfile -solidfile $solidmodelfile
-  $mymesh Update
-  puts "Done loading mesh..."
- 
-  puts "Loading solid model ($solidmodelfile)..."
-  solid_readNative -file $solidmodelfile -obj $mysolid
-  puts "Done loading solid model..."
-
-  # build a list of all nodes on the exterior surface of the mesh
-
-  puts "Find all nodes on exterior..."
-  set surfaceNodes ""
-  foreach face [$mysolid GetFaceIds] {
-    set surfaceNodes "$surfaceNodes [$mymesh GetElementNodesOnModelFace -face $face]"
-  }
-  set surfaceNodes [lsort -unique $surfaceNodes]
-  puts "Done finding all nodes on exterior..."
-
-  # loop over all elements connected to surface and see if all nodes for element
-  # fall on boundary
-
-  puts "Check elements touching the border..."
-  set numProbElems 0
-  foreach surfElem [$mymesh GetExteriorElementFacesOnRegion -region [$mysolid GetRegionIds]] {
-    set conn [$mymesh GetElementConnectivity -element [lindex $surfElem 0]]
-    set allOn 1
-    foreach n $conn {
-      if {[lsearch -exact $surfaceNodes $n] < 0} {
-        set allOn 0
-        break
-      }  
-    }
-    if {$allOn == 1} {
-      puts "PROBLEM: element [lindex $surfElem 0] has all nodes on boundary ($conn)"
-      incr numProbElems
-    }
-  }
-
-  catch {repos_delete -obj $mymesh}
-  catch {repos_delete -obj $mysolid}
-
-  if {$numProbElems == 0} {
-      puts "\nEverything is OK.\n"
-  } else {
-      puts "\nBAD NEWS!  There were ($numProbElems) bad elements.  Run phFixMesh.\n"
-  }
-
-}
+#proc mesh_checkForAdapt {smsfile solidmodelfile} {
+#
+#  #@author Nathan Wilson
+#  #@c Check that no elements have all nodes falling on exterior surface.
+#  #@a smsfile:  simmetrix mesh database
+#  #@a solidmodelfile: parasolid model
+#
+#  set mymesh tmp-mesh_checkForAdapt-mesh
+#  set mysolid tmp-mesh_checkForAdapt-solid
+#
+#  catch {repos_delete -obj $mymesh}
+#  catch {repos_delete -obj $mysolid}
+#
+#  puts "Loading mesh ($smsfile)..."
+#  mesh_newObject -result $mymesh -meshfile $smsfile -solidfile $solidmodelfile
+#  $mymesh Update
+#  puts "Done loading mesh..."
+# 
+#  puts "Loading solid model ($solidmodelfile)..."
+#  solid_readNative -file $solidmodelfile -obj $mysolid
+#  puts "Done loading solid model..."
+#
+#  # build a list of all nodes on the exterior surface of the mesh
+#
+#  puts "Find all nodes on exterior..."
+#  set surfaceNodes ""
+#  foreach face [$mysolid GetFaceIds] {
+#    set surfaceNodes "$surfaceNodes [$mymesh GetElementNodesOnModelFace -face $face]"
+#  }
+#  set surfaceNodes [lsort -unique $surfaceNodes]
+#  puts "Done finding all nodes on exterior..."
+#
+#  # loop over all elements connected to surface and see if all nodes for element
+#  # fall on boundary
+#
+#  puts "Check elements touching the border..."
+#  set numProbElems 0
+#  foreach surfElem [$mymesh GetExteriorElementFacesOnRegion -region [$mysolid GetRegionIds]] {
+#    set conn [$mymesh GetElementConnectivity -element [lindex $surfElem 0]]
+#    set allOn 1
+#    foreach n $conn {
+#      if {[lsearch -exact $surfaceNodes $n] < 0} {
+#        set allOn 0
+#        break
+#      }  
+#    }
+#    if {$allOn == 1} {
+#      puts "PROBLEM: element [lindex $surfElem 0] has all nodes on boundary ($conn)"
+#      incr numProbElems
+#    }
+#  }
+#
+#  catch {repos_delete -obj $mymesh}
+#  catch {repos_delete -obj $mysolid}
+#
+#  if {$numProbElems == 0} {
+#      puts "\nEverything is OK.\n"
+#  } else {
+#      puts "\nBAD NEWS!  There were ($numProbElems) bad elements.  Run phFixMesh.\n"
+#  }
+#
+#}
 
 
 # -------------

@@ -83,34 +83,9 @@ static int cvMesh_PrintMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
 static int cvMesh_UpdateMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
-//static int cvMesh_WriteSpectrumSolverElementsMtd( ClientData clientData, Tcl_Interp *interp,
-//				int argc, CONST84 char *argv[] );
-//static int cvMesh_WriteSpectrumSolverNodesMtd( ClientData clientData, Tcl_Interp *interp,
-//				int argc, CONST84 char *argv[] );
-//static int cvMesh_WriteSpectrumVisMtd( ClientData clientData, Tcl_Interp *interp,
-//				int argc, CONST84 char *argv[] );
 static int cvMesh_WriteMetisAdjacencyMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
 
-static int cvMesh_GetElementFacesInModelRegionMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetElementNodesInModelRegionMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetElementFacesOnModelFaceMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetElementNodesOnModelFaceMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetExteriorElementFacesOnRegionMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetExteriorElementNodesOnRegionMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetSharedElementFacesMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-static int cvMesh_GetSharedElementNodesMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
-
-static int cvMesh_GetElementConnectivityMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] );
 static int cvMesh_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] );
 
@@ -417,38 +392,10 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     //if ( cvMesh_GetKernelMtd( clientData, interp, argc, argv ) != TCL_OK ) {
     //  return TCL_ERROR;
     //} 
-//  } else if ( Tcl_StringMatch( argv[1], "WriteSpectrumVis" ) ) {
-//    if ( cvMesh_WriteSpectrumVisMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-//      return TCL_ERROR;
-//    }
-//  } else if ( Tcl_StringMatch( argv[1], "WriteSpectrumSolverElements" ) ) {
-//    if ( cvMesh_WriteSpectrumSolverElementsMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-//      return TCL_ERROR;
-//    }
-//  } else if ( Tcl_StringMatch( argv[1], "WriteSpectrumSolverNodes" ) ) {
-//    if ( cvMesh_WriteSpectrumSolverNodesMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-//      return TCL_ERROR;
-//    }
   } else if ( Tcl_StringMatch( argv[1], "WriteMetisAdjacency" ) ) {
     if ( cvMesh_WriteMetisAdjacencyMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     } 
-  } else if ( Tcl_StringMatch( argv[1], "GetElementFacesOnModelFace" ) ) {
-    if ( cvMesh_GetElementFacesOnModelFaceMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-      return TCL_ERROR;
-    }
-  } else if ( Tcl_StringMatch( argv[1], "GetElementNodesOnModelFace" ) ) {
-    if ( cvMesh_GetElementNodesOnModelFaceMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-      return TCL_ERROR;
-    }
-  } else if ( Tcl_StringMatch( argv[1], "GetExteriorElementFacesOnRegion" ) ) {
-    if ( cvMesh_GetExteriorElementFacesOnRegionMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-      return TCL_ERROR;
-    }
-  } else if ( Tcl_StringMatch( argv[1], "GetElementConnectivity" ) ) {
-    if ( cvMesh_GetElementConnectivityMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-      return TCL_ERROR;
-    }
   } else if ( Tcl_StringMatch( argv[1], "GetPolyData" ) ) {
     if ( cvMesh_GetPolyDataMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
@@ -519,26 +466,14 @@ static void gdscMeshPrintMethods( Tcl_Interp *interp )
   // way all I have to do is bind in code in the MegaMeshObject
   // and these commands are ready to go.
 
-  tcl_printstr(interp, "GetElementConnectivity\n");
-  //tcl_printstr(interp, "GetElementFacesInModelRegion\n");  
-  //tcl_printstr(interp, "GetElementNodesInModelRegion\n");  
-  tcl_printstr(interp, "GetElementFacesOnModelFace\n");   
-  tcl_printstr(interp, "GetElementNodesOnModelFace\n");  
-  tcl_printstr(interp, "GetExteriorElementFacesOnRegion\n");  
-  //tcl_printstr(interp, "GetExteriorElementNodesOnRegion\n");
   tcl_printstr(interp, "GetFacePolyData\n");
   tcl_printstr(interp, "GetKernel\n");
   tcl_printstr(interp, "GetPolyData\n");
   tcl_printstr(interp, "GetSolid\n");
   tcl_printstr(interp, "SetVtkPolyData\n");
   tcl_printstr(interp, "GetUnstructuredGrid\n");
-  //tcl_printstr(interp, "GetSharedElementFaces\n"); 
-  //tcl_printstr(interp, "GetSharedElementNodes\n");     
   tcl_printstr(interp, "Print\n");
   tcl_printstr(interp, "Update\n");
-//  tcl_printstr(interp, "WriteSpectrumSolverElements\n");
-//  tcl_printstr(interp, "WriteSpectrumSolverNodes\n");
-//  tcl_printstr(interp, "WriteSpectrumVis\n");
   tcl_printstr(interp, "WriteMetisAdjacency\n");
   tcl_printstr(interp, "*** methods to generate meshes ***\n");
   tcl_printstr(interp, "LoadModel\n");
@@ -641,134 +576,6 @@ int cvMesh_SetSolidKernelMtd( ClientData clientData, Tcl_Interp *interp,
   }
 }
 
-//// ---------------------------
-//// cvMesh_WriteSpectrumVisMtd
-//// ---------------------------
-//
-//static int cvMesh_WriteSpectrumVisMtd( ClientData clientData, Tcl_Interp *interp,
-//				 int argc, CONST84 char *argv[] ) {
-//  cvMeshObject *geom = (cvMeshObject *)clientData;
-//  char *usage;
-//  char *prefix;
-//  int status;
-//  char fn[CV_STRLEN];
-//
-//  int table_size = 1;
-//  ARG_Entry arg_table[] = {
-//    { "-filePrefix", STRING_Type, &prefix, NULL, REQUIRED, 0, { 0 } },
-//  };
-//
-//  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-//  if ( argc == 2 ) {
-//    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-//    return TCL_OK;
-//  }
-//  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-//			table_size, arg_table ) != TCL_OK ) {
-//    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-//    return TCL_ERROR;
-//  }
-//
-//  // Do work of command:
-//  sprintf( fn, "%s_mesh.vis", prefix );
-//  status = geom->WriteSpectrumVisMesh( fn );
-//  if ( status != CV_OK ) {
-//    Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-//		      " to file ", fn, (char *)NULL );
-//    return TCL_ERROR;
-//  }
-//  sprintf( fn, "%s_res1.vis", prefix );
-//  status = geom->WriteSpectrumVisData( fn );
-//
-//  if ( status != CV_OK ) {
-//    Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-//		      " to file ", fn, (char *)NULL );
-//    return TCL_ERROR;
-//  } else {
-//    return TCL_OK;
-//  }
-//}
-//
-//// --------------------------------------
-//// cvMesh_WriteSpectrumSolverElementsMtd
-//// --------------------------------------
-//
-//static int cvMesh_WriteSpectrumSolverElementsMtd( ClientData clientData, Tcl_Interp *interp,
-//				 int argc, CONST84 char *argv[] ) {
-//  cvMeshObject *geom = (cvMeshObject *)clientData;
-//  char *usage;
-//  char *fn;
-//  int status;
-//
-//  int table_size = 1;
-//  ARG_Entry arg_table[] = {
-//    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
-//  };
-//
-//  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-//  if ( argc == 2 ) {
-//    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-//    return TCL_OK;
-//  }
-//  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-//			table_size, arg_table ) != TCL_OK ) {
-//    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-//    return TCL_ERROR;
-//  }
-//
-//  // Do work of command:
-//  status = geom->WriteSpectrumSolverElements( fn );
-//
-//  if ( status != CV_OK ) {
-//    Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-//		      " to file ", fn, (char *)NULL );
-//    return TCL_ERROR;
-//  } else {
-//    return TCL_OK;
-//  }
-//}
-//
-//
-//// -----------------------------------
-//// cvMesh_WriteSpectrumSolverNodesMtd
-//// -----------------------------------
-//
-//static int cvMesh_WriteSpectrumSolverNodesMtd( ClientData clientData, Tcl_Interp *interp,
-//				 int argc, CONST84 char *argv[] ) {
-//  cvMeshObject *geom = (cvMeshObject *)clientData;
-//  char *usage;
-//  char *fn;
-//  int status;
-//
-//  int table_size = 1;
-//  ARG_Entry arg_table[] = {
-//    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
-//  };
-//
-//  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-//  if ( argc == 2 ) {
-//    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-//    return TCL_OK;
-//  }
-//  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-//			table_size, arg_table ) != TCL_OK ) {
-//    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-//    return TCL_ERROR;
-//  }
-//
-//  // Do work of command:
-//  status = geom->WriteSpectrumSolverNodes( fn );
-//
-//  if ( status != CV_OK ) {
-//    Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
-//		      " to file ", fn, (char *)NULL );
-//    return TCL_ERROR;
-//  } else {
-//    return TCL_OK;
-//  }
-//}
-
-
 // -------------------------------
 // cvMesh_WriteMetisAdjacencyMtd
 // -------------------------------
@@ -802,172 +609,6 @@ static int cvMesh_WriteMetisAdjacencyMtd( ClientData clientData, Tcl_Interp *int
   if ( status != CV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
 		      " to file ", fn, (char *)NULL );
-    return TCL_ERROR;
-  } else {
-    return TCL_OK;
-  }
-}
-
-
-// -------------------------------------
-// cvMesh_GetElementFacesOnModelFaceMtd
-// -------------------------------------
-
-static int cvMesh_GetElementFacesOnModelFaceMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] ) {
-  cvMeshObject *geom = (cvMeshObject *)clientData;
-  char *usage;
-  char *fn = NULL;
-  int status;
-  int face;
-  int explicitFaces = 0;
-
-  int table_size = 3;
-  ARG_Entry arg_table[] = {
-    { "-face", INT_Type   , &face, NULL, REQUIRED, 0 , { 0 }},
-    { "-explicitFaceOutput", BOOL_Type, &explicitFaces, NULL, GDSC_OPTIONAL, 0 , { 0 }},
-    { "-file", STRING_Type, &fn  , NULL, GDSC_OPTIONAL, 0 , { 0 }},
-  };
-
-  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-  if ( argc == 2 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-			table_size, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-  status = geom->GetElementFacesOnModelFace( face, explicitFaces, fn );
- 
-  if ( status != CV_OK ) {
-    Tcl_AppendResult( interp, "error extracting boundary conditions for ", geom->GetName(),
-		    ".", (char *)NULL );
-    return TCL_ERROR;
-  } else {
-    return TCL_OK;
-  }
-}
-
-// -------------------------------------
-// cvMesh_GetElementNodesOnModelFaceMtd
-// -------------------------------------
-
-static int cvMesh_GetElementNodesOnModelFaceMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] ) {
-  cvMeshObject *geom = (cvMeshObject *)clientData;
-  char *usage;
-  char *fn = NULL;
-  int status;
-  int face;
-
-  int table_size = 2;
-  ARG_Entry arg_table[] = {
-    { "-face", INT_Type   , &face, NULL, REQUIRED, 0 , { 0 }},
-    { "-file", STRING_Type, &fn  , NULL, GDSC_OPTIONAL, 0 , { 0 }},
-  };
-
-  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-  if ( argc == 2 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-			table_size, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-  status = geom->GetElementNodesOnModelFace( face, fn );
- 
-  if ( status != CV_OK ) {
-    Tcl_AppendResult( interp, "error extracting boundary conditions for ", geom->GetName(),
-		    ".", (char *)NULL );
-    return TCL_ERROR;
-  } else {
-    return TCL_OK;
-  }
-}
-
-// ------------------------------------------
-// cvMesh_GetExteriorElementFacesOnRegionMtd
-// ------------------------------------------
-
-static int cvMesh_GetExteriorElementFacesOnRegionMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] ) {
-  cvMeshObject *geom = (cvMeshObject *)clientData;
-  char *usage;
-  char *fn = NULL;
-  int status;
-  int region;
-
-  int table_size = 2;
-  ARG_Entry arg_table[] = {
-    { "-region", INT_Type   , &region, NULL, REQUIRED, 0 , { 0 }},
-    { "-file",    STRING_Type, &fn  , NULL, GDSC_OPTIONAL, 0 , { 0 }},
-  };
-
-  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-  if ( argc == 2 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-			table_size, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-  status = geom->GetExteriorElementFacesOnRegion( region, fn );
- 
-  if ( status != CV_OK ) {
-    Tcl_AppendResult( interp, "error extracting boundary conditions for ", geom->GetName(),
-		    ".", (char *)NULL );
-    return TCL_ERROR;
-  } else {
-    return TCL_OK;
-  }
-}
-
-// ---------------------------------
-// cvMesh_GetElementConnectivityMtd
-// ---------------------------------
-
-static int cvMesh_GetElementConnectivityMtd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] ) {
-  cvMeshObject *geom = (cvMeshObject *)clientData;
-  char *usage;
- 
-  int status;
-  int element;
-
-  int table_size = 1;
-  ARG_Entry arg_table[] = {
-    { "-element", INT_Type   , &element, NULL, REQUIRED, 0 , { 0 }},
-  };
-
-  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
-  if ( argc == 2 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 2,
-			table_size, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-  status = geom->GetElementConnectivity(element);
- 
-  if ( status != CV_OK ) {
-    Tcl_AppendResult( interp, "error extracting boundary conditions for ", geom->GetName(),
-		    ".", (char *)NULL );
     return TCL_ERROR;
   } else {
     return TCL_OK;
@@ -1334,16 +975,12 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
   cvMeshObject *geom = (cvMeshObject *)clientData;
   char *usage;
   char *flags;
-  double value1;
-  double value2;
-  int id = 0;
+  ARG_List valueList;
 
-  int table_size = 4;
+  int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-options", STRING_Type   , &flags, NULL, REQUIRED, 0 , { 0 }},
-    { "-id", INT_Type   , &id, NULL, GDSC_OPTIONAL, 0 , { 0 }},
-    { "-value1", DOUBLE_Type   , &value1, NULL, GDSC_OPTIONAL, 0 , { 0 }},
-    { "-value2", DOUBLE_Type   , &value2, NULL, GDSC_OPTIONAL, 0 , { 0 }},
+    { "-values", LIST_Type   , &valueList, NULL, GDSC_OPTIONAL, 0 , { 0 }},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1357,10 +994,30 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
+  // Parse coordinate lists:
+  if (valueList.argc == 0) {
+      ARG_FreeListArgvs( table_size, arg_table);
+      return CV_OK;
+  }
+
+  double *values = new double [valueList.argc];
+  int numValues = 0;
+  if ( ARG_ParseTclListStatic( interp, valueList, INT_Type, values, valueList.argc, &numValues )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+
+  if (numValues != valueList.argc) {
+     Tcl_AppendResult( interp, "error in values list", (char *)NULL );
+     return TCL_ERROR;
+  }
+
   // Do work of command:
 
   // Get the cvPolyData:
-  if ( geom->SetMeshOptions(flags,id,value1,value2) == CV_ERROR ) {
+  if ( geom->SetMeshOptions(flags,numValues,values) == CV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
     return TCL_ERROR;

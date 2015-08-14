@@ -1447,11 +1447,6 @@ proc mesh_writeCompleteMesh {mesh solid prefix outdir} {
   catch {repos_delete -obj $pd}
   catch {repos_delete -obj $facepd}
 
-  if {$kernel == "Parasolid" || $kernel == "Discrete"} {
-    $mesh WriteSpectrumSolverElements -file $outdir/misc/$prefix.connectivity
-    $mesh WriteSpectrumSolverNodes    -file $outdir/misc/$prefix.coordinates
-  }
-
 }
 
 
