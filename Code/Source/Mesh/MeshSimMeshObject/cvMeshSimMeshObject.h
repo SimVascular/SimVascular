@@ -149,7 +149,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
 
   //Adapt functions
   int Adapt();
-  int SetError(double *error_indicator,int lstep,int factor, double hmax, double hmin);
+  int SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin);
 
   // MESHSIMMESHOBJECT ONLY
   int FindFaceNumber (pRegion region, int pseudofaceID, int *facenum);

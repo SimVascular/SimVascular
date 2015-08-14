@@ -2315,13 +2315,13 @@ void setSizeFieldUsingHessians(pMesh mesh,
 
   writeMEDITSizeField(hess,mesh);
 
-  if(option==1) {
-    cleanAttachedData(mesh,nodalgradientID,0);
-    cleanAttachedData(mesh,nodalhessianID,0);
-    
-    MD_deleteMeshDataId(nodalgradientID);
-    MD_deleteMeshDataId(nodalhessianID);
-  }
+  //if(option==1) {
+  //  cleanAttachedData(mesh,nodalgradientID,0);
+  //  cleanAttachedData(mesh,nodalhessianID,0);
+  //  
+  //  MD_deleteMeshDataId(nodalgradientID);
+  //  MD_deleteMeshDataId(nodalhessianID);
+  //}
 
   delete [] hess;
 }

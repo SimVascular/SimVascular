@@ -59,6 +59,14 @@ if(Plugin_TET_ADAPTOR)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tet_adaptor)
 endif()
 
+if (Licensed_ADAPTOR)
+	set(CXXSRCS ${CXXSRCS}
+	${SimVascular_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
+	${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx)
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_adaptor)
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_adaptor)
+endif()
+
 simvascular_add_executable(${SIMVASCULAR_EXE} 
 	SRCS ${CXXSRCS} 
 	DEV_SCRIPT_NAME "mysim" 

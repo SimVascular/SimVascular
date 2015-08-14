@@ -48182,6 +48182,10 @@ proc wormGUIwriteMultipleFaces {} {
   set org_bct_dat_file $guiABC(bct_dat_file)
   set org_bct_vtp_file $guiABC(bct_vtp_file)
   # get all the named faces, then check for existence of flow file
+
+  global gDiscreteModelFaceNames
+  global gPolyDataFaceNames
+	 
   foreach id [$solid GetFaceIds] {
     set guiABC(mesh_face_file) $org_mesh_face_file
     set guiABC(face_name) $org_face_name
@@ -48191,8 +48195,19 @@ proc wormGUIwriteMultipleFaces {} {
     set guiABC(spectrum_z_file) $org_spectrum_z_file
     set guiABC(bct_dat_file) $org_bct_dat_file
     set guiABC(bct_vtp_file) $org_bct_vtp_file
-    set facename {}
-    set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
+    set facename "missing"
+    if {$solidkernel == "Parasolid"} {
+       set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
+    } elseif {$solidkernel == "Discrete"} {
+      global gDiscreteModelFaceNames
+      set facename $gDiscreteModelFaceNames($id)
+    } elseif {$solidkernel == "PolyData"} {
+      global gPolyDataFaceNames
+	  set facename $gPolyDataFaceNames($id)
+    } else {
+      return -code error "ERROR: invalid solid kernel ($kernel)"
+    }
+
     if {$facename != ""} {
       puts "  working on: $facename"
       eval set guiABC(face_name) $guiABC(face_name)

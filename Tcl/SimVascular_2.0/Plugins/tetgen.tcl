@@ -319,7 +319,7 @@ proc mesh_readTGS {filename resObj} {
 	     if {[lindex $line 1] == "surface"} {
                $resObj SetMeshOptions -options "s" -value1 [lindex $line 2]
 	     } elseif {[lindex $line 1] == "volume"} {
-               $resObj SetMeshOptions -options "v" -value [lindex $line 2]
+               $resObj SetMeshOptions -options "v" -value1 [lindex $line 2]
      	     } else {
 	       $resObj SetMeshOptions -options [lindex $line 1] -value1 [lindex $line 2]
        	    }

@@ -2171,7 +2171,7 @@ int cvMeshSimMeshObject::Adapt()
   return CV_OK;
 }
 
-int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, double hmax, double hmin)
+int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin)
 {
   errorIndicatorID = MD_newMeshDataId("error indicator");
 
@@ -2232,6 +2232,10 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
   
 
   // adaptation
+  // data clean up MOVED FROM BEFORE ADAPT. IF CRASH TRY MOVING BACK!
+  cleanAttachedData(mesh,errorIndicatorID,0);
+  cleanAttachedData(mesh,nodalgradientID,0);
+  cleanAttachedData(mesh,nodalhessianID,0);
 
   pProgress progressAdapt = Progress_new();
 
@@ -2251,10 +2255,6 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,int factor, 
   printf(" Total # of elements: %d\n", M_numRegions(mesh));
   printf(" Total # of vertices: %d\n\n", M_numVertices(mesh));
 
-  // data clean up MOVED FROM BEFORE ADAPT. IF CRASH TRY MOVING BACK!
-  cleanAttachedData(mesh,errorIndicatorID,0);
-  cleanAttachedData(mesh,nodalgradientID,0);
-  cleanAttachedData(mesh,nodalhessianID,0);
     
   MD_deleteMeshDataId(errorIndicatorID);
   MD_deleteMeshDataId(modes);

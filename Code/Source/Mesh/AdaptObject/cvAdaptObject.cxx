@@ -37,6 +37,7 @@
 
 #include "cvAdaptObject.h"
 //#include "cvTetGenAdapt.h"
+#include "cvMeshObject.h"
 #include "cv_misc_utils.h"
 
 #include <string.h>
@@ -99,8 +100,7 @@ cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,
   {
     adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
     if (adaptor == NULL) {
-		  fprintf( stdout, "Unable to create solid model kernal (%i)\n",cvAdaptObject::gCurrentKernel);
-		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
+		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
     }
 
   } else {

@@ -39,7 +39,8 @@
 
 #include "cvMeshSimAdapt.h"
 
-#include "cv_adapt_utils.h"
+#include "cv_meshsim_adapt_utils.h"
+//#include "cv_adapt_utils.h"
 
 #include "vtkXMLUnstructuredGridReader.h"
 #include "vtkXMLUnstructuredGridWriter.h"
@@ -192,11 +193,13 @@ int cvMeshSimAdapt::LoadModel(char *fileName)
 // -----------------------
 int cvMeshSimAdapt::LoadMesh(char *fileName)
 {
-  const char *extension = strrchr(fileName,".");
-  extension = extension+1;
+  const char *extension = strrchr(fileName,'.');
+  extension = extension +1;
 
   //if loading vtu, save as member data
   //else if loading sms, load into meshobject
+  fprintf(stdout,"Reading Mesh!\n");
+
   if (!strncmp(extension,"vtu",3)) {
     if (inmesh_ != NULL)
       inmesh_->Delete();
@@ -210,7 +213,9 @@ int cvMeshSimAdapt::LoadMesh(char *fileName)
     printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
     printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
     inmesh_->BuildLinks();
-  } else if (!strncmp(extension,"sms",3)) {
+  } 
+  else if (!strncmp(extension,"sms",3)) {
+    fprintf(stdout,"SMS!\n");
     if (meshobject_ == NULL)
     {
       fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
@@ -231,13 +236,13 @@ int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
   if (sol_ != NULL)
     delete [] sol_;
 
-  AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
+  readArrayFromFile(fileName,"solution",sol_);
 
-  if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
-  {
-    fprintf(stderr,"Error: Error when attaching solution to mesh\n");
-    return CV_ERROR;
-  }
+  //if (attachArray(sol_,mesh,"solution",options.ndof_,options.poly_) != CV_OK)
+  //{
+  //  fprintf(stderr,"Error: Error when attaching solution to mesh\n");
+  //  return CV_ERROR;
+  //}
 
   return CV_OK;
 }
@@ -250,13 +255,13 @@ int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
   if (ybar_ != NULL)
     delete [] ybar_;
 
-  AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_);
+  readArrayFromFile(fileName,"ybar",ybar_);
 
-  if (AdaptUtils_attachArray(ybar_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
-  {
-    fprintf(stderr,"Error: Error when attaching error to mesh\n");
-    return CV_ERROR;
-  }
+  //if (attachArray(ybar_,mesh,"error",options.nvar_,options.poly_) != CV_OK)
+  //{
+  //  fprintf(stderr,"Error: Error when attaching error to mesh\n");
+  //  return CV_ERROR;
+  //}
 
   return CV_OK;
 }
@@ -269,7 +274,7 @@ int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
   if (hessians_ != NULL)
     delete [] hessians_;
 
-  AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_);
+  readArrayFromFile(fileName,"hessians",hessians_);
 
   return CV_OK;
 }
@@ -279,21 +284,21 @@ int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
 // ---------------
 int cvMeshSimAdapt::ReadSolutionFromMesh()
 {
-  if (inmesh_ == NULL)
-  {
-    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
-  }
+ // if (inmesh_ == NULL)
+ // {
+ //   fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+ //   return CV_ERROR;
+ // }
 
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
-    return CV_ERROR;
+ // if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
+ //   return CV_ERROR;
 
-  if (sol_array_ != NULL)
-    sol_array_->Delete();
+ // if (sol_array_ != NULL)
+ //   sol_array_->Delete();
 
-  int numPoints = inmesh_->GetNumberOfPoints();
-  sol_array_ = vtkDoubleArray::New();
-  sol_array_->SetNumberOfComponents(options.nvar_);
+ // int numPoints = inmesh_->GetNumberOfPoints();
+ // sol_array_ = vtkDoubleArray::New();
+ // sol_array_->SetNumberOfComponents(options.nvar_);
 
   return CV_OK;
 }
@@ -303,14 +308,14 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
 // ---------------
 int cvMeshSimAdapt::ReadYbarFromMesh()
 {
-  if (inmesh_ == NULL)
-  {
-    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
-  }
+  //if (inmesh_ == NULL)
+  //{
+  //  fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+  //  return CV_ERROR;
+  //}
 
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
-    return CV_ERROR;
+  //if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+  //  return CV_ERROR;
 
   return CV_OK;
 }
@@ -319,7 +324,7 @@ int cvMeshSimAdapt::ReadYbarFromMesh()
 //  SetAdaptOptions
 // -----------------------
 /** 
- * @brief Function to set the options for tetgen. Store temporarily in 
+ * @brief Function to set the options for meshsim. Store temporarily in 
  * options object until the mesh is run
  * @param *flag char containing the flag to set
  * @param value if the flag requires a value, this double contains that 
@@ -379,7 +384,7 @@ int cvMeshSimAdapt::CheckOptions()
   fprintf(stderr,"Hmin: %.4f\n",options.hmin_);
   fprintf(stderr,"Ndof: %d\n",options.ndof_);
 
-  return CV_ERROR;
+  return CV_OK;
 }
 
 // -----------------------
@@ -408,6 +413,11 @@ int cvMeshSimAdapt::RunAdaptor()
   if (meshobject_ == NULL)
   {
     fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+    return CV_ERROR;
+  }
+  if (ybar_ == NULL)
+  {
+    fprintf(stderr,"Must load ybar before running adaptor\n");
     return CV_ERROR;
   }
   meshobject_->Adapt();

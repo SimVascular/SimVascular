@@ -34,7 +34,7 @@
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
-SET(CXXSRCS cv_meshsim_adapt_utils.cxx cvMeshSimAdapt.cxx
+SET(CXXSRCS cv_meshsim_adapt_utils.cxx cv_meshsim_adapt_init.cxx cvMeshSimAdapt.cxx
 	cvAdaptHelpers.cxx cvAdaptSF.cxx)
 
 
