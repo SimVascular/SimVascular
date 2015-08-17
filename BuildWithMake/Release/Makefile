@@ -52,35 +52,47 @@ DIST_DIR := $(DIST_DIR_TOP)/$(shell echo "puts \"[clock seconds]\"" | tclsh)
 REMOTE_DIR_TOP = remote_install_$(SIMVASCULAR_VERSION)
 
 ifneq ($(CLUSTER),x64_linux)
-  all: windows-distribution msi
+  all: windows-distribution msi msi-meshsim-and-parasolid
 else
   all: linux-distribution taritup
 endif
 
 #
-#  Create msi installer for simvascular licenses
+#  Create msi installer for simvascular meshsim-and-parasolid
 #
 
-msiclean-licenses:
+msiclean-meshsim-and-parasolid:
 	-rm *~
-	-rm simvascular-licenses.msi
-	-rm tmp/simvascular-licenses.wixobj
-	-rm tmp/simvascular-licenses.wxs
+	-rm package-release-meshsim-and-parasolid
+	-rm simvascular-meshsim-and-parasolid.msi
+	-rm tmp/simvascular-meshsim-and-parasolid.wixobj
+	-rm tmp/simvascular-meshsim-and-parasolid.wxs
 	-rm tmp/uuidgen.exe*
 	-rm tmp/uuidgen.obj*
 
-msi-licenses:	msiclean-licenses
+msi-meshsim-and-parasolid:	msiclean-meshsim-and-parasolid
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	x86_64-w64-mingw32-gcc -o tmp/uuidgen.exe windows_msi_helpers/uuidgen.c -lole32
 else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
+	-rm -Rf package-release-meshsim-and-parasolid
+	-mkdir -p package-release-meshsim-and-parasolid
+	-date > package-release-meshsim-and-parasolid/release-date
+	-chmod -R a+rwx package-release-meshsim-and-parasolid
+	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
+	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
+	-cp -f $(TOP)/Lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
+ifeq ($(MAKE_WITH_PARASOLID),1)
+	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
+	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
+endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs-licenses.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Licenses/MeshSim/license.dat
+	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -out tmp/simvascular-licenses.wixobj tmp/simvascular-licenses.wxs
+	-$(WIXUI_PATH)/candle.exe -out tmp/simvascular-meshsim-and-parasolid.wixobj tmp/simvascular-meshsim-and-parasolid.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe tmp/simvascular-licenses.wixobj $(WIXUI_WIN_PATH)/WixUI.wixlib -loc $(WIXUI_WIN_PATH)/WixUI_en-us.wxl -out simvascular-licenses.msi
+	-$(WIXUI_PATH)/light.exe tmp/simvascular-meshsim-and-parasolid.wixobj -ext WixUIExtension -out simvascular-meshsim-and-parasolid.msi
 
 #
 #  Create msi installer for SimVascular
@@ -107,6 +119,15 @@ endif
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe tmp/sv.wixobj -ext WixUIExtension -out $(SIMVASCULAR_VERSION).msi
 #	-$(WIXUI_PATH)/light.exe tmp/sv.wixobj $(WIXUI_WIN_PATH)/WixUIExtension.dll -loc $(WIXUI_WIN_PATH)/WixUI_en-us.wxl -out $(SIMVASCULAR_VERSION).msi
+
+msi-bundle:
+	-rm -f tmp/bundle.wixobj
+	-rm -f simvascular-bundle.exe
+	-echo "Create WXS file..."
+	-echo "Run candle..."
+	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj windows_installer_packages/wix-simvascular-bundle.wxs
+	-echo "Run light..."
+	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
 
 remote-linux-distribution: mksedscript linux-distribution
 	-rm -Rf $(REMOTE_DIR_TOP)
@@ -164,7 +185,7 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/adaptor.exe $(DIST_DIR)/adaptor-bin.exe
 	-cp -f $(TOP)/Bin/tetadaptor.exe $(DIST_DIR)/tetadaptor-bin.exe
 	-cp -f $(TOP)/../Code/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp $(DIST_DIR)
-	-cp -f $(TOP)/Lib/*.$(SOEXT)* $(DIST_DIR)
+#	-cp -f $(TOP)/Lib/*.$(SOEXT)* $(DIST_DIR)
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
@@ -196,19 +217,13 @@ copy-tcl-libs:
 copy-external-libs:
 	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
 	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
-#ifeq ($(MAKE_WITH_MPICH2),1)
-#	-mkdir -p $(DIST_DIR)/mpi/lib
-#	-cp -f $(MPIEXEC_PATH)/$(MPIEXEC)* $(DIST_DIR)
-#	-cp -f $(MPIEXEC_PATH)/*hydra* $(DIST_DIR)
-#	-cp -f $(MPICH_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/mpi/lib
+#ifeq ($(MAKE_WITH_PARASOLID),1)
+#	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
+#	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
 #endif
-ifeq ($(MAKE_WITH_PARASOLID),1)
-	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
-	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
-endif
-ifeq ($(MAKE_WITH_MESHSIM),1)
-	-cp -f ../Licenses/MeshSim/license.dat $(DIST_DIR)/meshsim-license.dat
-endif
+#ifeq ($(MAKE_WITH_MESHSIM),1)
+#	-cp -f ../Licenses/MeshSim/license.dat $(DIST_DIR)/meshsim-license.dat
+#endif
 ifeq ($(MAKE_WITH_LESLIB),1)
 	-cp -f ../Licenses/LesLib/license.dat $(DIST_DIR)/license.dat
 endif

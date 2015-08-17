@@ -22,7 +22,7 @@ export SIMVASCULAR_STATIC_BUILD=1
 ################################################################
 
 # simvascular addition
-export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/Code/Lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/BuildWithMake/Lib:$LD_LIBRARY_PATH
 
 # Tcl/Tk additions
 export TCL_LIBRARY=REPLACEME_TCL_LIBRARY

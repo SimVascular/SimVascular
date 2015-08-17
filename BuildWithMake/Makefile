@@ -34,11 +34,9 @@ TOP = .
 
 include $(TOP)/include.mk
 
-all:	static
+all:	mixed
 
-static: mksedscript pre-build static-build post-build
-
-shared: mksedscript pre-build shared-build post-build
+mixed: mksedscript pre-build static-build shared-build exec-build post-build
 
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
@@ -105,43 +103,35 @@ pre-build:
 	touch ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
 
 shared-build:
-	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
-	  echo "static building directory ($$i)"; \
-	  if [ -e $$i ];then \
-	  cd $$i; \
-	  $(MAKE) lib;fi ) ; done
-	for i in ${LIBDIRS}; do ( \
+	for i in ${SHARED_LIBDIRS}; do ( \
 	  echo "building lib directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
 	  $(MAKE) lib;fi ) ; done
-	for i in ${LIBDIRS}; do ( \
+	for i in ${SHARED_LIBDIRS}; do ( \
 	  echo "building shared directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
 	  $(MAKE) shared;fi ) ; done
-	for i in ${EXECDIRS}; do ( \
-	  echo "building execs ($$i)"; \
-	  if [ -e $$i ];then \
-	  cd $$i; \
-	  $(MAKE);fi ) ; done
 
 static-build:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
 	  echo "static building directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) lib;fi ) ; done
+	  $(MAKE) MAKE_STATIC_BUILD=1 lib;fi ) ; done
 	for i in ${LIBDIRS}; do ( \
 	  echo "static building directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) lib;fi ) ; done
+	  $(MAKE) MAKE_STATIC_BUILD=1 lib;fi ) ; done
+
+exec-build:
 	for i in ${EXECDIRS}; do ( \
 	  echo "building execs ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) static;fi ) ; done
+	  $(MAKE) MAKE_STATIC_BUILD=1 static;fi ) ; done
 
 post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv
@@ -176,6 +166,11 @@ veryclean:
 	  cd $$i; \
 	  $(MAKE) NO_DEPEND=1 veryclean;fi ) ;done
 	for i in ${LIBDIRS}; do ( \
+	  echo "super cleaning directory ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE) NO_DEPEND=1 veryclean;fi ) ; done
+	for i in ${SHARED_LIBDIRS}; do ( \
 	  echo "super cleaning directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \

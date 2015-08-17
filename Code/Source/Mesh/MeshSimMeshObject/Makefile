@@ -94,19 +94,27 @@ DLLHDRS = $(HDRS) cv_meshsim_mesh_init.h
 DLLSRCS = $(CXXSRCS) cv_meshsim_mesh_init.cxx
 DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
 ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_globals \
-          -l_lib_simvascular_mesh \
-          -l_lib_simvascular_parasolid \
-          -l_lib_simvascular_discrete \
-          $(MESHSIM_LIBS) $(PARASOLID_LIBS) \
- $(VTK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(ZLIB_LIBS) -l_lib_simvascular_sysgeom -l_lib_simvascular_solid -l_lib_simvascular_repository -l_lib_simvascular_utils -l_simvascular_globals
+  DLLLIBS = -l_lib_simvascular_mesh \
+            -l_simvascular_parasolid
+  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    DLLLIBS += -l_simvascular_meshsim_discrete
+  endif
+  DLLLIBS += -l_lib_simvascular_mesh
+  DLLLIBS += $(MESHSIM_LIBS) $(PARASOLID_LIBS)
 else
-DLLLIBS = lib_simvascular_globals.$(STATICEXT) \
-          lib_lib_simvascular_mesh.$(STATICEXT) \
-          lib_lib_simvascular_parasolid.$(STATICEXT) \
-          lib_lib_simvascular_discrete.$(STATICEXT) \
-          $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+  DLLLIBS = lib_lib_simvascular_mesh.$(STATICEXT) \
+            lib_simvascular_meshsim_discrete.$(STATICEXT) \
+            lib_simvascular_parasolid.$(STATICEXT) \
+            $(MESHSIM_LIBS) $(PARASOLID_LIBS)
 endif
+
+ifeq ($(MAKE_WITH_VMTK),1)
+	DLLLIBS += ../../../../BuildWithMake/Lib/lib_lib_simvascular_vmtk.$(STATICEXT)
+endif
+	DLLLIBS += ../../../../BuildWithMake/Lib/lib_lib_simvascular_zlib.$(STATICEXT)
+
+DLLLIBS += $(VTK_LIBS) $(PARASOLID_LIBS)
+
 TARGET_SHARED = lib_simvascular_meshsim_mesh.$(SOEXT)
 
 LFLAGS +=  

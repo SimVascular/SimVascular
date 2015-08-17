@@ -22,7 +22,6 @@ else
   endif
 endif
     SHAR            = 
-    SHARED          = 0
     SOEXT           = dll
     STATICEXT       = lib
     OBJECTEXT       = obj

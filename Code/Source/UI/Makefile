@@ -61,16 +61,22 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                     ../Common/Utils/cv_math_init.cxx
 
   ifeq ($(MAKE_WITH_MESHSIM),1)
+    ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
 	COPIED_CXXSRCS += ../Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx
+    endif
   endif
   ifeq ($(MAKE_WITH_TETGEN),1)
 	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    ifneq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
 	COPIED_CXXSRCS += ../Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx
+    endif
   endif
   ifeq ($(MAKE_WITH_PARASOLID),1)
+    ifneq ($(MAKE_WITH_PARASOLID_SHARED),1)
 	COPIED_CXXSRCS += ../../Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx
+    endif
   endif
   ifeq ($(MAKE_WITH_ITK),1)
 	COPIED_CXXSRCS += ../Segmentation/ITK/Util/cv_ITKUtils_init.cxx
@@ -95,16 +101,28 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_solverio.$(STATICEXT)
   endif
   ifeq ($(MAKE_WITH_MESHSIM),1)
+    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+#	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_simvascular_meshsim_mesh.$(STATICEXT)
+    else
 	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_meshsim_mesh.$(STATICEXT)
+    endif
   endif
   ifeq ($(MAKE_WITH_TETGEN),1)
 	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_tetgen_mesh.$(STATICEXT)
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_discrete.$(STATICEXT)
+    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+#	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_simvascular_meshsim_discrete.$(STATICEXT)
+    else
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_meshsim_discrete.$(STATICEXT)
+    endif
   endif
   ifeq ($(MAKE_WITH_PARASOLID),1)
+    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+#	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_simvascular_parasolid.$(STATICEXT)
+    else
 	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_parasolid.$(STATICEXT)
+    endif
   endif
 
   ifeq ($(MAKE_WITH_VMTK),1)
@@ -133,9 +151,9 @@ TARGET_EXE = simvascular.exe
 
 LINKOBJS = $(foreach name,$(OBJS),$(lastword $(subst /, ,$(name))))
 
-dynamic: $(TOP)/Bin/$(TARGET_EXE)
+dynamic: pre $(TOP)/Bin/$(TARGET_EXE)
 
-static: $(TOP)/Bin/$(TARGET_EXE)
+static: pre $(TOP)/Bin/$(TARGET_EXE)
 
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)

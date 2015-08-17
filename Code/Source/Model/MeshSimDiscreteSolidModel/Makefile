@@ -68,13 +68,16 @@ TARGET_LIB = lib_lib_simvascular_discrete.$(STATICEXT)
 DLLHDRS = $(HDRS) cv_discrete_init.h
 DLLSRCS = $(CXXSRCS) cv_discrete_init.cxx
 DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
-ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_globals -l_lib_simvascular_mesh \
-          $(MESHSIM_LIBS)
-else
-DLLLIBS = lib_simvascular_globals.$(STATICEXT) \
-          $(MESHSIM_LIBS)
+
+DLLLIBS = $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+
+ifeq ($(MAKE_WITH_VMTK),1)
+	DLLLIBS += ../../../../BuildWithMake/Lib/lib_lib_simvascular_vmtk.$(STATICEXT)
 endif
+
+DLLLIBS += $(VTK_LIBS)
+
+
 TARGET_SHARED = lib_simvascular_meshsim_discrete.$(SOEXT)
 
 # -------

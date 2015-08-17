@@ -44,18 +44,18 @@ $(TOP)/Lib/$(TARGET_LIB):	$(OBJS)
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Lib/$(TARGET_SHARED):	$(DLLOBJS)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED)  \
-             $(DLLOBJS) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS) $(DLLLIBS)
+             $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED); do /bin/mv -f $$fn $(TOP)/Lib; done
 #	$(LINK_EXE) dummy.exe $(LFLAGS) \
              $(DLLOBJS) $(CXX_LIBS) $(VTK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(ZLIB_LIBS) -l_lib_simvascular_sysgeom -l_lib_simvascular_solid -l_lib_simvascular_repository -l_lib_simvascular_utils -l_simvascular_globals
 #	$(LINK_EXE) dummy.exe $(LFLAGS) \
-             $(DLLOBJS) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS) $(DLLLIBS)
+             $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
 else
 $(TOP)/Lib/$(TARGET_SHARED):	$(DLLOBJS)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGETDIR)/$(TARGET_SHARED)" \
              /pdb:"$(TARGETDIR)/$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
-             $(DLLOBJS) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS)
+             $(DLLOBJS) $(LFLAGS)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
@@ -71,14 +71,14 @@ endif
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED2)              \
-             $(DLLOBJS2) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS) $(DLLLIBS2)
+             $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
 else
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGETDIR)/$(TARGET_SHARED2)" \
              /pdb:"$(TARGETDIR)/$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
-             $(DLLOBJS2) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS)
+             $(DLLOBJS2) $(LFLAGS)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
@@ -94,14 +94,14 @@ endif
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED3)             \
-             $(DLLOBJS3) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS) $(DLLLIBS3)
+             $(DLLOBJS3) $(LFLAGS) $(DLLLIBS3)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
 else
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGETDIR)/$(TARGET_SHARED3)" \
              /pdb:"$(TARGETDIR)/$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \
-             $(DLLOBJS3) $(LFLAGS) $(VTK_HARDWIRED_LINKFLAGS)
+             $(DLLOBJS3) $(LFLAGS)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done

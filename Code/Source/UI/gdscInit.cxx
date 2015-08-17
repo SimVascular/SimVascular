@@ -231,24 +231,30 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef USE_MESHSIM
+#ifndef USE_MESHSIM_SHARED  
   if ( Meshsimmesh_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
     return TCL_ERROR;
   }
 #endif
+#endif
 
 #ifdef USE_DISCRETE_MODEL
+#ifndef USE_DISCRETE_MODEL_SHARED
   if ( Meshsimdiscretesolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
     return TCL_ERROR;
   }
 #endif
+#endif
 
 #ifdef USE_PARASOLID
+#ifndef USE_PARASOLID_SHARED
   if ( Parasolidsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
     return TCL_ERROR;
   }
+#endif
 #endif
 
 //#ifdef USE_VMTK

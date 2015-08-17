@@ -47,3 +47,4 @@ Code/Source/.cproject
 !Code/ThirdParty/msmpi/Lib/.project
 !Code/ThirdParty/msmpi/.project
 !Code/ThirdParty/msmpi/Installers/.project
+!BuildWithMake/Release/windows_installer_packages/.project

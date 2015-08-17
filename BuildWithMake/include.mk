@@ -62,7 +62,11 @@ CLUSTER = x64_cygwin
 CXX_COMPILER_VERSION = vs12.5
 FORTRAN_COMPILER_VERSION = ifort
 
+ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
+-include cluster_overrides.mk
+else
 -include $(TOP)/cluster_overrides.mk
+endif
 
 # ---------------------------------------
 # Control solid modeling kernel inclusion
@@ -74,6 +78,7 @@ FORTRAN_COMPILER_VERSION = ifort
 # via the make command line.
 
 MAKE_WITH_PARASOLID = 0
+MAKE_WITH_PARASOLID_SHARED = 1
 
 # You can also exclude the SolidModel module entirely.  Be aware that
 # this leads to the exclusion of certain LevelSet functionality as
@@ -88,7 +93,9 @@ EXCLUDE_SOLID_MODEL = 0
 
 MAKE_WITH_MESHSIM = 0
 MAKE_WITH_MESHSIM_DISCRETE_MODEL = 0
+MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED = 1
 MAKE_WITH_MESHSIM_ADAPTOR = 0
+MAKE_WITH_MESHSIM_SHARED = 1
 MESHSIM_USE_LICENSE_FILE = 1
 MESHSIM_EMBED_LICENSE_KEYS = 0
 MESHSIM_USE_SIMVASCULAR_USE_WIN32_REGISTRY = 0
@@ -190,7 +197,7 @@ LINK_WITH_DEBUG = 1
 # Static link
 # -----------------------------------------------------
 
-MAKE_STATIC_BUILD = 1
+#MAKE_STATIC_BUILD = 1
 
 # by default don't build most third party
 # if we are only building the flow solver
@@ -203,7 +210,11 @@ endif
 # if you need to override anything above for a given site, do it here
 # -----------------------------------------------------------------------
 
+ifeq ($(LOCAL_DIR_SITE_OVERRIDES),1)
+-include site_overrides.mk
+else
 -include $(TOP)/site_overrides.mk
+endif
 
 # ----------------
 # Target directory
@@ -247,7 +258,11 @@ SIMVASCULAR_REGISTRY_TOPLEVEL=SIMVASCULAR
 # if you need to override anything above, stuff it in global_overrides.mk
 # -----------------------------------------------------------------------
 
+ifeq ($(LOCAL_DIR_GLOBAL_OVERRIDES),1)
+-include global_overrides.mk
+else
 -include $(TOP)/global_overrides.mk
+endif
 
 ifeq ($(CLUSTER),x86_cygwin) 
   SIMVASCULAR_VERSION  = simvascular32
@@ -283,7 +298,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-   GLOBAL_DEFINES += -DUSE_NOTIMER -DWINDOWS -DWIN32 -DCYGWIN
+   GLOBAL_DEFINES += -DUSE_NOTIMER -DWINDOWS -DWIN32
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -295,14 +310,23 @@ ifeq ($(EXCLUDE_SOLID_MODEL),0)
     ifeq ($(MAKE_WITH_PARASOLID),1)
         GLOBAL_DEFINES += -DUSE_PARASOLID
     endif
+    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+        GLOBAL_DEFINES += -DUSE_PARASOLID_SHARED
+    endif
 else
     GLOBAL_DEFINES += -DEXCLUDE_SOLID_MODEL
 endif
 
 ifeq ($(MAKE_WITH_MESHSIM),1) 
   GLOBAL_DEFINES += -DUSE_MESHSIM
+  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1) 
+    GLOBAL_DEFINES += -DUSE_MESHSIM_SHARED
+  endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
     GLOBAL_DEFINES += -DUSE_DISCRETE_MODEL
+  endif
+  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+    GLOBAL_DEFINES += -DUSE_DISCRETE_MODEL_SHARED
   endif
   ifeq ($(SIMVASCULAR_USE_WIN32_REGISTRY),1)
     GLOBAL_DEFINES += -DMESHSIM_LICENSE_IN_WIN32_REGISTRY
@@ -334,10 +358,6 @@ endif
 
 ifeq ($(MAKE_WITH_GTS),1)
   GLOBAL_DEFINES += -DUSE_GTS -DNATIVE_WIN32
-endif
-
-ifeq ($(BUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT),1)
-  GLOBAL_DEFINES += -DBUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT
 endif
 
 # ----------------------------------
@@ -373,12 +393,6 @@ ifeq ($(CLUSTER), x64_linux)
         GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 endif
 
-ifeq ($(SHARED), 1)
-    GLOBAL_LFLAGS += $(DYNAMIC_FLAG)
-else
-    GLOBAL_LFLAGS += $(STATIC_FLAG)
-endif
-
 # -----------------------
 # Intel Compiler Runtimes
 # -----------------------
@@ -411,6 +425,8 @@ endif
 # Local lib directories
 # ---------------------
 
+SHARED_LIBDIRS =
+
 LIBDIRS = ../Code/Source/Common/Globals \
 	  ../Code/Source/Common/Utils \
 	  ../Code/Source/Common/Repository \
@@ -439,11 +455,19 @@ endif
 ifeq ($(EXCLUDE_SOLID_MODEL),0)
 
     ifeq ($(MAKE_WITH_PARASOLID),1)
+      ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+        SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
+      else
         LIBDIRS += ../Code/Licensed/ParasolidSolidModel
+      endif
     endif
 
     ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+      ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+        SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+      else
         LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+      endif
     endif
 
 endif
@@ -451,7 +475,11 @@ endif
 # meshing
 
 ifeq ($(MAKE_WITH_MESHSIM),1)
+  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
+  else
      LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
+  endif
 endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
@@ -491,7 +519,7 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 # Local include directories
 # -------------------------
 
-LOCAL_SUBDIRS   = $(LIBDIRS) ../Code/Source/Include
+LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 LOCAL_LIBDIR	=  -L$(TOP)/Lib
 LOCAL_LIBS	=  $(LOCAL_LIBDIR) -lsimvascular_utils
@@ -800,11 +828,11 @@ endif
 
 ifeq ($(MAKE_WITH_MESHSIM),1)
 
+  SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
+
   ifeq ($(MAKE_WITH_PARASOLID),1)
     MESHSIM_MODELER=parasolid
   endif
-
-  SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/meshsim-9.0-150704-vs12.x64_cygwin.mk
@@ -856,5 +884,8 @@ endif
 # here's your chance to override package locations
 # ------------------------------------------------
 
+ifeq ($(LOCAL_DIR_PKG_OVERRIDES),1)
+-include pkg_overrides.mk
+else
 -include $(TOP)/pkg_overrides.mk
-
+endif

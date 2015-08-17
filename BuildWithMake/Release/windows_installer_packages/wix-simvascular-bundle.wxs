@@ -1,0 +1,37 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <Bundle Name="SimVascular Bundle" Version="2.0.0.0" Manufacturer="simvascular.org" UpgradeCode="85E8D8C7-FDF1-4D3B-9B5C-3E5CA3551E56" Copyright="2015" IconSourceFile="windows_msi_helpers/simvascular.ico" AboutUrl="http://www.simvascular.org">
+  
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense" />
+    
+      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\MPI" Value="Version" Variable="MSMPI_EXISTS" Result="exists" Win64="yes" />
+      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\MPI" Value="Version" Variable="MSMPI_VERSION" Result="value" Win64="yes" />
+
+      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\DevDiv\vc\Servicing\14.0\RuntimeMinimum" Value="Version" Variable="MSVC_EXISTS" Result="exists" Win64="yes"/>
+      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\DevDiv\vc\Servicing\14.0\RuntimeMinimum" Value="Version" Variable="MSVC_VERSION" Result="value" Win64="yes"/>
+
+      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\GDCM\GDCM 2.4" Variable="GDCM_WOW64_EXISTS" Result="exists" Win64="yes" />
+      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\GDCM\GDCM 2.4" Variable="GDCM_EXISTS" Result="exists"/>
+      
+     <Chain>
+ 
+     <ExePackage Id="Dependency1" SourceFile="windows_installer_packages/vcredist_x64-MSVC-2013-update-4.exe" Vital="no"
+         DetectCondition="(MSVC_EXISTS)"
+     />
+     <MsiPackage Id="Dependency2" SourceFile="windows_installer_packages/w_fcompxe_redist_intel64_2013_sp1.4.237.msi" Vital="no" />
+     <ExePackage Id="Dependency3" SourceFile="windows_installer_packages/MSMpiSetup.exe" Vital="no"
+         DetectCondition="(MSMPI_EXISTS)"
+     />
+
+     <ExePackage Id="Dependency4" SourceFile="windows_installer_packages/GDCM-2.4.0-Windows-x86.exe" Vital="no"
+         DetectCondition="((GDCM_WOW64_EXISTS) OR (GDCM_EXISTS))"
+     />
+ 
+     <MsiPackage Id="MainPackage" SourceFile="simvascular.msi" Vital="yes" />
+      
+    </Chain>
+    
+  </Bundle>
+</Wix>

@@ -74,8 +74,13 @@ ifneq ($(CLUSTER),x64_linux)
   endif
 endif
 
+#intentionally link against static library
 ifeq ($(MAKE_WITH_PARASOLID),1)
-  PARASOLID_LIB_FOR_LINKING = $(TOP)/Lib/lib_lib_simvascular_parasolid.$(STATICEXT)
+  ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+    PARASOLID_LIB_FOR_LINKING = $(TOP)/Lib/lib_lib_simvascular_parasolid.$(STATICEXT)
+  else
+    PARASOLID_LIB_FOR_LINKING = $(TOP)/Lib/lib_lib_simvascular_parasolid.$(STATICEXT)
+  endif
 endif
 
 static: $(TOP)/Bin/$(TARGET_EXE)

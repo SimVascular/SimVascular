@@ -121,6 +121,23 @@ namespace eval u {}
 # Import tcl code
 # ---------------
 
+proc modules_registry_query {regpath regpathwow key} {
+    global tcl_platform
+    set value {}
+    if {$tcl_platform(platform) == "windows"} {
+      package require registry
+	if {![catch {set value [registry get $regpath $key]} msg]} {
+	  return $value
+        } else {
+	  if {![catch {set value [registry get $regpathwow $key]} msg]} {
+	    return $value
+	  }
+	}
+    } else {
+	return
+    }
+}
+
 if {$SIMVASCULAR_RELEASE_BUILD != 0} {
   catch {package require tbcload}
   # why do I need to prevent this from being read on windows?
@@ -130,7 +147,59 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
   foreach codefile [glob [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 *code.tcl]] {
     source $codefile
   }
+
+  if {$tcl_platform(platform) == "windows"} {    
+    set parasoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  SIMVASCULAR_PARASOLID_DLL]
+    
+    if {$parasoliddll != ""} {
+      puts "Found Parasolid.  Loading..."
+      load $parasoliddll Parasolidsolid
+    }
+
+    set pschema_dir [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  SIMVASCULAR_PARASOLID_PSCHEMA_DIR]
+    
+    if {$pschema_dir != ""} {
+      puts "Found Parasolid Schema Directory."
+      global env
+      set env(P_SCHEMA) $pschema_dir
+    }
+ 
+    set discretedll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  SIMVASCULAR_MESHSIM_DISCRETE_DLL]
+    
+    if {$discretedll != ""} {
+      puts "Found MeshSim Discrete Model.  Loading..."
+      load $discretedll Meshsimdiscretesolid
+    }
+
+    set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+  			  SIMVASCULAR_MESHSIM_MESH_DLL]
+    
+    if {$meshsimdll != ""} {
+      puts "Found MeshSim Mesh.  Loading..."
+      load $meshsimdll Meshsimmesh
+    }
+  }
+
+  if {$tcl_platform(platform) == "unix"} {
+    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid} 
+    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_mesh.so Meshsimmesh}
+    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_parasolid.so  Parasolidsolid}
+  }
+
 } else {
+  if {$tcl_platform(platform) == "unix"} {
+    catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid} 
+    catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_mesh.so Meshsimmesh}
+    catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_parasolid.so  Parasolidsolid}
+  }
+
   source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 simvascular_developer_startup.tcl]
   if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
      catch {source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
