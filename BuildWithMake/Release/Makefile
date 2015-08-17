@@ -54,7 +54,7 @@ REMOTE_DIR_TOP = remote_install_$(SIMVASCULAR_VERSION)
 ifneq ($(CLUSTER),x64_linux)
   all: windows-distribution msi
 else
-  all: linux-distribution taritup
+  all: linux-distribution taritup taritup-meshsim-and-parasolid
 endif
 
 #
@@ -290,6 +290,22 @@ common-post-distribution:
 linux-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
 
 windows-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
+
+taritup-meshsim-and-parasolid:
+	-mkdir tar_files
+	-rm -Rf package-release-meshsim-and-parasolid
+	-mkdir -p package-release-meshsim-and-parasolid/package/$(SIMVASCULAR_VERSION)/xxxxxxxx
+	-date > package-release-meshsim-and-parasolid/release-date
+	-chmod -R a+rwx package-release-meshsim-and-parasolid
+	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
+	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
+	-cp -f $(TOP)/Lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
+ifeq ($(MAKE_WITH_PARASOLID),1)
+	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
+	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
+endif
+	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
+	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
 
 taritup:
 	-mkdir tar_files
