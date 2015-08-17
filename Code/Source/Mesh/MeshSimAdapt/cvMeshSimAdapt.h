@@ -139,6 +139,7 @@ private:
   double *hessians_;
 
   AdaptOptions options;
+
 };
 
 

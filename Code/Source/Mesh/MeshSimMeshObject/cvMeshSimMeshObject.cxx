@@ -1858,15 +1858,35 @@ int cvMeshSimMeshObject::Adapt()
   return CV_OK;
 }
 
-int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin)
+int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars)
 {
+  if (mesh == NULL)
+  {
+    fprintf(stderr,"Must load mesh before setting an array!");
+    return CV_ERROR;
+  }
+  if (array == NULL)
+  {
+    fprintf(stderr,"array to be attached is NULL!");
+    return CV_ERROR;
+  }
+
+  if (errorIndicatorID != NULL)
+    MD_deleteMeshDataId(errorIndicatorID);
+
   errorIndicatorID = MD_newMeshDataId("error indicator");
 
+  int poly=1;
+  attachArray(array,mesh,errorIndicatorID,numVars,poly);
+  
+  return CV_OK;
+}
+
+int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin)
+{
   modes = MD_newMeshDataId("number of modes");// required for higher order
   nodalgradientID = MD_newMeshDataId( "gradient");
   nodalhessianID = MD_newMeshDataId( "hessian");
-
-  pMSAdapt simAdapter;
 
   cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
   
@@ -1878,11 +1898,7 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double facto
     
   cout<<"\n Reading files:"<<endl;
 
-  int poly=1;
-
-  int nvar = 5;
-  attachArray(error_indicator,mesh,errorIndicatorID,nvar,poly);
-
+  pMSAdapt simAdapter;
   simAdapter = MSA_new(mesh,1);
 
   // need to use only local refinement if boundary layer exists

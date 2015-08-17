@@ -392,7 +392,15 @@ int cvMeshSimAdapt::CheckOptions()
 // -----------------------
 int cvMeshSimAdapt::SetErrorMetric()
 {
-  fprintf(stdout,"TODO\n");
+  if (meshobject_ == NULL)
+  {
+    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+    return CV_ERROR;
+  }
+                                                    
+  int nvar = 5;
+  meshobject_->SetArrayOnMesh(ybar_,5);
+
   return CV_OK;
 }
 
