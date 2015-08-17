@@ -52,7 +52,7 @@ DIST_DIR := $(DIST_DIR_TOP)/$(shell echo "puts \"[clock seconds]\"" | tclsh)
 REMOTE_DIR_TOP = remote_install_$(SIMVASCULAR_VERSION)
 
 ifneq ($(CLUSTER),x64_linux)
-  all: windows-distribution msi msi-meshsim-and-parasolid
+  all: windows-distribution msi
 else
   all: linux-distribution taritup
 endif
@@ -106,7 +106,7 @@ msiclean:
 	-rm tmp/uuidgen.exe*
 	-rm tmp/uuidgen.obj*
 
-msi:	msiclean
+msi-simvascular:	msiclean
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	x86_64-w64-mingw32-gcc -o tmp/uuidgen.exe windows_msi_helpers/uuidgen.c -lole32
 else
@@ -128,6 +128,8 @@ msi-bundle:
 	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj windows_installer_packages/wix-simvascular-bundle.wxs
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
+
+msi: msiclean msi-simvascular msiclean-meshsim-and-parasolid msi-meshsim-and-parasolid msi-bundle
 
 remote-linux-distribution: mksedscript linux-distribution
 	-rm -Rf $(REMOTE_DIR_TOP)

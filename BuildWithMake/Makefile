@@ -95,7 +95,7 @@ endif
 	-rm -f tclscript
 
 pre-build:
-	cd ../Code/Source/UI;$(MAKE) pre
+	cd ../Code/Source/UI;$(MAKE) MAKE_STATIC_BUILD=1 pre
 	mkdir -p Bin
 	mkdir -p Lib
 	touch ../Code/Source/Include/simvascular_options.h
