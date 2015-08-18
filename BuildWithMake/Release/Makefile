@@ -87,6 +87,7 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
+	-cp -f $(TOP)/Bin/adaptor.exe package-release-meshsim-and-parasolid/adaptor-bin.exe
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
@@ -122,6 +123,7 @@ endif
 
 msi-bundle:
 	-rm -f tmp/bundle.wixobj
+	-rm -f simvascular-bundle.wixpdb
 	-rm -f simvascular-bundle.exe
 	-echo "Create WXS file..."
 	-echo "Run candle..."
@@ -184,7 +186,6 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/presolver.exe $(DIST_DIR)/presolver-bin.exe
 	-cp -f $(TOP)/Bin/postsolver.exe $(DIST_DIR)/postsolver-bin.exe
 	-cp -f $(TOP)/Bin/flowsolver.exe $(DIST_DIR)/flowsolver-bin.exe
-	-cp -f $(TOP)/Bin/adaptor.exe $(DIST_DIR)/adaptor-bin.exe
 	-cp -f $(TOP)/Bin/tetadaptor.exe $(DIST_DIR)/tetadaptor-bin.exe
 	-cp -f $(TOP)/../Code/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp $(DIST_DIR)
 #	-cp -f $(TOP)/Lib/*.$(SOEXT)* $(DIST_DIR)
@@ -304,6 +305,7 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
+	-cp -f $(TOP)/Bin/adaptor.exe package-release-meshsim-and-parasolid/adaptor-bin.exe
 	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
 	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
 

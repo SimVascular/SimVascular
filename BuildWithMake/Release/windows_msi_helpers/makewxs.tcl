@@ -163,6 +163,10 @@ if {$SIMVASCULAR_VERSION == "simvascular32"} {
   puts $outfp "<Package Id='06558B20-CCE8-4FDA-BB51-A5073901CA68' Keywords='Installer' Description='$SIMVASCULAR_VERSION Installer' Comments='SimVascular $SIMVASCULAR_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
 }
 
+puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
+puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"
+puts $outfp "<WixVariable Id=\"WixUIDialogBmp\" Value=\"windows_msi_helpers/msi-dialog.bmp\" />"
+
 puts $outfp "<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />"
 puts $outfp "<Property Id='INSTALLLEVEL' Value='999' />"
 puts $outfp "<Property Id='ALLUSERS' Value='1' />" 

@@ -49,7 +49,7 @@ BuildWithMake/MakeHelpers/vtk-6.2.0.x64_linux.mk -text
 BuildWithMake/Makefile -text
 BuildWithMake/README-build-linux.txt -text
 BuildWithMake/README-build-windows.txt -text
-BuildWithMake/Release/License.rtf -text
+BuildWithMake/Release/License.rtf -text svneol=unset#unset
 BuildWithMake/Release/Makefile -text
 BuildWithMake/Release/dcmtk/dcmdump-win32.exe -text
 BuildWithMake/Release/dcmtk/dcmodify-win32.exe -text
@@ -82,6 +82,7 @@ BuildWithMake/Release/tcl_helper_scripts/create_tclIndex.tcl -text
 BuildWithMake/Release/tcl_helper_scripts/d2u_files.tcl -text
 BuildWithMake/Release/windows_installer_packages/GDCM-2.4.0-Windows-x86.exe -text
 BuildWithMake/Release/windows_installer_packages/MSMpiSetup.exe -text
+BuildWithMake/Release/windows_installer_packages/msi-logo.png -text
 BuildWithMake/Release/windows_installer_packages/vcredist_x64-MSVC-2013-update-4.exe -text
 BuildWithMake/Release/windows_installer_packages/w_fcompxe_redist_intel64_2013_sp1.4.237.msi -text
 BuildWithMake/Release/windows_installer_packages/wix-simvascular-bundle.wxs -text
@@ -90,6 +91,10 @@ BuildWithMake/Release/windows_installer_scripts/remote-install-x86.sh -text
 BuildWithMake/Release/windows_msi_helpers/makewxs-licenses.tcl -text
 BuildWithMake/Release/windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl -text
 BuildWithMake/Release/windows_msi_helpers/makewxs.tcl -text
+BuildWithMake/Release/windows_msi_helpers/msi-banner.bmp -text
+BuildWithMake/Release/windows_msi_helpers/msi-banner.jpg -text
+BuildWithMake/Release/windows_msi_helpers/msi-dialog.bmp -text
+BuildWithMake/Release/windows_msi_helpers/msi-dialog.jpg -text
 BuildWithMake/Release/windows_msi_helpers/prepare_simvascular_tcl_release.tcl -text
 BuildWithMake/Release/windows_msi_helpers/simvascular.ico -text
 BuildWithMake/Release/windows_msi_helpers/uuidgen.c -text
