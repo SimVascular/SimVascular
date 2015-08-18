@@ -28,12 +28,13 @@
  #
  #=========================================================================#
  
-# TODO: Remove this! needs to be refactored
 set(lib lib_simvascular_adaptor)
 LIST(APPEND CORELIBS ${lib})
 
-set(HDRS cvAdaptObject.h cv_adapt_init.h)
-SET(CXXSRCS cvAdaptObject.cxx cv_adapt_init.cxx)
+include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
+
+set(HDRS cvAdaptObject.h cv_adapt_utils.h cv_adapt_init.h eispack.h)
+SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx cv_adapt_init.cxx eispack.cxx)
 
 add_library(${lib} ${CXXSRCS})
 

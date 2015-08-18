@@ -140,6 +140,7 @@ public:
   virtual int Adapt() = 0;
   virtual int SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin) = 0;
   virtual int SetArrayOnMesh(double *array,int numVars) = 0;
+  virtual int GetArrayOnMesh(double *array,int numVars) = 0;
 
   int openOutputFile(char* filename);
   int closeOutputFile();

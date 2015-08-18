@@ -38,7 +38,7 @@
  *
  *=========================================================================*/
 
-#include "cv_meshsim_adapt_utils.h"
+#include "cv_meshsim_adapt_utils.h"   
 
 long eigen (double pos[3][3], double e[3][3], double v[3], int checkOrthogonality)
 {  
@@ -2042,7 +2042,6 @@ void writeArrayToFile( char *filename,
 
   closefile_( &restart, mode);
 }
-
 
 void setSizeFieldUsingHessians(pMesh mesh,
 			       pMSAdapt simAdapter,

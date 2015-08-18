@@ -163,10 +163,14 @@ int AdaptUtils_hessiansFromSolution (vtkUnstructuredGrid *mesh);
 // (i.e., use 3 EI for flow problem or use 1 EI for scalar problem)
 double AdaptUtils_getErrorValue (double *nodalValues, int option);
 
+int MSAdaptUtils_setSizeFieldUsingHessians (vtkUnstructuredGrid *mesh,
+				 double factor, double hmax,
+				 double hmin,
+				 double sphere[5]);
 
 int AdaptUtils_setSizeFieldUsingHessians ( vtkUnstructuredGrid *mesh,
       		           double factor, double hmax,
-      		           double hmin);
+      		           double hmin, double sphere[5]);
 
 // max relative interpolation error at a vertex
 double AdaptUtils_maxLocalError (vtkUnstructuredGrid *mesh,vtkIdType vertex, double H[3][3]);

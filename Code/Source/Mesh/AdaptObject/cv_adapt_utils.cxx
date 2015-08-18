@@ -624,6 +624,233 @@ double AdaptUtils_getErrorValue(double *nodalValues, int option) {
   return errorValue;
 }
 
+int MSAdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
+			       double factor,
+			       double hmax,
+			       double hmin,
+                               double sphere[5])
+{
+  int i,j,k;
+  int nshg;
+  int ierr;
+  int three = 3;
+  int bdryNumNodes = 0;
+  double xyz[3];
+  double T[3][3];
+  double tol=1.e-12;
+  double maxEigenval=0;
+  double eloc;  	  // local error at a vertex
+  double etot=0.;	  // total error for all vertices
+  double emean; 	  // emean = etot / nv
+  double elocmax=0.;	  // max local error
+  double elocmin=1.e20;   // min local error
+  //double z[3][3];
+  double z[9];
+  vtkIdType pointId,averageHessian;
+
+  vtkSmartPointer<vtkDoubleArray> averageHessians = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+
+  nshg = mesh->GetNumberOfPoints();
+  averageHessians = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("averagehessians"));
+
+  // struct Hessian contains decomposed values
+  // mesh sizes and directional information
+  Hessian *hess = new Hessian[nshg];
+
+  vtkSmartPointer<vtkDoubleArray> errorMetricArray = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+  errorMetricArray->SetNumberOfComponents(9);
+  errorMetricArray->Allocate(nshg,10000);
+  errorMetricArray->SetNumberOfTuples(nshg);
+  errorMetricArray->SetName("errormetric");
+
+  i=0;
+  for (pointId=0;pointId<nshg;pointId++)
+  {
+    mesh->GetPoint(pointId,xyz);
+
+    if (AdaptUtils_getHessian(averageHessians,pointId,T) != CV_OK)
+    {
+      fprintf(stderr,"Error when getting hessian\n");
+      return CV_OK;
+    }
+
+    double eigenVals[3];
+    double e[3];
+    //double Tfoo[3][3];
+    double Tfoo[9];
+
+    //copy T into temporary buffer
+    //for (j=0;j<3;j++)
+    //{
+    //  for (k=0;k<3;k++)
+    //  {
+    //    Tfoo[j][k] = T[j][k];
+    //  }
+    //}
+    for (j=0;j<3;j++)
+    {
+      for (k=0;k<3;k++)
+      {
+        Tfoo[j*3+k] = T[j][k];
+      }
+    }
+    
+    //mytred(&three,&three,Tfoo,eigenVals,e,z);
+    tred2(three,Tfoo,eigenVals,e,z);
+
+    //tql2(&three,&three,eigenVals,e,z,&ierr);
+    ierr = tql2(three,eigenVals,e,z);
+
+    for (j=0;j<3;j++)
+    {
+      hess[i].h[j] = eigenVals[j];
+      for (k=0;k<3;k++)
+      {
+	//hess[i].dir[j][k]=z[j][k];
+	hess[i].dir[j][k]=z[j*3+k];
+      }
+    }
+
+    hess[i].h[0] = ABS(hess[i].h[0]);
+    hess[i].h[1] = ABS(hess[i].h[1]);
+    hess[i].h[2] = ABS(hess[i].h[2]);
+
+    if( MAX(hess[i].h[0],MAX(hess[i].h[1],hess[i].h[2])) < tol ) {
+      printf("Warning: zero maximum eigenvalue for node %d !!!\n",i);
+      printf("       %f %f %f\n", hess[i].h[0],
+             hess[i].h[1],hess[i].h[2]);
+      continue;
+    }
+
+    // estimate relative interpolation error
+    // needed for scaling metric field (mesh size field)
+    // to get an idea refer Appendix A in Li's thesis
+    eloc=AdaptUtils_maxLocalError(mesh,pointId,T);
+    etot += eloc;
+    if( eloc>elocmax )  elocmax=eloc;
+    if( eloc<elocmin )  elocmin=eloc;
+
+    i++;
+  }
+
+  printf("Info: Reading hessian... done...\n");
+
+  emean =  etot / nshg;
+  printf("\n Info on relative interpolation error: ");
+  printf("   total: %f\n",etot);
+  printf("   mean:  %f\n",emean);
+  printf("   max local: %f\n",elocmax);
+  printf("   min local: %f\n",elocmin);
+
+  eloc = emean*factor;
+
+  printf("\n towards uniform local error distribution of %f\n", eloc);
+  printf("   with max edge length=%f; min edge length=%f\n\n",hmax,hmin);
+
+  fprintf(stdout,"Strategy chosen is isotropic adaptation, i.e., size-field driven\n");
+  fprintf(stdout,"Info on relative interpolation error :\n");
+  fprintf(stdout,"total : %.4f\n",etot);
+  fprintf(stdout,"mean : %.4f\n",emean);
+  fprintf(stdout,"factor : %.4f\n",factor);
+  fprintf(stdout,"min. local : %.4f\n",elocmin);;
+  fprintf(stdout,"max. local : %.4f\n",elocmax);
+  fprintf(stdout,"towards uniform local error distribution of %.4f\n",eloc);
+  fprintf(stdout,"with min. edge length : %.4f\n",hmin);
+  fprintf(stdout,"with max. edge length : %.4f\n",hmax);
+
+  int foundHmin = 0;
+  int foundHmax = 0;
+  int hminCount = 0;
+  int hmaxCount = 0;
+  int bothHminHmaxCount = 0;
+  int insideSphereCount = 0;
+
+  double tol2, tol3;
+
+  i=0;
+  for (pointId=0;pointId<nshg;pointId++)
+  {
+    tol2 = 0.01*hmax;
+    tol3 = 0.01*hmin;
+    foundHmin = 0;
+    foundHmax = 0;
+    for( j=0; j<3; j++ ) {
+      if( hess[i].h[j] < tol )
+	hess[i].h[j] = hmax;
+      else {
+	hess[i].h[j] = sqrt(eloc/hess[i].h[j]);
+	if( hess[i].h[j] > hmax )
+	  hess[i].h[j] = hmax;
+	if( hess[i].h[j] < hmin )
+	  hess[i].h[j] = hmin;
+      }
+    }
+
+    for(j=0; j<3; j++) {
+      if(ABS(hess[i].h[j]-hmax) <= tol2)
+	foundHmax = 1;
+      if(ABS(hess[i].h[j]-hmin) <= tol3)
+	foundHmin = 1;
+    }
+    if(foundHmin)
+      hminCount++;
+    if(foundHmax)
+      hmaxCount++;
+    if(foundHmin && foundHmax)
+      bothHminHmaxCount++;
+
+    double vxyz[3];
+    mesh->GetPoint(pointId,vxyz);
+    // check if inside of sphere radius
+    double r = sqrt ((vxyz[0] - sphere[1])*(vxyz[0] - sphere[1]) + 
+		     (vxyz[1] - sphere[2])*(vxyz[1] - sphere[2]) +
+		     (vxyz[2] - sphere[3])*(vxyz[2] - sphere[3]));
+
+    if (r < sphere[0]) {
+
+      hess[i].h[0] = sphere[4];
+      hess[i].h[1] = sphere[4];
+      hess[i].h[2] = sphere[4];
+
+      insideSphereCount++;
+
+    }
+
+    // set the data in directions
+    for (int jRow=0; jRow<3; jRow++) {
+      for(int iDir=0; iDir<3; iDir++) {
+	hess[i].dir[jRow][iDir]=hess[i].dir[jRow][iDir]*hess[i].h[jRow];
+      }
+    }
+
+    for (j=0;j<3;j++)
+    {
+      for (k=0;k<3;k++)
+      {
+        errorMetricArray->SetComponent(i,j*3+k,hess[i].dir[j][k]);
+      }
+    }
+    
+    i++;
+  }
+  fprintf(stdout,"Nodes with hmin into effect : %.4f\n",hminCount);
+  fprintf(stdout,"Nodes with hmax into effect : %.4f\n",hmaxCount);
+  fprintf(stdout,"Nodes with both hmin/hmax into effect : %.4f\n",bothHminHmaxCount);
+  fprintf(stdout,"Nodes within sphere : %d\v",insideSphereCount);
+  fprintf(stdout,"Nodes ignored in boundary layer : %.4f\n",bdryNumNodes);;
+
+  delete [] hess;
+
+  mesh->GetPointData()->AddArray(errorMetricArray);
+  mesh->GetPointData()->SetActiveScalars("errormetric");
+
+  return CV_OK;
+}
+
+
+
 // -----------------------------
 // setSizeFieldUsingHessians()
 // -----------------------------
@@ -639,7 +866,8 @@ double AdaptUtils_getErrorValue(double *nodalValues, int option) {
 int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
 			       double factor,
 			       double hmax,
-			       double hmin)
+			       double hmin,
+                               double sphere[5])
 {
   int i,j,k;
   int nshg;
@@ -760,16 +988,16 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   printf("\n towards uniform local error distribution of %f\n", eloc);
   printf("   with max edge length=%f; min edge length=%f\n\n",hmax,hmin);
 
-  fprintf(stderr,"Strategy chosen is isotropic adaptation, i.e., size-field driven\n");
-  fprintf(stderr,"Info on relative interpolation error :\n");
-  fprintf(stderr,"total : %.4f\n",etot);
-  fprintf(stderr,"mean : %.4f\n",emean);
-  fprintf(stderr,"factor : %.4f\n",factor);
-  fprintf(stderr,"min. local : %.4f\n",elocmin);;
-  fprintf(stderr,"max. local : %.4f\n",elocmax);
-  fprintf(stderr,"towards uniform local error distribution of %.4f\n",eloc);
-  fprintf(stderr,"with min. edge length : %.4f\n",hmin);
-  fprintf(stderr,"with max. edge length : %.4f\n",hmax);
+  fprintf(stdout,"Strategy chosen is isotropic adaptation, i.e., size-field driven\n");
+  fprintf(stdout,"Info on relative interpolation error :\n");
+  fprintf(stdout,"total : %.4f\n",etot);
+  fprintf(stdout,"mean : %.4f\n",emean);
+  fprintf(stdout,"factor : %.4f\n",factor);
+  fprintf(stdout,"min. local : %.4f\n",elocmin);;
+  fprintf(stdout,"max. local : %.4f\n",elocmax);
+  fprintf(stdout,"towards uniform local error distribution of %.4f\n",eloc);
+  fprintf(stdout,"with min. edge length : %.4f\n",hmin);
+  fprintf(stdout,"with max. edge length : %.4f\n",hmax);
 
   int foundHmin = 0;
   int foundHmax = 0;
@@ -814,6 +1042,20 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
 
     double vxyz[3];
     mesh->GetPoint(pointId,vxyz);
+    // check if inside of sphere radius
+    double r = sqrt ((vxyz[0] - sphere[1])*(vxyz[0] - sphere[1]) + 
+		     (vxyz[1] - sphere[2])*(vxyz[1] - sphere[2]) +
+		     (vxyz[2] - sphere[3])*(vxyz[2] - sphere[3]));
+
+    if (r < sphere[0]) {
+
+      hess[i].h[0] = sphere[4];
+      hess[i].h[1] = sphere[4];
+      hess[i].h[2] = sphere[4];
+
+      insideSphereCount++;
+
+    }
 
     // set the data in directions
     for (int jRow=0; jRow<3; jRow++) {
@@ -829,10 +1071,11 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
     
     i++;
   }
-  fprintf(stderr,"Nodes with hmin into effect : %.4f\n",hminCount);
-  fprintf(stderr,"Nodes with hmax into effect : %.4f\n",hmaxCount);
-  fprintf(stderr,"Nodes with both hmin/hmax into effect : %.4f\n",bothHminHmaxCount);
-  fprintf(stderr,"Nodes ignored in boundary layer : %.4f\n",bdryNumNodes);;
+  fprintf(stdout,"Nodes with hmin into effect : %.4f\n",hminCount);
+  fprintf(stdout,"Nodes with hmax into effect : %.4f\n",hmaxCount);
+  fprintf(stdout,"Nodes with both hmin/hmax into effect : %.4f\n",bothHminHmaxCount);
+  fprintf(stdout,"Nodes within sphere : %d\v",insideSphereCount);
+  fprintf(stdout,"Nodes ignored in boundary layer : %.4f\n",bdryNumNodes);;
 
   delete [] hess;
 

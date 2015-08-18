@@ -148,6 +148,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   int Adapt();
   int SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin) {return CV_ERROR;}
   int SetArrayOnMesh(double *array,int numVars) {return CV_ERROR;}
+  int GetArrayOnMesh(double *array,int numVars) {return CV_ERROR;}
 
   //TETGENMESHOBJECT ONLY: These are helper functions for some of the more complicated mesh options
   int GenerateSurfaceRemesh();

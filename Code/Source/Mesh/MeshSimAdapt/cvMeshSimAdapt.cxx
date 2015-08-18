@@ -39,8 +39,8 @@
 
 #include "cvMeshSimAdapt.h"
 
+#include "cv_adapt_utils.h"
 #include "cv_meshsim_adapt_utils.h"
-//#include "cv_adapt_utils.h"
 
 #include "vtkXMLUnstructuredGridReader.h"
 #include "vtkXMLUnstructuredGridWriter.h"
@@ -73,6 +73,11 @@ cvMeshSimAdapt::cvMeshSimAdapt()
   options.instep_ = 0;
   options.outstep_ = 0;
   options.ndof_=5;
+  options.sphere_[0] = -1;
+  options.sphere_[1] = 0;
+  options.sphere_[2] = 0;
+  options.sphere_[3] = 0;
+  options.sphere_[4] = 1;
 
   sol_array_ = NULL;
   hessians_array_ = NULL;
@@ -81,6 +86,7 @@ cvMeshSimAdapt::cvMeshSimAdapt()
   sol_ = NULL;
   hessians_ = NULL;
   ybar_ = NULL;
+  errormetric_ = NULL;
 }
 
 cvMeshSimAdapt::cvMeshSimAdapt( const cvMeshSimAdapt& Adapt)
@@ -110,6 +116,8 @@ cvMeshSimAdapt::~cvMeshSimAdapt()
     delete [] ybar_;
   if (hessians_ != NULL)
     delete [] hessians_;
+  if (errormetric_ != NULL)
+    delete [] errormetric_;
 
   if (meshobject_ != NULL)
     gRepository->UnRegister(meshobject_->GetName());
@@ -236,13 +244,16 @@ int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
   if (sol_ != NULL)
     delete [] sol_;
 
-  readArrayFromFile(fileName,"solution",sol_);
+  AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
 
-  //if (attachArray(sol_,mesh,"solution",options.ndof_,options.poly_) != CV_OK)
-  //{
-  //  fprintf(stderr,"Error: Error when attaching solution to mesh\n");
-  //  return CV_ERROR;
-  //}
+  if (inmesh_ != NULL)
+  {
+    if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching solution to mesh\n");
+      return CV_ERROR;
+    }
+  }
 
   return CV_OK;
 }
@@ -255,13 +266,16 @@ int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
   if (ybar_ != NULL)
     delete [] ybar_;
 
-  readArrayFromFile(fileName,"ybar",ybar_);
+  AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_);
 
-  //if (attachArray(ybar_,mesh,"error",options.nvar_,options.poly_) != CV_OK)
-  //{
-  //  fprintf(stderr,"Error: Error when attaching error to mesh\n");
-  //  return CV_ERROR;
-  //}
+  if (inmesh_ != NULL)
+  {
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching error to mesh\n");
+      return CV_ERROR;
+    }
+  }
 
   return CV_OK;
 }
@@ -274,7 +288,16 @@ int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
   if (hessians_ != NULL)
     delete [] hessians_;
 
-  readArrayFromFile(fileName,"hessians",hessians_);
+  AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_);
+
+  if (inmesh_ != NULL)
+  {
+    if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",options.nvar_,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching error to mesh\n");
+      return CV_ERROR;
+    }
+  }
 
   return CV_OK;
 }
@@ -392,14 +415,89 @@ int cvMeshSimAdapt::CheckOptions()
 // -----------------------
 int cvMeshSimAdapt::SetErrorMetric()
 {
-  if (meshobject_ == NULL)
+  //Old MESH STUFF!
+  //if (meshobject_ == NULL)
+  //{
+  //  fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+  //  return CV_ERROR;
+  //}
+  //                                                  
+  //int nvar = 5;
+  //meshobject_->SetArrayOnMesh(ybar_,5);
+
+  if (inmesh_ == NULL)
   {
-    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+    fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
     return CV_ERROR;
   }
-                                                    
-  int nvar = 5;
-  meshobject_->SetArrayOnMesh(ybar_,5);
+  int numPoints = inmesh_->GetNumberOfPoints();
+
+  switch(options.strategy_) {
+  //this code processes for both if strategy == 1 || strategy ==2
+  //Right now the only implemented adaptation is for isotropic meshing. 
+  //TetGen only has the ability to specify one size metric at each node 
+  //within the mesh, so anisotropic meshing is not capable at this moment.
+  //Strategies 1 and 2 implement isotropic adaptation 
+  case 1 :
+  case 2 : { //isotropic adaptation
+    cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
+    
+    char error_tag[28];
+    if(options.strategy_ == 1) {
+      cout<<"\nUsing ybar to compute hessians...\n"<<endl;
+      sprintf(error_tag,"ybar");
+    }
+    else if (options.strategy_ == 2) {
+      cout<<"\nUsing numerical/computed hessians (i.e, from phasta)...\n"<<endl;
+      sprintf(error_tag,"hessains");
+    }
+
+    if(options.strategy_==1) {
+      // calculating hessians for ybar field
+      // first reconstruct gradients and then the hessians 
+      // also deals with boundary issues &
+      // applies smoothing procedure for hessians
+      // (simple average : arithmetic mean)
+      if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
+      {
+        fprintf(stderr,"Error: Error when calculating hessians from solution\n");
+        return CV_ERROR;
+      }
+    }
+    else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
+      // use the hessians computed from phasta
+    }
+    if (MSAdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_) != CV_OK)
+    {
+        fprintf(stderr,"Error: Error when setting size field with hessians\n");
+        return CV_ERROR;
+    }
+  }
+  break;
+  case 3:
+  case 4: { // anisotropic adaptation (tag driven)
+    cout<<"Strategy has not been implemented"<<endl;
+    return 0;
+  }
+  break;
+  case 5:
+  case 6: { //anisotropic adaptation (size-field driven)
+    cout<<"Strategy has not been implemented"<<endl;
+    return 0;
+  }
+  break;
+  default : {
+    if(options.strategy_<0) {
+      cout<<"This is default case but has not been implemented"<<endl;
+
+    }
+    else {
+      cout<<"\nSpecify a correct (adaptation) strategy (adapt.cc)"<<endl;
+      exit(-1);
+    }
+  }
+  break;
+  }
 
   return CV_OK;
 }
@@ -409,7 +507,38 @@ int cvMeshSimAdapt::SetErrorMetric()
 // -----------------------
 int cvMeshSimAdapt::SetupMesh()
 {
-  fprintf(stdout,"TODO\n");
+  if (meshobject_ == NULL)
+  {
+    fprintf(stderr,"Mesh object needs to be create with CreateInternalMeshObject\n");
+    return CV_ERROR;
+  }
+
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"ERROR: Volumetric vtu mesh is not loaded\n");
+    return CV_ERROR;
+  }
+
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"errormetric") != CV_OK)
+  {
+    fprintf(stderr,"Error metric must be incident on mesh. Created in SetErrorMetric\n");
+    return CV_ERROR;
+  }
+
+  if (errormetric_ != NULL)
+    delete [] errormetric_;
+
+  int nVar = 9;
+  int poly=1;
+  if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,poly) != CV_OK)
+  {
+    fprintf(stderr,"Error in getting error metric off mesh\n");
+    return CV_ERROR;
+  }
+
+  meshobject_->SetError(errormetric_,options.instep_,options.ratio_,options.hmax_,options.hmin_);
+
+
   return CV_OK;
 }
 
@@ -429,7 +558,7 @@ int cvMeshSimAdapt::RunAdaptor()
     return CV_ERROR;
   }
   meshobject_->Adapt();
-  meshobject_->SetError(ybar_,options.instep_,options.ratio_,options.hmax_,options.hmin_);
+  //meshobject_->SetError(ybar_,options.instep_,options.ratio_,options.hmax_,options.hmin_);
   return CV_OK;
 }
 

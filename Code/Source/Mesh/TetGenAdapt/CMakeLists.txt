@@ -36,8 +36,8 @@ include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 include_directories(${TETGEN_INCLUDE_DIR})
 
-set(HDRS cvTetGenAdapt.h cv_adapt_utils.h cv_tetgen_adapt_init.h eispack.h)
-SET(CXXSRCS cvTetGenAdapt.cxx cv_tetgen_adapt_init.cxx cv_adapt_utils.cxx eispack.cxx)
+set(HDRS cvTetGenAdapt.h cv_tetgen_adapt_init.h)
+SET(CXXSRCS cvTetGenAdapt.cxx cv_tetgen_adapt_init.cxx)
 
 add_library(${lib} ${CXXSRCS})
 

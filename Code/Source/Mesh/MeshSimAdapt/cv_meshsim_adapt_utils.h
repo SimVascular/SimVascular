@@ -53,6 +53,8 @@
 #include <vector>
 #include <map>
 
+#include "cv_adapt_utils.h"
+
 using namespace std;
 
 #ifndef WIN32
@@ -126,12 +128,6 @@ extern "C" {
   #endif
 };
 
-
-struct Hessian {
-  double h[3];
-  double dir[3][3];
-};
-typedef struct Hessian Hessian;  
 
 long eigen (double pos[3][3], double e[3][3], double v[3], 
 	    int checkOrthogonality);

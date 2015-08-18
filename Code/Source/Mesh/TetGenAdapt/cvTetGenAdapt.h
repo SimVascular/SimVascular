@@ -85,6 +85,7 @@ class cvTetGenAdapt: public cvAdaptObject {
     int instep_;
     int outstep_;
     int ndof_;
+    double sphere_[5];
   }  AdaptOptions;
 
 public:

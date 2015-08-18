@@ -78,6 +78,11 @@ cvTetGenAdapt::cvTetGenAdapt()
   options.instep_ = 0;
   options.outstep_ = 0;
   options.ndof_=5;
+  options.sphere_[0] = -1;
+  options.sphere_[1] = 0;
+  options.sphere_[2] = 0;
+  options.sphere_[3] = 0;
+  options.sphere_[4] = 1;
 
   sol_array_ = NULL;
   hessians_array_ = NULL;
@@ -228,10 +233,17 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 
   AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
 
-  if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
+  if (inmesh_ != NULL)
   {
-    fprintf(stderr,"Error: Error when attaching solution to mesh\n");
-    return CV_ERROR;
+    if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching solution to mesh\n");
+      return CV_ERROR;
+    }
+  }
+  else
+  {
+    fprintf(stderr,"Must load a mesh to attach solution to mesh\n");
   }
 
   return CV_OK;
@@ -247,10 +259,17 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 
   AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_);
 
-  if (AdaptUtils_attachArray(ybar_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
+  if (inmesh_ != NULL)
   {
-    fprintf(stderr,"Error: Error when attaching error to mesh\n");
-    return CV_ERROR;
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching error to mesh\n");
+      return CV_ERROR;
+    }
+  }
+  else
+  {
+    fprintf(stderr,"Must load a mesh to attach ybar to mesh\n");
   }
 
   return CV_OK;
@@ -265,6 +284,19 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
     delete [] hessians_;
 
   AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_);
+
+  if (inmesh_ != NULL)
+  {
+    if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",options.nvar_,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching error to mesh\n");
+      return CV_ERROR;
+    }
+  }
+  else
+  {
+    fprintf(stderr,"Must load a mesh to attach hessian to mesh\n");
+  }
 
   return CV_OK;
 }
@@ -374,7 +406,7 @@ int cvTetGenAdapt::CheckOptions()
   fprintf(stderr,"Hmin: %.4f\n",options.hmin_);
   fprintf(stderr,"Ndof: %d\n",options.ndof_);
 
-  return CV_ERROR;
+  return CV_OK;
 }
 
 // -----------------------
@@ -424,7 +456,7 @@ int cvTetGenAdapt::SetErrorMetric()
     else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
       // use the hessians computed from phasta
     }
-    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_) != CV_OK)
+    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_) != CV_OK)
     {
         fprintf(stderr,"Error: Error when setting size field with hessians\n");
         return CV_ERROR;
