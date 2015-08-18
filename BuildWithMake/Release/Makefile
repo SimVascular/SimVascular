@@ -89,6 +89,10 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
 	-cp -f $(TOP)/Bin/adaptor.exe package-release-meshsim-and-parasolid/adaptor-bin.exe
+	-cp -fR $(TCL_BASE)/lib package-release-meshsim-and-parasolid
+	-cp -fR $(TCL_BASE)/bin package-release-meshsim-and-parasolid
+	-cp -fR $(TCL_BASE)/bin/*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -fR $(TCL_BASE)/lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
@@ -115,7 +119,7 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) sv$(SIMVASCULAR_POSTFIX) simvascular-bin.exe $(SIMVASCULAR_VERSION) $(SIMVASCULAR_FULL_VER_NO)
+	-tclsh windows_msi_helpers/makewxs.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) Releases$(SIMVASCULAR_POSTFIX) simvascular-bin.exe $(SIMVASCULAR_VERSION) $(SIMVASCULAR_FULL_VER_NO)
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."

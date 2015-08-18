@@ -151,7 +151,7 @@ puts $outfp "<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'"
 puts $outfp "     xmlns:util=\"http://schemas.microsoft.com/wix/UtilExtension\">"
 
 if {$SIMVASCULAR_VERSION == "simvascular"} {
-  puts $outfp "<Product Name='$SIMVASCULAR_VERSION' Id='5833F929-2D79-4232-ACFC-CF2CFC18E4C8' UpgradeCode='3AFA29BA-2DE8-4004-B5CE-A13160096CE8' Language='1033' Codepage='1252' Version='$SIMVASCULAR_FULL_VER_NO' Manufacturer='SimVascular'>"
+  puts $outfp "<Product Name='$SIMVASCULAR_VERSION' Id='986308C0-4613-427A-8971-B976F6A4A823' UpgradeCode='F55C7E60-DBD1-4D25-BDC0-DCFFF5651920' Language='1033' Codepage='1252' Version='$SIMVASCULAR_FULL_VER_NO' Manufacturer='SimVascular'>"
   puts $outfp "<Package Id='104C5565-1E4D-4C92-852B-FAC30A602DC6' Keywords='Installer' Description='$SIMVASCULAR_VERSION Installer' Comments='SimVascular $SIMVASCULAR_PLATFORM version' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
 } elseif {$SIMVASCULAR_VERSION == "beta"} {
   puts $outfp "<Product Name='$SIMVASCULAR_VERSION' Id='BDC232D8-EBE3-4730-BEC1-01D4991C1EE4' UpgradeCode='DCD272C9-71BC-4917-8EE9-AAE95D2B8578' Language='1033' Codepage='1252' Version='$SIMVASCULAR_FULL_VER_NO' Manufacturer='SimVascular'>"
