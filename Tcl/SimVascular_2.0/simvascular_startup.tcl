@@ -343,7 +343,17 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
           if {$SIMVASCULAR_RELEASE_BUILD == 1} {
             set gExternalPrograms(cvpresolver) [file join $executable_home presolver$execbinext]
             set gExternalPrograms(cvpostsolver) [file join $executable_home postsolver$execbinext]
-            set gExternalPrograms(cvadaptor) [file join $executable_home adaptor$execbinext]
+	    set gExternalPrograms(cvadaptor) [file join $executable_home adaptor$execbinext]
+	    if {$tcl_platform(platform) == "windows"} {
+	      if {![file exists $gExternalPrograms(cvadaptor)]} {
+                  set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			         HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+				 SIMVASCULAR_MESHSIM_MESH_DLL]
+		  if {$meshsimdll != ""} {
+		      set gExternalPrograms(cvadaptor) [file join [file dirname $meshsimdll] [file tail $gExternalPrograms(cvadaptor)]]
+		  }
+	      } 
+	    }
             set gExternalPrograms(cvtetadaptor) [file join $executable_home tetadaptor$execbinext]
             set gExternalPrograms(cvflowsolver) [file join $executable_home flowsolver$execbinext]
             #    set gExternalPrograms(cvsolver) [file join $simvascular_home solver$execext]
