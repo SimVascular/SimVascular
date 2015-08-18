@@ -179,7 +179,7 @@ veryclean:
 	  echo "super cleaning directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) NO_DEPEND=1 veryclean;fi ) ; done
+	  $(MAKE) NO_DEPEND=1 MAKE_STATIC_BUILD=1 veryclean;fi ) ; done
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Lib/*; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f $$fn; done
