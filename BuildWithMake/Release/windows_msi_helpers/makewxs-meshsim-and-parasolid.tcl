@@ -123,10 +123,16 @@ set idno 1000
 set outfp [open tmp/simvascular-meshsim-and-parasolid.wxs w]
 
 puts $outfp "<?xml version='1.0' encoding='windows-1252'?>"
-puts $outfp "<Wix xmlns='http://schemas.microsoft.com/wix/2006/wi'>"
+puts $outfp "<Wix xmlns=\"http://schemas.microsoft.com/wix/2006/wi\""
+puts $outfp "     xmlns:util=\"http://schemas.microsoft.com/wix/UtilExtension\">"
 
 puts $outfp "<Product Name='SimVascular Licensed Modules' Id='84AE32E4-7A5E-45B4-BDA5-08046B90B2DD' UpgradeCode='93A386BE-02E9-4D0C-B0CD-D44AD83F9F33' Language='1033' Codepage='1252' Version='$SIMVASCULAR_RELEASE_VERSION_NO' Manufacturer='SimVascular'>"
+
 puts $outfp "<Package Id='585A82F4-077B-4857-9E0A-B0C87A49DE83' Keywords='Installer' Description='SimVascular Licensed Modules Installer' Comments='SimVascular Licensed Modules' Manufacturer='SimVascular' InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />"
+
+puts $outfp "<WixVariable Id=\"WixUILicenseRtf\" Value=\"License.rtf\" />"
+puts $outfp "<WixVariable Id=\"WixUIBannerBmp\" Value=\"windows_msi_helpers/msi-banner.bmp\" />"
+puts $outfp "<WixVariable Id=\"WixUIDialogBmp\" Value=\"windows_msi_helpers/msi-dialog.bmp\" />"
 
 puts $outfp "<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />"
 puts $outfp "<Property Id='INSTALLLEVEL' Value='999' />"
@@ -186,7 +192,7 @@ puts $outfp "\t</Feature>"
 puts $outfp "</Feature>"
 
 puts $outfp "<Property Id='WIXUI_INSTALLDIR' Value='INSTALLDIR' />		<UIRef Id='WixUI_InstallDir' />"
-#puts $outfp "<Icon Id='idico' SourceFile='[pwd]\\windows_msi_helpers\\simvascular.ico' />"
+puts $outfp "<Icon Id='idico' SourceFile='$pwd\\windows_msi_helpers\\simvascular.ico' />"
 puts $outfp "</Product>"
 puts $outfp "</Wix>"
 

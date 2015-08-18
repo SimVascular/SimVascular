@@ -67,6 +67,7 @@ msiclean-meshsim-and-parasolid:
 	-rm simvascular-meshsim-and-parasolid.msi
 	-rm tmp/simvascular-meshsim-and-parasolid.wixobj
 	-rm tmp/simvascular-meshsim-and-parasolid.wxs
+	-rm tmp/simvascular-meshsim-and-parasolid.wixpdb
 	-rm tmp/uuidgen.exe*
 	-rm tmp/uuidgen.obj*
 
@@ -91,9 +92,9 @@ endif
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -out tmp/simvascular-meshsim-and-parasolid.wixobj tmp/simvascular-meshsim-and-parasolid.wxs
+	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/simvascular-meshsim-and-parasolid.wixobj tmp/simvascular-meshsim-and-parasolid.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe tmp/simvascular-meshsim-and-parasolid.wixobj -ext WixUIExtension -out simvascular-meshsim-and-parasolid.msi
+	-$(WIXUI_PATH)/light.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-meshsim-and-parasolid.msi tmp/simvascular-meshsim-and-parasolid.wixobj
 
 #
 #  Create msi installer for SimVascular
@@ -116,10 +117,9 @@ endif
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) sv$(SIMVASCULAR_POSTFIX) simvascular-bin.exe $(SIMVASCULAR_VERSION) $(SIMVASCULAR_FULL_VER_NO)
 	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -out tmp/sv.wixobj tmp/sv.wxs
+	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe tmp/sv.wixobj -ext WixUIExtension -out $(SIMVASCULAR_VERSION).msi
-#	-$(WIXUI_PATH)/light.exe tmp/sv.wixobj $(WIXUI_WIN_PATH)/WixUIExtension.dll -loc $(WIXUI_WIN_PATH)/WixUI_en-us.wxl -out $(SIMVASCULAR_VERSION).msi
+	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SIMVASCULAR_VERSION).msi tmp/sv.wixobj
 
 msi-bundle:
 	-rm -f tmp/bundle.wixobj

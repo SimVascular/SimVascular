@@ -88,7 +88,6 @@ BuildWithMake/Release/windows_installer_packages/w_fcompxe_redist_intel64_2013_s
 BuildWithMake/Release/windows_installer_packages/wix-simvascular-bundle.wxs -text
 BuildWithMake/Release/windows_installer_scripts/remote-install-x64.sh -text
 BuildWithMake/Release/windows_installer_scripts/remote-install-x86.sh -text
-BuildWithMake/Release/windows_msi_helpers/makewxs-licenses.tcl -text
 BuildWithMake/Release/windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl -text
 BuildWithMake/Release/windows_msi_helpers/makewxs.tcl -text
 BuildWithMake/Release/windows_msi_helpers/msi-banner.bmp -text
