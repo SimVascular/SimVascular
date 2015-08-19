@@ -427,7 +427,9 @@ mark_as_superbuild(
 #-----------------------------------------------------------------------------
 # VTK
 set(SimVascular_DEPENDS "TCL")
-simvascular_external(VTK DOWNLOADABLE)
+simvascular_external(VTK DOWNLOADABLE 
+	COMPONENTS 
+	 vtkFiltersFlowPaths)
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -857,11 +859,26 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK Setup
+find_package(VTK COMPONENTS 
+	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk 
+	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
+	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
 include(${VTK_USE_FILE})
+# foreach( d ${VTK_LIBRARY_DIRS})
+# MESSAGE(" ${d}")
+# endforeach()
+
+# message("${VTK_REQUIRED_EXE_LINKER_FLAGS} | \n ${VTK_REQUIRED_CXX_FLAGS}\n ${VTK_REQUIRED_MODULE_LINKER_FLAGS}")
 
 # SV uses non stanard libraries, this adds them, also adds the intel libraries
-include(VTKSVConfig) 
-set(VTK_LIBRARIES ${VTK_LIBRARIES} ${VTK_EXTRA_LIBS})
+#include(VTKSVConfig) 
+
+file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*.lib")
+# message("${VTK_DIR}\n ${vtk_new_libs}")
+string(REGEX REPLACE [a-z|A-Z]*/ "" vtk_new_libs "${vtk_new_libs}")
+string(REGEX REPLACE "-[0-9]\\.*[0-9]\\.lib" "" vtk_new_libs "${vtk_new_libs}")
+# message("${VTK_DIR}\n${vtk_new_libs}")
+set(VTK_LIBRARIES ${VTK_LIBRARIES} ${vtk_new_libs})
 if(${VTK_DIR} MATCHES "intel")
 	#message(STATUS "VTK appears to be built with intel, adding libraries")
 	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
