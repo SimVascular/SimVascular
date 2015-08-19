@@ -105,7 +105,7 @@ endif()
 ADD_LIBRARY(flowsolver_fortran_lib ${FSRCS})
 #SET_TARGET_PROPERTIES(flowsolver_fortran_lib PROPERTIES COMPILE_FLAGS "-extend_source 132")
 TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
-
+message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
 
 simvascular_add_executable(${FLOWSOLVER_EXE} 
