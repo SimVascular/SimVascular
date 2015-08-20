@@ -135,10 +135,7 @@ cvMeshSimMeshObject::~cvMeshSimMeshObject()
 #endif
 
    if (mesh != NULL) 
-   {
-     fprintf(stderr,"Mesh is not NULL!!!!");
      M_release(mesh);
-   }
    if (model != NULL) GM_release(model);
 
 }

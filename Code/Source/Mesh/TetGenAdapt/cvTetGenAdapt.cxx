@@ -69,6 +69,9 @@ cvTetGenAdapt::cvTetGenAdapt()
   inmesh_  = NULL;
   insurface_mesh_ = NULL;
 
+  outmesh_ = NULL;
+  outsurface_mesh_ = NULL;
+
   options.poly_ = 1;
   options.strategy_ = 1;
   options.ratio_ = 0.2;
@@ -102,10 +105,18 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 
 cvTetGenAdapt::~cvTetGenAdapt()
 {
+  if (meshobject_ != NULL)
+    gRepository->UnRegister(meshobject_->GetName());
+
   if (inmesh_ != NULL)
     inmesh_->Delete();
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
+
+  if (outmesh_ != NULL)
+    outmesh_->Delete();
+  if (outsurface_mesh_ != NULL)
+    outsurface_mesh_->Delete();
 
   if (sol_array_ != NULL)
     sol_array_->Delete();
@@ -120,9 +131,6 @@ cvTetGenAdapt::~cvTetGenAdapt()
     delete [] ybar_;
   if (hessians_ != NULL)
     delete [] hessians_;
-
-  if (meshobject_ != NULL)
-    gRepository->UnRegister(meshobject_->GetName());
 }
 
 cvAdaptObject *cvTetGenAdapt::Copy() const
@@ -306,22 +314,23 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::ReadSolutionFromMesh()
 {
-  if (inmesh_ == NULL)
-  {
-    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
-  }
+  //if (inmesh_ == NULL)
+  //{
+  //  fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+  //  return CV_ERROR;
+  //}
 
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
-    return CV_ERROR;
+  //if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
+  //  return CV_ERROR;
 
-  if (sol_array_ != NULL)
-    sol_array_->Delete();
+  //if (sol_array_ != NULL)
+  //  sol_array_->Delete();
 
-  int numPoints = inmesh_->GetNumberOfPoints();
-  sol_array_ = vtkDoubleArray::New();
-  sol_array_->SetNumberOfComponents(options.nvar_);
+  //int numPoints = inmesh_->GetNumberOfPoints();
+  //sol_array_ = vtkDoubleArray::New();
+  //sol_array_->SetNumberOfComponents(options.nvar_);
 
+  fprintf(stderr,"TODO when solver io is removed\n");
   return CV_OK;
 }
 
@@ -330,15 +339,16 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
 // ---------------
 int cvTetGenAdapt::ReadYbarFromMesh()
 {
-  if (inmesh_ == NULL)
-  {
-    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
-  }
+  //if (inmesh_ == NULL)
+  //{
+  //  fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+  //  return CV_ERROR;
+  //}
 
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
-    return CV_ERROR;
+  //if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+  //  return CV_ERROR;
 
+  fprintf(stderr,"TODO when solver io is removed\n");
   return CV_OK;
 }
 

@@ -104,10 +104,18 @@ cvMeshSimAdapt::cvMeshSimAdapt( const cvMeshSimAdapt& Adapt)
 
 cvMeshSimAdapt::~cvMeshSimAdapt()
 {
+  if (meshobject_ != NULL)
+    gRepository->UnRegister(meshobject_->GetName());
+
   if (inmesh_ != NULL)
     inmesh_->Delete();
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
+
+  if (outmesh_ != NULL)
+    outmesh_->Delete();
+  if (outsurface_mesh_ != NULL)
+    outsurface_mesh_->Delete();
 
   if (sol_array_ != NULL)
     sol_array_->Delete();
@@ -124,12 +132,6 @@ cvMeshSimAdapt::~cvMeshSimAdapt()
     delete [] hessians_;
   if (errormetric_ != NULL)
     delete [] errormetric_;
-
-  //if (meshobject_ != NULL)
-  //{
-  //  fprintf(stderr,"Mesh object not null, unregistering\n");
-  //  gRepository->UnRegister(meshobject_->GetName());
-  //}
 }
 
 cvAdaptObject *cvMeshSimAdapt::Copy() const
@@ -332,6 +334,7 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
  // sol_array_ = vtkDoubleArray::New();
  // sol_array_->SetNumberOfComponents(options.nvar_);
 
+  fprintf(stderr,"TODO when solver io is removed\n");
   return CV_OK;
 }
 
@@ -349,6 +352,7 @@ int cvMeshSimAdapt::ReadYbarFromMesh()
   //if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
   //  return CV_ERROR;
 
+  fprintf(stderr,"TODO when solver io is removed\n");
   return CV_OK;
 }
 
@@ -680,15 +684,6 @@ int cvMeshSimAdapt::TransferRegions()
     return CV_ERROR;
   }
 
-  return CV_OK;
-}
-
-// -----------------------
-//  WriteCompleteMeshFiles
-// -----------------------
-int cvMeshSimAdapt::WriteCompleteMeshFiles(char *dirName)
-{
-  fprintf(stderr,"Not complete yet!\n");
   return CV_OK;
 }
 
