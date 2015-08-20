@@ -88,10 +88,10 @@ void  bzero(void* ptr, size_t sz);
 
 #include "MeshSimInternal_phAdapt.h"
 #include "cvAdaptHelp.h"
-#include "cvSolverIO.h"
 
 #include "SimVascular.h"
 #include "cv_misc_utils.h"
+#include "cvSolverIO.h"
 
 struct simvascular_adaptor_greater_abs {
   bool operator () (const double &a, const double &b)

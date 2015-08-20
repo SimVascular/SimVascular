@@ -1870,3 +1870,14 @@ int cvTetGenMeshObject::Adapt()
 
   return CV_OK;
 }
+
+// --------------------
+//  GetAdaptedMesh
+// --------------------
+int cvTetGenMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd,int numVars)
+{
+  ug->DeepCopy(volumemesh_);
+  pd->DeepCopy(surfacemesh_);
+
+  return CV_OK;
+}

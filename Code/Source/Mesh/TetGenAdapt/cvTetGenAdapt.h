@@ -120,8 +120,10 @@ public:
   //Post Operations
   int GetAdaptedMesh();
   int TransferSolution();
+  int TransferRegions();
 
   //Write Operations
+  int WriteCompleteMeshFiles(char *fileName) {return CV_ERROR;}
   int WriteAdaptedModel(char *fileName);
   int WriteAdaptedMesh(char *fileName);
   int WriteAdaptedSolution(char *fileName);
@@ -130,6 +132,8 @@ private:
   cvMeshObject *meshobject_;
   vtkUnstructuredGrid *inmesh_;
   vtkPolyData *insurface_mesh_;
+  vtkUnstructuredGrid *outmesh_;
+  vtkPolyData *outsurface_mesh_;
 
   vtkDoubleArray *sol_array_;
   vtkDoubleArray *ybar_array_;

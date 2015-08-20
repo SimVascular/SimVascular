@@ -117,8 +117,10 @@ public:
   //Post Operations
   virtual int GetAdaptedMesh()=0;
   virtual int TransferSolution()=0;
+  virtual int TransferRegions()=0;
 
   //Write Operations
+  virtual int WriteCompleteMeshFiles(char *fileName)=0;
   virtual int WriteAdaptedModel(char *fileName)=0;
   virtual int WriteAdaptedMesh(char *fileName)=0;
   virtual int WriteAdaptedSolution(char *fileName)=0;

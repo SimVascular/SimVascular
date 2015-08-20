@@ -86,6 +86,7 @@ class cvMeshSimAdapt: public cvAdaptObject {
     int outstep_;
     int ndof_;
     double sphere_[5];
+    int tmp_old_stuffs_;
   }  AdaptOptions;
 
 public:
@@ -120,8 +121,10 @@ public:
   //Post Operations
   int GetAdaptedMesh();
   int TransferSolution();
+  int TransferRegions();
 
   //Write Operations
+  int WriteCompleteMeshFiles(char *fileName);
   int WriteAdaptedModel(char *fileName);
   int WriteAdaptedMesh(char *fileName);
   int WriteAdaptedSolution(char *fileName);
@@ -129,7 +132,9 @@ public:
 private:
   cvMeshObject *meshobject_;
   vtkUnstructuredGrid *inmesh_;
+  vtkUnstructuredGrid *outmesh_;
   vtkPolyData *insurface_mesh_;
+  vtkPolyData *outsurface_mesh_;
 
   vtkDoubleArray *sol_array_;
   vtkDoubleArray *ybar_array_;

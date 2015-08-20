@@ -42,25 +42,9 @@
 
 #include "vtkGeometryFilter.h"
 #include "vtkCleanPolyData.h"
-
-#ifdef USE_PARASOLID
-  #include "cv_parasolid_utils.h"
-  #include "parasolid_kernel.h"
-  #include "kernel_interface.h"
-#endif
-
-#ifdef USE_PARASOLID
-  #include "SimParasolidKrnl.h"
-  #include "SimParasolidInt.h"
-#endif
-
-#ifdef USE_DISCRETE_MODEL
-  #include "cvMeshSimDiscreteSolidModel.h"
-#endif
-
-//These have been added from ADAPTOR, make sure they are 
-//underneath compiler flags!
-#include "cv_meshsim_adapt_utils.h"
+#include "vtkSmartPointer.h"
+#include "vtkPoints.h"
+#include "vtkIdList.h"
 
 #ifdef WIN32
 #include <windows.h>
@@ -68,26 +52,9 @@
 #include <stdio.h>
 #endif
 
-#ifdef USE_PARASOLID
-  #include "cv_parasolid_utils.h"
-  #include "parasolid_kernel.h"
-  #include "kernel_interface.h"
-#endif
-
-#ifdef USE_PARASOLID
-  #include "SimError.h"
-  #include "SimErrorCodes.h"
-  #include "SimParasolidInt.h"
-  #include "SimParasolidKrnl.h"
-#endif
-
-#ifdef USE_DISCRETE_MODEL
-  #include "SimError.h"
-  #include "SimErrorCodes.h"
-  #include "MeshSim.h"
-  #include "SimModel.h"
-  #include "SimDiscrete.h"
-#endif
+//These have been added from ADAPTOR, make sure they are 
+//underneath compiler flags!
+#include "cv_meshsim_adapt_utils.h"
 
 // -----------
 // cvMeshSimMeshObject
@@ -122,6 +89,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
 
   solidmodeling_kernel_ = SM_KT_PARASOLID;
 
+  simAdapter = NULL;
 }
 
 // -----------
@@ -1853,65 +1821,11 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
  */
 int cvMeshSimMeshObject::Adapt()
 { 
-  fprintf(stdout,"MeshSim Adapt what what!\n");
-
-  return CV_OK;
-}
-
-int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars)
-{
-  if (mesh == NULL)
+  if (simAdapter == NULL)
   {
-    fprintf(stderr,"Must load mesh before setting an array!");
+    fprintf(stdout,"SetErrorMetric must be called prior to adaption!\n");
     return CV_ERROR;
   }
-  if (array == NULL)
-  {
-    fprintf(stderr,"array to be attached is NULL!");
-    return CV_ERROR;
-  }
-
-  if (errorIndicatorID != NULL)
-    MD_deleteMeshDataId(errorIndicatorID);
-
-  errorIndicatorID = MD_newMeshDataId("error indicator");
-
-  int poly=1;
-  attachArray(array,mesh,errorIndicatorID,numVars,poly);
-  
-  return CV_OK;
-}
-
-int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars)
-{
-  return CV_OK;
-}
-
-int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin)
-{
-  int nshg = M_numVertices(mesh);
-  pMSAdapt simAdapter;
-  simAdapter = MSA_new(mesh,1);
-
-  pVertex vertex;
-  VIter vit=M_vertexIter(mesh);
-  int i=0;
-  while ( vertex=VIter_next(vit)) {
-    if (EN_isBLEntity(vertex)) {
-      continue;
-    }
-    double scaled_eigenvecs[3][3];
-    for (int j=0;j<3;j++)
-    {
-      for (int k=0;k<3;k++)
-	scaled_eigenvecs[j][k] = nshg*(j*3+k)+i;
-    }
-    MSA_setAnisoVertexSize(simAdapter, 
-        		   vertex,
-        		   scaled_eigenvecs);
-    ++i;
-  }
-  VIter_delete(vit);
 
   pProgress progressAdapt = Progress_new();
 
@@ -1934,89 +1848,268 @@ int cvMeshSimMeshObject::SetError(double *error_indicator,int lstep,double facto
   MSA_delete(simAdapter);
 
   return CV_OK;
-  //OlD STUFFS
-//  modes = MD_newMeshDataId("number of modes");// required for higher order
-//  nodalgradientID = MD_newMeshDataId( "gradient");
-//  nodalhessianID = MD_newMeshDataId( "hessian");
-//
-//  cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
-//  
-//  char error_tag[28];
-//  error_tag[0]='\0';
-//
-//  cout<<"\nUsing ybar to compute hessians...\n"<<endl;
-//  sprintf(error_tag,"ybar");
-//    
-//  cout<<"\n Reading files:"<<endl;
-//
-//  pMSAdapt simAdapter;
-//  simAdapter = MSA_new(mesh,1);
-//
-//  // need to use only local refinement if boundary layer exists
-//  pVertex v;
-//  VIter vIter=M_vertexIter(mesh);
-//  while(v = VIter_next(vIter)) {
-//    if (EN_isBLEntity(v)) {
-//      MSA_setLocal(simAdapter,1);
-//      cout<<endl<<" ** boundary layer mesh detected, using local refinement **" << endl <<endl;
-//      break;
-//    }
-//  }
-//  VIter_delete(vIter);
-// 
-//  // calculating hessians for ybar field
-//  // first reconstruct gradients and then the hessians 
-//  // also deals with boundary issues &
-//  // applies smoothing procedure for hessians
-//  // (simple average : arithmetic mean)
-//
-//  hessiansFromSolution(mesh,lstep,errorIndicatorID,nodalhessianID,nodalgradientID);
-//  
-//  // compute mesh size-field using hessian strategy (anisotropic adaptation)
-//  // and set it at each vertex
-//  int option = 1;
-//  double sphere[5];
-//  sphere[0] = -1;
-//  sphere[1] = 0;
-//  sphere[2] = 0;
-//  sphere[3] = 0;
-//  sphere[4] = 1;
-//
-//  setSizeFieldUsingHessians(mesh,simAdapter,factor,hmax,hmin,option,sphere,nodalhessianID,nodalgradientID);
-//  
-//
-//  // adaptation
-//  // data clean up MOVED FROM BEFORE ADAPT. IF CRASH TRY MOVING BACK!
-//  cleanAttachedData(mesh,errorIndicatorID,0);
-//  cleanAttachedData(mesh,nodalgradientID,0);
-//  cleanAttachedData(mesh,nodalhessianID,0);
-//
-//  pProgress progressAdapt = Progress_new();
-//
-//  MSA_adapt(simAdapter, progressAdapt);
-//
-//  Progress_delete(progressAdapt);
-//
-//  pProgress progressFix = Progress_new();
-//  // 7.0+ version
-//  // takes case of bad brdy. elements (elements with no interior nodes)
-//  // is this the replacement for 7+?
-//  int dimfilter = 12;
-//  MS_ensureInteriorVertices(mesh,dimfilter,progressFix);
-//  Progress_delete(progressFix);
-//
-//  printf("-- Adaptation Done...\n");
-//  printf(" Total # of elements: %d\n", M_numRegions(mesh));
-//  printf(" Total # of vertices: %d\n\n", M_numVertices(mesh));
-//
-//    
-//  MD_deleteMeshDataId(errorIndicatorID);
-//  MD_deleteMeshDataId(modes);
-//  MD_deleteMeshDataId(nodalgradientID);
-//  MD_deleteMeshDataId(nodalhessianID);
-//
-//  MSA_delete(simAdapter);
-//
-//  return CV_OK;
+}
+
+int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd,int numVars)
+{
+  if (ug == NULL)
+  {
+    fprintf(stderr,"UGrid is NULL!\n");
+    return CV_ERROR;
+  }
+  if (pd == NULL)
+  {
+    fprintf(stderr,"PolyData is NULL!\n");
+    return CV_ERROR;
+  }
+  double xyz[3];
+  vtkIdType pointId;
+  vtkIdType closestPoint;
+
+  vtkSmartPointer<vtkPoints> outPoints = 
+    vtkSmartPointer<vtkPoints>::New();
+
+  int count = 0;
+
+  int nshg_adapted = M_numVertices(mesh);
+
+  vtkIntArray* gid = vtkIntArray::New();
+  gid->SetNumberOfComponents(1);
+  gid->Allocate(nshg_adapted,1000);
+  gid->SetNumberOfTuples(nshg_adapted);
+  gid->SetName("GlobalNodeID");
+
+  outPoints->SetNumberOfPoints(nshg_adapted);
+  VIter myViter;
+  myViter = M_vertexIter(mesh);
+  for (int i = 0; i < nshg_adapted; i++) {
+    pPoint point = V_point (VIter_next(myViter));
+    //int nodenumber = P_id (point);
+    int nodenumber = i + 1;
+    P_setID(point,nodenumber);  
+    double x = P_x (point);
+    double y = P_y (point);
+    double z = P_z (point);
+    //fprintf(stdout,"%i %lf %lf %lf\n",nodenumber,x,y,z);  
+    outPoints->SetPoint(nodenumber-1,x,y,z);
+    gid->SetTuple1(nodenumber-1,nodenumber);
+  } // i 
+  VIter_delete(myViter);
+
+  count = 0;
+
+  int neltot = M_numRegions(mesh);
+
+  //  vtkSmartPointer<vtkIdList> ptids = 
+  //  vtkSmartPointer<vtkIdList>::New();
+  vtkIdList* ptids = vtkIdList::New();
+ 
+  vtkSmartPointer<vtkIntArray> eid = 
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> rid = 
+    vtkSmartPointer<vtkIntArray>::New();
+
+  ug->SetPoints(outPoints);
+  ug->GetPointData()->AddArray(gid);
+
+  ptids->Allocate(10,10);
+  ptids->Initialize();
+  ptids->SetNumberOfIds(4);
+
+  eid->SetNumberOfComponents(1);
+  eid->Allocate(neltot,1000);
+  eid->Initialize();
+  eid->SetName("GlobalElementID");
+
+  rid->SetNumberOfComponents(1);
+  rid->Allocate(neltot,1000);
+  rid->Initialize();
+  rid->SetName("ModelRegionID");
+
+  // only for linear tets
+
+  pRegion myelement = NULL;
+  RIter myRIter = M_regionIter(mesh);
+
+  // only allow one model region for now
+  int curMdlRegID = 1;
+
+  while ((myelement = RIter_next(myRIter)) != NULL) {
+    // the elements are numbered from 1 to N.
+    int curElemID = EN_id((pEntity)myelement)+1;
+    pPList vert_list = R_vertices (myelement,MY_MESHSIM_VERTEX_ORDERING);
+    int num_elem_verts = PList_size (vert_list);
+    // must be linear
+    if (num_elem_verts != 4) {
+      exit(-1);
+    }
+    for (i = 0; i < num_elem_verts; i++) {
+        pVertex vertex = (pVertex)PList_item (vert_list, i);
+        // vtk nodes must start at zero
+        ptids->SetId(i,P_id(V_point(vertex))-1);
+    } // i
+    PList_delete(vert_list);      
+    ug->InsertNextCell(VTK_TETRA,ptids);
+    eid->InsertNextTuple1(curElemID);
+    rid->InsertNextTuple1(curMdlRegID);
+  }
+
+  ptids->Delete();
+   
+  ug->GetCellData()->AddArray(rid);
+  ug->GetCellData()->SetScalars(eid);
+  ug->GetCellData()->SetActiveScalars("GlobalElementID");
+  ug->GetCellData()->CopyAllOn();
+
+  //Now get PolyData surface from mesh
+  vtkSmartPointer<vtkGeometryFilter> surfFilt = vtkSmartPointer<vtkGeometryFilter>::New();
+  surfFilt->MergingOff();
+  surfFilt->SetInputDataObject(ug);
+  surfFilt->Update();
+  vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->PointMergingOff();
+  cleaner->PieceInvariantOff();
+  cleaner->SetInputDataObject(surfFilt->GetOutput());
+  cleaner->Update();
+
+  pd->DeepCopy(cleaner->GetOutput());
+
+  return CV_OK;
+}
+
+int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars,char *arrayName)
+{
+  if (mesh == NULL)
+  {
+    fprintf(stderr,"Must load mesh before setting an array!");
+    return CV_ERROR;
+  }
+  if (array == NULL)
+  {
+    fprintf(stderr,"array to be attached is NULL!");
+    return CV_ERROR;
+  }
+
+  if (!strncmp("error indicator",arrayName,15))
+  {
+    if (errorIndicatorID != NULL)
+      MD_deleteMeshDataId(errorIndicatorID);
+
+    errorIndicatorID = MD_newMeshDataId("error indicator");
+
+    int poly=1;
+    attachArray(array,mesh,errorIndicatorID,numVars,poly);
+  }
+  else 
+  {
+    fprintf(stderr,"Array name is not recognized\n"); 
+    return CV_ERROR;
+  }
+  
+  return CV_OK;
+}
+
+int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayName)
+{
+  fprintf(stdout,"Not yet implemented\n");
+  return CV_OK;
+}
+
+int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double factor, double hmax, double hmin,int old)
+{
+  if (old == 1)
+  {
+    //OLD STUFFS
+    modes = MD_newMeshDataId("number of modes");// required for higher order
+    nodalgradientID = MD_newMeshDataId( "gradient");
+    nodalhessianID = MD_newMeshDataId( "hessian");
+
+    cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
+    
+    char error_tag[28];
+    error_tag[0]='\0';
+
+    cout<<"\nUsing ybar to compute hessians...\n"<<endl;
+    sprintf(error_tag,"ybar");
+      
+    cout<<"\n Reading files:"<<endl;
+
+    simAdapter = MSA_new(mesh,1);
+
+    // need to use only local refinement if boundary layer exists
+    pVertex v;
+    VIter vIter=M_vertexIter(mesh);
+    while(v = VIter_next(vIter)) {
+      if (EN_isBLEntity(v)) {
+        MSA_setLocal(simAdapter,1);
+        cout<<endl<<" ** boundary layer mesh detected, using local refinement **" << endl <<endl;
+        break;
+      }
+    }
+    VIter_delete(vIter);
+ 
+    // calculating hessians for ybar field
+    // first reconstruct gradients and then the hessians 
+    // also deals with boundary issues &
+    // applies smoothing procedure for hessians
+    // (simple average : arithmetic mean)
+
+    hessiansFromSolution(mesh,lstep,errorIndicatorID,nodalhessianID,nodalgradientID);
+    
+    // compute mesh size-field using hessian strategy (anisotropic adaptation)
+    // and set it at each vertex
+    int option = 1;
+    double sphere[5];
+    sphere[0] = -1;
+    sphere[1] = 0;
+    sphere[2] = 0;
+    sphere[3] = 0;
+    sphere[4] = 1;
+
+    setSizeFieldUsingHessians(mesh,simAdapter,factor,hmax,hmin,option,sphere,nodalhessianID,nodalgradientID);
+    
+    // adaptation
+    // data clean up MOVED FROM BEFORE ADAPT. IF CRASH TRY MOVING BACK!
+    cleanAttachedData(mesh,errorIndicatorID,0);
+    cleanAttachedData(mesh,nodalgradientID,0);
+    cleanAttachedData(mesh,nodalhessianID,0);
+
+    MD_deleteMeshDataId(errorIndicatorID);
+    MD_deleteMeshDataId(modes);
+    MD_deleteMeshDataId(nodalgradientID);
+    MD_deleteMeshDataId(nodalhessianID);
+  }
+  else 
+  {
+    int nshg = M_numVertices(mesh);
+    simAdapter = MSA_new(mesh,1);
+
+    pVertex vertex;
+    VIter vit=M_vertexIter(mesh);
+    int i=0;
+    while ( vertex=VIter_next(vit)) {
+      if (EN_isBLEntity(vertex)) {
+        continue;
+      }
+      double scaled_eigenvecs[3][3];
+      fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
+      for (int j=0;j<3;j++)
+      {
+        for (int k=0;k<3;k++)
+        {
+          scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
+          fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
+        }
+        fprintf(stdout,"\n");
+      }
+      fprintf(stdout,"\n");
+      MSA_setAnisoVertexSize(simAdapter, 
+          		   vertex,
+          		   scaled_eigenvecs);
+      ++i;
+    }
+    VIter_delete(vit);
+  }
+  return CV_OK;
 }
 

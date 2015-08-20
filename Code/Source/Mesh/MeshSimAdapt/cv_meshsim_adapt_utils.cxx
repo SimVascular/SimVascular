@@ -2292,6 +2292,16 @@ void setSizeFieldUsingHessians(pMesh mesh,
         hess[i].dir[jRow][iDir]=hess[i].dir[jRow][iDir]*hess[i].h[jRow];
       }
     }
+    fprintf(stdout,"\nHessian 3 by 3 is:\n");
+    for (j=0;j<3;j++)
+    {
+      for (int k=0;k<3;k++)
+      {  
+	fprintf(stdout,"%.4f ",hess[i].dir[j][k]);
+      }
+      fprintf(stdout,"\n");
+    }
+    fprintf(stdout,"\n");
 
     MSA_setAnisoVertexSize(simAdapter, 
         		   vertex,

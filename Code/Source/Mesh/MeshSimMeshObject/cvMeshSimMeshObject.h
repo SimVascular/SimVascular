@@ -52,14 +52,35 @@
 #include "SimMeshingErrorCodes.h"
 #include "SimAdvMeshing.h"
 
+#ifdef USE_MESHSIM_ADAPTOR
+#include "MeshSim.h"
+#include "MeshSimAdapt.h"
+#include "SimMeshTools.h"
+#include "SimParasolidKrnl.h"
+#include "SimAdvMeshing.h"
+
+#include "MeshSimInternal_phAdapt.h"
+#include "cvAdaptHelp.h"
+#endif
+
 #ifdef USE_PARASOLID
+  #include "SimParasolidKrnl.h"
+  #include "SimParasolidInt.h"
+  #include "cv_parasolid_utils.h"
   #include "parasolid_kernel.h"
   #include "kernel_interface.h"
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
 //  #include "SimParasolidKrnl.h"
 #endif
 
 #ifdef USE_DISCRETE_MODEL
   #include "cvMeshSimDiscreteSolidModel.h"
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
+  #include "MeshSim.h"
+  #include "SimModel.h"
+  #include "SimDiscrete.h"
 #endif
 
 class cvMeshSimMeshObject : public cvMeshObject {
@@ -144,9 +165,10 @@ class cvMeshSimMeshObject : public cvMeshObject {
 
   //Adapt functions
   int Adapt();
-  int SetError(double *error_indicator,int lstep,double factor, double hmax, double hmin);
-  int SetArrayOnMesh(double *array,int numVars);
-  int GetArrayOnMesh(double *array,int numVars);
+  int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd,int numVars);
+  int SetErrorMetric(double *error_indicator,int lstep,double factor, double hmax, double hmin,int old);
+  int SetArrayOnMesh(double *array,int numVars,char *arrayName);
+  int GetArrayOnMesh(double *array,int numVars,char *arrayName);
 
   // MESHSIMMESHOBJECT ONLY
   int FindFaceNumber (pRegion region, int pseudofaceID, int *facenum);
@@ -211,6 +233,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   pMeshDataId nodalhessianID;
   pMeshDataId nodalgradientID;
   pMeshDataId phasta_solution;
+  pMSAdapt simAdapter;
 };
 
 

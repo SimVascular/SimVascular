@@ -362,7 +362,7 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   else if (!strncmp(flag,"instep",6)) {
     options.instep_ = (int) value;
   }
-  else if (!strncmp(flag,"outstep",6)) {
+  else if (!strncmp(flag,"outstep",7)) {
     options.outstep_ = (int) value;
   }
   else if (!strncmp(flag,"strategy",8)) {
@@ -380,7 +380,7 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   else if (!strncmp(flag,"hmin",4)) {
     options.hmin_ = (double) value;
   }
-  else if (!strncmp(flag,"ndof",8)) {
+  else if (!strncmp(flag,"ndof",4)) {
     options.ndof_ = (int) value;
   }
   else {
@@ -456,7 +456,8 @@ int cvTetGenAdapt::SetErrorMetric()
     else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
       // use the hessians computed from phasta
     }
-    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_) != CV_OK)
+    options.strategy_ = 1;
+    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_,options.strategy_) != CV_OK)
     {
         fprintf(stderr,"Error: Error when setting size field with hessians\n");
         return CV_ERROR;
@@ -547,7 +548,20 @@ int cvTetGenAdapt::PrintStats()
 // -----------------------
 int cvTetGenAdapt::GetAdaptedMesh()
 {
-  fprintf(stdout,"TODO!\n");
+  if (outmesh_ != NULL)
+    outmesh_->Delete();
+
+  if (outsurface_mesh_ != NULL)
+    outsurface_mesh_->Delete();
+
+  if (meshobject_ == NULL)
+  {
+    fprintf(stderr,"Mesh Object is null!\n");
+    return CV_ERROR;
+  }
+  outmesh_ = vtkUnstructuredGrid::New();
+  outsurface_mesh_ = vtkPolyData::New();
+  meshobject_->GetAdaptedMesh(outmesh_,outsurface_mesh_,options.nvar_);
   return CV_OK;
 }
 
@@ -556,23 +570,71 @@ int cvTetGenAdapt::GetAdaptedMesh()
 // -----------------------
 int cvTetGenAdapt::TransferSolution()
 {
-  //if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.ndof_) != CV_OK)
-  //{
-  //  fprintf(stderr,"ERROR: Solution was not transferred\n");
-  //  return CV_ERROR;
-  //}
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Inmesh is NULL!\n");
+    return CV_ERROR;
+  }
+  if (outmesh_ == NULL)
+  {
+    fprintf(stderr,"Outmesh is NULL!\n");
+    return CV_ERROR;
+  }
+  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.ndof_) != CV_OK)
+  {
+    fprintf(stderr,"ERROR: Solution was not transferred\n");
+    return CV_ERROR;
+  }
 
-  fprintf(stdout,"TODO!\n");
   return CV_OK;
 }
 
+// -----------------------
+//  TransferRegions
+// -----------------------
+int cvTetGenAdapt::TransferRegions()
+{
+  if (insurface_mesh_ == NULL)
+  {
+    fprintf(stderr,"In surfacemesh is NULL!\n");
+    return CV_ERROR;
+  }
+  if (outsurface_mesh_ == NULL)
+  {
+    fprintf(stderr,"Out surfacemesh is NULL!\n");
+    return CV_ERROR;
+  }
+
+  if (AdaptUtils_modelFaceIDTransfer(insurface_mesh_,outsurface_mesh_) != CV_OK)
+  {
+    fprintf(stderr,"ERROR: Regions were not transferred\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
 
 // -----------------------
 //  WriteAdaptedModel
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 {
-  fprintf(stdout,"TODO!\n");
+  if (outsurface_mesh_ == NULL)
+  {
+    if (meshobject_ == NULL)
+    {
+      fprintf(stderr,"Mesh Object is null!\n");
+      return CV_ERROR;
+    }
+
+    this->GetAdaptedMesh();
+  }
+
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer = 
+    vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetInputData(outsurface_mesh_);
+  writer->SetFileName(fileName);
+  writer->Update();
   return CV_OK;
 }
 
@@ -581,7 +643,22 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 {
-  fprintf(stdout,"TODO!\n");
+  if (outmesh_ == NULL)
+  {
+    if (meshobject_ == NULL)
+    {
+      fprintf(stderr,"Mesh Object is null!\n");
+      return CV_ERROR;
+    }
+    this->GetAdaptedMesh();
+  }
+
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
+    vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  writer->SetInputData(outmesh_);
+  writer->SetFileName(fileName);
+  writer->Update();
+
   return CV_OK;
 }
 
