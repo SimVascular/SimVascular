@@ -89,7 +89,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
 
   solidmodeling_kernel_ = SM_KT_PARASOLID;
 
-  simAdapter = NULL;
+  //simAdapter = NULL;
 }
 
 // -----------
@@ -134,7 +134,11 @@ cvMeshSimMeshObject::~cvMeshSimMeshObject()
    }
 #endif
 
-   if (mesh != NULL) M_release(mesh);
+   if (mesh != NULL) 
+   {
+     fprintf(stderr,"Mesh is not NULL!!!!");
+     M_release(mesh);
+   }
    if (model != NULL) GM_release(model);
 
 }
@@ -1821,11 +1825,11 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
  */
 int cvMeshSimMeshObject::Adapt()
 { 
-  if (simAdapter == NULL)
-  {
-    fprintf(stdout,"SetErrorMetric must be called prior to adaption!\n");
-    return CV_ERROR;
-  }
+  //if (simAdapter == NULL)
+  //{
+  //  fprintf(stdout,"SetErrorMetric must be called prior to adaption!\n");
+  //  return CV_ERROR;
+  //}
 
   pProgress progressAdapt = Progress_new();
 
@@ -2017,6 +2021,8 @@ int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayN
 
 int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double factor, double hmax, double hmin,int old)
 {
+  int nshg = M_numVertices(mesh);
+  simAdapter = MSA_new(mesh,1);
   if (old == 1)
   {
     //OLD STUFFS
@@ -2033,8 +2039,6 @@ int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double
     sprintf(error_tag,"ybar");
       
     cout<<"\n Reading files:"<<endl;
-
-    simAdapter = MSA_new(mesh,1);
 
     // need to use only local refinement if boundary layer exists
     pVertex v;
@@ -2081,9 +2085,6 @@ int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double
   }
   else 
   {
-    int nshg = M_numVertices(mesh);
-    simAdapter = MSA_new(mesh,1);
-
     pVertex vertex;
     VIter vit=M_vertexIter(mesh);
     int i=0;
@@ -2092,17 +2093,17 @@ int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double
         continue;
       }
       double scaled_eigenvecs[3][3];
-      fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
+      //fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
       for (int j=0;j<3;j++)
       {
         for (int k=0;k<3;k++)
         {
           scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
-          fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
+          //fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
         }
-        fprintf(stdout,"\n");
+        //fprintf(stdout,"\n");
       }
-      fprintf(stdout,"\n");
+      //fprintf(stdout,"\n");
       MSA_setAnisoVertexSize(simAdapter, 
           		   vertex,
           		   scaled_eigenvecs);

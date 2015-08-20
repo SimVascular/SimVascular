@@ -125,8 +125,11 @@ cvMeshSimAdapt::~cvMeshSimAdapt()
   if (errormetric_ != NULL)
     delete [] errormetric_;
 
-  if (meshobject_ != NULL)
-    gRepository->UnRegister(meshobject_->GetName());
+  //if (meshobject_ != NULL)
+  //{
+  //  fprintf(stderr,"Mesh object not null, unregistering\n");
+  //  gRepository->UnRegister(meshobject_->GetName());
+  //}
 }
 
 cvAdaptObject *cvMeshSimAdapt::Copy() const
@@ -165,10 +168,10 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
 
   mesh_name = "/adapt/internal/meshobject";
 
-  // TODO: Previously had this, but was causing crashing after a few runs.
-  // Didn't check and unregister if didn't work, crashing gone. This 
-  // doesn't seem good. Need to figure out what is really happening.
-  // Register the solid:
+  //// TODO: Previously had this, but was causing crashing after a few runs.
+  //// Didn't check and unregister if didn't work, crashing gone. This 
+  //// doesn't seem good. Need to figure out what is really happening.
+  //// Register the solid:
   //if ( !( gRepository->Register(mesh_name, meshobject_ ) ) ) {
   //  Tcl_AppendResult( interp, "error registering obj ", mesh_name,
   //      	      " in repository", (char *)NULL );
@@ -362,7 +365,6 @@ int cvMeshSimAdapt::ReadYbarFromMesh()
  */
 int cvMeshSimAdapt::SetAdaptOptions(char *flag,double value)
 {
-  fprintf(stderr,"At beginning of options\n");
   if (!strncmp(flag,"poly",4)) {
     options.poly_ = (int) value;
   }
@@ -398,7 +400,6 @@ int cvMeshSimAdapt::SetAdaptOptions(char *flag,double value)
     return CV_ERROR;
   }
 
-  fprintf(stderr,"At end of options\n");
   return CV_OK;
 }
 
@@ -481,8 +482,7 @@ int cvMeshSimAdapt::SetErrorMetric()
       else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
         // use the hessians computed from phasta
       }
-      options.strategy_= 2;
-      if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_,options.strategy_) != CV_OK)
+      if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_,2) != CV_OK)
       {
           fprintf(stderr,"Error: Error when setting size field with hessians\n");
           return CV_ERROR;
@@ -578,10 +578,8 @@ int cvMeshSimAdapt::RunAdaptor()
   {
     meshobject_->SetErrorMetric(ybar_,options.instep_,options.ratio_,options.hmax_,options.hmin_,options.tmp_old_stuffs_);
   }
-  else
-  {
-    meshobject_->Adapt();
-  }
+
+  meshobject_->Adapt();
   return CV_OK;
 }
 

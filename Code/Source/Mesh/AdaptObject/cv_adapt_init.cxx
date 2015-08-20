@@ -411,7 +411,6 @@ static void gdscAdaptPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "SetupMesh\n");
   tcl_printstr(interp, "RunAdaptor\n");
   tcl_printstr(interp, "PrintStats\n");
-  tcl_printstr(interp, "CreateInternalMeshObject\n");
   tcl_printstr(interp, "TransferSolution\n");
   tcl_printstr(interp, "WriteAdaptedModel\n");
   tcl_printstr(interp, "WriteAdaptedMesh\n");
@@ -743,7 +742,6 @@ static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp
     return TCL_ERROR;
   }
 
-  fprintf(stderr,"At end of Init Adapt Options\n");
   return TCL_OK;
 }
 

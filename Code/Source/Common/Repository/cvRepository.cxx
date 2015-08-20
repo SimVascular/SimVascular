@@ -130,15 +130,18 @@ int cvRepository::UnRegister( char *name )
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
   if ( entryPtr == NULL ) {
+    fprintf(stderr,"Entry ptr nul\n");
     return 0;
   } else {
     obj = (cvRepositoryData *) Tcl_GetHashValue( entryPtr );
     if ( obj->NumLocks() > 0 ) {
+      fprintf(stderr,"Num locks greater than zero\n");
       return 0;
     }
     Tcl_DeleteHashEntry( entryPtr );
     delete obj;
     iterValid_ = 0;
+    fprintf(stderr,"Object actually deleted\n");
     return 1;
   }
 }

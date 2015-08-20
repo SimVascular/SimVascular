@@ -355,7 +355,6 @@ int cvTetGenAdapt::ReadYbarFromMesh()
  */
 int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
 {
-  fprintf(stderr,"At beginning of options\n");
   if (!strncmp(flag,"poly",4)) {
     options.poly_ = (int) value;
   }
@@ -388,7 +387,6 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
     return CV_ERROR;
   }
 
-  fprintf(stderr,"At end of options\n");
   return CV_OK;
 }
 

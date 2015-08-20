@@ -676,7 +676,15 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
 
   vtkSmartPointer<vtkDoubleArray> errorMetricArray = 
     vtkSmartPointer<vtkDoubleArray>::New();
-  errorMetricArray->SetNumberOfComponents(3);
+  if (strategy == 1)
+    errorMetricArray->SetNumberOfComponents(3);
+  else if (strategy == 2)
+    errorMetricArray->SetNumberOfComponents(9);
+  else
+  {
+    fprintf(stderr,"Strategy does not exist\n");
+    return CV_ERROR;
+  }
   errorMetricArray->Allocate(nshg,10000);
   errorMetricArray->SetNumberOfTuples(nshg);
   errorMetricArray->SetName("errormetric");
@@ -850,17 +858,17 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
     }
     else if (strategy == 2)
     {
-      fprintf(stdout,"\nHessian for node %d is:\n",i);
+      //fprintf(stdout,"\nHessian for node %d is:\n",i);
       for (j=0;j<3;j++)
       {
 	for (k=0;k<3;k++)
 	{  
-	  fprintf(stdout,"%.4f ",hess[i].dir[j][k]);
+	  //fprintf(stdout,"%.4f ",hess[i].dir[j][k]);
 	  errorMetricArray->SetComponent(i,j*3+k,hess[i].dir[j][k]);
 	}
-	fprintf(stdout,"\n");
+	//fprintf(stdout,"\n");
       }
-      fprintf(stdout,"\n");
+      //fprintf(stdout,"\n");
     }
     
     i++;
