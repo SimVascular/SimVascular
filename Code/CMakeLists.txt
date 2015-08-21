@@ -874,15 +874,15 @@ include(${VTK_USE_FILE})
 
 # SV uses non stanard libraries, this adds them, also adds the intel libraries
 #include(VTKSVConfig) 
-
 file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*TCL*${CMAKE_STATIC_LIBRARY_SUFFIX}")
 file(GLOB_RECURSE vtk_new_libs2 RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*${CMAKE_STATIC_LIBRARY_SUFFIX}")
-set(vtk_new_libs ${vtk_new_libs} ${vtk_new_libs2})
+list(APPEND vtk_new_libs ${vtk_new_libs2})
 string(REGEX REPLACE [a-z|A-Z]*/${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
-string(REGEX REPLACE ${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+if (CMAKE_STATIC_LIBRARY_PREFIX)
+	string(REGEX REPLACE ${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+endif()
 string(REGEX REPLACE "-[0-9]\\.*[0-9]\\${CMAKE_STATIC_LIBRARY_SUFFIX}" "" vtk_new_libs "${vtk_new_libs}")
 list(REMOVE_DUPLICATES vtk_new_libs)
-#message("${VTK_DIR}\n${vtk_new_libs}")
 
 set(VTK_LIBRARIES ${VTK_LIBRARIES} ${vtk_new_libs})
 if(${VTK_DIR} MATCHES "intel")
