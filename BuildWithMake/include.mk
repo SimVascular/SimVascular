@@ -222,13 +222,8 @@ endif
 
 TARGETDIR = .
 
-# -----------------------------------------------------------
-# SVEXTERN_COMPILER_VERSION = { vs10sp1 }  (windows)
-# SVEXTERN_COMPILER_VERSION = {intel_13.0} (linux)
-# -----------------------------------------------------------
-
 ifeq ($(CLUSTER), x64_cygwin)
-  SVEXTERN_COMPILER_VERSION = vs12.5
+  SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 endif
 ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gcc-4.8
