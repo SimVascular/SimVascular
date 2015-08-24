@@ -77,14 +77,14 @@ class cvMeshSimAdapt: public cvAdaptObject {
 
   typedef struct AdaptOptions {
     int poly_;
+    int metric_option_;
     int strategy_;
     double ratio_;
-    int nvar_;
     double hmax_;
     double hmin_;
     int instep_;
     int outstep_;
-    int ndof_;
+    int step_incr_;
     double sphere_[5];
     int tmp_old_stuffs_;
   }  AdaptOptions;
@@ -97,7 +97,8 @@ public:
 
   cvAdaptObject *Copy() const;
   int Copy( const cvAdaptObject& src);
-  int CreateInternalMeshObject(Tcl_Interp *interp);
+  int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
+		  char *solidFileName);
 
   //Setup Operations
   int LoadModel(char *fileName);
@@ -111,7 +112,7 @@ public:
   //Setup Operations
   int SetAdaptOptions(char *flag,double value);
   int CheckOptions();
-  int SetErrorMetric();
+  int SetMetric(char *input,int option,int strategy);
   int SetupMesh();
 
   //Adapt Operations
@@ -128,17 +129,12 @@ public:
   int WriteAdaptedModel(char *fileName);
   int WriteAdaptedMesh(char *fileName);
   int WriteAdaptedSolution(char *fileName);
-
 private:
   cvMeshObject *meshobject_;
   vtkUnstructuredGrid *inmesh_;
   vtkUnstructuredGrid *outmesh_;
   vtkPolyData *insurface_mesh_;
   vtkPolyData *outsurface_mesh_;
-
-  vtkDoubleArray *sol_array_;
-  vtkDoubleArray *ybar_array_;
-  vtkDoubleArray *hessians_array_;
 
   double *sol_;
   double *ybar_;

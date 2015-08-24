@@ -165,8 +165,8 @@ class cvMeshSimMeshObject : public cvMeshObject {
 
   //Adapt functions
   int Adapt();
-  int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd,int numVars);
-  int SetErrorMetric(double *error_indicator,int lstep,double factor, double hmax, double hmin,int old);
+  int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd);
+  int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy,int old);
   int SetArrayOnMesh(double *array,int numVars,char *arrayName);
   int GetArrayOnMesh(double *array,int numVars,char *arrayName);
 

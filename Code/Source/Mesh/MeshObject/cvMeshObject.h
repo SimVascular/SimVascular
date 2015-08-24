@@ -138,8 +138,8 @@ public:
 
   //Adapt Functions
   virtual int Adapt() = 0;
-  virtual int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd,int numVars) = 0;
-  virtual int SetErrorMetric(double *error_indicator,int lstep,double factor, double hmax, double hmin,int old) = 0;
+  virtual int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd) = 0;
+  virtual int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy,int old) = 0;
   virtual int SetArrayOnMesh(double *array,int numVars,char *arrayName) = 0;
   virtual int GetArrayOnMesh(double *array,int numVars,char *arrayName) = 0;
 

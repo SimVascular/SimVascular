@@ -115,6 +115,9 @@ int AdaptUtils_getHessiansFromPhasta(double *hessiansFromPhasta,
 
 int AdaptUtils_getHessian (vtkDoubleArray *Hessians,vtkIdType v, double T[3][3]);
 
+int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin, 
+    int end, int incr);
+
 // attaches array to mesh entities
 // `dataID' is the MeshDataId
 // `nVar' is the no. of variables at each dof

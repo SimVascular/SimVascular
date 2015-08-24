@@ -215,6 +215,104 @@ int AdaptUtils_getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3][3])
   return CV_OK;
 }
 
+// ----------------------------
+// averageSolutionsOnMesh()
+// ---------------------------
+/**
+ * @brief This averages the solutions on the mesh into within the given
+ * steps and increment into one solution. 
+ * @param begin first step to use
+ * @param end last step to use
+ * @param incr increment to avg with
+ */
+
+int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin,
+    int end, int incr)
+{
+  //Essentially creating our own ybar array, 
+  //Component 1: vel_x
+  //Component 2: vel_y
+  //Component 3: vel_z
+  //Component 4: Pressure
+  //Component 5: vel_magnitude
+  int numPoints = mesh->GetNumberOfPoints();
+
+  vtkSmartPointer<vtkDoubleArray> averageArray = 
+    vtkSmartPointer<vtkDoubleArray>::New(); 
+  averageArray->SetNumberOfComponents(5);
+  averageArray->Allocate(numPoints,10000);
+  averageArray->SetNumberOfTuples(numPoints);
+  averageArray->SetName("avg_sols");
+  for (int i=0; i<numPoints;i++)
+    averageArray->InsertValue(i,0);
+  
+  int numArrays = 0;
+  for (int step_num = begin;step_num <= end;step_num += incr)
+  {
+    vtkDoubleArray *tmpVelArray;
+    vtkDoubleArray *tmpPressureArray;
+    vtkSmartPointer<vtkDoubleArray> tmpArray = 
+      vtkSmartPointer<vtkDoubleArray>::New();;
+    averageArray->SetNumberOfComponents(5);
+    averageArray->Allocate(numPoints,10000);
+    averageArray->SetNumberOfTuples(numPoints);
+    char vel_step[80];
+    char press_step[80];
+    sprintf(vel_step,"%s_%05i","velocity",step_num);
+    sprintf(press_step,"%s_%05i","pressure",step_num);
+    if (AdaptUtils_checkArrayExists(mesh,0,vel_step) != CV_OK)
+    {
+      fprintf(stderr,"Array %s not existent on mesh\n",vel_step);
+      return CV_ERROR;
+    }
+    tmpVelArray = vtkDoubleArray::SafeDownCast(
+	mesh->GetPointData()->GetArray(vel_step));
+    if (AdaptUtils_checkArrayExists(mesh,0,press_step) != CV_OK)
+    {
+      fprintf(stderr,"Array %s not existent on mesh\n",press_step);
+      return CV_ERROR;
+    }
+    tmpPressureArray = vtkDoubleArray::SafeDownCast(
+	mesh->GetPointData()->GetArray(press_step));
+    for (int i = 0;i < numPoints;i++)
+    {
+      double vel_x = tmpVelArray->GetComponent(i,0);
+      tmpArray->InsertComponent(i,0,vel_x);
+
+      double vel_y = tmpVelArray->GetComponent(i,0);
+      tmpArray->InsertComponent(i,1,vel_y);
+
+      double vel_z = tmpVelArray->GetComponent(i,0);
+      tmpArray->InsertComponent(i,2,vel_z);
+
+      double pressure = tmpPressureArray->GetValue(i);
+      tmpArray->InsertComponent(i,3,pressure);
+
+      double vel_mag = sqrt(pow(vel_x,2) + pow(vel_y,2) + pow(vel_z,2));
+      tmpArray->InsertComponent(i,4,vel_mag);
+
+      for (int j=0;j <5;j++)
+      {
+        double tmp = averageArray->GetComponent(i,j);
+        averageArray->InsertComponent(i,j,tmp+tmpArray->GetComponent(i,j));
+      }
+    }
+    numArrays++;
+  }
+  
+  for (int i=0; i<numPoints;i++)
+  {
+    for (int j=0;j <5;j++)
+    {
+      double tmp = averageArray->GetComponent(i,j);
+      averageArray->InsertComponent(i,j,tmp/numArrays);
+    }
+  }
+
+  mesh->GetPointData()->AddArray(averageArray);
+  return CV_OK;
+}
+
 //
 // -----------------------------
 // attachArray()
@@ -467,34 +565,34 @@ int AdaptUtils_gradientsFromFilter(vtkUnstructuredGrid *mesh)
     vtkSmartPointer<vtkGradientFilter>::New();
   vtkSmartPointer<vtkDoubleArray> errorForGradient = 
     vtkSmartPointer<vtkDoubleArray>::New();
-  vtkSmartPointer<vtkDoubleArray> newError = 
+  vtkSmartPointer<vtkDoubleArray> speed = 
     vtkSmartPointer<vtkDoubleArray>::New();
 
   numPoints = mesh->GetNumberOfPoints();
 
-  errorForGradient = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("error"));
+  errorForGradient = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("avg_sols"));
 
   //This is to contain the speed from the error array from restart
-  newError->SetNumberOfComponents(1);
-  newError->Allocate(numPoints,10000);
-  newError->SetNumberOfTuples(numPoints);
-  newError->SetName("errorforvtk");
+  speed->SetNumberOfComponents(1);
+  speed->Allocate(numPoints,10000);
+  speed->SetNumberOfTuples(numPoints);
+  speed->SetName("speed");
   //The fifth component of the error array contains the speed info
   for (vtkId=0;vtkId<numPoints;vtkId++)
   {
-    newError->SetTuple1(vtkId,errorForGradient->GetComponent(vtkId,4));
+    speed->SetTuple1(vtkId,errorForGradient->GetComponent(vtkId,4));
   }
-  mesh->GetPointData()->AddArray(newError);
-  mesh->GetPointData()->SetActiveScalars("errorforvtk");
+  mesh->GetPointData()->AddArray(speed);
+  mesh->GetPointData()->SetActiveScalars("speed");
 
   calcGradient->SetInputData(mesh);
-  calcGradient->SetInputScalars(0,"errorforvtk");
+  calcGradient->SetInputScalars(0,"speed");
   calcGradient->SetResultArrayName("gradients");
   calcGradient->Update();
 
   //The new mesh has gradient field data attached to it
+  mesh->GetCellData()->RemoveArray("speed");
   mesh->DeepCopy(calcGradient->GetOutput());
-  mesh->GetCellData()->RemoveArray("errorforvtk");
 
   return CV_OK;
 }
@@ -677,7 +775,7 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   vtkSmartPointer<vtkDoubleArray> errorMetricArray = 
     vtkSmartPointer<vtkDoubleArray>::New();
   if (strategy == 1)
-    errorMetricArray->SetNumberOfComponents(3);
+    errorMetricArray->SetNumberOfComponents(1);
   else if (strategy == 2)
     errorMetricArray->SetNumberOfComponents(9);
   else
@@ -851,10 +949,13 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
 
     if (strategy == 1)
     {
+      double value = 0;
       for (j=0;j<3;j++)
       {
-	errorMetricArray->SetComponent(i,j,ABS(hess[i].h[j]));
+	 value += ABS(hess[i].h[j]);
       }
+      value = value/3;
+      errorMetricArray->SetValue(i,value);
     }
     else if (strategy == 2)
     {

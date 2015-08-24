@@ -74,26 +74,23 @@ cvTetGenAdapt::cvTetGenAdapt()
 
   options.poly_ = 1;
   options.strategy_ = 1;
+  options.option_ = 1;
   options.ratio_ = 0.2;
-  options.nvar_ = 5;
   options.hmax_ = 1;
   options.hmin_ = 1;
   options.instep_ = 0;
   options.outstep_ = 0;
-  options.ndof_=5;
+  options.step_incr_ = 1;
   options.sphere_[0] = -1;
   options.sphere_[1] = 0;
   options.sphere_[2] = 0;
   options.sphere_[3] = 0;
   options.sphere_[4] = 1;
 
-  sol_array_ = NULL;
-  hessians_array_ = NULL;
-  ybar_array_ = NULL;
-
   sol_ = NULL;
   hessians_ = NULL;
   ybar_ = NULL;
+  errormetric_ = NULL;
 }
 
 cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
@@ -118,19 +115,14 @@ cvTetGenAdapt::~cvTetGenAdapt()
   if (outsurface_mesh_ != NULL)
     outsurface_mesh_->Delete();
 
-  if (sol_array_ != NULL)
-    sol_array_->Delete();
-  if (hessians_array_ != NULL)
-    hessians_array_->Delete();
-  if (ybar_array_ != NULL)
-    ybar_array_->Delete();
-
   if (sol_ != NULL)
     delete [] sol_;
   if (ybar_ != NULL)
     delete [] ybar_;
   if (hessians_ != NULL)
     delete [] hessians_;
+  if (errormetric_ != NULL)
+    delete [] errormetric_;
 }
 
 cvAdaptObject *cvTetGenAdapt::Copy() const
@@ -151,7 +143,9 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
-int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp)
+int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
+		char *meshFileName,
+		char *solidFileName)
 {
   char* mesh_name = NULL;
   if (meshobject_ != NULL)
@@ -243,7 +237,8 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 
   if (inmesh_ != NULL)
   {
-    if (AdaptUtils_attachArray(sol_,inmesh_,"solution",options.ndof_,options.poly_) != CV_OK)
+    int nVar = 5;//Number of variables in solution
+    if (AdaptUtils_attachArray(sol_,inmesh_,"solution",nVar,options.poly_) != CV_OK)
     {
       fprintf(stderr,"Error: Error when attaching solution to mesh\n");
       return CV_ERROR;
@@ -269,7 +264,8 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 
   if (inmesh_ != NULL)
   {
-    if (AdaptUtils_attachArray(ybar_,inmesh_,"error",options.nvar_,options.poly_) != CV_OK)
+    int nVar=5; //Number of variables in ybar
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
     {
       fprintf(stderr,"Error: Error when attaching error to mesh\n");
       return CV_ERROR;
@@ -295,7 +291,8 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 
   if (inmesh_ != NULL)
   {
-    if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",options.nvar_,options.poly_) != CV_OK)
+    int nVar=9;
+    if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",nVar,options.poly_) != CV_OK)
     {
       fprintf(stderr,"Error: Error when attaching error to mesh\n");
       return CV_ERROR;
@@ -322,13 +319,6 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
 
   //if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
   //  return CV_ERROR;
-
-  //if (sol_array_ != NULL)
-  //  sol_array_->Delete();
-
-  //int numPoints = inmesh_->GetNumberOfPoints();
-  //sol_array_ = vtkDoubleArray::New();
-  //sol_array_->SetNumberOfComponents(options.nvar_);
 
   fprintf(stderr,"TODO when solver io is removed\n");
   return CV_OK;
@@ -374,23 +364,20 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   else if (!strncmp(flag,"outstep",7)) {
     options.outstep_ = (int) value;
   }
+  else if (!strncmp(flag,"step_incr",9)) {
+    options.step_incr_ = (int) value;
+  }
   else if (!strncmp(flag,"strategy",8)) {
     options.strategy_ = (int) value;
   }
   else if (!strncmp(flag,"ratio",5)) {
     options.ratio_ = (double) value;
   }
-  else if (!strncmp(flag,"nvar",4)) {
-    options.nvar_ = (int) value;
-  }
   else if (!strncmp(flag,"hmax",4)) {
     options.hmax_ = (double) value;
   }
   else if (!strncmp(flag,"hmin",4)) {
     options.hmin_ = (double) value;
-  }
-  else if (!strncmp(flag,"ndof",4)) {
-    options.ndof_ = (int) value;
   }
   else {
     fprintf(stderr,"Flag given is not a valid adapt option\n");
@@ -409,18 +396,16 @@ int cvTetGenAdapt::CheckOptions()
   fprintf(stderr,"Poly: %d\n",options.poly_);
   fprintf(stderr,"Strategy: %d\n",options.strategy_);
   fprintf(stderr,"Ratio: %.4f\n",options.ratio_);
-  fprintf(stderr,"NVar: %d\n",options.nvar_);
   fprintf(stderr,"Hmax: %.4f\n",options.hmax_);
   fprintf(stderr,"Hmin: %.4f\n",options.hmin_);
-  fprintf(stderr,"Ndof: %d\n",options.ndof_);
 
   return CV_OK;
 }
 
 // -----------------------
-//  SetErrorMetric
+//  SetMetric
 // -----------------------
-int cvTetGenAdapt::SetErrorMetric()
+int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
 {
   if (inmesh_ == NULL)
   {
@@ -569,7 +554,7 @@ int cvTetGenAdapt::GetAdaptedMesh()
   }
   outmesh_ = vtkUnstructuredGrid::New();
   outsurface_mesh_ = vtkPolyData::New();
-  meshobject_->GetAdaptedMesh(outmesh_,outsurface_mesh_,options.nvar_);
+  meshobject_->GetAdaptedMesh(outmesh_,outsurface_mesh_);
   return CV_OK;
 }
 
@@ -588,7 +573,8 @@ int cvTetGenAdapt::TransferSolution()
     fprintf(stderr,"Outmesh is NULL!\n");
     return CV_ERROR;
   }
-  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.ndof_) != CV_OK)
+  int nVar = 5;// Number of variables in sol
+  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,nVar) != CV_OK)
   {
     fprintf(stderr,"ERROR: Solution was not transferred\n");
     return CV_ERROR;

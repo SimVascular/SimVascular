@@ -1851,7 +1851,7 @@ int cvMeshSimMeshObject::Adapt()
   return CV_OK;
 }
 
-int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd,int numVars)
+int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
   if (ug == NULL)
   {
@@ -2016,7 +2016,7 @@ int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayN
   return CV_OK;
 }
 
-int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double factor, double hmax, double hmin,int old)
+int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy, int old)
 {
   int nshg = M_numVertices(mesh);
   simAdapter = MSA_new(mesh,1);
@@ -2089,21 +2089,33 @@ int cvMeshSimMeshObject::SetErrorMetric(double *error_indicator,int lstep,double
       if (EN_isBLEntity(vertex)) {
         continue;
       }
-      double scaled_eigenvecs[3][3];
-      //fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
-      for (int j=0;j<3;j++)
+      if (strategy == 1) 
       {
-        for (int k=0;k<3;k++)
-        {
-          scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
-          //fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
-        }
-        //fprintf(stdout,"\n");
+	MSA_setVertexSize(simAdapter,vertex,error_indicator[i]);
       }
-      //fprintf(stdout,"\n");
-      MSA_setAnisoVertexSize(simAdapter, 
-          		   vertex,
-          		   scaled_eigenvecs);
+      else if (strategy == 2)
+      {
+	 double scaled_eigenvecs[3][3];
+	 //fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
+	 for (int j=0;j<3;j++)
+	 {
+	   for (int k=0;k<3;k++)
+	   {
+	     scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
+	     //fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
+	   }
+	   //fprintf(stdout,"\n");
+	 }
+	 //fprintf(stdout,"\n");
+	 MSA_setAnisoVertexSize(simAdapter, 
+			      vertex,
+			      scaled_eigenvecs);
+      }
+      else 
+      {
+	fprintf(stderr,"Strategy is not available\n");
+	return CV_ERROR;
+      }
       ++i;
     }
     VIter_delete(vit);
