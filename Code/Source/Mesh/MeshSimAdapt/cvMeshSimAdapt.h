@@ -126,7 +126,7 @@ public:
 
   //Write Operations
   int WriteCompleteMeshFiles(char *dirName,int numFaces,
-      int *faceids,char *facenames) {return CV_ERROR;}
+      int *faceids,char facenames[3][80]) {return CV_ERROR;}
   int WriteAdaptedModel(char *fileName);
   int WriteAdaptedMesh(char *fileName);
   int WriteAdaptedSolution(char *fileName);

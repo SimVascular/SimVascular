@@ -687,7 +687,7 @@ int cvTetGenAdapt::TransferRegions()
 //  WriteCompleteMeshFiles
 // -----------------------
 int cvTetGenAdapt::WriteCompleteMeshFiles(char *dirName,int numFaces,
-    int *faceids,char *facenames)
+    int *faceids,char facenames[3][80])
 {
   if (this->GetAdaptedMesh() != CV_OK)
     return CV_ERROR;
@@ -705,6 +705,7 @@ int cvTetGenAdapt::WriteCompleteMeshFiles(char *dirName,int numFaces,
 
   for (int i=0;i<numFaces;i++)
   {
+    fprintf(stderr,"WHAT IS FACENAME %s\n",facenames[i]);
     char modelFaceName[80];
     sprintf(modelFaceName,"%s/mesh-complete/mesh-surfaces/%s.vtp",dirName,facenames[i]);
     if (this->WriteAdaptedModelFace(faceids[i],modelFaceName) != CV_OK)

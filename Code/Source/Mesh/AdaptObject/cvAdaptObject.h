@@ -123,7 +123,7 @@ public:
 
   //Write Operations
   virtual int WriteCompleteMeshFiles(char *dirName,int numFaces,
-      int *faceids,char *facenames)=0;
+      int *faceids,char facenames[3][80])=0;
   virtual int WriteAdaptedModel(char *fileName)=0;
   virtual int WriteAdaptedMesh(char *fileName)=0;
   virtual int WriteAdaptedSolution(char *fileName)=0;
