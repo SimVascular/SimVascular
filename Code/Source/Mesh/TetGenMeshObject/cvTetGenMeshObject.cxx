@@ -1865,6 +1865,28 @@ int cvTetGenMeshObject::Adapt()
 
   cout<<"Done with Adaptive Mesh..."<<endl;
 
+  if (outmesh_ == NULL) {
+    return CV_ERROR;
+  }
+  if (surfacemesh_ != NULL)
+    surfacemesh_->Delete();
+
+  if (volumemesh_ != NULL)
+    volumemesh_->Delete();
+
+  surfacemesh_ = vtkPolyData::New();
+  volumemesh_ = vtkUnstructuredGrid::New();
+  if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
+	&numBoundaryRegions_,1) != CV_OK)
+    return CV_ERROR;
+
+  if (TGenUtils_ResetOriginalRegions(surfacemesh_,originalpolydata_,
+	"ModelFaceID","ModelFaceID") 
+      != CV_OK)
+  {
+    fprintf(stderr,"Error while resetting the original region values\n");
+    return CV_ERROR;
+  }
   return CV_OK;
 }
 
@@ -1909,20 +1931,12 @@ int cvTetGenMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
   if (outmesh_ == NULL) {
     return CV_ERROR;
   }
-  if (surfacemesh_ != NULL)
-  {
-    surfacemesh_->Delete();
-  }
-  if (volumemesh_ != NULL)
-  {
-    volumemesh_->Delete();
-  }
-
-  surfacemesh_ = vtkPolyData::New();
-  volumemesh_ = vtkUnstructuredGrid::New();
-  if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
-	&numBoundaryRegions_,1) != CV_OK)
+  if (volumemesh_ == NULL) {
     return CV_ERROR;
+  }
+  if (surfacemesh_ == NULL) {
+    return CV_ERROR;
+  }
 
   ug->DeepCopy(volumemesh_);
   pd->DeepCopy(surfacemesh_);

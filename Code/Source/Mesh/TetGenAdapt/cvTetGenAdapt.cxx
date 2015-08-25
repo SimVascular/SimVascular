@@ -39,6 +39,7 @@
 
 #include "cvTetGenAdapt.h"
 #include "cv_tetgenmesh_utils.h"
+#include "cv_mesh_init.h"
 
 #include "cv_adapt_utils.h"
 
@@ -175,6 +176,9 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   //  return CV_ERROR;
   //}
   gRepository->Register(mesh_name, meshobject_ );
+  Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
+  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
+		     (ClientData)meshobject_, DeletegdscMesh );
 
  return CV_OK;
 }
@@ -597,7 +601,6 @@ int cvTetGenAdapt::RunAdaptor()
   }
 
   meshobject_->Adapt();
-  meshobject_->WriteMesh("dummy",0);
 
   return CV_OK;
 }
@@ -677,47 +680,6 @@ int cvTetGenAdapt::TransferRegions()
   if (AdaptUtils_modelFaceIDTransfer(insurface_mesh_,outsurface_mesh_) != CV_OK)
   {
     fprintf(stderr,"ERROR: Regions were not transferred\n");
-    return CV_ERROR;
-  }
-
-  return CV_OK;
-}
-
-// -----------------------
-//  WriteCompleteMeshFiles
-// -----------------------
-int cvTetGenAdapt::WriteCompleteMeshFiles(char *dirName,int numFaces,
-    int *faceids,char facenames[3][80])
-{
-  if (this->GetAdaptedMesh() != CV_OK)
-    return CV_ERROR;
-
-  char meshFileName[80];
-  char modelFileName[80];
-  sprintf(meshFileName,"%s/mesh-complete/mesh-complete.mesh.vtu",dirName);
-  sprintf(modelFileName,"%s/mesh-complete/mesh-complete.exterior.vtp",dirName);
-
-  if (this->WriteAdaptedMesh(meshFileName) != CV_OK)
-  {
-    fprintf(stderr,"Error in writing mesh\n");
-      return CV_ERROR;
-  }
-
-  for (int i=0;i<numFaces;i++)
-  {
-    fprintf(stderr,"WHAT IS FACENAME %s\n",facenames[i]);
-    char modelFaceName[80];
-    sprintf(modelFaceName,"%s/mesh-complete/mesh-surfaces/%s.vtp",dirName,facenames[i]);
-    if (this->WriteAdaptedModelFace(faceids[i],modelFaceName) != CV_OK)
-    {
-      fprintf(stderr,"Error in writing model face\n");
-      return CV_ERROR;
-    }
-  }
-
-  if (this->WriteAdaptedModel(modelFileName) != CV_OK)
-  {
-    fprintf(stderr,"Error in writing model model\n");
     return CV_ERROR;
   }
 

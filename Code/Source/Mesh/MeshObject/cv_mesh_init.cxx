@@ -65,8 +65,6 @@ int cvMesh_SetMeshKernelCmd( ClientData clientData, Tcl_Interp *interp,
 
 int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
-int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
-		     int argc, CONST84 char *argv[] );
 int cvMesh_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] );
 int cvMesh_LogonCmd( ClientData clientData, Tcl_Interp *interp,
@@ -148,7 +146,6 @@ static int cvMesh_AdaptMtd( ClientData clientData, Tcl_Interp *interp,
 
 static void gdscMeshPrintMethods( Tcl_Interp *interp );
 
-void DeletegdscMesh( ClientData clientData );
 
 // ----------
 // cvMesh_Init

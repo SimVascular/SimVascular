@@ -41,5 +41,10 @@
 
 extern "C" CV_DLL_EXPORT int Gdscmesh_Init( Tcl_Interp *interp );
 
+int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
+		     int argc, CONST84 char *argv[] );
+
+void DeletegdscMesh( ClientData clientData );
+
 #endif // __CVMESH_INIT_H
 
