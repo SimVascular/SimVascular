@@ -1006,11 +1006,13 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
        != TCL_OK ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     ARG_FreeListArgvs( table_size, arg_table );
+    delete [] values;
     return TCL_ERROR;
   }
 
   if (numValues != valueList.argc) {
      Tcl_AppendResult( interp, "error in values list", (char *)NULL );
+     delete [] values;
      return TCL_ERROR;
   }
 
@@ -1020,8 +1022,11 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
   if ( geom->SetMeshOptions(flags,numValues,values) == CV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
+    delete [] values;
     return TCL_ERROR;
   }
+
+  delete [] values;
 
   return TCL_OK;
 }
@@ -1539,11 +1544,13 @@ static int cvMesh_SetBoundaryLayerMtd( ClientData clientData, Tcl_Interp *interp
        != TCL_OK ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     ARG_FreeListArgvs( table_size, arg_table );
+    delete [] H;
     return TCL_ERROR;
   }
 
   if (numH != Hlist.argc) {
      Tcl_AppendResult( interp, "error in H list", (char *)NULL );
+     delete [] H;
      return TCL_ERROR;
   }
 
@@ -1552,6 +1559,7 @@ static int cvMesh_SetBoundaryLayerMtd( ClientData clientData, Tcl_Interp *interp
   if ( geom->SetBoundaryLayer(type,id,side,nL,H) == CV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
+    delete [] H;
     return TCL_ERROR;
   }
 
@@ -1597,11 +1605,13 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
        != TCL_OK ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     ARG_FreeListArgvs( table_size, arg_table );
+    delete [] walls;
     return TCL_ERROR;
   }
 
   if (numWalls != wallsList.argc) {
      Tcl_AppendResult( interp, "error in H list", (char *)NULL );
+     delete [] walls;
      return TCL_ERROR;
   }
 
@@ -1610,6 +1620,7 @@ static int cvMesh_SetWallsMtd( ClientData clientData, Tcl_Interp *interp,
   if ( geom->SetWalls(numWalls,walls) == CV_ERROR ) {
     Tcl_AppendResult( interp, "error in method ",
 		      (char *)NULL );
+    delete [] walls;
     return TCL_ERROR;
   }
 

@@ -103,6 +103,8 @@ static int cvAdapt_GetAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_TransferSolutionMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
+static int cvAdapt_TransferRegionsMtd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
 static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *interp,
@@ -167,6 +169,8 @@ int Adapt_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "GetAdaptedMesh", cvAdapt_GetAdaptedMeshMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "TransferSolution", cvAdapt_TransferSolutionMtd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
+  Tcl_CreateCommand( interp, "TransferRegions", cvAdapt_TransferRegionsMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
   Tcl_CreateCommand( interp, "WriteAdaptedModel", cvAdapt_WriteAdaptedModelMtd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
@@ -358,6 +362,10 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     if ( cvAdapt_TransferSolutionMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
+  } else if ( Tcl_StringMatch( argv[1], "TransferRegions" ) ) {
+    if ( cvAdapt_TransferRegionsMtd( clientData, interp, argc, argv ) != TCL_OK ) {
+      return TCL_ERROR;
+    }
   } else if ( Tcl_StringMatch( argv[1], "WriteAdaptedModel" ) ) {
     if ( cvAdapt_WriteAdaptedModelMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
@@ -367,7 +375,7 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "WriteAdaptedSolution" ) ) {
-    if ( cvAdapt_TransferSolutionMtd( clientData, interp, argc, argv ) != TCL_OK ) {
+    if ( cvAdapt_WriteAdaptedSolutionMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else {
@@ -412,6 +420,7 @@ static void gdscAdaptPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "RunAdaptor\n");
   tcl_printstr(interp, "PrintStats\n");
   tcl_printstr(interp, "TransferSolution\n");
+  tcl_printstr(interp, "TransferRegions\n");
   tcl_printstr(interp, "WriteAdaptedModel\n");
   tcl_printstr(interp, "WriteAdaptedMesh\n");
   tcl_printstr(interp, "WriteAdaptedSolution\n");
@@ -770,7 +779,7 @@ static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
 
   char *usage;
 
-  int table_sz = 2;
+  int table_sz = 3;
   ARG_Entry arg_table[] = {
     { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
     { "-option", INT_Type, &option, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
@@ -873,6 +882,115 @@ int cvAdapt_TransferSolutionMtd( ClientData clientData, Tcl_Interp *interp,
   } else {
     return TCL_ERROR;
   }
+}
+
+// ----------------
+// cvAdapt_TransferRegionsMtd
+// ----------------
+int cvAdapt_TransferRegionsMtd( ClientData clientData, Tcl_Interp *interp,
+		      int argc, CONST84 char *argv[] )
+{
+  cvAdaptObject *geom = (cvAdaptObject *)clientData;
+
+  if (geom->TransferRegions() == CV_OK) {
+    return TCL_OK;
+  } else {
+    return TCL_ERROR;
+  }
+}
+
+// ----------------
+// cvAdapt_WriteCompleteMeshFilesMtd
+// ----------------
+static int cvAdapt_WriteCompleteMeshFilesMtd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *fileName = NULL;
+  ARG_List faceIdList;
+  ARG_List faceNameList;
+
+  char *usage;
+
+  int table_sz = 3;
+  ARG_Entry arg_table[] = {
+    { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-faceids", LIST_Type, &faceIdList, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-facenames", LIST_Type, &faceNameList, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+  };
+
+  usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
+  if ( argc == 2 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 2,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  if (faceIdList.argc == 0) {
+      ARG_FreeListArgvs( table_sz, arg_table);
+      return CV_OK;
+  }
+  if (faceNameList.argc == 0) {
+      ARG_FreeListArgvs( table_sz, arg_table);
+      return CV_OK;
+  }
+  int *faceids = new int [faceIdList.argc];
+  int numFaceIds = 0;
+  if ( ARG_ParseTclListStatic( interp, faceIdList, INT_Type, faceids, faceIdList.argc, &numFaceIds )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete [] faceids;
+    return TCL_ERROR;
+  }
+
+  if (numFaceIds != faceIdList.argc) {
+     Tcl_AppendResult( interp, "error in face ids list", (char *)NULL );
+    delete [] faceids;
+     return TCL_ERROR;
+  }
+
+  char *facenames = new char [faceNameList.argc];
+  int numFaceNames = 0;
+  if ( ARG_ParseTclListStatic( interp, faceNameList, INT_Type, facenames, faceNameList.argc, &numFaceNames )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_sz, arg_table );
+    delete [] faceids;
+    delete [] facenames;
+    return TCL_ERROR;
+  }
+
+  if (numFaceNames != faceNameList.argc) {
+     Tcl_AppendResult( interp, "error in face ids list", (char *)NULL );
+    delete [] faceids;
+    delete [] facenames;
+     return TCL_ERROR;
+  }
+
+  if (numFaceIds != numFaceNames)
+  {
+     Tcl_AppendResult( interp, "Ids and Names should have same length\n", (char *)NULL );
+    delete [] faceids;
+     return TCL_ERROR;
+  }
+
+     //Do work of command
+  cvAdaptObject *geom = (cvAdaptObject *)clientData;
+
+  if (geom->WriteCompleteMeshFiles(fileName,numFaceIds,faceids,facenames) != CV_OK) {
+    fprintf(stderr,"Error in writing of mesh files\n");
+    delete [] faceids;
+    delete [] facenames;
+    return TCL_ERROR;
+  }
+  delete [] faceids;
+  delete [] facenames;
+
+  return TCL_OK;
 }
 
 // ----------------

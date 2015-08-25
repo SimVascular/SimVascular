@@ -1906,6 +1906,24 @@ int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double
 // --------------------
 int cvTetGenMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
+  if (outmesh_ == NULL) {
+    return CV_ERROR;
+  }
+  if (surfacemesh_ != NULL)
+  {
+    surfacemesh_->Delete();
+  }
+  if (volumemesh_ != NULL)
+  {
+    volumemesh_->Delete();
+  }
+
+  surfacemesh_ = vtkPolyData::New();
+  volumemesh_ = vtkUnstructuredGrid::New();
+  if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
+	&numBoundaryRegions_,1) != CV_OK)
+    return CV_ERROR;
+
   ug->DeepCopy(volumemesh_);
   pd->DeepCopy(surfacemesh_);
 
