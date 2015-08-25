@@ -674,81 +674,65 @@ int cvTetGenMeshObject::NewMesh() {
   outmesh_ = new tetgenio;
   outmesh_->firstnumber = 0;
 
-  if (meshoptions_.startwithvolume == 0)
+  //MarkerListName
+  std::string markerListName;
+  int useSizingFunction;
+  int useBoundary;
+  vtkSmartPointer<vtkDoubleArray> meshsizingfunction = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+
+  if (meshoptions_.boundarylayermeshflag)
   {
-    //MarkerListName
-    std::string markerListName;
-    int useSizingFunction;
-    int useBoundary;
-    vtkSmartPointer<vtkDoubleArray> meshsizingfunction = 
-      vtkSmartPointer<vtkDoubleArray>::New();
-
-    if (meshoptions_.boundarylayermeshflag)
-    {
-      useSizingFunction = 1;
-      useBoundary = 0;
-      markerListName = "CellEntityIds";
-    }
-    else if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
-    {
-      fprintf(stdout,"Using size function\n");
-      useSizingFunction = 1;
-      useBoundary = 1;
-      markerListName = "ModelFaceID";
-    }
-    else 
-    {
-      useSizingFunction = 0;
-      useBoundary = 1;
-      markerListName = "ModelFaceID";
-    }
-
-    //If using boundary layer mesh, must apply mesh sizing function that is 
-    //attached to the polydatasolid from VMTKUtils_ComputeSizingFunction
-    if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
-	meshoptions_.refinement)
-    {
-      if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
-      {
-	fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
-			Something may have gone wrong when setting up BL");
-	return CV_ERROR;
-      }
-      meshsizingfunction = vtkDoubleArray::SafeDownCast(polydatasolid_->\
-	    GetPointData()->GetScalars("MeshSizingFunction"));
-    }
-    else
-    {
-      meshsizingfunction = NULL;
-    }
-
-    vtkSmartPointer<vtkCleanPolyData> cleaner =
-     vtkSmartPointer<vtkCleanPolyData>::New(); 
-    cleaner->SetInputData(polydatasolid_);
-    cleaner->Update();
-    polydatasolid_->DeepCopy(cleaner->GetOutput());
-    fprintf(stderr,"Converting to TetGen...\n");
-    //Convert the polydata to tetgen for meshing with given option
-    if (TGenUtils_ConvertSurfaceToTetGen(inmesh_,polydatasolid_,useSizingFunction,
-	    meshsizingfunction,useBoundary,markerListName,
-	    meshoptions_.maxedgesize) != CV_OK)
-    {
-	return CV_ERROR;
-    }
+    useSizingFunction = 1;
+    useBoundary = 0;
+    markerListName = "CellEntityIds";
+  }
+  else if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
+  {
+    fprintf(stdout,"Using size function\n");
+    useSizingFunction = 1;
+    useBoundary = 1;
+    markerListName = "ModelFaceID";
   }
   else 
   {
-    if (inputug_ == NULL)
-      return CV_ERROR;
-
-    if (TGenUtils_ConvertVolumeToTetGen(inputug_,polydatasolid_,inmesh_) != CV_OK)
-    {
-      fprintf(stderr,"Conversion from volume to TetGen failed\n");
-      return CV_ERROR;
-    }
+    useSizingFunction = 0;
+    useBoundary = 1;
+    markerListName = "ModelFaceID";
   }
 
+  //If using boundary layer mesh, must apply mesh sizing function that is 
+  //attached to the polydatasolid from VMTKUtils_ComputeSizingFunction
+  if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
+      meshoptions_.refinement)
+  {
+    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    {
+      fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
+		      Something may have gone wrong when setting up BL");
+      return CV_ERROR;
+    }
+    meshsizingfunction = vtkDoubleArray::SafeDownCast(polydatasolid_->\
+	  GetPointData()->GetScalars("MeshSizingFunction"));
+  }
+  else
+  {
+    meshsizingfunction = NULL;
+  }
 
+  vtkSmartPointer<vtkCleanPolyData> cleaner =
+   vtkSmartPointer<vtkCleanPolyData>::New(); 
+  cleaner->SetInputData(polydatasolid_);
+  cleaner->Update();
+  polydatasolid_->DeepCopy(cleaner->GetOutput());
+  fprintf(stderr,"Converting to TetGen...\n");
+  //Convert the polydata to tetgen for meshing with given option
+  if (TGenUtils_ConvertSurfaceToTetGen(inmesh_,polydatasolid_,useSizingFunction,
+	  meshsizingfunction,useBoundary,markerListName,
+	  meshoptions_.maxedgesize) != CV_OK)
+  {
+      return CV_ERROR;
+  }
   //The mesh is now loaded, and TetGen is ready to be called
   meshloaded_ = 1;
 
@@ -1373,18 +1357,24 @@ int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
       fprintf(stderr,"ModelFaceID does not exist\n");
       return CV_ERROR;
     }
-    double range[2];
-    originalpolydata_->GetCellData()->GetArray("ModelFaceID")->GetRange(range);
-    max = range[1];
-    
-    for(i=0;i<max;i++)
+
+    int *faces;
+    int numFaces = 0;
+    if (PlyDtaUtils_GetFaceIds(originalpolydata_,&numFaces,&faces) != CV_OK)
+    {
+      fprintf(stderr,"Could not get face ids\n");
+      return CV_ERROR;
+    }
+
+    for(i=0;i<numFaces;i++)
     { 
       tmpstr[0] = '\0';
       char *namestr;
-      sprintf(tmpstr,"%s {%i %i {%s}} ",rtnstr,i+1,i+1,"");
+      sprintf(tmpstr,"%s {%i %i {%s}} ",rtnstr,faces[i],faces[i],"");
       rtnstr[0]='\0';
       sprintf(rtnstr,"%s",tmpstr);
     }
+    delete [] faces;
 
   }
 
@@ -1846,7 +1836,6 @@ int cvTetGenMeshObject::ResetOriginalRegions(std::string newName,std::string ori
  */
 int cvTetGenMeshObject::Adapt()
 { 
-  fprintf(stdout,"TetGen Adapt what what!\n");
   cout<<"Starting Adaptive Mesh..."<<endl;
   tetgenbehavior* newtgb = new tetgenbehavior;
 
@@ -1864,11 +1853,52 @@ int cvTetGenMeshObject::Adapt()
   newtgb->useshelles = 1;
 #endif
 
-  tetrahedralize(newtgb, inmesh_, outmesh_);
+  try
+  {
+    tetrahedralize(newtgb, inmesh_, outmesh_);
+  }
+  catch (int r)
+  {
+    fprintf(stderr,"ERROR: TetGen quit and returned error code %d\n",r);
+    return CV_ERROR;
+  }
 
   cout<<"Done with Adaptive Mesh..."<<endl;
 
   return CV_OK;
+}
+
+// --------------------
+//  SetMetricOnMesh
+// --------------------
+int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy,int old)
+{
+  // cant overwrite mesh
+  if (inmesh_ != NULL) {
+    delete inmesh_;
+  }
+  if (outmesh_ != NULL)
+  {
+    delete outmesh_;
+  }
+
+  if (inputug_ == NULL)
+    return CV_ERROR;
+
+  if (polydatasolid_ == NULL)
+    return CV_ERROR;
+
+  //Create new tetgen mesh objects and set first number of output mesh to 0
+  inmesh_ = new tetgenio;
+  inmesh_->firstnumber = 0;
+  outmesh_ = new tetgenio;
+  outmesh_->firstnumber = 0;
+
+  if (TGenUtils_ConvertVolumeToTetGen(inputug_,polydatasolid_,inmesh_) != CV_OK)
+  {
+    fprintf(stderr,"Conversion from volume to TetGen failed\n");
+    return CV_ERROR;
+  }
 }
 
 // --------------------

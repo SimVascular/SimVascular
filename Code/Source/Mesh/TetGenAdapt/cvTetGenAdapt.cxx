@@ -38,6 +38,7 @@
  */
 
 #include "cvTetGenAdapt.h"
+#include "cv_tetgenmesh_utils.h"
 
 #include "cv_adapt_utils.h"
 
@@ -68,13 +69,12 @@ cvTetGenAdapt::cvTetGenAdapt()
   meshobject_ = NULL;
   inmesh_  = NULL;
   insurface_mesh_ = NULL;
-
   outmesh_ = NULL;
   outsurface_mesh_ = NULL;
 
   options.poly_ = 1;
+  options.metric_option_ = 1;
   options.strategy_ = 1;
-  options.option_ = 1;
   options.ratio_ = 0.2;
   options.hmax_ = 1;
   options.hmin_ = 1;
@@ -155,7 +155,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   }
 
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
-  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,"dummy","dummy");
+  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,solidFileName);
   if ( meshobject_ == NULL ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
     return CV_ERROR;
@@ -199,6 +199,9 @@ int cvTetGenAdapt::LoadModel(char *fileName)
   printf(" Total # of faces: %d\n", insurface_mesh_->GetNumberOfCells());
   printf(" Total # of vertices: %d\n", insurface_mesh_->GetNumberOfPoints());
   insurface_mesh_->BuildLinks();
+
+  if (meshobject_->LoadModel(fileName) != CV_OK)
+    return CV_ERROR;
 
   return CV_OK;
 }
@@ -311,16 +314,21 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::ReadSolutionFromMesh()
 {
-  //if (inmesh_ == NULL)
-  //{
-  //  fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-  //  return CV_ERROR;
-  //}
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+    return CV_ERROR;
+  }
 
-  //if (AdaptUtils_checkArrayExists(inmesh_,0,"solution") != CV_OK)
-  //  return CV_ERROR;
+  if (sol_ != NULL)
+    delete [] sol_;
 
-  fprintf(stderr,"TODO when solver io is removed\n");
+  fprintf(stdout,"Getting solution from step %d to step %d in increments of %d\n",
+      options.instep_,options.outstep_,options.step_incr_);
+  if (AdaptUtils_averageSolutionsOnMesh(inmesh_,options.instep_,
+	options.outstep_,options.step_incr_) != CV_OK)
+    return CV_ERROR;
+
   return CV_OK;
 }
 
@@ -329,16 +337,37 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
 // ---------------
 int cvTetGenAdapt::ReadYbarFromMesh()
 {
-  //if (inmesh_ == NULL)
-  //{
-  //  fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-  //  return CV_ERROR;
-  //}
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+    return CV_ERROR;
+  }
 
-  //if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
-  //  return CV_ERROR;
+  if (ybar_ != NULL)
+    delete [] ybar_;
+  char ybar_step[80];
+  sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
+  if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != CV_OK)
+    return CV_ERROR;
 
-  fprintf(stderr,"TODO when solver io is removed\n");
+  int nVar = 5; //Number of variables in ybar
+  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,ybar_step,nVar,
+	options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error when retrieving ybar array on mesh\n");
+    return CV_ERROR;
+  }
+
+  if (inmesh_ != NULL)
+  {
+    int nVar = 5; //Number of variables in ybar
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching error to mesh\n");
+      return CV_ERROR;
+    }
+  }
+
   return CV_OK;
 }
 
@@ -366,6 +395,9 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   }
   else if (!strncmp(flag,"step_incr",9)) {
     options.step_incr_ = (int) value;
+  }
+  else if (!strncmp(flag,"metric_option",13)) {
+     options.metric_option_ = (int) value;
   }
   else if (!strncmp(flag,"strategy",8)) {
     options.strategy_ = (int) value;
@@ -407,77 +439,104 @@ int cvTetGenAdapt::CheckOptions()
 // -----------------------
 int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
 {
+  if (option != -1)
+    options.metric_option_ = option;
+  if (strategy != -1)
+    options.strategy_ = strategy;
+
   if (inmesh_ == NULL)
   {
     fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
     return CV_ERROR;
   }
   int numPoints = inmesh_->GetNumberOfPoints();
+  
+  //Options 1,2, and 3 all use the hessian as adaption metric!
+  //Option 4 uses an attached array to the input mesh
+  switch(options.metric_option_) {
+  case 1 : //Read ybar from solution file (restart), and then calculate hessian using VTK classes!
+  case 2 : //Read ybar from vtu mesh, and then calculate hessian using VTK classes!
+  case 3 : {  //Read solution from mesh and calculate average solution. Then calculate hessian
+      if (options.metric_option_ == 1)
+      {
+	if (ybar_ == NULL)
+	{
+	  if (input == NULL)
+	    return CV_ERROR;
+	  if (this->LoadYbarFromFile(input) != CV_OK)
+	    return CV_ERROR;
+	}
+      }
+      else if (options.metric_option_ == 2)
+      {
+	if (this->ReadYbarFromMesh() != CV_OK)
+	  return CV_ERROR;
+      }
+      else if (options.metric_option_ == 3)
+      {
+	if (this->ReadSolutionFromMesh() != CV_OK)
+	  return CV_ERROR;
+      }
 
-  switch(options.strategy_) {
-  //this code processes for both if strategy == 1 || strategy ==2
-  //Right now the only implemented adaptation is for isotropic meshing. 
-  //TetGen only has the ability to specify one size metric at each node 
-  //within the mesh, so anisotropic meshing is not capable at this moment.
-  //Strategies 1 and 2 implement isotropic adaptation 
-  case 1 :
-  case 2 : { //isotropic adaptation
-    cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
-    
-    char error_tag[28];
-    if(options.strategy_ == 1) {
-      cout<<"\nUsing ybar to compute hessians...\n"<<endl;
-      sprintf(error_tag,"ybar");
-    }
-    else if (options.strategy_ == 2) {
-      cout<<"\nUsing numerical/computed hessians (i.e, from phasta)...\n"<<endl;
-      sprintf(error_tag,"hessains");
-    }
-
-    if(options.strategy_==1) {
-      // calculating hessians for ybar field
-      // first reconstruct gradients and then the hessians 
-      // also deals with boundary issues &
-      // applies smoothing procedure for hessians
-      // (simple average : arithmetic mean)
+      //Compute hessian and attach to mesh!
       if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
       {
-        fprintf(stderr,"Error: Error when calculating hessians from solution\n");
-        return CV_ERROR;
+	fprintf(stderr,"Error: Error when calculating hessians from solution\n");
+	return CV_ERROR;
       }
-    }
-    else if (options.strategy_ == 2) { // cannot use analytic hessian in this case
-      // use the hessians computed from phasta
-    }
-    options.strategy_ = 1;
-    if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,options.ratio_,options.hmax_,options.hmin_,options.sphere_,options.strategy_) != CV_OK)
-    {
-        fprintf(stderr,"Error: Error when setting size field with hessians\n");
-        return CV_ERROR;
-    }
+      if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,
+	    options.ratio_,options.hmax_,options.hmin_,
+	    options.sphere_,options.strategy_) != CV_OK)
+      {
+	  fprintf(stderr,"Error: Error when setting size field with hessians\n");
+	  return CV_ERROR;
+      }
   }
   break;
-  case 3:
-  case 4: { // anisotropic adaptation (tag driven)
-    cout<<"Strategy has not been implemented"<<endl;
-    return 0;
-  }
-  break;
-  case 5:
-  case 6: { //anisotropic adaptation (size-field driven)
-    cout<<"Strategy has not been implemented"<<endl;
-    return 0;
+  case 4: { //Read some other array from the mesh to set on mesh
+      if (input != NULL)
+      {
+	if (AdaptUtils_checkArrayExists(inmesh_,0,input) != CV_OK)
+	{
+	  fprintf(stderr,"Given array name is not on input mesh!\n");
+	}
+      }
+      else 
+      {
+	fprintf(stderr,"Must give name of array to use as metric on mesh\n");
+	return CV_ERROR;
+      }
+      double *tmp;
+      if (AdaptUtils_getAttachedArray(tmp,inmesh_,input,1,options.poly_) != CV_OK)
+      {
+	fprintf(stderr,"Error when retrieving array from mesh!\n");
+	return CV_ERROR;
+
+      }
+      if (AdaptUtils_attachArray(tmp,inmesh_,"errormetric",1,options.poly_) != CV_OK)
+      {
+	fprintf(stderr,"Error when attaching array to mesh!\n");
+	return CV_ERROR;
+      }
+      delete [] tmp;
   }
   break;
   default : {
-    if(options.strategy_<0) {
-      cout<<"This is default case but has not been implemented"<<endl;
-
-    }
-    else {
-      cout<<"\nSpecify a correct (adaptation) strategy (adapt.cc)"<<endl;
-      exit(-1);
-    }
+      cout<<"Valid metric option not given!"<<endl;
+      cout<<"\nSpecify a correct (adaptation) option (1-4):"<<endl;
+      cout<<"\n1: Read Ybar from file and then calculate hessian from";
+      cout<<"	ybar component 5 (avg. magnitude of velocity over entire"; 
+      cout<<" simulation)"<<endl;
+      cout<<"2: Read Ybar from vtu mesh and then calculate hessian from ";
+      cout<<"ybar component 5 (avg. magnitude of velocity over entire"; 
+      cout<<" simulation)"<<endl; 
+      cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
+      cout<<" velocity over specified timestep range. Must provide"; 
+      cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
+      cout<<"	then calculated from avg. magnitude of velocity."<<endl;
+      cout<<"4: Read array from mesh, and specify mesh metric with this array."<<endl;
+      
+      return CV_ERROR;
   }
   break;
   }
@@ -500,12 +559,23 @@ int cvTetGenAdapt::SetupMesh()
     fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
     return CV_ERROR;
   }
+  int nVar;
+  if (options.strategy_ == 1)
+    nVar = 1;
+  else if (options.strategy_ == 2)
+    nVar = 9;
+  if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error in getting error metric off mesh\n");
+    return CV_ERROR;
+  }
 
   double dummy=0;
   meshobject_->SetVtkPolyDataObject(insurface_mesh_);
   meshobject_->SetInputUnstructuredGrid(inmesh_);
-  meshobject_->SetMeshOptions("StartWithVolume",0,&dummy);
-  meshobject_->NewMesh();
+  meshobject_->SetMetricOnMesh(errormetric_,
+      options.instep_,options.ratio_,options.hmax_,
+      options.hmin_,options.strategy_,0);
 
   return CV_OK;
 }
@@ -515,6 +585,11 @@ int cvTetGenAdapt::SetupMesh()
 // -----------------------
 int cvTetGenAdapt::RunAdaptor()
 {
+  if (meshobject_ == NULL)
+  {
+    fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
+    return CV_ERROR;
+  }
   if (inmesh_ == NULL || insurface_mesh_ == NULL)
   {
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
@@ -609,6 +684,46 @@ int cvTetGenAdapt::TransferRegions()
 }
 
 // -----------------------
+//  WriteCompleteMeshFiles
+// -----------------------
+int cvTetGenAdapt::WriteCompleteMeshFiles(char *dirName,int numFaces,
+    int *faceids,char *facenames)
+{
+  if (this->GetAdaptedMesh() != CV_OK)
+    return CV_ERROR;
+
+  char meshFileName[80];
+  char modelFileName[80];
+  sprintf(meshFileName,"%s/mesh-complete/mesh-complete.mesh.vtu",dirName);
+  sprintf(modelFileName,"%s/mesh-complete/mesh-complete.exterior.vtp",dirName);
+
+  if (this->WriteAdaptedMesh(meshFileName) != CV_OK)
+  {
+    fprintf(stderr,"Error in writing mesh\n");
+      return CV_ERROR;
+  }
+
+  for (int i=0;i<numFaces;i++)
+  {
+    char modelFaceName[80];
+    sprintf(modelFaceName,"%s/mesh-complete/mesh-surfaces/%s.vtp",dirName,facenames[i]);
+    if (this->WriteAdaptedModelFace(faceids[i],modelFaceName) != CV_OK)
+    {
+      fprintf(stderr,"Error in writing model face\n");
+      return CV_ERROR;
+    }
+  }
+
+  if (this->WriteAdaptedModel(modelFileName) != CV_OK)
+  {
+    fprintf(stderr,"Error in writing model model\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// -----------------------
 //  WriteAdaptedModel
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
@@ -627,6 +742,36 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
   vtkSmartPointer<vtkXMLPolyDataWriter> writer = 
     vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetInputData(outsurface_mesh_);
+  writer->SetFileName(fileName);
+  writer->Update();
+  return CV_OK;
+}
+
+// -----------------------
+//  WriteAdaptedModelFace
+// -----------------------
+int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
+{
+  if (outsurface_mesh_ == NULL)
+  {
+    if (meshobject_ == NULL)
+    {
+      fprintf(stderr,"Mesh Object is null!\n");
+      return CV_ERROR;
+    }
+
+  }
+  vtkSmartPointer<vtkPolyData> face = 
+    vtkSmartPointer<vtkPolyData>::New();
+  if (TGenUtils_GetFacePolyData(faceid,outsurface_mesh_,face)  != CV_OK)
+  {
+    fprintf(stderr,"Error getting face on output surface mesh\n");
+    return CV_ERROR;
+  }
+
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer = 
+    vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+  writer->SetInputData(face);
   writer->SetFileName(fileName);
   writer->Update();
   return CV_OK;

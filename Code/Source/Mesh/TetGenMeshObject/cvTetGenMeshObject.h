@@ -147,7 +147,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   //Adapt Function
   int Adapt();
   int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd);
-  int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy,int old) {return CV_ERROR;}
+  int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy,int old);
   int SetArrayOnMesh(double *array,int numVars, char *arrayName) {return CV_ERROR;}
   int GetArrayOnMesh(double *array,int numVars,char *arrayName) {return CV_ERROR;}
 

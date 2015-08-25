@@ -78,7 +78,7 @@ class cvTetGenAdapt: public cvAdaptObject {
   typedef struct AdaptOptions {
     int poly_;
     int strategy_;
-    int option_;
+    int metric_option_;
     double ratio_;
     double hmax_;
     double hmin_;
@@ -124,8 +124,10 @@ public:
   int TransferRegions();
 
   //Write Operations
-  int WriteCompleteMeshFiles(char *fileName) {return CV_ERROR;}
+  int WriteCompleteMeshFiles(char *dirName,int numFaces,
+      int *faceids,char *facenames);
   int WriteAdaptedModel(char *fileName);
+  int WriteAdaptedModelFace(int faceid,char *fileName);
   int WriteAdaptedMesh(char *fileName);
   int WriteAdaptedSolution(char *fileName);
 

@@ -629,7 +629,9 @@ int cvMeshSimAdapt::SetupMesh()
     return CV_ERROR;
   }
 
-  meshobject_->SetMetricOnMesh(errormetric_,options.instep_,options.ratio_,options.hmax_,options.hmin_,options.strategy_,options.tmp_old_stuffs_);
+  meshobject_->SetMetricOnMesh(errormetric_,options.instep_,options.ratio_,
+		  options.hmax_,options.hmin_,options.strategy_,
+		  options.tmp_old_stuffs_);
 
 
   return CV_OK;
