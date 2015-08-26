@@ -41,6 +41,7 @@
 
 #include "cv_adapt_utils.h"
 #include "cv_meshsim_adapt_utils.h"
+#include "cv_mesh_init.h"
 
 #include "vtkXMLUnstructuredGridReader.h"
 #include "vtkXMLUnstructuredGridWriter.h"
@@ -174,6 +175,9 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   //  return CV_ERROR;
   //}
   gRepository->Register(mesh_name, meshobject_ );
+  Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
+  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
+		     (ClientData)meshobject_, DeletegdscMesh );
 
   if (solidFileName != NULL)
   {
