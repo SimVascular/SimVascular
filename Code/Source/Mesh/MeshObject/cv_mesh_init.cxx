@@ -991,12 +991,6 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  // Parse coordinate lists:
-  if (valueList.argc == 0) {
-      ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
-  }
-
   double *values = new double [valueList.argc];
   int numValues = 0;
   if ( ARG_ParseTclListStatic( interp, valueList, DOUBLE_Type, values, valueList.argc, &numValues )

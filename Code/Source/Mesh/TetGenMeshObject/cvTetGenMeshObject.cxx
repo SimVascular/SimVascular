@@ -758,6 +758,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flag,int numValues,double *values) 
 //    return CV_ERROR;
 //  }
   
+	fprintf(stderr,"Flag: %s\n  NumVals:  %d\n  Val:  %.2f\n",flag,numValues,values[0]);
   if(!strncmp(flag,"GlobalEdgeSize",14)) {            //Global edge size
        if (numValues < 1)
 	 return CV_ERROR;
