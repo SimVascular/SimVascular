@@ -1,1 +1,1 @@
-Visit http://simvascular.ucsd.edu/docsCompile.html for compilation instructions.
+Visit http://www.simvascular.org/docsCompile.html for compilation instructions.
