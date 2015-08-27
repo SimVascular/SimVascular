@@ -72,7 +72,7 @@ proc guiMMcreateTetGenScriptFile {} {
 
   puts $fp "# start_of_user_meshing_control_parameters"
   if {$guiTGvars(useMeshMaxVolume)} {
-    puts $fp "option A $guiTGvars(meshMaxEdgeSize)"
+    puts $fp "option GlobalEdgeSize $guiTGvars(meshMaxEdgeSize)"
   }
   if {[llength $guiTGvars(wallFaces)] != 0} {
     set guiTGvars(meshWallFirst) 1
@@ -101,34 +101,34 @@ proc guiMMcreateTetGenScriptFile {} {
   #  puts $fp "sphereRefinement $guiTGvars(refinementSize) $guiTGvars(sphereRadius) $guiTGvars(sphereCenter)"
   #}
   if {$guiTGvars(useMeshOptimization)} {
-    puts $fp "option O $guiTGvars(meshOptimization)"
+    puts $fp "option Optimization $guiTGvars(meshOptimization)"
   }
   if {$guiTGvars(useMeshTolerance)} {
-    puts $fp "option T $guiTGvars(meshTolerance)"
+    puts $fp "option Epsilon $guiTGvars(meshTolerance)"
   }
   if {$guiTGvars(useMeshQuality)} {
-    puts $fp "option q $guiTGvars(meshQuality)"
+    puts $fp "option QualityRatio $guiTGvars(meshQuality)"
   }
   if {$guiTGvars(useMeshCoarsen)} {
-    puts $fp "option R $guiTGvars(meshCoarsenPercent)"
+    puts $fp "option CoarsenPercent $guiTGvars(meshCoarsenPercent)"
   }
   if {$guiTGvars(useMeshSuppression)} {
-    puts $fp "option Y"
+    puts $fp "option NoBisect"
   }
   if {$guiTGvars(useNoMerging)} {
-    puts $fp "option M"
+    puts $fp "option NoMerge"
   }
   if {$guiTGvars(useMeshDetection)} {
-    puts $fp "option d"
+    puts $fp "option Diagnose"
   }
   if {$guiTGvars(useCheckConsistency)} {
-    puts $fp "option C"
+    puts $fp "option Check"
   }
   if {$guiTGvars(useQuiet)} {
-    puts $fp "option Q"
+    puts $fp "option Quiet"
   }
   if {$guiTGvars(useVerbose)} {
-    puts $fp "option V"
+    puts $fp "option Verbose"
   }
   if {$guiTGvars(useMeshTetGenOptions)} {
     puts $fp "option $guiTGvars(meshTetGenOptions)"
@@ -275,7 +275,7 @@ proc mesh_readTGS {filename resObj} {
 	    set regionid $id
 	  }
 	}
-	$resObj SetMeshOptions -options "LocalEdgeSize" -id $regionid -value1 [lindex $line 3] 
+	$resObj SetMeshOptions -options "LocalEdgeSize" -id $regionid -values {[lindex $line 3]} 
       } elseif {[lindex $line 0] == "useCenterlineRadius"} {
 	if {$guiTGvars(meshWallFirst) != 1} {
           return -code error "ERROR: Must select wall faces for boundary layer"
@@ -294,7 +294,7 @@ proc mesh_readTGS {filename resObj} {
 	$resObj SetSphereRefinement -size [lindex $line 1] -r [lindex $line 2] -ctr [lrange $line 3 5]
       } elseif {[lindex $line 0] == "wallFaces"} {
 	set guiTGvars(meshWallFirst) 1
-	$resObj SetMeshOptions -options "MeshWallFirst" -value1 0
+	$resObj SetMeshOptions -options "MeshWallFirst" -values {1}
 	set walls {}
 	for {set i 1} {$i < [llength $line]} {incr i} {
 	  set name [lindex $line $i]
@@ -317,19 +317,20 @@ proc mesh_readTGS {filename resObj} {
       } elseif {[lindex $line 0] == "option"} {
 	  if {[llength $line] == 3} {
 	     if {[lindex $line 1] == "surface"} {
-               $resObj SetMeshOptions -options "SurfaceMeshFlag" -value1 [lindex $line 2]
+               $resObj SetMeshOptions -options "SurfaceMeshFlag" -values [lindex $line 2]
 	     } elseif {[lindex $line 1] == "volume"} {
-               $resObj SetMeshOptions -options "VolumeMeshFlag" -value1 [lindex $line 2]
+               $resObj SetMeshOptions -options "VolumeMeshFlag" -values [lindex $line 2]
 	     } elseif {[lindex $line 1] == "gsize"} {
-               $resObj SetMeshOptions -options "GlobalEdgeSize" -value1 [lindex $line 2]
+               $resObj SetMeshOptions -options "GlobalEdgeSize" -values [lindex $line 2]
 	     } elseif {[lindex $line 1] == "a"} {
-               $resObj SetMeshOptions -options "GlobalEdgeSize" -value1 [lindex $line 2]
+               $resObj SetMeshOptions -options "GlobalEdgeSize" -values [lindex $line 2]
      	     } else {
-	       $resObj SetMeshOptions -options [lindex $line 1] -value1 [lindex $line 2]
+	       lappend mylist [lindex $line 2]
+	       $resObj SetMeshOptions -options [lindex $line 1] -values [lindex $line 2]
        	    }
 	  } else {
              foreach lineval [lrange $line 1 end] {
-              $resObj SetMeshOptions -options $lineval
+              $resObj SetMeshOptions -options {$lineval}
              }
 	  }
       } elseif {[lindex $line 0] == "getBoundaries"} {

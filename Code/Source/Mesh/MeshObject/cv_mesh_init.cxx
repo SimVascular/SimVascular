@@ -999,7 +999,7 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
 
   double *values = new double [valueList.argc];
   int numValues = 0;
-  if ( ARG_ParseTclListStatic( interp, valueList, INT_Type, values, valueList.argc, &numValues )
+  if ( ARG_ParseTclListStatic( interp, valueList, DOUBLE_Type, values, valueList.argc, &numValues )
        != TCL_OK ) {
     Tcl_SetResult( interp, usage, TCL_VOLATILE );
     ARG_FreeListArgvs( table_size, arg_table );
