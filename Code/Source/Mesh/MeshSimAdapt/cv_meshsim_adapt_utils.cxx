@@ -40,6 +40,8 @@
 
 #include "cv_meshsim_adapt_utils.h"   
 
+#include "eispack.h"
+
 long eigen (double pos[3][3], double e[3][3], double v[3], int checkOrthogonality)
 {  
   // characteristic polynomial of T : 
@@ -2118,26 +2120,38 @@ void setSizeFieldUsingHessians(pMesh mesh,
     
 
     // copy T into temporary buffer
-    double Tfoo[3][3];
-    for(int j=0; j< 3; j++){
-        for(int k=0; k< 3; k++){       
-            
-            Tfoo[j][k]=T[j][k];
-        }
-    } 
+    //double Tfoo[3][3];
+    double Tfoo[9];
+    //for(int j=0; j< 3; j++){
+    //    for(int k=0; k< 3; k++){       
+    //        
+    //        Tfoo[j][k]=T[j][k];
+    //    }
+    //} 
+    for (j=0;j<3;j++)
+    {
+      for (int k=0;k<3;k++)
+      {
+        Tfoo[j*3+k] = T[j][k];
+      }
+    }
 
     int three = 3;
-    double z[3][3];
-    mytred(&three,&three,Tfoo,eigenVals,e,z);
+    //double z[3][3];
+    double z[9];
+    //mytred(&three,&three,Tfoo,eigenVals,e,z);
+    tred2(three,Tfoo,eigenVals,e,z);
 //    std::cout<<"eigenvals/eigenVecs (tred)\n";
 
     int ierr;
-    tql2(&three,&three,eigenVals,e,z,&ierr);
+    //tql2(&three,&three,eigenVals,e,z,&ierr);
+    ierr = tql2(three,eigenVals,e,z);
 
     for(int j=0; j< 3; j++){
         hess[i].h[j]=eigenVals[j];
         for(int k=0; k< 3; k++){   
-            hess[i].dir[j][k]=z[j][k];
+            //hess[i].dir[j][k]=z[j][k];
+	    hess[i].dir[j][k]=z[j*3+k];
         }
     }
 

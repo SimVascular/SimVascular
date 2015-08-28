@@ -1312,6 +1312,7 @@ proc mesh_writeCompleteMeshFromFiles {mesh_fn solid_fn prefix outdir} {
 proc mesh_writeCompleteMesh {mesh solid prefix outdir} {
 
   global guiMMvars
+  global gFilenames
   set kernel [$solid GetKernel]
 
   file mkdir [file join $outdir mesh-surfaces]

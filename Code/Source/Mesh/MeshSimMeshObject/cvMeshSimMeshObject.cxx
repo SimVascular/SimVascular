@@ -89,6 +89,24 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
 
   solidmodeling_kernel_ = SM_KT_PARASOLID;
 
+  meshoptions_.surface = 0;
+  meshoptions_.volume = 0;
+  meshoptions_.surface_optimization = 1;
+  meshoptions_.surface_smoothing = 3;
+  meshoptions_.volume_optimization = 1;
+  meshoptions_.volume_smoothing = 1;
+  meshoptions_.gsize_type = 0;
+  meshoptions_.gsize = 0.0;
+  meshoptions_.gcurv_type = 0;
+  meshoptions_.gcurv = 0.0;
+  meshoptions_.gmincurv_type = 0;
+  meshoptions_.gmincurv = 0.0;
+
+  errorIndicatorID = NULL;
+  modes            = NULL;
+  nodalhessianID   = NULL;
+  nodalgradientID  = NULL;
+  phasta_solution  = NULL;
   //simAdapter = NULL;
 }
 
@@ -635,16 +653,39 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
   rid->SetName("ModelRegionID");
 
   // only for linear tets
-  initRegionTraversal();
-  while (getNextRegion() == 1) {
-    initElementTraversal();
-    while (getNextElement() == 1) {
-        ptids->SetId(0,connID_[0]-1);ptids->SetId(1,connID_[1]-1);
-        ptids->SetId(2,connID_[2]-1);ptids->SetId(3,connID_[3]-1);
-        grid->InsertNextCell(VTK_TETRA,ptids);
-        eid->InsertNextTuple1(curElemID_);
-        rid->InsertNextTuple1(curMdlRegID_);
+  //initRegionTraversal();
+  //while (getNextRegion() == 1) {
+  //  initElementTraversal();
+  //  while (getNextElement() == 1) {
+  //      ptids->SetId(0,connID_[0]-1);ptids->SetId(1,connID_[1]-1);
+  //      ptids->SetId(2,connID_[2]-1);ptids->SetId(3,connID_[3]-1);
+  //      grid->InsertNextCell(VTK_TETRA,ptids);
+  //      eid->InsertNextTuple1(curElemID_);
+  //      rid->InsertNextTuple1(curMdlRegID_);
+  //  }
+  //}
+  
+  pRegion myelement = NULL;
+  RIter myRIter = M_regionIter(mesh);
+  int curMdlRegID = 1;
+  while ((myelement = RIter_next(myRIter)) != NULL) {
+    // the elements are numbered from 1 to N.
+    int curElemID = EN_id((pEntity)myelement)+1;
+    pPList vert_list = R_vertices (myelement,MY_MESHSIM_VERTEX_ORDERING);
+    int num_elem_verts = PList_size (vert_list);
+    // must be linear
+    if (num_elem_verts != 4) {
+      exit(-1);
     }
+    for (i = 0; i < num_elem_verts; i++) {
+        pVertex vertex = (pVertex)PList_item (vert_list, i);
+        // vtk nodes must start at zero
+        ptids->SetId(i,P_id(V_point(vertex))-1);
+    } // i
+    PList_delete(vert_list);      
+    grid->InsertNextCell(VTK_TETRA,ptids);
+    eid->InsertNextTuple1(curElemID);
+    rid->InsertNextTuple1(curMdlRegID);
   }
 
   ptids->Delete();
@@ -1235,6 +1276,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
     return CV_ERROR;
   }
 
+	fprintf(stderr,"Flag: %s\n  NumVals:  %d\n  Val:  %.2f\n",flags,numValues,values[0]);
   if (!strncmp(flags,"SurfaceMeshFlag",15)) {    //Surface flag, on or off
       if (numValues < 1)
 	return CV_ERROR;
@@ -1311,6 +1353,38 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       MS_setMinCurvSize(case_,pid,(int)values[1],values[2]);
+  }
+  else if(!strncmp(flags,"SurfaceOptimization",19)) {  //Set Surface Optimization
+      if (numValues < 1)
+      {
+	fprintf(stderr,"Must give optimization level value\n");
+	return CV_ERROR;
+      }
+      meshoptions_.surface_optimization = values[0];
+  }
+  else if(!strncmp(flags,"VolumeOptimization",18)) {  //Set Volume Optimization
+      if (numValues < 1)
+      {
+	fprintf(stderr,"Must give optimization level value\n");
+	return CV_ERROR;
+      }
+      meshoptions_.volume_optimization = values[0];
+  }
+  else if(!strncmp(flags,"SurfaceSmoothing",19)) {  //Set Surface Optimization
+      if (numValues < 1)
+      {
+	fprintf(stderr,"Must give optimization level value\n");
+	return CV_ERROR;
+      }
+      meshoptions_.surface_smoothing = values[0];
+  }
+  else if(!strncmp(flags,"VolumeSmoothing",18)) {  //Set Volume Optimization
+      if (numValues < 1)
+      {
+	fprintf(stderr,"Must give optimization level value\n");
+	return CV_ERROR;
+      }
+      meshoptions_.volume_smoothing = values[0];
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1982,12 +2056,12 @@ int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars,char *arrayNa
 {
   if (mesh == NULL)
   {
-    fprintf(stderr,"Must load mesh before setting an array!");
+    fprintf(stderr,"Must load mesh before setting an array!\n");
     return CV_ERROR;
   }
   if (array == NULL)
   {
-    fprintf(stderr,"array to be attached is NULL!");
+    fprintf(stderr,"array to be attached is NULL!\n");
     return CV_ERROR;
   }
 
@@ -2018,6 +2092,11 @@ int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayN
 
 int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy, int old)
 {
+  if (mesh == NULL)
+  {
+    fprintf(stderr,"Must load .sms mesh before setting metric on mesh\n");
+    return CV_ERROR;
+  }
   int nshg = M_numVertices(mesh);
   simAdapter = MSA_new(mesh,1);
   if (old == 1)

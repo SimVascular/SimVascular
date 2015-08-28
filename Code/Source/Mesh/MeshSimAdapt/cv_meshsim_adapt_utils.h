@@ -114,17 +114,17 @@ extern "C" {
     #define lubksb lubksb_
     void mytred_(int*,int*,double[3][3],double*,double*,double[3][3]);
     #define mytred mytred_  
-    void tql2_(int*,int*,double*,double*,double[3][3],int*);
-    #define tql2 tql2_    
+   // void tql2_(int*,int*,double*,double*,double[3][3],int*);
+   // #define tql2 tql2_    
   #else
      void LUDCMP(double*, int*, int*, int*,double*);
      void LUBKSB(double*, int*, int*, int*,double*);
      void MYTRED(int*,int*,double[3][3],double*,double*,double[3][3]);
-     void TQL2(int*,int*,double*,double*,double[3][3],int*);
+    // void TQL2(int*,int*,double*,double*,double[3][3],int*);
     #define ludcmp LUDCMP
     #define lubksb LUBKSB
     #define mytred MYTRED
-    #define tql2 TQL2
+    //#define tql2 TQL2
   #endif
 };
 

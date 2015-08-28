@@ -752,19 +752,18 @@ int cvTetGenMeshObject::NewMesh() {
  * called before the options can be set
  */
 
-int cvTetGenMeshObject::SetMeshOptions(char *flag,int numValues,double *values) {
+int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
   // must have created mesh
 //  if (inmesh_ == NULL) {
 //    return CV_ERROR;
 //  }
   
-	fprintf(stderr,"Flag: %s\n  NumVals:  %d\n  Val:  %.2f\n",flag,numValues,values[0]);
-  if(!strncmp(flag,"GlobalEdgeSize",14)) {            //Global edge size
+  if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
        if (numValues < 1)
 	 return CV_ERROR;
       meshoptions_.maxedgesize=values[0];
   }
-  else if(!strncmp(flag,"LocalEdgeSize",13)) {
+  else if(!strncmp(flags,"LocalEdgeSize",13)) {
       if (numValues < 2)
       {
 	fprintf(stderr,"Must give face id and local edge size\n");
@@ -777,7 +776,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flag,int numValues,double *values) 
         return CV_ERROR;
       meshoptions_.secondarrayfunction = 1;
   }
-  else if(!strncmp(flag,"SurfaceMeshFlag",15)) {
+  else if(!strncmp(flags,"SurfaceMeshFlag",15)) {
 #ifdef USE_VMTK
       if (numValues < 1)
 	return CV_ERROR;
@@ -788,57 +787,57 @@ int cvTetGenMeshObject::SetMeshOptions(char *flag,int numValues,double *values) 
       return CV_ERROR;
 #endif
   }
-  else if(!strncmp(flag,"VolumeMeshFlag",14)) {
+  else if(!strncmp(flags,"VolumeMeshFlag",14)) {
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.volumemeshflag = values[0];
   }
-  else if(!strncmp(flag,"QualityRatio",12)) {//q
+  else if(!strncmp(flags,"QualityRatio",12)) {//q
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.minratio=values[0];
   }
-  else if(!strncmp(flag,"Optimization",12)) {//O
+  else if(!strncmp(flags,"Optimization",12)) {//O
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.optlevel=(int)values[0];
   }
-  else if(!strncmp(flag,"Epsilon",7)) {//T
+  else if(!strncmp(flags,"Epsilon",7)) {//T
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.epsilon=values[0];
   }
-  else if(!strncmp(flag,"CoarsenPercent",14)) {//R
+  else if(!strncmp(flags,"CoarsenPercent",14)) {//R
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.coarsen_percent=values[0]/100;
   }
-  else if(!strncmp(flag,"Verbose",7)) {//V
+  else if(!strncmp(flags,"Verbose",7)) {//V
       meshoptions_.verbose=1;
   }
-  else if(!strncmp(flag,"NoMerge",7)) {//M
+  else if(!strncmp(flags,"NoMerge",7)) {//M
       meshoptions_.nomerge=1;
   }
-  else if(!strncmp(flag,"Check",5)) {//C
+  else if(!strncmp(flags,"Check",5)) {//C
       meshoptions_.docheck=1;
   }
-  else if(!strncmp(flag,"NoBisect",8)) {//Y
+  else if(!strncmp(flags,"NoBisect",8)) {//Y
       meshoptions_.nobisect=1;
   }
-  else if(!strncmp(flag,"Quiet",5)) {//Q
+  else if(!strncmp(flags,"Quiet",5)) {//Q
       meshoptions_.quiet=1;
   }
-  else if(!strncmp(flag,"Diagnose",8)) {//d
+  else if(!strncmp(flags,"Diagnose",8)) {//d
       meshoptions_.diagnose=1;
   }
-  else if(!strncmp(flag,"MeshWallFirst",13)) {//k
+  else if(!strncmp(flags,"MeshWallFirst",13)) {//k
       meshoptions_.meshwallfirst=1;
   }
-  else if(!strncmp(flag,"StartWithVolume",15)) {//r
+  else if(!strncmp(flags,"StartWithVolume",15)) {//r
       meshoptions_.startwithvolume=1;
   }
   else {
-      fprintf(stderr,"%s: flag is not recognized\n",flag);
+      fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
 
   return CV_OK;

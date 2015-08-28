@@ -6241,17 +6241,17 @@ proc mesh_readMSS {filename resObj} {
         }
         showArray ids
       } elseif {[lindex $line 0] == "gsize"} {
-        $resObj SetMeshOptions -options "GlobalEdgeSize" -id $types([string tolower [lindex $line 1]]) -value1 [lindex $line 2]
+        $resObj SetMeshOptions -options "GlobalEdgeSize" -values [list $types([string tolower [lindex $line 1]]) [lindex $line 2]]
       } elseif {[lindex $line 0] == "size"} {
-        $resObj SetMeshOptions -options "LocalEdgeSize" -id $ids([lindex $line 1]) -value1 $types([string tolower [lindex $line 2]]) -value2 [lindex $line 3]
+        $resObj SetMeshOptions -options "LocalEdgeSize" -values [list $ids([lindex $line 1]) $types([string tolower [lindex $line 2]]) [lindex $line 3]]
       } elseif {[lindex $line 0] == "gcurv"} {
-        $resObj SetMeshOptions -options "GlobalCurvature" -id $types([string tolower [lindex $line 1]]) -value1 [lindex $line 2]
+        $resObj SetMeshOptions -options "GlobalCurvature" -values [list $types([string tolower [lindex $line 1]]) [lindex $line 2]]
       } elseif {[lindex $line 0] == "curv"} {
-        $resObj SetMeshOptions -options "LocalCurvature" -id $ids([lindex $line 1]) -value1 $types([string tolower [lindex $line 2]]) -value2 [lindex $line 3]
+        $resObj SetMeshOptions -options "LocalCurvature" -values [list $ids([lindex $line 1]) $types([string tolower [lindex $line 2]]) [lindex $line 3]]
       } elseif {[lindex $line 0] == "GlobalCurvatureMin"} {
-        $resObj SetMeshOptions -options "M" -id $types([string tolower [lindex $line 1]]) -value1 [lindex $line 2]
+        $resObj SetMeshOptions -options "M" -values [list $types([string tolower [lindex $line 1]]) [lindex $line 2]]
       } elseif {[lindex $line 0] == "LocalCurvatureMin"} {
-        $resObj SetMeshOptions -options "m" -id $ids([lindex $line 1]) -value1 $types([string tolower [lindex $line 2]]) -value2 [lindex $line 3]
+        $resObj SetMeshOptions -options "m" -values [list $ids([lindex $line 1]) $types([string tolower [lindex $line 2]]) [lindex $line 3]]
       } elseif {[lindex $line 0] == "boundaryLayer"} {
         $resObj SetBoundaryLayer -id $ids([lindex $line 1]) -type [lindex $line 2] \
                                  -side $sides([string tolower [lindex $line 3]]) -nL [lindex $line 4] -H [lrange $line 5 end]
@@ -6267,14 +6267,30 @@ proc mesh_readMSS {filename resObj} {
       } elseif {[lindex $line 0] == "option"} {
 	  if {[llength $line] == 3} {
 	      if {[lindex $line 1] == "surface"} {
-                $resObj SetMeshOptions -options "SurfaceMeshFlag" -value1 [lindex $line 2]
+                $resObj SetMeshOptions -options "SurfaceMeshFlag" -values [lindex $line 2]
 	      } elseif {[lindex $line 1] == "volume"} {
-                $resObj SetMeshOptions -options "VolumeMeshFlag" -value1 [lindex $line 2]
+                $resObj SetMeshOptions -options "VolumeMeshFlag" -values [lindex $line 2]
 	      } else {
 		  return -code error "bad line: \{$line\}"
 	      }
 	  } elseif {[llength $line] == 4} {
-              eval $resObj Set[string toupper [lindex $line 1] 0 0][string toupper [lindex $line 2] 0 0] -value [lindex $line 3]
+	    if {[lindex $line 1] == "surface"} {
+	      if {[lindex $line 2] == "optimization"} {
+		$resObj SetMeshOptions -options "SurfaceOptimization" -values [lindex $line 3]
+	      } elseif {[lindex $line 2] == "smoothing"} {
+		$resObj SetMeshOptions -options "SurfaceSmoothing" -values [lindex $line 3]
+	      } else {
+		  return -code error "bad line: \{$line\}"
+	      }
+	    } elseif {[lindex $line 1] == "volume"} {
+	      if {[lindex $line 2] == "optimization"} {
+		$resObj SetMeshOptions -options "VolumeOptimization" -values [lindex $line 3]
+	      } elseif {[lindex $line 2] == "smoothing"} {
+		$resObj SetMeshOptions -options "VolumeSmoothing" -values [lindex $line 3]
+	      } else {
+		  return -code error "bad line: \{$line\}"
+	      }
+	    }
 	  } else {
 	      return -code error "bad line: \{$line\}"
 	  }
