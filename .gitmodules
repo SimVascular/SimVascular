@@ -1,3 +1,3 @@
 [submodule "Code/Licensed/ParasolidSolidModel"]
 	path = Code/Licensed/ParasolidSolidModel
-	url = git@132.239.93.21:simvascular/licensedplugin-parasolidsolidmodel.git
+	url = git@github.com:SimVascular/LicensedPlugin-ParasolidSolidModel.git
