@@ -704,7 +704,7 @@ int cvMeshSimAdapt::TransferSolution()
     return CV_ERROR;
   }
   int nVar = 5; //Number of variables in solution vector
-  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,nVar) != CV_OK)
+  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.outstep_) != CV_OK)
   {
     fprintf(stderr,"ERROR: Solution was not transferred\n");
     return CV_ERROR;

@@ -144,7 +144,7 @@ int AdaptUtils_getAttachedArray ( double *&valueArray, vtkUnstructuredGrid *mesh
                        std::string dataName, int nVar, int poly);
 
 // just take the value from any adjacent vertex
-int AdaptUtils_fix4SolutionTransfer (vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int nVar);
+int AdaptUtils_fix4SolutionTransfer (vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int outstep);
 
 int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd);
 

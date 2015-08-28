@@ -426,7 +426,7 @@ int AdaptUtils_getAttachedArray( double *&valueArray,
  * @param nVar This is the number of components in the solutions array
  * @note This takes the solution from the closest node
  */
-int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int nVar)
+int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int outstep)
 {
   int i;
   int numVerts;
@@ -434,21 +434,42 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
 //  double solution[nVar];
   vtkIdType pointId;
   vtkIdType closestPoint;
-  vtkSmartPointer<vtkDoubleArray> inSolution = 
+  vtkDoubleArray *inVel; 
+  vtkDoubleArray *inPress; 
+  vtkSmartPointer<vtkDoubleArray> outVel = 
     vtkSmartPointer<vtkDoubleArray>::New();
-  vtkSmartPointer<vtkDoubleArray> outSolution = 
+  vtkSmartPointer<vtkDoubleArray> outPress = 
     vtkSmartPointer<vtkDoubleArray>::New();
   vtkSmartPointer<vtkPointLocator> locator = 
     vtkSmartPointer<vtkPointLocator>::New();
 
   numVerts = outmesh->GetNumberOfPoints();
 
-  outSolution->SetNumberOfComponents(nVar);
-  outSolution->Allocate(numVerts,10000);
-  outSolution->SetNumberOfTuples(numVerts);
-  outSolution->SetName("solution");
+  char vel[80];
+  char press[80];
+  sprintf(vel,"%s_%05i","velocity",outstep);
+  sprintf(press,"%s_%05i","pressure",outstep);
+  if (AdaptUtils_checkArrayExists(inmesh,0,vel) != CV_OK)
+  {
+    fprintf(stderr,"Array %s does not exist on mesh\n");
+    return CV_ERROR;
+  }
+  if (AdaptUtils_checkArrayExists(inmesh,0,press) != CV_OK)
+  {
+    fprintf(stderr,"Array %s does not exist on mesh\n");
+    return CV_ERROR;
+  }
+  outVel->SetNumberOfComponents(3);
+  outVel->Allocate(numVerts,10000);
+  outVel->SetNumberOfTuples(numVerts);
+  outVel->SetName("velocity");
+  outPress->SetNumberOfComponents(1);
+  outPress->Allocate(numVerts,10000);
+  outPress->SetNumberOfTuples(numVerts);
+  outPress->SetName("pressure");
 
-  inSolution = vtkDoubleArray::SafeDownCast(inmesh->GetPointData()->GetArray("solution"));
+  inVel = vtkDoubleArray::SafeDownCast(inmesh->GetPointData()->GetArray(vel));
+  inPress = vtkDoubleArray::SafeDownCast(inmesh->GetPointData()->GetArray(press));
 
   locator->SetDataSet(inmesh);
   locator->BuildLocator();
@@ -458,16 +479,15 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
     outmesh->GetPoint(pointId,xyz);
     closestPoint = locator->FindClosestPoint(xyz);
 
-    for (i=0;i<nVar;i++)
-    {
-//      solution[i] = inSolution->GetComponent(closestPoint,i);
-      outSolution->SetComponent(pointId,i,inSolution->GetComponent(closestPoint,i));
-    }
-//    outSolution->SetTuple(pointId,solution);
+    for (i=0;i<3;i++)
+      outVel->SetComponent(pointId,i,inVel->GetComponent(closestPoint,i));
+
+    outPress->SetValue(pointId,inPress->GetValue(closestPoint));
   }
 
-  outmesh->GetPointData()->AddArray(outSolution);
-  outmesh->GetPointData()->SetActiveScalars("solution");
+  outmesh->GetPointData()->AddArray(outVel);
+  outmesh->GetPointData()->AddArray(outPress);
+  outmesh->GetPointData()->SetActiveScalars("velocity");
 
   return CV_OK;
 }

@@ -64,6 +64,12 @@
 
 #include <iostream>
 
+#include <sys/stat.h>
+bool file_exists(const std::string& name) {
+  struct stat buffer;   
+  return (stat (name.c_str(), &buffer) == 0); 
+}
+
 cvTetGenAdapt::cvTetGenAdapt() 
   : cvAdaptObject(KERNEL_TETGEN)
 {
@@ -189,6 +195,12 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 // -----------------------
 int cvTetGenAdapt::LoadModel(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
 
@@ -215,6 +227,12 @@ int cvTetGenAdapt::LoadModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::LoadMesh(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (inmesh_ != NULL)
     inmesh_->Delete();
   vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader = 
@@ -237,6 +255,12 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
 // ---------------
 int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (sol_ != NULL)
     delete [] sol_;
 
@@ -264,6 +288,12 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (ybar_ != NULL)
     delete [] ybar_;
 
@@ -291,6 +321,12 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (hessians_ != NULL)
     delete [] hessians_;
 
@@ -652,7 +688,7 @@ int cvTetGenAdapt::TransferSolution()
     return CV_ERROR;
   }
   int nVar = 5;// Number of variables in sol
-  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,nVar) != CV_OK)
+  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.outstep_) != CV_OK)
   {
     fprintf(stderr,"ERROR: Solution was not transferred\n");
     return CV_ERROR;
@@ -691,6 +727,12 @@ int cvTetGenAdapt::TransferRegions()
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (outsurface_mesh_ == NULL)
   {
     if (meshobject_ == NULL)
@@ -715,6 +757,12 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (outsurface_mesh_ == NULL)
   {
     if (meshobject_ == NULL)
@@ -745,6 +793,12 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (outmesh_ == NULL)
   {
     if (meshobject_ == NULL)
@@ -769,6 +823,12 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 {
+  if (!file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   fprintf(stdout,"TODO!\n");
   //int numPoints = outmesh_->GetNumberOfPoints();
   //AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
