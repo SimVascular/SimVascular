@@ -1014,6 +1014,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     return CV_ERROR;
   }
 
+  fprintf(stderr,"Solid Kernel: %s\n",SolidModel_KernelT_EnumToStr(solidmodeling_kernel_));
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
 #ifdef USE_PARASOLID
