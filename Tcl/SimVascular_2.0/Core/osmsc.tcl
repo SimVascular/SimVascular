@@ -1442,7 +1442,16 @@ proc mesh_writeCompleteMesh {mesh solid prefix outdir} {
 
   $pdwriter Delete
 
-  $mesh WriteMetisAdjacency -file $outdir/$prefix.xadj
+  #$mesh WriteMetisAdjacency -file $outdir/$prefix.xadj
+  set mesh_kernel [$mesh GetKernel] 
+  if {$mesh_kernel == "TetGen"} {
+    set gFilenames(tet_mesh_script_file) $outdir/$prefix
+    guiMMcreateTetGenScriptFile
+  } elseif {$mesh_kernel == "MeshSim"} {
+    set gFilenames(mesh_script_file) $outdir/$prefix
+    guiMMcreateMeshSimScriptFile
+    $mesh WriteMesh -file $outdir/$prefix.sms
+  }
 
   catch {repos_delete -obj $ug}
   catch {repos_delete -obj $pd}

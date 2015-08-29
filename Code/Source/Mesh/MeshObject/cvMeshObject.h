@@ -86,6 +86,7 @@ public:
   // Routines that are pulled out of old instantiation since they shouldn't be required.
   virtual int SetMeshFileName( const char* filename ) = 0;
   virtual int SetSolidFileName( const char* filename ) = 0;
+  cvMeshObject::KernelType GetMeshKernel() const { return mesh_kernel_; }
 
   void SetSolidModelKernel(SolidModel_KernelT kernel) { solidmodeling_kernel_ = kernel; }
   int GetMeshLoaded() { return meshloaded_;}

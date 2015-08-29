@@ -38011,9 +38011,11 @@ proc guiTETGEN_load_script_file {} {
 proc guiTETGEN_save_script_file {} {
 
   global gOptions
+  global gFilenames
 
   set gOptions(meshing_kernel) TetGen
   set gOptions(meshing_solid_kernel) PolyData
+  set gFilenames(tet_mesh_script_file) $gFilenames(polydata_solid_file)
 
   mesh_setKernel -name $gOptions(meshing_kernel)
 

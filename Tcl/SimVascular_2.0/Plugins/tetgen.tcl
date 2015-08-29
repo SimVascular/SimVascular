@@ -39,7 +39,7 @@ proc guiMMcreateTetGenScriptFile {} {
   set mesh_kernel $gOptions(meshing_kernel)
 
   if {$mesh_kernel == "TetGen"} {
-    set scriptfile [file rootname $gFilenames(polydata_solid_file)].tgs
+    set scriptfile [file rootname $gFilenames(tet_mesh_script_file)].tgs
   } else {
     return -code error "ERROR: Invalid Mesh Script File"
   }

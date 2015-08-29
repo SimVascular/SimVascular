@@ -35,6 +35,7 @@
 
 #include "SimVascular.h"
 #include "cvMeshSystem.h"
+#include "cvMeshObject.h"
 #include "cv_mesh_init.h"
 
 #include <stdio.h>
@@ -75,8 +76,8 @@ int cvMesh_LogoffCmd( ClientData clientData, Tcl_Interp *interp,
 
 // gdscMesh methods
 // --------------------
-//static int cvMesh_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
-//				int argc, CONST84 char *argv[] );
+static int cvMesh_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
+				int argc, CONST84 char *argv[] );
 static int cvMesh_PrintMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
 static int cvMesh_UpdateMtd( ClientData clientData, Tcl_Interp *interp,
@@ -385,10 +386,10 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     if ( cvMesh_PrintMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
-    //  } else if ( Tcl_StringMatch( argv[1], "GetKernel" ) ) {
-    //if ( cvMesh_GetKernelMtd( clientData, interp, argc, argv ) != TCL_OK ) {
-    //  return TCL_ERROR;
-    //} 
+  } else if ( Tcl_StringMatch( argv[1], "GetKernel" ) ) {
+    if ( cvMesh_GetKernelMtd( clientData, interp, argc, argv ) != TCL_OK ) {
+      return TCL_ERROR;
+    }
   } else if ( Tcl_StringMatch( argv[1], "WriteMetisAdjacency" ) ) {
     if ( cvMesh_WriteMetisAdjacencyMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
@@ -497,6 +498,35 @@ static void gdscMeshPrintMethods( Tcl_Interp *interp )
   return;
 }
 
+// ----------------
+// cvMesh_GetKernelMtd
+// ----------------
+
+static int cvMesh_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] )
+{
+  cvMeshObject *geom = (cvMeshObject *)clientData;
+  char *usage;
+  cvMeshObject::KernelType kernelType;
+  char *kernelName;
+
+  usage = ARG_GenSyntaxStr( 2, argv, 0, NULL );
+  if ( argc != 2 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  kernelType = geom->GetMeshKernel();
+  kernelName = cvMeshObject::GetKernelName( kernelType );
+  Tcl_SetResult( interp, kernelName, TCL_VOLATILE );
+
+  if ( kernelType == SM_KT_INVALID ) {
+    fprintf(stderr,"Invalid kernel type\n");
+    return TCL_ERROR;
+  } else {
+    return TCL_OK;
+  }
+}
 
 // ----------------
 // cvMesh_PrintMtd
