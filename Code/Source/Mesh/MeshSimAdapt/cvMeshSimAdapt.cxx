@@ -153,12 +153,12 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     return CV_ERROR;
   }
 
-  char *kernelName = SolidModel_KernelT_EnumToStr( cvSolidModel::gCurrentKernel );
-  fprintf(stderr,"Solid Kernel: %s\n",kernelName);
-  meshobject_->SetSolidModelKernel(cvSolidModel::gCurrentKernel);
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("MeshSim");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,
 		  solidFileName);
+  char *kernelName = SolidModel_KernelT_EnumToStr( cvSolidModel::gCurrentKernel );
+  fprintf(stderr,"Solid Kernel: %s\n",kernelName);
+  meshobject_->SetSolidModelKernel(cvSolidModel::gCurrentKernel);
   if ( meshobject_ == NULL ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
     return CV_ERROR;
