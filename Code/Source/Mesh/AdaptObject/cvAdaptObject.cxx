@@ -56,25 +56,8 @@ cvAdaptObject::cvAdaptObject( KernelType t)
 
 cvAdaptObject::~cvAdaptObject()
 {
+  ;
 }
-
-//// ----------------------------
-//// ExecutableAdaptObject
-//// ----------------------------
-//
-//cvAdaptObject* cvAdaptObject::ExecutableAdaptObject(KernelType t)
-//{
-//  if (t == KERNEL_TETGEN)
-//  {
-//    cvTetGenAdapt *adaptor = new cvTetGenAdapt;
-//    return adaptor;
-//  }
-//  else 
-//  {
-//    fprintf(stderr,"Your adaptor name does not exist\n");
-//    return 0;
-//  }
-//}
 
 // ----------------------------
 // DefaultInstantiateAdaptObject

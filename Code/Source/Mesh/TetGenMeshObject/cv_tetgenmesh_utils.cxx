@@ -1190,7 +1190,6 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   }
 
 
-  fprintf(stdout,"Mapping Cells\n");;
   for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
   {
     //currentValue = currentRegionsInt->GetValue(cellId);
@@ -1213,7 +1212,6 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
 	  subId,distance);
       currentRegionsInt->InsertValue(cellId,realRegions->GetValue(closestCell));
   }
-  fprintf(stdout,"Done\n");;
 
   //for (i=0;i<range+1;i++)
   //{

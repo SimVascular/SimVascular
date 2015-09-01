@@ -539,7 +539,6 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
     mapper[i] = -1;
   }
 
-  fprintf(stdout,"Mapping Cells\n");
   for (cellId=0;cellId<outpd->GetNumberOfCells();cellId++)
   {
       outpd->GetCellPoints(cellId,npts,pts);
@@ -556,7 +555,6 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
 	  subId,distance);
       currentRegionsInt->InsertValue(cellId,realRegions->GetValue(closestCell));
   }
-  fprintf(stdout,"Done\n");
 
   outpd->GetCellData()->RemoveArray("ModelFaceID");
   currentRegionsInt->SetName("ModelFaceID");

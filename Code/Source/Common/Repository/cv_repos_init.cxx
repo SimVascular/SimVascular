@@ -283,7 +283,7 @@ int Repos_DeleteCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   obj_t = gRepository->GetType( objName );
-  if ( obj_t == SOLID_MODEL_T || obj_t == MESH_T) {
+  if ( obj_t == SOLID_MODEL_T || obj_t == MESH_T || obj_t == ADAPTOR_T) {
     return Tcl_VarEval( interp, "rename ", objName, " {}", (char *)NULL );
   } else {
     unreg_status = gRepository->UnRegister( objName );

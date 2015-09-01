@@ -157,7 +157,6 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,
 		  solidFileName);
   char *kernelName = SolidModel_KernelT_EnumToStr( cvSolidModel::gCurrentKernel );
-  fprintf(stderr,"Solid Kernel: %s\n",kernelName);
   meshobject_->SetSolidModelKernel(cvSolidModel::gCurrentKernel);
   if ( meshobject_ == NULL ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
@@ -477,12 +476,12 @@ int cvMeshSimAdapt::SetAdaptOptions(char *flag,double value)
 // -----------------------
 int cvMeshSimAdapt::CheckOptions() 
 {
-  fprintf(stderr,"Check values\n");
-  fprintf(stderr,"Poly: %d\n",options.poly_);
-  fprintf(stderr,"Strategy: %d\n",options.strategy_);
-  fprintf(stderr,"Ratio: %.4f\n",options.ratio_);
-  fprintf(stderr,"Hmax: %.4f\n",options.hmax_);
-  fprintf(stderr,"Hmin: %.4f\n",options.hmin_);
+  fprintf(stdout,"Check values\n");
+  fprintf(stdout,"Poly: %d\n",options.poly_);
+  fprintf(stdout,"Strategy: %d\n",options.strategy_);
+  fprintf(stdout,"Ratio: %.4f\n",options.ratio_);
+  fprintf(stdout,"Hmax: %.4f\n",options.hmax_);
+  fprintf(stdout,"Hmin: %.4f\n",options.hmin_);
 
   return CV_OK;
 }

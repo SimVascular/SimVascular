@@ -137,48 +137,6 @@ int Adapt_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "adapt_newObject", cvAdapt_NewObjectCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
-  //Object tcl functions
-  Tcl_CreateCommand( interp, "CreateInternalMeshObject", cvAdapt_CreateInternalMeshObjectMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "LoadModel", cvAdapt_LoadModelMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "LoadMesh", cvAdapt_LoadMeshMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "LoadSolutionFromFile", cvAdapt_LoadSolutionFromFileMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "LoadYbarFromFile", cvAdapt_LoadYbarFromFileMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "LoadHessianFromFile", cvAdapt_LoadHessianFromFileMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "ReadSolutionFromMesh", cvAdapt_ReadSolutionFromMeshMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "ReadYbarFromMesh", cvAdapt_ReadYbarFromMeshMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "SetAdaptOptions", cvAdapt_SetAdaptOptionsMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "CheckOptions", cvAdapt_CheckOptionsMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "SetMetric", cvAdapt_SetMetricMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "SetupMesh", cvAdapt_SetupMeshMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "RunAdaptor", cvAdapt_RunAdaptorMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "PrintStats", cvAdapt_PrintStatsMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "GetAdaptedMesh", cvAdapt_GetAdaptedMeshMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "TransferSolution", cvAdapt_TransferSolutionMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "TransferRegions", cvAdapt_TransferRegionsMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "WriteAdaptedModel", cvAdapt_WriteAdaptedModelMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "WriteAdaptedMesh", cvAdapt_WriteAdaptedMeshMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-  Tcl_CreateCommand( interp, "WriteAdaptedSolution", cvAdapt_WriteAdaptedSolutionMtd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
-
   // Initialize
   cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
 
@@ -221,7 +179,7 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
-  char *resultName;
+  char *resultName = NULL;
 
   char *usage;
   char *kernelName;
@@ -253,7 +211,7 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   KernelType meshType = KERNEL_INVALID;
   kernelName = cvMeshSystem::GetCurrentKernelName();
   // Instantiate the new mesh:
-  cvAdaptObject *adaptor;
+  cvAdaptObject *adaptor = NULL;
   if (!strcmp(kernelName,"TetGen")) {
     meshType = KERNEL_TETGEN;
     cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
@@ -283,7 +241,6 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvAdapt_ObjectCmd,
 		     (ClientData)adaptor, DeletegdscAdapt );
 
-  fprintf(stderr,"Looks as if creation worked correctly!\n");
   return TCL_OK;
 }
 

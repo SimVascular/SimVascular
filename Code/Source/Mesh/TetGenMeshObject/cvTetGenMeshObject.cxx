@@ -81,7 +81,7 @@
 
 cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   : cvMeshObject()
-{
+{ 
   interp_ = interp;
   inmesh_ = NULL;
   outmesh_ = NULL;
@@ -536,6 +536,7 @@ int cvTetGenMeshObject::GetNodeCoords(int node)
 
 int cvTetGenMeshObject::LoadModel(char *filename) {
 
+	fprintf(stderr,"Loading Model\n");
   if (filename == NULL) {
     return CV_ERROR;
   }
@@ -561,7 +562,6 @@ int cvTetGenMeshObject::LoadModel(char *filename) {
   }
 
   originalpolydata_->DeepCopy(polydatasolid_);
-  fprintf(stdout,"Original Solid is set\n");
   return CV_OK;
 
 }

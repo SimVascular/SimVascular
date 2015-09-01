@@ -445,7 +445,6 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 void DeletegdscMesh( ClientData clientData ) {
     cvMeshObject *geom = (cvMeshObject *)clientData;
   
-    fprintf(stderr,"Internal Mesh is being unregistered\n");
     gRepository->UnRegister( geom->GetName() );
 }
 
