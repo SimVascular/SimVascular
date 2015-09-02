@@ -436,9 +436,7 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
   vtkIdType closestPoint;
   vtkDoubleArray *inVel; 
   vtkDoubleArray *inPress; 
-  vtkSmartPointer<vtkDoubleArray> outVel = 
-    vtkSmartPointer<vtkDoubleArray>::New();
-  vtkSmartPointer<vtkDoubleArray> outPress = 
+  vtkSmartPointer<vtkDoubleArray> outSol = 
     vtkSmartPointer<vtkDoubleArray>::New();
   vtkSmartPointer<vtkPointLocator> locator = 
     vtkSmartPointer<vtkPointLocator>::New();
@@ -459,14 +457,10 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
     fprintf(stderr,"Array %s does not exist on mesh\n");
     return CV_ERROR;
   }
-  outVel->SetNumberOfComponents(3);
-  outVel->Allocate(numVerts,10000);
-  outVel->SetNumberOfTuples(numVerts);
-  outVel->SetName("velocity");
-  outPress->SetNumberOfComponents(1);
-  outPress->Allocate(numVerts,10000);
-  outPress->SetNumberOfTuples(numVerts);
-  outPress->SetName("pressure");
+  outSol->SetNumberOfComponents(5);
+  outSol->Allocate(numVerts,10000);
+  outSol->SetNumberOfTuples(numVerts);
+  outSol->SetName("solution");
 
   inVel = vtkDoubleArray::SafeDownCast(inmesh->GetPointData()->GetArray(vel));
   inPress = vtkDoubleArray::SafeDownCast(inmesh->GetPointData()->GetArray(press));
@@ -479,15 +473,18 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
     outmesh->GetPoint(pointId,xyz);
     closestPoint = locator->FindClosestPoint(xyz);
 
+    double vel[3];
     for (i=0;i<3;i++)
-      outVel->SetComponent(pointId,i,inVel->GetComponent(closestPoint,i));
-
-    outPress->SetValue(pointId,inPress->GetValue(closestPoint));
+    {
+      vel[i] = inVel->GetComponent(closestPoint,i);
+      outSol->SetComponent(pointId,i,vel[i]);
+    }
+    outSol->SetComponent(pointId,3,inPress->GetValue(closestPoint));
+    outSol->SetComponent(pointId,4,sqrt(pow(vel[0],2)+pow(vel[1],2)+pow(vel[3],2)));
   }
 
-  outmesh->GetPointData()->AddArray(outVel);
-  outmesh->GetPointData()->AddArray(outPress);
-  outmesh->GetPointData()->SetActiveScalars("velocity");
+  outmesh->GetPointData()->AddArray(outSol);
+  outmesh->GetPointData()->SetActiveScalars("solution");
 
   return CV_OK;
 }

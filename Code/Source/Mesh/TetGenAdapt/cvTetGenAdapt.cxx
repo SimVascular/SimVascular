@@ -736,12 +736,6 @@ int cvTetGenAdapt::TransferRegions()
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 {
-  if (!file_exists(fileName))
-  {
-    fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
-  }
-
   if (outsurface_mesh_ == NULL)
   {
     if (meshobject_ == NULL)
@@ -766,12 +760,6 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
 {
-  if (!file_exists(fileName))
-  {
-    fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
-  }
-
   if (outsurface_mesh_ == NULL)
   {
     if (meshobject_ == NULL)
@@ -802,12 +790,6 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 {
-  if (!file_exists(fileName))
-  {
-    fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
-  }
-
   if (outmesh_ == NULL)
   {
     if (meshobject_ == NULL)
@@ -832,18 +814,27 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 {
-  if (!file_exists(fileName))
+  if (AdaptUtils_checkArrayExists(outmesh_,0,"solution") != CV_OK)
   {
-    fprintf(stderr,"File %s does not exist\n",fileName);
+    fprintf(stderr,"Array solution does not exist, must transfer solution prior to writing solution file\n");
     return CV_ERROR;
   }
 
-  fprintf(stdout,"TODO!\n");
-  //int numPoints = outmesh_->GetNumberOfPoints();
-  //AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
-  //    options.ndof_,options.outstep_,solution);
+  if (sol_ != NULL)
+    delete [] sol_;
 
-  //delete [] solution;
+  int nVar = 5; //Number of variables in ybar
+  if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
+	options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Could not get solution from mesh\n");
+    return CV_ERROR;
+  }
+
+  int numPoints = outmesh_->GetNumberOfPoints();
+  AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
+      nVar,options.outstep_,sol_);
+
   return CV_OK;
 }
 

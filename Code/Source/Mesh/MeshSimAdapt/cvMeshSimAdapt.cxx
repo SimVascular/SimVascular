@@ -811,12 +811,27 @@ int cvMeshSimAdapt::WriteAdaptedMesh(char *fileName)
 // -----------------------
 int cvMeshSimAdapt::WriteAdaptedSolution(char *fileName)
 {
-  fprintf(stdout,"TODO!\n");
-  //int numPoints = outmesh_->GetNumberOfPoints();
-  //AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
-  //    options.ndof_,options.outstep_,solution);
+  if (AdaptUtils_checkArrayExists(outmesh_,0,"solution") != CV_OK)
+  {
+    fprintf(stderr,"Array solution does not exist, must transfer solution prior to writing solution file\n");
+    return CV_ERROR;
+  }
 
-  //delete [] solution;
+  if (sol_ != NULL)
+    delete [] sol_;
+
+  int nVar = 5; //Number of variables in ybar
+  if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
+	options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Could not get solution from mesh\n");
+    return CV_ERROR;
+  }
+
+  int numPoints = outmesh_->GetNumberOfPoints();
+  AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
+      nVar,options.outstep_,sol_);
+
   return CV_OK;
 }
 
