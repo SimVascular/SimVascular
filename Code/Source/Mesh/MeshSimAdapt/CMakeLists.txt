@@ -30,7 +30,6 @@
 
  set(lib lib_simvascular_meshsim_adaptor)
  LIST(APPEND CORELIBS ${lib})
-# TODO: Remove this! needs to be refactored
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
@@ -52,7 +51,8 @@ target_link_libraries(${lib}
 			lib_simvascular_sysgeom	
 			lib_simvascular_solverio
 			lib_simvascular_globals 
-			lib_simvascular_utils)
+			lib_simvascular_utils
+			lib_simvascular_adaptor)
 
 if(Licensed_PARASOLID)
 	target_link_libraries(${lib} lib_simvascular_parasolid)
@@ -66,11 +66,6 @@ if(SIMVASCULAR_INSTALL_LIBS)
     )
 endif()
 
-if(SIMVASCULAR_INSTALL_HEADERS)
-  install(FILES ${HDRS}
-    DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/plugins/tetadapt COMPONENT PluginHeaders
-    )
-endif()
 
 
 

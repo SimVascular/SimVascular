@@ -27,24 +27,32 @@
  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  #
  #=========================================================================#
- 
+SET(lib lib_simvascular_meshsim_mesh) 
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
 
-add_library(lib_simvascular_meshsim_mesh ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 
-include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
+if(Licensed_ADAPTOR)
+    include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
+endif()
 
-target_link_libraries(lib_simvascular_meshsim_mesh
+target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${ZLIB_LIBRARY} ${GLOBAL_LIBRARIES}
 			lib_simvascular_globals lib_simvascular_mesh 
 			lib_simvascular_utils lib_simvascular_sysgeom
 			lib_simvascular_repository lib_simvascular_solid
-			lib_simvascular_meshsim_adaptor lib_simvascular_solverio
 			)
 		#MAKE SURE LIBS ARE SPLIT UP WITH COMPILE FLAGS ADPTOR
 if(Licensed_PARASOLID)
-    target_link_libraries(lib_simvascular_meshsim_mesh lib_simvascular_parasolid)
+    target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
+
+if(Licensed_ADAPTOR)
+    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor
+			          lib_simvascular_solverio)
+endif()
+
+

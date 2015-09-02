@@ -54,7 +54,9 @@
 
 //These have been added from ADAPTOR, make sure they are 
 //underneath compiler flags!
+#ifdef USE_MESHSIM_ADAPTOR
 #include "cv_meshsim_adapt_utils.h"
+#endif
 
 // -----------
 // cvMeshSimMeshObject
@@ -102,12 +104,13 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   meshoptions_.gmincurv_type = 0;
   meshoptions_.gmincurv = 0.0;
 
+#ifdef USE_MESHSIM_ADAPTOR
   errorIndicatorID = NULL;
   modes            = NULL;
   nodalhessianID   = NULL;
   nodalgradientID  = NULL;
   phasta_solution  = NULL;
-  //simAdapter = NULL;
+#endif
 }
 
 // -----------
@@ -1897,12 +1900,7 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
  */
 int cvMeshSimMeshObject::Adapt()
 { 
-  //if (simAdapter == NULL)
-  //{
-  //  fprintf(stdout,"SetErrorMetric must be called prior to adaption!\n");
-  //  return CV_ERROR;
-  //}
-
+#ifdef USE_MESHSIM_ADAPTOR
   pProgress progressAdapt = Progress_new();
 
   MSA_adapt(simAdapter, progressAdapt);
@@ -1924,10 +1922,15 @@ int cvMeshSimMeshObject::Adapt()
   MSA_delete(simAdapter);
 
   return CV_OK;
+#else
+  fprintf(stderr,"Error: MeshSim Adaptor not available\n");
+  return CV_ERROR;
+#endif
 }
 
 int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
+#ifdef USE_MESHSIM_ADAPTOR
   if (ug == NULL)
   {
     fprintf(stderr,"UGrid is NULL!\n");
@@ -2051,10 +2054,15 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
   pd->DeepCopy(cleaner->GetOutput());
 
   return CV_OK;
+#else
+  fprintf(stderr,"Error: MeshSim Adaptor not available\n");
+  return CV_ERROR;
+#endif
 }
 
 int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars,char *arrayName)
 {
+#ifdef USE_MESHSIM_ADAPTOR
   if (mesh == NULL)
   {
     fprintf(stderr,"Must load mesh before setting an array!\n");
@@ -2083,6 +2091,10 @@ int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars,char *arrayNa
   }
   
   return CV_OK;
+#else
+  fprintf(stderr,"Error: MeshSim Adaptor not available\n");
+  return CV_ERROR;
+#endif
 }
 
 int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayName)
@@ -2093,6 +2105,7 @@ int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayN
 
 int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy, int old)
 {
+#ifdef USE_MESHSIM_ADAPTOR
   if (mesh == NULL)
   {
     fprintf(stderr,"Must load .sms mesh before setting metric on mesh\n");
@@ -2201,5 +2214,9 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
     VIter_delete(vit);
   }
   return CV_OK;
+#else
+  fprintf(stderr,"Error: MeshSim Adaptor not available\n");
+  return CV_ERROR;
+#endif
 }
 

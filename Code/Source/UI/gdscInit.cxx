@@ -268,10 +268,6 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef USE_MESHSIM_ADAPTOR
-  if ( Adapt_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on Adapt_Init\n" );
-    return TCL_ERROR;
-  }
   if ( MeshSimAdapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on MeshSimAdapt_Init\n" );
     return TCL_ERROR;

@@ -85,7 +85,7 @@ int TetGenAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 int TetGenAdapt_Init( Tcl_Interp *interp )
 {
 
-  printf("  %-6s %s\n","","TetGen Adaption Enabled");
+  printf("  %-12s %s\n","","TetGen Adaption Enabled");
   
   // Associate the adapt registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.

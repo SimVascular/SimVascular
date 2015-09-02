@@ -28,7 +28,6 @@
  #
  #=========================================================================#
  
-# TODO: Remove this! needs to be refactored
 set(lib lib_simvascular_tet_adaptor)
 LIST(APPEND CORELIBS ${lib})
 
@@ -40,13 +39,6 @@ set(HDRS cvTetGenAdapt.h cv_tetgen_adapt_init.h)
 SET(CXXSRCS cvTetGenAdapt.cxx cv_tetgen_adapt_init.cxx)
 
 add_library(${lib} ${CXXSRCS})
-
-#simvascular_add_executable(${TET_ADAPTOR_EXE} 
-#  SRCS ${CXXSRCS}
-#  DEV_SCRIPT_NAME "mytetadaptor" 
-#  INSTALL_SCRIPT_NAME "svtetadapt"
-#  INSTALL_COMPONENT PluginExecutables
-#  INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}

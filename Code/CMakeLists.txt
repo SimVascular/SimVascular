@@ -209,6 +209,7 @@ mark_as_superbuild(Licensed_ADAPTOR)
 
 if(Licensed_ADAPTOR)
 	set(BUILD_ThreeDSolver ON)
+	set(Licensed_MESHSIM ON)
 endif()
 
 
@@ -488,9 +489,14 @@ else()
 	unset(TETGEN_LIBRARY CACHE)
 endif()
 
+if(Licensed_ADAPTOR)
+    set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+elseif(Plugin_TET_ADAPTOR)
+    set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+endif()
+
 if(Plugin_TET_ADAPTOR)
 	SET(USE_TET_ADAPTOR ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
 	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
 endif()
 
@@ -517,7 +523,6 @@ endif()
 if(Licensed_ADAPTOR)
 	set(USE_MESHSIM_ADAPTOR ON)
 	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
-#	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/MeshSimAdapt")
 endif()
 
 
