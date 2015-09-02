@@ -148,6 +148,9 @@ int AdaptUtils_fix4SolutionTransfer (vtkUnstructuredGrid *inmesh,vtkUnstructured
 
 int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd);
 
+// temporary function to split speed from or avg_sols
+int AdaptUtils_splitSpeedFromYbar( vtkUnstructuredGrid *mesh);
+
 // recover gradients from a VTKFilter
 int AdaptUtils_gradientsFromFilter (vtkUnstructuredGrid *mesh);
 

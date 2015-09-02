@@ -565,6 +565,49 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
 }
 
 // -----------------------------
+// splitSpeedFromYbar()
+// -----------------------------
+/** 
+ * @brief Filter to split speed from the ybar field  
+ * @param mesh The mesh with the attached field data information (avg_sols))
+ */
+
+int AdaptUtils_splitSpeedFromYbar(vtkUnstructuredGrid *mesh)
+{ 
+  int numPoints;
+  vtkIdType vtkId;
+  vtkSmartPointer<vtkDoubleArray> avg_sols = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkDoubleArray> speed = 
+    vtkSmartPointer<vtkDoubleArray>::New();
+
+  numPoints = mesh->GetNumberOfPoints();
+
+  if (AdaptUtils_checkArrayExists(mesh,0,"avg_sols") != CV_OK)
+  {
+    fprintf(stderr,"Array named avg_sols is not on mesh\n");
+    return CV_ERROR;
+  }
+
+  avg_sols = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("avg_sols"));
+
+  //This is to contain the speed from the ybar array from restart
+  speed->SetNumberOfComponents(1);
+  speed->Allocate(numPoints,10000);
+  speed->SetNumberOfTuples(numPoints);
+  speed->SetName("average_speed");
+  //The fifth component of the ybar array contains the speed info
+  for (vtkId=0;vtkId<numPoints;vtkId++)
+  {
+    speed->SetTuple1(vtkId,avg_sols->GetComponent(vtkId,4));
+  }
+  mesh->GetPointData()->AddArray(speed);
+  mesh->GetPointData()->SetActiveScalars("average_speed");
+
+  return CV_OK;
+}
+
+// -----------------------------
 // gradientsFromFilter()
 // -----------------------------
 /** 
@@ -575,38 +618,25 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
 int AdaptUtils_gradientsFromFilter(vtkUnstructuredGrid *mesh)
 { 
   int numPoints;
-  vtkIdType vtkId;
   vtkSmartPointer<vtkGradientFilter> calcGradient = 
     vtkSmartPointer<vtkGradientFilter>::New();
-  vtkSmartPointer<vtkDoubleArray> errorForGradient = 
-    vtkSmartPointer<vtkDoubleArray>::New();
-  vtkSmartPointer<vtkDoubleArray> speed = 
-    vtkSmartPointer<vtkDoubleArray>::New();
 
   numPoints = mesh->GetNumberOfPoints();
 
-  errorForGradient = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("avg_sols"));
-
-  //This is to contain the speed from the error array from restart
-  speed->SetNumberOfComponents(1);
-  speed->Allocate(numPoints,10000);
-  speed->SetNumberOfTuples(numPoints);
-  speed->SetName("speed");
-  //The fifth component of the error array contains the speed info
-  for (vtkId=0;vtkId<numPoints;vtkId++)
+  if (AdaptUtils_checkArrayExists(mesh,0,"average_speed") != CV_OK)
   {
-    speed->SetTuple1(vtkId,errorForGradient->GetComponent(vtkId,4));
+    fprintf(stderr,"Array named average_speed is not on mesh\n");
   }
-  mesh->GetPointData()->AddArray(speed);
-  mesh->GetPointData()->SetActiveScalars("speed");
+
+  mesh->GetPointData()->SetActiveScalars("average_speed");
 
   calcGradient->SetInputData(mesh);
-  calcGradient->SetInputScalars(0,"speed");
+  calcGradient->SetInputScalars(0,"average_speed");
   calcGradient->SetResultArrayName("gradients");
   calcGradient->Update();
 
   //The new mesh has gradient field data attached to it
-  mesh->GetCellData()->RemoveArray("speed");
+  mesh->GetCellData()->RemoveArray("average_speed");
   mesh->DeepCopy(calcGradient->GetOutput());
 
   return CV_OK;
@@ -673,6 +703,11 @@ int AdaptUtils_hessiansFromSolution(vtkUnstructuredGrid *mesh)
   //nodalgradientID  =  MD_newMeshDataId( "gradient");
   //nodalhessianID  =  MD_newMeshDataId( "hessian");
   
+  if (AdaptUtils_splitSpeedFromYbar(mesh) != CV_OK)
+  {
+    fprintf(stderr,"Error in setting getting speed array\n");
+    return CV_ERROR;
+  }
   // recover gradients from vtk filter
   // attaches gradient to vertices
   // gradient attached via nodalgradientID
