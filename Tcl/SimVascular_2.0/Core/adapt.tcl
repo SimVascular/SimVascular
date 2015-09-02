@@ -1,6 +1,6 @@
 proc guiMeshSimAdaptMesh {} {
 
-  set scriptfile [meshSimWriteAdapteMeshScript]
+  set scriptfile [meshSimWriteAdaptMeshScript]
 
   meshSimSourceAdaptScript $scriptfile
 }
@@ -10,6 +10,8 @@ proc meshSimWriteAdaptMeshScript {} {
   global gObjects
   global gFilenames
   global guiMMvars
+
+  set guiMMvars(metric_array_name) dummy
 
   set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]] 
   set gFilenames(adapted_mesh_file) $basename.sms 
@@ -44,6 +46,7 @@ proc meshSimWriteAdaptMeshScript {} {
   puts "Writing MeshSim Adapt Script File"
   set script_filename [file rootname $out_mesh_file].msas
 
+  set object /adapt/object
   set fp [open $script_filename "w"]
 
   puts $fp "# MeshSim Adapt Script File"
@@ -51,7 +54,7 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "# Timestamp: $timestamp  ([clock format $timestamp])"
   puts $fp "####################################################"
   puts $fp ""
-  puts $fp "set object /adapt/object"
+  puts $fp "set object $object"
   puts $fp "catch {repos_delete -obj $object}"
   puts $fp "global gOptions"
   puts $fp "global gFilenames"
@@ -69,7 +72,6 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "$object CreateInternalMeshObject"
   puts $fp "$object LoadModel -file $model_file"
   puts $fp "$object LoadMesh -file $mesh_file"
-  puts $fp "$object LoadModel -file $vtp_surface_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
   puts $fp "$object LoadYbarFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"

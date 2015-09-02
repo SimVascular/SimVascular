@@ -5708,7 +5708,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}  
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.button1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.button1  -command {guiMMbrowseFileSolid atdb_solid_file}  -text {Browse}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.button1  -command {guiMMbrowseFile atdb_solid_file}  -text {Browse}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -5879,7 +5879,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12.tbutton9
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12.tbutton9  -command {guiMMadaptMesh}  -text {Adapt}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12.tbutton9  -command {guiMeshSimAdaptMesh}  -text {Adapt}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -49256,6 +49256,7 @@ set {guiMMvars(error_reduction_factor)} {0.2}
 set {guiMMvars(error_step_number)} {x}
 set {guiMMvars(first_step_number)} {0}
 set {guiMMvars(last_step_number)} {1}
+set {guiMMvars(metric_array_name)} {size_metric}
 set {guiMMvars(step_incr)} {1}
 set {guiMMvars(ms_strategy)} {2}
 set {guiMMvars(tg_strategy)} {1}
