@@ -62,6 +62,13 @@ CLUSTER = x64_cygwin
 CXX_COMPILER_VERSION = vs12.5
 FORTRAN_COMPILER_VERSION = ifort
 
+# ---------------------------------------------------------------------
+# COMPILER_VERSION = { intel, gnu }
+# for compilation on linux cluster with intel or gun compiler
+# ---------------------------------------------------------------------
+
+COMPILER_VERSION = intel
+
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
 -include cluster_overrides.mk
 else
@@ -157,7 +164,13 @@ MAKE_WITH_MPICH2 = 1
 # Build only the 3D Solver
 # -----------------------------------------------------
 
-EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
+EXCLUDE_ALL_BUT_THREEDSOLVER = 0
+
+# -----------------------------------------------------
+# Compile with VTK
+# -----------------------------------------------------
+
+MAKE_WITH_VTK = 1
 
 # -----------------------------------------------------
 # Compile with ITK
@@ -199,14 +212,6 @@ LINK_WITH_DEBUG = 1
 
 #MAKE_STATIC_BUILD = 1
 
-# by default don't build most third party
-# if we are only building the flow solver
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
-    MAKE_WITH_ITK = 0
-    MAKE_WITH_VMTK = 0
-    MAKE_WITH_TETGEN = 0
-endif
-
 # if you need to override anything above for a given site, do it here
 # -----------------------------------------------------------------------
 
@@ -214,6 +219,20 @@ ifeq ($(LOCAL_DIR_SITE_OVERRIDES),1)
 -include site_overrides.mk
 else
 -include $(TOP)/site_overrides.mk
+endif
+
+# by default don't build most third party
+# if we are only building the flow solver
+ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
+    ifeq ($(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE), 0)
+        MAKE_WITH_VTK = 0
+    endif
+
+    MAKE_WITH_ITK = 0
+    MAKE_WITH_VMTK = 0
+    MAKE_WITH_TETGEN = 0
+    MAKE_WITH_SPARSE = 0
+    MAKE_WITH_NSPCG = 0
 endif
 
 # ----------------
@@ -382,7 +401,7 @@ endif
 # note: linux needs cleaning up!
 ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/compiler.intel.x64_linux.mk
-	ifeq ($(CXX_COMPILER_VERSION), gcc)
+	ifeq ($(COMPILER_VERSION), gnu)
 	  include $(TOP)/MakeHelpers/compiler.gnu.x64_linux.mk
 	endif
         GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
@@ -590,7 +609,7 @@ ifeq ($(MAKE_WITH_SPARSE),1)
     SPARSE_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_sparse$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
-    SPARSE_LIBS    = -L $(TOP)/lib -l_lib_simvascular_sparse
+    SPARSE_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_sparse
   endif
 endif
 
@@ -606,7 +625,7 @@ ifeq ($(MAKE_WITH_ZLIB),1)
     ZLIB_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_zlib$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
-    ZLIB_LIBS    = -L $(TOP)/lib -l_lib_simvascular_zlib
+    ZLIB_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_zlib
   endif
 endif
 
@@ -627,7 +646,7 @@ ifeq ($(MAKE_WITH_NSPCG),1)
     NSPCG_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_nspcg$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
-    NSPCG_LIBS    = -L $(TOP)/lib -l_lib_simvascular_nspcg
+    NSPCG_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_nspcg
   endif
 endif
 
@@ -646,7 +665,7 @@ ifeq ($(MAKE_WITH_TETGEN),1)
     TETGEN_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_tetgen$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
-    TETGEN_LIBS    = -L $(TOP)/lib -l_lib_simvascular_tetgen
+    TETGEN_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_tetgen
   endif
 endif
 
@@ -678,7 +697,7 @@ ifeq ($(MAKE_WITH_METIS),1)
     METIS_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_metis$(LIBLINKEXT)
   endif
   ifeq ($(CLUSTER),x64_linux)
-    METIS_LIBS    = -L $(TOP)/lib -l_lib_simvascular_metis
+    METIS_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_metis
   endif
 endif
 
@@ -708,12 +727,16 @@ endif
 # Visualization toolkit
 # ---------------------
 
+ifeq ($(MAKE_WITH_VTK),1)
+
 ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
+endif
+
 endif
 
 # -----------------------------------------

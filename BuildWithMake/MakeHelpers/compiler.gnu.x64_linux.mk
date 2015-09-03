@@ -1,4 +1,5 @@
-
+# already set all flags from intel.x64_linux.mk before coming here
+# the flags below are used to replace the previous flags.
     SHELL           =/bin/sh
     CXX             = g++ -pthread -w
     CC              = gcc -pthread -w
