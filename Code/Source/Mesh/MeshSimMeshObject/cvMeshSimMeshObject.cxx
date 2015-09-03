@@ -2074,7 +2074,7 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
     }
     if (strategy == 1) 
     {
-      MSA_setVertexSize(simAdapter,vertex,error_indicator[i]);
+      MSA_setVertexSize(simAdapter,vertex,error_indicator[i++]);
     }
     else if (strategy == 2)
     {
@@ -2084,7 +2084,7 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
        {
 	 for (int k=0;k<3;k++)
 	 {
-	   scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
+	   scaled_eigenvecs[j][k] = error_indicator[i++];
 	   //fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
 	 }
 	 //fprintf(stdout,"\n");
@@ -2099,7 +2099,6 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
       fprintf(stderr,"Strategy is not available\n");
       return CV_ERROR;
     }
-    ++i;
   }
   VIter_delete(vit);
 
