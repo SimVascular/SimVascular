@@ -144,8 +144,6 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int GenerateMesh();
   int WriteMesh(char *filename, int smsver);
   int WriteStats(char *filename);
-  //int DeleteMesh();
-  //int DeleteModel();
       
   // output visualization files
   int WriteMetisAdjacency (char *filename);

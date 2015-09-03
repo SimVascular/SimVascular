@@ -148,8 +148,6 @@ class cvTetGenMeshObject : public cvMeshObject {
   int Adapt();
   int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd);
   int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy);
-  int SetArrayOnMesh(double *array,int numVars, char *arrayName) {return CV_ERROR;}
-  int GetArrayOnMesh(double *array,int numVars,char *arrayName) {return CV_ERROR;}
 
   //TETGENMESHOBJECT ONLY: These are helper functions for some of the more complicated mesh options
   int GenerateSurfaceRemesh();
