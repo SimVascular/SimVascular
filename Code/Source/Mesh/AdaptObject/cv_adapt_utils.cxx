@@ -265,9 +265,9 @@ int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin,
     vtkDoubleArray *tmpPressureArray;
     vtkSmartPointer<vtkDoubleArray> tmpArray = 
       vtkSmartPointer<vtkDoubleArray>::New();;
-    averageArray->SetNumberOfComponents(5);
-    averageArray->Allocate(numPoints,10000);
-    averageArray->SetNumberOfTuples(numPoints);
+    tmpArray->SetNumberOfComponents(5);
+    tmpArray->Allocate(numPoints,10000);
+    tmpArray->SetNumberOfTuples(numPoints);
     char vel_step[80];
     char press_step[80];
     sprintf(vel_step,"%s_%05i","velocity",step_num);
