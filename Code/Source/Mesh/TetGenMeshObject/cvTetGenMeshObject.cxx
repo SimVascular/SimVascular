@@ -230,7 +230,11 @@ int cvTetGenMeshObject::Print()
   int nEdge = 0;
   int nVertex = 0;
 
-	
+  if (polydatasolid_ == NULL)
+  {
+    fprintf(stderr,"Solid has not been loaded\n");
+    return CV_ERROR;
+  }
   if(meshoptions_.surfacemeshflag && !meshoptions_.volumemeshflag)
   {
     num_nodes = polydatasolid_->GetNumberOfPoints();
@@ -238,6 +242,11 @@ int cvTetGenMeshObject::Print()
   }
   else if(meshoptions_.boundarylayermeshflag)
   {
+    if (volumemesh_ == NULL)
+    {
+      fprintf(stderr,"Mesh has not been created\n");
+      return CV_ERROR;
+    }
     num_nodes = volumemesh_->GetNumberOfPoints();
     num_elems = volumemesh_->GetNumberOfCells();
     nMeshFaces = 4.0*(volumemesh_->GetNumberOfCells());
@@ -245,6 +254,11 @@ int cvTetGenMeshObject::Print()
   }
   else 
   {
+    if (outmesh_ == NULL)
+    {
+      fprintf(stderr,"Mesh has not been created\n");
+      return CV_ERROR;
+    }
     num_nodes = outmesh_->numberofpoints;
     num_elems = outmesh_->numberoftetrahedra;
     nMeshFaces = outmesh_->numberoftrifaces;

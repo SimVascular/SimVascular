@@ -110,10 +110,7 @@ cvTetGenAdapt::cvTetGenAdapt( const cvTetGenAdapt& Adapt)
 cvTetGenAdapt::~cvTetGenAdapt()
 {
   if (meshobject_ != NULL)
-  {
-    char *name = "/adapt/internal/meshobject";
-    int unreg_status = gRepository->UnRegister(name);
-  }
+    gRepository->UnRegister(meshobject_->GetName());
 
   if (inmesh_ != NULL)
     inmesh_->Delete();
@@ -184,11 +181,27 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     delete meshobject_;
     return CV_ERROR;
   }
-
   meshobject_->SetName(mesh_name);
   Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
-		     (ClientData)meshobject_, DeletegdscMesh );
+        	     (ClientData)meshobject_, fakeDeletegdscMesh );
+
+  if (solidFileName != NULL)
+  {
+    if (this->LoadModel(solidFileName) != CV_OK)
+    {
+      fprintf(stderr,"Error loading solid model in internal object creation\n");
+      return CV_ERROR;
+    }
+  }
+  if (meshFileName != NULL)
+  {
+    if (this->LoadMesh(meshFileName) != CV_OK)
+    {
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
+      return CV_ERROR;
+    }
+  }
 
  return CV_OK;
 }

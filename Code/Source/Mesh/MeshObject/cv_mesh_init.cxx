@@ -448,6 +448,14 @@ void DeletegdscMesh( ClientData clientData ) {
     gRepository->UnRegister( geom->GetName() );
 }
 
+// -------------
+// fakeDeletegdscMesh
+// -------------
+// This is the deletion call-back for cvMeshObject object commands.
+
+void fakeDeletegdscMesh( ClientData clientData ) {
+  ;
+}
 
 // ------------
 // gdscMeshPrintMethods

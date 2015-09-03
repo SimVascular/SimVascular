@@ -146,13 +146,17 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 		char *meshFileName,
 		char *solidFileName)
 {
-  char* mesh_name = NULL;
   if (meshobject_ != NULL)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
     return CV_ERROR;
   }
 
+  char* mesh_name = "/adapt/internal/meshobject";
+  if ( gRepository->Exists(mesh_name) ) {
+    fprintf(stderr,"Object %s already exists\n",mesh_name);
+    return TCL_ERROR;
+  }
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("MeshSim");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,
 		  solidFileName);
@@ -163,20 +167,17 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     return CV_ERROR;
   }
 
-  mesh_name = "/adapt/internal/meshobject";
 
-  //// TODO: Previously had this, but was causing crashing after a few runs.
-  //// Didn't check and unregister if didn't work, crashing gone. This 
-  //// doesn't seem good. Need to figure out what is really happening.
-  //// Register the solid:
-  //if ( !( gRepository->Register(mesh_name, meshobject_ ) ) ) {
-  //  Tcl_AppendResult( interp, "error registering obj ", mesh_name,
-  //      	      " in repository", (char *)NULL );
-  //  fprintf(stderr,"Error when registering\n");
-  //  int unreg_status = gRepository->UnRegister( mesh_name );
-  //  return CV_ERROR;
-  //}
-  gRepository->Register(mesh_name, meshobject_ );
+  int reg_status = gRepository->Register(mesh_name, meshobject_ );
+  // Register the mesh:
+  if ( reg_status == 0 ) {
+    Tcl_AppendResult( interp, "error registering obj ", mesh_name,
+        	      " in repository", (char *)NULL );
+    fprintf(stderr,"Error when registering\n");
+    delete meshobject_;
+    return CV_ERROR;
+  }
+  meshobject_->SetName(mesh_name);
   Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
 		     (ClientData)meshobject_, DeletegdscMesh );
@@ -184,13 +185,19 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   if (solidFileName != NULL)
   {
     if (this->LoadModel(solidFileName) != CV_OK)
+    {
+      fprintf(stderr,"Error loading solid model in internal object creation\n");
       return CV_ERROR;
+    }
   }
 
   if (meshFileName != NULL)
   {
     if (this->LoadMesh(meshFileName) != CV_OK)
+    {
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
       return CV_ERROR;
+    }
   }
 
  return CV_OK;
