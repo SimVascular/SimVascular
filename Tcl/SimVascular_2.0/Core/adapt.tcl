@@ -3,6 +3,18 @@ proc guiMeshSimAdaptMesh {} {
   set scriptfile [meshSimWriteAdaptMeshScript]
 
   meshSimSourceAdaptScript $scriptfile
+
+  global guiMMvars
+  global gObjects
+  set gObjects(mesh_object) /adapt/internal/meshobject
+  set pd /adapt/polydata
+  catch {repos_delete -obj $pd}
+  set gObject(mesh_object_pd) $pd
+  set guiMMvars(viewMeshVtkFlag) 1
+
+  guiMMviewMeshVtk
+
+  guiMMprintMeshStats
 }
 
 proc meshSimWriteAdaptMeshScript {} {
@@ -115,6 +127,19 @@ proc guiTetGenAdaptMesh {} {
   set scriptfile [tetGenWriteAdaptMeshScript]
 
   tetGenSourceAdaptScript $scriptfile
+
+  global guiMMvars
+  global gObjects
+  set gObjects(mesh_object) /adapt/internal/meshobject
+  set pd /adapt/polydata
+  catch {repos_delete -obj $pd}
+  set gObject(mesh_object_pd) $pd
+  set guiMMvars(viewMeshVtkFlag) 1
+
+  guiMMviewMeshVtk
+
+  guiMMprintMeshStats
+
 }
 
 proc tetGenWriteAdaptMeshScript {} {
