@@ -9,7 +9,7 @@ proc guiMeshSimAdaptMesh {} {
   set gObjects(mesh_object) /adapt/internal/meshobject
   set pd /adapt/polydata
   catch {repos_delete -obj $pd}
-  set gObject(mesh_object_pd) $pd
+  set gObjects(mesh_object_pd) $pd
   set guiMMvars(viewMeshVtkFlag) 1
 
   guiMMviewMeshVtk
@@ -133,7 +133,7 @@ proc guiTetGenAdaptMesh {} {
   set gObjects(mesh_object) /adapt/internal/meshobject
   set pd /adapt/polydata
   catch {repos_delete -obj $pd}
-  set gObject(mesh_object_pd) $pd
+  set gObjects(mesh_object_pd) $pd
   set guiMMvars(viewMeshVtkFlag) 1
 
   guiMMviewMeshVtk
