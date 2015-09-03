@@ -414,6 +414,11 @@ int cvTetGenAdapt::ReadYbarFromMesh()
     fprintf(stderr,"Error when retrieving ybar array on mesh\n");
     return CV_ERROR;
   }
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
+    vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  writer->SetInputData(inmesh_);
+  writer->SetFileName("/Users/adamupdegrove/Desktop/dummy1.vtu");
+  writer->Update();
 
   if (inmesh_ != NULL)
   {
@@ -424,6 +429,11 @@ int cvTetGenAdapt::ReadYbarFromMesh()
       return CV_ERROR;
     }
   }
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer2 = 
+    vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+  writer2->SetInputData(inmesh_);
+  writer2->SetFileName("/Users/adamupdegrove/Desktop/dummy2.vtu");
+  writer2->Update();
 
   return CV_OK;
 }
@@ -621,6 +631,11 @@ int cvTetGenAdapt::SetupMesh()
     nVar = 1;
   else if (options.strategy_ == 2)
     nVar = 9;
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"errormetric") != CV_OK)
+  {
+    fprintf(stderr,"Error metric must be incident on mesh. Created in SetMetric\n");
+    return CV_ERROR;
+  }
   if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,options.poly_) != CV_OK)
   {
     fprintf(stderr,"Error in getting error metric off mesh\n");

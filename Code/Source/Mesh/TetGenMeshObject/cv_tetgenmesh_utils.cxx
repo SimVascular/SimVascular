@@ -255,7 +255,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
   inmesh->numberofpoints = numPoints;
   inmesh->pointlist = new double[numPoints*3];
   inmesh->tetrahedronlist = new int[numTets*4];
-  inmesh->numberofpointmtrs = 3;
+  inmesh->numberofpointmtrs = 1;
   inmesh->pointmtrlist = new REAL[numPoints*inmesh->numberofpointmtrs];
 
   cout<<"Converting to Adapt Points..."<<endl;
@@ -265,10 +265,7 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
     inmesh->pointlist[i*3] = tetPts[0];
     inmesh->pointlist[i*3+1] = tetPts[1];
     inmesh->pointlist[i*3+2] = tetPts[2];
-    for (j = 0; j < 3; j++)
-    {
-      inmesh->pointmtrlist[i*3+j] = errorMetricArray->GetComponent(i,j);
-    }
+    inmesh->pointmtrlist[i] = errorMetricArray->GetValue(i);
   }
 
   cout<<"Converting to Adapt Tets..."<<endl;

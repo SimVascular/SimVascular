@@ -357,6 +357,9 @@ int AdaptUtils_attachArray( double *valueArray,
   vtkSmartPointer<vtkDoubleArray> edgeDataArray = 
     vtkSmartPointer<vtkDoubleArray>::New();
 
+  if (AdaptUtils_checkArrayExists(mesh,0,dataName))
+    mesh->GetPointData()->RemoveArray(dataName.c_str());
+
   numVerts = mesh->GetNumberOfPoints();
   numCells = mesh->GetNumberOfCells();
   numEdges = mesh->GetNumberOfCells();
@@ -417,11 +420,13 @@ int AdaptUtils_getAttachedArray( double *&valueArray,
   nshg = mesh->GetNumberOfPoints();
   valueArray = new double[nshg*nVar];
 
+  int count = 0;
   for (pointId = 0;pointId<nshg;pointId++)
   {
     for (i=0;i<nVar;i++)
     {
-      valueArray[pointId+i*nshg] = solutionArray->GetComponent(pointId,i);
+      //valueArray[pointId+i*nshg] = solutionArray->GetComponent(pointId,i);
+      valueArray[count++] = solutionArray->GetComponent(pointId,i);
     }
   } 
   return CV_OK;
