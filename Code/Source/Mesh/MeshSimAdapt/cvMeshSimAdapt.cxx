@@ -654,6 +654,17 @@ int cvMeshSimAdapt::SetupMesh()
   else if (options.strategy_ == 2)
     nVar = 9;
 
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"errormetric") != CV_OK)
+  {
+    fprintf(stderr,"Error metric must be incident on mesh. Created in SetMetric\n");
+    return CV_ERROR;
+  }
+  if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error in getting error metric off mesh\n");
+    return CV_ERROR;
+  }
+
   meshobject_->SetMetricOnMesh(errormetric_,options.instep_,options.ratio_,
 		  options.hmax_,options.hmin_,options.strategy_);
 

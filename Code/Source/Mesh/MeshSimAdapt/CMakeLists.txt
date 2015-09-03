@@ -33,7 +33,7 @@
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
-set(HDRS cvMeshSimAdapt.h cv_meshsim_adapt_init.h)
+set(HDRS cvMeshSimAdapt.h cv_meshsim_adapt_init.h MeshSimInternal_phAdapt.h cvAdaptHelp.h)
 SET(CXXSRCS cvMeshSimAdapt.cxx cv_meshsim_adapt_init.cxx)
 
 

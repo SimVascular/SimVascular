@@ -52,12 +52,6 @@
 #include <stdio.h>
 #endif
 
-//These have been added from ADAPTOR, make sure they are 
-//underneath compiler flags!
-#ifdef USE_MESHSIM_ADAPTOR
-#include "cv_meshsim_adapt_utils.h"
-#endif
-
 // -----------
 // cvMeshSimMeshObject
 // -----------
