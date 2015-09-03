@@ -256,7 +256,12 @@ int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin,
   averageArray->SetNumberOfTuples(numPoints);
   averageArray->SetName("avg_sols");
   for (int i=0; i<numPoints;i++)
-    averageArray->InsertValue(i,0);
+  {
+    for (int j=0;j<5;j++)
+    {
+      averageArray->InsertComponent(i,j,0);
+    }
+  }
   
   int numArrays = 0;
   for (int step_num = begin;step_num <= end;step_num += incr)
