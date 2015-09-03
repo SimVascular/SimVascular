@@ -33,13 +33,12 @@
 include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
-SET(CXXSRCS cv_meshsim_adapt_utils.cxx cv_meshsim_adapt_init.cxx cvMeshSimAdapt.cxx
-	cvAdaptHelpers.cxx cvAdaptSF.cxx)
+set(HDRS cvMeshSimAdapt.h cv_meshsim_adapt_init.h)
+SET(CXXSRCS cvMeshSimAdapt.cxx cv_meshsim_adapt_init.cxx)
 
 
 
-SET(FSRCS pythag.f tred2EISPACK.f tql2.f lubksb.f ludcmp.f)
-add_library(${lib} ${CXXSRCS} ${FSRCS})
+add_library(${lib} ${CXXSRCS})
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
@@ -63,6 +62,11 @@ if(SIMVASCULAR_INSTALL_LIBS)
     RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
     LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
     ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+    )
+endif()
+if(SIMVASCULAR_INSTALL_HEADERS)
+  install(FILES ${HDRS}
+    DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/plugins/tetadapt COMPONENT PluginHeaders
     )
 endif()
 

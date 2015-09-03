@@ -64,11 +64,6 @@
 
 #include <iostream>
 
-#include <sys/stat.h>
-bool file_exists(const std::string& name) {
-  struct stat buffer;   
-  return (stat (name.c_str(), &buffer) == 0); 
-}
 
 cvTetGenAdapt::cvTetGenAdapt() 
   : cvAdaptObject(KERNEL_TETGEN)
@@ -212,7 +207,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 // -----------------------
 int cvTetGenAdapt::LoadModel(char *fileName)
 {
-  if (!file_exists(fileName))
+  if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
     return CV_ERROR;
@@ -249,7 +244,7 @@ int cvTetGenAdapt::LoadModel(char *fileName)
 // -----------------------
 int cvTetGenAdapt::LoadMesh(char *fileName)
 {
-  if (!file_exists(fileName))
+  if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
     return CV_ERROR;
@@ -277,7 +272,7 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
 // ---------------
 int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 {
-  if (!file_exists(fileName))
+  if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
     return CV_ERROR;
@@ -310,7 +305,7 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 {
-  if (!file_exists(fileName))
+  if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
     return CV_ERROR;
@@ -343,7 +338,7 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
 // ---------------
 int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
 {
-  if (!file_exists(fileName))
+  if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
     return CV_ERROR;
@@ -637,7 +632,7 @@ int cvTetGenAdapt::SetupMesh()
   meshobject_->SetInputUnstructuredGrid(inmesh_);
   meshobject_->SetMetricOnMesh(errormetric_,
       options.instep_,options.ratio_,options.hmax_,
-      options.hmin_,options.strategy_,0);
+      options.hmin_,options.strategy_);
 
   return CV_OK;
 }

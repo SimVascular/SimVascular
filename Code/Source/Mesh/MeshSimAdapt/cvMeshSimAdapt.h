@@ -86,7 +86,6 @@ class cvMeshSimAdapt: public cvAdaptObject {
     int outstep_;
     int step_incr_;
     double sphere_[5];
-    int tmp_old_stuffs_;
   }  AdaptOptions;
 
 public:

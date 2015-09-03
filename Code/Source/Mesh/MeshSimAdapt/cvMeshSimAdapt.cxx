@@ -40,7 +40,6 @@
 #include "cvMeshSimAdapt.h"
 
 #include "cv_adapt_utils.h"
-#include "cv_meshsim_adapt_utils.h"
 #include "cv_mesh_init.h"
 
 #include "vtkXMLUnstructuredGridReader.h"
@@ -84,7 +83,6 @@ cvMeshSimAdapt::cvMeshSimAdapt()
   options.sphere_[2] = 0;
   options.sphere_[3] = 0;
   options.sphere_[4] = 1;
-  options.tmp_old_stuffs_ = 0;
 
   sol_ = NULL;
   hessians_ = NULL;
@@ -209,6 +207,12 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 // -----------------------
 int cvMeshSimAdapt::LoadModel(char *fileName)
 {
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   const char *extension = strrchr(fileName,'.');
   extension = extension+1;
 
@@ -262,6 +266,12 @@ int cvMeshSimAdapt::LoadModel(char *fileName)
 // -----------------------
 int cvMeshSimAdapt::LoadMesh(char *fileName)
 {
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   const char *extension = strrchr(fileName,'.');
   extension = extension +1;
 
@@ -302,6 +312,12 @@ int cvMeshSimAdapt::LoadMesh(char *fileName)
 // ---------------
 int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
 {
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (sol_ != NULL)
     delete [] sol_;
 
@@ -325,6 +341,12 @@ int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
 // ---------------
 int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
 {
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (ybar_ != NULL)
     delete [] ybar_;
 
@@ -348,6 +370,12 @@ int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
 // ---------------
 int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
 {
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
   if (hessians_ != NULL)
     delete [] hessians_;
 
@@ -467,9 +495,6 @@ int cvMeshSimAdapt::SetAdaptOptions(char *flag,double value)
   else if (!strncmp(flag,"hmin",4)) {
     options.hmin_ = (double) value;
   }
-  else if (!strncmp(flag,"old",3)) {
-    options.tmp_old_stuffs_ = (int) value;
-  }
   else {
     fprintf(stderr,"Flag given is not a valid adapt option\n");
     return CV_ERROR;
@@ -503,119 +528,103 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
   if (strategy != -1)
     options.strategy_ = strategy;
 
-  if (options.tmp_old_stuffs_ == 1)
+  if (inmesh_ == NULL)
   {
-    //OLD STUFFS!
-    if (meshobject_ == NULL)
-    {
-      fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
-      return CV_ERROR;
-    }
-                                                      
-    int nvar = 5;
-    char *arrayName = "error indicator";
-    meshobject_->SetArrayOnMesh(ybar_,5,arrayName);
+    fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
+    return CV_ERROR;
   }
-  else 
-  {
-    if (inmesh_ == NULL)
-    {
-      fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
-      return CV_ERROR;
-    }
-    int numPoints = inmesh_->GetNumberOfPoints();
+  int numPoints = inmesh_->GetNumberOfPoints();
 
-    //Options 1,2, and 3 all use the hessian as adaption metric!
-    //Option 4 uses an attached array to the input mesh
-    switch(options.metric_option_) {
-    case 1 : //Read ybar from solution file (restart), and then calculate hessian using VTK classes!
-    case 2 : //Read ybar from vtu mesh, and then calculate hessian using VTK classes!
-    case 3 : {  //Read solution from mesh and calculate average solution. Then calculate hessian
-	if (options.metric_option_ == 1)
+  //Options 1,2, and 3 all use the hessian as adaption metric!
+  //Option 4 uses an attached array to the input mesh
+  switch(options.metric_option_) {
+  case 1 : //Read ybar from solution file (restart), and then calculate hessian using VTK classes!
+  case 2 : //Read ybar from vtu mesh, and then calculate hessian using VTK classes!
+  case 3 : {  //Read solution from mesh and calculate average solution. Then calculate hessian
+      if (options.metric_option_ == 1)
+      {
+	if (ybar_ == NULL)
 	{
-	  if (ybar_ == NULL)
-	  {
-	    if (input == NULL)
-	      return CV_ERROR;
-	    if (this->LoadYbarFromFile(input) != CV_OK)
-	      return CV_ERROR;
-	  }
-	}
-	else if (options.metric_option_ == 2)
-	{
-          if (this->ReadYbarFromMesh() != CV_OK)
+	  if (input == NULL)
+	    return CV_ERROR;
+	  if (this->LoadYbarFromFile(input) != CV_OK)
 	    return CV_ERROR;
 	}
-	else if (options.metric_option_ == 3)
-	{
-	  if (this->ReadSolutionFromMesh() != CV_OK)
-	    return CV_ERROR;
-	}
-
-	//Compute hessian and attach to mesh!
-        if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
-        {
-          fprintf(stderr,"Error: Error when calculating hessians from solution\n");
-          return CV_ERROR;
-        }
-	if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,
-	      options.ratio_,options.hmax_,options.hmin_,
-	      options.sphere_,options.strategy_) != CV_OK)
-	{
-	    fprintf(stderr,"Error: Error when setting size field with hessians\n");
-	    return CV_ERROR;
-	}
-    }
-    break;
-    case 4: { //Read some other array from the mesh to set on mesh
-        if (input != NULL)
-	{
-	  if (AdaptUtils_checkArrayExists(inmesh_,0,input) != CV_OK)
-	  {
-	    fprintf(stderr,"Given array name is not on input mesh!\n");
-	  }
-	}
-	else 
-	{
-	  fprintf(stderr,"Must give name of array to use as metric on mesh\n");
+      }
+      else if (options.metric_option_ == 2)
+      {
+	if (this->ReadYbarFromMesh() != CV_OK)
 	  return CV_ERROR;
-	}
-	double *tmp;
-	if (AdaptUtils_getAttachedArray(tmp,inmesh_,input,1,options.poly_) != CV_OK)
-	{
-	  fprintf(stderr,"Error when retrieving array from mesh!\n");
+      }
+      else if (options.metric_option_ == 3)
+      {
+	if (this->ReadSolutionFromMesh() != CV_OK)
 	  return CV_ERROR;
+      }
 
-	}
-	if (AdaptUtils_attachArray(tmp,inmesh_,"errormetric",1,options.poly_) != CV_OK)
-	{
-	  fprintf(stderr,"Error when attaching array to mesh!\n");
+      //Compute hessian and attach to mesh!
+      if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
+      {
+	fprintf(stderr,"Error: Error when calculating hessians from solution\n");
+	return CV_ERROR;
+      }
+      if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,
+	    options.ratio_,options.hmax_,options.hmin_,
+	    options.sphere_,options.strategy_) != CV_OK)
+      {
+	  fprintf(stderr,"Error: Error when setting size field with hessians\n");
 	  return CV_ERROR;
-	}
-	delete [] tmp;
-    }
-    break;
-    default : {
-        cout<<"Valid metric option not given!"<<endl;
-        cout<<"\nSpecify a correct (adaptation) option (1-4):"<<endl;
-	cout<<"\n1: Read Ybar from file and then calculate hessian from";
-        cout<<"	ybar component 5 (avg. magnitude of velocity over entire"; 
-	cout<<" simulation)"<<endl;
-	cout<<"2: Read Ybar from vtu mesh and then calculate hessian from ";
-	cout<<"ybar component 5 (avg. magnitude of velocity over entire"; 
-	cout<<" simulation)"<<endl; 
-	cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
-	cout<<" velocity over specified timestep range. Must provide"; 
-	cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
-        cout<<"	then calculated from avg. magnitude of velocity."<<endl;
-	cout<<"4: Read array from mesh, and specify mesh metric with this array."<<endl;
-	
-        return CV_ERROR;
-    }
-    break;
-    }
-
+      }
   }
+  break;
+  case 4: { //Read some other array from the mesh to set on mesh
+      if (input != NULL)
+      {
+	if (AdaptUtils_checkArrayExists(inmesh_,0,input) != CV_OK)
+	{
+	  fprintf(stderr,"Given array name is not on input mesh!\n");
+	}
+      }
+      else 
+      {
+	fprintf(stderr,"Must give name of array to use as metric on mesh\n");
+	return CV_ERROR;
+      }
+      double *tmp;
+      if (AdaptUtils_getAttachedArray(tmp,inmesh_,input,1,options.poly_) != CV_OK)
+      {
+	fprintf(stderr,"Error when retrieving array from mesh!\n");
+	return CV_ERROR;
+
+      }
+      if (AdaptUtils_attachArray(tmp,inmesh_,"errormetric",1,options.poly_) != CV_OK)
+      {
+	fprintf(stderr,"Error when attaching array to mesh!\n");
+	return CV_ERROR;
+      }
+      delete [] tmp;
+  }
+  break;
+  default : {
+      cout<<"Valid metric option not given!"<<endl;
+      cout<<"\nSpecify a correct (adaptation) option (1-4):"<<endl;
+      cout<<"\n1: Read Ybar from file and then calculate hessian from";
+      cout<<"	ybar component 5 (avg. magnitude of velocity over entire"; 
+      cout<<" simulation)"<<endl;
+      cout<<"2: Read Ybar from vtu mesh and then calculate hessian from ";
+      cout<<"ybar component 5 (avg. magnitude of velocity over entire"; 
+      cout<<" simulation)"<<endl; 
+      cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
+      cout<<" velocity over specified timestep range. Must provide"; 
+      cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
+      cout<<"	then calculated from avg. magnitude of velocity."<<endl;
+      cout<<"4: Read array from mesh, and specify mesh metric with this array."<<endl;
+      
+      return CV_ERROR;
+  }
+  break;
+  }
+
   return CV_OK;
 }
 
@@ -645,25 +654,8 @@ int cvMeshSimAdapt::SetupMesh()
   else if (options.strategy_ == 2)
     nVar = 9;
 
-  if (options.tmp_old_stuffs_ != 1)
-  {
-    if (AdaptUtils_checkArrayExists(inmesh_,0,"errormetric") != CV_OK)
-    {
-      fprintf(stderr,"Error metric must be incident on mesh. Created in SetMetric\n");
-      return CV_ERROR;
-    }
-    if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,options.poly_) != CV_OK)
-    {
-      fprintf(stderr,"Error in getting error metric off mesh\n");
-      return CV_ERROR;
-    }
-  }
-
-
   meshobject_->SetMetricOnMesh(errormetric_,options.instep_,options.ratio_,
-		  options.hmax_,options.hmin_,options.strategy_,
-		  options.tmp_old_stuffs_);
-
+		  options.hmax_,options.hmin_,options.strategy_);
 
   return CV_OK;
 }

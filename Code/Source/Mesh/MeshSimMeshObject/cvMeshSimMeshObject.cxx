@@ -2060,50 +2060,7 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
 #endif
 }
 
-int cvMeshSimMeshObject::SetArrayOnMesh(double *array, int numVars,char *arrayName)
-{
-#ifdef USE_MESHSIM_ADAPTOR
-  if (mesh == NULL)
-  {
-    fprintf(stderr,"Must load mesh before setting an array!\n");
-    return CV_ERROR;
-  }
-  if (array == NULL)
-  {
-    fprintf(stderr,"array to be attached is NULL!\n");
-    return CV_ERROR;
-  }
-
-  if (!strncmp("error indicator",arrayName,15))
-  {
-    if (errorIndicatorID != NULL)
-      MD_deleteMeshDataId(errorIndicatorID);
-
-    errorIndicatorID = MD_newMeshDataId("error indicator");
-
-    int poly=1;
-    attachArray(array,mesh,errorIndicatorID,numVars,poly);
-  }
-  else 
-  {
-    fprintf(stderr,"Array name is not recognized\n"); 
-    return CV_ERROR;
-  }
-  
-  return CV_OK;
-#else
-  fprintf(stderr,"Error: MeshSim Adaptor not available\n");
-  return CV_ERROR;
-#endif
-}
-
-int cvMeshSimMeshObject::GetArrayOnMesh(double *array, int numVars, char *arrayName)
-{
-  fprintf(stdout,"Not yet implemented\n");
-  return CV_OK;
-}
-
-int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy, int old)
+int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy)
 {
 #ifdef USE_MESHSIM_ADAPTOR
   if (mesh == NULL)
@@ -2113,106 +2070,45 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
   }
   int nshg = M_numVertices(mesh);
   simAdapter = MSA_new(mesh,1);
-  if (old == 1)
-  {
-    //OLD STUFFS
-    modes = MD_newMeshDataId("number of modes");// required for higher order
-    nodalgradientID = MD_newMeshDataId( "gradient");
-    nodalhessianID = MD_newMeshDataId( "hessian");
 
-    cout<<"\nStrategy chosen for ANISOTROPIC adaptation : size-field driven"<<endl;
-    
-    char error_tag[28];
-    error_tag[0]='\0';
-
-    cout<<"\nUsing ybar to compute hessians...\n"<<endl;
-    sprintf(error_tag,"ybar");
-      
-    cout<<"\n Reading files:"<<endl;
-
-    // need to use only local refinement if boundary layer exists
-    pVertex v;
-    VIter vIter=M_vertexIter(mesh);
-    while(v = VIter_next(vIter)) {
-      if (EN_isBLEntity(v)) {
-        MSA_setLocal(simAdapter,1);
-        cout<<endl<<" ** boundary layer mesh detected, using local refinement **" << endl <<endl;
-        break;
-      }
+  pVertex vertex;
+  VIter vit=M_vertexIter(mesh);
+  int i=0;
+  while ( vertex=VIter_next(vit)) {
+    if (EN_isBLEntity(vertex)) {
+      continue;
     }
-    VIter_delete(vIter);
- 
-    // calculating hessians for ybar field
-    // first reconstruct gradients and then the hessians 
-    // also deals with boundary issues &
-    // applies smoothing procedure for hessians
-    // (simple average : arithmetic mean)
-
-    hessiansFromSolution(mesh,lstep,errorIndicatorID,nodalhessianID,nodalgradientID);
-    
-    // compute mesh size-field using hessian strategy (anisotropic adaptation)
-    // and set it at each vertex
-    int option = 1;
-    double sphere[5];
-    sphere[0] = -1;
-    sphere[1] = 0;
-    sphere[2] = 0;
-    sphere[3] = 0;
-    sphere[4] = 1;
-
-    setSizeFieldUsingHessians(mesh,simAdapter,factor,hmax,hmin,option,sphere,nodalhessianID,nodalgradientID);
-    
-    // adaptation
-    // data clean up MOVED FROM BEFORE ADAPT. IF CRASH TRY MOVING BACK!
-    cleanAttachedData(mesh,errorIndicatorID,0);
-    cleanAttachedData(mesh,nodalgradientID,0);
-    cleanAttachedData(mesh,nodalhessianID,0);
-
-    MD_deleteMeshDataId(errorIndicatorID);
-    MD_deleteMeshDataId(modes);
-    MD_deleteMeshDataId(nodalgradientID);
-    MD_deleteMeshDataId(nodalhessianID);
-  }
-  else 
-  {
-    pVertex vertex;
-    VIter vit=M_vertexIter(mesh);
-    int i=0;
-    while ( vertex=VIter_next(vit)) {
-      if (EN_isBLEntity(vertex)) {
-        continue;
-      }
-      if (strategy == 1) 
-      {
-	MSA_setVertexSize(simAdapter,vertex,error_indicator[i]);
-      }
-      else if (strategy == 2)
-      {
-	 double scaled_eigenvecs[3][3];
-	 //fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
-	 for (int j=0;j<3;j++)
+    if (strategy == 1) 
+    {
+      MSA_setVertexSize(simAdapter,vertex,error_indicator[i]);
+    }
+    else if (strategy == 2)
+    {
+       double scaled_eigenvecs[3][3];
+       //fprintf(stdout,"\nAfter hessian for node %d is:\n",i);
+       for (int j=0;j<3;j++)
+       {
+	 for (int k=0;k<3;k++)
 	 {
-	   for (int k=0;k<3;k++)
-	   {
-	     scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
-	     //fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
-	   }
-	   //fprintf(stdout,"\n");
+	   scaled_eigenvecs[j][k] = error_indicator[nshg*(j*3+k)+i];
+	   //fprintf(stdout,"%.4f ",scaled_eigenvecs[j][k]);
 	 }
 	 //fprintf(stdout,"\n");
-	 MSA_setAnisoVertexSize(simAdapter, 
-			      vertex,
-			      scaled_eigenvecs);
-      }
-      else 
-      {
-	fprintf(stderr,"Strategy is not available\n");
-	return CV_ERROR;
-      }
-      ++i;
+       }
+       //fprintf(stdout,"\n");
+       MSA_setAnisoVertexSize(simAdapter, 
+			    vertex,
+			    scaled_eigenvecs);
     }
-    VIter_delete(vit);
+    else 
+    {
+      fprintf(stderr,"Strategy is not available\n");
+      return CV_ERROR;
+    }
+    ++i;
   }
+  VIter_delete(vit);
+
   return CV_OK;
 #else
   fprintf(stderr,"Error: MeshSim Adaptor not available\n");

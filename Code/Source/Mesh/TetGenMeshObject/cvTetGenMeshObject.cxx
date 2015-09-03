@@ -1907,7 +1907,7 @@ int cvTetGenMeshObject::Adapt()
 // --------------------
 //  SetMetricOnMesh
 // --------------------
-int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy,int old)
+int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy)
 {
   // cant overwrite mesh
   if (inmesh_ != NULL) {
@@ -1935,6 +1935,8 @@ int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double
     fprintf(stderr,"Conversion from volume to TetGen failed\n");
     return CV_ERROR;
   }
+
+  return CV_OK;
 }
 
 // --------------------

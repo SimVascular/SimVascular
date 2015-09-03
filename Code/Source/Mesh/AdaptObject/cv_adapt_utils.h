@@ -85,24 +85,7 @@ struct Hessian {
   };
   typedef struct Hessian Hessian;
 
-//extern "C" {
-//
-//  // for solving linear system (small)
-//  // the last array is the right hand side
-//  // it is being passed as a reference  and overridden
-//  // to contain the linear system's solution !
-//  #ifndef WIN32
-//    void mytred_(int*,int*,double[3][3],double*,double*,double[3][3]);
-//    #define mytred mytred_  
-//    void tql2_(int*,int*,double*,double*,double[3][3],int*);
-//    #define tql2 tql2_    
-//  #else
-//     void MYTRED(int*,int*,double[3][3],double*,double*,double[3][3]);
-//     void TQL2(int*,int*,double*,double*,double[3][3],int*);
-//    #define mytred MYTRED
-//    #define tql2 TQL2
-//  #endif
-//};
+bool AdaptUtils_file_exists (const std::string& name);
 
 // simple average over a patch surrounding the vertex    
 int AdaptUtils_SmoothHessians (vtkUnstructuredGrid *mesh);
