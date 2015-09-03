@@ -398,9 +398,11 @@ ifeq ($(CLUSTER), x64_cygwin)
   endif
 endif
 
-# note: linux needs cleaning up!
+# Use COMPILER_VERSION for compilation on linux clusters
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/compiler.intel.x64_linux.mk
+	ifeq ($(COMPILER_VERSION), intel)
+      include $(TOP)/MakeHelpers/compiler.intel.x64_linux.mk
+	endif
 	ifeq ($(COMPILER_VERSION), gnu)
 	  include $(TOP)/MakeHelpers/compiler.gnu.x64_linux.mk
 	endif
