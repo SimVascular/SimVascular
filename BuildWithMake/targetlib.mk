@@ -37,7 +37,7 @@ lib:	$(TOP)/Lib/$(TARGET_LIB)
 shared: $(TOP)/Lib/$(TARGET_SHARED) $(TOP)/Lib/$(TARGET_SHARED2) $(TOP)/Lib/$(TARGET_SHARED3)
 
 $(TOP)/Lib/$(TARGET_LIB):	$(OBJS)
-	$(AR)$(TARGET_LIB) $(OBJS)
+	$(AR) $(TARGET_LIB) $(OBJS)
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done 
 	for fn in $(TARGET_LIB); do /bin/mv -f $$fn  $(TOP)/Lib/$(TARGET_LIB); done
 
