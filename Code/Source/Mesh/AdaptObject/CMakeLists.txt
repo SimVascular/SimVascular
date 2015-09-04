@@ -1,6 +1,6 @@
 ##=========================================================================
  #
- # Copyright (c) 2014 The Regents of the University of California.
+ # Copyright (c) 2014-2015 The Regents of the University of California.
  # All Rights Reserved. 
  #
  # Permission is hereby granted, free of charge, to any person obtaining
@@ -27,32 +27,38 @@
  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  #
  #=========================================================================#
-SET(lib lib_simvascular_meshsim_mesh) 
-SET(CXXSRCS cvMeshSimMeshObject.cxx
-          cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
+ 
+set(lib lib_simvascular_adaptor)
+LIST(APPEND CORELIBS ${lib})
 
-add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 
-if(Licensed_ADAPTOR)
-    include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
-endif()
+set(HDRS cvAdaptObject.h cv_adapt_utils.h cv_adapt_init.h eispack.h)
+SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx cv_adapt_init.cxx eispack.cxx)
+
+add_library(${lib} ${CXXSRCS})
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${ZLIB_LIBRARY} ${GLOBAL_LIBRARIES}
-			lib_simvascular_globals lib_simvascular_mesh 
-			lib_simvascular_utils lib_simvascular_sysgeom
-			lib_simvascular_repository lib_simvascular_solid
-			)
-		#MAKE SURE LIBS ARE SPLIT UP WITH COMPILE FLAGS ADPTOR
-if(Licensed_PARASOLID)
-    target_link_libraries(${lib} lib_simvascular_parasolid)
+			${GLOBAL_LIBRARIES}
+			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
+			${TCL_LIBRARY} ${TK_LIBRARY}
+			${INTELRUNTIME_LIBRARIES}
+			lib_simvascular_mesh
+			lib_simvascular_solverio
+			lib_simvascular_globals 
+			lib_simvascular_utils
+)
+
+
+if(SIMVASCULAR_INSTALL_LIBS)
+  install(TARGETS ${lib}
+    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+    LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+    ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+    )
 endif()
-
-if(Licensed_ADAPTOR)
-    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor
-			          lib_simvascular_solverio)
+if(SIMVASCULAR_INSTALL_HEADERS)
+  install(FILES ${HDRS}
+    DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/plugins/tetadapt COMPONENT PluginHeaders
+    )
 endif()
-
-

@@ -197,7 +197,7 @@ if(Plugin_TETGEN)
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	set(USE_Fortran ON)
+	#set(USE_Fortran ON)
 	set(BUILD_ThreeDSolver ON)
 endif()
 
@@ -209,6 +209,7 @@ mark_as_superbuild(Licensed_ADAPTOR)
 
 if(Licensed_ADAPTOR)
 	set(BUILD_ThreeDSolver ON)
+	set(Licensed_MESHSIM ON)
 endif()
 
 
@@ -488,8 +489,15 @@ else()
 	unset(TETGEN_LIBRARY CACHE)
 endif()
 
+if(Licensed_ADAPTOR)
+    set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+elseif(Plugin_TET_ADAPTOR)
+    set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+endif()
+
 if(Plugin_TET_ADAPTOR)
-	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/TetGenAdapt")
+	SET(USE_TET_ADAPTOR ON)
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -508,13 +516,15 @@ if(Plugin_ITK)
 endif()
 
 #---
-if(Licensed_ADAPTOR)
-	set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/Mesh/MeshSimAdapt")
-endif()
-
 if(Licensed_MESHSIM OR Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
 	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
 endif()
+
+if(Licensed_ADAPTOR)
+	set(USE_MESHSIM_ADAPTOR ON)
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+endif()
+
 
 
 #-----------------------------------------------------------------------------
@@ -877,7 +887,7 @@ if(Plugin_TETGEN)
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	set(USE_Fortran ON)
+	#set(USE_Fortran ON)
 	set(ThreeDSolver_BUILD_SolverIO ON)
 endif()
 

@@ -52,14 +52,35 @@
 #include "SimMeshingErrorCodes.h"
 #include "SimAdvMeshing.h"
 
+#ifdef USE_MESHSIM_ADAPTOR
+#include "MeshSim.h"
+#include "MeshSimAdapt.h"
+#include "SimMeshTools.h"
+#include "SimParasolidKrnl.h"
+#include "SimAdvMeshing.h"
+
+#include "MeshSimInternal_phAdapt.h"
+#include "cvAdaptHelp.h"
+#endif
+
 #ifdef USE_PARASOLID
+  #include "SimParasolidKrnl.h"
+  #include "SimParasolidInt.h"
+  #include "cv_parasolid_utils.h"
   #include "parasolid_kernel.h"
   #include "kernel_interface.h"
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
 //  #include "SimParasolidKrnl.h"
 #endif
 
 #ifdef USE_DISCRETE_MODEL
   #include "cvMeshSimDiscreteSolidModel.h"
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
+  #include "MeshSim.h"
+  #include "SimModel.h"
+  #include "SimDiscrete.h"
 #endif
 
 class cvMeshSimMeshObject : public cvMeshObject {
@@ -85,6 +106,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   cvMeshSimMeshObject( const cvMeshSimMeshObject& sm );  // copy constructor
   ~cvMeshSimMeshObject();
 
+  //Set mesh and model file locations
   int SetMeshFileName( const char* meshFileName );
   int SetSolidFileName( const char* solidFileName );
 
@@ -98,68 +120,53 @@ class cvMeshSimMeshObject : public cvMeshObject {
   // the copy command probably doesn't work right!
   cvMeshObject *Copy() const;
 
-  // create the mesh
+  // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
-  
-  int SetSurfaceMeshFlag(int value);
-  int SetSurfaceOptimization(int value);
-  int SetSurfaceSmoothing(int value);
 
-  int SetVolumeMeshFlag(int value);   
-  int SetVolumeOptimization(int value);
-  int SetVolumeSmoothing(int value);
-  
-  int SetGlobalSize(int type, double gsize);
-  int SetLocalSize(int type, int id, double size);
+  //Set curve sizes and other mesh options
+  int SetMeshOptions(char *flags, int numValues,double *values);
 
-  int SetGlobalCurv(int type, double size);
-  int SetLocalCurv(int type, int id, double size);
-  int SetGlobalMinCurv(int type, double size);
-  int SetLocalMinCurv(int type, int id, double size);
+  //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
   int SetWalls(int numWalls, int *walls) {return CV_ERROR;}
-  int SetMeshOptions(char *flags, double value) {return CV_ERROR;}
   
+  //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
                             double* center, double *normal);
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size, char *filename) 
     {return CV_ERROR;}
 
+  //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();
   int WriteMesh(char *filename, int smsver);
   int WriteStats(char *filename);
-  //int DeleteMesh();
-  //int DeleteModel();
       
   // output visualization files
-  int WriteDataExplorer (char *filename) {return CV_ERROR;}
   int WriteMetisAdjacency (char *filename);
   
   // general queries
-  int GetElementConnectivity(int element);
   int GetNodeCoords(int node);  
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid() {return CV_ERROR;}
   cvUnstructuredGrid *GetUnstructuredGrid();
 
   // queries for bc's
-  int GetElementNodesOnModelFace (int face, char* filename);
-  int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename);
   cvPolyData* GetFacePolyData (int orgfaceid);
   int GetModelFaceInfo(char rtnstr[99999]);
   
-  int GetElementsInModelRegion (int region, char* filename);
+  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
+  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
 
-  int GetExteriorElementFacesOnRegion (int region, char* filename);
-  
-  // change elements
-  int GenerateQuadraticElements ();
+  //Adapt functions
+  int Adapt();
+  int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd);
+  int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy);
 
-  // helper routines
+  // MESHSIMMESHOBJECT ONLY
   int FindFaceNumber (pRegion region, int pseudofaceID, int *facenum);
   int FindNodesOnElementFace (pFace face, int* nodes);
   void initNodeTraversal();
@@ -172,8 +179,7 @@ class cvMeshSimMeshObject : public cvMeshObject {
   int OutputExteriorElementFaces(pRegion region, int pseudoFaceID, char *filename);
   int getIdentForFaceId(int orgfaceid, int *faceID);
 
-  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
-
+  // output visualization files
   private:
 
   int MapIDtoPID(int id, pGEntity *pid);
@@ -216,6 +222,14 @@ class cvMeshSimMeshObject : public cvMeshObject {
   pAManager manager_;
   pACase case_;
 
+#ifdef USE_MESHSIM_ADAPTOR
+  pMeshDataId errorIndicatorID;
+  pMeshDataId modes;
+  pMeshDataId nodalhessianID;
+  pMeshDataId nodalgradientID;
+  pMeshDataId phasta_solution;
+  pMSAdapt simAdapter;
+#endif
 };
 
 

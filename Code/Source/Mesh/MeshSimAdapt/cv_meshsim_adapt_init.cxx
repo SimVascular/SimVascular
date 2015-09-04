@@ -28,8 +28,8 @@
  *
  *=========================================================================*/
 
-/** @file cv_tetgen_mesh_init.cxx
- *  @brief Ipmlements functions to register TetGenMeshObject as a mesh type
+/** @file cv_meshsim_adapt_init.cxx
+ *  @brief Ipmlements functions to register MeshSimAdapt as an adaptor type
  *
  *  @author Adam Updegrove
  *  @author updega2@gmail.com 
@@ -39,9 +39,9 @@
 
 #include "SimVascular.h"
 #include "cv_misc_utils.h"
-#include "cv_tetgen_mesh_init.h"
-#include "cvTetGenMeshSystem.h"
-#include "cv_tetgenmesh_utils.h"
+#include "cv_meshsim_adapt_init.h"
+#include "cvMeshSimAdapt.h"
+//#include "cv_adapt_utils.h"
 #include "cv_arg.h"
 
 #include <stdio.h>
@@ -62,58 +62,84 @@
  
 // Prototypes:
 // -----------
+//
+cvMeshSimAdapt* CreateMeshSimAdapt()
+{
+	return new cvMeshSimAdapt();
+}
 
-int TetGenMesh_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
+// -----
+// Adapt
+// -----
+
+int MeshSimAdapt_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
+
+int MeshSimAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
 // ----------
 // Tetgenmesh_Init
 // ----------
 
-int Tetgenmesh_Init( Tcl_Interp *interp )
+int MeshSimAdapt_Init( Tcl_Interp *interp )
 {
 
-#ifdef TETGEN151
-  printf("  %-12s %s\n","TetGen:", "1.5.1");
-#elif TETGEN150
-  printf("  %-12s %s\n","TetGen:", "1.5.0");
-#elif TETGEN143
-  printf("  %-12s %s\n","TetGen:", "1.4.3");
-#endif
+  printf("  %-12s %s\n","","MeshSim Adaption Enabled");
   
-  // Associate the mesh registrar with the Tcl interpreter so it can be
+  // Associate the adapt registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
+  cvFactoryRegistrar* adaptObjectRegistrar = 
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
 
-	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod = 
-    (MeshKernelRegistryMethodPtr) Tcl_GetAssocData( interp, "MeshSystemRegistrar", NULL);
-	
-  if (pMeshKernelRegistryMethod != NULL) {
-    cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
-    if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) == CV_OK)) {
-      //printf("  TetGen module registered\n");
-      Tcl_CreateCommand( interp, "tetgen_mesh_available", TetGenMesh_AvailableCmd,
-		         (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-    }
+  if (adaptObjectRegistrar != NULL) {
+          // Register this particular factory method with the main app.
+          adaptObjectRegistrar->SetFactoryMethodPtr( KERNEL_MESHSIM, 
+      (FactoryMethodPtr) &CreateMeshSimAdapt );
+
+    Tcl_CreateCommand( interp, "meshsimadapt_available", MeshSimAdapt_AvailableCmd,
+		       (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   }
   else {
     return TCL_ERROR;
   }
 
-  //Initialize Tetgenutils
-  if (TGenUtils_Init() != CV_OK) {
-    return TCL_ERROR;
-  }
+  Tcl_CreateCommand( interp, "meshsimadapt_registrars", MeshSimAdapt_RegistrarsListCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   return TCL_OK;
+
 }
 
 
-int TetGenMesh_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
+int MeshSimAdapt_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
-  Tcl_SetResult( interp, "TetGen Mesh Module Available", TCL_VOLATILE );
+  Tcl_SetResult( interp, "MeshSim Mesh Adaption Available", TCL_VOLATILE );
 
   return TCL_OK;
 }
+
+int MeshSimAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  if ( argc != 1 ) {
+    Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
+    return TCL_ERROR;
+  }
+  cvFactoryRegistrar *adaptObjectRegistrar = 
+    (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
+
+  char result[255];
+  sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );
+  Tcl_AppendElement( interp, result );
+  for (int i = 0; i < 5; i++) {
+    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n", 
+      i, (adaptObjectRegistrar->GetFactoryMethodPtr(i)));
+    Tcl_AppendElement( interp, result );
+  }
+  return TCL_OK;
+}
+
 
 
