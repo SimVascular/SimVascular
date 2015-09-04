@@ -87,6 +87,9 @@ char *RepositoryDataT_EnumToStr( RepositoryDataT val )
   case TEMPORALDATASET_T:
     strcpy( result, "TemporalDataSet" );
     break;
+  case ADAPTOR_T:
+    strcpy( result, "Adaptor");
+    break;
   default:
     strcpy( result, "Invalid RepositoryData type" );
     break;

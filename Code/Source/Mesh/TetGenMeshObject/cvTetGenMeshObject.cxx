@@ -81,11 +81,12 @@
 
 cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   : cvMeshObject()
-{
+{ 
   interp_ = interp;
   inmesh_ = NULL;
   outmesh_ = NULL;
   polydatasolid_ = NULL;
+  inputug_ = NULL;
   meshloaded_ = 0;
   loadedVolumeMesh_ = 0;
   //nodemap_ = NULL;
@@ -123,15 +124,20 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.numsublayers=0;
   meshoptions_.blthicknessfactor=0;
   meshoptions_.sublayerratio=0;
-  meshoptions_.sphererefinement=0;
+  meshoptions_.refinement=0;
   meshoptions_.refinedsize=0;
   meshoptions_.sphereradius=0;
+  meshoptions_.cylinderradius=0;
+  meshoptions_.cylinderlength=0;
   meshoptions_.functionbasedmeshing=0;
   meshoptions_.secondarrayfunction=0;
   meshoptions_.meshwallfirst=0;
+  meshoptions_.startwithvolume=0;
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
+    meshoptions_.cylindercenter[i] = 0;
+    meshoptions_.cylindernormal[i] = 0;
   }
 }
 
@@ -170,6 +176,9 @@ cvTetGenMeshObject::~cvTetGenMeshObject()
 
   if (polydatasolid_ != NULL)
     polydatasolid_->Delete();
+
+  if (inputug_ != NULL)
+    inputug_->Delete();
 
   if (originalpolydata_ != NULL)
     originalpolydata_->Delete();
@@ -221,7 +230,11 @@ int cvTetGenMeshObject::Print()
   int nEdge = 0;
   int nVertex = 0;
 
-	
+  if (polydatasolid_ == NULL)
+  {
+    fprintf(stderr,"Solid has not been loaded\n");
+    return CV_ERROR;
+  }
   if(meshoptions_.surfacemeshflag && !meshoptions_.volumemeshflag)
   {
     num_nodes = polydatasolid_->GetNumberOfPoints();
@@ -229,6 +242,11 @@ int cvTetGenMeshObject::Print()
   }
   else if(meshoptions_.boundarylayermeshflag)
   {
+    if (volumemesh_ == NULL)
+    {
+      fprintf(stderr,"Mesh has not been created\n");
+      return CV_ERROR;
+    }
     num_nodes = volumemesh_->GetNumberOfPoints();
     num_elems = volumemesh_->GetNumberOfCells();
     nMeshFaces = 4.0*(volumemesh_->GetNumberOfCells());
@@ -236,6 +254,11 @@ int cvTetGenMeshObject::Print()
   }
   else 
   {
+    if (outmesh_ == NULL)
+    {
+      fprintf(stderr,"Mesh has not been created\n");
+      return CV_ERROR;
+    }
     num_nodes = outmesh_->numberofpoints;
     num_elems = outmesh_->numberoftetrahedra;
     nMeshFaces = outmesh_->numberoftrifaces;
@@ -388,42 +411,6 @@ cvUnstructuredGrid* cvTetGenMeshObject::GetUnstructuredGrid() {
   return result;
 
 }
-
-// -----
-// SetSurfaceMeshFlag
-// -----
-/** 
- * @brief Function to set surface meshing option 
- * @return CV_OK if executed correctly
- */
-int cvTetGenMeshObject::SetSurfaceMeshFlag(int value)
-{
-  if (value == 1)
-  {
-#ifdef USE_VMTK
-    meshoptions_.surfacemeshflag = value;
-#else
-    fprintf(stderr,"Plugin VMTK is not being used!\
-       	In order to use surface meshing, plugin VMTK must be available!\n");
-    return CV_ERROR;
-#endif
-  }
-  return CV_OK;
-}
-
-// -----
-// SetVolumeMeshFlag
-// -----
-/** 
- * @brief Function to set volume meshing option 
- * @return CV_OK if executed correctly
- */
-int cvTetGenMeshObject::SetVolumeMeshFlag(int value)
-{
-  meshoptions_.volumemeshflag = value;
-  return CV_OK;
-}
-
 /** 
  * @brief Function that writes the adjacency between tetrahedral elements 
  * @param *filename char holding the name of the file to be written to 
@@ -531,6 +518,25 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
   }
 }
 
+int cvTetGenMeshObject::GetNodeCoords(int node)
+{
+  if (volumemesh_ == 0)
+  {
+    fprintf(stderr,"Mesh needs to be computed before node coords can be retrieved\n");
+    return CV_ERROR;
+  }
+  nodeID_ = node;
+  nodeX_ = 0; nodeY_ = 0; nodeZ_ = 0;
+  double pts[3];
+
+  volumemesh_->GetPoint(node,pts);
+  nodeX_ = pts[0];
+  nodeY_ = pts[1];
+  nodeZ_ = pts[2];
+
+  return CV_OK;
+}
+
 // --------------------
 //  LoadModel
 // --------------------
@@ -544,6 +550,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
 
 int cvTetGenMeshObject::LoadModel(char *filename) {
 
+	fprintf(stderr,"Loading Model\n");
   if (filename == NULL) {
     return CV_ERROR;
   }
@@ -569,7 +576,6 @@ int cvTetGenMeshObject::LoadModel(char *filename) {
   }
 
   originalpolydata_->DeepCopy(polydatasolid_);
-  fprintf(stdout,"Original Solid is set\n");
   return CV_OK;
 
 }
@@ -676,16 +682,18 @@ int cvTetGenMeshObject::NewMesh() {
     return CV_ERROR;
   }
 
+  //Create new tetgen mesh objects and set first number of output mesh to 0
+  inmesh_ = new tetgenio;
+  inmesh_->firstnumber = 0;
+  outmesh_ = new tetgenio;
+  outmesh_->firstnumber = 0;
+
   //MarkerListName
   std::string markerListName;
   int useSizingFunction;
   int useBoundary;
   vtkSmartPointer<vtkDoubleArray> meshsizingfunction = 
     vtkSmartPointer<vtkDoubleArray>::New();
-  //Create new tetgen mesh objects and set first number of output mesh to 0
-  inmesh_ = new tetgenio;
-  outmesh_ = new tetgenio;
-  outmesh_->firstnumber = 0;
 
   if (meshoptions_.boundarylayermeshflag)
   {
@@ -693,7 +701,7 @@ int cvTetGenMeshObject::NewMesh() {
     useBoundary = 0;
     markerListName = "CellEntityIds";
   }
-  else if (meshoptions_.functionbasedmeshing || meshoptions_.sphererefinement)
+  else if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
   {
     fprintf(stdout,"Using size function\n");
     useSizingFunction = 1;
@@ -710,12 +718,12 @@ int cvTetGenMeshObject::NewMesh() {
   //If using boundary layer mesh, must apply mesh sizing function that is 
   //attached to the polydatasolid from VMTKUtils_ComputeSizingFunction
   if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
-      meshoptions_.sphererefinement)
+      meshoptions_.refinement)
   {
     if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
-	              Something may have gone wrong when setting up BL");
+		      Something may have gone wrong when setting up BL");
       return CV_ERROR;
     }
     meshsizingfunction = vtkDoubleArray::SafeDownCast(polydatasolid_->\
@@ -733,45 +741,15 @@ int cvTetGenMeshObject::NewMesh() {
   polydatasolid_->DeepCopy(cleaner->GetOutput());
   fprintf(stderr,"Converting to TetGen...\n");
   //Convert the polydata to tetgen for meshing with given option
-  if (TGenUtils_ConvertToTetGen(inmesh_,polydatasolid_,useSizingFunction,
+  if (TGenUtils_ConvertSurfaceToTetGen(inmesh_,polydatasolid_,useSizingFunction,
 	  meshsizingfunction,useBoundary,markerListName,
 	  meshoptions_.maxedgesize) != CV_OK)
   {
       return CV_ERROR;
   }
-
   //The mesh is now loaded, and TetGen is ready to be called
   meshloaded_ = 1;
 
-  return CV_OK;
-}
-
-// --------------------
-//  SetLocalSize
-// --------------------
-/** 
- * @brief Function to set the region to refine based on region
- * @param size This is the smaller refined of the edges within sphere region.
- * @param radius This is the radius of the refinement sphere.
- * @param center This is the center of the refinement sphere.
- * @return CV_OK if the mesh sizing function based on the circle is computed
- * correctly 
- */
-int cvTetGenMeshObject::SetLocalSize(int type,int id,double size)
-{   
-
-  fprintf(stderr,"Setting local mesh size...\n");
-  //Set meshoptions_ parameters based on input.
-  meshoptions_.functionbasedmeshing = 1;
-
-  //Create a new mesh sizing function and call TGenUtils to compute function.
-  //Store in the member data vtkDouble Array meshsizingfunction
-  if (TGenUtils_SetLocalMeshSize(polydatasolid_,id,size) != CV_OK)
-  {
-    return CV_ERROR;
-  }
-
-  meshoptions_.secondarrayfunction = 1;
   return CV_OK;
 }
 
@@ -788,50 +766,92 @@ int cvTetGenMeshObject::SetLocalSize(int type,int id,double size)
  * called before the options can be set
  */
 
-int cvTetGenMeshObject::SetMeshOptions(char *flag,double value) {
+int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values) {
   // must have created mesh
 //  if (inmesh_ == NULL) {
 //    return CV_ERROR;
 //  }
   
-  if(!strncmp(flag,"a",1)) {
-      meshoptions_.maxedgesize=value;
+  if(!strncmp(flags,"GlobalEdgeSize",14)) {            //Global edge size
+       if (numValues < 1)
+	 return CV_ERROR;
+      meshoptions_.maxedgesize=values[0];
   }
-  else if(!strncmp(flag,"q",1)) {
-      meshoptions_.minratio=value;
+  else if(!strncmp(flags,"LocalEdgeSize",13)) {
+      if (numValues < 2)
+      {
+	fprintf(stderr,"Must give face id and local edge size\n");
+	return CV_ERROR;
+      }
+      meshoptions_.functionbasedmeshing = 1;
+      //Create a new mesh sizing function and call TGenUtils to compute function.
+      //Store in the member data vtkDouble Array meshsizingfunction
+      if (TGenUtils_SetLocalMeshSize(polydatasolid_,values[0],values[1]) != CV_OK)
+        return CV_ERROR;
+      meshoptions_.secondarrayfunction = 1;
   }
-  else if(!strncmp(flag,"O",1)) {
-      meshoptions_.optlevel=(int)value;
+  else if(!strncmp(flags,"SurfaceMeshFlag",15)) {
+#ifdef USE_VMTK
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.surfacemeshflag = values[0];
+#else
+      fprintf(stderr,"Plugin VMTK is not being used!\
+	  In order to use surface meshing, plugin VMTK must be available!\n");
+      return CV_ERROR;
+#endif
   }
-  else if(!strncmp(flag,"T",1)) {
-      meshoptions_.epsilon=value;
+  else if(!strncmp(flags,"VolumeMeshFlag",14)) {
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.volumemeshflag = values[0];
   }
-  else if(!strncmp(flag,"R",1)) {
-      meshoptions_.coarsen_percent=value/100;
+  else if(!strncmp(flags,"QualityRatio",12)) {//q
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.minratio=values[0];
   }
-  else if(!strncmp(flag,"V",1)) {
+  else if(!strncmp(flags,"Optimization",12)) {//O
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.optlevel=(int)values[0];
+  }
+  else if(!strncmp(flags,"Epsilon",7)) {//T
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.epsilon=values[0];
+  }
+  else if(!strncmp(flags,"CoarsenPercent",14)) {//R
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.coarsen_percent=values[0]/100;
+  }
+  else if(!strncmp(flags,"Verbose",7)) {//V
       meshoptions_.verbose=1;
   }
-  else if(!strncmp(flag,"M",1)) {
+  else if(!strncmp(flags,"NoMerge",7)) {//M
       meshoptions_.nomerge=1;
   }
-  else if(!strncmp(flag,"C",1)) {
+  else if(!strncmp(flags,"Check",5)) {//C
       meshoptions_.docheck=1;
   }
-  else if(!strncmp(flag,"Y",1)) {
+  else if(!strncmp(flags,"NoBisect",8)) {//Y
       meshoptions_.nobisect=1;
   }
-  else if(!strncmp(flag,"Q",1)) {
+  else if(!strncmp(flags,"Quiet",5)) {//Q
       meshoptions_.quiet=1;
   }
-  else if(!strncmp(flag,"d",1)) {
+  else if(!strncmp(flags,"Diagnose",8)) {//d
       meshoptions_.diagnose=1;
   }
-  else if(!strncmp(flag,"k",1)) {
+  else if(!strncmp(flags,"MeshWallFirst",13)) {//k
       meshoptions_.meshwallfirst=1;
   }
+  else if(!strncmp(flags,"StartWithVolume",15)) {//r
+      meshoptions_.startwithvolume=1;
+  }
   else {
-      fprintf(stderr,"%s: flag is not recognized\n",flag);
+      fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
 
   return CV_OK;
@@ -941,6 +961,48 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   return CV_OK;
 }
 
+// --------------------
+//  SetCylinderRefinement
+// --------------------
+/** 
+ * @brief Function to set the region to refine based on input cylinder
+ * @param size This is the smaller refined of the edges within cylinder region.
+ * @param radius This is the radius of the refinement cylinder.
+ * @param center This is the center of the refinement cylinder. 
+ * Halfway along the length. 
+ * @param normal This is the normal direction from the center that the length
+ * of the cylinder follows.
+ * @return CV_OK if the mesh sizing function based on the circle is computed
+ * correctly 
+ */
+int cvTetGenMeshObject::SetCylinderRefinement(double size, double radius, 
+    double length, double* center, double *normal)
+{   
+  //Set meshoptions_ parameters based on input.
+  int i;
+  meshoptions_.refinement = 1;
+  meshoptions_.refinedsize = size;
+  meshoptions_.cylinderradius = radius;
+  meshoptions_.cylinderlength = length;
+  for (i=0;i<3;i++)
+  { 
+    meshoptions_.cylindercenter[i] = center[i];
+    meshoptions_.cylindernormal[i] = normal[i];
+  }
+
+  //Create a new mesh sizing function and call TGenUtils to compute function.
+  //Store in the member data vtkDouble Array meshsizingfunction
+  if (TGenUtils_SetRefinementCylinder(polydatasolid_,"MeshSizingFunction",
+	size,radius,center,length,normal,meshoptions_.secondarrayfunction,
+	meshoptions_.maxedgesize) != CV_OK)
+  {
+    return CV_ERROR;
+  }
+
+  meshoptions_.secondarrayfunction = 1;
+  return CV_OK;
+}
+
 
 // --------------------
 //  SetSphereRefinement
@@ -958,7 +1020,7 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
 {   
   //Set meshoptions_ parameters based on input.
   int i;
-  meshoptions_.sphererefinement = 1;
+  meshoptions_.refinement = 1;
   meshoptions_.refinedsize = size;
   meshoptions_.sphereradius = radius;
   for (i=0;i<3;i++)
@@ -1060,7 +1122,7 @@ int cvTetGenMeshObject::GenerateMesh() {
       }
 
       if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing 
-        || meshoptions_.sphererefinement)
+        || meshoptions_.refinement)
       {
 	if (GenerateMeshSizingFunction() != CV_OK)
 	  return CV_ERROR;
@@ -1146,7 +1208,7 @@ int cvTetGenMeshObject::GenerateMesh() {
       tgb->mindihedral = 10.0;
       tgb->nobisect=1;
     }
-    if (meshoptions_.sphererefinement)
+    if (meshoptions_.refinement)
     {
       tgb->quality = 3;
       tgb->metric = 1;
@@ -1309,18 +1371,24 @@ int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
       fprintf(stderr,"ModelFaceID does not exist\n");
       return CV_ERROR;
     }
-    double range[2];
-    originalpolydata_->GetCellData()->GetArray("ModelFaceID")->GetRange(range);
-    max = range[1];
-    
-    for(i=0;i<max;i++)
+
+    int *faces;
+    int numFaces = 0;
+    if (PlyDtaUtils_GetFaceIds(originalpolydata_,&numFaces,&faces) != CV_OK)
+    {
+      fprintf(stderr,"Could not get face ids\n");
+      return CV_ERROR;
+    }
+
+    for(i=0;i<numFaces;i++)
     { 
       tmpstr[0] = '\0';
       char *namestr;
-      sprintf(tmpstr,"%s {%i %i {%s}} ",rtnstr,i+1,i+1,"");
+      sprintf(tmpstr,"%s {%i %i {%s}} ",rtnstr,faces[i],faces[i],"");
       rtnstr[0]='\0';
       sprintf(rtnstr,"%s",tmpstr);
     }
+    delete [] faces;
 
   }
 
@@ -1342,6 +1410,24 @@ int cvTetGenMeshObject::SetVtkPolyDataObject(vtkPolyData *newPolyData)
   }
   polydatasolid_ = vtkPolyData::New();
   polydatasolid_->DeepCopy(newPolyData);
+
+  return CV_OK;
+}
+
+/** 
+ * @brief Function to set an input unstructured grid
+ * @param *newPolyData Pointer to vtkPolyData object that you want to be 
+ * set as the class member data
+ * @return CV_OK if executed correctly
+ */
+int cvTetGenMeshObject::SetInputUnstructuredGrid(vtkUnstructuredGrid *ug)
+{
+  if (inputug_ != NULL)
+  {
+    inputug_->Delete();
+  }
+  inputug_ = vtkUnstructuredGrid::New();
+  inputug_->DeepCopy(ug);
 
   return CV_OK;
 }
@@ -1382,7 +1468,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   }
   //If doing sphere refinement, we need to base surface mesh on mesh 
   //sizing function
-  if (meshoptions_.sphererefinement || meshoptions_.functionbasedmeshing)
+  if (meshoptions_.refinement || meshoptions_.functionbasedmeshing)
   {
     useSizingFunction = 1;
     if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
@@ -1549,7 +1635,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
     trianglesplitfactor = NULL;
     markerListName = "ModelFaceID";
   }
-  if (meshoptions_.functionbasedmeshing || meshoptions_.sphererefinement)
+  if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
   {
     useSizeFunction = 1;
     if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
@@ -1755,3 +1841,121 @@ int cvTetGenMeshObject::ResetOriginalRegions(std::string newName,std::string ori
  return CV_OK;   
 }
 
+// --------------------
+//  Adapt
+// --------------------
+/** 
+ * @brief Function to Adapt Mesh based on input adaption features etc.
+ * @return CV_OK if adaptions performs correctly
+ */
+int cvTetGenMeshObject::Adapt()
+{ 
+  cout<<"Starting Adaptive Mesh..."<<endl;
+  tetgenbehavior* newtgb = new tetgenbehavior;
+
+  newtgb->refine=1;
+  newtgb->metric=1;
+  newtgb->quality=1;
+  newtgb->neighout=2;
+  newtgb->verbose=1;
+  //newtgb->coarsen=1;
+  //newtgb->coarsen_param=8;
+  //newtgb->coarsen_percent=1;
+#if USE_TETGEN143
+  newtgb->goodratio = 4.0;
+  newtgb->goodangle = 0.88;
+  newtgb->useshelles = 1;
+#endif
+
+  try
+  {
+    tetrahedralize(newtgb, inmesh_, outmesh_);
+  }
+  catch (int r)
+  {
+    fprintf(stderr,"ERROR: TetGen quit and returned error code %d\n",r);
+    return CV_ERROR;
+  }
+
+  cout<<"Done with Adaptive Mesh..."<<endl;
+
+  if (outmesh_ == NULL) {
+    return CV_ERROR;
+  }
+  if (surfacemesh_ != NULL)
+    surfacemesh_->Delete();
+
+  if (volumemesh_ != NULL)
+    volumemesh_->Delete();
+
+  surfacemesh_ = vtkPolyData::New();
+  volumemesh_ = vtkUnstructuredGrid::New();
+  if (TGenUtils_ConvertToVTK(outmesh_,volumemesh_,surfacemesh_,
+	&numBoundaryRegions_,1) != CV_OK)
+    return CV_ERROR;
+
+  if (TGenUtils_ResetOriginalRegions(surfacemesh_,originalpolydata_,
+	"ModelFaceID","ModelFaceID") 
+      != CV_OK)
+  {
+    fprintf(stderr,"Error while resetting the original region values\n");
+    return CV_ERROR;
+  }
+  return CV_OK;
+}
+
+// --------------------
+//  SetMetricOnMesh
+// --------------------
+int cvTetGenMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy)
+{
+  // cant overwrite mesh
+  if (inmesh_ != NULL) {
+    delete inmesh_;
+  }
+  if (outmesh_ != NULL)
+  {
+    delete outmesh_;
+  }
+
+  if (inputug_ == NULL)
+    return CV_ERROR;
+
+  if (polydatasolid_ == NULL)
+    return CV_ERROR;
+
+  //Create new tetgen mesh objects and set first number of output mesh to 0
+  inmesh_ = new tetgenio;
+  inmesh_->firstnumber = 0;
+  outmesh_ = new tetgenio;
+  outmesh_->firstnumber = 0;
+
+  if (TGenUtils_ConvertVolumeToTetGen(inputug_,polydatasolid_,inmesh_) != CV_OK)
+  {
+    fprintf(stderr,"Conversion from volume to TetGen failed\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// --------------------
+//  GetAdaptedMesh
+// --------------------
+int cvTetGenMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
+{
+  if (outmesh_ == NULL) {
+    return CV_ERROR;
+  }
+  if (volumemesh_ == NULL) {
+    return CV_ERROR;
+  }
+  if (surfacemesh_ == NULL) {
+    return CV_ERROR;
+  }
+
+  ug->DeepCopy(volumemesh_);
+  pd->DeepCopy(surfacemesh_);
+
+  return CV_OK;
+}

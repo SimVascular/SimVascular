@@ -68,6 +68,11 @@
   #include "cv_meshsim_mesh_init.h"
 #endif
 
+#ifdef USE_MESHSIM_ADAPTOR
+  #include "cv_adapt_init.h"
+  #include "cv_meshsim_adapt_init.h"
+#endif
+
 #ifdef USE_TETGEN
   #include "cv_mesh_init.h"
   #include "cv_tetgen_mesh_init.h"
@@ -86,6 +91,11 @@
 #ifdef USE_ITK
   #include "cv_ITKLset_init.h"
   #include "cv_ITKUtils_init.h"
+#endif
+
+#ifdef USE_TET_ADAPTOR
+  #include "cv_adapt_init.h"
+  #include "cv_tetgen_adapt_init.h"
 #endif
 
 // The following is needed for Windows
@@ -216,6 +226,7 @@ int SimVascular_Init( Tcl_Interp *interp )
       fprintf( stderr, "error on gdscMesh_Init\n" );
       return TCL_ERROR;
   }
+
 #elif defined USE_TETGEN
   if ( Gdscmesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on gdscMesh_Init\n" );
@@ -230,6 +241,25 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 #endif
 
+#ifdef USE_MESHSIM_ADAPTOR
+  if ( Adapt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Adapt_Init\n" );
+    return TCL_ERROR;
+  }
+#elif defined USE_TET_ADAPTOR
+  if ( Adapt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Adapt_Init\n" );
+    return TCL_ERROR;
+  }
+#endif
+
+#ifdef USE_TET_ADAPTOR
+  if ( TetGenAdapt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on TetGenAdapt_Init\n" );
+    return TCL_ERROR;
+  }
+#endif
+
 #ifdef USE_MESHSIM
 #ifndef USE_MESHSIM_SHARED  
   if ( Meshsimmesh_Init(interp) == TCL_ERROR ) {
@@ -238,6 +268,14 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 #endif
 #endif
+
+#ifdef USE_MESHSIM_ADAPTOR
+  if ( MeshSimAdapt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on MeshSimAdapt_Init\n" );
+    return TCL_ERROR;
+  }
+#endif
+
 
 #ifdef USE_DISCRETE_MODEL
 #ifndef USE_DISCRETE_MODEL_SHARED
@@ -303,7 +341,6 @@ int SimVascular_Init( Tcl_Interp *interp )
         return TCL_ERROR;
       }
 #endif
-
 
 #endif
 

@@ -35,97 +35,62 @@
 
 #include "SimVascular.h" 
 
+#include "cvAdaptObject.h"
+//#include "cvTetGenAdapt.h"
 #include "cvMeshObject.h"
 #include "cv_misc_utils.h"
+
 #include <string.h>
+#include <assert.h>
 
-// -------------
-// cvMeshObject
-// -------------
+#include "cv_globals.h"
 
-cvMeshObject::cvMeshObject()
-  : cvRepositoryData( MESH_T )
+KernelType cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
+cvFactoryRegistrar cvAdaptObject::gRegistrar;
+
+cvAdaptObject::cvAdaptObject( KernelType t)
+  : cvRepositoryData( ADAPTOR_T )
 {
- 
+  adapt_kernel_ = t;
 }
 
-
-// --------------
-// ~cvMeshObject
-// --------------
-
-cvMeshObject::~cvMeshObject()
+cvAdaptObject::~cvAdaptObject()
 {
   ;
 }
 
+// ----------------------------
+// DefaultInstantiateAdaptObject
+// ----------------------------
 
-// Caller should deallocate the returned string.
-
-char *cvMeshObject::GetKernelName( cvMeshObject::KernelType kernel )
+cvAdaptObject* cvAdaptObject::DefaultInstantiateAdaptObject( Tcl_Interp *interp,KernelType t )
 {
-  char *result;
+  // Get the adapt object factory registrar associated with this Tcl interpreter.
+  cvFactoryRegistrar* adaptObjectRegistrar;
+  if (interp == NULL) {
+    fprintf(stdout,"WARNING:  Null interpreter passed to AdaptObject.  Overriding with default.\n");
+    fflush(stdout);
+  }
+  Tcl_Interp* myinterp = NULL;
+  myinterp = gVtkTclInterp;
+  assert(myinterp); 
 
-  result = new char[100];
-  result[0]='\0';
-  switch (kernel) {
-  case KERNEL_MESHSIM:
-    strcpy( result, "MeshSim" );
-    break;
-  case KERNEL_GMSH:
-    strcpy( result, "GMsh" );
-    break;
-  case KERNEL_TETGEN:
-    strcpy( result, "TetGen" );
-    break;
-  default:
-    strcpy( result, "Invalid kernel name; must be one of "
-	    "{ MeshSim, GMsh,TetGen }" );
-    return NULL;
-    break;
+  adaptObjectRegistrar = (cvFactoryRegistrar *) Tcl_GetAssocData( myinterp, "AdaptObjectRegistrar", NULL);
+
+  cvAdaptObject* adaptor = NULL;
+  if (t == KERNEL_TETGEN || 
+      t == KERNEL_MESHSIM)
+  {
+    adaptor = (cvAdaptObject *) (adaptObjectRegistrar->UseFactoryMethod( t ));
+    if (adaptor == NULL) {
+		  fprintf( stdout, "Unable to create adaptor object for kernel (%i)\n",cvAdaptObject::gCurrentKernel);
+    }
+
+  } else {
+    fprintf( stdout, "current kernel is not valid (%i)\n",t);
+    Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
   }
 
-  return result;
+  return adaptor;
 }
-
-cvMeshObject::KernelType cvMeshObject::GetKernelType( const char* kernel_name )
-{
-  if (strcmp(kernel_name, "MeshSim") == 0)
-    return cvMeshObject::KERNEL_MESHSIM;
-  else if (strcmp(kernel_name, "GMsh") == 0)
-    return cvMeshObject::KERNEL_GMSH;
-  else if (strcmp(kernel_name, "TetGen") == 0)
-    return cvMeshObject::KERNEL_TETGEN;
-
-  return cvMeshObject::KERNEL_INVALID;
-}
-
-
-int cvMeshObject::openOutputFile(char* filename) {
-  fp_ = NULL;
-  // open the output file
-  #ifdef USE_ZLIB
-  char filenamegz[MAXPATHLEN];
-  filenamegz[0]='\0';
-  sprintf (filenamegz, "%s.gz", filename);
-  fp_ = gzopen (filenamegz, "wb");
-  if (fp_ == NULL) {
-      fprintf(stderr,"Error: Could not open output file %s.\n",filenamegz);
-      return CV_ERROR;
-  }
-  #else
-  fp_ = gzopen (filename, "wb");
-  if (fp_ == NULL) {
-      fprintf(stderr,"Error: Could not open output file %s.\n",filename);
-      return CV_ERROR;
-  }
-  #endif
-  return CV_OK;
-}
-
-int cvMeshObject::closeOutputFile() {
-  gzclose(fp_);
-  return CV_OK;
-}
-
 

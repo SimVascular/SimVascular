@@ -52,7 +52,8 @@ typedef enum {
   UNSTRUCTURED_GRID_T,
   SOLID_MODEL_T,
   MESH_T,
-  TEMPORALDATASET_T
+  TEMPORALDATASET_T,
+  ADAPTOR_T
 } RepositoryDataT;
 
 RepositoryDataT RepositoryDataT_StrToEnum( char *name );

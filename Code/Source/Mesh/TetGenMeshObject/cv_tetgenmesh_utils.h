@@ -56,9 +56,12 @@ int TGenUtils_Init();
 //int cvTetGenMeshObjectUtils_Logon(char *filename);
 //int cvTetGenMeshObjectUtils_Logoff();
 //
-int TGenUtils_ConvertToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
+int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
     int meshsizingfunction, vtkDoubleArray *meshSizingFunction,
     int useBoundary, std::string markerListArrayName, double maxEdgeSize); 
+
+int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,
+    vtkPolyData *surfaceMesh,tetgenio *inmesh);
 
 int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,
     vtkPolyData *surfacemesh,int *totRegions,int getBoundary);
@@ -70,6 +73,11 @@ int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid);
 int TGenUtils_WriteVTP(char *filename,vtkPolyData *PData);
 
 int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh);
+
+int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
+    std::string sizingFunctionArrayName,double size,double radius,
+    double* center,double length, double *normal, int secondarray, 
+    double maxedgesize);
 
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,double radius,

@@ -6241,17 +6241,17 @@ proc mesh_readMSS {filename resObj} {
         }
         showArray ids
       } elseif {[lindex $line 0] == "gsize"} {
-        $resObj SetGlobalSize -type $types([string tolower [lindex $line 1]]) -gsize [lindex $line 2]
+        $resObj SetMeshOptions -options "GlobalEdgeSize" -values [list $types([string tolower [lindex $line 1]]) [lindex $line 2]]
       } elseif {[lindex $line 0] == "size"} {
-        $resObj SetLocalSize -id $ids([lindex $line 1]) -type $types([string tolower [lindex $line 2]]) -size [lindex $line 3]
+        $resObj SetMeshOptions -options "LocalEdgeSize" -values [list $ids([lindex $line 1]) $types([string tolower [lindex $line 2]]) [lindex $line 3]]
       } elseif {[lindex $line 0] == "gcurv"} {
-        $resObj SetGlobalCurv -type $types([string tolower [lindex $line 1]]) -gcurv [lindex $line 2]
+        $resObj SetMeshOptions -options "GlobalCurvature" -values [list $types([string tolower [lindex $line 1]]) [lindex $line 2]]
       } elseif {[lindex $line 0] == "curv"} {
-        $resObj SetLocalCurv -id $ids([lindex $line 1]) -type $types([string tolower [lindex $line 2]]) -curv [lindex $line 3]
-      } elseif {[lindex $line 0] == "gmincurv"} {
-        $resObj SetGlobalMinCurv -type $types([string tolower [lindex $line 1]]) -gcurv [lindex $line 2]
-      } elseif {[lindex $line 0] == "mincurv"} {
-        $resObj SetLocalMinCurv -id $ids([lindex $line 1]) -type $types([string tolower [lindex $line 2]]) -curv [lindex $line 3]
+        $resObj SetMeshOptions -options "LocalCurvature" -values [list $ids([lindex $line 1]) $types([string tolower [lindex $line 2]]) [lindex $line 3]]
+      } elseif {[lindex $line 0] == "GlobalCurvatureMin"} {
+        $resObj SetMeshOptions -options "M" -values [list $types([string tolower [lindex $line 1]]) [lindex $line 2]]
+      } elseif {[lindex $line 0] == "LocalCurvatureMin"} {
+        $resObj SetMeshOptions -options "m" -values [list $ids([lindex $line 1]) $types([string tolower [lindex $line 2]]) [lindex $line 3]]
       } elseif {[lindex $line 0] == "boundaryLayer"} {
         $resObj SetBoundaryLayer -id $ids([lindex $line 1]) -type [lindex $line 2] \
                                  -side $sides([string tolower [lindex $line 3]]) -nL [lindex $line 4] -H [lrange $line 5 end]
@@ -6267,14 +6267,30 @@ proc mesh_readMSS {filename resObj} {
       } elseif {[lindex $line 0] == "option"} {
 	  if {[llength $line] == 3} {
 	      if {[lindex $line 1] == "surface"} {
-                $resObj SetSurfaceMeshFlag -value [lindex $line 2]
+                $resObj SetMeshOptions -options "SurfaceMeshFlag" -values [lindex $line 2]
 	      } elseif {[lindex $line 1] == "volume"} {
-                $resObj SetVolumeMeshFlag -value [lindex $line 2]
+                $resObj SetMeshOptions -options "VolumeMeshFlag" -values [lindex $line 2]
 	      } else {
 		  return -code error "bad line: \{$line\}"
 	      }
 	  } elseif {[llength $line] == 4} {
-              eval $resObj Set[string toupper [lindex $line 1] 0 0][string toupper [lindex $line 2] 0 0] -value [lindex $line 3]
+	    if {[lindex $line 1] == "surface"} {
+	      if {[lindex $line 2] == "optimization"} {
+		$resObj SetMeshOptions -options "SurfaceOptimization" -values [lindex $line 3]
+	      } elseif {[lindex $line 2] == "smoothing"} {
+		$resObj SetMeshOptions -options "SurfaceSmoothing" -values [lindex $line 3]
+	      } else {
+		  return -code error "bad line: \{$line\}"
+	      }
+	    } elseif {[lindex $line 1] == "volume"} {
+	      if {[lindex $line 2] == "optimization"} {
+		$resObj SetMeshOptions -options "VolumeOptimization" -values [lindex $line 3]
+	      } elseif {[lindex $line 2] == "smoothing"} {
+		$resObj SetMeshOptions -options "VolumeSmoothing" -values [lindex $line 3]
+	      } else {
+		  return -code error "bad line: \{$line\}"
+	      }
+	    }
 	  } else {
 	      return -code error "bad line: \{$line\}"
 	  }
@@ -6286,68 +6302,68 @@ proc mesh_readMSS {filename resObj} {
   catch {repos_delete -obj $solid}
 }
 
-proc mesh_checkForAdapt {smsfile solidmodelfile} {
-
-  #@author Nathan Wilson
-  #@c Check that no elements have all nodes falling on exterior surface.
-  #@a smsfile:  simmetrix mesh database
-  #@a solidmodelfile: parasolid model
-
-  set mymesh tmp-mesh_checkForAdapt-mesh
-  set mysolid tmp-mesh_checkForAdapt-solid
-
-  catch {repos_delete -obj $mymesh}
-  catch {repos_delete -obj $mysolid}
-
-  puts "Loading mesh ($smsfile)..."
-  mesh_newObject -result $mymesh -meshfile $smsfile -solidfile $solidmodelfile
-  $mymesh Update
-  puts "Done loading mesh..."
- 
-  puts "Loading solid model ($solidmodelfile)..."
-  solid_readNative -file $solidmodelfile -obj $mysolid
-  puts "Done loading solid model..."
-
-  # build a list of all nodes on the exterior surface of the mesh
-
-  puts "Find all nodes on exterior..."
-  set surfaceNodes ""
-  foreach face [$mysolid GetFaceIds] {
-    set surfaceNodes "$surfaceNodes [$mymesh GetElementNodesOnModelFace -face $face]"
-  }
-  set surfaceNodes [lsort -unique $surfaceNodes]
-  puts "Done finding all nodes on exterior..."
-
-  # loop over all elements connected to surface and see if all nodes for element
-  # fall on boundary
-
-  puts "Check elements touching the border..."
-  set numProbElems 0
-  foreach surfElem [$mymesh GetExteriorElementFacesOnRegion -region [$mysolid GetRegionIds]] {
-    set conn [$mymesh GetElementConnectivity -element [lindex $surfElem 0]]
-    set allOn 1
-    foreach n $conn {
-      if {[lsearch -exact $surfaceNodes $n] < 0} {
-        set allOn 0
-        break
-      }  
-    }
-    if {$allOn == 1} {
-      puts "PROBLEM: element [lindex $surfElem 0] has all nodes on boundary ($conn)"
-      incr numProbElems
-    }
-  }
-
-  catch {repos_delete -obj $mymesh}
-  catch {repos_delete -obj $mysolid}
-
-  if {$numProbElems == 0} {
-      puts "\nEverything is OK.\n"
-  } else {
-      puts "\nBAD NEWS!  There were ($numProbElems) bad elements.  Run phFixMesh.\n"
-  }
-
-}
+#proc mesh_checkForAdapt {smsfile solidmodelfile} {
+#
+#  #@author Nathan Wilson
+#  #@c Check that no elements have all nodes falling on exterior surface.
+#  #@a smsfile:  simmetrix mesh database
+#  #@a solidmodelfile: parasolid model
+#
+#  set mymesh tmp-mesh_checkForAdapt-mesh
+#  set mysolid tmp-mesh_checkForAdapt-solid
+#
+#  catch {repos_delete -obj $mymesh}
+#  catch {repos_delete -obj $mysolid}
+#
+#  puts "Loading mesh ($smsfile)..."
+#  mesh_newObject -result $mymesh -meshfile $smsfile -solidfile $solidmodelfile
+#  $mymesh Update
+#  puts "Done loading mesh..."
+# 
+#  puts "Loading solid model ($solidmodelfile)..."
+#  solid_readNative -file $solidmodelfile -obj $mysolid
+#  puts "Done loading solid model..."
+#
+#  # build a list of all nodes on the exterior surface of the mesh
+#
+#  puts "Find all nodes on exterior..."
+#  set surfaceNodes ""
+#  foreach face [$mysolid GetFaceIds] {
+#    set surfaceNodes "$surfaceNodes [$mymesh GetElementNodesOnModelFace -face $face]"
+#  }
+#  set surfaceNodes [lsort -unique $surfaceNodes]
+#  puts "Done finding all nodes on exterior..."
+#
+#  # loop over all elements connected to surface and see if all nodes for element
+#  # fall on boundary
+#
+#  puts "Check elements touching the border..."
+#  set numProbElems 0
+#  foreach surfElem [$mymesh GetExteriorElementFacesOnRegion -region [$mysolid GetRegionIds]] {
+#    set conn [$mymesh GetElementConnectivity -element [lindex $surfElem 0]]
+#    set allOn 1
+#    foreach n $conn {
+#      if {[lsearch -exact $surfaceNodes $n] < 0} {
+#        set allOn 0
+#        break
+#      }  
+#    }
+#    if {$allOn == 1} {
+#      puts "PROBLEM: element [lindex $surfElem 0] has all nodes on boundary ($conn)"
+#      incr numProbElems
+#    }
+#  }
+#
+#  catch {repos_delete -obj $mymesh}
+#  catch {repos_delete -obj $mysolid}
+#
+#  if {$numProbElems == 0} {
+#      puts "\nEverything is OK.\n"
+#  } else {
+#      puts "\nBAD NEWS!  There were ($numProbElems) bad elements.  Run phFixMesh.\n"
+#  }
+#
+#}
 
 
 # -------------

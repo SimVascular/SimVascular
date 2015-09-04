@@ -95,7 +95,7 @@ int TGenUtils_Init()
  * @return CV_OK if function completes properly
  */
 
-int TGenUtils_ConvertToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
+int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
     int meshsizingfunction,vtkDoubleArray *meshSizingFunction,
     int useBoundary,std::string markerListArrayName,double maxEdgeSize)
 {
@@ -202,6 +202,81 @@ int TGenUtils_ConvertToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
     }
   }
 
+  return CV_OK;
+}
+
+// -----------------------------
+// cvTGenUtils_ConvertVolumeToTetGen()
+// -----------------------------
+/** 
+ * @brief Function to convert the current mesh to a tetgen mesh object to be
+ * able to remesh
+ * @param mesh This is the full mesh to be remeshed
+ * @param surfaceMesh This is the intial mesh; If we don't need the final 
+ * mesh regions, then we don't have to actually use this
+ * @param inmesh This is the tegen mesh object to be transferred to
+ */
+
+int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,
+    tetgenio *inmesh)
+{
+  int numTets,numPolys;
+  int numPoints,numSurfacePoints;
+  double tetPts[3];
+  tetgenio::facet *f;
+  tetgenio::polygon *p;
+  vtkIdType i,j;
+  vtkIdType npts = 0;
+  vtkIdType *pts = 0;
+  vtkIdType cellId;
+  vtkSmartPointer<vtkPoints> uPoints = vtkSmartPointer<vtkPoints>::New();
+  vtkSmartPointer<vtkCellArray> pPolys = vtkSmartPointer<vtkCellArray>::New();
+  vtkSmartPointer<vtkCellArray> uTets = vtkSmartPointer<vtkCellArray>::New();
+  vtkIntArray *boundaryScalars;
+  vtkDoubleArray *errorMetricArray;
+
+  mesh->BuildLinks();
+  numTets = mesh->GetNumberOfCells();
+  numPoints = mesh->GetNumberOfPoints();
+  uPoints = mesh->GetPoints();
+  uTets = mesh->GetCells();
+
+  numSurfacePoints = surfaceMesh->GetNumberOfPoints();
+  numPolys = surfaceMesh->GetNumberOfPolys();
+  pPolys = surfaceMesh->GetPolys();
+  boundaryScalars = vtkIntArray::SafeDownCast(surfaceMesh->GetCellData()->GetArray("ModelFaceID"));
+  errorMetricArray = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("errormetric"));
+
+  cout<<"Num Cells "<<numTets<<endl;
+  cout<<"Num Points "<<numPoints<<endl;
+  inmesh->firstnumber = 0;
+  inmesh->numberofcorners = 4;
+  inmesh->numberoftetrahedra = numTets;
+  inmesh->numberofpoints = numPoints;
+  inmesh->pointlist = new double[numPoints*3];
+  inmesh->tetrahedronlist = new int[numTets*4];
+  inmesh->numberofpointmtrs = 1;
+  inmesh->pointmtrlist = new REAL[numPoints*inmesh->numberofpointmtrs];
+
+  cout<<"Converting to Adapt Points..."<<endl;
+  for (i = 0; i < numPoints; i++)
+  {
+    uPoints->GetPoint(i,tetPts);
+    inmesh->pointlist[i*3] = tetPts[0];
+    inmesh->pointlist[i*3+1] = tetPts[1];
+    inmesh->pointlist[i*3+2] = tetPts[2];
+    inmesh->pointmtrlist[i] = errorMetricArray->GetValue(i);
+  }
+
+  cout<<"Converting to Adapt Tets..."<<endl;
+  for (i=0,uTets->InitTraversal();uTets->GetNextCell(npts,pts);i++)
+  {
+    for (j = 0;j < npts;j++)
+    {
+      inmesh->tetrahedronlist[i*npts+j] = pts[j];
+    }
+  }
+  
   return CV_OK;
 }
 
@@ -739,6 +814,98 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 }
 
 // -----------------------------
+// cvTGenUtils_SetRefinementCylinder()
+// -----------------------------
+/** 
+ * @brief computes the distance between each point on surface and center
+ * @brief of cylinder. Then, if inside radius, the meshsizing function at the 
+ * @brief is set to the reduced size, 
+ * @param size This is the smaller refined of the edges within cylinder region.
+ * @param radius This is the radius of the refinement cylinder.
+ * @param center This is the center of the refinement cylinder.
+ * @param length This is the length of the cylinder. Center is half the length.
+ * @param normal This is the normal direction of the length of the cylinder.
+ * It is normalized before being used for compuation.
+ * @return CV_OK if function completes properly
+ */
+
+int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
+    std::string sizingFunctionArrayName,double size,double radius, double *center,
+    double length, double *normal, int secondarray,double maxedgesize)
+{ 
+  int numPts;
+  double disttopoint;
+  double distalonglength;
+  double pts[3];
+  double norm[3];
+  for (int i=0;i < 3;i++)
+    norm[i] = normal[i];
+  vtkIdType pointId;
+  vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New(); 
+
+  //Set sizing function params
+  numPts = polydatasolid->GetNumberOfPoints();
+  if (secondarray)
+  {
+    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    {
+      fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
+		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
+      return CV_ERROR;
+    }
+    meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+  }
+  else
+  {
+    meshSizeArray->SetNumberOfComponents(1);
+    meshSizeArray->Allocate(numPts,1000);
+    meshSizeArray->SetNumberOfTuples(numPts);
+    meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    for (pointId = 0;pointId<numPts;pointId++)
+    {
+      meshSizeArray->SetValue(pointId,0.0);
+    }
+  }
+
+  for (pointId = 0;pointId<numPts;pointId++)
+  {
+    polydatasolid->GetPoint(pointId,pts);
+    //compute distance
+    double pvec[3];
+    double scale;
+    vtkMath::Norm(norm);
+    vtkMath::Subtract(pts,center,pvec);
+    scale = vtkMath::Dot(pvec,norm);
+    vtkMath::MultiplyScalar(norm,scale);
+    disttopoint = sqrt(pow(pts[0]-norm[0],2)+
+	pow(pts[1]-norm[1],2)+
+	pow(pts[2]-norm[2],2));
+
+    distalonglength = sqrt(pow(norm[0]-center[0],2)+
+	pow(norm[1]-center[1],2)+
+	pow(norm[2]-center[2],2));
+
+    //set value to new size
+    if (disttopoint <= radius && distalonglength <= length/2)
+        meshSizeArray->SetValue(pointId,size);
+    else 
+    {
+      if (meshSizeArray->GetValue(pointId) == 0) 
+        meshSizeArray->SetValue(pointId,maxedgesize);
+    }
+  }
+  
+  if (secondarray)
+  {
+    polydatasolid->GetPointData()->RemoveArray(sizingFunctionArrayName.c_str());
+  } 
+  polydatasolid->GetPointData()->AddArray(meshSizeArray);
+  polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
+
+  return CV_OK;
+}
+
+// -----------------------------
 // cvTGenUtils_SetRefinementSphere()
 // -----------------------------
 /** 
@@ -1020,7 +1187,6 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   }
 
 
-  fprintf(stdout,"Mapping Cells\n");;
   for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
   {
     //currentValue = currentRegionsInt->GetValue(cellId);
@@ -1043,7 +1209,6 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
 	  subId,distance);
       currentRegionsInt->InsertValue(cellId,realRegions->GetValue(closestCell));
   }
-  fprintf(stdout,"Done\n");;
 
   //for (i=0;i<range+1;i++)
   //{

@@ -37,7 +37,7 @@ proc guiTGadaptMesh {} {
   global guiTGvars
 
   set ascflag                $guiMMvars(phasta_format)
-  set surface_mesh_file      $gFilenames(surface_mesh_file)
+  set surface_mesh_file      $gFilenames(vtp_surface_file)
   set mesh_file              $gFilenames(mesh_file)
   set solution_file          [file join $guiMMvars(error_input_dir) $gFilenames(solution_file)] 
   #set error_file             [file join $guiMMvars(error_input_dir) $gFilenames(error_file)]

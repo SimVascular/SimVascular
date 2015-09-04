@@ -74,13 +74,18 @@ class cvTetGenMeshObject : public cvMeshObject {
     int numsublayers;
     double blthicknessfactor;
     double sublayerratio;
-    int sphererefinement;
+    int refinement;
     double refinedsize;
     double sphereradius;
     double spherecenter[3];
+    double cylinderradius;
+    double cylindercenter[3];
+    double cylinderlength;
+    double cylindernormal[3];
     int functionbasedmeshing;
     int secondarrayfunction;
     int meshwallfirst;
+    int startwithvolume;
   } TGoptions;
 
   public:
@@ -91,6 +96,7 @@ class cvTetGenMeshObject : public cvMeshObject {
 
   ~cvTetGenMeshObject();
 
+  //Set mesh and model file locations
   int SetMeshFileName( const char* meshFileName );
   int SetSolidFileName( const char* solidFileName );
 
@@ -98,75 +104,52 @@ class cvTetGenMeshObject : public cvMeshObject {
   int Print();
   cvMeshObject *Copy() const;
 
+  // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
   int GetBoundaryFaces(double angle);
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
 
-  int SetSurfaceMeshFlag(int value);
-  int SetSurfaceOptimization(int value) {return CV_ERROR;}
-  int SetSurfaceSmoothing(int value) {return CV_ERROR;}
-
-  int SetVolumeMeshFlag(int value);   
-  int SetVolumeOptimization(int value) {return CV_ERROR;}
-  int SetVolumeSmoothing(int value) {return CV_ERROR;}
-
-  int SetGlobalSize(int type, double gsize) {return CV_ERROR;}
-  int SetLocalSize(int type, int id, double size);
-
-  int SetGlobalCurv(int type, double size) {return CV_ERROR;}
-  int SetLocalCurv(int type, int id, double size) {return CV_ERROR;}
-  int SetGlobalMinCurv(int type, double size) {return CV_ERROR;}
-  int SetLocalMinCurv(int type, int id, double size) {return CV_ERROR;}
-  int SetMeshOptions(char *flags,double value);
+  //Set curve sizes and other mesh options
+  int SetMeshOptions(char *flags,int numValues, double *values);
  
+  //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H); 
   int SetWalls(int numWalls,int *walls); 
   
+  //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
-                            double* center, double *normal) {return CV_ERROR;}
+                            double* center, double *normal);
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size,char *sizefunctionname);
 
+  //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();
   int WriteMesh(char *filename, int smsver);
   int WriteStats(char *filename);
 
   // output visualization files
-  int WriteDataExplorer (char *filename) {return CV_ERROR;}
   int WriteMetisAdjacency (char *filename);
 
   // general queries
-  int GetElementConnectivity(int element) {return CV_ERROR;}
-  int GetNodeCoords(int node) {return CV_ERROR;}  
+  int GetNodeCoords(int node);  
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid();
   cvUnstructuredGrid *GetUnstructuredGrid();
   int GetModelFaceInfo(char rtnstr[99999]);
 
   // queries for bc's
-  int GetElementNodesOnModelFace (int face, char* filename) {return CV_ERROR;}
-  int GetElementFacesOnModelFace (int face, int explicitFaceOut, char* filename) {return CV_ERROR;}
   cvPolyData* GetFacePolyData (int orgfaceid);
 
-  int GetElementsInModelRegion (int region, char* filename) {return CV_ERROR;}
-
-  int GetExteriorElementFacesOnRegion (int region, char* filename) {return CV_ERROR;} 
-  
-  // change elements
-  int GenerateQuadraticElements () {return CV_ERROR;}
-
-  void initNodeTraversal() {return;} 
-  void initElementTraversal() {return;} 
-  void initRegionTraversal() {return;} 
-  int getNextNode() {return CV_ERROR;}
-  int getNextElement() {return CV_ERROR;}
-  int getNextRegion() {return CV_ERROR;} 
-  int getNeighborMdlRegIds() {return CV_ERROR;} 
-
   int SetVtkPolyDataObject(vtkPolyData *newPolyData);
+  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug);
 
-  //These are helper functions for some of the more complicated mesh options
+  //Adapt Function
+  int Adapt();
+  int GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd);
+  int SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy);
+
+  //TETGENMESHOBJECT ONLY: These are helper functions for some of the more complicated mesh options
   int GenerateSurfaceRemesh();
   int GenerateBoundaryLayerMesh();
   int GenerateAndMeshCaps();
@@ -187,6 +170,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   tetgenio *inmesh_;
   tetgenio *outmesh_;
   vtkPolyData *polydatasolid_;
+  vtkUnstructuredGrid *inputug_;
 
   vtkPolyData *originalpolydata_;
   vtkPolyData *surfacemesh_;
