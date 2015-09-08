@@ -2,9 +2,6 @@ env:
   matrix:
       - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=false
       - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=true
-    # - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=false BUILD_SOLVER=true
-    # - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=false BUILD_SOLVER=false
-    # - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true
 
 sudo: false
 language: cpp
@@ -19,6 +16,7 @@ addons:
     - tcl8.5-dev
     - tk8.5-dev
     - tcllib
+    - tklib
     - gfortran
     sources:
     - kubuntu-backports
