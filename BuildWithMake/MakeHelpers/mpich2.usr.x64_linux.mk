@@ -1,8 +1,8 @@
 ifeq ($(CLUSTER), x64_linux)
-    MPICH_TOP     =  /usr/lib/mpich
-    MPICH_INCDIR  = -I $(MPICH_TOP)/include -L $(MPICH_TOP)/lib
-    MPICH_LIBS    = -lmpichf90 -lmpich -lopa -lmpl -lrt -lpthread
-    MPICH_SO_PATH = $(MPICH_TOP)/lib
+    MPI_TOP     =  /usr/lib/mpich
+    MPI_INCDIR  = -I $(MPI_TOP)/include -L $(MPI_TOP)/lib
+    MPI_LIBS    = -lmpichf90 -lmpich -lopa -lmpl -lrt -lpthread
+    MPI_SO_PATH = $(MPI_TOP)/lib
     MPIEXEC_PATH  = /usr/bin
     MPIEXEC       = mpiexec
 endif
