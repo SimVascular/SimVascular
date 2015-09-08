@@ -51,7 +51,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # ==============
 
-FFLAGS   = $(GLOBAL_FFLAGS) $(MPICH_INCDIR) $(METIS_INCDIR)
+FFLAGS   = $(GLOBAL_FFLAGS) $(MPI_INCDIR) $(METIS_INCDIR)
 
 ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
   FSRCS    =	        ADDBCMUL.f \

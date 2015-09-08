@@ -160,7 +160,7 @@ $(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(LFLAGS) $(LINKOBJS) \
         $(LINKEXPLICITLIBS) \
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
-        $(ZLIB_LIBS) $(MPICH_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
+        $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	mv $(TARGET_EXE)* $(TOP)/Bin
 else
@@ -168,7 +168,7 @@ $(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)
 	$(LINK_EXE)$(TARGET_EXE) $(LFLAGS) $(LINKOBJS) \
         $(LINKEXPLICITLIBS) \
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
-        $(ZLIB_LIBS) $(MPICH_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
+        $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifneq ($(MAKE_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls
