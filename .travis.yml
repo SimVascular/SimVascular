@@ -18,6 +18,7 @@ addons:
     - tcl8.5-dev
     - tk8.5-dev
     - tcllib
+    - tklib
     - gfortran
     sources:
     - kubuntu-backports
