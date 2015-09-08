@@ -1,7 +1,9 @@
 env:
   matrix:
-      - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=false
-      - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=true BUILD_TEST=true
+      - WITH_CMAKE=true VTK_VERSION=6.0 ITK_VERSION=4.5 PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=false
+      - WITH_CMAKE=true VTK_VERSION=6.2 ITK_VERSION=4.8 PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=true
+      - WITH_CMAKE=true VTK_VERSION=6.0 ITK_VERSION=4.5 PREBUILD_ITKVTK=true BUILD_SOLVER=true BUILD_TEST=true
+      - WITH_CMAKE=true VTK_VERSION=6.2 ITK_VERSION=4.8 PREBUILD_ITKVTK=true BUILD_SOLVER=true BUILD_TEST=true
 
 sudo: false
 language: cpp
@@ -18,7 +20,6 @@ addons:
     - tcllib
     - tklib
     - gfortran
-    - xvrfb
     sources:
     - kubuntu-backports
 
@@ -32,10 +33,10 @@ before_install:
   - export cwd=$(pwd)
   - export SCRIPTS=$cwd/travis
   - export EXTERNALS_DIR=/home/travis/external
-  - export VTK_SOURCE_DIR=$EXTERNALS_DIR/vtk-6.0
-  - export VTK_DIR=$EXTERNALS_DIR/vtk-6.0-build
-  - export ITK_SOURCE_DIR=$EXTERNALS_DIR/itk-4.5
-  - export ITK_DIR=$EXTERNALS_DIR/itk-4.5-build
+  - export VTK_SOURCE_DIR=$EXTERNALS_DIR/vtk-$VTK_VERSION
+  - export VTK_DIR=$EXTERNALS_DIR/vtk-$VTK_VERSION-build
+  - export ITK_SOURCE_DIR=$EXTERNALS_DIR/itk-$ITK_VERSION
+  - export ITK_DIR=$EXTERNALS_DIR/itk-$ITK_VERSION-build
   - export BUILD_DIR=$cwd/build
   - export SV_TEST_DIR=$HOME/test/
   - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
@@ -48,7 +49,10 @@ cache:
   - /home/travis/external/vtk-6.0-build
   - /home/travis/external/itk-4.5
   - /home/travis/external/itk-4.5-build
-  apt: true
+  - /home/travis/external/vtk-6.2
+  - /home/travis/external/vtk-6.2-build
+  - /home/travis/external/itk-4.8
+  - /home/travis/external/itk-4.8-build
 
 before_script:
   - $SCRIPTS/travis_build_vtk.sh
