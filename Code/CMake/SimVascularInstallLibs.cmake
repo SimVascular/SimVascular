@@ -126,8 +126,8 @@ endif()
 
 #-----------------------------------------------------------------------------
 # MPI
-if(USE_MPI)
-    if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_MPI )
+if(USE_MPI AND NOT SimVascular_USE_DUMMY_MPICH2)
+    if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_MPI)
         if(NOT WIN32)
             # MPI needs to be insalled, if its not a system LIBRARY.
             # or this is a distribution, unless its WIN32
