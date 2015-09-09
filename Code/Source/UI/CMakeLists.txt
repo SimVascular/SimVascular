@@ -38,9 +38,11 @@ if(Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
 endif()
 
 if(Licensed_PARASOLID)
-	SET(CXXSRCS ${CXXSRCS} 
-	${SimVascular_SOURCE_DIR}/Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_parasolid)
+	if (NOT PARASOLID_USE_SHARED_LIBRARIES)
+	  SET(CXXSRCS ${CXXSRCS} 
+	  ${SimVascular_SOURCE_DIR}/Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx)
+	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_parasolid)
+        endif()
 endif()
 
 if(Plugin_ITK)
