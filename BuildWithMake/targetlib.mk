@@ -30,61 +30,42 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-OBJ_DIR ?= $(BUILD_DIR)
-
-OBJS    ?= $(addprefix $(OBJ_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
-           $(addprefix $(OBJ_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
-           $(addprefix $(OBJ_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
-
-DLLOBJS  ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS:.cxx=.$(OBJECTEXT)))
-DLLOBJS2 ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS2:.cxx=.$(OBJECTEXT)))
-DLLOBJS3 ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS3:.cxx=.$(OBJECTEXT)))
-
-SRCS	= $(CXXSRCS)
-
-DEPS	= $(CXXSRCS:.cxx=.d)
-
-DLLHDRS += $(HDRS)
-DLLSRCS += $(CXXSRCS)
-
-TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_lib_$(TARGET_LIB_NAME).$(STATICEXT)
-TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(SOEXT)
-
-#ifeq ($(CLUSTER),x64_linux)
-#DLLLIBS = -l_simvascular_globals
-#else
-#DLLLIBS = lib_simvascular_globals.$(STATICEXT)
-#endif
-
 all:	lib
 
-directories:
-	mkdir -p $(BUILD_DIR)
-	mkdir -p $(TOP)/Lib/$(LIB_BUILD_DIR)
+lib:	$(TOP)/Lib/$(TARGET_LIB)
 
-lib:	directories $(TARGET_LIB)
+shared: $(TOP)/Lib/$(TARGET_SHARED) $(TOP)/Lib/$(TARGET_SHARED2) $(TOP)/Lib/$(TARGET_SHARED3)
 
-shared: directories $(TARGET_SHARED) $(TARGET_SHARED2) $(TARGET_SHARED3)
-
-$(TARGET_LIB):	$(OBJS)
-	for fn in $(TARGET_LIB); do /bin/rm -f $$fn; done 
-	$(AR)$(TARGET_LIB) $(OBJS)
+$(TOP)/Lib/$(TARGET_LIB):	$(OBJS)
+	$(AR) $(TARGET_LIB) $(OBJS)
+	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done 
+	for fn in $(TARGET_LIB); do /bin/mv -f $$fn  $(TOP)/Lib/$(TARGET_LIB); done
 
 ifeq ($(CLUSTER),x64_linux) 
-$(TARGET_SHARED):	$(DLLOBJS)
-	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
-	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
-	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
+$(TOP)/Lib/$(TARGET_SHARED):	$(DLLOBJS)
+	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED)  \
+             $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
+	for fn in $(TOP)/Lib/$(TARGET_SHARED); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED); do /bin/mv -f $$fn $(TOP)/Lib; done
+#	$(LINK_EXE) dummy.exe $(LFLAGS) \
+             $(DLLOBJS) $(CXX_LIBS) $(VTK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(ZLIB_LIBS) -l_lib_simvascular_sysgeom -l_lib_simvascular_solid -l_lib_simvascular_repository -l_lib_simvascular_utils -l_simvascular_globals
+#	$(LINK_EXE) dummy.exe $(LFLAGS) \
              $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
 else
-$(TARGET_SHARED):	$(DLLOBJS)
-	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
-	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
-	for fn in $(TARGET_SHARED:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
-	for fn in $(TARGET_SHARED:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
-	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
-             /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
+$(TOP)/Lib/$(TARGET_SHARED):	$(DLLOBJS)
+	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGETDIR)/$(TARGET_SHARED)" \
+             /pdb:"$(TARGETDIR)/$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
+	for fn in $(TOP)/Lib/$(TARGET_SHARED); do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.$(SOEXT).manifest); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED); do /bin/mv -f $$fn $(TOP)/Lib; done
+	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/mv -f $$fn $(TOP)/Lib; done
+	for fn in $(TARGET_SHARED:.$(SOEXT)=.exp); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
+	for fn in $(TARGET_SHARED:.$(SOEXT)=.pdb); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
+	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(SOEXT).manifest); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
 endif
 
 ifeq ($(CLUSTER),x64_linux) 
@@ -102,10 +83,12 @@ $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.$(SOEXT).manifest); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
 	for fn in $(TARGET_SHARED2:.$(SOEXT)=.$(STATICEXT)); do /bin/mv -f $$fn $(TOP)/Lib; done
 	for fn in $(TARGET_SHARED2:.$(SOEXT)=.exp); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
 	for fn in $(TARGET_SHARED2:.$(SOEXT)=.pdb); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
+	for fn in $(TARGET_SHARED2:.$(SOEXT)=.$(SOEXT).manifest); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
 endif
 
 ifeq ($(CLUSTER),x64_linux) 
@@ -123,24 +106,28 @@ $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.$(SOEXT).manifest); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
 	for fn in $(TARGET_SHARED3:.$(SOEXT)=.$(STATICEXT)); do /bin/mv -f $$fn $(TOP)/Lib; done
 	for fn in $(TARGET_SHARED3:.$(SOEXT)=.exp); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
 	for fn in $(TARGET_SHARED3:.$(SOEXT)=.pdb); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
+	for fn in $(TARGET_SHARED3:.$(SOEXT)=.$(SOEXT).manifest); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
 endif
 
 ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
-clean:
-	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
+clean: veryclean
+
+veryclean:
+	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
 	for fn in *~; do /bin/rm -f $$fn;done
+	for fn in *.d; do /bin/rm -f $$fn; done
+	for fn in *.pdb; do /bin/rm -f $$fn; done
+	for fn in *.exp; do /bin/rm -f $$fn; done
 	for fn in *_wrap.cxx*; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED3)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
-
-veryclean: clean
-	if [ -e obj ];then /bin/rm -f -r obj;fi

@@ -52,59 +52,75 @@ ifeq ($(MAKE_WITH_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
 endif
 
-ifeq ($(MAKE_WITH_PARASOLID),1)
-    CXXFLAGS    += $(PARASOLID_INCDIR) \
-                   -I$(TOP)/../Code/Licensed/ParasolidSolidModel
-endif
 
-ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-    CXXFLAGS    += $(MESHSIM_INCDIR) \
-		  -I$(TOP)/../Source/Model/MeshSimDiscreteSolidModel
+# Conditional inclusion of headers for concrete SolidModel classes
+# ----------------------------------------------------------------
+
+ifeq ($(EXCLUDE_SOLID_MODEL),0)
+
+    ifeq ($(MAKE_WITH_PARASOLID),1)
+        CXXFLAGS    += $(PARASOLID_INCDIR) \
+		       -I$(TOP)/ParasolidSolidModel
+    endif
+
+    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+        CXXFLAGS    += $(MESHSIM_INCDIR) \
+		       -I$(TOP)/MeshSimDiscreteSolidModel
+    endif
+
 endif
 
 ifeq ($(MAKE_WITH_MESHSIM),1)
         CXXFLAGS    += $(MESHSIM_INCDIR)
 endif
 
+
 HDRS	= cvMeshSimMeshObject.h cvMeshSimMeshSystem.h
 
 CXXSRCS	= cvMeshSimMeshObject.cxx \
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx
 
-DLLHDRS = cv_meshsim_mesh_init.h
+SRCS	= $(CXXSRCS)
 
-DLLSRCS = cv_meshsim_mesh_init.cxx
+DEPS	= $(CXXSRCS:.cxx=.d)
 
-DLLLIBS = $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
 
-ifeq ($(MAKE_WITH_PARASOLID),1)
-  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+DEPLIBS = $(TOP)/lib/lib_simvascular_utils.$(STATICEXT) $(TOP)/lib/lib_simvascular_mesh.$(STATICEXT)
+
+TARGET_LIB = lib_lib_simvascular_meshsim_mesh.$(STATICEXT)
+
+DLLHDRS = $(HDRS) cv_meshsim_mesh_init.h
+DLLSRCS = $(CXXSRCS) cv_meshsim_mesh_init.cxx
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+ifeq ($(CLUSTER),x64_linux)
+  DLLLIBS = -l_lib_simvascular_mesh \
+            -l_simvascular_parasolid
+  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    DLLLIBS += -l_simvascular_meshsim_discrete
+  endif
+  DLLLIBS += -l_lib_simvascular_mesh
+  DLLLIBS += $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+else
+  DLLLIBS = lib_lib_simvascular_mesh.$(STATICEXT) \
+            lib_simvascular_meshsim_discrete.$(STATICEXT) \
+            lib_simvascular_parasolid.$(STATICEXT) \
+            $(MESHSIM_LIBS) $(PARASOLID_LIBS)
 endif
-ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
-endif
-
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
 
 ifeq ($(MAKE_WITH_VMTK),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+	DLLLIBS += ../../../../BuildWithMake/Lib/lib_lib_simvascular_vmtk.$(STATICEXT)
 endif
+	DLLLIBS += ../../../../BuildWithMake/Lib/lib_lib_simvascular_zlib.$(STATICEXT)
 
-ifeq ($(MAKE_WITH_ZLIB),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
-endif
+DLLLIBS += $(VTK_LIBS) $(PARASOLID_LIBS)
 
-ifeq ($(MAKE_WITH_MESHSIM),1)
-  DLLLIBS += $(MESHSIM_LIBS)
-endif
+TARGET_SHARED = lib_simvascular_meshsim_mesh.$(SOEXT)
 
-ifeq ($(MAKE_WITH_PARASOLID),1)
-  DLLLIBS += $(PARASOLID_LIBS)
-endif
-
-DLLLIBS += $(VTK_LIBS)
-
-TARGET_LIB_NAME = simvascular_meshsim_mesh
+LFLAGS +=  
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk
 

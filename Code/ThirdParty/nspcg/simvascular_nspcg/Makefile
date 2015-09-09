@@ -28,11 +28,25 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
+# ==============
+# Compiler flags
+# ==============
+
 FFLAGS   = $(GLOBAL_FFLAGS)
 
 FSRCS    = nspcg1.f nspcg2.f nspcg3.f nspcg4.f nspcg5.f
 
-TARGET_LIB_NAME = simvascular_nspcg
+TARGET_LIB = lib_lib_simvascular_nspcg.$(STATICEXT)
+
+SRCS	= $(FSRCS)
+
+DEPS	= 
+
+OBJS	= $(FSRCS:.f=.$(OBJECTEXT))
+
+# =======
+# Targets
+# =======
 
 include $(TOP)/targetlib.mk
 

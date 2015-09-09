@@ -21,7 +21,7 @@ export LES_LICENSE_SERVER=REPLACEME_LES_LICENSE_SERVER
 ############################################################
 
 # 3-D solver environment variables
-export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME/Code/FlowSolvers/ThreeDSolver/svSolver
+export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME/Code/Modules/ThreeDSolver/IncompressibleSolver/Solver
 
 # simvascular addition
 export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/Code/Lib:$LD_LIBRARY_PATH

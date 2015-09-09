@@ -50,29 +50,19 @@ SRCS	= $(CXXSRCS)
 
 DEPS	= $(CXXSRCS:.cxx=.d)
 
-OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
-          $(addprefix $(BUILD_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
-          $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
 
-TARGET_EXE_FULL = $(TOP)/Bin/postsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
-TARGET_EXE = $(TOP)/Bin/postsolver.exe
+TARGET_EXE = postsolver.exe
 
-static: directories createOptionFile $(TARGET_EXE_FULL) 
+static: createOptionFile $(TOP)/Bin/$(TARGET_EXE)
 
-directories:
-	-mkdir -p $(BUILD_DIR)
-
-$(TARGET_EXE_FULL): $(OBJS)
-	for fn in $(TARGET_EXE); do /bin/rm -f $$fn; done
-	for fn in $(basename $(TARGET_EXE)).pdb; do /bin/rm -f $$fn; done
-	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
-	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
-	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS) \
+$(TOP)/Bin/$(TARGET_EXE): $(OBJS)
+	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS) \
              $(OBJS) $(ZLIB_LIBS) $(VTK_LIBS) \
-             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+             ../../../../BuildWithMake/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
              $(CXX_LIBS)
-	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
-	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)
+	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	mv $(TARGET_EXE)* $(TOP)/Bin
 
 ifndef NO_DEPEND
 -include $(DEPS)
@@ -84,12 +74,15 @@ createOptionFile:
 	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
 	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
 
-clean:
-	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
+clean: veryclean
+
+veryclean:
+	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
 	for fn in *~; do /bin/rm -f $$fn;done
+	for fn in *.mod; do /bin/rm -f $$fn;done
+	for fn in *.d; do /bin/rm -f $$fn; done
+	for fn in *.pdb; do /bin/rm -f $$fn; done
+	for fn in *.exp; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	/bin/rm -f cvFlowsolverOptions.h
-
-veryclean: clean
-	if [ -e obj ];then /bin/rm -f -r obj;fi
 

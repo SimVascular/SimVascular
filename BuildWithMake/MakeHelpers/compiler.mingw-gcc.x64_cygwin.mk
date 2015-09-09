@@ -11,7 +11,7 @@ ifeq ($(CLUSTER), x64_cygwin)
     AR              = x86_64-w64-mingw32-ar -cru  
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     DEBUG_FLAGS     = 
-    OPT_FLAGS       = -O3
+    OPT_FLAGS       = -O2
 else
   ifeq ($(MAKE_OPTIMIZED),1)
     DEBUG_FLAGS     =
@@ -44,5 +44,4 @@ endif
     LINK_EXE        = $(CXX)  -L$(TOP)/Lib -o 
     LIBPATH_COMPILER_FLAG = -L
     LIBFLAG         = -l
-    SVLIBFLAG       = -llib
 endif

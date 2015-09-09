@@ -84,97 +84,121 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
   endif
 
+  LINKEXPLICITLIBS =      ../../../BuildWithMake/Lib/lib_lib_simvascular_post.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_image.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_repository.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_lset.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_solid.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_mesh.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_sysgeom.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_utils.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_lset.$(STATICEXT)  \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_image.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_polydatasolid.$(STATICEXT) \
+                          ../../../BuildWithMake/Lib/lib_lib_simvascular_globals.$(STATICEXT)
+
   ifeq ($(MAKE_WITH_SOLVERIO),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_solverio.$(STATICEXT)
   endif
   ifeq ($(MAKE_WITH_MESHSIM),1)
     ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
+#	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_simvascular_meshsim_mesh.$(STATICEXT)
     else
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_meshsim_mesh.$(STATICEXT)
     endif
   endif
   ifeq ($(MAKE_WITH_TETGEN),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_tetgen_mesh.$(STATICEXT)
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
     ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
+#	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_simvascular_meshsim_discrete.$(STATICEXT)
     else
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_meshsim_discrete.$(STATICEXT)
     endif
   endif
   ifeq ($(MAKE_WITH_PARASOLID),1)
     ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
+#	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_simvascular_parasolid.$(STATICEXT)
     else
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_parasolid.$(STATICEXT)
     endif
   endif
 
   ifeq ($(MAKE_WITH_VMTK),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_vmtk.$(STATICEXT)
   endif
 
   ifeq ($(MAKE_WITH_ITK),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itkutils$(LIBLINKEXT) \
-                            $(SVLIBFLAG)_lib_simvascular_cvitk$(LIBLINKEXT)
+	LINKEXPLICITLIBS += ../../../BuildWithMake/Lib/lib_lib_simvascular_itkutils.$(STATICEXT) \
+                            ../../../BuildWithMake/Lib/lib_lib_simvascular_cvitk.$(STATICEXT)
   endif
 
 endif
 
-SRCS	= $(CXXSRCS) $(foreach name,$(COPIED_CXXSRCS),$(lastword $(subst /, ,$(name))))
+SRCS	= $(CXXSRCS) $(COPIED_CXXSRCS)
 
 DEPS	= $(SRCS:.cxx=.d)
 
-OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
+OBJS	= $(SRCS:.cxx=.$(OBJECTEXT))
 
-TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
-TARGET_EXE = $(TOP)/Bin/simvascular.exe
+TARGET_EXE = simvascular.exe
 
-dynamic: pre directories $(TARGET_EXE_FULL)
+# here we use the trick that the objects are actually compiled in the
+# local directory
 
-static: pre directories $(TARGET_EXE_FULL)
+#LINKOBJS = $(OBJS)
 
-directories:
-	-mkdir -p $(BUILD_DIR)
+LINKOBJS = $(foreach name,$(OBJS),$(lastword $(subst /, ,$(name))))
 
-$(TARGET_EXE_FULL): $(OBJS)
-	for fn in $(TARGET_EXE); do /bin/rm -f $$fn; done
-	for fn in $(basename $(TARGET_EXE)).pdb; do /bin/rm -f $$fn; done
-	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
-	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
-	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
-        $(LFLAGS) \
+dynamic: pre $(TOP)/Bin/$(TARGET_EXE)
+
+static: pre $(TOP)/Bin/$(TARGET_EXE)
+
+ifeq ($(CLUSTER),x64_linux) 
+$(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)
+	$(LINK_EXE)$(TARGET_EXE) $(LFLAGS) $(LINKOBJS) \
+        $(LINKEXPLICITLIBS) \
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
-        $(ZLIB_LIBS) $(MPICH_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
+        $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-ifeq ($(CLUSTER),x64_cygwin)
+	mv $(TARGET_EXE)* $(TOP)/Bin
+else
+$(TOP)/Bin/$(TARGET_EXE): $(LINKOBJS)
+	$(LINK_EXE)$(TARGET_EXE) $(LFLAGS) $(LINKOBJS) \
+        $(LINKEXPLICITLIBS) \
+        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
+        $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
+	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifneq ($(MAKE_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls
         # we need to check and see if we should be still rebasing 
         # the tcltk and vtk dlls
-	editbin /REBASE:BASEFILE $(TARGET_EXE) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
+	editbin /REBASE:BASEFILE $(TARGET_EXE) ../../../BuildWithMake/Lib/*.$(SOEXT) \
           $(TCLTK_DLLS) $(VTK_DLLS)
 endif
+	mv $(TARGET_EXE)* $(TOP)/Bin
 endif
-	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
-	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)
 
 pre:
-	$(foreach name,$(COPIED_CXXSRCS),$(shell cp -f $(name) .))
+	$(foreach name,$(SRCS),$(shell cp -f $(name) .))
 
 ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
 clean:
-	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
+	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
 	for fn in *~; do /bin/rm -f $$fn;done
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
+	for fn in *.mod; do /bin/rm -f $$fn;done
 
 veryclean: clean
-	if [ -e obj ];then /bin/rm -f -r obj;fi
+	for fn in *.d; do /bin/rm -f $$fn; done
+	for fn in *.pdb; do /bin/rm -f $$fn; done
+	for fn in *.exp; do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	for fn in *.lib; do /bin/rm -f $$fn; done
+	for fn in coffbase.txt; do /bin/rm -f $$fn; done
+	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
 
 

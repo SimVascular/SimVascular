@@ -12,10 +12,10 @@ else
     DEBUG_FFLAGS    =  
     OPT_FFLAGS      = /MD /Zi /O2
   else
-    DEBUG_FFLAGS    = /MD /Zi /Od /debug:all /debug:all /check:all -traceback
+    DEBUG_FFLAGS    = /MD /Od /debug:all /debug:all /check:all -traceback
   endif
 endif
-    GLOBAL_FFLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) /W0 /4L132 /heap-arrays:256
+    GLOBAL_FFLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) /W0 /4L132
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += /DEBUG
 endif

@@ -28,6 +28,14 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
+# ==============
+# Compiler flags
+# ==============
+
+# --------------
+# Compiler flags
+# --------------
+
 CCFLAGS = $(GLOBAL_CCFLAGS)
 
 HDRS	= crc32.h deflate.h inffast.h inflate.h inftrees.h \
@@ -36,7 +44,17 @@ HDRS	= crc32.h deflate.h inffast.h inflate.h inftrees.h \
 CSRCS	= adler32.c  compress.c  crc32.c  deflate.c  gzio.c   inffast.c \
 	  inflate.c  inftrees.c  trees.c  uncompr.c  zutil.c
 
-TARGET_LIB_NAME = simvascular_zlib
+SRCS	= $(CSRCS)
+
+DEPS	= $(CSRCS:.c=.d)
+
+OBJS	= $(CSRCS:.c=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_zlib.$(STATICEXT)
+
+# =======
+# Targets
+# =======
 
 include $(TOP)/targetlib.mk
 

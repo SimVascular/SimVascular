@@ -83,7 +83,7 @@ endif
 	-chmod -R a+rwx package-release-meshsim-and-parasolid
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
@@ -299,12 +299,12 @@ windows-distribution: mksedscript common-pre-distribution copy-sv-executables co
 taritup-meshsim-and-parasolid:
 	-mkdir tar_files
 	-rm -Rf package-release-meshsim-and-parasolid
-	-mkdir -p package-release-meshsim-and-parasolid
+	-mkdir -p package-release-meshsim-and-parasolid/package/$(SIMVASCULAR_VERSION)/xxxxxxxx
 	-date > package-release-meshsim-and-parasolid/release-date
 	-chmod -R a+rwx package-release-meshsim-and-parasolid
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema

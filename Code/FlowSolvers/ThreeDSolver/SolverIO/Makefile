@@ -50,9 +50,18 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ZLIB_INCDIR) -I..
 
 HDRS	= cvSolverIO.h
-
 CXXSRCS = cvSolverIO.cxx
 
-TARGET_LIB_NAME = simvascular_solverio
+SRCS	= $(CSRCS) $(CXXSRCS)
+
+DEPS	= $(CSRCS:.c=.d) $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(CSRCS:.c=.$(OBJECTEXT)) $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_solverio.$(STATICEXT)
+
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk

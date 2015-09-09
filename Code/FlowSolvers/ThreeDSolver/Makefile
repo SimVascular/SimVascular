@@ -43,60 +43,47 @@ TOP=../../../BuildWithMake
 include $(TOP)/include.mk
 
 ifeq ($(MAKE_WITH_SOLVERIO),1)
-  THREED_LIB_DIRS = SolverIO
+  THREED_SUBDIRS = SolverIO
 else
-  THREED_LIB_DIRS =
+  THREED_SUBDIRS =
 endif
 
 ifeq ($(MAKE_WITH_DUMMY_MPI),1)
-  THREED_LIB_DIRS += dummyMPI
+  THREED_SUBDIRS += dummyMPI
 endif
 
 ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
-	THREED_LIB_DIRS += svLS
-endif
-
-ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
-	THREED_LIB_DIRS += svLS 
+	THREED_SUBDIRS += svLS 
 endif
 
 ifeq ($(MAKE_WITH_THREEDSOLVER),1)
-	THREED_EXEC_DIRS += svSolver 
+	THREED_SUBDIRS += svSolver 
 endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
   ifeq ($(MAKE_WITH_PRESOLVER),1)
-	THREED_EXEC_DIRS += svPre
+	THREED_SUBDIRS += svPre
   endif
   ifeq ($(MAKE_WITH_POSTSOLVER),1)
-	THREED_EXEC_DIRS += svPost
+	THREED_SUBDIRS += svPost
   endif
 endif
 
-lib:
-	@for i in ${THREED_LIB_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE)) ; done
-
-static:
-	@for i in ${THREED_EXEC_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE)) ; done
+lib:	libsubdirs
 
 shared:
 
-clean:
-	for i in ${THREED_LIB_DIRS}; do ( \
+libsubdirs:
+	@for i in ${THREED_SUBDIRS}; do ( \
 	  cd $$i; \
-	  $(MAKE) clean ) ; done
-	for i in ${THREED_EXEC_DIRS}; do ( \
+	  $(MAKE)) ; done
+
+clean:
+	for i in ${THREED_SUBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) clean ) ; done
 
 veryclean: clean
-	for i in ${THREED_LIB_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) veryclean ) ; done
-	for i in ${THREED_EXEC_DIRS}; do ( \
+	for i in ${THREED_SUBDIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) veryclean ) ; done

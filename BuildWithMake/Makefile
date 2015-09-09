@@ -65,7 +65,7 @@ ifneq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_TCLSH+`cygpath -u $(TCLSH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+`cygpath -u $(TKCXIMAGE_DLL)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MPICH_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
@@ -84,7 +84,7 @@ else
 	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MPICH_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
@@ -181,8 +181,8 @@ veryclean:
 	  cd $$i; \
 	  $(MAKE) NO_DEPEND=1 MAKE_STATIC_BUILD=1 veryclean;fi ) ; done
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
-	for fn in $(TOP)/Lib/*; do /bin/rm -f -r $$fn; done
-	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done
+	for fn in $(TOP)/Lib/*; do /bin/rm -f $$fn; done
+	for fn in $(TOP)/Bin/*; do /bin/rm -f $$fn; done
 	if [ -e myadaptor ];then /bin/rm -f myadaptor;fi
 	if [ -e mytetadaptor ];then /bin/rm -f mytetadaptor;fi
 	if [ -e sv ];then /bin/rm -f sv;fi

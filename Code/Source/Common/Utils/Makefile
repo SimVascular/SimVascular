@@ -34,6 +34,10 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
+# --------------
+# Compiler flags
+# --------------
+
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) $(DEFINES)
 
@@ -44,16 +48,31 @@ HDRS	= cv_misc_utils.h cv_vtk_utils.h cvTimer.h cvIntArrayList.h \
 CXXSRCS	= cv_misc_utils.cxx cv_vtk_utils.cxx cvTimer.cxx cvIntArrayList.cxx \
 	  cvStateArray.cxx cv_cgeom.cxx cvMath.cxx cv_arg.cxx cvFactoryRegistrar.cxx
 
+SRCS	= $(CXXSRCS)
+
+DEPS	= $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_utils.$(STATICEXT)
+
 DLLHDRS = cv_math_init.h
 DLLSRCS = cv_math_init.cxx
-
-TARGET_SHARED = simvascular_math
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+TARGET_SHARED = lib_simvascular_math.$(SOEXT)
 
 DLLHDRS2 = cv_get_tcl_interp_init.h
 DLLSRCS2 = cv_get_tcl_interp_init.cxx
-
+DLLOBJS2 = $(DLLSRCS2:.cxx=.$(OBJECTEXT)) 
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS2 = -l_simvascular_globals
+else
+DLLLIBS2 = lib_simvascular_globals.$(STATICEXT)
+endif
 TARGET_SHARED2 = lib_simvascular_gettclinterp.$(SOEXT)
 
-TARGET_LIB_NAME = simvascular_utils
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk

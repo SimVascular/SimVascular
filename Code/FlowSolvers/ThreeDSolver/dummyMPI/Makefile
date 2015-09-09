@@ -53,6 +53,16 @@ HDRS	= mpi_stubs_c.h
 CSRCS   = mpi_stubs_c.c
 FSRCS   = mpi_stubs.f 
 
-TARGET_LIB_NAME = simvascular_dummy_mpi
+SRCS	= $(CSRCS) $(CXXSRCS)
+
+DEPS	= $(CSRCS:.c=.d) $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(FSRCS:.f=.$(OBJECTEXT)) $(CSRCS:.c=.$(OBJECTEXT)) $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_dummympi.$(STATICEXT)
+
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk
