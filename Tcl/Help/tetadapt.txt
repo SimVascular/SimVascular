@@ -1,0 +1,40 @@
+# Adapt Options
+## Condense Restart Files
+
+	- THIS STEP IS NOT NECESSARY IF SIMULATION HAS BEEN RUN ON ONE PROCESSOR. THIS IS ALSO ONLY NECESSARY IF USING ADAPT OPTION 1 (See Options Below) WHICH USES THE CONDENSED RESTART FILE. If the restart files have been run on multiple processors, then the restart files need to be condensed into a single file. The single file will be given the name:
+	restart.LAST_STEP.0 
+	in the output directory, where LAST_STEP is the last step in the simulation and specified in the last step number entry box.
+
+	* Input Directory: Specify the directory in which all the restart files exist. This is typically underneath a folder called NUM_PROCS-procs_case if the simulation has been run on more than one processor.
+	* Output Directory: This directory will be automatically set to the be the same as the input directory. This is where the restart.LAST_STEP.0 file will be written.
+	* Flow Solver file format: By default, this will be binary. If you have changed the flow solver format to be ascii, then specify ascii here.
+	* Last Step Number: This is the last step number of the simulation. The restarts from the last step contain average solution information, so it is important that the last step number be specified here.
+	* Create One Restart File: After options have been specified, create the condensed restart file.
+
+## Filenames
+
+	- Specify all the input files needed by the adaptor.
+
+	* Model File: This is the original solid file used to create the mesh. For PolyData, this will have a .vtp extension and have a corresponding .facenames file.
+	* Mesh File (.vtu): This is the mesh created. If using Adapt Option 1 (See Options Below), this file can be the original mesh created. However, if using Adapt Option 2 or 3, this needs to be the all_results.vtu file created in the postsolver.
+	* Condensed Restart File: Again, only necessary if using Adapt Option 1. If the simulation was run on multiple processors, this is the condensed restart created above; however, if the simulation was run on one processor, this is just the last restart file generated. 
+	* Output Directory: This is a directory where you would like to output all the mesh files. This will contain the adapted mesh, the adaption options, and the new adapted solution file.
+
+## Options
+	
+	- These options change varying on the Adapt Option specified. 
+
+	* Error Reduction Factor: (Number between 0 and 1) This is multiplied by the calculated metric to alter the mesh size specified. For more reduction, use a number closer to 0, for less reduction use a number closer to 1. The default value of 0.2 works well and most likely shouldn't need to be changed.
+	* Global Min Edge Size: This number sets a lower bound for the element mesh edge size. A size metric is calculated from the hessian of the solution at every node on the mesh. If the edge size determined is smaller than this value, it will be changed to this value. 
+	* Global Max Edge Size: If the edge size determined is bigger than the determined size metric, it will be changed to this value. This is a way to refine the mesh to a smaller size.
+	* Start Step Number: ONLY USED WITH ADAPT OPTION 3 (See Adapt Option Below).
+	* End Step Number: USED WITH ADAPT OPTION 2 and 3 (See Adapt Option Below).
+	* Step Increment: ONLY USED WITH ADAPT OPTION 3 (See Adapt Option Below).
+	* Adapt Option:
+		* 1 - The condensed restart file is used to take average values from the simulation and calculate a new size metric.
+		* 2 - The average solution data field from the all_results.vtu is used to calculate a new size metric. Make sure to specify the last step number in the End Step Number entry box.
+		* 3 - The Start Step Number, Step Increment, and End Step Number are used to calculate new average values based on the resolution of the data fields on the all_results.vtu. Use this if average values from the entire simulation are not desired. Specify a start number later in the simulation if this is the case. Example: If the simulation lasts 100 timesteps and restart files are saved every 10 timesteps; however, only the second half of the simulation is desired for mesh adaption, Set Start Step Number to 50, Step Increment to 10, and End Step Number to 100. 
+	* Adapt Strategy: 
+		* 1 - Specifies isotropic mesh adaption (size metric is a scalar at each node).
+		* 2 - Specifies anisotropic mesh adaption (size metric is three vector specifying directions and magnitudes for each node). NOT AVAILABLE WITH TETGEN ADAPTION
+
