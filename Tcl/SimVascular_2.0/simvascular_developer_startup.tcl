@@ -90,6 +90,7 @@ if {$SIMVASCULAR_RELEASE_BUILD == 0} {
 }
 
 # load packages if dynamically build
-catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_mesh.dll Meshsimmesh}
-catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_parasolid.dll Parasolidsolid}
-catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid}
+#catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_mesh.dll Meshsimmesh}
+#catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_parasolid.dll Parasolidsolid}
+#catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid}
+catch {load $env(SIMVASCULAR_HOME)/Code/Build/Lib/lib_simvascular_parasolid.dylib Parasolidsolid}
