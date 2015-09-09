@@ -406,6 +406,36 @@ proc crd_ren {ren} {
   catch {vis_vRmAll $ren}
   catch {vis_nodeRmAll $ren}
   set gRen3dFreeze $oldFreeze
+
+  if {$ren == "gRenWin_3D_ren1"} {
+    global gRenWin_3D_vars
+    foreach member [array names gRenWin_3D_vars] {
+      set $gRenWin_3D_vars($member) 0
+    }
+
+    global lsGUIdisplayPathFlag
+    global lsGUIdisplayProbeFlag
+    global lsGUI3dWindow
+    set lsGUIdisplayPathFlag 0
+    set lsGUIdisplayProbeFlag 0
+    foreach member [array name lsGUI3dWindow] {
+      set $lsGUI3dWindow($member) 0
+    }
+
+    global bcGUI3dWindow
+    foreach member [array name bcGUI3dWindow] {
+      set $bcGUI3dWindow($member) 0
+    }
+
+    global guiMMvars
+    set guiMMvars(viewMeshVtkFlag) 0
+
+    global guiVISvars
+    foreach member [array name guiVISvars] {
+      set $guiVISvars($member) 0
+    }
+
+  }
 }
 
 
