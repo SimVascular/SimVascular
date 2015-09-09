@@ -28,6 +28,14 @@ TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
+# ==============
+# Compiler flags
+# ==============
+
+# --------------
+# Compiler flags
+# --------------
+
 CCFLAGS = $(GLOBAL_CCFLAGS) -I .
 
 HDRS	= defs.h macros.h metis.h \
@@ -44,7 +52,17 @@ CSRCS	= coarsen.c fm.c initpart.c match.c ccgraph.c memory.c \
        mrefine2.c minitpart2.c mbalance2.c mfm2.c \
        kvmetis.c kwayvolrefine.c kwayvolfm.c subdomains.c
 
-TARGET_LIB_NAME = simvascular_metis
+SRCS	= $(CSRCS)
+
+DEPS	= $(CSRCS:.c=.d)
+
+OBJS	= $(CSRCS:.c=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_metis.$(STATICEXT)
+
+# =======
+# Targets
+# =======
 
 include $(TOP)/targetlib.mk
 

@@ -55,13 +55,33 @@ HDRS	= cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h
 
 CXXSRCS	= cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx
 
-DLLHDRS = cv_discrete_init.h
+SRCS	= $(CXXSRCS)
 
-DLLSRCS = cv_discrete_init.cxx
+DEPS	= $(CXXSRCS:.cxx=.d)
 
-DLLLIBS = $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT) \
-          $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
 
-TARGET_LIB_NAME = simvascular_meshsim_discrete
+DEPLIBS = $(TOP)/lib/lib_simvascular_utils.$(STATICEXT)
+
+TARGET_LIB = lib_lib_simvascular_discrete.$(STATICEXT)
+
+DLLHDRS = $(HDRS) cv_discrete_init.h
+DLLSRCS = $(CXXSRCS) cv_discrete_init.cxx
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+
+DLLLIBS = $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+
+ifeq ($(MAKE_WITH_VMTK),1)
+	DLLLIBS += ../../../../BuildWithMake/Lib/lib_lib_simvascular_vmtk.$(STATICEXT)
+endif
+
+DLLLIBS += $(VTK_LIBS)
+
+
+TARGET_SHARED = lib_simvascular_meshsim_discrete.$(SOEXT)
+
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk

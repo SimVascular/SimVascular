@@ -59,19 +59,37 @@ CXXSRCS	= cvLevelSet.cxx cvLevelSetNode.cxx \
           cvLevelSetVelocityExponentialDecay.cxx \
           cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
 
-DLLHDRS = cv_LsetCore_init.h
-DLLSRCS = cv_LsetCore_init.cxx
+SRCS	= $(CXXSRCS)
 
-DLLHDRS2 = cv_LsetV_init.h
-DLLSRCS2 = cv_LsetV_init.cxx
+DEPS	= $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_lset.$(STATICEXT)
+
+DLLHDRS = $(HDRS) cv_LsetCore_init.h
+DLLSRCS = $(CXXSRCS) cv_LsetCore_init.cxx
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS = -l_simvascular_globals
+else
+DLLLIBS = lib_simvascular_globals.$(STATICEXT)
+endif
+TARGET_SHARED = lib_simvascular_lsetcore.$(SOEXT)
+
+DLLHDRS2 = $(HDRS) cv_LsetV_init.h
+DLLSRCS2 = $(CXXSRCS) cv_LsetV_init.cxx
+DLLOBJS2 = $(DLLSRCS2:.cxx=.$(OBJECTEXT))
+TARGET_SHARED2 = lib_simvascular_lsetv.$(SOEXT)
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS2 = -l_simvascular_globals
+else
+DLLLIBS2 = lib_simvascular_globals.$(STATICEXT)
+endif
 
 # -------
 # Targets
 # -------
-
-TARGET_LIB_NAME = simvascular_lset
-TARGET_SHARED = lib_simvascular_lsetcore
-TARGET_SHARED2 = lib_simvascular_lsetv
 
 include $(TOP)/targetlib.mk
 

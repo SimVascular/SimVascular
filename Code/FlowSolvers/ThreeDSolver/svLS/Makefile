@@ -70,15 +70,23 @@ ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
 			PRECOND.f \
 			SOLVE.f \
 			SPARMUL.f
- TARGET_LIB_NAME = simvascular_svLS_$(MPI_NAME)
+  TARGET_LIB = lib_lib_simvascular_svLS.$(STATICEXT)
 endif
 
 ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
   FSRCS      = dummy_prototypes.f
-  TARGET_LIB_NAME = simvascular_dummy_svLS
+  TARGET_LIB = lib_lib_simvascular_dummy_svLS.$(STATICEXT)
 endif
 
-OBJ_DIR = $(BUILD_MPI_DIR)
+SRCS	= $(FSRCS)
+
+DEPS	= $(CSRCS:.c=.d) $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(FSRCS:.f=.$(OBJECTEXT))
+
+# =======
+# Targets
+# =======
 
 include $(TOP)/targetlib.mk
 

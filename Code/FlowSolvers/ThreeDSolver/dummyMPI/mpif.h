@@ -1,9 +1,4 @@
 c
-c
-c
-       INTEGER MPI_ADDRESS_KIND
-       PARAMETER (MPI_ADDRESS_KIND=8)
-c
 c  Dummy parameters for MPI F77 stubs
 c
       integer MPI_COMM_WORLD

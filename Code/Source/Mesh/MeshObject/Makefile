@@ -57,11 +57,25 @@ HDRS	= cvMeshObject.h cvMeshSystem.h
 
 CXXSRCS	= cvMeshObject.cxx cvMeshSystem.cxx
 
+SRCS	= $(CXXSRCS)
+
+DEPS	= $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+DEPLIBS = 
+
+TARGET_LIB = lib_lib_simvascular_mesh.$(STATICEXT)
+
 DLLHDRS = $(HDRS) cv_mesh_init.h
-
 DLLSRCS = $(CXXSRCS) cv_mesh_init.cxx
-
-TARGET_LIB_NAME = simvascular_mesh
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS = -l_simvascular_globals
+else
+DLLLIBS = lib_simvascular_globals.$(STATICEXT)
+endif
+TARGET_SHARED = lib_simvascular_mesh.$(SOEXT)
 
 include $(TOP)/targetlib.mk
 

@@ -34,16 +34,37 @@ TOP=../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
+# --------------
+# Compiler flags
+# --------------
+
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ITK_INCDIRS) -I../Include -I.. -I../Util
 
 HDRS	=  cvITKUtils.h
 CXXSRCS	=  cvITKUtils.cxx
 
-DLLHDRS = cv_ITKUtils_init.h
+SRCS	= $(CXXSRCS)
 
-DLLSRCS = cv_ITKUtils_init.cxx
+DEPS	= $(CXXSRCS:.cxx=.d)
 
-TARGET_LIB_NAME = simvascular_itkutils
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_itkutils.$(STATICEXT)
+
+DLLHDRS = $(HDRS) cv_ITKUtils_init.h
+DLLSRCS = $(CXXSRCS) cv_ITKUtils_init.cxx
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS = -l_simvascular_itkutils
+else
+DLLLIBS = lib_simvascular_globals.$(STATICEXT)
+endif
+
+TARGET_SHARED = lib_simvascular_itkutils.$(SOEXT)
+
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk

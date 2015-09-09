@@ -43,12 +43,24 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 
 HDRS	= cv_globals.h
 
+
 CXXSRCS	= cv_globals.cxx
 
-DLLHDRS =
+SRCS	= $(CXXSRCS)
 
-DLLSRCS = 
+DEPS	= $(CXXSRCS:.cxx=.d)
 
-TARGET_LIB_NAME = simvascular_globals
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_globals.$(STATICEXT)
+
+DLLHDRS = cv_globals.h
+DLLSRCS = cv_globals.cxx
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+TARGET_SHARED = lib_simvascular_globals.$(SOEXT)
+
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk

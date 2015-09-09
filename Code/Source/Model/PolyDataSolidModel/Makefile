@@ -30,6 +30,10 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
+# --------------
+# Compiler flags
+# --------------
+
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
 	   $(SHAPES_INCDIR) $(GLIB_INCDIR) $(GTS_INCDIR)
 
@@ -44,9 +48,27 @@ CXXSRCS	= cvPolyDataSolid.cxx \
           cv_polydatasolid_utils.cxx \
           vtkGetBoundaryFaces.cxx
 
-DLLHDRS = cv_polydatasolid_init.h
-DLLSRCS = cv_polydatasolid_utils.cxx
+SRCS	= $(CXXSRCS)
 
-TARGET_LIB_NAME = simvascular_polydatasolid
+DEPS	= $(CXXSRCS:.cxx=.d)
+
+OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+
+TARGET_LIB = lib_lib_simvascular_polydatasolid.$(STATICEXT)
+
+DLLHDRS = $(HDRS) cv_polydatasolid_init.h
+DLLSRCS = $(CXXSRCS) cv_polydatasolid_utils.cxx
+DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
+ifeq ($(CLUSTER),x64_linux)
+DLLLIBS = -l_simvascular_globals
+else
+DLLLIBS = lib_simvascular_globals.$(STATICEXT)
+endif
+
+TARGET_SHARED = lib_simvascular_polydatasolid.$(SOEXT)
+
+# -------
+# Targets
+# -------
 
 include $(TOP)/targetlib.mk
