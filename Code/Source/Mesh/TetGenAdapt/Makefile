@@ -53,55 +53,50 @@ SRCS	= $(CXXSRCS) $(FSRCS)
 
 DEPS	= $(CXXSRCS:.cxx=.d)
 
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT)) $(FSRCS:.f=.$(OBJECTEXT))
+OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
+          $(addprefix $(BUILD_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
+          $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
 
-TARGET_EXE = tetadaptor.exe
+TARGET_EXE_FULL = $(TOP)/Bin/tetadaptor-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
+TARGET_EXE = $(TOP)/Bin/tetadaptor.exe
 
-# needed to use globals in dll
-ifneq ($(CLUSTER),x64_linux)
-  ifneq ($(MAKE_STATIC_BUILD),1)
-	LFLAGS += $(TOP)/Lib/lib_simvascular_globals.$(STATICEXT)
-  endif
-endif
+static: directories $(TARGET_EXE_FULL)
 
-static: $(TOP)/Bin/$(TARGET_EXE)
+directories:
+	-mkdir -p $(BUILD_DIR)
 
-ifeq ($(CLUSTER),x64_linux)
-$(TOP)/Bin/$(TARGET_EXE): $(OBJS)
-	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS) $(LFLAGS) \
+$(TARGET_EXE_FULL): $(OBJS)
+	for fn in $(TARGET_EXE); do /bin/rm -f $$fn; done
+	for fn in $(basename $(TARGET_EXE)).pdb; do /bin/rm -f $$fn; done
+	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
+	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
+	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS) \
              $(OBJS) \
-             $(TOP)/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
-             $(LFLAGS) -l_lib_simvascular_globals -l_lib_simvascular_solid -l_lib_simvascular_utils \
+             $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
+             $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT) \
              $(TETGEN_LIBS) \
              $(ZLIB_LIBS) \
-	     $(VTK_LIBS) $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) \
-             $(F90_LIBS) $(CXX_LIBS)
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-	mv $(TARGET_EXE)* $(TOP)/Bin
-else
-$(TOP)/Bin/$(TARGET_EXE): $(OBJS)
-	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS) $(LFLAGS) \
-             $(OBJS) \
-             $(TOP)/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
-             $(TETGEN_LIBS) $(ZLIB_LIBS) $(GLIB_LIBS) $(GTS_LIBS) \
 	     $(TCLTK_LIBS) $(VTK_LIBS) $(ZLIB_LIBS) \
              $(F90_LIBS) $(CXX_LIBS)
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-	mv $(TARGET_EXE)* $(TOP)/Bin
-endif
+	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
+	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)
 
 ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
-clean: veryclean
-
-veryclean:
-	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
+clean:
+	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
-	for fn in *.mod; do /bin/rm -f $$fn;done
-	for fn in *.d; do /bin/rm -f $$fn; done
-	for fn in *.pdb; do /bin/rm -f $$fn; done
-	for fn in *.exp; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+
+veryclean: clean
+	if [ -e obj ];then /bin/rm -f -r obj;fi
 

@@ -28,32 +28,13 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-# ==============
-# Compiler flags
-# ==============
-
-# --------------
-# Compiler flags
-# --------------
-
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR)
 
 HDRS	= tetgen.h
 
 CXXSRCS	= predicates.cxx tetgen.cxx
 
-SRCS	= $(CXXSRCS)
-
-DEPS	= $(CXXSRCS:.cxx=.d)
-
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_tetgen.$(STATICEXT)
-
-# =======
-# Targets
-# =======
+TARGET_LIB_NAME = simvascular_tetgen
 
 include $(TOP)/targetlib.mk
-
 

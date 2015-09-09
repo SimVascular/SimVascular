@@ -50,5 +50,6 @@ endif
     LINK_EXE        = link /out:
     LIBPATH_COMPILER_FLAG = /LIBPATH:
     LIBFLAG         =
+    SVLIBFLAG       =lib
     LIBLINKEXT      =.lib
 endif

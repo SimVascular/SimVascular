@@ -54,28 +54,10 @@ CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
 	  cvPolyData.cxx cvStrPts.cxx cvUnstructuredGrid.cxx \
 	  cv_repos_init.cxx cvDataSet.cxx
 
-SRCS	= $(CXXSRCS)
+DLLHDRS = cv_repos_init.h
 
-DEPS	= $(CXXSRCS:.cxx=.d)
+DLLSRCS = cv_repos_init.cxx
 
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_repository.$(STATICEXT)
-
-DLLHDRS = $(HDRS)
-DLLSRCS = $(CXXSRCS)
-DLLOBJS = $(OBJS)
-ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_lib_simvascular_utils -l_simvascular_globals $(TCLTK_LIBS) $(VTK_LIBS)
-else
-DLLLIBS = lib_lib_simvascular_utils.$(STATICEXT) \
-          lib_simvascular_globals.$(STATICEXT) \
-          $(TCLTK_LIBS) $(VTK_LIBS)
-endif
-TARGET_SHARED = lib_simvascular_repository.$(SOEXT)
-
-# -------
-# Targets
-# -------
+TARGET_LIB_NAME = simvascular_repository
 
 include $(TOP)/targetlib.mk
