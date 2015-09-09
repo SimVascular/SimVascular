@@ -28,31 +28,13 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-# ==============
-# Compiler flags
-# ==============
-
-# --------------
-# Compiler flags
-# --------------
-
 CCFLAGS = $(GLOBAL_CCFLAGS)
 
 HDRS	= spConfig.h spDefs.h spMatrix.h
 
 CSRCS	= spAllocate.c spBuild.c spFactor.c spOutput.c spSolve.c spUtils.c spFortran.c
 
-SRCS	= $(CSRCS)
-
-DEPS	= $(CSRCS:.c=.d)
-
-OBJS	= $(CSRCS:.c=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_sparse.$(STATICEXT)
-
-# =======
-# Targets
-# =======
+TARGET_LIB_NAME = simvascular_sparse
 
 include $(TOP)/targetlib.mk
 

@@ -139,20 +139,30 @@ SRCS	= $(FSRCS) $(CSRCS) $(CXXSRCS)
 
 DEPS	= $(CSRCS:.c=.d) $(CXXSRCS:.cxx=.d)
 
-OBJS	= $(FSRCS:.f=.$(OBJECTEXT)) $(CSRCS:.c=.$(OBJECTEXT)) $(CXXSRCS:.cxx=.$(OBJECTEXT))
+OBJS    = $(addprefix $(BUILD_MPI_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
+          $(addprefix $(BUILD_MPI_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
+          $(addprefix $(BUILD_MPI_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
 
-TARGET_EXE = flowsolver.exe
+TARGET_EXE_FULL = $(TOP)/Bin/flowsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)-$(MPI_NAME).exe
+TARGET_EXE = $(TOP)/Bin/flowsolver-$(MPI_NAME).exe
 
-static: createOptionFile $(TOP)/Bin/$(TARGET_EXE) 
+static: directories createOptionFile $(TARGET_EXE_FULL) 
 
-$(TOP)/Bin/$(TARGET_EXE): $(OBJS)
-	$(LINK_EXE)$(TARGET_EXE) $(GLOBAL_LFLAGS)  $(SOLVER_STCKSZ) \
+directories:
+	-mkdir -p $(BUILD_MPI_DIR)
+
+$(TARGET_EXE_FULL): $(OBJS)
+	for fn in $(TARGET_EXE); do /bin/rm -f $$fn; done
+	for fn in $(basename $(TARGET_EXE)).pdb; do /bin/rm -f $$fn; done
+	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
+	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
+	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS)  $(SOLVER_STCKSZ) \
              $(OBJS) \
-             ../../../../BuildWithMake/Lib/lib_lib_simvascular_solverio.$(STATICEXT) \
+             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
 	     $(ZLIB_LIBS) $(VTK_LIBS) $(METIS_LIBS) $(LESLIB_LIBS) \
              $(SVLS_LIBS) $(MPI_LIBS) $(F90_LIBS) $(CXX_LIBS)
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-	mv $(TARGET_EXE)* $(TOP)/Bin
+	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
+	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)
 
 ifndef NO_DEPEND
 -include $(DEPS)
@@ -164,15 +174,12 @@ createOptionFile:
 	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 
-clean: veryclean
-
-veryclean:
-	for fn in *.$(OBJECTEXT); do /bin/rm -f $$fn; done
+clean:
+	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
-	for fn in *.mod; do /bin/rm -f $$fn;done
-	for fn in *.d; do /bin/rm -f $$fn; done
-	for fn in *.pdb; do /bin/rm -f $$fn; done
-	for fn in *.exp; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	/bin/rm -f cvFlowsolverOptions.h
+
+veryclean: clean
+	if [ -e obj ];then /bin/rm -f -r obj;fi
 

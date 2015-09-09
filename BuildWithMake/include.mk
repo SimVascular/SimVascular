@@ -62,13 +62,6 @@ CLUSTER = x64_cygwin
 CXX_COMPILER_VERSION = vs12.5
 FORTRAN_COMPILER_VERSION = ifort
 
-# ---------------------------------------------------------------------
-# COMPILER_VERSION = { intel, gnu }
-# for compilation on linux cluster with intel or gun compiler
-# ---------------------------------------------------------------------
-
-COMPILER_VERSION = intel
-
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
 -include cluster_overrides.mk
 else
@@ -149,22 +142,23 @@ MAKE_WITH_POSTSOLVER = 1
 # Compile Flowsolver Modules
 # -----------------------------------------------------
 
+FLOWSOLVER_VERSION_READBCTNODE_ACTIVATE = 1
 FLOWSOLVER_VERSION_CORONARY_ACTIVATE = 1
 FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE = 1
 FLOWSOLVER_VERSION_VARWALL_ACTIVATE = 1
 FLOWSOLVER_VERSION_USE_VTK_ACTIVATE = 1
 
 # -----------------------------------------------------
-# Compile with MPICH2
+# Compile with MPI
 # -----------------------------------------------------
 
-MAKE_WITH_MPICH2 = 1
+MAKE_WITH_MPI = 1
 
 # -----------------------------------------------------
 # Build only the 3D Solver
 # -----------------------------------------------------
 
-EXCLUDE_ALL_BUT_THREEDSOLVER = 0
+EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
 
 # -----------------------------------------------------
 # Compile with VTK
@@ -278,12 +272,6 @@ else
 -include $(TOP)/global_overrides.mk
 endif
 
-ifeq ($(CLUSTER),x86_cygwin) 
-  SIMVASCULAR_VERSION  = simvascular32
-  SIMVASCULAR_PLATFORM = x86
-  SIMVASCULAR_POSTFIX=32
-  SIMVASCULAR_OS=windows
-endif
 ifeq ($(CLUSTER),x64_cygwin) 
   SIMVASCULAR_VERSION  = simvascular
   SIMVASCULAR_PLATFORM = x64
@@ -398,44 +386,31 @@ ifeq ($(CLUSTER), x64_cygwin)
   endif
 endif
 
-# Use COMPILER_VERSION for compilation on linux clusters
 ifeq ($(CLUSTER), x64_linux)
-	ifeq ($(COMPILER_VERSION), intel)
-      include $(TOP)/MakeHelpers/compiler.intel.x64_linux.mk
-	endif
-	ifeq ($(COMPILER_VERSION), gnu)
-	  include $(TOP)/MakeHelpers/compiler.gnu.x64_linux.mk
-	endif
+  ifeq ($(CXX_COMPILER_VERSION), icpc)
+	include $(TOP)/MakeHelpers/compiler.icpc.x64_linux.mk
+  endif
+  ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
+	include $(TOP)/MakeHelpers/compiler.ifort.x64_linux.mk
         GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
-endif
-
-# -----------------------
-# Intel Compiler Runtimes
-# -----------------------
-
-ifeq ($(CLUSTER), x64_cygwin)
-    INTEL_COMPILER_SO_PATH  = $(LICENSED_SOFTWARE_TOPLEVEL)/intel_compiler_runtime_libs/2013.1.117/win/intel64
-endif
-
-ifeq ($(CLUSTER), x64_linux)
-    INTEL_COMPILER_SO_PATH  = $(LICENSED_SOFTWARE_TOPLEVEL)/intel_compiler_runtime_libs/2013.1.117/linux/intel64
+  endif
+  ifeq ($(CXX_COMPILER_VERSION), gcc)
+	include $(TOP)/MakeHelpers/compiler.gcc.x64_linux.mk
+  endif
+  ifeq ($(FORTRAN_COMPILER_VERSION), gfortran)
+	include $(TOP)/MakeHelpers/compiler.gfortran.x64_linux.mk
+        GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+  endif
 endif
 
 # --------------------------------
-# define rules for file extensions
+# build directory for object files
 # --------------------------------
 
-ifeq ($(CLUSTER), x86_cygwin)
-	  include $(TOP)/MakeHelpers/rules.x86_cygwin.mk
-endif
-
-ifeq ($(CLUSTER), x64_cygwin)
-	  include $(TOP)/MakeHelpers/rules.x64_cygwin.mk
-endif
-
-ifeq ($(CLUSTER), x64_linux)
-	  include $(TOP)/MakeHelpers/rules.x64_linux.mk
-endif
+BUILD_DIR = obj/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)
+LIB_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)
+BUILD_MPI_DIR = obj/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)/$(MPI_NAME)
+LIB_MPI_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)
 
 # ---------------------
 # Local lib directories
@@ -500,19 +475,6 @@ endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
   EXECDIRS = ../Code/Source/UI
-else
-  EXECDIRS = 
-endif
-
-#
-#  override other options to build solver only!
-#
-
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),0)
-  LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
-  SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
-  THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
-  # must build solver before adaptor because of SolverIO
   ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
      EXECDIRS += ../Code/Source/Mesh/MeshSimAdapt
   endif
@@ -520,13 +482,23 @@ ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),0)
      EXECDIRS += ../Code/Source/Mesh/TetGenAdapt
   endif
 else
-  ifeq ($(MAKE_WITH_THREEDSOLVER),1)
-     LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
+  EXECDIRS = 
+endif
+
+ifeq ($(MAKE_WITH_THREEDSOLVER),1)
+     LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
      SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
-  else
-     LIBDIRS = 		
-  endif
+     EXECDIRS += ../Code/FlowSolvers/ThreeDSolver
+endif
+
+#
+#  override other options to build solver only!
+#
+
+ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
+  LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
+  EXECDIRS = ../Code/FlowSolvers/ThreeDSolver
 endif
 
 SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
@@ -549,33 +521,24 @@ endif
 # included.
 # -----
 
-ifeq ($(CLUSTER),x64_cygwin)
-	LFLAGS 	 = $(GLOBAL_LFLAGS) \
-	           $(TCLTK_LIBS) \
-                   $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib
-endif
+# include path to find libs when linking
+GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
 
-ifeq ($(CLUSTER),x64_linux)
-	LFLAGS 	 = $(GLOBAL_LFLAGS) \
-	           $(TCLTK_LIBS) \
-	           -L $(TOP)/Lib
-endif
+LFLAGS 	 = $(GLOBAL_LFLAGS) $(TCLTK_LIBS)
 
-ifeq ($(CLUSTER),x64_cygwin)
-LFLAGS     += $(LIBFLAG)lib_lib_simvascular_lset$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_image$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_mesh$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_solid$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_sysgeom$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_repository$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_utils$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_post$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_polydatasolid$(LIBLINKEXT) \
-              $(LIBFLAG)lib_lib_simvascular_globals$(LIBLINKEXT)
-endif
+LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)
 
-ifeq ($(CLUSTER),x64_linux)
-LFLAGS     += -l_lib_simvascular_lset \
+#ifeq ($(CLUSTER),x64_linux)
+#LFLAGS     += -l_lib_simvascular_lset \
               -l_lib_simvascular_image \
               -l_lib_simvascular_solid \
               -l_lib_simvascular_sysgeom \
@@ -586,7 +549,7 @@ LFLAGS     += -l_lib_simvascular_lset \
               -l_lib_simvascular_globals \
               -l_lib_simvascular_polydatasolid \
               -l_lib_simvascular_utils
-endif
+#endif
 
 #
 # ThirdParty software that must be built
@@ -607,12 +570,7 @@ ifeq ($(MAKE_WITH_SPARSE),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/sparse
   SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
   SPARSE_INCDIR  = -I $(SPARSE_TOP)
-  ifeq ($(CLUSTER),x64_cygwin)
-    SPARSE_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_sparse$(LIBLINKEXT)
-  endif
-  ifeq ($(CLUSTER),x64_linux)
-    SPARSE_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_sparse
-  endif
+  SPARSE_LIBS    = $(SVLIBFLAG)_lib_simvascular_sparse$(LIBLINKEXT)
 endif
 
 # ----
@@ -623,12 +581,7 @@ ifeq ($(MAKE_WITH_ZLIB),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/zlib
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
-  ifeq ($(CLUSTER),x64_cygwin)
-    ZLIB_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_zlib$(LIBLINKEXT)
-  endif
-  ifeq ($(CLUSTER),x64_linux)
-    ZLIB_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_zlib
-  endif
+  ZLIB_LIBS    = $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
 endif
 
 # -----------------------------------------
@@ -644,12 +597,7 @@ ifeq ($(MAKE_WITH_NSPCG),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/nspcg
   NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
   NSPCG_INCDIR  = -I $(NSPCG_TOP)
-  ifeq ($(CLUSTER),x64_cygwin)
-    NSPCG_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_nspcg$(LIBLINKEXT)
-  endif
-  ifeq ($(CLUSTER),x64_linux)
-    NSPCG_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_nspcg
-  endif
+  NSPCG_LIBS    = $(SVLIBFLAG)_lib_simvascular_nspcg$(LIBLINKEXT)
 endif
 
 # -----------------------------------------
@@ -663,12 +611,7 @@ ifeq ($(MAKE_WITH_TETGEN),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tetgen
   TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
   TETGEN_INCDIR  = -I $(TETGEN_TOP)
-  ifeq ($(CLUSTER),x64_cygwin)
-    TETGEN_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_tetgen$(LIBLINKEXT)
-  endif
-  ifeq ($(CLUSTER),x64_linux)
-    TETGEN_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_tetgen
-  endif
+  TETGEN_LIBS    = $(SVLIBFLAG)_lib_simvascular_tetgen$(LIBLINKEXT)
 endif
 
 # ----
@@ -678,13 +621,13 @@ endif
 ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_dummy_svLS.$(STATICEXT)
+    SVLS_LIBS   = $(SVLIBFLAG)_lib_simvascular_dummy_svLS$(LIBLINKEXT)
 endif
 
 ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(TOP)/Lib/lib_lib_simvascular_svLS.$(STATICEXT)
+    SVLS_LIBS   = $(SVLIBFLAG)_lib_simvascular_svLS_$(MPI_NAME)$(LIBLINKEXT)
 endif
 
 # -----
@@ -695,12 +638,7 @@ ifeq ($(MAKE_WITH_METIS),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/metis
   METIS_TOP = $(TOP)/../Code/ThirdParty/metis
   METIS_INCDIR  = -I $(METIS_TOP)
-  ifeq ($(CLUSTER),x64_cygwin)
-    METIS_LIBS    = $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib $(LIBFLAG)lib_lib_simvascular_metis$(LIBLINKEXT)
-  endif
-  ifeq ($(CLUSTER),x64_linux)
-    METIS_LIBS    = -L $(TOP)/Lib -l_lib_simvascular_metis
-  endif
+  METIS_LIBS    = $(SVLIBFLAG)_lib_simvascular_metis$(LIBLINKEXT)
 endif
 
 
@@ -767,7 +705,7 @@ endif
 # MPI
 # -----
 
-ifeq ($(MAKE_WITH_MPICH2),1)
+ifeq ($(MAKE_WITH_MPI),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/msmpi.x64_cygwin.mk
@@ -885,11 +823,6 @@ ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
   LESLIB_INCDIR = 
   LESLIB_LIBS   = 
 
-  ifeq ($(CLUSTER), x86_cygwin)
-    LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN
-    LESLIB_LIBS   = 
-  endif
-
   ifeq ($(CLUSTER), x64_cygwin)
     LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN -DACUSIM_WIN64
     LESLIB_LIBS   = 
@@ -908,4 +841,16 @@ ifeq ($(LOCAL_DIR_PKG_OVERRIDES),1)
 -include pkg_overrides.mk
 else
 -include $(TOP)/pkg_overrides.mk
+endif
+
+# --------------------------------
+# define rules for file extensions
+# --------------------------------
+
+ifeq ($(CLUSTER), x64_cygwin)
+	  include $(TOP)/MakeHelpers/rules.x64_cygwin.mk
+endif
+
+ifeq ($(CLUSTER), x64_linux)
+	  include $(TOP)/MakeHelpers/rules.x64_linux.mk
 endif

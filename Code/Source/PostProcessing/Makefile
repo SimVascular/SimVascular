@@ -42,31 +42,15 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(ZLIB_INCDIR) $(V
 
 HDRS	= cvConvertVisFiles.h cvCalculateWallShearStress.h \
 	  cvCalculateTKE.h
+
 CXXSRCS	= cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx \
 	  cvCalculateTKE.cxx
 
-SRCS	= $(CXXSRCS)
+DLLHDRS = cv_post_init.h
 
-DEPS	= $(CXXSRCS:.cxx=.d)
+DLLSRCS = cv_post_init.cxx
 
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_post.$(STATICEXT)
-
-DLLHDRS = $(HDRS) cv_post_init.h
-DLLSRCS = $(CXXSRCS) cv_post_init.cxx
-DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
-ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_globals
-else
-DLLLIBS = lib_simvascular_globals.$(STATICEXT)
-endif
-TARGET_SHARED = lib_simvascular_post.$(SOEXT)
-
-
-# -------
-# Targets
-# -------
+TARGET_LIB_NAME = simvascular_post
 
 include $(TOP)/targetlib.mk
 

@@ -34,10 +34,6 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-# --------------
-# Compiler flags
-# --------------
-
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
@@ -55,24 +51,18 @@ ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
   CXXFLAGS += $(MESHSIM_INCDIR)
 endif
 
-HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h
+HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h \
+          cv_tetgenmesh_utils.h
 
 CXXSRCS	= cvTetGenMeshObject.cxx \
           cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx
 
-SRCS	= $(CXXSRCS)
+DLLHDRS = $(HDRS) cv_tetgen_mesh_init.h
 
-DEPS	= $(CXXSRCS:.cxx=.d)
-
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
+DLLSRCS = $(CXXSRCS) cv_tetgen_mesh_init.cxx
 
 DEPLIBS = $(TOP)/lib/lib_simvascular_utils.$(STATICEXT) $(TOP)/lib/lib_simvascular_mesh.$(STATICEXT)
 
-TARGET_LIB = lib_lib_simvascular_tetgen_mesh.$(STATICEXT)
-
-DLLHDRS = $(HDRS) cv_tetgen_mesh_init.h
-DLLSRCS = $(CXXSRCS) cv_tetgen_mesh_init.cxx
-DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
 ifeq ($(CLUSTER),x64_linux)
 DLLLIBS = -l_simvascular_globals \
           -l_lib_simvascular_mesh \
@@ -83,12 +73,8 @@ DLLLIBS = lib_simvascular_globals.$(STATICEXT) \
           lib_lib_simvascular_mesh.$(STATICEXT) \
           $(TETGEN_LIBS) $(PARASOLID_LIBS)
 endif
-TARGET_SHARED = lib_simvascular_tetgen_mesh.$(SOEXT)
 
-LFLAGS +=  
-# -------
-# Targets
-# -------
+TARGET_LIB_NAME = simvascular_tetgen_mesh
 
 include $(TOP)/targetlib.mk
 

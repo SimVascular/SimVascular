@@ -88,27 +88,10 @@ ifeq ($(MAKE_WITH_GTS),1)
   CXXSRCS +=  vtkSurfaceBooleanOperations.cxx
 endif
 
-SRCS	= $(CXXSRCS)
+DLLHDRS = cv_geom_init.h
 
-DEPS	= $(CXXSRCS:.cxx=.d)
+DLLSRCS = cv_geom_init.cxx
 
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_sysgeom.$(STATICEXT)
-
-DLLHDRS = $(HDRS) cv_geom_init.h
-DLLSRCS = $(CXXSRCS) cv_geom_init.cxx
-DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
-ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_globals
-else
-DLLLIBS = lib_simvascular_globals.$(STATICEXT)
-endif
-
-TARGET_SHARED = lib_simvascular_sysgeom.$(SOEXT)
-
-# -------
-# Targets
-# -------
+TARGET_LIB_NAME = simvascular_sysgeom
 
 include $(TOP)/targetlib.mk

@@ -34,11 +34,6 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-
-# --------------
-# Compiler flags
-# --------------
-
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
 
 
@@ -50,27 +45,11 @@ CXXSRCS	= cv_image.cxx cv_read_header.cxx cv_decode.cxx \
 	  cv_img_threshold.cxx cvDistanceMap.cxx \
 	  cv_mask_image_in_place.cxx
 
-SRCS	= $(CXXSRCS)
+DLLHDRS = cv_image_init.h
 
-DEPS	= $(CXXSRCS:.cxx=.d)
+DLLSRCS = cv_image_init.cxx
 
-OBJS	= $(CXXSRCS:.cxx=.$(OBJECTEXT))
-
-TARGET_LIB = lib_lib_simvascular_image.$(STATICEXT)
-
-DLLHDRS = $(HDRS) cv_image_init.h
-DLLSRCS = $(CXXSRCS) cv_image_init.cxx
-DLLOBJS = $(DLLSRCS:.cxx=.$(OBJECTEXT))
-ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_globals
-else
-DLLLIBS = lib_simvascular_globals.$(STATICEXT)
-endif
-TARGET_SHARED = lib_simvascular_image.$(SOEXT)
-
-# -------
-# Targets
-# -------
+TARGET_LIB_NAME = simvascular_image
 
 include $(TOP)/targetlib.mk
 
