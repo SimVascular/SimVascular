@@ -11,7 +11,7 @@ set(CSRCS coarsen.c fm.c initpart.c match.c ccgraph.c memory.c
        mrefine.c mutil.c mfm.c mkmetis.c mkwayrefine.c mkwayfmh.c 
        mrefine2.c minitpart2.c mbalance2.c mfm2.c 
        kvmetis.c kwayvolrefine.c kwayvolfm.c subdomains.c)
-message("METIS_LIBRARY_NAME ${METIS_LIBRARY_NAME}")
+
 add_library(${METIS_LIBRARY_NAME} STATIC ${CSRCS})
 # install(TARGETS ${METIS_LIBRARY} 
 #     RUNTIME DESTINATION ${METIS_INSTALL_DIR}
