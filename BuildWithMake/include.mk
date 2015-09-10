@@ -153,6 +153,8 @@ FLOWSOLVER_VERSION_USE_VTK_ACTIVATE = 1
 # -----------------------------------------------------
 
 MAKE_WITH_MPI = 1
+MAKE_WITH_OPENMPI = 1
+MAKE_WITH_MPICH = 0
 
 # -----------------------------------------------------
 # Build only the 3D Solver
@@ -215,20 +217,6 @@ else
 -include $(TOP)/site_overrides.mk
 endif
 
-# by default don't build most third party
-# if we are only building the flow solver
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
-    ifeq ($(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE), 0)
-        MAKE_WITH_VTK = 0
-    endif
-
-    MAKE_WITH_ITK = 0
-    MAKE_WITH_VMTK = 0
-    MAKE_WITH_TETGEN = 0
-    MAKE_WITH_SPARSE = 0
-    MAKE_WITH_NSPCG = 0
-endif
-
 # ----------------
 # Target directory
 # ----------------
@@ -283,6 +271,20 @@ ifeq ($(CLUSTER),x64_linux)
   SIMVASCULAR_PLATFORM = x64
   SIMVASCULAR_POSTFIX=
   SIMVASCULAR_OS=linux
+endif
+
+# by default don't build most third party
+# if we are only building the flow solver
+ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
+    ifeq ($(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE), 0)
+        MAKE_WITH_VTK = 0
+    endif
+
+    MAKE_WITH_ITK = 0
+    MAKE_WITH_VMTK = 0
+    MAKE_WITH_TETGEN = 0
+    MAKE_WITH_SPARSE = 0
+    MAKE_WITH_NSPCG = 0
 endif
 
 # --------------
@@ -707,13 +709,20 @@ endif
 
 ifeq ($(MAKE_WITH_MPI),1)
 
+  MPI_NAME ?= mpi
+
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/msmpi.x64_cygwin.mk
   endif
 
   # on linux, use the OS installed version of mpich2
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/mpich2.usr.x64_linux.mk
+    ifeq ($(MAKE_WITH_OPENMPI),1)
+      include $(TOP)/MakeHelpers/openmpi.x64_linux.mk
+    endif
+    ifeq ($(MAKE_WITH_MPICH),1)
+      include $(TOP)/MakeHelpers/mpich.x64_linux.mk
+    endif
   endif
 
 endif
