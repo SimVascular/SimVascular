@@ -44,16 +44,17 @@ endif()
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
-			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
+			${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
-			${INTELRUNTIME_LIBRARIES}
-			lib_simvascular_mesh
-			lib_simvascular_solid			
-			lib_simvascular_sysgeom	
-			lib_simvascular_solverio
-			lib_simvascular_globals 
-			lib_simvascular_utils
-			lib_simvascular_adaptor)
+			${INTELRUNTIME_LIBRARIES})
+			#${ZLIB_LIBRARY} 
+			#lib_simvascular_mesh
+			#lib_simvascular_solid			
+			#lib_simvascular_sysgeom	
+			#lib_simvascular_solverio
+			#lib_simvascular_globals 
+			#lib_simvascular_utils
+			#lib_simvascular_adaptor)
 
 if(Licensed_PARASOLID)
 	target_link_libraries(${lib} lib_simvascular_parasolid)

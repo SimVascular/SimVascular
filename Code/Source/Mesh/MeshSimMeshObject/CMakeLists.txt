@@ -42,14 +42,15 @@ if(Licensed_ADAPTOR)
 endif()
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${ZLIB_LIBRARY} ${GLOBAL_LIBRARIES}
-			lib_simvascular_globals lib_simvascular_mesh 
-			lib_simvascular_utils lib_simvascular_sysgeom
-			lib_simvascular_repository lib_simvascular_solid
+	#${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+			#${PARASOLID_LIBRARIES}
+			#${GLOBAL_LIBRARIES}
+			#${MESHSIM_LIBRARIES}
+			#${ZLIB_LIBRARY} 
+			#lib_simvascular_globals lib_simvascular_mesh 
+			#lib_simvascular_utils lib_simvascular_sysgeom
+			#lib_simvascular_repository lib_simvascular_solid
 			)
-		#MAKE SURE LIBS ARE SPLIT UP WITH COMPILE FLAGS ADPTOR
 if(Licensed_PARASOLID)
     target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
