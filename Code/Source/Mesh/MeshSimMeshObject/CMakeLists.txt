@@ -42,22 +42,24 @@ if(Licensed_ADAPTOR)
 endif()
 
 target_link_libraries(${lib}
-	#${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			#${PARASOLID_LIBRARIES}
-			#${GLOBAL_LIBRARIES}
-			#${MESHSIM_LIBRARIES}
-			#${ZLIB_LIBRARY} 
-			#lib_simvascular_globals lib_simvascular_mesh 
-			#lib_simvascular_utils lib_simvascular_sysgeom
-			#lib_simvascular_repository lib_simvascular_solid
-			)
+			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+			${PARASOLID_LIBRARIES}
+			${GLOBAL_LIBRARIES}
+			${MESHSIM_LIBRARIES}
+			lib_simvascular_globals #lib_simvascular_mesh 
+			lib_simvascular_utils)# lib_simvascular_sysgeom)
+			#lib_simvascular_repository 
+			#lib_simvascular_solid)
+if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+	target_link_libraries(${lib} lib_simvascular_discrete)
+endif()
 if(Licensed_PARASOLID)
     target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
-
+			
 if(Licensed_ADAPTOR)
-    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor
-			          lib_simvascular_solverio)
+    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor)
+	    #lib_simvascular_solverio)
 endif()
 
 

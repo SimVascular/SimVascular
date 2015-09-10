@@ -103,5 +103,14 @@ if {$tcl_platform(platform) == "windows"} {
     if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.so Parasolidsolid} msg]} {
       puts "Parasolid Not Loaded: $msg"
     }
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_meshsim_mesh.so Meshsimmesh} msg]} {
+      puts "MeshSim Not Loaded: $msg"
+    }
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_discrete.so Meshsimdiscretesolid} msg]} {
+      puts "MeshSim Discrete Not Loaded: $msg"
+    }
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_meshsim_adaptor.so Meshsimadapt} msg]} {
+      puts "MeshSim Adapt Not Loaded: $msg"
+    }
   }
 }
