@@ -49,6 +49,9 @@ macro(tcl_cmd)
 	endif()
 endmacro()
 
+set(SIMVASCULAR_NO_RENDERER 0)
+mark_as_superbuild(SIMVASCULAR_NO_RENDERER)
+
 if(NOT SimVascular_SUPERBUILD)
 	set(TCL_CONFIG_FILES)
 	tcl_cmd(CODE "puts \"[clock seconds]\""

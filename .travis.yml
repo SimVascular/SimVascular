@@ -1,7 +1,7 @@
 env:
   matrix:
+      - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=false
       - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=true BUILD_TEST=true
-      - WITH_CMAKE=true VTK60=true ITK45=true PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=true
 
 sudo: false
 language: cpp
@@ -39,6 +39,7 @@ before_install:
   - export BUILD_DIR=$cwd/build
   - export SV_TEST_DIR=$HOME/test/
   - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
+  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
   # - sudo apt-get install -qq mpich2 tklib
 
 cache:

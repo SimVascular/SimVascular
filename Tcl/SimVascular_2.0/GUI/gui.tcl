@@ -46269,7 +46269,12 @@ proc mainGUI {} {
   global symbolicName
   global guiTRIMvars
   global gRen3d
-  set gRen3d [vis_gRenWin_3D]
+  global SIMVASCULAR_NO_RENDERER
+  if { $SIMVASCULAR_NO_RENDERER == "0" } { 
+    puts "No render window" 
+  } else {
+    set gRen3d [vis_gRenWin_3D]
+  }
 
   set tbox $symbolicName(guiTRIMcutFileTB)
   $tbox delete 1.0 end
