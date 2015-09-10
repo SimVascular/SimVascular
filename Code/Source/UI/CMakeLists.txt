@@ -26,15 +26,19 @@ if(Plugin_TETGEN)
 endif()
 
 if(Licensed_MESHSIM)
-	SET(CXXSRCS ${CXXSRCS} 
-	${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_mesh)
+	if (NOT MESHSIM_USE_SHARED_LIBRARIES)
+	  SET(CXXSRCS ${CXXSRCS} 
+	  ${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx)
+	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_mesh)
+        endif()
 endif()
 
 if(Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
-	SET(CXXSRCS ${CXXSRCS} 
-	${SimVascular_SOURCE_DIR}/Source/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_discrete)
+	if (NOT MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+	  SET(CXXSRCS ${CXXSRCS} 
+	  ${SimVascular_SOURCE_DIR}/Source/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)
+	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_discrete)
+        endif()
 endif()
 
 if(Licensed_PARASOLID)
@@ -62,11 +66,13 @@ if(Plugin_TET_ADAPTOR)
 endif()
 
 if (Licensed_ADAPTOR)
-	set(CXXSRCS ${CXXSRCS}
-	${SimVascular_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
-	${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_adaptor)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_adaptor)
+	if(NOT MESHSIM_USE_SHARED_LIBRARIES)
+	  set(CXXSRCS ${CXXSRCS}
+	  ${SimVascular_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
+	  ${SimVascular_SOURCE_DIR}/Source/Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx)
+	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_adaptor)
+	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_adaptor)
+        endif()
 endif()
 
 simvascular_add_executable(${SIMVASCULAR_EXE} 

@@ -31,7 +31,11 @@ SET(lib lib_simvascular_meshsim_mesh)
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
 
-add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+if(MESHSIM_USE_SHARED_LIBRARIES)
+    add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+else()
+    add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+endif()
 
 if(Licensed_ADAPTOR)
     include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)

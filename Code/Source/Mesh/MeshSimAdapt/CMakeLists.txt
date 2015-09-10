@@ -34,11 +34,13 @@ include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
 set(HDRS cvMeshSimAdapt.h cv_meshsim_adapt_init.h MeshSimInternal_phAdapt.h cvAdaptHelp.h)
-SET(CXXSRCS cvMeshSimAdapt.cxx cv_meshsim_adapt_init.cxx)
+SET(CXXSRCS cvMeshSimAdapt.cxx)
 
-
-
-add_library(${lib} ${CXXSRCS})
+if(MESHSIM_USE_SHARED_LIBRARIES)
+    add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_adapt_init.cxx)
+else()
+    add_library(${lib} ${CXXSRCS} cv_meshsim_adapt_init.cxx)
+endif()
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}

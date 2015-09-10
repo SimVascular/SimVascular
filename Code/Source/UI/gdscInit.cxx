@@ -270,10 +270,12 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef USE_MESHSIM_ADAPTOR
+#ifndef USE_MESHSIM_SHARED
   if ( MeshSimAdapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on MeshSimAdapt_Init\n" );
     return TCL_ERROR;
   }
+#endif
 #endif
 
 
@@ -287,7 +289,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef USE_PARASOLID
-#if USE_PARASOLID_SHARED == 0
+#ifndef USE_PARASOLID_SHARED
   if ( Parasolidsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
     return TCL_ERROR;
