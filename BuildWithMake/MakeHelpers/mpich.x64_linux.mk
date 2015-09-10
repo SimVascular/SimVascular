@@ -1,7 +1,7 @@
 MPI_NAME    = mpich
-MPI_INCDIR  = -I $(MPI_TOP)/include -L $(MPI_TOP)/lib
-MPI_LIBS    = $(shell mpif90 -link_info | awk '{print substr($0, index($0,$2))}')
-MPI_SO_PATH = $(shell which mpiexec)/..
-MPIEXEC_PATH  = $(dir $(shell which mpiexec))
+MPI_INCDIR  = $(wordlist 2,99,$(shell mpif90 -link_info))
+MPI_LIBS    = $(wordlist 2,99,$(shell mpif90 -link_info))
+MPI_SO_PATH = 
+MPIEXEC_PATH  = 
 MPIEXEC       = mpiexec
 
