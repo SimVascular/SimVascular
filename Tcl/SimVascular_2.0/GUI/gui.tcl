@@ -5882,6 +5882,17 @@ img_guessVolParams $gImageVol(filename)}
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12.tbutton9
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12.tbutton9  -command {guiMeshSimAdaptMesh}  -text {Adapt Mesh}
 
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12
+  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12  -text {Helper [+]}  -height {25}
+  # bindings
+  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12 <Button-1> {guiCV_squeezer_labelframe .tframe0 %W}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0.tbutton9
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0.tbutton9  -command {guiSVHELPshow meshsimadapt.txt}  -text {Help}
+
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
@@ -6557,6 +6568,17 @@ img_guessVolParams $gImageVol(filename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10.frame6.tbutton9
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10.frame6.tbutton9  -command {guiTetGenAdaptMesh}  -text {Adapt Mesh}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11
+  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11  -text {Helper [+]}  -height {25}
+  # bindings
+  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11 <Button-1> {guiCV_squeezer_labelframe .frame0 %W}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0  -borderwidth {0}  -relief {flat}  -width {479}  -height {116}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0.tbutton9
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0.tbutton9  -command {guiSVHELPshow tetadapt.txt}  -text {Help}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -15911,6 +15933,7 @@ img_guessVolParams $gImageVol(filename)}
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8  -fill x
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10  -fill x
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11  -fill x
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12  -fill x
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1  -fill x  -side bottom
@@ -16044,6 +16067,9 @@ img_guessVolParams $gImageVol(filename)}
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11.tframe12.tbutton9  -expand 1 -fill x
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0.tbutton9  -side right -fill y
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe1.tlabelframe6  -fill x
@@ -16307,6 +16333,7 @@ img_guessVolParams $gImageVol(filename)}
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1  -fill x  -side bottom
@@ -16419,6 +16446,9 @@ img_guessVolParams $gImageVol(filename)}
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10.frame6
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10.frame6.tbutton9  -fill x
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0.tbutton9  -side right -fill y
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0  -fill both
@@ -49216,6 +49246,10 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ_pack_info)} {-fill both}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0.tframe12)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0.tframe12_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe6.tlabelframe0 -anchor center -expand 1 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11.frame0_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe11  -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0)} {0}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12.tframe0_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe12  -anchor center -expand 1 -fill both -ipadx 0 -ipady 0 -padx 0 -pady 0 -side top}
 set {guiCVvars(.guiDICOM.tlabelframe17.frame0)} {1}
 set {guiCVvars(.guiDICOM.tlabelframe17.frame0_pack_info)} {-in .guiDICOM.tlabelframe17 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiDICOM.tlabelframe3.frame0)} {1}

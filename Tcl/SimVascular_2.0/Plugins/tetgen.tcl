@@ -275,7 +275,7 @@ proc mesh_readTGS {filename resObj} {
 	    set regionid $id
 	  }
 	}
-	$resObj SetMeshOptions -options "LocalEdgeSize" -id $regionid -values {[lindex $line 3]} 
+	$resObj SetMeshOptions -options "LocalEdgeSize" -values [list $regionid [lindex $line 3]] 
       } elseif {[lindex $line 0] == "useCenterlineRadius"} {
 	if {$guiTGvars(meshWallFirst) != 1} {
           return -code error "ERROR: Must select wall faces for boundary layer"
