@@ -8,16 +8,16 @@ ifeq ($(CLUSTER), x64_linux)
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     OPT_FLAGS       = -O3 -fPIC
     DEBUG_FLAGS     =
-    LINK_EXE        = $(CXX) -pthread -o
+    LINK_EXE        = $(CXX) -o
 else
   ifeq ($(MAKE_OPTIMIZED),1)
     DEBUG_FLAGS     =
-    OPT_FLAGS       = -O2 -fPIC -g
-    LINK_EXE        = $(CXX) -pthread -o
+    OPT_FLAGS       = -O2 -fPIC
+    LINK_EXE        = $(CXX) -o
   else
     DEBUG_FLAGS     = -O0 -debug -g -fp-stack-check -fstack-protector-all 
     OPT_FLAGS       =
-    LINK_EXE        = $(CXX) -debug -g -pthread -fp-stack-check -fstack-protector-all -traceback -o  
+    LINK_EXE        = $(CXX) -debug -g -fp-stack-check -fstack-protector-all -traceback -o  
   endif
 endif
     SHAR            = $(CXX) -shared -o
@@ -39,7 +39,7 @@ endif
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -debug -g
 endif
-    LINK_EXE        = $(CXX)  -L$(TOP)/Lib -o 
+#    LINK_EXE        = $(CXX)  -L$(TOP)/Lib -o 
     LIBPATH_COMPILER_FLAG = -L
     LIBFLAG         = -l
     SVLIBFLAG       = -l

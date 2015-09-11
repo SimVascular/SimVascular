@@ -5,7 +5,7 @@ ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     DEBUG_FFLAGS    =
 else
   ifeq ($(MAKE_OPTIMIZED),1)
-    OPT_FFLAGS      = -O2 -fPIC -g
+    OPT_FFLAGS      = -O2 -fPIC
     DEBUG_FFLAGS    =
   else
     OPT_FFLAGS      =
