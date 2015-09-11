@@ -55,7 +55,7 @@ CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { vs10.1, vs12.5, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { icpc, vs10.1, vs12.5, mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
@@ -142,7 +142,6 @@ MAKE_WITH_POSTSOLVER = 1
 # Compile Flowsolver Modules
 # -----------------------------------------------------
 
-FLOWSOLVER_VERSION_READBCTNODE_ACTIVATE = 1
 FLOWSOLVER_VERSION_CORONARY_ACTIVATE = 1
 FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE = 1
 FLOWSOLVER_VERSION_VARWALL_ACTIVATE = 1

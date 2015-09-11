@@ -155,7 +155,7 @@ int input_fform(char inpfname[])
     strvalue=(string)inp.GetValue("Solve Heat","False",false,false);
     (strvalue == "True")? solheat=1:solheat=0;
     //for compressible solheat= False so
-    if(matdat.matflg[0][0] =0) solheat=0;
+    if(matdat.matflg[0][0] ==0) solheat=0;
     
     // Solve Scalars
     solscalr = inp.GetValue("Solve Scalars","0",false,false);
