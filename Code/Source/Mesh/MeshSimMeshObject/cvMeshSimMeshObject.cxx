@@ -650,40 +650,40 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
   rid->SetName("ModelRegionID");
 
   // only for linear tets
-  //initRegionTraversal();
-  //while (getNextRegion() == 1) {
-  //  initElementTraversal();
-  //  while (getNextElement() == 1) {
-  //      ptids->SetId(0,connID_[0]-1);ptids->SetId(1,connID_[1]-1);
-  //      ptids->SetId(2,connID_[2]-1);ptids->SetId(3,connID_[3]-1);
-  //      grid->InsertNextCell(VTK_TETRA,ptids);
-  //      eid->InsertNextTuple1(curElemID_);
-  //      rid->InsertNextTuple1(curMdlRegID_);
-  //  }
-  //}
-  
-  pRegion myelement = NULL;
-  RIter myRIter = M_regionIter(mesh);
-  int curMdlRegID = 1;
-  while ((myelement = RIter_next(myRIter)) != NULL) {
-    // the elements are numbered from 1 to N.
-    int curElemID = EN_id((pEntity)myelement)+1;
-    pPList vert_list = R_vertices (myelement,MY_MESHSIM_VERTEX_ORDERING);
-    int num_elem_verts = PList_size (vert_list);
-    // must be linear
-    if (num_elem_verts != 4) {
-      exit(-1);
+  initRegionTraversal();
+  while (getNextRegion() == 1) {
+    initElementTraversal();
+    while (getNextElement() == 1) {
+        ptids->SetId(0,connID_[0]-1);ptids->SetId(1,connID_[1]-1);
+        ptids->SetId(2,connID_[2]-1);ptids->SetId(3,connID_[3]-1);
+        grid->InsertNextCell(VTK_TETRA,ptids);
+        eid->InsertNextTuple1(curElemID_);
+        rid->InsertNextTuple1(curMdlRegID_);
     }
-    for (i = 0; i < num_elem_verts; i++) {
-        pVertex vertex = (pVertex)PList_item (vert_list, i);
-        // vtk nodes must start at zero
-        ptids->SetId(i,P_id(V_point(vertex))-1);
-    } // i
-    PList_delete(vert_list);      
-    grid->InsertNextCell(VTK_TETRA,ptids);
-    eid->InsertNextTuple1(curElemID);
-    rid->InsertNextTuple1(curMdlRegID);
   }
+  
+  //pRegion myelement = NULL;
+  //RIter myRIter = M_regionIter(mesh);
+  //int curMdlRegID = 1;
+  //while ((myelement = RIter_next(myRIter)) != NULL) {
+  //  // the elements are numbered from 1 to N.
+  //  int curElemID = EN_id((pEntity)myelement)+1;
+  //  pPList vert_list = R_vertices (myelement,MY_MESHSIM_VERTEX_ORDERING);
+  //  int num_elem_verts = PList_size (vert_list);
+  //  // must be linear
+  //  if (num_elem_verts != 4) {
+  //    exit(-1);
+  //  }
+  //  for (i = 0; i < num_elem_verts; i++) {
+  //      pVertex vertex = (pVertex)PList_item (vert_list, i);
+  //      // vtk nodes must start at zero
+  //      ptids->SetId(i,P_id(V_point(vertex))-1);
+  //  } // i
+  //  PList_delete(vert_list);      
+  //  grid->InsertNextCell(VTK_TETRA,ptids);
+  //  eid->InsertNextTuple1(curElemID);
+  //  rid->InsertNextTuple1(curMdlRegID);
+  //}
 
   ptids->Delete();
 
@@ -1915,6 +1915,7 @@ int cvMeshSimMeshObject::Adapt()
 
   MSA_delete(simAdapter);
 
+  this->InitTraversal();
   return CV_OK;
 #else
   fprintf(stderr,"Error: MeshSim Adaptor not available\n");

@@ -806,12 +806,28 @@ int cvMeshSimAdapt::WriteAdaptedMesh(char *fileName)
     }
     this->GetAdaptedMesh();
   }
+  const char *extension = strrchr(fileName,'.');
+  extension = extension +1;
 
-  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
-    vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-  writer->SetInputData(outmesh_);
-  writer->SetFileName(fileName);
-  writer->Update();
+  //if loading vtu, save as member data
+  //else if loading sms, load into meshobject
+  fprintf(stdout,"Reading Mesh!\n");
+
+  if (!strncmp(extension,"vtu",3)) {
+    vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
+      vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+    writer->SetInputData(outmesh_);
+    writer->SetFileName(fileName);
+    writer->Update();
+  } 
+  else if (!strncmp(extension,"sms",3)) {
+    if (meshobject_->WriteMesh(fileName,0) != CV_OK)
+    {
+      fprintf(stderr,"Error in writing of sms mesh\n");
+      return CV_ERROR;
+    }
+  }
+
 
   return CV_OK;
 }
