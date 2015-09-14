@@ -97,8 +97,16 @@ if {$tcl_platform(platform) == "unix"} {
     catch {load lib_simvascular_meshsim_adaptor.so  Meshsimadapt}
 }
 if {$tcl_platform(platform) == "windows"} {
-  catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh}
-  catch {load lib_simvascular_parasolid.dll Parasolidsolid}
-  catch {load lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid}
-  catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt}
+    if [catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg] {
+	puts "meshsim_mesh dll: $msg"
+    }
+    if [catch {load lib_simvascular_parasolid.dll Parasolidsolid} msg] {
+	puts "simvascular_parasolid dll: $msg"
+    }
+    if [catch {load lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid} msg] {
+        puts "simvascular meshsim discrete dll: $msg"
+    }
+    if [catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg] {
+	puts "simvascular meshsim adaptor dll: $msg"
+    }
 }
