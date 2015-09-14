@@ -423,10 +423,9 @@ LIB_MPI_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSIO
 # Local lib directories
 # ---------------------
 
-SHARED_LIBDIRS =
+SHARED_LIBDIRS = ../Code/Source/Common/Globals
 
-LIBDIRS = ../Code/Source/Common/Globals \
-	  ../Code/Source/Common/Utils \
+LIBDIRS = ../Code/Source/Common/Utils \
 	  ../Code/Source/Common/Repository \
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \
@@ -553,8 +552,7 @@ LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)
+              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
 
 #
 # ThirdParty software that must be built

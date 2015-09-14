@@ -190,7 +190,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   }
   
   evalmestr[0]='\0';
-  sprintf(evalmestr,"%s %s","mesh_newObject -obj ",mesh_name);
+  sprintf(evalmestr,"%s %s","mesh_newObject -result ",mesh_name);
   
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);

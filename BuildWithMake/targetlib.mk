@@ -50,6 +50,10 @@ DLLSRCS += $(CXXSRCS)
 TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_lib_$(TARGET_LIB_NAME).$(STATICEXT)
 TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(SOEXT)
 
+ifneq ($(TARGET_LIB_NAME),simvascular_globals)
+  DLLLIBS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+endif
+
 #ifeq ($(CLUSTER),x64_linux)
 #DLLLIBS = -l_simvascular_globals
 #else
