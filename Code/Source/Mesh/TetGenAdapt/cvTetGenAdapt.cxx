@@ -64,7 +64,6 @@
 
 #include <iostream>
 
-#include "cvTetGenMeshObject.h"
 
 cvTetGenAdapt::cvTetGenAdapt() 
   : cvAdaptObject(KERNEL_TETGEN)
@@ -143,7 +142,6 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
   return CV_OK;
 }
 
-
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
@@ -158,73 +156,49 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   }
 
   char* mesh_name = "/adapt/internal/meshobject";
-  
-  char evalmestr[1024];
-
   if ( gRepository->Exists(mesh_name) ) {
     fprintf(stderr,"Object %s already exists\n",mesh_name);
     return CV_ERROR;
   }
-
-  /*
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s %s","repos_exists -obj ",mesh_name);
-  
-  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+  cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
+  meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,solidFileName);
+  if ( meshobject_ == NULL ) {
+    fprintf(stderr,"Mesh Object is null after instantiation!\n");
     return CV_ERROR;
   }
 
-  if(strcmp(Tcl_GetStringResult(interp),"1")) {
-    fprintf(stderr,"Object %s already exists\n",mesh_name);
+  int reg_status = gRepository->Register(mesh_name, meshobject_ );
+  // Register the mesh:
+  if ( reg_status == 0 ) {
+    Tcl_AppendResult( interp, "error registering obj ", mesh_name,
+        	      " in repository", (char *)NULL );
+    fprintf(stderr,"Error when registering\n");
+    delete meshobject_;
     return CV_ERROR;
   }
-  */
-  
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s","mesh_setKernel -name TetGen");
-  
-  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return CV_ERROR;
-  }
-  
-  evalmestr[0]='\0';
-  sprintf(evalmestr,"%s %s","mesh_newObject -result ",mesh_name);
-  
-  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return CV_ERROR;
-  }
+  meshobject_->SetName(mesh_name);
+  Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
+  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
+        	     (ClientData)meshobject_, fakeDeletegdscMesh );
 
   if (solidFileName != NULL)
   {
-    evalmestr[0]='\0';
-    sprintf(evalmestr,"%s %s %s",mesh_name," LoadModel -file ",solidFileName);
-  
-    if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
+    if (this->LoadModel(solidFileName) != CV_OK)
+    {
       fprintf(stderr,"Error loading solid model in internal object creation\n");
-      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return CV_ERROR;
+    }
+  }
+  if (meshFileName != NULL)
+  {
+    if (this->LoadMesh(meshFileName) != CV_OK)
+    {
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
       return CV_ERROR;
     }
   }
 
-  if (meshFileName != NULL)
-  {
-    evalmestr[0]='\0';
-    sprintf(evalmestr,"%s %s %s",mesh_name," LoadMesh -file ",meshFileName);
-  
-    if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
-      fprintf(stderr,"Error loading mesh in internal object creation\n");
-      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return CV_ERROR;
-    } 
-  }
-
-  meshobject_ = dynamic_cast<cvTetGenMeshObject*>(gRepository->GetObject(mesh_name));
-  	    
-  return CV_OK;
- 
+ return CV_OK;
 }
 
 
