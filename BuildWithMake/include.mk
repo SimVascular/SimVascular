@@ -331,6 +331,9 @@ ifeq ($(MAKE_WITH_MESHSIM),1)
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
     GLOBAL_DEFINES += -DUSE_DISCRETE_MODEL_SHARED
   endif
+  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1) 
+    GLOBAL_DEFINES += -DUSE_MESHSIM_ADAPTOR
+  endif
   ifeq ($(SIMVASCULAR_USE_WIN32_REGISTRY),1)
     GLOBAL_DEFINES += -DMESHSIM_LICENSE_IN_WIN32_REGISTRY
   else
@@ -345,6 +348,9 @@ endif
 
 ifeq ($(MAKE_WITH_TETGEN),1) 
   GLOBAL_DEFINES += -DUSE_TETGEN
+  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1) 
+    GLOBAL_DEFINES += -DUSE_TET_ADAPTOR
+  endif
 endif
 
 ifeq ($(MAKE_WITH_ZLIB),1)
@@ -476,12 +482,6 @@ endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
   EXECDIRS = ../Code/Source/UI
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
-     EXECDIRS += ../Code/Source/Mesh/MeshSimAdapt
-  endif
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
-     EXECDIRS += ../Code/Source/Mesh/TetGenAdapt
-  endif
 else
   EXECDIRS = 
 endif
@@ -492,6 +492,23 @@ ifeq ($(MAKE_WITH_THREEDSOLVER),1)
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
      EXECDIRS += ../Code/FlowSolvers/ThreeDSolver
 endif
+
+# need solverio for adaptor classes so add them after adding solverio
+
+LIBDIRS += ../Code/Source/Mesh/AdaptObject
+
+ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
+endif
+
+ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
+  else
+     LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
+  endif
+endif
+
 
 #
 #  override other options to build solver only!
@@ -529,6 +546,7 @@ LFLAGS 	 = $(GLOBAL_LFLAGS) $(TCLTK_LIBS)
 
 LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
@@ -537,20 +555,6 @@ LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)
-
-#ifeq ($(CLUSTER),x64_linux)
-#LFLAGS     += -l_lib_simvascular_lset \
-              -l_lib_simvascular_image \
-              -l_lib_simvascular_solid \
-              -l_lib_simvascular_sysgeom \
-              -l_lib_simvascular_repository \
-              -l_lib_simvascular_utils \
-              -l_lib_simvascular_post \
-              -l_lib_simvascular_solid \
-              -l_lib_simvascular_globals \
-              -l_lib_simvascular_polydatasolid \
-              -l_lib_simvascular_utils
-#endif
 
 #
 # ThirdParty software that must be built

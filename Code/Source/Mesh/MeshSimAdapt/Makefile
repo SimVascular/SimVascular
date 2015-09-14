@@ -46,75 +46,79 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(MESHSIM_INCDIR) $(PARASOLID_INCDIR) $(SOLVERIO_INCDIR) \
-           $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) $(ZLIB_INCDIR) -DCV_STATIC_LINK
+# --------------
+# Compiler flags
+# --------------
 
-FFLAGS   = $(GLOBAL_FFLAGS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) \
+	   $(LOCAL_INCDIR) \
+	   $(VTK_INCDIRS) \
+	   $(TCLTK_INCDIR)
 
-HDRS	= MeshSimInternal_phAdapt.h \
-          cvAdaptCore.h cvAdaptHelp.h
+ifeq ($(MAKE_WITH_ZLIB),1)
+  CXXFLAGS += $(ZLIB_INCDIR)
+endif
 
-CXXSRCS = cvAdaptCore.cxx main.cxx \
-	  cvAdaptHelpers.cxx cvAdaptSF.cxx
-
-FSRCS   = pythag.f tred2EISPACK.f tql2.f lubksb.f ludcmp.f
-
-SRCS	= $(CXXSRCS) $(FSRCS)
-
-DEPS	= $(CXXSRCS:.cxx=.d)
-
-OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
-          $(addprefix $(BUILD_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
-          $(addprefix $(BUILD_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
-
-TARGET_EXE_FULL = $(TOP)/Bin/adaptor-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
-TARGET_EXE = $(TOP)/Bin/adaptor.exe
-
-#intentionally link against static library
 ifeq ($(MAKE_WITH_PARASOLID),1)
-  PARASOLID_LIB_FOR_LINKING = $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+    CXXFLAGS    += $(PARASOLID_INCDIR) \
+                   -I$(TOP)/../Code/Licensed/ParasolidSolidModel
 endif
 
-static: directories $(TARGET_EXE_FULL)
-
-directories:
-	-mkdir -p $(BUILD_DIR)
-
-$(TARGET_EXE_FULL): $(OBJS)
-	for fn in $(TARGET_EXE); do /bin/rm -f $$fn; done
-	for fn in $(basename $(TARGET_EXE)).pdb; do /bin/rm -f $$fn; done
-	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
-	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
-	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS) \
-             $(OBJS) \
-             $(PARASOLID_LIB_FOR_LINKING) \
-             $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
-             $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT) \
-             $(MESHSIM_LIBS) \
-             $(PARASOLID_LIBS) $(ZLIB_LIBS) \
-	     $(TCLTK_LIBS) $(VTK_LIBS) $(ZLIB_LIBS) \
-             $(F90_LIBS) $(CXX_LIBS) \
-             $(PARASOLID_LIBS) $(MESHSIM_LIBS)
-	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
-	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)
-
-ifndef NO_DEPEND
--include $(DEPS)
+ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    CXXFLAGS    += $(MESHSIM_INCDIR) \
+		  -I$(TOP)/../Source/Model/MeshSimDiscreteSolidModel
 endif
 
-clean:
-	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
-	for fn in *~; do /bin/rm -f $$fn;done
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+ifeq ($(MAKE_WITH_MESHSIM),1)
+        CXXFLAGS    += $(MESHSIM_INCDIR)
+endif
 
-veryclean: clean
-	if [ -e obj ];then /bin/rm -f -r obj;fi
+ifeq ($(MAKE_WITH_TETGEN),1)
+        CXXFLAGS    += $(TETGEN_INCDIR)
+endif
+
+HDRS	= cvMeshSimAdapt.h MeshSimInternal_phAdapt.h cvAdaptHelp.h
+
+CXXSRCS = cvMeshSimAdapt.cxx
+
+DLLHDRS = cv_meshsim_adapt_init.h
+
+DLLSRCS = cv_meshsim_adapt_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
+          $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+          $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT)
+
+ifeq ($(MAKE_WITH_PARASOLID),1)
+  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+endif
+ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+endif
+
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
+
+ifeq ($(MAKE_WITH_VMTK),1)
+  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+endif
+
+ifeq ($(MAKE_WITH_ZLIB),1)
+  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
+endif
+
+ifeq ($(MAKE_WITH_MESHSIM),1)
+  DLLLIBS += $(MESHSIM_LIBS)
+endif
+
+ifeq ($(MAKE_WITH_PARASOLID),1)
+  DLLLIBS += $(PARASOLID_LIBS)
+endif
+
+DLLLIBS += $(VTK_LIBS)
+
+TARGET_LIB_NAME = simvascular_meshsim_adaptor
+
+include $(TOP)/targetlib.mk
 
 

@@ -58,15 +58,24 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                     ../Common/Utils/cv_get_tcl_interp_init.cxx \
                     ../Mesh/MeshObject/cv_mesh_init.cxx \
                     ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
-                    ../Common/Utils/cv_math_init.cxx
+                    ../Common/Utils/cv_math_init.cxx \
+                    ../Mesh/AdaptObject/cv_adapt_init.cxx
 
   ifeq ($(MAKE_WITH_MESHSIM),1)
     ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
 	COPIED_CXXSRCS += ../Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx
     endif
   endif
+  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+    ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
+	COPIED_CXXSRCS += ../Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx
+    endif
+  endif
   ifeq ($(MAKE_WITH_TETGEN),1)
 	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
+  endif
+  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+	COPIED_CXXSRCS += ../Mesh/TetGenAdapt/cv_tetgen_adapt_init.cxx
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
     ifneq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
@@ -94,8 +103,18 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
+  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_adaptor$(LIBLINKEXT)
+    else
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_adaptor$(LIBLINKEXT)
+    endif
+  endif
   ifeq ($(MAKE_WITH_TETGEN),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
+  endif
+  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tet_adaptor$(LIBLINKEXT)
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
     ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)

@@ -189,6 +189,15 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
       puts "Found MeshSim Mesh.  Loading..."
       load $meshsimdll Meshsimmesh
     }
+
+    set meshsimadaptdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+  			  SIMVASCULAR_MESHSIM_ADAPT_DLL]
+    
+    if {$meshsimadaptdll != ""} {
+      puts "Found MeshSim Adapt.  Loading..."
+      load $meshsimapadtdll Meshsimadapt
+    }
   }
 
   if {$tcl_platform(platform) == "unix"} {
@@ -203,7 +212,7 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
     catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_mesh.so Meshsimmesh}
     catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_parasolid.so  Parasolidsolid}
   }
-
+  
   source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 simvascular_developer_startup.tcl]
   if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
      catch {source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
