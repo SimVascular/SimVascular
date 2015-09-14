@@ -68,6 +68,12 @@ else
 -include $(TOP)/cluster_overrides.mk
 endif
 
+# -------
+# globals
+# -------
+
+MAKE_WITH_GLOBALS_SHARED = 1
+
 # ---------------------------------------
 # Control solid modeling kernel inclusion
 # ---------------------------------------
@@ -300,6 +306,10 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   GLOBAL_DEFINES += -DCV_STATIC_LINK -DSIMVASCULAR_STATIC_BUILD
 endif
 
+ifeq ($(MAKE_GLOBALS_SHARED),1)
+  GLOBAL_DEFINES += -DCV_GLOBALS_SHARED
+endif
+
 ifeq ($(CLUSTER), x64_cygwin)
    GLOBAL_DEFINES += -DUSE_NOTIMER -DWINDOWS -DWIN32
 endif
@@ -423,9 +433,16 @@ LIB_MPI_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSIO
 # Local lib directories
 # ---------------------
 
-SHARED_LIBDIRS = ../Code/Source/Common/Globals
+LIBDIRS =
+SHARED_LIBDIRS =
 
-LIBDIRS = ../Code/Source/Common/Utils \
+ifeq ($(MAKE_WITH_GLOBALS_SHARED),1)
+  SHARED_LIBDIRS = ../Code/Source/Common/Globals
+else
+  LIBDIRS = ../Code/Source/Common/Globals
+endif
+
+LIBDIRS += ../Code/Source/Common/Utils \
 	  ../Code/Source/Common/Repository \
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \

@@ -64,12 +64,17 @@
 #endif
 
 /* global variables are in a shared library by default */
-#ifdef WINDOWS
-    #define CV_GLOBALS_DLL_EXPORT __declspec(dllexport)
-    #define CV_GLOBALS_DLL_IMPORT __declspec(dllimport)
-#else
+#ifndef CV_GLOBALS_SHARED
   #define CV_GLOBALS_DLL_EXPORT
   #define CV_GLOBALS_DLL_IMPORT extern
+#else
+  #ifdef WINDOWS
+    #define CV_GLOBALS_DLL_EXPORT __declspec(dllexport)
+    #define CV_GLOBALS_DLL_IMPORT __declspec(dllimport)
+  #else
+    #define CV_GLOBALS_DLL_EXPORT
+    #define CV_GLOBALS_DLL_IMPORT extern
+  #endif
 #endif
 
 #include "simvascular_version.h"

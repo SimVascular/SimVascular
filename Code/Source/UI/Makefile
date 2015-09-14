@@ -143,7 +143,11 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 endif
 
 # need to explicitly add in globals for executable
-LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+ifeq ($(MAKE_WITH_GLOBALS_SHARED),1)
+  LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+else
+  LFLAGS += $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)
+endif
 
 SRCS	= $(CXXSRCS) $(foreach name,$(COPIED_CXXSRCS),$(lastword $(subst /, ,$(name))))
 
