@@ -76,6 +76,8 @@ proc file_find {dir wildcard args} {
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SIMVASCULAR_PARASOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_parasolid.dll'  />"
         incr regid
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SIMVASCULAR_PARASOLID_PSCHEMA_DIR' Action='write' Type='string' Value='\[INSTALLDIR\]\schema' />"
+	incr regid
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SIMVASCULAR_MESHSIM_ADAPT_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_adaptor.dll' />"
         incr regid
     }
     foreach i $files {

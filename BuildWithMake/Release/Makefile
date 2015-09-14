@@ -89,7 +89,6 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
-	-cp -f $(TOP)/Bin/adaptor.exe package-release-meshsim-and-parasolid/adaptor-bin.exe
 	-cp -fR $(TCL_BASE)/lib package-release-meshsim-and-parasolid
 	-cp -fR $(TCL_BASE)/bin package-release-meshsim-and-parasolid
 	-cp -fR $(TCL_BASE)/bin/*.$(SOEXT)* package-release-meshsim-and-parasolid
@@ -191,8 +190,7 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/simvascular.exe $(DIST_DIR)/simvascular-bin.exe
 	-cp -f $(TOP)/Bin/presolver.exe $(DIST_DIR)/presolver-bin.exe
 	-cp -f $(TOP)/Bin/postsolver.exe $(DIST_DIR)/postsolver-bin.exe
-	-cp -f $(TOP)/Bin/flowsolver.exe $(DIST_DIR)/flowsolver-bin.exe
-	-cp -f $(TOP)/Bin/tetadaptor.exe $(DIST_DIR)/tetadaptor-bin.exe
+	-cp -f $(TOP)/Bin/flowsolver-$(MPI_NAME).exe $(DIST_DIR)/flowsolver-bin.exe
 	-cp -f $(TOP)/../Code/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
 

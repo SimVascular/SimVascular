@@ -196,7 +196,7 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
     
     if {$meshsimadaptdll != ""} {
       puts "Found MeshSim Adapt.  Loading..."
-      load $meshsimapadtdll Meshsimadapt
+      load $meshsimadaptdll Meshsimadapt
     }
   }
 
