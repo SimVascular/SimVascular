@@ -83,7 +83,8 @@ endif
 	-chmod -R a+rwx package-release-meshsim-and-parasolid
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
@@ -161,6 +162,7 @@ remote-windows-distribution: mksedscript windows-distribution
 
 
 mksedscript:
+	-mkdir -p tmp
 	-echo "puts \"s/REPLACE_TIMESTAMP/[file tail $(DIST_DIR)]/g\"" | tclsh | cat > tmp/sedscript
 	-echo "puts \"s/REPLACE_SIMVASCULAR_TIMESTAMP/[file tail $(DIST_DIR)]/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_SIMVASCULAR_OS/$(SIMVASCULAR_OS)/g\"" | tclsh | cat >> tmp/sedscript
@@ -192,11 +194,11 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/flowsolver.exe $(DIST_DIR)/flowsolver-bin.exe
 	-cp -f $(TOP)/Bin/tetadaptor.exe $(DIST_DIR)/tetadaptor-bin.exe
 	-cp -f $(TOP)/../Code/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp $(DIST_DIR)
-#	-cp -f $(TOP)/Lib/*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
-	-svn export --force $(TOP)/../Tcl $(DIST_DIR)/UnTcl
+	-cp -Rf $(TOP)/../Tcl $(DIST_DIR)/UnTcl
          # relace the full version number in the tcl launch script
 	-sed -f tmp/sedscript $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_startup.tcl > $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_startup.tcl.new
 	-mv $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_startup.tcl.new $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular_startup.tcl
@@ -258,15 +260,11 @@ copy-external-libs-linux-only:
 
 generate-wrapper-scripts:
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/$(SIMVASCULAR_VERSION)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/adaptor$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/tetadaptor$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/xfsv$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-simvascular-script >> $(DIST_DIR)/$(SIMVASCULAR_VERSION)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-adaptor-script >> $(DIST_DIR)/adaptor$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-tetadaptor-script >> $(DIST_DIR)/tetadaptor$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-flowsolver-script >> $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-presolver-script >> $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
 	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-postsolver-script >> $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
@@ -283,8 +281,6 @@ common-post-distribution:
 	-chmod -f a+rx $(DIST_DIR)/generic_launch_script
 	-chmod -f a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)
 	-chmod -f a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
-	-chmod -f a+rx $(DIST_DIR)/adaptor$(SIMVASCULAR_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/tetadaptor$(SIMVASCULAR_POSTFIX)
 	-chmod -f a+rx $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
 	-chmod -f a+rx $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
 	-chmod -f a+rx $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
@@ -304,12 +300,12 @@ taritup-meshsim-and-parasolid:
 	-chmod -R a+rwx package-release-meshsim-and-parasolid
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
-	-cp -f $(TOP)/Bin/adaptor.exe package-release-meshsim-and-parasolid/adaptor-bin.exe
 	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
 	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
 
