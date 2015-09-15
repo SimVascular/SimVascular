@@ -1014,7 +1014,7 @@ static int cvMesh_SetMeshOptionsMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-options", STRING_Type   , &flags, NULL, REQUIRED, 0 , { 0 }},
-    { "-values", LIST_Type   , &valueList, NULL, GDSC_OPTIONAL, 0 , { 0 }},
+    { "-values", LIST_Type   , &valueList, NULL, REQUIRED, 0 , { 0 }},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
