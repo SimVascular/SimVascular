@@ -84,6 +84,10 @@ ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
   DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
 endif
 
+ifeq ($(MAKE_WITH_VMTK),1)
+  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+endif
+
 DLLLIBS += $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
 
 ifeq ($(MAKE_WITH_VMTK),1)
@@ -94,6 +98,25 @@ ifeq ($(MAKE_WITH_ZLIB),1)
   DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
 endif
 
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT)
+
+DLLIBS +=  $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT)
+
 ifeq ($(MAKE_WITH_MESHSIM),1)
   DLLLIBS += $(MESHSIM_LIBS)
 endif
@@ -101,6 +124,8 @@ endif
 ifeq ($(MAKE_WITH_PARASOLID),1)
   DLLLIBS += $(PARASOLID_LIBS)
 endif
+
+DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
 
 DLLLIBS += $(VTK_LIBS)
 

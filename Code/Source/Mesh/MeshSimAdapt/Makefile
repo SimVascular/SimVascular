@@ -115,6 +115,25 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
   DLLLIBS += $(PARASOLID_LIBS)
 endif
 
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT)
+
+DLLIBS +=  $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
+              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT)
+
 DLLLIBS += $(VTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_meshsim_adaptor
