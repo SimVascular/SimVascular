@@ -142,6 +142,95 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
   return CV_OK;
 }
 
+#ifdef NOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
+
+#include "cvTetGenMeshObject.h"
+
+// -----------------------
+//  CreateInternalMeshObject
+// -----------------------
+int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
+		char *meshFileName,
+		char *solidFileName)
+{
+  if (meshobject_ != NULL)
+  {
+    fprintf(stderr,"Cannot create a mesh object, one already exists\n");
+    return CV_ERROR;
+  }
+
+  char* mesh_name = "/adapt/internal/meshobject";
+  
+  char evalmestr[1024];
+
+  if ( gRepository->Exists(mesh_name) ) {
+    fprintf(stderr,"Object %s already exists\n",mesh_name);
+    return CV_ERROR;
+  }
+
+  /*
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s %s","repos_exists -obj ",mesh_name);
+  
+  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return CV_ERROR;
+  }
+
+  if(strcmp(Tcl_GetStringResult(interp),"1")) {
+    fprintf(stderr,"Object %s already exists\n",mesh_name);
+    return CV_ERROR;
+  }
+  */
+  
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s","mesh_setKernel -name TetGen");
+  
+  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return CV_ERROR;
+  }
+  
+  evalmestr[0]='\0';
+  sprintf(evalmestr,"%s %s","mesh_newObject -result ",mesh_name);
+  
+  if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
+    fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+    return CV_ERROR;
+  }
+
+  if (solidFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    sprintf(evalmestr,"%s %s %s",mesh_name," LoadModel -file ",solidFileName);
+  
+    if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
+      fprintf(stderr,"Error loading solid model in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return CV_ERROR;
+    }
+  }
+
+  if (meshFileName != NULL)
+  {
+    evalmestr[0]='\0';
+    sprintf(evalmestr,"%s %s %s",mesh_name," LoadMesh -file ",meshFileName);
+  
+    if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
+      fprintf(stderr,"Error loading mesh in internal object creation\n");
+      fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
+      return CV_ERROR;
+    } 
+  }
+
+  meshobject_ = dynamic_cast<cvTetGenMeshObject*>(gRepository->GetObject(mesh_name));
+  	    
+  return CV_OK;
+ 
+}
+
+#else
+
 // -----------------------
 //  CreateInternalMeshObject
 // -----------------------
@@ -158,7 +247,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   char* mesh_name = "/adapt/internal/meshobject";
   if ( gRepository->Exists(mesh_name) ) {
     fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return CV_ERROR;
+    return TCL_ERROR;
   }
   cvMeshObject::KernelType newkernel = cvMeshObject::GetKernelType("TetGen");
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,solidFileName);
@@ -201,6 +290,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
  return CV_OK;
 }
 
+#endif
 
 // -----------------------
 //  LoadModel

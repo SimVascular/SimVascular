@@ -46,14 +46,15 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-# --------------
-# Compiler flags
-# --------------
-
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
+
+# double hack for now, want to make code consistent with meshsim code
+ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  CXXFLAGS += -DNOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
+endif
 
 ifeq ($(MAKE_WITH_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
