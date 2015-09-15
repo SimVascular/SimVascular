@@ -46,14 +46,13 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-# --------------
-# Compiler flags
-# --------------
-
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
+
+# hack for now
+CXXFLAGS += -DNOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
 
 ifeq ($(MAKE_WITH_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
@@ -85,54 +84,47 @@ DLLHDRS = cv_meshsim_adapt_init.h
 
 DLLSRCS = cv_meshsim_adapt_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
-          $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
-          $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT)
-
-ifeq ($(MAKE_WITH_PARASOLID),1)
-  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
-endif
-ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
-endif
-
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
-
-ifeq ($(MAKE_WITH_VMTK),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
-endif
-
-ifeq ($(MAKE_WITH_ZLIB),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
-endif
-
-ifeq ($(MAKE_WITH_MESHSIM),1)
-  DLLLIBS += $(MESHSIM_LIBS)
-endif
-
-ifeq ($(MAKE_WITH_PARASOLID),1)
-  DLLLIBS += $(PARASOLID_LIBS)
-endif
-
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT)
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT)
-
-DLLIBS +=  $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
+DLLLIBS +=    $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
 
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT)
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT)
+  ifeq ($(MAKE_WITH_SOLVERIO),1)
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+  endif
+
+  ifeq ($(MAKE_WITH_MESHSIM),1)
+  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
+    else
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
+    endif
+  endif
+  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
+    else
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+    endif
+  endif
+  ifeq ($(MAKE_WITH_PARASOLID),1)
+    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
+    else
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+    endif
+  endif
+
+  ifeq ($(MAKE_WITH_VMTK),1)
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+  endif
+
+  ifeq ($(MAKE_WITH_SOLVERIO),1)
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+  endif
 
 DLLLIBS += $(VTK_LIBS)
 
