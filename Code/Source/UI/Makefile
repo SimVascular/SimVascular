@@ -96,6 +96,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   ifeq ($(MAKE_WITH_SOLVERIO),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
+
   ifeq ($(MAKE_WITH_MESHSIM),1)
     ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
@@ -108,6 +109,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_adaptor$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_adaptor$(LIBLINKEXT)
+        LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif
   ifeq ($(MAKE_WITH_TETGEN),1)
@@ -115,6 +117,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   endif
   ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tet_adaptor$(LIBLINKEXT)
+        LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
   endif
   ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
     ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
@@ -138,6 +141,10 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   ifeq ($(MAKE_WITH_ITK),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itkutils$(LIBLINKEXT) \
                             $(SVLIBFLAG)_lib_simvascular_cvitk$(LIBLINKEXT)
+  endif
+
+  ifeq ($(MAKE_WITH_SOLVERIO),1)
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
 endif

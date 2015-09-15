@@ -12,7 +12,7 @@ else
     DEBUG_FFLAGS    = -O0 -g
   endif
 endif
-    GLOBAL_FFLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) -ffixed-line-length-132 -fmax-stack-var-size=16
+    GLOBAL_FFLAGS   = $(BUILDFLAGS) $(DEBUG_FFLAGS) $(OPT_FFLAGS) -ffixed-line-length-132 -fmax-stack-var-size=256
     F90_LIBS        = -lgfortran -lm
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -g
