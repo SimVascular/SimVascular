@@ -332,7 +332,7 @@ proc mesh_readTGS {filename resObj} {
              foreach lineval [lrange $line 1 end] {
 	      puts "[llength $lineval]"
 	      puts "$lineval"
-              $resObj SetMeshOptions -options $lineval
+              $resObj SetMeshOptions -options $lineval -values {1}
              }
 	  }
       } elseif {[lindex $line 0] == "getBoundaries"} {
