@@ -201,22 +201,19 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
   }
 
   if {$tcl_platform(platform) == "unix"} {
+    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_parasolid.so  Parasolidsolid}
     catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid} 
     catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_mesh.so Meshsimmesh}
-    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_parasolid.so  Parasolidsolid}
+    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_adaptor.so  Meshsimadapt}
   }
 
 } else {
-  if {$tcl_platform(platform) == "unix"} {
-    catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid} 
-    catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_mesh.so Meshsimmesh}
-    catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_parasolid.so  Parasolidsolid}
-  }
   
   source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 simvascular_developer_startup.tcl]
   if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
      catch {source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
   }
+
 }
 
 # ------------------
