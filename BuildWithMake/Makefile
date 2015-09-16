@@ -104,11 +104,6 @@ pre-build:
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
-	  echo "building lib directory ($$i)"; \
-	  if [ -e $$i ];then \
-	  cd $$i; \
-	  $(MAKE) lib;fi ) ; done
-	for i in ${SHARED_LIBDIRS}; do ( \
 	  echo "building shared directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \

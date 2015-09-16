@@ -128,6 +128,10 @@ DLLLIBS +=    $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
+  ifeq ($(MAKE_WITH_ZLIB),1)
+    DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
+  endif
+
 DLLLIBS += $(VTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_meshsim_adaptor

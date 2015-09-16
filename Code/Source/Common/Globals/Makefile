@@ -41,21 +41,13 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) $(DEFINES)
 
-HDRS	= 
+HDRS	= cv_globals.h
 
-CXXSRCS	= 
+CXXSRCS	= cv_globals.cxx
 
 DLLHDRS = 
 
 DLLSRCS =
-
-ifeq ($(MAKE_WITH_GLOBALS_SHARED),1)
-  DLLHDRS = cv_globals.h
-  DLLSRCS = cv_globals.cxx
-else
- HDRS = cv_globals.h
- CXXSRCS = cv_globals.cxx
-endif
 
 TARGET_LIB_NAME = simvascular_globals
 
