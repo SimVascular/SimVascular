@@ -64,12 +64,14 @@
   #define Write_Restart WRITE_RESTART
   #define Write_Error   WRITE_ERROR
   #define Write_Displ   WRITE_DISPL
+  #define Append_Restart   APPEND_RESTART
 #endif
 
 #ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define Write_Restart write_restart_
   #define Write_Error   write_error_
   #define Write_Displ   write_displ_
+  #define Append_Restart   append_restart_
 #endif
 
 extern char cvsolver_iotype[80];
@@ -178,6 +180,46 @@ Write_Restart(  int* pid,
 }
 
 void 
+Append_Restart(  int* pid,
+              int* stepno,
+              int* nshg,
+              int* numVars,
+              double* array1,
+              const char* dataname) {
+
+
+    char fname[255];
+    char rfile[60];
+    int irstou;
+    int magic_number = 362436;
+    int* mptr = &magic_number;
+    time_t timenow = time ( &timenow);
+    double version=0.0;
+    int isize, nitems;
+    int iarray[10];
+
+    sprintf(rfile,"restart.%d.%d",*stepno,*pid+1);
+    if (openfile_(rfile,"append", &irstou) == CVSOLVER_IO_ERROR) {
+      fprintf(stderr,"IO_ERROR opening file [%s] in Write_Restart.\n",rfile);
+      return;
+    }
+
+    isize = (*nshg)*(*numVars);
+    nitems = 3;
+    iarray[ 0 ] = (*nshg);
+    iarray[ 1 ] = (*numVars);
+    iarray[ 2 ] = (*stepno);
+    writeheader_( &irstou, dataname, (void*)iarray, &nitems, &isize, "double", cvsolver_iotype );
+
+
+    nitems = (*nshg)*(*numVars);
+    writedatablock_( &irstou, dataname, (void*)(array1), &nitems, "double", cvsolver_iotype );
+
+    closefile_( &irstou, "append" );
+
+}
+
+void
 Write_Error(  int* pid, 
               int* stepno, 
               int* nshg, 

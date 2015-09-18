@@ -369,6 +369,7 @@ extern "C" {
     int iofieldv;
     char iotype[80];
     int ioybar;
+    int ioyerror;
     /*  int iostats; */
 /*      int ipresref; */
   } outpar ;

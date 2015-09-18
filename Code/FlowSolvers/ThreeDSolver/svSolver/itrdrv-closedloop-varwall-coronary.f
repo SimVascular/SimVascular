@@ -212,8 +212,8 @@ c
         integer         iarray(50) ! integers for headers
         character*20        license_f_name
         
-        real*8 rerr(nshg,10), ybar(nshg,5) ,  dummyVar(nshg),
-     &         uhess(nshg,27), gradu(nshg,9)
+        real*8 rerr(nshg,10), ybar(nshg,5), yerror(nshg,5),
+     &          dummyVar(nshg), uhess(nshg,27), gradu(nshg,9)
      
         INTEGER idTmp, i, j
         REAL*8 correction, sumtime
@@ -292,6 +292,7 @@ c
 
         rerr = zero
         ybar = y
+        yerror=zero
 c
 c.... ---------------> initialize LesLib Library <---------------
 c
@@ -891,20 +892,22 @@ c
 c
 c.... compute the consistent boundary flux
 c
-
-           if(tractionMethod.eq.0) then
+           if(tractionMethod.eq.0 .or. tractionMethod.eq.2) then
              if(nsrfCM.gt.0) then
                 call newBflux ( yold,      acold,      uold,    x,
      &                      shp,       shgl,       shpb,   
      &                      shglb,     ilwork,     iBC,
      &                      BC,        iper)
              endif
-           else if(tractionMethod.eq.1) then
+           endif
+
+           if(tractionMethod.eq.1 .or. tractionMethod.eq.2) then
              call Bflux ( yold,      acold,      uold,     x,
      &                      shp,       shgl,       shpb,
      &                      shglb,     ilwork,     iBC,
      &                      BC,        iper)
            endif
+
 
 
 c....  print out results.
@@ -917,7 +920,7 @@ c
 c
 c.... -------------------> error calculation  <-----------------
 c 
-            if(ioybar.eq.1) then
+            if ((ioybar.eq.1) .or. (ioyerror.eq.1)) then
 c$$$c
 c$$$c compute average
 c$$$c
@@ -949,14 +952,43 @@ c
                   ybar(:,5) = tfact*dummyVar + (one-tfact)*ybar(:,5)
                endif
 c
-c compute rms
+c compute errors
 c
-               rerr(:, 7)=rerr(:, 7)+(yold(:,1)-ybar(:,1))**2
-               rerr(:, 8)=rerr(:, 8)+(yold(:,2)-ybar(:,2))**2
-               rerr(:, 9)=rerr(:, 9)+(yold(:,3)-ybar(:,3))**2
-               rerr(:,10)=rerr(:,10)+(yold(:,4)-ybar(:,4))**2
+!               rerr(:, 7)=rerr(:, 7)+(yold(:,1)-ybar(:,1))**2
+!               rerr(:, 8)=rerr(:, 8)+(yold(:,2)-ybar(:,2))**2
+!               rerr(:, 9)=rerr(:, 9)+(yold(:,3)-ybar(:,3))**2
+!               rerr(:,10)=rerr(:,10)+(yold(:,4)-ybar(:,4))**2
+!               yerror(:,1) = sqrt((yold(:,1)-ybar(:,1))**2)
+!               yerror(:,2) = sqrt((yold(:,2)-ybar(:,2))**2)
+!               yerror(:,3) = sqrt((yold(:,3)-ybar(:,3))**2)
+!               yerror(:,4) = sqrt((yold(:,4)-ybar(:,4))**2)
+!               yerror(:,5) = sqrt((dummyVar-ybar(:,5))**2)
+               yerror(:,1) = yerror(:,1)+(yold(:,1)-ybar(:,1))**2
+               yerror(:,2) = yerror(:,2)+(yold(:,2)-ybar(:,2))**2
+               yerror(:,3) = yerror(:,3)+(yold(:,3)-ybar(:,3))**2
+               yerror(:,4) = yerror(:,4)+(yold(:,4)-ybar(:,4))**2
+               yerror(:,5) = yerror(:,5)+(dummyVar-ybar(:,5))**2
+
+            endif
+
+            if (mod(lstep, ntout) .eq. 0) then
+              if (ioybar.eq.1) then
+                call append_restart(myrank, lstep, nshg, 1, ybar(:,5),
+     &                             'average speed'//CHAR(0))
+                call append_restart(myrank, lstep, nshg, 1, ybar(:,4),
+     &                             'average pressure'//CHAR(0))
+              endif
+
+              if (ioyerror.eq.1) then
+                call append_restart(myrank, lstep, nshg, 1,
+     &                         yerror(:,5), 'speed error'//CHAR(0))
+                call append_restart(myrank, lstep, nshg, 1,
+     &                         yerror(:,4),'pressure error'//CHAR(0))
+              endif
+
             endif
             
+
             if(istop.eq.1000) exit ! stop when delta small (see rstatic)
  2000    continue
  2001    continue
@@ -981,6 +1013,21 @@ c
          call restar ('out ',  yold  ,ac)
          if(ideformwall.eq.1) 
      &        call write_displ(myrank, lstep, nshg, 3, u,deformflag)
+
+          if (ioybar.eq.1) then
+            call append_restart(myrank, lstep, nshg, 1, ybar(:,5),
+     &                         'average speed'//CHAR(0))
+            call append_restart(myrank, lstep, nshg, 1, ybar(:,4),
+     &                         'average pressure'//CHAR(0))
+          endif
+
+          if (ioyerror.eq.1) then
+            call append_restart(myrank, lstep, nshg, 1,
+     &                     yerror(:,5), 'speed error'//CHAR(0))
+            call append_restart(myrank, lstep, nshg, 1,
+     &                     yerror(:,4),'pressure error'//CHAR(0))
+          endif
+
       endif
 
       
@@ -990,35 +1037,35 @@ c
      &                        nPermDims )
       END IF
 
-      if(ioybar.eq.1) then
-
-         itmp = 1
-         if (lstep .gt. 0) itmp = int(log10(float(lstep)))+1
-         write (fmt2,"('(''restart.'',i',i1,',1x)')") itmp
-         write (fname2,fmt2) lstep
-
-         fname2 = trim(fname2) // cname(myrank+1)
-c
-c.... open  files
-c
-         call openfile(  fname2,  'append?'//CHAR(0), irstin )
-
-         fnamer2 = 'ybar'
-         isize = nshg*5
-         nitems = 3
-         iarray(1) = nshg
-         iarray(2) = 5
-         iarray(3) = lstep
-         call writeheader(irstin, fnamer2,iarray, nitems, isize,
-     &        'double'//CHAR(0), iotype )
-
-         nitems = nshg*5
-         call writedatablock(irstin, fnamer2,ybar, nitems,
-     &        'double'//CHAR(0), iotype)
-
-         call closefile( irstin, "append"//CHAR(0) )
-
-      endif
+!      if(ioybar.eq.1) then
+!
+!         itmp = 1
+!         if (lstep .gt. 0) itmp = int(log10(float(lstep)))+1
+!         write (fmt2,"('(''restart.'',i',i1,',1x)')") itmp
+!         write (fname2,fmt2) lstep
+!
+!         fname2 = trim(fname2) // cname(myrank+1)
+!c
+!c.... open  files
+!c
+!         call openfile(  fname2,  'append?'//CHAR(0), irstin )
+!
+!         fnamer2 = 'ybar'
+!         isize = nshg*5
+!         nitems = 3
+!         iarray(1) = nshg
+!         iarray(2) = 5
+!         iarray(3) = lstep
+!         call writeheader(irstin, fnamer2,iarray, nitems, isize,
+!     &        'double'//CHAR(0), iotype )
+!
+!         nitems = nshg*5
+!         call writedatablock(irstin, fnamer2,ybar, nitems,
+!     &        'double'//CHAR(0), iotype)
+!
+!         call closefile( irstin, "append"//CHAR(0) )
+!
+!      endif
 
  5    format(1X,F15.10,3X,F15.10,3X,F15.10,3X,F15.10)
  444  format(6(2x,e14.7))
