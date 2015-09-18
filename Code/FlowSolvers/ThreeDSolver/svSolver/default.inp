@@ -99,7 +99,7 @@
 # ==============
 {
   Number of Timesteps between Restarts: NODEFAULT        
-  Print Average: True                      # True,False;Print average speed and pressure                   
+  Print Average Solution: True                      # True,False;Print average speed and pressure                   
   Print Error Indicators: False            # True,False;Print speed and pressure errors
   Number of Surfaces which Output Pressure and Flow: 0    
   List of Output Surfaces: NODEFAULT 
