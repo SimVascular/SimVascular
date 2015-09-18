@@ -52,8 +52,8 @@ c
 c----------------------------------------------------------------------
 c
 c
-        INTEGER ntout,ioform, iowflux, iofieldv, ioybar
+        INTEGER ntout,ioform, iowflux, iofieldv, ioybar, ioyerror
         REAL*8 ro, vel, temper, press, entrop
         CHARACTER*80 iotype
         common /outpar/ ro,     vel,    temper, press,  entrop, ntout,
-     &                  ioform, iowflux, iofieldv, iotype, ioybar
+     &            ioform, iowflux, iofieldv, iotype, ioybar,ioyerror

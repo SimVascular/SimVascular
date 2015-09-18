@@ -188,9 +188,12 @@ int input_fform(char inpfname[])
 //    strvalue=(string)inp.GetValue("Print FieldView","False",false,false);
 //    (strvalue == "True")? outpar.iofieldv = 1:outpar.iofieldv = 0;
 
-    strvalue=(string)inp.GetValue("Print ybar","True",false,true);
+    strvalue=(string)inp.GetValue("Print Average","True",false,true);
     (strvalue == "True")? outpar.ioybar = 1: outpar.ioybar = 0;
- 
+
+    strvalue=(string)inp.GetValue("Print Error Indicators","False",false,true);
+    (strvalue == "True")? outpar.ioyerror = 1: outpar.ioyerror = 0;
+
     strvalue=(string)inp.GetValue("Data Block Format","binary",false,false);//normally use binary
     strcpy( outpar.iotype , strvalue.c_str());
     strcpy( cvsolver_iotype ,strvalue.c_str());
@@ -214,6 +217,8 @@ int input_fform(char inpfname[])
           inpdat.tractionMethod=0;
       }else if ( strvalue =="Residual Based" ){
           inpdat.tractionMethod=1;
+      }else if ( strvalue =="Both" ){
+          inpdat.tractionMethod=2;
       }else{
           if(myrank==0){
               cerr << " ERROR: Invalid Force Calculation Method." << endl;
