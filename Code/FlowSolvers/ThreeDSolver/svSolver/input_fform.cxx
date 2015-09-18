@@ -188,7 +188,7 @@ int input_fform(char inpfname[])
 //    strvalue=(string)inp.GetValue("Print FieldView","False",false,false);
 //    (strvalue == "True")? outpar.iofieldv = 1:outpar.iofieldv = 0;
 
-    strvalue=(string)inp.GetValue("Print Average","True",false,true);
+    strvalue=(string)inp.GetValue("Print Average Solution","True",false,true);
     (strvalue == "True")? outpar.ioybar = 1: outpar.ioybar = 0;
 
     strvalue=(string)inp.GetValue("Print Error Indicators","False",false,true);
