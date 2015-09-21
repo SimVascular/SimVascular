@@ -135,8 +135,9 @@ public:
     double* GetWallProperties() {return wpglobal_;};
 
     int ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool RequestedNewSn,
-            bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar,
-            double* qglobal,double* aglobal,double* dglobal, double* yglobal,int numy, const char* outdir);
+            bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar, bool RequestedYerror,
+            double* qglobal,double* aglobal,double* dglobal, double* y1global, double* y2global, double* ye1global, double* ye2global,
+            const char* outdir);
 
     int ExportYBar(int stepnumber, int numy, double* yglobal, const char* outdir);
 
@@ -762,7 +763,7 @@ int GetWallElements(int neltot,int* ien, const char* wallfn, int* wallElementNum
 }
 
 int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements, bool applyWD, double* xglobal,double* dglobal,double* qglobal,double mu,
-        double** tglobal, double** wglobal){
+        double** vtglobal, double** vwglobal){
     int nsd=3;
     double* sA=new double[nshgtot]();
     double* sTF=new double[nshgtot*nsd]();
@@ -930,8 +931,8 @@ int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements, bool
         }
     }
 
-    *tglobal=wallTraction;
-    *wglobal=wallShearStress;
+    *vtglobal=wallTraction;
+    *vwglobal=wallShearStress;
 
     delete [] sA;
     delete [] sTF;
@@ -947,8 +948,8 @@ int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements, bool
 // =======================================
 
 int PostSolver::ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool RequestedNewSn,
-        bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar,
-        double* qglobal,double* aglobal,double* dglobal, double* yglobal,int numy, const char* outdir){
+        bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar, bool RequestedYerror,
+        double* qglobal,double* aglobal,double* dglobal, double* y1global, double* y2global, double* ye1global, double* ye2global, const char* outdir){
 
     // Write the total restart into restart.lstep.0  NOTE 0 is not
     // used in our partitioned system which goes from 1..nproc
@@ -1042,14 +1043,39 @@ int PostSolver::ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool Re
     if(RequestedYbar) {
         nitems = 3;
         iarray[ 0 ] = nshgtot_;
-        iarray[ 1 ] = numy;
+        iarray[ 1 ] = 1;
         iarray[ 2 ] = lstep;
-        size = numy*nshgtot_;
-        writeheader_( &irstin, "ybar ",
+        size = nshgtot_;
+        writeheader_( &irstin, "average speed ",
                 ( void* )iarray, &nitems, &size,"double", iotype_ );
         nitems = size;
-        writedatablock_( &irstin, "ybar ",
-                ( void* )(yglobal), &nitems, "double", iotype_ );
+        writedatablock_( &irstin, "average speed ",
+                ( void* )(y1global), &nitems, "double", iotype_ );
+        nitems = 3;
+        writeheader_( &irstin, "average pressure ",
+                ( void* )iarray, &nitems, &size,"double", iotype_ );
+        nitems = size;
+        writedatablock_( &irstin, "average pressure ",
+                ( void* )(y2global), &nitems, "double", iotype_ );
+    }
+
+    if(RequestedYerror) {
+        nitems = 3;
+        iarray[ 0 ] = nshgtot_;
+        iarray[ 1 ] = 1;
+        iarray[ 2 ] = lstep;
+        size = nshgtot_;
+        writeheader_( &irstin, "speed error ",
+                ( void* )iarray, &nitems, &size,"double", iotype_ );
+        nitems = size;
+        writedatablock_( &irstin, "speed error ",
+                ( void* )(ye1global), &nitems, "double", iotype_ );
+        nitems = 3;
+        writeheader_( &irstin, "pressure error ",
+                ( void* )iarray, &nitems, &size,"double", iotype_ );
+        nitems = size;
+        writedatablock_( &irstin, "pressure error",
+                ( void* )(ye2global), &nitems, "double", iotype_ );
     }
 
     closefile_( &irstin, "write" );
@@ -1245,44 +1271,6 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         count++;
     }
 
-    // create a list of the shear vectors
-
-    bool HaveTractions = true;
-
-    vtkDoubleArray **traction = new vtkDoubleArray*[numArrays];
-
-    count = 0;
-    for (i = start; i <= stop; i += incr) {
-        tname[0] = '\0';
-        sprintf(tname,"%s_%05i","traction",i);
-        traction[count] = static_cast<vtkDoubleArray*>(pd->GetPointData()->GetArray(tname));
-        if (traction[count] == NULL) {
-            delete [] traction;
-            HaveTractions = false;
-            break;
-        }
-        count++;
-    }
-
-    // create a list of the shear vectors
-
-    bool HaveWSS = true;
-
-    vtkDoubleArray **wss = new vtkDoubleArray*[numArrays];
-
-    count = 0;
-    for (i = start; i <= stop; i += incr) {
-        wname[0] = '\0';
-        sprintf(wname,"%s_%05i","WSS",i);
-        wss[count] = static_cast<vtkDoubleArray*>(pd->GetPointData()->GetArray(wname));
-        if (wss[count] == NULL) {
-            delete [] wss;
-            HaveWSS = false;
-            break;
-        }
-        count++;
-    }
-
     // create return vector
 
     vtkDoubleArray *meanpressure = vtkDoubleArray::New();
@@ -1322,6 +1310,44 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
 
     delete [] p;
 
+    // create a list of the shear vectors
+
+    bool HaveTractions = true;
+
+    vtkDoubleArray **traction = new vtkDoubleArray*[numArrays];
+
+    count = 0;
+    for (i = start; i <= stop; i += incr) {
+        tname[0] = '\0';
+        sprintf(tname,"%s_%05i","vinplane_traction",i);
+        traction[count] = static_cast<vtkDoubleArray*>(pd->GetPointData()->GetArray(tname));
+        if (traction[count] == NULL) {
+            delete [] traction;
+            HaveTractions = false;
+            break;
+        }
+        count++;
+    }
+
+    // create a list of the shear vectors
+
+    bool HaveWSS = true;
+
+    vtkDoubleArray **wss = new vtkDoubleArray*[numArrays];
+
+    count = 0;
+    for (i = start; i <= stop; i += incr) {
+        wname[0] = '\0';
+        sprintf(wname,"%s_%05i","vWSS",i);
+        wss[count] = static_cast<vtkDoubleArray*>(pd->GetPointData()->GetArray(wname));
+        if (wss[count] == NULL) {
+            delete [] wss;
+            HaveWSS = false;
+            break;
+        }
+        count++;
+    }
+
     // if we have wall shear stress
 
     if (HaveTractions == true) {
@@ -1330,19 +1356,19 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         shearmean->SetNumberOfComponents(1);
         shearmean->Allocate(numPts,10000);
         shearmean->SetNumberOfTuples(numPts);
-        shearmean->SetName("TAWSS");
+        shearmean->SetName("vTAWSS");
 
         vtkDoubleArray *shearpulse = vtkDoubleArray::New();
         shearpulse->SetNumberOfComponents(1);
         shearpulse->Allocate(numPts,10000);
         shearpulse->SetNumberOfTuples(numPts);
-        shearpulse->SetName("shear_pulse");
+        shearpulse->SetName("vshear_pulse");
 
         vtkDoubleArray *osi = vtkDoubleArray::New();
         osi->SetNumberOfComponents(1);
         osi->Allocate(numPts,10000);
         osi->SetNumberOfTuples(numPts);
-        osi->SetName("OSI");
+        osi->SetName("vOSI");
 
         for (i = 0; i < numPts; i++) {
             double v0 = 0.0;
@@ -1366,7 +1392,7 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
             osi->SetTuple1(i,osival);
         }
 
-        fprintf(stdout,"found traction and adding mean, pulse, osi.\n");
+        fprintf(stdout,"found vinplane_traction and adding mean, pulse, osi.\n");
 
         pd->GetPointData()->AddArray(shearmean);
         pd->GetPointData()->AddArray(shearpulse);
@@ -1385,19 +1411,19 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
         shearmean_wss->SetNumberOfComponents(1);
         shearmean_wss->Allocate(numPts,10000);
         shearmean_wss->SetNumberOfTuples(numPts);
-        shearmean_wss->SetName("TAWSS_wss");
+        shearmean_wss->SetName("vTAWSS_wss");
 
         vtkDoubleArray *shearpulse_wss = vtkDoubleArray::New();
         shearpulse_wss->SetNumberOfComponents(1);
         shearpulse_wss->Allocate(numPts,10000);
         shearpulse_wss->SetNumberOfTuples(numPts);
-        shearpulse_wss->SetName("shear_pulse_wss");
+        shearpulse_wss->SetName("vshear_pulse_wss");
 
         vtkDoubleArray *osi_wss = vtkDoubleArray::New();
         osi_wss->SetNumberOfComponents(1);
         osi_wss->Allocate(numPts,10000);
         osi_wss->SetNumberOfTuples(numPts);
-        osi_wss->SetName("OSI_wss");
+        osi_wss->SetName("vOSI_wss");
 
         for (i = 0; i < numPts; i++) {
             double v0 = 0.0;
@@ -1421,7 +1447,7 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
             osi_wss->SetTuple1(i,osival);
         }
 
-        fprintf(stdout,"found wss and adding mean, pulse, osi.\n");
+        fprintf(stdout,"found vWSS and adding mean, pulse, osi.\n");
 
         pd->GetPointData()->AddArray(shearmean_wss);
         pd->GetPointData()->AddArray(shearpulse_wss);
@@ -1432,6 +1458,154 @@ int calcMeanWallShearStressAndPressure(int start, int stop, int incr, bool sim_u
 
         delete [] wss;
     }
+
+    HaveTractions = true;
+
+    traction = new vtkDoubleArray*[numArrays];
+
+    count = 0;
+    for (i = start; i <= stop; i += incr) {
+        tname[0] = '\0';
+        sprintf(tname,"%s_%05i","rinplane_traction",i);
+        traction[count] = static_cast<vtkDoubleArray*>(pd->GetPointData()->GetArray(tname));
+        if (traction[count] == NULL) {
+            delete [] traction;
+            HaveTractions = false;
+            break;
+        }
+        count++;
+    }
+
+    // create a list of the shear vectors
+
+    HaveWSS = true;
+
+    wss = new vtkDoubleArray*[numArrays];
+
+    count = 0;
+    for (i = start; i <= stop; i += incr) {
+        wname[0] = '\0';
+        sprintf(wname,"%s_%05i","rWSS",i);
+        wss[count] = static_cast<vtkDoubleArray*>(pd->GetPointData()->GetArray(wname));
+        if (wss[count] == NULL) {
+            delete [] wss;
+            HaveWSS = false;
+            break;
+        }
+        count++;
+    }
+
+    // if we have wall shear stress
+
+    if (HaveTractions == true) {
+
+        vtkDoubleArray *shearmean = vtkDoubleArray::New();
+        shearmean->SetNumberOfComponents(1);
+        shearmean->Allocate(numPts,10000);
+        shearmean->SetNumberOfTuples(numPts);
+        shearmean->SetName("rTAWSS");
+
+        vtkDoubleArray *shearpulse = vtkDoubleArray::New();
+        shearpulse->SetNumberOfComponents(1);
+        shearpulse->Allocate(numPts,10000);
+        shearpulse->SetNumberOfTuples(numPts);
+        shearpulse->SetName("rshear_pulse");
+
+        vtkDoubleArray *osi = vtkDoubleArray::New();
+        osi->SetNumberOfComponents(1);
+        osi->Allocate(numPts,10000);
+        osi->SetNumberOfTuples(numPts);
+        osi->SetName("rOSI");
+
+        for (i = 0; i < numPts; i++) {
+            double v0 = 0.0;
+            double v1 = 0.0;
+            double v2 = 0.0;
+            double pulsemag = 0.0;
+            for (j = 0; j < numArrays; j++) {
+                traction[j]->GetTuple(i,shear);
+                v0 += shear[0];v1 += shear[1];v2 += shear[2];
+                pulsemag += sqrt(shear[0]*shear[0]+shear[1]*shear[1]+shear[2]*shear[2]);
+            }
+            v0 = v0/numArrays; v1 = v1/numArrays; v2 = v2/numArrays;
+            double mag = sqrt(v0*v0+v1*v1+v2*v2);
+            shearmean->SetTuple1(i,mag);
+            pulsemag = pulsemag / numArrays;
+            shearpulse->SetTuple1(i,pulsemag);
+            double osival = 0;
+            if (pulsemag > 0.00001) {
+                osival = 1.0/2.0*(1-mag/pulsemag);
+            }
+            osi->SetTuple1(i,osival);
+        }
+
+        fprintf(stdout,"found rinplane_traction and adding mean, pulse, osi.\n");
+
+        pd->GetPointData()->AddArray(shearmean);
+        pd->GetPointData()->AddArray(shearpulse);
+        pd->GetPointData()->AddArray(osi);
+        shearmean->Delete();
+        shearpulse->Delete();
+        osi->Delete();
+
+        delete [] traction;
+
+    }
+
+    if (HaveWSS == true) {
+
+        vtkDoubleArray *shearmean_wss = vtkDoubleArray::New();
+        shearmean_wss->SetNumberOfComponents(1);
+        shearmean_wss->Allocate(numPts,10000);
+        shearmean_wss->SetNumberOfTuples(numPts);
+        shearmean_wss->SetName("rTAWSS_wss");
+
+        vtkDoubleArray *shearpulse_wss = vtkDoubleArray::New();
+        shearpulse_wss->SetNumberOfComponents(1);
+        shearpulse_wss->Allocate(numPts,10000);
+        shearpulse_wss->SetNumberOfTuples(numPts);
+        shearpulse_wss->SetName("rshear_pulse_wss");
+
+        vtkDoubleArray *osi_wss = vtkDoubleArray::New();
+        osi_wss->SetNumberOfComponents(1);
+        osi_wss->Allocate(numPts,10000);
+        osi_wss->SetNumberOfTuples(numPts);
+        osi_wss->SetName("rOSI_wss");
+
+        for (i = 0; i < numPts; i++) {
+            double v0 = 0.0;
+            double v1 = 0.0;
+            double v2 = 0.0;
+            double pulsemag = 0.0;
+            for (j = 0; j < numArrays; j++) {
+                wss[j]->GetTuple(i,shear);
+                v0 += shear[0];v1 += shear[1];v2 += shear[2];
+                pulsemag += sqrt(shear[0]*shear[0]+shear[1]*shear[1]+shear[2]*shear[2]);
+            }
+            v0 = v0/numArrays; v1 = v1/numArrays; v2 = v2/numArrays;
+            double mag = sqrt(v0*v0+v1*v1+v2*v2);
+            shearmean_wss->SetTuple1(i,mag);
+            pulsemag = pulsemag / numArrays;
+            shearpulse_wss->SetTuple1(i,pulsemag);
+            double osival = 0;
+            if (pulsemag > 0.00001) {
+                osival = 1.0/2.0*(1-mag/pulsemag);
+            }
+            osi_wss->SetTuple1(i,osival);
+        }
+
+        fprintf(stdout,"found rWSS and adding mean, pulse, osi.\n");
+
+        pd->GetPointData()->AddArray(shearmean_wss);
+        pd->GetPointData()->AddArray(shearpulse_wss);
+        pd->GetPointData()->AddArray(osi_wss);
+        shearmean_wss->Delete();
+        shearpulse_wss->Delete();
+        osi_wss->Delete();
+
+        delete [] wss;
+    }
+
     return CV_OK;
 }
 
@@ -1724,10 +1898,12 @@ int main(int argc, char* argv[])
     bool RequestedVIS = false;
     bool RequestedVISmesh = false;
     bool RequestedSolution= false;
-    bool RequestedInPlaneTraction = false;
+    bool RequestedvInPlaneTraction = false;
+    bool RequestedrInPlaneTraction = false;
     bool RequestedDisplacements  = false;
     bool RequestedWallprops  = false;
-    bool RequestedWSS  = false;
+    bool RequestedvWSS  = false;
+    bool RequestedrWSS  = false;
     bool RequestedCalcWS= false;
     bool RequestedApplyWD= false;
     bool RequestedWallFilter = false;
@@ -1739,6 +1915,7 @@ int main(int argc, char* argv[])
     bool RequestedUnitsCm = true;
     bool RequestedTimeDeriv = false;
     bool RequestedYbar = false;
+    bool RequestedYerror = false;
     bool RequestedFlowSolverFormat = false;
     bool RequestedOnlyLastStep = false;
     bool RequestedNewSn = false;
@@ -1783,7 +1960,8 @@ int main(int argc, char* argv[])
             cout << "  -wfilter filename   : output wall data only on specified wall"<<endl;
             cout << "  -calcws             : Recalculate wall stress on specified wall"<<endl;
             cout << "  -applywd            : Apply wall deformation during wall stress calculation"<<endl;
-            cout << "  -ybar               : Reduce ybar field"<<endl;
+            cout << "  -ybar               : Reduce average speed and pressure"<<endl;
+            cout << "  -yerror             : Reduce speed and pressure errors"<<endl;
             cout << "  -nonbinary          : Read/Write files in ASCII format" <<endl;
             //cout << "  -none               : do not reduce everything found"<<endl;
             cout << "  -all                : Reduce all available data"<<endl;
@@ -1850,7 +2028,8 @@ int main(int argc, char* argv[])
             RequestedSolution = true;
         }
         else if(tmpstr=="-traction"){
-            RequestedInPlaneTraction = true;
+            RequestedvInPlaneTraction = true;
+            RequestedrInPlaneTraction = true;
         }
         else if(tmpstr=="-disp"){
             RequestedDisplacements = true;
@@ -1865,7 +2044,8 @@ int main(int argc, char* argv[])
             sprintf(wallfn,"%s",argv[iarg]);
         }
         else if(tmpstr=="-wss"){
-            RequestedWSS = true;
+            RequestedvWSS = true;
+            RequestedrWSS = true;
         }
         else if(tmpstr=="-calcws"){
             RequestedCalcWS = true;
@@ -1883,6 +2063,9 @@ int main(int argc, char* argv[])
         }
         else if(tmpstr=="-ybar"){
             RequestedYbar = true;
+        }
+        else if(tmpstr=="-yerror"){
+            RequestedYerror = true;
         }
         else if(tmpstr=="-td"){
             RequestedTimeDeriv = true;
@@ -1960,8 +2143,8 @@ int main(int argc, char* argv[])
     if(RequestedSolution){
         cout << "Will reduce solution(pressure and velocity) as requested" << endl;
     }
-    if(RequestedInPlaneTraction){
-        cout << "Will reduce boundary flux field as requested" << endl;
+    if(RequestedvInPlaneTraction || RequestedrInPlaneTraction){
+        cout << "Will reduce inplane traction as requested" << endl;
     }
     if(RequestedDisplacements){
         cout << "Will reduce displacement field as requested" << endl;
@@ -1969,17 +2152,20 @@ int main(int argc, char* argv[])
     if(RequestedWallprops){
         cout << "Will reduce wall property field as requested" << endl;
     }
-    if(RequestedWSS){
+    if(RequestedvWSS || RequestedrWSS){
         cout << "Will reduce wall shear stress field as requested" << endl;
     }
     if(RequestedTimeDeriv){
         cout << "Will reduce time-derivative field as requested" << endl;
     }
     if(RequestedYbar){
-        cout << "Will reduce ybar field as requested" << endl;
+        cout << "Will reduce average speed and pressure as requested" << endl;
+    }
+    if(RequestedYerror){
+        cout << "Will reduce speed and pressure errors as requested" << endl;
     }
 
-    if(RequestedSolution||RequestedTimeDeriv||RequestedDisplacements||RequestedWSS||RequestedInPlaneTraction||RequestedWallprops||RequestedYbar){
+    if(RequestedSolution||RequestedTimeDeriv||RequestedDisplacements||RequestedvWSS||RequestedrWSS||RequestedvInPlaneTraction||RequestedrInPlaneTraction||RequestedWallprops||RequestedYbar||RequestedYerror){
         RequestedAll=false;
     }
 
@@ -1988,10 +2174,13 @@ int main(int argc, char* argv[])
         RequestedSolution = true;
         RequestedTimeDeriv = true;
         RequestedDisplacements  = true;
-        RequestedWSS  = true;
-        RequestedInPlaneTraction = true;
+        RequestedvWSS  = true;
+        RequestedrWSS  = true;
+        RequestedvInPlaneTraction = true;
+        RequestedrInPlaneTraction = true;
         RequestedWallprops  = true;
         RequestedYbar=true;
+        RequestedYerror=true;
     }
 
     if(RequestedHelp){
@@ -2040,11 +2229,16 @@ int main(int argc, char* argv[])
     // do work
 
     double *qglobal = NULL;
-    double *tglobal = NULL;
+    double *vtglobal = NULL;
+    double *rtglobal = NULL;
     double *dglobal = NULL;
-    double *wglobal = NULL;
+    double *vwglobal = NULL;
+    double *rwglobal = NULL;
     double *aglobal = NULL;
-    double *yglobal = NULL;
+    double *y1global = NULL;
+    double *y2global = NULL;
+    double *ye1global = NULL;
+    double *ye2global = NULL;
 
     double *wpglobal = NULL;
     int *wallflag = NULL;
@@ -2230,12 +2424,15 @@ int main(int argc, char* argv[])
 
         if (RequestedAll) {
             RequestedSolution = true;
-            RequestedInPlaneTraction = true;
+            RequestedvInPlaneTraction = true;
+            RequestedrInPlaneTraction = true;
             RequestedDisplacements  = true;
             //RequestedWallprops  = true;
-            RequestedWSS  = true;
+            RequestedvWSS  = true;
+            RequestedrWSS  = true;
             RequestedTimeDeriv = true;
             RequestedYbar=true;
+            RequestedYerror=true;
         }
 
         if(RequestedSolution){
@@ -2297,44 +2494,93 @@ int main(int argc, char* argv[])
                     cout << "ERROR: no solution found for wall stress calculation!" << endl;
                     return 1;
                 }
-                if ( (CalculateWallStress(nshgtot,wallElementNum,wallElements,RequestedApplyWD,xglobal,dglobal,qglobal,mu,&tglobal,&wglobal)) == CV_ERROR ) {
+                if ( (CalculateWallStress(nshgtot,wallElementNum,wallElements,RequestedApplyWD,xglobal,dglobal,qglobal,mu,&vtglobal,&vwglobal)) == CV_ERROR ) {
                     return 1;
                 }
             }
         }
 
-        if (RequestedInPlaneTraction) {
+        if (RequestedvInPlaneTraction) {
             if(!RequestedCalcWS){
-                if ( (pp->ParseRestartFile( stepnumber , "boundary flux" , &numt, &tglobal)) == CV_ERROR ) {
+                if ( (pp->ParseRestartFile( stepnumber , "vin plane traction" , &numt, &vtglobal)) == CV_ERROR ) {
                     if (RequestedAll) {
-                        RequestedInPlaneTraction = false;
+                        RequestedvInPlaneTraction = false;
                     } else {
-                        cout << "ERROR reading boundary flux in step " << stepnumber << "!" << endl;
+                        cout << "ERROR reading vin plane traction in step " << stepnumber << "!" << endl;
                         return 1;
                     }
                 }
             }
         }
 
-        if (RequestedWSS) {
+        if (RequestedrInPlaneTraction) {
+            if ( (pp->ParseRestartFile( stepnumber , "rin plane traction" , &numt, &rtglobal)) == CV_ERROR ) {
+                if (RequestedAll) {
+                    RequestedrInPlaneTraction = false;
+                } else {
+                    cout << "ERROR reading rin plane traction in step " << stepnumber << "!" << endl;
+                    return 1;
+                }
+            }
+        }
+
+        if (RequestedvWSS) {
             if(!RequestedCalcWS){
-                if ( (pp->ParseRestartFile( stepnumber , "wall shear stresses" , &numw, &wglobal)) == CV_ERROR ) {
+                if ( (pp->ParseRestartFile( stepnumber , "vwall shear stresses" , &numw, &vwglobal)) == CV_ERROR ) {
                     if (RequestedAll) {
-                        RequestedWSS = false;
+                        RequestedvWSS = false;
                     } else {
-                        cout << "ERROR reading wall shear stresses in step " << stepnumber << "!" << endl;
+                        cout << "ERROR reading vwall shear stresses in step " << stepnumber << "!" << endl;
                         return 1;
                     }
+                }
+            }
+        }
+
+        if (RequestedrWSS) {
+            if ( (pp->ParseRestartFile( stepnumber , "rwall shear stresses" , &numw, &rwglobal)) == CV_ERROR ) {
+                if (RequestedAll) {
+                    RequestedrWSS = false;
+                } else {
+                    cout << "ERROR reading rwall shear stresses in step " << stepnumber << "!" << endl;
+                    return 1;
                 }
             }
         }
 
         if (RequestedYbar) {
-            if ( (pp->ParseRestartFile( stepnumber , "ybar" , &numy, &yglobal)) == CV_ERROR ) {
+            if ( (pp->ParseRestartFile( stepnumber , "average speed" , &numy, &y1global)) == CV_ERROR ) {
                 if (RequestedAll) {
                     RequestedYbar = false;
                 } else {
-                    cout << "ERROR reading ybar in step " << stepnumber << "!" << endl;
+                    cout << "ERROR reading average speed in step " << stepnumber << "!" << endl;
+                    return 1;
+                }
+            }
+            if ( (pp->ParseRestartFile( stepnumber , "average pressure" , &numy, &y2global)) == CV_ERROR ) {
+                if (RequestedAll) {
+                    RequestedYbar = false;
+                } else {
+                    cout << "ERROR reading average pressure in step " << stepnumber << "!" << endl;
+                    return 1;
+                }
+            }
+        }
+
+        if (RequestedYerror) {
+            if ( (pp->ParseRestartFile( stepnumber , "speed error" , &numy, &ye1global)) == CV_ERROR ) {
+                if (RequestedAll) {
+                    RequestedYerror = false;
+                } else {
+                    cout << "ERROR reading speed error in step " << stepnumber << "!" << endl;
+                    return 1;
+                }
+            }
+            if ( (pp->ParseRestartFile( stepnumber , "pressure error" , &numy, &ye2global)) == CV_ERROR ) {
+                if (RequestedAll) {
+                    RequestedYerror = false;
+                } else {
+                    cout << "ERROR reading pressure error in step " << stepnumber << "!" << endl;
                     return 1;
                 }
             }
@@ -2350,8 +2596,8 @@ int main(int argc, char* argv[])
                 cout << "Exporting Flowsolver restart file...";
 
                 pp->ExportFlowSolverFileFormat(stepnumber,newstepnumber,RequestedNewSn,
-                        RequestedSolution,RequestedTimeDeriv,RequestedDisplacements,RequestedYbar,
-                        qglobal,aglobal,dglobal,yglobal,numy,outdir);
+                        RequestedSolution,RequestedTimeDeriv,RequestedDisplacements,RequestedYbar,RequestedYerror,
+                        qglobal,aglobal,dglobal,y1global,y2global,ye1global,ye2global,outdir);
 
                 cout << "Done." << endl;
             }
@@ -2430,8 +2676,8 @@ int main(int argc, char* argv[])
             }
 
             // traction
-            if(RequestedInPlaneTraction) {
-                gzprintf(frest, "    analysis results \"traction\"\n");
+            if(RequestedvInPlaneTraction) {
+                gzprintf(frest, "    analysis results \"vinplane traction\"\n");
                 gzprintf(frest, "      number of data %i\n",numNodes);
                 gzprintf(frest, "      type \"nodal\"\n");
                 gzprintf(frest, "      order \"vector\"\n");
@@ -2445,7 +2691,31 @@ int main(int argc, char* argv[])
                 gzprintf(frest, "      data\n");
                 for (i=0; i< nshgtot; i++) {
                     for (j=1; j < 4; j++) {
-                        gzprintf(frest,"%25.15le ",tglobal[j*nshgtot+i]);
+                        gzprintf(frest,"%25.15le ",vtglobal[j*nshgtot+i]);
+                    }
+                    gzprintf(frest,"\n");
+                }
+                gzprintf(frest, "      end data\n");
+                gzprintf(frest, "    end analysis results\n");
+                gzprintf(frest, "\n");
+            }
+
+            if(RequestedrInPlaneTraction) {
+                gzprintf(frest, "    analysis results \"rinplane traction\"\n");
+                gzprintf(frest, "      number of data %i\n",numNodes);
+                gzprintf(frest, "      type \"nodal\"\n");
+                gzprintf(frest, "      order \"vector\"\n");
+                gzprintf(frest, "      number of components 3\n");
+                gzprintf(frest, "      components\n");
+                gzprintf(frest, "      \"x\"\n");
+                gzprintf(frest, "      \"y\"\n");
+                gzprintf(frest, "      \"z\"\n");
+                gzprintf(frest, "      end components\n");
+                gzprintf(frest, "      length 3\n");
+                gzprintf(frest, "      data\n");
+                for (i=0; i< nshgtot; i++) {
+                    for (j=1; j < 4; j++) {
+                        gzprintf(frest,"%25.15le ",rtglobal[j*nshgtot+i]);
                     }
                     gzprintf(frest,"\n");
                 }
@@ -2504,8 +2774,8 @@ int main(int argc, char* argv[])
             }
 
             // Wall Shear Stress
-            if(RequestedWSS) {
-                gzprintf(frest, "    analysis results \"wall shear stress\"\n");
+            if(RequestedvWSS) {
+                gzprintf(frest, "    analysis results \"vwall shear stress\"\n");
                 gzprintf(frest, "      number of data %i\n",numNodes);
                 gzprintf(frest, "      type \"nodal\"\n");
                 gzprintf(frest, "      order \"vector\"\n");
@@ -2519,7 +2789,31 @@ int main(int argc, char* argv[])
                 gzprintf(frest, "      data\n");
                 for (i=0; i< nshgtot; i++) {
                     for (j=0; j < 3; j++) {
-                        gzprintf(frest,"%25.15le ",wglobal[j*nshgtot+i]);
+                        gzprintf(frest,"%25.15le ",vwglobal[j*nshgtot+i]);
+                    }
+                    gzprintf(frest,"\n");
+                }
+                gzprintf(frest, "      end data\n");
+                gzprintf(frest, "    end analysis results\n");
+                gzprintf(frest, "\n");
+            }
+
+            if(RequestedrWSS) {
+                gzprintf(frest, "    analysis results \"rwall shear stress\"\n");
+                gzprintf(frest, "      number of data %i\n",numNodes);
+                gzprintf(frest, "      type \"nodal\"\n");
+                gzprintf(frest, "      order \"vector\"\n");
+                gzprintf(frest, "      number of components 3\n");
+                gzprintf(frest, "      components\n");
+                gzprintf(frest, "      \"x\"\n");
+                gzprintf(frest, "      \"y\"\n");
+                gzprintf(frest, "      \"z\"\n");
+                gzprintf(frest, "      end components\n");
+                gzprintf(frest, "      length 3\n");
+                gzprintf(frest, "      data\n");
+                for (i=0; i< nshgtot; i++) {
+                    for (j=0; j < 3; j++) {
+                        gzprintf(frest,"%25.15le ",rwglobal[j*nshgtot+i]);
                     }
                     gzprintf(frest,"\n");
                 }
@@ -2573,39 +2867,59 @@ int main(int argc, char* argv[])
 
             char pname[80];
             char vname[80];
-            char tname[80];
+            char t1name[80];
+            char t2name[80];
             char dname[80];
             char wpname[80];
-            char wname[80];
+            char w1name[80];
+            char w2name[80];
             char aname[80];
-            char yname[80];
+            char y1name[80];
+            char y2name[80];
+            char ye1name[80];
+            char ye2name[80];
             pname[0] = '\0';
             vname[0] = '\0';
-            tname[0] = '\0';
+            t1name[0] = '\0';
+            t2name[0] = '\0';
             dname[0] = '\0';
             wpname[0] = '\0';
-            wname[0] = '\0';
+            w1name[0] = '\0';
+            w2name[0] = '\0';
             aname[0] = '\0';
-            yname[0] = '\0';
+            y1name[0] = '\0';
+            y2name[0] = '\0';
+            ye1name[0] = '\0';
+            ye2name[0] = '\0';
 
             if (!RequestedVTKcombo) {
                 sprintf(pname,"%s","pressure");
                 sprintf(vname,"%s","velocity");
-                sprintf(tname,"%s","traction");
+                sprintf(t1name,"%s","vinplane_traction");
+                sprintf(t2name,"%s","rinplane_traction");
                 sprintf(dname,"%s","displacement");
                 sprintf(wpname,"%s","wallproperty");
-                sprintf(wname,"%s","WSS");
+                sprintf(w1name,"%s","vWSS");
+                sprintf(w2name,"%s","rWSS");
                 sprintf(aname,"%s","timeDeriv");
-                sprintf(yname,"%s","ybar");
+                sprintf(y1name,"%s","average_speed");
+                sprintf(y2name,"%s","average_pressure");
+                sprintf(ye1name,"%s","speed_error");
+                sprintf(ye2name,"%s","pressure_error");
             } else {
                 sprintf(pname,"%s_%05i","pressure",stepnumber);
                 sprintf(vname,"%s_%05i","velocity",stepnumber);
-                sprintf(tname,"%s_%05i","traction",stepnumber);
+                sprintf(t1name,"%s_%05i","vinplane_traction",stepnumber);
+                sprintf(t2name,"%s_%05i","rinplane_traction",stepnumber);
                 sprintf(dname,"%s_%05i","displacement",stepnumber);
                 sprintf(wpname,"%s_%05i","wallproperty",0);
-                sprintf(wname,"%s_%05i","WSS",stepnumber);
+                sprintf(w1name,"%s_%05i","vWSS",stepnumber);
+                sprintf(w2name,"%s_%05i","rWSS",stepnumber);
                 sprintf(aname,"%s_%05i","timeDeriv",stepnumber);
-                sprintf(yname,"%s_%05i","ybar",stepnumber);
+                sprintf(y1name,"%s_%05i","average_speed",stepnumber);
+                sprintf(y2name,"%s_%05i","average_pressure",stepnumber);
+                sprintf(ye1name,"%s_%05i","speed_error",stepnumber);
+                sprintf(ye2name,"%s_%05i","pressure_error",stepnumber);
             }
 
             // ========
@@ -2651,15 +2965,31 @@ int main(int argc, char* argv[])
             // TRACTION
             // ========
 
-            if(RequestedInPlaneTraction) {
+            if(RequestedvInPlaneTraction) {
 
                 vtkDoubleArray *traction = vtkDoubleArray::New();
                 traction->SetNumberOfComponents(3);
                 traction->Allocate(nshgtot,10000);
                 traction->SetNumberOfTuples(nshgtot);
-                traction->SetName(tname);
+                traction->SetName(t1name);
                 for (i=0; i< nshgtot; i++) {
-                    traction->SetTuple3(i,tglobal[0*nshgtot+i],tglobal[1*nshgtot+i],tglobal[2*nshgtot+i]);
+                    traction->SetTuple3(i,vtglobal[0*nshgtot+i],vtglobal[1*nshgtot+i],vtglobal[2*nshgtot+i]);
+                }
+
+                grid->GetPointData()->AddArray(traction);
+
+                traction->Delete();
+            }
+
+            if(RequestedrInPlaneTraction) {
+
+                vtkDoubleArray *traction = vtkDoubleArray::New();
+                traction->SetNumberOfComponents(3);
+                traction->Allocate(nshgtot,10000);
+                traction->SetNumberOfTuples(nshgtot);
+                traction->SetName(t2name);
+                for (i=0; i< nshgtot; i++) {
+                    traction->SetTuple3(i,rtglobal[0*nshgtot+i],rtglobal[1*nshgtot+i],rtglobal[2*nshgtot+i]);
                 }
 
                 grid->GetPointData()->AddArray(traction);
@@ -2715,15 +3045,30 @@ int main(int argc, char* argv[])
             // WSS
             // ===
 
-            if (RequestedWSS) {
+            if (RequestedvWSS) {
 
                 vtkDoubleArray *wss = vtkDoubleArray::New();
                 wss->SetNumberOfComponents(3);
                 wss->Allocate(nshgtot,10000);
                 wss->SetNumberOfTuples(nshgtot);
-                wss->SetName(wname);
+                wss->SetName(w1name);
                 for (i=0; i< nshgtot; i++) {
-                    wss->SetTuple3(i,wglobal[0*nshgtot+i],wglobal[1*nshgtot+i],wglobal[2*nshgtot+i]);
+                    wss->SetTuple3(i,vwglobal[0*nshgtot+i],vwglobal[1*nshgtot+i],vwglobal[2*nshgtot+i]);
+                }
+
+                grid->GetPointData()->AddArray(wss);
+
+                wss->Delete();
+            }
+
+            if (RequestedrWSS) {
+                vtkDoubleArray *wss = vtkDoubleArray::New();
+                wss->SetNumberOfComponents(3);
+                wss->Allocate(nshgtot,10000);
+                wss->SetNumberOfTuples(nshgtot);
+                wss->SetName(w2name);
+                for (i=0; i< nshgtot; i++) {
+                    wss->SetTuple3(i,rwglobal[0*nshgtot+i],rwglobal[1*nshgtot+i],rwglobal[2*nshgtot+i]);
                 }
 
                 grid->GetPointData()->AddArray(wss);
@@ -2759,13 +3104,28 @@ int main(int argc, char* argv[])
 
             if(RequestedYbar) {
                 vtkDoubleArray *ybar = vtkDoubleArray::New();
-                ybar->SetNumberOfComponents(numy);
+                ybar->SetNumberOfComponents(1);
                 ybar->Allocate(nshgtot,10000);
                 ybar->SetNumberOfTuples(nshgtot);
-                ybar->SetName(yname);
+                ybar->SetName(y1name);
                 for (i=0; i< nshgtot; i++) {
-                    for (int loopB=0; loopB< numy; loopB++) {
-                        currTuple[loopB] = yglobal[loopB*nshgtot+i];
+                    for (int loopB=0; loopB< 1; loopB++) {
+                        currTuple[loopB] = y1global[loopB*nshgtot+i];
+                    }
+                    // Set Tuple
+                    ybar->SetTuple(i,currTuple);
+                }
+                grid->GetPointData()->AddArray(ybar);
+                ybar->Delete();
+
+                ybar = vtkDoubleArray::New();
+                ybar->SetNumberOfComponents(1);
+                ybar->Allocate(nshgtot,10000);
+                ybar->SetNumberOfTuples(nshgtot);
+                ybar->SetName(y2name);
+                for (i=0; i< nshgtot; i++) {
+                    for (int loopB=0; loopB< 1; loopB++) {
+                        currTuple[loopB] = y2global[loopB*nshgtot+i];
                     }
                     // Set Tuple
                     ybar->SetTuple(i,currTuple);
@@ -2774,6 +3134,41 @@ int main(int argc, char* argv[])
                 ybar->Delete();
             }
 
+            // ======
+            // YERROR
+            // ======
+
+            if(RequestedYerror) {
+                vtkDoubleArray *yerror = vtkDoubleArray::New();
+                yerror->SetNumberOfComponents(1);
+                yerror->Allocate(nshgtot,10000);
+                yerror->SetNumberOfTuples(nshgtot);
+                yerror->SetName(ye1name);
+                for (i=0; i< nshgtot; i++) {
+                    for (int loopB=0; loopB< 1; loopB++) {
+                        currTuple[loopB] = ye1global[loopB*nshgtot+i];
+                    }
+                    // Set Tuple
+                    yerror->SetTuple(i,currTuple);
+                }
+                grid->GetPointData()->AddArray(yerror);
+                yerror->Delete();
+
+                yerror = vtkDoubleArray::New();
+                yerror->SetNumberOfComponents(1);
+                yerror->Allocate(nshgtot,10000);
+                yerror->SetNumberOfTuples(nshgtot);
+                yerror->SetName(ye2name);
+                for (i=0; i< nshgtot; i++) {
+                    for (int loopB=0; loopB< 1; loopB++) {
+                        currTuple[loopB] = ye2global[loopB*nshgtot+i];
+                    }
+                    // Set Tuple
+                    yerror->SetTuple(i,currTuple);
+                }
+                grid->GetPointData()->AddArray(yerror);
+                yerror->Delete();
+            }
 
             if (((RequestedVTP == true) && (RequestedVTKcombo == false)) ||
                     ((RequestedVTP == true) && (RequestedVTKcombo == true) && (stepnumber == sn_stop))) {
@@ -2819,8 +3214,10 @@ int main(int argc, char* argv[])
                 }
 
                 sprintf(pname,"%s_%05i","pressure",stepnumber);
-                sprintf(tname,"%s_%05i","traction",stepnumber);
-                sprintf(wname,"%s_%05i","WSS",stepnumber);
+                sprintf(t1name,"%s_%05i","vinplane_traction",stepnumber);
+                sprintf(t2name,"%s_%05i","rinplane_traction",stepnumber);
+                sprintf(w1name,"%s_%05i","vWSS",stepnumber);
+                sprintf(w2name,"%s_%05i","rWSS",stepnumber);
 
                 vtkDoubleArray* dataArray = NULL;
                 if(RequestedSolution){
@@ -2828,14 +3225,24 @@ int main(int argc, char* argv[])
                     dataArray->SetName(pname);
                     gridForAverage->GetPointData()->AddArray(dataArray);
                 }
-                if(RequestedInPlaneTraction){
-                    dataArray=cloneVtkDoubleArray(nshgtot,3,static_cast<vtkDoubleArray*>(grid->GetPointData()->GetArray("traction")));
-                    dataArray->SetName(tname);
+                if(RequestedvInPlaneTraction){
+                    dataArray=cloneVtkDoubleArray(nshgtot,3,static_cast<vtkDoubleArray*>(grid->GetPointData()->GetArray("vinplane_traction")));
+                    dataArray->SetName(t1name);
                     gridForAverage->GetPointData()->AddArray(dataArray);
                 }
-                if(RequestedWSS){
-                    dataArray=cloneVtkDoubleArray(nshgtot,3,static_cast<vtkDoubleArray*>(grid->GetPointData()->GetArray("WSS")));
-                    dataArray->SetName(wname);
+                if(RequestedrInPlaneTraction){
+                    dataArray=cloneVtkDoubleArray(nshgtot,3,static_cast<vtkDoubleArray*>(grid->GetPointData()->GetArray("rinplane_traction")));
+                    dataArray->SetName(t2name);
+                    gridForAverage->GetPointData()->AddArray(dataArray);
+                }
+                if(RequestedvWSS){
+                    dataArray=cloneVtkDoubleArray(nshgtot,3,static_cast<vtkDoubleArray*>(grid->GetPointData()->GetArray("vWSS")));
+                    dataArray->SetName(w1name);
+                    gridForAverage->GetPointData()->AddArray(dataArray);
+                }
+                if(RequestedrWSS){
+                    dataArray=cloneVtkDoubleArray(nshgtot,3,static_cast<vtkDoubleArray*>(grid->GetPointData()->GetArray("rWSS")));
+                    dataArray->SetName(w2name);
                     gridForAverage->GetPointData()->AddArray(dataArray);
                 }
 
@@ -2856,11 +3263,15 @@ int main(int argc, char* argv[])
 
                     for ( int sn = sn_start; sn <= sn_stop; sn += sn_incr) {
                         sprintf(pname,"%s_%05i","pressure",sn);
-                        sprintf(tname,"%s_%05i","traction",sn);
-                        sprintf(wname,"%s_%05i","WSS",sn);
+                        sprintf(t1name,"%s_%05i","vinplane_traction",sn);
+                        sprintf(t2name,"%s_%05i","rinplane_traction",sn);
+                        sprintf(w1name,"%s_%05i","vWSS",sn);
+                        sprintf(w2name,"%s_%05i","rWSS",sn);
                         cleaner->GetOutput()->GetPointData()->RemoveArray(pname);
-                        cleaner->GetOutput()->GetPointData()->RemoveArray(tname);
-                        cleaner->GetOutput()->GetPointData()->RemoveArray(wname);
+                        cleaner->GetOutput()->GetPointData()->RemoveArray(t1name);
+                        cleaner->GetOutput()->GetPointData()->RemoveArray(t2name);
+                        cleaner->GetOutput()->GetPointData()->RemoveArray(w1name);
+                        cleaner->GetOutput()->GetPointData()->RemoveArray(w2name);
                     }
 
                     vtkXMLPolyDataWriter *polywriter = vtkXMLPolyDataWriter::New();
@@ -2911,20 +3322,29 @@ int main(int argc, char* argv[])
         }
 
         if (qglobal != NULL) delete [] qglobal;
-        if (tglobal != NULL) delete [] tglobal;
+        if (vtglobal != NULL) delete [] vtglobal;
+        if (rtglobal != NULL) delete [] rtglobal;
         if (dglobal != NULL) delete [] dglobal;
         //if (wpglobal != NULL) delete [] wpglobal;//no change with time. so keep it.
-        if (wglobal != NULL) delete [] wglobal;
+        if (vwglobal != NULL) delete [] vwglobal;
+        if (rwglobal != NULL) delete [] rwglobal;
         if (aglobal != NULL) delete [] aglobal;
-        if (yglobal != NULL) delete [] yglobal;
+        if (y1global != NULL) delete [] y1global;
+        if (y2global != NULL) delete [] y2global;
+        if (ye1global != NULL) delete [] ye1global;
+        if (ye2global != NULL) delete [] ye2global;
         qglobal = NULL;
-        tglobal = NULL;
+        vtglobal = NULL;
+        rtglobal = NULL;
         dglobal = NULL;
         //wpglobal = NULL;//no change with time. so keep it.
-        wglobal = NULL;
+        vwglobal = NULL;
+        rwglobal = NULL;
         aglobal = NULL;
-        yglobal = NULL;
-
+        y1global = NULL;
+        y2global = NULL;
+        ye1global = NULL;
+        ye2global = NULL;
     }
 
     if (grid != NULL) grid->Delete();
@@ -2933,12 +3353,17 @@ int main(int argc, char* argv[])
     delete pp;
 
     if (qglobal != NULL) delete [] qglobal;
-    if (tglobal != NULL) delete [] tglobal;
+    if (vtglobal != NULL) delete [] vtglobal;
+    if (rtglobal != NULL) delete [] rtglobal;
     if (dglobal != NULL) delete [] dglobal;
     if (wpglobal != NULL) delete [] wpglobal;
-    if (wglobal != NULL) delete [] wglobal;
+    if (vwglobal != NULL) delete [] vwglobal;
+    if (rwglobal != NULL) delete [] rwglobal;
     if (aglobal != NULL) delete [] aglobal;
-    if (yglobal != NULL) delete [] yglobal;
+    if (y1global != NULL) delete [] y1global;
+    if (y2global != NULL) delete [] y2global;
+    if (ye1global != NULL) delete [] ye1global;
+    if (ye2global != NULL) delete [] ye2global;
     if (wallflag !=NULL) delete [] wallflag;
     if (wallElements !=NULL) delete [] wallElements;
 

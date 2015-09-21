@@ -1718,7 +1718,7 @@ c.... open input files
 c
          call openfile(  fname2,  'append?'//CHAR(0), irstin )
          
-         fnamer = 'boundary flux'        
+         fnamer = 'rin plane traction'
          isize = nshg*ndof
          nitems = 3
          iarray(1) = nshg
@@ -1729,7 +1729,7 @@ c
     
 c         fnamer = 'boundary flux'        
          nitems = nshg*ndof
-         call writedatablock(irstin, fnamer,rtmp, nitems, 
+         call writedatablock(irstin, fnamer,rtmp(:,2:4), nitems,
      &        'double'//CHAR(0), iotype)
         
          call closefile( irstin, "append"//CHAR(0) )
@@ -1739,7 +1739,7 @@ c     wallss vectors into the restart file(s)
 c         if( iowflux .eq. 1) then
             call openfile(  fname2,  'append?'//CHAR(0), irstin )
             
-            fnamer = 'wall shear stresses'        
+            fnamer = 'rwall shear stresses'
             isize = nshg*ndof
             
             nitems = 3
@@ -1956,8 +1956,8 @@ c.... open input files
 c
          call openfile(  fname2,  'append?'//CHAR(0), irstin )
 
-c     write traction
-         fnamer = 'boundary flux'
+c     write velocity based in-plane traction
+         fnamer = 'vin plane traction'
 
          isize = nshg*nsd
          nitems = 3
@@ -1971,8 +1971,8 @@ c     write traction
          call writedatablock(irstin, fnamer,walltsVec, nitems,
      &        'double'//CHAR(0), iotype)
 
-c     write wall shear stress
-        fnamer = 'wall shear stresses'
+c     write velocity-based wall shear stress
+        fnamer = 'vwall shear stresses'
 
         isize = nshg*nsd
         nitems = 3
@@ -1994,7 +1994,7 @@ c     write wall shear stress
 c
 c.... file error handling
 c
-      call error ('bflux   ','opening ', iflux)
+      call error ('newbflux   ','opening ', iflux)
 
       end
 
