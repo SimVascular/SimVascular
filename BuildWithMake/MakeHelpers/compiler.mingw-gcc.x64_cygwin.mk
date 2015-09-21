@@ -44,5 +44,6 @@ endif
     LINK_EXE        = $(CXX)  -L$(TOP)/Lib -o 
     LIBPATH_COMPILER_FLAG = -L
     LIBFLAG         = -l
+    LIBCMD          = lib 
     SVLIBFLAG       = -llib
 endif

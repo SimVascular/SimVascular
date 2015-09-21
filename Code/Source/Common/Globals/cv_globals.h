@@ -34,16 +34,16 @@
 #include "cv_misc_utils.h"
 #include "cvRepository.h"
 
-CV_DLL_IMPORT cvRepository *gRepository;
+CV_GLOBALS_DLL_IMPORT cvRepository *gRepository;
 
 #include "tcl.h"
-CV_DLL_IMPORT Tcl_HashTable gLsetVTable;
-CV_DLL_IMPORT Tcl_HashTable gLsetCoreTable;
+CV_GLOBALS_DLL_IMPORT Tcl_HashTable gLsetVTable;
+CV_GLOBALS_DLL_IMPORT Tcl_HashTable gLsetCoreTable;
 
-CV_DLL_IMPORT char projectionSetBase_[CV_STRLEN];
+CV_GLOBALS_DLL_IMPORT char projectionSetBase_[CV_STRLEN];
 
 // global variable to figure out if we are running in batch mode
-CV_DLL_IMPORT int gSimVascularBatchMode;
+CV_GLOBALS_DLL_IMPORT int gSimVascularBatchMode;
 
-CV_DLL_IMPORT Tcl_Interp* gVtkTclInterp;
-CV_DLL_EXPORT Tcl_Interp* getTclInterp();
+CV_GLOBALS_DLL_IMPORT Tcl_Interp* gVtkTclInterp;
+CV_GLOBALS_DLL_IMPORT Tcl_Interp* getTclInterp();

@@ -903,7 +903,7 @@ int cvMeshSimMeshObject::getIdentForFaceId(int orgfaceid, int *faceID) {
     }
     *faceID =GEN_tag(msentity);
     if (*faceID == 0) {
-      fprintf(stderr,"ERROR: could not find GEN_tag (entity: %i)\n",msentity);
+      fprintf(stderr,"ERROR: could not find GEN_tag (entity: %i)\n",(int)msentity);
       fflush(stderr);
       return CV_ERROR;
     }
@@ -1926,6 +1926,9 @@ int cvMeshSimMeshObject::Adapt()
 int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
 #ifdef USE_MESHSIM_ADAPTOR
+
+  int i;
+  
   if (ug == NULL)
   {
     fprintf(stderr,"UGrid is NULL!\n");
@@ -1956,7 +1959,7 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
   outPoints->SetNumberOfPoints(nshg_adapted);
   VIter myViter;
   myViter = M_vertexIter(mesh);
-  for (int i = 0; i < nshg_adapted; i++) {
+  for (i = 0; i < nshg_adapted; i++) {
     pPoint point = V_point (VIter_next(myViter));
     //int nodenumber = P_id (point);
     int nodenumber = i + 1;
