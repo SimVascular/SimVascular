@@ -190,6 +190,7 @@ public:
 
 	}
 
+#ifdef USE_QUICKVIEW_DEBUG
 	//some debug stuff
 	void ViewITKFront()
 	{
@@ -203,6 +204,8 @@ public:
 		viewer.Visualize();
 
 	}
+#endif
+
 	template<typename TLevelSetFilterType>
 	void ShowDebug(typename TLevelSetFilterType::Pointer levelSetFilter);
 

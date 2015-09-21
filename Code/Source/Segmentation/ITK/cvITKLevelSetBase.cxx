@@ -813,9 +813,11 @@ int cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	return 1;
  }
 
+#ifdef USE_QUICKVIEW_DEBUG
 template<typename TInputImage,
 typename TInternalPixelType>
 template<typename TLevelSetFilterType>
+
 void cvITKLevelSetBase<TInputImage, TInternalPixelType>
 ::ShowDebug(typename TLevelSetFilterType::Pointer levelSetFilter)
  {
@@ -882,6 +884,7 @@ void cvITKLevelSetBase<TInputImage, TInternalPixelType>
 	viewer.Visualize();
 
  }
+#endif
 
 template<typename TInputImage,
 typename TInternalPixelType>
