@@ -55,6 +55,8 @@
 #include "SimErrorCodes.h"
 #include "SimMeshingErrorCodes.h"
 
+void SimVascularMeshSimMessageHandler(int type, const char *msg);
+
 #ifdef WIN32
 #ifdef MESHSIM_LICENSE_IN_WIN32_REGISTRY
 
@@ -117,8 +119,8 @@ int Meshsimmesh_Init( Tcl_Interp *interp )
   {
   // Initialize the MeshSim libraries
     printf("  %-12s %s\n", "MeshSim:", MS_version());
-
     MS_init();
+    Sim_setMessageHandler(SimVascularMeshSimMessageHandler);
   } catch (...) {
    fprintf(stdout,"  ERROR Initializng MeshSim.\n");
    return TCL_OK;

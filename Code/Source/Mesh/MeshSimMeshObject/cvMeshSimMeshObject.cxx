@@ -52,6 +52,27 @@
 #include <stdio.h>
 #endif
 
+void SimVascularMeshSimMessageHandler(int type, const char *msg) {
+  switch (type) {
+  case Sim_InfoMsg:
+    fprintf(stdout,"Info: %s\n",msg);
+    break;
+  case Sim_DebugMsg:
+    fprintf(stdout,"Debug: %s\n",msg);
+    break;
+  case Sim_WarningMsg:
+    fprintf(stdout,"Warning: %s\n",msg);
+    break;
+  case Sim_ErrorMsg:
+    fprintf(stdout,"Error: %s\n",msg);
+    break;
+  default:
+   fprintf(stdout,"messageHandler (%i): %s\n",type,msg);
+  }
+  fflush(stdout);
+  return;
+}
+
 // -----------
 // cvMeshSimMeshObject
 // -----------
@@ -77,7 +98,8 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   ptrModelRegions_ = NULL;
 
   case_ = NULL;
-  manager_ = AMAN_new();
+  progress_ = Progress_new();
+  Progress_setDefaultCallback(progress_);
 
 #ifdef USE_DISCRETE_MODEL
   discreteModel_ = NULL;
@@ -141,8 +163,9 @@ cvMeshSimMeshObject::~cvMeshSimMeshObject()
      GRIter_delete(ptrModelRegions_);
    }
 
-   if (case_ != NULL) AttCase_unassociate(case_);
-   if (manager_ != NULL) AMAN_release(manager_);
+   if (case_ != NULL) MS_deleteMeshCase(case_);
+   if (progress_ != NULL) Progress_delete(progress_);
+    
 #ifdef USE_DISCRETE_MODEL
    if (discreteModel_ != NULL) {
      delete discreteModel_;
@@ -159,21 +182,20 @@ cvMeshSimMeshObject::~cvMeshSimMeshObject()
 
 int cvMeshSimMeshObject::SetMeshFileName( const char* meshFileName )
 {
-  if (meshFileName != NULL)
+  meshFileName_[0]='\0';
+  if (meshFileName != NULL) {
     sprintf(meshFileName_, "%s", meshFileName);
-  else
-    meshFileName_[0] = '\0';
+  }
 
   return CV_OK;
 }
 
 int cvMeshSimMeshObject::SetSolidFileName( const char* solidFileName )
 {
-  if (solidFileName != NULL)
+  solidFileName_[0]='\0';
+  if (solidFileName != NULL) {
     sprintf(solidFileName_, "%s", solidFileName);
-  else
-    solidFileName_[0] = '\0';
-
+  }
   return CV_OK;
 }
 
@@ -1023,8 +1045,6 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     }
     part_ = firstPart;
 
-    pProgress progress = Progress_new();
-
 #ifndef CREATE_MESHSIM_SOLID_FROM_FILE
 
     fprintf(stdout,"note: creating model from SV part.\n");
@@ -1039,12 +1059,12 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     } 
     if (!isAssembly) {
 
-      model = GM_createFromNativeModel(paramodel_,progress);
+      model = GM_createFromNativeModel(paramodel_,progress_);
 
     } else {
 
       pGAModel pGAM = NULL;
-      pGAM = GAM_createFromNativeModel(paramodel_,progress);
+      pGAM = GAM_createFromNativeModel(paramodel_,progress_);
       if (pGAM == NULL) {
         fprintf(stderr,"ERROR: Problem from GM_createFromNativeModel.\n");
         fflush(stderr);
@@ -1055,7 +1075,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
       fflush(stdout);
       // what is a connector?
       pMConnector connector = MC_new();
-      model = GM_createFromAssemblyModel (pGAM, connector, progress);
+      model = GM_createFromAssemblyModel (pGAM, connector, progress_);
 
     }
 
@@ -1089,13 +1109,13 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     sprintf(fnamesmd,"%s%s",fname,".smd");
     fprintf(stdout,"looking for gmodel (%s).\n",fnamesmd);
     pNativeModel simmetrix_native_model = NULL;
-    GM_load(fnamesmd,simmetrix_native_model,progress);
+    GM_load(fnamesmd,simmetrix_native_model,progress_);
     if (simmetrix_native_model == NULL) {
       fprintf(stderr,"ERROR: Problem from GM_load.\n");
       return CV_ERROR;
     }
     model = NULL;
-    model = GM_createFromNativeModel(simmetrix_native_model,progress);
+    model = GM_createFromNativeModel(simmetrix_native_model,progress_);
     if (model == NULL) {
       fprintf(stderr,"ERROR: Problem from GM_createFromNativeModel.\n");
       return CV_ERROR;
@@ -1104,21 +1124,21 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     /*
     int fileFormat = 0;
     pParasolidNativeModel paramodel_ = ParasolidNM_createFromFile(fname,fileFormat);
-    pGAModel pGAM = GAM_createFromNativeModel(paramodel_,progress);
+    pGAModel pGAM = GAM_createFromNativeModel(paramodel_,progress_);
    // what is a connector?  pass in NULL for now..
-    model = GM_createFromAssemblyModel (pGAM, NULL, progress); 
+    model = GM_createFromAssemblyModel (pGAM, NULL, progress_); 
     NM_release(paramodel_);
     */
 
 #endif
 
-    Progress_delete(progress);
     fprintf(stdout,"attach case.\n");
     fflush(stdout);
     case_ = NULL;
-    case_ = AMAN_newCase(manager_,"case name", "info type", model);
+    case_ = MS_newMeshCase(model);
+    
     if (case_ == NULL) {
-      fprintf(stderr,"ERROR: Problem from AMAN_newCase.\n");
+      fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
       fflush(stderr);
       return CV_ERROR;
     }
@@ -1140,8 +1160,23 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 
     model = discreteModel_->geom_;
 
-    case_ = AMAN_newCase(manager_,"case name", "info type", model);
+    fprintf(stdout,"attach case to model (%p).\n",model);
+    fflush(stdout);
 
+    if (model == NULL) {
+      fprintf(stderr,"ERROR: Problem with model.\n");
+      fflush(stderr);
+      return CV_ERROR;
+    }
+
+    case_ = NULL;
+    case_ = MS_newMeshCase(model);
+    if (case_ == NULL) {
+      fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
+      fflush(stderr);
+      return CV_ERROR;
+    }
+    
     solidFileName_[0] = '\0';
     sprintf(solidFileName_,"%s",filename);
 #else
@@ -1169,25 +1204,19 @@ int cvMeshSimMeshObject::LoadMesh(char *filename,char *surfilename) {
   // create an empty mesh object if it doesn't already exist
   if (mesh == NULL) {
     NewMesh();
-  } 
-
-  pProgress progress = Progress_new();
+  }
 
   try {
-    mesh = M_load(filename, model,progress);
+    mesh = M_load(filename, model,progress_);
   } catch (pSimError err) {
     fprintf(stderr,"Simmetrix error caught:\n");
     fprintf(stderr,"  Error code: %d\n",SimError_code(err));
     fprintf(stderr,"  Error string: %s\n",SimError_toString(err));
-    Progress_delete(progress);
     return CV_ERROR;
   } catch (...) {
     fprintf(stderr,"Unhandled exception caught\n");
-    Progress_delete(progress);
     return CV_ERROR;
   }
-  
-  Progress_delete(progress);
 
   meshFileName_[0] = '\0';
   sprintf(meshFileName_,"%s",filename);
@@ -1213,7 +1242,7 @@ int cvMeshSimMeshObject::NewMesh() {
   int reptype = 0;
 
   mesh = M_new(reptype, model);
-  case_ = AMAN_newCase(manager_,"case name", "info type", model);
+
   // need to prevent update method from trying to
   // read a mesh file if you are creating one!
   meshloaded_ = 1;
@@ -1269,21 +1298,35 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
  */
 
 int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *values) {
+
   // must have created mesh
   if (mesh == NULL) {
     return CV_ERROR;
   }
 
-	fprintf(stderr,"Flag: %s\n  NumVals:  %d\n  Val:  %.2f\n",flags,numValues,values[0]);
+  if (model == NULL) {
+    return CV_ERROR;
+  }
+
+  pModelItem modelDomain = NULL;
+  modelDomain = GM_domain(model);
+  if (modelDomain == NULL) {
+    return CV_ERROR;
+  }
+    
+  fprintf(stderr,"Flag: %s\n  NumVals:  %d\n  Val:  %.2f\n",flags,numValues,values[0]);
+  
   if (!strncmp(flags,"SurfaceMeshFlag",15)) {    //Surface flag, on or off
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.surface=(int)values[0];
+      fprintf(stdout,"\t%s %i\n","meshoptions_.surface",meshoptions_.surface);
   }
   else if (!strncmp(flags,"VolumeMeshFlag",14)) {    //Volume flag, on or off
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.volume=(int)values[0];
+      fprintf(stdout,"\t%s %i\n","meshoptions_.volume",meshoptions_.volume);
   }
    else if (!strncmp(flags,"GlobalEdgeSize",14)) {    //Global edge size, type, size
       if (numValues < 2)
@@ -1293,8 +1336,10 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
       }
       meshoptions_.gsize_type=values[0];
       meshoptions_.gsize=values[1];
-      // old api 5.4: MS_setGlobalMeshSize(mesh,type,gsize);
-      MS_setMeshSize(case_,GM_domain(model),values[0],values[1],NULL);
+      MS_setMeshSize(case_,modelDomain,meshoptions_.gsize_type,meshoptions_.gsize,NULL);
+
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.gsize_type",meshoptions_.gsize_type);
+      fprintf(stdout,"\t%s %lf\n"," meshoptions_.gsize",meshoptions_.gsize);
   }
   else if (!strncmp(flags,"LocalEdgeSize",13)) {    //Local edge size, surface id, type, size
       if (numValues < 3)
@@ -1316,7 +1361,10 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
       }
       meshoptions_.gcurv_type=values[0];
       meshoptions_.gcurv=values[1];
-      MS_setMeshSize(case_,GM_domain(model),values[0],values[1],NULL);
+      MS_setMeshSize(case_,modelDomain,meshoptions_.gcurv_type, meshoptions_.gcurv,NULL);
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.gcurv_type",meshoptions_.gcurv_type);
+      fprintf(stdout,"\t%s %lf\n"," meshoptions_.gcurv",meshoptions_.gcurv);
+      
   }
   else if(!strncmp(flags,"LocalCurvature",14)) {  //Local Curv, surface id, type, gcurv value
       if (numValues < 3)
@@ -1338,7 +1386,9 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
       }
       meshoptions_.gmincurv_type=values[0];
       meshoptions_.gmincurv=values[1];
-      MS_setMinCurvSize(case_,GM_domain(model),values[0],values[1]);
+      MS_setMinCurvSize(case_,modelDomain,meshoptions_.gmincurv_type,meshoptions_.gmincurv);
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.gmincurv_type",meshoptions_.gcurv_type);
+      fprintf(stdout,"\t%s %lf\n"," meshoptions_.gmincurv",meshoptions_.gcurv);
   }
   else if(!strncmp(flags,"LocalCurvatureMin",17)) {  //Local Curv Min, surface id, type, gcurv min value
       if (numValues < 3)
@@ -1359,6 +1409,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       meshoptions_.surface_optimization = values[0];
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.surface_optimization",meshoptions_.surface_optimization);  
   }
   else if(!strncmp(flags,"VolumeOptimization",18)) {  //Set Volume Optimization
       if (numValues < 1)
@@ -1367,22 +1418,25 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       meshoptions_.volume_optimization = values[0];
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.volume_optimization",meshoptions_.volume_optimization);      
   }
-  else if(!strncmp(flags,"SurfaceSmoothing",19)) {  //Set Surface Optimization
+  else if(!strncmp(flags,"SurfaceSmoothing",16)) {  //Set Surface Optimization
       if (numValues < 1)
       {
 	fprintf(stderr,"Must give optimization level value\n");
 	return CV_ERROR;
       }
       meshoptions_.surface_smoothing = values[0];
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.surface_smoothing",meshoptions_.surface_smoothing);  
   }
-  else if(!strncmp(flags,"VolumeSmoothing",18)) {  //Set Volume Optimization
+  else if(!strncmp(flags,"VolumeSmoothing",15)) {  //Set Volume Optimization
       if (numValues < 1)
       {
 	fprintf(stderr,"Must give optimization level value\n");
 	return CV_ERROR;
       }
       meshoptions_.volume_smoothing = values[0];
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.volume_smoothing",meshoptions_.volume_smoothing);  
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1392,41 +1446,57 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 }
 
 int cvMeshSimMeshObject::GenerateMesh() {
+
   // must have created mesh
   if (mesh == NULL) {
+    fprintf(stderr,"ERROR: mesh object doesn't exist!\n");
+    return CV_ERROR;
+  }
+
+  fprintf(stdout,"Checking validity of geometric model...\n");
+  if (!GM_isValid(model,1,NULL)) {
+    fprintf(stderr,"ERROR: model is invalid!\n");
+    fflush(stderr);
     return CV_ERROR;
   }
 
   try {
 
     // create the meshing processes and run
-
-    pProgress progress = Progress_new();
-
+    
     // create surface mesh
     pSurfaceMesher surfaceMesher = SurfaceMesher_new(case_,mesh);
 
     SurfaceMesher_setOptimization(surfaceMesher,meshoptions_.surface_optimization);
     SurfaceMesher_setSmoothing(surfaceMesher,meshoptions_.surface_smoothing);
 
+    fflush(stderr);
+
+    fprintf(stdout,"%s%i%s","SurfaceMesher_setOptimization(surfaceMesher,",meshoptions_.surface_optimization,")\n");
+    fprintf(stdout,"%s%i%s","SurfaceMesher_setSmoothing(surfaceMesher,",meshoptions_.surface_smoothing,")\n");
+    fflush(stdout);
+        
     // create it
-    SurfaceMesher_execute(surfaceMesher,progress);
-
-    Progress_delete(progress);
-
-    progress = Progress_new();
-
+    fprintf(stdout,"Creating surface mesh...\n");
+    fflush(stdout);
+    SurfaceMesher_execute(surfaceMesher,progress_);
+  
     pVolumeMesher volumeMesher = VolumeMesher_new(case_,mesh);
-
+       
     // specify options
     VolumeMesher_setOptimization(volumeMesher,meshoptions_.volume_optimization);
     VolumeMesher_setSmoothing(volumeMesher,meshoptions_.volume_smoothing);
 
+    fflush(stderr);
+    fprintf(stdout,"%s%i%s","VolumeMesher_setOptimization(volumeMesher,",meshoptions_.volume_optimization,")\n");
+    fprintf(stdout,"%s%i%s","VolumeMesher_setSmoothing(volumeMesher,",meshoptions_.volume_smoothing,")\n");
+    
     // create it
-    VolumeMesher_execute(volumeMesher,progress); 
+    fprintf(stdout,"Creating volume mesh...\n");
+    fflush(stdout);
+    VolumeMesher_execute(volumeMesher,progress_); 
 
     // clean up
-    Progress_delete(progress);
     SurfaceMesher_delete(surfaceMesher);
     VolumeMesher_delete(volumeMesher);
 
@@ -1438,14 +1508,10 @@ int cvMeshSimMeshObject::GenerateMesh() {
     // undocumented simmetrix call (ver 6.3)
     //fix4NodesOnSurface(mesh);
 
-    progress = Progress_new();
-
     // takes case of bad brdy. elements (elements with no interior nodes)
     // is this the replacement for 7+?
     int dimfilter = 12;
-    MS_ensureInteriorVertices(mesh,dimfilter,progress);
-
-    Progress_delete(progress);
+    MS_ensureInteriorVertices(mesh,dimfilter,progress_);
 
     InitTraversal();
 
@@ -1469,23 +1535,17 @@ int cvMeshSimMeshObject::WriteMesh(char *filename, int smsver) {
     return CV_ERROR;
   }
 
-  pProgress progress = Progress_new();
-
   try {
-    M_write(mesh,filename,smsver,progress);
+    M_write(mesh,filename,smsver,progress_);
   } catch (pSimError err) {
     fprintf(stderr,"Simmetrix error caught:\n");
     fprintf(stderr,"  Error code: %d\n",SimError_code(err));
     fprintf(stderr,"  Error string: %s\n",SimError_toString(err));
-    Progress_delete(progress);
     return CV_ERROR;
   } catch (...) {
     fprintf(stderr,"Unhandled exception caught\n");
-    Progress_delete(progress);
     return CV_ERROR;
   }
-  
-  Progress_delete(progress);
 
   meshFileName_[0] = '\0';
   sprintf(meshFileName_,"%s",filename);
@@ -1895,19 +1955,14 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
 int cvMeshSimMeshObject::Adapt()
 { 
 #ifdef USE_MESHSIM_ADAPTOR
-  pProgress progressAdapt = Progress_new();
 
-  MSA_adapt(simAdapter, progressAdapt);
+  MSA_adapt(simAdapter, progress_);
 
-  Progress_delete(progressAdapt);
-
-  pProgress progressFix = Progress_new();
   // 7.0+ version
   // takes case of bad brdy. elements (elements with no interior nodes)
   // is this the replacement for 7+?
   int dimfilter = 12;
-  MS_ensureInteriorVertices(mesh,dimfilter,progressFix);
-  Progress_delete(progressFix);
+  MS_ensureInteriorVertices(mesh,dimfilter,progress_);
 
   printf("-- Adaptation Done...\n");
   printf(" Total # of elements: %d\n", M_numRegions(mesh));

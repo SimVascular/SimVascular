@@ -68,6 +68,7 @@ ifneq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+`cygpath -u $(MESHSIM_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
 # leave intel compilers blank for now on windows
@@ -86,6 +87,7 @@ else
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+$(MESHSIM_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript

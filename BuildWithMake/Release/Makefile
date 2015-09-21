@@ -89,6 +89,9 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
+ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+	-cp -f $(MESHSIM_SO_PATH)/Sim*.dll package-release-meshsim-and-parasolid
+endif
 	-cp -fR $(TCL_BASE)/lib package-release-meshsim-and-parasolid
 	-cp -fR $(TCL_BASE)/bin package-release-meshsim-and-parasolid
 	-cp -fR $(TCL_BASE)/bin/*.$(SOEXT)* package-release-meshsim-and-parasolid
@@ -303,6 +306,9 @@ taritup-meshsim-and-parasolid:
 ifeq ($(MAKE_WITH_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
+endif
+ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+	-cp -f $(MESHSIM_SO_PATH)/*.$(SOEXT)* package-release-meshsim-and-parasolid
 endif
 	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
 	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar

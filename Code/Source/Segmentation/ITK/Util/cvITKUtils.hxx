@@ -519,6 +519,7 @@ void vtk2itkBinaryImageToSeedImage(vtkStructuredPoints* vtkImg,
 	initialContour->Update();
 
 	if(TImageType::ImageDimension == 2){
+#ifdef USE_QUICKVIEW_DEBUG
 		if(Debug){
 			QuickView viewer;
 			bool flip = false;
@@ -531,6 +532,7 @@ void vtk2itkBinaryImageToSeedImage(vtkStructuredPoints* vtkImg,
 					"initialContour");
 			viewer.Visualize();
 		}
+#endif
 	}
 
 

@@ -2,9 +2,9 @@ ifeq ($(CLUSTER), x64_linux)
     MESHSIM_TOP      = $(LICENSED_SOFTWARE_TOPLEVEL)/meshsim-9.0-150704
     MESHSIM_INCDIR   = -I$(MESHSIM_TOP)/include
     MESHSIM_LIBDIR   = $(MESHSIM_TOP)/lib/x64_rhel6_gcc44
-    MESHSIM_DEFS     = -DSimDeprecated70
     MESHSIM_LIBS     = -L$(MESHSIM_LIBDIR) \
-                       -lSimAdvMeshing -lSimMeshing -lSimMeshTools 
+                       -lSimAdvMeshing -lSimMeshing -lSimMeshTools
+    MESHSIM_SO_PATH  = $(MESHSIM_LIBDIR)
     ifeq ($(MESHSIM_MODELER),parasolid)
       MESHSIM_LIBS   := $(MESHSIM_LIBS) -lSimParasolid260
     endif 

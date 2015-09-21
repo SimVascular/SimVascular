@@ -156,6 +156,8 @@ private:
    // quad flag is mostly meaningless in this class
    int quadElem_;
 
+   pProgress progress_;
+
   // Private geom pointer:
 
 
