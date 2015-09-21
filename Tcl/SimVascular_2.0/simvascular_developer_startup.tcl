@@ -91,20 +91,20 @@ if {$SIMVASCULAR_RELEASE_BUILD == 0} {
 
 # load packages if dynamically build
 if {$tcl_platform(platform) == "unix"} {
+    catch {load lib_simvascular_parasolid.so  Parasolidsolid}
     catch {load lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid} 
     catch {load lib_simvascular_meshsim_mesh.so Meshsimmesh}
-    catch {load lib_simvascular_parasolid.so  Parasolidsolid}
     catch {load lib_simvascular_meshsim_adaptor.so  Meshsimadapt}
 }
 if {$tcl_platform(platform) == "windows"} {
-    if [catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg] {
-	puts "meshsim_mesh dll: $msg"
-    }
     if [catch {load lib_simvascular_parasolid.dll Parasolidsolid} msg] {
 	puts "simvascular_parasolid dll: $msg"
     }
     if [catch {load lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid} msg] {
         puts "simvascular meshsim discrete dll: $msg"
+    }
+    if [catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg] {
+	puts "meshsim_mesh dll: $msg"
     }
     if [catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg] {
 	puts "simvascular meshsim adaptor dll: $msg"
