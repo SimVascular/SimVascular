@@ -86,7 +86,7 @@ cvMeshSimAdapt::cvMeshSimAdapt()
 
   sol_ = NULL;
   hessians_ = NULL;
-  ybar_ = NULL;
+  avgspeed_ = NULL;
   errormetric_ = NULL;
 }
 
@@ -114,8 +114,8 @@ cvMeshSimAdapt::~cvMeshSimAdapt()
 
   if (sol_ != NULL)
     delete [] sol_;
-  if (ybar_ != NULL)
-    delete [] ybar_;
+  if (avgspeed_ != NULL)
+    delete [] avgspeed_;
   if (hessians_ != NULL)
     delete [] hessians_;
   if (errormetric_ != NULL)
@@ -337,9 +337,9 @@ int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
 }
 
 // ---------------
-//  LoadYbar
+//  LoadAvgSpeed
 // ---------------
-int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
+int cvMeshSimAdapt::LoadAvgSpeedFromFile(char *fileName)
 {
   if (!AdaptUtils_file_exists(fileName))
   {
@@ -347,15 +347,17 @@ int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
     return CV_ERROR;
   }
 
-  if (ybar_ != NULL)
-    delete [] ybar_;
+  if (avgspeed_ != NULL)
+    delete [] avgspeed_;
+  char avgspeed_step[80];
+  sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
 
-  AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_);
+  AdaptUtils_readArrayFromFile(fileName,avgspeed_step,avgspeed_);
 
   if (inmesh_ != NULL)
   {
-    int nVar = 5; //Number of variables in ybar
-    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    int nVar = 1; //Number of variables in average speed
+    if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != CV_OK)
     {
       fprintf(stderr,"Error: Error when attaching error to mesh\n");
       return CV_ERROR;
@@ -383,7 +385,7 @@ int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
 
   if (inmesh_ != NULL)
   {
-    int nVar = 5; //Number of variables in ybar
+    int nVar = 5; //Number of variables in hessian
     if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",nVar,options.poly_) != CV_OK)
     {
       fprintf(stderr,"Error: Error when attaching error to mesh\n");
@@ -417,9 +419,9 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
 }
 
 // ---------------
-//  ReadYbar
+//  ReadAvgSpeed
 // ---------------
-int cvMeshSimAdapt::ReadYbarFromMesh()
+int cvMeshSimAdapt::ReadAvgSpeedFromMesh()
 {
   if (inmesh_ == NULL)
   {
@@ -427,27 +429,27 @@ int cvMeshSimAdapt::ReadYbarFromMesh()
     return CV_ERROR;
   }
 
-  if (ybar_ != NULL)
-    delete [] ybar_;
-  char ybar_step[80];
-  sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
-  if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != CV_OK)
+  if (avgspeed_ != NULL)
+    delete [] avgspeed_;
+  char avgspeed_step[80];
+  sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
+  if (AdaptUtils_checkArrayExists(inmesh_,0,avgspeed_step) != CV_OK)
     return CV_ERROR;
 
-  int nVar = 5; //Number of variables in ybar
-  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,ybar_step,nVar,
+  int nVar = 1; //Number of variables in average speed
+  if (AdaptUtils_getAttachedArray(avgspeed_,inmesh_,avgspeed_step,nVar,
 	options.poly_) != CV_OK)
   {
-    fprintf(stderr,"Error when retrieving ybar array on mesh\n");
+    fprintf(stderr,"Error when retrieving average speed array on mesh\n");
     return CV_ERROR;
   }
 
   if (inmesh_ != NULL)
   {
-    int nVar = 5; //Number of variables in ybar
-    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    int nVar = 1; //Number of variables in average speed
+    if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != CV_OK)
     {
-      fprintf(stderr,"Error: Error when attaching error to mesh\n");
+      fprintf(stderr,"Error: Error when attaching average speed to mesh\n");
       return CV_ERROR;
     }
   }
@@ -538,22 +540,22 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
   //Options 1,2, and 3 all use the hessian as adaption metric!
   //Option 4 uses an attached array to the input mesh
   switch(options.metric_option_) {
-  case 1 : //Read ybar from solution file (restart), and then calculate hessian using VTK classes!
-  case 2 : //Read ybar from vtu mesh, and then calculate hessian using VTK classes!
+  case 1 : //Read average speed from solution file (restart), and then calculate hessian using VTK classes!
+  case 2 : //Read average speed from vtu mesh, and then calculate hessian using VTK classes!
   case 3 : {  //Read solution from mesh and calculate average solution. Then calculate hessian
       if (options.metric_option_ == 1)
       {
-	if (ybar_ == NULL)
+	if (avgspeed_ == NULL)
 	{
 	  if (input == NULL)
 	    return CV_ERROR;
-	  if (this->LoadYbarFromFile(input) != CV_OK)
+	  if (this->LoadAvgSpeedFromFile(input) != CV_OK)
 	    return CV_ERROR;
 	}
       }
       else if (options.metric_option_ == 2)
       {
-	if (this->ReadYbarFromMesh() != CV_OK)
+	if (this->ReadAvgSpeedFromMesh() != CV_OK)
 	  return CV_ERROR;
       }
       else if (options.metric_option_ == 3)
@@ -608,12 +610,10 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
   default : {
       cout<<"Valid metric option not given!"<<endl;
       cout<<"\nSpecify a correct (adaptation) option (1-4):"<<endl;
-      cout<<"\n1: Read Ybar from file and then calculate hessian from";
-      cout<<"	ybar component 5 (avg. magnitude of velocity over entire"; 
-      cout<<" simulation)"<<endl;
-      cout<<"2: Read Ybar from vtu mesh and then calculate hessian from ";
-      cout<<"ybar component 5 (avg. magnitude of velocity over entire"; 
-      cout<<" simulation)"<<endl; 
+      cout<<"\n1: Read average speed from file and then calculate hessian from";
+      cout<<"	speed"<<endl; 
+      cout<<"2: Read average speed from vtu mesh and then calculate hessian from ";
+      cout<<"speed"<<endl; 
       cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
       cout<<" velocity over specified timestep range. Must provide"; 
       cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
@@ -846,7 +846,7 @@ int cvMeshSimAdapt::WriteAdaptedSolution(char *fileName)
   if (sol_ != NULL)
     delete [] sol_;
 
-  int nVar = 5; //Number of variables in ybar
+  int nVar = 5; //Number of variables in solution
   if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
 	options.poly_) != CV_OK)
   {
