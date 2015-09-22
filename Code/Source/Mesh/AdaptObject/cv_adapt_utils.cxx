@@ -725,11 +725,11 @@ int AdaptUtils_hessiansFromSolution(vtkUnstructuredGrid *mesh)
   //nodalgradientID  =  MD_newMeshDataId( "gradient");
   //nodalhessianID  =  MD_newMeshDataId( "hessian");
   
-  if (AdaptUtils_splitSpeedFromYbar(mesh) != CV_OK)
-  {
-    fprintf(stderr,"Error in setting getting speed array\n");
-    return CV_ERROR;
-  }
+  //if (AdaptUtils_splitSpeedFromYbar(mesh) != CV_OK)
+  //{
+  //  fprintf(stderr,"Error in setting getting speed array\n");
+  //  return CV_ERROR;
+  //}
   // recover gradients from vtk filter
   // attaches gradient to vertices
   // gradient attached via nodalgradientID

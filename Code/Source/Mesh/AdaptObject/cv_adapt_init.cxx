@@ -79,13 +79,13 @@ static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );    
 static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );        
-static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *interp,
+static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );        
 static int cvAdapt_LoadHessianFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_ReadSolutionFromMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
-static int cvAdapt_ReadYbarFromMeshMtd( ClientData clientData, Tcl_Interp *interp,
+static int cvAdapt_ReadAvgSpeedFromMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
@@ -271,8 +271,8 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     if ( cvAdapt_LoadSolutionFromFileMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
-  } else if ( Tcl_StringMatch( argv[1], "LoadYbarFromFile" ) ) {
-    if ( cvAdapt_LoadYbarFromFileMtd( clientData, interp, argc, argv ) != TCL_OK ) {
+  } else if ( Tcl_StringMatch( argv[1], "LoadAvgSpeedFromFile" ) ) {
+    if ( cvAdapt_LoadAvgSpeedFromFileMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "LoadHessianFromFile" ) ) {
@@ -283,8 +283,8 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     if ( cvAdapt_ReadSolutionFromMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
-  } else if ( Tcl_StringMatch( argv[1], "ReadYbarFromMesh" ) ) {
-    if ( cvAdapt_ReadYbarFromMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
+  } else if ( Tcl_StringMatch( argv[1], "ReadAvgSpeedFromMesh" ) ) {
+    if ( cvAdapt_ReadAvgSpeedFromMeshMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
   } else if ( Tcl_StringMatch( argv[1], "SetAdaptOptions" ) ) {
@@ -366,10 +366,10 @@ static void gdscAdaptPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "LoadModel\n");
   tcl_printstr(interp, "LoadMesh\n");
   tcl_printstr(interp, "LoadSolutionFromFile\n");
-  tcl_printstr(interp, "LoadYbarFromFile\n");
+  tcl_printstr(interp, "LoadAvgSpeedFromFile\n");
   tcl_printstr(interp, "LoadHessianFromFile\n");
   tcl_printstr(interp, "ReadSolutionFromMesh\n");
-  tcl_printstr(interp, "ReadYbarFromMesh\n");
+  tcl_printstr(interp, "ReadAvgSpeedFromMesh\n");
   tcl_printstr(interp, "SetAdaptOptions\n");
   tcl_printstr(interp, "CheckOptions\n");
   tcl_printstr(interp, "SetMetric\n");
@@ -551,9 +551,9 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
 }
 
 // ----------------
-// cvAdapt_LoadYbarFromFileMtd
+// cvAdapt_LoadAvgSpeedFromFileMtd
 // ----------------
-static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *interp,
+static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )        
 {
   char *fileName = NULL;
@@ -582,9 +582,9 @@ static int cvAdapt_LoadYbarFromFileMtd( ClientData clientData, Tcl_Interp *inter
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadYbarFromFile(fileName) != CV_OK)
+  if (geom->LoadAvgSpeedFromFile(fileName) != CV_OK)
   {
-    fprintf(stderr,"Error in loading of ybar\n");
+    fprintf(stderr,"Error in loading of average speed\n");
     return TCL_ERROR;
   }
 
@@ -649,14 +649,14 @@ static int cvAdapt_ReadSolutionFromMeshMtd( ClientData clientData, Tcl_Interp *i
 }
 
 // ----------------
-// cvAdapt_ReadYbarFromMeshMtd
+// cvAdapt_ReadAvgSpeedFromMeshMtd
 // ----------------
-static int cvAdapt_ReadYbarFromMeshMtd( ClientData clientData, Tcl_Interp *interp,
+static int cvAdapt_ReadAvgSpeedFromMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] )
 {
   cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
-  if (geom->ReadYbarFromMesh() == CV_OK) {
+  if (geom->ReadAvgSpeedFromMesh() == CV_OK) {
     return TCL_OK;
   } else {
     return TCL_ERROR;

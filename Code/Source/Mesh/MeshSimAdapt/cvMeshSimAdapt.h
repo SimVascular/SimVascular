@@ -103,10 +103,10 @@ public:
   int LoadModel(char *fileName);
   int LoadMesh(char *fileName);
   int LoadSolutionFromFile(char *fileName);
-  int LoadYbarFromFile(char *fileName);
+  int LoadAvgSpeedFromFile(char *fileName);
   int LoadHessianFromFile(char *fileName);
   int ReadSolutionFromMesh();
-  int ReadYbarFromMesh();
+  int ReadAvgSpeedFromMesh();
 
   //Setup Operations
   int SetAdaptOptions(char *flag,double value);
@@ -136,7 +136,7 @@ private:
   vtkPolyData *outsurface_mesh_;
 
   double *sol_;
-  double *ybar_;
+  double *avgspeed_;
   double *hessians_;
   double *errormetric_;
 
