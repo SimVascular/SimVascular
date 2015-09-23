@@ -34761,13 +34761,11 @@ proc guiPPsmoothSmoothPath {} {
 
   if { [string trim $targetID] == "" } {
     set answer [tk_messageBox -title "No New ID Specified"  -type yesno -message "You did not specify a new Path ID. Do you wish to overwrite the Path ID: $pathId? This cannot be undone."]
+    switch -- $answer {
+      no return
+      yes {set targetID $pathId}
+    }
   }
-
-  switch -- $answer {
-    no return
-    yes {set targetID $pathId}
-  }
-
 
   # create a list of points from the current path
   set pts {}
