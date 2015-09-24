@@ -72,7 +72,7 @@ macro(simvascular_external _pkg)
 
 	set(options OPTIONAL VERSION_EXACT 
 		DOWNLOADABLE SYSTEM_DEFAULT 
-		SVEXTERN_CONFIG ADD_INSTALL SHARED_LIB
+		SVEXTERN_CONFIG ADD_INSTALL SHARED_LIB NO_MODULE
 		) 
 	set(oneValueArgs VERSION)
 	set(multiValueArgs PATHS HINTS COMPONENTS)
@@ -84,6 +84,9 @@ macro(simvascular_external _pkg)
 	set(EXTRA_ARGS)
 	if(simvascular_external_COMPONENTS)
 		set(EXTRA_ARGS COMPONENTS ${simvascular_external_COMPONENTS})
+	endif()
+	if(simvascular_external_NO_MODULE)
+		set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
 	endif()
 	#message("EXTRA_ARGS: ${EXTRA_ARGS}")
 	set(${_upper}_VERSION ${simvascular_external_VERSION})
@@ -191,7 +194,7 @@ macro(simvascular_third_party _pkg)
 	set(options OPTIONAL VERSION_EXACT 
 		DOWNLOADABLE SYSTEM_DEFAULT 
 		SVEXTERN_CONFIG ADD_INSTALL
-		) 
+		)
 	set(oneValueArgs VERSION)
 	set(multiValueArgs PATHS HINTS COMPONENTS)
 	

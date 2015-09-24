@@ -172,9 +172,11 @@ endif()
 option(SimVascular_USE_ZLIB "Use ZLib" ON)
 option(SimVascular_USE_MPICH2 "Use MPICH2" ON)
 option(SimVascular_USE_DUMMY_MPICH2 "Use Dummy MPICH2" OFF)
+option(SimVascular_USE_MSMPI "Use MSMPI" OFF)
 mark_as_superbuild(SimVascular_USE_ZLIB)
 mark_as_superbuild(SimVascular_USE_MPICH2)
 mark_as_superbuild(SimVascular_USE_DUMMY_MPICH2)
+mark_as_superbuild(SimVascular_USE_MSMPI)
 
 option(SimVascular_USE_GLIB "Use GLIB Library" OFF)
 option(SimVascular_USE_GTS "Use GTS Library" OFF)
@@ -427,7 +429,9 @@ mark_as_superbuild(
 #-----------------------------------------------------------------------------
 # VTK
 set(SimVascular_DEPENDS "TCL")
-simvascular_external(VTK DOWNLOADABLE)
+simvascular_external(VTK DOWNLOADABLE 
+	COMPONENTS 
+	 vtkFiltersFlowPaths)
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -778,14 +782,24 @@ if(USE_MPI OR SimVascular_USE_MPI)
 			MPIEXEC
 			ALL_PROJECTS)
 
-		include_directories(${MPI_Fortran_INCLUDE_PATH})
+		# include_directories(${MPI_Fortran_INCLUDE_PATH})
 		if(SimVascular_DEVELOPER_OUTPUT)
 			#getListOfVarsPrefix("MPI" _VARLIST)
 			#print_vars(_VARLIST)
 		endif()
-
-		set(svMPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY})
-		set(svMPI_Fortran_LIBRARIES ${MPI_Fortran_LIBRARIES})
+		if(SimVascular_USE_MSMPI)
+			# TODO(jmerkow): Change this.
+			set(svMPI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/msmpi/")
+			set(svMPI_LIB_DIR  "${svMPI_DIR}/Lib/x64/")
+			set(svMPI_INCLUDE_PATH "${svMPI_DIR}/Include/;${svMPI_DIR}/Include/x64/")
+			set(svMPI_EXTRA_LIBRARY "")
+			set(svMPI_Fortran_LIBRARIES "${svMPI_LIB_DIR}/msmpi.lib;${svMPI_LIB_DIR}/msmpifmc.lib;${svMPI_LIB_DIR}/msmpifec.lib")
+		else()
+			set(svMPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY})
+			set(svMPI_Fortran_LIBRARIES ${MPI_Fortran_LIBRARIES})
+			set(svMPI_INCLUDE_PATH ${MPI_Fortran_INCLUDE_PATH})
+		endif()
+		include_directories(${svMPI_INCLUDE_PATH})
 	else()
 		set(svMPI_EXTRA_LIBRARY lib_extra_simvascular_dummympi)
 		set(svMPI_Fortran_LIBRARIES lib_fortran_simvascular_dummympi)
@@ -857,11 +871,30 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK Setup
+find_package(VTK COMPONENTS 
+	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk 
+	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
+	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
 include(${VTK_USE_FILE})
+# foreach( d ${VTK_LIBRARY_DIRS})
+# MESSAGE(" ${d}")
+# endforeach()
+
+# message("${VTK_REQUIRED_EXE_LINKER_FLAGS} | \n ${VTK_REQUIRED_CXX_FLAGS}\n ${VTK_REQUIRED_MODULE_LINKER_FLAGS}")
 
 # SV uses non stanard libraries, this adds them, also adds the intel libraries
-include(VTKSVConfig) 
-set(VTK_LIBRARIES ${VTK_LIBRARIES} ${VTK_EXTRA_LIBS})
+#include(VTKSVConfig) 
+file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*TCL*${CMAKE_STATIC_LIBRARY_SUFFIX}")
+file(GLOB_RECURSE vtk_new_libs2 RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*${CMAKE_STATIC_LIBRARY_SUFFIX}")
+list(APPEND vtk_new_libs ${vtk_new_libs2})
+string(REGEX REPLACE [a-z|A-Z]*/${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+if (CMAKE_STATIC_LIBRARY_PREFIX)
+	string(REGEX REPLACE ${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+endif()
+string(REGEX REPLACE "-[0-9]\\.*[0-9]\\${CMAKE_STATIC_LIBRARY_SUFFIX}" "" vtk_new_libs "${vtk_new_libs}")
+list(REMOVE_DUPLICATES vtk_new_libs)
+
+set(VTK_LIBRARIES ${VTK_LIBRARIES} ${vtk_new_libs})
 if(${VTK_DIR} MATCHES "intel")
 	#message(STATUS "VTK appears to be built with intel, adding libraries")
 	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
