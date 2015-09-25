@@ -82,7 +82,7 @@ int MeshSimAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 // Tetgenmesh_Init
 // ----------
 
-int MeshSimAdapt_Init( Tcl_Interp *interp )
+int Meshsimadapt_Init( Tcl_Interp *interp )
 {
 
   printf("  %-12s %s\n","","MeshSim Adaption Enabled");

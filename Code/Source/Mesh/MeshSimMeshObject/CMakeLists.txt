@@ -31,7 +31,11 @@ SET(lib lib_simvascular_meshsim_mesh)
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
 
-add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+if(MESHSIM_USE_SHARED_LIBRARIES)
+    add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+else()
+    add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+endif()
 
 if(Licensed_ADAPTOR)
     include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
@@ -39,20 +43,23 @@ endif()
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${ZLIB_LIBRARY} ${GLOBAL_LIBRARIES}
-			lib_simvascular_globals lib_simvascular_mesh 
-			lib_simvascular_utils lib_simvascular_sysgeom
-			lib_simvascular_repository lib_simvascular_solid
-			)
-		#MAKE SURE LIBS ARE SPLIT UP WITH COMPILE FLAGS ADPTOR
+			${PARASOLID_LIBRARIES}
+			${GLOBAL_LIBRARIES}
+			${MESHSIM_LIBRARIES}
+			lib_simvascular_globals #lib_simvascular_mesh 
+			lib_simvascular_utils)# lib_simvascular_sysgeom)
+			#lib_simvascular_repository 
+			#lib_simvascular_solid)
+if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+	target_link_libraries(${lib} lib_simvascular_discrete)
+endif()
 if(Licensed_PARASOLID)
     target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
-
+			
 if(Licensed_ADAPTOR)
-    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor
-			          lib_simvascular_solverio)
+    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor)
+	    #lib_simvascular_solverio)
 endif()
 
 
