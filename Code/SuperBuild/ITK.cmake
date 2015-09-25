@@ -45,8 +45,8 @@ endif()
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 
-  set(revision_tag "v4.5.0")
-  set(location_args GIT_REPOSITORY "${git_protocol}://itk.org/ITK.git"
+  set(revision_tag "v4.8.0")
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
     set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj} 
