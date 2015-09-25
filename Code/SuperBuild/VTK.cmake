@@ -74,11 +74,11 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
    ${${proj}_EP_ARGS}
-   GIT_REPOSITORY "${git_protocol}://github.com/Kitware/VTK.git"
+   GIT_REPOSITORY "https://github.com/SimVascular/VTK.git"
    PREFIX ${${proj}_OUTPUT_DIR}-PREFIX
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
-   GIT_TAG "v6.0.0"
+   GIT_TAG "simvascular-patch-6.2"
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
