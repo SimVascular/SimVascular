@@ -817,6 +817,13 @@ if(USE_MPI OR SimVascular_USE_MPI)
 endif()
 
 #-----------------------------------------------------------------------------
+# Set flags for shared libs
+if (PARASOLID_USE_SHARED_LIBRARIES OR MESHSIM_USE_SHARED_LIBRARIES)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+endif()
+
+#-----------------------------------------------------------------------------
 # Enable Testing
 option(BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
 mark_as_superbuild(VARS BUILD_TESTING)
