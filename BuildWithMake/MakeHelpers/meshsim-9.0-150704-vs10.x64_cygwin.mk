@@ -1,8 +1,12 @@
 ifeq ($(CLUSTER), x64_cygwin)
     MESHSIM_TOP      = $(LICENSED_SOFTWARE_TOPLEVEL)/meshsim-9.0-150704
     MESHSIM_INCDIR   = -I$(MESHSIM_TOP)/include
-    MESHSIM_LIBDIR   = $(MESHSIM_TOP)/lib/x64_win_vc10
-    MESHSIM_DEFS     = -DSimDeprecated70
+    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+      MESHSIM_LIBDIR   = $(MESHSIM_TOP)/lib/x64_win_vc10_shared
+    else
+      MESHSIM_LIBDIR   = $(MESHSIM_TOP)/lib/x64_win_vc10
+    endif
+    MESHSIM_SO_PATH  = $(MESHSIM_LIBDIR)
     MESHSIM_LIBS     = $(LIBPATH_COMPILER_FLAG)$(MESHSIM_LIBDIR) \
                        $(LIBFLAG)SimAdvMeshing$(LIBLINKEXT) \
                        $(LIBFLAG)SimMeshing$(LIBLINKEXT) \

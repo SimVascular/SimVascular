@@ -59,8 +59,13 @@ DLLHDRS = cv_discrete_init.h
 
 DLLSRCS = cv_discrete_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT) \
-          $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+DLLLIBS =
+
+ifeq ($(MAKE_WITH_VMTK),1)
+	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+endif
+
+DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS)
 
 TARGET_LIB_NAME = simvascular_meshsim_discrete
 

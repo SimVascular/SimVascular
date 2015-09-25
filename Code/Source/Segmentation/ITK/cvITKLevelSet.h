@@ -182,6 +182,7 @@ public:
 
 	}
 
+#ifdef USE_QUICKVIEW_DEBUG
 	//some debug stuff
 	void ViewITKFront()
 	{
@@ -195,7 +196,8 @@ public:
 		viewer.Visualize();
 
 	}
-
+#endif
+	
 	void WriteFrontImages()
 	{
 		std::stringstream filenameBase;

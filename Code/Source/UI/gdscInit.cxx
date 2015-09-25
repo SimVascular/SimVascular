@@ -278,7 +278,6 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 #endif
 
-
 #ifdef USE_DISCRETE_MODEL
 #ifndef USE_DISCRETE_MODEL_SHARED
   if ( Meshsimdiscretesolid_Init(interp) == TCL_ERROR ) {

@@ -79,7 +79,7 @@ int MeshSimAdapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
 // ----------
-// Tetgenmesh_Init
+// Meshsimadapt_Init
 // ----------
 
 int Meshsimadapt_Init( Tcl_Interp *interp )

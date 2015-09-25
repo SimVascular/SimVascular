@@ -45,9 +45,9 @@ HDRS	= cv_globals.h
 
 CXXSRCS	= cv_globals.cxx
 
-DLLHDRS =
+DLLHDRS = 
 
-DLLSRCS = 
+DLLSRCS =
 
 TARGET_LIB_NAME = simvascular_globals
 

@@ -63,7 +63,9 @@
 #include "vtkImageData.h"
 #include "vtkPolyData.h"
 
+#ifdef USE_QUICKVIEW_DEBUG
 #include "QuickView.h"
+#endif
 
 #include "itkImageFileWriter.h"
 #include "vtkTIFFWriter.h"
