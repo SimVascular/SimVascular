@@ -43,6 +43,8 @@ cvMeshSimDiscreteSolidModel::cvMeshSimDiscreteSolidModel()
 {
   geom_ = NULL;
   quadElem_ = 0;
+  progress_ = Progress_new();
+  Progress_setDefaultCallback(progress_);
 }
 
 
@@ -57,6 +59,7 @@ cvMeshSimDiscreteSolidModel::~cvMeshSimDiscreteSolidModel()
       SimDiscrete_stop(0);
       SimDiscrete_start(0);
   }
+  if (progress_ != NULL) Progress_delete(progress_);
 }
 
 
@@ -314,9 +317,7 @@ int cvMeshSimDiscreteSolidModel::ReadNative( char *filename )
   }
 
   // read discrete model
-  pProgress progressDM = Progress_new();
-  geom_ = DM_load(filename, progressDM);
-  Progress_delete(progressDM);
+  geom_ = DM_load(filename, progress_);
 
   return CV_OK;
 }
@@ -330,9 +331,7 @@ int cvMeshSimDiscreteSolidModel::WriteNative( int file_version, char *filename )
 {
   if ( geom_ == NULL ) return CV_ERROR;
 
-  pProgress progressDM = Progress_new();
-  DM_write(geom_,filename,file_version,progressDM);
-  Progress_delete(progressDM);
+  DM_write(geom_,filename,file_version,progress_);
 
   return CV_OK;
 

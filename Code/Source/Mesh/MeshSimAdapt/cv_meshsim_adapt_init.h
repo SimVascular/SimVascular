@@ -46,6 +46,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int MeshSimAdapt_Init( Tcl_Interp *interp );
+extern "C" CV_DLL_EXPORT int Meshsimadapt_Init( Tcl_Interp *interp );
 
 #endif // __CVMESHSIMADAPT_INIT_H

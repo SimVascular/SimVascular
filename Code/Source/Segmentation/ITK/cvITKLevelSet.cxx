@@ -315,6 +315,8 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 	m_vtkFrontPolyData = contour->GetOutput();
 
 
+#ifdef USE_QUICKVIEW_DEBUG
+	
 	//We're done, but there is some debug info I might want
 	if(this->GetDebug())
 		std::cout << "NumPts " << contour->GetOutput()->GetNumberOfPoints() <<std::endl;
@@ -384,6 +386,9 @@ int cvITKLevelSet::ComputeGACLevelSet(float expFactorRising)
 				"VascOneLevelSet Output");
 		viewer.Visualize();
 	}
+
+#endif
+	
 	return TCL_OK;
 
 
@@ -478,6 +483,7 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc,
 	m_vtkFrontPolyData = contour->GetOutput();
 
 
+#ifdef USE_QUICKVIEW_DEBUG
 	//We're done, but there is some debug info I might want
 	if(this->GetDebug())
 		std::cout << "NumPts " << contour->GetOutput()->GetNumberOfPoints() <<std::endl;
@@ -546,7 +552,8 @@ int cvITKLevelSet::ComputePhaseOneLevelSet(float kc,
 				"VascOneLevelSet Output");
 		viewer.Visualize();
 	}
-
+#endif
+	
 	return TCL_OK;
 }
 int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
@@ -622,7 +629,7 @@ int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
 	contour->Update();
 	m_vtkFrontPolyData = contour->GetOutput();
 
-
+#ifdef USE_QUICKVIEW_DEBUG
 	//We're done, but there is some debug info I might want
 	if(this->GetDebug())
 		std::cout << "NumPts " << contour->GetOutput()->GetNumberOfPoints() <<std::endl;
@@ -693,6 +700,8 @@ int cvITKLevelSet::ComputePhaseTwoLevelSet(float kupp,float klow)
 				"VascOneLevelSet Output");
 		viewer.Visualize();
 	}
+#endif
+	
 	return TCL_OK;
 
 

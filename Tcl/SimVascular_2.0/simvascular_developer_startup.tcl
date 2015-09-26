@@ -90,6 +90,40 @@ if {$SIMVASCULAR_RELEASE_BUILD == 0} {
 }
 
 # load packages if dynamically build
-catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_mesh.dll Meshsimmesh}
-catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_parasolid.dll Parasolidsolid}
-catch {load $env(SIMVASCULAR_HOME)/BuildWithMake/Lib/lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid}
+if {$tcl_platform(platform) == "unix"} {
+  if {$tcl_platform(os) == "Darwin"} {
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.dylib Parasolidsolid} msg]} {
+	puts "liblib_simvascular_parasolid shared dylib: $msg"
+    }
+  } 
+  
+  if {$tcl_platform(os) == "Linux"} {
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.so  Parasolidsolid} msg]} {
+	puts "liblib_simvascular_parasolid shared object: $msg"
+    }
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_discrete.so Meshsimdiscretesolid} msg]} {
+        puts "liblib_simvascular meshsim discrete shared object: $msg"
+    }
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_meshsim_mesh.so Meshsimmesh} msg]} {
+	puts "liblib_meshsim_mesh shared object: $msg"
+    }
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_meshsim_adaptor.so  Meshsimadapt} msg]} {
+	puts "liblib_simvascular meshsim adaptor shared object: $msg"
+    } 
+  }
+}
+
+if {$tcl_platform(platform) == "windows"} {
+    if [catch {load lib_simvascular_parasolid.dll Parasolidsolid} msg] {
+	puts "simvascular_parasolid dll: $msg"
+    }
+    if [catch {load lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid} msg] {
+        puts "simvascular meshsim discrete dll: $msg"
+    }
+    if [catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg] {
+	puts "meshsim_mesh dll: $msg"
+    }
+    if [catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg] {
+	puts "simvascular meshsim adaptor dll: $msg"
+    }
+}

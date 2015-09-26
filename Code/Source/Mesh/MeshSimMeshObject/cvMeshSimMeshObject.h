@@ -218,10 +218,10 @@ class cvMeshSimMeshObject : public cvMeshObject {
 #ifdef USE_DISCRETE_MODEL
   cvMeshSimDiscreteSolidModel* discreteModel_;
 #endif
-
-  pAManager manager_;
+  
   pACase case_;
-
+  pProgress progress_;
+  
 #ifdef USE_MESHSIM_ADAPTOR
   pMeshDataId errorIndicatorID;
   pMeshDataId modes;

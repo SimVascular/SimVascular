@@ -30,11 +30,15 @@
  
 SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 
-
-add_library(lib_simvascular_discrete ${CXXSRCS} cv_discrete_init.cxx)
+if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+    add_library(lib_simvascular_discrete SHARED ${CXXSRCS} cv_discrete_init.cxx)
+else()
+    add_library(lib_simvascular_discrete ${CXXSRCS} cv_discrete_init.cxx)
+endif()
 
 target_link_libraries(lib_simvascular_discrete
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${ZLIB_LIBRARY} ${GLOBAL_LIBRARIES}
-			lib_simvascular_globals lib_simvascular_mesh)
+			${GLOBAL_LIBRARIES})
+			#${ZLIB_LIBRARY} 
+			#lib_simvascular_globals lib_simvascular_mesh)

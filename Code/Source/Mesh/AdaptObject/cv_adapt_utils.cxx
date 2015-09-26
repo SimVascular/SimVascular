@@ -63,6 +63,19 @@
 #include "cvSolverIO.h"
 
 #include <sys/stat.h>
+
+#ifdef WIN32
+void  bzero(void* ptr, size_t sz) {
+    int i;
+    char *cptr;
+    cptr = (char*) ptr;
+    for (i=0; i < sz; i++) {
+        cptr[i]=0;
+    }
+    return;
+}
+#endif
+
 // -----------------------------
 // AdaptUtils_file_exists()
 // -----------------------------

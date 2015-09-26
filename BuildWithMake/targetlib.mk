@@ -36,7 +36,7 @@ OBJS    ?= $(addprefix $(OBJ_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
            $(addprefix $(OBJ_DIR)/,$(CSRCS:.c=.$(OBJECTEXT))) \
            $(addprefix $(OBJ_DIR)/,$(FSRCS:.f=.$(OBJECTEXT)))
 
-DLLOBJS  ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS:.cxx=.$(OBJECTEXT)))
+DLLOBJS  ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS:.cxx=.$(OBJECTEXT))) $(OBJS)
 DLLOBJS2 ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS2:.cxx=.$(OBJECTEXT)))
 DLLOBJS3 ?= $(addprefix $(OBJ_DIR)/,$(DLLSRCS3:.cxx=.$(OBJECTEXT)))
 
@@ -44,11 +44,15 @@ SRCS	= $(CXXSRCS)
 
 DEPS	= $(CXXSRCS:.cxx=.d)
 
-DLLHDRS += $(HDRS)
-DLLSRCS += $(CXXSRCS)
+#DLLHDRS += $(HDRS)
+#DLLSRCS += $(CXXSRCS) $(CSRCS)
 
 TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_lib_$(TARGET_LIB_NAME).$(STATICEXT)
 TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(SOEXT)
+
+ifneq ($(TARGET_LIB_NAME),simvascular_globals)
+  DLLLIBS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+endif
 
 #ifeq ($(CLUSTER),x64_linux)
 #DLLLIBS = -l_simvascular_globals
@@ -76,15 +80,24 @@ $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
              $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
-else
+endif
+ifeq ($(CLUSTER),x64_cygwin)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
+ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
              /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
+	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
+else
+	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
+             /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
+             $(DLLOBJS) $(LFLAGS)
+	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
+endif
 endif
 
 ifeq ($(CLUSTER),x64_linux) 
@@ -93,7 +106,8 @@ $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
              $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
-else
+endif
+ifeq ($(CLUSTER),x64_cygwin)
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGETDIR)/$(TARGET_SHARED2)" \
              /pdb:"$(TARGETDIR)/$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
@@ -114,7 +128,8 @@ $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
              $(DLLOBJS3) $(LFLAGS) $(DLLLIBS3)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED3); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
-else
+endif
+ifeq ($(CLUSTER),x64_cygwin)
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGETDIR)/$(TARGET_SHARED3)" \
              /pdb:"$(TARGETDIR)/$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \
