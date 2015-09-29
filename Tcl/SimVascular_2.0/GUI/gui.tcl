@@ -33035,7 +33035,7 @@ proc guiPPchooserShowPath {} {
     vis_pRm $gRen3d $i
   }
   if {$guiPPchooserShowPointsFlag == 1} {
-    solid_setKernel -name PolyData
+    #solid_setKernel -name PolyData
     for {set i 0} {$i < [llength $pts]} {incr i} {
       set pt [lindex $pts $i]
       set pti [lindex $ptIndex $i]
@@ -46298,6 +46298,7 @@ proc mainGUI {} {
   global guiTRIMvars
   global gRen3d
   global SIMVASCULAR_NO_RENDERER
+  set gRen3d [vis_gRenWin_3D]
   if { $SIMVASCULAR_NO_RENDERER == "0" } { 
     puts "No render window" 
   } else {

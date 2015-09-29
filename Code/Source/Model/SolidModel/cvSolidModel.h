@@ -47,6 +47,7 @@ enum SolidModel_KernelT {
   SM_KT_PARASOLID,
   SM_KT_DISCRETE,
   SM_KT_POLYDATA,
+  SM_KT_OCCT,
   SM_KT_INVALID
 };
 

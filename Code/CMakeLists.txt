@@ -214,6 +214,10 @@ if(Licensed_ADAPTOR)
 	set(Licensed_MESHSIM ON)
 endif()
 
+#-----------------------------------------------------------------------------
+# Open Source Software Options: Solid Models - OPENCASCADE
+option(Plugin_OPENCASCADE "OPENCASCADE" OFF)
+mark_as_superbuild(Plugin_OPENCASCADE)
 
 #-----------------------------------------------------------------------------
 # Commercial Software Options: Solid Models - Parasolid
@@ -555,6 +559,23 @@ if(SimVascular_USE_GLIB)
 		simvascular_external(GLIB DOWNLOADABLE SHARED_LIB)
 	endif()
 	set(USE_GLIB ON)
+endif()
+
+#-----------------------------------------------------------------------------
+# OPENCASCADE
+if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
+	if(Plugin_OPENCASCADE)
+		simvascular_external(OPENCASCADE SYSTEM_DEFAULT SHARED_LIB)
+		mark_as_superbuild(OPENCASCADE_DIR)
+		mark_as_superbuild(OPENCASCADE_INCLUDE_DIR)
+		mark_as_superbuild(OPENCASCADE_LIBRARIES)
+		mark_as_superbuild(OPENCASCADE_LIBRARY)
+		set(USE_OPENCASCADE ON)
+		set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
+	endif()
+endif()
+if(OPENCASCADE_FOUND)
+	message("OpenCASC Found!")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -954,6 +975,12 @@ if(Licensed_PARASOLID)
 	endif()
 	if (PARASOLID_USE_SHARED_LIBRARIES)
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_PARASOLID_SHARED")
+	endif()
+endif()
+
+if(Plugin_OPENCASCADE)
+	if(OPENCASCADE_FOUND)
+		include_directories(${OPENCASCADE_INCLUDE_DIR})
 	endif()
 endif()
 

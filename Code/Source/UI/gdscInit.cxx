@@ -63,6 +63,10 @@
   #include "cv_solid_init.h"
 #endif
 
+#ifdef USE_OPENCASCADE
+  #include "cv_occt_init.h"
+#endif
+
 #ifdef USE_MESHSIM
   #include "cv_mesh_init.h"
   #include "cv_meshsim_mesh_init.h"
@@ -220,6 +224,13 @@ int SimVascular_Init( Tcl_Interp *interp )
     fprintf( stderr, "error on PolyDataSolid_Init\n" );
     return TCL_ERROR;
   }
+
+#ifdef USE_OPENCASCADE
+  if ( Occt_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Opencascade_Init\n" );
+    return TCL_ERROR;
+  }
+#endif
 
 #ifdef USE_MESHSIM
   if ( Gdscmesh_Init(interp) == TCL_ERROR ) {

@@ -49,6 +49,12 @@ if(Licensed_PARASOLID)
         endif()
 endif()
 
+if(Plugin_OPENCASCADE)
+	SET(CXXSRCS ${CXXSRCS}
+	${SimVascular_SOURCE_DIR}/Source/Model/OCCTSolidModel/cv_occt_init.cxx)
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_opencascade)
+endif()
+
 if(Plugin_ITK)
 	include_directories(${SimVascular_SOURCE_DIR}/Source/Segmentation/ITK/Include)
 	include_directories(${SimVascular_SOURCE_DIR}/Source/Segmentation/ITK/Util)
@@ -88,11 +94,12 @@ target_link_libraries(${SIMVASCULAR_EXE}
 			lib_simvascular_repository lib_simvascular_lset
 			lib_simvascular_solid lib_simvascular_mesh
 			lib_simvascular_sysgeom lib_simvascular_utils
-			lib_simvascular_globals lib_simvascular_polydatasolid)
+			lib_simvascular_globals lib_simvascular_polydatasolid
+			lib_simvascular_opencascade)
 
 target_link_libraries(${SIMVASCULAR_EXE} ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${ZLIB_LIBRARY} ${ITK_LIBRARIES}
 			${INTELRUNTIME_LIBRARIES}
-			${GLOBAL_LIBRARIES})
+			${GLOBAL_LIBRARIES} ${OPENCASCADE_LIBRARIES})

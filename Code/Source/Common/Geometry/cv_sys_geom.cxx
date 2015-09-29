@@ -2524,7 +2524,7 @@ int sys_geom_2DWindingNum( cvPolyData *pgn )
     tot_theta += dtheta;
   }
 
-  wnum = Round( tot_theta / (2 * CV_PI) );
+  wnum = svRound( tot_theta / (2 * CV_PI) );
   delete tmp;
   delete [] lines;
   delete [] pts;
