@@ -43,10 +43,10 @@ include(GetPrerequisites)
 #-----------------------------------------------------------------------------
 # Libraries
 set(${proj}_LIBNAMES TKernel) 
-set(${proj}_FIND_COMPONENTS TKBRep TKShapeSchema
-		     TKPShape TKDraw TKTopTest TKTopAlgo 
-		     TKVRML TKQADraw TKPrim TKFeat TKCAF 
-		     TKDCAF TKBO TKMath TKIVtk)
+set(${proj}_FIND_COMPONENTS TKBRep TKTopTest TKTopAlgo
+			    TKPrim TKMath TKIVtk TKG3d TKG2d
+		            TKGeomBase TKGeomAlgo TKV3d TKService
+		            TKMesh)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})

@@ -222,12 +222,13 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   vtkPolyData *pd;
 
   IVtkOCC_Shape::Handle aShapeImpl = new IVtkOCC_Shape(*geom_);
-  IVtk_IShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
+  //IVtk_IShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
+  IVtkVTK_ShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
   IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher();
   aMesher->Build(aShapeImpl,aDataImpl);
 
   pd = vtkPolyData::New();
-  pd->DeepCopy(aDataImpl->GetVtkPolyData());
+  pd->DeepCopy(aDataImpl->getVtkPolyData());
 
   result = new cvPolyData(pd);
   pd->Delete();
