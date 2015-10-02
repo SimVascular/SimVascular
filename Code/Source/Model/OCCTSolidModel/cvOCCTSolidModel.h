@@ -96,7 +96,7 @@ public:
   int MakeCylinder( double r, double length, double ctr[],
        		    double axis[] ); 
   int MakeTorus( double rmaj, double rmin, double ctr[],
-       		 double axis[] ) { return CV_ERROR; }
+       		 double axis[] );
   int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR; };
 
   int SetPoly3dFacetMethod( SolidModel_FacetT code ) {return CV_ERROR; }
@@ -112,11 +112,11 @@ public:
 
   // Booleans are compatible only between like-typed concrete objects:
   int Intersect( cvSolidModel *a, cvSolidModel *b,
-       		 SolidModel_SimplifyT st = SM_Simplify_All ) {return CV_ERROR;}
+       		 SolidModel_SimplifyT st = SM_Simplify_All );
   int Union( cvSolidModel *a, cvSolidModel *b,
-       	     SolidModel_SimplifyT st = SM_Simplify_All ) {return CV_ERROR;}
+       	     SolidModel_SimplifyT st = SM_Simplify_All );
   int Subtract( cvSolidModel *a, cvSolidModel *b,
-       		SolidModel_SimplifyT st = SM_Simplify_All ) {return CV_ERROR;}
+       		SolidModel_SimplifyT st = SM_Simplify_All );
 
   // Transformations:
   int Translate( double vec[], int ndim ) { return CV_ERROR; } 

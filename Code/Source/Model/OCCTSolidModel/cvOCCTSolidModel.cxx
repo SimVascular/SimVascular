@@ -43,6 +43,7 @@
 #include "cvOCCTSolidModel.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+#include "vtkMath.h"
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_utils.h"
 #include "cv_misc_utils.h"
@@ -54,9 +55,25 @@
 #include "gp_Ax2.hxx"
 #include "gp_Dir.hxx"
 #include "gp_Vec.hxx"
+#include "gp_Pln.hxx"
+#include "gp_Circ.hxx"
+#include "Geom_BezierCurve.hxx"
+#include "TopoDS_Edge.hxx"
+#include "TopoDS_Wire.hxx"
+#include "TopoDS_Face.hxx"
+
 #include "BRepPrimAPI_MakeBox.hxx"
 #include "BRepPrimAPI_MakeSphere.hxx"
 #include "BRepPrimAPI_MakeCylinder.hxx"
+#include "BRepBuilderAPI_MakeEdge.hxx"
+#include "BRepBuilderAPI_MakeWire.hxx"
+#include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepOffsetAPI_MakePipe.hxx"
+#include "BRepOffsetAPI_ThruSections.hxx"
+#include "BRepLib_MakePolygon.hxx"
+#include "BRepAlgoAPI_Fuse.hxx"
+#include "BRepAlgoAPI_Common.hxx"
+#include "BRepAlgoAPI_Cut.hxx"
 
 #include "IVtkOCC_Shape.hxx"
 #include "IVtk_IShapeData.hxx"
@@ -156,8 +173,12 @@ int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
   if(geom_ != NULL)
     delete geom_;
 
-  gp_Pnt center(ctr[0],ctr[1],ctr[2]);
-  BRepPrimAPI_MakeBox boxmaker(center,dims[0],dims[1],dims[2]);
+  double crn[3];
+  crn[0] = ctr[0] - dims[0]/2.0;
+  crn[1] = ctr[1] - dims[1]/2.0;
+  crn[2] = ctr[2] - dims[2]/2.0;
+  gp_Pnt corner(crn[0],crn[1],crn[2]);
+  BRepPrimAPI_MakeBox boxmaker(corner,dims[0],dims[1],dims[2]);
 
   boxmaker.Build();
   geom_ = new TopoDS_Shape;
@@ -195,7 +216,10 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
   if (geom_ == NULL)
     delete geom_;
 
-  gp_Pnt center(ctr[0],ctr[1],ctr[2]);
+  double axiscopy[3]; axiscopy[0]=axis[0]; axiscopy[1]=axis[1]; axiscopy[2]=axis[2];
+  vtkMath::Normalize(axiscopy);
+  vtkMath::MultiplyScalar(axiscopy,length/2);
+  gp_Pnt center(ctr[0]-axiscopy[0],ctr[1]-axiscopy[1],ctr[2]-axiscopy[2]);
   gp_Vec vector(axis[0],axis[1],axis[2]);
   gp_Dir direction(vector);
   gp_Ax2 cylaxis(center,direction);
@@ -204,6 +228,191 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
   cylindermaker.Build();
   geom_ = new TopoDS_Shape;
   *geom_ = cylindermaker.Shape();
+
+  return CV_OK;
+}
+
+int cvOCCTSolidModel::MakeTorus( double rmaj, double rmin, double ctr[],
+				double axis[])
+{
+  if (geom_ == NULL)
+    delete geom_;
+
+  gp_Pnt pnt1(0.0, 0.0, 0.0);
+  gp_Pnt pnt2(1.0, 0.0, 0.0);
+  gp_Pnt pnt3(1.0, 1.0, 0.0);
+  gp_Pnt pnt4(0.0, 1.0, 0.0);
+  BRepLib_MakePolygon poly1;
+  poly1.Add(pnt1);
+  poly1.Add(pnt2);
+  poly1.Add(pnt3);
+  poly1.Add(pnt4);
+  poly1.Add(pnt1);
+  TopoDS_Wire wire1 = poly1.Wire();
+
+  gp_Pnt pnt5(0.0, 0.0, 1.0);
+  gp_Pnt pnt6(1.0, 0.0, 1.0);
+  gp_Pnt pnt7(1.0, 1.0, 1.0);
+  gp_Pnt pnt8(0.0, 1.0, 1.0);
+  BRepLib_MakePolygon poly2;
+  poly2.Add(pnt5);
+  poly2.Add(pnt6);
+  poly2.Add(pnt7);
+  poly2.Add(pnt8);
+  poly2.Add(pnt5);
+  TopoDS_Wire wire2 = poly2.Wire();
+
+  BRepOffsetAPI_ThruSections lofter;
+  lofter.AddWire(wire1);
+  lofter.AddWire(wire2);
+  lofter.Build();
+
+  //TopoDS_Edge L1 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,0.0,0.0),gp_Pnt(1.0,0.0,0.5));
+  //TopoDS_Edge L2 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,0.0,0.5),gp_Pnt(1.0,1.0,0.0));
+  //TopoDS_Edge L3 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,1.0,0.0),gp_Pnt(0.0,1.0,0.5));
+  //TopoDS_Edge L4 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,1.0,0.5),gp_Pnt(0.0,0.0,0.0));
+  //BRepBuilderAPI_MakeWire mkWire_L;
+  //mkWire_L.Add(L1);
+  //mkWire_L.Add(L2);
+  //mkWire_L.Add(L3);
+  //mkWire_L.Add(L4);
+  //TopoDS_Wire Wire_L = mkWire_L.Wire();
+
+  //TopoDS_Edge L11 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,0.0,1.0),gp_Pnt(1.0,0.0,1.0));
+  //TopoDS_Edge L12 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,0.0,1.0),gp_Pnt(1.0,1.0,1.0));
+  //TopoDS_Edge L13 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,1.0,1.0),gp_Pnt(0.0,1.0,1.0));
+  //TopoDS_Edge L14 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,1.0,1.0),gp_Pnt(0.0,0.0,1.0));
+  //BRepBuilderAPI_MakeWire mkWire_U;
+  //mkWire_U.Add(L11);
+  //mkWire_U.Add(L12);
+  //mkWire_U.Add(L13);
+  //mkWire_U.Add(L14);
+  //TopoDS_Wire Wire_U = mkWire_U.Wire();
+
+  //BRepOffsetAPI_ThruSections mk_solid(Standard_True);
+  //mk_solid.AddWire(Wire_L);
+  //mk_solid.AddWire(Wire_U);
+  //mk_solid.Build();
+  geom_ = new TopoDS_Shape;
+  *geom_ = lofter.Shape();
+
+
+  return CV_OK;
+}
+
+// ------------
+// Union
+// ------------
+int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
+			      SolidModel_SimplifyT st)
+{
+  cvOCCTSolidModel *occtPtrA;
+  cvOCCTSolidModel *occtPtrB;
+
+  if (geom_ != NULL)
+    return CV_ERROR;
+
+  //Need both objects to create a union
+  if (a == NULL)
+    return CV_ERROR;
+  if (a->GetKernelT() != SM_KT_OCCT ) {
+    fprintf(stderr,"Model not of type OCCT\n");
+    return CV_ERROR;
+  }
+  
+  if (b == NULL)
+    return CV_ERROR;
+  if (b->GetKernelT() != SM_KT_OCCT ) {
+    fprintf(stderr,"Model not of type OCCT\n");
+    return CV_ERROR;
+  }
+
+  occtPtrA = (cvOCCTSolidModel *)( a );
+  occtPtrB = (cvOCCTSolidModel *)( b );
+
+  BRepAlgoAPI_Fuse unionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
+  unionOCCT.Build();
+
+  geom_ = new TopoDS_Shape;
+  *geom_ = unionOCCT.Shape();
+
+  return CV_OK;
+}
+
+// ------------
+// Intersect
+// ------------
+int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
+			      SolidModel_SimplifyT st)
+{
+  cvOCCTSolidModel *occtPtrA;
+  cvOCCTSolidModel *occtPtrB;
+
+  if (geom_ != NULL)
+    return CV_ERROR;
+
+  //Need both objects to create an intersection
+  if (a == NULL)
+    return CV_ERROR;
+  if (a->GetKernelT() != SM_KT_OCCT ) {
+    fprintf(stderr,"Model not of type OCCT\n");
+    return CV_ERROR;
+  }
+  
+  if (b == NULL)
+    return CV_ERROR;
+  if (b->GetKernelT() != SM_KT_OCCT ) {
+    fprintf(stderr,"Model not of type OCCT\n");
+    return CV_ERROR;
+  }
+
+  occtPtrA = (cvOCCTSolidModel *)( a );
+  occtPtrB = (cvOCCTSolidModel *)( b );
+
+  BRepAlgoAPI_Common intersectionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
+  intersectionOCCT.Build();
+
+  geom_ = new TopoDS_Shape;
+  *geom_ = intersectionOCCT.Shape();
+
+  return CV_OK;
+}
+
+// ------------
+// Subtract
+// ------------
+int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
+			      SolidModel_SimplifyT st)
+{
+  cvOCCTSolidModel *occtPtrA;
+  cvOCCTSolidModel *occtPtrB;
+
+  if (geom_ != NULL)
+    return CV_ERROR;
+
+  //Need both objects to create a subtraction
+  if (a == NULL)
+    return CV_ERROR;
+  if (a->GetKernelT() != SM_KT_OCCT ) {
+    fprintf(stderr,"Model not of type OCCT\n");
+    return CV_ERROR;
+  }
+  
+  if (b == NULL)
+    return CV_ERROR;
+  if (b->GetKernelT() != SM_KT_OCCT ) {
+    fprintf(stderr,"Model not of type OCCT\n");
+    return CV_ERROR;
+  }
+
+  occtPtrA = (cvOCCTSolidModel *)( a );
+  occtPtrB = (cvOCCTSolidModel *)( b );
+
+  BRepAlgoAPI_Cut subtractionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
+  subtractionOCCT.Build();
+
+  geom_ = new TopoDS_Shape;
+  *geom_ = subtractionOCCT.Shape();
 
   return CV_OK;
 }

@@ -46,7 +46,7 @@ set(${proj}_LIBNAMES TKernel)
 set(${proj}_FIND_COMPONENTS TKBRep TKTopTest TKTopAlgo
 			    TKPrim TKMath TKIVtk TKG3d TKG2d
 		            TKGeomBase TKGeomAlgo TKV3d TKService
-		            TKMesh)
+			    TKMesh TKOffset TKBool TKBO TKShHealing)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
@@ -60,7 +60,7 @@ set(${proj}_HEADER "gp_Pnt.hxx")
 #-----------------------------------------------------------------------------
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR} ${${proj}_DIR}/install)
 if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
-	set(${proj}_PATH "${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.0/")
+	set(${proj}_PATH "${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.1/")
 endif()
 # Set paths to search for OpenCascade
 if(LINUX)

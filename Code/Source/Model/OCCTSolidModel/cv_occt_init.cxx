@@ -84,7 +84,7 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Occt_Init( Tcl_Interp *interp )
 {
-  printf("  %-12s %s\n","OpenCASCADE:", "6.9.0");
+  printf("  %-12s %s\n","OpenCASCADE:", "6.9.1");
   cvFactoryRegistrar* solidModelRegistrar = 
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 

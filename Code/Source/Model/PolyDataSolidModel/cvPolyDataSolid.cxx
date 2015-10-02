@@ -52,6 +52,10 @@
 #include <string.h>
 #include <assert.h>
 #include "vtkCubeSource.h"
+#include "vtkCylinderSource.h"
+#include "vtkSphereSource.h"
+#include "vtkTransform.h"
+#include "vtkTransformPolyDataFilter.h"
 
 #ifdef USE_GTS
   #include "vtkSurfaceBooleanOperations.h"
@@ -436,11 +440,16 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
 
   //Need both objects to create an intersection
   if (a == NULL)
-  {
+    return CV_ERROR;
+  if (a->GetKernelT() != SM_KT_POLYDATA ) {
+    fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
+
   if (b == NULL)
-  {
+    return CV_ERROR;
+  if (b->GetKernelT() != SM_KT_POLYDATA ) {
+    fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
 #ifdef USE_GTS
@@ -477,9 +486,14 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
   intersectPolyData->SetInputData(1,pd2);
   intersectPolyData->Update();
 
+  vtkSmartPointer<vtkPolyDataNormals> normaler = 
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  normaler->SetInputData(intersectPolyData->GetOutput());
+  normaler->Update();
+
   //set output vtp to output from filter
   geom_ = vtkPolyData::New();
-  geom_->DeepCopy(intersectPolyData->GetOutput());
+  geom_->DeepCopy(normaler->GetOutput());
 
   intersectPolyData->Delete();
 #endif
@@ -510,13 +524,18 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
 
   //Need both objects to create a union
   if (a == NULL)
-  {
+    return CV_ERROR;
+  if (a->GetKernelT() != SM_KT_POLYDATA ) {
+    fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
   if (b == NULL)
-  {
+    return CV_ERROR;
+  if (b->GetKernelT() != SM_KT_POLYDATA ) {
+    fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
+
 #ifdef USE_GTS
   vtkSurfaceBooleanOperations *unionPolyData;
   vtkPolyData *pd1;
@@ -551,9 +570,14 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
   unionPolyData->SetInputData(1,pd2);
   unionPolyData->Update();
 
+  vtkSmartPointer<vtkPolyDataNormals> normaler = 
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  normaler->SetInputData(unionPolyData->GetOutput());
+  normaler->Update();
+
   //set output vtp to output from filter
   geom_ = vtkPolyData::New();
-  geom_->DeepCopy(unionPolyData->GetOutput());
+  geom_->DeepCopy(normaler->GetOutput());
 
   unionPolyData->Delete();
 #endif
@@ -583,11 +607,16 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
 
   //Need both objects to create a subtraction
   if (a == NULL)
-  {
+    return CV_ERROR;
+  if (a->GetKernelT() != SM_KT_POLYDATA ) {
+    fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
+
   if (b == NULL)
-  {
+    return CV_ERROR;
+  if (b->GetKernelT() != SM_KT_POLYDATA ) {
+    fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
 #ifdef USE_GTS
@@ -624,9 +653,14 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
   subtractPolyData->SetInputData(1,pd2);
   subtractPolyData->Update();
 
+  vtkSmartPointer<vtkPolyDataNormals> normaler = 
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  normaler->SetInputData(subtractPolyData->GetOutput());
+  normaler->Update();
+
   //set output vtp to output from filter
   geom_ = vtkPolyData::New();
-  geom_->DeepCopy(subtractPolyData->GetOutput());
+  geom_->DeepCopy(normaler->GetOutput());
 
   subtractPolyData->Delete();
 #endif
@@ -752,14 +786,106 @@ int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
   }
   geom_ = vtkPolyData::New();
 
-vtkSmartPointer<vtkCubeSource> cube = vtkSmartPointer<vtkCubeSource>::New();
-cube->SetCenter(ctr[0], ctr[1], ctr[2]);
-cube->SetXLength(dims[0]);
-cube->SetYLength(dims[1]);
-cube->SetZLength(dims[2]);
-cube->Update();
+  vtkSmartPointer<vtkCubeSource> cube = vtkSmartPointer<vtkCubeSource>::New();
+  cube->SetCenter(ctr[0], ctr[1], ctr[2]);
+  cube->SetXLength(dims[0]);
+  cube->SetYLength(dims[1]);
+  cube->SetZLength(dims[2]);
+  cube->Update();
 
-geom_->DeepCopy(cube->GetOutput());
+  vtkSmartPointer<vtkTriangleFilter> triangulator = 
+    vtkSmartPointer<vtkTriangleFilter>::New();
+  triangulator->SetInputData(cube->GetOutput());
+  triangulator->Update();
+
+  geom_->DeepCopy(triangulator->GetOutput());
+
+  return CV_OK;
+}
+
+// ----------------
+// MakeSphere
+// ----------------
+/** 
+ * Creates a Sphere
+ * @param r
+ * @param ctr
+ * @return *result a sphere
+ */
+
+int cvPolyDataSolid::MakeSphere(double r, double ctr[])
+{
+  if ( geom_ != NULL ) {
+    return CV_ERROR;
+  }
+  geom_ = vtkPolyData::New();
+
+  vtkSmartPointer<vtkSphereSource> sphere = 
+    vtkSmartPointer<vtkSphereSource>::New();
+  sphere->SetCenter(ctr[0], ctr[1], ctr[2]);
+  sphere->SetRadius(r);
+  sphere->SetThetaResolution(50);
+  sphere->SetPhiResolution(50);
+  sphere->Update();
+
+  vtkSmartPointer<vtkTriangleFilter> triangulator = 
+    vtkSmartPointer<vtkTriangleFilter>::New();
+  triangulator->SetInputData(sphere->GetOutput());
+  triangulator->Update();
+
+  geom_->DeepCopy(triangulator->GetOutput());
+
+  return CV_OK;
+}
+
+// ----------------
+// MakeCylinder
+// ----------------
+/** 
+ * Creates a Cylinder
+ * @param r
+ * @param ctr
+ * @param length
+ * @param axis
+ * @return *result a sphere
+ */
+
+int cvPolyDataSolid::MakeCylinder(double r, double length, double ctr[],
+    				  double axis[] )
+{
+  if ( geom_ != NULL ) {
+    return CV_ERROR;
+  }
+  geom_ = vtkPolyData::New();
+
+  vtkSmartPointer<vtkCylinderSource> cylinder = 
+    vtkSmartPointer<vtkCylinderSource>::New();
+  cylinder->SetCenter(ctr[0],ctr[1],ctr[2]);
+  cylinder->SetHeight(length);
+  cylinder->SetRadius(r);
+  cylinder->SetResolution(50);
+  cylinder->Update();
+
+  double vec[3]; vec[0] = 0.0; vec[1] = 1.0; vec[2] = 0.0;
+  double rotateaxis[3]; vtkMath::Cross(axis,vec,rotateaxis);
+  double radangle = vtkMath::AngleBetweenVectors(axis,vec);
+  double degangle = vtkMath::DegreesFromRadians(radangle);
+  vtkSmartPointer<vtkTransform> transformer =
+    vtkSmartPointer<vtkTransform>::New();
+  transformer->RotateWXYZ(degangle,rotateaxis);
+
+  vtkSmartPointer<vtkTransformPolyDataFilter> polyDataTransformer = 
+    vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+  polyDataTransformer->SetInputData(cylinder->GetOutput());
+  polyDataTransformer->SetTransform(transformer);
+  polyDataTransformer->Update();
+
+  vtkSmartPointer<vtkTriangleFilter> triangulator = 
+    vtkSmartPointer<vtkTriangleFilter>::New();
+  triangulator->SetInputData(polyDataTransformer->GetOutput());
+  triangulator->Update();
+
+  geom_->DeepCopy(triangulator->GetOutput());
 
   return CV_OK;
 }

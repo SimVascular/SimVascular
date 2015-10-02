@@ -91,10 +91,10 @@ public:
   int MakeBox2d( double dims[], double ctr[] ) {return CV_ERROR;} 
 
   int MakeBox3d( double dims[], double ctr[] );
-  int MakeSphere( double r, double ctr[] ) {return CV_ERROR;} 
+  int MakeSphere( double r, double ctr[] ); 
   int MakeEllipsoid( double r[], double ctr[] ) {return CV_ERROR;} 
   int MakeCylinder( double r, double length, double ctr[],
-       		    double axis[] ) {return CV_ERROR;} 
+       		    double axis[] ); 
   int MakeTorus( double rmaj, double rmin, double ctr[],
        		 double axis[] ) { return CV_ERROR; }
   int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR; };
