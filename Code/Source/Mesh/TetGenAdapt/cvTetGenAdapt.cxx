@@ -406,7 +406,7 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
   char avgspeed_step[80];
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
 
-  AdaptUtils_readArrayFromFile(fileName,avgspeed_step,avgspeed_);
+  AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_);
 
   if (inmesh_ != NULL)
   {
