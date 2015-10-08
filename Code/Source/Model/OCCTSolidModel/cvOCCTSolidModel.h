@@ -53,6 +53,7 @@
 #include "cvVTK.h"
 #include "cv_misc_utils.h"
 #include "TopoDS_Shape.hxx"
+#include "TopoDS_Wire.hxx"
 
 
 // Some elementary notes on abstract base classes (ABC's)
@@ -96,7 +97,7 @@ public:
   int MakeCylinder( double r, double length, double ctr[],
        		    double axis[] ); 
   int MakeTorus( double rmaj, double rmin, double ctr[],
-       		 double axis[] );
+       		 double axis[] ) {return CV_ERROR;}
   int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR; };
 
   int SetPoly3dFacetMethod( SolidModel_FacetT code ) {return CV_ERROR; }
@@ -105,9 +106,9 @@ public:
   int ExtrudeZ( cvSolidModel *in, double dist ) {return CV_ERROR; }
   int Extrude( cvSolidModel *in, double **dist ) {return CV_ERROR; }
 
-  int MakeInterpCurveLoop( cvPolyData *pd, int closed ) {return CV_ERROR; }
+  int MakeInterpCurveLoop( cvPolyData *pd, int closed );
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) {return CV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name ) {return CV_ERROR; }
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,int continuity,int partype,double w1,double w2,double w3 );
   int CapSurfToSolid( cvSolidModel *surf ) { return CV_ERROR; }
 
   // Booleans are compatible only between like-typed concrete objects:
@@ -172,6 +173,8 @@ public:
 protected:
 
   TopoDS_Shape *geom_;
+  TopoDS_Wire *wire_;
+  TopoDS_Wire *wire2_;
 
   int numBoundaryRegions;
 

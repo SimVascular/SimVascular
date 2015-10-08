@@ -60,6 +60,7 @@
 #include "Geom_BezierCurve.hxx"
 #include "TopoDS_Edge.hxx"
 #include "TopoDS_Wire.hxx"
+#include "TopoDS_Vertex.hxx"
 #include "TopoDS_Face.hxx"
 
 #include "BRepPrimAPI_MakeBox.hxx"
@@ -68,18 +69,24 @@
 #include "BRepBuilderAPI_MakeEdge.hxx"
 #include "BRepBuilderAPI_MakeWire.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepBuilderAPI_MakeVertex.hxx"
+#include "BRepBuilderAPI_Sewing.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
 #include "BRepOffsetAPI_ThruSections.hxx"
 #include "BRepLib_MakePolygon.hxx"
 #include "BRepAlgoAPI_Fuse.hxx"
 #include "BRepAlgoAPI_Common.hxx"
 #include "BRepAlgoAPI_Cut.hxx"
+#include "BRepTools_Quilt.hxx"
 
 #include "IVtkOCC_Shape.hxx"
 #include "IVtk_IShapeData.hxx"
 #include "IVtk_IShapeMesher.hxx"
 #include "IVtkVTK_ShapeData.hxx"
 #include "IVtkOCC_ShapeMesher.hxx"
+
+#include "TopExp_Explorer.hxx"
+#include "Message_ProgressIndicator.hxx"
 
 // ----------
 // OCCTSolidModel
@@ -97,6 +104,7 @@ cvOCCTSolidModel::cvOCCTSolidModel()
  */
   numBoundaryRegions = 0;
   geom_ = NULL;
+  wire_ = NULL;
 }
 
 // -----------
@@ -109,9 +117,9 @@ cvOCCTSolidModel::cvOCCTSolidModel()
 cvOCCTSolidModel::~cvOCCTSolidModel() 
 {
   if (geom_ != NULL)
-  {
     delete geom_;
-  }
+  if (wire_ != NULL)
+    delete wire_;
 }
 
 // -----------
@@ -124,6 +132,7 @@ cvOCCTSolidModel::cvOCCTSolidModel( const cvOCCTSolidModel& sm)
 	: cvSolidModel( SM_KT_OCCT)
 {
   geom_ = NULL;
+  wire_ = NULL;
   Copy( sm );
 }
 
@@ -141,13 +150,21 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   if (geom_ != NULL) {
     return CV_ERROR;
   }
+  if (wire_ != NULL) {
+    return CV_ERROR;
+  }
   if (src.GetKernelT() != SM_KT_OCCT) {
     return CV_ERROR;
   }
 
   solidPtr = (cvOCCTSolidModel *)( &src );
-  if ( solidPtr->geom_ == NULL ) {
-    return CV_OK;
+  if ( solidPtr->geom_ != NULL ) {
+    geom_ = new TopoDS_Shape;
+    *geom_ = *(solidPtr->geom_);
+  }
+  if ( solidPtr->wire_ != NULL ) {
+    wire_ = new TopoDS_Wire;
+    *wire_ = *(solidPtr->wire_);
   }
 
   return CV_OK;
@@ -193,7 +210,7 @@ int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
 
 int cvOCCTSolidModel::MakeSphere( double r, double ctr[])
 {
-  if (geom_ == NULL)
+  if (geom_ != NULL)
     delete geom_;
 
   gp_Pnt center(ctr[0],ctr[1],ctr[2]);
@@ -213,7 +230,7 @@ int cvOCCTSolidModel::MakeSphere( double r, double ctr[])
 int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
     					double axis[])
 {
-  if (geom_ == NULL)
+  if (geom_ != NULL)
     delete geom_;
 
   double axiscopy[3]; axiscopy[0]=axis[0]; axiscopy[1]=axis[1]; axiscopy[2]=axis[2];
@@ -232,73 +249,107 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
   return CV_OK;
 }
 
-int cvOCCTSolidModel::MakeTorus( double rmaj, double rmin, double ctr[],
-				double axis[])
-{
-  if (geom_ == NULL)
-    delete geom_;
+// ------------
+// MakeLoftedSurf
+// ------------
+int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves, 
+		char *name,int continuity,int partype,
+		double w1,double w2,double w3)
+{                              
+  if (geom_ != NULL)
+    delete geom_;                         
 
-  gp_Pnt pnt1(0.0, 0.0, 0.0);
-  gp_Pnt pnt2(1.0, 0.0, 0.0);
-  gp_Pnt pnt3(1.0, 1.0, 0.0);
-  gp_Pnt pnt4(0.0, 1.0, 0.0);
-  BRepLib_MakePolygon poly1;
-  poly1.Add(pnt1);
-  poly1.Add(pnt2);
-  poly1.Add(pnt3);
-  poly1.Add(pnt4);
-  poly1.Add(pnt1);
-  TopoDS_Wire wire1 = poly1.Wire();
+  if ( numCurves < 2 ) {
+    return CV_ERROR;
+  }
 
-  gp_Pnt pnt5(0.0, 0.0, 1.0);
-  gp_Pnt pnt6(1.0, 0.0, 1.0);
-  gp_Pnt pnt7(1.0, 1.0, 1.0);
-  gp_Pnt pnt8(0.0, 1.0, 1.0);
-  BRepLib_MakePolygon poly2;
-  poly2.Add(pnt5);
-  poly2.Add(pnt6);
-  poly2.Add(pnt7);
-  poly2.Add(pnt8);
-  poly2.Add(pnt5);
-  TopoDS_Wire wire2 = poly2.Wire();
+  cvOCCTSolidModel *wirePtr;
+  BRepOffsetAPI_ThruSections lofter(Standard_False,Standard_False,1e-6);
+  lofter.SetCriteriumWeight(w1,w2,w3);
+  lofter.SetContinuity(continuity);
+  lofter.SetParType(partype);
+  lofter.SetSmoothing(Standard_True);
 
-  BRepOffsetAPI_ThruSections lofter;
-  lofter.AddWire(wire1);
-  lofter.AddWire(wire2);
+  fprintf(stderr,"Loft Continuity: %d\n",continuity);
+  fprintf(stderr,"Loft Parameter: %d\n",partype);
+  for ( int i = 0; i < numCurves; i++ ) {
+    if ( curves[i]->GetKernelT() != SM_KT_OCCT ) {
+      fprintf(stderr,"Solid kernel should be OCCT\n");
+      return CV_ERROR;
+    }
+    wirePtr = (cvOCCTSolidModel *) curves[i];
+
+    lofter.AddWire(*(wirePtr->wire_));
+  }
   lofter.Build();
+  TopExp_Explorer FaceExp;
+  FaceExp.Init(lofter.Shape(),TopAbs_FACE);
+  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
+  {
+    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
+    //fprintf(stderr,"Face %d Orientation %d\n",i,tmpFace.Orientation());
+  }
 
-  //TopoDS_Edge L1 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,0.0,0.0),gp_Pnt(1.0,0.0,0.5));
-  //TopoDS_Edge L2 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,0.0,0.5),gp_Pnt(1.0,1.0,0.0));
-  //TopoDS_Edge L3 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,1.0,0.0),gp_Pnt(0.0,1.0,0.5));
-  //TopoDS_Edge L4 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,1.0,0.5),gp_Pnt(0.0,0.0,0.0));
-  //BRepBuilderAPI_MakeWire mkWire_L;
-  //mkWire_L.Add(L1);
-  //mkWire_L.Add(L2);
-  //mkWire_L.Add(L3);
-  //mkWire_L.Add(L4);
-  //TopoDS_Wire Wire_L = mkWire_L.Wire();
-
-  //TopoDS_Edge L11 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,0.0,1.0),gp_Pnt(1.0,0.0,1.0));
-  //TopoDS_Edge L12 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,0.0,1.0),gp_Pnt(1.0,1.0,1.0));
-  //TopoDS_Edge L13 = BRepBuilderAPI_MakeEdge(gp_Pnt(1.0,1.0,1.0),gp_Pnt(0.0,1.0,1.0));
-  //TopoDS_Edge L14 = BRepBuilderAPI_MakeEdge(gp_Pnt(0.0,1.0,1.0),gp_Pnt(0.0,0.0,1.0));
-  //BRepBuilderAPI_MakeWire mkWire_U;
-  //mkWire_U.Add(L11);
-  //mkWire_U.Add(L12);
-  //mkWire_U.Add(L13);
-  //mkWire_U.Add(L14);
-  //TopoDS_Wire Wire_U = mkWire_U.Wire();
-
-  //BRepOffsetAPI_ThruSections mk_solid(Standard_True);
-  //mk_solid.AddWire(Wire_L);
-  //mk_solid.AddWire(Wire_U);
-  //mk_solid.Build();
   geom_ = new TopoDS_Shape;
   *geom_ = lofter.Shape();
 
+  //Standard_Real W1,W2,W3;
+  //lofter.CriteriumWeight(W1,W2,W3);
+  //fprintf(stderr,"Continuity Used: %d\n",lofter.Continuity());
+  //fprintf(stderr,"Max Degree Used: %d\n",lofter.MaxDegree());
+  //fprintf(stderr,"ParType Used: %d\n",lofter.ParType());
+  //fprintf(stderr,"Weight Used: %.2f,%.2f,%.2f\n",W1,W2,W3);
 
   return CV_OK;
 }
+
+// ------------
+// MakeInterpCurveLoop
+// ------------
+int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
+{
+  double *ord_pts;
+  int num_pts;
+
+  if ( wire_ != NULL ) {
+    delete wire_;
+  }
+
+  // We're assuming / requiring that the given cvPolyData describes a
+  // closed loop.  Get those points in their connected order.
+  if ( sys_geom_GetOrderedPts( pd, &ord_pts, &num_pts ) != CV_OK ) {
+    return CV_ERROR;
+  }
+
+  if ( num_pts < 3 ) {
+    delete [] ord_pts;
+    return CV_ERROR;
+  }
+
+  BRepBuilderAPI_MakeWire wiremaker;
+  BRepLib_MakePolygon poly;
+  int i=0;
+  for (i=0;i<num_pts-1;i++)
+  {
+    TopoDS_Edge newedge = BRepBuilderAPI_MakeEdge(
+        		gp_Pnt(ord_pts[3*i],ord_pts[3*i+1],ord_pts[3*i+2]),
+        		gp_Pnt(ord_pts[3*i+3],ord_pts[3*i+4],ord_pts[3*i+5]));
+    wiremaker.Add(newedge);
+  }
+  TopoDS_Edge lastedge = BRepBuilderAPI_MakeEdge(
+      			gp_Pnt(ord_pts[3*i],ord_pts[3*i+1],ord_pts[3*i+2]),
+        		gp_Pnt(ord_pts[0],ord_pts[1],ord_pts[2]));
+  wiremaker.Add(lastedge);
+  wiremaker.Build();
+
+  wire_ = new TopoDS_Wire;
+  *wire_ = wiremaker.Wire();
+  geom_ = new TopoDS_Shape;
+  *geom_ = wiremaker.Shape();
+
+  return CV_OK;
+}
+
 
 // ------------
 // Union

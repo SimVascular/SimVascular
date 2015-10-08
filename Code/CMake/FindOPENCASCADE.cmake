@@ -42,11 +42,11 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Libraries
-set(${proj}_LIBNAMES TKernel) 
-set(${proj}_FIND_COMPONENTS TKBRep TKTopTest TKTopAlgo
+set(${proj}_LIBNAMES TKBRep) 
+set(${proj}_FIND_COMPONENTS TKTopTest TKTopAlgo
 			    TKPrim TKMath TKIVtk TKG3d TKG2d
 		            TKGeomBase TKGeomAlgo TKV3d TKService
-			    TKMesh TKOffset TKBool TKBO TKShHealing)
+			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
@@ -64,7 +64,7 @@ if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR}
 endif()
 # Set paths to search for OpenCascade
 if(LINUX)
-	set(sub_path "intel_linux/base")
+	set(sub_path "lin64/gcc")
 elseif(APPLE)
 	set(sub_path "mac64/clang")
 elseif(WIN32 AND IS64)
@@ -81,7 +81,7 @@ endforeach()
 
 # Set paths to search for OpenCascade
 if(LINUX)
-	set(lib_sub_path "shared_object")
+	set(lib_sub_path "lib")
 elseif(APPLE)
 	set(lib_sub_path "lib")
 elseif(WIN32 AND IS64)

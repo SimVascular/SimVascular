@@ -107,7 +107,8 @@ public:
 
   int MakeInterpCurveLoop( cvPolyData *pd, int closed ) {return CV_ERROR; }
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) {return CV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name ) {return CV_ERROR; }
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
+     int continuity,int partype,double w1,double w2,double w3 ) {return CV_ERROR; }
   int CapSurfToSolid( cvSolidModel *surf ) { return CV_ERROR; }
 
   // Booleans are compatible only between like-typed concrete objects:

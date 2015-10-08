@@ -1991,12 +1991,20 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
   int numSrcs;
   cvSolidModel **srcs;
   cvSolidModel *geom;
+  int continuity=0;
+  int partype=0;
+  double w1=0.4,w2=0.2,w3=0.4;
   int i;
   
-  int table_size = 2;
+  int table_size = 7;
   ARG_Entry arg_table[] = {
     { "-srcs", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } }
+    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-continuity", INT_Type, &continuity, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-partype", INT_Type, &partype, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-w1", DOUBLE_Type, &w1, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-w2", DOUBLE_Type, &w2, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-w3", DOUBLE_Type, &w3, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2064,7 +2072,8 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeLoftedSurf( srcs, numSrcs , dstName ) != CV_OK ) {
+  if ( geom->MakeLoftedSurf( srcs, numSrcs , dstName,
+	continuity,partype,w1,w2,w3) != CV_OK ) {
     Tcl_SetResult( interp, "error in curve loop construction", TCL_STATIC );
     delete [] srcs;
     delete geom;

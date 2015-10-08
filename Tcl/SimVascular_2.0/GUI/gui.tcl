@@ -46293,6 +46293,7 @@ proc mainGUI {} {
   $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
   $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
   $tv insert {} 1 -id .models.Parasolid -text "Parasolid" -open 0
+  $tv insert {} 1 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
 
   global symbolicName
   global guiTRIMvars

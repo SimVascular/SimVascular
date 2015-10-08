@@ -456,6 +456,7 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 
   after 5000 {set tkcon_delay_done 1}
   vwait tkcon_delay_done
+  guiCV_display_windows 3d_only
   if { $SIMVASCULAR_NO_RENDERER == "0" } { 
     puts "Not render window mode" 
   } else {
