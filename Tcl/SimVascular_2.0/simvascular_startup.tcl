@@ -469,12 +469,18 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   set w [winfo width $leftright]
   #puts "width: $w"
   set sash0 300
-  puts "sashpos: [$leftright sashpos 0 $sash0]"
+  if {[$leftright sashpos 0 $sash0] != 0} {
+    puts "Pos not zero"
+    puts "sashpos: [$leftright sashpos 0 $sash0]"
+  }
 
   set h [winfo height $topbottom]
   #puts "height: $h"
   set sash0 320
-  puts "sashpos: [$topbottom sashpos 0 $sash0]"
+  if {[$topbottom sashpos 0 $sash0] != 0} {
+    puts "Pos not zero"
+    puts "sashpos: [$topbottom sashpos 0 $sash0]"
+  }
 
   if {[info exists env(SIMVASCULAR_REDIRECT_STDERR_STDOUT)]} {
   proc handle { args } {

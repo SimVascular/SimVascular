@@ -93,7 +93,7 @@ public:
 
   int MakeBox3d( double dims[], double ctr[] );
   int MakeSphere( double r, double ctr[] ); 
-  int MakeEllipsoid( double r[], double ctr[] ) {return CV_ERROR;} 
+  int MakeEllipsoid( double r[], double ctr[] ); 
   int MakeCylinder( double r, double length, double ctr[],
        		    double axis[] ); 
   int MakeTorus( double rmaj, double rmin, double ctr[],
@@ -128,7 +128,7 @@ public:
 
   // Geometric query methods:
   cvPolyData *GetPolyData(int useMaxDist, double max_dist) const;
-  cvPolyData *GetFacePolyData(int faceid, int useMaxDist, double max_dist) const {return CV_ERROR;}
+  cvPolyData *GetFacePolyData(int faceid, int useMaxDist, double max_dist) const;
   cvPolyData *GetDiscontinuities() const { return CV_ERROR; }
   cvOCCTSolidModel *GetAxialIsoparametricCurve( double p ) const { return CV_ERROR; }
   int FindExtent( double *extent ) { return CV_ERROR; }
@@ -148,7 +148,7 @@ public:
   // Attribute related & required methods:
   void MakeSurf() { return; }
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
-  int GetFaceIds (int *numFaces, int **faceIds) {return CV_ERROR;}
+  int GetFaceIds (int *numFaces, int **faceIds);
   int GetFaceAttribute(char *attr,int faceid, char **value) {return CV_ERROR;}
   int SetFaceAttribute(char *attr,int faceid, char *value) {return CV_ERROR;}
   int GetRegionIds (int *numRegions, int **RegionIds) {return CV_ERROR; }
@@ -173,8 +173,6 @@ public:
 protected:
 
   TopoDS_Shape *geom_;
-  TopoDS_Wire *wire_;
-  TopoDS_Wire *wire2_;
 
   int numBoundaryRegions;
 
