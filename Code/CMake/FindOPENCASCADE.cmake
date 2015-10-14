@@ -42,8 +42,8 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Libraries
-set(${proj}_LIBNAMES TKBRep) 
-set(${proj}_FIND_COMPONENTS TKTopTest TKTopAlgo
+set(${proj}_LIBNAMES TKBRep TKHLR) 
+set(${proj}_FIND_COMPONENTS TKTopAlgo
 			    TKPrim TKMath TKIVtk TKG3d TKG2d
 		            TKGeomBase TKGeomAlgo TKV3d TKService
 			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel)
