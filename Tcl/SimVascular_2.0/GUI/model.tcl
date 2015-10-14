@@ -669,6 +669,8 @@ proc guiSV_model_get_kernel_type {ext} {
     set kernel "Discrete"
   } elseif {[string compare -length 7 $ext "xmt_txt"] == 0} {
     set kernel "Parasolid"
+  } elseif {[string compare -length 4 $ext "brep"] == 0} {
+    set kernel "OpenCASCADE"
   } else {
     return -code error "ERROR: Unkown file type extension: $ext"
   }
@@ -686,8 +688,8 @@ proc guiSV_model_load_model { {fn "" } } {
 
    set kernel $gOptions(meshing_solid_kernel)
    if {$fn == ""} {
-     if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData"} {
-       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
+     if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData" || $kernel == "OpenCASCADE"} {
+       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {OpenCASCADE *.brep} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
      #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
@@ -760,6 +762,23 @@ proc guiSV_model_load_model { {fn "" } } {
       package require md5
       set mymd5 [::md5::md5 -hex -file $fn]
       if {$mymd5 != $gPolyDataFaceNamesInfo(model_file_md5)} {
+        return -code error "ERROR: dsm model ($fn) file doesn't match one used to generate facenames ($fn.facenames)!"
+      }
+      guiSV_model_add_faces_to_tree $kernel $inputName
+      set withFaces 1
+    }
+  }
+  if {$kernel == "OpenCASCADE"} {
+    global gOCCTFaceNames
+    global gOCCTFaceNamesInfo
+    catch {unset gOCCTFaceNames}
+    catch {unset gOCCTFaceNamesInfo}
+    if [file exists $fn.facenames] {
+      puts "sourcing $fn.facenames"
+      source $fn.facenames
+      package require md5
+      set mymd5 [::md5::md5 -hex -file $fn]
+      if {$mymd5 != $gOCCTFaceNamesInfo(model_file_md5)} {
         return -code error "ERROR: dsm model ($fn) file doesn't match one used to generate facenames ($fn.facenames)!"
       }
       guiSV_model_add_faces_to_tree $kernel $inputName
@@ -862,6 +881,39 @@ proc guiSV_model_save_model {} {
         close $fp
         puts "Done writing facenames file."
       }
+  } elseif {$kernel == "OpenCASCADE"} {
+      set fn $model
+      set fn [tk_getSaveFile -defaultextension {*.brep} -filetypes {{vtkPolyData *.vtp} {VTK *.vtk} {vtkUnstructuredGrid *.vtu} {STL *.stl}  {PLY *.ply} {OpenCASCADE *.brep} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
+      package require md5
+      if {$fn == ""} return 
+      puts "Writing brep solid ($fn)"
+      $model WriteNative -file $fn
+      puts "Done writing brep solid."
+      puts "Writing file ($fn.facenames)"
+      set allids [$model GetFaceIds]
+      if {[llength $allids] != 0} {
+	puts "Writing file ($fn.facenames)"
+	set mymd5 [::md5::md5 -hex -file $fn]
+	set fp [open $fn.facenames w]
+	fconfigure $fp -translation lf
+	puts $fp "\# user defined face id to name mapping for model file ($fn)"
+	set timestamp [clock seconds]
+	puts $fp "\# timestamp: $timestamp  ([clock format $timestamp])"
+	puts $fp ""
+	puts $fp "global gOCCTFaceNames"
+	puts $fp "global gOCCTFaceNamesInfo"
+	puts $fp ""
+	puts $fp "set gOCCTFaceNamesInfo(timestamp) \{$timestamp\}"
+	puts $fp "set gOCCTFaceNamesInfo(model_file_md5) \{$mymd5\}"
+	puts $fp "set gOCCTFaceNamesInfo(model_file_name) \{[file tail $fn]\}"
+	puts $fp ""
+	foreach id $allids {
+	  set face [model_idface $kernel $model $id]
+          puts $fp "set gOCCTFaceNames($id) \{$face\}"
+        }
+        close $fp
+        puts "Done writing facenames file."
+      }
   } else {
     return -code error "ERROR: invalid solid model type."
   }
@@ -870,6 +922,7 @@ proc guiSV_model_save_model {} {
 # Procedure: guiSV_model_add_faces_to_tree
 proc guiSV_model_add_faces_to_tree {kernel modelname} {
   global gPolyDataFaceNames
+  global gOCCTFaceNames
   global gDiscreteModelFaceNames
   global smasherFaceNames
   global gOptions
@@ -885,6 +938,8 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       set facename $gDiscreteModelFaceNames($id)
     } elseif {$kernel == "PolyData"} {
       set facename $gPolyDataFaceNames($id)
+    } elseif {$kernel == "OpenCASCADE"} {
+      set facename $gOCCTFaceNames($id)
     } else {
       return -code error "ERROR: Solid kernel $kernel is not a valid kernel"
     }
@@ -957,6 +1012,8 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       set facename $gDiscreteModelFaceNames($id)
     } elseif {$kernel == "PolyData"} {
       set facename $gPolyDataFaceNames($id)
+    } elseif {$kernel == "OpenCASCADE"} {
+      set facename $gOCCTFaceNames($id)
     } else {
       return -code error "ERROR: Solid kernel $kernel is not a valid kernel"
     }
@@ -966,6 +1023,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
 
 proc guiSV_model_get_face_ids_from_tree {modelname} {
   global gPolyDataFaceNames
+  global gOCCTFaceNames
   global gOptions
   global symbolicName
   global gKernel
@@ -1017,6 +1075,7 @@ proc guiSV_model_update_tree {} {
     $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
     $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
     $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
+    $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
   }
   $tv configure -columns [list DisplayModel FaceIds DisplayFaces]
   $tv heading \#0 -text "Object"
@@ -1302,7 +1361,7 @@ proc guiSV_model_update_actor_selection {actorname} {
 
   set kernel [lindex $namesplit 2]
   set gOptions(meshing_solid_kernel) $kernel
-  if {!($kernel == "PolyData" || $kernel == "Parasolid" || $kernel == "Discrete")} {
+  if {!($kernel == "PolyData" || $kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "OpenCASCADE")} {
     puts "Actor not of valid solid kernel type"
     return
   }
@@ -2134,6 +2193,7 @@ proc guiSV_model_update_new_solid {kernel model newmodel} {
   global gOptions
   global gKernel
   global gPolyDataFaceNames
+  global gOCCTFaceNames
 
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2442,6 +2502,7 @@ proc guiSV_model_copy_model {kernel model newname op} {
   global gOptions
   global symbolicName
   global gPolyDataFaceNames
+  global gOCCTFaceNames
   global gDiscreteModelFaceNames
 
   if {$newname == ""} {
@@ -2467,7 +2528,7 @@ proc guiSV_model_copy_model {kernel model newname op} {
     if [guiSV_model_check_array_exists $oldmodel 1 "ModelFaceID"] {
       set addfaces 1
     }
-  } elseif {$kernel == "Discrete"} {
+  } elseif {$kernel == "Discrete"|| $kernel =="OpenCASCADE"} {
     set addfaces 1
   }
 
@@ -3129,6 +3190,12 @@ proc guiSV_model_update_view_model {kernel model} {
       set faceids [$model GetFaceIds]
       foreach id $faceids {
 	set gDiscreteModelFaceNames($id) [model_idface $kernel $model $id]
+      }
+    } elseif {$kernel == "OpenCASCADE"} {
+      catch {unset gOCCTFaceNames}
+      set faceids [$model GetFaceIds]
+      foreach id $faceids {
+	set gOCCTFaceNames($id) [model_idface $kernel $model $id]
       }
     }
     set faces [model_get $model]

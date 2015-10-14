@@ -75,6 +75,7 @@
 #include "BRepBuilderAPI_MakeFace.hxx"
 #include "BRepBuilderAPI_MakeVertex.hxx"
 #include "BRepBuilderAPI_Sewing.hxx"
+#include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
 #include "BRepOffsetAPI_ThruSections.hxx"
 #include "BRepLib_MakePolygon.hxx"
@@ -84,6 +85,7 @@
 #include "BRepAdaptor_Curve.hxx"
 #include "BRepFill_Filling.hxx"
 #include "BRepTools_Quilt.hxx"
+#include "BRepTools.hxx"
 #include "BRep_Tool.hxx"
 
 #include "IVtkOCC_Shape.hxx"
@@ -93,6 +95,7 @@
 #include "IVtkOCC_ShapeMesher.hxx"
 
 #include "TopExp_Explorer.hxx"
+#include "TopTools_DataMapOfIntegerShape.hxx"
 #include "Message_ProgressIndicator.hxx"
 #include "GCPnts_AbscissaPoint.hxx"
 #include "Adaptor3d_Curve.hxx"
@@ -273,27 +276,27 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
 
   cvOCCTSolidModel *shapePtr;
   BRepOffsetAPI_ThruSections lofter(Standard_False,Standard_False,1e-6);
-  if (continuity == 0)
-    lofter.SetContinuity(GeomAbs_C0);
-  else if (continuity == 1)
-    lofter.SetContinuity(GeomAbs_G1);
-  else if (continuity == 2)
-    lofter.SetContinuity(GeomAbs_C1);
-  else if (continuity == 3)
-    lofter.SetContinuity(GeomAbs_G2);
-  else if (continuity == 4)
-    lofter.SetContinuity(GeomAbs_C2);
-  else if (continuity == 5)
-    lofter.SetContinuity(GeomAbs_C3);
-  else
-    lofter.SetContinuity(GeomAbs_CN);
+  //if (continuity == 0)
+  //  lofter.SetContinuity(GeomAbs_C0);
+  //else if (continuity == 1)
+  //  lofter.SetContinuity(GeomAbs_G1);
+  //else if (continuity == 2)
+  //  lofter.SetContinuity(GeomAbs_C1);
+  //else if (continuity == 3)
+  //  lofter.SetContinuity(GeomAbs_G2);
+  //else if (continuity == 4)
+  //  lofter.SetContinuity(GeomAbs_C2);
+  //else if (continuity == 5)
+  //  lofter.SetContinuity(GeomAbs_C3);
+  //else
+  //  lofter.SetContinuity(GeomAbs_CN);
 
-  if (partype == 0)
-    lofter.SetParType(Approx_ChordLength);
-  else if (partype == 1)
-    lofter.SetParType(Approx_Centripetal);
-  else
-    lofter.SetParType(Approx_IsoParametric);
+  //if (partype == 0)
+  //  lofter.SetParType(Approx_ChordLength);
+  //else if (partype == 1)
+  //  lofter.SetParType(Approx_Centripetal);
+  //else
+  //  lofter.SetParType(Approx_IsoParametric);
 
   lofter.CheckCompatibility(Standard_False);
   //lofter.SetCriteriumWeight(w1,w2,w3);
@@ -437,8 +440,8 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   attacher.Perform();
 
   geom_ = new TopoDS_Shape;
-  *geom_ = attacher.SewedShape();
-  //*geom_ = lofter.Shape();
+  //*geom_ = attacher.SewedShape();
+  *geom_ = lofter.Shape();
 
   //Standard_Real W1,W2,W3;
   //lofter.CriteriumWeight(W1,W2,W3);
@@ -696,6 +699,8 @@ int cvOCCTSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   for (; anExp2.More(); anExp2.Next()) {
    const TopoDS_Face& aFace = TopoDS::Face (anExp2.Current());
    (*faceIds)[j] = aFace.HashCode(9999999999);
+   TopTools_DataMapOfIntegerShape dataManager(1);
+   dataManager.Bind((*faceIds)[j],aFace);
    //(*faceIds)[j] = j;
    j++;
   }
@@ -723,8 +728,6 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 
   int foundFace = 0;
 
-
-  
   for (; anExp.More(); anExp.Next()) {
    const TopoDS_Face& aFace = TopoDS::Face (anExp.Current());
    int hashcode = aFace.HashCode(9999999999);
@@ -794,6 +797,74 @@ int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
 
   geom_ = new TopoDS_Shape;
   *geom_ = facemaker.Shape();
+
+  return CV_OK;
+}
+
+// ---------------
+// ReadNative
+// ---------------
+int cvOCCTSolidModel::ReadNative( char *filename )
+{
+  if (geom_ != NULL)
+    delete geom_;
+
+  const char *extension = strrchr(filename,'.');
+  extension = extension+1;
+
+  Handle(Message_ProgressIndicator) progress; 
+  BRep_Builder builder;
+  geom_ = new TopoDS_Shape;
+  if (!strncmp(extension,"brep",4)) {
+    fprintf(stdout,"Reading file %s\n",filename);
+    Standard_Boolean worked = 
+      BRepTools::Read(*geom_,filename,builder,progress);
+    if (worked = Standard_True)
+      fprintf(stdout,"File read\n");
+    else 
+    {
+      fprintf(stderr,"File was not read\n");
+      return CV_ERROR;
+    }
+  }
+  else {
+    fprintf(stderr,"File can only be read with .brep extension\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// ---------------
+// WriteNative
+// ---------------
+int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
+{
+  if (geom_ == NULL)
+  {
+    fprintf(stderr,"Need geometry to write file\n");
+    return CV_ERROR;
+  }
+  const char *extension = strrchr(filename,'.');
+  extension = extension+1;
+
+  Handle(Message_ProgressIndicator) progress; 
+  if (!strncmp(extension,"brep",4)) {
+    fprintf(stdout,"Writing file %s\n",filename);
+    Standard_Boolean worked = 
+      BRepTools::Write(*geom_,filename,progress);
+    if (worked = Standard_True)
+      fprintf(stdout,"File written\n");
+    else 
+    {
+      fprintf(stderr,"File was not written\n");
+      return CV_ERROR;
+    }
+  }
+  else {
+    fprintf(stderr,"File can only be written with .brep extension\n");
+    return CV_ERROR;
+  }
 
   return CV_OK;
 }

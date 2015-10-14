@@ -157,8 +157,8 @@ public:
   int DeleteRegion (int regionid) {return CV_ERROR;}
   
   // I/O:
-  int ReadNative( char *filename ) {return CV_ERROR;}                     
-  int WriteNative( int file_version, char *filename ) const {return CV_ERROR;}
+  int ReadNative( char *filename );                     
+  int WriteNative( int file_version, char *filename ) const;
   int WriteVtkPolyData( char *filename ) {return CV_ERROR; }
 
   // geometric manipulation

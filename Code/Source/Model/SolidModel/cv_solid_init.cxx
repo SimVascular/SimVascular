@@ -2220,7 +2220,8 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
   cvSolidModel *geom;
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
-      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA) {
+      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
 
 	  geom = cvSolidModel::DefaultInstantiateSolidModel( interp);
 
