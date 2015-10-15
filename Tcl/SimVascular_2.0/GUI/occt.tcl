@@ -25,7 +25,7 @@ proc guiSV_model_create_model_opencascade {} {
 
    set createPREOPgrpKeptSelections {}
    puts "children: $children"
-   
+
     foreach child $children {
       if {[lindex [$tv item $child -values] 0] == "X"} {
   lappend createPREOPgrpKeptSelections [string range $child 12 end]
@@ -137,6 +137,12 @@ proc guiSV_model_create_model_opencascade {} {
       repos_delete -obj /tmp/preop/$modelname
     }
 
+    #Find face areas and remove two smaller ones
+    set num [llength $createPREOPgrpKeptSelections]
+    if { $num > 1} {
+      guiSV_model_opencascade_fixup $modelname $num
+    }
+
     global gOCCTFaceNames
     crd_ren gRenWin_3D_ren1
     set pretty_names {}
@@ -176,6 +182,44 @@ proc guiSV_model_create_model_opencascade {} {
   if {$isdups == 1} {
     tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
   }
+
+}
+
+proc guiSV_model_opencascade_fixup {model num} {
+  global symbolicName
+  global gRen3d
+
+  set kernel "OpenCASCADE"
+
+  for {set i 0} {$i < [expr ($num-1)*2]} {incr i} {
+    set currentids [$model GetFaceIds]
+    set min_area 1.0e20
+    set min_id -1
+    set min_face ""
+    foreach id $currentids {
+      catch {repos_delete -obj /tmp/face/pd}
+      $model GetFacePolyData -result /tmp/face/pd -face $id
+      set tmp_area [geom_surfArea -src /tmp/face/pd]
+      puts "Calcing Area $tmp_area for face $id"
+      if {$tmp_area < $min_area} {
+	set min_area $tmp_area
+	set min_id $id
+      }
+    }
+    if {$min_id != -1} {
+      $model DeleteRegion -regionid $min_id
+      puts "Deleting $min_id"
+    }
+  }
+
+  set copy "_copy"
+  set copymod $model$copy
+  catch {repos_delete -obj $copymod}
+  solid_capSurfToSolid -src $model -dst $copymod
+  catch {repos_delete -obj $model}
+
+  solid_copy -src $copymod -dst $model
+
 }
 
 proc makeSurfOCCT {} {

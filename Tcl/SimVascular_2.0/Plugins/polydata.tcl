@@ -1,19 +1,19 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -26,7 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#===========================================================================    
+#===========================================================================
 
 # Procedure: guiMMextractBoundaries
 proc guiMMextractBoundaries {} {
@@ -57,7 +57,7 @@ proc guiMMextractBoundaries {} {
     }
   } else {
     return -code error "Solid Must be of type PolyData"
-  } 
+  }
 
   crd_ren gRenWin_3D_ren1
   smasherGUIupdateViewWindow
@@ -89,7 +89,7 @@ proc PolyDataCombine {} {
     set faceIds [$smasherInputName GetFaceIds]
     set two {-1}
     foreach faceid $faceIds {
-      if {$gPolyDataFaceNames($faceid) == $name} { 
+      if {$gPolyDataFaceNames($faceid) == $name} {
 	puts "Face Id # $faceid"
 	puts "Name: $gPolyDataFaceNames($faceid)"
         if {$iter == 0} {
@@ -147,7 +147,7 @@ proc PolyDataDeleteCells {} {
   }
 
   if {$gNumPickedCells != 0} {
-    set modelpd /models/$kernel/$model   
+    set modelpd /models/$kernel/$model
 
     if {[repos_exists -obj $modelpd] == 0} {
       $model GetPolyData -result $modelpd
@@ -188,7 +188,7 @@ proc PolyDataFillHoles {} {
   geom_fillHoles $openpd $closedpd
 
   $solid SetVtkPolyData -obj $closedpd
-  if {[array size gPolyDataFaceNames] != 0 } { 
+  if {[array size gPolyDataFaceNames] != 0 } {
     unset gPolyDataFaceNames
   }
 
@@ -203,7 +203,7 @@ proc PolyDataRemeshSurfaces {solid excludelist} {
   global symbolicName
   global gPolyDataFaceNames
   global smasherInputName
-  
+
   set kernel $gOptions(meshing_solid_kernel)
   set size $guiPDvars(remeshFaceSize)
 
@@ -221,7 +221,7 @@ proc PolyDataDeleteRegions {solid deletelist} {
   global guiPDvars
   global symbolicName
   global gPolyDataFaceNames
-  
+
   set kernel $gOptions(meshing_solid_kernel)
 
   if {$kernel != "PolyData"} {
@@ -238,7 +238,7 @@ proc return_pd_region_names {} {
   global gOptions
   global gObjects
   global gPolyDataFaceNames
-  
+
   set kernel $gOptions(meshing_solid_kernel)
   set solid $smasherInputName
   set gObjects(polydata_solid) $smasherInputName
@@ -297,15 +297,15 @@ proc PolyDataThreshold {solid} {
   }
   set guiPDvars(wall_id) $wallid
 
-  $solid GetPolyData -result $geom 
+  $solid GetPolyData -result $geom
 
   vtkThreshold $thresholder
   $thresholder SetInputData [repos_exportToVtk -src $geom]
-  $thresholder SetInputArrayToProcess 0 0 0 1 "ModelFaceID" 
+  $thresholder SetInputArrayToProcess 0 0 0 1 "ModelFaceID"
   $thresholder ThresholdBetween $wallid $wallid
   $thresholder Update
 
-  vtkDataSetSurfaceFilter $surfacer 
+  vtkDataSetSurfaceFilter $surfacer
   $surfacer SetInputData [$thresholder GetOutput]
   $surfacer Update
 
@@ -336,12 +336,12 @@ proc PolyDataVMTKGetCenterIds {obj objType} {
   catch {repos_delete -obj $cappedgeom}
 
   if {$objType == "solid"} {
-    $obj GetPolyData -result $polydata 
+    $obj GetPolyData -result $polydata
   } elseif {$objType == "mesh"} {
-    $obj GetSolid -result $polydata 
-  } 
+    $obj GetSolid -result $polydata
+  }
 
-  set gCenterlineIds [geom_cap -src $polydata -result $cappedgeom -captype 1] 
+  set gCenterlineIds [geom_cap -src $polydata -result $cappedgeom -captype 1]
 
   return $cappedgeom
 }
@@ -375,7 +375,7 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
     $original GetSolid -result $originalsolid
   }
 
-  geom_centerlines -src $polydata -sourcelist [lindex $gCenterlineIds 0] -targetlist [lrange $gCenterlineIds 1 [llength $gCenterlineIds]] -linesresult $centerlines -voronoiresult $voronoi 
+  geom_centerlines -src $polydata -sourcelist [lindex $gCenterlineIds 0] -targetlist [lrange $gCenterlineIds 1 [llength $gCenterlineIds]] -linesresult $centerlines -voronoiresult $voronoi
 
   geom_distancetocenterlines -src $originalsolid -lines $centerlines -result $distance
 
@@ -432,5 +432,5 @@ proc set_capids_for_pd {pd {value -1}} {
 proc check_surface_for_capids {pd} {
 
   return [[[repos_exportToVtk -src $pd] GetCellData] HasArray "CapID"]
-  
+
 }
