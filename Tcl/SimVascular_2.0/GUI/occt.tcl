@@ -143,6 +143,18 @@ proc guiSV_model_create_model_opencascade {} {
       guiSV_model_opencascade_fixup $modelname $num
     }
 
+    #If not on mac and want caps, cap the surface
+    global tcl_platform
+    if {$tcl_platform(os) != "Darwin"} {
+      set copy "_copy"
+      set copymod $modelname$copy
+      catch {repos_delete -obj $copymod}
+      solid_capSurfToSolid -src $modelname -dst $copymod
+      catch {repos_delete -obj $modelname}
+
+      solid_copy -src $copymod -dst $modelname
+    }
+
     global gOCCTFaceNames
     crd_ren gRenWin_3D_ren1
     set pretty_names {}
@@ -211,14 +223,6 @@ proc guiSV_model_opencascade_fixup {model num} {
       puts "Deleting $min_id"
     }
   }
-
-  set copy "_copy"
-  set copymod $model$copy
-  catch {repos_delete -obj $copymod}
-  solid_capSurfToSolid -src $model -dst $copymod
-  catch {repos_delete -obj $model}
-
-  solid_copy -src $copymod -dst $model
 
 }
 

@@ -416,12 +416,12 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   const Standard_Real anAngTol = 1.e-02; //angular
   const Standard_Real aCurvTol = 1.e-01; //curvature
 
-  BRepFill_Filling surfacemaker;
-  //GeomPlate_BuildPlateSurface aPlateBuilder(aDeg,aNbPnts,
-  //      	  aNbIter,aTol2d,aTol3d,anAngTol,aCurvTol);
-  //surfacemaker.LoadInitSurface(lofter.Shape());
-  //BRepBuilderAPI_Sewing attacher;
-  //attacher.Add(lofter.Shape());
+  GeomPlate_BuildPlateSurface aPlateBuilder(aDeg,aNbPnts,
+        	  aNbIter,aTol2d,aTol3d,anAngTol,aCurvTol);
+
+  //Attacher!
+  BRepBuilderAPI_Sewing attacher;
+  attacher.Add(shape);
   Standard_Real sewtoler =  1.e-6;
   Standard_Real closetoler =  1.e-2;
   ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
@@ -438,22 +438,22 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
     fprintf(stdout,"Edge Length %.4f\n",lineProps.Mass());
     fprintf(stdout,"Closed? %d\n",tmpEdge.Closed());
 
-  //  //BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
-  //  //wiremaker.Build();
+    BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
+    wiremaker.Build();
 
-  //  //BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
-  //  //filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
-  //  //filler.Build();
+    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+    filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
+    filler.Build();
 
-  //  //attacher.Add(filler.Face());
+    attacher.Add(filler.Face());
   }
-  ////attacher.Perform();
+  attacher.Perform();
 
   if (geom_ != NULL)
     delete geom_;
 
   geom_ = new TopoDS_Shape;
-  *geom_ = shape;
+  *geom_ = attacher.SewedShape();
   return CV_OK;
 }
 
