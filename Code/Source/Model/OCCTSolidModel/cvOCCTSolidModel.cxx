@@ -39,6 +39,7 @@
  */
 
 #include "SimVascular.h"
+#include "cv_globals.h"
 
 #include "cvOCCTSolidModel.h"
 #include "vtkPolyData.h"
@@ -110,6 +111,48 @@
 #include "GeomPlate_MakeApprox.hxx"
 #include "ShapeFix_FreeBounds.hxx"
 
+//Doc stuff
+#include "TDocStd_Document.hxx"
+#include "TDF_Label.hxx"
+#include "TNaming_Builder.hxx"
+#include "TNaming_NamedShape.hxx"
+#include "TDataStd_Integer.hxx"
+
+
+int AddLabel(TopoDS_Face &face,int id)
+{
+  //Get the document created inside of the manager
+  Handle(TDocStd_Document) doc;
+  gOCCTManager->GetDocument(1,doc);
+
+  //Get the main part of the document
+  TDF_Label root=doc->Main();
+
+  //Create a child label with a tag
+  TDF_Label aLabel=root.FindChild(id+1,Standard_True);
+
+  //Register the shape
+  TNaming_Builder builder(aLabel);
+  builder.Generated(face);
+
+  //Create new integer attribute on object
+  Handle(TDataStd_Integer) INT = new TDataStd_Integer();
+  aLabel.AddAttribute(INT);
+  INT->Set(id);
+
+  //Retrieve the shape
+  Handle(TNaming_NamedShape) NS;
+  aLabel.FindAttribute(TNaming_NamedShape::GetID(),NS);
+  face = TopoDS::Face(NS->Get());
+
+  Standard_Integer check;
+  //Retrive attribute
+  aLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+  check = INT->Get();
+  fprintf(stderr,"Want to check and see if worked: %d\n",check);
+
+  return CV_OK;
+}
 // ----------
 // OCCTSolidModel
 // ----------
@@ -515,6 +558,7 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
       GProp_GProps newEdgeProps;
       BRepGProp::LinearProperties(tmpEdge,newEdgeProps);
     }
+    AddLabel(tmpFace,i);
   }
 
   geom_ = new TopoDS_Shape;
