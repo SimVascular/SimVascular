@@ -47,6 +47,7 @@ enum SolidModel_KernelT {
   SM_KT_PARASOLID,
   SM_KT_DISCRETE,
   SM_KT_POLYDATA,
+  SM_KT_OCCT,
   SM_KT_INVALID
 };
 
@@ -135,7 +136,8 @@ public:
 
   virtual int MakeInterpCurveLoop( cvPolyData *pd, int closed ) = 0;
   virtual int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) = 0;
-  virtual int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name ) = 0;
+  virtual int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
+     int continuity,int partype,double w1,double w2,double w3 ) = 0;
   virtual int CapSurfToSolid( cvSolidModel *surf ) { return CV_ERROR; }
 
   // Booleans are compatible only between like-typed concrete objects:

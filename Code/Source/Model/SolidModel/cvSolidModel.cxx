@@ -92,7 +92,8 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
   cvSolidModel* solid = NULL;
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID || 
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
-      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA) {
+      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
 
     solid = (cvSolidModel *) (solidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
     if (solid == NULL) {
@@ -142,6 +143,8 @@ SolidModel_KernelT SolidModel_KernelT_StrToEnum( char *name )
     return SM_KT_DISCRETE;
   } else if ( !strcmp( name, "PolyData" ) ) {
     return SM_KT_POLYDATA;
+  } else if ( !strcmp( name, "OpenCASCADE" ) ) {
+    return SM_KT_OCCT;
   } else {
     return SM_KT_INVALID;
   }
@@ -166,6 +169,9 @@ char *SolidModel_KernelT_EnumToStr( SolidModel_KernelT val )
     break;
   case SM_KT_POLYDATA:
     strcpy ( result, "PolyData" );
+    break;
+  case SM_KT_OCCT:
+    strcpy ( result, "OpenCASCADE" );
     break;
   default:
     strcpy( result, "Invalid kernel name; must be one of "

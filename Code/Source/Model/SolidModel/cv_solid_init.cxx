@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -33,7 +33,7 @@
  *
  *=========================================================================*/
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -346,7 +346,7 @@ int Solid_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "solid_poly3dSurface", Solid_Poly3dSurfaceCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "solid_extrudeZ", Solid_ExtrudeZCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "solid_extrude", Solid_ExtrudeCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "solid_makeApproxCurveLoop",
@@ -396,14 +396,14 @@ int Solid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
     return TCL_ERROR;
   }
-  cvFactoryRegistrar *solidModelRegistrar = 
+  cvFactoryRegistrar *solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 
   char result[255];
   sprintf( result, "Solid model registrar ptr -> %p\n", solidModelRegistrar );
   Tcl_AppendElement( interp, result );
   for (int i = 0; i < 5; i++) {
-    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n", 
+    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n",
       i, (solidModelRegistrar->GetFactoryMethodPtr(i)));
     Tcl_AppendElement( interp, result );
   }
@@ -605,7 +605,7 @@ int Solid_CircleCmd( ClientData clientData, Tcl_Interp *interp,
   double radius;
   double ctr[2];
   cvSolidModel *geom;
-  
+
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -632,7 +632,7 @@ int Solid_CircleCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  
+
   if ( radius <= 0.0 ) {
     Tcl_SetResult( interp, "radius must be positive", TCL_STATIC );
     return TCL_ERROR;
@@ -686,7 +686,7 @@ int Solid_EllipseCmd( ClientData clientData, Tcl_Interp *interp,
   double xr, yr;
   double ctr[2];
   cvSolidModel *geom;
-  
+
   int table_size = 5;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -714,7 +714,7 @@ int Solid_EllipseCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  
+
   if ( ( xr <= 0.0 ) || ( yr <= 0.0 ) ) {
     Tcl_SetResult( interp, "radii must be positive", TCL_STATIC );
     return TCL_ERROR;
@@ -771,7 +771,7 @@ int Solid_Box2dCmd( ClientData clientData, Tcl_Interp *interp,
   double boxDims[2];
   double ctr[2];
   cvSolidModel *geom;
-  
+
   int table_size = 5;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -799,7 +799,7 @@ int Solid_Box2dCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  
+
   if ( ( boxDims[0] <= 0.0 ) || ( boxDims[1] <= 0.0 ) ) {
     Tcl_SetResult( interp, "height and width must be positive", TCL_STATIC );
     return TCL_ERROR;
@@ -855,7 +855,7 @@ int Solid_Box3dCmd( ClientData clientData, Tcl_Interp *interp,
   double ctr[3];
   int ndims, nctr;
   cvSolidModel *geom;
-  
+
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -896,7 +896,7 @@ int Solid_Box3dCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_FreeListArgvs( table_size, arg_table );
 
   // Do work of command:
-  
+
   if ( ( dims[0] <= 0.0 ) || ( dims[1] <= 0.0 ) || ( dims[2] <= 0.0 ) ) {
     Tcl_SetResult( interp, "all dims must be positive", TCL_STATIC );
     return TCL_ERROR;
@@ -952,7 +952,7 @@ int Solid_SphereCmd( ClientData clientData, Tcl_Interp *interp,
   double r;
   int nctr;
   cvSolidModel *geom;
-  
+
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -982,7 +982,7 @@ int Solid_SphereCmd( ClientData clientData, Tcl_Interp *interp,
 
   // We no longer need ctrList's argv:
   Tcl_Free( (char *) ctrList.argv );
-  
+
   if ( nctr != 3 ) {
     Tcl_SetResult( interp, "sphere requires a 3D center coordinate",
 		   TCL_STATIC );
@@ -1040,7 +1040,7 @@ int Solid_EllipsoidCmd( ClientData clientData, Tcl_Interp *interp,
   double r[3];
   int nctr, nr;
   cvSolidModel *geom;
-  
+
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -1137,7 +1137,7 @@ int Solid_CylinderCmd( ClientData clientData, Tcl_Interp *interp,
   double r, l;
   int nctr, naxis;
   cvSolidModel *geom;
-  
+
   int table_size = 5;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -1235,7 +1235,7 @@ int Solid_TruncatedConeCmd( ClientData clientData, Tcl_Interp *interp,
   double r1, r2;
   int npt, ndir;
   cvSolidModel *geom;
-  
+
   int table_size = 5;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -1333,7 +1333,7 @@ int Solid_TorusCmd( ClientData clientData, Tcl_Interp *interp,
   double rmaj, rmin;
   int nctr, naxis;
   cvSolidModel *geom;
-  
+
   int table_size = 5;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -1532,7 +1532,7 @@ int Solid_Poly3dSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *pd;
   RepositoryDataT type;
   cvSolidModel *geom;
-  
+
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
@@ -1629,7 +1629,7 @@ int Solid_ExtrudeZCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *src;
   RepositoryDataT type;
   cvSolidModel *geom;
-  
+
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
@@ -1714,7 +1714,7 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *src;
   RepositoryDataT type;
   cvSolidModel *geom;
-  
+
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
@@ -1773,7 +1773,7 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
   dist = new double*[2];
   dist[0] = &pt1[0];
   dist[1] = &pt2[0];
- 
+
   // Instantiate the new solid:
   geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
   if ( geom == NULL ) {
@@ -1822,7 +1822,7 @@ int Solid_MakeApproxCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
   RepositoryDataT type;
   cvSolidModel *geom;
   int closed = 1;
-  
+
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-src_pd", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
@@ -1991,12 +1991,20 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
   int numSrcs;
   cvSolidModel **srcs;
   cvSolidModel *geom;
+  int continuity=0;
+  int partype=0;
+  double w1=0.4,w2=0.2,w3=0.4;
   int i;
-  
-  int table_size = 2;
+
+  int table_size = 7;
   ARG_Entry arg_table[] = {
     { "-srcs", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } }
+    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-continuity", INT_Type, &continuity, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-partype", INT_Type, &partype, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-w1", DOUBLE_Type, &w1, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-w2", DOUBLE_Type, &w2, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-w3", DOUBLE_Type, &w3, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2064,7 +2072,8 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeLoftedSurf( srcs, numSrcs , dstName ) != CV_OK ) {
+  if ( geom->MakeLoftedSurf( srcs, numSrcs , dstName,
+	continuity,partype,w1,w2,w3) != CV_OK ) {
     Tcl_SetResult( interp, "error in curve loop construction", TCL_STATIC );
     delete [] srcs;
     delete geom;
@@ -2104,7 +2113,7 @@ int Solid_CapSurfToSolidCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *src;
   RepositoryDataT type;
   cvSolidModel *geom;
-  
+
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
@@ -2211,7 +2220,8 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
   cvSolidModel *geom;
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
-      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA) {
+      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
 
 	  geom = cvSolidModel::DefaultInstantiateSolidModel( interp);
 
@@ -2347,7 +2357,7 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *gmA;
   cvRepositoryData *gmB;
   cvSolidModel *geom;
-  
+
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
@@ -2381,7 +2391,7 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
       Tcl_SetResult( interp, smpStr, TCL_VOLATILE );
       return TCL_ERROR;
     }
-  }    
+  }
 
   // Do work of command:
 
@@ -2457,7 +2467,7 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *gmA;
   cvRepositoryData *gmB;
   cvSolidModel *result;
-  
+
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
@@ -2491,7 +2501,7 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
       Tcl_SetResult( interp, smpStr, TCL_VOLATILE );
       return TCL_ERROR;
     }
-  }    
+  }
 
   // Do work of command:
 
@@ -2567,7 +2577,7 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
   cvRepositoryData *gmA;
   cvRepositoryData *gmB;
   cvSolidModel *result;
-  
+
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
@@ -2601,7 +2611,7 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
       Tcl_SetResult( interp, smpStr, TCL_VOLATILE );
       return TCL_ERROR;
     }
-  }    
+  }
 
   // Do work of command:
 
@@ -3224,7 +3234,7 @@ static void PrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "GetClassName\n");
   tcl_printstr(interp, "GetDiscontinuities\n");
   tcl_printstr(interp, "GetAxialIsoparametricCurve\n");
-  tcl_printstr(interp, "GetFaceAttr\n");  
+  tcl_printstr(interp, "GetFaceAttr\n");
   tcl_printstr(interp, "GetFaceIds\n");
   tcl_printstr(interp, "GetBoundaryFaces\n");
   tcl_printstr(interp, "GetFaceNormal\n");
@@ -3266,7 +3276,7 @@ static int Solid_FindExtentMtd( ClientData clientData, Tcl_Interp *interp,
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%f", extent );
-    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "FindExtent: error on object ",
@@ -3335,7 +3345,7 @@ static int Solid_GetTopoDimMtd( ClientData clientData, Tcl_Interp *interp,
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%d", tdim );
-    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetTopoDim: error on object ",
@@ -3943,7 +3953,7 @@ static int Solid_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },  
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4069,7 +4079,7 @@ static int Solid_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4132,7 +4142,7 @@ static int Solid_GetFaceNormalMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
     { "-u", DOUBLE_Type, &u, NULL, REQUIRED, 0, { 0 } },
-    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}}, 
+    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}},
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4471,7 +4481,7 @@ static int Solid_ClearLabelMtd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, "key ", key, " not found", (char *) NULL );
     return TCL_ERROR;
   }
-    
+
   geom->ClearLabel( key );
 
   return TCL_OK;
@@ -4498,7 +4508,7 @@ static int Solid_GetFaceIdsMtd( ClientData clientData, Tcl_Interp *interp,
       Tcl_AppendElement ( interp, facestring);
 	  facestring[0]='\n';
     }
-    delete faces; 
+    delete faces;
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetFaceIds: error on object ",
@@ -4565,7 +4575,7 @@ static int Solid_GetRegionIdsMtd( ClientData clientData, Tcl_Interp *interp,
       Tcl_AppendElement ( interp, regionstring);
 	  regionstring[0]='\n';
     }
-    delete regions; 
+    delete regions;
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetRegionIds: error on object ",
