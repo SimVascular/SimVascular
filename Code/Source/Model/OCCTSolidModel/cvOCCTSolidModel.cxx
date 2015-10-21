@@ -46,6 +46,7 @@
 #include "vtkSmartPointer.h"
 #include "vtkThreshold.h"
 #include "vtkDataSetSurfaceFilter.h"
+#include "vtkQuadricDecimation.h"
 #include "vtkMath.h"
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_utils.h"
@@ -85,9 +86,13 @@
 #include "BRepAlgoAPI_Common.hxx"
 #include "BRepAlgoAPI_Cut.hxx"
 #include "BRepAdaptor_Curve.hxx"
+#include "BRepAdaptor_HCurve.hxx"
 #include "BRepFill_Filling.hxx"
+#include "BRepFill_CurveConstraint.hxx"
+#include "BRepFilletAPI_MakeFillet.hxx"
 #include "BRepTools_Quilt.hxx"
 #include "BRepTools.hxx"
+#include "BRepTools_ReShape.hxx"
 #include "BRep_Tool.hxx"
 
 #include "IVtkOCC_Shape.hxx"
@@ -96,6 +101,7 @@
 #include "IVtkVTK_ShapeData.hxx"
 #include "IVtkOCC_ShapeMesher.hxx"
 
+#include "TopExp.hxx"
 #include "TopExp_Explorer.hxx"
 #include "TopTools_DataMapOfIntegerShape.hxx"
 #include "Message_ProgressIndicator.hxx"
@@ -111,6 +117,7 @@
 #include "GeomPlate_PlateG0Criterion.hxx"
 #include "GeomPlate_MakeApprox.hxx"
 #include "ShapeFix_FreeBounds.hxx"
+#include "ShapeFix_Shape.hxx"
 
 //Doc stuff
 #include "TDocStd_Document.hxx"
@@ -305,7 +312,7 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
 // ------------
 int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
 		char *name,int continuity,int partype,
-		double w1,double w2,double w3)
+		double w1,double w2,double w3,int smoothing)
 {
   if (geom_ != NULL)
     this->RemoveShape();
@@ -339,11 +346,11 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
     lofter.SetParType(Approx_IsoParametric);
 
   lofter.CheckCompatibility(Standard_False);
-  //lofter.SetCriteriumWeight(w1,w2,w3);
-  //lofter.SetSmoothing(Standard_True);
+  lofter.SetSmoothing(smoothing);
+  lofter.SetCriteriumWeight(w1,w2,w3);
 
-  fprintf(stderr,"Loft Continuity: %d\n",continuity);
-  fprintf(stderr,"Loft Parameter: %d\n",partype);
+  fprintf(stdout,"Loft Continuity: %d\n",continuity);
+  fprintf(stdout,"Loft Parameter: %d\n",partype);
   for ( int i = 0; i < numCurves; i++ ) {
     if ( curves[i]->GetKernelT() != SM_KT_OCCT ) {
       fprintf(stderr,"Solid kernel should be OCCT\n");
@@ -370,6 +377,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   //fprintf(stderr,"Weight Used: %.2f,%.2f,%.2f\n",W1,W2,W3);
 
 
+  fprintf(stdout,"Lofting Vessel Done\n");
   return CV_OK;
 }
 
@@ -448,18 +456,56 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   solidPtr = (cvOCCTSolidModel *) surf;
   TopoDS_Shape shape = *(solidPtr->geom_);
 
-  const Standard_Integer aNbIter = 5; //number of algorithm iterations
-  const Standard_Integer aNbPnts = 5; //sample points per each constraint
-  const Standard_Integer aDeg = 3; //requested surface degree ?
-  const Standard_Integer aMaxDeg = 6;
-  const Standard_Integer aMaxSeg = 10000;
-  const Standard_Real aTol3d = 1.e-04;
-  const Standard_Real aTol2d = 1.e-05;
-  const Standard_Real anAngTol = 1.e-02; //angular
-  const Standard_Real aCurvTol = 1.e-01; //curvature
+  //BRepBuilderAPI_Sewing attacher;
+  //attacher.Add(shape);
+  //Standard_Real sewtoler =  1.e-6;
+  //Standard_Real closetoler =  1.e-2;
+  //ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
+  //      	  Standard_False,Standard_False);
+  //TopoDS_Compound freeWires = findFree.GetClosedWires();
+  //TopExp_Explorer NewEdgeExp;
+  //NewEdgeExp.Init(freeWires,TopAbs_EDGE);
+  //for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
+  //{
+  //  const Standard_Integer aNbIter = 12; //number of algorithm iterations
+  //  const Standard_Integer aNbPnts = 5; //sample points per each constraint
+  //  const Standard_Integer aDeg = 3; //requested surface degree ?
+  //  const Standard_Integer aMaxDeg = 8;
+  //  const Standard_Integer aMaxSeg = 9;
+  //  const Standard_Real aTol3d = 1.e-04;
+  //  const Standard_Real aTol2d = 1.e-05;
+  //  const Standard_Real anAngTol = 1.e-02; //angular
+  //  const Standard_Real aCurvTol = 1.e-02; //curvature
 
-  GeomPlate_BuildPlateSurface aPlateBuilder(aDeg,aNbPnts,
-        	  aNbIter,aTol2d,aTol3d,anAngTol,aCurvTol);
+  //  TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
+  //  BRepAdaptor_Curve adC(tmpEdge);
+  //  Handle(BRepAdaptor_HCurve) aHAD =
+  //    new BRepAdaptor_HCurve(adC);
+  //  Handle(GeomPlate_CurveConstraint) aConst =
+  //    new GeomPlate_CurveConstraint(aHAD,(Standard_Integer) GeomAbs_C0,aNbPnts,aTol3d,
+  //        0.01,0.1);
+
+  //  GeomPlate_BuildPlateSurface aPlateBuilder(aDeg,aNbPnts,
+  //      	    aNbIter,aTol2d,aTol3d,anAngTol,aCurvTol);
+  //  aPlateBuilder.Add(aConst);
+  //  aPlateBuilder.Perform();
+
+  //  Handle(GeomPlate_Surface) aPlSurf = aPlateBuilder.Surface();
+  //  Standard_Real aDist = aPlateBuilder.G0Error();
+
+  //  TColgp_SequenceOfXY S2d;
+  //  TColgp_SequenceOfXYZ S3d;
+  //  S2d.Clear();
+  //  S3d.Clear();
+  //  aPlateBuilder.Disc2dContour(4,S2d);
+  //  aPlateBuilder.Disc3dContour(4,0,S3d);
+  //  Standard_Real amaxTol = Max( aTol3d, 10* aDist);
+  //  GeomPlate_PlateG0Criterion Criterion( S2d, S3d, amaxTol );
+  //  GeomPlate_MakeApprox Approx( aPlSurf, Criterion, aTol3d, aMaxSeg, aMaxDeg );
+  //  //aSurf = Approx.Surface();
+  //  attacher.Add(Approx.Surface());
+  //}
+  //attacher.Perform();
 
   //Attacher!
   BRepBuilderAPI_Sewing attacher;
@@ -483,7 +529,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
     BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
     wiremaker.Build();
 
-    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+    BRepFill_Filling filler(2,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
     filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
     filler.Build();
 
@@ -497,6 +543,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   this->NewShape();
   *geom_ = attacher.SewedShape();
   this->AddShape();
+
   return CV_OK;
 }
 
@@ -641,7 +688,14 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   IVtkOCC_Shape::Handle aShapeImpl = new IVtkOCC_Shape(*geom_);
   //IVtk_IShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
   IVtkVTK_ShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
-  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher();
+  //Deviation Coefficient is 0.0001,Deviation Angle = 5rad,default is 12rad,
+  //Do not generate u isoline and do not generate v isoline
+  double devcoeff = 0.0001;
+  double angcoeff = 20.0 * M_PI/180.0;
+  int uIsoLine= 0;
+  int vIsoLine= 0;
+  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
+      devcoeff,angcoeff,uIsoLine,vIsoLine);
   aMesher->Build(aShapeImpl,aDataImpl);
 
   pd = vtkPolyData::New();
@@ -739,7 +793,15 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 
   IVtkOCC_Shape::Handle aShapeImpl = new IVtkOCC_Shape(anExp.Current());
   IVtkVTK_ShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
-  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher();
+  //IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher();
+  //Deviation Coefficient is 0.0001,Deviation Angle = 5rad,default is 12rad,
+  //Do not generate u isoline and do not generate v isoline
+  double devcoeff = 0.0001;
+  double angcoeff = 20.0 * M_PI/180.0;
+  int uIsoLine= 0;
+  int vIsoLine= 0;
+  IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
+      devcoeff,angcoeff,uIsoLine,vIsoLine);
   aMesher->Build(aShapeImpl,aDataImpl);
 
   pd = vtkPolyData::New();
@@ -779,7 +841,7 @@ int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
   BRepBuilderAPI_MakeWire wiremaker(edgemaker.Edge());
   wiremaker.Build();
 
-  BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+  BRepFill_Filling filler(3,5,12,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
   filler.Add(edgemaker.Edge(),GeomAbs_C0,Standard_True);
   filler.Build();
 
@@ -795,9 +857,9 @@ int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
 }
 
 // ---------------
-// DeleteRegion
+// DeleteFaces
 // ---------------
-int cvOCCTSolidModel::DeleteRegion( int regionid )
+int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
 {
   if (geom_ == NULL)
   {
@@ -805,26 +867,36 @@ int cvOCCTSolidModel::DeleteRegion( int regionid )
     return CV_ERROR;
   }
 
+  int *deleteFace = new int[numFaces_];
+  for (int i=0; i < numFaces_; i++) {
+    deleteFace[i] = 0;
+  }
+  for (int i=0; i < numfaces; i++) {
+    deleteFace[faces[i]] = 1;
+  }
+
   const TopoDS_Shape& aShape = *geom_;
   TopExp_Explorer anExp (aShape, TopAbs_FACE);
-
-  int foundFace = 0;
 
   //BRepBuilderAPI_Sewing attacher;
   for (int i=0; anExp.More(); anExp.Next(),i++) {
    TopoDS_Face aFace = TopoDS::Face (anExp.Current());
+   int faceId = -1;
+   this->GetFaceLabel(aFace,faceId);
    //int hashcode = aFace.HashCode(9999999999);
-   int idonface;
-   this->GetFaceLabel(aFace,idonface);
-   //do something with aFace
-   //if (regionid != hashcode) {
-      //attacher.Add(aFace);
-   //}
-   //do something with aFace
-   if (regionid == idonface) {
-     TDF_Label tmpLabel;
-     shapetool_->FindSubShape(*shapelabel_,aFace,tmpLabel);
-     shapetool_->RemoveShape(tmpLabel,Standard_True);
+   if (faceId == -1)
+   {
+     fprintf(stderr,"Face not found\n");
+     return CV_ERROR;
+   }
+   if (deleteFace[faceId] == 1) {
+     BRepTools_ReShape remover;
+     remover.Remove(aFace,Standard_True);
+     *geom_ = remover.Apply(*geom_,TopAbs_FACE);
+     numFaces_--;
+     //TDF_Label tmpLabel;
+     //shapetool_->FindSubShape(*shapelabel_,aFace,tmpLabel);
+     //shapetool_->RemoveShape(tmpLabel,Standard_True);
    }
   }
   //attacher.Perform();
@@ -834,8 +906,65 @@ int cvOCCTSolidModel::DeleteRegion( int regionid )
   //*geom_ = attacher.SewedShape();
   //this->AddShape();
 
+  delete [] deleteFace;
   return CV_OK;
 }
+
+// ---------------
+// CreateEdgeBlend
+// ---------------
+int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
+{
+  if (geom_ == NULL)
+  {
+    fprintf(stderr,"Solid is Null\n");
+    return CV_ERROR;
+  }
+
+  TopTools_IndexedDataMapOfShapeListOfShape anEFsMap;
+  TopExp::MapShapesAndAncestors (*geom_, TopAbs_EDGE,
+      TopAbs_FACE, anEFsMap);
+  int num = anEFsMap.Extent();
+  fprintf(stderr,"Extent! %d\n",num);
+  for (int i=1;i < num+1;i++)
+  {
+    TopTools_ListOfShape faces = anEFsMap.FindFromIndex(i);
+    fprintf(stderr,"Extent Number dos! %d\n",faces.Extent());
+    TopoDS_Shape face1 = faces.First();
+    int faceId1,faceId2;
+    this->GetFaceLabel(face1,faceId1);
+    TopoDS_Shape face2 = faces.Last();
+    this->GetFaceLabel(face2,faceId2);
+    if (faceId1 == faceA && faceId2 == faceB)
+    {
+      TopoDS_Edge tmpEdge = TopoDS::Edge(anEFsMap.FindKey(i));
+      BRepFilletAPI_MakeFillet filletmaker(*geom_);
+      filletmaker.Add(radius,tmpEdge);
+      try
+      {
+        filletmaker.Build();
+      }
+      catch (Standard_Failure)
+      {
+	fprintf(stderr,"Try different radius\n");
+	return CV_ERROR;
+      }
+      try
+      {
+        *geom_ = filletmaker.Shape();
+      }
+      catch (StdFail_NotDone)
+      {
+	fprintf(stderr,"Try different radius\n");
+	return CV_ERROR;
+      }
+    }
+  }
+
+
+  return CV_OK;
+}
+
 
 // ---------------
 // ReadNative
@@ -952,7 +1081,7 @@ int cvOCCTSolidModel::RegisterShapeFaces()
 // ---------------
 //topotype face is 0
 //topotype edge is 1
-int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id) const
+int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
 {
   if (shape.IsNull())
   {
@@ -964,6 +1093,7 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id) const
 
   ////Get new label for topo (face,edge)
   TDF_Label tmpLabel = shapetool_->AddSubShape(*shapelabel_,shape);
+  numFaces_++;
 
   //Register the shape
   if (tmpLabel.IsNull())
@@ -1072,16 +1202,27 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd) const
     vtkSmartPointer<vtkThreshold> thresholder =
       vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(pd);
-    //Set Input Array to 0 port,0 connection,1 for Cell Data, and Regions is the type name
+    //Set Input Array to 0 port,0 connection,1 for Cell Data, and MESh_TYPES is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
     //Source polydata is on MESH_TYPE 7
     thresholder->ThresholdBetween(7,7);
     thresholder->Update();
+    //Extract surface
     vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
       vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
     surfacer->SetInputData(thresholder->GetOutput());
     surfacer->Update();
-    pd->DeepCopy(surfacer->GetOutput());
+    //For polydata of just edges, MESH_TYPE is not 7
+    //Only want if not edges
+    if (surfacer->GetOutput()->GetNumberOfPoints() != 0)
+    {
+      vtkSmartPointer<vtkQuadricDecimation> decimator =
+	vtkSmartPointer<vtkQuadricDecimation>::New();
+      decimator->SetInputData(surfacer->GetOutput());
+      decimator->SetTargetReduction(0.8);
+      decimator->GetOutput();
+      pd->DeepCopy(decimator->GetOutput());
+    }
   }
 
   return CV_OK;

@@ -219,8 +219,8 @@ proc guiSV_model_opencascade_fixup {model num} {
       }
     }
     if {$min_id != -1} {
-      $model DeleteRegion -regionid $min_id
       puts "Deleting $min_id"
+      $model DeleteFaces -faces [list $min_id]
     }
   }
 

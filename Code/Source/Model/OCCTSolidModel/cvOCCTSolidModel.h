@@ -110,7 +110,7 @@ public:
 
   int MakeInterpCurveLoop( cvPolyData *pd, int closed );
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) {return CV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,int continuity,int partype,double w1,double w2,double w3 );
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,int continuity,int partype,double w1,double w2,double w3 ,int smoothing);
   int CapSurfToSolid( cvSolidModel *surf );
 
   // Booleans are compatible only between like-typed concrete objects:
@@ -156,7 +156,7 @@ public:
   int GetRegionIds (int *numRegions, int **RegionIds) {return CV_ERROR; }
   int GetRegionAttribute(char *attr,int regionid, char **value) {return CV_ERROR; }
   int SetRegionAttribute(char *attr,int regionid, char *value) {return CV_ERROR; }
-  int DeleteRegion (int regionid);
+  int DeleteRegion (int regionid) {return CV_ERROR;}
 
   // I/O:
   int ReadNative( char *filename );
@@ -165,8 +165,8 @@ public:
 
   // geometric manipulation
   // this method is buggy and should be used with great care!
-  int DeleteFaces (int numfaces, int *faces) {return CV_ERROR;}
-  int CreateEdgeBlend(int faceA, int faceB, double radius) {return CV_ERROR; }
+  int DeleteFaces (int numfaces, int *faces);
+  int CreateEdgeBlend(int faceA, int faceB, double radius);
   int CombineFaces (int targetface, int loseface) {return CV_ERROR;}
   int RemeshFace (int numfaces,int *excludedFaces, double size) {return CV_ERROR;}
 
@@ -174,7 +174,7 @@ public:
 
   //OCCT Model specific function related to OCAF
   int RegisterShapeFaces();
-  int AddFaceLabel(TopoDS_Shape &shape, int &id) const;
+  int AddFaceLabel(TopoDS_Shape &shape, int &id);
   int GetFaceLabel(TopoDS_Shape &shape, int &id) const;
 
   int NewShape();
