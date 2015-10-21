@@ -44,6 +44,8 @@
 #include "cvOCCTSolidModel.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
+#include "vtkThreshold.h"
+#include "vtkDataSetSurfaceFilter.h"
 #include "vtkMath.h"
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_utils.h"
@@ -64,7 +66,6 @@
 #include "TopoDS_Edge.hxx"
 #include "TopoDS_Wire.hxx"
 #include "TopoDS_Vertex.hxx"
-#include "TopoDS_Face.hxx"
 #include "TopoDS_Compound.hxx"
 
 #include "GeomAPI_Interpolate.hxx"
@@ -113,46 +114,18 @@
 
 //Doc stuff
 #include "TDocStd_Document.hxx"
-#include "TDF_Label.hxx"
 #include "TNaming_Builder.hxx"
+#include "TNaming_Tool.hxx"
 #include "TNaming_NamedShape.hxx"
 #include "TDataStd_Integer.hxx"
+#include "TDataStd_Real.hxx"
+#include "XCAFDoc_ShapeTool.hxx"
+#include "XCAFDoc_DocumentTool.hxx"
+#include "TDF_ChildIterator.hxx"
+#include "STEPCAFControl_Writer.hxx"
+#include "STEPCAFControl_Reader.hxx"
 
 
-int AddLabel(TopoDS_Face &face,int id)
-{
-  //Get the document created inside of the manager
-  Handle(TDocStd_Document) doc;
-  gOCCTManager->GetDocument(1,doc);
-
-  //Get the main part of the document
-  TDF_Label root=doc->Main();
-
-  //Create a child label with a tag
-  TDF_Label aLabel=root.FindChild(id+1,Standard_True);
-
-  //Register the shape
-  TNaming_Builder builder(aLabel);
-  builder.Generated(face);
-
-  //Create new integer attribute on object
-  Handle(TDataStd_Integer) INT = new TDataStd_Integer();
-  aLabel.AddAttribute(INT);
-  INT->Set(id);
-
-  //Retrieve the shape
-  Handle(TNaming_NamedShape) NS;
-  aLabel.FindAttribute(TNaming_NamedShape::GetID(),NS);
-  face = TopoDS::Face(NS->Get());
-
-  Standard_Integer check;
-  //Retrive attribute
-  aLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
-  check = INT->Get();
-  fprintf(stderr,"Want to check and see if worked: %d\n",check);
-
-  return CV_OK;
-}
 // ----------
 // OCCTSolidModel
 // ----------
@@ -169,6 +142,19 @@ cvOCCTSolidModel::cvOCCTSolidModel()
  */
   numBoundaryRegions = 0;
   geom_ = NULL;
+
+  //Get the document created inside of the manager
+  Handle(TDocStd_Document) doc;
+  gOCCTManager->GetDocument(1,doc);
+
+  shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
+  ////Get the main part of the document
+  //TDF_Label root = doc->Main();
+
+  ////Create label
+  shapelabel_ = new TDF_Label;
+  //*shapelabel_ = root.NewChild();
+  numFaces_ = 0;
 }
 
 // -----------
@@ -181,7 +167,9 @@ cvOCCTSolidModel::cvOCCTSolidModel()
 cvOCCTSolidModel::~cvOCCTSolidModel()
 {
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
+
+  delete shapelabel_;
 }
 
 // -----------
@@ -215,10 +203,16 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
     return CV_ERROR;
   }
 
+  Handle(TDocStd_Document) doc;
+  gOCCTManager->GetDocument(1,doc);
+
+  shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
+
   solidPtr = (cvOCCTSolidModel *)( &src );
   if ( solidPtr->geom_ != NULL ) {
-    geom_ = new TopoDS_Shape;
+    this->NewShape();
     *geom_ = *(solidPtr->geom_);
+    this->AddShape();
   }
 
   return CV_OK;
@@ -242,7 +236,7 @@ cvSolidModel *cvOCCTSolidModel::Copy() const
 int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
 {
   if(geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   double crn[3];
   crn[0] = ctr[0] - dims[0]/2.0;
@@ -252,8 +246,9 @@ int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
   BRepPrimAPI_MakeBox boxmaker(corner,dims[0],dims[1],dims[2]);
 
   boxmaker.Build();
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = boxmaker.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -265,14 +260,15 @@ int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
 int cvOCCTSolidModel::MakeSphere( double r, double ctr[])
 {
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   gp_Pnt center(ctr[0],ctr[1],ctr[2]);
   BRepPrimAPI_MakeSphere spheremaker(center,r);
 
   spheremaker.Build();
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = spheremaker.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -285,7 +281,7 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
     					double axis[])
 {
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   double axiscopy[3]; axiscopy[0]=axis[0]; axiscopy[1]=axis[1]; axiscopy[2]=axis[2];
   vtkMath::Normalize(axiscopy);
@@ -297,8 +293,9 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
   BRepPrimAPI_MakeCylinder cylindermaker(cylaxis,r,length);
 
   cylindermaker.Build();
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = cylindermaker.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -311,7 +308,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
 		double w1,double w2,double w3)
 {
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   if ( numCurves < 2 ) {
     return CV_ERROR;
@@ -360,9 +357,10 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   lofter.Build();
 
 
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   //*geom_ = attacher.SewedShape();
   *geom_ = lofter.Shape();
+  this->AddShape();
 
   //Standard_Real W1,W2,W3;
   //lofter.CriteriumWeight(W1,W2,W3);
@@ -384,7 +382,7 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
   int num_pts;
 
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   // We're assuming / requiring that the given cvPolyData describes a
   // closed loop.  Get those points in their connected order.
@@ -413,7 +411,7 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
   //wiremaker.Add(lastedge);
   //wiremaker.Build();
 
-  //geom_ = new TopoDS_Shape;
+  //this->NewShape();
   //*geom_ = wiremaker.Shape();
 
   Handle(TColgp_HArray1OfPnt) hArray =
@@ -434,8 +432,9 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
   BRepBuilderAPI_MakeWire wiremaker(edgemaker.Edge());
   wiremaker.Build();
 
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = wiremaker.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -493,10 +492,11 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   attacher.Perform();
 
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = attacher.SewedShape();
+  this->AddShape();
   return CV_OK;
 }
 
@@ -534,35 +534,13 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   BRepAlgoAPI_Fuse unionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
   unionOCCT.Build();
 
-  fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
-  fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
-  fprintf(stderr,"HAS DELETED? %d\n",unionOCCT.HasDeleted());
-
-  TopTools_ListOfShape edgeList = unionOCCT.SectionEdges();
-  TopoDS_Shape edge = edgeList.First();
-  GProp_GProps edgeProps;
-  BRepGProp::LinearProperties(edge,edgeProps);
-
-  TopExp_Explorer FaceExp;
-  FaceExp.Init(unionOCCT.Shape(),TopAbs_FACE);
-  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
-  {
-    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
-    GProp_GProps lineProps;
-    BRepGProp::LinearProperties(tmpFace,lineProps);
-    TopExp_Explorer EdgeExp;
-    EdgeExp.Init(tmpFace,TopAbs_EDGE);
-    for (int j=0;EdgeExp.More();EdgeExp.Next(),j++)
-    {
-      TopoDS_Edge tmpEdge = TopoDS::Edge(EdgeExp.Current());
-      GProp_GProps newEdgeProps;
-      BRepGProp::LinearProperties(tmpEdge,newEdgeProps);
-    }
-    AddLabel(tmpFace,i);
-  }
-
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = unionOCCT.Shape();
+  this->AddShape();
+
+  //fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
+  //fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
+  //fprintf(stderr,"HAS DELETED? %d\n",unionOCCT.HasDeleted());
 
   return CV_OK;
 }
@@ -600,8 +578,9 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
   BRepAlgoAPI_Common intersectionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
   intersectionOCCT.Build();
 
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = intersectionOCCT.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -639,8 +618,9 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
   BRepAlgoAPI_Cut subtractionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
   subtractionOCCT.Build();
 
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = subtractionOCCT.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -666,6 +646,7 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 
   pd = vtkPolyData::New();
   pd->DeepCopy(aDataImpl->getVtkPolyData());
+  //this->GetOnlyPD(pd);
 
   result = new cvPolyData(pd);
   pd->Delete();
@@ -705,12 +686,12 @@ int cvOCCTSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   int j = 0;
 
   for (; anExp2.More(); anExp2.Next()) {
-   const TopoDS_Face& aFace = TopoDS::Face (anExp2.Current());
-   (*faceIds)[j] = aFace.HashCode(9999999999);
-   TopTools_DataMapOfIntegerShape dataManager(1);
-   dataManager.Bind((*faceIds)[j],aFace);
-   //(*faceIds)[j] = j;
-   j++;
+    TopoDS_Face aFace = TopoDS::Face (anExp2.Current());
+    int faceId= -1;
+    this->GetFaceLabel(aFace,faceId);
+    //(*faceIds)[j] = aFace.HashCode(9999999999);
+    (*faceIds)[j] = faceId;
+    j++;
   }
 
   return CV_OK;
@@ -737,10 +718,12 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   int foundFace = 0;
 
   for (; anExp.More(); anExp.Next()) {
-   const TopoDS_Face& aFace = TopoDS::Face (anExp.Current());
-   int hashcode = aFace.HashCode(9999999999);
+   TopoDS_Face aFace = TopoDS::Face (anExp.Current());
+   //int hashcode = aFace.HashCode(9999999999);
+   int idonface;
+   this->GetFaceLabel(aFace,idonface);
    //do something with aFace
-   if (faceid == hashcode) {
+   if (faceid == idonface) {
      foundFace = 1;
      break;
    }
@@ -761,6 +744,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 
   pd = vtkPolyData::New();
   pd->DeepCopy(aDataImpl->getVtkPolyData());
+  //this->GetOnlyPD(pd);
 
   result = new cvPolyData(pd);
   pd->Delete();
@@ -770,7 +754,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
 {
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   gp_Pnt pnt1(0.0,0.0,1.0);
   gp_Pnt pnt2(0.0,1.0,1.0);
@@ -803,8 +787,9 @@ int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
   facemaker.Add(wiremaker.Wire());
   facemaker.Build();
 
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   *geom_ = facemaker.Shape();
+  this->AddShape();
 
   return CV_OK;
 }
@@ -825,20 +810,29 @@ int cvOCCTSolidModel::DeleteRegion( int regionid )
 
   int foundFace = 0;
 
-  BRepBuilderAPI_Sewing attacher;
+  //BRepBuilderAPI_Sewing attacher;
   for (int i=0; anExp.More(); anExp.Next(),i++) {
-   const TopoDS_Face& aFace = TopoDS::Face (anExp.Current());
-   int hashcode = aFace.HashCode(9999999999);
+   TopoDS_Face aFace = TopoDS::Face (anExp.Current());
+   //int hashcode = aFace.HashCode(9999999999);
+   int idonface;
+   this->GetFaceLabel(aFace,idonface);
    //do something with aFace
-   if (regionid != hashcode) {
-      attacher.Add(aFace);
+   //if (regionid != hashcode) {
+      //attacher.Add(aFace);
+   //}
+   //do something with aFace
+   if (regionid == idonface) {
+     TDF_Label tmpLabel;
+     shapetool_->FindSubShape(*shapelabel_,aFace,tmpLabel);
+     shapetool_->RemoveShape(tmpLabel,Standard_True);
    }
   }
-  attacher.Perform();
+  //attacher.Perform();
 
-  delete geom_;
-  geom_ = new TopoDS_Shape;
-  *geom_ = attacher.SewedShape();
+  //this->RemoveShape();
+  //this->NewShape();
+  //*geom_ = attacher.SewedShape();
+  //this->AddShape();
 
   return CV_OK;
 }
@@ -849,14 +843,14 @@ int cvOCCTSolidModel::DeleteRegion( int regionid )
 int cvOCCTSolidModel::ReadNative( char *filename )
 {
   if (geom_ != NULL)
-    delete geom_;
+    this->RemoveShape();
 
   const char *extension = strrchr(filename,'.');
   extension = extension+1;
 
   Handle(Message_ProgressIndicator) progress;
   BRep_Builder builder;
-  geom_ = new TopoDS_Shape;
+  this->NewShape();
   if (!strncmp(extension,"brep",4)) {
     fprintf(stdout,"Reading file %s\n",filename);
     Standard_Boolean worked =
@@ -868,6 +862,20 @@ int cvOCCTSolidModel::ReadNative( char *filename )
       fprintf(stderr,"File was not read\n");
       return CV_ERROR;
     }
+    this->AddShape();
+  }
+  else if (!strncmp(extension,"step",4)) {
+    Handle(TDocStd_Document) aDoc;
+    gOCCTManager->GetDocument(1,aDoc);
+    fprintf(stdout,"Reading file %s\n",filename);
+    STEPCAFControl_Reader reader;
+    reader.Perform(filename,aDoc);
+    shapetool_ = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+    TDF_LabelSequence allLabels;
+    shapetool_->GetShapes(allLabels);
+    *shapelabel_ = allLabels.First();
+    *geom_ = shapetool_->GetShape(*shapelabel_);
+    this->RegisterShapeFaces();
   }
   else {
     fprintf(stderr,"File can only be read with .brep extension\n");
@@ -903,9 +911,177 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
       return CV_ERROR;
     }
   }
+  else if (!strncmp(extension,"step",4)) {
+    Handle(TDocStd_Document) aDoc;
+    gOCCTManager->GetDocument(1,aDoc);
+    fprintf(stdout,"Writing file %s\n",filename);
+    STEPCAFControl_Writer writer;
+    writer.Perform(aDoc,filename);
+  }
   else {
     fprintf(stderr,"File can only be written with .brep extension\n");
     return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// ---------------
+// RegisterShapeFaces
+// ---------------
+int cvOCCTSolidModel::RegisterShapeFaces()
+{
+  if (geom_ == NULL)
+  {
+    fprintf(stderr,"Geometry is NULL, cannot register faces\n");
+    return CV_ERROR;
+  }
+  TopExp_Explorer FaceExp;
+  FaceExp.Init(*geom_,TopAbs_FACE);
+  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
+  {
+    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
+    AddFaceLabel(tmpFace,i);
+  }
+
+  return CV_OK;
+}
+
+// ---------------
+// AddFaceLabel
+// ---------------
+//topotype face is 0
+//topotype edge is 1
+int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id) const
+{
+  if (shape.IsNull())
+  {
+    fprintf(stderr,"Face is NULL, cannot add\n");
+    return CV_ERROR;
+  }
+  ////Create or find child label with a tag
+  //TDF_Label topoLabels=shapelabel_->FindChild(topotype,Standard_True);
+
+  ////Get new label for topo (face,edge)
+  TDF_Label tmpLabel = shapetool_->AddSubShape(*shapelabel_,shape);
+
+  //Register the shape
+  if (tmpLabel.IsNull())
+  {
+    fprintf(stderr,"Face is not part of shape\n");
+    return CV_ERROR;
+  }
+  TNaming_Builder builder(tmpLabel);
+  builder.Generated(shape);
+
+  //Standard_Integer numLabels = topoLabels.NbChildren();
+  //Create new integer attribute on object
+  Handle(TDataStd_Integer) INT = new TDataStd_Integer();
+  tmpLabel.AddAttribute(INT);
+  INT->Set(id);
+  //
+
+  return CV_OK;
+}
+
+// ---------------
+// GetFaceLabel
+// ---------------
+//topotype face is 0
+//topotype edge is 1
+int cvOCCTSolidModel::GetFaceLabel(TopoDS_Shape &shape, int &id) const
+{
+  TDF_Label tmpLabel;
+  shapetool_->FindSubShape(*shapelabel_,shape,tmpLabel);
+  if (tmpLabel.IsNull())
+  {
+    fprintf(stderr,"Face has not been given a label\n");
+    return CV_ERROR;
+  }
+
+  //Retrive attribute
+  Handle(TDataStd_Integer) INT = new TDataStd_Integer();
+  tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+  id = INT->Get();
+
+  return CV_OK;
+}
+
+// ---------------
+// NewShape
+// ---------------
+int cvOCCTSolidModel::NewShape()
+{
+  if (geom_ != NULL)
+    this->RemoveShape();
+
+  geom_ = new TopoDS_Shape;
+
+  return CV_OK;
+}
+
+// ---------------
+// AddShape
+// ---------------
+int cvOCCTSolidModel::AddShape()
+{
+  if (geom_ == NULL)
+    return CV_ERROR;
+
+  *shapelabel_ = shapetool_->NewShape();
+  shapetool_->SetShape(*shapelabel_,*geom_);
+  this->RegisterShapeFaces();
+
+  return CV_OK;
+}
+
+// ---------------
+// RemoveShape
+// ---------------
+int cvOCCTSolidModel::RemoveShape() const
+{
+  if (geom_ != NULL)
+  {
+    if (shapelabel_->IsNull())
+    {
+      fprintf(stderr,"Shape was not regsitered, cannot remove\n");
+      return CV_ERROR;
+    }
+    shapetool_->RemoveShape(*shapelabel_,Standard_True);
+    delete geom_;
+  }
+  else
+  {
+      fprintf(stderr,"Shape has already been deleted, cannot remove\n");
+      return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// ---------------
+// GetOnlyPD
+// ---------------
+int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd) const
+{
+  if (pd == NULL)
+    return CV_ERROR;
+
+  if (PlyDtaUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
+  {
+    vtkSmartPointer<vtkThreshold> thresholder =
+      vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(pd);
+    //Set Input Array to 0 port,0 connection,1 for Cell Data, and Regions is the type name
+    thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
+    //Source polydata is on MESH_TYPE 7
+    thresholder->ThresholdBetween(7,7);
+    thresholder->Update();
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
+      vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
+    pd->DeepCopy(surfacer->GetOutput());
   }
 
   return CV_OK;

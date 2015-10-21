@@ -43,10 +43,16 @@ include(GetPrerequisites)
 #-----------------------------------------------------------------------------
 # Libraries
 set(${proj}_LIBNAMES TKBRep TKHLR)
-set(${proj}_FIND_COMPONENTS TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
+set(${proj}_FIND_COMPONENTS TKService TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
 			    TKPrim TKMath TKIVtk TKG3d TKG2d
-		            TKGeomBase TKGeomAlgo TKV3d TKService
-			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel)
+		            TKGeomBase TKGeomAlgo TKV3d
+			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel
+			    TKIGES TKMeshVS TKOpenGL TKSTEP TKSTEP209
+			    TKSTEPAttr TKVRML TKSTEPBase TKSTL
+			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
+			    TKTObj TKVoxel TKXDEIGES TKXDESTEP TKXMesh
+			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
+			    FWOSPlugin)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})

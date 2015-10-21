@@ -53,7 +53,9 @@
 #include "cvVTK.h"
 #include "cv_misc_utils.h"
 #include "TopoDS_Shape.hxx"
-#include "TopoDS_Wire.hxx"
+#include "TopoDS_Face.hxx"
+#include "TDF_Label.hxx"
+#include "XCAFDoc_ShapeTool.hxx"
 
 
 // Some elementary notes on abstract base classes (ABC's)
@@ -170,10 +172,23 @@ public:
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
 
+  //OCCT Model specific function related to OCAF
+  int RegisterShapeFaces();
+  int AddFaceLabel(TopoDS_Shape &shape, int &id) const;
+  int GetFaceLabel(TopoDS_Shape &shape, int &id) const;
+
+  int NewShape();
+  int AddShape();
+  int RemoveShape() const;
+
+  int GetOnlyPD(vtkPolyData *pd) const;
 protected:
 
   TopoDS_Shape *geom_;
+  TDF_Label *shapelabel_;
+  Handle(XCAFDoc_ShapeTool) shapetool_;
 
+  int numFaces_;
   int numBoundaryRegions;
 
 };

@@ -44,6 +44,7 @@ target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY} 								
 			${GLOBAL_LIBRARIES}
 			${OPENCASCADE_LIBRARIES}
+			${FREETYPE_LIBRARY}
 			lib_simvascular_solid lib_simvascular_repository
 			lib_simvascular_globals lib_simvascular_utils lib_simvascular_sysgeom
             )

@@ -34,8 +34,9 @@
 #include "cv_misc_utils.h"
 #include "cvRepository.h"
 #ifdef USE_OPENCASCADE
-#include "TDocStd_Application.hxx"
-#include "AppStd_Application.hxx"
+//#include "TDocStd_Application.hxx"
+//#include "AppStd_Application.hxx"
+#include "XCAFApp_Application.hxx"
 #endif
 
 CV_GLOBALS_DLL_IMPORT cvRepository *gRepository;
@@ -52,5 +53,6 @@ CV_GLOBALS_DLL_IMPORT int gSimVascularBatchMode;
 CV_GLOBALS_DLL_IMPORT Tcl_Interp* gVtkTclInterp;
 CV_GLOBALS_DLL_IMPORT Tcl_Interp* getTclInterp();
 #ifdef USE_OPENCASCADE
-CV_GLOBALS_DLL_IMPORT AppStd_Application *gOCCTManager;
+//CV_GLOBALS_DLL_IMPORT AppStd_Application *gOCCTManager;
+CV_GLOBALS_DLL_IMPORT Handle(XCAFApp_Application) gOCCTManager;
 #endif

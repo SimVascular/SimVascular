@@ -69,6 +69,8 @@
 #include <TDocStd_Document.hxx>
 #include <TDocStd_XLinkTool.hxx>
 #include <CDF_Session.hxx>
+#include <XCAFDoc_DocumentTool.hxx>
+#include <XCAFApp_Application.hxx>
 
 // Prototypes:
 // -----------
@@ -91,23 +93,19 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Occt_Init( Tcl_Interp *interp )
 {
-  //if (!CDF_Session::Exists()) {
-  //  Handle(CDF_Session) S = CDF_Session::CurrentSession();
-  //  if (!S->HasCurrentApplication())
-  //  Standard_DomainError::Raise("DDocStd::Find no applicative session");
-  //  gOCCTManager = Handle(TDocStd_Application)::DownCast(S->CurrentApplication());
-  //}
-  //else {
-  //  fprintf(stderr,"No active application\n");
-  //  // none active application
-  //}
-  gOCCTManager = new AppStd_Application;
+  //gOCCTManager = new AppStd_Application;
+  gOCCTManager = XCAFApp_Application::GetApplication();
   if ( gOCCTManager == NULL ) {
     fprintf( stderr, "error allocating gOCCTManager\n" );
     return TCL_ERROR;
   }
   Handle(TDocStd_Document) doc;
-  gOCCTManager->NewDocument("Standard",doc);
+  //gOCCTManager->NewDocument("Standard",doc);
+  gOCCTManager->NewDocument("MDTV-XCAF",doc);
+  if ( !XCAFDoc_DocumentTool::IsXCAFDocument(doc))
+  {
+    fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly\n");
+  }
 
   printf("  %-12s %s\n","OpenCASCADE:", "6.9.1");
   cvFactoryRegistrar* solidModelRegistrar =
