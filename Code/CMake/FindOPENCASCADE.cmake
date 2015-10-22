@@ -47,12 +47,15 @@ set(${proj}_FIND_COMPONENTS TKService TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
 			    TKPrim TKMath TKIVtk TKG3d TKG2d
 		            TKGeomBase TKGeomAlgo TKV3d
 			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel
-			    TKIGES TKMeshVS TKOpenGL TKSTEP TKSTEP209
+			    TKIGES TKMeshVS TKSTEP TKSTEP209
 			    TKSTEPAttr TKVRML TKSTEPBase TKSTL
 			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
 			    TKTObj TKVoxel TKXDEIGES TKXDESTEP TKXMesh
 			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
 			    FWOSPlugin)
+if (APPLE)
+	set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
+endif()
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})

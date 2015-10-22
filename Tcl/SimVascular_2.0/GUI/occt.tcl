@@ -138,22 +138,22 @@ proc guiSV_model_create_model_opencascade {} {
     }
 
     #Find face areas and remove two smaller ones
-    set num [llength $createPREOPgrpKeptSelections]
-    if { $num > 1} {
-      guiSV_model_opencascade_fixup $modelname $num
-    }
+    #set num [llength $createPREOPgrpKeptSelections]
+    #if { $num > 1} {
+    #  guiSV_model_opencascade_fixup $modelname $num
+    #}
 
     #If not on mac and want caps, cap the surface
-    global tcl_platform
-    if {$tcl_platform(os) != "Darwin"} {
-      set copy "_copy"
-      set copymod $modelname$copy
-      catch {repos_delete -obj $copymod}
-      solid_capSurfToSolid -src $modelname -dst $copymod
-      catch {repos_delete -obj $modelname}
+    #global tcl_platform
+    #if {$tcl_platform(os) != "Darwin"} {
+    #  set copy "_copy"
+    #  set copymod $modelname$copy
+    #  catch {repos_delete -obj $copymod}
+    #  solid_capSurfToSolid -src $modelname -dst $copymod
+    #  catch {repos_delete -obj $modelname}
 
-      solid_copy -src $copymod -dst $modelname
-    }
+    #  solid_copy -src $copymod -dst $modelname
+    #}
 
     global gOCCTFaceNames
     crd_ren gRenWin_3D_ren1
@@ -358,8 +358,14 @@ proc makeSurfOCCT {} {
     catch {repos_delete -obj $c0/surf}
     catch {repos_delete -obj $c0/surf/pd}
     solid_setKernel -name OpenCASCADE
-    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 4 -partype 0 -w1 0.4 -w2 0.2 -w3 0.4}]} {
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 4 -partype 0 -w1 0.4 -w2 0.2 -w3 0.4 -smooth 1}]} {
 	return -code error "Error lofting surface."
+    }
+    global tcl_platform
+    if {$tcl_platform(os) != "Darwin"} {
+      catch {repos_delete -obj $c0/surf/capped}
+      catch {repos_delete -obj $c0/surf/capped/pd}
+      solid_capSurfToSolid -src $c0/surf -dst $c0/surf/capped
     }
 
     #
@@ -369,7 +375,11 @@ proc makeSurfOCCT {} {
     global gRen3d
     set ren $gRen3d
 
-    set surf $c0/surf
+    if {$tcl_platform(os) != "Darwin"} {
+      set surf $c0/surf/capped
+    } else {
+      set surf $c0/surf
+    }
     solid_setKernel -name OpenCASCADE
 
     global gOptions

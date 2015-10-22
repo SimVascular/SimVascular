@@ -77,6 +77,7 @@
 #include "BRepBuilderAPI_MakeWire.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
 #include "BRepBuilderAPI_MakeVertex.hxx"
+#include "BRepBuilderAPI_MakeSolid.hxx"
 #include "BRepBuilderAPI_Sewing.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
@@ -120,6 +121,8 @@
 #include "ShapeFix_Shape.hxx"
 
 //Doc stuff
+#include "TDF_Label.hxx"
+#include "TDF_LabelSequence.hxx"
 #include "TDocStd_Document.hxx"
 #include "TNaming_Builder.hxx"
 #include "TNaming_Tool.hxx"
@@ -540,8 +543,12 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   if (geom_ != NULL)
     this->RemoveShape();
 
+  TopoDS_Shell tmpShell = TopoDS::Shell(attacher.SewedShape());
+  BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
+  solidmaker.Build();
+
   this->NewShape();
-  *geom_ = attacher.SewedShape();
+  *geom_ = solidmaker.Solid();
   this->AddShape();
 
   return CV_OK;
