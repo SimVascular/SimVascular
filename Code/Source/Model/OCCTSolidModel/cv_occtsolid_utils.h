@@ -63,12 +63,20 @@ int OCCTUtils_GetFaceLabel( const TopoDS_Shape &geom,
 	       const Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &id);
 
+int OCCTUtils_GetFaceRange( const TopoDS_Shape &geom,
+	       const Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
+	       int &face_range);
 
 /* -------- */
-/* Orient  */
+/* Set */
 /* -------- */
-int OCCTUtils_OrientSingleShape(TopoDS_Shape &shape,TopAbs_Orientation orientation);
 
-int OCCTUtils_OrientFaces(TopoDS_Shape &geom);
+int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
+		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel);
 
+
+/* -------- */
+/* Orientation  */
+/* -------- */
+int OCCTUtils_GetOrientation(const TopoDS_Shape &geom,int &orientation);
 #endif // __OCCTSOLID_UTILS_H

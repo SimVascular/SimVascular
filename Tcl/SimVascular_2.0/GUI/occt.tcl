@@ -349,7 +349,7 @@ proc makeSurfOCCT {} {
     catch {repos_delete -obj $c0/surf}
     catch {repos_delete -obj $c0/surf/pd}
     solid_setKernel -name OpenCASCADE
-    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 2 -w1 0.4 -w2 0.2 -w3 0.4 -smooth 0}]} {
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 0.4 -w2 0.2 -w3 0.4 -smooth 0}]} {
 	return -code error "Error lofting surface."
     }
     global tcl_platform

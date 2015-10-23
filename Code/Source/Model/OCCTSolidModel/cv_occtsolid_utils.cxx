@@ -134,41 +134,100 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
 }
 
 // -------------------
-// OCCTUtils_OrientSingleFace
+// OCCTUtils_RenumberFaces
 // -------------------
 /**
- * @brief Procedure to orient a single face
- * @param *geom input TopoDS_Shape on which to get the face ids
- * @note This will orient faces according to opencascade outward normal
+ * @brief Procedure to get a shape orientation
+ * @param *geom input TopoDS_Shape on which to get orientation
  * @return CV_OK if function completes properly
  */
-int OCCTUtils_OrientSingleShape(TopoDS_Shape &shape,TopAbs_Orientation orientation)
+int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
+		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel)
 {
-  shape.Orientation(orientation);
-  return CV_OK;
-}
+  int *faces;
+  int numFaces;
+  int facerange;
+  OCCTUtils_GetFaceIds(shape,shapetool,shapelabel,&numFaces,&faces);
+  OCCTUtils_GetFaceRange(shape,shapetool,shapelabel,facerange);
 
-// -------------------
-// OCCTUtils_OrientFaces
-// -------------------
-/**
- * @brief Procedure to orient normals on faces of shape
- * @param *geom input TopoDS_Shape on which to get the face ids
- * @note This will orient faces according to opencascade outward normal
- * @return CV_OK if function completes properly
- */
-int OCCTUtils_OrientFaces(TopoDS_Shape &geom)
-{
-  TopExp_Explorer anExp(geom,TopAbs_FACE);
-  for (int i=0;anExp.More();anExp.Next())
+  //Initialize to zero
+  int *newmap = new int[numFaces];
+
+  //Increase map one at spot for each face id
+  for (int i=0;i<numFaces;i++)
+    newmap[i] = 0;
+
+  fprintf(stderr,"Face range %d\n",facerange);
+  int checkid=-1;
+  int currentid=0;
+  TopExp_Explorer anExp(shape,TopAbs_FACE);
+  while (checkid != facerange)
   {
-    TopoDS_Shape face = TopoDS::Face(anExp.Current());
-    if (OCCTUtils_OrientSingleShape(face,TopAbs_FORWARD) != CV_OK)
+    anExp.Init(shape,TopAbs_FACE);
+    int found=0;
+    for (int j=0;anExp.More();anExp.Next(),j++)
     {
-      fprintf(stderr,"Error in orienting face\n");
-      return CV_ERROR;
+      TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
+      int faceid=-1;
+      OCCTUtils_GetFaceLabel(shape,shapetool,shapelabel,faceid);
+      fprintf(stderr,"Face id %d\n",faceid);
+      fprintf(stderr,"CheckId %d\n",checkid);
+      if (faceid == checkid)
+      {
+	newmap[j] = currentid++;
+	found=1;
+	break;
+      }
     }
+    if (!found)
+      checkid++;
+  }
+  for (int i=0;i<numFaces;i++)
+  {
+    fprintf(stderr,"OldFace %d\n",faces[i]);
+    fprintf(stderr,"CheckMapping %d\n",newmap[i]);
+
   }
 
+  delete [] newmap;
+  delete [] faces;
   return CV_OK;
 }
+
+// ----------------
+// GetFaceRange
+// ----------------
+int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
+		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+    		int &face_range)
+{
+  face_range = 0;
+  TopExp_Explorer anExp(shape,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next())
+  {
+    const TopoDS_Face &tmpFace = TopoDS::Face(anExp.Current());
+    int faceid =-1;
+    OCCTUtils_GetFaceLabel(tmpFace,shapetool,shapelabel,faceid);
+    if (faceid > face_range)
+      face_range = faceid;
+  }
+  face_range++;
+
+  return CV_OK;
+}
+
+
+// -------------------
+// OCCTUtils_GetOrientation
+// -------------------
+/**
+ * @brief Procedure to get a shape orientation
+ * @param *geom input TopoDS_Shape on which to get orientation
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
+{
+  orientation = (int) shape.Orientation();
+  return CV_OK;
+}
+

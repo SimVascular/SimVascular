@@ -365,12 +365,27 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
     TopoDS_Wire newwire = TopoDS::Wire(*(shapePtr->geom_));
     lofter.AddWire(newwire);
   }
-  lofter.Build();
-
+  try
+  {
+    lofter.Build();
+  }
+  catch (Standard_Failure)
+  {
+    fprintf(stderr,"Failure in lofting\n");
+    return CV_ERROR;
+  }
 
   this->NewShape();
   //*geom_ = attacher.SewedShape();
-  *geom_ = lofter.Shape();
+  try
+  {
+    *geom_ = lofter.Shape();
+  }
+  catch (StdFail_NotDone)
+  {
+    fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
+    return CV_ERROR;
+  }
   this->AddShape();
 
   //Standard_Real W1,W2,W3;
@@ -550,10 +565,17 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
 
   this->NewShape();
   *geom_ = solidmaker.Solid();
-  if (OCCTUtils_OrientFaces(*geom_) != CV_OK)
+  //geom_->Orientation(TopAbs_FORWARD);
+  int orientation;
+  OCCTUtils_GetOrientation(*geom_,orientation);
+  fprintf(stderr,"Shape Orientation %d\n",orientation);
+  TopExp_Explorer anExp(*geom_,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
   {
-    fprintf(stderr,"Error when orienting faces\n");
-    return CV_ERROR;
+    TopoDS_Shape face = TopoDS::Face(anExp.Current());
+    face.Orientation(TopAbs_INTERNAL);
+    OCCTUtils_GetOrientation(TopoDS::Face(anExp.Current()),orientation);
+    fprintf(stderr,"Face %d Orientation %d\n",i,orientation);
   }
   this->AddShape();
 
@@ -597,6 +619,7 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   this->NewShape();
   *geom_ = unionOCCT.Shape();
   this->AddShape();
+  //OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_);
 
   //fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
   //fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
@@ -1228,25 +1251,6 @@ int cvOCCTSolidModel::GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
   TopExp_Explorer anExp(shape,TopAbs_FACE);
   for (int i=0;anExp.More();anExp.Next())
     num_faces++;
-
-  return CV_OK;
-}
-
-// ----------------
-// GetFaceRange
-// ----------------
-int cvOCCTSolidModel::GetFaceRange(const TopoDS_Shape &shape,int &face_range)
-{
-  face_range = 0;
-  TopExp_Explorer anExp(shape,TopAbs_FACE);
-  for (int i=0;anExp.More();anExp.Next())
-  {
-    const TopoDS_Face &tmpFace = TopoDS::Face(anExp.Current());
-    int faceid =-1;
-    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,faceid);
-    if (faceid > face_range)
-      face_range = faceid;
-  }
 
   return CV_OK;
 }

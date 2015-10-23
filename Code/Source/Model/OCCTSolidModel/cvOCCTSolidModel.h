@@ -182,7 +182,6 @@ public:
 
   int GetOnlyPD(vtkPolyData *pd) const;
   int GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces);
-  int GetFaceRange(const TopoDS_Shape &shape,int &face_range);
 protected:
 
   TopoDS_Shape *geom_;
