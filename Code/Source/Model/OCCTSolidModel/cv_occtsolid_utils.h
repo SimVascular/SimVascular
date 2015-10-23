@@ -28,9 +28,9 @@
  *
  *=========================================================================*/
 
-/** @file cv_polydatasolid_utils.h
+/** @file cv_occtsolid_utils.h
  *  @brief These functions are utilities that are called mostly by
- *  cvPolyDataSolid
+ *  cvOCCTSolidModel
  *  @details These functions are called mostly by cvPolyDataSolid and
  *  they provide a clean way for implementation of functions with that
  *  class. They provide the full code for extracting boundaries, extracting
@@ -42,45 +42,33 @@
  *  @author shaddenlab.berkeley.edu
  */
 
-#ifndef __CV_POLYDATASOLID_UTILS_H
-#define __CV_POLYDATASOLID_UTILS_H
+#ifndef __CV_OCCTSOLID_UTILS_H
+#define __CV_OCCTSOLID_UTILS_H
 
 
-#include "cvPolyData.h"
-#include "cvLispList.h"
-#include "cv_vtk_utils.h"
-
-/* ------ */
-/* Kernel */
-/* ------ */
-
-int PlyDtaUtils_Init();
+#include "TopoDS_Shape.hxx"
+#include "TopoDS_Face.hxx"
+#include "TDF_Label.hxx"
+#include "XCAFDoc_ShapeTool.hxx"
+#include "XCAFDoc_ShapeTool.hxx"
 
 /* -------- */
 /* Get Info */
 /* -------- */
-int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces);
+int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
+		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+	       	int *v_num_faces, int **v_faces);
 
-int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions);
+int OCCTUtils_GetFaceLabel( const TopoDS_Shape &geom,
+	       const Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
+	       int &id);
 
-int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd);
-
-/* -------- */
-/* File I/O */
-/* -------- */
-int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result);
-
-int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename );
 
 /* -------- */
-/* PolyData Change and Check Operations */
+/* Orient  */
 /* -------- */
-int PlyDtaUtils_CombineFaces( vtkPolyData *geom, int *targetface, int *loseface);
+int OCCTUtils_OrientSingleShape(TopoDS_Shape &shape,TopAbs_Orientation orientation);
 
-int PlyDtaUtils_DeleteCells( vtkPolyData *geom, int *numcells, int *cells);
+int OCCTUtils_OrientFaces(TopoDS_Shape &geom);
 
-int PlyDtaUtils_DeleteRegion( vtkPolyData *geom, int *regionid);
-
-int PlyDtaUtils_PDCheckArrayName( vtkPolyData *object, int datatype,std::string arrayname);
-int PlyDtaUtils_UGCheckArrayName( vtkUnstructuredGrid *object, int datatype,std::string arrayname);
-#endif // __PARASOLID_MODEL_H
+#endif // __OCCTSOLID_UTILS_H

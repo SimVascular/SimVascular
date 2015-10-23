@@ -52,9 +52,9 @@ set(${proj}_FIND_COMPONENTS TKService TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
 			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
 			    TKTObj TKVoxel TKXDEIGES TKXDESTEP TKXMesh
 			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
-			    FWOSPlugin)
+			    FWOSPlugin TKOpenGL)
 if (APPLE)
-	set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
+set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
 endif()
 
 # Add requestion components
@@ -92,7 +92,7 @@ endforeach()
 if(LINUX)
 	set(lib_sub_path "lib")
 elseif(APPLE)
-	set(lib_sub_path "lib")
+	set(lib_sub_path "libd")
 elseif(WIN32 AND IS64)
 	set(lib_sub_path "dll")
 elseif(WIN32 AND NOT IS64)

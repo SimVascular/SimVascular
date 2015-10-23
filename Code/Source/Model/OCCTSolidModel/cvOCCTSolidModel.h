@@ -175,13 +175,14 @@ public:
   //OCCT Model specific function related to OCAF
   int RegisterShapeFaces();
   int AddFaceLabel(TopoDS_Shape &shape, int &id);
-  int GetFaceLabel(TopoDS_Shape &shape, int &id) const;
 
   int NewShape();
   int AddShape();
   int RemoveShape() const;
 
   int GetOnlyPD(vtkPolyData *pd) const;
+  int GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces);
+  int GetFaceRange(const TopoDS_Shape &shape,int &face_range);
 protected:
 
   TopoDS_Shape *geom_;
