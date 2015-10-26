@@ -223,7 +223,8 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   if ( solidPtr->geom_ != NULL ) {
     this->NewShape();
     *geom_ = *(solidPtr->geom_);
-    this->AddShape();
+    RegisterShapeFaces();
+
   }
 
   return CV_OK;
@@ -619,7 +620,17 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   this->NewShape();
   *geom_ = unionOCCT.Shape();
   this->AddShape();
-  //OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_);
+  OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_);
+  TopExp_Explorer FaceExp;
+  FaceExp.Init(*geom_,TopAbs_FACE);
+  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
+  {
+    fprintf(stderr,"Face %d\n",i);
+    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
+    int newid=-1;
+    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
+    fprintf(stderr,"Id? %d\n",newid);
+  }
 
   //fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
   //fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
@@ -1107,7 +1118,8 @@ int cvOCCTSolidModel::RegisterShapeFaces()
   for (int i=0;FaceExp.More();FaceExp.Next(),i++)
   {
     TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
-    AddFaceLabel(tmpFace,i);
+    int faceid=i;
+    AddFaceLabel(tmpFace,faceid);
   }
 
   return CV_OK;
@@ -1124,6 +1136,18 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
   {
     fprintf(stderr,"Face is NULL, cannot add\n");
     return CV_ERROR;
+  }
+  int checkid=-1;
+  OCCTUtils_GetFaceLabel(shape,shapetool_,*shapelabel_,checkid);
+  if (checkid != -1)
+  {
+    fprintf(stdout,"Face already has label, relableing %d\n",id);
+    if (OCCTUtils_ReLabelFace(shape,shapetool_,*shapelabel_,id) != CV_OK)
+    {
+      fprintf(stderr,"Face has no label, which doesn't make sense\n");
+      return CV_ERROR;
+    }
+    return CV_OK;
   }
   ////Create or find child label with a tag
   //TDF_Label topoLabels=shapelabel_->FindChild(topotype,Standard_True);

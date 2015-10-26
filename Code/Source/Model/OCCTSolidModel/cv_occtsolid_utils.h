@@ -56,7 +56,7 @@
 /* Get Info */
 /* -------- */
 int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
-		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 	       	int *v_num_faces, int **v_faces);
 
 int OCCTUtils_GetFaceLabel( const TopoDS_Shape &geom,
@@ -64,15 +64,19 @@ int OCCTUtils_GetFaceLabel( const TopoDS_Shape &geom,
 	       int &id);
 
 int OCCTUtils_GetFaceRange( const TopoDS_Shape &geom,
-	       const Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
+	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &face_range);
+
+int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
+	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
+	       int &id);
 
 /* -------- */
 /* Set */
 /* -------- */
 
 int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
-		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel);
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel);
 
 
 /* -------- */

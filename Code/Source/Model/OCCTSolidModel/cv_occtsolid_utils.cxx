@@ -68,7 +68,7 @@
  */
 
 int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
-		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 	       	int *v_num_faces, int **v_faces)
 {
   int num = 0;
@@ -142,7 +142,7 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
  * @return CV_OK if function completes properly
  */
 int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
-		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel)
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel)
 {
   int *faces;
   int numFaces;
@@ -155,9 +155,8 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 
   //Increase map one at spot for each face id
   for (int i=0;i<numFaces;i++)
-    newmap[i] = 0;
+    newmap[i] = -2;
 
-  fprintf(stderr,"Face range %d\n",facerange);
   int checkid=-1;
   int currentid=0;
   TopExp_Explorer anExp(shape,TopAbs_FACE);
@@ -169,24 +168,25 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
     {
       TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
       int faceid=-1;
-      OCCTUtils_GetFaceLabel(shape,shapetool,shapelabel,faceid);
-      fprintf(stderr,"Face id %d\n",faceid);
-      fprintf(stderr,"CheckId %d\n",checkid);
+      OCCTUtils_GetFaceLabel(tmpFace,shapetool,shapelabel,faceid);
       if (faceid == checkid)
       {
-	newmap[j] = currentid++;
-	found=1;
-	break;
+	if (newmap[j] == -2)
+	{
+	  newmap[j] = currentid++;
+	  found=1;
+	  break;
+	}
       }
     }
     if (!found)
       checkid++;
   }
+
   for (int i=0;i<numFaces;i++)
   {
-    fprintf(stderr,"OldFace %d\n",faces[i]);
-    fprintf(stderr,"CheckMapping %d\n",newmap[i]);
-
+    fprintf(stderr,"Face %d\n",faces[i]);
+    fprintf(stderr,"Checkmap %d\n",newmap[i]);
   }
 
   delete [] newmap;
@@ -198,7 +198,7 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 // GetFaceRange
 // ----------------
 int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
-		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
     		int &face_range)
 {
   face_range = 0;
@@ -231,3 +231,26 @@ int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
   return CV_OK;
 }
 
+int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+		int &id)
+{
+  if (shape.IsNull())
+  {
+    fprintf(stderr,"Face is NULL, cannot add\n");
+    return CV_ERROR;
+  }
+
+  TDF_Label tmpLabel;
+  shapetool->FindSubShape(shapelabel,shape,tmpLabel);
+  if (tmpLabel.IsNull())
+  {
+    fprintf(stderr,"Face has not been given a label\n");
+    return CV_ERROR;
+  }
+  Handle(TDataStd_Integer) INT = new TDataStd_Integer();
+  tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+  INT->Set(id);
+
+  return CV_OK;
+}
