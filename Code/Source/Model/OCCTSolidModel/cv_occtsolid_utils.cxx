@@ -121,7 +121,7 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
   shapetool->FindSubShape(shapelabel,geom,tmpLabel);
   if (tmpLabel.IsNull())
   {
-    fprintf(stderr,"Face has not been given a label\n");
+    fprintf(stderr,"Face does not have label\n");
     return CV_ERROR;
   }
 
@@ -183,12 +183,6 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
       checkid++;
   }
 
-  for (int i=0;i<numFaces;i++)
-  {
-    fprintf(stderr,"Face %d\n",faces[i]);
-    fprintf(stderr,"Checkmap %d\n",newmap[i]);
-  }
-
   delete [] newmap;
   delete [] faces;
   return CV_OK;
@@ -231,6 +225,15 @@ int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
   return CV_OK;
 }
 
+// -------------------
+// OCCTUtils_ReLabelFace
+// -------------------
+/**
+ * @brief Procedure to relabel the face of a shape
+ * @param shape input TopoDS_Shape face that needs to be relabled
+ * @param id desired id for face
+ * @return CV_OK if function completes properly
+ */
 int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 		int &id)
@@ -251,6 +254,25 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
   tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
   INT->Set(id);
+
+  return CV_OK;
+}
+
+// -------------------
+// OCCTUtils_GetNumberFaces
+// -------------------
+/**
+ * @brief Procedure to return the number of faces in shape
+ * @param shape input TopoDS_Shape to find number of faces
+ * @param num_faces returns the number of faces found
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
+{
+  num_faces = 0;
+  TopExp_Explorer anExp(shape,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next())
+    num_faces++;
 
   return CV_OK;
 }

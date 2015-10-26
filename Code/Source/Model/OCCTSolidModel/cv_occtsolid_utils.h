@@ -67,6 +67,8 @@ int OCCTUtils_GetFaceRange( const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &face_range);
 
+int OCCTUtils_GetNumberOfFaces( const TopoDS_Shape &geom,int &num_faces);
+
 int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &id);

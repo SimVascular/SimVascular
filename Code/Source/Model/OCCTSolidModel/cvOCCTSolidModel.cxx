@@ -163,7 +163,7 @@ cvOCCTSolidModel::cvOCCTSolidModel()
   //TDF_Label root = doc->Main();
 
   ////Create label
-  shapelabel_ = new TDF_Label;
+  shapelabel_ = NULL;
   //*shapelabel_ = root.NewChild();
   numFaces_ = 0;
 }
@@ -179,8 +179,6 @@ cvOCCTSolidModel::~cvOCCTSolidModel()
 {
   if (geom_ != NULL)
     this->RemoveShape();
-
-  delete shapelabel_;
 }
 
 // -----------
@@ -223,7 +221,8 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   if ( solidPtr->geom_ != NULL ) {
     this->NewShape();
     *geom_ = *(solidPtr->geom_);
-    RegisterShapeFaces();
+    //RegisterShapeFaces();
+    this->AddShape();
 
   }
 
@@ -539,12 +538,12 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   NewEdgeExp.Init(freeWires,TopAbs_EDGE);
   for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
   {
-    fprintf(stderr,"New Wire #%d\n",i);
+    //fprintf(stderr,"New Wire #%d\n",i);
     TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
     GProp_GProps lineProps;
     BRepGProp::LinearProperties(tmpEdge,lineProps);
-    fprintf(stdout,"Edge Length %.4f\n",lineProps.Mass());
-    fprintf(stdout,"Closed? %d\n",tmpEdge.Closed());
+    //fprintf(stdout,"Edge Length %.4f\n",lineProps.Mass());
+    //fprintf(stdout,"Closed? %d\n",tmpEdge.Closed());
 
     BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
     wiremaker.Build();
@@ -567,17 +566,17 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   this->NewShape();
   *geom_ = solidmaker.Solid();
   //geom_->Orientation(TopAbs_FORWARD);
-  int orientation;
-  OCCTUtils_GetOrientation(*geom_,orientation);
-  fprintf(stderr,"Shape Orientation %d\n",orientation);
-  TopExp_Explorer anExp(*geom_,TopAbs_FACE);
-  for (int i=0;anExp.More();anExp.Next(),i++)
-  {
-    TopoDS_Shape face = TopoDS::Face(anExp.Current());
-    face.Orientation(TopAbs_INTERNAL);
-    OCCTUtils_GetOrientation(TopoDS::Face(anExp.Current()),orientation);
-    fprintf(stderr,"Face %d Orientation %d\n",i,orientation);
-  }
+  //int orientation;
+  //OCCTUtils_GetOrientation(*geom_,orientation);
+  //fprintf(stderr,"Shape Orientation %d\n",orientation);
+  //TopExp_Explorer anExp(*geom_,TopAbs_FACE);
+  //for (int i=0;anExp.More();anExp.Next(),i++)
+  //{
+  //  TopoDS_Shape face = TopoDS::Face(anExp.Current());
+  //  face.Orientation(TopAbs_INTERNAL);
+  //  OCCTUtils_GetOrientation(TopoDS::Face(anExp.Current()),orientation);
+  //  fprintf(stderr,"Face %d Orientation %d\n",i,orientation);
+  //}
   this->AddShape();
 
   return CV_OK;
@@ -625,11 +624,9 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   FaceExp.Init(*geom_,TopAbs_FACE);
   for (int i=0;FaceExp.More();FaceExp.Next(),i++)
   {
-    fprintf(stderr,"Face %d\n",i);
     TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
     int newid=-1;
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
-    fprintf(stderr,"Id? %d\n",newid);
   }
 
   //fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
@@ -1141,7 +1138,6 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
   OCCTUtils_GetFaceLabel(shape,shapetool_,*shapelabel_,checkid);
   if (checkid != -1)
   {
-    fprintf(stdout,"Face already has label, relableing %d\n",id);
     if (OCCTUtils_ReLabelFace(shape,shapetool_,*shapelabel_,id) != CV_OK)
     {
       fprintf(stderr,"Face has no label, which doesn't make sense\n");
@@ -1184,6 +1180,7 @@ int cvOCCTSolidModel::NewShape()
     this->RemoveShape();
 
   geom_ = new TopoDS_Shape;
+  shapelabel_ = new TDF_Label;
 
   return CV_OK;
 }
@@ -1215,7 +1212,11 @@ int cvOCCTSolidModel::RemoveShape() const
       fprintf(stderr,"Shape was not regsitered, cannot remove\n");
       return CV_ERROR;
     }
-    shapetool_->RemoveShape(*shapelabel_,Standard_True);
+    //Want to remove shape, but shape isn't being copied over correctly
+    //Full shape info for new shape cannot be retrieved if removed currently
+    //Will try some other stuff
+    //shapetool_->RemoveShape(*shapelabel_,Standard_False);
+    delete shapelabel_;
     delete geom_;
   }
   else
@@ -1266,22 +1267,3 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd) const
   return CV_OK;
 }
 
-// ----------------
-// GetNumberOfFaces
-// ----------------
-int cvOCCTSolidModel::GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
-{
-  num_faces = 0;
-  TopExp_Explorer anExp(shape,TopAbs_FACE);
-  for (int i=0;anExp.More();anExp.Next())
-    num_faces++;
-
-  return CV_OK;
-}
-
-//// --------------
-//// ReorderFaces
-//// --------------
-//int cvOCCTSolidModel::ReorderFaces(TopoDS_Shape &shape)
-//{
-//}

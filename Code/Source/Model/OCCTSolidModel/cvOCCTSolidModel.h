@@ -181,7 +181,6 @@ public:
   int RemoveShape() const;
 
   int GetOnlyPD(vtkPolyData *pd) const;
-  int GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces);
 protected:
 
   TopoDS_Shape *geom_;

@@ -128,17 +128,10 @@ proc guiSV_model_create_model_opencascade {} {
          continue
       }
        solid_union -result /tmp/preop/$modelname -a $modelname -b $cursolid
-       set checkids [/tmp/preop/$modelname GetFaceIds]
-       foreach id $checkids {
-	 puts "NEw check id $id"
-       }
 
        repos_delete -obj $modelname
        solid_copy -src /tmp/preop/$modelname -dst $modelname
-       set checkids [$modelname GetFaceIds]
-       foreach id $checkids {
-	 puts "Copy check id $id"
-       }
+
        repos_delete -obj /tmp/preop/$modelname
     }
 
