@@ -73,6 +73,10 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &id);
 
+int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
+	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
+	       char *attr,char **value);
+
 /* -------- */
 /* Set */
 /* -------- */
@@ -80,9 +84,20 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
 int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel);
 
+int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &geom,
+	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
+	       char *attr,char *value);
+
+/* -------- */
+/* Check */
+/* -------- */
+int OCCTUtils_CheckIsSolid(const TopoDS_Shape &geom,int &issue);
 
 /* -------- */
 /* Orientation  */
 /* -------- */
 int OCCTUtils_GetOrientation(const TopoDS_Shape &geom,int &orientation);
+
+int OCCTUtils_SetOrientation(TopoDS_Shape &geom, TopoDS_Shape &face,
+		int &orientation);
 #endif // __OCCTSOLID_UTILS_H

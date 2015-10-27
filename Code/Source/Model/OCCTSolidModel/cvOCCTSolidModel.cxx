@@ -326,7 +326,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   }
 
   cvOCCTSolidModel *shapePtr;
-  BRepOffsetAPI_ThruSections lofter(Standard_False,Standard_False,1e-6);
+  BRepOffsetAPI_ThruSections lofter(Standard_True,Standard_False,1e-6);
   if (continuity == 0)
     lofter.SetContinuity(GeomAbs_C0);
   else if (continuity == 1)
@@ -548,7 +548,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
     BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
     wiremaker.Build();
 
-    BRepFill_Filling filler(2,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
     filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
     filler.Build();
 
@@ -565,6 +565,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
 
   this->NewShape();
   *geom_ = solidmaker.Solid();
+  this->AddShape();
   //geom_->Orientation(TopAbs_FORWARD);
   //int orientation;
   //OCCTUtils_GetOrientation(*geom_,orientation);
@@ -573,11 +574,23 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   //for (int i=0;anExp.More();anExp.Next(),i++)
   //{
   //  TopoDS_Shape face = TopoDS::Face(anExp.Current());
-  //  face.Orientation(TopAbs_INTERNAL);
-  //  OCCTUtils_GetOrientation(TopoDS::Face(anExp.Current()),orientation);
-  //  fprintf(stderr,"Face %d Orientation %d\n",i,orientation);
+  //  OCCTUtils_GetOrientation(face,orientation);
+  //  if (orientation != TopAbs_FORWARD)
+  //  {
+  //    int neworient = 0;
+  //    //OCCTUtils_SetOrientation(*geom_,face,neworient);
+  //  }
+  //  GProp_GProps lineProps;
+  //  BRepGProp::LinearProperties(face,lineProps);
+  //  fprintf(stdout,"Face Area %.4f\n",lineProps.Mass());
   //}
-  this->AddShape();
+
+  int issue=0;
+  if (OCCTUtils_CheckIsSolid(*geom_,issue) != CV_OK)
+  {
+    fprintf(stderr,"Shape is not solid after cap\n");
+    return CV_ERROR;
+  }
 
   return CV_OK;
 }
@@ -612,22 +625,16 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
 
   occtPtrA = (cvOCCTSolidModel *)( a );
   occtPtrB = (cvOCCTSolidModel *)( b );
+  TopoDS_Shape shapeA = *(occtPtrA->geom_);
+  TopoDS_Shape shapeB = *(occtPtrB->geom_);
 
-  BRepAlgoAPI_Fuse unionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
+  BRepAlgoAPI_Fuse unionOCCT(shapeA,shapeB);
   unionOCCT.Build();
 
   this->NewShape();
   *geom_ = unionOCCT.Shape();
   this->AddShape();
-  OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_);
-  TopExp_Explorer FaceExp;
-  FaceExp.Init(*geom_,TopAbs_FACE);
-  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
-  {
-    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
-    int newid=-1;
-    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
-  }
+  //OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_);
 
   //fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
   //fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
@@ -771,6 +778,86 @@ int cvOCCTSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
   return CV_OK;
 
+}
+
+// ------------
+// GetFaceAttribute
+// ------------
+int cvOCCTSolidModel::GetFaceAttribute (char *attr,int faceid,char **value)
+{
+  if (geom_ == NULL)
+  {
+    fprintf(stderr,"solid is null\n");
+    return CV_ERROR;
+  }
+
+  int found =0;
+  TopoDS_Shape labelFace;
+  TopExp_Explorer anExp(*geom_,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    TopoDS_Shape tmpFace = anExp.Current();
+    int id=-1;
+    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,id);
+    if (id == faceid)
+    {
+      found=1;
+      labelFace = tmpFace;
+    }
+  }
+
+  if (found == 0)
+  {
+    fprintf(stderr,"Face not found on shape, so attribute cannot be found\n");
+    return CV_ERROR;
+  }
+
+  if (OCCTUtils_GetFaceAttribute(labelFace,shapetool_,*shapelabel_,attr,value) != CV_OK)
+  {
+    fprintf(stderr,"Could not get face attribute\n");
+    return CV_ERROR;
+  }
+  return CV_OK;
+}
+
+// ------------
+// SetFaceAttribute
+// ------------
+int cvOCCTSolidModel::SetFaceAttribute (char *attr,int faceid,char *value)
+{
+  if (geom_ == NULL)
+  {
+    fprintf(stderr,"solid is null\n");
+    return CV_ERROR;
+  }
+
+  int found =0;
+  TopoDS_Shape labelFace;
+  TopExp_Explorer anExp(*geom_,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    TopoDS_Shape tmpFace = anExp.Current();
+    int id=-1;
+    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,id);
+    if (id == faceid)
+    {
+      found=1;
+      labelFace = tmpFace;
+    }
+  }
+
+  if (found == 0)
+  {
+    fprintf(stderr,"Face not found on shape, so attribute cannot be set\n");
+    return CV_ERROR;
+  }
+
+  if (OCCTUtils_SetFaceAttribute(labelFace,shapetool_,*shapelabel_,attr,value) != CV_OK)
+  {
+    fprintf(stderr,"Could not set face attribute\n");
+    return CV_ERROR;
+  }
+  return CV_OK;
 }
 
 // ---------------
@@ -952,7 +1039,6 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
   for (int i=1;i < num+1;i++)
   {
     TopTools_ListOfShape faces = anEFsMap.FindFromIndex(i);
-    fprintf(stderr,"Extent Number dos! %d\n",faces.Extent());
     TopoDS_Shape face1 = faces.First();
     int faceId1,faceId2;
     OCCTUtils_GetFaceLabel(face1,shapetool_,*shapelabel_,faceId1);
@@ -995,7 +1081,10 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
   fprintf(stderr,"Modified? %d\n",modfaces.Extent());
   TopTools_ListOfShape newfaces = filletmaker.Generated(*geom_);
   fprintf(stderr,"Generated? %d\n",newfaces.Extent());
+  this->RemoveShape();
+  this->NewShape();
   *geom_ = tmpShape;
+  this->AddShape();
   TopExp_Explorer FaceExp;
   FaceExp.Init(*geom_,TopAbs_FACE);
   for (int i=0;FaceExp.More();FaceExp.Next(),i++)
@@ -1004,7 +1093,25 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
     TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
     int newid=-1;
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
-    fprintf(stderr,"Id? %d\n",newid);
+    if (newid == -1)
+    {
+      AddFaceLabel(tmpFace,i);
+      fprintf(stderr,"Giving label to face doh\n");
+    }
+  }
+  if (OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_) != CV_OK)
+  {
+    fprintf(stderr,"Renumbering did not work\n");
+    return CV_ERROR;
+  }
+  FaceExp.Init(*geom_,TopAbs_FACE);
+  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
+  {
+    fprintf(stderr,"New Face %d\n",i);
+    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
+    int newid=-1;
+    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
+    fprintf(stderr,"ID %d\n",newid);
   }
 
   return CV_OK;

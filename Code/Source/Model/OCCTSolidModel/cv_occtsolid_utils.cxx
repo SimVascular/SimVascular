@@ -50,9 +50,13 @@
 #include "TopoDS_Face.hxx"
 #include "TopExp_Explorer.hxx"
 
+#include "BRepTools_Reshape.hxx"
+#include "BRepCheck_Solid.hxx"
+
 #include "Standard_Real.hxx"
 #include "Standard_Integer.hxx"
 #include "TDataStd_Integer.hxx"
+#include "TDataStd_ExtStringArray.hxx"
 
 // ---------------------
 // OCCTUtils_GetFaceIds
@@ -183,6 +187,17 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
       checkid++;
   }
 
+  anExp.Init(shape,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
+    if (OCCTUtils_ReLabelFace(tmpFace,shapetool,shapelabel,newmap[i]) != CV_OK)
+    {
+      fprintf(stderr,"Could not label face\n");
+      return CV_ERROR;
+    }
+  }
+
   delete [] newmap;
   delete [] faces;
   return CV_OK;
@@ -222,6 +237,28 @@ int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
 int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
 {
   orientation = (int) shape.Orientation();
+  return CV_OK;
+}
+
+// -------------------
+// OCCTUtils_SetOrientation
+// -------------------
+/**
+ * @brief Procedure to set a face orientation
+ * @param shape input TopoDS_Shape on which to set a faces orientation
+ * @param face the face on which to set the orientation
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orientation)
+{
+  Handle(BRepTools_ReShape) reshaper =  new BRepTools_ReShape();
+  reshaper->ModeConsiderOrientation() = Standard_True;
+
+  TopoDS_Shape compFace = face.Complemented();
+  reshaper->Replace(face,compFace,Standard_True);
+  TopoDS_Shape tmpShape = reshaper->Apply(shape,TopAbs_FACE);
+  shape = tmpShape;
+
   return CV_OK;
 }
 
@@ -273,6 +310,138 @@ int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
   TopExp_Explorer anExp(shape,TopAbs_FACE);
   for (int i=0;anExp.More();anExp.Next())
     num_faces++;
+
+  return CV_OK;
+}
+
+// -------------------
+// OCCTUtils_GetFaceAttribute
+// -------------------
+/**
+ * @brief Procedure to get an attribute of the shape
+ * @param shape input TopoDS_Shape to get attribute
+ * @param shapetool the XDEDoc manager that contains attribute info
+ * @param shapelabel the label for the shape registered in XDEDoc
+ * @note attributes includ id, name, and parent
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+    				char *attr, char **value)
+{
+  TDF_Label tmpLabel;
+  shapetool->FindSubShape(shapelabel,face,tmpLabel);
+  if (tmpLabel.IsNull())
+  {
+    fprintf(stderr,"Face is not labelled and thus has no attribute\n");
+    return CV_ERROR;
+  }
+  if (!strncmp(attr,"name",4))
+  {
+    Handle(TDataStd_ExtStringArray) NSTRING = new
+      TDataStd_ExtStringArray();
+    tmpLabel.FindAttribute(NSTRING->ID(),NSTRING);
+    //*value = NSTRING->Value(0);
+  }
+  else if (!strncmp(attr,"parent",6))
+  {
+    Handle(TDataStd_ExtStringArray) PSTRING = new
+      TDataStd_ExtStringArray();
+    tmpLabel.FindAttribute(PSTRING->ID(),PSTRING);
+    //*value = PSTRING->Value(0);
+  }
+  else if (!strncmp(attr,"id",2))
+  {
+    Handle(TDataStd_Integer) INT = new TDataStd_Integer();
+    tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+    //*value = INT->Get();
+  }
+  else
+  {
+    fprintf(stderr,"Attribute %s is not attribute of shape. Options are name, parent, id\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// -------------------
+// OCCTUtils_SetFaceAttribute
+// -------------------
+/**
+ * @brief Procedure to set an attribute of the shape
+ * @param shape input TopoDS_Shape to set attribute
+ * @param shapetool the XDEDoc manager that contains attribute info
+ * @param shapelabel the label for the shape registered in XDEDoc
+ * @note attributes include id, name, and parent
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+    				char *attr, char *value)
+{
+  TDF_Label tmpLabel;
+  shapetool->FindSubShape(shapelabel,face,tmpLabel);
+  if (tmpLabel.IsNull())
+  {
+    fprintf(stderr,"Face is not labelled and thus has no attribute\n");
+    return CV_ERROR;
+  }
+  if (!strncmp(attr,"name",4))
+  {
+    Handle(TDataStd_ExtStringArray) NSTRING = new
+      TDataStd_ExtStringArray();
+    tmpLabel.FindAttribute(NSTRING->ID(),NSTRING);
+    //NSTRING->Set(*value);
+  }
+  else if (!strncmp(attr,"parent",6))
+  {
+    Handle(TDataStd_ExtStringArray) PSTRING = new
+      TDataStd_ExtStringArray();
+    tmpLabel.FindAttribute(PSTRING->ID(),PSTRING);
+    //PSTRING->Set(*value);
+  }
+  else if (!strncmp(attr,"id",2))
+  {
+    Handle(TDataStd_Integer) INT = new TDataStd_Integer();
+    tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+    //INT->Set(*value);
+  }
+  else
+  {
+    fprintf(stderr,"Attribute %s is not attribute of shape. Options are name, parent, id\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// -------------------
+// OCCTUtils_CheckIsSolid
+// -------------------
+/**
+ * @brief Procedure to check and see if it is solid
+ * @param shape input TopoDS_Shape to check
+ * @param issue contains integer for issue. BRepCheck_Status doc of occt
+ * @return CV_OK if solid, CV_ERROR if it is not solid
+ */
+int OCCTUtils_CheckIsSolid(const TopoDS_Shape &shape,int &issue)
+{
+  BRepCheck_Solid solidchecker(TopoDS::Solid(shape));
+  BRepCheck_ListOfStatus status = solidchecker.Status();
+  BRepCheck_ListIteratorOfListOfStatus statit;
+  statit.Initialize(status);
+  for (int i=0;statit.More();statit.Next())
+  {
+    BRepCheck_Status checker = statit.Value();
+    if (checker != 0)
+    {
+      issue = checker;
+      fprintf(stderr,"Shape is not solid!\n");
+      return CV_ERROR;
+    }
+  }
+  issue = 0;
 
   return CV_OK;
 }

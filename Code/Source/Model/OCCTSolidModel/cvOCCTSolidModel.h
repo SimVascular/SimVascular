@@ -151,8 +151,8 @@ public:
   void MakeSurf() { return; }
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
   int GetFaceIds (int *numFaces, int **faceIds);
-  int GetFaceAttribute(char *attr,int faceid, char **value) {return CV_ERROR;}
-  int SetFaceAttribute(char *attr,int faceid, char *value) {return CV_ERROR;}
+  int GetFaceAttribute(char *attr,int faceid, char **value);
+  int SetFaceAttribute(char *attr,int faceid, char *value);
   int GetRegionIds (int *numRegions, int **RegionIds) {return CV_ERROR; }
   int GetRegionAttribute(char *attr,int regionid, char **value) {return CV_ERROR; }
   int SetRegionAttribute(char *attr,int regionid, char *value) {return CV_ERROR; }
