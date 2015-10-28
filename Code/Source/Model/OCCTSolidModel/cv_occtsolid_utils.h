@@ -51,6 +51,7 @@
 #include "TDF_Label.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
+#include "TDataStd_ExtStringArray.hxx"
 
 /* -------- */
 /* Get Info */
@@ -77,6 +78,9 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       char *attr,char **value);
 
+int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
+    					char *charstr);
+
 /* -------- */
 /* Set */
 /* -------- */
@@ -88,6 +92,8 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       char *attr,char *value);
 
+int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
+    					char *charstr);
 /* -------- */
 /* Check */
 /* -------- */

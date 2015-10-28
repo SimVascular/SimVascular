@@ -56,7 +56,54 @@
 #include "Standard_Real.hxx"
 #include "Standard_Integer.hxx"
 #include "TDataStd_Integer.hxx"
-#include "TDataStd_ExtStringArray.hxx"
+#include "TNaming_Builder.hxx"
+
+#include <string>
+#include <sstream>
+#include <iostream>
+
+//Function to turn an integer into a string
+char *intToChar(int in)
+{
+  char *out;
+  sprintf(out,"%d",in);
+  return out;
+}
+
+int charToInt(const char *in)
+{
+  int out = atoi(in);
+  return out;
+}
+
+int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
+    char *charstr)
+{
+  int lower = 0;
+  int upper = strlen(charstr);
+  array->Init(lower,upper);
+  for (int i=lower;i<upper;i++)
+  {
+    array->SetValue(i,charstr[i]);
+  }
+
+  return CV_OK;
+}
+
+int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
+    char *charstr)
+{
+    std::stringstream streamer;
+    for (int i=array->Lower();i<array->Upper();i++)
+    {
+      TCollection_AsciiString asciiString(array->Value(i),'?');
+      streamer << asciiString.ToCString();
+    }
+    std::string outstr = streamer.str();
+    sprintf(charstr,"%s",outstr.c_str());
+
+    return CV_OK;
+}
 
 // ---------------------
 // OCCTUtils_GetFaceIds
@@ -129,9 +176,15 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
     return CV_ERROR;
   }
 
+  TDF_Label idLabel = tmpLabel.FindChild(0);
+  if (idLabel.IsNull())
+  {
+    fprintf(stderr,"Face does not have id\n");
+    return CV_ERROR;
+  }
   //Retrive attribute
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
-  tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+  idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
   id = INT->Get();
 
   return CV_OK;
@@ -288,8 +341,14 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
     fprintf(stderr,"Face has not been given a label\n");
     return CV_ERROR;
   }
+  TDF_Label idLabel = tmpLabel.FindChild(0);
+  if (idLabel.IsNull())
+  {
+    fprintf(stderr,"Face has not been given an id\n");
+    return CV_ERROR;
+  }
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
-  tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+  idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
   INT->Set(id);
 
   return CV_OK;
@@ -329,6 +388,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
     				char *attr, char **value)
 {
+  static char returnString[256];
   TDF_Label tmpLabel;
   shapetool->FindSubShape(shapelabel,face,tmpLabel);
   if (tmpLabel.IsNull())
@@ -338,23 +398,57 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
   }
   if (!strncmp(attr,"name",4))
   {
+    TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
+    if (nameLabel.IsNull())
+    {
+      fprintf(stderr,"Name label doesn't exist, cannot retrive name\n");
+      return CV_ERROR;
+    }
     Handle(TDataStd_ExtStringArray) NSTRING = new
       TDataStd_ExtStringArray();
-    tmpLabel.FindAttribute(NSTRING->ID(),NSTRING);
-    //*value = NSTRING->Value(0);
+    int isLabel = nameLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),NSTRING);
+    if (isLabel == 0)
+    {
+      fprintf(stderr,"name attribute does not exist on face\n");
+      return CV_ERROR;
+    }
+    returnString[0]='\0';
+    OCCTUtils_GetExtStringArrayAsChar(NSTRING,returnString);
+    *value = returnString;
   }
   else if (!strncmp(attr,"parent",6))
   {
+    TDF_Label parentLabel = tmpLabel.FindChild(2,Standard_False);
+    if (parentLabel.IsNull())
+    {
+      fprintf(stderr,"Name label doesn't exist, cannot retrive name\n");
+      return CV_ERROR;
+    }
     Handle(TDataStd_ExtStringArray) PSTRING = new
       TDataStd_ExtStringArray();
-    tmpLabel.FindAttribute(PSTRING->ID(),PSTRING);
-    //*value = PSTRING->Value(0);
+    int isLabel = parentLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),PSTRING);
+    if (isLabel == 0)
+    {
+      fprintf(stderr,"parent attribute does not exist on face\n");
+      return CV_ERROR;
+    }
+    returnString[0]='\0';
+    OCCTUtils_GetExtStringArrayAsChar(PSTRING,returnString);
+    *value = returnString;
   }
   else if (!strncmp(attr,"id",2))
   {
+    TDF_Label idLabel = tmpLabel.FindChild(0);
     Handle(TDataStd_Integer) INT = new TDataStd_Integer();
-    tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
-    //*value = INT->Get();
+    int isLabel = idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+    if (isLabel == 0)
+    {
+      fprintf(stderr,"id attribute does not exist on face\n");
+      return CV_ERROR;
+    }
+    returnString[0]='\0';
+    sprintf(returnString,"%d",INT->Get());
+    *value = returnString;
   }
   else
   {
@@ -389,23 +483,29 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
   }
   if (!strncmp(attr,"name",4))
   {
+    TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
     Handle(TDataStd_ExtStringArray) NSTRING = new
       TDataStd_ExtStringArray();
-    tmpLabel.FindAttribute(NSTRING->ID(),NSTRING);
-    //NSTRING->Set(*value);
+    int isLabel = nameLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),NSTRING);
+
+    OCCTUtils_SetExtStringArrayFromChar(NSTRING,value);
   }
   else if (!strncmp(attr,"parent",6))
   {
+    TDF_Label parentLabel = tmpLabel.FindChild(2,Standard_False);
     Handle(TDataStd_ExtStringArray) PSTRING = new
       TDataStd_ExtStringArray();
-    tmpLabel.FindAttribute(PSTRING->ID(),PSTRING);
-    //PSTRING->Set(*value);
+    int isLabel = parentLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),PSTRING);
+
+    OCCTUtils_SetExtStringArrayFromChar(PSTRING,value);
   }
   else if (!strncmp(attr,"id",2))
   {
+    TDF_Label idLabel = tmpLabel.FindChild(0,Standard_False);
     Handle(TDataStd_Integer) INT = new TDataStd_Integer();
-    tmpLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
-    //INT->Set(*value);
+    int isLabel = idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
+
+    INT->Set(charToInt(value));
   }
   else
   {

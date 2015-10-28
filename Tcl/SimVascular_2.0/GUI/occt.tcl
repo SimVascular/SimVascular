@@ -392,16 +392,17 @@ proc makeSurfOCCT {} {
     set gLoftedSolids($grp) $surf
 
     # clean up the tags with the group names
-    #set solid $surf
-    #foreach i [$solid GetFaceIds] {
-    #  set facename {}
-    #  catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $i]}
-    #  if {$facename != "" && $facename != "inflow" && $facename != "inlet"} {
-    #    $solid SetFaceAttr -attr gdscName -faceId $i -value $grp
-    #  } else {
-    #    # we have a wall
-    #    $solid SetFaceAttr -attr gdscName -faceId $i -value wall_$grp
-    #  }
-    #}
+    set solid $surf
+    foreach i [$solid GetFaceIds] {
+      set facename {}
+      #catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $i]}
+      #if {$facename != "" && $facename != "inflow" && $facename != "inlet"} {
+      #  $solid SetFaceAttr -attr gdscName -faceId $i -value $grp
+      #} else {
+      #  # we have a wall
+      #  $solid SetFaceAttr -attr gdscName -faceId $i -value wall_$grp
+      #}
+      $solid SetFaceAttr -attr parent -faceId $i -value $grp
+    }
 
 }
