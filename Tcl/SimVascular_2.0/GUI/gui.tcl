@@ -1,27 +1,27 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Portions of the code Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                           University of California, San Diego.
-# 
+#
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 # BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -688,7 +688,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.label33  -font {Helvetica 10}  -borderwidth {0}  -text {min: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry34
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry34  -font {Helvetica 10}  -textvariable {guiVIB(min_thr_value)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry34  -font {Helvetica 10}  -textvariable {guiVIB(min_thr_value)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry34 <Key-Return> {volGUIupdateSeed guiVIB manual;volGUIupdatePointCloud guiVIB;volGUIupdateIsosurface guiVIB}
 
@@ -696,7 +696,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.label35  -font {Helvetica 10}  -text {max:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry36
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry36  -font {Helvetica 10}  -textvariable {guiVIB(max_thr_value)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry36  -font {Helvetica 10}  -textvariable {guiVIB(max_thr_value)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame32.entry36 <Key-Return> {volGUIupdateSeed guiVIB manual;volGUIupdatePointCloud guiVIB;volGUIupdateIsosurface guiVIB}
 
@@ -720,7 +720,7 @@ proc ShowWindow.guiCV { args} {
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame28.menubutton0.m add command  -command {volGUIupdateSeed guiVIB restore_pt}  -label {Restore Seed Point}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame28.entry36
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame28.entry36  -font {Helvetica 10}  -textvariable {guiVIB(seed_location)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame28.entry36  -font {Helvetica 10}  -textvariable {guiVIB(seed_location)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe35.frame37.frame28.frame28.entry36 <Key-Return> {volGUIupdateSeed guiVIB manual}
 
@@ -764,7 +764,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame8.label4  -font {Helvetica 10}  -borderwidth {0}  -text {opacity fn: }  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame8.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame8.entry5  -font {Helvetica 10}  -textvariable {guiVIB(opacityFunction)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame8.entry5  -font {Helvetica 10}  -textvariable {guiVIB(opacityFunction)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame8.entry5 <Key-Return> {volGUIupdateVolRender guiVIB opacity}
 
@@ -775,7 +775,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame9.label4  -font {Helvetica 10}  -borderwidth {0}  -text {color fn: }  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame9.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame9.entry5  -font {Helvetica 10}  -textvariable {guiVIB(colorFunction)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame9.entry5  -font {Helvetica 10}  -textvariable {guiVIB(colorFunction)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame0.frame9.entry5 <Key-Return> {volGUIupdateVolRender guiVIB color}
 
@@ -786,7 +786,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame10.label4  -font {Helvetica 10}  -borderwidth {0}  -text {gradient fn: }  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame10.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame10.entry5  -font {Helvetica 10}  -textvariable {guiVIB(gradientFunction)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame10.entry5  -font {Helvetica 10}  -textvariable {guiVIB(gradientFunction)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer.tframe4.frame10.entry5 <Key-Return> {volGUIupdateVolRender guiVIB gradient}
 
@@ -806,7 +806,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tlabel5  -font {Helvetica 10}  -relief {flat}  -text {Intensity Range}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry6  -font {Helvetica 10}  -textvariable {guiCVIMGvars(vol_ren_min_range)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry6  -font {Helvetica 10}  -textvariable {guiCVIMGvars(vol_ren_min_range)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry6 <Key-Return> {guiSVIMG_vol_ren_with_canvas_update_histo}
 
@@ -814,7 +814,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Max:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry8  -font {Helvetica 10}  -textvariable {guiCVIMGvars(vol_ren_max_range)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry8  -font {Helvetica 10}  -textvariable {guiCVIMGvars(vol_ren_max_range)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer4.tframe4.tframe1.tentry8 <Key-Return> {guiSVIMG_vol_ren_with_canvas_update_histo}
 
@@ -888,7 +888,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame10.label4  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {ambient coefficient:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame10.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame10.entry5  -font {Helvetica 10}  -textvariable {guiVIB(ambientCoefficient)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame10.entry5  -font {Helvetica 10}  -textvariable {guiVIB(ambientCoefficient)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame10.entry5 <Key-Return> {volGUIupdateVolRender guiVIB shading}
 
@@ -899,7 +899,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame2.label4  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {diffuse coefficient:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame2.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame2.entry5  -font {Helvetica 10}  -textvariable {guiVIB(diffuseCoefficient)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame2.entry5  -font {Helvetica 10}  -textvariable {guiVIB(diffuseCoefficient)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame2.entry5 <Key-Return> {volGUIupdateVolRender guiVIB shading}
 
@@ -910,7 +910,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame4.label4  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {specular coefficient:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame4.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame4.entry5  -font {Helvetica 10}  -textvariable {guiVIB(specularCoefficient)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame4.entry5  -font {Helvetica 10}  -textvariable {guiVIB(specularCoefficient)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame4.entry5 <Key-Return> {volGUIupdateVolRender guiVIB shading}
 
@@ -921,7 +921,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame6.label4  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {specular power:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame6.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame6.entry5  -font {Helvetica 10}  -textvariable {guiVIB(specularPower)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame6.entry5  -font {Helvetica 10}  -textvariable {guiVIB(specularPower)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer0.tframe4.frame6.entry5 <Key-Return> {volGUIupdateVolRender guiVIB shading}
 
@@ -944,7 +944,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer8.tframe4.frame10.label4  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {sample step size:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer8.tframe4.frame10.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer8.tframe4.frame10.entry5  -font {Helvetica 10}  -textvariable {guiVIB(sampleStepSize)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer8.tframe4.frame10.entry5  -font {Helvetica 10}  -textvariable {guiVIB(sampleStepSize)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe36.squeezer8.tframe4.frame10.entry5 <Key-Return> {volGUIupdateVolRender guiVIB sample_size}
 
@@ -1045,7 +1045,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame1.frame4.label6  -font {Helvetica 10}  -borderwidth {0}  -text {voxel size: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame1.frame4.entry7
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame1.frame4.entry7  -font {Helvetica 10}  -textvariable {guiRIB(resample_voxel_size)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame1.frame4.entry7  -font {Helvetica 10}  -textvariable {guiRIB(resample_voxel_size)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame1.frame4.entry7 <Key-Return> {resampleGUIupdateResample 0}
 
@@ -1080,12 +1080,12 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.label19  -font {Helvetica 10}  -borderwidth {0}  -text {R}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry20  -font {Helvetica 10}  -textvariable {guiRIB(box_min_r)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry20  -font {Helvetica 10}  -textvariable {guiRIB(box_min_r)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry20 <Key-Return> {resampleGUIupdateResample 0}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry21  -font {Helvetica 10}  -textvariable {guiRIB(box_max_r)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry21  -font {Helvetica 10}  -textvariable {guiRIB(box_max_r)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame13.entry21 <Key-Return> {resampleGUIupdateResample 0}
 
@@ -1096,12 +1096,12 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.label23  -font {Helvetica 10}  -borderwidth {0}  -text {A}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry24
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry24  -font {Helvetica 10}  -textvariable {guiRIB(box_min_a)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry24  -font {Helvetica 10}  -textvariable {guiRIB(box_min_a)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry24 <Key-Return> {resampleGUIupdateResample 0}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry25
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry25  -font {Helvetica 10}  -textvariable {guiRIB(box_max_a)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry25  -font {Helvetica 10}  -textvariable {guiRIB(box_max_a)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame14.entry25 <Key-Return> {resampleGUIupdateResample 0}
 
@@ -1112,12 +1112,12 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.label27  -font {Helvetica 10}  -borderwidth {0}  -text {S}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry28
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry28  -font {Helvetica 10}  -textvariable {guiRIB(box_min_s)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry28  -font {Helvetica 10}  -textvariable {guiRIB(box_min_s)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry28 <Key-Return> {resampleGUIupdateResample 0}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry29
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry29  -font {Helvetica 10}  -textvariable {guiRIB(box_max_s)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry29  -font {Helvetica 10}  -textvariable {guiRIB(box_max_s)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame0.frame2.frame10.frame15.entry29 <Key-Return> {resampleGUIupdateResample 0}
 
@@ -1263,7 +1263,7 @@ proc ShowWindow.guiCV { args} {
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.label33  -font {Helvetica 10}  -borderwidth {0}  -text {min: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry34
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry34  -font {Helvetica 10}  -textvariable {guiRIB(min_thr_value)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry34  -font {Helvetica 10}  -textvariable {guiRIB(min_thr_value)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry34 <Key-Return> {volGUIupdateSeed guiRIB manual; volGUIupdatePointCloud guiRIB
 volGUIupdateIsosurface guiRIB}
@@ -1272,7 +1272,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.label35  -font {Helvetica 10}  -text {max:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry36
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry36  -font {Helvetica 10}  -textvariable {guiRIB(max_thr_value)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry36  -font {Helvetica 10}  -textvariable {guiRIB(max_thr_value)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.frame32.entry36 <Key-Return> {volGUIupdateSeed guiRIB manual;  volGUIupdatePointCloud guiRIB
 volGUIupdateIsosurface guiRIB}
@@ -1291,7 +1291,7 @@ volGUIupdateIsosurface guiRIB}
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.menubutton0.m add command  -command {volGUIupdateSeed guiRIB interactor}  -label {Seed by Interactor Center}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.entry36
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.entry36  -font {Helvetica 10}  -textvariable {guiRIB(seed_location)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.entry36  -font {Helvetica 10}  -textvariable {guiRIB(seed_location)}  -width {8}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe37.frame37.frame28.entry36 <Key-Return> {volGUIupdateSeed guiRIB manual}
 
@@ -1335,7 +1335,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame8.label4  -font {Helvetica 10}  -borderwidth {0}  -text {opacity fn: }  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame8.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame8.entry5  -font {Helvetica 10}  -textvariable {guiRIB(opacityFunction)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame8.entry5  -font {Helvetica 10}  -textvariable {guiRIB(opacityFunction)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame8.entry5 <Key-Return> {volGUIupdateVolRender guiRIB opacity}
 
@@ -1346,7 +1346,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame9.label4  -font {Helvetica 10}  -borderwidth {0}  -text {color fn: }  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame9.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame9.entry5  -font {Helvetica 10}  -textvariable {guiRIB(colorFunction)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame9.entry5  -font {Helvetica 10}  -textvariable {guiRIB(colorFunction)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame9.entry5 <Key-Return> {volGUIupdateVolRender guiRIB color}
 
@@ -1357,7 +1357,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame10.label4  -font {Helvetica 10}  -borderwidth {0}  -text {gradient fn: }  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame10.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame10.entry5  -font {Helvetica 10}  -textvariable {guiRIB(gradientFunction)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame10.entry5  -font {Helvetica 10}  -textvariable {guiRIB(gradientFunction)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe38.frame10.entry5 <Key-Return> {volGUIupdateVolRender guiRIB gradient}
 
@@ -1374,7 +1374,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe0.tframe0.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Slice Range:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe0.tframe0.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe0.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiCVIMGvars(mip_slice_range)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe0.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiCVIMGvars(mip_slice_range)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe0.tframe0.tentry2 <Key-Return> {guiSVIMG_showMIP}
 
@@ -1424,7 +1424,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Num Iterations:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(flow_num_iters)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(flow_num_iters)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame40  -width {453}  -height {44}
@@ -1433,7 +1433,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Stencil Radius:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(flow_stencil_radius)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(flow_stencil_radius)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1  -width {453}  -height {44}
@@ -1442,7 +1442,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Time Step:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(flow_time_step)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(flow_time_step)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe26.frame24.frame1.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -1477,7 +1477,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Num Iterations:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(aniso_num_iterations)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(aniso_num_iterations)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame40  -width {453}  -height {44}
@@ -1486,7 +1486,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Diffusion Threshold:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(aniso_diffusion_threshold)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(aniso_diffusion_threshold)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2  -width {453}  -height {44}
@@ -1495,7 +1495,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Grad Mag Thr Flag:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(aniso_mag_grad_thr_flag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(aniso_mag_grad_thr_flag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe0.frame24.frame2.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -1518,7 +1518,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe1.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Threshold Value:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe1.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe1.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(threshold_value)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe1.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(threshold_value)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe1.tlabel27
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe1.tlabel27  -font {Helvetica 10}  -relief {flat}  -text {Threshold Filter}
@@ -1539,7 +1539,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Shift:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_shift)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_shift)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame40  -width {453}  -height {44}
@@ -1548,7 +1548,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Scale:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_scale)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_scale)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.frame2  -width {453}  -height {44}
@@ -1608,13 +1608,13 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tlabel30  -font {Helvetica 10}  -relief {flat}  -text {Min:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tentry31
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tentry31  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_window_min)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tentry31  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_window_min)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tlabel32
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tlabel32  -font {Helvetica 10}  -relief {flat}  -text {Max:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tentry33
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tentry33  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_window_max)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tentry33  -font {Helvetica 10}  -textvariable {guiFILTvars(shift_window_max)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tbutton34
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe23.tframe16.frame24.tframe28.tframe29.tbutton34  -command {guiFILTsetShiftScaleParams}  -text {Set Params}
@@ -1680,13 +1680,13 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.label46  -font {Helvetica 10}  -text {minimum}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry47
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {gImageVol(voi_x0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {gImageVol(voi_x0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {gImageVol(voi_y0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {gImageVol(voi_y0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry49
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry49  -font {Helvetica 10}  -textvariable {gImageVol(voi_z0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame34.entry49  -font {Helvetica 10}  -textvariable {gImageVol(voi_z0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35  -width {199}  -height {108}
@@ -1695,13 +1695,13 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.label50  -font {Helvetica 10}  -text {maximum}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry51
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry51  -font {Helvetica 10}  -textvariable {gImageVol(voi_x1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry51  -font {Helvetica 10}  -textvariable {gImageVol(voi_x1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry52
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry52  -font {Helvetica 10}  -textvariable {gImageVol(voi_y1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry52  -font {Helvetica 10}  -textvariable {gImageVol(voi_y1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry53
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry53  -font {Helvetica 10}  -textvariable {gImageVol(voi_z1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame4.frame32.frame35.entry53  -font {Helvetica 10}  -textvariable {gImageVol(voi_z1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24  -width {426}  -height {115}
@@ -1722,7 +1722,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame13.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame13.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(min_RAS)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(min_RAS)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame6  -width {233}  -height {70}
@@ -1737,7 +1737,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame6.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame6.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame6.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(directionCosines)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame24.frame6.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(directionCosines)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25  -width {426}  -height {102}
@@ -1752,7 +1752,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame13.label26  -font {Helvetica 10}  -borderwidth {0}  -text {size:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame13.entry27
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame13.entry27  -font {Helvetica 10}  -textvariable {gImageVol(file_hdr_size)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame13.entry27  -font {Helvetica 10}  -textvariable {gImageVol(file_hdr_size)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame13.frame0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame13.frame0  -width {218}  -height {30}
@@ -1776,7 +1776,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame5.label30  -font {Helvetica 10}  -borderwidth {0}  -text {file:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame5.entry31
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame5.entry31  -font {Helvetica 10}  -textvariable {gImageVol(filename)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.frame25.frame5.entry31  -font {Helvetica 10}  -textvariable {gImageVol(filename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -1806,13 +1806,13 @@ volGUIupdateIsosurface guiRIB}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(vdims_x)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(vdims_x)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(vdims_y)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(vdims_y)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(vdims_z)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame3.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(vdims_z)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23  -borderwidth {0}  -relief {flat}  -width {426}  -height {115}
@@ -1839,13 +1839,13 @@ volGUIupdateIsosurface guiRIB}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(ext_i)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(ext_i)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(ext_j)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(ext_j)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(ext_k)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe1.notebook34.tframe1.tframe4.tframe6.frame23.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(ext_k)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -1890,7 +1890,7 @@ volGUIupdateIsosurface guiRIB}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame12.frame0.button27  -command {createPREOPloadsaveVolFile}  -text {Browse}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame12.frame0.entry28
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame12.frame0.entry28  -font {Helvetica 10}  -textvariable {gImageVol(data_dirname)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame12.frame0.entry28  -font {Helvetica 10}  -textvariable {gImageVol(data_dirname)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame12.frame0.entry28 <Key-Return> {global gImageVol
 img_guessVolParams $gImageVol(filename)}
@@ -1938,13 +1938,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.label46  -font {Helvetica 10}  -text {minimum}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry47
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {gImageVol(voi_x0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {gImageVol(voi_x0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {gImageVol(voi_y0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {gImageVol(voi_y0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry49
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry49  -font {Helvetica 10}  -textvariable {gImageVol(voi_z0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame34.entry49  -font {Helvetica 10}  -textvariable {gImageVol(voi_z0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35  -width {199}  -height {108}
@@ -1953,13 +1953,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.label50  -font {Helvetica 10}  -text {maximum}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry51
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry51  -font {Helvetica 10}  -textvariable {gImageVol(voi_x1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry51  -font {Helvetica 10}  -textvariable {gImageVol(voi_x1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry52
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry52  -font {Helvetica 10}  -textvariable {gImageVol(voi_y1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry52  -font {Helvetica 10}  -textvariable {gImageVol(voi_y1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry53
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry53  -font {Helvetica 10}  -textvariable {gImageVol(voi_z1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame4.frame32.frame35.entry53  -font {Helvetica 10}  -textvariable {gImageVol(voi_z1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24  -width {426}  -height {115}
@@ -1980,7 +1980,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame13.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame13.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(min_RAS)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(min_RAS)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame6  -width {233}  -height {70}
@@ -1995,7 +1995,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame6.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame6.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame6.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(directionCosines)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame24.frame6.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(directionCosines)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25  -width {426}  -height {102}
@@ -2010,7 +2010,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame13.label26  -font {Helvetica 10}  -borderwidth {0}  -text {size:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame13.entry27
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame13.entry27  -font {Helvetica 10}  -textvariable {gImageVol(file_hdr_size)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame13.entry27  -font {Helvetica 10}  -textvariable {gImageVol(file_hdr_size)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame13.frame0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame13.frame0  -width {218}  -height {30}
@@ -2034,7 +2034,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame5.label30  -font {Helvetica 10}  -borderwidth {0}  -text {file:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame5.entry31
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame5.entry31  -font {Helvetica 10}  -textvariable {gImageVol(filename)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame5.entry31  -font {Helvetica 10}  -textvariable {gImageVol(filename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame5.button32
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.frame25.frame5.button32  -command {set gImageVol(filename) [tk_getOpenFile]}  -text {browse}
@@ -2067,13 +2067,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(vdims_x)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(vdims_x)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(vdims_y)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(vdims_y)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(vdims_z)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame3.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(vdims_z)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23  -borderwidth {0}  -relief {flat}  -width {426}  -height {115}
@@ -2100,13 +2100,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15  -width {181}  -height {66}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(ext_i)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry19  -font {Helvetica 10}  -textvariable {gImageVol(ext_i)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(ext_j)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry20  -font {Helvetica 10}  -textvariable {gImageVol(ext_j)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(ext_k)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tframe4.tframe6.frame23.frame13.frame15.entry21  -font {Helvetica 10}  -textvariable {gImageVol(ext_k)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tcheckbutton8
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe7.notebook0.tframe1.frame20.squeezer.tcheckbutton8  -variable {guiSVvars(file_squeeze_vol_opt)}  -command {guiSV_file_squeeze_vol_opt}  -text {Display / Edit Advanced Parameters}
@@ -2202,7 +2202,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame2.label1  -font {Helvetica 10}  -borderwidth {0}  -text {num handles:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame2.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame2.entry0  -font {Helvetica 10}  -textvariable {guiPPchooserNumHandles}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame2.entry0  -font {Helvetica 10}  -textvariable {guiPPchooserNumHandles}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame2.entry0 <Key-Return> {guiPPchooserUpdateNumHandles}
 
@@ -2234,7 +2234,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame8.radiobutton11  -variable {guiPPchooserIncrement}  -value {0.5}  -command {guiPPchooserUpdateIncrement}  -text {half pixel}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame8.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame8.entry0  -font {Helvetica 10}  -textvariable {guiPPchooserIncrement}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame8.entry0  -font {Helvetica 10}  -textvariable {guiPPchooserIncrement}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe6.frame15.frame8.entry0 <Key-Return> {guiPPchooserUpdateIncrement}
 
@@ -2317,7 +2317,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame6.frame22.label2  -font {Helvetica 10}  -borderwidth {0}  -text {Threshold Value:  }  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame6.frame22.entry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame6.frame22.entry3  -font {Helvetica 10}  -textvariable {guiPPchooserGuessThrValue}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame6.frame22.entry3  -font {Helvetica 10}  -textvariable {guiPPchooserGuessThrValue}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame6.frame22.label0
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame6.frame22.label0  -font {Helvetica 10}  -borderwidth {0}  -text {(seeded threshold ignores this value!)}
@@ -2359,7 +2359,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame1.frame22.label2  -font {Helvetica 10}  -borderwidth {0}  -text {Num Thinning Passes:  }  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame1.frame22.entry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame1.frame22.entry3  -font {Helvetica 10}  -state {disabled}  -textvariable {guiPPchooserNumThinningPasses}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame1.frame22.entry3  -font {Helvetica 10}  -state {disabled}  -textvariable {guiPPchooserNumThinningPasses}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame1.frame22.label0
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe7.frame4.frame1.frame22.label0  -font {Helvetica 10}  -borderwidth {0}  -text {(zero means no thinning)}
@@ -2380,7 +2380,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame19.label20  -font {Helvetica 10}  -borderwidth {0}  -text {Subsample every }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame19.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame19.entry21  -font {Helvetica 10}  -textvariable {guiPPsmoothSubSampleRate}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame19.entry21  -font {Helvetica 10}  -textvariable {guiPPsmoothSubSampleRate}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame19.label22
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame19.label22  -font {Helvetica 10}  -borderwidth {0}  -text { points (leave blank for auto subsample)}
@@ -2392,7 +2392,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame23.label24  -font {Helvetica 10}  -text {Create/Replace Path ID: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame23.entry25
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame23.entry25  -font {Helvetica 10}  -textvariable {guiPPsmoothTargetPathID}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame23.entry25  -font {Helvetica 10}  -textvariable {guiPPsmoothTargetPathID}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame23.label27
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame12.frame23.label27  -font {Helvetica 10}  -borderwidth {0}  -text { (cannot be undone)}
@@ -2413,7 +2413,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame28.label18  -font {Helvetica 10}  -text {Number of  Modes: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame28.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame28.entry19  -font {Helvetica 10}  -textvariable {guiPPsmoothNumFourierModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame28.entry19  -font {Helvetica 10}  -textvariable {guiPPsmoothNumFourierModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame28.checkbutton20
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe8.frame11.frame28.checkbutton20  -variable {guiPPsmoothUseFourierSmooth}  -text {Use Fourier Smoothing}
@@ -2443,7 +2443,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame2.label9  -font {Helvetica 10}  -text {Path ID:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame2.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(path_entry_path_id)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame2.entry10  -font {Helvetica 10}  -textvariable {guiSVvars(path_entry_path_id)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame2.tbutton0
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame2.tbutton0  -command {guiSV_path_renumber_current_path}  -text {Renumber Path}
@@ -2458,7 +2458,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame3.label11  -font {Helvetica 10}  -text {Path Name:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame3.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame3.entry12  -font {Helvetica 10}  -textvariable {guiSVvars(path_entry_path_name)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame3.entry12  -font {Helvetica 10}  -textvariable {guiSVvars(path_entry_path_name)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame3.entry12 <Key-Return> {guiSV_path_change_name}
 
@@ -2472,7 +2472,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame0.label11  -font {Helvetica 10}  -text {Num. of Spline Pts:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame0.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame0.entry12  -font {Helvetica 10}  -textvariable {guiSVvars(path_entry_number_spline_pts)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame0.entry12  -font {Helvetica 10}  -textvariable {guiSVvars(path_entry_number_spline_pts)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe1.frame0.frame0.entry12 <Key-Return> {guiSV_path_change_number_spline_pts}
 
@@ -2534,7 +2534,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.frame31.frame14.frame16.tframe6.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Num Spline Pts:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.frame31.frame14.frame16.tframe6.tentry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.frame31.frame14.frame16.tframe6.tentry8  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_num_spline_pts_path1)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.frame31.frame14.frame16.tframe6.tentry8  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_num_spline_pts_path1)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.frame31.frame14.frame16.tframe6.tentry8 <Key-Return> {guiPPquantChangeNumSplinePts path1}
 
@@ -2626,7 +2626,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.tframe0.tlabel2  -font {Helvetica 10}  -relief {flat}  -text {Window Size:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.tframe0.tentry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.tframe0.tentry3  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_window_size_path1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe6.tframe0.tframe0.tentry3  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_window_size_path1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -2671,7 +2671,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.frame31.frame14.frame16.tframe6.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Num Spline Pts:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.frame31.frame14.frame16.tframe6.tentry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.frame31.frame14.frame16.tframe6.tentry8  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_num_spline_pts_path2)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.frame31.frame14.frame16.tframe6.tentry8  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_num_spline_pts_path2)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.frame31.frame14.frame16.tframe6.tentry8 <Key-Return> {guiPPquantChangeNumSplinePts path2}
 
@@ -2763,7 +2763,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.tframe0.tlabel2  -font {Helvetica 10}  -relief {flat}  -text {Window Size:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.tframe0.tentry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.tframe0.tentry3  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_window_size_path2)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe7.tframe0.tframe0.tentry3  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_window_size_path2)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -2814,7 +2814,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8.tframe1.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {  Num Spline Pts:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8.tframe1.tentry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8.tframe1.tentry8  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_num_spline_pts_twistpath)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8.tframe1.tentry8  -font {Helvetica 10}  -textvariable {guiSVvars(path_quantification_num_spline_pts_twistpath)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe8.tpanedwindow9.tframe10.notebook5.tframe0.notebook5.tframe8.tframe1.tentry8 <Key-Return> {guiPPquantChangeNumSplinePts twistpath}
 
@@ -3048,7 +3048,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame37  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame37.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame37.entry10  -font {Helvetica 10}  -textvariable {lsGUIlsParams(MagFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame37.entry10  -font {Helvetica 10}  -textvariable {lsGUIlsParams(MagFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame37.radiobutton13
   ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame37.radiobutton13  -variable {lsGUIlsParams(calcDecayConstBy)}  -value {multiply}  -text {Multiply Local Max By:}  -width {20}
@@ -3057,7 +3057,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame12  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame12.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame12.entry22  -font {Helvetica 10}  -textvariable {lsGUIlsParams(potentialValueDecay)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame12.entry22  -font {Helvetica 10}  -textvariable {lsGUIlsParams(potentialValueDecay)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame12.entry22 <Key-Return> {lsGUIthrSlice}
 
@@ -3074,7 +3074,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry18 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3082,7 +3082,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.label19  -font {Helvetica 10}  -borderwidth {0}  -text {Y}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame8.entry20 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3096,7 +3096,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -text {radius:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry44  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry44  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3104,7 +3104,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.label29  -font {Helvetica 10}  -borderwidth {0}  -text {Kthr:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry41  -font {Helvetica 10}  -textvariable {lsGUIlsParams(Kthr)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.entry41  -font {Helvetica 10}  -textvariable {lsGUIlsParams(Kthr)}  -width {0}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.label17
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.tlabelframe1.frame32.frame40.label17  -font {Helvetica 10}  -borderwidth {0}  -width {3}
@@ -3133,7 +3133,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -text {Klow:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame38.entry42  -font {Helvetica 10}  -textvariable {lsGUIlsParams(Klow)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame38.entry42  -font {Helvetica 10}  -textvariable {lsGUIlsParams(Klow)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame39
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame39  -width {453}  -height {48}
@@ -3142,13 +3142,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame39.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Kupp:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame39.entry45
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame39.entry45  -font {Helvetica 10}  -textvariable {lsGUIlsParams(Kupp)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame34.frame39.entry45  -font {Helvetica 10}  -textvariable {lsGUIlsParams(Kupp)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37.entry10  -font {Helvetica 10}  -textvariable {lsGUIlsParams(pFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37.entry10  -font {Helvetica 10}  -textvariable {lsGUIlsParams(pFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37.radiobutton13
   ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame37.radiobutton13  -variable {lsGUIlsParams(calcPotConstBy)}  -value {multiply}  -text {Multiply Local Max By:}  -width {20}
@@ -3157,7 +3157,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame12  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame12.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame12.entry22  -font {Helvetica 10}  -textvariable {lsGUIlsParams(potentialValuePotential)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame12.entry22  -font {Helvetica 10}  -textvariable {lsGUIlsParams(potentialValuePotential)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame40.frame48.frame22.frame12.entry22 <Key-Return> {lsGUIthrSlice}
 
@@ -3177,7 +3177,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame0.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Stop Velocity:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame0.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame0.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(stopV)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame0.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(stopV)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame0.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3188,7 +3188,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -text {Max Steps:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {lsGUIlsParams(MaxSteps)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {lsGUIlsParams(MaxSteps)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame39
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame39  -width {453}  -height {48}
@@ -3197,7 +3197,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame39.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Goodness Stop Criteria:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame39.entry45
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame39.entry45  -font {Helvetica 10}  -textvariable {lsGUIlsParams(GoodnessStop)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame39.entry45  -font {Helvetica 10}  -textvariable {lsGUIlsParams(GoodnessStop)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame40  -width {453}  -height {44}
@@ -3206,7 +3206,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -text { Grid Factor:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(GridFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(GridFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.label31
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Common Parameters}
@@ -3218,7 +3218,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame1.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Rebuild Phi After Every:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame1.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(rebuildPhiFrequency)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(rebuildPhiFrequency)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame1.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3229,7 +3229,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame2.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Check Area Interval:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame2.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame2.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(checkGoodnessFrequency)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame2.entry44  -font {Helvetica 10}  -textvariable {lsGUIlsParams(checkGoodnessFrequency)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame24.frame2.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3246,7 +3246,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame0.frame20.label21  -font {Helvetica 10}  -borderwidth {0}  -text {Threshold Value:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame0.frame20.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame0.frame20.entry22  -font {Helvetica 10}  -textvariable {lsGUIthrValue}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame0.frame20.entry22  -font {Helvetica 10}  -textvariable {lsGUIthrValue}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe1.frame15.frame42.frame0.frame20.entry22 <Key-Return> {lsGUIthrSlice}
 
@@ -3317,7 +3317,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame63.label21  -font {Helvetica 10}  -borderwidth {0}  -text {Threshold Value:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame63.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame63.entry22  -font {Helvetica 10}  -textvariable {lsGUIthrValue}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame63.entry22  -font {Helvetica 10}  -textvariable {lsGUIthrValue}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame63.entry22 <Key-Return> {lsGUIthrSlice}
 
@@ -3328,7 +3328,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame37.label29  -font {Helvetica 10}  -borderwidth {0}  -text {Multiply Max By:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame37.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame37.entry41  -font {Helvetica 10}  -textvariable {lsGUIlsParams(MagFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame37.entry41  -font {Helvetica 10}  -textvariable {lsGUIlsParams(MagFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8  -width {589}  -height {25}
@@ -3340,7 +3340,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {6}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {6}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry18 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3348,7 +3348,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.label20  -font {Helvetica 10}  -borderwidth {0}  -text {Radius:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry21
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry21  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {6}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry21  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {6}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry21 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3356,7 +3356,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.label19  -font {Helvetica 10}  -borderwidth {0}  -text {Y:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {6}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {6}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame8.entry20 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -3367,7 +3367,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame10.label29  -font {Helvetica 10}  -borderwidth {0}  -text {Potential Value:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame10.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame10.entry41  -font {Helvetica 10}  -textvariable {lsGUIlsParams(potentialValueDecay)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame24.frame9.frame64.frame10.entry41  -font {Helvetica 10}  -textvariable {lsGUIlsParams(potentialValueDecay)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame59
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe2.frame59  -borderwidth {0}  -relief {flat}  -width {214}  -height {59}
@@ -3427,7 +3427,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry18 <Key-Return> {lsGUImakeCircle}
 
@@ -3435,7 +3435,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.label19  -font {Helvetica 10}  -text {Y:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame8.entry20 <Key-Return> {lsGUImakeCircle}
 
@@ -3446,7 +3446,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -text {radius:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame40.entry44  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame40.entry44  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame40.frame43.frame40.entry44 <Key-Return> {lsGUImakeCircle}
 
@@ -3472,7 +3472,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry18  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry18 <Key-Return> {lsGUImakeEllipse}
 
@@ -3480,7 +3480,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.label19  -font {Helvetica 10}  -text {Y:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry20  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame8.entry20 <Key-Return> {lsGUImakeEllipse}
 
@@ -3491,7 +3491,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.label17  -font {Helvetica 10}  -borderwidth {0}  -text {a:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry18  -font {Helvetica 10}  -textvariable {lsGUIellipseA}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry18  -font {Helvetica 10}  -textvariable {lsGUIellipseA}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry18 <Key-Return> {lsGUImakeEllipse}
 
@@ -3499,7 +3499,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.label19  -font {Helvetica 10}  -text {b:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry20  -font {Helvetica 10}  -textvariable {lsGUIellipseB}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry20  -font {Helvetica 10}  -textvariable {lsGUIellipseB}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry20 <Key-Return> {lsGUImakeEllipse}
 
@@ -3507,7 +3507,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.label51  -font {Helvetica 10}  -borderwidth {0}  -text {perimeter:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry1  -font {Helvetica 10}  -textvariable {lsGUIellipsePERIMETER}  -width {9}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry1  -font {Helvetica 10}  -textvariable {lsGUIellipsePERIMETER}  -width {9}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe3.frame38.frame41.frame45.frame50.entry1 <Key-Return> {lsGUImakeEllipse}
 
@@ -3607,16 +3607,16 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.button37  -command {lsGUIscaleSeg levelset}  -text {Scale by:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {lsGUIscaleFactor}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {lsGUIscaleFactor}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.button39
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.button39  -command {lsGUItranslateSeg levelset}  -text {Translate by:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {lsGUItransX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {lsGUItransX}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {lsGUItransY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {lsGUItransY}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.label44
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.label44  -font {Helvetica 10}  -borderwidth {0}  -text {dY:}  -width {4}
@@ -3628,7 +3628,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.button4  -command {lsGUIfourierSmoothSeg levelset}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.label62
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame61.label62  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Level Set Additional Single Slice Manipulations}
@@ -3664,16 +3664,16 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.button37  -command {lsGUIscaleSeg threshold}  -text {Scale by:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {lsGUIscaleFactor}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {lsGUIscaleFactor}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.button39
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.button39  -command {lsGUItranslateSeg threshold}  -text {Translate by:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {lsGUItransX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {lsGUItransX}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {lsGUItransY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {lsGUItransY}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.label44
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.label44  -font {Helvetica 10}  -borderwidth {0}  -text {dY:}  -width {4}
@@ -3685,7 +3685,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.button4  -command {lsGUIfourierSmoothSeg threshold}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.label62
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame14.label62  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Threshold Additional Single Slice Manipulations}
@@ -3709,7 +3709,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame0.frame1.frame36.button37  -command {lsGUIscaleSeg analytic}  -text {Scale by:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame0.frame1.frame36.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {lsGUIscaleFactor}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {lsGUIscaleFactor}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.label47
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.label47  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Analytic Additional Options}
@@ -3730,13 +3730,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.label52  -font {Helvetica 10}  -borderwidth {0}  -text {dX:}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.entry40  -font {Helvetica 10}  -textvariable {lsGUItransX}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.entry40  -font {Helvetica 10}  -textvariable {lsGUItransX}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.label44
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.label44  -font {Helvetica 10}  -borderwidth {0}  -text {dY:}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.entry41  -font {Helvetica 10}  -textvariable {lsGUItransY}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe5.frame27.frame48.entry41  -font {Helvetica 10}  -textvariable {lsGUItransY}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -3757,7 +3757,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame12.label54  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame12.entry55
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame12.entry55  -font {Helvetica 10}  -textvariable {lsGUIbatchEntry}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame12.entry55  -font {Helvetica 10}  -textvariable {lsGUIbatchEntry}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame12.entry55 <Key-Return> {lsGUIsegBatch levelset}
 
@@ -3792,7 +3792,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame1.frame4.button4  -command {lsGUIfourierSmoothBatch levelset}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame1.frame4.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame60.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16  -borderwidth {0}  -relief {flat}  -width {214}  -height {59}
@@ -3813,7 +3813,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame6.frame12.label54  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame6.frame12.entry55
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame6.frame12.entry55  -font {Helvetica 10}  -textvariable {lsGUIbatchEntry}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame6.frame12.entry55  -font {Helvetica 10}  -textvariable {lsGUIbatchEntry}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame6.frame12.entry55 <Key-Return> {lsGUIsegBatch threshold}
 
@@ -3842,7 +3842,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame1.frame4.button4  -command {lsGUIfourierSmoothBatch threshold}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame1.frame4.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe6.frame16.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {lsGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -3889,7 +3889,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.label2  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {X}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry1  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry1  -font {Helvetica 10}  -textvariable {lsGUIctrX}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry1 <Key-Return> {itklsUpdatePhyCenter 0}
 
@@ -3900,7 +3900,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.label4  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Y}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry2  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry2  -font {Helvetica 10}  -textvariable {lsGUIctrY}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry2 <Key-Return> {itklsUpdatePhyCenter 0}
 
@@ -3911,7 +3911,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.label5  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {X}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry3  -font {Helvetica 10}  -textvariable {itklsGUIParams(phyCntrX)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry3  -font {Helvetica 10}  -textvariable {itklsGUIParams(phyCntrX)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry3 <Key-Return> {itklsUpdateCenter 0}
 
@@ -3922,7 +3922,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Y}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry4
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry4  -font {Helvetica 10}  -textvariable {itklsGUIParams(phyCntrY)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry4  -font {Helvetica 10}  -textvariable {itklsGUIParams(phyCntrY)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame8.entry4 <Key-Return> {itklsUpdateCenter 0}
 
@@ -3936,7 +3936,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry18  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {25}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry18  -font {Helvetica 10}  -textvariable {lsGUIradius}  -width {25}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry18 <Key-Return> {itklsGUIUpdatePhyRadius}
 
@@ -3947,7 +3947,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(phyRadius)}  -width {25}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(phyRadius)}  -width {25}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe1.frame17.frame11.entry20 <Key-Return> {itklsGUIUpdateRadius}
 
@@ -3975,7 +3975,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Feat.}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(gSigma1)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(gSigma1)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry18 <Key-Return> {itklsDo 1}
 
@@ -3986,7 +3986,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Adv.}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(advSigma1)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(advSigma1)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame8.entry20 <Key-Return> {itklsDo 1}
 
@@ -4000,7 +4000,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame15.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame15.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame15.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(kThr)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame15.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(kThr)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.frame15.entry18 <Key-Return> {itklsDo 1}
 
@@ -4022,7 +4022,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Rise}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(expRise)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(expRise)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry18 <Key-Return> {itklsDo 1}
 
@@ -4033,7 +4033,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Fall}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(expFall)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(expFall)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame3.entry20 <Key-Return> {itklsDo 1}
 
@@ -4047,7 +4047,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxIter1)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxIter1)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry18 <Key-Return> {itklsDo 1}
 
@@ -4058,7 +4058,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Max Err.}  -width {7}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxErr1)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxErr1)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe2.frame4.tlabelframe1.frame10.frame5.entry20 <Key-Return> {itklsDo 1}
 
@@ -4086,7 +4086,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Feat.}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(gSigma2)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(gSigma2)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry18 <Key-Return> {itklsDo 2}
 
@@ -4097,7 +4097,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Adv.}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(advSigma2)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(advSigma2)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame8.entry20 <Key-Return> {itklsDo 2}
 
@@ -4111,7 +4111,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(kUpp)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(kUpp)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry18 <Key-Return> {itklsDo 2}
 
@@ -4122,7 +4122,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Klow}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(kLow)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(kLow)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.frame11.entry20 <Key-Return> {itklsDo 2}
 
@@ -4141,7 +4141,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -width {2}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxIter2)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxIter2)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry18 <Key-Return> {itklsDo 2}
 
@@ -4152,7 +4152,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.label7  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Max Err.}  -width {7}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxErr2)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry20  -font {Helvetica 10}  -textvariable {itklsGUIParams(maxErr2)}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame40.frame48.tlabelframe3.frame13.tlabelframe1.frame5.entry20 <Key-Return> {itklsDo 2}
 
@@ -4259,7 +4259,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame1.button52  -command {itklsBatchRun}  -text {Batch Segmenation:}  -width {18}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame1.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame1.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParamsBatch(posList)}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame1.entry18  -font {Helvetica 10}  -textvariable {itklsGUIParamsBatch(posList)}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame1.entry18 <Key-Return> {itklsBatchRun}
 
@@ -4327,7 +4327,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame7.frame12.frame11.button52  -command {lsGUIfourierSmoothSeg itklevelset}  -text {Fourier Smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame7.frame12.frame11.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame7.frame12.frame11.entry18  -font {Helvetica 10}  -textvariable {itklsGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe1.notebook0.tframe0.frame15.frame48.tlabelframe6.frame13.frame7.frame12.frame11.entry18  -font {Helvetica 10}  -textvariable {itklsGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -4374,7 +4374,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe0.frame0.frame1.label1  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Refresh every:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe0.frame0.frame1.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe0.frame0.frame1.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_evol_refresh)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe0.frame0.frame1.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_evol_refresh)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1  -text {Segmentaion Options [-]}  -height {10}
@@ -4413,7 +4413,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line2.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Blur:}  -width {18}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line2.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line2.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_edge_prox_sigma)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line2.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_edge_prox_sigma)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line2.entry0 <Key-Return> {itk3dLS_updateEdgeImage 0}
 
@@ -4424,7 +4424,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line3.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Contrast Constant:}  -width {18}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line3.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line3.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_edge_prox_kappa)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line3.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_edge_prox_kappa)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line3.entry0 <Key-Return> {itk3dLS_updateEdgeImage 0}
 
@@ -4435,7 +4435,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line4.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Proximity Exponent:}  -width {18}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line4.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line4.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_edge_prox_exponent)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line4.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_edge_prox_exponent)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame0.line4.entry0 <Key-Return> {itk3dLS_updateEdgeImage 0}
 
@@ -4475,7 +4475,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line2.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Iterations:}  -width {18}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line2.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line2.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_numiter)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.line2.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_numiter)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0  -text {Advanced Parameters [-]}  -height {10}
@@ -4492,13 +4492,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Prop. Scaling:}  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_prop)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_prop)}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.label1
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.label1  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Curv. Scaling:}  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.entry1  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_curv)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line0.entry1  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_curv)}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1  -borderwidth {0}  -relief {flat}  -width {300}  -height {10}
@@ -4507,13 +4507,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.label0  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Advect. Scaling:}  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_adv)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_adv)}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.label1
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.label1  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Iso Value:}  -width {14}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.entry1  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_iso)}  -width {8}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame0.labelframe1.frame0.frame1.labelframe0.frame0.line1.entry1  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_ls_iso)}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame15
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame15  -borderwidth {1}  -relief {raised}  -width {787}  -height {382}
@@ -4537,7 +4537,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -text {Max Steps:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_MaxSteps)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_MaxSteps)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame40  -width {453}  -height {44}
@@ -4546,7 +4546,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Grid Factor:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_GridFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_GridFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1  -width {453}  -height {44}
@@ -4555,7 +4555,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Rebuild Phi After Every:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_rebuildPhiFrequency)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_rebuildPhiFrequency)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame24.frame1.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -4569,7 +4569,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame0.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Stop Velocity:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame0.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame0.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_stopV)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame0.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_stopV)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame0.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -4580,7 +4580,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame39.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Goodness Stop Criteria:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame39.entry45
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame39.entry45  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_GoodnessStop)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame39.entry45  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_GoodnessStop)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2  -width {453}  -height {44}
@@ -4589,7 +4589,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Check Area Interval:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_checkGoodnessFrequency)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(ls_checkGoodnessFrequency)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.tframe4.tframe0.frame2.frame2.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -4624,7 +4624,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.label11  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Segmentation file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_ls_seg_file)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_ls_seg_file)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame17.menubutton20.m}  -text {Options}
@@ -4642,7 +4642,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.label11  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Save Seg Params:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_ls_seg_params)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_ls_seg_params)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe2.frame29.menubutton20.m}  -text {Options}
@@ -4699,7 +4699,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.label11  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Seeds file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_seeds_file)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_seeds_file)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.frame17.menubutton20.m}  -text {Options}
@@ -4815,7 +4815,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ.frame8.radiobutton11  -variable {gui3Dvars(chooserIncrement)}  -value {0.5}  -command {gui3DchooserUpdateIncrement}  -text {half pixel}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ.frame8.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ.frame8.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(chooserIncrement)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ.frame8.entry0  -font {Helvetica 10}  -textvariable {gui3Dvars(chooserIncrement)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.tframe0.tframeXYZ.frame8.entry0 <Key-Return> {gui3DchooserUpdateIncrement}
 
@@ -4939,7 +4939,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe4.tlabel6  -font {Helvetica 10}  -relief {flat}  -text {min R:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe4.tentry7
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe4.tentry7  -font {Helvetica 10}  -textvariable {gui3Dvars(userMinR)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe4.tentry7  -font {Helvetica 10}  -textvariable {gui3Dvars(userMinR)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe4.tentry7 <Key-Return> {gui3DuserUpdateMinMaxR}
 
@@ -4950,7 +4950,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe5.tlabel8  -font {Helvetica 10}  -relief {flat}  -text {max R:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe5.tentry9
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe5.tentry9  -font {Helvetica 10}  -textvariable {gui3Dvars(userMaxR)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe5.tentry9  -font {Helvetica 10}  -textvariable {gui3Dvars(userMaxR)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe2.notebook0.tframe6.tframe0.tframe2.tframe12.frame15.frame12.tframe3.tframe5.tentry9 <Key-Return> {gui3DuserUpdateMinMaxR}
 
@@ -4997,7 +4997,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_default)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_default)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tlabel7
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe19.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Sampling:}
@@ -5006,7 +5006,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_overrides)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_overrides)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe8.tframe1.tframe11.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Sampling Overrides:}
@@ -5023,7 +5023,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe3.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe3.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_along_length_multiplier)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe3.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(sampling_along_length_multiplier)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe3.tlabel7
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe3.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Number of Points Per Segment:}
@@ -5035,7 +5035,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe4.tcheckbutton5  -variable {guiBOOLEANvars(use_linear_sampling_along_length)}  -text {Linear Sample Along Length}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe4.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe4.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(linear_sampling_along_length_multiplier)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe4.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(linear_sampling_along_length_multiplier)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe4.tlabel7
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe4.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Factor:}
@@ -5047,7 +5047,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe20.tcheckbutton5  -variable {guiBOOLEANvars(use_FFT)}  -text {Use FFT}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe20.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe20.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(num_modes_for_FFT)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe20.tentry6  -font {Helvetica 10}  -textvariable {guiBOOLEANvars(num_modes_for_FFT)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe20.tlabel7
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe9.panedwindow0.notebook0.tframe3.tframe1.tlabelframe14.tframe4.tlabelframe11.tframe10.tframe20.tlabel7  -font {Helvetica 10}  -relief {flat}  -text {Num Modes:}
@@ -5088,7 +5088,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe16.frame1.frame0.label14  -font {Helvetica 10}  -text {MeshSim script file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe16.frame1.frame0.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe16.frame1.frame0.entry15  -font {Helvetica 10}  -textvariable {gFilenames(mesh_script_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe16.frame1.frame0.entry15  -font {Helvetica 10}  -textvariable {gFilenames(mesh_script_file)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe16.frame1.frame0.entry15 <Key-Return> {guiMMreadScriptFile}
 
@@ -5116,7 +5116,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {File:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.frame9.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe17.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
@@ -5147,7 +5147,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27.label0  -font {Helvetica 10}  -relief {flat}  -text {Global Max Edge Size: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(gsize)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(gsize)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe18.frame27.frame2  -width {153}  -height {30}
@@ -5176,7 +5176,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe19.frame24.frame27.frame0.label4  -font {Helvetica 10}  -relief {flat}  -text {mesh complete dir:  }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe19.frame24.frame27.frame0.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe19.frame24.frame27.frame0.entry5  -font {Helvetica 10}  -textvariable {gFilenames(complete_mesh_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe19.frame24.frame27.frame0.entry5  -font {Helvetica 10}  -textvariable {gFilenames(complete_mesh_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe19.frame24.frame27.frame0.tbutton15
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe21.tlabelframe19.frame24.frame27.frame0.tbutton15  -command {guiPOSTselectMeshCompleteDir}  -text {Select Dir}
@@ -5279,7 +5279,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe6.frame2.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Size:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe6.frame2.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe6.frame2.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_size)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe6.frame2.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_size)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe6.frame2.tframe0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe6.frame2.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -5356,7 +5356,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Size:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_bl_size)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_bl_size)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame22
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame22  -width {439}  -height {26}
@@ -5365,7 +5365,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame22.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Num Layers:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame22.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_bl_numLayers)}  -width {4}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_bl_numLayers)}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame23
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame23  -width {439}  -height {26}
@@ -5374,7 +5374,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame23.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Params:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame23.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame23.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_bl_params)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame7.frame23.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_bl_params)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame15
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.frame20.tlabelframe12.tframe1.tframe3.tlabelframe13.tframe14.frame2.frame15  -borderwidth {0}  -relief {flat}  -width {124}  -height {50}
@@ -5411,7 +5411,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {size:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_sphere_size)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_sphere_size)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame22
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame22  -width {439}  -height {26}
@@ -5420,7 +5420,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame22.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {radius:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame22.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_sphere_radius)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_sphere_radius)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame23
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame23  -width {439}  -height {26}
@@ -5429,7 +5429,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame23.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {center pt:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame23.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame23.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_sphere_center)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame7.frame23.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_sphere_center)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame15
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe19.frame26.frame2.frame15  -width {124}  -height {50}
@@ -5458,7 +5458,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {size:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_size)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_size)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame22
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame22  -width {439}  -height {26}
@@ -5467,7 +5467,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame22.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {radius:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame22.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_radius)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_radius)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame23
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame23  -width {439}  -height {26}
@@ -5476,7 +5476,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame23.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {center pt:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame23.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame23.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_center)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame7.frame23.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_center)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame15
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame15  -width {124}  -height {50}
@@ -5494,7 +5494,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {length:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_length)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_length)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame22
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame22  -width {439}  -height {26}
@@ -5503,7 +5503,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame22.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {normal:}  -width {8}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame22.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_normal)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe15.tframe9.tlabelframe20.frame26.frame27.frame28.frame22.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_cylinder_normal)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe14
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe14  -text {Meshing Parameters [-]}  -width {583}  -height {25}
@@ -5555,7 +5555,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Size:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_global_size)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(mca_global_size)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2.tframe0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe22.tlabelframe6.frame2.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -5658,7 +5658,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame3.label14  -font {Helvetica 10}  -relief {flat}  -text {Original Mesh File (.sms):}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame3.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame3.entry15  -font {Helvetica 10}  -textvariable {gFilenames(mesh_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame3.entry15  -font {Helvetica 10}  -textvariable {gFilenames(mesh_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame3.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame3.button16  -command {guiMMbrowseFile mesh_file}  -text {Browse}
@@ -5670,7 +5670,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame6.label14  -font {Helvetica 10}  -relief {flat}  -text {Results Mesh File (.vtu):}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame6.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame6.entry15  -font {Helvetica 10}  -textvariable {gFilenames(vtu_mesh_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame6.entry15  -font {Helvetica 10}  -textvariable {gFilenames(vtu_mesh_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame6.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame6.button16  -command {guiMMbrowseFile vtu_mesh_file}  -text {Browse}
@@ -5682,7 +5682,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame7.label14  -font {Helvetica 10}  -relief {flat}  -text {Condensed Restart File:}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame7.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame7.entry15  -font {Helvetica 10}  -textvariable {gFilenames(solution_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame7.entry15  -font {Helvetica 10}  -textvariable {gFilenames(solution_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame7.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame7.button16  -command {guiMMbrowseFile solution_file}  -text {Browse}
@@ -5694,7 +5694,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame8.label14  -font {Helvetica 10}  -relief {flat}  -text {Output Directory:}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame8.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame8.entry15  -font {Helvetica 10}  -textvariable {gFilenames(adapted_mesh_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame8.entry15  -font {Helvetica 10}  -textvariable {gFilenames(adapted_mesh_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame8.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame8.button16  -command {guiChooseOutputDirectory adapted_mesh_dir}  -text {Browse}
@@ -5706,7 +5706,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Solid File (.xmt_txt or .dsm):}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.button1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe8.frame1.frame9.button1  -command {guiMMbrowseFile atdb_solid_file}  -text {Browse}
@@ -5738,7 +5738,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame6.label9  -font {Helvetica 10}  -borderwidth {0}  -text {Input Directory: }  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame6.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiMMvars(error_input_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiMMvars(error_input_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame6.button11
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame6.button11  -command {guiMMselectDir error_input_dir}  -text {Browse}  -width {10}
@@ -5750,7 +5750,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Output Directory:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(error_output_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(error_output_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame7.button14
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame7.button14  -command {guiMMselectDir error_output_dir}  -text {Browse}  -width {10}
@@ -5774,7 +5774,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame15.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Last Step Number:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame15.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.tframe13
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe9.frame1.tframe13  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -5803,7 +5803,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame27.label0  -font {Helvetica 10}  -relief {flat}  -text {Global Min Edge Size:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame27.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(min_gsize)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(min_gsize)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame2  -width {30}  -height {30}
@@ -5812,7 +5812,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame2.label0  -font {Helvetica 10}  -text {Global Max Edge Size:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame2.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame2.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(gsize)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame2.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(gsize)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame6  -width {30}  -height {30}
@@ -5821,7 +5821,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame6.label0  -font {Helvetica 10}  -relief {flat}  -text {Error Reduction Factor} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame6.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame6.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(error_reduction_factor)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame28.frame6.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(error_reduction_factor)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29  -width {494}  -height {83}
@@ -5833,7 +5833,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame27.label0  -font {Helvetica 10}  -relief {flat}  -text {Step Increment:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame27.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(step_incr)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(step_incr)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame2  -width {30}  -height {30}
@@ -5842,7 +5842,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame2.label0  -font {Helvetica 10}  -text {Start Step Number:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame2.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame2.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(first_step_number)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame2.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(first_step_number)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame6  -width {30}  -height {30}
@@ -5851,7 +5851,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame6.label0  -font {Helvetica 10}  -relief {flat}  -text {End Step Number:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame6.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame6.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame29.frame6.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame30
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame30  -width {494}  -height {83}
@@ -5860,7 +5860,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame30.label0  -font {Helvetica 10}  -relief {flat}  -text {Adapt Option (See Help):} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame30.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame30.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(adapt_option)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame30.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(adapt_option)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame31
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame31  -width {494}  -height {83}
@@ -5869,7 +5869,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame31.label0  -font {Helvetica 10}  -relief {flat}  -text {Adapt Strategy:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame31.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame31.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(ms_strategy)} -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe10.frame5.frame15.frame31.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(ms_strategy)} -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe1.notebook0.tframe0.tlabelframe11  -text {Run Adaptor [-]}  -height {25}
@@ -5934,7 +5934,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe18.frame18.label17  -font {Helvetica 10}  -borderwidth {0}  -text {File:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe18.frame18.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe18.frame18.entry0  -font {Helvetica 10}  -textvariable {gFilenames(polydata_solid_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe18.frame18.entry0  -font {Helvetica 10}  -textvariable {gFilenames(polydata_solid_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe18.frame18.button1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe18.frame18.button1  -command {guiTETGEN_select_solid_model}  -text {Select}
@@ -5954,7 +5954,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe16.frame1.frame0.label14  -font {Helvetica 10}  -text {TetGen script file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe16.frame1.frame0.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe16.frame1.frame0.entry15  -font {Helvetica 10}  -textvariable {gFilenames(tet_mesh_script_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe16.frame1.frame0.entry15  -font {Helvetica 10}  -textvariable {gFilenames(tet_mesh_script_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe16.frame1.frame0.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe16.frame1.frame0.button16  -command {guiTETGEN_load_script_file}  -text {Select}
@@ -6019,7 +6019,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame4.label6  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {-T    Set a tolerance for coplanar test:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame4.entry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame4.entry3  -font {Helvetica 10}  -textvariable {guiTGvars(meshTolerance)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame4.entry3  -font {Helvetica 10}  -textvariable {guiTGvars(meshTolerance)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame6  -borderwidth {0}  -relief {flat}  -width {180}  -height {30}
@@ -6085,7 +6085,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame18.label9  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {     Other user specified flags:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame18.entry9
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame18.entry9  -font {Helvetica 10}  -textvariable {guiTGvars(meshTetGenOptions)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe19.frame7.frame18.entry9  -font {Helvetica 10}  -textvariable {guiTGvars(meshTetGenOptions)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe40  -text {Helper [+]}  -height {25}
@@ -6122,7 +6122,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame2.frame7.label1  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Set maximum edge size for equilateral tetrahedron:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame2.frame7.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame2.frame7.entry1  -font {Helvetica 10}  -textvariable {guiTGvars(meshMaxEdgeSize)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame2.frame7.entry1  -font {Helvetica 10}  -textvariable {guiTGvars(meshMaxEdgeSize)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame2.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe20.frame14.frame2.frame1  -borderwidth {0}  -relief {flat}  -width {180}  -height {30}
@@ -6165,7 +6165,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe21.frame27.label4  -font {Helvetica 10}  -relief {flat}  -text {mesh complete dir:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe21.frame27.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe21.frame27.entry5  -font {Helvetica 10}  -textvariable {gFilenames(complete_mesh_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe21.frame27.entry5  -font {Helvetica 10}  -textvariable {gFilenames(complete_mesh_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe21.frame27.tbutton15
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe1.tlabelframe21.frame27.tbutton15  -command {guiPOSTselectMeshCompleteDir}  -text {Select Dir}
@@ -6203,7 +6203,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe4.label4  -font {Helvetica 10}  -borderwidth {0}  -text {Portion of Edge Size:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe4.entry4
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe4.entry4  -font {Helvetica 10}  -textvariable {guiTGvars(blthicknessratio)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe4.entry4  -font {Helvetica 10}  -textvariable {guiTGvars(blthicknessratio)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe5
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe5  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -6212,7 +6212,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe5.label5  -font {Helvetica 10}  -borderwidth {0}  -text {Num Layers:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe5.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe5.entry5  -font {Helvetica 10}  -textvariable {guiTGvars(numsublayers)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe5.entry5  -font {Helvetica 10}  -textvariable {guiTGvars(numsublayers)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe6  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -6221,7 +6221,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe6.label6  -font {Helvetica 10}  -borderwidth {0}  -text {Layer Decreasing Ratio:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe6.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe6.entry6  -font {Helvetica 10}  -textvariable {guiTGvars(sublayerratio)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe1.frame0.tframe99.tframe6.entry6  -font {Helvetica 10}  -textvariable {guiTGvars(sublayerratio)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4  -text {Local Size [-]}  -height {25}
@@ -6238,7 +6238,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0.frame2.label2  -font {Helvetica 10}  -borderwidth {0}  -text {Size:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0.frame2.entry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0.frame2.entry2  -font {Helvetica 10}  -textvariable {guiTGvars(localMeshSize)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0.frame2.entry2  -font {Helvetica 10}  -textvariable {guiTGvars(localMeshSize)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0.button2
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe4.frame0.button2  -command {guiTETGENcreateMeshMacro localSize}  -text {Add Local Mesh Size}
@@ -6273,7 +6273,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe5.label5  -font {Helvetica 10}  -borderwidth {0}  -text {Sphere Radius:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe5.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe5.entry5  -font {Helvetica 10}  -textvariable {guiTGvars(setSphereRadius)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe5.entry5  -font {Helvetica 10}  -textvariable {guiTGvars(setSphereRadius)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe5.entry5 <Key-Return> {guiREFINEsetRefineSphereRadius "tetgen"}
 
@@ -6284,7 +6284,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe8.label8  -font {Helvetica 10}  -borderwidth {0}  -text {Refinement Mesh Size:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe8.entry8
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe8.entry8  -font {Helvetica 10}  -textvariable {guiTGvars(refinementSize)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe2.frame1.tframe9.tframe8.entry8  -font {Helvetica 10}  -textvariable {guiTGvars(refinementSize)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe9
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe6.tlabelframe9  -text {Radius-Based Meshing [-]}  -height {25}
@@ -6378,7 +6378,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame3.label14  -font {Helvetica 10}  -relief {flat}  -text {Mesh File (.vtu):}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame3.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame3.entry15  -font {Helvetica 10}  -textvariable {gFilenames(vtu_mesh_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame3.entry15  -font {Helvetica 10}  -textvariable {gFilenames(vtu_mesh_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame3.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame3.button16  -command {guiMMbrowseFile vtu_mesh_file}  -text {Browse}
@@ -6390,7 +6390,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame14.label14  -font {Helvetica 10}  -relief {flat}  -text {Output Directory:}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame14.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame14.entry15  -font {Helvetica 10}  -textvariable {gFilenames(adapted_mesh_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame14.entry15  -font {Helvetica 10}  -textvariable {gFilenames(adapted_mesh_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame14.button16
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame14.button16  -command {guiChooseOutputDirectory adapted_mesh_dir}  -text {Browse}
@@ -6402,7 +6402,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Model File:}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame9.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(vtp_surface_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(vtp_surface_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame9.button1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame9.button1  -command {guiMMbrowseFile vtp_surface_file}  -text {Browse}
@@ -6414,7 +6414,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame10.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Condensed Restart File:}  -width {22}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame10.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame10.entry0  -font {Helvetica 10}  -textvariable {gFilenames(solution_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame10.entry0  -font {Helvetica 10}  -textvariable {gFilenames(solution_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame10.button1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe7.frame1.frame10.button1  -command {guiMMbrowseFile solution_file}  -text {Browse}
@@ -6434,7 +6434,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame6.label9  -font {Helvetica 10}  -borderwidth {0}  -text {Input Directory: }  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame6.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiMMvars(error_input_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiMMvars(error_input_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame6.button11
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame6.button11  -command {guiMMselectDir error_input_dir}  -text {Browse}  -width {10}
@@ -6446,7 +6446,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Output Directory:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(error_output_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiMMvars(error_output_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame7.button14
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame7.button14  -command {guiMMselectDir error_output_dir}  -text {Browse}  -width {10}
@@ -6470,7 +6470,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame15.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Last Step Number:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame15.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.tbutton8
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe8.frame1.tbutton8  -command {guiMMcreateCondensedFile}  -text {Create One Restart File}
@@ -6490,7 +6490,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame27.label0  -font {Helvetica 10}  -relief {flat}  -text {Global Min Edge Size:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame27.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(min_gsize)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame27.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(min_gsize)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame2  -width {30}  -height {30}
@@ -6499,7 +6499,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame2.label0  -font {Helvetica 10}  -text {Global Max Edge Size:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame2.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame2.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(gsize)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame2.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(gsize)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame6  -width {30}  -height {30}
@@ -6508,7 +6508,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame6.label0  -font {Helvetica 10}  -relief {flat}  -text {Error Reduction Factor:} -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame6.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame6.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(error_reduction_factor)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame5.frame6.entry1  -font {Helvetica 10}  -textvariable {guiMMvars(error_reduction_factor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6  -width {150}  -height {126}
@@ -6520,7 +6520,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe8.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Start Step Number:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe8.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(first_step_number)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe8.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(first_step_number)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe9
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe9  -width {150}  -height {126}
@@ -6529,7 +6529,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe9.label18  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {End Step Number:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe9.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe9.entry19  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe9.entry19  -font {Helvetica 10}  -textvariable {guiMMvars(last_step_number)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe10
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe10  -width {150}  -height {126}
@@ -6538,7 +6538,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe10.label19  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Step Increment:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe10.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe10.entry20  -font {Helvetica 10}  -textvariable {guiMMvars(step_incr)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame6.tframe10.entry20  -font {Helvetica 10}  -textvariable {guiMMvars(step_incr)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame7
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame7  -width {150}  -height {126}
@@ -6547,7 +6547,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame7.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Adapt Option (See Help):}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame7.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame7.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(adapt_option)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame7.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(adapt_option)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame8  -width {150}  -height {126}
@@ -6556,7 +6556,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Adapt Strategy:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame8.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(tg_strategy)}  -width {10} 
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe9.frame8.entry18  -font {Helvetica 10}  -textvariable {guiMMvars(tg_strategy)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe10.notebook20.tframe2.notebook0.tframe0.tlabelframe10  -text {Run Adaptor [-]}  -height {25}
@@ -6629,7 +6629,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe1.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {script filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe1.frame0.frame9.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe1.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(supre_script_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe1.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gFilenames(supre_script_file)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe1.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
@@ -6669,7 +6669,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame6.label9  -font {Helvetica 10}  -borderwidth {0}  -text {Input Directory: }  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame6.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(input_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(input_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame6.button11
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame6.button11  -command {guiPOSTselectDir input_dir}  -text {Browse}  -width {10}
@@ -6681,7 +6681,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Output Directory:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiPOSTvars(output_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiPOSTvars(output_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame7.button14
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame7.button14  -command {guiPOSTselectDir output_dir}  -text {Browse}  -width {10}
@@ -6696,19 +6696,19 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.label17  -font {Helvetica 10}  -borderwidth {0}  -text {start:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiPOSTvars(start)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiPOSTvars(start)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.label19
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.label19  -font {Helvetica 10}  -borderwidth {0}  -text {stop:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry20  -font {Helvetica 10}  -textvariable {guiPOSTvars(stop)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry20  -font {Helvetica 10}  -textvariable {guiPOSTvars(stop)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.label21
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.label21  -font {Helvetica 10}  -borderwidth {0}  -text {increment:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry22  -font {Helvetica 10}  -textvariable {guiPOSTvars(increment)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame15.entry22  -font {Helvetica 10}  -textvariable {guiPOSTvars(increment)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16  -width {146}  -height {80}
@@ -6717,13 +6717,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.label23  -font {Helvetica 10}  -borderwidth {0}  -text {in prefix:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.entry24
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.entry24  -font {Helvetica 10}  -textvariable {guiPOSTvars(in_prefix)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.entry24  -font {Helvetica 10}  -textvariable {guiPOSTvars(in_prefix)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.label25
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.label25  -font {Helvetica 10}  -borderwidth {0}  -text {out prefix:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.entry26
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.entry26  -font {Helvetica 10}  -textvariable {guiPOSTvars(out_prefix)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame16.entry26  -font {Helvetica 10}  -textvariable {guiPOSTvars(out_prefix)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame27
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame1.frame27  -width {240}  -height {26}
@@ -6804,7 +6804,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame6.label9  -font {Helvetica 10}  -borderwidth {0}  -text {wall nodes (.nbc) file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame6.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame6.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(wall_nbc_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame6.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(wall_nbc_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame6.button11
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame6.button11  -command {guiPOSTselectWallFile}  -text {Browse}  -width {10}
@@ -6816,7 +6816,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame46.label9  -font {Helvetica 10}  -borderwidth {0}  -text {timestep to subtract:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame46.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame46.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(subtract_step_number)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame4.frame46.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(subtract_step_number)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame5
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe2.frame5  -relief {flat}  -width {641}  -height {109}
@@ -6849,7 +6849,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.frame22.frame23  -width {401}  -height {51}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.frame22.frame23.entry28
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.frame22.frame23.entry28  -font {Helvetica 10}  -textvariable {guiVISvars(currentStep)}  -width {12}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.frame22.frame23.entry28  -font {Helvetica 10}  -textvariable {guiVISvars(currentStep)}  -width {12}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.frame22.frame23.entry28 <Key-Return> {guiVISchangeStep fakeValue}
 
@@ -6908,7 +6908,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(vol_minPressure)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(vol_minPressure)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame59.entry62 <Key-Return> {guiVISupdateVol}
 
@@ -6919,7 +6919,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(vol_maxPressure)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(vol_maxPressure)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame47.frame50.frame60.entry64 <Key-Return> {guiVISupdateVol}
 
@@ -6952,7 +6952,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(vol_minVelMag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(vol_minVelMag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame59.entry62 <Key-Return> {guiVISupdateVol}
 
@@ -6963,7 +6963,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(vol_maxVelMag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(vol_maxVelMag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame50.frame60.entry64 <Key-Return> {guiVISupdateVol}
 
@@ -6988,7 +6988,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Scale Factor:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame59.entry30
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame59.entry30  -font {Helvetica 10}  -textvariable {guiVISvars(vol_velocityScale)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame59.entry30  -font {Helvetica 10}  -textvariable {guiVISvars(vol_velocityScale)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer.tframe4.frame8.frame5.frame59.entry30 <Key-Return> {guiVISupdateVol}
 
@@ -7035,7 +7035,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_minPressure)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_minPressure)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame59.entry62 <Key-Return> {guiVISupdateCutVol}
 
@@ -7046,7 +7046,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_maxPressure)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_maxPressure)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame47.frame50.frame60.entry64 <Key-Return> {guiVISupdateCutVol}
 
@@ -7079,7 +7079,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_minVelMag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_minVelMag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame59.entry62 <Key-Return> {guiVISupdateCutVol}
 
@@ -7090,7 +7090,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_maxVelMag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_maxVelMag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame50.frame60.entry64 <Key-Return> {guiVISupdateCutVol}
 
@@ -7115,7 +7115,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Scale Factor:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame59.entry30
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame59.entry30  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_velocityScale)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame59.entry30  -font {Helvetica 10}  -textvariable {guiVISvars(cutvol_velocityScale)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer27.tframe4.frame8.frame5.frame59.entry30 <Key-Return> {guiVISupdateCutVol}
 
@@ -7153,7 +7153,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_minPressure)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_minPressure)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame59.entry62 <Key-Return> {guiVISupdateCutPlane}
 
@@ -7164,7 +7164,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_maxPressure)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_maxPressure)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame47.frame50.frame60.entry64 <Key-Return> {guiVISupdateCutPlane}
 
@@ -7197,7 +7197,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_minVelMag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_minVelMag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame59.entry62 <Key-Return> {guiVISupdateCutPlane}
 
@@ -7208,7 +7208,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_maxVelMag)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_maxVelMag)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame50.frame60.entry64 <Key-Return> {guiVISupdateCutPlane}
 
@@ -7234,7 +7234,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Scale Factor:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame59.entry30
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame59.entry30  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_velocityScale)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame59.entry30  -font {Helvetica 10}  -textvariable {guiVISvars(cutplane_velocityScale)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer28.tframe4.frame8.frame5.frame59.entry30 <Key-Return> {guiVISupdateCutPlane}
 
@@ -7278,7 +7278,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame10.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Title:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame10.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_title)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_title)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame10.entry13 <Key-Return> {guiVISupdateLegend}
 
@@ -7292,7 +7292,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame59.label61  -font {Helvetica 10}  -borderwidth {0}  -text {Min:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame59.entry62
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(legend_minValue)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame59.entry62  -font {Helvetica 10}  -textvariable {guiVISvars(legend_minValue)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame59.entry62 <Key-Return> {guiVISupdateLegend}
 
@@ -7303,7 +7303,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame60.label63  -font {Helvetica 10}  -borderwidth {0}  -text {Max:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame60.entry64
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(legend_maxValue)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame60.entry64  -font {Helvetica 10}  -textvariable {guiVISvars(legend_maxValue)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame50.frame60.entry64 <Key-Return> {guiVISupdateLegend}
 
@@ -7317,7 +7317,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame16.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Number of Labels:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame16.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame16.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_numLabels)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame16.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_numLabels)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame16.entry13 <Key-Return> {guiVISupdateLegend}
 
@@ -7328,7 +7328,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame17.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Label Format:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame17.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame17.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_labelFormat)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame17.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_labelFormat)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame17.entry13 <Key-Return> {guiVISupdateLegend}
 
@@ -7339,7 +7339,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame0.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Number of Colors:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame0.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_numColors)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(legend_numColors)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe21.squeezer29.tframe4.frame1.frame0.entry13 <Key-Return> {guiVISupdateLegend}
 
@@ -7380,17 +7380,17 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.label46  -font {Helvetica 10}  -borderwidth {0}  -text {X    Y    Z}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry47
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {guiVISvars(p1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {guiVISvars(p1)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry47 <Key-Return> {guiVISchangeSlice}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {guiVISvars(p2)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {guiVISvars(p2)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry48 <Key-Return> {guiVISchangeSlice}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry49
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry49  -font {Helvetica 10}  -textvariable {guiVISvars(p3)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry49  -font {Helvetica 10}  -textvariable {guiVISvars(p3)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame32.frame34.entry49 <Key-Return> {guiVISchangeSlice}
 
@@ -7407,7 +7407,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.label3  -font {Helvetica 10}  -borderwidth {0}  -text {Plane Offset:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry4
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry4  -font {Helvetica 10}  -textvariable {guiVISvars(slice_offset)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry4  -font {Helvetica 10}  -textvariable {guiVISvars(slice_offset)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry4 <Key-Return> {guiVISchangeSlice}
 
@@ -7415,7 +7415,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.label18  -font {Helvetica 10}  -borderwidth {0}  -text {Scale All Pts By:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry19  -font {Helvetica 10}  -textvariable {guiVISvars(slice_scaleFactor)}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.entry19  -font {Helvetica 10}  -textvariable {guiVISvars(slice_scaleFactor)}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame12.frame25.frame2.button20  -command {guiVISscalePlanePts}  -text {Apply}
@@ -7433,7 +7433,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.label10  -font {Helvetica 10}  -borderwidth {0}  -text {from Solid Model:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry11
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry11  -font {Helvetica 10}  -textvariable {guiVISvars(solidModelName)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry11  -font {Helvetica 10}  -textvariable {guiVISvars(solidModelName)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry11 <Key-Return> {guiVISupdateFromSolid}
 
@@ -7441,7 +7441,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.label12  -font {Helvetica 10}  -borderwidth {0}  -text { Face Name: }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(faceName)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(faceName)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe22.frame8.frame9.entry13 <Key-Return> {guiVISupdateFromSolid}
 
@@ -7500,7 +7500,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame10.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Filename Format:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame10.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(images_filenameFormat)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(images_filenameFormat)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame17
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame17  -width {320}  -height {118}
@@ -7515,7 +7515,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame0.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Selected Steps:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame0.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(images_selectedSteps)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe23.frame1.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(images_selectedSteps)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -7545,7 +7545,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame10.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame10.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(plotpath_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(plotpath_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame17
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame17  -width {320}  -height {118}
@@ -7572,7 +7572,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame0.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Selected Steps:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame0.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(plotpath_selectedSteps)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe24.frame9.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(plotpath_selectedSteps)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -7590,7 +7590,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame10.label12  -font {Helvetica 10}  -borderwidth {0}  -text {mesh faces dir:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame10.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame10.entry13  -font {Helvetica 10}  -textvariable {gFilenames(mesh_faces_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame10.entry13  -font {Helvetica 10}  -textvariable {gFilenames(mesh_faces_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame10.tcheckbutton0
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame10.tcheckbutton0  -variable {gOptions(exclude_walls_from_flows)}  -text {Skip "wall" faces}
@@ -7602,7 +7602,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame0.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Selected Steps:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame0.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_selectedSteps)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_selectedSteps)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame3  -width {320}  -height {118}
@@ -7611,7 +7611,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame3.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Solid Model:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame3.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame3.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(solidModelName)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame9.frame3.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(solidModelName)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame0  -borderwidth {0}  -relief {flat}  -width {377}  -height {241}
@@ -7635,7 +7635,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame0.frame5.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame0.frame5.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame0.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_flow_results_file)}  -width {30}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame0.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_flow_results_file)}  -width {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame2  -borderwidth {0}  -relief {flat}  -width {377}  -height {241}
@@ -7659,7 +7659,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame2.frame5.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame2.frame5.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame2.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_pressure_results_file)}  -width {30}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame2.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_pressure_results_file)}  -width {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3  -borderwidth {0}  -relief {flat}  -width {377}  -height {241}
@@ -7683,7 +7683,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame5.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame5.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(energy_flux_results_file)}  -width {30}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(energy_flux_results_file)}  -width {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame1  -width {320}  -height {118}
@@ -7692,7 +7692,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame1.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Density:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame1.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame1.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_density)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame3.frame1.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_density)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1  -borderwidth {0}  -relief {flat}  -width {377}  -height {241}
@@ -7713,7 +7713,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1.frame5.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1.frame5.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_resistance_results_file)}  -width {30}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1.frame5.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(outlet_resistance_results_file)}  -width {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1.label3
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe25.frame1.label3  -font {Helvetica 10}  -borderwidth {0}  -text {(NOTE: you MUST write both files above first)}
@@ -7740,7 +7740,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame10.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Sphere Center:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame10.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_sphereCenter)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame10.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_sphereCenter)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame10.entry13 <Key-Return> {guiVISvolFlowSliceDisplaySphere}
 
@@ -7751,7 +7751,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame2.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Sphere Radius:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame2.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame2.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_sphereRadius)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame2.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_sphereRadius)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame1.frame2.entry13 <Key-Return> {guiVISvolFlowSliceDisplaySphere}
 
@@ -7780,7 +7780,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame8.label9  -font {Helvetica 10}  -text {Total Number of Slices:  }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame8.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame8.entry10  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_num_planes)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame8.entry10  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_num_planes)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame3  -borderwidth {0}  -width {326}  -height {48}
@@ -7795,7 +7795,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame3.frame16.label4  -font {Helvetica 10}  -text {Distance Between Slices:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame3.frame16.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame3.frame16.entry5  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_plane_incr)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame1.frame13.frame3.frame16.entry5  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_plane_incr)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18  -borderwidth {0}  -relief {flat}  -width {466}  -height {118}
@@ -7807,7 +7807,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame16.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Results Filename:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame16.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame16.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_resultsFilename)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame16.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_resultsFilename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame0  -borderwidth {0}  -width {359}  -height {26}
@@ -7816,7 +7816,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame0.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Selected Steps:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame0.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_selectedSteps)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame0.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_selectedSteps)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame3  -width {320}  -height {119}
@@ -7840,7 +7840,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Surface Normal:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame7.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_surfaceNormal)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame7.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_surfaceNormal)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame7.label8
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame7.label8  -font {Helvetica 10}  -borderwidth {0}  -text {  (required)  }
@@ -7852,7 +7852,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame9.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Results Directory:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame9.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame9.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_resultsDir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame9.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_resultsDir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame9.label8
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame9.label8  -font {Helvetica 10}  -borderwidth {0}  -text {  (optional)  }
@@ -7864,7 +7864,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame1.label12  -font {Helvetica 10}  -borderwidth {0}  -text {Density:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame1.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame1.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_density)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame1.entry13  -font {Helvetica 10}  -textvariable {guiVISvars(volFlowSlice_density)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame1.label8
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe26.frame5.frame18.frame1.label8  -font {Helvetica 10}  -borderwidth {0}  -text {(required for energy)}
@@ -7897,7 +7897,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe2.frame18.frame23.button27  -command {guiVISselectResultsDir}  -text {Results Directory}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe2.frame18.frame23.entry28
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe2.frame18.frame23.entry28  -font {Helvetica 10}  -textvariable {guiVISvars(resultsDir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe2.frame18.frame23.entry28  -font {Helvetica 10}  -textvariable {guiVISvars(resultsDir)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe3.squeezer.tframe4.notebook20.tframe2.frame18.frame23.entry28 <Key-Return> {guiVISloadImages}
 
@@ -7953,7 +7953,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.label11  -font {Helvetica 10}  -borderwidth {0}  -text {WSS File:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.entry12  -font {Helvetica 10}  -textvariable {gFilenames(wss_file)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.entry12  -font {Helvetica 10}  -textvariable {gFilenames(wss_file)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame8.menubutton20.m}  -text {Options}
@@ -7970,7 +7970,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.label11  -font {Helvetica 10}  -borderwidth {0}  -text {Solid model file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.entry12  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.entry12  -font {Helvetica 10}  -textvariable {gFilenames(atdb_solid_file)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame15.menubutton20.m}  -text {Options}
@@ -7987,7 +7987,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.label11  -font {Helvetica 10}  -borderwidth {0}  -text {mesh-surfaces dir:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.entry12  -font {Helvetica 10}  -textvariable {gFilenames(mesh_faces_dir)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.entry12  -font {Helvetica 10}  -textvariable {gFilenames(mesh_faces_dir)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame16.menubutton20.m}  -text {Options}
@@ -8003,7 +8003,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.label11  -font {Helvetica 10}  -borderwidth {0}  -text {cuts file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(cuts_file)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(cuts_file)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame1.frame17.menubutton20.m}  -text {Options}
@@ -8122,7 +8122,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.label47  -font {Helvetica 10}  -borderwidth {0}  -text {min value:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry48  -font {Helvetica 10}  -textvariable {guiWSSvars(area_min_value)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry48  -font {Helvetica 10}  -textvariable {guiWSSvars(area_min_value)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry48 <Key-Return> {guiWSSupdateScalarRange}
 
@@ -8130,7 +8130,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.label49  -font {Helvetica 10}  -borderwidth {0}  -text {max value:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry50
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry50  -font {Helvetica 10}  -textvariable {guiWSSvars(area_max_value)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry50  -font {Helvetica 10}  -textvariable {guiWSSvars(area_max_value)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame39.entry50 <Key-Return> {guiWSSupdateScalarRange}
 
@@ -8156,7 +8156,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame0.label47  -font {Helvetica 10}  -borderwidth {0}  -text {plane offset:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame0.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame0.entry48  -font {Helvetica 10}  -textvariable {guiWSSvars(plane_offset)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame4.frame0.entry48  -font {Helvetica 10}  -textvariable {guiWSSvars(plane_offset)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame5
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe4.frame5  -width {114}  -height {76}
@@ -8180,7 +8180,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame6.label9  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Input Files/Dir: }  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame6.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(restartFilesDir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame6.entry10  -font {Helvetica 10}  -textvariable {guiPOSTvars(restartFilesDir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame6.button11
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame6.button11  -command {guiPOSTselectRestartDir}  -text {Select}  -width {10}
@@ -8192,7 +8192,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Output File/Dir:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame7.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiPOSTvars(vtkFlowFile)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame7.entry13  -font {Helvetica 10}  -textvariable {guiPOSTvars(vtkFlowFile)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame7.button14
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame7.button14  -command {guiPOSTselectVTKOutputDir}  -text {Select}  -width {10}
@@ -8207,19 +8207,19 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.label17  -font {Helvetica 10}  -borderwidth {0}  -text {start:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiPOSTvars(start)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry18  -font {Helvetica 10}  -textvariable {guiPOSTvars(start)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.label19
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.label19  -font {Helvetica 10}  -borderwidth {0}  -text {stop:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry20  -font {Helvetica 10}  -textvariable {guiPOSTvars(stop)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry20  -font {Helvetica 10}  -textvariable {guiPOSTvars(stop)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.label21
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.label21  -font {Helvetica 10}  -borderwidth {0}  -text {increment:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry22  -font {Helvetica 10}  -textvariable {guiPOSTvars(increment)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame15.entry22  -font {Helvetica 10}  -textvariable {guiPOSTvars(increment)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame16  -width {146}  -height {80}
@@ -8266,7 +8266,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame1.label1  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Wall File:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame1.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame1.entry1  -font {Helvetica 10}  -textvariable {guiPOSTvars(meshFaceFile)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame1.entry1  -font {Helvetica 10}  -textvariable {guiPOSTvars(meshFaceFile)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame1.button1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame1.button1  -command {guiPOSTselectMeshFaceFile}  -text {Select}  -width {10}
@@ -8284,7 +8284,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.label1  -font {Helvetica 10}  -relief {flat}  -justify {right}  -text {Viscosity:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.entry1  -font {Helvetica 10}  -textvariable {guiPOSTvars(mu)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.tlabelframe1.frame1.frame2.entry1  -font {Helvetica 10}  -textvariable {guiPOSTvars(mu)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame17
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.frame1.frame17  -width {146}  -height {80}
@@ -8308,7 +8308,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame10.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {mesh complete dir:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame10.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame10.entry13  -font {Helvetica 10}  -textvariable {gFilenames(complete_mesh_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame10.entry13  -font {Helvetica 10}  -textvariable {gFilenames(complete_mesh_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame10.tcheckbutton0
   ttk::checkbutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame10.tcheckbutton0  -variable {gOptions(exclude_walls_from_flows)}  -text {Skip "wall" faces}
@@ -8332,7 +8332,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame3.label12  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Flows From File:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame3.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame3.entry13  -font {Helvetica 10}  -textvariable {guiPOSTvars(vtkFlowFile)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame3.entry13  -font {Helvetica 10}  -textvariable {guiPOSTvars(vtkFlowFile)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame3.tbutton15
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe0.tframe8.frame9.frame3.tbutton15  -command {guiPOSTselectFlowsFile}  -text {Select}
@@ -8463,7 +8463,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe18  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe18.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe18.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe18.tbutton21  -command {guiRUNSOLVERsetInitDir}  -text {Select Run Dir:}  -width {17}
@@ -8481,13 +8481,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe0.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Starting Step Number:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe0.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetLogDir}  -text {Select Log Dir:}  -width {17}
@@ -8496,7 +8496,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(map_dir_msu)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(map_dir_msu)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe2.tlabel4
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe2.tlabel4  -font {Helvetica 10}  -relief {flat}  -text {Net Mapped Dir:}  -width {15}
@@ -8520,7 +8520,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetFileName solver_log_file .txt}  -text {Select Log File:}  -width {20}
@@ -8535,7 +8535,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe0.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe0.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(00000_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe0.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(00000_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe0.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe0.tbutton21  -command {guiRUNSOLVERsetFileName 00000_log_file .txt}  -text {Select 00000 File:}  -width {20}
@@ -8550,7 +8550,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe2.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe2.tframe1.tframe3.tframe3.tframe2.tbutton21  -command {guiRUNSOLVERsetFileName histor_dat_file .dat}  -text {Select histor.dat File:}  -width {20}
@@ -8574,7 +8574,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe18  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe18.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_inp_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_inp_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe18.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe18.tbutton21  -command {guiRUNSOLVERsetFileName solver_inp_file .inp}  -text {Select solver.inp:}
@@ -8583,7 +8583,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe6  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe6.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe6.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(cvpre_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe6.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(cvpre_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe6.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe6.tbutton21  -command {guiRUNSOLVERsetFileName cvpre_file .cvpre}  -text {Select cvpre file:}
@@ -8592,7 +8592,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe9.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe9.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(hist_dat_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe9.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(hist_dat_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe9.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe9.tbutton21  -command {guiRUNSOLVERsetFileName hist_dat_file .dat}  -text {Select *Hist.dat file:}
@@ -8601,7 +8601,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe10  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe10.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe10.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(plot_output_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe10.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(plot_output_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe10.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe4.tframe10.tbutton21  -command {guiRUNSOLVERsetOutputFileName plot_output_file .txt}  -text {Select OUTPUT file:}
@@ -8616,7 +8616,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe0.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Period:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe0.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(period)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(period)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe12
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe12  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -8625,7 +8625,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe12.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Num Steps Per Cycle:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe12.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe12.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(num_steps_per_cycle)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe11.tframe12.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(num_steps_per_cycle)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe24
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe3.tframe24  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -8698,7 +8698,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe18  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe18.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe18.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe18.tbutton21  -command {guiRUNSOLVERsetInitDir}  -text {Select Run Dir:}  -width {17}
@@ -8716,13 +8716,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe0.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Starting Step Number:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe0.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetLogDir}  -text {Select Log Dir:}  -width {17}
@@ -8731,7 +8731,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(map_dir_osmsc)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(map_dir_osmsc)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe2.tlabel4
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe2.tlabel4  -font {Helvetica 10}  -relief {flat}  -text {Net Mapped Dir:}  -width {15}
@@ -8755,7 +8755,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetFileName solver_log_file .txt}  -text {Select Log File:}  -width {20}
@@ -8770,7 +8770,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe0.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe0.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(00000_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe0.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(00000_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe0.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe0.tbutton21  -command {guiRUNSOLVERsetFileName 00000_log_file .txt}  -text {Select 00000 file:}  -width {20}
@@ -8785,7 +8785,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe2.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe7.tframe1.tframe3.tframe3.tframe2.tbutton21  -command {guiRUNSOLVERsetFileName histor_dat_file .dat}  -text {Select histor.dat File:}  -width {20}
@@ -8815,7 +8815,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe4.tlabel5  -font {Helvetica 10}  -relief {flat}  -text {User:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe4.tentry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe4.tentry1  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(user)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe4.tentry1  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(user)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe4.tbutton2
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe4.tbutton2  -command {guiRUNSOLVERwhoami}  -text {whoami}
@@ -8838,13 +8838,13 @@ img_guessVolParams $gImageVol(filename)}
   .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe13.tmenubutton6.m add radiobutton  -value {4}  -variable {guiRUNSOLVERvars(num_procs_localhost)}  -label {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe13.tentry3
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe13.tentry3  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(num_procs_localhost)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe13.tentry3  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(num_procs_localhost)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe18.tbutton21  -command {guiRUNSOLVERsetInitDir}  -text {Select Run Dir:}  -width {17}
@@ -8871,13 +8871,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe0.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Starting Step Number:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe0.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetLogDir}  -text {Select Log Dir:}  -width {17}
@@ -8886,7 +8886,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(map_dir_localhost)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(map_dir_localhost)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe2.tlabel4
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe2.tlabel4  -font {Helvetica 10}  -relief {flat}  -text {Net Mapped Dir:}  -width {15}
@@ -8904,7 +8904,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetFileName solver_log_file .txt}  -text {Select Log File:}  -width {20}
@@ -8919,7 +8919,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe0  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe0.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe0.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(00000_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe0.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(00000_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe0.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe0.tbutton21  -command {guiRUNSOLVERsetFileName 00000_log_file .txt}  -text {Select 00000 file:}  -width {20}
@@ -8934,7 +8934,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe2.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe8.tframe1.tframe3.tframe5.tframe3.tframe2.tbutton21  -command {guiRUNSOLVERsetFileName histor_dat_file .dat}  -text {Select histor.dat File:}  -width {20}
@@ -8961,7 +8961,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe18  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe18.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe18.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(init_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe18.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe18.tbutton21  -command {guiRUNSOLVERsetInitDir}  -text {Select Run Dir:}  -width {20}
@@ -8979,7 +8979,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe23.tframe0.tlabel1  -font {Helvetica 10}  -relief {flat}  -text {Start Step Number:}  -width {18}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe23.tframe0.tentry2
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe23.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe23.tframe0.tentry2  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(startnum)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe24
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe24  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -8994,7 +8994,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(log_dir)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetLogDir}  -text {Select Log Dir:}  -width {20}
@@ -9012,7 +9012,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe1.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe1.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(solver_log_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe1.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe1.tbutton21  -command {guiRUNSOLVERsetFileName solver_log_file .txt}  -text {Select Log File:}  -width {20}
@@ -9027,7 +9027,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe2.tentry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe2.tentry20  -font {Helvetica 10}  -textvariable {guiRUNSOLVERvars(histor_dat_file)}  -width {40}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe2.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe5.notebook1.tframe0.tframe1.tframe3.tframe5.tframe3.tframe2.tbutton21  -command {guiRUNSOLVERsetFileName histor_dat_file .dat}  -text {Select histor.dat File:}  -width {20}
@@ -9093,10 +9093,10 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9  -width {470}  -height {222}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9.entry18  -font {Helvetica 10}  -textvariable {guiABC(mesh_face_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9.entry18  -font {Helvetica 10}  -textvariable {guiABC(mesh_face_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9.entry19  -font {Helvetica 10}  -textvariable {guiABC(flow_rate_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame9.entry19  -font {Helvetica 10}  -textvariable {guiABC(flow_rate_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame10
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame1.frame6.frame10  -width {116}  -height {224}
@@ -9135,7 +9135,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame32.label35  -font {Helvetica 10}  -borderwidth {0}  -text {period:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame32.entry36
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame32.entry36  -font {Helvetica 10}  -textvariable {gBC(period)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame32.entry36  -font {Helvetica 10}  -textvariable {gBC(period)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame33
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame33  -width {300}  -height {29}
@@ -9144,7 +9144,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame33.label37  -font {Helvetica 10}  -borderwidth {0}  -text {viscosity:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame33.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame33.entry38  -font {Helvetica 10}  -textvariable {guiABC(viscosity)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame33.entry38  -font {Helvetica 10}  -textvariable {guiABC(viscosity)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame34
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame34  -width {300}  -height {29}
@@ -9153,7 +9153,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame34.label39  -font {Helvetica 10}  -borderwidth {0}  -text {density:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame34.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame34.entry40  -font {Helvetica 10}  -textvariable {guiABC(density)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame34.entry40  -font {Helvetica 10}  -textvariable {guiABC(density)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame41
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame27.frame30.frame41  -width {300}  -height {29}
@@ -9183,7 +9183,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame32.label35  -font {Helvetica 10}  -borderwidth {0}  -text {num of periods:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame32.entry36
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame32.entry36  -font {Helvetica 10}  -textvariable {guiABC(num_output_periods)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame32.entry36  -font {Helvetica 10}  -textvariable {guiABC(num_output_periods)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame33
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame33  -width {300}  -height {29}
@@ -9192,7 +9192,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame33.label37  -font {Helvetica 10}  -borderwidth {0}  -text {num pts in period:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame33.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame33.entry38  -font {Helvetica 10}  -textvariable {guiABC(num_output_pts_in_period)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame33.entry38  -font {Helvetica 10}  -textvariable {guiABC(num_output_pts_in_period)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame34
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame34  -width {300}  -height {29}
@@ -9201,7 +9201,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame34.label39  -font {Helvetica 10}  -borderwidth {0}  -text {num fourier modes:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame34.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame34.entry40  -font {Helvetica 10}  -textvariable {guiABC(num_output_modes)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame34.entry40  -font {Helvetica 10}  -textvariable {guiABC(num_output_modes)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame41
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame2.frame28.frame30.frame41  -width {300}  -height {29}
@@ -9231,7 +9231,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame41.label39  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {bct.dat file:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame41.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame41.entry40  -font {Helvetica 10}  -textvariable {guiABC(bct_dat_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame41.entry40  -font {Helvetica 10}  -textvariable {guiABC(bct_dat_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame1  -width {300}  -height {29}
@@ -9240,7 +9240,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame1.label39  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {vtp file:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame1.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame1.entry40  -font {Helvetica 10}  -textvariable {guiABC(bct_vtp_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame3.frame30.frame1.entry40  -font {Helvetica 10}  -textvariable {guiABC(bct_vtp_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame4
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe12.notebook0.tframe6.tframe3.frame4  -borderwidth {0}  -relief {flat}  -width {524}  -height {53}
@@ -9279,7 +9279,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame31.frame11.label12  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame31.frame11.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame31.frame11.entry13  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}  -width {12}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame31.frame11.entry13  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame31.frame11.tbutton14
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame31.frame11.tbutton14  -command {bcGUIaddToSegBatch}  -text {Add to Batch}
@@ -9323,7 +9323,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame45.label46  -font {Helvetica 10}  -borderwidth {0}  -text {bc group dir:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame45.entry47
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame45.entry47  -font {Helvetica 10}  -textvariable {gFilenames(vel_seg_dir)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame45.entry47  -font {Helvetica 10}  -textvariable {gFilenames(vel_seg_dir)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame5
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame5  -borderwidth {0}  -relief {flat}  -width {673}  -height {25}
@@ -9332,7 +9332,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame5.label46  -font {Helvetica 10}  -borderwidth {0}  -text {current bc group:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame5.entry47
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame5.entry47  -font {Helvetica 10}  -textvariable {bcGUIcurrentGroup}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.frame27.frame30.tframe16.frame5.entry47  -font {Helvetica 10}  -textvariable {bcGUIcurrentGroup}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -9365,7 +9365,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame37  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame37.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame37.entry10  -font {Helvetica 10}  -textvariable {bcGUIlsParams(MagFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame37.entry10  -font {Helvetica 10}  -textvariable {bcGUIlsParams(MagFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame37.radiobutton13
   ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame37.radiobutton13  -variable {bcGUIlsParams(calcDecayConstBy)}  -value {multiply}  -text {Multiply Local Max By:}  -width {20}
@@ -9374,7 +9374,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame12  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame12.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame12.entry22  -font {Helvetica 10}  -textvariable {bcGUIlsParams(potentialValueDecay)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame12.entry22  -font {Helvetica 10}  -textvariable {bcGUIlsParams(potentialValueDecay)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame12.entry22 <Key-Return> {bcGUIthrSlice}
 
@@ -9391,7 +9391,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry18 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9399,7 +9399,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.label19  -font {Helvetica 10}  -borderwidth {0}  -text {Y}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame8.entry20 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9413,7 +9413,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -text {radius:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry44  -font {Helvetica 10}  -textvariable {bcGUIradius}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry44  -font {Helvetica 10}  -textvariable {bcGUIradius}  -width {0}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry44 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9421,7 +9421,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.label29  -font {Helvetica 10}  -borderwidth {0}  -text {Kthr:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry41  -font {Helvetica 10}  -textvariable {bcGUIlsParams(Kthr)}  -width {0}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.entry41  -font {Helvetica 10}  -textvariable {bcGUIlsParams(Kthr)}  -width {0}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.label17
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame17.frame32.frame40.label17  -font {Helvetica 10}  -borderwidth {0}  -width {3}
@@ -9450,7 +9450,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -text {Klow:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame38.entry42  -font {Helvetica 10}  -textvariable {bcGUIlsParams(Klow)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame38.entry42  -font {Helvetica 10}  -textvariable {bcGUIlsParams(Klow)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame39
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame39  -width {453}  -height {48}
@@ -9459,13 +9459,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame39.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Kupp:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame39.entry45
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame39.entry45  -font {Helvetica 10}  -textvariable {bcGUIlsParams(Kupp)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame34.frame39.entry45  -font {Helvetica 10}  -textvariable {bcGUIlsParams(Kupp)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37.entry10
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37.entry10  -font {Helvetica 10}  -textvariable {bcGUIlsParams(pFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37.entry10  -font {Helvetica 10}  -textvariable {bcGUIlsParams(pFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37.radiobutton13
   ttk::radiobutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame37.radiobutton13  -variable {bcGUIlsParams(calcPotConstBy)}  -value {multiply}  -text {Multiply Local Max By:}  -width {20}
@@ -9474,7 +9474,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame12  -width {316}  -height {26}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame12.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame12.entry22  -font {Helvetica 10}  -textvariable {bcGUIlsParams(potentialValuePotential)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame12.entry22  -font {Helvetica 10}  -textvariable {bcGUIlsParams(potentialValuePotential)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame40.frame48.frame22.frame12.entry22 <Key-Return> {bcGUIthrSlice}
 
@@ -9494,7 +9494,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame0.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Stop Velocity:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame0.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame0.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(stopV)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame0.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(stopV)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame0.entry44 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9505,7 +9505,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -text {Max Steps:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {bcGUIlsParams(MaxSteps)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {bcGUIlsParams(MaxSteps)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame39
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame39  -width {453}  -height {48}
@@ -9514,7 +9514,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame39.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Goodness Stop Criteria:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame39.entry45
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame39.entry45  -font {Helvetica 10}  -textvariable {bcGUIlsParams(GoodnessStop)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame39.entry45  -font {Helvetica 10}  -textvariable {bcGUIlsParams(GoodnessStop)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame40  -width {453}  -height {44}
@@ -9523,7 +9523,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -text { Grid Factor:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(GridFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(GridFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.label31
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.label31  -font {Helvetica 10}  -borderwidth {0}  -text {Common Parameters}
@@ -9535,7 +9535,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame1.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Rebuild Phi After Every:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame1.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(rebuildPhiFrequency)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(rebuildPhiFrequency)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame1.entry44 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9546,7 +9546,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame2.label32  -font {Helvetica 10}  -borderwidth {0}  -text {Check Area Interval:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame2.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame2.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(checkGoodnessFrequency)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame2.entry44  -font {Helvetica 10}  -textvariable {bcGUIlsParams(checkGoodnessFrequency)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame24.frame2.entry44 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9563,7 +9563,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame0.frame20.label21  -font {Helvetica 10}  -borderwidth {0}  -text {Threshold Value:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame0.frame20.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame0.frame20.entry22  -font {Helvetica 10}  -textvariable {bcGUIthrValue}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame0.frame20.entry22  -font {Helvetica 10}  -textvariable {bcGUIthrValue}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe8.frame15.frame42.frame0.frame20.entry22 <Key-Return> {bcGUIthrSlice}
 
@@ -9631,7 +9631,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame63.label21  -font {Helvetica 10}  -borderwidth {0}  -text {Threshold Value:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame63.entry22
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame63.entry22  -font {Helvetica 10}  -textvariable {bcGUIthrValue}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame63.entry22  -font {Helvetica 10}  -textvariable {bcGUIthrValue}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame63.entry22 <Key-Return> {bcGUIthrSlice}
 
@@ -9642,7 +9642,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame37.label29  -font {Helvetica 10}  -borderwidth {0}  -text {Multiply Max By:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame37.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame37.entry41  -font {Helvetica 10}  -textvariable {bcGUIlsParams(MagFactor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame37.entry41  -font {Helvetica 10}  -textvariable {bcGUIlsParams(MagFactor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8  -width {589}  -height {25}
@@ -9654,7 +9654,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {6}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {6}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry18 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9662,7 +9662,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.label19  -font {Helvetica 10}  -borderwidth {0}  -text {Y:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {6}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {6}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame8.entry20 <Key-Return> {bcGUIchangeFrame 0}
 
@@ -9673,7 +9673,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame10.label29  -font {Helvetica 10}  -borderwidth {0}  -text {Potential Value:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame10.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame10.entry41  -font {Helvetica 10}  -textvariable {bcGUIlsParams(potentialValueDecay)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame24.frame9.frame64.frame10.entry41  -font {Helvetica 10}  -textvariable {bcGUIlsParams(potentialValueDecay)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame11
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe9.frame11  -width {541}  -height {35}
@@ -9724,7 +9724,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry18 <Key-Return> {bcGUImakeCircle}
 
@@ -9732,7 +9732,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.label19  -font {Helvetica 10}  -text {Y:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame8.entry20 <Key-Return> {bcGUImakeCircle}
 
@@ -9743,7 +9743,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -text {radius:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame40.entry44  -font {Helvetica 10}  -textvariable {bcGUIradius}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame40.entry44  -font {Helvetica 10}  -textvariable {bcGUIradius}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame40.frame43.frame40.entry44 <Key-Return> {bcGUImakeCircle}
 
@@ -9769,7 +9769,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.label17  -font {Helvetica 10}  -borderwidth {0}  -text {X:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry18  -font {Helvetica 10}  -textvariable {bcGUIctrX}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry18 <Key-Return> {bcGUImakeEllipse}
 
@@ -9777,7 +9777,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.label19  -font {Helvetica 10}  -text {Y:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry20  -font {Helvetica 10}  -textvariable {bcGUIctrY}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame8.entry20 <Key-Return> {bcGUImakeEllipse}
 
@@ -9788,7 +9788,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.label17  -font {Helvetica 10}  -borderwidth {0}  -text {a:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry18
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry18  -font {Helvetica 10}  -textvariable {bcGUIellipseA}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry18  -font {Helvetica 10}  -textvariable {bcGUIellipseA}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry18 <Key-Return> {bcGUImakeEllipse}
 
@@ -9796,7 +9796,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.label19  -font {Helvetica 10}  -text {b:}  -width {3}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry20
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry20  -font {Helvetica 10}  -textvariable {bcGUIellipseB}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry20  -font {Helvetica 10}  -textvariable {bcGUIellipseB}  -width {5}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry20 <Key-Return> {bcGUImakeEllipse}
 
@@ -9804,7 +9804,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.label51  -font {Helvetica 10}  -borderwidth {0}  -text {perimeter:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry1  -font {Helvetica 10}  -textvariable {bcGUIellipsePERIMETER}  -width {9}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry1  -font {Helvetica 10}  -textvariable {bcGUIellipsePERIMETER}  -width {9}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame38.frame41.frame45.frame50.entry1 <Key-Return> {bcGUImakeEllipse}
 
@@ -9827,7 +9827,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame0.frame1.frame36.button37  -command {bcGUIscaleSeg analytic}  -text {Scale by:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame0.frame1.frame36.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {bcGUIscaleFactor}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {bcGUIscaleFactor}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.label47
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.label47  -font {Helvetica 10}  -borderwidth {0}  -text {Additional Options}
@@ -9848,13 +9848,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.label52  -font {Helvetica 10}  -borderwidth {0}  -text {dX:}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.entry40  -font {Helvetica 10}  -textvariable {bcGUItransX}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.entry40  -font {Helvetica 10}  -textvariable {bcGUItransX}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.label44
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.label44  -font {Helvetica 10}  -borderwidth {0}  -text {dY:}  -width {4}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.entry41  -font {Helvetica 10}  -textvariable {bcGUItransY}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe10.frame27.frame48.entry41  -font {Helvetica 10}  -textvariable {bcGUItransY}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe11
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe11  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -9946,16 +9946,16 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.button37  -command {bcGUIscaleSeg levelset}  -text {Scale by:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {bcGUIscaleFactor}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {bcGUIscaleFactor}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.button39
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.button39  -command {bcGUItranslateSeg levelset}  -text {Translate by:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {bcGUItransX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {bcGUItransX}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {bcGUItransY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {bcGUItransY}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.label44
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.label44  -font {Helvetica 10}  -borderwidth {0}  -text {dY:}  -width {4}
@@ -9967,7 +9967,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.button4  -command {bcGUIfourierSmoothSeg levelset}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.label62
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame61.label62  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -anchor {center}  -text {Threshold Additional Single Slice Manipulations}
@@ -10000,16 +10000,16 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.button37  -command {bcGUIscaleSeg threshold}  -text {Scale by:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry38
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {bcGUIscaleFactor}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry38  -font {Helvetica 10}  -textvariable {bcGUIscaleFactor}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.button39
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.button39  -command {bcGUItranslateSeg threshold}  -text {Translate by:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry40
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {bcGUItransX}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry40  -font {Helvetica 10}  -textvariable {bcGUItransX}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry41
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {bcGUItransY}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry41  -font {Helvetica 10}  -textvariable {bcGUItransY}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.label44
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.label44  -font {Helvetica 10}  -borderwidth {0}  -text {dY:}  -width {4}
@@ -10021,7 +10021,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.button4  -command {bcGUIfourierSmoothSeg threshold}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.frame0.frame1.frame36.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.label62
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe12.frame24.label62  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -anchor {center}  -text {Level Set Additional Single Slice Manipulations}
@@ -10045,7 +10045,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame12.label54  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame12.entry55
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame12.entry55  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame12.entry55  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame12.entry55 <Key-Return> {bcGUIsegBatch levelset}
 
@@ -10077,7 +10077,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame1.frame4.button4  -command {bcGUIfourierSmoothBatch levelset}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame1.frame4.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame60.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22  -borderwidth {0}  -relief {flat}  -width {214}  -height {59}
@@ -10098,7 +10098,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame6.frame12.label54  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame6.frame12.entry55
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame6.frame12.entry55  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame6.frame12.entry55  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame6.frame12.entry55 <Key-Return> {bcGUIsegBatch threshold}
 
@@ -10127,7 +10127,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame1.frame4.button4  -command {bcGUIfourierSmoothBatch threshold}  -text {Fourier smooth:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame1.frame4.entry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe13.frame22.frame1.frame4.entry6  -font {Helvetica 10}  -textvariable {bcGUIfourierNumModes}  -width {5}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -10223,7 +10223,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame33.label34  -font {Helvetica 10}  -text {Equation X: }  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame33.entry35
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame33.entry35  -font {Helvetica 10}  -textvariable {gBC(baselineCorrectionX)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame33.entry35  -font {Helvetica 10}  -textvariable {gBC(baselineCorrectionX)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame36
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame36  -width {150}  -height {48}
@@ -10232,7 +10232,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame36.label34  -font {Helvetica 10}  -text {Equation Y: }  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame36.entry35
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame36.entry35  -font {Helvetica 10}  -textvariable {gBC(baselineCorrectionY)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame36.entry35  -font {Helvetica 10}  -textvariable {gBC(baselineCorrectionY)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame37
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame37  -width {150}  -height {48}
@@ -10241,7 +10241,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame37.label34  -font {Helvetica 10}  -text {Equation Z:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame37.entry35
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame37.entry35  -font {Helvetica 10}  -textvariable {gBC(baselineCorrectionZ)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame17.frame37.entry35  -font {Helvetica 10}  -textvariable {gBC(baselineCorrectionZ)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18  -width {488}  -height {88}
@@ -10256,7 +10256,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18.frame33.label34  -font {Helvetica 10}  -text {Directory Name:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18.frame33.entry35
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18.frame33.entry35  -font {Helvetica 10}  -textvariable {gFilenames(baseline_regions_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18.frame33.entry35  -font {Helvetica 10}  -textvariable {gFilenames(baseline_regions_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18.frame33.button42
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame18.frame33.button42  -command {bcGUIbaselineLoadRegions}  -text {Load}  -width {10}
@@ -10316,7 +10316,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame23.frame11.label12  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame23.frame11.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame23.frame11.entry13  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame23.frame11.entry13  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17  -borderwidth {0}  -relief {flat}  -width {321}  -height {120}
@@ -10337,7 +10337,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17.frame23.frame11.label12  -font {Helvetica 10}  -borderwidth {0}  -text {filename:}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17.frame23.frame11.entry13
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17.frame23.frame11.entry13  -font {Helvetica 10}  -textvariable {gFilenames(tagged_pixels_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17.frame23.frame11.entry13  -font {Helvetica 10}  -textvariable {gFilenames(tagged_pixels_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17.frame23.button2
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe15.frame17.frame17.frame23.button2  -command {bcGUIsaveTaggedPixels}  -text {Save}
@@ -10372,7 +10372,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe16.frame12.label54  -font {Helvetica 10}  -borderwidth {0}  -text {batch list:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe16.frame12.entry55
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe16.frame12.entry55  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe16.frame12.entry55  -font {Helvetica 10}  -textvariable {bcGUIbatchEntry}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe16.frame12.entry55 <Key-Return> {bcGUIsegBatch levelset}
 
@@ -10422,7 +10422,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame115.label118  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame115.entry119
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(vcalc_flow_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(vcalc_flow_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame116
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame116  -width {228}  -height {30}
@@ -10437,7 +10437,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame126.label122  -font {Helvetica 10}  -borderwidth {0}  -text {Frames:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame126.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame126.entry123  -font {Helvetica 10}  -textvariable {bcGUIvcalcFrames}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame127.frame126.entry123  -font {Helvetica 10}  -textvariable {bcGUIvcalcFrames}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0  -width {228}  -height {136}
@@ -10455,7 +10455,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0.frame115.label118  -font {Helvetica 10}  -borderwidth {0}  -text {Directory:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0.frame115.entry119
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(vel_seg_dir)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(vel_seg_dir)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0.frame116
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame0.frame116  -width {228}  -height {30}
@@ -10488,7 +10488,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame115.label118  -font {Helvetica 10}  -borderwidth {0}  -text {Directory:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame115.entry119
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(mapped_vel_dir)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(mapped_vel_dir)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame116
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame116  -width {622}  -height {34}
@@ -10503,7 +10503,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame126.label122  -font {Helvetica 10}  -borderwidth {0}  -text {Frames:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame126.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame126.entry123  -font {Helvetica 10}  -textvariable {bcGUIoutInletVelFrames}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame10.frame0.frame126.entry123  -font {Helvetica 10}  -textvariable {bcGUIoutInletVelFrames}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11  -width {327}  -height {109}
@@ -10524,7 +10524,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame115.label118  -font {Helvetica 10}  -borderwidth {0}  -text {Directory:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame115.entry119
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(mapped_inlet_mesh_dir)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(mapped_inlet_mesh_dir)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame116
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame116  -width {622}  -height {34}
@@ -10539,7 +10539,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame126.label122  -font {Helvetica 10}  -borderwidth {0}  -text {Frames:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame126.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame126.entry123  -font {Helvetica 10}  -textvariable {bcGUIoutInletMeshVelFrames}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame9.frame11.frame2.frame126.entry123  -font {Helvetica 10}  -textvariable {bcGUIoutInletMeshVelFrames}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1  -width {680}  -height {196}
@@ -10563,7 +10563,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame115.label118  -font {Helvetica 10}  -borderwidth {0}  -text {Filename:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame115.entry119
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(bct_dat_file)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame115.entry119  -font {Helvetica 10}  -textvariable {gFilenames(bct_dat_file)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame116
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame116  -width {228}  -height {30}
@@ -10578,7 +10578,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame126.label122  -font {Helvetica 10}  -borderwidth {0}  -text {period:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame126.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame126.entry123  -font {Helvetica 10}  -textvariable {gBC(period)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame126.entry123  -font {Helvetica 10}  -textvariable {gBC(period)}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame133
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame133  -width {200}  -height {26}
@@ -10587,7 +10587,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame133.label122  -font {Helvetica 10}  -borderwidth {0}  -text {Frames:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame133.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame133.entry123  -font {Helvetica 10}  -textvariable {bcGUIbctdatFrames}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame133.entry123  -font {Helvetica 10}  -textvariable {bcGUIbctdatFrames}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame0
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame0  -width {200}  -height {26}
@@ -10596,7 +10596,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame0.label122  -font {Helvetica 10}  -borderwidth {0}  -text {num fourier:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame0.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame0.entry123  -font {Helvetica 10}  -textvariable {bcGUIbctdatNumFourierTerms}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame0.entry123  -font {Helvetica 10}  -textvariable {bcGUIbctdatNumFourierTerms}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame2  -width {200}  -height {26}
@@ -10605,7 +10605,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame2.label122  -font {Helvetica 10}  -borderwidth {0}  -text {num pts:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame2.entry123
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame2.entry123  -font {Helvetica 10}  -textvariable {bcGUIbctdatNumPoints}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame4.frame128.frame2.entry123  -font {Helvetica 10}  -textvariable {bcGUIbctdatNumPoints}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame5
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe29.frame1.frame5  -width {327}  -height {184}
@@ -10629,7 +10629,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame23.button27  -command {createPREOPloadsavePCgeometric}  -text {Browse}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame23.entry28
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame23.entry28  -font {Helvetica 10}  -textvariable {gFilenames(phase_contrast_geometric)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame23.entry28  -font {Helvetica 10}  -textvariable {gFilenames(phase_contrast_geometric)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame23.entry28 <Key-Return> {createPREOPloadsavePCgetParams}
 
@@ -10646,7 +10646,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame31.label29  -font {Helvetica 10}  -text {number of slices}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame31.entry30
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame31.entry30  -font {Helvetica 10}  -state {disabled}  -textvariable {gBC(numSlices)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame31.entry30  -font {Helvetica 10}  -state {disabled}  -textvariable {gBC(numSlices)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32  -borderwidth {0}  -width {274}  -height {108}
@@ -10670,10 +10670,10 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.label46  -font {Helvetica 10}  -text {minimum}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.entry47
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {gBC(voi_x0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.entry47  -font {Helvetica 10}  -textvariable {gBC(voi_x0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {gBC(voi_y0)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame34.entry48  -font {Helvetica 10}  -textvariable {gBC(voi_y0)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35  -borderwidth {0}  -width {150}  -height {99}
@@ -10682,10 +10682,10 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.label50  -font {Helvetica 10}  -text {maximum}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.entry51
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.entry51  -font {Helvetica 10}  -textvariable {gBC(voi_x1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.entry51  -font {Helvetica 10}  -textvariable {gBC(voi_x1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.entry52
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.entry52  -font {Helvetica 10}  -textvariable {gBC(voi_y1)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame25.frame32.frame35.entry52  -font {Helvetica 10}  -textvariable {gBC(voi_y1)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe0.frame54.frame1  -width {226}  -height {38}
@@ -10790,7 +10790,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe39.frame68.frame101.frame99.label89  -font {Helvetica 10}  -text {Warp Scale Factor:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe39.frame68.frame101.frame99.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe39.frame68.frame101.frame99.entry90  -font {Helvetica 10}  -textvariable {bcGUI3dWindow(scaleFactor)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe39.frame68.frame101.frame99.entry90  -font {Helvetica 10}  -textvariable {bcGUI3dWindow(scaleFactor)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe39.frame68.frame101.frame99.entry90 <Key-Return> {bcGUIupdate3dWindow}
 
@@ -10981,7 +10981,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame99.label89  -font {Helvetica 10}  -text {Warp Scale Factor:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame99.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame99.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(warpFactor)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame99.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(warpFactor)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame99.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11010,7 +11010,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame7.label89  -font {Helvetica 10}  -text {Mesh Face Offset:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame7.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame7.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(meshOffset)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame7.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(meshOffset)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame7.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11084,7 +11084,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame9.label89  -font {Helvetica 10}  -text {Display Image Min:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame9.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame9.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(img_min_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame9.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(img_min_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame9.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11095,7 +11095,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame10.label89  -font {Helvetica 10}  -text {Display Image Max:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame10.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame10.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(img_max_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame10.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(img_max_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame10.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11106,7 +11106,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame11.label89  -font {Helvetica 10}  -text {Warp Min Val:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame11.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame11.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(warp_min_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame11.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(warp_min_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame11.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11117,7 +11117,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame13.label89  -font {Helvetica 10}  -text {Warp Max Val:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame13.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame13.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(warp_max_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame13.entry90  -font {Helvetica 10}  -textvariable {bcGUImagWindow(warp_max_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe42.frame71.frame13.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11197,7 +11197,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame7.label89  -font {Helvetica 10}  -text {Mesh Face Offset:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame7.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame7.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(meshOffset)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame7.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(meshOffset)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame7.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11208,7 +11208,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame11.label89  -font {Helvetica 10}  -text {Warp Scale Factor:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame11.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame11.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(warpFactor)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame11.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(warpFactor)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame11.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11237,7 +11237,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame12.label89  -font {Helvetica 10}  -text {Image Display Min:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame12.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame12.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(img_min_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame12.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(img_min_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame12.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11248,7 +11248,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame13.label89  -font {Helvetica 10}  -text {Image Display Max:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame13.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame13.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(img_max_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame13.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(img_max_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame13.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11259,7 +11259,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame15.label89  -font {Helvetica 10}  -text {Warp Min Val:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame15.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame15.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(warp_min_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame15.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(warp_min_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame15.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11270,7 +11270,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame16.label89  -font {Helvetica 10}  -text {Warp Max Val:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame16.entry90
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame16.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(warp_max_val)}  -width {15}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame16.entry90  -font {Helvetica 10}  -textvariable {bcGUIpotWindow(warp_max_val)}  -width {15}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe43.frame100.frame16.entry90 <Key-Return> {bcGUIupdateMagWindow}
 
@@ -11284,7 +11284,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame1.label6  -font {Helvetica 10}  -text {Actor Name:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame1.entry7
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame1.entry7  -font {Helvetica 10}  -textvariable {guiRWH(actor)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame1.entry7  -font {Helvetica 10}  -textvariable {guiRWH(actor)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11356,7 +11356,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame21.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame21.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame21.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newColor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame21.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newColor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame21.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame21.frame16.button20  -command {guiRWHsetProperty SetColor newColor color}  -text {Set Color}  -width {20}
@@ -11377,7 +11377,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame22.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame22.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame22.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newDiffuseColor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame22.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newDiffuseColor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame22.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame22.frame16.button20  -command {guiRWHsetProperty SetDiffuseColor newDiffuseColor diffuseColor}  -text {Set Diffuse Color}  -width {20}
@@ -11398,7 +11398,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame23.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame23.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame23.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newAmbientColor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame23.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newAmbientColor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame23.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame23.frame16.button20  -command {guiRWHsetProperty SetAmbientColor newAmbientColor ambientColor}  -text {Set Ambient Color}  -width {20}
@@ -11419,7 +11419,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame24.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame24.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame24.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newSpecularColor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame24.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newSpecularColor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame24.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame24.frame16.button20  -command {guiRWHsetProperty SetSpecularColor newSpecularColor specularColor}  -text {Set Spectular Color}  -width {20}
@@ -11440,7 +11440,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame25.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame25.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame25.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newEdgeColor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame25.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newEdgeColor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame25.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame25.frame16.button20  -command {guiRWHsetProperty SetEdgeColor newEdgeColor edgeColor}  -text {Set Edge Color}  -width {20}
@@ -11461,7 +11461,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame31.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame31.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame31.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newPointSize)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame31.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newPointSize)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame31.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame5.frame31.frame16.button20  -command {guiRWHsetProperty SetPointSize newPointSize pointSize}  -text {Set Point Size}  -width {20}
@@ -11485,7 +11485,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame30.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame30.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame30.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newOpacity)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame30.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newOpacity)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame30.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame30.frame16.button20  -command {guiRWHsetProperty SetOpacity newOpacity opacity}  -text {Set Opacity}  -width {20}
@@ -11506,7 +11506,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame26.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame26.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame26.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newAmbient)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame26.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newAmbient)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame26.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame26.frame16.button20  -command {guiRWHsetProperty SetAmbient newAmbient ambient}  -text {Set Ambient}  -width {20}
@@ -11527,7 +11527,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame27.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame27.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame27.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newDiffuse)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame27.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newDiffuse)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame27.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame27.frame16.button20  -command {guiRWHsetProperty SetDiffuse newDiffuse diffuse}  -text {Set Diffuse}  -width {20}
@@ -11548,7 +11548,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame28.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame28.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame28.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newSpecular)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame28.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newSpecular)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame28.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame28.frame16.button20  -command {guiRWHsetProperty SetSpecular newSpecular specular}  -text {Set Specular}  -width {20}
@@ -11569,7 +11569,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame29.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame29.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame29.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newSpecularPower)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame29.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newSpecularPower)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame29.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame29.frame16.button20  -command {guiRWHsetProperty SetSpecularPower newSpecularPower specularPower}  -text {Set Specular Power}  -width {20}
@@ -11590,7 +11590,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame32.frame16  -width {150}  -height {57}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame32.frame16.entry19
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame32.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newLineWidth)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame32.frame16.entry19  -font {Helvetica 10}  -textvariable {guiRWH(newLineWidth)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame32.frame16.button20
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame3.frame6.frame32.frame16.button20  -command {guiRWHsetProperty SetLineWidth newLineWidth lineWidth}  -text {Set Line Width}  -width {20}
@@ -11602,13 +11602,13 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.label8  -font {Helvetica 10}  -text {Scalar Range:}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.entry9
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.entry9  -font {Helvetica 10}  -textvariable {guiRWH(scalarMin)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.entry9  -font {Helvetica 10}  -textvariable {guiRWH(scalarMin)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.button10
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.button10  -command {guiRWHsetScalarRange}  -text {Set Min}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.entry11
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.entry11  -font {Helvetica 10}  -textvariable {guiRWH(scalarMax)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.entry11  -font {Helvetica 10}  -textvariable {guiRWH(scalarMax)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.button12
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe44.frame6.button12  -command {guiRWHsetScalarRange}  -text {Set Max}
@@ -11701,7 +11701,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe21.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Probe Reslice Dims:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe21.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe21.tentry23  -font {Helvetica 10}  -textvariable {gOptions(resliceDims)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe21.tentry23  -font {Helvetica 10}  -textvariable {gOptions(resliceDims)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe24
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe24  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11710,7 +11710,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe24.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Path Point Size:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe24.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe24.tentry23  -font {Helvetica 10}  -textvariable {gOptions(pathDisplayPointSize)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe24.tentry23  -font {Helvetica 10}  -textvariable {gOptions(pathDisplayPointSize)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe25
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe25  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11719,7 +11719,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe25.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Window Level Incr:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe25.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe25.tentry23  -font {Helvetica 10}  -textvariable {gOptions(window_level_increment)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe25.tentry23  -font {Helvetica 10}  -textvariable {gOptions(window_level_increment)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe26
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe26  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11728,7 +11728,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe26.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Facet Max Edge Size:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe26.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe26.tentry23  -font {Helvetica 10}  -textvariable {gOptions(facet_max_edge_size)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe26.tentry23  -font {Helvetica 10}  -textvariable {gOptions(facet_max_edge_size)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe27
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe27  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11737,7 +11737,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe27.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Max Polys in Isosurface:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe27.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe27.tentry23  -font {Helvetica 10}  -textvariable {gOptions(max_num_polys_for_isosurface)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe27.tentry23  -font {Helvetica 10}  -textvariable {gOptions(max_num_polys_for_isosurface)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe28
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe28  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11746,7 +11746,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe28.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {LOD Max Polys:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe28.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe28.tentry23  -font {Helvetica 10}  -textvariable {gOptions(vis_lod_max_num_polys)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe28.tentry23  -font {Helvetica 10}  -textvariable {gOptions(vis_lod_max_num_polys)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe29
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe29  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11755,7 +11755,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe29.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Path Axes Scale Factor:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe29.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe29.tentry23  -font {Helvetica 10}  -textvariable {gOptions(pathplan_axes_scale_factor)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe29.tentry23  -font {Helvetica 10}  -textvariable {gOptions(pathplan_axes_scale_factor)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe30
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe30  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11764,7 +11764,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe30.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Path Plan Axes Width:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe30.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe30.tentry23  -font {Helvetica 10}  -textvariable {gOptions(pathplan_axes_width)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe30.tentry23  -font {Helvetica 10}  -textvariable {gOptions(pathplan_axes_width)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe31
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe31  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11773,7 +11773,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Smooth Iso Num Iters:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gOptions(smooth_num_iters)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gOptions(smooth_num_iters)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe32
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe32  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -11782,7 +11782,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe32.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Smooth Relax Factor:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe32.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gOptions(smooth_relax_factor)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tframe18.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gOptions(smooth_relax_factor)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tbutton33
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe1.tframe3.notebook37.tframe5.tbutton33  -command {mainGUIdisplayFreeze}  -text {Freeze/Defrost 3-D Windows}
@@ -11850,7 +11850,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Minimum Value:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_min_value)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_min_value)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame40  -width {453}  -height {44}
@@ -11859,7 +11859,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Maximum Value:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_max_value)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_max_value)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1  -width {453}  -height {44}
@@ -11868,7 +11868,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Alpha:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_alpha)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_alpha)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame1.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -11879,7 +11879,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame43.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Beta:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame43.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame43.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_beta)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame43.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_sigmod_beta)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe26.frame24.frame43.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -11902,7 +11902,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Start Time:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_fmm_start_time)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_fmm_start_time)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame40  -width {453}  -height {44}
@@ -11911,7 +11911,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Stop Time:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_fmm_stop_time)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_fmm_stop_time)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.tlabel27
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe41.tlabel27  -font {Helvetica 10}  -relief {flat}  -text {Fast Marching Method Segment}
@@ -11938,7 +11938,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame38.label30  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Lower threshold:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame38.entry42
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_lower_threshold)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame38.entry42  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_lower_threshold)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame40
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame40  -width {453}  -height {44}
@@ -11947,7 +11947,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame40.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Upper threshold:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame40.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_upper_threshold)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame40.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_upper_threshold)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1  -width {453}  -height {44}
@@ -11956,7 +11956,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Propagation scaling:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_propagation_scaling)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_propagation_scaling)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame1.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -11967,7 +11967,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame44.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Curvature scaling:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame44.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame44.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_curvature_scaling)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame44.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_curvature_scaling)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame44.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -11978,7 +11978,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame45.label32  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Number of iterations:}  -width {25}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame45.entry44
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame45.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_num_iterations)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame45.entry44  -font {Helvetica 10}  -textvariable {gui3Dvars(fast_ls_num_iterations)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.tframe42.frame24.frame45.entry44 <Key-Return> {lsGUIchangeFrame 0}
 
@@ -12001,7 +12001,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.label11  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Segmentation file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_fast_seg_file)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_fast_seg_file)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame17.menubutton20.m}  -text {Options}
@@ -12019,7 +12019,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.label11  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Save Seg Params:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_fast_seg_params)}  -width {35}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.entry12  -font {Helvetica 10}  -textvariable {gFilenames(3d_fast_seg_params)}  -width {35}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.menubutton20
   ttk::menubutton .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.menubutton20  -menu {.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe2.panedwindow0.notebook0.tframe4.frame29.menubutton20.m}  -text {Options}
@@ -12223,7 +12223,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.label5  -font {helvetica 10}  -borderwidth {0}  -text {surf id: }  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.entry0  -font {Helvetica 10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.entry0  -font {Helvetica 10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.button6
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame0.button6  -command {guiSV_model_set_att_name}  -text {Set Value}
@@ -12235,7 +12235,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.label5  -font {helvetica 10}  -borderwidth {0}  -text {surf name: }  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0  -font {Helvetica 10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0  -font {Helvetica 10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame5.entry0 <Key-Return> {guiSV_model_set_att_name}
 
@@ -12252,7 +12252,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame2.label5  -font {helvetica 10}  -borderwidth {0}  -text {entity id: }  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame2.entry0
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame2.entry0  -font {Helvetica 10}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame2.entry0  -font {Helvetica 10}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame6
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe9.frame19.tframe1.frame8.frame9.frame6  -width {222}  -height {26}
@@ -12387,7 +12387,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.frame1.label8  -font {Helvetica 10}  -text {num sample pts: }  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.frame1.entry9
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.frame1.entry9  -font {Helvetica 10}  -textvariable {gPathBrowser(solid_sample)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.frame1.entry9  -font {Helvetica 10}  -textvariable {gPathBrowser(solid_sample)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.frame1.entry9 <Key-Return> {guiGROUPSUpdateSource}
 
@@ -12411,7 +12411,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tlabel1  -font {Helvetica 10}  -text {Cell Edge Size: }  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tentry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tentry1  -font {Helvetica 10}  -textvariable {guiSVvars(facet_max_edge_size)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7.tentry1  -font {Helvetica 10}  -textvariable {guiSVvars(facet_max_edge_size)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12429,7 +12429,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1.frame0.label14  -font {Helvetica 10}  -text {blends file:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1.frame0.entry15
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1.frame0.entry15  -font {Helvetica 10}  -textvariable {gFilenames(blend_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1.frame0.entry15  -font {Helvetica 10}  -textvariable {gFilenames(blend_file)}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe3.tframe7.frame1.frame0.entry15 <Key-Return> {guiBLENDSloadBLENDfile}
 
@@ -12539,7 +12539,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Divisions:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_butterfly_divisions)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_butterfly_divisions)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tbutton18
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe13.tframe13.tframe9.tframe31.tbutton18  -command {gui3DchangeSurface gBut}  -text {Subdivide}
@@ -12562,7 +12562,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Divisions:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_densify_divisions)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_densify_divisions)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tbutton18
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe14.tframe13.tframe7.tframe31.tbutton18  -command {gui3DchangeSurface gBut}  -text {Subdivide}
@@ -12585,7 +12585,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Target rate:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_quad_target)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_quad_target)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface gDec}  -text {Decimate}
@@ -12608,7 +12608,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Iters:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_smooth_num_iters)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_smooth_num_iters)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12617,7 +12617,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Relax Factor:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_smooth_relax_factor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_smooth_relax_factor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface gSm}  -text {Smooth}
@@ -12640,7 +12640,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Iters:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_syncsmooth_num_iters)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_syncsmooth_num_iters)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12649,7 +12649,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Band:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_syncsmooth_pass_band_value)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(smooth_syncsmooth_pass_band_value)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tbutton4
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe17.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe32.tbutton4  -command {gui3DchangeSurface gSSm}  -text {Smooth}
@@ -12711,7 +12711,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Target rate:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_quad_target)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_quad_target)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe15.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface lDec}  -text {Locally Decimate}
@@ -12734,7 +12734,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Iters:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_smooth_num_iters)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_smooth_num_iters)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12743,7 +12743,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Relax Factor:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_smooth_relax_factor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_smooth_relax_factor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe16.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface lLap}  -text {Locally Laplacian Smooth}
@@ -12766,7 +12766,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Iters:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_cgsmooth_num_iters)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_cgsmooth_num_iters)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12775,7 +12775,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Constrain Factor:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_cgsmooth_constrain_factor)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_cgsmooth_constrain_factor)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tbutton4
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe18.tframe13.tframe2.tframe32.tbutton4  -command {gui3DchangeSurface lCon}  -text {Locally Constrain Smooth}
@@ -12798,7 +12798,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tlabel22  -font {Helvetica 10}  -relief {flat}  -text {Num Divisions:}  -width {15}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_linear_subdivisions)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_linear_subdivisions)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface lSub}  -text {Locally Subdivide}
@@ -12856,7 +12856,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe1.tframe1.tframe2.tframe9.tframe5.label5  -font {Helvetica 10}  -borderwidth {0}  -text {Sphere Radius:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe1.tframe1.tframe2.tframe9.tframe5.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe1.tframe1.tframe2.tframe9.tframe5.entry5  -font {Helvetica 10}  -textvariable {gui3Dvars(setSphereRadius)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe1.tframe1.tframe2.tframe9.tframe5.entry5  -font {Helvetica 10}  -textvariable {gui3Dvars(setSphereRadius)}  -width {10}
   # bindings
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe1.tframe1.tframe2.tframe9.tframe5.entry5 <Key-Return> {guiREFINEsetRefineSphereRadius "model"}
 
@@ -12918,7 +12918,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe4.tframe1.tframe3.label5  -font {Helvetica 10}  -borderwidth {0}  -text {Blend Sphere Radius:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe4.tframe1.tframe3.entry5
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe4.tframe1.tframe3.entry5  -font {Helvetica 10}  -textvariable {gui3Dvars(blendSphereRadius)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1.tframe13.notebook15.tframe4.tframe1.tframe3.entry5  -font {Helvetica 10}  -textvariable {gui3Dvars(blendSphereRadius)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -12938,7 +12938,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.tframe1.frame17.label11  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Cuts File:}  -width {12}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.tframe1.frame17.entry12
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.tframe1.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(trim_cuts_file)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.tframe1.frame17.entry12  -font {Helvetica 10}  -textvariable {gFilenames(trim_cuts_file)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.tframe1.frame17.tbutton21
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe3.tframe1.frame17.tbutton21  -command {guiTRIMloadCutsFile}  -text {Load}
@@ -12984,7 +12984,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9.tframe1.frame4.frame0.label46  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Plane Offset:}  -width {20}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9.tframe1.frame4.frame0.entry48
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9.tframe1.frame4.frame0.entry48  -font {Helvetica 10}  -textvariable {guiTRIMvars(plane_offset)}  -width {10}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe9.tframe1.frame4.frame0.entry48  -font {Helvetica 10}  -textvariable {guiTRIMvars(plane_offset)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe11
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe19.tlabelframe9.tframe1.tlabelframe11  -text {Cut With Box [-]}  -width {207}  -height {25}
@@ -13095,7 +13095,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe8.tlabel5  -font {Helvetica 10}  -relief {flat}  -text {Remesh Size:  }
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe8.tentry6
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe8.tentry6  -font {Helvetica 10}  -textvariable {guiPDvars(remeshFaceSize)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe8.tentry6  -font {Helvetica 10}  -textvariable {guiPDvars(remeshFaceSize)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe9
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe20.tframe9.frame19.tframe1.tlabelframe10.tframe7.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -13273,7 +13273,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tlabel1  -font {Helvectica 10}  -relief {flat}  -text {Extraction Angle (Only used if PolyData does not already have faces):}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tentry1
-  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tentry1  -font {Helvetica 10}  -textvariable {guiTRIMvars(discrete_angle)}  
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tlabelframe11.tframe2.tframe4.tentry1  -font {Helvetica 10}  -textvariable {guiTRIMvars(discrete_angle)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe3.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -13282,7 +13282,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe9.tsizegrip10
-  ttk::sizegrip .guiCV.tframe9.tsizegrip10  
+  ttk::sizegrip .guiCV.tframe9.tsizegrip10
 
   # pack master .guiCV.tframe2
   pack configure .guiCV.tframe2.tmenubutton0  -fill both  -side left
@@ -20892,7 +20892,7 @@ profiles by hand.  Inside of the 2-D Intensity graphic window, the following com
 "Shift-a"   : remove last point
 "button 1" : show scalar value under pointer
 "c"           : create contour from points}
-  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame2.frame14.text16 insert end {Calculate a baseline correction equation 
+  .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe0.notebook27.tframe28.tframe6.notebook7.tframe14.frame2.frame14.text16 insert end {Calculate a baseline correction equation
 using this GUI
 
 keystrokes over graphics window
@@ -21193,7 +21193,7 @@ proc ShowWindow.guiDICOM { args} {
   } {
     catch "destroy .guiDICOM"
   }
-  toplevel .guiDICOM 
+  toplevel .guiDICOM
 
   # Window manager configurations
   wm positionfrom .guiDICOM program
@@ -21220,7 +21220,7 @@ Please use the "Current widget path:" to show/hide windows.}}
   ttk::label .guiDICOM.tlabelframe17.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Directory:}  -width {10}
 
   # build widget .guiDICOM.tlabelframe17.frame0.frame9.entry0
-  ttk::entry .guiDICOM.tlabelframe17.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {guiDICOMvars(original_dicom_dir)}  -width {40}  
+  ttk::entry .guiDICOM.tlabelframe17.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {guiDICOMvars(original_dicom_dir)}  -width {40}
   # bindings
   bind .guiDICOM.tlabelframe17.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
@@ -21251,7 +21251,7 @@ Please use the "Current widget path:" to show/hide windows.}}
   ttk::label .guiDICOM.tlabelframe3.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Directory:}  -width {10}
 
   # build widget .guiDICOM.tlabelframe3.frame0.frame9.entry0
-  ttk::entry .guiDICOM.tlabelframe3.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {guiDICOMvars(output_sorted_dicom_dir)}  -width {40}  
+  ttk::entry .guiDICOM.tlabelframe3.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {guiDICOMvars(output_sorted_dicom_dir)}  -width {40}
   # bindings
   bind .guiDICOM.tlabelframe3.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
@@ -21285,7 +21285,7 @@ Please use the "Current widget path:" to show/hide windows.}}
   ttk::label .guiDICOM.tlabelframe7.frame0.frame9.label24  -font {Helvetica 10}  -borderwidth {0}  -relief {flat}  -text {Directory:}  -width {10}
 
   # build widget .guiDICOM.tlabelframe7.frame0.frame9.entry0
-  ttk::entry .guiDICOM.tlabelframe7.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gImageVol(data_dirname)}  -width {40}  
+  ttk::entry .guiDICOM.tlabelframe7.frame0.frame9.entry0  -font {Helvetica 10}  -textvariable {gImageVol(data_dirname)}  -width {40}
   # bindings
   bind .guiDICOM.tlabelframe7.frame0.frame9.entry0 <Key-Return> {guiFNMloadSolidModel atdb_solid_file atdb_solid}
 
@@ -21395,7 +21395,7 @@ Please use the "Current widget path:" to show/hide windows.}}
 
 
   # build widget .guiPPselectPath.frame7
-  ttk::frame .guiPPselectPath.frame7  -width {212} -height {46} 
+  ttk::frame .guiPPselectPath.frame7  -width {212} -height {46}
   # build widget .guiPPselectPath.frame7.label11
   ttk::label .guiPPselectPath.frame7.label11  -font {Helvetica 10}  -borderwidth {0}  -text {Select Path}
 
@@ -21403,9 +21403,9 @@ Please use the "Current widget path:" to show/hide windows.}}
   ttk::label .guiPPselectPath.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -text {(double click on line)}
 
   # build widget .guiPPselectPath.frame8
-  ttk::frame .guiPPselectPath.frame8  -width {212} -height {250} 
+  ttk::frame .guiPPselectPath.frame8  -width {212} -height {250}
   # build widget .guiPPselectPath.frame8.frame
-  ttk::frame .guiPPselectPath.frame8.frame  
+  ttk::frame .guiPPselectPath.frame8.frame
   # build widget .guiPPselectPath.frame8.frame.scrollbar3
   ttk::scrollbar .guiPPselectPath.frame8.frame.scrollbar3  -command {.guiPPselectPath.frame8.frame.listbox1 xview}  -orient {horizontal}
 
@@ -21418,7 +21418,7 @@ Please use the "Current widget path:" to show/hide windows.}}
   bind .guiPPselectPath.frame8.frame.listbox1 <Double-Button-1> {guiPPselectPathChoose}
 
   # build widget .guiPPselectPath.frame9
-  ttk::frame .guiPPselectPath.frame9  -width {85} -height {38} 
+  ttk::frame .guiPPselectPath.frame9  -width {85} -height {38}
   # build widget .guiPPselectPath.frame9.button10
   ttk::button .guiPPselectPath.frame9.button10  -command {guiPPselectPathCancel}  -text {CANCEL}  -takefocus {ttk::takefocus}
 
@@ -21486,7 +21486,7 @@ Please use the "Current widget path:" to show/hide windows.}}
 
 
   # build widget .guiSELECTGROUPS.frame
-ttk::frame .guiSELECTGROUPS.frame  -width {256} -height {245} 
+ttk::frame .guiSELECTGROUPS.frame  -width {256} -height {245}
   # build widget .guiSELECTGROUPS.frame.scrollbar3
   ttk::scrollbar .guiSELECTGROUPS.frame.scrollbar3  -command {.guiSELECTGROUPS.frame.listbox1 xview}  -orient {horizontal}
 
@@ -21499,7 +21499,7 @@ ttk::frame .guiSELECTGROUPS.frame  -width {256} -height {245}
   bind .guiSELECTGROUPS.frame.listbox1 <Double-Button-1> {guiSELECTGROUPSdone}
 
   # build widget .guiSELECTGROUPS.frame17
-ttk::frame .guiSELECTGROUPS.frame17  -width {256} -height {66} 
+ttk::frame .guiSELECTGROUPS.frame17  -width {256} -height {66}
   # build widget .guiSELECTGROUPS.frame17.button18
   ttk::button .guiSELECTGROUPS.frame17.button18  -command {guiSELECTGROUPScancel}  -text {CANCEL}  -takefocus {ttk::takefocus}
 
@@ -21563,7 +21563,7 @@ Please use the "Current widget path:" to show/hide windows.}}
 
 
   # build widget .lsGUIselectPath.frame7
-ttk::frame .lsGUIselectPath.frame7  -width {212} -height {46} 
+ttk::frame .lsGUIselectPath.frame7  -width {212} -height {46}
   # build widget .lsGUIselectPath.frame7.label11
   ttk::label .lsGUIselectPath.frame7.label11  -font {Helvetica 10}  -borderwidth {0}  -text {Select Path}
 
@@ -21571,9 +21571,9 @@ ttk::frame .lsGUIselectPath.frame7  -width {212} -height {46}
   ttk::label .lsGUIselectPath.frame7.label12  -font {Helvetica 10}  -borderwidth {0}  -text {(double click on line)}
 
   # build widget .lsGUIselectPath.frame8
-ttk::frame .lsGUIselectPath.frame8  -width {212} -height {250} 
+ttk::frame .lsGUIselectPath.frame8  -width {212} -height {250}
   # build widget .lsGUIselectPath.frame8.frame
-ttk::frame .lsGUIselectPath.frame8.frame  
+ttk::frame .lsGUIselectPath.frame8.frame
   # build widget .lsGUIselectPath.frame8.frame.scrollbar3
   ttk::scrollbar .lsGUIselectPath.frame8.frame.scrollbar3  -command {.lsGUIselectPath.frame8.frame.listbox1 xview}  -orient {horizontal}
 
@@ -21586,7 +21586,7 @@ ttk::frame .lsGUIselectPath.frame8.frame
   bind .lsGUIselectPath.frame8.frame.listbox1 <Double-Button-1> {lsGUIselectPathChoose}
 
   # build widget .lsGUIselectPath.frame9
-ttk::frame .lsGUIselectPath.frame9  -width {85} -height {38} 
+ttk::frame .lsGUIselectPath.frame9  -width {85} -height {38}
   # build widget .lsGUIselectPath.frame9.button10
   ttk::button .lsGUIselectPath.frame9.button10  -command {lsGUIselectPathCancel}  -text {CANCEL}  -takefocus {ttk::takefocus}
 
@@ -21660,8 +21660,8 @@ proc ShowWindow.svGroupWindow { {cmd "0"}} {
   ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton1  -command {guiSV_group_rename_group}  -text {Rename Group}
   ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton2  -command {guiSV_group_duplicate_group}  -text {Duplicate Group}
   ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton4  -command {guiSV_group_copy_members}  -text {Copy Members}
-  
-  
+
+
   ttk::button .svGroupWindow.tframe6.frame1.frame2.tbutton3  -command {DestroyWindow.svGroupWindow}  -text {Cancel}
 
   pack configure .svGroupWindow.tframe6  -fill both -ipadx 5 -ipady 5
@@ -21741,7 +21741,7 @@ proc ShowWindow.svSaveSegWindow { {args "0"}} {
   wm minsize .svSaveSegWindow 150 60
   wm protocol .svSaveSegWindow WM_DELETE_WINDOW {DestroyWindow.svSaveSegWindow}
 
-  
+
 
   ttk::frame .svSaveSegWindow.tframe6  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
   ttk::frame .svSaveSegWindow.tframe6.frame1  -borderwidth {0}  -relief {flat}  -width {60}  -height {10}
@@ -21940,8 +21940,8 @@ proc bcGUI_hand_EndQueryInteraction { widget} {
 # Procedure: bcGUI_hand_StartQueryInteraction
 proc bcGUI_hand_StartQueryInteraction { widget x y} {
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global bcGUIhanddrawShowMagValue
   set bcGUIhanddrawShowMagValue 1
@@ -21955,8 +21955,8 @@ proc bcGUI_hand_UpdateQueryInteraction { widget x y} {
   global bcGUImagWindow
   global bcGUIpotWindow
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global symbolicName
   if {[file rootname $widget] == $symbolicName(bcRenWinMag)} {
@@ -22032,8 +22032,8 @@ proc bcGUI_hand_add_point { widget x y} {
   global bcGUImagWindow
   global bcGUIpotWindow
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global symbolicName
   if {[file rootname $widget] == $symbolicName(bcRenWinMag)} {
@@ -22212,8 +22212,8 @@ proc bcGUI_hand_remove_last_point { widget x y} {
   set selectedLines bcGUItmp-handdraw-lines1
   set cursorPoints bcGUItmp-handdraw-crsr-pts1
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   $cursorPoints Reset
 
@@ -22275,8 +22275,8 @@ proc bcGUI_hand_show_cursor { widget x y} {
 
   set cursorPoints bcGUItmp-handdraw-crsr-pts1
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global bcGUImagWindow
   global bcGUIpotWindow
@@ -22334,8 +22334,8 @@ proc bcGUI_hand_tag_voxel { widget x y} {
   global bcGUImagWindow
   set ren $bcGUImagWindow(ren)
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   # y is flipped upside down
   set height [lindex [$widget configure -height] 4]
@@ -22420,8 +22420,8 @@ proc bcGUI_hand_untag_voxel { widget x y} {
   global bcGUImagWindow
   set ren $bcGUImagWindow(ren)
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   # y is flipped upside down
   set height [lindex [$widget configure -height] 4]
@@ -22484,8 +22484,8 @@ proc bcGUI_hand_xyplot_velocity { widget x y plotdir} {
   set ds2do tmp-bcGUI_hand_xyplot-ds2d0
   set xyplot3 tmp-bcGUI_hand_xyplot-myxyplot
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global bcGUIcurrentFrameNumber
   global bcGUIhanddrawXpressed
@@ -22664,9 +22664,9 @@ proc bcGUI_hand_xyplot_velocity { widget x y plotdir} {
 proc bcGUI_hand_xyplot_velocity_release { widget x y} {
 
   set xyplot3 tmp-bcGUI_hand_xyplot-myxyplot
-  
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global bcGUIhanddrawXpressed
   set bcGUIhanddrawXpressed 0
@@ -24692,7 +24692,7 @@ proc bcGUIparallelProjection {} {
 
       vis_renPerspectiveProjection $renMag
       vis_renPerspectiveProjection $renPot
- 
+
       set selectedPoints bcGUItmp-handdraw-pts1
       set selectedLines bcGUItmp-handdraw-lines1
       set selectedActor bcGUItmp-handdraw-actor
@@ -25453,14 +25453,14 @@ proc bcGUIupdate3dWindow {} {
       }
           #puts "pixel: $pixel value: $velvalueX $velvalueY $velvalueZ"
           # flip directions if necessary
-          
+
           $vVectors InsertNextTuple3 $velvalueX $velvalueY $velvalueZ
         }
 
         set vCreateNorm bcGUI-pcdata-hardcoded-norm
         catch {$vCreateNorm Delete}
         set tmpvectrepos /gBC/pcdata/vel/hardcoded/tmp/pd
- 
+
         catch {repos_delete -obj $tmpvectrepos}
         catch {repos_delete -obj $vectrepos}
 
@@ -25935,12 +25935,12 @@ proc createPREOPgrpSaveGroups {} {
   puts $fp "  # Group Stuff"
   set names [group_names]
   if {[llength $names] > 0} {
-    
+
     foreach name $names {
   puts $fp "  group_readProfiles \{$name\} \[file join \$grpdir \{$name\}\]"
         group_saveProfiles $name [file join $grpdir $name]
     }
-    
+
   }
   puts $fp "}"
 
@@ -25955,12 +25955,12 @@ proc createPREOPgrpSaveGroups {} {
     foreach name $names {
       set fn [file join $grpdir $name.svsurf]
       puts $fp "  seg3d_readSurf \{$name\} \[file join \$grpdir \{$fn\}\]"
-      
+
       puts $fn
       seg3d_saveSurf $name $fn
-        
+
     }
-  
+
   }
 
   puts $fp "}"
@@ -25971,8 +25971,8 @@ proc createPREOPgrpSaveGroups {} {
 # Procedure: createPREOPgrpUpdateAvailGrps
 proc createPREOPgrpUpdateAvailGrps {} {
 
- global symbolicName  
- 
+ global symbolicName
+
  # delete any existing entries first
  $symbolicName(createPREOPgrpAvailLB) delete 0 end
 
@@ -25980,7 +25980,7 @@ proc createPREOPgrpUpdateAvailGrps {} {
  foreach i [group_names] {
    $symbolicName(createPREOPgrpAvailLB) insert end $i
  }
-  
+
  $symbolicName(createPREOPgrpAvailLB) selection clear 0 end
 }
 
@@ -26270,7 +26270,7 @@ proc createPREOPloadsaveLoadVol {} {
 
     if {$gOptions(image_data_type) == "GE_MR_5X"} {
       mc_LoadImage
-      } else { 
+      } else {
         mc_LoadImageDICOM $change_to_cm_flag
       }
 
@@ -26540,7 +26540,7 @@ proc createPREOPloadsaveVolFile {} {
 
   set filename [tk_chooseDirectory -mustexist true -title "Choose Volumetric Image Data Directory" -initialdir [pwd]]
   set gImageVol(tmpfilename) [string trim $filename]
-  
+
   if {[string length [string trim $filename]] != 0} {
     set gImageVol(filename) $filename
     set gImageVol(data_dirname) $filename
@@ -26791,7 +26791,7 @@ proc gui3DaddSeed {} {
   set flag $gui3Dvars(chooserShowSphereFlag)
 
   if {$flag == 0} return
-  
+
   set ss $gui3Dvars(sphere_source)
   set r [$ss GetRadius]
   set ctr [$ss GetCenter]
@@ -26866,8 +26866,8 @@ proc gui3DchangeSurface { operation} {
   #  model_create $kernel $oldmodel
   #}
 
-  set modelpd /tmp/3D/modelpd/input 
-  set obj /tmp/3D/modelpd/output 
+  set modelpd /tmp/3D/modelpd/input
+  set obj /tmp/3D/modelpd/output
   catch {repos_delete -obj $modelpd}
   catch {repos_delete -obj $obj}
   $model GetPolyData -result $modelpd
@@ -26880,7 +26880,7 @@ proc gui3DchangeSurface { operation} {
   } elseif {$operation == "gSSm"} {
      set band  $gui3Dvars(smooth_syncsmooth_pass_band_value)
      set num   $gui3Dvars(smooth_syncsmooth_num_iters)
-     geom_syncsmooth $modelpd $band $num $obj 
+     geom_syncsmooth $modelpd $band $num $obj
 
   } elseif {$operation == "gBut"} {
      set num   $gui3Dvars(smooth_butterfly_divisions)
@@ -26888,11 +26888,11 @@ proc gui3DchangeSurface { operation} {
 
   } elseif {$operation == "gDen"} {
      set num   $gui3Dvars(smooth_densify_divisions)
-     geom_densify $modelpd $num $obj  
+     geom_densify $modelpd $num $obj
 
   } elseif {$operation == "gDec"} {
      set target  $gui3Dvars(smooth_quad_target)
-     geom_quadraticDecimation $modelpd $target $obj 
+     geom_quadraticDecimation $modelpd $target $obj
 
   } elseif {$operation == "fill"} {
      geom_fillHoles $modelpd $obj
@@ -26930,10 +26930,10 @@ proc gui3DcheckBeforeSmooth {} {
 
   set obj $gui3Dvars(polydata_change_obj)
   set sel $gui3Dvars(smooth_org_segment)
-  
+
   if {![repos_exists -obj $obj]} {
     if {$sel == "level_set"} {
-        set lsobj $gui3Dvars(ls_finalSegmentation)    
+        set lsobj $gui3Dvars(ls_finalSegmentation)
   catch {geom_copy -src $lsobj -dst $obj}
     } else {
   catch {geom_copy -src $sel -dst $obj}
@@ -26996,8 +26996,8 @@ proc gui3DchooserShowAllSeeds { clicked args} {
           set actor [::vis::poly $gRen3d $spd]
           [$actor GetProperty] SetOpacity $gui3Dvars(sphere_opacity)
           [$actor GetProperty] SetColor $cr $cg $cb
-        } else { 
-          puts "WARNING: line ignored ($line)" 
+        } else {
+          puts "WARNING: line ignored ($line)"
         }
       }
     }
@@ -27077,7 +27077,7 @@ proc gui3DchooserShowSphere { clicked} {
 
   global gRen3d
   global gui3Dvars
-  
+
   set flag $gui3Dvars(chooserShowSphereFlag)
 
   if {$clicked == "clicked"} {
@@ -27327,7 +27327,7 @@ proc gui3Dfast { operation} {
 
   global symbolicName
   global gui3Dvars
- 
+
   if {$operation == "sigmod"} {
     set min   $gui3Dvars(fast_sigmod_min_value)
     set max   $gui3Dvars(fast_sigmod_max_value)
@@ -27565,12 +27565,12 @@ proc gui3DioSmoothFile { operation} {
       global gui3Dvars
       set gui3Dvars(smooth_num_tris) [[repos_exportToVtk -src $obj] GetNumberOfCells]
       gui3DvisSmooth no
-    }  
+    }
   } elseif {$operation == "save"} {
 
     # save
     set fn [tk_getSaveFile -filetypes {{"VTK" .vtp}} -defaultextension .vtp -title "Save Smoothed Surface File" -initialfile $gFilenames(3d_smoothed_seg_out_file)]
-    if {$fn == ""} { 
+    if {$fn == ""} {
       puts "User Cancelled."
       return
     }
@@ -27735,7 +27735,7 @@ proc gui3DrunLS {} {
         if {[lindex $line 0] == "sphere"} {
 
         geom_mkSphere [lindex $line 2] [lindex $line 3] [lindex $line 4] [lindex $line 1] $pd
-      
+
           lappend all_spheres $pd
         } else {
           puts "WARNING: line ignored ($line)"
@@ -27759,7 +27759,7 @@ proc gui3DrunLS {} {
       geom_copy -src $segPd -dst $initPD
       set initData [list polydata $initPD]
 
-    
+
     } elseif { $gui3Dvars(ls_init_option) == "selected_poly" } {
 
       #set ignored [tk_messageBox -title "Done Segmentation" -type ok -message "Done!"]
@@ -27799,7 +27799,7 @@ proc gui3DrunLS {} {
       if {$selected != ""} {
         foreach grp $selected {
           set objName $gSeg3D($grp)
-          
+
           catch {cleaner Delete}
           vtkCleanPolyData cleaner
           cleaner ConvertPolysToLinesOff
@@ -27807,13 +27807,13 @@ proc gui3DrunLS {} {
           cleaner ConvertLinesToPointsOff
           cleaner SetInputDataObject [repos_exportToVtk -src $objName]
           cleaner Update
-          
+
           set inPD /tmp/gui3D/outPD2/$grp
           catch {repos_delete -obj $inPD}
           repos_importVtkPd -src [cleaner GetOutput] -dst $inPD
           #geom_copy -src [cleaner GetOutput] -dst $inPD
-  
-          
+
+
           lappend initPDs $inPD
 
         }
@@ -27834,7 +27834,7 @@ proc gui3DrunLS {} {
         puts "Appending PDs"
         geom_appendPds $initPDs $initPD
       }
-      
+
       set initData [list polydata $initPD]
 
     }
@@ -27844,7 +27844,7 @@ proc gui3DrunLS {} {
     if {[vis_pExists $gRen3d $segPd]} {
        vis_pRm $gRen3d $segPd
      }
-   
+
     #lset_run $img $pot $initData $kt $klow $kupp  $serialInit $gridFactor $initOnly  $sparseFlag $isotropicFlag $expandFlag  $convFlag $timerFlag  $maxTSFlag $maxTS  $writeIntermediate  $runVpot $runVSmooth $runVConst $numVConst  $magGradFactor $pFactor  $rens $objPrefix $verbose  $stopV $rebuildPhiFreq $ac $acInterval $3d_curv $segPd $grid
     catch {repos_delete -obj $outPd}
     #jtm 3d levelset runs from here
@@ -27899,7 +27899,7 @@ proc gui3DsetSeedTransparency { val} {
   set flag $gui3Dvars(chooserShowSphereFlag)
 
   if {$flag == 0} return
-  
+
   set spd $gui3Dvars(sphere_pd)
   set actor [::vis::polyGetActor $gRen3d $spd]
   [$actor GetProperty] SetOpacity $gui3Dvars(sphere_opacity)
@@ -27924,7 +27924,7 @@ proc gui3DupdateRadiusScale { val} {
   set flag $gui3Dvars(chooserShowSphereFlag)
 
   if {$flag == 0} return
-  
+
   set ss $gui3Dvars(sphere_source)
   $ss SetRadius $gui3Dvars(radius)
   set x $gui3Dvars(chooserXvar)
@@ -27932,7 +27932,7 @@ proc gui3DupdateRadiusScale { val} {
   set z $gui3Dvars(chooserZvar)
   $ss SetCenter $x $y $z
   $ss Update
- 
+
   vis_render $gRen3d
 }
 
@@ -28248,15 +28248,15 @@ proc guiBOOLEANboolean {} {
       set numOutPtsInSegs $overrides($grp)
       puts "overriding default ($sampling_default) with ($numOutPtsInSegs) for ($grp)."
     }
- 
+
     set vecFlag 0
- 
+
     set numSegs [llength [group_get $grp]]
 
     set numOutPtsAlongLength [expr $sample_per_segment * $numSegs]
 
     set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
-   
+
     puts "num pts along length: $numPtsInLinearSampleAlongLength"
 
     set outPD /guiGROUPS/polydatasurface/$grp
@@ -28296,7 +28296,7 @@ proc guiBOOLEANboolean {} {
   }
 
   catch {repos_delete -obj $tmppolysolid}
-  set rtnstr [geom_checksurface -src $myresult -tolerance $tol] 
+  set rtnstr [geom_checksurface -src $myresult -tolerance $tol]
 
   vis_pRepos $gRen3d $myresult
   tk_messageBox -title "Solid Unions Complete"  -type ok -message "Number of Free Edges: [lindex $rtnstr 0]\n (Free edges are okay for open surfaces)\n Number of Bad Edges: [lindex $rtnstr 1]"
@@ -28366,7 +28366,7 @@ proc guiBOUNDARIESdeleteRegions {} {
   set all_names [return_pd_region_names]
     set run [::swaplist::swaplist .guiCV.select_boundary_groups guiPDvars(selected_groups) [lsort -dictionary [return_pd_region_names]] $guiPDvars(selected_groups)]
 
-  if {$run == 1} { 
+  if {$run == 1} {
     PolyDataDeleteRegions
   }
   set guiPDvars(updatedSolid) 1
@@ -28398,8 +28398,8 @@ proc guiBOUNDARIESfillWithIds {} {
       set maxid $id
     }
   }
-  set fillpd /guiBOUNDARIES/fillpd 
-  set outfillpd /guiBOUNDARIES/outfillpd 
+  set fillpd /guiBOUNDARIES/fillpd
+  set outfillpd /guiBOUNDARIES/outfillpd
   catch {repos_delete -obj $fillpd}
   catch {repos_delete -obj $outfillpd}
 
@@ -28428,7 +28428,7 @@ proc guiBOUNDARIESremeshSurfaces { sizeName} {
   global gPolyDataFaceNames
   global smasherInputName
   set gOptions(meshing_solid_kernel) PolyData
-    
+
   set yesno [tk_messageBox -default yes  -message "Select remesh size before running remesh. Continue?"  -title "Set Mesh Size"  -type yesno]
 
   if {$smasherInputName == "none"} {
@@ -28660,9 +28660,9 @@ proc guiCV_select_cpm_directory {} {
   foreach solid $solids {
       set packFrame $topPackFrame.tframe$id
       ttk::frame $packFrame
-      $packFrame configure -relief raised 
+      $packFrame configure -relief raised
       pack $topPackFrame $packFrame -side left -fill x -expand 1
-      incr id 
+      incr id
       foreach child [pack slaves $templateFrame] {
           set name [lindex [split $child .] end]
           set widgetType [winfo class $child]
@@ -28789,7 +28789,7 @@ proc guiCV_select_cpm_directory {} {
     foreach mypic $gAnatomicModelSurfacePictures($model_id) {
       lappend guiRESULTSvars(plot_objs_$solid)  [lindex $gPictures($mypic) 0]
       lappend guiRESULTSvars(plot_names_$solid) [lindex $gPictures($mypic) 1]
-    }    
+    }
   }
 
   set leftmenu $symbolicName(results_tab_left_3D_menu).m
@@ -28815,7 +28815,7 @@ proc guiCV_select_cpm_directory {} {
       lappend guiRESULTSvars(3D_objs_$solid)  $myvtkobj
       lappend guiRESULTSvars(3D_scalar_ranges_$solid) $range
       incr id
-    }    
+    }
   }
 }
 
@@ -28858,7 +28858,7 @@ proc guiCV_select_project_directory {} {
 
   global SIMVASCULAR_VERSION
   global SIMVASCULAR_MAJOR_VER_NO
- 
+
   if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SIMVASCULAR_VERSION $SIMVASCULAR_MAJOR_VER_NO" LastProjectDir $dir} msg] {
        puts "ERROR updating LastProjectDir in registry! ($msg)"
   }
@@ -28898,7 +28898,7 @@ proc guiCV_squeezer_labelframe { frame widget} {
     #foreach i [array names opts] {
       #puts "$i: $opts($i)"
       #if {$i != "-in" } {
-      #  
+      #
       #}
     #}
     pack configure $widget$frame -side $opts(-side) -fill $opts(-fill) -expand $opts(-expand) -anchor $opts(-anchor)
@@ -28906,8 +28906,8 @@ proc guiCV_squeezer_labelframe { frame widget} {
     set orgtext [$widget cget -text]
     if {[string range $orgtext end-2 end] == {[+]}} {
       set orgtext [string range $orgtext 0 end-4]
-    } 
-    $widget configure -text "$orgtext \[\-\]" 
+    }
+    $widget configure -text "$orgtext \[\-\]"
   } else {
     set guiCVvars($widget$frame\_pack_info) [pack info $widget$frame]
     set guiCVvars($widget$frame) 0
@@ -28917,8 +28917,8 @@ proc guiCV_squeezer_labelframe { frame widget} {
     set orgtext [$widget cget -text]
     if {[string range $orgtext end-2 end] == {[-]}} {
       set orgtext [string range $orgtext 0 end-4]
-    } 
-    $widget configure -text "$orgtext \[\+\]" 
+    }
+    $widget configure -text "$orgtext \[\+\]"
   }
 }
 
@@ -28941,7 +28941,7 @@ pack configure $frame2 -fill $opts(-fill)
 
 # Procedure: guiCVloadDICOM
 proc guiCVloadDICOM {} {
-      
+
   global gImageVol
   createPREOPloadsaveVolFile
   if {$gImageVol(tmpfilename) != ""} {
@@ -28981,10 +28981,10 @@ proc guiCVshowHideMenu { mainbox text} {
   global guiCVvars
 
   set fbox $symbolicName($mainbox)
-  
+
   set varname show_tab_[string range $mainbox 15 end]\_$text
   set varname [string tolower [regsub -all " " $varname _]]
-  
+
   eval set flag \$guiCVvars($varname)
 
   #puts "tab is $varname"
@@ -28993,7 +28993,7 @@ proc guiCVshowHideMenu { mainbox text} {
   for {set i 0} {$i < $num_tabs} {incr i} {
     set opvals [$fbox tab $i]
     array set vals $opvals
-    # hide 
+    # hide
     #puts "-text $vals(-text)"
 
     if {[string tolower $vals(-text)] == [string tolower $text]} {
@@ -29017,7 +29017,7 @@ proc guiCVshowHideMenu { mainbox text} {
 proc guiCVshowHideMenu_SV_level_set {} {
   global guiCVvars
   set guiCVvars(show_tab_create_vessel_legacy_level_set) $guiCVvars(show_tabs_legacy_level_set)
-  set guiCVvars(show_tab_3d_ls_segment) $guiCVvars(show_tabs_legacy_level_set) 
+  set guiCVvars(show_tab_3d_ls_segment) $guiCVvars(show_tabs_legacy_level_set)
   guiCVshowHideMenu guiCV_notebook_create_vessel "Legacy Level Set"
   guiCVshowHideMenu guiCV_notebook_3D_LS "Segment"
 }
@@ -29039,7 +29039,7 @@ proc guiDELETEvis {} {
   global gOptions
   global gObjects
 
-  set kernel $gOptions(meshing_solid_kernel) 
+  set kernel $gOptions(meshing_solid_kernel)
   set solid $gObjects(polydata_solid)
 
   if {$kernel != "PolyData"} {
@@ -29068,7 +29068,7 @@ proc guiDICOM_select_original_dicom_dir {} {
   if {![file isdirectory $dir]} {
      return -code error "ERROR:  ($dir) is not a directory!"
   }
- 
+
   set guiDICOMvars(original_dicom_dir) $dir
 
   set guiDICOMvars(original_dicom_files) {}
@@ -29118,7 +29118,7 @@ proc guiDICOMsortFiles {} {
 proc guiFILT { operation} {
   global guiFILTvars
   set image_obj $guiFILTvars(volume)
-  set backup_obj "$image_obj/backup" 
+  set backup_obj "$image_obj/backup"
   # restore original image volume
   if {$operation == "restore"} {
     if {![repos_exists -obj $backup_obj]} {
@@ -29182,7 +29182,7 @@ proc guiFILT { operation} {
 
    repos_delete -obj $image_obj
    repos_importVtkImg -src [$caster GetOutput] -dst $image_obj
-   
+
    $caster Delete
    repos_delete -obj $floatSmoothImg
    repos_delete -obj $floatImg
@@ -29208,7 +29208,7 @@ proc guiFILT { operation} {
 
    repos_delete -obj $image_obj
    repos_importVtkImg -src [$ansy GetOutput] -dst $image_obj
-   
+
    $ansy Delete
 
  } elseif {$operation == "shift_and_scale"} {
@@ -29234,7 +29234,7 @@ proc guiFILT { operation} {
 
    repos_delete -obj $image_obj
    repos_importVtkImg -src [$shifty GetOutput] -dst $image_obj
-   
+
    $shifty Delete
 
  } elseif {$operation == "threshold"} {
@@ -29392,7 +29392,7 @@ proc guiFNMloadSolidModel { fn solid} {
           set gDiscreteModelFaceNames($id) "noname_$id"
         }
       }
-    } elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {      
+    } elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
       global gPolyDataFaceNames
       global gPolyDataFaceNamesInfo
       catch {unset gPolyDataFaceNames}
@@ -30033,12 +30033,12 @@ proc guiMESHSIM_load_polydata {} {
 #    } else {
 #      #If boundaries aren't identified, read in PolyData as full PolyData
 #      #Boundaries will be extracted with Surface Extraction button
-#      guiMMloadPolyData $smasherInputName 
+#      guiMMloadPolyData $smasherInputName
 #      return
     }
   }
   guiTRIMvis vis_initial_surface
-   
+
   return
 }
 
@@ -30119,7 +30119,7 @@ proc guiMMadaptMesh {} {
   set model_file             $gFilenames(atdb_solid_file)
   set mesh_file              $gFilenames(mesh_file)
   set solution_file          [file join $guiMMvars(error_input_dir) $gFilenames(solution_file)]
-  # gui has been hard wired to only let use create a combo result and error file 
+  # gui has been hard wired to only let use create a combo result and error file
   #set error_file             [file join $guiMMvars(error_input_dir) $gFilenames(error_file)]
   set error_file             [file join $guiMMvars(error_input_dir) $gFilenames(solution_file)]
   set out_mesh_file          $gFilenames(adapted_mesh_file)
@@ -30198,7 +30198,7 @@ proc guiMMbrowseFileScript { name} {
    } elseif {$gOptions(meshing_kernel) == "TetGen"} {
      set fn [tk_getOpenFile -filetypes {{"TetGen" *.tgs}} -title "Choose Mesh Script File"]
    } else {
-     return -code error "ERROR: Must Choose Meshing Kernel Type"  
+     return -code error "ERROR: Must Choose Meshing Kernel Type"
    }
    if {$fn != ""} {
      set gFilenames($name) $fn
@@ -30231,7 +30231,7 @@ proc guiMMbrowseFileSolid { name} {
 
 # Procedure: guiMMcheckMeshSimLicenseKeys
 proc guiMMcheckMeshSimLicenseKeys {} {
-  
+
   set pk [guiMMfindMeshSimLicenseKeys]
 
   set meshsim_value_names [registry values "$pk" MESHSIM*]
@@ -30283,7 +30283,7 @@ proc guiMMcreateCondensedFile {} {
 
   catch {exec $cvpost -sn $stepnum -indir $indir -outdir $indir $ascflag $dispflag $tractflag $wssflag -sol -ybar -ph} msg
 
-  global gFilenames 
+  global gFilenames
   set gFilenames(solution_file) $guiMMvars(error_input_dir)/restart.$stepnum.0
   #tk_messageBox -message $msg -title "cvpostsolver output" -icon info -type ok
   guiSVMSGshow $msg
@@ -30468,7 +30468,7 @@ proc guiMMcreateScriptFile {} {
 
 # Procedure: guiMMfindMeshSimLicenseKeys
 proc guiMMfindMeshSimLicenseKeys {} {
-  
+
   global SIMVASCULAR_VERSION
 
   global tcl_platform
@@ -30544,7 +30544,7 @@ proc guiMMinstallMeshSimLicenseKeys {} {
 
   # process file and add new keys
 
-  # do we need to worry about /cr on linux here? 
+  # do we need to worry about /cr on linux here?
   set licfp [open $fn r]
   while {[gets $licfp line] >= 0} {
     if {$line == ""} continue
@@ -30593,7 +30593,7 @@ proc guiMMlaunchInternal {} {
       set yesno [tk_messageBox -message "Use currently selected meshing options?  This will save/overwrite the meshing script file." -default yes -icon question -type yesno]
       if {$yesno == "yes"} {
    if {$meshing_kernel == "MeshSim"} {
-           guiMESHSIM_save_script_file 
+           guiMESHSIM_save_script_file
    } elseif {$meshing_kernel == "TetGen"} {
      guiTETGEN_save_script_file
    } else {
@@ -30610,7 +30610,7 @@ proc guiMMlaunchInternal {} {
         catch {vis_pRm $gRen3d $gObjects(mesh_object_pd)}
       }
       puts $gOptions(meshing_kernel)
-      
+
       if [catch {repos_delete -obj $gObjects(mesh_object)} msg] {
   puts $msg
       }
@@ -30648,7 +30648,7 @@ proc guiMMloadPolyData { object} {
   #shaddenlab.berkeley.edu
   #
   #This is a procedure to load the solid model as a full PolyData
-  #The boundaries can then be extracted later with the GetBoundaryFaces 
+  #The boundaries can then be extracted later with the GetBoundaryFaces
   #method
 
   global gRenWin_3D_vars
@@ -30656,7 +30656,7 @@ proc guiMMloadPolyData { object} {
   global gObjects
   global gOptions
   global gRen3d
-  
+
   set kernel $gOptions(meshing_solid_kernel)
   set useLOD $gRenWin_3D_vars(solid_use_LOD)
   set pd /gRenWin_3D/meshing_solid/pd
@@ -30704,7 +30704,7 @@ proc guiMMmeshControlAttributesShow {} {
   } elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
     global gDiscreteModelFaceNames
     foreach id [array names gDiscreteModelFaceNames] {
-       lappend names $gDiscreteModelFaceNames($id) 
+       lappend names $gDiscreteModelFaceNames($id)
     }
   } else {
     return -code error "ERROR: invalid solid kernel ($kernel)"
@@ -30742,7 +30742,7 @@ proc guiMMmodelSaveModel {} {
   global gObjects
   global gOptions
 
-  if {$gOptions(meshing_solid_kernel) == "Parasolid" || $gOptions(meshing_solid_kernel) == "Discrete"} { 
+  if {$gOptions(meshing_solid_kernel) == "Parasolid" || $gOptions(meshing_solid_kernel) == "Discrete"} {
     set filename $gFilenames(atdb_solid_file)
     set modelname $gObjects(atdb_solid)
   } elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
@@ -30820,7 +30820,7 @@ proc guiMMreadMesh {} {
   global gOptions
   $meshobj SetSolidKernel -name $gOptions(meshing_solid_kernel)
   $meshobj LoadModel -file $gFilenames(atdb_solid_file)
-  $meshobj NewMesh  
+  $meshobj NewMesh
   $meshobj LoadMesh -file $gFilenames(mesh_file)
   #mesh_newObject -result $meshobj -solidfile $gFilenames(atdb_solid_file)  -meshfile $gFilenames(mesh_file)
 }
@@ -31001,7 +31001,7 @@ proc guiMMreadScriptFile {} {
     if {[file exists $gFilenames(tet_mesh_script_file)] != 1} {
       puts "ERROR:  File \"$gFilenames(mesh_script_file)\" does not exist!"
       return -code error "ERROR:  File \"$gFilenames(mesh_script_file)\" does not exist!"
-    }  
+    }
     guiMMreadTetGenScriptFile
   }
 }
@@ -31369,7 +31369,7 @@ proc guiPDsaveCenterlines {} {
   set initialfilename [file tail $gFilenames(polydata_solid_file)]
   set fn [tk_getSaveFile -filetypes { {"VTK" .vtp}} -defaultextension .vtp -title "Save Centerlines" -initialfile $initialfilename -initialdir $initialdirectory ]
 
-  if {$fn == ""} { 
+  if {$fn == ""} {
      puts "User Cancelled."
      return
   }
@@ -31400,7 +31400,7 @@ proc guiPDsaveVoronoi {} {
   set initialfilename [file tail $gFilenames(polydata_solid_file)]
   set fn [tk_getSaveFile -filetypes { {"VTK" .vtp}} -defaultextension .vtp -title "Save Voronoi" -initialfile $initialfilename -initialdir $initialdirectory ]
 
-  if {$fn == ""} { 
+  if {$fn == ""} {
      puts "User Cancelled."
      return
   }
@@ -31496,7 +31496,7 @@ proc guiPHASTAcreateNumstartFile {} {
   set initialfilename [file tail $gFilenames(numstart_file)]
   set fn [tk_getSaveFile -filetypes { {"Numstart File" .dat}} -defaultextension .dat -title "Save Numstart" -initialfile $initialfilename -initialdir $initialdirectory ]
 
-  if {$fn == ""} { 
+  if {$fn == ""} {
      puts "User Cancelled."
      return
   }
@@ -31711,23 +31711,23 @@ proc guiPOSTconvertFilesToVTK {} {
     set wallfile [string trim $guiPOSTvars(meshFaceFile)]
     if {$wallfile == ""} {
       tk_messageBox -title "Wall File Not Provided"  -type ok -message "Please specify a wall file for wall data output!"
-      return       
+      return
     } else {
       if {[file exists $wallfile]==0} {
         tk_messageBox -title "Wall File Not Found"  -type ok -message "Please provide a correct name!"
-        return    
+        return
       }
       set wallflag "-wfilter"
       set wallfile "\"$wallfile\""
     }
-  
+
     if {$guiPOSTvars(recalc_wall_stress)} {
 
       set mu [string trim $guiPOSTvars(mu)]
       if {$mu != ""} {
         set muflag "-mu"
-      } else { 
-        set yesno [tk_messageBox -default yes -message "You have not provided fluid viscosity. Make sure geombc file has the value. Continue?" -title "Missing Viscosity Value" -type yesno]   
+      } else {
+        set yesno [tk_messageBox -default yes -message "You have not provided fluid viscosity. Make sure geombc file has the value. Continue?" -title "Missing Viscosity Value" -type yesno]
         switch -- $yesno {
           yes {
           }
@@ -31737,14 +31737,14 @@ proc guiPOSTconvertFilesToVTK {} {
         }
       }
       set calcws "-calcws"
-      
+
       if {$guiPOSTvars(apply_wall_deformation)} {
         set applywd "-applywd"
       }
     }
   }
   set cmdstr "-all -indir \"$indir\" -outdir \"$outdir\" $vtkcombo $simunitsflag -start $start -stop $stop -incr $increment $makevtu $vtufn $makevtp $vtpfn $laststep $wallflag $wallfile $calcws $applywd $muflag $mu"
-  
+
   puts "executing cvpostsolver with cmdstr: $cmdstr"
 
   global gExternalPrograms
@@ -31846,7 +31846,7 @@ proc guiPOSTselectFlowsFile {} {
       set initdir [pwd]
       set fn ""
   }
-     
+
   set fn [tk_getOpenFile -initialdir $initdir -initialfile $fn]
   if {$fn == ""} return
   set guiPOSTvars(vtkFlowFile) $fn
@@ -31883,7 +31883,7 @@ proc guiPOSTselectMeshFaceFile {} {
 
 # Procedure: guiPOSTselectRestartDir
 proc guiPOSTselectRestartDir {} {
-  
+
   global guiPOSTvars
 
   set fn [tk_getOpenFile -defaultextension restart.*.1 -initialdir [pwd] -multiple 1]
@@ -32274,7 +32274,7 @@ proc guiPOSTwriteCompleteMeshFiles {} {
    }
 
    if {[repos_exists -obj $solid] == 0} {
-       set yesno [tk_messageBox -default yes -message "You have not loaded the solid model used for meshing.  Load it now?" -title "Missing Solid Model" -type yesno]   
+       set yesno [tk_messageBox -default yes -message "You have not loaded the solid model used for meshing.  Load it now?" -title "Missing Solid Model" -type yesno]
        switch -- $yesno {
          yes {
                guiFNMloadSolidModel atdb_solid_file atdb_solid
@@ -32294,7 +32294,7 @@ proc guiPOSTwriteCompleteMeshFiles {} {
    #if [file exists $outdir] {
    #   return -code error "ERROR: Can't specify an existing directory!"
    #}
-   
+
    # guess prefix based on solid model
    set prefix [file rootname [file tail $outdir]]
 
@@ -32491,7 +32491,7 @@ proc guiPPchooserAddPointBelowSelection { args} {
     set nextId [expr $i + 1]
     set gPathPoints($pathId,$nextId) $gPathPoints($pathId,$i)
   }
-  
+
   set gPathPoints($pathId,[expr $posId + 1]) $point
 
   guiSV_path_update_tree
@@ -32781,7 +32781,7 @@ proc guiPPchooserDeletePoint {} {
   }
 
   guiSV_path_update_tree
- 
+
   guiPPchooserShowPath
   guiPPchooserShowSpline
 }
@@ -33080,11 +33080,11 @@ proc guiPPchooserShowSpline {} {
      return
   }
 
-  set splinePts $gPathPoints($id,splinePts) 
+  set splinePts $gPathPoints($id,splinePts)
 
   if {[llength $splinePts] < 2} {
      return
-   } 
+   }
 
    path_MakePolyData $splinePts $splinePd
 
@@ -33284,7 +33284,7 @@ proc guiPPchooserToggleSplineInteractor {} {
   for {set i 0} {$i < $maxnum} {incr i} {
      lappend pts $gPathPoints($pathId,$i)
   }
-  
+
   # can only create a spline if we have more than 2 points
   if {[llength $pts] < 2} {
     return -code error "not enough points to display spline!"
@@ -33629,7 +33629,7 @@ proc guiPPcreateDistanceMap {} {
   }
 
   catch {repos_delete -obj $distobj}
- 
+
   if {[string trim $pathId] == ""} {
     puts "ERROR:  Must specify a Path ID before selecting points!"
     return -code error "ERROR:  Must specify a Path ID before selecting points!"
@@ -33923,7 +33923,7 @@ proc guiPPquantChangeNumSplinePts { pathNo} {
 
 # Procedure: guiPPquantSaveAngleToFile
 proc guiPPquantSaveAngleToFile {} {
- 
+
   # make sure angle is current
   guiPPquant_calc_parallel_ref
 
@@ -34066,11 +34066,11 @@ proc guiPPquantSelectPath { pathNo} {
     set startScale $symbolicName(guiPPquantStartIDScale_$pathNo)
     set stopScale $symbolicName(guiPPquantStopIDScale_$pathNo)
     set posScale  $symbolicName(guiPPquantPositionScale_$pathNo)
- 
+
     $startScale configure -from $min -to $max
     $stopScale  configure -from $min -to $max
     $posScale   configure -from $min -to $max
- 
+
     if {$guiSVvars(path_quantification_current_position_$pathNo) > $max} {
       set guiSVvars(path_quantification_current_position_$pathNo) $max
     }
@@ -34136,7 +34136,7 @@ proc guiPPquantUpdateDisplay { pathNo pressed} {
 
   global gRen3d
   global guiSVvars
-  
+
   set splinePd /guiPPquant/path/$pathNo
   set splinePts $guiSVvars(path_quantification_spline_$pathNo)
   if {$pressed == "path" || $pressed == "all"} {
@@ -34152,7 +34152,7 @@ proc guiPPquantUpdateDisplay { pathNo pressed} {
       if {$pathNo == "path1"} {
         eval $myprop SetColor $guiSVvars(path_quantification_color_path1)
       } elseif {$pathNo == "path2"} {
-        eval $myprop SetColor $guiSVvars(path_quantification_color_path2) 
+        eval $myprop SetColor $guiSVvars(path_quantification_color_path2)
       } elseif {$pathNo == "twistpath"} {
         eval $myprop SetColor $guiSVvars(path_quantification_color_twistpath)
       } elseif {$pathNo == "refpath"} {
@@ -34363,7 +34363,7 @@ proc guiPPquant_calc_discrete_curvature { p1 p2 p3} {
   set a1 [lindex $vec_p2_p1 0]
   set b1 [lindex $vec_p2_p1 1]
   set c1 [lindex $vec_p2_p1 2]
- 
+
   set a2 [lindex $vec_p2_p3 0]
   set b2 [lindex $vec_p2_p3 1]
   set c2 [lindex $vec_p2_p3 2]
@@ -34409,7 +34409,7 @@ proc guiPPquant_calc_discrete_curvature { p1 p2 p3} {
 
 # Procedure: guiPPquant_calc_index_projection
 proc guiPPquant_calc_index_projection { coord_main_vessel coord_branch} {
-  
+
 
   #-------------------------------
   # calculate coorrdinate of the projection
@@ -34424,7 +34424,7 @@ proc guiPPquant_calc_index_projection { coord_main_vessel coord_branch} {
     set distance_to_branch [math_distance $coord_main_vessel_j $coord_branch]
 
     if {$distance_to_branch < $min_distance} {
-      set index_min_distance $j 
+      set index_min_distance $j
       set min_distance $distance_to_branch
     }
   }
@@ -34437,7 +34437,7 @@ proc guiPPquant_calc_index_projection { coord_main_vessel coord_branch} {
 proc guiPPquant_calc_parallel_ref {} {
 
   global guiSVvars
-  
+
   set main_path $guiSVvars(path_quantification_spline_twistpath)
   set main_tangents $guiSVvars(path_quantification_tangents_twistpath)
   if {$main_path == "" || $main_tangents == ""} {
@@ -34476,14 +34476,14 @@ proc guiPPquant_calc_parallel_ref {} {
     set coord_main_vessel_spline_tan_next_i [lindex $coord_main_vessel_spline_tan $next_i]
     set vec_ref_i [math_cross $coord_main_vessel_spline_tan_next_i $coord_main_vessel_spline_tan_i]
 
-    set mag_invariant_axis [math_magnitude $vec_ref_i]   
+    set mag_invariant_axis [math_magnitude $vec_ref_i]
     set vec_ref_i_normalized [math_normalize $vec_ref_i]
     set vec_ref_i_scaled [math_scaleVec $vec_ref_i_normalized $mag_vec_start]
-    
+
     set ang_wrt_ref_deg [math_radToDeg [math_angleBtw3DVectors $vec_ref_i $vec_start]]
 
     # find sign to determine rotation orientation
-    set cross_ref_start [math_cross $vec_ref_i $vec_start ]  
+    set cross_ref_start [math_cross $vec_ref_i $vec_start ]
     set dot_tan_vec_i_cross_ref_start [math_dot $coord_main_vessel_spline_tan_i $cross_ref_start]
     set sign_criteria $dot_tan_vec_i_cross_ref_start
 
@@ -34500,7 +34500,7 @@ proc guiPPquant_calc_parallel_ref {} {
     set vec_start [math_matrix_mult_3x1 $rot_mat $vec_ref_i_scaled]
     set parallel_ref_j [math_addVectors $vec_start $coord_main_vessel_spline_next_i]
     lappend parallel_ref $parallel_ref_j
-    lappend parallel_ref_for_plot $parallel_ref_j 
+    lappend parallel_ref_for_plot $parallel_ref_j
   }
 
   lappend parallel_ref_for_plot $coord_ostia_B_prj
@@ -34598,7 +34598,7 @@ proc guiPPsavePaths {} {
 
   set gFilenames(path_file) $fn
   if { [string tolower [file extension gFilenames(path_file)]] != ".paths"} {
-    set gFilenames(path_file) $gFilenames(path_file).paths 
+    set gFilenames(path_file) $gFilenames(path_file).paths
     puts $gFilenames(path_file)
   }
 
@@ -34915,7 +34915,7 @@ proc guiPPsmoothSmoothPath {} {
   set numModes $guiPPsmoothNumFourierModes
   if { $numModes < 2} {
     tk_messageBox -title "Not Enough Modes"  -type ok -message "Number of fourier mode must be greater than 1."
-   return 
+   return
   }
 
 
@@ -34939,7 +34939,7 @@ proc guiPPsmoothSmoothPath {} {
   for {set i 0} {$i < [llength $pts]} {incr i} {
      set gPathPoints($targetID,$i) [lindex $pts $i]
   }
-  
+
   # preserve name and number of spline points if it exists
   set gPathPoints($targetID,name) $name
   set gPathPoints($targetID,numSplinePts) $numSplinePts
@@ -35333,7 +35333,7 @@ proc guiRESULTS3Dshow { side type} {
       catch {vis_lodRm $gRen3d $i}
       catch {vis_pRm $gRen3d $i}
     }
-    
+
     # map string to plot name
     set selected_3D_name $guiRESULTSvars($side\_3D_selected)
     set solid $guiRESULTSvars($side\_selected_solid_model)
@@ -35446,14 +35446,14 @@ proc guiRESULTSselectModel { side type} {
     if {$selected_model_index < 0} {
       return -code error "ERROR: could not find solid obj for solid name!"
     }
-    set selected_model [lindex $guiRESULTSvars(solid_objs) $selected_model_index]  
+    set selected_model [lindex $guiRESULTSvars(solid_objs) $selected_model_index]
   }
 
   array set visopts $guiRESULTSvars(visopts_solid_$selected_model)
   set guiRESULTSvars($side\_show) $visopts(show)
   set guiRESULTSvars($side\_opacity_scale_value) $visopts(opacity)
   set guiRESULTSvars($side\_color) [list $visopts(r) $visopts(g) $visopts(b)]
-  set guiRESULTSvars($side\_selected_solid_model) $selected_model   
+  set guiRESULTSvars($side\_selected_solid_model) $selected_model
 
   guiRESULTSupdatePlotsMenu $side
   guiRESULTSupdate3DMenu $side
@@ -35479,7 +35479,7 @@ proc guiRESULTSselectPlots { side} {
     if {$selected_plot_index < 0} {
       return -code error "ERROR: could not find plot photo for solid name!"
     }
-    set guiRESULTSvars($side\_plot_photo) [lindex $guiRESULTSvars(plot_objs_$solid) $selected_plot_index]  
+    set guiRESULTSvars($side\_plot_photo) [lindex $guiRESULTSvars(plot_objs_$solid) $selected_plot_index]
   }
 
   guiRESULTSupdateLabelImage $side 0
@@ -35724,7 +35724,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
 
     set n2 $guiRUNSOLVERvars(num_procs_osmsc02)
     set n4 $guiRUNSOLVERvars(num_procs_osmsc04)
-  
+
     set num_procs [expr $n2 + $n4 ]
 
     if {$n2 > 0} {
@@ -35733,7 +35733,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
     if {$n4 > 0} {
       incr num_hosts
     }
- 
+
     if {$num_procs == 0} {
       return -code error "ERROR:  No procs ($num_procs)"
     }
@@ -35791,7 +35791,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
     foreach i [lsort -dictionary [array names useip]] {
       set hosts "$hosts $i $useip($i)"
     }
- 
+
   } else {
 
     return -code error "ERROR: unknown system ($system)."
@@ -35816,7 +35816,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
       foreach fn [glob [file join $rundir *.dat]] {
         file copy $fn $fullrundir
       }
-  
+
       #file copy [file join $rundir numstart.dat] $fullrundir
 
       #if {[file exists [file join $rundir bct.dat]] || [file exists [file join $rundir bct1.dat]]} {
@@ -35872,7 +35872,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
   set POSTSOLVER    $gExternalPrograms(cvpostsolver)
   set MPIEXEC       $gExternalPrograms(mpiexec)
   set SOLVER        $gExternalPrograms(cvflowsolver)
-  set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(cvflowsolver)] 
+  set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(cvflowsolver)]
   set ADAPTOR       $gExternalPrograms(cvadaptor)
 
   set stdout_file $guiRUNSOLVERvars(log_dir)
@@ -35927,7 +35927,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
 
     puts $fp "exec \"$MPIEXEC\" -wdir \"$fullrundir\" $npflag $num_procs \"$SOLVER\" \"$fullrundir/solver.inp\" \"$stdout_file\" >>& $solver_log_file &\n\n"
     set pid [eval exec \"$MPIEXEC\" -wdir \"$fullrundir\" $npflag $num_procs \"$SOLVER\" \"$fullrundir/solver.inp\" \"$stdout_file\" >>& $solver_log_file &]
- 
+
   }
 
   puts $fp "Solver pid ($pid)."
@@ -36033,7 +36033,7 @@ proc guiRUNSOLVERstopTail { filename} {
 
 # Procedure: guiRUNSOLVERwhoami
 proc guiRUNSOLVERwhoami {} {
-  global guiRUNSOLVERvars  
+  global guiRUNSOLVERvars
   set guiRUNSOLVERvars(user) [file tail [exec whoami]]
 }
 
@@ -36316,10 +36316,10 @@ proc guiSVIMG_canvas_bind { w bounds tol} {
 # Procedure: guiSVIMG_canvas_calc_histogram
 proc guiSVIMG_canvas_calc_histogram { bounds} {
 
-    # Get the size of the histogram window    
+    # Get the size of the histogram window
     set width [expr [lindex $bounds 1] - [lindex $bounds 0]]
     set height [expr [lindex $bounds 3] - [lindex $bounds 2]]
-    
+
     # Setup the bins of the accumulate filter from the range of input data
     set accumulate tmp-guiSVIMG_canvas_add_histogram-accum
     catch {$accumulate Delete}
@@ -36331,7 +36331,7 @@ proc guiSVIMG_canvas_calc_histogram { bounds} {
     global guiCVIMGvars
     set xmin $guiCVIMGvars(vol_ren_min_range)
     set xmax $guiCVIMGvars(vol_ren_max_range)
-    set inputRange [list $xmin $xmax]       
+    set inputRange [list $xmin $xmax]
 
     set origin [lindex $inputRange 0]
 
@@ -36406,7 +36406,7 @@ proc guiSVIMG_canvas_done { args} {
          set y [math_linInterp1D 10.0 110.0 1.0 0.0 $py]
          if {$y < 0} {set y 0}
          #puts "pt $i: $x $y"
-         lappend newPts [list $x $y]         
+         lappend newPts [list $x $y]
      }
      global guiVIB
      set guiVIB(opacityFunction) $newPts
@@ -36423,7 +36423,7 @@ proc guiSVIMG_canvas_done { args} {
     set redPts [$Cred coords line0]
     set greenPts [$Cgreen coords line0]
     set bluePts [$Cblue coords line0]
-  
+
     set id 0
     foreach ptset [list $redPts $greenPts $bluePts] {
       set numPts [expr [llength $ptset] / 2]
@@ -36437,7 +36437,7 @@ proc guiSVIMG_canvas_done { args} {
         set y [math_linInterp1D 10.0 110.0 1.0 0.0 $py]
   if {$y < 0} {set y 0}
         lappend allX $x
-        set orgpts($id) "$orgpts($id) $x $y"         
+        set orgpts($id) "$orgpts($id) $x $y"
       }
       incr id
     }
@@ -36453,7 +36453,7 @@ proc guiSVIMG_canvas_done { args} {
     }
     global guiVIB
     set guiVIB(colorFunction) $colorFn
-    volGUIupdateVolRender guiVIB color   
+    volGUIupdateVolRender guiVIB color
 
   }
 }
@@ -36563,7 +36563,7 @@ proc guiSVIMG_canvas_redraw { w dx dy bounds} {
     set x [lindex $bounds 1]
     set dx [expr $x - [lindex $coords $from]]
     #puts "x: $x dx: $dx coords: [lindex $coords $from]"
-        } 
+        }
         if {$y <= [lindex $bounds 2]} {
     set y [lindex $bounds 2]
     set dy [expr $y - [lindex $coords $to]]
@@ -36633,7 +36633,7 @@ proc guiSVIMG_vol_ren_with_canvas {} {
     $w create line [lindex $bounds 1] [lindex $bounds 3]  [lindex $bounds 1] [lindex $bounds 2]  -fill black -tag rightbdr
     $w create line [lindex $bounds 1] [lindex $bounds 2]  [lindex $bounds 0] [lindex $bounds 2]  -fill black -tag topbdr
     $w create line [lindex $bounds 0] [lindex $bounds 2]  [lindex $bounds 0] [lindex $bounds 3]  -fill black -tag leftbdr
-    foreach pt $histopts { 
+    foreach pt $histopts {
       eval $w create line $pt -fill gray
     }
     $w create line 50 110 350 10  -fill $color -tag line0
@@ -36659,7 +36659,7 @@ proc guiSVIMG_vol_ren_with_canvas_cleanup {} {
     bind $w <Double-1>        {}
     bind $w <B1-Motion>       {}
     bind $w <ButtonRelease-1> {}
-    bind $w <Button-3>        {} 
+    bind $w <Button-3>        {}
   }
 }
 
@@ -36700,7 +36700,7 @@ proc guiSVIMG_vol_ren_with_canvas_update_histo {} {
     $w create line [lindex $bounds 1] [lindex $bounds 3]  [lindex $bounds 1] [lindex $bounds 2]  -fill black -tag rightbdr
     $w create line [lindex $bounds 1] [lindex $bounds 2]  [lindex $bounds 0] [lindex $bounds 2]  -fill black -tag topbdr
     $w create line [lindex $bounds 0] [lindex $bounds 2]  [lindex $bounds 0] [lindex $bounds 3]  -fill black -tag leftbdr
-    foreach pt $histopts { 
+    foreach pt $histopts {
       eval $w create line $pt -fill gray
     }
     eval $w create line $coords  -fill $color -tag line0
@@ -36746,7 +36746,7 @@ proc guiSV_copy_selected_members {} {
     set grp [lindex $seg 0]
     puts "id: $id grp: $grp"
 
-    if {![string is integer "$id"]} { puts "$grp $id not a contour" 
+    if {![string is integer "$id"]} { puts "$grp $id not a contour"
     } else {
       set obj /group/$grp/$id
       #puts "is contour $grp $id"
@@ -36776,7 +36776,7 @@ proc guiSV_delete_selected_members {} {
   }
   guiSV_group_update_tree
   set loftGroup 0
-  set groupItemValue [lindex [$tv item .groups.all.$grp -values] 1] 
+  set groupItemValue [lindex [$tv item .groups.all.$grp -values] 1]
   if {$groupItemValue == "X"} {
     set loftGroup 1
   }
@@ -36827,7 +36827,7 @@ proc guiSV_group_change_selected_color {} {
        #gdscGeneralView $gRen3d $member
       }
     set groupShow [lindex [$tv item .groups.all.$grp -values] 2]
-    if {$groupShow == "X"} { 
+    if {$groupShow == "X"} {
       guiSV_group_display_selected_groups 1
     }
   }
@@ -36858,7 +36858,7 @@ proc guiSV_group_copy_members {} {
   }
 
   if {[group_create $name] != "0"} {puts "group created $name"}
-  
+
   foreach seg $segs {
     set id [lindex $seg 1]
     set grp [lindex $seg 0]
@@ -36944,8 +36944,8 @@ proc guiSV_group_deselect_groups_for_lofting {} {
   set selected [guiSV_group_get_tree_current_groups_selected]
   if {$selected != ""} {
     foreach grp $selected {
-     set col2var [lindex [$tv item .groups.all.$grp -values] 1] 
-     set col3var [lindex [$tv item .groups.all.$grp -values] 2] 
+     set col2var [lindex [$tv item .groups.all.$grp -values] 1]
+     set col3var [lindex [$tv item .groups.all.$grp -values] 2]
      $tv item .groups.all.$grp -values [list "" $col2var $col3var]
      set idx [lsearch $guiBOOLEANvars(selected_groups) $grp]
      set guiBOOLEANvars(selected_groups) [lreplace $guiBOOLEANvars(selected_groups) $idx $idx]
@@ -36954,8 +36954,8 @@ proc guiSV_group_deselect_groups_for_lofting {} {
   set selected [guiSV_group_get_tree_current_surfaces_selected]
   if {$selected != ""} {
     foreach grp $selected {
-     set col2var [lindex [$tv item .groups.3d.$grp -values] 1] 
-     set col3var [lindex [$tv item .groups.3d.$grp -values] 2] 
+     set col2var [lindex [$tv item .groups.3d.$grp -values] 1]
+     set col3var [lindex [$tv item .groups.3d.$grp -values] 2]
      $tv item .groups.3d.$grp -values [list "" $col2var $col3var]
      set idx [lsearch $guiBOOLEANvars(selected_seg3d) $grp]
      set guiBOOLEANvars(selected_seg3d) [lreplace $guiBOOLEANvars(selected_seg3d) $idx $idx]
@@ -36972,7 +36972,7 @@ proc guiSV_group_display_selected_groups { showFlag} {
   set tv $symbolicName(guiSV_group_tree)
   set selected [guiSV_group_get_tree_current_groups_selected]
   if {$selected == ""} return
-  
+
   foreach grp $selected {
     #grp color returns $gOptions(color_for_groups) it the color is not set
     set grpcolor [group_get_color $grp]
@@ -36988,12 +36988,12 @@ proc guiSV_group_display_selected_groups { showFlag} {
 
     # update tree display
     if {$showFlag == 0} {
-      set col1var [lindex [$tv item .groups.all.$grp -values] 0] 
-      set col2var [lindex [$tv item .groups.all.$grp -values] 1] 
+      set col1var [lindex [$tv item .groups.all.$grp -values] 0]
+      set col2var [lindex [$tv item .groups.all.$grp -values] 1]
       $tv item .groups.all.$grp -values [list $col1var $col2var ""]
     } else {
-      set col1var [lindex [$tv item .groups.all.$grp -values] 0] 
-      set col2var [lindex [$tv item .groups.all.$grp -values] 1] 
+      set col1var [lindex [$tv item .groups.all.$grp -values] 0]
+      set col2var [lindex [$tv item .groups.all.$grp -values] 1]
       $tv item .groups.all.$grp -values [list $col1var $col2var "X"]
     }
   }
@@ -37013,7 +37013,7 @@ proc guiSV_group_duplicate_group {} {
 
   set items [group_get $name]
   foreach i $items {
-    
+
         group_copy_member $i $name $newname
     }
 
@@ -37050,7 +37050,7 @@ proc guiSV_group_get_tree_current_groups_selected {} {
   foreach i $children {
     if [regexp .groups.all. $i] {
       set selected([lindex [split [string range $i 12 end] .] 0]) 1
-    } 
+    }
   }
   set allselected [lsort -dictionary [array names selected]]
   puts "selected $allselected"
@@ -37079,13 +37079,13 @@ proc guiSV_group_get_tree_current_members_selected {} {
         puts "skip ($i)"
         continue
       }
-      
+
       set grp [lindex [split [string range $i $tree_str_len end] .] 0]
       set member [lindex [split [string range $i $tree_str_len end] .] 1]
 
       # puts "$grp $member"
       lappend rtmembers [list $grp $member]
-    } 
+    }
   }
   puts "rtmembers $rtmembers"
   return $rtmembers
@@ -37109,7 +37109,7 @@ proc guiSV_group_get_tree_current_surfaces_selected {} {
   foreach i $children {
     if [regexp .groups.3d. $i] {
       set selected([lindex [split [string range $i 11 end] .] 0]) 1
-    } 
+    }
   }
   set allselected [lsort -dictionary [array names selected]]
   puts "selected $allselected"
@@ -37149,6 +37149,8 @@ proc guiSV_group_make_isosurface_3D_surface {} {
   set tv $symbolicName(guiSV_group_tree)
   set contourpd $gui3Dvars(smoothIsosurface)
   set objName Isosurface_$gui3Dvars(min_thr_value)
+  regsub -all {\.} $objName {_} objName
+  #$gui3Dvars(min_thr_value)
   catch {repos_delete -obj $objName}
   if {[repos_exists -obj $contourpd] == 0} {
     return -code error "ERROR: Show isosurface to convert 3D Surface"
@@ -37169,7 +37171,7 @@ proc guiSV_group_make_isosurface_3D_surface {} {
 
   }
   repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
-  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
+  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
   guiSV_group_update_tree
   DestroyWindow.svSaveSegWindow
   guiSV_model_display_selected_full_model 0
@@ -37212,7 +37214,7 @@ proc guiSV_group_rename_group {} {
   set items [group_get $name]
   foreach i $items {
     group_copy_member $i $name $newname
-      
+
     }
 
   group_delete $name
@@ -37255,7 +37257,7 @@ proc guiSV_group_selectTree { args} {
   foreach i $children {
     if [regexp .groups.all. $i] {
       set keepgroups([lindex [split [string range $i 12 end] .] 0]) 1
-    } 
+    }
   }
   set allgrpselected [lsort -dictionary [array names keepgroups]]
   puts "grp selected $allgrpselected"
@@ -37277,7 +37279,7 @@ proc guiSV_group_selectTree { args} {
   foreach i $children {
     if [regexp .groups.3d. $i] {
       set keepseg([lindex [split [string range $i 11 end] .] 0]) 1
-    } 
+    }
   }
   set allsegselected [lsort -dictionary [array names keepseg]]
   puts "seg selected $allsegselected"
@@ -37325,7 +37327,7 @@ proc guiSV_group_update_tree {} {
   set lsGUIcurrentGroup {}
 
 
-  if {[llength [group_names]] == 0} { 
+  if {[llength [group_names]] == 0} {
     $symbolicName(guiSV_group_tree) delete .groups.all
     $tv insert {} 0 -id .groups.all -text "2D Group Surfaces" -open 0
   }
@@ -37334,7 +37336,7 @@ proc guiSV_group_update_tree {} {
   $tv heading Loft -text "Use in Model"
   $tv heading DisplaySolid -text "Show Surface"
   $tv heading DisplayGroup -text "Show Members"
-  
+
   #Groups column
   $tv column \#0 -width 160 -anchor w
   $tv column \#0 -minwidth 100 -anchor w
@@ -37350,16 +37352,16 @@ proc guiSV_group_update_tree {} {
   #Show Members
   $tv column \#3 -width 120 -anchor center
   $tv column \#3 -minwidth 50 -anchor center
-  
+
   $tv configure -show [list tree headings]
 
-  # 2D groups 
+  # 2D groups
   foreach grp [lsort -dictionary [group_names]] {
     if {$previousCurrentGroup == $grp} {
        set groupStillExists 1
-    } 
+    }
     if {[$tv exists .groups.all.$grp] != 1} {
-          $tv insert .groups.all end -id .groups.all.$grp -text "$grp" -values {}    
+          $tv insert .groups.all end -id .groups.all.$grp -text "$grp" -values {}
     }
     set i 0
     foreach item [group_iditems $grp {}] {
@@ -37373,9 +37375,9 @@ proc guiSV_group_update_tree {} {
   foreach grp [lsort -dictionary [seg3d_names]] {
     if {$previousCurrentGroup == $grp} {
        set groupStillExists 1
-    } 
+    }
     if {[$tv exists .groups.3d.$grp] != 1} {
-          $tv insert .groups.3d end -id .groups.3d.$grp -text "$grp" -values {}    
+          $tv insert .groups.3d end -id .groups.3d.$grp -text "$grp" -values {}
     }
   }
 
@@ -37398,8 +37400,8 @@ proc guiSV_group_use_selected_groups_for_lofting {} {
   set work {}
   if {$selected != ""} {
     foreach grp $selected {
-     set col2var "[lindex [$tv item .groups.all.$grp -values] 1]" 
-     set col3var "[lindex [$tv item .groups.all.$grp -values] 2]" 
+     set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"
+     set col3var "[lindex [$tv item .groups.all.$grp -values] 2]"
      $tv item .groups.all.$grp -values [list "X" $col2var $col3var]
      lappend guiBOOLEANvars(selected_groups) $grp
     }
@@ -37407,13 +37409,13 @@ proc guiSV_group_use_selected_groups_for_lofting {} {
   set tmp {}
   foreach element $guiBOOLEANvars(selected_groups) {dict set tmp $element 1}
   set guiBOOLEANvars(selected_groups) [dict keys $tmp]
-  
+
   set work {}
   set selected [guiSV_group_get_tree_current_surfaces_selected]
   if {$selected != ""} {
     foreach grp $selected {
-     set col2var "[lindex [$tv item .groups.3d.$grp -values] 1]" 
-     set col3var "[lindex [$tv item .groups.3d.$grp -values] 2]" 
+     set col2var "[lindex [$tv item .groups.3d.$grp -values] 1]"
+     set col3var "[lindex [$tv item .groups.3d.$grp -values] 2]"
      $tv item .groups.3d.$grp -values [list "X" $col2var $col3var]
      lappend guiBOOLEANvars(selected_seg3d) $grp
     }
@@ -37436,9 +37438,9 @@ proc guiSV_info_selected_members {} {
     set grp [lindex $seg 0]
     puts "id: $id grp: $grp"
 
-    if {![string is integer "$id"]} { 
-    
-    puts "$grp $id not a contour" 
+    if {![string is integer "$id"]} {
+
+    puts "$grp $id not a contour"
 
     } else {
       set obj /group/$grp/$id
@@ -37488,7 +37490,7 @@ proc guiSV_path_delete_current_path {} {
   global guiSVvars
 
   set allselected [guiSV_path_get_tree_current_paths_selected]
-  
+
   set yesno [tk_messageBox -default no  -message "Really delete paths ($allselected)?  Cannot be undone."  -title "Confirm deleting path"  -type yesno]
   switch -- $yesno {
     yes {
@@ -37500,12 +37502,12 @@ proc guiSV_path_delete_current_path {} {
 
   set mapping {}
   # find all the paths using the key name
-  set funkynames [lsort -dictionary [array names gPathPoints *,name]]  
+  set funkynames [lsort -dictionary [array names gPathPoints *,name]]
   foreach funkyname $funkynames {
     set pathId [lindex [split [string trim $funkyname] ,] 0]
       if {[lsearch -exact $allselected $pathId] < 0} {
         lappend mapping [list $pathId $pathId]
-      } 
+      }
   }
   puts "mapping: $mapping"
   path_renumberPaths $mapping
@@ -37536,7 +37538,7 @@ proc guiSV_path_get_tree_current_paths_selected {} {
   foreach i $children {
     if [regexp .paths.all. $i] {
       set renamepath([lindex [split [string range $i 11 end] .] 0]) 1
-    } 
+    }
   }
   set allselected [lsort -integer [array names renamepath]]
   #puts "selected $allselected"
@@ -37568,7 +37570,7 @@ proc guiSV_path_get_tree_current_points_selected {} {
       set posId [lindex [split $i .] end]
 
       lappend rtnpts [list $pathId $posId $gPathPoints($pathId,$posId)]
-    } 
+    }
   }
   puts "rtnpts $rtnpts"
   return $rtnpts
@@ -37630,14 +37632,14 @@ proc guiSV_path_renumber_current_path {} {
   foreach i $children {
     if [regexp .paths.all. $i] {
       set renamepath([lindex [split [string range $i 11 end] .] 0]) 1
-    } 
+    }
   }
   set allselected [lsort -integer [array names renamepath]]
   puts "selected $allselected"
   if {[llength $allselected] > 1} {
      return -code error "Can only rename one path at a time!"
   }
-  
+
   set yesno [tk_messageBox -default no  -message "Really renumber path ID: ([lindex $allselected 0]) to ID: $guiSVvars(path_entry_path_id)?"  -title "Confirm path renumbering"  -type yesno]
   switch -- $yesno {
     yes {
@@ -37648,7 +37650,7 @@ proc guiSV_path_renumber_current_path {} {
   }
 
   # find all the paths using the key name
-  set funkynames [lsort -dictionary [array names gPathPoints *,name]]  
+  set funkynames [lsort -dictionary [array names gPathPoints *,name]]
   foreach funkyname $funkynames {
     set pathId [lindex [split [string trim $funkyname] ,] 0]
     if {$pathId != [lindex $allselected 0]} {
@@ -37681,7 +37683,7 @@ proc guiSV_path_selectTree { args} {
   foreach i $children {
     if [regexp .paths.all. $i] {
       set keeppath([lindex [split [string range $i 11 end] .] 0]) 1
-    } 
+    }
   }
   set allselected [lsort -integer [array names keeppath]]
   puts "selected $allselected"
@@ -37743,7 +37745,7 @@ proc guiSV_path_update_tree {} {
   $tv insert {} 0 -id .paths.all -text "All Paths" -open 0
   #$tv insert .paths end -id .paths.sorted -text "Sorted Paths" -open 0
   $tv heading \#0 -text "Paths"
- 
+
   global gPathPoints
   set pointIds {}
 
@@ -37817,13 +37819,13 @@ proc guiSV_seg3d_duplicate_seg {} {
   if {[vis_pExists $gRen3d $segPd]} {
            vis_pRm $gRen3d $segPd
          }
-  
+
 
   set objName $gSeg3D($newname)
   guiSV_group_update_tree
 
   DestroyWindow.svSaveSegWindow
-  
+
   guiSV_group_update_tree
   global symbolicName
   set tv $symbolicName(guiSV_group_tree)
@@ -37859,7 +37861,7 @@ proc guiSV_seg3d_new_seg {} {
   catch {repos_delete -obj $segPd}
   catch {repos_delete -obj $tmpPd}
   repos_importVtkPd -src [cleaner GetOutput] -dst $tmpPd
-  
+
 
   geom_smooth $tmpPd .01 50 $segPd
 
@@ -37885,7 +37887,7 @@ proc guiSV_seg3d_new_seg {} {
   set objName $gSeg3D($name)
   global gOptions
   repos_setLabel -obj $objName -key color -value $gOptions(color_for_saved_surface)
-  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface) 
+  repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
 
   guiSV_group_update_tree
   DestroyWindow.svSaveSegWindow
@@ -37937,13 +37939,13 @@ proc guiSV_seg3d_rename_seg {} {
   if {[vis_pExists $gRen3d $segPd]} {
            vis_pRm $gRen3d $segPd
          }
-  
+
 
   set objName $gSeg3D($newname)
   guiSV_group_update_tree
 
   DestroyWindow.svSaveSegWindow
-  
+
   guiSV_group_update_tree
   global symbolicName
   set tv $symbolicName(guiSV_group_tree)
@@ -38049,8 +38051,8 @@ proc guiSV_solid_display_selected_groups { showFlag} {
   if {$selected != ""} {
     foreach grp $selected {
        set col1var "[lindex [$tv item .groups.all.$grp -values] 0]"
-       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"  
-       set col3var "[lindex [$tv item .groups.all.$grp -values] 2]" 
+       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"
+       set col3var "[lindex [$tv item .groups.all.$grp -values] 2]"
        #Hard coding here! The faint hearted should look away!
        set objName /guiGROUPS/polydatasurface/$grp
        if {$showFlag} {
@@ -38061,7 +38063,7 @@ proc guiSV_solid_display_selected_groups { showFlag} {
          }
          $tv item .groups.all.$grp -values [list $col1var "X" $col3var]
 
-       } else { 
+       } else {
          if {[vis_pExists $gRen3d $objName]} {
            vis_pRm $gRen3d $objName
          }
@@ -38076,9 +38078,9 @@ proc guiSV_solid_display_selected_groups { showFlag} {
   set selected [guiSV_group_get_tree_current_surfaces_selected]
   if {$selected != ""} {
   foreach grp $selected {
-       set col1var "[lindex [$tv item .groups.3d.$grp -values] 0]" 
+       set col1var "[lindex [$tv item .groups.3d.$grp -values] 0]"
        set col2var "[lindex [$tv item .groups.3d.$grp -values] 1]"
-       set col3var "[lindex [$tv item .groups.3d.$grp -values] 2]" 
+       set col3var "[lindex [$tv item .groups.3d.$grp -values] 2]"
        #Hard coding here! The faint hearted should look away!
        set objName $gSeg3D($grp)
        if {$showFlag} {
@@ -38093,10 +38095,10 @@ proc guiSV_solid_display_selected_groups { showFlag} {
           repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
         }
 
-        gdscGeneralView $gRen3d $objName 
+        gdscGeneralView $gRen3d $objName
         $tv item .groups.3d.$grp -values [list $col1var "X" $col3var]
 
-       } else { 
+       } else {
          if {[vis_pExists $gRen3d $objName]} {
            vis_pRm $gRen3d $objName
          }
@@ -38121,7 +38123,7 @@ proc guiSV_solid_loft_selected {} {
   set selected [guiSV_group_get_tree_current_groups_selected]
   if {$selected != ""} {
     foreach grp $selected {
-       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"  
+       set col2var "[lindex [$tv item .groups.all.$grp -values] 1]"
        #Hard coding here! The faint hearted should look away!
        set objName /guiGROUPS/polydatasurface/$grp
        lsGUIloftGroup $grp
@@ -38281,7 +38283,7 @@ proc guiTETGENcreateMeshMacro { type} {
     if {$facename == ""} {
        return -code error "ERROR: facename cannot be blank!"
     }
-    set addstr "boundaryLayer $facename $guiTGvars(numsublayers) $guiTGvars(blthicknessratio) $guiTGvars(sublayerratio)\n" 
+    set addstr "boundaryLayer $facename $guiTGvars(numsublayers) $guiTGvars(blthicknessratio) $guiTGvars(sublayerratio)\n"
   } elseif {$type == "sphereRefinement"} {
     set addstr "sphereRefinement $guiTGvars(refinementSize) $guiTGvars(sphereRadius) $guiTGvars(sphereCenter)\n"
   } else {
@@ -38307,7 +38309,7 @@ proc guiTETGENestimateMeshSize {} {
 
   set solid $gObjects(polydata_solid)
   if {[repos_exists -obj $solid] == 0} {
-      set yesno [tk_messageBox -default yes -message "You have not loaded the solid model to use for meshing.  Load it now?" -title "Missing Solid Model" -type yesno]   
+      set yesno [tk_messageBox -default yes -message "You have not loaded the solid model to use for meshing.  Load it now?" -title "Missing Solid Model" -type yesno]
       switch -- $yesno {
         yes {
               guiTETGEN_select_solid_model
@@ -38332,7 +38334,7 @@ proc guiTETGENestimateMeshSize {} {
     if {$area < $min} {
       set min $area
     }
-  } 
+  }
   set edgesize [expr sqrt(($min)/(3.14159))/(2.5)]
   set edgesize [expr {double(round(10000*$edgesize))/10000}]
   set guiTGvars(meshMaxEdgeSize) $edgesize
@@ -38430,7 +38432,7 @@ proc guiTRIMaddCutBox {} {
    set side inside
 
    set vals $guiTRIMvars(box_interactor_planes_pts_and_nrms)
- 
+
    set tbox $symbolicName(guiTRIMcutFileTB)
    $tbox insert end "\# planes side offset pt1x pt1y pt1z nrm1x nrm1y nrm1z pt2x...\n"
    $tbox insert end "box_planes $side $offset $vals\n"
@@ -38761,7 +38763,7 @@ proc guiTRIMloadCutsFile {} {
    }
 
   set gFilenames(trim_cuts_file) $fn
-  
+
   set mytext {}
   set tbox $symbolicName(guiTRIMcutFileTB)
   $tbox delete 1.0 end
@@ -38792,13 +38794,13 @@ proc guiTRIMloadSeg {} {
    }
 
    set gFilenames(segmentation_file) $fn
-   
+
   set initpd /guiTRIM/initialPD
   set cutpd /guiTRIM/cutPD
 
   catch {repos_delete -obj $initpd}
   repos_readXMLPolyData $gFilenames(segmentation_file) $initpd
- 
+
   global guiTRIMvars
   set guiTRIMvars(num_tris) [[repos_exportToVtk -src $initpd] GetNumberOfCells]
 
@@ -38889,7 +38891,7 @@ proc guiTRIMsaveSeg {} {
   set initialfilename [file tail $gFilenames(segmentation_cut_out_file)]
   set fn [tk_getSaveFile -filetypes { {"VTK" .vtp}} -defaultextension .vtp -title "Save Cut Surface File" -initialfile $initialfilename -initialdir $initialdirectory ]
 
-  if {$fn == ""} { 
+  if {$fn == ""} {
      puts "User Cancelled."
      return
   }
@@ -38903,7 +38905,7 @@ proc guiTRIMsaveSeg {} {
 proc guiTRIMsaveSolid {} {
 
   set fn [tk_getSaveFile -filetypes {{"discrete model" .dsm} {"all files" *}} -title "Save Discrete Solid Model File"]
-  if {$fn == ""} { 
+  if {$fn == ""} {
      puts "User Cancelled."
      return
   }
@@ -38960,10 +38962,10 @@ proc guiTRIMvis { flag} {
   set visflag 0
   if {$flag == "vis_boxInteractor" && $guiTRIMvars(vis_boxInteractor)} {
     set visflag 1
-  } 
+  }
   if {$flag == "vis_planeInteractor" && $guiTRIMvars(vis_planeInteractor)} {
     set visflag 1
-  } 
+  }
   set kernel $gOptions(meshing_solid_kernel)
   if {$kernel != "PolyData"} {
     return -code error "ERROR: Kernel must be PolyData for operation"
@@ -39835,7 +39837,7 @@ proc guiVISflowThruFace { meshFaceObj unitOutwardNormal type rtnFlow} {
 
   #
   #  can't get here - dead code
-  # 
+  #
 
   set boolean 1
   set rotated_norm {}
@@ -41817,7 +41819,7 @@ proc guiVISvolFlowMultSliceCalcFlows { writeSlices} {
       # is computed last
       set num_planes [expr $guiVISvars(volFlowSlice_num_planes) - 1]
       set plane_incr $guiVISvars(volFlowSlice_plane_incr)
-  
+
       # File names for other cut planes will be a variation of the
       # original output file name
       set orig_resultsDir $guiVISvars(volFlowSlice_resultsDir)
@@ -41857,7 +41859,7 @@ proc guiVISvolFlowMultSliceCalcFlows { writeSlices} {
 
     # Write out the results
     set specifier "_plus"
-    set guiVISvars(volFlowSlice_resultsDir) "$orig_resultsDir$specifier$i" 
+    set guiVISvars(volFlowSlice_resultsDir) "$orig_resultsDir$specifier$i"
     set guiVISvars(volFlowSlice_resultsFilename) "$orig_resultsFilename$specifier$i"
     guiVISvolFlowSliceCalcFlows $writeSlices
       }
@@ -41875,13 +41877,13 @@ proc guiVISvolFlowMultSliceCalcFlows { writeSlices} {
 
     # Write out the results
     set specifier "_sub"
-    set guiVISvars(volFlowSlice_resultsDir) "$orig_resultsDir$specifier$i" 
+    set guiVISvars(volFlowSlice_resultsDir) "$orig_resultsDir$specifier$i"
     set guiVISvars(volFlowSlice_resultsFilename) "$orig_resultsFilename$specifier$i"
     guiVISvolFlowSliceCalcFlows $writeSlices
       }
 
       # Now set all values back to original
-      set guiVISvars(volFlowSlice_resultsDir) $orig_resultsDir 
+      set guiVISvars(volFlowSlice_resultsDir) $orig_resultsDir
       set guiVISvars(volFlowSlice_resultsFilename) $orig_resultsFilename
       set guiVISvars(p1) $orig_p1
       set guiVISvars(p2) $orig_p2
@@ -41980,7 +41982,7 @@ proc guiVISvolFlowSliceCalcFlows { writeSlices} {
        $clipper SetInputDataObject [repos_exportToVtk -src $velocityPD]
      } elseif {$integrateType == "energy"} {
        vtkPolyData $pressureAndVelocity
-       set pts   [[repos_exportToVtk -src $pressurePD] GetPoints] 
+       set pts   [[repos_exportToVtk -src $pressurePD] GetPoints]
        set polys [[repos_exportToVtk -src $pressurePD] GetPolys]
        set p [[[repos_exportToVtk -src $pressurePD] GetPointData] GetScalars]
        set v [[[repos_exportToVtk -src $velocityPD] GetPointData] GetVectors]
@@ -42042,7 +42044,7 @@ proc guiVISvolFlowSliceCalcFlows { writeSlices} {
        # get flux
        set flux [geom_integrateSurfaceFlux -obj $flat_0 -nrm $inorm -tensorType 1]
      } elseif {$integrateType == "energy"} {
-       set flux [geom_integrateEnergy -obj $flat_0 -nrm $inorm -rho $density] 
+       set flux [geom_integrateEnergy -obj $flat_0 -nrm $inorm -rho $density]
      } else {
        return -code "ERROR: wrong integrateType ($integrateType)!"
      }
@@ -42066,7 +42068,7 @@ proc guiVISvolFlowSliceCalcFlows { writeSlices} {
    } elseif {$integrateType == "velocity"} {
      puts $fp "# geodesic results (volumetric flow through slice)"
    } elseif {$integrateType == "energy"} {
-     puts $fp "# geodesic results (energy for slice)" 
+     puts $fp "# geodesic results (energy for slice)"
    } else {
      return -code "ERROR: wrong integrateType ($integrateType)!"
    }
@@ -42164,12 +42166,12 @@ proc guiVOLRENupdate { type pt args} {
   for {set i 1} {$i <= 4} {incr i} {
       lappend opacityFn [list [expr $low + $guiVOLRENvars(intensity_pt_$i) * $range] $guiVOLRENvars(opacity_pt_$i)]
   }
- 
+
   for {set i 1} {$i <= 4} {incr i} {
      set r [lindex $guiVOLRENvars(color_pt_$i) 0]
      set g [lindex $guiVOLRENvars(color_pt_$i) 1]
      set b [lindex $guiVOLRENvars(color_pt_$i) 2]
-     lappend colorFn [list [expr $low + $guiVOLRENvars(intensity_pt_$i) * $range] $r $g $b] 
+     lappend colorFn [list [expr $low + $guiVOLRENvars(intensity_pt_$i) * $range] $r $g $b]
   }
 
   global guiVIB
@@ -42982,8 +42984,8 @@ proc lsGUI_hand_StartQueryInteraction { widget x y} {
   global lsGUIhanddrawShowMagValue
   set lsGUIhanddrawShowMagValue 1
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   lsGUI_hand_UpdateQueryInteraction $widget $x $y
 }
@@ -42995,8 +42997,8 @@ proc lsGUI_hand_UpdateQueryInteraction { widget x y} {
   global lsGUImagWindow
   global lsGUIpotWindow
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global symbolicName
   if {[file rootname $widget] == $symbolicName(lsRenWinMag)} {
@@ -43046,8 +43048,8 @@ proc lsGUI_hand_add_point { widget x y} {
   global lsGUImagWindow
   global lsGUIpotWindow
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global symbolicName
   if {[file rootname $widget] == $symbolicName(lsRenWinMag)} {
@@ -43195,8 +43197,8 @@ proc lsGUI_hand_remove_last_point { widget x y} {
   set selectedLines lsGUItmp-handdraw-lines1
   set cursorPoints lsGUItmp-handdraw-crsr-pts1
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   $cursorPoints Reset
 
@@ -43261,8 +43263,8 @@ proc lsGUI_hand_show_cursor { widget x y} {
   global lsGUImagWindow
   global lsGUIpotWindow
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   global symbolicName
   if {[file rootname $widget] == $symbolicName(lsRenWinMag)} {
@@ -43314,8 +43316,8 @@ proc lsGUI_hand_show_cursor { widget x y} {
 # Procedure: lsGUI_hand_toggle_show_cursor
 proc lsGUI_hand_toggle_show_cursor { widget x y} {
 
-  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]] 
-  set y [expr [winfo pointery $widget] - [winfo rooty $widget]] 
+  set x [expr [winfo pointerx $widget] - [winfo rootx $widget]]
+  set y [expr [winfo pointery $widget] - [winfo rooty $widget]]
 
   set cursorPoints lsGUItmp-handdraw-crsr-pts1
   global lsGUIhanddrawShowCursorFlag
@@ -43420,13 +43422,13 @@ proc lsGUIaddToGroup { type} {
   $tv selection set .groups.all.$group.$posId
 
   set groupShow [lindex [$tv item .groups.all.$group -values] 2]
-  set solidShow [lindex [$tv item .groups.all.$group -values] 1] 
+  set solidShow [lindex [$tv item .groups.all.$group -values] 1]
 
   if {$solidShow == "X"} {
     lsGUIloftGroup $group
   }
   puts "groupShow $groupShow"
-  if {$groupShow == "X"} { 
+  if {$groupShow == "X"} {
     guiSV_group_display_selected_groups 1
   }
 }
@@ -43653,7 +43655,7 @@ proc lsGUIchangeFrame { value} {
       itkutils_GenerateCircle -result $sphere -r $phyRadius -x $phyCntrX -y $phyCntrY -z 0
       repos_setLabel -obj $sphere -key color -value $gOptions(color_for_seeds)
       repos_setLabel -obj $sphere -key opacity -value $gOptions(opacity_for_seeds)
-      gdscGeneralView $ren $sphere 
+      gdscGeneralView $ren $sphere
     }
 
     # display level set result
@@ -43668,14 +43670,14 @@ proc lsGUIchangeFrame { value} {
       # }
       set pdname $baseName/ls
       if {[repos_exists -obj $pdname] == 1} {
-        
+
         catch {repos_clearLabel -obj $pdname -key color}
         catch {repos_clearLabel -obj $pdname -key width}
         repos_setLabel -obj $pdname -key color -value $gOptions(color_for_new_segmentations)
         repos_setLabel -obj $pdname -key width -value $gOptions(line_width_for_new_segmentations)
         gdscGeneralView $ren $pdname
       }
-    
+
     }
 
     # display levelset evolution
@@ -43697,7 +43699,7 @@ proc lsGUIchangeFrame { value} {
       if {$selected != ""} {
         set grp [lindex $selected 0]
         set numSegs [llength [group_get $grp]]
-        set objName /guiGROUPS/polydatasurface/$grp 
+        set objName /guiGROUPS/polydatasurface/$grp
       } else {
         global gSeg3D
         set selected [guiSV_group_get_tree_current_surfaces_selected]
@@ -46142,7 +46144,7 @@ proc lsGUIupdatePositionScale { {value "0"}} {
   global lsGUIcurrentPathNumber
   set pathId $lsGUIcurrentPathNumber
 
-  
+
   set path $gPathPoints($pathId,splinePts)
 
   global lsGUIcurrentPositionNumber
@@ -46247,7 +46249,7 @@ proc mainGUI {} {
   #  setup that used to be done when you displayed the path planning
   #  gui
   #
-   
+
   global gImageVol
   global symbolicName
   global gOptions
@@ -46298,8 +46300,8 @@ proc mainGUI {} {
   global guiTRIMvars
   global gRen3d
   global SIMVASCULAR_NO_RENDERER
-  if { $SIMVASCULAR_NO_RENDERER == "0" } { 
-    puts "No render window" 
+  if { $SIMVASCULAR_NO_RENDERER == "0" } {
+    puts "No render window"
   } else {
     set gRen3d [vis_gRenWin_3D]
   }
@@ -46375,7 +46377,7 @@ proc mainGUIexit { {value "0"}} {
   set selected_quit 1
   if {!$value} {
   set selected_quit [tk_dialog .askthem "Quit Dialog" "Are you sure you want to quit?" question 0 " No " " Yes "]
-  } 
+  }
 
   if {$selected_quit || $value} {
    vtkCommand DeleteAllObjects
@@ -46476,9 +46478,9 @@ proc resampleGUIsetup {} {
   global symbolicName
 
   if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-  set repos_image $guiVars(repos_image_obj_alt)  
+  set repos_image $guiVars(repos_image_obj_alt)
   } else {
-  set repos_image $guiVars(repos_image_obj)   
+  set repos_image $guiVars(repos_image_obj)
   }
 
   # do nothing if we don't have a resampled image
@@ -46509,7 +46511,7 @@ proc resampleGUIsetup {} {
 proc resampleGUIupdateResample { flag} {
 
   set context guiRIB
-  
+
   # the value of context in the global environment is linked to the local variable, guiVars
   upvar #0 $context guiVars
 
@@ -46575,11 +46577,11 @@ proc resampleGUIupdateResample { flag} {
      # set center based on requested method
 
      if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-    set imgobj $guiVars(repos_image_obj_alt)  
+    set imgobj $guiVars(repos_image_obj_alt)
     } else {
-    set imgobj $guiVars(repos_image_obj)    
+    set imgobj $guiVars(repos_image_obj)
   }
-  
+
      set centerBy $guiVars(box_center_method)
      set size $guiVars(resample_voxel_size)
 
@@ -46664,9 +46666,9 @@ proc resampleGUIupdateResample { flag} {
     vtkImageReslice $rs
     global guiVIB
     if { [info exists guiVIB(use_alt_image)] && $guiVIB(use_alt_image) } {
-    set repos_image $guiVIB(repos_image_obj_alt)  
+    set repos_image $guiVIB(repos_image_obj_alt)
     } else {
-    set repos_image $guiVIB(repos_image_obj)    
+    set repos_image $guiVIB(repos_image_obj)
     }
     $rs SetInputDataObject [repos_exportToVtk -src $repos_image] ; # use of guiVIB is intentional here!
     $rs SetInterpolationModeToLinear
@@ -46863,7 +46865,7 @@ proc smasherGUIreadModel {} {
   }
 
   global gOptions
-  
+
   set gFilenames(generic_solid_file) $fn
 
   solid_setKernel -name $gOptions(meshing_solid_kernel)
@@ -46910,7 +46912,7 @@ proc smasherGUIreadModel {} {
     } else {
       #If boundaries aren't identified, read in PolyData as full PolyData
       #Boundaries will be extracted with Surface Extraction button
-      guiMMloadPolyData $smasherInputName 
+      guiMMloadPolyData $smasherInputName
       return
     }
   }
@@ -46929,7 +46931,7 @@ proc smasherGUIsmashIt {} {
 
   # delete tmp objects if they already exist
   foreach i [repos_subList /tmp/smasher/*] {
-    repos_delete -obj $i 
+    repos_delete -obj $i
   }
 
   global smasherInputName
@@ -46974,7 +46976,7 @@ proc smasherGUIsmashIt {} {
       set staticFaceId [$smasherInputName GetFaceAttr -attr identifier -faceId $faceId]
     }
     if {[catch {$smasherInputName GetFacePolyData -result /tmp/smasher/$faceId/$staticFaceId -face $faceId $maxedgecmd $maxedgesize} errmsg] == 0} {
-      repos_setLabel -obj /tmp/smasher/$faceId/$staticFaceId -key color -value blue  
+      repos_setLabel -obj /tmp/smasher/$faceId/$staticFaceId -key color -value blue
       repos_setLabel -obj /tmp/smasher/$faceId/$staticFaceId -key visible -value true
       lappend mylist /tmp/smasher/$faceId/$staticFaceId
       lappend smasherFaceIds $faceId
@@ -47015,7 +47017,7 @@ proc smasherGUIsmashIt {} {
   set gRen3dFreeze 1
   gdscGeneralView $gRen3d $mylist
   set gRen3dFreeze 0
-  
+
   for {set i 0} {$i < [llength $smasherFaceIds]} {incr i} {
     set actor [vis_pGetActor $gRen3d /tmp/smasher/[lindex $smasherFaceIds $i]/[lindex $smasherStaticFaceIds $i]]
     [$actor GetProperty] SetColor 1 0 0
@@ -47104,7 +47106,7 @@ proc smasherGUIupdateSel { curselection} {
  global symbolicName
 
  set selected_id [$curselection curselection]
-  
+
  $symbolicName(smasherEntityIdLabel) config -state normal
  $symbolicName(smasherEntityIdLabel) delete 0 end
 
@@ -47231,7 +47233,7 @@ proc smasherGUIwriteModel {} {
 
   if {$solid_kernel == "Parasolid"} {
     set fn [tk_getSaveFile -filetypes {{PARASOLID *.xmt_txt} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $smasherInputName]
-    if {$fn == ""} return 
+    if {$fn == ""} return
     puts "Writing file $fn."
     if {[file extension $fn] == ".xmt_txt"} {
       $smasherInputName WriteNative -file [file rootname $fn]
@@ -47242,7 +47244,7 @@ proc smasherGUIwriteModel {} {
   } elseif {$solid_kernel == "Discrete"} {
     package require md5
     set fn [tk_getSaveFile -filetypes {{DISCRETE *.dsm} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $smasherInputName]
-    if {$fn == ""} return 
+    if {$fn == ""} return
     puts "Writing discrete model ($fn)"
     $smasherInputName WriteNative -file $fn
     puts "Done writing discrete model."
@@ -47272,7 +47274,7 @@ proc smasherGUIwriteModel {} {
   } elseif {$solid_kernel == "PolyData"} {
     package require md5
     set fn [tk_getSaveFile -defaultextension {.vtp} -filetypes {{vtkPolyData *.vtp} {VTK *.vtk} {vtkUnstructuredGrid *.vtu} {STL *.stl}  {PLY *.ply} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $smasherInputName]
-    if {$fn == ""} return 
+    if {$fn == ""} return
     puts "Writing polydata solid ($fn)"
     $smasherInputName WriteNative -file $fn
     puts "Done writing polydata solid."
@@ -47311,7 +47313,7 @@ proc smasherGUIwriteModel {} {
 # Procedure: smasherSetAttName
 proc smasherSetAttName {} {
 
- global symbolicName  
+ global symbolicName
  global smasherInputName
  global smasherFaceIds
  global smasherStaticFaceIds
@@ -47326,7 +47328,7 @@ proc smasherSetAttName {} {
  puts "objectname $faceId myindex $myindex smasherFaceIds $smasherFaceIds"
 
  if {$myindex >= 0} {
-   #set faceId [lindex $smasherFaceIds $myindex] 
+   #set faceId [lindex $smasherFaceIds $myindex]
    # update the attribute information specified on the original model face
    set AttName [$symbolicName(smasherAttNameLabel) get]
    if {$solid_kernel == "Parasolid"} {
@@ -47509,11 +47511,11 @@ proc volGUIsetup { context} {
   global symbolicName
 
   if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-  set repos_image $guiVars(repos_image_obj_alt)  
+  set repos_image $guiVars(repos_image_obj_alt)
   } else {
-  set repos_image $guiVars(repos_image_obj)   
+  set repos_image $guiVars(repos_image_obj)
   }
- 
+
   set image [repos_exportToVtk -src $repos_image]
 
   set ldims [$image GetDimensions]
@@ -47606,9 +47608,9 @@ proc volGUIupdateColorMaps { context} {
   set ren $gRen3d
 
   if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-  set repos_image $guiVars(repos_image_obj_alt)  
+  set repos_image $guiVars(repos_image_obj_alt)
   } else {
-  set repos_image $guiVars(repos_image_obj)   
+  set repos_image $guiVars(repos_image_obj)
   }
 
   set image [repos_exportToVtk -src $repos_image]
@@ -47638,9 +47640,9 @@ proc volGUIupdateIsosurface { context} {
   # check to see if we should use seeded threshold
   if {$guiVars(use_seed_thr) == 0} {
   if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-    set imgobj $guiVars(repos_image_obj_alt)  
+    set imgobj $guiVars(repos_image_obj_alt)
     } else {
-    set imgobj $guiVars(repos_image_obj)    
+    set imgobj $guiVars(repos_image_obj)
     }
   } else {
     set imgobj $guiVars(repos_seed_thr_obj)
@@ -47774,10 +47776,10 @@ proc volGUIupdatePointCloud { context} {
     # check to see if we should use seeded threshold
     if {$guiVars(use_seed_thr) == 0} {
     if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-    set repos_image $guiVars(repos_image_obj_alt)  
+    set repos_image $guiVars(repos_image_obj_alt)
       } else {
-    set repos_image $guiVars(repos_image_obj)   
-      }  
+    set repos_image $guiVars(repos_image_obj)
+      }
     } else {
       set repos_image $guiVars(repos_seed_thr_obj)
     }
@@ -47891,18 +47893,18 @@ proc volGUIupdateSeededThreshold { context} {
 
   upvar #0 $context guiVars
 
-  # seed contour 
+  # seed contour
   if {$guiVars(use_seed_thr) == 0} {
       catch {repos_delete -obj $guiVars(repos_seed_thr_obj)}
       return
   }
 
   if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-  set imgobj $guiVars(repos_image_obj_alt)  
+  set imgobj $guiVars(repos_image_obj_alt)
   } else {
-  set imgobj $guiVars(repos_image_obj)    
+  set imgobj $guiVars(repos_image_obj)
   }
-    
+
   # create a binary segmentation
   set thr mythr
   catch {$thr Delete}
@@ -47947,9 +47949,9 @@ proc volGUIupdateSlider { context sliceDir numTicks} {
     if {$guiVars(show_image) == 0} {return}
 
     if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-    set repos_image_obj $guiVars(repos_image_obj_alt)  
+    set repos_image_obj $guiVars(repos_image_obj_alt)
     } else {
-    set repos_image_obj $guiVars(repos_image_obj)   
+    set repos_image_obj $guiVars(repos_image_obj)
     }
 
 
@@ -48067,11 +48069,11 @@ proc volGUIupdateVolRender { context update} {
   set specularPower $guiVars(specularPower)
   set enableShading $guiVars(enableShading)
   set sampleSize $guiVars(sampleStepSize)
- 
+
   if { [info exists guiVars(use_alt_image)] && $guiVars(use_alt_image) } {
-  set repos_image_obj $guiVars(repos_image_obj_alt)  
+  set repos_image_obj $guiVars(repos_image_obj_alt)
   } else {
-  set repos_image_obj $guiVars(repos_image_obj)   
+  set repos_image_obj $guiVars(repos_image_obj)
   }
 
   # turn on/off volume rendering
@@ -48233,7 +48235,7 @@ proc wormGUIwriteMultipleFaces {} {
 
   global gDiscreteModelFaceNames
   global gPolyDataFaceNames
-	 
+
   foreach id [$solid GetFaceIds] {
     set guiABC(mesh_face_file) $org_mesh_face_file
     set guiABC(face_name) $org_face_name
@@ -48320,7 +48322,7 @@ proc wormGUIwritePHASTA { prompt_user_for_dir} {
 
     set fdir [tk_chooseDirectory -mustexist 1 -title "Select Save Location for BCT Files" -initialdir $initialdirectory ]
 
-    if {$fdir == ""} { 
+    if {$fdir == ""} {
        puts "User Cancelled."
        return
     }
