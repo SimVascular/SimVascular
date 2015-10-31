@@ -163,7 +163,7 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
-int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
+int Model_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
@@ -382,7 +382,7 @@ int Solid_Init( Tcl_Interp *interp )
 
   Tcl_CreateCommand( interp, "geom_all_union", Geom_All_UnionCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Model_Convert_Para_To_PolyCmd,
+  Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Model_Convert_NURBS_To_PolyCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   return TCL_OK;
@@ -3064,7 +3064,7 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
 // Geom_All_UnionCmd
 // -------------
 
-int Model_Convert_Para_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
+int Model_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] )
 {
   char *usage;

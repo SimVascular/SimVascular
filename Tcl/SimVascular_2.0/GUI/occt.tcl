@@ -59,60 +59,28 @@ proc guiSV_model_create_model_opencascade {} {
     if {[repos_exists -obj /models/$kernel/$modelname] == 1} {
       repos_delete -obj /model/$kernel/$modelname
     }
-
-    # for convenience, we offer to make any missing solid models for the
-    # the user.  In general, people shouldn't do this, but what can you
-    # do?
-
-    set recreateAllChoice [tk_messageBox -title "Recreate all vessels?"  -message "Recreate all solids?"  -icon question -type yesno]
-
+    # create solids
     foreach i $createPREOPgrpKeptSelections {
       set cursolid ""
-
-      if {$cursolid == "" || [repos_exists -obj $cursolid] == 0 || $recreateAllChoice == "yes"} {
-         # solid  doesn't exist for current object, ask to create
-         set choice [tk_messageBox -title "Missing capped solid branch!"  -message "Create missing solids using defaults?"  -icon question -type yesnocancel]
-         switch -- $choice {
-           yes {
-              # create solids
-              foreach j $createPREOPgrpKeptSelections {
-                set cursolid ""
-    catch {set cursolid $gLoftedSolids($j)}
-      if {$cursolid == "" || [repos_exists -obj $cursolid] == 0 || $recreateAllChoice == "yes"} {
-                  # loft solid from group
-                  global gPathBrowser
-                  set keepgrp $gPathBrowser(currGroupName)
-                  set gPathBrowser(currGroupName) $j
-                  #puts "align"
-                  #vis_img_SolidAlignProfiles;
-                  #puts "fit"
-                  #vis_img_SolidFitCurves;
-                  #puts "loft"
-                  #vis_img_SolidLoftSurf;
-                  #vis_img_SolidCapSurf;
-                  # set it back to original
-                  global gRen3dFreeze
-                  set oldFreeze $gRen3dFreeze
-                  set gRen3dFreeze 1
-                  makeSurfOCCT
-                  set gRen3dFreeze $oldFreeze
-                  set gPathBrowser(currGroupName) $keepgrp
-    }
-              }
-              break
-     }
-           cancel {
-              return -code error "Missing solid branches.  Create preop model failed."
-     }
-           no {
-              return -code error "Missing solid braches.  Create preop model failed."
-     }
-         }
-
-      } elseif {[repos_type -obj $cursolid] != "SolidModel"} {
-         puts  "ERROR: Expected SolidModel for $cursolid."
-         return -code error "ERROR: Expected SolidModel for $cursolid."
-      }
+      catch {set cursolid $gLoftedSolids($i)}
+      # loft solid from group
+      global gPathBrowser
+      set keepgrp $gPathBrowser(currGroupName)
+      set gPathBrowser(currGroupName) $i
+      #puts "align"
+      #vis_img_SolidAlignProfiles;
+      #puts "fit"
+      #vis_img_SolidFitCurves;
+      #puts "loft"
+      #vis_img_SolidLoftSurf;
+      #vis_img_SolidCapSurf;
+      # set it back to original
+      global gRen3dFreeze
+      set oldFreeze $gRen3dFreeze
+      set gRen3dFreeze 1
+      makeSurfOCCT
+      set gRen3dFreeze $oldFreeze
+      set gPathBrowser(currGroupName) $keepgrp
     }
 
     set shortname [lindex $createPREOPgrpKeptSelections 0]
@@ -153,9 +121,12 @@ proc guiSV_model_create_model_opencascade {} {
     set pretty_names {}
     set all_ids {}
     foreach i [$modelname GetFaceIds] {
-      puts "What id number $i"
-      lappend pretty_names "noname_$i"
-      set gOCCTFaceNames($i) "noname_$i"
+      catch {set type [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+      catch {set parent [$modelname GetFaceAttr -attr parent -faceId $i]}
+      set facename "[string trim $type]_[string trim $parent]"
+      lappend pretty_names $facename
+      set gOCCTFaceNames($i) $facename
+      $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
       lappend all_ids $i
     }
     set isdups 0
@@ -177,8 +148,8 @@ proc guiSV_model_create_model_opencascade {} {
        set dupid [lindex $duplistids $i]
        set newname [string trim $dup]_2
        set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-       set gOCCTFaceNames($dupid) "noname_dup_$dupid"
-       #$modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       set gOCCTFaceNames($dupid) $newname
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
      }
   }
 
@@ -376,12 +347,12 @@ proc makeSurfOCCT {} {
     solid_setKernel -name OpenCASCADE
 
     global gOptions
-    if {$gOptions(facet_max_edge_size) != ""} {
-      $surf GetPolyData -result $surf/pd \
-                  -max_edge_size $gOptions(facet_max_edge_size)
-    } else {
+    #if {$gOptions(facet_max_edge_size) != ""} {
+    #  $surf GetPolyData -result $surf/pd \
+    #              -max_edge_size $gOptions(facet_max_edge_size)
+    #} else {
       $surf GetPolyData -result $surf/pd
-    }
+    #}
 
     set a [vis_pRepos $ren $surf/pd]
     vis_pNorm $ren $surf/pd
@@ -395,13 +366,6 @@ proc makeSurfOCCT {} {
     set solid $surf
     foreach i [$solid GetFaceIds] {
       set facename {}
-      #catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $i]}
-      #if {$facename != "" && $facename != "inflow" && $facename != "inlet"} {
-      #  $solid SetFaceAttr -attr gdscName -faceId $i -value $grp
-      #} else {
-      #  # we have a wall
-      #  $solid SetFaceAttr -attr gdscName -faceId $i -value wall_$grp
-      #}
       $solid SetFaceAttr -attr parent -faceId $i -value $grp
     }
 

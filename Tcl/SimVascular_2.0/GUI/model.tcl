@@ -541,9 +541,7 @@ proc guiSV_model_set_att_name {} {
    vis_pRm $gRen3d $oldpd
    catch {repos_delete -obj $facepd}
    set faceid [lindex [$tv item .models.$kernel.$modelname.$currname -values] 1]
-   if {$kernel == "Parasolid"} {
-     $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
-   }
+   $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
    $modelname GetFacePolyData -face $faceid -result $facepd
    foreach key [repos_getLabelKeys -obj $oldpd] {
      set value [repos_getLabel -obj $oldpd -key $key]
@@ -669,7 +667,8 @@ proc guiSV_model_get_kernel_type {ext} {
     set kernel "Discrete"
   } elseif {[string compare -length 7 $ext "xmt_txt"] == 0} {
     set kernel "Parasolid"
-  } elseif {[string compare -length 4 $ext "brep"] == 0} {
+  } elseif {[string compare -length 4 $ext "brep"] == 0 || \
+            [string compare -length 4 $ext "step"] == 0} {
     set kernel "OpenCASCADE"
   } else {
     return -code error "ERROR: Unkown file type extension: $ext"
@@ -689,7 +688,7 @@ proc guiSV_model_load_model { {fn "" } } {
    set kernel $gOptions(meshing_solid_kernel)
    if {$fn == ""} {
      if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData" || $kernel == "OpenCASCADE"} {
-       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {OpenCASCADE *.brep} {"All Files" *.*}} -title "Choose Solid Model"]
+       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {OpenCASCADE *.brep} {STEP *.step} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
      #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
@@ -883,12 +882,12 @@ proc guiSV_model_save_model {} {
       }
   } elseif {$kernel == "OpenCASCADE"} {
       set fn $model
-      set fn [tk_getSaveFile -defaultextension {*.brep} -filetypes {{vtkPolyData *.vtp} {VTK *.vtk} {vtkUnstructuredGrid *.vtu} {STL *.stl}  {PLY *.ply} {OpenCASCADE *.brep} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
+      set fn [tk_getSaveFile -defaultextension {*.step} -filetypes {{STEP .step} {OpenCASCADE *.brep} {STL *.stl} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
       package require md5
       if {$fn == ""} return
-      puts "Writing brep solid ($fn)"
+      puts "Writing solid ($fn)"
       $model WriteNative -file $fn
-      puts "Done writing brep solid."
+      puts "Done writing solid."
       puts "Writing file ($fn.facenames)"
       set allids [$model GetFaceIds]
       if {[llength $allids] != 0} {
@@ -940,6 +939,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       set facename $gPolyDataFaceNames($id)
     } elseif {$kernel == "OpenCASCADE"} {
       set facename $gOCCTFaceNames($id)
+      $modelname SetFaceAttr -attr gdscName -faceId $id -value $facename
     } else {
       return -code error "ERROR: Solid kernel $kernel is not a valid kernel"
     }
@@ -968,8 +968,8 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
      }
      set duplist [lsort -dictionary $pretty_names]
      foreach i [lsort -unique $pretty_names] {
-        set idx [lsearch -exact $duplist $i]
-        set duplist [lreplace $duplist $idx $idx]
+	set idx [lsearch -exact $duplist $i]
+	set duplist [lreplace $duplist $idx $idx]
      }
      set msg "Duplicate faces found!\n\n"
      set duplistids {}
@@ -986,15 +986,15 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
        set facepd /models/$kernel/$modelname/$newname
        catch {repos_delete -obj $facepd}
        if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize} errmsg] == 0} {
-         model_add $modelname $newname $newname
-         puts "added face $newname to $modelname"
+	 model_add $modelname $newname $newname
+	 puts "added face $newname to $modelname"
        } else {
-         puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize"
-         puts $errmsg
-         set errorFaceName {}
-         catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
-         tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize)\n"
-         #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
+	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize"
+	 puts $errmsg
+	 set errorFaceName {}
+	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
+	 tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize)\n"
+	 #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
        }
      }
      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
@@ -1072,6 +1072,7 @@ proc guiSV_model_update_tree {} {
     $tv delete .models.PolyData
     $tv delete .models.Parasolid
     $tv delete .models.Discrete
+    $tv delete .models.OpenCASCADE
     $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
     $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
     $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
@@ -3312,7 +3313,7 @@ proc guiSV_model_undo {} {
   guiSV_model_delete_model $kernel $model
 }
 
-proc guiSV_model_create_polydata_solid_from_parasolid {} {
+proc guiSV_model_create_polydata_solid_from_nurbs {} {
   global guiTRIMvars
   global symoblicName
   global gOptions
@@ -3323,12 +3324,13 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
   if {[llength $model] != 1} {
     return -code error "ERROR: Only one model allowed to create Discrete at a time"
   }
-  if {$gKernel($model) != "Parasolid"} {
-    return -code error "ERROR: Must use a Parasolid model to create PolyData Model"
+  puts $gKernel($model)
+  if {!($gKernel($model) == "Parasolid" || $gKernel($model) == "OpenCASCADE")} {
+    return -code error "ERROR: Must use  a Parasolid or OpenCASCADE model to create PolyData Model"
   }
   set kernel $gKernel($model)
   set modelpd /tmp/models/$kernel/$model
-  solid_setKernel -name Parasolid
+  solid_setKernel -name $kernel
   if {[repos_exists -obj $modelpd] == 1} {
     catch {repos_delete -obj $modelpd}
   }

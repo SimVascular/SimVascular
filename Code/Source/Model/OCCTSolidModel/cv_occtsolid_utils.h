@@ -45,9 +45,12 @@
 #ifndef __CV_OCCTSOLID_UTILS_H
 #define __CV_OCCTSOLID_UTILS_H
 
+#include "cvSolidModel.h"
+#include "cvOCCTSolidModel.h"
 
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
+#include "TopoDS_Wire.hxx"
 #include "TDF_Label.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
@@ -81,6 +84,9 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
 int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     					char *charstr);
 
+int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves,TopoDS_Shape &shape,int numCurves,int continuity,
+		int partype, double w1, double w2, double w3, int smoothing);
+
 /* -------- */
 /* Set */
 /* -------- */
@@ -91,6 +97,9 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       char *attr,char *value);
+
+int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
+	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel);
 
 int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
     					char *charstr);

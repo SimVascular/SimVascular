@@ -180,7 +180,7 @@ public:
   int AddShape();
   int RemoveShape() const;
 
-  int GetOnlyPD(vtkPolyData *pd) const;
+  int GetOnlyPD(vtkPolyData *pd,double &max_dist) const;
 protected:
 
   TopoDS_Shape *geom_;

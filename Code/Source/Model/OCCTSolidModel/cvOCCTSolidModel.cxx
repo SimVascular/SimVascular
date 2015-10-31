@@ -82,7 +82,6 @@
 #include "BRepBuilderAPI_Sewing.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
-#include "BRepOffsetAPI_ThruSections.hxx"
 #include "BRepLib_MakePolygon.hxx"
 #include "BRepAlgoAPI_Fuse.hxx"
 #include "BRepAlgoAPI_Common.hxx"
@@ -134,8 +133,10 @@
 #include "XCAFDoc_ShapeTool.hxx"
 #include "XCAFDoc_DocumentTool.hxx"
 #include "TDF_ChildIterator.hxx"
+#include "STEPControl_StepModelType.hxx"
 #include "STEPCAFControl_Writer.hxx"
 #include "STEPCAFControl_Reader.hxx"
+#include "StlAPI_Writer.hxx"
 
 
 // ----------
@@ -327,67 +328,39 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   }
 
   cvOCCTSolidModel *shapePtr;
-  BRepOffsetAPI_ThruSections lofter(Standard_True,Standard_False,1e-6);
-  if (continuity == 0)
-    lofter.SetContinuity(GeomAbs_C0);
-  else if (continuity == 1)
-    lofter.SetContinuity(GeomAbs_G1);
-  else if (continuity == 2)
-    lofter.SetContinuity(GeomAbs_C1);
-  else if (continuity == 3)
-    lofter.SetContinuity(GeomAbs_G2);
-  else if (continuity == 4)
-    lofter.SetContinuity(GeomAbs_C2);
-  else if (continuity == 5)
-    lofter.SetContinuity(GeomAbs_C3);
-  //else
-  //  lofter.SetContinuity(GeomAbs_CN);
-
-  if (partype == 0)
-    lofter.SetParType(Approx_ChordLength);
-  else if (partype == 1)
-    lofter.SetParType(Approx_Centripetal);
-  else
-    lofter.SetParType(Approx_IsoParametric);
-
-  lofter.CheckCompatibility(Standard_False);
-  lofter.SetSmoothing(smoothing);
-  lofter.SetCriteriumWeight(w1,w2,w3);
-
-  fprintf(stdout,"Loft Continuity: %d\n",continuity);
-  fprintf(stdout,"Loft Parameter: %d\n",partype);
-  for ( int i = 0; i < numCurves; i++ ) {
-    if ( curves[i]->GetKernelT() != SM_KT_OCCT ) {
-      fprintf(stderr,"Solid kernel should be OCCT\n");
+  TopoDS_Wire *bcurves;
+  bcurves = new TopoDS_Wire[numCurves];
+  for (int i =0; i<numCurves;i++)
+  {
+    if ( curves[i]->GetKernelT() != SM_KT_OCCT )
+    {
+      delete [] bcurves;
+      fprintf(stderr,"Curves must be of type OCCT\n");
       return CV_ERROR;
     }
     shapePtr = (cvOCCTSolidModel *) curves[i];
-
-    TopoDS_Wire newwire = TopoDS::Wire(*(shapePtr->geom_));
-    lofter.AddWire(newwire);
+    bcurves[i] = TopoDS::Wire(*(shapePtr->geom_));
   }
-  try
-  {
-    lofter.Build();
-  }
-  catch (Standard_Failure)
-  {
-    fprintf(stderr,"Failure in lofting\n");
-    return CV_ERROR;
-  }
-
   this->NewShape();
-  //*geom_ = attacher.SewedShape();
-  try
+  if (OCCTUtils_MakeLoftedSurf(bcurves,*geom_,numCurves,continuity,partype,
+			  w1,w2,w3,smoothing) != CV_OK)
   {
-    *geom_ = lofter.Shape();
-  }
-  catch (StdFail_NotDone)
-  {
-    fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
+    delete [] bcurves;
+    fprintf(stderr,"Error while lofting surface\n");
     return CV_ERROR;
   }
+
   this->AddShape();
+  //Name faces
+  TopExp_Explorer anExp(*geom_,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
+    if (i == 0)
+      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","wall");
+    else
+      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","cap");
+  }
 
   //Standard_Real W1,W2,W3;
   //lofter.CriteriumWeight(W1,W2,W3);
@@ -395,9 +368,8 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   //fprintf(stderr,"Max Degree Used: %d\n",lofter.MaxDegree());
   //fprintf(stderr,"ParType Used: %d\n",lofter.ParType());
   //fprintf(stderr,"Weight Used: %.2f,%.2f,%.2f\n",W1,W2,W3);
-
-
   fprintf(stdout,"Lofting Vessel Done\n");
+  delete [] bcurves;
   return CV_OK;
 }
 
@@ -540,12 +512,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   NewEdgeExp.Init(freeWires,TopAbs_EDGE);
   for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
   {
-    numFilled += 1;
-    fprintf(stderr,"Num filled INside %d\n",numFilled);
-    fprintf(stderr,"I am in here\n");
     TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
-    GProp_GProps lineProps;
-    BRepGProp::LinearProperties(tmpEdge,lineProps);
 
     BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
     wiremaker.Build();
@@ -555,8 +522,8 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
     filler.Build();
 
     attacher.Add(filler.Face());
+    numFilled ++;
   }
-  fprintf(stderr,"Num filled %d\n",numFilled);
   attacher.Perform();
 
   if (geom_ != NULL)
@@ -570,21 +537,32 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   *geom_ = solidmaker.Solid();
   this->AddShape();
 
+
   //Name face as cap for the new surfaces
   int numFaces = 0;
   OCCTUtils_GetNumberOfFaces(*geom_,numFaces);
   TopExp_Explorer anExp(*geom_,TopAbs_FACE);
-  fprintf(stderr,"Num faces %d\n",numFaces);
-  fprintf(stderr,"Num filled %d\n",numFilled);
-  fprintf(stderr,"Num after %d\n",numFaces-numFilled);
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
     if (i >= (numFaces-numFilled))
     {
-      fprintf(stderr,"Setting face name!\n");
       OCCTUtils_SetFaceAttribute(
-	  tmpFace,shapetool_,*shapelabel_,"name","cap");
+	  tmpFace,shapetool_,*shapelabel_,"gdscName","cap");
+    }
+    else if (attacher.IsModified(shape))
+    {
+      GProp_GProps tmpFaceProps;
+      BRepGProp::LinearProperties(tmpFace,tmpFaceProps);
+      TopExp_Explorer faceExp(shape,TopAbs_FACE);
+      for (int j=0;faceExp.More();faceExp.Next(),j++)
+      {
+	TopoDS_Face daFace = TopoDS::Face(faceExp.Current());
+        GProp_GProps daFaceProps;
+        BRepGProp::LinearProperties(tmpFace,daFaceProps);
+	if (tmpFaceProps.Mass() == daFaceProps.Mass())
+          OCCTUtils_PassFaceAttributes(daFace,tmpFace,shapetool_,*shapelabel_);
+      }
     }
   }
 
@@ -638,37 +616,57 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   *geom_ = unionOCCT.Shape();
   this->AddShape();
 
-
+  //Transfer modified shape info from input A
   TopExp_Explorer anExp(shapeA,TopAbs_FACE);
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     const TopTools_ListOfShape &modListA =
       unionOCCT.Modified(anExp.Current());
-    fprintf(stderr,"Modified Extent %d\n",modListA.Extent());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
     if (modListA.Extent() != 0)
     {
-      fprintf(stderr,"Changed!\n");
-      //Transfer Data
+      TopTools_ListIteratorOfListOfShape modFaceIt(modListA);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
     }
   }
+
+  //Transfer modified shape info from input B
   anExp.Init(shapeB,TopAbs_FACE);
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     const TopTools_ListOfShape &modListB =
       unionOCCT.Modified(anExp.Current());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
     if (modListB.Extent() != 0)
     {
-      fprintf(stderr,"Changed!\n");
-      //Transfer Data
+      TopTools_ListIteratorOfListOfShape modFaceIt(modListB);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
     }
   }
-  TopTools_ListOfShape modListB = unionOCCT.Modified(unionOCCT.Shape2());
-  fprintf(stderr,"Modified Extent %d\n",modListB.Extent());
+
   //OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_);
 
-  fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
-  fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
-  fprintf(stderr,"HAS DELETED? %d\n",unionOCCT.HasDeleted());
+  //fprintf(stderr,"HAS GENERATED? %d\n",unionOCCT.HasGenerated());
+  //fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
+  //fprintf(stderr,"HAS DELETED? %d\n",unionOCCT.HasDeleted());
 
   return CV_OK;
 }
@@ -781,7 +779,10 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 
   pd = vtkPolyData::New();
   pd->DeepCopy(aDataImpl->getVtkPolyData());
-  //this->GetOnlyPD(pd);
+  //if (max_dist != -1)
+  //{
+    this->GetOnlyPD(pd,max_dist);
+  //}
 
   result = new cvPolyData(pd);
   pd->Delete();
@@ -941,7 +942,8 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 
   pd = vtkPolyData::New();
   pd->DeepCopy(aDataImpl->getVtkPolyData());
-  //this->GetOnlyPD(pd);
+  //if (max_dist != -1)
+    this->GetOnlyPD(pd,max_dist);
 
   result = new cvPolyData(pd);
   pd->Delete();
@@ -1122,7 +1124,8 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
     if (newid == -1)
     {
-      AddFaceLabel(tmpFace,i);
+      int faceid = i+1;
+      AddFaceLabel(tmpFace,faceid);
       fprintf(stderr,"Giving label to face doh\n");
     }
   }
@@ -1181,7 +1184,7 @@ int cvOCCTSolidModel::ReadNative( char *filename )
     shapetool_ = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
     TDF_LabelSequence allLabels;
     shapetool_->GetShapes(allLabels);
-    *shapelabel_ = allLabels.First();
+    *shapelabel_ = allLabels.Last();
     *geom_ = shapetool_->GetShape(*shapelabel_);
     this->RegisterShapeFaces();
   }
@@ -1220,11 +1223,17 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
     }
   }
   else if (!strncmp(extension,"step",4)) {
-    Handle(TDocStd_Document) aDoc;
-    gOCCTManager->GetDocument(1,aDoc);
     fprintf(stdout,"Writing file %s\n",filename);
     STEPCAFControl_Writer writer;
-    writer.Perform(aDoc,filename);
+    STEPControl_StepModelType stepmodel;
+    char *empty = NULL;
+    writer.Transfer(*shapelabel_,stepmodel,empty);
+    writer.Write(filename);
+  }
+  else if (!strncmp(extension,"stl",3)) {
+    fprintf(stdout,"Writing file %s\n",filename);
+    StlAPI_Writer writer;
+    writer.Write(*geom_,filename);
   }
   else {
     fprintf(stderr,"File can only be written with .brep extension\n");
@@ -1249,7 +1258,7 @@ int cvOCCTSolidModel::RegisterShapeFaces()
   for (int i=0;FaceExp.More();FaceExp.Next(),i++)
   {
     TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
-    int faceid=i;
+    int faceid=i+1;
     AddFaceLabel(tmpFace,faceid);
   }
 
@@ -1385,7 +1394,7 @@ int cvOCCTSolidModel::RemoveShape() const
 // ---------------
 // GetOnlyPD
 // ---------------
-int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd) const
+int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
 {
   if (pd == NULL)
     return CV_ERROR;
@@ -1407,15 +1416,18 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd) const
     surfacer->Update();
     //For polydata of just edges, MESH_TYPE is not 7
     //Only want if not edges
+    //fprintf(stderr,"Num Points bef! %d\n",surfacer->GetOutput()->GetNumberOfPoints());
+    //  vtkSmartPointer<vtkQuadricDecimation> decimator =
+    //    vtkSmartPointer<vtkQuadricDecimation>::New();
+    //  decimator->SetInputData(surfacer->GetOutput());
+    //  decimator->SetTargetReduction(0.2);
+    //  decimator->GetOutput();
+    //  pd->DeepCopy(decimator->GetOutput());
     if (surfacer->GetOutput()->GetNumberOfPoints() != 0)
     {
-      vtkSmartPointer<vtkQuadricDecimation> decimator =
-	vtkSmartPointer<vtkQuadricDecimation>::New();
-      decimator->SetInputData(surfacer->GetOutput());
-      decimator->SetTargetReduction(0.8);
-      decimator->GetOutput();
-      pd->DeepCopy(decimator->GetOutput());
+      pd->DeepCopy(surfacer->GetOutput());
     }
+    //fprintf(stderr,"Num Points now! %d\n",pd->GetNumberOfPoints());
   }
 
   return CV_OK;
