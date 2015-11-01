@@ -48,13 +48,19 @@
 #include "cvSolidModel.h"
 #include "cvOCCTSolidModel.h"
 
+#include "Standard_Real.hxx"
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
+#include "TopoDS_Edge.hxx"
 #include "TopoDS_Wire.hxx"
+#include "TopoDS_Shell.hxx"
+#include "TopoDS_Solid.hxx"
 #include "TDF_Label.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
 #include "TDataStd_ExtStringArray.hxx"
+#include "Geom_BSplineCurve.hxx"
+#include "Geom_BSplineSurface.hxx"
 
 /* -------- */
 /* Get Info */
@@ -86,6 +92,22 @@ int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
 
 int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves,TopoDS_Shape &shape,int numCurves,int continuity,
 		int partype, double w1, double w2, double w3, int smoothing);
+
+Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
+		const Standard_Real presPln,
+		TopoDS_Face& theFace);
+
+Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
+  const TopoDS_Shape& aShell);
+
+TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+		const TopoDS_Wire& wire2, const Standard_Real presPln,
+		TopoDS_Face& face1, TopoDS_Face& face);
+
+Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
+		const Handle(Geom_BSplineSurface)& aSurface);
+
+Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge);
 
 /* -------- */
 /* Set */

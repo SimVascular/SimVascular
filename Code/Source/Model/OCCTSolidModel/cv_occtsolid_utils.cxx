@@ -46,21 +46,44 @@
 #include "cv_occtsolid_utils.h"
 
 //OCCT Includes
+#include "Precision.hxx"
 #include "TopoDS.hxx"
 #include "TopoDS_Face.hxx"
+#include "TopoDS_Shell.hxx"
+#include "TopExp.hxx"
 #include "TopExp_Explorer.hxx"
 
+#include "BSplCLib.hxx"
 #include "BRepOffsetAPI_ThruSections.hxx"
+#include "BRepClass3d_SolidClassifier.hxx"
 #include "BRepTools_Reshape.hxx"
 #include "BRepCheck_Solid.hxx"
+#include "BRep_Tool.hxx"
+#include "BRep_Builder.hxx"
+#include "BRepBuilderAPI_FindPlane.hxx"
+#include "BRepBuilderAPI_MakeFace.hxx"
 
 #include "TDataStd_Integer.hxx"
 #include "TDataStd_Name.hxx"
 #include "Standard_Real.hxx"
+#include "Standard_NullObject.hxx"
 #include "StdFail_NotDone.hxx"
 #include "Standard_Integer.hxx"
 #include "TDataStd_Integer.hxx"
 #include "TNaming_Builder.hxx"
+
+#include "Geom_Plane.hxx"
+#include "GeomFill_Line.hxx"
+#include "GeomFill_AppSurf.hxx"
+#include "GeomFill_SectionGenerator.hxx"
+#include "GeomConvert.hxx"
+#include "GeomConvert_ApproxCurve.hxx"
+#include "GeomConvert_CompCurveToBSplineCurve.hxx"
+#include "Geom_BSplineSurface.hxx"
+#include "Geom_BoundedCurve.hxx"
+#include "Geom_TrimmedCurve.hxx"
+#include "Geom2d_Line.hxx"
+#include "Geom_Conic.hxx"
 
 #include <string>
 #include <sstream>
@@ -126,62 +149,441 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
 		int partype, double w1, double w2, double w3, int smoothing)
 {
 
-  cvOCCTSolidModel *shapePtr;
-  BRepOffsetAPI_ThruSections lofter(Standard_True,Standard_False,1e-6);
-  if (continuity == 0)
-    lofter.SetContinuity(GeomAbs_C0);
-  else if (continuity == 1)
-    lofter.SetContinuity(GeomAbs_G1);
-  else if (continuity == 2)
-    lofter.SetContinuity(GeomAbs_C1);
-  else if (continuity == 3)
-    lofter.SetContinuity(GeomAbs_G2);
-  else if (continuity == 4)
-    lofter.SetContinuity(GeomAbs_C2);
-  else if (continuity == 5)
-    lofter.SetContinuity(GeomAbs_C3);
+  //Methods using BRepOffsetAPI_ThruSections
+  //cvOCCTSolidModel *shapePtr;
+  //BRepOffsetAPI_ThruSections lofter(Standard_True,Standard_False,1e-6);
+  //if (continuity == 0)
+  //  lofter.SetContinuity(GeomAbs_C0);
+  //else if (continuity == 1)
+  //  lofter.SetContinuity(GeomAbs_G1);
+  //else if (continuity == 2)
+  //  lofter.SetContinuity(GeomAbs_C1);
+  //else if (continuity == 3)
+  //  lofter.SetContinuity(GeomAbs_G2);
+  //else if (continuity == 4)
+  //  lofter.SetContinuity(GeomAbs_C2);
+  //else if (continuity == 5)
+  //  lofter.SetContinuity(GeomAbs_C3);
+  ////else
+  ////  lofter.SetContinuity(GeomAbs_CN);
+
+  //if (partype == 0)
+  //  lofter.SetParType(Approx_ChordLength);
+  //else if (partype == 1)
+  //  lofter.SetParType(Approx_Centripetal);
   //else
-  //  lofter.SetContinuity(GeomAbs_CN);
+  //  lofter.SetParType(Approx_IsoParametric);
 
-  if (partype == 0)
-    lofter.SetParType(Approx_ChordLength);
-  else if (partype == 1)
-    lofter.SetParType(Approx_Centripetal);
-  else
-    lofter.SetParType(Approx_IsoParametric);
+  //lofter.CheckCompatibility(Standard_False);
+  //lofter.SetSmoothing(smoothing);
+  //lofter.SetCriteriumWeight(w1,w2,w3);
 
-  lofter.CheckCompatibility(Standard_False);
-  lofter.SetSmoothing(smoothing);
-  lofter.SetCriteriumWeight(w1,w2,w3);
+  //fprintf(stdout,"Loft Continuity: %d\n",continuity);
+  //fprintf(stdout,"Loft Parameter: %d\n",partype);
+  //for ( int i = 0; i < numCurves; i++ ) {
+  //  TopoDS_Wire newwire = curves[i];
+  //  lofter.AddWire(newwire);
+  //}
+  //try
+  //{
+  //  lofter.Build();
+  //}
+  //catch (Standard_Failure)
+  //{
+  //  fprintf(stderr,"Failure in lofting\n");
+  //  return CV_ERROR;
+  //}
 
-  fprintf(stdout,"Loft Continuity: %d\n",continuity);
-  fprintf(stdout,"Loft Parameter: %d\n",partype);
-  for ( int i = 0; i < numCurves; i++ ) {
-    TopoDS_Wire newwire = curves[i];
-    lofter.AddWire(newwire);
-  }
-  try
+  ////shape = attacher.SewedShape();
+  //try
+  //{
+  //  shape = lofter.Shape();
+  //}
+  //catch (StdFail_NotDone)
+  //{
+  //  fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
+  //  return CV_ERROR;
+  //}
+
+  //Methods using GeomFill_SectionGenerator
+  GeomFill_SectionGenerator sectioner;
+  Handle(Geom_BSplineSurface) surface;
+  Handle(Geom_BSplineCurve) BS, BS1;
+  Handle(Geom_TrimmedCurve) curvTrim;
+
+  Standard_Boolean checkDegenerate = Standard_False;
+  for (int i = 0; i< numCurves;i++)
   {
-    lofter.Build();
+    checkDegenerate = BRep_Tool::Degenerated(TopoDS::Edge(curves[i]));
+    if (checkDegenerate == Standard_True)
+    {
+      fprintf(stderr,"Degenerate wire detected\n");
+      return CV_ERROR;
+    }
+
+    TopoDS_Edge newEdge = TopoDS::Edge(curves[i]);
+    Handle(Geom_BSplineCurve) curvBS = OCCTUtils_EdgeToBSpline(newEdge);
+
+    Standard_Real aTolV = Precision::Confusion();
+    aTolV = 1.e-3;
+    GeomConvert_CompCurveToBSplineCurve compBS(curvBS);
+    compBS.Add(curvBS,aTolV,Standard_True,Standard_False,1);
+    BS = compBS.BSplineCurve();
+    sectioner.AddCurve(BS);
   }
-  catch (Standard_Failure)
-  {
-    fprintf(stderr,"Failure in lofting\n");
+
+  sectioner.Perform(Precision::PConfusion());
+  Handle(GeomFill_Line) line = new GeomFill_Line(numCurves);
+
+  Standard_Real pres3d = 1.e-6;
+  Standard_Integer nbIt = 3;
+  if(pres3d <= 1.e-3) nbIt = 0;
+
+  Standard_Integer degmin = 2, degmax = 2;//Max(myDegMax, degmin);
+  Standard_Boolean SpApprox = Standard_True;
+
+  GeomFill_AppSurf anApprox(degmin, degmax, pres3d, pres3d, nbIt);
+  anApprox.SetContinuity((GeomAbs_Shape) continuity);
+
+  //if(smoothing) {
+  //  anApprox.SetCriteriumWeight(myCritWeights[0], myCritWeights[1], myCritWeights[2]);
+  //  anApprox.PerformSmoothing(line, section);
+  //}
+  anApprox.SetParType((Approx_ParametrizationType) partype);
+  anApprox.Perform(line, sectioner, SpApprox);
+
+  if(anApprox.IsDone()) {
+    surface =
+      new Geom_BSplineSurface(anApprox.SurfPoles(), anApprox.SurfWeights(),
+      anApprox.SurfUKnots(), anApprox.SurfVKnots(),
+      anApprox.SurfUMults(), anApprox.SurfVMults(),
+      anApprox.UDegree(), anApprox.VDegree());
+  }
+
+  if(surface.IsNull()) {
+    fprintf(stderr,"Lofting did not complete\n");
     return CV_ERROR;
   }
 
-  //shape = attacher.SewedShape();
-  try
-  {
-    shape = lofter.Shape();
-  }
-  catch (StdFail_NotDone)
-  {
-    fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
-    return CV_ERROR;
-  }
+  // create the new surface
+  TopoDS_Shell shell;
+  TopoDS_Face face;
+  TopoDS_Wire W;
+  TopoDS_Edge edge, edge1, edge2, edge3, edge4, couture;
+  TopTools_Array1OfShape vcouture(1, 1);
+
+  BRep_Builder B;
+  B.MakeShell(shell);
+
+  TopoDS_Wire newW1, newW2;
+  BRep_Builder BW1, BW2;
+  BW1.MakeWire(newW1);
+  BW2.MakeWire(newW2);
+
+  TopLoc_Location loc;
+  TopoDS_Vertex v1f,v1l,v2f,v2l;
+
+  Standard_Integer nbPnts = 21;
+  TColgp_Array2OfPnt points(1, nbPnts, 1, numCurves);
+
+  TopoDS_Shape firstEdge;
+
+  // segmentation of TS
+  Standard_Real Ui1,Ui2,V0,V1;
+  Ui1 = 0;
+  Ui2 = 1;
+  Ui1 = OCCTUtils_PreciseUpar(Ui1, surface);
+  Ui2 = OCCTUtils_PreciseUpar(Ui2, surface);
+  V0  = surface->VKnot(surface->FirstVKnotIndex());
+  V1  = surface->VKnot(surface->LastVKnotIndex());
+  surface->Segment(Ui1,Ui2,V0,V1);
+
+  // return vertices
+  edge =  TopoDS::Edge(curves[0]);
+  TopExp::Vertices(edge,v1f,v1l);
+  if (edge.Orientation() == TopAbs_REVERSED)
+    TopExp::Vertices(edge,v1l,v1f);
+  firstEdge = edge;
+
+  edge =  TopoDS::Edge(curves[numCurves-1]);
+  TopExp::Vertices(edge,v2f,v2l);
+  if (edge.Orientation() == TopAbs_REVERSED)
+    TopExp::Vertices(edge,v2l,v2f);
+
+  // make the face
+  B.MakeFace(face, surface, Precision::Confusion());
+
+  // make the wire
+  B.MakeWire(W);
+
+  // make the missing edges
+  Standard_Real f1, f2, l1, l2;
+  surface->Bounds(f1,l1,f2,l2);
+
+  // --- edge 1
+  B.MakeEdge(edge1, surface->VIso(f2), Precision::Confusion());
+  v1f.Orientation(TopAbs_FORWARD);
+  B.Add(edge1, v1f);
+  v1l.Orientation(TopAbs_REVERSED);
+  B.Add(edge1, v1l);
+  B.Range(edge1, f1, l1);
+  // processing of looping sections
+  // store edges of the 1st section
+
+  // --- edge 2
+  B.MakeEdge(edge2, surface->VIso(l2), Precision::Confusion());
+  v2f.Orientation(TopAbs_FORWARD);
+  B.Add(edge2, v2f);
+  v2l.Orientation(TopAbs_REVERSED);
+  B.Add(edge2, v2l);
+  B.Range(edge2, f1, l1);
+  edge2.Reverse();
+
+
+  // --- edge 3
+  B.MakeEdge(edge3, surface->UIso(f1), Precision::Confusion());
+  v1f.Orientation(TopAbs_FORWARD);
+  B.Add(edge3, v1f);
+  v2f.Orientation(TopAbs_REVERSED);
+  B.Add(edge3, v2f);
+  B.Range(edge3, f2, l2);
+  couture = edge3;
+  edge3.Reverse();
+
+  // --- edge 4
+  edge4 = couture;
+
+  B.Add(W,edge1);
+  B.Add(W,edge4);
+  B.Add(W,edge2);
+  B.Add(W,edge3);
+
+  // set PCurve
+  B.UpdateEdge(edge1,new Geom2d_Line(gp_Pnt2d(0,f2),gp_Dir2d(1,0)),face,
+    Precision::Confusion());
+  B.Range(edge1,face,f1,l1);
+  B.UpdateEdge(edge2,new Geom2d_Line(gp_Pnt2d(0,l2),gp_Dir2d(1,0)),face,
+    Precision::Confusion());
+  B.Range(edge2,face,f1,l1);
+
+  B.UpdateEdge(edge3,
+    new Geom2d_Line(gp_Pnt2d(l1,0),gp_Dir2d(0,1)),
+    new Geom2d_Line(gp_Pnt2d(f1,0),gp_Dir2d(0,1)),face,
+    Precision::Confusion());
+  B.Range(edge3,face,f2,l2);
+
+  B.Add(face,W);
+  B.Add(shell, face);
+
+  // complete newW1 newW2
+  TopoDS_Edge edge12 = edge1;
+  TopoDS_Edge edge22 = edge2;
+  edge12.Reverse();
+  edge22.Reverse();
+  BW1.Add(newW1, edge12);
+  BW2.Add(newW2, edge22);
+
+  // history
+  TopTools_DataMapOfShapeShape generated;
+  generated.Bind(firstEdge, face);
+
+  TopoDS_Face first,last;
+  shape = OCCTUtils_MakeSolid(shell, newW1, newW2, pres3d, first, last);
 
   return CV_OK;
+}
+
+Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
+  const TopoDS_Shape& aShell)
+{
+  TopExp_Explorer Explo(aFace, TopAbs_EDGE);
+  TopoDS_Shape anEdge = Explo.Current();
+  TopAbs_Orientation Or1 = anEdge.Orientation();
+
+  TopTools_IndexedDataMapOfShapeListOfShape EFmap;
+  TopExp::MapShapesAndAncestors( aShell, TopAbs_EDGE, TopAbs_FACE, EFmap );
+
+  const TopoDS_Shape& AdjacentFace = EFmap.FindFromKey(anEdge).First();
+  TopoDS_Shape theEdge;
+  for (Explo.Init(AdjacentFace, TopAbs_EDGE); Explo.More(); Explo.Next())
+  {
+    theEdge = Explo.Current();
+    if (theEdge.IsSame(anEdge))
+      break;
+  }
+
+  TopAbs_Orientation Or2 = theEdge.Orientation();
+  if (Or1 == Or2)
+    return Standard_False;
+  return Standard_True;
+}
+
+Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
+  const Standard_Real presPln,
+  TopoDS_Face& theFace)
+{
+  Standard_Boolean isDegen = Standard_True;
+  TopoDS_Iterator iter(W);
+  for (; iter.More(); iter.Next())
+  {
+    const TopoDS_Edge& anEdge = TopoDS::Edge(iter.Value());
+    if (!BRep_Tool::Degenerated(anEdge))
+      isDegen = Standard_False;
+  }
+  if (isDegen)
+    return Standard_True;
+
+  Standard_Boolean Ok = Standard_False;
+  if (!W.IsNull()) {
+    BRepBuilderAPI_FindPlane Searcher( W, presPln );
+    if (Searcher.Found())
+    {
+      theFace = BRepBuilderAPI_MakeFace(Searcher.Plane(), W);
+      Ok = Standard_True;
+    }
+    else // try to find another surface
+    {
+      BRepBuilderAPI_MakeFace MF( W );
+      if (MF.IsDone())
+      {
+        theFace = MF.Face();
+        Ok = Standard_True;
+      }
+    }
+  }
+
+  return Ok;
+}
+
+TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+  const TopoDS_Wire& wire2, const Standard_Real presPln,
+  TopoDS_Face& face1, TopoDS_Face& face2)
+{
+  if (shell.IsNull())
+    StdFail_NotDone::Raise("Thrusections is not build");
+  Standard_Boolean B = shell.Closed();
+  BRep_Builder BB;
+
+  if (!B)
+  {
+    // It is necessary to close the extremities
+    B =  OCCTUtils_PerformPlan(wire1, presPln, face1);
+    if (B) {
+      B =  OCCTUtils_PerformPlan(wire2, presPln, face2);
+      if (B) {
+        if (!face1.IsNull() && !OCCTUtils_IsSameOriented( face1, shell ))
+          face1.Reverse();
+        if (!face2.IsNull() && !OCCTUtils_IsSameOriented( face2, shell ))
+          face2.Reverse();
+
+        if (!face1.IsNull())
+          BB.Add(shell, face1);
+        if (!face2.IsNull())
+          BB.Add(shell, face2);
+
+        shell.Closed(Standard_True);
+      }
+    }
+  }
+
+  TopoDS_Solid solid;
+  BB.MakeSolid(solid);
+  BB.Add(solid, shell);
+
+  // verify the orientation the solid
+  BRepClass3d_SolidClassifier clas3d(solid);
+  clas3d.PerformInfinitePoint(Precision::Confusion());
+  if (clas3d.State() == TopAbs_IN) {
+    BB.MakeSolid(solid);
+    TopoDS_Shape aLocalShape = shell.Reversed();
+    BB.Add(solid, TopoDS::Shell(aLocalShape));
+    //    B.Add(solid, TopoDS::Shell(newShell.Reversed()));
+  }
+
+  solid.Closed(Standard_True);
+  return solid;
+}
+
+Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
+  const Handle(Geom_BSplineSurface)& aSurface)
+{
+  Standard_Real Tol = Precision::PConfusion();
+  Standard_Integer i1, i2;
+
+  aSurface->LocateU(anUpar, Tol, i1, i2);
+  Standard_Real U1 = aSurface->UKnot(i1);
+  Standard_Real U2 = aSurface->UKnot(i2);
+
+  Standard_Real NewU = anUpar;
+
+  NewU = (anUpar - U1 < U2 - anUpar)? U1 : U2;
+  return NewU;
+}
+
+Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge)
+{
+  Handle(Geom_BSplineCurve) aBSCurve;
+  if (BRep_Tool::Degenerated(theEdge)) {
+    // degenerated edge : construction of a point curve
+    TColStd_Array1OfReal aKnots (1,2);
+    aKnots(1) = 0.;
+    aKnots(2) = 1.;
+
+    TColStd_Array1OfInteger aMults (1,2);
+    aMults(1) = 2;
+    aMults(2) = 2;
+
+    TColgp_Array1OfPnt aPoles(1,2);
+    TopoDS_Vertex vf, vl;
+    TopExp::Vertices(theEdge,vl,vf);
+    aPoles(1) = BRep_Tool::Pnt(vf);
+    aPoles(2) = BRep_Tool::Pnt(vl);
+
+    aBSCurve = new Geom_BSplineCurve (aPoles, aKnots, aMults, 1);
+  }
+  else
+  {
+    // get the curve of the edge
+    TopLoc_Location aLoc;
+    Standard_Real aFirst, aLast;
+    Handle(Geom_Curve) aCurve = BRep_Tool::Curve (theEdge, aLoc, aFirst, aLast);
+    if (aCurve.IsNull())
+      Standard_NullObject::Raise("Null 3D curve in edge");
+
+    // convert its part used by edge to bspline; note that if edge curve is bspline,
+    // conversion made via trimmed curve is still needed -- it will copy it, segment
+    // as appropriate, and remove periodicity if it is periodic (deadly for approximator)
+    Handle(Geom_TrimmedCurve) aTrimCurve = new Geom_TrimmedCurve (aCurve, aFirst, aLast);
+
+    // special treatment of conic curve
+    if (aTrimCurve->BasisCurve()->IsKind(STANDARD_TYPE(Geom_Conic)))
+    {
+      const Handle(Geom_Curve)& aCurveTrimmed = aTrimCurve; // to avoid ambiguity
+      GeomConvert_ApproxCurve anAppr (aCurveTrimmed, Precision::Confusion(), GeomAbs_C1, 16, 14);
+      if (anAppr.HasResult())
+        aBSCurve = anAppr.Curve();
+    }
+
+    // general case
+    if (aBSCurve.IsNull())
+      aBSCurve = GeomConvert::CurveToBSplineCurve (aTrimCurve);
+
+    // apply transformation if needed
+    if (! aLoc.IsIdentity())
+      aBSCurve->Transform (aLoc.Transformation());
+
+    // reparameterize to [0,1]
+    TColStd_Array1OfReal aKnots (1, aBSCurve->NbKnots());
+    aBSCurve->Knots (aKnots);
+    BSplCLib::Reparametrize (0., 1., aKnots);
+    aBSCurve->SetKnots (aKnots);
+  }
+
+  // reverse curve if edge is reversed
+  if (theEdge.Orientation() == TopAbs_REVERSED)
+    aBSCurve->Reverse();
+
+  return aBSCurve;
 }
 
 // ---------------------
