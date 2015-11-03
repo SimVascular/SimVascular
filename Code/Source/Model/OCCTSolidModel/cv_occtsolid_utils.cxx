@@ -214,15 +214,16 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   Standard_Boolean checkDegenerate = Standard_False;
   for (int i = 0; i< numCurves;i++)
   {
-    checkDegenerate = BRep_Tool::Degenerated(TopoDS::Edge(curves[i]));
+    TopExp_Explorer getEdge(curves[i],TopAbs_EDGE);
+    TopoDS_Edge tmpEdge = TopoDS::Edge(getEdge.Current());
+
+    checkDegenerate = BRep_Tool::Degenerated(tmpEdge);
     if (checkDegenerate == Standard_True)
     {
       fprintf(stderr,"Degenerate wire detected\n");
       return CV_ERROR;
     }
-
-    TopoDS_Edge newEdge = TopoDS::Edge(curves[i]);
-    Handle(Geom_BSplineCurve) curvBS = OCCTUtils_EdgeToBSpline(newEdge);
+    Handle(Geom_BSplineCurve) curvBS = OCCTUtils_EdgeToBSpline(tmpEdge);
 
     Standard_Real aTolV = Precision::Confusion();
     aTolV = 1.e-3;
@@ -239,20 +240,67 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   Standard_Integer nbIt = 3;
   if(pres3d <= 1.e-3) nbIt = 0;
 
-  Standard_Integer degmin = 2, degmax = 2;//Max(myDegMax, degmin);
+  Standard_Integer degmin = 2, degmax = 3;//Max(myDegMax, degmin);
   Standard_Boolean SpApprox = Standard_True;
 
   GeomFill_AppSurf anApprox(degmin, degmax, pres3d, pres3d, nbIt);
   anApprox.SetContinuity((GeomAbs_Shape) continuity);
 
-  //if(smoothing) {
-  //  anApprox.SetCriteriumWeight(myCritWeights[0], myCritWeights[1], myCritWeights[2]);
-  //  anApprox.PerformSmoothing(line, section);
-  //}
-  anApprox.SetParType((Approx_ParametrizationType) partype);
-  anApprox.Perform(line, sectioner, SpApprox);
+  anApprox.SetCriteriumWeight(w1, w2, w3);
+  if(smoothing) {
+    anApprox.SetCriteriumWeight(w1, w2, w3);
+    anApprox.PerformSmoothing(line, sectioner);
+  }
+  else
+  {
+    anApprox.SetParType((Approx_ParametrizationType) partype);
+    anApprox.Perform(line, sectioner, SpApprox);
+  }
 
   if(anApprox.IsDone()) {
+    fprintf(stderr,"UDegree %d\n",anApprox.UDegree());
+    fprintf(stderr,"VDegree %d\n",anApprox.VDegree());
+    TColStd_Array2OfReal surfweights = anApprox.SurfWeights();
+    fprintf(stderr,"RowLength %d\n",surfweights.RowLength());
+    fprintf(stderr,"ColLength %d\n",surfweights.ColLength());
+    fprintf(stderr,"SurfWeights\n");
+    for (int i=1;i<surfweights.ColLength();i++)
+    {
+      for (int j=1;j<surfweights.RowLength();j++)
+      {
+	fprintf(stderr,"%.2f ",surfweights.Value(i,j));
+      }
+      fprintf(stderr,"\n");
+    }
+    TColStd_Array1OfReal uknots = anApprox.SurfUKnots();
+    TColStd_Array1OfReal vknots = anApprox.SurfVKnots();
+    fprintf(stderr,"Uknot length %d\n",uknots.Length());
+    for (int i=1;i<=uknots.Length();i++)
+    {
+      fprintf(stderr,"%.2f ",uknots.Value(i));
+    }
+    fprintf(stderr,"\n");
+    fprintf(stderr,"Vknot length %d\n",vknots.Length());
+    for (int i=1;i<=vknots.Length();i++)
+    {
+      fprintf(stderr,"%.2f ",vknots.Value(i));
+    }
+    fprintf(stderr,"\n");
+    TColStd_Array1OfInteger umults = anApprox.SurfUMults();
+    TColStd_Array1OfInteger vmults = anApprox.SurfVMults();
+    fprintf(stderr,"Umult length %d\n",umults.Length());
+    for (int i=1;i<=umults.Length();i++)
+    {
+      fprintf(stderr,"%d ",umults.Value(i));
+    }
+    fprintf(stderr,"\n");
+    fprintf(stderr,"Vmult length %d\n",vmults.Length());
+    for (int i=1;i<=vmults.Length();i++)
+    {
+      fprintf(stderr,"%d ",vmults.Value(i));
+    }
+    fprintf(stderr,"\n");
+
     surface =
       new Geom_BSplineSurface(anApprox.SurfPoles(), anApprox.SurfWeights(),
       anApprox.SurfUKnots(), anApprox.SurfVKnots(),
@@ -299,13 +347,15 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   surface->Segment(Ui1,Ui2,V0,V1);
 
   // return vertices
-  edge =  TopoDS::Edge(curves[0]);
+  TopExp_Explorer edge_one(curves[0],TopAbs_EDGE);
+  edge =  TopoDS::Edge(edge_one.Current());
   TopExp::Vertices(edge,v1f,v1l);
   if (edge.Orientation() == TopAbs_REVERSED)
     TopExp::Vertices(edge,v1l,v1f);
   firstEdge = edge;
 
-  edge =  TopoDS::Edge(curves[numCurves-1]);
+  TopExp_Explorer edge_last(curves[numCurves-1],TopAbs_EDGE);
+  edge =  TopoDS::Edge(edge_last.Current());
   TopExp::Vertices(edge,v2f,v2l);
   if (edge.Orientation() == TopAbs_REVERSED)
     TopExp::Vertices(edge,v2l,v2f);
