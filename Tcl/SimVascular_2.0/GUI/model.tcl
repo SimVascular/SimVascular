@@ -1115,6 +1115,7 @@ proc guiSV_model_update_tree {} {
       }
       set i 0
       foreach item [model_iditems $model {}] {
+	puts "Adding item $item"
 	if {[$tv exists .models.$kernel.$model.$item] != 1} {
 	  $tv insert .models.$kernel.$model $i -id .models.$kernel.$model.$item -text "$item"
 	}
@@ -3143,7 +3144,7 @@ proc guiSV_model_update_view_model {kernel model} {
   set tv $symbolicName(guiSV_model_tree)
 
   set hasfaces 0
-  if {$kernel == "Parasolid"} {
+  if {$kernel == "Parasolid" || $kernel == "OpenCASCADE"} {
     set hasfaces 1
   } elseif {$kernel == "PolyData"} {
     if [guiSV_model_check_array_exists $model 1 "ModelFaceID"] {

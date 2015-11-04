@@ -214,6 +214,18 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   Standard_Boolean checkDegenerate = Standard_False;
   for (int i = 0; i< numCurves;i++)
   {
+    fprintf(stderr,"Next Wire\n");
+    TopExp_Explorer ptExp(curves[i],TopAbs_VERTEX);
+    for (int j=0;ptExp.More();ptExp.Next(),j++)
+    {
+      TopoDS_Vertex tmpVertex = TopoDS::Vertex(ptExp.Current());
+      gp_Pnt newPnt = BRep_Tool::Pnt(tmpVertex);
+      fprintf(stderr,"X point %.2f\n",newPnt.X());
+      fprintf(stderr,"Y point %.2f\n",newPnt.Y());
+      fprintf(stderr,"Z point %.2f\n",newPnt.Z());
+      fprintf(stderr,"\n");
+    }
+    fprintf(stderr,"\n");
     TopExp_Explorer getEdge(curves[i],TopAbs_EDGE);
     TopoDS_Edge tmpEdge = TopoDS::Edge(getEdge.Current());
 
@@ -1067,6 +1079,7 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
     fprintf(stderr,"Failure in getting gdscName for shape\n");
     return CV_ERROR;
   }
+  fprintf(stderr,"Got face attribute, now setting\n");
   if (OCCTUtils_SetFaceAttribute(
 	faceDst,shapetool,shapelabel,"gdscName",name) != CV_OK)
   {

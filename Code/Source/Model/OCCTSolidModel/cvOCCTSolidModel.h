@@ -178,7 +178,7 @@ public:
 
   int NewShape();
   int AddShape();
-  int RemoveShape() const;
+  int RemoveShape();
 
   int GetOnlyPD(vtkPolyData *pd,double &max_dist) const;
 protected:

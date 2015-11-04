@@ -1058,12 +1058,13 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
     return CV_ERROR;
   }
 
+  char *nameA;
+  char *nameB;
   TopTools_IndexedDataMapOfShapeListOfShape anEFsMap;
   TopExp::MapShapesAndAncestors (*geom_, TopAbs_EDGE,
       TopAbs_FACE, anEFsMap);
   int num = anEFsMap.Extent();
   int found = 0;
-  fprintf(stderr,"Extent! %d\n",num);
   TopoDS_Edge filletEdge;
   for (int i=1;i < num+1;i++)
   {
@@ -1077,14 +1078,20 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
     {
       found++;
       filletEdge = TopoDS::Edge(anEFsMap.FindKey(i));
+      OCCTUtils_GetFaceAttribute(face1,shapetool_,*shapelabel_,
+	  "gdscName",&nameA);
+      OCCTUtils_GetFaceAttribute(face2,shapetool_,*shapelabel_,
+	  "gdscName",&nameB);
     }
   }
   if (found != 1)
   {
-    fprintf(stderr,"Single edge between faces found\n");
+    fprintf(stderr,"Single edge between faces not found\n");
+    fprintf(stderr,"Number of edges %d\n",found);
     return CV_ERROR;
   }
 
+  TopoDS_Shape geomcopy = *geom_;
   BRepFilletAPI_MakeFillet filletmaker(*geom_);
   filletmaker.Add(radius,filletEdge);
   TopoDS_Shape tmpShape;
@@ -1106,42 +1113,45 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
     fprintf(stderr,"Try different radius\n");
     return CV_ERROR;
   }
-  TopTools_ListOfShape modfaces = filletmaker.Modified(*geom_);
-  fprintf(stderr,"Modified? %d\n",modfaces.Extent());
-  TopTools_ListOfShape newfaces = filletmaker.Generated(*geom_);
-  fprintf(stderr,"Generated? %d\n",newfaces.Extent());
-  this->RemoveShape();
+  //this->RemoveShape();
   this->NewShape();
   *geom_ = tmpShape;
   this->AddShape();
+  TopExp_Explorer anExp(geomcopy,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    const TopTools_ListOfShape &modfaces =
+      filletmaker.Modified(anExp.Current());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
+    fprintf(stderr,"\n");
+    if (modfaces.Extent() != 0)
+    {
+      TopTools_ListIteratorOfListOfShape modFaceIt(modfaces);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
+    }
+  }
+  char blendname[100];
+  sprintf(blendname,"wall_blend_%s_%s",nameA,nameB);
   TopExp_Explorer FaceExp;
   FaceExp.Init(*geom_,TopAbs_FACE);
   for (int i=0;FaceExp.More();FaceExp.Next(),i++)
   {
-    fprintf(stderr,"New Face %d\n",i);
     TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
     int newid=-1;
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
-    if (newid == -1)
-    {
-      int faceid = i+1;
-      AddFaceLabel(tmpFace,faceid);
-      fprintf(stderr,"Giving label to face doh\n");
-    }
-  }
-  if (OCCTUtils_RenumberFaces(*geom_,shapetool_,*shapelabel_) != CV_OK)
-  {
-    fprintf(stderr,"Renumbering did not work\n");
-    return CV_ERROR;
-  }
-  FaceExp.Init(*geom_,TopAbs_FACE);
-  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
-  {
-    fprintf(stderr,"New Face %d\n",i);
-    TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
-    int newid=-1;
-    OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
-    fprintf(stderr,"ID %d\n",newid);
+    char *name;
+    OCCTUtils_GetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",&name);
+    if (!strncmp(name,"noname",6))
+      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",blendname);
   }
 
   return CV_OK;
@@ -1366,7 +1376,7 @@ int cvOCCTSolidModel::AddShape()
 // ---------------
 // RemoveShape
 // ---------------
-int cvOCCTSolidModel::RemoveShape() const
+int cvOCCTSolidModel::RemoveShape()
 {
   if (geom_ != NULL)
   {
@@ -1379,8 +1389,16 @@ int cvOCCTSolidModel::RemoveShape() const
     //Full shape info for new shape cannot be retrieved if removed currently
     //Will try some other stuff
     //shapetool_->RemoveShape(*shapelabel_,Standard_False);
-    delete shapelabel_;
-    delete geom_;
+    if (shapelabel_ != NULL)
+    {
+      delete shapelabel_;
+      shapelabel_ = NULL;
+    }
+    if (geom_ != NULL)
+    {
+      delete geom_;
+      geom_ = NULL;
+    }
   }
   else
   {

@@ -322,7 +322,7 @@ proc makeSurfOCCT {} {
     catch {repos_delete -obj $c0/surf}
     catch {repos_delete -obj $c0/surf/pd}
     solid_setKernel -name OpenCASCADE
-    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 2 -w1 0.4 -w2 0.2 -w3 0.4 -smooth 0}]} {
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 0.4 -w2 0.2 -w3 0.4 -smooth 0}]} {
 	return -code error "Error lofting surface."
     }
     global tcl_platform
@@ -369,4 +369,87 @@ proc makeSurfOCCT {} {
       $solid SetFaceAttr -attr parent -faceId $i -value $grp
     }
 
+}
+
+proc guiSV_model_blend_selected_models_occt {} {
+  global gObjects
+  global symbolicName
+  global gOptions
+  global gKernel
+  global gOCCTFaceNames
+
+
+  set tv $symbolicName(guiSV_model_tree)
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Can only blend one Parasolid model at a time"
+  }
+  set kernel $gKernel($model)
+  if {$kernel != "OpenCASCADE"} {
+    return -code error "ERROR: Solid kernel must be Parasolid or OpenCASCADE for operation"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
+  #set oldmodel "[string trim $model]_blended"
+  guiSV_model_add_to_backup_list $kernel $model
+  #model_create $kernel $oldmodel
+  set faceids [$model GetFaceIds]
+  foreach id $faceids {
+    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+    if {$facename != ""} {
+      set ids($facename) $id
+    }
+  }
+  set params [$symbolicName(guiOCCTBLENDSscript) get 0.0 end]
+
+  set blended -1
+  set broken [split $params "\n"]
+  for {set i 0} {$i < [llength $broken]} {incr i} {
+    set trimmed [string trim [lindex $broken $i]]
+    if {$trimmed == ""} {continue}
+    if {[llength $trimmed] != 3} {
+      puts "ERROR: line ($trimmed) ignored!"
+    }
+    set faceA -1
+    set faceB -1
+    catch {set faceA [lindex $trimmed 0]}
+    catch {set faceB [lindex $trimmed 1]}
+    set r [lindex $trimmed 2]
+    if {$faceA < 0 || $faceB < 0} {
+       puts "ERROR: invalid values in line ($trimmed).  Line Ignored."
+       continue
+    }
+    $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
+
+    set faceids [$model GetFaceIds]
+    foreach id $faceids {
+      set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+      set gOCCTFaceNames($id) $facename
+    }
+    set blended 1
+  }
+  if {$blended == -1} {
+    return -code error "ERROR: No params, model was not blended"
+  }
+
+  set pretty_names {}
+  foreach i [$model GetFaceIds] {
+    catch {lappend pretty_names [$model GetFaceAttr -attr gdscName -faceId $i]}
+  }
+  if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
+    set duplist [lsort -dictionary $pretty_names]
+    foreach i [lsort -unique $pretty_names] {
+      set idx [lsearch -exact $duplist $i]
+      set duplist [lreplace $duplist $idx $idx]
+    }
+    set msg "Duplicate faces found!\n\n"
+    foreach dup $duplist {
+      set msg "$msg  name: $dup\n"
+    }
+    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+  }
+
+  guiSV_model_add_faces_to_tree $kernel $model
+  guiSV_model_update_view_model $kernel $model
 }
