@@ -192,7 +192,7 @@ public:
   // geometric manipulation
   // this method is buggy and should be used with great care!
   virtual int DeleteFaces (int numfaces, int *faces) = 0;
-  virtual int CreateEdgeBlend(int faceA, int faceB, double radius) = 0;
+  virtual int CreateEdgeBlend(int faceA, int faceB, double radius, int filletshape) = 0;
   virtual int CombineFaces (int targetface, int loseface) = 0;
   virtual int RemeshFace (int numfaces,int *excludedFaces, double size) = 0;
 

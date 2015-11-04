@@ -1050,7 +1050,7 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
 // ---------------
 // CreateEdgeBlend
 // ---------------
-int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
+int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int filletshape)
 {
   if (geom_ == NULL)
   {
@@ -1092,7 +1092,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius)
   }
 
   TopoDS_Shape geomcopy = *geom_;
-  BRepFilletAPI_MakeFillet filletmaker(*geom_);
+  BRepFilletAPI_MakeFillet filletmaker(*geom_,(ChFi3d_FilletShape) filletshape);
   filletmaker.Add(radius,filletEdge);
   TopoDS_Shape tmpShape;
   try

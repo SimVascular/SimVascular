@@ -4865,13 +4865,15 @@ static int Solid_CreateEdgeBlendMtd( ClientData clientData, Tcl_Interp *interp,
   int status;
   int faceA;
   int faceB;
+  int filletshape=0;
   double radius;
 
-  int table_size = 3;
+  int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-faceA", INT_Type, &faceA, NULL, REQUIRED, 0, { 0 } },
     { "-faceB", INT_Type, &faceB, NULL, REQUIRED, 0, { 0 } },
     { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
+    { "-fillshape", INT_Type, &filletshape, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -4884,7 +4886,7 @@ static int Solid_CreateEdgeBlendMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  status = geom->CreateEdgeBlend( faceA, faceB, radius );
+  status = geom->CreateEdgeBlend( faceA, faceB, radius, filletshape );
 
   if ( status != CV_OK ) {
     Tcl_AppendResult( interp, "CreateEdgeBlend: error on object ", geom->GetName(),
