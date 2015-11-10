@@ -60,8 +60,10 @@
 #include "BRepCheck_Solid.hxx"
 #include "BRep_Tool.hxx"
 #include "BRep_Builder.hxx"
+#include "BRepAdaptor_Curve.hxx"
 #include "BRepBuilderAPI_FindPlane.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepBuilderAPI_MakeEdge.hxx"
 
 #include "TDataStd_Integer.hxx"
 #include "TDataStd_Name.hxx"
@@ -72,6 +74,7 @@
 #include "TDataStd_Integer.hxx"
 #include "TNaming_Builder.hxx"
 
+#include "GeomAPI_Interpolate.hxx"
 #include "Geom_Plane.hxx"
 #include "GeomFill_Line.hxx"
 #include "GeomFill_AppSurf.hxx"
@@ -84,6 +87,7 @@
 #include "Geom_TrimmedCurve.hxx"
 #include "Geom2d_Line.hxx"
 #include "Geom_Conic.hxx"
+#include "GCPnts_UniformAbscissa.hxx"
 
 #include <string>
 #include <sstream>
@@ -208,24 +212,13 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   //Methods using GeomFill_SectionGenerator
   GeomFill_SectionGenerator sectioner;
   Handle(Geom_BSplineSurface) surface;
+  Handle(Geom_BSplineSurface) tmpSurface;
   Handle(Geom_BSplineCurve) BS, BS1;
   Handle(Geom_TrimmedCurve) curvTrim;
 
   Standard_Boolean checkDegenerate = Standard_False;
   for (int i = 0; i< numCurves;i++)
   {
-    fprintf(stderr,"Next Wire\n");
-    TopExp_Explorer ptExp(curves[i],TopAbs_VERTEX);
-    for (int j=0;ptExp.More();ptExp.Next(),j++)
-    {
-      TopoDS_Vertex tmpVertex = TopoDS::Vertex(ptExp.Current());
-      gp_Pnt newPnt = BRep_Tool::Pnt(tmpVertex);
-      fprintf(stderr,"X point %.2f\n",newPnt.X());
-      fprintf(stderr,"Y point %.2f\n",newPnt.Y());
-      fprintf(stderr,"Z point %.2f\n",newPnt.Z());
-      fprintf(stderr,"\n");
-    }
-    fprintf(stderr,"\n");
     TopExp_Explorer getEdge(curves[i],TopAbs_EDGE);
     TopoDS_Edge tmpEdge = TopoDS::Edge(getEdge.Current());
 
@@ -243,6 +236,48 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     compBS.Add(curvBS,aTolV,Standard_True,Standard_False,1);
     BS = compBS.BSplineCurve();
     sectioner.AddCurve(BS);
+
+    //if (i < numCurves-1)
+    //{
+    //  BRepAdaptor_Curve firstCurve(tmpEdge);
+    //  GCPnts_UniformAbscissa abs1(firstCurve,40);
+
+    //  TopExp_Explorer getNextEdge(curves[i+1],TopAbs_EDGE);
+    //  TopoDS_Edge nextTmpEdge = TopoDS::Edge(getNextEdge.Current());
+
+    //  BRepAdaptor_Curve secondCurve(nextTmpEdge);
+    //  GCPnts_UniformAbscissa abs2(secondCurve,20);
+
+    //  Handle(TColgp_HArray1OfPnt) hArray =
+    //          new TColgp_HArray1OfPnt(1,20);
+    //  for (int j=1;j<=20;j++)
+    //  {
+    //    gp_Pnt newPnt1 = firstCurve.Value(abs1.Parameter(j));
+    //    gp_Pnt newPnt2 = secondCurve.Value(abs2.Parameter(j));
+    //    fprintf(stderr,"First Point: %.4f,%.4f,%.4f\n",newPnt1.X(),newPnt1.Y(),newPnt1.Z());
+    //    fprintf(stderr,"Second Point: %.4f,%.4f,%.4f\n",newPnt2.X(),newPnt2.Y(),newPnt2.Z());
+    //    gp_Pnt halfPnt(newPnt1.X()+((newPnt2.X()-newPnt1.X())/2),
+    //                   newPnt1.Y()+((newPnt2.Y()-newPnt1.Y())/2),
+    //                   newPnt1.Z()+((newPnt2.Z()-newPnt1.Z())/2));
+    //    fprintf(stderr,"Half Point: %.4f,%.4f,%.4f\n",halfPnt.X(),halfPnt.Y(),halfPnt.Z());
+    //    fprintf(stderr,"\n");
+    //    hArray->SetValue(j,halfPnt);
+    //  }
+    //  GeomAPI_Interpolate pointinterp(hArray,Standard_False,1.0e-6);
+    //  pointinterp.Perform();
+    //  Handle(Geom_BSplineCurve) newCurve = pointinterp.Curve();
+
+    //  BRepBuilderAPI_MakeEdge edgemaker(newCurve);
+    //  edgemaker.Build();
+    //  Handle(Geom_BSplineCurve) extraBS =
+    //    OCCTUtils_EdgeToBSpline(edgemaker.Edge());
+
+    //  GeomConvert_CompCurveToBSplineCurve newCompBS(extraBS);
+    //  newCompBS.Add(extraBS,aTolV,Standard_True,Standard_False,1);
+    //  BS = newCompBS.BSplineCurve();
+    //  sectioner.AddCurve(BS);
+    //  //Move to get new curves!
+    //}
   }
 
   sectioner.Perform(Precision::PConfusion());
@@ -258,10 +293,18 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   GeomFill_AppSurf anApprox(degmin, degmax, pres3d, pres3d, nbIt);
   anApprox.SetContinuity((GeomAbs_Shape) continuity);
 
-  anApprox.SetCriteriumWeight(w1, w2, w3);
+  //anApprox.SetCriteriumWeight(w1, w2, w3);
   if(smoothing) {
     anApprox.SetCriteriumWeight(w1, w2, w3);
-    anApprox.PerformSmoothing(line, sectioner);
+    try
+    {
+      anApprox.PerformSmoothing(line, sectioner);
+    }
+    catch (std::bad_alloc)
+    {
+      fprintf(stderr,"Not enough memory for this smoothing\n");
+      return CV_ERROR;
+    }
   }
   else
   {
@@ -289,7 +332,7 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     fprintf(stderr,"Uknot length %d\n",uknots.Length());
     for (int i=1;i<=uknots.Length();i++)
     {
-      fprintf(stderr,"%.2f ",uknots.Value(i));
+      fprintf(stderr,"%.8f ",uknots.Value(i));
     }
     fprintf(stderr,"\n");
     fprintf(stderr,"Vknot length %d\n",vknots.Length());
@@ -318,7 +361,35 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
       anApprox.SurfUKnots(), anApprox.SurfVKnots(),
       anApprox.SurfUMults(), anApprox.SurfVMults(),
       anApprox.UDegree(), anApprox.VDegree());
+    for (int i=1;i<=uknots.Length();i++)
+    {
+      try
+      {
+	surface->SetWeight(i,1,w1);
+	surface->SetWeight(i,vknots.Length()+w2,w1);
+	//surface->SetWeight(i,2,w2);
+	//surface->SetWeight(i,vknots.Length()-1,w2);
+	//surface->SetWeight(i,3,w3);
+	//surface->SetWeight(i,vknots.Length()-2,w3);
+      }
+      catch (Standard_ConstructionError)
+      {
+	fprintf(stderr,"Weight not valid\n");
+	return CV_ERROR;
+      }
+      catch (Standard_OutOfRange)
+      {
+	fprintf(stderr,"Weight out of range\n");
+	return CV_ERROR;
+      }
+    }
   }
+
+  gp_Pnt tmpPoint = surface->Pole(1,1);
+  tmpPoint.SetX(tmpPoint.X()+10.0);
+  tmpPoint.SetY(tmpPoint.Y()+10.0);
+  tmpPoint.SetZ(tmpPoint.Z()+10.0);
+  //surface->SetPole(1,1,tmpPoint);
 
   if(surface.IsNull()) {
     fprintf(stderr,"Lofting did not complete\n");
@@ -929,7 +1000,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
     				char *attr, char **value)
 {
-  static char returnString[256];
+  static char returnString[255];
   TDF_Label tmpLabel;
   shapetool->FindSubShape(shapelabel,face,tmpLabel);
   if (tmpLabel.IsNull())
@@ -987,6 +1058,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
       fprintf(stderr,"id attribute does not exist on face\n");
       return CV_ERROR;
     }
+    fprintf(stderr,"Inside id and want to check the actual id!! %d\n",INT->Get());
     returnString[0]='\0';
     sprintf(returnString,"%d",INT->Get());
     *value = returnString;
@@ -1069,19 +1141,19 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
  * @return CV_OK if function completes properly
  */
 int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
-		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel)
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &labelSrc,
+		TDF_Label &labelDst)
 {
   //Pass the face names first
   char *name;
   if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,shapelabel,"gdscName",&name) != CV_OK)
+	faceSrc,shapetool,labelSrc,"gdscName",&name) != CV_OK)
   {
     fprintf(stderr,"Failure in getting gdscName for shape\n");
     return CV_ERROR;
   }
-  fprintf(stderr,"Got face attribute, now setting\n");
   if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,shapelabel,"gdscName",name) != CV_OK)
+	faceDst,shapetool,labelDst,"gdscName",name) != CV_OK)
   {
     fprintf(stderr,"Failure in setting gdscName for shape\n");
     return CV_ERROR;
@@ -1090,13 +1162,13 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
   //Now parent name
   char *parent;
   if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,shapelabel,"parent",&parent) != CV_OK)
+	faceSrc,shapetool,labelSrc,"parent",&parent) != CV_OK)
   {
     fprintf(stderr,"Failure in getting parent for shape\n");
     return CV_ERROR;
   }
   if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,shapelabel,"parent",parent) != CV_OK)
+	faceDst,shapetool,labelDst,"parent",parent) != CV_OK)
   {
     fprintf(stderr,"Failure in setting parent for shape\n");
     return CV_ERROR;

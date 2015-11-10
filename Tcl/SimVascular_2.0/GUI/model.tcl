@@ -948,7 +948,6 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
     catch {repos_delete -obj $facepd}
     if {[catch {$modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize} errmsg] == 0} {
       model_add $modelname $facename $facename
-      puts "added face $facename to $modelname"
     } else {
       puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize"
       puts $errmsg
@@ -987,7 +986,6 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
        catch {repos_delete -obj $facepd}
        if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize} errmsg] == 0} {
 	 model_add $modelname $newname $newname
-	 puts "added face $newname to $modelname"
        } else {
 	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize"
 	 puts $errmsg
@@ -1115,7 +1113,6 @@ proc guiSV_model_update_tree {} {
       }
       set i 0
       foreach item [model_iditems $model {}] {
-	puts "Adding item $item"
 	if {[$tv exists .models.$kernel.$model.$item] != 1} {
 	  $tv insert .models.$kernel.$model $i -id .models.$kernel.$model.$item -text "$item"
 	}
@@ -3124,6 +3121,7 @@ proc guiSV_model_add_to_backup_list {kernel model} {
       }
       model_add $name $facename $facename
       $tv insert .models.$kernel.$name end -id .models.$kernel.$name.$facename -text "$facename"
+      guiSV_model_set_col_value $kernel.$name.$facename 1 $id
     }
   }
 

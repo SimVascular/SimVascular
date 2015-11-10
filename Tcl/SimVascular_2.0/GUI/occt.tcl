@@ -322,7 +322,7 @@ proc makeSurfOCCT {} {
     catch {repos_delete -obj $c0/surf}
     catch {repos_delete -obj $c0/surf/pd}
     solid_setKernel -name OpenCASCADE
-    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 0.4 -w2 0.2 -w3 0.4 -smooth 0}]} {
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 2 -w1 1000.0 -w2 2 -w3 1.0 -smooth 0}]} {
 	return -code error "Error lofting surface."
     }
     global tcl_platform
@@ -403,34 +403,30 @@ proc guiSV_model_blend_selected_models_occt {} {
   }
   set params [$symbolicName(guiOCCTBLENDSscript) get 0.0 end]
 
-  set blended -1
   set broken [split $params "\n"]
-  for {set i 0} {$i < [llength $broken]} {incr i} {
-    set trimmed [string trim [lindex $broken $i]]
-    if {$trimmed == ""} {continue}
-    if {[llength $trimmed] != 3} {
-      puts "ERROR: line ($trimmed) ignored!"
-    }
-    set faceA -1
-    set faceB -1
-    catch {set faceA [lindex $trimmed 0]}
-    catch {set faceB [lindex $trimmed 1]}
-    set r [lindex $trimmed 2]
-    if {$faceA < 0 || $faceB < 0} {
-       puts "ERROR: invalid values in line ($trimmed).  Line Ignored."
-       continue
-    }
-    $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
-
-    set faceids [$model GetFaceIds]
-    foreach id $faceids {
-      set facename [$model GetFaceAttr -attr gdscName -faceId $id]
-      set gOCCTFaceNames($id) $facename
-    }
-    set blended 1
+  if {[llength $broken] > 2} {
+    return -code error "ERROR: Can only do one blend at a time"
   }
-  if {$blended == -1} {
-    return -code error "ERROR: No params, model was not blended"
+
+  set trimmed [string trim [lindex $broken 0]]
+  if {$trimmed == ""} {continue}
+  if {[llength $trimmed] != 3} {
+    puts "ERROR: line ($trimmed) ignored!"
+  }
+  set faceA -1
+  set faceB -1
+  catch {set faceA [lindex $trimmed 0]}
+  catch {set faceB [lindex $trimmed 1]}
+  set r [lindex $trimmed 2]
+  if {$faceA < 0 || $faceB < 0} {
+     return -code error "ERROR: invalid values in line ($trimmed)."
+  }
+  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -fillshape 1
+
+  set faceids [$model GetFaceIds]
+  foreach id $faceids {
+    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+    set gOCCTFaceNames($id) $facename
   }
 
   set pretty_names {}

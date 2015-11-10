@@ -80,6 +80,7 @@
 #include "BRepBuilderAPI_MakeVertex.hxx"
 #include "BRepBuilderAPI_MakeSolid.hxx"
 #include "BRepBuilderAPI_Sewing.hxx"
+#include "BRepBuilderAPI_Copy.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
 #include "BRepLib_MakePolygon.hxx"
@@ -222,9 +223,24 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   solidPtr = (cvOCCTSolidModel *)( &src );
   if ( solidPtr->geom_ != NULL ) {
     this->NewShape();
-    *geom_ = *(solidPtr->geom_);
-    //RegisterShapeFaces();
+    BRepBuilderAPI_Copy copier(*(solidPtr->geom_));
+    *geom_ = copier.Shape();
     this->AddShape();
+    TopExp_Explorer oldExp(*(solidPtr->geom_),TopAbs_FACE);
+    TopExp_Explorer newExp(*geom_,TopAbs_FACE);
+
+    for (int i=0;oldExp.More();oldExp.Next(),newExp.Next(),i++)
+    {
+      TopoDS_Face oldFace = TopoDS::Face(oldExp.Current());
+      TopoDS_Face newFace = TopoDS::Face(newExp.Current());
+
+      if (OCCTUtils_PassFaceAttributes(oldFace,newFace,shapetool_,
+	    *(solidPtr->shapelabel_),*shapelabel_) != CV_OK)
+      {
+	fprintf(stderr,"Could not pass face attributes to copy\n");
+	return CV_ERROR;
+      }
+    }
 
   }
 
@@ -395,25 +411,6 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
     return CV_ERROR;
   }
 
-  //BRepBuilderAPI_MakeWire wiremaker;
-  //BRepLib_MakePolygon poly;
-  //int i=0;
-  //for (i=0;i<num_pts-1;i++)
-  //{
-  //  TopoDS_Edge newedge = BRepBuilderAPI_MakeEdge(
-  //      		gp_Pnt(ord_pts[3*i],ord_pts[3*i+1],ord_pts[3*i+2]),
-  //      		gp_Pnt(ord_pts[3*i+3],ord_pts[3*i+4],ord_pts[3*i+5]));
-  //  wiremaker.Add(newedge);
-  //}
-  //TopoDS_Edge lastedge = BRepBuilderAPI_MakeEdge(
-  //    			gp_Pnt(ord_pts[3*i],ord_pts[3*i+1],ord_pts[3*i+2]),
-  //      		gp_Pnt(ord_pts[0],ord_pts[1],ord_pts[2]));
-  //wiremaker.Add(lastedge);
-  //wiremaker.Build();
-
-  //this->NewShape();
-  //*geom_ = wiremaker.Shape();
-
   Handle(TColgp_HArray1OfPnt) hArray =
 	  new TColgp_HArray1OfPnt(1,num_pts+1);
   int i=0;
@@ -561,7 +558,8 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
         GProp_GProps daFaceProps;
         BRepGProp::LinearProperties(tmpFace,daFaceProps);
 	if (tmpFaceProps.Mass() == daFaceProps.Mass())
-          OCCTUtils_PassFaceAttributes(daFace,tmpFace,shapetool_,*shapelabel_);
+          OCCTUtils_PassFaceAttributes(daFace,tmpFace,shapetool_,
+	      *shapelabel_,*shapelabel_);
       }
     }
   }
@@ -630,7 +628,7 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
 	  return CV_ERROR;
@@ -653,7 +651,7 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
 	  return CV_ERROR;
@@ -1058,8 +1056,19 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
     return CV_ERROR;
   }
 
-  char *nameA;
-  char *nameB;
+  //Fillet shape can be three things
+  //0 -> Rational
+  //1 -> Quasi-Angular
+  //2 -> Parametric
+  if ((filletshape < 0) || (filletshape > 2))
+  {
+    fprintf(stderr,"Invalid shape type\n");
+    return CV_ERROR;
+  }
+
+  char *name;
+  char nameA[255];
+  char nameB[255];
   TopTools_IndexedDataMapOfShapeListOfShape anEFsMap;
   TopExp::MapShapesAndAncestors (*geom_, TopAbs_EDGE,
       TopAbs_FACE, anEFsMap);
@@ -1074,14 +1083,20 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
     OCCTUtils_GetFaceLabel(face1,shapetool_,*shapelabel_,faceId1);
     TopoDS_Shape face2 = faces.Last();
     OCCTUtils_GetFaceLabel(face2,shapetool_,*shapelabel_,faceId2);
-    if (faceId1 == faceA && faceId2 == faceB)
+    if ((faceId1 == faceA && faceId2 == faceB) ||
+		    (faceId1 == faceB && faceId2 == faceA))
     {
       found++;
+      char* checkid1;
+      char* checkid2;
+      int intcheck1,intcheck2;
       filletEdge = TopoDS::Edge(anEFsMap.FindKey(i));
       OCCTUtils_GetFaceAttribute(face1,shapetool_,*shapelabel_,
-	  "gdscName",&nameA);
+	  "gdscName",&name);
+      strncpy(nameA,name,sizeof(nameA));
       OCCTUtils_GetFaceAttribute(face2,shapetool_,*shapelabel_,
-	  "gdscName",&nameB);
+	  "gdscName",&name);
+      strncpy(nameB,name,sizeof(nameB));
     }
   }
   if (found != 1)
@@ -1094,6 +1109,10 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
   TopoDS_Shape geomcopy = *geom_;
   BRepFilletAPI_MakeFillet filletmaker(*geom_,(ChFi3d_FilletShape) filletshape);
   filletmaker.Add(radius,filletEdge);
+  TopoDS_Vertex vl,vf;
+  TopExp::Vertices(filletEdge,vl,vf);
+  //Standard_Real fillabs = filletmaker.Abscissa(0.5,vl);
+  //fprintf(stderr,"Want to see what this is %.4f\n",fillabs);
   TopoDS_Shape tmpShape;
   try
   {
@@ -1113,7 +1132,6 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
     fprintf(stderr,"Try different radius\n");
     return CV_ERROR;
   }
-  //this->RemoveShape();
   this->NewShape();
   *geom_ = tmpShape;
   this->AddShape();
@@ -1123,23 +1141,37 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
     const TopTools_ListOfShape &modfaces =
       filletmaker.Modified(anExp.Current());
     TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
-    fprintf(stderr,"\n");
     if (modfaces.Extent() != 0)
     {
+      fprintf(stderr,"Found modified face!\n");
       TopTools_ListIteratorOfListOfShape modFaceIt(modfaces);
       for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
 	  return CV_ERROR;
 	}
+	fprintf(stderr,"Also checking masses\n");
+      	GProp_GProps oldFaceProps;
+      	BRepGProp::LinearProperties(oldFace,oldFaceProps);
+	fprintf(stderr,"Old Face Mass %.4f\n",oldFaceProps.Mass());
+      	GProp_GProps newFaceProps;
+      	BRepGProp::LinearProperties(newFace,newFaceProps);
+	fprintf(stderr,"New Face Mass %.4f\n",newFaceProps.Mass());
       }
     }
+    fprintf(stderr,"Checking if deleted %d\n",filletmaker.IsDeleted(anExp.Current()));
+    const TopTools_ListOfShape &genfaces =
+      filletmaker.Generated(anExp.Current());
+    fprintf(stderr,"Checking generated %d\n",genfaces.Extent());
   }
-  char blendname[100];
+  fprintf(stderr,"Number Faulty Surfaces: %d\n",filletmaker.NbFaultyContours());
+  fprintf(stderr,"Has result?: %d\n",filletmaker.HasResult());
+  fprintf(stderr,"Number of Contours: %d\n",filletmaker.NbContours());
+  char blendname[255];
   sprintf(blendname,"wall_blend_%s_%s",nameA,nameB);
   TopExp_Explorer FaceExp;
   FaceExp.Init(*geom_,TopAbs_FACE);
@@ -1152,6 +1184,9 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
     OCCTUtils_GetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",&name);
     if (!strncmp(name,"noname",6))
       OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",blendname);
+    GProp_GProps faceProps;
+    BRepGProp::LinearProperties(tmpFace,faceProps);
+    fprintf(stderr,"Looking at masses of faces: %.4f\n",faceProps.Mass());
   }
 
   return CV_OK;
@@ -1265,10 +1300,10 @@ int cvOCCTSolidModel::RegisterShapeFaces()
   }
   TopExp_Explorer FaceExp;
   FaceExp.Init(*geom_,TopAbs_FACE);
-  for (int i=0;FaceExp.More();FaceExp.Next(),i++)
+  for (int i=1;FaceExp.More();FaceExp.Next(),i++)
   {
     TopoDS_Face tmpFace = TopoDS::Face(FaceExp.Current());
-    int faceid=i+1;
+    int faceid=i;
     AddFaceLabel(tmpFace,faceid);
   }
 

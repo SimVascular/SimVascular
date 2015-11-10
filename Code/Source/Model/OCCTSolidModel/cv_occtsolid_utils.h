@@ -121,7 +121,8 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &geom,
 	       char *attr,char *value);
 
 int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
-	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel);
+	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &labelSrc,
+	       TDF_Label &labelDst);
 
 int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
     					char *charstr);
