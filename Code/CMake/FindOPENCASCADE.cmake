@@ -50,8 +50,8 @@ set(${proj}_FIND_COMPONENTS TKService TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
 			    TKIGES TKMeshVS TKSTEP TKSTEP209
 			    TKSTEPAttr TKVRML TKSTEPBase TKSTL
 			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
-			    TKTObj
-			    TKVoxel
+			    #TKTObj
+			    #TKVoxel
 			    TKXDEIGES TKXDESTEP TKXMesh
 			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
 			    FWOSPlugin)

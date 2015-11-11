@@ -305,18 +305,21 @@ int vtkCGSmooth::SetFixedPoints(vtkPolyData *pd)
 	  vtkSmartPointer<vtkIdList>::New();
 	pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
 	vtkIdType numNei = neighbors->GetNumberOfIds();
-	vtkIdType neighCell = neighbors->GetId(0);
-        if (this->CellArray->GetValue(neighCell) != 1)
-        {
-	  if (this->fixedPt[p1] != 1)
+	if (numNei > 0)
+	{
+	  vtkIdType neighCell = neighbors->GetId(0);
+	  if (this->CellArray->GetValue(neighCell) != 1)
 	  {
-	    this->fixedPt[p1] = 1;
-	    this->NumFixedPoints++;
-	  }
-	  if (this->fixedPt[p2] != 1)
-	  {
-	    this->fixedPt[p2] = 1;
-	    this->NumFixedPoints++;
+	    if (this->fixedPt[p1] != 1)
+	    {
+	      this->fixedPt[p1] = 1;
+	      this->NumFixedPoints++;
+	    }
+	    if (this->fixedPt[p2] != 1)
+	    {
+	      this->fixedPt[p2] = 1;
+	      this->NumFixedPoints++;
+	    }
 	  }
 	}
       }
