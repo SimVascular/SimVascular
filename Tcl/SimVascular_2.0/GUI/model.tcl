@@ -668,7 +668,8 @@ proc guiSV_model_get_kernel_type {ext} {
   } elseif {[string compare -length 7 $ext "xmt_txt"] == 0} {
     set kernel "Parasolid"
   } elseif {[string compare -length 4 $ext "brep"] == 0 || \
-            [string compare -length 4 $ext "step"] == 0} {
+            [string compare -length 4 $ext "step"] == 0 || \
+            [string compare -length 4 $ext "iges"] == 0} {
     set kernel "OpenCASCADE"
   } else {
     return -code error "ERROR: Unkown file type extension: $ext"
@@ -688,7 +689,7 @@ proc guiSV_model_load_model { {fn "" } } {
    set kernel $gOptions(meshing_solid_kernel)
    if {$fn == ""} {
      if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData" || $kernel == "OpenCASCADE"} {
-       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {OpenCASCADE *.brep} {STEP *.step} {"All Files" *.*}} -title "Choose Solid Model"]
+       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {OpenCASCADE *.brep} {STEP *.step} {IGES *.iges} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
      #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
@@ -882,7 +883,7 @@ proc guiSV_model_save_model {} {
       }
   } elseif {$kernel == "OpenCASCADE"} {
       set fn $model
-      set fn [tk_getSaveFile -defaultextension {*.step} -filetypes {{STEP .step} {OpenCASCADE *.brep} {STL *.stl} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
+      set fn [tk_getSaveFile -defaultextension {*.step} -filetypes {{STEP .step} {IGES *.iges} {OpenCASCADE *.brep} {STL *.stl} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
       package require md5
       if {$fn == ""} return
       puts "Writing solid ($fn)"

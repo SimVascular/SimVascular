@@ -322,7 +322,7 @@ proc makeSurfOCCT {} {
     catch {repos_delete -obj $c0/surf}
     catch {repos_delete -obj $c0/surf/pd}
     solid_setKernel -name OpenCASCADE
-    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 2 -w1 1000.0 -w2 2 -w3 1.0 -smooth 0}]} {
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 100.0 -w2 2.0 -w3 1.0 -smooth 0}]} {
 	return -code error "Error lofting surface."
     }
     global tcl_platform
@@ -391,8 +391,6 @@ proc guiSV_model_blend_selected_models_occt {} {
   set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
-  #set oldmodel "[string trim $model]_blended"
-  guiSV_model_add_to_backup_list $kernel $model
   #model_create $kernel $oldmodel
   set faceids [$model GetFaceIds]
   foreach id $faceids {
@@ -421,7 +419,11 @@ proc guiSV_model_blend_selected_models_occt {} {
   if {$faceA < 0 || $faceB < 0} {
      return -code error "ERROR: invalid values in line ($trimmed)."
   }
-  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -fillshape 1
+
+  #set oldmodel "[string trim $model]_blended"
+  guiSV_model_add_to_backup_list $kernel $model
+
+  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -fillshape 0
 
   set faceids [$model GetFaceIds]
   foreach id $faceids {

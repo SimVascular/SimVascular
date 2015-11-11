@@ -137,6 +137,8 @@
 #include "STEPControl_StepModelType.hxx"
 #include "STEPCAFControl_Writer.hxx"
 #include "STEPCAFControl_Reader.hxx"
+#include "IGESCAFControl_Writer.hxx"
+#include "IGESCAFControl_Reader.hxx"
 #include "StlAPI_Writer.hxx"
 
 
@@ -1074,6 +1076,9 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
       TopAbs_FACE, anEFsMap);
   int num = anEFsMap.Extent();
   int found = 0;
+
+  TopoDS_Shape geomcopy = *geom_;
+  BRepFilletAPI_MakeFillet filletmaker(*geom_,(ChFi3d_FilletShape) filletshape);
   TopoDS_Edge filletEdge;
   for (int i=1;i < num+1;i++)
   {
@@ -1091,6 +1096,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
       char* checkid2;
       int intcheck1,intcheck2;
       filletEdge = TopoDS::Edge(anEFsMap.FindKey(i));
+      filletmaker.Add(radius,filletEdge);
       OCCTUtils_GetFaceAttribute(face1,shapetool_,*shapelabel_,
 	  "gdscName",&name);
       strncpy(nameA,name,sizeof(nameA));
@@ -1099,20 +1105,13 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
       strncpy(nameB,name,sizeof(nameB));
     }
   }
-  if (found != 1)
+  fprintf(stderr,"Number of edges %d\n",found);
+  if (found == 0)
   {
-    fprintf(stderr,"Single edge between faces not found\n");
-    fprintf(stderr,"Number of edges %d\n",found);
+    fprintf(stderr,"No edges between faces\n");
     return CV_ERROR;
   }
 
-  TopoDS_Shape geomcopy = *geom_;
-  BRepFilletAPI_MakeFillet filletmaker(*geom_,(ChFi3d_FilletShape) filletshape);
-  filletmaker.Add(radius,filletEdge);
-  TopoDS_Vertex vl,vf;
-  TopExp::Vertices(filletEdge,vl,vf);
-  //Standard_Real fillabs = filletmaker.Abscissa(0.5,vl);
-  //fprintf(stderr,"Want to see what this is %.4f\n",fillabs);
   TopoDS_Shape tmpShape;
   try
   {
@@ -1132,6 +1131,12 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
     fprintf(stderr,"Try different radius\n");
     return CV_ERROR;
   }
+  if (filletmaker.IsDone() != 1)
+  {
+    fprintf(stderr,"Not done\n");
+    return CV_ERROR;
+  }
+  this->RemoveShape();
   this->NewShape();
   *geom_ = tmpShape;
   this->AddShape();
@@ -1186,7 +1191,9 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius,int fi
       OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",blendname);
     GProp_GProps faceProps;
     BRepGProp::LinearProperties(tmpFace,faceProps);
+    TopoDS_Shape checkType = FaceExp.Current();
     fprintf(stderr,"Looking at masses of faces: %.4f\n",faceProps.Mass());
+    fprintf(stderr,"Check Face Type!!!! %d\n",checkType.ShapeType());
   }
 
   return CV_OK;
@@ -1233,6 +1240,19 @@ int cvOCCTSolidModel::ReadNative( char *filename )
     *geom_ = shapetool_->GetShape(*shapelabel_);
     this->RegisterShapeFaces();
   }
+  else if (!strncmp(extension,"iges",4)) {
+    Handle(TDocStd_Document) aDoc;
+    gOCCTManager->GetDocument(1,aDoc);
+    fprintf(stdout,"Reading file %s\n",filename);
+    IGESCAFControl_Reader reader;
+    reader.Perform(filename,aDoc);
+    shapetool_ = XCAFDoc_DocumentTool::ShapeTool(aDoc->Main());
+    TDF_LabelSequence allLabels;
+    shapetool_->GetShapes(allLabels);
+    *shapelabel_ = allLabels.Last();
+    *geom_ = shapetool_->GetShape(*shapelabel_);
+    this->RegisterShapeFaces();
+  }
   else {
     fprintf(stderr,"File can only be read with .brep extension\n");
     return CV_ERROR;
@@ -1270,10 +1290,21 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
   else if (!strncmp(extension,"step",4)) {
     fprintf(stdout,"Writing file %s\n",filename);
     STEPCAFControl_Writer writer;
-    STEPControl_StepModelType stepmodel;
     char *empty = NULL;
-    writer.Transfer(*shapelabel_,stepmodel,empty);
-    writer.Write(filename);
+    writer.Transfer(*shapelabel_,STEPControl_AsIs);
+    IFSelect_ReturnStatus ret = writer.Write(filename);
+    if (ret == IFSelect_RetError || ret == IFSelect_RetFail || ret == IFSelect_RetStop)
+    {
+      fprintf(stderr,"File could not be opened\n");
+      return CV_ERROR;
+    }
+  }
+  else if (!strncmp(extension,"iges",4)) {
+    fprintf(stdout,"Writing file %s\n",filename);
+    IGESCAFControl_Writer writer;
+    char *empty = NULL;
+    writer.Transfer(*shapelabel_);
+    Standard_Boolean ret = writer.Write(filename);
   }
   else if (!strncmp(extension,"stl",3)) {
     fprintf(stdout,"Writing file %s\n",filename);
@@ -1281,7 +1312,7 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
     writer.Write(*geom_,filename);
   }
   else {
-    fprintf(stderr,"File can only be written with .brep extension\n");
+    fprintf(stderr,"File type not excepted\n");
     return CV_ERROR;
   }
 
@@ -1454,9 +1485,14 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
 
   if (PlyDtaUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
   {
+    vtkSmartPointer<vtkCleanPolyData> cleaner =
+      vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(pd);
+    cleaner->PointMergingOn();
+    cleaner->Update();
     vtkSmartPointer<vtkThreshold> thresholder =
       vtkSmartPointer<vtkThreshold>::New();
-    thresholder->SetInputData(pd);
+    thresholder->SetInputData(cleaner->GetOutput());
     //Set Input Array to 0 port,0 connection,1 for Cell Data, and MESh_TYPES is the type name
     thresholder->SetInputArrayToProcess(0,0,0,1,"MESH_TYPES");
     //Source polydata is on MESH_TYPE 7
