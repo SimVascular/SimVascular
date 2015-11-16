@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -29,12 +29,12 @@
  *=========================================================================*/
 
 /** @file vtkCGSmooth.cxx
- *  @brief This implements the vtkCGSmooth filter 
+ *  @brief This implements the vtkCGSmooth filter
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkCGSmooth.h"
@@ -100,7 +100,7 @@ int vtkCGSmooth::RequestData(
     // get the input and output
     vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
     vtkPolyData *output = vtkPolyData::GetData(outputVector);
-    
+
     // Define variables used by the algorithm
     vtkSmartPointer<vtkPoints> inpts = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> inPolys = vtkSmartPointer<vtkCellArray>::New();
@@ -116,10 +116,10 @@ int vtkCGSmooth::RequestData(
     numPts = input->GetNumberOfPoints();
 
     //Check the input to make sure it is there
-    if (numPolys < 1)               
+    if (numPolys < 1)
     {
         vtkDebugMacro("No input!");
-	return 1;
+	return 0;
     }
 
     if (this->UsePointArray)
@@ -141,7 +141,7 @@ int vtkCGSmooth::RequestData(
 
     input->BuildLinks();
     this->SetFixedPoints(input);
-    vtkSmartPointer<vtkPolyData> tmp = 
+    vtkSmartPointer<vtkPolyData> tmp =
 	    vtkSmartPointer<vtkPolyData>::New();
     tmp->DeepCopy(input);
     for (int i=0;i<this->NumSmoothOperations;i++)
@@ -301,7 +301,7 @@ int vtkCGSmooth::SetFixedPoints(vtkPolyData *pd)
       {
 	p1 = pts[i];
 	p2 = pts[(i+1)%(npts)];
-        vtkSmartPointer<vtkIdList> neighbors = 
+        vtkSmartPointer<vtkIdList> neighbors =
 	  vtkSmartPointer<vtkIdList>::New();
 	pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
 	vtkIdType numNei = neighbors->GetNumberOfIds();
@@ -329,13 +329,13 @@ int vtkCGSmooth::SetFixedPoints(vtkPolyData *pd)
   return 1;
 }
 
-int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current) 
+int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
 {
   double pt[3];
   double smoothpt[3];
   double origpt[3];
   int numPoints = current->GetNumberOfPoints();
-  vtkSmartPointer<vtkPolyDataNormals> normaler = 
+  vtkSmartPointer<vtkPolyDataNormals> normaler =
           vtkSmartPointer<vtkPolyDataNormals>::New();
   normaler->SetInputData(current);
   normaler->SplittingOff();
@@ -353,7 +353,7 @@ int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
   std::vector<double> b(numPoints*6);
   std::vector<double> x(numPoints*3);
 
-  int subId;    
+  int subId;
   double distance[3];
   double closestPt[3];
   double normal[3];
@@ -372,8 +372,8 @@ int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
       distance[i] = origpt[i] - pt[i];
     double direction = vtkMath::Dot(normal, distance);
     double norm = vtkMath::Normalize(normal);
-    double dist = sqrt(pow(distance[0],2) + 
-		       pow(distance[1],2) + 
+    double dist = sqrt(pow(distance[0],2) +
+		       pow(distance[1],2) +
 		       pow(distance[2],2));
     for (int i=0;i<3;i++)
     {
@@ -412,7 +412,7 @@ int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
       it = neighborPts.begin();
       while (it != neighborPts.end())
       {
-	for (int i=0;i<3;i++) 
+	for (int i=0;i<3;i++)
 	{
 	  int x_row = numPoints*3 + ((int) pointId)*3 + i;
 	  int x_column = ((int) *it)*3 + i;
@@ -429,7 +429,7 @@ int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
   //std::vector<double> c(totalEqs);
   //A.multiply_column(&x[0],&c[0]);
 
-  vtkSmartPointer<vtkPoints> newPoints = 
+  vtkSmartPointer<vtkPoints> newPoints =
     vtkSmartPointer<vtkPoints>::New();
 
   double newpt[3];
@@ -455,10 +455,10 @@ int vtkCGSmooth::CGSmooth(vtkPolyData *original,vtkPolyData *current)
 int vtkCGSmooth::GetAttachedPoints(vtkPolyData *pd, vtkIdType nodeId,std::set<vtkIdType> *attachedPts)
 {
   vtkIdType npts,*pts;
-  vtkSmartPointer<vtkIdList> pointCells = 
+  vtkSmartPointer<vtkIdList> pointCells =
     vtkSmartPointer<vtkIdList>::New();
   //Do Before function call!
-  pd->GetPointCells(nodeId,pointCells); 
+  pd->GetPointCells(nodeId,pointCells);
   for (int i=0;i<pointCells->GetNumberOfIds();i++)
   {
     vtkIdType cellId = pointCells->GetId(i);

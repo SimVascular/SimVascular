@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -29,13 +29,13 @@
  *=========================================================================*/
 
 /** @file vtkLocalQuadricDecimation.cxx
- *  @brief This implements the vtkLocalQuadricDecimation or localized 
+ *  @brief This implements the vtkLocalQuadricDecimation or localized
  *  decimation techniques
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkLocalQuadricDecimation.h"
@@ -214,13 +214,13 @@ int vtkLocalQuadricDecimation::RequestData(
       input->GetPointData() == NULL  || input->GetFieldData() == NULL)
     {
     vtkErrorMacro("Nothing to decimate");
-    return 1;
+    return 0;
     }
 
   if (input->GetPolys()->GetMaxCellSize() > 3)
     {
     vtkErrorMacro("Can only decimate triangles");
-    return 1;
+    return 0;
     }
 
   if (this->UsePointArray)
@@ -228,7 +228,7 @@ int vtkLocalQuadricDecimation::RequestData(
     if (this->GetDecimateArrays(input,0) != 1)
     {
       vtkErrorMacro("Need point array on mesh to be able to local decimation");
-      return 1;
+      return 0;
     }
   }
   if (this->UseCellArray)
@@ -236,7 +236,7 @@ int vtkLocalQuadricDecimation::RequestData(
     if (this->GetDecimateArrays(input,1) != 1)
     {
       vtkErrorMacro("Need cell array on mesh to be able to local decimation");
-      return 1;
+      return 0;
     }
   }
   input->BuildLinks();
@@ -274,7 +274,7 @@ int vtkLocalQuadricDecimation::RequestData(
 
   this->Mesh->BuildCells();
   this->Mesh->BuildLinks();
-  
+
 
   this->ErrorQuadrics =
     new vtkLocalQuadricDecimation::ErrorQuadric[numPts];
@@ -293,7 +293,7 @@ int vtkLocalQuadricDecimation::RequestData(
           this->fixedPoint[pts[(j+1)%3]])
 	useEdge = 0;
 
-      if (useEdge) 
+      if (useEdge)
       {
         if (this->Edges->IsEdge(pts[j], pts[(j+1)%3]) == -1)
           {
@@ -1147,7 +1147,7 @@ int vtkLocalQuadricDecimation::CollapseEdge(vtkIdType pt0Id, vtkIdType pt1Id)
 {
   int j, numDeleted=0;
   vtkIdType i, npts, *pts, cellId;
-  
+
   this->Mesh->GetPointCells(pt0Id, this->CollapseCellIds);
   for (i = 0; i < this->CollapseCellIds->GetNumberOfIds(); i++)
     {
@@ -1483,7 +1483,7 @@ void vtkLocalQuadricDecimation::CorrectPointData(vtkPolyData *object)
   vtkIdType i,j;
   int numPts;
   int numPointArrays = 0;
-  vtkSmartPointer<vtkPolyData> objectCopy = 
+  vtkSmartPointer<vtkPolyData> objectCopy =
     vtkSmartPointer<vtkPolyData>::New();
   objectCopy->DeepCopy(object);
 
