@@ -383,6 +383,7 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
 	return CV_ERROR;
       }
     }
+    //surface->SetVPeriodic();
   }
 
   gp_Pnt tmpPoint = surface->Pole(1,1);

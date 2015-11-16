@@ -322,7 +322,7 @@ proc makeSurfOCCT {} {
     catch {repos_delete -obj $c0/surf}
     catch {repos_delete -obj $c0/surf/pd}
     solid_setKernel -name OpenCASCADE
-    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 100.0 -w2 2.0 -w3 1.0 -smooth 0}]} {
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 1.0 -w2 1.0 -w3 1.0 -smooth 0}]} {
 	return -code error "Error lofting surface."
     }
     global tcl_platform
@@ -450,4 +450,426 @@ proc guiSV_model_blend_selected_models_occt {} {
 
   guiSV_model_add_faces_to_tree $kernel $model
   guiSV_model_update_view_model $kernel $model
+}
+
+# Procedure: guiSV_model_get_occt_more_segs {} {
+proc guiSV_model_create_model_opencascade_from_splines {} {
+  global gRen3d
+  global guiPDvars
+  global gui3Dvars
+  global gOptions
+  global guiSVvars
+
+  global guiBOOLEANvars
+  set gOptions(meshing_solid_kernel) OpenCASCADE
+  set kernel $gOptions(meshing_solid_kernel)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
+  set ordered_names    $guiBOOLEANvars(selected_groups)
+  set ordered_names2    $guiBOOLEANvars(selected_seg3d)
+  set sampling_default $guiBOOLEANvars(sampling_default)
+  set lin_multiplier   $guiBOOLEANvars(linear_sampling_along_length_multiplier)
+  set useLinearSampleAlongLength   $guiBOOLEANvars(use_linear_sampling_along_length)
+  set numModes         $guiBOOLEANvars(num_modes_for_FFT)
+  array set overrides  $guiBOOLEANvars(sampling_overrides)
+  set useFFT           $guiBOOLEANvars(use_FFT)
+  set sample_per_segment $guiBOOLEANvars(sampling_along_length_multiplier)
+  set addCaps          $guiBOOLEANvars(add_caps_to_vessels)
+  set noInterOut       $guiBOOLEANvars(no_inter_output)
+  set tol 	       $guiBOOLEANvars(tolerance)
+  set spline           $guiBOOLEANvars(spline_type)
+
+
+  set model [guiSV_model_new_surface_name 0]
+  catch {repos_delete -obj $model}
+  if {[model_create $kernel $model] != 1} {
+    guiSV_model_delete_model $kernel $model
+    catch {repos_delete -obj /models/$kernel/$model}
+    model_create $kernel $model
+  }
+
+  foreach grp $ordered_names {
+
+    set numOutPtsInSegs $sampling_default
+
+    if [info exists overrides($grp)] {
+      set numOutPtsInSegs $overrides($grp)
+      puts "overriding default ($sampling_default) with ($numOutPtsInSegs) for ($grp)."
+    }
+
+    set vecFlag 0
+
+    set numSegs [llength [group_get $grp]]
+
+    set numOutPtsAlongLength [expr $sample_per_segment * $numSegs]
+
+    set numPtsInLinearSampleAlongLength [expr $lin_multiplier *$numOutPtsAlongLength]
+
+    puts "num pts along length: $numPtsInLinearSampleAlongLength"
+
+    set outPD /guiGROUPS/polydatasurface/$grp
+    catch {repos_delete -obj $outPD}
+
+    global gRen3dFreeze
+    set oldFreeze $gRen3dFreeze
+    set gRen3dFreeze 1
+    solid_setKernel -name OpenCASCADE
+    get_even_segs_along_length $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
+    set gRen3dFreeze $oldFreeze
+
+  }
+
+  global gLoftedSolids
+  set shortname [lindex $ordered_names 0]
+  set cursolid $gLoftedSolids($shortname)
+  solid_copy -src $cursolid -dst $model
+  puts "copy $cursolid to preop model."
+
+  foreach i [lrange $ordered_names 1 end] {
+    set cursolid $gLoftedSolids($i)
+    puts "union $cursolid into preop model."
+    if {[repos_type -obj $cursolid] != "SolidModel"} {
+       puts "Warning:  $cursolid is being ignored."
+       continue
+    }
+     solid_union -result /tmp/preop/$model -a $cursolid -b $model
+
+     repos_delete -obj $model
+     solid_copy -src /tmp/preop/$model -dst $model
+
+     repos_delete -obj /tmp/preop/$model
+  }
+
+  if {[repos_exists -obj /tmp/preop/$model] == 1} {
+    repos_delete -obj /tmp/preop/$model
+  }
+
+  #global tcl_platform
+  #if {$tcl_platform(os) == "Darwin"} {
+  #  #Find face areas and remove two smaller ones
+  #  set num [llength $createPREOPgrpKeptSelections]
+  #  if { $num > 1} {
+  #    guiSV_model_opencascade_fixup $model $num
+  #  }
+  #}
+
+  global gOCCTFaceNames
+  crd_ren gRenWin_3D_ren1
+  set pretty_names {}
+  set all_ids {}
+  foreach i [$model GetFaceIds] {
+    catch {set type [$model GetFaceAttr -attr gdscName -faceId $i]}
+    catch {set parent [$model GetFaceAttr -attr parent -faceId $i]}
+    set facename "[string trim $type]_[string trim $parent]"
+    lappend pretty_names $facename
+    set gOCCTFaceNames($i) $facename
+    $model SetFaceAttr -attr gdscName -faceId $i -value $facename
+    lappend all_ids $i
+  }
+  set isdups 0
+  if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
+   set isdups 1
+   set duplist [lsort -dictionary $pretty_names]
+   foreach i [lsort -unique $pretty_names] {
+      set idx [lsearch -exact $duplist $i]
+      set duplist [lreplace $duplist $idx $idx]
+   }
+   set msg "Duplicate faces found!\n\n"
+   set duplistids {}
+   foreach dup $duplist {
+     set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
+     lappend duplistids $id
+   }
+   for {set i 0} {$i < [llength $duplist]} {incr i} {
+     set dup [lindex $duplist $i]
+     set dupid [lindex $duplistids $i]
+     set newname [string trim $dup]_2
+     set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
+     set gOCCTFaceNames($dupid) $newname
+     $model SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+   }
+}
+
+guiSV_model_add_faces_to_tree $kernel $model
+guiSV_model_display_only_given_model $model 1
+if {$isdups == 1} {
+  tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+}
+
+}
+
+proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps outPD} {
+  
+    #puts "Vec Flag: $vecFlag"
+    #puts "UseLinearSampleAlongLength $useLinearSampleAlongLength"
+    #puts "NumPtsInLinearSampleAlongLength $numPtsInLinearSampleAlongLength"
+    #puts "UseFFT $useFFT"
+    #puts "NumModes $numModes" 
+    #puts "NumOutPtsInSegs $numOutPtsInSegs"
+    #puts "NUmOutPtsAlongLength $numOutPtsAlongLength"
+    #puts "AddCaps $addCaps"
+
+    set unorientedPD /tmp/polysolid_create_vessel_from_group/tmp/unorientedPD
+    catch {repos_delete -obj $unorientedPD}
+
+    if {($grp == "") || (![group_exists $grp])} {
+	return -code error "Current group $grp not valid."
+    }
+    set sortedList [group_get $grp]
+    if {[llength $sortedList] == 0} {
+	return -code error "No profiles found for sampling."
+    }
+
+    #
+    # supersample profiles
+    #
+
+    # sample all to the same resolution as the maximal resolution
+    set numSuperPts 0
+    foreach profile $sortedList {
+      set numpts [geom_numPts -obj $profile]
+      if {$numpts > $numSuperPts} {
+        set numSuperPts $numpts
+      }
+    }
+
+    if {$numOutPtsInSegs > $numSuperPts} {
+       set numSuperPts $numOutPtsInSegs
+    }
+
+    if {$numSuperPts == 0} {
+      return -code error "ERROR: numSuperPts cant be zero!"
+    }
+
+    puts "Sampling all contours to a resolution of $numSuperPts points."
+
+    foreach profile $sortedList {
+      catch {repos_delete -obj $profile/supersample}
+      geom_sampleLoop -src $profile -num $numSuperPts -dst $profile/supersample
+    }
+
+    #
+    #  align profiles
+    #
+
+    set prof [lindex $sortedList 0]
+    catch {repos_delete -obj $prof/aligned}
+    geom_copy -src $prof/supersample -dst $prof/aligned
+
+    for {set i 1} {$i < [llength $sortedList]} {incr i} {
+
+	set p [lindex $sortedList [expr $i - 1]]
+	set q [lindex $sortedList $i]
+
+        catch {repos_delete -obj $q/aligned}
+
+	geom_alignProfile  -ref $p/aligned  -src $q/supersample -dst $q/aligned  -vecMtd $vecFlag
+
+    }
+
+    #
+    #  sample profiles
+    #
+
+    foreach profile $sortedList {
+      catch {repos_delete -obj $profile/sample}
+      geom_sampleLoop -src $profile/aligned -num $numOutPtsInSegs -dst $profile/sample
+    }
+
+    catch {repos_deleteList [repos_subList /guiGROUPS/segment/$grp/*]}
+    catch {repos_delete -obj /guiGROUPS/polydatasurface/tmp/$grp}
+    catch {repos_delete -obj /guiGROUPS/polydatasurface/$grp}
+
+    set branch_segs {}
+    set numSegs [llength $sortedList]
+
+    catch {unset org_pts}
+    catch {unset line_pts}
+    catch {unset sampled_pts}
+    catch {unset seg_ordered_pts}
+    catch {unset all_seg_ordered_pts}
+
+    for {set i 0} {$i < $numSegs} {incr i} {
+      geom_getPts [lindex $sortedList $i]/sample org_pts($i)
+    }
+
+    for {set i 0} {$i < $numSegs} {incr i} {
+      for {set j 0} {$j < $numOutPtsInSegs} {incr j} {
+	lappend line_pts($j) [lindex $org_pts($i) $j]
+      }
+    }
+
+    for {set i 0} {$i < $numOutPtsInSegs} {incr i} {
+
+      set pts $line_pts($i)
+
+      set mysplineX tmp-mysplineX
+      set mysplineY tmp-mysplineY
+      set mysplineZ tmp-mysplineZ
+      catch {$mysplineX Delete}
+      catch {$mysplineY Delete}
+      catch {$mysplineZ Delete}
+      vtkCardinalSpline $mysplineX
+      vtkCardinalSpline $mysplineY
+      vtkCardinalSpline $mysplineZ
+      $mysplineX RemoveAllPoints
+      $mysplineY RemoveAllPoints
+      $mysplineZ RemoveAllPoints
+      for {set n 0} {$n < [llength $pts]} {incr n} {
+	set pt [lindex $pts $n]
+	$mysplineX AddPoint $n [lindex $pt 0]
+	$mysplineY AddPoint $n [lindex $pt 1]
+	$mysplineZ AddPoint $n [lindex $pt 2]
+      }
+      set pts {}
+
+      if {!$useLinearSampleAlongLength} {
+        for {set n 0} {$n < $numOutPtsAlongLength} {incr n} {
+          set t [expr 1.0*[$mysplineX GetNumberOfPoints]/(1.0*$numOutPtsAlongLength-1)*$n]
+	  lappend pts [list [$mysplineX Evaluate $t] [$mysplineY Evaluate $t] [$mysplineZ Evaluate $t]]
+        }
+      } else {
+        # first super sample along spline to get smoothness
+        for {set n 0} {$n < $numPtsInLinearSampleAlongLength} {incr n} {
+          set t [expr 1.0*[$mysplineX GetNumberOfPoints]/(1.0*$numPtsInLinearSampleAlongLength-1)*$n]
+	  lappend pts [list [$mysplineX Evaluate $t] [$mysplineY Evaluate $t] [$mysplineZ Evaluate $t]]
+        }
+        # now linearly interpolate
+	set pts [math_linearInterpCurve -pts $pts -closed 0 -numInterpPts $numOutPtsAlongLength]
+      }
+
+      if {$useFFT} {
+
+        # create a "periodic" function from the path pts
+        set biglist $pts
+        set firstPt [lindex $pts 0]
+        set lastPt [lindex $pts end]
+	set count 0
+        for {set j [expr [llength $pts] - 1]} {$j >= 0} {incr j -1} {
+          lappend biglist [lindex $pts $j]
+        }
+        set newpts [math_smoothCurve -pts $biglist -closed 0 -numModes $numModes -numInterpPts [expr 2*$numOutPtsAlongLength]]
+        set pts [lrange $newpts 0 [expr [llength $pts]-1]]
+
+        # need to make sure we didn't shorten, but really need to do a linear sample now!
+        set pts [linsert $pts 0 $firstPt]
+        lappend pts $lastPt
+
+        # now linearly interpolate
+	set pts [math_linearInterpCurve -pts $pts -closed 0 -numInterpPts $numOutPtsAlongLength]
+
+        #if {!$useLinearSampleAlongLength} {
+        #   return -code error "ERROR: must use linear sample if you use fft!"
+	#}
+	#set pts [math_linearInterpCurve -pts $pts -closed 0 -numInterpPts $numPtsInLinearSampleAlongLength]
+
+        #set pts [math_linearInterpCurve -pts $pts -closed 0 -numInterpPts $numOutPtsAlongLength]
+
+      }
+
+      set sampled_pts($i) $pts
+
+    }
+
+    for {set j 0} {$j < $numOutPtsInSegs} {incr j} {
+      for {set i 0} {$i < $numOutPtsAlongLength} {incr i} {
+	lappend seg_ordered_pts($i) [lindex $sampled_pts($j) $i] 
+      }
+    }
+
+    for {set i 0} {$i < $numOutPtsAlongLength} {incr i} {
+       lappend all_seg_ordered_pts $seg_ordered_pts($i)
+    }
+
+    global gRen3d
+    set ren $gRen3d
+    set curveList {}
+    for {set i 0} {$i < $numOutPtsAlongLength} {incr i} {
+      set tmpSplineSlice($i) /tmp/spline/slice/$i
+      catch {repos_delete -obj $tmpSplineSlice($i)}
+      geom_mkLinesFromPts $seg_ordered_pts($i) $tmpSplineSlice($i) 1
+
+      set profile $tmpSplineSlice($i)
+
+      catch {repos_delete -obj $profile/curve}
+      catch {repos_delete -obj $profile/curve/pd}
+
+      if [catch {solid_makeInterpCurveLoop -src_pd $profile -dst $profile/curve} errmsg] {
+         puts "ERROR:  $errmsg"
+         return -code error $errmsg
+      }
+
+      $profile/curve GetPolyData -result $profile/curve/pd
+
+      lappend curveList $profile/curve
+
+      set a [vis_pCurve $ren $profile/curve/pd]
+      [$a GetProperty] SetLineWidth 3
+
+    }
+
+    vis_render $ren
+    puts "Lets see"
+
+    #
+    #  loft solid
+    #
+
+    set c0 [lindex $curveList 0]
+    if {[llength $curveList] < 2} {
+        return -code error "Must have >= 2 curves to loft."
+    }
+    catch {repos_delete -obj $c0/surf}
+    catch {repos_delete -obj $c0/surf/pd}
+    solid_setKernel -name OpenCASCADE
+    if {[catch {solid_makeLoftedSurf -srcs $curveList -dst $c0/surf -continuity 2 -partype 0 -w1 1.0 -w2 1.0 -w3 1.0 -smooth 0}]} {
+        return -code error "Error lofting surface."
+    }
+    global tcl_platform
+    #if {$tcl_platform(os) != "Darwin"} {
+      catch {repos_delete -obj $c0/surf/capped}
+      catch {repos_delete -obj $c0/surf/capped/pd}
+      solid_capSurfToSolid -src $c0/surf -dst $c0/surf/capped
+    #}
+
+    #
+    # bound solid
+    #
+
+    global gRen3d
+    set ren $gRen3d
+
+    #if {$tcl_platform(os) != "Darwin"} {
+      set surf $c0/surf/capped
+    #} else {
+    #  set surf $c0/surf
+    #}
+    solid_setKernel -name OpenCASCADE
+
+    global gOptions
+    global gPathBrowser
+    #if {$gOptions(facet_max_edge_size) != ""} {
+    #  $surf GetPolyData -result $surf/pd \
+    #              -max_edge_size $gOptions(facet_max_edge_size)
+    #} else {
+      $surf GetPolyData -result $surf/pd
+    #}
+
+    set a [vis_pRepos $ren $surf/pd]
+    vis_pNorm $ren $surf/pd
+    [$a GetProperty] SetOpacity $gPathBrowser(solid_opacity)
+
+    # ugly way to keep track of solids created for each group
+    global gLoftedSolids
+    set gLoftedSolids($grp) $surf
+
+    # clean up the tags with the group names
+    set solid $surf
+    foreach i [$solid GetFaceIds] {
+      set facename {}
+      $solid SetFaceAttr -attr parent -faceId $i -value $grp
+    }
+
+
 }
