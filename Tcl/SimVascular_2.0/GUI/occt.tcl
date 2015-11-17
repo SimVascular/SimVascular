@@ -511,12 +511,12 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
     set outPD /guiGROUPS/polydatasurface/$grp
     catch {repos_delete -obj $outPD}
 
-    global gRen3dFreeze
-    set oldFreeze $gRen3dFreeze
-    set gRen3dFreeze 1
+    #global gRen3dFreeze
+    #set oldFreeze $gRen3dFreeze
+    #set gRen3dFreeze 1
     solid_setKernel -name OpenCASCADE
     get_even_segs_along_length $grp $vecFlag  $useLinearSampleAlongLength $numPtsInLinearSampleAlongLength  $useFFT $numModes  $numOutPtsInSegs $numOutPtsAlongLength $addCaps $outPD
-    set gRen3dFreeze $oldFreeze
+    #set gRen3dFreeze $oldFreeze
 
   }
 
@@ -555,7 +555,7 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
   #}
 
   global gOCCTFaceNames
-  crd_ren gRenWin_3D_ren1
+  #crd_ren gRenWin_3D_ren1
   set pretty_names {}
   set all_ids {}
   foreach i [$model GetFaceIds] {
@@ -592,7 +592,7 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
 }
 
 guiSV_model_add_faces_to_tree $kernel $model
-guiSV_model_display_only_given_model $model 1
+#guiSV_model_display_only_given_model $model 1
 if {$isdups == 1} {
   tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
 }
@@ -600,12 +600,12 @@ if {$isdups == 1} {
 }
 
 proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps outPD} {
-  
+
     #puts "Vec Flag: $vecFlag"
     #puts "UseLinearSampleAlongLength $useLinearSampleAlongLength"
     #puts "NumPtsInLinearSampleAlongLength $numPtsInLinearSampleAlongLength"
     #puts "UseFFT $useFFT"
-    #puts "NumModes $numModes" 
+    #puts "NumModes $numModes"
     #puts "NumOutPtsInSegs $numOutPtsInSegs"
     #puts "NUmOutPtsAlongLength $numOutPtsAlongLength"
     #puts "AddCaps $addCaps"
@@ -774,7 +774,7 @@ proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsIn
 
     for {set j 0} {$j < $numOutPtsInSegs} {incr j} {
       for {set i 0} {$i < $numOutPtsAlongLength} {incr i} {
-	lappend seg_ordered_pts($i) [lindex $sampled_pts($j) $i] 
+	lappend seg_ordered_pts($i) [lindex $sampled_pts($j) $i]
       }
     }
 
@@ -786,7 +786,7 @@ proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsIn
     set ren $gRen3d
     set curveList {}
     for {set i 0} {$i < $numOutPtsAlongLength} {incr i} {
-      set tmpSplineSlice($i) /tmp/spline/slice/$i
+      set tmpSplineSlice($i) /$grp/spline/slice/$i
       catch {repos_delete -obj $tmpSplineSlice($i)}
       geom_mkLinesFromPts $seg_ordered_pts($i) $tmpSplineSlice($i) 1
 
@@ -810,7 +810,6 @@ proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsIn
     }
 
     vis_render $ren
-    puts "Lets see"
 
     #
     #  loft solid
