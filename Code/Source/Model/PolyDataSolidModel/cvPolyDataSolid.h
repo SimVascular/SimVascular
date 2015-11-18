@@ -164,7 +164,7 @@ public:
   // geometric manipulation
   // this method is buggy and should be used with great care!
   int DeleteFaces (int numfaces, int *faces);
-  int CreateEdgeBlend(int faceA, int faceB, double radius,int filletshape) {return CV_ERROR; }
+  int CreateEdgeBlend(int faceA, int faceB, double radius,double minRadius,int filletshape) {return CV_ERROR; }
   int CombineFaces (int targetface, int loseface);
   int RemeshFace (int numfaces,int *excludedFaces, double size);
 

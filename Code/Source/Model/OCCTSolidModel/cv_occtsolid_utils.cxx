@@ -64,6 +64,9 @@
 #include "BRepBuilderAPI_FindPlane.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
 #include "BRepBuilderAPI_MakeEdge.hxx"
+#include "BRepFilletAPI_MakeFillet.hxx"
+
+#include "ChFi3D_FilletShape.hxx"
 
 #include "TDataStd_Integer.hxx"
 #include "TDataStd_Name.hxx"
@@ -73,6 +76,8 @@
 #include "Standard_Integer.hxx"
 #include "TDataStd_Integer.hxx"
 #include "TNaming_Builder.hxx"
+
+#include "ShapeAnalysis_Surface.hxx"
 
 #include "GeomAPI_Interpolate.hxx"
 #include "Geom_Plane.hxx"
@@ -87,6 +92,7 @@
 #include "Geom_TrimmedCurve.hxx"
 #include "Geom2d_Line.hxx"
 #include "Geom_Conic.hxx"
+#include "GeomLProp_SLProps.hxx"
 #include "GCPnts_UniformAbscissa.hxx"
 
 #include <string>
@@ -134,6 +140,187 @@ int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     sprintf(charstr,"%s",outstr.c_str());
 
     return CV_OK;
+}
+
+class LinearFunc
+{
+  public:
+    LinearFunc(Standard_Real x1,Standard_Real y1,
+	Standard_Real x2,Standard_Real y2);
+    ~LinearFunc() {;}
+
+    Standard_Real GetY(Standard_Real x);
+  private:
+    Standard_Real m_;
+    Standard_Real b_;
+};
+
+LinearFunc::LinearFunc(Standard_Real x1,Standard_Real y1,
+    		       Standard_Real x2,Standard_Real y2)
+{
+  m_ = (y2 - y1)/(x2 - x1);
+  b_ = y2 - (m_*x2);
+}
+
+Standard_Real LinearFunc::GetY(Standard_Real x)
+{
+  Standard_Real y = m_*x + b_;
+  return y;
+}
+
+// OCCTUtils_CreateEdgeBlend
+// ---------------------
+/**
+ * @brief Procedure to get face numbers that correspond to the scalars
+ * assigned to the geometry
+ * @param *geom input TopoDS_Shape on which to get the face ids
+ * @param *v_num_faces int that contains the number of total face regions
+ * @param **v_faces vector containing the array of numerical values
+ * corresponding to each face region
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+		BRepFilletAPI_MakeFillet &filletmaker,
+		int faceA,int faceB,double radius,double minRadius,
+		char blendname[])
+{
+  if (minRadius > radius)
+    fprintf(stderr,"Minimum radius is larger than Maximum radius\n");
+
+  char *name;
+  char nameA[255];
+  char nameB[255];
+  TopTools_IndexedDataMapOfShapeListOfShape anEFsMap;
+  TopExp::MapShapesAndAncestors (shape, TopAbs_EDGE,
+      TopAbs_FACE, anEFsMap);
+  int num = anEFsMap.Extent();
+  int found = 0;
+
+  TopoDS_Shape geomcopy = shape;
+  TopoDS_Edge filletEdge;
+  for (int i=1;i < num+1;i++)
+  {
+    TopTools_ListOfShape faces = anEFsMap.FindFromIndex(i);
+    TopoDS_Shape face1 = faces.First();
+    int faceId1,faceId2;
+    OCCTUtils_GetFaceLabel(face1,shapetool,shapelabel,faceId1);
+    TopoDS_Shape face2 = faces.Last();
+    OCCTUtils_GetFaceLabel(face2,shapetool,shapelabel,faceId2);
+    if ((faceId1 == faceA && faceId2 == faceB) ||
+		    (faceId1 == faceB && faceId2 == faceA))
+    {
+      found++;
+      char* checkid1;
+      char* checkid2;
+      int intcheck1,intcheck2;
+      filletEdge = TopoDS::Edge(anEFsMap.FindKey(i));
+      OCCTUtils_GetFaceAttribute(face1,shapetool,shapelabel,
+	  "gdscName",&name);
+      strncpy(nameA,name,sizeof(nameA));
+      OCCTUtils_GetFaceAttribute(face2,shapetool,shapelabel,
+	  "gdscName",&name);
+      strncpy(nameB,name,sizeof(nameB));
+
+      //Trying to get a curvature measure
+      BRepAdaptor_Curve curveAdaptor;
+      curveAdaptor.Initialize(filletEdge);
+      Standard_Integer NbPts = 20;
+      GCPnts_UniformAbscissa uAbs;
+      uAbs.Initialize(curveAdaptor,NbPts);
+
+      if (!uAbs.IsDone())
+      {
+	fprintf(stderr,"Could not create points on edge\n");
+	return CV_ERROR;
+      }
+      TopoDS_Face face1ForCurve = TopoDS::Face(faces.First());
+      TopoDS_Face face2ForCurve = TopoDS::Face(faces.Last());
+      Handle(Geom_Surface) surfHand1 =
+	      BRep_Tool::Surface(face1ForCurve);
+      Handle(Geom_Surface) surfHand2 =
+	      BRep_Tool::Surface(face2ForCurve);
+      ShapeAnalysis_Surface analyzer1(surfHand1);
+      ShapeAnalysis_Surface analyzer2(surfHand2);
+      TColgp_Array1OfPnt2d radLawArray(1,uAbs.NbPoints());
+      Standard_Real minAng = M_PI + 1.0;
+      Standard_Real maxAng = -1.0;
+      for (int j=1;j<=uAbs.NbPoints();j++)
+      {
+	gp_Pnt nextPnt = curveAdaptor.Value(uAbs.Parameter(j));
+        gp_Pnt2d face1UV = analyzer1.ValueOfUV(nextPnt,1.0e-6);
+        gp_Pnt2d face2UV = analyzer2.ValueOfUV(nextPnt,1.0e-6);
+	GeomLProp_SLProps prop1(surfHand1,face1UV.X(),face1UV.Y(),1,1.0e-6);
+	GeomLProp_SLProps prop2(surfHand2,face2UV.X(),face2UV.Y(),1,1.0e-6);
+	fprintf(stderr,"Curvature 1 check %.4f\n",prop1.MeanCurvature());
+	fprintf(stderr,"Curvature 2 check %.4f\n",prop2.MeanCurvature());
+	gp_Vec f1tan1 = prop1.D1U();
+	gp_Vec f1tan2 = prop1.D1V();
+	gp_Vec f2tan1 = prop2.D1U();
+	gp_Vec f2tan2 = prop2.D1V();
+	gp_Vec norm1 = f1tan1.Crossed(f1tan2);
+	gp_Vec norm2 = f2tan1.Crossed(f2tan2);
+	Standard_Real ang = norm1.Angle(norm2);
+	fprintf(stderr,"Angle between face normals at point is: %.4f\n",ang);
+	gp_Pnt2d angSet(uAbs.Parameter(j),ang);
+	radLawArray.SetValue(j,angSet);
+	if (ang < minAng)
+	  minAng = ang;
+	if (ang > maxAng)
+	  maxAng = ang;
+      }
+      fprintf(stderr,"Max angle: %.4f\n",maxAng);
+      fprintf(stderr,"Min angle: %.4f\n",minAng);
+      LinearFunc radLaw(minAng,minRadius,maxAng,radius);
+      fprintf(stderr,"Checking worked max radius: %.4f\n",radLaw.GetY(maxAng));
+      fprintf(stderr,"Checking worked min radius: %.4f\n",radLaw.GetY(minAng));
+      for (int j=1;j<=uAbs.NbPoints();j++)
+      {
+	gp_Pnt2d currVal = radLawArray.Value(j);
+	Standard_Real newRad = radLaw.GetY(currVal.Y());
+	gp_Pnt2d newVal(currVal.X(),newRad);
+	radLawArray.SetValue(j,newVal);
+	fprintf(stderr,"%d point has new radius value of %.4f for parameter %.4f\n",j,newVal.Y(),newVal.X());
+      }
+      filletmaker.Add(radLawArray,filletEdge);
+    }
+  }
+
+  fprintf(stderr,"Number of edges %d\n",found);
+  if (found == 0)
+  {
+    fprintf(stderr,"No edges between faces\n");
+    return CV_ERROR;
+  }
+  sprintf(blendname,"wall_blend_%s_%s",nameA,nameB);
+
+  TopoDS_Shape tmpShape;
+  try
+  {
+    filletmaker.Build();
+  }
+  catch (Standard_Failure)
+  {
+    fprintf(stderr,"Try different radius\n");
+    return CV_ERROR;
+  }
+  try
+  {
+    tmpShape = filletmaker.Shape();
+  }
+  catch (StdFail_NotDone)
+  {
+    fprintf(stderr,"Try different radius\n");
+    return CV_ERROR;
+  }
+  if (filletmaker.IsDone() != 1)
+  {
+    fprintf(stderr,"Not done\n");
+    return CV_ERROR;
+  }
+  shape = tmpShape;
+
+  return CV_OK;
 }
 
 // ---------------------

@@ -48,6 +48,7 @@
 #include "cvSolidModel.h"
 #include "cvOCCTSolidModel.h"
 
+#include "BRepFilletAPI_MakeFillet.hxx"
 #include "Standard_Real.hxx"
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
@@ -90,8 +91,21 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
 int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     					char *charstr);
 
+/* -------- */
+/* Ops */
+/* -------- */
 int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves,TopoDS_Shape &shape,int numCurves,int continuity,
 		int partype, double w1, double w2, double w3, int smoothing);
+
+int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
+		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
+		BRepFilletAPI_MakeFillet &filletmaker,
+    		int faceA, int faceB, double radius,double minRadius,
+		char blendname[]);
+
+/* -------- */
+/* Helpers for loft */
+/* -------- */
 
 Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
 		const Standard_Real presPln,

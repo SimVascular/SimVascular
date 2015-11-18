@@ -408,7 +408,7 @@ proc guiSV_model_blend_selected_models_occt {} {
 
   set trimmed [string trim [lindex $broken 0]]
   if {$trimmed == ""} {continue}
-  if {[llength $trimmed] != 3} {
+  if {[llength $trimmed] != 4} {
     puts "ERROR: line ($trimmed) ignored!"
   }
   set faceA -1
@@ -416,6 +416,7 @@ proc guiSV_model_blend_selected_models_occt {} {
   catch {set faceA [lindex $trimmed 0]}
   catch {set faceB [lindex $trimmed 1]}
   set r [lindex $trimmed 2]
+  set minr [lindex $trimmed 3]
   if {$faceA < 0 || $faceB < 0} {
      return -code error "ERROR: invalid values in line ($trimmed)."
   }
@@ -423,7 +424,7 @@ proc guiSV_model_blend_selected_models_occt {} {
   #set oldmodel "[string trim $model]_blended"
   guiSV_model_add_to_backup_list $kernel $model
 
-  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -fillshape 0
+  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -minradius $minr -fillshape 0
 
   set faceids [$model GetFaceIds]
   foreach id $faceids {
