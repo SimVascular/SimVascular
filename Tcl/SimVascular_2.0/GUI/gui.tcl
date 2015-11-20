@@ -49331,8 +49331,8 @@ set {guiBOOLEANvars(add_caps_to_vessels)} {1}
 set {guiBOOLEANvars(linear_sampling_along_length_multiplier)} {10}
 set {guiBOOLEANvars(no_inter_output)} {1}
 set {guiBOOLEANvars(num_modes_for_FFT)} {20}
-set {guiBOOLEANvars(sampling_along_length_multiplier)} {12}
-set {guiBOOLEANvars(sampling_default)} {60}
+set {guiBOOLEANvars(sampling_along_length_multiplier)} {1}
+set {guiBOOLEANvars(sampling_default)} {10}
 set {guiBOOLEANvars(sampling_overrides)} {}
 set {guiBOOLEANvars(selected_groups)} {}
 set {guiBOOLEANvars(selected_seg3d)} {}

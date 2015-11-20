@@ -1,7 +1,7 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Portions of the code Copyright (c) 2009-2011 Open Source Medical
 # Software Corporation, University of California, San Diego.
@@ -10,25 +10,25 @@
 # Charles Taylor, Nathan Wilson, Ken Wang.
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
-# 
+# contributors to the source code.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 # BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -36,7 +36,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 #
-#=========================================================================== 
+#===========================================================================
 
 proc bctdat_combine {inFiles outFile} {
   #author Nathan Wilson
@@ -1393,14 +1393,14 @@ proc geom_calcTransformMatrixToRAS {xyzPts rasPts rtnMatrix4x4} {
   #@c Calculates the transformations required to move a plane specified
   #@c by 3 points in (XYZ) space into the appropriate location in
   #@c 3-D (RAS) space.  Hardcoded tolerances used!
-  #@a xyzPts:  list of 3D points in XYZ space in the following order:  
+  #@a xyzPts:  list of 3D points in XYZ space in the following order:
   #@a          top left corner, top right corner, bottom right corner.
   #@a          Each point is represented as a list of its coordinates.
-  #@a rasPts:  list of 3D points in RAS space in the following order:  
+  #@a rasPts:  list of 3D points in RAS space in the following order:
   #@a          top left corner, top right corner, bottom right corner.
   #@a          Each point is represented as a list of its coordinates.
   #@a rtnMatrix4x4: vtkMatrix4x4 matrix to transform image into 3-D space.
-  #@note Method is exact copy of img_calcTransformMatrixToRAS (CVS-1.36).  
+  #@note Method is exact copy of img_calcTransformMatrixToRAS (CVS-1.36).
   #@note Only inputs are changed.
   #@r status
 
@@ -1418,10 +1418,10 @@ proc geom_calcTransformMatrixToRASWithTol {xyzPts rasPts diffTol dirTol rotVectT
   #@c Calculates the transformations required to move a plane specified
   #@c by 3 points in (XYZ) space into the appropriate location in
   #@c 3-D (RAS) space.
-  #@a xyzPts:  list of 3D points in XYZ space in the following order:  
+  #@a xyzPts:  list of 3D points in XYZ space in the following order:
   #@a          top left corner, top right corner, bottom right corner.
   #@a          Each point is represented as a list of its coordinates.
-  #@a rasPts:  list of 3D points in RAS space in the following order:  
+  #@a rasPts:  list of 3D points in RAS space in the following order:
   #@a          top left corner, top right corner, bottom right corner.
   #@a          Each point is represented as a list of its coordinates.
   #@a diffTol: how much the final points can vary from the initial points.
@@ -1429,8 +1429,8 @@ proc geom_calcTransformMatrixToRASWithTol {xyzPts rasPts diffTol dirTol rotVectT
   #@a rotVectTol:  tolerance used to determine A x B equals zero vector.
   #@a debugOn:  flag to output simple debugging information.
   #@a rtnMatrix4x4: vtkMatrix4x4 matrix to transform image into 3-D space.
-  
-  #@note Method is exact copy of img_calcTransformMatrixToRAS (CVS-1.36).  
+
+  #@note Method is exact copy of img_calcTransformMatrixToRAS (CVS-1.36).
   #@note Only inputs are changed.
   #@r status
 
@@ -1893,8 +1893,8 @@ proc group_get_color {name} {
 
     if {[lsearch -exact [array names gGroupColor] $name] < 0} {
       set gGroupColor($name) $gOptions(color_for_groups)
-    } 
-      
+    }
+
     return $gGroupColor($name)
 }
 
@@ -2381,7 +2381,7 @@ proc group_restorePreopSegs {name} {
         set path_xhat [repos_getLabel -obj $guy -key xhat]
       }
       set creation_type [repos_getLabel -obj $guy -key creation_type]
- 
+
       if {$creation_type == "levelset"} {
         set seg /lsGUI/$pathId/$posId/ls/oriented
         set segdisoriented /lsGUI/$pathId/$posId/ls
@@ -2392,7 +2392,7 @@ proc group_restorePreopSegs {name} {
         puts "ERROR: invalid creation type for $guy, object ignored."
         continue
       }
-      
+
       # check and see if we have done a bulk scaling
       if {[regexp bulk_scale_factor    [repos_getLabelKeys -obj $guy]] || \
 	  [regexp shifted_origin       [repos_getLabelKeys -obj $guy]] || \
@@ -2644,7 +2644,7 @@ proc seg3d_add {name pd} {
 
     set segPD /guiGROUPS/3dsurface/$name
     if {[repos_exists -obj $segPD]} {return 1}
-    
+
     global gSeg3D
     geom_copy -src $pd -dst $segPD
     set gSeg3D($name) $segPD
@@ -2652,7 +2652,7 @@ proc seg3d_add {name pd} {
 }
 
 proc seg3d_exists {name} {
-    
+
     global gSeg3D
     return [expr {[lsearch -exact [array names gSeg3D] $name] > -1}]
 }
@@ -2706,7 +2706,7 @@ proc seg3d_saveSurf {name filename} {
   package require md5
   repos_writeXMLPolyData $pd $vtpfn
   set vtpmd5 [::md5::md5 -hex -file $vtpfn]
-  
+
   set keys [repos_getLabelKeys -obj $pd]
   catch {unset arr}
   foreach k $keys {
@@ -2724,7 +2724,7 @@ proc seg3d_saveSurf {name filename} {
 
 
 proc seg3d_readSurf {name filename} {
-  
+
   if {[seg3d_exists $name]} {
   #return -code error "ERROR: Group $name already exists."
         puts "WARNING:  segmentation existed and is being replaced!!"
@@ -3381,11 +3381,11 @@ proc img_guessVolParams {filename} {
   set gImageVol(vdims_z_signed) [expr [lindex $topLeft $myindex] - [lindex $top_left_corner $myindex]]
 
   set magdist [math_magnitude [math_subVectors $topLeft $top_left_corner]]
-  
+
   puts "original vdims_z: $gImageVol(vdims_z)"
   puts "setting vdims_z with magnitude of difference: $magdist"
   set gImageVol(vdims_z) $magdist
- 
+
   #puts "$topLeft"
   #puts "$top_left_corner"
   #puts "$gImageVol(vdims_z_signed)"
@@ -4114,9 +4114,9 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
 
   # inserting a through plane component of zero for each boundary point
   # if user specifies this;  otherwise, assign the corresponding velocity
-  # in the image to this point. 
+  # in the image to this point.
   # also zero z-component of point?
-   if {$zeroBoundFlag == 1} {      
+   if {$zeroBoundFlag == 1} {
        for {set i 0} {$i < [$segvtkobj GetNumberOfPoints]} {incr i} {
 	   set pt [$segvtkobj GetPoint $i]
 	   $vPoints InsertNextPoint [lindex $pt 0] [lindex $pt 1] 0.0
@@ -4126,7 +4126,7 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
        }
    } else {
  for {set i 0} {$i < [$segvtkobj GetNumberOfPoints]} {incr i} {
-      
+
 	  # Initialize variables
 	  set vx 0
 	  set vy 0
@@ -4137,13 +4137,13 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
 
 	  # Need to find corresponding pixel number for this point.  Since this is a
 	  # structured data set, coordinates of origin represent centroid for pixel at
-	  # bottom-left of image instead of bottom-left corner of image.  Adjust 
+	  # bottom-left of image instead of bottom-left corner of image.  Adjust
 	  # origin just for calculation purposes.
 	  set adjOrig [math_subVectors $origin [math_scaleVec $spacing 0.5]]
 	  set rowIx [expr int([expr [expr [lindex $pt 1] - [lindex $adjOrig 1]] / [lindex $spacing 1]])]
 	  set colIx [expr int([expr [expr [lindex $pt 0] - [lindex $adjOrig 0]] / [lindex $spacing 0]])]
 	  set pixel [expr $rowIx * [lindex $dims 0] + $colIx]
-	  
+
 	  #  Here's a check to make sure we computed the right pixel number
 	  set pixcoord [$image(Z) GetPoint $pixel]
 	  set coordDiff [math_subVectors $pixcoord $pt]
@@ -4154,7 +4154,7 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
 	  #puts "pixel $pixel ($rowIx, $colIx): $pixcoord"
 	  #puts "desired point:  $pt"
 	  #puts "difference:  $coordDiff"
-	    
+
 	  if {$coordDiffX > [expr 1.01*([lindex $spacing 0] / 2.0)] || \
 	      $coordDiffY > [expr 1.01*([lindex $spacing 1] / 2.0)] || \
 	      $coordDiffZ > [expr 1.01*([lindex $spacing 2] / 2.0)]} {
@@ -4163,9 +4163,9 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
 	           puts "desired point:  $pt"
 	           puts "difference:  $coordDiff"
 	           return
-	  } 
+	  }
 
-	  
+
 	  set pixval [$imageScalars(Z) GetTuple1 $pixel]
 	  set vz [expr double([lindex $directions 2])*($pixval-[expr $correctZ])]
 	  if {$map(X) == 1} {
@@ -4615,7 +4615,7 @@ proc img_calcTransformMatrixToRAS {imageFilename rtnMatrix4x4} {
                     0]
 
   geom_calcTransformMatrixToRAS $pts $ptList $rtnMatrix4x4
-  
+
   return GDSC_OK
 
 }
@@ -4988,7 +4988,7 @@ proc img_writeXML {vimg fn} {
   $writer SetInputDataObject $vtkobj
   $writer SetFileName $fn
   $writer Write
-  $writer Delete  
+  $writer Delete
 }
 
 
@@ -5090,7 +5090,7 @@ proc img_createMIPfromVolume {imgvol direction slices mipImg} {
       #puts "range: [[$imgmerger GetOutput] GetScalarRange]"
       $miptmp DeepCopy [$imgmerger GetOutput]
       $imgmerger Delete
-      $mip DeepCopy $miptmp     
+      $mip DeepCopy $miptmp
     }
   }
 
@@ -5114,7 +5114,7 @@ proc img_createMIPfromVolume {imgvol direction slices mipImg} {
     set ext [$mip GetExtent]
     $finalMIP SetExtent [lindex $ext 0] [lindex $ext 1] [lindex $ext 4] [lindex $ext 5] 0 0
   }
-  
+
   repos_importVtkImg -src $finalMIP -dst $mipImg
 
   $voi       Delete
@@ -5218,12 +5218,12 @@ proc img_readDICOM {dirname change_to_cm_flag rtnobj} {
   img_findPCMRIorientation [lindex [lsort -dictionary [glob [file join $dirname I.*]]] 0] xyz directions
 
   #
-  #  NOTE (2012/12/12):  I believe that vtk's DICOM reader sorts the 
-  #    slices into lowest to highest patient position, meaning 
+  #  NOTE (2012/12/12):  I believe that vtk's DICOM reader sorts the
+  #    slices into lowest to highest patient position, meaning
   #    the file name ordering is arbitrary (unlike 5X where we have
   #    to worry about it).  Hence the different handling of cases
   #    like "a s r" don't require special handling like it does for
-  #    5X.               
+  #    5X.
   #
 
   if {$xyz == "r s a"} {
@@ -6225,10 +6225,10 @@ proc mesh_readMSS {filename resObj} {
 	}
         set faceids [$solid GetFaceIds]
         foreach id $faceids {
-	  if {$gOptions(meshing_solid_kernel) == "Parasolid"} { 
+	  if {$gOptions(meshing_solid_kernel) == "Parasolid"} {
             set ident [$solid GetFaceAttr -attr identifier -faceId $id]
             set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
-	  } elseif {$gOptions(meshing_solid_kernel) == "Discrete"} { 
+	  } elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
             set ident $id
             set facename $gDiscreteModelFaceNames($id)
 	  } else {
@@ -6319,7 +6319,7 @@ proc mesh_readMSS {filename resObj} {
 #  mesh_newObject -result $mymesh -meshfile $smsfile -solidfile $solidmodelfile
 #  $mymesh Update
 #  puts "Done loading mesh..."
-# 
+#
 #  puts "Loading solid model ($solidmodelfile)..."
 #  solid_readNative -file $solidmodelfile -obj $mysolid
 #  puts "Done loading solid model..."
@@ -6346,7 +6346,7 @@ proc mesh_readMSS {filename resObj} {
 #      if {[lsearch -exact $surfaceNodes $n] < 0} {
 #        set allOn 0
 #        break
-#      }  
+#      }
 #    }
 #    if {$allOn == 1} {
 #      puts "PROBLEM: element [lindex $surfElem 0] has all nodes on boundary ($conn)"
@@ -7575,7 +7575,7 @@ proc post_sampleToVolume {fn dims origin spacing outfn} {
 
   set sp tmp-post_sampleToVolume-sp
   catch {$sp Delete}
-  vtkImageData $sp 
+  vtkImageData $sp
   $sp SetDimensions [lindex $dims 0] [lindex $dims 1] [lindex $dims 2]
   $sp SetExtent 0 [expr [lindex $dims 0] - 1] \
                 0 [expr [lindex $dims 1] - 1] \
@@ -7599,7 +7599,7 @@ proc post_sampleToVolume {fn dims origin spacing outfn} {
   $dummy FillComponent 0 0
 
   [$sp GetPointData] SetScalars $dummy
-  
+
   set probe tmp-post_sampleToVolume-probe
   catch {$probe Delete}
   vtkProbeFilter $probe
@@ -7648,7 +7648,7 @@ proc post_sampleToRawVolume {fn dims origin spacing arrayname component outprefi
 
   set sp tmp-post_sampleToVolumeRaw-sp
   catch {$sp Delete}
-  vtkImageData $sp 
+  vtkImageData $sp
   $sp SetDimensions [lindex $dims 0] [lindex $dims 1] [lindex $dims 2]
   $sp SetExtent 0 [expr [lindex $dims 0] - 1] \
                 0 [expr [lindex $dims 1] - 1] \
@@ -7672,7 +7672,7 @@ proc post_sampleToRawVolume {fn dims origin spacing arrayname component outprefi
   $dummy FillComponent 0 0
 
   [$sp GetPointData] SetScalars $dummy
-  
+
   set probe tmp-post_sampleToVolumeRaw-probe
   catch {$probe Delete}
   vtkProbeFilter $probe
@@ -7748,7 +7748,7 @@ proc post_sample {filenames dims scaleFactorBB} {
 
   set xlen [expr 1.0*([lindex $bbox 1] - [lindex $bbox 0])*$scaleFactorBB]
   set xmin [expr ([lindex $bbox 0] + [lindex $bbox 1])/2.0 - $xlen/2.0]
- 
+
   set ylen [expr 1.0*([lindex $bbox 3] - [lindex $bbox 2])*$scaleFactorBB]
   set ymin [expr ([lindex $bbox 2] + [lindex $bbox 3])/2.0 - $ylen/2.0]
 
@@ -7756,7 +7756,7 @@ proc post_sample {filenames dims scaleFactorBB} {
   set zmin [expr ([lindex $bbox 4] + [lindex $bbox 5])/2.0 - $zlen/2.0]
 
   set origin [list $xmin $ymin $zmin]
- 
+
   set sX [expr 1.0*$xlen/double([lindex $dims 0])]
   set sY [expr 1.0*$ylen/double([lindex $dims 1])]
   set sZ [expr 1.0*$zlen/double([lindex $dims 2])]
@@ -7778,7 +7778,7 @@ proc post_sample {filenames dims scaleFactorBB} {
 
     set arrayname pressure
     set component 0
-    set outprefix $pre\-pressure 
+    set outprefix $pre\-pressure
 
     post_sampleToRawVolume $fn $dims $origin $spacing $arrayname $component $outprefix
 
@@ -7846,7 +7846,7 @@ proc repos_subList {pat} {
 
 proc repos_sorted {pat field} {
     #@author Ken Wang
-    #@c Uses repos_subList to find all the objects matching 
+    #@c Uses repos_subList to find all the objects matching
     #@c the requested pattern, and then sorts based on the given field.
     #@note This routine assumes object names of the form "/a/b/c/..."
     #@a pat:  Pattern to match.
@@ -8393,4 +8393,4 @@ proc view_slice {fn} {
    gdscView $slice
 }
 
-   
+

@@ -873,3 +873,94 @@ proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsIn
 
 
 }
+
+# Procedure: createPREOPgrpSaveGroups
+proc saveResampledGroup {grp numSuperPts} {
+
+  set sortedList [group_get $grp]
+  if {[llength $sortedList] == 0} {
+      return -code error "No profiles found for sampling."
+  }
+  set resampleList {}
+  foreach profile $sortedList {
+    catch {repos_delete -obj $profile/supersample}
+    geom_sampleLoop -src $profile -num $numSuperPts -dst $profile/supersample
+    lappend resampleList $profile/supersample
+  }
+
+  # create the directory if it doesn't exist
+  global gFilenames
+  set mydir [tk_chooseDirectory -mustexist 0 -title "Save SimVascular Groups To Directory"  -initialdir $gFilenames(groups_dir)]
+  set grpdir $gFilenames(groups_dir)
+  puts $grpdir
+  set contents_file [file join $grpdir group_contents.tcl]
+
+  if {[file exists $grpdir] == 1} {
+    if {[file isdirectory $grpdir] == 0} {
+      puts "ERROR:  Group directory $grpdir is apparently a file!"
+      return -code error "ERROR:  Group directory $grpdir is apparently a file!"
+    }
+  } else {
+      if [catch {file mkdir $grpdir}] {
+      puts "ERROR:  Could not create directory $grpdir."
+      return -code error "ERROR:  Could not create directory $grpdir."
+    }
+  }
+
+  set fp [open $contents_file "w"]
+  puts $fp "# geodesic_groups_file 2.3"
+  puts $fp ""
+  puts $fp "#"
+
+  puts $fp "proc group_autoload {} {"
+  puts $fp "  global gFilenames"
+  puts $fp "  set grpdir \$gFilenames(groups_dir)"
+  puts $fp "  # Group Stuff"
+
+  puts $fp "  group_readProfiles \{$grp\} \[file join \$grpdir \{$grp\}\]"
+  saveResampledSegments $grp "[file join $grpdir $grp]_resampled" $resampleList $sortedList
+
+  puts $fp "}"
+
+  close $fp
+}
+
+# ------------------
+# saveResampledSegments
+# ------------------
+
+proc saveResampledSegments {name filename items infoList} {
+  #@author Nathan Wilson
+  #@c  Routine to save a group of profiles to a file.
+  #@a name:  Group to be written to the file.
+  #@a filename:  File to be created.
+  set fp [open $filename w]
+  set count 0
+  foreach i $items {
+        # need to protect against empty segmentations
+        if {[[repos_exportToVtk -src $i] GetNumberOfPoints] == 0} {
+          continue
+	}
+	set keys [repos_getLabelKeys -obj $i]
+	catch {unset arr}
+	foreach k $keys {
+	    set arr($k) [repos_getLabel -obj $i -key $k]
+	}
+	set str [array get arr]
+	set id [group_itemid $name [lindex $infoList $count]]
+	set ptList [geom_getOrderedPts -obj $i]
+	puts $fp $i
+	puts $fp $id
+	puts $fp $str
+	foreach pt $ptList {
+	    set x [lindex $pt 0]
+	    set y [lindex $pt 1]
+	    set z [lindex $pt 2]
+	    puts $fp "$x $y $z"
+	}
+	puts $fp ""
+  	incr count
+  }
+  close $fp
+}
+

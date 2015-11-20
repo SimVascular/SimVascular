@@ -318,6 +318,7 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
     fprintf(stderr,"Not done\n");
     return CV_ERROR;
   }
+  fprintf(stderr,"Number faulty contours: %d\n",filletmaker.NbFaultyContours());
   shape = tmpShape;
 
   return CV_OK;
