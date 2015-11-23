@@ -875,24 +875,55 @@ proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsIn
 }
 
 # Procedure: createPREOPgrpSaveGroups
-proc saveResampledGroup {grp numSuperPts} {
+proc saveResampledGroup {grp numSamplePts} {
 
+  set vecFlag false
   set sortedList [group_get $grp]
   if {[llength $sortedList] == 0} {
       return -code error "No profiles found for sampling."
   }
-  set resampleList {}
   foreach profile $sortedList {
     catch {repos_delete -obj $profile/supersample}
-    geom_sampleLoop -src $profile -num $numSuperPts -dst $profile/supersample
-    lappend resampleList $profile/supersample
+    geom_sampleLoop -src $profile -num 64 -dst $profile/supersample
+  }
+
+  set prof [lindex $sortedList 0]
+  catch {repos_delete -obj $prof/aligned}
+  geom_copy -src $prof/supersample -dst $prof/aligned
+
+  for {set i 1} {$i < [llength $sortedList]} {incr i} {
+
+      set p [lindex $sortedList [expr $i - 1]]
+      set q [lindex $sortedList $i]
+
+      catch {repos_delete -obj $q/aligned}
+
+      geom_alignProfile \
+	      -ref $p/aligned \
+	      -src $q/supersample -dst $q/aligned \
+	      -vecMtd $vecFlag
+
+  }
+
+  #
+  #  sample profiles
+  #
+
+  set sample $numSamplePts
+  puts ">>> Num fit pts per curve:  \[$sample\]"
+
+  set resampleList {}
+  foreach profile $sortedList {
+    catch {repos_delete -obj $profile/sample}
+    geom_sampleLoop -src $profile/aligned -num $sample -dst $profile/sample
+    lappend resampleList $profile/sample
   }
 
   # create the directory if it doesn't exist
   global gFilenames
   set mydir [tk_chooseDirectory -mustexist 0 -title "Save SimVascular Groups To Directory"  -initialdir $gFilenames(groups_dir)]
-  set grpdir $gFilenames(groups_dir)
-  puts $grpdir
+  set gFilenames(groups_dir) $mydir
+  set grpdir $mydir
   set contents_file [file join $grpdir group_contents.tcl]
 
   if {[file exists $grpdir] == 1} {
@@ -907,22 +938,8 @@ proc saveResampledGroup {grp numSuperPts} {
     }
   }
 
-  set fp [open $contents_file "w"]
-  puts $fp "# geodesic_groups_file 2.3"
-  puts $fp ""
-  puts $fp "#"
-
-  puts $fp "proc group_autoload {} {"
-  puts $fp "  global gFilenames"
-  puts $fp "  set grpdir \$gFilenames(groups_dir)"
-  puts $fp "  # Group Stuff"
-
-  puts $fp "  group_readProfiles \{$grp\} \[file join \$grpdir \{$grp\}\]"
   saveResampledSegments $grp "[file join $grpdir $grp]_resampled" $resampleList $sortedList
 
-  puts $fp "}"
-
-  close $fp
 }
 
 # ------------------
@@ -937,17 +954,18 @@ proc saveResampledSegments {name filename items infoList} {
   set fp [open $filename w]
   set count 0
   foreach i $items {
+	set actItem [lindex $infoList $count]
         # need to protect against empty segmentations
         if {[[repos_exportToVtk -src $i] GetNumberOfPoints] == 0} {
           continue
 	}
-	set keys [repos_getLabelKeys -obj $i]
+	set keys [repos_getLabelKeys -obj $actItem]
 	catch {unset arr}
 	foreach k $keys {
-	    set arr($k) [repos_getLabel -obj $i -key $k]
+	    set arr($k) [repos_getLabel -obj $actItem -key $k]
 	}
 	set str [array get arr]
-	set id [group_itemid $name [lindex $infoList $count]]
+	set id [group_itemid $name $actItem]
 	set ptList [geom_getOrderedPts -obj $i]
 	puts $fp $i
 	puts $fp $id
