@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved.
+ * All Rights Reserved. 
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code.
+ * contributors to the source code. 
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
+ * "Software"), to deal in the Software without restriction, including 
+ * without limitation the rights to use, copy, modify, merge, publish, 
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
+ * 
+ * The above copyright notice and this permission notice shall be included 
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -47,7 +47,6 @@ enum SolidModel_KernelT {
   SM_KT_PARASOLID,
   SM_KT_DISCRETE,
   SM_KT_POLYDATA,
-  SM_KT_OCCT,
   SM_KT_INVALID
 };
 
@@ -96,13 +95,13 @@ public:
 
   SolidModel_KernelT GetKernelT() const { return kernel_; }
 
-  // Solid Model factory method that delegates creation of models to the
+  // Solid Model factory method that delegates creation of models to the 
   //  concrete implementations.
   static cvSolidModel* DefaultInstantiateSolidModel( Tcl_Interp *interp = NULL);
 
   // Global variables that handle management of solid model kernels.
   static SolidModel_KernelT gCurrentKernel;
-  static cvFactoryRegistrar gRegistrar;
+  static cvFactoryRegistrar gRegistrar; 
 
   // Modeler operations:
   virtual void Clear() = 0;
@@ -136,8 +135,7 @@ public:
 
   virtual int MakeInterpCurveLoop( cvPolyData *pd, int closed ) = 0;
   virtual int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) = 0;
-  virtual int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
-     int continuity,int partype,double w1,double w2,double w3 ,int smoothing) = 0;
+  virtual int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name ) = 0;
   virtual int CapSurfToSolid( cvSolidModel *surf ) { return CV_ERROR; }
 
   // Booleans are compatible only between like-typed concrete objects:
@@ -173,7 +171,7 @@ public:
   virtual int Distance( double pos[], double upperLimit,
 			double *dist ) = 0;
   virtual int GetFaceNormal (int faceid, double u, double v, double normal[]) = 0;
-
+  
   // Attribute related & required methods:
   virtual int GetBoundaryFaces(double angle)=0;
   virtual int GetFaceIds (int *numFaces, int **faceIds) = 0;
@@ -183,7 +181,7 @@ public:
   virtual int GetRegionAttribute(char *attr,int regionid, char **value) = 0;
   virtual int SetRegionAttribute(char *attr,int regionid, char *value) = 0;
   virtual int DeleteRegion (int regionid) = 0;
-
+  
   // I/O:
   virtual int ReadNative( char *filename ) = 0;
   virtual int WriteNative( int file_version, char *filename ) const = 0;
@@ -192,13 +190,12 @@ public:
   // geometric manipulation
   // this method is buggy and should be used with great care!
   virtual int DeleteFaces (int numfaces, int *faces) = 0;
-  virtual int CreateEdgeBlend(int faceA, int faceB, double radius, double minRadius,
-      int filletshape) = 0;
+  virtual int CreateEdgeBlend(int faceA, int faceB, double radius) = 0;
   virtual int CombineFaces (int targetface, int loseface) = 0;
   virtual int RemeshFace (int numfaces,int *excludedFaces, double size) = 0;
 
   virtual int SetVtkPolyDataObject(vtkPolyData *newPolyData) = 0;
-
+  
 protected:
   double tol_;
 

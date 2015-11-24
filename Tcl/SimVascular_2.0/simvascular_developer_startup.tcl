@@ -98,7 +98,7 @@ if {$tcl_platform(platform) == "unix"} {
   } 
   
   if {$tcl_platform(os) == "Linux"} {
-    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.so Parasolidsolid} msg]} {
+    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.so  Parasolidsolid} msg]} {
 	puts "liblib_simvascular_parasolid shared object: $msg"
     }
     if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_discrete.so Meshsimdiscretesolid} msg]} {

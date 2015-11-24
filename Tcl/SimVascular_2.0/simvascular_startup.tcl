@@ -456,7 +456,6 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 
   after 5000 {set tkcon_delay_done 1}
   vwait tkcon_delay_done
-  guiCV_display_windows 3d_only
   if { $SIMVASCULAR_NO_RENDERER == "0" } { 
     puts "Not render window mode" 
   } else {
@@ -469,18 +468,12 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   set w [winfo width $leftright]
   #puts "width: $w"
   set sash0 300
-  if {[$leftright sashpos 0 $sash0] != 0} {
-    puts "Pos not zero"
-    puts "sashpos: [$leftright sashpos 0 $sash0]"
-  }
+  puts "sashpos: [$leftright sashpos 0 $sash0]"
 
   set h [winfo height $topbottom]
   #puts "height: $h"
   set sash0 320
-  if {[$topbottom sashpos 0 $sash0] != 0} {
-    puts "Pos not zero"
-    puts "sashpos: [$topbottom sashpos 0 $sash0]"
-  }
+  puts "sashpos: [$topbottom sashpos 0 $sash0]"
 
   if {[info exists env(SIMVASCULAR_REDIRECT_STDERR_STDOUT)]} {
   proc handle { args } {

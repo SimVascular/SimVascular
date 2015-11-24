@@ -543,38 +543,32 @@ void vtkBooleanOperationPolyDataFilter2::Impl::GetBooleanRegions(
       nextCell = nextLine.id; p1 = nextLine.pt1; p2 = nextLine.pt2;
       outputCellId0 = this->NewCellIds[inputIndex]->GetComponent(nextCell,0);
       outputCellId1 = this->NewCellIds[inputIndex]->GetComponent(nextCell,1);
-      if (outputCellId0 != -1)
+      if (this->checkedcarefully[inputIndex][outputCellId0] == 0)
       {
-	if (this->checkedcarefully[inputIndex][outputCellId0] == 0)
+	int sign1 = this->GetCellOrientation(tmpPolyData,outputCellId0,
+	  p1,p2,inputIndex);
+	if (sign1 != 0)
 	{
-	  int sign1 = this->GetCellOrientation(tmpPolyData,outputCellId0,
-	    p1,p2,inputIndex);
-	  if (sign1 != 0)
-	  {
-	    this->CheckCells->InsertNextId(outputCellId0);
-	    this->FindRegion(inputIndex,sign1,1,1);
-	    this->CheckCells->Reset();
-	    this->CheckCells2->Reset();
-	    this->CheckCellsCareful->Reset();
-	    this->CheckCellsCareful2->Reset();
-	  }
+	  this->CheckCells->InsertNextId(outputCellId0);
+	  this->FindRegion(inputIndex,sign1,1,1);
+	  this->CheckCells->Reset();
+	  this->CheckCells2->Reset();
+	  this->CheckCellsCareful->Reset();
+	  this->CheckCellsCareful2->Reset();
 	}
       }
-      if (outputCellId1 != -1)
+      if (this->checkedcarefully[inputIndex][outputCellId1] == 0)
       {
-	if (this->checkedcarefully[inputIndex][outputCellId1] == 0)
+	int sign2 = this->GetCellOrientation(tmpPolyData,outputCellId1,
+	    p1,p2,inputIndex);
+	if (sign2 != 0)
 	{
-	  int sign2 = this->GetCellOrientation(tmpPolyData,outputCellId1,
-	      p1,p2,inputIndex);
-	  if (sign2 != 0)
-	  {
-	    this->CheckCells->InsertNextId(outputCellId1);
-	    this->FindRegion(inputIndex,sign2,1,1);
-	    this->CheckCells->Reset();
-	    this->CheckCells2->Reset();
-	    this->CheckCellsCareful->Reset();
-	    this->CheckCellsCareful2->Reset();
-	  }
+	  this->CheckCells->InsertNextId(outputCellId1);
+	  this->FindRegion(inputIndex,sign2,1,1);
+	  this->CheckCells->Reset();
+	  this->CheckCells2->Reset();
+	  this->CheckCellsCareful->Reset();
+	  this->CheckCellsCareful2->Reset();
 	}
       }
     }
@@ -1109,7 +1103,7 @@ void vtkBooleanOperationPolyDataFilter2::Impl::DetermineIntersection(
   {
     if (usedPt[interPt] == false)
     {
-      simLoop newloop;
+      usedPt[interPt] = true;
       this->IntersectionLines->GetPointCells(interPt,cellIds);
       if (this->Verbose)
       {
@@ -1123,6 +1117,7 @@ void vtkBooleanOperationPolyDataFilter2::Impl::DetermineIntersection(
 
       nextCell = cellIds->GetId(0);
 
+      simLoop newloop;
       newloop.startPt = interPt;
       caseId = this->RunLoopFind(interPt,nextCell,usedPt,&newloop);
       if (caseId != -1)
@@ -1134,15 +1129,9 @@ void vtkBooleanOperationPolyDataFilter2::Impl::DetermineIntersection(
 	    std::cout<<"End point of open loop is "<<nextPt<<endl;
 	  newloop.endPt = nextPt;
 	  newloop.loopType = 2;
-	  nextCell = cellIds->GetId(1);
-          vtkIdType newId = this->RunLoopFind(interPt,nextCell,usedPt,&newloop);
-	  newloop.startPt = newId;
 	  //Save start and end point in custom data structure for loop
 	}
-	else 
-	  newloop.loopType = 1;
       }
-      usedPt[interPt] = true;
       loops->push_back(newloop);
     }
   }
@@ -1191,10 +1180,8 @@ int vtkBooleanOperationPolyDataFilter2::Impl::RunLoopFind(
       if (this->Verbose)
         std::cout<<"Number Of Cells is greater than 2 for point "
 	  <<nextPt<<endl;
-      usedPt[nextPt] = false;
+
       nextCell = this->RunLoopTest(nextPt,nextCell,loop,usedPt);
-      if (nextCell == -1)
-	break;
 
       if (this->Verbose)
         std::cout<<"Next cell is "<<nextCell<<endl;
@@ -1310,40 +1297,34 @@ int vtkBooleanOperationPolyDataFilter2::Impl::RunLoopTest(
 	//std::cout<<"Line cell is "<<nextCell<<endl;
 	outputCellId0 = this->NewCellIds[input]->GetComponent(nextCell,0);
 	outputCellId1 = this->NewCellIds[input]->GetComponent(nextCell,1);
-	if (outputCellId0 != -1)
+	if (this->checkedcarefully[input][outputCellId0] == 0)
 	{
-	  if (this->checkedcarefully[input][outputCellId0] == 0)
+	  int sign1 = this->GetCellOrientation(tmpPolyData,outputCellId0,
+	    p1,p2,input);
+	  if (sign1 == -1)
 	  {
-	    int sign1 = this->GetCellOrientation(tmpPolyData,outputCellId0,
-	      p1,p2,input);
-	    if (sign1 == -1)
-	    {
-	      numRegionsFound++;
-	      this->CheckCells->InsertNextId(outputCellId0);
-	      this->FindRegion(input,sign1,1,0);
-	      this->CheckCells->Reset();
-	      this->CheckCells2->Reset();
-	      this->CheckCellsCareful->Reset();
-	      this->CheckCellsCareful2->Reset();
-	    }
+	    numRegionsFound++;
+	    this->CheckCells->InsertNextId(outputCellId0);
+	    this->FindRegion(input,sign1,1,0);
+	    this->CheckCells->Reset();
+	    this->CheckCells2->Reset();
+	    this->CheckCellsCareful->Reset();
+	    this->CheckCellsCareful2->Reset();
 	  }
 	}
-	if (outputCellId1 != -1)
+	if (this->checkedcarefully[input][outputCellId1] == 0)
 	{
-	  if (this->checkedcarefully[input][outputCellId1] == 0)
+	  int sign2 = this->GetCellOrientation(tmpPolyData,outputCellId1,
+	    p1,p2,input);
+	  if (sign2 == -1)
 	  {
-	    int sign2 = this->GetCellOrientation(tmpPolyData,outputCellId1,
-	      p1,p2,input);
-	    if (sign2 == -1)
-	    {
-	      numRegionsFound++;
-	      this->CheckCells->InsertNextId(outputCellId1);
-	      this->FindRegion(input,sign2,1,0);
-	      this->CheckCells->Reset();
-	      this->CheckCells2->Reset();
-	      this->CheckCellsCareful->Reset();
-	      this->CheckCellsCareful2->Reset();
-	    }
+	    numRegionsFound++;
+	    this->CheckCells->InsertNextId(outputCellId1);
+	    this->FindRegion(input,sign2,1,0);
+	    this->CheckCells->Reset();
+	    this->CheckCells2->Reset();
+	    this->CheckCellsCareful->Reset();
+	    this->CheckCellsCareful2->Reset();
 	  }
 	}
       }
@@ -1373,96 +1354,65 @@ void vtkBooleanOperationPolyDataFilter2::Impl::PerformBoolean(
   vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer = 
     vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
 
-  vtkPolyData *surfaces[4];
-  for (int i=0;i<4;i++)
-  {
-    surfaces[i] = vtkPolyData::New();;
-  }
-
+  vtkSmartPointer<vtkPolyData> surface1_A = 
+	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[0]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(-1,-1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surfaces[0]->DeepCopy(surfacer->GetOutput());
+  surface1_A->DeepCopy(surfacer->GetOutput());
 
+  vtkSmartPointer<vtkPolyData> surface1_B = 
+	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[0]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(1,1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surfaces[1]->DeepCopy(surfacer->GetOutput());
+  surface1_B->DeepCopy(surfacer->GetOutput());
 
+  vtkSmartPointer<vtkPolyData> surface2_A = 
+	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[1]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(1,1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surfaces[2]->DeepCopy(surfacer->GetOutput());
+  surface2_A->DeepCopy(surfacer->GetOutput());
 
+  vtkSmartPointer<vtkPolyData> surface2_B = 
+	  vtkSmartPointer<vtkPolyData>::New();
   thresholder->SetInputData(this->Mesh[1]);
   thresholder->SetInputArrayToProcess(0,0,0,1,"BooleanRegion");
   thresholder->ThresholdBetween(-1,-1);
   thresholder->Update();
   surfacer->SetInputData(thresholder->GetOutput());
   surfacer->Update();
-  surfaces[3]->DeepCopy(surfacer->GetOutput());
+  surface2_B->DeepCopy(surfacer->GetOutput());
   
   vtkSmartPointer<vtkAppendPolyData> appender = 
     vtkSmartPointer<vtkAppendPolyData>::New();
   
-  if (this->intersectionCase == 2)
-  {
-    vtkSmartPointer<vtkPolyData> tmp = 
-      vtkSmartPointer<vtkPolyData>::New();
-    int numCells[4];
-    std::list<vtkIdType> nocellregion;
-    for (int i=0;i<4;i++)
-    {
-      numCells[i] = surfaces[i]->GetNumberOfCells();
-      if (numCells[i] == 0)
-      {
-	nocellregion.push_back(i);
-      }
-    }
-    if (nocellregion.size() > 0)
-    {
-      if (nocellregion.front() == 0)
-      {
-	tmp->DeepCopy(surfaces[1]);
-	surfaces[1]->DeepCopy(surfaces[0]);
-	surfaces[0]->DeepCopy(tmp);
-      }
-      if (nocellregion.back() == 2)
-      {
-	tmp->DeepCopy(surfaces[3]);
-	surfaces[3]->DeepCopy(surfaces[2]);
-	surfaces[2]->DeepCopy(tmp);
-      }
-    }
-  }
   if (Operation == 0)
   {
-    appender->AddInputData(surfaces[0]);
-    appender->AddInputData(surfaces[2]);
+    appender->AddInputData(surface1_A);
+    appender->AddInputData(surface2_A);
   }
   if (Operation == 1)
   {
-    appender->AddInputData(surfaces[1]);
-    appender->AddInputData(surfaces[3]);
+    appender->AddInputData(surface1_B);
+    appender->AddInputData(surface2_B);
   }
   if (Operation == 2)
   {
-    appender->AddInputData(surfaces[0]);
-    appender->AddInputData(surfaces[3]);
+    appender->AddInputData(surface1_A);
+    appender->AddInputData(surface2_B);
   }
   appender->Update();
 
   output->DeepCopy(appender->GetOutput());
-
-  for (int i =0;i < 4;i++)
-    surfaces[i]->Delete();
 }

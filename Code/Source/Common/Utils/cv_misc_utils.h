@@ -159,11 +159,11 @@ double misc_Det3x3( double mat[] )
 
 
 // =========
-//   svRound
+//   Round
 // =========
 
 inline
-int svRound( double d )
+int Round( double d )
 {
   return( (int) floor( d + 0.5 ) );
 }

@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved.
+ * All Rights Reserved. 
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
+ * "Software"), to deal in the Software without restriction, including 
+ * without limitation the rights to use, copy, modify, merge, publish, 
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
+ * 
+ * The above copyright notice and this permission notice shall be included 
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -33,9 +33,9 @@
  *  subdivision
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com
+ *  @author updega2@gmail.com 
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
+ *  @author shaddenlab.berkeley.edu 
  */
 
 #include "vtkLocalLinearSubdivisionFilter.h"
@@ -63,7 +63,7 @@ int vtkLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
   vtkPoints *inputPts=inputDS->GetPoints();
   vtkPointData *inputPD=inputDS->GetPointData();
   static double weights[2] = {.5, .5};
-  vtkSmartPointer<vtkIdList> edgeNeighbor =
+  vtkSmartPointer<vtkIdList> edgeNeighbor = 
     vtkSmartPointer<vtkIdList>::New();
 
   // Create an edge table to keep track of which edges we've processed
@@ -103,7 +103,7 @@ int vtkLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
 	delete [] noSubdivideCell;
 	return 0;
         }
-      if (noSubdivideCell[edgeNeighbor->GetId(0)] ||
+      if (noSubdivideCell[edgeNeighbor->GetId(0)] || 
 	  noSubdivideCell[cellId])
 	isLocalBoundary = 1;
 
@@ -125,7 +125,7 @@ int vtkLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
         {
         newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData, cellIds);
         }
-      else
+      else 
         {
 	newId = -1;
 	if (edgeTable->IsEdge (p1, p2) == -1)

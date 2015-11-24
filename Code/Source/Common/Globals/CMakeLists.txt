@@ -15,10 +15,6 @@ add_library(${lib} ${CXXSRCS})
 target_link_libraries(${lib} 
    ${GLOBAL_LIBRARIES})
 
-if (Plugin_OPENCASCADE)
-	target_link_libraries(${lib} ${OPENCASCADE_LIBRARIES})
-endif()
-
 if(SIMVASCULAR_INSTALL_LIBS)
 	install(TARGETS ${lib}
 	    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables

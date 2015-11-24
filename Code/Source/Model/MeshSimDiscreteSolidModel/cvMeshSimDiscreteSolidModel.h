@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved.
+ * All Rights Reserved. 
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code.
+ * contributors to the source code. 
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
+ * "Software"), to deal in the Software without restriction, including 
+ * without limitation the rights to use, copy, modify, merge, publish, 
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
+ * 
+ * The above copyright notice and this permission notice shall be included 
  * in all copies or substantial portions of the Software.
- *
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -89,11 +89,10 @@ public:
   int ExtrudeZ( cvSolidModel *in, double dist ) {return CV_ERROR;}
   int Extrude( cvSolidModel *in, double **dist ) {return CV_ERROR;}
   int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR;}
-
+ 
   int MakeInterpCurveLoop( cvPolyData *pd, int closed ) { return CV_ERROR; }
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) { return CV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves, char *name,
-     int continuity,int partype,double w1,double w2,double w3 ,int smoothing) { return CV_ERROR; }
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves, char *name ) { return CV_ERROR; }
 
   // Booleans:
   int Intersect( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
@@ -119,7 +118,7 @@ public:
 			double *ans ) const {return CV_ERROR;}
   int Distance( double pos[], double upperLimit, double *dist ) {return CV_ERROR;};
   int GetFaceNormal (int faceid, double u, double v, double normal[]) {return CV_ERROR;}
-
+  
   // Attribute related & required methods:
   int GetBoundaryFaces (double angle) {return CV_ERROR;}
   int GetFaceIds (int *numFaces, int **faceIds);
@@ -130,7 +129,7 @@ public:
   int GetRegionAttribute(char *attr,int regionid, char **value) {return CV_ERROR;}
   int SetRegionAttribute(char *attr,int regionid, char *value) {return CV_ERROR;}
   int DeleteRegion (int regionid) {return CV_ERROR;}
-
+  
   // File I/O:
   int ReadNative( char *filename );
   int WriteNative( int file_version, char *filename ) const;
@@ -142,12 +141,12 @@ public:
 
   // geometric manipulation
   virtual int DeleteFaces (int numfaces, int *faces) {return CV_ERROR;}
-  int CreateEdgeBlend(int faceA, int faceB, double radius,double minRadius,int filletshape) {return CV_ERROR;}
+  int CreateEdgeBlend(int faceA, int faceB, double radius) {return CV_ERROR;}
   int CombineFaces(int targetface, int loseface) {return CV_ERROR;}
   int RemeshFace (int numfaces,int *excludedFaces, double size) {return CV_ERROR;}
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
-
+ 
   // hack for now to get access in the meshing layer
    pDiscreteModel geom_;
 
