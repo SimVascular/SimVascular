@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- * Copyright (c) 2014-2015 The Regents of the University of California.
+ * Copyright (c) 2015 The Regents of the University of California.
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -28,56 +28,85 @@
  *
  *=========================================================================*/
 
-/** @file vtkCGSmooth.h
- *  @brief Smoothes a surface using a constrained method solving the
- *  minimization between the original surface and a laplacian smoothed
- *  surface
+/** @file vtkBlendPolyData.h
  *
  *  @author Adam Updegrove
  *  @author updega2@gmail.com
  *  @author UC Berkeley
  *  @author shaddenlab.berkeley.edu
- *  @note Most functions in class call functions in cv_polydatasolid_utils.
  */
 
-#ifndef __vtkCGSmooth_h
-#define __vtkCGSmooth_h
+#ifndef __vtkBlendPolyData_h
+#define __vtkBlendPolyData_h
 
+#include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
-#include <set>
 
-class vtkCGSmooth : public vtkPolyDataAlgorithm
+class VTKFILTERSCORE_EXPORT vtkBlendPolyData : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkCGSmooth* New();
-  vtkTypeRevisionMacro(vtkCGSmooth, vtkPolyDataAlgorithm);
+  static vtkBlendPolyData* New();
+  vtkTypeRevisionMacro(vtkBlendPolyData, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
-  // Set name for cell array to be used to determine the in between sections
+  // Specify the feature angle for extracting feature edges.
+  //vtkSetClampMacro(FeatureAngle,double,0.0,180.0);
   vtkGetStringMacro(CellArrayName);
   vtkSetStringMacro(CellArrayName);
   vtkGetStringMacro(PointArrayName);
   vtkSetStringMacro(PointArrayName);
 
-  vtkGetMacro(Weight,double);
-  vtkSetMacro(Weight,double);
+  // Description:
+  // Set number of blend iterations, default = 2.
+  vtkSetMacro(NumBlendIterations, int);
+  vtkGetMacro(NumBlendIterations, int);
 
-  vtkGetMacro(UsePointArray,int);
+  // Description:
+  // Set number of iterations within the blending procedure. A blend consists
+  // of a subdivide and then iterations of smoothing and decimation. 1 sub
+  // blend iterations would consist of one smooth and one decimation.
+  // default = 4
+  vtkSetMacro(NumSubBlendIterations, int);
+  vtkGetMacro(NumSubBlendIterations, int);
+
+  // Description:
+  // Set number of b iterations, default = 1.
+  vtkSetMacro(NumSubdivisionIterations, int);
+  vtkGetMacro(NumSubdivisionIterations, int);
+
+  // Description:
+  // Set number of smooth iterations, default = 100
+  vtkSetMacro(NumSmoothIterations, int);
+  vtkGetMacro(NumSmoothIterations, int);
+
+  // Description:
+  // Set number for smoothing relaxation, default = 0.01
+  vtkSetMacro(SmoothRelaxationFactor, double);
+  vtkGetMacro(SmoothRelaxationFactor, double);
+
+  // Description:
+  // Set target decimation reduction rate, default = 0.25
+  vtkSetMacro(DecimationTargetReduction, double);
+  vtkGetMacro(DecimationTargetReduction, double);
+
+  // Description:
+  // Turn on/off the use of point array for constraint local operation.
+  // If value in array equals 1, nodes will be smoothed
   vtkSetMacro(UsePointArray,int);
+  vtkGetMacro(UsePointArray,int);
   vtkBooleanMacro(UsePointArray,int);
-  vtkGetMacro(UseCellArray,int);
+
+  // Description:
+  // Turn on/off the use of cell array for constraint on local operation.
+  // If value in array equals 1, nodes of cell will be smoothed
   vtkSetMacro(UseCellArray,int);
+  vtkGetMacro(UseCellArray,int);
   vtkBooleanMacro(UseCellArray,int);
 
-  vtkGetMacro(NumSmoothOperations,int);
-  vtkSetMacro(NumSmoothOperations,int);
-  vtkGetMacro(NumGradientSolves,int);
-  vtkSetMacro(NumGradientSolves,int);
-
 protected:
-  vtkCGSmooth();
-  ~vtkCGSmooth();
+  vtkBlendPolyData();
+  ~vtkBlendPolyData();
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
@@ -89,25 +118,19 @@ protected:
 
   char* CellArrayName;
   char* PointArrayName;
-  int UsePointArray;
   int UseCellArray;
+  int UsePointArray;
 
-  int GetArrays(vtkPolyData *object,int type);
-  void Test();
-  int CGSmooth(vtkPolyData *original,vtkPolyData *current);
-  int GetAttachedPoints(vtkPolyData *pd, vtkIdType nodeId, std::set<vtkIdType> *attachedPts);
-  int SetFixedPoints(vtkPolyData *pd);
-
-  double Weight;
-  int NumSmoothOperations;
-  int NumGradientSolves;
-
-  int *fixedPt;
-  int NumFixedPoints;
+  int NumBlendIterations;
+  int NumSmoothIterations;
+  int NumSubdivisionIterations;
+  int NumSubBlendIterations;
+  double SmoothRelaxationFactor;
+  double DecimationTargetReduction;
 
 private:
-  vtkCGSmooth(const vtkCGSmooth&);  // Not implemented.
-  void operator=(const vtkCGSmooth&);  // Not implemented.
+  vtkBlendPolyData(const vtkBlendPolyData&);  // Not implemented.
+  void operator=(const vtkBlendPolyData&);  // Not implemented.
 };
 
 #endif

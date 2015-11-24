@@ -1,25 +1,25 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Portions of the code Copyright (c) 1998-2007 Stanford University,
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -30,7 +30,7 @@
  *
 *=========================================================================*/
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -232,6 +232,9 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_LocalSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
 
+int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
+
 int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
 
@@ -402,6 +405,8 @@ int Geom_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_local_subdivision", Geom_LocalSubdivisionCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_local_blend", Geom_LocalBlendCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_sphere", Geom_SetArrayForLocalOp_SphereCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face", Geom_SetArrayForLocalOp_FaceCmd,
@@ -410,7 +415,7 @@ int Geom_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_set_array_for_local_op_face_blend", Geom_SetArrayForLocalOp_BlendCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-#ifdef USE_GTS 
+#ifdef USE_GTS
   Tcl_CreateCommand( interp, "geom_union_gts", Geom_Union_GTSCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_intersect_gts", Geom_Intersect_GTSCmd,
@@ -418,7 +423,7 @@ int Geom_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "geom_subtract_gts", Geom_Subtract_GTSCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #endif
-#ifdef USE_VMTK 
+#ifdef USE_VMTK
   Tcl_CreateCommand( interp, "geom_centerlines", Geom_CenterlinesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_distancetocenterlines", Geom_DistanceToCenterlinesCmd,
@@ -877,7 +882,7 @@ int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
   }
   int *doublecaps;
   int numfaces=0;
-  
+
   if ( sys_geom_set_ids_for_caps( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  &doublecaps,&numfaces)
        != CV_OK ) {
@@ -913,7 +918,7 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *Name;
   char *dstName;
-  char *arrayName = 0; 
+  char *arrayName = 0;
   char *outArray = "LocalOpsArray";
   int dataType = 1;
   ARG_List values;
@@ -1180,7 +1185,7 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *Name;
   char *dstName;
-  char *arrayName = 0; 
+  char *arrayName = 0;
   char *outArray = "LocalOpsArray";
   int dataType = 1;
   double radius;
@@ -1272,7 +1277,7 @@ int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *Name;
   char *dstName;
-  char *pointArrayName = 0; 
+  char *pointArrayName = 0;
   char *cellArrayName = 0;
   double target = 0.25;
   cvRepositoryData *src;
@@ -1341,7 +1346,7 @@ int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *Name;
   char *dstName;
-  char *pointArrayName = 0; 
+  char *pointArrayName = 0;
   char *cellArrayName = 0;
   int numiters = 100;
   double relax = 0.01;
@@ -1413,7 +1418,7 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *Name;
   char *dstName;
-  char *pointArrayName = 0; 
+  char *pointArrayName = 0;
   char *cellArrayName = 0;
   int numiters = 5;
   double constrainfactor = 0.7;
@@ -1487,7 +1492,7 @@ int Geom_LocalSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   char *usage;
   char *Name;
   char *dstName;
-  char *pointArrayName = 0; 
+  char *pointArrayName = 0;
   char *cellArrayName = 0;
   int numiters = 100;
   cvRepositoryData *src;
@@ -1532,7 +1537,76 @@ int Geom_LocalSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   if ( sys_geom_local_subdivision( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numiters,pointArrayName,cellArrayName)
        != CV_OK ) {
-    Tcl_SetResult( interp, "running local decimation operation", TCL_STATIC );
+    Tcl_SetResult( interp, "running local subdivision operation", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  return TCL_OK;
+}
+
+// ----------------
+// Geom_LocalBlendCmd
+// ----------------
+//
+int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
+				 int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *Name;
+  char *dstName;
+  char *pointArrayName = 0;
+  char *cellArrayName = 0;
+  int numiters = 2;
+  cvRepositoryData *src;
+  cvRepositoryData *dst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 5;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  src = gRepository->GetObject( Name );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", Name,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+  if ( sys_geom_local_blend( (cvPolyData*)src, (cvPolyData**)(&dst),
+			  numiters,pointArrayName,cellArrayName)
+       != CV_OK ) {
+    Tcl_SetResult( interp, "running local blend operation", TCL_STATIC );
     return TCL_ERROR;
   }
 
@@ -2005,7 +2079,7 @@ int Geom_NumClosedLineRegionsCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%d", num );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -2928,7 +3002,7 @@ int Geom_SurfAreaCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%f", area );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -2987,7 +3061,7 @@ int Geom_GetPolyCentroidCmd( ClientData clientData, Tcl_Interp *interp,
   rtnstr[0]='\0';
   sprintf( rtnstr, "%f %f %f", centroid[0], centroid[1], centroid[2] );
   Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
-  
+
   return TCL_OK;
 }
 
@@ -3377,7 +3451,7 @@ int Geom_PtInPolyCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%d", ans );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -3569,7 +3643,7 @@ int Geom_NumPtsCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%d", num );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -3811,7 +3885,7 @@ int Geom_2dWindingNumCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%d", wnum );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -3869,7 +3943,7 @@ int Geom_PolygonNormCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%f %f %f", n[0], n[1], n[2] );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -3927,7 +4001,7 @@ int Geom_AvgPtCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%f %f %f", pt[0], pt[1], pt[2] );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -4170,7 +4244,7 @@ int Geom_IntegrateSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
 
-  
+
     if ( ARG_ParseTclStr( interp, argc, argv, 1,
 			table_size, arg_table ) != TCL_OK ) {
       Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -4209,7 +4283,7 @@ int Geom_IntegrateSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
     return TCL_ERROR;
   }
-  
+
   double q = 0.0;
   if ( sys_geom_IntegrateSurface((cvPolyData*)obj, tensorType, nrm, &q) != CV_OK ) {
     Tcl_SetResult( interp, "error calculating surface integral",
@@ -4250,7 +4324,7 @@ int Geom_IntegrateSurface2Cmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
 
-  
+
     if ( ARG_ParseTclStr( interp, argc, argv, 1,
 			table_size, arg_table ) != TCL_OK ) {
       Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -4273,7 +4347,7 @@ int Geom_IntegrateSurface2Cmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
     return TCL_ERROR;
   }
-  
+
   double q = 0.0;
   double area = 0.0;
   if ( sys_geom_IntegrateSurface2((cvPolyData*)obj, tensorType, &q, &area) != CV_OK ) {
@@ -4317,7 +4391,7 @@ int Geom_IntegrateEnergyCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
 
-  
+
     if ( ARG_ParseTclStr( interp, argc, argv, 1,
 			table_size, arg_table ) != TCL_OK ) {
       Tcl_SetResult( interp, usage, TCL_VOLATILE );
@@ -4356,7 +4430,7 @@ int Geom_IntegrateEnergyCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, objName, " not of type cvPolyData", (char *)NULL );
     return TCL_ERROR;
   }
-  
+
   double energy = 0.0;
   if ( sys_geom_IntegrateEnergy((cvPolyData*)obj, rho, nrm, &energy) != CV_OK ) {
     Tcl_SetResult( interp, "error calculating surface integral",
@@ -4697,9 +4771,9 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcNameA;
   char *srcNameB;
   int scflag = FALSE;
-  int vflag = FALSE; 
+  int vflag = FALSE;
   char *dstName;
-  
+
   cvRepositoryData *srcA = NULL;
   cvRepositoryData *srcB = NULL;
   cvRepositoryData *dst = NULL;
@@ -4770,7 +4844,7 @@ int Geom_AddPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   if (vflag) {
       v = SYS_GEOM_ADD_VECTOR;
   }
- 
+
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
@@ -4800,9 +4874,9 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcNameA;
   char *srcNameB;
   int scflag = FALSE;
-  int vflag = FALSE; 
+  int vflag = FALSE;
   char *dstName;
-  
+
   cvRepositoryData *srcA = NULL;
   cvRepositoryData *srcB = NULL;
   cvRepositoryData *dst = NULL;
@@ -4873,7 +4947,7 @@ int Geom_SubtractPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   if (vflag) {
       v = SYS_GEOM_SUBTRACT_VECTOR;
   }
- 
+
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
@@ -4903,9 +4977,9 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcNameA;
   char *srcNameB;
   int scflag = FALSE;
-  int vflag = FALSE; 
+  int vflag = FALSE;
   char *dstName;
-  
+
   cvRepositoryData *srcA = NULL;
   cvRepositoryData *srcB = NULL;
   cvRepositoryData *dst = NULL;
@@ -4976,7 +5050,7 @@ int Geom_MultiplyPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   if (vflag) {
       v = SYS_GEOM_MULTIPLY_VECTOR;
   }
- 
+
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
@@ -5006,9 +5080,9 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcNameA;
   char *srcNameB;
   int scflag = FALSE;
-  int vflag = FALSE; 
+  int vflag = FALSE;
   char *dstName;
-  
+
   cvRepositoryData *srcA = NULL;
   cvRepositoryData *srcB = NULL;
   cvRepositoryData *dst = NULL;
@@ -5079,7 +5153,7 @@ int Geom_DividePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   if (vflag) {
       v = SYS_GEOM_DIVIDE_VECTOR;
   }
- 
+
   if ( sys_geom_mathPointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "point data math error", TCL_STATIC );
     return TCL_ERROR;
@@ -5109,9 +5183,9 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcNameA;
   char *srcNameB;
   int scflag = FALSE;
-  int vflag = FALSE; 
+  int vflag = FALSE;
   char *dstName;
-  
+
   cvRepositoryData *srcA = NULL;
   cvRepositoryData *srcB = NULL;
   cvRepositoryData *dst = NULL;
@@ -5182,7 +5256,7 @@ int Geom_ProjectCmd( ClientData clientData, Tcl_Interp *interp,
   if (vflag) {
       v = SYS_GEOM_ADD_VECTOR;
   }
- 
+
   if ( sys_geom_Project( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "error projecting polydata point data", TCL_STATIC );
     return TCL_ERROR;
@@ -5278,7 +5352,7 @@ int Geom_IntegrateScalarThreshCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-thr", DOUBLE_Type, &wssthresh, NULL, REQUIRED, 0, { 0 } }, 
+    { "-thr", DOUBLE_Type, &wssthresh, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -5333,9 +5407,9 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   char *srcNameA;
   char *srcNameB;
   int scflag = FALSE;
-  int vflag = FALSE; 
+  int vflag = FALSE;
   char *dstName;
-  
+
   cvRepositoryData *srcA = NULL;
   cvRepositoryData *srcB = NULL;
   cvRepositoryData *dst = NULL;
@@ -5406,7 +5480,7 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   if (vflag) {
       v = SYS_GEOM_ADD_VECTOR;
   }
- 
+
   if ( sys_geom_ReplacePointData( (cvPolyData*)srcA, (cvPolyData*)srcB, sc, v, (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "error replacing point data", TCL_STATIC );
     return TCL_ERROR;
@@ -5634,7 +5708,7 @@ int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
 		    int argc, CONST84 char *argv[] )
 {
   int numIds;
-  int *ids;      
+  int *ids;
   int captype;
   char *usage;
   char *cappedName;
@@ -5701,7 +5775,7 @@ int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
 
 //  Tcl_SetResult( interp, cappedDst->GetName(), TCL_VOLATILE );
 
-  if (numIds == 0) 
+  if (numIds == 0)
   {
     Tcl_SetResult( interp, "No Ids Found", TCL_STATIC );
     return TCL_ERROR;

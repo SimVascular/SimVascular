@@ -11,15 +11,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -143,14 +143,14 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
 cvPolyData *sys_geom_warp3dPts( cvPolyData *src, double scale );
 
 enum sys_geom_math_scalar {
-    SYS_GEOM_NO_SCALAR, 
+    SYS_GEOM_NO_SCALAR,
     SYS_GEOM_ADD_SCALAR,
     SYS_GEOM_SUBTRACT_SCALAR,
     SYS_GEOM_MULTIPLY_SCALAR,
     SYS_GEOM_DIVIDE_SCALAR
 };
 enum sys_geom_math_vector {
-    SYS_GEOM_NO_VECTOR, 
+    SYS_GEOM_NO_VECTOR,
     SYS_GEOM_ADD_VECTOR,
     SYS_GEOM_SUBTRACT_VECTOR,
     SYS_GEOM_MULTIPLY_VECTOR,
@@ -189,20 +189,23 @@ int sys_geom_local_constrain_smooth(cvPolyData *pd,cvPolyData **outpd, int numit
 int sys_geom_local_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
     char *pointarrayname, char *cellarrayname);
 
+int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    char *pointarrayname, char *cellarrayname);
+
 #ifdef USE_VMTK
 int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
-                            int *targets, int ntargets, 
+                            int *targets, int ntargets,
 			    cvPolyData **lines, cvPolyData **voronoi);
 
 int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,cvPolyData **distance );
 
 int sys_geom_cap( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
 
-int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata, 
+int sys_geom_cap_with_ids( cvPolyData *polydata, cvPolyData **cappedpolydata,
 		int fillId,int filledholes,int filltype);
 
 int sys_geom_set_ids_for_caps( cvPolyData *pd, cvPolyData **outpd,int **doublecaps,
-    int *numfaces); 
+    int *numfaces);
 
 int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd,cvPolyData **polydata, char *originalarray,char *newarray);
 #endif

@@ -5,21 +5,21 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 # BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -27,7 +27,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 #
-#===========================================================================  
+#===========================================================================
 
 proc geom_appendPds {pdList outPd} {
 
@@ -37,7 +37,7 @@ proc geom_appendPds {pdList outPd} {
 	lappend vtkPds [repos_exportToVtk -src $pd]
     }
     set numPds [llength $vtkPds]
-    
+
     set appender tmp-guiTRIM-appender
     catch {$appender Delete}
 
@@ -96,7 +96,7 @@ proc geom_cap_with_delaunay {inPd cutPd outPd} {
 
   set boolean 1
   set rotated_norm {}
- 
+
   geom_flatten $normal $boolean $inPd rotated_norm $flat
 
   set avgpt [geom_avgPt -obj $flat]
@@ -115,7 +115,7 @@ proc geom_cap_with_delaunay {inPd cutPd outPd} {
   vtkDelaunay2D $delaunay
   $delaunay SetInputDataObject [repos_exportToVtk -src $flat]
   $delaunay Update
-  
+
   repos_importVtkPd -src [$delaunay GetOutput] -dst $dPd
 
   # rotate back
@@ -153,7 +153,7 @@ proc geom_localOperation {operation inPd outPd} {
   set tv $symbolicName(guiSV_model_tree)
   set tbox $symbolicName(guiLocalSurfaceOperationParametersTextBox)
   set gui3Dvars(localControlAttributes) [$tbox get 0.0 end]
-  
+
   set tmp1Pd /tmp/models/local/first
   set tmp2Pd /tmp/models/local/second
   catch {repos_delete -obj $tmp1Pd}
@@ -173,7 +173,7 @@ proc geom_localOperation {operation inPd outPd} {
 	set datatype [lindex $trimmed end]
         geom_set_array_for_local_op_sphere -src $tmp1Pd -result $tmp2Pd -radius $radius -center $center -outarray $outarray -datatype $datatype
       } elseif {$cmd == "faces"} {
-	set changelist [lrange $trimmed 1 end-3] 
+	set changelist [lrange $trimmed 1 end-3]
 	set inarray [lindex $trimmed end-2]
 	set outarray [lindex $trimmed end-1]
 	set datatype [lindex $trimmed end]
@@ -219,6 +219,10 @@ proc geom_localOperation {operation inPd outPd} {
     set iters $gui3Dvars(local_cgsmooth_num_iters)
     set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
     geom_local_constrain_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -constrainfactor $constrain -cellarray "ActiveCells"
+  } elseif {$operation == "lBld"} {
+    set iters $gui3Dvars(local_cgsmooth_num_iters)
+    set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
+    geom_local_blend -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
   } else {
     return -code error "ERROR: Invalid local surface operation"
   }
@@ -250,7 +254,7 @@ proc geom_fillHoles {inPd outPd} {
   geom_orientPd $tmpPd $outPd
 
   catch {repos_delete -obj $tmpPd}
- 
+
   $filler Delete
 
 }
@@ -265,7 +269,7 @@ proc geom_fillHolesWithIds {inPd outPd fillId filltype} {
   geom_orientPd $tmpPd $outPd
 
   catch {repos_delete -obj $tmpPd}
- 
+
 }
 
 
@@ -290,31 +294,31 @@ proc geom_fillSurfaceVoid {inPd outPd id} {
   set freeEdges /tmp/guiTRIM/freeEdges
   set capPd /tmp/guiTRIM/capPd
   #set capTriPd /tmp/guiTRIM/capTriPd
- 
+
   catch {repos_delete -obj $freeEdges}
   catch {repos_delete -obj $capPd}
-  catch {repos_delete -obj $capTriPd} 
+  catch {repos_delete -obj $capTriPd}
 
   #set vtkidobj tmp-guiTRIM-ids
   #catch {$vtkidobj Delete}
 
   # find the free edges
   geom_getFreeEdges $inPd $freeEdges
-  
+
   # find the points on the free edges
   set pts [geom_getOrderedPts -obj $freeEdges]
-  
+
   # assume planar, make polygon
   geom_polygonFromPts $pts $capPd
-  
+
   # associate id to polygon
   geom_tagAllCellsWithId $capPd $id
   #vtkIntArray $vtkidobj
   #$vtkidobj SetNumberOfComponents 1
   #$vtkidobj SetNumberOfTuples 1
-  #$vtkidobj SetTuple1 0 $id   
+  #$vtkidobj SetTuple1 0 $id
 
-  #set pd [repos_exportToVtk -src $capPd] 
+  #set pd [repos_exportToVtk -src $capPd]
   #[$pd GetCellData] SetScalars $vtkidobj
 
   geom_triangulate $capPd $outPd
@@ -362,7 +366,7 @@ proc geom_mkSphere {x y z r outPd} {
 
 
 proc geom_orientPd {inPd outPd} {
-  
+
   set tmpPd tmp-orientedPd-pd
   catch {repos_delete -obj $tmpPd}
 
@@ -378,7 +382,7 @@ proc geom_orientPd {inPd outPd} {
   $cleaner SetInputDataObject [repos_exportToVtk -src $inPd]
   $cleaner Update
 
-  vtkPolyDataNormals $orienter 
+  vtkPolyDataNormals $orienter
   $orienter SetInputDataObject [$cleaner GetOutput]
   $orienter AutoOrientNormalsOn
   $orienter ComputePointNormalsOn
@@ -395,7 +399,7 @@ proc geom_orientPd {inPd outPd} {
 
 
 proc geom_avgNormal {inPd} {
-  
+
   set tmpPd tmp-avgNormPd-pd
   catch {repos_delete -obj $tmpPd}
 
@@ -404,7 +408,7 @@ proc geom_avgNormal {inPd} {
   set orienter tmp-orientedPd-normls
 
   catch {$orienter Delete}
-  vtkPolyDataNormals $orienter 
+  vtkPolyDataNormals $orienter
   $orienter SetInputDataObject [repos_exportToVtk -src $tmpPd]
   $orienter AutoOrientNormalsOn
   $orienter ComputePointNormalsOn
@@ -434,7 +438,7 @@ proc geom_avgNormal {inPd} {
 
   $orienter Delete
   catch {repos_delete -obj $tmpPd}
-  
+
   return [list $x $y $z]
 
 }
@@ -653,7 +657,7 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
 	set mean_q [expr $mean_q + $q]
     }
     set mean_q [expr $mean_q/(1.0*[llength $flow])]
-    
+
     # Calculating the time
     set dt [expr double($period)/($number_of_points_per_cycle)]
     for {set i 0} {$i < [llength $flow]} {incr i} {
@@ -669,8 +673,8 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
 
     set johnsWay 0
 
-    if { $johnsWay } { 
-  
+    if { $johnsWay } {
+
       set num_kept_modes [llength $all_flow_values]
 
       for {set i 0} {$i <= [expr $number_of_points_per_cycle / 2]} {incr i} {
@@ -678,7 +682,7 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
         lappend frequencies $freq
         lappend omega [expr 2.0*[math_pi]*$freq]
       }
- 
+
       for {set i [expr -$number_of_points_per_cycle/2+1]} {$i <= -1} {incr i} {
 	set freq [expr 1.0/$period*$i]
         lappend frequencies $freq
@@ -697,7 +701,7 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
     }
     #puts "freq: $frequencies"
     #puts "omega: $omega"
- 
+
     foreach omg $omega {
         #  this is the expression we need to calculate with complex numbers
         #  $Rc+1.0/(1.0/$Rd+$I*$omg*$C)
@@ -708,7 +712,7 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
         set Z [::math::complexnumbers::+ [list $Rc 0] $part2]
 	lappend Z_RCR $Z
     }
-  
+
     if { $johnsWay } {
       set midpos [expr $number_of_points_per_cycle/2]
       set Z_RCR [lreplace $Z_RCR $midpos $midpos [list [::math::complexnumbers::real [lindex $Z_RCR $midpos]] 0]]
@@ -716,12 +720,12 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
 
     set modes [math_FFT -pts $flow_with_time -nterms $num_kept_modes -numInterpPts 1024]
     #puts "modes: $modes"
-    
+
     #puts "num_kept_modes $num_kept_modes  length Z_RCR [llength $Z_RCR]"
     for {set i 0} {$i < [llength $Z_RCR]} {incr i} {
       lappend modified_modes [::math::complexnumbers::* [lindex $modes $i] [lindex $Z_RCR $i]]
     }
-    
+
     set pomega [expr 2.0*[math_pi]*1.0/$period]
     set pressure [math_inverseFFT -terms $modified_modes -t0 0 -dt $dt -omega $pomega -numPts [expr $number_of_points_per_cycle + 1]]
     #puts "pressure: $pressure"
@@ -729,11 +733,11 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
     # this is imepdance in time
     #set z_rcr [math_inverseFFT -terms $Z_RCR -t0 0 -dt $dt -omega $pomega -numPts [expr $number_of_points_per_cycle + 1]]
 
-    # this is a correction for the Aspire def of iDFT 
+    # this is a correction for the Aspire def of iDFT
     #foreach i $z_rcr {
     #	lappend aspire_z_rcr [expr $z_rcr * [llength $z_rcr]]
     #}
-   
+
     if {$units == "cm"} {
       set pressure_units_in_1_mmHg 1333.2237
     } elseif {$units == "mm"} {
@@ -752,7 +756,7 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
     set systolic_pressure [lindex $sorted_p end]
     set diastolic_pressure [lindex $sorted_p 0]
     set pulse_pressure [expr $systolic_pressure-$diastolic_pressure]
-     
+
     set mean_p 0
     foreach p $scaled_pressure  {
 	set mean_p [expr $mean_p + $p]
@@ -764,7 +768,7 @@ proc RCR_parameter_estimator {R C period ratio units bn flow_fn} {
     puts [format "%20s %10.2f" "systolic pressure:" $systolic_pressure]
     puts [format "%20s %10.2f" "pulse pressure:" $pulse_pressure]
     puts [format "%20s %10.2f" "mean flow:" $mean_q]
-    
+
 }
 
 
@@ -808,7 +812,7 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
    set theMesh $guiVISvars(mesh_vtk_obj)
 
    # read in the vtk objects for the named faces
- 
+
    foreach face $faces {
       set fn [file join $mesh_surf_dir $face.vtk]
       #puts "Reading ($face) from file ($fn)."
@@ -840,7 +844,7 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
        set pressure {}
        guiVISflowThruFace /tmp/post_tweak_steady_bc/face/$face $normals($face) flow flow
        lappend flow_results($face) $flow
-       #puts "face flow ($face): $flow" 
+       #puts "face flow ($face): $flow"
        guiVISflowThruFace /tmp/post_tweak_steady_bc/face/$face $normals($face) pressure pressure
        lappend pressure_results($face) $pressure
        #puts "face pressure ($face): $pressure"
@@ -870,7 +874,7 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
        set pressure [expr $pressure / double([llength $pressure_results($face)])]
 
        set avg_flow_results($face) $flow
-       #puts "avg face flow ($face): $flow" 
+       #puts "avg face flow ($face): $flow"
        set avg_pressure_results($face) $pressure
        #puts "avg face pressure ($face): $pressure"
        set resistance [expr double($pressure)/double($flow)]
@@ -909,7 +913,7 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
        set dflow [lindex $fi 2]
        puts $fp [format "\#\#%30s %10i %10.3g %10.3g %10.2f" $face $id $avg_flow_results($face) $dflow [expr ($dflow-$avg_flow_results($face))/$dflow*100.0]]
    }
-  
+
   puts $fp "\#\n\#"
   puts $fp "\#\#\# for solver"
   set sorted_ids [lsort -integer -increasing [array names r_for_solver]]
@@ -917,7 +921,7 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
       puts $fp "$comments_for_solver($i)"
   }
   puts $fp "\#\#\#"
-  puts $fp "Number of Resistance Surfaces: [llength $sorted_ids]"	
+  puts $fp "Number of Resistance Surfaces: [llength $sorted_ids]"
   puts $fp "List of Resistance Surfaces: $sorted_ids"
   puts -nonewline $fp "Resistance Values: "
   foreach i [lsort -integer -increasing [array names r_for_solver]] {
@@ -925,14 +929,14 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
   }
   puts $fp ""
   close $fp
- 
+
 }
 
 
 proc math_factorial {number} {
 
   #-------------------------------
-  # calculate factorial: number! 
+  # calculate factorial: number!
   # -------------------------------
 
   set s 1
@@ -1164,7 +1168,7 @@ proc post_TKE {fullsimdir filePrefix startStepNo stopStepNo outerIncr maxStepNo 
 
     catch {repos_delete -obj $myTKERepos}
     post_calcTKE -inputPdList [repos_subList $myResRepos*] -result $myTKERepos
- 
+
     set pressure [[[repos_exportToVtk -src $res_name] GetPointData] GetScalars]
     set velocity [[[repos_exportToVtk -src $res_name] GetPointData] GetVectors]
     set kinetic_energy [[[repos_exportToVtk -src $myTKERepos] GetPointData] GetScalars]
