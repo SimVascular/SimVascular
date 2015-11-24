@@ -37389,6 +37389,8 @@ proc guiSV_group_make_isosurface_3D_surface {} {
   set tv $symbolicName(guiSV_group_tree)
   set contourpd $gui3Dvars(smoothIsosurface)
   set objName Isosurface_$gui3Dvars(min_thr_value)
+  regsub -all {\.} $objName {_} objName
+  #$gui3Dvars(min_thr_value)
   catch {repos_delete -obj $objName}
   if {[repos_exists -obj $contourpd] == 0} {
     return -code error "ERROR: Show isosurface to convert 3D Surface"
