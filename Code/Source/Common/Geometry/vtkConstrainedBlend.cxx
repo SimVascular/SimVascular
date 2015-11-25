@@ -32,9 +32,9 @@
  *  @brief This implements the vtkConstrainedBlend filter as a class
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkConstrainedBlend.h"
@@ -57,6 +57,7 @@
 #include "vtkFloatArray.h"
 #include "vtkPolyDataNormals.h"
 #include "vtkLocalLinearSubdivisionFilter.h"
+#include "vtkLocalSmoothPolyDataFilter.h"
 #include "vtkCellLocator.h"
 #include "vtkGenericCell.h"
 #include "vtkMath.h"
@@ -80,7 +81,9 @@ vtkConstrainedBlend::vtkConstrainedBlend()
 
     this->NumBlendOperations = 2;
     this->NumSubBlendOperations = 2;
-    this->NumSmoothOperations = 3;
+    this->NumCGSmoothOperations = 3;
+    this->NumLapSmoothOperations = 50;
+    this->RelaxationFactor = 0.01;
     this->NumGradientSolves = 20;
     this->DecimationTargetReduction = 0.01;
     this->NumSubdivisionIterations = 1;
@@ -103,7 +106,7 @@ int vtkConstrainedBlend::RequestData(
     // get the input and output
     vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
     vtkPolyData *output = vtkPolyData::GetData(outputVector);
-    
+
     // Define variables used by the algorithm
     vtkSmartPointer<vtkPoints> inpts = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> inPolys = vtkSmartPointer<vtkCellArray>::New();
@@ -119,7 +122,7 @@ int vtkConstrainedBlend::RequestData(
     numPts = input->GetNumberOfPoints();
 
     //Check the input to make sure it is there
-    if (numPolys < 1)               
+    if (numPolys < 1)
     {
         vtkDebugMacro("No input!");
 	return 1;
@@ -142,15 +145,18 @@ int vtkConstrainedBlend::RequestData(
       }
     }
 
-    vtkSmartPointer<vtkPolyData> tmp = 
+    vtkSmartPointer<vtkPolyData> tmp =
       vtkSmartPointer<vtkPolyData>::New();
     tmp->DeepCopy(input);
     for (int i=0;i<this->NumBlendOperations;i++)
     {
       for (int j=0;j<this->NumSubBlendOperations;j++)
       {
-        std::cout<<"Smooth!"<<endl;
+        std::cout<<"CGSmooth!"<<endl;
 	this->CGSmooth(tmp);
+
+        std::cout<<"LapSmooth!"<<endl;
+	this->LaplacianSmooth(tmp);
 
         std::cout<<"Decimate!"<<endl;
         this->Decimate(tmp);
@@ -213,7 +219,7 @@ int vtkConstrainedBlend::GetArrays(vtkPolyData *object,int type)
 }
 
 int vtkConstrainedBlend::Decimate(vtkPolyData *pd) {
-  vtkSmartPointer<vtkLocalQuadricDecimation> decimator = 
+  vtkSmartPointer<vtkLocalQuadricDecimation> decimator =
     vtkSmartPointer<vtkLocalQuadricDecimation>::New();
   decimator->SetInputData(pd);
   if (this->UsePointArray)
@@ -251,7 +257,7 @@ int vtkConstrainedBlend::Decimate(vtkPolyData *pd) {
 }
 
 int vtkConstrainedBlend::Subdivide(vtkPolyData *pd) {
-  vtkSmartPointer<vtkLocalLinearSubdivisionFilter> subdivider = 
+  vtkSmartPointer<vtkLocalLinearSubdivisionFilter> subdivider =
     vtkSmartPointer<vtkLocalLinearSubdivisionFilter>::New();
 
   subdivider->SetInputData(pd);
@@ -290,11 +296,11 @@ int vtkConstrainedBlend::Subdivide(vtkPolyData *pd) {
 
 int vtkConstrainedBlend::CGSmooth(vtkPolyData *pd)
 {
-  vtkSmartPointer<vtkCGSmooth> smoother = 
+  vtkSmartPointer<vtkCGSmooth> smoother =
     vtkSmartPointer<vtkCGSmooth>::New();
   smoother->SetInputData(pd);
   smoother->SetNumGradientSolves(this->NumGradientSolves);
-  smoother->SetNumSmoothOperations(this->NumSmoothOperations);
+  smoother->SetNumSmoothOperations(this->NumCGSmoothOperations);
   if (this->UsePointArray)
   {
     smoother->SetPointArrayName(this->PointArrayName);
@@ -306,6 +312,30 @@ int vtkConstrainedBlend::CGSmooth(vtkPolyData *pd)
     smoother->UseCellArrayOn();
   }
   smoother->SetWeight(this->Weight);
+  smoother->Update();
+
+  pd->DeepCopy(smoother->GetOutput());
+  return 1;
+}
+
+int vtkConstrainedBlend::LaplacianSmooth(vtkPolyData *pd)
+{
+  vtkSmartPointer<vtkLocalSmoothPolyDataFilter> smoother =
+    vtkSmartPointer<vtkLocalSmoothPolyDataFilter>::New();
+  smoother->SetInputData(pd);
+  if (this->UsePointArray)
+  {
+    smoother->SetSmoothPointArrayName(this->PointArrayName);
+    smoother->UsePointArrayOn();
+  }
+  if (this->UseCellArray)
+  {
+    smoother->SetSmoothCellArrayName(this->CellArrayName);
+    smoother->UseCellArrayOn();
+  }
+  smoother->SetNumberOfIterations(this->NumLapSmoothOperations);
+  smoother->SetRelaxationFactor(this->RelaxationFactor);
+  smoother->BoundarySmoothingOff();
   smoother->Update();
 
   pd->DeepCopy(smoother->GetOutput());

@@ -3372,6 +3372,7 @@ proc guiSV_model_blend_selected_models {} {
 proc guiSV_model_blend_selected_models_polydata {} {
   global gObjects
   global symbolicName
+  global gui3Dvars
   global gOptions
   global gKernel
 
@@ -3410,15 +3411,11 @@ proc guiSV_model_blend_selected_models_polydata {} {
        puts "ERROR: invalid values in line ($trimmed).  Line Ignored."
        continue
     }
+    set gui3Dvars(blendSphereRadius) $r
     $symbolicName(guiLocalSurfaceOperationParametersTextBox) delete 0.0 end
-    puts $kernel
-    puts $model
-    puts $facenameA
 
     $tv selection set [list ".models.$kernel.$model.$facenameA" ".models.$kernel.$model.$facenameB"]
-    puts "squir"
     guiSV_model_create_local_surface_macro blend
-    puts "squir 2"
 
     set tmpModel /tmp/models/for/edgeblending
     set tmpVtk /tmp/vtk/for/edgeblending
@@ -3426,11 +3423,11 @@ proc guiSV_model_blend_selected_models_polydata {} {
     catch {repos_delete -obj $tmpVtk}
     $model GetPolyData -result $tmpVtk
     geom_localOperation lBld $tmpVtk $tmpModel
-    puts "squir 3"
 
     $model SetVtkPolyData -obj $tmpModel
 
   }
+  $symbolicName(guiLocalSurfaceOperationParametersTextBox) delete 0.0 end
   guiSV_model_update_tree
   guiSV_model_update_view_model $kernel $model
 }

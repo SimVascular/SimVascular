@@ -223,12 +223,13 @@ proc geom_localOperation {operation inPd outPd} {
     set iters $gui3Dvars(local_blend_iters)
     set subiters $gui3Dvars(local_subblend_iters)
     set subdivisioniters $gui3Dvars(local_blend_subdivision_iters)
-    set smoothiters $gui3Dvars(local_blend_smooth_iters)
+    set cgsmoothiters $gui3Dvars(local_blend_cgsmooth_iters)
+    set lapsmoothiters $gui3Dvars(local_blend_smooth_iters)
     set relaxation $gui3Dvars(local_blend_relaxation)
     set decimation $gui3Dvars(local_blend_decimation)
     geom_local_blend -src $tmp2Pd -result $tmp3Pd -numblenditers $iters -numsubblenditers $subiters \
-    -numsubdivisioniters $subdivisioniters -numlapsmoothiters $smoothiters \
-    -smoothrelaxation $relaxation -targetdecimation $decimation -cellarray "ActiveCells"
+    -numsubdivisioniters $subdivisioniters -numcgsmoothiters $cgsmoothiters \
+    -numlapsmoothiters $lapsmoothiters -targetdecimation $decimation -cellarray "ActiveCells"
   } else {
     return -code error "ERROR: Invalid local surface operation"
   }

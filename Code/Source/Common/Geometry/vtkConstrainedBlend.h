@@ -29,13 +29,13 @@
  *=========================================================================*/
 
 /** @file vtkConstrainedBlend.h
- *  @brief This blends using constrained smoothing, localized decimation, 
+ *  @brief This blends using constrained smoothing, localized decimation,
  *  and localized subdivision
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  *  @note Most functions in class call functions in cv_polydatasolid_utils.
  */
 
@@ -73,8 +73,10 @@ public:
   vtkSetMacro(NumBlendOperations,int);
   vtkGetMacro(NumSubBlendOperations,int);
   vtkSetMacro(NumSubBlendOperations,int);
-  vtkGetMacro(NumSmoothOperations,int);
-  vtkSetMacro(NumSmoothOperations,int);
+  vtkGetMacro(NumCGSmoothOperations,int);
+  vtkSetMacro(NumCGSmoothOperations,int);
+  vtkGetMacro(NumLapSmoothOperations,int);
+  vtkSetMacro(NumLapSmoothOperations,int);
   vtkGetMacro(NumGradientSolves,int);
   vtkSetMacro(NumGradientSolves,int);
   vtkGetMacro(NumSubdivisionIterations,int);
@@ -88,8 +90,8 @@ protected:
   ~vtkConstrainedBlend();
 
   // Usual data generation method
-  int RequestData(vtkInformation *vtkNotUsed(request), 
-		  vtkInformationVector **inputVector, 
+  int RequestData(vtkInformation *vtkNotUsed(request),
+		  vtkInformationVector **inputVector,
 		  vtkInformationVector *outputVector);
 
   vtkIntArray *CellArray;
@@ -108,11 +110,13 @@ protected:
   int UseCellArray;
   int NumBlendOperations;
   int NumSubBlendOperations;
-  int NumSmoothOperations;
+  int NumCGSmoothOperations;
+  int NumLapSmoothOperations;
   int NumGradientSolves;
   int NumSubdivisionIterations;
 
   double Weight;
+  double RelaxationFactor;
   double DecimationTargetReduction;
 
 private:

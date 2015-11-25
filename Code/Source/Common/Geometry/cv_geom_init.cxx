@@ -1566,8 +1566,8 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
   int numblenditers = 2;
   int numsubblenditers = 2;
   int numsubdivisioniters = 1;
-  int numlapsmoothiters = 3;
-  double smoothrelaxation = 0.01;
+  int numcgsmoothiters = 3;
+  int numlapsmoothiters = 50;
   double targetdecimation = 0.01;
   cvRepositoryData *src;
   cvRepositoryData *dst = NULL;
@@ -1578,10 +1578,10 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
     { "-numblenditers", INT_Type, &numblenditers, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-numsubblenditers", INT_Type, &numblenditers, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numsubblenditers", INT_Type, &numsubblenditers, NULL, GDSC_OPTIONAL, 0, { 0 } },
     { "-numsubdivisioniters", INT_Type, &numsubdivisioniters, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numcgsmoothiters", INT_Type, &numcgsmoothiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
     { "-numlapsmoothiters", INT_Type, &numlapsmoothiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-smoothrelaxation", DOUBLE_Type, &smoothrelaxation, NULL, GDSC_OPTIONAL, 0, { 0 } },
     { "-targetdecimation", DOUBLE_Type, &targetdecimation, NULL, GDSC_OPTIONAL, 0, { 0 } },
     { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
     { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
@@ -1615,8 +1615,8 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
   }
   if ( sys_geom_local_blend( (cvPolyData*)src, (cvPolyData**)(&dst),
 			  numblenditers,numsubblenditers,
-			  numsubdivisioniters, numlapsmoothiters,
-			  smoothrelaxation, targetdecimation,
+			  numsubdivisioniters, numcgsmoothiters,
+			  numlapsmoothiters, targetdecimation,
 			  pointArrayName,cellArrayName)
        != CV_OK ) {
     Tcl_SetResult( interp, "running local blend operation", TCL_STATIC );

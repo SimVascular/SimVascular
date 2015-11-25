@@ -3974,8 +3974,8 @@ int sys_geom_local_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
  */
 
 int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
-		int numsubblenditers, int numsubdivisioniters, 
-		int numlapsmoothiters, double smoothrelaxation, 
+		int numsubblenditers, int numsubdivisioniters,
+		int numcgsmoothiters, int numlapsmoothiters,
 		double targetdecimation,
 		char *pointarrayname, char *cellarrayname)
 {
@@ -4002,12 +4002,17 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
     blender->SetNumBlendOperations(numblenditers);
     blender->SetNumSubBlendOperations(numsubblenditers);
     blender->SetNumSubdivisionIterations(numsubdivisioniters);
-    blender->SetNumSmoothOperations(numlapsmoothiters);
-    //blender->SetSmoothRelaxationFactor(smoothrelaxation);
+    blender->SetNumCGSmoothOperations(numcgsmoothiters);
+    blender->SetNumLapSmoothOperations(numlapsmoothiters);
     blender->SetDecimationTargetReduction(targetdecimation);
     blender->Update();
 
-    result = new cvPolyData( blender->GetOutput());
+    vtkNew(vtkPolyDataNormals,normaler);
+    normaler->SetInputData(blender->GetOutput());
+    normaler->SplittingOff();
+    normaler->Update();
+
+    result = new cvPolyData( normaler->GetOutput());
     *outpd = result;
   }
   catch (...) {
