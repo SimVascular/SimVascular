@@ -189,7 +189,9 @@ int sys_geom_local_constrain_smooth(cvPolyData *pd,cvPolyData **outpd, int numit
 int sys_geom_local_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
     char *pointarrayname, char *cellarrayname);
 
-int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, int numiters,
+int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, int numblenditers,
+    int numsubblenditers, int numsubdivisioniters,
+    int numlapsmoothiters, double smoothrelaxation, double targetdecimation,
     char *pointarrayname, char *cellarrayname);
 
 #ifdef USE_VMTK

@@ -12953,6 +12953,44 @@ img_guessVolParams $gImageVol(filename)}
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame2.label17
   ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame2.label17  -font {Helvetica 10}  -borderwidth {0}  -text {Blended Solid Model}
 
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4
+  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4  -text {Blend Options [-]}  -width {30}  -height {25}
+  # bindings
+  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4 <Button-1> {guiCV_squeezer_labelframe .tframe1 %W}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label17
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label17  -font {Helvetica 10}  -borderwidth {0}  -text {Blend Iterations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry12
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry12  -font {Helvetica 10}  -textvariable {gui3Dvars(local_blend_iters)} -width {4}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label18
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label18  -font {Helvetica 10}  -borderwidth {0}  -text {Sub Blend Iterations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry13
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry13  -font {Helvetica 10}  -textvariable {gui3Dvars(local_subblend_iters)} -width {4}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label19
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label19  -font {Helvetica 10}  -borderwidth {0}  -text {Subdivision Iterations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry14
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry14  -font {Helvetica 10}  -textvariable {gui3Dvars(local_blend_subdivision_iters)} -width {4}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label20
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label20  -font {Helvetica 10}  -borderwidth {0}  -text {Smooth Iterations}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry15
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry15  -font {Helvetica 10}  -textvariable {gui3Dvars(local_blend_smooth_iters)} -width {4}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label21
+  ttk::label .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label21  -font {Helvetica 10}  -borderwidth {0}  -text {Target Decimation}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry16
+  ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry16  -font {Helvetica 10}  -textvariable {gui3Dvars(local_blend_decimation)} -width {4}
+
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame18
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame18  -width {587}  -height {416}
 
@@ -19931,6 +19969,7 @@ img_guessVolParams $gImageVol(filename)}
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame1  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame2  -fill both
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4  -fill both
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame18  -expand 1  -fill both
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame1
@@ -19953,6 +19992,21 @@ img_guessVolParams $gImageVol(filename)}
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame2.frame0
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame2.frame0.button3  -expand 1  -fill both  -side left
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1  -expand 1
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label17  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry12  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label18  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry13  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label19  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry14  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label20  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry15  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.label21  -expand 1  -side left
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.tlabelframe4.tframe1.entry16  -expand 1  -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame18
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe22.tframe7.frame18.frame10  -fill x
@@ -49091,12 +49145,18 @@ set {gui3Dvars(fast_vis_fmm)} {0}
 set {gui3Dvars(fast_vis_ls)} {0}
 set {gui3Dvars(loaded_seeds_file_text)} {# simvascular_seeds_file_format 1.0}
 set {gui3Dvars(localControlAttributes)} {}
-set {gui3Dvars(local_cgsmooth_constrain_factor)} {0.7}
-set {gui3Dvars(local_cgsmooth_num_iters)} {5}
+set {gui3Dvars(local_cgsmooth_constrain_factor)} {0.2}
+set {gui3Dvars(local_cgsmooth_num_iters)} {3}
 set {gui3Dvars(local_linear_subdivisions)} {1}
 set {gui3Dvars(local_quad_target)} {0.25}
 set {gui3Dvars(local_smooth_num_iters)} {100}
 set {gui3Dvars(local_smooth_relax_factor)} {0.01}
+set {gui3Dvars(local_blend_iters)} {2}
+set {gui3Dvars(local_subblend_iters)} {2}
+set {gui3Dvars(local_blend_subdivision_iters)} {1}
+set {gui3Dvars(local_blend_smooth_iters)} {3}
+set {gui3Dvars(local_blend_relaxation)} {0.01}
+set {gui3Dvars(local_blend_decimation)} {0.01}
 set {gui3Dvars(ls_GoodnessStop)} {0.975}
 set {gui3Dvars(ls_GridFactor)} {2.0}
 set {gui3Dvars(ls_Klow)} {0.0}
@@ -49191,8 +49251,8 @@ set {guiBOOLEANvars(add_caps_to_vessels)} {1}
 set {guiBOOLEANvars(linear_sampling_along_length_multiplier)} {10}
 set {guiBOOLEANvars(no_inter_output)} {1}
 set {guiBOOLEANvars(num_modes_for_FFT)} {20}
-set {guiBOOLEANvars(sampling_along_length_multiplier)} {6}
-set {guiBOOLEANvars(sampling_default)} {30}
+set {guiBOOLEANvars(sampling_along_length_multiplier)} {12}
+set {guiBOOLEANvars(sampling_default)} {60}
 set {guiBOOLEANvars(sampling_overrides)} {}
 set {guiBOOLEANvars(selected_groups)} {}
 set {guiBOOLEANvars(selected_seg3d)} {}

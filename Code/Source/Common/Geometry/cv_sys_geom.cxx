@@ -58,7 +58,7 @@
 #include "vtkLocalSmoothPolyDataFilter.h"
 #include "vtkLocalLinearSubdivisionFilter.h"
 #include "vtkCGSmooth.h"
-#include "vtkBlendPolyData.h"
+#include "vtkConstrainedBlend.h"
 #include "vtkFindSeparateRegions.h"
 #include "vtkGetSphereRegions.h"
 
@@ -3973,18 +3973,21 @@ int sys_geom_local_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
  *  @return CV_OK if the function executes properly
  */
 
-int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numiters,
+int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
+		int numsubblenditers, int numsubdivisioniters, 
+		int numlapsmoothiters, double smoothrelaxation, 
+		double targetdecimation,
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
   cvPolyData *result = NULL;
 
   fprintf(stdout,"Running local subdivision\n");
-  fprintf(stdout,"Num Iters: %d\n",numiters);
+  fprintf(stdout,"Num Iters: %d\n",numblenditers);
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkBlendPolyData,blender);
+    vtkNew(vtkConstrainedBlend,blender);
     blender->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -3996,7 +3999,12 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numiters,
       blender->SetCellArrayName(cellarrayname);
       blender->UseCellArrayOn();
     }
-    blender->SetNumBlendIterations(numiters);
+    blender->SetNumBlendOperations(numblenditers);
+    blender->SetNumSubBlendOperations(numsubblenditers);
+    blender->SetNumSubdivisionIterations(numsubdivisioniters);
+    blender->SetNumSmoothOperations(numlapsmoothiters);
+    //blender->SetSmoothRelaxationFactor(smoothrelaxation);
+    blender->SetDecimationTargetReduction(targetdecimation);
     blender->Update();
 
     result = new cvPolyData( blender->GetOutput());

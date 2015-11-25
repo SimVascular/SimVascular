@@ -52,7 +52,7 @@ SET(CXXSRCS	cv_sys_geom.cxx cv_ggems.cxx
 	vtkLocalSmoothPolyDataFilter.cxx
 	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
-	vtkBlendPolyData.cxx)
+	vtkConstrainedBlend.cxx)
 SET(HDRS cv_sys_geom.h cv_ggems.h
 	cv_spline.h cv_integrate_surface.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
@@ -68,7 +68,7 @@ SET(HDRS cv_sys_geom.h cv_ggems.h
 	vtkLocalSmoothPolyDataFilter.h
 	vtkCGSmooth.h svMath.h sparse_matrix.h
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h
-	vtkBlendPolyData.h)
+	vtkConstrainedBlend.h)
 
 if(SimVascular_USE_GTS)
 	SET(CXXSRCS  ${CXXSRCS} vtkSurfaceBooleanOperations.cxx)
