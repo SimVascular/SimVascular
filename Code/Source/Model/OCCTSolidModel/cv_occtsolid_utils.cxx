@@ -100,19 +100,22 @@
 #include <iostream>
 
 //Function to turn an integer into a string
-char *intToChar(int in)
-{
-  char *out;
-  sprintf(out,"%d",in);
-  return out;
-}
-
 int charToInt(const char *in)
 {
   int out = atoi(in);
   return out;
 }
 
+// ---------------------
+// OCCTUtils_SetExtStringArray
+// ---------------------
+/**
+ * @brief Helper function to create an occt string array from a character
+ * array. Used to set labels on faces
+ * @param &array the new string array in which to put the char array
+ * @param &charstr the character to put in array
+ * @return CV_OK if function completes properly
+ */
 int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
     char *charstr)
 {
@@ -127,6 +130,15 @@ int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
   return CV_OK;
 }
 
+// ---------------------
+// OCCTUtils_GetExtStringArray
+// ---------------------
+/**
+ * @brief Helper function get a character array from an occt string array.
+ * @param &array the string array to be extracted
+ * @param &charstr the char array to put in the information
+ * @return CV_OK if function completes properly
+ */
 int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     char *charstr)
 {
@@ -142,6 +154,12 @@ int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     return CV_OK;
 }
 
+// ---------------------
+// Class LinearFunc
+// ---------------------
+/**
+ * @brief Simple class to set up linear interpolation between points
+ */
 class LinearFunc
 {
   public:
@@ -155,6 +173,7 @@ class LinearFunc
     Standard_Real b_;
 };
 
+//Constructor
 LinearFunc::LinearFunc(Standard_Real x1,Standard_Real y1,
     		       Standard_Real x2,Standard_Real y2)
 {
@@ -162,21 +181,31 @@ LinearFunc::LinearFunc(Standard_Real x1,Standard_Real y1,
   b_ = y2 - (m_*x2);
 }
 
+//Get output linear interpolated value
 Standard_Real LinearFunc::GetY(Standard_Real x)
 {
   Standard_Real y = m_*x + b_;
   return y;
 }
 
+// ---------------------
 // OCCTUtils_CreateEdgeBlend
 // ---------------------
 /**
- * @brief Procedure to get face numbers that correspond to the scalars
- * assigned to the geometry
- * @param *geom input TopoDS_Shape on which to get the face ids
- * @param *v_num_faces int that contains the number of total face regions
- * @param **v_faces vector containing the array of numerical values
- * corresponding to each face region
+ * @brief Procedure to create edge blend between two faces faceA and faceB
+ * @param &shape shape containing faces and resultant shape with blend
+ * @param shapetool the XDEDoc manager that contains attribute info
+ * @param shapelabel the label for the shape registered in XDEDoc
+ * @param filletmake the occt API to make a fillet
+ * @param faceA first integer face to blend
+ * @param faceB second integer face to blend
+ * @param radius Maximum radius to set anywhere on the fillet.
+ * @param minRadius Minimum radius to set anywhere on the fillet. A linear
+ * interpolation is created between the minimum and maximum radius specified
+ * based on the angle created bewteen the two faces at a set number of points
+ * around the fillet edge. The new fillet radius value will be somehwere
+ * between the maximum and minimum radius values given.
+ * @param blendname Name to be given the new face created for the shape
  * @return CV_OK if function completes properly
  */
 int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
@@ -328,12 +357,20 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 // OCCTUtils_MakeLoftedSurf
 // ---------------------
 /**
- * @brief Procedure to get face numbers that correspond to the scalars
- * assigned to the geometry
- * @param *geom input TopoDS_Shape on which to get the face ids
- * @param *v_num_faces int that contains the number of total face regions
- * @param **v_faces vector containing the array of numerical values
- * corresponding to each face region
+ * @brief Procedure to create a lofted surface from a set of wires
+ * @param curves list of wires to be lofted. Wires should be created by
+ * uniformly spaced points circumferentially and should be aligned with
+ * first points matching
+ * @param shape place to store the output lofted surface
+ * @param numCurves number of wires contained in curves
+ * @param continuity desired continuity of the ouptut surface. Typically, 2
+ * works okay. Trouble with higher or lower
+ * @param partype The parametrization method. 0 is chord, 1 is centripetal,
+ * 2 is isoparametric. Depends on wires which works best.
+ * @param w1, first weighting to be used only if smoothing
+ * @param w2, second weighting to be used only if smoothing
+ * @param w3, third weighting to be used only if smoothing
+ * @param smoothing indicates whether smoothing should be used
  * @return CV_OK if function completes properly
  */
 int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
@@ -715,6 +752,12 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   return CV_OK;
 }
 
+// ---------------------
+// OCCTUtils_IsSameOriented
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
 Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
   const TopoDS_Shape& aShell)
 {
@@ -740,6 +783,12 @@ Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
   return Standard_True;
 }
 
+// ---------------------
+// OCCTUtils_PerformPlan
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
 Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
   const Standard_Real presPln,
   TopoDS_Face& theFace)
@@ -777,6 +826,12 @@ Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
   return Ok;
 }
 
+// ---------------------
+// OCCTUtils_MakeSolid
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
 TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
   const TopoDS_Wire& wire2, const Standard_Real presPln,
   TopoDS_Face& face1, TopoDS_Face& face2)
@@ -826,6 +881,12 @@ TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
   return solid;
 }
 
+// ---------------------
+// OCCTUtils_PreciseUpar
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
 Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
   const Handle(Geom_BSplineSurface)& aSurface)
 {
@@ -842,6 +903,12 @@ Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
   return NewU;
 }
 
+// ---------------------
+// OCCTUtils_EdgeToBSpline
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
 Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge)
 {
   Handle(Geom_BSplineCurve) aBSCurve;
@@ -996,8 +1063,7 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
 // OCCTUtils_RenumberFaces
 // -------------------
 /**
- * @brief Procedure to get a shape orientation
- * @param *geom input TopoDS_Shape on which to get orientation
+ * @brief Procedure to renumber faces (not used)
  * @return CV_OK if function completes properly
  */
 int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
@@ -1061,6 +1127,11 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 // ----------------
 // GetFaceRange
 // ----------------
+/**
+ * @brief Procedure to get the range of id values on a shape
+ * @param face_range the returned range of faces
+ * @return CV_OK if function completes properly
+ */
 int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
     		int &face_range)

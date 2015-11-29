@@ -700,13 +700,61 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
 
   occtPtrA = (cvOCCTSolidModel *)( a );
   occtPtrB = (cvOCCTSolidModel *)( b );
+  TopoDS_Shape shapeA = *(occtPtrA->geom_);
+  TopoDS_Shape shapeB = *(occtPtrB->geom_);
 
-  BRepAlgoAPI_Common intersectionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
+  BRepAlgoAPI_Common intersectionOCCT(shapeA,shapeB);
   intersectionOCCT.Build();
 
   this->NewShape();
   *geom_ = intersectionOCCT.Shape();
   this->AddShape();
+
+  //Transfer modified shape info from input A
+  TopExp_Explorer anExp(shapeA,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    const TopTools_ListOfShape &modListA =
+      intersectOCCT.Modified(anExp.Current());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
+    if (modListA.Extent() != 0)
+    {
+      TopTools_ListIteratorOfListOfShape modFaceIt(modListA);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
+    }
+  }
+
+  //Transfer modified shape info from input B
+  anExp.Init(shapeB,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    const TopTools_ListOfShape &modListB =
+      intersectOCCT.Modified(anExp.Current());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
+    if (modListB.Extent() != 0)
+    {
+      TopTools_ListIteratorOfListOfShape modFaceIt(modListB);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
+    }
+  }
 
   return CV_OK;
 }
@@ -740,13 +788,61 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
 
   occtPtrA = (cvOCCTSolidModel *)( a );
   occtPtrB = (cvOCCTSolidModel *)( b );
+  TopoDS_Shape shapeA = *(occtPtrA->geom_);
+  TopoDS_Shape shapeB = *(occtPtrB->geom_);
 
-  BRepAlgoAPI_Cut subtractionOCCT(*(occtPtrA->geom_),*(occtPtrB->geom_));
+  BRepAlgoAPI_Cut subtractionOCCT(shapeA,shapeB);
   subtractionOCCT.Build();
 
   this->NewShape();
   *geom_ = subtractionOCCT.Shape();
   this->AddShape();
+
+  //Transfer modified shape info from input A
+  TopExp_Explorer anExp(shapeA,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    const TopTools_ListOfShape &modListA =
+      intersectOCCT.Modified(anExp.Current());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
+    if (modListA.Extent() != 0)
+    {
+      TopTools_ListIteratorOfListOfShape modFaceIt(modListA);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
+    }
+  }
+
+  //Transfer modified shape info from input B
+  anExp.Init(shapeB,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    const TopTools_ListOfShape &modListB =
+      intersectOCCT.Modified(anExp.Current());
+    TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
+    if (modListB.Extent() != 0)
+    {
+      TopTools_ListIteratorOfListOfShape modFaceIt(modListB);
+      for (int j=0;modFaceIt.More();modFaceIt.Next(),j++)
+      {
+        TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
+	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
+	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	{
+	  fprintf(stderr,"Could not pass face info\n");
+	  return CV_ERROR;
+	}
+      }
+    }
+  }
 
   return CV_OK;
 }
@@ -950,6 +1046,9 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   return result;
 }
 
+// ---------------
+// MakeEllipsoid
+// ---------------
 int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
 {
   if (geom_ != NULL)
