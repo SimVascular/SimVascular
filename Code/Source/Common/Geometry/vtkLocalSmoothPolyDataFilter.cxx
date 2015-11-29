@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -161,7 +161,7 @@ vtkLocalSmoothPolyDataFilter::vtkLocalSmoothPolyDataFilter()
 }
 
 vtkLocalSmoothPolyDataFilter::~vtkLocalSmoothPolyDataFilter()
-{ 
+{
   //this->SmoothCellArray->Delete();
   //this->SmoothPointArray->Delete();
   //this->ConstrainArray->Delete();
@@ -675,7 +675,7 @@ int vtkLocalSmoothPolyDataFilter::RequestData(
 	      if (Verts[i].constrain == 0)
 	        movepoint = 1;
 	    }
-	    else 
+	    else
 	      movepoint = 1;
 
             if (movepoint)
@@ -895,7 +895,7 @@ int vtkLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoint
       {
 	p1 = pts[i];
 	p2 = pts[(i+1)%(npts)];
-        vtkSmartPointer<vtkIdList> neighbors = 
+        vtkSmartPointer<vtkIdList> neighbors =
 	  vtkSmartPointer<vtkIdList>::New();
 	pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
 	vtkIdType numNei = neighbors->GetNumberOfIds();
@@ -906,7 +906,7 @@ int vtkLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoint
           fixedPoint[p2] = 1;
 	}
       }
-      
+
     }
   }
 

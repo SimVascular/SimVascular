@@ -1,6 +1,6 @@
 /*=========================================================================
  *
- * Copyright (c) 2014-2015 The Regents of the University of California.
+ * Copyright (c) 2015 The Regents of the University of California.
  * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
@@ -28,10 +28,9 @@
  *
  *=========================================================================*/
 
-/** @file vtkCGSmooth.h
- *  @brief Smoothes a surface using a constrained method solving the
- *  minimization between the original surface and a laplacian smoothed
- *  surface
+/** @file vtkConstrainedBlend.h
+ *  @brief This blends using constrained smoothing, localized decimation,
+ *  and localized subdivision
  *
  *  @author Adam Updegrove
  *  @author updega2@gmail.com
@@ -40,17 +39,17 @@
  *  @note Most functions in class call functions in cv_polydatasolid_utils.
  */
 
-#ifndef __vtkCGSmooth_h
-#define __vtkCGSmooth_h
+#ifndef __vtkConstrainedBlend_h
+#define __vtkConstrainedBlend_h
 
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 
-class vtkCGSmooth : public vtkPolyDataAlgorithm
+class vtkConstrainedBlend : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkCGSmooth* New();
-  vtkTypeRevisionMacro(vtkCGSmooth, vtkPolyDataAlgorithm);
+  static vtkConstrainedBlend* New();
+  vtkTypeRevisionMacro(vtkConstrainedBlend, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -70,14 +69,25 @@ public:
   vtkSetMacro(UseCellArray,int);
   vtkBooleanMacro(UseCellArray,int);
 
-  vtkGetMacro(NumSmoothOperations,int);
-  vtkSetMacro(NumSmoothOperations,int);
+  vtkGetMacro(NumBlendOperations,int);
+  vtkSetMacro(NumBlendOperations,int);
+  vtkGetMacro(NumSubBlendOperations,int);
+  vtkSetMacro(NumSubBlendOperations,int);
+  vtkGetMacro(NumCGSmoothOperations,int);
+  vtkSetMacro(NumCGSmoothOperations,int);
+  vtkGetMacro(NumLapSmoothOperations,int);
+  vtkSetMacro(NumLapSmoothOperations,int);
   vtkGetMacro(NumGradientSolves,int);
   vtkSetMacro(NumGradientSolves,int);
+  vtkGetMacro(NumSubdivisionIterations,int);
+  vtkSetMacro(NumSubdivisionIterations,int);
+
+  vtkGetMacro(DecimationTargetReduction,double);
+  vtkSetMacro(DecimationTargetReduction,double);
 
 protected:
-  vtkCGSmooth();
-  ~vtkCGSmooth();
+  vtkConstrainedBlend();
+  ~vtkConstrainedBlend();
 
   // Usual data generation method
   int RequestData(vtkInformation *vtkNotUsed(request),
@@ -89,25 +99,29 @@ protected:
 
   char* CellArrayName;
   char* PointArrayName;
-  int UsePointArray;
-  int UseCellArray;
 
   int GetArrays(vtkPolyData *object,int type);
-  void Test();
-  int CGSmooth(vtkPolyData *original,vtkPolyData *current);
-  int GetAttachedPoints(vtkPolyData *pd, vtkIdType nodeId, std::set<vtkIdType> *attachedPts);
-  int SetFixedPoints(vtkPolyData *pd);
+  int Decimate(vtkPolyData *pd);
+  int Subdivide(vtkPolyData *pd);
+  int LaplacianSmooth(vtkPolyData *pd);
+  int CGSmooth(vtkPolyData *pd);
+
+  int UsePointArray;
+  int UseCellArray;
+  int NumBlendOperations;
+  int NumSubBlendOperations;
+  int NumCGSmoothOperations;
+  int NumLapSmoothOperations;
+  int NumGradientSolves;
+  int NumSubdivisionIterations;
 
   double Weight;
-  int NumSmoothOperations;
-  int NumGradientSolves;
-
-  int *fixedPt;
-  int NumFixedPoints;
+  double RelaxationFactor;
+  double DecimationTargetReduction;
 
 private:
-  vtkCGSmooth(const vtkCGSmooth&);  // Not implemented.
-  void operator=(const vtkCGSmooth&);  // Not implemented.
+  vtkConstrainedBlend(const vtkConstrainedBlend&);  // Not implemented.
+  void operator=(const vtkConstrainedBlend&);  // Not implemented.
 };
 
 #endif
