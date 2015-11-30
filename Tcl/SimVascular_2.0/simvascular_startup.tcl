@@ -78,9 +78,12 @@ if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
       }
 }
 
-if {[info exists SIMVASCULAR_NO_RENDERER] == 0} {
+if {[info exists SIMVASCULAR_NO_RENDERER] == 1} {
   global SIMVASCULAR_NO_RENDERER
   set SIMVASCULAR_NO_RENDERER "1"
+} else {
+  global SIMVASCULAR_NO_RENDERER
+  set SIMVASCULAR_NO_RENDERER "0"
 }
 
 # if { $SIMVASCULAR_RELEASE_BUILD == 1}  {
