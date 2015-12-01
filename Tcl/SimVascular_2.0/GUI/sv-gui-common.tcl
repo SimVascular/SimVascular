@@ -1,5 +1,5 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Portions of the code Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                           University of California, San Diego.
@@ -9,19 +9,19 @@
 #   Charles Taylor, Nathan Wilson, Ken Wang.
 #
 # See SimVascular Acknowledgements file for additional
-#   contributors to the source code. 
-# 
+#   contributors to the source code.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -592,9 +592,9 @@ proc vsclrCreateTrimBox {topLeft topRight botRight sizeofbox phaseplane} {
   vtkTransform t3
 
   vtkTransform prayer
-  prayer PostMultiply 
+  prayer PostMultiply
   prayer RotateWXYZ 180.0 1 0 0
-  
+
   gdscGetPointsFromNthPoly 0 $dodo points
   puts "points: $points"
   # first rotate
@@ -986,13 +986,13 @@ proc mc_LoadImage {} {
 
     #vis_img_VolImgBrowser gImageFoo
     vis_img_VolImgBrwsr2 volume_image vis_img_vol_browser
-    
+
     global guiVIB
     set guiVIB(use_alt_image) 0
 
     set guiVIB(show_image) 1
 
-    # check and see if we are using the new gui 
+    # check and see if we are using the new gui
     #if {[info procs ShowWindow.guiSVIMG] != ""} {
     #  ShowWindow.guiSVIMG
     #} else {
@@ -1094,7 +1094,7 @@ proc mc_LoadImageXML {} {
 
     vis_img_VtkVolImg $voi $ext $gRen3d gImageFoo
     vis_img_VolImgBrwsr2 volume_image vis_img_vol_browser
-    # check and see if we are using the new gui 
+    # check and see if we are using the new gui
 
     global guiVIB
     set guiVIB(use_alt_image) 0
@@ -1119,7 +1119,7 @@ proc mc_LoadImageXML {} {
 
     global gOptions
     if {$gImageVol(vdims_x) < 0.5 ||  $gImageVol(vdims_y) < 0.5 || $gImageVol(vdims_z) < 0.5} {
-	if {($gOptions(facet_max_edge_size) > 2) || ($gOptions(pathDisplayPointSize) > 1)} { 
+	if {($gOptions(facet_max_edge_size) > 2) || ($gOptions(pathDisplayPointSize) > 1)} {
           set yesno [tk_messageBox -default yes  -message "It appears some global display parameters are set for mm instead of cm.  Would you like the software to adjust settings?"  -title "Adjust Global Display Settings"  -type yesno]
           switch -- $yesno {
             yes {
@@ -1201,7 +1201,7 @@ proc mc_LoadImageDICOM {change_to_cm} {
 
     vis_img_VtkVolImg $voi $ext $gRen3d gImageFoo
     vis_img_VolImgBrwsr2 volume_image vis_img_vol_browser
-    # check and see if we are using the new gui 
+    # check and see if we are using the new gui
 
     global guiVIB
     set guiVIB(use_alt_image) 0
@@ -1226,7 +1226,7 @@ proc mc_LoadImageDICOM {change_to_cm} {
 
     global gOptions
     if {$gImageVol(vdims_x) < 0.5 ||  $gImageVol(vdims_y) < 0.5 || $gImageVol(vdims_z) < 0.5} {
-	if {($gOptions(facet_max_edge_size) > 2) || ($gOptions(pathDisplayPointSize) > 1)} { 
+	if {($gOptions(facet_max_edge_size) > 2) || ($gOptions(pathDisplayPointSize) > 1)} {
           set yesno [tk_messageBox -default yes  -message "It appears some global display parameters are set for mm instead of cm.  Would you like the software to adjust settings?"  -title "Adjust Global Display Settings"  -type yesno]
           switch -- $yesno {
             yes {
@@ -1275,13 +1275,13 @@ proc seg_LoadImageMha {} {
   set ext [$voi GetDimensions]
   set voiExt [$voi GetExtent]
   set voiBounds [$voi GetBounds]
-  
+
   set voiOrgX [expr ([lindex $voiBounds 0] + [lindex $voiBounds 1])/2]
   set voiOrgY [expr ([lindex $voiBounds 2] + [lindex $voiBounds 3])/2]
   set voiOrgZ [expr ([lindex $voiBounds 4] + [lindex $voiBounds 5])/2]
-  
+
   set voiOrigin "$voiOrgX $voiOrgY $voiOrgZ"
-  
+
   #puts "voiOrigin: $voiOrigin"
   #puts "l1: [lindex $voiOrigin 0]"
 
@@ -1306,7 +1306,7 @@ proc seg_LoadImageMha {} {
   set gImageVol(filename) {}
   set gOptions(image_data_type) generic
 
-  
+
   #puts "[math_subVectors [$voi GetOrigin] [math_scaleVec $vdims 0.5]] = math_subVectors ([$voi GetOrigin]) ([math_scaleVec $vdims 0.5])"
   set gImageVol(min_RAS) [math_subVectors [$voi GetOrigin] [math_scaleVec $vdims 0.5]]
   set gImageVol(ext_ras) $ext
@@ -1326,7 +1326,7 @@ proc seg_LoadImageMha {} {
 
    vis_img_VtkVolImg $voi $ext $gRen3d gImageFoo
    vis_img_VolImgBrwsr2 volume_image vis_img_vol_browser
-   # check and see if we are using the new gui 
+   # check and see if we are using the new gui
 
    global guiVIB
    set guiVIB(use_alt_image) 0
@@ -1351,7 +1351,7 @@ proc seg_LoadImageMha {} {
 
      global gOptions
      if {$gImageVol(vdims_x) < 0.5 ||  $gImageVol(vdims_y) < 0.5 || $gImageVol(vdims_z) < 0.5} {
-       if {($gOptions(facet_max_edge_size) > 2) || ($gOptions(pathDisplayPointSize) > 1)} { 
+       if {($gOptions(facet_max_edge_size) > 2) || ($gOptions(pathDisplayPointSize) > 1)} {
         set yesno [tk_messageBox -default yes  -message "It appears some global display parameters are set for mm instead of cm.  Would you like the software to adjust settings?"  -title "Adjust Global Display Settings"  -type yesno]
         switch -- $yesno {
           yes {

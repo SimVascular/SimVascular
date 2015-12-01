@@ -2863,7 +2863,6 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
       cell->Delete();
       return CV_ERROR;
   }
-  fprintf(stdout,"Number of Intersected Points: %d\n",intersectionPoints->GetNumberOfPoints());
   intersectionPoints->GetPoint(0,x);
 
   locator->Delete();
