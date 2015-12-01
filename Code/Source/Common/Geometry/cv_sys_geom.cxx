@@ -53,6 +53,7 @@
 #include "vtkConnectivityFilter.h"
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkAppendPolyData.h"
+#include "vtkOBBTree.h"
 
 #include "vtkLocalQuadricDecimation.h"
 #include "vtkLocalSmoothPolyDataFilter.h"
@@ -2840,7 +2841,8 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
       a1[i]=p1[i];
   }
 
-  vtkCellLocator *locator = vtkCellLocator::New();
+  vtkOBBTree *locator = vtkOBBTree::New();
+  //vtkCellLocator *locator = vtkCellLocator::New();
   vtkGenericCell *cell = vtkGenericCell::New();
 
   locator->SetDataSet(pd);
@@ -2850,14 +2852,19 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
   //fprintf(stdout,"a1: %f %f %f\n",a1[0],a1[1],a1[2]);
   //fprintf(stdout,"tol: %f\n",tol);
 
+  vtkSmartPointer<vtkPoints> intersectionPoints =
+    vtkSmartPointer<vtkPoints>::New();
   x[0]=0;x[1]=0;x[2]=0;
-  //if (locator->IntersectWithLine(a0, a1, tol, t, x, pcoords, subId) == 0) {
-  if (locator->IntersectWithLine(a0,a1,tol,t,x,pcoords,subId,cellId,cell) == 0) {
+  locator->IntersectWithLine(a0, a1, intersectionPoints,NULL);
+  if (intersectionPoints->GetNumberOfPoints() == 0) {
+  //if (locator->IntersectWithLine(a0,a1,tol,t,x,pcoords,subId,cellId,cell) == 0) {
       fprintf(stderr,"ERROR:  Line does not intersect vtkPolyData!\n");
       locator->Delete();
       cell->Delete();
       return CV_ERROR;
   }
+  fprintf(stdout,"Number of Intersected Points: %d\n",intersectionPoints->GetNumberOfPoints());
+  intersectionPoints->GetPoint(0,x);
 
   locator->Delete();
   cell->Delete();
