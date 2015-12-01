@@ -80,8 +80,12 @@ if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
 
 if {[info exists SIMVASCULAR_NO_RENDERER] == 0} {
   global SIMVASCULAR_NO_RENDERER
-  set SIMVASCULAR_NO_RENDERER "1"
+  set SIMVASCULAR_NO_RENDERER "0"
 }
+#} else {
+#  global SIMVASCULAR_NO_RENDERER
+#  set SIMVASCULAR_NO_RENDERER "0"
+#}
 
 # if { $SIMVASCULAR_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SIMVASCULAR_VERSION-$SIMVASCULAR_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
@@ -456,7 +460,7 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 
   after 5000 {set tkcon_delay_done 1}
   vwait tkcon_delay_done
-  if { $SIMVASCULAR_NO_RENDERER == "0" } {
+  if { $SIMVASCULAR_NO_RENDERER == "1" } {
     puts "Not render window mode"
   } else {
     guiCV_display_windows 3d_only
