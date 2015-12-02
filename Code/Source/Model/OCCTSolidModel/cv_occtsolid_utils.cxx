@@ -512,7 +512,7 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   Standard_Integer nbIt = 3;
   if(pres3d <= 1.e-3) nbIt = 0;
 
-  Standard_Integer degmin = 2, degmax = 3;//Max(myDegMax, degmin);
+  Standard_Integer degmin = 2, degmax = 2;//Max(myDegMax, degmin);
   Standard_Boolean SpApprox = Standard_True;
 
   GeomFill_AppSurf anApprox(degmin, degmax, pres3d, pres3d, nbIt);

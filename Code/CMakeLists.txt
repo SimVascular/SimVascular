@@ -13,7 +13,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Superbuild
-set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"  
+set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 	"${CMAKE_MODULE_PATH}")
 
 set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
@@ -30,8 +30,8 @@ if(APPLE)
 	# Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
 	#       we ensure that the bitness will be properly detected.
 	mark_as_superbuild(
-		VARS 
-		CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH 
+		VARS
+		CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH
 		CMAKE_OSX_DEPLOYMENT_TARGET:STRING)
 
 endif()
@@ -127,7 +127,7 @@ find_package(Doxygen)
 if(DOXYGEN_FOUND)
 	file(TO_NATIVE_PATH "${SimVascular_BINARY_DIR}/Doxygen/" SimVascular_DOCS_DIR_WORK)
 	set(SimVascular_DOCS_DIR ${SimVascular_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
-	configure_file(${SimVascular_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in 
+	configure_file(${SimVascular_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
 		${SimVascular_BINARY_DIR}/simvascular.Doxyfile @ONLY)
 	add_custom_target(doc
 		${DOXYGEN_EXECUTABLE} ${SimVascular_BINARY_DIR}/simvascular.Doxyfile
@@ -173,7 +173,7 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
-# FlowSolver Options 
+# FlowSolver Options
 if(BUILD_ThreeDSolver)
 
 endif()
@@ -213,6 +213,8 @@ if(Plugin_TET_ADAPTOR)
 	#set(USE_Fortran ON)
 	set(BUILD_ThreeDSolver ON)
 endif()
+
+option(USE_PYTHON "Use Python" ON)
 
 #-----------------------------------------------------------------------------
 # Adaptor Options
@@ -309,7 +311,7 @@ endif()
 # Start Configuration Steps and Second Generation Options
 #-----------------------------------------------------------------------------
 # Compiler Flags
-if(SimVascular_SUPPRESS_WARNINGS) 
+if(SimVascular_SUPPRESS_WARNINGS)
 	add_definitions("-w")
 endif()
 if(LINUX)
@@ -368,7 +370,7 @@ if(WIN32)
 
 
 	#set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} ws2_32.lib wsock32.lib" CACHE)
-	
+
 	#set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE")
 endif()
 
@@ -401,7 +403,7 @@ endif()
 # and finding the libraries that those parts need.
 #-----------------------------------------------------------------------------
 # Basic Core Libs
-set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} 
+set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS}
 	"Source/Common/Globals"
 	"Source/Common/Utils"
 	"Source/Common/Repository"
@@ -431,21 +433,34 @@ endif()
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
 mark_as_superbuild(
-	VARS 
-	TCL_INCLUDE_PATH:PATH 
+	VARS
+	TCL_INCLUDE_PATH:PATH
 	TCL_LIBRARY:FILEPATH
 	TCL_TCLSH:FILEPATH
-	TK_INCLUDE_PATH:PATH 
+	TK_INCLUDE_PATH:PATH
 	TK_LIBRARY:FILEPATH
-	TK_WISH:FILEPATH 
+	TK_WISH:FILEPATH
 	ALL_PROJECTS)
 
+#-----------------------------------------------------------------------------
+# PYTHON
+if(USE_PYTHON)
+	find_package(PythonLibs REQUIRED)
+	mark_as_superbuild(
+		PYTHONLIBS_FOUND
+		PYTHON_INCLUDE_PATH
+		PYTHON_LIBRARIES
+		PYTHON_INCLUDE_DIRS
+		PYTHONLIBS_VERSION_STRING)
+
+	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/TclPython")
+endif()
 
 #-----------------------------------------------------------------------------
 # VTK
 set(SimVascular_DEPENDS "TCL")
-simvascular_external(VTK DOWNLOADABLE 
-	COMPONENTS 
+simvascular_external(VTK DOWNLOADABLE
+	COMPONENTS
 	 vtkFiltersFlowPaths)
 
 #-----------------------------------------------------------------------------
@@ -702,9 +717,9 @@ if(BUILD_ThreeDSolver)
 	set(USE_SVLS ON)
 	set(USE_MPI ON)
 	set(ThreeDSolver_BUILD_SolverIO ON)
-	#set(FLOWSOLVER_CONFIG_PATHS 
+	#set(FLOWSOLVER_CONFIG_PATHS
 	#	"${SimVascular_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
-	# find config file		
+	# find config file
 	#set(FLOWSOLVER_CONFIG_FILE "${SimVascular_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp")
 	#mark_as_superbuild(FLOWSOLVER_CONFIG_FILE)
 	#set(FLOWSOLVER_CONFIG_PATH ${OUTBIN_DIR})
@@ -781,7 +796,7 @@ if(SimVascular_USE_INTELRUNTIME OR USE_INTEL)
 	endif()
 	set(USE_INTELRUNTIME ON)
 	set(USE_INTEL ON)
-	mark_as_superbuild(VARS 
+	mark_as_superbuild(VARS
 		INTELRUNTIME_LIB_DIR:PATH
 		INTELRUNTIME_LIBRARIES)
 else()
@@ -817,8 +832,8 @@ if(USE_MPI OR SimVascular_USE_MPI)
 		endif()
 
 		mark_as_superbuild(
-			VARS 
-			MPI_Fortran_COMPILER:FILEPATH 
+			VARS
+			MPI_Fortran_COMPILER:FILEPATH
 			MPI_C_COMPILER:FILEPATH
 			MPI_CXX_COMPILER:FILEPATH
 			MPIEXEC
@@ -880,13 +895,13 @@ mark_as_superbuild(SIMVASCULAR_USE_WIN32_REGISTRY:BOOL)
 #-----------------------------------------------------------------------------
 # Superbuild
 #-----------------------------------------------------------------------------
-# Anything after this will not be executed if in 
+# Anything after this will not be executed if in
 # superbuild mode.
 #-----------------------------------------------------------------------------
 set(git_protocol "git")
 mark_as_superbuild(git_protocol)
 
-ExternalProject_Include_Dependencies(${PROJECT_NAME} 
+ExternalProject_Include_Dependencies(${PROJECT_NAME}
 	PROJECT_VAR PROJECT_NAME)
 if(SimVascular_SUPERBUILD)
 
@@ -911,7 +926,7 @@ endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# TCL Setup 
+# TCL Setup
 # TCL has two include directories, the macro only includes one.
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 if(WIN32)
@@ -920,8 +935,8 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK Setup
-find_package(VTK COMPONENTS 
-	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk 
+find_package(VTK COMPONENTS
+	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk
 	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
 include(${VTK_USE_FILE})
@@ -932,7 +947,7 @@ include(${VTK_USE_FILE})
 # message("${VTK_REQUIRED_EXE_LINKER_FLAGS} | \n ${VTK_REQUIRED_CXX_FLAGS}\n ${VTK_REQUIRED_MODULE_LINKER_FLAGS}")
 
 # SV uses non stanard libraries, this adds them, also adds the intel libraries
-#include(VTKSVConfig) 
+#include(VTKSVConfig)
 file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*TCL*${CMAKE_STATIC_LIBRARY_SUFFIX}")
 file(GLOB_RECURSE vtk_new_libs2 RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*${CMAKE_STATIC_LIBRARY_SUFFIX}")
 list(APPEND vtk_new_libs ${vtk_new_libs2})
@@ -1023,17 +1038,17 @@ set(SIMVASCULAR_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
 
 #-----------------------------------------------------------------------------
-# Include the Core subdirs 
+# Include the Core subdirs
 # These are handled here because other sub directories depend on them
 # set
-set(SIMVASCULAR_INCLUDE_DIRS 
+set(SIMVASCULAR_INCLUDE_DIRS
 			 	"Source/Include"
 			 	"FlowSolvers/Include"
 			 	)
 
 foreach(dir ${SIMVASCULAR_INCLUDE_DIRS})
 	add_subdirectory(${dir})
-	include_directories(${SimVascular_SOURCE_DIR}/${dir} 
+	include_directories(${SimVascular_SOURCE_DIR}/${dir}
 						${SimVascular_BINARY_DIR}/${dir})
 endforeach()
 

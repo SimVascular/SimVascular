@@ -715,7 +715,7 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     const TopTools_ListOfShape &modListA =
-      intersectOCCT.Modified(anExp.Current());
+      intersectionOCCT.Modified(anExp.Current());
     TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
     if (modListA.Extent() != 0)
     {
@@ -738,7 +738,7 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     const TopTools_ListOfShape &modListB =
-      intersectOCCT.Modified(anExp.Current());
+      intersectionOCCT.Modified(anExp.Current());
     TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
     if (modListB.Extent() != 0)
     {
@@ -803,7 +803,7 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     const TopTools_ListOfShape &modListA =
-      intersectOCCT.Modified(anExp.Current());
+      subtractionOCCT.Modified(anExp.Current());
     TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
     if (modListA.Extent() != 0)
     {
@@ -826,7 +826,7 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     const TopTools_ListOfShape &modListB =
-      intersectOCCT.Modified(anExp.Current());
+      subtractionOCCT.Modified(anExp.Current());
     TopoDS_Face oldFace = TopoDS::Face(anExp.Current());
     if (modListB.Extent() != 0)
     {
@@ -877,7 +877,7 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   pd->DeepCopy(aDataImpl->getVtkPolyData());
   //if (max_dist != -1)
   //{
-    //this->GetOnlyPD(pd,max_dist);
+    this->GetOnlyPD(pd,max_dist);
   //}
 
   result = new cvPolyData(pd);
@@ -1039,7 +1039,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   pd = vtkPolyData::New();
   pd->DeepCopy(aDataImpl->getVtkPolyData());
   //if (max_dist != -1)
-    //this->GetOnlyPD(pd,max_dist);
+    this->GetOnlyPD(pd,max_dist);
 
   result = new cvPolyData(pd);
   pd->Delete();

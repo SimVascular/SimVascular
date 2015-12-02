@@ -938,7 +938,7 @@ proc saveResampledGroup {grp numSamplePts} {
     }
   }
 
-  saveResampledSegments $grp "[file join $grpdir $grp]_resampled" $resampleList $sortedList
+  saveResampledSegments $grp "[file join $grpdir $grp]_[string trim $numSamplePts]_resampled" $resampleList $sortedList
 
 }
 
