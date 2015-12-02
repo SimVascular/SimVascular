@@ -74,7 +74,7 @@ set(SuperBuild_Libraries_Dir "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
 mark_as_superbuild(SuperBuild_Libraries_Dir)
 
 if (SIMVASCULAR_NO_RENDERER)
-	message("Building in No Renderer Mode")
+	message(" -- Building in No Renderer Mode")
 	set(SIMVASCULAR_NO_RENDERER 1)
 	mark_as_superbuild(SIMVASCULAR_NO_RENDERER)
 endif()
