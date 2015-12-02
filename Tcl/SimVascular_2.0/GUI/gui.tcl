@@ -48726,7 +48726,7 @@ proc wormGUIwritePHASTA { prompt_user_for_dir} {
   fconfigure $fp -translation lf
 
   set numNodes [geom_numPts -obj $face]
-  set nodeids [[[repos_exportToVtk -src $face] GetPointData] GetScalars]
+  set nodeids [[[repos_exportToVtk -src $face] GetPointData] GetArray "GlobalNodeID"]
 
   # write out header
   puts $fp "$numNodes [expr $numPtsInPeriod + 1]"
