@@ -73,6 +73,12 @@ option(SimVascular_SUPERBUILD
 set(SuperBuild_Libraries_Dir "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
 mark_as_superbuild(SuperBuild_Libraries_Dir)
 
+if (SIMVASCULAR_NO_RENDERER)
+	# Needs to be 1 not 'true'
+	set(SIMVASCULAR_NO_RENDERER 1)
+	mark_as_superbuild(SIMVASCULAR_NO_RENDERER)
+endif()
+
 #-----------------------------------------------------------------------------
 # unset NEED variables
 unset(USE_Fortran)

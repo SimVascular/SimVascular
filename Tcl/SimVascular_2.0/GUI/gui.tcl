@@ -46583,9 +46583,7 @@ proc mainGUI {} {
   global guiTRIMvars
   global gRen3d
   global SIMVASCULAR_NO_RENDERER
-  if { $SIMVASCULAR_NO_RENDERER == "0" } {
-    puts "No render window"
-  } else {
+  if { $SIMVASCULAR_NO_RENDERER != "1" } {
     set gRen3d [vis_gRenWin_3D]
   }
 
