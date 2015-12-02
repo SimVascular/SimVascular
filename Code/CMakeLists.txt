@@ -214,7 +214,7 @@ if(Plugin_TET_ADAPTOR)
 	set(BUILD_ThreeDSolver ON)
 endif()
 
-option(USE_PYTHON "Use Python" ON)
+option(USE_TCLPYTHON "Use Tcl Python" OFF)
 
 #-----------------------------------------------------------------------------
 # Adaptor Options
@@ -444,7 +444,7 @@ mark_as_superbuild(
 
 #-----------------------------------------------------------------------------
 # PYTHON
-if(USE_PYTHON)
+if(USE_TCLPYTHON)
 	find_package(PythonLibs REQUIRED)
 	mark_as_superbuild(
 		PYTHONLIBS_FOUND
