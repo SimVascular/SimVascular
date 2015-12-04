@@ -31,6 +31,7 @@
 set(lib lib_simvascular_tclpython)
 include_directories(${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS} ${TCL_INCLUDE_PATH})
 
+message("WTFFFFFFFFFFFFFFFFFFFF")
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
