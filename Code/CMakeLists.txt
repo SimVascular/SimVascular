@@ -215,6 +215,7 @@ if(Plugin_TET_ADAPTOR)
 endif()
 
 option(USE_TCLPYTHON "Use Tcl Python" OFF)
+mark_as_superbuild(USE_TCLPYTHON)
 
 #-----------------------------------------------------------------------------
 # Adaptor Options
@@ -454,6 +455,7 @@ if(USE_TCLPYTHON)
 		PYTHONLIBS_VERSION_STRING)
 
 	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/TclPython")
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_TCLPYTHON")
 endif()
 
 #-----------------------------------------------------------------------------

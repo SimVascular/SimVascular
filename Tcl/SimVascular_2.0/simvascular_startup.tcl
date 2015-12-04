@@ -1,24 +1,24 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Portions of the code Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
 #
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
-# 
+# contributors to the source code.
+#
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -68,20 +68,20 @@ if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
     set SIMVASCULAR_TIMESTAMP   REPLACE_SIMVASCULAR_TIMESTAMP
     set SIMVASCULAR_PLATFORM    REPLACE_SIMVASCULAR_PLATFORM
     set SIMVASCULAR_VERSION     REPLACE_SIMVASCULAR_VERSION
-    if {[string range $SIMVASCULAR_FULL_VER_NO 0 6] != "REPLACE"} { 
+    if {[string range $SIMVASCULAR_FULL_VER_NO 0 6] != "REPLACE"} {
       set SIMVASCULAR_RELEASE_BUILD 1
       set timestamp [file tail $simvascular_home]
       set SIMVASCULAR_BUILD_ID $timestamp
-      } else { 
+      } else {
         set SIMVASCULAR_RELEASE_BUILD 0
         set SIMVASCULAR_BUILD_ID "developer build"
       }
 }
 
-if {[info exists SIMVASCULAR_NO_RENDERER] == 0} {
-  global SIMVASCULAR_NO_RENDERER
+#if {[info exists SIMVASCULAR_NO_RENDERER] == 0} {
+#  global SIMVASCULAR_NO_RENDERER
   set SIMVASCULAR_NO_RENDERER "1"
-}
+#}
 
 # if { $SIMVASCULAR_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SIMVASCULAR_VERSION-$SIMVASCULAR_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
@@ -152,11 +152,11 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
     source $codefile
   }
 
-  if {$tcl_platform(platform) == "windows"} {    
+  if {$tcl_platform(platform) == "windows"} {
     set parasoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  SIMVASCULAR_PARASOLID_DLL]
-    
+
     if {$parasoliddll != ""} {
       puts "Found Parasolid.  Loading..."
       load $parasoliddll Parasolidsolid
@@ -165,17 +165,17 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
     set pschema_dir [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  SIMVASCULAR_PARASOLID_PSCHEMA_DIR]
-    
+
     if {$pschema_dir != ""} {
       puts "Found Parasolid Schema Directory."
       global env
       set env(P_SCHEMA) $pschema_dir
     }
- 
+
     set discretedll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  SIMVASCULAR_MESHSIM_DISCRETE_DLL]
-    
+
     if {$discretedll != ""} {
       puts "Found MeshSim Discrete Model.  Loading..."
       load $discretedll Meshsimdiscretesolid
@@ -184,7 +184,7 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
     set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
   			  SIMVASCULAR_MESHSIM_MESH_DLL]
-    
+
     if {$meshsimdll != ""} {
       puts "Found MeshSim Mesh.  Loading..."
       load $meshsimdll Meshsimmesh
@@ -193,7 +193,7 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
     set meshsimadaptdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
   			  SIMVASCULAR_MESHSIM_ADAPT_DLL]
-    
+
     if {$meshsimadaptdll != ""} {
       puts "Found MeshSim Adapt.  Loading..."
       load $meshsimadaptdll Meshsimadapt
@@ -202,13 +202,13 @@ if {$SIMVASCULAR_RELEASE_BUILD != 0} {
 
   if {$tcl_platform(platform) == "unix"} {
     catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_parasolid.so  Parasolidsolid}
-    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid} 
+    catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid}
     catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_mesh.so Meshsimmesh}
     catch {load $env(SIMVASCULAR_HOME)/lib_simvascular_meshsim_adaptor.so  Meshsimadapt}
   }
 
 } else {
-  
+
   source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 simvascular_developer_startup.tcl]
   if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
      catch {source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
@@ -287,7 +287,7 @@ if {![file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
             puts "ERROR: could not find registry key:\nHKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\$SIMVASCULAR_VERSION $SIMVASCULAR_MAJOR_VER_NO RunDir"
             set rundir ""
           }
-        } 
+        }
       }
       set execext {.exe}
       set execbinext {-bin.exe}
@@ -317,7 +317,7 @@ if {$tcl_platform(platform) == "windows"} {
   if {![file isdirectory $lastdir]} {
     set lastdir [file dirname $lastdir]
   }
- 
+
   puts "trying to return to: $lastdir"
   if [catch {cd $lastdir}] {
     catch {cd}
@@ -362,7 +362,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
 		  if {$meshsimdll != ""} {
 		      set gExternalPrograms(cvadaptor) [file join [file dirname $meshsimdll] [file tail $gExternalPrograms(cvadaptor)]]
 		  }
-	      } 
+	      }
 	    }
             set gExternalPrograms(cvtetadaptor) [file join $executable_home tetadaptor$execbinext]
             set gExternalPrograms(cvflowsolver) [file join $executable_home flowsolver$execbinext]
@@ -457,8 +457,8 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   after 5000 {set tkcon_delay_done 1}
   vwait tkcon_delay_done
   guiCV_display_windows 3d_only
-  if { $SIMVASCULAR_NO_RENDERER == "0" } { 
-    puts "Not render window mode" 
+  if { $SIMVASCULAR_NO_RENDERER == "0" } {
+    puts "Not render window mode"
   } else {
     guiCV_display_windows 3d_only
   }
