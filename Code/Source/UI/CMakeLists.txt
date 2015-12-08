@@ -18,8 +18,8 @@ if(NOT BUILD_SHARED_LIBS)
 		 ${SimVascular_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
 endif()
 
-if(USE_TCLPYTHON)
-  	include_directories(${PYTHON_INCLUDE_PATH})
+if (USE_TCLPYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH})
 endif()
 
 if(Plugin_TETGEN)

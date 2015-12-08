@@ -41,6 +41,8 @@
 #include "cv_arg.h"
 #include "cvVTK.h"
 #include "vtkTclUtil.h"
+#include "vtkPythonUtil.h"
+#include "PyVTKClass.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -51,6 +53,134 @@
 // main() lives.  ... Why?
 
 #include "cv_globals.h"
+#include <Python.h>
+
+PyObject* py_hello(PyObject* self, PyObject* args)
+{
+  char *s = "Hello from C!";
+  fprintf(stdout,"%s\n",s);
+  return Py_BuildValue("s", s);
+}
+
+PyObject* py_tclReposList(PyObject* self, PyObject* args)
+{
+  char *name;
+  gRepository->InitIterator();
+  while ( name = gRepository->GetNextName() ) {
+    fprintf(stderr,"%s\n",name);
+  }
+  Py_RETURN_NONE;
+}
+
+PyObject* py_exportVtkObj(PyObject* self, PyObject* args)
+{
+  RepositoryDataT type;
+  cvRepositoryData *pd;
+  char *result;
+  char *objName;
+  vtkObject *vtkObj;
+
+  fprintf(stderr,"Where\n");
+  PyArg_ParseTuple(args,"s",&objName);
+
+  fprintf(stderr,"Am\n");
+  fprintf(stderr,"Val %s\n",objName);
+  pd = gRepository->GetObject( objName );
+  if ( pd == NULL ) {
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  // Check type (be aware that this implementation is not
+  // ideal... what we'd rather be doing here is official RTTI to check
+  // that pd is of type cvDataObject... this would be much better than
+  // checking for any of the cvDataObject's derived types, since we'll have
+  // to remember to update this list if/when more classes are derived
+  // from cvDataObject... however RTTI in Sun's WorkShop implementation is
+  // not readily cooperating...).
+
+  fprintf(stderr,"I\n");
+  type = pd->GetType();
+
+  // RTTI version of type check (?):
+  //  if ( typeid( pd ) != typeid( cvDataObject ) ) {
+
+  fprintf(stderr,"in\n");
+  if ( ( type != POLY_DATA_T ) && ( type != STRUCTURED_PTS_T ) &&
+       ( type != UNSTRUCTURED_GRID_T ) && ( type != TEMPORALDATASET_T ) ) {
+
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  fprintf(stderr,"here\n");
+  vtkObj = ((cvDataObject *)pd)->GetVtkPtr();
+  fprintf(stderr,"NumbPoints: %d\n",((vtkPolyData *)vtkObj)->GetNumberOfPoints());
+  PyObject *returnObj = vtkPythonUtil::GetObjectFromPointer( vtkObj);
+  Py_INCREF(returnObj);
+  return returnObj;
+}
+
+PyObject* py_importVtkObj(PyObject* self, PyObject* args)
+{
+  fprintf(stderr,"Here! \n");
+  RepositoryDataT type;
+  cvRepositoryData *pd;
+  char *result = NULL;
+  char *objName = NULL;
+  PyObject *vtkPyObj = NULL;
+  vtkPolyData *vtkObj = NULL;
+
+  fprintf(stderr,"Here 2! \n");
+  PyArg_ParseTuple(args,"Os",&vtkPyObj,&objName);
+
+  // Get the vtk Object:
+  vtkObj = (vtkPolyData *)vtkPythonUtil::GetPointerFromObject(vtkPyObj,"vtkPolyData");
+  if ( vtkObj == NULL ) {
+    fprintf(stderr,"Estoy aqui\n");
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  fprintf(stderr,"Here 3! \n");
+  // Is the specified repository object name already in use?
+  if ( gRepository->Exists( objName ) ) {
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  fprintf(stderr,"Here 4! \n");
+  pd = new cvPolyData( vtkObj );
+  pd->SetName( objName );
+  if ( !( gRepository->Register( pd->GetName(), pd ) ) ) {
+    PyErr_SetString(PyExc_RuntimeError, result);
+    delete pd;
+    return Py_BuildValue("s",result);
+  }
+
+  fprintf(stderr,"Here 5! \n");
+  return Py_BuildValue("s",pd->GetName());
+}
+
+PyObject* py_createPd(PyObject* self, PyObject* args)
+{
+  vtkPolyData *empty = vtkPolyData::New();
+  const char *pythonicname = vtkPythonUtil::PythonicClassName("vtkPolyData");
+  fprintf(stderr,"Pythonic name %s\n",pythonicname);
+
+  PyObject *obj = vtkPythonUtil::GetObjectFromPointer(empty);
+  empty->Delete();
+  return obj;
+}
+
+PyMethodDef pythonc_methods[] = {
+  {"pyRepos_hello", py_hello, METH_VARARGS,"Say hello in C"},
+  {"pyRepos_accessHash", py_tclReposList, METH_VARARGS,"Attempt to access tcl hash table"},
+  {"pyRepos_exportToVtk", py_exportVtkObj, METH_VARARGS,"Export cvPolyData object to python vtk"},
+  {"pyRepos_importVtkPd", py_importVtkObj, METH_VARARGS,"Import vtkobject into repository"},
+  {"pyRepos_createPd", py_createPd, METH_VARARGS,"Simple Test"},
+  {NULL, NULL}
+};
 
 // Prototypes:
 
@@ -101,8 +231,8 @@ int Repos_WriteVtkUnstructuredGridCmd( ClientData clientData,
 				       Tcl_Interp *interp,
 				       int argc, CONST84 char *argv[] );
 
-//int Repos_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
-//		   int argc, CONST84 char *argv[] );
+int Repos_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
 
 
   // Label-related methods
@@ -185,6 +315,34 @@ int Repos_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "repos_clearLabel", Repos_ClearLabelCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+
+  Tcl_CreateCommand( interp, "repos_initPyMods", Repos_InitPyModulesCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  return TCL_OK;
+}
+
+//Must be called after the python interpreter is initiated and through
+//the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
+int Repos_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *name;
+
+  if ( argc != 1 ) {
+    Tcl_SetResult( interp, "usage: repos_initPyMods", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  //Import vtk
+  PyObject *vtkstring = PyString_FromString("vtk");
+  PyObject *vtkmodule = PyImport_Import(vtkstring);
+  PyModule_AddObject(PyImport_AddModule("__buildin__"), "vtk", vtkmodule);
+
+  //Init our defined functions
+  PyObject *pythonC;
+  pythonC = Py_InitModule("pythonc", pythonc_methods);
+  Py_INCREF(pythonC);
+  PyModule_AddObject(PyImport_AddModule("__buildin__"), "pythonc", pythonC);
 
   return TCL_OK;
 }

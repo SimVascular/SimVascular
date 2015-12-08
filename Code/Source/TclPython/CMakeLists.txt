@@ -29,14 +29,16 @@
  #=========================================================================#
 
 set(lib lib_simvascular_tclpython)
-set(modlib lib_simvascular_pythonmods)
-include_directories(${PYTHON_INCLUDE_PATH} ${PYTHON_INCLUDE_DIR} ${PYTHON_INCLUDE_DIRS} ${TCL_INCLUDE_PATH})
+include_directories(${PYTHON_INCLUDE_PATH}
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS}
+		    ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
 add_library(${lib} SHARED ${CSRCS})
-add_library(${modlib} SHARED myModules.c)
 
-target_link_libraries(${lib} ${PYTHON_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY})
-target_link_libraries(${modlib} ${PYTHON_LIBRARIES})
+target_link_libraries(${lib} lib_simvascular_repository
+			     lib_simvascular_globals
+	${PYTHON_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
