@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -33,7 +33,7 @@
  *
  *=========================================================================*/
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -74,13 +74,13 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] ); 
+		   int argc, CONST84 char *argv[] );
 static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] );    
+		   int argc, CONST84 char *argv[] );
 static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] );        
+		   int argc, CONST84 char *argv[] );
 static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] );        
+		   int argc, CONST84 char *argv[] );
 static int cvAdapt_LoadHessianFromFileMtd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 static int cvAdapt_ReadSolutionFromMeshMtd( ClientData clientData, Tcl_Interp *interp,
@@ -155,14 +155,14 @@ int Adapt_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
     return TCL_ERROR;
   }
-  cvFactoryRegistrar *adaptObjectRegistrar = 
+  cvFactoryRegistrar *adaptObjectRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "AdaptObjectRegistrar", NULL);
 
   char result[255];
   sprintf( result, "Adapt object registrar ptr -> %p\n", adaptObjectRegistrar );
   Tcl_AppendElement( interp, result );
   for (int i = 0; i < 5; i++) {
-    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n", 
+    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n",
       i, (adaptObjectRegistrar->GetFactoryMethodPtr(i)));
     Tcl_AppendElement( interp, result );
   }
@@ -351,7 +351,7 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
 void DeletegdscAdapt( ClientData clientData ) {
     cvAdaptObject *geom = (cvAdaptObject *)clientData;
-  
+
     gRepository->UnRegister( geom->GetName() );
 }
 
@@ -381,7 +381,7 @@ static void gdscAdaptPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "WriteAdaptedModel\n");
   tcl_printstr(interp, "WriteAdaptedMesh\n");
   tcl_printstr(interp, "WriteAdaptedSolution\n");
-  
+
   return;
 }
 
@@ -391,7 +391,7 @@ static void gdscAdaptPrintMethods( Tcl_Interp *interp )
 static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
-  char *meshFileName = NULL;  
+  char *meshFileName = NULL;
   char *solidFileName = NULL;
 
   char *usage;
@@ -399,7 +399,7 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-meshfile", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)
@@ -431,7 +431,7 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
 // cvAdapt_LoadModelMtd
 // ----------------
 static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] ) 
+		   int argc, CONST84 char *argv[] )
 {
   char *solidFileName = NULL;
 
@@ -439,7 +439,7 @@ static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &solidFileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &solidFileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -472,9 +472,9 @@ static int cvAdapt_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 // cvAdapt_LoadMeshMtd
 // ----------------
 static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] )    
+		   int argc, CONST84 char *argv[] )
 {
-  char *meshFileName = NULL;  
+  char *meshFileName = NULL;
 
   char *usage;
 
@@ -513,7 +513,7 @@ static int cvAdapt_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 // cvAdapt_LoadSolutionFromFileMtd
 // ----------------
 static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] )        
+		   int argc, CONST84 char *argv[] )
 {
   char *fileName = NULL;
 
@@ -521,7 +521,7 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -541,7 +541,7 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
     fprintf(stderr,"Adapt object should already be created! It is NULL\n");
     return TCL_ERROR;
   }
-  if (geom->LoadSolutionFromFile(fileName) != CV_OK) 
+  if (geom->LoadSolutionFromFile(fileName) != CV_OK)
   {
     fprintf(stderr,"Error in loading of solution\n");
     return TCL_ERROR;
@@ -554,7 +554,7 @@ static int cvAdapt_LoadSolutionFromFileMtd( ClientData clientData, Tcl_Interp *i
 // cvAdapt_LoadAvgSpeedFromFileMtd
 // ----------------
 static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] )        
+		   int argc, CONST84 char *argv[] )
 {
   char *fileName = NULL;
 
@@ -562,7 +562,7 @@ static int cvAdapt_LoadAvgSpeedFromFileMtd( ClientData clientData, Tcl_Interp *i
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -603,7 +603,7 @@ static int cvAdapt_LoadHessianFromFileMtd( ClientData clientData, Tcl_Interp *in
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -677,8 +677,8 @@ static int cvAdapt_SetAdaptOptionsMtd( ClientData clientData, Tcl_Interp *interp
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-flag", STRING_Type, &flag, NULL, REQUIRED, 0, { 0 } }, 
-    { "-value", DOUBLE_Type, &value, NULL, REQUIRED, 0, { 0 } }, 
+    { "-flag", STRING_Type, &flag, NULL, REQUIRED, 0, { 0 } },
+    { "-value", DOUBLE_Type, &value, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -739,9 +739,9 @@ static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 3;
   ARG_Entry arg_table[] = {
-    { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
-    { "-option", INT_Type, &option, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
-    { "-strategy", INT_Type, &strategy, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
+    { "-option", INT_Type, &option, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-strategy", INT_Type, &strategy, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)
@@ -869,7 +869,7 @@ static int cvAdapt_WriteAdaptedModelMtd( ClientData clientData, Tcl_Interp *inte
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -910,7 +910,7 @@ static int cvAdapt_WriteAdaptedMeshMtd( ClientData clientData, Tcl_Interp *inter
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -951,7 +951,7 @@ static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *i
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {

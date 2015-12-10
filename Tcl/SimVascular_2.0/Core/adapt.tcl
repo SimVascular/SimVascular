@@ -25,11 +25,11 @@ proc meshSimWriteAdaptMeshScript {} {
 
   set guiMMvars(metric_array_name) dummy
 
-  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]] 
-  set gFilenames(adapted_mesh_file) $basename.sms 
-  set gFilenames(adapted_vtu_mesh_file) $basename.vtu 
-  set gFilenames(adapted_vtp_surface_file) $basename.vtp 
-  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1 
+  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]]
+  set gFilenames(adapted_mesh_file) $basename.sms
+  set gFilenames(adapted_vtu_mesh_file) $basename.vtu
+  set gFilenames(adapted_vtp_surface_file) $basename.vtp
+  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1
 
   set ascflag                $guiMMvars(phasta_format)
   set model_file             $gFilenames(atdb_solid_file)
@@ -54,7 +54,7 @@ proc meshSimWriteAdaptMeshScript {} {
   set reductionRatio         $guiMMvars(error_reduction_factor)
   set maxCoarseFactor        $guiMMvars(gsize)
   set maxRefineFactor        $guiMMvars(min_gsize)
-  
+
   puts "Writing MeshSim Adapt Script File"
   set script_filename [file rootname $out_mesh_file].msas
 
@@ -85,7 +85,7 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "$object LoadModel -file $model_file"
   puts $fp "$object LoadMesh -file $mesh_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
-  puts $fp "$object LoadYbarFromFile -file $solution_file"
+  puts $fp "$object LoadAvgSpeedFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"
   puts $fp "$object SetAdaptOptions -flag metric_option -value $adapt_option"
   puts $fp "$object SetAdaptOptions -flag ratio -value $reductionRatio"
@@ -148,17 +148,17 @@ proc tetGenWriteAdaptMeshScript {} {
   global gFilenames
   global guiMMvars
 
-  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]] 
-  set gFilenames(adapted_vtu_mesh_file) $basename.vtu 
-  set gFilenames(adapted_vtp_surface_file) $basename.vtp 
-  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1 
+  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]]
+  set gFilenames(adapted_vtu_mesh_file) $basename.vtu
+  set gFilenames(adapted_vtp_surface_file) $basename.vtp
+  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1
 
   set ascflag                $guiMMvars(phasta_format)
   set vtu_mesh_file          $gFilenames(vtu_mesh_file)
   set vtp_surface_file       $gFilenames(vtp_surface_file)
 
   set solution_file          $gFilenames(solution_file)
-  set out_vtu_mesh_file      $gFilenames(adapted_vtu_mesh_file) 
+  set out_vtu_mesh_file      $gFilenames(adapted_vtu_mesh_file)
   set out_solution_file      $gFilenames(adapted_solution_file)
   set out_vtp_mesh_file      $gFilenames(adapted_vtp_surface_file)
 
@@ -172,7 +172,7 @@ proc tetGenWriteAdaptMeshScript {} {
   set reductionRatio         $guiMMvars(error_reduction_factor)
   set maxCoarseFactor        $guiMMvars(gsize)
   set maxRefineFactor        $guiMMvars(min_gsize)
-  
+
   puts "Writing TetGen Adapt Script File"
   set script_filename [file rootname $out_vtu_mesh_file].tgas
 
@@ -202,7 +202,7 @@ proc tetGenWriteAdaptMeshScript {} {
   puts $fp "$object CreateInternalMeshObject"
   puts $fp "$object LoadModel -file $vtp_surface_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
-  puts $fp "$object LoadYbarFromFile -file $solution_file"
+  puts $fp "$object LoadAvgSpeedFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"
   puts $fp "$object SetAdaptOptions -flag metric_option -value $adapt_option"
   puts $fp "$object SetAdaptOptions -flag ratio -value $reductionRatio"

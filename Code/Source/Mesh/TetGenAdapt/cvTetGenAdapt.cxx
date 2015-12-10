@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief The implementations of functions in cvTetGenAdapt
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "cvTetGenAdapt.h"
@@ -65,7 +65,7 @@
 #include <iostream>
 
 
-cvTetGenAdapt::cvTetGenAdapt() 
+cvTetGenAdapt::cvTetGenAdapt()
   : cvAdaptObject(KERNEL_TETGEN)
 {
   meshobject_ = NULL;
@@ -160,7 +160,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   }
 
   char* mesh_name = "/adapt/internal/meshobject";
-  
+
   char evalmestr[1024];
 
   if ( gRepository->Exists(mesh_name) ) {
@@ -171,7 +171,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   /*
   evalmestr[0]='\0';
   sprintf(evalmestr,"%s %s","repos_exists -obj ",mesh_name);
-  
+
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return CV_ERROR;
@@ -182,18 +182,18 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     return CV_ERROR;
   }
   */
-  
+
   evalmestr[0]='\0';
   sprintf(evalmestr,"%s","mesh_setKernel -name TetGen");
-  
+
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return CV_ERROR;
   }
-  
+
   evalmestr[0]='\0';
   sprintf(evalmestr,"%s %s","mesh_newObject -result ",mesh_name);
-  
+
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return CV_ERROR;
@@ -203,7 +203,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s %s %s",mesh_name," LoadModel -file ",solidFileName);
-  
+
     if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
       fprintf(stderr,"Error loading solid model in internal object creation\n");
       fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
@@ -215,18 +215,18 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s %s %s",mesh_name," LoadMesh -file ",meshFileName);
-  
+
     if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
       fprintf(stderr,"Error loading mesh in internal object creation\n");
       fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
       return CV_ERROR;
-    } 
+    }
   }
 
   meshobject_ = dynamic_cast<cvTetGenMeshObject*>(gRepository->GetObject(mesh_name));
-  	    
+
   return CV_OK;
- 
+
 }
 
 #else
@@ -306,7 +306,7 @@ int cvTetGenAdapt::LoadModel(char *fileName)
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
 
-  vtkSmartPointer<vtkXMLPolyDataReader> pdreader = 
+  vtkSmartPointer<vtkXMLPolyDataReader> pdreader =
     vtkSmartPointer<vtkXMLPolyDataReader>::New();
 
   insurface_mesh_ = vtkPolyData::New();
@@ -342,7 +342,7 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
 
   if (inmesh_ != NULL)
     inmesh_->Delete();
-  vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader = 
+  vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader =
     vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
 
   inmesh_ = vtkUnstructuredGrid::New();
@@ -526,11 +526,11 @@ int cvTetGenAdapt::ReadAvgSpeedFromMesh()
 // -----------------------
 //  SetAdaptOptions
 // -----------------------
-/** 
- * @brief Function to set the options for tetgen. Store temporarily in 
+/**
+ * @brief Function to set the options for tetgen. Store temporarily in
  * options object until the mesh is run
  * @param *flag char containing the flag to set
- * @param value if the flag requires a value, this double contains that 
+ * @param value if the flag requires a value, this double contains that
  * value to be set
  * @return *result: CV_ERROR if the flag doesn't exist. Else return CV_OK
  */
@@ -574,7 +574,7 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
 // -----------------------
 //  CheckOptions
 // -----------------------
-int cvTetGenAdapt::CheckOptions() 
+int cvTetGenAdapt::CheckOptions()
 {
   fprintf(stderr,"Check values\n");
   fprintf(stderr,"Poly: %d\n",options.poly_);
@@ -602,7 +602,7 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
     return CV_ERROR;
   }
   int numPoints = inmesh_->GetNumberOfPoints();
-  
+
   //Options 1,2, and 3 all use the hessian as adaption metric!
   //Option 4 uses an attached array to the input mesh
   switch(options.metric_option_) {
@@ -653,7 +653,7 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
 	  fprintf(stderr,"Given array name is not on input mesh!\n");
 	}
       }
-      else 
+      else
       {
 	fprintf(stderr,"Must give name of array to use as metric on mesh\n");
 	return CV_ERROR;
@@ -677,17 +677,17 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
       cout<<"Valid metric option not given!"<<endl;
       cout<<"\nSpecify a correct (adaptation) option (1-4):"<<endl;
       cout<<"\n1: Read average speed from file and then calculate hessian from";
-      cout<<"	average speed"; 
+      cout<<"	average speed";
       cout<<" simulation)"<<endl;
       cout<<"2: Read average speed from vtu mesh and then calculate hessian from ";
-      cout<<"average speed"; 
-      cout<<" simulation)"<<endl; 
+      cout<<"average speed";
+      cout<<" simulation)"<<endl;
       cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
-      cout<<" velocity over specified timestep range. Must provide"; 
+      cout<<" velocity over specified timestep range. Must provide";
       cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
       cout<<"	then calculated from avg. magnitude of velocity."<<endl;
       cout<<"4: Read array from mesh, and specify mesh metric with this array."<<endl;
-      
+
       return CV_ERROR;
   }
   break;
@@ -703,7 +703,7 @@ int cvTetGenAdapt::SetupMesh()
 {
   if (inmesh_ == NULL || insurface_mesh_ == NULL)
   {
-    fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
+    fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n");
     return CV_ERROR;
   }
   if (meshobject_ == NULL)
@@ -749,7 +749,7 @@ int cvTetGenAdapt::RunAdaptor()
   }
   if (inmesh_ == NULL || insurface_mesh_ == NULL)
   {
-    fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n"); 
+    fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n");
     return CV_ERROR;
   }
 
@@ -855,7 +855,7 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
     this->GetAdaptedMesh();
   }
 
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer = 
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer =
     vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetInputData(outsurface_mesh_);
   writer->SetFileName(fileName);
@@ -877,7 +877,7 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
     }
 
   }
-  vtkSmartPointer<vtkPolyData> face = 
+  vtkSmartPointer<vtkPolyData> face =
     vtkSmartPointer<vtkPolyData>::New();
   if (TGenUtils_GetFacePolyData(faceid,outsurface_mesh_,face)  != CV_OK)
   {
@@ -885,7 +885,7 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
     return CV_ERROR;
   }
 
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer = 
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer =
     vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetInputData(face);
   writer->SetFileName(fileName);
@@ -908,7 +908,7 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
     this->GetAdaptedMesh();
   }
 
-  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
+  vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
     vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
   writer->SetInputData(outmesh_);
   writer->SetFileName(fileName);
