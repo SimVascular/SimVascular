@@ -764,6 +764,14 @@ proc guiSV_model_load_model { {fn "" } } {
       }
       guiSV_model_add_faces_to_tree $kernel $inputName
       set withFaces 1
+    } elseif {[guiSV_model_check_array_exists $inputName 1 "ModelFaceID"]} {
+      catch {unset gPolyDataFaceNames}
+      set faceids [$inputName GetFaceIds]
+      foreach id $faceids {
+	set gPolyDataFaceNames($id) "noname_$id"
+      }
+      guiSV_model_add_faces_to_tree $kernel $inputName
+      set withFaces 1
     }
   }
 
