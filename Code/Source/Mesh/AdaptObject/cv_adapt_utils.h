@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -29,17 +29,17 @@
  *=========================================================================*/
 
 /** @file cv_adapt_utils.h
- *  @brief These functions are utilities that are called mostly by 
+ *  @brief These functions are utilities that are called mostly by
  *  cvTetGenAdapt
- *  @details These functions are called mostly by cvTetGenAdapt and 
- *  they provide a clean way for implementation of functions with that 
+ *  @details These functions are called mostly by cvTetGenAdapt and
+ *  they provide a clean way for implementation of functions with that
  *  class. They provide the full code for conversion between tetgen
  *  and vtkPolyData
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #ifndef __CV_ADAPT_UTILS_H
@@ -87,40 +87,40 @@ struct Hessian {
 
 bool AdaptUtils_file_exists (const std::string& name);
 
-// simple average over a patch surrounding the vertex    
+// simple average over a patch surrounding the vertex
 int AdaptUtils_SmoothHessians (vtkUnstructuredGrid *mesh);
 
 // hessian returned : 6-component (symmetric)
 // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
 // called in setSizeFieldUsingHessians (sizefield.cc)
-int AdaptUtils_getHessiansFromPhasta(double *hessiansFromPhasta, 
+int AdaptUtils_getHessiansFromPhasta(double *hessiansFromPhasta,
     vtkUnstructuredGrid *mesh,int nvar, double *hessians);
 
 int AdaptUtils_getHessian (vtkDoubleArray *Hessians,vtkIdType v, double T[3][3]);
 
-int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin, 
+int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin,
     int end, int incr);
 
 // attaches array to mesh entities
 // `dataID' is the MeshDataId
 // `nVar' is the no. of variables at each dof
 // e.g., `nVar'=5 (for flow problems) or 27 (for hessians)
-// `poly' is the polynomial order 
+// `poly' is the polynomial order
 // this routine attaches  "valueArray"
 // the incoming "valueArray" which contains data
-// for ALL vertices (general dofs) is split into 
+// for ALL vertices (general dofs) is split into
 // local entity-level arrays to handle the memory
-// during local mesh modifications 
-int AdaptUtils_attachArray ( double *valueArray, vtkUnstructuredGrid *mesh, 
+// during local mesh modifications
+int AdaptUtils_attachArray ( double *valueArray, vtkUnstructuredGrid *mesh,
       	     std::string dataName,int nVar, int poly );
 
 // get data (previously attached) from mesh
 // `dataID' is the MeshDataId
 // `nVar' is the no. of variables at each dof
 // e.g., `nVar'=5 (for flow problems) or 27 (for hessians)
-// `poly' is the polynomial order (ONLY order 1 is supported as of now) 
-// this routine gets attached data array from mesh   
-// in restart-writable format 
+// `poly' is the polynomial order (ONLY order 1 is supported as of now)
+// this routine gets attached data array from mesh
+// in restart-writable format
 // memory is allocated within the function
 // user has to delete the memory
 int AdaptUtils_getAttachedArray ( double *&valueArray, vtkUnstructuredGrid *mesh,
@@ -132,7 +132,7 @@ int AdaptUtils_fix4SolutionTransfer (vtkUnstructuredGrid *inmesh,vtkUnstructured
 int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd);
 
 // temporary function to split speed from or avg_sols
-int AdaptUtils_splitSpeedFromYbar( vtkUnstructuredGrid *mesh);
+int AdaptUtils_splitSpeedFromAvgSols( vtkUnstructuredGrid *mesh);
 
 // recover gradients from a VTKFilter
 int AdaptUtils_gradientsFromFilter (vtkUnstructuredGrid *mesh);
@@ -169,15 +169,15 @@ int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,t
 
 // to read parameters from a phasta file (filename)
 // parameters correspond to nshg & nvar, i.e., size of field-array
-// these parameters are used as reference values 
+// these parameters are used as reference values
 // (sometimes needed before reading the field-array)
-void AdaptUtils_readParametersFromFile (char *filename, char *fieldName,
+int AdaptUtils_readParametersFromFile (char *filename, char *fieldName,
 		       int &nshg, int &numVars);
 
 // to read array from a phasta file (filename)
 // memory is allocated HERE for 'valueArray'
 // `fieldName' tells which block to read like solution, error etc.
-void AdaptUtils_readArrayFromFile ( char *filename, char *fieldName,
+int AdaptUtils_readArrayFromFile ( char *filename, char *fieldName,
 		  double *&valueArray);
 
 // to write array to a phasta file (filename)
@@ -188,7 +188,7 @@ void AdaptUtils_readArrayFromFile ( char *filename, char *fieldName,
 void AdaptUtils_writeArrayToFile ( char *filename, char *fieldName,
 		  char *outputFormat, char *mode,
 		  int nshg, int numVars,
-		  int stepNumber, double *valueArray); 
+		  int stepNumber, double *valueArray);
 
 int AdaptUtils_checkArrayExists(vtkUnstructuredGrid *object,int datatype,std::string arrayname);
 #endif //__CV_ADAPT_UTILS_H

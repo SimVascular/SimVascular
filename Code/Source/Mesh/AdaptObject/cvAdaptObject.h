@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -82,7 +82,7 @@ public:
   virtual ~cvAdaptObject();
 
   KernelType GetKernel() const {return adapt_kernel_;}
-  //Instantiation function from SimVascular 
+  //Instantiation function from SimVascular
   static cvAdaptObject* DefaultInstantiateAdaptObject( Tcl_Interp *interp = NULL, KernelType t = KERNEL_TETGEN);
   //Called after Insantiation, create a cvMeshObject
   virtual int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
@@ -98,9 +98,11 @@ public:
   virtual int LoadModel(char *fileName)=0;
   virtual int LoadMesh(char *fileName)=0;
   virtual int LoadSolutionFromFile(char *fileName)=0;
+  virtual int LoadYbarFromFile(char *fileName)=0;
   virtual int LoadAvgSpeedFromFile(char *fileName)=0;
   virtual int LoadHessianFromFile(char *fileName)=0;
   virtual int ReadSolutionFromMesh()=0;
+  virtual int ReadYbarFromMesh()=0;
   virtual int ReadAvgSpeedFromMesh()=0;
 
   //Setup Operations
@@ -109,7 +111,7 @@ public:
   virtual int SetMetric(char *input,int option,
 		  int strategy)=0;
   virtual int SetupMesh()=0;
-  
+
   //Adapt Operations
   virtual int RunAdaptor()=0;
   virtual int PrintStats()=0;
@@ -123,11 +125,11 @@ public:
   virtual int WriteAdaptedModel(char *fileName)=0;
   virtual int WriteAdaptedMesh(char *fileName)=0;
   virtual int WriteAdaptedSolution(char *fileName)=0;
-  
+
 private:
   KernelType adapt_kernel_;
 };
 
 #endif // _CVADAPTOBJECT_H
-  
+
 

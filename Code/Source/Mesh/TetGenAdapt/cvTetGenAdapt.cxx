@@ -90,6 +90,7 @@ cvTetGenAdapt::cvTetGenAdapt()
   options.sphere_[4] = 1;
 
   sol_ = NULL;
+  ybar_ = NULL;
   hessians_ = NULL;
   avgspeed_ = NULL;
   errormetric_ = NULL;
@@ -371,7 +372,11 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
   if (sol_ != NULL)
     delete [] sol_;
 
-  AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
+  if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read solution from file\n");
+    return CV_ERROR;
+  }
 
   if (inmesh_ != NULL)
   {
@@ -385,6 +390,49 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
   else
   {
     fprintf(stderr,"Must load a mesh to attach solution to mesh\n");
+  }
+
+  return CV_OK;
+}
+
+// Retain Loading of Ybar for old solver versions
+// ---------------
+//  LoadYbar
+// ---------------
+int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
+{
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
+  if (ybar_ != NULL)
+    delete [] ybar_;
+
+  if (AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read ybar from file\n");
+    return CV_ERROR;
+  }
+
+  if (inmesh_ != NULL)
+  {
+    int nVar=5; //Number of variables in average speed
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching speed to mesh\n");
+      return CV_ERROR;
+    }
+    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error getting speed from ybar\n");
+      return CV_ERROR;
+    }
+  }
+  else
+  {
+    fprintf(stderr,"Must load a mesh to attach average speed to mesh\n");
   }
 
   return CV_OK;
@@ -406,7 +454,20 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
   char avgspeed_step[80];
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
 
-  AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_);
+  if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read average speed from file\n");
+    if (this->LoadYbarFromFile(fileName) != CV_OK)
+    {
+      fprintf(stderr,"Attempted to find ybar, couldn't read ybar from file either\n");
+      return CV_ERROR;
+    }
+    else
+    {
+      fprintf(stdout,"Note: Couldn't find average speed, but found ybar\n");
+      return CV_OK;
+    }
+  }
 
   if (inmesh_ != NULL)
   {
@@ -439,7 +500,11 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
   if (hessians_ != NULL)
     delete [] hessians_;
 
-  AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_);
+  if (AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read hessians from file\n");
+    return CV_ERROR;
+  }
 
   if (inmesh_ != NULL)
   {
@@ -477,6 +542,52 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
   if (AdaptUtils_averageSolutionsOnMesh(inmesh_,options.instep_,
 	options.outstep_,options.step_incr_) != CV_OK)
     return CV_ERROR;
+
+  return CV_OK;
+}
+
+//Retain for old solver versions for now
+// ---------------
+//  ReadYbarFromMesh
+// ---------------
+int cvTetGenAdapt::ReadYbarFromMesh()
+{
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+    return CV_ERROR;
+  }
+
+  if (ybar_ != NULL)
+    delete [] ybar_;
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+  {
+    fprintf(stderr,"Array %s does not exist on mesh\n","ybar");
+    return CV_ERROR;
+  }
+
+  int nVar = 5; //Number of variables in average speed
+  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,"ybar",nVar,
+	options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error when retrieving ybar array on mesh\n");
+    return CV_ERROR;
+  }
+
+  if (inmesh_ != NULL)
+  {
+    int nVar = 5; //Number of variables in average speed
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching ybar to mesh\n");
+      return CV_ERROR;
+    }
+    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error getting speed from average sols\n");
+      return CV_ERROR;
+    }
+  }
 
   return CV_OK;
 }
@@ -616,7 +727,10 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
 	  if (input == NULL)
 	    return CV_ERROR;
 	  if (this->LoadAvgSpeedFromFile(input) != CV_OK)
+	  {
+	    fprintf(stderr,"Could not load avg apeed or ybar from file\n");
 	    return CV_ERROR;
+	  }
 	}
       }
       else if (options.metric_option_ == 2)
@@ -808,7 +922,6 @@ int cvTetGenAdapt::TransferSolution()
   if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.outstep_) != CV_OK)
   {
     fprintf(stderr,"ERROR: Solution was not transferred\n");
-    return CV_ERROR;
   }
 
   return CV_OK;
@@ -925,23 +1038,24 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
   if (AdaptUtils_checkArrayExists(outmesh_,0,"solution") != CV_OK)
   {
     fprintf(stderr,"Array solution does not exist, must transfer solution prior to writing solution file\n");
-    return CV_ERROR;
   }
-
-  if (sol_ != NULL)
-    delete [] sol_;
-
-  int nVar = 5; //Number of variables in solution
-  if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
-	options.poly_) != CV_OK)
+  else
   {
-    fprintf(stderr,"Could not get solution from mesh\n");
-    return CV_ERROR;
-  }
+    if (sol_ != NULL)
+      delete [] sol_;
 
-  int numPoints = outmesh_->GetNumberOfPoints();
-  AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
-      nVar,options.outstep_,sol_);
+    int nVar = 5; //Number of variables in solution
+    if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
+	  options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Could not get solution from mesh\n");
+      return CV_ERROR;
+    }
+
+    int numPoints = outmesh_->GetNumberOfPoints();
+    AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
+	nVar,options.outstep_,sol_);
+  }
 
   return CV_OK;
 }

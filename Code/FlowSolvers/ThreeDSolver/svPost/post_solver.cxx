@@ -135,8 +135,8 @@ public:
     double* GetWallProperties() {return wpglobal_;};
 
     int ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool RequestedNewSn,
-            bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar, bool RequestedYerror,
-            double* qglobal,double* aglobal,double* dglobal, double* y1global, double* y2global, double* ye1global, double* ye2global,
+            bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar, bool YbarArrayExists, bool RequestedYerror,
+            double* qglobal,double* aglobal,double* dglobal, double *ybarglobal, double* y1global, double* y2global, double* ye1global, double* ye2global,
             const char* outdir);
 
     int ExportYBar(int stepnumber, int numy, double* yglobal, const char* outdir);
@@ -948,8 +948,8 @@ int CalculateWallStress(int nshgtot, int wallElementNum, int* wallElements, bool
 // =======================================
 
 int PostSolver::ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool RequestedNewSn,
-        bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar, bool RequestedYerror,
-        double* qglobal,double* aglobal,double* dglobal, double* y1global, double* y2global, double* ye1global, double* ye2global, const char* outdir){
+        bool RequestedSolution, bool RequestedTimeDeriv, bool RequestedDisplacements, bool RequestedYbar, bool YbarArrayExists, bool RequestedYerror,
+        double* qglobal,double* aglobal,double* dglobal, double *ybarglobal,double* y1global, double* y2global, double* ye1global, double* ye2global, const char* outdir){
 
     // Write the total restart into restart.lstep.0  NOTE 0 is not
     // used in our partitioned system which goes from 1..nproc
@@ -1040,7 +1040,18 @@ int PostSolver::ExportFlowSolverFileFormat(int lstep, int newstepnumber, bool Re
                 ( void* )(dglobal), &nitems, "double", iotype_ );
     }
 
-    if(RequestedYbar) {
+    if(YbarArrayExists) {
+        nitems = 3;
+        iarray[ 0 ] = nshgtot_;
+        iarray[ 1 ] = 5;
+        iarray[ 2 ] = lstep;
+        size = nshgtot_*5;
+        writeheader_( &irstin, "ybar ",
+                ( void* )iarray, &nitems, &size,"double", iotype_ );
+        nitems = size;
+        writedatablock_( &irstin, "ybar ",
+                ( void* )(ybarglobal), &nitems, "double", iotype_ );
+    }  else if(RequestedYbar) {
         nitems = 3;
         iarray[ 0 ] = nshgtot_;
         iarray[ 1 ] = 1;
@@ -1915,6 +1926,7 @@ int main(int argc, char* argv[])
     bool RequestedUnitsCm = true;
     bool RequestedTimeDeriv = false;
     bool RequestedYbar = false;
+    bool YbarArrayExists = false;
     bool RequestedYerror = false;
     bool RequestedFlowSolverFormat = false;
     bool RequestedOnlyLastStep = false;
@@ -2235,6 +2247,7 @@ int main(int argc, char* argv[])
     double *vwglobal = NULL;
     double *rwglobal = NULL;
     double *aglobal = NULL;
+    double *ybarglobal = NULL;
     double *y1global = NULL;
     double *y2global = NULL;
     double *ye1global = NULL;
@@ -2549,9 +2562,17 @@ int main(int argc, char* argv[])
         }
 
         if (RequestedYbar) {
+            //First attempt ybar, if older version of solver, this could exist
+            if ( (pp->ParseRestartFile( stepnumber , "ybar" , &numy, &ybarglobal)) == CV_ERROR ) {
+                cout << "No ybar in step " << stepnumber << endl;
+            } else {
+	      YbarArrayExists = true;
+	    }
             if ( (pp->ParseRestartFile( stepnumber , "average speed" , &numy, &y1global)) == CV_ERROR ) {
                 if (RequestedAll) {
                     RequestedYbar = false;
+		} else if (YbarArrayExists) {
+                  cout << "Ybar array exists in " << stepnumber << ", avg speed is inside" << endl;
                 } else {
                     cout << "ERROR reading average speed in step " << stepnumber << "!" << endl;
                     return 1;
@@ -2560,6 +2581,8 @@ int main(int argc, char* argv[])
             if ( (pp->ParseRestartFile( stepnumber , "average pressure" , &numy, &y2global)) == CV_ERROR ) {
                 if (RequestedAll) {
                     RequestedYbar = false;
+		} else if (YbarArrayExists) {
+                  cout << "Ybar array exists in " << stepnumber << ", avg pressure is inside" << endl;
                 } else {
                     cout << "ERROR reading average pressure in step " << stepnumber << "!" << endl;
                     return 1;
@@ -2596,8 +2619,8 @@ int main(int argc, char* argv[])
                 cout << "Exporting Flowsolver restart file...";
 
                 pp->ExportFlowSolverFileFormat(stepnumber,newstepnumber,RequestedNewSn,
-                        RequestedSolution,RequestedTimeDeriv,RequestedDisplacements,RequestedYbar,RequestedYerror,
-                        qglobal,aglobal,dglobal,y1global,y2global,ye1global,ye2global,outdir);
+                        RequestedSolution,RequestedTimeDeriv,RequestedDisplacements,RequestedYbar,YbarArrayExists, RequestedYerror,
+                        qglobal,aglobal,dglobal,ybarglobal,y1global,y2global,ye1global,ye2global,outdir);
 
                 cout << "Done." << endl;
             }
@@ -3102,7 +3125,22 @@ int main(int argc, char* argv[])
             // YBAR
             // ====
 
-            if(RequestedYbar) {
+	    if (YbarArrayExists) {
+	      vtkDoubleArray *ybar = vtkDoubleArray::New();
+	      ybar->SetNumberOfComponents(5);
+	      ybar->Allocate(nshgtot,10000);
+	      ybar->SetNumberOfTuples(nshgtot);
+	      ybar->SetName("ybar");
+	      for (i=0; i< nshgtot; i++) {
+		  for (int loopB=0; loopB< 5; loopB++) {
+		      currTuple[loopB] = ybarglobal[loopB*nshgtot+i];
+		  }
+		  // Set Tuple
+		  ybar->SetTuple(i,currTuple);
+	      }
+	      grid->GetPointData()->AddArray(ybar);
+	      ybar->Delete();
+	    } else if(RequestedYbar) {
                 vtkDoubleArray *ybar = vtkDoubleArray::New();
                 ybar->SetNumberOfComponents(1);
                 ybar->Allocate(nshgtot,10000);
@@ -3133,6 +3171,7 @@ int main(int argc, char* argv[])
                 grid->GetPointData()->AddArray(ybar);
                 ybar->Delete();
             }
+
 
             // ======
             // YERROR
@@ -3329,6 +3368,7 @@ int main(int argc, char* argv[])
         if (vwglobal != NULL) delete [] vwglobal;
         if (rwglobal != NULL) delete [] rwglobal;
         if (aglobal != NULL) delete [] aglobal;
+        if (ybarglobal != NULL) delete [] ybarglobal;
         if (y1global != NULL) delete [] y1global;
         if (y2global != NULL) delete [] y2global;
         if (ye1global != NULL) delete [] ye1global;
@@ -3341,6 +3381,7 @@ int main(int argc, char* argv[])
         vwglobal = NULL;
         rwglobal = NULL;
         aglobal = NULL;
+        ybarglobal = NULL;
         y1global = NULL;
         y2global = NULL;
         ye1global = NULL;
@@ -3360,6 +3401,7 @@ int main(int argc, char* argv[])
     if (vwglobal != NULL) delete [] vwglobal;
     if (rwglobal != NULL) delete [] rwglobal;
     if (aglobal != NULL) delete [] aglobal;
+    if (ybarglobal != NULL) delete [] ybarglobal;
     if (y1global != NULL) delete [] y1global;
     if (y2global != NULL) delete [] y2global;
     if (ye1global != NULL) delete [] ye1global;

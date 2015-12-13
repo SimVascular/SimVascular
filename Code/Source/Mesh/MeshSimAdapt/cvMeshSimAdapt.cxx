@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief The implementations of functions in cvMeshSimAdapt
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "cvMeshSimAdapt.h"
@@ -60,7 +60,7 @@
 
 #include <iostream>
 
-cvMeshSimAdapt::cvMeshSimAdapt() 
+cvMeshSimAdapt::cvMeshSimAdapt()
   : cvAdaptObject(KERNEL_MESHSIM)
 {
   meshobject_ = NULL;
@@ -155,7 +155,7 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   }
 
   char* mesh_name = "/adapt/internal/meshobject";
-  
+
   char evalmestr[1024];
 
   if ( gRepository->Exists(mesh_name) ) {
@@ -166,7 +166,7 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   /*
   evalmestr[0]='\0';
   sprintf(evalmestr,"%s %s","repos_exists -obj ",mesh_name);
-  
+
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return CV_ERROR;
@@ -177,18 +177,18 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     return CV_ERROR;
   }
   */
-  
+
   evalmestr[0]='\0';
   sprintf(evalmestr,"%s","mesh_setKernel -name MeshSim");
-  
+
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return CV_ERROR;
   }
-  
+
   evalmestr[0]='\0';
   sprintf(evalmestr,"%s %s","mesh_newObject -result ",mesh_name);
-  
+
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
     return CV_ERROR;
@@ -198,7 +198,7 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s %s %s",mesh_name," LoadModel -file ",solidFileName);
-  
+
     if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
       fprintf(stderr,"Error loading solid model in internal object creation\n");
       fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
@@ -211,18 +211,18 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   {
     evalmestr[0]='\0';
     sprintf(evalmestr,"%s %s %s",mesh_name," LoadMesh -file ",meshFileName);
-  
+
     if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
       fprintf(stderr,"Error loading mesh in internal object creation\n");
       fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
       return CV_ERROR;
-    } 
+    }
   }
 
   meshobject_ = dynamic_cast<cvMeshSimMeshObject*>(gRepository->GetObject(mesh_name));
-  	    
+
   return CV_OK;
- 
+
 }
 
 #else
@@ -311,7 +311,7 @@ int cvMeshSimAdapt::LoadModel(char *fileName)
      if (insurface_mesh_ != NULL)
 	insurface_mesh_->Delete();
      insurface_mesh_ = vtkPolyData::New();
-     vtkSmartPointer<vtkXMLPolyDataReader> reader = 
+     vtkSmartPointer<vtkXMLPolyDataReader> reader =
 	vtkSmartPointer<vtkXMLPolyDataReader>::New();
      reader->SetFileName(fileName);
      reader->Update();
@@ -373,7 +373,7 @@ int cvMeshSimAdapt::LoadMesh(char *fileName)
   if (!strncmp(extension,"vtu",3)) {
     if (inmesh_ != NULL)
       inmesh_->Delete();
-    vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader = 
+    vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader =
       vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
     inmesh_ = vtkUnstructuredGrid::New();
     ugreader->SetFileName(fileName);
@@ -383,7 +383,7 @@ int cvMeshSimAdapt::LoadMesh(char *fileName)
     printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
     printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
     inmesh_->BuildLinks();
-  } 
+  }
   else if (!strncmp(extension,"sms",3)) {
     fprintf(stdout,"SMS!\n");
     if (meshobject_ == NULL)
@@ -412,7 +412,11 @@ int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
   if (sol_ != NULL)
     delete [] sol_;
 
-  AdaptUtils_readArrayFromFile(fileName,"solution",sol_);
+  if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read solution from file\n");
+    return CV_ERROR;
+  }
 
   if (inmesh_ != NULL)
   {
@@ -422,6 +426,49 @@ int cvMeshSimAdapt::LoadSolutionFromFile(char *fileName)
       fprintf(stderr,"Error: Error when attaching solution to mesh\n");
       return CV_ERROR;
     }
+  }
+
+  return CV_OK;
+}
+
+// Retain Loading of Ybar for old solver versions
+// ---------------
+//  LoadYbar
+// ---------------
+int cvMeshSimAdapt::LoadYbarFromFile(char *fileName)
+{
+  if (!AdaptUtils_file_exists(fileName))
+  {
+    fprintf(stderr,"File %s does not exist\n",fileName);
+    return CV_ERROR;
+  }
+
+  if (ybar_ != NULL)
+    delete [] ybar_;
+
+  if (AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read ybar from file\n");
+    return CV_ERROR;
+  }
+
+  if (inmesh_ != NULL)
+  {
+    int nVar=5; //Number of variables in average speed
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching speed to mesh\n");
+      return CV_ERROR;
+    }
+    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error getting speed from ybar\n");
+      return CV_ERROR;
+    }
+  }
+  else
+  {
+    fprintf(stderr,"Must load a mesh to attach average speed to mesh\n");
   }
 
   return CV_OK;
@@ -443,7 +490,20 @@ int cvMeshSimAdapt::LoadAvgSpeedFromFile(char *fileName)
   char avgspeed_step[80];
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
 
-  AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_);
+  if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read average speed from file\n");
+    if (this->LoadYbarFromFile(fileName) != CV_OK)
+    {
+      fprintf(stderr,"Attempted to find ybar, couldn't read ybar from file either\n");
+      return CV_ERROR;
+    }
+    else
+    {
+      fprintf(stdout,"Note: Couldn't find average speed, but found ybar\n");
+      return CV_OK;
+    }
+  }
 
   if (inmesh_ != NULL)
   {
@@ -472,7 +532,11 @@ int cvMeshSimAdapt::LoadHessianFromFile(char *fileName)
   if (hessians_ != NULL)
     delete [] hessians_;
 
-  AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_);
+  if (AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_) != CV_OK)
+  {
+    fprintf(stderr,"Error: Couldn't read hessians from file\n");
+    return CV_ERROR;
+  }
 
   if (inmesh_ != NULL)
   {
@@ -497,7 +561,7 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
     return CV_ERROR;
   }
-  
+
   if (sol_ != NULL)
     delete [] sol_;
   fprintf(stdout,"Getting solution from step %d to step %d in increments of %d\n",
@@ -505,6 +569,52 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
   if (AdaptUtils_averageSolutionsOnMesh(inmesh_,options.instep_,
 	options.outstep_,options.step_incr_) != CV_OK)
     return CV_ERROR;
+
+  return CV_OK;
+}
+
+//Retain for old solver versions for now
+// ---------------
+//  ReadYbarFromMesh
+// ---------------
+int cvMeshSimAdapt::ReadYbarFromMesh()
+{
+  if (inmesh_ == NULL)
+  {
+    fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
+    return CV_ERROR;
+  }
+
+  if (ybar_ != NULL)
+    delete [] ybar_;
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+  {
+    fprintf(stderr,"Array %s does not exist on mesh\n","ybar");
+    return CV_ERROR;
+  }
+
+  int nVar = 5; //Number of variables in average speed
+  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,"ybar",nVar,
+	options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error when retrieving ybar array on mesh\n");
+    return CV_ERROR;
+  }
+
+  if (inmesh_ != NULL)
+  {
+    int nVar = 5; //Number of variables in average speed
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"ybar",nVar,options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error when attaching ybar to mesh\n");
+      return CV_ERROR;
+    }
+    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
+    {
+      fprintf(stderr,"Error: Error getting speed from average sols\n");
+      return CV_ERROR;
+    }
+  }
 
   return CV_OK;
 }
@@ -551,11 +661,11 @@ int cvMeshSimAdapt::ReadAvgSpeedFromMesh()
 // -----------------------
 //  SetAdaptOptions
 // -----------------------
-/** 
- * @brief Function to set the options for meshsim. Store temporarily in 
+/**
+ * @brief Function to set the options for meshsim. Store temporarily in
  * options object until the mesh is run
  * @param *flag char containing the flag to set
- * @param value if the flag requires a value, this double contains that 
+ * @param value if the flag requires a value, this double contains that
  * value to be set
  * @return *result: CV_ERROR if the flag doesn't exist. Else return CV_OK
  */
@@ -599,7 +709,7 @@ int cvMeshSimAdapt::SetAdaptOptions(char *flag,double value)
 // -----------------------
 //  CheckOptions
 // -----------------------
-int cvMeshSimAdapt::CheckOptions() 
+int cvMeshSimAdapt::CheckOptions()
 {
   fprintf(stdout,"Check values\n");
   fprintf(stdout,"Poly: %d\n",options.poly_);
@@ -641,7 +751,10 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
 	  if (input == NULL)
 	    return CV_ERROR;
 	  if (this->LoadAvgSpeedFromFile(input) != CV_OK)
+	  {
+	    fprintf(stderr,"Could not load avg apeed or ybar from file\n");
 	    return CV_ERROR;
+	  }
 	}
       }
       else if (options.metric_option_ == 2)
@@ -678,7 +791,7 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
 	  fprintf(stderr,"Given array name is not on input mesh!\n");
 	}
       }
-      else 
+      else
       {
 	fprintf(stderr,"Must give name of array to use as metric on mesh\n");
 	return CV_ERROR;
@@ -702,15 +815,15 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
       cout<<"Valid metric option not given!"<<endl;
       cout<<"\nSpecify a correct (adaptation) option (1-4):"<<endl;
       cout<<"\n1: Read average speed from file and then calculate hessian from";
-      cout<<"	speed"<<endl; 
+      cout<<"	speed"<<endl;
       cout<<"2: Read average speed from vtu mesh and then calculate hessian from ";
-      cout<<"speed"<<endl; 
+      cout<<"speed"<<endl;
       cout<<"3: Read solution from vtu mesh, calculate avg. magnitude of";
-      cout<<" velocity over specified timestep range. Must provide"; 
+      cout<<" velocity over specified timestep range. Must provide";
       cout<<" cylinder_results as one vtu with all timesteps. Hessian is";
       cout<<"	then calculated from avg. magnitude of velocity."<<endl;
       cout<<"4: Read array from mesh, and specify mesh metric with this array."<<endl;
-      
+
       return CV_ERROR;
   }
   break;
@@ -828,7 +941,6 @@ int cvMeshSimAdapt::TransferSolution()
   if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.outstep_) != CV_OK)
   {
     fprintf(stderr,"ERROR: Solution was not transferred\n");
-    return CV_ERROR;
   }
 
   return CV_OK;
@@ -875,7 +987,7 @@ int cvMeshSimAdapt::WriteAdaptedModel(char *fileName)
     this->GetAdaptedMesh();
   }
 
-  vtkSmartPointer<vtkXMLPolyDataWriter> writer = 
+  vtkSmartPointer<vtkXMLPolyDataWriter> writer =
     vtkSmartPointer<vtkXMLPolyDataWriter>::New();
   writer->SetInputData(outsurface_mesh_);
   writer->SetFileName(fileName);
@@ -905,12 +1017,12 @@ int cvMeshSimAdapt::WriteAdaptedMesh(char *fileName)
   fprintf(stdout,"Reading Mesh!\n");
 
   if (!strncmp(extension,"vtu",3)) {
-    vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
+    vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer =
       vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
     writer->SetInputData(outmesh_);
     writer->SetFileName(fileName);
     writer->Update();
-  } 
+  }
   else if (!strncmp(extension,"sms",3)) {
     if (meshobject_->WriteMesh(fileName,0) != CV_OK)
     {
@@ -931,23 +1043,24 @@ int cvMeshSimAdapt::WriteAdaptedSolution(char *fileName)
   if (AdaptUtils_checkArrayExists(outmesh_,0,"solution") != CV_OK)
   {
     fprintf(stderr,"Array solution does not exist, must transfer solution prior to writing solution file\n");
-    return CV_ERROR;
   }
-
-  if (sol_ != NULL)
-    delete [] sol_;
-
-  int nVar = 5; //Number of variables in solution
-  if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
-	options.poly_) != CV_OK)
+  else
   {
-    fprintf(stderr,"Could not get solution from mesh\n");
-    return CV_ERROR;
-  }
+    if (sol_ != NULL)
+      delete [] sol_;
 
-  int numPoints = outmesh_->GetNumberOfPoints();
-  AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
-      nVar,options.outstep_,sol_);
+    int nVar = 5; //Number of variables in solution
+    if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
+	  options.poly_) != CV_OK)
+    {
+      fprintf(stderr,"Could not get solution from mesh\n");
+      return CV_ERROR;
+    }
+
+    int numPoints = outmesh_->GetNumberOfPoints();
+    AdaptUtils_writeArrayToFile(fileName,"solution","binary","write",numPoints,
+	nVar,options.outstep_,sol_);
+  }
 
   return CV_OK;
 }
