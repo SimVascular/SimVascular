@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief This is the filter to loft a solid from segmentation groups
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkLoftPolyDataSolid.h"
@@ -282,7 +282,7 @@ vtkPolyData *vtkLoftPolyDataSolid::GetInput(int idx)
 }
 
 //----------------------------------------------------------------------------
-void vtkLoftPolyDataSolid::PrintSelf(ostream& os, 
+void vtkLoftPolyDataSolid::PrintSelf(ostream& os,
     vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -292,7 +292,7 @@ void vtkLoftPolyDataSolid::PrintSelf(ostream& os,
   os << "UseLinearSampleAlongLength:" << (this->UseLinearSampleAlongLength?"On":"Off") << endl;
   os << "UseFFT:" << (this->UseFFT?"On":"Off") << endl;
   os << "NumLinearPtsAlongLength: " << this->NumLinearPtsAlongLength <<endl;
-  os << "NumModes: " << this->NumModes <<endl; 
+  os << "NumModes: " << this->NumModes <<endl;
   os << "NumOutPtsInSegs: " << this->NumOutPtsInSegs <<endl;
   os << "NumOutPtsAlongLength: " << this->NumOutPtsAlongLength <<endl;
 }
@@ -317,38 +317,38 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
   vtkKochanekSpline *splineZ;
   //if (this->SplineType == 0)
   //{
-  //  //vtkSmartPointer<vtkCardinalSpline> splineX = 
+  //  //vtkSmartPointer<vtkCardinalSpline> splineX =
   //  //  vtkSmartPointer<vtkCardinalSpline>::New();
-  //  //vtkSmartPointer<vtkCardinalSpline> splineY = 
+  //  //vtkSmartPointer<vtkCardinalSpline> splineY =
   //  //  vtkSmartPointer<vtkCardinalSpline>::New();
-  //  //vtkSmartPointer<vtkCardinalSpline> splineZ = 
+  //  //vtkSmartPointer<vtkCardinalSpline> splineZ =
   //  //  vtkSmartPointer<vtkCardinalSpline>::New();
   //  splineX = vtkCardinalSpline::New();
   //  splineY = vtkCardinalSpline::New();
   //  splineZ = vtkCardinalSpline::New();
   //}
-  //else if (this->SplineType == 1) 
+  //else if (this->SplineType == 1)
   //{
-    //vtkSmartPointer<vtkKochanekSpline> splineX = 
+    //vtkSmartPointer<vtkKochanekSpline> splineX =
     //  vtkSmartPointer<vtkKochanekSpline>::New();
-    //vtkSmartPointer<vtkKochanekSpline> splineY = 
+    //vtkSmartPointer<vtkKochanekSpline> splineY =
     //  vtkSmartPointer<vtkKochanekSpline>::New();
-    //vtkSmartPointer<vtkKochanekSpline> splineZ = 
+    //vtkSmartPointer<vtkKochanekSpline> splineZ =
     //  vtkSmartPointer<vtkKochanekSpline>::New();
-    splineX = vtkKochanekSpline::New(); 
-    splineX->SetDefaultBias(this->Bias); 
-    splineX->SetDefaultTension(this->Tension); 
+    splineX = vtkKochanekSpline::New();
+    splineX->SetDefaultBias(this->Bias);
+    splineX->SetDefaultTension(this->Tension);
     splineX->SetDefaultContinuity(this->Continuity);
     splineY = vtkKochanekSpline::New();
-    splineY->SetDefaultBias(this->Bias); 
-    splineY->SetDefaultTension(this->Tension); 
+    splineY->SetDefaultBias(this->Bias);
+    splineY->SetDefaultTension(this->Tension);
     splineY->SetDefaultContinuity(this->Continuity);
     splineZ = vtkKochanekSpline::New();
-    splineZ->SetDefaultBias(this->Bias); 
-    splineZ->SetDefaultTension(this->Tension); 
+    splineZ->SetDefaultBias(this->Bias);
+    splineZ->SetDefaultTension(this->Tension);
     splineZ->SetDefaultContinuity(this->Continuity);
   //}
-       
+
   double t;
   double tmpPt[3];
   int lenpts=0;
@@ -381,7 +381,7 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
       {
 	t = (1.0*splineX->GetNumberOfPoints())/
 	  (1.0*(this->NumOutPtsAlongLength-1))*n;
-	
+
 	outPts[n][0] = splineX->Evaluate(t);
 	outPts[n][1] = splineY->Evaluate(t);
 	outPts[n][2] = splineZ->Evaluate(t);
@@ -411,10 +411,10 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
 
     if (this->UseFFT)
     {
-      double firstPt[3]; 
+      double firstPt[3];
       double lastPt[3];
       for (int r=0;r<3;r++)
-      {  
+      {
 	firstPt[r] = outPts[0][r];
 	lastPt[r] = outPts[numPts-1][r];
       }
@@ -464,16 +464,16 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
     for (int j=0;j<this->NumOutPtsAlongLength;j++)
     {
       sampledPts[j]->InsertNextPoint(outPts[j]);
-    } 
+    }
   } //NumOutPtsInSegs
 
-  vtkSmartPointer<vtkPoints> vPts = 
+  vtkSmartPointer<vtkPoints> vPts =
     vtkSmartPointer<vtkPoints>::New();
-  vtkSmartPointer<vtkIdList> vconnA = 
+  vtkSmartPointer<vtkIdList> vconnA =
     vtkSmartPointer<vtkIdList>::New();
-  vtkSmartPointer<vtkIdList> vconnB = 
+  vtkSmartPointer<vtkIdList> vconnB =
     vtkSmartPointer<vtkIdList>::New();
-  vtkSmartPointer<vtkPolyData> vPD = 
+  vtkSmartPointer<vtkPolyData> vPD =
     vtkSmartPointer<vtkPolyData>::New();
 
   vPts->Allocate(200,400);
@@ -510,7 +510,7 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
 	vconnA->InsertNextId(numCurvePts + offset);
 	vconnB->InsertNextId(numCurvePts + offset);
       }
-      else 
+      else
       {
 	vconnA->InsertNextId(j + 1 + offset);
 	vconnA->InsertNextId(numCurvePts + j + 1 + offset);
@@ -568,7 +568,7 @@ void vtkLoftPolyDataSolid::deleteArray(double **ptr, int a, int b) {
     delete ptr;
 }
 
-int vtkLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, double t0, 
+int vtkLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, double t0,
                             double dt, int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -612,7 +612,7 @@ int vtkLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, doub
               double m = (orgPts[j][1]-orgPts[j-1][1])/(orgPts[j][0]-orgPts[j-1][0]);
               outPts[i][1] = m*(t - orgPts[j-1][0]) + orgPts[j-1][1];
               break;
-          }   
+          }
       }
 
       if (j == numOrgPts) {
@@ -633,7 +633,7 @@ int vtkLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, doub
 
 }
 
-int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed, 
+int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
                                      int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -648,12 +648,12 @@ int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts,
     // find the length of the curve
     double length = 0;
     curveLength(orgPts,numOrgPts,closed,&length);
- 
+
     // now do linear interpolation of each coordinate
     double **xin = this->createArray(numOrgPts+1,2);
     double **yin = this->createArray(numOrgPts+1,2);
-    double **zin = this->createArray(numOrgPts+1,2);   
- 
+    double **zin = this->createArray(numOrgPts+1,2);
+
     int i;
     double t = 0;
     for (i=0;i < numOrgPts;i++) {
@@ -666,7 +666,7 @@ int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts,
         }
         t += sqrt( (orgPts[j][0]-orgPts[i][0])*(orgPts[j][0]-orgPts[i][0]) +
                    (orgPts[j][1]-orgPts[i][1])*(orgPts[j][1]-orgPts[i][1]) +
-                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) ); 
+                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) );
     }
 
     int numPts = numOrgPts;
@@ -707,7 +707,7 @@ int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts,
     double **outPts = this->createArray(numOutPts,3);
     if (*outPts == NULL) {
         this->deleteArray(xin,numOrgPts+1,2); this->deleteArray(xout,numOutPts,2);
-        this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2); 
+        this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2);
         this->deleteArray(zin,numOrgPts+1,2); this->deleteArray(zout,numOutPts,2);
         return 0;
     }
@@ -724,7 +724,7 @@ int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts,
 
     // clean up
     this->deleteArray(xin,numOrgPts+1,2); this->deleteArray(xout,numOutPts,2);
-    this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2); 
+    this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2);
     this->deleteArray(zin,numOrgPts+1,2); this->deleteArray(zout,numOutPts,2);
 
     *rtnOutPts = outPts;
@@ -736,7 +736,7 @@ int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts,
 int vtkLoftPolyDataSolid::curveLength(double **pts, int numPts, int closed, double *length) {
 
     // This method takes an original set of points and returns the length
-    // of the line 2-D line.  
+    // of the line 2-D line.
 
     // If you specify closed == 1, the curve is assumed to be closed
     // and the distance between the last point and the first is included
@@ -760,7 +760,7 @@ int vtkLoftPolyDataSolid::curveLength(double **pts, int numPts, int closed, doub
         if (j == numPts) {
             j = 0;
         }
-        result += sqrt( (pts[j][0]-pts[i][0])*(pts[j][0]-pts[i][0]) + 
+        result += sqrt( (pts[j][0]-pts[i][0])*(pts[j][0]-pts[i][0]) +
                         (pts[j][1]-pts[i][1])*(pts[j][1]-pts[i][1]) +
                         (pts[j][2]-pts[i][2])*(pts[j][2]-pts[i][2]) );
     }
@@ -769,7 +769,7 @@ int vtkLoftPolyDataSolid::curveLength(double **pts, int numPts, int closed, doub
     return 1;
 }
 
-int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes, 
+int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes,
                                      int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -788,12 +788,12 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
     // find the length of the curve
     double length = 0;
     this->curveLength(orgPts,numOrgPts,closed,&length);
- 
+
     // now do linear interpolation of each coordinate
     double **xin = this->createArray(numOrgPts+1,2);
     double **yin = this->createArray(numOrgPts+1,2);
-    double **zin = this->createArray(numOrgPts+1,2);   
- 
+    double **zin = this->createArray(numOrgPts+1,2);
+
     int i;
     double t = 0;
     for (i=0;i < numOrgPts;i++) {
@@ -806,7 +806,7 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
         }
         t += sqrt( (orgPts[j][0]-orgPts[i][0])*(orgPts[j][0]-orgPts[i][0]) +
                    (orgPts[j][1]-orgPts[i][1])*(orgPts[j][1]-orgPts[i][1]) +
-                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) ); 
+                   (orgPts[j][2]-orgPts[i][2])*(orgPts[j][2]-orgPts[i][2]) );
     }
 
     int numPts = numOrgPts;
@@ -823,7 +823,7 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
     double **xmodes;
     double **ymodes;
     double **zmodes;
-  
+
     // need to unhardcore this
     int numInterpPts = 2048;
 
@@ -857,21 +857,21 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
     double Pi = 3.1415926535;
     double omega = 2.0*Pi/length;
 
-    if (this->inverseFFT(xmodes, keepNumModes, t0, dt, omega, 
+    if (this->inverseFFT(xmodes, keepNumModes, t0, dt, omega,
                    numOutPts, &xout) == 0) {
         this->deleteArray(xmodes,keepNumModes,2);
         this->deleteArray(ymodes,keepNumModes,2);
         this->deleteArray(zmodes,keepNumModes,2);
         return 0;
     }
-    if (this->inverseFFT(ymodes, keepNumModes, t0, dt, omega, 
+    if (this->inverseFFT(ymodes, keepNumModes, t0, dt, omega,
                    numOutPts, &yout) == 0) {
         this->deleteArray(xmodes,keepNumModes,2);this->deleteArray(xout,numOutPts,2);
         this->deleteArray(ymodes,keepNumModes,2);
         this->deleteArray(zmodes,keepNumModes,2);
         return 0;
     }
-    if (this->inverseFFT(zmodes, keepNumModes, t0, dt, omega, 
+    if (this->inverseFFT(zmodes, keepNumModes, t0, dt, omega,
                    numOutPts, &zout) == 0) {
         this->deleteArray(xmodes,keepNumModes,2);this->deleteArray(xout,numOutPts,2);
         this->deleteArray(ymodes,keepNumModes,2);this->deleteArray(yout,numOutPts,2);
@@ -883,7 +883,7 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
     double **outPts = this->createArray(numOutPts,3);
     if (*outPts == NULL) {
         this->deleteArray(xin,numOrgPts+1,2); this->deleteArray(xout,numOutPts,2);
-        this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2); 
+        this->deleteArray(yin,numOrgPts+1,2); this->deleteArray(yout,numOutPts,2);
         this->deleteArray(zin,numOrgPts+1,2); this->deleteArray(zout,numOutPts,2);
         return 0;
     }
@@ -900,7 +900,7 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
 
     // clean up
     this->deleteArray(xout,numOutPts,2);
-    this->deleteArray(yout,numOutPts,2); 
+    this->deleteArray(yout,numOutPts,2);
     this->deleteArray(zout,numOutPts,2);
 
     *rtnOutPts = outPts;
@@ -909,7 +909,7 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
 
 }
 
-int vtkLoftPolyDataSolid::inverseFFT(double **terms, int numTerms, double t0, double dt, double omega, 
+int vtkLoftPolyDataSolid::inverseFFT(double **terms, int numTerms, double t0, double dt, double omega,
                          int numRtnPts, double ***rtnPts) {
 
   int i,j;
@@ -998,7 +998,7 @@ int vtkLoftPolyDataSolid::FFT(double **pts, int numPts, int numInterpPts, int nu
     if (*terms == NULL) {
         return 0;
     }
-   
+
     // here we calculate dt so that our time series will go from
     // 0 to T - dt.
 

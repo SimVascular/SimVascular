@@ -36,6 +36,11 @@ set(lib lib_simvascular_solid)
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
+if(USE_TCLPYTHON)
+	include_directories(${PYTHON_INCLUDE_PATH}
+		    ${PYTHON_INCLUDE_DIR}
+		    ${PYTHON_INCLUDE_DIRS})
+endif()
 
 SET(CXXSRCS cvSolidModel.cxx)
 SET(HDRS    cvSolidModel.h)
@@ -49,6 +54,9 @@ target_link_libraries(${lib}
 			lib_simvascular_globals lib_simvascular_utils
 			lib_simvascular_polydatasolid
             )
+if(USE_TCLPYTHON)
+   target_link_libraries(${lib} ${PYTHON_LIBRARIES})
+endif()
 
 if(SIMVASCULAR_INSTALL_LIBS)
 	install(TARGETS ${lib}

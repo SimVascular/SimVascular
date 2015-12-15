@@ -64,6 +64,7 @@
 #include "gp_Circ.hxx"
 #include "Geom_BezierCurve.hxx"
 #include "GeomPlate_CurveConstraint.hxx"
+#include "Geom_BSplineSurface.hxx"
 #include "Geom_Surface.hxx"
 #include "TopoDS_Edge.hxx"
 #include "TopoDS_Wire.hxx"
@@ -77,9 +78,9 @@
 #include "BRepBuilderAPI_MakeEdge.hxx"
 #include "BRepBuilderAPI_MakeWire.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepBuilderAPI_MakeShell.hxx"
 #include "BRepBuilderAPI_MakeVertex.hxx"
 #include "BRepBuilderAPI_MakeSolid.hxx"
-#include "BRepBuilderAPI_Sewing.hxx"
 #include "BRepBuilderAPI_Copy.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
@@ -116,10 +117,10 @@
 #include "TColgp_SequenceOfXY.hxx"
 #include "TColgp_SequenceOfXYZ.hxx"
 #include "TColgp_HArray1OfPnt.hxx"
+#include "TColgp_Array2OfPnt.hxx"
+#include "TColStd_Array1OfInteger.hxx"
 #include "GeomPlate_PlateG0Criterion.hxx"
 #include "GeomPlate_MakeApprox.hxx"
-#include "ShapeFix_FreeBounds.hxx"
-#include "ShapeFix_Shape.hxx"
 
 //Doc stuff
 #include "TDF_Label.hxx"
@@ -498,42 +499,17 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   //}
   //attacher.Perform();
 
-  //Attacher!
-  int numFilled=0;
-  BRepBuilderAPI_Sewing attacher;
-  attacher.Add(shape);
-  Standard_Real sewtoler =  1.e-6;
-  Standard_Real closetoler =  1.e-2;
-  ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
-        	  Standard_False,Standard_False);
-  TopoDS_Compound freeWires = findFree.GetClosedWires();
-  TopExp_Explorer NewEdgeExp;
-  NewEdgeExp.Init(freeWires,TopAbs_EDGE);
-  for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
-  {
-    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
-
-    BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
-    wiremaker.Build();
-
-    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
-    filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
-    filler.Build();
-
-    attacher.Add(filler.Face());
-    numFilled ++;
-  }
-  attacher.Perform();
-
   if (geom_ != NULL)
     this->RemoveShape();
 
-  TopoDS_Shell tmpShell = TopoDS::Shell(attacher.SewedShape());
-  BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
-  solidmaker.Build();
-
+  int numFilled=0;
+  BRepBuilderAPI_Sewing attacher;
   this->NewShape();
-  *geom_ = solidmaker.Solid();
+  if (OCCTUtils_CapShapeToSolid(shape,*geom_,attacher,numFilled) != CV_OK)
+  {
+    fprintf(stderr,"Error capping shape\n");
+    return CV_ERROR;
+  }
   this->AddShape();
 
 
@@ -568,6 +544,11 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
 
   int issue=0;
   if (OCCTUtils_CheckIsSolid(*geom_,issue) != CV_OK)
+  {
+    fprintf(stderr,"Shape is not solid after cap\n");
+    return CV_ERROR;
+  }
+  if (issue != 0)
   {
     fprintf(stderr,"Shape is not solid after cap\n");
     return CV_ERROR;
@@ -1303,6 +1284,18 @@ int cvOCCTSolidModel::ReadNative( char *filename )
     fprintf(stderr,"File can only be read with .brep extension\n");
     return CV_ERROR;
   }
+  fprintf(stdout,"---------------------------------------------------------\n");
+  fprintf(stdout,"Printing Shape Info\n");
+  fprintf(stdout,"Orientation: %d\n",geom_->Orientation());
+  fprintf(stdout,"Shape Type:  %d\n",geom_->ShapeType());
+  fprintf(stdout,"Free:        %d\n",geom_->Free());
+  fprintf(stdout,"Locked:      %d\n",geom_->Locked());
+  fprintf(stdout,"Modified:    %d\n",geom_->Modified());
+  fprintf(stdout,"Orientable:  %d\n",geom_->Orientable());
+  fprintf(stdout,"Closed:      %d\n",geom_->Closed());
+  fprintf(stdout,"Infinite:    %d\n",geom_->Infinite());
+  fprintf(stdout,"Convex:      %d\n",geom_->Convex());
+  fprintf(stdout,"---------------------------------------------------------\n");
 
   return CV_OK;
 }
@@ -1516,6 +1509,95 @@ int cvOCCTSolidModel::RemoveShape()
   {
       fprintf(stderr,"Shape has already been deleted, cannot remove\n");
       return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// -------------------
+// CreateBSplineSurface
+// -------------------
+int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
+    int &len1,int &len2,double *uKnots,int &uKlen,double *vKnots,int &vKlen,
+    double *uMults,int &uMlen,double *vMults,int &vMlen,int &p,int &q)
+{
+  //Create a BSpline surface from the input control points,knots, and mults
+
+  TColgp_Array2OfPnt cPoints(1,len2,1,len1);
+  for (int i=0;i<len1;i++)
+  {
+    for (int j=0;j<len2;j++)
+    {
+      gp_Pnt newPnt(CX[i][j],CY[i][j],CZ[i][j]);
+      cPoints.SetValue(j+1,i+1,newPnt);
+    }
+  }
+
+  //Knot spans
+  TColStd_Array1OfReal uKCol(1,uKlen);
+  for (int i=0;i<uKlen;i++)
+    uKCol.SetValue(i+1, uKnots[i]);
+  TColStd_Array1OfReal vKCol(1,vKlen);
+  for (int i=0;i<vKlen;i++)
+    vKCol.SetValue(i+1, vKnots[i]);
+
+  //Mult spans
+  TColStd_Array1OfInteger uMCol(1,uMlen);
+  for (int i=0;i<uMlen;i++)
+    uMCol.SetValue(i+1,(int) uMults[i]);
+  TColStd_Array1OfInteger vMCol(1,vMlen);
+  for (int i=0;i<vMlen;i++)
+    vMCol.SetValue(i+1,(int) vMults[i]);
+
+  Standard_Real tol = 1.e-6;
+  Handle(Geom_BSplineSurface) bspline;
+  Handle(Geom_Surface) aSurf;
+  try {
+    Standard_Boolean uPer=Standard_False,vPer=Standard_False;
+    bspline = new Geom_BSplineSurface(cPoints,uKCol,vKCol,uMCol,vMCol,p,q,uPer,vPer);
+    bspline->SetUPeriodic();
+    aSurf = bspline;
+  }
+  catch (Standard_ConstructionError)
+  {
+    fprintf(stderr,"Construction Error\n");
+    return CV_ERROR;
+  }
+  int numFilled=0;
+  BRepBuilderAPI_Sewing attacher;
+  BRepBuilderAPI_MakeShell shellBuilder(aSurf);
+  TopoDS_Shape aShape(shellBuilder.Shape());
+  this->NewShape();
+  if (OCCTUtils_CapShapeToSolid(aShape,*geom_,attacher,numFilled) != CV_OK)
+  {
+    fprintf(stderr,"Error capping shape\n");
+    return CV_ERROR;
+  }
+  this->AddShape();
+
+  fprintf(stdout,"---------------------------------------------------------\n");
+  fprintf(stdout,"Printing Shape Info\n");
+  fprintf(stdout,"Orientation: %d\n",geom_->Orientation());
+  fprintf(stdout,"Shape Type:  %d\n",geom_->ShapeType());
+  fprintf(stdout,"Free:        %d\n",geom_->Free());
+  fprintf(stdout,"Locked:      %d\n",geom_->Locked());
+  fprintf(stdout,"Modified:    %d\n",geom_->Modified());
+  fprintf(stdout,"Orientable:  %d\n",geom_->Orientable());
+  fprintf(stdout,"Closed:      %d\n",geom_->Closed());
+  fprintf(stdout,"Infinite:    %d\n",geom_->Infinite());
+  fprintf(stdout,"Convex:      %d\n",geom_->Convex());
+  fprintf(stdout,"---------------------------------------------------------\n");
+
+  int issue=0;
+  if (OCCTUtils_CheckIsSolid(*geom_,issue) != CV_OK)
+  {
+    fprintf(stderr,"Shape is not solid after cap\n");
+    return CV_ERROR;
+  }
+  if (issue != 0)
+  {
+    fprintf(stderr,"Shape is not solid after cap\n");
+    return CV_ERROR;
   }
 
   return CV_OK;

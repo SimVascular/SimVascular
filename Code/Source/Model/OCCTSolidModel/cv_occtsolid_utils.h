@@ -49,6 +49,7 @@
 #include "cvOCCTSolidModel.h"
 
 #include "BRepFilletAPI_MakeFillet.hxx"
+#include "BRepBuilderAPI_Sewing.hxx"
 #include "Standard_Real.hxx"
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
@@ -103,6 +104,13 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
     		int faceA, int faceB, double radius,double minRadius,
 		char blendname[]);
 
+int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
+    		TopoDS_Shape &shape,const int numCurves, const TopoDS_Wire *curves,
+		const int pres3d);
+
+int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
+    		BRepBuilderAPI_Sewing &attacher,int &numFilled);
+
 /* -------- */
 /* Helpers for loft */
 /* -------- */
@@ -122,6 +130,7 @@ Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
 		const Handle(Geom_BSplineSurface)& aSurface);
 
 Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge);
+
 
 /* -------- */
 /* Set */

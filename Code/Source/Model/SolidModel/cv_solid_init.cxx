@@ -46,12 +46,17 @@
 #include "cvPolyData.h"
 #include "cvPolyDataSolid.h"
 #include "cv_sys_geom.h"
+#include "vtkPythonUtil.h"
+#include "PyVTKClass.h"
 
 #include "cvFactoryRegistrar.h"
 
 #ifdef USE_DISCRETE_MODEL
 #include "cvMeshSimDiscreteSolidModel.h"
 int DiscreteUtils_Init();
+#endif
+#ifdef USE_OPENCASCADE
+#include "cvOCCTSolidModel.h"
 #endif
 
 // The following is needed for Windows
@@ -63,6 +68,336 @@ int DiscreteUtils_Init();
 // --------
 
 #include "cv_globals.h"
+#include "Python.h"
+
+//Python intialization functions. Called from python interpreter
+//
+// --------------------
+// pySolid.hello
+// --------------------
+PyObject* hello(PyObject* self, PyObject* args)
+{
+  char *s = "Hello from C!";
+  fprintf(stdout,"%s\n",s);
+  return Py_BuildValue("s", s);
+}
+
+PyObject* tclReposList(PyObject* self, PyObject* args)
+{
+  char *name;
+  gRepository->InitIterator();
+  while ( name = gRepository->GetNextName() ) {
+    fprintf(stderr,"%s\n",name);
+  }
+  Py_RETURN_NONE;
+}
+
+// --------------------
+// pySolid.exportVtkObj
+// --------------------
+PyObject* exportVtkObj(PyObject* self, PyObject* args)
+{
+  RepositoryDataT type;
+  cvRepositoryData *pd;
+  char *result;
+  char *objName;
+  vtkObject *vtkObj;
+
+  PyArg_ParseTuple(args,"s",&objName);
+
+  pd = gRepository->GetObject( objName );
+  if ( pd == NULL ) {
+    fprintf(stderr,"Object is not in repository\n");
+    return NULL;
+  }
+
+  // Check type (be aware that this implementation is not
+  // ideal... what we'd rather be doing here is official RTTI to check
+  // that pd is of type cvDataObject... this would be much better than
+  // checking for any of the cvDataObject's derived types, since we'll have
+  // to remember to update this list if/when more classes are derived
+  // from cvDataObject... however RTTI in Sun's WorkShop implementation is
+  // not readily cooperating...).
+
+  type = pd->GetType();
+
+  // RTTI version of type check (?):
+  //  if ( typeid( pd ) != typeid( cvDataObject ) ) {
+
+  if ( ( type != POLY_DATA_T ) && ( type != STRUCTURED_PTS_T ) &&
+       ( type != UNSTRUCTURED_GRID_T ) && ( type != TEMPORALDATASET_T ) ) {
+
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  vtkObj = ((cvDataObject *)pd)->GetVtkPtr();
+  PyObject *returnObj = vtkPythonUtil::GetObjectFromPointer( vtkObj);
+  Py_INCREF(returnObj);
+  return returnObj;
+}
+
+// --------------------
+// pySolid.importVtkObj
+// --------------------
+PyObject* importVtkObj(PyObject* self, PyObject* args)
+{
+  cvRepositoryData *pd;
+  char *result = NULL;
+  char *objName = NULL;
+  PyObject *vtkPyObj = NULL;
+  vtkPolyData *vtkObj = NULL;
+
+  PyArg_ParseTuple(args,"Os",&vtkPyObj,&objName);
+
+  // Get the vtk Object:
+  vtkObj = (vtkPolyData *)vtkPythonUtil::GetPointerFromObject(vtkPyObj,"vtkPolyData");
+  if ( vtkObj == NULL ) {
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  // Is the specified repository object name already in use?
+  if ( gRepository->Exists( objName ) ) {
+    PyErr_SetString(PyExc_RuntimeError, result);
+    return Py_BuildValue("s",result);
+  }
+
+  pd = new cvPolyData( vtkObj );
+  pd->SetName( objName );
+  if ( !( gRepository->Register( pd->GetName(), pd ) ) ) {
+    PyErr_SetString(PyExc_RuntimeError, result);
+    delete pd;
+    return Py_BuildValue("s",result);
+  }
+
+  return Py_BuildValue("s",pd->GetName());
+}
+
+// --------------------
+// pySolid.createPd
+// --------------------
+PyObject* createPd(PyObject* self, PyObject* args)
+{
+  vtkPolyData *empty = vtkPolyData::New();
+  const char *pythonicname = vtkPythonUtil::PythonicClassName("vtkPolyData");
+  fprintf(stderr,"Pythonic name %s\n",pythonicname);
+
+  PyObject *obj = vtkPythonUtil::GetObjectFromPointer(empty);
+  empty->Delete();
+  return obj;
+}
+
+// --------------------
+// pySolid.importTuple
+// --------------------
+PyObject* importTuple1D(PyObject* self, PyObject* args)
+{
+  PyObject *py_tuple;
+  int len;
+  if (!PyArg_ParseTuple(args,"O",&py_tuple))
+  {
+    fprintf(stderr,"Error importing tuple\n");
+    return NULL;
+  }
+  len = PyTuple_Size(py_tuple);
+  int *vals;
+  vals = new int[len];
+  for (int i=0;i<len;i++)
+  {
+    vals[i] = (int) PyInt_AsLong(PyTuple_GetItem(py_tuple,i));
+    fprintf(stdout,"Check val %d\n",vals[i]);
+  }
+
+  delete [] vals;
+  return Py_BuildValue("s","success");;
+}
+
+// --------------------
+// getArrayFromDoubleList
+// --------------------
+double *getArrayFromDoubleList(PyObject* listObj,int &len)
+{
+  len = PyList_Size(listObj);
+  double *arr = new double[len];
+  for (int i=0;i<len;i++)
+  {
+    arr[i] = (double) PyFloat_AsDouble(PyList_GetItem(listObj,i));
+  }
+  return arr;
+}
+
+// --------------------
+// getArrayFromDoubleList2D
+// --------------------
+double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny)
+{
+  lenx = PyList_Size(listObj);
+  double **arr = new double*[lenx];
+  for (int i=0;i<lenx;i++)
+  {
+    PyObject *newList = PyList_GetItem(listObj,i);
+    leny = PyList_Size(newList);
+    arr[i] = new double[leny];
+    for (int j=0;j<leny;j++)
+      arr[i][j] = (double) PyFloat_AsDouble(PyList_GetItem(newList,j));
+  }
+  return arr;
+}
+
+// --------------------
+// pySolid.importList1D
+// --------------------
+PyObject* importList1D(PyObject* self, PyObject* args)
+{
+  PyObject *py_list;
+  if (!PyArg_ParseTuple(args,"O!",&PyList_Type,&py_list))
+  {
+    fprintf(stderr,"Error importing list\n");
+    return NULL;
+  }
+  double *vals = NULL;
+  int len=0;
+  vals = getArrayFromDoubleList(py_list,len);
+
+  delete [] vals;
+  return Py_BuildValue("s","success");
+}
+
+// --------------------
+// pySolid.importList2D
+// --------------------
+PyObject* importList2D(PyObject* self, PyObject* args)
+{
+  PyObject *py_list;
+  int lenx=0,leny=0;
+  double **arr = NULL;
+  if (!PyArg_ParseTuple(args,"O!",&PyList_Type,&py_list))
+  {
+    fprintf(stderr,"Error importing list\n");
+    return NULL;
+  }
+  arr = getArrayFromDoubleList2D(py_list,lenx,leny);
+
+  for (int i=0;i<lenx;i++)
+    delete [] arr[i];
+
+  delete [] arr;
+  return Py_BuildValue("s","success");
+}
+
+// --------------------
+// pySolid.convertListsToOCCTObject
+// --------------------
+PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
+{
+  //Call cvOCCTSolidModel function to create BSpline surf
+  cvOCCTSolidModel *geom;
+  if (cvSolidModel::gCurrentKernel != SM_KT_OCCT)
+  {
+    fprintf(stderr,"Solid Model kernel must be OCCT\n");
+    return NULL;
+  }
+
+  char *objName;
+  int p=0,q=0;
+  PyObject *X,*Y,*Z,*uKnots,*vKnots,*uMults,*vMults,*uDeg,*vDeg;
+  if (!PyArg_ParseTuple(args,"sO!O!O!O!O!O!O!ii",&objName,
+						&PyList_Type,&X,
+					        &PyList_Type,&Y,
+					        &PyList_Type,&Z,
+					        &PyList_Type,&uKnots,
+						&PyList_Type,&vKnots,
+						&PyList_Type,&uMults,
+						&PyList_Type,&vMults,
+						&p,&q))
+  {
+    fprintf(stderr,"Could not import 1 char, 7 tuples, and 2 ints: X,Y,Z,uKnots,vKnots,uMults,vMults,uDeg,vDeg");
+    return NULL;
+  }
+
+  geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
+  if ( geom == NULL ) {
+    fprintf(stderr,"Object is not in repository\n");
+    return NULL;
+  }
+  //Get X,Y,Z arrays
+  double **Xarr=NULL,**Yarr=NULL,**Zarr=NULL;
+  int Xlen1=0,Xlen2=0,Ylen1=0,Ylen2=0,Zlen1=0,Zlen2=0;
+  Py_INCREF(X); Py_INCREF(Y); Py_INCREF(Z);
+  Xarr = getArrayFromDoubleList2D(X,Xlen1,Xlen2);
+  Yarr = getArrayFromDoubleList2D(Y,Ylen1,Ylen2);
+  Zarr = getArrayFromDoubleList2D(Z,Zlen1,Zlen2);
+  Py_DECREF(X); Py_DECREF(Y); Py_DECREF(Z);
+  //Clean up
+  if ((Xlen1 != Ylen1 || Ylen1 != Zlen1 || Zlen1 != Xlen1) ||
+      (Xlen2 != Ylen2 || Ylen2 != Zlen2 || Zlen2 != Xlen2))
+  {
+    fprintf(stderr,"X,Y,and Z inputs need to be same dimensions\n");
+    for (int i=0;i<Xlen1;i++)
+      delete [] Xarr[i];
+    delete [] Xarr;
+    for (int i=0;i<Ylen1;i++)
+      delete [] Yarr[i];
+    delete [] Yarr;
+    for (int i=0;i<Zlen1;i++)
+      delete [] Zarr[i];
+    delete [] Zarr;
+    return NULL;
+  }
+
+  //Get knots and multiplicity arrays
+  double *uKarr=NULL,*vKarr=NULL,*uMarr=NULL,*vMarr=NULL;
+  int uKlen=0,vKlen=0,uMlen=0,vMlen=0;
+  uKarr = getArrayFromDoubleList(uKnots,uKlen);
+  vKarr = getArrayFromDoubleList(vKnots,vKlen);
+  uMarr = getArrayFromDoubleList(uMults,uMlen);
+  vMarr = getArrayFromDoubleList(vMults,vMlen);
+
+  if (geom->CreateBSplineSurface(Xarr,Yarr,Zarr,Xlen1,Xlen2,
+    uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != CV_OK)
+  {
+    //Set special python thingy
+    fprintf(stderr,"Conversion to BSpline surface didn't work\n");
+    return NULL;
+  }
+
+  //Clean up
+  for (int i=0;i<Xlen1;i++)
+  {
+    delete [] Xarr[i];
+    delete [] Yarr[i];
+    delete [] Zarr[i];
+  }
+  delete [] Xarr;
+  delete [] Yarr;
+  delete [] Zarr;
+
+  delete [] uKarr;
+  delete [] vKarr;
+  delete [] uMarr;
+  delete [] vMarr;
+
+  return Py_BuildValue("s","success");
+}
+
+//All functions listed and initiated as pySolid_methods declared here
+// --------------------
+// pySolid_methods
+// --------------------
+PyMethodDef pySolid_methods[] = {
+  {"hello", hello, METH_VARARGS,"Say hello in C"},
+  {"accessHash", tclReposList, METH_VARARGS,"Attempt to access tcl hash table"},
+  {"exportToVtk", exportVtkObj, METH_VARARGS,"Export cvPolyData object to python vtk"},
+  {"importVtkPd", importVtkObj, METH_VARARGS,"Import vtkobject into repository"},
+  {"createPd", createPd, METH_VARARGS,"Simple Test"},
+  {"importTuple1D", importTuple1D, METH_VARARGS,"Test import tuple"},
+  {"importList1D", importList1D, METH_VARARGS,"Test import list"},
+  {"importList2D", importList2D, METH_VARARGS,"Test import list 2D"},
+  {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
+  {NULL, NULL}
+};
+
 
 // Prototypes:
 // -----------
@@ -154,6 +489,9 @@ int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
 void DeleteSolid( ClientData clientData );
 
+int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] );
+
 int Solid_SetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
@@ -168,6 +506,9 @@ int Model_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
 			      int argc, CONST84 char *argv[] );
+
+int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
 
 
 // Solid object methods
@@ -375,6 +716,9 @@ int Solid_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "solid_methods", Solid_ListMethodsCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
+  Tcl_CreateCommand( interp, "solid_newObject", Solid_NewObjectCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+
   Tcl_CreateCommand( interp, "solid_setKernel", Solid_SetKernelCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "solid_getKernel", Solid_GetKernelCmd,
@@ -384,6 +728,38 @@ int Solid_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Model_Convert_NURBS_To_PolyCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+
+  Tcl_CreateCommand( interp, "solid_initPyMods", Solid_InitPyModulesCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+
+  return TCL_OK;
+}
+
+//Must be called after the python interpreter is initiated and through
+//the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
+// --------------------
+// Solid_InitPyModules
+// --------------------
+int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *name;
+
+  if ( argc != 1 ) {
+    Tcl_SetResult( interp, "usage: repos_initPyMods", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  //Import vtk
+  PyObject *vtkstring = PyString_FromString("vtk");
+  PyObject *vtkmodule = PyImport_Import(vtkstring);
+  PyModule_AddObject(PyImport_AddModule("__buildin__"), "vtk", vtkmodule);
+
+  //Init our defined functions
+  PyObject *pythonC;
+  pythonC = Py_InitModule("pySolid", pySolid_methods);
+  Py_INCREF(pythonC);
+  PyModule_AddObject(PyImport_AddModule("__buildin__"), "pySolid", pythonC);
 
   return TCL_OK;
 }
@@ -2885,6 +3261,75 @@ void DeleteSolid( ClientData clientData )
   gRepository->UnRegister( geom->GetName() );
 }
 
+// ------------------
+// Solid_NewObjectCmd
+// ------------------
+
+int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
+			int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *objName, *fileName;
+
+  int table_sz = 1;
+  ARG_Entry arg_table[] = {
+    { "-name", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_sz, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Make sure the specified result object does not exist:
+  if ( gRepository->Exists( objName ) ) {
+    Tcl_AppendResult( interp, "object ", objName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Instantiate the new solid:
+  cvSolidModel *geom;
+  if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
+      cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
+      cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
+
+	  geom = cvSolidModel::DefaultInstantiateSolidModel( interp);
+
+	  if ( geom == NULL ) {
+	    return TCL_ERROR;
+	  }
+
+	  // Register the new solid:
+	  if ( !( gRepository->Register( objName, geom ) ) ) {
+	    Tcl_AppendResult( interp, "error registering obj ", objName,
+			      " in repository", (char *)NULL );
+	    delete geom;
+	    return TCL_ERROR;
+	  }
+
+  }
+
+  else {
+    fprintf( stdout, "current kernel is not valid (%i)\n",cvSolidModel::gCurrentKernel);
+    //Tcl_SetResult( interp, "current kernel is not valid", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  // Create object command for new solid:
+  Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
+  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), Solid_ObjectCmd,
+		     (ClientData)geom, DeleteSolid );
+  return TCL_OK;
+}
 
 
 // ------------------

@@ -60,10 +60,14 @@
 #include "BRepCheck_Solid.hxx"
 #include "BRep_Tool.hxx"
 #include "BRep_Builder.hxx"
+#include "BRepFill_Filling.hxx"
 #include "BRepAdaptor_Curve.hxx"
 #include "BRepBuilderAPI_FindPlane.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepBuilderAPI_MakeSolid.hxx"
+#include "BRepBuilderAPI_MakeWire.hxx"
 #include "BRepBuilderAPI_MakeEdge.hxx"
+#include "BRepBuilderAPI_Sewing.hxx"
 #include "BRepFilletAPI_MakeFillet.hxx"
 
 #include "ChFi3D_FilletShape.hxx"
@@ -78,6 +82,8 @@
 #include "TNaming_Builder.hxx"
 
 #include "ShapeAnalysis_Surface.hxx"
+#include "ShapeFix_FreeBounds.hxx"
+#include "ShapeFix_Shape.hxx"
 
 #include "GeomAPI_Interpolate.hxx"
 #include "Geom_Plane.hxx"
@@ -352,6 +358,77 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 
   return CV_OK;
 }
+// ---------------------
+// OCCTUtils_CreateEdgeBlend
+// ---------------------
+/**
+ * @brief Procedure to create edge blend between two faces faceA and faceB
+ * @param &shape shape containing faces and resultant shape with blend
+ * @param shapetool the XDEDoc manager that contains attribute info
+ * @param shapelabel the label for the shape registered in XDEDoc
+ * @param filletmake the occt API to make a fillet
+ * @param faceA first integer face to blend
+ * @param faceB second integer face to blend
+ * @param radius Maximum radius to set anywhere on the fillet.
+ * @param minRadius Minimum radius to set anywhere on the fillet. A linear
+ * interpolation is created between the minimum and maximum radius specified
+ * based on the angle created bewteen the two faces at a set number of points
+ * around the fillet edge. The new fillet radius value will be somehwere
+ * between the maximum and minimum radius values given.
+ * @param blendname Name to be given the new face created for the shape
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
+    BRepBuilderAPI_Sewing &attacher,int &numFilled)
+{
+  //Attacher!
+  attacher.Add(shape);
+  Standard_Real sewtoler =  1.e-6;
+  Standard_Real closetoler =  1.e-2;
+  ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
+        	  Standard_False,Standard_False);
+  TopoDS_Compound freeWires = findFree.GetClosedWires();
+  TopExp_Explorer NewEdgeExp;
+  NewEdgeExp.Init(freeWires,TopAbs_EDGE);
+  for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
+  {
+    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
+
+    BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
+    wiremaker.Build();
+
+    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+    filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
+
+    try {
+      filler.Build();
+    }
+    catch (Standard_Failure)
+    {
+      fprintf(stderr,"Failure when filling holes\n");
+      return CV_ERROR;
+    }
+
+    attacher.Add(filler.Face());
+    numFilled ++;
+  }
+  fprintf(stderr,"Number of holes found: %d\n",numFilled);
+  attacher.Perform();
+
+  TopoDS_Shell tmpShell;
+  try {
+    tmpShell = TopoDS::Shell(attacher.SewedShape());
+  }
+  catch (Standard_TypeMismatch) {
+    fprintf(stderr,"No open boundaries found\n");
+    return CV_ERROR;
+  }
+  BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
+  solidmaker.Build();
+
+  geom = solidmaker.Solid();
+  return CV_OK;
+}
 
 // ---------------------
 // OCCTUtils_MakeLoftedSurf
@@ -611,6 +688,23 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     //surface->SetVPeriodic();
   }
 
+  if (OCCTUtils_ShapeFromBSplineSurface(surface,shape,numCurves,
+	curves,pres3d) != CV_OK)
+  {
+    fprintf(stderr,"Error in conversion from bspline surface to shape\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// ---------------------
+// OCCTUtils_ShapeFromBSplineSurface
+// ---------------------
+int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
+    		TopoDS_Shape &shape,const int numCurves, const TopoDS_Wire *curves,
+		const int pres3d)
+{
   gp_Pnt tmpPoint = surface->Pole(1,1);
   tmpPoint.SetX(tmpPoint.X()+10.0);
   tmpPoint.SetY(tmpPoint.Y()+10.0);
@@ -1447,21 +1541,27 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
  */
 int OCCTUtils_CheckIsSolid(const TopoDS_Shape &shape,int &issue)
 {
-  BRepCheck_Solid solidchecker(TopoDS::Solid(shape));
-  BRepCheck_ListOfStatus status = solidchecker.Status();
-  BRepCheck_ListIteratorOfListOfStatus statit;
-  statit.Initialize(status);
-  for (int i=0;statit.More();statit.Next())
-  {
-    BRepCheck_Status checker = statit.Value();
-    if (checker != 0)
+  try {
+    BRepCheck_Solid solidchecker(TopoDS::Solid(shape));
+    BRepCheck_ListOfStatus status = solidchecker.Status();
+    BRepCheck_ListIteratorOfListOfStatus statit;
+    statit.Initialize(status);
+    for (int i=0;statit.More();statit.Next())
     {
-      issue = checker;
-      fprintf(stderr,"Shape is not solid!\n");
-      return CV_ERROR;
+      BRepCheck_Status checker = statit.Value();
+      if (checker != 0)
+      {
+	issue = checker;
+	fprintf(stderr,"Shape is not solid!\n");
+	return CV_ERROR;
+      }
     }
+    issue = 0;
   }
-  issue = 0;
+  catch (Standard_TypeMismatch) {
+    fprintf(stderr,"Shape caused error in solid check\n");
+    return CV_ERROR;
+  }
 
   return CV_OK;
 }
