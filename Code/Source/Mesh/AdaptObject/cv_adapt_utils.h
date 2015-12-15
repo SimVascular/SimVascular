@@ -161,7 +161,7 @@ double AdaptUtils_E_error (double xyz[2][3], double H[3][3]);
 
 int AdaptUtils_convertToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,tetgenio *inmesh);
 
-int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface,int *pointMapper);
+int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface);
 
 int AdaptUtils_runAdaptor(tetgenio *inmesh,tetgenio *outmesh);
 

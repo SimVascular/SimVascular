@@ -23,6 +23,7 @@ proc meshSimWriteAdaptMeshScript {} {
   global gFilenames
   global guiMMvars
 
+  set gOptions(meshing_kernel) MeshSim
   set guiMMvars(metric_array_name) dummy
 
   set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]]
@@ -54,6 +55,13 @@ proc meshSimWriteAdaptMeshScript {} {
   set reductionRatio         $guiMMvars(error_reduction_factor)
   set maxCoarseFactor        $guiMMvars(gsize)
   set maxRefineFactor        $guiMMvars(min_gsize)
+  set mesh                   /adapt/internal/meshobject
+  set solid                  /adapt/temporary/solid
+
+  catch {repos_delete -obj $mesh}
+  catch {repos_delete -obj $solid}
+  set gObjects(adapt_solid) $solid
+  guiFNMloadSolidModel vtp_surface_file adapt_solid
 
   puts "Writing MeshSim Adapt Script File"
   set script_filename [file rootname $out_mesh_file].msas
@@ -85,7 +93,6 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "$object LoadModel -file $model_file"
   puts $fp "$object LoadMesh -file $mesh_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
-  #puts $fp "$object LoadAvgSpeedFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"
   puts $fp "$object SetAdaptOptions -flag metric_option -value $adapt_option"
   puts $fp "$object SetAdaptOptions -flag ratio -value $reductionRatio"
@@ -106,6 +113,7 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "$object WriteAdaptedMesh -file $out_mesh_file"
   puts $fp "$object WriteAdaptedMesh -file $out_vtu_mesh_file"
   puts $fp "$object WriteAdaptedSolution -file $out_solution_file"
+  puts $fp "mesh_writeCompleteMesh $mesh $solid adapted_meshcomplete $gFilenames(adapted_mesh_dir)"
   puts $fp ""
   close $fp
 
@@ -212,7 +220,6 @@ proc tetGenWriteAdaptMeshScript {} {
   puts $fp "$object CreateInternalMeshObject"
   puts $fp "$object LoadModel -file $vtp_surface_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
-  #puts $fp "$object LoadAvgSpeedFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"
   puts $fp "$object SetAdaptOptions -flag metric_option -value $adapt_option"
   puts $fp "$object SetAdaptOptions -flag ratio -value $reductionRatio"

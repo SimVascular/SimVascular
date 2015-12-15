@@ -130,7 +130,7 @@ int AdaptUtils_SmoothHessians(vtkUnstructuredGrid *mesh)
   nodalHessians = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("hessians"));
 
   //Have no purpose for point mapping here
-  AdaptUtils_getSurfaceBooleans(mesh,pointOnSurface,NULL);
+  AdaptUtils_getSurfaceBooleans(mesh,pointOnSurface);
 
   for (pointId=0;pointId<numVerts;pointId++)
   {
@@ -1178,7 +1178,7 @@ double AdaptUtils_E_error(double xyz[2][3], double H[3][3])
  * the surface mesh and the volumetric mesh
  */
 
-int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface,int *pointMapper)
+int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface)
 {
   int vCount = 0;
   int numVerts;
@@ -1202,24 +1202,11 @@ int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface
   for(pointId=0;pointId<numVerts;pointId++)
   {
     pointOnSurface[pointId] = false;
-    volumePt = volumeNodeArray->GetValue(pointId);
-    for (surfacePtId=0;surfacePtId<surfaceNodeArray->GetNumberOfTuples();surfacePtId++)
-    {
-      if (pointMapper != NULL)
-      {
-        pointMapper[surfacePtId] = -1;
-      }
-      surfacePt = surfaceNodeArray->GetValue(surfacePtId);
-      if (volumePt == surfacePt)
-      {
-	pointOnSurface[pointId] = true;
-	if (pointMapper != NULL)
-	{
-	  pointMapper[surfacePtId] = pointId;
-	}
-	vCount++;
-      }
-    }
+  }
+  for (surfacePtId=0;surfacePtId<surfaceNodeArray->GetNumberOfTuples();surfacePtId++)
+  {
+    surfacePt = surfaceNodeArray->GetValue(surfacePtId);
+    pointOnSurface[surfacePt] = true;
   }
 
   return CV_OK;
