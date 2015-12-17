@@ -81,7 +81,7 @@ public:
   // Modeler operations:
   void Clear() {return;}
   void ClearSurf() {return;}
-  void Print() const {return;}
+  void Print() const;
   void Check( int *nerr ) const {return;}
   cvSolidModel *Copy() const;
 

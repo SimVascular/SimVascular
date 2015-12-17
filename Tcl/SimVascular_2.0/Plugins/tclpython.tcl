@@ -8,13 +8,11 @@ proc startTclPython {} {
   set gPythonInterp [::python::interp new]
   $gPythonInterp exec {print("Hello Python World")}
 
-  #Create vtkPolyData to pass string between tcl and python
-  catch {stringPd Delete}
-  catch {repos_delete -obj STRING}
-  vtkPolyData stringPd
-  repos_importVtkPd -src stringPd -dst STRING
-  repos_setstring -obj STRING -str $env(SIMVASCULAR_HOME)
-  $gPythonInterp exec {simvascular_home = tcl.eval('repos_getstring -obj STRING')}
+  #Create TclPyString global to pass string between tcl and python
+  global TclPyString
+  $gPythonInterp exec {tcl.eval('global TclPyString')}
+  set TclPyString $env(SIMVASCULAR_HOME)
+  $gPythonInterp exec {simvascular_home = tcl.eval('set dummy $TclPyString')}
 }
 
 #Kill the python interpreter when youre done!
