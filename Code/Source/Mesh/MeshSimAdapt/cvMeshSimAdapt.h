@@ -138,6 +138,7 @@ private:
   vtkPolyData *outsurface_mesh_;
 
   double *sol_;
+  double *ybar_;
   double *avgspeed_;
   double *hessians_;
   double *errormetric_;

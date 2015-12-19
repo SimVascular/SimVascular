@@ -85,6 +85,7 @@ cvMeshSimAdapt::cvMeshSimAdapt()
   options.sphere_[4] = 1;
 
   sol_ = NULL;
+  ybar_ = NULL;
   hessians_ = NULL;
   avgspeed_ = NULL;
   errormetric_ = NULL;

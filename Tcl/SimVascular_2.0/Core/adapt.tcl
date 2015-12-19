@@ -58,10 +58,11 @@ proc meshSimWriteAdaptMeshScript {} {
   set mesh                   /adapt/internal/meshobject
   set solid                  /adapt/temporary/solid
 
-  catch {repos_delete -obj $mesh}
+  #catch {repos_delete -obj $mesh}
   catch {repos_delete -obj $solid}
-  set gObjects(adapt_solid) $solid
-  guiFNMloadSolidModel vtp_surface_file adapt_solid
+  set gObjects(atdb_solid) $solid
+  guiFNMloadSolidModel atdb_solid_file atdb_solid
+  puts "$solid GetKernel"
 
   puts "Writing MeshSim Adapt Script File"
   set script_filename [file rootname $out_mesh_file].msas
@@ -186,7 +187,7 @@ proc tetGenWriteAdaptMeshScript {} {
   set mesh                   /adapt/internal/meshobject
   set solid                  /adapt/temporary/solid
 
-  catch {repos_delete -obj $mesh}
+ # catch {repos_delete -obj $mesh}
   catch {repos_delete -obj $solid}
   set gObjects(adapt_solid) $solid
   guiFNMloadSolidModel vtp_surface_file adapt_solid
