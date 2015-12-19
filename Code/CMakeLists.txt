@@ -942,6 +942,7 @@ find_package(VTK COMPONENTS
 	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
 include(${VTK_USE_FILE})
+message(${VTK_USE_FILE})
 # foreach( d ${VTK_LIBRARY_DIRS})
 # MESSAGE(" ${d}")
 # endforeach()

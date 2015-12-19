@@ -109,6 +109,7 @@
 #include "TopExp.hxx"
 #include "TopExp_Explorer.hxx"
 #include "TopTools_DataMapOfIntegerShape.hxx"
+#include "TopTools_ListIteratorOfListOfShape.hxx"
 #include "Message_ProgressIndicator.hxx"
 #include "GCPnts_AbscissaPoint.hxx"
 #include "Adaptor3d_Curve.hxx"
@@ -120,6 +121,7 @@
 #include "TColgp_SequenceOfXYZ.hxx"
 #include "TColgp_HArray1OfPnt.hxx"
 #include "TColgp_Array2OfPnt.hxx"
+#include "TColStd_Array1OfReal.hxx"
 #include "TColStd_Array1OfInteger.hxx"
 #include "GeomPlate_PlateG0Criterion.hxx"
 #include "GeomPlate_MakeApprox.hxx"
@@ -1300,11 +1302,15 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
     }
   }
   else if (!strncmp(extension,"iges",4)) {
+#ifdef __linux__
+    fprintf(stdout,"Cannot write IGES file on linux %s\n",filename);
+#else
     fprintf(stdout,"Writing file %s\n",filename);
     IGESCAFControl_Writer writer;
     char *empty = NULL;
     writer.Transfer(*shapelabel_);
     Standard_Boolean ret = writer.Write(filename);
+#endif
   }
   else if (!strncmp(extension,"stl",3)) {
     fprintf(stdout,"Writing file %s\n",filename);

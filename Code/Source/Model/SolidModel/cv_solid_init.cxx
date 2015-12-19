@@ -68,7 +68,9 @@ int DiscreteUtils_Init();
 // --------
 
 #include "cv_globals.h"
+#ifdef USE_TCLPYTHON
 #include "Python.h"
+#endif
 
 //Python intialization functions. Called from python interpreter
 //
@@ -286,6 +288,7 @@ PyObject* importList2D(PyObject* self, PyObject* args)
   return Py_BuildValue("s","success");
 }
 
+#ifdef USE_OPENCASCADE
 // --------------------
 // pySolid.convertListsToOCCTObject
 // --------------------
@@ -380,6 +383,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 
   return Py_BuildValue("s","success");
 }
+#endif
 
 //All functions listed and initiated as pySolid_methods declared here
 // --------------------
@@ -394,7 +398,9 @@ PyMethodDef pySolid_methods[] = {
   {"importTuple1D", importTuple1D, METH_VARARGS,"Test import tuple"},
   {"importList1D", importList1D, METH_VARARGS,"Test import list"},
   {"importList2D", importList2D, METH_VARARGS,"Test import list 2D"},
+#ifdef USE_OPENCASCADE
   {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
+#endif
   {NULL, NULL}
 };
 

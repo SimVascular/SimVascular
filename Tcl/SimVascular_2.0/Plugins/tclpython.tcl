@@ -1,9 +1,19 @@
 #Creates a python interpreter and stores in global gPythonInterp
 proc startTclPython {} {
   global env
-  if [catch {load Lib/liblib_simvascular_tclpython.dylib Tclpython} msg] {
-    return -code error "ERROR: Error loading Tclpython: $msg"
-  }
+  global tcl_platform
+  if {$tcl_platform(platform) == "unix"} {
+    if {$tcl_platform(os) == "Darwin"} {
+      if [catch {load Lib/liblib_simvascular_tclpython.dylib Tclpython} msg] {
+	return -code error "ERROR: Error loading Tclpython: $msg"
+      }
+    }
+    if {$tcl_platform(os) == "Linux"} {
+      if [catch {load Lib/liblib_simvascular_tclpython.so Tclpython} msg] {
+	return -code error "ERROR: Error loading Tclpython: $msg"
+      }
+    }
+  } 
   global gPythonInterp
   set gPythonInterp [::python::interp new]
   $gPythonInterp exec {print("Hello Python World")}

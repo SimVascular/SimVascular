@@ -52,12 +52,16 @@
 #include "TopoDS_Shell.hxx"
 #include "TopExp.hxx"
 #include "TopExp_Explorer.hxx"
+#include "TopTools_Array1OfShape.hxx"
+#include "TopTools_ListIteratorOfListOfShape.hxx"
 
 #include "BSplCLib.hxx"
 #include "BRepOffsetAPI_ThruSections.hxx"
 #include "BRepClass3d_SolidClassifier.hxx"
-#include "BRepTools_Reshape.hxx"
+#include "BRepTools_ReShape.hxx"
 #include "BRepCheck_Solid.hxx"
+#include "BRepCheck_ListOfStatus.hxx"
+#include "BRepCheck_ListIteratorOfListOfStatus.hxx"
 #include "BRep_Tool.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepFill_Filling.hxx"
@@ -71,7 +75,7 @@
 #include "BRepBuilderAPI_Sewing.hxx"
 #include "BRepFilletAPI_MakeFillet.hxx"
 
-#include "ChFi3D_FilletShape.hxx"
+//#include "ChFi3D_FilletShape.hxx"
 
 #include "TDataStd_Integer.hxx"
 #include "TDataStd_Name.hxx"
