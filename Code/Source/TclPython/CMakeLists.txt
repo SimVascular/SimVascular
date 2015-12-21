@@ -34,7 +34,6 @@ include_directories(${PYTHON_INCLUDE_PATH}
 		    ${PYTHON_INCLUDE_DIRS}
 		    ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-message("WTFFFFFFFFFFFFFFFFFFFF")
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
