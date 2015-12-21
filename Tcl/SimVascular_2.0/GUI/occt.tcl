@@ -151,15 +151,162 @@ proc guiSV_model_create_model_opencascade {} {
        set gOCCTFaceNames($dupid) $newname
        $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
      }
-  }
+    }
 
-  guiSV_model_add_faces_to_tree $kernel $modelname
-  guiSV_model_display_only_given_model $modelname 1
-  if {$isdups == 1} {
-    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
-  }
+    guiSV_model_add_faces_to_tree $kernel $modelname
+    guiSV_model_display_only_given_model $modelname 1
+    if {$isdups == 1} {
+      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+    }
 
 }
+
+# Procedure: guiSV_model_create_model_opencascade_python
+proc guiSV_model_create_model_opencascade_python {} {
+   global symbolicName
+   global createPREOPgrpKeptSelections
+   global gFilenames
+   global gObjects
+   global gLoftedSolids
+   global gOptions
+
+   set gOptions(meshing_solid_kernel) OpenCASCADE
+   solid_setKernel -name $gOptions(meshing_solid_kernel)
+   set kernel $gOptions(meshing_solid_kernel)
+   set gOptions(meshing_solid_kernel) $kernel
+   solid_setKernel -name $kernel
+
+   set tv $symbolicName(guiSV_group_tree)
+   set children [$tv children {}]
+
+   if {[lsearch -exact $children .groups.all] >= 0} {
+     set children [$tv children .groups.all]
+     if {$children == ""} {
+       return
+     }
+   }
+
+   set createPREOPgrpKeptSelections {}
+   puts "children: $children"
+
+   foreach child $children {
+     if {[lindex [$tv item $child -values] 0] == "X"} {
+       lappend createPREOPgrpKeptSelections [string range $child 12 end]
+     }
+   }
+
+   set modelname [guiSV_model_new_surface_name 0]
+   catch {repos_delete -obj $modelname}
+   if {[model_create $kernel $modelname] != 1} {
+     guiSV_model_delete_model $kernel $modelname
+     catch {repos_delete -obj /models/$kernel/$modelname}
+     model_create $kernel $modelname
+   }
+   guiSV_model_update_tree
+
+   #set modelname $gObjects(preop_solid)
+
+   if {[llength $createPREOPgrpKeptSelections] == 0} {
+      puts "No solid models selected.  Nothing done!"
+      return
+   }
+
+   puts "Will union together the following SolidModel objects:"
+   puts "  $createPREOPgrpKeptSelections"
+
+   if {[repos_exists -obj $modelname] == 1} {
+      puts "Warning:  object $modelname existed and is being replaced."
+      repos_delete -obj $modelname
+   }
+
+   foreach i $createPREOPgrpKeptSelections {
+      set cursolid ""
+      catch {set cursolid $gLoftedSolids($i)}
+      # loft solid from group
+      global gPathBrowser
+      set keepgrp $gPathBrowser(currGroupName)
+      set gPathBrowser(currGroupName) $i
+      #puts "align"
+      #vis_img_SolidAlignProfiles;
+      #puts "fit"
+      #vis_img_SolidFitCurves;
+      #puts "loft"
+      #vis_img_SolidLoftSurf;
+      #vis_img_SolidCapSurf;
+      # set it back to original
+      global gRen3dFreeze
+      set oldFreeze $gRen3dFreeze
+      set gRen3dFreeze 1
+      call_python_lofting $i avg endderiv centripetal centripetal 3 3
+      set gRen3dFreeze $oldFreeze
+      set gPathBrowser(currGroupName) $keepgrp
+   }
+    set shortname [lindex $createPREOPgrpKeptSelections 0]
+    set cursolid $gLoftedSolids($shortname)
+    solid_copy -src $cursolid -dst $modelname
+    puts "copy $cursolid to preop model."
+
+    foreach i [lrange $createPREOPgrpKeptSelections 1 end] {
+      set cursolid $gLoftedSolids($i)
+      puts "union $cursolid into preop model."
+      if {[repos_type -obj $cursolid] != "SolidModel"} {
+         puts "Warning:  $cursolid is being ignored."
+         continue
+      }
+       solid_union -result /tmp/preop/$modelname -a $cursolid -b $modelname
+
+       repos_delete -obj $modelname
+       solid_copy -src /tmp/preop/$modelname -dst $modelname
+
+       repos_delete -obj /tmp/preop/$modelname
+    }
+
+    if {[repos_exists -obj /tmp/preop/$modelname] == 1} {
+      repos_delete -obj /tmp/preop/$modelname
+    }
+    global gOCCTFaceNames
+    crd_ren gRenWin_3D_ren1
+    set pretty_names {}
+    set all_ids {}
+    foreach i [$modelname GetFaceIds] {
+      catch {set type [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+      catch {set parent [$modelname GetFaceAttr -attr parent -faceId $i]}
+      set facename "[string trim $type]_[string trim $parent]"
+      lappend pretty_names $facename
+      set gOCCTFaceNames($i) $facename
+      $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
+      lappend all_ids $i
+    }
+    set isdups 0
+    if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
+     set isdups 1
+     set duplist [lsort -dictionary $pretty_names]
+     foreach i [lsort -unique $pretty_names] {
+        set idx [lsearch -exact $duplist $i]
+        set duplist [lreplace $duplist $idx $idx]
+     }
+     set msg "Duplicate faces found!\n\n"
+     set duplistids {}
+     foreach dup $duplist {
+       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
+       lappend duplistids $id
+     }
+     for {set i 0} {$i < [llength $duplist]} {incr i} {
+       set dup [lindex $duplist $i]
+       set dupid [lindex $duplistids $i]
+       set newname [string trim $dup]_2
+       set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
+       set gOCCTFaceNames($dupid) $newname
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+     }
+    }
+
+    guiSV_model_add_faces_to_tree $kernel $modelname
+    guiSV_model_display_only_given_model $modelname 1
+    if {$isdups == 1} {
+      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+    }
+ }
 
 proc guiSV_model_opencascade_fixup {model num} {
   global symbolicName
@@ -361,6 +508,7 @@ proc makeSurfOCCT {} {
     # ugly way to keep track of solids created for each group
     global gLoftedSolids
     set gLoftedSolids($grp) $surf
+    $surf Print
 
     # clean up the tags with the group names
     set solid $surf
@@ -875,7 +1023,7 @@ proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsIn
 }
 
 # Procedure: createPREOPgrpSaveGroups
-proc saveResampledGroup {grp numSamplePts} {
+proc resampleGroupEvenSpace {grp numSamplePts saveGroupFile} {
 
   set vecFlag false
   set sortedList [group_get $grp]
@@ -919,27 +1067,29 @@ proc saveResampledGroup {grp numSamplePts} {
     lappend resampleList $profile/sample
   }
 
-  # create the directory if it doesn't exist
-  global gFilenames
-  set mydir [tk_chooseDirectory -mustexist 0 -title "Save SimVascular Groups To Directory"  -initialdir $gFilenames(groups_dir)]
-  set gFilenames(groups_dir) $mydir
-  set grpdir $mydir
-  set contents_file [file join $grpdir group_contents.tcl]
 
-  if {[file exists $grpdir] == 1} {
-    if {[file isdirectory $grpdir] == 0} {
-      puts "ERROR:  Group directory $grpdir is apparently a file!"
-      return -code error "ERROR:  Group directory $grpdir is apparently a file!"
+  if {$saveGroupFile} {
+    # create the directory if it doesn't exist
+    global gFilenames
+    set mydir [tk_chooseDirectory -mustexist 0 -title "Save SimVascular Groups To Directory"  -initialdir $gFilenames(groups_dir)]
+    set gFilenames(groups_dir) $mydir
+    set grpdir $mydir
+    set contents_file [file join $grpdir group_contents.tcl]
+
+    if {[file exists $grpdir] == 1} {
+      if {[file isdirectory $grpdir] == 0} {
+	puts "ERROR:  Group directory $grpdir is apparently a file!"
+	return -code error "ERROR:  Group directory $grpdir is apparently a file!"
+      }
+    } else {
+	if [catch {file mkdir $grpdir}] {
+	puts "ERROR:  Could not create directory $grpdir."
+	return -code error "ERROR:  Could not create directory $grpdir."
+      }
     }
-  } else {
-      if [catch {file mkdir $grpdir}] {
-      puts "ERROR:  Could not create directory $grpdir."
-      return -code error "ERROR:  Could not create directory $grpdir."
-    }
+
+    saveResampledSegments $grp "[file join $grpdir $grp]_[string trim $numSamplePts]_resampled" $resampleList $sortedList
   }
-
-  saveResampledSegments $grp "[file join $grpdir $grp]_[string trim $numSamplePts]_resampled" $resampleList $sortedList
-
 }
 
 # ------------------
@@ -947,7 +1097,6 @@ proc saveResampledGroup {grp numSamplePts} {
 # ------------------
 
 proc saveResampledSegments {name filename items infoList} {
-  #@author Nathan Wilson
   #@c  Routine to save a group of profiles to a file.
   #@a name:  Group to be written to the file.
   #@a filename:  File to be created.

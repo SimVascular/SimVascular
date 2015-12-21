@@ -16,6 +16,8 @@
 #include <cStringIO.h>
 #include "tclpython.h"
 
+//#include "pythonModules.h"
+
 static unsigned existingInterpreters = 0;
 static struct Tcl_HashTable threadStates;
 static struct Tcl_HashTable dictionaries;
@@ -186,6 +188,7 @@ static int newInterpreter(Tcl_Interp *interpreter)
         PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
         PycString_IMPORT;
         globalState = PyThreadState_Swap(0);                                                            /* save the global thread */
+	//
     } else {
         PyEval_AcquireLock();                                           /* needed in order to be able to create a new interpreter */
     }
@@ -216,6 +219,13 @@ static int newInterpreter(Tcl_Interp *interpreter)
     tcl = Py_InitModule("tcl", tclMethods);                                   /* add a new 'tcl' module to the python interpreter */
     Py_INCREF(tcl);
     PyModule_AddObject(PyImport_AddModule("__builtin__"), "tcl", tcl);
+
+	//-------------------------------IMPORT MODULES--------------------//
+    //PyObject *pythonC;
+    //pythonC = Py_InitModule("pythonc", pythonc_methods);
+    //Py_INCREF(pythonC);
+    //PyModule_AddObject(PyImport_AddModule("__buildin__"), "pythonc", pythonC);
+	//-----------------------------------------------------------------//
     return TCL_OK;
 }
 

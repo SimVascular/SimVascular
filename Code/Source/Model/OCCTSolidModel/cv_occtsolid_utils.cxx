@@ -52,21 +52,30 @@
 #include "TopoDS_Shell.hxx"
 #include "TopExp.hxx"
 #include "TopExp_Explorer.hxx"
+#include "TopTools_Array1OfShape.hxx"
+#include "TopTools_ListIteratorOfListOfShape.hxx"
 
 #include "BSplCLib.hxx"
 #include "BRepOffsetAPI_ThruSections.hxx"
 #include "BRepClass3d_SolidClassifier.hxx"
-#include "BRepTools_Reshape.hxx"
+#include "BRepTools_ReShape.hxx"
 #include "BRepCheck_Solid.hxx"
+#include "BRepCheck_ListOfStatus.hxx"
+#include "BRepCheck_ListIteratorOfListOfStatus.hxx"
 #include "BRep_Tool.hxx"
 #include "BRep_Builder.hxx"
+#include "BRepFill_Filling.hxx"
 #include "BRepAdaptor_Curve.hxx"
 #include "BRepBuilderAPI_FindPlane.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepBuilderAPI_MakeShell.hxx"
+#include "BRepBuilderAPI_MakeSolid.hxx"
+#include "BRepBuilderAPI_MakeWire.hxx"
 #include "BRepBuilderAPI_MakeEdge.hxx"
+#include "BRepBuilderAPI_Sewing.hxx"
 #include "BRepFilletAPI_MakeFillet.hxx"
 
-#include "ChFi3D_FilletShape.hxx"
+//#include "ChFi3D_FilletShape.hxx"
 
 #include "TDataStd_Integer.hxx"
 #include "TDataStd_Name.hxx"
@@ -78,6 +87,8 @@
 #include "TNaming_Builder.hxx"
 
 #include "ShapeAnalysis_Surface.hxx"
+#include "ShapeFix_FreeBounds.hxx"
+#include "ShapeFix_Shape.hxx"
 
 #include "GeomAPI_Interpolate.hxx"
 #include "Geom_Plane.hxx"
@@ -352,6 +363,114 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 
   return CV_OK;
 }
+// ---------------------
+// OCCTUtils_CreateEdgeBlend
+// ---------------------
+/**
+ * @brief Procedure to create edge blend between two faces faceA and faceB
+ * @param &shape shape containing faces and resultant shape with blend
+ * @param shapetool the XDEDoc manager that contains attribute info
+ * @param shapelabel the label for the shape registered in XDEDoc
+ * @param filletmake the occt API to make a fillet
+ * @param faceA first integer face to blend
+ * @param faceB second integer face to blend
+ * @param radius Maximum radius to set anywhere on the fillet.
+ * @param minRadius Minimum radius to set anywhere on the fillet. A linear
+ * interpolation is created between the minimum and maximum radius specified
+ * based on the angle created bewteen the two faces at a set number of points
+ * around the fillet edge. The new fillet radius value will be somehwere
+ * between the maximum and minimum radius values given.
+ * @param blendname Name to be given the new face created for the shape
+ * @return CV_OK if function completes properly
+ */
+int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
+    BRepBuilderAPI_Sewing &attacher,int &numFilled)
+{
+  if (shape.Closed())
+  {
+    geom = shape;
+    fprintf(stdout,"Shape is closed, nothing to be done\n");
+    return CV_OK;
+  }
+
+  //Attacher!
+  attacher.Add(shape);
+  Standard_Real sewtoler =  1.e-6;
+  Standard_Real closetoler =  1.e-2;
+  ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
+        	  Standard_False,Standard_False);
+  TopoDS_Compound freeWires = findFree.GetClosedWires();
+  TopExp_Explorer NewEdgeExp;
+  NewEdgeExp.Init(freeWires,TopAbs_EDGE);
+  for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
+  {
+    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
+
+    BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
+    wiremaker.Build();
+
+    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+    filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
+
+    try {
+      filler.Build();
+    }
+    catch (Standard_Failure)
+    {
+      fprintf(stderr,"Failure when filling holes\n");
+      return CV_ERROR;
+    }
+
+    TopoDS_Face newFace = filler.Face();
+    //if (!OCCTUtils_IsSameOrientedWEdge(newFace,shape,tmpEdge))
+    //{
+    //  fprintf(stderr,"Reversing\n");
+    //  newFace.Reversed();
+    //}
+    attacher.Add(newFace);
+    numFilled ++;
+  }
+  fprintf(stderr,"Number of holes found: %d\n",numFilled);
+  if (numFilled == 0)
+  {
+    fprintf(stderr,"No holes found\n");
+    return CV_OK;
+  }
+  attacher.Perform();
+
+  TopoDS_Shell tmpShell;
+  try {
+    tmpShell = TopoDS::Shell(attacher.SewedShape());
+  }
+  catch (Standard_TypeMismatch) {
+    fprintf(stderr,"No open boundaries found\n");
+    return CV_ERROR;
+  }
+
+  BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
+  geom = solidmaker.Shape();
+  geom.Closed(Standard_True);
+
+  //BRep_Builder BB;
+  //TopoDS_Solid solid;
+  //BB.MakeSolid(solid);
+  //BB.Add(solid,tmpShell);
+
+  ////Set Orientation
+  //BB.MakeSolid(solid);
+  //BRepClass3d_SolidClassifier clas3d(solid);
+  //clas3d.PerformInfinitePoint(Precision::Confusion());
+  //fprintf(stderr,"Print state: %d\n",clas3d.State());
+  //if (clas3d.State() == TopAbs_IN) {
+  //  BB.MakeSolid(solid);
+  //  TopoDS_Shape aLocalShape = tmpShell.Reversed();
+  //  BB.Add(solid, TopoDS::Shell(aLocalShape));
+  //}
+
+  //solid.Closed(Standard_True);
+  //geom = solid;
+  return CV_OK;
+}
 
 // ---------------------
 // OCCTUtils_MakeLoftedSurf
@@ -377,63 +496,6 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
 		int numCurves,int continuity,
 		int partype, double w1, double w2, double w3, int smoothing)
 {
-
-  //Methods using BRepOffsetAPI_ThruSections
-  //cvOCCTSolidModel *shapePtr;
-  //BRepOffsetAPI_ThruSections lofter(Standard_True,Standard_False,1e-6);
-  //if (continuity == 0)
-  //  lofter.SetContinuity(GeomAbs_C0);
-  //else if (continuity == 1)
-  //  lofter.SetContinuity(GeomAbs_G1);
-  //else if (continuity == 2)
-  //  lofter.SetContinuity(GeomAbs_C1);
-  //else if (continuity == 3)
-  //  lofter.SetContinuity(GeomAbs_G2);
-  //else if (continuity == 4)
-  //  lofter.SetContinuity(GeomAbs_C2);
-  //else if (continuity == 5)
-  //  lofter.SetContinuity(GeomAbs_C3);
-  ////else
-  ////  lofter.SetContinuity(GeomAbs_CN);
-
-  //if (partype == 0)
-  //  lofter.SetParType(Approx_ChordLength);
-  //else if (partype == 1)
-  //  lofter.SetParType(Approx_Centripetal);
-  //else
-  //  lofter.SetParType(Approx_IsoParametric);
-
-  //lofter.CheckCompatibility(Standard_False);
-  //lofter.SetSmoothing(smoothing);
-  //lofter.SetCriteriumWeight(w1,w2,w3);
-
-  //fprintf(stdout,"Loft Continuity: %d\n",continuity);
-  //fprintf(stdout,"Loft Parameter: %d\n",partype);
-  //for ( int i = 0; i < numCurves; i++ ) {
-  //  TopoDS_Wire newwire = curves[i];
-  //  lofter.AddWire(newwire);
-  //}
-  //try
-  //{
-  //  lofter.Build();
-  //}
-  //catch (Standard_Failure)
-  //{
-  //  fprintf(stderr,"Failure in lofting\n");
-  //  return CV_ERROR;
-  //}
-
-  ////shape = attacher.SewedShape();
-  //try
-  //{
-  //  shape = lofter.Shape();
-  //}
-  //catch (StdFail_NotDone)
-  //{
-  //  fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
-  //  return CV_ERROR;
-  //}
-
   //Methods using GeomFill_SectionGenerator
   GeomFill_SectionGenerator sectioner;
   Handle(Geom_BSplineSurface) surface;
@@ -461,48 +523,6 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     compBS.Add(curvBS,aTolV,Standard_True,Standard_False,1);
     BS = compBS.BSplineCurve();
     sectioner.AddCurve(BS);
-
-    //if (i < numCurves-1)
-    //{
-    //  BRepAdaptor_Curve firstCurve(tmpEdge);
-    //  GCPnts_UniformAbscissa abs1(firstCurve,40);
-
-    //  TopExp_Explorer getNextEdge(curves[i+1],TopAbs_EDGE);
-    //  TopoDS_Edge nextTmpEdge = TopoDS::Edge(getNextEdge.Current());
-
-    //  BRepAdaptor_Curve secondCurve(nextTmpEdge);
-    //  GCPnts_UniformAbscissa abs2(secondCurve,20);
-
-    //  Handle(TColgp_HArray1OfPnt) hArray =
-    //          new TColgp_HArray1OfPnt(1,20);
-    //  for (int j=1;j<=20;j++)
-    //  {
-    //    gp_Pnt newPnt1 = firstCurve.Value(abs1.Parameter(j));
-    //    gp_Pnt newPnt2 = secondCurve.Value(abs2.Parameter(j));
-    //    fprintf(stderr,"First Point: %.4f,%.4f,%.4f\n",newPnt1.X(),newPnt1.Y(),newPnt1.Z());
-    //    fprintf(stderr,"Second Point: %.4f,%.4f,%.4f\n",newPnt2.X(),newPnt2.Y(),newPnt2.Z());
-    //    gp_Pnt halfPnt(newPnt1.X()+((newPnt2.X()-newPnt1.X())/2),
-    //                   newPnt1.Y()+((newPnt2.Y()-newPnt1.Y())/2),
-    //                   newPnt1.Z()+((newPnt2.Z()-newPnt1.Z())/2));
-    //    fprintf(stderr,"Half Point: %.4f,%.4f,%.4f\n",halfPnt.X(),halfPnt.Y(),halfPnt.Z());
-    //    fprintf(stderr,"\n");
-    //    hArray->SetValue(j,halfPnt);
-    //  }
-    //  GeomAPI_Interpolate pointinterp(hArray,Standard_False,1.0e-6);
-    //  pointinterp.Perform();
-    //  Handle(Geom_BSplineCurve) newCurve = pointinterp.Curve();
-
-    //  BRepBuilderAPI_MakeEdge edgemaker(newCurve);
-    //  edgemaker.Build();
-    //  Handle(Geom_BSplineCurve) extraBS =
-    //    OCCTUtils_EdgeToBSpline(edgemaker.Edge());
-
-    //  GeomConvert_CompCurveToBSplineCurve newCompBS(extraBS);
-    //  newCompBS.Add(extraBS,aTolV,Standard_True,Standard_False,1);
-    //  BS = newCompBS.BSplineCurve();
-    //  sectioner.AddCurve(BS);
-    //  //Move to get new curves!
-    //}
   }
 
   sectioner.Perform(Precision::PConfusion());
@@ -538,79 +558,73 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   }
 
   if(anApprox.IsDone()) {
-    fprintf(stderr,"UDegree %d\n",anApprox.UDegree());
-    fprintf(stderr,"VDegree %d\n",anApprox.VDegree());
-    TColStd_Array2OfReal surfweights = anApprox.SurfWeights();
-    fprintf(stderr,"RowLength %d\n",surfweights.RowLength());
-    fprintf(stderr,"ColLength %d\n",surfweights.ColLength());
-    fprintf(stderr,"SurfWeights\n");
-    for (int i=1;i<surfweights.ColLength();i++)
-    {
-      for (int j=1;j<surfweights.RowLength();j++)
-      {
-	fprintf(stderr,"%.2f ",surfweights.Value(i,j));
-      }
-      fprintf(stderr,"\n");
-    }
-    TColStd_Array1OfReal uknots = anApprox.SurfUKnots();
-    TColStd_Array1OfReal vknots = anApprox.SurfVKnots();
-    fprintf(stderr,"Uknot length %d\n",uknots.Length());
-    for (int i=1;i<=uknots.Length();i++)
-    {
-      fprintf(stderr,"%.8f ",uknots.Value(i));
-    }
-    fprintf(stderr,"\n");
-    fprintf(stderr,"Vknot length %d\n",vknots.Length());
-    for (int i=1;i<=vknots.Length();i++)
-    {
-      fprintf(stderr,"%.2f ",vknots.Value(i));
-    }
-    fprintf(stderr,"\n");
-    TColStd_Array1OfInteger umults = anApprox.SurfUMults();
-    TColStd_Array1OfInteger vmults = anApprox.SurfVMults();
-    fprintf(stderr,"Umult length %d\n",umults.Length());
-    for (int i=1;i<=umults.Length();i++)
-    {
-      fprintf(stderr,"%d ",umults.Value(i));
-    }
-    fprintf(stderr,"\n");
-    fprintf(stderr,"Vmult length %d\n",vmults.Length());
-    for (int i=1;i<=vmults.Length();i++)
-    {
-      fprintf(stderr,"%d ",vmults.Value(i));
-    }
-    fprintf(stderr,"\n");
-
+    //fprintf(stderr,"UDegree %d\n",anApprox.UDegree());
+    //fprintf(stderr,"VDegree %d\n",anApprox.VDegree());
+    //TColStd_Array2OfReal surfweights = anApprox.SurfWeights();
+    //fprintf(stderr,"RowLength %d\n",surfweights.RowLength());
+    //fprintf(stderr,"ColLength %d\n",surfweights.ColLength());
+    //fprintf(stderr,"SurfWeights\n");
+    //for (int i=1;i<surfweights.ColLength();i++)
+    //{
+    //  for (int j=1;j<surfweights.RowLength();j++)
+    //  {
+    //    fprintf(stderr,"%.2f ",surfweights.Value(i,j));
+    //  }
+    //  fprintf(stderr,"\n");
+    //}
+    //TColStd_Array1OfReal uknots = anApprox.SurfUKnots();
+    //TColStd_Array1OfReal vknots = anApprox.SurfVKnots();
+    //fprintf(stderr,"Uknot length %d\n",uknots.Length());
+    //for (int i=1;i<=uknots.Length();i++)
+    //{
+    //  fprintf(stderr,"%.8f ",uknots.Value(i));
+    //}
+    //fprintf(stderr,"\n");
+    //fprintf(stderr,"Vknot length %d\n",vknots.Length());
+    //for (int i=1;i<=vknots.Length();i++)
+    //{
+    //  fprintf(stderr,"%.2f ",vknots.Value(i));
+    //}
+    //fprintf(stderr,"\n");
+    //TColStd_Array1OfInteger umults = anApprox.SurfUMults();
+    //TColStd_Array1OfInteger vmults = anApprox.SurfVMults();
+    //fprintf(stderr,"Umult length %d\n",umults.Length());
+    //for (int i=1;i<=umults.Length();i++)
+    //{
+    //  fprintf(stderr,"%d ",umults.Value(i));
+    //}
+    //fprintf(stderr,"\n");
+    //fprintf(stderr,"Vmult length %d\n",vmults.Length());
+    //for (int i=1;i<=vmults.Length();i++)
+    //{
+    //  fprintf(stderr,"%d ",vmults.Value(i));
+    //}
+    //fprintf(stderr,"\n");
     surface =
       new Geom_BSplineSurface(anApprox.SurfPoles(), anApprox.SurfWeights(),
       anApprox.SurfUKnots(), anApprox.SurfVKnots(),
       anApprox.SurfUMults(), anApprox.SurfVMults(),
       anApprox.UDegree(), anApprox.VDegree());
-    for (int i=1;i<=uknots.Length();i++)
-    {
-      try
-      {
-	surface->SetWeight(i,1,w1);
-	surface->SetWeight(i,vknots.Length()+w2,w1);
-	//surface->SetWeight(i,2,w2);
-	//surface->SetWeight(i,vknots.Length()-1,w2);
-	//surface->SetWeight(i,3,w3);
-	//surface->SetWeight(i,vknots.Length()-2,w3);
-      }
-      catch (Standard_ConstructionError)
-      {
-	fprintf(stderr,"Weight not valid\n");
-	return CV_ERROR;
-      }
-      catch (Standard_OutOfRange)
-      {
-	fprintf(stderr,"Weight out of range\n");
-	return CV_ERROR;
-      }
-    }
-    //surface->SetVPeriodic();
+    //surface->SetUPeriodic();
   }
 
+  if (OCCTUtils_ShapeFromBSplineSurface(surface,shape,curves[0],curves[numCurves-1],pres3d) != CV_OK)
+  {
+    fprintf(stderr,"Error in conversion from bspline surface to shape\n");
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// ---------------------
+// OCCTUtils_ShapeFromBSplineSurface
+// ---------------------
+int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
+    		TopoDS_Shape &shape,const TopoDS_Wire &first_wire,
+		const TopoDS_Wire &last_wire,
+		const int pres3d)
+{
   gp_Pnt tmpPoint = surface->Pole(1,1);
   tmpPoint.SetX(tmpPoint.X()+10.0);
   tmpPoint.SetY(tmpPoint.Y()+10.0);
@@ -641,7 +655,6 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   TopoDS_Vertex v1f,v1l,v2f,v2l;
 
   Standard_Integer nbPnts = 21;
-  TColgp_Array2OfPnt points(1, nbPnts, 1, numCurves);
 
   TopoDS_Shape firstEdge;
 
@@ -656,14 +669,14 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   surface->Segment(Ui1,Ui2,V0,V1);
 
   // return vertices
-  TopExp_Explorer edge_one(curves[0],TopAbs_EDGE);
+  TopExp_Explorer edge_one(first_wire,TopAbs_EDGE);
   edge =  TopoDS::Edge(edge_one.Current());
   TopExp::Vertices(edge,v1f,v1l);
   if (edge.Orientation() == TopAbs_REVERSED)
     TopExp::Vertices(edge,v1l,v1f);
   firstEdge = edge;
 
-  TopExp_Explorer edge_last(curves[numCurves-1],TopAbs_EDGE);
+  TopExp_Explorer edge_last(last_wire,TopAbs_EDGE);
   edge =  TopoDS::Edge(edge_last.Current());
   TopExp::Vertices(edge,v2f,v2l);
   if (edge.Orientation() == TopAbs_REVERSED)
@@ -746,8 +759,9 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
   TopTools_DataMapOfShapeShape generated;
   generated.Bind(firstEdge, face);
 
+  shape = shell;
   TopoDS_Face first,last;
-  shape = OCCTUtils_MakeSolid(shell, newW1, newW2, pres3d, first, last);
+  shape = OCCTUtils_MakeShell(shell, newW1, newW2, pres3d, first, last);
 
   return CV_OK;
 }
@@ -770,6 +784,36 @@ Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
 
   const TopoDS_Shape& AdjacentFace = EFmap.FindFromKey(anEdge).First();
   TopoDS_Shape theEdge;
+  for (Explo.Init(AdjacentFace, TopAbs_EDGE); Explo.More(); Explo.Next())
+  {
+    theEdge = Explo.Current();
+    if (theEdge.IsSame(anEdge))
+      break;
+  }
+
+  TopAbs_Orientation Or2 = theEdge.Orientation();
+  if (Or1 == Or2)
+    return Standard_False;
+  return Standard_True;
+}
+
+// ---------------------
+// OCCTUtils_IsSameOrientedWEdge
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
+Standard_Boolean OCCTUtils_IsSameOrientedWEdge(const TopoDS_Shape& aFace,
+  const TopoDS_Shape& aShell,const TopoDS_Shape &anEdge)
+{
+  TopAbs_Orientation Or1 = anEdge.Orientation();
+
+  TopTools_IndexedDataMapOfShapeListOfShape EFmap;
+  TopExp::MapShapesAndAncestors( aShell, TopAbs_EDGE, TopAbs_FACE, EFmap );
+
+  const TopoDS_Shape& AdjacentFace = EFmap.FindFromKey(anEdge).First();
+  TopoDS_Shape theEdge;
+  TopExp_Explorer Explo(AdjacentFace, TopAbs_EDGE);
   for (Explo.Init(AdjacentFace, TopAbs_EDGE); Explo.More(); Explo.Next())
   {
     theEdge = Explo.Current();
@@ -827,12 +871,12 @@ Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
 }
 
 // ---------------------
-// OCCTUtils_MakeSolid
+// OCCTUtils_MakeShell
 // ---------------------
 /**
  * @brief Taken from BRepOffsetAPI_ThruSections
  */
-TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+TopoDS_Solid OCCTUtils_MakeShell(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
   const TopoDS_Wire& wire2, const Standard_Real presPln,
   TopoDS_Face& face1, TopoDS_Face& face2)
 {
@@ -841,44 +885,44 @@ TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
   Standard_Boolean B = shell.Closed();
   BRep_Builder BB;
 
-  if (!B)
-  {
-    // It is necessary to close the extremities
-    B =  OCCTUtils_PerformPlan(wire1, presPln, face1);
-    if (B) {
-      B =  OCCTUtils_PerformPlan(wire2, presPln, face2);
-      if (B) {
-        if (!face1.IsNull() && !OCCTUtils_IsSameOriented( face1, shell ))
-          face1.Reverse();
-        if (!face2.IsNull() && !OCCTUtils_IsSameOriented( face2, shell ))
-          face2.Reverse();
+  //if (!B)
+  //{
+  //  // It is necessary to close the extremities
+  //  B =  OCCTUtils_PerformPlan(wire1, presPln, face1);
+  //  if (B) {
+  //    B =  OCCTUtils_PerformPlan(wire2, presPln, face2);
+  //    if (B) {
+  //      if (!face1.IsNull() && !OCCTUtils_IsSameOriented( face1, shell ))
+  //        face1.Reverse();
+  //      if (!face2.IsNull() && !OCCTUtils_IsSameOriented( face2, shell ))
+  //        face2.Reverse();
 
-        if (!face1.IsNull())
-          BB.Add(shell, face1);
-        if (!face2.IsNull())
-          BB.Add(shell, face2);
+  //      if (!face1.IsNull())
+  //        BB.Add(shell, face1);
+  //      if (!face2.IsNull())
+  //        BB.Add(shell, face2);
 
-        shell.Closed(Standard_True);
-      }
-    }
-  }
+  //      shell.Closed(Standard_True);
+  //    }
+  //  }
+  //}
 
-  TopoDS_Solid solid;
-  BB.MakeSolid(solid);
-  BB.Add(solid, shell);
+  TopoDS_Solid orientedshell;
+  BB.MakeSolid(orientedshell);
+  BB.Add(orientedshell, shell);
 
   // verify the orientation the solid
-  BRepClass3d_SolidClassifier clas3d(solid);
+  BRepClass3d_SolidClassifier clas3d(orientedshell);
   clas3d.PerformInfinitePoint(Precision::Confusion());
   if (clas3d.State() == TopAbs_IN) {
-    BB.MakeSolid(solid);
+    BB.MakeSolid(orientedshell);
     TopoDS_Shape aLocalShape = shell.Reversed();
-    BB.Add(solid, TopoDS::Shell(aLocalShape));
-    //    B.Add(solid, TopoDS::Shell(newShell.Reversed()));
+    BB.Add(orientedshell, TopoDS::Shell(aLocalShape));
+    //    B.Add(orientedshell, TopoDS::Shell(newShell.Reversed()));
   }
 
-  solid.Closed(Standard_True);
-  return solid;
+  //orientedshell.Closed(Standard_True);
+  return orientedshell;
 }
 
 // ---------------------
@@ -1447,21 +1491,27 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
  */
 int OCCTUtils_CheckIsSolid(const TopoDS_Shape &shape,int &issue)
 {
-  BRepCheck_Solid solidchecker(TopoDS::Solid(shape));
-  BRepCheck_ListOfStatus status = solidchecker.Status();
-  BRepCheck_ListIteratorOfListOfStatus statit;
-  statit.Initialize(status);
-  for (int i=0;statit.More();statit.Next())
-  {
-    BRepCheck_Status checker = statit.Value();
-    if (checker != 0)
+  try {
+    BRepCheck_Solid solidchecker(TopoDS::Solid(shape));
+    BRepCheck_ListOfStatus status = solidchecker.Status();
+    BRepCheck_ListIteratorOfListOfStatus statit;
+    statit.Initialize(status);
+    for (int i=0;statit.More();statit.Next())
     {
-      issue = checker;
-      fprintf(stderr,"Shape is not solid!\n");
-      return CV_ERROR;
+      BRepCheck_Status checker = statit.Value();
+      if (checker != 0)
+      {
+	issue = checker;
+	fprintf(stderr,"Shape is not solid!\n");
+	return CV_ERROR;
+      }
     }
+    issue = 0;
   }
-  issue = 0;
+  catch (Standard_TypeMismatch) {
+    fprintf(stderr,"Shape caused error in solid check\n");
+    return CV_ERROR;
+  }
 
   return CV_OK;
 }

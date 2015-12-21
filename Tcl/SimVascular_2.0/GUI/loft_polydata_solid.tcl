@@ -1,23 +1,23 @@
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 # BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -145,7 +145,7 @@ proc polysolid_orient_open_vessel {inPD outPD} {
   $nrmls Update
 
   # remove caps
- 
+
   vtkPolyData $removecaps
   $removecaps DeepCopy [$nrmls GetOutput]
 
@@ -178,7 +178,7 @@ proc polysolid_orient_closed_vessel {inPD outPD} {
   catch {repos_delete -obj $tmpPD}
 
   set nrmls tmp-guiGROUPSalignAllProfiles-nrmls
- 
+
   catch {$nrmls Delete}
   catch {$removecaps Delete}
 
@@ -209,12 +209,12 @@ proc polysolid_orient_closed_vessel {inPD outPD} {
 
 
 proc polysolid_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps outPD} {
-  
+
     #puts "Vec Flag: $vecFlag"
     #puts "UseLinearSampleAlongLength $useLinearSampleAlongLength"
     #puts "NumPtsInLinearSampleAlongLength $numPtsInLinearSampleAlongLength"
     #puts "UseFFT $useFFT"
-    #puts "NumModes $numModes" 
+    #puts "NumModes $numModes"
     #puts "NumOutPtsInSegs $numOutPtsInSegs"
     #puts "NUmOutPtsAlongLength $numOutPtsAlongLength"
     #puts "AddCaps $addCaps"
@@ -383,7 +383,7 @@ proc polysolid_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength 
 
     for {set j 0} {$j < $numOutPtsInSegs} {incr j} {
       for {set i 0} {$i < $numOutPtsAlongLength} {incr i} {
-	lappend seg_ordered_pts($i) [lindex $sampled_pts($j) $i] 
+	lappend seg_ordered_pts($i) [lindex $sampled_pts($j) $i]
       }
     }
 
@@ -391,7 +391,7 @@ proc polysolid_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength 
        lappend all_seg_ordered_pts $seg_ordered_pts($i)
     }
 
-                                        
+
     polysolid_connect_curves_internal $all_seg_ordered_pts $unorientedPD
 
     if {$addCaps} {
@@ -405,12 +405,12 @@ proc polysolid_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength 
 }
 
 proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps splineType outPD} {
-  
+
     #puts "Vec Flag: $vecFlag"
     #puts "UseLinearSampleAlongLength $useLinearSampleAlongLength"
     #puts "NumPtsInLinearSampleAlongLength $numPtsInLinearSampleAlongLength"
     #puts "UseFFT $useFFT"
-    #puts "NumModes $numModes" 
+    #puts "NumModes $numModes"
     #puts "NumOutPtsInSegs $numOutPtsInSegs"
     #puts "NUmOutPtsAlongLength $numOutPtsAlongLength"
     #puts "AddCaps $addCaps"
@@ -511,7 +511,7 @@ proc polysolid_create_all_vessels {selected_groups} {
   set addCaps 0
 
   foreach grp $selected_groups {
- 
+
     set numSegs [llength [group_get $grp]]
 
     set useLinearSampleAlongLength 0
@@ -520,7 +520,7 @@ proc polysolid_create_all_vessels {selected_groups} {
     set numOutPtsAlongLength [expr 6 * $numSegs]
 
     set numPtsInLinearSampleAlongLength [expr 10*$numOutPtsAlongLength]
-   
+
     puts "num pts along length: $numPtsInLinearSampleAlongLength"
 
     set numModes 20

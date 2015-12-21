@@ -49,6 +49,7 @@
 #include "cvOCCTSolidModel.h"
 
 #include "BRepFilletAPI_MakeFillet.hxx"
+#include "BRepBuilderAPI_Sewing.hxx"
 #include "Standard_Real.hxx"
 #include "TopoDS_Shape.hxx"
 #include "TopoDS_Face.hxx"
@@ -103,6 +104,14 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
     		int faceA, int faceB, double radius,double minRadius,
 		char blendname[]);
 
+int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
+    		TopoDS_Shape &shape,
+		const TopoDS_Wire &first_wire, const TopoDS_Wire &last_wire,
+		const int pres3d);
+
+int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
+    		BRepBuilderAPI_Sewing &attacher,int &numFilled);
+
 /* -------- */
 /* Helpers for loft */
 /* -------- */
@@ -114,7 +123,10 @@ Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
 Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
   const TopoDS_Shape& aShell);
 
-TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+Standard_Boolean OCCTUtils_IsSameOrientedWEdge(const TopoDS_Shape& aFace,
+  const TopoDS_Shape& aShell,const TopoDS_Shape &anEdge);
+
+TopoDS_Solid OCCTUtils_MakeShell(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
 		const TopoDS_Wire& wire2, const Standard_Real presPln,
 		TopoDS_Face& face1, TopoDS_Face& face);
 
@@ -122,6 +134,7 @@ Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
 		const Handle(Geom_BSplineSurface)& aSurface);
 
 Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge);
+
 
 /* -------- */
 /* Set */

@@ -64,6 +64,7 @@
 #include "gp_Circ.hxx"
 #include "Geom_BezierCurve.hxx"
 #include "GeomPlate_CurveConstraint.hxx"
+#include "Geom_BSplineSurface.hxx"
 #include "Geom_Surface.hxx"
 #include "TopoDS_Edge.hxx"
 #include "TopoDS_Wire.hxx"
@@ -77,9 +78,9 @@
 #include "BRepBuilderAPI_MakeEdge.hxx"
 #include "BRepBuilderAPI_MakeWire.hxx"
 #include "BRepBuilderAPI_MakeFace.hxx"
+#include "BRepBuilderAPI_MakeShell.hxx"
 #include "BRepBuilderAPI_MakeVertex.hxx"
 #include "BRepBuilderAPI_MakeSolid.hxx"
-#include "BRepBuilderAPI_Sewing.hxx"
 #include "BRepBuilderAPI_Copy.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
@@ -96,6 +97,8 @@
 #include "BRepTools.hxx"
 #include "BRepTools_ReShape.hxx"
 #include "BRep_Tool.hxx"
+#include "ShapeFix_Shell.hxx"
+#include "ShapeFix_FreeBounds.hxx"
 
 #include "IVtkOCC_Shape.hxx"
 #include "IVtk_IShapeData.hxx"
@@ -106,6 +109,7 @@
 #include "TopExp.hxx"
 #include "TopExp_Explorer.hxx"
 #include "TopTools_DataMapOfIntegerShape.hxx"
+#include "TopTools_ListIteratorOfListOfShape.hxx"
 #include "Message_ProgressIndicator.hxx"
 #include "GCPnts_AbscissaPoint.hxx"
 #include "Adaptor3d_Curve.hxx"
@@ -116,10 +120,11 @@
 #include "TColgp_SequenceOfXY.hxx"
 #include "TColgp_SequenceOfXYZ.hxx"
 #include "TColgp_HArray1OfPnt.hxx"
+#include "TColgp_Array2OfPnt.hxx"
+#include "TColStd_Array1OfReal.hxx"
+#include "TColStd_Array1OfInteger.hxx"
 #include "GeomPlate_PlateG0Criterion.hxx"
 #include "GeomPlate_MakeApprox.hxx"
-#include "ShapeFix_FreeBounds.hxx"
-#include "ShapeFix_Shape.hxx"
 
 //Doc stuff
 #include "TDF_Label.hxx"
@@ -259,6 +264,34 @@ cvSolidModel *cvOCCTSolidModel::Copy() const
   return result;
 }
 
+// ----
+// Print
+// ----
+
+void cvOCCTSolidModel::Print() const
+{
+  if (geom_ == NULL)
+  {
+    fprintf(stderr,"No geometry in model\n");
+  }
+  fprintf(stdout,"---------------------------------------------------------\n");
+  fprintf(stdout,"Model Info\n");
+  fprintf(stdout,"Number of Faces: %s\n","TODO");
+  fprintf(stdout,"Number of Edges: %s\n","TODO");
+  fprintf(stdout,"TopoDS_Shape Info\n");
+  fprintf(stdout,"Orientation: %d\n",geom_->Orientation());
+  fprintf(stdout,"Shape Type:  %d\n",geom_->ShapeType());
+  fprintf(stdout,"Free:        %d\n",geom_->Free());
+  fprintf(stdout,"Locked:      %d\n",geom_->Locked());
+  fprintf(stdout,"Modified:    %d\n",geom_->Modified());
+  fprintf(stdout,"Orientable:  %d\n",geom_->Orientable());
+  fprintf(stdout,"Closed:      %d\n",geom_->Closed());
+  fprintf(stdout,"Infinite:    %d\n",geom_->Infinite());
+  fprintf(stdout,"Convex:      %d\n",geom_->Convex());
+  fprintf(stdout,"---------------------------------------------------------\n");
+  return;
+}
+
 
 // ----------
 // MakeBox3d
@@ -380,12 +413,6 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
       OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","cap");
   }
 
-  //Standard_Real W1,W2,W3;
-  //lofter.CriteriumWeight(W1,W2,W3);
-  //fprintf(stderr,"Continuity Used: %d\n",lofter.Continuity());
-  //fprintf(stderr,"Max Degree Used: %d\n",lofter.MaxDegree());
-  //fprintf(stderr,"ParType Used: %d\n",lofter.ParType());
-  //fprintf(stderr,"Weight Used: %.2f,%.2f,%.2f\n",W1,W2,W3);
   fprintf(stdout,"Lofting Vessel Done\n");
   delete [] bcurves;
   return CV_OK;
@@ -447,93 +474,17 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   solidPtr = (cvOCCTSolidModel *) surf;
   TopoDS_Shape shape = *(solidPtr->geom_);
 
-  //BRepBuilderAPI_Sewing attacher;
-  //attacher.Add(shape);
-  //Standard_Real sewtoler =  1.e-6;
-  //Standard_Real closetoler =  1.e-2;
-  //ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
-  //      	  Standard_False,Standard_False);
-  //TopoDS_Compound freeWires = findFree.GetClosedWires();
-  //TopExp_Explorer NewEdgeExp;
-  //NewEdgeExp.Init(freeWires,TopAbs_EDGE);
-  //for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
-  //{
-  //  const Standard_Integer aNbIter = 12; //number of algorithm iterations
-  //  const Standard_Integer aNbPnts = 5; //sample points per each constraint
-  //  const Standard_Integer aDeg = 3; //requested surface degree ?
-  //  const Standard_Integer aMaxDeg = 8;
-  //  const Standard_Integer aMaxSeg = 9;
-  //  const Standard_Real aTol3d = 1.e-04;
-  //  const Standard_Real aTol2d = 1.e-05;
-  //  const Standard_Real anAngTol = 1.e-02; //angular
-  //  const Standard_Real aCurvTol = 1.e-02; //curvature
-
-  //  TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
-  //  BRepAdaptor_Curve adC(tmpEdge);
-  //  Handle(BRepAdaptor_HCurve) aHAD =
-  //    new BRepAdaptor_HCurve(adC);
-  //  Handle(GeomPlate_CurveConstraint) aConst =
-  //    new GeomPlate_CurveConstraint(aHAD,(Standard_Integer) GeomAbs_C0,aNbPnts,aTol3d,
-  //        0.01,0.1);
-
-  //  GeomPlate_BuildPlateSurface aPlateBuilder(aDeg,aNbPnts,
-  //      	    aNbIter,aTol2d,aTol3d,anAngTol,aCurvTol);
-  //  aPlateBuilder.Add(aConst);
-  //  aPlateBuilder.Perform();
-
-  //  Handle(GeomPlate_Surface) aPlSurf = aPlateBuilder.Surface();
-  //  Standard_Real aDist = aPlateBuilder.G0Error();
-
-  //  TColgp_SequenceOfXY S2d;
-  //  TColgp_SequenceOfXYZ S3d;
-  //  S2d.Clear();
-  //  S3d.Clear();
-  //  aPlateBuilder.Disc2dContour(4,S2d);
-  //  aPlateBuilder.Disc3dContour(4,0,S3d);
-  //  Standard_Real amaxTol = Max( aTol3d, 10* aDist);
-  //  GeomPlate_PlateG0Criterion Criterion( S2d, S3d, amaxTol );
-  //  GeomPlate_MakeApprox Approx( aPlSurf, Criterion, aTol3d, aMaxSeg, aMaxDeg );
-  //  //aSurf = Approx.Surface();
-  //  attacher.Add(Approx.Surface());
-  //}
-  //attacher.Perform();
-
-  //Attacher!
-  int numFilled=0;
-  BRepBuilderAPI_Sewing attacher;
-  attacher.Add(shape);
-  Standard_Real sewtoler =  1.e-6;
-  Standard_Real closetoler =  1.e-2;
-  ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
-        	  Standard_False,Standard_False);
-  TopoDS_Compound freeWires = findFree.GetClosedWires();
-  TopExp_Explorer NewEdgeExp;
-  NewEdgeExp.Init(freeWires,TopAbs_EDGE);
-  for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
-  {
-    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
-
-    BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
-    wiremaker.Build();
-
-    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
-    filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
-    filler.Build();
-
-    attacher.Add(filler.Face());
-    numFilled ++;
-  }
-  attacher.Perform();
-
   if (geom_ != NULL)
     this->RemoveShape();
 
-  TopoDS_Shell tmpShell = TopoDS::Shell(attacher.SewedShape());
-  BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
-  solidmaker.Build();
-
+  int numFilled=0;
+  BRepBuilderAPI_Sewing attacher;
   this->NewShape();
-  *geom_ = solidmaker.Solid();
+  if (OCCTUtils_CapShapeToSolid(shape,*geom_,attacher,numFilled) != CV_OK)
+  {
+    fprintf(stderr,"Error capping shape\n");
+    return CV_ERROR;
+  }
   this->AddShape();
 
 
@@ -568,6 +519,11 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
 
   int issue=0;
   if (OCCTUtils_CheckIsSolid(*geom_,issue) != CV_OK)
+  {
+    fprintf(stderr,"Shape is not solid after cap\n");
+    return CV_ERROR;
+  }
+  if (issue != 0)
   {
     fprintf(stderr,"Shape is not solid after cap\n");
     return CV_ERROR;
@@ -1346,11 +1302,15 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
     }
   }
   else if (!strncmp(extension,"iges",4)) {
+#ifdef __linux__
+    fprintf(stdout,"Cannot write IGES file on linux %s\n",filename);
+#else
     fprintf(stdout,"Writing file %s\n",filename);
     IGESCAFControl_Writer writer;
     char *empty = NULL;
     writer.Transfer(*shapelabel_);
     Standard_Boolean ret = writer.Write(filename);
+#endif
   }
   else if (!strncmp(extension,"stl",3)) {
     fprintf(stdout,"Writing file %s\n",filename);
@@ -1516,6 +1476,99 @@ int cvOCCTSolidModel::RemoveShape()
   {
       fprintf(stderr,"Shape has already been deleted, cannot remove\n");
       return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+// -------------------
+// CreateBSplineSurface
+// -------------------
+int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
+    int &len1,int &len2,double *uKnots,int &uKlen,double *vKnots,int &vKlen,
+    double *uMults,int &uMlen,double *vMults,int &vMlen,int &p,int &q)
+{
+  //Create a BSpline surface from the input control points,knots, and mults
+
+  TColgp_Array2OfPnt cPoints(1,len2,1,len1);
+  for (int i=0;i<len1;i++)
+  {
+    for (int j=0;j<len2;j++)
+    {
+      gp_Pnt newPnt(CX[i][j],CY[i][j],CZ[i][j]);
+      cPoints.SetValue(j+1,i+1,newPnt);
+    }
+  }
+
+  //Knot spans
+  TColStd_Array1OfReal uKCol(1,uKlen);
+  for (int i=0;i<uKlen;i++)
+    uKCol.SetValue(i+1, uKnots[i]);
+  TColStd_Array1OfReal vKCol(1,vKlen);
+  for (int i=0;i<vKlen;i++)
+    vKCol.SetValue(i+1, vKnots[i]);
+
+  //Mult spans
+  TColStd_Array1OfInteger uMCol(1,uMlen);
+  for (int i=0;i<uMlen;i++)
+    uMCol.SetValue(i+1,(int) uMults[i]);
+  TColStd_Array1OfInteger vMCol(1,vMlen);
+  for (int i=0;i<vMlen;i++)
+    vMCol.SetValue(i+1,(int) vMults[i]);
+
+  Standard_Real tol = 1.e-6;
+  Handle(Geom_BSplineSurface) surface;
+  Handle(Geom_Surface) aSurf;
+  try {
+    Standard_Boolean uPer=Standard_False,vPer=Standard_False;
+    surface = new Geom_BSplineSurface(cPoints,uKCol,vKCol,uMCol,vMCol,p,q,uPer,vPer);
+    surface->SetUPeriodic();
+    aSurf = surface;
+  }
+  catch (Standard_ConstructionError)
+  {
+    fprintf(stderr,"Construction Error\n");
+    return CV_ERROR;
+  }
+
+  BRepBuilderAPI_MakeShell shellBuilder(aSurf);
+  this->NewShape();
+  *geom_ = shellBuilder.Shape();
+
+  //Attacher!
+  TopoDS_Wire wires[2];
+  Standard_Real sewtoler =  1.e-6;
+  Standard_Real closetoler =  1.e-2;
+  ShapeFix_FreeBounds findFree(*geom_,sewtoler,closetoler,
+        	  Standard_False,Standard_False);
+  TopoDS_Compound freeWires = findFree.GetClosedWires();
+  TopExp_Explorer NewEdgeExp;
+  NewEdgeExp.Init(freeWires,TopAbs_EDGE);
+  for (int i=0;NewEdgeExp.More();NewEdgeExp.Next(),i++)
+  {
+    TopoDS_Edge tmpEdge = TopoDS::Edge(NewEdgeExp.Current());
+
+    BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
+    wiremaker.Build();
+
+    wires[i] = wiremaker.Wire();
+  }
+
+  Standard_Real pres3d = 1.0e-6;
+  if (OCCTUtils_ShapeFromBSplineSurface(surface,*geom_,wires[0],wires[1],pres3d) != CV_OK)
+  {
+    fprintf(stderr,"Error in conversion from bspline surface to shape\n");
+    return CV_ERROR;
+  }
+
+  this->AddShape();
+
+  //Name faces
+  TopExp_Explorer anExp(*geom_,TopAbs_FACE);
+  for (int i=0;anExp.More();anExp.Next(),i++)
+  {
+    TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
+    OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","wall");
   }
 
   return CV_OK;

@@ -7,11 +7,12 @@ LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-SET(CXXSRCS cvRepository.cxx cvRepositoryData.cxx 
-    cvDataObject.cxx cvPolyData.cxx 
+SET(CXXSRCS cvRepository.cxx cvRepositoryData.cxx
+    cvDataObject.cxx cvPolyData.cxx
     cvStrPts.cxx cvUnstructuredGrid.cxx
     cv_repos_init.cxx cvDataSet.cxx
     )
+
 SET(HDRS cvRepository.h cvRepositoryData.h
     cvDataObject.h cvPolyData.h
     cvStrPts.h cvUnstructuredGrid.h
@@ -20,8 +21,8 @@ SET(HDRS cvRepository.h cvRepositoryData.h
 
 add_library(${lib} ${CXXSRCS})
 
-target_link_libraries(${lib} 
-   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY} 
+target_link_libraries(${lib}
+   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
    lib_simvascular_globals lib_simvascular_utils
    )
