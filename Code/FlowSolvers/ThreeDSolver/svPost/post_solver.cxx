@@ -2564,6 +2564,7 @@ int main(int argc, char* argv[])
         if (RequestedYbar) {
             //First attempt ybar, if older version of solver, this could exist
             if ( (pp->ParseRestartFile( stepnumber , "ybar" , &numy, &ybarglobal)) == CV_ERROR ) {
+	      YbarArrayExists = false;
                 cout << "No ybar in step " << stepnumber << endl;
             } else {
 	      YbarArrayExists = true;
@@ -2897,6 +2898,7 @@ int main(int argc, char* argv[])
             char w1name[80];
             char w2name[80];
             char aname[80];
+            char ybarname[80];
             char y1name[80];
             char y2name[80];
             char ye1name[80];
@@ -2910,6 +2912,7 @@ int main(int argc, char* argv[])
             w1name[0] = '\0';
             w2name[0] = '\0';
             aname[0] = '\0';
+            ybarname[0] = '\0';
             y1name[0] = '\0';
             y2name[0] = '\0';
             ye1name[0] = '\0';
@@ -2925,6 +2928,7 @@ int main(int argc, char* argv[])
                 sprintf(w1name,"%s","vWSS");
                 sprintf(w2name,"%s","rWSS");
                 sprintf(aname,"%s","timeDeriv");
+                sprintf(ybarname,"%s","ybar");
                 sprintf(y1name,"%s","average_speed");
                 sprintf(y2name,"%s","average_pressure");
                 sprintf(ye1name,"%s","speed_error");
@@ -2939,6 +2943,7 @@ int main(int argc, char* argv[])
                 sprintf(w1name,"%s_%05i","vWSS",stepnumber);
                 sprintf(w2name,"%s_%05i","rWSS",stepnumber);
                 sprintf(aname,"%s_%05i","timeDeriv",stepnumber);
+                sprintf(ybarname,"%s_%05i","ybar",stepnumber);
                 sprintf(y1name,"%s_%05i","average_speed",stepnumber);
                 sprintf(y2name,"%s_%05i","average_pressure",stepnumber);
                 sprintf(ye1name,"%s_%05i","speed_error",stepnumber);
@@ -3130,7 +3135,7 @@ int main(int argc, char* argv[])
 	      ybar->SetNumberOfComponents(5);
 	      ybar->Allocate(nshgtot,10000);
 	      ybar->SetNumberOfTuples(nshgtot);
-	      ybar->SetName("ybar");
+	      ybar->SetName(ybarname);
 	      for (i=0; i< nshgtot; i++) {
 		  for (int loopB=0; loopB< 5; loopB++) {
 		      currTuple[loopB] = ybarglobal[loopB*nshgtot+i];

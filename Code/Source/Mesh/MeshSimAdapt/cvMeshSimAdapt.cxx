@@ -488,8 +488,6 @@ int cvMeshSimAdapt::LoadAvgSpeedFromFile(char *fileName)
 
   if (avgspeed_ != NULL)
     delete [] avgspeed_;
-  char avgspeed_step[80];
-  sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
 
   if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != CV_OK)
   {
@@ -594,14 +592,16 @@ int cvMeshSimAdapt::ReadYbarFromMesh()
 
   if (ybar_ != NULL)
     delete [] ybar_;
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+  char ybar_step[80];
+  sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
+  if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != CV_OK)
   {
-    fprintf(stderr,"Array %s does not exist on mesh\n","ybar");
+    fprintf(stderr,"Array %s does not exist on mesh\n",ybar_step);
     return CV_ERROR;
   }
 
   int nVar = 5; //Number of variables in average speed
-  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,"ybar",nVar,
+  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,ybar_step,nVar,
 	options.poly_) != CV_OK)
   {
     fprintf(stderr,"Error when retrieving ybar array on mesh\n");
@@ -611,7 +611,7 @@ int cvMeshSimAdapt::ReadYbarFromMesh()
   if (inmesh_ != NULL)
   {
     int nVar = 5; //Number of variables in average speed
-    if (AdaptUtils_attachArray(ybar_,inmesh_,"ybar",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
     {
       fprintf(stderr,"Error: Error when attaching ybar to mesh\n");
       return CV_ERROR;
@@ -642,13 +642,8 @@ int cvMeshSimAdapt::ReadAvgSpeedFromMesh()
   char avgspeed_step[80];
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
   if (AdaptUtils_checkArrayExists(inmesh_,0,avgspeed_step) != CV_OK)
-    return CV_ERROR;
-
-  int nVar = 1; //Number of variables in average speed
-  if (AdaptUtils_getAttachedArray(avgspeed_,inmesh_,avgspeed_step,nVar,
-	options.poly_) != CV_OK)
   {
-    fprintf(stderr,"Error when retrieving average speed array on mesh\n");
+    fprintf(stderr,"Array %s does not exist on mesh\n",avgspeed_step);
     if (this->ReadYbarFromMesh() != CV_OK)
     {
       fprintf(stderr,"Attempted to find ybar, couldn't find ybar on mesh either\n");
@@ -659,6 +654,14 @@ int cvMeshSimAdapt::ReadAvgSpeedFromMesh()
       fprintf(stdout,"Found ybar array on mesh\n");
       return CV_OK;
     }
+  }
+
+  int nVar = 1; //Number of variables in average speed
+  if (AdaptUtils_getAttachedArray(avgspeed_,inmesh_,avgspeed_step,nVar,
+	options.poly_) != CV_OK)
+  {
+    fprintf(stderr,"Error when retrieving average speed array on mesh\n");
+    return CV_ERROR;
   }
 
   if (inmesh_ != NULL)
@@ -783,6 +786,11 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
 	if (this->ReadSolutionFromMesh() != CV_OK)
 	  return CV_ERROR;
       }
+      vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
+	      vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
+      writer->SetInputData(inmesh_);
+      writer->SetFileName("/media/psf/Home/Desktop/dumone.vtu");
+      writer->Write();
 
       //Compute hessian and attach to mesh!
       if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)

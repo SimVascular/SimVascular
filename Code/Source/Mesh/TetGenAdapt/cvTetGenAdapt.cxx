@@ -451,9 +451,6 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
 
   if (avgspeed_ != NULL)
     delete [] avgspeed_;
-  char avgspeed_step[80];
-  sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
-
   if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != CV_OK)
   {
     fprintf(stderr,"Error: Couldn't read average speed from file\n");
@@ -566,14 +563,16 @@ int cvTetGenAdapt::ReadYbarFromMesh()
 
   if (ybar_ != NULL)
     delete [] ybar_;
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"ybar") != CV_OK)
+  char ybar_step[80];
+  sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
+  if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != CV_OK)
   {
-    fprintf(stderr,"Array %s does not exist on mesh\n","ybar");
+    fprintf(stderr,"Array %s does not exist on mesh\n",ybar_step);
     return CV_ERROR;
   }
 
   int nVar = 5; //Number of variables in average speed
-  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,"ybar",nVar,
+  if (AdaptUtils_getAttachedArray(ybar_,inmesh_,ybar_step,nVar,
 	options.poly_) != CV_OK)
   {
     fprintf(stderr,"Error when retrieving ybar array on mesh\n");
