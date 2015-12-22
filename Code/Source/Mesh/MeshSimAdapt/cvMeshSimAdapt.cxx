@@ -571,6 +571,12 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
 	options.outstep_,options.step_incr_) != CV_OK)
     return CV_ERROR;
 
+  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK) 
+  {
+    fprintf(stderr,"Could not converate solution into average speed array\n");
+    return CV_ERROR;
+  }
+
   return CV_OK;
 }
 
@@ -643,7 +649,16 @@ int cvMeshSimAdapt::ReadAvgSpeedFromMesh()
 	options.poly_) != CV_OK)
   {
     fprintf(stderr,"Error when retrieving average speed array on mesh\n");
-    return CV_ERROR;
+    if (this->ReadYbarFromMesh() != CV_OK)
+    {
+      fprintf(stderr,"Attempted to find ybar, couldn't find ybar on mesh either\n");
+      return CV_ERROR;
+    }
+    else
+    {
+      fprintf(stdout,"Found ybar array on mesh\n");
+      return CV_OK;
+    }
   }
 
   if (inmesh_ != NULL)
