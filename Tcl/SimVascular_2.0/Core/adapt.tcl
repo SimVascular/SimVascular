@@ -23,13 +23,14 @@ proc meshSimWriteAdaptMeshScript {} {
   global gFilenames
   global guiMMvars
 
+  set gOptions(meshing_kernel) MeshSim
   set guiMMvars(metric_array_name) dummy
 
-  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]] 
-  set gFilenames(adapted_mesh_file) $basename.sms 
-  set gFilenames(adapted_vtu_mesh_file) $basename.vtu 
-  set gFilenames(adapted_vtp_surface_file) $basename.vtp 
-  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1 
+  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]]
+  set gFilenames(adapted_mesh_file) $basename.sms
+  set gFilenames(adapted_vtu_mesh_file) $basename.vtu
+  set gFilenames(adapted_vtp_surface_file) $basename.vtp
+  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1
 
   set ascflag                $guiMMvars(phasta_format)
   set model_file             $gFilenames(atdb_solid_file)
@@ -54,7 +55,15 @@ proc meshSimWriteAdaptMeshScript {} {
   set reductionRatio         $guiMMvars(error_reduction_factor)
   set maxCoarseFactor        $guiMMvars(gsize)
   set maxRefineFactor        $guiMMvars(min_gsize)
-  
+  set mesh                   /adapt/internal/meshobject
+  set solid                  /adapt/temporary/solid
+
+  #catch {repos_delete -obj $mesh}
+  catch {repos_delete -obj $solid}
+  set gObjects(atdb_solid) $solid
+  guiFNMloadSolidModel atdb_solid_file atdb_solid
+  puts "$solid GetKernel"
+
   puts "Writing MeshSim Adapt Script File"
   set script_filename [file rootname $out_mesh_file].msas
 
@@ -85,7 +94,6 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "$object LoadModel -file $model_file"
   puts $fp "$object LoadMesh -file $mesh_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
-  puts $fp "$object LoadYbarFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"
   puts $fp "$object SetAdaptOptions -flag metric_option -value $adapt_option"
   puts $fp "$object SetAdaptOptions -flag ratio -value $reductionRatio"
@@ -106,6 +114,7 @@ proc meshSimWriteAdaptMeshScript {} {
   puts $fp "$object WriteAdaptedMesh -file $out_mesh_file"
   puts $fp "$object WriteAdaptedMesh -file $out_vtu_mesh_file"
   puts $fp "$object WriteAdaptedSolution -file $out_solution_file"
+  puts $fp "mesh_writeCompleteMesh $mesh $solid adapted_meshcomplete $gFilenames(adapted_mesh_dir)"
   puts $fp ""
   close $fp
 
@@ -148,17 +157,20 @@ proc tetGenWriteAdaptMeshScript {} {
   global gFilenames
   global guiMMvars
 
-  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]] 
-  set gFilenames(adapted_vtu_mesh_file) $basename.vtu 
-  set gFilenames(adapted_vtp_surface_file) $basename.vtp 
-  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1 
+  set gOptions(meshing_kernel) TetGen
+  set gOptions(meshing_solid_kernel) PolyData
+
+  set basename [file join $gFilenames(adapted_mesh_dir) [file tail $gFilenames(adapted_mesh_dir)]]
+  set gFilenames(adapted_vtu_mesh_file) $basename.vtu
+  set gFilenames(adapted_vtp_surface_file) $basename.vtp
+  set gFilenames(adapted_solution_file) $basename.restart.$guiMMvars(last_step_number).1
 
   set ascflag                $guiMMvars(phasta_format)
   set vtu_mesh_file          $gFilenames(vtu_mesh_file)
   set vtp_surface_file       $gFilenames(vtp_surface_file)
 
   set solution_file          $gFilenames(solution_file)
-  set out_vtu_mesh_file      $gFilenames(adapted_vtu_mesh_file) 
+  set out_vtu_mesh_file      $gFilenames(adapted_vtu_mesh_file)
   set out_solution_file      $gFilenames(adapted_solution_file)
   set out_vtp_mesh_file      $gFilenames(adapted_vtp_surface_file)
 
@@ -172,7 +184,14 @@ proc tetGenWriteAdaptMeshScript {} {
   set reductionRatio         $guiMMvars(error_reduction_factor)
   set maxCoarseFactor        $guiMMvars(gsize)
   set maxRefineFactor        $guiMMvars(min_gsize)
-  
+  set mesh                   /adapt/internal/meshobject
+  set solid                  /adapt/temporary/solid
+
+ # catch {repos_delete -obj $mesh}
+  catch {repos_delete -obj $solid}
+  set gObjects(adapt_solid) $solid
+  guiFNMloadSolidModel vtp_surface_file adapt_solid
+
   puts "Writing TetGen Adapt Script File"
   set script_filename [file rootname $out_vtu_mesh_file].tgas
 
@@ -202,7 +221,6 @@ proc tetGenWriteAdaptMeshScript {} {
   puts $fp "$object CreateInternalMeshObject"
   puts $fp "$object LoadModel -file $vtp_surface_file"
   puts $fp "$object LoadMesh -file $vtu_mesh_file"
-  puts $fp "$object LoadYbarFromFile -file $solution_file"
   puts $fp "$object SetAdaptOptions -flag strategy -value $adapt_strategy"
   puts $fp "$object SetAdaptOptions -flag metric_option -value $adapt_option"
   puts $fp "$object SetAdaptOptions -flag ratio -value $reductionRatio"
@@ -223,6 +241,7 @@ proc tetGenWriteAdaptMeshScript {} {
   puts $fp "$object WriteAdaptedMesh -file $out_vtu_mesh_file"
   puts $fp "$object WriteAdaptedModel -file $out_vtp_mesh_file"
   puts $fp "$object WriteAdaptedSolution -file $out_solution_file"
+  puts $fp "mesh_writeCompleteMesh $mesh $solid adapted $gFilenames(adapted_mesh_dir)"
   puts $fp ""
   close $fp
 
