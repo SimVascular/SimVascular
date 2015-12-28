@@ -6,6 +6,7 @@
 import sys, getopt
 import numpy as np
 import scipy as sp
+import vtk
 import imp
 import re
 import os
@@ -103,7 +104,7 @@ def getrbasis(u,deg,w,ktype):
 
 	return Rp,knots
 
-def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype):
+def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype,Du0,DuN,Dv0,DvN):
 ## @brief Function to set up bspline going through x,y points and of degree deg
 #  @param x given values in x direction
 #  @param y corresponding y values to x
@@ -133,13 +134,13 @@ def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype):
 	Rx,xknots = getrbasis(u,xdeg,w[:,0],kutype)
 	Ry,yknots = getrbasis(v,ydeg,w[0,:],kvtype)
 	if (kutype == 'endderiv'):
-		x,y,z,Rx = addderivdata(x.T,y.T,z.T,Rx,xknots,p)
+		x,y,z,Rx = addderivdata(x.T,y.T,z.T,Rx,xknots,p,Du0,DuN)
 		x = x.T
 		y = y.T
 		z = z.T
 		ncy = ncy+2
 	if (kvtype == 'endderiv'):
-		x,y,z,Ry = addderivdata(x,y,z,Ry,yknots,q)
+		x,y,z,Ry = addderivdata(x,y,z,Ry,yknots,q,Dv0,DvN)
 		ncx = ncx+2
 	Rxinv = np.linalg.inv(Rx)
 	xu = np.empty_like(x)
@@ -160,7 +161,7 @@ def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype):
 	####################Calculate control points!#######################
 	return xv,yv,zv,Rx,Ry,xknots,yknots
 
-def addderivdata(X,Y,Z,R,knots,deg):
+def addderivdata(X,Y,Z,R,knots,deg,D0,Dn):
 	ncx = X.shape[0]
 	ncy = X.shape[1]
 	#Order of the bspline
@@ -172,12 +173,6 @@ def addderivdata(X,Y,Z,R,knots,deg):
 	#Number of knot points
 	nkx = r+1
 
-	#Modify the input data and R arrays
-	D0 = np.array([[(X[1,:]-X[0,:])],[(Y[1,:]-Y[0,:])],[(Z[1,:]-Z[0,:])]])
-	Dn = np.array([[(X[-1,:]-X[-2,:])],[(Y[-1,:]-Y[-2,:])],[(Z[-1,:]-Z[-2,:])]])
-	#D0 = -1.0*np.zeros((1,ncy))
-	#Dn = np.zeros((1,ncy))
-
 	#Make x add rows
 	row2x = np.zeros((1,R.shape[1]))
 	row2x[0,0] = -1.0
@@ -188,21 +183,21 @@ def addderivdata(X,Y,Z,R,knots,deg):
 
 	Dx = np.zeros((ncx+2,ncy))
 	Dx[0,:] = X[0,:]
-	Dx[1,:] = (knots[p+1]/p)*D0[0,:]
+	Dx[1,:] = (knots[p+1]/p)*D0[0]
 	Dx[2:-2,:] = X[1:-1,:]
-	Dx[-2,:] = ((1- knots[r-p-1])/p)*Dn[0,:]
+	Dx[-2,:] = ((1- knots[r-p-1])/p)*Dn[0]
 	Dx[-1,:] = X[-1,:]
 	Dy = np.zeros((ncx+2,ncy))
 	Dy[0,:] = Y[0,:]
-	Dy[1,:] = (knots[p+1]/p)*D0[1,:]
+	Dy[1,:] = (knots[p+1]/p)*D0[1]
 	Dy[2:-2,:] = Y[1:-1,:]
-	Dy[-2,:] = ((1- knots[r-p-1])/p)*Dn[1,:]
+	Dy[-2,:] = ((1- knots[r-p-1])/p)*Dn[1]
 	Dy[-1,:] = Y[-1,:]
 	Dz = np.zeros((ncx+2,ncy))
 	Dz[0,:] = Z[0,:]
-	Dz[1,:] = (knots[p+1]/p)*D0[2,:]
+	Dz[1,:] = (knots[p+1]/p)*D0[2]
 	Dz[2:-2,:] = Z[1:-1,:]
-	Dz[-2,:] = ((1- knots[r-p-1])/p)*Dn[2,:]
+	Dz[-2,:] = ((1- knots[r-p-1])/p)*Dn[2]
 	Dz[-1,:] = Z[-1,:]
 
 	R = np.insert(R,1,row2x,axis=0)
@@ -291,10 +286,14 @@ def loft(argv):
    kvtype    = 'avg'
    p         = 2
    q         = 2
+   Du0       = [0.0]
+   DuN       = [0.0]
+   Dv0       = [0.0]
+   DvN       = [0.0]
    try:
-      opts, args = getopt.getopt(argv,"ha:o:u:v:x:y:p:q:",["allpoints=", \
+      opts, args = getopt.getopt(argv,"ha:u:v:x:y:p:q:o:n:r:s:",["allpoints=", \
 		      "putype=","pvtype=","kutype=","kvtype=", \
-		      "uorder=","vorder="])
+		      "uorder=","vorder=","du0=","dun=","dv0=","dvn="])
    except getopt.GetoptError:
       print '-a[--allpoints]  <all points, NxMxL, N is number of pts in v,M is number of pts in u,L is 3 (X,Y,Z)>'
       print '-u[--putype] <parametrictype in u>'
@@ -303,6 +302,10 @@ def loft(argv):
       print '-y[--kvtype] <knottype in v>'
       print '-p[--uorder] <degree of curve in u>'
       print '-q[--vorder] <degree of curve in v>'
+      print '-o[--du0]    <end derivative of surface in u at beginning>'
+      print '-n[--dun]    <end derivative of surface in u at end>'
+      print '-r[--dv0]    <end derivative of surface in v at beginning>'
+      print '-s[--dvn]    <end derivative of surface in v at end>'
       sys.exit(2)
    for opt, arg in opts:
       if opt == '-h':
@@ -313,6 +316,10 @@ def loft(argv):
 	 print '-y[--kvtype] <knottype in v>'
 	 print '-p[--uorder] <degree of curve in u>'
 	 print '-q[--vorder] <degree of curve in v>'
+         print '-o[--du0]    <end derivative of surface in u at beginning>'
+         print '-n[--dun]    <end derivative of surface in u at end>'
+         print '-r[--dv0]    <end derivative of surface in v at beginning>'
+         print '-s[--dvn]    <end derivative of surface in v at end>'
          sys.exit()
       elif opt in ("-a", "--allpoints"):
          allpoints = arg
@@ -328,15 +335,39 @@ def loft(argv):
          p = int(arg)
       elif opt in ("-q", "--vorder"):
          q = int(arg)
+      elif opt in ("-o", "--du0"):
+         Du0 = [float(i) for i in arg]
+      elif opt in ("-n", "--dun"):
+         DuN = [float(i) for i in arg]
+      elif opt in ("-r", "--dv0"):
+         Dv0 = [float(i) for i in arg]
+      elif opt in ("-s", "--dvn"):
+         DvN = [float(i) for i in arg]
    print 'Parametric Type (u) is: ', putype
    print 'Parametric Type (v) is: ', pvtype
    print 'Knot Type (u) is:       ', kutype
    print 'Knot Type (v) is:       ', kvtype
    print 'Surface Degree (u) is:  ', p
    print 'Surface Degree (v) is:  ', q
+   if (Du0 == [0.0]):
+	print 'Beg Derivative (u) is:  ', 'default'
+   else:
+   	print 'Beg Derivative (u) is:  ', Du0
+   if (DuN == [0.0]):
+	print 'End Derivative (u) is:  ', 'default'
+   else:
+   	print 'End Derivative (u) is:  ', DuN
+   if (Dv0 == [0.0]):
+	print 'Beg Derivative (v) is:  ', 'default'
+   else:
+   	print 'Beg Derivative (v) is:  ', Dv0
+   if (DvN == [0.0]):
+	print 'End Derivative (v) is:  ', 'default'
+   else:
+   	print 'End Derivative (v) is:  ', DvN
    print ''
 
-   return nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q)
+   return nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN)
 
 def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 
@@ -372,9 +403,30 @@ def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 
 	return uKnew,vKnew,uMnew,vMnew
 
-#################################TESTING#####################################
-def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q):
+def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
+  	math = vtk.vtkMath()
+	
+	#Initiate vecs for cross product
+	vec1 = [Xpts[1]-Xpts[0],Ypts[1]-Ypts[0],Zpts[1]-Zpts[0]]
+	vec2 = [Xpts[2]-Xpts[0],Ypts[2]-Ypts[2],Zpts[2]-Zpts[0]]
+	perp = [0.0,0.0,0.0]
+	dirl = [0.0,0.0,0.0]
+	for i in range(3):
+		dirl[i] = direction[i]
 
+	math.Cross(vec1,vec2,perp)
+	dotval = math.Dot(perp,dirl)
+	if (dotval < 0):
+		for i in range(3):
+			perp[i] = -1.0*perp[i]
+	
+	return perp
+
+
+#################################TESTING#####################################
+def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
+
+	#Pull in coordinates from input. Repeat first points to complete surface
 	X         = np.zeros((allpoints.shape[0],allpoints.shape[1]+1))
 	Y         = np.zeros((allpoints.shape[0],allpoints.shape[1]+1))
 	Z         = np.zeros((allpoints.shape[0],allpoints.shape[1]+1))
@@ -385,6 +437,7 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q):
 	Z[:,:-1]  = allpoints[:,:,2]
 	Z[:,-1]   = allpoints[:,0,2]
 
+	#Set up degree, number of control points for inputs
 	ncx = X.shape[1]
 	ncy = X.shape[0]
 	n = ncx-1
@@ -394,11 +447,25 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q):
 	nkx = r+1
 	nky = s+1
 
+	#Get parametric vectors and weights
 	u = getus(X[0,:],Y[0,:],Z[0,:],putype)
 	v = getus(X[:,0],Y[:,0],Z[:,0],pvtype)
 	W = np.ones((ncx,ncy))
 
-	Xu,Yu,Zu,Nx,Ny,xknots,yknots = nurbs3d(X,Y,Z,u,v,W,p,q,kutype,kvtype)
+	#Set up derivates at ends (default is linear interp between endpoints))
+	if (Du0 == [0.0]):
+		Du0 = np.array([X.T[1,:]-X.T[0,:],Y.T[1,:]-Y.T[0,:],Z.T[1,:]-Z.T[0,:]])
+	if (DuN == [0.0]):
+		DuN = np.array([X.T[-1,:]-X.T[-2,:],Y.T[-1,:]-Y.T[-2,:],Z.T[-1,:]-Z.T[-2,:]])
+	if (Dv0 == [0.0]):
+		Dv0tmp = np.array([X[1,:]-X[0,:],Y[1,:]-Y[0,:],Z[1,:]-Z[0,:]])
+		Dv0 = calc_seg_perp_vector(X[0,0:3],Y[0,0:3],Z[0,0:3],Dv0tmp[0,:])
+	if (DvN == [0.0]):
+		DvNtmp = np.array([X[-1,:]-X[-2,:],Y[-1,:]-Y[-2,:],Z[-1,:]-Z[-2,:]])
+		DvN = calc_seg_perp_vector(X[-1,0:3],Y[-1,0:3],Z[-1,0:3],DvNtmp[0,:])
+
+	Xu,Yu,Zu,Nx,Ny,xknots,yknots = nurbs3d(X,Y,Z,u,v,W,p,q,kutype,kvtype,\
+			Du0,DuN,Dv0,DvN)
 
 	#Convert knots and parameters into opencascade understandable arrays
 	uK,vK,uM,vM = convertToKnotsMults(xknots,yknots,p,q)

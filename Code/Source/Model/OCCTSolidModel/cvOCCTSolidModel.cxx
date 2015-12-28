@@ -808,6 +808,8 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
 // ------------
 cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
 {
+  //In OpenCASCADE case, max_dist corresponds to angle in degrees for which
+  //faceted normals are allowed
   if (geom_ == NULL)
   {
     fprintf(stderr,"Solid is null\n");
@@ -816,13 +818,16 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   cvPolyData *result;
   vtkPolyData *pd;
 
+  if (useMaxDist == 0) 
+    max_dist = 20.0;
+
   IVtkOCC_Shape::Handle aShapeImpl = new IVtkOCC_Shape(*geom_);
   //IVtk_IShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
   IVtkVTK_ShapeData::Handle aDataImpl = new IVtkVTK_ShapeData();
   //Deviation Coefficient is 0.0001,Deviation Angle = 5rad,default is 12rad,
   //Do not generate u isoline and do not generate v isoline
   double devcoeff = 0.0001;
-  double angcoeff = 20.0 * M_PI/180.0;
+  double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
   int vIsoLine= 0;
   IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(
@@ -953,6 +958,8 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   cvPolyData *result;
   vtkPolyData *pd;
 
+  if (useMaxDist == 0) 
+    max_dist = 20.0;
   int i = 0;
   const TopoDS_Shape& aShape = *geom_;
   TopExp_Explorer anExp (aShape, TopAbs_FACE);
@@ -985,7 +992,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   //Deviation Coefficient is 0.0001,Deviation Angle = 5rad,default is 12rad,
   //Do not generate u isoline and do not generate v isoline
   double devcoeff = 0.0001;
-  double angcoeff = 20.0 * M_PI/180.0;
+  double angcoeff = max_dist * M_PI/180.0;
   int uIsoLine= 0;
   int vIsoLine= 0;
   IVtk_IShapeMesher::Handle aMesher = new IVtkOCC_ShapeMesher(

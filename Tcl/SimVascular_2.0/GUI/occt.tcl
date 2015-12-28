@@ -237,7 +237,7 @@ proc guiSV_model_create_model_opencascade_python {} {
       global gRen3dFreeze
       set oldFreeze $gRen3dFreeze
       set gRen3dFreeze 1
-      call_python_lofting $i avg endderiv centripetal centripetal 3 3
+      call_python_lofting $i avg endderiv centripetal centripetal 3 3 0.0 0.0 0.0 0.0
       set gRen3dFreeze $oldFreeze
       set gPathBrowser(currGroupName) $keepgrp
    }
@@ -519,6 +519,43 @@ proc makeSurfOCCT {} {
 
 }
 
+proc guiSV_model_get_model_faces {} {
+  global symbolicName
+  global gKernel
+  global gPolyDataFacesNames
+  global gDiscreteModelFaceNames
+  global gOCCTFaceNames
+
+  set tv $symbolicName(guiSV_model_tree)
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Must select model from tree and only one allowed for extraction at a time"
+  }
+  set kernel $gKernel($model)
+  solid_setKernel -name $kernel
+
+  set allids [$model GetFaceIds]
+  foreach id $allids {
+    if {$kernel == "Discrete"} {
+      set gDiscreteModelFaceNames($id) "noname_$id"
+    } elseif {$kernel == "PolyData"} {
+      set gPolyDataFaceNames($id) "noname_$id"
+    } elseif {$kernel == "OpenCASCADE"} {
+      set name "noname_$id"
+      set gOCCTFaceNames($id) $name
+      $model SetFaceAttr -attr gdscName -faceId $id -value $name 
+    } else {
+      return -code error "ERROR: Kernel type $kernel is invalid for this operation"
+    }
+  }
+  guiSV_model_remove_faces_from_tree $kernel $model
+  guiSV_model_update_tree
+  guiSV_model_add_faces_to_tree $kernel $model
+
+  guiSV_model_update_tree
+  guiSV_model_update_view_model $kernel $model
+}
+
 proc guiSV_model_blend_selected_models_occt {} {
   global gObjects
   global symbolicName
@@ -718,34 +755,32 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
   }
   set isdups 0
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
-   set isdups 1
-   set duplist [lsort -dictionary $pretty_names]
-   foreach i [lsort -unique $pretty_names] {
+    set isdups 1
+    set duplist [lsort -dictionary $pretty_names]
+    foreach i [lsort -unique $pretty_names] {
       set idx [lsearch -exact $duplist $i]
       set duplist [lreplace $duplist $idx $idx]
-   }
-   set msg "Duplicate faces found!\n\n"
-   set duplistids {}
-   foreach dup $duplist {
-     set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
-     lappend duplistids $id
-   }
-   for {set i 0} {$i < [llength $duplist]} {incr i} {
-     set dup [lindex $duplist $i]
-     set dupid [lindex $duplistids $i]
-     set newname [string trim $dup]_2
-     set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-     set gOCCTFaceNames($dupid) $newname
-     $model SetFaceAttr -attr gdscName -faceId $dupid -value $newname
-   }
-}
-
-guiSV_model_add_faces_to_tree $kernel $model
-#guiSV_model_display_only_given_model $model 1
-if {$isdups == 1} {
-  tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
-}
-
+    }
+    set msg "Duplicate faces found!\n\n"
+    set duplistids {}
+    foreach dup $duplist {
+      set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
+      lappend duplistids $id
+    }
+    for {set i 0} {$i < [llength $duplist]} {incr i} {
+      set dup [lindex $duplist $i]
+      set dupid [lindex $duplistids $i]
+      set newname [string trim $dup]_2
+      set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
+      set gOCCTFaceNames($dupid) $newname
+      $model SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+    }
+  }
+  guiSV_model_add_faces_to_tree $kernel $model
+  #guiSV_model_display_only_given_model $model 1
+  if {$isdups == 1} {
+    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+  }
 }
 
 proc get_even_segs_along_length {grp vecFlag useLinearSampleAlongLength numPtsInLinearSampleAlongLength useFFT numModes numOutPtsInSegs numOutPtsAlongLength addCaps outPD} {

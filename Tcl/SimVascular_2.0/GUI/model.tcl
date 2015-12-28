@@ -801,7 +801,7 @@ proc guiSV_model_save_model {} {
   set model [guiSV_model_get_tree_current_models_selected]
 
   if {[llength $model] != 1} {
-    return -code error "Only one model can be written at a time!"
+    return -code error "Must select model from tree and only one can be written at a time!"
   }
   set kernel $gKernel($model)
   solid_setKernel -name $kernel
@@ -926,8 +926,14 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
   global gDiscreteModelFaceNames
   global smasherFaceNames
   global gOptions
+  global gKernel
 
-  set maxedgesize $gOptions(facet_max_edge_size)
+  set facet_metric 1.0
+  if {$kernel == "Parasolid"} {
+    set facet_metric $gOptions(facet_max_edge_size)
+  } elseif {$kernel =="OpenCASCADE"} {
+    set facet_metric $gOptions(facet_max_angle_dev)
+  }
   set faceIds [$modelname GetFaceIds]
   catch {unset smasherFaceNames}
   foreach id $faceIds {
@@ -947,14 +953,14 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
     lappend smasherFaceNames $facename
     set facepd /models/$kernel/$modelname/$facename
     catch {repos_delete -obj $facepd}
-    if {[catch {$modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize} errmsg] == 0} {
+    if {[catch {$modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric} errmsg] == 0} {
       model_add $modelname $facename $facename
     } else {
-      puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize"
+      puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric"
       puts $errmsg
       set errorFaceName {}
       catch {set errorFaceName [$modelname GetFaceAttr -faceId $id -attr gdscName]}
-      tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize)\n"
+      tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric)\n"
       #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
     }
   }
@@ -985,14 +991,14 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
        $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
        set facepd /models/$kernel/$modelname/$newname
        catch {repos_delete -obj $facepd}
-       if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize} errmsg] == 0} {
+       if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric} errmsg] == 0} {
 	 model_add $modelname $newname $newname
        } else {
-	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize"
+	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric"
 	 puts $errmsg
 	 set errorFaceName {}
 	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
-	 tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize)\n"
+	 tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric)\n"
 	 #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
        }
      }
@@ -1150,9 +1156,15 @@ proc guiSV_model_display_model {showFlag kernel model} {
   global gOptions
   set tv $symbolicName(guiSV_model_tree)
 
+  set facet_metric 1.0
+  if {$kernel == "Parasolid"} {
+    set facet_metric $gOptions(facet_max_edge_size)
+  } elseif {$kernel =="OpenCASCADE"} {
+    set facet_metric $gOptions(facet_max_angle_dev)
+  }
   set modelpd /models/$kernel/$model
   if {![repos_exists -obj $modelpd]} {
-    $model GetPolyData -result $modelpd -max_edge_size $gOptions(facet_max_edge_size)
+    $model GetPolyData -result $modelpd -max_edge_size $facet_metric
   }
   if {$showFlag == 0} {
     vis_pRm $gRen3d $modelpd
@@ -1238,7 +1250,7 @@ proc guiSV_model_display_selected_faces {showFlag} {
   }
 
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be selected to edit face visualization at a time"
+    return -code error "ERROR: Must select model from tree and only one can be selected to edit face visualization at a time"
   }
   set kernel $gKernel($model)
   set check [lindex [$tv item .models.$kernel.$model -values] 2]
@@ -1654,7 +1666,7 @@ proc guiVMTKCenterlines {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be used for centerline extraction"
+    return -code error "ERROR: Must select model from tree and only one can be used for centerline extraction"
   }
   set kernel $gKernel($model)
   if {$kernel != "PolyData"} {
@@ -1728,7 +1740,7 @@ proc guiBOUNDARIESextract {} {
   #set kernel $gOptions(meshing_solid_kernel)
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed for extraction at a time"
+    return -code error "ERROR: Must select model from tree and only one allowed for extraction at a time"
   }
 
   set kernel $gKernel($model)
@@ -2448,7 +2460,7 @@ proc guiSV_model_trim_model {} {
 
   set model [guiSV_model_get_tree_current_selected_models]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be trimmed at a time"
+    return -code error "ERROR: Must select model from tree and only one can be trimmed at a time"
   }
   set gObjects(preop_solid) $model
   set trimmedModel1 "[string trim $model]_trimmed1"
@@ -2489,7 +2501,7 @@ proc guiSV_model_copy_selected_model {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be copied at a time"
+    return -code error "ERROR: Must select model from tree and only one can be copied at a time"
   }
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2559,7 +2571,7 @@ proc guiSV_model_rename_selected_model {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be copied at a time"
+    return -code error "ERROR: Must select model from tree and only one can be copied at a time"
   }
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2878,7 +2890,7 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+    return -code error "ERROR: Must select model from tree and only one allowed to create Discrete at a time"
   }
   if {$gKernel($model) != "PolyData"} {
     return -code error "ERROR: Must use PolyData to create Discrete Model"
@@ -2936,7 +2948,7 @@ proc guiSV_model_create_local_surface_macro {type} {
   } elseif {$type == "faces"} {
     set model [guiSV_model_get_tree_current_models_selected]
     if {[llength $model] != 1} {
-      return -code error "ERROR: Only one model can be selected for local operations"
+      return -code error "ERROR: Must select model from tree and only one can be selected for local operations"
     }
     set kernel $gKernel($model)
     set selected [guiSV_model_get_tree_current_faces_selected]
@@ -2957,7 +2969,7 @@ proc guiSV_model_create_local_surface_macro {type} {
   } elseif {$type == "blend"} {
     set model [guiSV_model_get_tree_current_models_selected]
     if {[llength $model] != 1} {
-      return -code error "ERROR: Only one model can be selected for local operations"
+      return -code error "ERROR: Must select model from tree and only one can be selected for local operations"
     }
     set kernel $gKernel($model)
     set selected [guiSV_model_get_tree_current_faces_selected]
@@ -3322,7 +3334,7 @@ proc guiSV_model_create_polydata_solid_from_nurbs {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+    return -code error "ERROR: Must select model from tree and only one allowed to create Discrete at a time"
   }
   puts $gKernel($model)
   if {!($gKernel($model) == "Parasolid" || $gKernel($model) == "OpenCASCADE")} {
@@ -3334,7 +3346,13 @@ proc guiSV_model_create_polydata_solid_from_nurbs {} {
   if {[repos_exists -obj $modelpd] == 1} {
     catch {repos_delete -obj $modelpd}
   }
-  $model GetPolyData -result $modelpd -max_edge_size $guiSVvars(facet_max_edge_size)
+  set facet_metric 1.0
+  if {$kernel == "Parasolid"} {
+    set facet_metric $guiSVvars(facet_max_edge_size)
+  } elseif {$kernel == "OpenCASCADE"} {
+    set facet_metric $gOptions(facet_max_angle_dev)
+  }
+  $model GetPolyData -result $modelpd -max_edge_size $facet_metric
 
   set facevtklist {}
   set facenames {}
@@ -3346,7 +3364,7 @@ proc guiSV_model_create_polydata_solid_from_nurbs {} {
     if {[repos_exists -obj $facepd] == 1} {
       catch {repos_delete -obj $facepd}
     }
-    $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
+    $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $facet_metric
     lappend facevtklist $facepd
     lappend idlist $faceid
   }
@@ -3409,7 +3427,7 @@ proc guiSV_model_name_faces_from_reference {newmodel refmodel} {
     if {[repos_exists -obj $facepd] == 1} {
       catch {repos_delete -obj $facepd}
     }
-    $refmodel GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
+    $refmodel GetFacePolyData -face $faceid -result $facepd -max_edge_size $facet_metric
     lappend facevtklist $facepd
     lappend idlist $faceid
   }

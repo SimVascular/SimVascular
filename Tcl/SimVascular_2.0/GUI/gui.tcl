@@ -13322,7 +13322,7 @@ img_guessVolParams $gImageVol(filename)}
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.frame1.entry9 <Key-Return> {guiGROUPSUpdateSource}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2
-  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2  -text {Execute [-]} -width {30}  -height {30}
+  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2  -text {Convert [-]} -width {30}  -height {30}
   bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2 <Button-1> {guiCV_squeezer_labelframe .tframe5 %W}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5
@@ -13333,6 +13333,19 @@ img_guessVolParams $gImageVol(filename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1  -command {guiSV_model_create_polydata_solid_from_nurbs}  -text {Convert Selected Model To PolyData}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3
+  ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3  -text {Extract Faces [-]} -width {30}  -height {30}
+  bind .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3 <Button-1> {guiCV_squeezer_labelframe .tframe5 %W}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5  -borderwidth {2}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6
+  ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6  -borderwidth {2}  -relief {flat}  -width {30}  -height {30}
+
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6.button1
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6.button1  -command {guiSV_model_get_model_faces}  -text {Extract Model Faces}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe3
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -20235,6 +20248,7 @@ img_guessVolParams $gImageVol(filename)}
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1 -fill x
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2 -fill x
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3 -fill x
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5  -expand 1  -fill both
@@ -20262,6 +20276,15 @@ img_guessVolParams $gImageVol(filename)}
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1  -fill y -side left
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5  -expand 1  -fill both
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6  -fill both -side top
+
+  # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5.tframe6.button1  -fill y -side left
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe3
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe3.tframe7  -expand 1  -fill both
@@ -27090,7 +27113,7 @@ proc gui3DchangeSurface { operation} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed for operation"
+    return -code error "ERROR: Must select model from tree and only one allowed for operation"
   }
   set kernel $gKernel($model)
   if {$kernel != "PolyData"} {
@@ -38649,7 +38672,7 @@ proc guiTRIMaddCutBox {} {
 
    set model [guiSV_model_get_tree_current_models_selected]
    if {[llength $model] != 1} {
-     return -code error "ERROR: Only one model allowed to be trimmed at a time"
+     return -code error "ERROR: Must select model from tree and only one allowed to be trimmed at a time"
    }
    set kernel $gKernel($model)
    if {$kernel != "PolyData"} {
@@ -38700,7 +38723,7 @@ proc guiTRIMaddCutPlane { side} {
    solid_setKernel -name $kernel
 
    if {[llength $model] != 1} {
-     return -code error "ERROR: Only one model allowed to be trimmed at a time"
+     return -code error "ERROR: Must select model from tree and only one allowed to be trimmed at a time"
    }
    #set oldmodel "[string trim $model]_boxtrimmed"
    guiSV_model_add_to_backup_list $kernel $model
@@ -39216,7 +39239,7 @@ proc guiTRIMvis { flag} {
     if {$flag == "vis_planeInteractor"} {
       set guiTRIMvars(vis_planeInteractor) 0
     }
-    return -code error "ERROR: Only one model should be selected to show interactor"
+    return -code error "ERROR: Must select model from tree and only one should be selected to show interactor"
   }
   set modelpd /models/$kernel/$model
   catch {repos_delete -obj $modelpd}
@@ -49426,6 +49449,8 @@ set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5)} {1}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2.tframe5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe2 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5)} {1}
+set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3.tframe5_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe3 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1)} {0}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8.tframe1_pack_info)} {-in .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe8 -anchor center -expand 0 -fill x -ipadx 0 -ipady 0 -padx 0 -pady 0 -side bottom}
 set {guiCVvars(.guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9.tframe2)} {1}

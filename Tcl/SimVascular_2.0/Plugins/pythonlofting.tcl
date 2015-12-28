@@ -1,9 +1,9 @@
-proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg} {
+proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 DuN Dv0 DvN} {
   global gOptions
   global gPythonInterp
-  global guiBOOLEANvars
+  global gPathBrowser
 
-  set resample_num       $guiBOOLEANvars(sampling_default)
+  set resample_num       $gPathBrowser(solid_sample)
   set saveGroup          0
   resampleGroupEvenSpace $groupName $resample_num $saveGroup
 
@@ -35,6 +35,14 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg} {
   $gPythonInterp exec {vDeg=int(tcl.eval('set dummy $TclPyString'))}
   set TclPyString $resample_num
   $gPythonInterp exec {numPtsPerSeg=int(tcl.eval('set dummy $TclPyString'))}
+  set TclPyString $Du0
+  $gPythonInterp exec {Du0=[float(i) for i in (tcl.eval('set dummy $TclPyString')).split()]}
+  set TclPyString $DuN
+  $gPythonInterp exec {DuN=[float(i) for i in (tcl.eval('set dummy $TclPyString')).split()]}
+  set TclPyString $Dv0
+  $gPythonInterp exec {Dv0=[float(i) for i in (tcl.eval('set dummy $TclPyString')).split()]}
+  set TclPyString $DvN
+  $gPythonInterp exec {DvN=[float(i) for i in (tcl.eval('set dummy $TclPyString')).split()]}
 
   #Get group in python and then pass points to lofting function
   set sortedList [group_get $groupName]
@@ -62,7 +70,7 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg} {
   #Import python lofting code and call
   $gPythonInterp exec {loftfile = os.path.join(simvascular_home,'../../Python/model/occt/nurbs_lofting.py')}
   $gPythonInterp exec {pyloft = imp.load_source('nurbs_lofting', loftfile)}
-  $gPythonInterp exec {X,Y,Z,uknots,vknots,u,v,p,q = pyloft.loft(["-a",allpoints,"-p",uDeg,"-q",vDeg,"--kutype",kutype,"--kvtype",kvtype,"--putype",putype,"--pvtype",pvtype])}
+  $gPythonInterp exec {X,Y,Z,uknots,vknots,u,v,p,q = pyloft.loft(["-a",allpoints,"-p",uDeg,"-q",vDeg,"--kutype",kutype,"--kvtype",kvtype,"--putype",putype,"--pvtype",pvtype,"-o",Du0,"-n",DuN,"-r",Dv0,"-s",DvN])}
 
   #Pass python lofting code surface to c++ which will make a occt model
   set kernel                          "OpenCASCADE"
