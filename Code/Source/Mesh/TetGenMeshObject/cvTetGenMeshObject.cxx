@@ -1854,7 +1854,9 @@ int cvTetGenMeshObject::Adapt()
 
   newtgb->refine=1;
   newtgb->metric=1;
-  newtgb->quality=1;
+  newtgb->quality = 3;
+  newtgb->mindihedral = 10.0;
+  newtgb->minratio = 1.2;
   newtgb->neighout=2;
   newtgb->verbose=1;
   //newtgb->coarsen=1;
