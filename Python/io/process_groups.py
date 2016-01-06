@@ -22,14 +22,6 @@ try:
     import re
 except ImportError:
     print "could Not Import Module re For Regex Manipulations"
-#try:
-#    import Tkinter
-#except ImportError:
-#    print "Could Not Import Module Tkinter For Python Tcl Support"
-#try:
-#    from vtk import *
-#except ImportError:
-#    print "Could Not Import Module vtk"
 
 #---------------------------
 # END MODULE IMPORT SEGMENT
@@ -39,6 +31,14 @@ except ImportError:
 # BEGIN DEFINITIONS FOR A GROUP DATA CLASS
 #-----------------------------------------
 class SimVascularGroup:
+    '''
+    This is a class to contain the information for a SimVascular Group or 
+    a group of segmentations defining one individual vessel.
+
+    Members:
+    	m_GroupName:   Name given to segmentation group
+	m_SegmentList: List of SimVascularSeg containing each segment info
+    '''
 
     def __init__(self, a_GroupName):
 
@@ -67,6 +67,27 @@ class SimVascularGroup:
 # BEGIN DEFINITIONS FOR A SEGMENT DATA CLASS (FOR POTENTIAL OOP WRAPPING)
 #----------------------------------------------------------------------
 class SimVascularSeg:
+    '''
+    This is a class to contain the information for a singular SimVascular 
+    segmentation.
+
+    Members:
+    	m_SegmentID:       ID given to segmentation
+	m_SegmentDataDict: Dictionary containing many of the important
+			   segmentation details
+			   Items:
+			   	pathID  - ID of corresponding SimVascular path	
+			   	pos     - Position along SimVascular path	
+			   	normal  - Normal to seg at path location
+				xhat    - Direction of 2D slice plane relative to xhat
+			   	centerX - On 2D slice plane, X center of seg	
+			   	centerY - On 2D slice plane, Y center of seg	
+			   	radius  - For analytic seg, radius of circle	
+	m_SegmentPoints:   List of the segmentations points. Each entry in 
+			   list is X,Y,Z coordinates of new point around
+			   segmentation. First point is not repeated at the 
+			   end
+    '''
 
     def __init__(self, a_SegmentID):
 
@@ -84,6 +105,19 @@ class SimVascularSeg:
 # objects, which can later be processed for geometry information
 #
 def processSimVascularGroupFile(a_Filename,a_Groupname):
+    '''
+    Function to take in a saved individual simvascular gropu file, parse the
+    information, and save in into a SimVascularGroup data structure.
+
+    Args:
+	arg1: a_Filename, the location of the saved simvascular group to 
+	      process.
+	arg2: a_Groupname, the name to give ot the processed group.
+
+    Returns:
+    	The SimVascularGroup data structure containing the SimVascularSeg list
+
+    '''
 
     grpFileObj  = open(a_Filename, 'r')
     Group       = SimVascularGroup(a_Groupname)
@@ -188,10 +222,24 @@ def processSimVascularGroupFile(a_Filename,a_Groupname):
 
 def resampleSegPoints(a_SimVascularSeg,a_numSamplePts):
     print 'Need to do!'
+    return 0
 
 def convertGroupPointsToNumpy(a_SimVascularGroup,a_numSamplePts):
-    # Converts all the points from a single simvascular group into one data
-    # structure as a 3 dimensional numpy array
+    '''
+    Converts all the points from a single simvascular group into one data
+    structure as a 3 dimensional numpy array
+
+    Args:
+	arg1: a_SimVascularGroup, the SimVascularGroup to process 
+	arg2: a_numSamplePts, If SimVascularGroup does not have same number
+	      of points per segmentation, resample the groups to this resolution.
+
+    Returns:
+    	The numpy array of points of size m,n,l. Where m is the number of 
+	segmentations, n is the number of points per segmentation, and l is
+	3 (X,Y,Z) coordinate.
+
+    '''
     segList     = a_SimVascularGroup.m_SegmentList
     numSegs     = len(segList)
     numPts      = len(segList[0].m_SegmentPoints)
@@ -202,7 +250,8 @@ def convertGroupPointsToNumpy(a_SimVascularGroup,a_numSamplePts):
 	if (numPtsInSeg != numPts):
 	    resample = 1
 
-    # If not same number of points in all segs, resample to numSamplePts
+    # If not same number of points in all segs, resample to numSamplePts,
+    # still must be implemented
     if (resample == 1):
 	for i in range(numSegs):
 	    segList[i].m_SegmentPoints = \

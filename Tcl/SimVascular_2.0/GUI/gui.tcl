@@ -35205,9 +35205,9 @@ proc guiPPsmoothSmoothPath {} {
 
   # preserve name and number of spline points if it exists
   set gPathPoints($targetID,name) $name
-  set gPathPoints($targetID,numSplinePts) $numSplinePts
+
   set gPathPoints($targetID,splinePts) {}
-  guiPPchooserSplinePts
+  guiPPchooserSplinePts $targetID
 
   guiSV_path_update_tree
   set tv $symbolicName(guiSV_path_tree)
@@ -43648,6 +43648,7 @@ proc lsGUIaddToGroup { type} {
   }
 
   if {[repos_exists -obj $seg] == 0} {
+    puts $seg
     puts "WARNING:  No oriented segmentation found!"
     return
     #return -code error "ERROR:  No oriented segmentation found!"
@@ -46374,6 +46375,28 @@ proc lsGUIupdatePath {} {
   global lsGUIshowInteractiveContourFlag
   set lsGUIshowInteractiveContourFlag 0
   lsGUIshowInteractiveContour
+}
+
+# Procedure: lsGUIupdatePathNoVol
+proc lsGUIupdatePathNoVol {} {
+
+  global symbolicName
+  set pathPositionScale $symbolicName(lsGUIpathPositionScale)
+  set pathSeedPositionScale $symbolicName(lsGUI3dseedpathPositionScale)
+
+  global lsGUIcurrentPathNumber
+  set pathId $lsGUIcurrentPathNumber
+
+
+  global gPathPoints
+  set path $gPathPoints($pathId,splinePts)
+
+  $pathPositionScale configure -from 0
+  $pathPositionScale configure -to [expr [llength $path] - 1]
+  $pathSeedPositionScale configure -from 0
+  $pathSeedPositionScale configure -to [expr [llength $path] - 1]
+
+  lsGUIdisplayPath
 }
 
 
@@ -49354,8 +49377,8 @@ set {guiBOOLEANvars(add_caps_to_vessels)} {1}
 set {guiBOOLEANvars(linear_sampling_along_length_multiplier)} {10}
 set {guiBOOLEANvars(no_inter_output)} {1}
 set {guiBOOLEANvars(num_modes_for_FFT)} {20}
-set {guiBOOLEANvars(sampling_along_length_multiplier)} {1}
-set {guiBOOLEANvars(sampling_default)} {10}
+set {guiBOOLEANvars(sampling_along_length_multiplier)} {12}
+set {guiBOOLEANvars(sampling_default)} {60}
 set {guiBOOLEANvars(sampling_overrides)} {}
 set {guiBOOLEANvars(selected_groups)} {}
 set {guiBOOLEANvars(selected_seg3d)} {}

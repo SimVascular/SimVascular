@@ -61,6 +61,7 @@ set gOptions(window_level_increment) 0.01
 set gOptions(show_progress_widget) 0
 set gOptions(facet_max_edge_size) 1.0
 set gOptions(facet_max_angle_dev) 20.0
+set gOptions(resegment_spacing) 5
 set gOptions(max_num_polys_for_isosurface) 250000
 set gOptions(vis_lod_max_num_polys) 250000
 set gOptions(use_lod_for_isosurface) 0

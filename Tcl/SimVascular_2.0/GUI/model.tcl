@@ -572,23 +572,8 @@ proc guiSV_model_check_array_exists {model datatype arrayname} {
   catch {repos_delete -obj $cv_tmp}
   $model GetPolyData -result $cv_tmp
 
-  set numArrays 0
-  set exists 0
-  if {$datatype == 0} {
-    set numArrays [[[repos_exportToVtk -src $cv_tmp] GetPointData] GetNumberOfArrays]
-    for {set i 0} {$i < $numArrays} {incr i} {
-      if {[string equal $arrayname [[[repos_exportToVtk -src $cv_tmp] GetPointData] GetArrayName $i]]} {
-	set exists 1
-      }
-    }
-  } else {
-    set numArrays [[[repos_exportToVtk -src $cv_tmp] GetCellData] GetNumberOfArrays]
-    for {set i 0} {$i < $numArrays} {incr i} {
-      if {[string equal $arrayname [[[repos_exportToVtk -src $cv_tmp] GetCellData] GetArrayName $i]]} {
-	set exists 1
-      }
-    }
-  }
+  set exists [polydata_check_array_exists [repos_exportToVtk -src $cv_tmp] $datatype $arrayname]
+
   return $exists
 }
 
@@ -3053,34 +3038,60 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
     set checkid [lindex [split $path "."] end]
     if {$checkid > $maxid} { set maxid $checkid }
   }
-  set numLines [$centerlinepd GetNumberOfLines]
+  if {[polydata_check_array_exists $centerlinepd 1 "GroupIds"] == 0} {
+    return -code error "Necessary group ids do not exist, must separate centerlines"
+  }
+  set numGroups [[[$centerlinepd GetCellData] GetArray "GroupIds"] GetRange]
+  set numGroups [expr [lindex $numGroups 1]+1]
+  #set numLines [$centerlinepd GetNumberOfLines]
 
+  set pathIdList {}
   incr maxid
-  for {set i 0} {$i < $numLines} {incr i} {
+  for {set i 0} {$i < $numGroups} {incr i} {
     set guiSVvars(path_entry_path_id) $maxid
     set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
     guiSV_path_insert_new_path
     $tv selection set .paths.all.$maxid
 
     set pointids /tmp/vtk/pointids
+    set polyline /tmp/vtk/polyline
     catch {$pointids Delete}
+    catch {$polyline Delete}
     vtkIdList $pointids
-    $centerlinepd GetCellPoints $i $pointids
+    set polyline [polydata_threshold_region $centerlinepd 1 "GroupIds" $i $i] 
+    $polyline GetCellPoints 0 $pointids
+    #$centerlinepd GetCellPoints $i $pointids
 
+    #Add points to path
     for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
       set id [$pointids GetId $j]
-      set pt [$centerlinepd GetPoint $id]
+      set pt [$polyline GetPoint $id]
       #guiPPchooserAddSpecifiedPoint $pt
       set maxnum [llength [$tv children .paths.all.$maxid]]
       set gPathPoints($maxid,$maxnum) $pt
       $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
-      set gPathPoints($maxid,splinePts) {}
     }
+    set gPathPoints($maxid,numSplinePts) {300}
+    set gPathPoints($maxid,splinePts) {}
+    guiPPchooserSplinePts $maxid
     guiSV_path_update_tree
     $tv selection set .paths.all.$maxid
-    guiPPchooserSplinePts $maxid
-    incr maxid
+
+    #Smooth path
+    global guiPPsmoothSubSampleRate
+    global guiPPsmoothUseFourierSmooth
+    global guiPPsmoothNumFourierModes
+    global guiPPsmoothTargetPathID
+    set guiPPsmoothSubSampleRate 1
+    set guiPPsmoothUseFourierSmooth 1
+    set guiPPsmoothNumFourierModes 300
+    set guiPPsmoothTargetPathID $maxid
+    guiPPsmoothSmoothPath
+
+    lappend pathIdList $maxid
+    incr maxid    
   }
+  return $pathIdList
 }
 
 proc guiSV_model_add_to_backup_list {kernel model} {

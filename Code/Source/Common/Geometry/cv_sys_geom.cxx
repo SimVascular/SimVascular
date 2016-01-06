@@ -67,6 +67,7 @@
 #ifdef USE_VMTK
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataCenterlines.h"
+#include "vtkvmtkCenterlineBranchExtractor.h"
 #include "vtkvmtkCapPolyData.h"
 #include "vtkvmtkSimpleCapPolyData.h"
 #endif
@@ -75,6 +76,7 @@
 #include "vtkBooleanOperationPolyDataFilter2.h"
 #include "vtkIntersectionPolyDataFilter2.h"
 #include "vtkLoftPolyDataSolid.h"
+#include "vtkXMLPolyDataWriter.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -4017,8 +4019,8 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
     centerLiner->Update();
 
     result1 = new cvPolyData( centerLiner->GetOutput() );
-    result2 = new cvPolyData( centerLiner->GetVoronoiDiagram() );
     *lines = result1;
+    result2 = new cvPolyData( centerLiner->GetVoronoiDiagram() );
     *voronoi = result2;
   }
   catch (...) {
@@ -4026,6 +4028,55 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
     fflush(stderr);
     return CV_ERROR;
   }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_separatecenterlines */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
+ *
+ *  @brief Function to separate centerlines based on bifurcations of the geometry
+ *  @param *lines from centerline extraction, the centerlines to be used
+ *  @note  The output lines are not physically different than the input. The 
+ *  @note  simply applies cell data to the lines that describe the bifurcation regions.
+ *  @note  The cell array names are "Blanking","GroupIds","CenterlineIds",and "TractIds"
+ *  @param **separate vtkPolyData with cell arrays discribing branchin attached
+ *  @return CV_OK if the VTMK function executes properly
+ */
+
+int sys_geom_separatecenterlines( cvPolyData *lines,
+		cvPolyData **separate)
+{
+  vtkPolyData *geom = lines->GetVtkPolyData();
+  cvPolyData *result1 = NULL;
+  *separate = NULL;
+
+  vtkNew(vtkvmtkCenterlineBranchExtractor,brancher);
+  try {
+    std::cout<<"Separating Sections..."<<endl;
+    brancher->SetInputData(geom);
+    brancher->SetBlankingArrayName("Blanking");
+    brancher->SetRadiusArrayName("MaximumInscribedSphereRadius");
+    brancher->SetGroupIdsArrayName("GroupIds");
+    brancher->SetCenterlineIdsArrayName("CenterlineIds");
+    brancher->SetTractIdsArrayName("TractIds");
+    brancher->Update();
+
+    result1 = new cvPolyData( brancher->GetOutput() );
+    *separate = result1;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in centerline separation.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
   return CV_OK;
 }
 

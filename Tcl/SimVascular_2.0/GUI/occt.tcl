@@ -187,8 +187,6 @@ proc guiSV_model_create_model_opencascade_python {} {
    }
 
    set createPREOPgrpKeptSelections {}
-   puts "children: $children"
-
    foreach child $children {
      if {[lindex [$tv item $child -values] 0] == "X"} {
        lappend createPREOPgrpKeptSelections [string range $child 12 end]
@@ -203,6 +201,23 @@ proc guiSV_model_create_model_opencascade_python {} {
      model_create $kernel $modelname
    }
    guiSV_model_update_tree
+
+   opencascade_loft_with_python $modelname
+}
+
+proc opencascade_loft_with_python {modelname} {
+   global symbolicName
+   global createPREOPgrpKeptSelections
+   global gFilenames
+   global gObjects
+   global gLoftedSolids
+   global gOptions
+
+   set gOptions(meshing_solid_kernel) OpenCASCADE
+   solid_setKernel -name $gOptions(meshing_solid_kernel)
+   set kernel $gOptions(meshing_solid_kernel)
+   set gOptions(meshing_solid_kernel) $kernel
+   solid_setKernel -name $kernel
 
    #set modelname $gObjects(preop_solid)
 
@@ -1165,4 +1180,223 @@ proc saveResampledSegments {name filename items infoList} {
   }
   close $fp
 }
+
+proc guiSV_model_resegment {} {
+  global gOptions
+  global symbolicName
+  global smasherInputName
+  global gFilenames
+  global gKernel
+
+  set tv $symbolicName(guiSV_model_tree)
+  set model [guiSV_model_get_tree_current_models_selected]
+
+  if {[llength $model] != 1} {
+    return -code error "Must select model from tree and only one can be written at a time!"
+  }
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "Can only resegment a PolyData model"
+  }
+  solid_setKernel -name $kernel
+
+  set paths [guiSV_path_get_tree_current_paths_selected]
+  if {$paths == ""} {
+    return -code "ERROR: Select path in paths tab for resegmentation"
+  }
+  if {[llength $paths] > 1} {
+    return -code error "Cannot have more than one path selected!"
+  }
+  set pathId [lindex $paths 0]
+
+  set spacing $gOptions(resegment_spacing)
+
+  set modelName [guiSV_model_resegment_polydata_vessel $kernel $model $pathId $spacing]
+  return $modelName
+}
+
+proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
+  global gOptions
+  global symbolicName
+  global guiSVvars
+  global gPathPoints
+  global lsGUIcurrentGroup
+  global lsGUIcurrentPathNumber
+  global lsGUIcurrentPositionNumber
+  global lsGUIhandContourType
+
+  #Look at batch code to run along path!!!
+  set type                   $lsGUIhandContourType
+  set lsGUIcurrentPathNumber $pathId
+  lsGUIupdatePathNoVol
+  set path                   $gPathPoints($pathId,splinePts)
+  set min 1
+  set max [expr [llength $path] -1]
+  if {$max == -1} {
+    return -code error "ERROR: Path spline points don't exist"
+  }
+
+  set segstring "$min-$max by $spacing"
+  set allsegs [string_parse $segstring $min $max]
+  #if {[llength $allsegs] >= 5} {
+  #   set yesno [tk_messageBox -message "Are you really, really sure?  You will be attempting [llength $allsegs] slices along length of vessel." -default no -icon question -type yesno]
+  #   if {$yesno == "no"} {
+  #      return -code error "User halted."
+  #   }
+  #}
+
+  set tv $symbolicName(guiSV_group_tree)
+  set groupName "[string trim $model]_on_path_[string trim $pathId]_every_$spacing"
+  set guiSVvars(groups_entry_group_name) $groupName
+  guiSV_group_new_group
+  $tv item .groups.all.$groupName -values {"" "" ""}
+
+  puts $allsegs
+  foreach seg $allsegs {
+    #Update points on path
+    set lsGUIcurrentGroup          $groupName
+    set lsGUIcurrentPositionNumber $seg
+
+    set newseg {}
+    if {$type == "levelset"} {
+      set newseg /lsGUI/$pathId/$seg/ls/oriented
+    } elseif {$type == "threshold"} {
+      set baseName /lsGUI/$pathId/$seg
+      set newseg $baseName/thr/oriented
+    } else {
+      return -code error "Invalid segmentation type ($type)."
+    }
+
+    catch {repos_delete -obj $newseg}
+    #Segment vessel at current location
+    set tmpPd [guiSV_model_slice_pd_at_path_point /models/$kernel/$model]
+    if [catch {geom_copy -src $tmpPd -dst $newseg}] {
+      puts "Resegmentation didn't work"
+    } 
+
+    lsGUIaddToGroup hand
+  }
+  return $groupName
+}
+proc guiSV_model_slice_pd_at_path_point {{value 0} } {
+
+    if {$value == "0"} {
+        global gui3Dvars
+        set pd $gui3Dvars(ls_finalSegmentation)
+    } else {
+        set pd $value
+    }
+    if {![repos_exists -obj $pd]} return
+
+
+    global gOptions
+    set ext $gOptions(resliceDims)
+
+    global gPathPoints
+    global lsGUIcurrentPathNumber
+    global lsGUIcurrentPositionNumber
+    set pathId $lsGUIcurrentPathNumber
+    set path $gPathPoints($pathId,splinePts)
+    set posId $lsGUIcurrentPositionNumber
+
+    array set items [lindex $path $posId]
+    set pos [TupleToList $items(p)]
+    set nrm [TupleToList $items(t)]
+    set xhat [TupleToList $items(tx)]
+
+    catch {plane Delete}
+    vtkPlane plane
+    plane SetOrigin [lindex $pos 0] [lindex $pos 1] [lindex $pos 2] 
+    plane SetNormal [lindex $nrm 0] [lindex $nrm 1] [lindex $nrm 2]
+
+    catch {cutter Delete}
+    vtkCutter cutter
+    cutter SetCutFunction plane 
+
+    cutter SetInputData [repos_exportToVtk -src $pd]
+    cutter GenerateValues 1 0 1
+    cutter Update
+
+    catch {connfilt Delete}
+    vtkPolyDataConnectivityFilter connfilt
+    connfilt SetInputData [cutter GetOutput]
+    connfilt SetClosestPoint [lindex $pos 0] [lindex $pos 1] [lindex $pos 2]
+    connfilt SetExtractionModeToClosestPointRegion
+    connfilt Update
+
+    global gRen3d
+    global lsGUImagWindow
+
+    set segPd tmpPD
+    set segPd2 tmpPD2
+    catch {repos_delete -obj $segPd}
+    #catch {repos_delete -obj $segPd2}
+    repos_importVtkPd -src [connfilt GetOutput] -dst $segPd
+    #set bd2 [[repos_exportToVtk -src $segPd] GetBounds]
+    #puts "bd2 $bd2"
+
+    #geom_disorientProfile -src $segPd -dst $segPd2 -path_pos $pos \
+    #         -path_tan $nrm -path_xhat $xhat
+
+    #repos_setLabel -obj $segPd2 -key color -value blue
+    #repos_setLabel -obj $segPd2 -key opacity -value 1
+    #return $segPd2
+
+    return $segPd
+}
+
+proc polydata_centerlines_as_paths {} {
+  global gOptions
+  global symbolicName
+  global smasherInputName
+  global gFilenames
+  global gKernel
+
+  set tv $symbolicName(guiSV_model_tree)
+  set model [guiSV_model_get_tree_current_models_selected]
+
+  if {[llength $model] != 1} {
+    return -code error "Must select model from tree and only one can be written at a time!"
+  }
+  set kernel $gKernel($model)
+  if {$kernel != "PolyData"} {
+    return -code error "Can only resegment a PolyData model"
+  }
+  solid_setKernel -name $kernel
+
+  #Get centerlines
+  guiVMTKCenterlines
+
+  #Convert centerliens to pathlines (smoothed)
+  set addedPathIds [guiSV_model_convert_centerlines_to_pathlines]
+
+  #Resegment vessel along pathlines
+  set vesselNames {}
+  set pathTv $symbolicName(guiSV_path_tree)
+  foreach id $addedPathIds {
+    $pathTv selection set .paths.all.$id
+    lappend vesselNames [guiSV_model_resegment]
+  }
+
+  #Loft to bsplines surfaces from resegmented surface
+  puts "Relofting!"
+  startTclPython
+  set gOptions(meshing_solid_kernel) OpenCASCADE
+  solid_setKernel -name $gOptions(meshing_solid_kernel)
+  set kernel $gOptions(meshing_solid_kernel)
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
+  foreach vessel $vesselNames {
+    catch {repos_delete -obj $vessel}
+    if {[model_create $kernel $vessel] != 1} {
+      guiSV_model_delete_model $kernel $vessel
+      catch {repos_delete -obj /models/$kernel/$vessel}
+      model_create $kernel $vessel
+    }
+    guiSV_model_update_tree
+    opencascade_loft_with_python $vessel $vessel
+  }
+}
+
 

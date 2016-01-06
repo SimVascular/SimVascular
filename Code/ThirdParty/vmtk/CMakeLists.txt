@@ -50,6 +50,8 @@ set(CXXSRCS vtkvmtkBoundaryLayerGenerator.cxx
         vtkvmtkVoronoiDiagram3D.cxx vtkvmtkNonManifoldFastMarching.cxx
         vtkvmtkSimplifyVoronoiDiagram.cxx vtkvmtkInternalTetrahedraExtractor.cxx
 	vtkvmtkSteepestDescentLineTracer.cxx vtkvmtkPolyDataCenterlines.cxx
+	vtkvmtkCenterlineBranchExtractor.cxx vtkvmtkCenterlineSphereDistance.cxx
+	vtkvmtkCenterlineUtilities.cxx vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
 	)
 SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h 
 	vtkvmtkBoundaryLayerGenerator.h vtkvmtkBoundaryReferenceSystems.h
@@ -68,6 +70,8 @@ SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h
 	vtkvmtkVoronoiDiagram3D.h vtkvmtkNonManifoldFastMarching.h
 	vtkvmtkSimplifyVoronoiDiagram.h vtkvmtkSteepestDescentLineTracer.h
 	vtkvmtkInternalTetrahedraExtractor.h vtkvmtkPolyDataCenterlines.h
+	vtkvmtkCenterlineBranchExtractor.h vtkvmtkCenterlineSphereDistance.h
+	vtkvmtkCenterlineUtilities.h vtkvmtkCenterlineSplittingAndGroupingFilter.h
 	)
 
 add_library(${lib} ${CXXSRCS} cv_VMTK_utils.cxx)
