@@ -171,9 +171,7 @@ proc guiSV_model_create_model_opencascade_python {} {
    global gOptions
 
    set gOptions(meshing_solid_kernel) OpenCASCADE
-   solid_setKernel -name $gOptions(meshing_solid_kernel)
    set kernel $gOptions(meshing_solid_kernel)
-   set gOptions(meshing_solid_kernel) $kernel
    solid_setKernel -name $kernel
 
    set tv $symbolicName(guiSV_group_tree)
@@ -214,9 +212,7 @@ proc opencascade_loft_with_python {modelname} {
    global gOptions
 
    set gOptions(meshing_solid_kernel) OpenCASCADE
-   solid_setKernel -name $gOptions(meshing_solid_kernel)
    set kernel $gOptions(meshing_solid_kernel)
-   set gOptions(meshing_solid_kernel) $kernel
    solid_setKernel -name $kernel
 
    #set modelname $gObjects(preop_solid)
@@ -558,7 +554,7 @@ proc guiSV_model_get_model_faces {} {
     } elseif {$kernel == "OpenCASCADE"} {
       set name "noname_$id"
       set gOCCTFaceNames($id) $name
-      $model SetFaceAttr -attr gdscName -faceId $id -value $name 
+      $model SetFaceAttr -attr gdscName -faceId $id -value $name
     } else {
       return -code error "ERROR: Kernel type $kernel is invalid for this operation"
     }
@@ -1230,8 +1226,8 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
   set lsGUIcurrentPathNumber $pathId
   lsGUIupdatePathNoVol
   set path                   $gPathPoints($pathId,splinePts)
-  set min 1
-  set max [expr [llength $path] -1]
+  set min $spacing
+  set max [expr [llength $path] - $spacing]
   if {$max == -1} {
     return -code error "ERROR: Path spline points don't exist"
   }
@@ -1272,12 +1268,13 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
     set tmpPd [guiSV_model_slice_pd_at_path_point /models/$kernel/$model]
     if [catch {geom_copy -src $tmpPd -dst $newseg}] {
       puts "Resegmentation didn't work"
-    } 
+    }
 
     lsGUIaddToGroup hand
   }
   return $groupName
 }
+
 proc guiSV_model_slice_pd_at_path_point {{value 0} } {
 
     if {$value == "0"} {
@@ -1306,12 +1303,12 @@ proc guiSV_model_slice_pd_at_path_point {{value 0} } {
 
     catch {plane Delete}
     vtkPlane plane
-    plane SetOrigin [lindex $pos 0] [lindex $pos 1] [lindex $pos 2] 
+    plane SetOrigin [lindex $pos 0] [lindex $pos 1] [lindex $pos 2]
     plane SetNormal [lindex $nrm 0] [lindex $nrm 1] [lindex $nrm 2]
 
     catch {cutter Delete}
     vtkCutter cutter
-    cutter SetCutFunction plane 
+    cutter SetCutFunction plane
 
     cutter SetInputData [repos_exportToVtk -src $pd]
     cutter GenerateValues 1 0 1
@@ -1348,6 +1345,8 @@ proc guiSV_model_slice_pd_at_path_point {{value 0} } {
 proc polydata_centerlines_as_paths {} {
   global gOptions
   global symbolicName
+  global guiPDvars
+  global createPREOPgrpKeptSelections
   global smasherInputName
   global gFilenames
   global gKernel
@@ -1368,7 +1367,7 @@ proc polydata_centerlines_as_paths {} {
   guiVMTKCenterlines
 
   #Convert centerliens to pathlines (smoothed)
-  set addedPathIds [guiSV_model_convert_centerlines_to_pathlines]
+  set addedPathIds [guiSV_model_convert_centerlines_to_pathlines Broken]
 
   #Resegment vessel along pathlines
   set vesselNames {}
@@ -1382,12 +1381,12 @@ proc polydata_centerlines_as_paths {} {
   puts "Relofting!"
   startTclPython
   set gOptions(meshing_solid_kernel) OpenCASCADE
-  solid_setKernel -name $gOptions(meshing_solid_kernel)
   set kernel $gOptions(meshing_solid_kernel)
-  set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
   foreach vessel $vesselNames {
+    set createPREOPgrpKeptSelections {}
+    lappend createPREOPgrpKeptSelections $vessel
     catch {repos_delete -obj $vessel}
     if {[model_create $kernel $vessel] != 1} {
       guiSV_model_delete_model $kernel $vessel
@@ -1395,7 +1394,7 @@ proc polydata_centerlines_as_paths {} {
       model_create $kernel $vessel
     }
     guiSV_model_update_tree
-    opencascade_loft_with_python $vessel $vessel
+    opencascade_loft_with_python $vessel
   }
 }
 

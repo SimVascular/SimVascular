@@ -13177,7 +13177,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5.tbutton4  -command {guiSV_model_convert_centerlines_to_pathlines}  -text {Convert Centerlines to Pathlines}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe4.frame5.tframe5.tbutton4  -command {guiSV_model_convert_centerlines_to_pathlines Sim}  -text {Convert Centerlines to Pathlines}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe21.tframe0.tlabelframe1  -text {Delete Cells and Fill Holes [-]}  -height {25}
@@ -35207,6 +35207,7 @@ proc guiPPsmoothSmoothPath {} {
   set gPathPoints($targetID,name) $name
 
   set gPathPoints($targetID,splinePts) {}
+  set gPathPoints($targetID,numSplinePts) $numSplinePts
   guiPPchooserSplinePts $targetID
 
   guiSV_path_update_tree

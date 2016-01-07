@@ -3018,7 +3018,7 @@ proc guiSV_model_send_selected_to_3D_segmentation {} {
   }
 }
 
-proc guiSV_model_convert_centerlines_to_pathlines {} {
+proc guiSV_model_convert_centerlines_to_pathlines {type} {
   global guiSVvars
   global guiPDvars
   global symbolicName
@@ -3038,58 +3038,190 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
     set checkid [lindex [split $path "."] end]
     if {$checkid > $maxid} { set maxid $checkid }
   }
-  if {[polydata_check_array_exists $centerlinepd 1 "GroupIds"] == 0} {
-    return -code error "Necessary group ids do not exist, must separate centerlines"
-  }
-  set numGroups [[[$centerlinepd GetCellData] GetArray "GroupIds"] GetRange]
-  set numGroups [expr [lindex $numGroups 1]+1]
-  #set numLines [$centerlinepd GetNumberOfLines]
 
+  #Convert centerlines to paths
   set pathIdList {}
-  incr maxid
-  for {set i 0} {$i < $numGroups} {incr i} {
-    set guiSVvars(path_entry_path_id) $maxid
-    set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
-    guiSV_path_insert_new_path
-    $tv selection set .paths.all.$maxid
-
-    set pointids /tmp/vtk/pointids
-    set polyline /tmp/vtk/polyline
-    catch {$pointids Delete}
-    catch {$polyline Delete}
-    vtkIdList $pointids
-    set polyline [polydata_threshold_region $centerlinepd 1 "GroupIds" $i $i] 
-    $polyline GetCellPoints 0 $pointids
-    #$centerlinepd GetCellPoints $i $pointids
-
-    #Add points to path
-    for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
-      set id [$pointids GetId $j]
-      set pt [$polyline GetPoint $id]
-      #guiPPchooserAddSpecifiedPoint $pt
-      set maxnum [llength [$tv children .paths.all.$maxid]]
-      set gPathPoints($maxid,$maxnum) $pt
-      $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+  #Different way to make paths
+  if {$type == "GroupIds" || $type == "CenterlineIds" || $type == "TractIds"} {
+    if {[polydata_check_array_exists $centerlinepd 1 $type] == 0} {
+      return -code error "Necessary group ids do not exist, must separate centerlines"
     }
-    set gPathPoints($maxid,numSplinePts) {300}
-    set gPathPoints($maxid,splinePts) {}
-    guiPPchooserSplinePts $maxid
-    guiSV_path_update_tree
-    $tv selection set .paths.all.$maxid
+    set numGroups [[[$centerlinepd GetCellData] GetArray $type] GetRange]
+    set numGroups [expr [lindex $numGroups 1]+1]
+    #set numLines [$centerlinepd GetNumberOfLines]
 
-    #Smooth path
-    global guiPPsmoothSubSampleRate
-    global guiPPsmoothUseFourierSmooth
-    global guiPPsmoothNumFourierModes
-    global guiPPsmoothTargetPathID
-    set guiPPsmoothSubSampleRate 1
-    set guiPPsmoothUseFourierSmooth 1
-    set guiPPsmoothNumFourierModes 300
-    set guiPPsmoothTargetPathID $maxid
-    guiPPsmoothSmoothPath
+    incr maxid
+    for {set i 0} {$i < $numGroups} {incr i} {
+      set guiSVvars(path_entry_path_id) $maxid
+      set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
+      guiSV_path_insert_new_path
+      $tv selection set .paths.all.$maxid
 
-    lappend pathIdList $maxid
-    incr maxid    
+      set pointids /tmp/vtk/pointids
+      set polyline /tmp/vtk/polyline
+      catch {$pointids Delete}
+      catch {$polyline Delete}
+      vtkIdList $pointids
+      set polyline [polydata_threshold_region $centerlinepd 1 $type $i $i]
+      $polyline GetCellPoints 0 $pointids
+      #$centerlinepd GetCellPoints $i $pointids
+
+      #Add points to path
+      for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
+	set id [$pointids GetId $j]
+	set pt [$polyline GetPoint $id]
+	#guiPPchooserAddSpecifiedPoint $pt
+	set maxnum [llength [$tv children .paths.all.$maxid]]
+	set gPathPoints($maxid,$maxnum) $pt
+	$tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+      }
+      set guiSVvars(path_entry_number_spline_pts) 300
+      set gPathPoints($maxid,numSplinePts) {300}
+      set gPathPoints($maxid,splinePts) {}
+      guiPPchooserSplinePts $maxid
+      guiSV_path_update_tree
+      $tv selection set .paths.all.$maxid
+
+      #Smooth path
+      global guiPPsmoothSubSampleRate
+      global guiPPsmoothUseFourierSmooth
+      global guiPPsmoothNumFourierModes
+      global guiPPsmoothTargetPathID
+      set guiPPsmoothSubSampleRate 1
+      set guiPPsmoothUseFourierSmooth 1
+      set guiPPsmoothNumFourierModes 300
+      set guiPPsmoothTargetPathID $maxid
+      guiPPsmoothSmoothPath
+
+      lappend pathIdList $maxid
+      incr maxid
+    }
+  } elseif {$type == "Sim" || $type == "Broken"} {
+    if {[polydata_check_array_exists $centerlinepd 1 "CenterlineIds"] == 0} {
+      return -code error "Necessary group ids do not exist, must separate centerlines"
+    }
+    set numGroups [[[$centerlinepd GetCellData] GetArray "CenterlineIds"] GetRange]
+    set numGroups [expr [lindex $numGroups 1]+1]
+    #set numLines [$centerlinepd GetNumberOfLines]
+
+    incr maxid
+    for {set i 0} {$i < $numGroups} {incr i} {
+      set pointids /tmp/vtk/pointids
+      set polyline /tmp/vtk/polyline
+      set cvpolyline /tmp/vtk/cvpolyline
+      set grouparray /tmp/vtk/grouparray
+      set selectline /tmp/vtk/selectline
+      set cvselectline /tmp/vtk/cvselectline
+      set brokenline /tmp/vtk/brokenline
+      catch {repos_delete -obj $cvpolyline}
+      catch {repos_delete -obj $cvselectline}
+      catch {$pointids Delete}
+      catch {$polyline Delete}
+      catch {$selectline Delete}
+      catch {$brokenline Delete}
+      catch {$grouparray Delete}
+      vtkIdList $pointids
+      set polyline [polydata_threshold_region $centerlinepd 1 "CenterlineIds" $i $i]
+      repos_importVtkPd -src $polyline -dst $cvpolyline
+      set polyline [repos_exportToVtk -src $cvpolyline]
+      set grouparray [[$polyline GetCellData] GetArray "GroupIds"]
+
+      set grpRange [$grouparray GetRange]
+      set lower [expr int([lindex $grpRange 1])]
+      set upper [expr int([lindex $grpRange 1])]
+
+      for {set j [expr [$grouparray GetNumberOfTuples]-1]} {$j >= 0} {incr j -1} {
+	set groupId [$grouparray GetValue $j]
+	if {$lower == $groupId} {
+	  set lower [expr $groupId -1]
+	} else {
+	  break
+	}
+      }
+      if {$lower == -1} {
+	set lower 0
+      }
+      set selectline [polydata_threshold_region $polyline 1 "GroupIds" $lower $upper]
+      repos_importVtkPd -src $selectline -dst $cvselectline
+      set selectline [repos_exportToVtk -src $cvselectline]
+
+      if {$type == "Broken"} {
+	set brokenline [polydata_threshold_region $selectline 1 "Blanking" 0 0]
+	set numLines [$brokenline GetNumberOfLines]
+	for {set k 0} {$k < $numLines} {incr k} {
+	  $brokenline GetCellPoints $k $pointids
+
+	  #Add points to path
+	  set guiSVvars(path_entry_path_id) $maxid
+	  set guiSVvars(path_entry_path_name) [string trim $centerlines]_[string trim $i]_$k
+	  guiSV_path_insert_new_path
+	  $tv selection set .paths.all.$maxid
+
+	  for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
+	    set id [$pointids GetId $j]
+	    set pt [$brokenline GetPoint $id]
+	    #guiPPchooserAddSpecifiedPoint $pt
+	    set maxnum [llength [$tv children .paths.all.$maxid]]
+	    set gPathPoints($maxid,$maxnum) $pt
+	    $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+	  }
+  	  set guiSVvars(path_entry_number_spline_pts) 300
+	  set gPathPoints($maxid,numSplinePts) {300}
+	  set gPathPoints($maxid,splinePts) {}
+	  guiPPchooserSplinePts $maxid
+	  guiSV_path_update_tree
+	  $tv selection set .paths.all.$maxid
+
+	  #Smooth path
+	  global guiPPsmoothSubSampleRate
+	  global guiPPsmoothUseFourierSmooth
+	  global guiPPsmoothNumFourierModes
+	  global guiPPsmoothTargetPathID
+	  set guiPPsmoothSubSampleRate 1
+	  set guiPPsmoothUseFourierSmooth 1
+	  set guiPPsmoothNumFourierModes 300
+	  set guiPPsmoothTargetPathID $maxid
+	  guiPPsmoothSmoothPath
+
+	  lappend pathIdList $maxid
+	  incr maxid
+	}
+      } else {
+	#Add points to path
+	set guiSVvars(path_entry_path_id) $maxid
+	set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
+	guiSV_path_insert_new_path
+	$tv selection set .paths.all.$maxid
+
+	for {set j 0} {$j < [$selectline GetNumberOfPoints]} {incr j} {
+	  set pt [$selectline GetPoint $j]
+	  #guiPPchooserAddSpecifiedPoint $pt
+	  set maxnum [llength [$tv children .paths.all.$maxid]]
+	  set gPathPoints($maxid,$maxnum) $pt
+	  $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+	}
+        set guiSVvars(path_entry_number_spline_pts) 300
+	set gPathPoints($maxid,numSplinePts) {300}
+	set gPathPoints($maxid,splinePts) {}
+	guiPPchooserSplinePts $maxid
+	guiSV_path_update_tree
+	$tv selection set .paths.all.$maxid
+
+	#Smooth path
+	global guiPPsmoothSubSampleRate
+	global guiPPsmoothUseFourierSmooth
+	global guiPPsmoothNumFourierModes
+	global guiPPsmoothTargetPathID
+	set guiPPsmoothSubSampleRate 1
+	set guiPPsmoothUseFourierSmooth 1
+	set guiPPsmoothNumFourierModes 300
+	set guiPPsmoothTargetPathID $maxid
+	guiPPsmoothSmoothPath
+
+	lappend pathIdList $maxid
+	incr maxid
+      }
+    }
   }
   return $pathIdList
 }

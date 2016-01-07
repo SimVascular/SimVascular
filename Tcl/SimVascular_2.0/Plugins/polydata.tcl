@@ -458,7 +458,7 @@ proc polydata_check_array_exists {pd datatype arrayname} {
       }
     }
   }
-  
+
   return $exists
 }
 
