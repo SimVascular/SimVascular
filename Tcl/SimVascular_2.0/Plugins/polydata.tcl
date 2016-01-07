@@ -481,3 +481,4 @@ proc polydata_threshold_region {pd datatype arrayname min max} {
 
   return [$surfacer GetOutput]
 }
+

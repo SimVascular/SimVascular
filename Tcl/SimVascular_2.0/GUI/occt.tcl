@@ -1226,8 +1226,8 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
   set lsGUIcurrentPathNumber $pathId
   lsGUIupdatePathNoVol
   set path                   $gPathPoints($pathId,splinePts)
-  set min $spacing
-  set max [expr [llength $path] - $spacing]
+  set min 0
+  set max [expr [llength $path]-1]
   if {$max == -1} {
     return -code error "ERROR: Path spline points don't exist"
   }
@@ -1247,7 +1247,26 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
   guiSV_group_new_group
   $tv item .groups.all.$groupName -values {"" "" ""}
 
-  puts $allsegs
+  #Remove caps if any and get end segmentations
+  set tmpWallPd /tmp/threshold/cap/pd
+  set wallPd /threshold/cap/pd
+  set endPds /threshold/feature/ends/pd
+  catch {repos_delete -obj $tmpWallPd}
+  catch {$wallPd Delete}
+  catch {$endPds Delete}
+  set tmpWallPd [repos_exportToVtk -src /models/$kernel/$model]
+  set wallPd [polydata_threshold_region $tmpWallPd 1 "CapID" -1 0]  
+
+  catch {featurefind Delete}
+  vtkFeatureEdges featurefind
+  featurefind SetInputData $wallPd
+  featurefind BoundaryEdgesOn
+  featurefind FeatureEdgesOff
+  featurefind ManifoldEdgesOff
+  featurefind NonManifoldEdgesOff
+  featurefind Update
+  set endPds [featurefind GetOutput]
+
   foreach seg $allsegs {
     #Update points on path
     set lsGUIcurrentGroup          $groupName
@@ -1264,8 +1283,15 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
     }
 
     catch {repos_delete -obj $newseg}
+    set tmpPd {}
+    if {$seg == $min || $seg == $max} {
+      array set items [lindex $path $seg]
+      set pos [TupleToList $items(p)]
+      set tmpPd [guiSV_model_connect_closest_point $endPds $pos]
+    } else {
+      set tmpPd [guiSV_model_slice_pd_at_path_point /models/$kernel/$model]
+    }
     #Segment vessel at current location
-    set tmpPd [guiSV_model_slice_pd_at_path_point /models/$kernel/$model]
     if [catch {geom_copy -src $tmpPd -dst $newseg}] {
       puts "Resegmentation didn't work"
     }
@@ -1325,21 +1351,26 @@ proc guiSV_model_slice_pd_at_path_point {{value 0} } {
     global lsGUImagWindow
 
     set segPd tmpPD
-    set segPd2 tmpPD2
     catch {repos_delete -obj $segPd}
-    #catch {repos_delete -obj $segPd2}
     repos_importVtkPd -src [connfilt GetOutput] -dst $segPd
-    #set bd2 [[repos_exportToVtk -src $segPd] GetBounds]
-    #puts "bd2 $bd2"
-
-    #geom_disorientProfile -src $segPd -dst $segPd2 -path_pos $pos \
-    #         -path_tan $nrm -path_xhat $xhat
-
-    #repos_setLabel -obj $segPd2 -key color -value blue
-    #repos_setLabel -obj $segPd2 -key opacity -value 1
-    #return $segPd2
 
     return $segPd
+}
+
+proc guiSV_model_connect_closest_point {pd pos} {
+
+  catch {connfilt Delete}
+  vtkPolyDataConnectivityFilter connfilt
+  connfilt SetInputData $pd
+  connfilt SetClosestPoint [lindex $pos 0] [lindex $pos 1] [lindex $pos 2]
+  connfilt SetExtractionModeToClosestPointRegion
+  connfilt Update
+
+  set segPd tmpPD
+  catch {repos_delete -obj $segPd}
+  repos_importVtkPd -src [connfilt GetOutput] -dst $segPd
+
+  return $segPd
 }
 
 proc polydata_centerlines_as_paths {} {
