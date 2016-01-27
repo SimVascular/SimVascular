@@ -371,10 +371,10 @@ def loft(argv):
 
 def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 ## @brief Function to convert the knots and parametric values into the input
-#         for opencascade data structures. This is knots and multiplicity. 
+#         for opencascade data structures. This is knots and multiplicity.
 #         Knots contains the knot values, but does not keep any repeated knots.
 #         The multiplicity vector keeps the number of times each value in the
-#	  knot vector repeats. This is 1 in most cases. 
+#	  knot vector repeats. This is 1 in most cases.
 #  @param uKnots, the knots in the u direction to be processed
 #  @param uKnots, the knots in the v direction to be processed
 #  @param uDeg,   the degree of the surface in the u direction
@@ -417,16 +417,16 @@ def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 	return uKnew,vKnew,uMnew,vMnew
 
 def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
-## @brief Function to calculate the normal to three points. This is used for 
+## @brief Function to calculate the normal to three points. This is used for
 #	  the first and last segmentations to specify as an end derivative.
 #  @param Xpts, x coordinate for three points
 #  @param Ypts, y coordinate for three points
 #  @param Zpts, z coordinate for three points
-#  @param direction, direction in which the normal should face. The dot 
+#  @param direction, direction in which the normal should face. The dot
 #	  product of this and the normal calculated will be > 0.
 #  @return perp, the normal to the given three points
   	math = vtk.vtkMath()
-	
+
 	#Initiate vecs for cross product
 	vec1 = [Xpts[1]-Xpts[0],Ypts[1]-Ypts[0],Zpts[1]-Zpts[0]]
 	vec2 = [Xpts[2]-Xpts[0],Ypts[2]-Ypts[2],Zpts[2]-Zpts[0]]
@@ -440,22 +440,22 @@ def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
 	if (dotval < 0):
 		for i in range(3):
 			perp[i] = -1.0*perp[i]
-	
+
 	return perp
 
 
 #################################TESTING#####################################
 def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 ## @brief Function that takes all inputs and calls the code to interpolate
-#	  a 3D bspline surface. 
-#  @note  The book used for this work is: 
+#	  a 3D bspline surface.
+#  @note  The book used for this work is:
 #         Piegl, Les A., and Wayne Tiller. The NURBS Book. 2nd ed. Berlin: Springer, 1997. Print.
 #	  Chapters: 3 and 4 for curves and surfaces, 9 for surface fitting
 #  @param allpoints, all the segmentation points to interpolate in m,n,l array.
-#	  m is number of segs, n is number of points per seg, and l is 3 for 
+#	  m is number of segs, n is number of points per seg, and l is 3 for
 #	  each coordinate direction.
 #  @param putype, the type of parametrization to use in u direction. Can be
-#         'equal', 'chord', or 'centripetal'. 'Equal' does not always guarantee a 
+#         'equal', 'chord', or 'centripetal'. 'Equal' does not always guarantee a
 #	  invertible system. 'chord' or 'centripetal' do, and they are better for
 #	  unevenly spaced input data as the parametrization is based off the
 #	  distance of the input points.
@@ -463,17 +463,17 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 #	  available as in the u direction.
 #  @param kutype, the type of knot spacing to use in u dierction. Can be 'equal',
 #	  'avg', or 'endderiv'. 'Equal' does not guarantee an invertible system.
-#	  'avg' is better for unevenly spaced data, and 'endderiv' allows the 
-#	  input of end derivative constraints. 
+#	  'avg' is better for unevenly spaced data, and 'endderiv' allows the
+#	  input of end derivative constraints.
 #  @param p, the order of the surface in the u direction
 #  @param q, the order of the surface in the v direction
-#  @param Du0, If 'endderiv' is specified for the kutype, then Du0 is the 
+#  @param Du0, If 'endderiv' is specified for the kutype, then Du0 is the
 #	  vector derivative for the beginning of the interpolation in u.
-#  @param DuN, If 'endderiv' is specified for the kutype, then DuN is the 
+#  @param DuN, If 'endderiv' is specified for the kutype, then DuN is the
 #	  vector derivative for the end of the interpolation in u.
-#  @param Dv0, If 'endderiv' is specified for the kvtype, then Dv0 is the 
+#  @param Dv0, If 'endderiv' is specified for the kvtype, then Dv0 is the
 #	  vector derivative for the beginning of the interpolation in v.
-#  @param DvN, If 'endderiv' is specified for the kvtype, then DvN is the 
+#  @param DvN, If 'endderiv' is specified for the kvtype, then DvN is the
 #	  vector derivative for the end of the interpolation in v.
 
 	#Pull in coordinates from input. Repeat first points to complete surface
@@ -502,7 +502,7 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 	v = getus(X[:,0],Y[:,0],Z[:,0],pvtype)
 	W = np.ones((ncx,ncy))
 
-	#Set up derivates at ends (default is linear interp between endpoints))
+	#Set up derivates at ends (default is normal direction from last seg))
 	if (Du0 == [0.0]):
 		Du0 = np.array([X.T[1,:]-X.T[0,:],Y.T[1,:]-Y.T[0,:],Z.T[1,:]-Z.T[0,:]])
 	if (DuN == [0.0]):

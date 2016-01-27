@@ -448,7 +448,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
   }
 
   BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
-  geom = solidmaker.Shape();
+  geom = solidmaker.Solid();
   geom.Closed(Standard_True);
 
   //BRep_Builder BB;
@@ -606,6 +606,25 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
       anApprox.SurfUMults(), anApprox.SurfVMults(),
       anApprox.UDegree(), anApprox.VDegree());
     //surface->SetUPeriodic();
+    //fprintf(stdout,"-----------------BSPLINE PARAMETERS----------------------\n");
+    //fprintf(stdout,"U Degree:             %d\n",surface->UDegree());
+    //fprintf(stdout,"Is U Closed?:         %d\n",surface->IsUClosed());
+    //fprintf(stdout,"Is U Periodic?:       %d\n",surface->IsUPeriodic());
+    //fprintf(stdout,"Is U Rational?:       %d\n",surface->IsURational());
+    //fprintf(stdout,"Nb U Poles:           %d\n",surface->NbUPoles());
+    //fprintf(stdout,"Nb U Knots:           %d\n",surface->NbUKnots());
+    //fprintf(stdout,"First U Knot Index:   %d\n",surface->FirstUKnotIndex());
+    //fprintf(stdout,"Last U Knot Index:    %d\n",surface->LastUKnotIndex());
+    //fprintf(stdout,"_________________________________________________________\n");
+    //fprintf(stdout,"V Degree:             %d\n",surface->VDegree());
+    //fprintf(stdout,"Is V Closed?:         %d\n",surface->IsVClosed());
+    //fprintf(stdout,"Is V Periodic?:       %d\n",surface->IsVPeriodic());
+    //fprintf(stdout,"Is U Rational?:       %d\n",surface->IsVRational());
+    //fprintf(stdout,"Nb V Poles:           %d\n",surface->NbVPoles());
+    //fprintf(stdout,"Nb V Knots:           %d\n",surface->NbVKnots());
+    //fprintf(stdout,"First V Knot Index:   %d\n",surface->FirstVKnotIndex());
+    //fprintf(stdout,"Last V Knot Index:    %d\n",surface->LastVKnotIndex());
+    //fprintf(stdout,"_________________________________________________________\n");
   }
 
   if (OCCTUtils_ShapeFromBSplineSurface(surface,shape,curves[0],curves[numCurves-1],pres3d) != CV_OK)

@@ -84,6 +84,7 @@
 #include "BRepBuilderAPI_Copy.hxx"
 #include "BRep_Builder.hxx"
 #include "BRepOffsetAPI_MakePipe.hxx"
+#include "BRepOffsetAPI_ThruSections.hxx"
 #include "BRepLib_MakePolygon.hxx"
 #include "BRepAlgoAPI_Fuse.hxx"
 #include "BRepAlgoAPI_Common.hxx"
@@ -371,6 +372,80 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
 		char *name,int continuity,int partype,
 		double w1,double w2,double w3,int smoothing)
 {
+
+  //if (geom_ != NULL)
+  //  this->RemoveShape();
+
+  //if ( numCurves < 2 ) {
+  //  return CV_ERROR;
+  //}
+
+  //cvOCCTSolidModel *shapePtr;
+  //BRepOffsetAPI_ThruSections lofter(Standard_False,Standard_False,1e-6);
+  //if (continuity == 0)
+  //  lofter.SetContinuity(GeomAbs_C0);
+  //else if (continuity == 1)
+  //  lofter.SetContinuity(GeomAbs_G1);
+  //else if (continuity == 2)
+  //  lofter.SetContinuity(GeomAbs_C1);
+  //else if (continuity == 3)
+  //  lofter.SetContinuity(GeomAbs_G2);
+  //else if (continuity == 4)
+  //  lofter.SetContinuity(GeomAbs_C2);
+  //else if (continuity == 5)
+  //  lofter.SetContinuity(GeomAbs_C3);
+  ////else
+  ////  lofter.SetContinuity(GeomAbs_CN);
+
+  //if (partype == 0)
+  //  lofter.SetParType(Approx_ChordLength);
+  //else if (partype == 1)
+  //  lofter.SetParType(Approx_Centripetal);
+  //else
+  //  lofter.SetParType(Approx_IsoParametric);
+
+  //lofter.SetMaxDegree(2);
+  //lofter.CheckCompatibility(Standard_False);
+  //lofter.SetSmoothing(smoothing);
+  //lofter.SetCriteriumWeight(w1,w2,w3);
+
+  //fprintf(stdout,"Loft Continuity: %d\n",continuity);
+  //fprintf(stdout,"Loft Parameter: %d\n",partype);
+  //for ( int i = 0; i < numCurves; i++ ) {
+  //  if ( curves[i]->GetKernelT() != SM_KT_OCCT ) {
+  //    fprintf(stderr,"Solid kernel should be OCCT\n");
+  //    return CV_ERROR;
+  //  }
+  //  shapePtr = (cvOCCTSolidModel *) curves[i];
+
+  //  TopoDS_Wire newwire = TopoDS::Wire(*(shapePtr->geom_));
+  //  lofter.AddWire(newwire);
+  //}
+  //try
+  //{
+  //  lofter.Build();
+  //}
+  //catch (Standard_Failure)
+  //{
+  //  fprintf(stderr,"Failure in lofting\n");
+  //  return CV_ERROR;
+  //}
+
+  //this->NewShape();
+  ////*geom_ = attacher.SewedShape();
+  //try
+  //{
+  //  *geom_ = lofter.Shape();
+  //}
+  //catch (StdFail_NotDone)
+  //{
+  //  fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
+  //  return CV_ERROR;
+  //}
+  //this->AddShape();
+
+  //return CV_OK;
+
   if (geom_ != NULL)
     this->RemoveShape();
 
@@ -394,7 +469,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   }
   this->NewShape();
   if (OCCTUtils_MakeLoftedSurf(bcurves,*geom_,numCurves,continuity,partype,
-			  w1,w2,w3,smoothing) != CV_OK)
+        		  w1,w2,w3,smoothing) != CV_OK)
   {
     delete [] bcurves;
     fprintf(stderr,"Error while lofting surface\n");
@@ -818,7 +893,7 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   cvPolyData *result;
   vtkPolyData *pd;
 
-  if (useMaxDist == 0) 
+  if (useMaxDist == 0)
     max_dist = 20.0;
 
   IVtkOCC_Shape::Handle aShapeImpl = new IVtkOCC_Shape(*geom_);
@@ -958,7 +1033,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   cvPolyData *result;
   vtkPolyData *pd;
 
-  if (useMaxDist == 0) 
+  if (useMaxDist == 0)
     max_dist = 20.0;
   int i = 0;
   const TopoDS_Shape& aShape = *geom_;
@@ -1529,8 +1604,27 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
   try {
     Standard_Boolean uPer=Standard_False,vPer=Standard_False;
     surface = new Geom_BSplineSurface(cPoints,uKCol,vKCol,uMCol,vMCol,p,q,uPer,vPer);
-    surface->SetUPeriodic();
+    //surface->SetUPeriodic();
     aSurf = surface;
+    //fprintf(stdout,"-----------------BSPLINE PARAMETERS----------------------\n");
+    //fprintf(stdout,"U Degree:             %d\n",surface->UDegree());
+    //fprintf(stdout,"Is U Closed?:         %d\n",surface->IsUClosed());
+    //fprintf(stdout,"Is U Periodic?:       %d\n",surface->IsUPeriodic());
+    //fprintf(stdout,"Is U Rational?:       %d\n",surface->IsURational());
+    //fprintf(stdout,"Nb U Poles:           %d\n",surface->NbUPoles());
+    //fprintf(stdout,"Nb U Knots:           %d\n",surface->NbUKnots());
+    //fprintf(stdout,"First U Knot Index:   %d\n",surface->FirstUKnotIndex());
+    //fprintf(stdout,"Last U Knot Index:    %d\n",surface->LastUKnotIndex());
+    //fprintf(stdout,"_________________________________________________________\n");
+    //fprintf(stdout,"V Degree:             %d\n",surface->VDegree());
+    //fprintf(stdout,"Is V Closed?:         %d\n",surface->IsVClosed());
+    //fprintf(stdout,"Is V Periodic?:       %d\n",surface->IsVPeriodic());
+    //fprintf(stdout,"Is U Rational?:       %d\n",surface->IsVRational());
+    //fprintf(stdout,"Nb V Poles:           %d\n",surface->NbVPoles());
+    //fprintf(stdout,"Nb V Knots:           %d\n",surface->NbVKnots());
+    //fprintf(stdout,"First V Knot Index:   %d\n",surface->FirstVKnotIndex());
+    //fprintf(stdout,"Last V Knot Index:    %d\n",surface->LastVKnotIndex());
+    //fprintf(stdout,"_________________________________________________________\n");
   }
   catch (Standard_ConstructionError)
   {

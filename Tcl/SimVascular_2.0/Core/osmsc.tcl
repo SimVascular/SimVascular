@@ -5,21 +5,21 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
 # "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
-# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
-# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+# LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+# FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+# COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
 # BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
 # OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
 # AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -27,7 +27,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 #
-#=========================================================================== 
+#===========================================================================
 
 proc vtu_extractFace {vtuObjs faceObj readFiles args} {
 
@@ -46,11 +46,11 @@ proc vtu_extractFace {vtuObjs faceObj readFiles args} {
     set realFaceObj tmp-inflow-face
     catch {repos_delete -obj $realFaceObj}
     repos_readVtkPolyData -file $faceObj -obj $realFaceObj
-    [[[repos_exportToVtk -src $realFaceObj] GetPointData] GetScalars] SetName "GlobalNodeID"     
+    [[[repos_exportToVtk -src $realFaceObj] GetPointData] GetScalars] SetName "GlobalNodeID"
   } else {
     set realFaceObj $faceObj
   }
- 
+
   set numPtsFace   [geom_numPts -obj $realFaceObj]
   set nodeIds [[[repos_exportToVtk -src $realFaceObj] GetPointData] GetScalars]
 
@@ -190,7 +190,7 @@ proc bctdat_to_vtp {bctdatFileName inflowFaceFileName old_units new_units shift 
   set fp [open $bctdatFileName r]
   gets $fp line
   set numPtsBctDat [lindex $line 0]
-  set numSamplePts [lindex $line 1] 
+  set numSamplePts [lindex $line 1]
 
   if {$numPtsBctDat != $numPtsFace} {
      close $fp
@@ -215,7 +215,7 @@ proc bctdat_to_vtp {bctdatFileName inflowFaceFileName old_units new_units shift 
       lappend vel [lrange $line 0 2]
       lappend mytime [lindex $line 3]
     }
-    set nodeVelocity($localNodeID) $vel  
+    set nodeVelocity($localNodeID) $vel
   }
   close $fp
 
@@ -277,7 +277,7 @@ proc vtu_calc_flow_thru_faces {vtuFileNames mesh_surface_vtk_filenames skipWalls
     incr tmpid
     catch {repos_delete -obj $face_obj}
     repos_readVtkPolyData -file $facefile -obj $face_obj
-    [[[repos_exportToVtk -src $face_obj] GetPointData] GetScalars] SetName "GlobalNodeID" 
+    [[[repos_exportToVtk -src $face_obj] GetPointData] GetScalars] SetName "GlobalNodeID"
     set face_file($facename) $facefile
     set face_objs($facename) $face_obj
   }
@@ -307,7 +307,7 @@ proc vtu_calc_flow_thru_faces {vtuFileNames mesh_surface_vtk_filenames skipWalls
     set pretty_names($ug) [file rootname [file tail $vtuObj]]
     lappend sim_objs $ug
   }
- 
+
   set sim_objs [lsort -dictionary $sim_objs]
 
   #
@@ -386,7 +386,7 @@ proc vtu_combine_steps {vtuFileNames tractionName inflowFaceFileName outFileName
     set prettyname [file rootname [file tail $vtuObj]]
 
     set pointData [[$ug_reader GetOutput] GetPointData]
-    [$pointData GetArray pressure] SetName pressure_$prettyname  
+    [$pointData GetArray pressure] SetName pressure_$prettyname
     [$pointData GetArray velocity] SetName velocity_$prettyname
     [$pointData GetArray $tractionName] SetName WSS_$prettyname
 
@@ -444,11 +444,11 @@ proc vtp_momentumInFace {faceFileName rho outFileName} {
     if {[string range $abstractArrayName 0 8] == "pressure_"} {
       #puts "$abstractArrayName"
       $mycalc AddScalarVariable s$pid $abstractArrayName 0
-      incr pid 
+      incr pid
     } elseif {[string range $abstractArrayName 0 8] == "velocity_"} {
       #puts "$abstractArrayName"
       $mycalc AddVectorVariable v$vid $abstractArrayName 0 1 2
-      incr vid 
+      incr vid
     }
   }
 
@@ -525,11 +525,11 @@ proc vtu_create_wss_osi_pulse {vtu_files tractionName wssFN osiFN pulseFN} {
     $cleaner SetInputDataObject [$filter GetOutput]
     $cleaner Update
 
-    # replace vectors with traction 
-    [[$cleaner GetOutput] GetPointData] SetActiveVectors $tractionName 
+    # replace vectors with traction
+    [[$cleaner GetOutput] GetPointData] SetActiveVectors $tractionName
     repos_importVtkPd -src [$cleaner GetOutput] -dst $objname
 
-    lappend shearPds $objname 
+    lappend shearPds $objname
   }
 
   puts "calculating wss..."
@@ -605,9 +605,9 @@ proc vtp_create_wss_osi_pulse {vtp_file tractionName outFN} {
       $pd CopyStructure $vtkpd
       [$pd GetPointData] AddArray [$pointData GetAbstractArray $i]
 
-      # replace vectors with traction 
+      # replace vectors with traction
       [$pd GetPointData] SetActiveVectors $abstractArrayName
- 
+
       repos_importVtkPd -src $pd -dst $objname
 
       $pd Delete
@@ -712,7 +712,7 @@ proc vtu_extractFaceFromFiles {vtuFileName faceFileName faceObj} {
   vtu_extractFaceFileFromUG $ug $faceFileName $faceObj
 
   vtu_extractSingleFace $ug [repos_exportToVtk -src $faceObj]
- 
+
   $ug Delete
 
 }
@@ -721,7 +721,7 @@ proc vtu_extractFaceFromFiles {vtuFileName faceFileName faceObj} {
 proc vtu_extractFaceFileFromUG {ug faceFileName faceObj} {
 
   catch {repos_delete -obj $faceObj}
- 
+
   # load mesh face
   puts "Load mesh face ($faceFileName)..."
 
@@ -731,7 +731,7 @@ proc vtu_extractFaceFileFromUG {ug faceFileName faceObj} {
   [[[repos_exportToVtk -src $faceObj] GetPointData] GetScalars] SetName "GlobalNodeID"
 
   vtu_extractSingleFace $ug [repos_exportToVtk -src $faceObj]
- 
+
 }
 
 
@@ -757,8 +757,8 @@ proc vtu_extractSingleFace {ug faceObj} {
       lappend scalars $abstractArrayName
       incr pid
     } elseif {[string range $abstractArrayName 0 8] == "velocity_"} {
-      lappend vectors $abstractArrayName      
-      incr vid 
+      lappend vectors $abstractArrayName
+      incr vid
     }
   }
 
@@ -846,8 +846,8 @@ proc vtp_extractSingleFace {pd faceObj} {
       lappend scalars $abstractArrayName
       incr pid
     } elseif {[string range $abstractArrayName 0 8] == "velocity_"} {
-      lappend vectors $abstractArrayName      
-      incr vid 
+      lappend vectors $abstractArrayName
+      incr vid
     }
   }
 
@@ -938,7 +938,7 @@ proc vtx_TemporalFlowThruFaces {vtxFileName mesh_surface_vtk_filenames skipWalls
       set nodeIds [[$face_obj GetPointData] GetScalars]
       $nodeIds SetName "GlobalNodeID"
     }
-    [[repos_exportToVtk -src $face_obj] GetPointData] SetActiveScalars GlobalNodeID 
+    [[repos_exportToVtk -src $face_obj] GetPointData] SetActiveScalars GlobalNodeID
     set face_file($facename) $facefile
     set face_objs($facename) $face_obj
   }
@@ -947,7 +947,7 @@ proc vtx_TemporalFlowThruFaces {vtxFileName mesh_surface_vtk_filenames skipWalls
 
   # load sim results
   if {[file extension $vtxFileName] == ".vtu"} {
-    set vtuIsTrue 1 
+    set vtuIsTrue 1
     set ug_reader tmp-vtu-temporalflowthrufaces-ug_reader
     set ug        tmp-vtu-temporalflowthrufaces-ug
 
@@ -963,7 +963,7 @@ proc vtx_TemporalFlowThruFaces {vtxFileName mesh_surface_vtk_filenames skipWalls
     $ug_reader Delete
   } else {
     set vtuIsTrue 0
-    set sim_pd_obj tmp-sim-results-pd-obj-for-flow  
+    set sim_pd_obj tmp-sim-results-pd-obj-for-flow
     catch {repos_delete -obj $sim_pd_obj}
     repos_readXMLPolyData $vtxFileName $sim_pd_obj
   }
@@ -1048,13 +1048,13 @@ proc vtx_TemporalFlowThruFaces {vtxFileName mesh_surface_vtk_filenames skipWalls
 
     set step0 [lindex $tsteps 0]
 
-    set pmin($face) [list $parray($step0) $step0] 
+    set pmin($face) [list $parray($step0) $step0]
     set pmax($face) [list $parray($step0) $step0]
     set pavg($face) 0
     set qmin($face) [list $qarray($step0) $step0]
     set qmax($face) [list $qarray($step0) $step0]
     set qavg($face) 0
-  
+
     foreach step $tsteps {
       eval set p $parray($step)
       eval set q $qarray($step)
@@ -1228,7 +1228,7 @@ proc repos_readXMLPolyData {filename rtnobj} {
      return -code error "ERROR: file ($filename) does not exist."
   }
   if {[file extension $filename] == ".vtk"} {
-    repos_readVtkPolyData -file $filename -obj $rtnobj 
+    repos_readVtkPolyData -file $filename -obj $rtnobj
   } elseif {[file extension $filename] == ".vtp"} {
     set reader /tmp/geom_readXMLPolyData/xmlreader
     catch {reader Delete}
@@ -1248,7 +1248,7 @@ proc repos_writeXMLPolyData {inobj outfn} {
 
   #@a Nathan Wilson
   #@c write a PolyData or vtkPolyData object to a file
-  
+
   if [repos_exists -obj $inobj] {
     set inobj [repos_exportToVtk -src $inobj]
   } else {
@@ -1305,7 +1305,7 @@ proc mesh_writeCompleteMeshFromFiles {mesh_fn solid_fn prefix outdir} {
 
    catch {repos_delete -obj $solid}
    catch {repos_delete -obj $mesh}
-    
+
 }
 
 
@@ -1390,7 +1390,7 @@ proc mesh_writeCompleteMesh {mesh solid prefix outdir} {
        puts "$facename is not being written because it has no_name"
      } else {
        set name_to_identifier($facename) $ident
-       set identifier_to_name($ident) $facename 
+       set identifier_to_name($ident) $facename
        catch {repos_delete -obj $facepd}
        if [catch {$mesh GetFacePolyData -result $facepd -face $i}] {
          return -code error "ERROR: i ($i) not found.  skip face?"
@@ -1398,11 +1398,11 @@ proc mesh_writeCompleteMesh {mesh solid prefix outdir} {
        $pdwriter SetInputDataObject [repos_exportToVtk -src $facepd]
        $pdwriter SetFileName $outdir/mesh-surfaces/$facename.vtp
        $pdwriter Update
-       if {[string range [string trim $facename] 0 3] == "wall"} { 
+       if {[string range [string trim $facename] 0 3] == "wall"} {
          set foundWall 1
          $appender AddInputData [repos_exportToVtk -src $facepd]
        }
-       if {[string range [string trim $facename] 0 4] == "stent"} { 
+       if {[string range [string trim $facename] 0 4] == "stent"} {
          set foundStent 1
          $Sappender AddInputData [repos_exportToVtk -src $facepd]
        }
@@ -1443,7 +1443,7 @@ proc mesh_writeCompleteMesh {mesh solid prefix outdir} {
   $pdwriter Delete
 
   #$mesh WriteMetisAdjacency -file $outdir/$prefix.xadj
-  set mesh_kernel [$mesh GetKernel] 
+  set mesh_kernel [$mesh GetKernel]
   if {$mesh_kernel == "TetGen"} {
     set gFilenames(tet_mesh_script_file) $outdir/$prefix
     guiMMcreateTetGenScriptFile
@@ -1464,7 +1464,7 @@ proc mvres {startnum stopnum} {
 
   #puts -nonewline "enter starting number: "
   #flush stdout
-  #gets stdin startnum 
+  #gets stdin startnum
   #puts -nonewline "enter stopping number: "
   #flush stdout
   #gets stdin stopnum
@@ -1535,7 +1535,7 @@ proc bctdat_from_temporal_vtk {temporal_vtk addZeroPt outfn} {
       set v_array(velocity_0.00000) $v_array([lindex $velocities end])
       lappend velocities velocity_0.00000
       set velocities [lsort -dictionary $velocities]
-  }  
+  }
 
   # scale factor in case we want to scale the velocities being written out for
   # some reason (e.g. unit coversion).
@@ -1583,7 +1583,7 @@ proc vtkobj_translate_shift {inobj old_units new_units shift stress_mags stress_
   set filtShift      tmp-vtkobj_translate_shift-filtshift
 
   catch {$outobj Delete}
-  catch {$scaleTransform Delete} 
+  catch {$scaleTransform Delete}
   catch {$filtScale Delete}
   catch {$shiftTransform Delete}
   catch {$filtShift Delete}
@@ -1789,8 +1789,8 @@ proc vtkobj_translate_shift {inobj old_units new_units shift stress_mags stress_
   #puts "velocities: $velocities"
   #puts "tractions: $tractions"
   #puts "displacements: $displacements"
-  
-  catch {$scaleTransform} 
+
+  catch {$scaleTransform}
   catch {$filtScale}
   catch {$shiftTransform}
   catch {$filtShift}
@@ -1813,12 +1813,12 @@ proc create_polydata_model_from_mesh_surfaces {all_face_files outfn} {
 
     package require md5
 
-    if {$fn == ""} return 
+    if {$fn == ""} return
 
     set id 1
-     
+
     foreach face $all_face_files {
-  
+
       catch {repos_delete -obj $face}
 
       repos_readXMLPolyData $face $face
@@ -1841,7 +1841,7 @@ proc create_polydata_model_from_mesh_surfaces {all_face_files outfn} {
     repos_writeXMLPolyData mergePtsPD $fn
 
     puts "Writing file ($fn.facenames)"
- 
+
     if {[array size gPolyDataFaceNames] != 0} {
       puts "Writing file ($fn.facenames)"
       set mymd5 [::md5::md5 -hex -file $fn]

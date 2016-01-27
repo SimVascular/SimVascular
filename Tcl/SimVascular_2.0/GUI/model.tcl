@@ -1660,22 +1660,16 @@ proc guiVMTKCenterlines {} {
   set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
-  global gWaitVar
-  set gWaitVar 0
-  tk_messageBox -title "Extract Centerlines"  -type ok -message "Extracting the centerlines requires the walls to be defined:\n 1. Click 'OK'\n 2. Select the walls in the Model Object list using ctrl-click or shift-click\n 3. Hit 'Enter' on your keyboard"
-  vwait gWaitVar
+  set yesno [tk_messageBox -message "Wall faces must be named starting with wall. Are your wall surfaces named?" -default no -icon question -type yesno]
 
-  set selected [guiSV_model_get_tree_current_faces_selected]
-  set faces {}
-  foreach name $selected {
-    if {[lindex $name 1] != ""} {
-      lappend faces [lindex $name 1]
-    }
+  if {$yesno == "no"} {
+    return
   }
+
   set all_faces [model_get $model]
   set deletelist {}
   foreach face $all_faces {
-    if {[lsearch -exact $faces $face] == -1} {
+    if {[string range [string trim $face] 0 3] != "wall"} {
       lappend deletelist [lindex [$tv item .models.$kernel.$model.$face -values] 1]
     }
   }
@@ -3153,7 +3147,7 @@ proc guiSV_model_convert_centerlines_to_pathlines {type} {
 
 	  #Add points to path
 	  set guiSVvars(path_entry_path_id) $maxid
-	  set guiSVvars(path_entry_path_name) [string trim $centerlines]_[string trim $i]_$k
+	  set guiSVvars(path_entry_path_name) [string trim $centerlines]_[string trim $i]_[[[$brokenline GetCellData] GetArray "GroupIds"] GetValue $k]
 	  guiSV_path_insert_new_path
 	  $tv selection set .paths.all.$maxid
 
@@ -3168,6 +3162,8 @@ proc guiSV_model_convert_centerlines_to_pathlines {type} {
   	  set guiSVvars(path_entry_number_spline_pts) 300
 	  set gPathPoints($maxid,numSplinePts) {300}
 	  set gPathPoints($maxid,splinePts) {}
+	  set newcell /tmp/vtk/newcell
+	  catch {$newcell Delete}
 	  guiPPchooserSplinePts $maxid
 	  guiSV_path_update_tree
 	  $tv selection set .paths.all.$maxid

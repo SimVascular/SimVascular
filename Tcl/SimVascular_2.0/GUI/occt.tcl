@@ -1255,7 +1255,7 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
   catch {$wallPd Delete}
   catch {$endPds Delete}
   set tmpWallPd [repos_exportToVtk -src /models/$kernel/$model]
-  set wallPd [polydata_threshold_region $tmpWallPd 1 "CapID" -1 0]  
+  set wallPd [polydata_threshold_region $tmpWallPd 1 "CapID" -1 0]
 
   catch {featurefind Delete}
   vtkFeatureEdges featurefind
@@ -1373,12 +1373,13 @@ proc guiSV_model_connect_closest_point {pd pos} {
   return $segPd
 }
 
-proc polydata_centerlines_as_paths {} {
+proc guiSV_model_vessel_extraction {} {
   global gOptions
   global symbolicName
   global guiPDvars
   global createPREOPgrpKeptSelections
   global smasherInputName
+  global gPathPoints
   global gFilenames
   global gKernel
 
@@ -1397,16 +1398,33 @@ proc polydata_centerlines_as_paths {} {
   #Get centerlines
   guiVMTKCenterlines
 
+  #Get groups on pd
+  set pd /tmp/vtk/pd
+  set vtkpd /tmp/vtk/vtkpd
+  catch {repos_delete -obj $pd}
+  catch {$vtkpd Delete}
+  geom_grouppolydata -src /models/$kernel/$model -lines $guiPDvars(centerlines) -result $pd
+  set vtkpd [repos_exportToVtk -src $pd]
+
   #Convert centerliens to pathlines (smoothed)
   set addedPathIds [guiSV_model_convert_centerlines_to_pathlines Broken]
 
   #Resegment vessel along pathlines
   set vesselNames {}
-  set pathTv $symbolicName(guiSV_path_tree)
+  set pathTv  $symbolicName(guiSV_path_tree)
+  set pdGroup /tmp/vtk/pd/group/threshold
+  set spacing $gOptions(resegment_spacing)
+
   foreach id $addedPathIds {
     $pathTv selection set .paths.all.$id
-    lappend vesselNames [guiSV_model_resegment]
+    set groupId [lindex [split $gPathPoints($id,name) "_"] end]
+
+    catch {repos_delete -obj $pdGroup}
+    set pdGroup [polydata_threshold_region $vtkpd 0 "GroupIds" $groupId $groupId]
+    repos_importVtkPd -src $pdGroup -dst /models/$kernel/$pdGroup
+    lappend vesselNames [guiSV_model_resegment_polydata_vessel $kernel $pdGroup $id $spacing]
   }
+  catch {repos_delete -obj $pdGroup}
 
   #Loft to bsplines surfaces from resegmented surface
   puts "Relofting!"
