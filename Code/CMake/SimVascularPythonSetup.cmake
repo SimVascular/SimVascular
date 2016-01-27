@@ -24,7 +24,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-macro(tcl_cmd)
+macro(py_cmd)
 	set(options MESSAGE DEV_MESSAGE)
 	set(oneValueArgs OUTPUT_VARIABLE)
 	set(multiValueArgs FILES CODE)
@@ -32,20 +32,10 @@ macro(tcl_cmd)
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 	if(_CODE)
-		file(WRITE ${TEMP_DIR}/tmp.tcl "${_CODE}")
-	endif()
-	if(NOT TCL_TCLSH)
-		message(AUTHOR_WARNING "No tclsh command specicied. Command not run")
-	endif()
-	if(TCL_TCLSH)
-		exec_program(${TCL_TCLSH} 
-			ARGS ${TEMP_DIR}/tmp.tcl
-			OUTPUT_VARIABLE ${_OUTPUT_VARIABLE}
-			)
-		file(REMOVE ${TEMP_DIR}/tmp.tcl)
+		file(WRITE ${TEMP_DIR}/tmp.py "${_CODE}")
 	endif()
 	if(_CODE)
-		file(REMOVE ${TEMP_DIR}/tmp.tcl)
+		file(REMOVE ${TEMP_DIR}/tmp.py)
 	endif()
 endmacro()
 
@@ -53,48 +43,27 @@ set(SIMVASCULAR_NO_RENDERER 0)
 mark_as_superbuild(SIMVASCULAR_NO_RENDERER)
 
 if(NOT SimVascular_SUPERBUILD)
-	set(TCL_CONFIG_FILES)
-	tcl_cmd(CODE "puts \"[clock seconds]\""
+	py_cmd(CODE "puts \"[clock seconds]\""
 		OUTPUT_VARIABLE SIMVASCULAR_TIMESTAMP)
 	
-	set(SimVascular_SOURCE_TCL_DIR ${SimVascular_SOURCE_HOME}/Tcl)
-	set(SimVascular_BINARY_TCL_DIR ${SimVascular_BINARY_HOME}/Tcl)
-	set(SimVascular_TCL ${SimVascular_BINARY_TCL_DIR})
-	add_custom_target(copy-tcl ALL)
-	add_custom_command(TARGET copy-tcl POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SimVascular_BINARY_TCL_DIR}
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${SimVascular_BINARY_TCL_DIR}
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SimVascular_SOURCE_TCL_DIR} ${SimVascular_BINARY_TCL_DIR}
-		COMMENT "Copying Tcl Directory..."
+	set(SimVascular_SOURCE_PYTHON_DIR ${SimVascular_SOURCE_HOME}/Python)
+	set(SimVascular_BINARY_PYTHON_DIR ${SimVascular_BINARY_HOME}/Python)
+	set(SimVascular_PYTHON ${SimVascular_BINARY_PYTHON_DIR})
+	add_custom_target(copy-py ALL)
+	add_custom_command(TARGET copy-py POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SimVascular_BINARY_PYTHON_DIR}
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${SimVascular_BINARY_PYTHON_DIR}
+		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SimVascular_SOURCE_PYTHON_DIR} ${SimVascular_BINARY_PYTHON_DIR}
+		COMMENT "Copying Python Directory..."
 		)
 	
-
-	set(TCL_STARTUP_CONFIG_FILE "${TEMP_DIR}/startup_configure.tcl")
-	set(TCL_SPLASH_CONFIG_FILE "${TEMP_DIR}/splash_configure.tcl")
-	set(TCL_EXTERNAL_CONFIG_FILE "${TEMP_DIR}/externals_configure.tcl")
-
-	include(SimVascularTclConfigure)
-
-	set(TCL_CONFIG_FILES 
-		${TCL_SPLASH_CONFIG_FILE} ${TCL_STARTUP_CONFIG_FILE} ${TCL_EXTERNAL_CONFIG_FILE})
-
-	foreach(tcl_file ${TCL_CONFIG_FILES})
-		dev_message("Configuring ${tcl_file}")
-		add_custom_command(TARGET copy-tcl POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SimVascular_BINARY_TCL_DIR}
-			COMMENT "Copying ${tcl_file}..."
-			)
-		add_dependencies(copy-tcl ${tcl_file})
-	endforeach()
+	#include(SimVascularPythonConfigure)
 	
 	#-----------------------------------------------------------------------------
 	# Install Steps
 	#-----------------------------------------------------------------------------
 	
-	include(PrepareTcl)
+	include(PreparePython)
 
-	install(DIRECTORY ${TEMP_DIR}/Tcl DESTINATION ${SIMVASCULAR_INSTALL_SCRIPT_DIR})
-	install(FILES ${TCL_CONFIG_FILES}
-		DESTINATION ${SIMVASCULAR_INSTALL_TCL_CODE_DIR}
-		)
+	install(DIRECTORY ${TEMP_DIR}/Python DESTINATION ${SIMVASCULAR_INSTALL_SCRIPT_DIR})
 endif()

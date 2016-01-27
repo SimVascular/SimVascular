@@ -13,7 +13,7 @@ proc startTclPython {} {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }
-  } 
+  }
   global gPythonInterp
   set gPythonInterp [::python::interp new]
   $gPythonInterp exec {print("Hello Python World")}

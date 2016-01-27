@@ -24,24 +24,20 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-set(proj VTK)
-if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  set(${proj}_DEPENDENCIES "")
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_TCL)
-    message(WARNING  "You have specified ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj} but not ${CMAKE_PROJECT_NAME}_USE_SYSTEM_TCL. This is not reccomended, as the libraries may not match, so it may lead to namespace pollution.")
-  endif()
-else()
-  set(${proj}_DEPENDENCIES "TCL")
-endif()
+set(proj OPENCASCADE)
 
-ExternalProject_Include_Dependencies(${proj} 
+set(${proj}_DEPENDENCIES VTK)
+
+ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
-  EP_ARGS_VAR ${proj}_EP_ARGS 
-  DEPENDS_VAR ${proj}_DEPENDENCIES)
+  DEPENDS_VAR ${proj}_DEPENDENCIES
+  EP_ARGS_VAR ${proj}_EXTERNAL_PROJECT_ARGS
+  USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
+  )
 
 # Sanity checks
-if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
-  message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+if(DEFINED OPENCASCADE_DIR AND NOT EXISTS ${OPENCASCADE_DIR})
+  message(FATAL_ERROR "OPENCASCADE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
 if(APPLE)
@@ -58,10 +54,27 @@ if(APPLE)
     )
 endif()
 
+get_filename_component(TCL_LIBRARY_DIR ${TCL_LIBRARY} PATH)
+get_filename_component(TK_LIBRARY_DIR ${TK_LIBRARY} PATH)
+
+set(3RDPARTY_VTK_INCLUDE_DIR "${VTK_DIR}/${SIMVASCULAR_INSTALL_ROOT_DIR}/${SIMVASCULAR_INSTALL_VTK_INCLUDE_DIR}")
+set(3RDPARTY_VTK_LIBRARY_DIR "${VTK_DIR}/${SIMVASCULAR_INSTALL_ROOT_DIR}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}")
+
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj})
-  set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-build)
+
+	#set(revision_tag "6.9")
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git")
+	  #GIT_TAG ${revision_tag})
+  if(WIN32)
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj} 
+      CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build  
+      CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
+  else()
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build)
+  endif()
   if(WIN32 AND NOT TK_INTERNAL_PATH)
     set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/ThirdParty/TclTk/internals/tk8.5)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
@@ -71,53 +84,57 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(VTK_TK_XLIB_PATH_DEFINE  "-DTK_XLIB_PATH:PATH=${TK_XLIB_PATH}")
   endif()
 
+  set(${proj}_INSTALL_DIR "opencascade")
+
+  if(APPLE)
+    set(${proj}_BUILD_TYPE "Debug")
+  else()
+    set(${proj}_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+  endif()
+
   ExternalProject_Add(${proj}
-   ${${proj}_EP_ARGS}
-   GIT_REPOSITORY "https://github.com/SimVascular/VTK.git"
-   PREFIX ${${proj}_OUTPUT_DIR}-PREFIX
+   ${location_args}
+   PREFIX ${${proj}_OUTPUT_DIR}-prefix
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
-   GIT_TAG "simvascular-patch-6.2"
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
    -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
-   -DBUILD_SHARED_LIBS:BOOL=${SimVascular_BUILD_SHARED_VTK}
-   -DBUILD_TESTING:BOOL=OFF
-   -DVTK_WRAP_TCL:BOOL=ON
-   -DVTK_WRAP_PYTHON:BOOL=${SimVascular_USE_PYTHON}
-   -DVTK_Group_Tk:BOOL=ON
-   -DTCL_INCLUDE_PATH:PATH=${TCL_INCLUDE_PATH}
-   -DTCL_LIBRARY:FILEPATH=${TCL_LIBRARY}
-   -DTCL_TCLSH:FILEPATH=${TCL_TCLSH}
-   -DTK_INCLUDE_PATH:PATH=${TK_INCLUDE_PATH}
-   ${VTK_TK_XLIB_PATH_DEFINE}
-   ${VTK_TK_INTENAL_PATH_DEFINE}
-   -DTK_LIBRARY:FILEPATH=${TK_LIBRARY}
    -DBUILD_EXAMPLES:BOOL=OFF
+   -DBUILD_SHARED_LIBS:BOOL=ON
+   -DBUILD_TESTING:BOOL=OFF
+   -DBUILD_MODULE_Draw:BOOL=OFF
+   -DCMAKE_BUILD_TYPE:STRING=${${proj}_BUILD_TYPE}
+   -D3RDPARTY_TCL_INCLUDE_DIR:PATH=${TCL_INCLUDE_PATH}
+   -D3RDPARTY_TCL_LIBRARY_DIR:PATH=${TCL_LIBRARY_DIR}
+   -D3RDPARTY_TK_INCLUDE_DIR:PATH=${TK_INCLUDE_PATH}
+   -D3RDPARTY_TK_LIBRARY_DIR:PATH=${TK_LIBRARY_DIR}
+   -DBUILD_LIBRARY_TYPE:STRING=Shared
+   -DUSE_VTK:BOOL=ON
+   -DVTK_VERSION:STRING=${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
+   -DVTK_DIR:PATH=${VTK_DIR}
+   -D3RDPARTY_VTK_DIR:PATH=${VTK_DIR}
+   -D3RDPARTY_VTK_INCLUDE_DIR:PATH=${3RDPARTY_VTK_INCLUDE_DIR}
+   -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${3RDPARTY_VTK_LIBRARY_DIR}
+   -DINSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
    -DCMAKE_INSTALL_PREFIX:STRING=${SIMVASCULAR_INSTALL_ROOT_DIR}
-   -DVTK_INSTALL_RUNTIME_DIR:PATH=${SIMVASCULAR_INSTALL_VTK_RUNTIME_DIR}
-   -DVTK_INSTALL_LIBRARY_DIR:PATH=${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}
-   -DVTK_INSTALL_ARCHIVE_DIR:PATH=${SIMVASCULAR_INSTALL_VTK_ARCHIVE_DIR}
-   -DVTK_INSTALL_INCLUDE_DIR:PATH=${SIMVASCULAR_INSTALL_VTK_INCLUDE_DIR}
+   DEPENDS
+   ${${proj}_DEPENDENCIES}
    )
-
 set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
-
 set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
-
-if(SIMVASCULAR_INSTALL_EXTERNALS)
-  ExternalProject_Install_CMake(${proj})
-endif()
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+if(SIMVASCULAR_INSTALL_EXTERNALS)
+  ExternalProject_Install_CMake(${proj})
+endif()
+mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 mark_as_superbuild(
   VARS ${proj}_DIR:PATH

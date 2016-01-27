@@ -142,6 +142,10 @@ if(NOT SIMVASCULAR_INSTALL_VTK_INCLUDE_DIR)
 endif()
 mark_as_superbuild(SIMVASCULAR_INSTALL_VTK_INCLUDE_DIR:PATH)
 
+set(SIMVASCULAR_INSTALL_BUILD_SHARED_LIBS ON)
+mark_as_superbuild(SIMVASCULAR_INSTALL_BUILD_SHARED_LIBS)
+
+
 #-----------------------------------------------------------------------------
 # ITK 
 #
@@ -162,6 +166,13 @@ if(NOT SIMVASCULAR_INSTALL_ITK_INCLUDE_DIR)
   set(SIMVASCULAR_INSTALL_ITK_INCLUDE_DIR itk/include)
 endif()
 mark_as_superbuild(SIMVASCULAR_INSTALL_ITK_INCLUDE_DIR:PATH)
+
+#-----------------------------------------------------------------------------
+# OPENCASCADE 
+#
+if(NOT OPENCASCADE_INSTALL_DIR)
+  set(OPENCASCADE_INSTALL_DIR ${SIMVASCULAR_INSTALL_ROOT_DIR}/opencascade)
+endif()
 
 #-----------------------------------------------------------------------------
 # TCL 
