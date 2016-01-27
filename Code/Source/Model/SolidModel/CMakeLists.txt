@@ -36,7 +36,7 @@ set(lib lib_simvascular_solid)
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
-if(USE_TCLPYTHON)
+if(SimVascular_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
 		    ${PYTHON_INCLUDE_DIR}
 		    ${PYTHON_INCLUDE_DIRS})
@@ -54,7 +54,7 @@ target_link_libraries(${lib}
 			lib_simvascular_globals lib_simvascular_utils
 			lib_simvascular_polydatasolid
             )
-if(USE_TCLPYTHON)
+if(SimVascular_USE_PYTHON)
    target_link_libraries(${lib} ${PYTHON_LIBRARIES})
 endif()
 

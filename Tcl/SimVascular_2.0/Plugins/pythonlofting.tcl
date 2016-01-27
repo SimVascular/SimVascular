@@ -68,7 +68,7 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
 
   puts "Calling python lofting code"
   #Import python lofting code and call
-  $gPythonInterp exec {loftfile = os.path.join(simvascular_home,'../../Python/model/occt/nurbs_lofting.py')}
+  $gPythonInterp exec {loftfile = os.path.join(simvascular_home,'Python/model/occt/nurbs_lofting.py')}
   $gPythonInterp exec {pyloft = imp.load_source('nurbs_lofting', loftfile)}
   $gPythonInterp exec {X,Y,Z,uknots,vknots,u,v,p,q = pyloft.loft(["-a",allpoints,"-p",uDeg,"-q",vDeg,"--kutype",kutype,"--kvtype",kvtype,"--putype",putype,"--pvtype",pvtype,"-o",Du0,"-n",DuN,"-r",Dv0,"-s",DvN])}
 

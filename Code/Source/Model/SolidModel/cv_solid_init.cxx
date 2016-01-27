@@ -46,9 +46,6 @@
 #include "cvPolyData.h"
 #include "cvPolyDataSolid.h"
 #include "cv_sys_geom.h"
-#include "vtkPythonUtil.h"
-#include "PyVTKClass.h"
-
 #include "cvFactoryRegistrar.h"
 
 #ifdef USE_DISCRETE_MODEL
@@ -68,10 +65,13 @@ int DiscreteUtils_Init();
 // --------
 
 #include "cv_globals.h"
-#ifdef USE_TCLPYTHON
+#ifdef USE_PYTHON
 #include "Python.h"
+#include "vtkPythonUtil.h"
+#include "PyVTKClass.h"
 #endif
 
+#ifdef USE_PYTHON
 //Python intialization functions. Called from python interpreter
 //
 // --------------------
@@ -287,8 +287,9 @@ PyObject* importList2D(PyObject* self, PyObject* args)
   delete [] arr;
   return Py_BuildValue("s","success");
 }
+#endif
 
-#ifdef USE_OPENCASCADE
+#if defined(USE_PYTHON) && defined(USE_OPENCASCADE)
 // --------------------
 // pySolid.convertListsToOCCTObject
 // --------------------
@@ -385,6 +386,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 }
 #endif
 
+#ifdef USE_PYTHON
 //All functions listed and initiated as pySolid_methods declared here
 // --------------------
 // pySolid_methods
@@ -403,6 +405,7 @@ PyMethodDef pySolid_methods[] = {
 #endif
   {NULL, NULL}
 };
+#endif
 
 
 // Prototypes:
@@ -513,8 +516,10 @@ int Model_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
 			      int argc, CONST84 char *argv[] );
 
+#ifdef USE_PYTHON
 int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
+#endif
 
 
 // Solid object methods
@@ -734,13 +739,15 @@ int Solid_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Model_Convert_NURBS_To_PolyCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-
+#ifdef USE_PYTHON
   Tcl_CreateCommand( interp, "solid_initPyMods", Solid_InitPyModulesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+#endif
 
   return TCL_OK;
 }
 
+#ifdef USE_PYTHON
 //Must be called after the python interpreter is initiated and through
 //the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
 // --------------------
@@ -769,6 +776,7 @@ int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 
   return TCL_OK;
 }
+#endif
 
 // This routine is used for debugging the registrar/factory system.
 int Solid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
@@ -792,8 +800,6 @@ int Solid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 
   return TCL_OK;
 }
-
-
 
 // ----------------
 // Solid_PolyPtsCmd

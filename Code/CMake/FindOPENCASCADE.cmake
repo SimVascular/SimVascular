@@ -50,8 +50,6 @@ set(${proj}_FIND_COMPONENTS TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
 			    TKIGES TKMeshVS TKSTEP TKSTEP209
 			    TKSTEPAttr TKVRML TKSTEPBase TKSTL
 			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
-			    #TKTObj
-			    #TKVoxel
 			    TKService
 			    TKXDEIGES TKXDESTEP TKXMesh
 			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
@@ -70,7 +68,7 @@ set(${proj}_HEADER "gp_Pnt.hxx")
 #-----------------------------------------------------------------------------
 # Find Libraries
 #-----------------------------------------------------------------------------
-set(${proj}_POSSIBLE_PATHS ${${proj}_DIR} ${${proj}_DIR}/install)
+set(${proj}_POSSIBLE_PATHS ${${proj}_DIR} ${${proj}_DIR}/simvascular/opencascade)
 if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
 	set(${proj}_PATH "${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.1/")
 endif()
@@ -92,16 +90,29 @@ endforeach()
 #message("${proj}_POSSIBLE_PATHS: ${${proj}_POSSIBLE_PATHS}")
 
 # Set paths to search for OpenCascade
-if(LINUX)
-	set(lib_sub_path "lib")
-elseif(APPLE)
-	set(lib_sub_path "libd")
-elseif(WIN32 AND IS64)
-	set(lib_sub_path "dll")
-elseif(WIN32 AND NOT IS64)
-	set(lib_sub_path "dll")
+if(NOT SimVascular_USE_SYSTEM_${proj})
+  if(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
+    set(${proj}_LIB_INSTALL_EXT "i")
+  elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(${proj}_LIB_INSTALL_EXT "d")
+  else()
+    set(${proj}_LIB_INSTALL_EXT "")
+  endif()
+else()
+  set(${proj}_LIB_INSTALL_EXT "")
 endif()
 
+if(WIN32)
+  set(${proj}_LIB_INSTALL_DIR "bin${${proj}_LIB_INSTALL_EXT}")
+elseif(APPLE)
+  message("WARNING: OpenCASCADE must be built and installed as Debug")
+  set(${proj}_LIB_INSTALL_DIR "libd")
+else()
+  set(${proj}_LIB_INSTALL_DIR "lib${${proj}_LIB_INSTALL_EXT}")
+endif()
+mark_as_superbuild(${${proj}_LIB_INSTALL_DIR})
+
+set(lib_sub_path ${${proj}_LIB_INSTALL_DIR})
 
 set(${proj}_POSSIBLE_LIB_PATHS )
 foreach(p ${${proj}_POSSIBLE_PATHS})

@@ -18,7 +18,7 @@ if(NOT BUILD_SHARED_LIBS)
 		 ${SimVascular_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
 endif()
 
-if (USE_TCLPYTHON)
+if (SimVascular_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH})
 endif()
 
@@ -107,6 +107,6 @@ target_link_libraries(${SIMVASCULAR_EXE} ${OPTLIBS}
 			${INTELRUNTIME_LIBRARIES}
 			${GLOBAL_LIBRARIES})
 
-if(USE_TCLPYTHON)
+if(SimVascular_USE_PYTHON)
   	target_link_libraries(${SIMVASCULAR_EXE} ${PYTHON_LIBRARIES})
 endif()

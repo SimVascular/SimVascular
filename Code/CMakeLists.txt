@@ -104,6 +104,7 @@ include(SimVascularVersion)
 include(SimVascularInstallSetup)
 include(SimVascularHomeSetup)
 include(SimVascularTclSetup)
+include(SimVascularPythonSetup)
 
 #-----------------------------------------------------------------------------
 # Setting up default directories for SimVascular Externals
@@ -214,8 +215,14 @@ if(Plugin_TET_ADAPTOR)
 	set(BUILD_ThreeDSolver ON)
 endif()
 
-option(USE_TCLPYTHON "Use Tcl Python" ON)
-mark_as_superbuild(USE_TCLPYTHON)
+option(SimVascular_BUILD_SHARED_VTK "Buiild vtk libraries as shared libs" OFF)
+mark_as_superbuild(SimVascular_BUILD_SHARED_VTK)
+
+option(SimVascular_USE_PYTHON "Use Tcl Python" OFF)
+mark_as_superbuild(SimVascular_USE_PYTHON)
+if(SimVascular_USE_PYTHON)
+  set(SimVascular_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Adaptor Options
@@ -232,6 +239,9 @@ endif()
 # Open Source Software Options: Solid Models - OPENCASCADE
 option(Plugin_OPENCASCADE "OPENCASCADE" OFF)
 mark_as_superbuild(Plugin_OPENCASCADE)
+if(Plugin_OPENCASCADE)
+  set(SimVascular_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
+endif()
 
 #-----------------------------------------------------------------------------
 # Commercial Software Options: Solid Models - Parasolid
@@ -445,7 +455,7 @@ mark_as_superbuild(
 
 #-----------------------------------------------------------------------------
 # PYTHON
-if(USE_TCLPYTHON)
+if(SimVascular_USE_PYTHON)
 	find_package(PythonLibs REQUIRED)
 	mark_as_superbuild(
 		PYTHONLIBS_FOUND
@@ -454,8 +464,19 @@ if(USE_TCLPYTHON)
 		PYTHON_INCLUDE_DIRS
 		PYTHONLIBS_VERSION_STRING)
 
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/TclPython")
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_TCLPYTHON")
+	if(PYTHONLIBS_FOUND)
+		string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
+		list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
+		list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
+		mark_as_superbuild(PYTHONLIBS_MAJOR_VERSION)
+		mark_as_superbuild(PYTHONLIBS_MINOR_VERSION)
+		set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/TclPython")
+		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_PYTHON")
+	else()
+		message(STATUS "")
+		message(STATUS "Python Libs NOT FOUND")
+		message(STATUS "Make sure you have python installed on your system.")
+	endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -463,7 +484,10 @@ endif()
 set(SimVascular_DEPENDS "TCL")
 simvascular_external(VTK DOWNLOADABLE
 	COMPONENTS
-	 vtkFiltersFlowPaths)
+        vtkFiltersFlowPaths vtkWrappingTcl
+	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
+	vtkFiltersCore vtkIOLegacy)
+set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} VTK)
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -546,6 +570,12 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugin LevelSets
 if(Plugin_ITK)
+	if(SimVascular_BUILD_SHARED_VTK)
+		set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} ITK)
+		set(SIMVASCULAR_INSTALL_HEADERS ON)
+		set(SIMVASCULAR_INSTALL_EXTERNALS ON)
+		set(SIMVASCULAR_INSTALL_LIBS ON)
+	endif()
 	simvascular_external(ITK DOWNLOADABLE)
 	set(USE_ITK ON)
 	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
@@ -593,17 +623,12 @@ endif()
 # OPENCASCADE
 if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
 	if(Plugin_OPENCASCADE)
-		simvascular_external(OPENCASCADE SYSTEM_DEFAULT SHARED_LIB)
-		mark_as_superbuild(OPENCASCADE_DIR)
-		mark_as_superbuild(OPENCASCADE_INCLUDE_DIR)
-		mark_as_superbuild(OPENCASCADE_LIBRARIES)
-		mark_as_superbuild(OPENCASCADE_LIBRARY)
+		#simvascular_third_party(opencascade)
+		simvascular_external(OPENCASCADE DOWNLOADABLE)
 		set(USE_OPENCASCADE ON)
 		set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
+		#set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} OPENCASCADE)
 	endif()
-endif()
-if(OPENCASCADE_FOUND)
-	message("OpenCASC Found!")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -936,6 +961,29 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
+if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
+	if(Plugin_OPENCASCADE)
+		set(OPENCASCADE_VERSION "6.9")
+		find_package(OPENCASCADE)
+		mark_as_superbuild(OPENCASCADE_SOURCE_DIR)
+		mark_as_superbuild(OPENCASCADE_INCLUDE_DIR)
+		mark_as_superbuild(OPENCASCADE_LIBRARIES)
+		mark_as_superbuild(OPENCASCADE_LIBRARY)
+	endif()
+endif()
+if(OPENCASCADE_FOUND)
+	message("OCCT Found!")
+endif()
+# Plugin setup
+if(Plugin_ITK)
+	find_package(ITK REQUIRED)
+	include(${ITK_USE_FILE})
+endif()
+set(VTK_MODULES_REQUESTED ${VTK_MODULES_REQUESTED} vtkFiltersFlowPaths vtkWrappingTcl
+	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
+	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
+
+#-----------------------------------------------------------------------------
 # VTK Setup
 find_package(VTK COMPONENTS
 	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk
@@ -965,12 +1013,9 @@ if(${VTK_DIR} MATCHES "intel")
 	#message(STATUS "VTK appears to be built with intel, adding libraries")
 	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
 endif()
-
-
-#-----------------------------------------------------------------------------
-# Plugin setup
-if(Plugin_ITK)
-	include(${ITK_USE_FILE})
+set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
+if(SimVascular_BUILD_SHARED_VTK)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DVTK_BUILD_SHARED_LIBS")
 endif()
 
 if(Plugin_TETGEN)
