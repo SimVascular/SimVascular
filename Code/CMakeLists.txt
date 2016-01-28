@@ -241,6 +241,9 @@ option(Plugin_OPENCASCADE "OPENCASCADE" OFF)
 mark_as_superbuild(Plugin_OPENCASCADE)
 if(Plugin_OPENCASCADE)
   set(SimVascular_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
+  if(UNIX AND NOT APPLE)
+  	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+  endif()
 endif()
 
 #-----------------------------------------------------------------------------

@@ -95,10 +95,10 @@ int Occt_Init( Tcl_Interp *interp )
 {
   //gOCCTManager = new AppStd_Application;
   gOCCTManager = XCAFApp_Application::GetApplication();
-  if ( gOCCTManager == NULL ) {
-    fprintf( stderr, "error allocating gOCCTManager\n" );
-    return TCL_ERROR;
-  }
+  //if ( gOCCTManager == NULL ) {
+  //  fprintf( stderr, "error allocating gOCCTManager\n" );
+  //  return TCL_ERROR;
+  //}
   Handle(TDocStd_Document) doc;
   //gOCCTManager->NewDocument("Standard",doc);
   gOCCTManager->NewDocument("MDTV-XCAF",doc);

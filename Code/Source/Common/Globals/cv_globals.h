@@ -52,7 +52,7 @@ CV_GLOBALS_DLL_IMPORT int gSimVascularBatchMode;
 
 CV_GLOBALS_DLL_IMPORT Tcl_Interp* gVtkTclInterp;
 CV_GLOBALS_DLL_IMPORT Tcl_Interp* getTclInterp();
-#ifdef USE_OPENCASCADE
+ifdef USE_OPENCASCADE
 //CV_GLOBALS_DLL_IMPORT AppStd_Application *gOCCTManager;
 CV_GLOBALS_DLL_IMPORT Handle(XCAFApp_Application) gOCCTManager;
 #endif
