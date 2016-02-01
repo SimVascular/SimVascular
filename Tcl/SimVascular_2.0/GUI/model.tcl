@@ -3027,7 +3027,7 @@ proc guiSV_model_convert_centerlines_to_pathlines {type} {
   #$centerlinepd BuildLinks 0
 
   set currentPaths [$tv children .paths.all]
-  set maxid 0
+  set maxid -1
   foreach path $currentPaths {
     set checkid [lindex [split $path "."] end]
     if {$checkid > $maxid} { set maxid $checkid }

@@ -1,9 +1,8 @@
-proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 DuN Dv0 DvN} {
+proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 DuN Dv0 DvN cap resample_num} {
   global gOptions
   global gPythonInterp
   global gPathBrowser
 
-  set resample_num       $gPathBrowser(solid_sample)
   set saveGroup          0
   resampleGroupEvenSpace $groupName $resample_num $saveGroup
 
@@ -97,7 +96,11 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
 
   #Cap the solid now
   catch {repos_delete -obj $pysolid/capped}
-  solid_capSurfToSolid -src $pysolid -dst $pysolid/capped
+  if {$cap} {
+    solid_capSurfToSolid -src $pysolid -dst $pysolid/capped
+  } else {
+    solid_copy -src $pysolid -dst $pysolid/capped
+  }
 
   # ugly way to keep track of solids created for each group
   global gLoftedSolids

@@ -86,11 +86,11 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(${proj}_INSTALL_DIR "opencascade")
 
-  if(APPLE)
-    set(${proj}_BUILD_TYPE "Debug")
-  else()
+  #if(APPLE)
+  #  set(${proj}_BUILD_TYPE "Debug")
+  #else()
     set(${proj}_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-  endif()
+  #endif()
 
   ExternalProject_Add(${proj}
    ${location_args}

@@ -50119,6 +50119,13 @@ set {guiTGvars(useNoMerging)} {0}
 set {guiTGvars(useQuiet)} {0}
 set {guiTGvars(useVerbose)} {0}
 set {guiTGvars(wallFaces)} {}
+global {guiPYPLOFTvars}
+set {guiPYLOFTvars(uDeg)} {3}
+set {guiPYLOFTvars(vDeg)} {3}
+set {guiPYLOFTvars(Du0)}  {0.0}
+set {guiPYLOFTvars(DuN)}  {0.0}
+set {guiPYLOFTvars(Dv0)}  {0.0}
+set {guiPYLOFTvars(DvN)}  {0.0}
 global {guiTRIMvars}
 set {guiTRIMvars(area_max_value)} {1.0}
 set {guiTRIMvars(area_min_value)} {0.0}

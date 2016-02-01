@@ -165,6 +165,8 @@ proc guiSV_model_create_model_opencascade {} {
 proc guiSV_model_create_model_opencascade_python {} {
    global symbolicName
    global createPREOPgrpKeptSelections
+   global guiBOOLEANvars
+   global gPathBrowser
    global gFilenames
    global gObjects
    global gLoftedSolids
@@ -200,16 +202,19 @@ proc guiSV_model_create_model_opencascade_python {} {
    }
    guiSV_model_update_tree
 
-   opencascade_loft_with_python $modelname
+   set cap          $guiBOOLEANvars(add_caps_to_vessels)
+   set resample_num $gPathBrowser(solid_sample)
+   opencascade_loft_with_python $modelname $cap $resample_num
 }
 
-proc opencascade_loft_with_python {modelname} {
+proc opencascade_loft_with_python {modelname cap resample_num} {
    global symbolicName
    global createPREOPgrpKeptSelections
    global gFilenames
    global gObjects
    global gLoftedSolids
    global gOptions
+   global guiPYLOFTvars
 
    set gOptions(meshing_solid_kernel) OpenCASCADE
    set kernel $gOptions(meshing_solid_kernel)
@@ -230,6 +235,12 @@ proc opencascade_loft_with_python {modelname} {
       repos_delete -obj $modelname
    }
 
+   set uDeg $guiPYLOFTvars(uDeg)
+   set vDeg $guiPYLOFTvars(vDeg)
+   set Du0  $guiPYLOFTvars(Du0)
+   set DuN  $guiPYLOFTvars(DuN)
+   set Dv0  $guiPYLOFTvars(Dv0)
+   set DvN  $guiPYLOFTvars(DvN)
    foreach i $createPREOPgrpKeptSelections {
       set cursolid ""
       catch {set cursolid $gLoftedSolids($i)}
@@ -248,7 +259,7 @@ proc opencascade_loft_with_python {modelname} {
       global gRen3dFreeze
       set oldFreeze $gRen3dFreeze
       set gRen3dFreeze 1
-      call_python_lofting $i avg endderiv centripetal centripetal 3 3 0.0 0.0 0.0 0.0
+      call_python_lofting $i avg endderiv centripetal centripetal $uDeg $vDeg $Du0 $DuN $Dv0 $DvN $cap $resample_num
       set gRen3dFreeze $oldFreeze
       set gPathBrowser(currGroupName) $keepgrp
    }
@@ -1181,6 +1192,7 @@ proc guiSV_model_resegment {} {
   global gOptions
   global symbolicName
   global smasherInputName
+  global gPathBrowser
   global gFilenames
   global gKernel
 
@@ -1267,6 +1279,19 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
   featurefind Update
   set endPds [featurefind GetOutput]
 
+  #Not being used currently!
+  #set numResamplePts 20
+  #set tmpPd {}
+  #if {$pathId == 0} {
+  #  array set items [lindex $path $max]
+  #  set pos [TupleToList $items(p)]
+  #  set tmpPd [guiSV_model_connect_closest_point $endPds $pos]
+  #} else {
+  #  array set items [lindex $path $min]
+  #  set pos [TupleToList $items(p)]
+  #  set tmpPd [guiSV_model_connect_closest_point $endPds $pos]
+  #}
+  #set numResamplePts [[repos_exportToVtk -src $tmpPd] GetNumberOfPoints]
   foreach seg $allsegs {
     #Update points on path
     set lsGUIcurrentGroup          $groupName
@@ -1283,7 +1308,6 @@ proc guiSV_model_resegment_polydata_vessel {kernel model pathId spacing} {
     }
 
     catch {repos_delete -obj $newseg}
-    set tmpPd {}
     if {$seg == $min || $seg == $max} {
       array set items [lindex $path $seg]
       set pos [TupleToList $items(p)]
@@ -1379,6 +1403,7 @@ proc guiSV_model_vessel_extraction {} {
   global guiPDvars
   global createPREOPgrpKeptSelections
   global smasherInputName
+  global gPathBrowser
   global gPathPoints
   global gFilenames
   global gKernel
@@ -1405,15 +1430,17 @@ proc guiSV_model_vessel_extraction {} {
   catch {$vtkpd Delete}
   geom_grouppolydata -src /models/$kernel/$model -lines $guiPDvars(centerlines) -result $pd
   set vtkpd [repos_exportToVtk -src $pd]
+  repos_writeVtkPolyData -obj $pd -type ascii -file "/Users/adamupdegrove/Desktop/seperated.vtk"
 
   #Convert centerliens to pathlines (smoothed)
   set addedPathIds [guiSV_model_convert_centerlines_to_pathlines Broken]
 
   #Resegment vessel along pathlines
   set vesselNames {}
-  set pathTv  $symbolicName(guiSV_path_tree)
-  set pdGroup /tmp/vtk/pd/group/threshold
-  set spacing $gOptions(resegment_spacing)
+  set pathTv       $symbolicName(guiSV_path_tree)
+  set pdGroup      /tmp/vtk/pd/group/threshold
+  set spacing      $gOptions(resegment_spacing)
+  set resample_num $gPathBrowser(solid_sample)
 
   foreach id $addedPathIds {
     $pathTv selection set .paths.all.$id
@@ -1433,6 +1460,7 @@ proc guiSV_model_vessel_extraction {} {
   set kernel $gOptions(meshing_solid_kernel)
   solid_setKernel -name $kernel
 
+  set cap 0
   foreach vessel $vesselNames {
     set createPREOPgrpKeptSelections {}
     lappend createPREOPgrpKeptSelections $vessel
@@ -1443,8 +1471,7 @@ proc guiSV_model_vessel_extraction {} {
       model_create $kernel $vessel
     }
     guiSV_model_update_tree
-    opencascade_loft_with_python $vessel
+    opencascade_loft_with_python $vessel $cap $resample_num
   }
 }
-
 
