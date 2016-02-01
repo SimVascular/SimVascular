@@ -104,7 +104,7 @@ endif()
 
 if(WIN32)
   set(${proj}_LIB_INSTALL_DIR "bin${${proj}_LIB_INSTALL_EXT}")
-  elseif(APPLE && SimVascular_USE_SYSTEM_${proj})
+  elseif(APPLE AND SimVascular_USE_SYSTEM_${proj})
     message("WARNING: Issue with optimization in AdvApp2Var_ApproxF2Var, on Apple, occt must be built in debug")
     set(${proj}_LIB_INSTALL_DIR "libd")
 else()
