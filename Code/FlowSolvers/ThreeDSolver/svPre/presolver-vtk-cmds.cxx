@@ -138,7 +138,7 @@ extern char buffer_[MAXCMDLINELENGTH];
 #include "vtkGeometryFilter.h"
 #include "vtkCleanPolyData.h"
 #include "vtkCellData.h"
-#include "vtkCellArray.h" 
+#include "vtkCellArray.h"
 #include "vtkExtractEdges.h"
 
 #include "vtkXMLUnstructuredGridWriter.h"
@@ -431,13 +431,13 @@ int cmd_mesh_vtu(char *cmd) {
 
 }
 
-/** 
+/**
  * @author Adam Updegrove
- * @author updega2@gmail.com 
+ * @author updega2@gmail.com
  * @author UC Berkeley
- * @author shaddenlab.berkeley.edu 
+ * @author shaddenlab.berkeley.edu
  * @brief Command to generate adjacency from the existing vtu mesh
- * @param *char cmd; should just be the vtu file 
+ * @param *char cmd; should just be the vtu file
  * @return CV_OK if function completes properly
  */
 int cmd_mesh_and_adjncy_vtu(char *cmd) {
@@ -678,37 +678,16 @@ int cmd_mesh_and_adjncy_vtu(char *cmd) {
 	vtkIdType p1, p2, p3;
 	vtkIdType npts = 0;
 	vtkIdType *pts = 0;
-	vtkSmartPointer < vtkIntArray > globalElementIds = vtkSmartPointer
-			< vtkIntArray > ::New();
-	vtkSmartPointer < vtkCellData > myData = vtkSmartPointer < vtkCellData
-			> ::New();
 	vtkSmartPointer < vtkIdList > ptIds = vtkSmartPointer < vtkIdList > ::New();
 	vtkSmartPointer < vtkIdList > cellIds = vtkSmartPointer < vtkIdList
 			> ::New();
 
 	// do work
 	//
+	ug->GetPointData()->SetActiveScalars("GlobalNodeID");
+	ug->GetCellData()->SetActiveScalars("GlobalElementID");
 	ug->BuildLinks();
 	numCells = ug->GetNumberOfCells();
-
-	globalElementIds = NULL;
-	globalElementIds = static_cast<vtkIntArray*>(ug->GetCellData()->GetArray(
-			"GlobalElementID"));
-//  globalElementIds = vtkIntArray::SafeDownCast(ug->GetCellData()->GetScalars("GlobalElementID"));
-//  fprintf(stderr,"Right Here!\n");
-//  int numArrays = ug->GetPointData()->GetNumberOfArrays();
-//  fprintf(stderr,"Num Point Arrays: %s\n",numArrays);
-//  int numCellArrays = ug->GetCellData()->GetNumberOfArrays();
-//  fprintf(stderr,"Num Cell Arrays: %s\n",numCellArrays);
-//  for (i=0;i<numArrays;i++)
-//  {
-//    fprintf(stderr,"Array Name: %s\n",ug->GetCellData()->GetArrayName(i));
-//  }
-
-	if (globalElementIds == NULL) {
-		fprintf(stderr, "ERROR: Global Element IDs were not transferred\n");
-		return CV_ERROR;
-	}
 
 	xadj_ = new int[numCells + 1];
 	adjncy_ = new int[4 * numCells];
@@ -718,7 +697,7 @@ int cmd_mesh_and_adjncy_vtu(char *cmd) {
 
 	ptIds->SetNumberOfIds(3);
 	for (cellId = 0; cellId < numCells; cellId++) {
-		meshCellId = globalElementIds->LookupValue(cellId + 1);
+		meshCellId = (int) ug->GetCellData()->GetScalars()->LookupValue(cellId + 1);
 		ug->GetCellPoints(meshCellId, npts, pts);
 
 		for (i = 0; i < npts; i++) {
@@ -733,10 +712,8 @@ int cmd_mesh_and_adjncy_vtu(char *cmd) {
 			ug->GetCellNeighbors(meshCellId, ptIds, cellIds);
 
 			if (cellIds->GetNumberOfIds() != 0) {
-				adjncy_[adj++] = (int) (globalElementIds->GetValue(
+				adjncy_[adj++] = (int) (ug->GetCellData()->GetScalars()->GetTuple1(
 						cellIds->GetId(0)) - 1);
-				//adjncy_[adj++] = (int) cellIds->GetId(0);;
-				//debugprint(stddbg,"Neighbor of Element cellId %d is %d\n",cellId,cellIds->GetId(0));
 			}
 
 		}
