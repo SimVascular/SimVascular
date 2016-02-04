@@ -234,17 +234,27 @@ endif
 ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gcc-4.8
 endif
+ifeq ($(CLUSTER), x64_osx)
+  SVEXTERN_COMPILER_VERSION = clang_70
+  MAKE_WITH_CXX11 = 0
+endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV15/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV15/src
-    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV15/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/src
+    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV16/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV15/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV15/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /SV15/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
+endif
+
+ifeq ($(CLUSTER), x64_osx)
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/osx/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
 endif
 
 # -------------------------------------------
@@ -315,6 +325,10 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
+   GLOBAL_DEFINES += -DUSE_NOTIMER -DUNIX
+endif
+
+ifeq ($(CLUSTER), x64_osx)
    GLOBAL_DEFINES += -DUSE_NOTIMER -DUNIX
 endif
 
@@ -420,6 +434,23 @@ ifeq ($(CLUSTER), x64_linux)
   endif
 endif
 
+ifeq ($(CLUSTER), x64_osx)
+  ifeq ($(CXX_COMPILER_VERSION), clang)
+	include $(TOP)/MakeHelpers/compiler.clang.x64_osx.mk
+  endif
+  ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
+	include $(TOP)/MakeHelpers/compiler.ifort.x64_osx.mk
+        GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+  endif
+  ifeq ($(CXX_COMPILER_VERSION), gcc)
+	include $(TOP)/MakeHelpers/compiler.gcc.x64_osx.mk
+  endif
+  ifeq ($(FORTRAN_COMPILER_VERSION), gfortran)
+	include $(TOP)/MakeHelpers/compiler.gfortran.x64_osx.mk
+        GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+  endif
+endif
+
 # --------------------------------
 # build directory for object files
 # --------------------------------
@@ -509,9 +540,22 @@ ifeq ($(MAKE_WITH_THREEDSOLVER),1)
      EXECDIRS += ../Code/FlowSolvers/ThreeDSolver
 endif
 
+ifeq ($(MAKE_WITH_SOLVERIO),1)
+     LIBDIRS += ../Code/FlowSolvers/ThreeDSolver/SolverIO
+     THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
+endif
+
 # need solverio for adaptor classes so add them after adding solverio
 
-LIBDIRS += ../Code/Source/Mesh/AdaptObject
+ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  LIBDIRS += ../Code/Source/Mesh/AdaptObject
+else
+  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+    LIBDIRS += ../Code/Source/Mesh/AdaptObject
+  endif
+endif
+
+
 
 ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
   LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
@@ -562,7 +606,6 @@ LFLAGS 	 = $(GLOBAL_LFLAGS) $(TCLTK_LIBS)
 
 LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
@@ -683,6 +726,10 @@ ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_linux.mk
 endif
 
+ifeq ($(CLUSTER), x64_osx)
+	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_osx.mk
+endif
+
 # ---------------------
 # Visualization toolkit
 # ---------------------
@@ -695,6 +742,10 @@ endif
 
 ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
+endif
+
+ifeq ($(CLUSTER), x64_osx)
+	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_osx.mk
 endif
 
 endif
@@ -719,6 +770,10 @@ ifeq ($(MAKE_WITH_ITK),1)
 	include $(TOP)/MakeHelpers/itk-4.8.0.x64_linux.mk
   endif
 
+  ifeq ($(CLUSTER), x64_osx)
+	include $(TOP)/MakeHelpers/itk-4.8.2.x64_osx.mk
+  endif
+
 endif
 
 # -----
@@ -740,6 +795,15 @@ ifeq ($(MAKE_WITH_MPI),1)
     endif
     ifeq ($(MAKE_WITH_MPICH),1)
       include $(TOP)/MakeHelpers/mpich.x64_linux.mk
+    endif
+  endif
+
+  ifeq ($(CLUSTER), x64_osx)
+    ifeq ($(MAKE_WITH_OPENMPI),1)
+      include $(TOP)/MakeHelpers/openmpi.x64_osx.mk
+    endif
+    ifeq ($(MAKE_WITH_MPICH),1)
+      include $(TOP)/MakeHelpers/mpich.x64_osx.mk
     endif
   endif
 
@@ -805,6 +869,10 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
   endif
 
+  ifeq ($(CLUSTER), x64_osx)
+	include $(TOP)/MakeHelpers/parasolid-26.1.x64_osx.mk
+  endif
+
 endif
 
 # -------
@@ -827,6 +895,8 @@ ifeq ($(MAKE_WITH_MESHSIM),1)
 	include $(TOP)/MakeHelpers/meshsim-9.0-150704.x64_linux.mk
   endif
 
+  #No meshsim for mac osx
+
 endif
 
 # ------
@@ -843,6 +913,8 @@ ifeq ($(MAKE_WITH_BINARY_LESLIB),1)
 	include $(TOP)/MakeHelpers/leslib-1.5.x64_linux.mk
   endif
 
+  #No leslib for mac osx
+
 endif
 
 ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
@@ -856,6 +928,10 @@ ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
   endif
 
   ifeq ($(CLUSTER), x64_linux)
+    LESLIB_DEFS   = -DACUSIM_LINUX
+  endif
+
+  ifeq ($(CLUSTER), x64_osx)
     LESLIB_DEFS   = -DACUSIM_LINUX
   endif
 
@@ -880,4 +956,8 @@ endif
 
 ifeq ($(CLUSTER), x64_linux)
 	  include $(TOP)/MakeHelpers/rules.x64_linux.mk
+endif
+
+ifeq ($(CLUSTER), x64_osx)
+	  include $(TOP)/MakeHelpers/rules.x64_osx.mk
 endif

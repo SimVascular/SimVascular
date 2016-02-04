@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -30,9 +30,9 @@
  */
 
 // Adapted from the Berkeley list package, extracted from the NACHOS
-// OS simulation system. 
+// OS simulation system.
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #define TRUE  1
 #define FALSE 0
@@ -60,7 +60,7 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 */
 
 
-// list.cc 
+// list.cc
 //     	Routines to manage a singly linked list of "things".
 //	Lists are implemented as templates so that we can store
 //	anything on the list in a type-safe manner.
@@ -69,13 +69,13 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 //	list; it is de-allocated when the item is removed. This means
 //      we don't need to keep a "next" pointer in every object we
 //      want to put on a list.
-// 
+//
 //     	NOTE: Mutual exclusion must be provided by the caller.
-//  	If you want a synchronized list, you must use the routines 
+//  	If you want a synchronized list, you must use the routines
 //	in synchlist.cc.
 //
 // Copyright (c) 1992-1996 The Regents of the University of California.
-// All rights reserved.  See copyright.h for copyright notice and limitation 
+// All rights reserved.  See copyright.h for copyright notice and limitation
 // of liability and disclaimer of warranty provisions.
 
 
@@ -102,26 +102,26 @@ cvLispListElement<T>::cvLispListElement(T itm)
 
 template <class T>
 cvLispList<T>::cvLispList()
-{ 
-    first = last = NULL; 
+{
+    first = last = NULL;
     numInList = 0;
 }
 
 //----------------------------------------------------------------------
 // cvLispList<T>::~cvLispList
-//	Prepare a list for deallocation.  
+//	Prepare a list for deallocation.
 //----------------------------------------------------------------------
 
 template <class T>
 cvLispList<T>::~cvLispList()
-{ 
-    Assert(IsEmpty());		// make sure list is empty
+{
+    Assert(this->IsEmpty());		// make sure list is empty
 }
 
 //----------------------------------------------------------------------
 // cvLispList<T>::Append
 //      Append an "item" to the end of the list.
-//      
+//
 //	Allocate a cvLispListElement to keep track of the item.
 //      If the list is empty, then this will be the only element.
 //	Otherwise, put it at the end.
@@ -135,8 +135,8 @@ cvLispList<T>::Append(T item)
 {
     cvLispListElement<T> *element = new cvLispListElement<T>(item);
 
-    Assert(!IsInList(item));
-    if (IsEmpty()) {		// list is empty
+    Assert(!this->IsInList(item));
+    if (this->IsEmpty()) {		// list is empty
 	first = element;
 	last = element;
     } else {			// else put it after last
@@ -144,7 +144,7 @@ cvLispList<T>::Append(T item)
 	last = element;
     }
     numInList++;
-    Assert(IsInList(item));
+    Assert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -158,8 +158,8 @@ cvLispList<T>::Prepend(T item)
 {
     cvLispListElement<T> *element = new cvLispListElement<T>(item);
 
-    Assert(!IsInList(item));
-    if (IsEmpty()) {		// list is empty
+    Assert(!this->IsInList(item));
+    if (this->IsEmpty()) {		// list is empty
 	first = element;
 	last = element;
     } else {			// else put it before first
@@ -167,14 +167,14 @@ cvLispList<T>::Prepend(T item)
 	first = element;
     }
     numInList++;
-    Assert(IsInList(item));
+    Assert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
 // cvLispList<T>::RemoveFront
 //      Remove the first "item" from the front of the list.
 //	List must not be empty.
-// 
+//
 // Returns:
 //	The removed item.
 //----------------------------------------------------------------------
@@ -186,10 +186,10 @@ cvLispList<T>::RemoveFront()
     cvLispListElement<T> *element = first;
     T thing;
 
-    Assert(!IsEmpty());
+    Assert(!this->IsEmpty());
 
     thing = first->item;
-    if (first == last) {	// list had one item, now has none 
+    if (first == last) {	// list had one item, now has none
         first = NULL;
 	last = NULL;
     } else {
@@ -212,10 +212,10 @@ cvLispList<T>::Remove(T item)
     cvLispListElement<T> *prev, *ptr;
     T removed;
 
-    Assert(IsInList(item));
+    Assert(this->IsInList(item));
 
     // if first item on list is match, then remove from front
-    if (item == first->item) {	
+    if (item == first->item) {
         removed = RemoveFront();
         Assert(item == removed);
     } else {
@@ -233,7 +233,7 @@ cvLispList<T>::Remove(T item)
         }
 	Assert(ptr != NULL);	// should always find item!
     }
-    Assert(!IsInList(item));
+    Assert(!this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -244,7 +244,7 @@ cvLispList<T>::Remove(T item)
 template <class T>
 Bool
 cvLispList<T>::IsInList(T item) const
-{ 
+{
     cvLispListElement<T> *ptr;
 
     //    cout << "List<T>::IsInList(T item) const; ";
@@ -274,7 +274,7 @@ cvLispList<T>::IsInList(T item) const
 template <class T>
 void
 cvLispList<T>::Apply(void (*func)(T)) const
-{ 
+{
     cvLispListElement<T> *ptr;
 
     for (ptr = first; ptr != NULL; ptr = ptr->next) {
@@ -287,13 +287,13 @@ cvLispList<T>::Apply(void (*func)(T)) const
 // SortedList::Insert
 //      Insert an "item" into a list, so that the list elements are
 //	sorted in increasing order.
-//      
+//
 //	Allocate a cvLispListElement to keep track of the item.
 //      If the list is empty, then this will be the only element.
 //	Otherwise, walk through the list, one element at a time,
 //	to find where the new item should be placed.
 //
-//	"item" is the thing to put on the list. 
+//	"item" is the thing to put on the list.
 //----------------------------------------------------------------------
 
 template <class T>
@@ -303,11 +303,11 @@ cvSortedList<T>::Insert(T item)
     cvLispListElement<T> *element = new cvLispListElement<T>(item);
     cvLispListElement<T> *ptr;		// keep track
 
-    Assert(!IsInList(item));
+    Assert(!this->IsInList(item));
     if (this->IsEmpty()) {			// if list is empty, put at front
         this->first = element;
         this->last = element;
-    } else if (compare(item, (this->first)->item) < 0) {  // item goes at front 
+    } else if (compare(item, (this->first)->item) < 0) {  // item goes at front
 	element->next = this->first;
 	this->first = element;
     } else {		// look for first elt in list bigger than item
@@ -323,7 +323,7 @@ cvSortedList<T>::Insert(T item)
 	this->last = element;
     }
     this->numInList++;
-    Assert(IsInList(item));
+    Assert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -335,7 +335,7 @@ cvSortedList<T>::Insert(T item)
 //----------------------------------------------------------------------
 
 template <class T>
-void 
+void
 cvLispList<T>::SanityCheck() const
 {
     cvLispListElement<T> *ptr;
@@ -361,7 +361,7 @@ cvLispList<T>::SanityCheck() const
 //----------------------------------------------------------------------
 
 template <class T>
-void 
+void
 cvLispList<T>::SelfTest(T *p, int numEntries)
 {
     int i;
@@ -369,24 +369,24 @@ cvLispList<T>::SelfTest(T *p, int numEntries)
 
     SanityCheck();
     // check various ways that list is empty
-    Assert(IsEmpty() && (first == NULL));
+    Assert(this->IsEmpty() && (first == NULL));
     for (; !iterator->IsDone(); iterator->Next()) {
       //	AssertNOTREACHED();	// nothing on list
     }
 
     for (i = 0; i < numEntries; i++) {
 	 Append(p[i]);
-	 Assert(IsInList(p[i]));
-	 Assert(!IsEmpty());
+	 Assert(this->IsInList(p[i]));
+	 Assert(!this->IsEmpty());
      }
      SanityCheck();
 
      // should be able to get out everything we put in
      for (i = 0; i < numEntries; i++) {
 	 Remove(p[i]);
-         Assert(!IsInList(p[i]));
+         Assert(!this->IsInList(p[i]));
      }
-     Assert(IsEmpty());
+     Assert(this->IsEmpty());
      SanityCheck();
      delete iterator;
 }
@@ -399,14 +399,14 @@ cvLispList<T>::SelfTest(T *p, int numEntries)
 //----------------------------------------------------------------------
 
 template <class T>
-void 
+void
 cvSortedList<T>::SanityCheck() const
 {
     cvLispListElement<T> *prev, *ptr;
 
     cvLispList<T>::SanityCheck();
     if (this->first != this->last) {
-      for (prev = this->first, ptr = (this->first)->next; ptr != NULL; 
+      for (prev = this->first, ptr = (this->first)->next; ptr != NULL;
 						prev = ptr, ptr = ptr->next) {
             Assert(compare(prev->item, ptr->item) <= 0);
         }
@@ -419,7 +419,7 @@ cvSortedList<T>::SanityCheck() const
 //----------------------------------------------------------------------
 
 template <class T>
-void 
+void
 cvSortedList<T>::SelfTest(T *p, int numEntries)
 {
     int i;
@@ -429,16 +429,16 @@ cvSortedList<T>::SelfTest(T *p, int numEntries)
 
     for (i = 0; i < numEntries; i++) {
 	 Insert(p[i]);
-	 Assert(IsInList(p[i]));
+	 Assert(this->IsInList(p[i]));
      }
      SanityCheck();
 
      // should be able to get out everything we put in
      for (i = 0; i < numEntries; i++) {
 	 q[i] = this->RemoveFront();
-         Assert(!IsInList(q[i]));
+         Assert(!this->IsInList(q[i]));
      }
-     Assert(IsEmpty());
+     Assert(this->IsEmpty());
 
      // make sure everything came out in the right order
      for (i = 0; i < (numEntries - 1); i++) {

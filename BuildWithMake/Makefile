@@ -51,40 +51,54 @@ mksedscript:
 	-echo "puts \"s+REPLACEME_FORTRAN_COMPILER_VERSION+$(FORTRAN_COMPILER_VERSION)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIMVASCULAR_HOME+[file rootname `pwd`]/..+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIMVASCULAR_VERSION+$(SIMVASCULAR_VERSION)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_LES_LICENSE_SERVER+$(LES_LICENSE_SERVER)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LIB_BUILD_DIR+$(LIB_BUILD_DIR)+g\"" >> tclscript
-	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
-ifneq ($(CLUSTER),x64_linux)
+ifeq ($(CLUSTER),x64_cygwin)
 	-echo "puts \"s+REPLACEME_SIMVASCULAR_OS+windows+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+`cygpath -u $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+`cygpath -u $(LICENSED_SOFTWARE_TOPLEVEL)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+`cygpath -u $(SIM_LICENSE_FILE)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCL_LIBRARY+`cygpath -u $(TCL_LIBRARY)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TK_LIBRARY+`cygpath -u $(TK_LIBRARY)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+`cygpath -u $(TCLTK_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+`cygpath -u $(TCLSH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+`cygpath -u $(TKCXIMAGE_DLL)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+`cygpath -u $(MESHSIM_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
 # leave intel compilers blank for now on windows
 #	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+`cygpath -u $(INTEL_COMPILER_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH++g\"" >> tclscript
-else
+ifeq ($(MAKE_WITH_GLIB),1)
+	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
+endif
+ifeq ($(MAKE_WITH_MPI),1)
+	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
+endif
+ifeq ($(MAKE_WITH_PARASOLID),1)
+	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
+endif
+ifeq ($(MAKE_WITH_MESHSIM),1)
+	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+`cygpath -u $(MESHSIM_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
+endif
+ifeq ($(MAKE_WITH_LESLIB),1)
+	-echo "puts \"s+REPLACEME_LES_LICENSE_SERVER+$(LES_LICENSE_SERVER)+g\"" >> tclscript
+endif
+ifeq ($(MAKE_WITH_VTK),1)
+	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
+endif
+endif
+ifeq ($(CLUSTER),x64_linux)
+	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIMVASCULAR_OS+linux+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+$(LICENSED_SOFTWARE_TOPLEVEL)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCL_LIBRARY+$(TCL_LIBRARY)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TK_LIBRARY+$(TK_LIBRARY)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+`cygpath -u $(SIM_LICENSE_FILE)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+$(MPIEXEC_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+$(MESHSIM_SO_PATH)+g\"" >> tclscript
