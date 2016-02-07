@@ -10,11 +10,11 @@ Version:   $Revision: 1.9 $
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -36,6 +36,9 @@ Version:   $Revision: 1.9 $
 
 #include "vtkvmtkConstants.h"
 
+#include "vtkXMLPolyDataWriter.h"
+#include <sstream>
+#include <iostream>
 
 vtkStandardNewMacro(vtkvmtkPolyDataCenterlineGroupsClipper);
 
@@ -49,9 +52,9 @@ vtkvmtkPolyDataCenterlineGroupsClipper::vtkvmtkPolyDataCenterlineGroupsClipper()
   this->CenterlineGroupIds = NULL;
   this->ClipAllCenterlineGroupIds = 0;
   this->CutoffRadiusFactor = VTK_VMTK_LARGE_DOUBLE;
-  this->ClipValue = 0.0; 
-  this->UseRadiusInformation = 1; 
- 
+  this->ClipValue = 0.0;
+  this->UseRadiusInformation = 1;
+
   this->SetNumberOfOutputPorts(2);
   this->GenerateClippedOutput = 0;
   vtkPolyData *output2 = vtkPolyData::New();
@@ -194,7 +197,7 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
     groupIdsArray->Delete();
     return 1;
     }
-  
+
   vtkAppendPolyData* appendBranches = vtkAppendPolyData::New();
   vtkAppendPolyData* appendClippedOutput = NULL;
   if (this->GenerateClippedOutput)
@@ -238,7 +241,7 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
   vtkIdType groupId;
 
   vtkIdList* centerlineGroupIds = vtkIdList::New();
- 
+
   int i;
   if (this->ClipAllCenterlineGroupIds)
     {
@@ -299,6 +302,14 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
       tubeDifferenceValue = nonGroupTubeValue - groupTubeValue;
       clippingArray->SetValue(k,tubeDifferenceValue);
       }
+   // std::stringstream out;
+   // out << i;
+   // std::string filestring = "/Users/adamupdegrove/Desktop/ClipInput"+out.str()+".vtp";
+   // vtkXMLPolyDataWriter *mywriter = vtkXMLPolyDataWriter::New();
+   // mywriter->SetInputData(clippingInput);
+   // mywriter->SetFileName(filestring.c_str());
+   // mywriter->Write();
+   // mywriter->Delete();
 
     vtkClipPolyData* clipper = vtkClipPolyData::New();
 #if (VTK_MAJOR_VERSION <= 5)
@@ -331,7 +342,7 @@ int vtkvmtkPolyDataCenterlineGroupsClipper::RequestData(
 #endif
       clippedOutputBranch->Delete();
       }
-    
+
     groupIdsArray = vtkIntArray::New();
     groupIdsArray->SetName(this->GroupIdsArrayName);
     groupIdsArray->SetNumberOfTuples(clippedBranch->GetNumberOfPoints());

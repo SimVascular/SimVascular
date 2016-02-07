@@ -116,6 +116,10 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
 /* Helpers for loft */
 /* -------- */
 
+TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+  const TopoDS_Wire& wire2, const Standard_Real presPln,
+  TopoDS_Face& face1, TopoDS_Face& face2);
+
 Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
 		const Standard_Real presPln,
 		TopoDS_Face& theFace);
