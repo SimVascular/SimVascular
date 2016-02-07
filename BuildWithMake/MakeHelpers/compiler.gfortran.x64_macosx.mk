@@ -1,4 +1,4 @@
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
     F90             = gfortran -pthread -cpp
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     OPT_FFLAGS      = -O3 -fPIC

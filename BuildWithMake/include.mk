@@ -136,6 +136,12 @@ MAKE_WITH_SOURCE_CODE_SVLS = 1
 MAKE_WITH_ZLIB = 1
 
 # -----------------------------------------------------
+# system tcltk
+# -----------------------------------------------------
+
+USE_SYSTEM_TCLTK = 0
+
+# -----------------------------------------------------
 # Compile with 3-D Solver and Related Programs
 # -----------------------------------------------------
 
@@ -234,7 +240,7 @@ endif
 ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gcc-4.8
 endif
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang_70
   MAKE_WITH_CXX11 = 0
 endif
@@ -251,7 +257,7 @@ ifeq ($(CLUSTER), x64_linux)
     LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
 endif
 
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/osx/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
     LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
@@ -328,7 +334,7 @@ ifeq ($(CLUSTER), x64_linux)
    GLOBAL_DEFINES += -DUSE_NOTIMER -DUNIX
 endif
 
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
    GLOBAL_DEFINES += -DUSE_NOTIMER -DUNIX
 endif
 
@@ -434,19 +440,19 @@ ifeq ($(CLUSTER), x64_linux)
   endif
 endif
 
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
   ifeq ($(CXX_COMPILER_VERSION), clang)
-	include $(TOP)/MakeHelpers/compiler.clang.x64_osx.mk
+	include $(TOP)/MakeHelpers/compiler.clang.x64_macosx.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
-	include $(TOP)/MakeHelpers/compiler.ifort.x64_osx.mk
+	include $(TOP)/MakeHelpers/compiler.ifort.x64_macosx.mk
         GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
   ifeq ($(CXX_COMPILER_VERSION), gcc)
-	include $(TOP)/MakeHelpers/compiler.gcc.x64_osx.mk
+	include $(TOP)/MakeHelpers/compiler.gcc.x64_macosx.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), gfortran)
-	include $(TOP)/MakeHelpers/compiler.gfortran.x64_osx.mk
+	include $(TOP)/MakeHelpers/compiler.gfortran.x64_macosx.mk
         GLOBAL_DEFINES += -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   endif
 endif
@@ -726,8 +732,10 @@ ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_linux.mk
 endif
 
-ifeq ($(CLUSTER), x64_osx)
-	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_osx.mk
+ifeq ($(CLUSTER), x64_macosx)
+	ifeq ($(USE_SYSTEM_TCLTK),0)
+	  include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_macosx.mk
+	endif
 endif
 
 # ---------------------
@@ -744,8 +752,8 @@ ifeq ($(CLUSTER), x64_linux)
 	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
 endif
 
-ifeq ($(CLUSTER), x64_osx)
-	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_osx.mk
+ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
 endif
 
 endif
@@ -770,8 +778,8 @@ ifeq ($(MAKE_WITH_ITK),1)
 	include $(TOP)/MakeHelpers/itk-4.8.0.x64_linux.mk
   endif
 
-  ifeq ($(CLUSTER), x64_osx)
-	include $(TOP)/MakeHelpers/itk-4.8.2.x64_osx.mk
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/itk-4.8.2.x64_macosx.mk
   endif
 
 endif
@@ -798,12 +806,12 @@ ifeq ($(MAKE_WITH_MPI),1)
     endif
   endif
 
-  ifeq ($(CLUSTER), x64_osx)
+  ifeq ($(CLUSTER), x64_macosx)
     ifeq ($(MAKE_WITH_OPENMPI),1)
-      include $(TOP)/MakeHelpers/openmpi.x64_osx.mk
+      include $(TOP)/MakeHelpers/openmpi.x64_macosx.mk
     endif
     ifeq ($(MAKE_WITH_MPICH),1)
-      include $(TOP)/MakeHelpers/mpich.x64_osx.mk
+      include $(TOP)/MakeHelpers/mpich.x64_macosx.mk
     endif
   endif
 
@@ -869,8 +877,8 @@ ifeq ($(MAKE_WITH_PARASOLID),1)
 	include $(TOP)/MakeHelpers/parasolid-26.1.x64_linux.mk
   endif
 
-  ifeq ($(CLUSTER), x64_osx)
-	include $(TOP)/MakeHelpers/parasolid-26.1.x64_osx.mk
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/parasolid-26.1.x64_macosx.mk
   endif
 
 endif
@@ -931,7 +939,7 @@ ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
     LESLIB_DEFS   = -DACUSIM_LINUX
   endif
 
-  ifeq ($(CLUSTER), x64_osx)
+  ifeq ($(CLUSTER), x64_macosx)
     LESLIB_DEFS   = -DACUSIM_LINUX
   endif
 
@@ -958,6 +966,6 @@ ifeq ($(CLUSTER), x64_linux)
 	  include $(TOP)/MakeHelpers/rules.x64_linux.mk
 endif
 
-ifeq ($(CLUSTER), x64_osx)
-	  include $(TOP)/MakeHelpers/rules.x64_osx.mk
+ifeq ($(CLUSTER), x64_macosx)
+	  include $(TOP)/MakeHelpers/rules.x64_macosx.mk
 endif

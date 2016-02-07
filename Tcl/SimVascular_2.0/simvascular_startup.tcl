@@ -431,7 +431,7 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   # try and pick a nice looking theme if it exists
 
   if {$tcl_platform(os) == "Linux"} {
-     catch {ttk::style theme use clam}
+     catch {ttk::style theme use aqua}
   }
 
   if {$tcl_platform(platform) == "windows"} {
@@ -441,6 +441,10 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 
   mainGUI
   catch {wm withdraw .}
+  if {$tcl_platform(os) == "Darwin"} {
+     catch {ttk::style theme use aqua}
+  }
+
 
   # --------------------------------
   # aliases (alias proc is in Tkcon)

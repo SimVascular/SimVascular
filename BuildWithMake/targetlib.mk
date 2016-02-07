@@ -81,6 +81,13 @@ $(TARGET_SHARED):	$(DLLOBJS)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
              $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
 endif
+ifeq ($(CLUSTER),x64_macosx) 
+$(TARGET_SHARED):	$(DLLOBJS)
+	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
+	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
+             $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
+endif
 ifeq ($(CLUSTER),x64_cygwin)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
@@ -107,6 +114,13 @@ $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
 endif
+ifeq ($(CLUSTER),x64_macosx) 
+$(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
+	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED2)              \
+             $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2)
+	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
+endif
 ifeq ($(CLUSTER),x64_cygwin)
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGETDIR)/$(TARGET_SHARED2)" \
@@ -123,6 +137,13 @@ $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 endif
 
 ifeq ($(CLUSTER),x64_linux) 
+$(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
+	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED3)             \
+             $(DLLOBJS3) $(LFLAGS) $(DLLLIBS3)
+	for fn in $(TOP)/Lib/$(TARGET_SHARED3); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
+endif
+ifeq ($(CLUSTER),x64_macosx) 
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED3)             \
              $(DLLOBJS3) $(LFLAGS) $(DLLLIBS3)

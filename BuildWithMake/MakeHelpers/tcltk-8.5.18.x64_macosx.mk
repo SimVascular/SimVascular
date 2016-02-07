@@ -1,4 +1,4 @@
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
     BUILDFLAGS     += -D__NON_STD_TCL_INSTALL
     TCL_BASE       = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tcltk-8.5.18
     TK_BASE        = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/tcltk-8.5.18

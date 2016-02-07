@@ -1,4 +1,4 @@
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
     SHELL           =/bin/sh
     CXX             = clang++ -pthread -w
     CC              = clang -pthread -w
@@ -33,7 +33,10 @@ endif
       GLOBAL_CXXFLAGS += -std=c++11
   endif
     GLOBAL_CCFLAGS  = $(BUILDFLAGS) $(DEBUG_FLAGS) $(OPT_FLAGS)
-    GLOBAL_LFLAGS   = -lz -framework GLUT -framework OpenGL -framework Cocoa -framework Tcl -framework Tk
+    GLOBAL_LFLAGS   = -lz -framework GLUT -framework OpenGL -framework Cocoa
+ifeq ($(USE_SYSTEM_TCLTK),1)
+	GLOBAL_LFLAGS += -framework Tcl -framework Tk
+endif
 ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -g
 endif

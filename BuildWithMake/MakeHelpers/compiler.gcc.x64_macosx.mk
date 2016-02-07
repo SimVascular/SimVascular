@@ -1,4 +1,4 @@
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
     SHELL           =/bin/sh
     CXX             = g++-mp-5 -pthread -w
     CC              = gcc-mp-5 -pthread -w

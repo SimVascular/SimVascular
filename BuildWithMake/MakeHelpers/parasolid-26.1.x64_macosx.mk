@@ -1,4 +1,4 @@
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
     PARASOLID_TOP     = $(LICENSED_SOFTWARE_TOPLEVEL)/parasolid-26.1/intel_macos/base
     PARASOLID_INCDIR  = -I$(PARASOLID_TOP)
     PARASOLID_LIBDIR  = -L$(PARASOLID_TOP)

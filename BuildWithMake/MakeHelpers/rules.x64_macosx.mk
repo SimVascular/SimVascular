@@ -1,4 +1,4 @@
-ifeq ($(CLUSTER), x64_osx)
+ifeq ($(CLUSTER), x64_macosx)
 $(BUILD_DIR)/%.d: %.cxx
 	$(SHELL) -ec '$(CXXDEP) $(CXXFLAGS) $< \
               | sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
