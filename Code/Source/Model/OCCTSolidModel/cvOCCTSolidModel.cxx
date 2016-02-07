@@ -1661,6 +1661,8 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
     fprintf(stderr,"Error in conversion from bspline surface to shape\n");
     return CV_ERROR;
   }
+  //TopoDS_Face firstFace,lastFace;
+  //*geom_ = OCCTUtils_MakeSolid(shellBuilder.Shell(),wires[0],wires[1],firstFace,lastFace,pres3d);
 
   this->AddShape();
 

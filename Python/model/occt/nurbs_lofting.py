@@ -508,11 +508,11 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 	if (DuN == [0.0]):
 		DuN = np.array([X.T[-1,:]-X.T[-2,:],Y.T[-1,:]-Y.T[-2,:],Z.T[-1,:]-Z.T[-2,:]])
 	if (Dv0 == [0.0]):
-		Dv0tmp = np.array([X[1,:]-X[0,:],Y[1,:]-Y[0,:],Z[1,:]-Z[0,:]])
-		Dv0 = calc_seg_perp_vector(X[0,0:3],Y[0,0:3],Z[0,0:3],Dv0tmp[0,:])
+		Dv0 = np.array([X[1,:]-X[0,:],Y[1,:]-Y[0,:],Z[1,:]-Z[0,:]])
+		#Dv0 = calc_seg_perp_vector(X[0,0:3],Y[0,0:3],Z[0,0:3],Dv0tmp[0,:])
 	if (DvN == [0.0]):
-		DvNtmp = np.array([X[-1,:]-X[-2,:],Y[-1,:]-Y[-2,:],Z[-1,:]-Z[-2,:]])
-		DvN = calc_seg_perp_vector(X[-1,0:3],Y[-1,0:3],Z[-1,0:3],DvNtmp[0,:])
+		DvN = np.array([X[-1,:]-X[-2,:],Y[-1,:]-Y[-2,:],Z[-1,:]-Z[-2,:]])
+		#DvN = calc_seg_perp_vector(X[-1,0:3],Y[-1,0:3],Z[-1,0:3],DvNtmp[0,:])
 
 	Xu,Yu,Zu,Nx,Ny,xknots,yknots = nurbs3d(X,Y,Z,u,v,W,p,q,kutype,kvtype,\
 			Du0,DuN,Dv0,DvN)

@@ -1430,7 +1430,7 @@ proc guiSV_model_vessel_extraction {} {
   catch {$vtkpd Delete}
   geom_grouppolydata -src /models/$kernel/$model -lines $guiPDvars(centerlines) -result $pd
   set vtkpd [repos_exportToVtk -src $pd]
-  repos_writeVtkPolyData -obj $pd -type ascii -file "/Users/adamupdegrove/Desktop/seperated.vtk"
+  #repos_writeVtkPolyData -obj $pd -type ascii -file "/Users/adamupdegrove/Desktop/separated.vtk"
 
   #Convert centerliens to pathlines (smoothed)
   set addedPathIds [guiSV_model_convert_centerlines_to_pathlines Broken]

@@ -396,7 +396,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
   //Attacher!
   attacher.Add(shape);
   Standard_Real sewtoler =  1.e-6;
-  Standard_Real closetoler =  1.e-2;
+  Standard_Real closetoler =  1.e-4;
   ShapeFix_FreeBounds findFree(shape,sewtoler,closetoler,
         	  Standard_False,Standard_False);
   TopoDS_Compound freeWires = findFree.GetClosedWires();
@@ -409,7 +409,9 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
     BRepBuilderAPI_MakeWire wiremaker(tmpEdge);
     wiremaker.Build();
 
-    BRepFill_Filling filler(3,15,2,Standard_False,0.00001,0.0001,0.01,0.1,8,9);
+    int degOfCap=2;
+    int numPointsOnCurve = 20;
+    BRepFill_Filling filler(degOfCap,numPointsOnCurve);
     filler.Add(tmpEdge,GeomAbs_C0,Standard_True);
 
     try {
@@ -844,6 +846,61 @@ Standard_Boolean OCCTUtils_IsSameOrientedWEdge(const TopoDS_Shape& aFace,
   if (Or1 == Or2)
     return Standard_False;
   return Standard_True;
+}
+
+// ---------------------
+// OCCTUtils_MakeSolid
+// ---------------------
+/**
+ * @brief Taken from BRepOffsetAPI_ThruSections
+ */
+TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+  const TopoDS_Wire& wire2, const Standard_Real presPln,
+  TopoDS_Face& face1, TopoDS_Face& face2)
+{
+  if (shell.IsNull())
+    StdFail_NotDone::Raise("Thrusections is not build");
+  Standard_Boolean B = shell.Closed();
+  BRep_Builder BB;
+
+  if (!B)
+  {
+    // It is necessary to close the extremities
+    B =  OCCTUtils_PerformPlan(wire1, presPln, face1);
+    if (B) {
+      B =  OCCTUtils_PerformPlan(wire2, presPln, face2);
+      if (B) {
+        if (!face1.IsNull() && !OCCTUtils_IsSameOriented( face1, shell ))
+          face1.Reverse();
+        if (!face2.IsNull() && !OCCTUtils_IsSameOriented( face2, shell ))
+          face2.Reverse();
+
+        if (!face1.IsNull())
+          BB.Add(shell, face1);
+        if (!face2.IsNull())
+          BB.Add(shell, face2);
+
+        shell.Closed(Standard_True);
+      }
+    }
+  }
+
+  TopoDS_Solid solid;
+  BB.MakeSolid(solid);
+  BB.Add(solid, shell);
+
+  // verify the orientation the solid
+  BRepClass3d_SolidClassifier clas3d(solid);
+  clas3d.PerformInfinitePoint(Precision::Confusion());
+  if (clas3d.State() == TopAbs_IN) {
+    BB.MakeSolid(solid);
+    TopoDS_Shape aLocalShape = shell.Reversed();
+    BB.Add(solid, TopoDS::Shell(aLocalShape));
+    //    B.Add(solid, TopoDS::Shell(newShell.Reversed()));
+  }
+
+  solid.Closed(Standard_True);
+  return solid;
 }
 
 // ---------------------
