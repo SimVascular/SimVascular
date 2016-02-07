@@ -59,7 +59,14 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                     ../Mesh/MeshObject/cv_mesh_init.cxx \
                     ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
                     ../Common/Utils/cv_math_init.cxx \
-                    ../Mesh/AdaptObject/cv_adapt_init.cxx
+
+  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+	COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
+  else
+    ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+	  COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
+    endif
+  endif
 
   ifeq ($(MAKE_WITH_MESHSIM),1)
     ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
