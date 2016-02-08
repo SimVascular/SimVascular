@@ -68,7 +68,7 @@ set(${proj}_HEADER "gp_Pnt.hxx")
 #-----------------------------------------------------------------------------
 # Find Libraries
 #-----------------------------------------------------------------------------
-set(${proj}_POSSIBLE_PATHS ${${proj}_DIR} ${${proj}_DIR}/simvascular/opencascade)
+set(${proj}_POSSIBLE_PATHS ${${proj}_DIR} ${${proj}_DIR})
 if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
 	set(${proj}_PATH "${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.1/")
 endif()

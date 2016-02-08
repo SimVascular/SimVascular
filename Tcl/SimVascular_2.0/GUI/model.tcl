@@ -541,7 +541,9 @@ proc guiSV_model_set_att_name {} {
    vis_pRm $gRen3d $oldpd
    catch {repos_delete -obj $facepd}
    set faceid [lindex [$tv item .models.$kernel.$modelname.$currname -values] 1]
-   $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
+   if {$kernel == "OpenCASCADE" || $kernel == "Parasolid"} {
+     $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
+   }
    $modelname GetFacePolyData -face $faceid -result $facepd
    foreach key [repos_getLabelKeys -obj $oldpd] {
      set value [repos_getLabel -obj $oldpd -key $key]

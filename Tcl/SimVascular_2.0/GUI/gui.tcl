@@ -12373,7 +12373,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1  -width {229}  -height {121}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -command {guiSV_model_create_model_parasolid}  -text {Create Pre-Op Solid Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -command {guiSV_model_create_model_parasolid}  -text {Create Solid Model}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8  -borderwidth {0}  -relief {flat}  -width {336}  -height {74}
@@ -13229,7 +13229,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4  -command {guiSV_model_create_model_polydata}  -text {Create Pre-Op Solid Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe7.tframe8.tframe9.tbutton4  -command {guiSV_model_create_model_polydata}  -text {Create Solid Model}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe0.tframe1.tlabelframe9  -text {Make 3D Seed Surface [-]}  -width {152}  -height {25}
@@ -13302,7 +13302,12 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1  -width {229}  -height {121}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -command {guiSV_model_create_model_opencascade}  -text {Create Pre-Op Solid Model}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -command {guiSV_model_create_model_opencascade}  -text {Create Model with OpenCASCADE}
+global SIMVASCULAR_USE_PYTHON
+if {$SIMVASCULAR_USE_PYTHON == "ON"} {
+  # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13  -command {guiSV_model_create_model_opencascade_python}  -text {Create Model with SimVascular}
+}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8  -borderwidth {0}  -relief {flat}  -width {336}  -height {74}
@@ -20259,6 +20264,9 @@ img_guessVolParams $gImageVol(filename)}
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -side left
+if {$SIMVASCULAR_USE_PYTHON} {
+  pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13  -side left
+}
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame8.label10  -fill both
@@ -49589,7 +49597,7 @@ set {guiCVvars(show_tab_meshing_tetgen)} {1}
 set {guiCVvars(show_tab_model_discrete)} {0}
 set {guiCVvars(show_tab_model_parasolid)} {0}
 set {guiCVvars(show_tab_model_polydata)} {1}
-set {guiCVvars(show_tab_model_opencascade)} {1}
+set {guiCVvars(show_tab_model_opencascade)} {0}
 set {guiCVvars(show_tab_paths_quantification)} {0}
 set {guiCVvars(show_tab_simulations_vis_wss)} {0}
 set {guiCVvars(show_tabs_legacy_level_set)} {0}
@@ -50126,6 +50134,10 @@ set {guiPYLOFTvars(Du0)}  {0.0}
 set {guiPYLOFTvars(DuN)}  {0.0}
 set {guiPYLOFTvars(Dv0)}  {0.0}
 set {guiPYLOFTvars(DvN)}  {0.0}
+set {guiPYLOFTvars(kuType)}  {avg}
+set {guiPYLOFTvars(kvType)}  {endderiv}
+set {guiPYLOFTvars(puType)}  {centripetal}
+set {guiPYLOFTvars(pvType)}  {centripetal}
 global {guiTRIMvars}
 set {guiTRIMvars(area_max_value)} {1.0}
 set {guiTRIMvars(area_min_value)} {0.0}

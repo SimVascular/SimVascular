@@ -1187,7 +1187,7 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
 // ---------------
 // CreateEdgeBlend
 // ---------------
-int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, double minRadius,int filletshape)
+int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int filletshape)
 {
   if (geom_ == NULL)
   {
@@ -1210,7 +1210,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, doubl
   char blendname[255];
   BRepFilletAPI_MakeFillet filletmaker(geompass,(ChFi3d_FilletShape) filletshape);
   if (OCCTUtils_CreateEdgeBlend(geompass,shapetool_,*shapelabel_,
-	filletmaker,faceA,faceB,radius,minRadius,blendname) != CV_OK)
+	filletmaker,faceA,faceB,radius,blendname) != CV_OK)
   {
     fprintf(stderr,"Fillet creation didn't complete\n");
     return CV_ERROR;

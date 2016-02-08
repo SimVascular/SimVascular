@@ -518,3 +518,12 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 if {$argc >= 1} {
    source [lindex $argv 0]
 }
+
+# ------------------
+# Load Python
+# ------------------
+global SIMVASCULAR_USE_PYTHON
+if {$SIMVASCULAR_USE_PYTHON == "ON"} {
+  startTclPython
+}
+

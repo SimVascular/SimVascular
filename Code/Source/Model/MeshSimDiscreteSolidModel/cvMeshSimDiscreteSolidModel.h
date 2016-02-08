@@ -142,7 +142,7 @@ public:
 
   // geometric manipulation
   virtual int DeleteFaces (int numfaces, int *faces) {return CV_ERROR;}
-  int CreateEdgeBlend(int faceA, int faceB, double radius,double minRadius,int filletshape) {return CV_ERROR;}
+  int CreateEdgeBlend(int faceA, int faceB, double radius,int filletshape) {return CV_ERROR;}
   int CombineFaces(int targetface, int loseface) {return CV_ERROR;}
   int RemeshFace (int numfaces,int *excludedFaces, double size) {return CV_ERROR;}
 

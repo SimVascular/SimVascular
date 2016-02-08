@@ -13,16 +13,42 @@ proc startTclPython {} {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }
+    if {$tcl_platform(platform) == "windows"} {
+      if [catch {load Lib/liblib_simvascular_tclpython.lib Tclpython} msg] {
+	return -code error "ERROR: Error loading Tclpython: $msg"
+      }
+    }
   }
   global gPythonInterp
   set gPythonInterp [::python::interp new]
-  $gPythonInterp exec {print("Hello Python World")}
+  $gPythonInterp exec {print("Python Available")}
 
   #Create TclPyString global to pass string between tcl and python
   global TclPyString
   $gPythonInterp exec {tcl.eval('global TclPyString')}
   set TclPyString $env(SIMVASCULAR_HOME)
   $gPythonInterp exec {simvascular_home = tcl.eval('set dummy $TclPyString')}
+
+  #Initiate modules
+  puts "Initiate the python modules from tcl"
+  if [catch {$gPythonInterp exec {tcl.eval("solid_initPyMods")}} errmsg] {
+    puts "Could not initialize internal python modules: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {import os}} errmsg] {
+    puts "No os module found: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {import imp}} errmsg] {
+    puts "No imp module found: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {import vtk}} errmsg] {
+    puts "No vtk module found: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {import pySolid}} errmsg] {
+    puts "No SimVascular pySolid module found: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
+    puts "No numpy module found: $errmsg"
+  }
 }
 
 #Kill the python interpreter when youre done!

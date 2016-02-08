@@ -6,15 +6,10 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
   set saveGroup          0
   resampleGroupEvenSpace $groupName $resample_num $saveGroup
 
-  #Initiate modules
-  puts "Initiate the python modules from tcl"
-  $gPythonInterp exec {tcl.eval("solid_initPyMods")}
-  $gPythonInterp exec {import os}
-  $gPythonInterp exec {import imp}
-  $gPythonInterp exec {import vtk}
-  $gPythonInterp exec {import pySolid}
-  $gPythonInterp exec {import numpy as np}
-
+  #Make sure numpy module exists
+  if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
+    return -code error "ERROR: numpy module does not exist. Must install numpy (http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)"
+  }
   #Pass lofting info to python
   global TclPyString
   $gPythonInterp exec {tcl.eval('global TclPyString')}

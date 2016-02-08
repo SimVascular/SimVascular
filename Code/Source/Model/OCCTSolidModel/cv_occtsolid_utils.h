@@ -101,7 +101,7 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves,TopoDS_Shape &shape,int numCurv
 int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 		BRepFilletAPI_MakeFillet &filletmaker,
-    		int faceA, int faceB, double radius,double minRadius,
+    		int faceA, int faceB, double radius,
 		char blendname[]);
 
 int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,

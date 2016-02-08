@@ -235,12 +235,16 @@ proc opencascade_loft_with_python {modelname cap resample_num} {
       repos_delete -obj $modelname
    }
 
-   set uDeg $guiPYLOFTvars(uDeg)
-   set vDeg $guiPYLOFTvars(vDeg)
-   set Du0  $guiPYLOFTvars(Du0)
-   set DuN  $guiPYLOFTvars(DuN)
-   set Dv0  $guiPYLOFTvars(Dv0)
-   set DvN  $guiPYLOFTvars(DvN)
+   set uDeg   $guiPYLOFTvars(uDeg)
+   set vDeg   $guiPYLOFTvars(vDeg)
+   set Du0    $guiPYLOFTvars(Du0)
+   set DuN    $guiPYLOFTvars(DuN)
+   set Dv0    $guiPYLOFTvars(Dv0)
+   set DvN    $guiPYLOFTvars(DvN)
+   set kuType $guiPYLOFTvars(kuType)
+   set kvType $guiPYLOFTvars(kvType)
+   set puType $guiPYLOFTvars(puType)
+   set pvType $guiPYLOFTvars(pvType)
    foreach i $createPREOPgrpKeptSelections {
       set cursolid ""
       catch {set cursolid $gLoftedSolids($i)}
@@ -259,7 +263,7 @@ proc opencascade_loft_with_python {modelname cap resample_num} {
       global gRen3dFreeze
       set oldFreeze $gRen3dFreeze
       set gRen3dFreeze 1
-      call_python_lofting $i avg endderiv centripetal centripetal $uDeg $vDeg $Du0 $DuN $Dv0 $DvN $cap $resample_num
+      call_python_lofting $i $kuType $kvType $puType $pvType $uDeg $vDeg $Du0 $DuN $Dv0 $DvN $cap $resample_num
       set gRen3dFreeze $oldFreeze
       set gPathBrowser(currGroupName) $keepgrp
    }
@@ -623,7 +627,6 @@ proc guiSV_model_blend_selected_models_occt {} {
   catch {set faceA [lindex $trimmed 0]}
   catch {set faceB [lindex $trimmed 1]}
   set r [lindex $trimmed 2]
-  set minr [lindex $trimmed 3]
   if {$faceA < 0 || $faceB < 0} {
      return -code error "ERROR: invalid values in line ($trimmed)."
   }
@@ -631,7 +634,7 @@ proc guiSV_model_blend_selected_models_occt {} {
   #set oldmodel "[string trim $model]_blended"
   guiSV_model_add_to_backup_list $kernel $model
 
-  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -minradius $minr -fillshape 0
+  $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r -fillshape 0
 
   set faceids [$model GetFaceIds]
   foreach id $faceids {
@@ -1455,7 +1458,6 @@ proc guiSV_model_vessel_extraction {} {
 
   #Loft to bsplines surfaces from resegmented surface
   puts "Relofting!"
-  startTclPython
   set gOptions(meshing_solid_kernel) OpenCASCADE
   set kernel $gOptions(meshing_solid_kernel)
   solid_setKernel -name $kernel

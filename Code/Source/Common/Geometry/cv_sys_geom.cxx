@@ -4107,7 +4107,7 @@ int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
 
   vtkNew(vtkvmtkPolyDataCenterlineGroupsClipper,grouper);
   try {
-    std::cout<<"Brancing PolyData..."<<endl;
+    std::cout<<"Branching PolyData..."<<endl;
     grouper->SetInputData(geom);
     grouper->SetCenterlines(centerlines);
     grouper->SetCenterlineGroupIdsArrayName("GroupIds");

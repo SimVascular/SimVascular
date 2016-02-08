@@ -222,11 +222,11 @@ Standard_Real LinearFunc::GetY(Standard_Real x)
 int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 		BRepFilletAPI_MakeFillet &filletmaker,
-		int faceA,int faceB,double radius,double minRadius,
+		int faceA,int faceB,double radius,
 		char blendname[])
 {
-  if (minRadius > radius)
-    fprintf(stderr,"Minimum radius is larger than Maximum radius\n");
+  //if (minRadius > radius)
+  //  fprintf(stderr,"Minimum radius is larger than Maximum radius\n");
 
   char *name;
   char nameA[255];
@@ -262,67 +262,68 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 	  "gdscName",&name);
       strncpy(nameB,name,sizeof(nameB));
 
-      //Trying to get a curvature measure
-      BRepAdaptor_Curve curveAdaptor;
-      curveAdaptor.Initialize(filletEdge);
-      Standard_Integer NbPts = 20;
-      GCPnts_UniformAbscissa uAbs;
-      uAbs.Initialize(curveAdaptor,NbPts);
+      ////Trying to get a curvature measure
+      //BRepAdaptor_Curve curveAdaptor;
+      //curveAdaptor.Initialize(filletEdge);
+      //Standard_Integer NbPts = 20;
+      //GCPnts_UniformAbscissa uAbs;
+      //uAbs.Initialize(curveAdaptor,NbPts);
 
-      if (!uAbs.IsDone())
-      {
-	fprintf(stderr,"Could not create points on edge\n");
-	return CV_ERROR;
-      }
-      TopoDS_Face face1ForCurve = TopoDS::Face(faces.First());
-      TopoDS_Face face2ForCurve = TopoDS::Face(faces.Last());
-      Handle(Geom_Surface) surfHand1 =
-	      BRep_Tool::Surface(face1ForCurve);
-      Handle(Geom_Surface) surfHand2 =
-	      BRep_Tool::Surface(face2ForCurve);
-      ShapeAnalysis_Surface analyzer1(surfHand1);
-      ShapeAnalysis_Surface analyzer2(surfHand2);
-      TColgp_Array1OfPnt2d radLawArray(1,uAbs.NbPoints());
-      Standard_Real minAng = M_PI + 1.0;
-      Standard_Real maxAng = -1.0;
-      for (int j=1;j<=uAbs.NbPoints();j++)
-      {
-	gp_Pnt nextPnt = curveAdaptor.Value(uAbs.Parameter(j));
-        gp_Pnt2d face1UV = analyzer1.ValueOfUV(nextPnt,1.0e-6);
-        gp_Pnt2d face2UV = analyzer2.ValueOfUV(nextPnt,1.0e-6);
-	GeomLProp_SLProps prop1(surfHand1,face1UV.X(),face1UV.Y(),1,1.0e-6);
-	GeomLProp_SLProps prop2(surfHand2,face2UV.X(),face2UV.Y(),1,1.0e-6);
-	fprintf(stderr,"Curvature 1 check %.4f\n",prop1.MeanCurvature());
-	fprintf(stderr,"Curvature 2 check %.4f\n",prop2.MeanCurvature());
-	gp_Vec f1tan1 = prop1.D1U();
-	gp_Vec f1tan2 = prop1.D1V();
-	gp_Vec f2tan1 = prop2.D1U();
-	gp_Vec f2tan2 = prop2.D1V();
-	gp_Vec norm1 = f1tan1.Crossed(f1tan2);
-	gp_Vec norm2 = f2tan1.Crossed(f2tan2);
-	Standard_Real ang = norm1.Angle(norm2);
-	fprintf(stderr,"Angle between face normals at point is: %.4f\n",ang);
-	gp_Pnt2d angSet(uAbs.Parameter(j),ang);
-	radLawArray.SetValue(j,angSet);
-	if (ang < minAng)
-	  minAng = ang;
-	if (ang > maxAng)
-	  maxAng = ang;
-      }
-      fprintf(stderr,"Max angle: %.4f\n",maxAng);
-      fprintf(stderr,"Min angle: %.4f\n",minAng);
-      LinearFunc radLaw(minAng,minRadius,maxAng,radius);
-      fprintf(stderr,"Checking worked max radius: %.4f\n",radLaw.GetY(maxAng));
-      fprintf(stderr,"Checking worked min radius: %.4f\n",radLaw.GetY(minAng));
-      for (int j=1;j<=uAbs.NbPoints();j++)
-      {
-	gp_Pnt2d currVal = radLawArray.Value(j);
-	Standard_Real newRad = radLaw.GetY(currVal.Y());
-	gp_Pnt2d newVal(currVal.X(),newRad);
-	radLawArray.SetValue(j,newVal);
-	fprintf(stderr,"%d point has new radius value of %.4f for parameter %.4f\n",j,newVal.Y(),newVal.X());
-      }
-      filletmaker.Add(radLawArray,filletEdge);
+      //if (!uAbs.IsDone())
+      //{
+      //  fprintf(stderr,"Could not create points on edge\n");
+      //  return CV_ERROR;
+      //}
+      //TopoDS_Face face1ForCurve = TopoDS::Face(faces.First());
+      //TopoDS_Face face2ForCurve = TopoDS::Face(faces.Last());
+      //Handle(Geom_Surface) surfHand1 =
+      //        BRep_Tool::Surface(face1ForCurve);
+      //Handle(Geom_Surface) surfHand2 =
+      //        BRep_Tool::Surface(face2ForCurve);
+      //ShapeAnalysis_Surface analyzer1(surfHand1);
+      //ShapeAnalysis_Surface analyzer2(surfHand2);
+      //TColgp_Array1OfPnt2d radLawArray(1,uAbs.NbPoints());
+      //Standard_Real minAng = M_PI + 1.0;
+      //Standard_Real maxAng = -1.0;
+      //for (int j=1;j<=uAbs.NbPoints();j++)
+      //{
+      //  gp_Pnt nextPnt = curveAdaptor.Value(uAbs.Parameter(j));
+      //  gp_Pnt2d face1UV = analyzer1.ValueOfUV(nextPnt,1.0e-6);
+      //  gp_Pnt2d face2UV = analyzer2.ValueOfUV(nextPnt,1.0e-6);
+      //  GeomLProp_SLProps prop1(surfHand1,face1UV.X(),face1UV.Y(),1,1.0e-6);
+      //  GeomLProp_SLProps prop2(surfHand2,face2UV.X(),face2UV.Y(),1,1.0e-6);
+      //  fprintf(stderr,"Curvature 1 check %.4f\n",prop1.MeanCurvature());
+      //  fprintf(stderr,"Curvature 2 check %.4f\n",prop2.MeanCurvature());
+      //  gp_Vec f1tan1 = prop1.D1U();
+      //  gp_Vec f1tan2 = prop1.D1V();
+      //  gp_Vec f2tan1 = prop2.D1U();
+      //  gp_Vec f2tan2 = prop2.D1V();
+      //  gp_Vec norm1 = f1tan1.Crossed(f1tan2);
+      //  gp_Vec norm2 = f2tan1.Crossed(f2tan2);
+      //  Standard_Real ang = norm1.Angle(norm2);
+      //  fprintf(stderr,"Angle between face normals at point is: %.4f\n",ang);
+      //  gp_Pnt2d angSet(uAbs.Parameter(j),ang);
+      //  radLawArray.SetValue(j,angSet);
+      //  if (ang < minAng)
+      //    minAng = ang;
+      //  if (ang > maxAng)
+      //    maxAng = ang;
+      //}
+      //fprintf(stderr,"Max angle: %.4f\n",maxAng);
+      //fprintf(stderr,"Min angle: %.4f\n",minAng);
+      //LinearFunc radLaw(minAng,minRadius,maxAng,radius);
+      //fprintf(stderr,"Checking worked max radius: %.4f\n",radLaw.GetY(maxAng));
+      //fprintf(stderr,"Checking worked min radius: %.4f\n",radLaw.GetY(minAng));
+      //for (int j=1;j<=uAbs.NbPoints();j++)
+      //{
+      //  gp_Pnt2d currVal = radLawArray.Value(j);
+      //  Standard_Real newRad = radLaw.GetY(currVal.Y());
+      //  gp_Pnt2d newVal(currVal.X(),newRad);
+      //  radLawArray.SetValue(j,newVal);
+      //  fprintf(stderr,"%d point has new radius value of %.4f for parameter %.4f\n",j,newVal.Y(),newVal.X());
+      //}
+      //filletmaker.Add(radLawArray,filletEdge);
+      filletmaker.Add(radius,filletEdge);
     }
   }
 
