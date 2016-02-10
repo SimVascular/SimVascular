@@ -361,9 +361,11 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
 
   set originalsolid /tmp/polydata/originalsolid
   set centerlines [string trim $original]_centerlines
+  set tmplines /tmp/polydata/tmplines
   set voronoi /tmp/polydata/voronoi
   set distance /tmp/polydata/distance
   catch {repos_delete -obj $originalsolid}
+  catch {repos_delete -obj $tmplines}
   catch {repos_delete -obj $centerlines}
   catch {repos_delete -obj $voronoi}
   catch {repos_delete -obj $distance}
@@ -375,7 +377,9 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
     $original GetSolid -result $originalsolid
   }
 
-  geom_centerlines -src $polydata -sourcelist [lindex $gCenterlineIds 0] -targetlist [lrange $gCenterlineIds 1 [llength $gCenterlineIds]] -linesresult $centerlines -voronoiresult $voronoi
+  geom_centerlines -src $polydata -sourcelist [lindex $gCenterlineIds 0] -targetlist [lrange $gCenterlineIds 1 [llength $gCenterlineIds]] -linesresult $tmplines -voronoiresult $voronoi
+
+  geom_separatecenterlines -lines $tmplines -result $centerlines
 
   geom_distancetocenterlines -src $originalsolid -lines $centerlines -result $distance
 
@@ -434,3 +438,47 @@ proc check_surface_for_capids {pd} {
   return [[[repos_exportToVtk -src $pd] GetCellData] HasArray "CapID"]
 
 }
+
+proc polydata_check_array_exists {pd datatype arrayname} {
+
+  set numArrays 0
+  set exists 0
+  if {$datatype == 0} {
+    set numArrays [[$pd GetPointData] GetNumberOfArrays]
+    for {set i 0} {$i < $numArrays} {incr i} {
+      if {[string equal $arrayname [[$pd GetPointData] GetArrayName $i]]} {
+	set exists 1
+      }
+    }
+  } else {
+    set numArrays [[$pd GetCellData] GetNumberOfArrays]
+    for {set i 0} {$i < $numArrays} {incr i} {
+      if {[string equal $arrayname [[$pd GetCellData] GetArrayName $i]]} {
+	set exists 1
+      }
+    }
+  }
+
+  return $exists
+}
+
+proc polydata_threshold_region {pd datatype arrayname min max} {
+
+  set thresholder tmp-thresholder
+  set surfacer tmp-surfacer
+  catch {$thresholder Delete}
+  catch {$surfacer Delete}
+
+  vtkThreshold $thresholder
+  $thresholder SetInputData $pd
+  $thresholder SetInputArrayToProcess 0 0 0 $datatype $arrayname
+  $thresholder ThresholdBetween $min $max
+  $thresholder Update
+
+  vtkDataSetSurfaceFilter $surfacer
+  $surfacer SetInputData [$thresholder GetOutput]
+  $surfacer Update
+
+  return [$surfacer GetOutput]
+}
+

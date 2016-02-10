@@ -264,6 +264,12 @@ int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_DistanceToCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
+int Geom_GroupPolyDataCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] );
+
+int Geom_SeparateCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] );
+
 int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
@@ -426,7 +432,11 @@ int Geom_Init( Tcl_Interp *interp )
 #ifdef USE_VMTK
   Tcl_CreateCommand( interp, "geom_centerlines", Geom_CenterlinesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "geom_grouppolydata", Geom_GroupPolyDataCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_distancetocenterlines", Geom_DistanceToCenterlinesCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "geom_separatecenterlines", Geom_SeparateCenterlinesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_cap", Geom_CapCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -5636,6 +5646,86 @@ int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
+int Geom_GroupPolyDataCmd( ClientData clientData, Tcl_Interp *interp,
+		    int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *geomName;
+  char *linesName;
+  char *groupedName;
+  cvRepositoryData *geomSrc;
+  cvRepositoryData *linesSrc;
+  cvRepositoryData *groupedDst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 3;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &geomName, NULL, REQUIRED, 0, { 0 } },
+    { "-lines", STRING_Type, &linesName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &groupedName, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  geomSrc = gRepository->GetObject( geomName );
+  if ( geomSrc == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", geomName,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  type = geomSrc->GetType();
+  if ( type != POLY_DATA_T ) {
+    Tcl_AppendResult( interp, geomName, " not of type cvPolyData", (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  linesSrc = gRepository->GetObject( linesName );
+  if ( linesSrc == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", linesName,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  type = linesSrc->GetType();
+  if ( type != POLY_DATA_T ) {
+    Tcl_AppendResult( interp, linesName, " not of type cvPolyData", (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  if ( sys_geom_grouppolydata( (cvPolyData*)geomSrc, (cvPolyData*)linesSrc, (cvPolyData**)(&groupedDst) )
+       != CV_OK ) {
+    Tcl_SetResult( interp, "error getting grouped polydata", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( groupedName, groupedDst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", groupedName,
+		      " in repository", (char *)NULL );
+    delete groupedDst;
+    return TCL_ERROR;
+  }
+
+  Tcl_SetResult( interp, groupedDst->GetName(), TCL_VOLATILE );
+//  Tcl_SetResult( interp, voronoiDst->GetName(), TCL_VOLATILE );
+
+  return TCL_OK;
+}
+
 int Geom_DistanceToCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 		    int argc, CONST84 char *argv[] )
 {
@@ -5711,6 +5801,69 @@ int Geom_DistanceToCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   Tcl_SetResult( interp, distanceDst->GetName(), TCL_VOLATILE );
+//  Tcl_SetResult( interp, voronoiDst->GetName(), TCL_VOLATILE );
+
+  return TCL_OK;
+}
+
+int Geom_SeparateCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
+		    int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *linesName;
+  char *separateName;
+  cvRepositoryData *linesSrc;
+  cvRepositoryData *separateDst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 2;
+  ARG_Entry arg_table[] = {
+    { "-lines", STRING_Type, &linesName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &separateName, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  linesSrc = gRepository->GetObject( linesName );
+  if ( linesSrc == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", linesName,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  type = linesSrc->GetType();
+  if ( type != POLY_DATA_T ) {
+    Tcl_AppendResult( interp, linesName, " not of type cvPolyData", (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  if ( sys_geom_separatecenterlines( (cvPolyData*)linesSrc, (cvPolyData**)(&separateDst) )
+       != CV_OK ) {
+    Tcl_SetResult( interp, "error separating centerlines", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( separateName, separateDst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", separateName,
+		      " in repository", (char *)NULL );
+    delete separateDst;
+    return TCL_ERROR;
+  }
+
+  Tcl_SetResult( interp, separateDst->GetName(), TCL_VOLATILE );
 //  Tcl_SetResult( interp, voronoiDst->GetName(), TCL_VOLATILE );
 
   return TCL_OK;

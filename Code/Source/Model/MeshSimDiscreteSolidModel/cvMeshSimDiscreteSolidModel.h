@@ -89,10 +89,11 @@ public:
   int ExtrudeZ( cvSolidModel *in, double dist ) {return CV_ERROR;}
   int Extrude( cvSolidModel *in, double **dist ) {return CV_ERROR;}
   int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR;}
- 
+
   int MakeInterpCurveLoop( cvPolyData *pd, int closed ) { return CV_ERROR; }
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) { return CV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves, char *name ) { return CV_ERROR; }
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves, char *name,
+     int continuity,int partype,double w1,double w2,double w3 ,int smoothing) { return CV_ERROR; }
 
   // Booleans:
   int Intersect( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
@@ -141,7 +142,7 @@ public:
 
   // geometric manipulation
   virtual int DeleteFaces (int numfaces, int *faces) {return CV_ERROR;}
-  int CreateEdgeBlend(int faceA, int faceB, double radius) {return CV_ERROR;}
+  int CreateEdgeBlend(int faceA, int faceB, double radius,int filletshape) {return CV_ERROR;}
   int CombineFaces(int targetface, int loseface) {return CV_ERROR;}
   int RemeshFace (int numfaces,int *excludedFaces, double size) {return CV_ERROR;}
 
