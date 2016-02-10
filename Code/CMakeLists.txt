@@ -499,7 +499,9 @@ simvascular_external(VTK DOWNLOADABLE
         vtkFiltersFlowPaths vtkWrappingTcl
 	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy)
-set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} VTK)
+if(SIMVASCULAR_BUILD_SHARED_VTK)
+	set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} VTK)
+endif()
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -992,9 +994,6 @@ if(Plugin_ITK)
 	find_package(ITK REQUIRED)
 	include(${ITK_USE_FILE})
 endif()
-set(VTK_MODULES_REQUESTED ${VTK_MODULES_REQUESTED} vtkFiltersFlowPaths vtkWrappingTcl
-	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
-	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
 
 #-----------------------------------------------------------------------------
 # VTK Setup

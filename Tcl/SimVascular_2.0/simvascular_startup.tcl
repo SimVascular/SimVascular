@@ -78,10 +78,10 @@ if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
       }
 }
 
-#if {[info exists SIMVASCULAR_NO_RENDERER] == 0} {
-#  global SIMVASCULAR_NO_RENDERER
+if {[info exists SIMVASCULAR_NO_RENDERER] == 0} {
+  global SIMVASCULAR_NO_RENDERER
   set SIMVASCULAR_NO_RENDERER "0"
-#}
+}
 
 # if { $SIMVASCULAR_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SIMVASCULAR_VERSION-$SIMVASCULAR_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
