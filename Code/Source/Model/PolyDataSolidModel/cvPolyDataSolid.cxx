@@ -51,6 +51,7 @@
 #include "cv_sys_geom.h"
 #include <string.h>
 #include <assert.h>
+#include "vtkMath.h"
 #include "vtkCubeSource.h"
 #include "vtkCylinderSource.h"
 #include "vtkSphereSource.h"
@@ -877,7 +878,9 @@ int cvPolyDataSolid::MakeCylinder(double r, double length, double ctr[],
 
   double vec[3]; vec[0] = 0.0; vec[1] = 1.0; vec[2] = 0.0;
   double rotateaxis[3]; vtkMath::Cross(axis,vec,rotateaxis);
-  double radangle = vtkMath::AngleBetweenVectors(axis,vec);
+  double tmpcross[3];
+  vtkMath::Cross(axis,vec,tmpcross);
+  double radangle = atan2(vtkMath::Norm(tmpcross), vtkMath::Dot(axis,vec));
   double degangle = vtkMath::DegreesFromRadians(radangle);
   vtkSmartPointer<vtkTransform> transformer =
     vtkSmartPointer<vtkTransform>::New();
