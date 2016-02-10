@@ -12,8 +12,8 @@ if(WIN32 AND NOT UNIX)
 	set_env_string_concat(SIMVASCULAR_HOME "%~dp0" core_str)
 endif()
 
-set(core_vars 	SIMVASCULAR_OS SOFTWARE_PLATFORM COMPILER_VERSION 
-	SIMVASCULAR_VERSION OPEN_SOFTWARE_BINARIES_TOPLEVEL 
+set(core_vars 	SIMVASCULAR_OS SOFTWARE_PLATFORM COMPILER_VERSION
+	SIMVASCULAR_VERSION OPEN_SOFTWARE_BINARIES_TOPLEVEL
 	LICENSED_SOFTWARE_TOPLEVEL SIMVASCULAR_STATIC_BUILD)
 
 
@@ -50,9 +50,9 @@ if(Licensed_PARASOLID)
 	set_env_string_concat(P_SCHEMA "${PARASOLID_SCHEMA_DIR}" developer_script_string)
 	set_env_string(P_SCHEMA "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
 	set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
-		<Registry Id='regid.parasolid' Root='HKLM' 
-		Key='Software\\SimVascular\\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@' 
-		Name='PSchemaDir' Action='write' Type='string' 
+		<Registry Id='regid.parasolid' Root='HKLM'
+		Key='Software\\SimVascular\\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@'
+		Name='PSchemaDir' Action='write' Type='string'
 		Value='[INSTALL_ROOT]@SIMVASCULAR_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR@' />")
 endif()
 
@@ -76,7 +76,7 @@ foreach(lib ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
 	dev_message("SimVascular_USE_SYSTEM_${lib} ${SimVascular_USE_SYSTEM_${lib}}")
 	# on unix systems we only need this path if its installed (moved)
 	if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_${lib})
-		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated. 
+		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
 		if(SIMVASCULAR_INSTALL_${lib}_LIBRARY_DIR)
 			#if there is an install library directory, add it to the path for installation, it will be installed there.
 			append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_${lib}_LIBRARY_DIR}" install_script_string)
@@ -85,7 +85,7 @@ foreach(lib ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
 			# if there is an install runtime directory, add it to the path for installation
 			# set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 				# 	<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
-				# 		Value='[INSTALL_ROOT]\\${SIMVASCULAR_INSTALL_${lib}_RUNTIME_DIR}' 
+				# 		Value='[INSTALL_ROOT]\\${SIMVASCULAR_INSTALL_${lib}_RUNTIME_DIR}'
 				# 		Permanent='yes' Part='last' Action='set' System='yes' />")
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_${lib}_RUNTIME_DIR}" install_script_string)
 endif()
@@ -100,8 +100,8 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/$
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_HOME_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_RUNTIME_DIR}" install_script_string)
 # set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
-	# 				<Environment Id='UpdatePath.runtime.${lib}' Name='PATH' 
-	# 					Value='[INSTALL_ROOT]\\@SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR@' 
+	# 				<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
+	# 					Value='[INSTALL_ROOT]\\@SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR@'
 	# 					Permanent='yes' Part='last' Action='set' System='yes' />")
 
 if(SimVascular_USE_TKCXIMAGE)
@@ -118,6 +118,28 @@ if(NOT SimVascular_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
 	set_env_string_concat(TK_LIBRARY "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_TCL_LIBRARY_DIR}/tk8.5" install_script_string)
 endif()
 
+#--------
+# Python
+if(SimVascular_USE_PYTHON)
+	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python" developer_script_string)
+	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python/vtk" developer_script_string)
+	append_env_string_concat(PYTHONPATH "${VTK_DIR}/bin" developer_script_string)
+	append_env_string_concat(PYTHONPATH "${VTK_DIR}/lib" developer_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${VTK_DIR}/bin" developer_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages/vtk" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
+endif()
+#--------
+# Tcl is VTK built as shared
+if(SimVascular_BUILD_SHARED_VTK)
+	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
+	set_env_string_concat(TCLLIBPATH "${ENV_SIMVASCULAR_HOME}/lib/tcltk/vtk-6.2" install_script_string)
+endif()
+
+
 configure_file(${SimVascular_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
 set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")
 set(PREAMBLE_INSTALL_FILE "${TEMP_DIR}/install-preample")
@@ -131,7 +153,7 @@ file(APPEND ${PREAMBLE_INSTALL_FILE} "${install_script_string}\n")
 
 set(SCRIPT_FILES "${TEMP_DIR}/\@mode\@-preample")
 
-# CHANGE FOR EXECUTABLE RENAME REMOVE 
+# CHANGE FOR EXECUTABLE RENAME REMOVE
 set(SCRIPT_FILES ${SCRIPT_FILES} "${SimVascular_SOURCE_DIR}/Scripts/executable/\@mode\@/\@tar\@-\@OSTYPE\@.in")
 
 unset(GDB)
@@ -141,7 +163,7 @@ file(WRITE ${INSTALL_SYMLINK_FILE} "${locate_script}\n\necho $DIR\n\n")
 dev_message("SIMVASCULAR_SCRIPT_TARGETS: ${SIMVASCULAR_SCRIPT_TARGETS}")
 foreach(tar ${SIMVASCULAR_SCRIPT_TARGETS})
 	simvascular_configure_script(
-		TARGET "${tar}" 
+		TARGET "${tar}"
 		FILES ${SCRIPT_FILES}
 		INSTALL
 		)
@@ -149,7 +171,7 @@ foreach(tar ${SIMVASCULAR_SCRIPT_TARGETS})
 		message("${tar}")
 		ADD_CUSTOM_TARGET(${tar}-copy ALL
 			DEPENDS ${tar}
-			COMMAND ${CMAKE_COMMAND} -E remove ${OUTBIN_DIR}/$<TARGET_FILE_NAME:${tar}> 
+			COMMAND ${CMAKE_COMMAND} -E remove ${OUTBIN_DIR}/$<TARGET_FILE_NAME:${tar}>
 			COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${tar}> ${OUTBIN_DIR}
 			COMMENT "Copying ${tar} to ${OUTBIN_DIR}"
 			)

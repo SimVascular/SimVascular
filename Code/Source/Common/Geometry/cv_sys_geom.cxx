@@ -69,14 +69,17 @@
 #ifdef USE_VMTK
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataCenterlines.h"
+#include "vtkvmtkCenterlineBranchExtractor.h"
 #include "vtkvmtkCapPolyData.h"
 #include "vtkvmtkSimpleCapPolyData.h"
+#include "vtkvmtkPolyDataCenterlineGroupsClipper.h"
 #endif
 
 #include "vtkMultiplePolyDataIntersectionFilter.h"
 #include "vtkBooleanOperationPolyDataFilter2.h"
 #include "vtkIntersectionPolyDataFilter2.h"
 #include "vtkLoftPolyDataSolid.h"
+#include "vtkXMLPolyDataWriter.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -2526,7 +2529,7 @@ int sys_geom_2DWindingNum( cvPolyData *pgn )
     tot_theta += dtheta;
   }
 
-  wnum = Round( tot_theta / (2 * CV_PI) );
+  wnum = svRound( tot_theta / (2 * CV_PI) );
   delete tmp;
   delete [] lines;
   delete [] pts;
@@ -4096,9 +4099,108 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
     centerLiner->Update();
 
     result1 = new cvPolyData( centerLiner->GetOutput() );
-    result2 = new cvPolyData( centerLiner->GetVoronoiDiagram() );
     *lines = result1;
+    result2 = new cvPolyData( centerLiner->GetVoronoiDiagram() );
     *voronoi = result2;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in centerline operation.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_separatecenterlines */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
+ *
+ *  @brief Function to separate centerlines based on bifurcations of the geometry
+ *  @param *lines from centerline extraction, the centerlines to be used
+ *  @note  The output lines are not physically different than the input. The
+ *  @note  simply applies cell data to the lines that describe the bifurcation regions.
+ *  @note  The cell array names are "Blanking","GroupIds","CenterlineIds",and "TractIds"
+ *  @param **separate vtkPolyData with cell arrays discribing branchin attached
+ *  @return CV_OK if the VTMK function executes properly
+ */
+
+int sys_geom_separatecenterlines( cvPolyData *lines,
+		cvPolyData **separate)
+{
+  vtkPolyData *geom = lines->GetVtkPolyData();
+  cvPolyData *result1 = NULL;
+  *separate = NULL;
+
+  vtkNew(vtkvmtkCenterlineBranchExtractor,brancher);
+  try {
+    std::cout<<"Separating Sections..."<<endl;
+    brancher->SetInputData(geom);
+    brancher->SetBlankingArrayName("Blanking");
+    brancher->SetRadiusArrayName("MaximumInscribedSphereRadius");
+    brancher->SetGroupIdsArrayName("GroupIds");
+    brancher->SetCenterlineIdsArrayName("CenterlineIds");
+    brancher->SetTractIdsArrayName("TractIds");
+    brancher->Update();
+
+    result1 = new cvPolyData( brancher->GetOutput() );
+    *separate = result1;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in centerline separation.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_grouppolydata */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
+ *
+ *  @brief Function to calculate distance to surface from points on line
+ *  @param *polydata The polydata to find distance form lines on
+ *  @param *lines from centerline extraction, the centerlines to be used
+ *  @param **distance vtkPolyData with distance functiona attached returned
+ *  @return CV_OK if the VTMK function executes properly
+ */
+
+int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
+		cvPolyData **grouped)
+{
+  vtkPolyData *geom = polydata->GetVtkPolyData();
+  vtkPolyData *centerlines = lines->GetVtkPolyData();
+  cvPolyData *result = NULL;
+  *grouped = NULL;
+
+  vtkNew(vtkvmtkPolyDataCenterlineGroupsClipper,grouper);
+  try {
+    std::cout<<"Branching PolyData..."<<endl;
+    grouper->SetInputData(geom);
+    grouper->SetCenterlines(centerlines);
+    grouper->SetCenterlineGroupIdsArrayName("GroupIds");
+    grouper->SetGroupIdsArrayName("GroupIds");
+    grouper->SetCenterlineRadiusArrayName("MaximumInscribedSphereRadius");
+    grouper->SetBlankingArrayName("Blanking");
+    grouper->SetCutoffRadiusFactor(1e16);
+    grouper->SetClipValue(0.0);
+    grouper->SetUseRadiusInformation(1);
+    grouper->ClipAllCenterlineGroupIdsOn();
+    grouper->Update();
+
+    result = new cvPolyData( grouper->GetOutput());
+    *grouped = result;
   }
   catch (...) {
     fprintf(stderr,"ERROR in centerline operation.\n");

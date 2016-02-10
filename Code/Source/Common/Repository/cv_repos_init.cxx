@@ -1,7 +1,7 @@
 /* Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
- * Portions of the code Copyright (c) 2009-2011 Open Source Medical 
+ * Portions of the code Copyright (c) 2009-2011 Open Source Medical
  * Software Corporation, University of California, San Diego.
  * All rights reserved.
  *
@@ -9,19 +9,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -31,7 +31,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include "cv_repos_init.h"
 #include "cvRepository.h"
@@ -101,6 +101,13 @@ int Repos_WriteVtkUnstructuredGridCmd( ClientData clientData,
 				       Tcl_Interp *interp,
 				       int argc, CONST84 char *argv[] );
 
+int Repos_SetStringCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
+
+int Repos_GetStringCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
+
+
 
   // Label-related methods
   // ---------------------
@@ -116,8 +123,6 @@ static int Repos_SetLabelCmd( ClientData clientData, Tcl_Interp *interp,
 
 static int Repos_ClearLabelCmd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
-
-
 // ----------
 // Repos_Init
 // ----------
@@ -184,7 +189,86 @@ int Repos_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "repos_clearLabel", Repos_ClearLabelCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "repos_setstring", Repos_SetStringCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "repos_getstring", Repos_GetStringCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  return TCL_OK;
+}
 
+// -------------
+// Repos_PassCmd
+// -------------
+
+int Repos_SetStringCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *stringPd;
+  char *string;
+  char *usage;
+  int table_sz = 2;
+  cvRepositoryData *pd;
+  ARG_Entry arg_table[] = {
+    { "-obj", STRING_Type, &stringPd, NULL, REQUIRED, 0, { 0 } },
+    { "-str", STRING_Type, &string, NULL, REQUIRED, 0, { 0 } }
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1, table_sz, arg_table )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  pd = gRepository->GetObject( stringPd );
+  if ( pd == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", stringPd, (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  pd->SetName( string );
+
+  char rtnstr[255];
+  rtnstr[0]='\0';
+  sprintf( rtnstr, "%s", string );
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
+
+  return TCL_OK;
+}
+
+int Repos_GetStringCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *stringPd;
+  char *usage;
+  int table_sz = 1;
+  cvRepositoryData *pd;
+  ARG_Entry arg_table[] = {
+    { "-obj", STRING_Type, &stringPd, NULL, REQUIRED, 0, { 0 } }
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1, table_sz, arg_table )
+       != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  pd = gRepository->GetObject( stringPd );
+  if ( pd == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", stringPd, (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  Tcl_SetResult( interp, pd->GetName(), TCL_VOLATILE );
   return TCL_OK;
 }
 
@@ -240,7 +324,7 @@ int Repos_ExistsCmd( ClientData clientData, Tcl_Interp *interp,
   char rtnstr[255];
   rtnstr[0]='\0';
   sprintf( rtnstr, "%d", exists );
-  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
+  Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
 
   return TCL_OK;
 }
@@ -360,7 +444,7 @@ int Repos_ImportVtkPdCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &vtkName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-  };    
+  };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -419,7 +503,7 @@ int Repos_ExportToVtkCmd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 1;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-  };    
+  };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -508,7 +592,7 @@ int Repos_ImportVtkSpCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &vtkName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-  };    
+  };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -570,7 +654,7 @@ int Repos_ImportVtkUnstructuredGridCmd( ClientData clientData, Tcl_Interp *inter
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &vtkName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-  };    
+  };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -632,7 +716,7 @@ int Repos_ImportVtkImgCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &vtkName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-  };    
+  };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -694,7 +778,7 @@ int Repos_ImportVtkImgCmd( ClientData clientData, Tcl_Interp *interp,
   //  this->Translate[0] = whole[0];
   //  this->Translate[1] = whole[2];
   //  this->Translate[2] = whole[4];
-  
+
   origin[0] += spacing[0] * whole[0];
   origin[1] += spacing[1] * whole[2];
   whole[1] -= whole[0];
@@ -747,7 +831,7 @@ int Repos_SaveCmd( ClientData clientData, Tcl_Interp *interp,
 
   filename[0]='\0';
   sprintf(filename,"%s",argv[1]);
-  
+
   saveResult = gRepository->Save( filename );
   if ( saveResult ) {
     Tcl_SetResult( interp, "repository successfully saved", TCL_STATIC );
@@ -1283,7 +1367,7 @@ int Repos_ClearLabelCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, "key ", key, " not found", (char *) NULL );
     return TCL_ERROR;
   }
-    
+
   obj->ClearLabel( key );
 
   return TCL_OK;

@@ -199,7 +199,11 @@ int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
                             int *targets, int ntargets,
 			    cvPolyData **lines, cvPolyData **voronoi);
 
+int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,cvPolyData **grouped );
+
 int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,cvPolyData **distance );
+
+int sys_geom_separatecenterlines( cvPolyData *lines,cvPolyData **separate );
 
 int sys_geom_cap( cvPolyData *polydata, cvPolyData **cappedpolydata, int *numcenterids,int **centerids,int type);
 

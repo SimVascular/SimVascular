@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -101,8 +101,8 @@ double Magnitude( double vx, double vy, double vz )
 // =========
 
 inline
-void Cross( double ax, double ay, double az, 
-            double bx, double by, double bz, 
+void Cross( double ax, double ay, double az,
+            double bx, double by, double bz,
             double *prodx, double *prody, double *prodz )
 {
   (*prodx) = ay * bz - az * by;
@@ -117,7 +117,7 @@ void Cross( double ax, double ay, double az,
 // =======
 
 inline
-double Dot( double ax, double ay, double az, 
+double Dot( double ax, double ay, double az,
             double bx, double by, double bz )
 {
   double product;
@@ -153,17 +153,17 @@ double misc_Det3x3( double mat[] )
 
   det = a11*a22*a33 - a11*a23*a32 - a12*a21*a33
     + a12*a23*a31 + a13*a21*a32 - a13*a22*a31;
-  
+
   return det;
 }
 
 
 // =========
-//   Round
+//   svRound
 // =========
 
 inline
-int Round( double d )
+int svRound( double d )
 {
   return( (int) floor( d + 0.5 ) );
 }
@@ -174,7 +174,7 @@ int Round( double d )
 // ============
 
 inline
-double Distance( double ax, double ay, double az, 
+double Distance( double ax, double ay, double az,
 		 double bx, double by, double bz )
 {
   double tmpx, tmpy, tmpz;

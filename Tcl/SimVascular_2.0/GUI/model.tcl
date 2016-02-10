@@ -541,7 +541,7 @@ proc guiSV_model_set_att_name {} {
    vis_pRm $gRen3d $oldpd
    catch {repos_delete -obj $facepd}
    set faceid [lindex [$tv item .models.$kernel.$modelname.$currname -values] 1]
-   if {$kernel == "Parasolid"} {
+   if {$kernel == "OpenCASCADE" || $kernel == "Parasolid"} {
      $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
    }
    $modelname GetFacePolyData -face $faceid -result $facepd
@@ -574,23 +574,8 @@ proc guiSV_model_check_array_exists {model datatype arrayname} {
   catch {repos_delete -obj $cv_tmp}
   $model GetPolyData -result $cv_tmp
 
-  set numArrays 0
-  set exists 0
-  if {$datatype == 0} {
-    set numArrays [[[repos_exportToVtk -src $cv_tmp] GetPointData] GetNumberOfArrays]
-    for {set i 0} {$i < $numArrays} {incr i} {
-      if {[string equal $arrayname [[[repos_exportToVtk -src $cv_tmp] GetPointData] GetArrayName $i]]} {
-	set exists 1
-      }
-    }
-  } else {
-    set numArrays [[[repos_exportToVtk -src $cv_tmp] GetCellData] GetNumberOfArrays]
-    for {set i 0} {$i < $numArrays} {incr i} {
-      if {[string equal $arrayname [[[repos_exportToVtk -src $cv_tmp] GetCellData] GetArrayName $i]]} {
-	set exists 1
-      }
-    }
-  }
+  set exists [polydata_check_array_exists [repos_exportToVtk -src $cv_tmp] $datatype $arrayname]
+
   return $exists
 }
 
@@ -669,6 +654,10 @@ proc guiSV_model_get_kernel_type {ext} {
     set kernel "Discrete"
   } elseif {[string compare -length 7 $ext "xmt_txt"] == 0} {
     set kernel "Parasolid"
+  } elseif {[string compare -length 4 $ext "brep"] == 0 || \
+            [string compare -length 4 $ext "step"] == 0 || \
+            [string compare -length 4 $ext "iges"] == 0} {
+    set kernel "OpenCASCADE"
   } else {
     return -code error "ERROR: Unkown file type extension: $ext"
   }
@@ -686,8 +675,8 @@ proc guiSV_model_load_model { {fn "" } } {
 
    set kernel $gOptions(meshing_solid_kernel)
    if {$fn == ""} {
-     if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData"} {
-       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {"All Files" *.*}} -title "Choose Solid Model"]
+     if {$kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "PolyData" || $kernel == "OpenCASCADE"} {
+       set fn [tk_getOpenFile -filetypes {{PARASOLID *.xmt_txt} {Discrete *.dsm} {vtkPolyData *.vtp} {LegacyVTK *.vtk} {Stereolithography *.stl} {"Polygon File Format" *.ply} {OpenCASCADE *.brep} {STEP *.step} {IGES *.iges} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "Discrete"} {
      #  set fn [tk_getOpenFile -filetypes {{Discrete *.dsm} {"All Files" *.*}} -title "Choose Solid Model"]
      #} elseif {$gOptions(meshing_solid_kernel) == "PolyData"} {
@@ -764,11 +753,20 @@ proc guiSV_model_load_model { {fn "" } } {
       }
       guiSV_model_add_faces_to_tree $kernel $inputName
       set withFaces 1
-    } elseif {[guiSV_model_check_array_exists $inputName 1 "ModelFaceID"]} {
-      catch {unset gPolyDataFaceNames}
-      set faceids [$inputName GetFaceIds]
-      foreach id $faceids {
-	set gPolyDataFaceNames($id) "noname_$id"
+    }
+  }
+  if {$kernel == "OpenCASCADE"} {
+    global gOCCTFaceNames
+    global gOCCTFaceNamesInfo
+    catch {unset gOCCTFaceNames}
+    catch {unset gOCCTFaceNamesInfo}
+    if [file exists $fn.facenames] {
+      puts "sourcing $fn.facenames"
+      source $fn.facenames
+      package require md5
+      set mymd5 [::md5::md5 -hex -file $fn]
+      if {$mymd5 != $gOCCTFaceNamesInfo(model_file_md5)} {
+        return -code error "ERROR: dsm model ($fn) file doesn't match one used to generate facenames ($fn.facenames)!"
       }
       guiSV_model_add_faces_to_tree $kernel $inputName
       set withFaces 1
@@ -790,7 +788,7 @@ proc guiSV_model_save_model {} {
   set model [guiSV_model_get_tree_current_models_selected]
 
   if {[llength $model] != 1} {
-    return -code error "Only one model can be written at a time!"
+    return -code error "Must select model from tree and only one can be written at a time!"
   }
   set kernel $gKernel($model)
   solid_setKernel -name $kernel
@@ -870,6 +868,39 @@ proc guiSV_model_save_model {} {
         close $fp
         puts "Done writing facenames file."
       }
+  } elseif {$kernel == "OpenCASCADE"} {
+      set fn $model
+      set fn [tk_getSaveFile -defaultextension {*.step} -filetypes {{STEP .step} {IGES *.iges} {OpenCASCADE *.brep} {STL *.stl} {"All Files" *.*}} -title "Choose Solid Model" -initialfile $fn]
+      package require md5
+      if {$fn == ""} return
+      puts "Writing solid ($fn)"
+      $model WriteNative -file $fn
+      puts "Done writing solid."
+      puts "Writing file ($fn.facenames)"
+      set allids [$model GetFaceIds]
+      if {[llength $allids] != 0} {
+	puts "Writing file ($fn.facenames)"
+	set mymd5 [::md5::md5 -hex -file $fn]
+	set fp [open $fn.facenames w]
+	fconfigure $fp -translation lf
+	puts $fp "\# user defined face id to name mapping for model file ($fn)"
+	set timestamp [clock seconds]
+	puts $fp "\# timestamp: $timestamp  ([clock format $timestamp])"
+	puts $fp ""
+	puts $fp "global gOCCTFaceNames"
+	puts $fp "global gOCCTFaceNamesInfo"
+	puts $fp ""
+	puts $fp "set gOCCTFaceNamesInfo(timestamp) \{$timestamp\}"
+	puts $fp "set gOCCTFaceNamesInfo(model_file_md5) \{$mymd5\}"
+	puts $fp "set gOCCTFaceNamesInfo(model_file_name) \{[file tail $fn]\}"
+	puts $fp ""
+	foreach id $allids {
+	  set face [model_idface $kernel $model $id]
+          puts $fp "set gOCCTFaceNames($id) \{$face\}"
+        }
+        close $fp
+        puts "Done writing facenames file."
+      }
   } else {
     return -code error "ERROR: invalid solid model type."
   }
@@ -878,11 +909,18 @@ proc guiSV_model_save_model {} {
 # Procedure: guiSV_model_add_faces_to_tree
 proc guiSV_model_add_faces_to_tree {kernel modelname} {
   global gPolyDataFaceNames
+  global gOCCTFaceNames
   global gDiscreteModelFaceNames
   global smasherFaceNames
   global gOptions
+  global gKernel
 
-  set maxedgesize $gOptions(facet_max_edge_size)
+  set facet_metric 1.0
+  if {$kernel == "Parasolid"} {
+    set facet_metric $gOptions(facet_max_edge_size)
+  } elseif {$kernel =="OpenCASCADE"} {
+    set facet_metric $gOptions(facet_max_angle_dev)
+  }
   set faceIds [$modelname GetFaceIds]
   catch {unset smasherFaceNames}
   foreach id $faceIds {
@@ -893,21 +931,24 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       set facename $gDiscreteModelFaceNames($id)
     } elseif {$kernel == "PolyData"} {
       set facename $gPolyDataFaceNames($id)
+    } elseif {$kernel == "OpenCASCADE"} {
+      set facename $gOCCTFaceNames($id)
+      $modelname SetFaceAttr -attr gdscName -faceId $id -value $facename
     } else {
       return -code error "ERROR: Solid kernel $kernel is not a valid kernel"
     }
     lappend smasherFaceNames $facename
     set facepd /models/$kernel/$modelname/$facename
     catch {repos_delete -obj $facepd}
-    if {[catch {$modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize} errmsg] == 0} {
+    if {[catch {$modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric} errmsg] == 0} {
       model_add $modelname $facename $facename
       puts "added face $facename to $modelname"
     } else {
-      puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize"
+      puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric"
       puts $errmsg
       set errorFaceName {}
       catch {set errorFaceName [$modelname GetFaceAttr -faceId $id -attr gdscName]}
-      tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $id -max_edge_size $maxedgesize)\n"
+      tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric)\n"
       #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
     }
   }
@@ -921,8 +962,8 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
      }
      set duplist [lsort -dictionary $pretty_names]
      foreach i [lsort -unique $pretty_names] {
-        set idx [lsearch -exact $duplist $i]
-        set duplist [lreplace $duplist $idx $idx]
+	set idx [lsearch -exact $duplist $i]
+	set duplist [lreplace $duplist $idx $idx]
      }
      set msg "Duplicate faces found!\n\n"
      set duplistids {}
@@ -938,16 +979,16 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
        $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
        set facepd /models/$kernel/$modelname/$newname
        catch {repos_delete -obj $facepd}
-       if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize} errmsg] == 0} {
+       if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric} errmsg] == 0} {
          model_add $modelname $newname $newname
          puts "added face $newname to $modelname"
        } else {
-         puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize"
-         puts $errmsg
-         set errorFaceName {}
-         catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
-         tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $maxedgesize)\n"
-         #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
+	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric"
+	 puts $errmsg
+	 set errorFaceName {}
+	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
+	 tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric)\n"
+	 #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
        }
      }
      tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
@@ -965,6 +1006,8 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       set facename $gDiscreteModelFaceNames($id)
     } elseif {$kernel == "PolyData"} {
       set facename $gPolyDataFaceNames($id)
+    } elseif {$kernel == "OpenCASCADE"} {
+      set facename $gOCCTFaceNames($id)
     } else {
       return -code error "ERROR: Solid kernel $kernel is not a valid kernel"
     }
@@ -974,6 +1017,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
 
 proc guiSV_model_get_face_ids_from_tree {modelname} {
   global gPolyDataFaceNames
+  global gOCCTFaceNames
   global gOptions
   global symbolicName
   global gKernel
@@ -1022,9 +1066,11 @@ proc guiSV_model_update_tree {} {
     $tv delete .models.PolyData
     $tv delete .models.Parasolid
     $tv delete .models.Discrete
+    $tv delete .models.OpenCASCADE
     $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
     $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
     $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
+    $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
   }
   $tv configure -columns [list DisplayModel FaceIds DisplayFaces]
   $tv heading \#0 -text "Object"
@@ -1099,9 +1145,15 @@ proc guiSV_model_display_model {showFlag kernel model} {
   global gOptions
   set tv $symbolicName(guiSV_model_tree)
 
+  set facet_metric 1.0
+  if {$kernel == "Parasolid"} {
+    set facet_metric $gOptions(facet_max_edge_size)
+  } elseif {$kernel =="OpenCASCADE"} {
+    set facet_metric $gOptions(facet_max_angle_dev)
+  }
   set modelpd /models/$kernel/$model
   if {![repos_exists -obj $modelpd]} {
-    $model GetPolyData -result $modelpd -max_edge_size $gOptions(facet_max_edge_size)
+    $model GetPolyData -result $modelpd -max_edge_size $facet_metric
   }
   if {$showFlag == 0} {
     vis_pRm $gRen3d $modelpd
@@ -1187,7 +1239,7 @@ proc guiSV_model_display_selected_faces {showFlag} {
   }
 
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be selected to edit face visualization at a time"
+    return -code error "ERROR: Must select model from tree and only one can be selected to edit face visualization at a time"
   }
   set kernel $gKernel($model)
   set check [lindex [$tv item .models.$kernel.$model -values] 2]
@@ -1310,7 +1362,7 @@ proc guiSV_model_update_actor_selection {actorname} {
 
   set kernel [lindex $namesplit 2]
   set gOptions(meshing_solid_kernel) $kernel
-  if {!($kernel == "PolyData" || $kernel == "Parasolid" || $kernel == "Discrete")} {
+  if {!($kernel == "PolyData" || $kernel == "Parasolid" || $kernel == "Discrete" || $kernel == "OpenCASCADE")} {
     puts "Actor not of valid solid kernel type"
     return
   }
@@ -1603,7 +1655,7 @@ proc guiVMTKCenterlines {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be used for centerline extraction"
+    return -code error "ERROR: Must select model from tree and only one can be used for centerline extraction"
   }
   set kernel $gKernel($model)
   if {$kernel != "PolyData"} {
@@ -1612,22 +1664,16 @@ proc guiVMTKCenterlines {} {
   set gOptions(meshing_solid_kernel) $kernel
   solid_setKernel -name $kernel
 
-  global gWaitVar
-  set gWaitVar 0
-  tk_messageBox -title "Extract Centerlines"  -type ok -message "Extracting the centerlines requires the walls to be defined:\n 1. Click 'OK'\n 2. Select the walls in the Model Object list using ctrl-click or shift-click\n 3. Hit 'Enter' on your keyboard"
-  vwait gWaitVar
+  set yesno [tk_messageBox -message "Wall faces must be named starting with wall. Are your wall surfaces named?" -default no -icon question -type yesno]
 
-  set selected [guiSV_model_get_tree_current_faces_selected]
-  set faces {}
-  foreach name $selected {
-    if {[lindex $name 1] != ""} {
-      lappend faces [lindex $name 1]
-    }
+  if {$yesno == "no"} {
+    return
   }
+
   set all_faces [model_get $model]
   set deletelist {}
   foreach face $all_faces {
-    if {[lsearch -exact $faces $face] == -1} {
+    if {[string range [string trim $face] 0 3] != "wall"} {
       lappend deletelist [lindex [$tv item .models.$kernel.$model.$face -values] 1]
     }
   }
@@ -1677,7 +1723,7 @@ proc guiBOUNDARIESextract {} {
   #set kernel $gOptions(meshing_solid_kernel)
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed for extraction at a time"
+    return -code error "ERROR: Must select model from tree and only one allowed for extraction at a time"
   }
 
   set kernel $gKernel($model)
@@ -2142,6 +2188,7 @@ proc guiSV_model_update_new_solid {kernel model newmodel} {
   global gOptions
   global gKernel
   global gPolyDataFaceNames
+  global gOCCTFaceNames
 
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2282,6 +2329,113 @@ proc DestroyWindow.svModelWindow {} {# xf ignore me 7
   }
 }
 
+proc guiSV_model_blend_selected_models {} {
+  global gObjects
+  global symbolicName
+  global gOptions
+  global gKernel
+
+
+  set tv $symbolicName(guiSV_model_tree)
+  set model [guiSV_model_get_tree_current_models_selected]
+  if {[llength $model] != 1} {
+    return -code error "ERROR: Can only blend one Parasolid model at a time"
+  }
+  set kernel $gKernel($model)
+  if {$kernel != "Parasolid"} {
+    return -code error "ERROR: Solid kernel must be Parasolid for operation"
+  }
+  set gOptions(meshing_solid_kernel) $kernel
+  solid_setKernel -name $kernel
+
+  #set oldmodel "[string trim $model]_blended"
+  guiSV_model_add_to_backup_list $kernel $model
+  #model_create $kernel $oldmodel
+  set faceids [$model GetFaceIds]
+  foreach id $faceids {
+    set ident [$model GetFaceAttr -attr identifier -faceId $id]
+    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+    if {$facename != ""} {
+      set ids($facename) $id
+    }
+    set ids($ident) $id
+  }
+  set params [$symbolicName(guiBLENDSscript) get 0.0 end]
+
+  set broken [split $params "\n"]
+  for {set i 0} {$i < [llength $broken]} {incr i} {
+    set trimmed [string trim [lindex $broken $i]]
+    if {$trimmed == ""} {continue}
+    if {[llength $trimmed] != 3} {
+      puts "ERROR: line ($trimmed) ignored!"
+    }
+    set faceA -1
+    set faceB -1
+    catch {set faceA $ids([lindex $trimmed 0])}
+    catch {set faceB $ids([lindex $trimmed 1])}
+    set r [lindex $trimmed 2]
+    if {$faceA < 0 || $faceB < 0} {
+       puts "ERROR: invalid values in line ($trimmed).  Line Ignored."
+       continue
+    }
+    $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
+    set nameA [$model GetFaceAttr -attr gdscName -faceId $faceA]
+    set nameB [$model GetFaceAttr -attr gdscName -faceId $faceB]
+    set wallblend 0
+    if {[string range $nameA 0 4] == "wall_"} {
+       set nameA [string range $nameA 5 end]
+       incr wallblend
+    }
+    if {[string range $nameB 0 4] == "wall_"} {
+       set nameB [string range $nameB 5 end]
+       incr wallblend
+    }
+
+    if {$wallblend > 0} {
+       set name "wall_blend"
+    } else {
+       set name "blend"
+    }
+
+    # tag new faces
+    set tagger 0
+    foreach id [$model GetFaceIds] {
+      set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+      set value [lsearch -exact $faceids $id]
+      if {$value < 0} {
+        set name "$name\_$nameA\_$nameB"
+  if {$tagger > 0} {
+          set name "$name\_tag$tagger"
+  }
+        incr tagger
+        puts "new face id: $id ($name)"
+        $model SetFaceAttr -attr gdscName -faceId $id -value $name
+      }
+    }
+    set faceids [$model GetFaceIds]
+  }
+
+  set pretty_names {}
+  foreach i [$model GetFaceIds] {
+    catch {lappend pretty_names [$model GetFaceAttr -attr gdscName -faceId $i]}
+  }
+  if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
+    set duplist [lsort -dictionary $pretty_names]
+    foreach i [lsort -unique $pretty_names] {
+      set idx [lsearch -exact $duplist $i]
+      set duplist [lreplace $duplist $idx $idx]
+    }
+    set msg "Duplicate faces found!\n\n"
+    foreach dup $duplist {
+      set msg "$msg  name: $dup\n"
+    }
+    tk_messageBox -title "Duplicate Face Names" -type ok -message $msg
+  }
+
+  guiSV_model_update_tree
+  guiSV_model_update_view_model $kernel $model
+}
+
 proc guiSV_model_trim_model {} {
 
   global symbolicName
@@ -2289,7 +2443,7 @@ proc guiSV_model_trim_model {} {
 
   set model [guiSV_model_get_tree_current_selected_models]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be trimmed at a time"
+    return -code error "ERROR: Must select model from tree and only one can be trimmed at a time"
   }
   set gObjects(preop_solid) $model
   set trimmedModel1 "[string trim $model]_trimmed1"
@@ -2330,7 +2484,7 @@ proc guiSV_model_copy_selected_model {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be copied at a time"
+    return -code error "ERROR: Must select model from tree and only one can be copied at a time"
   }
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2343,6 +2497,7 @@ proc guiSV_model_copy_model {kernel model newname op} {
   global gOptions
   global symbolicName
   global gPolyDataFaceNames
+  global gOCCTFaceNames
   global gDiscreteModelFaceNames
 
   if {$newname == ""} {
@@ -2368,7 +2523,7 @@ proc guiSV_model_copy_model {kernel model newname op} {
     if [guiSV_model_check_array_exists $oldmodel 1 "ModelFaceID"] {
       set addfaces 1
     }
-  } elseif {$kernel == "Discrete"} {
+  } elseif {$kernel == "Discrete"|| $kernel =="OpenCASCADE"} {
     set addfaces 1
   }
 
@@ -2399,7 +2554,7 @@ proc guiSV_model_rename_selected_model {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model can be copied at a time"
+    return -code error "ERROR: Must select model from tree and only one can be copied at a time"
   }
   set kernel $gKernel($model)
   set gOptions(meshing_solid_kernel) $kernel
@@ -2718,7 +2873,7 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+    return -code error "ERROR: Must select model from tree and only one allowed to create Discrete at a time"
   }
   if {$gKernel($model) != "PolyData"} {
     return -code error "ERROR: Must use PolyData to create Discrete Model"
@@ -2776,7 +2931,7 @@ proc guiSV_model_create_local_surface_macro {type} {
   } elseif {$type == "faces"} {
     set model [guiSV_model_get_tree_current_models_selected]
     if {[llength $model] != 1} {
-      return -code error "ERROR: Only one model can be selected for local operations"
+      return -code error "ERROR: Must select model from tree and only one can be selected for local operations"
     }
     set kernel $gKernel($model)
     set selected [guiSV_model_get_tree_current_faces_selected]
@@ -2797,7 +2952,7 @@ proc guiSV_model_create_local_surface_macro {type} {
   } elseif {$type == "blend"} {
     set model [guiSV_model_get_tree_current_models_selected]
     if {[llength $model] != 1} {
-      return -code error "ERROR: Only one model can be selected for local operations"
+      return -code error "ERROR: Must select model from tree and only one can be selected for local operations"
     }
     set kernel $gKernel($model)
     set selected [guiSV_model_get_tree_current_faces_selected]
@@ -2861,7 +3016,7 @@ proc guiSV_model_send_selected_to_3D_segmentation {} {
   }
 }
 
-proc guiSV_model_convert_centerlines_to_pathlines {} {
+proc guiSV_model_convert_centerlines_to_pathlines {type} {
   global guiSVvars
   global guiPDvars
   global symbolicName
@@ -2876,39 +3031,199 @@ proc guiSV_model_convert_centerlines_to_pathlines {} {
   #$centerlinepd BuildLinks 0
 
   set currentPaths [$tv children .paths.all]
-  set maxid 0
+  set maxid -1
   foreach path $currentPaths {
     set checkid [lindex [split $path "."] end]
     if {$checkid > $maxid} { set maxid $checkid }
   }
-  set numLines [$centerlinepd GetNumberOfLines]
 
-  incr maxid
-  for {set i 0} {$i < $numLines} {incr i} {
-    set guiSVvars(path_entry_path_id) $maxid
-    set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
-    guiSV_path_insert_new_path
-    $tv selection set .paths.all.$maxid
-
-    set pointids /tmp/vtk/pointids
-    catch {$pointids Delete}
-    vtkIdList $pointids
-    $centerlinepd GetCellPoints $i $pointids
-
-    for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
-      set id [$pointids GetId $j]
-      set pt [$centerlinepd GetPoint $id]
-      #guiPPchooserAddSpecifiedPoint $pt
-      set maxnum [llength [$tv children .paths.all.$maxid]]
-      set gPathPoints($maxid,$maxnum) $pt
-      $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
-      set gPathPoints($maxid,splinePts) {}
+  #Convert centerlines to paths
+  set pathIdList {}
+  #Different way to make paths
+  if {$type == "GroupIds" || $type == "CenterlineIds" || $type == "TractIds"} {
+    if {[polydata_check_array_exists $centerlinepd 1 $type] == 0} {
+      return -code error "Necessary group ids do not exist, must separate centerlines"
     }
-    guiSV_path_update_tree
-    $tv selection set .paths.all.$maxid
-    guiPPchooserSplinePts $maxid
+    set numGroups [[[$centerlinepd GetCellData] GetArray $type] GetRange]
+    set numGroups [expr [lindex $numGroups 1]+1]
+    #set numLines [$centerlinepd GetNumberOfLines]
+
     incr maxid
+    for {set i 0} {$i < $numGroups} {incr i} {
+      set guiSVvars(path_entry_path_id) $maxid
+      set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
+      guiSV_path_insert_new_path
+      $tv selection set .paths.all.$maxid
+
+      set pointids /tmp/vtk/pointids
+      set polyline /tmp/vtk/polyline
+      catch {$pointids Delete}
+      catch {$polyline Delete}
+      vtkIdList $pointids
+      set polyline [polydata_threshold_region $centerlinepd 1 $type $i $i]
+      $polyline GetCellPoints 0 $pointids
+      #$centerlinepd GetCellPoints $i $pointids
+
+      #Add points to path
+      for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
+	set id [$pointids GetId $j]
+	set pt [$polyline GetPoint $id]
+	#guiPPchooserAddSpecifiedPoint $pt
+	set maxnum [llength [$tv children .paths.all.$maxid]]
+	set gPathPoints($maxid,$maxnum) $pt
+	$tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+      }
+      set guiSVvars(path_entry_number_spline_pts) 300
+      set gPathPoints($maxid,numSplinePts) {300}
+      set gPathPoints($maxid,splinePts) {}
+      guiPPchooserSplinePts $maxid
+      guiSV_path_update_tree
+      $tv selection set .paths.all.$maxid
+
+      #Smooth path
+      global guiPPsmoothSubSampleRate
+      global guiPPsmoothUseFourierSmooth
+      global guiPPsmoothNumFourierModes
+      global guiPPsmoothTargetPathID
+      set guiPPsmoothSubSampleRate 1
+      set guiPPsmoothUseFourierSmooth 1
+      set guiPPsmoothNumFourierModes 300
+      set guiPPsmoothTargetPathID $maxid
+      guiPPsmoothSmoothPath
+
+      lappend pathIdList $maxid
+      incr maxid
+    }
+  } elseif {$type == "Sim" || $type == "Broken"} {
+    if {[polydata_check_array_exists $centerlinepd 1 "CenterlineIds"] == 0} {
+      return -code error "Necessary group ids do not exist, must separate centerlines"
+    }
+    set numGroups [[[$centerlinepd GetCellData] GetArray "CenterlineIds"] GetRange]
+    set numGroups [expr [lindex $numGroups 1]+1]
+    #set numLines [$centerlinepd GetNumberOfLines]
+
+    incr maxid
+    for {set i 0} {$i < $numGroups} {incr i} {
+      set pointids /tmp/vtk/pointids
+      set polyline /tmp/vtk/polyline
+      set cvpolyline /tmp/vtk/cvpolyline
+      set grouparray /tmp/vtk/grouparray
+      set selectline /tmp/vtk/selectline
+      set cvselectline /tmp/vtk/cvselectline
+      set brokenline /tmp/vtk/brokenline
+      catch {repos_delete -obj $cvpolyline}
+      catch {repos_delete -obj $cvselectline}
+      catch {$pointids Delete}
+      catch {$polyline Delete}
+      catch {$selectline Delete}
+      catch {$brokenline Delete}
+      catch {$grouparray Delete}
+      vtkIdList $pointids
+      set polyline [polydata_threshold_region $centerlinepd 1 "CenterlineIds" $i $i]
+      repos_importVtkPd -src $polyline -dst $cvpolyline
+      set polyline [repos_exportToVtk -src $cvpolyline]
+      set grouparray [[$polyline GetCellData] GetArray "GroupIds"]
+
+      set grpRange [$grouparray GetRange]
+      set lower [expr int([lindex $grpRange 1])]
+      set upper [expr int([lindex $grpRange 1])]
+
+      for {set j [expr [$grouparray GetNumberOfTuples]-1]} {$j >= 0} {incr j -1} {
+	set groupId [$grouparray GetValue $j]
+	if {$lower == $groupId} {
+	  set lower [expr $groupId -1]
+	} else {
+	  break
+	}
+      }
+      if {$lower == -1} {
+	set lower 0
+      }
+      set selectline [polydata_threshold_region $polyline 1 "GroupIds" $lower $upper]
+      repos_importVtkPd -src $selectline -dst $cvselectline
+      set selectline [repos_exportToVtk -src $cvselectline]
+
+      if {$type == "Broken"} {
+	set brokenline [polydata_threshold_region $selectline 1 "Blanking" 0 0]
+	set numLines [$brokenline GetNumberOfLines]
+	for {set k 0} {$k < $numLines} {incr k} {
+	  $brokenline GetCellPoints $k $pointids
+
+	  #Add points to path
+	  set guiSVvars(path_entry_path_id) $maxid
+	  set guiSVvars(path_entry_path_name) [string trim $centerlines]_[string trim $i]_[[[$brokenline GetCellData] GetArray "GroupIds"] GetValue $k]
+	  guiSV_path_insert_new_path
+	  $tv selection set .paths.all.$maxid
+
+	  for {set j 0} {$j < [$pointids GetNumberOfIds]} {incr j} {
+	    set id [$pointids GetId $j]
+	    set pt [$brokenline GetPoint $id]
+	    #guiPPchooserAddSpecifiedPoint $pt
+	    set maxnum [llength [$tv children .paths.all.$maxid]]
+	    set gPathPoints($maxid,$maxnum) $pt
+	    $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+	  }
+  	  set guiSVvars(path_entry_number_spline_pts) 300
+	  set gPathPoints($maxid,numSplinePts) {300}
+	  set gPathPoints($maxid,splinePts) {}
+	  set newcell /tmp/vtk/newcell
+	  catch {$newcell Delete}
+	  guiPPchooserSplinePts $maxid
+	  guiSV_path_update_tree
+	  $tv selection set .paths.all.$maxid
+
+	  #Smooth path
+	  global guiPPsmoothSubSampleRate
+	  global guiPPsmoothUseFourierSmooth
+	  global guiPPsmoothNumFourierModes
+	  global guiPPsmoothTargetPathID
+	  set guiPPsmoothSubSampleRate 1
+	  set guiPPsmoothUseFourierSmooth 1
+	  set guiPPsmoothNumFourierModes 300
+	  set guiPPsmoothTargetPathID $maxid
+	  guiPPsmoothSmoothPath
+
+	  lappend pathIdList $maxid
+	  incr maxid
+	}
+      } else {
+	#Add points to path
+	set guiSVvars(path_entry_path_id) $maxid
+	set guiSVvars(path_entry_path_name) [string trim $centerlines]_$i
+	guiSV_path_insert_new_path
+	$tv selection set .paths.all.$maxid
+
+	for {set j 0} {$j < [$selectline GetNumberOfPoints]} {incr j} {
+	  set pt [$selectline GetPoint $j]
+	  #guiPPchooserAddSpecifiedPoint $pt
+	  set maxnum [llength [$tv children .paths.all.$maxid]]
+	  set gPathPoints($maxid,$maxnum) $pt
+	  $tv insert .paths.all.$maxid end -id .paths.all.$maxid.$maxnum -text $pt
+	}
+        set guiSVvars(path_entry_number_spline_pts) 300
+	set gPathPoints($maxid,numSplinePts) {300}
+	set gPathPoints($maxid,splinePts) {}
+	guiPPchooserSplinePts $maxid
+	guiSV_path_update_tree
+	$tv selection set .paths.all.$maxid
+
+	#Smooth path
+	global guiPPsmoothSubSampleRate
+	global guiPPsmoothUseFourierSmooth
+	global guiPPsmoothNumFourierModes
+	global guiPPsmoothTargetPathID
+	set guiPPsmoothSubSampleRate 1
+	set guiPPsmoothUseFourierSmooth 1
+	set guiPPsmoothNumFourierModes 300
+	set guiPPsmoothTargetPathID $maxid
+	guiPPsmoothSmoothPath
+
+	lappend pathIdList $maxid
+	incr maxid
+      }
+    }
   }
+  return $pathIdList
 }
 
 proc guiSV_model_add_to_backup_list {kernel model} {
@@ -2962,6 +3277,7 @@ proc guiSV_model_add_to_backup_list {kernel model} {
       }
       model_add $name $facename $facename
       $tv insert .models.$kernel.$name end -id .models.$kernel.$name.$facename -text "$facename"
+      guiSV_model_set_col_value $kernel.$name.$facename 1 $id
     }
   }
 
@@ -2982,7 +3298,7 @@ proc guiSV_model_update_view_model {kernel model} {
   set tv $symbolicName(guiSV_model_tree)
 
   set hasfaces 0
-  if {$kernel == "Parasolid"} {
+  if {$kernel == "Parasolid" || $kernel == "OpenCASCADE"} {
     set hasfaces 1
   } elseif {$kernel == "PolyData"} {
     if [guiSV_model_check_array_exists $model 1 "ModelFaceID"] {
@@ -3030,6 +3346,12 @@ proc guiSV_model_update_view_model {kernel model} {
       set faceids [$model GetFaceIds]
       foreach id $faceids {
 	set gDiscreteModelFaceNames($id) [model_idface $kernel $model $id]
+      }
+    } elseif {$kernel == "OpenCASCADE"} {
+      catch {unset gOCCTFaceNames}
+      set faceids [$model GetFaceIds]
+      foreach id $faceids {
+	set gOCCTFaceNames($id) [model_idface $kernel $model $id]
       }
     }
     set faces [model_get $model]
@@ -3146,7 +3468,7 @@ proc guiSV_model_undo {} {
   guiSV_model_delete_model $kernel $model
 }
 
-proc guiSV_model_create_polydata_solid_from_parasolid {} {
+proc guiSV_model_create_polydata_solid_from_nurbs {} {
   global guiTRIMvars
   global symoblicName
   global gOptions
@@ -3155,18 +3477,25 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
 
   set model [guiSV_model_get_tree_current_models_selected]
   if {[llength $model] != 1} {
-    return -code error "ERROR: Only one model allowed to create Discrete at a time"
+    return -code error "ERROR: Must select model from tree and only one allowed to create Discrete at a time"
   }
-  if {$gKernel($model) != "Parasolid"} {
-    return -code error "ERROR: Must use a Parasolid model to create PolyData Model"
+  puts $gKernel($model)
+  if {!($gKernel($model) == "Parasolid" || $gKernel($model) == "OpenCASCADE")} {
+    return -code error "ERROR: Must use  a Parasolid or OpenCASCADE model to create PolyData Model"
   }
   set kernel $gKernel($model)
   set modelpd /tmp/models/$kernel/$model
-  solid_setKernel -name Parasolid
+  solid_setKernel -name $kernel
   if {[repos_exists -obj $modelpd] == 1} {
     catch {repos_delete -obj $modelpd}
   }
-  $model GetPolyData -result $modelpd -max_edge_size $guiSVvars(facet_max_edge_size)
+  set facet_metric 1.0
+  if {$kernel == "Parasolid"} {
+    set facet_metric $guiSVvars(facet_max_edge_size)
+  } elseif {$kernel == "OpenCASCADE"} {
+    set facet_metric $gOptions(facet_max_angle_dev)
+  }
+  $model GetPolyData -result $modelpd -max_edge_size $facet_metric
 
   set facevtklist {}
   set facenames {}
@@ -3178,7 +3507,7 @@ proc guiSV_model_create_polydata_solid_from_parasolid {} {
     if {[repos_exists -obj $facepd] == 1} {
       catch {repos_delete -obj $facepd}
     }
-    $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
+    $model GetFacePolyData -face $faceid -result $facepd -max_edge_size $facet_metric
     lappend facevtklist $facepd
     lappend idlist $faceid
   }
@@ -3241,7 +3570,7 @@ proc guiSV_model_name_faces_from_reference {newmodel refmodel} {
     if {[repos_exists -obj $facepd] == 1} {
       catch {repos_delete -obj $facepd}
     }
-    $refmodel GetFacePolyData -face $faceid -result $facepd -max_edge_size $guiSVvars(facet_max_edge_size)
+    $refmodel GetFacePolyData -face $faceid -result $facepd -max_edge_size $facet_metric
     lappend facevtklist $facepd
     lappend idlist $faceid
   }
