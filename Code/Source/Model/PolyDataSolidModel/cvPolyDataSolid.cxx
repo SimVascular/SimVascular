@@ -108,6 +108,7 @@ cvPolyDataSolid::cvPolyDataSolid( const cvPolyDataSolid& sm)
 	: cvSolidModel( SM_KT_POLYDATA)
 {
   geom_ = NULL;
+  numBoundaryRegions=0;
   Copy( sm );
 }
 
@@ -136,6 +137,7 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
 
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(solidPtr->geom_);
+  numBoundaryRegions = solidPtr->numBoundaryRegions;
 
   return CV_OK;
 }
@@ -162,9 +164,9 @@ int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
 
   if (PlyDtaUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == CV_OK)
   {
-    int **faceIds;
-    int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, faceIds);
-    delete [] *faceIds;
+    int *faceIds;
+    int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, &faceIds);
+    delete [] faceIds;
   }
 
   return CV_OK;
