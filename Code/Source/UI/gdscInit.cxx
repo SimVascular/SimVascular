@@ -59,9 +59,7 @@
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_init.h"
 
-#ifndef EXCLUDE_SOLID_MODEL
-  #include "cv_solid_init.h"
-#endif
+#include "cv_solid_init.h"
 
 #ifdef USE_MESHSIM
   #include "cv_mesh_init.h"
@@ -213,12 +211,10 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-#ifndef EXCLUDE_SOLID_MODEL
   if ( Solid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Solid_Init\n" );
     return TCL_ERROR;
   }
-#endif
 
   if ( PolyDataSolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on PolyDataSolid_Init\n" );
