@@ -39,21 +39,21 @@ set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 
 #-----------------------------------------------------------------------------
 # Post Solver
-if(ThreeDSolver_BUILD_svPost)
+if(SV_THREEDSOLVER_USE_SVPOST)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
-	set(ThreeDSolver_BUILD_SolverIO ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
 #-----------------------------------------------------------------------------
 # SolverIO
-if(ThreeDSolver_BUILD_SolverIO)
+if(SV_THREEDSOLVER_USE_SOLVERIO)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
 endif()
 #-----------------------------------------------------------------------------
 # Presolver
-if(ThreeDSolver_BUILD_svPre)
+if(SV_THREEDSOLVER_USE_SVPOST)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
-	set(ThreeDSolver_BUILD_SolverIO ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
 if(SV_USE_DUMMY_MPICH2)
@@ -67,19 +67,19 @@ dev_message("Flowsolver Header Path:  ${FLOWSOLVER_OPTIONS_HEADER_PATH}" )
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 message(STATUS "${INDENTS}ThreeDSolver Options")
-if((ThreeDSolver_USE_CORONARY EQUAL 0) AND (ThreeDSolver_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
+if((SV_THREEDSOLVER_USE_CORONARY EQUAL 0) AND (SV_THREEDSOLVER_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
   MESSAGE(STATUS "${INDENTS}    Compiling baseline version")
 endif()
-if(ThreeDSolver_USE_CORONARY)
+if(SV_THREEDSOLVER_USE_CORONARY)
   MESSAGE(STATUS "${INDENTS}    Activating coronary bc feature")
 endif()
-if(ThreeDSolver_USE_CLOSEDLOOP)
+if(SV_THREEDSOLVER_USE_CLOSEDLOOP)
   MESSAGE(STATUS "${INDENTS}    Activating closed loop bc feature")
 endif()
-if(ThreeDSolver_USE_VARWALL)
+if(SV_THREEDSOLVER_USE_VARWALL)
   MESSAGE(STATUS "${INDENTS}    Activating variable wall feature")
 endif()
-if(ThreeDSolver_USE_VTK)
+if(SV_THREEDSOLVER_USE_VTK)
   MESSAGE(STATUS "${INDENTS}    Activating using VTK feature")
 endif()
 

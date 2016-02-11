@@ -56,8 +56,8 @@ set(${proj}_HEADER "tetgen.h")
 # Find Libraries
 #-----------------------------------------------------------------------------
 # Set paths to search for parasolid
-set(${proj}_PATH "${SV_SV_EXTERN_OpenLibs_BIN_DIR}/tetgen-1.5.0/")
-set(${proj}_PATH2 "${SV_SV_EXTERN_OpenLibs_BIN_DIR}/tetgen-1.4.3/")
+set(${proj}_PATH "${SV_EXTERN_OPEN_BIN_DIR}/tetgen-1.5.0/")
+set(${proj}_PATH2 "${SV_EXTERN_OPEN_BIN_DIR}/tetgen-1.4.3/")
 if(LINUX)
 	set(lib_sub_path "")
 elseif(APPLE)

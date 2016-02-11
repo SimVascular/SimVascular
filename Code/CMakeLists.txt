@@ -169,7 +169,7 @@ mark_as_superbuild(SV_ONLY_BUILD_FLOWSOLVER)
 mark_as_superbuild(SV_SUPPRESS_WARNINGS)
 
 if(SV_ONLY_BUILD_FLOWSOLVER)
-	set(SV_USE_3DSOLVER ON)
+	set(SV_USE_THREEDSOLVER ON)
 endif()
 
 if(WIN32)
@@ -181,7 +181,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # FlowSolver Options
-if(SV_USE_3DSOLVER)
+if(SV_USE_THREEDSOLVER)
 
 endif()
 
@@ -218,7 +218,7 @@ endif()
 
 if(Plugin_TET_ADAPTOR)
 	#set(SV_USE_FORTRAN ON)
-	set(SV_USE_3DSOLVER ON)
+	set(SV_USE_THREEDSOLVER ON)
 endif()
 
 option(SV_BUILD_SHARED_VTK "Buiild vtk libraries as shared libs" OFF)
@@ -237,7 +237,7 @@ option(Licensed_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
 mark_as_superbuild(Licensed_ADAPTOR)
 
 if(Licensed_ADAPTOR)
-	set(SV_USE_3DSOLVER ON)
+	set(SV_USE_THREEDSOLVER ON)
 	set(Licensed_MESHSIM ON)
 endif()
 
@@ -290,44 +290,44 @@ mark_as_superbuild(MESHSIM_EMBED_LICENSE_KEYS:BOOL)
 #-----------------------------------------------------------------------------
 # Solver Build Options (Modules)
 #-----------------------------------------------------------------------------
-option(SV_USE_3DSOLVER "Option to build flowsolver modules (requires Fortran)" OFF)
-if(SV_USE_3DSOLVER)
-	#option(SV_USE_3DSOLVER "Option to build 3D-solver module (requires Fortran)" ON)
-	option(ThreeDSolver_BUILD_SolverIO "Option to build solverIO module (requires Fortran)" ON)
-	option(ThreeDSolver_BUILD_svPre "Option to build Pre-solver module (requires Fortran)" ON)
-	option(ThreeDSolver_BUILD_svPost "Option to build post-solver module" ON)
-	option(ThreeDSolver_SOLVER_IO_REDIRECT "Option to redirect solver IO" OFF)
-	option(ThreeDSolver_USE_CORONARY "" ON)
-	option(ThreeDSolver_USE_CLOSEDLOOP "" ON)
-	option(ThreeDSolver_USE_VARWALL "" ON)
-	option(ThreeDSolver_USE_VTK "" OFF)
+option(SV_USE_THREEDSOLVER "Option to build flowsolver modules (requires Fortran)" OFF)
+if(SV_USE_THREEDSOLVER)
+	#option(SV_USE_THREEDSOLVER "Option to build 3D-solver module (requires Fortran)" ON)
+	option(SV_THREEDSOLVER_USE_SOLVERIO "Option to build solverIO module (requires Fortran)" ON)
+	option(SV_THREEDSOLVER_USE_SVPRE "Option to build Pre-solver module (requires Fortran)" ON)
+	option(SV_THREEDSOLVER_USE_SVPOST "Option to build post-solver module" ON)
+	option(SV_THREEDSOLVER_SOLVERIO_REDIRECT "Option to redirect solver IO" OFF)
+	option(SV_THREEDSOLVER_USE_CORONARY "" ON)
+	option(SV_THREEDSOLVER_USE_CLOSEDLOOP "" ON)
+	option(SV_THREEDSOLVER_USE_VARWALL "" ON)
+	option(SV_THREEDSOLVER_USE_VTK "" OFF)
 endif()
-mark_as_superbuild(SV_USE_3DSOLVER)
-mark_as_superbuild(ThreeDSolver_BUILD_SolverIO)
-mark_as_superbuild(ThreeDSolver_BUILD_svPre)
-mark_as_superbuild(ThreeDSolver_BUILD_svPost)
-mark_as_superbuild(ThreeDSolver_USE_IO_REDIRECT)
-mark_as_superbuild(ThreeDSolver_USE_CORONARY)
-mark_as_superbuild(ThreeDSolver_USE_CLOSEDLOOP)
-mark_as_superbuild(ThreeDSolver_USE_VARWALL)
-mark_as_superbuild(ThreeDSolver_USE_VTK)
+mark_as_superbuild(SV_USE_THREEDSOLVER)
+mark_as_superbuild(SV_THREEDSOLVER_USE_SOLVERIO)
+mark_as_superbuild(SV_THREEDSOLVER_USE_SVPRE)
+mark_as_superbuild(SV_THREEDSOLVER_USE_SVPOST)
+mark_as_superbuild(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
+mark_as_superbuild(SV_THREEDSOLVER_USE_CORONARY)
+mark_as_superbuild(SV_THREEDSOLVER_USE_CLOSEDLOOP)
+mark_as_superbuild(SV_THREEDSOLVER_USE_VARWALL)
+mark_as_superbuild(SV_THREEDSOLVER_USE_VTK)
 
 
 #-----------------------------------------------------------------------------
 # Linear Solver Options: SVLS
-if(SV_USE_3DSOLVER)
-	option(ThreeDSolver_USE_SVLS "Use svLS as linear solver" ON )
-	if(ThreeDSolver_USE_SVLS)
+if(SV_USE_THREEDSOLVER)
+	option(SV_THREEDSOLVER_USE_SVLS "Use svLS as linear solver" ON )
+	if(SV_THREEDSOLVER_USE_SVLS)
 		set(USE_SVLS 1)
 	endif()
-	mark_as_superbuild(ThreeDSolver_USE_SVLS)
+	mark_as_superbuild(SV_THREEDSOLVER_USE_SVLS)
 	set(SVLS_BUILD_TYPE "Source")
 
-	option(ThreeDSolver_USE_LESLIB "Use leslib as linear solver" OFF )
-	if(ThreeDSolver_USE_LESLIB)
+	option(SV_THREEDSOLVER_USE_LESLIB "Use leslib as linear solver" OFF )
+	if(SV_THREEDSOLVER_USE_LESLIB)
 		set(USE_LESLIB 1)
 	endif()
-	mark_as_superbuild(ThreeDSolver_USE_LESLIB)
+	mark_as_superbuild(SV_THREEDSOLVER_USE_LESLIB)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -651,7 +651,7 @@ if(Licensed_ADAPTOR)
 	set(USE_SVLS ON)
 	set(SV_USE_FORTRAN ON)
 	set(SV_USE_MPI ON)
-	set(SV_USE_3DSOLVER ON)
+	set(SV_USE_THREEDSOLVER ON)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -746,14 +746,14 @@ endif()
 
 #-----------------------------------------------------------------------------
 # ThreeD Solver
-if(SV_USE_3DSOLVER)
+if(SV_USE_THREEDSOLVER)
 	option(SV_USE_SPARSE "Use sparse Library" ON)
 	option(SV_USE_METIS "Use metis Library" ON)
 	option(SV_USE_NSPCG "Use nspcg Library" ON)
 	set(SV_USE_FORTRAN ON)
 	set(USE_SVLS ON)
 	set(SV_USE_MPI ON)
-	set(ThreeDSolver_BUILD_SolverIO ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 	#set(FLOWSOLVER_CONFIG_PATHS
 	#	"${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
 	# find config file
@@ -766,7 +766,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Solver IO
-if(ThreeDSolver_SOLVER_IO_REDIRECT)
+if(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DBUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT")
 endif()
 
@@ -780,7 +780,7 @@ if(USE_SVLS)
 	set(SV_USE_MPI ON)
 endif()
 
-if(ThreeDSolver_USE_LESLIB)
+if(SV_THREEDSOLVER_USE_LESLIB)
 	find_package(LESLIB REQUIRED)
 	mark_as_superbuild(VARS LESLIB_LIBRARY LESLIB_INCLUDE_DIR)
 endif()
@@ -855,7 +855,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable MPI
-if(SV_USE_MPI OR SV_USE_MPICH2)
+if(SV_USE_MPI OR USE_MPI)
 	set(SV_USE_MPI ON)
 	if (NOT SV_USE_DUMMY_MPICH2)
 		simvascular_external(MPI SYSTEM_DEFAULT SHARED_LIB)
@@ -1037,7 +1037,7 @@ endif()
 
 if(Plugin_TET_ADAPTOR)
 	#set(SV_USE_FORTRAN ON)
-	set(ThreeDSolver_BUILD_SolverIO ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
 
@@ -1112,7 +1112,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Add directories
 # Modules
-if(SV_USE_3DSOLVER)
+if(SV_USE_THREEDSOLVER)
 	add_subdirectory(FlowSolvers)
 endif()
 

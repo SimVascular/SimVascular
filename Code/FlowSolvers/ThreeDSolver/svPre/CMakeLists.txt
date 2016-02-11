@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -33,7 +33,7 @@ SET(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
 	presolver-vtk-cmds.cxx)
 
 # Add c++ sources for variable wall module
-if(ThreeDSolver_USE_VARWALL)
+if(SV_THREEDSOLVER_USE_VARWALL)
 	SET(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
 endif()
 
@@ -45,7 +45,7 @@ SET(CSRCS directsolve.c)
 SET(FSRCS stannspcg.f)
 
 # Add fortran sources for variable wall module
-if(ThreeDSolver_USE_VARWALL)
+if(SV_THREEDSOLVER_USE_VARWALL)
 	SET(FSRCS ${FSRCS} gmresfortran.f90)
 endif()
 
@@ -57,7 +57,7 @@ ADD_LIBRARY(presolver_fortran_lib ${FSRCS})
 
 simvascular_add_executable(${PRESOLVER_EXE}
 	SRCS ${CXXSRCS} ${CSRCS}
-	DEV_SCRIPT_NAME "mypre" 
+	DEV_SCRIPT_NAME "mypre"
 	INSTALL_SCRIPT_NAME "svpre"
 	INSTALL_COMPONENT ModuleExecutables
 	INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})

@@ -69,9 +69,9 @@ set(${proj}_HEADER "gp_Pnt.hxx")
 # Find Libraries
 #-----------------------------------------------------------------------------
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
-#if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
-#	set(${proj}_PATH "${SV_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.1/")
-#endif()
+if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
+	set(${proj}_PATH "${SV_EXTERN_OPEN_BIN_DIR}/opencascade-6.9.1/")
+endif()
 # Set paths to search for OpenCascade
 if(LINUX)
 	set(sub_path "lin64/gcc")
