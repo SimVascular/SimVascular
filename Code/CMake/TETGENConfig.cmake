@@ -26,7 +26,7 @@
 
 set(proj TETGEN)
 set(${proj}_NEEDED_LIBS tet)
-if(SimVascular_USE_SYSTEM_${proj})
+if(SV_USE_SYSTEM_${proj})
 
 	  #The two different available versions of tetgen
 	  set(TETGEN150 false)

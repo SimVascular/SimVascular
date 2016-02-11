@@ -32,8 +32,8 @@
 #define __simvascular_sparse_h
 
 /* Use the sparse library configured for SimVascular.  */
-#cmakedefine SimVascular_USE_SYSTEM_SPARSE
-#ifdef SimVascular_USE_SYSTEM_SPARSE
+#cmakedefine SV_USE_SYSTEM_SPARSE
+#ifdef SV_USE_SYSTEM_SPARSE
 #include <spMatrix.h>
 #else
 #include <simvascular_sparse/spMatrix.h>

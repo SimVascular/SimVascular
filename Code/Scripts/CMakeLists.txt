@@ -3,7 +3,7 @@ file(MAKE_DIRECTORY ${TEMP_DIR}/developer ${TEMP_DIR}/install)
 
 set(core_str)
 if(UNIX)
-	file(READ ${SimVascular_SOURCE_DIR}/Scripts/home-locate-linux.sh locate_script)
+	file(READ ${SV_SOURCE_DIR}/Scripts/home-locate-linux.sh locate_script)
 	set(core_str "${locate_script}\n")
 	set_env_string_concat(SIMVASCULAR_HOME "$DIR" core_str)
 endif()
@@ -73,9 +73,9 @@ foreach(lib ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
 		# If there is a DLL path associated with it, go ahead and add it to the scripts
 		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" developer_script_string)
 	endif()
-	dev_message("SimVascular_USE_SYSTEM_${lib} ${SimVascular_USE_SYSTEM_${lib}}")
+	dev_message("SV_USE_SYSTEM_${lib} ${SV_USE_SYSTEM_${lib}}")
 	# on unix systems we only need this path if its installed (moved)
-	if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_${lib})
+	if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${lib})
 		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
 		if(SIMVASCULAR_INSTALL_${lib}_LIBRARY_DIR)
 			#if there is an install library directory, add it to the path for installation, it will be installed there.
@@ -104,13 +104,13 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/$
 	# 					Value='[INSTALL_ROOT]\\@SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR@'
 	# 					Permanent='yes' Part='last' Action='set' System='yes' />")
 
-if(SimVascular_USE_TKCXIMAGE)
+if(SV_USE_TKCXIMAGE)
 	if(TKCXIMAGE_DLL)
 		set_env_string_concat(TKCXIMAGE_DLL "${TKCXIMAGE_DLL}" developer_script_string)
 	endif()
 endif()
 
-if(NOT SimVascular_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
+if(NOT SV_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
 	#Lib additions
 	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.5" developer_script_string)
 	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.5" developer_script_string)
@@ -120,7 +120,7 @@ endif()
 
 #--------
 # Python
-if(SimVascular_USE_PYTHON)
+if(SV_USE_PYTHON)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python/vtk" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/bin" developer_script_string)
@@ -134,13 +134,13 @@ if(SimVascular_USE_PYTHON)
 endif()
 #--------
 # Tcl is VTK built as shared
-if(SimVascular_BUILD_SHARED_VTK)
+if(SV_BUILD_SHARED_VTK)
 	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
 	set_env_string_concat(TCLLIBPATH "${ENV_SIMVASCULAR_HOME}/lib/tcltk/vtk-6.2" install_script_string)
 endif()
 
 
-configure_file(${SimVascular_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
+configure_file(${SV_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
 set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")
 set(PREAMBLE_INSTALL_FILE "${TEMP_DIR}/install-preample")
 set(EXE_FILE_STRING "")
@@ -154,7 +154,7 @@ file(APPEND ${PREAMBLE_INSTALL_FILE} "${install_script_string}\n")
 set(SCRIPT_FILES "${TEMP_DIR}/\@mode\@-preample")
 
 # CHANGE FOR EXECUTABLE RENAME REMOVE
-set(SCRIPT_FILES ${SCRIPT_FILES} "${SimVascular_SOURCE_DIR}/Scripts/executable/\@mode\@/\@tar\@-\@OSTYPE\@.in")
+set(SCRIPT_FILES ${SCRIPT_FILES} "${SV_SOURCE_DIR}/Scripts/executable/\@mode\@/\@tar\@-\@OSTYPE\@.in")
 
 unset(GDB)
 unset(GDB_FLAGS)
@@ -188,5 +188,5 @@ if(UNIX)
 	#install(CODE "execute_process(COMMAND \"${INSTALL_SYMLINK_FILE}\"")")
 endif()
 if(BUILD_TESTING)
-	configure_file(executable_names.tcl.in ${SimVascular_TEST_DIR}/common/executable_names.tcl)
+	configure_file(executable_names.tcl.in ${SV_TEST_DIR}/common/executable_names.tcl)
 endif()

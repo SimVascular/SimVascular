@@ -56,7 +56,7 @@ set(${proj}_HEADER "metis.h")
 # Find Libraries
 #-----------------------------------------------------------------------------
 # Set paths to search for parasolid
-set(${proj}_PATH "${SimVascular_SV_EXTERN_OpenLibs_BIN_DIR}/metis-4.0.1/")
+set(${proj}_PATH "${SV_EXTERN_OpenLibs_BIN_DIR}/metis-4.0.1/")
 if(LINUX)
 	set(lib_sub_path "")
 elseif(APPLE)

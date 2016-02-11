@@ -47,7 +47,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
 
   if(LINUX)
-    set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/intel-runtime-linux_x64-2013.1.117.tar.gz" CACHE
+    set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/intel-runtime-linux_x64-2013.1.117.tar.gz" CACHE
      STRING "Location of ${proj}, can be web address or local path")
   elseif(APPLE)
     MESSAGE(STATUS "INTEL runtime is not needed on mac os")

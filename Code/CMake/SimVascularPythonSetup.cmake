@@ -39,21 +39,21 @@ macro(py_cmd)
 	endif()
 endmacro()
 
-set(SIMVASCULAR_NO_RENDERER 0)
-mark_as_superbuild(SIMVASCULAR_NO_RENDERER)
+set(SV_NO_RENDERER 0)
+mark_as_superbuild(SV_NO_RENDERER)
 
-if(NOT SimVascular_SUPERBUILD)
+if(NOT SV_SUPERBUILD)
 	py_cmd(CODE "puts \"[clock seconds]\""
 		OUTPUT_VARIABLE SIMVASCULAR_TIMESTAMP)
 	
-	set(SimVascular_SOURCE_PYTHON_DIR ${SimVascular_SOURCE_HOME}/Python)
-	set(SimVascular_BINARY_PYTHON_DIR ${SimVascular_BINARY_HOME}/Python)
-	set(SimVascular_PYTHON ${SimVascular_BINARY_PYTHON_DIR})
+	set(SV_SOURCE_PYTHON_DIR ${SV_SOURCE_HOME}/Python)
+	set(SV_BINARY_PYTHON_DIR ${SV_BINARY_HOME}/Python)
+	set(SV_PYTHON ${SV_BINARY_PYTHON_DIR})
 	add_custom_target(copy-py ALL)
 	add_custom_command(TARGET copy-py POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SimVascular_BINARY_PYTHON_DIR}
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${SimVascular_BINARY_PYTHON_DIR}
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SimVascular_SOURCE_PYTHON_DIR} ${SimVascular_BINARY_PYTHON_DIR}
+		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_PYTHON_DIR}
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_PYTHON_DIR}
+		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_PYTHON_DIR} ${SV_BINARY_PYTHON_DIR}
 		COMMENT "Copying Python Directory..."
 		)
 	

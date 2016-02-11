@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# Image 
+# Image
 #-----------------------------------------------------------------------------
 
 set(lib lib_simvascular_globals)
@@ -12,7 +12,7 @@ set(HDRS cv_globals.h)
 
 add_library(${lib} ${CXXSRCS})
 
-target_link_libraries(${lib} 
+target_link_libraries(${lib}
    ${GLOBAL_LIBRARIES})
 
 if(SIMVASCULAR_INSTALL_LIBS)

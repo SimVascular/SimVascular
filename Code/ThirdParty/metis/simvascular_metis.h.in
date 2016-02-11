@@ -32,8 +32,8 @@
 #define __simvascular_metis_h
 
 /* Use the metis library configured for SimVascular.  */
-#cmakedefine SimVascular_USE_SYSTEM_METIS
-#ifdef SimVascular_USE_SYSTEM_METIS
+#cmakedefine SV_USE_SYSTEM_METIS
+#ifdef SV_USE_SYSTEM_METIS
 # include <metis.h>
 #else
 #include <simvascular_metis/Lib/metis.h>

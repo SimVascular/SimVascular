@@ -57,10 +57,10 @@ if(APPLE)
 	set(LicensedLibs_Bin_REL_PATH "/licensed/")
 endif()
 
-set(SimVascular_SV_EXTERN_OpenLibs_BIN_DIR 
+set(SV_SV_EXTERN_OpenLibs_BIN_DIR 
 	${SV_EXTERN_DEFAULT}/${OpenLibs_Bin_REL_PATH} CACHE PATH "Location of")
-mark_as_superbuild(SimVascular_SV_EXTERN_OpenLibs_BIN_DIR)
+mark_as_superbuild(SV_SV_EXTERN_OpenLibs_BIN_DIR)
 
-set(SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR 
+set(SV_SV_EXTERN_LicensedLibs_BIN_DIR 
 	${SV_EXTERN_DEFAULT}/${LicensedLibs_Bin_REL_PATH} CACHE PATH "Location of")
-mark_as_superbuild(SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR)
+mark_as_superbuild(SV_SV_EXTERN_LicensedLibs_BIN_DIR)

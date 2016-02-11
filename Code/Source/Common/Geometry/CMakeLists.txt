@@ -70,7 +70,7 @@ SET(HDRS cv_sys_geom.h cv_ggems.h
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h
 	vtkConstrainedBlend.h)
 
-if(SimVascular_USE_GTS)
+if(SV_USE_GTS)
 	SET(CXXSRCS  ${CXXSRCS} vtkSurfaceBooleanOperations.cxx)
 	SET(HDRS  ${HDRS} vtkSurfaceBooleanOperations.h)
 endif()
@@ -104,14 +104,14 @@ target_link_libraries(${lib}
 	lib_simvascular_solid lib_simvascular_globals
 	)
 
-if(SimVascular_USE_GLIB)
+if(SV_USE_GLIB)
 	include_directories(${GLIB_INCLUDE_PATH})
 	target_link_libraries(${lib}
 		${GLIB_LIBRARY}
 		)
 endif()
 
-if(SimVascular_USE_GTS)
+if(SV_USE_GTS)
 	include_directories(${GTS_INCLUDE_PATH})
 	target_link_libraries(${lib}
 		${GTS_LIBRARY}

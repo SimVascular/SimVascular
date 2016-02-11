@@ -49,19 +49,19 @@ macro(tcl_cmd)
 	endif()
 endmacro()
 
-if(NOT SimVascular_SUPERBUILD)
+if(NOT SV_SUPERBUILD)
 	set(TCL_CONFIG_FILES)
 	tcl_cmd(CODE "puts \"[clock seconds]\""
 		OUTPUT_VARIABLE SIMVASCULAR_TIMESTAMP)
 	
-	set(SimVascular_SOURCE_TCL_DIR ${SimVascular_SOURCE_HOME}/Tcl)
-	set(SimVascular_BINARY_TCL_DIR ${SimVascular_BINARY_HOME}/Tcl)
-	set(SimVascular_TCL ${SimVascular_BINARY_TCL_DIR})
+	set(SV_SOURCE_TCL_DIR ${SV_SOURCE_HOME}/Tcl)
+	set(SV_BINARY_TCL_DIR ${SV_BINARY_HOME}/Tcl)
+	set(SV_TCL ${SV_BINARY_TCL_DIR})
 	add_custom_target(copy-tcl ALL)
 	add_custom_command(TARGET copy-tcl POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SimVascular_BINARY_TCL_DIR}
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${SimVascular_BINARY_TCL_DIR}
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SimVascular_SOURCE_TCL_DIR} ${SimVascular_BINARY_TCL_DIR}
+		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_TCL_DIR}
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_TCL_DIR}
+		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_TCL_DIR} ${SV_BINARY_TCL_DIR}
 		COMMENT "Copying Tcl Directory..."
 		)
 	
@@ -78,7 +78,7 @@ if(NOT SimVascular_SUPERBUILD)
 	foreach(tcl_file ${TCL_CONFIG_FILES})
 		dev_message("Configuring ${tcl_file}")
 		add_custom_command(TARGET copy-tcl POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SimVascular_BINARY_TCL_DIR}
+			COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SV_BINARY_TCL_DIR}
 			COMMENT "Copying ${tcl_file}..."
 			)
 		add_dependencies(copy-tcl ${tcl_file})

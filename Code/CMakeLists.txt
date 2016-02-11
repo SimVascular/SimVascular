@@ -16,8 +16,8 @@ endif()
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 	"${CMAKE_MODULE_PATH}")
 
-set(EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
-set(EXTERNAL_PROJECT_FILE_PREFIX "")
+set(SV_EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
+set(SV_EXTERNAL_PROJECT_FILE_PREFIX "")
 include(ExternalProject)
 include(ExternalProjectDependency)
 
@@ -37,15 +37,15 @@ if(APPLE)
 endif()
 #-----------------------------------------------------------------------------
 # Developer flag (Output extra info during configure)
-option(SimVascular_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)
-mark_as_superbuild(SimVascular_DEVELOPER_OUTPUT)
+option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)
+mark_as_superbuild(SV_DEVELOPER_OUTPUT)
 #-----------------------------------------------------------------------------
 # Include Macros
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
 
 #-----------------------------------------------------------------------------
-Project(SimVascular)
+Project(SV)
 #-----------------------------------------------------------------------------
 if(APPLE)
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/lib")
@@ -66,23 +66,23 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Superbuild Option
-option(SimVascular_SUPERBUILD
+option(SV_SUPERBUILD
 	"Build ${PROJECT_NAME} and the projects it depends on.
 	This must be turn on if your wish to download any packages." ON)
 
-set(SuperBuild_Libraries_Dir "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
-mark_as_superbuild(SuperBuild_Libraries_Dir)
+set(SV_SUPERBUILD_LIBS_DIR "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
+mark_as_superbuild(SV_SUPERBUILD_LIBS_DIR)
 
-if (SIMVASCULAR_NO_RENDERER)
+if (SV_NO_RENDERER)
 	# Needs to be 1 not 'true'
-	set(SIMVASCULAR_NO_RENDERER 1)
-	mark_as_superbuild(SIMVASCULAR_NO_RENDERER)
+	set(SV_NO_RENDERER 1)
+	mark_as_superbuild(SV_NO_RENDERER)
 endif()
 
 #-----------------------------------------------------------------------------
 # unset NEED variables
-unset(USE_Fortran)
-unset(USE_MPI)
+unset(SV_USE_FORTRAN)
+unset(SV_USE_MPI)
 unset(USE_INTEL)
 unset(USE_SVLS)
 
@@ -132,12 +132,12 @@ mark_as_superbuild(VARS BUILD_SHARED_LIBS ALL_PROJECTS)
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
-	file(TO_NATIVE_PATH "${SimVascular_BINARY_DIR}/Doxygen/" SimVascular_DOCS_DIR_WORK)
-	set(SimVascular_DOCS_DIR ${SimVascular_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
-	configure_file(${SimVascular_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
-		${SimVascular_BINARY_DIR}/simvascular.Doxyfile @ONLY)
+	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
+	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
+	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
+		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
 	add_custom_target(doc
-		${DOXYGEN_EXECUTABLE} ${SimVascular_BINARY_DIR}/simvascular.Doxyfile
+		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		COMMENT "Generating API documentation with Doxygen" VERBATIM
 		)
@@ -162,44 +162,44 @@ endif()
 
 #-----------------------------------------------------------------------------
 # SimVascular Build options
-option(SimVascular_ONLY_BUILD_FLOWSOLVER "Option ONLY build the 3D Solver (No GUI)" OFF)
-option(SimVascular_SUPPRESS_WARNINGS "Option to suppress all compiler warnings while compiling" ON)
+option(SV_ONLY_BUILD_FLOWSOLVER "Option ONLY build the 3D Solver (No GUI)" OFF)
+option(SV_SUPPRESS_WARNINGS "Option to suppress all compiler warnings while compiling" ON)
 
-mark_as_superbuild(SimVascular_ONLY_BUILD_FLOWSOLVER)
-mark_as_superbuild(SimVascular_SUPPRESS_WARNINGS)
+mark_as_superbuild(SV_ONLY_BUILD_FLOWSOLVER)
+mark_as_superbuild(SV_SUPPRESS_WARNINGS)
 
-if(SimVascular_ONLY_BUILD_FLOWSOLVER)
-	set(BUILD_ThreeDSolver ON)
+if(SV_ONLY_BUILD_FLOWSOLVER)
+	set(SV_USE_3DSOLVER ON)
 endif()
 
 if(WIN32)
-	option(SimVascular_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
+	option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
 
-	mark_as_advanced(SimVascular_USE_WIN32_REGISTRY)
-	mark_as_superbuild(SimVascular_USE_WIN32_REGISTRY:BOOL)
+	mark_as_advanced(SV_USE_WIN32_REGISTRY)
+	mark_as_superbuild(SV_USE_WIN32_REGISTRY:BOOL)
 endif()
 
 #-----------------------------------------------------------------------------
 # FlowSolver Options
-if(BUILD_ThreeDSolver)
+if(SV_USE_3DSOLVER)
 
 endif()
 
 #-----------------------------------------------------------------------------
 # General Library Options
-option(SimVascular_USE_ZLIB "Use ZLib" ON)
-option(SimVascular_USE_MPICH2 "Use MPICH2" ON)
-option(SimVascular_USE_DUMMY_MPICH2 "Use Dummy MPICH2" OFF)
-option(SimVascular_USE_MSMPI "Use MSMPI" OFF)
-mark_as_superbuild(SimVascular_USE_ZLIB)
-mark_as_superbuild(SimVascular_USE_MPICH2)
-mark_as_superbuild(SimVascular_USE_DUMMY_MPICH2)
-mark_as_superbuild(SimVascular_USE_MSMPI)
+option(SV_USE_ZLIB "Use ZLib" ON)
+option(SV_USE_MPICH2 "Use MPICH2" ON)
+option(SV_USE_DUMMY_MPICH2 "Use Dummy MPICH2" OFF)
+option(SV_USE_MSMPI "Use MSMPI" OFF)
+mark_as_superbuild(SV_USE_ZLIB)
+mark_as_superbuild(SV_USE_MPICH2)
+mark_as_superbuild(SV_USE_DUMMY_MPICH2)
+mark_as_superbuild(SV_USE_MSMPI)
 
-option(SimVascular_USE_GLIB "Use GLIB Library" OFF)
-option(SimVascular_USE_GTS "Use GTS Library" OFF)
-mark_as_superbuild(SimVascular_USE_GLIB)
-mark_as_superbuild(SimVascular_USE_GTS)
+option(SV_USE_GLIB "Use GLIB Library" OFF)
+option(SV_USE_GTS "Use GTS Library" OFF)
+mark_as_superbuild(SV_USE_GLIB)
+mark_as_superbuild(SV_USE_GTS)
 
 #-----------------------------------------------------------------------------
 # Plugins
@@ -217,17 +217,17 @@ if(Plugin_TETGEN)
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	#set(USE_Fortran ON)
-	set(BUILD_ThreeDSolver ON)
+	#set(SV_USE_FORTRAN ON)
+	set(SV_USE_3DSOLVER ON)
 endif()
 
-option(SimVascular_BUILD_SHARED_VTK "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(SimVascular_BUILD_SHARED_VTK)
+option(SV_BUILD_SHARED_VTK "Buiild vtk libraries as shared libs" OFF)
+mark_as_superbuild(SV_BUILD_SHARED_VTK)
 
-option(SimVascular_USE_PYTHON "Use Tcl Python" OFF)
-mark_as_superbuild(SimVascular_USE_PYTHON)
-if(SimVascular_USE_PYTHON)
-  set(SimVascular_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
+option(SV_USE_PYTHON "Use Tcl Python" OFF)
+mark_as_superbuild(SV_USE_PYTHON)
+if(SV_USE_PYTHON)
+  set(SV_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -237,7 +237,7 @@ option(Licensed_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
 mark_as_superbuild(Licensed_ADAPTOR)
 
 if(Licensed_ADAPTOR)
-	set(BUILD_ThreeDSolver ON)
+	set(SV_USE_3DSOLVER ON)
 	set(Licensed_MESHSIM ON)
 endif()
 
@@ -246,10 +246,10 @@ endif()
 option(Plugin_OPENCASCADE "OPENCASCADE" OFF)
 mark_as_superbuild(Plugin_OPENCASCADE)
 if(Plugin_OPENCASCADE)
-  set(SimVascular_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
+  set(SV_BUILD_SHARED_VTK "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
-if(SimVascular_BUILD_SHARED_VTK)
+if(SV_BUILD_SHARED_VTK)
   if(UNIX AND NOT APPLE)
   	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
   endif()
@@ -290,9 +290,9 @@ mark_as_superbuild(MESHSIM_EMBED_LICENSE_KEYS:BOOL)
 #-----------------------------------------------------------------------------
 # Solver Build Options (Modules)
 #-----------------------------------------------------------------------------
-option(BUILD_ThreeDSolver "Option to build flowsolver modules (requires Fortran)" OFF)
-if(BUILD_ThreeDSolver)
-	#option(BUILD_ThreeDSolver "Option to build 3D-solver module (requires Fortran)" ON)
+option(SV_USE_3DSOLVER "Option to build flowsolver modules (requires Fortran)" OFF)
+if(SV_USE_3DSOLVER)
+	#option(SV_USE_3DSOLVER "Option to build 3D-solver module (requires Fortran)" ON)
 	option(ThreeDSolver_BUILD_SolverIO "Option to build solverIO module (requires Fortran)" ON)
 	option(ThreeDSolver_BUILD_svPre "Option to build Pre-solver module (requires Fortran)" ON)
 	option(ThreeDSolver_BUILD_svPost "Option to build post-solver module" ON)
@@ -302,7 +302,7 @@ if(BUILD_ThreeDSolver)
 	option(ThreeDSolver_USE_VARWALL "" ON)
 	option(ThreeDSolver_USE_VTK "" OFF)
 endif()
-mark_as_superbuild(BUILD_ThreeDSolver)
+mark_as_superbuild(SV_USE_3DSOLVER)
 mark_as_superbuild(ThreeDSolver_BUILD_SolverIO)
 mark_as_superbuild(ThreeDSolver_BUILD_svPre)
 mark_as_superbuild(ThreeDSolver_BUILD_svPost)
@@ -315,7 +315,7 @@ mark_as_superbuild(ThreeDSolver_USE_VTK)
 
 #-----------------------------------------------------------------------------
 # Linear Solver Options: SVLS
-if(BUILD_ThreeDSolver)
+if(SV_USE_3DSOLVER)
 	option(ThreeDSolver_USE_SVLS "Use svLS as linear solver" ON )
 	if(ThreeDSolver_USE_SVLS)
 		set(USE_SVLS 1)
@@ -334,7 +334,7 @@ endif()
 # Start Configuration Steps and Second Generation Options
 #-----------------------------------------------------------------------------
 # Compiler Flags
-if(SimVascular_SUPPRESS_WARNINGS)
+if(SV_SUPPRESS_WARNINGS)
 	add_definitions("-w")
 endif()
 if(LINUX)
@@ -467,7 +467,7 @@ mark_as_superbuild(
 
 #-----------------------------------------------------------------------------
 # PYTHON
-if(SimVascular_USE_PYTHON)
+if(SV_USE_PYTHON)
 	find_package(PythonLibs REQUIRED)
 	mark_as_superbuild(
 		PYTHONLIBS_FOUND
@@ -493,7 +493,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK
-set(SimVascular_DEPENDS "TCL")
+set(SV_DEPENDS "TCL")
 simvascular_external(VTK DOWNLOADABLE
 	COMPONENTS
         vtkFiltersFlowPaths vtkWrappingTcl
@@ -506,9 +506,9 @@ endif()
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
 if(WIN32)
-	option(SimVascular_USE_TKCXIMAGE "Use TKCXImage (Legacy)" OFF)
-	mark_as_superbuild(SimVascular_USE_TKCXIMAGE)
-	if(SimVascular_USE_TKCXIMAGE)
+	option(SV_USE_TKCXIMAGE "Use TKCXImage (Legacy)" OFF)
+	mark_as_superbuild(SV_USE_TKCXIMAGE)
+	if(SV_USE_TKCXIMAGE)
 		find_library(TKCXIMAGE_DLL tkcximage)
 		if(TKCXIMAGE_DLL)
 			set(TKCXIMAGE_DLL_LIBRARY ${TKCXIMAGE_DLL})
@@ -522,10 +522,10 @@ endif()
 
 #-----------------------------------------------------------------------------
 # ZLIB
-if(SimVascular_USE_ZLIB)
+if(SV_USE_ZLIB)
 	SET(USE_ZLIB ON)
 	simvascular_third_party(zlib)
-	if(NOT SimVascular_USE_SYSTEM_ZLIB)
+	if(NOT SV_USE_SYSTEM_ZLIB)
 		set(ZLIB_LIBRARY lib_simvascular_zlib)
 	else()
 		find_package(ZLIB)
@@ -543,7 +543,7 @@ endif()
 if(Plugin_TETGEN)
 	SET(USE_TETGEN ON)
 	simvascular_third_party(tetgen)
-	if(NOT SimVascular_USE_SYSTEM_TETGEN)
+	if(NOT SV_USE_SYSTEM_TETGEN)
 		set(TETGEN_VERSION "1.5.1")
 		set(TETGEN_LIBRARY lib_simvascular_tet)
 	else()
@@ -584,7 +584,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugin LevelSets
 if(Plugin_ITK)
-	if(SimVascular_BUILD_SHARED_VTK)
+	if(SV_BUILD_SHARED_VTK)
 		set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} ITK)
 		set(SIMVASCULAR_INSTALL_HEADERS ON)
 		set(SIMVASCULAR_INSTALL_EXTERNALS ON)
@@ -617,13 +617,13 @@ endif()
 
 #-----------------------------------------------------------------------------
 # GTS
-if(SimVascular_USE_GTS)
+if(SV_USE_GTS)
 	simvascular_external(GTS DOWNLOADABLE SHARED_LIB)
-	set(SimVascular_USE_GLIB ON)
+	set(SV_USE_GLIB ON)
 	set(USE_GTS ON)
 endif()
 
-if(SimVascular_USE_GLIB)
+if(SV_USE_GLIB)
 	if(UNIX)
 		simvascular_external(GLIB SYSTEM_DEFAULT SHARED_LIB)
 	endif()
@@ -635,7 +635,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # OPENCASCADE
-if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
+if(NOT SV_EXCLUDE_SOLID_MODEL)
 	if(Plugin_OPENCASCADE)
 		#simvascular_third_party(opencascade)
 		simvascular_external(OPENCASCADE DOWNLOADABLE)
@@ -651,16 +651,16 @@ endif()
 #-----------------------------------------------------------------------------
 if(Licensed_ADAPTOR)
 	set(USE_SVLS ON)
-	set(USE_Fortran ON)
-	set(USE_MPI ON)
-	set(BUILD_ThreeDSolver ON)
+	set(SV_USE_FORTRAN ON)
+	set(SV_USE_MPI ON)
+	set(SV_USE_3DSOLVER ON)
 endif()
 
 #-----------------------------------------------------------------------------
 # Parasolid
-if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
+if(NOT SV_EXCLUDE_SOLID_MODEL)
 	if(Licensed_PARASOLID)
-			if(EXISTS ${SimVascular_SOURCE_DIR}/Licensed/ParasolidSolidModel/CMakeLists.txt)
+			if(EXISTS ${SV_SOURCE_DIR}/Licensed/ParasolidSolidModel/CMakeLists.txt)
 				simvascular_external(PARASOLID SYSTEM_DEFAULT SHARED_LIB)
 				if(WIN32)
 					set(SIMVASCULAR_EXTRA_PATHS ${SIMVASCULAR_EXTRA_PATHS} ${PARASOLID_DLL_PATH})
@@ -738,7 +738,7 @@ endif()
 message(STATUS "")
 #-----------------------------------------------------------------------------
 # GTS
-if(SimVascular_USE_GTS)
+if(SV_USE_GTS)
 	set(USE_GTS ON)
 	if(WINDOWS)
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DNATIVE_WIN32")
@@ -752,18 +752,18 @@ endif()
 
 #-----------------------------------------------------------------------------
 # ThreeD Solver
-if(BUILD_ThreeDSolver)
-	option(SimVascular_USE_SPARSE "Use sparse Library" ON)
-	option(SimVascular_USE_METIS "Use metis Library" ON)
-	option(SimVascular_USE_NSPCG "Use nspcg Library" ON)
-	set(USE_Fortran ON)
+if(SV_USE_3DSOLVER)
+	option(SV_USE_SPARSE "Use sparse Library" ON)
+	option(SV_USE_METIS "Use metis Library" ON)
+	option(SV_USE_NSPCG "Use nspcg Library" ON)
+	set(SV_USE_FORTRAN ON)
 	set(USE_SVLS ON)
-	set(USE_MPI ON)
+	set(SV_USE_MPI ON)
 	set(ThreeDSolver_BUILD_SolverIO ON)
 	#set(FLOWSOLVER_CONFIG_PATHS
-	#	"${SimVascular_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
+	#	"${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
 	# find config file
-	#set(FLOWSOLVER_CONFIG_FILE "${SimVascular_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp")
+	#set(FLOWSOLVER_CONFIG_FILE "${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp")
 	#mark_as_superbuild(FLOWSOLVER_CONFIG_FILE)
 	#set(FLOWSOLVER_CONFIG_PATH ${OUTBIN_DIR})
 	#file(COPY ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${FLOWSOLVER_CONFIG_PATH})
@@ -782,8 +782,8 @@ endif()
 if(USE_SVLS)
 	set(SVLS_BUILD_TYPE "Source")
 	#simvascular_external(svls SVEXTERN_DEFAULT)
-	set(USE_Fortran ON)
-	set(USE_MPI ON)
+	set(SV_USE_FORTRAN ON)
+	set(SV_USE_MPI ON)
 endif()
 
 if(ThreeDSolver_USE_LESLIB)
@@ -793,30 +793,30 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Add libraries for flowsolver
-if(SimVascular_USE_SPARSE)
+if(SV_USE_SPARSE)
 	SET(USE_SPARSE ON)
 	simvascular_third_party(sparse)
-	if(NOT SimVascular_USE_SYSTEM_SPARSE)
+	if(NOT SV_USE_SYSTEM_SPARSE)
 		set(SPARSE_LIBRARY lib_simvascular_sparse)
 	else()
 		find_package(METIS)
 	endif()
 endif()
 
-if(SimVascular_USE_METIS)
+if(SV_USE_METIS)
 	SET(USE_METIS ON)
 	simvascular_third_party(metis)
-	if(NOT SimVascular_USE_SYSTEM_METIS)
+	if(NOT SV_USE_SYSTEM_METIS)
 		set(METIS_LIBRARY lib_simvascular_metis)
 	else()
 		find_package(METIS)
 	endif()
 endif()
 
-if(SimVascular_USE_NSPCG)
+if(SV_USE_NSPCG)
 	SET(USE_NSPCG ON)
 	simvascular_third_party(nspcg)
-	if(NOT SimVascular_USE_SYSTEM_NSPCG)
+	if(NOT SV_USE_SYSTEM_NSPCG)
 		set(NSPCG_LIBRARY lib_simvascular_nspcg)
 	else()
 		find_package(NSPCG)
@@ -829,12 +829,12 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable Interl Runtime libs if we need or want them
-option(SimVascular_USE_INTELRUNTIME "Add Intel Runtime Libraries (these may be needed by some libraries)" OFF)
-mark_as_superbuild(SimVascular_USE_INTELRUNTIME)
+option(SV_USE_INTELRUNTIME "Add Intel Runtime Libraries (these may be needed by some libraries)" OFF)
+mark_as_superbuild(SV_USE_INTELRUNTIME)
 
-if(SimVascular_USE_INTELRUNTIME OR USE_INTEL)
+if(SV_USE_INTELRUNTIME OR USE_INTEL)
 	simvascular_external(INTELRUNTIME SYSTEM_DEFAULT SHARED_LIB)
-	if(SimVascular_USE_SYSTEM_ZLIB)
+	if(SV_USE_SYSTEM_ZLIB)
 		set(INTELRUNTIME_LIB_DIR "" CACHE PATH "A directory where intel runtimes may be, use this if its not in the path")
 	endif()
 	set(USE_INTELRUNTIME ON)
@@ -848,7 +848,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable Fortran
-if(USE_Fortran)
+if(SV_USE_FORTRAN)
 	enable_language(Fortran)
 	if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
 		#set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-fbounds-check")
@@ -861,9 +861,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable MPI
-if(USE_MPI OR SimVascular_USE_MPI)
-	set(USE_MPI ON)
-	if (NOT SimVascular_USE_DUMMY_MPICH2)
+if(SV_USE_MPI OR SV_USE_MPICH2)
+	set(SV_USE_MPI ON)
+	if (NOT SV_USE_DUMMY_MPICH2)
 		simvascular_external(MPI SYSTEM_DEFAULT SHARED_LIB)
 		if(MPI_FOUND)
 			get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
@@ -883,11 +883,11 @@ if(USE_MPI OR SimVascular_USE_MPI)
 			ALL_PROJECTS)
 
 		# include_directories(${MPI_Fortran_INCLUDE_PATH})
-		if(SimVascular_DEVELOPER_OUTPUT)
+		if(SV_DEVELOPER_OUTPUT)
 			#getListOfVarsPrefix("MPI" _VARLIST)
 			#print_vars(_VARLIST)
 		endif()
-		if(SimVascular_USE_MSMPI)
+		if(SV_USE_MSMPI)
 			# TODO(jmerkow): Change this.
 			set(svMPI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/msmpi/")
 			set(svMPI_LIB_DIR  "${svMPI_DIR}/Lib/x64/")
@@ -924,7 +924,7 @@ if(BUILD_TESTING)
 endif()
 
 if(WIN32)
-	if(SimVascular_ENABLE_DISTRIBUTION)
+	if(SV_ENABLE_DISTRIBUTION)
 		set(SIMVASCULAR_USE_WIN32_REGISTRY ON)
 	endif()
 endif()
@@ -946,7 +946,7 @@ mark_as_superbuild(git_protocol)
 
 ExternalProject_Include_Dependencies(${PROJECT_NAME}
 	PROJECT_VAR PROJECT_NAME)
-if(SimVascular_SUPERBUILD)
+if(SV_SUPERBUILD)
 
 	message(STATUS "Install timestamp: ${SIMVASCULAR_RELEASE_TIMESTAMP}")
 	file(WRITE "${TEMP_DIR}/release-date" "${SIMVASCULAR_RELEASE_TIMESTAMP}")
@@ -954,12 +954,12 @@ if(SimVascular_SUPERBUILD)
 
 	# Git Check (superbuild)
 	find_package(Git REQUIRED)
-	option(SimVascular_USE_GIT
+	option(SV_USE_GIT
 		"If behind a firewall turn this off to use http instead." ON)
 
 	dev_message("Superbuild Mode!")
-	if(SimVascular_ENABLE_DISTRIBUTION)
-		add_subdirectory(${SimVascular_DISTRIBUTION_DIR} ${SimVascular_BINARY_DISTRIBUTION_DIR})
+	if(SV_ENABLE_DISTRIBUTION)
+		add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
 	endif()
 	include(Superbuild)
 	RETURN()
@@ -977,7 +977,7 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
-if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
+if(NOT SV_EXCLUDE_SOLID_MODEL)
 	if(Plugin_OPENCASCADE)
 		set(OPENCASCADE_VERSION "6.9")
 		find_package(OPENCASCADE)
@@ -1026,7 +1026,7 @@ if(${VTK_DIR} MATCHES "intel")
 	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
 endif()
 set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
-if(SimVascular_BUILD_SHARED_VTK)
+if(SV_BUILD_SHARED_VTK)
   set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DVTK_BUILD_SHARED_LIBS")
 endif()
 
@@ -1043,7 +1043,7 @@ if(Plugin_TETGEN)
 endif()
 
 if(Plugin_TET_ADAPTOR)
-	#set(USE_Fortran ON)
+	#set(SV_USE_FORTRAN ON)
 	set(ThreeDSolver_BUILD_SolverIO ON)
 endif()
 
@@ -1107,8 +1107,8 @@ set(SIMVASCULAR_INCLUDE_DIRS
 
 foreach(dir ${SIMVASCULAR_INCLUDE_DIRS})
 	add_subdirectory(${dir})
-	include_directories(${SimVascular_SOURCE_DIR}/${dir}
-						${SimVascular_BINARY_DIR}/${dir})
+	include_directories(${SV_SOURCE_DIR}/${dir}
+						${SV_BINARY_DIR}/${dir})
 endforeach()
 
 foreach(dir ${SIMVASCULAR_CORE_LIBRARY_DIRS})
@@ -1116,15 +1116,14 @@ foreach(dir ${SIMVASCULAR_CORE_LIBRARY_DIRS})
 endforeach()
 
 
-
 #-----------------------------------------------------------------------------
 # Add directories
 # Modules
-if(BUILD_ThreeDSolver)
+if(SV_USE_3DSOLVER)
 	add_subdirectory(FlowSolvers)
 endif()
 
-if(NOT SimVascular_ONLY_BUILD_FLOWSOLVER)
+if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 	# Add the Core Direcotories
 	message(STATUS "Libraries:")
 	foreach(dir ${SIMVASCULAR_CORE_LIBRARY_DIRS})

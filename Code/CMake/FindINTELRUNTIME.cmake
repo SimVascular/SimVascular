@@ -56,7 +56,7 @@ set(${proj}_HEADER "")
 # Find Libraries
 #-----------------------------------------------------------------------------
 set(${proj}_PATH_PREFIX
-	"${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/intel_compiler_runtime_libs/2013.1.117/")
+	"${SV_SV_EXTERN_LicensedLibs_BIN_DIR}/intel_compiler_runtime_libs/2013.1.117/")
 # Set paths to search
 if(LINUX)
 	set(lib_sub_path "linux/intel64")

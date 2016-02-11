@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -27,7 +27,7 @@
  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  #
  #=========================================================================#
-SET(lib lib_simvascular_meshsim_mesh) 
+SET(lib lib_simvascular_meshsim_mesh)
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
 
@@ -38,7 +38,7 @@ else()
 endif()
 
 if(Licensed_ADAPTOR)
-    include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
+    include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 endif()
 
 target_link_libraries(${lib}
@@ -46,9 +46,9 @@ target_link_libraries(${lib}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
 			${MESHSIM_LIBRARIES}
-			lib_simvascular_globals #lib_simvascular_mesh 
+			lib_simvascular_globals #lib_simvascular_mesh
 			lib_simvascular_utils)# lib_simvascular_sysgeom)
-			#lib_simvascular_repository 
+			#lib_simvascular_repository
 			#lib_simvascular_solid)
 if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
 	target_link_libraries(${lib} lib_simvascular_discrete)
@@ -56,7 +56,7 @@ endif()
 if(Licensed_PARASOLID)
     target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
-			
+
 if(Licensed_ADAPTOR)
     target_link_libraries(${lib} lib_simvascular_meshsim_adaptor)
 	    #lib_simvascular_solverio)

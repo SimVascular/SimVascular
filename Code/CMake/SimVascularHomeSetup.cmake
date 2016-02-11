@@ -25,27 +25,27 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 if(NOT TEMP_DIR)
-set(TEMP_DIR ${SimVascular_BINARY_DIR}/tmp)
+set(TEMP_DIR ${SV_BINARY_DIR}/tmp)
 file(MAKE_DIRECTORY ${TEMP_DIR})
 endif()
 mark_as_superbuild(TEMP_DIR)
 
-get_filename_component(SimVascular_SOURCE_HOME ${SimVascular_SOURCE_DIR}/../ ABSOLUTE)
-dev_message("SimVascular Source Home: ${SimVascular_SOURCE_HOME}")
-if(NOT SimVascular_BINARY_HOME)
-	set(SimVascular_BINARY_HOME ${SimVascular_BINARY_DIR})
+get_filename_component(SV_SOURCE_HOME ${SV_SOURCE_DIR}/../ ABSOLUTE)
+dev_message("SimVascular Source Home: ${SV_SOURCE_HOME}")
+if(NOT SV_BINARY_HOME)
+	set(SV_BINARY_HOME ${SV_BINARY_DIR})
 endif()
 
-set(SimVascular_HOME ${SimVascular_BINARY_HOME})
-set(SimVascular_DISTRIBUTION_DIR ${SimVascular_SOURCE_HOME}/Distribution)
-set(SimVascular_BINARY_DISTRIBUTION_DIR ${SimVascular_BINARY_HOME}/Distribution)
+set(SV_HOME ${SV_BINARY_HOME})
+set(SV_DISTRIBUTION_DIR ${SV_SOURCE_HOME}/Distribution)
+set(SV_BINARY_DISTRIBUTION_DIR ${SV_BINARY_HOME}/Distribution)
 
 mark_as_superbuild(VARS
-	SimVascular_SOURCE_HOME:PATH
-	SimVascular_BINARY_HOME:PATH
-	SimVascular_HOME:PATH
-	SimVascular_SOURCE_TCL_DIR:PATH
-	SimVascular_BINARY_TCL_DIR:PATH
-	SimVascular_TCL:PATH
-	SimVascular_DISTRIBUTION_DIR:PATH
+	SV_SOURCE_HOME:PATH
+	SV_BINARY_HOME:PATH
+	SV_HOME:PATH
+	SV_SOURCE_TCL_DIR:PATH
+	SV_BINARY_TCL_DIR:PATH
+	SV_TCL:PATH
+	SV_DISTRIBUTION_DIR:PATH
 	)

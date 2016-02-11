@@ -46,7 +46,7 @@ set(${proj}_INSTALL_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-install)
 
 
 if(WIN32)
-  set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/glib-2.36.4-bin-win-x64.tar.gz" CACHE
+  set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/glib-2.36.4-bin-win-x64.tar.gz" CACHE
     STRING "Location of tetgen, can be web address or local path")
   unset(configure_cmd)
   unset(build_cmd)

@@ -27,7 +27,7 @@
 include (CMakeParseArguments)
 
 macro(dev_message string)
-	if(SimVascular_DEVELOPER_OUTPUT)
+	if(SV_DEVELOPER_OUTPUT)
 		message("DEV: ${string}")
 	endif()
 endmacro()
@@ -103,35 +103,35 @@ macro(simvascular_external _pkg)
 	#message(STATUS "Search paths for ${_upper}Config.cmake: ${_paths}")
 
 	if(simvascular_external_SYSTEM_DEFAULT)
-		option(SimVascular_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
-		mark_as_advanced(SimVascular_USE_SYSTEM_${_upper})
+		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
+		mark_as_advanced(SV_USE_SYSTEM_${_upper})
 	else()
-		option(SimVascular_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
+		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
 	endif()
 
-	mark_as_superbuild(SimVascular_USE_SYSTEM_${_upper})
+	mark_as_superbuild(SV_USE_SYSTEM_${_upper})
 	#message("${_upper}: ${simvascular_external_SVEXTERN_CONFIG}")
 
-	if((NOT SimVascular_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
-		(simvascular_external_SVEXTERN_CONFIG AND SimVascular_USE_SYSTEM_${_upper}))
+	if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
+		(simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_upper}))
 
 	find_package(${_upper} ${EXTRA_ARGS} 
 		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake 
 		NO_CMAKE_MODULE_PATH
 		NO_DEFAULT_PATH)
-elseif(NOT SimVascular_SUPERBUILD)
-	#message(" ${_upper} NOT SimVascular_SUPERBUILD AND NOT simvascular_external_SVEXTERN_CONFIG")
+elseif(NOT SV_SUPERBUILD)
+	#message(" ${_upper} NOT SV_SUPERBUILD AND NOT simvascular_external_SVEXTERN_CONFIG")
 	find_package(${_upper} ${EXTRA_ARGS})
-elseif(SimVascular_USE_SYSTEM_${_upper})
+elseif(SV_USE_SYSTEM_${_upper})
 	find_package(${_upper} ${EXTRA_ARGS})
 endif()
 
 if(simvascular_external_DOWNLOADABLE)
-	set(SimVascular_DEPENDS ${SimVascular_DEPENDS} ${_upper})
-	list( REMOVE_DUPLICATES SimVascular_DEPENDS )
+	set(SV_DEPENDS ${SV_DEPENDS} ${_upper})
+	list( REMOVE_DUPLICATES SV_DEPENDS )
 endif()
 
-if(SimVascular_USE_${_upper})
+if(SV_USE_${_upper})
 	set(USE_${_upper} ON)
 endif()
 
@@ -160,7 +160,7 @@ if(${_upper}_FOUND)
 endif()
 unset(simvascular_external_SVEXTERN_CONFIG)
 unset(simvascular_external_ADD_INSTALL)
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "Finished Configuring ${_upper}")
 	message(STATUS "")
 endif()
@@ -180,8 +180,8 @@ macro(unset_simvascular_external _pkg)
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-	unset(SimVascular_USE_SYSTEM_${_upper})
-	list(REMOVE_ITEM SimVascular_DEPENDS ${_upper})
+	unset(SV_USE_SYSTEM_${_upper})
+	list(REMOVE_ITEM SV_DEPENDS ${_upper})
 endmacro()
 
 #-----------------------------------------------------------------------------
@@ -203,22 +203,22 @@ macro(simvascular_third_party _pkg)
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 	set(${_upper}_SUBDIR ThirdParty/${_pkg})
 	if(simvascular_third_party_SYSTEM_DEFAULT)
-		option(SimVascular_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
+		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
 	else()
-		option(SimVascular_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
+		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
 	endif()
 
-	mark_as_advanced(SimVascular_USE_SYSTEM_${_upper})
-	mark_as_superbuild(SimVascular_USE_SYSTEM_${_upper})
+	mark_as_advanced(SV_USE_SYSTEM_${_upper})
+	mark_as_superbuild(SV_USE_SYSTEM_${_upper})
 
-	configure_file(${SimVascular_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in 
-		${SimVascular_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
-	include_directories(BEFORE ${SimVascular_BINARY_DIR}/${${_upper}_SUBDIR} ${SimVascular_SOURCE_DIR}/${${_upper}_SUBDIR})
-	if(SimVascular_USE_SYSTEM_${_upper})
+	configure_file(${SV_SOURCE_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h.in 
+		${SV_BINARY_DIR}/${${_upper}_SUBDIR}/simvascular_${_lower}.h)
+	include_directories(BEFORE ${SV_BINARY_DIR}/${${_upper}_SUBDIR} ${SV_SOURCE_DIR}/${${_upper}_SUBDIR})
+	if(SV_USE_SYSTEM_${_upper})
 		set(${_upper}_LIBRARIES)
 		set(${_upper}_LIBRARY)
 	else()
-		if(NOT SimVascular_SUPERBUILD)
+		if(NOT SV_SUPERBUILD)
 			set(${_upper}_LIBRARY_NAME lib_simvascular_${_lower})
 			add_subdirectory(${${_upper}_SUBDIR}/simvascular_${_lower})
 		endif()

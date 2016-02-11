@@ -69,7 +69,7 @@ if(UNIX)
 endif()
 
 set(CLUSTER "${ARCH}_${SIMVASCULAR_OS}")
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "${CLUSTER}")
 endif()
 
@@ -77,7 +77,7 @@ set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
 
 
 SET(USER_HOME_DIR $ENV{HOME})
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "Home dir: ${USER_HOME_DIR}")
 endif()
 

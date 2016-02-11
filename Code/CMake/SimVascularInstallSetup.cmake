@@ -1,14 +1,14 @@
 #-----------------------------------------------------------------------------
 # Setup SimVascular Install options and directories
 #-----------------------------------------------------------------------------
-#option(SimVascular_SUPERBUILD_INSTALL 
+#option(SV_SUPERBUILD_INSTALL 
   #  "Enabling this option will install automatically SimVascular in Superbuild Mode" OFF)
-option(SimVascular_ENABLE_DISTRIBUTION 
+option(SV_ENABLE_DISTRIBUTION 
   "Enalble Distribution Targets (CPack)" OFF)
-mark_as_advanced(SimVascular_ENABLE_DISTRIBUTION)
-mark_as_superbuild(SimVascular_ENABLE_DISTRIBUTION)
+mark_as_advanced(SV_ENABLE_DISTRIBUTION)
+mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
 
-if(SimVascular_ENABLE_DISTRIBUTION)
+if(SV_ENABLE_DISTRIBUTION)
   #set(SIMVASCULAR_INSTALL_SYSTEM_LIBS OFF CACHE "This is for distribution only, it enables installing certain system libraries.")
   #mark_as_advanced(SIMVASCULAR_INSTALL_SYSTEM_LIBS)
   mark_as_superbuild(SIMVASCULAR_INSTALL_SYSTEM_LIBS:BOOL)
@@ -247,7 +247,7 @@ foreach(_var ${_VARLIST})
   endif()
 endforeach()
 
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
   getListOfVarsPrefix("SIMVASCULAR_INSTALL" _VARLIST)
   list(INSERT _VARLIST 0 CMAKE_INSTALL_PREFIX)
   print_vars(_VARLIST)
@@ -259,14 +259,14 @@ endif()
 #-----------------------------------------------------------------------------
 #
 if(NOT DEFINED OUTBIN_DIR OR NOT DEFINED OUTLIB_DIR)
-  set(OUTBIN_DIR "${SimVascular_BINARY_DIR}/Bin")
-  set(OUTLIB_DIR ${SimVascular_BINARY_DIR}/Lib)
+  set(OUTBIN_DIR "${SV_BINARY_DIR}/Bin")
+  set(OUTLIB_DIR ${SV_BINARY_DIR}/Lib)
 endif()
 mark_as_superbuild(OUTBIN_DIR:PATH)
 mark_as_superbuild(OUTLIB_DIR:PATH)
 
 if(NOT DEFINED SIMVASCULAR_DEVELOPER_SCRIPT_DIR)
-  set(SIMVASCULAR_DEVELOPER_SCRIPT_DIR "${SimVascular_BINARY_DIR}")
+  set(SIMVASCULAR_DEVELOPER_SCRIPT_DIR "${SV_BINARY_DIR}")
 endif()
 mark_as_superbuild(SIMVASCULAR_DEVELOPER_SCRIPT_DIR:PATH)
 
@@ -289,7 +289,7 @@ mark_as_advanced(CMAKE_RUNTIME_OUTPUT_DIRECTORY
   CMAKE_LIBRARY_OUTPUT_DIRECTORY
   CMAKE_ARCHIVE_OUTPUT_DIRECTORY)
 
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
   set(_VARLIST OUTBIN_DIR
     OUTLIB_DIR
     SCRIPT_DIR)

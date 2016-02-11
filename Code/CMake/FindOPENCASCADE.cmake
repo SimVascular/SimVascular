@@ -70,7 +70,7 @@ set(${proj}_HEADER "gp_Pnt.hxx")
 #-----------------------------------------------------------------------------
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
 #if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
-#	set(${proj}_PATH "${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.1/")
+#	set(${proj}_PATH "${SV_SV_EXTERN_LicensedLibs_BIN_DIR}/opencascade-6.9.1/")
 #endif()
 # Set paths to search for OpenCascade
 if(LINUX)
@@ -90,7 +90,7 @@ endforeach()
 #message("${proj}_POSSIBLE_PATHS: ${${proj}_POSSIBLE_PATHS}")
 
 # Set paths to search for OpenCascade
-if(NOT SimVascular_USE_SYSTEM_${proj})
+if(NOT SV_USE_SYSTEM_${proj})
   if(${CMAKE_BUILD_TYPE} STREQUAL "RelWithDebInfo")
     set(${proj}_LIB_INSTALL_EXT "i")
   elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
@@ -104,7 +104,7 @@ endif()
 
 if(WIN32)
   set(${proj}_LIB_INSTALL_DIR "bin${${proj}_LIB_INSTALL_EXT}")
-elseif(APPLE AND SimVascular_USE_SYSTEM_${proj})
+elseif(APPLE AND SV_USE_SYSTEM_${proj})
     message("WARNING: Issue with optimization in AdvApp2Var_ApproxF2Var, on Apple, occt must be built in debug")
     set(${proj}_LIB_INSTALL_DIR "libd")
 else()

@@ -45,7 +45,7 @@ foreach(var ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
     if(${var}_DLL_LIBRARIES)
         list(REMOVE_DUPLICATES ${var}_DLL_LIBRARIES)
     endif()
-    if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_${var} )
+    if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${var} )
         # We only want to install libraries they are not system libraries.
         # we want to install them regardles if this is a distribution.
         dev_message("[${var}]  This is either not a system library, or this is a distribution install.")
@@ -92,7 +92,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # TCL
 
-if(NOT SimVascular_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
+if(NOT SV_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
     if(NOT APPLE)
         message("${TCL_DLL_PATH}")
         set(extra_exclude_pattern)
@@ -126,8 +126,8 @@ endif()
 
 #-----------------------------------------------------------------------------
 # MPI
-if(USE_MPI AND NOT SimVascular_USE_DUMMY_MPICH2)
-    if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_MPI)
+if(SV_USE_MPI AND NOT SV_USE_DUMMY_MPICH2)
+    if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_MPI)
         if(NOT WIN32)
             # MPI needs to be insalled, if its not a system LIBRARY.
             # or this is a distribution, unless its WIN32
@@ -183,8 +183,8 @@ if(USE_MESHSIM)
 
 endif()
 
-if(SimVascular_ENABLE_DISTRIBUTION OR NOT SimVascular_USE_SYSTEM_PARSOLID)
-    if(NOT SimVascular_EXCLUDE_SOLID_MODEL)
+if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_PARSOLID)
+    if(NOT SV_EXCLUDE_SOLID_MODEL)
         if(Licensed_PARASOLID)
             file(GLOB PARASOLID_DLLS "${PARASOLID_DLL_PATH}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
             install(FILES ${PARASOLID_DLLS} DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
@@ -228,7 +228,7 @@ foreach(exe ${EXTERNAL_EXES})
 
     find_program(EXTERNALEXE_${_EXE}
         NAMES ${_${_EXE}_NAMES}
-        PATHS ${SimVascular_DISTRIBUTION_DIR}/dicom2 ${SimVascular_DISTRIBUTION_DIR}/dcmtk
+        PATHS ${SV_DISTRIBUTION_DIR}/dicom2 ${SV_DISTRIBUTION_DIR}/dcmtk
         )
     
     if(NOT EXTERNALEXE_${_EXE})
@@ -239,8 +239,8 @@ foreach(exe ${EXTERNAL_EXES})
   else()
     dev_message("    ${EXTERNALEXE_${_EXE}} as ${_exe}${${CMAKE_EXECUTABLE_SUFFIX}}.")
     add_custom_target(${exe}-copy ALL
-        COMMAND ${CMAKE_COMMAND} -E remove ${SimVascular_HOME}/${exe}${CMAKE_EXECUTABLE_SUFFIX}
-        COMMAND ${CMAKE_COMMAND} -E copy ${EXTERNALEXE_${_EXE}} ${SimVascular_HOME}/${exe}${CMAKE_EXECUTABLE_SUFFIX}
+        COMMAND ${CMAKE_COMMAND} -E remove ${SV_HOME}/${exe}${CMAKE_EXECUTABLE_SUFFIX}
+        COMMAND ${CMAKE_COMMAND} -E copy ${EXTERNALEXE_${_EXE}} ${SV_HOME}/${exe}${CMAKE_EXECUTABLE_SUFFIX}
         COMMENT "Copying ${exe} to ${OUTBIN_DIR}/${exe}"
         )
 

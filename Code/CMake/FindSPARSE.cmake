@@ -55,7 +55,7 @@ set(${proj}_HEADER "spDefs.h")
 #-----------------------------------------------------------------------------
 # Find Libraries
 #-----------------------------------------------------------------------------
-set(${proj}_PATH "${SimVascular_SV_EXTERN_OpenLibs_BIN_DIR}/sparse-1.4/")
+set(${proj}_PATH "${SV_SV_EXTERN_OpenLibs_BIN_DIR}/sparse-1.4/")
 # Set paths to search for parasolid
 if(LINUX)
 	set(lib_sub_path "")
