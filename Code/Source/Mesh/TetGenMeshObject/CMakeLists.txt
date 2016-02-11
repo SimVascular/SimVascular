@@ -40,7 +40,7 @@ SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
 
 add_library(${lib} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
 
-if(Plugin_VMTK)
+if(SV_USE_VMTK)
 	SET(OPTLIBS lib_simvascular_vmtk)
 endif()
 

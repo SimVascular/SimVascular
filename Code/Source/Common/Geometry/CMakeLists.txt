@@ -75,7 +75,7 @@ if(SV_USE_GTS)
 	SET(HDRS  ${HDRS} vtkSurfaceBooleanOperations.h)
 endif()
 
-#if(Plugin_VMTK)
+#if(SV_USE_VMTK)
 #	SET(CXXSRCS ${CXXSRCS} vtkvmtkPolyDataCenterlines.cxx
 #		 	       vtkvmtkPolyDataDistanceToCenterlines.cxx
 #		               vtkvmtkMinHeap.cxx

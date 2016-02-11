@@ -56,7 +56,7 @@ target_link_libraries(${lib}
 			#lib_simvascular_utils
 			#lib_simvascular_adaptor)
 
-if(Licensed_PARASOLID)
+if(SV_USE_PARASOLID)
 	target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
 

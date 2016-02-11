@@ -50,7 +50,7 @@ target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
 			lib_simvascular_globals lib_simvascular_utils lib_simvascular_sysgeom
             )
-if(Plugin_VMTK)
+if(SV_USE_VMTK)
     target_link_libraries(${lib} lib_simvascular_vmtk)
 endif()
 

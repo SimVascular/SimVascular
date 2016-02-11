@@ -37,7 +37,7 @@ else()
     add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 endif()
 
-if(Licensed_ADAPTOR)
+if(SV_USE_ADAPTOR)
     include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 endif()
 
@@ -53,11 +53,11 @@ target_link_libraries(${lib}
 if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
 	target_link_libraries(${lib} lib_simvascular_discrete)
 endif()
-if(Licensed_PARASOLID)
+if(SV_USE_PARASOLID)
     target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
 
-if(Licensed_ADAPTOR)
+if(SV_USE_ADAPTOR)
     target_link_libraries(${lib} lib_simvascular_meshsim_adaptor)
 	    #lib_simvascular_solverio)
 endif()

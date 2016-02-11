@@ -22,14 +22,14 @@ if (SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH})
 endif()
 
-if(Plugin_TETGEN)
+if(SV_USE_TETGEN)
 	include_directories(${TETGEN_INCLUDE_DIR})
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tetgen_mesh)
 endif()
 
-if(Licensed_MESHSIM)
+if(SV_USE_MESHSIM)
 	if (NOT MESHSIM_USE_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx)
@@ -37,7 +37,7 @@ if(Licensed_MESHSIM)
         endif()
 endif()
 
-if(Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
+if(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
 	if (NOT MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)
@@ -45,7 +45,7 @@ if(Licensed_MESHSIM_DISCRETE_SOLIDMODEL)
         endif()
 endif()
 
-if(Licensed_PARASOLID)
+if(SV_USE_PARASOLID)
 	if (NOT PARASOLID_USE_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx)
@@ -53,13 +53,13 @@ if(Licensed_PARASOLID)
         endif()
 endif()
 
-if(Plugin_OPENCASCADE)
+if(SV_USE_OPENCASCADE)
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Model/OCCTSolidModel/cv_occt_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_opencascade ${OPENCASCADE_LIBRARIES})
 endif()
 
-if(Plugin_ITK)
+if(SV_USE_ITK)
 	include_directories(${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include)
 	include_directories(${SV_SOURCE_DIR}/Source/Segmentation/ITK/Util)
 	SET(CXXSRCS ${CXXSRCS} ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset2d_init.cxx
@@ -67,7 +67,7 @@ if(Plugin_ITK)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_cvitk lib_simvascular_itkutils)
   endif()
 
-if(Plugin_TET_ADAPTOR)
+if(SV_USE_TET_ADAPTOR)
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
 	${SV_SOURCE_DIR}/Source/Mesh/TetGenAdapt/cv_tetgen_adapt_init.cxx)
@@ -75,7 +75,7 @@ if(Plugin_TET_ADAPTOR)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tet_adaptor)
 endif()
 
-if (Licensed_ADAPTOR)
+if (SV_USE_ADAPTOR)
 	if(NOT MESHSIM_USE_SHARED_LIBRARIES)
 	  set(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx

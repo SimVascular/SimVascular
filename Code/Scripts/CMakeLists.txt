@@ -45,7 +45,7 @@ set(FRAGMENT_INJECTION_STRING)
 # Write extra FILES
 env_variable_to_value_variable(ENV_SIMVASCULAR_HOME SIMVASCULAR_HOME)
 
-if(Licensed_PARASOLID)
+if(SV_USE_PARASOLID)
 	#Parasolid as a few special directories to add
 	set_env_string_concat(P_SCHEMA "${PARASOLID_SCHEMA_DIR}" developer_script_string)
 	set_env_string(P_SCHEMA "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
@@ -56,7 +56,7 @@ if(Licensed_PARASOLID)
 		Value='[INSTALL_ROOT]@SIMVASCULAR_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR@' />")
 endif()
 
-if(Licensed_MESHSIM)
+if(SV_USE_MESHSIM)
 	if(NOT MESHSIM_LICENSE_IN_WIN32_REGISTRY)
 		if(MESHSIM_LICENSE_FILE)
 			set_env_string_concat(SIM_LICENSE_FILE "${MESHSIM_LICENSE_FILE}" developer_script_string)
