@@ -85,7 +85,7 @@ if (Licensed_ADAPTOR)
         endif()
 endif()
 
-simvascular_add_executable(${SIMVASCULAR_EXE}
+simvascular_add_executable(${SV_EXE}
 	SRCS ${CXXSRCS}
 	DEV_SCRIPT_NAME "mysim"
 	INSTALL_SCRIPT_NAME "simvascular"
@@ -93,14 +93,14 @@ simvascular_add_executable(${SIMVASCULAR_EXE}
 	INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
 #message("OPTLIBS ${OPTLIBS}")
 
-target_link_libraries(${SIMVASCULAR_EXE}
+target_link_libraries(${SV_EXE}
 			lib_simvascular_post lib_simvascular_image
 			lib_simvascular_repository lib_simvascular_lset
 			lib_simvascular_solid lib_simvascular_mesh
 			lib_simvascular_sysgeom lib_simvascular_utils
 			lib_simvascular_globals lib_simvascular_polydatasolid)
 
-target_link_libraries(${SIMVASCULAR_EXE} ${OPTLIBS}
+target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${ZLIB_LIBRARY} ${ITK_LIBRARIES}
@@ -108,5 +108,5 @@ target_link_libraries(${SIMVASCULAR_EXE} ${OPTLIBS}
 			${GLOBAL_LIBRARIES})
 
 if(SV_USE_PYTHON)
-  	target_link_libraries(${SIMVASCULAR_EXE} ${PYTHON_LIBRARIES})
+  target_link_libraries(${SV_EXE} ${PYTHON_LIBRARIES})
 endif()

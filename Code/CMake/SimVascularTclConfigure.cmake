@@ -65,11 +65,11 @@ file(WRITE ${TCL_EXTERNAL_CONFIG_FILE}
 	set execbinext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set gExternalPrograms(mpiexec) {${MPIEXEC}}
 }
-set gExternalPrograms(cvpresolver) [file join $bindir ${PRESOLVER_EXE}$execbinext]
-set gExternalPrograms(cvpostsolver) [file join $bindir ${POSTSOLVER_EXE}$execbinext]
-set gExternalPrograms(cvflowsolver) [file join $bindir ${FLOWSOLVER_EXE}$execbinext]
-set gExternalPrograms(cvadaptor) [file join $bindir ${ADAPTOR_EXE}$execbinext]
-set gExternalPrograms(cvtetadaptor) [file join $bindir ${TET_ADAPTOR_EXE}$execbinext]
+set gExternalPrograms(cvpresolver) [file join $bindir ${SV_PRESOLVER_EXE}$execbinext]
+set gExternalPrograms(cvpostsolver) [file join $bindir ${SV_POSTSOLVER_EXE}$execbinext]
+set gExternalPrograms(cvflowsolver) [file join $bindir ${SV_FLOWSOLVER_EXE}$execbinext]
+set gExternalPrograms(cvadaptor) [file join $bindir ${SV_ADAPTOR_EXE}$execbinext]
+set gExternalPrograms(cvtetadaptor) [file join $bindir ${SV_TET_ADAPTOR_EXE}$execbinext]
 set gExternalPrograms(gdcmdump) gdcmdump
 set gExternalPrograms(dicom2) [file join $homedir dicom2${CMAKE_EXECUTABLE_SUFFIX}]
 ")

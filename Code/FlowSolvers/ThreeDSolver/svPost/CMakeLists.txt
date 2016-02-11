@@ -30,14 +30,14 @@
 
 SET(CXXSRCS post_solver.cxx)
 
-simvascular_add_executable(${POSTSOLVER_EXE}
+simvascular_add_executable(${SV_POSTSOLVER_EXE}
   SRCS ${CXXSRCS}
   DEV_SCRIPT_NAME "mypost"
   INSTALL_SCRIPT_NAME "svpost"
   INSTALL_COMPONENT ModuleExecutables
   INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
 
-target_link_libraries(${POSTSOLVER_EXE}
+target_link_libraries(${SV_POSTSOLVER_EXE}
 			${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY}
 			${VTK_LIBRARIES}
 			lib_simvascular_solverio)

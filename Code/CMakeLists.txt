@@ -88,12 +88,12 @@ unset(USE_SVLS)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
-set(SIMVASCULAR_EXE "simvascular")
-set(ADAPTOR_EXE "svadapt")
-set(PRESOLVER_EXE "svpre")
-set(FLOWSOLVER_EXE "svsolver")
-set(POSTSOLVER_EXE "svpost")
-set(TET_ADAPTOR_EXE "svtetadapt")
+set(SV_EXE "simvascular")
+set(SV_ADAPTOR_EXE "svadapt")
+set(SV_PRESOLVER_EXE "svpre")
+set(SV_FLOWSOLVER_EXE "svsolver")
+set(SV_POSTSOLVER_EXE "svpost")
+set(SV_TET_ADAPTOR_EXE "svtetadapt")
 
 #-----------------------------------------------------------------------------
 # start internal cache variables

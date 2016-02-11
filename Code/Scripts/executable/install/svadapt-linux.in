@@ -3,7 +3,7 @@
 # instead of embedded keys
 # run the executable
 if [ -e $SIM_LICENSE_FILE ] ; then
-$SIMVASCULAR_HOME/@SIMVASCULAR_INSTALL_RUNTIME_DIR@/@ADAPTOR_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
+$SIMVASCULAR_HOME/@SIMVASCULAR_INSTALL_RUNTIME_DIR@/@SV_ADAPTOR_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
 else
 echo "No license key for MeshSim found!!!  Exiting."
 fi

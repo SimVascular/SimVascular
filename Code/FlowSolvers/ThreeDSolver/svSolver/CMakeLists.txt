@@ -108,7 +108,7 @@ TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fort
 message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
 
-simvascular_add_executable(${FLOWSOLVER_EXE}
+simvascular_add_executable(${SV_FLOWSOLVER_EXE}
   SRCS ${CXXSRCS} ${CSRCS}
   DEV_SCRIPT_NAME "mysolver"
   INSTALL_SCRIPT_NAME "svsolver"
@@ -122,7 +122,7 @@ else()
 endif()
 
 
-TARGET_LINK_LIBRARIES(${FLOWSOLVER_EXE} flowsolver_fortran_lib
+TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} flowsolver_fortran_lib
                       ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
                       ${METIS_LIBRARY} ${SVLS_LIBRARY}
                       ${svMPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
