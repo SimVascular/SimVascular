@@ -1,18 +1,18 @@
 
 # run the executable
-case "$SIMVASCULAR_BATCH_MODE" in
+case "$SV_BATCH_MODE" in
 "1")
 case "$*" in
 "")
-$SIMVASCULAR_HOME/Bin/@SV_EXE@
+$SV_HOME/Bin/@SV_EXE@
 ;;
 *)
-$SIMVASCULAR_HOME/Bin/@SV_EXE@ $*
+$SV_HOME/Bin/@SV_EXE@ $*
 ;;
 esac
 ;;
 *)
-$SIMVASCULAR_HOME/Bin/@SV_EXE@ $SIMVASCULAR_HOME/Tcl/cpmView/cpmview_startup.tcl $*
+$SV_HOME/Bin/@SV_EXE@ $SV_HOME/Tcl/cpmView/cpmview_startup.tcl $*
 ;;
 esac
 

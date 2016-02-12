@@ -5,16 +5,16 @@ set(core_str)
 if(UNIX)
 	file(READ ${SV_SOURCE_DIR}/Scripts/home-locate-linux.sh locate_script)
 	set(core_str "${locate_script}\n")
-	set_env_string_concat(SIMVASCULAR_HOME "$DIR" core_str)
+	set_env_string_concat(SV_HOME "$DIR" core_str)
 endif()
 if(WIN32 AND NOT UNIX)
 	set(core_str "@echo off\r\n")
-	set_env_string_concat(SIMVASCULAR_HOME "%~dp0" core_str)
+	set_env_string_concat(SV_HOME "%~dp0" core_str)
 endif()
 
-set(core_vars 	SIMVASCULAR_OS SOFTWARE_PLATFORM COMPILER_VERSION
-	SIMVASCULAR_VERSION OPEN_SOFTWARE_BINARIES_TOPLEVEL
-	LICENSED_SOFTWARE_TOPLEVEL SIMVASCULAR_STATIC_BUILD)
+set(core_vars 	SV_OS SOFTWARE_PLATFORM COMPILER_VERSION
+	SV_VERSION OPEN_SOFTWARE_BINARIES_TOPLEVEL
+	LICENSED_SOFTWARE_TOPLEVEL SV_STATIC_BUILD)
 
 
 foreach(var ${core_vars})
@@ -43,17 +43,17 @@ set(install_script_string)
 set(FRAGMENT_INJECTION_STRING)
 #---
 # Write extra FILES
-env_variable_to_value_variable(ENV_SIMVASCULAR_HOME SIMVASCULAR_HOME)
+env_variable_to_value_variable(ENV_SV_HOME SV_HOME)
 
 if(SV_USE_PARASOLID)
 	#Parasolid as a few special directories to add
 	set_env_string_concat(P_SCHEMA "${PARASOLID_SCHEMA_DIR}" developer_script_string)
-	set_env_string(P_SCHEMA "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
+	set_env_string(P_SCHEMA "${ENV_SV_HOME}/${SV_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR}" install_script_string)
 	set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 		<Registry Id='regid.parasolid' Root='HKLM'
-		Key='Software\\SimVascular\\@SIMVASCULAR_VERSION@ @SIMVASCULAR_MAJOR_VERSION@'
+		Key='Software\\SimVascular\\@SV_VERSION@ @SV_MAJOR_VERSION@'
 		Name='PSchemaDir' Action='write' Type='string'
-		Value='[INSTALL_ROOT]@SIMVASCULAR_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR@' />")
+		Value='[INSTALL_ROOT]@SV_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR@' />")
 endif()
 
 if(SV_USE_MESHSIM)
@@ -67,7 +67,7 @@ if(SV_USE_MESHSIM)
 	endif()
 endif()
 
-foreach(lib ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
+foreach(lib ${SV_EXTERNAL_SHARED_LIBS})
 	# For Each library that we have linked against
 	if(${lib}_DLL_PATH)
 		# If there is a DLL path associated with it, go ahead and add it to the scripts
@@ -77,17 +77,17 @@ foreach(lib ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
 	# on unix systems we only need this path if its installed (moved)
 	if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${lib})
 		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
-		if(SIMVASCULAR_INSTALL_${lib}_LIBRARY_DIR)
+		if(SV_INSTALL_${lib}_LIBRARY_DIR)
 			#if there is an install library directory, add it to the path for installation, it will be installed there.
-			append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_${lib}_LIBRARY_DIR}" install_script_string)
+			append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${lib}_LIBRARY_DIR}" install_script_string)
 		endif()
-		if(SIMVASCULAR_INSTALL_${lib}_RUNTIME_DIR)
+		if(SV_INSTALL_${lib}_RUNTIME_DIR)
 			# if there is an install runtime directory, add it to the path for installation
 			# set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 				# 	<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
-				# 		Value='[INSTALL_ROOT]\\${SIMVASCULAR_INSTALL_${lib}_RUNTIME_DIR}'
+				# 		Value='[INSTALL_ROOT]\\${SV_INSTALL_${lib}_RUNTIME_DIR}'
 				# 		Permanent='yes' Part='last' Action='set' System='yes' />")
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_${lib}_RUNTIME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${lib}_RUNTIME_DIR}" install_script_string)
 endif()
 else()
 	if(${lib}_DLL_PATH)
@@ -96,12 +96,12 @@ else()
 endif()
 endforeach()
 # This is a catch all if no DLL_PATH was specified but we will need the so for installed libraries.
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR}" install_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_HOME_DIR}" install_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_RUNTIME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_EXTERNALS_RUNTIME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}" install_script_string)
 # set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 	# 				<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
-	# 					Value='[INSTALL_ROOT]\\@SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR@'
+	# 					Value='[INSTALL_ROOT]\\@SV_INSTALL_EXTERNALS_RUNTIME_DIR@'
 	# 					Permanent='yes' Part='last' Action='set' System='yes' />")
 
 if(SV_USE_TKCXIMAGE)
@@ -110,12 +110,12 @@ if(SV_USE_TKCXIMAGE)
 	endif()
 endif()
 
-if(NOT SV_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
+if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
 	#Lib additions
 	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.5" developer_script_string)
 	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.5" developer_script_string)
-	set_env_string_concat(TCL_LIBRARY "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_TCL_LIBRARY_DIR}/tcl8.5" install_script_string)
-	set_env_string_concat(TK_LIBRARY "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_TCL_LIBRARY_DIR}/tk8.5" install_script_string)
+	set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tcl8.5" install_script_string)
+	set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tk8.5" install_script_string)
 endif()
 
 #--------
@@ -126,17 +126,17 @@ if(SV_USE_PYTHON)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/bin" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/lib" developer_script_string)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${VTK_DIR}/bin" developer_script_string)
-	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" install_script_string)
-	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages/vtk" install_script_string)
-	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
-	append_env_string_concat(PYTHONPATH "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SIMVASCULAR_HOME}/${SIMVASCULAR_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages/vtk" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
+	append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
 endif()
 #--------
 # Tcl is VTK built as shared
-if(SV_BUILD_SHARED_VTK)
+if(VTK_USE_SHARED_LIBRARIES)
 	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
-	set_env_string_concat(TCLLIBPATH "${ENV_SIMVASCULAR_HOME}/lib/tcltk/vtk-6.2" install_script_string)
+	set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/lib/tcltk/vtk-6.2" install_script_string)
 endif()
 
 
@@ -160,8 +160,8 @@ unset(GDB)
 unset(GDB_FLAGS)
 set(INSTALL_SYMLINK_FILE "${TEMP_DIR}/setup-symlinks.sh")
 file(WRITE ${INSTALL_SYMLINK_FILE} "${locate_script}\n\necho $DIR\n\n")
-dev_message("SIMVASCULAR_SCRIPT_TARGETS: ${SIMVASCULAR_SCRIPT_TARGETS}")
-foreach(tar ${SIMVASCULAR_SCRIPT_TARGETS})
+dev_message("SV_SCRIPT_TARGETS: ${SV_SCRIPT_TARGETS}")
+foreach(tar ${SV_SCRIPT_TARGETS})
 	simvascular_configure_script(
 		TARGET "${tar}"
 		FILES ${SCRIPT_FILES}
@@ -183,8 +183,8 @@ foreach(tar ${SIMVASCULAR_SCRIPT_TARGETS})
 	endif()
 endforeach()
 if(UNIX)
-	install(PROGRAMS ${INSTALL_SYMLINK_FILE} DESTINATION ${SIMVASCULAR_INSTALL_SCRIPT_DIR})
-	install(FILES "README-install" DESTINATION ${SIMVASCULAR_INSTALL_SCRIPT_DIR})
+	install(PROGRAMS ${INSTALL_SYMLINK_FILE} DESTINATION ${SV_INSTALL_SCRIPT_DIR})
+	install(FILES "README-install" DESTINATION ${SV_INSTALL_SCRIPT_DIR})
 	#install(CODE "execute_process(COMMAND \"${INSTALL_SYMLINK_FILE}\"")")
 endif()
 if(BUILD_TESTING)

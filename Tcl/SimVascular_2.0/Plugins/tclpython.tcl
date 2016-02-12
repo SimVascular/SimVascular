@@ -26,7 +26,7 @@ proc startTclPython {} {
   #Create TclPyString global to pass string between tcl and python
   global TclPyString
   $gPythonInterp exec {tcl.eval('global TclPyString')}
-  set TclPyString $env(SIMVASCULAR_HOME)
+  set TclPyString $env(SV_HOME)
   $gPythonInterp exec {simvascular_home = tcl.eval('set dummy $TclPyString')}
 
   #Initiate modules

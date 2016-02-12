@@ -75,7 +75,7 @@ if(SV_USE_TET_ADAPTOR)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tet_adaptor)
 endif()
 
-if (SV_USE_ADAPTOR)
+if (SV_USE_MESHSIM_ADAPTOR)
 	if(NOT MESHSIM_USE_SHARED_LIBRARIES)
 	  set(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
@@ -90,7 +90,7 @@ simvascular_add_executable(${SV_EXE}
 	DEV_SCRIPT_NAME "mysim"
 	INSTALL_SCRIPT_NAME "simvascular"
 	INSTALL_COMPONENT CoreExecutables
-	INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+	INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 #message("OPTLIBS ${OPTLIBS}")
 
 target_link_libraries(${SV_EXE}

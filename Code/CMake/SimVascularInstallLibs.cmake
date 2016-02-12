@@ -38,7 +38,7 @@ macro(simvascular_install_prereqs tar location)
     ENDFOREACH()
 endmacro()
 
-foreach(var ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
+foreach(var ${SV_EXTERNAL_SHARED_LIBS})
     if(NOT ${var}_DLL_LIBRARIES)
         set(${var}_DLL_LIBRARIES ${${var}_LIBRARY} ${${var}_LIBRARIES} ${${var}_DLL_LIBRARY})
     endif()
@@ -49,8 +49,8 @@ foreach(var ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
         # We only want to install libraries they are not system libraries.
         # we want to install them regardles if this is a distribution.
         dev_message("[${var}]  This is either not a system library, or this is a distribution install.")
-        if(NOT SIMVASCULAR_INSTALL_${var}_RUNTIME_DIR)
-            dev_message("[${var}]  SIMVASCULAR_INSTALL_${var}_RUNTIME_DIR does not exist, ${lib_name} installing into externals")
+        if(NOT SV_INSTALL_${var}_RUNTIME_DIR)
+            dev_message("[${var}]  SV_INSTALL_${var}_RUNTIME_DIR does not exist, ${lib_name} installing into externals")
             # Variables with a install directory are handled differently
             # if the directory doesn't exist, install in in the catch all
             foreach(lib ${${var}_DLL_LIBRARIES})
@@ -60,15 +60,15 @@ foreach(var ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
                 get_filename_component(lib_name_we ${lib} NAME_WE)
                 get_filename_component(lib_path ${lib} PATH)
                 if(_EXT MATCHES "${CMAKE_SHARED_LIBRARY_SUFFIX}$")
-                    dev_message("[${var}] ${lib_name} marked for install into ${SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR}")
+                    dev_message("[${var}] ${lib_name} marked for install into ${SV_INSTALL_EXTERNALS_RUNTIME_DIR}")
                     if(IS_SYMLINK ${lib})
                         dev_message("${lib_name} ${lib_name_we} is a symbolic link\n${lib_path}/${lib_name_we}*")
                         #get_filename_component(lib ${})
                         FILE(GLOB lib "${lib_path}/${lib_name_we}*")
                     endif()
                     dev_message("Installing ${lib}")
-                    install(FILES ${lib} DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT "ExteralRuntimes")
-                    simvascular_install_prereqs(${lib} ${SIMVASCULAR_INSTALL_EXTERNALS_RUNTIME_DIR})
+                    install(FILES ${lib} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT "ExteralRuntimes")
+                    simvascular_install_prereqs(${lib} ${SV_INSTALL_EXTERNALS_RUNTIME_DIR})
                 else()
                     dev_message("[${var}]  ${lib_name} is not a shared lib, removing ${lib_name}, EXT ${_EXT}, do not install")
                     list(REMOVE_ITEM ${var}_DLL_LIBRARIES ${lib})
@@ -76,7 +76,7 @@ foreach(var ${SIMVASCULAR_EXTERNAL_SHARED_LIBS})
             endforeach()
         else()
             #debug only
-            dev_message("SIMVASCULAR_INSTALL_${var}_RUNTIME_DIR exists, ${var} will be handled elsewhere")
+            dev_message("SV_INSTALL_${var}_RUNTIME_DIR exists, ${var} will be handled elsewhere")
         endif()
     else()
         dev_message("[${var}] This is system library, and distribution is not enabled.")
@@ -92,7 +92,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # TCL
 
-if(NOT SV_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
+if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
     if(NOT APPLE)
         message("${TCL_DLL_PATH}")
         set(extra_exclude_pattern)
@@ -103,7 +103,7 @@ if(NOT SV_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
       endif()
       install(DIRECTORY 
         ${TCL_SOURCE_DIR}/
-        DESTINATION ${SIMVASCULAR_INSTALL_TCL_TOP_DIR}
+        DESTINATION ${SV_INSTALL_TCL_TOP_DIR}
         COMPONENT TclTkLibraries
         PATTERN "tcllib_doc" EXCLUDE
         PATTERN "tklib_doc" EXCLUDE
@@ -116,11 +116,11 @@ if(NOT SV_USE_SYSTEM_TCL OR SIMVASCULAR_INSTALL_SYSTEM_LIBS)
       file(GLOB TCL_DLLS "${TCL_DLL_PATH}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
       # CHANGE FOR EXECUTABLE RENAME REMOVE
       # if(NOT WIN32)
-      #     install(FILES ${TCL_DLLS} DESTINATION ${SIMVASCULAR_INSTALL_TCL_RUNTIME_DIR})
+      #     install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_TCL_RUNTIME_DIR})
       # else()
-      #   install(FILES ${TCL_DLLS}  DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+      #   install(FILES ${TCL_DLLS}  DESTINATION ${SV_INSTALL_RUNTIME_DIR})
       #endif()
-      install(FILES ${TCL_DLLS} DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT TclTkRuntimes)
+      install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT TclTkRuntimes)
   endif()
 endif()
 
@@ -154,9 +154,9 @@ if(SV_USE_MPI AND NOT SV_USE_DUMMY_MPICH2)
                 list(REMOVE_DUPLICATES MPI_INSTALL_LIBS)
             endif()
             install(FILES ${MPI_INSTALL_LIBS} 
-                DESTINATION ${SIMVASCULAR_INSTALL_MPI_LIBRARY_DIR} COMPONENT MPIRuntimes)
+                DESTINATION ${SV_INSTALL_MPI_LIBRARY_DIR} COMPONENT MPIRuntimes)
             foreach(lib ${MPI_INSTALL_LIBS})
-            simvascular_install_prereqs(${lib} ${SIMVASCULAR_INSTALL_MPI_RUNTIME_DIR})
+            simvascular_install_prereqs(${lib} ${SV_INSTALL_MPI_RUNTIME_DIR})
         endforeach()
         endif()
         #find MPIEXEC's path, and install it and everything with MPI or hydra in the name
@@ -167,9 +167,9 @@ if(SV_USE_MPI AND NOT SV_USE_DUMMY_MPICH2)
         if(MPIEXEC_INSTALL_PROGS)
             list(REMOVE_DUPLICATES MPIEXEC_INSTALL_PROGS)
             # CHANGE NO TARGETS
-            # install(PROGRAMS ${MPIEXEC_INSTALL_PROGS} DESTINATION ${SIMVASCULAR_INSTALL_MPI_EXE_DIR})
+            # install(PROGRAMS ${MPIEXEC_INSTALL_PROGS} DESTINATION ${SV_INSTALL_MPI_EXE_DIR})
             install(PROGRAMS ${MPIEXEC_INSTALL_PROGS} 
-                DESTINATION ${SIMVASCULAR_INSTALL_HOME_DIR} COMPONENT MPIExecutables)
+                DESTINATION ${SV_INSTALL_HOME_DIR} COMPONENT MPIExecutables)
         endif()
     endif()
 endif()
@@ -186,10 +186,10 @@ endif()
 if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_PARSOLID)
       if(SV_USE_PARASOLID)
 	  file(GLOB PARASOLID_DLLS "${PARASOLID_DLL_PATH}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
-	  install(FILES ${PARASOLID_DLLS} DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+	  install(FILES ${PARASOLID_DLLS} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 	  file(GLOB PARASOLID_INSTALL_SCHEMAS "${PARASOLID_SCHEMA_DIR}/*.*")
 	  install(FILES ${PARASOLID_INSTALL_SCHEMAS}
-	      DESTINATION ${SIMVASCULAR_INSTALL_PARASOLID_SCHEMA_DIR})
+	      DESTINATION ${SV_INSTALL_PARASOLID_SCHEMA_DIR})
       endif()
 endif()
 
@@ -244,7 +244,7 @@ foreach(exe ${EXTERNAL_EXES})
 
 endif()
 install(PROGRAMS ${EXTERNALEXE_${_EXE}} 
-    DESTINATION ${SIMVASCULAR_INSTALL_EXTERNAL_EXE_DIR}
+    DESTINATION ${SV_INSTALL_EXTERNAL_EXE_DIR}
     RENAME "${_exe}${CMAKE_EXECUTABLE_SUFFIX}" OPTIONAL)
 #unset(EXTERNALEXE_${_EXE} CACHE)
 endforeach()

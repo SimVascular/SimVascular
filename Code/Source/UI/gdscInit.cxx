@@ -134,22 +134,22 @@ void SimVascularWelcome( Tcl_Interp *interp )
 {
   // Find the date of the executable we're running
   Tcl_Eval( interp, "puts \"\"");
-  Tcl_Eval( interp, "set simvascular_home \"$env(SIMVASCULAR_HOME)\";"
+  Tcl_Eval( interp, "set simvascular_home \"$env(SV_HOME)\";"
                   "if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {"
                       "source [file join $simvascular_home/Tcl/startup_configure.tcl];"
                       "if { [file exists [file join $simvascular_home/release-date]] } {"
-                          "set SIMVASCULAR_BUILD_STR \".$SIMVASCULAR_PATCH_VERSION\";"
-                          "if {$SIMVASCULAR_VERSION !=\"simvascular\"} {"
-                            "set SIMVASCULAR_BUILD_STR \".$SIMVASCULAR_PATCH_VERSION $SIMVASCULAR_VERSION\";"
+                          "set SV_BUILD_STR \".$SV_PATCH_VERSION\";"
+                          "if {$SV_VERSION !=\"simvascular\"} {"
+                            "set SV_BUILD_STR \".$SV_PATCH_VERSION $SV_VERSION\";"
                           "}"
                       "} else {"
-                          "set SIMVASCULAR_BUILD_STR \" (dev build)\";"
+                          "set SV_BUILD_STR \" (dev build)\";"
                       "}"
                   "} else {"
-                  "set SIMVASCULAR_FULL_VER_NO \"unknown version\";"
-                  "set SIMVASCULAR_BUILD_STR \"unknown release\";"
+                  "set SV_FULL_VER_NO \"unknown version\";"
+                  "set SV_BUILD_STR \"unknown release\";"
                   "}");
-  Tcl_Eval( interp, "puts [format \"  %-12s %s\" \"SimVascular:\" $SIMVASCULAR_FULL_VER_NO$SIMVASCULAR_BUILD_STR]" );
+  Tcl_Eval( interp, "puts [format \"  %-12s %s\" \"SimVascular:\" $SV_FULL_VER_NO$SV_BUILD_STR]" );
   Tcl_Eval( interp, "puts \"  Copyright (c) 2014-2015 The Regents of the University of California.\"" );
   Tcl_Eval( interp, "puts \"                         All Rights Reserved.\"");
   Tcl_Eval( interp, "puts \"\"");
@@ -170,7 +170,7 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-#ifdef SIMVASCULAR_STATIC_BUILD
+#ifdef SV_STATIC_BUILD
   if ( Getinterp_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Getinterp_Init\n" );
     return TCL_ERROR;
@@ -357,7 +357,7 @@ int SimVascular_Init( Tcl_Interp *interp )
   Tcl_Eval( interp, "if {[file exists [file join $env(HOME) .simvascular_rc]]} {          "
                     "  set tcl_rcFileName [file join $env(HOME) .simvascular_rc]           "
                     "} else {                                                         "
-                    "  set tcl_rcFileName [file join $env(SIMVASCULAR_HOME) simvascular.rc] "
+                    "  set tcl_rcFileName [file join $env(SV_HOME) simvascular.rc] "
                     "}                                                                ");
   Tcl_SetVar( interp, "tcl_prompt1", "puts -nonewline \"simvascular> \"",
 	      TCL_GLOBAL_ONLY );

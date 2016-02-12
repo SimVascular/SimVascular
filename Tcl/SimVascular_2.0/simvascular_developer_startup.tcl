@@ -29,7 +29,7 @@
 
 global auto_path
 
-if {$SIMVASCULAR_RELEASE_BUILD == 0} {
+if {$SV_RELEASE_BUILD == 0} {
   source $simvascular_home/Tcl/Common/General/tmpobj.tcl
   source $simvascular_home/Tcl/Common/General/helpers.tcl
 }
@@ -43,9 +43,9 @@ set auto_path [linsert $auto_path 0 $simvascular_home/Tcl/SimVascular_2.0/Core]
 lappend auto_path [file join $simvascular_home Tcl External tclxml3.2]
 
 # gui stuff
-if {[info exists env(SIMVASCULAR_BATCH_MODE)] == 0} {
+if {[info exists env(SV_BATCH_MODE)] == 0} {
 
-  if {$SIMVASCULAR_RELEASE_BUILD == 0} {
+  if {$SV_RELEASE_BUILD == 0} {
     source $simvascular_home/Tcl/Common/Vis/actor.tcl
     source $simvascular_home/Tcl/Common/Vis/obj.tcl
     source $simvascular_home/Tcl/Common/Vis/img.tcl
@@ -80,11 +80,11 @@ proc upix {} {
 }
 
 # wrap the call to upix so that it *can* be disabled in released versions
-if {$SIMVASCULAR_RELEASE_BUILD == 0} {
+if {$SV_RELEASE_BUILD == 0} {
   # if we are running in batch mode, can't
   # regenerate the indexes constantly or
   # else auto_index gets confused
-  if {[info exists env(SIMVASCULAR_BATCH_MODE)] == 0} {
+  if {[info exists env(SV_BATCH_MODE)] == 0} {
     upix
   }
 }
@@ -92,22 +92,22 @@ if {$SIMVASCULAR_RELEASE_BUILD == 0} {
 # load packages if dynamically build
 if {$tcl_platform(platform) == "unix"} {
   if {$tcl_platform(os) == "Darwin"} {
-    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.dylib Parasolidsolid} msg]} {
+    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_parasolid.dylib Parasolidsolid} msg]} {
 	puts "liblib_simvascular_parasolid shared dylib: $msg"
     }
   } 
   
   if {$tcl_platform(os) == "Linux"} {
-    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_parasolid.so  Parasolidsolid} msg]} {
+    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_parasolid.so  Parasolidsolid} msg]} {
 	puts "liblib_simvascular_parasolid shared object: $msg"
     }
-    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_discrete.so Meshsimdiscretesolid} msg]} {
+    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_discrete.so Meshsimdiscretesolid} msg]} {
         puts "liblib_simvascular meshsim discrete shared object: $msg"
     }
-    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_meshsim_mesh.so Meshsimmesh} msg]} {
+    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_mesh.so Meshsimmesh} msg]} {
 	puts "liblib_meshsim_mesh shared object: $msg"
     }
-    if {[catch {load $env(SIMVASCULAR_HOME)/Lib/liblib_simvascular_meshsim_adaptor.so  Meshsimadapt} msg]} {
+    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_adaptor.so  Meshsimadapt} msg]} {
 	puts "liblib_simvascular meshsim adaptor shared object: $msg"
     } 
   }

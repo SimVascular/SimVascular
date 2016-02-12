@@ -83,13 +83,13 @@ endif()
 # unset NEED variables
 unset(SV_USE_FORTRAN)
 unset(SV_USE_MPI)
-unset(USE_INTEL)
-unset(USE_SVLS)
+unset(SV_USE_INTEL)
+unset(SV_USE_THEEDSOLVER_SVLS)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
 set(SV_EXE "simvascular")
-set(SV_ADAPTOR_EXE "svadapt")
+set(SV_MESHSIM_ADAPTOR_EXE "svadapt")
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
@@ -97,9 +97,9 @@ set(SV_TET_ADAPTOR_EXE "svtetadapt")
 
 #-----------------------------------------------------------------------------
 # start internal cache variables
-set(SIMVASCULAR_INCLUDE_DIRS "")
-set(SIMVASCULAR_CORE_LIBRARY_DIRS "")
-set(SIMVASCULAR_CORE_EXECUTABLE_DIRS "")
+set(SV_INCLUDE_DIRS "")
+set(SV_CORE_LIBRARY_DIRS "")
+set(SV_CORE_EXECUTABLE_DIRS "")
 
 #-----------------------------------------------------------------------------
 # Includes
@@ -155,9 +155,9 @@ endif(DOXYGEN_FOUND)
 #endif()
 
 if(NOT BUILD_SHARED_LIBS)
-	set(SIMVASCULAR_INSTALL_HEADERS OFF)
-	set(SIMVASCULAR_INSTALL_EXTERNALS OFF)
-	set(SIMVASCULAR_INSTALL_LIBS OFF)
+	set(SV_INSTALL_HEADERS OFF)
+	set(SV_INSTALL_EXTERNALS OFF)
+	set(SV_INSTALL_LIBS OFF)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -235,10 +235,10 @@ endif()
 #-----------------------------------------------------------------------------
 # Adaptor Options
 # Adaptor converts objects between the different solid models.
-option(SV_USE_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
-mark_as_superbuild(SV_USE_ADAPTOR)
+option(SV_USE_MESHSIM_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
+mark_as_superbuild(SV_USE_MESHSIM_ADAPTOR)
 
-if(SV_USE_ADAPTOR)
+if(SV_USE_MESHSIM_ADAPTOR)
 	set(SV_USE_THREEDSOLVER ON)
 	set(SV_USE_MESHSIM ON)
 endif()
@@ -327,7 +327,7 @@ if(SV_USE_THREEDSOLVER)
 
 	option(SV_THREEDSOLVER_USE_LESLIB "Use leslib as linear solver" OFF )
 	if(SV_THREEDSOLVER_USE_LESLIB)
-		set(USE_LESLIB 1)
+		set(SV_USE_LESLIB 1)
 	endif()
 	mark_as_superbuild(SV_THREEDSOLVER_USE_LESLIB)
 endif()
@@ -358,10 +358,10 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 endif()
 
 if(NOT BUILD_SHARED_LIBS)
-	set(SIMVASCULAR_STATIC_BUILD "1")
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_STATIC_LINK -DSIMVASCULAR_STATIC_BUILD")
+	set(SV_STATIC_BUILD "1")
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_STATIC_LINK -DSV_STATIC_BUILD")
 elseif()
-	set(SIMVASCULAR_STATIC_BUILD "0")
+	set(SV_STATIC_BUILD "0")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -428,7 +428,7 @@ endif()
 # and finding the libraries that those parts need.
 #-----------------------------------------------------------------------------
 # Basic Core Libs
-set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS}
+set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/Common/Globals"
 	"Source/Common/Utils"
 	"Source/Common/Repository"
@@ -440,7 +440,7 @@ set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS}
 	"Source/Mesh/MeshObject"
 	"Source/Model/PolyDataSolidModel")
 
-set(SIMVASCULAR_CORE_EXECUTABLE_DIRS ${SIMVASCULAR_CORE_EXECUTABLE_DIRS} "Source/UI")
+set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
 
 #-----------------------------------------------------------------------------
 # We can not begin enabling libraries
@@ -484,7 +484,7 @@ if(SV_USE_PYTHON)
 		list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
 		mark_as_superbuild(PYTHONLIBS_MAJOR_VERSION)
 		mark_as_superbuild(PYTHONLIBS_MINOR_VERSION)
-		set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/TclPython")
+		set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_PYTHON")
 	else()
 		message(STATUS "")
@@ -501,8 +501,8 @@ simvascular_external(VTK DOWNLOADABLE
         vtkFiltersFlowPaths vtkWrappingTcl
 	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy)
-if(SIMVASCULAR_BUILD_SHARED_VTK)
-	set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} VTK)
+if(SV_BUILD_SHARED_VTK)
+	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -517,7 +517,7 @@ if(WIN32)
 			get_filename_component(TKCXIMAGE_DLL_PATH ${TKCXIMAGE_DLL} DIRECTORY CACHE)
 			mark_as_superbuild(TKCXIMAGE_DLL)
 			mark_as_superbuild(TKCXIMAGE_DLL_PATH)
-			set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} "TKCXIMAGE")
+			set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "TKCXIMAGE")
 		endif()
 	endif()
 endif()
@@ -560,46 +560,46 @@ if(SV_USE_TETGEN)
 	else()
 		message(FATAL_ERROR "Unknown Tetgen versions, please specify!")
 	endif()
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
 else()
 	unset(TETGEN_LIBRARY CACHE)
 endif()
 
-if(SV_USE_ADAPTOR)
-    set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+if(SV_USE_MESHSIM_ADAPTOR)
+    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
 elseif(SV_USE_TET_ADAPTOR)
-    set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
 endif()
 
 if(SV_USE_TET_ADAPTOR)
 	SET(USE_TET_ADAPTOR ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
 endif()
 
 #-----------------------------------------------------------------------------
 # VMTK
 if(SV_USE_VMTK)
 	set(USE_VMTK ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
 endif()
 
 #-----------------------------------------------------------------------------
 # Plugin LevelSets
 if(SV_USE_ITK)
 	if(VTK_USE_SHARED_LIBRARIES)
-		set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} ITK)
-		set(SIMVASCULAR_INSTALL_HEADERS ON)
-		set(SIMVASCULAR_INSTALL_EXTERNALS ON)
-		set(SIMVASCULAR_INSTALL_LIBS ON)
+		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
+		set(SV_INSTALL_HEADERS ON)
+		set(SV_INSTALL_EXTERNALS ON)
+		set(SV_INSTALL_LIBS ON)
 	endif()
 	simvascular_external(ITK DOWNLOADABLE)
 	set(USE_ITK ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
 endif()
 
 #---
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
 	if(SV_USE_MESHSIM)
 		option(MESHSIM_USE_SHARED_LIBRARIES "Build MeshSim as shared libraries" OFF)
 		mark_as_superbuild(MESHSIM_USE_SHARED_LIBRARIES)
@@ -610,9 +610,9 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
 	endif()
 endif()
 
-if(SV_USE_ADAPTOR)
+if(SV_USE_MESHSIM_ADAPTOR)
 	set(USE_MESHSIM_ADAPTOR ON)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
 endif()
 
 
@@ -644,13 +644,13 @@ if(SV_USE_OPENCASCADE)
 	mark_as_superbuild(OPENCASCADE_SOURCE_DIR)
 	set(USE_OPENCASCADE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_OPENCASCADE")
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
-	#set(SIMVASCULAR_EXTERNAL_SHARED_LIBS ${SIMVASCULAR_EXTERNAL_SHARED_LIBS} OPENCASCADE)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
+	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
 endif()
 # Licensed Package Additions
 #-----------------------------------------------------------------------------
-if(SV_USE_ADAPTOR)
-	set(USE_SVLS ON)
+if(SV_USE_MESHSIM_ADAPTOR)
+	set(SV_THREEDSOLVER_USE_SVLS ON)
 	set(SV_USE_FORTRAN ON)
 	set(SV_USE_MPI ON)
 	set(SV_USE_THREEDSOLVER ON)
@@ -662,7 +662,7 @@ if(SV_USE_PARASOLID)
 		if(EXISTS ${SV_SOURCE_DIR}/Licensed/ParasolidSolidModel/CMakeLists.txt)
 			simvascular_external(PARASOLID SYSTEM_DEFAULT SHARED_LIB)
 			if(WIN32)
-				set(SIMVASCULAR_EXTRA_PATHS ${SIMVASCULAR_EXTRA_PATHS} ${PARASOLID_DLL_PATH})
+				set(SV_EXTRA_PATHS ${SV_EXTRA_PATHS} ${PARASOLID_DLL_PATH})
 				mark_as_superbuild(PARASOLID_DLL_PATH:PATH)
 			endif()
 			mark_as_superbuild(PARASOLID_DIR)
@@ -672,7 +672,7 @@ if(SV_USE_PARASOLID)
 			mark_as_superbuild(PARASOLID_SCHEMA_DIR)
 			SET(USE_PARASOLID ON)
 			set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_PARASOLID")
-			set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
+			set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
 			option(PARASOLID_USE_SHARED_LIBRARIES "Build Parasolid as shared libraries" OFF)
 			mark_as_superbuild(PARASOLID_USE_SHARED_LIBRARIES)
 		else()
@@ -681,7 +681,7 @@ if(SV_USE_PARASOLID)
 
 endif()
 if(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
-	set(SIMVASCULAR_CORE_LIBRARY_DIRS ${SIMVASCULAR_CORE_LIBRARY_DIRS} "Source/Model/MeshSimDiscreteSolidModel")
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/MeshSimDiscreteSolidModel")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -753,7 +753,7 @@ if(SV_USE_THREEDSOLVER)
 	option(SV_USE_METIS "Use metis Library" ON)
 	option(SV_USE_NSPCG "Use nspcg Library" ON)
 	set(SV_USE_FORTRAN ON)
-	set(USE_SVLS ON)
+	set(SV_THREEDSOLVER_USE_SVLS ON)
 	set(SV_USE_MPI ON)
 	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 	#set(FLOWSOLVER_CONFIG_PATHS
@@ -763,7 +763,7 @@ if(SV_USE_THREEDSOLVER)
 	#mark_as_superbuild(FLOWSOLVER_CONFIG_FILE)
 	#set(FLOWSOLVER_CONFIG_PATH ${OUTBIN_DIR})
 	#file(COPY ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${FLOWSOLVER_CONFIG_PATH})
-	#install(FILES ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+	#install(FILES ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 endif()
 
 #-----------------------------------------------------------------------------
@@ -775,7 +775,7 @@ endif()
 #-----------------------------------------------------------------------------
 #  SVLS
 # svLS depends on the THREEDSOLVER build state so it must be here.
-if(USE_SVLS)
+if(SV_THREEDSOLVER_USE_SVLS)
 	set(SVLS_BUILD_TYPE "Source")
 	#simvascular_external(svls SVEXTERN_DEFAULT)
 	set(SV_USE_FORTRAN ON)
@@ -921,16 +921,16 @@ endif()
 
 if(WIN32)
 	if(SV_ENABLE_DISTRIBUTION)
-		set(SIMVASCULAR_USE_WIN32_REGISTRY ON)
+		set(SV_USE_WIN32_REGISTRY ON)
 	endif()
 endif()
-if(SIMVASCULAR_USE_WIN32_REGISTRY_FORCE_OFF)
-	set(SIMVASCULAR_USE_WIN32_REGISTRY OFF)
-	message(STATUS "Forcing SIMVASCULAR_USE_WIN32_REGISTRY off, even in distribution mode")
-	message(STATUS "SIMVASCULAR_USE_WIN32_REGISTRY: ${SIMVASCULAR_USE_WIN32_REGISTRY}")
-	mark_as_superbuild(SIMVASCULAR_USE_WIN32_REGISTRY_FORCE_OFF:BOOL)
+if(SV_USE_WIN32_REGISTRY_FORCE_OFF)
+	set(SV_USE_WIN32_REGISTRY OFF)
+	message(STATUS "Forcing SV_USE_WIN32_REGISTRY off, even in distribution mode")
+	message(STATUS "SV_USE_WIN32_REGISTRY: ${SV_USE_WIN32_REGISTRY}")
+	mark_as_superbuild(SV_USE_WIN32_REGISTRY_FORCE_OFF:BOOL)
 endif()
-mark_as_superbuild(SIMVASCULAR_USE_WIN32_REGISTRY:BOOL)
+mark_as_superbuild(SV_USE_WIN32_REGISTRY:BOOL)
 #-----------------------------------------------------------------------------
 # Superbuild
 #-----------------------------------------------------------------------------
@@ -944,9 +944,9 @@ ExternalProject_Include_Dependencies(${PROJECT_NAME}
 	PROJECT_VAR PROJECT_NAME)
 if(SV_SUPERBUILD)
 
-	message(STATUS "Install timestamp: ${SIMVASCULAR_RELEASE_TIMESTAMP}")
-	file(WRITE "${TEMP_DIR}/release-date" "${SIMVASCULAR_RELEASE_TIMESTAMP}")
-	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SIMVASCULAR_INSTALL_HOME_DIR})
+	message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
+	file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
+	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
 
 	# Git Check (superbuild)
 	find_package(Git REQUIRED)
@@ -1088,25 +1088,25 @@ add_definitions(${GLOBAL_DEFINES})
 #-----------------------------------------------------------------------------
 # Add Local Includes
 set(LOCAL_LIBDIR Lib)
-set(SIMVASCULAR_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
+set(SV_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
 
 #-----------------------------------------------------------------------------
 # Include the Core subdirs
 # These are handled here because other sub directories depend on them
 # set
-set(SIMVASCULAR_INCLUDE_DIRS
+set(SV_INCLUDE_DIRS
 			 	"Source/Include"
 			 	"FlowSolvers/Include"
 			 	)
 
-foreach(dir ${SIMVASCULAR_INCLUDE_DIRS})
+foreach(dir ${SV_INCLUDE_DIRS})
 	add_subdirectory(${dir})
 	include_directories(${SV_SOURCE_DIR}/${dir}
 						${SV_BINARY_DIR}/${dir})
 endforeach()
 
-foreach(dir ${SIMVASCULAR_CORE_LIBRARY_DIRS})
+foreach(dir ${SV_CORE_LIBRARY_DIRS})
 	include_directories("${dir}")
 endforeach()
 
@@ -1121,13 +1121,13 @@ endif()
 if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 	# Add the Core Direcotories
 	message(STATUS "Libraries:")
-	foreach(dir ${SIMVASCULAR_CORE_LIBRARY_DIRS})
+	foreach(dir ${SV_CORE_LIBRARY_DIRS})
 		message(STATUS "	${dir}")
 		include_directories("${dir}")
 		add_subdirectory("${dir}")
 	endforeach()
 	message(STATUS "Executables")
-	foreach(dir ${SIMVASCULAR_CORE_EXECUTABLE_DIRS})
+	foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
 		message(STATUS "	${dir}")
 		add_subdirectory("${dir}")
 	endforeach()
