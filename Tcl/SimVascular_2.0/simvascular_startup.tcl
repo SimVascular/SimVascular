@@ -414,6 +414,11 @@ if {$tcl_platform(platform) == "windows"} {
 # Launch gui if interactive
 # -------------------------
 
+global SIMVASCULAR_USE_PYTHON
+if {[info exists SIMVASCULAR_USE_PYTHON] == 0} {
+  set SIMVASCULAR_USE_PYTHON OFF
+}
+
 if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   # tcl 8.4.x no longer exports tkTabToWindow
   if [catch {tk::unsupported::ExposePrivateCommand tkTabToWindow}] {
