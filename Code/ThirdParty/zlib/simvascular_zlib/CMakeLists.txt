@@ -9,9 +9,9 @@ SET(SRCS
 	)
 
 IF(WIN32)
-	IF(BUILD_SHARED_LIBS)
+	IF(SV_BUILD_SHARED_LIBS)
 		SET(ZLIB_DLL 1)
-	ENDIF(BUILD_SHARED_LIBS)
+	ENDIF(SV_BUILD_SHARED_LIBS)
 ENDIF(WIN32)
 
-add_library(lib_simvascular_zlib ${SRCS})
+add_library(lib_simvascular_zlib ${SV_LIBRARY_TYPE} ${SRCS})

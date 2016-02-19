@@ -57,6 +57,7 @@
 #include "vtkSphereSource.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "cv_vtk_utils.h"
 
 #ifdef USE_GTS
   #include "vtkSurfaceBooleanOperations.h"
@@ -163,7 +164,7 @@ int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(newPolyData);
 
-  if (PlyDtaUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == CV_OK)
   {
     int *faceIds;
     int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, &faceIds);

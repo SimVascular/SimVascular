@@ -99,12 +99,20 @@ endif()
 if(SV_THREEDSOLVER_USE_LESLIB)
   include_directories(${LESLIB_INCLUDE_DIR})
 else()# dummy leslib
-  add_library(lib_dummy_leslib leslib_dummy_prototypes.c)
+add_library(lib_dummy_leslib ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
   set(LESLIB_LIBRARY lib_dummy_leslib)
 endif()
-ADD_LIBRARY(flowsolver_fortran_lib ${FSRCS})
+add_library(lib_simvascular_write_restart ${SV_LIBRARY_TYPE} ${CSRCS})
+target_link_libraries(lib_simvascular_write_restart lib_simvascular_solverio
+	lib_dummy_leslib
+	${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
+
+ADD_LIBRARY(flowsolver_fortran_lib ${SV_LIBRARY_TYPE} ${FSRCS})
 #SET_TARGET_PROPERTIES(flowsolver_fortran_lib PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
+TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES} lib_simvascular_solverio lib_simvascular_write_restart)
+if(SV_THREEDSOLVER_USE_SVLS)
+	target_link_libraries(flowsolver_fortran_lib lib_simvascular_svls)
+endif()
 message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
 

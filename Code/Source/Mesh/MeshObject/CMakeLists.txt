@@ -35,16 +35,17 @@
 set(lib lib_simvascular_mesh)
 LIST(APPEND CORELIBS ${lib})
 
-SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx)
-SET(HDRS cvMeshObject.h cvMeshSystem.h)
+SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx cv_mesh_init.cxx)
+SET(HDRS cvMeshObject.h cvMeshSystem.h cv_mesh_init.h)
 
-
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
+			${ZLIB_LIBRARY}
 			lib_simvascular_globals lib_simvascular_repository
+			lib_simvascular_solid
             )
 
 if(SV_INSTALL_LIBS)

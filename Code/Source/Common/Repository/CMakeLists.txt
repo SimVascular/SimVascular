@@ -19,7 +19,7 @@ SET(HDRS cvRepository.h cvRepositoryData.h
     cv_repos_init.h cvDataSet.h
     )
 
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

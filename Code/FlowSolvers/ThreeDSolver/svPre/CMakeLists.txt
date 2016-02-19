@@ -53,7 +53,7 @@ endif()
 
 
 
-ADD_LIBRARY(presolver_fortran_lib ${FSRCS})
+ADD_LIBRARY(presolver_fortran_lib ${SV_LIBRARY_TYPE} ${FSRCS})
 
 simvascular_add_executable(${SV_PRESOLVER_EXE}
 	SRCS ${CXXSRCS} ${CSRCS}
@@ -67,6 +67,8 @@ TARGET_LINK_LIBRARIES(${SV_PRESOLVER_EXE} presolver_fortran_lib
 	${METIS_LIBRARY} ${SPARSE_LIBRARY}
 	${NSPCG_LIBRARY} ${VTK_LIBRARIES}
 	lib_simvascular_solverio)
+
+TARGET_LINK_LIBRARIES(presolver_fortran_lib ${NSPCG_LIBRARY})
 
 if(NOT MSVC)
 	SET_TARGET_PROPERTIES(presolver_fortran_lib PROPERTIES LINKER_LANGUAGE Fortran)

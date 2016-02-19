@@ -36,7 +36,13 @@ include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 set(HDRS cvAdaptObject.h cv_adapt_utils.h cv_adapt_init.h eispack.h)
 SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx cv_adapt_init.cxx eispack.cxx)
 
-add_library(${lib} ${CXXSRCS})
+if(SV_USE_MESHSIM_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${CXXSRCS})
+elseif(SV_BUILD_SHARED_LIBS)
+  add_library(${lib} SHARED ${CXXSRCS})
+else()
+  add_library(${lib} STATIC ${CXXSRCS})
+endif()
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}

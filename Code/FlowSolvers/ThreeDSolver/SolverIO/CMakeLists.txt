@@ -32,7 +32,7 @@ set(lib lib_simvascular_solverio)
 SET(CXXSRCS cvSolverIO.cxx)
 set(HDRS cvSolverIO.h)
 
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY})
 

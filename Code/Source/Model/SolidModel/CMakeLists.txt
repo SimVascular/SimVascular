@@ -43,16 +43,15 @@ if(SV_USE_PYTHON)
 endif()
 
 SET(CXXSRCS cvSolidModel.cxx)
-SET(HDRS    cvSolidModel.h)
+SET(HDRS    cvSolidModel.h cv_solit_init.h)
 
-add_library(${lib} ${CXXSRCS} cv_solid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES} ${TETGEN_LIBRARY}
-			lib_simvascular_globals lib_simvascular_utils
-			lib_simvascular_polydatasolid
+			lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository
             )
 if(SV_USE_PYTHON)
    target_link_libraries(${lib} ${PYTHON_LIBRARIES})

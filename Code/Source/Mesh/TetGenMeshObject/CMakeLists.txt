@@ -38,7 +38,7 @@ include_directories(${TETGEN_INCLUDE_DIR})
 SET(CXXSRCS cvTetGenMeshObject.cxx cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx)
 SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
 
-add_library(${lib} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
 
 if(SV_USE_VMTK)
 	SET(OPTLIBS lib_simvascular_vmtk)
@@ -50,8 +50,9 @@ target_link_libraries(${lib}
    ${PARASOLID_LIBRARIES}
    ${GLOBAL_LIBRARIES}
    ${TETGEN_LIBRARY}
+   ${ZLIB_LIBRARY}
    lib_simvascular_globals lib_simvascular_utils
-   lib_simvascular_polydatasolid
+   lib_simvascular_polydatasolid lib_simvascular_mesh
    )
 
 set_target_properties(${lib} PROPERTIES "COMPILE_DEFINITIONS" TETLIBRARY)

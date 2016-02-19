@@ -18,10 +18,11 @@ add_subdirectory(ITKCode)
 
 SET(CXXSRCS cvITKLevelSet.cxx)
 SET(HDRS cvITKLevelSet.h cvITKLevelSetBase.h)
-add_library(${lib} ${CXXSRCS} cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx)
 
 TARGET_LINK_LIBRARIES(${lib}
  lib_simvascular_itkutils
+ lib_simvascular_repository
  ${ITK_LIBRARIES} ${VTK_LIBRARIES} 
  ${GLOBAL_LIBRARIES})
 if(SV_INSTALL_LIBS)

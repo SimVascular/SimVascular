@@ -75,33 +75,11 @@ if(SV_USE_GTS)
 	SET(HDRS  ${HDRS} vtkSurfaceBooleanOperations.h)
 endif()
 
-#if(SV_USE_VMTK)
-#	SET(CXXSRCS ${CXXSRCS} vtkvmtkPolyDataCenterlines.cxx
-#		 	       vtkvmtkPolyDataDistanceToCenterlines.cxx
-#		               vtkvmtkMinHeap.cxx
-#			       vtkvmtkNonManifoldSteepestDescent.cxx
-#		               vtkvmtkVoronoiDiagram3D.cxx
-#		               vtkvmtkNonManifoldFastMarching.cxx
-#		               vtkvmtkSimplifyVoronoiDiagram.cxx
-#			       vtkvmtkInternalTetrahedraExtractor.cxx
-#			       vtkvmtkSteepestDescentLineTracer.cxx
-#			       vtkvmtkCapPolyData.cxx)
-#	SET(HDRS ${HDRS} vtkvmtkPolyDataCenterlines.h
-#		 	 vtkvmtkPolyDataDistanceToCenterlines.h
-#		         vtkvmtkMinHeap.h
-#			 vtkvmtkNonManifoldSteepestDescent.h
-#		         vtkvmtkVoronoiDiagram3D.h
-#		         vtkvmtkNonManifoldFastMarching.h
-#		         vtkvmtkSimplifyVoronoiDiagram.h
-#			 vtkvmtkSteepestDescentLineTracer.h
-#			 vtkvmtkInternalTetrahedraExtractor.h
-#			 vtkvmtkCapPolyData.h)
-#endif()
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-	lib_simvascular_solid lib_simvascular_globals
+	lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository lib_simvascular_solid
 	)
 
 if(SV_USE_GLIB)
@@ -117,6 +95,13 @@ if(SV_USE_GTS)
 		${GTS_LIBRARY}
 		)
 endif()
+
+if(SV_USE_VMTK)
+	target_link_libraries(${lib}
+		lib_simvascular_vmtk
+		)
+endif()
+
 
 
 if(SV_INSTALL_LIBS)

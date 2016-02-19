@@ -10,10 +10,16 @@ include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 set(CXXSRCS cv_globals.cxx)
 set(HDRS cv_globals.h)
 
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
-   ${GLOBAL_LIBRARIES})
+   ${GLOBAL_LIBRARIES}
+   ${OPENCASCADE_LIBRARIES})
+
+if(SV_USE_OPENCASCADE)
+  target_link_libraries(${lib}
+     ${OPENCASCADE_LIBRARIES})
+endif()
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

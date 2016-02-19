@@ -31,10 +31,10 @@ SET(lib lib_simvascular_meshsim_mesh)
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
 
-if(MESHSIM_USE_SHARED_LIBRARIES)
+if(SV_USE_MESHSIM_SHARED_LIBRARIES)
     add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 else()
-    add_library(${lib} ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+    add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 endif()
 
 if(SV_USE_ADAPTOR)
@@ -50,7 +50,7 @@ target_link_libraries(${lib}
 			lib_simvascular_utils)# lib_simvascular_sysgeom)
 			#lib_simvascular_repository
 			#lib_simvascular_solid)
-if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
 	target_link_libraries(${lib} lib_simvascular_discrete)
 endif()
 if(SV_USE_PARASOLID)

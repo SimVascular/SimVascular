@@ -74,7 +74,7 @@
   #define Append_Restart   append_restart_
 #endif
 
-extern char cvsolver_iotype[80];
+char cvsolver_iotype[80];
 
 void 
 Write_Restart(  int* pid, 

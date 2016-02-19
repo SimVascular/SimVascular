@@ -6,9 +6,11 @@ LIST(APPEND PLUGINLIBS ${lib})
 
 SET(CXXSRCS cvITKUtils.cxx)
 SET(HDRS cvITKUtils.cxx)
-add_library(${lib} ${CXXSRCS} cv_ITKUtils_init.cxx)
+
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKUtils_init.cxx)
     
-target_link_libraries(${lib} ${ITK_LIBRARIES} ${VTK_LIBRARIES})
+target_link_libraries(${lib} ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+		      lib_simvascular_repository)
 if(SV_INSTALL_LIBS)
 install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables

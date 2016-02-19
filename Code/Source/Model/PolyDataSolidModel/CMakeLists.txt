@@ -42,13 +42,12 @@ SET(HDRS cvPolyDataSolid.h cv_polydatasolid_init.h
          cv_polydatasolid_utils.h vtkGetBoundaryFaces.h
             )
 
-add_library(${lib} ${CXXSRCS} cv_polydatasolid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx)
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
-			lib_simvascular_globals lib_simvascular_utils lib_simvascular_sysgeom
+			lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository lib_simvascular_solid lib_simvascular_sysgeom
             )
 if(SV_USE_VMTK)
     target_link_libraries(${lib} lib_simvascular_vmtk)

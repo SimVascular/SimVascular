@@ -30,10 +30,10 @@
  
 SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 
-if(MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+if(SV_USE_MESHSIM_SHARED_LIBRARIES)
     add_library(lib_simvascular_discrete SHARED ${CXXSRCS} cv_discrete_init.cxx)
 else()
-    add_library(lib_simvascular_discrete ${CXXSRCS} cv_discrete_init.cxx)
+    add_library(lib_simvascular_discrete STATIC ${CXXSRCS} cv_discrete_init.cxx)
 endif()
 
 target_link_libraries(lib_simvascular_discrete

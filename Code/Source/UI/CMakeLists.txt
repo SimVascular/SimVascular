@@ -3,7 +3,7 @@ SET(CXXSRCS main.cxx gdscInit.cxx cv_VTK_init.cxx)
 
 UNSET(OPTLIBS)
 
-if(NOT BUILD_SHARED_LIBS)
+if(NOT SV_BUILD_SHARED_LIBS)
 	SET(CXXSRCS ${CXXSRCS}
 		 ${SV_SOURCE_DIR}/Source/Common/Geometry/cv_geom_init.cxx
                  ${SV_SOURCE_DIR}/Source/PostProcessing/cv_post_init.cxx
@@ -30,7 +30,7 @@ if(SV_USE_TETGEN)
 endif()
 
 if(SV_USE_MESHSIM)
-	if (NOT MESHSIM_USE_SHARED_LIBRARIES)
+	if (NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx)
 	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_mesh)
@@ -38,7 +38,7 @@ if(SV_USE_MESHSIM)
 endif()
 
 if(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
-	if (NOT MESHSIM_DISCRETE_USE_SHARED_LIBRARIES)
+	if (NOT SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)
 	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_discrete)
@@ -46,7 +46,7 @@ if(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
 endif()
 
 if(SV_USE_PARASOLID)
-	if (NOT PARASOLID_USE_SHARED_LIBRARIES)
+	if (NOT SV_USE_PARASOLID_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx)
 	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_parasolid)
@@ -76,7 +76,7 @@ if(SV_USE_TET_ADAPTOR)
 endif()
 
 if (SV_USE_MESHSIM_ADAPTOR)
-	if(NOT MESHSIM_USE_SHARED_LIBRARIES)
+	if(NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
 	  set(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
 	  ${SV_SOURCE_DIR}/Source/Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx)

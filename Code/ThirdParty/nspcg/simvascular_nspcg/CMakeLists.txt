@@ -28,4 +28,4 @@ endif()
 
 
 set(FSRCS nspcg1.f nspcg2.f nspcg3.f nspcg4.f nspcg5.f)
-add_library(${NSPCG_LIBRARY_NAME} STATIC ${FSRCS})
+add_library(${NSPCG_LIBRARY_NAME} ${SV_LIBRARY_TYPE} ${FSRCS})

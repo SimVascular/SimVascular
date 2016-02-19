@@ -134,7 +134,7 @@ if(SV_USE_PYTHON)
 endif()
 #--------
 # Tcl is VTK built as shared
-if(VTK_USE_SHARED_LIBRARIES)
+if(VTK_SHARED_LIBRARIES)
 	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
 	set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/lib/tcltk/vtk-6.2" install_script_string)
 endif()

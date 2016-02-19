@@ -21,7 +21,9 @@ SET(FSRCS ADDBCMUL.f
 		SPARMUL.f)
 
 
-add_library(${lib} ${FSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${FSRCS})
+
+target_link_libraries(${lib} ${MPI_LIBRARY} ${MPI_Fortran_LIBRARIES})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

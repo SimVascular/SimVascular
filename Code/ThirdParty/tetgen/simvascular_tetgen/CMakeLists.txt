@@ -11,7 +11,7 @@ project(TETGEN)
 #Add a library to the project using the specified source files. 
 # In Linux/Unix, it will creates the libtet.a
 ###SIMVASCULAR_CHANGE
-add_library(lib_simvascular_tet STATIC tetgen.cxx predicates.cxx)
+add_library(lib_simvascular_tet ${SV_LIBRARY_TYPE} tetgen.cxx predicates.cxx)
 
 #Set properties on a target. 
 #We use this here to set -DTETLIBRARY for when compiling the

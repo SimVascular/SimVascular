@@ -38,7 +38,28 @@
 
 #include "SimVascular.h"
 #include "tcl.h"
+#ifdef USE_PYTHON
+#include "Python.h"
+#endif
 
 extern "C" CV_DLL_EXPORT int Solid_Init( Tcl_Interp *interp );
+
+//Solid commands that need to be recognized in functions outside the solid model module
+int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
+		     int argc, CONST84 char *argv[] );
+
+void DeleteSolid( ClientData clientData );
+
+#ifdef USE_PYTHON
+
+double *getArrayFromDoubleList(PyObject* listObj,int &len);
+
+double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
+
+PyObject* importList1D(PyObject* self, PyObject* args);
+
+PyObject* importList2D(PyObject* self, PyObject* args);
+
+#endif
 
 #endif // __CVSOLID_INIT_H

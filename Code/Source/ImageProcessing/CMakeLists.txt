@@ -18,12 +18,12 @@ SET(HDRS cv_image.h cv_img_offsets.h
     cv_mask_image_in_place.h
     )
 
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
-   lib_simvascular_globals)
+   lib_simvascular_globals lib_simvascular_sysgeom)
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
