@@ -46,6 +46,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Occt_Init( Tcl_Interp *interp );
+extern "C" CV_DLL_EXPORT int Occtsolid_Init( Tcl_Interp *interp );
 
 #endif // __CV_OCCT_INIT_H

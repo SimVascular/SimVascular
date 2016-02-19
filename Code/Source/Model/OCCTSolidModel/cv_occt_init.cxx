@@ -101,7 +101,7 @@ int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 #endif
 
 
-int Occt_Init( Tcl_Interp *interp )
+int Occtsolid_Init( Tcl_Interp *interp )
 {
   //gOCCTManager = new AppStd_Application;
   gOCCTManager = XCAFApp_Application::GetApplication();

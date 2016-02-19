@@ -94,6 +94,9 @@ endif()
 # Include files for the USE_VTK VERSION
 if (SV_THREEDSOLVER_USE_VTK)
   SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
+  ADD_LIBRARY(lib_simvascular_solver_vtk ${SV_LIBRARY_TYPE} use_vtk.cxx)
+  target_link_libraries(lib_simvascular_solver_vtk
+	  ${VTK_LIBRARIES})
 endif()
 
 if(SV_THREEDSOLVER_USE_LESLIB)
@@ -109,9 +112,14 @@ target_link_libraries(lib_simvascular_write_restart lib_simvascular_solverio
 
 ADD_LIBRARY(flowsolver_fortran_lib ${SV_LIBRARY_TYPE} ${FSRCS})
 #SET_TARGET_PROPERTIES(flowsolver_fortran_lib PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES} lib_simvascular_solverio lib_simvascular_write_restart)
+TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY}
+	${svMPI_Fortran_LIBRARIES}
+	lib_simvascular_solverio lib_simvascular_write_restart)
 if(SV_THREEDSOLVER_USE_SVLS)
 	target_link_libraries(flowsolver_fortran_lib lib_simvascular_svls)
+endif()
+if(SV_THREEDSOLVER_USE_VTK)
+	target_link_libraries(flowsolver_fortran_lib lib_simvascular_solver_vtk)
 endif()
 message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)

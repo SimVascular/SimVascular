@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -35,24 +35,40 @@
 set(lib lib_simvascular_utils)
 LIST(APPEND CORELIBS ${lib})
 
-SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx 
+SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
             cvTimer.cxx cvIntArrayList.cxx
             cvStateArray.cxx cv_cgeom.cxx
-            cvMath.cxx cv_arg.cxx 
+            cvMath.cxx cv_arg.cxx
             cvFactoryRegistrar.cxx
             )
-SET(HDRS    cv_misc_utils.h cv_vtk_utils.h 
+SET(HDRS    cv_misc_utils.h cv_vtk_utils.h
             cvTimer.h cvIntArrayList.h
-            cvStateArray.h cv_cgeom.h 
+            cvStateArray.h cv_cgeom.h
             cvMath.h cv_arg.h cvFactoryRegistrar.h
             )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(lib_simvascular_tcl_interp ${SV_LIBRARY_TYPE} cv_get_tcl_interp_init.cxx)
+add_library(lib_simvascular_math ${SV_LIBRARY_TYPE} cv_math_init.cxx)
 
-target_link_libraries(${lib} 
+target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES} 
+			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
+			lib_simvascular_globals
+            )
+target_link_libraries(lib_simvascular_math
+			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+			${PARASOLID_LIBRARIES}
+			${GLOBAL_LIBRARIES}
+			${lib}
+			lib_simvascular_globals
+            )
+target_link_libraries(lib_simvascular_tcl_interp
+			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+			${PARASOLID_LIBRARIES}
+			${GLOBAL_LIBRARIES}
+			${lib}
 			lib_simvascular_globals
             )
 

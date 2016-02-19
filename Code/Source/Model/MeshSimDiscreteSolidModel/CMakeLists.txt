@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -27,10 +27,10 @@
  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  #
  #=========================================================================#
- 
+
 SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 
-if(SV_USE_MESHSIM_SHARED_LIBRARIES)
+if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
     add_library(lib_simvascular_discrete SHARED ${CXXSRCS} cv_discrete_init.cxx)
 else()
     add_library(lib_simvascular_discrete STATIC ${CXXSRCS} cv_discrete_init.cxx)
@@ -40,5 +40,5 @@ target_link_libraries(lib_simvascular_discrete
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${GLOBAL_LIBRARIES})
-			#${ZLIB_LIBRARY} 
+			#${ZLIB_LIBRARY}
 			#lib_simvascular_globals lib_simvascular_mesh)

@@ -37,7 +37,7 @@ LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-SET(CXXSRCS	cv_sys_geom.cxx cv_ggems.cxx
+SET(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	cv_spline.cxx cv_integrate_surface.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
 	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx
@@ -75,7 +75,7 @@ if(SV_USE_GTS)
 	SET(HDRS  ${HDRS} vtkSurfaceBooleanOperations.h)
 endif()
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

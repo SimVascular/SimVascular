@@ -6,19 +6,27 @@ set(lib lib_simvascular_post)
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx
-            cvCalculateTKE.cxx
+  cvCalculateTKE.cxx
             )
 SET(HDRS    cvConvertVisFiles.h cvCalculateWallShearStress.h
-            cvCalculateTKE.h
+  cvCalculateTKE.h
             )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(lib_simvascular_gdscpost ${SV_LIBRARY_TYPE} cv_post_init.cxx)
 
-target_link_libraries(lib_simvascular_post
-			${VTK_LIBRARIES} ${TCL_LIBRARY} 
-			${TK_LIBRARY} 
+target_link_libraries(${lib}
+			${VTK_LIBRARIES} ${TCL_LIBRARY}
+			${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
 			${ZLIB_LIBRARY}
+			lib_simvascular_globals lib_simvascular_repository)
+target_link_libraries(lib_simvascular_gdscpost
+			${VTK_LIBRARIES} ${TCL_LIBRARY}
+			${TK_LIBRARY}
+			${GLOBAL_LIBRARIES}
+			${ZLIB_LIBRARY}
+			${lib}
 			lib_simvascular_globals lib_simvascular_repository)
 
 if(SV_INSTALL_LIBS)

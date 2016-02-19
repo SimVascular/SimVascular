@@ -5,19 +5,19 @@
 # All rights reserved.
 #
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -89,41 +89,28 @@ if {$SV_RELEASE_BUILD == 0} {
   }
 }
 
-# load packages if dynamically build
-if {$tcl_platform(platform) == "unix"} {
-  if {$tcl_platform(os) == "Darwin"} {
-    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_parasolid.dylib Parasolidsolid} msg]} {
-	puts "liblib_simvascular_parasolid shared dylib: $msg"
-    }
-  } 
-  
-  if {$tcl_platform(os) == "Linux"} {
-    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_parasolid.so  Parasolidsolid} msg]} {
-	puts "liblib_simvascular_parasolid shared object: $msg"
-    }
-    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_discrete.so Meshsimdiscretesolid} msg]} {
-        puts "liblib_simvascular meshsim discrete shared object: $msg"
-    }
-    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_mesh.so Meshsimmesh} msg]} {
-	puts "liblib_meshsim_mesh shared object: $msg"
-    }
-    if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_adaptor.so  Meshsimadapt} msg]} {
-	puts "liblib_simvascular meshsim adaptor shared object: $msg"
-    } 
-  }
+if {$SV_STATIC_BUILD != 1} {
+  source [file join $env(SV_HOME) Tcl SimVascular_2.0 Core simvascular_load_shared_libs.tcl]
+}
+set lib_ext so
+if {$tcl_platform(os) == "Darwin"} {
+  set lib_ext dylib
+} elseif {$tcl_platform(platform) == "windows"} {
+  set lib_ext dll
 }
 
-if {$tcl_platform(platform) == "windows"} {
-    if [catch {load lib_simvascular_parasolid.dll Parasolidsolid} msg] {
-	puts "simvascular_parasolid dll: $msg"
-    }
-    if [catch {load lib_simvascular_meshsim_discrete.dll Meshsimdiscretesolid} msg] {
-        puts "simvascular meshsim discrete dll: $msg"
-    }
-    if [catch {load lib_simvascular_meshsim_mesh.dll Meshsimmesh} msg] {
-	puts "meshsim_mesh dll: $msg"
-    }
-    if [catch {load lib_simvascular_meshsim_adaptor.dll Meshsimadapt} msg] {
-	puts "simvascular meshsim adaptor dll: $msg"
-    }
+# load commercial packages if dynamically build
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_parasolid.$lib_ext Parasolidsolid} msg]} {
+    puts "liblib_simvascular_parasolid $lib_ext: $msg"
+}
+if {$tcl_platform(os) != "Darwin"} {
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_discrete.$lib_ext Meshsimdiscretesolid} msg]} {
+      puts "liblib_simvascular_meshsim_discrete $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_mesh.$lib_ext Meshsimmesh} msg]} {
+      puts "liblib_meshsim_mesh $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_adaptor.$lib_ext  Meshsimadapt} msg]} {
+      puts "liblib_simvascular_meshsim_adaptor $lib_ext: $msg"
+  }
 }

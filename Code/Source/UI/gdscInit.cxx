@@ -182,12 +182,12 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 
   if ( Lsetcore_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on LsetCore_Init\n" );
+    fprintf( stderr, "error on Lsetcore_Init\n" );
     return TCL_ERROR;
   }
 
   if ( Lsetv_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on LsetV_Init\n" );
+    fprintf( stderr, "error on Lsetv_Init\n" );
     return TCL_ERROR;
   }
 
@@ -216,13 +216,13 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-  if ( PolyDataSolid_Init(interp) == TCL_ERROR ) {
+  if ( Polydatasolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on PolyDataSolid_Init\n" );
     return TCL_ERROR;
   }
 
 #ifdef USE_OPENCASCADE
-  if ( Occt_Init(interp) == TCL_ERROR ) {
+  if ( Occtsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Opencascade_Init\n" );
     return TCL_ERROR;
   }
@@ -261,7 +261,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef USE_TET_ADAPTOR
-  if ( TetGenAdapt_Init(interp) == TCL_ERROR ) {
+  if ( Tetgenadapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on TetGenAdapt_Init\n" );
     return TCL_ERROR;
   }
