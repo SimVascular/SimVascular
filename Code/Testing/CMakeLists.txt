@@ -1,6 +1,6 @@
 
 include( CTest )
-include(${CMAKE_CURRENT_SOURCE_DIR}/SVTestMacros.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/SimVascularTestMacros.cmake)
 
 option(SV_RUN_GUI_TESTS "Option to run GUI testing when performing test" ON)
 set(SV_TEST_DIR "" CACHE PATH "Path to SV automated test files")
