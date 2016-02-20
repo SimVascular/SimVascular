@@ -63,8 +63,9 @@ if(SV_USE_ITK)
 	include_directories(${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include)
 	include_directories(${SV_SOURCE_DIR}/Source/Segmentation/ITK/Util)
 	SET(CXXSRCS ${CXXSRCS} ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset2d_init.cxx
-							${SV_SOURCE_DIR}/Source/Segmentation/ITK/Util/cv_ITKUtils_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_cvitk lib_simvascular_itkutils)
+			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset3d_init.cxx
+			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/Util/cv_ITKUtils_init.cxx)
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_cvitk2d lib_simvascular_cvitk3d lib_simvascular_itkutils)
   endif()
 
 if(SV_USE_TET_ADAPTOR)

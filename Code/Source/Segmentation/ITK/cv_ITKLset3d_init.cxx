@@ -132,9 +132,9 @@ static int NewName( CONST84 char *name )
 
 
 // -------------
-// itkls3d_Init
+// Itkls3d_Init
 // -------------
-int itkls3d_Init( Tcl_Interp *interp ){
+int Itkls3d_Init( Tcl_Interp *interp ){
 
 	//Usage: CVTCLFunctionInit(Prefix,FunctionName,TclName)
 	CVTCLFunctionInit(itkls3d,NewCmd,ITKLevelSet3D);

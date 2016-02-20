@@ -80,4 +80,13 @@ if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_adaptor.$lib_ext Adapt} ms
 if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tet_adaptor.$lib_ext Tetgenadapt} msg]} {
     puts "liblib_simvascular_tet_adaptor $lib_ext: $msg"
 }
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_cvitk2d.$lib_ext Itkls2d} msg]} {
+    puts "liblib_simvascular_tet_cvitk2d $lib_ext: $msg"
+}
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_cvitk3d.$lib_ext Itkls3d} msg]} {
+    puts "liblib_simvascular_tet_cvitk3d $lib_ext: $msg"
+}
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_itkutils.$lib_ext Itkutils} msg]} {
+    puts "liblib_simvascular_tet_itkutils $lib_ext: $msg"
+}
 

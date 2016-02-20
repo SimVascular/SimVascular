@@ -2,7 +2,7 @@
 #-----------------------------------------------------------------------------
 # Plugin - ITK Level Sets
 #-----------------------------------------------------------------------------
-set(lib lib_simvascular_cvitk)
+set(lib lib_simvascular_cvitk2d)
 LIST(APPEND PLUGINLIBS ${lib})
 
 include_directories(./Include)
@@ -18,13 +18,20 @@ add_subdirectory(ITKCode)
 
 SET(CXXSRCS cvITKLevelSet.cxx)
 SET(HDRS cvITKLevelSet.h cvITKLevelSetBase.h)
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKLset2d_init.cxx)
+add_library(lib_simvascular_cvitk3d ${SV_LIBRARY_TYPE} cv_ITKLset3d_init.cxx)
 
 TARGET_LINK_LIBRARIES(${lib}
  lib_simvascular_itkutils
  lib_simvascular_repository
- ${ITK_LIBRARIES} ${VTK_LIBRARIES} 
+ ${ITK_LIBRARIES} ${VTK_LIBRARIES}
  ${GLOBAL_LIBRARIES})
+TARGET_LINK_LIBRARIES(lib_simvascular_cvitk3d
+ lib_simvascular_itkutils
+ lib_simvascular_repository
+ ${ITK_LIBRARIES} ${VTK_LIBRARIES}
+ ${GLOBAL_LIBRARIES}
+ ${lib})
 if(SV_INSTALL_LIBS)
     install(TARGETS ${lib}
         RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables

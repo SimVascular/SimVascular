@@ -254,17 +254,17 @@ if {$SV_RELEASE_BUILD == 0} {
   source [file join $env(SV_HOME) Tcl SimVascular_2.0 Core simvascular_init.tcl]
 }
 
-puts "Optional Runtimes:"
+#puts "Optional Runtimes:"
 # Load TKCXImage
 if {[info exists env(TKCXIMAGE_DLL)]} {
   if [catch {load $env(TKCXIMAGE_DLL) Tkcximage} msg] {
      #return -code error "ERROR: Uh oh, can't load Tkcximage!"
-     puts [format "  %-12s %s" "Tkcximage:" unavailable]
+     puts [format "  %-12s %s" "Tkcximage:" Unavailable]
   }
 } else {
   if [catch {load Tkcximage} msg] {
      #return -code error "ERROR: Uh oh, can't load Tkcximage!"
-     puts [format "  %-12s %s" "Tkcximage:" unavailable]
+     puts [format "  %-12s %s" "Tkcximage:" Unavailable]
   }
 }
 puts ""

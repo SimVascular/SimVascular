@@ -336,15 +336,15 @@ int SimVascular_Init( Tcl_Interp *interp )
 //#endif
 
 #ifdef USE_ITK
-  if ( itkls2d_Init(interp) == TCL_ERROR ) {
+  if ( Itkls2d_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on itkls2d_Init\n" );
       return TCL_ERROR;
     }
-  if ( itkls3d_Init(interp) == TCL_ERROR ) {
+  if ( Itkls3d_Init(interp) == TCL_ERROR ) {
         fprintf( stderr, "error on itkls3d_Init\n" );
         return TCL_ERROR;
       }
-  if ( itkutils_Init(interp) == TCL_ERROR ) {
+  if ( Itkutils_Init(interp) == TCL_ERROR ) {
         fprintf( stderr, "error on itkls2d_Init\n" );
         return TCL_ERROR;
       }

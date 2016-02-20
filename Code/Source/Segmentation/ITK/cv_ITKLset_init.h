@@ -40,7 +40,7 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int itkls2d_Init( Tcl_Interp *interp );
-extern "C" CV_DLL_EXPORT int itkls3d_Init( Tcl_Interp *interp );
+extern "C" CV_DLL_EXPORT int Itkls2d_Init( Tcl_Interp *interp );
+extern "C" CV_DLL_EXPORT int Itkls3d_Init( Tcl_Interp *interp );
 
 #endif /* CV_ITKLSET_INIT_H_ */

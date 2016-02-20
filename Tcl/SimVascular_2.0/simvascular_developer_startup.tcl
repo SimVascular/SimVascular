@@ -89,7 +89,8 @@ if {$SV_RELEASE_BUILD == 0} {
   }
 }
 
-if {$SV_STATIC_BUILD != 1} {
+global SV_SHARED_BUILD
+if {$SV_SHARED_BUILD == "ON"} {
   source [file join $env(SV_HOME) Tcl SimVascular_2.0 Core simvascular_load_shared_libs.tcl]
 }
 set lib_ext so
@@ -99,18 +100,28 @@ if {$tcl_platform(os) == "Darwin"} {
   set lib_ext dll
 }
 
-# load commercial packages if dynamically build
+# load commercial packages if dynamically built
 if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_parasolid.$lib_ext Parasolidsolid} msg]} {
-    puts "liblib_simvascular_parasolid $lib_ext: $msg"
+  if {$SV_SHARED_BUILD == "ON"} {
+    puts [format "  %-12s %s" "Parasolid:" Unavailable]
+  }
+  #puts "liblib_simvascular_parasolid $lib_ext: $msg"
 }
-if {$tcl_platform(os) != "Darwin"} {
-  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_discrete.$lib_ext Meshsimdiscretesolid} msg]} {
-      puts "liblib_simvascular_meshsim_discrete $lib_ext: $msg"
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_discrete.$lib_ext Meshsimdiscretesolid} msg]} {
+  if {$SV_SHARED_BUILD == "ON"} {
+    puts [format "  %-12s %s" "Discrete:" Unavailable]
   }
-  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_mesh.$lib_ext Meshsimmesh} msg]} {
-      puts "liblib_meshsim_mesh $lib_ext: $msg"
+  #puts "liblib_simvascular_meshsim_discrete $lib_ext: $msg"
+}
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_mesh.$lib_ext Meshsimmesh} msg]} {
+  if {$SV_SHARED_BUILD == "ON"} {
+    puts [format "  %-12s %s" "MeshSim:" Unavailable]
   }
-  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_adaptor.$lib_ext  Meshsimadapt} msg]} {
-      puts "liblib_simvascular_meshsim_adaptor $lib_ext: $msg"
+  #puts "liblib_meshsim_mesh $lib_ext: $msg"
+}
+if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_meshsim_adaptor.$lib_ext  Meshsimadapt} msg]} {
+  if {$SV_SHARED_BUILD == "ON"} {
+    puts [format "  %-12s %s" "" "MeshSim Adaption Unavailable"]
   }
+  #puts "liblib_simvascular_meshsim_adaptor $lib_ext: $msg"
 }

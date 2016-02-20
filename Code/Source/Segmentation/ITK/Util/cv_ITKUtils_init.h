@@ -38,7 +38,7 @@
 #define CV_ITKUTILS_INIT_H_
 
 
-extern "C" CV_DLL_EXPORT int itkutils_Init( Tcl_Interp *interp );
+extern "C" CV_DLL_EXPORT int Itkutils_Init( Tcl_Interp *interp );
 
 
 #endif /* CV_ITKUTILS_INIT_H_ */
