@@ -10,15 +10,15 @@
   See LICENCE file for details.
 
   Portions of this code are covered under the VTK copyright.
-  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm 
+  See VTKCopyright.txt or http://www.kitware.com/VTKCopyright.htm
   for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
-//SimVascular Changes: Changes to update code to VTK pipeline 6.0 
+//SimVascular Changes: Changes to update code to VTK pipeline 6.0
 //Lines 197, 271: SetInput -> SetInputData
 
 #include "vtkvmtkPolyDataSurfaceRemeshing.h"
@@ -126,7 +126,7 @@ vtkvmtkPolyDataSurfaceRemeshing::~vtkvmtkPolyDataSurfaceRemeshing()
     {
     this->CellEntityIdsArray->Delete();
     this->CellEntityIdsArray = NULL;
-    } 
+    }
 
   if (this->ExcludedEntityIds)
     {
@@ -168,7 +168,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     this->CellEntityIdsArray->Delete();
     this->CellEntityIdsArray = NULL;
     }
-    
+
   this->CellEntityIdsArray = vtkIntArray::New();
   if (this->CellEntityIdsArrayName)
     {
@@ -208,7 +208,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   vtkPoints* workingPoints = vtkPoints::New();
   vtkCellArray* workingCells = vtkCellArray::New();
   workingPoints->DeepCopy(input->GetPoints());
-  
+
   double point1[3], point2[3], point3[3];
   double cellNormal[3], orientedCellNormal[3];
   for (int i=0; i<input->GetNumberOfCells(); i++)
@@ -221,7 +221,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     cell->GetPoints()->GetPoint(0,point1);
     cell->GetPoints()->GetPoint(1,point2);
     cell->GetPoints()->GetPoint(2,point3);
-    vtkTriangle::ComputeNormal(point1,point2,point3,cellNormal); 
+    vtkTriangle::ComputeNormal(point1,point2,point3,cellNormal);
     cellNormals->GetTuple(i,orientedCellNormal);
     workingCells->InsertNextCell(3);
     if (vtkMath::Dot(cellNormal,orientedCellNormal) > 0.0)
@@ -242,7 +242,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   this->Mesh->SetPolys(workingCells);
 
   workingPoints->Delete();
-  workingCells->Delete(); 
+  workingCells->Delete();
   normals->Delete();
 
   this->Mesh->BuildCells();
@@ -315,7 +315,8 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   for (int n=0; n<this->NumberOfIterations; n++)
     {
     cout<<"Iteration "<<n+1<<"/"<<this->NumberOfIterations<<endl;
-    this->EdgeCollapseIteration();
+    if (n != 0)
+      this->EdgeCollapseIteration();
     this->EdgeFlipIteration();
     this->EdgeSplitIteration();
     this->EdgeFlipIteration();
@@ -351,9 +352,9 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
     {
     return 1;
     }
- 
+
   this->TriangleSplitIteration();
- 
+
   vtkPoints* newPoints = vtkPoints::New();
   vtkCellArray* newCells = vtkCellArray::New();
   vtkIntArray* newCellEntityIdsArray = vtkIntArray::New();
@@ -379,7 +380,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RequestData(
   output->SetPoints(newPoints);
   output->SetPolys(newCells);
   output->GetCellData()->AddArray(newCellEntityIdsArray);
- 
+
   newPoints->Delete();
   newCells->Delete();
   newCellEntityIdsArray->Delete();
@@ -490,7 +491,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnBoundary(vtkIdType pointId)
 
 int vtkvmtkPolyDataSurfaceRemeshing::EdgeFlipConnectivityOptimizationIteration()
 {
-  //TODO: randomize. 
+  //TODO: randomize.
   int numberOfChanges = 0;
   int numberOfCells = this->Mesh->GetNumberOfCells();
   for (int i=0; i<numberOfCells; i++)
@@ -627,7 +628,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::PointRelocationIteration(bool projectToSurf
       {
       return RELOCATE_FAILURE;
       }
-    } 
+    }
   return RELOCATE_SUCCESS;
 }
 
@@ -656,7 +657,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::IsPointOnEntityBoundary(vtkIdType pointId)
   bool uniformCellEntityIds = true;
   for (int i=0; i<nptCells; i++)
     {
-    vtkIdType cellEntityId = this->CellEntityIdsArray->GetValue(ptCells->GetId(i)); 
+    vtkIdType cellEntityId = this->CellEntityIdsArray->GetValue(ptCells->GetId(i));
     if (cellEntityId == -1)
       {
       continue;
@@ -843,10 +844,10 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
 #else
   if (!stencil->GetIsBoundary())
 #endif
-    { 
+    {
     double targetPoint[3];
     targetPoint[0] = targetPoint[1] = targetPoint[2] = 0.0;
-#ifndef USE_STENCIL 
+#ifndef USE_STENCIL
     int numberOfNeighbors = neighborIds->GetNumberOfIds();
     double stencilWeight = 1.0 / numberOfNeighbors;
     for (int i=0; i<numberOfNeighbors; i++)
@@ -870,12 +871,12 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
 #endif
     double point[3];
     this->Mesh->GetPoint(pointId,point);
-  
+
     double relocatedPoint[3];
     relocatedPoint[0] = point[0] + this->Relaxation * (targetPoint[0] - point[0]);
     relocatedPoint[1] = point[1] + this->Relaxation * (targetPoint[1] - point[1]);
     relocatedPoint[2] = point[2] + this->Relaxation * (targetPoint[2] - point[2]);
- 
+
     double projectedRelocatedPoint[3];
     vtkIdType cellId;
     int subId;
@@ -925,12 +926,12 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
 
     double point[3];
     this->Mesh->GetPoint(pointId,point);
-  
+
     double relocatedPoint[3];
     relocatedPoint[0] = point[0] + this->Relaxation * (targetPoint[0] - point[0]);
     relocatedPoint[1] = point[1] + this->Relaxation * (targetPoint[1] - point[1]);
     relocatedPoint[2] = point[2] + this->Relaxation * (targetPoint[2] - point[2]);
-  
+
     double projectedRelocatedPoint[3];
     vtkIdType cellId;
     int subId;
@@ -947,7 +948,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::RelocatePoint(vtkIdType pointId, bool proje
       projectedRelocatedPoint[2] = relocatedPoint[2];
 //      return RELOCATE_FAILURE;
       }
-  
+
     this->Mesh->GetPoints()->SetPoint(pointId,projectedRelocatedPoint);
     }
 #ifndef USE_STENCIL
@@ -990,7 +991,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
       numberOfNeighborTriangles++;
       }
     }
- 
+
   cellIds->Delete();
 
   if (numberOfNeighborTriangles == 0)
@@ -1051,7 +1052,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::GetEdgeCellsAndOppositeEdge(vtkIdType pt1, 
 
   pt3 = pt3tmp;
   pt4 = pt4tmp;
-    
+
   if (reverse)
     {
     vtkIdType tmp;
@@ -1102,7 +1103,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitTriangle(vtkIdType cellId)
   int subId;
   double dist2;
   this->Locator->FindClosestPoint(newPoint,projectedNewPoint,closestCellId,subId,dist2);
- 
+
   vtkIdType newpt = this->Mesh->InsertNextLinkedPoint(projectedNewPoint,1);
 
   this->Mesh->ReplaceCellPoint(cellId,pt3,newpt);
@@ -1190,16 +1191,16 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
       this->Locator->FindClosestPoint(newPoint,projectedNewPoint,cellId,subId,dist2);
       }
     vtkIdType newpt = this->Mesh->InsertNextLinkedPoint(projectedNewPoint,2);
-  
+
     this->Mesh->ReplaceCellPoint(cell1,pt2,newpt);
     this->Mesh->ReplaceCellPoint(cell2,pt2,newpt);
-  
+
     this->Mesh->RemoveReferenceToCell(pt2,cell1);
     this->Mesh->RemoveReferenceToCell(pt2,cell2);
-  
+
     this->Mesh->AddReferenceToCell(newpt,cell1);
     this->Mesh->AddReferenceToCell(newpt,cell2);
-  
+
     vtkIdType tri[3];
     tri[0] = pt3;
     tri[1] = newpt;
@@ -1232,11 +1233,11 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
       projectedNewPoint[2] = newPoint[2];
       }
     vtkIdType newpt = this->Mesh->InsertNextLinkedPoint(projectedNewPoint,2);
-  
+
     this->Mesh->ReplaceCellPoint(cell1,pt2,newpt);
     this->Mesh->RemoveReferenceToCell(pt2,cell1);
     this->Mesh->AddReferenceToCell(newpt,cell1);
-  
+
     vtkIdType tri[3];
     tri[0] = pt3;
     tri[1] = newpt;
@@ -1244,7 +1245,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::SplitEdge(vtkIdType pt1, vtkIdType pt2)
     vtkIdType cell3 = this->Mesh->InsertNextLinkedCell(VTK_TRIANGLE,3,tri);
     this->CellEntityIdsArray->InsertValue(cell3,this->CellEntityIdsArray->GetValue(cell1));
     }
- 
+
   return SUCCESS;
 }
 
@@ -1292,7 +1293,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
       pt2 = tmp;
       swappedForBoundary = true;
       }
- 
+
     int pt1OnEntityBoundary = this->IsPointOnEntityBoundary(pt1);
     int pt2OnEntityBoundary = this->IsPointOnEntityBoundary(pt2);
     if (!pt1OnEntityBoundary && pt2OnEntityBoundary)
@@ -1305,23 +1306,23 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
       pt1 = pt2;
       pt2 = tmp;
       }
- 
+
     vtkIdList* pt2Cells = vtkIdList::New();
     this->Mesh->GetPointCells(pt2,pt2Cells);
     vtkIdType npt2Cells = pt2Cells->GetNumberOfIds();
-    
+
     this->Mesh->RemoveReferenceToCell(pt1,cell1);
     this->Mesh->RemoveReferenceToCell(pt1,cell2);
     this->Mesh->RemoveReferenceToCell(pt3,cell1);
     this->Mesh->RemoveReferenceToCell(pt4,cell2);
     this->Mesh->DeletePoint(pt2);
-    this->Mesh->DeleteCell(cell1); 
+    this->Mesh->DeleteCell(cell1);
     this->CellEntityIdsArray->InsertValue(cell1,-1);
-    this->Mesh->DeleteCell(cell2); 
+    this->Mesh->DeleteCell(cell2);
     this->CellEntityIdsArray->InsertValue(cell2,-1);
-  
+
     this->Mesh->ResizeCellList(pt1,npt2Cells-2);
-  
+
     for (int i=0; i<npt2Cells; i++)
       {
       vtkIdType pt2Cell = pt2Cells->GetId(i);
@@ -1332,7 +1333,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
       this->Mesh->AddReferenceToCell(pt1,pt2Cell);
       this->Mesh->ReplaceCellPoint(pt2Cell,pt2,pt1);
       }
-  
+
     pt2Cells->Delete();
     }
   else
@@ -1340,15 +1341,15 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
     vtkIdList* pt2Cells = vtkIdList::New();
     this->Mesh->GetPointCells(pt2,pt2Cells);
     vtkIdType npt2Cells = pt2Cells->GetNumberOfIds();
-    
+
     this->Mesh->RemoveReferenceToCell(pt1,cell1);
     this->Mesh->RemoveReferenceToCell(pt3,cell1);
     this->Mesh->DeletePoint(pt2);
-    this->Mesh->DeleteCell(cell1); 
+    this->Mesh->DeleteCell(cell1);
     this->CellEntityIdsArray->InsertValue(cell1,-1);
-  
+
     this->Mesh->ResizeCellList(pt1,npt2Cells-1);
-  
+
     for (int i=0; i<npt2Cells; i++)
       {
       vtkIdType pt2Cell = pt2Cells->GetId(i);
@@ -1359,7 +1360,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::CollapseEdge(vtkIdType pt1, vtkIdType pt2)
       this->Mesh->AddReferenceToCell(pt1,pt2Cell);
       this->Mesh->ReplaceCellPoint(pt2Cell,pt2,pt1);
       }
-  
+
     pt2Cells->Delete();
     }
 
@@ -1383,10 +1384,10 @@ int vtkvmtkPolyDataSurfaceRemeshing::FlipEdge(vtkIdType pt1, vtkIdType pt2)
 
   this->Mesh->RemoveCellReference(cell1);
   this->Mesh->RemoveCellReference(cell2);
-  this->Mesh->DeleteCell(cell1); 
+  this->Mesh->DeleteCell(cell1);
   vtkIdType cell1EntityId = this->CellEntityIdsArray->GetValue(cell1);
   this->CellEntityIdsArray->InsertValue(cell1,-1);
-  this->Mesh->DeleteCell(cell2); 
+  this->Mesh->DeleteCell(cell2);
   vtkIdType cell2EntityId = this->CellEntityIdsArray->GetValue(cell2);
   this->CellEntityIdsArray->InsertValue(cell2,-1);
 
@@ -1451,19 +1452,19 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestFlipEdgeValidity(vtkIdType pt1, vtkIdTy
   this->Mesh->GetPoint(tri[0][0],point1);
   this->Mesh->GetPoint(tri[0][1],point2);
   this->Mesh->GetPoint(tri[0][2],point3);
-  vtkTriangle::ComputeNormal(point1,point2,point3,normal1); 
+  vtkTriangle::ComputeNormal(point1,point2,point3,normal1);
   this->Mesh->GetPoint(tri[1][0],point1);
   this->Mesh->GetPoint(tri[1][1],point2);
   this->Mesh->GetPoint(tri[1][2],point3);
-  vtkTriangle::ComputeNormal(point1,point2,point3,normal2); 
+  vtkTriangle::ComputeNormal(point1,point2,point3,normal2);
   this->Mesh->GetPoint(tri[2][0],point1);
   this->Mesh->GetPoint(tri[2][1],point2);
   this->Mesh->GetPoint(tri[2][2],point3);
-  vtkTriangle::ComputeNormal(point1,point2,point3,normal3); 
+  vtkTriangle::ComputeNormal(point1,point2,point3,normal3);
   this->Mesh->GetPoint(tri[3][0],point1);
   this->Mesh->GetPoint(tri[3][1],point2);
   this->Mesh->GetPoint(tri[3][2],point3);
-  vtkTriangle::ComputeNormal(point1,point2,point3,normal4); 
+  vtkTriangle::ComputeNormal(point1,point2,point3,normal4);
 
   if (vtkMath::Dot(normal3,normal1)<0.0 || vtkMath::Dot(normal4,normal1)<0.0 || vtkMath::Dot(normal3,normal2)<0.0 || vtkMath::Dot(normal4,normal2)<0.0)
     {
@@ -1473,7 +1474,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestFlipEdgeValidity(vtkIdType pt1, vtkIdTy
   if (fabs(acos(vtkMath::Dot(normal3,normal4)) - acos(vtkMath::Dot(normal1,normal2))) > this->NormalAngleTolerance)
     {
     return DO_NOTHING;
-    } 
+    }
 
   return DO_CHANGE;
 }
@@ -1578,7 +1579,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestDelaunayFlipEdge(vtkIdType pt1, vtkIdTy
         maxAngle23 = angle;
         }
       }
-    } 
+    }
 
   if (maxAngle01 < maxAngle23 + this->InternalAngleTolerance)
     {
@@ -1668,7 +1669,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
 {
   pt1 = -1;
   pt2 = -1;
-  
+
   vtkIdType npts, *pts;
   this->Mesh->GetCellPoints(cellId,npts,pts);
 
@@ -1694,7 +1695,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
   double side1Squared = vtkMath::Distance2BetweenPoints(point1,point2);
   double side2Squared = vtkMath::Distance2BetweenPoints(point2,point3);
   double side3Squared = vtkMath::Distance2BetweenPoints(point3,point1);
-  
+
   double frobeniusAspectRatio = (side1Squared + side2Squared + side3Squared) / (4.0 * sqrt(3.0) * area);
 
   if (frobeniusAspectRatio < this->AspectRatioThreshold && area > targetArea * this->MinAreaFactor)
@@ -1712,7 +1713,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
     pt1 = tri[1];
     pt2 = tri[2];
     }
-  else 
+  else
     {
     pt1 = tri[2];
     pt2 = tri[0];
@@ -1770,7 +1771,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAspectRatioCollapseEdge(vtkIdType cellI
       continue;
       }
     this->Mesh->GetCellPoints(cells[i],npts,pts);
-    
+
     double normal1[3], normal2[3];
     this->Mesh->GetPoint(pts[0],point1);
     this->Mesh->GetPoint(pts[1],point2);
@@ -1830,7 +1831,7 @@ int vtkvmtkPolyDataSurfaceRemeshing::TestAreaSplitEdge(vtkIdType cellId, vtkIdTy
   double side1Squared = vtkMath::Distance2BetweenPoints(point1,point2);
   double side2Squared = vtkMath::Distance2BetweenPoints(point2,point3);
   double side3Squared = vtkMath::Distance2BetweenPoints(point3,point1);
-  
+
   double targetArea = this->ComputeTriangleTargetArea(cellId);
 
   if (area < targetArea)
