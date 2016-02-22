@@ -48,7 +48,7 @@
 
 #include "Util/cvITKUtils.h"
 
-#include "cv_ITKLset_init.h"
+#include "cv_ITKLset3d_init.h"
 
 // The following is needed for Windows
 #ifdef GetObject

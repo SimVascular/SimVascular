@@ -91,7 +91,8 @@
 #include "cv_VTK_init.h"
 
 #ifdef USE_ITK
-  #include "cv_ITKLset_init.h"
+  #include "cv_ITKLset2d_init.h"
+  #include "cv_ITKLset3d_init.h"
   #include "cv_ITKUtils_init.h"
 #endif
 
