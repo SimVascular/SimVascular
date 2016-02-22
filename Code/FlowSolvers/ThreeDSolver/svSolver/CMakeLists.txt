@@ -113,12 +113,12 @@ endif()
 add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
 target_link_libraries(${lib_restart} lib_simvascular_solverio
 	${lib_leslib}
-	${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
+	${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
 
 ADD_LIBRARY(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
 #SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(${lib_flowsolver} ${svMPI_EXTRA_LIBRARY}
-	${svMPI_Fortran_LIBRARIES}
+TARGET_LINK_LIBRARIES(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
+	${SV_MPI_Fortran_LIBRARIES}
 	lib_simvascular_solverio ${lib_restart})
 if(SV_THREEDSOLVER_USE_SVLS)
 	target_link_libraries(${lib_flowsolver} lib_simvascular_svls)
@@ -126,7 +126,7 @@ endif()
 if(SV_THREEDSOLVER_USE_VTK)
 	target_link_libraries(${lib_flowsolver} ${lib_vtk})
 endif()
-message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
+message("Libs: ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
 
 simvascular_add_executable(${SV_FLOWSOLVER_EXE}
@@ -146,7 +146,7 @@ endif()
 TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
                       ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
                       ${METIS_LIBRARY} ${SVLS_LIBRARY}
-                      ${svMPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
+		      ${SV_MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
                       ${NSPCG_LIBRARY} lib_simvascular_solverio
                       ${VTKLIB}
                       )
