@@ -10,6 +10,9 @@ if (POLICY CMP0054)
 	cmake_policy(SET CMP0054 OLD)
 endif()
 
+#-----------------------------------------------------------------------------
+Project(SV)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Superbuild
@@ -22,62 +25,9 @@ include(ExternalProject)
 include(ExternalProjectDependency)
 
 #-----------------------------------------------------------------------------
-# Do some apple logic
-if(APPLE)
-	set ( CMAKE_OSX_ARCHITECTURES "" CACHE STRING "" FORCE )
-	#	set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE STRING "" FORCE )
-	#	set(CMAKE_OSX_SYSROOT "" CACHE STRING "" FORCE)
-	# Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
-	#       we ensure that the bitness will be properly detected.
-	mark_as_superbuild(
-		VARS
-		CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH
-		CMAKE_OSX_DEPLOYMENT_TARGET:STRING)
-
-endif()
-#-----------------------------------------------------------------------------
-# Developer flag (Output extra info during configure)
-option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)
-mark_as_superbuild(SV_DEVELOPER_OUTPUT)
-#-----------------------------------------------------------------------------
 # Include Macros
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
-
-#-----------------------------------------------------------------------------
-Project(SV)
-#-----------------------------------------------------------------------------
-if(APPLE)
-	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/lib")
-endif()
-#-----------------------------------------------------------------------------
-# Set a default build type (if none was specified)
-if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-	message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
-	set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
-	mark_as_advanced(CMAKE_BUILD_TYPE)
-	# Set the possible values of build type for cmake-gui
-	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
-		"MinSizeRel" "RelWithDebInfo")
-endif()
-if(NOT CMAKE_CONFIGURATION_TYPES)
-	mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
-endif()
-
-#-----------------------------------------------------------------------------
-# Superbuild Option
-option(SV_SUPERBUILD
-	"Build ${PROJECT_NAME} and the projects it depends on.
-	This must be turn on if your wish to download any packages." ON)
-
-set(SV_SUPERBUILD_LIBS_DIR "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
-mark_as_superbuild(SV_SUPERBUILD_LIBS_DIR)
-
-if (SV_NO_RENDERER)
-	# Needs to be 1 not 'true'
-	set(SV_NO_RENDERER 1)
-	mark_as_superbuild(SV_NO_RENDERER)
-endif()
 
 #-----------------------------------------------------------------------------
 # unset NEED variables
@@ -85,6 +35,13 @@ unset(SV_USE_FORTRAN)
 unset(SV_USE_MPI)
 unset(SV_USE_INTEL)
 unset(SV_THREEDSVOLER_USE_SVLS)
+
+#-----------------------------------------------------------------------------
+# Include Initial Options
+include(SimVascularOptions)
+#-----------------------------------------------------------------------------
+# Include Dependent Options
+include(SimVascularDependentOptions)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
@@ -120,317 +77,6 @@ include(SimVascularPythonSetup)
 include(SetupSimVascularExternalsDefaults)
 
 #-----------------------------------------------------------------------------
-# Start Option Section
-#-----------------------------------------------------------------------------
-# This section sets up all the build options that are presented to the user and
-# sets their default values
-
-#-----------------------------------------------------------------------------
-# Basic Options (CMAKE Defaults)
-option(SV_BUILD_SHARED_LIBS "Build ${PROJECT_NAME} as shared libraries." OFF)
-mark_as_superbuild(VARS SV_BUILD_SHARED_LIBS ALL_PROJECTS)
-set(SV_LIBRARY_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED" FORCE)
-set_property(CACHE SV_LIBRARY_TYPE PROPERTY STRINGS STATIC SHARED)
-mark_as_superbuild(SV_LIBRARY_TYPE)
-if(SV_BUILD_SHARED_LIBS)
-	set(SV_LIBRARY_TYPE "SHARED" CACHE STRING "Shared cache" FORCE)
-endif()
-
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
-	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
-	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
-		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
-	add_custom_target(doc
-		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen" VERBATIM
-		)
-endif(DOXYGEN_FOUND)
-
-#find_package(FreeType)
-#if(FREETYPE_FOUND)
-#	mark_as_superbuild(FREETYPE_DIR)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIRS)
-#	mark_as_superbuild(FREETYPE_LIBRARY)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIR_freetype2)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIR_ft2build)
-#	include_directories(${FREETYPE_INCLUDE_DIR_freetype2})
-#	include_directories(${FREETYPE_INCLUDE_DIR_ft2build})
-#endif()
-
-if(NOT SV_BUILD_SHARED_LIBS)
-	set(SV_INSTALL_HEADERS OFF)
-	set(SV_INSTALL_EXTERNALS OFF)
-	set(SV_INSTALL_LIBS OFF)
-else()
-	set(SV_INSTALL_HEADERS ON)
-	set(SV_INSTALL_LIBS ON)
-endif()
-
-#-----------------------------------------------------------------------------
-# SimVascular Build options
-option(SV_ONLY_BUILD_FLOWSOLVER "Option ONLY build the 3D Solver (No GUI)" OFF)
-option(SV_SUPPRESS_WARNINGS "Option to suppress all compiler warnings while compiling" ON)
-
-mark_as_superbuild(SV_ONLY_BUILD_FLOWSOLVER)
-mark_as_superbuild(SV_SUPPRESS_WARNINGS)
-
-if(SV_ONLY_BUILD_FLOWSOLVER)
-	set(SV_USE_THREEDSOLVER ON)
-endif()
-
-if(WIN32)
-	option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
-
-	mark_as_advanced(SV_USE_WIN32_REGISTRY)
-	mark_as_superbuild(SV_USE_WIN32_REGISTRY:BOOL)
-endif()
-
-#-----------------------------------------------------------------------------
-# FlowSolver Options
-if(SV_USE_THREEDSOLVER)
-
-endif()
-
-#-----------------------------------------------------------------------------
-# General Library Options
-option(SV_USE_ZLIB "Use ZLib" ON)
-option(SV_USE_MPICH2 "Use MPICH2" ON)
-option(SV_USE_DUMMY_MPICH2 "Use Dummy MPICH2" OFF)
-option(SV_USE_MSMPI "Use MSMPI" OFF)
-mark_as_superbuild(SV_USE_ZLIB)
-mark_as_superbuild(SV_USE_MPICH2)
-mark_as_superbuild(SV_USE_DUMMY_MPICH2)
-mark_as_superbuild(SV_USE_MSMPI)
-
-option(SV_USE_GLIB "Use GLIB Library" OFF)
-option(SV_USE_GTS "Use GTS Library" OFF)
-mark_as_superbuild(SV_USE_GLIB)
-mark_as_superbuild(SV_USE_GTS)
-
-#-----------------------------------------------------------------------------
-# Plugins
-option(SV_USE_ITK "Enable ITK Plugin" ON)
-mark_as_superbuild(SV_USE_ITK)
-option(ITK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(ITK_SHARED_LIBRARIES)
-
-option(SV_USE_VMTK "Enable VMTK Plugin" ON)
-mark_as_superbuild(SV_USE_VMTK)
-
-option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
-mark_as_superbuild(SV_USE_TETGEN)
-if(SV_USE_TETGEN)
-	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
-	mark_as_superbuild(SV_USE_TET_ADAPTOR)
-endif()
-
-if(SV_USE_TET_ADAPTOR)
-	#set(SV_USE_FORTRAN ON)
-	set(SV_USE_THREEDSOLVER ON)
-endif()
-
-option(VTK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(VTK_SHARED_LIBRARIES)
-
-option(SV_USE_PYTHON "Use Tcl Python" OFF)
-mark_as_superbuild(SV_USE_PYTHON)
-if(SV_USE_PYTHON)
-	set(VTK_SHARED_LIBRARIES "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
-
-#-----------------------------------------------------------------------------
-# Adaptor Options
-# Adaptor converts objects between the different solid models.
-option(SV_USE_MESHSIM_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
-mark_as_superbuild(SV_USE_MESHSIM_ADAPTOR)
-
-if(SV_USE_MESHSIM_ADAPTOR)
-	set(SV_USE_THREEDSOLVER ON)
-	set(SV_USE_MESHSIM ON)
-endif()
-
-#-----------------------------------------------------------------------------
-# Open Source Software Options: Solid Models - OPENCASCADE
-option(SV_USE_OPENCASCADE "OPENCASCADE" OFF)
-mark_as_superbuild(SV_USE_OPENCASCADE)
-if(SV_USE_OPENCASCADE)
-    set(VTK_SHARED_LIBRARIES "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
-
-if(VTK_SHARED_LIBRARIES)
-  if(UNIX AND NOT APPLE)
-  	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-  endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# Commercial Software Options: Solid Models - Parasolid
-option(SV_USE_PARASOLID "Parasolid" OFF)
-mark_as_superbuild(SV_USE_PARASOLID)
-
-#-----------------------------------------------------------------------------
-# Commercial Software Options: Meshing - MeshSim
-option(SV_USE_MESHSIM "Use MeshSim commercial libraries.  Requires licenese" OFF)
-if(SV_USE_MESHSIM)
-	option(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL "" ON)
-	if(WIN32)
-		set(CMAKE_CXX_STANDARD_LIBRARIES ${CMAKE_CXX_STANDARD_LIBRARIES} rpcrt4.lib)
-		option(MESHSIM_LICENSE_IN_WIN32_REGISTRY "Use system registry in windows" ON)
-		option(MESHSIM_USE_LICENSE_FILE "Use a license file for MeshSim" OFF)
-		option(MESHSIM_EMBED_LICENSE_KEYS "Embed License information for MeshSim" OFF)
-	else()
-		option(MESHSIM_USE_LICENSE_FILE "Use a license file for MeshSim" ON)
-		option(MESHSIM_EMBED_LICENSE_KEYS "Embed License information for MeshSim" OFF)
-	endif()
-else()
-	unset(MESHSIM_USE_LICENSE_FILE  CACHE)
-	unset(MESHSIM_EMBED_LICENSE_KEYS  CACHE)
-	unset(MESHSIM_LICENSE_IN_WIN32_REGISTRY  CACHE)
-	UNset(MESHSIM_USE_DISCRETE_MODEL CACHE)
-endif()
-mark_as_superbuild(SV_USE_MESHSIM:BOOL)
-mark_as_superbuild(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL:BOOL)
-mark_as_superbuild(MESHSIM_LICENSE_IN_WIN32_REGISTRY:BOOL)
-mark_as_superbuild(MESHSIM_USE_LICENSE_FILE:BOOL)
-mark_as_superbuild(MESHSIM_EMBED_LICENSE_KEYS:BOOL)
-
-
-#-----------------------------------------------------------------------------
-# Solver Build Options (Modules)
-#-----------------------------------------------------------------------------
-option(SV_USE_THREEDSOLVER "Option to build flowsolver modules (requires Fortran)" OFF)
-if(SV_USE_THREEDSOLVER)
-	#option(SV_USE_THREEDSOLVER "Option to build 3D-solver module (requires Fortran)" ON)
-	option(SV_THREEDSOLVER_USE_SOLVERIO "Option to build solverIO module (requires Fortran)" ON)
-	option(SV_THREEDSOLVER_USE_SVPRE "Option to build Pre-solver module (requires Fortran)" ON)
-	option(SV_THREEDSOLVER_USE_SVPOST "Option to build post-solver module" ON)
-	option(SV_THREEDSOLVER_SOLVERIO_REDIRECT "Option to redirect solver IO" OFF)
-	option(SV_THREEDSOLVER_USE_CORONARY "" ON)
-	option(SV_THREEDSOLVER_USE_CLOSEDLOOP "" ON)
-	option(SV_THREEDSOLVER_USE_VARWALL "" ON)
-	option(SV_THREEDSOLVER_USE_VTK "" OFF)
-	mark_as_superbuild(SV_USE_THREEDSOLVER)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SOLVERIO)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SVPRE)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SVPOST)
-	mark_as_superbuild(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_CORONARY)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_CLOSEDLOOP)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_VARWALL)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_VTK)
-endif()
-
-#-----------------------------------------------------------------------------
-# Linear Solver Options: SVLS
-if(SV_USE_THREEDSOLVER)
-	option(SV_THREEDSOLVER_USE_SVLS "Use svLS as linear solver" ON )
-	if(SV_THREEDSOLVER_USE_SVLS)
-		set(USE_SVLS 1)
-	endif()
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SVLS)
-	set(SVLS_BUILD_TYPE "Source")
-
-	option(SV_THREEDSOLVER_USE_LESLIB "Use leslib as linear solver" OFF )
-	if(SV_THREEDSOLVER_USE_LESLIB)
-		set(SV_USE_LESLIB 1)
-	endif()
-	mark_as_superbuild(SV_THREEDSOLVER_USE_LESLIB)
-endif()
-
-#-----------------------------------------------------------------------------
-# Start Configuration Steps and Second Generation Options
-#-----------------------------------------------------------------------------
-# Compiler Flags
-if(SV_SUPPRESS_WARNINGS)
-	add_definitions("-w")
-endif()
-if(LINUX)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
-	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -pthread -static")
-endif()
-if(CMAKE_COMPILER_IS_GNUCXX)
-	add_definitions("-fpermissive")
-endif()
-set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -pthread -static")
-#-----------------------------------------------------------------------------
-# Start Global Defines
-#-----------------------------------------------------------------------------
-# Global definesis a catch variable for all the compiler definitions.
-# These flags are stored (as opposed to adding directly with ADD_DEFINITIONS)
-# so the flags may be printed for debuging purposes.
-if(CMAKE_COMPILER_IS_GNUCXX)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DGCC")
-endif()
-
-if(NOT SV_BUILD_SHARED_LIBS)
-	set(SV_STATIC_BUILD "1")
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_STATIC_LINK -DSV_STATIC_BUILD")
-elseif()
-	set(SV_STATIC_BUILD "0")
-endif()
-
-#-----------------------------------------------------------------------------
-# OS Specific build flags
-#-----------------------------------------------------------------------------
-# All OS
-set(USE_NOTIMER ON)
-
-# Windows (32 and 64)
-if(WIN32)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
-	if(NOT IS64)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
-	endif()
-	if(CYGWIN)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCYGWIN")
-	endif()
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE")
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D__VC__")
-	check_library_exists("${CMAKE_CXX_STANDARD_LIBRARIES}" gethostname "" HAVE_STDGETHOSTNAME)
-	if(NOT HAVE_STDGETHOSTNAME)
-		check_library_exists("wsock32.lib" gethostname "" HAVE_WSOCK_GETHOSTNAME)
-		if(HAVE_WSOCK_GETHOSTNAME)
-			set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} wsock32.lib")
-		else()
-			MESSAGE(AUTHOR_WARNING "gethostname has not beed found! The flowsolver will not compile")
-		endif()
-	endif()
-	set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} Shlwapi.lib")
-	mark_as_superbuild(CMAKE_CXX_STANDARD_LIBRARIES)
-
-
-	#set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} ws2_32.lib wsock32.lib" CACHE)
-
-	#set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE")
-endif()
-
-# Visual Studio flags
-if(MSVC)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DMSVC /EHsc")
-endif()
-
-# Linux
-if(UNIX)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUNIX")
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE")
-endif()
-
-# Visual Studio Linker Flags
-if(MSVC)
-	set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE:LIB")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrtd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MACHINE:X64 /subsystem:console /D__VC__")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000,10000000")
-endif()
-
-#-----------------------------------------------------------------------------
 # Package and Subdirectory Logic
 # Now we begin actually doing the logic to figure out which directories to add#
 # and finding the libraries that those parts need.
@@ -449,6 +95,19 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/Model/PolyDataSolidModel")
 
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
+
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
+	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
+	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
+		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
+	add_custom_target(doc
+		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API documentation with Doxygen" VERBATIM
+		)
+endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------------
 # We can not begin enabling libraries
@@ -516,8 +175,6 @@ endif()
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
 if(WIN32)
-	option(SV_USE_TKCXIMAGE "Use TKCXImage (Legacy)" OFF)
-	mark_as_superbuild(SV_USE_TKCXIMAGE)
 	if(SV_USE_TKCXIMAGE)
 		find_library(TKCXIMAGE_DLL tkcximage)
 		if(TKCXIMAGE_DLL)
@@ -606,24 +263,9 @@ endif()
 #---
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
-	if(SV_USE_MESHSIM)
-		option(SV_USE_MESHSIM_SHARED_LIBRARIES "Build MeshSim as shared libraries" OFF)
-		if(SV_BUILD_SHARED_LIBS)
-			set(SV_USE_MESHSIM_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
-		endif()
-		mark_as_superbuild(SV_USE_MESHSIM_SHARED_LIBRARIES)
-	endif()
-	if(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
-		option(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES "Build MeshSim Discrete Solid as shared libraries" OFF)
-		if(SV_BUILD_SHARED_LIBS)
-			set(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
-		endif()
-		mark_as_superbuild(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-	endif()
 endif()
 
 if(SV_USE_MESHSIM_ADAPTOR)
-	set(USE_MESHSIM_ADAPTOR ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
 endif()
 
@@ -840,9 +482,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable Interl Runtime libs if we need or want them
-option(SV_USE_INTELRUNTIME "Add Intel Runtime Libraries (these may be needed by some libraries)" OFF)
-mark_as_superbuild(SV_USE_INTELRUNTIME)
-
 if(SV_USE_INTELRUNTIME OR USE_INTEL)
 	simvascular_external(INTELRUNTIME SYSTEM_DEFAULT SHARED_LIB)
 	if(SV_USE_SYSTEM_ZLIB)
@@ -926,9 +565,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable Testing
-option(SV_BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
-mark_as_superbuild(VARS BUILD_TESTING)
-
 if(SV_BUILD_TESTING)
 	enable_testing()
 	add_subdirectory(Testing)
