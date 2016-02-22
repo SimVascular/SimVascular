@@ -13485,6 +13485,9 @@ img_guessVolParams $gImageVol(filename)}
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -command {guiSV_model_create_model_opencascade}  -text {Create Model with OpenCASCADE}
 global SV_USE_PYTHON
+if {[info exists SV_USE_PYTHON] == 0} {
+  set SV_USE_PYTHON "OFF"
+}
 if {$SV_USE_PYTHON == "ON"} {
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13  -command {guiSV_model_create_model_opencascade_python}  -text {Create Model with SimVascular}

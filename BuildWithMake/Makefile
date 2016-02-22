@@ -49,11 +49,11 @@ mksedscript:
 	-echo "puts \"s+REPLACEME_SOFTWARE_PLATFORM+$(CLUSTER)+g\"" > tclscript 
 	-echo "puts \"s+REPLACEME_CXX_COMPILER_VERSION+$(CXX_COMPILER_VERSION)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_FORTRAN_COMPILER_VERSION+$(FORTRAN_COMPILER_VERSION)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIMVASCULAR_HOME+[file rootname `pwd`]/..+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIMVASCULAR_VERSION+$(SIMVASCULAR_VERSION)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_HOME+[file rootname `pwd`]/..+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_VERSION+$(SIMVASCULAR_VERSION)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LIB_BUILD_DIR+$(LIB_BUILD_DIR)+g\"" >> tclscript
 ifeq ($(CLUSTER),x64_cygwin)
-	-echo "puts \"s+REPLACEME_SIMVASCULAR_OS+windows+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_OS+windows+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+`cygpath -u $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+`cygpath -u $(LICENSED_SOFTWARE_TOPLEVEL)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCL_LIBRARY+`cygpath -u $(TCL_LIBRARY)`+g\"" >> tclscript
@@ -89,7 +89,7 @@ endif
 endif
 ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIMVASCULAR_OS+linux+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_OS+linux+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+$(LICENSED_SOFTWARE_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCL_LIBRARY+$(TCL_LIBRARY)+g\"" >> tclscript
@@ -109,7 +109,7 @@ ifeq ($(CLUSTER),x64_linux)
 endif
 ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SIMVASCULAR_OS+linux+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_OS+macosx+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL+$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_LICENSED_SOFTWARE_TOPLEVEL+$(LICENSED_SOFTWARE_TOPLEVEL)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCL_LIBRARY+$(TCL_LIBRARY)+g\"" >> tclscript

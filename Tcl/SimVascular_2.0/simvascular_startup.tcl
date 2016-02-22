@@ -521,6 +521,9 @@ if {$argc >= 1} {
 # Load Python
 # ------------------
 global SV_USE_PYTHON
+if {[info exists SV_USE_PYTHON] == 0} {
+  set SV_USE_PYTHON "OFF"
+}
 if {$SV_USE_PYTHON == "ON"} {
   startTclPython
 }

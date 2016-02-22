@@ -74,6 +74,11 @@ HDRS	= cv_VMTK_utils.h \
 	  vtkvmtkSimplifyVoronoiDiagram.h \
           vtkvmtkSteepestDescentLineTracer.h \
 	  vtkvmtkInternalTetrahedraExtractor.h \
+	  vtkvmtkCenterlineBranchExtractor.h \
+	  vtkvmtkCenterlineSphereDistance.h \
+	  vtkvmtkCenterlineUtilities.h \
+	  vtkvmtkCenterlineSplittingAndGroupingFilter.h \
+	  vtkvmtkPolyDataCenterlineGroupsClipper.h \
           vtkvmtkPolyDataCenterlines.h
 
 CXXSRCS	=  cv_VMTK_utils.cxx \
@@ -106,6 +111,11 @@ CXXSRCS	=  cv_VMTK_utils.cxx \
            vtkvmtkSimplifyVoronoiDiagram.cxx \
            vtkvmtkInternalTetrahedraExtractor.cxx \
 	   vtkvmtkSteepestDescentLineTracer.cxx \
+	   vtkvmtkCenterlineBranchExtractor.cxx \
+	   vtkvmtkCenterlineSphereDistance.cxx \
+	   vtkvmtkCenterlineUtilities.cxx \
+	   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx \
+	   vtkvmtkPolyDataCenterlineGroupsClipper.cxx \
            vtkvmtkPolyDataCenterlines.cxx
 
 DLLHDRS = cv_geom_init.h

@@ -90,6 +90,9 @@ if {$SV_RELEASE_BUILD == 0} {
 }
 
 global SV_SHARED_BUILD
+if {[info exists SV_SHARED_BUILD] == 0} {
+  set SV_SHARED_BUILD "OFF"
+}
 if {$SV_SHARED_BUILD == "ON"} {
   source [file join $env(SV_HOME) Tcl SimVascular_2.0 Core simvascular_load_shared_libs.tcl]
 }
