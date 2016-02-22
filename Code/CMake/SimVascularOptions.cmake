@@ -13,11 +13,6 @@ option(SV_SUPERBUILD
 set(SV_SUPERBUILD_LIBS_DIR "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
 mark_as_superbuild(SV_SUPERBUILD_LIBS_DIR)
 
-#-----------------------------------------------------------------------------
-# Basic Options (CMAKE Defaults)
-set(SV_NO_RENDERER 1)
-mark_as_superbuild(SV_NO_RENDERER)
-
 option(SV_BUILD_SHARED_LIBS "Build ${PROJECT_NAME} as shared libraries." OFF)
 mark_as_superbuild(VARS SV_BUILD_SHARED_LIBS ALL_PROJECTS)
 
