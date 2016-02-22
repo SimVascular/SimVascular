@@ -62,4 +62,16 @@ if(SV_USE_ADAPTOR)
 	    #lib_simvascular_solverio)
 endif()
 
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+	install(FILES ${HDRS}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
+		)
+endif()
 

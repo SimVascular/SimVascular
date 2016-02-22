@@ -3,6 +3,8 @@
 #-----------------------------------------------------------------------------
 
 set(lib lib_simvascular_lset)
+set(lib2 lib_simvascular_lsetcore)
+set(lib3 lib_simvascular_lsetv)
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvLevelSet.cxx cvLevelSetNode.cxx
@@ -23,21 +25,21 @@ SET(HDRS cvLevelSet.h cvLevelSetNode.h
     )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_LsetCore_init.cxx cv_LsetV_init.cxx)
-add_library(lib_simvascular_lsetcore ${SV_LIBRARY_TYPE} cv_LsetCore_init.cxx)
-add_library(lib_simvascular_lsetv ${SV_LIBRARY_TYPE} cv_LsetV_init.cxx)
+add_library(${lib2} ${SV_LIBRARY_TYPE} cv_LsetCore_init.cxx)
+add_library(${lib3} ${SV_LIBRARY_TYPE} cv_LsetV_init.cxx)
 
 target_link_libraries(${lib}
    ${ITK_LIBRARIES} ${VTK_LIBRARIES}
    ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
    lib_simvascular_globals lib_simvascular_image)
-target_link_libraries(lib_simvascular_lsetcore
+target_link_libraries(${lib2}
    ${ITK_LIBRARIES} ${VTK_LIBRARIES}
    ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
    ${lib}
    lib_simvascular_globals lib_simvascular_image)
-target_link_libraries(lib_simvascular_lsetv
+target_link_libraries(${lib3}
    ${ITK_LIBRARIES} ${VTK_LIBRARIES}
    ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
@@ -45,7 +47,7 @@ target_link_libraries(lib_simvascular_lsetv
    lib_simvascular_globals lib_simvascular_image)
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
+	install(TARGETS ${lib} ${lib2} ${lib3}
 	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries

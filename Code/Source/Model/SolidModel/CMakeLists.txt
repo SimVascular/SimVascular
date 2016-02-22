@@ -43,7 +43,7 @@ if(SV_USE_PYTHON)
 endif()
 
 SET(CXXSRCS cvSolidModel.cxx)
-SET(HDRS    cvSolidModel.h cv_solit_init.h)
+SET(HDRS    cvSolidModel.h cv_solid_init.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 

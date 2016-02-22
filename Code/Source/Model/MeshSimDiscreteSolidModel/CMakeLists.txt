@@ -28,17 +28,31 @@
  #
  #=========================================================================#
 
+set(lib lib_simvascular_discrete)
 SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-    add_library(lib_simvascular_discrete SHARED ${CXXSRCS} cv_discrete_init.cxx)
+    add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
 else()
-    add_library(lib_simvascular_discrete STATIC ${CXXSRCS} cv_discrete_init.cxx)
+    add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx)
 endif()
 
-target_link_libraries(lib_simvascular_discrete
+target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${GLOBAL_LIBRARIES})
 			#${ZLIB_LIBRARY}
 			#lib_simvascular_globals lib_simvascular_mesh)
+
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+	install(FILES ${HDRS}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
+		)
+endif()

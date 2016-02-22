@@ -65,6 +65,6 @@ if(SV_INSTALL_LIBS)
 endif()
 if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS}
-    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/plugins/tetadapt COMPONENT PluginHeaders
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
     )
 endif()

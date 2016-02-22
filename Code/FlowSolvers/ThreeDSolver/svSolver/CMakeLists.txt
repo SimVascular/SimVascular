@@ -91,35 +91,40 @@ if (SV_THREEDSOLVER_USE_VARWALL)
   SET(FSRCS ${FSRCS} varwall_subroutines.f)
 endif()
 
+# Libraries for the solver
+set(lib_vtk lib_simvascular_flowsolver_vtk)
+set(lib_leslib lib_simvascular_flowsolver_dummy_leslib)
+set(lib_restart lib_simvascular_flowsolver_write_restart)
+set(lib_flowsolver lib_simvascular_flowsolver_fortran_lib)
 # Include files for the USE_VTK VERSION
 if (SV_THREEDSOLVER_USE_VTK)
   SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
-  ADD_LIBRARY(lib_simvascular_solver_vtk ${SV_LIBRARY_TYPE} use_vtk.cxx)
-  target_link_libraries(lib_simvascular_solver_vtk
+  ADD_LIBRARY(${lib_vtk} ${SV_LIBRARY_TYPE} use_vtk.cxx)
+  target_link_libraries(${lib_vtk}
 	  ${VTK_LIBRARIES})
 endif()
 
 if(SV_THREEDSOLVER_USE_LESLIB)
   include_directories(${LESLIB_INCLUDE_DIR})
 else()# dummy leslib
-add_library(lib_dummy_leslib ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
-  set(LESLIB_LIBRARY lib_dummy_leslib)
+add_library(${lib_leslib} ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
+  set(LESLIB_LIBRARY ${lib_leslib})
 endif()
-add_library(lib_simvascular_write_restart ${SV_LIBRARY_TYPE} ${CSRCS})
-target_link_libraries(lib_simvascular_write_restart lib_simvascular_solverio
-	lib_dummy_leslib
+add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
+target_link_libraries(${lib_restart} lib_simvascular_solverio
+	${lib_leslib}
 	${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
 
-ADD_LIBRARY(flowsolver_fortran_lib ${SV_LIBRARY_TYPE} ${FSRCS})
-#SET_TARGET_PROPERTIES(flowsolver_fortran_lib PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY}
+ADD_LIBRARY(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
+#SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
+TARGET_LINK_LIBRARIES(${lib_flowsolver} ${svMPI_EXTRA_LIBRARY}
 	${svMPI_Fortran_LIBRARIES}
-	lib_simvascular_solverio lib_simvascular_write_restart)
+	lib_simvascular_solverio ${lib_restart})
 if(SV_THREEDSOLVER_USE_SVLS)
-	target_link_libraries(flowsolver_fortran_lib lib_simvascular_svls)
+	target_link_libraries(${lib_flowsolver} lib_simvascular_svls)
 endif()
 if(SV_THREEDSOLVER_USE_VTK)
-	target_link_libraries(flowsolver_fortran_lib lib_simvascular_solver_vtk)
+	target_link_libraries(${lib_flowsolver} ${lib_vtk})
 endif()
 message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
@@ -138,7 +143,7 @@ else()
 endif()
 
 
-TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} flowsolver_fortran_lib
+TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
                       ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
                       ${METIS_LIBRARY} ${SVLS_LIBRARY}
                       ${svMPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
@@ -147,11 +152,18 @@ TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} flowsolver_fortran_lib
                       )
 
 if(SV_INSTALL_LIBS)
-  install(TARGETS flowsolver_fortran_lib
+  install(TARGETS ${lib_flowsolver} ${lib_restart} ${lib_leslib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
     LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
     ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
     )
+  if(SV_THREEDSOLVER_USE_VTK)
+    install(TARGETS ${lib_vtk}
+      RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
+      LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
+      ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
+      )
+  endif()
 endif()
 if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS}

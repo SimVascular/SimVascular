@@ -4,7 +4,7 @@ Project(NSPCG Fortran)
 if (NOT NSPCG_LIBRARY_NAME)
     set(NSPCG_LIBRARY_NAME nspcg)
 endif()
-#set default build type to relwithdebinfo, also sets flags O2 on linux 
+#set default build type to relwithdebinfo, also sets flags O2 on linux
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
@@ -29,3 +29,11 @@ endif()
 
 set(FSRCS nspcg1.f nspcg2.f nspcg3.f nspcg4.f nspcg5.f)
 add_library(${NSPCG_LIBRARY_NAME} ${SV_LIBRARY_TYPE} ${FSRCS})
+
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${NSPCG_LIBRARY_NAME}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		)
+endif()
