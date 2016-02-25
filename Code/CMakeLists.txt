@@ -163,14 +163,15 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 set(SV_DEPENDS "TCL")
+if(VTK_SHARED_LIBRARIES)
+	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
+	set(SV_INSTALL_EXTERNALS ON)
+endif()
 simvascular_external(VTK DOWNLOADABLE
 	COMPONENTS
         vtkFiltersFlowPaths vtkWrappingTcl
 	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy)
-if(SV_BUILD_SHARED_VTK)
-	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
-endif()
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -300,6 +301,7 @@ if(SV_USE_OPENCASCADE)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DUSE_OPENCASCADE")
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
 	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
+	#set(SV_INSTALL_EXTERNALS ON)
 endif()
 # Licensed Package Additions
 #-----------------------------------------------------------------------------
@@ -558,7 +560,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Set flags for shared libs
-if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES)
+if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES OR
+		ITK_SHARED_LIBRARIES OR VTK_SHARED_LIBRARIES OR
+		SV_BUILD_SHARED_LIBS)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()

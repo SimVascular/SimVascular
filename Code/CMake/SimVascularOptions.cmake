@@ -5,6 +5,10 @@ option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages dur
 mark_as_superbuild(SV_DEVELOPER_OUTPUT)
 
 #-----------------------------------------------------------------------------
+# Distribution
+option(SV_ENABLE_DISTRIBUTION "Distribute" OFF)
+mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
+#-----------------------------------------------------------------------------
 # Superbuild Option
 option(SV_SUPERBUILD
 	"Build ${PROJECT_NAME} and the projects it depends on.

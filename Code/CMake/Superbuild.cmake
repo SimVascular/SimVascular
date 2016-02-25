@@ -60,21 +60,21 @@ ExternalProject_Install_CMake(${proj})
 # steps to run whenever a top level build is done...
 ExternalProject_Add_Step(${proj} forcebuild
   COMMAND ${CMAKE_COMMAND} -E remove
-  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/SimVascular-build
+  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/${PROJECT_NAME}-build
    COMMAND ${CMAKE_COMMAND} -E remove
-  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/RelWithDebInfo/SimVascular-build
+   ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/RelWithDebInfo/${PROJECT_NAME}-build
   COMMENT "Forcing build step for '${proj}'"
   DEPENDEES build
   ALWAYS 1
   )
 
-file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/SimVascular-configure)
-file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/RelWithDebInfo/SimVascular-configure)
+file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/${PROJECT_NAME}-configure)
+file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/RelWithDebInfo/${PROJECT_NAME}-configure)
 
 add_custom_target(forcebuild)
 add_custom_command(TARGET forcebuild
   ${CMAKE_COMMAND} -E remove
-  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/SimVascular-build
+  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/${PROJECT_NAME}-build
   COMMENT "Forcing build step for '${proj}'")
 
 # This will extend this target to the top level build
