@@ -270,3 +270,12 @@ if(SV_USE_THREEDSOLVER)
 	mark_as_superbuild(SV_THREEDSOLVER_USE_LESLIB)
 endif()
 
+#-----------------------------------------------------------------------------
+# Set flags for shared libs
+if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES OR
+		ITK_SHARED_LIBRARIES OR VTK_SHARED_LIBRARIES OR
+		SV_BUILD_SHARED_LIBS)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" CACHE STRING "Need for shared libs" FORCE)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" CACHE STRING "Need for shared libs" FORCE)
+endif()
+

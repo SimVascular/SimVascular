@@ -298,7 +298,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 #ifdef USE_PARASOLID
 #ifndef USE_PARASOLID_SHARED
   if ( Parasolidsolid_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on gdscMesh_Init\n" );
+    fprintf( stderr, "error on Parasolidsolid_Init\n" );
     return TCL_ERROR;
   }
 #endif

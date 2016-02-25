@@ -559,15 +559,6 @@ if(SV_USE_MPI OR USE_MPI)
 endif()
 
 #-----------------------------------------------------------------------------
-# Set flags for shared libs
-if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES OR
-		ITK_SHARED_LIBRARIES OR VTK_SHARED_LIBRARIES OR
-		SV_BUILD_SHARED_LIBS)
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif()
-
-#-----------------------------------------------------------------------------
 # Enable Testing
 if(SV_BUILD_TESTING)
 	enable_testing()

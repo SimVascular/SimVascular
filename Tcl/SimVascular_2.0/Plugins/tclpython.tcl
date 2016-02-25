@@ -52,6 +52,9 @@ proc startTclPython {} {
   if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
     puts "No numpy module found: $errmsg"
   }
+  if [catch {$gPythonInterp exec {import scipy as sp}} errmsg] {
+    puts "No scipy module found: $errmsg"
+  }
 }
 
 #Kill the python interpreter when youre done!
