@@ -1,5 +1,5 @@
 #-----------------------------------------------------------------------------
-# Image 
+# Image
 #-----------------------------------------------------------------------------
 
 set(lib lib_simvascular_globals)
@@ -10,20 +10,26 @@ include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 set(CXXSRCS cv_globals.cxx)
 set(HDRS cv_globals.h)
 
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
-target_link_libraries(${lib} 
-   ${GLOBAL_LIBRARIES})
+target_link_libraries(${lib}
+   ${GLOBAL_LIBRARIES}
+   ${OPENCASCADE_LIBRARIES})
 
-if(SIMVASCULAR_INSTALL_LIBS)
+if(SV_USE_OPENCASCADE)
+  target_link_libraries(${lib}
+     ${OPENCASCADE_LIBRARIES})
+endif()
+
+if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)
 endif()
-if(SIMVASCULAR_INSTALL_HEADERS)
+if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()

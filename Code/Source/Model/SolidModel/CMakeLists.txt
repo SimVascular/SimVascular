@@ -36,37 +36,36 @@ set(lib lib_simvascular_solid)
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
-if(SimVascular_USE_PYTHON)
+if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
 		    ${PYTHON_INCLUDE_DIR}
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
 SET(CXXSRCS cvSolidModel.cxx)
-SET(HDRS    cvSolidModel.h)
+SET(HDRS    cvSolidModel.h cv_solid_init.h)
 
-add_library(${lib} ${CXXSRCS} cv_solid_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES} ${TETGEN_LIBRARY}
-			lib_simvascular_globals lib_simvascular_utils
-			lib_simvascular_polydatasolid
+			lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository
             )
-if(SimVascular_USE_PYTHON)
+if(SV_USE_PYTHON)
    target_link_libraries(${lib} ${PYTHON_LIBRARIES})
 endif()
 
-if(SIMVASCULAR_INSTALL_LIBS)
+if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)
 endif()
-if(SIMVASCULAR_INSTALL_HEADERS)
+if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()

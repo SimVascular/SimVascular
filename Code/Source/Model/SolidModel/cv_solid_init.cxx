@@ -45,15 +45,11 @@
 #include "cv_vtk_utils.h"
 #include "cvPolyData.h"
 #include "cvPolyDataSolid.h"
-#include "cv_sys_geom.h"
 #include "cvFactoryRegistrar.h"
 
 #ifdef USE_DISCRETE_MODEL
 #include "cvMeshSimDiscreteSolidModel.h"
 int DiscreteUtils_Init();
-#endif
-#ifdef USE_OPENCASCADE
-#include "cvOCCTSolidModel.h"
 #endif
 
 // The following is needed for Windows
@@ -289,103 +285,6 @@ PyObject* importList2D(PyObject* self, PyObject* args)
 }
 #endif
 
-#if defined(USE_PYTHON) && defined(USE_OPENCASCADE)
-// --------------------
-// pySolid.convertListsToOCCTObject
-// --------------------
-PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
-{
-  //Call cvOCCTSolidModel function to create BSpline surf
-  cvOCCTSolidModel *geom;
-  if (cvSolidModel::gCurrentKernel != SM_KT_OCCT)
-  {
-    fprintf(stderr,"Solid Model kernel must be OCCT\n");
-    return NULL;
-  }
-
-  char *objName;
-  int p=0,q=0;
-  PyObject *X,*Y,*Z,*uKnots,*vKnots,*uMults,*vMults,*uDeg,*vDeg;
-  if (!PyArg_ParseTuple(args,"sO!O!O!O!O!O!O!ii",&objName,
-						&PyList_Type,&X,
-					        &PyList_Type,&Y,
-					        &PyList_Type,&Z,
-					        &PyList_Type,&uKnots,
-						&PyList_Type,&vKnots,
-						&PyList_Type,&uMults,
-						&PyList_Type,&vMults,
-						&p,&q))
-  {
-    fprintf(stderr,"Could not import 1 char, 7 tuples, and 2 ints: X,Y,Z,uKnots,vKnots,uMults,vMults,uDeg,vDeg");
-    return NULL;
-  }
-
-  geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
-  if ( geom == NULL ) {
-    fprintf(stderr,"Object is not in repository\n");
-    return NULL;
-  }
-  //Get X,Y,Z arrays
-  double **Xarr=NULL,**Yarr=NULL,**Zarr=NULL;
-  int Xlen1=0,Xlen2=0,Ylen1=0,Ylen2=0,Zlen1=0,Zlen2=0;
-  Py_INCREF(X); Py_INCREF(Y); Py_INCREF(Z);
-  Xarr = getArrayFromDoubleList2D(X,Xlen1,Xlen2);
-  Yarr = getArrayFromDoubleList2D(Y,Ylen1,Ylen2);
-  Zarr = getArrayFromDoubleList2D(Z,Zlen1,Zlen2);
-  Py_DECREF(X); Py_DECREF(Y); Py_DECREF(Z);
-  //Clean up
-  if ((Xlen1 != Ylen1 || Ylen1 != Zlen1 || Zlen1 != Xlen1) ||
-      (Xlen2 != Ylen2 || Ylen2 != Zlen2 || Zlen2 != Xlen2))
-  {
-    fprintf(stderr,"X,Y,and Z inputs need to be same dimensions\n");
-    for (int i=0;i<Xlen1;i++)
-      delete [] Xarr[i];
-    delete [] Xarr;
-    for (int i=0;i<Ylen1;i++)
-      delete [] Yarr[i];
-    delete [] Yarr;
-    for (int i=0;i<Zlen1;i++)
-      delete [] Zarr[i];
-    delete [] Zarr;
-    return NULL;
-  }
-
-  //Get knots and multiplicity arrays
-  double *uKarr=NULL,*vKarr=NULL,*uMarr=NULL,*vMarr=NULL;
-  int uKlen=0,vKlen=0,uMlen=0,vMlen=0;
-  uKarr = getArrayFromDoubleList(uKnots,uKlen);
-  vKarr = getArrayFromDoubleList(vKnots,vKlen);
-  uMarr = getArrayFromDoubleList(uMults,uMlen);
-  vMarr = getArrayFromDoubleList(vMults,vMlen);
-
-  if (geom->CreateBSplineSurface(Xarr,Yarr,Zarr,Xlen1,Xlen2,
-    uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != CV_OK)
-  {
-    //Set special python thingy
-    fprintf(stderr,"Conversion to BSpline surface didn't work\n");
-    return NULL;
-  }
-
-  //Clean up
-  for (int i=0;i<Xlen1;i++)
-  {
-    delete [] Xarr[i];
-    delete [] Yarr[i];
-    delete [] Zarr[i];
-  }
-  delete [] Xarr;
-  delete [] Yarr;
-  delete [] Zarr;
-
-  delete [] uKarr;
-  delete [] vKarr;
-  delete [] uMarr;
-  delete [] vMarr;
-
-  return Py_BuildValue("s","success");
-}
-#endif
-
 #ifdef USE_PYTHON
 //All functions listed and initiated as pySolid_methods declared here
 // --------------------
@@ -400,9 +299,6 @@ PyMethodDef pySolid_methods[] = {
   {"importTuple1D", importTuple1D, METH_VARARGS,"Test import tuple"},
   {"importList1D", importList1D, METH_VARARGS,"Test import list"},
   {"importList2D", importList2D, METH_VARARGS,"Test import list 2D"},
-#ifdef USE_OPENCASCADE
-  {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
-#endif
   {NULL, NULL}
 };
 #endif
@@ -493,11 +389,6 @@ int Solid_CopyCmd( ClientData clientData, Tcl_Interp *interp,
 int Solid_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] );
 
-int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
-		     int argc, CONST84 char *argv[] );
-
-void DeleteSolid( ClientData clientData );
-
 int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
@@ -505,12 +396,6 @@ int Solid_SetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
 int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
-			int argc, CONST84 char *argv[] );
-
-int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
-			int argc, CONST84 char *argv[] );
-
-int Model_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
@@ -735,10 +620,6 @@ int Solid_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "solid_getKernel", Solid_GetKernelCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
-  Tcl_CreateCommand( interp, "geom_all_union", Geom_All_UnionCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Model_Convert_NURBS_To_PolyCmd,
-		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #ifdef USE_PYTHON
   Tcl_CreateCommand( interp, "solid_initPyMods", Solid_InitPyModulesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -759,7 +640,7 @@ int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
   char *name;
 
   if ( argc != 1 ) {
-    Tcl_SetResult( interp, "usage: repos_initPyMods", TCL_STATIC );
+    Tcl_SetResult( interp, "usage: solid_initPyMods", TCL_STATIC );
     return TCL_ERROR;
   }
 
@@ -3403,274 +3284,6 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 
   return TCL_OK;
 }
-
-// -------------
-// Geom_All_UnionCmd
-// -------------
-
-int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] )
-{
-  char *usage;
-  int numSrcs;
-  int interT;
-  ARG_List srcList;
-  char *dstName;
-  cvRepositoryData *src;
-  cvPolyData *dst;
-  RepositoryDataT type;
-  cvPolyData **srcs;
-  cvSolidModel *geom;
-  double tolerance = 1e-5;
-
-  int table_size = 4;
-  ARG_Entry arg_table[] = {
-    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
-    { "-intertype", INT_Type, &interT, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, GDSC_OPTIONAL, 0, { 0 } },
-  };
-  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
-  if ( argc == 1 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 1,
-			table_size, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-  numSrcs = srcList.argc;
-
-  // Foreach src obj, check that it is in the repository and of the
-  // correct type (i.e. cvSolidModel).  Also build up the array of
-  // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
-
-  srcs = new cvPolyData * [numSrcs];
-
-  for (int i = 0; i < numSrcs; i++ ) {
-    src = gRepository->GetObject( srcList.argv[i] );
-    if ( src == NULL ) {
-      Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
-			(char *)NULL );
-      ARG_FreeListArgvs( table_size, arg_table );
-      delete [] srcs;
-      return TCL_ERROR;
-    }
-    type = src->GetType();
-    if ( type != POLY_DATA_T ) {
-      Tcl_AppendResult( interp, "object ", srcList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
-      ARG_FreeListArgvs( table_size, arg_table );
-      delete [] srcs;
-      return TCL_ERROR;
-    }
-    srcs[i] = (cvPolyData *) src;
-  }
-
-  // We're done with the src object names:
-  ARG_FreeListArgvs( table_size, arg_table );
-
-  // Make sure the specified result object does not exist:
-  if ( gRepository->Exists( dstName ) ) {
-    Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
-    delete [] srcs;
-    return TCL_ERROR;
-  }
-
-  // Instantiate the new solid:
-  geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
-    delete [] srcs;
-    return TCL_ERROR;
-  }
-
-  if ( sys_geom_all_union( srcs, numSrcs,interT,tolerance,(cvPolyData**)(&dst) )
-       != CV_OK ) {
-    Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
-    delete dst;
-    delete [] srcs;
-    delete geom;
-    return TCL_ERROR;
-  }
-
-  vtkPolyData *dstPd;
-  dstPd = dst->GetVtkPolyData();
-  geom->SetVtkPolyDataObject(dstPd);
-  if ( !( gRepository->Register( dstName, geom ) ) ) {
-    Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
-    delete geom;
-    delete [] srcs;
-    delete dst;
-    return TCL_ERROR;
-  }
-
-  // Make a new Tcl command:
-  Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
-  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), Solid_ObjectCmd,
-		     (ClientData)geom, DeleteSolid );
-
-  return TCL_OK;
-}
-
-// -------------
-// Geom_All_UnionCmd
-// -------------
-
-int Model_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
-				 int argc, CONST84 char *argv[] )
-{
-  char *usage;
-  int numFaces;
-  int numIds;
-  int *allids;
-  int interT;
-  ARG_List faceList;
-  ARG_List idList;
-  char *srcName;
-  char *dstName;
-  cvRepositoryData *face;
-  cvPolyData *dst;
-  cvRepositoryData *model;
-  RepositoryDataT type;
-  cvPolyData **faces;
-  cvSolidModel *geom;
-
-  int table_size = 4;
-  ARG_Entry arg_table[] = {
-    { "-model", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-facelist", LIST_Type, &faceList, NULL, REQUIRED, 0, { 0 } },
-    { "-ids", LIST_Type, &idList, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-  };
-  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
-  if ( argc == 1 ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_OK;
-  }
-  if ( ARG_ParseTclStr( interp, argc, argv, 1,
-			table_size, arg_table ) != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    return TCL_ERROR;
-  }
-
-  // Do work of command:
-  numFaces = faceList.argc;
-  numIds = idList.argc;
-
-  if (numFaces != numIds)
-  {
-      Tcl_AppendResult( interp, "Number of Ids must equal number of faces!\n");
-      ARG_FreeListArgvs( table_size, arg_table );
-      return TCL_ERROR;
-  }
-
-  // Foreach src obj, check that it is in the repository and of the
-  // correct type (i.e. cvSolidModel).  Also build up the array of
-  // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
-
-  faces = new cvPolyData * [numFaces];
-
-  for (int i = 0; i < numFaces; i++ ) {
-    face = gRepository->GetObject( faceList.argv[i] );
-    if ( face == NULL ) {
-      Tcl_AppendResult( interp, "couldn't find object ", faceList.argv[i],
-			(char *)NULL );
-      ARG_FreeListArgvs( table_size, arg_table );
-      delete [] faces;
-      return TCL_ERROR;
-    }
-    type = face->GetType();
-    if ( type != POLY_DATA_T ) {
-      Tcl_AppendResult( interp, "object ", faceList.argv[i],
-			" not of type cvPolyData", (char *)NULL );
-      ARG_FreeListArgvs( table_size, arg_table );
-      delete [] faces;
-      return TCL_ERROR;
-    }
-    faces[i] = (cvPolyData *) face;
-  }
-
-  // Create an array, and for each id insert it into the array
-  allids = new int[numIds];
-  if ( ARG_ParseTclListStatic( interp, idList, INT_Type, allids, idList.argc, &numIds )
-       != TCL_OK ) {
-    Tcl_SetResult( interp, usage, TCL_VOLATILE );
-    ARG_FreeListArgvs( table_size, arg_table );
-    return TCL_ERROR;
-  }
-
-  // Make sure the specified result object does not exist:
-  if ( gRepository->Exists( dstName ) ) {
-    Tcl_AppendResult( interp, "object ", dstName, " already exists",
-		      (char *)NULL );
-    delete [] faces;
-    delete [] allids;
-    return TCL_ERROR;
-  }
-
-  // Retrieve cvPolyData source:
-  model = gRepository->GetObject( srcName );
-  if ( model == NULL ) {
-    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
-    delete [] faces;
-    delete [] allids;
-    return TCL_ERROR;
-  }
-  type = model->GetType();
-  if ( type != POLY_DATA_T ) {
-    Tcl_AppendResult( interp, "object ", srcName, " not of type cvPolyData",
-		      (char *)NULL );
-    delete [] faces;
-    delete [] allids;
-    return TCL_ERROR;
-  }
-
-  // We're done with the src object names:
-  ARG_FreeListArgvs( table_size, arg_table );
-
-  // Instantiate the new solid:
-  geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
-  if ( geom == NULL ) {
-    delete [] faces;
-    delete [] allids;
-    return TCL_ERROR;
-  }
-
-  if ( sys_geom_assign_ids_based_on_faces((cvPolyData *)model,faces,numFaces,allids,(cvPolyData**)(&dst) )
-       != CV_OK ) {
-    Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
-    delete dst;
-    delete [] faces;
-    delete [] allids;
-    return TCL_ERROR;
-  }
-
-  delete [] faces;
-  delete [] allids;
-
-  vtkPolyData *dstPd;
-  dstPd = dst->GetVtkPolyData();
-  geom->SetVtkPolyDataObject(dstPd);
-  if ( !( gRepository->Register( dstName, geom ) ) ) {
-    Tcl_AppendResult( interp, "error registering obj ", dstName,
-		      " in repository", (char *)NULL );
-    delete dst;
-    return TCL_ERROR;
-  }
-
-  // Make a new Tcl command:
-  Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
-  Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), Solid_ObjectCmd,
-		     (ClientData)geom, DeleteSolid );
-
-  return TCL_OK;
-}
-
 
 // ------------
 // PrintMethods

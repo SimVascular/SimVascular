@@ -8,22 +8,27 @@ project(TETGEN)
 ###SIMVASCULAR_CHANGE
 # add_executable(tetgen tetgen.cxx predicates.cxx)
 
-#Add a library to the project using the specified source files. 
+#Add a library to the project using the specified source files.
 # In Linux/Unix, it will creates the libtet.a
 ###SIMVASCULAR_CHANGE
-add_library(lib_simvascular_tet STATIC tetgen.cxx predicates.cxx)
+set(lib lib_simvascular_tet)
+add_library(${lib} ${SV_LIBRARY_TYPE} tetgen.cxx predicates.cxx)
 
-#Set properties on a target. 
+#Set properties on a target.
 #We use this here to set -DTETLIBRARY for when compiling the
 #library
 ###SIMVASCULAR_CHANGE
-set_target_properties(lib_simvascular_tet PROPERTIES "COMPILE_DEFINITIONS" TETLIBRARY)
+set_target_properties(${lib} PROPERTIES "COMPILE_DEFINITIONS" TETLIBRARY)
 
-# ###SIMVASCULAR_CHANGE
-# install(TARGETS tet 
-# 	RUNTIME DESTINATION ${TETGEN_INSTALL_DIR}
-# 	LIBRARY DESTINATION ${TETGEN_INSTALL_DIR}
-# 	ARCHIVE DESTINATION ${TETGEN_INSTALL_DIR}
-# 	)
-
-# install(FILES tetgen.h DESTINATION ${TETGEN_INSTALL_DIR})
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+        install(FILES tetgen.h
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/tetgen COMPONENT PluginHeaders
+		)
+endif()

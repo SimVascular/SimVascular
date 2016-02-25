@@ -1,6 +1,6 @@
-  set PRESOLVER     "$env(SIMVASCULAR_HOME)/Bin/@PRESOLVER_EXE@@WIN_EXE@"
-  set POSTSOLVER    "$env(SIMVASCULAR_HOME)/@postsolver_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
+  set PRESOLVER     "$env(SV_HOME)/Bin/@SV_PRESOLVER_EXE@@WIN_EXE@"
+  set POSTSOLVER    "$env(SV_HOME)/@postsolver_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
   set MPIEXEC       @MPIEXEC@
-  set SOLVER        "$env(SIMVASCULAR_HOME)/@flowsolver_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
+  set SOLVER        "$env(SV_HOME)/@flowsolver_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
   set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(cvflowsolver)] 
-  set ADAPTOR       "$env(SIMVASCULAR_HOME)/@adapter_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"
+  set ADAPTOR       "$env(SV_HOME)/@adapter_DEVELOPER_SCRIPT_NAME@@WIN_BAT@"

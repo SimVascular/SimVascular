@@ -32,8 +32,8 @@
 #define __simvascular_tetgen_h
 
 /* Use the tetgen library configured for SimVascular.  */
-#cmakedefine SimVascular_USE_SYSTEM_TETGEN
-#ifdef SimVascular_USE_SYSTEM_TETGEN
+#cmakedefine SV_USE_SYSTEM_TETGEN
+#ifdef SV_USE_SYSTEM_TETGEN
 #include <tetgen.h>
 #else
 #include <simvascular_tetgen/tetgen.h>

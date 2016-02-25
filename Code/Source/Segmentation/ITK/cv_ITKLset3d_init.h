@@ -27,16 +27,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  *=========================================================================*/
- 
-#ifndef __simvascular_metis_h
-#define __simvascular_metis_h
+/*
+ * cv_ITKLevelSet_init.h
+ *
+ *  Created on: Feb 12, 2014
+ *      Author: Jameson Merkow
+ */
 
-/* Use the metis library configured for SimVascular.  */
-#cmakedefine SV_USE_SYSTEM_METIS
-#ifdef SV_USE_SYSTEM_METIS
-# include <metis.h>
-#else
-#include <simvascular_metis/Lib/metis.h>
-#endif
+#ifndef CV_ITKLSET3D_INIT_H_
+#define CV_ITKLSET3D_INIT_H_
 
-#endif
+#include "SimVascular.h"
+#include "tcl.h"
+
+extern "C" CV_DLL_EXPORT int Itkls3d_Init( Tcl_Interp *interp );
+
+#endif /* CV_ITKLSET3D_INIT_H_ */

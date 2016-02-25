@@ -7,6 +7,9 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
   resampleGroupEvenSpace $groupName $resample_num $saveGroup
 
   #Make sure numpy module exists
+  if [catch {$gPythonInterp exec {import pyOCCT}} errmsg] {
+    return -code error "ERROR: pyOCCT module does not exist. Must have python and OCCT"
+  }
   if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
     return -code error "ERROR: numpy module does not exist. Must install numpy (http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)"
   }
@@ -87,7 +90,7 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
   $gPythonInterp exec {uM = np.ndarray.tolist(u)}
   $gPythonInterp exec {vM = np.ndarray.tolist(v)}
   $gPythonInterp exec {newmod = tcl.eval('set dummy $TclPyString')}
-  $gPythonInterp exec {pySolid.convertListsToOCCT(newmod,Xl,Yl,Zl,uK,vK,uM,vM,p,q)}
+  $gPythonInterp exec {pyOCCT.convertListsToOCCT(newmod,Xl,Yl,Zl,uK,vK,uM,vM,p,q)}
 
   #Cap the solid now
   catch {repos_delete -obj $pysolid/capped}

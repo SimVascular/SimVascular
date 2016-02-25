@@ -48,7 +48,7 @@
 
 #include "Util/cvITKUtils.h"
 
-#include "cv_ITKLset_init.h"
+#include "cv_ITKLset2d_init.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -128,9 +128,9 @@ static int NewName( CONST84 char *name )
 
 
 // -------------
-// itkls2d_Init
+// Itkls2d_Init
 // -------------
-int itkls2d_Init( Tcl_Interp *interp ){
+int Itkls2d_Init( Tcl_Interp *interp ){
 
 	//Usage: CVTCLFunctionInit(Prefix,FunctionName,TclName)
 	CVTCLFunctionInit(itkls2d,NewCmd,ITKLevelSet2D);

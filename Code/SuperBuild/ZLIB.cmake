@@ -47,7 +47,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   if(LINUX)
    set(${proj}_DEPENDENCIES "INTELRUNTIME")
-   set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/zlib-1.2.3-linux.tar.gz" CACHE
+   set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/zlib-1.2.3-linux.tar.gz" CACHE
      STRING "Location of ${proj}, can be web address or local path")
  elseif(APPLE)
   MESSAGE(FATAL_ERROR "Zlib download is not currently available for mac os")

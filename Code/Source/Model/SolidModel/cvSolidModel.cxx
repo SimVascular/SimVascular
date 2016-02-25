@@ -71,12 +71,6 @@ cvFactoryRegistrar cvSolidModel::gRegistrar;
 
 cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 {
-#ifdef EXCLUDE_SOLID_MODEL
-  printf( "ERR: attempted to create cvSolidModel w/ no available kernel\n" );
-  return NULL;
-
-#else
-
   // Get the solid model factory registrar associated with this Tcl interpreter.
   cvFactoryRegistrar* solidModelRegistrar;
   if (interp == NULL) {
@@ -106,7 +100,6 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
   }
   return solid;
 
-#endif
 }
 
 // ----------

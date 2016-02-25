@@ -70,7 +70,7 @@ Please use the "Current widget path:" to show/hide windows.}}
   ttk::frame .splash.tframe2  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .splash.tframe2.tlabel4
-  ttk::label .splash.tframe2.tlabel4  -background {white}  -foreground {blue}  -font {Helvetica 14}  -relief {groove}  -anchor {center}  -justify {center}  -text {VERSION REPLACE_SIMVASCULAR_FULL_VER_NO}  -textvariable {gOptions(simvascular_version)}  -width {60}
+  ttk::label .splash.tframe2.tlabel4  -background {white}  -foreground {blue}  -font {Helvetica 14}  -relief {groove}  -anchor {center}  -justify {center}  -text {VERSION REPLACE_SV_FULL_VER_NO}  -textvariable {gOptions(simvascular_version)}  -width {60}
 
   # build widget .splash.tframe3
   ttk::frame .splash.tframe3  -borderwidth {0}  -relief {flat}  -width {30}  -height {30}
@@ -141,7 +141,7 @@ Please use the "Current widget path:" to show/hide windows.}}
   }
 }
 
-if {![info exists env(SIMVASCULAR_HOME)]} {
+if {![info exists env(SV_HOME)]} {
    catch {image create photo logo \
   -file {../../splash.gif} \
   -gamma {1.0} \
@@ -149,7 +149,7 @@ if {![info exists env(SIMVASCULAR_HOME)]} {
   -width {0}} errmsg
 } else {
 
-    catch {image create photo logo -file [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 splash.gif] } errmsg
+    catch {image create photo logo -file [file join $env(SV_HOME) Tcl SimVascular_2.0 splash.gif] } errmsg
 
 } 
     #puts "No Splash $errmsg"
@@ -162,7 +162,7 @@ global {gOptions}
 if { [file exists [file join $simvascular_home Tcl splash_configure.tcl]]} {
   source [file join $simvascular_home Tcl splash_configure.tcl]
 } else {
-set {gOptions(simvascular_version)} "VERSION REPLACE_SIMVASCULAR_FULL_VER_NO"
+set {gOptions(simvascular_version)} "VERSION REPLACE_SV_FULL_VER_NO"
 }
 # please don't modify the following
 # variables. They are needed by xf.

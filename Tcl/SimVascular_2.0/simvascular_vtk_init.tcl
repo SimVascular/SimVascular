@@ -16,7 +16,9 @@ foreach kit { CommonCore CommonMath CommonMisc CommonSystem CommonTransforms Com
 if {[llength $not_loaded] > 0 && [llength $loaded] > 0} {
   puts "Error loading the following static vtk packages: $not_loaded"
 } elseif {[llength $not_loaded] > 0 && [llength $loaded] == 0} {
-  puts "Static libraries not found, loading shared vtk packages"
+  puts [format "  %-12s %s" "TclVtk:" Shared Libs]
   set auto_path "$auto_path $env(TCLLIBPATH)"
   package require vtk
+} else {
+  puts [format "  %-12s %s" "TclVtk:" Static Libs]
 }

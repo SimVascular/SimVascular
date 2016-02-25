@@ -151,7 +151,7 @@ proc guiSVHELPshow { file} {
   ]
 
   global env
-  set simvascular_help "$env(SIMVASCULAR_HOME)/Tcl/Help/"
+  set simvascular_help "$env(SV_HOME)/Tcl/Help/"
   set fp [open "$simvascular_help$file" r]
   set data [read $fp]
   close $fp

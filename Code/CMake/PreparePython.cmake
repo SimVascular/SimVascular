@@ -26,7 +26,7 @@
 
 
 file(REMOVE_RECURSE ${TEMP_DIR}/Python ${TEMP_DIR}/UnPython)
-file(COPY ${SimVascular_SOURCE_PYTHON_DIR} DESTINATION ${TEMP_DIR})
+file(COPY ${SV_SOURCE_PYTHON_DIR} DESTINATION ${TEMP_DIR})
 	file(RENAME ${TEMP_DIR}/Python ${TEMP_DIR}/UnPython)
 	file(MAKE_DIRECTORY ${TEMP_DIR}/Python/io)
 	file(MAKE_DIRECTORY ${TEMP_DIR}/Python/model)

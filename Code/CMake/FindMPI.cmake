@@ -98,7 +98,7 @@ include(GetPrerequisites)
 # want to compile regular stuff with GNU and parallel stuff with Intel), you can always set
 # your favorite MPI_<lang>_COMPILER explicitly and this stuff will be ignored.
 #
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
       MESSAGE(STATUS "Using SimVascular MPI Finder")
 endif()
 # Start out with the generic MPI compiler names, as these are most commonly used.
