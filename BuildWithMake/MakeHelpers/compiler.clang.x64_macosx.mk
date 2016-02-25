@@ -29,7 +29,7 @@ endif
     BUILDFLAGS      = $(GLOBAL_DEFINES)
     GLOBAL_CXXFLAGS = $(BUILDFLAGS) $(DEBUG_FLAGS) $(OPT_FLAGS)
     GLOBAL_CXXFLAGS += -fpermissive
-  ifeq ($(MAKE_WITH_CXX11),1)
+  ifeq ($(SV_USE_CXX11),1)
       GLOBAL_CXXFLAGS += -std=c++11
   endif
     GLOBAL_CCFLAGS  = $(BUILDFLAGS) $(DEBUG_FLAGS) $(OPT_FLAGS)

@@ -37,9 +37,8 @@
 
 # Important notes:
 #   - set TARGETDIR
-#   - specify inclusion of { Discrete, Parasolid, Irit } via MAKE_WITH_*
+#   - specify inclusion of { Discrete, Parasolid, Irit } via SV_USE_*
 #     vars
-
 
 # ----------------------------------------------------
 # by default, no check for dependancies when compiling
@@ -72,7 +71,7 @@ endif
 # globals
 # -------
 
-MAKE_WITH_GLOBALS_SHARED = 1
+SV_USE_GLOBALS_SHARED = 1
 
 # ---------------------------------------
 # Control solid modeling kernel inclusion
@@ -83,8 +82,8 @@ MAKE_WITH_GLOBALS_SHARED = 1
 # set the value to something other than 1 in global_overrides.mk or 
 # via the make command line.
 
-MAKE_WITH_PARASOLID = 0
-MAKE_WITH_PARASOLID_SHARED = 1
+SV_USE_PARASOLID = 0
+SV_USE_PARASOLID_SHARED = 1
 
 # You can also exclude the SolidModel module entirely.  Be aware that
 # this leads to the exclusion of certain LevelSet functionality as
@@ -97,11 +96,11 @@ EXCLUDE_SOLID_MODEL = 0
 # Control inclusion of meshSim functions
 # --------------------------------------
 
-MAKE_WITH_MESHSIM = 0
-MAKE_WITH_MESHSIM_DISCRETE_MODEL = 0
-MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED = 1
-MAKE_WITH_MESHSIM_ADAPTOR = 0
-MAKE_WITH_MESHSIM_SHARED = 1
+SV_USE_MESHSIM = 0
+SV_USE_MESHSIM_DISCRETE_MODEL = 0
+SV_USE_MESHSIM_DISCRETE_MODEL_SHARED = 1
+SV_USE_MESHSIM_ADAPTOR = 0
+SV_USE_MESHSIM_SHARED = 1
 MESHSIM_USE_LICENSE_FILE = 1
 MESHSIM_EMBED_LICENSE_KEYS = 0
 MESHSIM_USE_SIMVASCULAR_USE_WIN32_REGISTRY = 0
@@ -110,30 +109,30 @@ MESHSIM_USE_SIMVASCULAR_USE_WIN32_REGISTRY = 0
 # Control inclusion of tetgen functions
 # -------------------------------------
 
-MAKE_WITH_TETGEN = 1
-MAKE_WITH_TETGEN_ADAPTOR = 1
+SV_USE_TETGEN = 1
+SV_USE_TETGEN_ADAPTOR = 1
 
 # ----------------------------------------------
 # Control inclusion of leslib
 # {binary and dummy} are mutually exclusive opts
 # ----------------------------------------------
 
-MAKE_WITH_BINARY_LESLIB = 0
-MAKE_WITH_DUMMY_LESLIB = 1
+SV_USE_BINARY_LESLIB = 0
+SV_USE_DUMMY_LESLIB = 1
 
 # --------------------------------------------------------
 # Control inclusion of svLS
 # {binary, dummy, source code} are mutually exclusive opts
 # --------------------------------------------------------
 
-MAKE_WITH_DUMMY_SVLS = 0
-MAKE_WITH_SOURCE_CODE_SVLS = 1
+SV_USE_DUMMY_SVLS = 0
+SV_USE_SOURCE_CODE_SVLS = 1
 
 # -----------------------------------------------------
 # Compile with zlib
 # -----------------------------------------------------
 
-MAKE_WITH_ZLIB = 1
+SV_USE_ZLIB = 1
 
 # -----------------------------------------------------
 # system tcltk
@@ -145,10 +144,10 @@ USE_SYSTEM_TCLTK = 0
 # Compile with 3-D Solver and Related Programs
 # -----------------------------------------------------
 
-MAKE_WITH_SOLVERIO = 1
-MAKE_WITH_THREEDSOLVER = 1
-MAKE_WITH_PRESOLVER = 1
-MAKE_WITH_POSTSOLVER = 1
+SV_USE_SOLVERIO = 1
+SV_USE_THREEDSOLVER = 1
+SV_USE_PRESOLVER = 1
+SV_USE_POSTSOLVER = 1
 
 # -----------------------------------------------------
 # Compile Flowsolver Modules
@@ -163,9 +162,9 @@ FLOWSOLVER_VERSION_USE_VTK_ACTIVATE = 1
 # Compile with MPI
 # -----------------------------------------------------
 
-MAKE_WITH_MPI = 1
-MAKE_WITH_OPENMPI = 1
-MAKE_WITH_MPICH = 0
+SV_USE_MPI = 1
+SV_USE_OPENMPI = 1
+SV_USE_MPICH = 0
 
 # -----------------------------------------------------
 # Build only the 3D Solver
@@ -177,34 +176,34 @@ EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
 # Compile with VTK
 # -----------------------------------------------------
 
-MAKE_WITH_VTK = 1
+SV_USE_VTK = 1
 
 # -----------------------------------------------------
 # Compile with ITK
 # -----------------------------------------------------
 
-MAKE_WITH_ITK = 1
+SV_USE_ITK = 1
 
 # -----------------------------------------------------
 # Compile with VMTK
 # -----------------------------------------------------
 
-MAKE_WITH_VMTK = 1
+SV_USE_VMTK = 1
 
 # -----------------------------------------------------
 # Compile with glib & gts
 # -----------------------------------------------------
 
-MAKE_WITH_GLIB = 0
-MAKE_WITH_GTS  = 0
+SV_USE_GLIB = 0
+SV_USE_GTS  = 0
 
 # -----------------------------------------------------
 # Compile with sparse, metis, nspcg
 # -----------------------------------------------------
 
-MAKE_WITH_SPARSE = 1
-MAKE_WITH_METIS = 1
-MAKE_WITH_NSPCG = 1
+SV_USE_SPARSE = 1
+SV_USE_METIS = 1
+SV_USE_NSPCG = 1
 
 # -----------------------------------------------------
 # Compile with Optimization
@@ -242,7 +241,7 @@ ifeq ($(CLUSTER), x64_linux)
 endif
 ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang_70
-  MAKE_WITH_CXX11 = 0
+  SV_USE_CXX11 = 0
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
@@ -298,14 +297,14 @@ endif
 # if we are only building the flow solver
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     ifeq ($(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE), 0)
-        MAKE_WITH_VTK = 0
+        SV_USE_VTK = 0
     endif
 
-    MAKE_WITH_ITK = 0
-    MAKE_WITH_VMTK = 0
-    MAKE_WITH_TETGEN = 0
-    MAKE_WITH_SPARSE = 0
-    MAKE_WITH_NSPCG = 0
+    SV_USE_ITK = 0
+    SV_USE_VMTK = 0
+    SV_USE_TETGEN = 0
+    SV_USE_SPARSE = 0
+    SV_USE_NSPCG = 0
 endif
 
 # --------------
@@ -340,28 +339,28 @@ endif
 
 
 ifeq ($(EXCLUDE_SOLID_MODEL),0)
-    ifeq ($(MAKE_WITH_PARASOLID),1)
+    ifeq ($(SV_USE_PARASOLID),1)
         GLOBAL_DEFINES += -DUSE_PARASOLID
     endif
-    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+    ifeq ($(SV_USE_PARASOLID_SHARED),1)
         GLOBAL_DEFINES += -DUSE_PARASOLID_SHARED
     endif
 else
     GLOBAL_DEFINES += -DEXCLUDE_SOLID_MODEL
 endif
 
-ifeq ($(MAKE_WITH_MESHSIM),1) 
+ifeq ($(SV_USE_MESHSIM),1) 
   GLOBAL_DEFINES += -DUSE_MESHSIM
-  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1) 
+  ifeq ($(SV_USE_MESHSIM_SHARED),1) 
     GLOBAL_DEFINES += -DUSE_MESHSIM_SHARED
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     GLOBAL_DEFINES += -DUSE_DISCRETE_MODEL
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
     GLOBAL_DEFINES += -DUSE_DISCRETE_MODEL_SHARED
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1) 
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1) 
     GLOBAL_DEFINES += -DUSE_MESHSIM_ADAPTOR
   endif
   ifeq ($(SIMVASCULAR_USE_WIN32_REGISTRY),1)
@@ -376,26 +375,26 @@ ifeq ($(MAKE_WITH_MESHSIM),1)
   endif
 endif
 
-ifeq ($(MAKE_WITH_TETGEN),1) 
+ifeq ($(SV_USE_TETGEN),1) 
   GLOBAL_DEFINES += -DUSE_TETGEN
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1) 
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1) 
     GLOBAL_DEFINES += -DUSE_TET_ADAPTOR
   endif
 endif
 
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_ZLIB),1)
   GLOBAL_DEFINES += -DUSE_ZLIB
 endif
 
-ifeq ($(MAKE_WITH_ITK),1)
+ifeq ($(SV_USE_ITK),1)
   GLOBAL_DEFINES += -DUSE_ITK
 endif
 
-ifeq ($(MAKE_WITH_VMTK),1)
+ifeq ($(SV_USE_VMTK),1)
   GLOBAL_DEFINES += -DUSE_VMTK
 endif
 
-ifeq ($(MAKE_WITH_GTS),1)
+ifeq ($(SV_USE_GTS),1)
   GLOBAL_DEFINES += -DUSE_GTS -DNATIVE_WIN32
 endif
 
@@ -473,7 +472,7 @@ LIB_MPI_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSIO
 LIBDIRS =
 SHARED_LIBDIRS =
 
-ifeq ($(MAKE_WITH_GLOBALS_SHARED),1)
+ifeq ($(SV_USE_GLOBALS_SHARED),1)
   SHARED_LIBDIRS = ../Code/Source/Common/Globals
 else
   LIBDIRS = ../Code/Source/Common/Globals
@@ -489,15 +488,15 @@ LIBDIRS += ../Code/Source/Common/Utils \
 	  ../Code/Source/Legacy/LevelSet \
 	  ../Code/Source/Model/PolyDataSolidModel
 
-ifeq ($(MAKE_WITH_ITK),1)
+ifeq ($(SV_USE_ITK),1)
      LIBDIRS += ../Code/Source/Segmentation/ITK ../Code/Source/Segmentation/ITK/Util
 endif
 
-ifeq ($(MAKE_WITH_TETGEN),1)
+ifeq ($(SV_USE_TETGEN),1)
      LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
 endif
 
-ifeq ($(MAKE_WITH_VMTK),1)
+ifeq ($(SV_USE_VMTK),1)
      LIBDIRS += ../Code/ThirdParty/vmtk
 endif
 
@@ -505,16 +504,16 @@ endif
 
 ifeq ($(EXCLUDE_SOLID_MODEL),0)
 
-    ifeq ($(MAKE_WITH_PARASOLID),1)
-      ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+    ifeq ($(SV_USE_PARASOLID),1)
+      ifeq ($(SV_USE_PARASOLID_SHARED),1)
         SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
       else
         LIBDIRS += ../Code/Licensed/ParasolidSolidModel
       endif
     endif
 
-    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-      ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+      ifeq ($(SV_USE_MESHSIM_SHARED),1)
         SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
       else
         LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
@@ -525,8 +524,8 @@ endif
 
 # meshing
 
-ifeq ($(MAKE_WITH_MESHSIM),1)
-  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+ifeq ($(SV_USE_MESHSIM),1)
+  ifeq ($(SV_USE_MESHSIM_SHARED),1)
      SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
   else
      LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
@@ -539,36 +538,36 @@ else
   EXECDIRS = 
 endif
 
-ifeq ($(MAKE_WITH_THREEDSOLVER),1)
+ifeq ($(SV_USE_THREEDSOLVER),1)
      LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
      SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
      EXECDIRS += ../Code/FlowSolvers/ThreeDSolver
 endif
 
-ifeq ($(MAKE_WITH_SOLVERIO),1)
+ifeq ($(SV_USE_SOLVERIO),1)
      LIBDIRS += ../Code/FlowSolvers/ThreeDSolver/SolverIO
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
 endif
 
 # need solverio for adaptor classes so add them after adding solverio
 
-ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
   LIBDIRS += ../Code/Source/Mesh/AdaptObject
 else
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
     LIBDIRS += ../Code/Source/Mesh/AdaptObject
   endif
 endif
 
 
 
-ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
   LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
 endif
 
-ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
-  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
+  ifeq ($(SV_USE_MESHSIM_SHARED),1)
      SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
   else
      LIBDIRS += ../Code/Source/Mesh/MeshSimAdapt
@@ -596,7 +595,7 @@ LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 LOCAL_LIBDIR	=  -L$(TOP)/Lib
 LOCAL_LIBS	=  $(LOCAL_LIBDIR) -lsimvascular_utils
 
-ifeq ($(MAKE_WITH_ITK),1)
+ifeq ($(SV_USE_ITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
 endif
 
@@ -635,7 +634,7 @@ LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
 # Sparse
 # ------
 
-ifeq ($(MAKE_WITH_SPARSE),1)
+ifeq ($(SV_USE_SPARSE),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/sparse
   SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
   SPARSE_INCDIR  = -I $(SPARSE_TOP)
@@ -646,7 +645,7 @@ endif
 # zlib
 # ----
 
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_ZLIB),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/zlib
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
@@ -662,7 +661,7 @@ endif
 # NSPCG
 # ------
 
-ifeq ($(MAKE_WITH_NSPCG),1)
+ifeq ($(SV_USE_NSPCG),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/nspcg
   NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
   NSPCG_INCDIR  = -I $(NSPCG_TOP)
@@ -674,7 +673,7 @@ endif
 # ***  (not free for commercial use)    ***
 # -----------------------------------------
 
-ifeq ($(MAKE_WITH_TETGEN),1)
+ifeq ($(SV_USE_TETGEN),1)
   TETGEN150       = 1
   GLOBAL_DEFINES += -DTETLIBRARY
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tetgen
@@ -687,13 +686,13 @@ endif
 # svLS
 # ----
 
-ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
+ifeq ($(SV_USE_DUMMY_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
     SVLS_LIBS   = $(SVLIBFLAG)_lib_simvascular_dummy_svLS$(LIBLINKEXT)
 endif
 
-ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
+ifeq ($(SV_USE_SOURCE_CODE_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
     SVLS_LIBS   = $(SVLIBFLAG)_lib_simvascular_svLS_$(MPI_NAME)$(LIBLINKEXT)
@@ -703,7 +702,7 @@ endif
 # Metis
 # -----
 
-ifeq ($(MAKE_WITH_METIS),1)
+ifeq ($(SV_USE_METIS),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/metis
   METIS_TOP = $(TOP)/../Code/ThirdParty/metis
   METIS_INCDIR  = -I $(METIS_TOP)
@@ -742,7 +741,7 @@ endif
 # Visualization toolkit
 # ---------------------
 
-ifeq ($(MAKE_WITH_VTK),1)
+ifeq ($(SV_USE_VTK),1)
 
 ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
@@ -768,7 +767,7 @@ endif
 # Insight ToolKit
 # ---------------
 
-ifeq ($(MAKE_WITH_ITK),1)
+ifeq ($(SV_USE_ITK),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/itk-4.8.0.x64_cygwin.mk
@@ -788,7 +787,7 @@ endif
 # MPI
 # -----
 
-ifeq ($(MAKE_WITH_MPI),1)
+ifeq ($(SV_USE_MPI),1)
 
   MPI_NAME ?= mpi
 
@@ -798,19 +797,19 @@ ifeq ($(MAKE_WITH_MPI),1)
 
   # on linux, use the OS installed version of mpich2
   ifeq ($(CLUSTER), x64_linux)
-    ifeq ($(MAKE_WITH_OPENMPI),1)
+    ifeq ($(SV_USE_OPENMPI),1)
       include $(TOP)/MakeHelpers/openmpi.x64_linux.mk
     endif
-    ifeq ($(MAKE_WITH_MPICH),1)
+    ifeq ($(SV_USE_MPICH),1)
       include $(TOP)/MakeHelpers/mpich.x64_linux.mk
     endif
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-    ifeq ($(MAKE_WITH_OPENMPI),1)
+    ifeq ($(SV_USE_OPENMPI),1)
       include $(TOP)/MakeHelpers/openmpi.x64_macosx.mk
     endif
-    ifeq ($(MAKE_WITH_MPICH),1)
+    ifeq ($(SV_USE_MPICH),1)
       include $(TOP)/MakeHelpers/mpich.x64_macosx.mk
     endif
   endif
@@ -826,7 +825,7 @@ endif
 # glib
 # ----
 
-ifeq ($(MAKE_WITH_GLIB),1)
+ifeq ($(SV_USE_GLIB),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/glib-2.36.4.x64_cygwin.mk
@@ -842,7 +841,7 @@ endif
 # gts
 # ---
 
-ifeq ($(MAKE_WITH_GTS),1)
+ifeq ($(SV_USE_GTS),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/gts-2010.03.21.x64_cygwin.mk
@@ -867,7 +866,7 @@ endif
 # Parasolid
 # ---------
 
-ifeq ($(MAKE_WITH_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/parasolid-26.1.x64_cygwin.mk
@@ -887,11 +886,11 @@ endif
 # MeshSim
 # -------
 
-ifeq ($(MAKE_WITH_MESHSIM),1)
+ifeq ($(SV_USE_MESHSIM),1)
 
   SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
 
-  ifeq ($(MAKE_WITH_PARASOLID),1)
+  ifeq ($(SV_USE_PARASOLID),1)
     MESHSIM_MODELER=parasolid
   endif
 
@@ -911,7 +910,7 @@ endif
 # LesLib
 # ------
 
-ifeq ($(MAKE_WITH_BINARY_LESLIB),1)
+ifeq ($(SV_USE_BINARY_LESLIB),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/leslib-1.5.x64_cygwin.mk
@@ -925,7 +924,7 @@ ifeq ($(MAKE_WITH_BINARY_LESLIB),1)
 
 endif
 
-ifeq ($(MAKE_WITH_DUMMY_LESLIB),1)
+ifeq ($(SV_USE_DUMMY_LESLIB),1)
 
   LESLIB_INCDIR = 
   LESLIB_LIBS   = 

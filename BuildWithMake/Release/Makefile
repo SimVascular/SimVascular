@@ -85,11 +85,11 @@ endif
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
-ifeq ($(MAKE_WITH_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
-ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	-cp -f $(MESHSIM_SO_PATH)/Sim*.dll package-release-meshsim-and-parasolid
 endif
 	-cp -fR $(TCL_BASE)/lib package-release-meshsim-and-parasolid
@@ -227,21 +227,21 @@ copy-tcl-libs:
 copy-external-libs:
 	-mkdir -p $(DIST_DIR)/intel_compiler_runtime_libs
 	-cp -f -p $(INTEL_COMPILER_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)/intel_compiler_runtime_libs
-#ifeq ($(MAKE_WITH_PARASOLID),1)
+#ifeq ($(SV_USE_PARASOLID),1)
 #	-cp -f $(PARASOLID_DLLS) $(DIST_DIR)
 #	-cp -Rf $(P_SCHEMA) $(DIST_DIR)/schema
 #endif
-#ifeq ($(MAKE_WITH_MESHSIM),1)
+#ifeq ($(SV_USE_MESHSIM),1)
 #	-cp -f ../Licenses/MeshSim/license.dat $(DIST_DIR)/meshsim-license.dat
 #endif
-ifeq ($(MAKE_WITH_LESLIB),1)
+ifeq ($(SV_USE_LESLIB),1)
 	-cp -f ../Licenses/LesLib/license.dat $(DIST_DIR)/license.dat
 endif
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_ZLIB),1)
 	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
 endif
-ifeq ($(MAKE_WITH_ITK),1)
+ifeq ($(SV_USE_ITK),1)
 	-cp -f $(ITK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 
@@ -303,11 +303,11 @@ taritup-meshsim-and-parasolid:
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
-ifeq ($(MAKE_WITH_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
 endif
-ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	-cp -f $(MESHSIM_SO_PATH)/*.$(SOEXT)* package-release-meshsim-and-parasolid
 endif
 	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid

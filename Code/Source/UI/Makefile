@@ -60,104 +60,104 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                     ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
                     ../Common/Utils/cv_math_init.cxx \
 
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
 	COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
   else
-    ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+    ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
 	  COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
     endif
   endif
 
-  ifeq ($(MAKE_WITH_MESHSIM),1)
-    ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM),1)
+    ifneq ($(SV_USE_MESHSIM_SHARED),1)
 	COPIED_CXXSRCS += ../Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
-    ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
+    ifneq ($(SV_USE_MESHSIM_SHARED),1)
 	COPIED_CXXSRCS += ../Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_TETGEN),1)
+  ifeq ($(SV_USE_TETGEN),1)
 	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
   endif
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
 	COPIED_CXXSRCS += ../Mesh/TetGenAdapt/cv_tetgen_adapt_init.cxx
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-    ifneq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
 	COPIED_CXXSRCS += ../Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_PARASOLID),1)
-    ifneq ($(MAKE_WITH_PARASOLID_SHARED),1)
+  ifeq ($(SV_USE_PARASOLID),1)
+    ifneq ($(SV_USE_PARASOLID_SHARED),1)
 	COPIED_CXXSRCS += ../../Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_ITK),1)
+  ifeq ($(SV_USE_ITK),1)
 	COPIED_CXXSRCS += ../Segmentation/ITK/Util/cv_ITKUtils_init.cxx
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset2d_init.cxx
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
   endif
 
-  ifeq ($(MAKE_WITH_SOLVERIO),1)
+  ifeq ($(SV_USE_SOLVERIO),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_MESHSIM),1)
-    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM),1)
+    ifeq ($(SV_USE_MESHSIM_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
-    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
+    ifeq ($(SV_USE_MESHSIM_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_adaptor$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_TETGEN),1)
+  ifeq ($(SV_USE_TETGEN),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
   endif
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tet_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_PARASOLID),1)
-    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+  ifeq ($(SV_USE_PARASOLID),1)
+    ifeq ($(SV_USE_PARASOLID_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
     endif
   endif
 
-  ifeq ($(MAKE_WITH_VMTK),1)
+  ifeq ($(SV_USE_VMTK),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_ITK),1)
+  ifeq ($(SV_USE_ITK),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itkutils$(LIBLINKEXT) \
                             $(SVLIBFLAG)_lib_simvascular_cvitk$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_SOLVERIO),1)
+  ifeq ($(SV_USE_SOLVERIO),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
 endif
 
 # need to explicitly add in globals for executable
-ifeq ($(MAKE_WITH_GLOBALS_SHARED),1)
+ifeq ($(SV_USE_GLOBALS_SHARED),1)
   LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 else
   LFLAGS += $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)

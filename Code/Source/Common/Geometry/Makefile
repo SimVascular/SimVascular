@@ -64,7 +64,7 @@ HDRS	= cv_sys_geom.h cv_ggems.h \
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h \
         vtkDelaunay2D_60.h vtkConstrainedBlend.h
 
-ifeq ($(MAKE_WITH_GTS),1)
+ifeq ($(SV_USE_GTS),1)
   HDRS +=  vtkSurfaceBooleanOperations.h
 endif
 
@@ -84,7 +84,7 @@ CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx \
         vtkDelaunay2D_60.cxx vtkConstrainedBlend.cxx
 
-ifeq ($(MAKE_WITH_GTS),1)
+ifeq ($(SV_USE_GTS),1)
   CXXSRCS +=  vtkSurfaceBooleanOperations.cxx
 endif
 

@@ -45,7 +45,7 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_ZLIB),1)
         CXXFLAGS += $(ZLIB_INCDIR)
 endif
 
