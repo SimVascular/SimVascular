@@ -45,7 +45,7 @@ set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
 
 
 if(UNIX)
-  set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/gts-snapshot-121130.tar" CACHE
+  set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/gts-snapshot-121130.tar" CACHE
     STRING "Location of gts, can be web address or local path")
   set(${proj}_INSTALL_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-install)
   set(configure_cmd CONFIGURE_COMMAND CC="${CMAKE_C_COMPILER}" && CPP="${CMAKE_CXX_COMPILER}" && ${${proj}_OUTPUT_DIR}/configure --prefix=${${proj}_INSTALL_DIR})
@@ -55,7 +55,7 @@ endif()
 
 if(MSVC)
 	dev_message("WINDOWS")
-	set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/gts-2010.03.21-bin-win-x64.tar.gz" CACHE
+	set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/gts-2010.03.21-bin-win-x64.tar.gz" CACHE
 		STRING "Location of gts, can be web address or local path")
 	unset(configure_cmd)
 	unset(build_cmd)

@@ -100,4 +100,7 @@ int VtkUtils_CalcDirection(double *pts, int numPts, int *currentDirection);
 
 int VtkUtils_ReversePtList( int num, double ptsIn[], double *ptsOut[] );
 
+int VtkUtils_PDCheckArrayName( vtkPolyData *object, int datatype,std::string arrayname);
+
+int VtkUtils_UGCheckArrayName( vtkUnstructuredGrid *object, int datatype,std::string arrayname);
 #endif // __VTKUTILS_H

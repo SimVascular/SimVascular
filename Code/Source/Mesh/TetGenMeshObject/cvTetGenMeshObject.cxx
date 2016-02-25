@@ -449,7 +449,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
     vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
     volumemesh_->BuildLinks();
 
-    if (PlyDtaUtils_UGCheckArrayName(volumemesh_,1,"GlobalElementID") != CV_OK)
+    if (VtkUtils_UGCheckArrayName(volumemesh_,1,"GlobalElementID") != CV_OK)
     {
       fprintf(stderr,"Array name 'GlobalElementID' does not exist in volume mesh. \
 		      Something wrong with ids on mesh");
@@ -719,7 +719,7 @@ int cvTetGenMeshObject::NewMesh() {
   if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
       meshoptions_.refinement)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
 		      Something may have gone wrong when setting up BL");
@@ -907,7 +907,7 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   vtkIntArray *wallArray = vtkIntArray::New();
   meshoptions_.meshwallfirst = 1;
 
-  if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid_,1,"ModelFaceID") != CV_OK)
   {
     fprintf(stderr,"ModelFaceID array not on object, so cannot set walls\n");
     return CV_ERROR;
@@ -1365,7 +1365,7 @@ int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
   rtnstr[0]='\0';
 
   if (solidmodeling_kernel_ == SM_KT_POLYDATA) {
-    if (PlyDtaUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != CV_OK)
     {
       fprintf(stderr,"ModelFaceID does not exist\n");
       return CV_ERROR;
@@ -1470,7 +1470,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   if (meshoptions_.refinement || meshoptions_.functionbasedmeshing)
   {
     useSizingFunction = 1;
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
 	              Something may have gone wrong when setting up BL");
@@ -1637,7 +1637,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
   if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
   {
     useSizeFunction = 1;
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
 	              Something may have gone wrong when setting up BL");
@@ -1692,7 +1692,7 @@ int cvTetGenMeshObject::GenerateMeshSizingFunction()
   //Compute a mesh sizing function to send to TetGen and create a
   //volume mesh based on. Must do this otherwise when appending
   //volume mesh and BL mesh, they won't match up!
-  if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") == 1)
+  if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") == 1)
   {
     fprintf(stderr,"MeshSizingFunction Name exists. Delete!\n");
     polydatasolid_->GetPointData()->RemoveArray("MeshSizingFunction");

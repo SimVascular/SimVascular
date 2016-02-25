@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -33,12 +33,12 @@
  *  @brief Ipmlements function to register PolyDataSolid as a solid type
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -85,14 +85,14 @@ int PolyDataSolid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
 
-int PolyDataSolid_Init( Tcl_Interp *interp )
+int Polydatasolid_Init( Tcl_Interp *interp )
 {
-  cvFactoryRegistrar* solidModelRegistrar = 
+  cvFactoryRegistrar* solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 
   if (solidModelRegistrar != NULL) {
           // Register this particular factory method with the main app.
-          solidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA, 
+          solidModelRegistrar->SetFactoryMethodPtr( SM_KT_POLYDATA,
       (FactoryMethodPtr) &CreatePolyDataSolid );
 
     Tcl_CreateCommand( interp, "polydata_available", PolyDataSolid_AvailableCmd,
@@ -128,14 +128,14 @@ int PolyDataSolid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
     return TCL_ERROR;
   }
-  cvFactoryRegistrar *solidModelRegistrar = 
+  cvFactoryRegistrar *solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 
   char result[255];
   sprintf( result, "Solid model registrar ptr -> %p\n", solidModelRegistrar );
   Tcl_AppendElement( interp, result );
   for (int i = 0; i < 5; i++) {
-    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n", 
+    sprintf( result, "GetFactoryMethodPtr(%i) = %p\n",
       i, (solidModelRegistrar->GetFactoryMethodPtr(i)));
     Tcl_AppendElement( interp, result );
   }

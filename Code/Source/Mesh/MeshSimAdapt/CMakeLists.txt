@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -30,16 +30,16 @@
 
  set(lib lib_simvascular_meshsim_adaptor)
  LIST(APPEND CORELIBS ${lib})
-include_directories(${SimVascular_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
+include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
 set(HDRS cvMeshSimAdapt.h cv_meshsim_adapt_init.h MeshSimInternal_phAdapt.h cvAdaptHelp.h)
 SET(CXXSRCS cvMeshSimAdapt.cxx)
 
-if(MESHSIM_USE_SHARED_LIBRARIES)
+if(SV_USE_MESHSIM_SHARED_LIBRARIES)
     add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_adapt_init.cxx)
 else()
-    add_library(${lib} ${CXXSRCS} cv_meshsim_adapt_init.cxx)
+    add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_adapt_init.cxx)
 endif()
 
 target_link_libraries(${lib}
@@ -47,31 +47,31 @@ target_link_libraries(${lib}
 			${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES})
-			#${ZLIB_LIBRARY} 
+			#${ZLIB_LIBRARY}
 			#lib_simvascular_mesh
-			#lib_simvascular_solid			
-			#lib_simvascular_sysgeom	
+			#lib_simvascular_solid
+			#lib_simvascular_sysgeom
 			#lib_simvascular_solverio
-			#lib_simvascular_globals 
+			#lib_simvascular_globals
 			#lib_simvascular_utils
 			#lib_simvascular_adaptor)
 
-if(Licensed_PARASOLID)
+if(SV_USE_PARASOLID)
 	target_link_libraries(${lib} lib_simvascular_parasolid)
 endif()
 
-#if(SIMVASCULAR_INSTALL_LIBS)
-#  install(TARGETS ${lib}
-#    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
-#    LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
-#    ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
-#    )
-#endif()
-#if(SIMVASCULAR_INSTALL_HEADERS)
-#  install(FILES ${HDRS}
-#    DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/plugins/tetadapt COMPONENT PluginHeaders
-#    )
-#endif()
+if(SV_INSTALL_LIBS)
+  install(TARGETS ${lib}
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+    )
+endif()
+if(SV_INSTALL_HEADERS)
+  install(FILES ${HDRS}
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
+    )
+endif()
 
 
 

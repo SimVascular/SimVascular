@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -33,9 +33,9 @@
  *  @details Provides boundary layer and surface remeshing.
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "cv_VMTK_utils.h"
@@ -75,46 +75,46 @@
  * remeshed. It is also the new returen surface remesh
  * @param maxEdgeSize This is the edge size that would like to be targeted
  * for the surface remesh
- * @param meshcapsonly This is boolean on whether the whole mesh should be 
+ * @param meshcapsonly This is boolean on whether the whole mesh should be
  * meshed or just caps. If meshcapsonly is 1, then you must provide a list
  * of excluded ids in the *excludedIds param.
  * @param preservedges This is a boolean on whether the feature edges should
  * be preserved or not. In most cases, this is 1.
  * @param trianglesplit factor. This is just the value for a split triangle
  * when it must be split. Default is 1.0.
- * @param collapseanglethreshold. This is the angle at which a triangle is 
+ * @param collapseanglethreshold. This is the angle at which a triangle is
  * bad triangle and should be collapsed. Default is 0.5.
- * @param *excludedIds These are the excluded regions if meshcapsonly is 
- * specified. 
+ * @param *excludedIds These are the excluded regions if meshcapsonly is
+ * specified.
  * @param cellEntityIdsArrayName This is the array name assigned to the nodes
  * of the output surface remesh
  * @param useSizingFunction This is if we want to specify a distance at each
  * node for the mesh. Used for mesh refinement!
- * @param *meshSizingFunction This is the actual meshSizing Function. Must 
+ * @param *meshSizingFunction This is the actual meshSizing Function. Must
  * exist if using a sizing function
- * @return CV_OK is executed correctly. If something goes wrong, CV_ERROR 
+ * @return CV_OK is executed correctly. If something goes wrong, CV_ERROR
  * is returned
  */
 int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
-    int meshcapsonly,int preserveedges,double trianglesplitfactor, 
+    int meshcapsonly,int preserveedges,double trianglesplitfactor,
     double collapseanglethreshold, vtkIdList *excludedIds,
     std::string cellEntityIdsArrayName,int useSizingFunction,
     vtkDoubleArray *meshSizingFunction)
 {
   double edgesize;
   vtkIdType i;
-  vtkSmartPointer<vtkPolyData> surfacepd = 
+  vtkSmartPointer<vtkPolyData> surfacepd =
     vtkSmartPointer<vtkPolyData>::New();
   surfacepd->DeepCopy(surfaceMesh);
 
   //Triangle filters and decimator to produce mesh that is remeshable
-  vtkSmartPointer<vtkTriangleFilter> tris1 = 
+  vtkSmartPointer<vtkTriangleFilter> tris1 =
     vtkSmartPointer<vtkTriangleFilter>::New();
-  vtkSmartPointer<vtkCleanPolyData> cleaner = 
+  vtkSmartPointer<vtkCleanPolyData> cleaner =
     vtkSmartPointer<vtkCleanPolyData>::New();
-  vtkSmartPointer<vtkCleanPolyData> cleaner2 = 
+  vtkSmartPointer<vtkCleanPolyData> cleaner2 =
     vtkSmartPointer<vtkCleanPolyData>::New();
-  vtkSmartPointer<vtkvmtkSurfaceProjection> projector = 
+  vtkSmartPointer<vtkvmtkSurfaceProjection> projector =
     vtkSmartPointer<vtkvmtkSurfaceProjection>::New();
   vtkSmartPointer<vtkPolyDataNormals> normaler =
     vtkSmartPointer<vtkPolyDataNormals>::New();
@@ -154,7 +154,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
     cellIds->FillComponent(0,0.0);
     surfacepd->GetCellData()->AddArray(cellIds);
   }
-  //If applying a meshsizing function, transfer the values to an array of 
+  //If applying a meshsizing function, transfer the values to an array of
   //areas based on the edge sizes specified
   if (useSizingFunction)
   {
@@ -166,7 +166,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
       {
         meshSizingFunction->SetValue(i,(0.25)*pow(3.0,0.5)*pow(maxEdgeSize,2.0));
       }
-      else 
+      else
       {
         meshSizingFunction->SetValue(i,(0.25)*pow(3.0,0.5)*pow(edgesize,2.0));
       }
@@ -176,7 +176,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
 
   cleaner->SetInputData(surfacepd);
   cleaner->Update();
-  
+
   tris1->SetInputData(cleaner->GetOutput());
   tris1->Update();
 
@@ -225,7 +225,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
     projector->SetInputData(remesher->GetOutput());
     projector->SetReferenceSurface(surfacepd);
     projector->Update();
-    
+
     normaler->SetInputData(projector->GetOutput());
     normaler->SetConsistency(1);
     normaler->SetAutoOrientNormals(1);
@@ -247,7 +247,7 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
 // --------------------
 //  VMTKUtils_ComputeSizingFunction
 // --------------------
-/** 
+/**
  * @brief Function to compute a sizing function of the current mesh. This
  * is a function describing the size of the mesh at each location
  * @param *inpd This is the input vtkPolyData to compute the funciton on.
@@ -255,14 +255,14 @@ int VMTKUtils_SurfaceRemeshing(vtkPolyData *surfaceMesh, double maxEdgeSize,
  * Default is 1.2.
  * @param sizingFunctionArrayName This is the array name given to the output
  * sizing function attached to the mesh.
- * @return CV_OK if the sizing function is computed correctly. 
+ * @return CV_OK if the sizing function is computed correctly.
  */
 int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
     std::string sizingFunctionArrayName)
 {
   vtkSmartPointer<vtkvmtkPolyDataSizingFunction> sizer =
     vtkSmartPointer<vtkvmtkPolyDataSizingFunction>::New();
-  vtkSmartPointer<vtkPolyData> copypd = 
+  vtkSmartPointer<vtkPolyData> copypd =
     vtkSmartPointer<vtkPolyData>::New();
   copypd->DeepCopy(inpd);
 
@@ -271,7 +271,7 @@ int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
     scalefactor = 1.8;
   }
 
-  sizer->SetInputData(copypd);   
+  sizer->SetInputData(copypd);
   //"VolumeSizingFunction"
   sizer->SetSizingFunctionArrayName(sizingFunctionArrayName.c_str());
   //sizer->SetScaleFactor(0.8);
@@ -279,7 +279,7 @@ int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
   sizer->Update();
 
   inpd->DeepCopy(sizer->GetOutput());
-  
+
   fprintf(stderr,"Got Volume Mesh Func!\n");
   return CV_OK;
 }
@@ -287,10 +287,10 @@ int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
 // --------------------
 //  VMTKUtils_Capper
 // --------------------
-/** 
+/**
  * @brief Function to cap or fill the holes of a vtkPolyData
  * @param *inpd This is the vtkPolyData to apply the filter
- * @param captype This is the type of cap desired. 0 is used for a basic or 
+ * @param captype This is the type of cap desired. 0 is used for a basic or
  * simple cap. 1 is used if you would like a cap with a point in the center
  * of the holes.
  * @param trioutput This is boolean telling whether to make sure the output
@@ -298,21 +298,21 @@ int VMTKUtils_ComputeSizingFunction(vtkPolyData *inpd, double scalefactor,
  * @param cellEntityIdOffset This is used if an offset from surface is desire
  * @param cellEntityIdsArrayName This is the name given if offset is desired
  * @return CV_OK if the mesh sizing function based on the circle is computed
- * correctly 
+ * correctly
  */
 int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
     int cellEntityIdOffset,std::string cellEntityIdsArrayName)
 {
-  vtkSmartPointer<vtkvmtkSimpleCapPolyData> simplecapper = 
+  vtkSmartPointer<vtkvmtkSimpleCapPolyData> simplecapper =
     vtkSmartPointer<vtkvmtkSimpleCapPolyData>::New();
-  vtkSmartPointer<vtkvmtkCapPolyData> capper = 
+  vtkSmartPointer<vtkvmtkCapPolyData> capper =
     vtkSmartPointer<vtkvmtkCapPolyData>::New();
-  vtkSmartPointer<vtkPolyData> copypd = 
+  vtkSmartPointer<vtkPolyData> copypd =
     vtkSmartPointer<vtkPolyData>::New();
   vtkSmartPointer<vtkPolyDataNormals> normaler =
     vtkSmartPointer<vtkPolyDataNormals>::New();
   copypd->DeepCopy(inpd);
-  vtkSmartPointer<vtkTriangleFilter> tris = 
+  vtkSmartPointer<vtkTriangleFilter> tris =
     vtkSmartPointer<vtkTriangleFilter>::New();
 
   if (cellEntityIdOffset == NULL)
@@ -349,7 +349,7 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
     tris->PassLinesOff();
     tris->PassVertsOff();
     tris->Update();
-    
+
     normaler->SetInputData(tris->GetOutput());
   }
   else
@@ -377,25 +377,25 @@ int VMTKUtils_Capper(vtkPolyData *inpd,int captype,int trioutput,
 // --------------------
 //  VMTKUtils_BoundaryLayerMesh
 // --------------------
-/** 
+/**
  * @brief Function to compute the boundary layer on a mesh
  * @param blMesh This is the returned boundary layer mesh as a vtu
  * @param innerSurface This is the inner surface of the final bl mesh
  * @param edgeSize This is the desired edge size for the bl mesh
- * @param blThicknessFactor This is the portion of the edge size that you 
+ * @param blThicknessFactor This is the portion of the edge size that you
  * would like to be used for the thickness of the boundary layer
  * @param numSublayers This is the number of layers in the bl mesh.
- * @param sublayerRation This is the ratio at which to decrease the bl mesh 
+ * @param sublayerRation This is the ratio at which to decrease the bl mesh
  * by.
- * @param sidewallCellEntityId This is the value to assign to the tets that 
+ * @param sidewallCellEntityId This is the value to assign to the tets that
  * align along the sidewall of the final bl mesh
  * @param innerSurfaceCellEntityId This is the value assigned to the inner
  * surface of the bl mesh
  * @param negateWarpVectors This is whether or not to use the current vector
- * direction or use the exact opposite. Typically this is 1 because you use 
+ * direction or use the exact opposite. Typically this is 1 because you use
  * the normals as the direction and you would like the bl mesh to go inward
  * (normals are typically oriented outward).
- * @param cellEntityIdsArrayName This is the name of the array given to the 
+ * @param cellEntityIdsArrayName This is the name of the array given to the
  * nodes of the output mesh.
  * @return CV_OK if the boundary layer mesh is created properly
  */
@@ -403,21 +403,21 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
     vtkUnstructuredGrid *innerSurface,
     double edgeSize,double blThicknessFactor,int numSublayers,
     double sublayerRatio,int sidewallCellEntityId,
-    int innerSurfaceCellEntityId,int negateWarpVectors, 
+    int innerSurfaceCellEntityId,int negateWarpVectors,
     std::string cellEntityIdsArrayName)
 {
-  vtkSmartPointer<vtkvmtkBoundaryLayerGenerator> layerer = 
+  vtkSmartPointer<vtkvmtkBoundaryLayerGenerator> layerer =
     vtkSmartPointer<vtkvmtkBoundaryLayerGenerator>::New();
 // needs fixed!!! NMW 2014-08-04
 #ifndef WIN32
-  vtkSmartPointer<vtkDoubleArray> checkArray = 
+  vtkSmartPointer<vtkDoubleArray> checkArray =
     vtkSmartPointer<vtkDoubleArray>::New();
 #endif
-  vtkSmartPointer<vtkUnstructuredGrid> copyug = 
+  vtkSmartPointer<vtkUnstructuredGrid> copyug =
     vtkSmartPointer<vtkUnstructuredGrid>::New();
   copyug->DeepCopy(blMesh);
 
-  try 
+  try
   {
 // needs fixed!!!  NMW 2014-08-04, MSVC compiler doesn't like.
 // should just check for array, not copy it anyway.
@@ -472,32 +472,32 @@ int VMTKUtils_BoundaryLayerMesh(vtkUnstructuredGrid *blMesh,
 // --------------------
 //  VMTKUtils_AppendMesh
 // --------------------
-/** 
- * @brief Function append the final combined boundary layer mesh with the 
+/**
+ * @brief Function append the final combined boundary layer mesh with the
  * volume mesh
  * @param meshFromTetGen This is the full vtu output from TetGen
- * @param innerMesh This is the original inner surface extracted from the 
+ * @param innerMesh This is the original inner surface extracted from the
  * interior of the boundary layer mesh
  * @param boundaryMesh This is the actual boundary layer mesh
  * @param surfaceWithSize This is the surface input to tetgen with the mesh
  * sizing function attached to it.
- * @param This is the name of the array within the surfaceWithSize mesh that 
- * contains the values pertaining to whehter or not it is a capped surface or 
+ * @param This is the name of the array within the surfaceWithSize mesh that
+ * contains the values pertaining to whehter or not it is a capped surface or
  * not.
- * @return CV_OK if the meshes are appended into one final mesh correctly. 
+ * @return CV_OK if the meshes are appended into one final mesh correctly.
  * The full mesh is returned in the first argument
  */
 
-int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen, 
+int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
     vtkUnstructuredGrid *innerMesh, vtkUnstructuredGrid *boundaryMesh,
     vtkUnstructuredGrid *surfaceWithSize,
     std::string cellEntityIdsArrayName)
 {
   vtkSmartPointer<vtkvmtkAppendFilter> appender =
     vtkSmartPointer<vtkvmtkAppendFilter>::New();
-  vtkSmartPointer<vtkThreshold> thresholder = 
+  vtkSmartPointer<vtkThreshold> thresholder =
     vtkSmartPointer<vtkThreshold>::New();
-  vtkSmartPointer<vtkUnstructuredGrid> endcaps = 
+  vtkSmartPointer<vtkUnstructuredGrid> endcaps =
     vtkSmartPointer<vtkUnstructuredGrid>::New();
 
   //Threshold out the endcaps from the surface
@@ -523,19 +523,19 @@ int VMTKUtils_AppendMesh(vtkUnstructuredGrid *meshFromTetGen,
 // --------------------
 //  VMTKUtils_InsertIds
 // --------------------
-/** 
- * @brief Function to attach GlobalElementIDs and GlobalNodeIDs to the 
- * final boundary layer mesh. The original values are destroyed by the 
+/**
+ * @brief Function to attach GlobalElementIDs and GlobalNodeIDs to the
+ * final boundary layer mesh. The original values are destroyed by the
  * complex process, so the values are reassigned.
- * @param fullmesh This is the full volumetric mesh output by TetGen, VMTK, 
- * and custom procedures. 
- * @param fullpolydata This should be empty coming in. It is then the 
+ * @param fullmesh This is the full volumetric mesh output by TetGen, VMTK,
+ * and custom procedures.
+ * @param fullpolydata This should be empty coming in. It is then the
  * extracted surface from the fullmesh.
- * @return CV_OK if the Ids are attached to the surfaces without issue 
+ * @return CV_OK if the Ids are attached to the surfaces without issue
  */
 
 int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata)
-{ 
+{
   int k;
   int modelId = 1;
   int globalId = 1;
@@ -556,20 +556,20 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
   vtkIdType count=0;
   vtkIdType npts = 0;
   vtkIdType *pts = 0;
-  vtkIdType numPts,numCells; 
-  vtkSmartPointer<vtkIntArray> modelRegionIds = 
+  vtkIdType numPts,numCells;
+  vtkSmartPointer<vtkIntArray> modelRegionIds =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> globalNodeIds = 
+  vtkSmartPointer<vtkIntArray> globalNodeIds =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> globalElementIds = 
+  vtkSmartPointer<vtkIntArray> globalElementIds =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> isTriangle = 
+  vtkSmartPointer<vtkIntArray> isTriangle =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkUnstructuredGrid> fullcopy = 
+  vtkSmartPointer<vtkUnstructuredGrid> fullcopy =
     vtkSmartPointer<vtkUnstructuredGrid>::New();
-  vtkSmartPointer<vtkDataSetSurfaceFilter> getSurface = 
+  vtkSmartPointer<vtkDataSetSurfaceFilter> getSurface =
     vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  vtkSmartPointer<vtkThreshold> thresholder = 
+  vtkSmartPointer<vtkThreshold> thresholder =
     vtkSmartPointer<vtkThreshold>::New();
 
   fullcopy->DeepCopy(fullmesh);
@@ -577,7 +577,7 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
   numCells = fullcopy->GetNumberOfCells();
 
 
-  //Remove all triangle Cells! These are triangles on surface of mesh 
+  //Remove all triangle Cells! These are triangles on surface of mesh
   //left from the append filter
   isTriangle->SetNumberOfComponents(1);
   isTriangle->Allocate(numCells,1000);
@@ -606,7 +606,7 @@ int VMTKUtils_InsertIds(vtkUnstructuredGrid *fullmesh, vtkPolyData *fullpolydata
   fullcopy->GetCellData()->RemoveArray("isTriangle");
   numPts = fullcopy->GetNumberOfPoints();
   numCells = fullcopy->GetNumberOfCells();
-  
+
   //Add global node Ids to points
   for (i=0;i<numPts;i++)
   {

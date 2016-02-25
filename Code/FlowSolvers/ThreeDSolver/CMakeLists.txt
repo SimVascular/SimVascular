@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -39,24 +39,24 @@ set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 
 #-----------------------------------------------------------------------------
 # Post Solver
-if(ThreeDSolver_BUILD_svPost)
+if(SV_THREEDSOLVER_USE_SVPOST)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPost)
-	set(ThreeDSolver_BUILD_SolverIO ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
 #-----------------------------------------------------------------------------
 # SolverIO
-if(ThreeDSolver_BUILD_SolverIO)
+if(SV_THREEDSOLVER_USE_SOLVERIO)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} SolverIO)
 endif()
 #-----------------------------------------------------------------------------
 # Presolver
-if(ThreeDSolver_BUILD_svPre)
+if(SV_THREEDSOLVER_USE_SVPOST)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
-	set(ThreeDSolver_BUILD_SolverIO ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
 
-if(SimVascular_USE_DUMMY_MPICH2)
+if(SV_USE_DUMMY_MPICH2)
     set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} dummyMPI)
 endif()
 
@@ -67,19 +67,19 @@ dev_message("Flowsolver Header Path:  ${FLOWSOLVER_OPTIONS_HEADER_PATH}" )
 
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 message(STATUS "${INDENTS}ThreeDSolver Options")
-if((ThreeDSolver_USE_CORONARY EQUAL 0) AND (ThreeDSolver_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
+if((SV_THREEDSOLVER_USE_CORONARY EQUAL 0) AND (SV_THREEDSOLVER_USE_CLOSEDLOOP EQUAL 0) AND (VER_VARWALL EQUAL 0) AND (VER_USE_VTK EQUAL 0))
   MESSAGE(STATUS "${INDENTS}    Compiling baseline version")
 endif()
-if(ThreeDSolver_USE_CORONARY)
+if(SV_THREEDSOLVER_USE_CORONARY)
   MESSAGE(STATUS "${INDENTS}    Activating coronary bc feature")
 endif()
-if(ThreeDSolver_USE_CLOSEDLOOP)
+if(SV_THREEDSOLVER_USE_CLOSEDLOOP)
   MESSAGE(STATUS "${INDENTS}    Activating closed loop bc feature")
 endif()
-if(ThreeDSolver_USE_VARWALL)
+if(SV_THREEDSOLVER_USE_VARWALL)
   MESSAGE(STATUS "${INDENTS}    Activating variable wall feature")
 endif()
-if(ThreeDSolver_USE_VTK)
+if(SV_THREEDSOLVER_USE_VTK)
   MESSAGE(STATUS "${INDENTS}    Activating using VTK feature")
 endif()
 

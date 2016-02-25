@@ -8,7 +8,7 @@
 #ifndef ZCONF_H
 #define ZCONF_H
 
-/* SimVascular_ZLIB_CHANGE - Added to mangle function names */
+/* SV_ZLIB_CHANGE - Added to mangle function names */
 #include "simvascular_zlib_mangle.h"
 
 /*
@@ -286,8 +286,8 @@ typedef uLong FAR uLongf;
    typedef Byte FAR   *voidpf;
    typedef Byte       *voidp;
 #endif
-   
-/* SimVascular_ZLIB_CHANGE - Added to mangle function names */
+
+/* SV_ZLIB_CHANGE - Added to mangle function names */
 #ifdef HAVE_UNISTD_H
 #  include <sys/types.h> /* for off_t */
 #  include <unistd.h>    /* for SEEK_* and off_t */

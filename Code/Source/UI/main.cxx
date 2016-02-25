@@ -60,7 +60,7 @@
 #endif
 
 #ifdef WIN32
-#ifdef SIMVASCULAR_USE_WIN32_REGISTRY
+#ifdef SV_USE_WIN32_REGISTRY
 #ifdef __MINGW32__
 // imperfect simple work around for missing getenv_s
 // on mingw32 stdlib (no bounds checking!)
@@ -116,14 +116,14 @@ errno_t cv_getenv_s(
   }
 #endif
 
-  char *envstr=getenv("SIMVASCULAR_BATCH_MODE");
+  char *envstr=getenv("SV_BATCH_MODE");
   if (envstr != NULL) {
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
     gSimVascularBatchMode = 1;
   }
 
 #ifdef WIN32
-#ifdef SIMVASCULAR_USE_WIN32_REGISTRY
+#ifdef SV_USE_WIN32_REGISTRY
 
   HKEY hKey2;
   LONG returnStatus2;
@@ -138,21 +138,21 @@ errno_t cv_getenv_s(
 
   char mykey[1024];
   mykey[0]='\0';
-  sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SIMVASCULAR_REGISTRY_TOPLEVEL,SIMVASCULAR_VERSION,SIMVASCULAR_MAJOR_VER_NO);
+  sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
 
   // we first assume that we are running on a 32-bit OS
   returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
   // if that fails, we check for the key hidden on a 64-bit OS
   // if this fails, then just give up and go home
   if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stdout,"Could not find SIMVASCULAR registry!\n(%s)\n Looking elsewhere.....",mykey);
+    fprintf(stdout,"Could not find SV registry!\n(%s)\n Looking elsewhere.....",mykey);
     mykey[0]='\0';
-    sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE\\Wow6432Node",SIMVASCULAR_REGISTRY_TOPLEVEL,SIMVASCULAR_VERSION,SIMVASCULAR_MAJOR_VER_NO);
+    sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
     //fprintf(stdout,"%s\n\n",mykey);
     returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
   }
   if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"FATAL ERROR: SIMVASCULAR registry error!\n(%s)\n",mykey);
+    fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
     exit(-1);
   }
   
@@ -160,7 +160,7 @@ errno_t cv_getenv_s(
   //RegCloseKey(hKey2);
 
   if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stdout,"  FATAL ERROR: Invalid application registry.  SIMVASCULAR RunDir not found!\n\n");
+    fprintf(stdout,"  FATAL ERROR: Invalid application registry.  SV RunDir not found!\n\n");
     exit(-1);
   }
 
@@ -202,7 +202,7 @@ errno_t cv_getenv_s(
   //fprintf(stdout,"pschema: %s\n",lszValue3);
 
  if (returnStatus2 != ERROR_SUCCESS) {
-  fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SIMVASCULAR PSchemaDir not found!\n\n");
+  fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PSchemaDir not found!\n\n");
   exit(-1);
 }
 
@@ -246,7 +246,7 @@ return 0;
 
 
 #ifdef WIN32
-#ifdef SIMVASCULAR_USE_WIN32_REGISTRY
+#ifdef SV_USE_WIN32_REGISTRY
 
 int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_Interp *interp ) {
 
@@ -262,7 +262,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
   lszValue2[0]='\0';
   scmd[0]='\0';
 
-  sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SIMVASCULAR_REGISTRY_TOPLEVEL,SIMVASCULAR_VERSION,SIMVASCULAR_MAJOR_VER_NO);
+  sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
 
   // we first assume that we are running on a 32-bit OS
   returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
@@ -271,11 +271,11 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
   // if this fails, then just give up and go home
   if (returnStatus2 != ERROR_SUCCESS) {
     mykey[0]='\0';
-    sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE\\Wow6432Node",SIMVASCULAR_REGISTRY_TOPLEVEL,SIMVASCULAR_VERSION,SIMVASCULAR_MAJOR_VER_NO);
+    sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE\\Wow6432Node",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
     returnStatus2 = RegOpenKeyEx(HKEY_LOCAL_MACHINE, mykey, 0L,  KEY_READ, &hKey2);
   }
   if (returnStatus2 != ERROR_SUCCESS) {
-    fprintf(stderr,"FATAL ERROR: SIMVASCULAR registry error!\n(%s)\n",mykey);
+    fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
     exit(-1);
   }
   
@@ -309,9 +309,9 @@ int Tcl_AppInit( Tcl_Interp *interp )
 {
 
 #ifdef WIN32  
-#ifdef SIMVASCULAR_USE_WIN32_REGISTRY
+#ifdef SV_USE_WIN32_REGISTRY
 
-  if (Tcl_AppInt_Win32ReadRegistryVar("HomeDir", "env(SIMVASCULAR_HOME)", interp ) == TCL_ERROR) {
+  if (Tcl_AppInt_Win32ReadRegistryVar("HomeDir", "env(SV_HOME)", interp ) == TCL_ERROR) {
     exit(-1);
   }
 

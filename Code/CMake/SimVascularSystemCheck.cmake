@@ -33,7 +33,7 @@ elseif(APPLE)
 	set(IS64 TRUE)
 endif()
 
-set(SIMVASCULAR_OS "${CMAKE_SYSTEM_NAME}")
+set(SV_OS "${CMAKE_SYSTEM_NAME}")
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")	
 	SET(LINUX TRUE)
 elseif(WIN32)
@@ -68,8 +68,8 @@ if(UNIX)
 	endif()
 endif()
 
-set(CLUSTER "${ARCH}_${SIMVASCULAR_OS}")
-if(SimVascular_DEV_OUTPUT)
+set(CLUSTER "${ARCH}_${SV_OS}")
+if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "${CLUSTER}")
 endif()
 
@@ -77,7 +77,7 @@ set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
 
 
 SET(USER_HOME_DIR $ENV{HOME})
-if(SimVascular_DEV_OUTPUT)
+if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "Home dir: ${USER_HOME_DIR}")
 endif()
 

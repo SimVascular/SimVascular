@@ -2,10 +2,10 @@
 # run the executable
 case "$*" in
 "")
-$SIMVASCULAR_HOME/BuildWithMake/Bin/postsolver.exe
+$SV_HOME/BuildWithMake/Bin/postsolver.exe
 ;;
 *)
-$SIMVASCULAR_HOME/BuildWithMake/Bin/postsolver.exe $*
+$SV_HOME/BuildWithMake/Bin/postsolver.exe $*
 ;;
 esac
 

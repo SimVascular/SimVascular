@@ -61,6 +61,11 @@
 // Globals:
 // --------
 
+#ifdef USE_PYTHON
+#include "Python.h"
+#include "vtkPythonUtil.h"
+#include "PyVTKClass.h"
+#endif
 #include "cv_globals.h"
 #include <TDF_Data.hxx>
 #include <TDF_Label.hxx>
@@ -90,8 +95,13 @@ int OCCTSolidModel_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
 int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
+#ifdef USE_PYTHON
+int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] );
+#endif
 
-int Occt_Init( Tcl_Interp *interp )
+
+int Occtsolid_Init( Tcl_Interp *interp )
 {
   //gOCCTManager = new AppStd_Application;
   gOCCTManager = XCAFApp_Application::GetApplication();
@@ -125,6 +135,10 @@ int Occt_Init( Tcl_Interp *interp )
 
   Tcl_CreateCommand( interp, "opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+#ifdef USE_PYTHON
+  Tcl_CreateCommand( interp, "occt_initPyMods", OCCTSolidModel_InitPyModulesCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+#endif
 
   return TCL_OK;
 }
@@ -157,3 +171,139 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
   }
   return TCL_OK;
 }
+
+#ifdef USE_PYTHON
+// --------------------
+// pySolid.convertListsToOCCTObject
+// --------------------
+PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
+{
+  //Call cvOCCTSolidModel function to create BSpline surf
+  cvOCCTSolidModel *geom;
+  if (cvSolidModel::gCurrentKernel != SM_KT_OCCT)
+  {
+    fprintf(stderr,"Solid Model kernel must be OCCT\n");
+    return NULL;
+  }
+
+  char *objName;
+  int p=0,q=0;
+  PyObject *X,*Y,*Z,*uKnots,*vKnots,*uMults,*vMults,*uDeg,*vDeg;
+  if (!PyArg_ParseTuple(args,"sO!O!O!O!O!O!O!ii",&objName,
+						&PyList_Type,&X,
+					        &PyList_Type,&Y,
+					        &PyList_Type,&Z,
+					        &PyList_Type,&uKnots,
+						&PyList_Type,&vKnots,
+						&PyList_Type,&uMults,
+						&PyList_Type,&vMults,
+						&p,&q))
+  {
+    fprintf(stderr,"Could not import 1 char, 7 tuples, and 2 ints: X,Y,Z,uKnots,vKnots,uMults,vMults,uDeg,vDeg");
+    return NULL;
+  }
+
+  geom = (cvOCCTSolidModel *)gRepository->GetObject( objName );
+  if ( geom == NULL ) {
+    fprintf(stderr,"Object is not in repository\n");
+    return NULL;
+  }
+  //Get X,Y,Z arrays
+  double **Xarr=NULL,**Yarr=NULL,**Zarr=NULL;
+  int Xlen1=0,Xlen2=0,Ylen1=0,Ylen2=0,Zlen1=0,Zlen2=0;
+  Py_INCREF(X); Py_INCREF(Y); Py_INCREF(Z);
+  Xarr = getArrayFromDoubleList2D(X,Xlen1,Xlen2);
+  Yarr = getArrayFromDoubleList2D(Y,Ylen1,Ylen2);
+  Zarr = getArrayFromDoubleList2D(Z,Zlen1,Zlen2);
+  Py_DECREF(X); Py_DECREF(Y); Py_DECREF(Z);
+  //Clean up
+  if ((Xlen1 != Ylen1 || Ylen1 != Zlen1 || Zlen1 != Xlen1) ||
+      (Xlen2 != Ylen2 || Ylen2 != Zlen2 || Zlen2 != Xlen2))
+  {
+    fprintf(stderr,"X,Y,and Z inputs need to be same dimensions\n");
+    for (int i=0;i<Xlen1;i++)
+      delete [] Xarr[i];
+    delete [] Xarr;
+    for (int i=0;i<Ylen1;i++)
+      delete [] Yarr[i];
+    delete [] Yarr;
+    for (int i=0;i<Zlen1;i++)
+      delete [] Zarr[i];
+    delete [] Zarr;
+    return NULL;
+  }
+
+  //Get knots and multiplicity arrays
+  double *uKarr=NULL,*vKarr=NULL,*uMarr=NULL,*vMarr=NULL;
+  int uKlen=0,vKlen=0,uMlen=0,vMlen=0;
+  uKarr = getArrayFromDoubleList(uKnots,uKlen);
+  vKarr = getArrayFromDoubleList(vKnots,vKlen);
+  uMarr = getArrayFromDoubleList(uMults,uMlen);
+  vMarr = getArrayFromDoubleList(vMults,vMlen);
+
+  if (geom->CreateBSplineSurface(Xarr,Yarr,Zarr,Xlen1,Xlen2,
+    uKarr,uKlen,vKarr,vKlen,uMarr,uMlen,vMarr,vMlen,p,q) != CV_OK)
+  {
+    //Set special python thingy
+    fprintf(stderr,"Conversion to BSpline surface didn't work\n");
+    return NULL;
+  }
+
+  //Clean up
+  for (int i=0;i<Xlen1;i++)
+  {
+    delete [] Xarr[i];
+    delete [] Yarr[i];
+    delete [] Zarr[i];
+  }
+  delete [] Xarr;
+  delete [] Yarr;
+  delete [] Zarr;
+
+  delete [] uKarr;
+  delete [] vKarr;
+  delete [] uMarr;
+  delete [] vMarr;
+
+  return Py_BuildValue("s","success");
+}
+#endif
+
+
+#ifdef USE_PYTHON
+//All functions listed and initiated as pyOCCT_methods declared here
+// --------------------
+// pyOCCT_methods
+// --------------------
+PyMethodDef pyOCCT_methods[] = {
+  {"convertListsToOCCT", convertListsToOCCTObject, METH_VARARGS,"Converts X,Y,Z,uKnots,vKnots,uMults,vMults,p,q to OCCT"},
+  {NULL, NULL}
+};
+#endif
+
+#ifdef USE_PYTHON
+//Must be called after the python interpreter is initiated and through
+//the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
+// --------------------
+// Solid_InitPyModules
+// --------------------
+int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
+		   int argc, CONST84 char *argv[] )
+{
+  char *name;
+
+  if ( argc != 1 ) {
+    Tcl_SetResult( interp, "usage: occt_initPyMods", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  //Init our defined functions
+  PyObject *pythonC;
+  pythonC = Py_InitModule("pyOCCT", pyOCCT_methods);
+  Py_INCREF(pythonC);
+  PyModule_AddObject(PyImport_AddModule("__buildin__"), "pyOCCT", pythonC);
+
+  return TCL_OK;
+}
+#endif
+

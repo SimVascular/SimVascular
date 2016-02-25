@@ -25,51 +25,53 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 file(WRITE  "${TCL_STARTUP_CONFIG_FILE}"
-"global SIMVASCULAR_FULL_VER_NO
-global SIMVASCULAR_MAJOR_VER_NO
-global SIMVASCULAR_PLATFORM
-global SIMVASCULAR_MINOR_VERSION
-global SIMVASCULAR_PATCH_VERSION
-global SIMVASCULAR_VERSION
-global SIMVASCULAR_NO_RENDERER
-global SIMVASCULAR_USE_PYTHON
-set SIMVASCULAR_FULL_VER_NO \"${SIMVASCULAR_FULL_VER_NO}\"
-set SIMVASCULAR_MAJOR_VER_NO \"${SIMVASCULAR_MAJOR_VER_NO}\"
-set SIMVASCULAR_PLATFORM    \"${SIMVASCULAR_PLATFORM}\"
-set SIMVASCULAR_MINOR_VERSION    \"${SIMVASCULAR_MINOR_VERSION}\"
-set SIMVASCULAR_PATCH_VERSION    \"${SIMVASCULAR_PATCH_VERSION}\"
-set SIMVASCULAR_VERSION     \"${SIMVASCULAR_VERSION}\"
-set SIMVASCULAR_NO_RENDERER \"${SIMVASCULAR_NO_RENDERER}\"
-set SIMVASCULAR_USE_PYTHON \"${SimVascular_USE_PYTHON}\"\n")
+"global SV_FULL_VER_NO
+global SV_MAJOR_VER_NO
+global SV_PLATFORM
+global SV_MINOR_VERSION
+global SV_PATCH_VERSION
+global SV_VERSION
+global SV_NO_RENDERER
+global SV_USE_PYTHON
+global SV_SHARED_BUILD
+set SV_FULL_VER_NO \"${SV_FULL_VER_NO}\"
+set SV_MAJOR_VER_NO \"${SV_MAJOR_VER_NO}\"
+set SV_PLATFORM    \"${SV_PLATFORM}\"
+set SV_MINOR_VERSION    \"${SV_MINOR_VERSION}\"
+set SV_PATCH_VERSION    \"${SV_PATCH_VERSION}\"
+set SV_VERSION     \"${SV_VERSION}\"
+set SV_NO_RENDERER \"${SV_NO_RENDERER}\"
+set SV_SHARED_BUILD \"${SV_BUILD_SHARED_LIBS}\"
+set SV_USE_PYTHON \"${SV_USE_PYTHON}\"\n")
 
 file(WRITE ${TCL_SPLASH_CONFIG_FILE} 
-"if {$SIMVASCULAR_RELEASE_BUILD == 1} {
-	set {gOptions(simvascular_version)} \"VERSION ${SIMVASCULAR_FULL_VER_NO}.${SIMVASCULAR_VERSION_TIMESTAMP}\"
+"if {$SV_RELEASE_BUILD == 1} {
+	set {gOptions(simvascular_version)} \"VERSION ${SV_FULL_VER_NO}.${SV_VERSION_TIMESTAMP}\"
 } else {
-set {gOptions(simvascular_version)} \"VERSION ${SIMVASCULAR_FULL_VER_NO} (developers build)\"
+set {gOptions(simvascular_version)} \"VERSION ${SV_FULL_VER_NO} (developers build)\"
 }\n")
 
 # file(WRITE ${TCL_EXTERNAL_CONFIG_FILE} 
-# "set bindir $env(SIMVASCULAR_HOME)/Bin
+# "set bindir $env(SV_HOME)/Bin
 file(WRITE ${TCL_EXTERNAL_CONFIG_FILE}
-"if {$SIMVASCULAR_RELEASE_BUILD == 1} {
-	set bindir $env(SIMVASCULAR_HOME)/${SIMVASCULAR_INSTALL_RUNTIME_DIR}
-	set homedir $env(SIMVASCULAR_HOME)	
+"if {$SV_RELEASE_BUILD == 1} {
+	set bindir $env(SV_HOME)/${SV_INSTALL_RUNTIME_DIR}
+	set homedir $env(SV_HOME)	
 	set execext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set execbinext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set gExternalPrograms(mpiexec) [file join  $homedir mpiexec${CMAKE_EXECUTABLE_SUFFIX}]
 } else {
-	set bindir $env(SIMVASCULAR_HOME)/Bin
-	set homedir $env(SIMVASCULAR_HOME)
+	set bindir $env(SV_HOME)/Bin
+	set homedir $env(SV_HOME)
 	set execext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set execbinext {${CMAKE_EXECUTABLE_SUFFIX}}
 	set gExternalPrograms(mpiexec) {${MPIEXEC}}
 }
-set gExternalPrograms(cvpresolver) [file join $bindir ${PRESOLVER_EXE}$execbinext]
-set gExternalPrograms(cvpostsolver) [file join $bindir ${POSTSOLVER_EXE}$execbinext]
-set gExternalPrograms(cvflowsolver) [file join $bindir ${FLOWSOLVER_EXE}$execbinext]
-set gExternalPrograms(cvadaptor) [file join $bindir ${ADAPTOR_EXE}$execbinext]
-set gExternalPrograms(cvtetadaptor) [file join $bindir ${TET_ADAPTOR_EXE}$execbinext]
+set gExternalPrograms(cvpresolver) [file join $bindir ${SV_PRESOLVER_EXE}$execbinext]
+set gExternalPrograms(cvpostsolver) [file join $bindir ${SV_POSTSOLVER_EXE}$execbinext]
+set gExternalPrograms(cvflowsolver) [file join $bindir ${SV_FLOWSOLVER_EXE}$execbinext]
+set gExternalPrograms(cvadaptor) [file join $bindir ${SV_MESHSIM_ADAPTOR_EXE}$execbinext]
+set gExternalPrograms(cvtetadaptor) [file join $bindir ${SV_TET_ADAPTOR_EXE}$execbinext]
 set gExternalPrograms(gdcmdump) gdcmdump
 set gExternalPrograms(dicom2) [file join $homedir dicom2${CMAKE_EXECUTABLE_SUFFIX}]
 ")

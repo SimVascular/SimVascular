@@ -26,13 +26,16 @@ proc startTclPython {} {
   #Create TclPyString global to pass string between tcl and python
   global TclPyString
   $gPythonInterp exec {tcl.eval('global TclPyString')}
-  set TclPyString $env(SIMVASCULAR_HOME)
+  set TclPyString $env(SV_HOME)
   $gPythonInterp exec {simvascular_home = tcl.eval('set dummy $TclPyString')}
 
   #Initiate modules
   puts "Initiate the python modules from tcl"
   if [catch {$gPythonInterp exec {tcl.eval("solid_initPyMods")}} errmsg] {
-    puts "Could not initialize internal python modules: $errmsg"
+    puts "Could not initialize internal python solid modules: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {tcl.eval("occt_initPyMods")}} errmsg] {
+    puts "Could not initialize internal python occt modules: $errmsg"
   }
   if [catch {$gPythonInterp exec {import os}} errmsg] {
     puts "No os module found: $errmsg"
@@ -48,6 +51,9 @@ proc startTclPython {} {
   }
   if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
     puts "No numpy module found: $errmsg"
+  }
+  if [catch {$gPythonInterp exec {import scipy as sp}} errmsg] {
+    puts "No scipy module found: $errmsg"
   }
 }
 
@@ -107,6 +113,7 @@ proc testCreateSurf {} {
   solid_newObject -name myNewObj
 
   ##Python Interp
+  $gPythonInterp exec {import pyOCCT}
   $gPythonInterp exec {import numpy as np}
   $gPythonInterp exec {X = np.ndarray.tolist(np.array([[3.1,4.3,5.3],[1.1,6.1,8.5]]))}
   $gPythonInterp exec {Y = np.ndarray.tolist(np.array([[3.1,4.3,5.3],[1.1,6.1,8.5]]))}
@@ -116,5 +123,5 @@ proc testCreateSurf {} {
   $gPythonInterp exec {vK = np.ndarray.tolist(np.array([3.0,4.0,51.0,6.0,8.0]))}
   $gPythonInterp exec {uM = np.ndarray.tolist(np.array([3.0,4.0,51.0,6.0,8.0]))}
   $gPythonInterp exec {vM = np.ndarray.tolist(np.array([3.0,4.0,51.0,6.0,8.0]))}
-  $gPythonInterp exec {pySolid.convertListsToOCCT("myNewObj",X,Y,Z,uK,vK,uM,vM,2,2)}
+  $gPythonInterp exec {pyOCCT.convertListsToOCCT("myNewObj",X,Y,Z,uK,vK,uM,vM,2,2)}
 }

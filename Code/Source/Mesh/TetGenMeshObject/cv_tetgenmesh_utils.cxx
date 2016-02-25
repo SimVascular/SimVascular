@@ -62,6 +62,7 @@
 
 #include "cv_polydatasolid_utils.h"
 #include "cv_misc_utils.h"
+#include "cv_vtk_utils.h"
 
 #define MAXPATHLEN 1024
 
@@ -155,7 +156,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   //Do Poly transition from polydatasolid into facetlist  
   if (useBoundary)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != CV_OK)
     {
       fprintf(stderr,"Array name does not exist in polydata. Regions must be identified \
 		    and named prior to this function call\n");
@@ -591,19 +592,19 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   vtkSmartPointer<vtkIntArray> lessElementIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> globalElement2Ids = vtkSmartPointer<vtkIntArray>::New();
  
-  if (PlyDtaUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != CV_OK)
   {
     fprintf(stderr,"Array name 'GlobalNodeID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
     return CV_ERROR;
   }
-  if (PlyDtaUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != CV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
     return CV_ERROR;
   }
-  if (PlyDtaUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != CV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified");
 		fprintf(stderr," and named 'ModelFaceID' prior to this function call\n");
@@ -751,7 +752,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
   volumemesh->BuildLinks();
 
-  if (PlyDtaUtils_UGCheckArrayName(volumemesh,1,"GlobalElementID") != CV_OK)
+  if (VtkUtils_UGCheckArrayName(volumemesh,1,"GlobalElementID") != CV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist. IDs on mesh may not have been assigned properly\n");
     return CV_ERROR;
@@ -847,7 +848,7 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
   numPts = polydatasolid->GetNumberOfPoints();
   if (secondarray)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
@@ -931,7 +932,7 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
   numPts = polydatasolid->GetNumberOfPoints();
   if (secondarray)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
@@ -1017,7 +1018,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
   numCells = polydatasolid->GetNumberOfCells();
   if (secondarray)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
@@ -1037,7 +1038,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     }
   }
 
-  if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,functionname) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid,0,functionname) != CV_OK)
   {
     fprintf(stderr,"Solid does not contain a double array of name %s.",
 		    functionname);
@@ -1159,13 +1160,13 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   locator->SetDataSet(originalgeom);
   locator->BuildLocator();
 
-  //if (PlyDtaUtils_PDCheckArrayName(newgeom,1,newName) != CV_OK)
+  //if (VtkUtils_PDCheckArrayName(newgeom,1,newName) != CV_OK)
   //{
   //  fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
   //      	    and named 'ModelFaceID' prior to this function call\n");
   //  return CV_ERROR;
   //}
-  if (PlyDtaUtils_PDCheckArrayName(originalgeom,1,originalName) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != CV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
@@ -1340,7 +1341,7 @@ int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
   int numPts = pd->GetNumberOfPoints();
   int numCells = pd->GetNumberOfCells();
   regionarray = vtkIntArray::SafeDownCast(pd->GetCellData()->GetArray("ModelFaceID"));
-  if (PlyDtaUtils_PDCheckArrayName(pd,0,"MeshSizingFunction") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(pd,0,"MeshSizingFunction") != CV_OK)
   {           
     meshSizeArray->SetNumberOfComponents(1);
     meshSizeArray->Allocate(numPts,1000);

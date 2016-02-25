@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -36,28 +36,28 @@ endif()
     set(CMAKE_Fortran_FLAGS "-ffixed-line-length-132 -cpp")
   else()
     #set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-check bounds")
-    
+
     set(CMAKE_Fortran_FLAGS "-extend-source 132 -fpp")
   endif()
 # Include c++ files
 SET(CXXSRCS Cinput.cxx ValType.cxx input_fform.cxx partition.cxx main.cxx)
 
 # Include c files
-SET(CSRCS getIntPnts.c ShapeFunctions_uniformP.c shptet.c symtri.c symtet.c) # for shape functions 
+SET(CSRCS getIntPnts.c ShapeFunctions_uniformP.c shptet.c symtri.c symtet.c) # for shape functions
 SET(CSRCS ${CSRCS} write_restart_files.c) # solver io files
 SET(CSRCS ${CSRCS} tmrc.c) # this is dummy timing function and should go away
-	
+
 if(NOT (LINUX AND IS64))
   SET(CSRCS ${CSRCS} missing_win32.c)
 endif()
 
 SET(FSRCS modules.f)
 
-if(ThreeDSolver_USE_CORONARY)
+if(SV_THREEDSOLVER_USE_CORONARY)
   SET(FSRCS ${FSRCS} modules-coronary.f)
 endif()
 
-if (ThreeDSolver_USE_CLOSEDLOOP)
+if (SV_THREEDSOLVER_USE_CLOSEDLOOP)
   SET(FSRCS ${FSRCS} modules-closedloop.f)
 endif()
 
@@ -77,69 +77,97 @@ SET(FSRCS ${FSRCS} addelmpvsqforsvls-closedloop-coronary.f
                    readnblk-varwall.f
                    updhistconv-coronary.f)
 
-if(ThreeDSolver_USE_CORONARY)
+if(SV_THREEDSOLVER_USE_CORONARY)
   SET(FSRCS ${FSRCS} coronary_subroutines.f)
 endif()
 
 # Include files for the CLOSEDLOOP VERSION
-if(ThreeDSolver_USE_CLOSEDLOOP)
+if(SV_THREEDSOLVER_USE_CLOSEDLOOP)
   SET(FSRCS ${FSRCS} closedloop_subroutines.f)
 endif()
 
 # Include files for the VARWALL VERSION
-if (ThreeDSolver_USE_VARWALL)
+if (SV_THREEDSOLVER_USE_VARWALL)
   SET(FSRCS ${FSRCS} varwall_subroutines.f)
 endif()
 
+# Libraries for the solver
+set(lib_vtk lib_simvascular_flowsolver_vtk)
+set(lib_leslib lib_simvascular_flowsolver_dummy_leslib)
+set(lib_restart lib_simvascular_flowsolver_write_restart)
+set(lib_flowsolver lib_simvascular_flowsolver_fortran_lib)
 # Include files for the USE_VTK VERSION
-if (ThreeDSolver_USE_VTK)
+if (SV_THREEDSOLVER_USE_VTK)
   SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
+  ADD_LIBRARY(${lib_vtk} ${SV_LIBRARY_TYPE} use_vtk.cxx)
+  target_link_libraries(${lib_vtk}
+	  ${VTK_LIBRARIES})
 endif()
 
-if(ThreeDSolver_USE_LESLIB) 
+if(SV_THREEDSOLVER_USE_LESLIB)
   include_directories(${LESLIB_INCLUDE_DIR})
 else()# dummy leslib
-  add_library(lib_dummy_leslib leslib_dummy_prototypes.c)
-  set(LESLIB_LIBRARY lib_dummy_leslib)
+add_library(${lib_leslib} ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
+  set(LESLIB_LIBRARY ${lib_leslib})
 endif()
-ADD_LIBRARY(flowsolver_fortran_lib ${FSRCS})
-#SET_TARGET_PROPERTIES(flowsolver_fortran_lib PROPERTIES COMPILE_FLAGS "-extend_source 132")
-TARGET_LINK_LIBRARIES(flowsolver_fortran_lib ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES})
-message("Libs: ${svMPI_EXTRA_LIBRARY} ${svMPI_Fortran_LIBRARIES}")
+add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
+target_link_libraries(${lib_restart} lib_simvascular_solverio
+	${lib_leslib}
+	${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
+
+ADD_LIBRARY(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
+#SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
+TARGET_LINK_LIBRARIES(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
+	${SV_MPI_Fortran_LIBRARIES}
+	lib_simvascular_solverio ${lib_restart})
+if(SV_THREEDSOLVER_USE_SVLS)
+	target_link_libraries(${lib_flowsolver} lib_simvascular_svls)
+endif()
+if(SV_THREEDSOLVER_USE_VTK)
+	target_link_libraries(${lib_flowsolver} ${lib_vtk})
+endif()
+message("Libs: ${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES}")
 set(HDRS Input.h ValType.h common_c.h)
 
-simvascular_add_executable(${FLOWSOLVER_EXE} 
+simvascular_add_executable(${SV_FLOWSOLVER_EXE}
   SRCS ${CXXSRCS} ${CSRCS}
-  DEV_SCRIPT_NAME "mysolver" 
+  DEV_SCRIPT_NAME "mysolver"
   INSTALL_SCRIPT_NAME "svsolver"
   INSTALL_COMPONENT ModuleExecutables
-  INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+  INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
-if(ThreeDSolver_USE_VTK)
+if(SV_THREEDSOLVER_USE_VTK)
   SET(VTKLIB ${VTK_LIBRARIES})
 else()
   SET(VTKLIB "")
 endif()
 
 
-TARGET_LINK_LIBRARIES(${FLOWSOLVER_EXE} flowsolver_fortran_lib 
+TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
                       ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
                       ${METIS_LIBRARY} ${SVLS_LIBRARY}
-                      ${svMPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
+		      ${SV_MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
                       ${NSPCG_LIBRARY} lib_simvascular_solverio
                       ${VTKLIB}
                       )
 
-if(SIMVASCULAR_INSTALL_LIBS)
-  install(TARGETS flowsolver_fortran_lib
-    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
-    LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
-    ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
+if(SV_INSTALL_LIBS)
+  install(TARGETS ${lib_flowsolver} ${lib_restart} ${lib_leslib}
+    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
     )
+  if(SV_THREEDSOLVER_USE_VTK)
+    install(TARGETS ${lib_vtk}
+      RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
+      LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
+      ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
+      )
+  endif()
 endif()
-if(SIMVASCULAR_INSTALL_HEADERS)
+if(SV_INSTALL_HEADERS)
   install(FILES ${HDRS}
-    DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()
 
