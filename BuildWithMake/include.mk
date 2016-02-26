@@ -96,7 +96,7 @@ SV_USE_MESHSIM_ADAPTOR = 0
 SV_USE_MESHSIM_SHARED = 1
 MESHSIM_USE_LICENSE_FILE = 1
 MESHSIM_EMBED_LICENSE_KEYS = 0
-MESHSIM_USE_SV_USE_WIN32_REGISTRY = 0
+MESHSIM_LICENSE_IN_WIN32_REGISTRY = 0
 
 # -------------------------------------
 # Control inclusion of tetgen functions
@@ -131,7 +131,7 @@ SV_USE_ZLIB = 1
 # system tcltk
 # -----------------------------------------------------
 
-USE_SYSTEM_TCLTK = 0
+SV_USE_SYSTEM_TCLTK = 0
 
 # -----------------------------------------------------
 # Compile with 3-D Solver and Related Programs
@@ -146,10 +146,10 @@ SV_USE_POSTSOLVER = 1
 # Compile Flowsolver Modules
 # -----------------------------------------------------
 
-FLOWSOLVER_VERSION_CORONARY_ACTIVATE = 1
-FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE = 1
-FLOWSOLVER_VERSION_VARWALL_ACTIVATE = 1
-FLOWSOLVER_VERSION_USE_VTK_ACTIVATE = 1
+SV_THREEDSOLVER_USE_CORONARY = 1
+SV_THREEDSOLVER_USE_CLOSEDLOOP = 1
+SV_THREEDSOLVER_USE_VARWALL = 1
+SV_THREEDSOLVER_USE_VTK = 1
 
 # -----------------------------------------------------
 # Compile with MPI
@@ -289,7 +289,7 @@ endif
 # by default don't build most third party
 # if we are only building the flow solver
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
-    ifeq ($(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE), 0)
+    ifeq ($(SV_THREEDSOLVER_USE_VTK), 0)
         SV_USE_VTK = 0
     endif
 
@@ -717,7 +717,7 @@ ifeq ($(CLUSTER), x64_linux)
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-	ifeq ($(USE_SYSTEM_TCLTK),0)
+	ifeq ($(SV_USE_SYSTEM_TCLTK),0)
 	  include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_macosx.mk
 	endif
 endif
