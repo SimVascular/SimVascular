@@ -85,13 +85,6 @@ SV_USE_GLOBALS_SHARED = 1
 SV_USE_PARASOLID = 0
 SV_USE_PARASOLID_SHARED = 1
 
-# You can also exclude the SolidModel module entirely.  Be aware that
-# this leads to the exclusion of certain LevelSet functionality as
-# well.
-
-EXCLUDE_SOLID_MODEL = 0
-
-
 # --------------------------------------
 # Control inclusion of meshSim functions
 # --------------------------------------
@@ -338,15 +331,11 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 
-ifeq ($(EXCLUDE_SOLID_MODEL),0)
-    ifeq ($(SV_USE_PARASOLID),1)
-        GLOBAL_DEFINES += -DUSE_PARASOLID
-    endif
-    ifeq ($(SV_USE_PARASOLID_SHARED),1)
-        GLOBAL_DEFINES += -DUSE_PARASOLID_SHARED
-    endif
-else
-    GLOBAL_DEFINES += -DEXCLUDE_SOLID_MODEL
+ifeq ($(SV_USE_PARASOLID),1)
+    GLOBAL_DEFINES += -DUSE_PARASOLID
+endif
+ifeq ($(SV_USE_PARASOLID_SHARED),1)
+    GLOBAL_DEFINES += -DUSE_PARASOLID_SHARED
 endif
 
 ifeq ($(SV_USE_MESHSIM),1) 
@@ -502,24 +491,20 @@ endif
 
 #  solid modeling
 
-ifeq ($(EXCLUDE_SOLID_MODEL),0)
+ifeq ($(SV_USE_PARASOLID),1)
+  ifeq ($(SV_USE_PARASOLID_SHARED),1)
+    SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
+  else
+    LIBDIRS += ../Code/Licensed/ParasolidSolidModel
+  endif
+endif
 
-    ifeq ($(SV_USE_PARASOLID),1)
-      ifeq ($(SV_USE_PARASOLID_SHARED),1)
-        SHARED_LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-      else
-        LIBDIRS += ../Code/Licensed/ParasolidSolidModel
-      endif
-    endif
-
-    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-      ifeq ($(SV_USE_MESHSIM_SHARED),1)
-        SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
-      else
-        LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
-      endif
-    endif
-
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+  ifeq ($(SV_USE_MESHSIM_SHARED),1)
+    SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+  else
+    LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+  endif
 endif
 
 # meshing
