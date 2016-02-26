@@ -103,7 +103,7 @@ SV_USE_MESHSIM_ADAPTOR = 0
 SV_USE_MESHSIM_SHARED = 1
 MESHSIM_USE_LICENSE_FILE = 1
 MESHSIM_EMBED_LICENSE_KEYS = 0
-MESHSIM_USE_SIMVASCULAR_USE_WIN32_REGISTRY = 0
+MESHSIM_USE_SV_USE_WIN32_REGISTRY = 0
 
 # -------------------------------------
 # Control inclusion of tetgen functions
@@ -266,10 +266,10 @@ endif
 #   Release version numbers for SimVascular 
 # -------------------------------------------
 
-SIMVASCULAR_MAJOR_VER_NO = "2.0"
-SIMVASCULAR_FULL_VER_NO = "2.0.20"
-SIMVASCULAR_USE_WIN32_REGISTRY=0
-SIMVASCULAR_REGISTRY_TOPLEVEL=SIMVASCULAR
+SV_MAJOR_VER_NO = "2.0"
+SV_FULL_VER_NO = "2.0.20"
+SV_USE_WIN32_REGISTRY=0
+SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
 # if you need to override anything above, stuff it in global_overrides.mk
 # -----------------------------------------------------------------------
@@ -281,16 +281,16 @@ else
 endif
 
 ifeq ($(CLUSTER),x64_cygwin) 
-  SIMVASCULAR_VERSION  = simvascular
-  SIMVASCULAR_PLATFORM = x64
-  SIMVASCULAR_POSTFIX=
-  SIMVASCULAR_OS=windows
+  SV_VERSION  = simvascular
+  SV_PLATFORM = x64
+  SV_POSTFIX=
+  SV_OS=windows
 endif
 ifeq ($(CLUSTER),x64_linux) 
-  SIMVASCULAR_VERSION  = simvascular
-  SIMVASCULAR_PLATFORM = x64
-  SIMVASCULAR_POSTFIX=
-  SIMVASCULAR_OS=linux
+  SV_VERSION  = simvascular
+  SV_PLATFORM = x64
+  SV_POSTFIX=
+  SV_OS=linux
 endif
 
 # by default don't build most third party
@@ -311,9 +311,9 @@ endif
 # Global defines
 # --------------
 
-GLOBAL_DEFINES = -DSV_VERSION=\"$(SIMVASCULAR_VERSION)\" -DSV_MAJOR_VER_NO=\"$(SIMVASCULAR_MAJOR_VER_NO)\" -DSV_FULL_VER_NO=\"$(SIMVASCULAR_FULL_VER_NO)\" -DSV_REGISTRY_TOPLEVEL=\"$(SIMVASCULAR_REGISTRY_TOPLEVEL)\"
+GLOBAL_DEFINES = -DSV_VERSION=\"$(SV_VERSION)\" -DSV_MAJOR_VER_NO=\"$(SV_MAJOR_VER_NO)\" -DSV_FULL_VER_NO=\"$(SV_FULL_VER_NO)\" -DSV_REGISTRY_TOPLEVEL=\"$(SV_REGISTRY_TOPLEVEL)\"
 
-ifeq ($(SIMVASCULAR_USE_WIN32_REGISTRY), 1)
+ifeq ($(SV_USE_WIN32_REGISTRY), 1)
   GLOBAL_DEFINES += -DSV_USE_WIN32_REGISTRY
 endif
 
@@ -363,7 +363,7 @@ ifeq ($(SV_USE_MESHSIM),1)
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1) 
     GLOBAL_DEFINES += -DUSE_MESHSIM_ADAPTOR
   endif
-  ifeq ($(SIMVASCULAR_USE_WIN32_REGISTRY),1)
+  ifeq ($(SV_USE_WIN32_REGISTRY),1)
     GLOBAL_DEFINES += -DMESHSIM_LICENSE_IN_WIN32_REGISTRY
   else
     ifeq ($(MESHSIM_USE_LICENSE_FILE),1)

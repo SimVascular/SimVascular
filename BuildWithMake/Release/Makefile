@@ -38,7 +38,7 @@ include $(TOP)/include.mk
 #  distributions.  Note that some of the paths are hardcoded.
 #
 
-SIMVASCULAR_CLUSTER = $(CLUSTER)
+SV_CLUSTER = $(CLUSTER)
 
 ifneq ($(CLUSTER),x64_linux)
 #WIXUI_PATH := $(shell cygpath -m $(OPEN_SOFTWARE_PRECOMPILED_TOPLEVEL)/wix-2.0.5805.0)
@@ -46,10 +46,10 @@ WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 endif
 
-DIST_DIR_TOP = package/$(SIMVASCULAR_VERSION)
+DIST_DIR_TOP = package/$(SV_VERSION)
 DIST_DIR := $(DIST_DIR_TOP)/$(shell echo "puts \"[clock seconds]\"" | tclsh)
 
-REMOTE_DIR_TOP = remote_install_$(SIMVASCULAR_VERSION)
+REMOTE_DIR_TOP = remote_install_$(SV_VERSION)
 
 ifneq ($(CLUSTER),x64_linux)
   all: windows-distribution msi
@@ -97,7 +97,7 @@ endif
 	-cp -fR $(TCL_BASE)/bin/*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-cp -fR $(TCL_BASE)/lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
+	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/simvascular-meshsim-and-parasolid.wixobj tmp/simvascular-meshsim-and-parasolid.wxs
 	-echo "Run light..."
@@ -109,7 +109,7 @@ endif
 
 msiclean:
 	-rm *~
-	-rm $(SIMVASCULAR_VERSION).msi
+	-rm $(SV_VERSION).msi
 	-rm tmp/sv.wixobj
 	-rm tmp/sv.wxs
 	-rm tmp/uuidgen.exe*
@@ -122,11 +122,11 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs.tcl $(SIMVASCULAR_VERSION) $(SIMVASCULAR_PLATFORM) $(DIST_DIR_TOP) $(SIMVASCULAR_MAJOR_VER_NO) Releases$(SIMVASCULAR_POSTFIX) simvascular-bin.exe $(SIMVASCULAR_VERSION) $(SIMVASCULAR_FULL_VER_NO)
+	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) simvascular-bin.exe $(SV_VERSION) $(SV_FULL_VER_NO)
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
-	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SIMVASCULAR_VERSION).msi tmp/sv.wixobj
+	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SV_VERSION).msi tmp/sv.wixobj
 
 msi-bundle:
 	-rm -f tmp/bundle.wixobj
@@ -143,37 +143,37 @@ msi: msiclean msi-simvascular msiclean-meshsim-and-parasolid msi-meshsim-and-par
 remote-linux-distribution: mksedscript linux-distribution
 	-rm -Rf $(REMOTE_DIR_TOP)
 	-mkdir -p $(REMOTE_DIR_TOP)/dist_files
-	-cp tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM)*.tar.gz $(REMOTE_DIR_TOP)/dist_files
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-clean-install.sh > $(REMOTE_DIR_TOP)/simvascular-clean-install-$(SIMVASCULAR_PLATFORM).sh
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-update-install.sh > $(REMOTE_DIR_TOP)/simvascular-update-install-$(SIMVASCULAR_PLATFORM).sh
+	-cp tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)*.tar.gz $(REMOTE_DIR_TOP)/dist_files
+	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-clean-install.sh > $(REMOTE_DIR_TOP)/simvascular-clean-install-$(SV_PLATFORM).sh
+	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-update-install.sh > $(REMOTE_DIR_TOP)/simvascular-update-install-$(SV_PLATFORM).sh
 	-sed -f tmp/sedscript platform_independent_scripts/generic-launch-script > $(REMOTE_DIR_TOP)/dist_files/generic_launch_script
-	-tar --preserve -cvf tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar $(REMOTE_DIR_TOP)
+	-tar --preserve -cvf tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar $(REMOTE_DIR_TOP)
 	-chmod a+rx $(REMOTE_DIR_TOP)/*.sh
 	-chmod a+rx $(REMOTE_DIR_TOP)/dist_files/generic_launch_script
-	-gzip tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar 
+	-gzip tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar 
 
 remote-windows-distribution: mksedscript windows-distribution
 	-rm -Rf $(REMOTE_DIR_TOP)
 	-mkdir -p $(REMOTE_DIR_TOP)/dist_files
-	-cp tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM)*.tar.gz $(REMOTE_DIR_TOP)/dist_files
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-clean-install.sh > $(REMOTE_DIR_TOP)/simvascular-clean-install-$(SIMVASCULAR_PLATFORM).sh
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-update-install.sh > $(REMOTE_DIR_TOP)/simvascular-update-install-$(SIMVASCULAR_PLATFORM).sh
+	-cp tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)*.tar.gz $(REMOTE_DIR_TOP)/dist_files
+	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-clean-install.sh > $(REMOTE_DIR_TOP)/simvascular-clean-install-$(SV_PLATFORM).sh
+	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-update-install.sh > $(REMOTE_DIR_TOP)/simvascular-update-install-$(SV_PLATFORM).sh
 	-chmod a+rx $(REMOTE_DIR_TOP)/*.sh
-	-tar --preserve -cvf tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar $(REMOTE_DIR_TOP)
-	-gzip tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar 
+	-tar --preserve -cvf tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar $(REMOTE_DIR_TOP)
+	-gzip tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar 
 
 
 mksedscript:
 	-mkdir -p tmp
 	-echo "puts \"s/REPLACE_TIMESTAMP/[file tail $(DIST_DIR)]/g\"" | tclsh | cat > tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_TIMESTAMP/[file tail $(DIST_DIR)]/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_OS/$(SIMVASCULAR_OS)/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_VERSION/$(SIMVASCULAR_VERSION)/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_PLATFORM/$(SIMVASCULAR_PLATFORM)/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_POSTFIX/$(SIMVASCULAR_POSTFIX)/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_MAJOR_VER_NO/$(SIMVASCULAR_MAJOR_VER_NO)/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_FULL_VER_NO/$(SIMVASCULAR_FULL_VER_NO)/g\"" | tclsh | cat >> tmp/sedscript
-	-echo "puts \"s/REPLACE_SIMVASCULAR_CLUSTER/$(CLUSTER)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_TIMESTAMP/[file tail $(DIST_DIR)]/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_OS/$(SV_OS)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_VERSION/$(SV_VERSION)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_PLATFORM/$(SV_PLATFORM)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_POSTFIX/$(SV_POSTFIX)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_MAJOR_VER_NO/$(SV_MAJOR_VER_NO)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_FULL_VER_NO/$(SV_FULL_VER_NO)/g\"" | tclsh | cat >> tmp/sedscript
+	-echo "puts \"s/REPLACE_SV_CLUSTER/$(CLUSTER)/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TCL_VERSION_NO/$(notdir $(TCL_LIBRARY))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TK_VERSION_NO/$(notdir $(TK_LIBRARY))/g\"" | tclsh | cat >> tmp/sedscript
 	-echo "puts \"s/REPLACE_TCLSH/$(notdir $(TCLSH))/g\"" | tclsh | cat >> tmp/sedscript
@@ -260,18 +260,18 @@ copy-external-libs-linux-only:
 	-cp -f dcmtk/dcmodify-linux.exe $(DIST_DIR)/dcmodify
 
 generate-wrapper-scripts:
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/$(SIMVASCULAR_VERSION)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-core-script > $(DIST_DIR)/xfsv$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-simvascular-script >> $(DIST_DIR)/$(SIMVASCULAR_VERSION)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-flowsolver-script >> $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-presolver-script >> $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-postsolver-script >> $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
-	-sed -f tmp/sedscript $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-dist-xfsv-script >> $(DIST_DIR)/xfsv$(SIMVASCULAR_POSTFIX)
-	-cp -f $(SIMVASCULAR_OS)_wrapper_scripts/$(SIMVASCULAR_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
-	-cat $(DIST_DIR)/$(SIMVASCULAR_VERSION) >> $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/$(SV_VERSION)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/flowsolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/presolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/postsolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/xfsv$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-simvascular-script >> $(DIST_DIR)/$(SV_VERSION)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-flowsolver-script >> $(DIST_DIR)/flowsolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-presolver-script >> $(DIST_DIR)/presolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-postsolver-script >> $(DIST_DIR)/postsolver$(SV_POSTFIX)
+	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-xfsv-script >> $(DIST_DIR)/xfsv$(SV_POSTFIX)
+	-cp -f $(SV_OS)_wrapper_scripts/$(SV_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SV_VERSION)-cmdline
+	-cat $(DIST_DIR)/$(SV_VERSION) >> $(DIST_DIR)/$(SV_VERSION)-cmdline
 
 common-post-distribution:
 	-sed -f tmp/sedscript platform_independent_scripts/post-install.sh > $(DIST_DIR)/post-install.sh
@@ -280,11 +280,11 @@ common-post-distribution:
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)
 	-chmod -f a+rx $(DIST_DIR)/*.sh
 	-chmod -f a+rx $(DIST_DIR)/generic_launch_script
-	-chmod -f a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)
-	-chmod -f a+rx $(DIST_DIR)/$(SIMVASCULAR_VERSION)-cmdline
-	-chmod -f a+rx $(DIST_DIR)/flowsolver$(SIMVASCULAR_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/presolver$(SIMVASCULAR_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/postsolver$(SIMVASCULAR_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/$(SV_VERSION)
+	-chmod -f a+rx $(DIST_DIR)/$(SV_VERSION)-cmdline
+	-chmod -f a+rx $(DIST_DIR)/flowsolver$(SV_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/presolver$(SV_POSTFIX)
+	-chmod -f a+rx $(DIST_DIR)/postsolver$(SV_POSTFIX)
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)*
 	-chmod -f -R a+rx $(DIST_DIR)
 	-chmod -f -R u+w $(DIST_DIR)
@@ -310,10 +310,10 @@ endif
 ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	-cp -f $(MESHSIM_SO_PATH)/*.$(SOEXT)* package-release-meshsim-and-parasolid
 endif
-	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
-	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
+	-tar --preserve-permissions --transform 's,package-release-meshsim-and-parasolid/,,g'  -cvf tar_files/simvascular-meshsim-and-parasolid-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package-release-meshsim-and-parasolid
+	-gzip tar_files/simvascular-meshsim-and-parasolid-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
 
 taritup:
 	-mkdir tar_files
-	-tar --preserve-permissions -cvf tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package
-	-gzip tar_files/simvascular-$(SIMVASCULAR_OS)-$(SIMVASCULAR_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
+	-tar --preserve-permissions -cvf tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar package
+	-gzip tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM).`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar
