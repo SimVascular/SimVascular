@@ -85,6 +85,13 @@ SV_USE_GLOBALS_SHARED = 1
 SV_USE_PARASOLID = 0
 SV_USE_PARASOLID_SHARED = 1
 
+# ------------
+# Open Cascade
+# ------------
+
+SV_USE_OPENCASCADE = 0
+SV_USE_OPENCASCADE_SHARED = 0
+
 # --------------------------------------
 # Control inclusion of meshSim functions
 # --------------------------------------
@@ -337,6 +344,12 @@ endif
 ifeq ($(SV_USE_PARASOLID_SHARED),1)
     GLOBAL_DEFINES += -DUSE_PARASOLID_SHARED
 endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+    GLOBAL_DEFINES += -DUSE_OPENCASCADE
+endif
+ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
+    GLOBAL_DEFINES += -DUSE_OPENCASCADE_SHARED
+endif
 
 ifeq ($(SV_USE_MESHSIM),1) 
   GLOBAL_DEFINES += -DUSE_MESHSIM
@@ -504,6 +517,14 @@ ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     SHARED_LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
   else
     LIBDIRS += ../Code/Source/Model/MeshSimDiscreteSolidModel
+  endif
+endif
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+  ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
+    SHARED_LIBDIRS += ../Code/Source/Model/OCCTSolidModel
+  else
+    LIBDIRS += ../Code/Source/Model/OCCTSolidModel
   endif
 endif
 
@@ -805,6 +826,27 @@ endif
 # ***  Optional Open Source Packages    ***
 # ***           (GPL code)              ***
 # -----------------------------------------
+
+# ------------
+# Open Cascade
+# ------------
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_cygwin.mk
+         OPENCASCADE_DEFS = -DWNT
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_macosx.mk
+  endif
+
+endif
 
 # ----
 # glib

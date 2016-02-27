@@ -41,6 +41,11 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) $(DEFINES)
 
+ifeq($(SV_USE_OPENCASCADE),1)
+    CXXFLAGS += $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS)
+
+endif
+
 HDRS	= cv_globals.h
 
 CXXSRCS	= cv_globals.cxx

@@ -45,6 +45,10 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(SOLVERIO_INCDIR)
 
+ifeq ($(SV_USE_OPENCASCADE),1)
+   CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
+
 ifeq ($(SV_USE_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
 endif
