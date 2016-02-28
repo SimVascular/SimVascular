@@ -135,6 +135,13 @@ SV_USE_SOURCE_CODE_SVLS = 1
 SV_USE_ZLIB = 1
 
 # -----------------------------------------------------
+# Compile with python interpreter
+# -----------------------------------------------------
+
+SV_USE_PYTHON = 0
+SV_USE_SYSTEM_PYTHON = 0
+
+# -----------------------------------------------------
 # system tcltk
 # -----------------------------------------------------
 
@@ -241,7 +248,6 @@ ifeq ($(CLUSTER), x64_linux)
 endif
 ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang_70
-  SV_USE_CXX11 = 0
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
@@ -382,6 +388,10 @@ ifeq ($(SV_USE_TETGEN),1)
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1) 
     GLOBAL_DEFINES += -DUSE_TET_ADAPTOR
   endif
+endif
+
+ifeq ($(SV_USE_PYTHON),1)
+    GLOBAL_DEFINES += -DUSE_PYTHON
 endif
 
 ifeq ($(SV_USE_ZLIB),1)
@@ -580,13 +590,20 @@ ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
   endif
 endif
 
+# -------------------------
+# Build a python interpreter
+# -------------------------
+
+ifeq ($(SV_USE_PYTHON),1)
+  SHARED_LIBDIRS += ../Code/Source/TclPython
+endif
 
 #
 #  override other options to build solver only!
 #
 
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
+  SHARED_LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
   EXECDIRS = ../Code/FlowSolvers/ThreeDSolver
 endif
 
@@ -758,7 +775,11 @@ ifeq ($(CLUSTER), x64_linux)
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
+	ifeq ($(SV_USE_PYTHON),1)
+	  include $(TOP)/MakeHelpers/vtk-6.2.0-tcltk-8.6-python-2.7.x64_macosx.mk
+        else
+	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
+	endif
 endif
 
 endif
@@ -878,6 +899,26 @@ ifeq ($(SV_USE_GTS),1)
 ###	include $(TOP)/MakeHelpers/gts-2010.03.21.x64_linux.mk
 ###  endif
 
+endif
+
+# ------------------
+# Python
+# ------------------
+
+ifeq ($(SV_USE_PYTHON),1)
+  ifeq ($(CLUSTER), x64_cygwin)
+	  include $(TOP)/MakeHelpers/python-2.7.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	  include $(TOP)/MakeHelpers/python-2.7.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	  ifeq ($(SV_USE_SYSTEM_PYTHON),0)
+	    include $(TOP)/MakeHelpers/python-2.7.x64_macosx.mk
+	  endif
+  endif
 endif
 
 # -----------------------------------------

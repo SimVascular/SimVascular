@@ -83,6 +83,11 @@ if {[info exists SV_NO_RENDERER] == 0} {
   set SV_NO_RENDERER "0"
 }
 
+global SV_BUILD_TYPE
+if {[info exists SV_BUILD_TYPE] == 0} {
+  set SV_BUILD_TYPE "MAKE"
+}
+
 # if { $SV_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SV_VERSION-$SV_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
 # } else {

@@ -1,20 +1,26 @@
 #Creates a python interpreter and stores in global gPythonInterp
 proc startTclPython {} {
   global env
+  global SV_BUILD_TYPE
   global tcl_platform
+
+  set lib_prefix "Lib/liblib_"
   if {$tcl_platform(platform) == "unix"} {
     if {$tcl_platform(os) == "Darwin"} {
-      if [catch {load Lib/liblib_simvascular_tclpython.dylib Tclpython} msg] {
+      if {$SV_BUILD_TYPE != "CMAKE"} {
+	set lib_prefix "Lib/x64_macosx/clang_gfortran/lib_"
+      }
+      if [catch {load ${lib_prefix}simvascular_tclpython.dylib Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }
     if {$tcl_platform(os) == "Linux"} {
-      if [catch {load Lib/liblib_simvascular_tclpython.so Tclpython} msg] {
+      if [catch {load ${lib_prefix}_simvascular_tclpython.so Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }
     if {$tcl_platform(platform) == "windows"} {
-      if [catch {load Lib/liblib_simvascular_tclpython.lib Tclpython} msg] {
+      if [catch {load ${lib_prefix}_simvascular_tclpython.lib Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }

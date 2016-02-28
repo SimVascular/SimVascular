@@ -4,6 +4,11 @@
 option(SV_DEVELOPER_OUTPUT "This is a developer mode to print extra messages during configure" OFF)
 mark_as_superbuild(SV_DEVELOPER_OUTPUT)
 
+set(SV_BUILD_TYPE "CMAKE" CACHE STRING "Designate CMAKE build" FORCE)
+set_property(CACHE SV_BUILD_TYPE PROPERTY CMAKE SHARED)
+mark_as_advanced(SV_BUILD_TYPE)
+mark_as_superbuild(SV_BUILD_TYPE)
+
 #-----------------------------------------------------------------------------
 # Distribution
 option(SV_ENABLE_DISTRIBUTION "Distribute" OFF)
