@@ -51,7 +51,7 @@ if(SV_THREEDSOLVER_USE_SOLVERIO)
 endif()
 #-----------------------------------------------------------------------------
 # Presolver
-if(SV_THREEDSOLVER_USE_SVPOST)
+if(SV_THREEDSOLVER_USE_SVPRE)
 	set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svPre)
 	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
 endif()
