@@ -751,7 +751,7 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_linux.mk
+	include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_linux.mk
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
@@ -771,7 +771,11 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
+	ifeq ($(SV_USE_PYTHON),1)
+	  include $(TOP)/MakeHelpers/vtk-6.2.0-tcltk-8.6-python-2.7.x64_linux.mk
+        else
+	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
+        endif
 endif
 
 ifeq ($(CLUSTER), x64_macosx)

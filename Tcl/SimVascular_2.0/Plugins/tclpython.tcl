@@ -15,12 +15,15 @@ proc startTclPython {} {
       }
     }
     if {$tcl_platform(os) == "Linux"} {
-      if [catch {load ${lib_prefix}_simvascular_tclpython.so Tclpython} msg] {
+      if {$SV_BUILD_TYPE != "CMAKE"} {
+	set lib_prefix "Lib/x64_linux/gcc-gfortran/lib_"
+      }
+      if [catch {load ${lib_prefix}simvascular_tclpython.so Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }
     if {$tcl_platform(platform) == "windows"} {
-      if [catch {load ${lib_prefix}_simvascular_tclpython.lib Tclpython} msg] {
+      if [catch {load ${lib_prefix}simvascular_tclpython.lib Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }

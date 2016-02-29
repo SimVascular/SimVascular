@@ -96,8 +96,8 @@ ifeq ($(MAKE_STATIC_BUILD),1)
     endif
   endif
   ifeq ($(SV_USE_OPENCASCADE),1)
-    ifneq ($(SV_USE__OPENCASCADE_SHARED),1)
-	COPIED_CXXSRCS += ../Model/OcctSolidModel/cv_occt_init.cxx
+    ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
+	COPIED_CXXSRCS += ../Model/OCCTSolidModel/cv_occt_init.cxx
     endif
   endif
   ifeq ($(SV_USE_ITK),1)
