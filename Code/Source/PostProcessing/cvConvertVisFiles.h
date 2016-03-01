@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -43,7 +43,7 @@
 #include "cvUnstructuredGrid.h"
 #include "cvPolyData.h"
 
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
 #include "simvascular_zlib.h"
 #else
 #include <stdlib.h>
@@ -77,7 +77,7 @@ class cvConvertVisFiles {
     cvUnstructuredGrid* GetGridObj();
     void SetGrid(cvUnstructuredGrid *obj) {grid_=(vtkUnstructuredGrid*)(obj->GetVtkPtr());}
     void SetTractionNodes(int numnodes, int* nodes);
-    
+
     // results
     int ReadVisRes(char *infilename);
     cvPolyData* GetPressureObj();
@@ -101,12 +101,12 @@ class cvConvertVisFiles {
     int readTractionFromFile();
     int readDisplacementFromFile();
     int readWSSFromFile();
-    
+
     int findStringInFile(char *findme, gzFile fp);
     int readNextLineFromFile(gzFile fp);
 
   private:
-    
+
     gzFile meshfp_;
     gzFile resfp_;
     char meshfilename_[MAXPATHLEN];
@@ -114,7 +114,7 @@ class cvConvertVisFiles {
 
     int  numTractionNodes_;
     int* tractionNodes_;
-    
+
     int meshLoaded_;
     int resLoaded_;
     int meshExported_;
@@ -128,7 +128,7 @@ class cvConvertVisFiles {
     int haveWSSResults_;
 
     char currentLine_[MAXVISLINELENGTH];
-    
+
     vtkPoints* meshpts_;
     vtkUnstructuredGrid* grid_;
     vtkFloatingPointArrayType* pressure_;
@@ -138,7 +138,7 @@ class cvConvertVisFiles {
     vtkFloatingPointArrayType* traction_;
     vtkFloatingPointArrayType* displacement_;
     vtkFloatingPointArrayType* wss_;
-    
+
 };
 
 #endif

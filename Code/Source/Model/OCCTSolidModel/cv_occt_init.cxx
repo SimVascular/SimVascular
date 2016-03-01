@@ -61,7 +61,7 @@
 // Globals:
 // --------
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 #include "Python.h"
 #include "vtkPythonUtil.h"
 #include "PyVTKClass.h"
@@ -95,7 +95,7 @@ int OCCTSolidModel_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
 int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 #endif
@@ -135,7 +135,7 @@ int Occtsolid_Init( Tcl_Interp *interp )
 
   Tcl_CreateCommand( interp, "opencascadesolidmodel_registrars", OCCTSolidModel_RegistrarsListCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
   Tcl_CreateCommand( interp, "occt_initPyMods", OCCTSolidModel_InitPyModulesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #endif
@@ -172,7 +172,7 @@ int OCCTSolidModel_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 // --------------------
 // pySolid.convertListsToOCCTObject
 // --------------------
@@ -270,7 +270,7 @@ PyObject* convertListsToOCCTObject(PyObject* self, PyObject* args)
 #endif
 
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 //All functions listed and initiated as pyOCCT_methods declared here
 // --------------------
 // pyOCCT_methods
@@ -281,7 +281,7 @@ PyMethodDef pyOCCT_methods[] = {
 };
 #endif
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 //Must be called after the python interpreter is initiated and through
 //the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
 // --------------------

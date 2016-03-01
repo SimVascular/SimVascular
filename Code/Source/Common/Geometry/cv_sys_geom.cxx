@@ -66,7 +66,7 @@
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataCenterlines.h"
 #include "vtkvmtkCenterlineBranchExtractor.h"
@@ -697,7 +697,7 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
   return CV_OK;
 }
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
 /* -------------- */
 /* sys_geom_union_gts */
 /* -------------- */
@@ -4033,7 +4033,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
   return CV_OK;
 }
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 
 /* -------------- */
 /* sys_geom_centerlines */

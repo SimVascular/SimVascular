@@ -42,7 +42,7 @@ typedef double DARR4[4];
 
 int tetIntPnt(int,DARR4**,double **);
 
-#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define SYMTET symtet_
 #endif
 

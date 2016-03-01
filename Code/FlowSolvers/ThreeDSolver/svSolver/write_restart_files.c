@@ -60,14 +60,14 @@
 #include <strings.h>
 #endif
 
-#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
   #define Write_Restart WRITE_RESTART
   #define Write_Error   WRITE_ERROR
   #define Write_Displ   WRITE_DISPL
   #define Append_Restart   APPEND_RESTART
 #endif
 
-#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define Write_Restart write_restart_
   #define Write_Error   write_error_
   #define Write_Displ   write_displ_

@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include "cvIOstream.h"
 #include <time.h>
@@ -65,11 +65,11 @@
 // imperfect simple work around for missing getenv_s
 // on mingw32 stdlib (no bounds checking!)
 #define getenv_s cv_getenv_s
-errno_t cv_getenv_s( 
+errno_t cv_getenv_s(
    size_t *pReturnValue,
    char* buffer,
    size_t numberOfElements,
-   const char *varname 
+   const char *varname
 ) {
   *pReturnValue = 0;
   char *rtnstr = NULL;
@@ -155,7 +155,7 @@ errno_t cv_getenv_s(
     fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
     exit(-1);
   }
-  
+
   returnStatus2 = RegQueryValueEx(hKey2, "RunDir", NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
   //RegCloseKey(hKey2);
 
@@ -175,7 +175,7 @@ errno_t cv_getenv_s(
   char newvar[_MAX_ENV];
   size_t requiredSize;
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
    //
    //  P_SCHEMA
    //
@@ -197,7 +197,7 @@ errno_t cv_getenv_s(
    // Attempt to change p_schema. Note that this only affects
    // the environment variable of the current process. The command
    // processor's environment is not changed.
- 
+
  returnStatus2 = RegQueryValueEx(hKey2, "PSchemaDir", NULL, &dwType2,(LPBYTE)&lszValue3, &dwSize3);
   //fprintf(stdout,"pschema: %s\n",lszValue3);
 
@@ -210,7 +210,7 @@ errno_t cv_getenv_s(
 newvar[0]='\0';
 sprintf(newvar,"%s",lszValue3);
   //fprintf(stdout,"%s\n",newvar);
-TCHAR  shortpschema[1024]=TEXT(""); 
+TCHAR  shortpschema[1024]=TEXT("");
    // convert to short filename without spaces
 if(!GetShortPathName(newvar,shortpschema,1024)) {
      // Handle an error condition.
@@ -225,7 +225,7 @@ getenv_s( &requiredSize, NULL, 0, "P_SCHEMA");
 
 envvar[0]='\0';
 
-   // Get the new value of the p_schema environment variable. 
+   // Get the new value of the p_schema environment variable.
 getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
 
    //if( envvar != NULL )
@@ -278,7 +278,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
     fprintf(stderr,"FATAL ERROR: SV registry error!\n(%s)\n",mykey);
     exit(-1);
   }
-  
+
   returnStatus2 = RegQueryValueEx(hKey2, regVarName, NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
   RegCloseKey(hKey2);
 
@@ -308,7 +308,7 @@ int Tcl_AppInt_Win32ReadRegistryVar(char* regVarName, char* interpVarName, Tcl_I
 int Tcl_AppInit( Tcl_Interp *interp )
 {
 
-#ifdef WIN32  
+#ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
 
   if (Tcl_AppInt_Win32ReadRegistryVar("HomeDir", "env(SV_HOME)", interp ) == TCL_ERROR) {
@@ -337,13 +337,13 @@ int Tcl_AppInit( Tcl_Interp *interp )
       return TCL_ERROR;
     }
   }
-  
+
   if ( SimVascular_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on SimVascular_Init\n" );
     return TCL_ERROR;
   }
 
-  return TCL_OK; 
+  return TCL_OK;
 }
 
 

@@ -47,7 +47,7 @@
 #include "cvPolyDataSolid.h"
 #include "cvFactoryRegistrar.h"
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
 #include "cvMeshSimDiscreteSolidModel.h"
 int DiscreteUtils_Init();
 #endif
@@ -61,13 +61,13 @@ int DiscreteUtils_Init();
 // --------
 
 #include "cv_globals.h"
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 #include "Python.h"
 #include "vtkPythonUtil.h"
 #include "PyVTKClass.h"
 #endif
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 //Python intialization functions. Called from python interpreter
 //
 // --------------------
@@ -285,7 +285,7 @@ PyObject* importList2D(PyObject* self, PyObject* args)
 }
 #endif
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 //All functions listed and initiated as pySolid_methods declared here
 // --------------------
 // pySolid_methods
@@ -401,7 +401,7 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
 			      int argc, CONST84 char *argv[] );
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 		   int argc, CONST84 char *argv[] );
 #endif
@@ -551,7 +551,7 @@ int Solid_Init( Tcl_Interp *interp )
   // Initialize
   cvSolidModel::gCurrentKernel = SM_KT_INVALID;
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
   cvSolidModel::gCurrentKernel = SM_KT_PARASOLID;
 #endif
 
@@ -620,7 +620,7 @@ int Solid_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "solid_getKernel", Solid_GetKernelCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
   Tcl_CreateCommand( interp, "solid_initPyMods", Solid_InitPyModulesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #endif
@@ -628,7 +628,7 @@ int Solid_Init( Tcl_Interp *interp )
   return TCL_OK;
 }
 
-#ifdef USE_PYTHON
+#ifdef SV_USE_PYTHON
 //Must be called after the python interpreter is initiated and through
 //the tcl interprter. i.e. PyInterprter exec {tcl.eval("initPyMods")
 // --------------------

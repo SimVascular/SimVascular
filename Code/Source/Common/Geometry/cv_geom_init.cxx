@@ -257,7 +257,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
 int Geom_Union_GTSCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
 
@@ -268,7 +268,7 @@ int Geom_Subtract_GTSCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
 #endif
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
@@ -436,7 +436,7 @@ int Geom_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "model_name_model_from_polydata_names", Geom_Convert_NURBS_To_PolyCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
   Tcl_CreateCommand( interp, "geom_union_gts", Geom_Union_GTSCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_intersect_gts", Geom_Intersect_GTSCmd,
@@ -444,7 +444,7 @@ int Geom_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "geom_subtract_gts", Geom_Subtract_GTSCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 #endif
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   Tcl_CreateCommand( interp, "geom_centerlines", Geom_CenterlinesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_grouppolydata", Geom_GroupPolyDataCmd,
@@ -1927,7 +1927,7 @@ int Geom_Convert_NURBS_To_PolyCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
 // -------------
 // Geom_Union_GTSCmd
 // -------------
@@ -5805,7 +5805,7 @@ int Geom_ReplacePointDataCmd( ClientData clientData, Tcl_Interp *interp,
   return TCL_OK;
 }
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 int Geom_CenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 		    int argc, CONST84 char *argv[] )
 {

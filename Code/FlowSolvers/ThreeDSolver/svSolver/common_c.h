@@ -6,33 +6,33 @@
  * Portions of the code Copyright (c) 2009-2011 Open Source Medical
  * Software Corporation, University of California, San Diego.
  *
- * Portions of the code Copyright (c) 1998-2007 Stanford University, 
- * Rensselaer Polytechnic Institute, Charles A. Taylor, 
+ * Portions of the code Copyright (c) 1998-2007 Stanford University,
+ * Rensselaer Polytechnic Institute, Charles A. Taylor,
  * Kenneth E. Jansen.
- * 
- * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
  *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ * See SimVascular Acknowledgements file for additional
+ * contributors to the source code.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
 
  * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
- * documentation and/or other materials provided with the distribution. 
+ * this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * Neither the name of the Stanford University or Rensselaer Polytechnic
  * Institute nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior 
+ * promote products derived from this software without specific prior
  * written permission.
 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
  * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -47,37 +47,37 @@
 // input.config.
 //
 // Input variables that have been previously declared in common.h have to be
-// re-declared here, in a consistant structure.   
+// re-declared here, in a consistant structure.
 
-#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
 
-#define workfc WORKFC 
-#define fronts FRONTS 
+#define workfc WORKFC
+#define fronts FRONTS
 #define newdim NEWDIM
-#define timer4 TIMER4 
-#define extrat EXTRAT 
-#define aerfrc AERFRC 
-#define conpar CONPAR 
-#define shpdat SHPDAT 
-#define elmpar ELMPAR 
-#define genpar GENPAR 
-#define inpdat INPDAT 
-#define intdat INTDAT 
+#define timer4 TIMER4
+#define extrat EXTRAT
+#define aerfrc AERFRC
+#define conpar CONPAR
+#define shpdat SHPDAT
+#define elmpar ELMPAR
+#define genpar GENPAR
+#define inpdat INPDAT
+#define intdat INTDAT
 #define mio MIO
-#define mioname MIONAME 
-#define itrpnt ITRPNT 
-#define matdat MATDAT 
-#define mmatpar MMATPAR 
-#define outpar OUTPAR 
+#define mioname MIONAME
+#define itrpnt ITRPNT
+#define matdat MATDAT
+#define mmatpar MMATPAR
+#define outpar OUTPAR
 #define point POINT
-#define precis PRECIS 
-#define propar PROPAR 
-#define resdat RESDAT 
-#define solpar SOLPAR 
-#define timdat TIMDAT 
+#define precis PRECIS
+#define propar PROPAR
+#define resdat RESDAT
+#define solpar SOLPAR
+#define timdat TIMDAT
 #define timpar TIMPAR
 #define incomp INCOMP
-#define mtimer1 MTIMER1 
+#define mtimer1 MTIMER1
 #define mtimer2 MTIMER2
 #define title TITLE
 #define sclrs SCLRS
@@ -86,37 +86,37 @@
 
 #endif
 
-#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 
-#define workfc workfc_ 
-#define fronts fronts_ 
-#define newdim newdim_ 
-#define timer4 timer4_ 
-#define extrat extrat_ 
-#define aerfrc aerfrc_ 
-#define conpar conpar_ 
-#define shpdat shpdat_ 
-#define elmpar elmpar_ 
-#define genpar genpar_ 
-#define inpdat inpdat_ 
-#define intdat intdat_ 
-#define mio mio_ 
-#define mioname mioname_ 
-#define itrpnt itrpnt_ 
-#define matdat matdat_ 
-#define mmatpar mmatpar_ 
-#define outpar outpar_ 
-#define point point_ 
-#define precis precis_ 
-#define propar propar_ 
-#define resdat resdat_ 
-#define solpar solpar_ 
-#define timdat timdat_ 
-#define timpar timpar_ 
-#define incomp incomp_ 
-#define mtimer1 mtimer1_ 
-#define mtimer2 mtimer2_ 
-#define title title_ 
+#define workfc workfc_
+#define fronts fronts_
+#define newdim newdim_
+#define timer4 timer4_
+#define extrat extrat_
+#define aerfrc aerfrc_
+#define conpar conpar_
+#define shpdat shpdat_
+#define elmpar elmpar_
+#define genpar genpar_
+#define inpdat inpdat_
+#define intdat intdat_
+#define mio mio_
+#define mioname mioname_
+#define itrpnt itrpnt_
+#define matdat matdat_
+#define mmatpar mmatpar_
+#define outpar outpar_
+#define point point_
+#define precis precis_
+#define propar propar_
+#define resdat resdat_
+#define solpar solpar_
+#define timdat timdat_
+#define timpar timpar_
+#define incomp incomp_
+#define mtimer1 mtimer1_
+#define mtimer2 mtimer2_
+#define title title_
 #define sclrs sclrs_
 #define nomodule nomodule_
 #define sequence sequence_
@@ -124,7 +124,7 @@
 #endif
 
 #define MAXBLK   5000
-#define MAXSURF  199  
+#define MAXSURF  199
 #define MAXTS   100
 #define MAXTOP   5
 #define MAXQPT   125
@@ -150,30 +150,30 @@
 #define five   5.0000000000000000000000000000000d0
 #define pi   3.1415926535897932384626433832795d0
 extern "C" {
-  extern struct { 
+  extern struct {
     int master;
     int numpe;
     int myrank;
   } workfc ;
 
-  extern struct { 
+  extern struct {
     int maxfront;
     int nlwork;
   } fronts ;
 
-  extern struct { 
+  extern struct {
     int numper;
     int nshgt;
     int nshg0;
   } newdim ;
 
-  extern struct { 
+  extern struct {
     double birth;
     double death;
     double comtim;
   } timer4 ;
 
-  extern struct { 
+  extern struct {
     double ttim[100];
   } extrat ;
 
@@ -184,7 +184,7 @@ extern "C" {
     bool consrv_sclr_conv_vel;
   } sclrs;
 
-  extern struct { 
+  extern struct {
     double flxID[MAXSURF+1][10] ;
     double Force[3];
     double HFlux;
@@ -194,7 +194,7 @@ extern "C" {
     int isrfIM;
   } aerfrc ;
 
-  extern struct { 
+  extern struct {
     int numnp;
     int numel;
     int numelb;
@@ -217,7 +217,7 @@ extern "C" {
     int idtn;
   } conpar ;
 
-  extern struct { 
+  extern struct {
     int nshape;
     int nshapeb;
     int maxshb;
@@ -228,7 +228,7 @@ extern "C" {
     int nsonmax;
   } shpdat ;
 
-  extern struct { 
+  extern struct {
     int lelCat;
     int lcsyst;
     int iorder;
@@ -244,7 +244,7 @@ extern "C" {
     int mattyp;
   } elmpar ;
 
-  extern struct { 
+  extern struct {
     double E3nsd;
     int I3nsd;
     int nsymdf;
@@ -274,7 +274,7 @@ extern "C" {
     int EntropyPressure;
   } genpar ;
 
-  extern struct { 
+  extern struct {
     double epstol[8];  /* 1+ max number of scalars  (beginning of the
                           end of time sequences) */
     double Delt[MAXTS];
@@ -296,7 +296,7 @@ extern "C" {
     int solverTask;
   } inpdat ;
 
-  extern struct { 
+  extern struct {
     int iin;
     int igeom;
     int ipar;
@@ -316,7 +316,7 @@ extern "C" {
     int itime;
   } mio ;
 
-  extern struct { 
+  extern struct {
     double fin;
     double fgeom;
     double fpar;
@@ -333,7 +333,7 @@ extern "C" {
     double ftime;
   } mioname ;
 
-  extern struct { 
+  extern struct {
     int mHBrg;
     int meBrg;
     int myBrg;
@@ -341,14 +341,14 @@ extern "C" {
     int mRsin;
   } itrpnt ;
 
-  extern struct { 
+  extern struct {
     double datmat[MAXTS][7][3];
     int matflg[MAXTS][6];
     int nummat;
     int mexist;
   } matdat ;
 
-  extern struct { 
+  extern struct {
     double pr, Planck, Stephan, Nh, Rh, Rgas;
     double gamma, gamma1, s0;
     //, const, xN2, xO2;
@@ -357,7 +357,7 @@ extern "C" {
     //double Tvib[5],g0s[5], dofs[5],ithm;
   } mmatpar ;
 
-  extern struct { 
+  extern struct {
     double ro;
     double vel;
     double temper;
@@ -374,26 +374,26 @@ extern "C" {
 /*      int ipresref; */
   } outpar ;
 
-  extern struct { 
+  extern struct {
     int mbeg;
     int mend;
     int mprec;
   } point ;
 
-  extern struct { 
+  extern struct {
     double epsM;
     int iabres;
   } precis ;
 
-  extern struct { 
+  extern struct {
     int npro;
   } propar ;
 
-  extern struct { 
+  extern struct {
     double resfrt;
   } resdat ;
 
-  extern struct { 
+  extern struct {
     int ivart;
     int iDC;
     int iPcond;
@@ -404,7 +404,7 @@ extern "C" {
     int idcsclr[2];
   } solpar ;
 
-  extern struct { 
+  extern struct {
     double time;
     double CFLfld;
     double CFLsld;
@@ -427,12 +427,12 @@ extern "C" {
     int iCFLworst;
   } timdat ;
 
-  extern struct { 
+  extern struct {
     int LCtime;
     int ntseq;
   } timpar ;
 
-  extern struct { 
+  extern struct {
     int numeqns[100];
     int minIters;
     int maxIters;
@@ -449,11 +449,11 @@ extern "C" {
     int maxContinuityIters;
   } incomp ;
 
-  extern struct { 
+  extern struct {
     double ccode[13];
   } mtimer1 ;
 
-  extern struct { 
+  extern struct {
     double flops;
     double gbytes;
     double sbytes;
@@ -464,7 +464,7 @@ extern "C" {
     int icode3;
   } mtimer2 ;
 
-  extern struct { 
+  extern struct {
     double title;
     int ititle;
   } title ;
@@ -474,7 +474,7 @@ extern "C" {
   }intdat;
 
   extern struct {
-    double bcttimescale;    
+    double bcttimescale;
     double ValueListResist[MAXSURF+1];
     double rhovw;
     double thicknessvw;
@@ -529,7 +529,7 @@ extern "C" {
     // =======
     int iwallmassfactor;
     int iwallstiffactor;
-    int nProps;  
+    int nProps;
  } nomodule;
 
   extern struct {
