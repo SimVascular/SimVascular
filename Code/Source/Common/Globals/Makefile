@@ -45,7 +45,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS)
 endif
 
-ifeq ($(SV_USE_GLOBALS_SHARED),1)
+ifeq ($(SV_USE_GLOBALS_SHARED),0)
   HDRS	  = cv_globals.h
   CXXSRCS = cv_globals.cxx
 else
