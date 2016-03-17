@@ -56,7 +56,7 @@
 #include "vtkCGSmooth.h"
 #include "vtkFloatArray.h"
 #include "vtkPolyDataNormals.h"
-#include "vtkLocalLinearSubdivisionFilter.h"
+#include "vtkLocalLoopSubdivisionFilter.h"
 #include "vtkLocalSmoothPolyDataFilter.h"
 #include "vtkCellLocator.h"
 #include "vtkGenericCell.h"
@@ -257,8 +257,8 @@ int vtkConstrainedBlend::Decimate(vtkPolyData *pd) {
 }
 
 int vtkConstrainedBlend::Subdivide(vtkPolyData *pd) {
-  vtkSmartPointer<vtkLocalLinearSubdivisionFilter> subdivider =
-    vtkSmartPointer<vtkLocalLinearSubdivisionFilter>::New();
+  vtkSmartPointer<vtkLocalLoopSubdivisionFilter> subdivider =
+    vtkSmartPointer<vtkLocalLoopSubdivisionFilter>::New();
 
   subdivider->SetInputData(pd);
   subdivider->SetNumberOfSubdivisions(this->NumSubdivisionIterations);

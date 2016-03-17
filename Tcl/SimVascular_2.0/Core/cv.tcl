@@ -212,9 +212,15 @@ proc geom_localOperation {operation inPd outPd} {
     set iters $gui3Dvars(local_smooth_num_iters)
     set relax $gui3Dvars(local_smooth_relax_factor)
     geom_local_laplacian_smooth -src $tmp2Pd -result $tmp3Pd -numiters $iters -relax $relax -cellarray "ActiveCells"
-  } elseif {$operation == "lSub"} {
+  } elseif {$operation == "lLinSub"} {
     set iters $gui3Dvars(local_linear_subdivisions)
-    geom_local_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
+    geom_local_linear_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
+  } elseif {$operation == "lButSub"} {
+    set iters $gui3Dvars(local_butterfly_subdivisions)
+    geom_local_butterfly_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
+  } elseif {$operation == "lLoopSub"} {
+    set iters $gui3Dvars(local_loop_subdivisions)
+    geom_local_loop_subdivision -src $tmp2Pd -result $tmp3Pd -numiters $iters -cellarray "ActiveCells"
   } elseif {$operation == "lCon"} {
     set iters $gui3Dvars(local_cgsmooth_num_iters)
     set constrain $gui3Dvars(local_cgsmooth_constrain_factor)
