@@ -12788,7 +12788,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::entry .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tentry23  -font {Helvetica 10}  -textvariable {gui3Dvars(local_linear_subdivisions)}  -width {10}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface lSub}  -text {Locally Subdivide}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe0.tframe13.tlabelframe17.tframe13.tframe0.tframe31.tbutton18  -command {gui3DchangeSurface lLinSub}  -text {Locally Subdivide}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1
   ttk::labelframe .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe13.tframe15.notebook16.tframe18.tlabelframe1  -text {Local Region Selection [-]}  -width {265}  -height {25}
@@ -27456,7 +27456,13 @@ proc gui3DchangeSurface { operation} {
   } elseif {$operation == "lDec"} {
      geom_localOperation $operation $modelpd $obj
 
-  } elseif {$operation == "lSub"} {
+  } elseif {$operation == "lLinSub"} {
+     geom_localOperation $operation $modelpd $obj
+
+  } elseif {$operation == "lButSub"} {
+     geom_localOperation $operation $modelpd $obj
+
+  } elseif {$operation == "lLoopSub"} {
      geom_localOperation $operation $modelpd $obj
 
   } elseif {$operation == "lLap"} {
@@ -49569,6 +49575,8 @@ set {gui3Dvars(localControlAttributes)} {}
 set {gui3Dvars(local_cgsmooth_constrain_factor)} {0.2}
 set {gui3Dvars(local_cgsmooth_num_iters)} {3}
 set {gui3Dvars(local_linear_subdivisions)} {1}
+set {gui3Dvars(local_butterfly_subdivisions)} {1}
+set {gui3Dvars(local_loop_subdivisions)} {1}
 set {gui3Dvars(local_quad_target)} {0.25}
 set {gui3Dvars(local_smooth_num_iters)} {100}
 set {gui3Dvars(local_smooth_relax_factor)} {0.01}

@@ -48,7 +48,10 @@ SET(CXXSRCS	cv_sys_geom.cxx cv_ggems.cxx
 	vtkLoftPolyDataSolid.cxx
 	vtkLocalQuadricDecimation.cxx
 	vtkLocalInterpolatingSubdivisionFilter.cxx
+	vtkLocalApproximatingSubdivisionFilter.cxx
 	vtkLocalLinearSubdivisionFilter.cxx
+	vtkLocalButterflySubdivisionFilter.cxx
+	vtkLocalLoopSubdivisionFilter.cxx
 	vtkLocalSmoothPolyDataFilter.cxx
 	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
@@ -64,7 +67,10 @@ SET(HDRS cv_sys_geom.h cv_ggems.h
 	vtkLoftPolyDataSolid.h
 	vtkLocalQuadricDecimation.h
 	vtkLocalInterpolatingSubdivisionFilter.h
+	vtkLocalApproximatingSubdivisionFilter.h
 	vtkLocalLinearSubdivisionFilter.h
+	vtkLocalButterflySubdivisionFilter.h
+	vtkLocalLoopSubdivisionFilter.h
 	vtkLocalSmoothPolyDataFilter.h
 	vtkCGSmooth.h svMath.h sparse_matrix.h
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h

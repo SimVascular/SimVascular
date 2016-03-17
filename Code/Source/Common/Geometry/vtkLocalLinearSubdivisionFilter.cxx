@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -33,9 +33,9 @@
  *  subdivision
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkLocalLinearSubdivisionFilter.h"
@@ -63,7 +63,7 @@ int vtkLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
   vtkPoints *inputPts=inputDS->GetPoints();
   vtkPointData *inputPD=inputDS->GetPointData();
   static double weights[2] = {.5, .5};
-  vtkSmartPointer<vtkIdList> edgeNeighbor = 
+  vtkSmartPointer<vtkIdList> edgeNeighbor =
     vtkSmartPointer<vtkIdList>::New();
 
   // Create an edge table to keep track of which edges we've processed
@@ -99,13 +99,13 @@ int vtkLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
       inputDS->GetCellEdgeNeighbors (cellId, p1, p2, edgeNeighbor);
       if (edgeNeighbor->GetNumberOfIds() != 1)
         {
-	vtkErrorMacro ("Dataset is non-manifold and cannot be subdivided.");
-	delete [] noSubdivideCell;
-	return 0;
+        vtkErrorMacro ("Dataset is non-manifold and cannot be subdivided.");
+        delete [] noSubdivideCell;
+        return 0;
         }
-      if (noSubdivideCell[edgeNeighbor->GetId(0)] || 
-	  noSubdivideCell[cellId])
-	isLocalBoundary = 1;
+      if (noSubdivideCell[edgeNeighbor->GetId(0)] ||
+          noSubdivideCell[cellId])
+        isLocalBoundary = 1;
 
       outputPD->CopyData (inputPD, p1, p1);
       outputPD->CopyData (inputPD, p2, p2);
@@ -125,21 +125,21 @@ int vtkLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
         {
         newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData, cellIds);
         }
-      else 
+      else
         {
-	newId = -1;
-	if (edgeTable->IsEdge (p1, p2) == -1)
-	  {
-	  outputPD->CopyData (inputPD, p1, p1);
-	  outputPD->CopyData (inputPD, p2, p2);
-	  edgeTable->InsertEdge (p1, p2);
-	  }
-	else
-	  {
-	  inputDS->GetCellEdgeNeighbors (-1, p1, p2, cellIds);
-	  //newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData, cellIds);
-	  }
-	}
+        newId = -1;
+        if (edgeTable->IsEdge (p1, p2) == -1)
+          {
+          outputPD->CopyData (inputPD, p1, p1);
+          outputPD->CopyData (inputPD, p2, p2);
+          edgeTable->InsertEdge (p1, p2);
+          }
+        else
+          {
+          inputDS->GetCellEdgeNeighbors (-1, p1, p2, cellIds);
+          //newId = this->FindEdge (inputDS, cellId, p1, p2, edgeData, cellIds);
+          }
+        }
       edgeData->InsertComponent(cellId,edgeId,newId);
       p1 = p2;
       if (edgeId < 2)
@@ -168,7 +168,7 @@ int vtkLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdi
     for (vtkIdType cellId=0;cellId < numCells;cellId++)
     {
       if (this->SubdivideCellArray->GetValue(cellId) != 1)
-	noSubdivideCell[cellId] = 1;
+        noSubdivideCell[cellId] = 1;
     }
   }
   int numPoints = pd->GetNumberOfPoints();
@@ -181,13 +181,13 @@ int vtkLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdi
       pd->GetCellPoints(cellId,npts,pts);
       for (int i=0;i<npts;i++)
       {
-	vtkIdType pointId= pts[i];
-	if (this->SubdividePointArray->GetValue(pointId) != 1)
-	  fixedPts++;
+        vtkIdType pointId= pts[i];
+        if (this->SubdividePointArray->GetValue(pointId) != 1)
+          fixedPts++;
       }
       if (fixedPts == npts)
       {
-	noSubdivideCell[cellId] = 1;
+        noSubdivideCell[cellId] = 1;
       }
     }
   }
