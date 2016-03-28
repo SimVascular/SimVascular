@@ -1,2 +1,2 @@
 
-$SIMVASCULAR_HOME/BuildWithMake/Bin/tetadaptor.exe $*
+$SV_HOME/BuildWithMake/Bin/tetadaptor.exe $*

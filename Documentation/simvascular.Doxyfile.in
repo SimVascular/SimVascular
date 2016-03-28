@@ -30,7 +30,7 @@
 # Project related configuration options
 #---------------------------------------------------------------------------
 PROJECT_NAME           = simvascular
-PROJECT_NUMBER         = @SIMVASCULAR_FULL_VERSION@
+PROJECT_NUMBER         = @SV_FULL_VERSION@
 OUTPUT_DIRECTORY       = @SimVascular_DOCS_DIR@
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -240,7 +240,7 @@ ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = NO
 SEARCH_INCLUDES        = YES
-INCLUDE_PATH           = REPLACEME_SIMVASCULAR_DOX_INCLUDE_DIR
+INCLUDE_PATH           = REPLACEME_SV_DOX_INCLUDE_DIR
 INCLUDE_FILE_PATTERNS  = *.h
 PREDEFINED             = 
 EXPAND_AS_DEFINED      = 

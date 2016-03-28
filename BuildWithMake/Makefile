@@ -64,26 +64,26 @@ ifeq ($(CLUSTER),x64_cygwin)
 # leave intel compilers blank for now on windows
 #	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+`cygpath -u $(INTEL_COMPILER_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH++g\"" >> tclscript
-ifeq ($(MAKE_WITH_GLIB),1)
+ifeq ($(SV_USE_GLIB),1)
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
 endif
-ifeq ($(MAKE_WITH_MPI),1)
+ifeq ($(SV_USE_MPI),1)
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
 endif
-ifeq ($(MAKE_WITH_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID),1)
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+`cygpath -u $(PARASOLID_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+`cygpath -u $(P_SCHEMA)`+g\"" >> tclscript
 endif
-ifeq ($(MAKE_WITH_MESHSIM),1)
+ifeq ($(SV_USE_MESHSIM),1)
 	-echo "puts \"s+REPLACEME_MESHSIM_SO_PATH+`cygpath -u $(MESHSIM_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
 endif
-ifeq ($(MAKE_WITH_LESLIB),1)
+ifeq ($(SV_USE_LESLIB),1)
 	-echo "puts \"s+REPLACEME_LES_LICENSE_SERVER+$(LES_LICENSE_SERVER)+g\"" >> tclscript
 endif
-ifeq ($(MAKE_WITH_VTK),1)
+ifeq ($(SV_USE_VTK),1)
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
 endif
 endif
@@ -105,6 +105,8 @@ ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIR)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(CLUSTER),x64_macosx)
@@ -125,6 +127,8 @@ ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+REPLACEME_PARASOLID_SO_PATH+$(PARASOLID_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_P_SCHEMA+$(P_SCHEMA)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+$(VTK_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIR)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
 endif
 	-/usr/bin/tclsh tclscript > sedscript

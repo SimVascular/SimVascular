@@ -3,7 +3,7 @@
 # instead of embedded keys
 # run the executable
 if [ -e $SIM_LICENSE_FILE ] ; then
-$SIMVASCULAR_HOME/BuildWithMake/Bin/adaptor.exe $*
+$SV_HOME/BuildWithMake/Bin/adaptor.exe $*
 else
 echo "No license key for MeshSim found!!!  Exiting."
 fi

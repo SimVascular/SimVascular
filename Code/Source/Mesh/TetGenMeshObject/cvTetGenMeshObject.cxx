@@ -65,7 +65,7 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkAppendPolyData.h"
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 	#include "cv_VMTK_utils.h"
 	#include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
 	#include "vtkvmtkUnstructuredGridTetraFilter.h"
@@ -790,7 +790,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       meshoptions_.secondarrayfunction = 1;
   }
   else if(!strncmp(flags,"SurfaceMeshFlag",15)) {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.surfacemeshflag = values[0];
@@ -876,7 +876,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
 int cvTetGenMeshObject::SetBoundaryLayer(int type, int id, int side,
     int nL, double* H)
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   meshoptions_.boundarylayermeshflag = 1;
   meshoptions_.numsublayers = nL;
   meshoptions_.blthicknessfactor = *H;
@@ -1100,7 +1100,7 @@ int cvTetGenMeshObject::GenerateMesh() {
 
 //All these complicated options exist if using VMTK. Should be stopped prior
 //to this if trying to use VMTK options and don't have VMTK.
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   //If doing surface remeshing!
   if (meshoptions_.surfacemeshflag)
   {
@@ -1270,7 +1270,7 @@ int cvTetGenMeshObject::GenerateMesh() {
     fprintf(stdout,"Only surface\n");
   }
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   //This is a post meshing step that needs to be done for boundary layer
   //mesh
   if (meshoptions_.boundarylayermeshflag)
@@ -1439,7 +1439,7 @@ int cvTetGenMeshObject::SetInputUnstructuredGrid(vtkUnstructuredGrid *ug)
  */
 int cvTetGenMeshObject::GenerateSurfaceRemesh()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   int meshcapsonly = 0;
   int preserveedges;
   int trianglesplitfactor;
@@ -1528,7 +1528,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
  */
 int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   if (boundarylayermesh_ != NULL)
   {
     boundarylayermesh_->Delete();
@@ -1608,7 +1608,7 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
  */
 int cvTetGenMeshObject::GenerateAndMeshCaps()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   vtkSmartPointer<vtkIdList> excluded =
     vtkSmartPointer<vtkIdList>::New();
   int meshcapsonly = 1;
@@ -1686,7 +1686,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
  */
 int cvTetGenMeshObject::GenerateMeshSizingFunction()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   vtkSmartPointer<vtkCleanPolyData> cleaner =
     vtkSmartPointer<vtkCleanPolyData>::New();
   //Compute a mesh sizing function to send to TetGen and create a
@@ -1725,7 +1725,7 @@ int cvTetGenMeshObject::GenerateMeshSizingFunction()
  */
 int cvTetGenMeshObject::AppendBoundaryLayerMesh()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   if (surfacemesh_ != NULL)
   {
     surfacemesh_->Delete();

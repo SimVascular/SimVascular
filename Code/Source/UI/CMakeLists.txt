@@ -37,7 +37,7 @@ if(SV_USE_MESHSIM)
         endif()
 endif()
 
-if(SV_USE_MESHSIM_DISCRETE_SOLIDMODEL)
+if(SV_USE_MESHSIM_DISCRETE_MODEL)
 	if (NOT SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
 	  ${SV_SOURCE_DIR}/Source/Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx)

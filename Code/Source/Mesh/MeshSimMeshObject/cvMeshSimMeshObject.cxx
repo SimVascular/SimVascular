@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -33,7 +33,7 @@
  *
  *=========================================================================*/
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 #include "cvMeshSimMeshObject.h"
 #include "cvSolidModel.h"
 #include "cv_misc_utils.h"
@@ -85,7 +85,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   model = NULL;
   meshloaded_ = 0;
   loadedVolumeMesh_ = 0;
-  quadElem_ = 0; 
+  quadElem_ = 0;
   //nodemap_ = NULL;
   pts_ = NULL;
 
@@ -101,7 +101,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   progress_ = Progress_new();
   Progress_setDefaultCallback(progress_);
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
   discreteModel_ = NULL;
 #endif
 
@@ -120,7 +120,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   meshoptions_.gmincurv_type = 0;
   meshoptions_.gmincurv = 0.0;
 
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
   errorIndicatorID = NULL;
   modes            = NULL;
   nodalhessianID   = NULL;
@@ -138,7 +138,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject( const cvMeshSimMeshObject& sm )
 {
 
   // Copy( sm );   // relying on automatic upcast to cvMeshObject*
-  
+
 }
 
 
@@ -165,14 +165,14 @@ cvMeshSimMeshObject::~cvMeshSimMeshObject()
 
    if (case_ != NULL) MS_deleteMeshCase(case_);
    if (progress_ != NULL) Progress_delete(progress_);
-    
-#ifdef USE_DISCRETE_MODEL
+
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
    if (discreteModel_ != NULL) {
      delete discreteModel_;
    }
 #endif
 
-   if (mesh != NULL) 
+   if (mesh != NULL)
      M_release(mesh);
    if (model != NULL) GM_release(model);
 
@@ -215,7 +215,7 @@ int cvMeshSimMeshObject::Logoff()
 // Print
 // -----
 
-int cvMeshSimMeshObject::Print() 
+int cvMeshSimMeshObject::Print()
 {
    /* output the statistics */
   int num_verts = M_numVertices (mesh);
@@ -293,7 +293,7 @@ int cvMeshSimMeshObject::InitTraversal() {
   loadedVolumeMesh_ = 1;
 
   numNodes_ = M_numVertices (mesh);
-  numLinearNodes_ = numNodes_; 
+  numLinearNodes_ = numNodes_;
   numElements_ = M_numRegions (mesh);
   numModelRegions_ = GM_numRegions (model);
 
@@ -314,7 +314,7 @@ int cvMeshSimMeshObject::InitTraversal() {
   GRIter_delete(myGRiter);
 
   int num_verts = M_numVertices (mesh);
- 
+
   // Add node numbers to the points
   // NOTE: node numbers start at 1
   VIter myViter = M_vertexIter(mesh);
@@ -364,7 +364,7 @@ int cvMeshSimMeshObject::InitTraversal() {
   initRegionTraversal();
 
   return CV_OK;
-  
+
 }
 
 
@@ -393,7 +393,7 @@ int cvMeshSimMeshObject::Update() {
   }
 
   return CV_OK;
-  
+
 }
 
 int cvMeshSimMeshObject::GetNodeCoords(int node) {
@@ -428,18 +428,18 @@ int cvMeshSimMeshObject::GetNodeCoords(int node) {
   }
 
   // The following code does not work since the iterators
-  // are unimplemented for the point object type. 
+  // are unimplemented for the point object type.
   //
   // search the point id's for the appropriate P_id
   //
   //void* temp = 0;
   //for (i = 0;i < (num_verts+nMeshEdges);i++) {
   //   point = M_nextPoint(mesh, &temp);
-  //   nodenumber = P_id (point);  
+  //   nodenumber = P_id (point);
   //   if (nodenumber == node) {
   //      x = P_x (point);
   //      y = P_y (point);
-  //      z = P_z (point);  
+  //      z = P_z (point);
   //      coordstr[0] = '\0';
   //      sprintf(coordstr,"%lf %lf %lf",x,y,z);
   //      Tcl_AppendElement(interp_, coordstr);
@@ -460,19 +460,19 @@ int cvMeshSimMeshObject::GetNodeCoords(int node) {
   } else {
     MEdge *edge;
     EIter myEiter = M_edgeIter(mesh);
-    while (edge = EIter_next(myEiter)) { 
+    while (edge = EIter_next(myEiter)) {
       if (E_numPoints(edge) != 1) {
          fprintf(stderr,"ERROR:  no interior point!\n");
          EIter_delete(myEiter);
          return CV_ERROR;
       }
       point = E_point(edge,0);
-      nodenumber = P_id (point);  
+      nodenumber = P_id (point);
       if (nodenumber == node) {
         nodeID_ = nodenumber;
         nodeX_ = P_x (point);
         nodeY_ = P_y (point);
-        nodeZ_ = P_z (point);  
+        nodeZ_ = P_z (point);
         //coordstr[0] = '\0';
         //sprintf(coordstr,"%lf %lf %lf",x,y,z);
         //Tcl_AppendElement(interp_, coordstr);
@@ -486,17 +486,17 @@ int cvMeshSimMeshObject::GetNodeCoords(int node) {
   return CV_ERROR;
 
 }
- 
- 
+
+
 cvPolyData* cvMeshSimMeshObject::GetPolyData() {
 
   cvPolyData* result =NULL;
 
   if(loadedVolumeMesh_ == 1) {
- 
+
     cvUnstructuredGrid* ug = this->GetUnstructuredGrid();
     vtkUnstructuredGrid* vtkug = ug->GetVtkUnstructuredGrid();
-     
+
     vtkGeometryFilter* surfFilt = vtkGeometryFilter::New();
     surfFilt->MergingOff();
     surfFilt->SetInputDataObject(vtkug);
@@ -547,13 +547,13 @@ cvPolyData* cvMeshSimMeshObject::GetPolyData() {
     VIter myViter = M_vertexIter(mesh);
     for (i = 0; i < nshgtot; i++) {
       pPoint point = V_point (VIter_next(myViter));
-      int nodenumber = P_id (point);  
+      int nodenumber = P_id (point);
       double x = P_x (point);
       double y = P_y (point);
-      double z = P_z (point);  
+      double z = P_z (point);
       pts->SetPoint(nodenumber-1,x,y,z);
       gid->SetTuple1(nodenumber-1,nodenumber);
-    } // i 
+    } // i
     VIter_delete(myViter);
 
     mypd->SetPoints(pts);
@@ -565,7 +565,7 @@ cvPolyData* cvMeshSimMeshObject::GetPolyData() {
     // if a tet mesh, insert tets
     // if a surface mesh, insert facets
     vtkIdList* PointIds = vtkIdList::New();
-    PointIds->Allocate(10,10);  
+    PointIds->Allocate(10,10);
     temp  = 0;
 
     // insert the triangles
@@ -573,17 +573,17 @@ cvPolyData* cvMeshSimMeshObject::GetPolyData() {
     int num_faces = M_numFaces (mesh);
 
     FIter myFiter = M_faceIter(mesh);
-    pFace myface; 
+    pFace myface;
     while (myface = FIter_next(myFiter)) {
       pPList vert_list = F_vertices (myface,MY_MESHSIM_VERTEX_ORDERING);
       for (j = 0; j < PList_size (vert_list); j++) {
         int nodenum = P_id (V_point ((pVertex)PList_item (vert_list, j)));
         PointIds->InsertNextId(nodenum-1);
-      }      
+      }
       mypd->InsertNextCell(VTK_POLYGON,PointIds);
-      PList_delete(vert_list);  
+      PList_delete(vert_list);
       PointIds->Reset();
-    }  
+    }
     FIter_delete(myFiter);
 
     PointIds->Delete();
@@ -601,17 +601,17 @@ cvPolyData* cvMeshSimMeshObject::GetPolyData() {
 //
 //  GetUnstructuredGrid
 //
- 
+
 cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
 
   // recall the node numbers start at 1 in the P_id,
   // but in vtkPolyData file they start at 0.
 
-  cvUnstructuredGrid *result = NULL; 
+  cvUnstructuredGrid *result = NULL;
 
   vtkPoints* pts = NULL;
   vtkUnstructuredGrid* grid = NULL;
- 
+
   int i,j;
   void* temp = 0;
 
@@ -638,13 +638,13 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
   VIter myViter = M_vertexIter(mesh);
   for (i = 0; i < nshgtot; i++) {
     pPoint point = V_point (VIter_next(myViter));
-    int nodenumber = P_id (point);  
+    int nodenumber = P_id (point);
     double x = P_x (point);
     double y = P_y (point);
-    double z = P_z (point);  
+    double z = P_z (point);
     pts->SetPoint(nodenumber-1,x,y,z);
     gid->SetTuple1(nodenumber-1,nodenumber);
-  } // i 
+  } // i
   VIter_delete(myViter);
 
   grid->SetPoints(pts);
@@ -683,7 +683,7 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
         rid->InsertNextTuple1(curMdlRegID_);
     }
   }
-  
+
   //pRegion myelement = NULL;
   //RIter myRIter = M_regionIter(mesh);
   //int curMdlRegID = 1;
@@ -701,7 +701,7 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
   //      // vtk nodes must start at zero
   //      ptids->SetId(i,P_id(V_point(vertex))-1);
   //  } // i
-  //  PList_delete(vert_list);      
+  //  PList_delete(vert_list);
   //  grid->InsertNextCell(VTK_TETRA,ptids);
   //  eid->InsertNextTuple1(curElemID);
   //  rid->InsertNextTuple1(curMdlRegID);
@@ -730,13 +730,13 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
 //
 
 int cvMeshSimMeshObject::getNextNode () {
- 
+
   pVertex vertex;
 
   pPoint point;
 
   if (iterNodes_ >= numNodes_) return 0;
- 
+
   if (iterNodes_ >= numLinearNodes_ && quadElem_ == 0) return 0;
 
   if (iterNodes_ < numLinearNodes_) {
@@ -744,14 +744,14 @@ int cvMeshSimMeshObject::getNextNode () {
     point = V_point (vertex);
   }
 
-  if (iterNodes_ == numLinearNodes_) { 
+  if (iterNodes_ == numLinearNodes_) {
     ptrNodes_=NULL;
   }
 
   if (iterNodes_ >= numLinearNodes_) {
-    //For each edge - output the midpoint node  
+    //For each edge - output the midpoint node
     MEdge* edge = EIter_next(ptrEdges_);
-  
+
     if (E_numPoints(edge) != 1) {
       fprintf(stderr,"ERROR:  no interior point!\n");
       return 0;
@@ -769,7 +769,7 @@ int cvMeshSimMeshObject::getNextNode () {
 
   return 1;
 
-}  
+}
 
 
 //
@@ -816,11 +816,11 @@ int cvMeshSimMeshObject::getNextElement () {
         pPoint point = V_point (vertex);
         connID_[i] = P_id (point);
       } // i
-      PList_delete(vert_list);      
+      PList_delete(vert_list);
 
       // quadratic element stuff
       if (quadElem_ == 1) {
-  
+
         pPList edge_list = R_edges(region,MY_MESHSIM_VERTEX_ORDERING);
         int num_edges = PList_size (edge_list);
 
@@ -830,21 +830,21 @@ int cvMeshSimMeshObject::getNextElement () {
             fprintf(stderr,"ERROR:  no interior point!\n");
             return 0;
   	  }
-          connID_[num_elem_verts+i] = P_id(E_point(xedge,0)); 
-        } 
+          connID_[num_elem_verts+i] = P_id(E_point(xedge,0));
+        }
         PList_delete(edge_list);
       } // quadElem_
 
       return 1;
-   
+
     } // if mytag
 
   } // end-while
- 
+
   return 0;
-  
+
 }
- 
+
 
 //
 //  getNeighborMdlRegIds
@@ -883,7 +883,7 @@ int cvMeshSimMeshObject::getNeighborMdlRegIds () {
     // Get the material regions corresponding to each element
     int tag0;
     int tag1;
-        
+
     if (reg0 != NULL) {tag0=GEN_tag((GEntity*)R_whatIn(reg0));} else {tag0 = -1;}
     if (reg1 != NULL) {tag1=GEN_tag((GEntity*)R_whatIn(reg1));} else {tag1 = -1;}
 
@@ -910,7 +910,7 @@ int cvMeshSimMeshObject::getIdentForFaceId(int orgfaceid, int *faceID) {
 
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
     if (PsdUtils_CheckIdentForFaceId(orgfaceid) != CV_OK) {
       fprintf(stderr,"ERROR: PsdUtils_CheckIdentForFaceId(%i)\n",orgfaceid);
       fflush(stderr);
@@ -959,7 +959,7 @@ int cvMeshSimMeshObject::WriteMetisAdjacency(char *filename) {
     pRegion region;
     pPList faces;
 
-    int nIfaces=0;  
+    int nIfaces=0;
     int iel,i;
 
     int  *xadj, *adjncy;
@@ -971,7 +971,7 @@ int cvMeshSimMeshObject::WriteMetisAdjacency(char *filename) {
 
     FIter fIter = M_faceIter(mesh);
     pFace face;
-      
+
     while (face = FIter_next(fIter)) {
         pPList regions = F_regions(face);
         if(PList_size(regions)==2) nIfaces++;
@@ -989,7 +989,7 @@ int cvMeshSimMeshObject::WriteMetisAdjacency(char *filename) {
     int adj=0;
     RIter_reset(rIter);
     xadj[0] = 0;
-    
+
     while(region=RIter_next(rIter)){
         faces = R_faces(region,MY_MESHSIM_FACE_ORDERING);
         for (i =0; i<PList_size(faces);i++){
@@ -1014,7 +1014,7 @@ int cvMeshSimMeshObject::WriteMetisAdjacency(char *filename) {
     for (i = 0; i < 2*nIfaces; i++) {
         gzprintf(fp_,"%i\n",adjncy[i]);
     }
-    
+
     delete xadj;
     delete adjncy;
 
@@ -1036,7 +1036,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
   fprintf(stderr,"Solid Kernel: %s\n",SolidModel_KernelT_EnumToStr(solidmodeling_kernel_));
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
     PK_PART_t firstPart;
     int isAssembly;
 
@@ -1049,14 +1049,14 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 
     fprintf(stdout,"note: creating model from SV part.\n");
     fflush(stdout);
-    
+
     pParasolidNativeModel paramodel_ = NULL;
     paramodel_ = ParasolidNM_createFromPart(firstPart);
     if (paramodel_ == NULL) {
       fprintf(stderr,"ERROR: Problem from ParasolidNM_createFromPart.\n");
       fflush(stderr);
       return CV_ERROR;
-    } 
+    }
     if (!isAssembly) {
 
       model = GM_createFromNativeModel(paramodel_,progress_);
@@ -1083,7 +1083,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
       fprintf(stderr,"ERROR: Problem from GM_createFromAssemblyModel.\n");
       fflush(stderr);
       return CV_ERROR;
-    } 
+    }
     // Should we release the model here or not?????
     //NM_release(paramodel_);
 
@@ -1094,7 +1094,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
    char fname[1024];
     fname[0] = '\0';
     sprintf(fname, "%s", filename);
-    
+
     // must remove file extension for frustrum
     if (strlen(filename) > 8) {
       int loc = strlen(filename)-8;
@@ -1126,7 +1126,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     pParasolidNativeModel paramodel_ = ParasolidNM_createFromFile(fname,fileFormat);
     pGAModel pGAM = GAM_createFromNativeModel(paramodel_,progress_);
    // what is a connector?  pass in NULL for now..
-    model = GM_createFromAssemblyModel (pGAM, NULL, progress_); 
+    model = GM_createFromAssemblyModel (pGAM, NULL, progress_);
     NM_release(paramodel_);
     */
 
@@ -1136,7 +1136,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
     fflush(stdout);
     case_ = NULL;
     case_ = MS_newMeshCase(model);
-    
+
     if (case_ == NULL) {
       fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
       fflush(stderr);
@@ -1151,7 +1151,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 
   } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
     discreteModel_ = new cvMeshSimDiscreteSolidModel();
 
     if (discreteModel_->ReadNative(filename) != CV_OK) {
@@ -1176,7 +1176,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
       fflush(stderr);
       return CV_ERROR;
     }
-    
+
     solidFileName_[0] = '\0';
     sprintf(solidFileName_,"%s",filename);
 #else
@@ -1256,12 +1256,12 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
   (*pid) = NULL;
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
     PK_ENTITY_t entity = PK_ENTITY_null;
     if (PsdUtils_GetIdent(part_,id,&entity) != CV_OK) {
       return CV_ERROR;
     }
-    
+
     (*pid) = GEN_getGEntityFromParasolidEntity(model,(PK_ENTITY_t)entity);
     // assume indentifier numbering corresponds to simmetrix numbering
 #else
@@ -1269,13 +1269,13 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
 #endif
 
   } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
- 
+
     // assume entity is face!
     (*pid) = GM_entityByTag(model,2,id);
     fprintf(stdout,"pid: %p  id: %i\n",pid,id);
 
   } else {
- 
+
     return CV_ERROR;
 
   }
@@ -1287,13 +1287,13 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
 // --------------------
 //  SetMeshOptions
 // --------------------
-/** 
- * @brief Function to set the options for meshing. Store temporarily in 
+/**
+ * @brief Function to set the options for meshing. Store temporarily in
  * meshoptions_ object until the mesh is run
  * @param *flag char containing the flag to set
- * @param value if the flag requires a value, this double contains that 
+ * @param value if the flag requires a value, this double contains that
  * value to be set
- * @return *result: CV_ERROR if the mesh doesn't exist. New Mesh must be 
+ * @return *result: CV_ERROR if the mesh doesn't exist. New Mesh must be
  * called before the options can be set
  */
 
@@ -1313,9 +1313,9 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
   if (modelDomain == NULL) {
     return CV_ERROR;
   }
-    
+
   fprintf(stderr,"Flag: %s\n  NumVals:  %d\n  Val:  %.2f\n",flags,numValues,values[0]);
-  
+
   if (!strncmp(flags,"SurfaceMeshFlag",15)) {    //Surface flag, on or off
       if (numValues < 1)
 	return CV_ERROR;
@@ -1364,7 +1364,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
       MS_setMeshSize(case_,modelDomain,meshoptions_.gcurv_type, meshoptions_.gcurv,NULL);
       fprintf(stdout,"\t%s %i\n"," meshoptions_.gcurv_type",meshoptions_.gcurv_type);
       fprintf(stdout,"\t%s %lf\n"," meshoptions_.gcurv",meshoptions_.gcurv);
-      
+
   }
   else if(!strncmp(flags,"LocalCurvature",14)) {  //Local Curv, surface id, type, gcurv value
       if (numValues < 3)
@@ -1409,7 +1409,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       meshoptions_.surface_optimization = values[0];
-      fprintf(stdout,"\t%s %i\n"," meshoptions_.surface_optimization",meshoptions_.surface_optimization);  
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.surface_optimization",meshoptions_.surface_optimization);
   }
   else if(!strncmp(flags,"VolumeOptimization",18)) {  //Set Volume Optimization
       if (numValues < 1)
@@ -1418,7 +1418,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       meshoptions_.volume_optimization = values[0];
-      fprintf(stdout,"\t%s %i\n"," meshoptions_.volume_optimization",meshoptions_.volume_optimization);      
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.volume_optimization",meshoptions_.volume_optimization);
   }
   else if(!strncmp(flags,"SurfaceSmoothing",16)) {  //Set Surface Optimization
       if (numValues < 1)
@@ -1427,7 +1427,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       meshoptions_.surface_smoothing = values[0];
-      fprintf(stdout,"\t%s %i\n"," meshoptions_.surface_smoothing",meshoptions_.surface_smoothing);  
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.surface_smoothing",meshoptions_.surface_smoothing);
   }
   else if(!strncmp(flags,"VolumeSmoothing",15)) {  //Set Volume Optimization
       if (numValues < 1)
@@ -1436,7 +1436,7 @@ int cvMeshSimMeshObject::SetMeshOptions(char *flags,int numValues, double *value
 	return CV_ERROR;
       }
       meshoptions_.volume_smoothing = values[0];
-      fprintf(stdout,"\t%s %i\n"," meshoptions_.volume_smoothing",meshoptions_.volume_smoothing);  
+      fprintf(stdout,"\t%s %i\n"," meshoptions_.volume_smoothing",meshoptions_.volume_smoothing);
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1463,7 +1463,7 @@ int cvMeshSimMeshObject::GenerateMesh() {
   try {
 
     // create the meshing processes and run
-    
+
     // create surface mesh
     pSurfaceMesher surfaceMesher = SurfaceMesher_new(case_,mesh);
 
@@ -1475,14 +1475,14 @@ int cvMeshSimMeshObject::GenerateMesh() {
     fprintf(stdout,"%s%i%s","SurfaceMesher_setOptimization(surfaceMesher,",meshoptions_.surface_optimization,")\n");
     fprintf(stdout,"%s%i%s","SurfaceMesher_setSmoothing(surfaceMesher,",meshoptions_.surface_smoothing,")\n");
     fflush(stdout);
-        
+
     // create it
     fprintf(stdout,"Creating surface mesh...\n");
     fflush(stdout);
     SurfaceMesher_execute(surfaceMesher,progress_);
-  
+
     pVolumeMesher volumeMesher = VolumeMesher_new(case_,mesh);
-       
+
     // specify options
     VolumeMesher_setOptimization(volumeMesher,meshoptions_.volume_optimization);
     VolumeMesher_setSmoothing(volumeMesher,meshoptions_.volume_smoothing);
@@ -1490,11 +1490,11 @@ int cvMeshSimMeshObject::GenerateMesh() {
     fflush(stderr);
     fprintf(stdout,"%s%i%s","VolumeMesher_setOptimization(volumeMesher,",meshoptions_.volume_optimization,")\n");
     fprintf(stdout,"%s%i%s","VolumeMesher_setSmoothing(volumeMesher,",meshoptions_.volume_smoothing,")\n");
-    
+
     // create it
     fprintf(stdout,"Creating volume mesh...\n");
     fflush(stdout);
-    VolumeMesher_execute(volumeMesher,progress_); 
+    VolumeMesher_execute(volumeMesher,progress_);
 
     // clean up
     SurfaceMesher_delete(surfaceMesher);
@@ -1567,26 +1567,26 @@ int cvMeshSimMeshObject::WriteStats(char *filename) {
   return CV_OK;
 }
 
-int cvMeshSimMeshObject::SetCylinderRefinement(double size, double radius, 
+int cvMeshSimMeshObject::SetCylinderRefinement(double size, double radius,
                             double length,double* center, double *normal) {
   // must have created mesh
   if (mesh == NULL) {
     return CV_ERROR;
   }
- 
-  MS_addCylinderRefinement(case_,size,radius,length, center,normal);  
+
+  MS_addCylinderRefinement(case_,size,radius,length, center,normal);
 
   return CV_OK;
 }
 
-int cvMeshSimMeshObject::SetSphereRefinement(double size, double radius, 
+int cvMeshSimMeshObject::SetSphereRefinement(double size, double radius,
                                            double* center) {
   // must have created mesh
   if (mesh == NULL) {
     return CV_ERROR;
   }
- 
-  MS_addSphereRefinement(case_,size,radius,center);  
+
+  MS_addSphereRefinement(case_,size,radius,center);
 
   return CV_OK;
 }
@@ -1613,7 +1613,7 @@ cvPolyData* cvMeshSimMeshObject::GetFacePolyData (int orgfaceid) {
   // but in vtkPolyData file they start at 0.
   int n;
   vtkPolyData *mypd = NULL;
-  cvPolyData *result = NULL; 
+  cvPolyData *result = NULL;
 
   // get the identifier/tag corresponding to the given parasolid face entity
   int faceID = 0;
@@ -1664,7 +1664,7 @@ cvPolyData* cvMeshSimMeshObject::GetFacePolyData (int orgfaceid) {
   eid2->SetName("GlobalElementID2");
 
   vtkIdList* PointIds = vtkIdList::New();
-  PointIds->Allocate(10,10);  
+  PointIds->Allocate(10,10);
 
   // node numbering in polydata object
   int poly_nodes = 0;
@@ -1676,11 +1676,11 @@ cvPolyData* cvMeshSimMeshObject::GetFacePolyData (int orgfaceid) {
   while (myface = FIter_next(myFiter)) {
 
         //if (!(loopfaces % 10000)) fprintf(stdout,"face %i\n",loopfaces);
-  
+
         // Get the model tag for the face
         int facetag=0;
         pGEntity modelentity = F_whatIn(myface);
-        
+
         if (modelentity != NULL) {
           // ignore unless face is classified on model face
 	  if (F_whatInType(myface) != Gface) continue;
@@ -1771,7 +1771,7 @@ int cvMeshSimMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
 
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
 
     while (modelface = GFIter_next(myGFiter)) {
       tmpstr[0] = '\0';
@@ -1790,7 +1790,7 @@ int cvMeshSimMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
 
   } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
 
     while (modelface = GFIter_next(myGFiter)) {
       tmpstr[0] = '\0';
@@ -1834,9 +1834,9 @@ int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *fac
   for (k = 0; k < PList_size (vert_list); k++){
     elemverts[k] = P_id (V_point ((pVertex)PList_item (vert_list, k)));
   }
-    
-  PList_delete(vert_list); 
- 
+
+  PList_delete(vert_list);
+
   // Note, for below the function F_region(.,n) does NOT seem to
   // return the faces in a specific order.  Thus, the code below
   // is needed to properly sort the bc's into separate files
@@ -1845,10 +1845,10 @@ int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *fac
 
   // Perform mapping between scorec face #'s and prophlex face #'s
   // ASSUME linear tet.
- 
+
   // Get the vertexes for the face (counterclockwise)
   pPList myverts = F_vertices (myface,MY_MESHSIM_VERTEX_ORDERING);
- 
+
   // Routine only good for linear tets
   if (PList_size (myverts) != 3) {
     fprintf(stderr,"ERROR:  Must be linear tets to extract bc's.\n");
@@ -1876,8 +1876,8 @@ int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *fac
   // numbered.  That is to say, unlike FE solvers where a face is implicitly defined
   // based on the order of the nodes defining the element, scorec appears random.
   // The variable keepme takes on a unique value depending on which nodes of the element
-  // are used to define the face.  This unique number is then mapped to the proper proplex 
-  // face. 
+  // are used to define the face.  This unique number is then mapped to the proper proplex
+  // face.
   // Keepme = 2^(local element_node_number #0) + 2^(local element_node_number #1) +
   //          2^(local element_node_number #2)
   //
@@ -1885,7 +1885,7 @@ int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *fac
   // definition.  keepme = 2^(0) + 2^(2) +2^(3) = 13 which corresponds to face = 1 in prophlex.
   // This is a royal pain in the ass to calculate, probably horribly cpu intensive, but I
   // don't know a better way...
- 
+
   int phlexface;
   if ( keepme == 14 ) {
     phlexface = 0;
@@ -1898,7 +1898,7 @@ int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *fac
   } else {
     fprintf(stderr,"ERROR:  could not resolve phlex face for element.\n");
     fprintf(stderr,"  keepme: %i   element nodes: %i %i %i %i \n", keepme,
-                     elemverts[0],elemverts[1],elemverts[2],elemverts[3]); 
+                     elemverts[0],elemverts[1],elemverts[2],elemverts[3]);
     return CV_ERROR;
   }
 
@@ -1908,7 +1908,7 @@ int cvMeshSimMeshObject::FindFaceNumber (pRegion region, int pseudoface,int *fac
 }
 
 int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
- 
+
   int i;
   int num_nodes = 0;
 
@@ -1934,8 +1934,8 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
       if (E_numPoints(xedge) != 1) {
         fprintf(stderr,"ERROR:  no interior point!\n");
         exit(-1);
-      }       
-      nodes[numElemFaceVerts+i] = P_id(E_point(xedge,0));     
+      }
+      nodes[numElemFaceVerts+i] = P_id(E_point(xedge,0));
     }
 
     num_nodes+=numEdges;
@@ -1948,13 +1948,13 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
 // --------------------
 //  Adapt
 // --------------------
-/** 
+/**
  * @brief Function to Adapt Mesh based on input adaption features etc.
  * @return CV_OK if adaptions performs correctly
  */
 int cvMeshSimMeshObject::Adapt()
-{ 
-#ifdef USE_MESHSIM_ADAPTOR
+{
+#ifdef SV_USE_MESHSIM_ADAPTOR
 
   MSA_adapt(simAdapter, progress_);
 
@@ -1980,10 +1980,10 @@ int cvMeshSimMeshObject::Adapt()
 
 int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
 
   int i;
-  
+
   if (ug == NULL)
   {
     fprintf(stderr,"UGrid is NULL!\n");
@@ -1998,7 +1998,7 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
   vtkIdType pointId;
   vtkIdType closestPoint;
 
-  vtkSmartPointer<vtkPoints> outPoints = 
+  vtkSmartPointer<vtkPoints> outPoints =
     vtkSmartPointer<vtkPoints>::New();
 
   int count = 0;
@@ -2018,27 +2018,27 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
     pPoint point = V_point (VIter_next(myViter));
     //int nodenumber = P_id (point);
     int nodenumber = i + 1;
-    P_setID(point,nodenumber);  
+    P_setID(point,nodenumber);
     double x = P_x (point);
     double y = P_y (point);
     double z = P_z (point);
-    //fprintf(stdout,"%i %lf %lf %lf\n",nodenumber,x,y,z);  
+    //fprintf(stdout,"%i %lf %lf %lf\n",nodenumber,x,y,z);
     outPoints->SetPoint(nodenumber-1,x,y,z);
     gid->SetTuple1(nodenumber-1,nodenumber);
-  } // i 
+  } // i
   VIter_delete(myViter);
 
   count = 0;
 
   int neltot = M_numRegions(mesh);
 
-  //  vtkSmartPointer<vtkIdList> ptids = 
+  //  vtkSmartPointer<vtkIdList> ptids =
   //  vtkSmartPointer<vtkIdList>::New();
   vtkIdList* ptids = vtkIdList::New();
- 
-  vtkSmartPointer<vtkIntArray> eid = 
+
+  vtkSmartPointer<vtkIntArray> eid =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> rid = 
+  vtkSmartPointer<vtkIntArray> rid =
     vtkSmartPointer<vtkIntArray>::New();
 
   ug->SetPoints(outPoints);
@@ -2080,14 +2080,14 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
         // vtk nodes must start at zero
         ptids->SetId(i,P_id(V_point(vertex))-1);
     } // i
-    PList_delete(vert_list);      
+    PList_delete(vert_list);
     ug->InsertNextCell(VTK_TETRA,ptids);
     eid->InsertNextTuple1(curElemID);
     rid->InsertNextTuple1(curMdlRegID);
   }
 
   ptids->Delete();
-   
+
   ug->GetCellData()->AddArray(rid);
   ug->GetCellData()->SetScalars(eid);
   ug->GetCellData()->SetActiveScalars("GlobalElementID");
@@ -2115,7 +2115,7 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
 
 int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy)
 {
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
   if (mesh == NULL)
   {
     fprintf(stderr,"Must load .sms mesh before setting metric on mesh\n");
@@ -2131,7 +2131,7 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
     if (EN_isBLEntity(vertex)) {
       continue;
     }
-    if (strategy == 1) 
+    if (strategy == 1)
     {
       MSA_setVertexSize(simAdapter,vertex,error_indicator[i++]);
     }
@@ -2149,11 +2149,11 @@ int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,doubl
 	 //fprintf(stdout,"\n");
        }
        //fprintf(stdout,"\n");
-       MSA_setAnisoVertexSize(simAdapter, 
+       MSA_setAnisoVertexSize(simAdapter,
 			    vertex,
 			    scaled_eigenvecs);
     }
-    else 
+    else
     {
       fprintf(stderr,"Strategy is not available\n");
       return CV_ERROR;

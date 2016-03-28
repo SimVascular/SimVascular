@@ -133,8 +133,8 @@ COMPILER_VERSION = intel_13.0  (build with intel instead of gcc)
 EXCLUDE_ALL_BUT_THREEDSOLVER = 1 (build flow solver only)
 
 # build with binary distribution of svls
-MAKE_WITH_BINARY_SVLS = 1
-MAKE_WITH_DUMMY_SVLS = 0
+SV_USE_BINARY_SVLS = 1
+SV_USE_DUMMY_SVLS = 0
 
 5. Copy meshsim license file
 ----------------------------

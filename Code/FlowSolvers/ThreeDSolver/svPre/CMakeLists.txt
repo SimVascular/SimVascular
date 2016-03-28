@@ -44,9 +44,10 @@ SET(CSRCS directsolve.c)
 # Add fortran sources
 SET(FSRCS stannspcg.f)
 
-# Add fortran sources for variable wall module
+# add fortran sources for variable wall module
+# makefile uses .f not .f90, keep consistent
 if(SV_THREEDSOLVER_USE_VARWALL)
-	SET(FSRCS ${FSRCS} gmresfortran.f90)
+	SET(FSRCS ${FSRCS} gmresfortran.f)
 endif()
 
 # Visual Studio Linker Flags
@@ -74,6 +75,11 @@ if(NOT MSVC)
 	SET_TARGET_PROPERTIES(presolver_fortran_lib PROPERTIES LINKER_LANGUAGE Fortran)
 	SET_TARGET_PROPERTIES(${SV_PRESOLVER_EXE} PROPERTIES LINKER_LANGUAGE Fortran)
 endif()
+
+if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+	SET_TARGET_PROPERTIES(${SV_PRESOLVER_EXE} PROPERTIES LINK_FLAGS -nofor-main)
+endif()
+
 if(SV_INSTALL_LIBS)
 	install(TARGETS presolver_fortran_lib
 		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables

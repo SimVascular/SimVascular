@@ -52,29 +52,29 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(TCLTK_INCDIR)
 
 # hack for now
-ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+ifeq ($(SV_USE_MESHSIM_SHARED),1)
   CXXFLAGS += -DNOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
 endif
 
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
 endif
 
-ifeq ($(MAKE_WITH_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID),1)
     CXXFLAGS    += $(PARASOLID_INCDIR) \
                    -I$(TOP)/../Code/Licensed/ParasolidSolidModel
 endif
 
-ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     CXXFLAGS    += $(MESHSIM_INCDIR) \
 		  -I$(TOP)/../Source/Model/MeshSimDiscreteSolidModel
 endif
 
-ifeq ($(MAKE_WITH_MESHSIM),1)
+ifeq ($(SV_USE_MESHSIM),1)
         CXXFLAGS    += $(MESHSIM_INCDIR)
 endif
 
-ifeq ($(MAKE_WITH_TETGEN),1)
+ifeq ($(SV_USE_TETGEN),1)
         CXXFLAGS    += $(TETGEN_INCDIR)
 endif
 
@@ -94,41 +94,41 @@ DLLLIBS +=    $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
 
-  ifeq ($(MAKE_WITH_SOLVERIO),1)
+  ifeq ($(SV_USE_SOLVERIO),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_MESHSIM),1)
-  ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM),1)
+  ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
     else
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
     else
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_PARASOLID),1)
-    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+  ifeq ($(SV_USE_PARASOLID),1)
+    ifeq ($(SV_USE_PARASOLID_SHARED),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
     else
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
     endif
   endif
 
-  ifeq ($(MAKE_WITH_VMTK),1)
+  ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_SOLVERIO),1)
+  ifeq ($(SV_USE_SOLVERIO),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_ZLIB),1)
+  ifeq ($(SV_USE_ZLIB),1)
     DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
   endif
 

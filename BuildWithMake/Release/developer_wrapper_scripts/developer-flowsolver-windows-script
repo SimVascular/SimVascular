@@ -44,4 +44,4 @@ export PATH=$LD_LIBRARY_PATH:$PATH
 esac
 
 # run the executable
-/cygdrive/c/Program\ Files/Microsoft\ MPI/Bin/mpiexec.exe -np $1 -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG $SIMVASCULAR_HOME/BuildWithMake/Bin/flowsolver.exe $2 $3 $4
+/cygdrive/c/Program\ Files/Microsoft\ MPI/Bin/mpiexec.exe -np $1 -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG $SV_HOME/BuildWithMake/Bin/flowsolver.exe $2 $3 $4

@@ -1,7 +1,7 @@
 ifeq ($(CLUSTER), x64_cygwin)
     MESHSIM_TOP      = $(LICENSED_SOFTWARE_TOPLEVEL)/meshsim-9.0-150704
     MESHSIM_INCDIR   = -I$(MESHSIM_TOP)/include
-    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+    ifeq ($(SV_USE_MESHSIM_SHARED),1)
       MESHSIM_LIBDIR   = $(MESHSIM_TOP)/lib/x64_win_vc10_shared
     else
       MESHSIM_LIBDIR   = $(MESHSIM_TOP)/lib/x64_win_vc10
@@ -15,7 +15,7 @@ ifeq ($(CLUSTER), x64_cygwin)
     ifeq ($(MESHSIM_MODELER),parasolid)
       MESHSIM_LIBS   := $(MESHSIM_LIBS) $(LIBFLAG)SimParasolid260$(LIBLINKEXT)
     endif 
-    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
       MESHSIM_LIBS   := $(MESHSIM_LIBS) $(LIBFLAG)SimDiscrete$(LIBLINKEXT)
     endif 
     MESHSIM_LIBS     := $(MESHSIM_LIBS) $(LIBFLAG)Ws2_32$(LIBLINKEXT) \

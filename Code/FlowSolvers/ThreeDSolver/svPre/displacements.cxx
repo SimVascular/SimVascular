@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -38,7 +38,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "cmd.h" 
+#include "cmd.h"
 
 struct Kentry {
       int row;
@@ -48,9 +48,9 @@ struct Kentry {
 
 #define SPARSE_OFFSET 1
 
-extern "C" int StanfordSolveSparseMatrix(Kentry* Kentries, 
+extern "C" int StanfordSolveSparseMatrix(Kentry* Kentries,
                                          double *b,
-                                         int numUniqueEntries, 
+                                         int numUniqueEntries,
                                          int size,double *soln);
 
 extern int   DisplacementNumElements_;
@@ -68,8 +68,8 @@ extern double* nodes_;
 // =========
 
 inline
-void Cross( double ax, double ay, double az, 
-            double bx, double by, double bz, 
+void Cross( double ax, double ay, double az,
+            double bx, double by, double bz,
             double *prodx, double *prody, double *prodz )
 {
   (*prodx) = ay * bz - az * by;
@@ -84,7 +84,7 @@ void Cross( double ax, double ay, double az,
 // =======
 
 inline
-double Dot( double ax, double ay, double az, 
+double Dot( double ax, double ay, double az,
             double bx, double by, double bz )
 {
   double product;
@@ -113,8 +113,8 @@ double Norm( double ax, double ay, double az )
 // ==========
 
 inline
-void SubVec( double ax, double ay, double az, 
-            double bx, double by, double bz, 
+void SubVec( double ax, double ay, double az,
+            double bx, double by, double bz,
             double *prodx, double *prody, double *prodz )
 {
   (*prodx) = ax - bx;
@@ -131,7 +131,7 @@ void SubVec( double ax, double ay, double az,
 inline
 void Mat3Vec( double mat[3][3],double v[3],double *prodx, double *prody, double *prodz )
 {
-  
+
   (*prodx) = mat[0][0]*v[0] + mat[0][1]*v[1] + mat[0][2]*v[2];
   (*prody) = mat[1][0]*v[0] + mat[1][1]*v[1] + mat[1][2]*v[2];
   (*prodz) = mat[2][0]*v[0] + mat[2][1]*v[1] + mat[2][2]*v[2];
@@ -224,8 +224,8 @@ int stiffnessmatrix(double Evw,double nuvw,
   fprintf(stdout,"detjacrot: %lf\n",detjacrot);
   fprintf(stdout,"area: %lf\n",area);
 #endif
- 
-  //matlab % B matrix 
+
+  //matlab % B matrix
   //matlab Bmatrix = zeros(5,9);
 
   for (i = 0; i < 5; i++) {
@@ -379,7 +379,7 @@ int stiffnessmatrix(double Evw,double nuvw,
   for( i = 0; i < 9; i++ ) {
     for( j = 0; j < 9; j++ ) {
       for( k = 0; k < 5; k++ ) {
-        // we flip the indices here on Bmatrix to get BmatrixT 
+        // we flip the indices here on Bmatrix to get BmatrixT
         Klocal9[ i ][ j ] += Bmatrix[ k ][ i ] * EtimesB[ k ][ j ] * thickness * area;
       }
     }
@@ -497,7 +497,7 @@ int stiffnessmatrix(double Evw,double nuvw,
   for (i = 0; i < 9; i++) {
      fglobal9[0] = 0;
   }
-  //matlab for i=1:3  
+  //matlab for i=1:3
   for (i = 0; i < 3; i++) {
       //matlab for il=1:3
       for (il = 0; il < 3; il++) {
@@ -512,7 +512,7 @@ int stiffnessmatrix(double Evw,double nuvw,
   return 0;
 }
 
-//clear r L Evw nuvw thickness pressure x1 x2 x3 
+//clear r L Evw nuvw thickness pressure x1 x2 x3
 //return
 
 /*
@@ -537,7 +537,7 @@ void siftDownKentries(Kentry Kentries[], int root, int bottom, int array_size)
     else
       maxChild = root * 2 + 1;
 
-    // hack since this seems to constantly end 
+    // hack since this seems to constantly end
     if (root < 0 || root >= array_size) break;
     if (maxChild < 0 || maxChild >= array_size) {
       fprintf(stdout,"warning: illegal maxChild (%i)\n",maxChild);
@@ -567,14 +567,14 @@ extern "C" void deleteKentries(Kentry *Kentries);
 
 void deleteKentries(Kentry *Kentries) {
     delete [] Kentries;
-} 
+}
 
-#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
-  #define STANNSPCG STANNSPCG 
-#elif CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+  #define STANNSPCG STANNSPCG
+#elif SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define STANNSPCG stannspcg_
 #else
-  // error here! 
+  // error here!
 #endif
 
 extern "C" int STANNSPCG(int *n,int *ndim,double *coef,int *jcoef1,
@@ -618,7 +618,7 @@ int StanfordIterativeSolve(Kentry* Kentries,double *b,
   // add 1 to all indices for nspcg
 
   // first insert the diagonal entries
-  
+
   for (i = 0; i < numUniqueEntries; i++) {
     row   = Kentries[i].row;
     col   = Kentries[i].col;
@@ -633,7 +633,7 @@ int StanfordIterativeSolve(Kentry* Kentries,double *b,
 
 
   // second insert the upper entries
-  
+
   for (i = 0; i < numUniqueEntries; i++) {
     row   = Kentries[i].row;
     col   = Kentries[i].col;
@@ -663,7 +663,7 @@ int StanfordIterativeSolve(Kentry* Kentries,double *b,
 }
 
 int calcInitDisplacements(double Evw,double nuvw,
-                          double thickness,double pressure,double kcons, 
+                          double thickness,double pressure,double kcons,
                           int use_direct_solve) {
 
   int nsdim = 3;
@@ -689,7 +689,7 @@ int calcInitDisplacements(double Evw,double nuvw,
 
   //matlab Kglobal = zeros(npoin*nsdim,npoin*nsdim);
 
-  // we first create all of the entries, then 
+  // we first create all of the entries, then
   // collapse into a spare data structure
 
   debugprint(stddbg,"  Allocating Kentry[%i]\n",9*9*numElems);
@@ -726,7 +726,7 @@ int calcInitDisplacements(double Evw,double nuvw,
     for (i = 0; i < 3; i++) {
       j = map[conn[i][ielem]];
       x[i][0] = nodes_[0*numNodes_+j-1];
-      x[i][1] = nodes_[1*numNodes_+j-1]; 
+      x[i][1] = nodes_[1*numNodes_+j-1];
       x[i][2] = nodes_[2*numNodes_+j-1];
     }
 
@@ -787,7 +787,7 @@ int calcInitDisplacements(double Evw,double nuvw,
       //matlab end
       }
     //matlab end
-    }  
+    }
   //matlab end
   }
 
@@ -898,7 +898,7 @@ int calcInitDisplacements(double Evw,double nuvw,
               curentry++;
           } else {
               fprintf(fp,"0\n");
-          } 
+          }
       }
   }
   fclose(fp);
@@ -920,7 +920,7 @@ int calcInitDisplacements(double Evw,double nuvw,
     fprintf(fp,"%i %i %lf\n",Kentries[i].row+SPARSE_OFFSET,Kentries[i].col+SPARSE_OFFSET,
             Kentries[i].value);
   }
-  fprintf(fp,"0 0 0.0\n"); 
+  fprintf(fp,"0 0 0.0\n");
   for (i = 0; i < numNodes*nsdim; i++) {
       fprintf(fp,"%lf\n",Fglobal[i+SPARSE_OFFSET]);
   }
@@ -935,7 +935,7 @@ int calcInitDisplacements(double Evw,double nuvw,
   // here we differ from the matlab code again, and loop over the nodal b.c.
   // array to see which nodes should be fixed
   for (i = 0; i < numNodes; i++) {
-    // should use bit test instead of an int 
+    // should use bit test instead of an int
     if (iBC_[map[i]-1] == 56) {
 
         //matlab for kk=1:npoin*nsdim
@@ -980,7 +980,7 @@ int calcInitDisplacements(double Evw,double nuvw,
               curentry++;
           } else {
               fprintf(fp,"0\n");
-          } 
+          }
       }
   }
   fclose(fp);
@@ -1002,18 +1002,18 @@ int calcInitDisplacements(double Evw,double nuvw,
     fprintf(fp,"%i %i %lf\n",Kentries[i].row+SPARSE_OFFSET,Kentries[i].col+SPARSE_OFFSET,
             Kentries[i].value);
   }
-  fprintf(fp,"0 0 0.0\n"); 
+  fprintf(fp,"0 0 0.0\n");
   for (i = 0; i < numNodes*nsdim; i++) {
       fprintf(fp,"%lf\n",Fglobal[i+SPARSE_OFFSET]);
   }
   fclose(fp);
 #endif
-   
+
   //% Solve the system
   //% ================
   //sol = sparse(Kglobal)\Fglobal;
 
-  // 
+  //
   //        call sparse
   //
 
@@ -1047,6 +1047,6 @@ int calcInitDisplacements(double Evw,double nuvw,
   delete Fglobal;
 
   return 0;
-  
+
 }
 

@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
- * 
+ * contributors to the source code.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -38,7 +38,7 @@
 #include "cmd.h"
 #include "cvSolverIO.h"
 
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
 #include "simvascular_zlib.h"
 #else
 #include <stdlib.h>
@@ -96,8 +96,8 @@ double PI=3.14159265358979323846;
 // =========
 
 inline
-void Cross( double ax, double ay, double az, 
-            double bx, double by, double bz, 
+void Cross( double ax, double ay, double az,
+            double bx, double by, double bz,
             double *prodx, double *prody, double *prodz )
 {
   (*prodx) = ay * bz - az * by;
@@ -112,7 +112,7 @@ void Cross( double ax, double ay, double az,
 // =======
 
 inline
-double Dot( double ax, double ay, double az, 
+double Dot( double ax, double ay, double az,
             double bx, double by, double bz )
 {
   double product;
@@ -182,11 +182,11 @@ int NWcloseFile() {
 }
 
 
-int NWgetNextLine(int *eof) {        
+int NWgetNextLine(int *eof) {
     for (int i = 0; i < MAXCMDLINELENGTH;i++) {
       buffer_[i]='\0';
     }
-    #ifdef USE_ZLIB
+    #ifdef SV_USE_ZLIB
       gzgets(fp_,buffer_,MAXCMDLINELENGTH);
     #else
       fgets(buffer_,MAXCMDLINELENGTH,fp_);
@@ -242,7 +242,7 @@ int parseNum(char *cmd, int *num) {
     // parse command string
     char mystr[MAXSTRINGLENGTH];
     parseCmdStr(cmd,mystr);
- 
+
     // do work
     *num = 0;
     if (sscanf(mystr,"%i",num) != 1) {
@@ -251,7 +251,7 @@ int parseNum(char *cmd, int *num) {
     }
 
     return CV_OK;
- 
+
 }
 
 
@@ -283,7 +283,7 @@ int parseNum2(char *cmd, int *num) {
     *num = surfID;
 
     return CV_OK;
- 
+
 }
 
 
@@ -292,7 +292,7 @@ int parseDouble(char *cmd, double *num) {
     // parse command string
     char mystr[MAXSTRINGLENGTH];
     parseCmdStr(cmd,mystr);
- 
+
     // do work
     *num = 0.0;
     if (sscanf(mystr,"%lf",num) != 1) {
@@ -301,7 +301,7 @@ int parseDouble(char *cmd, double *num) {
     }
 
     return CV_OK;
- 
+
 }
 
 
@@ -321,7 +321,7 @@ int parseDouble2(char *cmd, double *num) {
     mystr[0]='\0';
     cmd_token_get (&n, cmd, mystr, &end);
 
- 
+
     // do work
     *num = 0.0;
     if (sscanf(mystr,"%lf",num) != 1) {
@@ -330,12 +330,12 @@ int parseDouble2(char *cmd, double *num) {
     }
 
     return CV_OK;
- 
+
 }
 
 
 int parseDouble3(char *cmd, double *v1, double *v2, double *v3) {
-    
+
     // parse command string
     int n = 0;
     int end = 0;
@@ -370,7 +370,7 @@ int parseDouble3(char *cmd, double *v1, double *v2, double *v3) {
     }
 
     return CV_OK;
- 
+
 }
 
 
@@ -382,7 +382,7 @@ int parseFile(char *cmd) {
 
     // do work
     return NWopenFile(infile);
- 
+
 }
 
 int setNodesWithCode(char *cmd, int val) {
@@ -415,7 +415,7 @@ int setNodesWithCode(char *cmd, int val) {
     while (NWgetNextNonBlankLine(&eof) == CV_OK) {
         if (sscanf(buffer_,"%i",&nodeId) != 1) {
             fprintf(stderr,"WARNING:  line not of correct format (%s)\n",buffer_);
-        } else {      
+        } else {
           // this should be a bit set instead of an int!!
           iBC_[nodeId - 1] = val;
         }
@@ -430,7 +430,7 @@ int setNodesWithCode(char *cmd, int val) {
 }
 
 
-int check_node_order(int n0, int n1, int n2, int n3, int elementId, 
+int check_node_order(int n0, int n1, int n2, int n3, int elementId,
                      int *k0,int *k1, int *k2, int *k3) {
 
     int i,j0,j1,j2,j3;
@@ -449,7 +449,7 @@ int check_node_order(int n0, int n1, int n2, int n3, int elementId,
           j0 = n0;
           j1 = n1;
           j2 = n2;
-          j3 = n3;    
+          j3 = n3;
         }
 
     } else {
@@ -460,12 +460,12 @@ int check_node_order(int n0, int n1, int n2, int n3, int elementId,
         j3 = -1;
 
         for (i = 0; i < 4; i++) {
-            if (elements_[i*numElements_+(elementId-1)] != j0 && 
+            if (elements_[i*numElements_+(elementId-1)] != j0 &&
                 elements_[i*numElements_+(elementId-1)] != j1 &&
                 elements_[i*numElements_+(elementId-1)] != j2) {
                 j3 = elements_[i*numElements_+(elementId-1)];
                 break;
-            }  
+            }
         }
         if (j3 < 0) {
             //gzclose(fp);
@@ -490,7 +490,7 @@ int check_node_order(int n0, int n1, int n2, int n3, int elementId,
     c[0] = nodes_[0*numNodes_+j3 - 1] - nodes_[0*numNodes_+j0 - 1];
     c[1] = nodes_[1*numNodes_+j3 - 1] - nodes_[1*numNodes_+j0 - 1];
     c[2] = nodes_[2*numNodes_+j3 - 1] - nodes_[2*numNodes_+j0 - 1];
- 
+
     Cross(a[0],a[1],a[2],b[0],b[1],b[2],&norm0,&norm1,&norm2);
     double mydot = Dot(norm0,norm1,norm2,c[0],c[1],c[2]);
 
@@ -510,7 +510,7 @@ int check_node_order(int n0, int n1, int n2, int n3, int elementId,
 }
 
 
-int setBoundaryFacesWithCode(char *cmd,int setSurfID, int surfID, 
+int setBoundaryFacesWithCode(char *cmd,int setSurfID, int surfID,
                                        int setCode, int code, double value) {
 
     // enter
@@ -541,7 +541,7 @@ int setBoundaryFacesWithCode(char *cmd,int setSurfID, int surfID,
     int eof = 0;
 
     while (NWgetNextNonBlankLine(&eof) == CV_OK) {
- 
+
         if (sscanf(buffer_,"%i %i %i %i %i",&elementId,&matId,&n0,&n1,&n2) != 5) {
             fprintf(stderr,"WARNING:  line not of correct format (%s)\n",buffer_);
             NWcloseFile();
@@ -554,12 +554,12 @@ int setBoundaryFacesWithCode(char *cmd,int setSurfID, int surfID,
         int j3 = -1;
 
         for (i = 0; i < 4; i++) {
-            if (elements_[i*numElements_+(elementId-1)] != j0 && 
+            if (elements_[i*numElements_+(elementId-1)] != j0 &&
                 elements_[i*numElements_+(elementId-1)] != j1 &&
                 elements_[i*numElements_+(elementId-1)] != j2) {
                 j3 = elements_[i*numElements_+(elementId-1)];
                 break;
-            }  
+            }
         }
         if (j3 < 0) {
             NWcloseFile();
@@ -585,7 +585,7 @@ int setBoundaryFacesWithCode(char *cmd,int setSurfID, int surfID,
 
         Cross(a[0],a[1],a[2],b[0],b[1],b[2],&norm0,&norm1,&norm2);
         double mydot = Dot(norm0,norm1,norm2,c[0],c[1],c[2]);
-  
+
         if (mydot > 0) {
             int tmpj = j0;
             j0 = j2;
@@ -650,7 +650,7 @@ void siftDownEdges(int **edges, int root, int bottom, int array_size)
     else
       maxChild = root * 2 + 1;
 
-    // hack since this seems to constantly end 
+    // hack since this seems to constantly end
     if (root < 0 || root >= array_size) break;
     if (maxChild < 0 || maxChild >= array_size) {
       fprintf(stdout,"warning: illegal maxChild (%i)\n",maxChild);
@@ -719,14 +719,14 @@ int fixFreeEdgeNodes(char *cmd) {
         return CV_ERROR;
     }
 
-    
+
     int n0,n1,n2,n3;
     int elementId,matId;
     eof = 0;
     int numEdges = 0;
 
     while (NWgetNextNonBlankLine(&eof) == CV_OK) {
- 
+
         if (sscanf(buffer_,"%i %i %i %i %i",&elementId,&matId,&n0,&n1,&n2) != 5) {
             fprintf(stderr,"WARNING:  line not of correct format (%s)\n",buffer_);
             NWcloseFile();
@@ -770,7 +770,7 @@ int fixFreeEdgeNodes(char *cmd) {
     }
 
     NWcloseFile();
- 
+
     // sort edges so we can find free edges
 
     // debugging output
@@ -781,7 +781,7 @@ int fixFreeEdgeNodes(char *cmd) {
    int index0, index1;
 
 
-    // heap sort 
+    // heap sort
 
     int temp0,temp1;
     int array_size = numEdges;
@@ -801,7 +801,7 @@ int fixFreeEdgeNodes(char *cmd) {
     }
 
 
-    
+
     // insertion sort algorithm
 /*
     for (i=1; i < numEdges; i++) {
@@ -816,7 +816,7 @@ int fixFreeEdgeNodes(char *cmd) {
        edges[0][j] = index0;
        edges[1][j] = index1;
     }
-*/    
+*/
 
     // debugging output
     //for (i = 0; i < numEdges; i++) {
@@ -825,7 +825,7 @@ int fixFreeEdgeNodes(char *cmd) {
 
     // second pass
     // NOTE:  if you use the heap double heap sort above, this pass
-    // should be unnecessary 
+    // should be unnecessary
 
     for (i=1; i < numEdges; i++) {
        index0 = edges[0][i];
@@ -857,8 +857,8 @@ int fixFreeEdgeNodes(char *cmd) {
           // this should be a bit set instead of an int!!
           iBC_[edges[0][i] - 1] = 56;
           iBC_[edges[1][i] - 1] = 56;
-      }     
-    } 
+      }
+    }
 
     // cleanup
     delete [] edges[0];
@@ -884,7 +884,7 @@ void siftDownKentriesCalcMesh(int **ids, int root, int bottom, int array_size)
     else
       maxChild = root * 2 + 1;
 
-    // hack since this seems to constantly end 
+    // hack since this seems to constantly end
     if (root < 0 || root >= array_size) break;
     if (maxChild < 0 || maxChild >= array_size) {
       fprintf(stdout,"warning: illegal maxChild (%i)\n",maxChild);
@@ -936,7 +936,7 @@ int createMeshForDispCalc(char *cmd) {
     if (numLinesInFile == 0) {
         return CV_ERROR;
     }
-    
+
     int* ids[3];
     ids[0] = new int[numLinesInFile*3];
     ids[1] = new int[numLinesInFile*3];
@@ -948,14 +948,14 @@ int createMeshForDispCalc(char *cmd) {
         return CV_ERROR;
     }
 
-    
+
     int n0,n1,n2,n3;
     int elementId,matId;
     eof = 0;
     int numIds = 0;
     int numElements = 0;
     while (NWgetNextNonBlankLine(&eof) == CV_OK) {
- 
+
         if (sscanf(buffer_,"%i %i %i %i %i",&elementId,&matId,&n0,&n1,&n2) != 5) {
             fprintf(stderr,"WARNING:  line not of correct format (%s)\n",buffer_);
             NWcloseFile();
@@ -982,7 +982,7 @@ int createMeshForDispCalc(char *cmd) {
     }
 
     NWcloseFile();
- 
+
     // sort node ids so we can find duplicates
 
     // debugging output
@@ -1044,7 +1044,7 @@ int createMeshForDispCalc(char *cmd) {
         if (ids[0][i] != index0) {
             numUniqueNodes++;
             index0 = ids[0][i];
-        }  
+        }
     }
     debugprint(stddbg,"  Number of Unique Nodes Found: %i\n",numUniqueNodes);
 

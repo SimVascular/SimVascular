@@ -4,7 +4,7 @@ exec /usr/bin/tclsh "$0" $0 $*
 
 set lexec [lindex $argv 0] 
 set myexec [file tail $lexec]
-set allvers [glob -nocomplain [file dirname $lexec]/../package/REPLACE_SIMVASCULAR_VERSION/*]
+set allvers [glob -nocomplain [file dirname $lexec]/../package/REPLACE_SV_VERSION/*]
 set dirnames {}
 foreach i $allvers {
   if [file isdirectory $i] {
@@ -18,6 +18,6 @@ if {[llength $dirnames] == 0} {
 set dirnames [lsort -integer $dirnames]
 set mostrecent [lindex $dirnames end]
 
-exec bash -c "[file dirname $lexec]/../package/REPLACE_SIMVASCULAR_VERSION/$mostrecent/$myexec [lrange $argv 1 end]" >&@ stdout
+exec bash -c "[file dirname $lexec]/../package/REPLACE_SV_VERSION/$mostrecent/$myexec [lrange $argv 1 end]" >&@ stdout
 
 exit
