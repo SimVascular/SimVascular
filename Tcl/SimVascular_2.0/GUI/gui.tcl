@@ -12389,7 +12389,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6  -borderwidth {2}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1  -command {guiSV_model_create_polydata_solid_from_parasolid}  -text {Convert Selected Model To PolyData}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1  -command {guiSV_model_create_polydata_solid_from_nurbs}  -text {Convert Selected Model To PolyData}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7  -borderwidth {2}  -relief {flat}  -width {30}  -height {30}
