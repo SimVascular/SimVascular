@@ -32,6 +32,7 @@ if {[info exists SV_SHARED_BUILD] == 0} {
   set SV_SHARED_BUILD "OFF"
 }
 if {$SV_SHARED_BUILD == "ON"} {
+  set lib_ext so
   if {$tcl_platform(os) == "Darwin"} {
     set lib_ext dylib
   } elseif {$tcl_platform(platform) == "windows"} {
