@@ -2887,7 +2887,7 @@ proc guiSV_model_create_discrete_model_from_polydata {} {
     return -code error "ERROR: Must use PolyData to create Discrete Model"
   }
   set modelpd /models/PolyData/$model
-  if {[repos_exists -obj $modelpd]} {
+  if {[repos_exists -obj $modelpd] == 0} {
     $model GetPolyData -result $modelpd
   }
 
