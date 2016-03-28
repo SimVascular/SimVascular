@@ -27,66 +27,70 @@
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-set lib_ext so
-if {$tcl_platform(os) == "Darwin"} {
-  set lib_ext dylib
-} elseif {$tcl_platform(platform) == "windows"} {
-  set lib_ext dll
+global SV_SHARED_BUILD
+if {[info exists SV_SHARED_BUILD] == 0} {
+  set SV_SHARED_BUILD "OFF"
 }
+if {$SV_SHARED_BUILD == "ON"} {
+  if {$tcl_platform(os) == "Darwin"} {
+    set lib_ext dylib
+  } elseif {$tcl_platform(platform) == "windows"} {
+    set lib_ext dll
+  }
 
-#Load all the dynamic libraries!
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tcl_interp.$lib_ext Getinterp} msg]} {
-    puts "liblib_simvascular_utils Getinterp $lib_ext: $msg"
+  #Load all the dynamic libraries!
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tcl_interp.$lib_ext Getinterp} msg]} {
+      puts "liblib_simvascular_utils Getinterp $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_math.$lib_ext Math} msg]} {
+      puts "liblib_simvascular_utils Math $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_repository.$lib_ext Repos} msg]} {
+      puts "liblib_simvascular_repository $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_lsetcore.$lib_ext Lsetcore} msg]} {
+      puts "liblib_simvascular_lset Lsetcore $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_lsetv.$lib_ext Lsetv} msg]} {
+      puts "liblib_simvascular_lset Lsetv $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_sysgeom.$lib_ext Geom} msg]} {
+      puts "liblib_simvascular_sysgeom $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_image.$lib_ext Image} msg]} {
+      puts "liblib_simvascular_image $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_gdscpost.$lib_ext Gdscpost} msg]} {
+      puts "liblib_simvascular_post $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_solid.$lib_ext Solid} msg]} {
+      puts "liblib_simvascular_solid $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_polydatasolid.$lib_ext Polydatasolid} msg]} {
+      puts "liblib_simvascular_polydatasolid $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_opencascade.$lib_ext Occtsolid} msg]} {
+      puts "liblib_simvascular_opencascade $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_mesh.$lib_ext Gdscmesh} msg]} {
+      puts "liblib_simvascular_mesh $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tetgen_mesh.$lib_ext Tetgenmesh} msg]} {
+      puts "liblib_simvascular_tetgen_mesh $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_adaptor.$lib_ext Adapt} msg]} {
+      puts "liblib_simvascular_adaptor $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tet_adaptor.$lib_ext Tetgenadapt} msg]} {
+      puts "liblib_simvascular_tet_adaptor $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_cvitk2d.$lib_ext Itkls2d} msg]} {
+      puts "liblib_simvascular_tet_cvitk2d $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_cvitk3d.$lib_ext Itkls3d} msg]} {
+      puts "liblib_simvascular_tet_cvitk3d $lib_ext: $msg"
+  }
+  if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_itkutils.$lib_ext Itkutils} msg]} {
+      puts "liblib_simvascular_tet_itkutils $lib_ext: $msg"
+  }
 }
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_math.$lib_ext Math} msg]} {
-    puts "liblib_simvascular_utils Math $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_repository.$lib_ext Repos} msg]} {
-    puts "liblib_simvascular_repository $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_lsetcore.$lib_ext Lsetcore} msg]} {
-    puts "liblib_simvascular_lset Lsetcore $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_lsetv.$lib_ext Lsetv} msg]} {
-    puts "liblib_simvascular_lset Lsetv $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_sysgeom.$lib_ext Geom} msg]} {
-    puts "liblib_simvascular_sysgeom $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_image.$lib_ext Image} msg]} {
-    puts "liblib_simvascular_image $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_gdscpost.$lib_ext Gdscpost} msg]} {
-    puts "liblib_simvascular_post $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_solid.$lib_ext Solid} msg]} {
-    puts "liblib_simvascular_solid $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_polydatasolid.$lib_ext Polydatasolid} msg]} {
-    puts "liblib_simvascular_polydatasolid $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_opencascade.$lib_ext Occtsolid} msg]} {
-    puts "liblib_simvascular_opencascade $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_mesh.$lib_ext Gdscmesh} msg]} {
-    puts "liblib_simvascular_mesh $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tetgen_mesh.$lib_ext Tetgenmesh} msg]} {
-    puts "liblib_simvascular_tetgen_mesh $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_adaptor.$lib_ext Adapt} msg]} {
-    puts "liblib_simvascular_adaptor $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_tet_adaptor.$lib_ext Tetgenadapt} msg]} {
-    puts "liblib_simvascular_tet_adaptor $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_cvitk2d.$lib_ext Itkls2d} msg]} {
-    puts "liblib_simvascular_tet_cvitk2d $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_cvitk3d.$lib_ext Itkls3d} msg]} {
-    puts "liblib_simvascular_tet_cvitk3d $lib_ext: $msg"
-}
-if {[catch {load $env(SV_HOME)/Lib/liblib_simvascular_itkutils.$lib_ext Itkutils} msg]} {
-    puts "liblib_simvascular_tet_itkutils $lib_ext: $msg"
-}
-
