@@ -1072,13 +1072,26 @@ proc guiSV_model_update_tree {} {
 
   if {[llength [model_names]] == 0} {
     $tv delete .models.PolyData
-    $tv delete .models.Parasolid
-    $tv delete .models.Discrete
-    $tv delete .models.OpenCASCADE
     $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
-    $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
-    $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
-    $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+    catch {repos_delete -obj /tmp/testsolid/obj}
+    solid_setKernel -name "Discrete"
+    if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+      $tv delete .models.Discrete
+      $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
+    }
+    catch {repos_delete -obj /tmp/testsolid/obj}
+    solid_setKernel -name "Parasolid"
+    if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+      $tv delete .models.Parasolid
+      $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
+    }
+    catch {repos_delete -obj /tmp/testsolid/obj}
+    solid_setKernel -name "OpenCASCADE"
+    if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+      $tv delete .models.OpenCASCADE
+      $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+    }
+    catch {repos_delete -obj /tmp/testsolid/obj}
   }
   $tv configure -columns [list DisplayModel FaceIds DisplayFaces]
   $tv heading \#0 -text "Object"

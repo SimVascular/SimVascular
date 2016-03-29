@@ -424,16 +424,16 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
   if [catch {tk::unsupported::ExposePrivateCommand tkTabToWindow}] {
     proc tkTabToWindow {foo} {}
   }
+  # try and pick a nice looking theme if it exists
 
   source [file join $env(SV_HOME)/Tcl/External/tkcon.tcl]
   source [file join $env(SV_HOME)/Tcl/External/graph.tcl]
 
-  after 5000 {set splash_delay_done 1}
-  vwait splash_delay_done
-
-  DestroyWindow.splash
-
-  # try and pick a nice looking theme if it exists
+  #Start main gui but keep transparent while tkcon loads
+  #Wait for 6 seconds and then close the splash screen
+  #and show the main window with correct sizing
+  mainGUI
+  wm attributes .guiCV -alpha 0.0
 
   if {$tcl_platform(os) == "Linux"} {
      catch {ttk::style theme use aqua}
@@ -444,12 +444,15 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
      catch {ttk::style theme use vista}
   }
 
-  mainGUI
-  catch {wm withdraw .}
   if {$tcl_platform(os) == "Darwin"} {
      catch {ttk::style theme use aqua}
   }
 
+  after 6000 {set splash_delay_done 1}
+  vwait splash_delay_done
+
+  DestroyWindow.splash
+  wm attributes .guiCV -alpha 1.0
 
   # --------------------------------
   # aliases (alias proc is in Tkcon)
@@ -463,8 +466,6 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
   set ::tkcon::COLOR(bg) white
   global symbolicName
 
-  after 5000 {set tkcon_delay_done 1}
-  vwait tkcon_delay_done
   if { $SV_NO_RENDERER == "1" } {
     puts "Starting up in no render mode"
   } else {
@@ -476,14 +477,14 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
   set leftright $symbolicName(main_left_right_panedwindow)
 
   set w [winfo width $leftright]
-  #puts "width: $w"
-  set sash0 300
-  puts "sashpos: [$leftright sashpos 0 $sash0]"
+  puts "width: $w"
+  set sash0 [expr int($w/2)]
+  puts "vert sashpos: [$leftright sashpos 0 $sash0]"
 
   set h [winfo height $topbottom]
-  #puts "height: $h"
-  set sash0 320
-  puts "sashpos: [$topbottom sashpos 0 $sash0]"
+  puts "height: $h"
+  set sash0 [expr int($h/3)]
+  puts "horz sashpos: [$topbottom sashpos 0 $sash0]"
 
   if {[info exists env(SV_REDIRECT_STDERR_STDOUT)]} {
   proc handle { args } {

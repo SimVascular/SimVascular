@@ -44,10 +44,12 @@ proc ShowWindow.guiCV { args} {
   }
   toplevel .guiCV   -background {white}
 
+  set wmax [winfo screenwidth .]
+  set hmax [winfo screenheight .]
   # Window manager configurations
   wm positionfrom .guiCV program
   wm sizefrom .guiCV program
-  wm maxsize .guiCV 2560 1600
+  wm maxsize .guiCV $wmax $hmax
   #wm minsize .guiCV 1890 1155
   wm minsize .guiCV 124 95
   wm protocol .guiCV WM_DELETE_WINDOW {mainGUIexit}
@@ -46816,7 +46818,9 @@ proc mainGUI {} {
     }
 
     ShowWindow.guiCV
-    wm geometry .guiCV 1000x500+360+170
+    set swidth [expr [winfo screenwidth .]-10]
+    set sheight [expr [winfo screenheight .]-10]
+    wm geometry .guiCV ${swidth}x${sheight}+5+5
 
     guiFNMsetDefaultFilenames
     global gFilenames
@@ -46873,9 +46877,23 @@ proc mainGUI {} {
   bind $tv <<TreeviewOpen>> [list guiSV_model_fillTree $tv]
   bind $tv <<TreeviewSelect>> [list guiSV_model_selectTree $tv]
   $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
-  $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
-  $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
-  $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "Discrete"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "Parasolid"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "OpenCASCADE"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "PolyData"
 
   global symbolicName
   global guiTRIMvars
