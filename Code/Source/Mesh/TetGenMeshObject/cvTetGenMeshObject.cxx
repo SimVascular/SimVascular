@@ -66,11 +66,14 @@
 #include "vtkAppendPolyData.h"
 
 #ifdef SV_USE_VMTK
-	#include "cv_VMTK_utils.h"
-	#include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
-	#include "vtkvmtkUnstructuredGridTetraFilter.h"
+  #include "cv_VMTK_utils.h"
+  #include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
+  #include "vtkvmtkUnstructuredGridTetraFilter.h"
 #endif
 
+#ifdef SV_USE_MMG
+  #include "cv_mmg_mesh_utils.h"
+#endif
 
 // -----------
 // cvTetGenMeshObject
@@ -133,6 +136,8 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.secondarrayfunction=0;
   meshoptions_.meshwallfirst=0;
   meshoptions_.startwithvolume=0;
+  meshoptions_.refinecount=0;
+  meshoptions_.usemmg=0;
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
@@ -849,6 +854,9 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else if(!strncmp(flags,"StartWithVolume",15)) {//r
       meshoptions_.startwithvolume=1;
   }
+  else if (!strncmp(flags,"UseMMG",6)){
+      meshoptions_.usemmg=1;
+  }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
@@ -941,20 +949,23 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   polydatasolid_->GetCellData()->AddArray(wallArray);
   wallArray->Delete();
 
-  vtkSmartPointer<vtkThreshold> thresholder =
-    vtkSmartPointer<vtkThreshold>::New();
-  thresholder->SetInputData(polydatasolid_);
-   //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
-  thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  thresholder->ThresholdBetween(1,1);
-  thresholder->Update();
+  if (meshoptions_.usemmg == 0)
+  {
+    vtkSmartPointer<vtkThreshold> thresholder =
+      vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(polydatasolid_);
+     //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
+    thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
+    thresholder->ThresholdBetween(1,1);
+    thresholder->Update();
 
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
-    vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
+      vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
 
-  polydatasolid_->DeepCopy(surfacer->GetOutput());
+    polydatasolid_->DeepCopy(surfacer->GetOutput());
+  }
 
   delete [] isWall;
   return CV_OK;
@@ -999,6 +1010,7 @@ int cvTetGenMeshObject::SetCylinderRefinement(double size, double radius,
   }
 
   meshoptions_.secondarrayfunction = 1;
+  meshoptions_.refinecount += 1;
   return CV_OK;
 }
 
@@ -1037,6 +1049,7 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
   }
 
   meshoptions_.secondarrayfunction = 1;
+  meshoptions_.refinecount += 1;
   return CV_OK;
 }
 
@@ -1489,14 +1502,33 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     meshsizingfunction = NULL;
   }
 
-  //Generate Surface Remeshing
-  if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
-	meshcapsonly,preserveedges,trianglesplitfactor,
-	collapseanglethreshold,NULL,markerListName,
-	useSizingFunction,meshsizingfunction) != CV_OK)
+  if (meshoptions_.usemmg)
   {
-    fprintf(stderr,"Problem with surface meshing\n");
-    return CV_ERROR;
+    double mmg_maxsize = 1.25*meshoptions_.maxedgesize;
+    double mmg_minsize = mmg_maxsize;
+    double hausd = 0.01;
+    double dumAng = 45.0;
+    double hgrad = 1.1;
+    //Generate Surface Remeshing
+    if(MMGUtils_SurfaceRemeshing(polydatasolid_, mmg_minsize,
+	  mmg_maxsize, hausd, dumAng, hgrad,
+	  useSizingFunction, meshsizingfunction, meshoptions_.refinecount) != CV_OK)
+    {
+      fprintf(stderr,"Problem with surface meshing\n");
+      return CV_ERROR;
+    }
+  }
+  else
+  {
+    //Generate Surface Remeshing
+    if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
+          meshcapsonly,preserveedges,trianglesplitfactor,
+          collapseanglethreshold,NULL,markerListName,
+          useSizingFunction,meshsizingfunction) != CV_OK)
+    {
+      fprintf(stderr,"Problem with surface meshing\n");
+      return CV_ERROR;
+    }
   }
 
   if (TGenUtils_CheckSurfaceMesh(polydatasolid_,
