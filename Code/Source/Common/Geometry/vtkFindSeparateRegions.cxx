@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief This implements the vtkFindSeparateRegions filter as a class
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "vtkFindSeparateRegions.h"
@@ -96,7 +96,7 @@ int vtkFindSeparateRegions::RequestData(
     // get the input and output
     vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
     vtkPolyData *output = vtkPolyData::GetData(outputVector);
-    
+
     // Define variables used by the algorithm
     vtkSmartPointer<vtkPoints> inpts = vtkSmartPointer<vtkPoints>::New();
     vtkSmartPointer<vtkCellArray> inPolys = vtkSmartPointer<vtkCellArray>::New();
@@ -112,7 +112,7 @@ int vtkFindSeparateRegions::RequestData(
     numPts = input->GetNumberOfPoints();
 
     //Check the input to make sure it is there
-    if (numPolys < 1)               
+    if (numPolys < 1)
     {
         vtkDebugMacro("No input!");
 	return 1;
@@ -132,9 +132,9 @@ int vtkFindSeparateRegions::RequestData(
     input->BuildLinks();
     vtkSmartPointer<vtkIntArray> newPointArray =
       vtkSmartPointer<vtkIntArray>::New();
-    vtkSmartPointer<vtkIdList> pointCells = 
+    vtkSmartPointer<vtkIdList> pointCells =
       vtkSmartPointer<vtkIdList>::New();
-    vtkSmartPointer<vtkIdList> checkList = 
+    vtkSmartPointer<vtkIdList> checkList =
       vtkSmartPointer<vtkIdList>::New();
 
     if (this->targetCellIds == NULL)
@@ -209,7 +209,7 @@ int vtkFindSeparateRegions::SetAllCellIds()
   this->intCellScalars->GetRange(range);
 
   int max = range[1];
-  for (int i=0;i < max;i++)
+  for (int i=0;i <= max;i++)
     this->targetCellIds->InsertNextId(i);
 
   return 1;
