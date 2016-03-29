@@ -426,6 +426,15 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
   }
   # try and pick a nice looking theme if it exists
 
+  source [file join $env(SV_HOME)/Tcl/External/tkcon.tcl]
+  source [file join $env(SV_HOME)/Tcl/External/graph.tcl]
+
+  #Start main gui but keep transparent while tkcon loads
+  #Wait for 6 seconds and then close the splash screen
+  #and show the main window with correct sizing
+  mainGUI
+  wm attributes .guiCV -alpha 0.0
+
   if {$tcl_platform(os) == "Linux"} {
      catch {ttk::style theme use aqua}
   }
@@ -438,15 +447,6 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
   if {$tcl_platform(os) == "Darwin"} {
      catch {ttk::style theme use aqua}
   }
-
-  source [file join $env(SV_HOME)/Tcl/External/tkcon.tcl]
-  source [file join $env(SV_HOME)/Tcl/External/graph.tcl]
-
-  #Start main gui but keep transparent while tkcon loads
-  #Wait for 8 seconds and then close the splash screen
-  #and show the main window with correct sizing
-  mainGUI
-  wm attributes .guiCV -alpha 0.0
 
   after 6000 {set splash_delay_done 1}
   vwait splash_delay_done

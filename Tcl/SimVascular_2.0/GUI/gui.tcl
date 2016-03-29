@@ -46820,7 +46820,7 @@ proc mainGUI {} {
     ShowWindow.guiCV
     set swidth [expr [winfo screenwidth .]-10]
     set sheight [expr [winfo screenheight .]-10]
-    wm geometry .guiCV ${swidth}x${sheight}+10+10
+    wm geometry .guiCV ${swidth}x${sheight}+5+5
 
     guiFNMsetDefaultFilenames
     global gFilenames

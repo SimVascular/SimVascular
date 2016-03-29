@@ -91,7 +91,7 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 
     solid = (cvSolidModel *) (solidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
     if (solid == NULL) {
-		  fprintf( stdout, "Unable to create solid model kernal (%i)\n",cvSolidModel::gCurrentKernel);
+		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
 		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
     }
   } else {
