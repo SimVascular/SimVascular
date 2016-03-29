@@ -43,9 +43,9 @@
 #cmakedefine SV_USE_PYTHON @SV_USE_PYTHON@
 #cmakedefine SV_USE_GTS @SV_USE_GTS@
 #cmakedefine SV_USE_GLIB @SV_USE_GLIB@
-#cmakedefine USE_MMG @USE_MMG@
+#cmakedefine SV_USE_TETGEN @SV_USE_TETGEN@
+#cmakedefine SV_USE_MMG @SV_USE_MMG@
 #ifdef SV_USE_TETGEN
-  #cmakedefine SV_USE_TETGEN @SV_USE_TETGEN@
   #cmakedefine TETGEN150 @TETGEN150@
   #cmakedefine TETGEN143 @TETGEN143@
   #cmakedefine TETGEN151 @TETGEN151@

@@ -137,7 +137,11 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.meshwallfirst=0;
   meshoptions_.startwithvolume=0;
   meshoptions_.refinecount=0;
+#ifdef SV_USE_MMG
+  meshoptions_.usemmg=1;
+#else
   meshoptions_.usemmg=0;
+#endif
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
@@ -726,7 +730,7 @@ int cvTetGenMeshObject::NewMesh() {
   {
     if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
-      fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
+      fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
 		      Something may have gone wrong when setting up BL");
       return CV_ERROR;
     }

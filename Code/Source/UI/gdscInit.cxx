@@ -80,7 +80,7 @@
   #include "cv_tetgen_mesh_init.h"
 #endif
 
-#ifdef USE_MMG
+#ifdef SV_USE_MMG
   #include "cv_mesh_init.h"
   #include "cv_mmg_mesh_init.h"
 #endif
@@ -247,7 +247,7 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 #endif
 
-#ifdef USE_MMG
+#ifdef SV_USE_MMG
   if ( Mmgmesh_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Mmgmesh_Init\n" );
     return TCL_ERROR;

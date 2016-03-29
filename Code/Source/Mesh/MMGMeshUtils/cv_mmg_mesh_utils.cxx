@@ -232,7 +232,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   }
   if (useSizingFunction)
   {
-    meshSizingFunction->SetName("SizingFunction");
+    meshSizingFunction->SetName("MeshSizingFunction");
     if (MMGUtils_SetMeshSizingFunction(polydatasolid, meshSizingFunction, hmax) != CV_OK)
     {
       fprintf(stderr,"Error in setting sizing function\n");
@@ -375,7 +375,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   }
   if (useSizingFunction)
   {
-    if (MMGUtils_PassPointArray(pd, surface, "SizingFunction", "SizingFunction") != CV_OK)
+    if (MMGUtils_PassPointArray(pd, surface, "MeshSizingFunction", "MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Error resetting regions\n");
       MMGS_Free_all(MMG5_ARG_start,
