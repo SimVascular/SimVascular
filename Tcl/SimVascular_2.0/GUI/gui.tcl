@@ -46877,9 +46877,23 @@ proc mainGUI {} {
   bind $tv <<TreeviewOpen>> [list guiSV_model_fillTree $tv]
   bind $tv <<TreeviewSelect>> [list guiSV_model_selectTree $tv]
   $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
-  $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
-  $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
-  $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "Discrete"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "Parasolid"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "OpenCASCADE"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "PolyData"
 
   global symbolicName
   global guiTRIMvars

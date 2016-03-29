@@ -448,7 +448,7 @@ if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
   mainGUI
   wm attributes .guiCV -alpha 0.0
 
-  after 8000 {set splash_delay_done 1}
+  after 6000 {set splash_delay_done 1}
   vwait splash_delay_done
 
   DestroyWindow.splash
