@@ -44,10 +44,12 @@ proc ShowWindow.guiCV { args} {
   }
   toplevel .guiCV   -background {white}
 
+  set wmax [winfo screenwidth .]
+  set hmax [winfo screenheight .]
   # Window manager configurations
   wm positionfrom .guiCV program
   wm sizefrom .guiCV program
-  wm maxsize .guiCV 2560 1600
+  wm maxsize .guiCV $wmax $hmax
   #wm minsize .guiCV 1890 1155
   wm minsize .guiCV 124 95
   wm protocol .guiCV WM_DELETE_WINDOW {mainGUIexit}
@@ -46816,7 +46818,9 @@ proc mainGUI {} {
     }
 
     ShowWindow.guiCV
-    wm geometry .guiCV 1000x500+360+170
+    set swidth [expr [winfo screenwidth .]-10]
+    set sheight [expr [winfo screenheight .]-10]
+    wm geometry .guiCV ${swidth}x${sheight}+10+10
 
     guiFNMsetDefaultFilenames
     global gFilenames
