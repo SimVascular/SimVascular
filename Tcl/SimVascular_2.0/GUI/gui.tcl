@@ -50435,6 +50435,7 @@ set {guiTGvars(useNoMerging)} {0}
 set {guiTGvars(useQuiet)} {0}
 set {guiTGvars(useVerbose)} {0}
 set {guiTGvars(wallFaces)} {}
+set {guiTGvars(useMMG)} {1}
 global {guiPYPLOFTvars}
 set {guiPYLOFTvars(uDeg)} {3}
 set {guiPYLOFTvars(vDeg)} {3}

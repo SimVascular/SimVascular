@@ -1,19 +1,19 @@
 #===========================================================================
-#    
+#
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
 # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
 # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -26,7 +26,7 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-#===========================================================================    
+#===========================================================================
 
 # Procedure: guiMMcreateTetGenScriptFile
 proc guiMMcreateTetGenScriptFile {} {
@@ -69,6 +69,9 @@ proc guiMMcreateTetGenScriptFile {} {
 
   puts $fp "option surface $guiMMvars(meshGenerateSurfaceMesh)"
   puts $fp "option volume $guiMMvars(meshGenerateVolumeMesh)"
+  if {$guiTGvars(useMMG)} {
+    puts $fp "option UseMMG"
+  }
 
   puts $fp "# start_of_user_meshing_control_parameters"
   if {$guiTGvars(useMeshMaxVolume)} {
@@ -87,7 +90,7 @@ proc guiMMcreateTetGenScriptFile {} {
     puts $fp "functionBasedMeshing $guiTGvars(meshMaxEdgeSize) $guiTGvars(functionBasedMeshingName)"
   }
   if $guiMMvars(meshGenerateBoundaryLayerMesh) {
-    puts $fp "boundaryLayer $guiTGvars(numsublayers) $guiTGvars(blthicknessratio) $guiTGvars(sublayerratio)" 
+    puts $fp "boundaryLayer $guiTGvars(numsublayers) $guiTGvars(blthicknessratio) $guiTGvars(sublayerratio)"
   }
   # strip out blank lines
   set broke [split $guiTGvars(meshControlAttributes) "\n"]
@@ -136,15 +139,15 @@ proc guiMMcreateTetGenScriptFile {} {
 
   puts $fp "# end_of_user_meshing_control_parameters"
 
-  puts $fp "generateMesh" 
+  puts $fp "generateMesh"
 
   if {$guiMMvars(meshGenerateBoundaryLayerMesh)} {
     puts $fp "# create and name boundaries for boundary layer mesh"
-    puts $fp "getBoundaries"  
+    puts $fp "getBoundaries"
   }
 
   puts $fp "# write out mesh"
-    
+
   set gFilenames(mesh_file) [file rootname $gFilenames(mesh_file)].vtu
   puts $fp "writeMesh $gFilenames(mesh_file) vtu 0"
 
@@ -240,7 +243,7 @@ proc mesh_readTGS {filename resObj} {
 	   } else {
 	     puts "Getting Solid Boundaries..."
 	     set gInputReturnVar 50.0
-	     set dummyNum [tk_inputDialog .askthem "Boundary Extraction" "Enter Boundary Extraction Angle (0-90 degrees):" question 0 "OK"] 
+	     set dummyNum [tk_inputDialog .askthem "Boundary Extraction" "Enter Boundary Extraction Angle (0-90 degrees):" question 0 "OK"]
 	     set guiPDvars(angleForBoundaries) $gInputReturnVar
 	     $solid GetBoundaryFaces -angle $gInputReturnVar
 	     puts "Got Boundaries"
@@ -265,7 +268,7 @@ proc mesh_readTGS {filename resObj} {
           $resObj SetVtkPolyData -obj $solidPD
 
       } elseif {[lindex $line 0] == "localSize"} {
-	set facename [lindex $line 1] 
+	set facename [lindex $line 1]
 	if {$facename == ""} {
 	  return -code error "ERROR: Must select a face to add local mesh size on !"
 	}
@@ -275,7 +278,7 @@ proc mesh_readTGS {filename resObj} {
 	    set regionid $id
 	  }
 	}
-	$resObj SetMeshOptions -options "LocalEdgeSize" -values [list $regionid [lindex $line 3]] 
+	$resObj SetMeshOptions -options "LocalEdgeSize" -values [list $regionid [lindex $line 3]]
       } elseif {[lindex $line 0] == "useCenterlineRadius"} {
 	if {$guiTGvars(meshWallFirst) != 1} {
           return -code error "ERROR: Must select wall faces for boundary layer"
@@ -283,11 +286,11 @@ proc mesh_readTGS {filename resObj} {
 	set cappedsolid /tmp/solid/cappedpd
 	catch {repos_delete -obj $cappedsolid}
 
-	set cappedsolid [PolyDataVMTKGetCenterIds $resObj mesh] 
+	set cappedsolid [PolyDataVMTKGetCenterIds $resObj mesh]
 	set polys [PolyDataVMTKCenterlines $cappedsolid $resObj mesh]
 
 	$resObj SetVtkPolyData -obj [lindex $polys 0]
-	
+
       } elseif {[lindex $line 0] == "functionBasedMeshing"} {
 	$resObj SetSizeFunctionBasedMesh -size [lindex $line 1] -functionname [lindex $line 2]
       } elseif {[lindex $line 0] == "sphereRefinement"} {
@@ -364,7 +367,7 @@ proc createSolidBoundaries {} {
     puts "ERROR: File $filename does not exist."
     return -code error "ERROR: File $filename does not exist."
   }
-  
+
 
   if {[file exists $filename.facenames] == 0} {
     puts "Getting Solid Boundaries..."
@@ -400,20 +403,20 @@ proc PickPolyDataFaces {solid} {
   global gInputReturnVar
   set gInputReturnVar 1
 
-  set dummyNum [tk_inputDialog .askthem "Enter Inlet Surface" "Enter Number of Inlet Surfaces:" question 0 "OK"] 
+  set dummyNum [tk_inputDialog .askthem "Enter Inlet Surface" "Enter Number of Inlet Surfaces:" question 0 "OK"]
   tk_messageBox -title "Select Face" -type ok -message "To select a face click on 3D viewing window, hold cursor over surface and click 'p'"
   set numInlets $gInputReturnVar
   for {set tot 1} {$tot <= $numInlets} {incr tot} {
     PickPolyDataFace "inlet"
   }
   set gInputReturnVar 1
-  set dummyNum [tk_inputDialog .askthem "Enter Outlet Surface" "Enter Number of Outlet Surfaces:" question 0 "OK"] 
+  set dummyNum [tk_inputDialog .askthem "Enter Outlet Surface" "Enter Number of Outlet Surfaces:" question 0 "OK"]
   set numOutlets $gInputReturnVar
   for {set tot 1} {$tot <= $numOutlets} {incr tot} {
     PickPolyDataFace "outlet"
   }
   set gInputReturnVar 1
-  set dummyNum [tk_inputDialog .askthem "Enter Wall Surface" "Enter Number of Wall Surfaces:" question 0 "OK"] 
+  set dummyNum [tk_inputDialog .askthem "Enter Wall Surface" "Enter Number of Wall Surfaces:" question 0 "OK"]
   set numWalls $gInputReturnVar
   for {set tot 1} {$tot <= $numWalls} {incr tot} {
     PickPolyDataFace "wall"
@@ -425,7 +428,7 @@ proc PickPolyDataFace {facetype} {
   global gPolyDataFaceNames
   global PickedAssembly
   global gInputReturnVar
-  
+
   set gInputReturnVar ""
   set gActorPicked 0
 
@@ -442,20 +445,20 @@ proc PickPolyDataFace {facetype} {
   }
   if {$useDefault == 1} {
     if {$facetype == "inlet"} {
-      set gPolyDataFaceNames($idNumber) "inlet_$idNumber"  
+      set gPolyDataFaceNames($idNumber) "inlet_$idNumber"
     } elseif {$facetype == "outlet"} {
-      set gPolyDataFaceNames($idNumber) "outlet_$idNumber" 
+      set gPolyDataFaceNames($idNumber) "outlet_$idNumber"
     } elseif {$facetype == "wall"} {
-      set gPolyDataFaceNames($idNumber) "wall_$idNumber" 
+      set gPolyDataFaceNames($idNumber) "wall_$idNumber"
     }
   } elseif {$useDefault == 0} {
     puts $gInputReturnVar
     if {$facetype == "inlet"} {
-      set gPolyDataFaceNames($idNumber) $gInputReturnVar  
+      set gPolyDataFaceNames($idNumber) $gInputReturnVar
     } elseif {$facetype == "outlet"} {
-      set gPolyDataFaceNames($idNumber) $gInputReturnVar 
+      set gPolyDataFaceNames($idNumber) $gInputReturnVar
     } elseif {$facetype == "wall"} {
-      set gPolyDataFaceNames($idNumber) $gInputReturnVar 
+      set gPolyDataFaceNames($idNumber) $gInputReturnVar
     }
     puts "Name has been changed to $gPolyDataFaceNames($idNumber)"
   }
@@ -499,7 +502,7 @@ proc guiSPHEREvis {type} {
     set show $guiTGvars(showSphere)
     set object $gObjects(polydata_solid)
     set smasherInputName $object
-  
+
     set solid /solid/sphereinteractor/pd
   } elseif {$type == "model"} {
     set show $gui3Dvars(showSphere)
@@ -727,6 +730,6 @@ proc return_face_id {solid facename} {
     if {$gPolyDataFaceNames($id) == $facename} {
       set wallid $id
     }
-  } 
+  }
   return $wallid
 }
