@@ -208,6 +208,16 @@ endif()
 #-----------------------------------------------------------------------------
 # Begin Plugin Logic
 #-----------------------------------------------------------------------------
+# Plugin Mmg
+if(SV_USE_MMG)
+	SET(USE_MMG ON)
+	set(MMG_DIR "" CACHE PATH "Path to top mmg.  Specify this if ${proj} cannot be found.")
+	mark_as_superbuild(MMG_DIR)
+	find_package(MMG)
+	mark_as_superbuild(MMG_INCLUDE_DIR)
+	mark_as_superbuild(MMG_LIBRARY)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+endif()
 
 #-----------------------------------------------------------------------------
 # Plugin Tetgen
