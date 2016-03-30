@@ -45,30 +45,13 @@
 
 #include "mmg/mmgs/libmmgs.h"
 
-int MMGUtils_SetMeshSizingFunction(vtkPolyData *polydatasolid, vtkDoubleArray *meshSizingFunction,
-    int hmax)
-{
-  for (int i=0;i<meshSizingFunction->GetNumberOfTuples();i++)
-  {
-    int edgesize = meshSizingFunction->GetValue(i);
-    if (edgesize == 0)
-    {
-      meshSizingFunction->SetValue(i,(0.25)*pow(3.0,0.5)*pow((1.0/1.2)*hmax,2.0));
-    }
-    else
-    {
-      meshSizingFunction->SetValue(i,(0.25)*pow(3.0,0.5)*pow(edgesize,2.0));
-    }
-  }
-
-  return CV_OK;
-}
-
 int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid,
     double hmin, double hmax, double hausd, double angle, double hgrad,
     int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines)
 {
   vtkSmartPointer<vtkIntArray> boundaryScalars =
+    vtkSmartPointer<vtkIntArray>::New();
+  vtkSmartPointer<vtkIntArray> refineIDs =
     vtkSmartPointer<vtkIntArray>::New();
   if (VtkUtils_PDCheckArrayName(polydatasolid,1,"ModelFaceID") != CV_OK)
   {
@@ -112,6 +95,15 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     {
       fprintf(stderr,"Could not get face ids\n");
       return CV_ERROR;
+    }
+    if (numAddedRefines != 0)
+    {
+      if (VtkUtils_PDCheckArrayName(polydatasolid,0,"RefineID") != CV_OK)
+      {
+	fprintf(stderr,"Array %s does not exist on mesh\n","RefineID");
+	return CV_ERROR;
+      }
+      refineIDs = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray("RefineID"));
     }
     int numSizes = numFaces + numAddedRefines;
     delete [] faces;
@@ -173,15 +165,19 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     ppt->ref = 1;
   }
 
+  int refineCt=0;
   MMG5_pTria  tria;
   vtkIdType npts,*pts;
   for (int i=0;i<numTris;i++)
   {
+    refineCt=0;
     tria = &mesh->tria[i+1];
     polydatasolid->GetCellPoints(i,npts,pts);
     for (int j=0;j<npts;j++)
     {
       tria->v[j] = pts[j] + 1;
+      if (numAddedRefines != 0)
+	refineCt+= refineIDs->GetValue(pts[j]);
     }
     tria->ref = boundaryScalars->GetValue(i);
     if (useSizingFunction)
@@ -203,9 +199,11 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
       }
       else
       {
-	newmax = edgesize;
+	newmax = 1.25*edgesize;
 	newmin = newmax;
       }
+      if (numAddedRefines != 0 && refineCt == 3)
+	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]) + 1;
       if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, hausd))
       {
 	fprintf(stderr,"Error in mmgs\n");
@@ -229,16 +227,6 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
       fprintf(stderr,"Error in mmgs\n");
       return CV_ERROR;
     }
-  }
-  if (useSizingFunction)
-  {
-    meshSizingFunction->SetName("MeshSizingFunction");
-    if (MMGUtils_SetMeshSizingFunction(polydatasolid, meshSizingFunction, hmax) != CV_OK)
-    {
-      fprintf(stderr,"Error in setting sizing function\n");
-      return CV_ERROR;
-    }
-    polydatasolid->GetPointData()->AddArray(meshSizingFunction);
   }
 
   int ier = MMGS_loadSol(mesh, sol, "");

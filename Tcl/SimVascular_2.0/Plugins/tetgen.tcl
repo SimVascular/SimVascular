@@ -69,9 +69,7 @@ proc guiMMcreateTetGenScriptFile {} {
 
   puts $fp "option surface $guiMMvars(meshGenerateSurfaceMesh)"
   puts $fp "option volume $guiMMvars(meshGenerateVolumeMesh)"
-  if {$guiTGvars(useMMG)} {
-    puts $fp "option UseMMG"
-  }
+  puts $fp "option UseMMG $guiTGvars(useMMG)"
 
   puts $fp "# start_of_user_meshing_control_parameters"
   if {$guiTGvars(useMeshMaxVolume)} {

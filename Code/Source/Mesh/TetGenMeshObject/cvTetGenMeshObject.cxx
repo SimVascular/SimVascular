@@ -859,7 +859,9 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       meshoptions_.startwithvolume=1;
   }
   else if (!strncmp(flags,"UseMMG",6)){
-      meshoptions_.usemmg=1;
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.usemmg=values[0];
   }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
@@ -1008,7 +1010,7 @@ int cvTetGenMeshObject::SetCylinderRefinement(double size, double radius,
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementCylinder(polydatasolid_,"MeshSizingFunction",
 	size,radius,center,length,normal,meshoptions_.secondarrayfunction,
-	meshoptions_.maxedgesize) != CV_OK)
+	meshoptions_.maxedgesize,"RefineID",meshoptions_.refinecount) != CV_OK)
   {
     return CV_ERROR;
   }
@@ -1047,7 +1049,7 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementSphere(polydatasolid_,"MeshSizingFunction",
 	size,radius,center,meshoptions_.secondarrayfunction,
-	meshoptions_.maxedgesize) != CV_OK)
+	meshoptions_.maxedgesize,"RefineID",meshoptions_.refinecount) != CV_OK)
   {
     return CV_ERROR;
   }
@@ -1514,6 +1516,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     double dumAng = 45.0;
     double hgrad = 1.1;
     //Generate Surface Remeshing
+    PlyDtaUtils_WriteNative(polydatasolid_,0,"/Users/adamupdegrove/Desktop/JustChecking.vtp");
     if(MMGUtils_SurfaceRemeshing(polydatasolid_, mmg_minsize,
 	  mmg_maxsize, hausd, dumAng, hgrad,
 	  useSizingFunction, meshsizingfunction, meshoptions_.refinecount) != CV_OK)

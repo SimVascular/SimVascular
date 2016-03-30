@@ -39,8 +39,6 @@
 
 #include "mmg/mmgs/libmmgs.h"
 
-int MMGUtils_SetMeshSizingFunction(vtkPolyData *polydatasolid, vtkDoubleArray *meshSizingFunction, int hmax);
-
 int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid,
     double hmin, double hmax, double hausd, double angle, double hgrad,
     int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
