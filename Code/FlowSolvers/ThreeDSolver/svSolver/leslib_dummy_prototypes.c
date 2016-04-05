@@ -38,7 +38,7 @@
  * DAMAGE.
  */
 
-#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
   #define myflesnew_   MYFLESNEW
   #define myflessolve_ MYFLESSOLVE
   #define savelesrestart_ SAVELESRESTART
@@ -48,7 +48,7 @@
   #define usrnew_ USRNEW      
 #endif
 
-/* nothing to be done for CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE case */
+/* nothing to be done for SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE case */
 
 typedef	int	Integer	;		/* integer type			*/
 typedef	double	Real ;			/* real    type			*/

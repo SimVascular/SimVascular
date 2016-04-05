@@ -107,10 +107,10 @@ ifndef NO_DEPEND
 endif
 
 createOptionFile:
-	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
+	@echo "#define VER_CORONARY $(SV_THREEDSOLVER_USE_CORONARY)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
+	@echo "#define VER_CLOSEDLOOP $(SV_THREEDSOLVER_USE_CLOSEDLOOP)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
+	@echo "#define VER_VARWALL $(SV_THREEDSOLVER_USE_VARWALL)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
+	@echo "#define VER_USE_VTK $(SV_THREEDSOLVER_USE_VTK)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
 
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done

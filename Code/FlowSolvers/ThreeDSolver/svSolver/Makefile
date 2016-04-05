@@ -125,7 +125,7 @@ FSRCS   +=  addelmpvsqforsvls-closedloop-coronary.f \
 #endif
 
 # need to add in additional code if using real leslib
-ifeq ($(MAKE_WITH_BINARY_LESLIB), 1)
+ifeq ($(SV_USE_BINARY_LESLIB), 1)
   CSRCS	+= leslib_code_getsol.c leslib_code_lestools.c leslib_code_usr.c
   HDRS  += leslib_code_usr.h
   FSRCS += leslib_code_bc3diag.f      leslib_code_drvallreducesclr.f \
@@ -169,10 +169,10 @@ ifndef NO_DEPEND
 endif
 
 createOptionFile:
-	@echo "#define VER_CORONARY $(FLOWSOLVER_VERSION_CORONARY_ACTIVATE)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
-	@echo "#define VER_CLOSEDLOOP $(FLOWSOLVER_VERSION_CLOSEDLOOP_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
-	@echo "#define VER_VARWALL $(FLOWSOLVER_VERSION_VARWALL_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
-	@echo "#define VER_USE_VTK $(FLOWSOLVER_VERSION_USE_VTK_ACTIVATE)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_CORONARY $(SV_THREEDSOLVER_USE_CORONARY)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_CLOSEDLOOP $(SV_THREEDSOLVER_USE_CLOSEDLOOP)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_VARWALL $(SV_THREEDSOLVER_USE_VARWALL)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
+	@echo "#define VER_USE_VTK $(SV_THREEDSOLVER_USE_VTK)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/cvFlowsolverOptions.h
 
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done

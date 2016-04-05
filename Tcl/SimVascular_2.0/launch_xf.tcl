@@ -38,22 +38,22 @@
 global env
 set envnames [array names env]
 
-if {[lsearch -exact [array names env] SIMVASCULAR_HOME] < 0} {
-  puts "FATAL ERROR: Need to set environment variable SIMVASCULAR_HOME."
+if {[lsearch -exact [array names env] SV_HOME] < 0} {
+  puts "FATAL ERROR: Need to set environment variable SV_HOME."
   exit
 }
 
-if {!(([file exists $env(SIMVASCULAR_HOME)]) && ([file isdirectory $env(SIMVASCULAR_HOME)]))} {
-  puts "FATAL ERROR: Invalid value for SIMVASCULAR_HOME variable ($env(SIMVASCULAR_HOME))."
+if {!(([file exists $env(SV_HOME)]) && ([file isdirectory $env(SV_HOME)]))} {
+  puts "FATAL ERROR: Invalid value for SV_HOME variable ($env(SV_HOME))."
   exit
 }
 
-set simvascular_home $env(SIMVASCULAR_HOME)
+set simvascular_home $env(SV_HOME)
 
-#source [file join $env(SIMVASCULAR_HOME) Tcl SimVascular_2.0 simvascular_vtk_init.tcl]
+#source [file join $env(SV_HOME) Tcl SimVascular_2.0 simvascular_vtk_init.tcl]
 
 # need package xml
-lappend auto_path [file join $env(SIMVASCULAR_HOME) Tcl External tclxml3.2]
+lappend auto_path [file join $env(SV_HOME) Tcl External tclxml3.2]
 
 # ----------------------
 # load required packages
@@ -102,7 +102,7 @@ puts ""
     proc tkTabToWindow {foo} {}
   }
 
-source [file join $env(SIMVASCULAR_HOME)/Tcl/External/tkcon.tcl]
+source [file join $env(SV_HOME)/Tcl/External/tkcon.tcl]
 
   # try and pick a nice looking theme if it exists
 
@@ -132,9 +132,9 @@ source [file join $env(SIMVASCULAR_HOME)/Tcl/External/tkcon.tcl]
 # Source script if provided
 # -------------------------
 
-set xf_DIR [file join $env(SIMVASCULAR_HOME)/Tcl/External/xf-4.3]
+set xf_DIR [file join $env(SV_HOME)/Tcl/External/xf-4.3]
 
-source [file join $env(SIMVASCULAR_HOME)/Tcl/External/xf-4.3/src/xfmain.tcl]
+source [file join $env(SV_HOME)/Tcl/External/xf-4.3/src/xfmain.tcl]
 if {$argc >= 3} {
   ShowWindow.
 }

@@ -49,7 +49,7 @@
 #include "cvAdaptObject.h"
 //#include "cvRepositoryData.h"
 
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
 #include "simvascular_zlib.h"
 #else
 #include <stdlib.h>

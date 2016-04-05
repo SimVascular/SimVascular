@@ -20,7 +20,7 @@ ENDMACRO(LIST_INDEX)
 
 
 # Check if version file exists
-#SET(VER_FILE ${SimVascular_SOURCE_DIR}/Modules/ThreeDSolver/version.h)
+#SET(VER_FILE ${SV_SOURCE_DIR}/Modules/ThreeDSolver/version.h)
 #if(EXISTS ${VER_FILE})
 #  MESSAGE(STATUS "--- FLOWSOLVER VERSION FILE WAS FOUND.") 
 #  # Define version variables

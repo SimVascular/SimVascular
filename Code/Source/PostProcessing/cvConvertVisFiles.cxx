@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,7 +51,7 @@ cvConvertVisFiles::cvConvertVisFiles() {
     resfp_ = NULL;
     meshfilename_[0] = '\0';
     resfilename_[0] = '\0';
- 
+
     numTractionNodes_ = 0;
     tractionNodes_ = NULL;
 
@@ -70,7 +70,7 @@ cvConvertVisFiles::cvConvertVisFiles() {
     haveTransportResults_ = 0;
     haveStressResults_ = 0;
     haveTractionResults_ = 0;
-    haveDisplacementResults_ = 0;   
+    haveDisplacementResults_ = 0;
     haveWSSResults_ = 0;
     currentLine_[0]  = '\0';
     meshpts_ = NULL;
@@ -124,10 +124,10 @@ cvConvertVisFiles::~cvConvertVisFiles() {
             wss_->Delete();
       }
     }
-   
+
     if (numTractionNodes_ != 0) {
         delete [] tractionNodes_;
-    }         
+    }
 }
 
 
@@ -175,7 +175,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
       closeInputFile(meshfp_);
       return CV_ERROR;
     }
- 
+
     fprintf(stdout,"Reading %i nodes.\n",numNodes);
 
     // skip until we find the string
@@ -195,7 +195,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
     dpt[0] = 0;dpt[1] = 0;dpt[2] = 0;
     vtkFloatingPointType  fpt[3];
     int nodeid = 0;
- 
+
     while (0 == 0) {
       int flag = readNextLineFromFile(meshfp_);
       if (flag == NEXTLINE_EOF) {
@@ -221,10 +221,10 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
 
       // in the tcl scripts, we keep track of a mapping between node ids
       // and their location in the vtk pts list.  Here we just assume
-      // the pts are numbered from 1 to numNodes, and return an error 
+      // the pts are numbered from 1 to numNodes, and return an error
       // otherwise.
       //set map($node) $numNodes
- 
+
       if (nodeid < 1 || nodeid > numNodes) {
           fprintf(stderr,"ERROR:  node id (%i) out of allowable range [1,%i].",nodeid,numNodes);
           closeInputFile(meshfp_);
@@ -233,7 +233,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
       }
       //fprintf(stdout,"insert pt: %i value: %f %f %f\n",nodeid-1,fpt[0],fpt[1],fpt[2]);
       meshpts_->InsertPoint(nodeid-1,fpt);
-      
+
     }
 
     fprintf(stdout,"Done reading %i nodes.\n",meshpts_->GetNumberOfPoints());
@@ -273,7 +273,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
       meshpts_->Delete();
       return CV_ERROR;
     }
- 
+
     // skip until we find the string "connectivity"
     if (findStringInFile("connectivity",meshfp_) == CV_ERROR) {
         fprintf(stderr,"ERROR:  Could not find connectivity.\n");
@@ -288,7 +288,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
     grid_ = vtkUnstructuredGrid::New();
     grid_->Allocate(numElements+2,1000);
     grid_->SetPoints(meshpts_);
-  
+
     vtkIdList* ptids = vtkIdList::New();
     ptids->Allocate(10,10);
     ptids->Initialize();
@@ -329,7 +329,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
         ptids->SetId(2,conn[2]-1);ptids->SetId(3,conn[3]-1);
       } else if (nodesPerElement == 8) {
         if (sscanf(currentLine_,"%i %i %i %i %i %i %i %i %i",&elementid,
-                &conn[0],&conn[1],&conn[2],&conn[3], 
+                &conn[0],&conn[1],&conn[2],&conn[3],
                 &conn[4],&conn[5],&conn[6],&conn[7]) != 9) {
           fprintf(stderr,"ERROR: invalid line (%s).\n",currentLine_);
           closeInputFile(meshfp_);
@@ -347,7 +347,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
         fprintf(stderr,"ERROR: invalid nodes per element (%i).\n",nodesPerElement);
         closeInputFile(meshfp_);
         meshpts_->Delete();
-        ptids->Delete();  
+        ptids->Delete();
         grid_->Delete();
         return CV_ERROR;
       }
@@ -371,13 +371,13 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
       } else {
         closeInputFile(meshfp_);
         meshpts_->Delete();
-        ptids->Delete();  
+        ptids->Delete();
         grid_->Delete();
         return CV_ERROR;
       }
 
       currnum++;
-      
+
     }
 
     ptids->Delete();
@@ -401,7 +401,7 @@ int cvConvertVisFiles::ReadVisMesh(char *infilename) {
 
 int cvConvertVisFiles::readNextLineFromFile(gzFile fp) {
 
-#ifdef USE_ZLIB    
+#ifdef SV_USE_ZLIB
     if (gzgets(fp,currentLine_,MAXVISLINELENGTH) ==Z_NULL) {
 #else
     if (fgets(currentLine_,MAXVISLINELENGTH,fp) == NULL) {
@@ -409,13 +409,13 @@ int cvConvertVisFiles::readNextLineFromFile(gzFile fp) {
         //fprintf(stderr,"ERROR:  readNextLine failed.\n");
         return CV_ERROR;
     }
- 
+
     return CV_OK;
-   
+
 }
 
 int cvConvertVisFiles::findStringInFile(char *findme, gzFile fp) {
-    
+
     while (readNextLineFromFile(fp) == CV_OK) {
       if (strstr(currentLine_,findme) != NULL) {
           return CV_OK;
@@ -458,7 +458,7 @@ int cvConvertVisFiles::ReadVisRes(char *infilename) {
       if (findStringInFile("analysis results", resfp_) == CV_ERROR) {
         if (gzeof(resfp_)) {
             closeInputFile(resfp_);
-            if ((haveVelocityResults_ + havePressureResults_ + 
+            if ((haveVelocityResults_ + havePressureResults_ +
                  haveTransportResults_ + haveStressResults_) == 0) {
                 fprintf(stderr,"ERROR: no results found!\n");
                 return CV_ERROR;
@@ -547,7 +547,7 @@ int cvConvertVisFiles::readPressureFromFile() {
           scalars->Delete();
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f = d;
 
@@ -557,10 +557,10 @@ int cvConvertVisFiles::readPressureFromFile() {
           scalars->Delete();
           return CV_ERROR;
       }
-    
+
       scalars->InsertNextTuple1(f);
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1)) {
@@ -622,7 +622,7 @@ int cvConvertVisFiles::readVelocityFromFile() {
           vectors->Delete();
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f[0] = d[0];f[1] = d[1];f[2] = d[2];
 
@@ -632,10 +632,10 @@ int cvConvertVisFiles::readVelocityFromFile() {
           vectors->Delete();
           return CV_ERROR;
       }
-    
+
       vectors->InsertNextTuple3(f[0],f[1],f[2]);
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1)) {
@@ -688,7 +688,7 @@ int cvConvertVisFiles::readTractionFromFile() {
     d[0] = 0; d[1] = 0; d[2] = 0;
     f[0] = 0; f[1] = 0; f[2] = 0;
     int nodeid = 1;
- 
+
     if (numTractionNodes_ > 0) {
 		traction->FillComponent(0,0.0);
 		traction->FillComponent(1,0.0);
@@ -711,12 +711,12 @@ int cvConvertVisFiles::readTractionFromFile() {
           traction->Delete();
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f[0] = d[0];f[1] = d[1];f[2] = d[2];
-   
+
       int realnodeid = nodeid;
- 
+
       if (numTractionNodes_) {
           realnodeid = tractionNodes_[nodeid-1];
           if (nodeid > numTractionNodes_) {
@@ -733,13 +733,13 @@ int cvConvertVisFiles::readTractionFromFile() {
           traction->Delete();
           return CV_ERROR;
       }
-    
+
       //fprintf(stdout,"set node %i\n",realnodeid);
       // remember that in vtk data structures node 1 is actually in slot 0
       traction->SetTuple3((vtkIdType)(realnodeid-1),f[0],f[1],f[2]);
 
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1) && (numTractionNodes_ == 0)) {
@@ -798,7 +798,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
     d[0] = 0; d[1] = 0; d[2] = 0;
     f[0] = 0; f[1] = 0; f[2] = 0;
     int nodeid = 1;
- 
+
     int* keepme = NULL;
     if (numTractionNodes_ > 0) {
       displacement->FillComponent(0,0.0);
@@ -832,10 +832,10 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           if (keepme != NULL) delete [] keepme;
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f[0] = d[0];f[1] = d[1];f[2] = d[2];
-   
+
       int realnodeid = nodeid;
 
       if (realnodeid < 1 || realnodeid > numNodes) {
@@ -845,7 +845,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           if (keepme != NULL) delete [] keepme;
           return CV_ERROR;
       }
-    
+
       //fprintf(stdout,"set node %i\n",realnodeid);
       // remember that in vtk data structures node 1 is actually in slot 0
       if (keepme == NULL) {
@@ -858,7 +858,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
           }
       }
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1)) {
@@ -869,7 +869,7 @@ int cvConvertVisFiles::readDisplacementFromFile() {
     }
 
     fprintf(stdout,"Done reading %i nodal displacement vectors.\n",(nodeid-1));
-  
+
     if (keepme != NULL) delete [] keepme;
 
     haveDisplacementResults_=1;
@@ -916,7 +916,7 @@ int cvConvertVisFiles::readWSSFromFile() {
     d[0] = 0; d[1] = 0; d[2] = 0;
     f[0] = 0; f[1] = 0; f[2] = 0;
     int nodeid = 1;
- 
+
     int* keepme = NULL;
     if (numTractionNodes_ > 0) {
       wss->FillComponent(0,0.0);
@@ -950,10 +950,10 @@ int cvConvertVisFiles::readWSSFromFile() {
           if (keepme != NULL) delete [] keepme;
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f[0] = d[0];f[1] = d[1];f[2] = d[2];
-   
+
       int realnodeid = nodeid;
 
       if (realnodeid < 1 || realnodeid > numNodes) {
@@ -963,7 +963,7 @@ int cvConvertVisFiles::readWSSFromFile() {
           if (keepme != NULL) delete [] keepme;
           return CV_ERROR;
       }
-    
+
       //fprintf(stdout,"set node %i\n",realnodeid);
       // remember that in vtk data structures node 1 is actually in slot 0
       if (keepme == NULL) {
@@ -976,7 +976,7 @@ int cvConvertVisFiles::readWSSFromFile() {
           }
       }
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1)) {
@@ -987,7 +987,7 @@ int cvConvertVisFiles::readWSSFromFile() {
     }
 
     fprintf(stdout,"Done reading %i nodal wss vectors.\n",(nodeid-1));
-  
+
     if (keepme != NULL) delete [] keepme;
 
     haveWSSResults_=1;
@@ -1040,7 +1040,7 @@ int cvConvertVisFiles::readTransportFromFile() {
           scalars->Delete();
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f = d;
 
@@ -1050,10 +1050,10 @@ int cvConvertVisFiles::readTransportFromFile() {
           scalars->Delete();
           return CV_ERROR;
       }
-    
+
       scalars->InsertNextTuple1(f);
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1)) {
@@ -1120,7 +1120,7 @@ int cvConvertVisFiles::readStressFromFile() {
           tensors->Delete();
           return CV_ERROR;
       }
-      
+
       // convert to vtkFloatingPointTypes for vtk
       f[0] = d[0];f[1] = d[1];f[2] = d[2];
       f[3] = d[3];f[4] = d[4];f[5] = d[5];
@@ -1131,7 +1131,7 @@ int cvConvertVisFiles::readStressFromFile() {
           tensors->Delete();
           return CV_ERROR;
       }
-    
+
       // assume the following format of the stress results
       // components
       // "xx"   0
@@ -1149,7 +1149,7 @@ int cvConvertVisFiles::readStressFromFile() {
 
       tensors->InsertNextTuple9(f[0],f[3],f[5],f[3],f[1],f[4],f[5],f[4],f[2]);
       nodeid++;
-      
+
     }
 
     if (nodeid != (numNodes+1)) {

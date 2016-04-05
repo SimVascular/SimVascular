@@ -36,7 +36,7 @@
 #include "cvRepository.h"
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
-#ifdef USE_OPENCASCADE
+#ifdef SV_USE_OPENCASCADE
 //#include "AppStd_Application.hxx"
 #include "XCAFApp_Application.hxx"
 #endif
@@ -51,7 +51,7 @@ CV_GLOBALS_DLL_EXPORT Tcl_Interp* gVtkTclInterp = NULL;
 
 CV_GLOBALS_DLL_EXPORT Tcl_Interp* getTclInterp() {return gVtkTclInterp;};
 
-#ifdef USE_OPENCASCADE
+#ifdef SV_USE_OPENCASCADE
 //CV_GLOBALS_DLL_EXPORT AppStd_Application *gOCCTManager;
 CV_GLOBALS_DLL_EXPORT Handle(XCAFApp_Application) gOCCTManager;
 #endif

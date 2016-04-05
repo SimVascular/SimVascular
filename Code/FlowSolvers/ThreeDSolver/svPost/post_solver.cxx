@@ -72,7 +72,7 @@
 #include "vtkXMLPolyDataReader.h"
 #include "vtkCellArray.h"
 
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
 #include "simvascular_zlib.h"
 #else
 #include <stdlib.h>
@@ -1893,7 +1893,7 @@ int main(int argc, char* argv[])
     char gzext[4];
     double currTuple[5];
     gzext[0]='\0';
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
     gzext[0]='.';
     gzext[1]='g';
     gzext[2]='z';

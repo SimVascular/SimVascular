@@ -59,45 +59,44 @@
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_init.h"
 
-#ifndef EXCLUDE_SOLID_MODEL
-  #include "cv_solid_init.h"
-#endif
+#include "cv_solid_init.h"
 
-#ifdef USE_MESHSIM
+#ifdef SV_USE_MESHSIM
   #include "cv_mesh_init.h"
   #include "cv_meshsim_mesh_init.h"
 #endif
 
-#ifdef USE_OPENCASCADE
+#ifdef SV_USE_OPENCASCADE
   #include "cv_occt_init.h"
 #endif
 
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
   #include "cv_adapt_init.h"
   #include "cv_meshsim_adapt_init.h"
 #endif
 
-#ifdef USE_TETGEN
+#ifdef SV_USE_TETGEN
   #include "cv_mesh_init.h"
   #include "cv_tetgen_mesh_init.h"
 #endif
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
   #include "cv_discrete_init.h"
 #endif
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
   #include "cv_parasolid_solid_init.h"
 #endif
 
 #include "cv_VTK_init.h"
 
-#ifdef USE_ITK
-  #include "cv_ITKLset_init.h"
+#ifdef SV_USE_ITK
+  #include "cv_ITKLset2d_init.h"
+  #include "cv_ITKLset3d_init.h"
   #include "cv_ITKUtils_init.h"
 #endif
 
-#ifdef USE_TET_ADAPTOR
+#ifdef SV_USE_TET_ADAPTOR
   #include "cv_adapt_init.h"
   #include "cv_tetgen_adapt_init.h"
 #endif
@@ -113,7 +112,7 @@ extern "C" {__declspec(dllexport) int SimVascular_Init(Tcl_Interp *interp);}
 extern "C" {int SimVascular_Init( Tcl_Interp *interp );}
 #endif
 
-//#ifdef USE_VMTK
+//#ifdef SV_USE_VMTK
 //extern "C" {int CV_DLL_EXPORT Vtkvmtkcommontcl_Init(Tcl_Interp *interp);}
 //extern "C" {int CV_DLL_EXPORT Vtkvmtkcomputationalgeometrytcl_Init(Tcl_Interp *interp);}
 //extern "C" {int CV_DLL_EXPORT Vtkvmtkdifferentialgeometrytcl_Init(Tcl_Interp *interp);}
@@ -136,22 +135,22 @@ void SimVascularWelcome( Tcl_Interp *interp )
 {
   // Find the date of the executable we're running
   Tcl_Eval( interp, "puts \"\"");
-  Tcl_Eval( interp, "set simvascular_home \"$env(SIMVASCULAR_HOME)\";"
+  Tcl_Eval( interp, "set simvascular_home \"$env(SV_HOME)\";"
                   "if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {"
                       "source [file join $simvascular_home/Tcl/startup_configure.tcl];"
                       "if { [file exists [file join $simvascular_home/release-date]] } {"
-                          "set SIMVASCULAR_BUILD_STR \".$SIMVASCULAR_PATCH_VERSION\";"
-                          "if {$SIMVASCULAR_VERSION !=\"simvascular\"} {"
-                            "set SIMVASCULAR_BUILD_STR \".$SIMVASCULAR_PATCH_VERSION $SIMVASCULAR_VERSION\";"
+                          "set SV_BUILD_STR \".$SV_PATCH_VERSION\";"
+                          "if {$SV_VERSION !=\"simvascular\"} {"
+                            "set SV_BUILD_STR \".$SV_PATCH_VERSION $SV_VERSION\";"
                           "}"
                       "} else {"
-                          "set SIMVASCULAR_BUILD_STR \" (dev build)\";"
+                          "set SV_BUILD_STR \" (dev build)\";"
                       "}"
                   "} else {"
-                  "set SIMVASCULAR_FULL_VER_NO \"unknown version\";"
-                  "set SIMVASCULAR_BUILD_STR \"unknown release\";"
+                  "set SV_FULL_VER_NO \"unknown version\";"
+                  "set SV_BUILD_STR \"unknown release\";"
                   "}");
-  Tcl_Eval( interp, "puts [format \"  %-12s %s\" \"SimVascular:\" $SIMVASCULAR_FULL_VER_NO$SIMVASCULAR_BUILD_STR]" );
+  Tcl_Eval( interp, "puts [format \"  %-12s %s\" \"SimVascular:\" $SV_FULL_VER_NO$SV_BUILD_STR]" );
   Tcl_Eval( interp, "puts \"  Copyright (c) 2014-2015 The Regents of the University of California.\"" );
   Tcl_Eval( interp, "puts \"                         All Rights Reserved.\"");
   Tcl_Eval( interp, "puts \"\"");
@@ -172,7 +171,7 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-#ifdef SIMVASCULAR_STATIC_BUILD
+#ifdef SV_STATIC_BUILD
   if ( Getinterp_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Getinterp_Init\n" );
     return TCL_ERROR;
@@ -184,12 +183,12 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 
   if ( Lsetcore_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on LsetCore_Init\n" );
+    fprintf( stderr, "error on Lsetcore_Init\n" );
     return TCL_ERROR;
   }
 
   if ( Lsetv_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on LsetV_Init\n" );
+    fprintf( stderr, "error on Lsetv_Init\n" );
     return TCL_ERROR;
   }
 
@@ -213,66 +212,64 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-#ifndef EXCLUDE_SOLID_MODEL
   if ( Solid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Solid_Init\n" );
     return TCL_ERROR;
   }
-#endif
 
-  if ( PolyDataSolid_Init(interp) == TCL_ERROR ) {
+  if ( Polydatasolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on PolyDataSolid_Init\n" );
     return TCL_ERROR;
   }
 
-#ifdef USE_OPENCASCADE
-  if ( Occt_Init(interp) == TCL_ERROR ) {
+#ifdef SV_USE_OPENCASCADE
+  if ( Occtsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Opencascade_Init\n" );
     return TCL_ERROR;
   }
 #endif
 
-#ifdef USE_MESHSIM
+#ifdef SV_USE_MESHSIM
   if ( Gdscmesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on gdscMesh_Init\n" );
       return TCL_ERROR;
   }
 
-#elif defined USE_TETGEN
+#elif defined SV_USE_TETGEN
   if ( Gdscmesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on gdscMesh_Init\n" );
       return TCL_ERROR;
   }
 #endif
 
-#ifdef USE_TETGEN
+#ifdef SV_USE_TETGEN
   if ( Tetgenmesh_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Tetgenmesh_Init\n" );
     return TCL_ERROR;
   }
 #endif
 
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
   if ( Adapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Adapt_Init\n" );
     return TCL_ERROR;
   }
-#elif defined USE_TET_ADAPTOR
+#elif defined SV_USE_TET_ADAPTOR
   if ( Adapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Adapt_Init\n" );
     return TCL_ERROR;
   }
 #endif
 
-#ifdef USE_TET_ADAPTOR
-  if ( TetGenAdapt_Init(interp) == TCL_ERROR ) {
+#ifdef SV_USE_TET_ADAPTOR
+  if ( Tetgenadapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on TetGenAdapt_Init\n" );
     return TCL_ERROR;
   }
 #endif
 
-#ifdef USE_MESHSIM
-#ifndef USE_MESHSIM_SHARED
+#ifdef SV_USE_MESHSIM
+#ifndef SV_USE_MESHSIM_SHARED
   if ( Meshsimmesh_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
     return TCL_ERROR;
@@ -280,8 +277,8 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 #endif
 
-#ifdef USE_MESHSIM_ADAPTOR
-#ifndef USE_MESHSIM_SHARED
+#ifdef SV_USE_MESHSIM_ADAPTOR
+#ifndef SV_USE_MESHSIM_SHARED
   if ( Meshsimadapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on MeshSimAdapt_Init\n" );
     return TCL_ERROR;
@@ -289,8 +286,8 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 #endif
 
-#ifdef USE_DISCRETE_MODEL
-#ifndef USE_DISCRETE_MODEL_SHARED
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
+#ifndef SV_USE_MESHSIM_DISCRETE_MODEL_SHARED
   if ( Meshsimdiscretesolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscMesh_Init\n" );
     return TCL_ERROR;
@@ -298,16 +295,16 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 #endif
 
-#ifdef USE_PARASOLID
-#ifndef USE_PARASOLID_SHARED
+#ifdef SV_USE_PARASOLID
+#ifndef SV_USE_PARASOLID_SHARED
   if ( Parasolidsolid_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on gdscMesh_Init\n" );
+    fprintf( stderr, "error on Parasolidsolid_Init\n" );
     return TCL_ERROR;
   }
 #endif
 #endif
 
-//#ifdef USE_VMTK
+//#ifdef SV_USE_VMTK
 //  if ( Vtkvmtkcommontcl_Init(interp) == TCL_ERROR ) {
 //    fprintf( stderr, "error on Getinterp_Init\n" );
 //    return TCL_ERROR;
@@ -339,16 +336,16 @@ int SimVascular_Init( Tcl_Interp *interp )
 //  }
 //#endif
 
-#ifdef USE_ITK
-  if ( itkls2d_Init(interp) == TCL_ERROR ) {
+#ifdef SV_USE_ITK
+  if ( Itkls2d_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on itkls2d_Init\n" );
       return TCL_ERROR;
     }
-  if ( itkls3d_Init(interp) == TCL_ERROR ) {
+  if ( Itkls3d_Init(interp) == TCL_ERROR ) {
         fprintf( stderr, "error on itkls3d_Init\n" );
         return TCL_ERROR;
       }
-  if ( itkutils_Init(interp) == TCL_ERROR ) {
+  if ( Itkutils_Init(interp) == TCL_ERROR ) {
         fprintf( stderr, "error on itkls2d_Init\n" );
         return TCL_ERROR;
       }
@@ -361,7 +358,7 @@ int SimVascular_Init( Tcl_Interp *interp )
   Tcl_Eval( interp, "if {[file exists [file join $env(HOME) .simvascular_rc]]} {          "
                     "  set tcl_rcFileName [file join $env(HOME) .simvascular_rc]           "
                     "} else {                                                         "
-                    "  set tcl_rcFileName [file join $env(SIMVASCULAR_HOME) simvascular.rc] "
+                    "  set tcl_rcFileName [file join $env(SV_HOME) simvascular.rc] "
                     "}                                                                ");
   Tcl_SetVar( interp, "tcl_prompt1", "puts -nonewline \"simvascular> \"",
 	      TCL_GLOBAL_ONLY );

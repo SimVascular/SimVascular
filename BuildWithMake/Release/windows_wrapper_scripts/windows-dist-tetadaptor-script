@@ -1,4 +1,4 @@
 
 # run the executable
-$SIMVASCULAR_HOME/tetadaptor-bin.exe $*
+$SV_HOME/tetadaptor-bin.exe $*
 

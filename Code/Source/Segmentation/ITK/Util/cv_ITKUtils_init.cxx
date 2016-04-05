@@ -104,14 +104,14 @@ static int itkutils_ThresholdImageCmd( CXX_TCL_STDARGS );
 static int itkutils_FractEdgeProximity3DCmd( CXX_TCL_STDARGS );
 
 // -------------
-// itkutils_Init
+// Itkutils_Init
 // -------------
 //! Initializes C++/Tcl bindings
 /*! A more elaborate description... TBD
 */
-int itkutils_Init( Tcl_Interp *interp ){
+int Itkutils_Init( Tcl_Interp *interp ){
 
-	printf("  %-12s %s\n","itk:", itk::Version::GetITKVersion());
+	printf("  %-12s %s\n","Itk:", itk::Version::GetITKVersion());
 
 	//Usage: CVTCLFunctionInit(Prefix,FunctionName,TclName)
 	CVTCLFunctionInit(itkutils,GenerateCircleCmd,itkutils_GenerateCircle);

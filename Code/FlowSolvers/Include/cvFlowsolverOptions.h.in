@@ -29,22 +29,22 @@
  *=========================================================================*/
 
 /* Simvascular Version defines */
-#define SIMVASCULAR_VERSION "@SIMVASCULAR_VERSION@"
-#define SIMVASCULAR_MAJOR_VERSION "@SIMVASCULAR_MAJOR_VERSION@"
-#define SIMVASCULAR_MINOR_VERSION "@SIMVASCULAR_MINOR_VERSION@"
-#define SIMVASCULAR_PATCH_VERSION "@SIMVASCULAR_PATCH_VERSION@"
-#define SIMVASCULAR_FULL_VERSION "@SIMVASCULAR_FULL_VERSION@"
+#define SV_VERSION "@SV_VERSION@"
+#define SV_MAJOR_VERSION "@SV_MAJOR_VERSION@"
+#define SV_MINOR_VERSION "@SV_MINOR_VERSION@"
+#define SV_PATCH_VERSION "@SV_PATCH_VERSION@"
+#define SV_FULL_VERSION "@SV_FULL_VERSION@"
 
 /* Our Version defines */
-#define SIMVASCULAR_MAJOR_VER_NO "@SIMVASCULAR_MAJOR_VERSION@"
-#define SIMVASCULAR_FULL_VER_NO "@SIMVASCULAR_MAJOR_VERSION@.@SIMVASCULAR_MINOR_VERSION@"
+#define SV_MAJOR_VER_NO "@SV_MAJOR_VERSION@"
+#define SV_FULL_VER_NO "@SV_MAJOR_VERSION@.@SV_MINOR_VERSION@"
 
-#cmakedefine USE_ZLIB
-#cmakedefine USE_LESLIB
-#cmakedefine USE_NSPCG
-#cmakedefine USE_METIS
-#cmakedefine USE_SPARSE
-#cmakedefine USE_SVLS
+#cmakedefine SV_USE_ZLIB
+#cmakedefine SV_USE_LESLIB
+#cmakedefine SV_USE_NSPCG
+#cmakedefine SV_USE_METIS
+#cmakedefine SV_USE_SPARSE
+#cmakedefine SV_USE_SVLS
 
 
 /* Flowsolver defines */

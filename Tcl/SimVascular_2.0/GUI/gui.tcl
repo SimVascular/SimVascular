@@ -44,10 +44,12 @@ proc ShowWindow.guiCV { args} {
   }
   toplevel .guiCV   -background {white}
 
+  set wmax [winfo screenwidth .]
+  set hmax [winfo screenheight .]
   # Window manager configurations
   wm positionfrom .guiCV program
   wm sizefrom .guiCV program
-  wm maxsize .guiCV 2560 1600
+  wm maxsize .guiCV $wmax $hmax
   #wm minsize .guiCV 1890 1155
   wm minsize .guiCV 124 95
   wm protocol .guiCV WM_DELETE_WINDOW {mainGUIexit}
@@ -12389,7 +12391,7 @@ img_guessVolParams $gImageVol(filename)}
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6  -borderwidth {2}  -relief {flat}  -width {30}  -height {30}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1
-  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1  -command {guiSV_model_create_polydata_solid_from_parasolid}  -text {Convert Selected Model To PolyData}
+  ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe6.button1  -command {guiSV_model_create_polydata_solid_from_nurbs}  -text {Convert Selected Model To PolyData}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7
   ttk::frame .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe11.tframe13.notebook1.tframe2.tlabelframe2.tframe5.tframe7  -borderwidth {2}  -relief {flat}  -width {30}  -height {30}
@@ -13484,8 +13486,11 @@ img_guessVolParams $gImageVol(filename)}
 
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -command {guiSV_model_create_model_opencascade}  -text {Create Model with OpenCASCADE}
-global SIMVASCULAR_USE_PYTHON
-if {$SIMVASCULAR_USE_PYTHON == "ON"} {
+global SV_USE_PYTHON
+if {[info exists SV_USE_PYTHON] == 0} {
+  set SV_USE_PYTHON "OFF"
+}
+if {$SV_USE_PYTHON == "ON"} {
   # build widget .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13
   ttk::button .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13  -command {guiSV_model_create_model_opencascade_python}  -text {Create Model with SimVascular}
 }
@@ -20545,7 +20550,7 @@ if {$SIMVASCULAR_USE_PYTHON == "ON"} {
 
   # pack master .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button12  -side left
-if {$SIMVASCULAR_USE_PYTHON} {
+if {$SV_USE_PYTHON} {
   pack configure .guiCV.tframe3.tpanedwindow4.tframe6.tpanedwindow0.tframe2.frame2.frame3.notebook6.tframe6.tframe10.notebook1.tframe4.tframe13.notebook1.tframe2.tlabelframe1.tframe5.frame1.button13  -side left
 }
 
@@ -29139,9 +29144,9 @@ proc guiCV_select_cpm_directory {} {
   }
   cd $dir
 
-#  global SIMVASCULAR_VERSION
-#  puts "SIMVASCULAR_VERISON $SIMVASCULAR_VERSION"
-#  if [catch {registry set "HKEY_CURRENT_USER\\Software\\cpmViewer\\$SIMVASCULAR_VERSION 2.0" LastProjectDir $dir} msg] {
+#  global SV_VERSION
+#  puts "SV_VERISON $SV_VERSION"
+#  if [catch {registry set "HKEY_CURRENT_USER\\Software\\cpmViewer\\$SV_VERSION 2.0" LastProjectDir $dir} msg] {
 #       puts "ERROR updating LastProjectDir in registry! ($msg)"
 #  }
 
@@ -29409,10 +29414,10 @@ proc guiCV_select_project_directory {} {
      }
   }
 
-  global SIMVASCULAR_VERSION
-  global SIMVASCULAR_MAJOR_VER_NO
+  global SV_VERSION
+  global SV_MAJOR_VER_NO
 
-  if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SIMVASCULAR_VERSION $SIMVASCULAR_MAJOR_VER_NO" LastProjectDir $dir} msg] {
+  if [catch {registry set "HKEY_CURRENT_USER\\Software\\SimVascular\\$SV_VERSION $SV_MAJOR_VER_NO" LastProjectDir $dir} msg] {
        puts "ERROR updating LastProjectDir in registry! ($msg)"
   }
 }
@@ -31022,7 +31027,7 @@ proc guiMMcreateScriptFile {} {
 # Procedure: guiMMfindMeshSimLicenseKeys
 proc guiMMfindMeshSimLicenseKeys {} {
 
-  global SIMVASCULAR_VERSION
+  global SV_VERSION
 
   global tcl_platform
   if {$tcl_platform(platform) == "windows"} {
@@ -31033,7 +31038,7 @@ proc guiMMfindMeshSimLicenseKeys {} {
   }
 
   set using32bit 0
-  if {[string range $SIMVASCULAR_VERSION end-1 end] == "32"} {
+  if {[string range $SV_VERSION end-1 end] == "32"} {
     set using32bit 1
     set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular"
   } else {
@@ -31064,7 +31069,7 @@ proc guiMMfindMeshSimLicenseKeys {} {
 proc guiMMinstallMeshSimLicenseKeys {} {
 
   global tcl_platform
-  global SIMVASCULAR_VERSION
+  global SV_VERSION
 
   if {$tcl_platform(platform) == "windows"} {
     package require registry
@@ -31080,7 +31085,7 @@ proc guiMMinstallMeshSimLicenseKeys {} {
   # install in Wow6432Node location for 64-bit
 
   set using32bit 0
-  if {[string range $SIMVASCULAR_VERSION end-1 end] == "32"} {
+  if {[string range $SV_VERSION end-1 end] == "32"} {
     set using32bit 1
     set parentkeys "HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Licenses"
   } else {
@@ -46813,7 +46818,9 @@ proc mainGUI {} {
     }
 
     ShowWindow.guiCV
-    wm geometry .guiCV 1000x500+360+170
+    set swidth [expr [winfo screenwidth .]-10]
+    set sheight [expr [winfo screenheight .]-10]
+    wm geometry .guiCV ${swidth}x${sheight}+5+5
 
     guiFNMsetDefaultFilenames
     global gFilenames
@@ -46870,15 +46877,29 @@ proc mainGUI {} {
   bind $tv <<TreeviewOpen>> [list guiSV_model_fillTree $tv]
   bind $tv <<TreeviewSelect>> [list guiSV_model_selectTree $tv]
   $tv insert {} 0 -id .models.PolyData -text "PolyData" -open 0
-  $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
-  $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
-  $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "Discrete"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 1 -id .models.Discrete -text "Discrete" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "Parasolid"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 2 -id .models.Parasolid -text "Parasolid" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "OpenCASCADE"
+  if {![catch {solid_newObject -name /tmp/testsolid/obj}]} {
+    $tv insert {} 3 -id .models.OpenCASCADE -text "OpenCASCADE" -open 0
+  }
+  catch {repos_delete -obj /tmp/testsolid/obj}
+  solid_setKernel -name "PolyData"
 
   global symbolicName
   global guiTRIMvars
   global gRen3d
-  global SIMVASCULAR_NO_RENDERER
-  if { $SIMVASCULAR_NO_RENDERER != "1" } {
+  global SV_NO_RENDERER
+  if { $SV_NO_RENDERER != "1" } {
     set gRen3d [vis_gRenWin_3D]
   }
 

@@ -70,12 +70,12 @@ HDRS	= cv_VMTK_utils.h \
 	  vtkvmtkSimplifyVoronoiDiagram.h \
           vtkvmtkSteepestDescentLineTracer.h \
 	  vtkvmtkInternalTetrahedraExtractor.h \
-          vtkvmtkPolyDataCenterlines.h \
 	  vtkvmtkCenterlineBranchExtractor.h \
-          vtkvmtkCenterlineSphereDistance.h \
+	  vtkvmtkCenterlineSphereDistance.h \
 	  vtkvmtkCenterlineUtilities.h \
-          vtkvmtkCenterlineSplittingAndGroupingFilter.h \
-	  vtkvmtkPolyDataCenterlineGroupsClipper.h
+	  vtkvmtkCenterlineSplittingAndGroupingFilter.h \
+	  vtkvmtkPolyDataCenterlineGroupsClipper.h \
+          vtkvmtkPolyDataCenterlines.h
 
 CXXSRCS	=  cv_VMTK_utils.cxx \
            vtkvmtkBoundaryLayerGenerator.cxx \
@@ -107,12 +107,12 @@ CXXSRCS	=  cv_VMTK_utils.cxx \
            vtkvmtkSimplifyVoronoiDiagram.cxx \
            vtkvmtkInternalTetrahedraExtractor.cxx \
 	   vtkvmtkSteepestDescentLineTracer.cxx \
-           vtkvmtkPolyDataCenterlines.cxx \
 	   vtkvmtkCenterlineBranchExtractor.cxx \
-           vtkvmtkCenterlineSphereDistance.cxx \
+	   vtkvmtkCenterlineSphereDistance.cxx \
 	   vtkvmtkCenterlineUtilities.cxx \
-           vtkvmtkCenterlineSplittingAndGroupingFilter.cxx \
-	   vtkvmtkPolyDataCenterlineGroupsClipper.cxx
+	   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx \
+	   vtkvmtkPolyDataCenterlineGroupsClipper.cxx \
+           vtkvmtkPolyDataCenterlines.cxx
 
 DLLHDRS = cv_geom_init.h
 

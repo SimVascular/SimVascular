@@ -497,6 +497,13 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 	nkx = r+1
 	nky = s+1
 
+	if (kutype != 'endderiv' and ncx <= p):
+		print 'Need more input points or lower degree of surface'
+		return 0
+	if (kvtype != 'endderiv' and ncy <= q):
+		print 'Need more input points or lower degree of surface'
+		return 0
+
 	#Get parametric vectors and weights
 	u = getus(X[0,:],Y[0,:],Z[0,:],putype)
 	v = getus(X[:,0],Y[:,0],Z[:,0],pvtype)

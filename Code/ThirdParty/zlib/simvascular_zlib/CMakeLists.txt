@@ -7,11 +7,27 @@ SET(SRCS
 	adler32.c  compress.c  crc32.c  deflate.c  gzio.c   inffast.c
 	inflate.c  inftrees.c  trees.c  uncompr.c  zutil.c
 	)
+SET(HDRS crc32.h deflate.h inffast.h inffixed.h inflate.h inftrees.h
+	 trees.h zconf.h zlib.h zutil.h)
 
 IF(WIN32)
-	IF(BUILD_SHARED_LIBS)
+	IF(SV_BUILD_SHARED_LIBS)
 		SET(ZLIB_DLL 1)
-	ENDIF(BUILD_SHARED_LIBS)
+	ENDIF(SV_BUILD_SHARED_LIBS)
 ENDIF(WIN32)
 
-add_library(lib_simvascular_zlib ${SRCS})
+set(lib lib_simvascular_zlib)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${SRCS})
+
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+	install(FILES ${HDRS}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/thirdparty/zlib COMPONENT PluginHeaders
+		)
+endif()

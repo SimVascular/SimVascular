@@ -1,18 +1,18 @@
 
 # run the executable
-case "$SIMVASCULAR_BATCH_MODE" in
+case "$SV_BATCH_MODE" in
 "1")
 case "$*" in
 "")
-"$SIMVASCULAR_HOME/REPLACE_SIMVASCULAR_VERSION-bin.exe"
+"$SV_HOME/REPLACE_SV_VERSION-bin.exe"
 ;;
 *)
-"$SIMVASCULAR_HOME/REPLACE_SIMVASCULAR_VERSION-bin.exe" $*
+"$SV_HOME/REPLACE_SV_VERSION-bin.exe" $*
 ;;
 esac
 ;;
 *)
-"$SIMVASCULAR_HOME/REPLACE_SIMVASCULAR_VERSION-bin.exe" "$SIMVASCULAR_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl" $*
+"$SV_HOME/REPLACE_SV_VERSION-bin.exe" "$SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl" $*
 ;;
 esac
 

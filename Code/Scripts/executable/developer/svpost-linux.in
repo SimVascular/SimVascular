@@ -2,10 +2,10 @@
 # run the executable
 case "$*" in
 "")
-$SIMVASCULAR_HOME/Bin/@POSTSOLVER_EXE@ 
+$SV_HOME/Bin/@SV_POSTSOLVER_EXE@ 
 ;;
 *)
-$SIMVASCULAR_HOME/Bin/@POSTSOLVER_EXE@ $*
+$SV_HOME/Bin/@SV_POSTSOLVER_EXE@ $*
 ;;
 esac
 

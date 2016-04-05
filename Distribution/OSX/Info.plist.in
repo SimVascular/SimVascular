@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>SimVascular</string>
     <key>CFBundleGetInfoString</key>
-    <string>@SIMVASCULAR_FULL_VERSION@, Copyright (C) 2014</string>
+    <string>@SV_FULL_VERSION@, Copyright (C) 2014</string>
     <key>CFBundleIdentifier</key>
     <string>org.simvascular.simvascular</string>
     <key>CFBundleInfoDictionaryVersion</key>
@@ -15,11 +15,11 @@
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>
-    <string>@SIMVASCULAR_FULL_VERSION@</string>
+    <string>@SV_FULL_VERSION@</string>
     <key>CFBundleSignature</key>
     <string>simvascular</string>
     <key>CFBundleVersion</key>
-    <string>@SIMVASCULAR_FULL_VERSION@</string>
+    <string>@SV_FULL_VERSION@</string>
     <key>CFBundleIconFile</key>
     <string>SimVascular.icns</string>
     <key>LSMinimumSystemVersion</key>

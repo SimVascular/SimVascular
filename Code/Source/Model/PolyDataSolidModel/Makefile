@@ -33,6 +33,13 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
 	   $(SHAPES_INCDIR) $(GLIB_INCDIR) $(GTS_INCDIR)
 
+ifeq ($(SV_USE_OPENCASCADE),1)
+   CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
+
+ifeq ($(SV_USE_PYTHON),1)
+   CXXFLAGS += $(PYTHON_INCDIR)
+endif
 
 HDRS	= cvPolyDataSolid.h \
           cv_polydatasolid_init.h \

@@ -1685,7 +1685,7 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
   if (pd == NULL)
     return CV_ERROR;
 
-  if (PlyDtaUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
+  if (VtkUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
   {
     vtkSmartPointer<vtkCleanPolyData> cleaner =
       vtkSmartPointer<vtkCleanPolyData>::New();

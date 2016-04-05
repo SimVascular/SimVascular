@@ -20,6 +20,9 @@ else
     LINK_EXE        = $(CXX) -g -fstack-protector-all -o  
   endif
 endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+    OPT_FLAGS       = -std=gnu++11 -fPIC
+endif
     SHAR            = $(CXX) -shared -o
     SOEXT           = so
     STATICEXT       = a

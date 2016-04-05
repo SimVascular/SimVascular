@@ -29,17 +29,17 @@ if(NOT DEFINED EP_LIST_SEPARATOR)
 endif()
 
 #.rst:
-# .. cmake:variable:: EXTERNAL_PROJECT_DIR
+# .. cmake:variable:: SV_EXTERNALS_DIR
 #
-if(NOT EXISTS "${EXTERNAL_PROJECT_DIR}")
-  set(EXTERNAL_PROJECT_DIR ${CMAKE_SOURCE_DIR}/SuperBuild)
+if(NOT EXISTS "${SV_EXTERNALS_DIR}")
+  set(SV_EXTERNALS_DIR ${CMAKE_SOURCE_DIR}/SuperBuild)
 endif()
 
 #.rst:
-# .. cmake:variable:: EXTERNAL_PROJECT_FILE_PREFIX
+# .. cmake:variable:: SV_EXTERNAL_PROJECT_FILE_PREFIX
 #
-if(NOT DEFINED EXTERNAL_PROJECT_FILE_PREFIX)
-  set(EXTERNAL_PROJECT_FILE_PREFIX "External_")
+if(NOT DEFINED SV_EXTERNAL_PROJECT_FILE_PREFIX)
+  set(SV_EXTERNAL_PROJECT_FILE_PREFIX "External_")
 endif()
 
 # Compute -G arg for configuring external projects with the same CMake generator:
@@ -586,15 +586,15 @@ macro(ExternalProject_Include_Dependencies project_name)
   foreach(dep ${_sb_DEPENDS})
     get_property(_included GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED)
     if(NOT _included)
-      # XXX - Refactor - Add a single variable named 'EXTERNAL_PROJECT_DIRS'
-      if(EXISTS "${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
-        include(${EXTERNAL_PROJECT_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
+      # XXX - Refactor - Add a single variable named 'SV_EXTERNALS_DIRS'
+      if(EXISTS "${SV_EXTERNALS_DIR}/${SV_EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        include(${SV_EXTERNALS_DIR}/${SV_EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       elseif(EXISTS "${${dep}_FILEPATH}")
         include(${${dep}_FILEPATH})
-      elseif(EXISTS "${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
-        include(${EXTERNAL_PROJECT_ADDITIONAL_DIR}/${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
+      elseif(EXISTS "${SV_EXTERNAL_PROJECT_ADDITIONAL_DIR}/${SV_EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        include(${SV_EXTERNAL_PROJECT_ADDITIONAL_DIR}/${SV_EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake)
       else()
-        message(FATAL_ERROR "Can't find ${EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
+        message(FATAL_ERROR "Can't find ${SV_EXTERNAL_PROJECT_FILE_PREFIX}${dep}.cmake")
       endif()
       set_property(GLOBAL PROPERTY SB_${dep}_FILE_INCLUDED 1)
     endif()

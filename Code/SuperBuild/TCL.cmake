@@ -54,18 +54,18 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TclTk)
 
 	if(LINUX)
-		set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
 		message(ERROR "Superbuild for ${proj} is not supported for this platform")
 	elseif(WIN32)
-		set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/tcltk-8.5.11-win-x64.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-win-x64.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	endif()
 	mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
 	mark_as_advanced(SuperBuild_${proj}_URL)
 
-	set(SimVascular_${proj}_DIR ${${proj}_SOURCE_DIR})
+	set(SV_${proj}_DIR ${${proj}_SOURCE_DIR})
 	
 	ExternalProject_Add(${proj}
 		URL ${SuperBuild_${proj}_URL}
@@ -99,7 +99,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	if(LINUX)
 
 		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-		set(SimVascular_TCL_DIR ${${proj}_SOURCE_DIR})
+		set(SV_TCL_DIR ${${proj}_SOURCE_DIR})
 
 		set(TCL_DLL_PATH ${${proj}_OUTPUT_BIN_DIR}/bin)
 		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
@@ -117,7 +117,7 @@ else()
 endif()
 
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
-mark_as_superbuild(SimVascular_${proj}_DIR:PATH)
+mark_as_superbuild(SV_${proj}_DIR:PATH)
 mark_as_superbuild(TCL_DLL_PATH:PATH)
 mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
 mark_as_superbuild(TCL_LIBRARY:PATH)

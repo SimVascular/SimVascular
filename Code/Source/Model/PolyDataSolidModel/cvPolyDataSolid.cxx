@@ -57,12 +57,13 @@
 #include "vtkSphereSource.h"
 #include "vtkTransform.h"
 #include "vtkTransformPolyDataFilter.h"
+#include "cv_vtk_utils.h"
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
   #include "vtkSurfaceBooleanOperations.h"
 #endif
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   #include "cv_VMTK_utils.h"
 #endif
 
@@ -163,7 +164,7 @@ int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(newPolyData);
 
-  if (PlyDtaUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == CV_OK)
   {
     int *faceIds;
     int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, &faceIds);
@@ -462,7 +463,7 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
     fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
   vtkSurfaceBooleanOperations *intersectPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
@@ -546,7 +547,7 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
     return CV_ERROR;
   }
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
   vtkSurfaceBooleanOperations *unionPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
@@ -629,7 +630,7 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
     fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
   vtkSurfaceBooleanOperations *subtractPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
@@ -739,7 +740,7 @@ int cvPolyDataSolid::CombineFaces( int targetface, int loseface)
 
 int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   if (geom_ == NULL)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");

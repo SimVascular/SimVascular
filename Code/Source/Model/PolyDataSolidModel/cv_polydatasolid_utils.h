@@ -81,6 +81,4 @@ int PlyDtaUtils_DeleteCells( vtkPolyData *geom, int *numcells, int *cells);
 
 int PlyDtaUtils_DeleteRegion( vtkPolyData *geom, int *regionid);
 
-int PlyDtaUtils_PDCheckArrayName( vtkPolyData *object, int datatype,std::string arrayname);
-int PlyDtaUtils_UGCheckArrayName( vtkUnstructuredGrid *object, int datatype,std::string arrayname);
 #endif // __PARASOLID_MODEL_H

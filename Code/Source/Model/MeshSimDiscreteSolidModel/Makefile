@@ -61,7 +61,7 @@ DLLSRCS = cv_discrete_init.cxx
 
 DLLLIBS =
 
-ifeq ($(MAKE_WITH_VMTK),1)
+ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
 endif
 

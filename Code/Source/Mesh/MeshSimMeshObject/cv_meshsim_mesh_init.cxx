@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, William Katz.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -33,7 +33,7 @@
  *
  *=========================================================================*/
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include "cv_misc_utils.h"
 #include "cv_arg.h"
@@ -43,7 +43,7 @@
 
 #include "cv_globals.h"
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
 #include "SimParasolidKrnl.h"
 #include "SimParasolidInt.h"
 #endif
@@ -85,7 +85,7 @@ int MeshSim_Win32ReadRegistrySimRegister(char* regVarName) {
     fflush(stdout);
     return CV_ERROR;
   }
-   
+
   returnStatus2 = RegQueryValueEx(hKey2, regVarName, NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
   RegCloseKey(hKey2);
 
@@ -115,7 +115,7 @@ int MeshSimMesh_AvailableCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Meshsimmesh_Init( Tcl_Interp *interp )
 {
-  try 
+  try
   {
   // Initialize the MeshSim libraries
     printf("  %-12s %s\n", "MeshSim:", MS_version());
@@ -126,7 +126,7 @@ int Meshsimmesh_Init( Tcl_Interp *interp )
    return TCL_OK;
  }
 #if defined(MESHSIM_LICENSE_IN_WIN32_REGISTRY)
- try 
+ try
  {
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_ATTRIBUTES");
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_PARASOLID");
@@ -141,7 +141,7 @@ int Meshsimmesh_Init( Tcl_Interp *interp )
  return TCL_OK;
 }
 #elif defined(MESHSIM_USE_LICENSE_FILE)
-try 
+try
 {
 
   Sim_readLicenseFile(NULL);
@@ -153,7 +153,7 @@ try
 }
 #elif defined(MESHSIM_EMBED_LICENSE_KEYS)
 #include "../../../Licenses/MeshSim/meshsim_license.h"
-try 
+try
 {
   Sim_registerKey(MESHSIM_KEY_ATTRIBUTES);
   Sim_registerKey(MESHSIM_KEY_PARASOLID);
@@ -173,7 +173,7 @@ return CV_ERROR;
 #endif
 try{
   SimModel_start();
-  #ifdef USE_PARASOLID
+  #ifdef SV_USE_PARASOLID
   if (SimParasolid_start( 0 ) != 0) {
    fprintf(stdout,"ERROR starting MeshSim Parasolid Interface!\n");
    return CV_ERROR;
@@ -181,15 +181,15 @@ try{
   #endif
 
  SimAdvMeshing_start();
-} 
+}
 catch (...) {
  fprintf(stdout,"  ERROR starting MeshSim.  Will not be available!\n");
  return TCL_OK;
 }
 	// Get the main mesh
-	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod = 
+	MeshKernelRegistryMethodPtr pMeshKernelRegistryMethod =
     (MeshKernelRegistryMethodPtr) Tcl_GetAssocData( interp, "MeshSystemRegistrar", NULL);
-	
+
   if (pMeshKernelRegistryMethod != NULL) {
     cvMeshSystem* meshSimSystem = new cvMeshSimMeshSystem();
     if ((*pMeshKernelRegistryMethod)( cvMeshObject::KERNEL_MESHSIM, meshSimSystem ) == CV_OK) {

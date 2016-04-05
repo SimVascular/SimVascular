@@ -41,8 +41,8 @@ HDRS	=  cvITKLevelSet.h
 
 CXXSRCS	=  cvITKLevelSet.cxx
 
-DLLHDRS = cv_ITKLset_init.h
-DLLSRCS = cv_ITKLset_init.cxx
+DLLHDRS = cv_ITKLset2d_init.h cv_ITKLset3d_init.h
+DLLSRCS = cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx
 
 TARGET_LIB_NAME = simvascular_cvitk
 

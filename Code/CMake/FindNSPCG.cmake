@@ -55,7 +55,7 @@ set(${proj}_HEADER "")
 #-----------------------------------------------------------------------------
 # Find Libraries
 #-----------------------------------------------------------------------------
-set(${proj}_PATH "${SimVascular_SV_EXTERN_OpenLibs_BIN_DIR}/nspcg/")
+set(${proj}_PATH "${SV_EXTERN_OPEN_BIN_DIR}/nspcg/")
 # Set paths to search for parasolid
 if(LINUX)
 	set(lib_sub_path "")

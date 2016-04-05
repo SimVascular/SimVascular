@@ -2384,8 +2384,8 @@ proc FindGetMethods {obj} {
 
 
 proc printBuildID {} {
-  global SIMVASCULAR_BUILD_ID
-  puts "Build Identifier: $SIMVASCULAR_BUILD_ID"
+  global SV_BUILD_ID
+  puts "Build Identifier: $SV_BUILD_ID"
 }
 
 proc printExternals {} {

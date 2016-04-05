@@ -1,7 +1,7 @@
 
 set(TKCXIMAGE_NEEDED_LIBS Tkcximage)
 
-#if(SIMVASCULAR_USE_SV_EXTERN)
+#if(SV_USE_SV_EXTERN)
 set(TKCXIMAGE_PATH_PREFIX "tkcximage-0.98.9/tcltk-8.5.11/bin" CACHE TYPE PATH)
 	if(LINUX)		
 		message(WARNING "Tkcximage is not currently supported on Linux systems")

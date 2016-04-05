@@ -67,9 +67,9 @@ int myVtk_Init( Tcl_Interp *interp )
   // Print version info:
   vtkVersion *vobj = vtkVersion::New();
   if (gSimVascularBatchMode == 0) {
-    printf("  %-12s %s\n", "vtk:", vobj->GetVTKVersion());
+    printf("  %-12s %s\n", "Vtk:", vobj->GetVTKVersion());
   } else {
-    printf("  %-12s %s\n", "vtk:", vobj->GetVTKVersion());
+    printf("  %-12s %s\n", "Vtk:", vobj->GetVTKVersion());
   }
   vobj->Delete();
 

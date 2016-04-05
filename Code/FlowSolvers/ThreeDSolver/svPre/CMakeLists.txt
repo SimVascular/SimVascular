@@ -1,19 +1,19 @@
 ##=========================================================================
  #
  # Copyright (c) 2014-2015 The Regents of the University of California.
- # All Rights Reserved. 
+ # All Rights Reserved.
  #
  # Permission is hereby granted, free of charge, to any person obtaining
  # a copy of this software and associated documentation files (the
- # "Software"), to deal in the Software without restriction, including 
- # without limitation the rights to use, copy, modify, merge, publish, 
+ # "Software"), to deal in the Software without restriction, including
+ # without limitation the rights to use, copy, modify, merge, publish,
  # distribute, sublicense, and/or sell copies of the Software, and to
  # permit persons to whom the Software is furnished to do so, subject
  # to the following conditions:
- # 
- # The above copyright notice and this permission notice shall be included 
+ #
+ # The above copyright notice and this permission notice shall be included
  # in all copies or substantial portions of the Software.
- # 
+ #
  # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  # IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  # TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -33,7 +33,7 @@ SET(CXXSRCS cmd.cxx displacements.cxx helpers.cxx supre-cmds.cxx supre.cxx
 	presolver-vtk-cmds.cxx)
 
 # Add c++ sources for variable wall module
-if(ThreeDSolver_USE_VARWALL)
+if(SV_THREEDSOLVER_USE_VARWALL)
 	SET(CXXSRCS ${CXXSRCS} Laplace_Solve.cxx Transient_Laplace_Solve.cxx displacements_var_prop.cxx)
 endif()
 
@@ -44,44 +44,52 @@ SET(CSRCS directsolve.c)
 # Add fortran sources
 SET(FSRCS stannspcg.f)
 
-# Add fortran sources for variable wall module
-if(ThreeDSolver_USE_VARWALL)
-	SET(FSRCS ${FSRCS} gmresfortran.f90)
+# add fortran sources for variable wall module
+# makefile uses .f not .f90, keep consistent
+if(SV_THREEDSOLVER_USE_VARWALL)
+	SET(FSRCS ${FSRCS} gmresfortran.f)
 endif()
 
 # Visual Studio Linker Flags
 
 
 
-ADD_LIBRARY(presolver_fortran_lib ${FSRCS})
+ADD_LIBRARY(presolver_fortran_lib ${SV_LIBRARY_TYPE} ${FSRCS})
 
-simvascular_add_executable(${PRESOLVER_EXE}
+simvascular_add_executable(${SV_PRESOLVER_EXE}
 	SRCS ${CXXSRCS} ${CSRCS}
-	DEV_SCRIPT_NAME "mypre" 
+	DEV_SCRIPT_NAME "mypre"
 	INSTALL_SCRIPT_NAME "svpre"
 	INSTALL_COMPONENT ModuleExecutables
-	INSTALL_DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR})
+	INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
 
-TARGET_LINK_LIBRARIES(${PRESOLVER_EXE} presolver_fortran_lib
+TARGET_LINK_LIBRARIES(${SV_PRESOLVER_EXE} presolver_fortran_lib
 	${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
 	${METIS_LIBRARY} ${SPARSE_LIBRARY}
 	${NSPCG_LIBRARY} ${VTK_LIBRARIES}
 	lib_simvascular_solverio)
 
+TARGET_LINK_LIBRARIES(presolver_fortran_lib ${NSPCG_LIBRARY})
+
 if(NOT MSVC)
 	SET_TARGET_PROPERTIES(presolver_fortran_lib PROPERTIES LINKER_LANGUAGE Fortran)
-	SET_TARGET_PROPERTIES(${PRESOLVER_EXE} PROPERTIES LINKER_LANGUAGE Fortran)
+	SET_TARGET_PROPERTIES(${SV_PRESOLVER_EXE} PROPERTIES LINKER_LANGUAGE Fortran)
 endif()
-if(SIMVASCULAR_INSTALL_LIBS)
+
+if(${CMAKE_Fortran_COMPILER_ID} STREQUAL "Intel")
+	SET_TARGET_PROPERTIES(${SV_PRESOLVER_EXE} PROPERTIES LINK_FLAGS -nofor-main)
+endif()
+
+if(SV_INSTALL_LIBS)
 	install(TARGETS presolver_fortran_lib
-		RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
-		LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
-		ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT ModuleExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT ModuleLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT ModuleLibraries
 		)
 endif()
-if(SIMVASCULAR_INSTALL_HEADERS)
+if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()
 

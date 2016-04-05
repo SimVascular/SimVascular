@@ -47,7 +47,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
   set(${proj}_INSTALL_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-install)
 
-  set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/metis-4.0.1-cmake.tar.gz" CACHE
+  set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/metis-4.0.1-cmake.tar.gz" CACHE
    STRING "Location of ${proj}, can be web address or local path")
   mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
   mark_as_advanced(SuperBuild_${proj}_URL)
