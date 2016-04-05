@@ -133,6 +133,7 @@ endif()
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_LIBS_MISSING)
 set(${proj}_LIBRARIES_WORK "")
+set(one_lib)
 foreach(lib ${${proj}_LIBNAMES})
 	#find library
 	find_library(${proj}_${lib}_LIBRARY
@@ -153,8 +154,18 @@ foreach(lib ${${proj}_LIBNAMES})
 	if(${proj}_${lib}_LIBRARY)
 		set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
 		list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
+		set(one_lib ${${proj}_${lib}_LIBRARY})
 	endif()
 endforeach()
+#Get the found install lib dir location in opencascade
+get_filename_component(last_dir "${one_lib}" PATH)
+get_filename_component(a_last_dir "${last_dir}" NAME)
+get_filename_component(seco_last_dir "${last_dir}" PATH)
+get_filename_component(a_seco_last_dir "${seco_last_dir}" NAME)
+get_filename_component(thir_last_dir "${seco_last_dir}" PATH)
+get_filename_component(a_thir_last_dir "${thir_last_dir}" NAME)
+set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR "opencascade/${a_thir_last_dir}/${a_seco_last_dir}/${a_last_dir}")
+
 
 #message("${proj}_LIBRARIES_WORK: ${${proj}_LIBRARIES_WORK}")
 
@@ -179,7 +190,6 @@ if(${proj}_LIBRARIES)
 		list(GET ${proj}_LIBRARIES 1 temp_path)
 	endif()
 endif()
-
 #-----------------------------------------------------------------------------
 # Find Include Directory
 #-----------------------------------------------------------------------------
