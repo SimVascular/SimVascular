@@ -198,6 +198,12 @@ SV_USE_ITK = 1
 SV_USE_VMTK = 1
 
 # -----------------------------------------------------
+# Compile with GDCM
+# -----------------------------------------------------
+
+SV_USE_GDCM = 1
+
+# -----------------------------------------------------
 # Compile with glib & gts
 # -----------------------------------------------------
 
@@ -307,6 +313,7 @@ ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     endif
 
     SV_USE_ITK = 0
+    SV_USE_GDCM = 0
     SV_USE_VMTK = 0
     SV_USE_TETGEN = 0
     SV_USE_SPARSE = 0
@@ -400,6 +407,10 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   GLOBAL_DEFINES += -DSV_USE_ITK
+endif
+
+ifeq ($(SV_USE_GDCM),1)
+  GLOBAL_DEFINES += -DSV_USE_GDCM
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -794,6 +805,26 @@ endif
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
 
+# ----
+# GDCM
+# ----
+
+ifeq ($(SV_USE_GDCM),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_macosx.mk
+  endif
+
+endif
+
 # --------------
 # Insight ToolKit
 # ---------------
@@ -801,7 +832,7 @@ endif
 ifeq ($(SV_USE_ITK),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/itk-4.8.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/itk-4.7.1.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
