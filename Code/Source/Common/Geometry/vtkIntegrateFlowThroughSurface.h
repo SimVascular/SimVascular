@@ -22,12 +22,14 @@
 #ifndef __vtkIntegrateFlowThroughSurface_h
 #define __vtkIntegrateFlowThroughSurface_h
 
+#include "SimVascular.h"
+
 #include "vtkUnstructuredGridAlgorithm.h"
 
 class vtkIdList;
 class vtkDataSetAttributes;
 
-class VTK_EXPORT vtkIntegrateFlowThroughSurface : public vtkUnstructuredGridAlgorithm
+class CV_DLL_EXPORT vtkIntegrateFlowThroughSurface : public vtkUnstructuredGridAlgorithm
 {
 public:
   vtkTypeMacro(vtkIntegrateFlowThroughSurface,vtkUnstructuredGridAlgorithm);

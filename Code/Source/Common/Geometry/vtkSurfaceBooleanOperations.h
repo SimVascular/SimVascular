@@ -7,6 +7,8 @@
 #ifndef vtkSurfaceBooleanOperations_h
 #define vtkSurfaceBooleanOperations_h
 
+#include "SimVascular.h"
+
 #include "vtkPolyDataAlgorithm.h"
 
 
