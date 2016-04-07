@@ -237,13 +237,20 @@ copy-external-libs:
 ifeq ($(SV_USE_LESLIB),1)
 	-cp -f ../Licenses/LesLib/license.dat $(DIST_DIR)/license.dat
 endif
+ifeq ($(SV_USE_VTK),1)
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fd $(VTK_BINDIRS)/*.$(SOEXT)* $(DIST_DIR)
+endif
 ifeq ($(SV_USE_ZLIB),1)
 	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_ITK),1)
-	-cp -f $(ITK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
+ifeq ($(SV_USE_GDCM),1)
+	-cp -f $(SV_GDCM_DLLS)/*.$(SOEXT)* $(DIST_DIR)
+endif
+
 
 copy-external-libs-windows-only:
 	-cp -f dicom2/dicom2-win32.exe $(DIST_DIR)/dicom2.exe

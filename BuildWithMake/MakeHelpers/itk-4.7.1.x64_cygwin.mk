@@ -150,6 +150,7 @@ ifeq ($(CLUSTER), x64_cygwin)
 -I$(ITK_SRC_DIR)/Modules/ThirdParty/DoubleConversion/src/double-conversion
 
    ITK_LIBDIRS = $(ITK_BIN_DIR)/lib/RelWithDebInfo
+   ITK_BIN_LIBS = $(ITK_BIN_DIR)/bin/RelWithDebInfo
    ITK_LIBS =    $(LIBPATH_COMPILER_FLAG)$(ITK_LIBDIRS) \
 $(LIBFLAG)ITKBiasCorrection-4.7.lib     $(LIBFLAG)ITKIOJPEG-4.7.lib                    $(LIBFLAG)ITKOptimizers-4.7.lib \
 $(LIBFLAG)ITKBioCell-4.7.lib            $(LIBFLAG)ITKIOLSM-4.7.lib                     $(LIBFLAG)ITKPath-4.7.lib \

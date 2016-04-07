@@ -18,5 +18,6 @@ ifeq ($(CLUSTER), x64_cygwin)
                      $(LIBFLAG)gdcmjpeg16.lib  \
                      $(LIBFLAG)gdcmjpeg8.lib   \
                      $(LIBFLAG)gdcmMSFF.lib
+    SV_GDCM_DLLS   =  $(SV_GDCM_TOP)/bin/RelWithDebInfo
 #    SV_GDCM_LIBS  += $(LIBFLAG)Advapi32.lib $(LIBFLAG)Ws2_32.lib
 endif
