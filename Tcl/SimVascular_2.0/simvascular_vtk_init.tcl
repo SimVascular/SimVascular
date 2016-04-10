@@ -18,6 +18,16 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
       }
     }
     puts [format "  %-12s %s" "TclVtk:" "Dynamic Libs (not_loaded: [llength $not_loaded])"]
+} elseif {($SV_RELEASE_BUILD == 0) && ($tcl_platform(platform) == "windows")} {
+    foreach kit $all_vtk_kits {
+      #set myfn [file join $simvascular_home vtk${kit}TCL-6.2.dll]
+      if [catch {load vtk${kit}TCL-6.2.dll vtk${kit}TCL} msg] {
+        lappend not_loaded vtk${kit}TCL
+      } else {
+        lappend loaded vtk${kit}TCL
+      }
+    }
+    puts [format "  %-12s %s" "TclVtk:" "Dynamic Libs (not_loaded: [llength $not_loaded])"]
 } else {
   foreach kit $all_vtk_kits {
     if [catch {load {} vtk${kit}TCL} msg] {

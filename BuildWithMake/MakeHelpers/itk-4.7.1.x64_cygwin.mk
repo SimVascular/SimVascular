@@ -1,8 +1,9 @@
 ifeq ($(CLUSTER), x64_cygwin)
     ITK_SRC_DIR	= $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/itk-4.7.1
     ITK_BIN_DIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/itk-4.7.1
+    ITK_BUILD_DIR = $(OPEN_SOFTWARE_BUILDS_TOPLEVEL)/itk-4.7.1
     ITK_DEFS = -D ITK_IO_FACTORY_REGISTER_MANAGER -D MSVC
-    ITK_INCLUDE_DIR_BASE = $(VTK_BINDIR)/include/ITK-4.7
+    ITK_INCLUDE_DIR_BASE = $(ITK_BIN_DIR)/include/ITK-4.7
     ITK_LIBDIRS = $(ITK_BIN_DIR)/lib
     ITK_BIN_LIBS = $(ITK_BIN_DIR)/bin
 
@@ -13,7 +14,9 @@ ifeq ($(CLUSTER), x64_cygwin)
       -I$(ITK_INCLUDE_DIR_BASE)/itkjpeg \
       -I$(ITK_INCLUDE_DIR_BASE)/itkpng \
       -I$(ITK_INCLUDE_DIR_BASE)/itkzlib \
-      -I$(ITK_INCLUDE_DIR_BASE)/vnl
+      -I$(ITK_INCLUDE_DIR_BASE)/vnl \
+      -I$(ITK_BUILD_DIR)/Modules/IO/ImageBase \
+      -I$(ITK_BUILD_DIR)/Examples/ITKIOFactoryRegistration
 
    ITK_LIBS =    $(LIBPATH_COMPILER_FLAG)$(ITK_LIBDIRS) \
 $(LIBFLAG)ITKBiasCorrection-4.7.lib     $(LIBFLAG)ITKIOJPEG-4.7.lib                    $(LIBFLAG)ITKOptimizers-4.7.lib \
@@ -25,8 +28,8 @@ $(LIBFLAG)ITKEXPAT-4.7.lib              $(LIBFLAG)ITKIONIFTI-4.7.lib            
 $(LIBFLAG)ITKFEM-4.7.lib                $(LIBFLAG)ITKIONRRD-4.7.lib                    $(LIBFLAG)ITKStatistics-4.7.lib \
 $(LIBFLAG)ITKIOPNG-4.7.lib                     $(LIBFLAG)itksys-4.7.lib \
 $(LIBFLAG)ITKIOSiemens-4.7.lib                 \
-$(LIBFLAG)ITKIOSpatialObjects-4.7.lib          $(LIBFLAG)itkTestDriver.lib \
-$(LIBFLAG)ITKIOStimulate-4.7.lib               $(LIBFLAG)itktestlib-4.7.lib \
+$(LIBFLAG)ITKIOSpatialObjects-4.7.lib          \
+$(LIBFLAG)ITKIOStimulate-4.7.lib               \
 $(LIBFLAG)ITKIOTIFF-4.7.lib                    $(LIBFLAG)itktiff-4.7.lib \
 $(LIBFLAG)ITKIOTransformBase-4.7.lib           $(LIBFLAG)itkv3p_lsqr-4.7.lib \
 $(LIBFLAG)ITKIOTransformHDF5-4.7.lib           $(LIBFLAG)itkv3p_netlib-4.7.lib \
