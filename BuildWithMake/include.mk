@@ -758,7 +758,7 @@ endif
 # ------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -778,7 +778,7 @@ endif
 ifeq ($(SV_USE_VTK),1)
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/vtk-6.2.0-tcl-8.6.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
