@@ -121,8 +121,8 @@ endif(DOXYGEN_FOUND)
 # TCL
 if(WIN32)
 	simvascular_external(TCL DOWNLOADABLE SHARED_LIB)
-else()
-	simvascular_external(TCL SYSTEM_DEFAULT SHARED_LIB)
+	#else()
+	#simvascular_external(TCL SYSTEM_DEFAULT SHARED_LIB)
 endif()
 
 STRING(REGEX REPLACE
