@@ -117,7 +117,7 @@ int Occtsolid_Init( Tcl_Interp *interp )
     fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly\n");
   }
 
-  printf("  %-12s %s\n","OpenCASCADE:", "6.9.1");
+  printf("  %-12s %s\n","OpenCASCADE:", "7.0.0");
   cvFactoryRegistrar* solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 

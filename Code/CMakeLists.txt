@@ -13,6 +13,7 @@ if (POLICY CMP0054)
 	cmake_policy(SET CMP0054 OLD)
 endif()
 
+
 #-----------------------------------------------------------------------------
 Project(SV)
 #-----------------------------------------------------------------------------
@@ -32,6 +33,14 @@ include(ExternalProjectDependency)
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
 
+SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+SET(CMAKE_INSTALL_RPATH "")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+mark_as_superbuild(CMAKE_SKIP_BUILD_RPATH)
+mark_as_superbuild(CMAKE_SKIP_BUILD_WITH_INSTALL_RPATH)
+mark_as_superbuild(CMAKE_INSTALL_RPATH)
+mark_as_superbuild(CMAKE_INSTALL_RPATH_USE_LINK_RPATH)
 #-----------------------------------------------------------------------------
 # unset NEED variables
 unset(SV_USE_FORTRAN)
@@ -305,6 +314,7 @@ if(SV_USE_OPENCASCADE)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
 	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
 	#set(SV_INSTALL_EXTERNALS ON)
+	find_package(FREETYPE)
 endif()
 # Licensed Package Additions
 #-----------------------------------------------------------------------------

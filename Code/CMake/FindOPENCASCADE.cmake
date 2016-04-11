@@ -42,20 +42,19 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Libraries
-set(${proj}_LIBNAMES TKBRep TKHLR)
-set(${proj}_FIND_COMPONENTS TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
-			    TKPrim TKMath TKIVtk TKG3d TKG2d
-		            TKGeomBase TKGeomAlgo TKV3d
-			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel
-			    TKIGES TKMeshVS TKSTEP TKSTEP209
-			    TKSTEPAttr TKVRML TKSTEPBase TKSTL
-			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
-			    TKService
-			    TKXDEIGES TKXDESTEP TKXMesh
-			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
-			    FWOSPlugin)
+set(${proj}_LIBNAMES TKernel)
+set(${proj}_FIND_COMPONENTS FWOSPlugin
+                            TKBO TKBRep TKBin TKBinL TKBinTObj TKBinXCAF
+		            TKBool TKCAF TKCDF TKFeat TKFillet TKG2d
+		            TKG3d TKGeomAlgo TKGeomBase TKHLR TKIGES TKIVtk
+		            TKLCAF TKMath TKMesh TKMeshVS TKOffset
+		            TKPrim TKSTEP TKSTEP209 TKSTEPAttr TKSTEPBase
+		            TKSTL TKService TKShHealing TKStd TKStdL
+		            TKTObj TKTopAlgo TKV3d TKVCAF TKVRML TKXCAF
+		            TKXDEIGES TKXDESTEP TKXMesh TKXSBase TKXml
+		            TKXmlL TKXmlTObj TKXmlXCAF)
 if (APPLE)
-set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
+  set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
 endif()
 
 # Add requestion components
@@ -164,7 +163,9 @@ get_filename_component(seco_last_dir "${last_dir}" PATH)
 get_filename_component(a_seco_last_dir "${seco_last_dir}" NAME)
 get_filename_component(thir_last_dir "${seco_last_dir}" PATH)
 get_filename_component(a_thir_last_dir "${thir_last_dir}" NAME)
-set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR "opencascade/${a_thir_last_dir}/${a_seco_last_dir}/${a_last_dir}")
+set(OPENCASCADE_LIB_EXT "${a_thir_last_dir}/${a_seco_last_dir}/${a_last_dir}")
+mark_as_superbuild(OPENCASCADE_LIB_EXT)
+set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR "opencascade/${OPENCASCADE_LIB_EXT}")
 
 
 #message("${proj}_LIBRARIES_WORK: ${${proj}_LIBRARIES_WORK}")

@@ -137,18 +137,21 @@ endif()
 if(VTK_SHARED_LIBRARIES)
 	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
 	set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/vtk/lib/tcltk/modules" install_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${VTK_DIR}/lib" developer_script_string)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
 endif()
 
 # ITK built as shared for install
-#if(ITK_SHARED_LIBRARIES)
+if(ITK_SHARED_LIBRARIES)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ITK_DIR}/lib" developer_script_string)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_ITK_LIBRARY_DIR}" install_script_string)
-#endif()
+endif()
 
 # If using opencascade for install
-#if(SV_USE_OPENCASCADE)
+if(SV_USE_OPENCASCADE)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OPENCASCADE_DIR}/${OPENCASCADE_LIB_EXT}" developer_script_string)
         append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_OPENCASCADE_LIBRARY_DIR}" install_script_string)
-#endif()
+endif()
 
 
 

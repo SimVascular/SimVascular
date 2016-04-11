@@ -170,10 +170,15 @@ endif()
 #-----------------------------------------------------------------------------
 # Open Source Software Options: Solid Models - OPENCASCADE
 if(SV_USE_OPENCASCADE)
+    option(OPENCASCADE_SHARED_LIBRARIES "Build opencascade as shared libs" OFF)
+    mark_as_superbuild(OPENCASCADE_SHARED_LIBRARIES)
+endif()
+
+if(${OPENCASCADE_SHARED_LIBRARIES})
     set(VTK_SHARED_LIBRARIES "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
-if(VTK_SHARED_LIBRARIES)
+if(${VTK_SHARED_LIBRARIES})
   if(UNIX AND NOT APPLE)
   	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
   endif()
