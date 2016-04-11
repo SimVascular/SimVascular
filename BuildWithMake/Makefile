@@ -94,7 +94,12 @@ endif
 ifeq ($(SV_USE_ITK),1)
 	-echo "puts \"s+REPLACEME_ITK_SO_PATH+`cygpath -u $(ITK_BIN_LIBS)`+g\"" >> tclscript
 endif
-
+ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+`cygpath -u $(SV_PYTHON_SO_PATH)`+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
+endif
 endif
 ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript

@@ -302,6 +302,10 @@ VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
                 $(LIBFLAG)vtksys-6.2$(LIBLINKEXT) \
                 $(VTK_SYS_LIBS)
 
+ifeq ($(SV_USE_PYTHON),1)
+  VTK_LIBS +=  $(LIBFLAG)vtkWrappingPython27Core-6.2$(LIBLINKEXT)
+endif
+
 #
 #		vtkRenderingHybridOpenGL-6.2.lib \
 #		vtkRenderingHybridOpenGLTCL-6.2.lib \

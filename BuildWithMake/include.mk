@@ -609,7 +609,11 @@ endif
 # -------------------------
 
 ifeq ($(SV_USE_PYTHON),1)
-  SHARED_LIBDIRS += ../Code/Source/TclPython
+  ifeq ($(SV_USE_PYTHON_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/TclPython
+  else
+     LIBDIRS += ../Code/Source/TclPython
+  endif
 endif
 
 #
@@ -893,16 +897,16 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_cygwin.mk
          OPENCASCADE_DEFS = -DWNT
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_linux.mk
+	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_macosx.mk
+	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_macosx.mk
   endif
 
 endif
