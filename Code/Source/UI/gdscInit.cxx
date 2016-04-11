@@ -41,13 +41,8 @@
 #include <time.h>
 #include <stdlib.h>
 
-#ifdef __NON_STD_TCL_INSTALL
-  #include "tcl.h"
-  #include "tk.h"
-#else
-  #include <tcl.h>
-  #include <tk.h>
-#endif
+#include "tcl.h"
+#include "tk.h"
 
 #include "cv_repos_init.h"
 #include "cv_LsetCore_init.h"

@@ -57,7 +57,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/tcltk-8.6.4" CACHE
+		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Documents/Software/SimVascular/sv_extern/bin/macosx/clang_70/x64/tcltk-8.6.4/" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-win-x64.tar.gz" CACHE
@@ -116,13 +116,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
 		set(SV_TCL_DIR ${${proj}_SOURCE_DIR})
 
-		set(TCL_INCLUDE_PATH ${SuperBuild_${proj}_URL}/Library/Frameworks/Tcl.framework/Headers)
-		set(TCL_LIBRARY ${SuperBuild_${proj}_URL}/Library/Frameworks/tcl.framework)
-		set(TCL_TCLSH ${SuperBuild_${proj}_URL}/bin/tclsh8.5)
+		set(TCL_INCLUDE_PATH ${SuperBuild_${proj}_URL}/include)
+		set(TCL_LIBRARY ${SuperBuild_${proj}_URL}/lib/libtcl8.6.dylib)
+		set(TCL_TCLSH ${SuperBuild_${proj}_URL}/bin/tclsh8.6)
 
-		set(TK_INCLUDE_PATH ${SuperBuild_${proj}_URL}/Library/Frameworks/Tk.framework/Headers)
-		set(TK_LIBRARY ${SuperBuild_${proj}_URL}/Library/Frameworks/tk.framework)
-		set(TK_WISH ${SuperBuild_${proj}_URL}/bin/wish8.5)
+		set(TK_INCLUDE_PATH ${SuperBuild_${proj}_URL}/include)
+		set(TK_LIBRARY ${SuperBuild_${proj}_URL}/lib/libtk8.6.dylib)
+		set(TK_WISH ${SuperBuild_${proj}_URL}/bin/wish8.6)
 		mark_as_superbuild(TCL_INIT_PATH:PATH)
 	endif()
 

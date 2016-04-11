@@ -119,11 +119,7 @@ endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------------
 # TCL
-if(WIN32)
-	simvascular_external(TCL DOWNLOADABLE SHARED_LIB)
-	#else()
-	#simvascular_external(TCL SYSTEM_DEFAULT SHARED_LIB)
-endif()
+simvascular_external(TCL DOWNLOADABLE SHARED_LIB)
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
