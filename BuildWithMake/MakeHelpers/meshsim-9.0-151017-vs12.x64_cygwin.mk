@@ -15,7 +15,7 @@ ifeq ($(CLUSTER), x64_cygwin)
     ifeq ($(MESHSIM_MODELER),parasolid)
       MESHSIM_LIBS   := $(MESHSIM_LIBS) $(LIBFLAG)SimParasolid270$(LIBLINKEXT)
     endif 
-    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
+    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
       MESHSIM_LIBS   := $(MESHSIM_LIBS) $(LIBFLAG)SimDiscrete$(LIBLINKEXT)
     endif 
     MESHSIM_LIBS     := $(MESHSIM_LIBS) $(LIBFLAG)Ws2_32$(LIBLINKEXT) \
