@@ -1005,7 +1005,7 @@ ifeq ($(SV_USE_MESHSIM),1)
   endif
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150704-vs12.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/meshsim-9.0-151017-vs12.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)

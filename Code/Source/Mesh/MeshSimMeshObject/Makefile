@@ -46,7 +46,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+	   $(TCLTK_INCDIR) \
+           $(OPENCASCADE_INCDIR)
 
 ifeq ($(SV_USE_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
@@ -120,6 +121,10 @@ endif
 
 ifeq ($(SV_USE_PARASOLID),1)
   DLLLIBS += $(PARASOLID_LIBS)
+endif
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+  DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
 DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)

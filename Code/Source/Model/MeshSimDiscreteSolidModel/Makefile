@@ -51,6 +51,10 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
 
+ifeq ($(SV_USE_OPENCASCADE),1)
+   CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
+
 HDRS	= cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h
 
 CXXSRCS	= cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx
