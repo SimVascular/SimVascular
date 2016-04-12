@@ -69,7 +69,7 @@ ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS)
+DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS) $(OPENCASCADE_LIBS)
 
 TARGET_LIB_NAME = simvascular_meshsim_discrete
 
