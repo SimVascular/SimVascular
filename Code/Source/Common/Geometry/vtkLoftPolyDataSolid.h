@@ -41,10 +41,12 @@
 #ifndef __vtkLoftPolyDataSolid_h
 #define __vtkLoftPolyDataSolid_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKFILTERSCORE_EXPORT vtkLoftPolyDataSolid : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkLoftPolyDataSolid : public vtkPolyDataAlgorithm
 {
 public:
   static vtkLoftPolyDataSolid *New();

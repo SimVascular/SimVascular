@@ -43,6 +43,8 @@
 #ifndef __vtkCGSmooth_h
 #define __vtkCGSmooth_h
 
+#include "SimVascular.h"
+
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 

@@ -34,6 +34,13 @@
 #include "cv_misc_utils.h"
 #include "cvRepository.h"
 
+#ifdef SV_USE_OPENCASCADE
+  #ifdef WIN32
+  #include <windows.h>
+  #endif
+ #include "XCAFApp_Application.hxx"
+#endif
+
 CV_GLOBALS_DLL_IMPORT cvRepository *gRepository;
 
 #include "tcl.h"

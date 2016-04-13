@@ -41,6 +41,8 @@
 #ifndef __vtkMultiplePolyDataIntersectionFilter_h
 #define __vtkMultiplePolyDataIntersectionFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
@@ -49,7 +51,7 @@ class vtkDataArray;
 class vtkPoints;
 class vtkPolyData;
 
-class VTKFILTERSCORE_EXPORT vtkMultiplePolyDataIntersectionFilter : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkMultiplePolyDataIntersectionFilter : public vtkPolyDataAlgorithm
 {
 public:
   static vtkMultiplePolyDataIntersectionFilter *New();

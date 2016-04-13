@@ -58,12 +58,14 @@
 #ifndef __vtkGetBoundaryFaces_h
 #define __vtkGetBoundaryFaces_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
 class vtkFeatureEdges;
 
-class VTKFILTERSCORE_EXPORT vtkGetBoundaryFaces : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkGetBoundaryFaces : public vtkPolyDataAlgorithm
 {
 public:
   static vtkGetBoundaryFaces* New();

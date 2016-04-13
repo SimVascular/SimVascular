@@ -40,6 +40,8 @@
 #ifndef vtkLocalInterpolatingSubdivisionFilter_h
 #define vtkLocalInterpolatingSubdivisionFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
@@ -51,7 +53,7 @@ class vtkPointData;
 class vtkPoints;
 class vtkPolyData;
 
-class VTKFILTERSGENERAL_EXPORT vtkLocalInterpolatingSubdivisionFilter : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkLocalInterpolatingSubdivisionFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalInterpolatingSubdivisionFilter,vtkPolyDataAlgorithm);

@@ -122,7 +122,7 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) simvascular-bin.exe $(SV_VERSION) $(SV_FULL_VER_NO)
+	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) simvascular-bin.exe $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY)
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
@@ -194,7 +194,7 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/presolver.exe $(DIST_DIR)/presolver-bin.exe
 	-cp -f $(TOP)/Bin/postsolver.exe $(DIST_DIR)/postsolver-bin.exe
 	-cp -f $(TOP)/Bin/flowsolver-$(MPI_NAME).exe $(DIST_DIR)/flowsolver-bin.exe
-	-cp -f $(TOP)/../Code/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp $(DIST_DIR)
+	-cp -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
 
 copy-sv-tcl-code:
@@ -237,19 +237,33 @@ copy-external-libs:
 ifeq ($(SV_USE_LESLIB),1)
 	-cp -f ../Licenses/LesLib/license.dat $(DIST_DIR)/license.dat
 endif
+ifeq ($(SV_USE_VTK),1)
 	-cp -fd $(VTK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fd $(VTK_BINDIRS)/*.$(SOEXT)* $(DIST_DIR)
+endif
 ifeq ($(SV_USE_ZLIB),1)
 	-cp -f $(ZLIB_LIBDIR)/zlib.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_ITK),1)
-	-cp -f $(ITK_LIBDIRS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
+endif
+ifeq ($(SV_USE_GDCM),1)
+	-cp -f $(SV_GDCM_DLLS)/*.$(SOEXT)* $(DIST_DIR)
+endif
+ifeq ($(SV_USE_PYTHON),1)
+	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
 
 copy-external-libs-windows-only:
 	-cp -f dicom2/dicom2-win32.exe $(DIST_DIR)/dicom2.exe
 	-cp -f dcmtk/dcmdump-win32.exe $(DIST_DIR)/dcmdump.exe
 	-cp -f dcmtk/dcmodify-win32.exe $(DIST_DIR)/dcmodify.exe
+ifeq ($(USE_GLIB),1)
 	-cp $(GLIB_DLLS) $(DIST_DIR)
+endif
 ifeq ($(FORTRAN_COMPILER_VERSION),mingw-gfortran)
 	-cp -f /usr/x86_64-w64-mingw32/sys-root/mingw/bin/*.dll $(DIST_DIR)
 endif

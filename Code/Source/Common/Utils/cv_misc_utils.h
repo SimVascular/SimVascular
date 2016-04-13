@@ -190,7 +190,7 @@ double Distance( double ax, double ay, double az,
 // ========
 
 inline
-double Sign( double d, double tol )
+double cvSign( double d, double tol )
 {
   if ( fabs(d) < tol ) {
     return 0.0;

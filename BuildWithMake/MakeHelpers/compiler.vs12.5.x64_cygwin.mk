@@ -21,7 +21,7 @@ else
     DEBUG_FLAGS     = /MD /Zi /Od /EHsc -D_CRT_SECURE_NO_DEPRECATE /GS /GR
   endif
 endif
-    SHAR            = link
+    SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/link.exe"
     SOEXT           = dll
     STATICEXT       = lib
     OBJECTEXT       = obj
@@ -47,7 +47,7 @@ endif
     TEMPLATE_AR     = $(AR)
     CC_LIBS         =
     CXX_LIBS        = Advapi32.lib Ws2_32.lib Shlwapi.lib
-    LINK_EXE        = link /out:
+    LINK_EXE        = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/link.exe" /out:
     LIBPATH_COMPILER_FLAG = /LIBPATH:
     LIBFLAG         =
     LIBCMD          = lib 

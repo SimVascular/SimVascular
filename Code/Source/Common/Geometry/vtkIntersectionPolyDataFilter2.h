@@ -41,10 +41,12 @@
 #ifndef __vtkIntersectionPolyDataFilter2_h
 #define __vtkIntersectionPolyDataFilter2_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
-class VTKFILTERSGENERAL_EXPORT vtkIntersectionPolyDataFilter2 : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkIntersectionPolyDataFilter2 : public vtkPolyDataAlgorithm
 {
 public:
   static vtkIntersectionPolyDataFilter2 *New();
