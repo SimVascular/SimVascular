@@ -103,21 +103,22 @@ int OCCTSolidModel_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
 
 int Occtsolid_Init( Tcl_Interp *interp )
 {
+  Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
   //gOCCTManager = new AppStd_Application;
-  gOCCTManager = XCAFApp_Application::GetApplication();
+  OCCTManager = XCAFApp_Application::GetApplication();
   //if ( gOCCTManager == NULL ) {
   //  fprintf( stderr, "error allocating gOCCTManager\n" );
   //  return TCL_ERROR;
   //}
   Handle(TDocStd_Document) doc;
   //gOCCTManager->NewDocument("Standard",doc);
-  gOCCTManager->NewDocument("MDTV-XCAF",doc);
+  OCCTManager->NewDocument("MDTV-XCAF",doc);
   if ( !XCAFDoc_DocumentTool::IsXCAFDocument(doc))
   {
     fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly\n");
   }
 
-  printf("  %-12s %s\n","OpenCASCADE:", "6.9.1");
+  printf("  %-12s %s\n","OpenCASCADE:", "7.0.0");
   cvFactoryRegistrar* solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 

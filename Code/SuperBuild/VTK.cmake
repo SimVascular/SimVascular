@@ -86,6 +86,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
+   -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DBUILD_SHARED_LIBS:BOOL=${VTK_SHARED_LIBRARIES}
    -DBUILD_TESTING:BOOL=OFF
    -DVTK_WRAP_TCL:BOOL=ON
@@ -104,20 +105,22 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DVTK_INSTALL_LIBRARY_DIR:PATH=${SV_INSTALL_VTK_LIBRARY_DIR}
    -DVTK_INSTALL_ARCHIVE_DIR:PATH=${SV_INSTALL_VTK_ARCHIVE_DIR}
    -DVTK_INSTALL_INCLUDE_DIR:PATH=${SV_INSTALL_VTK_INCLUDE_DIR}
+   -DVTK_INSTALL_TCL_DIR:PATH=${SV_INSTALL_VTK_TCL_DIR}
    )
 
 set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
+else()
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+  file(COPY ${${proj}_DIR}/cmake_install.cmake
+       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
+endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})
 endif()
-
-else()
-  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-endif()
+mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 mark_as_superbuild(
   VARS ${proj}_DIR:PATH

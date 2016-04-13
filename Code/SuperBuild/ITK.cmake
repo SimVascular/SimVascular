@@ -70,6 +70,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
+   -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DBUILD_EXAMPLES:BOOL=OFF
    -DBUILD_SHARED_LIBS:BOOL=${ITK_SHARED_LIBRARIES}
    -DBUILD_TESTING:BOOL=OFF
@@ -92,6 +93,8 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+  file(COPY ${${proj}_DIR}/cmake_install.cmake
+       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})
