@@ -1508,6 +1508,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     meshsizingfunction = NULL;
   }
 
+#ifdef SV_USE_MMG
   if (meshoptions_.usemmg)
   {
     double mmg_maxsize = 1.25*meshoptions_.maxedgesize;
@@ -1527,6 +1528,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   }
   else
   {
+#endif
     //Generate Surface Remeshing
     if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
           meshcapsonly,preserveedges,trianglesplitfactor,
@@ -1536,7 +1538,9 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
       fprintf(stderr,"Problem with surface meshing\n");
       return CV_ERROR;
     }
+#ifdef SV_USE_MMG
   }
+#endif
 
   if (TGenUtils_CheckSurfaceMesh(polydatasolid_,
 	  meshoptions_.meshwallfirst) != CV_OK)
