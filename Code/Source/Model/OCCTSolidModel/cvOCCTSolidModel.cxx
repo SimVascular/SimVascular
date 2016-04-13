@@ -137,6 +137,7 @@
 #include "TDataStd_Integer.hxx"
 #include "TDataStd_Real.hxx"
 #include "TDataStd_Name.hxx"
+#include "XCAFApp_Application.hxx"
 #include "XCAFDoc_ShapeTool.hxx"
 #include "XCAFDoc_DocumentTool.hxx"
 #include "TDF_ChildIterator.hxx"
@@ -167,7 +168,9 @@ cvOCCTSolidModel::cvOCCTSolidModel()
 
   //Get the document created inside of the manager
   Handle(TDocStd_Document) doc;
-  gOCCTManager->GetDocument(1,doc);
+  Handle(XCAFApp_Application) OCCTManager =
+    static_cast<XCAFApp_Application*>(gOCCTManager);
+  OCCTManager->GetDocument(1,doc);
 
   shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
   ////Get the main part of the document
@@ -224,7 +227,9 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   }
 
   Handle(TDocStd_Document) doc;
-  gOCCTManager->GetDocument(1,doc);
+  Handle(XCAFApp_Application) OCCTManager =
+    static_cast<XCAFApp_Application*>(gOCCTManager);
+  OCCTManager->GetDocument(1,doc);
 
   shapetool_ = XCAFDoc_DocumentTool::ShapeTool(doc->Main());
 
@@ -1313,7 +1318,9 @@ int cvOCCTSolidModel::ReadNative( char *filename )
   }
   else if (!strncmp(extension,"step",4)) {
     Handle(TDocStd_Document) aDoc;
-    gOCCTManager->GetDocument(1,aDoc);
+    Handle(XCAFApp_Application) OCCTManager =
+      static_cast<XCAFApp_Application*>(gOCCTManager);
+    OCCTManager->GetDocument(1,aDoc);
     fprintf(stdout,"Reading file %s\n",filename);
     STEPCAFControl_Reader reader;
     reader.Perform(filename,aDoc);
@@ -1326,7 +1333,9 @@ int cvOCCTSolidModel::ReadNative( char *filename )
   }
   else if (!strncmp(extension,"iges",4)) {
     Handle(TDocStd_Document) aDoc;
-    gOCCTManager->GetDocument(1,aDoc);
+    Handle(XCAFApp_Application) OCCTManager =
+      static_cast<XCAFApp_Application*>(gOCCTManager);
+    OCCTManager->GetDocument(1,aDoc);
     fprintf(stdout,"Reading file %s\n",filename);
     IGESCAFControl_Reader reader;
     reader.Perform(filename,aDoc);
