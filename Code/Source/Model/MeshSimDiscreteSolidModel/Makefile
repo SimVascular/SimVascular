@@ -51,10 +51,6 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-   CXXFLAGS += $(OPENCASCADE_INCDIR)
-endif
-
 HDRS	= cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h
 
 CXXSRCS	= cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx
@@ -69,7 +65,7 @@ ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS) $(OPENCASCADE_LIBS)
+DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS) $(PARASOLID_LIBS)
 
 TARGET_LIB_NAME = simvascular_meshsim_discrete
 
