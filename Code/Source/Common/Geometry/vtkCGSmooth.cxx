@@ -65,7 +65,6 @@
 
 #include <iostream>
 
-vtkCxxRevisionMacro(vtkCGSmooth, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkCGSmooth);
 
 vtkCGSmooth::vtkCGSmooth()

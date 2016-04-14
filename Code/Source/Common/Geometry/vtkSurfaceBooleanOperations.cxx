@@ -26,8 +26,6 @@ extern "C" {
 
 using namespace std;
 
-vtkCxxRevisionMacro(vtkSurfaceBooleanOperations, "$Revision: 0.0 $")
-;
 vtkStandardNewMacro(vtkSurfaceBooleanOperations)
 ;
 

@@ -83,6 +83,14 @@
   #include "SimDiscrete.h"
 #endif
 
+#ifdef SV_USE_MESHSIM_SOLID_MODEL
+  #include "cvMeshSimSolidModel.h"
+  #include "SimError.h"
+  #include "SimErrorCodes.h"
+  #include "MeshSim.h"
+  #include "SimModel.h"
+#endif
+
 class cvMeshSimMeshObject : public cvMeshObject {
 
   typedef struct MSoptions {

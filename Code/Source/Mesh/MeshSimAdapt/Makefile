@@ -71,7 +71,12 @@ endif
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     CXXFLAGS    += $(MESHSIM_INCDIR) \
-		  -I$(TOP)/../Source/Model/MeshSimDiscreteSolidModel
+		  -I$(TOP)/../Code/Source/Model/MeshSimDiscreteSolidModel
+endif
+
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+    CXXFLAGS    += $(MESHSIM_INCDIR) \
+		  -I$(TOP)/../Code/Source/Model/MeshSimSolidModel
 endif
 
 ifeq ($(SV_USE_MESHSIM),1)

@@ -68,7 +68,7 @@ class CV_DLL_EXPORT vtkFindSeparateRegions : public vtkPolyDataAlgorithm
 {
 public:
   static vtkFindSeparateRegions* New();
-  vtkTypeRevisionMacro(vtkFindSeparateRegions, vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkFindSeparateRegions, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

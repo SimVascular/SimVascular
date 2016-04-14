@@ -26,10 +26,10 @@
  * By setting e.g. Difference to On, you automatically set Union and Intersection to Off.
  *
  */
-class vtkSurfaceBooleanOperations : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkSurfaceBooleanOperations : public vtkPolyDataAlgorithm
 {
 public:
-  vtkTypeRevisionMacro(vtkSurfaceBooleanOperations,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkSurfaceBooleanOperations,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
   static vtkSurfaceBooleanOperations *New();
 

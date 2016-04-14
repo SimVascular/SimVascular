@@ -33,8 +33,8 @@
  *
  *=========================================================================*/
 
-#ifndef __CVDISCRETE_MODEL_H
-#define __CVDISCRETE_MODEL_H
+#ifndef __CVMESHSIMSOLID_MODEL_H
+#define __CVMESHSIMSOLID_MODEL_H
 
 #include "SimVascular.h"
 #include "cvSolidModel.h"
@@ -43,7 +43,7 @@
 #include <stdlib.h>
 #include "MeshSim.h"
 #include "SimModel.h"
-#include "SimDiscrete.h"
+#include "SimCreateModel.h"
 
 //#include "cvMeshSimMeshObject.h"
 // this should come from meshsimmeshobject.h
@@ -51,20 +51,12 @@
 #define MY_MESHSIM_EDGE_ORDERING 1
 #define MY_MESHSIM_FACE_ORDERING 1
 
-// meshsim internal function
-extern "C" {
-  void refDerefSurfMesh(pMesh mesh, double swapAngle, double splitAngle,
-			double minAngle, double maxAngle, double clpsFcRot,
-			double clpsEdRot, double clpsShrtThan, double shrtRatio,
-			int gradeMesh);
-}
-
-class CV_DLL_EXPORT cvMeshSimDiscreteSolidModel : public cvSolidModel {
+class CV_DLL_EXPORT cvMeshSimSolidModel : public cvSolidModel {
 
 public:
-  cvMeshSimDiscreteSolidModel();                        // default constructor
-  cvMeshSimDiscreteSolidModel( const cvMeshSimDiscreteSolidModel& sm );  // copy constructor
-  ~cvMeshSimDiscreteSolidModel();
+  cvMeshSimSolidModel();                        // default constructor
+  cvMeshSimSolidModel( const cvMeshSimSolidModel& sm );  // copy constructor
+  ~cvMeshSimSolidModel();
 
   void Clear();
   void Print() const;
@@ -82,19 +74,19 @@ public:
   // 3D methods:
   int MakeBox3d( double dims[], double ctr[] ) {return CV_ERROR;}
   int MakeSphere( double r, double ctr[] ) {return CV_ERROR;}
-  int MakePoly3dSolid( cvPolyData *pd , double angle );
+  int MakePoly3dSolid( cvPolyData *pd , double angle ) {return CV_ERROR;} 
   int MakePoly3dSurface( cvPolyData *pd ) {return CV_ERROR;}
   int SetPoly3dFacetMethod( SolidModel_FacetT code ) {return CV_OK;}
   int MakeCylinder( double r, double length, double ctr[], double axis[] ) {return CV_ERROR;}
   int ExtrudeZ( cvSolidModel *in, double dist ) {return CV_ERROR;}
   int Extrude( cvSolidModel *in, double **dist ) {return CV_ERROR;}
   int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR;}
-
+ 
   int MakeInterpCurveLoop( cvPolyData *pd, int closed ) { return CV_ERROR; }
   int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) { return CV_ERROR; }
-  int MakeLoftedSurf( cvSolidModel **curves, int numCurves, char *name,
+  int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
      int continuity,int partype,double w1,double w2,double w3 ,int smoothing) { return CV_ERROR; }
-
+  
   // Booleans:
   int Intersect( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
   int Union( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
@@ -144,14 +136,15 @@ public:
 
   // geometric manipulation
   virtual int DeleteFaces (int numfaces, int *faces) {return CV_ERROR;}
-  int CreateEdgeBlend(int faceA, int faceB, double radius,int filletshape) {return CV_ERROR;}
+  int CreateEdgeBlend(int faceA, int faceB, double radius,
+      int filletshape) {return CV_ERROR;}
   int CombineFaces(int targetface, int loseface) {return CV_ERROR;}
   int RemeshFace (int numfaces,int *excludedFaces, double size) {return CV_ERROR;}
 
   int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
  
   // hack for now to get access in the meshing layer
-   pDiscreteModel geom_;
+   pGModel geom_;
 
 private:
 
@@ -167,4 +160,4 @@ private:
 };
 
 
-#endif // __GDSCDISCRETE_MODEL_H
+#endif // __CVMESHSIMSOLID_MODEL_H

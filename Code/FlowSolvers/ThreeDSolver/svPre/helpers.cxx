@@ -2025,7 +2025,7 @@ int gdscCalcJacDet(double xx[3][5], double r, double s, double *determinant) {
 
 }
 
-int gdscIntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uvalues, double *q) {
+int gdscIntegrateSurfElem(double crd[4][3], double *uvalues, double *q) {
 
   int i,j;
   double qflow = 0.0;
@@ -2171,7 +2171,7 @@ int geom_integrate_surface(vtkPolyData* pd, int tensorType, double *nrm, double 
           crd[j][2]=pts[conn[j]*3+2];
       }
 
-      vtkFloatingPointType uvalues[5];
+      double uvalues[5];
       // if tensorType = 0, scalar is assumed to be through plane component
       if (tensorType == 0) {
           for (j = 0; j < 4; j++) {
@@ -2180,7 +2180,7 @@ int geom_integrate_surface(vtkPolyData* pd, int tensorType, double *nrm, double 
       } else {
           // tensorType = 1, we need to dot the velocity vector with the surface normal
           for (j = 0; j < 4; j++) {
-              vtkFloatingPointType v[3];
+              double v[3];
               vectors->GetTuple(conn[j],v);
               uvalues[j] = nrm[0]*v[0]+nrm[1]*v[1]+nrm[2]*v[2];
           }

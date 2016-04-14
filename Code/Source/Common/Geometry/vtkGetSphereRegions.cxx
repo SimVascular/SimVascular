@@ -62,7 +62,6 @@
 
 #include <iostream>
 
-vtkCxxRevisionMacro(vtkGetSphereRegions, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkGetSphereRegions);
 
 vtkGetSphereRegions::vtkGetSphereRegions()

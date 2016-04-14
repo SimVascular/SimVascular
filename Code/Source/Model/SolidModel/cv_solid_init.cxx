@@ -45,6 +45,8 @@
 #include "cv_vtk_utils.h"
 #include "cvPolyData.h"
 #include "cvPolyDataSolid.h"
+#include "cv_sys_geom.h"
+
 #include "cvFactoryRegistrar.h"
 
 #ifdef SV_USE_MESHSIM_DISCRETE_MODEL
@@ -390,7 +392,7 @@ int Solid_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] );
 
 int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
-			int argc, CONST84 char *argv[] );
+		     int argc, CONST84 char *argv[] );
 
 int Solid_SetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
@@ -399,11 +401,11 @@ int Solid_GetKernelCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
 int Solid_PrintKernelInfoCmd( ClientData clientData, Tcl_Interp *interp,
-			      int argc, CONST84 char *argv[] );
+			int argc, CONST84 char *argv[] );
 
 #ifdef SV_USE_PYTHON
 int Solid_InitPyModulesCmd( ClientData clientData, Tcl_Interp *interp,
-		   int argc, CONST84 char *argv[] );
+			int argc, CONST84 char *argv[] );
 #endif
 
 
@@ -456,6 +458,10 @@ static int Solid_WriteNativeMtd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] );
 
 static int Solid_WriteVtkPolyDataMtd( ClientData clientData,
+				      Tcl_Interp *interp,
+				      int argc, CONST84 char *argv[] );
+
+static int Solid_WriteGeomSimMtd( ClientData clientData,
 				      Tcl_Interp *interp,
 				      int argc, CONST84 char *argv[] );
 
@@ -667,13 +673,13 @@ int Solid_RegistrarsListCmd( ClientData clientData, Tcl_Interp *interp,
     Tcl_SetResult( interp, "usage: registrars_list", TCL_STATIC );
     return TCL_ERROR;
   }
-  cvFactoryRegistrar *solidModelRegistrar =
+  cvFactoryRegistrar *solidModelRegistrar = 
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 
   char result[255];
   sprintf( result, "Solid model registrar ptr -> %p\n", solidModelRegistrar );
   Tcl_AppendElement( interp, result );
-  for (int i = 0; i < 5; i++) {
+  for (int i = 0; i < CV_MAX_FACTORY_METHOD_PTRS; i++) {
     sprintf( result, "GetFactoryMethodPtr(%i) = %p\n",
       i, (solidModelRegistrar->GetFactoryMethodPtr(i)));
     Tcl_AppendElement( interp, result );
@@ -2492,7 +2498,8 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
       cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
-      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
+      cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
 
 	  geom = cvSolidModel::DefaultInstantiateSolidModel( interp);
 
@@ -3059,6 +3066,11 @@ int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 				    argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
     }
+  } else if ( Tcl_StringMatch( argv[1], "WriteGeomSim" ) ) {
+    if ( Solid_WriteGeomSimMtd( clientData, interp,
+				    argc, argv ) != TCL_OK ) {
+      return TCL_ERROR;
+    }
   } else if ( Tcl_StringMatch( argv[1], "GetFacePolyData" ) ) {
     if ( Solid_GetFacePolyDataMtd( clientData, interp,
 			       argc, argv ) != TCL_OK ) {
@@ -3193,21 +3205,22 @@ int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
       cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
-      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
+      cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
 
-	  geom = cvSolidModel::DefaultInstantiateSolidModel( interp);
+  geom = cvSolidModel::DefaultInstantiateSolidModel( interp );
 
-	  if ( geom == NULL ) {
-	    return TCL_ERROR;
-	  }
+  if ( geom == NULL ) {
+    return TCL_ERROR;
+  }
 
 	  // Register the new solid:
 	  if ( !( gRepository->Register( objName, geom ) ) ) {
 	    Tcl_AppendResult( interp, "error registering obj ", objName,
 			      " in repository", (char *)NULL );
-	    delete geom;
-	    return TCL_ERROR;
-	  }
+    delete geom;
+    return TCL_ERROR;
+  }
 
   }
 
@@ -3230,7 +3243,7 @@ int Solid_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 // ------------------
 
 int Solid_SetKernelCmd( ClientData clientData, Tcl_Interp *interp,
-			int argc, CONST84 char *argv[] )
+				 int argc, CONST84 char *argv[] )
 {
   char *kernelName;
   char *usage;
@@ -3260,9 +3273,9 @@ int Solid_SetKernelCmd( ClientData clientData, Tcl_Interp *interp,
   } else {
     Tcl_SetResult( interp, SolidModel_KernelT_EnumToStr( SM_KT_INVALID ),
 		   TCL_VOLATILE );
-    return TCL_ERROR;
+      return TCL_ERROR;
   }
-}
+    }
 
 
 // ------------------
@@ -3306,7 +3319,7 @@ static void PrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "GetClassName\n");
   tcl_printstr(interp, "GetDiscontinuities\n");
   tcl_printstr(interp, "GetAxialIsoparametricCurve\n");
-  tcl_printstr(interp, "GetFaceAttr\n");
+  tcl_printstr(interp, "GetFaceAttr\n");  
   tcl_printstr(interp, "GetFaceIds\n");
   tcl_printstr(interp, "GetBoundaryFaces\n");
   tcl_printstr(interp, "GetFaceNormal\n");
@@ -3328,6 +3341,7 @@ static void PrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "Translate\n");
   tcl_printstr(interp, "WriteNative\n");
   tcl_printstr(interp, "WriteVtkPolyData\n");
+  tcl_printstr(interp, "WriteGeomSim\n");
   return;
 }
 
@@ -3348,7 +3362,7 @@ static int Solid_FindExtentMtd( ClientData clientData, Tcl_Interp *interp,
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%f", extent );
-    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
+    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "FindExtent: error on object ",
@@ -3417,7 +3431,7 @@ static int Solid_GetTopoDimMtd( ClientData clientData, Tcl_Interp *interp,
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%d", tdim );
-    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE );
+    Tcl_SetResult( interp, rtnstr, TCL_VOLATILE ); 
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetTopoDim: error on object ",
@@ -4008,6 +4022,47 @@ static int Solid_WriteVtkPolyDataMtd( ClientData clientData,
 }
 
 
+// ---------------------
+// Solid_WriteGeomSimMtd
+// ---------------------
+
+static int Solid_WriteGeomSimMtd( ClientData clientData,
+				      Tcl_Interp *interp,
+				      int argc, CONST84 char *argv[] )
+{
+  cvSolidModel *geom = (cvSolidModel *)clientData;
+  char *usage;
+  char *fn;
+  int status;
+
+  int table_size = 1;
+  ARG_Entry arg_table[] = {
+    { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
+  };
+
+  usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
+  if ( argc == 2 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 2,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  status = geom->WriteGeomSim( fn );
+  if ( status != CV_OK ) {
+    Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
+		      " to file ", fn, (char *)NULL );
+    return TCL_ERROR;
+  } else {
+    return TCL_OK;
+  }
+}
+
+
 // --------------------
 // Solid_GetPolyDataMtd
 // --------------------
@@ -4025,7 +4080,7 @@ static int Solid_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },  
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4151,7 +4206,7 @@ static int Solid_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4214,7 +4269,7 @@ static int Solid_GetFaceNormalMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
     { "-u", DOUBLE_Type, &u, NULL, REQUIRED, 0, { 0 } },
-    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}},
+    { "-v", DOUBLE_Type, &v, NULL, REQUIRED, 0, {0}}, 
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4553,7 +4608,7 @@ static int Solid_ClearLabelMtd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendResult( interp, "key ", key, " not found", (char *) NULL );
     return TCL_ERROR;
   }
-
+    
   geom->ClearLabel( key );
 
   return TCL_OK;
@@ -4580,7 +4635,7 @@ static int Solid_GetFaceIdsMtd( ClientData clientData, Tcl_Interp *interp,
       Tcl_AppendElement ( interp, facestring);
 	  facestring[0]='\n';
     }
-    delete faces;
+    delete faces; 
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetFaceIds: error on object ",

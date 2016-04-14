@@ -71,6 +71,8 @@ proc file_find {dir wildcard args} {
         set regid 11
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_DISCRETE_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_discrete.dll' />"
         incr regid
+	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_SOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_solid.dll' />"
+        incr regid
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_MESH_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_mesh.dll' />"
         incr regid
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_PARASOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_parasolid.dll'  />"
@@ -138,7 +140,7 @@ puts $outfp "<WixVariable Id=\"WixUIDialogBmp\" Value=\"windows_msi_helpers/msi-
 
 puts $outfp "<Media Id='1' Cabinet='Sample.cab' EmbedCab='yes' />"
 puts $outfp "<Property Id='INSTALLLEVEL' Value='999' />"
-puts $outfp "<Property Id='ALLUSERS' Value='1' />"
+puts $outfp "<Property Id='ALLUSERS' Value='1' />" 
 
 puts $outfp "<Directory Id='TARGETDIR' Name='SourceDir'>"
 puts $outfp "\t<Directory Id='ProgramFilesFolder' Name='PFiles'>"
