@@ -31,6 +31,8 @@ include(ExternalProjectDependency)
 # Include Macros
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
+include(CheckLibraryExists)
+include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # unset NEED variables
@@ -64,7 +66,6 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------
-include(CheckLibraryExists)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularInstallSetup)
@@ -140,7 +141,7 @@ mark_as_superbuild(
 #-----------------------------------------------------------------------------
 # PYTHON
 if(SV_USE_PYTHON)
-	find_package(PythonLibs REQUIRED)
+	simvascular_external(PYTHON DOWNLOADABLE SHARED_LIB)
 	mark_as_superbuild(
 		PYTHONLIBS_FOUND
 		PYTHON_INCLUDE_PATH
