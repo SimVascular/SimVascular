@@ -1517,7 +1517,6 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     double dumAng = 45.0;
     double hgrad = 1.1;
     //Generate Surface Remeshing
-    PlyDtaUtils_WriteNative(polydatasolid_,0,"/Users/adamupdegrove/Desktop/JustChecking.vtp");
     if(MMGUtils_SurfaceRemeshing(polydatasolid_, mmg_minsize,
 	  mmg_maxsize, hausd, dumAng, hgrad,
 	  useSizingFunction, meshsizingfunction, meshoptions_.refinecount) != CV_OK)
