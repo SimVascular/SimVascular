@@ -57,7 +57,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/tcltk-8.6.4" CACHE
+		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/tcltk-8.6.4.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-win-x64.tar.gz" CACHE
@@ -115,8 +115,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	if(APPLE)
 		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
 		set(SV_TCL_DIR ${${proj}_SOURCE_DIR})
-		set(Tcl_Framework_Dir ${SuperBuild_${proj}_URL}/Library/Frameworks/Tcl.framework)
-		set(Tk_Framework_Dir ${SuperBuild_${proj}_URL}/Library/Frameworks/Tk.framework)
+		set(Tcl_Framework_Dir ${${proj}_OUTPUT_BIN_DIR}/Library/Frameworks/Tcl.framework)
+		set(Tk_Framework_Dir ${${proj}_OUTPUT_BIN_DIR}/Library/Frameworks/Tk.framework)
 
 		set(TCL_INCLUDE_PATH ${Tcl_Framework_Dir}/Headers)
 		set(TCL_LIBRARY ${Tcl_Framework_Dir}/Versions/8.6/Tcl)
