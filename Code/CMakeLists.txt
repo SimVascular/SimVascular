@@ -162,11 +162,12 @@ if(SV_USE_PYTHON)
 		message(STATUS "Python Libs NOT FOUND")
 		message(STATUS "Make sure you have python installed on your system.")
 	endif()
+	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
 endif()
 
 #-----------------------------------------------------------------------------
 # VTK
-set(SV_DEPENDS "TCL")
+set(SV_DEPENDS ${SV_DEPENDS} "TCL")
 if(VTK_SHARED_LIBRARIES)
 	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
 	set(SV_INSTALL_EXTERNALS ON)

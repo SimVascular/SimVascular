@@ -50,24 +50,13 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-# Use the executable's path as a hint
-set(_Python_LIBRARY_PATH_HINT)
-if(PYTHON_EXECUTABLE)
-  if(WIN32)
-    get_filename_component(_Python_PREFIX ${PYTHON_EXECUTABLE} PATH)
-    if(_Python_PREFIX)
-      set(_Python_LIBRARY_PATH_HINT ${_Python_PREFIX}/libs)
-    endif()
-    unset(_Python_PREFIX)
-  else()
-    get_filename_component(_Python_PREFIX ${PYTHON_EXECUTABLE} PATH)
-    get_filename_component(_Python_PREFIX ${_Python_PREFIX} PATH)
-    if(_Python_PREFIX)
-      set(_Python_LIBRARY_PATH_HINT ${_Python_PREFIX}/lib)
-    endif()
-    unset(_Python_PREFIX)
-  endif()
-endif()
+get_filename_component(PYTHON_POSSIBLE_LIB_PATHS ${PYTHON_LIBRARIES} PATH)
+get_filename_component(PYTHON_POSSIBLE_EXECUTABLE_PATHS ${PYTHON_EXECUTABLE} PATH)
+
+set(PYTHON_POSSIBLE_INCLUDE_PATHS
+  "${PYTHON_INCLUDE_PATH}")
+set(_Python_LIBRARY_PATH_HINT
+  "${PYTHON_INCLUDE_PATH}")
 
 include(CMakeFindFrameworks)
 # Search for the python framework on Apple.
@@ -87,6 +76,7 @@ set(_PYTHON2_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
 set(_PYTHON3_VERSIONS 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
 
 if(PythonLibs_FIND_VERSION)
+	message("FIND_VERSION")
     if(PythonLibs_FIND_VERSION_COUNT GREATER 1)
         set(_PYTHON_FIND_MAJ_MIN "${PythonLibs_FIND_VERSION_MAJOR}.${PythonLibs_FIND_VERSION_MINOR}")
         unset(_PYTHON_FIND_OTHER_VERSIONS)
@@ -134,10 +124,12 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
       NAMES python${_CURRENT_VERSION_NO_DOTS}_d python
       HINTS ${_Python_LIBRARY_PATH_HINT}
       PATHS
+      ${PYTHON_POSSIBLE_LIB_PATHS}
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs/Debug
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs/Debug
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
+      NO_DEFAULT_PATH
       )
   endif()
 
@@ -158,11 +150,12 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
     HINTS
       ${_Python_LIBRARY_PATH_HINT}
     PATHS
+      ${PYTHON_POSSIBLE_LIB_PATHS}
       ${PYTHON_FRAMEWORK_LIBRARIES}
       [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
       [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/libs
     # Avoid finding the .dll in the PATH.  We want the .lib.
-    NO_SYSTEM_ENVIRONMENT_PATH
+    NO_DEFAULT_PATH
   )
   # Look for the static library in the Python config directory
   find_library(PYTHON_LIBRARY
@@ -199,6 +192,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
       HINTS
         ${_Python_INCLUDE_PATH_HINT}
       PATHS
+        ${PYTHON_POSSIBLE_INCLUDE_PATHS}
         ${PYTHON_FRAMEWORK_INCLUDES}
         [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/include
         [HKEY_CURRENT_USER\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]/include
@@ -207,6 +201,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
         python${_CURRENT_VERSION}m
         python${_CURRENT_VERSION}u
         python${_CURRENT_VERSION}
+	NO_DEFAULT_PATH
     )
   endif()
 
@@ -225,6 +220,24 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
     break()
   endif()
 endforeach()
+
+foreach(_CURRENT_VERSION ${_Python_VERSIONS})
+  set(_Python_NAMES python${_CURRENT_VERSION})
+   if(WIN32)
+     list(APPEND _Python_NAMES python)
+   endif()
+     find_program(PYTHON_EXECUTABLE
+                  NAMES ${_Python_NAMES}
+		  HINTS
+		  ${PYTHON_POSSIBLE_EXECUTABLE_PATHS}
+		  PATHS
+		  ${PYTHON_POSSIBLE_EXECUTABLE_PATHS}
+		  [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]
+		  NO_DEFAULT_PATH)
+endforeach()
+mark_as_advanced(
+  PYTHON_EXECUTABLE
+)
 
 unset(_Python_INCLUDE_PATH_HINT)
 unset(_Python_LIBRARY_PATH_HINT)

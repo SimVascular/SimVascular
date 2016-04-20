@@ -35,7 +35,7 @@ ExternalProject_Include_Dependencies(${proj}
 	)
 
 if(${PROJECT_NAME}_USE_SYSTEM_${proj})
-	unset(${proj}_LIB_DIR CACHE)
+	unset(${proj}_LIBRARIES CACHE)
 endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
@@ -43,17 +43,18 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	unset(PYTHONLIBS_FOUND CACHE)
 	unset(PYTHON_INCLUDE_PATH CACHE)
 	unset(PYTHON_LIBRARIES CACHE)
-	unset(PYTHON_INCLUDE_DIRS CACHE)
+	unset(PYTHON_LIBRARY_PATH CACHE)
+	unset(PYTHON_EXECUTABLE CACHE)
 	unset(PYTHON_VERSION_STRING CACHE)
 
-	set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/Externals/PYTHON)
-	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/Externals/PYTHON)
+	set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/PYTHON)
+	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/PYTHON)
 
 	if(LINUX)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python-2.7-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		set(SuperBuild_${proj}_URL "$/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/python-2.7-osx-x64-gnu.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/python-2.7-osx-x64.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python-2.7-win-x64.tar.gz" CACHE
@@ -64,7 +65,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	mark_as_advanced(SuperBuild_${proj}_URL)
 
 	set(SV_${proj}_DIR ${${proj}_SOURCE_DIR})
-	
+
 	ExternalProject_Add(${proj}
 		URL ${SuperBuild_${proj}_URL}
 		PREFIX ${${proj}_OUTPUT_DIR}-prefix
@@ -88,12 +89,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	endif()
 	if(APPLE)
 		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-		set(SV_${proj}_DIR ${${proj}_SOURCE_RI})
-		set(PYTHON_FRAMEWORKS_DIR ${${proj}_SOURCE_DIR}/Library/Frameworks)
+		set(SV_${proj}_DIR ${${proj}_SOURCE_DIR})
 
-		set(PYTHON_INCLUDE_PATH ${PYTHON_FRAMEWORKS_DIR}/Headers) 
-		set(PYTHON_LIBRARIES ${PYTHON_FRAMWORKS_DIR}/libpython2.7.dylib)
+		set(${proj}_EXECUTABLE ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Versions/2.7/python2.7)
+		set(${proj}_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Headers) 
+		set(${proj}_LIBRARIES ${${proj}_OUTPUT_BIN_DIR}/libpython2.7.dylib)
 	endif()
+	get_filename_component(${proj}_LIBRARY_PATH ${${proj}_LIBRARIES} PATH)
 
 else()
 	ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -103,3 +105,5 @@ mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 mark_as_superbuild(SV_${proj}_DIR:PATH)
 mark_as_superbuild(${proj}_INCLUDE_PATH:PATH)
 mark_as_superbuild(${proj}_LIBRARIES:PATH)
+mark_as_superbuild(${proj}_LIBRARY_PATH:PATH)
+mark_as_superbuild(${proj}_EXECUTABLE:PATH)
