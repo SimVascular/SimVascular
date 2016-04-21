@@ -27,6 +27,7 @@ set(SV_EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
 set(SV_EXTERNAL_PROJECT_FILE_PREFIX "")
 include(ExternalProject)
 include(ExternalProjectDependency)
+include(CheckLibraryExists)
 
 #-----------------------------------------------------------------------------
 # Include Macros
@@ -73,7 +74,6 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------
-include(CheckLibraryExists)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularInstallSetup)
