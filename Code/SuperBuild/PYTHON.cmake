@@ -91,7 +91,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
 		set(SV_${proj}_DIR ${${proj}_SOURCE_DIR})
 
-		set(${proj}_EXECUTABLE ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Versions/2.7/python2.7)
+		set(${proj}_EXECUTABLE ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Versions/2.7/bin/python2.7)
 		set(${proj}_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Headers) 
 		set(${proj}_LIBRARIES ${${proj}_OUTPUT_BIN_DIR}/libpython2.7.dylib)
 	endif()

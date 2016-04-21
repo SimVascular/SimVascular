@@ -185,7 +185,10 @@ static int newInterpreter(Tcl_Interp *interpreter)
 #else
     if (existingInterpreters == 0) {
         Py_Initialize();                                                                           /* initialize main interpreter */
-        PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
+	//Py_SetProgramName("/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MyPyBuild/externals/PYTHON/Python.framework/Versions/2.7/bin/python");
+	//Py_SetPath("/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MyPyBuild/externals/PYTHON/Python.framework/Versions/2.7/bin");
+	fprintf(stdout,"Check %s\n",Py_GetProgramName());
+	PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
         PycString_IMPORT;
         globalState = PyThreadState_Swap(0);                                                            /* save the global thread */
 	//

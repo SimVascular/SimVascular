@@ -50,13 +50,19 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-get_filename_component(PYTHON_POSSIBLE_LIB_PATHS ${PYTHON_LIBRARIES} PATH)
-get_filename_component(PYTHON_POSSIBLE_EXECUTABLE_PATHS ${PYTHON_EXECUTABLE} PATH)
+if(${PYTHON_LIBRARIES})
+  get_filename_component(PYTHON_POSSIBLE_LIB_PATHS ${PYTHON_LIBRARIES} PATH)
+endif()
+if(${PYTHON_EXECUTABLE})
+  get_filename_component(PYTHON_POSSIBLE_EXECUTABLE_PATHS ${PYTHON_EXECUTABLE} PATH)
+endif()
 
-set(PYTHON_POSSIBLE_INCLUDE_PATHS
-  "${PYTHON_INCLUDE_PATH}")
-set(_Python_LIBRARY_PATH_HINT
-  "${PYTHON_INCLUDE_PATH}")
+if(${PYTHON_INCLUDE_PATH})
+  set(PYTHON_POSSIBLE_INCLUDE_PATHS
+    "${PYTHON_INCLUDE_PATH}")
+  set(_Python_LIBRARY_PATH_HINT
+    "${PYTHON_INCLUDE_PATH}")
+endif()
 
 include(CMakeFindFrameworks)
 # Search for the python framework on Apple.
@@ -233,6 +239,8 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
 		  PATHS
 		  ${PYTHON_POSSIBLE_EXECUTABLE_PATHS}
 		  [HKEY_LOCAL_MACHINE\\SOFTWARE\\Python\\PythonCore\\${_CURRENT_VERSION}\\InstallPath]
+		  /usr/bin
+		  /usr/local/bin
 		  NO_DEFAULT_PATH)
 endforeach()
 mark_as_advanced(
