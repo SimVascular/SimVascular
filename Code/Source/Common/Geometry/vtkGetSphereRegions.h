@@ -67,7 +67,7 @@ class CV_DLL_EXPORT vtkGetSphereRegions : public vtkPolyDataAlgorithm
 {
 public:
   static vtkGetSphereRegions* New();
-  vtkTypeRevisionMacro(vtkGetSphereRegions, vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkGetSphereRegions, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

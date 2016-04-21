@@ -4,23 +4,12 @@
 
 VTK_SRCDIR = $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/vtk-6.3.0
 VTK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/vtk-6.3.0
-ifeq ($(CXX_COMPILER_VERSION), mingw-gcc)
-  VTK_LIBDIRS = $(VTK_BINDIR)/lib
-  VTK_BINDIRS = $(VTK_BINDIR)/bin
-else
-  VTK_LIBDIRS = $(VTK_BINDIR)/lib/RelWithDebInfo
-  VTK_BINDIRS = $(VTK_BINDIR)/bin/RelWithDebInfo
-endif
-
+VTK_LIBDIRS = $(VTK_BINDIR)/lib
+VTK_BINDIRS = $(VTK_BINDIR)/bin
 VTK_SO_PATH = $(VTK_BINDIRS)
 VTK_DLLS    = $(VTK_BINDIRS)/*.$(SOEXT)
 
-VTK_SYS_LIBS  = $(LIBFLAG)kernel32$(LIBLINKEXT) $(LIBFLAG)user32$(LIBLINKEXT) \
-                $(LIBFLAG)gdi32$(LIBLINKEXT) $(LIBFLAG)winspool$(LIBLINKEXT) $(LIBFLAG)shell32$(LIBLINKEXT) \
-                $(LIBFLAG)ole32$(LIBLINKEXT) $(LIBFLAG)oleaut32$(LIBLINKEXT) $(LIBFLAG)uuid$(LIBLINKEXT) \
-                $(LIBFLAG)comdlg32$(LIBLINKEXT) $(LIBFLAG)advapi32$(LIBLINKEXT) \
-                $(LIBFLAG)comctl32$(LIBLINKEXT) $(LIBFLAG)wsock32$(LIBLINKEXT) \
-                $(LIBFLAG)opengl32$(LIBLINKEXT) $(LIBFLAG)vfw32$(LIBLINKEXT)
+VTK_SYS_LIBS  = -lpthread -lm -ldl
 
 VTK_INCDIRS = \
 -I$(VTK_SRCDIR)/Wrapping/Tools \
@@ -354,7 +343,6 @@ VTK_LIBS =      $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtkRenderingAnnotationTCL-6.3$(LIBLINKEXT) \
 		$(LIBFLAG)vtkRenderingContextIIDTCL-6.3$(LIBLINKEXT) \
 		$(LIBFLAG)vtkRenderingCoreTCL-6.3$(LIBLINKEXT) \
-		$(LIBFLAG)vtkRenderingFreeTypeTCL-6.3$(LIBLINKEXT) \
 		$(LIBFLAG)vtkRenderingGLtoPSTCL-6.3$(LIBLINKEXT) \
 		$(LIBFLAG)vtkRenderingImageTCL-6.3$(LIBLINKEXT) \
 		$(LIBFLAG)vtkRenderingLODTCL-6.3$(LIBLINKEXT) \

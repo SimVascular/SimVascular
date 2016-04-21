@@ -69,7 +69,7 @@ class CV_DLL_EXPORT vtkGetBoundaryFaces : public vtkPolyDataAlgorithm
 {
 public:
   static vtkGetBoundaryFaces* New();
-  vtkTypeRevisionMacro(vtkGetBoundaryFaces, vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkGetBoundaryFaces, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

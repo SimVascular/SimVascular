@@ -62,7 +62,6 @@
 
 #include <iostream>
 
-vtkCxxRevisionMacro(vtkFindSeparateRegions, "$Revision: 0.0 $");
 vtkStandardNewMacro(vtkFindSeparateRegions);
 
 vtkFindSeparateRegions::vtkFindSeparateRegions()
