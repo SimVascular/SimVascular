@@ -35,7 +35,7 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS) -I./Include -I./Util -I./ITKCode
+           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR) -I./Include -I./Util -I./ITKCode
 
 HDRS	=  cvITKLevelSet.h
 

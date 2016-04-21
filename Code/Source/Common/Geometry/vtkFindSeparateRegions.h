@@ -58,11 +58,13 @@
 #ifndef __vtkFindSeparateRegions_h
 #define __vtkFindSeparateRegions_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
 
-class VTKFILTERSCORE_EXPORT vtkFindSeparateRegions : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkFindSeparateRegions : public vtkPolyDataAlgorithm
 {
 public:
   static vtkFindSeparateRegions* New();

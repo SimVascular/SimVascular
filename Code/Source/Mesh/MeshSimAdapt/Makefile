@@ -51,6 +51,10 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
 
+ifeq ($(SV_USE_OPENCASCADE),1)
+  CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
+
 # hack for now
 ifeq ($(SV_USE_MESHSIM_SHARED),1)
   CXXFLAGS += -DNOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
@@ -132,7 +136,7 @@ DLLLIBS +=    $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
     DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
   endif
 
-DLLLIBS += $(VTK_LIBS)
+DLLLIBS += $(VTK_LIBS) $(OPENCASCADE_LIBS)
 
 TARGET_LIB_NAME = simvascular_meshsim_adaptor
 

@@ -120,6 +120,8 @@
 #ifndef __vtkDelaunay2D_60_h
 #define __vtkDelaunay2D_60_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
@@ -132,7 +134,7 @@ class vtkPointSet;
 #define VTK_SET_TRANSFORM_PLANE 1
 #define VTK_BEST_FITTING_PLANE 2
 
-class VTKFILTERSCORE_EXPORT vtkDelaunay2D_60 : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkDelaunay2D_60 : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkDelaunay2D_60,vtkPolyDataAlgorithm);

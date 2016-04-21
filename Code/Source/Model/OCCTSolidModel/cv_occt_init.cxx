@@ -76,6 +76,7 @@
 #include <CDF_Session.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
 #include <XCAFApp_Application.hxx>
+#include "Standard_Version.hxx"
 
 // Prototypes:
 // -----------
@@ -118,7 +119,7 @@ int Occtsolid_Init( Tcl_Interp *interp )
     fprintf(stdout,"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly\n");
   }
 
-  printf("  %-12s %s\n","OpenCASCADE:", "7.0.0");
+  printf("  %-12s %s\n","OpenCASCADE:", OCC_VERSION_COMPLETE);
   cvFactoryRegistrar* solidModelRegistrar =
     (cvFactoryRegistrar *) Tcl_GetAssocData( interp, "SolidModelRegistrar", NULL);
 
