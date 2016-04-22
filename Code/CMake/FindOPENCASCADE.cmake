@@ -42,20 +42,56 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Libraries
-set(${proj}_LIBNAMES TKernel)
-set(${proj}_FIND_COMPONENTS FWOSPlugin
-                            TKBO TKBRep TKBin TKBinL TKBinTObj TKBinXCAF
-		            TKBool TKCAF TKCDF TKFeat TKFillet TKG2d
-		            TKG3d TKGeomAlgo TKGeomBase TKHLR TKIGES TKIVtk
-		            TKLCAF TKMath TKMesh TKMeshVS TKOffset
-		            TKPrim TKSTEP TKSTEP209 TKSTEPAttr TKSTEPBase
-		            TKSTL TKService TKShHealing TKStd TKStdL
-		            TKTObj TKTopAlgo TKV3d TKVCAF TKVRML TKXCAF
-		            TKXDEIGES TKXDESTEP TKXMesh TKXSBase TKXml
-		            TKXmlL TKXmlTObj TKXmlXCAF)
-if (APPLE)
-  set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
-endif()
+set(${proj}_LIBNAMES FWOSPlugin)
+set(${proj}_FIND_COMPONENTS TKBinTObj
+			    TKBinXCAF
+			    TKFeat
+			    TKFillet
+			    TKIVtk
+			    TKMeshVS
+			    TKOffset
+			    TKOpenGl
+			    TKSTL
+			    TKStd
+			    TKVRML
+			    TKXDEIGES
+			    TKXDESTEP
+			    TKXMesh
+			    TKXmlTObj
+			    TKXmlXCAF
+			    TKBin
+			    TKStdL
+			    TKIGES
+			    TKSTEP
+			    TKTObj
+			    TKXCAF
+			    TKXml
+			    TKBinL
+			    TKBool
+			    TKSTEPAttr
+			    TKSTEP209
+			    TKVCAF
+			    TKXmlL
+			    TKSTEPBase
+			    TKCAF
+			    TKV3d
+			    TKXSBase
+			    TKBO
+			    TKLCAF
+			    TKMesh
+			    TKHLR
+			    TKService
+			    TKPrim
+			    TKCDF
+			    TKShHealing
+			    TKTopAlgo
+			    TKGeomAlgo
+			    TKBRep
+			    TKGeomBase
+			    TKG3d
+			    TKG2d
+			    TKMath
+			    TKernel)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
