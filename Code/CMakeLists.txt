@@ -325,9 +325,20 @@ if(SV_USE_GDCM)
 	mark_as_superbuild(GDCM_SOURCE_DIR)
 	set(USE_GDCM ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
-	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
+	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
 	#set(SV_INSTALL_EXTERNALS ON)
-	#find_package(FREETYPE)
+endif()
+
+#-----------------------------------------------------------------------------
+# FREETYPE
+if(SV_USE_FREETYPE)
+	simvascular_external(FREETYPE DOWNLOADABLE)
+	mark_as_superbuild(FREETYPE_DIR)
+	mark_as_superbuild(FREETYPE_SOURCE_DIR)
+	set(USE_FREETYPE ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
+	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
+	#set(SV_INSTALL_EXTERNALS ON)
 endif()
 
 # Licensed Package Additions
