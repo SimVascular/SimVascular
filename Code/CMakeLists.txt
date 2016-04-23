@@ -316,6 +316,20 @@ if(SV_USE_OPENCASCADE)
 	#set(SV_INSTALL_EXTERNALS ON)
 	find_package(FREETYPE)
 endif()
+
+#-----------------------------------------------------------------------------
+# GDCM
+if(SV_USE_GDCM)
+	simvascular_external(GDCM DOWNLOADABLE)
+	mark_as_superbuild(GDCM_DIR)
+	mark_as_superbuild(GDCM_SOURCE_DIR)
+	set(USE_GDCM ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
+	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
+	#set(SV_INSTALL_EXTERNALS ON)
+	#find_package(FREETYPE)
+endif()
+
 # Licensed Package Additions
 #-----------------------------------------------------------------------------
 if(SV_USE_MESHSIM_ADAPTOR)

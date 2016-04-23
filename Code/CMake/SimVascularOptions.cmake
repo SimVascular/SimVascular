@@ -61,6 +61,9 @@ mark_as_superbuild(SV_USE_GTS)
 
 #-----------------------------------------------------------------------------
 # Plugins
+option(SV_USE_GDCM "Enable GDCM" ON)
+mark_as_superbuild(SV_USE_GDCM)
+
 option(SV_USE_ITK "Enable ITK Plugin" ON)
 mark_as_superbuild(SV_USE_ITK)
 

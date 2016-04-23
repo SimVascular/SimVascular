@@ -114,8 +114,8 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-  file(COPY ${${proj}_DIR}/cmake_install.cmake
-       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
+#  file(COPY ${${proj}_DIR}/cmake_install.cmake
+#       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})
