@@ -54,13 +54,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TclTk)
 
 	if(LINUX)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/latest/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/tcltk-8.6.4.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/mac_osx/clang/latest/clang.x64.tcltk-8.6.4.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-win-x64.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/windows/msvc_2013/latest/msvc_2013.x64.tcltk-8.6.4.zip" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	endif()
 	mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
