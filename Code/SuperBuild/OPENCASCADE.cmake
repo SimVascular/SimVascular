@@ -68,9 +68,9 @@ endif()
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 
-	#set(revision_tag "6.9")
-  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE-7.0.git")
-	  #GIT_TAG ${revision_tag})
+  set(revision_tag "v7.0.0")
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git"
+    GIT_TAG ${revision_tag})
   if(WIN32)
     set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
