@@ -184,10 +184,10 @@ static int newInterpreter(Tcl_Interp *interpreter)
     Tcl_SetHashValue(Tcl_CreateHashEntry(&threadStates, (ClientData)identifier, &created), 0);
 #else
     if (existingInterpreters == 0) {
+	//Py_SetProgramName("/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/PyCMakeBuild/externals/PYTHON/bin/python");
         Py_Initialize();                                                                           /* initialize main interpreter */
-	//Py_SetProgramName("/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MyPyBuild/externals/PYTHON/Python.framework/Versions/2.7/bin/python");
+	fprintf(stdout,"Check %s\n",Py_GetBuildInfo());
 	//Py_SetPath("/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MyPyBuild/externals/PYTHON/Python.framework/Versions/2.7/bin");
-	fprintf(stdout,"Check %s\n",Py_GetProgramName());
 	PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
         PycString_IMPORT;
         globalState = PyThreadState_Swap(0);                                                            /* save the global thread */
