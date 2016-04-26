@@ -26,7 +26,10 @@
 #
 set(proj ITK)
 
-set(${proj}_DEPENDENCIES VTK GDCM)
+set(${proj}_DEPENDENCIES VTK)
+if(${SV_USE_GDCM})
+  set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} GDCM)
+endif()
 
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
@@ -57,6 +60,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj})
     set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-b)
   endif()
+
+  set(ITK_USE_GDCM "OFF")
+  if(${SV_USE_GDCM})
+    set(ITK_USE_GDCM "ON")
+  endif()
+
   ExternalProject_Add(${proj}
    ${location_args}
    PREFIX ${${proj}_OUTPUT_DIR}-p
@@ -84,6 +93,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DITK_INSTALL_LIBRARY_DIR:PATH=${SV_INSTALL_ITK_LIBRARY_DIR}
    -DITK_INSTALL_ARCHIVE_DIR:PATH=${SV_INSTALL_ITK_ARCHIVE_DIR}
    -DITK_INSTALL_INCLUDE_DIR:PATH=${SV_INSTALL_ITK_INCLUDE_DIR}
+   -DITK_USE_SYSTEM_GDCM:BOOL=${${proj}_USE_GDCM}
+   -DGDCM_DIR:PATH=${GDCM_DIR}
    INSTALL_COMMAND ""
    DEPENDS
    ${${proj}_DEPENDENCIES}

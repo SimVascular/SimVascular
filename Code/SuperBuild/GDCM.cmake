@@ -26,7 +26,7 @@
 #
 set(proj GDCM)
 
-set(${proj}_DEPENDENCIES VTK)
+set(${proj}_DEPENDENCIES "")
 
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
@@ -40,41 +40,22 @@ if(DEFINED GDCM_DIR AND NOT EXISTS ${GDCM_DIR})
   message(FATAL_ERROR "GDCM_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-set(GDCM_BUILD_LIBRARY_TYPE "Static")
-if(${GDCM_SHARED_LIBRARIES})
-  set(GDCM_BUILD_LIBRARY_TYPE "Shared")
-endif()
-
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-	#set(revision_tag "6.9")
-  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE-7.0.git")
-	  #GIT_TAG ${revision_tag})
+  set(revision_tag "v2.6.1")
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/GDCM.git"
+	  GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj} 
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build  
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build  
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build)
-  endif()
-  if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/ThirdParty/TclTk/internals/tk8.5)
-    set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
-  endif()
-  if(WIN32 AND NOT TK_XLIB_PATH)
-    set(TK_XLIB_PATH ${TCL_INCLUDE_PATH})
-    set(VTK_TK_XLIB_PATH_DEFINE  "-DTK_XLIB_PATH:PATH=${TK_XLIB_PATH}")
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
   endif()
 
-  set(${proj}_INSTALL_DIR "opencascade")
-
-  #if(APPLE)
-  #  set(${proj}_BUILD_TYPE "Debug")
-  #else()
-    set(${proj}_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-  #endif()
+  set(${proj}_INSTALL_DIR "gdcm")
 
   ExternalProject_Add(${proj}
    ${location_args}
@@ -89,23 +70,14 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
    -DCMAKE_MACOSX_RPATH:INTERNAL=1
-   -DBUILD_EXAMPLES:BOOL=OFF
-   -DBUILD_SHARED_LIBS:BOOL=${GDCM_BUILD_SHARED_LIBRARIES}
-   -DBUILD_LIBRARY_TYPE:STRING=${GDCM_BUILD_LIBRARY_TYPE}
-   -DBUILD_TESTING:BOOL=OFF
-   -DBUILD_MODULE_Draw:BOOL=OFF
-   -DCMAKE_BUILD_TYPE:STRING=${${proj}_BUILD_TYPE}
-   -D3RDPARTY_TCL_INCLUDE_DIR:PATH=${TCL_INCLUDE_PATH}
-   -D3RDPARTY_TCL_LIBRARY_DIR:PATH=${TCL_LIBRARY_DIR}
-   -D3RDPARTY_TK_INCLUDE_DIR:PATH=${TK_INCLUDE_PATH}
-   -D3RDPARTY_TK_LIBRARY_DIR:PATH=${TK_LIBRARY_DIR}
-   -DUSE_VTK:BOOL=ON
-   -DVTK_VERSION:STRING=${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
-   -DVTK_DIR:PATH=${VTK_DIR}
-   -D3RDPARTY_VTK_DIR:PATH=${VTK_DIR}
-   -D3RDPARTY_VTK_INCLUDE_DIR:PATH=${3RDPARTY_VTK_INCLUDE_DIR}
-   -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${3RDPARTY_VTK_LIBRARY_DIR}
-   -DINSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
+   -DGDCM_BUILD_APPLICATIONS:BOOL=ON
+   -DGDCM_BUILD_EXAMPLES:BOOL=OFF
+   -DGDCM_BUILD_SHARED_LIBS:BOOL=${${proj}_SHARED_LIBRARIES}
+   -DGDCM_BUILD_TESTING:BOOL=OFF
+   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+   -DGDCM_USE_VTK:BOOL=OFF
+   -DGDCM_WRAP_PYTHON:BOOL=OFF
+   -DCMAKE_INSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
    -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
    INSTALL_COMMAND ""
    DEPENDS

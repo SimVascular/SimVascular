@@ -40,15 +40,45 @@ if(DEFINED FREETYPE_DIR AND NOT EXISTS ${FREETYPE_DIR})
   message(FATAL_ERROR "FREETYPE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
-set(FREETYPE_BUILD_LIBRARY_TYPE "Static")
-if(${FREETYPE_SHARED_LIBRARIES})
-  set(FREETYPE_BUILD_LIBRARY_TYPE "Shared")
-endif()
-
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
- set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
- set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/freetype.git")
+  if(WIN32)
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj}
+      CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build
+      CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+  else()
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
+  endif()
+
+  set(${proj}_INSTALL_DIR "freetype")
+
+  ExternalProject_Add(${proj}
+   ${location_args}
+   PREFIX ${${proj}_OUTPUT_DIR}-prefix
+   SOURCE_DIR ${${proj}_OUTPUT_DIR}
+   BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+   UPDATE_COMMAND ""
+   CMAKE_CACHE_ARGS
+   -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+   -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
+   -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+   -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
+   -DCMAKE_THREAD_LIBS:STRING=-lpthread
+   -DCMAKE_MACOSX_RPATH:INTERNAL=1
+   -DBUILD_SHARED_LIBS:BOOL=${${proj}_SHARED_LIBRARIES}
+   -DCMAKE_INSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
+   -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
+   INSTALL_COMMAND ""
+   DEPENDS
+   ${${proj}_DEPENDENCIES}
+   )
+  set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
+  set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+   
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
