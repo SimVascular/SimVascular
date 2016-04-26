@@ -54,7 +54,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python-2.7-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Desktop/SV16/bin/osx/clang_70/x64/python-2.7-osx-x64.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "/Users/adamupdegrove/Documents/Software/python-cmake-buildsystem/python2.7-osx-clang70-x64-cmake.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python-2.7-win-x64.tar.gz" CACHE
@@ -91,9 +91,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
 		set(SV_${proj}_DIR ${${proj}_SOURCE_DIR})
 
-		set(${proj}_EXECUTABLE ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Versions/2.7/bin/python2.7)
-		set(${proj}_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/Python.framework/Headers) 
-		set(${proj}_LIBRARIES ${${proj}_OUTPUT_BIN_DIR}/libpython2.7.dylib)
+		set(${proj}_EXECUTABLE ${${proj}_OUTPUT_BIN_DIR}/bin/python)
+		set(${proj}_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include/python2.7) 
+		set(${proj}_LIBRARIES ${${proj}_OUTPUT_BIN_DIR}/lib/libpython2.7.dylib)
 	endif()
 	get_filename_component(${proj}_LIBRARY_PATH ${${proj}_LIBRARIES} PATH)
 
