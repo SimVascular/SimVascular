@@ -50,8 +50,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	unset(TK_LIBRARY CACHE)
 	unset(TK_WISH CACHE)
 
-	set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/TclTk)
-	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TclTk)
+	set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/TCLTK)
+	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TCLTK)
 
 	if(LINUX)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
