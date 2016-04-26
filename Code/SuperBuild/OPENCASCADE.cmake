@@ -72,16 +72,16 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE-7.0.git")
 	  #GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj} 
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build  
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build  
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build)
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
   endif()
   if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/ThirdParty/TclTk/internals/tk8.5)
+    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/externals/TCLTK/internals/tk8.5)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
   endif()
   if(WIN32 AND NOT TK_XLIB_PATH)
