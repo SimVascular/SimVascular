@@ -59,10 +59,10 @@ mark_as_superbuild(SV_USE_GLIB)
 option(SV_USE_GTS "Use GTS Library" OFF)
 mark_as_superbuild(SV_USE_GTS)
 
-option(SV_USE_GDCM "Enable GDCM" ON)
+option(SV_USE_GDCM "Enable GDCM" OFF)
 mark_as_superbuild(SV_USE_GDCM)
 
-option(SV_USE_FREETYPE "Enable FREETYPE" ON)
+option(SV_USE_FREETYPE "Enable FREETYPE" OFF)
 mark_as_superbuild(SV_USE_FREETYPE)
 
 #-----------------------------------------------------------------------------
