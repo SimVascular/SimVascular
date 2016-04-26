@@ -143,16 +143,15 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Plugins
-#find_package(FreeType)
-#if(FREETYPE_FOUND)
-#	mark_as_superbuild(FREETYPE_DIR)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIRS)
-#	mark_as_superbuild(FREETYPE_LIBRARY)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIR_freetype2)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIR_ft2build)
-#	include_directories(${FREETYPE_INCLUDE_DIR_freetype2})
-#	include_directories(${FREETYPE_INCLUDE_DIR_ft2build})
-#endif()
+if (SV_USE_FREETYPE)
+  mark_as_superbuild(FREETYPE_DIR)
+#  mark_as_superbuild(FREETYPE_INCLUDE_DIRS)
+#  mark_as_superbuild(FREETYPE_LIBRARY)
+#  mark_as_superbuild(FREETYPE_INCLUDE_DIR_freetype2)
+#  mark_as_superbuild(FREETYPE_INCLUDE_DIR_ft2build)
+#  include_directories(${FREETYPE_INCLUDE_DIR_freetype2})
+#  include_directories(${FREETYPE_INCLUDE_DIR_ft2build})
+endif()
 
 if(SV_USE_TETGEN)
 	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
@@ -277,10 +276,12 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Set flags for shared libs
+if(NOT MSVC)
 if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES OR
 		ITK_SHARED_LIBRARIES OR VTK_SHARED_LIBRARIES OR
 		SV_BUILD_SHARED_LIBS)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" CACHE STRING "Need for shared libs" FORCE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" CACHE STRING "Need for shared libs" FORCE)
+endif()
 endif()
 

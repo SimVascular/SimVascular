@@ -59,8 +59,15 @@ mark_as_superbuild(SV_USE_GLIB)
 option(SV_USE_GTS "Use GTS Library" OFF)
 mark_as_superbuild(SV_USE_GTS)
 
+option(SV_USE_GDCM "Enable GDCM" ON)
+mark_as_superbuild(SV_USE_GDCM)
+
+option(SV_USE_FREETYPE "Enable FREETYPE" ON)
+mark_as_superbuild(SV_USE_FREETYPE)
+
 #-----------------------------------------------------------------------------
 # Plugins
+
 option(SV_USE_ITK "Enable ITK Plugin" ON)
 mark_as_superbuild(SV_USE_ITK)
 
