@@ -13,6 +13,7 @@ if (POLICY CMP0054)
 	cmake_policy(SET CMP0054 OLD)
 endif()
 
+
 #-----------------------------------------------------------------------------
 Project(SV)
 #-----------------------------------------------------------------------------
@@ -26,12 +27,21 @@ set(SV_EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
 set(SV_EXTERNAL_PROJECT_FILE_PREFIX "")
 include(ExternalProject)
 include(ExternalProjectDependency)
+include(CheckLibraryExists)
 
 #-----------------------------------------------------------------------------
 # Include Macros
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
 
+SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+SET(CMAKE_INSTALL_RPATH "")
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+mark_as_superbuild(CMAKE_SKIP_BUILD_RPATH)
+mark_as_superbuild(CMAKE_SKIP_BUILD_WITH_INSTALL_RPATH)
+mark_as_superbuild(CMAKE_INSTALL_RPATH)
+mark_as_superbuild(CMAKE_INSTALL_RPATH_USE_LINK_RPATH)
 #-----------------------------------------------------------------------------
 # unset NEED variables
 unset(SV_USE_FORTRAN)
@@ -64,7 +74,6 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------
-include(CheckLibraryExists)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularInstallSetup)
@@ -301,7 +310,33 @@ if(SV_USE_OPENCASCADE)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
 	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
 	#set(SV_INSTALL_EXTERNALS ON)
+	find_package(FREETYPE)
 endif()
+
+#-----------------------------------------------------------------------------
+# GDCM
+if(SV_USE_GDCM)
+	simvascular_external(GDCM DOWNLOADABLE)
+	mark_as_superbuild(GDCM_DIR)
+	mark_as_superbuild(GDCM_SOURCE_DIR)
+	set(USE_GDCM ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
+	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
+	#set(SV_INSTALL_EXTERNALS ON)
+endif()
+
+#-----------------------------------------------------------------------------
+# FREETYPE
+if(SV_USE_FREETYPE)
+	simvascular_external(FREETYPE DOWNLOADABLE)
+	mark_as_superbuild(FREETYPE_DIR)
+	mark_as_superbuild(FREETYPE_SOURCE_DIR)
+	set(USE_FREETYPE ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
+	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
+	#set(SV_INSTALL_EXTERNALS ON)
+endif()
+
 # Licensed Package Additions
 #-----------------------------------------------------------------------------
 if(SV_USE_MESHSIM_ADAPTOR)

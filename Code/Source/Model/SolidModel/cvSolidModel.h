@@ -48,6 +48,7 @@ enum SolidModel_KernelT {
   SM_KT_DISCRETE,
   SM_KT_POLYDATA,
   SM_KT_OCCT,
+  SM_KT_MESHSIMSOLID,
   SM_KT_INVALID
 };
 
@@ -188,6 +189,7 @@ public:
   virtual int ReadNative( char *filename ) = 0;
   virtual int WriteNative( int file_version, char *filename ) const = 0;
   virtual int WriteVtkPolyData( char *filename ) = 0;
+  virtual int WriteGeomSim( char *filename ) = 0;
 
   // geometric manipulation
   // this method is buggy and should be used with great care!

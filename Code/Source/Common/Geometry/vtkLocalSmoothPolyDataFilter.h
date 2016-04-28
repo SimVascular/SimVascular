@@ -105,12 +105,14 @@
 #ifndef vtkLocalSmoothPolyDataFilter_h
 #define vtkLocalSmoothPolyDataFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
 class vtkLocalSmoothPoints;
 
-class VTKFILTERSCORE_EXPORT vtkLocalSmoothPolyDataFilter : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkLocalSmoothPolyDataFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalSmoothPolyDataFilter,vtkPolyDataAlgorithm);

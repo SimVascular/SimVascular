@@ -42,7 +42,7 @@ CCFLAGS  = $(GLOBAL_CCFLAGS) \
 	   $(TCLTK_INCDIR) \
 	   $(PYTHON_INCDIR)
 
-LFLAGS += $(PYTHON_LIBDIR)
+DLLLIBS += $(PYTHON_LIB)
 
 HDRS	= tclpython.h symcat.h
 

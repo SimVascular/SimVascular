@@ -22,11 +22,11 @@ proc startTclPython {} {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }
-    if {$tcl_platform(platform) == "windows"} {
-      if [catch {load ${lib_prefix}simvascular_tclpython.lib Tclpython} msg] {
+  }
+  if {$tcl_platform(platform) == "windows"} {
+      if [catch {load lib_simvascular_tclpython.dll Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
-    }
   }
   global gPythonInterp
   set gPythonInterp [::python::interp new]

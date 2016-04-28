@@ -41,12 +41,14 @@
 #ifndef vtkFillHolesFilterWithIds_h
 #define vtkFillHolesFilterWithIds_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersModelingModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
 class vtkAbstractTransform;
 
-class VTKFILTERSMODELING_EXPORT vtkFillHolesFilterWithIds : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkFillHolesFilterWithIds : public vtkPolyDataAlgorithm
 {
 public:
   // Description:

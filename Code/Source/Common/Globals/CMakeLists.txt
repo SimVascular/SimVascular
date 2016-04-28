@@ -13,13 +13,7 @@ set(HDRS cv_globals.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
-   ${GLOBAL_LIBRARIES}
-   ${OPENCASCADE_LIBRARIES})
-
-if(SV_USE_OPENCASCADE)
-  target_link_libraries(${lib}
-     ${OPENCASCADE_LIBRARIES})
-endif()
+   ${GLOBAL_LIBRARIES})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

@@ -43,14 +43,16 @@
 #ifndef __vtkCGSmooth_h
 #define __vtkCGSmooth_h
 
+#include "SimVascular.h"
+
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 
-class vtkCGSmooth : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkCGSmooth : public vtkPolyDataAlgorithm
 {
 public:
   static vtkCGSmooth* New();
-  vtkTypeRevisionMacro(vtkCGSmooth, vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkCGSmooth, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:

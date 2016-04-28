@@ -46,7 +46,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(LOCAL_INCDIR) \
 	   $(VTK_INCDIRS) \
-	   $(TCLTK_INCDIR)
+	   $(TCLTK_INCDIR) \
+           $(OPENCASCADE_INCDIR)
 
 ifeq ($(SV_USE_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
@@ -57,13 +58,18 @@ ifeq ($(SV_USE_PARASOLID),1)
                    -I$(TOP)/../Code/Licensed/ParasolidSolidModel
 endif
 
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-    CXXFLAGS    += $(MESHSIM_INCDIR) \
-		  -I$(TOP)/../Source/Model/MeshSimDiscreteSolidModel
-endif
-
 ifeq ($(SV_USE_MESHSIM),1)
         CXXFLAGS    += $(MESHSIM_INCDIR)
+endif
+
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    CXXFLAGS    += $(MESHSIM_INCDIR) \
+		  -I$(TOP)/../Code/Source/Model/MeshSimDiscreteSolidModel
+endif
+
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+    CXXFLAGS    += $(MESHSIM_INCDIR) \
+		  -I$(TOP)/../Code/Source/Model/MeshSimSolidModel
 endif
 
 HDRS	= cvMeshSimMeshObject.h cvMeshSimMeshSystem.h
@@ -89,6 +95,13 @@ ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
   else
     DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+  endif
+endif
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+  ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+  else
+    DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_solid$(LIBLINKEXT)
   endif
 endif
 
@@ -120,6 +133,10 @@ endif
 
 ifeq ($(SV_USE_PARASOLID),1)
   DLLLIBS += $(PARASOLID_LIBS)
+endif
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+  DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
 DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)

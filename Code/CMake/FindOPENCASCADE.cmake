@@ -42,21 +42,56 @@ include(GetPrerequisites)
 
 #-----------------------------------------------------------------------------
 # Libraries
-set(${proj}_LIBNAMES TKBRep TKHLR)
-set(${proj}_FIND_COMPONENTS TKTopAlgo TKCAF TKLCAF TKXCAF TKCDF
-			    TKPrim TKMath TKIVtk TKG3d TKG2d
-		            TKGeomBase TKGeomAlgo TKV3d
-			    TKMesh TKOffset TKBool TKBO TKShHealing TKernel
-			    TKIGES TKMeshVS TKSTEP TKSTEP209
-			    TKSTEPAttr TKVRML TKSTEPBase TKSTL
-			    TKBin TKBinL TKBinTObj TKBinXCAF TKFeat TKFillet
+set(${proj}_LIBNAMES FWOSPlugin)
+set(${proj}_FIND_COMPONENTS TKBinTObj
+			    TKBinXCAF
+			    TKFeat
+			    TKFillet
+			    TKIVtk
+			    TKMeshVS
+			    TKOffset
+			    TKOpenGl
+			    TKSTL
+			    TKStd
+			    TKVRML
+			    TKXDEIGES
+			    TKXDESTEP
+			    TKXMesh
+			    TKXmlTObj
+			    TKXmlXCAF
+			    TKBin
+			    TKStdL
+			    TKIGES
+			    TKSTEP
+			    TKTObj
+			    TKXCAF
+			    TKXml
+			    TKBinL
+			    TKBool
+			    TKSTEPAttr
+			    TKSTEP209
+			    TKVCAF
+			    TKXmlL
+			    TKSTEPBase
+			    TKCAF
+			    TKV3d
+			    TKXSBase
+			    TKBO
+			    TKLCAF
+			    TKMesh
+			    TKHLR
 			    TKService
-			    TKXDEIGES TKXDESTEP TKXMesh
-			    TKXSBase TKXml TKXmlL TKXmlTObj TKXmlXCAF
-			    FWOSPlugin)
-if (APPLE)
-set(${proj}_FIND_COMPONENTS ${${proj}_FIND_COMPONENTS} TKOpenGL)
-endif()
+			    TKPrim
+			    TKCDF
+			    TKShHealing
+			    TKTopAlgo
+			    TKGeomAlgo
+			    TKBRep
+			    TKGeomBase
+			    TKG3d
+			    TKG2d
+			    TKMath
+			    TKernel)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
@@ -133,6 +168,7 @@ endif()
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_LIBS_MISSING)
 set(${proj}_LIBRARIES_WORK "")
+set(one_lib)
 foreach(lib ${${proj}_LIBNAMES})
 	#find library
 	find_library(${proj}_${lib}_LIBRARY
@@ -153,8 +189,20 @@ foreach(lib ${${proj}_LIBNAMES})
 	if(${proj}_${lib}_LIBRARY)
 		set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
 		list(REMOVE_ITEM ${proj}_LIBS_MISSING ${lib})
+		set(one_lib ${${proj}_${lib}_LIBRARY})
 	endif()
 endforeach()
+#Get the found install lib dir location in opencascade
+get_filename_component(last_dir "${one_lib}" PATH)
+get_filename_component(a_last_dir "${last_dir}" NAME)
+get_filename_component(seco_last_dir "${last_dir}" PATH)
+get_filename_component(a_seco_last_dir "${seco_last_dir}" NAME)
+get_filename_component(thir_last_dir "${seco_last_dir}" PATH)
+get_filename_component(a_thir_last_dir "${thir_last_dir}" NAME)
+set(OPENCASCADE_LIB_EXT "${a_thir_last_dir}/${a_seco_last_dir}/${a_last_dir}")
+mark_as_superbuild(OPENCASCADE_LIB_EXT)
+set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR "opencascade/${OPENCASCADE_LIB_EXT}")
+
 
 #message("${proj}_LIBRARIES_WORK: ${${proj}_LIBRARIES_WORK}")
 
@@ -179,7 +227,6 @@ if(${proj}_LIBRARIES)
 		list(GET ${proj}_LIBRARIES 1 temp_path)
 	endif()
 endif()
-
 #-----------------------------------------------------------------------------
 # Find Include Directory
 #-----------------------------------------------------------------------------

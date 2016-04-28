@@ -45,14 +45,10 @@ HDRS	= cv_VMTK_utils.h \
           vtkvmtkAppendFilter.h \
 	  vtkvmtkBoundaryLayerGenerator.h \
           vtkvmtkBoundaryReferenceSystems.h \
-	  vtkvmtkCapPolyData.h \
-          vtkvmtkConfigure.h \
-	  vtkvmtkConstants.h \
-          vtkvmtkDataSetItem.h \
-	  vtkvmtkItem.h \
-          vtkvmtkMath.h \
-	  vtkvmtkNeighborhood.h \
-          vtkvmtkPolyBallLine.h \
+	  vtkvmtkCapPolyData.h vtkvmtkConfigure.h \
+	  vtkvmtkConstants.h vtkvmtkDataSetItem.h \
+	  vtkvmtkItem.h vtkvmtkMath.h \
+	  vtkvmtkNeighborhood.h vtkvmtkPolyBallLine.h \
 	  vtkvmtkPolyDataBoundaryExtractor.h \
           vtkvmtkPolyDataDistanceToCenterlines.h \
 	  vtkvmtkPolyDataManifoldExtendedNeighborhood.h \

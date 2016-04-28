@@ -131,6 +131,7 @@ int Meshsimmesh_Init( Tcl_Interp *interp )
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_ATTRIBUTES");
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_PARASOLID");
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_DISCRETE");
+  MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_GMIMPORT");
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_SURFACE");
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_VOLUME");
   MeshSim_Win32ReadRegistrySimRegister("MESHSIM_KEY_EXPORT");
@@ -158,6 +159,7 @@ try
   Sim_registerKey(MESHSIM_KEY_ATTRIBUTES);
   Sim_registerKey(MESHSIM_KEY_PARASOLID);
   Sim_registerKey(MESHSIM_KEY_DISCRETE);
+  Sim_registerKey(MESHSIM_KEY_GMIMPORT);
   Sim_registerKey(MESHSIM_KEY_SURFACE);
   Sim_registerKey(MESHSIM_KEY_VOLUME);
   Sim_registerKey(MESHSIM_KEY_EXPORT);

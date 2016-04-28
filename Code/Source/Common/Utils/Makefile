@@ -37,10 +37,6 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) $(DEFINES)
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-   CXXFLAGS += $(OPENCASCADE_INCDIR)
-endif
-
 HDRS	= cv_misc_utils.h cv_vtk_utils.h cvTimer.h cvIntArrayList.h \
 	  cvStateArray.h cv_cgeom.h cvMath.h cv_arg.h cvFactoryRegistrar.h
 
