@@ -60,10 +60,10 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj})
-  set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-build)
+  set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+  set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
   if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/ThirdParty/TclTk/internals/tk8.5)
+    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/externals/TCL/internals/tk8.5)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
   endif()
   if(WIN32 AND NOT TK_XLIB_PATH)

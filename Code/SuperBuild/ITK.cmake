@@ -49,13 +49,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj} 
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
        CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-b  
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-b  
       CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-b)
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-b)
   endif()
   ExternalProject_Add(${proj}
    ${location_args}
