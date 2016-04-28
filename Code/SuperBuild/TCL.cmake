@@ -54,7 +54,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TCL)
 
 	if(LINUX)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/latest/linux.gcc-4.8.x64.tcltk-8.6.4-linux-x64-gnu.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/latest/linux.gcc-4.8.x64.tcltk-8.6.4.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.tcltk-8.6.4.tar.gz" CACHE
