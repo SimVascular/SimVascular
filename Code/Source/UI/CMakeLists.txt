@@ -18,6 +18,11 @@ if(NOT SV_BUILD_SHARED_LIBS)
 		 ${SV_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
 endif()
 
+if(NOT ${USE_SYSTEM_TCL})
+	include_directories(${TCL_INCLUDE_PATH})
+	include_directories(${TK_INCLUDE_PATH})
+endif()
+
 if (SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH})
 endif()

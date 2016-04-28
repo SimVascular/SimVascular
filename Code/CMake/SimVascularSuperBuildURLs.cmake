@@ -1,1 +1,1 @@
-set(svlibs_OPEN_URLBASE "http://simvascular.ucsd.edu/sv_lib/") 
+set(svlibs_OPEN_URLBASE "http://simvascular.stanford.edu/downloads/public/simvascular/externals") 
