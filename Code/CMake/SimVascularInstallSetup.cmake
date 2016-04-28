@@ -193,7 +193,7 @@ mark_as_superbuild(SV_INSTALL_OPENCASCADE_INCLUDE_DIR:PATH)
 # TCL 
 #
 if(NOT SV_INSTALL_TCL_TOP_DIR)
-  set(SV_INSTALL_TCL_TOP_DIR "TclTk")
+  set(SV_INSTALL_TCL_TOP_DIR "TCL")
 endif()
 mark_as_superbuild(SV_INSTALL_TCL_TOP_DIR:PATH)
 
