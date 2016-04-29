@@ -34,7 +34,6 @@
 // applications.
 
 #include <stdio.h>
-#include "tk.h"
 #include "vtkToolkits.h"
 #include "cv_VTK_init.h"
 #include "cvVTK.h"

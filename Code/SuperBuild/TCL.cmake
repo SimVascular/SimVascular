@@ -54,12 +54,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TCLTK)
 
 	if(LINUX)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-linux-x64-gnu.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/14.04/latest/linux.gcc-4.8.x64.tcltk-8.6.4.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		message(ERROR "Superbuild for ${proj} is not supported for this platform")
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.tcltk-8.6.4.tar.gz" CACHE
+			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tcltk-8.5.11-win-x64.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/windows/msvc_2013/latest/msvc_2013.x64.tcltk-8.6.4.zip" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	endif()
 	mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
@@ -89,12 +90,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 		set(TCL_DLL_PATH ${${proj}_OUTPUT_BIN_DIR}/bin)
 		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/tcl85t.lib)
-		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh85t.exe)
+		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/tcl86t.lib)
+		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh86t.exe)
 
 		set(TK_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/tk85t.lib)
-		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish85t.exe)
+		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/tk86t.lib)
+		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish86t.exe)
 	endif()
 	if(LINUX)
 
@@ -103,12 +104,27 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 		set(TCL_DLL_PATH ${${proj}_OUTPUT_BIN_DIR}/bin)
 		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtcl8.5.so)
-		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh8.5)
+		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtcl8.6.so)
+		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh8.6)
 
 		set(TK_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtk8.5.so)
-		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish8.5)
+		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtk8.6.so)
+		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish8.6)
+		mark_as_superbuild(TCL_INIT_PATH:PATH)
+	endif()
+	if(APPLE)
+		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
+		set(SV_TCL_DIR ${${proj}_SOURCE_DIR})
+		#set(Tcl_Framework_Dir ${${proj}_OUTPUT_BIN_DIR}/Library/Frameworks/Tcl.framework)
+		#set(Tk_Framework_Dir ${${proj}_OUTPUT_BIN_DIR}/Library/Frameworks/Tk.framework)
+
+		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
+		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtcl8.6.dylib)
+		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh8.6)
+
+		set(TK_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
+		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtk8.6.dylib)
+		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish8.6)
 		mark_as_superbuild(TCL_INIT_PATH:PATH)
 	endif()
 
