@@ -109,5 +109,5 @@ target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${GLOBAL_LIBRARIES})
 
 if(SV_USE_PYTHON)
-  target_link_libraries(${SV_EXE} ${PYTHON_LIBRARIES})
+  target_link_libraries(${SV_EXE} ${PYTHON_LIBRARY})
 endif()

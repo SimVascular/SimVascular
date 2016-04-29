@@ -50,15 +50,15 @@
 # (To distribute this file outside of CMake, substitute the full
 #  License text for the above reference.)
 
-if(${PYTHON_LIBRARIES})
+if(NOT "${PYTHON_LIBRARIES}" STREQUAL "")
   get_filename_component(PYTHON_POSSIBLE_LIB_PATHS ${PYTHON_LIBRARIES} PATH)
 endif()
-if(${PYTHON_EXECUTABLE})
+if(NOT "${PYTHON_EXECUTABLE}" STREQUAL "")
   get_filename_component(PYTHON_POSSIBLE_EXECUTABLE_PATHS ${PYTHON_EXECUTABLE} PATH)
 endif()
 
-if(${PYTHON_INCLUDE_PATH})
-  set(PYTHON_POSSIBLE_INCLUDE_PATHS
+if(NOT "${PYTHON_INCLUDE_PATH}" STREQUAL "")
+    set(PYTHON_POSSIBLE_INCLUDE_PATHS
     "${PYTHON_INCLUDE_PATH}")
   set(_Python_LIBRARY_PATH_HINT
     "${PYTHON_INCLUDE_PATH}")

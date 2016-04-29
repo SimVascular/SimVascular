@@ -41,7 +41,7 @@ add_library(${lib} SHARED ${CSRCS})
 
 target_link_libraries(${lib} lib_simvascular_repository
 			     lib_simvascular_globals
-	${PYTHON_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
+	${PYTHON_LIBRARY} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
 
 install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables

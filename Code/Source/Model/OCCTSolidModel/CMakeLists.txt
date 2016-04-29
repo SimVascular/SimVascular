@@ -54,7 +54,7 @@ target_link_libraries(${lib}
 			lib_simvascular_globals lib_simvascular_utils lib_simvascular_sysgeom
             )
 if(SV_USE_PYTHON)
-   target_link_libraries(${lib} ${PYTHON_LIBRARIES})
+   target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 if(SV_INSTALL_LIBS)

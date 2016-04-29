@@ -121,6 +121,9 @@ endif()
 #--------
 # Python
 if(SV_USE_PYTHON)
+	set_env_string_concat(PYTHONHOME "${PYTHON_SOURCE_DIR}" developer_script_string)
+	set_env_string_concat(PYTHONPATH "${PYTHON_LIBRARY_PATH}/python2.7" developer_script_string)
+	append_env_string_concat(PYTHONPATH "${PYTHON_LIBRARY_PATH}/python2.7/site-packages" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python/vtk" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/bin" developer_script_string)
