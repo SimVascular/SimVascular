@@ -75,7 +75,7 @@ foreach(lib ${SV_EXTERNAL_SHARED_LIBS})
 		# If there is a DLL path associated with it, go ahead and add it to the scripts
 		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" developer_script_string)
 	endif()
-	
+
 	# on unix systems we only need this path if its installed (moved)
 	if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${lib})
 		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
@@ -121,8 +121,10 @@ if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
 	#Lib additions
 	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.6" developer_script_string)
 	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.6" developer_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${TCL_LIBRARY_PATH}" developer_script_string)
 	set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tcl8.6" install_script_string)
 	set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tk8.6" install_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}" install_script_string)
 endif()
 
 #--------
