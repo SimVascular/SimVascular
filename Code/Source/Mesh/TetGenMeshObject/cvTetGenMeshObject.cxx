@@ -1511,9 +1511,10 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
 #ifdef SV_USE_MMG
   if (meshoptions_.usemmg)
   {
-    double mmg_maxsize = 1.3*meshoptions_.maxedgesize;
-    double mmg_minsize = mmg_maxsize;
-    double hausd = 0.05*mmg_minsize;
+    double meshsize = 1.3*meshoptions_.maxedgesize;
+    double mmg_maxsize = 1.5*meshsize;
+    double mmg_minsize = 0.5*meshsize;
+    double hausd = 0.05*meshsize;
     double dumAng = 45.0;
     double hgrad = 1.01;
     //Generate Surface Remeshing

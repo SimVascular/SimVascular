@@ -136,6 +136,11 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     fprintf(stderr,"Error in mmgs\n");
     return CV_ERROR;
   }
+  if (!MMGS_Set_solSize(mesh, sol, MMG5_Vertex, numPts, MMG5_Scalar))
+  {
+    fprintf(stderr,"Error in mmgs\n");
+    return CV_ERROR;
+  }
   if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmin, hmin))
   {
     fprintf(stderr,"Error in mmgs\n");
@@ -163,6 +168,20 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
       ppt->c[j] = pt[j];
     }
     ppt->ref = 1;
+    double ptsize = 0.0;
+    if (useSizingFunction)
+    {
+      ptsize = 1.3*meshSizingFunction->GetValue(i);
+    }
+    else
+    {
+      ptsize = hmax;
+    }
+    if (!MMGS_Set_scalarSol(sol, ptsize, i+1))
+    {
+      fprintf(stderr,"Error in mmgs\n");
+      return CV_ERROR;
+    }
   }
 
   int refineCt=0;
@@ -177,25 +196,27 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     {
       tria->v[j] = pts[j] + 1;
       if (numAddedRefines != 0)
-	refineCt += 1;
+	refineCt += refineIDs->GetValue(pts[j]);;
     }
     tria->ref = boundaryScalars->GetValue(i);
     if (useSizingFunction)
     {
       double newmax = 0.0;
       double newmin = 0.0;
-      if (numAddedRefines != 0 && refineCt == 3)
+      if (numAddedRefines != 0 && refineCt%3 == 0 && refineCt != 0)
       {
-	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]) + 1;
-	newmax = 1.3*meshSizingFunction->GetValue(pts[2]);
-	newmin = newmax;
+	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]);
+	fprintf(stderr,"Want to see!: %d\n",tria->ref);
+	double meshsize = 1.3*meshSizingFunction->GetValue(pts[2]);
+	newmax = 1.5*meshsize;
+	newmin = 0.5*meshsize;
       }
       else
       {
 	newmax = hmax;
 	newmin = hmin;
       }
-      if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, hausd))
+      if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, 10.0*hausd))
       {
 	fprintf(stderr,"Error in mmgs\n");
 	return CV_ERROR;
@@ -219,8 +240,6 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
       return CV_ERROR;
     }
   }
-
-  int ier = MMGS_loadSol(mesh, sol, "");
 
   return CV_OK;
 }
