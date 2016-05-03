@@ -99,6 +99,8 @@ SV_USE_OPENCASCADE_SHARED = 0
 SV_USE_MESHSIM = 0
 SV_USE_MESHSIM_DISCRETE_MODEL = 0
 SV_USE_MESHSIM_DISCRETE_MODEL_SHARED = 1
+SV_USE_MESHSIM_SOLID_MODEL = 0
+SV_USE_MESHSIM_SOLID_MODEL_SHARED = 1
 SV_USE_MESHSIM_ADAPTOR = 0
 SV_USE_MESHSIM_SHARED = 1
 MESHSIM_USE_LICENSE_FILE = 1
@@ -198,6 +200,12 @@ SV_USE_ITK = 1
 SV_USE_VMTK = 1
 
 # -----------------------------------------------------
+# Compile with GDCM
+# -----------------------------------------------------
+
+SV_USE_GDCM = 1
+
+# -----------------------------------------------------
 # Compile with glib & gts
 # -----------------------------------------------------
 
@@ -252,18 +260,23 @@ endif
 
 ifeq ($(CLUSTER), x64_cygwin)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL = C:/cygwin64/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/src
     LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV16/licensed
+    MITK_OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/mvtk/build
+    MITK_OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/mvtk/src
 endif
 
 ifeq ($(CLUSTER), x64_linux)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
     LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/osx/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
     LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
 endif
@@ -307,6 +320,7 @@ ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     endif
 
     SV_USE_ITK = 0
+    SV_USE_GDCM = 0
     SV_USE_VMTK = 0
     SV_USE_TETGEN = 0
     SV_USE_SPARSE = 0
@@ -368,6 +382,12 @@ ifeq ($(SV_USE_MESHSIM),1)
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
     GLOBAL_DEFINES += -DSV_USE_MESHSIM_DISCRETE_MODEL_SHARED
   endif
+  ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL
+  endif
+  ifeq ($(SV+USE_MESHSIM_SOLID_MODEL_SHARED),1)
+    GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL_SHARED
+  endif
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1) 
     GLOBAL_DEFINES += -DSV_USE_MESHSIM_ADAPTOR
   endif
@@ -400,6 +420,10 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   GLOBAL_DEFINES += -DSV_USE_ITK
+endif
+
+ifeq ($(SV_USE_GDCM),1)
+  GLOBAL_DEFINES += -DSV_USE_GDCM
 endif
 
 ifeq ($(SV_USE_VMTK),1)
@@ -530,6 +554,14 @@ ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
   endif
 endif
 
+    ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+      ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
+        SHARED_LIBDIRS += ../Code/Source/Model/MeshSimSolidModel
+      else
+        LIBDIRS += ../Code/Source/Model/MeshSimSolidModel
+      endif
+    endif
+
 ifeq ($(SV_USE_OPENCASCADE),1)
   ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
     SHARED_LIBDIRS += ../Code/Source/Model/OCCTSolidModel
@@ -595,7 +627,11 @@ endif
 # -------------------------
 
 ifeq ($(SV_USE_PYTHON),1)
-  SHARED_LIBDIRS += ../Code/Source/TclPython
+  ifeq ($(SV_USE_PYTHON_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/TclPython
+  else
+     LIBDIRS += ../Code/Source/TclPython
+  endif
 endif
 
 #
@@ -603,7 +639,7 @@ endif
 #
 
 ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  SHARED_LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
+  LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
   EXECDIRS = ../Code/FlowSolvers/ThreeDSolver
 endif
 
@@ -747,7 +783,7 @@ endif
 # ------------------
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/tcltk-8.5.18.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/tcltk-8.6.4.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -767,7 +803,7 @@ endif
 ifeq ($(SV_USE_VTK),1)
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/vtk-6.2.0-tcl-8.6.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -794,6 +830,26 @@ endif
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
 
+# ----
+# GDCM
+# ----
+
+ifeq ($(SV_USE_GDCM),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/gdcm-2.6.1.x64_macosx.mk
+  endif
+
+endif
+
 # --------------
 # Insight ToolKit
 # ---------------
@@ -801,7 +857,7 @@ endif
 ifeq ($(SV_USE_ITK),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/itk-4.8.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/itk-4.7.1.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
@@ -859,16 +915,16 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_cygwin.mk
          OPENCASCADE_DEFS = -DWNT
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_linux.mk
+	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/opencascade-6.9.0.x64_macosx.mk
+	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_macosx.mk
   endif
 
 endif
@@ -967,7 +1023,7 @@ ifeq ($(SV_USE_MESHSIM),1)
   endif
 
   ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150704-vs12.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/meshsim-9.0-151017-vs12.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)

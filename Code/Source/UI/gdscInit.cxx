@@ -41,13 +41,8 @@
 #include <time.h>
 #include <stdlib.h>
 
-#ifdef __NON_STD_TCL_INSTALL
-  #include "tcl.h"
-  #include "tk.h"
-#else
-  #include <tcl.h>
-  #include <tk.h>
-#endif
+#include "tcl.h"
+#include "tk.h"
 
 #include "cv_repos_init.h"
 #include "cv_LsetCore_init.h"
@@ -228,10 +223,12 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 
 #ifdef SV_USE_OPENCASCADE
+#ifndef SV_USE_OPENCASCADE_SHARED
   if ( Occtsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Opencascade_Init\n" );
     return TCL_ERROR;
   }
+#endif
 #endif
 
 #ifdef SV_USE_MESHSIM

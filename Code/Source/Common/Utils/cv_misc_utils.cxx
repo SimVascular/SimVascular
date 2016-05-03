@@ -123,7 +123,7 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
 
   if ( ( (Km > 0.0) && (k2a > 0.0) ) ||
        ( (Km < 0.0) && (k1a < 0.0) ) ||
-       ( (Sign( Km, tol ) == 0.0) && (k1a <= 0.0 ) ) ) {
+       ( (cvSign( Km, tol ) == 0.0) && (k1a <= 0.0 ) ) ) {
     ks[0] = k1a;
     ks[1] = k2a;
     return CV_OK;
@@ -131,7 +131,7 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
 
   if ( ( (Km > 0.0) && (k2b > 0.0) ) ||
        ( (Km < 0.0) && (k1b < 0.0) ) ||
-       ( (Sign( Km, tol ) == 0.0) && (k1b <= 0.0 ) ) ) {
+       ( (cvSign( Km, tol ) == 0.0) && (k1b <= 0.0 ) ) ) {
     ks[0] = k1b;
     ks[1] = k2b;
     return CV_OK;

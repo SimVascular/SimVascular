@@ -68,12 +68,14 @@ if(SV_USE_MESHSIM)
 endif()
 
 foreach(lib ${SV_EXTERNAL_SHARED_LIBS})
+        dev_message("SV_USE_SYSTEM_${lib} ${SV_USE_SYSTEM_${lib}}")
 	# For Each library that we have linked against
 	if(${lib}_DLL_PATH)
+	        dev_message("${lib}_DLL_PATH: ${${lib}_DLL_PATH}")
 		# If there is a DLL path associated with it, go ahead and add it to the scripts
 		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" developer_script_string)
 	endif()
-	dev_message("SV_USE_SYSTEM_${lib} ${SV_USE_SYSTEM_${lib}}")
+	
 	# on unix systems we only need this path if its installed (moved)
 	if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${lib})
 		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
@@ -110,17 +112,29 @@ if(SV_USE_TKCXIMAGE)
 	endif()
 endif()
 
+if (SV_USE_SYSTEM_TCL)
+	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.6" developer_script_string)
+	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.6" developer_script_string)
+endif()
+
 if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
 	#Lib additions
-	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.5" developer_script_string)
-	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.5" developer_script_string)
-	set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tcl8.5" install_script_string)
-	set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tk8.5" install_script_string)
+	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.6" developer_script_string)
+	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.6" developer_script_string)
+	set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tcl8.6" install_script_string)
+	set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tk8.6" install_script_string)
 endif()
 
 #--------
 # Python
 if(SV_USE_PYTHON)
+  if (SV_USE_SYSTEM_PYTHON)
+	   append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)
+	if (SV_USE_SYSTEM_VTK)
+	   append_env_string_concat(PYTHONPATH "${VTK_DLL_PATH}" developer_script_string)
+	   append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
+	endif()
+  else()
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/Wrapping/Python/vtk" developer_script_string)
 	append_env_string_concat(PYTHONPATH "${VTK_DIR}/bin" developer_script_string)
@@ -131,14 +145,53 @@ if(SV_USE_PYTHON)
 	append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
 	append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
-endif()
-#--------
-# Tcl is VTK built as shared
-if(VTK_SHARED_LIBRARIES)
-	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
-	set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/lib/tcltk/vtk-6.2" install_script_string)
+  endif()
 endif()
 
+#--------
+# Tcl is VTK built as shared
+if (NOT SV_USE_SYSTEM_VTK)
+  if(${VTK_SHARED_LIBRARIES})
+	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
+	set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/vtk/lib/tcltk/modules" install_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${VTK_DIR}/lib" developer_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
+  endif()
+endif()
+
+# ITK built as shared for install
+if (NOT SV_USE_SYSTEM_ITK)
+  if(${ITK_SHARED_LIBRARIES})
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ITK_DIR}/lib" developer_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_ITK_LIBRARY_DIR}" install_script_string)
+  endif()
+endif()
+
+# If using opencascade for install
+if (NOT SV_USE_SYSTEM_OPENCASCADE)
+  if(${OPENCASCADE_SHARED_LIBRARIES})
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OPENCASCADE_DIR}/${OPENCASCADE_LIB_EXT}" developer_script_string)
+        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_OPENCASCADE_LIBRARY_DIR}" install_script_string)
+  endif()
+endif()
+
+# If using system installs, add paths to shared libs if needed
+if(SV_USE_SYSTEM_GDCM AND GDCM_SHARED_LIBRARIES)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${GDCM_DLL_PATH}" developer_script_string)
+endif()
+if(SV_USE_SYSTEM_OPENCASCADE AND OPENCASCADE_SHARED_LIBRARIES)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OPENCASCADE_DLL_PATH}" developer_script_string)
+endif()
+if(SV_USE_SYSTEM_QT AND QT_SHARED_LIBRARIES)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${QT_DLL_PATH}" developer_script_string)
+endif()
+if(SV_USE_SYSTEM_TCL AND TCL_SHARED_LIBRARIES)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${TCL_DLL_PATH}" developer_script_string)
+endif()
+
+# need the path to the dll's
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/RelWithDebInfo" developer_script_string)
 
 configure_file(${SV_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
 set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")

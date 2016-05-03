@@ -186,6 +186,15 @@ if {$SV_RELEASE_BUILD != 0} {
       load $discretedll Meshsimdiscretesolid
     }
 
+    set meshsimsoliddll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
+			  SV_MESHSIM_SOLID_DLL]
+
+    if {$meshsimsoliddll != ""} {
+      puts "Found MeshSim Solid Model.  Loading..."
+      load $meshsimsoliddll Meshsimsolid
+    }
+
     set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
 			  HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
   			  SV_MESHSIM_MESH_DLL]
@@ -208,6 +217,7 @@ if {$SV_RELEASE_BUILD != 0} {
   if {$tcl_platform(platform) == "unix"} {
     catch {load $env(SV_HOME)/lib_simvascular_parasolid.so  Parasolidsolid}
     catch {load $env(SV_HOME)/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid}
+    catch {load $env(SV_HOME)/lib_simvascular_meshsim_solid.so Meshsimsolid}
     catch {load $env(SV_HOME)/lib_simvascular_meshsim_mesh.so Meshsimmesh}
     catch {load $env(SV_HOME)/lib_simvascular_meshsim_adaptor.so  Meshsimadapt}
   }
@@ -419,7 +429,11 @@ if {$tcl_platform(platform) == "windows"} {
 # Launch gui if interactive
 # -------------------------
 
-if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
+global SV_USE_PYTHON
+if {[info exists SV_USE_PYTHON] == 0} {
+  set SV_USE_PYTHON "OFF"
+}
+if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   # tcl 8.4.x no longer exports tkTabToWindow
   if [catch {tk::unsupported::ExposePrivateCommand tkTabToWindow}] {
     proc tkTabToWindow {foo} {}

@@ -44,9 +44,6 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) \
 	   $(TCLTK_INCDIR) \
 	   $(VTK_INCDIRS)
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-   CXXFLAGS += $(OPENCASCADE_INCDIR)
-endif
 
 HDRS	= cvRepository.h cvRepositoryData.h cvDataObject.h \
 	  cvPolyData.h cvStrPts.h cvUnstructuredGrid.h \

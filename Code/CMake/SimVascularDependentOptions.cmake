@@ -143,17 +143,6 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Plugins
-#find_package(FreeType)
-#if(FREETYPE_FOUND)
-#	mark_as_superbuild(FREETYPE_DIR)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIRS)
-#	mark_as_superbuild(FREETYPE_LIBRARY)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIR_freetype2)
-#	mark_as_superbuild(FREETYPE_INCLUDE_DIR_ft2build)
-#	include_directories(${FREETYPE_INCLUDE_DIR_freetype2})
-#	include_directories(${FREETYPE_INCLUDE_DIR_ft2build})
-#endif()
-
 if(SV_USE_TETGEN)
 	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
 	mark_as_superbuild(SV_USE_TET_ADAPTOR)
@@ -170,13 +159,32 @@ endif()
 #-----------------------------------------------------------------------------
 # Open Source Software Options: Solid Models - OPENCASCADE
 if(SV_USE_OPENCASCADE)
+    option(OPENCASCADE_SHARED_LIBRARIES "Build opencascade as shared libs" OFF)
+    mark_as_superbuild(OPENCASCADE_SHARED_LIBRARIES)
+    set(SV_USE_FREETYPE ON)
+endif()
+
+if(${OPENCASCADE_SHARED_LIBRARIES})
     set(VTK_SHARED_LIBRARIES "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
-if(VTK_SHARED_LIBRARIES)
+if(${VTK_SHARED_LIBRARIES})
   if(UNIX AND NOT APPLE)
   	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
   endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# Other externals
+if (SV_USE_FREETYPE)
+  option(FREETYPE_SHARED_LIBRARIES "Buiild freetype libraries as shared libs" ON)
+  mark_as_superbuild(FREETYPE_SHARED_LIBRARIES)
+  mark_as_superbuild(FREETYPE_DIR)
+endif()
+
+if(SV_USE_GDCM)
+  option(GDCM_SHARED_LIBRARIES "Buiild gdcm libraries as shared libs" ON)
+  mark_as_superbuild(GDCM_SHARED_LIBRARIES)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -272,10 +280,12 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Set flags for shared libs
+if(NOT MSVC)
 if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES OR
 		ITK_SHARED_LIBRARIES OR VTK_SHARED_LIBRARIES OR
 		SV_BUILD_SHARED_LIBS)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC" CACHE STRING "Need for shared libs" FORCE)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC" CACHE STRING "Need for shared libs" FORCE)
+endif()
 endif()
 

@@ -18,6 +18,11 @@ if(NOT SV_BUILD_SHARED_LIBS)
 		 ${SV_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
 endif()
 
+if(NOT ${USE_SYSTEM_TCL})
+	include_directories(${TCL_INCLUDE_PATH})
+	include_directories(${TK_INCLUDE_PATH})
+endif()
+
 if (SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH})
 endif()
@@ -63,7 +68,7 @@ endif()
 if(SV_USE_OPENCASCADE)
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Model/OCCTSolidModel/cv_occt_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_opencascade ${OPENCASCADE_LIBRARIES})
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_opencascade)
 endif()
 
 if(SV_USE_ITK)
@@ -111,10 +116,12 @@ target_link_libraries(${SV_EXE}
 target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
+			${OPENCASCADE_LIBRARIES}
 			${ZLIB_LIBRARY} ${ITK_LIBRARIES}
 			${INTELRUNTIME_LIBRARIES}
 			${GLOBAL_LIBRARIES}
-			${MMG_LIBRARY})
+			${MMG_LIBRARY}
+			${FREETYPE_LIBRARY})
 
 if(SV_USE_PYTHON)
   target_link_libraries(${SV_EXE} ${PYTHON_LIBRARIES})

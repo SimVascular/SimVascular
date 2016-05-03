@@ -41,6 +41,8 @@
 #ifndef vtkLocalLinearSubdivisionFilter_h
 #define vtkLocalLinearSubdivisionFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersModelingModule.h" // For export macro
 #include "vtkLocalInterpolatingSubdivisionFilter.h"
 
@@ -49,7 +51,7 @@ class vtkPointData;
 class vtkPoints;
 class vtkPolyData;
 
-class VTKFILTERSMODELING_EXPORT vtkLocalLinearSubdivisionFilter : public vtkLocalInterpolatingSubdivisionFilter
+class CV_DLL_EXPORT vtkLocalLinearSubdivisionFilter : public vtkLocalInterpolatingSubdivisionFilter
 {
 public:
   // Description:
