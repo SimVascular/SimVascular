@@ -2,8 +2,8 @@ global guiPDREMESHvars
 set guiPDREMESHvars(hmax) 0.1
 set guiPDREMESHvars(hmin) 0.1
 set guiPDREMESHvars(angle) 45
-set guiPDREMESHvars(hgrad) 1.1
-set guiPDREMESHvars(hausd) 0.01
+set guiPDREMESHvars(hgrad) 1.01
+set guiPDREMESHvars(hausd) 1.0
 
 proc guiSV_model_remesh_polydata_mmg {} {
   global gObjects

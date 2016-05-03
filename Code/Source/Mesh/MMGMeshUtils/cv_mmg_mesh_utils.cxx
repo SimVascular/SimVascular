@@ -177,33 +177,24 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     {
       tria->v[j] = pts[j] + 1;
       if (numAddedRefines != 0)
-	refineCt+= refineIDs->GetValue(pts[j]);
+	refineCt += 1;
     }
     tria->ref = boundaryScalars->GetValue(i);
     if (useSizingFunction)
     {
-      double edgesize = 0.0;
-      for (int j=0;j<npts;j++)
+      double newmax = 0.0;
+      double newmin = 0.0;
+      if (numAddedRefines != 0 && refineCt == 3)
       {
-        edgesize += meshSizingFunction->GetValue(pts[j]);
+	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]) + 1;
+	newmax = 1.3*meshSizingFunction->GetValue(pts[2]);
+	newmin = newmax;
       }
-      if (npts == 0)
-	npts = 1;
-      edgesize /= npts;
-      double newmax = 0;
-      double newmin = 0;
-      if (edgesize == 0)
+      else
       {
 	newmax = hmax;
 	newmin = hmin;
       }
-      else
-      {
-	newmax = 1.25*edgesize;
-	newmin = newmax;
-      }
-      if (numAddedRefines != 0 && refineCt == 3)
-	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]) + 1;
       if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, hausd))
       {
 	fprintf(stderr,"Error in mmgs\n");
@@ -339,7 +330,16 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
     return CV_ERROR;
   }
 
-  int ier = MMGS_mmgslib(mesh, sol);
+  fprintf(stderr,"Remeshing surface with MMG...\n");
+  try
+  {
+    MMGS_mmgslib(mesh, sol);
+  }
+  catch (int ier)
+  {
+    fprintf(stderr,"Remeshing exited with status ier %d...\n",ier);
+    return CV_ERROR;
+  }
 
   vtkPolyData *pd = vtkPolyData::New();
 
