@@ -175,7 +175,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     }
     else
     {
-      ptsize = hmax;
+      ptsize = hmax/1.5;
     }
     if (!MMGS_Set_scalarSol(sol, ptsize, i+1))
     {
@@ -206,7 +206,6 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
       if (numAddedRefines != 0 && refineCt%3 == 0 && refineCt != 0)
       {
 	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]);
-	fprintf(stderr,"Want to see!: %d\n",tria->ref);
 	double meshsize = 1.3*meshSizingFunction->GetValue(pts[2]);
 	newmax = 1.5*meshsize;
 	newmin = 0.5*meshsize;
