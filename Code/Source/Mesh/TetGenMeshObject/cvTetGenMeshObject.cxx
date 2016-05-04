@@ -142,6 +142,7 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
 #else
   meshoptions_.usemmg=0;
 #endif
+  meshoptions_.hausd=0;
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
@@ -858,6 +859,11 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else if(!strncmp(flags,"StartWithVolume",15)) {//r
       meshoptions_.startwithvolume=1;
   }
+  else if(!strncmp(flags,"Hausd",5)) {//r
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.hausd=values[0];
+  }
   else if (!strncmp(flags,"UseMMG",6)){
       if (numValues < 1)
 	return CV_ERROR;
@@ -1511,12 +1517,15 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
 #ifdef SV_USE_MMG
   if (meshoptions_.usemmg)
   {
-    double meshsize = 1.3*meshoptions_.maxedgesize;
+    double meshsize = meshoptions_.maxedgesize;
     double mmg_maxsize = 1.5*meshsize;
     double mmg_minsize = 0.5*meshsize;
-    double hausd = 0.05*meshsize;
+    if (meshoptions_.hausd == 0)
+      meshoptions_.hausd = 10.0*meshsize;
+    double hausd = meshoptions_.hausd;
     double dumAng = 45.0;
     double hgrad = 1.01;
+
     //Generate Surface Remeshing
     if(MMGUtils_SurfaceRemeshing(polydatasolid_, mmg_minsize,
 	  mmg_maxsize, hausd, dumAng, hgrad,

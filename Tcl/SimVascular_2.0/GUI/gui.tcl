@@ -50021,6 +50021,12 @@ set {guiPDvars(vis_full_pd)} {0}
 set {guiPDvars(vis_voronoi)} {0}
 set {guiPDvars(voronoi)} {/tmp/polydata/voronoi}
 set {guiPDvars(wall_id)} {-1}
+global {guiMMGvars}
+set {guiMMGvars(hmax)} {0.1}
+set {guiMMGvars(hmin)} {0.1}
+set {guiMMGvars(angle)} {45}
+set {guiMMGvars(hgrad)} {1.01}
+set {guiMMGvars(hausd)} {1.0}
 global {guiPHASTAvars}
 set {guiPHASTAvars(cmd_make_all_ebc)} {file_append [glob mesh-surfaces/*.ebc.gz] all.ebc.gz}
 set {guiPHASTAvars(cmd_make_all_nbc)} {file_append [glob mesh-surfaces/*.nbc.gz] all.nbc.gz}
@@ -50436,6 +50442,7 @@ set {guiTGvars(useQuiet)} {0}
 set {guiTGvars(useVerbose)} {0}
 set {guiTGvars(wallFaces)} {}
 set {guiTGvars(useMMG)} {1}
+set {guiTGvars(useHausd)} {0}
 global {guiPYPLOFTvars}
 set {guiPYLOFTvars(uDeg)} {3}
 set {guiPYLOFTvars(vDeg)} {3}

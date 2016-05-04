@@ -1,13 +1,6 @@
-global guiPDREMESHvars
-set guiPDREMESHvars(hmax) 0.1
-set guiPDREMESHvars(hmin) 0.1
-set guiPDREMESHvars(angle) 45
-set guiPDREMESHvars(hgrad) 1.01
-set guiPDREMESHvars(hausd) 1.0
-
 proc guiSV_model_remesh_polydata_mmg {} {
   global gObjects
-  global guiPDREMESHvars
+  global guiMMGvars
   global symbolicName
   global gOptions
   global gKernel
@@ -26,11 +19,11 @@ proc guiSV_model_remesh_polydata_mmg {} {
 
   guiSV_model_add_to_backup_list $kernel $model
 
-  set hmax $guiPDREMESHvars(hmax)
-  set hmin $guiPDREMESHvars(hmin)
-  set angle $guiPDREMESHvars(angle)
-  set hgrad $guiPDREMESHvars(hgrad)
-  set hausd $guiPDREMESHvars(hausd)
+  set hmax $guiMMGvars(hmax)
+  set hmin $guiMMGvars(hmin)
+  set angle $guiMMGvars(angle)
+  set hgrad $guiMMGvars(hgrad)
+  set hausd $guiMMGvars(hausd)
 
   set pd /models/PolyData/$model
   if {![repos_exists -obj $pd]} {

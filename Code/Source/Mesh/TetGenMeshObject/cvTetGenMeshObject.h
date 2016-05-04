@@ -88,6 +88,7 @@ class cvTetGenMeshObject : public cvMeshObject {
     int startwithvolume;
     int refinecount;
     int usemmg;
+    double hausd;
   } TGoptions;
 
   public:

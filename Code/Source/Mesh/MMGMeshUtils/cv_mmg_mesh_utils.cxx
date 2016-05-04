@@ -87,49 +87,43 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   int numPts   = polydatasolid->GetNumberOfPoints();
   int numTris  = polydatasolid->GetNumberOfCells();
   int numEdges = ridges->GetNumberOfEdges();
-  if (useSizingFunction)
+  int *faces;
+  int numFaces = 0;
+  if (PlyDtaUtils_GetFaceIds(polydatasolid,&numFaces,&faces) != CV_OK)
   {
-    int *faces;
-    int numFaces = 0;
-    if (PlyDtaUtils_GetFaceIds(polydatasolid,&numFaces,&faces) != CV_OK)
-    {
-      fprintf(stderr,"Could not get face ids\n");
-      return CV_ERROR;
-    }
-    if (numAddedRefines != 0)
-    {
-      if (VtkUtils_PDCheckArrayName(polydatasolid,0,"RefineID") != CV_OK)
-      {
-	fprintf(stderr,"Array %s does not exist on mesh\n","RefineID");
-	return CV_ERROR;
-      }
-      refineIDs = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray("RefineID"));
-    }
-    int numSizes = numFaces + numAddedRefines;
-    delete [] faces;
-    if (!MMGS_Set_iparameter(mesh, sol, MMGS_IPARAM_numberOfLocalParam, numSizes))
-    {
-      fprintf(stderr,"Error in mmgs\n");
-      return CV_ERROR;
-    }
+    fprintf(stderr,"Could not get face ids\n");
+    return CV_ERROR;
   }
-  else
+  if (numAddedRefines != 0)
   {
-    if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmax, hmax))
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,"RefineID") != CV_OK)
     {
-      fprintf(stderr,"Error in mmgs\n");
+      fprintf(stderr,"Array %s does not exist on mesh\n","RefineID");
       return CV_ERROR;
     }
-    if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hgrad, hgrad))
-    {
-      fprintf(stderr,"Error in mmgs\n");
-      return CV_ERROR;
-    }
-    if ( !MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hausd, hausd))
-    {
-      fprintf(stderr,"Error in mmgs\n");
-      return CV_ERROR;
-    }
+    refineIDs = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray("RefineID"));
+  }
+  int numSizes = numFaces + numAddedRefines;
+  delete [] faces;
+  if (!MMGS_Set_iparameter(mesh, sol, MMGS_IPARAM_numberOfLocalParam, numSizes))
+  {
+    fprintf(stderr,"Error in mmgs\n");
+    return CV_ERROR;
+  }
+  if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmax, hmax))
+  {
+    fprintf(stderr,"Error in mmgs\n");
+    return CV_ERROR;
+  }
+  if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hgrad, hgrad))
+  {
+    fprintf(stderr,"Error in mmgs\n");
+    return CV_ERROR;
+  }
+  if ( !MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hausd, hausd))
+  {
+    fprintf(stderr,"Error in mmgs\n");
+    return CV_ERROR;
   }
   if (!MMGS_Set_meshSize(mesh, numPts, numTris, numEdges))
   {
@@ -146,11 +140,6 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     fprintf(stderr,"Error in mmgs\n");
     return CV_ERROR;
   }
-  //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_angleDetection, angle))
-  //{
-  //  fprintf(stderr,"Error in mmgs\n");
-  //  return CV_ERROR;
-  //}
   if (!MMGS_Set_iparameter(mesh, sol, MMGS_IPARAM_angle,0))
   {
     fprintf(stderr,"Error in mmgs\n");
@@ -171,11 +160,11 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     double ptsize = 0.0;
     if (useSizingFunction)
     {
-      ptsize = 1.3*meshSizingFunction->GetValue(i);
+      ptsize = meshSizingFunction->GetValue(i);
     }
     else
     {
-      ptsize = hmax/1.5;
+      ptsize = (hmax+hmin)/2;
     }
     if (!MMGS_Set_scalarSol(sol, ptsize, i+1))
     {
@@ -199,27 +188,25 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
 	refineCt += refineIDs->GetValue(pts[j]);;
     }
     tria->ref = boundaryScalars->GetValue(i);
+    double newmax = 0.0;
+    double newmin = 0.0;
     if (useSizingFunction)
     {
-      double newmax = 0.0;
-      double newmin = 0.0;
       if (numAddedRefines != 0 && refineCt%3 == 0 && refineCt != 0)
-      {
-	tria->ref = minmax[1] + refineIDs->GetValue(pts[2]);
-	double meshsize = 1.3*meshSizingFunction->GetValue(pts[2]);
-	newmax = 1.5*meshsize;
-	newmin = 0.5*meshsize;
-      }
-      else
-      {
-	newmax = hmax;
-	newmin = hmin;
-      }
-      if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, 10.0*hausd))
-      {
-	fprintf(stderr,"Error in mmgs\n");
-	return CV_ERROR;
-      }
+        tria->ref = minmax[1] + refineIDs->GetValue(pts[2]);
+      double meshsize = meshSizingFunction->GetValue(pts[2]);
+      newmax = 1.5*meshsize;
+      newmin = 0.5*meshsize;
+    }
+    else
+    {
+      newmax = hmax;
+      newmin = hmin;
+    }
+    if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, hausd))
+    {
+      fprintf(stderr,"Error in mmgs\n");
+      return CV_ERROR;
     }
   }
   MMG5_pEdge edge;

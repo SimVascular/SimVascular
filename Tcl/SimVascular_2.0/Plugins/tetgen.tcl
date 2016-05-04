@@ -34,6 +34,7 @@ proc guiMMcreateTetGenScriptFile {} {
   global gFilenames
   global guiMMvars
   global guiTGvars
+  global guiMMGvars
   global gOptions
 
   set mesh_kernel $gOptions(meshing_kernel)
@@ -130,6 +131,9 @@ proc guiMMcreateTetGenScriptFile {} {
   }
   if {$guiTGvars(useVerbose)} {
     puts $fp "option Verbose"
+  }
+  if {$guiTGvars(useHausd)} {
+    puts $fp "option Hausd $guiMMGvars(hausd)"
   }
   if {$guiTGvars(useMeshTetGenOptions)} {
     puts $fp "option $guiTGvars(meshTetGenOptions)"
