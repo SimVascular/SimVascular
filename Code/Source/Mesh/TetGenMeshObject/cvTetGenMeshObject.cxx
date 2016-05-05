@@ -66,11 +66,14 @@
 #include "vtkAppendPolyData.h"
 
 #ifdef SV_USE_VMTK
-	#include "cv_VMTK_utils.h"
-	#include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
-	#include "vtkvmtkUnstructuredGridTetraFilter.h"
+  #include "cv_VMTK_utils.h"
+  #include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
+  #include "vtkvmtkUnstructuredGridTetraFilter.h"
 #endif
 
+#ifdef SV_USE_MMG
+  #include "cv_mmg_mesh_utils.h"
+#endif
 
 // -----------
 // cvTetGenMeshObject
@@ -133,6 +136,13 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.secondarrayfunction=0;
   meshoptions_.meshwallfirst=0;
   meshoptions_.startwithvolume=0;
+  meshoptions_.refinecount=0;
+#ifdef SV_USE_MMG
+  meshoptions_.usemmg=1;
+#else
+  meshoptions_.usemmg=0;
+#endif
+  meshoptions_.hausd=0;
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
@@ -721,7 +731,7 @@ int cvTetGenMeshObject::NewMesh() {
   {
     if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
-      fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
+      fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
 		      Something may have gone wrong when setting up BL");
       return CV_ERROR;
     }
@@ -849,6 +859,16 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else if(!strncmp(flags,"StartWithVolume",15)) {//r
       meshoptions_.startwithvolume=1;
   }
+  else if(!strncmp(flags,"Hausd",5)) {//r
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.hausd=values[0];
+  }
+  else if (!strncmp(flags,"UseMMG",6)){
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.usemmg=values[0];
+  }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
@@ -941,20 +961,23 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   polydatasolid_->GetCellData()->AddArray(wallArray);
   wallArray->Delete();
 
-  vtkSmartPointer<vtkThreshold> thresholder =
-    vtkSmartPointer<vtkThreshold>::New();
-  thresholder->SetInputData(polydatasolid_);
-   //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
-  thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  thresholder->ThresholdBetween(1,1);
-  thresholder->Update();
+  if (meshoptions_.usemmg == 0)
+  {
+    vtkSmartPointer<vtkThreshold> thresholder =
+      vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(polydatasolid_);
+     //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
+    thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
+    thresholder->ThresholdBetween(1,1);
+    thresholder->Update();
 
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
-    vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
+      vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
 
-  polydatasolid_->DeepCopy(surfacer->GetOutput());
+    polydatasolid_->DeepCopy(surfacer->GetOutput());
+  }
 
   delete [] isWall;
   return CV_OK;
@@ -993,12 +1016,13 @@ int cvTetGenMeshObject::SetCylinderRefinement(double size, double radius,
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementCylinder(polydatasolid_,"MeshSizingFunction",
 	size,radius,center,length,normal,meshoptions_.secondarrayfunction,
-	meshoptions_.maxedgesize) != CV_OK)
+	meshoptions_.maxedgesize,"RefineID",meshoptions_.refinecount) != CV_OK)
   {
     return CV_ERROR;
   }
 
   meshoptions_.secondarrayfunction = 1;
+  meshoptions_.refinecount += 1;
   return CV_OK;
 }
 
@@ -1031,12 +1055,13 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementSphere(polydatasolid_,"MeshSizingFunction",
 	size,radius,center,meshoptions_.secondarrayfunction,
-	meshoptions_.maxedgesize) != CV_OK)
+	meshoptions_.maxedgesize,"RefineID",meshoptions_.refinecount) != CV_OK)
   {
     return CV_ERROR;
   }
 
   meshoptions_.secondarrayfunction = 1;
+  meshoptions_.refinecount += 1;
   return CV_OK;
 }
 
@@ -1489,15 +1514,42 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     meshsizingfunction = NULL;
   }
 
-  //Generate Surface Remeshing
-  if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
-	meshcapsonly,preserveedges,trianglesplitfactor,
-	collapseanglethreshold,NULL,markerListName,
-	useSizingFunction,meshsizingfunction) != CV_OK)
+#ifdef SV_USE_MMG
+  if (meshoptions_.usemmg)
   {
-    fprintf(stderr,"Problem with surface meshing\n");
-    return CV_ERROR;
+    double meshsize = meshoptions_.maxedgesize;
+    double mmg_maxsize = 1.5*meshsize;
+    double mmg_minsize = 0.5*meshsize;
+    if (meshoptions_.hausd == 0)
+      meshoptions_.hausd = 10.0*meshsize;
+    double hausd = meshoptions_.hausd;
+    double dumAng = 45.0;
+    double hgrad = 1.01;
+
+    //Generate Surface Remeshing
+    if(MMGUtils_SurfaceRemeshing(polydatasolid_, mmg_minsize,
+	  mmg_maxsize, hausd, dumAng, hgrad,
+	  useSizingFunction, meshsizingfunction, meshoptions_.refinecount) != CV_OK)
+    {
+      fprintf(stderr,"Problem with surface meshing\n");
+      return CV_ERROR;
+    }
   }
+  else
+  {
+#endif
+    //Generate Surface Remeshing
+    if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
+          meshcapsonly,preserveedges,trianglesplitfactor,
+          collapseanglethreshold,NULL,markerListName,
+          useSizingFunction,meshsizingfunction) != CV_OK)
+    {
+      fprintf(stderr,"Problem with surface meshing\n");
+      return CV_ERROR;
+    }
+#ifdef SV_USE_MMG
+  }
+#endif
 
   if (TGenUtils_CheckSurfaceMesh(polydatasolid_,
 	  meshoptions_.meshwallfirst) != CV_OK)

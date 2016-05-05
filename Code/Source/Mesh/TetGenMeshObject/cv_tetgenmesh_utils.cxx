@@ -832,7 +832,8 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 
 int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,double radius, double *center,
-    double length, double *normal, int secondarray,double maxedgesize)
+    double length, double *normal, int secondarray,double maxedgesize,
+    std::string refineIDArrayName, int refinecount)
 {
   int numPts;
   double disttopoint;
@@ -843,6 +844,7 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
     norm[i] = normal[i];
   vtkIdType pointId;
   vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkIntArray> refineIDArray = vtkSmartPointer<vtkIntArray>::New();
 
   //Set sizing function params
   numPts = polydatasolid->GetNumberOfPoints();
@@ -855,6 +857,13 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
       return CV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
+    {
+      fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
+		      Reset or remake the array and try again\n",refineIDArrayName.c_str());
+      return CV_ERROR;
+    }
+    refineIDArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(refineIDArrayName.c_str()));
   }
   else
   {
@@ -862,9 +871,14 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
     meshSizeArray->Allocate(numPts,1000);
     meshSizeArray->SetNumberOfTuples(numPts);
     meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    refineIDArray->SetNumberOfComponents(1);
+    refineIDArray->Allocate(numPts,1000);
+    refineIDArray->SetNumberOfTuples(numPts);
+    refineIDArray->SetName(refineIDArrayName.c_str());
     for (pointId = 0;pointId<numPts;pointId++)
     {
       meshSizeArray->SetValue(pointId,0.0);
+      refineIDArray->SetValue(pointId,0);
     }
   }
 
@@ -888,7 +902,10 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
 
     //set value to new size
     if (disttopoint <= radius && distalonglength <= length/2)
-        meshSizeArray->SetValue(pointId,size);
+    {
+      meshSizeArray->SetValue(pointId,size);
+      refineIDArray->SetValue(pointId,refinecount+1);
+    }
     else
     {
       if (meshSizeArray->GetValue(pointId) == 0)
@@ -902,6 +919,7 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
   }
   polydatasolid->GetPointData()->AddArray(meshSizeArray);
   polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
+  polydatasolid->GetPointData()->AddArray(refineIDArray);
 
   return CV_OK;
 }
@@ -920,13 +938,15 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
  */
 
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
-    std::string sizingFunctionArrayName,double size,double radius, double *center,int secondarray,double maxedgesize)
+    std::string sizingFunctionArrayName,double size,double radius, double *center,
+    int secondarray,double maxedgesize, std::string refineIDArrayName, int refinecount)
 {
   int numPts;
   double dist;
   double pts[3];
-  vtkIdType pointId;
+  vtkIdType pointId, cellId;
   vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkIntArray> refineIDArray = vtkSmartPointer<vtkIntArray>::New();
 
   //Set sizing function params
   numPts = polydatasolid->GetNumberOfPoints();
@@ -939,6 +959,13 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
       return CV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
+    {
+      fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
+		      Reset or remake the array and try again\n",refineIDArrayName.c_str());
+      return CV_ERROR;
+    }
+    refineIDArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(refineIDArrayName.c_str()));
   }
   else
   {
@@ -946,9 +973,14 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
     meshSizeArray->Allocate(numPts,1000);
     meshSizeArray->SetNumberOfTuples(numPts);
     meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    refineIDArray->SetNumberOfComponents(1);
+    refineIDArray->Allocate(numPts,1000);
+    refineIDArray->SetNumberOfTuples(numPts);
+    refineIDArray->SetName(refineIDArrayName.c_str());
     for (pointId = 0;pointId<numPts;pointId++)
     {
       meshSizeArray->SetValue(pointId,0.0);
+      refineIDArray->SetValue(pointId,0);
     }
   }
 
@@ -962,7 +994,10 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
 
     //set value to new size
     if (dist <= radius)
-        meshSizeArray->SetValue(pointId,size);
+    {
+      meshSizeArray->SetValue(pointId,size);
+      refineIDArray->SetValue(pointId,refinecount+1);
+    }
     else
     {
       if (meshSizeArray->GetValue(pointId) == 0)
@@ -973,9 +1008,11 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
   if (secondarray)
   {
     polydatasolid->GetPointData()->RemoveArray(sizingFunctionArrayName.c_str());
+    polydatasolid->GetPointData()->RemoveArray(refineIDArrayName.c_str());
   }
   polydatasolid->GetPointData()->AddArray(meshSizeArray);
   polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
+  polydatasolid->GetPointData()->AddArray(refineIDArray);
 
   return CV_OK;
 }

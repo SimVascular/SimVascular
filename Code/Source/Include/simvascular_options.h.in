@@ -44,6 +44,7 @@
 #cmakedefine SV_USE_GTS @SV_USE_GTS@
 #cmakedefine SV_USE_GLIB @SV_USE_GLIB@
 #cmakedefine SV_USE_TETGEN @SV_USE_TETGEN@
+#cmakedefine SV_USE_MMG @SV_USE_MMG@
 #ifdef SV_USE_TETGEN
   #cmakedefine TETGEN150 @TETGEN150@
   #cmakedefine TETGEN143 @TETGEN143@

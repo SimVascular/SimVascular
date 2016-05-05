@@ -75,6 +75,11 @@
   #include "cv_tetgen_mesh_init.h"
 #endif
 
+#ifdef SV_USE_MMG
+  #include "cv_mesh_init.h"
+  #include "cv_mmg_mesh_init.h"
+#endif
+
 #ifdef SV_USE_MESHSIM_DISCRETE_MODEL
   #include "cv_discrete_init.h"
 #endif
@@ -236,6 +241,13 @@ int SimVascular_Init( Tcl_Interp *interp )
   if ( Gdscmesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on gdscMesh_Init\n" );
       return TCL_ERROR;
+  }
+#endif
+
+#ifdef SV_USE_MMG
+  if ( Mmgmesh_Init(interp) == TCL_ERROR ) {
+    fprintf( stderr, "error on Mmgmesh_Init\n" );
+    return TCL_ERROR;
   }
 #endif
 

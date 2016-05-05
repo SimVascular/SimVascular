@@ -34,6 +34,13 @@ if(SV_USE_TETGEN)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tetgen_mesh)
 endif()
 
+if(SV_USE_MMG)
+	include_directories(${MMG_INCLUDE_DIR})
+	SET(CXXSRCS ${CXXSRCS}
+	${SV_SOURCE_DIR}/Source/Mesh/MMGMeshUtils/cv_mmg_mesh_init.cxx)
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_mmg_mesh)
+endif()
+
 if(SV_USE_MESHSIM)
 	if (NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
 	  SET(CXXSRCS ${CXXSRCS}
@@ -113,6 +120,7 @@ target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${ZLIB_LIBRARY} ${ITK_LIBRARIES}
 			${INTELRUNTIME_LIBRARIES}
 			${GLOBAL_LIBRARIES}
+			${MMG_LIBRARY}
 			${FREETYPE_LIBRARY})
 
 if(SV_USE_PYTHON)

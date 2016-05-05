@@ -80,6 +80,9 @@ mark_as_superbuild(SV_USE_VMTK)
 option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
 mark_as_superbuild(SV_USE_TETGEN)
 
+option(SV_USE_MMG "Enable Mmg Meshing Plugin" OFF)
+mark_as_superbuild(SV_USE_MMG)
+
 option(VTK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
 mark_as_superbuild(VTK_SHARED_LIBRARIES)
 

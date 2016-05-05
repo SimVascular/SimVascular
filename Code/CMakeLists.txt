@@ -213,6 +213,15 @@ endif()
 #-----------------------------------------------------------------------------
 # Begin Plugin Logic
 #-----------------------------------------------------------------------------
+# Plugin Mmg
+if(SV_USE_MMG)
+	simvascular_external(MMG DOWNLOADABLE)
+	set(USE_MMG ON)
+	mark_as_superbuild(MMG_DIR)
+	mark_as_superbuild(MMG_INCLUDE_DIR)
+	mark_as_superbuild(MMG_LIBRARY)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+endif()
 
 #-----------------------------------------------------------------------------
 # Plugin Tetgen
@@ -653,6 +662,7 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
+# OPENCASCADE Setup
 if(SV_USE_OPENCASCADE)
 	set(OPENCASCADE_VERSION "6.9")
 	find_package(OPENCASCADE)
@@ -668,6 +678,15 @@ endif()
 if(SV_USE_ITK)
 	find_package(ITK REQUIRED)
 	include(${ITK_USE_FILE})
+endif()
+
+#-----------------------------------------------------------------------------
+# MMG Setup
+if(SV_USE_MMG)
+	find_package(MMG)
+	mark_as_superbuild(MMG_DIR)
+	mark_as_superbuild(MMG_INCLUDE_DIR)
+	mark_as_superbuild(MMG_LIBRARY)
 endif()
 
 #-----------------------------------------------------------------------------

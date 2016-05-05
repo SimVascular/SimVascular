@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -29,17 +29,17 @@
  *=========================================================================*/
 
 /** @file cv_tetgenmesh_utils.h
- *  @brief These functions are utilities that are called mostly by 
+ *  @brief These functions are utilities that are called mostly by
  *  cvTetGenMeshObject
- *  @details These functions are called mostly by cvTetGenMeshObject and 
- *  they provide a clean way for implementation of functions with that 
+ *  @details These functions are called mostly by cvTetGenMeshObject and
+ *  they provide a clean way for implementation of functions with that
  *  class. They provide the full code for conversion between tetgen
  *  and vtkPolyData
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #ifndef __CV_TETGENMESH_UTILS_H
@@ -58,7 +58,7 @@ int TGenUtils_Init();
 //
 int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid,
     int meshsizingfunction, vtkDoubleArray *meshSizingFunction,
-    int useBoundary, std::string markerListArrayName, double maxEdgeSize); 
+    int useBoundary, std::string markerListArrayName, double maxEdgeSize);
 
 int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,
     vtkPolyData *surfaceMesh,tetgenio *inmesh);
@@ -76,12 +76,14 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh);
 
 int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,double radius,
-    double* center,double length, double *normal, int secondarray, 
-    double maxedgesize);
+    double* center,double length, double *normal, int secondarray,
+    double maxedgesize, std::string refineIDArrayName,
+    int refinecount);
 
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,double radius,
-    double* center,int secondarray, double maxedgesize);
+    double* center,int secondarray, double maxedgesize, std::string refineIDArrayName,
+    int refinecount);
 
 int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,char *functionname, int secondarray);

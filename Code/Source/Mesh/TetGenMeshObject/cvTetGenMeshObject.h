@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -34,12 +34,12 @@
  *  This is derived from the MeshObject class and provides implementations
  *  of functions to be able to set up a mesh by converting to TetGen
  *  data structures, set the options for meshing, run the mesh, and convert
- *  the mesh back into vtkPolyData 
+ *  the mesh back into vtkPolyData
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  *  @note Most functions in class call functions in cv_polydatasolid_utils.
  */
 
@@ -86,6 +86,9 @@ class cvTetGenMeshObject : public cvMeshObject {
     int secondarrayfunction;
     int meshwallfirst;
     int startwithvolume;
+    int refinecount;
+    int usemmg;
+    double hausd;
   } TGoptions;
 
   public:
@@ -112,11 +115,11 @@ class cvTetGenMeshObject : public cvMeshObject {
 
   //Set curve sizes and other mesh options
   int SetMeshOptions(char *flags,int numValues, double *values);
- 
+
   //Set boundary layer and/or specify wall faces
-  int SetBoundaryLayer(int type, int id, int side, int nL, double* H); 
-  int SetWalls(int numWalls,int *walls); 
-  
+  int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
+  int SetWalls(int numWalls,int *walls);
+
   //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
                             double* center, double *normal);
@@ -132,7 +135,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   int WriteMetisAdjacency (char *filename);
 
   // general queries
-  int GetNodeCoords(int node);  
+  int GetNodeCoords(int node);
   cvPolyData *GetPolyData();
   cvPolyData *GetSolid();
   cvUnstructuredGrid *GetUnstructuredGrid();
@@ -179,7 +182,7 @@ class cvTetGenMeshObject : public cvMeshObject {
   vtkUnstructuredGrid *innerblmesh_;
 
   TGoptions meshoptions_;
-  
+
 };
 
 #endif // _CVTETGENMESHOBJECT_H

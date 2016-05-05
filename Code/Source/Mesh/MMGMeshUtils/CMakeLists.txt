@@ -29,38 +29,24 @@
  #=========================================================================#
 
 #-----------------------------------------------------------------------------
-# Plugin - TetGen Mesh
+# Plugin - MMG Mesh
 #-----------------------------------------------------------------------------
-set(lib lib_simvascular_tetgen_mesh)
-LIST(APPEND PLUGINLIBS ${lib})
-include_directories(${TETGEN_INCLUDE_DIR})
+set(lib lib_simvascular_mmg_mesh)
+include_directories(${MMG_INCLUDE_DIR})
 
-SET(CXXSRCS cvTetGenMeshObject.cxx cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx)
-SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
+SET(CXXSRCS cv_mmg_mesh_utils.cxx)
+SET(HDRS cv_mmg_mesh_utils.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
-
-if(SV_USE_VMTK)
-	SET(OPTLIBS lib_simvascular_vmtk)
-endif()
-
-if(SV_USE_MMG)
-  include_directories(${MMG_INCLUDE_DIR})
-  SET(OPTLIBS ${OPTLIBS} lib_simvascular_mmg_mesh ${MMG_LIBRARY})
-endif()
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx)
 
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-   ${OPTLIBS}
-   ${PARASOLID_LIBRARIES}
    ${GLOBAL_LIBRARIES}
-   ${TETGEN_LIBRARY}
+   ${MMG_LIBRARY}
    ${ZLIB_LIBRARY}
    lib_simvascular_globals lib_simvascular_utils
    lib_simvascular_polydatasolid lib_simvascular_mesh
    )
-
-set_target_properties(${lib} PROPERTIES "COMPILE_DEFINITIONS" TETLIBRARY)
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
