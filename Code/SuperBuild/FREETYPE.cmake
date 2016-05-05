@@ -44,20 +44,20 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/freetype.git")
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj}
+    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR}
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR}
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
+    set(${proj}_OUTPUT_DIR ${CSV_EXT_${proj}_SRC_DIR})
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
   endif()
 
   set(${proj}_INSTALL_DIR "freetype")
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${${proj}_OUTPUT_DIR}-prefix
+   PREFIX ${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""
@@ -72,7 +72,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_INSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
    -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-   INSTALL_COMMAND ""
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )

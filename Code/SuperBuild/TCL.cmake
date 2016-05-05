@@ -50,8 +50,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	unset(TK_LIBRARY CACHE)
 	unset(TK_WISH CACHE)
 
-	set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/TCLTK)
-	set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/TCLTK)
+	set(${proj}_OUTPUT_DIR ${SV_EXT_TCL_SRC_DIR})
+	set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_TCL_SRC_DIR})
 
 	if(LINUX)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/14.04/latest/linux.gcc-4.8.x64.tcltk-8.6.4.tar.gz" CACHE
@@ -70,7 +70,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	
 	ExternalProject_Add(${proj}
 		URL ${SuperBuild_${proj}_URL}
-		PREFIX ${${proj}_OUTPUT_DIR}-prefix
+		PREFIX ${SV_EXT_TCL_PFX_DIR}
 		SOURCE_DIR ${${proj}_OUTPUT_DIR}
 		BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
 		CONFIGURE_COMMAND ""

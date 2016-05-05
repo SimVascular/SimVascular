@@ -699,9 +699,9 @@ macro(ExternalProject_Add_Empty project_name)
   endif()
 
   ExternalProject_Add(${project_name}
-    PREFIX empty/${project_name}-prefix
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/empty/${project_name}
-    BINARY_DIR empty/${project_name}-build
+    PREFIX Empty/${project_name}-prefix
+    SOURCE_DIR ${CMAKE_BINARY_DIR}/Empty/${project_name}
+    BINARY_DIR Empty/${project_name}-build
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""

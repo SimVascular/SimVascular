@@ -68,25 +68,17 @@ endif()
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 
-  set(revision_tag "v7.0.0")
+  set(revision_tag "v${${proj}_VERSION}")
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
+    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR} 
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build  
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR}  
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
-  endif()
-  if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/externals/TCLTK/internals/tk8.6)
-    set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
-  endif()
-  if(WIN32 AND NOT TK_XLIB_PATH)
-    set(TK_XLIB_PATH ${TCL_INCLUDE_PATH})
-    set(VTK_TK_XLIB_PATH_DEFINE  "-DTK_XLIB_PATH:PATH=${TK_XLIB_PATH}")
+    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
   endif()
 
   set(${proj}_INSTALL_DIR "opencascade")
@@ -99,7 +91,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${${proj}_OUTPUT_DIR}-prefix
+   PREFIX ${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""
@@ -128,7 +120,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${3RDPARTY_VTK_LIBRARY_DIR}
    -DINSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
    -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
-   INSTALL_COMMAND ""
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )

@@ -55,6 +55,11 @@ include(SimVascularOptions)
 #-----------------------------------------------------------------------------
 # Include Dependent Options
 include(SimVascularDependentOptions)
+#-----------------------------------------------------------------------------
+# Include SimVascular Externals
+include(SimVascularSystemCheck)
+include(SimVascularVersion)
+include(SimVascularExternals)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
@@ -74,8 +79,6 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------
-include(SimVascularSystemCheck)
-include(SimVascularVersion)
 include(SimVascularInstallSetup)
 include(SimVascularHomeSetup)
 include(SimVascularTclSetup)

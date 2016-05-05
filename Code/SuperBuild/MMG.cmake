@@ -42,17 +42,17 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(revision_tag "v5.1.0")
+  set(revision_tag "v${${proj}_VERSION}")
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/mmg.git"
     GIT_TAG ${revision_tag})
-  set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
-  set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
+  set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
+  set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
 
   set(${proj}_INSTALL_DIR "mmg")
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${${proj}_OUTPUT_DIR}-prefix
+   PREFIX ${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""

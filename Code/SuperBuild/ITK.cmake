@@ -48,17 +48,17 @@ endif()
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 
-  set(revision_tag "v4.8.0")
+  set(revision_tag "v${${proj}_VERSION}")
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
+    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR}
        CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-b  
+     set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR}
       CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-b)
+    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
   endif()
 
   set(ITK_USE_GDCM "OFF")
@@ -68,7 +68,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${${proj}_OUTPUT_DIR}-p
+   PREFIX ${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""
@@ -95,7 +95,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DITK_INSTALL_INCLUDE_DIR:PATH=${SV_INSTALL_ITK_INCLUDE_DIR}
    -DITK_USE_SYSTEM_GDCM:BOOL=${${proj}_USE_GDCM}
    -DGDCM_DIR:PATH=${GDCM_DIR}
-   INSTALL_COMMAND ""
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
@@ -105,7 +104,7 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 #  file(COPY ${${proj}_DIR}/cmake_install.cmake
-#       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
+#       DESTINATION ${CMAKE_BINARY_DIR}/Empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

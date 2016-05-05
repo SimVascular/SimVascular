@@ -4,7 +4,7 @@
 #option(SV_SUPERBUILD_INSTALL 
   #  "Enabling this option will install automatically SimVascular in Superbuild Mode" OFF)
 option(SV_ENABLE_DISTRIBUTION 
-  "Enalble Distribution Targets (CPack)" OFF)
+  "Enable Distribution Targets (CPack)" OFF)
 mark_as_advanced(SV_ENABLE_DISTRIBUTION)
 mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
 
@@ -22,7 +22,7 @@ endif()
 #mark_as_superbuild(SUPERBUILD_INSTALL_PREFIX:PATH)
 
 if(NOT SV_INSTALL_ROOT_DIR)
-  set(SV_INSTALL_ROOT_DIR simvascular)
+  set(SV_INSTALL_ROOT_DIR ${SV_EXTERNALS_INSTALL_ROOT_DIR})
 endif()
 mark_as_superbuild(SV_INSTALL_ROOT_DIR:PATH)
 if(NOT WIN32)
