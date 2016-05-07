@@ -4,7 +4,7 @@
 #option(SV_SUPERBUILD_INSTALL 
   #  "Enabling this option will install automatically SimVascular in Superbuild Mode" OFF)
 option(SV_ENABLE_DISTRIBUTION 
-  "Enable Distribution Targets (CPack)" OFF)
+  "Enalble Distribution Targets (CPack)" OFF)
 mark_as_advanced(SV_ENABLE_DISTRIBUTION)
 mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
 
@@ -22,7 +22,7 @@ endif()
 #mark_as_superbuild(SUPERBUILD_INSTALL_PREFIX:PATH)
 
 if(NOT SV_INSTALL_ROOT_DIR)
-  set(SV_INSTALL_ROOT_DIR ${SV_EXTERNALS_INSTALL_ROOT_DIR})
+  set(SV_INSTALL_ROOT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR})
 endif()
 mark_as_superbuild(SV_INSTALL_ROOT_DIR:PATH)
 if(NOT WIN32)
@@ -123,27 +123,27 @@ mark_as_superbuild(SV_INSTALL_EXTERNAL_EXE_DIR:PATH)
 #-----------------------------------------------------------------------------
 # VTK 
 if(NOT SV_INSTALL_VTK_RUNTIME_DIR)
-  set(SV_INSTALL_VTK_RUNTIME_DIR vtk/bin)
+  set(SV_INSTALL_VTK_RUNTIME_DIR ${SV_EXT_VTK_BIN_DIR}/bin)
 endif()
 mark_as_superbuild(SV_INSTALL_VTK_RUNTIME_DIR:PATH)
 
 if(NOT SV_INSTALL_VTK_LIBRARY_DIR)
-  set(SV_INSTALL_VTK_LIBRARY_DIR vtk/lib)
+  set(SV_INSTALL_VTK_LIBRARY_DIR ${SV_EXT_VTK_BIN_DIR}/lib)
 endif()
 mark_as_superbuild(SV_INSTALL_VTK_LIBRARY_DIR:PATH)
 
 if(NOT SV_INSTALL_VTK_ARCHIVE_DIR)
-  set(SV_INSTALL_VTK_ARCHIVE_DIR vtk/lib)
+  set(SV_INSTALL_VTK_ARCHIVE_DIR ${SV_EXT_VTK_BIN_DIR}/lib)
 endif()
 mark_as_superbuild(SV_INSTALL_VTK_ARCHIVE_DIR:PATH)
 
 if(NOT SV_INSTALL_VTK_INCLUDE_DIR)
-  set(SV_INSTALL_VTK_INCLUDE_DIR vtk/include)
+  set(SV_INSTALL_VTK_INCLUDE_DIR ${SV_EXT_VTK_BIN_DIR}/include)
 endif()
 mark_as_superbuild(SV_INSTALL_VTK_INCLUDE_DIR:PATH)
 
 if(NOT SV_INSTALL_VTK_TCL_DIR)
-  set(SV_INSTALL_VTK_TCL_DIR vtk/lib/tcltk/modules)
+  set(SV_INSTALL_VTK_TCL_DIR ${SV_EXT_VTK_BIN_DIR}/lib/tcltk/modules)
 endif()
 mark_as_superbuild(SV_INSTALL_VTK_TCL_DIR:PATH)
 
@@ -155,20 +155,20 @@ mark_as_superbuild(SV_INSTALL_BUILD_SHARED_LIBS)
 # ITK 
 #
 if(NOT SV_INSTALL_ITK_RUNTIME_DIR)
-  set(SV_INSTALL_ITK_RUNTIME_DIR itk/bin)
+  set(SV_INSTALL_ITK_RUNTIME_DIR ${SV_EXT_ITK_BIN_DIR}/bin)
 endif()
 mark_as_superbuild(SV_INSTALL_ITK_RUNTIME_DIR:PATH)
 if(NOT SV_INSTALL_ITK_LIBRARY_DIR)
-  set(SV_INSTALL_ITK_LIBRARY_DIR itk/lib)
+  set(SV_INSTALL_ITK_LIBRARY_DIR ${SV_EXT_ITK_BIN_DIR}/lib)
 endif()
 mark_as_superbuild(SV_INSTALL_ITK_LIBRARY_DIR:PATH)
 if(NOT SV_INSTALL_ITK_ARCHIVE_DIR)
-  set(SV_INSTALL_ITK_ARCHIVE_DIR itk/lib)
+  set(SV_INSTALL_ITK_ARCHIVE_DIR ${SV_EXT_ITK_BIN_DIR}/lib)
 endif()
 mark_as_superbuild(SV_INSTALL_ITK_ARCHIVE_DIR:PATH)
 
 if(NOT SV_INSTALL_ITK_INCLUDE_DIR)
-  set(SV_INSTALL_ITK_INCLUDE_DIR itk/include)
+  set(SV_INSTALL_ITK_INCLUDE_DIR ${SV_EXT_ITK_BIN_DIR}/include)
 endif()
 mark_as_superbuild(SV_INSTALL_ITK_INCLUDE_DIR:PATH)
 
@@ -176,16 +176,16 @@ mark_as_superbuild(SV_INSTALL_ITK_INCLUDE_DIR:PATH)
 # OPENCASCADE 
 #
 if(NOT OPENCASCADE_INSTALL_DIR)
-  set(OPENCASCADE_INSTALL_DIR ${SV_INSTALL_ROOT_DIR}/opencascade)
+  set(OPENCASCADE_INSTALL_DIR ${SV_INSTALL_ROOT_DIR})
 endif()
 
 if(NOT SV_INSTALL_OPENCASCADE_LIBRARY_DIR)
-  set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR opencascade/lib)
+  set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR ${SV_EXT_OPENCASCADE_BIN_DIR}/lib)
 endif()
 mark_as_superbuild(SV_INSTALL_OPENCASCADE_LIBRARY_DIR:PATH)
 
 if(NOT SV_INSTALL_OPENCASCADE_INCLUDE_DIR)
-  set(SV_INSTALL_OPENCASCADE_INCLUDE_DIR opencascade/include)
+  set(SV_INSTALL_OPENCASCADE_INCLUDE_DIR ${SV_EXT_OPENCASCADE_BIN_DIR}/include)
 endif()
 mark_as_superbuild(SV_INSTALL_OPENCASCADE_INCLUDE_DIR:PATH)
 

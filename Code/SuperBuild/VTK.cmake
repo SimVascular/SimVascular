@@ -60,10 +60,10 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
-  set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
+  set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+  set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
   if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/${SV_EXT_TCL_SRC_DIR}/internals/tk8.6)
+    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/internals/tk8.6)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
   endif()
   if(WIN32 AND NOT TK_XLIB_PATH)
@@ -71,10 +71,14 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(VTK_TK_XLIB_PATH_DEFINE  "-DTK_XLIB_PATH:PATH=${TK_XLIB_PATH}")
   endif()
 
+  message("AHHHHHHHHHHHHHHHHHHHH")
+  message(${TCL_INCLUDE_PATH})
+  message(${TCL_LIBRARY})
+  message(${TCL_TCLSH})
   ExternalProject_Add(${proj}
    ${${proj}_EP_ARGS}
    GIT_REPOSITORY "https://github.com/SimVascular/VTK.git"
-   PREFIX ${SV_EXT_${proj}_PFX_DIR}
+   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    GIT_TAG "simvascular-patch-6.2"

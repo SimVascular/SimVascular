@@ -57,11 +57,11 @@ endif()
 get_filename_component(TCL_LIBRARY_DIR ${TCL_LIBRARY} PATH)
 get_filename_component(TK_LIBRARY_DIR ${TK_LIBRARY} PATH)
 
-set(3RDPARTY_VTK_INCLUDE_DIR "${VTK_DIR}/${SV_INSTALL_ROOT_DIR}/${SV_INSTALL_VTK_INCLUDE_DIR}")
-set(3RDPARTY_VTK_LIBRARY_DIR "${VTK_DIR}/${SV_INSTALL_ROOT_DIR}/${SV_INSTALL_VTK_LIBRARY_DIR}")
+set(3RDPARTY_VTK_INCLUDE_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_INSTALL_VTK_INCLUDE_DIR}")
+set(3RDPARTY_VTK_LIBRARY_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_INSTALL_VTK_LIBRARY_DIR}")
 
 set(OPENCASCADE_BUILD_LIBRARY_TYPE "Static")
-if(${OPENCASCADE_SHARED_LIBRARIES})
+if(OPENCASCADE_SHARED_LIBRARIES)
   set(OPENCASCADE_BUILD_LIBRARY_TYPE "Shared")
 endif()
 
@@ -72,16 +72,16 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR} 
+    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR}  
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
-    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+     set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
   endif()
 
-  set(${proj}_INSTALL_DIR "opencascade")
+  set(${proj}_INSTALL_DIR "${SV_EXT_${proj}_BIN_DIR}")
 
   #if(APPLE)
   #  set(${proj}_BUILD_TYPE "Debug")
@@ -91,7 +91,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${SV_EXT_${proj}_PFX_DIR}
+   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""
@@ -115,7 +115,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DUSE_VTK:BOOL=ON
    -DVTK_VERSION:STRING=${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
    -DVTK_DIR:PATH=${VTK_DIR}
-   -D3RDPARTY_VTK_DIR:PATH=${VTK_DIR}
+   -D3RDPARTY_VTK_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_INSTALL_VTK_BIN_DIR}
    -D3RDPARTY_VTK_INCLUDE_DIR:PATH=${3RDPARTY_VTK_INCLUDE_DIR}
    -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${3RDPARTY_VTK_LIBRARY_DIR}
    -DINSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
@@ -128,8 +128,8 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-  file(COPY ${${proj}_DIR}/cmake_install.cmake
-       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
+  #file(COPY ${${proj}_DIR}/cmake_install.cmake
+  #  DESTINATION ${CMAKE_BINARY_DIR}/Empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

@@ -52,13 +52,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR}
+    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR}
        CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
-     set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR}
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}
       CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
-    set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
   endif()
 
   set(ITK_USE_GDCM "OFF")
@@ -68,7 +68,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${SV_EXT_${proj}_PFX_DIR}
+   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""

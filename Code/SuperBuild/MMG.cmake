@@ -45,14 +45,14 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(revision_tag "v${${proj}_VERSION}")
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/mmg.git"
     GIT_TAG ${revision_tag})
-  set(${proj}_OUTPUT_DIR ${SV_EXT_${proj}_SRC_DIR})
-  set(${proj}_OUTPUT_BIN_DIR ${SV_EXT_${proj}_BLD_DIR})
+  set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+  set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
 
-  set(${proj}_INSTALL_DIR "mmg")
+  set(${proj}_INSTALL_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}")
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${SV_EXT_${proj}_PFX_DIR}
+   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_OUTPUT_DIR}
    BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
    UPDATE_COMMAND ""
@@ -63,8 +63,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
    -DCMAKE_MACOSX_RPATH:INTERNAL=1
-   -DCMAKE_INSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
-   -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_INSTALL_DIR}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DLIBMMG2D_STATIC:BOOL=1
    -DLIBMMG3D_STATIC:BOOL=1
