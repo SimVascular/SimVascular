@@ -52,39 +52,18 @@ option(SV_USE_MSMPI "Use MSMPI" OFF)
 mark_as_superbuild(SV_USE_MSMPI)
 
 #-----------------------------------------------------------------------------
-# General Library Options
+# ThirdParty
 option(SV_USE_GLIB "Use GLIB Library" OFF)
 mark_as_superbuild(SV_USE_GLIB)
 
 option(SV_USE_GTS "Use GTS Library" OFF)
 mark_as_superbuild(SV_USE_GTS)
 
-option(SV_USE_GDCM "Enable GDCM" OFF)
-mark_as_superbuild(SV_USE_GDCM)
-
-option(SV_USE_FREETYPE "Enable FREETYPE" OFF)
-mark_as_superbuild(SV_USE_FREETYPE)
-
-#-----------------------------------------------------------------------------
-# Plugins
-
-option(SV_USE_ITK "Enable ITK Plugin" ON)
-mark_as_superbuild(SV_USE_ITK)
-
-option(ITK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(ITK_SHARED_LIBRARIES)
-
 option(SV_USE_VMTK "Enable VMTK Plugin" ON)
 mark_as_superbuild(SV_USE_VMTK)
 
 option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
 mark_as_superbuild(SV_USE_TETGEN)
-
-option(SV_USE_MMG "Enable Mmg Meshing Plugin" OFF)
-mark_as_superbuild(SV_USE_MMG)
-
-option(VTK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(VTK_SHARED_LIBRARIES)
 
 option(SV_USE_PYTHON "Use Tcl Python" OFF)
 mark_as_superbuild(SV_USE_PYTHON)
@@ -94,11 +73,6 @@ mark_as_superbuild(SV_USE_PYTHON)
 # Adaptor converts objects between the different solid models.
 option(SV_USE_MESHSIM_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
 mark_as_superbuild(SV_USE_MESHSIM_ADAPTOR)
-
-#-----------------------------------------------------------------------------
-# Open Source Software Options: Solid Models - OPENCASCADE
-option(SV_USE_OPENCASCADE "OPENCASCADE" OFF)
-mark_as_superbuild(SV_USE_OPENCASCADE)
 
 #-----------------------------------------------------------------------------
 # Commercial Software Options: Solid Models - Parasolid

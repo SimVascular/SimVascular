@@ -42,7 +42,7 @@ FIND_PATH(MMG_INCLUDE_DIR
   $ENV{MMG_INCLUDE_DIR}
   $ENV{HOME}/include/
   ${MMG_DIR}/include/
-  ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_MMG_BIN_DIR}/include
+  ${SV_EXTERNALS_ORIG_DIR}/${SV_EXT_MMG_BIN_DIR}/include
   ${MMG_DIR}/simvascular/include/
   $ENV{MMG_DIR}/include/
   PATH_SUFFIXES
@@ -55,7 +55,7 @@ FIND_LIBRARY(MMG_LIBRARY
   $ENV{MMG_LIBRARY}
   $ENV{HOME}/lib
   ${MMG_DIR}/lib
-  ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_MMG_BIN_DIR}/lib
+  ${SV_EXTERNALS_ORIG_DIR}/${SV_EXT_MMG_BIN_DIR}/lib
   ${MMG_DIR}/simvascular/lib
   $ENV{MMG_DIR}/lib
   DOC "The mmg library"

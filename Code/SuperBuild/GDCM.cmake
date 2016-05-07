@@ -72,7 +72,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DGDCM_BUILD_APPLICATIONS:BOOL=ON
    -DGDCM_BUILD_EXAMPLES:BOOL=OFF
-   -DGDCM_BUILD_SHARED_LIBS:BOOL=${${proj}_SHARED_LIBRARIES}
+   -DGDCM_BUILD_SHARED_LIBS:BOOL=${SV_USE_${proj}_SHARED}
    -DGDCM_BUILD_TESTING:BOOL=OFF
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DGDCM_USE_VTK:BOOL=OFF
@@ -87,8 +87,6 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-  #file(COPY ${${proj}_DIR}/cmake_install.cmake
-  #     DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

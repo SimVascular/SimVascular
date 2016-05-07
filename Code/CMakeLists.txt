@@ -174,7 +174,7 @@ endif()
 #-----------------------------------------------------------------------------
 # VTK
 set(SV_DEPENDS "TCL")
-if(VTK_SHARED_LIBRARIES)
+if(SV_USE_VTK_SHARED)
 	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
 	set(SV_INSTALL_EXTERNALS ON)
 endif()
@@ -224,6 +224,10 @@ if(SV_USE_MMG)
 	mark_as_superbuild(MMG_INCLUDE_DIR)
 	mark_as_superbuild(MMG_LIBRARY)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+	if(SV_USE_MMG_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
+        endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -272,7 +276,7 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugin LevelSets
 if(SV_USE_ITK)
-	if(ITK_SHARED_LIBRARIES)
+	if(SV_USE_ITK_SHARED)
 		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
 		set(SV_INSTALL_EXTERNALS ON)
 	endif()
@@ -289,8 +293,6 @@ endif()
 if(SV_USE_MESHSIM_ADAPTOR)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
 endif()
-
-
 
 #-----------------------------------------------------------------------------
 # GTS
@@ -321,7 +323,9 @@ if(SV_USE_OPENCASCADE)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
 	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
-	#set(SV_INSTALL_EXTERNALS ON)
+	if(SV_USE_OPENCASCADE_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
 	find_package(FREETYPE)
 endif()
 
@@ -334,7 +338,9 @@ if(SV_USE_GDCM)
 	set(USE_GDCM ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
 	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
-	#set(SV_INSTALL_EXTERNALS ON)
+	if(SV_USE_GDCM_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -346,7 +352,9 @@ if(SV_USE_FREETYPE)
 	set(USE_FREETYPE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
 	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
-	#set(SV_INSTALL_EXTERNALS ON)
+	if(SV_USE_FREETYPE_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
 endif()
 
 # Licensed Package Additions
@@ -723,9 +731,9 @@ if(${VTK_DIR} MATCHES "intel")
 	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
 endif()
 set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
-if(VTK_SHARED_LIBRARIES)
+if(SV_USE_VTK_SHARED)
   set(SV_INSTALL_EXTERNALS ON)
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DVTK_BUILD_SHARED_LIBS")
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
 endif()
 
 if(SV_USE_TETGEN)

@@ -701,7 +701,7 @@ macro(ExternalProject_Add_Empty project_name)
   ExternalProject_Add(${project_name}
     PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${project_name}_PFX_DIR}
     SOURCE_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${project_name}_SRC_DIR}
-    BINARY_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${project_name}_BIN_DIR}
+    BINARY_DIR ${${project_name}_DIR}
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
