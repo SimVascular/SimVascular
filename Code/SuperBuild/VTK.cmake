@@ -60,10 +60,23 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
-  set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+  if(WIN32)
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+  else()
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+  endif()
   if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/internals/tk8.6)
+    set(TK_INTERNAL_PATH ${TCL_INCLUDE_PATH}/internals/tk8.6)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
   endif()
   if(WIN32 AND NOT TK_XLIB_PATH)
@@ -74,9 +87,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
    ${${proj}_EP_ARGS}
    GIT_REPOSITORY "https://github.com/SimVascular/VTK.git"
-   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
-   SOURCE_DIR ${${proj}_OUTPUT_DIR}
-   BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+   PREFIX ${${proj}_PFX_DIR}
+   SOURCE_DIR ${${proj}_SRC_DIR}
+   BINARY_DIR ${${proj}_BLD_DIR}
    GIT_TAG "simvascular-patch-6.2"
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
@@ -100,17 +113,18 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    ${VTK_TK_INTENAL_PATH_DEFINE}
    -DTK_LIBRARY:FILEPATH=${TK_LIBRARY}
    -DBUILD_EXAMPLES:BOOL=OFF
-   -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_TOPLEVEL_DIR}
-   -DVTK_INSTALL_RUNTIME_DIR:PATH=${SV_INSTALL_VTK_RUNTIME_DIR}
-   -DVTK_INSTALL_LIBRARY_DIR:PATH=${SV_INSTALL_VTK_LIBRARY_DIR}
-   -DVTK_INSTALL_ARCHIVE_DIR:PATH=${SV_INSTALL_VTK_ARCHIVE_DIR}
-   -DVTK_INSTALL_INCLUDE_DIR:PATH=${SV_INSTALL_VTK_INCLUDE_DIR}
-   -DVTK_INSTALL_TCL_DIR:PATH=${SV_INSTALL_VTK_TCL_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
+   -DVTK_INSTALL_RUNTIME_DIR:PATH=bin
+   -DVTK_INSTALL_LIBRARY_DIR:PATH=lib
+   -DVTK_INSTALL_ARCHIVE_DIR:PATH=lib
+   -DVTK_INSTALL_INCLUDE_DIR:PATH=include
+   -DVTK_INSTALL_TCL_DIR:PATH=lib/tcltk/modules
    )
 
-set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
+set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 
-set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+set(${proj}_DIR ${${proj}_BIN_DIR})
+simvascular_find_config_file(VTK)
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

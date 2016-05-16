@@ -45,10 +45,11 @@ SET(HDRS cvOCCTSolidModel.h cv_occt_init.h cv_occtsolid_utils.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
 
+link_directories(${FREETYPE_DIR}/lib)
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
-			${OPENCASCADE_LIBRARIES}
+			${OpenCASCADE_LIBRARIES}
 			${FREETYPE_LIBRARY}
 			lib_simvascular_solid lib_simvascular_repository
 			lib_simvascular_globals lib_simvascular_utils lib_simvascular_sysgeom

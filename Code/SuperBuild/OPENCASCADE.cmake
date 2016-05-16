@@ -24,9 +24,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-set(proj OPENCASCADE)
+set(proj OpenCASCADE)
 
-set(${proj}_DEPENDENCIES VTK)
+set(${proj}_DEPENDENCIES VTK FREETYPE)
 
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
@@ -36,32 +36,15 @@ ExternalProject_Include_Dependencies(${proj}
   )
 
 # Sanity checks
-if(DEFINED OPENCASCADE_DIR AND NOT EXISTS ${OPENCASCADE_DIR})
-  message(FATAL_ERROR "OPENCASCADE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
-if(APPLE)
-  if(NOT DEFINED TK_INTERNAL_PATH)
-    STRING(REGEX REPLACE "/Headers" "/PrivateHeaders" _TK_INTERNAL_PATH ${TK_INCLUDE_PATH})
-    set(TK_INTERNAL_PATH "${_TK_INTERNAL_PATH}" CACHE STRING "The path to the Tk internal headers (tkInt.h)")
-    set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
-  endif()
-  list(APPEND EXTERNAL_PROJECT_OPTIONAL_ARGS
-    -DTK_INTERNAL_PATH:STRING=${TK_INTERNAL_PATH}
-    -DVTK_USE_CARBON:BOOL=OFF
-    -DVTK_USE_COCOA:BOOL=ON # Default to Cocoa, VTK/CMakeLists.txt will enable Carbon and disable cocoa if needed
-    -DVTK_USE_X:BOOL=OFF
-    )
+if(DEFINED OpenCASCADE_DIR AND NOT EXISTS ${OpenCASCADE_DIR})
+  message(FATAL_ERROR "OpenCASCADE_DIR variable is defined but corresponds to non-existing directory")
 endif()
 
 get_filename_component(TCL_LIBRARY_DIR ${TCL_LIBRARY} PATH)
 get_filename_component(TK_LIBRARY_DIR ${TK_LIBRARY} PATH)
 
-set(3RDPARTY_VTK_INCLUDE_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_INSTALL_VTK_INCLUDE_DIR}")
-set(3RDPARTY_VTK_LIBRARY_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_INSTALL_VTK_LIBRARY_DIR}")
-
 set(${proj}_BUILD_LIBRARY_TYPE "Static")
-if(SV_UES_${proj}_SHARED)
+if(SV_USE_${proj}_SHARED)
   set(${proj}_BUILD_LIBRARY_TYPE "Shared")
 endif()
 
@@ -72,16 +55,20 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
-      CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
-      CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
+      CACHE PATH "On windows, there is a bug with OpenCASCADE source code directory path length, you can change this path to avoid it")
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
+      CACHE PATH "On windows, there is a bug with OpenCASCADE source code directory path length, you can change this path to avoid it")
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+      CACHE PATH "On windows, there is a bug with OpenCASCADE source code directory path length, you can change this path to avoid it")
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
+      CACHE PATH "On windows, there is a bug with OpenCASCADE source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
-     set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
   endif()
-
-  set(${proj}_INSTALL_DIR "${SV_EXT_${proj}_BIN_DIR}")
 
   #if(APPLE)
   #  set(${proj}_BUILD_TYPE "Debug")
@@ -91,9 +78,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
-   SOURCE_DIR ${${proj}_OUTPUT_DIR}
-   BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+   PREFIX ${${proj}_PFX_DIR}
+   SOURCE_DIR ${${proj}_SRC_DIR}
+   BINARY_DIR ${${proj}_BLD_DIR}
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -103,7 +90,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
    -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DBUILD_EXAMPLES:BOOL=OFF
-   -DBUILD_SHARED_LIBS:BOOL=${SV_UES_${proj}_SHARED}
+   -DBUILD_SHARED_LIBS:BOOL=${SV_USE_${proj}_SHARED}
    -DBUILD_LIBRARY_TYPE:STRING=${${proj}_BUILD_LIBRARY_TYPE}
    -DBUILD_TESTING:BOOL=OFF
    -DBUILD_MODULE_Draw:BOOL=OFF
@@ -114,22 +101,18 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -D3RDPARTY_TK_LIBRARY_DIR:PATH=${TK_LIBRARY_DIR}
    -DUSE_VTK:BOOL=ON
    -DVTK_VERSION:STRING=${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
-   -DVTK_DIR:PATH=${VTK_DIR}
-   -D3RDPARTY_VTK_DIR:PATH=${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_INSTALL_VTK_BIN_DIR}
-   -D3RDPARTY_VTK_INCLUDE_DIR:PATH=${3RDPARTY_VTK_INCLUDE_DIR}
-   -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${3RDPARTY_VTK_LIBRARY_DIR}
-   -DINSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
-   -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_TOPLEVEL_DIR}
+   -D3RDPARTY_VTK_DIR:PATH=${VTK_DIR}
+   -D3RDPARTY_FREETYPE_DIR:PATH=${FREETYPE_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
-set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+ set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
+set(${proj}_DIR ${${proj}_BIN_DIR})
+simvascular_find_config_file(OpenCASCADE)
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-  #file(COPY ${${proj}_DIR}/cmake_install.cmake
-  #  DESTINATION ${CMAKE_BINARY_DIR}/Empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

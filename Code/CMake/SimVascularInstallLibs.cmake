@@ -120,7 +120,7 @@ if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
       # else()
       #   install(FILES ${TCL_DLLS}  DESTINATION ${SV_INSTALL_RUNTIME_DIR})
       #endif()
-      install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT TclTkRuntimes)
+      install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_TCL_RUNTIME_DIR} COMPONENT TclTkRuntimes)
   endif()
 endif()
 

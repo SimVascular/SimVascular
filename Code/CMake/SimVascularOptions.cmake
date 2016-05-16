@@ -39,9 +39,6 @@ mark_as_superbuild(SV_SUPPRESS_WARNINGS)
 
 #-----------------------------------------------------------------------------
 # General Library Options
-option(SV_USE_ZLIB "Use ZLib" ON)
-mark_as_superbuild(SV_USE_ZLIB)
-
 option(SV_USE_MPICH2 "Use MPICH2" ON)
 mark_as_superbuild(SV_USE_MPICH2)
 
@@ -53,6 +50,9 @@ mark_as_superbuild(SV_USE_MSMPI)
 
 #-----------------------------------------------------------------------------
 # ThirdParty
+option(SV_USE_ZLIB "Use ZLib" ON)
+mark_as_superbuild(SV_USE_ZLIB)
+
 option(SV_USE_GLIB "Use GLIB Library" OFF)
 mark_as_superbuild(SV_USE_GLIB)
 
@@ -100,4 +100,4 @@ mark_as_superbuild(SV_USE_INTELRUNTIME)
 #-----------------------------------------------------------------------------
 # Enable Testing
 option(SV_BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
-mark_as_superbuild(VARS BUILD_TESTING)
+mark_as_superbuild(VARS SV_BUILD_TESTING)

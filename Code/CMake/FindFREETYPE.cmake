@@ -28,7 +28,11 @@
 # wants explicit full paths and this trickery doesn't work too well.
 # I'm going to attempt to cut out the middleman and hope 
 # everything still works.
+unset(FREETYPE_INCLUDE_DIR_ft2build CACHE)
+unset(FREETYPE_INCLUDE_DIR_freetype2 CACHE)
+unset(FREETYPE_LIBRARY CACHE)
 FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h 
+  ${FREETYPE_DIR}
   $ENV{FREETYPE_DIR}
   NO_DEFAULT_PATH
   PATH_SUFFIXES include
@@ -37,6 +41,8 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
 
 FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h 
   PATHS
+  ${FREETYPE_DIR}/include
+  ${FREETYPE_DIR}/include/freetype2
   /usr/local/X11R6/include
   /usr/local/X11/include
   /usr/X11/include
@@ -44,15 +50,18 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_ft2build ft2build.h
   /opt/local/include
   /opt/X11/include
   /usr/freeware/include
+  NO_DEFAULT_PATH
   PATH_SUFFIXES freetype2
 )
 
 FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h 
+  ${FREETYPE_DIR}/include/freetype2
   $ENV{FREETYPE_DIR}/include/freetype2
   NO_DEFAULT_PATH
 )
 
 FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h 
+  ${FREETYPE_DIR}/include
   /usr/local/X11R6/include
   /usr/local/X11/include
   /usr/X11/include
@@ -65,6 +74,7 @@ FIND_PATH(FREETYPE_INCLUDE_DIR_freetype2 freetype/config/ftheader.h
 FIND_LIBRARY(FREETYPE_LIBRARY
   NAMES freetype libfreetype freetype219
   PATHS
+  ${FREETYPE_DIR}
   $ENV{FREETYPE_DIR}
   NO_DEFAULT_PATH
   PATH_SUFFIXES lib64 lib 
@@ -78,6 +88,7 @@ FIND_LIBRARY(FREETYPE_LIBRARY
   /usr/X11
   /sw
   /usr/freeware
+  NO_DEFAULT_PATH
   PATH_SUFFIXES lib64 lib
 )
 
@@ -87,10 +98,15 @@ IF(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
 ENDIF(FREETYPE_INCLUDE_DIR_ft2build AND FREETYPE_INCLUDE_DIR_freetype2)
 SET(FREETYPE_LIBRARIES "${FREETYPE_LIBRARY}")
 
+set(FREETYPE_DIR ${FREETYPE_DIR} CACHE PATH "Path to top level libraries.  Specify this if FREETYPE cannot be found.")
 # handle the QUIETLY and REQUIRED arguments and set FREETYPE_FOUND to TRUE if 
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Freetype  DEFAULT_MSG  FREETYPE_LIBRARY  FREETYPE_INCLUDE_DIRS)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(FREETYPE
+  				  FOUND_VAR FREETYPE_FOUND  
+				  REQUIRED_VARS FREETYPE_LIBRARY FREETYPE_INCLUDE_DIRS
+				  VERSION_VAR FREETYPE_VERSION
+				  FAIL_MESSAGE "Could NOT find FREETYPE:")
 
 
-MARK_AS_ADVANCED(FREETYPE_LIBRARY FREETYPE_INCLUDE_DIR_freetype2 FREETYPE_INCLUDE_DIR_ft2build)
+#MARK_AS_ADVANCED(FREETYPE_LIBRARY FREETYPE_INCLUDE_DIR_freetype2 FREETYPE_INCLUDE_DIR_ft2build)

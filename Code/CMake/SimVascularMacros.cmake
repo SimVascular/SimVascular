@@ -66,9 +66,8 @@ endmacro()
 # 
 macro(simvascular_external _pkg)
 	string(TOLOWER "${_pkg}" _lower)
-	string(TOUPPER "${_pkg}" _upper)
 
-	dev_message("Configuring ${_upper}")
+	dev_message("Configuring ${_pkg}")
 
 	set(options OPTIONAL VERSION_EXACT 
 		DOWNLOADABLE SYSTEM_DEFAULT 
@@ -89,9 +88,9 @@ macro(simvascular_external _pkg)
 		set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
 	endif()
 	#message("EXTRA_ARGS: ${EXTRA_ARGS}")
-	set(${_upper}_VERSION ${simvascular_external_VERSION})
+	set(${_pkg}_VERSION ${simvascular_external_VERSION})
 	if(simvascular_external_VERSION_EXACT)
-		set(${_upper}_VERSION ${${_upper}_VERSION} EXACT)
+		set(${_pkg}_VERSION ${${_pkg}_VERSION} EXACT)
 	endif()
 
 	unset(ARG_STRING)
@@ -100,77 +99,77 @@ macro(simvascular_external _pkg)
 		set(_paths "${CMAKE_MODULE_PATH}")
 	endif()
 
-	#message(STATUS "Search paths for ${_upper}Config.cmake: ${_paths}")
+	#message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
 
 	if(simvascular_external_SYSTEM_DEFAULT)
-		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
-		mark_as_advanced(SV_USE_SYSTEM_${_upper})
+		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" ON)
+		mark_as_advanced(SV_USE_SYSTEM_${_pkg})
 	else()
-		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" OFF)
+		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" OFF)
 	endif()
 
-	mark_as_superbuild(SV_USE_SYSTEM_${_upper})
-	#message("${_upper}: ${simvascular_external_SVEXTERN_CONFIG}")
+	mark_as_superbuild(SV_USE_SYSTEM_${_pkg})
+	#message("${_pkg}: ${simvascular_external_SVEXTERN_CONFIG}")
 
 	if((NOT SV_SUPERBUILD AND simvascular_external_SVEXTERN_CONFIG) OR 
-		(simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_upper}))
+		(simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_pkg}))
 
-	find_package(${_upper} ${EXTRA_ARGS} 
-		PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake 
-		NO_CMAKE_MODULE_PATH
-		NO_DEFAULT_PATH)
-elseif(NOT SV_SUPERBUILD)
-	#message(" ${_upper} NOT SV_SUPERBUILD AND NOT simvascular_external_SVEXTERN_CONFIG")
-	find_package(${_upper} ${EXTRA_ARGS})
-elseif(SV_USE_SYSTEM_${_upper})
-	find_package(${_upper} ${EXTRA_ARGS})
-endif()
-
-if(simvascular_external_DOWNLOADABLE)
-	set(SV_DEPENDS ${SV_DEPENDS} ${_upper})
-	list( REMOVE_DUPLICATES SV_DEPENDS )
-endif()
-
-if(SV_USE_${_upper})
-	set(USE_${_upper} ON)
-endif()
-
-if(simvascular_external_SHARED_LIB)
-	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_upper})
-endif()
-
-if(${_upper}_FOUND)
-	if( ${_upper}_INCLUDE_DIR )
-		dev_message("Including dir: ${${_upper}_INCLUDE_DIR}")
-		# This get many of them
-		include_directories(${${_upper}_INCLUDE_DIR})
+	  simvascular_find_package(${_pkg} ${EXTRA_ARGS} 
+		  PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake 
+		  NO_CMAKE_MODULE_PATH
+		  NO_DEFAULT_PATH)
+	elseif(NOT SV_SUPERBUILD)
+		#message(" ${_pkg} NOT SV_SUPERBUILD AND NOT simvascular_external_SVEXTERN_CONFIG")
+		simvascular_find_package(${_pkg} ${EXTRA_ARGS})
+	elseif(SV_USE_SYSTEM_${_pkg})
+		simvascular_find_package(${_pkg} ${EXTRA_ARGS})
 	endif()
-	if(SV_INSTALL_EXTERNALS)
-		if(simvascular_external_ADD_INSTALL)
-			getListOfVars("${_upper}" "LIBRARY" ${_upper}_VARS_INSTALL)
-			# print_vars(${_upper}_VARS_INSTALL)
-			foreach(lib_install ${${_upper}_VARS_INSTALL})
-				list(APPEND ${_upper}_LIBRARY_INSTALL "${${lib_install}}")
-			endforeach()
-			#list(REMOVE_DUPLICATES ${_upper}_LIBRARY_INSTALL)
-			#message(STATUS "${_upper}_LIBRARY_INSTALL: ${${_upper}_LIBRARY_INSTALL}")
-			#install(FILES "${${_upper}_LIBRARY_INSTALL}" DESTINATION ${SV_INSTALL_EXTERNAL_LIBRARY_DIR})
+
+	if(simvascular_external_DOWNLOADABLE)
+		set(SV_DEPENDS ${SV_DEPENDS} ${_pkg})
+		list( REMOVE_DUPLICATES SV_DEPENDS )
+	endif()
+
+	if(SV_USE_${_pkg})
+		set(USE_${_pkg} ON)
+	endif()
+
+	if(simvascular_external_SHARED_LIB)
+		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
+	endif()
+
+	if(${_pkg}_FOUND)
+	        message("PKG ${_pkg} found!")
+		if( ${_pkg}_INCLUDE_DIR )
+			dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
+			# This get many of them
+			include_directories(${${_pkg}_INCLUDE_DIR})
+		endif()
+		if(SV_INSTALL_EXTERNALS)
+			if(simvascular_external_ADD_INSTALL)
+				getListOfVars("${_pkg}" "LIBRARY" ${_pkg}_VARS_INSTALL)
+				# print_vars(${_pkg}_VARS_INSTALL)
+				foreach(lib_install ${${_pkg}_VARS_INSTALL})
+					list(APPEND ${_pkg}_LIBRARY_INSTALL "${${lib_install}}")
+				endforeach()
+				#list(REMOVE_DUPLICATES ${_pkg}_LIBRARY_INSTALL)
+				#message(STATUS "${_pkg}_LIBRARY_INSTALL: ${${_pkg}_LIBRARY_INSTALL}")
+				#install(FILES "${${_pkg}_LIBRARY_INSTALL}" DESTINATION ${SV_INSTALL_EXTERNAL_LIBRARY_DIR})
+			endif()
 		endif()
 	endif()
-endif()
-unset(simvascular_external_SVEXTERN_CONFIG)
-unset(simvascular_external_ADD_INSTALL)
-if(SV_DEVELOPER_OUTPUT)
-	message(STATUS "Finished Configuring ${_upper}")
-	message(STATUS "")
-endif()
+	unset(simvascular_external_SVEXTERN_CONFIG)
+	unset(simvascular_external_ADD_INSTALL)
+	if(SV_DEVELOPER_OUTPUT)
+		message(STATUS "Finished Configuring ${_pkg}")
+		message(STATUS "")
+	endif()
 endmacro()
 #-----------------------------------------------------------------------------
 # unset_simvascular_external
 #
 macro(unset_simvascular_external _pkg)
 	string(TOLOWER "${_pkg}" _lower)
-	string(TOUPPER "${_pkg}" _upper)
 
 	set(options OPTIONAL VERSION_EXACT DOWNLOADABLE SVEXTERN_DEFAULT SVEXTERN_CONFIG)
 	set(oneValueArgs VERSION)
@@ -180,8 +179,8 @@ macro(unset_simvascular_external _pkg)
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-	unset(SV_USE_SYSTEM_${_upper})
-	list(REMOVE_ITEM SV_DEPENDS ${_upper})
+	unset(SV_USE_SYSTEM_${_pkg})
+	list(REMOVE_ITEM SV_DEPENDS ${_pkg})
 endmacro()
 
 #-----------------------------------------------------------------------------
@@ -374,4 +373,36 @@ function(sv_list_match resultVar str)
   endforeach()
   set(${resultVar} ${result} PARENT_SCOPE)
 endfunction()
+
+function(simvascular_dir_switch DIR_ONE DIR_TWO)
+  set(TMP_DIR ${${DIR_ONE}})
+  set(${DIR_ONE} ${${DIR_TWO}} PARENT_SCOPE)
+  set(${DIR_TWO} ${TMP_DIR} PARENT_SCOPE)
+endfunction()
+
+macro(simvascular_find_package pkg)
+  if(${pkg}_CONFIG_DIR)
+    simvascular_dir_switch(${pkg}_DIR ${pkg}_CONFIG_DIR)
+  endif()
+
+  find_package(${pkg} ${ARGN})
+
+  if(${pkg}_CONFIG_DIR)
+    simvascular_dir_switch(${pkg}_DIR ${pkg}_CONFIG_DIR)
+  endif()
+endmacro()
+
+macro(simvascular_find_config_file pkg)
+if(NOT "${${pkg}_DIR}" STREQUAL "")
+  file(GLOB_RECURSE ${pkg}_CONFIGS ${${pkg}_DIR} ${${pkg}_DIR}/${pkg}Config.cmake*)
+  if(${pkg}_CONFIGS)
+    list(GET ${pkg}_CONFIGS 0 ${pkg}_CONFIG_FILE)
+    get_filename_component(${pkg}_CONFIG_DIR ${${pkg}_CONFIG_FILE} DIRECTORY)
+    mark_as_superbuild(${pkg}_CONFIG_DIR}:PATH)
+    message("CONFIGS")
+    message(${${pkg}_CONFIG_DIR})
+    endif()
+  endif()
+endmacro()
+
 

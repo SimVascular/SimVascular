@@ -77,26 +77,35 @@ foreach(lib ${SV_EXTERNAL_SHARED_LIBS})
 	endif()
 
 	# on unix systems we only need this path if its installed (moved)
-	if(SV_ENABLE_DISTRIBUTION OR NOT SV_USE_SYSTEM_${lib})
-		# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
-		if(SV_INSTALL_${lib}_LIBRARY_DIR)
-			#if there is an install library directory, add it to the path for installation, it will be installed there.
-			append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${lib}_LIBRARY_DIR}" install_script_string)
+	# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
+	if(SV_INSTALL_${lib}_LIBRARY_DIR)
+		#if there is an install library directory, add it to the path for installation, it will be installed there.
+		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DIR}/lib" developer_script_string)
+		if(NOT SV_ENABLE_DISTRIBUTION)
+		  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_${lib}_LIBRARY_DIR}" install_script_string)
 		endif()
-		if(SV_INSTALL_${lib}_RUNTIME_DIR)
-			# if there is an install runtime directory, add it to the path for installation
-			# set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
-				# 	<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
-				# 		Value='[INSTALL_ROOT]\\${SV_INSTALL_${lib}_RUNTIME_DIR}'
-				# 		Permanent='yes' Part='last' Action='set' System='yes' />")
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${lib}_RUNTIME_DIR}" install_script_string)
-endif()
-else()
-	if(${lib}_DLL_PATH)
-		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" install_script_string)
 	endif()
-endif()
+	if(SV_INSTALL_${lib}_RUNTIME_DIR)
+		# if there is an install runtime directory, add it to the path for installation
+		# set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
+			# 	<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
+			# 		Value='[INSTALL_ROOT]\\${SV_INSTALL_${lib}_RUNTIME_DIR}'
+			# 		Permanent='yes' Part='last' Action='set' System='yes' />")
+		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DIR}/bin" developer_script_string)
+		if(NOT SV_ENABLE_DISTRIBUTION)
+		  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_${lib}_RUNTIME_DIR}" install_script_string)
+		endif()
+	endif()
+	if(NOT SV_USE_SYSTEM_${lib})
+        else()
+	        if(${lib}_DLL_PATH)
+		        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" install_script_string)
+	        endif()
+        endif()
 endforeach()
+if(SV_ENABLE_DISTRIBUTION)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/lib" install_script_string)
+endif()
 # This is a catch all if no DLL_PATH was specified but we will need the so for installed libraries.
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_EXTERNALS_RUNTIME_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
@@ -153,41 +162,45 @@ endif()
 #--------
 # Tcl is VTK built as shared
 if (NOT SV_USE_SYSTEM_VTK)
-  if(${VTK_SHARED_LIBRARIES})
-	set_env_string_concat(TCLLIBPATH "${VTK_DIR}/Wrapping/Tcl" developer_script_string)
-	set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/vtk/lib/tcltk/modules" install_script_string)
+  if(SV_USE_VTK_SHARED)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${VTK_DIR}/lib" developer_script_string)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
   endif()
 endif()
+set_env_string_concat(TCLLIBPATH "${VTK_DIR}/lib/tcltk/modules" developer_script_string)
+if(SV_ENABLE_DISTRIBUTION)
+  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/lib/tcltk/modules" install_script_string)
+else()
+  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/${SV_EXT_VTK_BIN_DIR}/lib/tcltk/modules" install_script_string)
+endif()
 
 # ITK built as shared for install
 if (NOT SV_USE_SYSTEM_ITK)
-  if(${ITK_SHARED_LIBRARIES})
+  if(SV_USE_ITK AND SV_USE_ITK_SHARED)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ITK_DIR}/lib" developer_script_string)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_ITK_LIBRARY_DIR}" install_script_string)
   endif()
 endif()
 
 # If using opencascade for install
-if (NOT SV_USE_SYSTEM_OPENCASCADE)
-  if(${OPENCASCADE_SHARED_LIBRARIES})
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OPENCASCADE_DIR}/${OPENCASCADE_LIB_EXT}" developer_script_string)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_OPENCASCADE_LIBRARY_DIR}" install_script_string)
+if (NOT SV_USE_SYSTEM_OpenCASCADE)
+  if(OpenCASCADE_DIR)
+	  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OpenCASCADE_DIR}/lib" developer_script_string)
+        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_OpenCASCADE_LIBRARY_DIR}" install_script_string)
   endif()
-endif()
+ endif()
 
 # If using system installs, add paths to shared libs if needed
-if(SV_USE_SYSTEM_GDCM AND GDCM_SHARED_LIBRARIES)
+if(SV_USE_SYSTEM_GDCM AND GDCM_DLL_PATH)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${GDCM_DLL_PATH}" developer_script_string)
 endif()
-if(SV_USE_SYSTEM_OPENCASCADE AND OPENCASCADE_SHARED_LIBRARIES)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OPENCASCADE_DLL_PATH}" developer_script_string)
+if(SV_USE_SYSTEM_OpenCASCADE AND OpenCASCADE_DLL_PATH)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OpenCASCADE_DLL_PATH}" developer_script_string)
 endif()
-if(SV_USE_SYSTEM_QT AND QT_SHARED_LIBRARIES)
+if(SV_USE_SYSTEM_QT AND QT_DLL_PATH)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${QT_DLL_PATH}" developer_script_string)
 endif()
-if(SV_USE_SYSTEM_TCL AND TCL_SHARED_LIBRARIES)
+if(SV_USE_SYSTEM_TCL AND TCL_DLL_PATH)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${TCL_DLL_PATH}" developer_script_string)
 endif()
 

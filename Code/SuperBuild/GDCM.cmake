@@ -46,22 +46,26 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/GDCM.git"
 	  GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
+      CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+      CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
-    set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
   endif()
-
-  set(${proj}_INSTALL_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}")
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
-   SOURCE_DIR ${${proj}_OUTPUT_DIR}
-   BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+   PREFIX ${${proj}_PFX_DIR}
+   SOURCE_DIR ${${proj}_SRC_DIR}
+   BINARY_DIR ${${proj}_BLD_DIR}
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -77,13 +81,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DGDCM_USE_VTK:BOOL=OFF
    -DGDCM_WRAP_PYTHON:BOOL=OFF
-   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_INSTALL_DIR}
-   INSTALL_COMMAND ""
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
-set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+ set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
+set(${proj}_DIR ${${proj}_BIN_DIR})
+simvascular_find_config_file(GDCM)
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})

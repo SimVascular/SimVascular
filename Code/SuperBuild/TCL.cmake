@@ -50,8 +50,23 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	unset(TK_LIBRARY CACHE)
 	unset(TK_WISH CACHE)
 
-	set(${proj}_OUTPUT_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
-	set(${proj}_OUTPUT_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+	# Because we are downloading prebuilt libraries and binaries for tcl,
+	# we set the source dir and bin dir to both be TCL_EXT_BIN_DIR
+	if(WIN32)
+	  set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
+	    CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+	  set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR} 
+	    CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+	  set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+	    CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+	  set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
+	    CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
+	else()
+	  set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
+	  set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+	  set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+	  set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+	endif()
 
 	if(LINUX)
 		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/14.04/latest/linux.gcc-4.8.x64.tcltk-8.6.4.tar.gz" CACHE
@@ -65,14 +80,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	endif()
 	mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
 	mark_as_advanced(SuperBuild_${proj}_URL)
-
-	set(SV_${proj}_DIR ${${proj}_SOURCE_DIR})
 	
 	ExternalProject_Add(${proj}
 		URL ${SuperBuild_${proj}_URL}
-		PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR}
-		SOURCE_DIR ${${proj}_OUTPUT_DIR}
-		BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+		PREFIX ${${proj}_PFX_DIR}
+		SOURCE_DIR ${${proj}_SRC_DIR}
+		BINARY_DIR ${${proj}_BIN_DIR}
 		CONFIGURE_COMMAND ""
 		BUILD_COMMAND ""
 		UPDATE_COMMAND ""
@@ -86,54 +99,51 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		)
 
 	if(WIN32)
-		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
+		set(TCL_DLL_PATH ${${proj}_BIN_DIR}/bin)
+		set(TCL_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
+		set(TCL_LIBRARY ${${proj}_BIN_DIR}/lib/tcl86t.lib)
+		set(TCL_TCLSH ${${proj}_BIN_DIR}/bin/tclsh86t.exe)
 
-		set(TCL_DLL_PATH ${${proj}_OUTPUT_BIN_DIR}/bin)
-		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/tcl86t.lib)
-		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh86t.exe)
-
-		set(TK_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/tk86t.lib)
-		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish86t.exe)
+		set(TK_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
+		set(TK_LIBRARY ${${proj}_BIN_DIR}/lib/tk86t.lib)
+		set(TK_WISH ${${proj}_BIN_DIR}/bin/wish86t.exe)
 	endif()
 	if(LINUX)
+		set(TCL_DLL_PATH ${${proj}_BIN_DIR}/bin)
+		set(TCL_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
+		set(TCL_LIBRARY ${${proj}_BIN_DIR}/lib/libtcl8.6.so)
+		set(TCL_TCLSH ${${proj}_BIN_DIR}/bin/tclsh8.6)
 
-		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-		set(SV_TCL_DIR ${${proj}_SOURCE_DIR})
-
-		set(TCL_DLL_PATH ${${proj}_OUTPUT_BIN_DIR}/bin)
-		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtcl8.6.so)
-		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh8.6)
-
-		set(TK_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtk8.6.so)
-		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish8.6)
+		set(TK_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
+		set(TK_LIBRARY ${${proj}_BIN_DIR}/lib/libtk8.6.so)
+		set(TK_WISH ${${proj}_BIN_DIR}/bin/wish8.6)
 		mark_as_superbuild(TCL_INIT_PATH:PATH)
 	endif()
 	if(APPLE)
-		set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-		set(SV_TCL_DIR ${${proj}_SOURCE_DIR})
-		#set(Tcl_Framework_Dir ${${proj}_OUTPUT_BIN_DIR}/Library/Frameworks/Tcl.framework)
-		#set(Tk_Framework_Dir ${${proj}_OUTPUT_BIN_DIR}/Library/Frameworks/Tk.framework)
+		#set(Tcl_Framework_Dir ${${proj}_BIN_DIR}/Library/Frameworks/Tcl.framework)
+		#set(Tk_Framework_Dir ${${proj}_BIN_DIR}/Library/Frameworks/Tk.framework)
 
-		set(TCL_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtcl8.6.dylib)
-		set(TCL_TCLSH ${${proj}_OUTPUT_BIN_DIR}/bin/tclsh8.6)
+		set(TCL_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
+		set(TCL_LIBRARY ${${proj}_BIN_DIR}/lib/libtcl8.6.dylib)
+		set(TCL_TCLSH ${${proj}_BIN_DIR}/bin/tclsh8.6)
 
-		set(TK_INCLUDE_PATH ${${proj}_OUTPUT_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_OUTPUT_BIN_DIR}/lib/libtk8.6.dylib)
-		set(TK_WISH ${${proj}_OUTPUT_BIN_DIR}/bin/wish8.6)
+		set(TK_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
+		set(TK_LIBRARY ${${proj}_BIN_DIR}/lib/libtk8.6.dylib)
+		set(TK_WISH ${${proj}_BIN_DIR}/bin/wish8.6)
 		mark_as_superbuild(TCL_INIT_PATH:PATH)
 	endif()
+	set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
+	set(${proj}_DIR ${${proj}_BIN_DIR})
 
 else()
 	ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
+if(SV_INSTALL_EXTERNALS)
+  ExternalProject_Install_CMake(${proj})
+endif()
 
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
-mark_as_superbuild(SV_${proj}_DIR:PATH)
+mark_as_superbuild(${proj}_DIR:PATH)
 mark_as_superbuild(TCL_DLL_PATH:PATH)
 mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
 mark_as_superbuild(TCL_LIBRARY:PATH)
@@ -142,10 +152,8 @@ mark_as_superbuild(TK_INCLUDE_PATH:PATH)
 mark_as_superbuild(TK_LIBRARY:PATH)
 mark_as_superbuild(TK_WISH:PATH)
 
-
-
-#mark_as_superbuild(
-	#  VARS ${proj}_DIR:PATH
-	#  LABELS "FIND_PACKAGE"
-	#  )
+mark_as_superbuild(
+	  VARS ${proj}_DIR:PATH
+	  LABELS "FIND_PACKAGE"
+	  )
 
