@@ -33,6 +33,8 @@ include(CheckLibraryExists)
 # Include Macros
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
+include(CheckLibraryExists)
+include(GetPrerequisites)
 
 SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -148,7 +150,7 @@ mark_as_superbuild(
 #-----------------------------------------------------------------------------
 # PYTHON
 if(SV_USE_PYTHON)
-	simvascular_find_package(PythonLibs REQUIRED)
+	simvascular_external(PYTHON SYSTEM_DEFAULT SHARED_LIB)
 	mark_as_superbuild(
 		PYTHONLIBS_FOUND
 		PYTHON_INCLUDE_PATH
@@ -169,11 +171,12 @@ if(SV_USE_PYTHON)
 		message(STATUS "Python Libs NOT FOUND")
 		message(STATUS "Make sure you have python installed on your system.")
 	endif()
+	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
 endif()
 
 #-----------------------------------------------------------------------------
 # VTK
-set(SV_DEPENDS "TCL")
+set(SV_DEPENDS ${SV_DEPENDS} "TCL")
 if(SV_USE_VTK_SHARED)
 	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
 	set(SV_INSTALL_EXTERNALS ON)
@@ -672,7 +675,7 @@ endif()
 # Now we need to finish configuring now that the external projects are configured
 #-----------------------------------------------------------------------------
 foreach(proj ${SV_EXTERNALS_LIST})
-  if(NOT SV_SUPERBUILD AND SV_USE_${proj})
+  if(NOT SV_SUPERBUILD)
     set(SV_USE_SYSTEM_${proj} "ON" CACHE BOOL "External ${proj} must be used" FORCE)
     set(${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
     mark_as_superbuild(${proj}_DIR)
