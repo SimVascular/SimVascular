@@ -5,7 +5,6 @@
 #############################################################################
 import sys, getopt
 import numpy as np
-import scipy as sp
 import vtk
 import imp
 import re

@@ -8,7 +8,7 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
 
   #Make sure numpy module exists
   if [catch {$gPythonInterp exec {import pyOCCT}} errmsg] {
-    return -code error "ERROR: pyOCCT module does not exist. Must have python and OCCT"
+    return -code error "ERROR: SimVascular pyOCCT module does not exist. Must have python and OCCT"
   }
   if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
     return -code error "ERROR: numpy module does not exist. Must install numpy (http://docs.scipy.org/doc/numpy-1.10.1/user/install.html)"
