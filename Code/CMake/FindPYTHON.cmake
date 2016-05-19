@@ -207,7 +207,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
         python${_CURRENT_VERSION}m
         python${_CURRENT_VERSION}u
         python${_CURRENT_VERSION}
-	NO_DEFAULT_PATH
+	#NO_DEFAULT_PATH
     )
   endif()
 
