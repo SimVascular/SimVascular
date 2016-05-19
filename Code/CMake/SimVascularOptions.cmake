@@ -50,6 +50,14 @@ option(SV_USE_MSMPI "Use MSMPI" OFF)
 mark_as_superbuild(SV_USE_MSMPI)
 
 #-----------------------------------------------------------------------------
+# Externals
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals" CACHE PATH "Externals toplevel directory")
+mark_as_superbuild(SV_EXTERNALS_TOPLEVEL_DIR:PATH)
+
+option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
+mark_as_superbuild(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+
+#-----------------------------------------------------------------------------
 # ThirdParty
 option(SV_USE_ZLIB "Use ZLib" ON)
 mark_as_superbuild(SV_USE_ZLIB)

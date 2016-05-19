@@ -30,7 +30,7 @@ proc startTclPython {} {
   }
   global gPythonInterp
   set gPythonInterp [::python::interp new]
-  $gPythonInterp exec {print("Python Available")}
+  #$gPythonInterp exec {print("Python Available")}
 
   #Create TclPyString global to pass string between tcl and python
   global TclPyString
