@@ -45,6 +45,9 @@ set(FRAGMENT_INJECTION_STRING)
 # Write extra FILES
 env_variable_to_value_variable(ENV_SV_HOME SV_HOME)
 
+#----------------------------------------------------------------------------
+# PARASOLID Install Rules
+#----------------------------------------------------------------------------
 if(SV_USE_PARASOLID)
 	#Parasolid as a few special directories to add
 	set_env_string_concat(P_SCHEMA "${PARASOLID_SCHEMA_DIR}" developer_script_string)
@@ -56,6 +59,9 @@ if(SV_USE_PARASOLID)
 		Value='[INSTALL_ROOT]@SV_INSTALL_NATIVE_PARASOLID_SCHEMA_DIR@' />")
 endif()
 
+#----------------------------------------------------------------------------
+# MESHSIM Install Rules
+#----------------------------------------------------------------------------
 if(SV_USE_MESHSIM)
 	if(NOT MESHSIM_LICENSE_IN_WIN32_REGISTRY)
 		if(MESHSIM_LICENSE_FILE)
@@ -67,6 +73,9 @@ if(SV_USE_MESHSIM)
 	endif()
 endif()
 
+#----------------------------------------------------------------------------
+# Opensource Externals Install Rules
+#----------------------------------------------------------------------------
 foreach(lib ${SV_EXTERNAL_SHARED_LIBS})
         dev_message("SV_USE_SYSTEM_${lib} ${SV_USE_SYSTEM_${lib}}")
 	# For Each library that we have linked against
@@ -115,6 +124,9 @@ append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTA
 	# 					Value='[INSTALL_ROOT]\\@SV_INSTALL_EXTERNALS_RUNTIME_DIR@'
 	# 					Permanent='yes' Part='last' Action='set' System='yes' />")
 
+#----------------------------------------------------------------------------
+# TCL Install Rules
+#----------------------------------------------------------------------------
 if(SV_USE_TKCXIMAGE)
 	if(TKCXIMAGE_DLL)
 		set_env_string_concat(TKCXIMAGE_DLL "${TKCXIMAGE_DLL}" developer_script_string)
@@ -136,8 +148,9 @@ if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}" install_script_string)
 endif()
 
-#--------
-# Python
+#----------------------------------------------------------------------------
+# PYTHON Install Rules
+#----------------------------------------------------------------------------
 if(SV_USE_PYTHON)
       if(PYTHON_SITE_PACKAGES)
 	       append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)
@@ -163,8 +176,9 @@ if(SV_USE_PYTHON)
     endif()
 endif()
 
-#--------
-# Tcl is VTK built as shared
+#----------------------------------------------------------------------------
+# VTK TCL Install Rules
+#----------------------------------------------------------------------------
 if (NOT SV_USE_SYSTEM_VTK)
   if(SV_USE_VTK_SHARED)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${VTK_DIR}/lib" developer_script_string)
@@ -178,6 +192,9 @@ else()
   set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/${SV_EXT_VTK_BIN_DIR}/lib/tcltk/modules" install_script_string)
 endif()
 
+#----------------------------------------------------------------------------
+# ITK Install Rules
+#----------------------------------------------------------------------------
 # ITK built as shared for install
 if (NOT SV_USE_SYSTEM_ITK)
   if(SV_USE_ITK AND SV_USE_ITK_SHARED)
@@ -186,14 +203,18 @@ if (NOT SV_USE_SYSTEM_ITK)
   endif()
 endif()
 
+#----------------------------------------------------------------------------
+# OpenCASCADE Install Rules
+#----------------------------------------------------------------------------
 # If using opencascade for install
 if (NOT SV_USE_SYSTEM_OpenCASCADE)
   if(OpenCASCADE_DIR)
-	  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OpenCASCADE_DIR}/lib" developer_script_string)
+	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OpenCASCADE_DIR}/lib" developer_script_string)
         append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_OpenCASCADE_LIBRARY_DIR}" install_script_string)
   endif()
  endif()
 
+# DONT THINK WE SHOULD HAVE THESE!
 # If using system installs, add paths to shared libs if needed
 if(SV_USE_SYSTEM_GDCM AND GDCM_DLL_PATH)
 	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${GDCM_DLL_PATH}" developer_script_string)

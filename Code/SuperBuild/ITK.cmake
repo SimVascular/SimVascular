@@ -122,6 +122,3 @@ mark_as_superbuild(
   VARS ${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
-
-
-
