@@ -6,33 +6,33 @@
  * Portions of the code Copyright (c) 2009-2011 Open Source Medical
  * Software Corporation, University of California, San Diego.
  *
- * Portions of the code Copyright (c) 1998-2007 Stanford University, 
- * Rensselaer Polytechnic Institute, Charles A. Taylor, 
+ * Portions of the code Copyright (c) 1998-2007 Stanford University,
+ * Rensselaer Polytechnic Institute, Charles A. Taylor,
  * Kenneth E. Jansen.
- * 
- * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
  *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions 
+ * See SimVascular Acknowledgements file for additional
+ * contributors to the source code.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
  * are met:
 
  * Redistributions of source code must retain the above copyright notice,
- * this list of conditions and the following disclaimer. 
- * Redistributions in binary form must reproduce the above copyright 
- * notice, this list of conditions and the following disclaimer in the 
- * documentation and/or other materials provided with the distribution. 
+ * this list of conditions and the following disclaimer.
+ * Redistributions in binary form must reproduce the above copyright
+ * notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution.
  * Neither the name of the Stanford University or Rensselaer Polytechnic
  * Institute nor the names of its contributors may be used to endorse or
- * promote products derived from this software without specific prior 
+ * promote products derived from this software without specific prior
  * written permission.
 
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
- * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS 
- * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE 
- * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, 
- * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, 
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+ * FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+ * COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+ * INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
  * BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS
  * OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
  * AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
@@ -65,12 +65,12 @@
 #include <unistd.h>
 #endif
 
-#ifdef CV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_CAPS_NO_UNDERSCORE
 #define input INPUT
 #define proces PROCES
 #endif
 
-#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
 #define input input_
 #define proces proces_
 #endif
@@ -119,7 +119,7 @@ extern "C" {
 extern "C" int main( int argc, char *argv[] );
 
 int main( int argc, char *argv[] ) {
-  
+
     int size,ierr;
     char inpfilename[255];
 
@@ -143,12 +143,12 @@ int main( int argc, char *argv[] ) {
         int gdb_child = fork();
 
         if( gdb_child == 0 ) {
-     
+
             std::cout << "Debugger Process initiating" << std::endl;
             strstream exec_string;
 
 #if ( defined LINUX )
-            exec_string <<"idb -gui" 
+            exec_string <<"idb -gui"
                         << " -pid "<< parent_pid <<" "<< argv[0] << std::endl;
 #endif
 
@@ -167,7 +167,7 @@ int main( int argc, char *argv[] ) {
   MPI_Comm_rank (MPI_COMM_WORLD, &myrank);
 
 #ifdef WIN32
-    	
+
   char systemcmd[2048];
   systemcmd[0]='\0';
 
@@ -181,7 +181,7 @@ int main( int argc, char *argv[] ) {
       fflush(stdout);fflush(stderr);
     }
   //}
-  
+
   char* flowsolver_map_shared_directory = NULL;
   flowsolver_map_shared_directory = getenv("FLOWSOLVER_MAP_SHARED_DIRECTORY");
 
@@ -203,11 +203,11 @@ int main( int argc, char *argv[] ) {
            default:
              fprintf(stderr, "Unknown error.\n");
            }
-        } 
+        }
   }
 
 #endif
-    
+
     /* Input data  */
     if(argc > 1 ){
         strcpy(inpfilename,argv[1]);
@@ -224,7 +224,7 @@ int main( int argc, char *argv[] ) {
     stdoutFileName[0]='\0';
     if(argc > 2) {
       sprintf(stdoutFileName,"%s.%05i.txt",argv[2],myrank);
-  
+
       simvascular_flowsolver_stdout = freopen( stdoutFileName, "a", stdout );
       // Note: freopen is deprecated; consider using freopen_s instead
 
@@ -264,10 +264,10 @@ int main( int argc, char *argv[] ) {
         /* Partition the problem to the correct number of processors */
         if( size > 1 ) {
             if( myrank == 0 ) {
-                 Partition_Problem( size, cvsolver_iotype, 
+                 Partition_Problem( size, cvsolver_iotype,
                                     cvsolver_iotype);
                  MPI_Barrier(MPI_COMM_WORLD);
-            } else { 
+            } else {
                  MPI_Barrier(MPI_COMM_WORLD);
                  sprintf(inpfilename,"%d-procs_case/",size);
                  if( !chdir( inpfilename ) ) {
@@ -312,13 +312,13 @@ int main( int argc, char *argv[] ) {
     else{
         printf("error during reading ascii input \n");
     }
-    
+
     MPI_Finalize();
 
     if (simvascular_flowsolver_stdout != NULL) fclose(simvascular_flowsolver_stdout);
 	// for now, redirecting stdout / stderr to one file!
     //fclose(simvascular_flowsolver_stderr);
-    
+
     if (myrank == 1) {
     char* flowsolver_unmount_shared_drive = NULL;
     flowsolver_unmount_shared_drive = getenv("FLOWSOLVER_UNMOUNT_SHARED_DRIVE");
@@ -332,6 +332,6 @@ int main( int argc, char *argv[] ) {
 
     fflush(stdout);
     fflush(stderr);
-    
+
     return ierr;
 }

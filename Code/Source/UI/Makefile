@@ -40,7 +40,8 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
-           $(ITK_INCDIRS) $(MYRLM_INCDIR) -DCV_STATIC_LINK
+           $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) \
+	   $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) -DSV_STATIC_LINK
 
 HDRS	= 
 
@@ -60,104 +61,128 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                     ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
                     ../Common/Utils/cv_math_init.cxx \
 
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
 	COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
   else
-    ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
+    ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
 	  COPIED_CXXSRCS += ../Mesh/AdaptObject/cv_adapt_init.cxx
     endif
   endif
 
-  ifeq ($(MAKE_WITH_MESHSIM),1)
-    ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM),1)
+    ifneq ($(SV_USE_MESHSIM_SHARED),1)
 	COPIED_CXXSRCS += ../Mesh/MeshSimMeshObject/cv_meshsim_mesh_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
-    ifneq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
+    ifneq ($(SV_USE_MESHSIM_SHARED),1)
 	COPIED_CXXSRCS += ../Mesh/MeshSimAdapt/cv_meshsim_adapt_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_TETGEN),1)
+  ifeq ($(SV_USE_TETGEN),1)
 	COPIED_CXXSRCS += ../Mesh/TetGenMeshObject/cv_tetgen_mesh_init.cxx
   endif
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
 	COPIED_CXXSRCS += ../Mesh/TetGenAdapt/cv_tetgen_adapt_init.cxx
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-    ifneq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
 	COPIED_CXXSRCS += ../Model/MeshSimDiscreteSolidModel/cv_discrete_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_PARASOLID),1)
-    ifneq ($(MAKE_WITH_PARASOLID_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+    ifneq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
+	COPIED_CXXSRCS += ../Model/MeshSimSolidModel/cv_meshsimsolid_init.cxx
+    endif
+  endif
+  ifeq ($(SV_USE_PARASOLID),1)
+    ifneq ($(SV_USE_PARASOLID_SHARED),1)
 	COPIED_CXXSRCS += ../../Licensed/ParasolidSolidModel/cv_parasolid_solid_init.cxx
     endif
   endif
-  ifeq ($(MAKE_WITH_ITK),1)
+  ifeq ($(SV_USE_OPENCASCADE),1)
+    ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
+	COPIED_CXXSRCS += ../Model/OCCTSolidModel/cv_occt_init.cxx
+    endif
+  endif
+  ifeq ($(SV_USE_ITK),1)
 	COPIED_CXXSRCS += ../Segmentation/ITK/Util/cv_ITKUtils_init.cxx
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset2d_init.cxx
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
   endif
 
-  ifeq ($(MAKE_WITH_SOLVERIO),1)
+  ifeq ($(SV_USE_SOLVERIO),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_MESHSIM),1)
-    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM),1)
+    ifeq ($(SV_USE_MESHSIM_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_ADAPTOR),1)
-    ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
+    ifeq ($(SV_USE_MESHSIM_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_adaptor$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_TETGEN),1)
+  ifeq ($(SV_USE_TETGEN),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
   endif
-  ifeq ($(MAKE_WITH_TETGEN_ADAPTOR),1)
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tet_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
   endif
-  ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL),1)
-    ifeq ($(MAKE_WITH_MESHSIM_DISCRETE_MODEL_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
     endif
   endif
-  ifeq ($(MAKE_WITH_PARASOLID),1)
-    ifeq ($(MAKE_WITH_PARASOLID_SHARED),1)
+  ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+    ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
+#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+    else
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_solid$(LIBLINKEXT)
+    endif
+  endif
+  ifeq ($(SV_USE_PARASOLID),1)
+    ifeq ($(SV_USE_PARASOLID_SHARED),1)
 #	LFLAGS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
     else
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
     endif
   endif
+  ifeq ($(SV_USE_OPENCASCADE),1)
+    ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
+#	LFLAGS += $(SVLIBFLAG)_simvascular_opencascade$(LIBLINKEXT)
+    else
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_opencascade$(LIBLINKEXT)
+    endif
+  endif
 
-  ifeq ($(MAKE_WITH_VMTK),1)
+  ifeq ($(SV_USE_VMTK),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_ITK),1)
+  ifeq ($(SV_USE_ITK),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itkutils$(LIBLINKEXT) \
                             $(SVLIBFLAG)_lib_simvascular_cvitk$(LIBLINKEXT)
   endif
 
-  ifeq ($(MAKE_WITH_SOLVERIO),1)
+  ifeq ($(SV_USE_SOLVERIO),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
 endif
 
 # need to explicitly add in globals for executable
-ifeq ($(MAKE_WITH_GLOBALS_SHARED),1)
+ifeq ($(SV_USE_GLOBALS_SHARED),1)
   LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 else
   LFLAGS += $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)
@@ -187,7 +212,8 @@ $(TARGET_EXE_FULL): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
         $(LFLAGS) \
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
-        $(ZLIB_LIBS) $(MPICH_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(TCLTK_LIBS) $(CXX_LIBS)
+        $(ZLIB_LIBS) $(MPICH_LIBS) $(GLIB_LIBS) $(GTS_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
+	$(PYTHON_LIB) $(SV_GDCM_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifeq ($(CLUSTER),x64_cygwin)
 ifneq ($(MAKE_STATIC_BUILD),1)

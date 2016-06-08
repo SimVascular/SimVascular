@@ -4,20 +4,20 @@
 
 export SOFTWARE_PLATFORM=REPLACEME_SOFTWARE_PLATFORM
 export COMPILER_VERSION=REPLACEME_COMPILER_VERSION
-export SIMVASCULAR_OS=REPLACEME_SIMVASCULAR_OS
+export SV_OS=REPLACEME_SV_OS
 
 # must specify paths in unix style
 export OPEN_SOFTWARE_BINARIES_TOPLEVEL=REPLACEME_OPEN_SOFTWARE_BINARIES_TOPLEVEL
 export LICENSED_SOFTWARE_TOPLEVEL=REPLACEME_LICENSED_SOFTWARE_TOPLEVEL
-export SIMVASCULAR_HOME=REPLACEME_SIMVASCULAR_HOME
+export SV_HOME=REPLACEME_SV_HOME
 
 # MeshSim license file
 export SIM_LICENSE_FILE=REPLACEME_LICENSE_FILE
-export SIM_LICENSE_FILE=$SIMVASCULAR_HOME/Licenses/MeshSim/license.dat
+export SIM_LICENSE_FILE=$SV_HOME/Licenses/MeshSim/license.dat
 
 # 3-D solver environment variables
-export FLOWSOLVER_CONFIG=$SIMVASCULAR_HOME/Code/FlowSolvers/ThreeDSolver/svSolver
-export LES_LICENSE_SERVER=$SIMVASCULAR_HOME/Licenses/LesLib/license.dat
+export FLOWSOLVER_CONFIG=$SV_HOME/Code/FlowSolvers/ThreeDSolver/svSolver
+export LES_LICENSE_SERVER=$SV_HOME/Licenses/LesLib/license.dat
 #export LES_LICENSE_SERVER=foo.bar.edu
 
 ################################################################
@@ -29,12 +29,12 @@ export LES_LICENSE_SERVER=$SIMVASCULAR_HOME/Licenses/LesLib/license.dat
 ################################################################
 
 # simvascular addition
-export LD_LIBRARY_PATH=$SIMVASCULAR_HOME/Code/Lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$SV_HOME/Code/Lib:$LD_LIBRARY_PATH
 
 # need to convert to dos style paths on windows
-case "$SIMVASCULAR_OS" in
+case "$SV_OS" in
  "windows" )
-export SIMVASCULAR_HOME=`cygpath --windows -t mixed $SIMVASCULAR_HOME`
+export SV_HOME=`cygpath --windows -t mixed $SV_HOME`
 export OPEN_SOFTWARE_BINARIES_TOPLEVEL=`cygpath --windows -t mixed $OPEN_SOFTWARE_BINARIES_TOPLEVEL`
 export LICENSED_SOFTWARE_TOPLEVEL=`cygpath --windows -t mixed $OPEN_SOFTWARE_BINARIES_TOPLEVEL`
 export FLOWSOLVER_CONFIG=`cygpath --windows -t mixed $FLOWSOLVER_CONFIG`
@@ -44,4 +44,4 @@ export PATH=$LD_LIBRARY_PATH:$PATH
 esac
 
 # run the executable
-/cygdrive/c/Program\ Files/Microsoft\ MPI/Bin/mpiexec.exe -np $1 -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG $SIMVASCULAR_HOME/BuildWithMake/Bin/flowsolver.exe $2 $3 $4
+/cygdrive/c/Program\ Files/Microsoft\ MPI/Bin/mpiexec.exe -np $1 -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG $SV_HOME/BuildWithMake/Bin/flowsolver.exe $2 $3 $4

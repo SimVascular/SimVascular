@@ -26,7 +26,7 @@
 
 
 file(REMOVE_RECURSE ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
-	file(COPY ${SimVascular_SOURCE_TCL_DIR} DESTINATION ${TEMP_DIR})
+	file(COPY ${SV_SOURCE_TCL_DIR} DESTINATION ${TEMP_DIR})
 	file(RENAME ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
 	file(MAKE_DIRECTORY ${TEMP_DIR}/Tcl/SimVascular_2.0)
 	
@@ -68,7 +68,7 @@ file(REMOVE_RECURSE ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
 
 	exec_program(${TCL_TCLSH} 
 		ARGS 
-		${SimVascular_SOURCE_DIR}/../Distribution/create_tclIndex.tcl 
+		${SV_SOURCE_DIR}/../Distribution/create_tclIndex.tcl 
 		${TEMP_DIR}/Tcl/SimVascular_2.0/
 		OUTPUT_VARIABLE TCLOUT
 		)

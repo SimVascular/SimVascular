@@ -160,6 +160,7 @@ public:
   int ReadNative( char *filename );
   int WriteNative( int file_version, char *filename ) const;
   int WriteVtkPolyData( char *filename ) {return CV_ERROR; }
+  int WriteGeomSim( char *filename ) {return CV_ERROR; }
 
   // geometric manipulation
   // this method is buggy and should be used with great care!

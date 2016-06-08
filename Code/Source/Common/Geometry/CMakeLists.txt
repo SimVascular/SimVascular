@@ -37,7 +37,7 @@ LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-SET(CXXSRCS	cv_sys_geom.cxx cv_ggems.cxx
+SET(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	cv_spline.cxx cv_integrate_surface.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
 	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx
@@ -76,64 +76,49 @@ SET(HDRS cv_sys_geom.h cv_ggems.h
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h
 	vtkConstrainedBlend.h)
 
-if(SimVascular_USE_GTS)
+if(SV_USE_GTS)
 	SET(CXXSRCS  ${CXXSRCS} vtkSurfaceBooleanOperations.cxx)
 	SET(HDRS  ${HDRS} vtkSurfaceBooleanOperations.h)
 endif()
 
-#if(Plugin_VMTK)
-#	SET(CXXSRCS ${CXXSRCS} vtkvmtkPolyDataCenterlines.cxx
-#		 	       vtkvmtkPolyDataDistanceToCenterlines.cxx
-#		               vtkvmtkMinHeap.cxx
-#			       vtkvmtkNonManifoldSteepestDescent.cxx
-#		               vtkvmtkVoronoiDiagram3D.cxx
-#		               vtkvmtkNonManifoldFastMarching.cxx
-#		               vtkvmtkSimplifyVoronoiDiagram.cxx
-#			       vtkvmtkInternalTetrahedraExtractor.cxx
-#			       vtkvmtkSteepestDescentLineTracer.cxx
-#			       vtkvmtkCapPolyData.cxx)
-#	SET(HDRS ${HDRS} vtkvmtkPolyDataCenterlines.h
-#		 	 vtkvmtkPolyDataDistanceToCenterlines.h
-#		         vtkvmtkMinHeap.h
-#			 vtkvmtkNonManifoldSteepestDescent.h
-#		         vtkvmtkVoronoiDiagram3D.h
-#		         vtkvmtkNonManifoldFastMarching.h
-#		         vtkvmtkSimplifyVoronoiDiagram.h
-#			 vtkvmtkSteepestDescentLineTracer.h
-#			 vtkvmtkInternalTetrahedraExtractor.h
-#			 vtkvmtkCapPolyData.h)
-#endif()
-add_library(${lib} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-	lib_simvascular_solid lib_simvascular_globals
+	lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository lib_simvascular_solid
 	)
 
-if(SimVascular_USE_GLIB)
+if(SV_USE_GLIB)
 	include_directories(${GLIB_INCLUDE_PATH})
 	target_link_libraries(${lib}
 		${GLIB_LIBRARY}
 		)
 endif()
 
-if(SimVascular_USE_GTS)
+if(SV_USE_GTS)
 	include_directories(${GTS_INCLUDE_PATH})
 	target_link_libraries(${lib}
 		${GTS_LIBRARY}
 		)
 endif()
 
-
-if(SIMVASCULAR_INSTALL_LIBS)
-	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SIMVASCULAR_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SIMVASCULAR_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SIMVASCULAR_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+if(SV_USE_VMTK)
+	target_link_libraries(${lib}
+		lib_simvascular_vmtk
 		)
 endif()
-if(SIMVASCULAR_INSTALL_HEADERS)
+
+
+
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()

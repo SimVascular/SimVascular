@@ -52,15 +52,19 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(TCLTK_INCDIR)
 
 # double hack for now, want to make code consistent with meshsim code
-ifeq ($(MAKE_WITH_MESHSIM_SHARED),1)
+ifeq ($(SV_USE_MESHSIM_SHARED),1)
   CXXFLAGS += -DNOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
 endif
 
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_OPENCASCADE),1)
+  CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
+
+ifeq ($(SV_USE_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
 endif
 
-ifeq ($(MAKE_WITH_TETGEN),1)
+ifeq ($(SV_USE_TETGEN),1)
         CXXFLAGS    += $(TETGEN_INCDIR)
 endif
 
@@ -75,22 +79,22 @@ DLLSRCS = cv_tetgen_adapt_init.cxx
 DLLLIBS = $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
           $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
 
-ifeq ($(MAKE_WITH_TETGEN),1)
+ifeq ($(SV_USE_TETGEN),1)
   DLLLIBS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
   DLLLIBS += $(SVLIBFLAG)_lib_simvascular_tetgen$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
 
-ifeq ($(MAKE_WITH_VMTK),1)
+ifeq ($(SV_USE_VMTK),1)
   DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
 endif
 
-ifeq ($(MAKE_WITH_ZLIB),1)
+ifeq ($(SV_USE_ZLIB),1)
   DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
 endif
 
-ifeq ($(MAKE_WITH_TETGEN),1)
+ifeq ($(SV_USE_TETGEN),1)
   DLLLIBS += $(TETGEN_LIBS)
 endif
 

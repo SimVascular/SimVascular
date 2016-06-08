@@ -21,12 +21,14 @@
 #ifndef __vtkSurfaceVectors_h
 #define __vtkSurfaceVectors_h
 
+#include "SimVascular.h"
+
 #include "vtkDataSetAlgorithm.h"
 
 class vtkFloatArray;
 class vtkIdList;
 
-class VTK_EXPORT vtkSurfaceVectors : public vtkDataSetAlgorithm
+class CV_DLL_EXPORT vtkSurfaceVectors : public vtkDataSetAlgorithm
 {
 public:
   vtkTypeMacro(vtkSurfaceVectors,vtkDataSetAlgorithm);

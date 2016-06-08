@@ -68,7 +68,7 @@
 #define vtkNew(type,name) \
   vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
 #include "vtkvmtkPolyDataCenterlines.h"
 #include "vtkvmtkCenterlineBranchExtractor.h"
@@ -699,7 +699,7 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
   return CV_OK;
 }
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
 /* -------------- */
 /* sys_geom_union_gts */
 /* -------------- */
@@ -3351,7 +3351,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
   {
     double pt[3];
     int numPoints = tmp->GetNumberOfPoints();
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
     {
       newArray->SetNumberOfTuples(numPoints);
       for (vtkIdType id=0;id < numPoints;id++)
@@ -3368,7 +3368,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
       if (dist <= radius)
 	newArray->InsertValue(id,1);
     }
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
       tmp->GetPointData()->RemoveArray(outarrayname);
     tmp->GetPointData()->AddArray(newArray);
   }
@@ -3377,7 +3377,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
     double centroid[3];
     vtkIdType npts,*pts;
     int numCells = tmp->GetNumberOfCells();
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
     {
       newArray->SetNumberOfTuples(numCells);
       for (vtkIdType id=0;id < numCells;id++)
@@ -3402,7 +3402,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
       if (dist <= radius)
 	newArray->InsertValue(id,1);
     }
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
       tmp->GetCellData()->RemoveArray(outarrayname);
     tmp->GetCellData()->AddArray(newArray);
   }
@@ -3456,13 +3456,13 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
   newArray->SetName(outarrayname);
   if (datatype == 0)
   {
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,inarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,inarrayname) != CV_OK)
     {
       fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
       return CV_ERROR;
     }
     int numPoints = tmp->GetNumberOfPoints();
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
     {
       newArray->SetNumberOfTuples(numPoints);
       for (vtkIdType id=0;id< numPoints;id++)
@@ -3485,20 +3485,20 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
       if (wantval[value-1])
 	newArray->InsertValue(id,1);
     }
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
       tmp->GetPointData()->RemoveArray(outarrayname);
     tmp->GetPointData()->AddArray(newArray);
     delete [] wantval;
   }
   else
   {
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
     {
       fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
       return CV_ERROR;
     }
     int numCells = tmp->GetNumberOfCells();
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
     {
       newArray->SetNumberOfTuples(numCells);
       for (vtkIdType id=0;id< numCells;id++)
@@ -3521,7 +3521,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
       if (wantval[value-1])
 	newArray->InsertValue(id,1);
     }
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
       tmp->GetCellData()->RemoveArray(outarrayname);
     tmp->GetCellData()->AddArray(newArray);
     delete [] wantval;
@@ -3571,7 +3571,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
   if (datatype == 0)
   {
     int numPoints = tmp->GetNumberOfPoints();
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
     {
       newArray->SetNumberOfTuples(numPoints);
       for (vtkIdType id=0;id< numPoints;id++)
@@ -3590,7 +3590,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
       if (wantval[id-1])
 	newArray->InsertValue(id,1);
     }
-    if (PlyDtaUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
       tmp->GetPointData()->RemoveArray(outarrayname);
     tmp->GetPointData()->AddArray(newArray);
     delete [] wantval;
@@ -3598,7 +3598,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
   else
   {
     int numCells = tmp->GetNumberOfCells();
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
     {
       newArray->SetNumberOfTuples(numCells);
       for (vtkIdType id=0;id< numCells;id++)
@@ -3617,7 +3617,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
       if (wantval[id-1])
 	newArray->InsertValue(id,1);
     }
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
       tmp->GetCellData()->RemoveArray(outarrayname);
     tmp->GetCellData()->AddArray(newArray);
     delete [] wantval;
@@ -3678,7 +3678,7 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
   }
   else
   {
-    if (PlyDtaUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
     {
       fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
       return CV_ERROR;
@@ -4153,7 +4153,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
   return CV_OK;
 }
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 
 /* -------------- */
 /* sys_geom_centerlines */
@@ -4515,12 +4515,12 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
       vtkNew(vtkIntArray, currentCapArray);
       vtkNew(vtkIntArray, currentFaceArray);
       vtkNew(vtkIntArray, newFaceArray);
-      if (PlyDtaUtils_PDCheckArrayName(capout,1,"CapID") != CV_OK)
+      if (VtkUtils_PDCheckArrayName(capout,1,"CapID") != CV_OK)
       {
 	fprintf(stderr,"CapID Array is not on the surface\n");
 	return CV_ERROR;
       }
-      if (PlyDtaUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+      if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
       {
 	fprintf(stderr,"ModelFaceID Array is not on the surface\n");
 	return CV_ERROR;
@@ -4714,13 +4714,13 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
   double facerange[2],caprange[2];
   vtkNew(vtkIntArray,capids);
   vtkNew(vtkIntArray,faceids);
-  if (PlyDtaUtils_PDCheckArrayName(geom,1,"CapID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"CapID") != CV_OK)
   {
     fprintf(stderr,"First\n");
     fprintf(stderr,"CapID Array is not on the surface\n");
     return CV_ERROR;
   }
-  if (PlyDtaUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
   {
     fprintf(stderr,"ModelFaceID Array is not on the surface\n");
     return CV_ERROR;
@@ -4757,7 +4757,7 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
 
     vtkNew(vtkIntArray,modelfacecaps);
 
-    if (PlyDtaUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != CV_OK)
     {
       fprintf(stderr,"Second\n");
       fprintf(stderr,"CapID Array is not on the surface\n");

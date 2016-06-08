@@ -55,7 +55,7 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvPo
 
 int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance);
 
-#ifdef USE_GTS
+#ifdef SV_USE_GTS
 int sys_geom_union_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst );
 
 int sys_geom_intersect_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst );
@@ -200,7 +200,7 @@ int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, int numblenditers,
     int numcgsmoothiters, int numlapsmoothiters, double targetdecimation,
     char *pointarrayname, char *cellarrayname);
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
 int sys_geom_centerlines( cvPolyData *polydata, int *source, int nsources,
                             int *targets, int ntargets,
 			    cvPolyData **lines, cvPolyData **voronoi);

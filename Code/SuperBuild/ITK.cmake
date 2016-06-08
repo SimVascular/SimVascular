@@ -27,6 +27,9 @@
 set(proj ITK)
 
 set(${proj}_DEPENDENCIES VTK)
+if(${SV_USE_GDCM})
+  set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} GDCM)
+endif()
 
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
@@ -49,14 +52,20 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
     GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj} 
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
        CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-b  
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-b  
       CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/kw/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/kw/${proj}-b)
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-b)
   endif()
+
+  set(ITK_USE_GDCM "OFF")
+  if(${SV_USE_GDCM})
+    set(ITK_USE_GDCM "ON")
+  endif()
+
   ExternalProject_Add(${proj}
    ${location_args}
    PREFIX ${${proj}_OUTPUT_DIR}-p
@@ -70,19 +79,22 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
+   -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DBUILD_EXAMPLES:BOOL=OFF
-   -DBUILD_SHARED_LIBS:BOOL=${SimVascular_BUILD_SHARED_VTK}
+   -DBUILD_SHARED_LIBS:BOOL=${ITK_SHARED_LIBRARIES}
    -DBUILD_TESTING:BOOL=OFF
    -DITK_WRAP_PYTHON:BOOL=OFF
    -DITK_LEGACY_SILENT:BOOL=OFF
    -DModule_ITKReview:BOOL=ON
    -DModule_ITKVtkGlue:BOOL=ON
    -DVTK_DIR:PATH=${VTK_DIR}
-   -DCMAKE_INSTALL_PREFIX:STRING=${SIMVASCULAR_INSTALL_ROOT_DIR}
-   -DITK_INSTALL_RUNTIME_DIR:PATH=${SIMVASCULAR_INSTALL_ITK_RUNTIME_DIR}
-   -DITK_INSTALL_LIBRARY_DIR:PATH=${SIMVASCULAR_INSTALL_ITK_LIBRARY_DIR}
-   -DITK_INSTALL_ARCHIVE_DIR:PATH=${SIMVASCULAR_INSTALL_ITK_ARCHIVE_DIR}
-   -DITK_INSTALL_INCLUDE_DIR:PATH=${SIMVASCULAR_INSTALL_ITK_INCLUDE_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
+   -DITK_INSTALL_RUNTIME_DIR:PATH=${SV_INSTALL_ITK_RUNTIME_DIR}
+   -DITK_INSTALL_LIBRARY_DIR:PATH=${SV_INSTALL_ITK_LIBRARY_DIR}
+   -DITK_INSTALL_ARCHIVE_DIR:PATH=${SV_INSTALL_ITK_ARCHIVE_DIR}
+   -DITK_INSTALL_INCLUDE_DIR:PATH=${SV_INSTALL_ITK_INCLUDE_DIR}
+   -DITK_USE_SYSTEM_GDCM:BOOL=${${proj}_USE_GDCM}
+   -DGDCM_DIR:PATH=${GDCM_DIR}
    INSTALL_COMMAND ""
    DEPENDS
    ${${proj}_DEPENDENCIES}
@@ -92,8 +104,10 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+#  file(COPY ${${proj}_DIR}/cmake_install.cmake
+#       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
-if(SIMVASCULAR_INSTALL_EXTERNALS)
+if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})
 endif()
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)

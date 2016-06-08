@@ -53,7 +53,7 @@ include $(TOP)/include.mk
 
 FFLAGS   = $(GLOBAL_FFLAGS) $(MPI_INCDIR) $(METIS_INCDIR)
 
-ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
+ifeq ($(SV_USE_SOURCE_CODE_SVLS),1)
   FSRCS    =	        ADDBCMUL.f \
 			BC.f \
 			CGRAD.f \
@@ -73,7 +73,7 @@ ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
  TARGET_LIB_NAME = simvascular_svLS_$(MPI_NAME)
 endif
 
-ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
+ifeq ($(SV_USE_DUMMY_SVLS),1)
   FSRCS      = dummy_prototypes.f
   TARGET_LIB_NAME = simvascular_dummy_svLS
 endif

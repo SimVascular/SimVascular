@@ -56,7 +56,7 @@ set(${proj}_HEADER "parasolid_kernel.h")
 #-----------------------------------------------------------------------------
 set(${proj}_POSSIBLE_PATHS ${${proj}_DIR} ${${proj}_DIR}/parasolid)
 if(${PROJECT_NAME}_EXTERNAL_DIR AND IS_DIRECTORY ${${PROJECT_NAME}_EXTERNAL_DIR})
-	set(${proj}_PATH "${SimVascular_SV_EXTERN_LicensedLibs_BIN_DIR}/parasolid-24.0/")
+  	set(${proj}_PATH "${SV_EXTERN_LICENSED_BIN_DIR}/parasolid-24.0/")
 endif()
 # Set paths to search for parasolid
 if(LINUX)

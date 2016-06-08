@@ -63,7 +63,7 @@
 #include <iostream>
 
 #include "cv_polydatasolid_utils.h"
-vtkCxxRevisionMacro(vtkGetBoundaryFaces, "$Revision: 0.0 $");
+
 vtkStandardNewMacro(vtkGetBoundaryFaces);
 
 // Construct object with feature angle = 50.0;

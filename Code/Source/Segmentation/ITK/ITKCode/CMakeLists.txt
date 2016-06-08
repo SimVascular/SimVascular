@@ -3,9 +3,9 @@ SET(HDRS itkVascularPhaseOneLevelSetFunction.hxx
 	itkVascularPhaseTwoLevelSetFunction.hxx
 	itkVascularPhaseTwoLevelSetImageFilter.hxx
 	VascularLevelSetObserver.h)
-if(SIMVASCULAR_INSTALL_HEADERS)
+if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
-		DESTINATION ${SIMVASCULAR_INSTALL_INCLUDE_DIR}/plugins/itk/levelset COMPONENT PluginHeaders
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/plugins/itk/levelset COMPONENT PluginHeaders
 		)
 endif()
 

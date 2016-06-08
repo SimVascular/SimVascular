@@ -42,33 +42,33 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-ifeq ($(MAKE_WITH_SOLVERIO),1)
+ifeq ($(SV_USE_SOLVERIO),1)
   THREED_LIB_DIRS = SolverIO
 else
   THREED_LIB_DIRS =
 endif
 
-ifeq ($(MAKE_WITH_DUMMY_MPI),1)
+ifeq ($(SV_USE_DUMMY_MPI),1)
   THREED_LIB_DIRS += dummyMPI
 endif
 
-ifeq ($(MAKE_WITH_SOURCE_CODE_SVLS),1)
+ifeq ($(SV_USE_SOURCE_CODE_SVLS),1)
 	THREED_LIB_DIRS += svLS
 endif
 
-ifeq ($(MAKE_WITH_DUMMY_SVLS),1)
+ifeq ($(SV_USE_DUMMY_SVLS),1)
 	THREED_LIB_DIRS += svLS 
 endif
 
-ifeq ($(MAKE_WITH_THREEDSOLVER),1)
+ifeq ($(SV_USE_THREEDSOLVER),1)
 	THREED_EXEC_DIRS += svSolver 
 endif
 
 ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  ifeq ($(MAKE_WITH_PRESOLVER),1)
+  ifeq ($(SV_USE_PRESOLVER),1)
 	THREED_EXEC_DIRS += svPre
   endif
-  ifeq ($(MAKE_WITH_POSTSOLVER),1)
+  ifeq ($(SV_USE_POSTSOLVER),1)
 	THREED_EXEC_DIRS += svPost
   endif
 endif

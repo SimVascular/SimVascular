@@ -40,7 +40,7 @@ ExternalProject_Add(${proj}
   INSTALL_COMMAND ""
   CMAKE_ARGS
   CMAKE_CACHE_ARGS
-  -DSimVascular_SUPERBUILD:BOOL=OFF
+  -DSV_SUPERBUILD:BOOL=OFF
   -DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_INSTALL_PREFIX}
   -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER}
   -DCMAKE_CXX_FLAGS:STRING=${ep_common_cxx_flags}
@@ -49,7 +49,7 @@ ExternalProject_Add(${proj}
   -DCMAKE_C_FLAGS:STRING=${ep_common_c_flags}
   -DADDITIONAL_C_FLAGS:STRING=${ADDITIONAL_C_FLAGS}
   -DADDITIONAL_CXX_FLAGS:STRING=${ADDITIONAL_CXX_FLAGS}
-  -DSIMVASCULAR_RELEASE_TIMESTAMP:STRING=${SIMVASCULAR_RELEASE_TIMESTAMP}
+  -DSV_RELEASE_TIMESTAMP:STRING=${SV_RELEASE_TIMESTAMP}
   DEPENDS 
   ${${PROJECT_NAME}_DEPENDS}
   )
@@ -60,21 +60,21 @@ ExternalProject_Install_CMake(${proj})
 # steps to run whenever a top level build is done...
 ExternalProject_Add_Step(${proj} forcebuild
   COMMAND ${CMAKE_COMMAND} -E remove
-  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/SimVascular-build
+  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/${PROJECT_NAME}-build
    COMMAND ${CMAKE_COMMAND} -E remove
-  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/RelWithDebInfo/SimVascular-build
+   ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/RelWithDebInfo/${PROJECT_NAME}-build
   COMMENT "Forcing build step for '${proj}'"
   DEPENDEES build
   ALWAYS 1
   )
 
-file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/SimVascular-configure)
-file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/RelWithDebInfo/SimVascular-configure)
+file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/${PROJECT_NAME}-configure)
+file(REMOVE ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/RelWithDebInfo/${PROJECT_NAME}-configure)
 
 add_custom_target(forcebuild)
 add_custom_command(TARGET forcebuild
   ${CMAKE_COMMAND} -E remove
-  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/SimVascular-stamp/SimVascular-build
+  ${${PROJECT_NAME}_BINARY_DIR}/cache/src/${PROJECT_NAME}-stamp/${PROJECT_NAME}-build
   COMMENT "Forcing build step for '${proj}'")
 
 # This will extend this target to the top level build

@@ -40,6 +40,8 @@
 #ifndef vtkLocalQuadricDecimation_h
 #define vtkLocalQuadricDecimation_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
@@ -49,7 +51,7 @@ class vtkPointData;
 class vtkPriorityQueue;
 class vtkDoubleArray;
 
-class VTKFILTERSCORE_EXPORT vtkLocalQuadricDecimation : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkLocalQuadricDecimation : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalQuadricDecimation, vtkPolyDataAlgorithm);

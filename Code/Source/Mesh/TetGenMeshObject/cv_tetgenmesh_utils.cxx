@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,9 +32,9 @@
  *  @brief The implementations of functions in cv_tetgenmesh_utils
  *
  *  @author Adam Updegrove
- *  @author updega2@gmail.com 
+ *  @author updega2@gmail.com
  *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  @author shaddenlab.berkeley.edu
  */
 
 #include "SimVascular.h"
@@ -62,10 +62,11 @@
 
 #include "cv_polydatasolid_utils.h"
 #include "cv_misc_utils.h"
+#include "cv_vtk_utils.h"
 
 #define MAXPATHLEN 1024
 
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
 #include "simvascular_zlib.h"
 #else
 #include <stdlib.h>
@@ -87,7 +88,7 @@ int TGenUtils_Init()
 // -----------------------------
 // cvTGenUtils_ConvertToTetGen()
 // -----------------------------
-/** 
+/**
  * @brief Takes vtkPolyData and turns it into TetGen data structures
  * @param *inmesh tetgenio structure in which to hold the input surface
  * @param *polydatasolid the solid in which to take the discrete points
@@ -109,9 +110,9 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   //Initiate pointers for the points, polys, and scalars
   vtkSmartPointer<vtkIdList> ptIds = vtkSmartPointer<vtkIdList>::New();
   vtkSmartPointer<vtkPoints> inPts = vtkSmartPointer<vtkPoints>::New();
-  vtkSmartPointer<vtkCellArray> inPolys = 
+  vtkSmartPointer<vtkCellArray> inPolys =
     vtkSmartPointer<vtkCellArray>::New();
-  vtkSmartPointer<vtkIntArray> boundaryScalars = 
+  vtkSmartPointer<vtkIntArray> boundaryScalars =
     vtkSmartPointer<vtkIntArray>::New();
 
   //All input numbers start from zero, all outmesh_put number start from zero
@@ -135,7 +136,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
   //Do Point transition from polydatasolid into pointlist
   fprintf(stderr,"Converting Points...\n");
   inPts = polydatasolid->GetPoints();
-  for ( i=0; i<inmesh->numberofpoints;i++) 
+  for ( i=0; i<inmesh->numberofpoints;i++)
   {
     inPts->GetPoint(i,polyPts);
     inmesh->pointlist[i*3] = polyPts[0];
@@ -152,10 +153,10 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
     }
   }
 
-  //Do Poly transition from polydatasolid into facetlist  
+  //Do Poly transition from polydatasolid into facetlist
   if (useBoundary)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,1,markerListArrayName) != CV_OK)
     {
       fprintf(stderr,"Array name does not exist in polydata. Regions must be identified \
 		    and named prior to this function call\n");
@@ -164,7 +165,7 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
 //    boundaryScalars = vtkIntArray::SafeDownCast(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
     boundaryScalars = static_cast<vtkIntArray*>(polydatasolid->GetCellData()->GetScalars(markerListArrayName.c_str()));
   }
-  inmesh->numberoffacets = (int) polydatasolid->GetNumberOfPolys();  
+  inmesh->numberoffacets = (int) polydatasolid->GetNumberOfPolys();
   inmesh->facetlist = new tetgenio::facet[inmesh->numberoffacets];
   inmesh->facetmarkerlist = new int[inmesh->numberoffacets];
 
@@ -208,11 +209,11 @@ int TGenUtils_ConvertSurfaceToTetGen(tetgenio *inmesh,vtkPolyData *polydatasolid
 // -----------------------------
 // cvTGenUtils_ConvertVolumeToTetGen()
 // -----------------------------
-/** 
+/**
  * @brief Function to convert the current mesh to a tetgen mesh object to be
  * able to remesh
  * @param mesh This is the full mesh to be remeshed
- * @param surfaceMesh This is the intial mesh; If we don't need the final 
+ * @param surfaceMesh This is the intial mesh; If we don't need the final
  * mesh regions, then we don't have to actually use this
  * @param inmesh This is the tegen mesh object to be transferred to
  */
@@ -276,17 +277,17 @@ int TGenUtils_ConvertVolumeToTetGen(vtkUnstructuredGrid *mesh,vtkPolyData *surfa
       inmesh->tetrahedronlist[i*npts+j] = pts[j];
     }
   }
-  
+
   return CV_OK;
 }
 
 // -----------------------------
 // cvTGenUtils_ConvertToVTK()
 // -----------------------------
-// 
-/** 
- * @brief Takes tetgenio and turns it into an output vtkPolyData and 
- * vtkUnstructuredGrid 
+//
+/**
+ * @brief Takes tetgenio and turns it into an output vtkPolyData and
+ * vtkUnstructuredGrid
  * @param *outmesh tetgen structure for which the mesh is output
  * @param *volumemesh vtkPolyData on which to save the surface mesh
  * @param *surfacemesh vtkUnstructuredGrid on which to save the volume mesh
@@ -301,7 +302,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   int totRegions=0;
   double tmp;
   vtkIdType i, j;
-  vtkIdType vtkId;   
+  vtkIdType vtkId;
   vtkIdType npts = 0;
   vtkIdType *pts = 0;
 
@@ -388,7 +389,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
     globalId++;
     polys->InsertNextCell(polyPointIds);
   }
-  
+
   //Create an unstructured grid and link scalar information to nodes and
   //elements
   fullUGrid->SetPoints(points);
@@ -409,7 +410,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   //Save all external faces to a vtkCellArray list
   fprintf(stderr,"Converting Faces to VTK Structures...\n");
   facePointIds->SetNumberOfIds(3);
-  
+
   count=0;
   for (i=0;i< numFaces;i++)
   {
@@ -457,7 +458,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
   vtpNodeIds->SetName("GlobalNodeID");
   fullPolyData->GetPointData()->AddArray(vtpNodeIds);
   fullPolyData->GetPointData()->SetActiveScalars("GlobalNodeID");
-												      
+
   vtpFaceIds->SetName("GlobalElementID");
   fullPolyData->GetCellData()->AddArray(vtpFaceIds);
   fullPolyData->GetCellData()->SetActiveScalars("GlobalElementID");
@@ -494,7 +495,7 @@ int TGenUtils_ConvertToVTK(tetgenio *outmesh,vtkUnstructuredGrid *volumemesh,vtk
 // -----------------------------
 // cvTGenUtils_WriteVTU()
 // -----------------------------
-/** 
+/**
  * @brief Writes a vtu file file
  * @param *filename Name of desired file location
  * @param *UGrid vtkUnstructuredGrid to be written
@@ -522,7 +523,7 @@ int TGenUtils_WriteVTU(char *filename,vtkUnstructuredGrid *UGrid)
 // -----------------------------
 // cvTGenUtils_WriteVTP()
 // -----------------------------
-/** 
+/**
  * @brief Writes a vtp file file
  * @param *filename Name of desired file location
  * @param *UGrid vtkPolyData to be written
@@ -551,18 +552,18 @@ int TGenUtils_WriteVTP(char *filename,vtkPolyData *PData)
 // -----------------------------
 // cvTGenUtils_GetFacePolyData()
 // -----------------------------
-/** 
- * @brief Based on Scalars Defined by the GetBoundaryFaces filter, 
- * separate into face VTKs   
+/**
+ * @brief Based on Scalars Defined by the GetBoundaryFaces filter,
+ * separate into face VTKs
  * @param *mesh vtkPolyData on which to extract the face from
  * @param *face vtkPolyData on which to set the face PolyData
  * @param angle double that specifies the extraction angle. Any faces
  * @param id int that specifies the face id to extract
  * @return CV_OK if function completes properly
- * @note There is another method to do this that does not retain id 
+ * @note There is another method to do this that does not retain id
  * information. It may be faster, but doesn't reatain info
  */
-// 
+//
 
 int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
 {
@@ -583,27 +584,27 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   vtkSmartPointer<vtkCellArray> selectFaces = vtkSmartPointer<vtkCellArray>::New();
   vtkSmartPointer<vtkPoints> meshPoints = vtkSmartPointer<vtkPoints>::New();
   vtkSmartPointer<vtkPoints> selectPoints = vtkSmartPointer<vtkPoints>::New();
-  
+
   vtkSmartPointer<vtkIntArray> globalNodeIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> globalElementIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> boundaryScalars = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> lessNodeIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> lessElementIds = vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> globalElement2Ids = vtkSmartPointer<vtkIntArray>::New();
- 
-  if (PlyDtaUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != CV_OK)
+
+  if (VtkUtils_PDCheckArrayName(mesh,0,"GlobalNodeID") != CV_OK)
   {
     fprintf(stderr,"Array name 'GlobalNodeID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
     return CV_ERROR;
   }
-  if (PlyDtaUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,1,"GlobalElementID") != CV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist.");
     fprintf(stderr," IDs on mesh may not have been assigned properly\n");
     return CV_ERROR;
   }
-  if (PlyDtaUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(mesh,1,"ModelFaceID") != CV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified");
 		fprintf(stderr," and named 'ModelFaceID' prior to this function call\n");
@@ -642,9 +643,9 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
 	  pointOnFace[pts[j]] = true;
 	  pointMapping[pts[j]] = count++;
 	}
-      } 
+      }
     }
-    else 
+    else
     {
       cellOnFace[cellId] = false;
     }
@@ -663,14 +664,14 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
   }
 
   facePointIds->SetNumberOfIds(3);
-  //Get node and element information for the current boundary on the full 
+  //Get node and element information for the current boundary on the full
   //polydata and save to a smaller polydata
-  for(cellId = 0,meshFaces->InitTraversal();meshFaces->GetNextCell(npts,pts); cellId++) 
+  for(cellId = 0,meshFaces->InitTraversal();meshFaces->GetNextCell(npts,pts); cellId++)
   {
     if (cellOnFace[cellId] == true)
     {
       for (j=0; j<npts; j++)
-      { 
+      {
         facePointIds->SetId(j,pointMapping[pts[j]]);
       }
       selectFaces->InsertNextCell(facePointIds);
@@ -679,7 +680,7 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
     }
   }
 
-  //Create links between points and faces and respective global node and 
+  //Create links between points and faces and respective global node and
   //element information
   tempFace->SetPoints(selectPoints);
   tempFace->SetPolys(selectFaces);
@@ -708,7 +709,7 @@ int TGenUtils_GetFacePolyData(int id,vtkPolyData *mesh, vtkPolyData *face)
 // -----------------------------
 // cvTGenUtils_writeDiffAdj()
 // -----------------------------
-/** 
+/**
  * @brief This is the new way to write an adjacency file based on the mesh
  * @note now implemented in the presolver as new command
  */
@@ -719,7 +720,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 
   std::string filename("compareAdjacency.xadj");
 
-  #ifdef USE_ZLIB
+  #ifdef SV_USE_ZLIB
   char filenamegz[MAXPATHLEN];
   filenamegz[0]='\0';
   sprintf (filenamegz, "%s.gz", filename.c_str());
@@ -751,7 +752,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
   volumemesh->BuildLinks();
 
-  if (PlyDtaUtils_UGCheckArrayName(volumemesh,1,"GlobalElementID") != CV_OK)
+  if (VtkUtils_UGCheckArrayName(volumemesh,1,"GlobalElementID") != CV_OK)
   {
     fprintf(stderr,"Array name 'GlobalElementID' does not exist. IDs on mesh may not have been assigned properly\n");
     return CV_ERROR;
@@ -768,7 +769,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 
   ptIds->SetNumberOfIds(3);
   for (cellId = 0;cellId<numCells;cellId++)
-  { 
+  {
     meshCellId = globalIds->LookupValue(cellId+1);
     volumemesh->GetCellPoints(meshCellId,npts,pts);
     for (i=0;i < npts; i++)
@@ -797,7 +798,7 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   gzprintf(myfile,"xadj: %i\n",numCells+1);
   gzprintf(myfile,"adjncy: %i\n",adj);
 
-  for (i=0;i < numCells+1; i++) 
+  for (i=0;i < numCells+1; i++)
   {
       gzprintf(myfile,"%i\n",xadj[i]);
   }
@@ -805,10 +806,10 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
   {
       gzprintf(myfile,"%i\n",adjacency[i]);
   }
-    
+
   delete xadj;
   delete adjacency;
-  
+
   gzclose(myfile);
   return CV_OK;
 }
@@ -816,10 +817,10 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 // -----------------------------
 // cvTGenUtils_SetRefinementCylinder()
 // -----------------------------
-/** 
+/**
  * @brief computes the distance between each point on surface and center
- * @brief of cylinder. Then, if inside radius, the meshsizing function at the 
- * @brief is set to the reduced size, 
+ * @brief of cylinder. Then, if inside radius, the meshsizing function at the
+ * @brief is set to the reduced size,
  * @param size This is the smaller refined of the edges within cylinder region.
  * @param radius This is the radius of the refinement cylinder.
  * @param center This is the center of the refinement cylinder.
@@ -831,8 +832,9 @@ int TGenUtils_writeDiffAdj(vtkUnstructuredGrid *volumemesh)
 
 int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,double radius, double *center,
-    double length, double *normal, int secondarray,double maxedgesize)
-{ 
+    double length, double *normal, int secondarray,double maxedgesize,
+    std::string refineIDArrayName, int refinecount)
+{
   int numPts;
   double disttopoint;
   double distalonglength;
@@ -841,19 +843,27 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
   for (int i=0;i < 3;i++)
     norm[i] = normal[i];
   vtkIdType pointId;
-  vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New(); 
+  vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkIntArray> refineIDArray = vtkSmartPointer<vtkIntArray>::New();
 
   //Set sizing function params
   numPts = polydatasolid->GetNumberOfPoints();
   if (secondarray)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
       return CV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
+    {
+      fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
+		      Reset or remake the array and try again\n",refineIDArrayName.c_str());
+      return CV_ERROR;
+    }
+    refineIDArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(refineIDArrayName.c_str()));
   }
   else
   {
@@ -861,9 +871,14 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
     meshSizeArray->Allocate(numPts,1000);
     meshSizeArray->SetNumberOfTuples(numPts);
     meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    refineIDArray->SetNumberOfComponents(1);
+    refineIDArray->Allocate(numPts,1000);
+    refineIDArray->SetNumberOfTuples(numPts);
+    refineIDArray->SetName(refineIDArrayName.c_str());
     for (pointId = 0;pointId<numPts;pointId++)
     {
       meshSizeArray->SetValue(pointId,0.0);
+      refineIDArray->SetValue(pointId,0);
     }
   }
 
@@ -887,20 +902,24 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
 
     //set value to new size
     if (disttopoint <= radius && distalonglength <= length/2)
-        meshSizeArray->SetValue(pointId,size);
-    else 
     {
-      if (meshSizeArray->GetValue(pointId) == 0) 
+      meshSizeArray->SetValue(pointId,size);
+      refineIDArray->SetValue(pointId,refinecount+1);
+    }
+    else
+    {
+      if (meshSizeArray->GetValue(pointId) == 0)
         meshSizeArray->SetValue(pointId,maxedgesize);
     }
   }
-  
+
   if (secondarray)
   {
     polydatasolid->GetPointData()->RemoveArray(sizingFunctionArrayName.c_str());
-  } 
+  }
   polydatasolid->GetPointData()->AddArray(meshSizeArray);
   polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
+  polydatasolid->GetPointData()->AddArray(refineIDArray);
 
   return CV_OK;
 }
@@ -908,10 +927,10 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
 // -----------------------------
 // cvTGenUtils_SetRefinementSphere()
 // -----------------------------
-/** 
+/**
  * @brief computes the distance between each point on surface and center
- * @brief of sphere. Then, if inside radius, the meshsizing function at the 
- * @brief is set to the reduced size, 
+ * @brief of sphere. Then, if inside radius, the meshsizing function at the
+ * @brief is set to the reduced size,
  * @param size This is the smaller refined of the edges within sphere region.
  * @param radius This is the radius of the refinement sphere.
  * @param center This is the center of the refinement sphere.
@@ -919,25 +938,34 @@ int TGenUtils_SetRefinementCylinder(vtkPolyData *polydatasolid,
  */
 
 int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
-    std::string sizingFunctionArrayName,double size,double radius, double *center,int secondarray,double maxedgesize)
-{ 
+    std::string sizingFunctionArrayName,double size,double radius, double *center,
+    int secondarray,double maxedgesize, std::string refineIDArrayName, int refinecount)
+{
   int numPts;
   double dist;
   double pts[3];
-  vtkIdType pointId;
-  vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New(); 
+  vtkIdType pointId, cellId;
+  vtkSmartPointer<vtkDoubleArray> meshSizeArray = vtkSmartPointer<vtkDoubleArray>::New();
+  vtkSmartPointer<vtkIntArray> refineIDArray = vtkSmartPointer<vtkIntArray>::New();
 
   //Set sizing function params
   numPts = polydatasolid->GetNumberOfPoints();
   if (secondarray)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
       return CV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
+    {
+      fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
+		      Reset or remake the array and try again\n",refineIDArrayName.c_str());
+      return CV_ERROR;
+    }
+    refineIDArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(refineIDArrayName.c_str()));
   }
   else
   {
@@ -945,9 +973,14 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
     meshSizeArray->Allocate(numPts,1000);
     meshSizeArray->SetNumberOfTuples(numPts);
     meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    refineIDArray->SetNumberOfComponents(1);
+    refineIDArray->Allocate(numPts,1000);
+    refineIDArray->SetNumberOfTuples(numPts);
+    refineIDArray->SetName(refineIDArrayName.c_str());
     for (pointId = 0;pointId<numPts;pointId++)
     {
       meshSizeArray->SetValue(pointId,0.0);
+      refineIDArray->SetValue(pointId,0);
     }
   }
 
@@ -961,20 +994,25 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
 
     //set value to new size
     if (dist <= radius)
-        meshSizeArray->SetValue(pointId,size);
-    else 
     {
-      if (meshSizeArray->GetValue(pointId) == 0) 
+      meshSizeArray->SetValue(pointId,size);
+      refineIDArray->SetValue(pointId,refinecount+1);
+    }
+    else
+    {
+      if (meshSizeArray->GetValue(pointId) == 0)
         meshSizeArray->SetValue(pointId,maxedgesize);
     }
   }
-  
+
   if (secondarray)
   {
     polydatasolid->GetPointData()->RemoveArray(sizingFunctionArrayName.c_str());
-  } 
+    polydatasolid->GetPointData()->RemoveArray(refineIDArrayName.c_str());
+  }
   polydatasolid->GetPointData()->AddArray(meshSizeArray);
   polydatasolid->GetPointData()->SetActiveScalars(sizingFunctionArrayName.c_str());
+  polydatasolid->GetPointData()->AddArray(refineIDArray);
 
   return CV_OK;
 }
@@ -982,14 +1020,14 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
 // -----------------------------
 // cvTGenUtils_SetSizeFunctionArray()
 // -----------------------------
-/** 
+/**
  * @brief set a mesh size function based on given array.
  * @brief Values of given array are normalized based on minimum value. Then
  * @brief normalized values are multiplied by size in order to give the mesh
  * @brief size function for the mesher
  * @param size This is the smaller refined of the edges within sphere region.
  * @param sizingFunctionArrayName Name for which to pull values from
- * @param functionname This is the desired function name to be sent to the 
+ * @param functionname This is the desired function name to be sent to the
  * mesher
  * @param secondarray This designates whether a previous function is already
  * applied.
@@ -999,7 +1037,7 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
 int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     std::string sizingFunctionArrayName,double size,char *functionname,
     int secondarray)
-{ 
+{
   int numPts,numCells;
   double dist;
   double value;
@@ -1017,7 +1055,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
   numCells = polydatasolid->GetNumberOfCells();
   if (secondarray)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,sizingFunctionArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain a double array of name %s. Regions must be identified \
 		      Reset or remake the array and try again\n",sizingFunctionArrayName.c_str());
@@ -1037,7 +1075,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
     }
   }
 
-  if (PlyDtaUtils_PDCheckArrayName(polydatasolid,0,functionname) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid,0,functionname) != CV_OK)
   {
     fprintf(stderr,"Solid does not contain a double array of name %s.",
 		    functionname);
@@ -1072,7 +1110,7 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
       //compute distance
       //set value to reduced size
       meshSizeArray->SetValue(pointId,factor*size);
-    } 
+    }
     polydatasolid->GetPointData()->RemoveArray(functionname);
   }
   else
@@ -1090,11 +1128,11 @@ int TGenUtils_SetSizeFunctionArray(vtkPolyData *polydatasolid,
 // -----------------------------
 // cvTGenUtils_LoadMesh()
 // -----------------------------
-/** 
- * @brief Function to load in a vtkUnstructuredGrid 
+/**
+ * @brief Function to load in a vtkUnstructuredGrid
  * @note This is only used by LoadMesh in vtkTetGenMeshObject
  */
-// 
+//
 
 int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid *result)
 {
@@ -1102,7 +1140,7 @@ int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid *result)
   extension = extension +1;
 
   if (!strncmp(extension,"vtu",3)) {
-    vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader = 
+    vtkSmartPointer<vtkXMLUnstructuredGridReader> ugreader =
       vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
     ugreader->SetFileName(filename);
     ugreader->Update();
@@ -1119,15 +1157,15 @@ int TGenUtils_LoadMesh(char *filename,vtkUnstructuredGrid *result)
   return CV_OK;
 }
 
-int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom, 
+int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,
     std::string originalName)
 {
-  int i,j,k; 
-  int subId;    
-  int maxIndex; 
+  int i,j,k;
+  int subId;
+  int maxIndex;
   int temp;
-  int flag = 1;  
+  int flag = 1;
   int count;
   int bigcount;
   vtkIdType npts;
@@ -1138,20 +1176,20 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   double tolerance = 1.0;
   double minmax[2];
   double centroid[3];
-  int range; 
+  int range;
   vtkIdType closestCell;
   vtkIdType cellId;
   vtkIdType currentValue;
   vtkIdType realValue;
-  vtkSmartPointer<vtkCellLocator> locator = 
+  vtkSmartPointer<vtkCellLocator> locator =
     vtkSmartPointer<vtkCellLocator>::New();
   vtkSmartPointer<vtkGenericCell> genericCell =
     vtkSmartPointer<vtkGenericCell>::New();
-  vtkSmartPointer<vtkLongArray> currentRegionsLong = 
+  vtkSmartPointer<vtkLongArray> currentRegionsLong =
     vtkSmartPointer<vtkLongArray>::New();
-  vtkSmartPointer<vtkIntArray> currentRegionsInt = 
+  vtkSmartPointer<vtkIntArray> currentRegionsInt =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkIntArray> realRegions = 
+  vtkSmartPointer<vtkIntArray> realRegions =
     vtkSmartPointer<vtkIntArray>::New();
 
   newgeom->BuildLinks();
@@ -1159,13 +1197,13 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   locator->SetDataSet(originalgeom);
   locator->BuildLocator();
 
-  //if (PlyDtaUtils_PDCheckArrayName(newgeom,1,newName) != CV_OK)
+  //if (VtkUtils_PDCheckArrayName(newgeom,1,newName) != CV_OK)
   //{
   //  fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
   //      	    and named 'ModelFaceID' prior to this function call\n");
   //  return CV_ERROR;
   //}
-  if (PlyDtaUtils_PDCheckArrayName(originalgeom,1,originalName) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != CV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
@@ -1180,7 +1218,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   range = minmax[1]-minmax[0];
   int *mapper;
   mapper = new int[1+range];
-  
+
   for (i=0;i<range+1;i++)
   {
     mapper[i] = -1;
@@ -1190,7 +1228,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
   {
     //currentValue = currentRegionsInt->GetValue(cellId);
-    
+
     //if (mapper[currentValue-1] == -1)
     //{
       newgeom->GetCellPoints(cellId,npts,pts);
@@ -1214,7 +1252,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   //{
   //  fprintf(stderr,"Want to see mapper vals: %d is %d\n",i,mapper[i]);
   //}
-  ////Set original region values 
+  ////Set original region values
   //for (cellId=0;cellId<newgeom->GetNumberOfCells();cellId++)
   //{
   //  currentValue = currentRegionsInt->GetValue(cellId);
@@ -1226,7 +1264,7 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
   newgeom->GetCellData()->AddArray(currentRegionsInt);
 
   newgeom->GetCellData()->SetActiveScalars(originalName.c_str());
-  
+
   delete [] mapper;
   return CV_OK;
 }
@@ -1234,11 +1272,11 @@ int TGenUtils_ResetOriginalRegions(vtkPolyData *newgeom,
 // -----------------------------
 // cvTGenUtils_CheckSurfaceMesh()
 // -----------------------------
-/** 
- * @brief Function to load in a vtkUnstructuredGrid 
+/**
+ * @brief Function to load in a vtkUnstructuredGrid
  * @note This is only used by LoadMesh in vtkTetGenMeshObject
  */
-// 
+//
 
 int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
 {
@@ -1247,13 +1285,13 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
   vtkIdType *pts;
   int BadEdges = 0,FreeEdges = 0;
   int regions=0;
-  vtkSmartPointer<vtkCleanPolyData> cleaner = 
+  vtkSmartPointer<vtkCleanPolyData> cleaner =
     vtkSmartPointer<vtkCleanPolyData>::New();
-  vtkSmartPointer<vtkIdList> edgeneigh = 
+  vtkSmartPointer<vtkIdList> edgeneigh =
     vtkSmartPointer<vtkIdList>::New();
-  vtkSmartPointer<vtkConnectivityFilter> connector = 
+  vtkSmartPointer<vtkConnectivityFilter> connector =
     vtkSmartPointer<vtkConnectivityFilter>::New();
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer = 
+  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
     vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
 
   //Clean the input surface
@@ -1268,15 +1306,15 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
 
   surfacer->SetInputData(connector->GetOutput());
   surfacer->Update();
-  
-  vtkSmartPointer<vtkIdTypeArray> regionarray = 
+
+  vtkSmartPointer<vtkIdTypeArray> regionarray =
     vtkSmartPointer<vtkIdTypeArray>::New();
   regionarray = vtkIdTypeArray::SafeDownCast(surfacer->GetOutput()->
       GetCellData()->GetScalars("RegionId"));
 
-  //Loop through the surface and find edges with cells that have either more 
-  //than one neighbor or no neighbors. No neighbors can be okay,as this can 
-  //indicate a free edge. However, for a polydata surface, multiple neighbors 
+  //Loop through the surface and find edges with cells that have either more
+  //than one neighbor or no neighbors. No neighbors can be okay,as this can
+  //indicate a free edge. However, for a polydata surface, multiple neighbors
   //indicates a bad cell with possible intersecting facets!
   for (int i = 0;i<pd->GetNumberOfCells();i++)
   {
@@ -1303,9 +1341,9 @@ int TGenUtils_CheckSurfaceMesh(vtkPolyData *pd,int boundarylayer)
     }
   }
 
-  fprintf(stdout,"Number of Bad Edges on Surface: %d\n",BadEdges);  
-  fprintf(stdout,"Number of Free Edges on Surface: %d\n",FreeEdges);  
-  fprintf(stdout,"Regions: %d\n",regions);  
+  fprintf(stdout,"Number of Bad Edges on Surface: %d\n",BadEdges);
+  fprintf(stdout,"Number of Free Edges on Surface: %d\n",FreeEdges);
+  fprintf(stdout,"Regions: %d\n",regions);
   if (regions != 0)
   {
     fprintf(stderr,"There are multiple regions here!\n");
@@ -1332,16 +1370,16 @@ int TGenUtils_SetLocalMeshSize(vtkPolyData *pd,int regionId,double size)
 {
   vtkIdType pointId, cellId;
   vtkIdType npts, *pts;
-  vtkSmartPointer<vtkIntArray> regionarray = 
+  vtkSmartPointer<vtkIntArray> regionarray =
     vtkSmartPointer<vtkIntArray>::New();
-  vtkSmartPointer<vtkDoubleArray> meshSizeArray = 
+  vtkSmartPointer<vtkDoubleArray> meshSizeArray =
     vtkSmartPointer<vtkDoubleArray>::New();
 
   int numPts = pd->GetNumberOfPoints();
   int numCells = pd->GetNumberOfCells();
   regionarray = vtkIntArray::SafeDownCast(pd->GetCellData()->GetArray("ModelFaceID"));
-  if (PlyDtaUtils_PDCheckArrayName(pd,0,"MeshSizingFunction") != CV_OK)
-  {           
+  if (VtkUtils_PDCheckArrayName(pd,0,"MeshSizingFunction") != CV_OK)
+  {
     meshSizeArray->SetNumberOfComponents(1);
     meshSizeArray->Allocate(numPts,1000);
     meshSizeArray->SetNumberOfTuples(numPts);

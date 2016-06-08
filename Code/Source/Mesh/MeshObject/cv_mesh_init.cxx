@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -56,7 +56,7 @@
 // --------
 
 #include "cv_globals.h"
- 
+
 // Prototypes:
 // -----------
 
@@ -102,11 +102,11 @@ static int cvMesh_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 
 static int cvMesh_GetModelFaceInfoMtd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] );
-  
+
 static int cvMesh_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] );
 /*
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
 static int cvMesh_LoadDiscreteModelMtd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] );
 #endif
@@ -140,7 +140,7 @@ static int cvMesh_SetSizeFunctionBasedMeshMtd( ClientData clientData, Tcl_Interp
 				 int argc, CONST84 char *argv[] );
 static int cvMesh_AdaptMtd( ClientData clientData, Tcl_Interp *interp,
 				 int argc, CONST84 char *argv[] );
-  
+
 
 // Helper functions
 // ----------------
@@ -483,7 +483,7 @@ static void gdscMeshPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "*** methods to generate meshes ***\n");
   tcl_printstr(interp, "LoadModel\n");
   /*
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
   tcl_printstr(interp, "LoadDiscreteModel\n");
 #endif
   */
@@ -943,14 +943,14 @@ static int cvMesh_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
 int cvMesh_LogonCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
-  
+
   char *logFileName;
 
   char *usage;
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &logFileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &logFileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -1072,7 +1072,7 @@ int cvMesh_LoadModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1135,7 +1135,7 @@ int cvMesh_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
   }
 }
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
 
 /*
 //
@@ -1151,7 +1151,7 @@ int cvMesh_LoadDiscreteModelMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1189,8 +1189,8 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } }, 
-    { "-surfile", STRING_Type, &SurfFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
+    { "-surfile", STRING_Type, &SurfFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1207,7 +1207,7 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->LoadMesh(FileName,SurfFileName) == CV_ERROR) {
-      Tcl_AppendResult( interp, "error opening logfile ", (char *)NULL);
+      Tcl_AppendResult( interp, "error loading mesh ", (char *)NULL);
       return TCL_ERROR;
   }
 
@@ -1223,7 +1223,7 @@ int cvMesh_WriteStatsMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 1;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } }, 
+    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1240,7 +1240,7 @@ int cvMesh_WriteStatsMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->WriteStats(FileName) == CV_ERROR) {
-      Tcl_AppendResult( interp, "error opening logfile ", (char *)NULL);
+      Tcl_AppendResult( interp, "error writing stats file ", (char *)NULL);
       return TCL_ERROR;
   }
 
@@ -1258,7 +1258,7 @@ int cvMesh_AdaptMtd( ClientData clientData, Tcl_Interp *interp,
   } else {
     return TCL_ERROR;
   }
-} 
+}
 
 int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
@@ -1270,8 +1270,8 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 2;
   ARG_Entry arg_table[] = {
-    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } }, 
-    { "-version", INT_Type, &smsver, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
+    { "-version", INT_Type, &smsver, NULL, GDSC_OPTIONAL, 0, { 0 } },
 
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
@@ -1289,7 +1289,7 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (geom->WriteMesh(FileName,smsver) == CV_ERROR) {
-      Tcl_AppendResult( interp, "error opening logfile ", (char *)NULL);
+      Tcl_AppendResult( interp, "error writing mesh ", (char *)NULL);
       return TCL_ERROR;
   }
 
@@ -1355,7 +1355,7 @@ static int cvMesh_SetSphereRefinementMtd( ClientData clientData, Tcl_Interp *int
   double ctr[3];
   double r;
   int nctr;
-  
+
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
@@ -1385,7 +1385,7 @@ static int cvMesh_SetSphereRefinementMtd( ClientData clientData, Tcl_Interp *int
 
   // We no longer need ctrList's argv:
   Tcl_Free( (char *) ctrList.argv );
-  
+
   if ( nctr != 3 ) {
     Tcl_SetResult( interp, "sphere requires a 3D center coordinate",
 		   TCL_STATIC );
@@ -1414,7 +1414,7 @@ static int cvMesh_SetSizeFunctionBasedMeshMtd( ClientData clientData, Tcl_Interp
   char *usage;
   char *functionName;
   double size;
-  
+
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
@@ -1461,7 +1461,7 @@ static int cvMesh_SetCylinderRefinementMtd( ClientData clientData, Tcl_Interp *i
   int nctr;
   int nnrm;
   double length;
-  
+
   int table_size = 5;
   ARG_Entry arg_table[] = {
     { "-size", DOUBLE_Type, &size, NULL, REQUIRED, 0, { 0 } },
@@ -1503,7 +1503,7 @@ static int cvMesh_SetCylinderRefinementMtd( ClientData clientData, Tcl_Interp *i
   // We no longer need ctrList's argv:
   Tcl_Free( (char *) ctrList.argv );
   Tcl_Free( (char *) nrmList.argv );
-  
+
   if ( nctr != 3 ) {
     Tcl_SetResult( interp, "sphere requires a 3D center coordinate",
 		   TCL_STATIC );

@@ -47,7 +47,7 @@
 #include "cvMeshSystem.h"
 #include "cvMeshObject.h"
 
-#ifdef USE_ZLIB
+#ifdef SV_USE_ZLIB
 #include "simvascular_zlib.h"
 #else
 #include <stdlib.h>

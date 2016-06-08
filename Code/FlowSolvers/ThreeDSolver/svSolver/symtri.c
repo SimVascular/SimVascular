@@ -43,7 +43,7 @@ typedef double DARR3[3];
 
 int triIntPnt(int, DARR3**,double**);
 
-#ifdef CV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
+#ifdef SV_WRAP_FORTRAN_IN_LOWERCASE_WITH_UNDERSCORE
   #define SYMTRI symtri_
 #endif
 

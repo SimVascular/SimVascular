@@ -32,8 +32,8 @@
 #define __simvascular_zlib_h
 
 /* Use the zlib library configured for SimVascular.  */
-#cmakedefine SimVascular_USE_SYSTEM_ZLIB
-#ifdef SimVascular_USE_SYSTEM_ZLIB
+#cmakedefine SV_USE_SYSTEM_ZLIB
+#ifdef SV_USE_SYSTEM_ZLIB
 # include <zlib.h>
 #else
 # include <simvascular_zlib/zlib.h>

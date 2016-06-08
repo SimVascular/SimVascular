@@ -71,12 +71,6 @@ cvFactoryRegistrar cvSolidModel::gRegistrar;
 
 cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
 {
-#ifdef EXCLUDE_SOLID_MODEL
-  printf( "ERR: attempted to create cvSolidModel w/ no available kernel\n" );
-  return NULL;
-
-#else
-
   // Get the solid model factory registrar associated with this Tcl interpreter.
   cvFactoryRegistrar* solidModelRegistrar;
   if (interp == NULL) {
@@ -93,11 +87,12 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
   if (cvSolidModel::gCurrentKernel == SM_KT_PARASOLID ||
       cvSolidModel::gCurrentKernel == SM_KT_DISCRETE ||
       cvSolidModel::gCurrentKernel == SM_KT_POLYDATA ||
-      cvSolidModel::gCurrentKernel == SM_KT_OCCT) {
+      cvSolidModel::gCurrentKernel == SM_KT_OCCT ||
+      cvSolidModel::gCurrentKernel == SM_KT_MESHSIMSOLID) {
 
     solid = (cvSolidModel *) (solidModelRegistrar->UseFactoryMethod( cvSolidModel::gCurrentKernel ));
     if (solid == NULL) {
-		  fprintf( stdout, "Unable to create solid model kernal (%i)\n",cvSolidModel::gCurrentKernel);
+		  fprintf( stdout, "Unable to create solid model kernel (%i)\n",cvSolidModel::gCurrentKernel);
 		  //Tcl_SetResult( interp, "Unable to create solid model", TCL_STATIC );
     }
   } else {
@@ -106,7 +101,6 @@ cvSolidModel* cvSolidModel::DefaultInstantiateSolidModel( Tcl_Interp *interp )
   }
   return solid;
 
-#endif
 }
 
 // ----------
@@ -145,6 +139,8 @@ SolidModel_KernelT SolidModel_KernelT_StrToEnum( char *name )
     return SM_KT_POLYDATA;
   } else if ( !strcmp( name, "OpenCASCADE" ) ) {
     return SM_KT_OCCT;
+  } else if ( !strcmp( name, "MeshSimSolid" ) ) {
+    return SM_KT_MESHSIMSOLID;
   } else {
     return SM_KT_INVALID;
   }
@@ -167,6 +163,9 @@ char *SolidModel_KernelT_EnumToStr( SolidModel_KernelT val )
   case SM_KT_DISCRETE:
     strcpy ( result, "Discrete" );
     break;
+  case SM_KT_MESHSIMSOLID:
+    strcpy ( result, "MeshSimSolid" );
+    break;
   case SM_KT_POLYDATA:
     strcpy ( result, "PolyData" );
     break;
@@ -175,7 +174,7 @@ char *SolidModel_KernelT_EnumToStr( SolidModel_KernelT val )
     break;
   default:
     strcpy( result, "Invalid kernel name; must be one of "
-	    "{ Parasolid, Discrete, PolyData }" );
+	    "{ Parasolid, Discrete, PolyData, OpenCASCADE, MeshSimSolid }" );
     break;
   }
 

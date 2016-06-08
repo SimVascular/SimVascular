@@ -101,7 +101,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   progress_ = Progress_new();
   Progress_setDefaultCallback(progress_);
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
   discreteModel_ = NULL;
 #endif
 
@@ -120,7 +120,7 @@ cvMeshSimMeshObject::cvMeshSimMeshObject(Tcl_Interp *interp)
   meshoptions_.gmincurv_type = 0;
   meshoptions_.gmincurv = 0.0;
 
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
   errorIndicatorID = NULL;
   modes            = NULL;
   nodalhessianID   = NULL;
@@ -166,7 +166,7 @@ cvMeshSimMeshObject::~cvMeshSimMeshObject()
    if (case_ != NULL) MS_deleteMeshCase(case_);
    if (progress_ != NULL) Progress_delete(progress_);
     
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
    if (discreteModel_ != NULL) {
      delete discreteModel_;
    }
@@ -910,7 +910,7 @@ int cvMeshSimMeshObject::getIdentForFaceId(int orgfaceid, int *faceID) {
 
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
     if (PsdUtils_CheckIdentForFaceId(orgfaceid) != CV_OK) {
       fprintf(stderr,"ERROR: PsdUtils_CheckIdentForFaceId(%i)\n",orgfaceid);
       fflush(stderr);
@@ -932,14 +932,14 @@ int cvMeshSimMeshObject::getIdentForFaceId(int orgfaceid, int *faceID) {
 #else
     return CV_ERROR;
 #endif
-
+  } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
+      *faceID = orgfaceid;
+      return CV_OK;
+  } else if (solidmodeling_kernel_ == SM_KT_MESHSIMSOLID) {
+      *faceID = orgfaceid;
+      return CV_OK;
   } else {
-
-    if (solidmodeling_kernel_ != SM_KT_DISCRETE) {
-     return CV_ERROR;
-    }
-    *faceID = orgfaceid;
-
+     return CV_ERROR; 
   }
 
   return CV_OK;
@@ -1036,7 +1036,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
   fprintf(stderr,"Solid Kernel: %s\n",SolidModel_KernelT_EnumToStr(solidmodeling_kernel_));
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
     PK_PART_t firstPart;
     int isAssembly;
 
@@ -1151,7 +1151,7 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 
   } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
     discreteModel_ = new cvMeshSimDiscreteSolidModel();
 
     if (discreteModel_->ReadNative(filename) != CV_OK) {
@@ -1160,6 +1160,45 @@ int cvMeshSimMeshObject::LoadModel(char *filename) {
 
     model = discreteModel_->geom_;
 
+    fprintf(stdout,"attach case to model (%p).\n",model);
+    fflush(stdout);
+
+    if (model == NULL) {
+      fprintf(stderr,"ERROR: Problem with model.\n");
+      fflush(stderr);
+      return CV_ERROR;
+    }
+
+    case_ = NULL;
+    case_ = MS_newMeshCase(model);
+    if (case_ == NULL) {
+      fprintf(stderr,"ERROR: Problem from MS_newMeshCase.\n");
+      fflush(stderr);
+      return CV_ERROR;
+    }
+    
+    solidFileName_[0] = '\0';
+    sprintf(solidFileName_,"%s",filename);
+#else
+    return CV_ERROR;
+#endif
+
+  } else if (solidmodeling_kernel_ == SM_KT_MESHSIMSOLID) {
+
+#ifdef SV_USE_MESHSIM_SOLID_MODEL
+    
+    cvMeshSimSolidModel* meshsimsolid = new cvMeshSimSolidModel();
+    
+    if (meshsimsolid->ReadNative(filename) != CV_OK) {
+      delete meshsimsolid;
+      return CV_ERROR;
+    }
+
+    model = meshsimsolid->geom_;
+
+    // probably have a memory leak here...
+    //delete meshsimsolid;
+    
     fprintf(stdout,"attach case to model (%p).\n",model);
     fflush(stdout);
 
@@ -1256,7 +1295,7 @@ int cvMeshSimMeshObject::MapIDtoPID(int id, pGEntity *pid) {
   (*pid) = NULL;
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
     PK_ENTITY_t entity = PK_ENTITY_null;
     if (PsdUtils_GetIdent(part_,id,&entity) != CV_OK) {
       return CV_ERROR;
@@ -1475,12 +1514,14 @@ int cvMeshSimMeshObject::GenerateMesh() {
     fprintf(stdout,"%s%i%s","SurfaceMesher_setOptimization(surfaceMesher,",meshoptions_.surface_optimization,")\n");
     fprintf(stdout,"%s%i%s","SurfaceMesher_setSmoothing(surfaceMesher,",meshoptions_.surface_smoothing,")\n");
     fflush(stdout);
-        
+
+    //SurfaceMesher_setContinueOnError(surfaceMesher,1);
+  
     // create it
     fprintf(stdout,"Creating surface mesh...\n");
     fflush(stdout);
     SurfaceMesher_execute(surfaceMesher,progress_);
-  
+    
     pVolumeMesher volumeMesher = VolumeMesher_new(case_,mesh);
        
     // specify options
@@ -1717,10 +1758,13 @@ cvPolyData* cvMeshSimMeshObject::GetFacePolyData (int orgfaceid) {
             // need to add one here to get elem nu since regions start at 0
             eid->InsertNextTuple1(EN_id((pRegion)PList_item(fregions,0))+1);
             eid2->InsertNextTuple1(EN_id((pRegion)PList_item(fregions,1))+1);
-	  } else {
+          } else if (PList_size(fregions) == 1) {
             // need to add one here to get elem nu since regions start at 0
             eid->InsertNextTuple1(EN_id((pRegion)PList_item(fregions,0))+1);
             eid2->InsertNextTuple1(-1);
+	  } else {
+	    eid->InsertNextTuple1(-1);
+            eid2->InsertNextTuple1(-1);	    
 	  }
           PList_delete(fregions);
 	}
@@ -1771,7 +1815,7 @@ int cvMeshSimMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
 
   if (solidmodeling_kernel_ == SM_KT_PARASOLID) {
 
-#ifdef USE_PARASOLID
+#ifdef SV_USE_PARASOLID
 
     while (modelface = GFIter_next(myGFiter)) {
       tmpstr[0] = '\0';
@@ -1790,7 +1834,7 @@ int cvMeshSimMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
 
   } else if (solidmodeling_kernel_ == SM_KT_DISCRETE) {
 
-#ifdef USE_DISCRETE_MODEL
+#ifdef SV_USE_MESHSIM_DISCRETE_MODEL
 
     while (modelface = GFIter_next(myGFiter)) {
       tmpstr[0] = '\0';
@@ -1954,7 +1998,7 @@ int cvMeshSimMeshObject::FindNodesOnElementFace (pFace face, int* nodes) {
  */
 int cvMeshSimMeshObject::Adapt()
 { 
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
 
   MSA_adapt(simAdapter, progress_);
 
@@ -1980,7 +2024,7 @@ int cvMeshSimMeshObject::Adapt()
 
 int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd)
 {
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
 
   int i;
   
@@ -2115,7 +2159,7 @@ int cvMeshSimMeshObject::GetAdaptedMesh(vtkUnstructuredGrid *ug, vtkPolyData *pd
 
 int cvMeshSimMeshObject::SetMetricOnMesh(double *error_indicator,int lstep,double factor, double hmax, double hmin,int strategy)
 {
-#ifdef USE_MESHSIM_ADAPTOR
+#ifdef SV_USE_MESHSIM_ADAPTOR
   if (mesh == NULL)
   {
     fprintf(stderr,"Must load .sms mesh before setting metric on mesh\n");

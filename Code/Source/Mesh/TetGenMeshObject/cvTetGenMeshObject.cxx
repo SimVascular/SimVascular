@@ -65,12 +65,15 @@
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkAppendPolyData.h"
 
-#ifdef USE_VMTK
-	#include "cv_VMTK_utils.h"
-	#include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
-	#include "vtkvmtkUnstructuredGridTetraFilter.h"
+#ifdef SV_USE_VMTK
+  #include "cv_VMTK_utils.h"
+  #include "vtkvmtkPolyDataToUnstructuredGridFilter.h"
+  #include "vtkvmtkUnstructuredGridTetraFilter.h"
 #endif
 
+#ifdef SV_USE_MMG
+  #include "cv_mmg_mesh_utils.h"
+#endif
 
 // -----------
 // cvTetGenMeshObject
@@ -133,6 +136,13 @@ cvTetGenMeshObject::cvTetGenMeshObject(Tcl_Interp *interp)
   meshoptions_.secondarrayfunction=0;
   meshoptions_.meshwallfirst=0;
   meshoptions_.startwithvolume=0;
+  meshoptions_.refinecount=0;
+#ifdef SV_USE_MMG
+  meshoptions_.usemmg=1;
+#else
+  meshoptions_.usemmg=0;
+#endif
+  meshoptions_.hausd=0;
   for (int i=0;i<3;i++)
   {
     meshoptions_.spherecenter[i] = 0;
@@ -449,7 +459,7 @@ int cvTetGenMeshObject::WriteMetisAdjacency(char *filename) {
     vtkSmartPointer<vtkIdList> cellIds = vtkSmartPointer<vtkIdList>::New();
     volumemesh_->BuildLinks();
 
-    if (PlyDtaUtils_UGCheckArrayName(volumemesh_,1,"GlobalElementID") != CV_OK)
+    if (VtkUtils_UGCheckArrayName(volumemesh_,1,"GlobalElementID") != CV_OK)
     {
       fprintf(stderr,"Array name 'GlobalElementID' does not exist in volume mesh. \
 		      Something wrong with ids on mesh");
@@ -719,9 +729,9 @@ int cvTetGenMeshObject::NewMesh() {
   if (meshoptions_.boundarylayermeshflag || meshoptions_.functionbasedmeshing ||
       meshoptions_.refinement)
   {
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
-      fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
+      fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
 		      Something may have gone wrong when setting up BL");
       return CV_ERROR;
     }
@@ -790,7 +800,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
       meshoptions_.secondarrayfunction = 1;
   }
   else if(!strncmp(flags,"SurfaceMeshFlag",15)) {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
       if (numValues < 1)
 	return CV_ERROR;
       meshoptions_.surfacemeshflag = values[0];
@@ -849,6 +859,16 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
   else if(!strncmp(flags,"StartWithVolume",15)) {//r
       meshoptions_.startwithvolume=1;
   }
+  else if(!strncmp(flags,"Hausd",5)) {//r
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.hausd=values[0];
+  }
+  else if (!strncmp(flags,"UseMMG",6)){
+      if (numValues < 1)
+	return CV_ERROR;
+      meshoptions_.usemmg=values[0];
+  }
   else {
       fprintf(stderr,"%s: flag is not recognized\n",flags);
   }
@@ -876,7 +896,7 @@ int cvTetGenMeshObject::SetMeshOptions(char *flags,int numValues,double *values)
 int cvTetGenMeshObject::SetBoundaryLayer(int type, int id, int side,
     int nL, double* H)
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   meshoptions_.boundarylayermeshflag = 1;
   meshoptions_.numsublayers = nL;
   meshoptions_.blthicknessfactor = *H;
@@ -907,7 +927,7 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   vtkIntArray *wallArray = vtkIntArray::New();
   meshoptions_.meshwallfirst = 1;
 
-  if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid_,1,"ModelFaceID") != CV_OK)
   {
     fprintf(stderr,"ModelFaceID array not on object, so cannot set walls\n");
     return CV_ERROR;
@@ -941,20 +961,23 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   polydatasolid_->GetCellData()->AddArray(wallArray);
   wallArray->Delete();
 
-  vtkSmartPointer<vtkThreshold> thresholder =
-    vtkSmartPointer<vtkThreshold>::New();
-  thresholder->SetInputData(polydatasolid_);
-   //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
-  thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
-  thresholder->ThresholdBetween(1,1);
-  thresholder->Update();
+  if (meshoptions_.usemmg == 0)
+  {
+    vtkSmartPointer<vtkThreshold> thresholder =
+      vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(polydatasolid_);
+     //Set Input Array to 0 port,0 connection,1 for Cell Data, and WallID is the type name
+    thresholder->SetInputArrayToProcess(0,0,0,1,"WallID");
+    thresholder->ThresholdBetween(1,1);
+    thresholder->Update();
 
-  vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
-    vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-  surfacer->SetInputData(thresholder->GetOutput());
-  surfacer->Update();
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer =
+      vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
 
-  polydatasolid_->DeepCopy(surfacer->GetOutput());
+    polydatasolid_->DeepCopy(surfacer->GetOutput());
+  }
 
   delete [] isWall;
   return CV_OK;
@@ -993,12 +1016,13 @@ int cvTetGenMeshObject::SetCylinderRefinement(double size, double radius,
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementCylinder(polydatasolid_,"MeshSizingFunction",
 	size,radius,center,length,normal,meshoptions_.secondarrayfunction,
-	meshoptions_.maxedgesize) != CV_OK)
+	meshoptions_.maxedgesize,"RefineID",meshoptions_.refinecount) != CV_OK)
   {
     return CV_ERROR;
   }
 
   meshoptions_.secondarrayfunction = 1;
+  meshoptions_.refinecount += 1;
   return CV_OK;
 }
 
@@ -1031,12 +1055,13 @@ int cvTetGenMeshObject::SetSphereRefinement(double size, double radius,
   //Store in the member data vtkDouble Array meshsizingfunction
   if (TGenUtils_SetRefinementSphere(polydatasolid_,"MeshSizingFunction",
 	size,radius,center,meshoptions_.secondarrayfunction,
-	meshoptions_.maxedgesize) != CV_OK)
+	meshoptions_.maxedgesize,"RefineID",meshoptions_.refinecount) != CV_OK)
   {
     return CV_ERROR;
   }
 
   meshoptions_.secondarrayfunction = 1;
+  meshoptions_.refinecount += 1;
   return CV_OK;
 }
 
@@ -1100,7 +1125,7 @@ int cvTetGenMeshObject::GenerateMesh() {
 
 //All these complicated options exist if using VMTK. Should be stopped prior
 //to this if trying to use VMTK options and don't have VMTK.
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   //If doing surface remeshing!
   if (meshoptions_.surfacemeshflag)
   {
@@ -1270,7 +1295,7 @@ int cvTetGenMeshObject::GenerateMesh() {
     fprintf(stdout,"Only surface\n");
   }
 
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   //This is a post meshing step that needs to be done for boundary layer
   //mesh
   if (meshoptions_.boundarylayermeshflag)
@@ -1365,7 +1390,7 @@ int cvTetGenMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
   rtnstr[0]='\0';
 
   if (solidmodeling_kernel_ == SM_KT_POLYDATA) {
-    if (PlyDtaUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(originalpolydata_,1,"ModelFaceID") != CV_OK)
     {
       fprintf(stderr,"ModelFaceID does not exist\n");
       return CV_ERROR;
@@ -1439,7 +1464,7 @@ int cvTetGenMeshObject::SetInputUnstructuredGrid(vtkUnstructuredGrid *ug)
  */
 int cvTetGenMeshObject::GenerateSurfaceRemesh()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   int meshcapsonly = 0;
   int preserveedges;
   int trianglesplitfactor;
@@ -1470,7 +1495,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
   if (meshoptions_.refinement || meshoptions_.functionbasedmeshing)
   {
     useSizingFunction = 1;
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Array name 'MeshSizingFunction' does not exist. \
 	              Something may have gone wrong when setting up BL");
@@ -1489,15 +1514,42 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
     meshsizingfunction = NULL;
   }
 
-  //Generate Surface Remeshing
-  if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
-	meshcapsonly,preserveedges,trianglesplitfactor,
-	collapseanglethreshold,NULL,markerListName,
-	useSizingFunction,meshsizingfunction) != CV_OK)
+#ifdef SV_USE_MMG
+  if (meshoptions_.usemmg)
   {
-    fprintf(stderr,"Problem with surface meshing\n");
-    return CV_ERROR;
+    double meshsize = meshoptions_.maxedgesize;
+    double mmg_maxsize = 1.5*meshsize;
+    double mmg_minsize = 0.5*meshsize;
+    if (meshoptions_.hausd == 0)
+      meshoptions_.hausd = 10.0*meshsize;
+    double hausd = meshoptions_.hausd;
+    double dumAng = 45.0;
+    double hgrad = 1.01;
+
+    //Generate Surface Remeshing
+    if(MMGUtils_SurfaceRemeshing(polydatasolid_, mmg_minsize,
+	  mmg_maxsize, hausd, dumAng, hgrad,
+	  useSizingFunction, meshsizingfunction, meshoptions_.refinecount) != CV_OK)
+    {
+      fprintf(stderr,"Problem with surface meshing\n");
+      return CV_ERROR;
+    }
   }
+  else
+  {
+#endif
+    //Generate Surface Remeshing
+    if(VMTKUtils_SurfaceRemeshing(polydatasolid_,meshoptions_.maxedgesize,
+          meshcapsonly,preserveedges,trianglesplitfactor,
+          collapseanglethreshold,NULL,markerListName,
+          useSizingFunction,meshsizingfunction) != CV_OK)
+    {
+      fprintf(stderr,"Problem with surface meshing\n");
+      return CV_ERROR;
+    }
+#ifdef SV_USE_MMG
+  }
+#endif
 
   if (TGenUtils_CheckSurfaceMesh(polydatasolid_,
 	  meshoptions_.meshwallfirst) != CV_OK)
@@ -1528,7 +1580,7 @@ int cvTetGenMeshObject::GenerateSurfaceRemesh()
  */
 int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   if (boundarylayermesh_ != NULL)
   {
     boundarylayermesh_->Delete();
@@ -1608,7 +1660,7 @@ int cvTetGenMeshObject::GenerateBoundaryLayerMesh()
  */
 int cvTetGenMeshObject::GenerateAndMeshCaps()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   vtkSmartPointer<vtkIdList> excluded =
     vtkSmartPointer<vtkIdList>::New();
   int meshcapsonly = 1;
@@ -1637,7 +1689,7 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
   if (meshoptions_.functionbasedmeshing || meshoptions_.refinement)
   {
     useSizeFunction = 1;
-    if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") != CV_OK)
     {
       fprintf(stderr,"Array name 'MeshSizingFunctionID' does not exist. \
 	              Something may have gone wrong when setting up BL");
@@ -1686,13 +1738,13 @@ int cvTetGenMeshObject::GenerateAndMeshCaps()
  */
 int cvTetGenMeshObject::GenerateMeshSizingFunction()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   vtkSmartPointer<vtkCleanPolyData> cleaner =
     vtkSmartPointer<vtkCleanPolyData>::New();
   //Compute a mesh sizing function to send to TetGen and create a
   //volume mesh based on. Must do this otherwise when appending
   //volume mesh and BL mesh, they won't match up!
-  if (PlyDtaUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") == 1)
+  if (VtkUtils_PDCheckArrayName(polydatasolid_,0,"MeshSizingFunction") == 1)
   {
     fprintf(stderr,"MeshSizingFunction Name exists. Delete!\n");
     polydatasolid_->GetPointData()->RemoveArray("MeshSizingFunction");
@@ -1725,7 +1777,7 @@ int cvTetGenMeshObject::GenerateMeshSizingFunction()
  */
 int cvTetGenMeshObject::AppendBoundaryLayerMesh()
 {
-#ifdef USE_VMTK
+#ifdef SV_USE_VMTK
   if (surfacemesh_ != NULL)
   {
     surfacemesh_->Delete();

@@ -35,14 +35,14 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS) -I./Include -I./Util -I./ITKCode
+           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR) -I./Include -I./Util -I./ITKCode
 
 HDRS	=  cvITKLevelSet.h
 
 CXXSRCS	=  cvITKLevelSet.cxx
 
-DLLHDRS = cv_ITKLset_init.h
-DLLSRCS = cv_ITKLset_init.cxx
+DLLHDRS = cv_ITKLset2d_init.h cv_ITKLset3d_init.h
+DLLSRCS = cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx
 
 TARGET_LIB_NAME = simvascular_cvitk
 

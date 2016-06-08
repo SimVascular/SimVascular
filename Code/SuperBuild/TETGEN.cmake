@@ -41,7 +41,7 @@ if(${PROJECT_NAME}_USE_SYSTEM_${proj})
 endif()
 
 
-set(SuperBuild_${proj}_URL "${SuperBuild_Libraries_Dir}/tetgen1.5.1-cmake.tar.gz" CACHE
+set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/tetgen1.5.1-cmake.tar.gz" CACHE
   STRING "Location of tetgen, can be web address or local path")
 mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
 mark_as_advanced(SuperBuild_${proj}_URL)

@@ -135,6 +135,8 @@ public:
   int ReadNative( char *filename );
   int WriteNative( int file_version, char *filename ) const;
   int WriteVtkPolyData( char *filename ) {return CV_ERROR;}
+  int WriteGeomSim( char *filename ) {return CV_ERROR; }
+
   cvPolyData *GetPolyData(int useMaxDist, double max_dist) const;
 
   cvPolyData *GetDiscontinuities() const { return NULL; }

@@ -42,6 +42,8 @@
 #ifndef __vtkConstrainedBlend_h
 #define __vtkConstrainedBlend_h
 
+#include "SimVascular.h"
+
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 

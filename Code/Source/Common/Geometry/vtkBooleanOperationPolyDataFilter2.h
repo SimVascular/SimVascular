@@ -41,6 +41,8 @@
 #ifndef __vtkBooleanOperationPolyDataFilter2_h
 #define __vtkBooleanOperationPolyDataFilter2_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
@@ -48,7 +50,7 @@
 
 class vtkIdList;
 
-class VTKFILTERSGENERAL_EXPORT vtkBooleanOperationPolyDataFilter2 : public vtkPolyDataAlgorithm
+class CV_DLL_EXPORT vtkBooleanOperationPolyDataFilter2 : public vtkPolyDataAlgorithm
 {
 public:
   // Description:

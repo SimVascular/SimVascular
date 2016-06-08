@@ -57,26 +57,31 @@ endif()
 get_filename_component(TCL_LIBRARY_DIR ${TCL_LIBRARY} PATH)
 get_filename_component(TK_LIBRARY_DIR ${TK_LIBRARY} PATH)
 
-set(3RDPARTY_VTK_INCLUDE_DIR "${VTK_DIR}/${SIMVASCULAR_INSTALL_ROOT_DIR}/${SIMVASCULAR_INSTALL_VTK_INCLUDE_DIR}")
-set(3RDPARTY_VTK_LIBRARY_DIR "${VTK_DIR}/${SIMVASCULAR_INSTALL_ROOT_DIR}/${SIMVASCULAR_INSTALL_VTK_LIBRARY_DIR}")
+set(3RDPARTY_VTK_INCLUDE_DIR "${VTK_DIR}/${SV_INSTALL_ROOT_DIR}/${SV_INSTALL_VTK_INCLUDE_DIR}")
+set(3RDPARTY_VTK_LIBRARY_DIR "${VTK_DIR}/${SV_INSTALL_ROOT_DIR}/${SV_INSTALL_VTK_LIBRARY_DIR}")
+
+set(OPENCASCADE_BUILD_LIBRARY_TYPE "Static")
+if(${OPENCASCADE_SHARED_LIBRARIES})
+  set(OPENCASCADE_BUILD_LIBRARY_TYPE "Shared")
+endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 
-	#set(revision_tag "6.9")
-  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git")
-	  #GIT_TAG ${revision_tag})
+  set(revision_tag "v7.0.0")
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/OpenCASCADE.git"
+    GIT_TAG ${revision_tag})
   if(WIN32)
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj} 
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj} 
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build  
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build  
       CACHE PATH "On windows, there is a bug with OPENCASCADE source code directory path length, you can change this path to avoid it")
   else()
-    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj})
-    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/ThirdParty/${proj}-build)
+    set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
+    set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
   endif()
   if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/ThirdParty/TclTk/internals/tk8.5)
+    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/externals/TCLTK/internals/tk8.6)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
   endif()
   if(WIN32 AND NOT TK_XLIB_PATH)
@@ -104,8 +109,10 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
+   -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DBUILD_EXAMPLES:BOOL=OFF
-   -DBUILD_SHARED_LIBS:BOOL=ON
+   -DBUILD_SHARED_LIBS:BOOL=${OPENCASCADE_SHARED_LIBRARIES}
+   -DBUILD_LIBRARY_TYPE:STRING=${OPENCASCADE_BUILD_LIBRARY_TYPE}
    -DBUILD_TESTING:BOOL=OFF
    -DBUILD_MODULE_Draw:BOOL=OFF
    -DCMAKE_BUILD_TYPE:STRING=${${proj}_BUILD_TYPE}
@@ -113,7 +120,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -D3RDPARTY_TCL_LIBRARY_DIR:PATH=${TCL_LIBRARY_DIR}
    -D3RDPARTY_TK_INCLUDE_DIR:PATH=${TK_INCLUDE_PATH}
    -D3RDPARTY_TK_LIBRARY_DIR:PATH=${TK_LIBRARY_DIR}
-   -DBUILD_LIBRARY_TYPE:STRING=Shared
    -DUSE_VTK:BOOL=ON
    -DVTK_VERSION:STRING=${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
    -DVTK_DIR:PATH=${VTK_DIR}
@@ -121,7 +127,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -D3RDPARTY_VTK_INCLUDE_DIR:PATH=${3RDPARTY_VTK_INCLUDE_DIR}
    -D3RDPARTY_VTK_LIBRARY_DIR:PATH=${3RDPARTY_VTK_LIBRARY_DIR}
    -DINSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
-   -DCMAKE_INSTALL_PREFIX:STRING=${SIMVASCULAR_INSTALL_ROOT_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
    INSTALL_COMMAND ""
    DEPENDS
    ${${proj}_DEPENDENCIES}
@@ -131,8 +137,10 @@ set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+  file(COPY ${${proj}_DIR}/cmake_install.cmake
+       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
-if(SIMVASCULAR_INSTALL_EXTERNALS)
+if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})
 endif()
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
