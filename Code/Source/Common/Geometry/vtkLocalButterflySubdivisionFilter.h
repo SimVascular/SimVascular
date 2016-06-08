@@ -49,7 +49,7 @@ class vtkCellArray;
 class vtkIdList;
 class vtkIntArray;
 
-class VTKFILTERSMODELING_EXPORT vtkLocalButterflySubdivisionFilter : public vtkLocalInterpolatingSubdivisionFilter
+class CV_DLL_EXPORT vtkLocalButterflySubdivisionFilter : public vtkLocalInterpolatingSubdivisionFilter
 {
 public:
   // Description:

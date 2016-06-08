@@ -51,7 +51,7 @@ class vtkIntArray;
 class vtkPoints;
 class vtkIdList;
 
-class VTKFILTERSMODELING_EXPORT vtkLocalLoopSubdivisionFilter : public vtkLocalApproximatingSubdivisionFilter
+class CV_DLL_EXPORT vtkLocalLoopSubdivisionFilter : public vtkLocalApproximatingSubdivisionFilter
 {
 public:
   // Description:
