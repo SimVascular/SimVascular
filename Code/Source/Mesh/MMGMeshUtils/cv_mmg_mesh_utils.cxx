@@ -404,7 +404,12 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
 
     pd->DeepCopy(surfacer->GetOutput());
   }
-  surface->DeepCopy(pd);
+  vtkSmartPointer<vtkCleanPolyData> cleaner =
+    vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->SetInputData(pd);
+  cleaner->Update();
+
+  surface->DeepCopy(cleaner->GetOutput());
   pd->Delete();
 
   MMGS_Free_all(MMG5_ARG_start,

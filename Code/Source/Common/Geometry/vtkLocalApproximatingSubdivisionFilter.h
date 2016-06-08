@@ -24,6 +24,8 @@
 #ifndef vtkLocalApproximatingSubdivisionFilter_h
 #define vtkLocalApproximatingSubdivisionFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 

@@ -43,6 +43,8 @@
 #ifndef vtkLocalLoopSubdivisionFilter_h
 #define vtkLocalLoopSubdivisionFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersModelingModule.h" // For export macro
 #include "vtkLocalApproximatingSubdivisionFilter.h"
 
