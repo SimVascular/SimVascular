@@ -42,6 +42,8 @@
 #ifndef vtkLocalButterflySubdivisionFilter_h
 #define vtkLocalButterflySubdivisionFilter_h
 
+#include "SimVascular.h"
+
 #include "vtkFiltersModelingModule.h" // For export macro
 #include "vtkLocalInterpolatingSubdivisionFilter.h"
 
