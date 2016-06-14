@@ -44,7 +44,6 @@
 #include "cvMath.h"
 #include "cvSolidModel.h"
 
-#include "vtkSurfaceBooleanOperations.h"
 #include "vtkSmartPointer.h"
 #include "vtkSortDataArray.h"
 #include "vtkPolygon.h"
