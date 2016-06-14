@@ -29,9 +29,9 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = simvascular
+PROJECT_NAME           = SV
 PROJECT_NUMBER         = @SV_FULL_VERSION@
-OUTPUT_DIRECTORY       = @SimVascular_DOCS_DIR@
+OUTPUT_DIRECTORY       = @SV_DOCS_DIR@
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 USE_WINDOWS_ENCODING   = YES
@@ -108,7 +108,7 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = @SimVascular_SOURCE_DIR@
+INPUT                  = @SV_SOURCE_DIR@
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.cxx \

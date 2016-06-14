@@ -14,11 +14,11 @@ import os
 #import SV_Groups.processGroups as SVGroup
 #np.set_printoptions(threshold='nan')
 
-def getzerobasis(u,deg,ktype):
 ## @brief Function to get the zero order basis funcions for given u and p
 #  @param u Desired parametric locations of basis functions [0-1]
 #  @param deg Degree of bspline
 #  @return The N0 or zero order basis functions and the corresponding knot vector
+def getzerobasis(u,deg,ktype):
 	nc = len(u)
 	n = nc - 1
 	p = deg
@@ -39,12 +39,12 @@ def getzerobasis(u,deg,ktype):
 
 	return N0,knots
 
-def getpbasis(u,deg,ktype):
 ## @brief Function to get the p order basis funcions for given u and p
 #  @param knots The knot vector for given parametric locations and degree
 #  @param u Desired parametric locations of basis functions [0-1]
 #  @param deg Degree of bspline
 #  @return The Np or p order basis functions
+def getpbasis(u,deg,ktype):
 	N0,knots = getzerobasis(u,deg,ktype)
 	nc = len(u)
 	n = nc - 1
@@ -75,12 +75,12 @@ def getpbasis(u,deg,ktype):
 
 	return Np,knots
 
-def getrbasis(u,deg,w,ktype):
 ## @brief Function to get the p order basis funcions for given u and p
 #  @param knots The knot vector for given parametric locations and degree
 #  @param u Desired parametric locations of basis functions [0-1]
 #  @param deg Degree of bspline
 #  @return The Np or p order basis functions
+def getrbasis(u,deg,w,ktype):
 	Np,knots = getpbasis(u,deg,ktype)
 	nc = len(u)
 	n = nc - 1
@@ -103,13 +103,13 @@ def getrbasis(u,deg,w,ktype):
 
 	return Rp,knots
 
-def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype,Du0,DuN,Dv0,DvN):
 ## @brief Function to set up bspline going through x,y points and of degree deg
 #  @param x given values in x direction
 #  @param y corresponding y values to x
 #  @param u given parametric values for knot points
 #  @param deg desired degree of bspline
 #  @return The control points in x and y, the basis functions and the knots vector
+def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype,Du0,DuN,Dv0,DvN):
 	#Number of given data points. This is number of output control points
 	ncx = x.shape[0]
 	ncy = y.shape[1]
@@ -204,11 +204,11 @@ def addderivdata(X,Y,Z,R,knots,deg,D0,Dn):
 
 	return Dx,Dy,Dz,R
 
-def getus(x,y,z,type='equal'):
 ## @brief Function to give u values for data x
 #  @param x data
 #  @param type method for u determination
 #  @return The u values
+def getus(x,y,z,type='equal'):
 	nc = len(x)
 	if (type == 'equal'):
 		u = np.linspace(0,1,nc)
@@ -243,11 +243,11 @@ def getus(x,y,z,type='equal'):
 
 	return u
 
-def getknots(u,p,type='equal'):
 ## @brief Function to give knot values for parameters u
 #  @param u parameter vector
 #  @param type method for knot determination
 #  @return The knot vector
+def getknots(u,p,type='equal'):
 	nc = len(u)
 	n = nc - 1
 	m = p+n+1
@@ -368,7 +368,6 @@ def loft(argv):
 
    return nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN)
 
-def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 ## @brief Function to convert the knots and parametric values into the input
 #         for opencascade data structures. This is knots and multiplicity.
 #         Knots contains the knot values, but does not keep any repeated knots.
@@ -382,6 +381,7 @@ def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 #  @return vKnew, the knot vector with unrepeating values in the v direction
 #  @return uMnew, the mult vector containing the repition of knot values in u
 #  @return vMnew, the mult vector containing the repition of knot values in v
+def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 
 	#Take interior u knots
 	uKlength = len(uKnots)-2*uDeg
@@ -415,7 +415,6 @@ def convertToKnotsMults(uKnots,vKnots,uDeg,vDeg):
 
 	return uKnew,vKnew,uMnew,vMnew
 
-def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
 ## @brief Function to calculate the normal to three points. This is used for
 #	  the first and last segmentations to specify as an end derivative.
 #  @param Xpts, x coordinate for three points
@@ -424,6 +423,7 @@ def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
 #  @param direction, direction in which the normal should face. The dot
 #	  product of this and the normal calculated will be > 0.
 #  @return perp, the normal to the given three points
+def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
   	math = vtk.vtkMath()
 
 	#Initiate vecs for cross product
@@ -444,7 +444,6 @@ def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
 
 
 #################################TESTING#####################################
-def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 ## @brief Function that takes all inputs and calls the code to interpolate
 #	  a 3D bspline surface.
 #  @note  The book used for this work is:
@@ -474,6 +473,7 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 #	  vector derivative for the beginning of the interpolation in v.
 #  @param DvN, If 'endderiv' is specified for the kvtype, then DvN is the
 #	  vector derivative for the end of the interpolation in v.
+def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 
 	#Pull in coordinates from input. Repeat first points to complete surface
 	X         = np.zeros((allpoints.shape[0],allpoints.shape[1]+1))
