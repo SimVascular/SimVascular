@@ -59,10 +59,6 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "cv_vtk_utils.h"
 
-#ifdef SV_USE_GTS
-  #include "vtkSurfaceBooleanOperations.h"
-#endif
-
 #ifdef SV_USE_VMTK
   #include "cv_VMTK_utils.h"
 #endif
@@ -463,26 +459,6 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
     fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
-#ifdef SV_USE_GTS
-  vtkSurfaceBooleanOperations *intersectPolyData;
-  vtkPolyData *pd1;
-  vtkPolyData *pd2;
-
-  intersectPolyData = vtkSurfaceBooleanOperations::New();
-  pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
-  pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();
-
-  intersectPolyData->AddInputData(pd1);
-  intersectPolyData->AddInputData(pd2);
-  intersectPolyData->SetModeToIntersection();
-  intersectPolyData->Update();
-
-  //set output vtp to output from filter
-  geom_ = vtkPolyData::New();
-  geom_->DeepCopy(intersectPolyData->GetOutput());
-
-  intersectPolyData->Delete();
-#else
   vtkBooleanOperationPolyDataFilter2 *intersectPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
@@ -507,7 +483,6 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
   geom_->DeepCopy(normaler->GetOutput());
 
   intersectPolyData->Delete();
-#endif
 
   return CV_OK;
 
@@ -547,26 +522,6 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
     return CV_ERROR;
   }
 
-#ifdef SV_USE_GTS
-  vtkSurfaceBooleanOperations *unionPolyData;
-  vtkPolyData *pd1;
-  vtkPolyData *pd2;
-
-  unionPolyData = vtkSurfaceBooleanOperations::New();
-  pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
-  pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();
-
-  unionPolyData->AddInputData(pd1);
-  unionPolyData->AddInputData(pd2);
-  unionPolyData->SetModeToUnion();
-  unionPolyData->Update();
-
-  //set output vtp to output from filter
-  geom_ = vtkPolyData::New();
-  geom_->DeepCopy(unionPolyData->GetOutput());
-
-  unionPolyData->Delete();
-#else
   vtkBooleanOperationPolyDataFilter2 *unionPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
@@ -591,7 +546,6 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
   geom_->DeepCopy(normaler->GetOutput());
 
   unionPolyData->Delete();
-#endif
 
   return CV_OK;
 }
@@ -630,26 +584,6 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
     fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
-#ifdef SV_USE_GTS
-  vtkSurfaceBooleanOperations *subtractPolyData;
-  vtkPolyData *pd1;
-  vtkPolyData *pd2;
-
-  subtractPolyData = vtkSurfaceBooleanOperations::New();
-  pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
-  pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();
-
-  subtractPolyData->AddInputData(pd1);
-  subtractPolyData->AddInputData(pd2);
-  subtractPolyData->SetModeToDifference();
-  subtractPolyData->Update();
-
-  //set output vtp to output from filter
-  geom_ = vtkPolyData::New();
-  geom_->DeepCopy(subtractPolyData->GetOutput());
-
-  subtractPolyData->Delete();
-#else
   vtkBooleanOperationPolyDataFilter2 *subtractPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
@@ -674,7 +608,6 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
   geom_->DeepCopy(normaler->GetOutput());
 
   subtractPolyData->Delete();
-#endif
 
   return CV_OK;
 }
