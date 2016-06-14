@@ -30,7 +30,7 @@ proc startTclPython {} {
   }
   global gPythonInterp
   set gPythonInterp [::python::interp new]
-  $gPythonInterp exec {print("Python Available")}
+  #$gPythonInterp exec {print("Python Available")}
 
   #Create TclPyString global to pass string between tcl and python
   global TclPyString
@@ -60,9 +60,6 @@ proc startTclPython {} {
   }
   if [catch {$gPythonInterp exec {import numpy as np}} errmsg] {
     puts "No numpy module found: $errmsg"
-  }
-  if [catch {$gPythonInterp exec {import scipy as sp}} errmsg] {
-    puts "No scipy module found: $errmsg"
   }
 }
 

@@ -33,6 +33,8 @@ include(CheckLibraryExists)
 # Include Macros
 include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
+include(CheckLibraryExists)
+include(GetPrerequisites)
 
 SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -55,6 +57,11 @@ include(SimVascularOptions)
 #-----------------------------------------------------------------------------
 # Include Dependent Options
 include(SimVascularDependentOptions)
+#-----------------------------------------------------------------------------
+# Include SimVascular Externals
+include(SimVascularSystemCheck)
+include(SimVascularVersion)
+include(SimVascularExternals)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
@@ -74,8 +81,6 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 # Includes
 #-----------------------------------------------------------------------------
-include(SimVascularSystemCheck)
-include(SimVascularVersion)
 include(SimVascularInstallSetup)
 include(SimVascularHomeSetup)
 include(SimVascularTclSetup)
@@ -86,7 +91,7 @@ include(SimVascularPythonSetup)
 # Note: *These can be changes by the user if they have moved the sv_extern directories*
 # This is part of he legacy build system
 
-include(SetupSimVascularExternalsDefaults)
+#include(SetupSimVascularExternalsDefaults)
 
 #-----------------------------------------------------------------------------
 # Package and Subdirectory Logic
@@ -108,7 +113,7 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
 
-find_package(Doxygen)
+simvascular_find_package(Doxygen)
 if(DOXYGEN_FOUND)
 	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
 	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
@@ -145,7 +150,7 @@ mark_as_superbuild(
 #-----------------------------------------------------------------------------
 # PYTHON
 if(SV_USE_PYTHON)
-	find_package(PythonLibs REQUIRED)
+	simvascular_external(PYTHON SYSTEM_DEFAULT SHARED_LIB)
 	mark_as_superbuild(
 		PYTHONLIBS_FOUND
 		PYTHON_INCLUDE_PATH
@@ -166,12 +171,13 @@ if(SV_USE_PYTHON)
 		message(STATUS "Python Libs NOT FOUND")
 		message(STATUS "Make sure you have python installed on your system.")
 	endif()
+	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
 endif()
 
 #-----------------------------------------------------------------------------
 # VTK
-set(SV_DEPENDS "TCL")
-if(VTK_SHARED_LIBRARIES)
+set(SV_DEPENDS ${SV_DEPENDS} "TCL")
+if(SV_USE_VTK_SHARED)
 	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
 	set(SV_INSTALL_EXTERNALS ON)
 endif()
@@ -204,7 +210,7 @@ if(SV_USE_ZLIB)
 	if(NOT SV_USE_SYSTEM_ZLIB)
 		set(ZLIB_LIBRARY lib_simvascular_zlib)
 	else()
-		find_package(ZLIB)
+		simvascular_find_package(ZLIB)
 	endif()
 else()
 	unset(ZLIB_LIBRARY CACHE)
@@ -221,6 +227,11 @@ if(SV_USE_MMG)
 	mark_as_superbuild(MMG_INCLUDE_DIR)
 	mark_as_superbuild(MMG_LIBRARY)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+	if(SV_USE_MMG_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
+	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
+        endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -232,7 +243,7 @@ if(SV_USE_TETGEN)
 		set(TETGEN_VERSION "1.5.1")
 		set(TETGEN_LIBRARY lib_simvascular_tet)
 	else()
-		find_package(TETGEN)
+		simvascular_find_package(TETGEN)
 	endif()
 	if(TETGEN_VERSION MATCHES "1.5.1")
 		set(TETGEN151 ON)
@@ -269,11 +280,12 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugin LevelSets
 if(SV_USE_ITK)
-	if(ITK_SHARED_LIBRARIES)
+	if(SV_USE_ITK_SHARED)
 		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
 		set(SV_INSTALL_EXTERNALS ON)
 	endif()
 	simvascular_external(ITK DOWNLOADABLE)
+
 	set(USE_ITK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
 endif()
@@ -286,8 +298,6 @@ endif()
 if(SV_USE_MESHSIM_ADAPTOR)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
 endif()
-
-
 
 #-----------------------------------------------------------------------------
 # GTS
@@ -308,18 +318,19 @@ if(SV_USE_GLIB)
 endif()
 
 #-----------------------------------------------------------------------------
-# OPENCASCADE
-if(SV_USE_OPENCASCADE)
+# OpenCASCADE
+if(SV_USE_OpenCASCADE)
 	#simvascular_third_party(opencascade)
-	simvascular_external(OPENCASCADE DOWNLOADABLE)
-	mark_as_superbuild(OPENCASCADE_DIR)
-	mark_as_superbuild(OPENCASCADE_SOURCE_DIR)
-	set(USE_OPENCASCADE ON)
+	simvascular_external(OpenCASCADE DOWNLOADABLE)
+	mark_as_superbuild(OpenCASCADE_DIR)
+	mark_as_superbuild(OpenCASCADE_SOURCE_DIR)
+	set(USE_OpenCASCADE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
-	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OPENCASCADE)
-	#set(SV_INSTALL_EXTERNALS ON)
-	find_package(FREETYPE)
+	if(SV_USE_OpenCASCADE_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -330,8 +341,10 @@ if(SV_USE_GDCM)
 	mark_as_superbuild(GDCM_SOURCE_DIR)
 	set(USE_GDCM ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
-	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
-	#set(SV_INSTALL_EXTERNALS ON)
+	if(SV_USE_GDCM_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -342,8 +355,10 @@ if(SV_USE_FREETYPE)
 	mark_as_superbuild(FREETYPE_SOURCE_DIR)
 	set(USE_FREETYPE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
-	#set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
-	#set(SV_INSTALL_EXTERNALS ON)
+	if(SV_USE_FREETYPE_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
 endif()
 
 # Licensed Package Additions
@@ -485,7 +500,7 @@ if(SV_THREEDSOLVER_USE_SVLS)
 endif()
 
 if(SV_THREEDSOLVER_USE_LESLIB)
-	find_package(LESLIB REQUIRED)
+	simvascular_find_package(LESLIB REQUIRED)
 	mark_as_superbuild(VARS LESLIB_LIBRARY LESLIB_INCLUDE_DIR)
 endif()
 
@@ -497,7 +512,7 @@ if(SV_USE_SPARSE)
 	if(NOT SV_USE_SYSTEM_SPARSE)
 		set(SPARSE_LIBRARY lib_simvascular_sparse)
 	else()
-		find_package(METIS)
+		simvascular_find_package(SPARSE)
 	endif()
 endif()
 
@@ -507,7 +522,7 @@ if(SV_USE_METIS)
 	if(NOT SV_USE_SYSTEM_METIS)
 		set(METIS_LIBRARY lib_simvascular_metis)
 	else()
-		find_package(METIS)
+		simvascular_find_package(METIS)
 	endif()
 endif()
 
@@ -517,7 +532,7 @@ if(SV_USE_NSPCG)
 	if(NOT SV_USE_SYSTEM_NSPCG)
 		set(NSPCG_LIBRARY lib_simvascular_nspcg)
 	else()
-		find_package(NSPCG)
+		simvascular_find_package(NSPCG)
 	endif()
 endif()
 
@@ -638,7 +653,7 @@ if(SV_SUPERBUILD)
 	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
 
 	# Git Check (superbuild)
-	find_package(Git REQUIRED)
+	simvascular_find_package(Git REQUIRED)
 	option(SV_USE_GIT
 		"If behind a firewall turn this off to use http instead." ON)
 
@@ -648,10 +663,28 @@ if(SV_SUPERBUILD)
 	endif()
 	include(Superbuild)
 	RETURN()
+else()
+	message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
+	file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
+	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
+
+	if(SV_ENABLE_DISTRIBUTION)
+		add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
+	endif()
 endif()
 #-----------------------------------------------------------------------------
 # Now we need to finish configuring now that the external projects are configured
 #-----------------------------------------------------------------------------
+foreach(proj ${SV_EXTERNALS_LIST})
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(SV_USE_SYSTEM_${proj} "ON" CACHE BOOL "External ${proj} must be used" FORCE)
+    set(${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+    mark_as_superbuild(${proj}_DIR)
+    if(SV_USE_${proj}_SHARED)
+      ExternalProject_Install_CMake_NoSB(${proj})
+    endif()
+  endif()
+endforeach()
 
 #-----------------------------------------------------------------------------
 # TCL Setup
@@ -662,28 +695,44 @@ if(WIN32)
 endif()
 
 #-----------------------------------------------------------------------------
-# OPENCASCADE Setup
-if(SV_USE_OPENCASCADE)
-	set(OPENCASCADE_VERSION "6.9")
-	find_package(OPENCASCADE)
-	mark_as_superbuild(OPENCASCADE_INCLUDE_DIR)
-	mark_as_superbuild(OPENCASCADE_LIBRARIES)
-	mark_as_superbuild(OPENCASCADE_LIBRARY)
+# ITK Setup
+#-----------------------------------------------------------------------------
+if(SV_USE_ITK)
+	simvascular_find_package(ITK REQUIRED)
+	include(${ITK_USE_FILE})
 endif()
 
-if(OPENCASCADE_FOUND)
-	message("OCCT Found!")
+# OpenCASCADE Setup
+#-----------------------------------------------------------------------------
+if(SV_USE_OpenCASCADE)
+	simvascular_find_package(OpenCASCADE)
+	mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
+	mark_as_superbuild(OpenCASCADE_LIBRARIES)
+	mark_as_superbuild(OpenCASCADE_LIBRARY)
 endif()
-# Plugin setup
-if(SV_USE_ITK)
-	find_package(ITK REQUIRED)
-	include(${ITK_USE_FILE})
+
+# GDCM Setup
+#-----------------------------------------------------------------------------
+if(SV_USE_GDCM)
+        simvascular_find_package(GDCM)
+	mark_as_superbuild(GDCM_DIR)
+	mark_as_superbuild(GDCM_INCLUDE_DIR)
+	mark_as_superbuild(GDCM_LIBRARIES)
+endif()
+
+# FREETYPE Setup
+#-----------------------------------------------------------------------------
+if(SV_USE_FREETYPE)
+  	simvascular_find_package(FREETYPE)
+	mark_as_superbuild(FREETYPE_DIR)
+	mark_as_superbuild(FREETYPE_INCLUDE_DIR)
+	mark_as_superbuild(FREETYPE_LIBRARIES)
 endif()
 
 #-----------------------------------------------------------------------------
 # MMG Setup
 if(SV_USE_MMG)
-	find_package(MMG)
+	simvascular_find_package(MMG)
 	mark_as_superbuild(MMG_DIR)
 	mark_as_superbuild(MMG_INCLUDE_DIR)
 	mark_as_superbuild(MMG_LIBRARY)
@@ -691,40 +740,37 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK Setup
-find_package(VTK COMPONENTS
+simvascular_find_package(VTK COMPONENTS
 	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk
 	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
 include(${VTK_USE_FILE})
-# foreach( d ${VTK_LIBRARY_DIRS})
-# MESSAGE(" ${d}")
-# endforeach()
-
-# message("${VTK_REQUIRED_EXE_LINKER_FLAGS} | \n ${VTK_REQUIRED_CXX_FLAGS}\n ${VTK_REQUIRED_MODULE_LINKER_FLAGS}")
-
-# SV uses non stanard libraries, this adds them, also adds the intel libraries
-#include(VTKSVConfig)
-file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*TCL*${CMAKE_STATIC_LIBRARY_SUFFIX}")
-file(GLOB_RECURSE vtk_new_libs2 RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*${CMAKE_STATIC_LIBRARY_SUFFIX}")
-list(APPEND vtk_new_libs ${vtk_new_libs2})
-string(REGEX REPLACE [a-z|A-Z]*/${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
-if (CMAKE_STATIC_LIBRARY_PREFIX)
-	string(REGEX REPLACE ${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+include(VTKSVConfig)
+#Does not pick up vtkCommonCoreTCL, need to add manually
+set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
+if(SV_USE_VTK_SHARED)
+  set(SV_INSTALL_EXTERNALS ON)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
 endif()
-string(REGEX REPLACE "-[0-9]\\.*[0-9]\\${CMAKE_STATIC_LIBRARY_SUFFIX}" "" vtk_new_libs "${vtk_new_libs}")
-list(REMOVE_DUPLICATES vtk_new_libs)
-
-set(VTK_LIBRARIES ${VTK_LIBRARIES} ${vtk_new_libs})
+# SV uses non stanard libraries, this adds them, also adds the intel libraries
+#file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*TCL*${CMAKE_STATIC_LIBRARY_SUFFIX}")
+#file(GLOB_RECURSE vtk_new_libs2 RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*${CMAKE_STATIC_LIBRARY_SUFFIX}")
+#list(APPEND vtk_new_libs ${vtk_new_libs2})
+#string(REGEX REPLACE [a-z|A-Z]*/${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+#if (CMAKE_STATIC_LIBRARY_PREFIX)
+#	string(REGEX REPLACE ${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
+#endif()
+#string(REGEX REPLACE "-[0-9]\\.*[0-9]\\${CMAKE_STATIC_LIBRARY_SUFFIX}" "" vtk_new_libs "${vtk_new_libs}")
+#list(REMOVE_DUPLICATES vtk_new_libs)
+#
+#set(VTK_LIBRARIES ${VTK_LIBRARIES} ${vtk_new_libs})
 if(${VTK_DIR} MATCHES "intel")
 	#message(STATUS "VTK appears to be built with intel, adding libraries")
 	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
 endif()
-set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
-if(VTK_SHARED_LIBRARIES)
-  set(SV_INSTALL_EXTERNALS ON)
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DVTK_BUILD_SHARED_LIBS")
-endif()
 
+#-----------------------------------------------------------------------------
+# TetGen Setup
 if(SV_USE_TETGEN)
 	if(TETGEN_VERSION MATCHES "1.5.1")
 		set(TETGEN151 ON)
@@ -758,9 +804,9 @@ if(SV_USE_PARASOLID)
 	endif()
 endif()
 
-if(SV_USE_OPENCASCADE)
-	if(OPENCASCADE_FOUND)
-		include_directories(${OPENCASCADE_INCLUDE_DIR})
+if(SV_USE_OpenCASCADE)
+	if(OpenCASCADE_FOUND)
+		include_directories(${OpenCASCADE_INCLUDE_DIR})
 	endif()
 endif()
 

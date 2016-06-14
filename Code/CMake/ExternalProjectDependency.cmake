@@ -699,9 +699,9 @@ macro(ExternalProject_Add_Empty project_name)
   endif()
 
   ExternalProject_Add(${project_name}
-    PREFIX empty/${project_name}-prefix
-    SOURCE_DIR ${CMAKE_BINARY_DIR}/empty/${project_name}
-    BINARY_DIR empty/${project_name}-build
+    PREFIX ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${project_name}_PFX_DIR}-empty
+    SOURCE_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${project_name}_SRC_DIR}-empty
+    BINARY_DIR ${${project_name}_DIR}
     DOWNLOAD_COMMAND ""
     CONFIGURE_COMMAND ""
     BUILD_COMMAND ""
@@ -726,5 +726,48 @@ endmacro()
 function(ExternalProject_Install_CMake project_name)
   ExternalProject_Get_Property(${project_name} binary_dir)
 
-  install(SCRIPT ${binary_dir}/cmake_install.cmake)
+  if("${project_name}" STREQUAL "${CMAKE_PROJECT_NAME}")
+    install(SCRIPT ${binary_dir}/cmake_install.cmake)
+  else()
+    if(NOT "${${proj}_DIR}" STREQUAL "")
+      if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
+	if(EXISTS ${binary_dir}/lib)
+	  install(DIRECTORY ${binary_dir}/lib DESTINATION Externals)
+	  install(DIRECTORY ${binary_dir}/bin DESTINATION Externals)
+	endif()
+      else()
+	if(EXISTS ${${proj}_DIR}/lib)
+	  install(DIRECTORY ${${proj}_DIR}/lib DESTINATION Externals/${SV_EXT_${project_name}_BIN_DIR})
+	endif()
+	if(EXISTS ${${proj}_DIR}/bin)
+	  install(DIRECTORY ${${proj}_DIR}/bin DESTINATION Externals/${SV_EXT_${project_name}_BIN_DIR})
+	endif()
+	if(EXISTS ${${proj}_DIR}/include)
+	  install(DIRECTORY ${${proj}_DIR}/include DESTINATION Externals/${SV_EXT_${project_name}_BIN_DIR})
+	endif()
+      endif()
+    endif()
+  endif()
+endfunction()
+
+function(ExternalProject_Install_CMake_NoSB project_name)
+
+  if(NOT "${${proj}_DIR}" STREQUAL "")
+    if(${CMAKE_PROJECT_NAME}_ENABLE_DISTRIBUTION)
+      if(EXISTS ${${proj}_DIR}/lib)
+	install(DIRECTORY ${${proj}_DIR}/lib DESTINATION Externals)
+	install(DIRECTORY ${${proj}_DIR}/bin DESTINATION Externals)
+      endif()
+    else()
+      if(EXISTS ${${proj}_DIR}/lib)
+	install(DIRECTORY ${${proj}_DIR}/lib DESTINATION Externals/${SV_EXT_${project_name}_BIN_DIR})
+      endif()
+      if(EXISTS ${${proj}_DIR}/bin)
+	install(DIRECTORY ${${proj}_DIR}/bin DESTINATION Externals/${SV_EXT_${project_name}_BIN_DIR})
+      endif()
+      if(EXISTS ${${proj}_DIR}/include)
+	install(DIRECTORY ${${proj}_DIR}/include DESTINATION Externals/${SV_EXT_${project_name}_BIN_DIR})
+      endif()
+    endif()
+  endif()
 endfunction()

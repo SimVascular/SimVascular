@@ -4,7 +4,7 @@
 #option(SV_SUPERBUILD_INSTALL 
   #  "Enabling this option will install automatically SimVascular in Superbuild Mode" OFF)
 option(SV_ENABLE_DISTRIBUTION 
-  "Enalble Distribution Targets (CPack)" OFF)
+  "Enable Distribution Targets (CPack)" OFF)
 mark_as_advanced(SV_ENABLE_DISTRIBUTION)
 mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
 
@@ -21,15 +21,6 @@ endif()
 #endif()
 #mark_as_superbuild(SUPERBUILD_INSTALL_PREFIX:PATH)
 
-if(NOT SV_INSTALL_ROOT_DIR)
-  set(SV_INSTALL_ROOT_DIR simvascular)
-endif()
-mark_as_superbuild(SV_INSTALL_ROOT_DIR:PATH)
-if(NOT WIN32)
-  if(NOT CMAKE_INSTALL_PREFIX MATCHES "${SV_INSTALL_ROOT_DIR}")
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
-  endif()
-endif()
 if(NOT SV_INSTALL_HOME_DIR)
   set(SV_INSTALL_HOME_DIR ".")
 endif()
@@ -119,105 +110,9 @@ endif()
 mark_as_superbuild(SV_INSTALL_EXTERNAL_EXE_DIR:PATH)
 
 #-----------------------------------------------------------------------------
-# Third Party install locations
+# Parasolid install locations
 #-----------------------------------------------------------------------------
-# VTK 
-if(NOT SV_INSTALL_VTK_RUNTIME_DIR)
-  set(SV_INSTALL_VTK_RUNTIME_DIR vtk/bin)
-endif()
-mark_as_superbuild(SV_INSTALL_VTK_RUNTIME_DIR:PATH)
-
-if(NOT SV_INSTALL_VTK_LIBRARY_DIR)
-  set(SV_INSTALL_VTK_LIBRARY_DIR vtk/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_VTK_LIBRARY_DIR:PATH)
-
-if(NOT SV_INSTALL_VTK_ARCHIVE_DIR)
-  set(SV_INSTALL_VTK_ARCHIVE_DIR vtk/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_VTK_ARCHIVE_DIR:PATH)
-
-if(NOT SV_INSTALL_VTK_INCLUDE_DIR)
-  set(SV_INSTALL_VTK_INCLUDE_DIR vtk/include)
-endif()
-mark_as_superbuild(SV_INSTALL_VTK_INCLUDE_DIR:PATH)
-
-if(NOT SV_INSTALL_VTK_TCL_DIR)
-  set(SV_INSTALL_VTK_TCL_DIR vtk/lib/tcltk/modules)
-endif()
-mark_as_superbuild(SV_INSTALL_VTK_TCL_DIR:PATH)
-
-set(SV_INSTALL_BUILD_SHARED_LIBS ON)
-mark_as_superbuild(SV_INSTALL_BUILD_SHARED_LIBS)
-
-
 #-----------------------------------------------------------------------------
-# ITK 
-#
-if(NOT SV_INSTALL_ITK_RUNTIME_DIR)
-  set(SV_INSTALL_ITK_RUNTIME_DIR itk/bin)
-endif()
-mark_as_superbuild(SV_INSTALL_ITK_RUNTIME_DIR:PATH)
-if(NOT SV_INSTALL_ITK_LIBRARY_DIR)
-  set(SV_INSTALL_ITK_LIBRARY_DIR itk/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_ITK_LIBRARY_DIR:PATH)
-if(NOT SV_INSTALL_ITK_ARCHIVE_DIR)
-  set(SV_INSTALL_ITK_ARCHIVE_DIR itk/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_ITK_ARCHIVE_DIR:PATH)
-
-if(NOT SV_INSTALL_ITK_INCLUDE_DIR)
-  set(SV_INSTALL_ITK_INCLUDE_DIR itk/include)
-endif()
-mark_as_superbuild(SV_INSTALL_ITK_INCLUDE_DIR:PATH)
-
-#-----------------------------------------------------------------------------
-# OPENCASCADE 
-#
-if(NOT OPENCASCADE_INSTALL_DIR)
-  set(OPENCASCADE_INSTALL_DIR ${SV_INSTALL_ROOT_DIR}/opencascade)
-endif()
-
-if(NOT SV_INSTALL_OPENCASCADE_LIBRARY_DIR)
-  set(SV_INSTALL_OPENCASCADE_LIBRARY_DIR opencascade/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_OPENCASCADE_LIBRARY_DIR:PATH)
-
-if(NOT SV_INSTALL_OPENCASCADE_INCLUDE_DIR)
-  set(SV_INSTALL_OPENCASCADE_INCLUDE_DIR opencascade/include)
-endif()
-mark_as_superbuild(SV_INSTALL_OPENCASCADE_INCLUDE_DIR:PATH)
-
-#-----------------------------------------------------------------------------
-# TCL 
-#
-if(NOT SV_INSTALL_TCL_TOP_DIR)
-  set(SV_INSTALL_TCL_TOP_DIR "TCL")
-endif()
-mark_as_superbuild(SV_INSTALL_TCL_TOP_DIR:PATH)
-
-if(NOT SV_INSTALL_TCL_RUNTIME_DIR)
-  set(SV_INSTALL_TCL_RUNTIME_DIR ".")
-endif()
-mark_as_superbuild(SV_INSTALL_TCL_RUNTIME_DIR:PATH)
-
-if(NOT SV_INSTALL_TCL_LIBRARY_DIR)
-  set(SV_INSTALL_TCL_LIBRARY_DIR ${SV_INSTALL_TCL_TOP_DIR}/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_TCL_LIBRARY_DIR:PATH)
-
-if(NOT SV_INSTALL_TCL_ARCHIVE_DIR)
-  set(SV_INSTALL_TCL_ARCHIVE_DIR ${SV_INSTALL_TCL_TOP_DIR}/lib)
-endif()
-mark_as_superbuild(SV_INSTALL_TCL_ARCHIVE_DIR:PATH)
-
-if(NOT SV_INSTALL_TCL_INCLUDE_DIR)
-  set(SV_INSTALL_TCL_INCLUDE_DIR ${SV_INSTALL_TCL_TOP_DIR}/include)
-endif()
-mark_as_superbuild(SV_INSTALL_TCL_INCLUDE_DIR:PATH)
-
-
 if(NOT SV_INSTALL_PARASOLID_RUNTIME_DIR)
   if(WIN32)
     set(SV_INSTALL_PARASOLID_RUNTIME_DIR ".")

@@ -92,37 +92,37 @@ endforeach()
 #-----------------------------------------------------------------------------
 # TCL
 
-if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
-    if(NOT APPLE)
-        message("${TCL_DLL_PATH}")
-        set(extra_exclude_pattern)
-        if(UNIX)
-          list(APPEND extra_exclude_pattern
-            REGEX "/bin" EXCLUDE
-            )
-      endif()
-      install(DIRECTORY 
-        ${TCL_SOURCE_DIR}/
-        DESTINATION ${SV_INSTALL_TCL_TOP_DIR}
-        COMPONENT TclTkLibraries
-        PATTERN "tcllib_doc" EXCLUDE
-        PATTERN "tklib_doc" EXCLUDE
-        PATTERN "*.a" EXCLUDE
-        PATTERN "include" EXCLUDE
-        PATTERN "*.lib" EXCLUDE
-        PATTERN "*.sh" EXCLUDE
-        )
-      # Tcl should be installed with linux, and windows copies, but not apple.
-      file(GLOB TCL_DLLS "${TCL_DLL_PATH}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
-      # CHANGE FOR EXECUTABLE RENAME REMOVE
-      # if(NOT WIN32)
-      #     install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_TCL_RUNTIME_DIR})
-      # else()
-      #   install(FILES ${TCL_DLLS}  DESTINATION ${SV_INSTALL_RUNTIME_DIR})
-      #endif()
-      install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT TclTkRuntimes)
-  endif()
-endif()
+#if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
+#    if(NOT APPLE)
+#        message("${TCL_DLL_PATH}")
+#        set(extra_exclude_pattern)
+#        if(UNIX)
+#          list(APPEND extra_exclude_pattern
+#            REGEX "/bin" EXCLUDE
+#            )
+#      endif()
+#      install(DIRECTORY 
+#        ${TCL_SOURCE_DIR}/
+#        DESTINATION ${SV_INSTALL_TCL_TOP_DIR}
+#        COMPONENT TclTkLibraries
+#        PATTERN "tcllib_doc" EXCLUDE
+#        PATTERN "tklib_doc" EXCLUDE
+#        PATTERN "*.a" EXCLUDE
+#        PATTERN "include" EXCLUDE
+#        PATTERN "*.lib" EXCLUDE
+#        PATTERN "*.sh" EXCLUDE
+#        )
+#      # Tcl should be installed with linux, and windows copies, but not apple.
+#      file(GLOB TCL_DLLS "${TCL_DLL_PATH}/*${CMAKE_SHARED_LIBRARY_SUFFIX}")
+#      # CHANGE FOR EXECUTABLE RENAME REMOVE
+#      # if(NOT WIN32)
+#      #     install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_TCL_RUNTIME_DIR})
+#      # else()
+#      #   install(FILES ${TCL_DLLS}  DESTINATION ${SV_INSTALL_RUNTIME_DIR})
+#      #endif()
+#      install(FILES ${TCL_DLLS} DESTINATION ${SV_INSTALL_TCL_RUNTIME_DIR} COMPONENT TclTkRuntimes)
+#  endif()
+#endif()
 
 #-----------------------------------------------------------------------------
 # MPI

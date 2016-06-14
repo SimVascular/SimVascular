@@ -185,7 +185,10 @@ static int newInterpreter(Tcl_Interp *interpreter)
 #else
     if (existingInterpreters == 0) {
         Py_Initialize();                                                                           /* initialize main interpreter */
-        PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
+	//fprintf(stdout,"Build Info: %s\n",Py_GetBuildInfo());
+	printf("  %-12s %s\n", "Python:",
+	       Py_GetVersion());
+	PyEval_InitThreads();                                               /* initialize and acquire the global interpreter lock */
         PycString_IMPORT;
         globalState = PyThreadState_Swap(0);                                                            /* save the global thread */
 	//

@@ -37,6 +37,7 @@ before_install:
   - export EXTERNALS_DIR=/home/travis/external
   - export VTK_SOURCE_DIR=$EXTERNALS_DIR/vtk-$VTK_VERSION
   - export VTK_DIR=$EXTERNALS_DIR/vtk-$VTK_VERSION-build
+  - export TCLLIBPATH=$VTK_DIR/Wrapping/Tcl
   - export ITK_SOURCE_DIR=$EXTERNALS_DIR/itk-$ITK_VERSION
   - export ITK_DIR=$EXTERNALS_DIR/itk-$ITK_VERSION-build
   - export BUILD_DIR=$cwd/build

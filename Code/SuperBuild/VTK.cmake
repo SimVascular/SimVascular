@@ -32,6 +32,9 @@ if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 else()
   set(${proj}_DEPENDENCIES "TCL")
+  if(${${CMAKE_PROJECT_NAME}_USE_PYTHON})
+    set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} "PYTHON")
+  endif()
 endif()
 
 ExternalProject_Include_Dependencies(${proj} 
@@ -60,10 +63,23 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
-  set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
+  if(WIN32)
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
+      CACHE PATH "On windows, there is a bug with VTK source code directory path length, you can change this path to avoid it")
+  else()
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+  endif()
   if(WIN32 AND NOT TK_INTERNAL_PATH)
-    set(TK_INTERNAL_PATH ${${proj}_OUTPUT_DIR}/externals/TCLTK/internals/tk8.6)
+    set(TK_INTERNAL_PATH ${TCL_INCLUDE_PATH}/internals/tk8.6)
     set(VTK_TK_INTENAL_PATH_DEFINE  "-DTK_INTERNAL_PATH:PATH=${TK_INTERNAL_PATH}")
   endif()
   if(WIN32 AND NOT TK_XLIB_PATH)
@@ -74,9 +90,9 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   ExternalProject_Add(${proj}
    ${${proj}_EP_ARGS}
    GIT_REPOSITORY "https://github.com/SimVascular/VTK.git"
-   PREFIX ${${proj}_OUTPUT_DIR}-PREFIX
-   SOURCE_DIR ${${proj}_OUTPUT_DIR}
-   BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+   PREFIX ${${proj}_PFX_DIR}
+   SOURCE_DIR ${${proj}_SRC_DIR}
+   BINARY_DIR ${${proj}_BLD_DIR}
    GIT_TAG "simvascular-patch-6.2"
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
@@ -87,7 +103,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
    -DCMAKE_MACOSX_RPATH:INTERNAL=1
-   -DBUILD_SHARED_LIBS:BOOL=${VTK_SHARED_LIBRARIES}
+   -DBUILD_SHARED_LIBS:BOOL=${SV_USE_${proj}_SHARED}
    -DBUILD_TESTING:BOOL=OFF
    -DVTK_WRAP_TCL:BOOL=ON
    -DVTK_WRAP_PYTHON:BOOL=${SV_USE_PYTHON}
@@ -99,23 +115,26 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    ${VTK_TK_XLIB_PATH_DEFINE}
    ${VTK_TK_INTENAL_PATH_DEFINE}
    -DTK_LIBRARY:FILEPATH=${TK_LIBRARY}
+   -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
+   -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_PATH}
+   -DPYTHON_LIBRARIES:FILEPATH=${PYTHON_LIBRARIES}
+   -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARIES}
    -DBUILD_EXAMPLES:BOOL=OFF
-   -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
-   -DVTK_INSTALL_RUNTIME_DIR:PATH=${SV_INSTALL_VTK_RUNTIME_DIR}
-   -DVTK_INSTALL_LIBRARY_DIR:PATH=${SV_INSTALL_VTK_LIBRARY_DIR}
-   -DVTK_INSTALL_ARCHIVE_DIR:PATH=${SV_INSTALL_VTK_ARCHIVE_DIR}
-   -DVTK_INSTALL_INCLUDE_DIR:PATH=${SV_INSTALL_VTK_INCLUDE_DIR}
-   -DVTK_INSTALL_TCL_DIR:PATH=${SV_INSTALL_VTK_TCL_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
+   -DVTK_INSTALL_RUNTIME_DIR:PATH=bin
+   -DVTK_INSTALL_LIBRARY_DIR:PATH=lib
+   -DVTK_INSTALL_ARCHIVE_DIR:PATH=lib
+   -DVTK_INSTALL_INCLUDE_DIR:PATH=include
+   -DVTK_INSTALL_TCL_DIR:PATH=lib/tcltk/modules
    )
 
-set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
+set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 
-set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+set(${proj}_DIR ${${proj}_BIN_DIR})
+simvascular_find_config_file(VTK)
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-#  file(COPY ${${proj}_DIR}/cmake_install.cmake
-#       DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

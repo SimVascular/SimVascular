@@ -24,17 +24,17 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SV_EXTERN_POSSIBLE_DIRS ${USER_HOME_DIR}/sv_extern /sv_extern C:/cygwin/sv_extern/
+set(SV_EXTERN_POSSIBLE_DIRS ${USER_HOME_DIR}/Externals /sv_extern C:/cygwin/sv_extern/
 	/c/cygwin/sv_extern/ c:/sv_extern/)
 
 if(LINUX)
-	set(SV_EXTERN_DEFAULT "/sv_extern")
+	set(SV_EXTERN_DEFAULT "/Externals")
 	set(OpenLibs_Bin_REL_PATH "bin/linux/intel_13.0/x64" CACHE PATH "sv extern open lib directory")
 	set(LicensedLibs_Bin_REL_PATH "/licensed" CACHE PATH "sv extern licensed lib directory")
 endif()
 
 if(CYGWIN AND NOT IS64)
-	set(SV_EXTERN_DEFAULT "/sv_extern")
+	set(SV_EXTERN_DEFAULT "/Externals")
 	set(OpenLibs_Bin_REL_PATH "bin/win/vs10sp1/x86")
 	set(LicensedLibs_Bin_REL_PATH "/licensed/")
 endif()
@@ -51,13 +51,20 @@ if(WIN32 AND IS64 AND NOT CYGWIN)
 	set(LicensedLibs_Bin_REL_PATH "/licensed/")
 endif()
 
-if(APPLE)
-	set(SV_EXTERN_DEFAULT "${USER_HOME_DIR}/sv_extern")
-	set(OpenLibs_Bin_REL_PATH "bin/macos/gnu/x64/")
+if(APPLE AND CLANG)
+	set(SV_EXTERN_DEFAULT "${USER_HOME_DIR}/Externals")
+	set(OpenLibs_Bin_REL_PATH "bin/mac_osx/clang/x64/")
 	set(LicensedLibs_Bin_REL_PATH "/licensed/")
 endif()
 
-set(SV_EXTERN_OPEN_BIN_DIR 
+if(APPLE AND GNU)
+	set(SV_EXTERN_DEFAULT "${USER_HOME_DIR}/Externals")
+	set(OpenLibs_Bin_REL_PATH "bin/mac_osx/gnu/x64/")
+	set(LicensedLibs_Bin_REL_PATH "/licensed/")
+endif()
+
+
+set(SV_EXTERNALS_OPEN_BIN_DIR 
 	${SV_EXTERN_DEFAULT}/${OpenLibs_Bin_REL_PATH} CACHE PATH "Location of")
       mark_as_superbuild(SV_EXTERN_OPEN_BIN_DIR)
 

@@ -9,7 +9,7 @@ if $VTK60; then
     fi
     mkdir -p $VTK_DIR
     cd $VTK_DIR
-    cmake -DVTK_WRAP_TCL=1 -DVTK_Group_Tk=1 -DBUILD_SHARED_LIBS=0 -DBUILD_TESTING=0 -DBUILD_EXAMPLES=0 $VTK_SOURCE_DIR
+    cmake -DVTK_WRAP_TCL=1 -DVTK_Group_Tk=1 -DBUILD_SHARED_LIBS=1 -DBUILD_TESTING=0 -DBUILD_EXAMPLES=0 $VTK_SOURCE_DIR
     $MAKE
     cd -
 fi
@@ -21,7 +21,7 @@ if $ITK450; then
     fi
     mkdir -p $ITK_DIR
     cd $ITK_DIR
-    cmake -DModule_ITKVtkGlue=1 -DVTK_DIR=$VTK_DIR -DModule_ITKReview=1 -DBUILD_SHARED_LIBS=0 -DBUILD_TESTING=0 -DBUILD_EXAMPLES=0 $ITK_SOURCE_DIR
+    cmake -DModule_ITKVtkGlue=1 -DVTK_DIR=$VTK_DIR -DModule_ITKReview=1 -DBUILD_SHARED_LIBS=1 -DBUILD_TESTING=0 -DBUILD_EXAMPLES=0 $ITK_SOURCE_DIR
     make --jobs=1
     cd -
 fi

@@ -18,6 +18,7 @@ mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
 option(SV_SUPERBUILD
 	"Build ${PROJECT_NAME} and the projects it depends on.
 	This must be turn on if your wish to download any packages." ON)
+mark_as_superbuild(SV_SUPERBUILD)
 
 set(SV_SUPERBUILD_LIBS_DIR "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
 mark_as_superbuild(SV_SUPERBUILD_LIBS_DIR)
@@ -39,9 +40,6 @@ mark_as_superbuild(SV_SUPPRESS_WARNINGS)
 
 #-----------------------------------------------------------------------------
 # General Library Options
-option(SV_USE_ZLIB "Use ZLib" ON)
-mark_as_superbuild(SV_USE_ZLIB)
-
 option(SV_USE_MPICH2 "Use MPICH2" ON)
 mark_as_superbuild(SV_USE_MPICH2)
 
@@ -52,39 +50,29 @@ option(SV_USE_MSMPI "Use MSMPI" OFF)
 mark_as_superbuild(SV_USE_MSMPI)
 
 #-----------------------------------------------------------------------------
-# General Library Options
+# Externals
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals" CACHE PATH "Externals toplevel directory")
+mark_as_superbuild(SV_EXTERNALS_TOPLEVEL_DIR:PATH)
+
+option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
+mark_as_superbuild(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+
+#-----------------------------------------------------------------------------
+# ThirdParty
+option(SV_USE_ZLIB "Use ZLib" ON)
+mark_as_superbuild(SV_USE_ZLIB)
+
 option(SV_USE_GLIB "Use GLIB Library" OFF)
 mark_as_superbuild(SV_USE_GLIB)
 
 option(SV_USE_GTS "Use GTS Library" OFF)
 mark_as_superbuild(SV_USE_GTS)
 
-option(SV_USE_GDCM "Enable GDCM" OFF)
-mark_as_superbuild(SV_USE_GDCM)
-
-option(SV_USE_FREETYPE "Enable FREETYPE" OFF)
-mark_as_superbuild(SV_USE_FREETYPE)
-
-#-----------------------------------------------------------------------------
-# Plugins
-
-option(SV_USE_ITK "Enable ITK Plugin" ON)
-mark_as_superbuild(SV_USE_ITK)
-
-option(ITK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(ITK_SHARED_LIBRARIES)
-
 option(SV_USE_VMTK "Enable VMTK Plugin" ON)
 mark_as_superbuild(SV_USE_VMTK)
 
 option(SV_USE_TETGEN "Enable Tetgen Meshing Plugin" ON)
 mark_as_superbuild(SV_USE_TETGEN)
-
-option(SV_USE_MMG "Enable Mmg Meshing Plugin" OFF)
-mark_as_superbuild(SV_USE_MMG)
-
-option(VTK_SHARED_LIBRARIES "Buiild vtk libraries as shared libs" OFF)
-mark_as_superbuild(VTK_SHARED_LIBRARIES)
 
 option(SV_USE_PYTHON "Use Tcl Python" OFF)
 mark_as_superbuild(SV_USE_PYTHON)
@@ -94,11 +82,6 @@ mark_as_superbuild(SV_USE_PYTHON)
 # Adaptor converts objects between the different solid models.
 option(SV_USE_MESHSIM_ADAPTOR "Build the adapter (Requires Fortran and MeshSim)" OFF)
 mark_as_superbuild(SV_USE_MESHSIM_ADAPTOR)
-
-#-----------------------------------------------------------------------------
-# Open Source Software Options: Solid Models - OPENCASCADE
-option(SV_USE_OPENCASCADE "OPENCASCADE" OFF)
-mark_as_superbuild(SV_USE_OPENCASCADE)
 
 #-----------------------------------------------------------------------------
 # Commercial Software Options: Solid Models - Parasolid
@@ -126,4 +109,4 @@ mark_as_superbuild(SV_USE_INTELRUNTIME)
 #-----------------------------------------------------------------------------
 # Enable Testing
 option(SV_BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
-mark_as_superbuild(VARS BUILD_TESTING)
+mark_as_superbuild(VARS SV_BUILD_TESTING)

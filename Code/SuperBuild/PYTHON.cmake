@@ -24,11 +24,8 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-set(proj TCL)
+set(proj PYTHON)
 set(${proj}_DEPENDENCIES "")
-if(LINUX)
-
-endif()
 
 ExternalProject_Include_Dependencies(${proj}
 	PROJECT_VAR proj
@@ -38,19 +35,19 @@ ExternalProject_Include_Dependencies(${proj}
 	)
 
 if(${PROJECT_NAME}_USE_SYSTEM_${proj})
-	unset(${proj}_LIB_DIR CACHE)
+	unset(${proj}_LIBRARIES CACHE)
 endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-	unset(TCL_INCLUDE_PATH CACHE)
-	unset(TCL_LIBRARY CACHE)
-	unset(TCL_TCLSH CACHE)
-	unset(TK_INCLUDE_PATH CACHE)
-	unset(TK_LIBRARY CACHE)
-	unset(TK_WISH CACHE)
+	unset(PYTHONLIBS_FOUND CACHE)
+	unset(PYTHON_INCLUDE_PATH CACHE)
+	unset(PYTHON_LIBRARIES CACHE)
+	unset(PYTHON_LIBRARY_PATH CACHE)
+	unset(PYTHON_EXECUTABLE CACHE)
+	unset(PYTHON_VERSION_STRING CACHE)
 
-	# Because we are downloading prebuilt libraries and binaries for tcl,
+	# Because we are downloading prebuilt libraries and binaries for python,
 	# we set the source dir and bin dir to both be TCL_EXT_BIN_DIR
 	if(WIN32)
 	  set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
@@ -69,18 +66,19 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	endif()
 
 	if(LINUX)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/linux/ubuntu/14.04/latest/linux.gcc-4.8.x64.tcltk-8.6.4.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python-2.7-linux-x64-gnu.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(APPLE)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.tcltk-8.6.4.tar.gz" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python2.7-osx-clang70-x64-cmake.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	elseif(WIN32)
-		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/windows/msvc_2013/latest/msvc_2013.x64.tcltk-8.6.4.zip" CACHE
+		set(SuperBuild_${proj}_URL "${SV_SUPERBUILD_LIBS_DIR}/python-2.7-win-x64.tar.gz" CACHE
 			STRING "Location of ${proj}, can be web address or local path")
 	endif()
+
 	mark_as_superbuild(SuperBuild_${proj}_URL:STRING)
 	mark_as_advanced(SuperBuild_${proj}_URL)
-	
+
 	ExternalProject_Add(${proj}
 		URL ${SuperBuild_${proj}_URL}
 		PREFIX ${${proj}_PFX_DIR}
@@ -99,39 +97,21 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		)
 
 	if(WIN32)
-		set(TCL_DLL_PATH ${${proj}_BIN_DIR}/bin)
-		set(TCL_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_BIN_DIR}/lib/tcl86t.lib)
-		set(TCL_TCLSH ${${proj}_BIN_DIR}/bin/tclsh86t.exe)
-
-		set(TK_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_BIN_DIR}/lib/tk86t.lib)
-		set(TK_WISH ${${proj}_BIN_DIR}/bin/wish86t.exe)
+		set(${proj}_EXECUTABLE ${${proj}_BIN_DIR}/bin/python)
+		set(${proj}_INCLUDE_PATH ${${proj}_BIN_DIR}/include/python2.7) 
+		set(${proj}_LIBRARIES ${${proj}_BIN_DIR}/lib/libpython2.7.lib)
 	endif()
 	if(LINUX)
-		set(TCL_DLL_PATH ${${proj}_BIN_DIR}/bin)
-		set(TCL_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_BIN_DIR}/lib/libtcl8.6.so)
-		set(TCL_TCLSH ${${proj}_BIN_DIR}/bin/tclsh8.6)
-
-		set(TK_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_BIN_DIR}/lib/libtk8.6.so)
-		set(TK_WISH ${${proj}_BIN_DIR}/bin/wish8.6)
-		mark_as_superbuild(TCL_INIT_PATH:PATH)
+		set(${proj}_EXECUTABLE ${${proj}_BIN_DIR}/bin/python)
+		set(${proj}_INCLUDE_PATH ${${proj}_BIN_DIR}/include/python2.7) 
+		set(${proj}_LIBRARIES ${${proj}_BIN_DIR}/lib/libpython2.7.so)
 	endif()
 	if(APPLE)
-		#set(Tcl_Framework_Dir ${${proj}_BIN_DIR}/Library/Frameworks/Tcl.framework)
-		#set(Tk_Framework_Dir ${${proj}_BIN_DIR}/Library/Frameworks/Tk.framework)
-
-		set(TCL_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
-		set(TCL_LIBRARY ${${proj}_BIN_DIR}/lib/libtcl8.6.dylib)
-		set(TCL_TCLSH ${${proj}_BIN_DIR}/bin/tclsh8.6)
-
-		set(TK_INCLUDE_PATH ${${proj}_BIN_DIR}/include)
-		set(TK_LIBRARY ${${proj}_BIN_DIR}/lib/libtk8.6.dylib)
-		set(TK_WISH ${${proj}_BIN_DIR}/bin/wish8.6)
-		mark_as_superbuild(TCL_INIT_PATH:PATH)
+		set(${proj}_EXECUTABLE ${${proj}_BIN_DIR}/bin/python)
+		set(${proj}_INCLUDE_PATH ${${proj}_BIN_DIR}/include/python2.7) 
+		set(${proj}_LIBRARIES ${${proj}_BIN_DIR}/lib/libpython2.7.dylib)
 	endif()
+	get_filename_component(${proj}_LIBRARY_PATH ${${proj}_LIBRARIES} PATH)
 	set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 	set(${proj}_DIR ${${proj}_BIN_DIR})
 
@@ -144,16 +124,7 @@ endif()
 
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 mark_as_superbuild(${proj}_DIR:PATH)
-mark_as_superbuild(TCL_DLL_PATH:PATH)
-mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
-mark_as_superbuild(TCL_LIBRARY:PATH)
-mark_as_superbuild(TCL_TCLSH:PATH)
-mark_as_superbuild(TK_INCLUDE_PATH:PATH)
-mark_as_superbuild(TK_LIBRARY:PATH)
-mark_as_superbuild(TK_WISH:PATH)
-
-mark_as_superbuild(
-	  VARS ${proj}_DIR:PATH
-	  LABELS "FIND_PACKAGE"
-	  )
-
+mark_as_superbuild(${proj}_INCLUDE_PATH:PATH)
+mark_as_superbuild(${proj}_LIBRARIES:PATH)
+mark_as_superbuild(${proj}_LIBRARY_PATH:PATH)
+mark_as_superbuild(${proj}_EXECUTABLE:PATH)

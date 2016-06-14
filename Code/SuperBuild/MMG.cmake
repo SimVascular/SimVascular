@@ -42,19 +42,30 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(revision_tag "v5.1.0")
+  set(revision_tag "v${${proj}_VERSION}")
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/mmg.git"
     GIT_TAG ${revision_tag})
-  set(${proj}_OUTPUT_DIR ${CMAKE_BINARY_DIR}/externals/${proj})
-  set(${proj}_OUTPUT_BIN_DIR ${CMAKE_BINARY_DIR}/externals/${proj}-build)
-
-  set(${proj}_INSTALL_DIR "mmg")
+  if(WIN32)
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
+      CACHE PATH "On windows, there is a bug with MMG source code directory path length, you can change this path to avoid it")
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
+      CACHE PATH "On windows, there is a bug with MMG source code directory path length, you can change this path to avoid it")
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
+      CACHE PATH "On windows, there is a bug with MMG source code directory path length, you can change this path to avoid it")
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
+      CACHE PATH "On windows, there is a bug with MMG source code directory path length, you can change this path to avoid it")
+  else()
+    set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
+    set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
+    set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR})
+    set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+  endif()
 
   ExternalProject_Add(${proj}
    ${location_args}
-   PREFIX ${${proj}_OUTPUT_DIR}-prefix
-   SOURCE_DIR ${${proj}_OUTPUT_DIR}
-   BINARY_DIR ${${proj}_OUTPUT_BIN_DIR}
+   PREFIX ${${proj}_PFX_DIR}
+   SOURCE_DIR ${${proj}_SRC_DIR}
+   BINARY_DIR ${${proj}_BLD_DIR}
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -63,24 +74,21 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
    -DCMAKE_MACOSX_RPATH:INTERNAL=1
-   -DCMAKE_INSTALL_DIR:PATH=${${proj}_INSTALL_DIR}
-   -DCMAKE_INSTALL_PREFIX:STRING=${SV_INSTALL_ROOT_DIR}
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-   -DLIBMMG2D_STATIC:BOOL=1
-   -DLIBMMG3D_STATIC:BOOL=1
-   -DLIBMMGS_STATIC:BOOL=1
-   -DLIBMMG_STATIC:BOOL=1
+   -DLIBMMG2D_SHARED:BOOL=${SV_USE_${proj}_SHARED}
+   -DLIBMMG3D_SHARED:BOOL=${SV_USE_${proj}_SHARED}
+   -DLIBMMGS_SHARED:BOOL=${SV_USE_${proj}_SHARED}
+   -DLIBMMG_SHARED:BOOL=${SV_USE_${proj}_SHARED}
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
-  set(${proj}_SOURCE_DIR ${${proj}_OUTPUT_DIR})
-  set(${proj}_DIR ${${proj}_OUTPUT_BIN_DIR})
+  set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
+  set(${proj}_DIR ${${proj}_BIN_DIR})
    
 
 else()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
-  #file(COPY ${${proj}_DIR}/cmake_install.cmake
-  #     DESTINATION ${CMAKE_BINARY_DIR}/empty/${proj}-build/)
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

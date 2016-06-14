@@ -4,7 +4,7 @@ set -e
 MAKE="make --jobs=$NUM_THREADS --keep-going"
 
 if $PREBUILD_ITKVTK; then
-    cmake_arg_str=" -DBUILD_TESTING=0 -DBUILD_SHARED_LIBS=0  -DBUILD_EXAMPLES=0 "
+    cmake_arg_str=" -DBUILD_TESTING=0 -DBUILD_SHARED_LIBS=1  -DBUILD_EXAMPLES=0 "
     vtk_repo_str=""
     if [ "$VTK_VERSION" == "6.0" ]; then
         vtk_repo_str=" --branch v6.0.0 https://github.com/SimVascular/VTK.git "

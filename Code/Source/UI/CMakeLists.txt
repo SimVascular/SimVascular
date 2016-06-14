@@ -65,10 +65,11 @@ if(SV_USE_PARASOLID)
         endif()
 endif()
 
-if(SV_USE_OPENCASCADE)
+if(SV_USE_OpenCASCADE)
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Model/OCCTSolidModel/cv_occt_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_opencascade)
+        link_directories(${FREETYPE_DIR}/lib)
 endif()
 
 if(SV_USE_ITK)
@@ -116,7 +117,7 @@ target_link_libraries(${SV_EXE}
 target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${OPENCASCADE_LIBRARIES}
+			${OpenCASCADE_LIBRARIES}
 			${ZLIB_LIBRARY} ${ITK_LIBRARIES}
 			${INTELRUNTIME_LIBRARIES}
 			${GLOBAL_LIBRARIES}
@@ -124,5 +125,5 @@ target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${FREETYPE_LIBRARY})
 
 if(SV_USE_PYTHON)
-  target_link_libraries(${SV_EXE} ${PYTHON_LIBRARIES})
+  target_link_libraries(${SV_EXE} ${PYTHON_LIBRARY})
 endif()
