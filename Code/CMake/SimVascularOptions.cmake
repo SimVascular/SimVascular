@@ -62,12 +62,6 @@ mark_as_superbuild(SV_EXTERNALS_USE_TOPLEVEL_DIR)
 option(SV_USE_ZLIB "Use ZLib" ON)
 mark_as_superbuild(SV_USE_ZLIB)
 
-option(SV_USE_GLIB "Use GLIB Library" OFF)
-mark_as_superbuild(SV_USE_GLIB)
-
-option(SV_USE_GTS "Use GTS Library" OFF)
-mark_as_superbuild(SV_USE_GTS)
-
 option(SV_USE_VMTK "Enable VMTK Plugin" ON)
 mark_as_superbuild(SV_USE_VMTK)
 

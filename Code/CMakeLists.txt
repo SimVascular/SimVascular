@@ -300,24 +300,6 @@ if(SV_USE_MESHSIM_ADAPTOR)
 endif()
 
 #-----------------------------------------------------------------------------
-# GTS
-if(SV_USE_GTS)
-	simvascular_external(GTS DOWNLOADABLE SHARED_LIB)
-	set(SV_USE_GLIB ON)
-	set(SV_USE_GTS ON)
-endif()
-
-if(SV_USE_GLIB)
-	if(UNIX)
-		simvascular_external(GLIB SYSTEM_DEFAULT SHARED_LIB)
-	endif()
-	if(MSVC)
-		simvascular_external(GLIB DOWNLOADABLE SHARED_LIB)
-	endif()
-	set(SV_USE_GLIB ON)
-endif()
-
-#-----------------------------------------------------------------------------
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
 	#simvascular_third_party(opencascade)
@@ -449,16 +431,6 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 	set(USE_MESHSIM ON)
 endif()
 message(STATUS "")
-#-----------------------------------------------------------------------------
-# GTS
-if(SV_USE_GTS)
-	set(USE_GTS ON)
-	if(WINDOWS)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DNATIVE_WIN32")
-	else()
-	endif()
-endif()
-
 #-----------------------------------------------------------------------------
 # Modules (Flowsolver)
 #-----------------------------------------------------------------------------

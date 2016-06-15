@@ -44,7 +44,6 @@
 #include "cvMath.h"
 #include "cvSolidModel.h"
 
-#include "vtkSurfaceBooleanOperations.h"
 #include "vtkSmartPointer.h"
 #include "vtkSortDataArray.h"
 #include "vtkPolygon.h"
@@ -696,94 +695,6 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
   }
   return CV_OK;
 }
-
-#ifdef SV_USE_GTS
-/* -------------- */
-/* sys_geom_union_gts */
-/* -------------- */
-
-int sys_geom_union_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst )
-{
-  vtkPolyData *a = srcA->GetVtkPolyData();
-  vtkPolyData *b = srcB->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *dst = NULL;
-
-  try {
-    vtkNew(vtkSurfaceBooleanOperations,booleanOperator);
-    booleanOperator->AddInputData(a);
-    booleanOperator->AddInputData(b);
-    booleanOperator->SetModeToUnion();
-    booleanOperator->Update();
-    result = new cvPolyData( booleanOperator->GetOutput() );
-    *dst = result;
-  }
-  catch (...) {
-    fprintf(stderr,"ERROR in boolean operation.\n");
-    fflush(stderr);
-    return CV_ERROR;
-  }
-  return CV_OK;
-}
-
-/* ------------------ */
-/* sys_geom_intersect_gts */
-/* ------------------ */
-
-int sys_geom_intersect_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst )
-{
-  vtkPolyData *a = srcA->GetVtkPolyData();
-  vtkPolyData *b = srcB->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *dst = NULL;
-
-  try {
-    vtkNew(vtkSurfaceBooleanOperations,booleanOperator);
-    booleanOperator->AddInputData(a);
-    booleanOperator->AddInputData(b);
-    booleanOperator->SetModeToIntersection();
-    booleanOperator->Update();
-    result = new cvPolyData( booleanOperator->GetOutput() );
-    *dst = result;
-  }
-  catch (...) {
-    fprintf(stderr,"ERROR in boolean operation.\n");
-    fflush(stderr);
-    return CV_ERROR;
-  }
-  return CV_OK;
-}
-
-
-/* ----------------- */
-/* sys_geom_subtract_gts */
-/* ----------------- */
-
-int sys_geom_subtract_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst )
-{
-  vtkPolyData *a = srcA->GetVtkPolyData();
-  vtkPolyData *b = srcB->GetVtkPolyData();
-  cvPolyData *result = NULL;
-  *dst = NULL;
-
-  try {
-    vtkNew(vtkSurfaceBooleanOperations,booleanOperator);
-    booleanOperator->AddInputData(a);
-    booleanOperator->AddInputData(b);
-    booleanOperator->SetModeToDifference();
-    booleanOperator->Update();
-    result = new cvPolyData( booleanOperator->GetOutput() );
-    *dst = result;
-  }
-  catch (...) {
-    fprintf(stderr,"ERROR in boolean operation.\n");
-    fflush(stderr);
-    return CV_ERROR;
-  }
-  return CV_OK;
-}
-
-#endif
 
 /* ------------------------ */
 /* sys_geom_ReverseAllCells */

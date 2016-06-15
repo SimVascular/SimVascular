@@ -45,7 +45,7 @@ include $(TOP)/include.mk
 # --------------
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-	   $(SHAPES_INCDIR) $(GLIB_INCDIR) $(GTS_INCDIR)
+	   $(SHAPES_INCDIR)
 
 ifeq ($(SV_USE_OPENCASCADE),1)
    CXXFLAGS += $(OPENCASCADE_INCDIR)
@@ -68,10 +68,6 @@ HDRS	= cv_sys_geom.h cv_ggems.h \
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h \
         vtkDelaunay2D_60.h vtkConstrainedBlend.h
 
-ifeq ($(SV_USE_GTS),1)
-  HDRS +=  vtkSurfaceBooleanOperations.h
-endif
-
 CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
 	cv_spline.cxx cv_integrate_surface.cxx \
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx \
@@ -87,10 +83,6 @@ CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
 	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx \
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx \
         vtkDelaunay2D_60.cxx vtkConstrainedBlend.cxx
-
-ifeq ($(SV_USE_GTS),1)
-  CXXSRCS +=  vtkSurfaceBooleanOperations.cxx
-endif
 
 DLLHDRS = cv_geom_init.h
 
