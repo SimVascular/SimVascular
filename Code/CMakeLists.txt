@@ -137,15 +137,15 @@ simvascular_external(TCL DOWNLOADABLE SHARED_LIB)
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
-mark_as_superbuild(
-	VARS
-	TCL_INCLUDE_PATH:PATH
-	TCL_LIBRARY:FILEPATH
-	TCL_TCLSH:FILEPATH
-	TK_INCLUDE_PATH:PATH
-	TK_LIBRARY:FILEPATH
-	TK_WISH:FILEPATH
-	ALL_PROJECTS)
+      #mark_as_superbuild(
+      #	VARS
+      #	TCL_INCLUDE_PATH:PATH
+      #	TCL_LIBRARY:FILEPATH
+      #	TCL_TCLSH:FILEPATH
+      #	TK_INCLUDE_PATH:PATH
+      #	TK_LIBRARY:FILEPATH
+      #	TK_WISH:FILEPATH
+      #	ALL_PROJECTS)
 
 #-----------------------------------------------------------------------------
 # PYTHON
@@ -665,6 +665,16 @@ include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 if(WIN32)
 	GET_FILENAME_COMPONENT(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
 endif()
+
+simvascular_find_package(TCL)
+mark_as_superbuild(TCL_DIR:PATH)
+mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
+mark_as_superbuild(TCL_LIBRARY:FILEPATH)
+mark_as_superbuild(TCL_TCLSH:FILEPATH)
+mark_as_superbuild(TK_INCLUDE_PATH:PATH)
+mark_as_superbuild(TK_LIBRARY:FILEPATH)
+mark_as_superbuild(TK_WISH:FILEPATH)
+mark_as_superbuild(ALL_PROJECTS)
 
 #-----------------------------------------------------------------------------
 # ITK Setup

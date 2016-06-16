@@ -35,11 +35,6 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-# Sanity checks
-if(DEFINED GDCM_DIR AND NOT EXISTS ${GDCM_DIR})
-  message(FATAL_ERROR "GDCM_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(revision_tag "v${${proj}_VERSION}")
@@ -90,6 +85,10 @@ set(${proj}_DIR ${${proj}_BIN_DIR})
 simvascular_find_config_file(GDCM)
 
 else()
+  # Sanity checks
+  if(DEFINED GDCM_DIR AND NOT EXISTS ${GDCM_DIR})
+    message(FATAL_ERROR "GDCM_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)

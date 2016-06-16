@@ -35,11 +35,6 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-# Sanity checks
-if(DEFINED OpenCASCADE_DIR AND NOT EXISTS ${OpenCASCADE_DIR})
-  message(FATAL_ERROR "OpenCASCADE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 get_filename_component(TCL_LIBRARY_DIR ${TCL_LIBRARY} PATH)
 get_filename_component(TK_LIBRARY_DIR ${TK_LIBRARY} PATH)
 
@@ -112,6 +107,10 @@ set(${proj}_DIR ${${proj}_BIN_DIR})
 simvascular_find_config_file(OpenCASCADE)
 
 else()
+  # Sanity checks
+  if(DEFINED OpenCASCADE_DIR AND NOT EXISTS ${OpenCASCADE_DIR})
+    message(FATAL_ERROR "OpenCASCADE_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)

@@ -42,11 +42,6 @@ ExternalProject_Include_Dependencies(${proj}
   EP_ARGS_VAR ${proj}_EP_ARGS 
   DEPENDS_VAR ${proj}_DEPENDENCIES)
 
-# Sanity checks
-if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
-  message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 if(APPLE)
   if(NOT DEFINED TK_INTERNAL_PATH)
     STRING(REGEX REPLACE "/Headers" "/PrivateHeaders" _TK_INTERNAL_PATH ${TK_INCLUDE_PATH})
@@ -134,6 +129,10 @@ set(${proj}_DIR ${${proj}_BIN_DIR})
 simvascular_find_config_file(VTK)
 
 else()
+  # Sanity checks
+  if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
+    message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)

@@ -35,11 +35,6 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-# Sanity checks
-if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
-  message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(revision_tag "v${${proj}_VERSION}")
@@ -88,6 +83,10 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    
 
 else()
+  # Sanity checks
+  if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
+    message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)

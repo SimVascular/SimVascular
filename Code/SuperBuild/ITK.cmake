@@ -38,13 +38,6 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-
-# Sanity checks
-if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
-  message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
-
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   #For VTK now, need better solution!
   if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_VTK)
@@ -111,6 +104,10 @@ set(${proj}_DIR ${${proj}_BIN_DIR})
 simvascular_find_config_file(ITK)
 
 else()
+  # Sanity checks
+  if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
+    message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)

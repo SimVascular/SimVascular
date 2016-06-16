@@ -116,7 +116,11 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	set(${proj}_DIR ${${proj}_BIN_DIR})
 
 else()
-	ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+  if(DEFINED PYTHON_DIR AND NOT EXISTS ${PYTHON_DIR})
+    message(FATAL_ERROR "PYTHON_DIR variable is defined but corresponds to non-existing directory")
+  endif()
+
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})

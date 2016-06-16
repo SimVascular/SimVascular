@@ -61,15 +61,10 @@ FIND_LIBRARY(MMG_LIBRARY
   DOC "The mmg library"
   )
 
-set(MMG_DIR "" CACHE PATH "Path to top level libraries.  Specify this if MMG cannot be found.")
+set(MMG_DIR "MMG_DIR-NOTFOUND" CACHE PATH "Path to top level libraries.  Specify this if MMG cannot be found.")
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(MMG 
 	FOUND_VAR MMG_FOUND
 	REQUIRED_VARS MMG_INCLUDE_DIR MMG_LIBRARY
 	FAIL_MESSAGE "Could NOT find MMG")
 
-#IF ( NOT MMG_FOUND )
-#   MESSAGE (WARNING "\nMMG not found: you can set the 'MMG_DIR' environment"
-#   " variable or the 'MMG_DIR' CMake variable to your MMG directory path"
-#   " to help us to fill the MMG library paths.\n" )
-#ENDIF ()

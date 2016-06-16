@@ -43,13 +43,6 @@ endif()
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-	unset(TCL_INCLUDE_PATH CACHE)
-	unset(TCL_LIBRARY CACHE)
-	unset(TCL_TCLSH CACHE)
-	unset(TK_INCLUDE_PATH CACHE)
-	unset(TK_LIBRARY CACHE)
-	unset(TK_WISH CACHE)
-
 	# Because we are downloading prebuilt libraries and binaries for tcl,
 	# we set the source dir and bin dir to both be TCL_EXT_BIN_DIR
 	if(WIN32)
@@ -136,7 +129,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 	set(${proj}_DIR ${${proj}_BIN_DIR})
 
 else()
-	ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
+  # Sanity checks
+  if(DEFINED TCL_DIR AND NOT EXISTS ${TCL_DIR})
+    message(FATAL_ERROR "TCL_DIR variable is defined but corresponds to non-existing directory")
+  endif()
+
+  ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)
   ExternalProject_Install_CMake(${proj})
