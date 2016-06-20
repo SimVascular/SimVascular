@@ -246,7 +246,7 @@ FIND_PATH(TK_INCLUDE_PATH
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 
-set(TCL_DIR "TCL_DIR-NOTFOUND" CACHE PATH "Path to top level libraries.  Specify this if TCL cannot be found.")
+set(TCL_DIR "${TCL_DIR}" CACHE PATH "Path to top level libraries.  Specify this if TCL cannot be found.")
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(TCL FOUND_VAR TCL_FOUND
                                   REQUIRED_VARS TCL_LIBRARY TCL_INCLUDE_PATH
                                   FAIL_MESSAGE "Could NOT find Tcl")

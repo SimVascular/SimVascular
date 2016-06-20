@@ -125,13 +125,15 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 
-set(${proj}_DIR ${${proj}_BIN_DIR})
-simvascular_find_config_file(VTK)
+set(SV_${proj}_DIR ${${proj}_BIN_DIR})
+set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/vtk-6.2)
+mark_as_superbuild(${proj}_DIR})
 
 else()
   # Sanity checks
-  if(DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR})
-    message(FATAL_ERROR "VTK_DIR variable is defined but corresponds to non-existing directory")
+  if((DEFINED SV_VTK_DIR AND NOT EXISTS ${SV_VTK_DIR})
+    AND (DEFINED VTK_DIR AND NOT EXISTS ${VTK_DIR}))
+    message(FATAL_ERROR "SV_VTK_DIR and VTK_DIR variable is defined but corresponds to non-existing directory")
   endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
@@ -141,6 +143,6 @@ endif()
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 mark_as_superbuild(
-  VARS ${proj}_DIR:PATH
+  VARS SV_${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )

@@ -61,7 +61,7 @@ FIND_LIBRARY(MMG_LIBRARY
   DOC "The mmg library"
   )
 
-set(MMG_DIR "MMG_DIR-NOTFOUND" CACHE PATH "Path to top level libraries.  Specify this if MMG cannot be found.")
+set(MMG_DIR "${MMG_DIR}" CACHE PATH "Path to top level libraries.  Specify this if MMG cannot be found.")
 INCLUDE(FindPackageHandleStandardArgs)
 FIND_PACKAGE_HANDLE_STANDARD_ARGS(MMG 
 	FOUND_VAR MMG_FOUND

@@ -126,12 +126,12 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 		mark_as_superbuild(TCL_INIT_PATH:PATH)
 	endif()
 	set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
-	set(${proj}_DIR ${${proj}_BIN_DIR})
+        set(SV_${proj}_DIR ${${proj}_BIN_DIR})
 
 else()
   # Sanity checks
-  if(DEFINED TCL_DIR AND NOT EXISTS ${TCL_DIR})
-    message(FATAL_ERROR "TCL_DIR variable is defined but corresponds to non-existing directory")
+  if(DEFINED SV_TCL_DIR AND NOT EXISTS ${SV_TCL_DIR})
+    message(FATAL_ERROR "SV_TCL_DIR variable is defined but corresponds to non-existing directory")
   endif()
 
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
@@ -141,7 +141,7 @@ if(SV_INSTALL_EXTERNALS)
 endif()
 
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
-mark_as_superbuild(${proj}_DIR:PATH)
+mark_as_superbuild(SV_${proj}_DIR:PATH)
 mark_as_superbuild(TCL_DLL_PATH:PATH)
 mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
 mark_as_superbuild(TCL_LIBRARY:PATH)
@@ -151,7 +151,7 @@ mark_as_superbuild(TK_LIBRARY:PATH)
 mark_as_superbuild(TK_WISH:PATH)
 
 mark_as_superbuild(
-	  VARS ${proj}_DIR:PATH
+          VARS SV_${proj}_DIR:PATH
 	  LABELS "FIND_PACKAGE"
 	  )
 

@@ -113,7 +113,7 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
 
-simvascular_find_package(Doxygen)
+find_package(Doxygen)
 if(DOXYGEN_FOUND)
 	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
 	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
@@ -134,6 +134,9 @@ endif(DOXYGEN_FOUND)
 #-----------------------------------------------------------------------------
 # TCL
 simvascular_external(TCL DOWNLOADABLE SHARED_LIB)
+if(SV_USE_SYSTEM_TCL)
+  set(SV_TCL_DIR ${TCL_DIR})
+endif()
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
@@ -172,6 +175,9 @@ if(SV_USE_PYTHON)
 		message(STATUS "Make sure you have python installed on your system.")
 	endif()
 	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
+        if(SV_USE_SYSTEM_PYTHON)
+          set(SV_PYTHON_DIR ${PYTHON_DIR})
+        endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -186,6 +192,10 @@ simvascular_external(VTK DOWNLOADABLE
         vtkFiltersFlowPaths vtkWrappingTcl
 	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy)
+mark_as_superbuild(VTK_DIR)
+if(SV_USE_SYSTEM_VTK)
+  simvascular_get_external_path_from_include_dir(VTK)
+endif()
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -210,7 +220,7 @@ if(SV_USE_ZLIB)
 	if(NOT SV_USE_SYSTEM_ZLIB)
 		set(ZLIB_LIBRARY lib_simvascular_zlib)
 	else()
-		simvascular_find_package(ZLIB)
+		find_package(ZLIB)
 	endif()
 else()
 	unset(ZLIB_LIBRARY CACHE)
@@ -232,6 +242,9 @@ if(SV_USE_MMG)
 	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
 	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
         endif()
+      if(SV_USE_SYSTEM_MMG)
+        simvascular_get_external_path_from_include_dir(MMG)
+      endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -243,7 +256,7 @@ if(SV_USE_TETGEN)
 		set(TETGEN_VERSION "1.5.1")
 		set(TETGEN_LIBRARY lib_simvascular_tet)
 	else()
-		simvascular_find_package(TETGEN)
+		find_package(TETGEN)
 	endif()
 	if(TETGEN_VERSION MATCHES "1.5.1")
 		set(TETGEN151 ON)
@@ -278,6 +291,23 @@ if(SV_USE_VMTK)
 endif()
 
 #-----------------------------------------------------------------------------
+# GDCM
+if(SV_USE_GDCM)
+	simvascular_external(GDCM DOWNLOADABLE)
+	mark_as_superbuild(GDCM_DIR)
+	mark_as_superbuild(GDCM_SOURCE_DIR)
+	set(USE_GDCM ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
+	if(SV_USE_GDCM_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
+        if(SV_USE_SYSTEM_GDCM)
+          simvascular_get_external_path_from_include_dir(GDCM)
+        endif()
+endif()
+
+#-----------------------------------------------------------------------------
 # Plugin LevelSets
 if(SV_USE_ITK)
 	if(SV_USE_ITK_SHARED)
@@ -285,9 +315,13 @@ if(SV_USE_ITK)
 		set(SV_INSTALL_EXTERNALS ON)
 	endif()
 	simvascular_external(ITK DOWNLOADABLE)
+        mark_as_superbuild(ITK_DIR)
 
 	set(USE_ITK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
+        if(SV_USE_SYSTEM_ITK)
+          simvascular_get_external_path_from_include_dir(ITK)
+        endif()
 endif()
 
 #---
@@ -297,6 +331,23 @@ endif()
 
 if(SV_USE_MESHSIM_ADAPTOR)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+endif()
+
+#-----------------------------------------------------------------------------
+# FREETYPE
+if(SV_USE_FREETYPE)
+	simvascular_external(FREETYPE DOWNLOADABLE)
+	mark_as_superbuild(FREETYPE_DIR)
+	mark_as_superbuild(FREETYPE_SOURCE_DIR)
+	set(USE_FREETYPE ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
+	if(SV_USE_FREETYPE_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
+        if(SV_USE_SYSTEM_FREETYPE)
+          set(SV_FREETYPE_DIR ${FREETYPE_DIR})
+        endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -313,34 +364,9 @@ if(SV_USE_OpenCASCADE)
 	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
 	  set(SV_INSTALL_EXTERNALS ON)
 	endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# GDCM
-if(SV_USE_GDCM)
-	simvascular_external(GDCM DOWNLOADABLE)
-	mark_as_superbuild(GDCM_DIR)
-	mark_as_superbuild(GDCM_SOURCE_DIR)
-	set(USE_GDCM ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
-	if(SV_USE_GDCM_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# FREETYPE
-if(SV_USE_FREETYPE)
-	simvascular_external(FREETYPE DOWNLOADABLE)
-	mark_as_superbuild(FREETYPE_DIR)
-	mark_as_superbuild(FREETYPE_SOURCE_DIR)
-	set(USE_FREETYPE ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
-	if(SV_USE_FREETYPE_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
+        if(SV_USE_SYSTEM_OpenCASCADE)
+          simvascular_get_external_path_from_include_dir(OpenCASCADE)
+        endif()
 endif()
 
 # Licensed Package Additions
@@ -472,7 +498,7 @@ if(SV_THREEDSOLVER_USE_SVLS)
 endif()
 
 if(SV_THREEDSOLVER_USE_LESLIB)
-	simvascular_find_package(LESLIB REQUIRED)
+	find_package(LESLIB REQUIRED)
 	mark_as_superbuild(VARS LESLIB_LIBRARY LESLIB_INCLUDE_DIR)
 endif()
 
@@ -484,7 +510,7 @@ if(SV_USE_SPARSE)
 	if(NOT SV_USE_SYSTEM_SPARSE)
 		set(SPARSE_LIBRARY lib_simvascular_sparse)
 	else()
-		simvascular_find_package(SPARSE)
+		find_package(SPARSE)
 	endif()
 endif()
 
@@ -494,7 +520,7 @@ if(SV_USE_METIS)
 	if(NOT SV_USE_SYSTEM_METIS)
 		set(METIS_LIBRARY lib_simvascular_metis)
 	else()
-		simvascular_find_package(METIS)
+		find_package(METIS)
 	endif()
 endif()
 
@@ -504,7 +530,7 @@ if(SV_USE_NSPCG)
 	if(NOT SV_USE_SYSTEM_NSPCG)
 		set(NSPCG_LIBRARY lib_simvascular_nspcg)
 	else()
-		simvascular_find_package(NSPCG)
+		find_package(NSPCG)
 	endif()
 endif()
 
@@ -625,7 +651,7 @@ if(SV_SUPERBUILD)
 	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
 
 	# Git Check (superbuild)
-	simvascular_find_package(Git REQUIRED)
+	find_package(Git REQUIRED)
 	option(SV_USE_GIT
 		"If behind a firewall turn this off to use http instead." ON)
 
@@ -648,13 +674,8 @@ endif()
 # Now we need to finish configuring now that the external projects are configured
 #-----------------------------------------------------------------------------
 foreach(proj ${SV_EXTERNALS_LIST})
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(SV_USE_SYSTEM_${proj} "ON" CACHE BOOL "External ${proj} must be used" FORCE)
-    set(${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
-    mark_as_superbuild(${proj}_DIR)
-    if(SV_USE_${proj}_SHARED)
-      ExternalProject_Install_CMake_NoSB(${proj})
-    endif()
+  if(SV_USE_${proj}_SHARED)
+    ExternalProject_Install_CMake_NoSB(${proj})
   endif()
 endforeach()
 
@@ -666,7 +687,7 @@ if(WIN32)
 	GET_FILENAME_COMPONENT(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
 endif()
 
-simvascular_find_package(TCL)
+find_package(TCL)
 mark_as_superbuild(TCL_DIR:PATH)
 mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
 mark_as_superbuild(TCL_LIBRARY:FILEPATH)
@@ -677,44 +698,44 @@ mark_as_superbuild(TK_WISH:FILEPATH)
 mark_as_superbuild(ALL_PROJECTS)
 
 #-----------------------------------------------------------------------------
-# ITK Setup
-#-----------------------------------------------------------------------------
-if(SV_USE_ITK)
-	simvascular_find_package(ITK REQUIRED)
-	include(${ITK_USE_FILE})
-endif()
-
-# OpenCASCADE Setup
-#-----------------------------------------------------------------------------
-if(SV_USE_OpenCASCADE)
-	simvascular_find_package(OpenCASCADE)
-	mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
-	mark_as_superbuild(OpenCASCADE_LIBRARIES)
-	mark_as_superbuild(OpenCASCADE_LIBRARY)
-endif()
-
 # GDCM Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_GDCM)
-        simvascular_find_package(GDCM)
+        find_package(GDCM)
 	mark_as_superbuild(GDCM_DIR)
 	mark_as_superbuild(GDCM_INCLUDE_DIR)
 	mark_as_superbuild(GDCM_LIBRARIES)
 endif()
 
+# ITK Setup
+#-----------------------------------------------------------------------------
+if(SV_USE_ITK)
+	find_package(ITK REQUIRED)
+	include(${ITK_USE_FILE})
+endif()
+
 # FREETYPE Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_FREETYPE)
-  	simvascular_find_package(FREETYPE)
+  	find_package(FREETYPE)
 	mark_as_superbuild(FREETYPE_DIR)
 	mark_as_superbuild(FREETYPE_INCLUDE_DIR)
 	mark_as_superbuild(FREETYPE_LIBRARIES)
 endif()
 
+# OpenCASCADE Setup
+#-----------------------------------------------------------------------------
+if(SV_USE_OpenCASCADE)
+	find_package(OpenCASCADE)
+	mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
+	mark_as_superbuild(OpenCASCADE_LIBRARIES)
+	mark_as_superbuild(OpenCASCADE_LIBRARY)
+endif()
+
 #-----------------------------------------------------------------------------
 # MMG Setup
 if(SV_USE_MMG)
-	simvascular_find_package(MMG)
+	find_package(MMG)
 	mark_as_superbuild(MMG_DIR)
 	mark_as_superbuild(MMG_INCLUDE_DIR)
 	mark_as_superbuild(MMG_LIBRARY)
@@ -722,7 +743,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # VTK Setup
-simvascular_find_package(VTK COMPONENTS
+find_package(VTK COMPONENTS
 	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk
 	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})

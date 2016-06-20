@@ -75,6 +75,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    )
   set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
   set(${proj}_DIR ${${proj}_BIN_DIR})
+  set(${proj}_DIR ${${proj}_BIN_DIR})
+  mark_as_superbuild(${proj}_DIR})
    
 
 else()

@@ -39,14 +39,6 @@ ExternalProject_Include_Dependencies(${proj}
   )
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
-  #For VTK now, need better solution!
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_VTK)
-    set(VTK_CONFIG_DIR ${VTK_DIR}/lib/cmake/vtk-6.2)
-  endif()
-  #For GDCM now, need better solution!
-  if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_GDCM AND ${CMAKE_PROJECT_NAME}_USE_GDCM)
-    set(GDCM_CONFIG_DIR ${GDCM_DIR}/lib/gdcm-2.6)
-  endif()
 
   set(revision_tag "v${${proj}_VERSION}")
   set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
@@ -88,25 +80,27 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DITK_LEGACY_SILENT:BOOL=OFF
    -DModule_ITKReview:BOOL=ON
    -DModule_ITKVtkGlue:BOOL=ON
-   -DVTK_DIR:PATH=${VTK_CONFIG_DIR}
+   -DVTK_DIR:PATH=${VTK_DIR}
    -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
    -DITK_INSTALL_RUNTIME_DIR:PATH=bin
    -DITK_INSTALL_LIBRARY_DIR:PATH=lib
    -DITK_INSTALL_ARCHIVE_DIR:PATH=lib
    -DITK_INSTALL_INCLUDE_DIR:PATH=include
    -DITK_USE_SYSTEM_GDCM:BOOL=${SV_USE_GDCM}
-   -DGDCM_DIR:PATH=${GDCM_CONFIG_DIR}
+   -DGDCM_DIR:PATH=${GDCM_DIR}
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
-set(${proj}_DIR ${${proj}_BIN_DIR})
-simvascular_find_config_file(ITK)
+set(SV_${proj}_DIR ${${proj}_BIN_DIR})
+set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-4.8)
+mark_as_superbuild(${proj}_DIR})
 
 else()
   # Sanity checks
-  if(DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR})
-    message(FATAL_ERROR "ITK_DIR variable is defined but corresponds to non-existing directory")
+  if((DEFINED SV_ITK_DIR AND NOT EXISTS ${SV_ITK_DIR})
+     AND (DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR}))
+    message(FATAL_ERROR "SV_ITK_DIR variable is defined but corresponds to non-existing directory")
   endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
@@ -116,6 +110,6 @@ endif()
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 mark_as_superbuild(
-  VARS ${proj}_DIR:PATH
+  VARS SV_${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
