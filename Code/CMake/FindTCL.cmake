@@ -18,11 +18,11 @@
 # - The stub libraries are now found in FindTclStub.cmake
 #   => they were only useful for people writing Tcl/Tk extensions.
 # - TCL_LIBRARY_DEBUG and TK_LIBRARY_DEBUG were removed.
-#   => these libs are not packaged by default with Tcl/Tk distributions.
+#   => these libs are not packaged by default with Tcl/Tk distributions. 
 #      Even when Tcl/Tk is built from source, several flavors of debug libs
 #      are created and there is no real reason to pick a single one
-#      specifically (say, amongst tcl84g, tcl84gs, or tcl84sgx).
-#      Let's leave that choice to the user by allowing him to assign
+#      specifically (say, amongst tcl84g, tcl84gs, or tcl84sgx). 
+#      Let's leave that choice to the user by allowing him to assign 
 #      TCL_LIBRARY to any Tcl library, debug or not.
 # - TK_INTERNAL_PATH was removed.
 #   => this ended up being only a Win32 variable, and there is a lot of
@@ -32,17 +32,18 @@
 #      and dig from there.
 
 INCLUDE(CMakeFindFrameworks)
-INCLUDE(FindTclsh)
-INCLUDE(FindWish)
+find_package(TclSh)
+find_package(Wish)
+
 
 GET_FILENAME_COMPONENT(TCL_TCLSH_PATH "${TCL_TCLSH}" PATH)
 GET_FILENAME_COMPONENT(TCL_TCLSH_PATH_PARENT "${TCL_TCLSH_PATH}" PATH)
-STRING(REGEX REPLACE
+STRING(REGEX REPLACE 
   "^.*tclsh([0-9]\\.*[0-9]).*$" "\\1" TCL_TCLSH_VERSION "${TCL_TCLSH}")
 
 GET_FILENAME_COMPONENT(TK_WISH_PATH "${TK_WISH}" PATH)
 GET_FILENAME_COMPONENT(TK_WISH_PATH_PARENT "${TK_WISH_PATH}" PATH)
-STRING(REGEX REPLACE
+STRING(REGEX REPLACE 
   "^.*wish([0-9]\\.*[0-9]).*$" "\\1" TK_WISH_VERSION "${TK_WISH}")
 
 GET_FILENAME_COMPONENT(TCL_INCLUDE_PATH_PARENT "${TCL_INCLUDE_PATH}" PATH)
@@ -50,12 +51,12 @@ GET_FILENAME_COMPONENT(TK_INCLUDE_PATH_PARENT "${TK_INCLUDE_PATH}" PATH)
 
 GET_FILENAME_COMPONENT(TCL_LIBRARY_PATH "${TCL_LIBRARY}" PATH)
 GET_FILENAME_COMPONENT(TCL_LIBRARY_PATH_PARENT "${TCL_LIBRARY_PATH}" PATH)
-STRING(REGEX REPLACE
+STRING(REGEX REPLACE 
   "^.*tcl([0-9]\\.*[0-9]).*$" "\\1" TCL_LIBRARY_VERSION "${TCL_LIBRARY}")
 
 GET_FILENAME_COMPONENT(TK_LIBRARY_PATH "${TK_LIBRARY}" PATH)
 GET_FILENAME_COMPONENT(TK_LIBRARY_PATH_PARENT "${TK_LIBRARY_PATH}" PATH)
-STRING(REGEX REPLACE
+STRING(REGEX REPLACE 
   "^.*tk([0-9]\\.*[0-9]).*$" "\\1" TK_LIBRARY_VERSION "${TK_LIBRARY}")
 
 SET(TCLTK_POSSIBLE_LIB_PATHS
@@ -66,14 +67,14 @@ SET(TCLTK_POSSIBLE_LIB_PATHS
   "${TK_LIBRARY_PATH}"
   "${TCL_TCLSH_PATH_PARENT}/lib"
   "${TK_WISH_PATH_PARENT}/lib"
-  /usr/lib
+  /usr/lib 
   /usr/local/lib
   )
 
 IF(WIN32)
   GET_FILENAME_COMPONENT(
-    ActiveTcl_CurrentVersion
-    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\ActiveState\\ActiveTcl;CurrentVersion]"
+    ActiveTcl_CurrentVersion 
+    "[HKEY_LOCAL_MACHINE\\SOFTWARE\\ActiveState\\ActiveTcl;CurrentVersion]" 
     NAME)
   SET(TCLTK_POSSIBLE_LIB_PATHS ${TCLTK_POSSIBLE_LIB_PATHS}
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\ActiveState\\ActiveTcl\\${ActiveTcl_CurrentVersion}]/lib"
@@ -84,13 +85,44 @@ IF(WIN32)
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Scriptics\\Tcl\\8.2;Root]/lib"
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\Scriptics\\Tcl\\8.0;Root]/lib"
     "$ENV{ProgramFiles}/Tcl/Lib"
-    "C:/Program Files/Tcl/lib"
-    "C:/Tcl/lib"
+    "C:/Program Files/Tcl/lib" 
+    "C:/Tcl/lib" 
     )
 ENDIF(WIN32)
 
+if(EXISTS "${TCL_DIR}/lib") 
+  UNSET(TCL_LIBRARY CACHE)
+  UNSET(TK_LIBRARY CACHE)
+  FIND_LIBRARY(TCL_LIBRARY
+    NAMES 
+    tcl
+    tcl${TK_LIBRARY_VERSION} tcl${TCL_TCLSH_VERSION} tcl${TK_WISH_VERSION}
+    tcl86 tcl8.6
+    tcl85 tcl8.5
+    tcl84 tcl8.4
+    tcl83 tcl8.3
+    tcl82 tcl8.2
+    tcl80 tcl8.0
+    PATHS ${TCL_DIR}/lib
+    NO_DEFAULT_PATH
+    )
+  FIND_LIBRARY(TK_LIBRARY
+    NAMES 
+    tk
+    tk${TCL_LIBRARY_VERSION} tk${TCL_TCLSH_VERSION} tk${TK_WISH_VERSION}
+    tk86 tk8.6
+    tk85 tk8.5
+    tk84 tk8.4
+    tk83 tk8.3
+    tk82 tk8.2
+    tk80 tk8.0
+    PATHS ${TCL_DIR}/lib
+    NO_DEFAULT_PATH
+    )
+endif()
+
 FIND_LIBRARY(TCL_LIBRARY
-  NAMES
+  NAMES 
   tcl
   tcl${TK_LIBRARY_VERSION} tcl${TCL_TCLSH_VERSION} tcl${TK_WISH_VERSION}
   tcl86 tcl8.6
@@ -103,8 +135,8 @@ FIND_LIBRARY(TCL_LIBRARY
   NO_DEFAULT_PATH
   )
 
-FIND_LIBRARY(TK_LIBRARY
-  NAMES
+FIND_LIBRARY(TK_LIBRARY 
+  NAMES 
   tk
   tk${TCL_LIBRARY_VERSION} tk${TCL_TCLSH_VERSION} tk${TK_WISH_VERSION}
   tk86 tk8.6
@@ -145,8 +177,8 @@ SET(TCLTK_POSSIBLE_INCLUDE_PATHS
   "${TK_LIBRARY_PATH_PARENT}/include"
   "${TCL_INCLUDE_PATH}"
   "${TK_INCLUDE_PATH}"
-  ${TCL_FRAMEWORK_INCLUDES}
-  ${TK_FRAMEWORK_INCLUDES}
+  ${TCL_FRAMEWORK_INCLUDES} 
+  ${TK_FRAMEWORK_INCLUDES} 
   "${TCL_TCLSH_PATH_PARENT}/include"
   "${TK_WISH_PATH_PARENT}/include"
   /usr/include
@@ -176,37 +208,54 @@ IF(WIN32)
     )
 ENDIF(WIN32)
 
-FIND_PATH(TCL_INCLUDE_PATH
+if(EXISTS "${TCL_DIR}/include")
+  UNSET(TCL_INCLUDE_PATH CACHE)
+  UNSET(TK_INCLUDE_PATH CACHE)
+  FIND_PATH(TCL_INCLUDE_PATH 
+    NAMES tcl.h
+    PATHS ${TCL_DIR}/include 
+    NO_DEFAULT_PATH
+    )
+  FIND_PATH(TK_INCLUDE_PATH 
+    NAMES tk.h
+    PATHS ${TCL_DIR}/include 
+    NO_DEFAULT_PATH
+    )
+endif()
+FIND_PATH(TCL_INCLUDE_PATH 
   NAMES tcl.h
-  PATHS ${TCLTK_POSSIBLE_INCLUDE_PATHS}
+  PATHS ${TCLTK_POSSIBLE_INCLUDE_PATHS} 
   NO_DEFAULT_PATH
   )
-FIND_PATH(TCL_INCLUDE_PATH
+FIND_PATH(TCL_INCLUDE_PATH 
   NAMES tcl.h
   PATHS ${TCLTK_POSSIBLE_INCLUDE_PATHS}
   )
 
-FIND_PATH(TK_INCLUDE_PATH
+FIND_PATH(TK_INCLUDE_PATH 
   NAMES tk.h
-  PATHS ${TCLTK_POSSIBLE_INCLUDE_PATHS}
+  PATHS ${TCLTK_POSSIBLE_INCLUDE_PATHS} 
   NO_DEFAULT_PATH
   )
-FIND_PATH(TK_INCLUDE_PATH
+FIND_PATH(TK_INCLUDE_PATH 
   NAMES tk.h
   PATHS ${TCLTK_POSSIBLE_INCLUDE_PATHS}
   )
 
-# handle the QUIETLY and REQUIRED arguments and set TCL_FOUND to TRUE if
+# handle the QUIETLY and REQUIRED arguments and set TCL_FOUND to TRUE if 
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
 
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(TCL DEFAULT_MSG TCL_LIBRARY TCL_INCLUDE_PATH)
-SET(TCLTK_FIND_REQUIRED ${TCL_FIND_REQUIRED})
-SET(TCLTK_FIND_QUIETLY  ${TCL_FIND_QUIETLY})
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(TCLTK DEFAULT_MSG TCL_LIBRARY TCL_INCLUDE_PATH TK_LIBRARY TK_INCLUDE_PATH)
-SET(TK_FIND_REQUIRED ${TCL_FIND_REQUIRED})
-SET(TK_FIND_QUIETLY  ${TCL_FIND_QUIETLY})
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(TK DEFAULT_MSG TK_LIBRARY TK_INCLUDE_PATH)
+set(TCL_DIR "${TCL_DIR}" CACHE PATH "Path to top level libraries.  Specify this if TCL cannot be found.")
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(TCL FOUND_VAR TCL_FOUND
+                                  REQUIRED_VARS TCL_LIBRARY TCL_INCLUDE_PATH
+                                  FAIL_MESSAGE "Could NOT find Tcl")
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(TCLTK FOUND_VAR TCLTK_FOUND
+                                  REQUIRED_VARS TCL_LIBRARY TCL_INCLUDE_PATH TK_LIBRARY TK_INCLUDE_PATH
+                                  FAIL_MESSAGE "Could NOT find TclTk") 
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(TK FOUND_VAR TK_FOUND
+                                  REQUIRED_VARS TK_LIBRARY TK_INCLUDE_PATH
+                                  FAIL_MESSAGE "Could NOT find Tk")
 
 MARK_AS_ADVANCED(
   TCL_INCLUDE_PATH
@@ -214,3 +263,4 @@ MARK_AS_ADVANCED(
   TCL_LIBRARY
   TK_LIBRARY
   )
+

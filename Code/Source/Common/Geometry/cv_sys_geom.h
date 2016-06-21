@@ -55,14 +55,6 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvPo
 
 int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance);
 
-#ifdef SV_USE_GTS
-int sys_geom_union_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst );
-
-int sys_geom_intersect_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst );
-
-int sys_geom_subtract_gts( cvPolyData *srcA, cvPolyData *srcB, cvPolyData **dst );
-#endif
-
 int sys_geom_NumClosedLineRegions( cvPolyData *src, int *num );
 
 int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst );

@@ -113,10 +113,10 @@ macro(simvascular_add_new_external proj version use shared dirname)
   if(SV_USE_${proj})
     list(APPEND SV_EXTERNALS_LIST ${proj})
     list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
-    if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+    mark_as_superbuild(SV_${proj}_DIR)
+    if(NOT SV_SUPERBUILD)
       set(SV_USE_SYSTEM_${proj} "ON" CACHE BOOL "External ${proj} must be used" FORCE)
-      set(${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
-      mark_as_superbuild(${proj}_DIR)
     endif()
   endif()
 endmacro()
@@ -124,49 +124,33 @@ endmacro()
 # VTK
 #-----------------------------------------------------------------------------
 # VTK is required
-simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
-if(SV_USE_VTK)
-  simvascular_find_config_file(VTK)
-endif()
 set(SV_USE_VTK ON CACHE BOOL "Must build with vtk" FORCE)
+simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
 if(NOT SV_INSTALL_VTK_TCL_DIR)
   set(SV_INSTALL_VTK_TCL_DIR ${SV_EXT_VTK_BIN_DIR}/lib/tcltk/modules)
 endif()
 mark_as_superbuild(SV_INSTALL_VTK_TCL_DIR:PATH)
+if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+  set(VTK_DIR ${SV_VTK_DIR}/lib/cmake/vtk-6.2)
+endif()
 
 
 # ITK
 #-----------------------------------------------------------------------------
 simvascular_add_new_external(ITK 4.8.0 ON ON itk)
+# If using extern directory, set dir with Config file!
 if(SV_USE_ITK)
-  simvascular_find_config_file(ITK)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-4.8)
+  endif()
 endif()
 
-# TCL
+# TCL is required
 #-----------------------------------------------------------------------------
+set(SV_USE_TCL ON CACHE BOOL "Must build with tcl" FORCE)
 simvascular_add_new_external(TCL 8.6.0 ON ON tcltk)
-if(NOT SV_SUPERBUILD)
-  set(SV_USE_TCL ON CACHE BOOL "Must build with tcl" FORCE)
-  set(TCL_INCLUDE_PATH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/include)
-  set(TK_INCLUDE_PATH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/include)
-  if(APPLE)
-    set(TCL_LIBRARY ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/lib/libtcl8.6.dylib)
-    set(TCL_TCLSH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/bin/tclsh8.6)
-    set(TK_LIBRARY ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/lib/libtk8.6.dylib)
-    set(TK_WISH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/bin/wish8.6)
-  endif()
-  if(LINUX)
-    set(TCL_LIBRARY ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/lib/libtcl8.6.so)
-    set(TCL_TCLSH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/bin/tclsh8.6)
-    set(TK_LIBRARY ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/lib/libtk8.6.so)
-    set(TK_WISH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/bin/wish8.6)
-  endif()
-  if(WIN32)
-    set(TCL_LIBRARY ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/lib/libtcl8.6.lib)
-    set(TCL_TCLSH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/bin/tclsh8.6.exe)
-    set(TK_LIBRARY ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/lib/libtk8.6.lib)
-    set(TK_WISH ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_TCL_BIN_DIR}/bin/wish8.6.exe)
-  endif()
+if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+  set(TCL_DIR ${SV_TCL_DIR})
 endif()
 
 #PYTHON
@@ -176,21 +160,37 @@ simvascular_add_new_external(PYTHON 2.7 OFF ON python)
 # OpenCASCADE
 #-----------------------------------------------------------------------------
 simvascular_add_new_external(OpenCASCADE 7.0.0 OFF ON opencascade)
+# If using extern directory, set dir with Config file!
 if(SV_USE_OpenCASCADE)
-  simvascular_find_config_file(OpenCASCADE)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(OpenCASCADE_DIR ${SV_OpenCASCADE_DIR}/lib/cmake/opencascade)
+  endif()
 endif()
 
 # GDCM
 #-----------------------------------------------------------------------------
 simvascular_add_new_external(GDCM 2.6.1 OFF ON gdcm)
+# If using extern directory, set dir with Config file!
 if(SV_USE_GDCM)
-  simvascular_find_config_file(GDCM)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(GDCM_DIR ${SV_GDCM_DIR}/lib/gdcm-2.6)
+  endif()
 endif()
 
 # FREETYPE
 #-----------------------------------------------------------------------------
 simvascular_add_new_external(FREETYPE 2.6.3 OFF ON freetype)
+if(SV_USE_FREETYPE)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(FREETYPE_DIR ${SV_FREETYPE_DIR})
+  endif()
+endif()
 
 # MMG
 #-----------------------------------------------------------------------------
 simvascular_add_new_external(MMG 5.1.0 OFF OFF mmg)
+if(SV_USE_MMG)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(MMG_DIR ${SV_MMG_DIR})
+  endif()
+endif()

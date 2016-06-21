@@ -35,11 +35,6 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-# Sanity checks
-if(DEFINED ${proj}_DIR AND NOT EXISTS ${${proj}_DIR})
-  message(FATAL_ERROR "${proj}_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(revision_tag "v${${proj}_VERSION}")
@@ -84,10 +79,16 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    ${${proj}_DEPENDENCIES}
    )
   set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
+  set(SV_${proj}_DIR ${${proj}_BIN_DIR})
   set(${proj}_DIR ${${proj}_BIN_DIR})
+  mark_as_superbuild(${proj}_DIR})
    
 
 else()
+  # Sanity checks
+  if(DEFINED SV_${proj}_DIR AND NOT EXISTS ${SV_${proj}_DIR})
+    message(FATAL_ERROR "SV_${proj}_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)
@@ -96,6 +97,6 @@ endif()
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 mark_as_superbuild(
-  VARS ${proj}_DIR:PATH
+  VARS SV_${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
