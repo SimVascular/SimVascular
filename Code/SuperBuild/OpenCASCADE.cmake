@@ -35,11 +35,6 @@ ExternalProject_Include_Dependencies(${proj}
   USE_SYSTEM_VAR ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj}
   )
 
-# Sanity checks
-if(DEFINED OpenCASCADE_DIR AND NOT EXISTS ${OpenCASCADE_DIR})
-  message(FATAL_ERROR "OpenCASCADE_DIR variable is defined but corresponds to non-existing directory")
-endif()
-
 get_filename_component(TCL_LIBRARY_DIR ${TCL_LIBRARY} PATH)
 get_filename_component(TK_LIBRARY_DIR ${TK_LIBRARY} PATH)
 
@@ -101,17 +96,23 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -D3RDPARTY_TK_LIBRARY_DIR:PATH=${TK_LIBRARY_DIR}
    -DUSE_VTK:BOOL=ON
    -DVTK_VERSION:STRING=${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}
-   -D3RDPARTY_VTK_DIR:PATH=${VTK_DIR}
-   -D3RDPARTY_FREETYPE_DIR:PATH=${FREETYPE_DIR}
+   -D3RDPARTY_VTK_DIR:PATH=${SV_VTK_DIR}
+   -D3RDPARTY_FREETYPE_DIR:PATH=${SV_FREETYPE_DIR}
    -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
  set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
-set(${proj}_DIR ${${proj}_BIN_DIR})
-simvascular_find_config_file(OpenCASCADE)
+ set(SV_${proj}_DIR ${${proj}_BIN_DIR})
+ set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/opencascade)
+ mark_as_superbuild(${proj}_DIR})
 
 else()
+  # Sanity checks
+  if((DEFINED SV_OpenCASCADE_DIR AND NOT EXISTS SV_${OpenCASCADE_DIR})
+     AND (DEFINED SV_OpenCASCADE_DIR AND NOT EXISTS SV_${OpenCASCADE_DIR}))
+    message(FATAL_ERROR "SV_OpenCASCADE_DIR variable is defined but corresponds to non-existing directory")
+  endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
 if(SV_INSTALL_EXTERNALS)
@@ -120,6 +121,6 @@ endif()
 mark_as_superbuild(${proj}_SOURCE_DIR:PATH)
 
 mark_as_superbuild(
-  VARS ${proj}_DIR:PATH
+  VARS SV_${proj}_DIR:PATH
   LABELS "FIND_PACKAGE"
   )
