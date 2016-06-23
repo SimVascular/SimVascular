@@ -961,8 +961,10 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
   polydatasolid_->GetCellData()->AddArray(wallArray);
   wallArray->Delete();
 
+#ifdef SV_USE_MMG
   if (meshoptions_.usemmg == 0)
   {
+#endif
     vtkSmartPointer<vtkThreshold> thresholder =
       vtkSmartPointer<vtkThreshold>::New();
     thresholder->SetInputData(polydatasolid_);
@@ -977,7 +979,9 @@ int cvTetGenMeshObject::SetWalls(int numWalls, int *walls)
     surfacer->Update();
 
     polydatasolid_->DeepCopy(surfacer->GetOutput());
+#ifdef SV_USE_MMG
   }
+#endif
 
   delete [] isWall;
   return CV_OK;

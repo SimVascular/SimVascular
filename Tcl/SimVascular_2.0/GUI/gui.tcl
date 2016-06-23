@@ -32869,10 +32869,10 @@ proc guiPOSTwriteCompleteMeshFiles {} {
 
    if {$mesh_kernel == "TetGen"} {
      set script_file [file join $outdir ${prefix}.tgs]
-     file copy $gFilenames(tet_mesh_script_file) $script_file
+     file copy -force $gFilenames(tet_mesh_script_file) $script_file
    } elseif {$mesh_kernel == "MeshSim"} {
      set script_file [file join $outdir ${prefix}.mss]
-     file copy $gFilenames(mesh_script_file) $script_file
+     file copy -force $gFilenames(mesh_script_file) $script_file
    }
 }
 
