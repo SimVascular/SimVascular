@@ -32828,6 +32828,7 @@ proc guiPOSTwriteCompleteMeshFiles {} {
    global gOptions
 
    set solidkernel $gOptions(meshing_solid_kernel)
+  set mesh_kernel $gOptions(meshing_kernel)
 
    if {$solidkernel == "Parasolid" || $solidkernel == "Discrete"} {
      set solid $gObjects(atdb_solid)
@@ -32867,11 +32868,11 @@ proc guiPOSTwriteCompleteMeshFiles {} {
    mesh_writeCompleteMesh $mesh $solid $prefix $outdir
 
    if {$mesh_kernel == "TetGen"} {
-     set [file join $outdir ${prefix}.tgs]
-     file copy $gFilename(tet_mesh_script_file) $script_file
+     set script_file [file join $outdir ${prefix}.tgs]
+     file copy $gFilenames(tet_mesh_script_file) $script_file
    } elseif {$mesh_kernel == "MeshSim"} {
      set script_file [file join $outdir ${prefix}.mss]
-     file copy $gFilename(mesh_script_file) $script_file
+     file copy $gFilenames(mesh_script_file) $script_file
    }
 }
 
