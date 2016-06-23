@@ -178,7 +178,13 @@ int sys_geom_local_laplacian_smooth(cvPolyData *pd,cvPolyData **outpd, int numit
 int sys_geom_local_constrain_smooth(cvPolyData *pd,cvPolyData **outpd, int numiters,
     double constrainfactor,int numcgsolves,char *pointarrayname, char *cellarrayname);
 
-int sys_geom_local_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
+int sys_geom_local_linear_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    char *pointarrayname, char *cellarrayname);
+
+int sys_geom_local_butterfly_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
+    char *pointarrayname, char *cellarrayname);
+
+int sys_geom_local_loop_subdivision(cvPolyData *pd,cvPolyData **outpd, int numiters,
     char *pointarrayname, char *cellarrayname);
 
 int sys_geom_local_blend(cvPolyData *pd,cvPolyData **outpd, int numblenditers,

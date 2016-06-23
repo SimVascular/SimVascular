@@ -110,32 +110,32 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     fprintf(stderr,"Error in mmgs\n");
     return CV_ERROR;
   }
-  if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmax, hmax))
-  {
-    fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
-  }
-  if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hgrad, hgrad))
-  {
-    fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
-  }
-  if ( !MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hausd, hausd))
-  {
-    fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
-  }
+  //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmax, hmax))
+  //{
+  //  fprintf(stderr,"Error in mmgs\n");
+  //  return CV_ERROR;
+  //}
+  //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmin, hmin))
+  //{
+  //  fprintf(stderr,"Error in mmgs\n");
+  //  return CV_ERROR;
+  //}
+  //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hgrad, hgrad))
+  //{
+  //  fprintf(stderr,"Error in mmgs\n");
+  //  return CV_ERROR;
+  //}
+  //if ( !MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hausd, hausd))
+  //{
+  //  fprintf(stderr,"Error in mmgs\n");
+  //  return CV_ERROR;
+  //}
   if (!MMGS_Set_meshSize(mesh, numPts, numTris, numEdges))
   {
     fprintf(stderr,"Error in mmgs\n");
     return CV_ERROR;
   }
   if (!MMGS_Set_solSize(mesh, sol, MMG5_Vertex, numPts, MMG5_Scalar))
-  {
-    fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
-  }
-  if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmin, hmin))
   {
     fprintf(stderr,"Error in mmgs\n");
     return CV_ERROR;
@@ -160,7 +160,12 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     double ptsize = 0.0;
     if (useSizingFunction)
     {
-      ptsize = meshSizingFunction->GetValue(i);
+      double meshFactor = 0.8;
+      ptsize = meshFactor*meshSizingFunction->GetValue(i);
+      if (ptsize == 0)
+      {
+	ptsize = (hmax+hmin)/2;
+      }
     }
     else
     {
@@ -194,9 +199,15 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     {
       if (numAddedRefines != 0 && refineCt%3 == 0 && refineCt != 0)
         tria->ref = minmax[1] + refineIDs->GetValue(pts[2]);
-      double meshsize = meshSizingFunction->GetValue(pts[2]);
+      double meshFactor = 0.8;
+      double meshsize = meshFactor*meshSizingFunction->GetValue(pts[2]);
       newmax = 1.5*meshsize;
       newmin = 0.5*meshsize;
+      if (meshsize == 0)
+      {
+        newmax = hmax;
+        newmin = hmin;
+      }
     }
     else
     {
@@ -404,7 +415,12 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
 
     pd->DeepCopy(surfacer->GetOutput());
   }
-  surface->DeepCopy(pd);
+  vtkSmartPointer<vtkCleanPolyData> cleaner =
+    vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->SetInputData(pd);
+  cleaner->Update();
+
+  surface->DeepCopy(cleaner->GetOutput());
   pd->Delete();
 
   MMGS_Free_all(MMG5_ARG_start,

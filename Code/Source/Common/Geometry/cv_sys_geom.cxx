@@ -57,6 +57,8 @@
 #include "vtkLocalQuadricDecimation.h"
 #include "vtkLocalSmoothPolyDataFilter.h"
 #include "vtkLocalLinearSubdivisionFilter.h"
+#include "vtkLocalButterflySubdivisionFilter.h"
+#include "vtkLocalLoopSubdivisionFilter.h"
 #include "vtkCGSmooth.h"
 #include "vtkConstrainedBlend.h"
 #include "vtkFindSeparateRegions.h"
@@ -3814,7 +3816,7 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
 }
 
 /* -------------- */
-/* sys_geom_local_subdivision */
+/* sys_geom_local_linear_subdivision */
 /* -------------- */
 
 /** @author Adam Updegrove
@@ -3834,7 +3836,7 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
  *  @return CV_OK if the function executes properly
  */
 
-int sys_geom_local_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
+int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
 		char *pointarrayname, char *cellarrayname)
 {
   vtkPolyData *geom = pd->GetVtkPolyData();
@@ -3846,6 +3848,124 @@ int sys_geom_local_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
     vtkNew(vtkLocalLinearSubdivisionFilter,subdivider);
+    subdivider->SetInputData(geom);
+    if (pointarrayname != 0)
+    {
+      subdivider->SetSubdividePointArrayName(pointarrayname);
+      subdivider->UsePointArrayOn();
+    }
+    if (cellarrayname != 0)
+    {
+      subdivider->SetSubdivideCellArrayName(cellarrayname);
+      subdivider->UseCellArrayOn();
+    }
+    subdivider->SetNumberOfSubdivisions(numiters);
+    subdivider->Update();
+
+    result = new cvPolyData( subdivider->GetOutput());
+    *outpd = result;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in local subdivision.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_local_butterfly_subdivision */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
+ *
+ *  @brief Function to perform a subdivision operation on only a portion
+ *  of a polydata
+ *  @param *pd The input polydata on which to perform decimation
+ *  @param **outpd The output polydata surface
+ *  @param numiters number of iterations of subdivision to perform
+ *  @param *pointarrayname This contains the arrayname holding the boolean
+ *  values indication with points to subdivide
+ *  @param *cellarrayname This contains the arrayname holding the boolean
+ *  values indication with cells to subdivide
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
+		char *pointarrayname, char *cellarrayname)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Running local subdivision\n");
+  fprintf(stdout,"Num Iters: %d\n",numiters);
+  fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
+  fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  try {
+    vtkNew(vtkLocalButterflySubdivisionFilter,subdivider);
+    subdivider->SetInputData(geom);
+    if (pointarrayname != 0)
+    {
+      subdivider->SetSubdividePointArrayName(pointarrayname);
+      subdivider->UsePointArrayOn();
+    }
+    if (cellarrayname != 0)
+    {
+      subdivider->SetSubdivideCellArrayName(cellarrayname);
+      subdivider->UseCellArrayOn();
+    }
+    subdivider->SetNumberOfSubdivisions(numiters);
+    subdivider->Update();
+
+    result = new cvPolyData( subdivider->GetOutput());
+    *outpd = result;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in local subdivision.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
+
+/* -------------- */
+/* sys_geom_local_loop_subdivision */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
+ *
+ *  @brief Function to perform a subdivision operation on only a portion
+ *  of a polydata
+ *  @param *pd The input polydata on which to perform decimation
+ *  @param **outpd The output polydata surface
+ *  @param numiters number of iterations of subdivision to perform
+ *  @param *pointarrayname This contains the arrayname holding the boolean
+ *  values indication with points to subdivide
+ *  @param *cellarrayname This contains the arrayname holding the boolean
+ *  values indication with cells to subdivide
+ *  @return CV_OK if the function executes properly
+ */
+
+int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
+		char *pointarrayname, char *cellarrayname)
+{
+  vtkPolyData *geom = pd->GetVtkPolyData();
+  cvPolyData *result = NULL;
+
+  fprintf(stdout,"Running local subdivision\n");
+  fprintf(stdout,"Num Iters: %d\n",numiters);
+  fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
+  fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
+  try {
+    vtkNew(vtkLocalLoopSubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
     if (pointarrayname != 0)
     {

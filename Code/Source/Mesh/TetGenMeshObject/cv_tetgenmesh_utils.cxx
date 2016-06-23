@@ -959,6 +959,20 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
       return CV_ERROR;
     }
     meshSizeArray = vtkDoubleArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(sizingFunctionArrayName.c_str()));
+  }
+  else
+  {
+    meshSizeArray->SetNumberOfComponents(1);
+    meshSizeArray->Allocate(numPts,1000);
+    meshSizeArray->SetNumberOfTuples(numPts);
+    meshSizeArray->SetName(sizingFunctionArrayName.c_str());
+    for (pointId = 0;pointId<numPts;pointId++)
+    {
+      meshSizeArray->SetValue(pointId,0.0);
+    }
+  }
+  if (refinecount != 0)
+  {
     if (VtkUtils_PDCheckArrayName(polydatasolid,0,refineIDArrayName) != CV_OK)
     {
       fprintf(stderr,"Solid does not contain an int array of name %s. Regions must be identified \
@@ -969,17 +983,12 @@ int TGenUtils_SetRefinementSphere(vtkPolyData *polydatasolid,
   }
   else
   {
-    meshSizeArray->SetNumberOfComponents(1);
-    meshSizeArray->Allocate(numPts,1000);
-    meshSizeArray->SetNumberOfTuples(numPts);
-    meshSizeArray->SetName(sizingFunctionArrayName.c_str());
     refineIDArray->SetNumberOfComponents(1);
     refineIDArray->Allocate(numPts,1000);
     refineIDArray->SetNumberOfTuples(numPts);
     refineIDArray->SetName(refineIDArrayName.c_str());
     for (pointId = 0;pointId<numPts;pointId++)
     {
-      meshSizeArray->SetValue(pointId,0.0);
       refineIDArray->SetValue(pointId,0);
     }
   }

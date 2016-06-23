@@ -1,64 +1,43 @@
 /*=========================================================================
- *
- * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining
- * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including
- * without limitation the rights to use, copy, modify, merge, publish,
- * distribute, sublicense, and/or sell copies of the Software, and to
- * permit persons to whom the Software is furnished to do so, subject
- * to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included
- * in all copies or substantial portions of the Software.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
- * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
- * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
- * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
- * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
- * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
- * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
- * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- *
- *=========================================================================*/
 
-/** @file vtkLocalInterpolatinSubdivision.cxx
- *  @brief This implements localized subdivision
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
+  Program:   Visualization Toolkit
+  Module:    vtkLocalApproximatingSubdivisionFilter.cxx
 
-#include "vtkLocalInterpolatingSubdivisionFilter.h"
+  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
+  All rights reserved.
+  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+     PURPOSE.  See the above copyright notice for more information.
+
+=========================================================================*/
+#include "vtkLocalApproximatingSubdivisionFilter.h"
+
+#include "vtkCell.h"
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
 #include "vtkEdgeTable.h"
+#include "vtkIdList.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
+#include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkUnsignedCharArray.h"
 
 
 // Construct object with number of subdivisions set to 1.
-vtkLocalInterpolatingSubdivisionFilter::vtkLocalInterpolatingSubdivisionFilter()
+vtkLocalApproximatingSubdivisionFilter::vtkLocalApproximatingSubdivisionFilter()
 {
   this->SubdivideCellArrayName = 0;
   this->SubdividePointArrayName = 0;
   this->NumberOfSubdivisions = 1;
-  this->UseCellArray = 0;
+  this->UseCellArray = 1;
   this->UsePointArray = 0;
 }
 
-int vtkLocalInterpolatingSubdivisionFilter::RequestData(
+int vtkLocalApproximatingSubdivisionFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -73,20 +52,22 @@ int vtkLocalInterpolatingSubdivisionFilter::RequestData(
   vtkPolyData *output = vtkPolyData::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkIdType numPts, numCells;
+  vtkIdType numCells, numPts;
   int level;
   vtkPoints *outputPts;
+
   vtkCellArray *outputPolys;
   vtkPointData *outputPD;
   vtkCellData *outputCD;
   vtkIntArray *edgeData;
 
+  vtkDebugMacro(<< "Generating subdivision surface using approximating scheme");
   numPts=input->GetNumberOfPoints();
   numCells=input->GetNumberOfCells();
 
   if (numPts < 1 || numCells < 1)
     {
-    vtkDebugMacro(<<"No data to interpolate!");
+    vtkErrorMacro(<<"No data to approximate!");
     return 1;
     }
 
@@ -96,37 +77,12 @@ int vtkLocalInterpolatingSubdivisionFilter::RequestData(
 
   vtkPolyData *inputDS = vtkPolyData::New();
   inputDS->CopyStructure (input);
+  inputDS->CopyAttributes(input);
   inputDS->GetPointData()->PassData(input->GetPointData());
   inputDS->GetCellData()->PassData(input->GetCellData());
 
-
-  // check for triangles in input; if none, stop execution
-  inputDS->BuildLinks();
-  vtkCellArray *polys = inputDS->GetPolys();
-  int hasTris = 0;
-  vtkIdType numCellPts = 0, *pts = 0;
-  polys->InitTraversal();
-
-  while(polys->GetNextCell(numCellPts, pts))
-    {
-    if (numCellPts == 3)
-      {
-      if (inputDS->IsTriangle(pts[0], pts[1], pts[2]))
-        {
-        hasTris = 1;
-        break;
-        }
-      }
-    }
-
-  if (!hasTris)
-    {
-    vtkWarningMacro( << this->GetClassName() << " only operates on triangles, but this data set has no triangles to operate on.");
-    inputDS->Delete();
-    return 1;
-    }
-
-  for (level = 0; level < this->NumberOfSubdivisions; level++)
+  int abort=0;
+  for (level = 0; level < this->NumberOfSubdivisions && !abort; level++)
     {
     if (this->UseCellArray)
     {
@@ -144,19 +100,25 @@ int vtkLocalInterpolatingSubdivisionFilter::RequestData(
 	return 0;
       }
     }
+    this->UpdateProgress(static_cast<double>(level+1)/
+                                                  this->NumberOfSubdivisions);
+    abort = this->GetAbortExecute();
+
     // Generate topology  for the input dataset
     inputDS->BuildLinks();
-    numCells = inputDS->GetNumberOfCells ();
 
-    // Copy points from input. The new points will include the old points
-    // and points calculated by the subdivision algorithm
+    numCells = inputDS->GetNumberOfCells ();
+    numPts = inputDS->GetNumberOfPoints();
+
+    // The points for the subdivisions will
+    // include even points (computed from old points) and
+    // odd points (inserted on edges)
     outputPts = vtkPoints::New();
-    outputPts->GetData()->DeepCopy(inputDS->GetPoints()->GetData());
+    outputPts->Allocate (numPts);
 
     // Copy pointdata structure from input
     outputPD = vtkPointData::New();
-    outputPD->CopyAllocate(inputDS->GetPointData(),
-                           2*inputDS->GetNumberOfPoints());
+    outputPD->CopyAllocate(inputDS->GetPointData(),2*inputDS->GetNumberOfPoints());
 
     // Copy celldata structure from input
     outputCD = vtkCellData::New();
@@ -197,22 +159,23 @@ int vtkLocalInterpolatingSubdivisionFilter::RequestData(
 
   output->SetPoints(inputDS->GetPoints());
   output->SetPolys(inputDS->GetPolys());
-  output->GetPointData()->PassData(inputDS->GetPointData());
-  output->GetCellData()->PassData(inputDS->GetCellData());
+  output->CopyAttributes(inputDS);
+
   inputDS->Delete();
 
   return 1;
 }
 
-int vtkLocalInterpolatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
+int vtkLocalApproximatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
                                                  vtkIdType cellId,
                                                  vtkIdType p1, vtkIdType p2,
                                                  vtkIntArray *edgeData,
                                                  vtkIdList *cellIds)
 {
+
   int edgeId = 0;
-  int currentCellId = 0;
-  int i;
+  vtkIdType currentCellId = 0;
+  vtkIdType i;
   int numEdges;
   vtkIdType tp1, tp2;
   vtkCell *cell;
@@ -233,23 +196,23 @@ int vtkLocalInterpolatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
       if ( (tp1 == p1 && tp2 == p2) ||
            (tp2 == p1 && tp1 == p2))
         {
-        // found the edge, return the stored value
-        return (int) edgeData->GetComponent(currentCellId,edgeId);
+        break;
         }
       tp1 = tp2;
       tp2 = cell->GetPointId(edgeId + 1);
       }
     }
-  vtkErrorMacro("Edge should have been found... but couldn't find it!!");
-  return 0;
+    // found the edge, return the stored value
+  return static_cast<int>(edgeData->GetComponent(currentCellId,edgeId));
 }
 
-vtkIdType vtkLocalInterpolatingSubdivisionFilter::InterpolatePosition (
+vtkIdType vtkLocalApproximatingSubdivisionFilter::InterpolatePosition (
         vtkPoints *inputPts, vtkPoints *outputPts,
         vtkIdList *stencil, double *weights)
 {
   double xx[3], x[3];
-  int i, j;
+  vtkIdType i;
+  int j;
 
   for (j = 0; j < 3; j++)
     {
@@ -267,8 +230,18 @@ vtkIdType vtkLocalInterpolatingSubdivisionFilter::InterpolatePosition (
   return outputPts->InsertNextPoint (x);
 }
 
+vtkIdType vtkLocalApproximatingSubdivisionFilter::KeepPosition (
+        vtkPoints *inputPts, vtkPoints *outputPts,
+        vtkIdList *stencil, double *weights)
+{
+  double x[3];
+  inputPts->GetPoint(stencil->GetId(0), x);
+  return outputPts->InsertNextPoint (x);
+}
 
-void vtkLocalInterpolatingSubdivisionFilter::GenerateSubdivisionCells (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkCellArray *outputPolys, vtkCellData *outputCD)
+void vtkLocalApproximatingSubdivisionFilter::GenerateSubdivisionCells (
+  vtkPolyData *inputDS, vtkIntArray *edgeData, vtkCellArray *outputPolys,
+  vtkCellData *outputCD)
 {
   vtkIdType numCells = inputDS->GetNumberOfCells();
   vtkIdType cellId, newId;
@@ -466,14 +439,15 @@ void vtkLocalInterpolatingSubdivisionFilter::GenerateSubdivisionCells (vtkPolyDa
     }
 }
 
-void vtkLocalInterpolatingSubdivisionFilter::PrintSelf(ostream& os, vtkIndent indent)
+void vtkLocalApproximatingSubdivisionFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 
-  os << indent << "Number of subdivisions: " << this->NumberOfSubdivisions << endl;
+  os << indent << "Number of subdivisions: "
+     << this->NumberOfSubdivisions << endl;
 }
 
-int vtkLocalInterpolatingSubdivisionFilter::GetSubdivideArrays(vtkPolyData *object, int type)
+int vtkLocalApproximatingSubdivisionFilter::GetSubdivideArrays(vtkPolyData *object, int type)
 {
   vtkIdType i;
   int exists = 0;
@@ -517,3 +491,4 @@ int vtkLocalInterpolatingSubdivisionFilter::GetSubdivideArrays(vtkPolyData *obje
 
   return exists;
 }
+

@@ -899,14 +899,16 @@ int vtkLocalSmoothPolyDataFilter::SetFixedPoints(vtkPolyData *pd,int *fixedPoint
 	  vtkSmartPointer<vtkIdList>::New();
 	pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
 	vtkIdType numNei = neighbors->GetNumberOfIds();
-	vtkIdType neighCell = neighbors->GetId(0);
-	if (this->SmoothCellArray->GetValue(neighCell) != 1)
+	if (numNei > 0)
 	{
-          fixedPoint[p1] = 1;
-          fixedPoint[p2] = 1;
+	  vtkIdType neighCell = neighbors->GetId(0);
+	  if (this->SmoothCellArray->GetValue(neighCell) != 1)
+	  {
+	    fixedPoint[p1] = 1;
+	    fixedPoint[p2] = 1;
+	  }
 	}
       }
-
     }
   }
 
