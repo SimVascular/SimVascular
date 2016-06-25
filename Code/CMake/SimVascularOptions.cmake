@@ -17,7 +17,7 @@ mark_as_superbuild(SV_ENABLE_DISTRIBUTION)
 # Superbuild Option
 option(SV_SUPERBUILD
 	"Build ${PROJECT_NAME} and the projects it depends on.
-	This must be turn on if your wish to download any packages." ON)
+	This must be turn on if your wish to download any packages." OFF)
 mark_as_superbuild(SV_SUPERBUILD)
 
 set(SV_SUPERBUILD_LIBS_DIR "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
