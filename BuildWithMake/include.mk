@@ -89,7 +89,7 @@ SV_USE_PARASOLID_SHARED = 1
 # Open Cascade
 # ------------
 
-SV_USE_OPENCASCADE = 0
+SV_USE_OPENCASCADE = 1
 SV_USE_OPENCASCADE_SHARED = 0
 
 # --------------------------------------
@@ -140,8 +140,25 @@ SV_USE_ZLIB = 1
 # Compile with python interpreter
 # -----------------------------------------------------
 
-SV_USE_PYTHON = 0
-SV_USE_SYSTEM_PYTHON = 0
+SV_USE_PYTHON = 1
+SV_USE_PYTHON_SHARED = 1
+SV_USE_SYSTEM_PYTHON = 1
+
+# -----------------------------------------------------
+# Compile with python interpreter
+# -----------------------------------------------------
+
+SV_USE_QT = 1
+SV_USE_SYSTEM_QT = 1
+SV_USE_QT_GUI = 0
+SV_USE_QT_GUI_SHARED = 0
+
+# -----------------------------------------------------
+# Compile with freetype
+# -----------------------------------------------------
+
+SV_USE_FREETYPE = 1
+SV_USE_SYSTEM_FREETYPE = 1
 
 # -----------------------------------------------------
 # system tcltk
@@ -172,8 +189,19 @@ SV_THREEDSOLVER_USE_VTK = 1
 # -----------------------------------------------------
 
 SV_USE_MPI = 1
-SV_USE_OPENMPI = 1
+SV_USE_OPENMPI = 0
 SV_USE_MPICH = 0
+
+# by default, only build with real mpi on windows
+ifeq ($(CLUSTER), x64_cygwin)
+  SV_USE_DUMMY_MPI = 0
+endif
+ifeq ($(CLUSTER), x64_linux)
+  SV_USE_DUMMY_MPI = 1
+endif
+ifeq ($(CLUSTER), x64_macosx)
+  SV_USE_DUMMY_MPI = 1
+endif
 
 # -----------------------------------------------------
 # Build only the 3D Solver
@@ -255,7 +283,7 @@ ifeq ($(CLUSTER), x64_linux)
   SVEXTERN_COMPILER_VERSION = gcc-4.8
 endif
 ifeq ($(CLUSTER), x64_macosx)
-  SVEXTERN_COMPILER_VERSION = clang_70
+  SVEXTERN_COMPILER_VERSION = clang-7.0
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
@@ -268,17 +296,17 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL =
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
     LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /SV16/bin/osx/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /SV16/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /usr/local/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/SV16/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/SV16/licensed
 endif
 
 # -------------------------------------------
@@ -412,6 +440,10 @@ endif
 
 ifeq ($(SV_USE_PYTHON),1)
     GLOBAL_DEFINES += -DSV_USE_PYTHON
+endif
+
+ifeq ($(SV_USE_QT),1)
+    GLOBAL_DEFINES += -DSV_USE_QT
 endif
 
 ifeq ($(SV_USE_ZLIB),1)
@@ -634,6 +666,18 @@ ifeq ($(SV_USE_PYTHON),1)
   endif
 endif
 
+# -------------------------
+# Qt
+# -------------------------
+
+ifeq ($(SV_USE_QT_GUI),1)
+  ifeq ($(SV_USE_QT_GUI_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/QtCode
+  else
+     LIBDIRS += ../Code/Source/QtCode
+  endif
+endif
+
 #
 #  override other options to build solver only!
 #
@@ -803,12 +847,12 @@ endif
 ifeq ($(SV_USE_VTK),1)
 
 ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/vtk-6.2.0-tcl-8.6.x64_cygwin.mk
+	include $(TOP)/MakeHelpers/vtk-6.2.0.x64_cygwin.mk
 endif
 
 ifeq ($(CLUSTER), x64_linux)
 	ifeq ($(SV_USE_PYTHON),1)
-	  include $(TOP)/MakeHelpers/vtk-6.2.0-tcltk-8.6-python-2.7.x64_linux.mk
+	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
         else
 	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_linux.mk
         endif
@@ -816,7 +860,7 @@ endif
 
 ifeq ($(CLUSTER), x64_macosx)
 	ifeq ($(SV_USE_PYTHON),1)
-	  include $(TOP)/MakeHelpers/vtk-6.2.0-tcltk-8.6-python-2.7.x64_macosx.mk
+	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
         else
 	  include $(TOP)/MakeHelpers/vtk-6.2.0.x64_macosx.mk
 	endif
@@ -861,11 +905,11 @@ ifeq ($(SV_USE_ITK),1)
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/itk-4.8.0.x64_linux.mk
+	include $(TOP)/MakeHelpers/itk-4.7.1.x64_linux.mk
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	include $(TOP)/MakeHelpers/itk-4.8.2.x64_macosx.mk
+	include $(TOP)/MakeHelpers/itk-4.7.1.x64_macosx.mk
   endif
 
 endif
@@ -875,6 +919,18 @@ endif
 # -----
 
 ifeq ($(SV_USE_MPI),1)
+
+ifeq ($(SV_USE_DUMMY_MPI),1)
+
+  MPI_NAME      = nompi
+  MPI_TOP       = ../dummyMPI
+  MPI_INCDIR    = -I $(MPI_TOP)
+  MPI_LIBS      = $(LIBFLAG)_lib_simvascular_dummy_mpi$(LIBLINKEXT)
+  MPI_SO_PATH   = 
+  MPIEXEC_PATH  = 
+  MPIEXEC       =
+
+else
 
   MPI_NAME ?= mpi
 
@@ -900,6 +956,8 @@ ifeq ($(SV_USE_MPI),1)
       include $(TOP)/MakeHelpers/mpich.x64_macosx.mk
     endif
   endif
+
+endif
 
 endif
 
@@ -975,9 +1033,25 @@ ifeq ($(SV_USE_PYTHON),1)
   endif
 
   ifeq ($(CLUSTER), x64_macosx)
-	  ifeq ($(SV_USE_SYSTEM_PYTHON),0)
-	    include $(TOP)/MakeHelpers/python-2.7.x64_macosx.mk
-	  endif
+	include $(TOP)/MakeHelpers/python-2.7.x64_macosx.mk
+  endif
+endif
+
+# --------
+# Freetype
+# --------
+
+ifeq ($(SV_USE_FREETYPE),1)
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_macosx.mk
   endif
 endif
 
@@ -985,6 +1059,24 @@ endif
 # ***  Optional Open Source Packages    ***
 # ***  (not free for commercial use)    ***
 # -----------------------------------------
+
+# ------------------
+# Qt
+# ------------------
+
+ifeq ($(SV_USE_QT),1)
+  ifeq ($(CLUSTER), x64_cygwin)
+	  include $(TOP)/MakeHelpers/qt-5.4.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	  include $(TOP)/MakeHelpers/qt-5.4.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	  include $(TOP)/MakeHelpers/qt-5.4.x64_macosx.mk
+  endif
+endif
 
 # --------------------------------------
 # ***  Optional Commercial Packages  ***

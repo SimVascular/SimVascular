@@ -87,6 +87,7 @@ ifeq ($(SV_USE_VTK),1)
 	-echo "puts \"s+REPLACEME_VTK_SO_PATH+`cygpath -u $(VTK_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+`cygpath -u $(VTK_BINDIRS)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+`cygpath -u $(VTK_LIBDIRS)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+`cygpath -u $(VTK_TCL_LIB_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_GDCM),1)
 	-echo "puts \"s+REPLACEME_SV_GDCM_SO_PATH+`cygpath -u $(SV_GDCM_SO_PATH)`+g\"" >> tclscript
@@ -94,8 +95,22 @@ endif
 ifeq ($(SV_USE_ITK),1)
 	-echo "puts \"s+REPLACEME_ITK_SO_PATH+`cygpath -u $(ITK_BIN_LIBS)`+g\"" >> tclscript
 endif
+
+ifeq ($(SV_USE_FREETYPE),1)
+	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+`cygpath -u $(SV_FREETYPE_SO_PATH)`+g\"" >> tclscript
+endif
 ifeq ($(SV_USE_PYTHON),1)
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+`cygpath -u $(SV_PYTHON_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES)\;$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
+else
+	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
+endif
+
+ifeq ($(SV_USE_QT),1)
+	-echo "puts \"s+REPLACEME_QT_SO_PATH+`cygpath -u $(QT_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
@@ -111,6 +126,7 @@ ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+$(SIM_LICENSE_FILE)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
@@ -122,7 +138,30 @@ ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
+ifeq ($(SV_USE_GDCM),1)
+	-echo "puts \"s+REPLACEME_SV_GDCM_SO_PATH+$(SV_GDCM_SO_PATH)+g\"" >> tclscript
 endif
+ifeq ($(SV_USE_ITK),1)
+	-echo "puts \"s+REPLACEME_ITK_SO_PATH+$(ITK_BIN_LIBS)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_FREETYPE),1)
+	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
+else
+	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
+endif
+
+endif
+
 ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_OS+macosx+g\"" >> tclscript
@@ -133,6 +172,7 @@ ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+REPLACEME_TCLTK_SO_PATH+$(TCLTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TCLSH+$(TCLSH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_TKCXIMAGE_DLL+$(TKCXIMAGE_DLL)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_TCL_LIB_PATH+$(VTK_TCL_LIB_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+$(GLIB_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SIM_LICENSE_FILE+`cygpath -u $(SIM_LICENSE_FILE)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+$(MPI_SO_PATH)+g\"" >> tclscript
@@ -144,6 +184,27 @@ ifeq ($(CLUSTER),x64_macosx)
 	-echo "puts \"s+REPLACEME_VTK_BIN_PATH+$(VTK_BINDIR)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_LIB_PATH+$(VTK_LIBDIRS)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_INTEL_COMPILER_SO_PATH+$(INTEL_COMPILER_SO_PATH)+g\"" >> tclscript
+ifeq ($(SV_USE_GDCM),1)
+	-echo "puts \"s+REPLACEME_SV_GDCM_SO_PATH+$(SV_GDCM_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_ITK),1)
+	-echo "puts \"s+REPLACEME_ITK_SO_PATH+$(ITK_BIN_LIBS)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_FREETYPE),1)
+	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
+else
+	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
+endif
 endif
 	-/usr/bin/tclsh tclscript > sedscript
 	-rm -f tclscript

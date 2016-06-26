@@ -60,9 +60,12 @@ HDRS	= cv_sys_geom.h cv_ggems.h \
 	vtkMultiplePolyDataIntersectionFilter.h \
 	vtkFillHolesFilterWithIds.h \
 	vtkLoftPolyDataSolid.h \
-	vtkLocalQuadricDecimation.h \
+	vtkLocalApproximatingSubdivisionFilter.h \
+	vtkLocalButterflySubdivisionFilter.h \
 	vtkLocalInterpolatingSubdivisionFilter.h \
 	vtkLocalLinearSubdivisionFilter.h \
+	vtkLocalLoopSubdivisionFilter.h \
+	vtkLocalQuadricDecimation.h \
 	vtkLocalSmoothPolyDataFilter.h \
 	vtkCGSmooth.h svMath.h sparse_matrix.h \
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h \
@@ -76,9 +79,12 @@ CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
 	vtkMultiplePolyDataIntersectionFilter.cxx \
 	vtkFillHolesFilterWithIds.cxx \
 	vtkLoftPolyDataSolid.cxx \
-	vtkLocalQuadricDecimation.cxx \
+	vtkLocalApproximatingSubdivisionFilter.cxx \
+	vtkLocalButterflySubdivisionFilter.cxx \
 	vtkLocalInterpolatingSubdivisionFilter.cxx \
 	vtkLocalLinearSubdivisionFilter.cxx \
+	vtkLocalLoopSubdivisionFilter.cxx \
+	vtkLocalQuadricDecimation.cxx \
 	vtkLocalSmoothPolyDataFilter.cxx \
 	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx \
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx \

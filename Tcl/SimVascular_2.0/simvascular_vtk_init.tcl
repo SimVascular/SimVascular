@@ -29,6 +29,8 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
     }
     puts [format "  %-12s %s" "TclVtk:" "Dynamic Libs (not_loaded: [llength $not_loaded])"]
 } else {
+  set auto_path "$auto_path $env(TCLLIBPATH)"
+  #puts "auto_path: $auto_path"
   foreach kit $all_vtk_kits {
     if [catch {load {} vtk${kit}TCL} msg] {
       lappend not_loaded vtk${kit}TCL
