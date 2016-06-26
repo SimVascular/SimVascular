@@ -41,7 +41,7 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) \
-	   $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) -DSV_STATIC_LINK
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) -DSV_STATIC_LINK
 
 HDRS	= 
 
@@ -181,6 +181,10 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 
 endif
 
+ifeq ($(SV_USE_QT_GUI),1)
+  LFLAGS += $(SVLIBFLAG)_lib_simvascular_qtcode$(LIBLINKEXT)
+endif
+
 # need to explicitly add in globals for executable
 ifeq ($(SV_USE_GLOBALS_SHARED),1)
   LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
@@ -213,7 +217,7 @@ $(TARGET_EXE_FULL): $(OBJS)
         $(LFLAGS) \
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
         $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
-	$(PYTHON_LIB) $(SV_GDCM_LIBS)
+        $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifeq ($(CLUSTER),x64_cygwin)
 ifneq ($(MAKE_STATIC_BUILD),1)

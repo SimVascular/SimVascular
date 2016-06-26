@@ -173,6 +173,7 @@ clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
 	for fn in *_wrap.cxx*; do /bin/rm -f $$fn; done
+	for fn in moc_*.cxx; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi

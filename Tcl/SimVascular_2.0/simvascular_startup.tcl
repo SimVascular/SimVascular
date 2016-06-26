@@ -432,6 +432,10 @@ if {$tcl_platform(platform) == "windows"} {
 global SV_USE_PYTHON
 if {[info exists SV_USE_PYTHON] == 0} {
   set SV_USE_PYTHON "OFF"
+  if [info exists env(SV_USE_PYTHON)] {
+    set SV_USE_PYTHON $env(SV_USE_PYTHON)
+  }
+  puts "Use Python: $SV_USE_PYTHON"
 }
 if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   # tcl 8.4.x no longer exports tkTabToWindow

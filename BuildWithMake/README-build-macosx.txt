@@ -3,6 +3,11 @@
                        Revised 2014-08-14
 ------------------------------------------------------------------------
 
+sudo port install py27-scipy
+sudo port install py27-numpy
+
+check out /opt/local/bin/gfortran-mp-4.9
+
 --------
 Overview
 --------

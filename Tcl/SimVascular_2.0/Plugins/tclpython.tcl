@@ -8,7 +8,7 @@ proc startTclPython {} {
   if {$tcl_platform(platform) == "unix"} {
     if {$tcl_platform(os) == "Darwin"} {
       if {$SV_BUILD_TYPE != "CMAKE"} {
-	set lib_prefix "Lib/x64_macosx/clang_gfortran/lib_"
+	set lib_prefix "lib_"
       }
       if [catch {load ${lib_prefix}simvascular_tclpython.dylib Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
@@ -18,7 +18,7 @@ proc startTclPython {} {
       if {$SV_BUILD_TYPE != "CMAKE"} {
 	set lib_prefix "Lib/x64_linux/gcc-gfortran/lib_"
       }
-      if [catch {load ${lib_prefix}simvascular_tclpython.so Tclpython} msg] {
+      if [catch {load lib_simvascular_tclpython.so Tclpython} msg] {
 	return -code error "ERROR: Error loading Tclpython: $msg"
       }
     }

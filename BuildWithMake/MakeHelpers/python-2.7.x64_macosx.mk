@@ -1,8 +1,7 @@
-ifeq ($(CLUSTER), x64_macosx)
-    PYTHON_BASE   = python2.7
-    PYTHON_SRCDIR = $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/$(PYTHON_BASE)
-    PYTHON_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/$(PYTHON_BASE)/bin
-    PYTHON_INCDIR = -I$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/$(PYTHON_BASE)/include/$(PYTHON_BASE)
-    PYTHON_LIBDIR = -L$(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/$(PYTHON_BASE)/lib
-    PYTHON_LIB    = $(PYTHON_LIBDIR) -lpython2.7
+ifeq ($(CLUSTER),x64_macosx)
+    PYTHON_TOP_DIR = /opt/local/Library/Frameworks/Python.framework/Versions/2.7
+    PYTHON_INCDIR = -I$(PYTHON_TOP_DIR)/include/python2.7
+    PYTHON_LIBDIR = 
+    PYTHON_LIB    = $(PYTHON_TOP_DIR)/lib/libpython2.7.dylib
+    PYTHON_SITE_PACKAGES = $(PYTHON_TOP_DIR)/lib/python2.7/site-packages
 endif

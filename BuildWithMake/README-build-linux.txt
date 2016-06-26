@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for SimVascular on Linux
-                       Revised 2014-08-14
+                       Revised 2016-05-13
 ------------------------------------------------------------------------
 
 --------
@@ -10,10 +10,10 @@ Overview
 By default, SimVascular is configured to build on linux using
 makefiles.  Our base test configuration for linux is:
 
-Ubuntu 12.04 64-bit desktop (w/ patches)
+Ubuntu 14.04 64-bit desktop (w/ patches)
 Intel 7 processor
 
-gcc/g++/gfortran version 4.6.3
+gcc/g++/gfortran version 4.8.4
 
 and/or
 
@@ -30,56 +30,50 @@ The following packages are required to build simvascular
 ### compilers
 % sudo apt-get install g++
 % sudo apt-get install gfortran
+
+### cmake tools
+% sudo apt-get install cmake
+% sudo apt-get install cmake-qt-gui
+
 ### for flowsolver
 % sudo apt-get install libmpich2-dev
+
 ### for vtk
 % sudo apt-get install libglu1-mesa-dev
 % sudo apt-get install libxt-dev
-### used by SV make scripts
-% sudo apt-get install tcl8.5
+
 ### used by SV to read DICOM headers
 % sudo apt-get install dcmtk
 % sudo apt-get install libgdcm-tools
 
-% sudo apt-get install gcc-multilib
-% sudo apt-get install ia32-libs
+
+#
+# default subversion for (ubuntu 14.04) is 1.8.8
+#
+
+% sudo apt-get install subversion
+% sudo apt-get install git
+
+# python
+% sudo apt-get install python2.7-dev
+% sudo apt-get install python-numpy
+% sudo apt-get install python-scipy
+
+#
+# install qt
+#
+
+sudo ./qt-opensource-linux-x64-5.4.2.run
+
+leads to /opt/Qt5.4.2
+
+sudo apt-get install libicu-dev
 
 #
 #  choose your version of subversion (1.6, 1.7, 1.8)
 #
 
-#
-# default subversion for precise (ubuntu 12.04) is 1.6
-#
 
-% sudo apt-get install subversion
-
-#
-#use PPA to get svn 1.7 on precise (ubuntu 12.04)
-#
-#https://launchpad.net/~svn/+archive/ppa
-#
-# add the following two lines to /etc/apt/sources.list
-#
-# deb http://ppa.launchpad.net/svn/ppa/ubuntu precise main
-# deb-src http://ppa.launchpad.net/svn/ppa/ubuntu precise main
-#
-% sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-key A2F4C039
-% sudo apt-get install subversion
-
-#
-#use third party to get svn 1.8 on precise (ubuntu 12.04)
-#
-% sudo sh -c 'echo "deb http://opensource.wandisco.com/ubuntu precise svn18" >> /etc/apt/sources.list.d/subversion18.list'
-% sudo wget -q http://opensource.wandisco.com/wandisco-debian.gpg -O- | sudo apt-key add -
-% sudo apt-get update
-% sudo apt-get install subversion
-
-#
-# for cmake binary from www.cmake.org
-#  NOTE: vtk requires at least cmake 2.8.12.1
-#
-%
 %
 #
 # some optional helpers
@@ -160,3 +154,18 @@ SV_USE_DUMMY_SVLS = 0
 sudo tar --directory /usr/local -xvzpsf simvascular-linux-x64.*.tar.gz
 sudo /usr/local/package/simvascular/xxxxxxxx/post-install.sh
 sudo /usr/local/package/simvascular/xxxxxxxx/post-solver-install.sh
+
+% sudo apt-get install gcc-multilib
+% sudo apt-get install ia32-libs
+
+% sudo mkdir /usr/local/SV16
+% wget "http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu/14.04/latest/linux.gcc-4.8.x64.everything.tar.gz"
+% sudo tar --directory /usr/local/SV16 -xvzf ./linux.gcc-4.8.x64.everything.tar.gz
+
+% git clone https://
+
+#
+#  if you have a current nvidia graphics card
+#
+
+% sudo apt-get install nvidia-current

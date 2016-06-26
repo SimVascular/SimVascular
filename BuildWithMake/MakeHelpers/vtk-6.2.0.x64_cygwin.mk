@@ -3,13 +3,15 @@
 # ---------------------
 
 VTK_SRCDIR = $(OPEN_SOFTWARE_SOURCES_TOPLEVEL)/vtk-6.2.0
-VTK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/vtk-6.2.0-tcltk-8.5
+VTK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/vtk-6.2.0
+VTK_INCLUDE_DIR_BASE = $(VTK_BINDIR)/include/vtk-6.2
+
 ifeq ($(CXX_COMPILER_VERSION), mingw-gcc)
   VTK_LIBDIRS = $(VTK_BINDIR)/lib
   VTK_BINDIRS = $(VTK_BINDIR)/bin
 else
-  VTK_LIBDIRS = $(VTK_BINDIR)/lib/RelWithDebInfo
-  VTK_BINDIRS = $(VTK_BINDIR)/bin/RelWithDebInfo
+  VTK_LIBDIRS = $(VTK_BINDIR)/lib
+  VTK_BINDIRS = $(VTK_BINDIR)/bin
 endif
 
 VTK_SO_PATH = $(VTK_BINDIRS)
@@ -22,244 +24,28 @@ VTK_SYS_LIBS  = $(LIBFLAG)kernel32$(LIBLINKEXT) $(LIBFLAG)user32$(LIBLINKEXT) \
                 $(LIBFLAG)comctl32$(LIBLINKEXT) $(LIBFLAG)wsock32$(LIBLINKEXT) \
                 $(LIBFLAG)opengl32$(LIBLINKEXT) $(LIBFLAG)vfw32$(LIBLINKEXT)
 
+#
+#  don't include vtksys!!
+#
+
 VTK_INCDIRS = \
--I$(VTK_SRCDIR)/Wrapping/Tools \
--I$(VTK_BINDIR)/Wrapping/Tools \
--I$(VTK_SRCDIR)/Wrapping/Tcl \
--I$(VTK_BINDIR)/Wrapping/Tcl \
--I$(VTK_SRCDIR)/Views/Infovis \
--I$(VTK_BINDIR)/Views/Infovis \
--I$(VTK_SRCDIR)/Views/Geovis \
--I$(VTK_BINDIR)/Views/Geovis \
--I$(VTK_SRCDIR)/Views/Context2D \
--I$(VTK_BINDIR)/Views/Context2D \
--I$(VTK_SRCDIR)/Rendering/VolumeOpenGL \
--I$(VTK_BINDIR)/Rendering/VolumeOpenGL \
--I$(VTK_SRCDIR)/Rendering/VolumeAMR \
--I$(VTK_BINDIR)/Rendering/VolumeAMR \
--I$(VTK_SRCDIR)/ThirdParty/TclTk \
--I$(VTK_BINDIR)/ThirdParty/TclTk \
--I$(VTK_SRCDIR)/Rendering/Tk \
--I$(VTK_BINDIR)/Rendering/Tk \
--I$(VTK_SRCDIR)/Rendering/LOD \
--I$(VTK_BINDIR)/Rendering/LOD \
--I$(VTK_SRCDIR)/Rendering/Label \
--I$(VTK_BINDIR)/Rendering/Label \
--I$(VTK_SRCDIR)/Rendering/Image \
--I$(VTK_BINDIR)/Rendering/Image \
--I$(VTK_SRCDIR)/Rendering/HybridOpenGL \
--I$(VTK_BINDIR)/Rendering/HybridOpenGL \
--I$(VTK_SRCDIR)/Rendering/FreeTypeOpenGL \
--I$(VTK_BINDIR)/Rendering/FreeTypeOpenGL \
--I$(VTK_SRCDIR)/IO/Video \
--I$(VTK_BINDIR)/IO/Video \
--I$(VTK_SRCDIR)/ThirdParty/sqlite \
--I$(VTK_BINDIR)/ThirdParty/sqlite \
--I$(VTK_SRCDIR)/IO/SQL \
--I$(VTK_BINDIR)/IO/SQL \
--I$(VTK_SRCDIR)/IO/PLY \
--I$(VTK_BINDIR)/IO/PLY \
--I$(VTK_SRCDIR)/IO/Parallel \
--I$(VTK_BINDIR)/IO/Parallel \
--I$(VTK_SRCDIR)/IO/NetCDF \
--I$(VTK_BINDIR)/IO/NetCDF \
--I$(VTK_SRCDIR)/ThirdParty/oggtheora \
--I$(VTK_BINDIR)/ThirdParty/oggtheora \
--I$(VTK_SRCDIR)/IO/Movie \
--I$(VTK_BINDIR)/IO/Movie \
--I$(VTK_SRCDIR)/IO/MINC \
--I$(VTK_BINDIR)/IO/MINC \
--I$(VTK_SRCDIR)/IO/LSDyna \
--I$(VTK_BINDIR)/IO/LSDyna \
--I$(VTK_SRCDIR)/ThirdParty/libxml2 \
--I$(VTK_BINDIR)/ThirdParty/libxml2 \
--I$(VTK_BINDIR)/ThirdParty/libxml2/vtklibxml2 \
--I$(VTK_SRCDIR)/IO/Infovis \
--I$(VTK_BINDIR)/IO/Infovis \
--I$(VTK_SRCDIR)/IO/Import \
--I$(VTK_BINDIR)/IO/Import \
--I$(VTK_SRCDIR)/Rendering/GL2PS \
--I$(VTK_BINDIR)/Rendering/GL2PS \
--I$(VTK_SRCDIR)/IO/Export \
--I$(VTK_BINDIR)/IO/Export \
--I$(VTK_SRCDIR)/IO/Exodus \
--I$(VTK_BINDIR)/IO/Exodus \
--I$(VTK_SRCDIR)/IO/EnSight \
--I$(VTK_BINDIR)/IO/EnSight \
--I$(VTK_SRCDIR)/IO/AMR \
--I$(VTK_BINDIR)/IO/AMR \
--I$(VTK_SRCDIR)/Interaction/Image \
--I$(VTK_BINDIR)/Interaction/Image \
--I$(VTK_SRCDIR)/Imaging/Stencil \
--I$(VTK_BINDIR)/Imaging/Stencil \
--I$(VTK_SRCDIR)/Imaging/Statistics \
--I$(VTK_BINDIR)/Imaging/Statistics \
--I$(VTK_SRCDIR)/Imaging/Morphological \
--I$(VTK_BINDIR)/Imaging/Morphological \
--I$(VTK_SRCDIR)/Imaging/Math \
--I$(VTK_BINDIR)/Imaging/Math \
--I$(VTK_SRCDIR)/ThirdParty/gl2ps \
--I$(VTK_BINDIR)/ThirdParty/gl2ps \
--I$(VTK_SRCDIR)/ThirdParty/libproj4 \
--I$(VTK_BINDIR)/ThirdParty/libproj4 \
--I$(VTK_BINDIR)/ThirdParty/libproj4/vtklibproj4 \
--I$(VTK_SRCDIR)/Views/Core \
--I$(VTK_BINDIR)/Views/Core \
--I$(VTK_SRCDIR)/Rendering/Volume \
--I$(VTK_BINDIR)/Rendering/Volume \
--I$(VTK_SRCDIR)/Imaging/Color \
--I$(VTK_BINDIR)/Imaging/Color \
--I$(VTK_SRCDIR)/Rendering/Annotation \
--I$(VTK_BINDIR)/Rendering/Annotation \
--I$(VTK_SRCDIR)/Interaction/Widgets \
--I$(VTK_BINDIR)/Interaction/Widgets \
--I$(VTK_SRCDIR)/Interaction/Style \
--I$(VTK_BINDIR)/Interaction/Style \
--I$(VTK_SRCDIR)/Infovis/Layout \
--I$(VTK_BINDIR)/Infovis/Layout \
--I$(VTK_SRCDIR)/Geovis/Core \
--I$(VTK_BINDIR)/Geovis/Core \
--I$(VTK_SRCDIR)/ThirdParty/verdict \
--I$(VTK_BINDIR)/ThirdParty/verdict \
--I$(VTK_SRCDIR)/Filters/Verdict \
--I$(VTK_BINDIR)/Filters/Verdict \
--I$(VTK_SRCDIR)/Filters/Texture \
--I$(VTK_BINDIR)/Filters/Texture \
--I$(VTK_SRCDIR)/Filters/Selection \
--I$(VTK_BINDIR)/Filters/Selection \
--I$(VTK_SRCDIR)/Filters/Programmable \
--I$(VTK_BINDIR)/Filters/Programmable \
--I$(VTK_SRCDIR)/Filters/ParallelImaging \
--I$(VTK_BINDIR)/Filters/ParallelImaging \
--I$(VTK_SRCDIR)/Filters/Parallel \
--I$(VTK_BINDIR)/Filters/Parallel \
--I$(VTK_SRCDIR)/Filters/Modeling \
--I$(VTK_BINDIR)/Filters/Modeling \
--I$(VTK_SRCDIR)/Imaging/General \
--I$(VTK_BINDIR)/Imaging/General \
--I$(VTK_SRCDIR)/Filters/Imaging \
--I$(VTK_BINDIR)/Filters/Imaging \
--I$(VTK_SRCDIR)/Filters/HyperTree \
--I$(VTK_BINDIR)/Filters/HyperTree \
--I$(VTK_SRCDIR)/Imaging/Sources \
--I$(VTK_BINDIR)/Imaging/Sources \
--I$(VTK_SRCDIR)/Filters/Hybrid \
--I$(VTK_BINDIR)/Filters/Hybrid \
--I$(VTK_SRCDIR)/Filters/Generic \
--I$(VTK_BINDIR)/Filters/Generic \
--I$(VTK_SRCDIR)/Filters/FlowPaths \
--I$(VTK_BINDIR)/Filters/FlowPaths \
--I$(VTK_SRCDIR)/Utilities/HashSource \
--I$(VTK_BINDIR)/Utilities/HashSource \
--I$(VTK_SRCDIR)/IO/Legacy \
--I$(VTK_BINDIR)/IO/Legacy \
--I$(VTK_SRCDIR)/Parallel/Core \
--I$(VTK_BINDIR)/Parallel/Core \
--I$(VTK_SRCDIR)/Filters/AMR \
--I$(VTK_BINDIR)/Filters/AMR \
--I$(VTK_SRCDIR)/ThirdParty/hdf5 \
--I$(VTK_BINDIR)/ThirdParty/hdf5 \
--I$(VTK_SRCDIR)/ThirdParty/hdf5/vtkhdf5/src \
--I$(VTK_SRCDIR)/ThirdParty/hdf5/vtkhdf5/hl/src \
--I$(VTK_BINDIR)/ThirdParty/hdf5/vtkhdf5 \
--I$(VTK_SRCDIR)/ThirdParty/netcdf \
--I$(VTK_BINDIR)/ThirdParty/netcdf \
--I$(VTK_BINDIR)/ThirdParty/netcdf/vtknetcdf \
--I$(VTK_SRCDIR)/ThirdParty/netcdf/vtknetcdf/include \
--I$(VTK_SRCDIR)/ThirdParty/exodusII \
--I$(VTK_BINDIR)/ThirdParty/exodusII \
--I$(VTK_SRCDIR)/ThirdParty/jsoncpp \
--I$(VTK_BINDIR)/ThirdParty/jsoncpp \
--I$(VTK_SRCDIR)/IO/Geometry \
--I$(VTK_BINDIR)/IO/Geometry \
--I$(VTK_SRCDIR)/IO/XML \
--I$(VTK_BINDIR)/IO/XML \
--I$(VTK_SRCDIR)/Domains/Chemistry \
--I$(VTK_BINDIR)/Domains/Chemistry \
--I$(VTK_SRCDIR)/Utilities/EncodeString \
--I$(VTK_BINDIR)/Utilities/EncodeString \
--I$(VTK_SRCDIR)/Utilities/ParseOGLExt \
--I$(VTK_BINDIR)/Utilities/ParseOGLExt \
--I$(VTK_SRCDIR)/Imaging/Hybrid \
--I$(VTK_BINDIR)/Imaging/Hybrid \
--I$(VTK_SRCDIR)/Rendering/OpenGL \
--I$(VTK_BINDIR)/Rendering/OpenGL \
--I$(VTK_SRCDIR)/ThirdParty/ftgl \
--I$(VTK_BINDIR)/ThirdParty/ftgl \
--I$(VTK_SRCDIR)/ThirdParty/ftgl/src \
--I$(VTK_SRCDIR)/ThirdParty/freetype \
--I$(VTK_BINDIR)/ThirdParty/freetype \
--I$(VTK_SRCDIR)/Rendering/FreeType \
--I$(VTK_BINDIR)/Rendering/FreeType \
--I$(VTK_SRCDIR)/Utilities/MaterialLibrary \
--I$(VTK_BINDIR)/Utilities/MaterialLibrary \
--I$(VTK_SRCDIR)/ThirdParty/expat \
--I$(VTK_BINDIR)/ThirdParty/expat \
--I$(VTK_SRCDIR)/IO/XMLParser \
--I$(VTK_BINDIR)/IO/XMLParser \
--I$(VTK_SRCDIR)/ThirdParty/tiff \
--I$(VTK_BINDIR)/ThirdParty/tiff \
--I$(VTK_SRCDIR)/ThirdParty/png \
--I$(VTK_BINDIR)/ThirdParty/png \
--I$(VTK_SRCDIR)/ThirdParty/jpeg \
--I$(VTK_BINDIR)/ThirdParty/jpeg \
--I$(VTK_SRCDIR)/ThirdParty/zlib \
--I$(VTK_BINDIR)/ThirdParty/zlib \
--I$(VTK_SRCDIR)/IO/Core \
--I$(VTK_BINDIR)/IO/Core \
--I$(VTK_SRCDIR)/IO/Image \
--I$(VTK_BINDIR)/IO/Image \
--I$(VTK_SRCDIR)/Filters/Sources \
--I$(VTK_BINDIR)/Filters/Sources \
--I$(VTK_SRCDIR)/Filters/Geometry \
--I$(VTK_BINDIR)/Filters/Geometry \
--I$(VTK_SRCDIR)/Rendering/Core \
--I$(VTK_BINDIR)/Rendering/Core \
--I$(VTK_SRCDIR)/Rendering/Context2D \
--I$(VTK_BINDIR)/Rendering/Context2D \
--I$(VTK_SRCDIR)/Imaging/Core \
--I$(VTK_BINDIR)/Imaging/Core \
--I$(VTK_SRCDIR)/Imaging/Fourier \
--I$(VTK_BINDIR)/Imaging/Fourier \
--I$(VTK_SRCDIR)/Filters/Statistics \
--I$(VTK_BINDIR)/Filters/Statistics \
--I$(VTK_SRCDIR)/Common/ComputationalGeometry \
--I$(VTK_BINDIR)/Common/ComputationalGeometry \
--I$(VTK_SRCDIR)/Filters/General \
--I$(VTK_BINDIR)/Filters/General \
--I$(VTK_SRCDIR)/Filters/Core \
--I$(VTK_BINDIR)/Filters/Core \
--I$(VTK_SRCDIR)/Common/ExecutionModel \
--I$(VTK_BINDIR)/Common/ExecutionModel \
--I$(VTK_SRCDIR)/Filters/Extraction \
--I$(VTK_BINDIR)/Filters/Extraction \
--I$(VTK_SRCDIR)/Infovis/Core \
--I$(VTK_BINDIR)/Infovis/Core \
--I$(VTK_SRCDIR)/Common/Transforms \
--I$(VTK_BINDIR)/Common/Transforms \
--I$(VTK_SRCDIR)/Common/System \
--I$(VTK_BINDIR)/Common/System \
--I$(VTK_SRCDIR)/Common/Misc \
--I$(VTK_BINDIR)/Common/Misc \
--I$(VTK_SRCDIR)/Utilities/KWSys \
--I$(VTK_BINDIR)/Utilities/KWSys \
--I$(VTK_SRCDIR)/Common/Core \
--I$(VTK_BINDIR)/Common/Core \
--I$(VTK_SRCDIR)/Common/Math \
--I$(VTK_BINDIR)/Common/Math \
--I$(VTK_SRCDIR)/Common/DataModel \
--I$(VTK_BINDIR)/Common/DataModel \
--I$(VTK_SRCDIR)/Common/Color \
--I$(VTK_BINDIR)/Common/Color \
--I$(VTK_SRCDIR)/Charts/Core \
--I$(VTK_BINDIR)/Charts/Core \
--I$(VTK_SRCDIR)/ThirdParty/alglib \
--I$(VTK_BINDIR)/ThirdParty/alglib \
--I$(VTK_BINDIR)/Utilities/DICOMParser \
--I$(VTK_SRCDIR)/Utilities/DICOMParser \
--I$(VTK_BINDIR)/Utilities/MetaIO/vtkmetaio \
--I$(VTK_BINDIR)/Utilities/MetaIO \
--I$(VTK_SRCDIR)/Utilities/MetaIO
+-I$(VTK_INCLUDE_DIR_BASE) \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkexpat \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkfreetype \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkgl2ps \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkjpeg \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkjsoncpp \
+-I$(VTK_INCLUDE_DIR_BASE)/vtklibproj4 \
+-I$(VTK_INCLUDE_DIR_BASE)/vtklibxml2 \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkmetaio \
+-I$(VTK_INCLUDE_DIR_BASE)/vtknetcdf \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkpng \
+-I$(VTK_INCLUDE_DIR_BASE)/vtksqlite \
+-I$(VTK_INCLUDE_DIR_BASE)/vtktiff \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkverdict \
+-I$(VTK_INCLUDE_DIR_BASE)/vtkzlib \
+-I$(VTK_INCLUDE_DIR_BASE)/alglib \
+-I$(VTK_INCLUDE_DIR_BASE)/TclTk
 
 #
 #  libraries for svSolver only
@@ -515,6 +301,11 @@ VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtkexpat-6.2$(LIBLINKEXT) \
                 $(LIBFLAG)vtksys-6.2$(LIBLINKEXT) \
                 $(VTK_SYS_LIBS)
+
+ifeq ($(SV_USE_PYTHON),1)
+  VTK_PYTHON_PACKAGES = $(VTK_BINDIR)/lib/python2.7/site-packages
+  VTK_LIBS +=  $(LIBFLAG)vtkWrappingPython27Core-6.2$(LIBLINKEXT)
+endif
 
 #
 #		vtkRenderingHybridOpenGL-6.2.lib \
