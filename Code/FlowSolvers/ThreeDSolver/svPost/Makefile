@@ -40,7 +40,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS) -I../../Include/Make
 
 HDRS	=
 
@@ -57,7 +57,7 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
 TARGET_EXE_FULL = $(TOP)/Bin/postsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/postsolver.exe
 
-static: directories createOptionFile $(TARGET_EXE_FULL) 
+static: directories $(TARGET_EXE_FULL) 
 
 directories:
 	-mkdir -p $(BUILD_DIR)
@@ -78,17 +78,12 @@ ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
-createOptionFile:
-	@echo "#define VER_CORONARY $(SV_THREEDSOLVER_USE_CORONARY)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
-	@echo "#define VER_CLOSEDLOOP $(SV_THREEDSOLVER_USE_CLOSEDLOOP)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
-	@echo "#define VER_VARWALL $(SV_THREEDSOLVER_USE_VARWALL)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
-	@echo "#define VER_USE_VTK $(SV_THREEDSOLVER_USE_VTK)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/cvFlowsolverOptions.h
-
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-	/bin/rm -f cvFlowsolverOptions.h
+	/bin/rm -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/Make/cvFlowsolverOptions.h
+	/bin/rm -fR $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPost/Make
 
 veryclean: clean
 	if [ -e obj ];then /bin/rm -f -r obj;fi

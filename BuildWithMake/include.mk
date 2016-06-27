@@ -620,7 +620,7 @@ endif
 
 ifeq ($(SV_USE_THREEDSOLVER),1)
      LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
-     SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO
+     SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO -I $(TOP)/../Code/FlowSolvers/Include/Make
      THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
      EXECDIRS += ../Code/FlowSolvers/ThreeDSolver
 endif
@@ -693,7 +693,7 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 # Local include directories
 # -------------------------
 
-LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include
+LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/Source/Include/Make
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 LOCAL_LIBDIR	=  -L$(TOP)/Lib
 LOCAL_LIBS	=  $(LOCAL_LIBDIR) -lsimvascular_utils

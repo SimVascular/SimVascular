@@ -46,9 +46,9 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(VTK_INCDIRS) $(NSPCG_INCDIR) $(ZLIB_INCDIR)
-CCFLAGS  = $(GLOBAL_CXXFLAGS) $(SPARSE_INCDIR) $(ZLIB_INCDIR) $(THREEDSOLVER_INCDIR)
-FFLAGS   = $(GLOBAL_FFLAGS) $(NSPCG_INCDIR) $(THREEDSOLVER_INCDIR)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(SOLVERIO_INCDIR) $(THREEDSOLVER_INCDIR) $(VTK_INCDIRS) $(NSPCG_INCDIR) $(ZLIB_INCDIR) -I../../Include/Make
+CCFLAGS  = $(GLOBAL_CXXFLAGS) $(SPARSE_INCDIR) $(ZLIB_INCDIR) $(THREEDSOLVER_INCDIR) -I../../Include/Make
+FFLAGS   = $(GLOBAL_FFLAGS) $(NSPCG_INCDIR) $(THREEDSOLVER_INCDIR) -I../../Include/Make
 
 HDRS	= cmd.h
 
@@ -84,7 +84,7 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
 TARGET_EXE_FULL = $(TOP)/Bin/presolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/presolver.exe
 
-static: directories createOptionFile $(TARGET_EXE_FULL) 
+static: directories $(TARGET_EXE_FULL) 
 
 directories:
 	-mkdir -p $(BUILD_DIR)
@@ -106,17 +106,10 @@ ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
-createOptionFile:
-	@echo "#define VER_CORONARY $(SV_THREEDSOLVER_USE_CORONARY)" > $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-	@echo "#define VER_CLOSEDLOOP $(SV_THREEDSOLVER_USE_CLOSEDLOOP)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-	@echo "#define VER_VARWALL $(SV_THREEDSOLVER_USE_VARWALL)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-	@echo "#define VER_USE_VTK $(SV_THREEDSOLVER_USE_VTK)" >> $(TOP)/../Code/FlowSolvers/ThreeDSolver/svPre/cvFlowsolverOptions.h
-
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
-	/bin/rm -f cvFlowsolverOptions.h
 
 veryclean: clean
 	if [ -e obj ];then /bin/rm -f -r obj;fi

@@ -47,7 +47,7 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ZLIB_INCDIR) -I..
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ZLIB_INCDIR) -I../../Include/Make
 
 HDRS	= cvSolverIO.h
 

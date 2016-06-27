@@ -36,7 +36,7 @@ include $(TOP)/include.mk
 
 all:	mixed
 
-mixed: mksedscript pre-build static-build shared-build exec-build post-build
+mixed: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-build post-build
 
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
@@ -213,9 +213,9 @@ pre-build:
 	cd ../Code/Source/UI;$(MAKE) MAKE_STATIC_BUILD=1 pre
 	mkdir -p Bin
 	mkdir -p Lib
-	touch ../Code/Source/Include/simvascular_options.h
-	touch ../Code/Source/Include/simvascular_version.h
-	touch ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
+	mkdir -p ../Code/Source/Include/Make
+	touch ../Code/Source/Include/Make/simvascular_options.h
+	touch ../Code/Source/Include/Make/simvascular_version.h
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
@@ -252,7 +252,7 @@ post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-postsolver-script >> mypost
 ifeq ($(CLUSTER),x64_linux)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
-else ($(CLUSTER),x64_macosx)
+elif ($(CLUSTER),x64_macosx)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
 else
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
@@ -262,6 +262,13 @@ endif
 	-chmod a+rx mysolver
 	-chmod a+rx mypost
 #	-rm -f sedscript
+
+create-svsolver-options-file:
+	mkdir -p $(TOP)/../Code/FlowSolvers/Include/Make
+	@echo "#define VER_CORONARY $(SV_THREEDSOLVER_USE_CORONARY)" > $(TOP)/../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
+	@echo "#define VER_CLOSEDLOOP $(SV_THREEDSOLVER_USE_CLOSEDLOOP)" >> $(TOP)/../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
+	@echo "#define VER_VARWALL $(SV_THREEDSOLVER_USE_VARWALL)" >> $(TOP)/../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
+	@echo "#define VER_USE_VTK $(SV_THREEDSOLVER_USE_VTK)" >> $(TOP)/../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
 
 clean:  veryclean
 
@@ -302,8 +309,10 @@ veryclean:
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/GUI/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Core/tclIndex
 	$(RM) $(TOP)/../Tcl/SimVascular_2.0/Plugins/tclIndex
-	/bin/rm -f  ../Code/Source/Include/simvascular_options.h
-	/bin/rm -f  ../Code/Source/Include/simvascular_version.h
-	/bin/rm -f  ../Code/FlowSolvers/ThreeDSolver/cvFlowsolverOptions.h
+	/bin/rm -f  ../Code/Source/Include/Make/simvascular_options.h
+	/bin/rm -f  ../Code/Source/Include/Make/simvascular_version.h
+	/bin/rm -f  ../Code/FlowSolvers/Include/Make/cvFlowsolverOptions.h
+	/bin/rm -fR ../Code/Source/Include/Make
+	/bin/rm -fR ../Code/FlowSolvers/Include/Make
 	/bin/rm -f  sedscript
 
