@@ -251,7 +251,11 @@ ifeq ($(SV_USE_GDCM),1)
 	-cp -f $(SV_GDCM_DLLS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-cp -fR $(PYTHON_BASE) $(DIST_DIR)/python-2.7
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+endif
+ifeq ($(SV_USE_QT),1)
+	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
