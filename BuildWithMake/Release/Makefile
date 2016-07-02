@@ -46,8 +46,9 @@ WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 endif
 
+SV_TIMESTAMP := $(shell echo "puts \"[clock seconds]\"" | tclsh)
 DIST_DIR_TOP = package/$(SV_VERSION)
-DIST_DIR := $(DIST_DIR_TOP)/$(shell echo "puts \"[clock seconds]\"" | tclsh)
+DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 
 REMOTE_DIR_TOP = remote_install_$(SV_VERSION)
 
@@ -55,6 +56,23 @@ ifneq ($(CLUSTER),x64_linux)
   all: windows-distribution msi
 else
   all: linux-distribution taritup taritup-meshsim-and-parasolid
+endif
+
+#
+# create script for sv
+#
+sv-startup-configure:
+	-rm tmp/startup_configure.tcl
+	-echo "set SV_BUILD_ID     $(SV_TIMESTAMP)" > tmp/startup_configure.tcl
+	-echo "set SV_FULL_VER_NO  $(SV_FULL_VER_NO)" >> tmp/startup_configure.tcl
+	-echo "set SV_MAJOR_VER_NO $(SV_MAJOR_VER_NO)" >> tmp/startup_configure.tcl
+	-echo "set SV_TIMESTAMP    $(SV_TIMESTAMP)" >> tmp/startup_configure.tcl
+	-echo "set SV_PLATFORM     $(SV_PLATFORM)" >> tmp/startup_configure.tcl
+	-echo "set SV_VERSION      $(SV_VERSION)" >> tmp/startup_configure.tcl
+ifeq ($(SV_USE_PYTHON),1)
+	-echo "set SV_USE_PYTHON   ON" >> tmp/startup_configure.tcl
+else
+	-echo "set SV_USE_PYTHON   OFF" >> tmp/startup_configure.tcl
 endif
 
 #
@@ -196,6 +214,9 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/flowsolver-$(MPI_NAME).exe $(DIST_DIR)/flowsolver-bin.exe
 	-cp -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
+ifeq ($(SV_USE_PYTHON),1)
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_tclpython*.$(SOEXT)* $(DIST_DIR)
+endif
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
@@ -216,6 +237,7 @@ copy-sv-tcl-code:
 	-cp $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular.rc $(DIST_DIR)
 	-rm -Rf $(DIST_DIR)/UnTcl
 	-tclsh tcl_helper_scripts/create_tclIndex.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
+	-cp -f tmp/startup_configure.tcl $(DIST_DIR)/Tcl
 
 copy-tcl-libs:
 	-cp -fR $(TCL_BASE)/lib $(DIST_DIR)
@@ -251,7 +273,8 @@ ifeq ($(SV_USE_GDCM),1)
 	-cp -f $(SV_GDCM_DLLS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
-	-cp -fR $(PYTHON_BASE) $(DIST_DIR)/python-2.7
+	-cp -fR $(PYTHON_BASE)/Lib $(DIST_DIR)/python-packages
+	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_QT),1)
@@ -307,9 +330,9 @@ common-post-distribution:
 	-chmod -f -R a+rx $(DIST_DIR)
 	-chmod -f -R u+w $(DIST_DIR)
 
-linux-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
+linux-distribution: mksedscript common-pre-distribution copy-sv-executables sv-startup-configure copy-tcl-libs copy-sv-tcl-code copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
 
-windows-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
+windows-distribution: mksedscript common-pre-distribution copy-sv-executables sv-startup-configure copy-tcl-libs copy-sv-tcl-code copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
 
 taritup-meshsim-and-parasolid:
 	-mkdir tar_files
