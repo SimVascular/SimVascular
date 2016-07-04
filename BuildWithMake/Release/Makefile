@@ -146,13 +146,15 @@ endif
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SV_VERSION).msi tmp/sv.wixobj
 
-msi-bundle:
+msi-bundle: mksedscript
 	-rm -f tmp/bundle.wixobj
 	-rm -f simvascular-bundle.wixpdb
 	-rm -f simvascular-bundle.exe
+	-rm -f tmp/wix-simvascular-bundle.wxs
 	-echo "Create WXS file..."
+	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
 	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj windows_installer_packages/wix-simvascular-bundle.wxs
+	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj tmp/wix-simvascular-bundle.wxs
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
 
@@ -270,12 +272,15 @@ ifeq ($(SV_USE_ITK),1)
 	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_GDCM),1)
-	-cp -f $(SV_GDCM_DLLS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/gdcm*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/gdcm*.exe* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/socketxx.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
 	-cp -fR $(PYTHON_BASE)/Lib $(DIST_DIR)/python-packages
 	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)
 	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
