@@ -114,6 +114,12 @@ MESHSIM_LICENSE_IN_WIN32_REGISTRY = 0
 SV_USE_TETGEN = 1
 SV_USE_TETGEN_ADAPTOR = 1
 
+# ------------------------
+# Control inclusion of mmg
+# ------------------------
+
+SV_USE_MMG = 1
+
 # ----------------------------------------------
 # Control inclusion of leslib
 # {binary and dummy} are mutually exclusive opts
@@ -438,6 +444,10 @@ ifeq ($(SV_USE_TETGEN),1)
   endif
 endif
 
+ifeq ($(SV_USE_MMG),1)
+  GLOBAL_DEFINES += -DSV_USE_MMG
+endif
+
 ifeq ($(SV_USE_PYTHON),1)
     GLOBAL_DEFINES += -DSV_USE_PYTHON
 endif
@@ -609,6 +619,14 @@ ifeq ($(SV_USE_MESHSIM),1)
      SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
   else
      LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
+  endif
+endif
+
+ifeq ($(SV_USE_MMG),1)
+  ifeq ($(SV_USE_MMG_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
+  else
+     LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
   endif
 endif
 
@@ -1053,6 +1071,26 @@ ifeq ($(SV_USE_FREETYPE),1)
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_macosx.mk
   endif
+endif
+
+# ---
+# MMG
+# ---
+
+ifeq ($(SV_USE_MMG),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_macosx.mk
+  endif
+
 endif
 
 # -----------------------------------------

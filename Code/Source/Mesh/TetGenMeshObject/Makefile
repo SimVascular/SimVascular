@@ -51,6 +51,10 @@ ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
   CXXFLAGS += $(MESHSIM_INCDIR)
 endif
 
+ifeq ($(SV_USE_MMG),1)
+  CXXFLAGS += $(SV_MMG_INCDIR)
+endif
+
 HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h \
           cv_tetgenmesh_utils.h
 
@@ -68,10 +72,16 @@ DLLLIBS = -l_simvascular_globals \
           -l_lib_simvascular_mesh \
           $(TETGEN_LIBS) \
  $(VTK_LIBS) $(TETGEN_LIBS) $(ZLIB_LIBS) -l_lib_simvascular_sysgeom -l_lib_simvascular_solid -l_lib_simvascular_repository -l_lib_simvascular_utils -l_simvascular_globals
+  ifeq ($(SV_USE_MMG),1)
+    DLLLIBS += -l_lib_simvascular_mmg_mesh
+  endif
 else
 DLLLIBS = lib_simvascular_globals.$(STATICEXT) \
           lib_lib_simvascular_mesh.$(STATICEXT) \
           $(TETGEN_LIBS) $(PARASOLID_LIBS)
+  ifeq ($(SV_USE_MMG),1)
+    DLLLIBS += lib_lib_simvascular_mmg_mesh.$(STATICEXT)
+  endif
 endif
 
 TARGET_LIB_NAME = simvascular_tetgen_mesh
