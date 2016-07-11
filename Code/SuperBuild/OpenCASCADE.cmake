@@ -109,8 +109,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
 else()
   # Sanity checks
-  if((DEFINED SV_OpenCASCADE_DIR AND NOT EXISTS SV_${OpenCASCADE_DIR})
-     AND (DEFINED SV_OpenCASCADE_DIR AND NOT EXISTS SV_${OpenCASCADE_DIR}))
+  if(DEFINED SV_${proj}_DIR AND NOT EXISTS ${SV_${proj}_DIR})
     message(FATAL_ERROR "SV_OpenCASCADE_DIR variable is defined but corresponds to non-existing directory")
   endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
