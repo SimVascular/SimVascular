@@ -70,7 +70,11 @@ proc guiMMcreateTetGenScriptFile {} {
 
   puts $fp "option surface $guiMMvars(meshGenerateSurfaceMesh)"
   puts $fp "option volume $guiMMvars(meshGenerateVolumeMesh)"
-  puts $fp "option UseMMG $guiTGvars(useMMG)"
+  if {$guiTGvars(useCenterlineRadius)} {
+    puts $fp "option UseMMG 0"
+  }  else {
+    puts $fp "option UseMMG $guiTGvars(useMMG)"
+  }
 
   puts $fp "# start_of_user_meshing_control_parameters"
   if {$guiTGvars(useMeshMaxVolume)} {
@@ -283,7 +287,7 @@ proc mesh_readTGS {filename resObj} {
 	$resObj SetMeshOptions -options "LocalEdgeSize" -values [list $regionid [lindex $line 3]]
       } elseif {[lindex $line 0] == "useCenterlineRadius"} {
 	if {$guiTGvars(meshWallFirst) != 1} {
-          return -code error "ERROR: Must select wall faces for boundary layer"
+          return -code error "ERROR: Must select wall faces for centerline extraction"
 	}
 	set cappedsolid /tmp/solid/cappedpd
 	catch {repos_delete -obj $cappedsolid}
