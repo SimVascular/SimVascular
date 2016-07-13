@@ -6,5 +6,5 @@ ifeq ($(CLUSTER), x64_cygwin)
     PYTHON_INCDIR = -I$(PYTHON_BASE)/include
     PYTHON_LIBDIR = $(PYTHON_BASE)/libs
     PYTHON_LIB    = $(LIBPATH_COMPILER_FLAG)$(PYTHON_LIBDIR) $(LIBFLAG)python27$(LIBLINKEXT)
-    PYTHON_SITE_PACKAGES = $(PYTHON_BASE)/Lib/site-packages
+    PYTHON_SITE_PACKAGES = $(PYTHON_BASE)/Lib\;$(PYTHON_BASE)/Lib/site-packages
 endif
