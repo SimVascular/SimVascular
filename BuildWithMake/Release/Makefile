@@ -58,6 +58,13 @@ else
   all: linux-distribution taritup taritup-meshsim-and-parasolid
 endif
 
+veryclean: msiclean msiclean-meshsim-and-parasolid msi-bundle-clean
+	-rm -f tar_files/*.tar
+	-rm -f tar_files/*.tar.gz
+	-rm -Rf $(DIST_DIR_TOP)
+	-rm -Rf package
+	-rm -Rf tmp/*
+
 #
 # create script for sv
 #
@@ -80,14 +87,14 @@ endif
 #
 
 msiclean-meshsim-and-parasolid:
-	-rm *~
-	-rm package-release-meshsim-and-parasolid
-	-rm simvascular-meshsim-and-parasolid.msi
-	-rm tmp/simvascular-meshsim-and-parasolid.wixobj
-	-rm tmp/simvascular-meshsim-and-parasolid.wxs
-	-rm tmp/simvascular-meshsim-and-parasolid.wixpdb
-	-rm tmp/uuidgen.exe*
-	-rm tmp/uuidgen.obj*
+	-rm -f *~
+	-rm -fR package-release-meshsim-and-parasolid
+	-rm -f simvascular-meshsim-and-parasolid.msi
+	-rm -f tmp/simvascular-meshsim-and-parasolid.wixobj
+	-rm -f tmp/simvascular-meshsim-and-parasolid.wxs
+	-rm -f simvascular-meshsim-and-parasolid.wixpdb
+	-rm -f tmp/uuidgen.exe*
+	-rm -f tmp/uuidgen.obj*
 
 msi-meshsim-and-parasolid:	msiclean-meshsim-and-parasolid
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
@@ -126,12 +133,13 @@ endif
 #
 
 msiclean:
-	-rm *~
-	-rm $(SV_VERSION).msi
-	-rm tmp/sv.wixobj
-	-rm tmp/sv.wxs
-	-rm tmp/uuidgen.exe*
-	-rm tmp/uuidgen.obj*
+	-rm -f *~
+	-rm -f $(SV_VERSION).msi
+	-rm -f tmp/simvascular.wixpdb
+	-rm -f tmp/sv.wixobj
+	-rm -f tmp/sv.wxs
+	-rm -f tmp/uuidgen.exe*
+	-rm -f tmp/uuidgen.obj*
 
 msi-simvascular:	msiclean
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
@@ -146,11 +154,13 @@ endif
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SV_VERSION).msi tmp/sv.wixobj
 
-msi-bundle: mksedscript
+msi-bundle-clean:
 	-rm -f tmp/bundle.wixobj
 	-rm -f simvascular-bundle.wixpdb
 	-rm -f simvascular-bundle.exe
 	-rm -f tmp/wix-simvascular-bundle.wxs
+
+msi-bundle: msi-bundle-clean mksedscript
 	-echo "Create WXS file..."
 	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
 	-echo "Run candle..."
