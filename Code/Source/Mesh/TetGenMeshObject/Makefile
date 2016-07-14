@@ -55,34 +55,29 @@ ifeq ($(SV_USE_MMG),1)
   CXXFLAGS += $(SV_MMG_INCDIR)
 endif
 
+ifeq ($(SV_USE_VMTK),1)
+  CXXFLAGS += $(VMTK_INCDIR)
+endif
+
 HDRS	= cvTetGenMeshObject.h cvTetGenMeshSystem.h \
           cv_tetgenmesh_utils.h
 
 CXXSRCS	= cvTetGenMeshObject.cxx \
           cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx
 
-DLLHDRS = $(HDRS) cv_tetgen_mesh_init.h
+DLLHDRS = cv_tetgen_mesh_init.h
 
-DLLSRCS = $(CXXSRCS) cv_tetgen_mesh_init.cxx
+DLLSRCS = cv_tetgen_mesh_init.cxx
 
 DEPLIBS = $(TOP)/lib/lib_simvascular_utils.$(STATICEXT) $(TOP)/lib/lib_simvascular_mesh.$(STATICEXT)
 
-ifeq ($(CLUSTER),x64_linux)
-DLLLIBS = -l_simvascular_globals \
-          -l_lib_simvascular_mesh \
-          $(TETGEN_LIBS) \
- $(VTK_LIBS) $(TETGEN_LIBS) $(ZLIB_LIBS) -l_lib_simvascular_sysgeom -l_lib_simvascular_solid -l_lib_simvascular_repository -l_lib_simvascular_utils -l_simvascular_globals
-  ifeq ($(SV_USE_MMG),1)
-    DLLLIBS += -l_lib_simvascular_mmg_mesh
-  endif
-else
-DLLLIBS = lib_simvascular_globals.$(STATICEXT) \
-          lib_lib_simvascular_mesh.$(STATICEXT) \
-          $(TETGEN_LIBS) $(PARASOLID_LIBS)
-  ifeq ($(SV_USE_MMG),1)
-    DLLLIBS += lib_lib_simvascular_mmg_mesh.$(STATICEXT)
-  endif
-endif
+DLLLIBS = $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(TETGEN_LIBS) $(VMTK_LIBS) $(SV_MMG_LIBS) $(ZLIB_LIBS)
 
 TARGET_LIB_NAME = simvascular_tetgen_mesh
 

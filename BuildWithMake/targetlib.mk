@@ -44,21 +44,24 @@ SRCS	= $(CXXSRCS)
 
 DEPS	= $(CXXSRCS:.cxx=.d)
 
-#DLLHDRS += $(HDRS)
-#DLLSRCS += $(CXXSRCS) $(CSRCS)
-
 TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_lib_$(TARGET_LIB_NAME).$(STATICEXT)
 TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(SOEXT)
 
-ifneq ($(TARGET_LIB_NAME),simvascular_globals)
-  DLLLIBS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+ifdef TARGET_LIB_NAME2
+  TARGET_LIB2 = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_lib_$(TARGET_LIB_NAME2).$(STATICEXT)
+  TARGET_SHARED2 = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME2).$(SOEXT)
 endif
 
-#ifeq ($(CLUSTER),x64_linux)
-#DLLLIBS = -l_simvascular_globals
-#else
-#DLLLIBS = lib_simvascular_globals.$(STATICEXT)
-#endif
+ifdef TARGET_LIB_NAME3
+  TARGET_LIB3 = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_lib_$(TARGET_LIB_NAME3).$(STATICEXT)
+  TARGET_SHARED3 = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME3).$(SOEXT)
+endif
+
+ifneq ($(TARGET_LIB_NAME),simvascular_globals)
+  DLLLIBS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+  DLLLIBS2 += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+  DLLLIBS3 += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+endif
 
 all:	lib
 
@@ -122,20 +125,23 @@ $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
 endif
 ifeq ($(CLUSTER),x64_cygwin)
-$(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
-	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGETDIR)/$(TARGET_SHARED2)" \
-             /pdb:"$(TARGETDIR)/$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
+$(TARGET_SHARED2):	$(DLLOBJS2)
+	for fn in $(TARGET_SHARED2); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED2:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED2:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
+ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
+	for fn in $(TARGET_SHARED2:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
+	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGET_SHARED2)" \
+             /pdb:"$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
              $(DLLOBJS2) $(LFLAGS)
-	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
-	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
-	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
-	for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
-	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
-	for fn in $(TARGET_SHARED2:.$(SOEXT)=.$(STATICEXT)); do /bin/mv -f $$fn $(TOP)/Lib; done
-	for fn in $(TARGET_SHARED2:.$(SOEXT)=.exp); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
-	for fn in $(TARGET_SHARED2:.$(SOEXT)=.pdb); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
+	$(LIBCMD) /out:"$(TARGET_SHARED2:.$(SOEXT)=.lib)" $(DLLOBJS2)
+else
+	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGET_SHARED2)" \
+             /pdb:"$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
+             $(DLLOBJS2) $(LFLAGS)
+	$(LIBCMD) /out:"$(TARGET_SHARED2:.$(SOEXT)=.lib)" $(DLLOBJS2)
 endif
-
+endif
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED3)             \
@@ -151,18 +157,22 @@ $(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
 	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
 endif
 ifeq ($(CLUSTER),x64_cygwin)
-$(TOP)/Lib/$(TARGET_SHARED3):	$(DLLOBJS3)
-	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGETDIR)/$(TARGET_SHARED3)" \
-             /pdb:"$(TARGETDIR)/$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \
+$(TARGET_SHARED3):	$(DLLOBJS3)
+	for fn in $(TARGET_SHARED3); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED3:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
+	for fn in $(TARGET_SHARED3:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
+ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
+	for fn in $(TARGET_SHARED3:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
+	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGET_SHARED3)" \
+             /pdb:"$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \
              $(DLLOBJS3) $(LFLAGS)
-	for fn in $(TOP)/Lib/$(TARGET_SHARED3); do /bin/rm -f $$fn; done
-	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
-	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.exp); do /bin/rm -f $$fn; done
-	for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.pdb); do /bin/rm -f $$fn; done
-	for fn in $(TARGET_SHARED3); do /bin/mv -f $$fn $(TOP)/Lib; done
-	for fn in $(TARGET_SHARED3:.$(SOEXT)=.$(STATICEXT)); do /bin/mv -f $$fn $(TOP)/Lib; done
-	for fn in $(TARGET_SHARED3:.$(SOEXT)=.exp); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
-	for fn in $(TARGET_SHARED3:.$(SOEXT)=.pdb); do (if [ -e $$fn ];then /bin/mv -f $$fn $(TOP)/Lib;fi); done
+	$(LIBCMD) /out:"$(TARGET_SHARED3:.$(SOEXT)=.lib)" $(DLLOBJS3)
+else
+	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGET_SHARED3)" \
+             /pdb:"$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \
+             $(DLLOBJS3) $(LFLAGS)
+	$(LIBCMD) /out:"$(TARGET_SHARED3:.$(SOEXT)=.lib)" $(DLLOBJS3)
+endif
 endif
 
 ifndef NO_DEPEND

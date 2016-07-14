@@ -50,6 +50,10 @@ DLLHDRS = cv_post_init.h
 
 DLLSRCS = cv_post_init.cxx
 
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(ZLIB_LIBS)
+
 TARGET_LIB_NAME = simvascular_post
 
 include $(TOP)/targetlib.mk

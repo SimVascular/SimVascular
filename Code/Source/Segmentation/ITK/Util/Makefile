@@ -44,6 +44,10 @@ DLLHDRS = cv_ITKUtils_init.h
 
 DLLSRCS = cv_ITKUtils_init.cxx
 
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(ITK_LIBS) $(SV_GDCM_LIBS)
+
 TARGET_LIB_NAME = simvascular_itkutils
 
 include $(TOP)/targetlib.mk

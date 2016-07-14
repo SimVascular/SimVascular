@@ -52,7 +52,7 @@ TARGET_SHARED = simvascular_math
 DLLHDRS2 = cv_get_tcl_interp_init.h
 DLLSRCS2 = cv_get_tcl_interp_init.cxx
 
-TARGET_SHARED2 = lib_simvascular_gettclinterp.$(SOEXT)
+TARGET_LIB_NAME2 = simvascular_gettclinterp
 
 TARGET_LIB_NAME = simvascular_utils
 

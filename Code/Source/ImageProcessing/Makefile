@@ -49,6 +49,12 @@ DLLHDRS = cv_image_init.h
 
 DLLSRCS = cv_image_init.cxx
 
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(VMTK_LIBS)
+
 TARGET_LIB_NAME = simvascular_image
 
 include $(TOP)/targetlib.mk

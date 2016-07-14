@@ -88,6 +88,56 @@ if {[info exists SV_BUILD_TYPE] == 0} {
   set SV_BUILD_TYPE "MAKE"
 }
 
+#
+#  Load SimVascular Modules (static or dynamic)
+#
+
+set gSimVascularTclInitLibs [list \
+				 [list myVtk {}] \
+				 [list Getinterp lib_simvascular_gettclinterp.dll] \
+				 [list Repos lib_simvascular_repository.dll] \
+				 [list Lsetcore lib_simvascular_lset.dll] \
+				 [list Lsetv lib_simvascular_lset.dll] \
+				 [list Geom lib_simvascular_sysgeom.dll] \
+				 [list Image lib_simvascular_image.dll] \
+				 [list Math lib_simvascular_utils.dll] \
+				 [list Gdscpost lib_simvascular_post.dll] \
+				 [list Solid lib_simvascular_solid.dll] \
+				 [list Polydatasolid lib_simvascular_polydatasolid.dll] \
+				 [list Occtsolid lib_simvascular_opencascade.dll] \
+				 [list Gdscmesh lib_simvascular_mesh.dll] \
+				 [list Mmgmesh lib_simvascular_mmg_mesh.dll] \
+				 [list Tetgenmesh lib_simvascular_tetgen_mesh.dll] \
+				 [list Adapt lib_simvascular_adaptor.dll] \
+				 [list Tetgenadapt lib_simvascular_tet_adaptor.dll] \
+				 [list Meshsimmesh {}] \
+				 [list Meshsimadapt {}] \
+				 [list Meshsimdiscretesolid {}] \
+				 [list Parasolidsolid {}] \
+				 [list Itkls2d lib_simvascular_cvitk2d.dll] \
+				 [list Itkls3d lib_simvascular_cvitk3d.dll] \
+				 [list Itkutils lib_simvascular_itkutils.dll] \
+				 ]
+
+foreach lib $gSimVascularTclInitLibs {
+    if {[lindex $lib 1] == ""} {
+	continue
+    }
+    if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
+	puts "error ([lindex $lib 0]) $msg"
+    } else {
+	puts "loaded [lindex $lib 0]..."
+    }
+}
+
+#lib_simvascular_tclpython.dll
+
+
+
+
+
+
+			     
 # if { $SV_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SV_VERSION-$SV_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
 # } else {

@@ -313,38 +313,6 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 #endif
 
-//#ifdef SV_USE_VMTK
-//  if ( Vtkvmtkcommontcl_Init(interp) == TCL_ERROR ) {
-//    fprintf( stderr, "error on Getinterp_Init\n" );
-//    return TCL_ERROR;
-//  }
-//
-//  if ( Vtkvmtkcomputationalgeometrytcl_Init(interp) == TCL_ERROR ) {
-//    fprintf( stderr, "error on Repos_Init\n" );
-//    return TCL_ERROR;
-//  }
-//
-//  if ( Vtkvmtkdifferentialgeometrytcl_Init(interp) == TCL_ERROR ) {
-//    fprintf( stderr, "error on LsetCore_Init\n" );
-//    return TCL_ERROR;
-//  }
-//
-//  if ( Vtkvmtkiotcl_Init(interp) == TCL_ERROR ) {
-//    fprintf( stderr, "error on LsetV_Init\n" );
-//    return TCL_ERROR;
-//  }
-//
-//  if ( Vtkvmtkmisctcl_Init(interp) == TCL_ERROR ) {
-//    fprintf( stderr, "error on Geom_Init\n" );
-//    return TCL_ERROR;
-//  }
-//
-//  if ( Vtkvmtksegmentationtcl_Init(interp) == TCL_ERROR ) {
-//    fprintf( stderr, "error on Image_Init\n" );
-//    return TCL_ERROR;
-//  }
-//#endif
-
 #ifdef SV_USE_ITK
   if ( Itkls2d_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on itkls2d_Init\n" );

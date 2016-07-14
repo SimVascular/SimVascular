@@ -76,15 +76,15 @@ DLLHDRS = cv_tetgen_adapt_init.h
 
 DLLSRCS = cv_tetgen_adapt_init.cxx
 
-DLLLIBS = $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
+DLLLIBS = $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT) \
           $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
 
 ifeq ($(SV_USE_TETGEN),1)
-  DLLLIBS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
+  DLLLIBS += $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT)
   DLLLIBS += $(SVLIBFLAG)_lib_simvascular_tetgen$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
 
 ifeq ($(SV_USE_VMTK),1)
   DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
@@ -99,6 +99,9 @@ ifeq ($(SV_USE_TETGEN),1)
 endif
 
 DLLLIBS += $(VTK_LIBS)
+
+DLLLIBS += $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
 TARGET_LIB_NAME = simvascular_tet_adaptor
 

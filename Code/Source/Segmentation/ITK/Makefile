@@ -41,9 +41,22 @@ HDRS	=  cvITKLevelSet.h
 
 CXXSRCS	=  cvITKLevelSet.cxx
 
-DLLHDRS = cv_ITKLset2d_init.h cv_ITKLset3d_init.h
-DLLSRCS = cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx
+DLLHDRS = cv_ITKLset2d_init.h
+DLLSRCS = cv_ITKLset2d_init.cxx
+TARGET_LIB_NAME = simvascular_cvitk2d
 
-TARGET_LIB_NAME = simvascular_cvitk
+DLLHDRS2 = cv_ITKLset3d_init.h
+DLLSRCS2 = cv_ITKLset3d_init.cxx
+TARGET_LIB_NAME2 = simvascular_cvitk3d
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_itkutils$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(ITK_LIBS) $(SV_GDCM_LIBS)
+
+DLLLIBS2 = $(SVLIBFLAG)_simvascular_itkutils$(LIBLINKEXT) \
+           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	   $(ITK_LIBS) $(SV_GDCM_LIBS)
 
 include $(TOP)/targetlib.mk

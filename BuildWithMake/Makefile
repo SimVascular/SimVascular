@@ -36,6 +36,8 @@ include $(TOP)/include.mk
 
 all:	mixed
 
+all-shared: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-shared-build post-build
+
 mixed: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-build post-build
 
 mksedscript:
@@ -242,6 +244,13 @@ exec-build:
 	  if [ -e $$i ];then \
 	  cd $$i; \
 	  $(MAKE) MAKE_STATIC_BUILD=1 static;fi ) ; done
+
+exec-shared-build:
+	for i in ${EXECDIRS}; do ( \
+	  echo "building execs ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE);fi ) ; done
 
 post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv

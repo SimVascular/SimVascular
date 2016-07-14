@@ -41,7 +41,7 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
-           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) -DSV_STATIC_LINK
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS)
 
 HDRS	= 
 
@@ -177,7 +177,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 
   ifeq ($(SV_USE_ITK),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itkutils$(LIBLINKEXT) \
-                            $(SVLIBFLAG)_lib_simvascular_cvitk$(LIBLINKEXT)
+                            $(SVLIBFLAG)_lib_simvascular_cvitk2d$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_SOLVERIO),1)
@@ -237,7 +237,7 @@ ifneq ($(MAKE_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls
         # we need to check and see if we should be still rebasing 
         # the tcltk and vtk dlls
-	editbin /REBASE:BASEFILE $(TARGET_EXE) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
+	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
           $(TCLTK_DLLS) $(VTK_DLLS)
 endif
 endif

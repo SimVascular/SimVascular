@@ -47,16 +47,17 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) \
 
 HDRS	= cvRepository.h cvRepositoryData.h cvDataObject.h \
 	  cvPolyData.h cvStrPts.h cvUnstructuredGrid.h \
-          cv_repos_init.h \
           cvDataSet.h
 
 CXXSRCS	= cvRepository.cxx cvRepositoryData.cxx cvDataObject.cxx \
 	  cvPolyData.cxx cvStrPts.cxx cvUnstructuredGrid.cxx \
-	  cv_repos_init.cxx cvDataSet.cxx
+	  cvDataSet.cxx
 
 DLLHDRS = cv_repos_init.h
 
 DLLSRCS = cv_repos_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
 TARGET_LIB_NAME = simvascular_repository
 

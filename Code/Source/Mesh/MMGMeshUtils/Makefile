@@ -54,9 +54,15 @@ CXXSRCS	= cv_mmg_mesh_utils.cxx
 
 DLLHDRS = cv_mmg_mesh_init.h
 
-DLLSRCS = cv_mmg_mesh_utils.cxx
+DLLSRCS = cv_mmg_mesh_init.cxx
 
 TARGET_LIB_NAME = simvascular_mmg_mesh
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(SV_MMG_LIBS)
 
 include $(TOP)/targetlib.mk
 
