@@ -569,7 +569,7 @@ int cvMeshSimAdapt::ReadSolutionFromMesh()
 	options.outstep_,options.step_incr_) != CV_OK)
     return CV_ERROR;
 
-  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK) 
+  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
   {
     fprintf(stderr,"Could not converate solution into average speed array\n");
     return CV_ERROR;
@@ -786,11 +786,6 @@ int cvMeshSimAdapt::SetMetric(char *input,int option, int strategy)
 	if (this->ReadSolutionFromMesh() != CV_OK)
 	  return CV_ERROR;
       }
-      vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = 
-	      vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();
-      writer->SetInputData(inmesh_);
-      writer->SetFileName("/media/psf/Home/Desktop/dumone.vtu");
-      writer->Write();
 
       //Compute hessian and attach to mesh!
       if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
