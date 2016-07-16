@@ -51,7 +51,7 @@
 #define MY_MESHSIM_EDGE_ORDERING 1
 #define MY_MESHSIM_FACE_ORDERING 1
 
-class CV_DLL_EXPORT cvMeshSimSolidModel : public cvSolidModel {
+class SV_EXPORT_MESHSIM_SOLID cvMeshSimSolidModel : public cvSolidModel {
 
 public:
   cvMeshSimSolidModel();                        // default constructor

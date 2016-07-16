@@ -46,7 +46,7 @@
 #include "vtkFiltersGeneralModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
-class CV_DLL_EXPORT vtkIntersectionPolyDataFilter2 : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkIntersectionPolyDataFilter2 : public vtkPolyDataAlgorithm
 {
 public:
   static vtkIntersectionPolyDataFilter2 *New();

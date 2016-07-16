@@ -76,6 +76,7 @@
 #define gzclose fclose
 #endif
 
+#include "cv_tetgenmesh_utils.h"
 
 // -----------------------------
 // cvTetGenMeshObjectUtils_Init()

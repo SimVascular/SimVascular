@@ -45,6 +45,8 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 
+CXXFLAGS += -DSV_EXPORT_MESH_COMPILE
+
 ifeq ($(SV_USE_ZLIB),1)
         CXXFLAGS += $(ZLIB_INCDIR)
 endif

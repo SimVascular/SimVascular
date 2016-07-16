@@ -47,7 +47,7 @@
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 
-class vtkConstrainedBlend : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkConstrainedBlend : public vtkPolyDataAlgorithm
 {
 public:
   static vtkConstrainedBlend* New();

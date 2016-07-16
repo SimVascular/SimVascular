@@ -93,11 +93,11 @@ if {[info exists SV_BUILD_TYPE] == 0} {
 #
 
 set gSimVascularTclInitLibs [list \
+				 [list Repos lib_simvascular_repository.dll] \
 				 [list myVtk {}] \
 				 [list Getinterp lib_simvascular_gettclinterp.dll] \
-				 [list Repos lib_simvascular_repository.dll] \
 				 [list Lsetcore lib_simvascular_lset.dll] \
-				 [list Lsetv lib_simvascular_lset.dll] \
+				 [list Lsetv lib_simvascular_lsetv.dll] \
 				 [list Geom lib_simvascular_sysgeom.dll] \
 				 [list Image lib_simvascular_image.dll] \
 				 [list Math lib_simvascular_utils.dll] \
@@ -114,9 +114,7 @@ set gSimVascularTclInitLibs [list \
 				 [list Meshsimadapt {}] \
 				 [list Meshsimdiscretesolid {}] \
 				 [list Parasolidsolid {}] \
-				 [list Itkls2d lib_simvascular_cvitk2d.dll] \
-				 [list Itkls3d lib_simvascular_cvitk3d.dll] \
-				 [list Itkutils lib_simvascular_itkutils.dll] \
+				 [list Itklset lib_simvascular_itklset.dll] \
 				 ]
 
 foreach lib $gSimVascularTclInitLibs {

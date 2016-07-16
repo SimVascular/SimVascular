@@ -56,8 +56,8 @@ typedef enum {
   ADAPTOR_T
 } RepositoryDataT;
 
-RepositoryDataT RepositoryDataT_StrToEnum( char *name );
-char *RepositoryDataT_EnumToStr( RepositoryDataT val );
+SV_EXPORT_REPOSITORY RepositoryDataT RepositoryDataT_StrToEnum( char *name );
+SV_EXPORT_REPOSITORY char *RepositoryDataT_EnumToStr( RepositoryDataT val );
 
 
 // This is simply a container class which is used to unify access to
@@ -65,7 +65,7 @@ char *RepositoryDataT_EnumToStr( RepositoryDataT val );
 // derived classes is the only reason currently for having this
 // class.
 
-class cvRepositoryData {
+class SV_EXPORT_REPOSITORY cvRepositoryData {
 
 public:
 

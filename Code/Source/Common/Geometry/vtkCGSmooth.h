@@ -48,7 +48,7 @@
 #include "vtkPolyDataAlgorithm.h"
 #include <set>
 
-class CV_DLL_EXPORT vtkCGSmooth : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkCGSmooth : public vtkPolyDataAlgorithm
 {
 public:
   static vtkCGSmooth* New();

@@ -39,6 +39,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Adapt_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_ADAPTOR int Adapt_Init( Tcl_Interp *interp );
 
 #endif // __CVADAPT_INIT_H

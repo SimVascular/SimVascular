@@ -37,6 +37,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) $(DEFINES)
 
+CXXFLAGS += -DSV_EXPORT_UTILS_COMPILE
+
 HDRS	= cv_misc_utils.h cv_vtk_utils.h cvTimer.h cvIntArrayList.h \
 	  cvStateArray.h cv_cgeom.h cvMath.h cv_arg.h cvFactoryRegistrar.h
 
@@ -51,6 +53,8 @@ TARGET_SHARED = simvascular_math
 
 DLLHDRS2 = cv_get_tcl_interp_init.h
 DLLSRCS2 = cv_get_tcl_interp_init.cxx
+
+DLLLIBS2 = $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
 TARGET_LIB_NAME2 = simvascular_gettclinterp
 

@@ -41,6 +41,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) $(DEFINES)
 
+CXXFLAGS += -DSV_EXPORT_GLOBALS_COMPILE
+
 ifeq ($(SV_USE_OPENCASCADE),1)
     CXXFLAGS += $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS)
 endif
@@ -51,10 +53,6 @@ ifeq ($(SV_USE_GLOBALS_SHARED),0)
 else
   DLLHDRS = cv_globals.h
   DLLSRCS = cv_globals.cxx
-endif
-
-ifeq ($(SV_USE_OPENCASCADE),1)
-  DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
 TARGET_LIB_NAME = simvascular_globals

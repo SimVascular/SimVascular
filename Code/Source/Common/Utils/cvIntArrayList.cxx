@@ -31,9 +31,9 @@
 
 #include "SimVascular.h" 
 
-#include "cvIntArrayList.h"
 #include "cv_misc_utils.h"
 
+#include "cvIntArrayList.h"
 
 // ------------
 // cvIntArrayList

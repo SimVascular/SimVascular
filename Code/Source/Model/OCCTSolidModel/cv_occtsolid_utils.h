@@ -67,106 +67,106 @@
 /* -------- */
 /* Get Info */
 /* -------- */
-int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 	       	int *v_num_faces, int **v_faces);
 
-int OCCTUtils_GetFaceLabel( const TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetFaceLabel( const TopoDS_Shape &geom,
 	       const Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &id);
 
-int OCCTUtils_GetFaceRange( const TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetFaceRange( const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &face_range);
 
-int OCCTUtils_GetNumberOfFaces( const TopoDS_Shape &geom,int &num_faces);
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetNumberOfFaces( const TopoDS_Shape &geom,int &num_faces);
 
-int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_ReLabelFace( TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       int &id);
 
-int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       char *attr,char **value);
 
-int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     					char *charstr);
 
 /* -------- */
 /* Ops */
 /* -------- */
-int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves,TopoDS_Shape &shape,int numCurves,int continuity,
+SV_EXPORT_OPENCASCADE int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves,TopoDS_Shape &shape,int numCurves,int continuity,
 		int partype, double w1, double w2, double w3, int smoothing);
 
-int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
+SV_EXPORT_OPENCASCADE int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
 		BRepFilletAPI_MakeFillet &filletmaker,
     		int faceA, int faceB, double radius,
 		char blendname[]);
 
-int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
+SV_EXPORT_OPENCASCADE int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
     		TopoDS_Shape &shape,
 		const TopoDS_Wire &first_wire, const TopoDS_Wire &last_wire,
 		const int pres3d);
 
-int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
     		BRepBuilderAPI_Sewing &attacher,int &numFilled);
 
 /* -------- */
 /* Helpers for loft */
 /* -------- */
 
-TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+SV_EXPORT_OPENCASCADE TopoDS_Solid OCCTUtils_MakeSolid(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
   const TopoDS_Wire& wire2, const Standard_Real presPln,
   TopoDS_Face& face1, TopoDS_Face& face2);
 
-Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
+SV_EXPORT_OPENCASCADE Standard_Boolean OCCTUtils_PerformPlan(const TopoDS_Wire& W,
 		const Standard_Real presPln,
 		TopoDS_Face& theFace);
 
-Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
+SV_EXPORT_OPENCASCADE Standard_Boolean OCCTUtils_IsSameOriented(const TopoDS_Shape& aFace,
   const TopoDS_Shape& aShell);
 
-Standard_Boolean OCCTUtils_IsSameOrientedWEdge(const TopoDS_Shape& aFace,
+SV_EXPORT_OPENCASCADE Standard_Boolean OCCTUtils_IsSameOrientedWEdge(const TopoDS_Shape& aFace,
   const TopoDS_Shape& aShell,const TopoDS_Shape &anEdge);
 
-TopoDS_Solid OCCTUtils_MakeShell(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
+SV_EXPORT_OPENCASCADE TopoDS_Solid OCCTUtils_MakeShell(TopoDS_Shell& shell, const TopoDS_Wire& wire1,
 		const TopoDS_Wire& wire2, const Standard_Real presPln,
 		TopoDS_Face& face1, TopoDS_Face& face);
 
-Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
+SV_EXPORT_OPENCASCADE Standard_Real OCCTUtils_PreciseUpar(const Standard_Real anUpar,
 		const Handle(Geom_BSplineSurface)& aSurface);
 
-Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge);
+SV_EXPORT_OPENCASCADE Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge);
 
 
 /* -------- */
 /* Set */
 /* -------- */
 
-int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
+SV_EXPORT_OPENCASCADE int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel);
 
-int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &geom,
+SV_EXPORT_OPENCASCADE int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &geom,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &shapelabel,
 	       char *attr,char *value);
 
-int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
+SV_EXPORT_OPENCASCADE int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
 	       Handle(XCAFDoc_ShapeTool) &shapetool, TDF_Label &labelSrc,
 	       TDF_Label &labelDst);
 
-int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
+SV_EXPORT_OPENCASCADE int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
     					char *charstr);
 /* -------- */
 /* Check */
 /* -------- */
-int OCCTUtils_CheckIsSolid(const TopoDS_Shape &geom,int &issue);
+SV_EXPORT_OPENCASCADE int OCCTUtils_CheckIsSolid(const TopoDS_Shape &geom,int &issue);
 
 /* -------- */
 /* Orientation  */
 /* -------- */
-int OCCTUtils_GetOrientation(const TopoDS_Shape &geom,int &orientation);
+SV_EXPORT_OPENCASCADE int OCCTUtils_GetOrientation(const TopoDS_Shape &geom,int &orientation);
 
-int OCCTUtils_SetOrientation(TopoDS_Shape &geom, TopoDS_Shape &face,
+SV_EXPORT_OPENCASCADE int OCCTUtils_SetOrientation(TopoDS_Shape &geom, TopoDS_Shape &face,
 		int &orientation);
 #endif // __OCCTSOLID_UTILS_H

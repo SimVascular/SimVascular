@@ -40,6 +40,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Itkls2d_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_SEGITK int Itkls2d_Init( Tcl_Interp *interp );
 
 #endif /* CV_ITKLSET2D_INIT_H_ */

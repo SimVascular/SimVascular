@@ -46,7 +46,7 @@
 #include "cvTetGenMeshObject.h"
 #include "cvFactoryRegistrar.h"
 
-class cvTetGenMeshSystem : public cvMeshSystem {
+class SV_EXPORT_TETGEN_MESH cvTetGenMeshSystem : public cvMeshSystem {
 
 public:
   cvTetGenMeshSystem();  

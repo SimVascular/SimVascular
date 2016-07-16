@@ -39,6 +39,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_TETGEN_MESH_COMPILE
+
 ifeq ($(SV_USE_ZLIB),1)
   CXXFLAGS += $(ZLIB_INCDIR)
 endif
@@ -68,8 +70,6 @@ CXXSRCS	= cvTetGenMeshObject.cxx \
 DLLHDRS = cv_tetgen_mesh_init.h
 
 DLLSRCS = cv_tetgen_mesh_init.cxx
-
-DEPLIBS = $(TOP)/lib/lib_simvascular_utils.$(STATICEXT) $(TOP)/lib/lib_simvascular_mesh.$(STATICEXT)
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT) \

@@ -38,13 +38,13 @@
 
 #include "SimVascular.h" 
 
-#include "cv_cgeom.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 
 #define JPK_PI 3.14159265358979
 
+#include "cv_cgeom.h"
 
 /*------------------------------------------------------------*
  *                                                            *

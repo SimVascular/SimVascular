@@ -36,7 +36,7 @@
 #include "cvLevelSetStructuredGrid.h"
 
 
-class cvLevelSetDenseGrid : public cvLevelSetStructuredGrid {
+class SV_EXPORT_LSET cvLevelSetDenseGrid : public cvLevelSetStructuredGrid {
 
 public:
 

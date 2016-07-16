@@ -34,7 +34,9 @@
 
 #include <vector>
 
-class SparseMatrix {
+#include "SimVascular.h"
+
+class SV_EXPORT_SYSGEOM SparseMatrix {
  public:
   SparseMatrix() {
     num_rows_ = num_cols_ = 0;

@@ -42,23 +42,23 @@
 #include "Python.h"
 #endif
 
-extern "C" CV_DLL_EXPORT int Solid_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_SOLID int Solid_Init( Tcl_Interp *interp );
 
 //Solid commands that need to be recognized in functions outside the solid model module
-int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
+SV_EXPORT_SOLID int Solid_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] );
 
-void DeleteSolid( ClientData clientData );
+SV_EXPORT_SOLID void DeleteSolid( ClientData clientData );
 
 #ifdef SV_USE_PYTHON
 
-double *getArrayFromDoubleList(PyObject* listObj,int &len);
+SV_EXPORT_SOLID double *getArrayFromDoubleList(PyObject* listObj,int &len);
 
-double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
+SV_EXPORT_SOLID double **getArrayFromDoubleList2D(PyObject* listObj,int &lenx,int &leny);
 
-PyObject* importList1D(PyObject* self, PyObject* args);
+SV_EXPORT_SOLID PyObject* importList1D(PyObject* self, PyObject* args);
 
-PyObject* importList2D(PyObject* self, PyObject* args);
+SV_EXPORT_SOLID PyObject* importList2D(PyObject* self, PyObject* args);
 
 #endif
 

@@ -45,7 +45,7 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Mmgmesh_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_MMG int Mmgmesh_Init( Tcl_Interp *interp );
 
-#endif // __Mmgmesh_Init
+#endif // __cvmmgmesh_Init
 

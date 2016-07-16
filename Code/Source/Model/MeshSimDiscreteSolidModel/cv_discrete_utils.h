@@ -37,18 +37,18 @@
 /* Kernel status management */
 /* ------------------------ */
 
-int DiscreteUtils_Init();
+SV_EXPORT_DISCRETE int DiscreteUtils_Init();
 
 /* ------------ */
 /* Construction */
 /* ------------ */
 
-int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *pd, 
+SV_EXPORT_DISCRETE int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *pd, 
 				      int faceCode, double angle,
 				      pDiscreteModel *result);
 
 /* -------- */
 /* File I/O */
 /* -------- */
-int DiscreteUtils_GetVtkPolyData( pDiscreteModel gm, int useMaxDist, double max_dist, vtkPolyData **out );
+SV_EXPORT_DISCRETE int DiscreteUtils_GetVtkPolyData( pDiscreteModel gm, int useMaxDist, double max_dist, vtkPolyData **out );
 

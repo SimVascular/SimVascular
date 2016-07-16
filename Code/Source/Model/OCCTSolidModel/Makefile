@@ -33,6 +33,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
 	   $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(PYTHON_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_OPENCASCADE_COMPILE
+
 HDRS	= cvOCCTSolidModel.h cv_occtsolid_utils.h
 CXXSRCS	= cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx
 

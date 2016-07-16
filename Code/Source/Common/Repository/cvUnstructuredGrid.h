@@ -36,12 +36,12 @@
 
 #include "SimVascular.h"
 
-#include "cvRepositoryData.h"
-#include "cvDataSet.h"
 #include "cvVTK.h"
 
+#include "cvRepositoryData.h"
+#include "cvDataSet.h"
 
-class cvUnstructuredGrid : public cvDataSet {
+class SV_EXPORT_REPOSITORY cvUnstructuredGrid : public cvDataSet {
 
 public:
   cvUnstructuredGrid();

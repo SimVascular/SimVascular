@@ -101,12 +101,11 @@ ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
              /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
-	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
 else
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS) /out:"$(TARGET_SHARED)" \
              /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
-	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
+#	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
 endif
 endif
 
@@ -134,7 +133,6 @@ ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGET_SHARED2)" \
              /pdb:"$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
              $(DLLOBJS2) $(LFLAGS)
-	$(LIBCMD) /out:"$(TARGET_SHARED2:.$(SOEXT)=.lib)" $(DLLOBJS2)
 else
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS2) /out:"$(TARGET_SHARED2)" \
              /pdb:"$(TARGET_SHARED2:.$(SOEXT)=.pdb)" \
@@ -166,7 +164,6 @@ ifneq ($(CXX_COMPILER_VERSION),mingw-gcc)
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGET_SHARED3)" \
              /pdb:"$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \
              $(DLLOBJS3) $(LFLAGS)
-	$(LIBCMD) /out:"$(TARGET_SHARED3:.$(SOEXT)=.lib)" $(DLLOBJS3)
 else
 	$(SHAR) $(SHARED_LFLAGS) $(DLLLIBS3) /out:"$(TARGET_SHARED3)" \
              /pdb:"$(TARGET_SHARED3:.$(SOEXT)=.pdb)" \

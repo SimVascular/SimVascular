@@ -35,6 +35,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Getinterp_Init( Tcl_Interp *interp );
+extern "C" SV_DLL_EXPORT int Getinterp_Init( Tcl_Interp *interp );
 
 #endif // __CVGETTCLINTERP_INIT_H

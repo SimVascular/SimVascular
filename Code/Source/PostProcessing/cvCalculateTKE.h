@@ -35,7 +35,7 @@
 // cvCalculateTKE
 // --------------
 
-class cvCalculateTKE {
+class SV_EXPORT_POST cvCalculateTKE {
 
   public:
 

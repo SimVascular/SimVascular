@@ -40,7 +40,7 @@
 #include "cv_image.h"
 
 
-class cvLevelSetVelocityKGI : public cvLevelSetVelocityImage {
+class SV_EXPORT_LSET cvLevelSetVelocityKGI : public cvLevelSetVelocityImage {
 
 public:
   cvLevelSetVelocityKGI();

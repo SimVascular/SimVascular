@@ -61,12 +61,13 @@
 #define LSETCORE_STRLEN  1000
 
 
-class cvLevelSetVelocity;
+class SV_EXPORT_LSET cvLevelSetVelocity;
 
 
 typedef enum { EXTEND_V, PROJECT_V, INVALID_V } ExtensionT;
-ExtensionT ExtensionT_StrToEnum( char *name );
-char *ExtensionT_EnumToStr( ExtensionT val );
+
+SV_EXPORT_LSET ExtensionT ExtensionT_StrToEnum( char *name );
+SV_EXPORT_LSET char *ExtensionT_EnumToStr( ExtensionT val );
 
 
 typedef struct {
@@ -75,7 +76,7 @@ typedef struct {
 } Seed_T;
 
 
-class cvLevelSet {
+class SV_EXPORT_LSET cvLevelSet {
 
   friend class cvLevelSetVelocity;
 

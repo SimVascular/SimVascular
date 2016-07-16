@@ -48,7 +48,7 @@
 
 class vtkAbstractTransform;
 
-class CV_DLL_EXPORT vtkFillHolesFilterWithIds : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkFillHolesFilterWithIds : public vtkPolyDataAlgorithm
 {
 public:
   // Description:

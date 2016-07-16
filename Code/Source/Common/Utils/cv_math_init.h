@@ -35,6 +35,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Math_Init( Tcl_Interp *interp );
+extern "C" SV_DLL_EXPORT int Math_Init( Tcl_Interp *interp );
 
 #endif // __CVMATH_INIT_H

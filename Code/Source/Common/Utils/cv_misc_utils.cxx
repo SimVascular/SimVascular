@@ -32,8 +32,8 @@
 #include "SimVascular.h" 
 
 #include <stdio.h>
-#include "cv_misc_utils.h"
 
+#include "cv_misc_utils.h"
 
 // ==========
 //   PopArg

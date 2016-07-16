@@ -58,7 +58,7 @@
 #include "Include/cvITKMacros.h"
 #include "Include/cvMacros.h"
 #include "Include/ConnectVTKITK.h"
-#include "Util/MyUtils.h"
+#include "MyUtils.h"
 
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
@@ -76,7 +76,7 @@
 #include "vtkTIFFWriter.h"
 #include "ImgInfo.h"
 
-#include "Util/cvITKUtils.h"
+#include "cvITKUtils.h"
 
 
 #define CVITKException(x)																\
@@ -89,7 +89,7 @@
 	throw std::runtime_error(message.str()); 											\
 		}																				\
 
-class cvITKLevelSet
+class SV_EXPORT_SEGITK cvITKLevelSet
 {
 
 public:

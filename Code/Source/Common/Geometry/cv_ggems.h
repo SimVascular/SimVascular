@@ -46,15 +46,15 @@ typedef struct _ggemsGeoPoint { Rfloat x, y, z; } ggemsGeoPoint;
 
 /*=========================  ggemsGeometrical Procedures  ======================= */
 
-Rdouble ggemsGeoDotProd ( ggemsGeoPoint *vec0, ggemsGeoPoint *vec1 );
+SV_EXPORT_SYSGEOM Rdouble ggemsGeoDotProd ( ggemsGeoPoint *vec0, ggemsGeoPoint *vec1 );
 
-void ggemsGeoCrossProd ( ggemsGeoPoint *in0, ggemsGeoPoint *in1, ggemsGeoPoint *out );
+SV_EXPORT_SYSGEOM void ggemsGeoCrossProd ( ggemsGeoPoint *in0, ggemsGeoPoint *in1, ggemsGeoPoint *out );
 
-Rdouble ggemsGeoTripleProd ( ggemsGeoPoint *vec0, ggemsGeoPoint *vec1, ggemsGeoPoint *vec2 );
+SV_EXPORT_SYSGEOM Rdouble ggemsGeoTripleProd ( ggemsGeoPoint *vec0, ggemsGeoPoint *vec1, ggemsGeoPoint *vec2 );
 
-Rdouble ggemsGeoVecLen ( ggemsGeoPoint *vec );
+SV_EXPORT_SYSGEOM Rdouble ggemsGeoVecLen ( ggemsGeoPoint *vec );
 
-int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n );
+SV_EXPORT_SYSGEOM int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n );
 
 
 /*=========================  ggemsgeo_solid_angle  =========================*/
@@ -63,7 +63,7 @@ int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n );
   a 3D plane polygon
 */
 
-Rdouble ggemsgeo_solid_angle ( 
+SV_EXPORT_SYSGEOM Rdouble ggemsgeo_solid_angle ( 
         int      n_vert,  /* number of vertices */
         ggemsGeoPoint *verts,  /* vertex coordinates list */
         ggemsGeoPoint *p );    /* point to be tested */
@@ -82,7 +82,7 @@ Rdouble ggemsgeo_solid_angle (
  * both of these are much better than the angle test.
  */
 
-int ggems_CrossingsMultiplyTest( double pgon[], int numverts,
+SV_EXPORT_SYSGEOM int ggems_CrossingsMultiplyTest( double pgon[], int numverts,
 				 double point[] );
 
 #endif /* __GGEMS_H */

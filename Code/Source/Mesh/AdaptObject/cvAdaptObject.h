@@ -74,7 +74,7 @@ enum KernelType {
 };
 
 
-class cvAdaptObject : public cvRepositoryData {
+class SV_EXPORT_ADAPTOR cvAdaptObject : public cvRepositoryData {
 
 public:
 

@@ -52,8 +52,8 @@ enum SolidModel_KernelT {
   SM_KT_INVALID
 };
 
-SolidModel_KernelT SolidModel_KernelT_StrToEnum( char *name );
-char *SolidModel_KernelT_EnumToStr( SolidModel_KernelT val );
+SV_EXPORT_SOLID SolidModel_KernelT SolidModel_KernelT_StrToEnum( char *name );
+SV_EXPORT_SOLID char *SolidModel_KernelT_EnumToStr( SolidModel_KernelT val );
 
 typedef enum {
   SM_Facet_Union,
@@ -62,8 +62,8 @@ typedef enum {
   SM_Facet_Invalid
 } SolidModel_FacetT;
 
-SolidModel_FacetT SolidModel_FacetT_StrToEnum( char *name );
-char *SolidModel_FacetT_EnumToStr( SolidModel_FacetT val );
+SV_EXPORT_SOLID SolidModel_FacetT SolidModel_FacetT_StrToEnum( char *name );
+SV_EXPORT_SOLID char *SolidModel_FacetT_EnumToStr( SolidModel_FacetT val );
 
 
 typedef enum {
@@ -72,8 +72,8 @@ typedef enum {
   SM_Simplify_Invalid
 } SolidModel_SimplifyT;
 
-SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum( char *name );
-char *SolidModel_SimplifyT_EnumToStr( SolidModel_SimplifyT val );
+SV_EXPORT_SOLID SolidModel_SimplifyT SolidModel_SimplifyT_StrToEnum( char *name );
+SV_EXPORT_SOLID char *SolidModel_SimplifyT_EnumToStr( SolidModel_SimplifyT val );
 
 
 // Some elementary notes on abstract base classes (ABC's)
@@ -88,7 +88,7 @@ char *SolidModel_SimplifyT_EnumToStr( SolidModel_SimplifyT val );
 // Item 34.
 
 
-class cvSolidModel : public cvRepositoryData {
+class SV_EXPORT_SOLID cvSolidModel : public cvRepositoryData {
 
 public:
   cvSolidModel( SolidModel_KernelT t );  // can never be called directly;

@@ -36,14 +36,14 @@
 #include "cvVTK.h"
 #include "cvPolyData.h"
 
-int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, double *q );
+SV_EXPORT_SYSGEOM int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, double *q );
 
-int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, double *area );
+SV_EXPORT_SYSGEOM int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, double *area );
 
-int sys_geom_IntegrateScalarSurf ( cvPolyData *src, double *q );
+SV_EXPORT_SYSGEOM int sys_geom_IntegrateScalarSurf ( cvPolyData *src, double *q );
 
-int sys_geom_IntegrateScalarThresh ( cvPolyData *src, double wssthresh, double *q, double *a );
+SV_EXPORT_SYSGEOM int sys_geom_IntegrateScalarThresh ( cvPolyData *src, double wssthresh, double *q, double *a );
 
-int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double *energy );
+SV_EXPORT_SYSGEOM int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double *energy );
 
 #endif

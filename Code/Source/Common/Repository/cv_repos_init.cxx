@@ -147,6 +147,8 @@ int Repos_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
+  gDummyTest_ = 2016;
+
   Tcl_CreateCommand( interp, "repos_list", Repos_ListCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "repos_exists", Repos_ExistsCmd,

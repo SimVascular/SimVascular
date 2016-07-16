@@ -36,7 +36,7 @@ class vtkInformationVector;
 class vtkDataSetAttributes;
 class vtkMultiProcessController;
 
-class CV_DLL_EXPORT vtkIntegrateAttributes : public vtkUnstructuredGridAlgorithm
+class SV_EXPORT_SYSGEOM vtkIntegrateAttributes : public vtkUnstructuredGridAlgorithm
 {
 public:
   vtkTypeMacro(vtkIntegrateAttributes,vtkUnstructuredGridAlgorithm);

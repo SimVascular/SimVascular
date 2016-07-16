@@ -41,14 +41,13 @@
 
 
 typedef enum { Dense_GridT, Sparse_GridT, Invalid_GridT } GridT;
-GridT GridT_StrToEnum( char *name );
-char *GridT_EnumToStr( GridT t );
 
+SV_EXPORT_LSET GridT GridT_StrToEnum( char *name );
+SV_EXPORT_LSET char *GridT_EnumToStr( GridT t );
 
-class cvLevelSetVelocity;
+class SV_EXPORT_LSET cvLevelSetVelocity;
 
-
-class cvLevelSetStructuredGrid {
+class SV_EXPORT_LSET cvLevelSetStructuredGrid {
 
 public:
 

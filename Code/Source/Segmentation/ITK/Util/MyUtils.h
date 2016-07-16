@@ -135,32 +135,32 @@ typedef itk::Image<double,2> Double2dITKImageType;
 typedef itk::Image<float,2> Float2dITKImageType;
 
 template<typename TImage>
-void CreateImage(typename TImage::Pointer image,typename TImage::SizeType size,
+ void CreateImage(typename TImage::Pointer image,typename TImage::SizeType size,
 		typename TImage::SpacingType spacing, typename TImage::PointType origin,
 		typename TImage::PixelType value);
 
 template<typename TVectorImage>
-void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value,typename TVectorImage::SizeType size,
+ void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value,typename TVectorImage::SizeType size,
 		typename TVectorImage::SpacingType spacing, typename TVectorImage::PointType origin);
 
 template<typename TVectorImage>
-void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value);
+ void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value);
 
 template<typename TImage>
-void SetImagePropoties(typename TImage::Pointer image,
+ void SetImagePropoties(typename TImage::Pointer image,
 		typename TImage::SpacingType spacing, typename TImage::PointType origin);
 
 template<typename TImage>
-void DeepCopy(const TImage* input, typename TImage::Pointer output);
+ void DeepCopy(const TImage* input, typename TImage::Pointer output);
 
 template<typename TImage>
-void DeepCopy(typename TImage::Pointer input, typename TImage::Pointer output);
+ void DeepCopy(typename TImage::Pointer input, typename TImage::Pointer output);
 
 template <class T>
-std::vector<T> &split(const std::string &s, char delim, std::vector<T> &elems);
+ std::vector<T> &split(const std::string &s, char delim, std::vector<T> &elems);
 
 template <class T>
-std::vector<T> split(const std::string &s, char delim);
+ std::vector<T> split(const std::string &s, char delim);
 
 //template<typename T>
 //void print_vector(typename std::vector<std::vector<T> > &vec,const char* end);
@@ -169,57 +169,57 @@ std::vector<T> split(const std::string &s, char delim);
 //void print_vector(typename std::vector<T> &vec,const char* end);
 
 template<typename T>
-void printvec(typename std::vector<T> vec);
+ void printvec(typename std::vector<T> vec);
 
 template<typename T>
-void printArray(T *arr,unsigned int length);
+ void printArray(T *arr,unsigned int length);
 
-void getParams(float params[6],const char* filename);
+ void getParams(float params[6],const char* filename);
 
-std::vector<std::vector<float> > getParams(const char* filename);
+ std::vector<std::vector<float> > getParams(const char* filename);
 
-std::vector<std::vector<float> > parsePathsFile(const char* filename);
+ std::vector<std::vector<float> > parsePathsFile(const char* filename);
 
-bool isInteger(const std::string & s);
+ bool isInteger(const std::string & s);
 
-bool isNumber(const char* s);
+ bool isNumber(const char* s);
 
 template<typename T>
-void make2DSeriesTo3D(std::string FilenameBase,
+ void make2DSeriesTo3D(std::string FilenameBase,
 		std::string FilenameExt,std::string out_filename, int start,int end);
 
 template<typename TvtkObject>
-void vtkResliceImage(vtkSmartPointer<TvtkObject> reader,
+ void vtkResliceImage(vtkSmartPointer<TvtkObject> reader,
 		vtkSmartPointer<vtkImageReslice> reslice,double axes[16]);
 
 
-void DeepCopy(Double2dITKImageType::Pointer input,Double2dITKImageType::Pointer output);
-void CopyVTKtoITK(vtkStructuredPoints* in,Double2dITKImageType* out);
-void CopyITKtoVTK(const Double2dITKImageType* in,vtkStructuredPoints* out);
+ void DeepCopy(Double2dITKImageType::Pointer input,Double2dITKImageType::Pointer output);
+ void CopyVTKtoITK(vtkStructuredPoints* in,Double2dITKImageType* out);
+ void CopyITKtoVTK(const Double2dITKImageType* in,vtkStructuredPoints* out);
 
 /** VTK Utils***/
 
 template<typename TvtkObject>
-void vtkResliceImage(vtkSmartPointer<TvtkObject>,
+ void vtkResliceImage(vtkSmartPointer<TvtkObject>,
 		vtkSmartPointer<vtkImageReslice> reslice);
 
-void vtkResliceImage(vtkSmartPointer<vtkImageImport> importer,
+ void vtkResliceImage(vtkSmartPointer<vtkImageImport> importer,
 		vtkSmartPointer<vtkImageReslice> reslice,double axes[16]);
 
-void vtkSetupResliceImage(vtkSmartPointer<vtkImageReslice> reslice,
+ void vtkSetupResliceImage(vtkSmartPointer<vtkImageReslice> reslice,
 		vtkSmartPointer<vtkPoints> path,
 		int ii);
 
-void vtkVecToPoints(vtkSmartPointer<vtkPoints> points, std::vector<std::vector<float> > pts);
+ void vtkVecToPoints(vtkSmartPointer<vtkPoints> points, std::vector<std::vector<float> > pts);
 
-vtkSmartPointer<vtkPoints> vtkInterpolatePath(vtkSmartPointer<vtkPoints> points, int numberOfOutputPoints);
+ vtkSmartPointer<vtkPoints> vtkInterpolatePath(vtkSmartPointer<vtkPoints> points, int numberOfOutputPoints);
 
-void vtkInterpolatePath(vtkSmartPointer<vtkPoints> points,vtkSmartPointer<vtkPoints> path,int numberOfOutputPoints);
+ void vtkInterpolatePath(vtkSmartPointer<vtkPoints> points,vtkSmartPointer<vtkPoints> path,int numberOfOutputPoints);
 
-void RenderPathSetup(vtkSmartPointer<vtkPoints> points,vtkSmartPointer<vtkPoints> path,
+ void RenderPathSetup(vtkSmartPointer<vtkPoints> points,vtkSmartPointer<vtkPoints> path,
 		vtkSmartPointer<vtkActor> profile,vtkSmartPointer<vtkActor> glyph,double ball[3], float tubearg=0.5);
 
-void QuickRenderPolyData(vtkPolyData* front,float radius = .5);
+ void QuickRenderPolyData(vtkPolyData* front,float radius = .5);
 
 
 /** Inline methods **/
@@ -363,7 +363,7 @@ inline void TransformPhysicalToIndex(double spacing[3],double origin[3],
 namespace MyUt{
 
 template <class T>
-std::vector<T> &split(const std::string &s, char delim, std::vector<T> &elems) {
+ std::vector<T> &split(const std::string &s, char delim, std::vector<T> &elems) {
 	std::stringstream ss(s);
 	std::string item;
 	T item_casted;
@@ -374,13 +374,13 @@ std::vector<T> &split(const std::string &s, char delim, std::vector<T> &elems) {
 }
 
 template <class T>
-std::vector<T> split(const std::string &s, char delim) {
+ std::vector<T> split(const std::string &s, char delim) {
 	std::vector<T> elems;
 	split<T>(s, delim, elems); return elems;
 }
 
 template<typename T>
-void printvec(std::vector<T> vec){
+ void printvec(std::vector<T> vec){
 	for( typename std::vector<T>::const_iterator i =vec.begin();
 			i != vec.end();
 			++i)
@@ -388,7 +388,7 @@ void printvec(std::vector<T> vec){
 }
 
 template<typename T>
-void printArray(T *arr,unsigned int length)
+ void printArray(T *arr,unsigned int length)
 {
 	for(int i = 0;i<length;i++)
 		std::cout << arr[i] << " ";
@@ -397,7 +397,7 @@ void printArray(T *arr,unsigned int length)
 }
 
 template<typename TImage>
-void DeepCopy(typename TImage::Pointer input, typename TImage::Pointer output)
+ void DeepCopy(typename TImage::Pointer input, typename TImage::Pointer output)
 {
 	output->SetRegions(input->GetLargestPossibleRegion());
 	output->Allocate();
@@ -414,7 +414,7 @@ void DeepCopy(typename TImage::Pointer input, typename TImage::Pointer output)
 }
 
 template<typename TImage>
-void DeepCopy(const TImage* input, typename TImage::Pointer output)
+ void DeepCopy(const TImage* input, typename TImage::Pointer output)
 {
 	output->SetRegions(input->GetLargestPossibleRegion());
 	output->Allocate();
@@ -431,7 +431,7 @@ void DeepCopy(const TImage* input, typename TImage::Pointer output)
 }
 
 template<typename TImage>
-void CreateImage(typename TImage::Pointer image,typename TImage::SizeType size,
+ void CreateImage(typename TImage::Pointer image,typename TImage::SizeType size,
 		typename TImage::SpacingType spacing, typename TImage::PointType origin,
 		typename TImage::PixelType value)
 {
@@ -449,7 +449,7 @@ void CreateImage(typename TImage::Pointer image,typename TImage::SizeType size,
 }
 
 template<typename TVectorImage>
-void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value,typename TVectorImage::SizeType size,
+ void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value,typename TVectorImage::SizeType size,
 		typename TVectorImage::SpacingType spacing, typename TVectorImage::PointType origin)
 {
 
@@ -484,7 +484,7 @@ void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVecto
 }
 
 template<typename TVectorImage>
-void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value)
+ void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVectorImage::PixelType value)
 {
 
 	typename TVectorImage::SizeType size;
@@ -501,7 +501,7 @@ void CreateImageVectorImage(typename TVectorImage::Pointer image,typename TVecto
 }
 
 template<typename TImage>
-void SetImagePropoties(typename TImage::Pointer image,
+ void SetImagePropoties(typename TImage::Pointer image,
 		typename TImage::SpacingType spacing, typename TImage::PointType origin)
 {
 	image->SetSpacing(spacing);
@@ -524,7 +524,7 @@ void SetImagePropoties(typename TImage::Pointer image,
  */
 
 template<typename T>
-void make2DSeriesTo3DGradient(std::string FilenameBase,
+ void make2DSeriesTo3DGradient(std::string FilenameBase,
 		std::string FilenameExt,std::string out_filename, int start,int end){
 	typedef T PixelType;
 	typedef itk::Image<T,2> InternalImageType;
@@ -584,7 +584,7 @@ void make2DSeriesTo3DGradient(std::string FilenameBase,
 }
 
 template<typename T>
-void make2DSeriesTo3D(std::string FilenameBase,
+ void make2DSeriesTo3D(std::string FilenameBase,
 		std::string FilenameExt,std::string out_filename, int start,int end){
 	typedef T PixelType;
 	typedef itk::Image<T,3> InternalImageType;
@@ -628,7 +628,7 @@ void make2DSeriesTo3D(std::string FilenameBase,
 }
 
 template<typename TInternalImageType>
-void WriteImage(const TInternalImageType * image,
+ SV_EXPORT_SEGITKUTILS void WriteImage(const TInternalImageType * image,
 		std::string FilenameBase,
 		std::string FilenameExt,
 		int FileId){
@@ -654,7 +654,7 @@ void WriteImage(const TInternalImageType * image,
 
 // Templated Definitions
 template<typename TInternalImageType>
-void make2DSeriesTo3DAbsOverlay(TInternalImageType * image, std::string FilenameBase,
+ void make2DSeriesTo3DAbsOverlay(TInternalImageType * image, std::string FilenameBase,
 		std::string FilenameExt,std::string out_filename, int start,int end){
 
 	typedef unsigned char UCPixelType;
@@ -821,7 +821,7 @@ void make2DSeriesTo3DAbsOverlay(TInternalImageType * image, std::string Filename
 
 
 template<typename TvtkObject>
-void vtkResliceImage(vtkSmartPointer<TvtkObject> reader,
+ void vtkResliceImage(vtkSmartPointer<TvtkObject> reader,
 		vtkSmartPointer<vtkImageReslice> reslice,double axes[16])
 {
 	reader->UpdateWholeExtent();

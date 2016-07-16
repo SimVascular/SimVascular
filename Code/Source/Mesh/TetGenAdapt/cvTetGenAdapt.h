@@ -73,7 +73,7 @@
 //
 
 
-class cvTetGenAdapt: public cvAdaptObject {
+class SV_EXPORT_TET_ADAPTOR cvTetGenAdapt: public cvAdaptObject {
 
   typedef struct AdaptOptions {
     int poly_;

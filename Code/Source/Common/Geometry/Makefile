@@ -51,6 +51,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
    CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
+CXXFLAGS += -DSV_EXPORT_SYSGEOM_COMPILE
 
 HDRS	= cv_sys_geom.h cv_ggems.h \
 	cv_spline.h cv_integrate_surface.h \

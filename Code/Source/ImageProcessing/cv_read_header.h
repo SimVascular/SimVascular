@@ -33,7 +33,7 @@
 
 #include "SimVascular.h"
 
-int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
+SV_EXPORT_IMAGE int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
                         int *dim_x, int *dim_y, int *file_hdr_size,
                         float ul[], float ur[], float br[],
                         int *rtnvenc, float *rtnvencscale,

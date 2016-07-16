@@ -37,7 +37,7 @@
 #include "cv_image.h"
 
 
-class cvLevelSetVelocityPotential : public cvLevelSetVelocityImage {
+class SV_EXPORT_LSET cvLevelSetVelocityPotential : public cvLevelSetVelocityImage {
 
 public:
   cvLevelSetVelocityPotential();

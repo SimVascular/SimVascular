@@ -36,7 +36,9 @@ const int CV_MAX_FACTORY_METHOD_PTRS = 10;
 
 typedef void* (*FactoryMethodPtr)();
 
-class cvFactoryRegistrar
+#include "SimVascular.h"
+
+class SV_EXPORT_UTILS cvFactoryRegistrar
 {
 public:
   cvFactoryRegistrar();

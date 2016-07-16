@@ -35,7 +35,6 @@
 #include <math.h>
 #include <stdlib.h>
 #include <assert.h>
-#include "cv_vtk_utils.h"
 #include "cv_misc_utils.h"
 #include "cv_cgeom.h"
 
@@ -56,6 +55,7 @@ typedef struct {
   int uncompressedId;
 } PostPt_T;
 
+#include "cv_vtk_utils.h"
 
 // Static helpers
 // --------------

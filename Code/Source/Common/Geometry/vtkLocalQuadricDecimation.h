@@ -51,7 +51,7 @@ class vtkPointData;
 class vtkPriorityQueue;
 class vtkDoubleArray;
 
-class CV_DLL_EXPORT vtkLocalQuadricDecimation : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkLocalQuadricDecimation : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalQuadricDecimation, vtkPolyDataAlgorithm);

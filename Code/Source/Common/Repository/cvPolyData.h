@@ -35,8 +35,6 @@
 #define __CVPOLY_DATA_H
 
 #include "SimVascular.h"
-#include "cvRepositoryData.h"
-#include "cvDataSet.h"
 #include "cv_misc_utils.h"
 #include "cvVTK.h"
 
@@ -45,8 +43,10 @@ typedef enum {
   PD_DIST_VTK, PD_DIST_INVALID
 } PolyData_DistanceT;
 
+#include "cvRepositoryData.h"
+#include "cvDataSet.h"
 
-class cvPolyData : public cvDataSet {
+class SV_EXPORT_REPOSITORY cvPolyData : public cvDataSet {
 
 public:
   cvPolyData();

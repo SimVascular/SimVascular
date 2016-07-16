@@ -36,6 +36,7 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
 
+CXXFLAGS += -DSV_EXPORT_IMAGE_COMPILE
 
 HDRS	= cv_image.h cv_img_offsets.h cv_decode.h \
 	  cv_calc_correction_eqn.h cv_img_threshold.h \

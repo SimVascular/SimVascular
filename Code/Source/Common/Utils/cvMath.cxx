@@ -36,9 +36,9 @@
 #include "math.h"
 #include <math.h>
 
-#include "cvMath.h"
-
 #include "cvVTK.h"
+
+#include "cvMath.h"
 
 cvMath::cvMath() {
 }

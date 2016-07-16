@@ -33,11 +33,11 @@
 
 #include "SimVascular.h" 
 
-#include "cvUnstructuredGrid.h"
 #include "vtkDataSet.h"
 #include "cv_misc_utils.h"
 #include <stdio.h>
 
+#include "cvUnstructuredGrid.h"
 
 // ----------------
 // cvUnstructuredGrid

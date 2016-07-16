@@ -64,7 +64,7 @@
 #include "vtkPolyDataAlgorithm.h"
 #include "vtkIdList.h"
 
-class CV_DLL_EXPORT vtkFindSeparateRegions : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkFindSeparateRegions : public vtkPolyDataAlgorithm
 {
 public:
   static vtkFindSeparateRegions* New();

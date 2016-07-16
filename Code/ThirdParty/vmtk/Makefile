@@ -114,9 +114,9 @@ CXXSRCS	=  cv_VMTK_utils.cxx \
 	   vtkvmtkPolyDataCenterlineGroupsClipper.cxx \
            vtkvmtkPolyDataCenterlines.cxx
 
-DLLHDRS = cv_geom_init.h
+DLLHDRS = 
 
-DLLSRCS = cv_geom_init.cxx
+DLLSRCS = 
 
 TARGET_LIB_NAME = simvascular_vmtk
 

@@ -41,7 +41,7 @@
 // cvCalculateWallShearStress
 // -----------------
 
-class cvCalculateWallShearStress {
+class SV_EXPORT_POST cvCalculateWallShearStress {
 
   public:
 

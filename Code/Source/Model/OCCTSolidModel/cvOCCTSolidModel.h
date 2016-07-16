@@ -70,7 +70,7 @@
 // Item 34.
 //
 
-class cvOCCTSolidModel : public cvSolidModel {
+class SV_EXPORT_OPENCASCADE cvOCCTSolidModel : public cvSolidModel {
 
 public:
   cvOCCTSolidModel();  // can never be called directly;

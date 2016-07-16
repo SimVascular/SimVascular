@@ -39,20 +39,20 @@
 
 #include "mmg/mmgs/libmmgs.h"
 
-int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid,
+SV_EXPORT_MMG int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid,
     double hmin, double hmax, double hausd, double angle, double hgrad,
     int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
 
-int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid);
+SV_EXPORT_MMG int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid);
 
-int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, double hausd, double angle, double hgrad, int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
+SV_EXPORT_MMG int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, double hausd, double angle, double hgrad, int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines);
 
-int MMGUtils_PassCellArray(vtkPolyData *newgeom,
+SV_EXPORT_MMG int MMGUtils_PassCellArray(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,std::string originalName);
 
-int MMGUtils_PassPointArray(vtkPolyData *newgeom,
+SV_EXPORT_MMG int MMGUtils_PassPointArray(vtkPolyData *newgeom,
     vtkPolyData *originalgeom,std::string newName,std::string originalName);
 
-int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, std::string ridgePtArrayName);
+SV_EXPORT_MMG int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, std::string ridgePtArrayName);
 #endif // __Mmgmesh_Init
 

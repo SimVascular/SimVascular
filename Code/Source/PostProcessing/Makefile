@@ -40,6 +40,8 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS)
 
+CXXFLAGS += -DSV_EXPORT_POST_COMPILE
+
 HDRS	= cvConvertVisFiles.h cvCalculateWallShearStress.h \
 	  cvCalculateTKE.h
 

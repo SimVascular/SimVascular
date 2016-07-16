@@ -65,7 +65,7 @@
 
 class vtkFeatureEdges;
 
-class CV_DLL_EXPORT vtkGetBoundaryFaces : public vtkPolyDataAlgorithm
+class SV_EXPORT_POLYDATASOLID vtkGetBoundaryFaces : public vtkPolyDataAlgorithm
 {
 public:
   static vtkGetBoundaryFaces* New();

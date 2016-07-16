@@ -56,14 +56,13 @@ typedef enum {
   GS_INVALID
 } GridScalarT;
 
-GridScalarT GridScalarT_StrToEnum( char *name );
-char *GridScalarT_EnumToStr( GridScalarT val );
+SV_EXPORT_LSET GridScalarT GridScalarT_StrToEnum( char *name );
+SV_EXPORT_LSET char *GridScalarT_EnumToStr( GridScalarT val );
+
+SV_EXPORT_LSET int cvLevelSetNodeCompareFn( const void *keyval, const void *datum );
 
 
-int cvLevelSetNodeCompareFn( const void *keyval, const void *datum );
-
-
-class cvLevelSetNode {
+class SV_EXPORT_LSET cvLevelSetNode {
 
 public:
 

@@ -41,11 +41,13 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) \
 	   $(VTK_INCDIRS)
 
+CXXFLAGS += -DSV_EXPORT_LSET_COMPILE
+
 HDRS	= cvLevelSet.h cvLevelSetNode.h \
 	  cvLevelSetStructuredGrid.h cvLevelSetDenseGrid.h \
-          cvLevelSetSparseGrid.h  cvLevelSetVelocity.h
+          cvLevelSetSparseGrid.h
 
-HDRS2   = cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
+HDRS   += cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
           cvLevelSetVelocityConstant.h \
 	  cvLevelSetVelocityThreshold.h cvLevelSetVelocityPotential.h \
           cvLevelSetVelocityExponentialDecay.h cvLevelSetVelocitySmooth.h \
@@ -53,31 +55,22 @@ HDRS2   = cvLevelSetVelocity.h cvLevelSetVelocityKGI.h \
 
 CXXSRCS	= cvLevelSet.cxx cvLevelSetNode.cxx \
 	  cvLevelSetStructuredGrid.cxx cvLevelSetDenseGrid.cxx \
-          cvLevelSetSparseGrid.cxx cvLevelSetVelocity.cxx 
+          cvLevelSetSparseGrid.cxx 
 
-CXXSRCS2 = cvLevelSetVelocity.cxx cvLevelSetVelocityKGI.cxx \
+CXXSRCS += cvLevelSetVelocity.cxx cvLevelSetVelocityKGI.cxx \
           cvLevelSetVelocityConstant.cxx \
 	  cvLevelSetVelocityThreshold.cxx cvLevelSetVelocityPotential.cxx \
           cvLevelSetVelocityExponentialDecay.cxx \
           cvLevelSetVelocitySmooth.cxx cvLevelSetVelocityImage.cxx
 
-ifneq ($(SV_USE_SHARED),1)
-  HDRS += $(HDRS2)
-  CXXSRCS += $(CXXSRCS2)
-endif
-
-DLLHDRS = cv_LsetCore_init.h
-DLLSRCS = cv_LsetCore_init.cxx
-
-DLLHDRS2 = $(HDRS2) cv_LsetV_init.h
-DLLSRCS2 = $(CXXSRCS2) cv_LsetV_init.cxx
+DLLHDRS = cv_LsetCore_init.h cv_LsetV_init.h cv_Lset_init.h
+DLLSRCS = cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx
 
 # -------
 # Targets
 # -------
 
 TARGET_LIB_NAME = simvascular_lset
-TARGET_LIB_NAME2 = simvascular_lsetv
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
 	  $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
@@ -85,14 +78,6 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
 	  $(VMTK_LIBS)
-
-DLLLIBS2 = $(SVLIBFLAG)_simvascular_lset$(LIBLINKEXT) \
-           $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
-	   $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	   $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
-           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-	   $(VMTK_LIBS)
 
 include $(TOP)/targetlib.mk
 

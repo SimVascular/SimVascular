@@ -33,8 +33,10 @@
 
 #include "SimVascular.h" 
 
-#include "cvRepository.h"
 #include "cvIOstream.h"
+
+#include "cv_globals.h"
+#include "cvRepository.h"
 
 // ----------
 // cvRepository
@@ -151,6 +153,9 @@ int cvRepository::UnRegister( char *name )
 int cvRepository::Exists( char *name )
 {
   Tcl_HashEntry *entryPtr;
+
+  fprintf(stdout,"\n\n\ngDummyTest_ (%i)  name (%s)\n\n\n",gDummyTest_,name);
+  fflush(stdout);
 
   entryPtr = Tcl_FindHashEntry( &table_, name );
   if ( entryPtr == NULL ) {

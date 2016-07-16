@@ -54,7 +54,7 @@
 #include "Include/cvITKMacros.h"
 #include "Include/cvMacros.h"
 #include "Include/ConnectVTKITK.h"
-#include "Util/MyUtils.h"
+#include "MyUtils.h"
 
 #include "itkVTKImageExport.h"
 #include "itkVTKImageImport.h"
@@ -72,7 +72,7 @@
 #include "vtkTIFFWriter.h"
 #include "ImgInfo.h"
 
-#include "Util/cvITKUtils.h"
+#include "cvITKUtils.h"
 
 #ifndef NULL
 #define NULL   ((void *) 0)
@@ -81,7 +81,7 @@
 
 template<typename TInputImage = itk::Image<short,2>,
 typename TInternalPixelType = float>
-class cvITKLevelSetBase
+class SV_EXPORT_SEGITK cvITKLevelSetBase
 {
 
 public:

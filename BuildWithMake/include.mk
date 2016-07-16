@@ -376,7 +376,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   GLOBAL_DEFINES += -DSV_STATIC_LINK -DSV_STATIC_BUILD
 endif
 
-ifeq ($(MAKE_GLOBALS_SHARED),1)
+ifeq ($(SV_GLOBALS_SHARED),1)
   GLOBAL_DEFINES += -DSV_GLOBALS_SHARED
 endif
 
@@ -581,9 +581,17 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK/Util ../Code/Source/Segmentation/ITK
+     SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK
   else
-     LIBDIRS += ../Code/Source/Segmentation/ITK/Util ../Code/Source/Segmentation/ITK
+     LIBDIRS += ../Code/Source/Segmentation/ITK
+  endif
+endif
+
+ifeq ($(SV_USE_MMG),1)
+  ifeq ($(SV_USE_MMG_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
+  else
+     LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
   endif
 endif
 
@@ -636,14 +644,6 @@ ifeq ($(SV_USE_MESHSIM),1)
      SHARED_LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
   else
      LIBDIRS += ../Code/Source/Mesh/MeshSimMeshObject
-  endif
-endif
-
-ifeq ($(SV_USE_MMG),1)
-  ifeq ($(SV_USE_MMG_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
-  else
-     LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
   endif
 endif
 

@@ -35,27 +35,19 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ITK_DEFS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR) -I./Include -I./Util -I./ITKCode
+           $(ITK_INCDIRS)  $(SV_GDCM_INCDIR) -I./Include -I./ITKCode
 
-HDRS	=  cvITKLevelSet.h
+CXXFLAGS += -DSV_EXPORT_SEGITK_COMPILE
 
-CXXSRCS	=  cvITKLevelSet.cxx
+HDRS	=  cvITKUtils.h cvITKLevelSet.h
+CXXSRCS	=  cvITKUtils.cxx cvITKLevelSet.cxx
 
-DLLHDRS = cv_ITKLset2d_init.h
-DLLSRCS = cv_ITKLset2d_init.cxx
-TARGET_LIB_NAME = simvascular_cvitk2d
+DLLHDRS = cv_ITKUtils_init.h cv_ITKLset2d_init.h cv_ITKLset3d_init.h cv_ITKLset_init.h
+DLLSRCS = cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx  cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx
 
-DLLHDRS2 = cv_ITKLset3d_init.h
-DLLSRCS2 = cv_ITKLset3d_init.cxx
-TARGET_LIB_NAME2 = simvascular_cvitk3d
+TARGET_LIB_NAME = simvascular_itklset
 
-DLLLIBS = $(SVLIBFLAG)_simvascular_itkutils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-	  $(ITK_LIBS) $(SV_GDCM_LIBS)
-
-DLLLIBS2 = $(SVLIBFLAG)_simvascular_itkutils$(LIBLINKEXT) \
-           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+DLLLIBS =  $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
            $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
 	   $(ITK_LIBS) $(SV_GDCM_LIBS)
 

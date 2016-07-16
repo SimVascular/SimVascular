@@ -227,7 +227,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(TARGET_EXE_FULL); do /bin/rm -f $$fn; done
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
-        $(LFLAGS) \
+        $(LFLAGS) $(SVLIBFLAG)_simvascular_gettclinterp$(LIBLINKEXT) $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)\
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
         $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
         $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS) $(SV_MMG_LIBS)

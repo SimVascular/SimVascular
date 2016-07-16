@@ -37,14 +37,15 @@
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 
-CV_GLOBALS_DLL_EXPORT cvRepository *gRepository = NULL;
-CV_GLOBALS_DLL_EXPORT Tcl_HashTable gLsetVTable;
-CV_GLOBALS_DLL_EXPORT Tcl_HashTable gLsetCoreTable;
-CV_GLOBALS_DLL_EXPORT char projectionSetBase_[CV_STRLEN];
+SV_DLL_EXPORT cvRepository *gRepository = NULL;
+SV_DLL_EXPORT int gDummyTest_ = 0;
+SV_DLL_EXPORT Tcl_HashTable gLsetVTable;
+SV_DLL_EXPORT Tcl_HashTable gLsetCoreTable;
+SV_DLL_EXPORT char projectionSetBase_[CV_STRLEN];
 // global variable to figure out if we are running in batch mode
-CV_GLOBALS_DLL_EXPORT int gSimVascularBatchMode = 0;
-CV_GLOBALS_DLL_EXPORT Tcl_Interp* gVtkTclInterp = NULL;
+SV_DLL_EXPORT int gSimVascularBatchMode = 0;
+SV_DLL_EXPORT Tcl_Interp *gVtkTclInterp = NULL;
+SV_DLL_EXPORT void *gOCCTManager = NULL;
 
-CV_GLOBALS_DLL_EXPORT Tcl_Interp* getTclInterp() {return gVtkTclInterp;};
+SV_DLL_EXPORT Tcl_Interp* getTclInterp() {return gVtkTclInterp;};
 
-CV_GLOBALS_DLL_EXPORT void *gOCCTManager;

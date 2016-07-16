@@ -51,6 +51,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_MESHSIM_SOLID_COMPILE
+
 HDRS	= cvMeshSimSolidModel.h
 
 CXXSRCS	= cvMeshSimSolidModel.cxx
