@@ -96,8 +96,7 @@ set gSimVascularTclInitLibs [list \
 				 [list Repos lib_simvascular_repository.dll] \
 				 [list myVtk {}] \
 				 [list Getinterp lib_simvascular_gettclinterp.dll] \
-				 [list Lsetcore lib_simvascular_lset.dll] \
-				 [list Lsetv lib_simvascular_lsetv.dll] \
+				 [list Lset lib_simvascular_lset.dll] \
 				 [list Geom lib_simvascular_sysgeom.dll] \
 				 [list Image lib_simvascular_image.dll] \
 				 [list Math lib_simvascular_utils.dll] \

@@ -71,6 +71,7 @@ endif
 # globals
 # -------
 
+SV_USE_SHARED = 1
 SV_USE_GLOBALS_SHARED = 1
 
 # ---------------------------------------
@@ -158,7 +159,7 @@ SV_USE_SYSTEM_PYTHON = 1
 SV_USE_QT = 1
 SV_USE_SYSTEM_QT = 1
 SV_USE_QT_GUI = 0
-SV_USE_QT_GUI_SHARED = 0
+SV_USE_QT_GUI_SHARED = 1
 
 # -----------------------------------------------------
 # Compile with freetype

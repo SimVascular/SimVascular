@@ -41,7 +41,7 @@
 #include "cvMeshSimMeshObject.h"
 #include "cvFactoryRegistrar.h"
 
-class cvMeshSimMeshSystem : public cvMeshSystem {
+class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshSystem : public cvMeshSystem {
 
 public:
   cvMeshSimMeshSystem();  

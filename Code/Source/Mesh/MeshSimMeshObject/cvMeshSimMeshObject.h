@@ -58,8 +58,6 @@
 #include "SimMeshTools.h"
 #include "SimParasolidKrnl.h"
 #include "SimAdvMeshing.h"
-
-#include "MeshSimInternal_phAdapt.h"
 #include "cvAdaptHelp.h"
 #endif
 
@@ -91,7 +89,7 @@
   #include "SimModel.h"
 #endif
 
-class cvMeshSimMeshObject : public cvMeshObject {
+class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
 
   typedef struct MSoptions {
       int surface;

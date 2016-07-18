@@ -36,8 +36,8 @@
 #ifndef __CV_MESHSIM_MESH_UTILS_H
 #define __CV_MESHSIM_MESH_UTILS_H
 
-int cvMeshSimMeshObjectUtils_Init();
-int cvMeshSimMeshObjectUtils_Logon(char *filename);
-int cvMeshSimMeshObjectUtils_Logoff();
+SV_EXPORT_MESHSIM_MESH int cvMeshSimMeshObjectUtils_Init();
+SV_EXPORT_MESHSIM_MESH int cvMeshSimMeshObjectUtils_Logon(char *filename);
+SV_EXPORT_MESHSIM_MESH int cvMeshSimMeshObjectUtils_Logoff();
 
 #endif //__CV_MESHSIM_MESH_UTILS_H

@@ -73,7 +73,7 @@
 //
 
 
-class cvMeshSimAdapt: public cvAdaptObject {
+class SV_EXPORT_MESHSIM_ADAPTOR cvMeshSimAdapt: public cvAdaptObject {
 
   typedef struct AdaptOptions {
     int poly_;
