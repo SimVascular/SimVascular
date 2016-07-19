@@ -52,31 +52,15 @@
 
 #ifdef WINDOWS
   #ifndef SV_STATIC_LINK
-    #define CV_DLL_EXPORT __declspec(dllexport)
-    #define CV_DLL_IMPORT __declspec(dllimport)
-  #else
-    #define CV_DLL_EXPORT
-    #define CV_DLL_IMPORT extern
-  #endif
-#else
-  #define CV_DLL_EXPORT
-  #define CV_DLL_IMPORT extern
-#endif
-
-#ifdef WINDOWS
-  #ifndef SV_STATIC_LINK
     #define SV_DLL_EXPORT __declspec(dllexport)
     #define SV_DLL_IMPORT __declspec(dllimport)
-    #define SV_EXPORT __declspec(dllimport)
   #else
     #define SV_DLL_EXPORT
-    #define SV_DLL_IMPORT 
-    #define SV_EXPORT
+    #define SV_DLL_IMPORT
   #endif
 #else
   #define SV_DLL_EXPORT
-  #define SV_DLL_IMPORT extern
-  #define SV_EXPORT extern
+  #define SV_DLL_IMPORT
 #endif
 
 #include "simvascular_version.h"
@@ -278,6 +262,15 @@
   #define SV_EXPORT_SEGITKUTILS SV_DLL_EXPORT
 #else
   #define SV_EXPORT_SEGITKUTILS SV_DLL_IMPORT
+#endif
+
+#ifdef SV_EXPORT_PARASOLID
+  #undef SV_EXPORT_PARASOLID
+#endif
+#ifdef SV_EXPORT_PARASOLID_COMPILE
+  #define SV_EXPORT_PARASOLID SV_DLL_EXPORT
+#else
+  #define SV_EXPORT_PARASOLID SV_DLL_IMPORT
 #endif
 
 #endif  /* SIMVASCULAR_H */

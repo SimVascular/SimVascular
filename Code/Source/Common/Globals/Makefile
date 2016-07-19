@@ -43,17 +43,11 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
 
 CXXFLAGS += -DSV_EXPORT_GLOBALS_COMPILE
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-    CXXFLAGS += $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS)
-endif
+HDRS	  = cv_globals.h
+CXXSRCS = cv_globals.cxx
 
-ifeq ($(SV_USE_GLOBALS_SHARED),0)
-  HDRS	  = cv_globals.h
-  CXXSRCS = cv_globals.cxx
-else
-  DLLHDRS = cv_globals.h
-  DLLSRCS = cv_globals.cxx
-endif
+DLLHDRS =
+DLLSRCS =
 
 TARGET_LIB_NAME = simvascular_globals
 

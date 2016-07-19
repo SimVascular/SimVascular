@@ -34,9 +34,9 @@ TOP = .
 
 include $(TOP)/include.mk
 
-all:	mixed
-
 all-shared: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-shared-build post-build
+
+all:	mixed
 
 mixed: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-build post-build
 
@@ -212,7 +212,7 @@ endif
 	-rm -f tclscript
 
 pre-build:
-	cd ../Code/Source/UI;$(MAKE) MAKE_STATIC_BUILD=1 pre
+	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
 	mkdir -p Bin
 	mkdir -p Lib
 	mkdir -p ../Code/Source/Include/Make
@@ -226,24 +226,26 @@ shared-build:
 	  cd $$i; \
 	  $(MAKE) shared;fi ) ; done
 
-static-build:
+static-third-party-build:
 	for i in ${THIRD_PARTY_LIBDIRS}; do ( \
 	  echo "static building directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) MAKE_STATIC_BUILD=1 lib;fi ) ; done
+	  $(MAKE) SV_STATIC_BUILD=1 lib;fi ) ; done
+
+static-build: static-third-party-build
 	for i in ${LIBDIRS}; do ( \
 	  echo "static building directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) MAKE_STATIC_BUILD=1 lib;fi ) ; done
+	  $(MAKE) SV_STATIC_BUILD=1 lib;fi ) ; done
 
 exec-build:
 	for i in ${EXECDIRS}; do ( \
 	  echo "building execs ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) MAKE_STATIC_BUILD=1 static;fi ) ; done
+	  $(MAKE) SV_STATIC_BUILD=1 static;fi ) ; done
 
 exec-shared-build:
 	for i in ${EXECDIRS}; do ( \
@@ -301,7 +303,7 @@ veryclean:
 	  echo "super cleaning directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) NO_DEPEND=1 MAKE_STATIC_BUILD=1 veryclean;fi ) ; done
+	  $(MAKE) NO_DEPEND=1 SV_STATIC_BUILD=1 veryclean;fi ) ; done
 	for fn in $(TOP)/*~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Lib/*; do /bin/rm -f -r $$fn; done
 	for fn in $(TOP)/Bin/*; do /bin/rm -f -r $$fn; done

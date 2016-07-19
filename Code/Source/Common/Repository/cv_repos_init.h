@@ -37,6 +37,6 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" SV_DLL_EXPORT int Repos_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_REPOSITORY int Repos_Init( Tcl_Interp *interp );
 
 #endif // __CVREPOS_INIT_H

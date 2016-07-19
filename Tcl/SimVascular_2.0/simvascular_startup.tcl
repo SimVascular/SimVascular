@@ -88,6 +88,15 @@ if {[info exists SV_BUILD_TYPE] == 0} {
   set SV_BUILD_TYPE "MAKE"
 }
 
+global SV_USE_PYTHON
+if {[info exists SV_USE_PYTHON] == 0} {
+  set SV_USE_PYTHON "OFF"
+  if [info exists env(SV_USE_PYTHON)] {
+    set SV_USE_PYTHON $env(SV_USE_PYTHON)
+  }
+  puts "Use Python: $SV_USE_PYTHON"
+}
+
 #
 #  Load SimVascular Modules (static or dynamic)
 #
@@ -116,24 +125,51 @@ set gSimVascularTclInitLibs [list \
 				 [list Itklset lib_simvascular_itklset.dll] \
 				 ]
 
+if {$SV_USE_PYTHON == "ON"} {
+    lappend gSimVascularTclInitLibs [list Tclpython lib_simvascular_tclpython.dll]
+}
+
+puts $gSimVascularTclInitLibs
+
 foreach lib $gSimVascularTclInitLibs {
     if {[lindex $lib 1] == ""} {
 	continue
     }
+    # try dynamic lib first
     if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
-	puts "error ([lindex $lib 0]) $msg"
+	# then static lib
+	if [catch {load {} [lindex $lib 0]} msg] {
+	    puts "error ([lindex $lib 0]) $msg"
+	}
     } else {
 	puts "loaded [lindex $lib 0]..."
     }
 }
 
-#lib_simvascular_tclpython.dll
-
-
-
-
-
-
+#  set lib_prefix "Lib/liblib_"
+#  if {$tcl_platform(platform) == "unix"} {
+#    if {$tcl_platform(os) == "Darwin"} {
+#      if {$SV_BUILD_TYPE != "CMAKE"} {
+#	set lib_prefix "lib_"
+#      }
+##      if [catch {load ${lib_prefix}simvascular_tclpython.dylib Tclpython} msg] {
+#	return -code error "ERROR: Error loading Tclpython: $msg"
+#      }
+#    }
+#    if {$tcl_platform(os) == "Linux"} {
+#      if {$SV_BUILD_TYPE != "CMAKE"} {
+#	set lib_prefix "Lib/x64_linux/gcc-gfortran/lib_"
+#      }
+#      if [catch {load lib_simvascular_tclpython.so Tclpython} msg] {
+#	return -code error "ERROR: Error loading Tclpython: $msg"
+#      }
+#    }
+#  }
+#  if {$tcl_platform(platform) == "windows"} {
+#      if [catch {load lib_simvascular_tclpython.dll Tclpython} msg] {
+#	return -code error "ERROR: Error loading Tclpython: $msg"
+#      }
+#  }
 			     
 # if { $SV_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SV_VERSION-$SV_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
@@ -476,14 +512,6 @@ if {$tcl_platform(platform) == "windows"} {
 # Launch gui if interactive
 # -------------------------
 
-global SV_USE_PYTHON
-if {[info exists SV_USE_PYTHON] == 0} {
-  set SV_USE_PYTHON "OFF"
-  if [info exists env(SV_USE_PYTHON)] {
-    set SV_USE_PYTHON $env(SV_USE_PYTHON)
-  }
-  puts "Use Python: $SV_USE_PYTHON"
-}
 if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   # tcl 8.4.x no longer exports tkTabToWindow
   if [catch {tk::unsupported::ExposePrivateCommand tkTabToWindow}] {
@@ -591,10 +619,7 @@ if {$argc >= 1} {
 # ------------------
 # Load Python
 # ------------------
-global SV_USE_PYTHON
-if {[info exists SV_USE_PYTHON] == 0} {
-  set SV_USE_PYTHON "OFF"
-}
+
 if {$SV_USE_PYTHON == "ON"} {
   startTclPython
 }

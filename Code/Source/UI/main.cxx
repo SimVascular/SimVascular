@@ -43,10 +43,6 @@
 #undef GetObject
 #endif
 
- extern "C" CV_DLL_EXPORT int SimVascular_Init(Tcl_Interp *interp);
-
- void SimVascularWelcome( Tcl_Interp *interp );
-
 #include "cv_globals.h"
 
 #ifdef WIN32
@@ -87,6 +83,8 @@ errno_t cv_getenv_s(
 #endif
 #endif
 #endif
+
+#include "SimVascular_Init.h"
 
 // ----
 // main
