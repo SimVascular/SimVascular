@@ -57,7 +57,9 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(CXXSRCS:.cxx=.$(OBJECTEXT))) \
 TARGET_EXE_FULL = $(TOP)/Bin/postsolver-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/postsolver.exe
 
-static: directories $(TARGET_EXE_FULL) 
+static: directories $(TARGET_EXE_FULL)
+
+shared: directories $(TARGET_EXE_FULL) 
 
 directories:
 	-mkdir -p $(BUILD_DIR)

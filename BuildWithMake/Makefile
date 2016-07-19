@@ -252,7 +252,7 @@ exec-shared-build:
 	  echo "building execs ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE);fi ) ; done
+	  $(MAKE) shared;fi ) ; done
 
 post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-core-script > sv

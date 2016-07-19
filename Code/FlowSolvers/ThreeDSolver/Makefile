@@ -84,6 +84,9 @@ static:
 	  $(MAKE)) ; done
 
 shared:
+	@for i in ${THREED_EXEC_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE)) ; done
 
 clean:
 	for i in ${THREED_LIB_DIRS}; do ( \
