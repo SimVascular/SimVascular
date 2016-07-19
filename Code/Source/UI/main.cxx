@@ -130,9 +130,15 @@ errno_t cv_getenv_s(
   char rundir[255];
   rundir[0]='\0';
 
+  DWORD dwType3=REG_SZ;
   DWORD dwSize3=255;
   char lszValue3[255];
   lszValue3[0]='\0';
+
+  DWORD dwType4=REG_SZ;
+  DWORD dwSize4=255;
+  char lszValue4[255];
+  lszValue4[0]='\0';
 
   char mykey[1024];
   mykey[0]='\0';
@@ -240,7 +246,7 @@ errno_t cv_getenv_s(
    // the environment variable of the current process. The command
    // processor's environment is not changed.
 
- returnStatus2 = RegQueryValueEx(hKey2, "PSchemaDir", NULL, &dwType2,(LPBYTE)&lszValue3, &dwSize3);
+ returnStatus2 = RegQueryValueEx(hKey2, "PSchemaDir", NULL, &dwType3,(LPBYTE)&lszValue3, &dwSize3);
   //fprintf(stdout,"pschema: %s\n",lszValue3);
 
  if (returnStatus2 != ERROR_SUCCESS) {
@@ -275,9 +281,11 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
 #endif
 
 #ifdef SV_USE_PYTHON
-
-  returnStatus2 = RegQueryValueEx(hKey2, "PythonPackagesDir", NULL, &dwType2,(LPBYTE)&lszValue3, &dwSize3);
-  fprintf(stdout,"PythonPackagesDir: %s\n",lszValue3);
+ 
+  lszValue4[0]='\0';
+  returnStatus2 = RegQueryValueEx(hKey2, "PythonPackagesDir", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
+  //returnStatus2 = RegQueryValueEx(hKey2, "Python", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
+  fprintf(stdout,"PythonPackagesDir: %s\n",lszValue4);
 
   if (returnStatus2 != ERROR_SUCCESS) {
     fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PythonPackagesDir not found!\n\n");
@@ -286,8 +294,8 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
 
   char pythonpath[_MAX_ENV];
   pythonpath[0]='\0';
-  sprintf(pythonpath,"%s",lszValue3);
-  //fprintf(stdout,"%s\n",pythonpath);
+  sprintf(pythonpath,"%s",lszValue4);
+  fprintf(stdout,"%s\n",pythonpath);
   
   _putenv_s( "PYTHONPATH", pythonpath );
 

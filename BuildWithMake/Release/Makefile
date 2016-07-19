@@ -109,7 +109,7 @@ endif
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(SV_USE_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
@@ -117,10 +117,6 @@ endif
 ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	-cp -f $(MESHSIM_SO_PATH)/Sim*.dll package-release-meshsim-and-parasolid
 endif
-	-cp -fR $(TCL_BASE)/lib package-release-meshsim-and-parasolid
-	-cp -fR $(TCL_BASE)/bin package-release-meshsim-and-parasolid
-	-cp -fR $(TCL_BASE)/bin/*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -fR $(TCL_BASE)/lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
@@ -229,6 +225,9 @@ copy-sv-executables:
 ifeq ($(SV_USE_PYTHON),1)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_tclpython*.$(SOEXT)* $(DIST_DIR)
 endif
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
+	-rm -f $(DIST_DIR)/*simvascular_parasolid*.$(SOEXT)*
+	-rm -f $(DIST_DIR)/*simvascular_meshsim*.$(SOEXT)*
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
