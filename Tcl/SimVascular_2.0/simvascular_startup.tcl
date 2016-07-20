@@ -101,35 +101,55 @@ if {[info exists SV_USE_PYTHON] == 0} {
 #  Load SimVascular Modules (static or dynamic)
 #
 
+if {$tcl_platform(platform) == "unix"} {
+    if {$tcl_platform(os) == "Darwin"} {
+      if {$SV_BUILD_TYPE != "CMAKE"} {
+	  set lib_prefix "lib"
+	  set so_postfix ".dylib"
+      } else {
+	  set lib_prefix "lib"
+	  set so_postfix ".so"
+      }
+    }
+}
+
+if {$tcl_platform(platform) == "windows"} {
+      if {$SV_BUILD_TYPE != "CMAKE"} {
+	  set lib_prefix "lib_"
+	  set so_postfix ".dll"
+      } else {
+	  set lib_prefix "lib_"
+	  set so_postfix ".dll"
+      }
+}
+    
 set gSimVascularTclInitLibs [list \
-				 [list Repos lib_simvascular_repository.dll] \
+				 [list Repos ${lib_prefix}simvascular_repository${so_postfix}] \
 				 [list myVtk {}] \
-				 [list Getinterp lib_simvascular_gettclinterp.dll] \
-				 [list Lset lib_simvascular_lset.dll] \
-				 [list Geom lib_simvascular_sysgeom.dll] \
-				 [list Image lib_simvascular_image.dll] \
-				 [list Math lib_simvascular_utils.dll] \
-				 [list Gdscpost lib_simvascular_post.dll] \
-				 [list Solid lib_simvascular_solid.dll] \
-				 [list Polydatasolid lib_simvascular_polydatasolid.dll] \
-				 [list Occtsolid lib_simvascular_opencascade.dll] \
-				 [list Gdscmesh lib_simvascular_mesh.dll] \
-				 [list Mmgmesh lib_simvascular_mmg_mesh.dll] \
-				 [list Tetgenmesh lib_simvascular_tetgen_mesh.dll] \
-				 [list Adapt lib_simvascular_adaptor.dll] \
-				 [list Tetgenadapt lib_simvascular_tet_adaptor.dll] \
+				 [list Getinterp ${lib_prefix}simvascular_gettclinterp${so_postfix}] \
+				 [list Lset ${lib_prefix}simvascular_lset${so_postfix}] \
+				 [list Geom ${lib_prefix}simvascular_sysgeom${so_postfix}] \
+				 [list Image ${lib_prefix}simvascular_image${so_postfix}] \
+				 [list Math ${lib_prefix}simvascular_utils${so_postfix}] \
+				 [list Gdscpost ${lib_prefix}simvascular_post${so_postfix}] \
+				 [list Solid ${lib_prefix}simvascular_solid${so_postfix}] \
+				 [list Polydatasolid ${lib_prefix}simvascular_polydatasolid${so_postfix}] \
+				 [list Occtsolid ${lib_prefix}simvascular_opencascade${so_postfix}] \
+				 [list Gdscmesh ${lib_prefix}simvascular_mesh${so_postfix}] \
+				 [list Mmgmesh ${lib_prefix}simvascular_mmg_mesh${so_postfix}] \
+				 [list Tetgenmesh ${lib_prefix}simvascular_tetgen_mesh${so_postfix}] \
+				 [list Adapt ${lib_prefix}simvascular_adaptor${so_postfix}] \
+				 [list Tetgenadapt ${lib_prefix}simvascular_tet_adaptor${so_postfix}] \
 				 [list Meshsimmesh {}] \
 				 [list Meshsimadapt {}] \
 				 [list Meshsimdiscretesolid {}] \
 				 [list Parasolidsolid {}] \
-				 [list Itklset lib_simvascular_itklset.dll] \
+				 [list Itklset ${lib_prefix}simvascular_itklset${so_postfix}] \
 				 ]
 
 if {$SV_USE_PYTHON == "ON"} {
-    lappend gSimVascularTclInitLibs [list Tclpython lib_simvascular_tclpython.dll]
+    lappend gSimVascularTclInitLibs [list Tclpython ${lib_prefix}simvascular_tclpython${so_postfix}]
 }
-
-puts $gSimVascularTclInitLibs
 
 foreach lib $gSimVascularTclInitLibs {
     if {[lindex $lib 1] == ""} {
@@ -138,38 +158,13 @@ foreach lib $gSimVascularTclInitLibs {
     # try dynamic lib first
     if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
 	# then static lib
-	if [catch {load {} [lindex $lib 0]} msg] {
-	    puts "error ([lindex $lib 0]) $msg"
-	}
+	#if [catch {load {} [lindex $lib 0]} msg] {
+	#    puts "error ([lindex $lib 0]) $msg"
+	#}
     } else {
 	puts "loaded [lindex $lib 0]..."
     }
 }
-
-#  set lib_prefix "Lib/liblib_"
-#  if {$tcl_platform(platform) == "unix"} {
-#    if {$tcl_platform(os) == "Darwin"} {
-#      if {$SV_BUILD_TYPE != "CMAKE"} {
-#	set lib_prefix "lib_"
-#      }
-##      if [catch {load ${lib_prefix}simvascular_tclpython.dylib Tclpython} msg] {
-#	return -code error "ERROR: Error loading Tclpython: $msg"
-#      }
-#    }
-#    if {$tcl_platform(os) == "Linux"} {
-#      if {$SV_BUILD_TYPE != "CMAKE"} {
-#	set lib_prefix "Lib/x64_linux/gcc-gfortran/lib_"
-#      }
-#      if [catch {load lib_simvascular_tclpython.so Tclpython} msg] {
-#	return -code error "ERROR: Error loading Tclpython: $msg"
-#      }
-#    }
-#  }
-#  if {$tcl_platform(platform) == "windows"} {
-#      if [catch {load lib_simvascular_tclpython.dll Tclpython} msg] {
-#	return -code error "ERROR: Error loading Tclpython: $msg"
-#      }
-#  }
 			     
 # if { $SV_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SV_VERSION-$SV_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"

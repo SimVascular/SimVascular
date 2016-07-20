@@ -1,5 +1,5 @@
 
-SET(CXXSRCS main.cxx gdscInit.cxx cv_VTK_init.cxx)
+SET(CXXSRCS main.cxx SimVascular_Init.cxx)
 
 UNSET(OPTLIBS)
 
@@ -12,6 +12,7 @@ if(NOT SV_BUILD_SHARED_LIBS)
                  ${SV_SOURCE_DIR}/Source/Model/SolidModel/cv_solid_init.cxx
                  ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetCore_init.cxx
                  ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetV_init.cxx
+		 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_Lset_init.cxx
                  ${SV_SOURCE_DIR}/Source/Common/Utils/cv_get_tcl_interp_init.cxx
                  ${SV_SOURCE_DIR}/Source/Mesh/MeshObject/cv_mesh_init.cxx
                  ${SV_SOURCE_DIR}/Source/Common/Utils/cv_math_init.cxx
@@ -77,10 +78,11 @@ if(SV_USE_ITK)
 	include_directories(${SV_SOURCE_DIR}/Source/Segmentation/ITK/Util)
 	SET(CXXSRCS ${CXXSRCS} ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset2d_init.cxx
 			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset3d_init.cxx
-			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/Util/cv_ITKUtils_init.cxx)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_cvitk2d lib_simvascular_cvitk3d lib_simvascular_itkutils)
+			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKUtils_init.cxx
+			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset_init.cxx)
+	SET(OPTLIBS ${OPTLIBS} lib_simvascular_itklset)
   endif()
-
+	
 if(SV_USE_TET_ADAPTOR)
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx
@@ -113,6 +115,11 @@ target_link_libraries(${SV_EXE}
 			lib_simvascular_solid lib_simvascular_mesh
 			lib_simvascular_sysgeom lib_simvascular_utils
 			lib_simvascular_globals lib_simvascular_polydatasolid)
+
+if(SV_USE_PYTHON)
+target_link_libraries(${SV_EXE}
+                        lib_simvascular_tclpython)
+endif()
 
 target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
