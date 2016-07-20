@@ -322,7 +322,7 @@ endif
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.16"
-SV_FULL_VER_NO = "2.16.0703"
+SV_FULL_VER_NO = "2.16.0719"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
