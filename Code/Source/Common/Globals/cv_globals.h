@@ -39,7 +39,6 @@
 #include "tcl.h"
 
 extern SV_EXPORT_GLOBALS cvRepository *gRepository;
-extern SV_EXPORT_GLOBALS int gDummyTest_;
 
 extern SV_EXPORT_GLOBALS Tcl_HashTable gLsetVTable;
 extern SV_EXPORT_GLOBALS Tcl_HashTable gLsetCoreTable;

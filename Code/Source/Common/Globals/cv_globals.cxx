@@ -38,7 +38,6 @@
 #include "cv_misc_utils.h"
 
 SV_DLL_EXPORT cvRepository *gRepository = NULL;
-SV_DLL_EXPORT int gDummyTest_ = 0;
 SV_DLL_EXPORT Tcl_HashTable gLsetVTable;
 SV_DLL_EXPORT Tcl_HashTable gLsetCoreTable;
 SV_DLL_EXPORT char projectionSetBase_[CV_STRLEN];

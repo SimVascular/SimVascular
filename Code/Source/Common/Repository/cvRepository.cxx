@@ -154,9 +154,6 @@ int cvRepository::Exists( char *name )
 {
   Tcl_HashEntry *entryPtr;
 
-  fprintf(stdout,"\n\n\ngDummyTest_ (%i)  name (%s)\n\n\n",gDummyTest_,name);
-  fflush(stdout);
-
   entryPtr = Tcl_FindHashEntry( &table_, name );
   if ( entryPtr == NULL ) {
     return 0;
