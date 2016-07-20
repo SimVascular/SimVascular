@@ -137,19 +137,32 @@ proc guiSV_model_create_model_opencascade {} {
         set idx [lsearch -exact $duplist $i]
         set duplist [lreplace $duplist $idx $idx]
      }
-     set msg "Duplicate faces found!\n\n"
+     set msg "Duplicate faces found, automatically renaming!\n\n"
      set duplistids {}
+     set numdupslist {}
      foreach dup $duplist {
-       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
-       lappend duplistids $id
+       set alldups [lsearch -exact -all $pretty_names $dup]
+       set numdups [expr [llength $alldups]-1]
+       lappend numdupslist $numdups
+       for {set i 0} {$i < $numdups} {incr i} {
+         set id [lindex $all_ids [lindex $alldups [expr $i+1]]]
+         lappend duplistids $id
+       }
      }
+     set dupnum 0
      for {set i 0} {$i < [llength $duplist]} {incr i} {
        set dup [lindex $duplist $i]
-       set dupid [lindex $duplistids $i]
-       set newname [string trim $dup]_2
-       set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-       set gOCCTFaceNames($dupid) $newname
-       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       set name_num 2
+       set numdups [lindex $numdupslist $i]
+       for {set j $dupnum} {$j < [expr $numdups+$dupnum]} {incr j} {
+         set dupid [lindex $duplistids $j]
+         set newname ${dup}_$name_num
+         incr name_num
+         set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
+         set gOCCTFaceNames($dupid) $newname
+         $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       }
+       set dupnum [expr $dupnum + $numdups]
      }
     }
 
@@ -311,19 +324,32 @@ proc opencascade_loft_with_python {modelname cap resample_num} {
         set idx [lsearch -exact $duplist $i]
         set duplist [lreplace $duplist $idx $idx]
      }
-     set msg "Duplicate faces found!\n\n"
+     set msg "Duplicate faces found, automatically renaming!\n\n"
      set duplistids {}
+     set numdupslist {}
      foreach dup $duplist {
-       set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
-       lappend duplistids $id
+       set alldups [lsearch -exact -all $pretty_names $dup]
+       set numdups [expr [llength $alldups]-1]
+       lappend numdupslist $numdups
+       for {set i 0} {$i < $numdups} {incr i} {
+         set id [lindex $all_ids [lindex $alldups [expr $i+1]]]
+         lappend duplistids $id
+       }
      }
+     set dupnum 0
      for {set i 0} {$i < [llength $duplist]} {incr i} {
        set dup [lindex $duplist $i]
-       set dupid [lindex $duplistids $i]
-       set newname [string trim $dup]_2
-       set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-       set gOCCTFaceNames($dupid) $newname
-       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       set name_num 2
+       set numdups [lindex $numdupslist $i]
+       for {set j $dupnum} {$j < [expr $numdups+$dupnum]} {incr j} {
+         set dupid [lindex $duplistids $j]
+         set newname ${dup}_$name_num
+         incr name_num
+         set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
+         set gOCCTFaceNames($dupid) $newname
+         $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       }
+       set dupnum [expr $dupnum + $numdups]
      }
     }
 
@@ -780,26 +806,39 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
   }
   set isdups 0
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
-    set isdups 1
-    set duplist [lsort -dictionary $pretty_names]
-    foreach i [lsort -unique $pretty_names] {
+   set isdups 1
+   set duplist [lsort -dictionary $pretty_names]
+   foreach i [lsort -unique $pretty_names] {
       set idx [lsearch -exact $duplist $i]
       set duplist [lreplace $duplist $idx $idx]
-    }
-    set msg "Duplicate faces found!\n\n"
-    set duplistids {}
-    foreach dup $duplist {
-      set id [lindex $all_ids [lindex [lsearch -exact -all $pretty_names $dup] end]]
-      lappend duplistids $id
-    }
-    for {set i 0} {$i < [llength $duplist]} {incr i} {
-      set dup [lindex $duplist $i]
-      set dupid [lindex $duplistids $i]
-      set newname [string trim $dup]_2
-      set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-      set gOCCTFaceNames($dupid) $newname
-      $model SetFaceAttr -attr gdscName -faceId $dupid -value $newname
-    }
+   }
+   set msg "Duplicate faces found, automatically renaming!\n\n"
+   set duplistids {}
+   set numdupslist {}
+   foreach dup $duplist {
+     set alldups [lsearch -exact -all $pretty_names $dup]
+     set numdups [expr [llength $alldups]-1]
+     lappend numdupslist $numdups
+     for {set i 0} {$i < $numdups} {incr i} {
+       set id [lindex $all_ids [lindex $alldups [expr $i+1]]]
+       lappend duplistids $id
+     }
+   }
+   set dupnum 0
+   for {set i 0} {$i < [llength $duplist]} {incr i} {
+     set dup [lindex $duplist $i]
+     set name_num 2
+     set numdups [lindex $numdupslist $i]
+     for {set j $dupnum} {$j < [expr $numdups+$dupnum]} {incr j} {
+       set dupid [lindex $duplistids $j]
+       set newname ${dup}_$name_num
+       incr name_num
+       set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
+       set gOCCTFaceNames($dupid) $newname
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+     }
+     set dupnum [expr $dupnum + $numdups]
+   }
   }
   guiSV_model_add_faces_to_tree $kernel $model
   #guiSV_model_display_only_given_model $model 1
