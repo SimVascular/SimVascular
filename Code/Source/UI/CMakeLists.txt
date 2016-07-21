@@ -3,7 +3,7 @@ SET(CXXSRCS main.cxx SimVascular_Init.cxx)
 
 UNSET(OPTLIBS)
 
-if(NOT SV_BUILD_SHARED_LIBS)
+if(NOT BUILD_SHARED_LIBS)
 	SET(CXXSRCS ${CXXSRCS}
 		 ${SV_SOURCE_DIR}/Source/Common/Geometry/cv_geom_init.cxx
                  ${SV_SOURCE_DIR}/Source/PostProcessing/cv_post_init.cxx
@@ -82,7 +82,7 @@ if(SV_USE_ITK)
 			       ${SV_SOURCE_DIR}/Source/Segmentation/ITK/cv_ITKLset_init.cxx)
 	SET(OPTLIBS ${OPTLIBS} lib_simvascular_itklset)
   endif()
-	
+
 if(SV_USE_TET_ADAPTOR)
 	SET(CXXSRCS ${CXXSRCS}
 	${SV_SOURCE_DIR}/Source/Mesh/AdaptObject/cv_adapt_init.cxx

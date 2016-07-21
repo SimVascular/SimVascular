@@ -38,10 +38,8 @@ SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx cv_adapt_init.cxx eispack.cxx)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
   add_library(${lib} SHARED ${CXXSRCS})
-elseif(SV_BUILD_SHARED_LIBS)
-  add_library(${lib} SHARED ${CXXSRCS})
 else()
-  add_library(${lib} STATIC ${CXXSRCS})
+  add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 endif()
 
 target_link_libraries(${lib}

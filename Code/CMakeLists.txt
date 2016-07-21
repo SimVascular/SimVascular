@@ -401,7 +401,7 @@ if(SV_USE_PARASOLID)
 			set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PARASOLID")
 			set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
 			option(SV_USE_PARASOLID_SHARED_LIBRARIES "Build Parasolid as shared libraries" OFF)
-			if (SV_BUILD_SHARED_LIBS)
+			if (BUILD_SHARED_LIBS)
 				set(SV_USE_PARASOLID_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
 			endif()
 			mark_as_superbuild(SV_USE_PARASOLID_SHARED_LIBRARIES)
@@ -621,7 +621,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable Testing
-if(SV_BUILD_TESTING)
+if(BUILD_TESTING)
 	enable_testing()
 	add_subdirectory(Testing)
 endif()
