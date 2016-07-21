@@ -103,26 +103,19 @@ if {[info exists SV_USE_PYTHON] == 0} {
 
 if {$tcl_platform(platform) == "unix"} {
     if {$tcl_platform(os) == "Darwin"} {
-      if {$SV_BUILD_TYPE != "CMAKE"} {
-	  set lib_prefix "lib"
-	  set so_postfix ".dylib"
-      } else {
-	  set lib_prefix "lib"
-	  set so_postfix ".so"
-      }
+      set lib_prefix "lib"
+      set so_postfix ".dylib"
+    } else {
+      set lib_prefix "lib"
+      set so_postfix ".so"
     }
 }
 
 if {$tcl_platform(platform) == "windows"} {
-      if {$SV_BUILD_TYPE != "CMAKE"} {
-	  set lib_prefix "lib_"
-	  set so_postfix ".dll"
-      } else {
-	  set lib_prefix "lib_"
-	  set so_postfix ".dll"
-      }
+  set lib_prefix "lib_"
+  set so_postfix ".dll"
 }
-    
+
 set gSimVascularTclInitLibs [list \
 				 [list Repos ${lib_prefix}simvascular_repository${so_postfix}] \
 				 [list myVtk {}] \
@@ -165,7 +158,7 @@ foreach lib $gSimVascularTclInitLibs {
 	puts "loaded [lindex $lib 0]..."
     }
 }
-			     
+
 # if { $SV_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SV_VERSION-$SV_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
 # } else {
