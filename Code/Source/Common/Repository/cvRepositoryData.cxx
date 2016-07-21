@@ -33,10 +33,10 @@
 
 #include "SimVascular.h" 
 
-#include "cvRepositoryData.h"
 #include "cvIOstream.h"
 #include <string.h>
 
+#include "cvRepositoryData.h"
 
 // -------------------------
 // RepositoryDataT_StrToEnum

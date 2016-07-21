@@ -31,7 +31,6 @@
 
 #include "SimVascular.h" 
 
-#include "cv_arg.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -39,6 +38,7 @@
 
 #define MAX_ARGVAL_PAIRS 100
 
+#include "cv_arg.h"
 
 static int ARG_FindArgvIx( char *name, int argc, CONST84 char *argv[] );
 

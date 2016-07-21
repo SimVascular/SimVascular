@@ -61,7 +61,7 @@ typedef struct {
   StateT state_;
 } TableStruct;
 
-int TableStructCompareFn( TableStruct *a, TableStruct *b );
+int SV_EXPORT_LSET TableStructCompareFn( TableStruct *a, TableStruct *b );
 
 
 // This type indicates which method to use for band construction.
@@ -79,7 +79,7 @@ typedef enum {
 } cvLevelSetSparseGridBandT;
 
 
-class cvLevelSetSparseGrid : public cvLevelSetStructuredGrid {
+class SV_EXPORT_LSET cvLevelSetSparseGrid : public cvLevelSetStructuredGrid {
 
 public:
 

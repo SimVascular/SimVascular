@@ -39,17 +39,17 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Gdscmesh_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_MESH int Gdscmesh_Init( Tcl_Interp *interp );
 
 //Need to declare these functions in header, so that they can be called outside
 //in a separate object
-int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
+SV_EXPORT_MESH int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] );
 
-void DeletegdscMesh( ClientData clientData );
+SV_EXPORT_MESH void DeletegdscMesh( ClientData clientData );
 
 //Fake deletion function for an internal meshobject within AdaptObject. Meshobject is unregistered in destruction of AdaptObject.
-void fakeDeletegdscMesh( ClientData clientData );
+SV_EXPORT_MESH void fakeDeletegdscMesh( ClientData clientData );
 
 #endif // __CVMESH_INIT_H
 

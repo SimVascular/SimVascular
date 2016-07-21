@@ -45,6 +45,7 @@
 #ifndef __CV_POLYDATASOLID_UTILS_H
 #define __CV_POLYDATASOLID_UTILS_H
 
+#include "SimVascular.h"
 
 #include "cvPolyData.h"
 #include "cvLispList.h"
@@ -54,31 +55,31 @@
 /* Kernel */
 /* ------ */
 
-int PlyDtaUtils_Init();
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_Init();
 
 /* -------- */
 /* Get Info */
 /* -------- */
-int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces);
 
-int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions);
 
-int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *facepd);
 
 /* -------- */
 /* File I/O */
 /* -------- */
-int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result);
 
-int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename );
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename );
 
 /* -------- */
 /* PolyData Change and Check Operations */
 /* -------- */
-int PlyDtaUtils_CombineFaces( vtkPolyData *geom, int *targetface, int *loseface);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_CombineFaces( vtkPolyData *geom, int *targetface, int *loseface);
 
-int PlyDtaUtils_DeleteCells( vtkPolyData *geom, int *numcells, int *cells);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteCells( vtkPolyData *geom, int *numcells, int *cells);
 
-int PlyDtaUtils_DeleteRegion( vtkPolyData *geom, int *regionid);
+SV_EXPORT_POLYDATASOLID int PlyDtaUtils_DeleteRegion( vtkPolyData *geom, int *regionid);
 
-#endif // __PARASOLID_MODEL_H
+#endif // __POLYDATASOLID_MODEL_H

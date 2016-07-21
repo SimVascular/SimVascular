@@ -45,7 +45,7 @@
 
 #include "cvConvertVisFiles.h"
 #include "cvCalculateWallShearStress.h"
-#include "cvCalculateTKE.cxx"
+#include "cvCalculateTKE.h"
 
 // The following is needed for Windows
 #ifdef GetObject

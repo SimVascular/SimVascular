@@ -45,6 +45,8 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(SOLVERIO_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_ADAPTOR_COMPILE
+
 ifeq ($(SV_USE_OPENCASCADE),1)
    CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
@@ -70,11 +72,18 @@ HDRS	= cvAdaptObject.h cv_adapt_utils.h eispack.h
 
 CXXSRCS	= cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx
 
-DLLHDRS = $(HDRS) cv_adapt_init.h
+DLLHDRS = cv_adapt_init.h
 
-DLLSRCS = $(CXXSRCS) cv_adapt_init.cxx
+DLLSRCS = cv_adapt_init.cxx
 
 TARGET_LIB_NAME = simvascular_adaptor
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+          $(ZLIB_LIBS)
 
 include $(TOP)/targetlib.mk
 

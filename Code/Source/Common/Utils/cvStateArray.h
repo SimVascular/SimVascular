@@ -53,8 +53,9 @@ typedef char StateT;
 #define STATE_NODE_SWEPT    0x20
 #define STATE_NODE_COVERED  0x40
 
+#include "SimVascular.h"
 
-class cvStateArray {
+class SV_EXPORT_UTILS cvStateArray {
 
 public:
   cvStateArray( int size );

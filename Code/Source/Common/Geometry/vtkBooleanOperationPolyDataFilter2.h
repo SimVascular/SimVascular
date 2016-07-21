@@ -50,7 +50,7 @@
 
 class vtkIdList;
 
-class CV_DLL_EXPORT vtkBooleanOperationPolyDataFilter2 : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkBooleanOperationPolyDataFilter2 : public vtkPolyDataAlgorithm
 {
 public:
   // Description:

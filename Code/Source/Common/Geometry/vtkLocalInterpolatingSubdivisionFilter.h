@@ -53,7 +53,7 @@ class vtkPointData;
 class vtkPoints;
 class vtkPolyData;
 
-class CV_DLL_EXPORT vtkLocalInterpolatingSubdivisionFilter : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkLocalInterpolatingSubdivisionFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalInterpolatingSubdivisionFilter,vtkPolyDataAlgorithm);

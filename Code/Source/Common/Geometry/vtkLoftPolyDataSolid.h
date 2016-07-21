@@ -46,7 +46,7 @@
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
-class CV_DLL_EXPORT vtkLoftPolyDataSolid : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkLoftPolyDataSolid : public vtkPolyDataAlgorithm
 {
 public:
   static vtkLoftPolyDataSolid *New();

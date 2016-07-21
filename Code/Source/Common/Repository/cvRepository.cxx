@@ -33,8 +33,10 @@
 
 #include "SimVascular.h" 
 
-#include "cvRepository.h"
 #include "cvIOstream.h"
+
+#include "cv_globals.h"
+#include "cvRepository.h"
 
 // ----------
 // cvRepository

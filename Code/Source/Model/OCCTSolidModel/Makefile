@@ -31,7 +31,9 @@ TOP=../../../../BuildWithMake
 include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-	   $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS)
+	   $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(PYTHON_INCDIR)
+
+CXXFLAGS += -DSV_EXPORT_OPENCASCADE_COMPILE
 
 HDRS	= cvOCCTSolidModel.h cv_occtsolid_utils.h
 CXXSRCS	= cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx
@@ -40,5 +42,11 @@ DLLHDRS = cv_occt_init.h
 DLLSRCS = cv_occt_init.cxx
 
 TARGET_LIB_NAME = simvascular_opencascade
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(VMTK_LIBS) $(OPENCASCADE_LIBS)
 
 include $(TOP)/targetlib.mk

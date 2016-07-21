@@ -30,24 +30,30 @@ TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
+
+CXXFLAGS += -DSV_EXPORT_POLYDATASOLID_COMPILE
 
 ifeq ($(SV_USE_PYTHON),1)
    CXXFLAGS += $(PYTHON_INCDIR)
 endif
 
 HDRS	= cvPolyDataSolid.h \
-          cv_polydatasolid_init.h \
           cv_polydatasolid_utils.h \
           vtkGetBoundaryFaces.h
 
 CXXSRCS	= cvPolyDataSolid.cxx \
-          cv_polydatasolid_init.cxx \
           cv_polydatasolid_utils.cxx \
           vtkGetBoundaryFaces.cxx
 
 DLLHDRS = cv_polydatasolid_init.h
-DLLSRCS = cv_polydatasolid_utils.cxx
+DLLSRCS = cv_polydatasolid_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+	  $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(VMTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_polydatasolid
 

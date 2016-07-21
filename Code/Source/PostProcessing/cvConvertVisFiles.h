@@ -65,7 +65,7 @@
 // cvConvertVisFiles
 // -------------------
 
-class cvConvertVisFiles {
+class SV_EXPORT_POST cvConvertVisFiles {
 
   public:
 

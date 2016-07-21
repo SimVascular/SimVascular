@@ -59,7 +59,7 @@ extern "C" {
 			int gradeMesh);
 }
 
-class CV_DLL_EXPORT cvMeshSimDiscreteSolidModel : public cvSolidModel {
+class SV_EXPORT_DISCRETE cvMeshSimDiscreteSolidModel : public cvSolidModel {
 
 public:
   cvMeshSimDiscreteSolidModel();                        // default constructor
@@ -167,4 +167,4 @@ private:
 };
 
 
-#endif // __GDSCDISCRETE_MODEL_H
+#endif // __CVDISCRETE_MODEL_H

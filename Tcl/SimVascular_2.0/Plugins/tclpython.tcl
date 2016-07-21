@@ -4,30 +4,6 @@ proc startTclPython {} {
   global SV_BUILD_TYPE
   global tcl_platform
 
-  set lib_prefix "Lib/liblib_"
-  if {$tcl_platform(platform) == "unix"} {
-    if {$tcl_platform(os) == "Darwin"} {
-      if {$SV_BUILD_TYPE != "CMAKE"} {
-	set lib_prefix "lib_"
-      }
-      if [catch {load ${lib_prefix}simvascular_tclpython.dylib Tclpython} msg] {
-	return -code error "ERROR: Error loading Tclpython: $msg"
-      }
-    }
-    if {$tcl_platform(os) == "Linux"} {
-      if {$SV_BUILD_TYPE != "CMAKE"} {
-	set lib_prefix "Lib/x64_linux/gcc-gfortran/lib_"
-      }
-      if [catch {load lib_simvascular_tclpython.so Tclpython} msg] {
-	return -code error "ERROR: Error loading Tclpython: $msg"
-      }
-    }
-  }
-  if {$tcl_platform(platform) == "windows"} {
-      if [catch {load lib_simvascular_tclpython.dll Tclpython} msg] {
-	return -code error "ERROR: Error loading Tclpython: $msg"
-      }
-  }
   global gPythonInterp
   set gPythonInterp [::python::interp new]
   #$gPythonInterp exec {print("Python Available")}

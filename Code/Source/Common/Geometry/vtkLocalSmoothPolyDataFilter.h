@@ -112,7 +112,7 @@
 
 class vtkLocalSmoothPoints;
 
-class CV_DLL_EXPORT vtkLocalSmoothPolyDataFilter : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkLocalSmoothPolyDataFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalSmoothPolyDataFilter,vtkPolyDataAlgorithm);

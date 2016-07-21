@@ -28,7 +28,7 @@
 class vtkFloatArray;
 class vtkIdList;
 
-class CV_DLL_EXPORT vtkSurfaceVectors : public vtkDataSetAlgorithm
+class SV_EXPORT_SYSGEOM vtkSurfaceVectors : public vtkDataSetAlgorithm
 {
 public:
   vtkTypeMacro(vtkSurfaceVectors,vtkDataSetAlgorithm);

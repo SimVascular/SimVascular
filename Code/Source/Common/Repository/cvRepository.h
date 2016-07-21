@@ -36,7 +36,6 @@
 
 #include "SimVascular.h"
 #include "tcl.h"
-#include "cvRepositoryData.h"
 
 // The following is needed for Windows
 #ifdef GetObject
@@ -77,7 +76,9 @@
 // prior to either a more recent Register or UnRegister), then
 // GetNextName returns NULL.
 
-class cvRepository {
+#include "cvRepositoryData.h"
+
+class SV_EXPORT_REPOSITORY cvRepository {
 
 public:
   cvRepository();

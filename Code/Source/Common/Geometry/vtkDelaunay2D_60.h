@@ -134,7 +134,7 @@ class vtkPointSet;
 #define VTK_SET_TRANSFORM_PLANE 1
 #define VTK_BEST_FITTING_PLANE 2
 
-class CV_DLL_EXPORT vtkDelaunay2D_60 : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkDelaunay2D_60 : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkDelaunay2D_60,vtkPolyDataAlgorithm);

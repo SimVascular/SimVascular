@@ -54,7 +54,7 @@
 
 #include "simvascular_tetgen.h"
 
-class cvTetGenMeshObject : public cvMeshObject {
+class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
 
   typedef struct TGoptions {
     int surfacemeshflag;

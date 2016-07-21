@@ -43,10 +43,6 @@
 #undef GetObject
 #endif
 
- extern "C" CV_DLL_EXPORT int SimVascular_Init(Tcl_Interp *interp);
-
- void SimVascularWelcome( Tcl_Interp *interp );
-
 #include "cv_globals.h"
 
 #ifdef WIN32
@@ -87,6 +83,8 @@ errno_t cv_getenv_s(
 #endif
 #endif
 #endif
+
+#include "SimVascular_Init.h"
 
 // ----
 // main
@@ -129,12 +127,18 @@ errno_t cv_getenv_s(
   LONG returnStatus2;
   DWORD dwType2=REG_SZ;
   DWORD dwSize2=255;
-  char lszValue2[255];
-  lszValue2[0]='\0';
+  char rundir[255];
+  rundir[0]='\0';
 
+  DWORD dwType3=REG_SZ;
   DWORD dwSize3=255;
   char lszValue3[255];
   lszValue3[0]='\0';
+
+  DWORD dwType4=REG_SZ;
+  DWORD dwSize4=255;
+  char lszValue4[255];
+  lszValue4[0]='\0';
 
   char mykey[1024];
   mykey[0]='\0';
@@ -156,7 +160,7 @@ errno_t cv_getenv_s(
     exit(-1);
   }
 
-  returnStatus2 = RegQueryValueEx(hKey2, "RunDir", NULL, &dwType2,(LPBYTE)&lszValue2, &dwSize2);
+  returnStatus2 = RegQueryValueEx(hKey2, "RunDir", NULL, &dwType2,(LPBYTE)&rundir, &dwSize2);
   //RegCloseKey(hKey2);
 
   if (returnStatus2 != ERROR_SUCCESS) {
@@ -164,16 +168,60 @@ errno_t cv_getenv_s(
     exit(-1);
   }
 
-  //printf("Value Read is %s\n", lszValue2);
-  int envi = 0;
-  for (envi = 0; envi < strlen(lszValue2);envi++) {
-    //if (lszValue2[envi]=='\\') lszValue2[envi]='/';
-  }
+  //printf("Value Read is %s\n", rundir);
+ 
+  // set the environment variables using the registry
+  char oldpath[_MAX_ENV];
+  char newpath[_MAX_ENV];
+  size_t requiredSize;
 
+   //
+   //  Add to PATH
+   //
+
+  oldpath[0]='\0';
+  getenv_s( &requiredSize, NULL, 0, "PATH");
+  if (requiredSize >= _MAX_ENV) {
+    fprintf(stderr,"FATAL ERROR:  path to long!\n");
+    exit(-1);
+  }
+  getenv_s( &requiredSize, oldpath, requiredSize, "PATH" );
+
+  // prepend path with location of our shared libs
+  
+  int newpathlength = 0;
+  newpath[0]='\0';
+
+  for (newpathlength = 0; newpathlength < strlen(rundir);newpathlength++) {
+    newpath[newpathlength]=rundir[newpathlength];
+    if (newpathlength == _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  path to long!\n");
+      exit(-1);
+    }
+  }
+  newpath[newpathlength++]=';';
+  
+  // now add original path
+  
+  for (int i = 0; i < strlen(oldpath);i++) {
+    newpath[newpathlength++]=oldpath[i];
+    if (newpathlength == _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  path to long!\n");
+      exit(-1);
+    }
+  }
+  newpath[newpathlength]='\0';
+
+  _putenv_s( "PATH", newpath );
+ 
+  //fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
+  //fprintf(stdout,"RUNDIR: %s\n",rundir);
+  //fprintf(stdout,"NEW PATH: %s\n",newpath);
+  //fprintf(stdout,"length of path: %i\n",newpathlength);
+  
    // set the environment variables using the registry
   char envvar[_MAX_ENV];
   char newvar[_MAX_ENV];
-  size_t requiredSize;
 
 #ifdef SV_USE_PARASOLID
    //
@@ -198,7 +246,7 @@ errno_t cv_getenv_s(
    // the environment variable of the current process. The command
    // processor's environment is not changed.
 
- returnStatus2 = RegQueryValueEx(hKey2, "PSchemaDir", NULL, &dwType2,(LPBYTE)&lszValue3, &dwSize3);
+ returnStatus2 = RegQueryValueEx(hKey2, "PSchemaDir", NULL, &dwType3,(LPBYTE)&lszValue3, &dwSize3);
   //fprintf(stdout,"pschema: %s\n",lszValue3);
 
  if (returnStatus2 != ERROR_SUCCESS) {
@@ -231,8 +279,31 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
    //if( envvar != NULL )
    //   printf( "New P_SCHEMA variable is: %s\n", envvar );
 #endif
+
+#ifdef SV_USE_PYTHON
+ 
+  lszValue4[0]='\0';
+  returnStatus2 = RegQueryValueEx(hKey2, "PythonPackagesDir", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
+  //returnStatus2 = RegQueryValueEx(hKey2, "Python", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
+  fprintf(stdout,"PythonPackagesDir: %s\n",lszValue4);
+
+  if (returnStatus2 != ERROR_SUCCESS) {
+    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PythonPackagesDir not found!\n\n");
+    exit(-1);
+  }
+
+  char pythonpath[_MAX_ENV];
+  pythonpath[0]='\0';
+  sprintf(pythonpath,"%s",lszValue4);
+  fprintf(stdout,"%s\n",pythonpath);
+  
+  _putenv_s( "PYTHONPATH", pythonpath );
+
+#endif
+
 RegCloseKey(hKey2);
 #endif
+  
 #endif
 
 if (gSimVascularBatchMode == 0) {

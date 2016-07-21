@@ -36,6 +36,7 @@
 #include "cvStrPts.h"
 #include "cv_misc_utils.h"
 
+#include "cvDataSet.h"
 
 // ------
 // cvStrPts

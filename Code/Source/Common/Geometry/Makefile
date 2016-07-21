@@ -44,13 +44,14 @@ include $(TOP)/include.mk
 # Compiler flags
 # --------------
 
-CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
-	   $(SHAPES_INCDIR)
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VMTK_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
+	   $(PYTHON_INCDIR)
 
 ifeq ($(SV_USE_OPENCASCADE),1)
    CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
 
+CXXFLAGS += -DSV_EXPORT_SYSGEOM_COMPILE
 
 HDRS	= cv_sys_geom.h cv_ggems.h \
 	cv_spline.h cv_integrate_surface.h \
@@ -93,6 +94,11 @@ CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
 DLLHDRS = cv_geom_init.h
 
 DLLSRCS = cv_geom_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+	  $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(VMTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_sysgeom
 

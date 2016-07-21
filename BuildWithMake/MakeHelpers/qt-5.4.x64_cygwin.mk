@@ -1,5 +1,5 @@
 ifeq ($(CLUSTER), x64_cygwin)
-    QT_TOP_DIR	= C:/OpenSource/Qt/5.4/msvc2013_64_opengl
+    QT_TOP_DIR	= C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl
     QT_DEFS = -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DNDEBUG -DQT_NO_THREAD
     QT_LIBDIRS = $(QT_TOP_DIR)/lib
     QT_BIN_LIBS = $(QT_TOP_DIR)/bin

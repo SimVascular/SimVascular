@@ -32,9 +32,11 @@
 #ifndef SVMATH_H_
 #define SVMATH_H_
 
+#include "SimVascular.h"
+
 class SparseMatrix;
 
-class svMath {
+class SV_EXPORT_SYSGEOM svMath {
  public:
   static void conjugate_gradient(
       const SparseMatrix &a, const double *b, int num_iterations, double *x);

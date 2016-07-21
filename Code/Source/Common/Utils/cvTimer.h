@@ -32,11 +32,12 @@
 #ifndef SU_Timer_h
 #define SU_Timer_h
 
+#include "SimVascular.h"
 
 // This hack is present because Sun CC (SC1.0) does not fully implement
 // nested classes.
 
-class cvTimeInBaseTimer {
+class SV_EXPORT_UTILS cvTimeInBaseTimer {
 public:
     inline cvTimeInBaseTimer();
     inline double operator -( const cvTimeInBaseTimer& ) const;
@@ -67,7 +68,7 @@ inline int cvTimeInBaseTimer::operator ==( const cvTimeInBaseTimer& t ) const
 
 
 
-class cvBaseTimer {
+class SV_EXPORT_UTILS cvBaseTimer {
 public:
     double seconds() const;
     double granularity();
@@ -84,7 +85,7 @@ protected:
 };
 
 
-class cvCPUTimer : public cvBaseTimer {
+class SV_EXPORT_UTILS cvCPUTimer : public cvBaseTimer {
 public:
     cvCPUTimer();
 
@@ -97,7 +98,7 @@ private:
 };
 
 
-class cvWallClockTimer : public cvBaseTimer {
+class SV_EXPORT_UTILS cvWallClockTimer : public cvBaseTimer {
 public:
     cvWallClockTimer();
 

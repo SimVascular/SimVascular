@@ -39,11 +39,11 @@
 typedef enum { VED_Default_K, VED_Mean_K, VED_Gaussian_K,
 	       VED_PrincipleK1_K, VED_PrincipleK2_K,
 	       VED_Invalid_K } cvLevelSetVelocityExponentialDecay3DKT;
-cvLevelSetVelocityExponentialDecay3DKT DKT_StrToEnum( char *name );
-char *DKT_EnumToStr( cvLevelSetVelocityExponentialDecay3DKT t );
 
+SV_EXPORT_LSET cvLevelSetVelocityExponentialDecay3DKT DKT_StrToEnum( char *name );
+SV_EXPORT_LSET char *DKT_EnumToStr( cvLevelSetVelocityExponentialDecay3DKT t );
 
-class cvLevelSetVelocityExponentialDecay : public cvLevelSetVelocityImage {
+class SV_EXPORT_LSET cvLevelSetVelocityExponentialDecay : public cvLevelSetVelocityImage {
 
 public:
   cvLevelSetVelocityExponentialDecay();

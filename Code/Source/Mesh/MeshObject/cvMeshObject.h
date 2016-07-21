@@ -66,7 +66,7 @@
 // *pointers* or *references* to the ABC.  See Meyers' Effective C++,
 // Item 34.
 
-class cvMeshObject : public cvRepositoryData {
+class SV_EXPORT_MESH cvMeshObject : public cvRepositoryData {
 
 public:
   enum KernelType {

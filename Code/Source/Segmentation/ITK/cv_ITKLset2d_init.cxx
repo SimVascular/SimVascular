@@ -46,7 +46,7 @@
 #include "cv_misc_utils.h"
 #include "cv_arg.h"
 
-#include "Util/cvITKUtils.h"
+#include "cvITKUtils.h"
 
 #include "cv_ITKLset2d_init.h"
 

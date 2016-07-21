@@ -88,6 +88,84 @@ if {[info exists SV_BUILD_TYPE] == 0} {
   set SV_BUILD_TYPE "MAKE"
 }
 
+global SV_USE_PYTHON
+if {[info exists SV_USE_PYTHON] == 0} {
+  set SV_USE_PYTHON "OFF"
+  if [info exists env(SV_USE_PYTHON)] {
+    set SV_USE_PYTHON $env(SV_USE_PYTHON)
+  }
+  puts "Use Python: $SV_USE_PYTHON"
+}
+
+#
+#  Load SimVascular Modules (static or dynamic)
+#
+
+if {$tcl_platform(platform) == "unix"} {
+    if {$tcl_platform(os) == "Darwin"} {
+      if {$SV_BUILD_TYPE != "CMAKE"} {
+	  set lib_prefix "lib"
+	  set so_postfix ".dylib"
+      } else {
+	  set lib_prefix "lib"
+	  set so_postfix ".so"
+      }
+    }
+}
+
+if {$tcl_platform(platform) == "windows"} {
+      if {$SV_BUILD_TYPE != "CMAKE"} {
+	  set lib_prefix "lib_"
+	  set so_postfix ".dll"
+      } else {
+	  set lib_prefix "lib_"
+	  set so_postfix ".dll"
+      }
+}
+    
+set gSimVascularTclInitLibs [list \
+				 [list Repos ${lib_prefix}simvascular_repository${so_postfix}] \
+				 [list myVtk {}] \
+				 [list Getinterp ${lib_prefix}simvascular_gettclinterp${so_postfix}] \
+				 [list Lset ${lib_prefix}simvascular_lset${so_postfix}] \
+				 [list Geom ${lib_prefix}simvascular_sysgeom${so_postfix}] \
+				 [list Image ${lib_prefix}simvascular_image${so_postfix}] \
+				 [list Math ${lib_prefix}simvascular_utils${so_postfix}] \
+				 [list Gdscpost ${lib_prefix}simvascular_post${so_postfix}] \
+				 [list Solid ${lib_prefix}simvascular_solid${so_postfix}] \
+				 [list Polydatasolid ${lib_prefix}simvascular_polydatasolid${so_postfix}] \
+				 [list Occtsolid ${lib_prefix}simvascular_opencascade${so_postfix}] \
+				 [list Gdscmesh ${lib_prefix}simvascular_mesh${so_postfix}] \
+				 [list Mmgmesh ${lib_prefix}simvascular_mmg_mesh${so_postfix}] \
+				 [list Tetgenmesh ${lib_prefix}simvascular_tetgen_mesh${so_postfix}] \
+				 [list Adapt ${lib_prefix}simvascular_adaptor${so_postfix}] \
+				 [list Tetgenadapt ${lib_prefix}simvascular_tet_adaptor${so_postfix}] \
+				 [list Meshsimmesh {}] \
+				 [list Meshsimadapt {}] \
+				 [list Meshsimdiscretesolid {}] \
+				 [list Parasolidsolid {}] \
+				 [list Itklset ${lib_prefix}simvascular_itklset${so_postfix}] \
+				 ]
+
+if {$SV_USE_PYTHON == "ON"} {
+    lappend gSimVascularTclInitLibs [list Tclpython ${lib_prefix}simvascular_tclpython${so_postfix}]
+}
+
+foreach lib $gSimVascularTclInitLibs {
+    if {[lindex $lib 1] == ""} {
+	continue
+    }
+    # try dynamic lib first
+    if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
+	# then static lib
+	#if [catch {load {} [lindex $lib 0]} msg] {
+	#    puts "error ([lindex $lib 0]) $msg"
+	#}
+    } else {
+	puts "loaded [lindex $lib 0]..."
+    }
+}
+			     
 # if { $SV_RELEASE_BUILD == 1}  {
 #   puts "\nSimVascular Version $SV_VERSION-$SV_FULL_VER_NO (Released [clock format [clock scan $timestamp -format %y%m%d%H%M%S] ])"
 # } else {
@@ -429,14 +507,6 @@ if {$tcl_platform(platform) == "windows"} {
 # Launch gui if interactive
 # -------------------------
 
-global SV_USE_PYTHON
-if {[info exists SV_USE_PYTHON] == 0} {
-  set SV_USE_PYTHON "OFF"
-  if [info exists env(SV_USE_PYTHON)] {
-    set SV_USE_PYTHON $env(SV_USE_PYTHON)
-  }
-  puts "Use Python: $SV_USE_PYTHON"
-}
 if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
   # tcl 8.4.x no longer exports tkTabToWindow
   if [catch {tk::unsupported::ExposePrivateCommand tkTabToWindow}] {
@@ -544,10 +614,7 @@ if {$argc >= 1} {
 # ------------------
 # Load Python
 # ------------------
-global SV_USE_PYTHON
-if {[info exists SV_USE_PYTHON] == 0} {
-  set SV_USE_PYTHON "OFF"
-}
+
 if {$SV_USE_PYTHON == "ON"} {
   startTclPython
 }

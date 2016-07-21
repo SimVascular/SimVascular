@@ -32,8 +32,9 @@
 #ifndef __CVINT_ARRAY_LIST_H
 #define __CVINT_ARRAY_LIST_H
 
+#include "SimVascular.h"
 
-class cvIntArrayList {
+class SV_EXPORT_UTILS cvIntArrayList {
 
 public:
   cvIntArrayList( int size );

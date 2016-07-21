@@ -36,8 +36,10 @@
  * Someday I may want to make this method inherent from a *
  * vtkMath object.                                        *
  **********************************************************/
- 
-class cvMath {
+
+#include "SimVascular.h"
+
+class SV_EXPORT_UTILS cvMath {
 
 public:
     cvMath();

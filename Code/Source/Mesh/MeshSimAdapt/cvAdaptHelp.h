@@ -50,41 +50,41 @@ pPList R_verticesLeft( pRegion region );
 
 
 
-  double Entity_shapeFunction(pEntity entity, pEntity element, int p, int ith, 
+SV_EXPORT_MESHSIM_ADAPTOR double Entity_shapeFunction(pEntity entity, pEntity element, int p, int ith, 
 			      double *L); 
 
 /*   This function returns the "body" mode for a tetrahedron.
      i,j,k are the highest monomial orders of r,s,t in the resulting
      polynomial order
 */
-  double Bn(int i, int j, int k, double r, double s, double t);
-  double Bn_2ndChunk(int i, int j, int k, double r, double s, double t);
-  double Bn_3rdChunk(int i, int j, int k, double r, double s, double t);
-  double Bn_4thChunk(int i, int j, int k, double r, double s, double t);
+SV_EXPORT_MESHSIM_ADAPTOR double Bn(int i, int j, int k, double r, double s, double t);
+SV_EXPORT_MESHSIM_ADAPTOR double Bn_2ndChunk(int i, int j, int k, double r, double s, double t);
+SV_EXPORT_MESHSIM_ADAPTOR double Bn_3rdChunk(int i, int j, int k, double r, double s, double t);
+SV_EXPORT_MESHSIM_ADAPTOR double Bn_4thChunk(int i, int j, int k, double r, double s, double t);
 
 /*  This function mode shape for a simplex edge of order ip */
-  double En(int ip, double r, double s);
+SV_EXPORT_MESHSIM_ADAPTOR double En(int ip, double r, double s);
 
 /*  This function mode shape for a triangular face. i,j are highest
     order of r,s in the polynomial, maple generated code.
 */
-  double Fn(int i, int j, double r, double s);
+SV_EXPORT_MESHSIM_ADAPTOR double Fn(int i, int j, double r, double s);
 
-  double V_blendOnEntity(pVertex v, pEntity e, double *L);
-  double V_blendIndexed(int i, double *L);
-  double V_blendIndexedOnEdge(int i, double *L);
-  double E_blendOnFace(pEdge edge, pFace face, double *L); 
-  double F_edgeBlendTri(int index[2], double *L);
-  double F_edgeBlendQuad(int *index, double *L); 
-  double E_blendOnRegion(pEdge edge, pRegion region, double *L);
-  double R_edgeBlendTet(int index[2], double *L);
-  double F_blendOnRegion(pFace face, pRegion region, double *L);
-  int V_index(pVertex v, pEntity ent, int *index);
-  int E_index(pEdge e, pEntity ent, int *index);
-  int F_index(pFace face, pEntity ent, int *index);
-  double E_modeShape(int p, double *L);
-  double F_modeShapeTri(int p, int i, double *L);
-  double F_modeShapeQuad(int p, int i, double *L);
-  double R_modeShapeTet(int p, int i, double *L);
-  double R_modeShapeHex(int p, int i, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double V_blendOnEntity(pVertex v, pEntity e, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double V_blendIndexed(int i, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double V_blendIndexedOnEdge(int i, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double E_blendOnFace(pEdge edge, pFace face, double *L); 
+SV_EXPORT_MESHSIM_ADAPTOR double F_edgeBlendTri(int index[2], double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double F_edgeBlendQuad(int *index, double *L); 
+SV_EXPORT_MESHSIM_ADAPTOR double E_blendOnRegion(pEdge edge, pRegion region, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double R_edgeBlendTet(int index[2], double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double F_blendOnRegion(pFace face, pRegion region, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR int V_index(pVertex v, pEntity ent, int *index);
+SV_EXPORT_MESHSIM_ADAPTOR int E_index(pEdge e, pEntity ent, int *index);
+SV_EXPORT_MESHSIM_ADAPTOR int F_index(pFace face, pEntity ent, int *index);
+SV_EXPORT_MESHSIM_ADAPTOR double E_modeShape(int p, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double F_modeShapeTri(int p, int i, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double F_modeShapeQuad(int p, int i, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double R_modeShapeTet(int p, int i, double *L);
+SV_EXPORT_MESHSIM_ADAPTOR double R_modeShapeHex(int p, int i, double *L);
 

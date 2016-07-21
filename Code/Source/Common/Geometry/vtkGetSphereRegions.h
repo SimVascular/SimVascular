@@ -63,7 +63,7 @@
 #include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
 
-class CV_DLL_EXPORT vtkGetSphereRegions : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkGetSphereRegions : public vtkPolyDataAlgorithm
 {
 public:
   static vtkGetSphereRegions* New();

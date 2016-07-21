@@ -33,11 +33,11 @@
 
 #include "SimVascular.h" 
 
-#include "cvPolyData.h"
 #include "cv_misc_utils.h"
 #include <stdio.h>
 #include <assert.h>
 
+#include "cvPolyData.h"
 
 // --------
 // cvPolyData

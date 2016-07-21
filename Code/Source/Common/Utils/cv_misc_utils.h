@@ -51,16 +51,17 @@
 // KCW [4/18/98]
 // ---
 
+#include "SimVascular.h"
 
 // Misc
 // ----
-char *PopArg( int *argc, char **argv[] );
+SV_EXPORT_UTILS char* PopArg( int *argc, char **argv[] );
 
 
 // Math
 // ----
 
-double FindMachineEpsilon();
+SV_EXPORT_UTILS double FindMachineEpsilon();
 
 
 // ==============
@@ -219,12 +220,12 @@ int IntSign( double d, double tol )
 }
 
 
-int Compute3dks( double Kg, double Km, double tol, double ks[] );
+int SV_EXPORT_UTILS Compute3dks( double Kg, double Km, double tol, double ks[] );
 
 
 // Files
 // -----
-int CountLines( char *filename );
+int SV_EXPORT_UTILS CountLines( char *filename );
 
 
 // Inline functions

@@ -39,7 +39,7 @@
 #include "cvLevelSetVelocity.h"
 
 
-class cvLevelSetVelocityConstant : public cvLevelSetVelocity {
+class SV_EXPORT_LSET cvLevelSetVelocityConstant : public cvLevelSetVelocity {
 
 public:
   cvLevelSetVelocityConstant();

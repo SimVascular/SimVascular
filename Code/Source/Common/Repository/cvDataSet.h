@@ -35,11 +35,13 @@
 #define __CVDATASET_H
 
 #include "SimVascular.h"
-#include "cvRepositoryData.h"
-#include "cvDataObject.h"
+
 #include "cvVTK.h"
 
-class cvDataSet : public cvDataObject {
+#include "cvRepositoryData.h"
+#include "cvDataObject.h"
+
+class SV_EXPORT_REPOSITORY cvDataSet : public cvDataObject {
 
 public:
   cvDataSet( RepositoryDataT type );

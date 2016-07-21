@@ -40,14 +40,14 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
-           $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) \
-           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) -DSV_STATIC_LINK
+           $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS)
 
 HDRS	= 
 
-CXXSRCS = main.cxx gdscInit.cxx cv_VTK_init.cxx
+CXXSRCS = main.cxx SimVascular_Init.cxx
 
-ifeq ($(MAKE_STATIC_BUILD),1)  
+ifeq ($(SV_STATIC_BUILD),1)  
 
   COPIED_CXXSRCS += ../Common/Geometry/cv_geom_init.cxx \
                     ../PostProcessing/cv_post_init.cxx \
@@ -56,6 +56,7 @@ ifeq ($(MAKE_STATIC_BUILD),1)
                     ../Model/SolidModel/cv_solid_init.cxx \
                     ../Legacy/LevelSet/cv_LsetCore_init.cxx \
                     ../Legacy/LevelSet/cv_LsetV_init.cxx \
+                    ../Legacy/LevelSet/cv_Lset_init.cxx \
                     ../Common/Utils/cv_get_tcl_interp_init.cxx \
                     ../Mesh/MeshObject/cv_mesh_init.cxx \
                     ../Model/PolyDataSolidModel/cv_polydatasolid_init.cxx \
@@ -105,8 +106,14 @@ ifeq ($(MAKE_STATIC_BUILD),1)
 	COPIED_CXXSRCS += ../Model/OCCTSolidModel/cv_occt_init.cxx
     endif
   endif
+  ifeq ($(SV_USE_MMG),1)
+    ifneq ($(SV_USE_MMG_SHARED),1)
+	COPIED_CXXSRCS += ../Mesh/MMGMeshUtils/cv_mmg_mesh_init.cxx
+    endif
+  endif
   ifeq ($(SV_USE_ITK),1)
-	COPIED_CXXSRCS += ../Segmentation/ITK/Util/cv_ITKUtils_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset_init.cxx
+	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKUtils_init.cxx
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset2d_init.cxx
 	COPIED_CXXSRCS += ../Segmentation/ITK/cv_ITKLset3d_init.cxx
   endif
@@ -116,52 +123,44 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   endif
 
   ifeq ($(SV_USE_MESHSIM),1)
-    ifeq ($(SV_USE_MESHSIM_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
-    else
+    ifneq ($(SV_USE_MESHSIM_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-    ifeq ($(SV_USE_MESHSIM_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_adaptor$(LIBLINKEXT)
-    else
+    ifneq ($(SV_USE_MESHSIM_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_TETGEN),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
+    ifneq ($(SV_USE_SHARED),1)
+      LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
+   endif
   endif
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
+    ifneq ($(SV_USE_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tet_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
+    endif
   endif
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-    ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
-    else
+    ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
-    ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
-    else
+    ifneq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_solid$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_PARASOLID),1)
-    ifeq ($(SV_USE_PARASOLID_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
-    else
+    ifneq ($(SV_USE_PARASOLID_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_OPENCASCADE),1)
-    ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
-#	LFLAGS += $(SVLIBFLAG)_simvascular_opencascade$(LIBLINKEXT)
-    else
+    ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_opencascade$(LIBLINKEXT)
     endif
   endif
@@ -171,18 +170,31 @@ ifeq ($(MAKE_STATIC_BUILD),1)
   endif
 
   ifeq ($(SV_USE_ITK),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itkutils$(LIBLINKEXT) \
-                            $(SVLIBFLAG)_lib_simvascular_cvitk$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itklset$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_SOLVERIO),1)
 	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
   endif
 
+  ifeq ($(SV_USE_MMG),1)
+    ifneq ($(SV_USE_MMG_SHARED),1)
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_mmg_mesh$(LIBLINKEXT)
+    endif
+  endif
+
+  ifeq ($(SV_USE_PYTHON),1)
+    ifneq ($(SV_USE_PYTHON_SHARED),1)
+	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tclpython$(LIBLINKEXT)
+    endif
+  endif
+
 endif
 
 ifeq ($(SV_USE_QT_GUI),1)
-  LFLAGS += $(SVLIBFLAG)_lib_simvascular_qtcode$(LIBLINKEXT)
+  ifneq ($(SV_USE_SHARED),1)
+    LFLAGS += $(SVLIBFLAG)_lib_simvascular_qtcode$(LIBLINKEXT)
+  endif
 endif
 
 # need to explicitly add in globals for executable
@@ -201,7 +213,7 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/simvascular.exe
 
-dynamic: pre directories $(TARGET_EXE_FULL)
+shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
 
@@ -217,14 +229,14 @@ $(TARGET_EXE_FULL): $(OBJS)
         $(LFLAGS) \
         $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
         $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
-        $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS)
+        $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS) $(SV_MMG_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 ifeq ($(CLUSTER),x64_cygwin)
-ifneq ($(MAKE_STATIC_BUILD),1)
+ifneq ($(SV_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls
         # we need to check and see if we should be still rebasing 
         # the tcltk and vtk dlls
-	editbin /REBASE:BASEFILE $(TARGET_EXE) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
+	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
           $(TCLTK_DLLS) $(VTK_DLLS)
 endif
 endif
@@ -243,6 +255,7 @@ clean:
 	for fn in *~; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
+	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 
 veryclean: clean
 	if [ -e obj ];then /bin/rm -f -r obj;fi

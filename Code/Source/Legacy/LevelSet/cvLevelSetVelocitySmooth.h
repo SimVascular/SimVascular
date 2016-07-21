@@ -39,11 +39,11 @@
 typedef enum { VS_Mean_K, VS_Gaussian_K,
 	       VS_PrincipleK1_K, VS_PrincipleK2_K,
 	       VS_Invalid_K } cvLevelSetVelocitySmooth3DKT;
-cvLevelSetVelocitySmooth3DKT KT_StrToEnum( char *name );
-char *KT_EnumToStr( cvLevelSetVelocitySmooth3DKT t );
 
+SV_EXPORT_LSET cvLevelSetVelocitySmooth3DKT KT_StrToEnum( char *name );
+SV_EXPORT_LSET char *KT_EnumToStr( cvLevelSetVelocitySmooth3DKT t );
 
-class cvLevelSetVelocitySmooth : public cvLevelSetVelocity {
+class SV_EXPORT_LSET cvLevelSetVelocitySmooth : public cvLevelSetVelocity {
 
 public:
   cvLevelSetVelocitySmooth();

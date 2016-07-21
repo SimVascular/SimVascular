@@ -67,7 +67,7 @@
 // Item 34.
 //
 
-class cvPolyDataSolid : public cvSolidModel {
+class SV_EXPORT_POLYDATASOLID cvPolyDataSolid : public cvSolidModel {
 
 public:
   cvPolyDataSolid();  // can never be called directly;

@@ -51,6 +51,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_DISCRETE_COMPILE
+
 HDRS	= cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h
 
 CXXSRCS	= cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx
@@ -59,7 +61,10 @@ DLLHDRS = cv_discrete_init.h
 
 DLLSRCS = cv_discrete_init.cxx
 
-DLLLIBS =
+DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
 ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)

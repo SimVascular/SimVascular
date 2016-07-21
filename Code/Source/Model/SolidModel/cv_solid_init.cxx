@@ -99,7 +99,7 @@ PyObject* exportVtkObj(PyObject* self, PyObject* args)
 {
   RepositoryDataT type;
   cvRepositoryData *pd;
-  char *result;
+  char *result = NULL;;
   char *objName;
   vtkObject *vtkObj;
 

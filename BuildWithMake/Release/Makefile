@@ -46,8 +46,9 @@ WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 endif
 
+SV_TIMESTAMP := $(shell echo "puts \"[clock seconds]\"" | tclsh)
 DIST_DIR_TOP = package/$(SV_VERSION)
-DIST_DIR := $(DIST_DIR_TOP)/$(shell echo "puts \"[clock seconds]\"" | tclsh)
+DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 
 REMOTE_DIR_TOP = remote_install_$(SV_VERSION)
 
@@ -57,19 +58,43 @@ else
   all: linux-distribution taritup taritup-meshsim-and-parasolid
 endif
 
+veryclean: msiclean msiclean-meshsim-and-parasolid msi-bundle-clean
+	-rm -f tar_files/*.tar
+	-rm -f tar_files/*.tar.gz
+	-rm -Rf $(DIST_DIR_TOP)
+	-rm -Rf package
+	-rm -Rf tmp/*
+
+#
+# create script for sv
+#
+sv-startup-configure:
+	-rm tmp/startup_configure.tcl
+	-echo "set SV_BUILD_ID     $(SV_TIMESTAMP)" > tmp/startup_configure.tcl
+	-echo "set SV_FULL_VER_NO  $(SV_FULL_VER_NO)" >> tmp/startup_configure.tcl
+	-echo "set SV_MAJOR_VER_NO $(SV_MAJOR_VER_NO)" >> tmp/startup_configure.tcl
+	-echo "set SV_TIMESTAMP    $(SV_TIMESTAMP)" >> tmp/startup_configure.tcl
+	-echo "set SV_PLATFORM     $(SV_PLATFORM)" >> tmp/startup_configure.tcl
+	-echo "set SV_VERSION      $(SV_VERSION)" >> tmp/startup_configure.tcl
+ifeq ($(SV_USE_PYTHON),1)
+	-echo "set SV_USE_PYTHON   ON" >> tmp/startup_configure.tcl
+else
+	-echo "set SV_USE_PYTHON   OFF" >> tmp/startup_configure.tcl
+endif
+
 #
 #  Create msi installer for simvascular meshsim-and-parasolid
 #
 
 msiclean-meshsim-and-parasolid:
-	-rm *~
-	-rm package-release-meshsim-and-parasolid
-	-rm simvascular-meshsim-and-parasolid.msi
-	-rm tmp/simvascular-meshsim-and-parasolid.wixobj
-	-rm tmp/simvascular-meshsim-and-parasolid.wxs
-	-rm tmp/simvascular-meshsim-and-parasolid.wixpdb
-	-rm tmp/uuidgen.exe*
-	-rm tmp/uuidgen.obj*
+	-rm -f *~
+	-rm -fR package-release-meshsim-and-parasolid
+	-rm -f simvascular-meshsim-and-parasolid.msi
+	-rm -f tmp/simvascular-meshsim-and-parasolid.wixobj
+	-rm -f tmp/simvascular-meshsim-and-parasolid.wxs
+	-rm -f simvascular-meshsim-and-parasolid.wixpdb
+	-rm -f tmp/uuidgen.exe*
+	-rm -f tmp/uuidgen.obj*
 
 msi-meshsim-and-parasolid:	msiclean-meshsim-and-parasolid
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
@@ -84,7 +109,7 @@ endif
 	-echo "puts \"[file tail $(DIST_DIR)]\"" | tclsh > tmp/timestamp
 	-cp -f tmp/timestamp package-release-meshsim-and-parasolid/
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_parasolid*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_mesh*.$(SOEXT)* package-release-meshsim-and-parasolid
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_meshsim*.$(SOEXT)* package-release-meshsim-and-parasolid
 ifeq ($(SV_USE_PARASOLID),1)
 	-cp -f $(PARASOLID_DLLS) package-release-meshsim-and-parasolid
 	-cp -Rf $(P_SCHEMA) package-release-meshsim-and-parasolid/schema
@@ -92,10 +117,6 @@ endif
 ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	-cp -f $(MESHSIM_SO_PATH)/Sim*.dll package-release-meshsim-and-parasolid
 endif
-	-cp -fR $(TCL_BASE)/lib package-release-meshsim-and-parasolid
-	-cp -fR $(TCL_BASE)/bin package-release-meshsim-and-parasolid
-	-cp -fR $(TCL_BASE)/bin/*.$(SOEXT)* package-release-meshsim-and-parasolid
-	-cp -fR $(TCL_BASE)/lib/*.$(SOEXT)* package-release-meshsim-and-parasolid
 	-echo "Create WXS file..."
 	-tclsh windows_msi_helpers/makewxs-meshsim-and-parasolid.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) ../Meshsim-And-Parasolid/MeshSim/license.dat
 	-echo "Run candle..."
@@ -108,12 +129,13 @@ endif
 #
 
 msiclean:
-	-rm *~
-	-rm $(SV_VERSION).msi
-	-rm tmp/sv.wixobj
-	-rm tmp/sv.wxs
-	-rm tmp/uuidgen.exe*
-	-rm tmp/uuidgen.obj*
+	-rm -f *~
+	-rm -f $(SV_VERSION).msi
+	-rm -f tmp/simvascular.wixpdb
+	-rm -f tmp/sv.wixobj
+	-rm -f tmp/sv.wxs
+	-rm -f tmp/uuidgen.exe*
+	-rm -f tmp/uuidgen.obj*
 
 msi-simvascular:	msiclean
 ifeq ($(CXX_COMPILER_VERSION),mingw-gcc)
@@ -128,13 +150,17 @@ endif
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe -ext WixUIExtension -ext WixUtilExtension -out $(SV_VERSION).msi tmp/sv.wixobj
 
-msi-bundle:
+msi-bundle-clean:
 	-rm -f tmp/bundle.wixobj
 	-rm -f simvascular-bundle.wixpdb
 	-rm -f simvascular-bundle.exe
+	-rm -f tmp/wix-simvascular-bundle.wxs
+
+msi-bundle: msi-bundle-clean mksedscript
 	-echo "Create WXS file..."
+	-sed -f tmp/sedscript windows_installer_packages/wix-simvascular-bundle.wxs > tmp/wix-simvascular-bundle.wxs
 	-echo "Run candle..."
-	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj windows_installer_packages/wix-simvascular-bundle.wxs
+	-$(WIXUI_PATH)/candle.exe -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out tmp/bundle.wixobj tmp/wix-simvascular-bundle.wxs
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
 
@@ -196,6 +222,12 @@ copy-sv-executables:
 	-cp -f $(TOP)/Bin/flowsolver-$(MPI_NAME).exe $(DIST_DIR)/flowsolver-bin.exe
 	-cp -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
+ifeq ($(SV_USE_PYTHON),1)
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_tclpython*.$(SOEXT)* $(DIST_DIR)
+endif
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
+	-rm -f $(DIST_DIR)/*simvascular_parasolid*.$(SOEXT)*
+	-rm -f $(DIST_DIR)/*simvascular_meshsim*.$(SOEXT)*
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
@@ -216,6 +248,7 @@ copy-sv-tcl-code:
 	-cp $(DIST_DIR)/UnTcl/SimVascular_2.0/simvascular.rc $(DIST_DIR)
 	-rm -Rf $(DIST_DIR)/UnTcl
 	-tclsh tcl_helper_scripts/create_tclIndex.tcl $(DIST_DIR)/Tcl/SimVascular_2.0
+	-cp -f tmp/startup_configure.tcl $(DIST_DIR)/Tcl
 
 copy-tcl-libs:
 	-cp -fR $(TCL_BASE)/lib $(DIST_DIR)
@@ -248,10 +281,18 @@ ifeq ($(SV_USE_ITK),1)
 	-cp -f $(ITK_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_GDCM),1)
-	-cp -f $(SV_GDCM_DLLS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/gdcm*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/gdcm*.exe* $(DIST_DIR)
+	-cp -f $(SV_GDCM_DLLS)/socketxx.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-cp -fR $(PYTHON_BASE)/Lib $(DIST_DIR)/python-packages
+	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
+endif
+ifeq ($(SV_USE_QT),1)
+	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
@@ -303,9 +344,9 @@ common-post-distribution:
 	-chmod -f -R a+rx $(DIST_DIR)
 	-chmod -f -R u+w $(DIST_DIR)
 
-linux-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
+linux-distribution: mksedscript common-pre-distribution copy-sv-executables sv-startup-configure copy-tcl-libs copy-sv-tcl-code copy-external-libs copy-external-libs-linux-only generate-wrapper-scripts common-post-distribution
 
-windows-distribution: mksedscript common-pre-distribution copy-sv-executables copy-sv-tcl-code copy-tcl-libs copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
+windows-distribution: mksedscript common-pre-distribution copy-sv-executables sv-startup-configure copy-tcl-libs copy-sv-tcl-code copy-external-libs copy-external-libs-windows-only generate-wrapper-scripts common-post-distribution
 
 taritup-meshsim-and-parasolid:
 	-mkdir tar_files

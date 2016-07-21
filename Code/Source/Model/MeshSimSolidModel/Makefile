@@ -51,6 +51,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MESHSIM_INCDIR) \
 	   $(ZLIB_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_MESHSIM_SOLID_COMPILE
+
 HDRS	= cvMeshSimSolidModel.h
 
 CXXSRCS	= cvMeshSimSolidModel.cxx
@@ -59,7 +61,9 @@ DLLHDRS = cv_meshsimsolid_init.h
 
 DLLSRCS = cv_meshsimsolid_init.cxx
 
-DLLLIBS =
+DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
 DLLLIBS += $(VTK_LIBS) $(MESHSIM_LIBS)
 

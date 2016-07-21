@@ -35,7 +35,7 @@
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" CV_DLL_EXPORT int Gdscpost_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_POST int Gdscpost_Init( Tcl_Interp *interp );
 
 #endif // __CVPOST_INIT_H
 

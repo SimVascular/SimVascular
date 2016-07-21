@@ -36,7 +36,7 @@ class vtkIntArray;
 class vtkPoints;
 class vtkPointData;
 
-class CV_DLL_EXPORT vtkLocalApproximatingSubdivisionFilter : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkLocalApproximatingSubdivisionFilter : public vtkPolyDataAlgorithm
 {
 public:
   vtkTypeMacro(vtkLocalApproximatingSubdivisionFilter,vtkPolyDataAlgorithm);

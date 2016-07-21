@@ -39,7 +39,7 @@
 #include "cvITKLevelSetBase.h"
 #include <stdio.h>
 
-#include "Util/cvITKUtils.h"
+#include "cvITKUtils.h"
 
 using namespace std;
 

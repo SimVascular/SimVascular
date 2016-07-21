@@ -34,11 +34,11 @@
 #include "SimVascular.h"
 #include "cvVTK.h"
 
-int mr_decode (vtkStructuredPoints *phase,
+SV_EXPORT_IMAGE int mr_decode (vtkStructuredPoints *phase,
                double venc,double vencscale,
                vtkStructuredPoints **vel);
 
-int mr_decode_masked (vtkStructuredPoints *mag,
+SV_EXPORT_IMAGE int mr_decode_masked (vtkStructuredPoints *mag,
                vtkStructuredPoints *phase,
                double venc,double vencscale,
                vtkStructuredPoints **vel);

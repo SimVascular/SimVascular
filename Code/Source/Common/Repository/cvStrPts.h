@@ -36,12 +36,12 @@
 
 #include "SimVascular.h"
 
-#include "cvRepositoryData.h"
-#include "cvDataSet.h"
 #include "cvVTK.h"
 
+#include "cvRepositoryData.h"
+#include "cvDataSet.h"
 
-class cvStrPts : public cvDataSet {
+class SV_EXPORT_REPOSITORY cvStrPts : public cvDataSet {
 
 public:
   cvStrPts();

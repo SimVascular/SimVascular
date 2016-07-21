@@ -51,7 +51,7 @@ class vtkCellArray;
 class vtkIdList;
 class vtkIntArray;
 
-class CV_DLL_EXPORT vtkLocalButterflySubdivisionFilter : public vtkLocalInterpolatingSubdivisionFilter
+class SV_EXPORT_SYSGEOM vtkLocalButterflySubdivisionFilter : public vtkLocalInterpolatingSubdivisionFilter
 {
 public:
   // Description:

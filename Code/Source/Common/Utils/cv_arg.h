@@ -66,35 +66,34 @@ typedef struct ARG_List_s {
   CONST84 char **argv;
 } ARG_List;
 
-
-char *ARG_GenSyntaxStr( int argc, CONST84 char *argv[],
+SV_EXPORT_UTILS char* ARG_GenSyntaxStr( int argc, CONST84 char *argv[],
 			int table_size, ARG_Entry arg_table[] );
 
 
-int ARG_ParseTclStr( Tcl_Interp *interp,
+SV_EXPORT_UTILS int ARG_ParseTclStr( Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[], int startIx,
 		     int table_size, ARG_Entry arg_table[] );
 
 
-int ARG_ParseTclListStatic( Tcl_Interp *interp, ARG_List list, ARG_Type t,
+SV_EXPORT_UTILS int ARG_ParseTclListStatic( Tcl_Interp *interp, ARG_List list, ARG_Type t,
 			    void *arr, int arrsz, int *numasn );
 
 
-int ARG_ParseTclListDynamic( Tcl_Interp *interp, ARG_List list, ARG_Type t,
+SV_EXPORT_UTILS int ARG_ParseTclListDynamic( Tcl_Interp *interp, ARG_List list, ARG_Type t,
 			     void **arr, int *numasn );
 
 
-int ARG_ParseTclObj( Tcl_Interp *interp,
+SV_EXPORT_UTILS int ARG_ParseTclObj( Tcl_Interp *interp,
 		     int objc, Tcl_Obj *CONST objv[],
 		     int table_size, ARG_Entry arg_table[] );
 
 
-void ARG_FreeListArgvs( int table_size, ARG_Entry arg_table[] );
+SV_EXPORT_UTILS void ARG_FreeListArgvs( int table_size, ARG_Entry arg_table[] );
 
 
-void ARG_Show( int table_size, ARG_Entry arg_table[] );
+SV_EXPORT_UTILS void ARG_Show( int table_size, ARG_Entry arg_table[] );
 
-void tcl_printstr( Tcl_Interp *interp, char *str );
+SV_EXPORT_UTILS void tcl_printstr( Tcl_Interp *interp, char *str );
 
 
 #endif /* __CVARG_H */

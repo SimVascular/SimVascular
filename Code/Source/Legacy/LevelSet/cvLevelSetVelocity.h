@@ -50,10 +50,10 @@
 #include "cvLevelSetStructuredGrid.h"
 
 
-class cvLevelSet;
+class SV_EXPORT_LSET cvLevelSet;
 
 
-class cvLevelSetVelocity {
+class SV_EXPORT_LSET cvLevelSetVelocity {
 
   friend class cvLevelSet;
 

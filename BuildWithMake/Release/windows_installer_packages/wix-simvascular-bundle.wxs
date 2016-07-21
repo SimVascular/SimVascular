@@ -2,7 +2,7 @@
      xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
-  <Bundle Name="SimVascular Complete Windows Installer (64-bit)" Version="2.0.20.0" Manufacturer="simvascular.org" UpgradeCode="85E8D8C7-FDF1-4D3B-9B5C-3E5CA3551E56" Copyright="2015" IconSourceFile="windows_msi_helpers/simvascular.ico" AboutUrl="http://www.simvascular.org">
+  <Bundle Name="SimVascular Complete Windows Installer (64-bit)" Version="REPLACE_SV_FULL_VER_NO" Manufacturer="simvascular.org" UpgradeCode="85E8D8C7-FDF1-4D3B-9B5C-3E5CA3551E56" Copyright="2016" IconSourceFile="windows_msi_helpers/simvascular.ico" AboutUrl="http://www.simvascular.org">
 
      <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
         <bal:WixStandardBootstrapperApplication LicenseFile="License.rtf" LogoFile="windows_installer_packages/msi-logo.png" />
@@ -14,9 +14,6 @@
       <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\DevDiv\vc\Servicing\14.0\RuntimeMinimum" Value="Version" Variable="MSVC_EXISTS" Result="exists" Win64="yes"/>
       <util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\DevDiv\vc\Servicing\14.0\RuntimeMinimum" Value="Version" Variable="MSVC_VERSION" Result="value" Win64="yes"/>
 
-      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\GDCM\GDCM 2.4" Variable="GDCM_WOW64_EXISTS" Result="exists" Win64="yes" />
-      <util:RegistrySearch Root="HKLM" Key="SOFTWARE\GDCM\GDCM 2.4" Variable="GDCM_EXISTS" Result="exists"/>
-
      <Chain>
 
      <ExePackage Id="Dependency1" DisplayName="MSVC 2013 C++ Runtime Libraries" SourceFile="windows_installer_packages/vcredist_x64-MSVC-2013-update-4.exe" Vital="no"
@@ -27,10 +24,6 @@
          DetectCondition="(MSMPI_EXISTS)" Permanent="yes"
      />
 
-     <ExePackage Id="Dependency4" DisplayName="Grassroots DICOM Utilities" SourceFile="windows_installer_packages/GDCM-2.4.0-Windows-x86.exe" Vital="no" 
-         DetectCondition="((GDCM_WOW64_EXISTS) OR (GDCM_EXISTS))"
-     />
- 
      <MsiPackage Id="MainPackage" SourceFile="simvascular.msi" Vital="yes" DisplayInternalUI="yes"/>
       
     </Chain>

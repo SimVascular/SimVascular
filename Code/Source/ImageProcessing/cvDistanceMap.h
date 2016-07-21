@@ -44,7 +44,7 @@ typedef int distanceMapType;
 //#define DISTANCEMAPVTKTYPE vtkShortArray
 //#define MAX_DISTANCE_VAL 32000
 
-class cvDistanceMap {
+class SV_EXPORT_IMAGE cvDistanceMap {
 
   public:
 

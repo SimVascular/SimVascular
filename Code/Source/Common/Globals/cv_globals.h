@@ -29,23 +29,28 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef CV_GLOBALS_H
+
 #include "SimVascular.h"
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 #include "cvRepository.h"
 
-CV_GLOBALS_DLL_IMPORT cvRepository *gRepository;
-
 #include "tcl.h"
-CV_GLOBALS_DLL_IMPORT Tcl_HashTable gLsetVTable;
-CV_GLOBALS_DLL_IMPORT Tcl_HashTable gLsetCoreTable;
 
-CV_GLOBALS_DLL_IMPORT char projectionSetBase_[CV_STRLEN];
+extern SV_EXPORT_GLOBALS cvRepository *gRepository;
+
+extern SV_EXPORT_GLOBALS Tcl_HashTable gLsetVTable;
+extern SV_EXPORT_GLOBALS Tcl_HashTable gLsetCoreTable;
+
+extern SV_EXPORT_GLOBALS char projectionSetBase_[CV_STRLEN];
 
 // global variable to figure out if we are running in batch mode
-CV_GLOBALS_DLL_IMPORT int gSimVascularBatchMode;
+extern SV_EXPORT_GLOBALS int gSimVascularBatchMode;
 
-CV_GLOBALS_DLL_IMPORT Tcl_Interp* gVtkTclInterp;
-CV_GLOBALS_DLL_IMPORT Tcl_Interp* getTclInterp();
+extern SV_EXPORT_GLOBALS Tcl_Interp* gVtkTclInterp;
+extern SV_EXPORT_GLOBALS Tcl_Interp* getTclInterp();
 
-CV_GLOBALS_DLL_IMPORT void *gOCCTManager;
+extern SV_EXPORT_GLOBALS void *gOCCTManager;
+
+#endif

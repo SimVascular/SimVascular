@@ -71,6 +71,7 @@ endif
 # globals
 # -------
 
+SV_USE_SHARED = 1
 SV_USE_GLOBALS_SHARED = 1
 
 # ---------------------------------------
@@ -90,7 +91,7 @@ SV_USE_PARASOLID_SHARED = 1
 # ------------
 
 SV_USE_OPENCASCADE = 1
-SV_USE_OPENCASCADE_SHARED = 0
+SV_USE_OPENCASCADE_SHARED = 1
 
 # --------------------------------------
 # Control inclusion of meshSim functions
@@ -113,6 +114,13 @@ MESHSIM_LICENSE_IN_WIN32_REGISTRY = 0
 
 SV_USE_TETGEN = 1
 SV_USE_TETGEN_ADAPTOR = 1
+
+# ------------------------
+# Control inclusion of mmg
+# ------------------------
+
+SV_USE_MMG = 1
+SV_USE_MMG_SHARED = 1
 
 # ----------------------------------------------
 # Control inclusion of leslib
@@ -151,7 +159,7 @@ SV_USE_SYSTEM_PYTHON = 1
 SV_USE_QT = 1
 SV_USE_SYSTEM_QT = 1
 SV_USE_QT_GUI = 0
-SV_USE_QT_GUI_SHARED = 0
+SV_USE_QT_GUI_SHARED = 1
 
 # -----------------------------------------------------
 # Compile with freetype
@@ -313,8 +321,8 @@ endif
 #   Release version numbers for SimVascular 
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "2.0"
-SV_FULL_VER_NO = "2.0.20"
+SV_MAJOR_VER_NO = "2.16"
+SV_FULL_VER_NO = "2.16.0719"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -365,11 +373,11 @@ ifeq ($(SV_USE_WIN32_REGISTRY), 1)
   GLOBAL_DEFINES += -DSV_USE_WIN32_REGISTRY
 endif
 
-ifeq ($(MAKE_STATIC_BUILD),1)
+ifeq ($(SV_STATIC_BUILD),1)
   GLOBAL_DEFINES += -DSV_STATIC_LINK -DSV_STATIC_BUILD
 endif
 
-ifeq ($(MAKE_GLOBALS_SHARED),1)
+ifeq ($(SV_GLOBALS_SHARED),1)
   GLOBAL_DEFINES += -DSV_GLOBALS_SHARED
 endif
 
@@ -436,6 +444,10 @@ ifeq ($(SV_USE_TETGEN),1)
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1) 
     GLOBAL_DEFINES += -DSV_USE_TET_ADAPTOR
   endif
+endif
+
+ifeq ($(SV_USE_MMG),1)
+  GLOBAL_DEFINES += -DSV_USE_MMG
 endif
 
 ifeq ($(SV_USE_PYTHON),1)
@@ -546,26 +558,50 @@ else
   LIBDIRS = ../Code/Source/Common/Globals
 endif
 
-LIBDIRS += ../Code/Source/Common/Utils \
+ifeq ($(SV_USE_SHARED),1)
+  SHARED_LIBDIRS += ../Code/Source/Common/Utils \
 	  ../Code/Source/Common/Repository \
+	  ../Code/Source/Model/SolidModel \
+	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \
 	  ../Code/Source/ImageProcessing \
 	  ../Code/Source/PostProcessing \
-	  ../Code/Source/Mesh/MeshObject \
+	  ../Code/Source/Model/PolyDataSolidModel \
+	  ../Code/Source/Legacy/LevelSet
+else
+  LIBDIRS += ../Code/Source/Common/Utils \
+	  ../Code/Source/Common/Repository \
 	  ../Code/Source/Model/SolidModel \
-	  ../Code/Source/Legacy/LevelSet \
-	  ../Code/Source/Model/PolyDataSolidModel
+	  ../Code/Source/Mesh/MeshObject \
+	  ../Code/Source/Common/Geometry \
+	  ../Code/Source/ImageProcessing \
+	  ../Code/Source/PostProcessing \
+	  ../Code/Source/Model/PolyDataSolidModel \
+	  ../Code/Source/Legacy/LevelSet
+endif
 
 ifeq ($(SV_USE_ITK),1)
-     LIBDIRS += ../Code/Source/Segmentation/ITK ../Code/Source/Segmentation/ITK/Util
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK
+  else
+     LIBDIRS += ../Code/Source/Segmentation/ITK
+  endif
+endif
+
+ifeq ($(SV_USE_MMG),1)
+  ifeq ($(SV_USE_MMG_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
+  else
+     LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
+  endif
 endif
 
 ifeq ($(SV_USE_TETGEN),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
+  else
      LIBDIRS += ../Code/Source/Mesh/TetGenMeshObject
-endif
-
-ifeq ($(SV_USE_VMTK),1)
-     LIBDIRS += ../Code/ThirdParty/vmtk
+  endif
 endif
 
 #  solid modeling
@@ -633,17 +669,27 @@ endif
 # need solverio for adaptor classes so add them after adding solverio
 
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-  LIBDIRS += ../Code/Source/Mesh/AdaptObject
+  ifeq ($(SV_USE_SHARED),1)
+    SHARED_LIBDIRS += ../Code/Source/Mesh/AdaptObject
+  else
+    LIBDIRS += ../Code/Source/Mesh/AdaptObject
+  endif
 else
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
-    LIBDIRS += ../Code/Source/Mesh/AdaptObject
+    ifeq ($(SV_USE_SHARED),1)
+      SHARED_LIBDIRS += ../Code/Source/Mesh/AdaptObject
+    else
+      LIBDIRS += ../Code/Source/Mesh/AdaptObject
+    endif
   endif
 endif
 
-
-
 ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
-  LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
+  ifeq ($(SV_USE_SHARED),1)
+    SHARED_LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
+  else
+    LIBDIRS += ../Code/Source/Mesh/TetGenAdapt
+  endif
 endif
 
 ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
@@ -695,8 +741,6 @@ SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
 
 LOCAL_SUBDIRS   = $(LIBDIRS) $(SHARED_LIBDIRS) ../Code/Source/Include ../Code/Source/Include/Make
 LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
-LOCAL_LIBDIR	=  -L$(TOP)/Lib
-LOCAL_LIBS	=  $(LOCAL_LIBDIR) -lsimvascular_utils
 
 ifeq ($(SV_USE_ITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
@@ -710,9 +754,10 @@ endif
 # include path to find libs when linking
 GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
 
-LFLAGS 	 = $(GLOBAL_LFLAGS) $(TCLTK_LIBS)
+LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS) $(PYTHON_LIB)
 
-LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
+ifneq ($(SV_USE_SHARED),1)
+  LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
@@ -721,6 +766,7 @@ LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
               $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+endif
 
 #
 # ThirdParty software that must be built
@@ -732,6 +778,17 @@ LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
 # ***   (less restrictive licenses)     ***
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
+
+# ----
+# VMTK
+# ----
+
+ifeq ($(SV_USE_VMTK),1)
+     THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/vmtk
+     VMTK_TOP = $(TOP)/../Code/ThirdParty/vmtk
+     VMTK_INCDIR  = -I $(VMTK_TOP)
+     VMTK_LIBS    = $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+endif
 
 # ------
 # Sparse
@@ -1053,6 +1110,26 @@ ifeq ($(SV_USE_FREETYPE),1)
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/freetype-2.6.3.x64_macosx.mk
   endif
+endif
+
+# ---
+# MMG
+# ---
+
+ifeq ($(SV_USE_MMG),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/mmg-5.1.0.x64_macosx.mk
+  endif
+
 endif
 
 # -----------------------------------------

@@ -51,7 +51,7 @@ class vtkDataArray;
 class vtkPoints;
 class vtkPolyData;
 
-class CV_DLL_EXPORT vtkMultiplePolyDataIntersectionFilter : public vtkPolyDataAlgorithm
+class SV_EXPORT_SYSGEOM vtkMultiplePolyDataIntersectionFilter : public vtkPolyDataAlgorithm
 {
 public:
   static vtkMultiplePolyDataIntersectionFilter *New();

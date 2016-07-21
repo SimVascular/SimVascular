@@ -29,7 +29,7 @@
 class vtkIdList;
 class vtkDataSetAttributes;
 
-class CV_DLL_EXPORT vtkIntegrateFlowThroughSurface : public vtkUnstructuredGridAlgorithm
+class SV_EXPORT_SYSGEOM vtkIntegrateFlowThroughSurface : public vtkUnstructuredGridAlgorithm
 {
 public:
   vtkTypeMacro(vtkIntegrateFlowThroughSurface,vtkUnstructuredGridAlgorithm);

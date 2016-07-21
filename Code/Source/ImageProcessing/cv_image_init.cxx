@@ -521,10 +521,10 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
 
   // debug info
   for (i = 0; i < numRegions; i++) {
-      fprintf(stdout,"region %i: %s %i\n",i,regionsArg.argv[i],listPd[i]);
+      fprintf(stdout,"region %i: %s %p\n",i,regionsArg.argv[i],listPd[i]);
   }
   for (i = 0; i < numImages; i++) {
-      fprintf(stdout,"images %i: %s %i\n",i,imagesArg.argv[i],listImg[i]);
+      fprintf(stdout,"images %i: %s %p\n",i,imagesArg.argv[i],listImg[i]);
   }
 
   // classify points and calculate correction equation
@@ -710,10 +710,10 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
 
   // debug info
   for (i = 0; i < numRegions; i++) {
-      fprintf(stdout,"region %i: %s %i\n",i,regionsArg.argv[i],listPd[i]);
+      fprintf(stdout,"region %i: %s %p\n",i,regionsArg.argv[i],listPd[i]);
   }
   for (i = 0; i < numImages; i++) {
-      fprintf(stdout,"images %i: %s %i\n",i,imagesArg.argv[i],listImg[i]);
+      fprintf(stdout,"images %i: %s %p\n",i,imagesArg.argv[i],listImg[i]);
   }
 
   // classify points and calculate correction equation

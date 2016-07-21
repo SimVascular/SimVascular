@@ -45,6 +45,8 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS)
 
+CXXFLAGS += -DSV_EXPORT_MESH_COMPILE
+
 ifeq ($(SV_USE_ZLIB),1)
         CXXFLAGS += $(ZLIB_INCDIR)
 endif
@@ -57,9 +59,14 @@ HDRS	= cvMeshObject.h cvMeshSystem.h
 
 CXXSRCS	= cvMeshObject.cxx cvMeshSystem.cxx
 
-DLLHDRS = $(HDRS) cv_mesh_init.h
+DLLHDRS = cv_mesh_init.h
 
-DLLSRCS = $(CXXSRCS) cv_mesh_init.cxx
+DLLSRCS = cv_mesh_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(ZLIB_LIBS)
 
 TARGET_LIB_NAME = simvascular_mesh
 

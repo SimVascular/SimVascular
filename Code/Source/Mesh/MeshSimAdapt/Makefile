@@ -51,6 +51,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_MESHSIM_ADAPTOR_COMPILE
+
 ifeq ($(SV_USE_OPENCASCADE),1)
   CXXFLAGS += $(OPENCASCADE_INCDIR)
 endif
@@ -87,7 +89,7 @@ ifeq ($(SV_USE_TETGEN),1)
         CXXFLAGS    += $(TETGEN_INCDIR)
 endif
 
-HDRS	= cvMeshSimAdapt.h MeshSimInternal_phAdapt.h cvAdaptHelp.h
+HDRS	= cvMeshSimAdapt.h cvAdaptHelp.h
 
 CXXSRCS = cvMeshSimAdapt.cxx
 
@@ -95,13 +97,13 @@ DLLHDRS = cv_meshsim_adapt_init.h
 
 DLLSRCS = cv_meshsim_adapt_init.cxx
 
-DLLLIBS +=    $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+DLLLIBS +=    $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT)
 
   ifeq ($(SV_USE_SOLVERIO),1)
 	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)

@@ -34,7 +34,7 @@
 #include "SimVascular.h"
 #include "cvVTK.h"
 
- int gdscMaskImageInPlace(vtkStructuredPoints *imgsp,
+SV_EXPORT_IMAGE int gdscMaskImageInPlace(vtkStructuredPoints *imgsp,
                           vtkStructuredPoints *masksp,
                           double replaceVal,int notval);
 

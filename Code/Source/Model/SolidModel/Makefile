@@ -44,6 +44,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR)
 
+CXXFLAGS += -DSV_EXPORT_SOLID_COMPILE
+
 ifeq ($(SV_USE_PARASOLID),1)
    CXXFLAGS += $(PARASOLID_INCDIR)
 endif
@@ -66,8 +68,9 @@ CXXSRCS	= cvSolidModel.cxx
 DLLHDRS = cv_solid_init.h 
 DLLSRCS = cv_solid_init.cxx 
 
-TARGET_LIB_NAME = simvascular_solid
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
-DEPLIBS_NAME = simvascular_utils
+TARGET_LIB_NAME = simvascular_solid
 
 include $(TOP)/targetlib.mk

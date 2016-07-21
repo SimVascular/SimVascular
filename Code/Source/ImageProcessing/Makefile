@@ -36,6 +36,7 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS)
 
+CXXFLAGS += -DSV_EXPORT_IMAGE_COMPILE
 
 HDRS	= cv_image.h cv_img_offsets.h cv_decode.h \
 	  cv_calc_correction_eqn.h cv_img_threshold.h \
@@ -48,6 +49,12 @@ CXXSRCS	= cv_image.cxx cv_read_header.cxx cv_decode.cxx \
 DLLHDRS = cv_image_init.h
 
 DLLSRCS = cv_image_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(VMTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_image
 

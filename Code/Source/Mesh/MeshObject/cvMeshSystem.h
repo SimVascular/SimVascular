@@ -39,7 +39,7 @@
 #include "SimVascular.h"
 #include "cvMeshObject.h"
 
-class cvMeshSystem {
+class SV_EXPORT_MESH cvMeshSystem {
 
 public:
   cvMeshSystem();  

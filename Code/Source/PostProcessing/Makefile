@@ -40,6 +40,8 @@ include $(TOP)/include.mk
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(ZLIB_INCDIR) $(VTK_INCDIRS)
 
+CXXFLAGS += -DSV_EXPORT_POST_COMPILE
+
 HDRS	= cvConvertVisFiles.h cvCalculateWallShearStress.h \
 	  cvCalculateTKE.h
 
@@ -49,6 +51,10 @@ CXXSRCS	= cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx \
 DLLHDRS = cv_post_init.h
 
 DLLSRCS = cv_post_init.cxx
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+	  $(ZLIB_LIBS)
 
 TARGET_LIB_NAME = simvascular_post
 
