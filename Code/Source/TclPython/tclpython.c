@@ -328,7 +328,7 @@ static int command(ClientData clientData, Tcl_Interp *interpreter, int numberOfA
 #define TCL_STORAGE_CLASS DLLEXPORT
 #endif
 
-EXTERN int Tclpython_Init(Tcl_Interp *interpreter)
+int Tclpython_Init(Tcl_Interp *interpreter)
 {
     Tcl_InitHashTable(&threadStates, TCL_ONE_WORD_KEYS);
     Tcl_InitHashTable(&dictionaries, TCL_ONE_WORD_KEYS);

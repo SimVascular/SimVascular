@@ -24,3 +24,5 @@
 extern SV_EXPORT_TCLPYTHON void tclSendThread(Tcl_ThreadId, Tcl_Interp *, CONST char *);
 /* public function for use in extensions to this extension: */
 extern SV_EXPORT_TCLPYTHON Tcl_Interp *tclInterpreter(CONST char *);
+
+extern SV_EXPORT_TCLPYTHON int Tclpython_Init(Tcl_Interp *interpreter);

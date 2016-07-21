@@ -37,7 +37,7 @@ include_directories(${PYTHON_INCLUDE_PATH}
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CSRCS} cv_pythoninterp_init.cxx)
 
 target_link_libraries(${lib} lib_simvascular_repository
 			     lib_simvascular_globals

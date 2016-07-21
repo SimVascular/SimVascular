@@ -38,7 +38,7 @@
 #include "cv_ITKLset3d_init.h"
 
 int Itklset_Init( Tcl_Interp *interp ){
-  
+
   Itkutils_Init( interp );
   Itkls2d_Init( interp );
   Itkls3d_Init( interp );
