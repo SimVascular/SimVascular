@@ -46,6 +46,16 @@ set SV_SHARED_BUILD \"${SV_BUILD_SHARED_LIBS}\"
 set SV_BUILD_TYPE \"${SV_BUILD_TYPE}\"
 set SV_USE_PYTHON \"${SV_USE_PYTHON}\"\n")
 
+file(APPEND  "${TCL_STARTUP_CONFIG_FILE}"
+"
+if {$SV_RELEASE_BUILD == 1} {
+
+} else {
+    global VTK_DIR
+    set VTK_DIR \"${VTK_DIR}\"
+}
+")
+
 file(WRITE ${TCL_SPLASH_CONFIG_FILE} 
 "if {$SV_RELEASE_BUILD == 1} {
 	set {gOptions(simvascular_version)} \"VERSION ${SV_FULL_VER_NO}.${SV_VERSION_TIMESTAMP}\"

@@ -62,7 +62,11 @@ include(SimVascularDependentOptions)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularExternals)
-
+#-----------------------------------------------------------------------------
+# Build SimVascular3
+option(BUILD_SV3
+    "Build SV3 with SimVacular." OFF)
+mark_as_superbuild(BUILD_SV3)
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
 set(SV_EXE "simvascular")
@@ -85,6 +89,19 @@ include(SimVascularInstallSetup)
 include(SimVascularHomeSetup)
 include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
+include(SimVascularFunctionCheckCompilerFlags)
+
+#-----------------------------------------------------------------------------
+# SV3 Uses C++11
+#-----------------------------------------------------------------------------
+if(BUILD_SV3)
+  SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
+    if(NOT SimVascular_CXX11_FLAG)
+    # Older gcc compilers use -std=c++0x
+    SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
+  endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SimVascular_CXX11_FLAG}")
+endif()
 
 #-----------------------------------------------------------------------------
 # Setting up default directories for SimVascular Externals
@@ -152,6 +169,9 @@ STRING(REGEX REPLACE
 
 #-----------------------------------------------------------------------------
 # PYTHON
+if(BUILD_SV3)
+  set(SV_USE_PYTHON ON)
+endif()
 if(SV_USE_PYTHON)
 	simvascular_external(PYTHON SYSTEM_DEFAULT SHARED_LIB)
 	mark_as_superbuild(
@@ -185,8 +205,26 @@ if(SV_USE_PYTHON)
         endif()
 endif()
 
+#---------------------------
+# Qt5
+if(BUILD_SV3)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
+    set(SimVascular_QT5_COMPONENTS Concurrent OpenGL PrintSupport Script Sql Svg WebKitWidgets Xml XmlPatterns UiTools Help)
+    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
+    if(Qt5_DIR)
+      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
+      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
+      if(_result LESS 0)
+        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
+      endif()
+    endif()
+endif()
+
 #-----------------------------------------------------------------------------
 # VTK
+if(BUILD_SV3)
+  set(SV_USE_VTK_SHARED ON)
+endif()
 set(SV_DEPENDS ${SV_DEPENDS} "TCL")
 if(SV_USE_VTK_SHARED)
 	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
@@ -297,6 +335,10 @@ endif()
 
 #-----------------------------------------------------------------------------
 # GDCM
+if(BUILD_SV3)
+  set(SV_USE_GDCM ON)
+  set(SV_USE_GDCM_SHARED ON)
+endif()
 if(SV_USE_GDCM)
 	simvascular_external(GDCM DOWNLOADABLE)
 	mark_as_superbuild(GDCM_DIR)
@@ -314,6 +356,10 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Plugin LevelSets
+if(BUILD_SV3)
+  set(SV_USE_ITK ON)
+  set(SV_USE_ITK_SHARED ON)
+endif()
 if(SV_USE_ITK)
 	if(SV_USE_ITK_SHARED)
 		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
@@ -371,6 +417,63 @@ if(SV_USE_OpenCASCADE)
 	endif()
         if(SV_USE_SYSTEM_OpenCASCADE)
           simvascular_get_external_path_from_include_dir(OpenCASCADE)
+        endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# CTK
+if(BUILD_SV3)
+  set(SV_USE_CTK ON)
+  set(SV_USE_CTK_SHARED ON)
+endif()
+if(SV_USE_CTK)
+    simvascular_external(CTK DOWNLOADABLE)
+    mark_as_superbuild(CTK_DIR)
+
+    if(SV_USE_CTK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} CTK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+        if(SV_USE_SYSTEM_CTK)
+          simvascular_get_external_path_from_include_dir(CTK)
+        endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# SimpleITK
+if(BUILD_SV3)
+  set(SV_USE_SimpleITK ON)
+  set(SV_USE_SimpleITK_SHARED ON)
+endif()
+if(SV_USE_SimpleITK)
+    simvascular_external(SimpleITK DOWNLOADABLE)
+    mark_as_superbuild(SimpleITK_DIR)
+
+    if(SV_USE_SimpleITK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} SimpleITK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+        if(SV_USE_SYSTEM_SimpleITK)
+          simvascular_get_external_path_from_include_dir(SimpleITK)
+        endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# MITK
+if(BUILD_SV3)
+  set(SV_USE_MITK ON)
+  set(SV_USE_MITK_SHARED ON)
+endif()
+if(SV_USE_MITK)
+    simvascular_external(MITK DOWNLOADABLE)
+    mark_as_superbuild(MITK_DIR)
+
+    if(SV_USE_MITK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+        if(SV_USE_SYSTEM_MITK)
+          simvascular_get_external_path_from_include_dir(MITK)
         endif()
 endif()
 
@@ -891,3 +994,26 @@ endif()
 # Configure Exe Scripts, this should be the last subdirectory
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
+
+#--------------------------------------------------------------------
+# Build SV3
+if(BUILD_SV3)
+
+    include_directories(
+      ${CMAKE_CURRENT_SOURCE_DIR}/CMake
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      )
+
+    set(files
+      svConfigure.h
+      )
+    foreach(f ${files})
+      configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/${f}.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${f}
+        )
+    endforeach()
+
+    add_subdirectory(SV3)
+endif()

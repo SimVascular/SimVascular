@@ -43,6 +43,7 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
   } elseif {[llength $not_loaded] > 0 && [llength $loaded] == 0} {
     puts [format "  %-12s %s" "TclVtk:" Shared Libs]
     set auto_path "$auto_path $env(TCLLIBPATH)"
+    lappend auto_path [file join ${VTK_DIR} Wrapping Tcl]
     package require vtk
   } else {
     puts [format "  %-12s %s" "TclVtk:" Static Libs]

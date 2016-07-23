@@ -24,6 +24,15 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+
+if(BUILD_SV3)
+    if(WIN32)
+      option(VTK_USE_SYSTEM_FREETYPE OFF)
+    else(WIN32)
+      option(VTK_USE_SYSTEM_FREETYPE ON)
+    endif(WIN32)
+endif()
+
 set(proj VTK)
 if(${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   set(${proj}_DEPENDENCIES "")
@@ -82,13 +91,58 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(VTK_TK_XLIB_PATH_DEFINE  "-DTK_XLIB_PATH:PATH=${TK_XLIB_PATH}")
   endif()
 
+  set(revision_tag "simvascular-patch-6.2")
+
+  set(additional_cmake_args )
+  if(BUILD_SV3)
+      if(MINGW)
+        set(additional_cmake_args
+            -DCMAKE_USE_WIN32_THREADS:BOOL=ON
+            -DCMAKE_USE_PTHREADS:BOOL=OFF
+            -DVTK_USE_VIDEO4WINDOWS:BOOL=OFF # no header files provided by MinGW
+            )
+      endif()
+    
+      if(WIN32)
+        # see http://bugs.mitk.org/show_bug.cgi?id=17858
+        list(APPEND additional_cmake_args
+             -DVTK_DO_NOT_DEFINE_OSTREAM_SLL:BOOL=ON
+             -DVTK_DO_NOT_DEFINE_OSTREAM_ULL:BOOL=ON
+            )
+      endif()
+
+    list(APPEND additional_cmake_args
+        -DVTK_QT_VERSION:STRING=5
+        "-DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}"
+        -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+        -DModule_vtkGUISupportQt:BOOL=ON
+        -DModule_vtkGUISupportQtWebkit:BOOL=ON
+        -DModule_vtkGUISupportQtSQL:BOOL=ON
+        -DModule_vtkRenderingQt:BOOL=ON
+        #-DModule_vtkFiltersParallelStatistics:BOOL=ON
+        -DVTK_Group_Qt:BOOL=ON
+     )
+
+      list(APPEND additional_cmake_args
+          -DVTK_WINDOWS_PYTHON_DEBUGGABLE:BOOL=OFF
+          )
+
+    list(APPEND additional_cmake_args
+        -DModule_vtkTestingRendering:BOOL=ON
+        -DVTK_MAKE_INSTANTIATORS:BOOL=ON
+        -DVTK_USE_SYSTEM_FREETYPE:BOOL=${VTK_USE_SYSTEM_FREETYPE}
+     )
+     
+     set(revision_tag "simvascular-patch-6.2b")
+  endif()
+
   ExternalProject_Add(${proj}
    ${${proj}_EP_ARGS}
    GIT_REPOSITORY "https://github.com/SimVascular/VTK.git"
    PREFIX ${${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_SRC_DIR}
    BINARY_DIR ${${proj}_BLD_DIR}
-   GIT_TAG "simvascular-patch-6.2"
+   GIT_TAG ${revision_tag}
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -116,6 +170,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARIES}
    -DBUILD_EXAMPLES:BOOL=OFF
    -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
+   ${additional_cmake_args}
    )
 
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})

@@ -51,7 +51,7 @@ if {!(([file exists $env(SV_HOME)]) && ([file isdirectory $env(SV_HOME)]))} {
 set simvascular_home $env(SV_HOME)
 global SV_BUILD_ID
 if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
-  source [file join $simvascular_home/Tcl/startup_configure.tcl]
+
   if { [file exists [file join $simvascular_home/release-date]] } {
       set SV_RELEASE_BUILD 1
       set fp [open "$simvascular_home/release-date" r]
@@ -62,6 +62,7 @@ if { [file exists [file join $simvascular_home/Tcl/startup_configure.tcl]]} {
       set SV_RELEASE_BUILD 0
       set SV_BUILD_ID "developer build"
   }
+  source [file join $simvascular_home/Tcl/startup_configure.tcl]
 } else {
     set SV_FULL_VER_NO REPLACE_SV_FULL_VER_NO
     set SV_MAJOR_VER_NO REPLACE_SV_MAJOR_VER_NO
