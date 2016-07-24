@@ -1,0 +1,2 @@
+set(MITK_BUILD_org.mitk.gui.qt.segmentation ON CACHE BOOL "")
+set(MITK_BUILD_org.mitk.gui.qt.measurementtoolbox ON CACHE BOOL "")

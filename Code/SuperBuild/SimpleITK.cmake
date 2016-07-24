@@ -24,12 +24,9 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-set(proj ITK)
+set(proj SimpleITK)
 
-set(${proj}_DEPENDENCIES VTK)
-if(SV_USE_GDCM)
-  set(${proj}_DEPENDENCIES ${${proj}_DEPENDENCIES} GDCM)
-endif()
+set(${proj}_DEPENDENCIES GDCM ITK)
 
 ExternalProject_Include_Dependencies(${proj}
   PROJECT_VAR proj
@@ -40,17 +37,15 @@ ExternalProject_Include_Dependencies(${proj}
 
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
-  set(revision_tag "v${${proj}_VERSION}")
-
   if(WIN32)
     set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
-      CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
+      CACHE PATH "On windows, there is a bug with SimpleITK source code directory path length, you can change this path to avoid it")
     set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR} 
-      CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
+      CACHE PATH "On windows, there is a bug with SimpleITK source code directory path length, you can change this path to avoid it")
     set(${proj}_BLD_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}  
-      CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
+      CACHE PATH "On windows, there is a bug with SimpleITK source code directory path length, you can change this path to avoid it")
     set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR}  
-      CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
+      CACHE PATH "On windows, there is a bug with SimpleITK source code directory path length, you can change this path to avoid it")
   else()
     set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR})
     set(${proj}_SRC_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_SRC_DIR})
@@ -58,31 +53,22 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
   endif()
 
-  set(additional_cmake_args )
-  if(BUILD_SV3)
-      if(MINGW)
-        set(additional_cmake_args
-            -DCMAKE_USE_WIN32_THREADS:BOOL=ON
-            -DCMAKE_USE_PTHREADS:BOOL=OFF)
-      endif()
-      
-      list(APPEND additional_cmake_args
-           -DUSE_WRAP_ITK:BOOL=OFF
-      )
-      
-      list(APPEND additional_cmake_args
-           -DModule_ITKOpenJPEG:BOOL=ON
-      )
-      
-      set(revision_tag "simvascular-patch-4.7.1")
-      
-  endif()
+  set(revision_tag "simvascular-patch-0.8.1")
+  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/SimpleITK.git"
+    GIT_TAG ${revision_tag})
+
+  ExternalProject_add(${proj}-download
+    ${location_args}
+    PREFIX ${${proj}_SRC_DIR}-download-prefix
+    SOURCE_DIR ${${proj}_SRC_DIR}
+    CONFIGURE_COMMAND ""
+    INSTALL_COMMAND ""
+    BUILD_COMMAND ""
+   )
 
   ExternalProject_Add(${proj}
-   GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
-   GIT_TAG ${revision_tag}
    PREFIX ${${proj}_PFX_DIR}
-   SOURCE_DIR ${${proj}_SRC_DIR}
+   SOURCE_DIR ${${proj}_SRC_DIR}/SuperBuild
    BINARY_DIR ${${proj}_BLD_DIR}
    UPDATE_COMMAND ""
    CMAKE_CACHE_ARGS
@@ -92,35 +78,39 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
    -DCMAKE_THREAD_LIBS:STRING=-lpthread
-   -DCMAKE_MACOSX_RPATH:INTERNAL=1
    -DBUILD_EXAMPLES:BOOL=OFF
    -DBUILD_SHARED_LIBS:BOOL=${SV_USE_${proj}_SHARED}
    -DBUILD_TESTING:BOOL=OFF
-   -DITK_WRAP_PYTHON:BOOL=OFF
-   -DITK_LEGACY_SILENT:BOOL=OFF
-   -DModule_ITKReview:BOOL=ON
-   -DModule_ITKVtkGlue:BOOL=ON
-   -DVTK_DIR:PATH=${VTK_DIR}
-   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
-   -DITK_USE_SYSTEM_GDCM:BOOL=${SV_USE_GDCM}
+   -DWRAP_CSHARP:BOOL=OFF
+   -DWRAP_TCL:BOOL=OFF
+   -DWRAP_LUA:BOOL=OFF
+   -DWRAP_JAVA:BOOL=OFF
+   -DWRAP_RUBY:BOOL=OFF
+   -DWRAP_R:BOOL=OFF
+   -DWRAP_PYTHON:BOOL=ON
+   -DSimpleITK_PYTHON_THREADS:BOOL=ON
+   -DSimpleITK_BUILD_DISTRIBUTE:BOOL=ON
+   -DPYTHON_EXECUTABLE:FILEPATH=${PYTHON_EXECUTABLE}
+   -DPYTHON_INCLUDE_DIR:PATH=${PYTHON_INCLUDE_DIR}
+   -DPYTHON_INCLUDE_DIR2:PATH=${PYTHON_INCLUDE_DIR2}
+   -DPYTHON_LIBRARY:FILEPATH=${PYTHON_LIBRARY}
+   -DUSE_SYSTEM_ITK:BOOL=ON
+   -DITK_DIR:PATH=${ITK_DIR}
    -DGDCM_DIR:PATH=${GDCM_DIR}
-    ${additional_cmake_args}
-   DEPENDS
-   ${${proj}_DEPENDENCIES}
+   -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
+   DEPENDS ${proj}-download ${${proj}_DEPENDENCIES}
    )
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 set(SV_${proj}_DIR ${${proj}_BIN_DIR})
-set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-4.8)
-if(BUILD_SV3)
-  set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-4.7)
-endif() 
+set(${proj}_DIR ${${proj}_BLD_DIR}/${proj}-build)
+
 mark_as_superbuild(${proj}_DIR})
 
 else()
   # Sanity checks
-  if((DEFINED SV_ITK_DIR AND NOT EXISTS ${SV_ITK_DIR})
-     AND (DEFINED ITK_DIR AND NOT EXISTS ${ITK_DIR}))
-    message(FATAL_ERROR "SV_ITK_DIR variable is defined but corresponds to non-existing directory")
+  if((DEFINED SV_SimpleITK_DIR AND NOT EXISTS ${SV_SimpleITK_DIR})
+     AND (DEFINED SimpleITK_DIR AND NOT EXISTS ${SimpleITK_DIR}))
+    message(FATAL_ERROR "SV_SimpleITK_DIR variable is defined but corresponds to non-existing directory")
   endif()
   ExternalProject_Add_Empty(${proj} DEPENDS ${${proj}_DEPENDENCIES})
 endif()
