@@ -984,6 +984,10 @@ if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 		include_directories("${dir}")
 		add_subdirectory("${dir}")
 	endforeach()
+	
+    include_directories("Source/Segmentation/ITK/Include")
+    include_directories("Source/Segmentation/ITK/ITKCode")
+	
 	message(STATUS "Executables")
 	foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
 		message(STATUS "	${dir}")
