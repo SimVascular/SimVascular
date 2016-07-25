@@ -3,21 +3,21 @@ SET(CXXSRCS main.cxx SimVascular_Init.cxx)
 
 UNSET(OPTLIBS)
 
-if(NOT BUILD_SHARED_LIBS)
-	SET(CXXSRCS ${CXXSRCS}
-		 ${SV_SOURCE_DIR}/Source/Common/Geometry/cv_geom_init.cxx
-                 ${SV_SOURCE_DIR}/Source/PostProcessing/cv_post_init.cxx
-                 ${SV_SOURCE_DIR}/Source/ImageProcessing/cv_image_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Common/Repository/cv_repos_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Model/SolidModel/cv_solid_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetCore_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetV_init.cxx
-		 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_Lset_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Common/Utils/cv_get_tcl_interp_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Mesh/MeshObject/cv_mesh_init.cxx
-                 ${SV_SOURCE_DIR}/Source/Common/Utils/cv_math_init.cxx
-		 ${SV_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
-endif()
+#if(NOT BUILD_SHARED_LIBS)
+#	SET(CXXSRCS ${CXXSRCS}
+#		 ${SV_SOURCE_DIR}/Source/Common/Geometry/cv_geom_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/PostProcessing/cv_post_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/ImageProcessing/cv_image_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Common/Repository/cv_repos_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Model/SolidModel/cv_solid_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetCore_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_LsetV_init.cxx
+#		 ${SV_SOURCE_DIR}/Source/Legacy/LevelSet/cv_Lset_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Common/Utils/cv_get_tcl_interp_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Mesh/MeshObject/cv_mesh_init.cxx
+#                 ${SV_SOURCE_DIR}/Source/Common/Utils/cv_math_init.cxx
+#		 ${SV_SOURCE_DIR}/Source/Model/PolyDataSolidModel/cv_polydatasolid_init.cxx)
+#endif()
 
 if(NOT ${USE_SYSTEM_TCL})
 	include_directories(${TCL_INCLUDE_PATH})

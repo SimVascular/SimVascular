@@ -29,34 +29,12 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef __CVUTILS_INIT_H
+#define __CVUTILS_INIT_H
+
 #include "SimVascular.h"
 #include "tcl.h"
 
-#include "cv_get_tcl_interp_init.h"
-#include "tcl.h"
-#include "cv_globals.h"
+extern "C" SV_EXPORT_UTILS int Utils_Init( Tcl_Interp *interp );
 
-int Getinterp_Init(Tcl_Interp *interp) {
-
-  gVtkTclInterp = interp;
-
-  const char name[] = "gTclInterp";
-  char strptr[32];
-  strptr[0]='\0';
-
-  sprintf(strptr,"%p",interp);
-
-  Tcl_SetVar(interp,name, strptr, TCL_GLOBAL_ONLY);
-
-  /*
-  const char* str;
-  str = Tcl_GetVar(interp,name,TCL_GLOBAL_ONLY);
-  fprintf(stdout,"%s\n",str);
-  void* ptr = NULL;
-  sscanf(str,"%p",&ptr);
-  fprintf(stdout,"\n%p\n",ptr);
-  */
-
-  return TCL_OK;
-
-}
+#endif // __UTILS_INIT_H

@@ -33,8 +33,6 @@
 #-----------------------------------------------------------------------------
 
 set(lib lib_simvascular_utils)
-set(lib2 lib_simvascular_tcl_interp)
-set(lib3 lib_simvascular_math)
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
@@ -42,16 +40,20 @@ SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
             cvStateArray.cxx cv_cgeom.cxx
             cvMath.cxx cv_arg.cxx
             cvFactoryRegistrar.cxx
+            cv_utils_init.cxx
+            cv_math_init.cxx
+            cv_get_tcl_interp_init.cxx
             )
 SET(HDRS    cv_misc_utils.h cv_vtk_utils.h
             cvTimer.h cvIntArrayList.h
             cvStateArray.h cv_cgeom.h
             cvMath.h cv_arg.h cvFactoryRegistrar.h
+            cv_utils_init.h
+            cv_math_init.h
+            cv_get_tcl_interp_init.h
             )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
-add_library(${lib2} ${SV_LIBRARY_TYPE} cv_get_tcl_interp_init.cxx)
-add_library(${lib3} ${SV_LIBRARY_TYPE} cv_math_init.cxx)
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
@@ -59,23 +61,9 @@ target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
 			lib_simvascular_globals
             )
-target_link_libraries(${lib3}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES}
-			${GLOBAL_LIBRARIES}
-			${lib}
-			lib_simvascular_globals
-            )
-target_link_libraries(${lib2}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES}
-			${GLOBAL_LIBRARIES}
-			${lib}
-			lib_simvascular_globals
-            )
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib} ${lib2} ${lib3}
+	install(TARGETS ${lib}
 	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries

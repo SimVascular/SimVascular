@@ -62,6 +62,7 @@ include(SimVascularDependentOptions)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularExternals)
+#include(SimVascularInternals)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
