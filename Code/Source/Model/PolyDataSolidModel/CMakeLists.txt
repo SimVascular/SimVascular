@@ -50,7 +50,7 @@ target_link_libraries(${lib}
                         ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME} ${SV_LIB_GEOM_NAME}
             )
 if(SV_USE_VMTK)
-    target_link_libraries(${lib} lib_simvascular_vmtk)
+    target_link_libraries(${lib} ${SV_LIB_THIRDPARTY_VMTK_NAME})
 endif()
 
 

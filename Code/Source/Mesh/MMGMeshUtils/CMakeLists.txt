@@ -45,7 +45,7 @@ target_link_libraries(${lib}
    ${MMG_LIBRARY}
    ${ZLIB_LIBRARY}
    ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
-   ${SV_LIB_POLYDATA_SOLID_NAME} lib_simvascular_mesh
+   ${SV_LIB_POLYDATA_SOLID_NAME} ${SV_LIB_MESH_NAME}
    )
 
 if(SV_INSTALL_LIBS)

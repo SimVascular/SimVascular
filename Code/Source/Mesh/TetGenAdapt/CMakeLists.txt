@@ -46,7 +46,7 @@ target_link_libraries(${lib}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES}
                         ${SV_LIB_ADAPTOR_NAME}
-			lib_simvascular_mesh
+			${SV_LIB_MESH_NAME}
 			${SV_LIB_SOLID_NAME}
 			${SV_LIB_GEOM_NAME}
 			lib_simvascular_solverio

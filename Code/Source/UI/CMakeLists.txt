@@ -70,7 +70,7 @@ simvascular_add_executable(${SV_EXE}
 target_link_libraries(${SV_EXE}
 			${SV_LIB_POST_NAME} ${SV_LIB_IMAGE_NAME}
 			${SV_LIB_REPOSITORY_NAME} ${SV_LIB_LSET_NAME}
-			${SV_LIB_SOLID_NAME} lib_simvascular_mesh
+			${SV_LIB_SOLID_NAME} ${SV_LIB_MESH_NAME}
                         ${SV_LIB_GEOM_NAME} ${SV_LIB_UTILS_NAME}
 			${SV_LIB_GLOBALS_NAME} ${SV_LIB_POLYDATA_SOLID_NAME})
 

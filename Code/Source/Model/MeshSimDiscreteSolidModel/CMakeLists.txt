@@ -42,7 +42,7 @@ target_link_libraries(${lib}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${GLOBAL_LIBRARIES})
 			#${ZLIB_LIBRARY}
-			#${SV_LIB_GLOBALS_NAME} lib_simvascular_mesh)
+			#${SV_LIB_GLOBALS_NAME} ${SV_LIB_MESH_NAME})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

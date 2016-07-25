@@ -85,7 +85,7 @@ target_link_libraries(${lib}
 
 if(SV_USE_VMTK)
 	target_link_libraries(${lib}
-		lib_simvascular_vmtk
+		${SV_LIB_THIRDPARTY_VMTK_NAME}
 		)
 endif()
 

@@ -41,7 +41,7 @@ SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
 
 if(SV_USE_VMTK)
-	SET(OPTLIBS lib_simvascular_vmtk)
+	SET(OPTLIBS ${SV_LIB_THIRDPARTY_VMTK_NAME})
 endif()
 
 if(SV_USE_MMG)
@@ -56,7 +56,7 @@ target_link_libraries(${lib}
    ${TETGEN_LIBRARY}
    ${ZLIB_LIBRARY}
    ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
-   ${SV_LIB_POLYDATA_SOLID_NAME} lib_simvascular_mesh
+   ${SV_LIB_POLYDATA_SOLID_NAME} ${SV_LIB_MESH_NAME}
    )
 
 set_target_properties(${lib} PROPERTIES "COMPILE_DEFINITIONS" TETLIBRARY)

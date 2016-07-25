@@ -31,7 +31,7 @@
 #-----------------------------------------------------------------------------
 # Plugin - VMTK
 #-----------------------------------------------------------------------------
-set(lib lib_simvascular_vmtk)
+set(lib ${SV_LIB_THIRDPARTY_VMTK_NAME})
 LIST(APPEND PLUGINLIBS ${lib})
 
 set(CXXSRCS cv_VMTK_utils.cxx vtkvmtkBoundaryLayerGenerator.cxx

@@ -47,7 +47,7 @@ target_link_libraries(${lib}
 			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES}
-			lib_simvascular_mesh
+			${SV_LIB_MESH_NAME}
 			lib_simvascular_solverio
 			${SV_LIB_GLOBALS_NAME}
 			${SV_LIB_UTILS_NAME}

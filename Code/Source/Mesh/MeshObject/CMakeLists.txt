@@ -32,7 +32,7 @@
 # Mesh Object
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_mesh)
+set(lib ${SV_LIB_MESH_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx)

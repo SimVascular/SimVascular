@@ -16,7 +16,7 @@ IF(WIN32)
 	ENDIF(BUILD_SHARED_LIBS)
 ENDIF(WIN32)
 
-set(lib lib_simvascular_zlib)
+set(lib ${SV_LIB_THIRDPARTY_ZLIB_NAME})
 add_library(${lib} ${SV_LIBRARY_TYPE} ${SRCS})
 
 if(SV_INSTALL_LIBS)
