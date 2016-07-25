@@ -93,9 +93,9 @@ endif()
 
 # Libraries for the solver
 set(lib_vtk lib_simvascular_flowsolver_vtk)
-set(lib_leslib lib_simvascular_flowsolver_dummy_leslib)
-set(lib_restart lib_simvascular_flowsolver_write_restart)
-set(lib_flowsolver lib_simvascular_flowsolver_fortran_lib)
+set(lib_leslib ${SV_LIB_THREEDSOLVER_DUMMY_LESLIB_NAME})
+set(lib_restart ${SV_LIB_THREEDSOLVER_WRITE_RESTART_NAME})
+set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME})
 # Include files for the USE_VTK VERSION
 if (SV_THREEDSOLVER_USE_VTK)
   SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
@@ -111,7 +111,7 @@ add_library(${lib_leslib} ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
   set(LESLIB_LIBRARY ${lib_leslib})
 endif()
 add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
-target_link_libraries(${lib_restart} lib_simvascular_solverio
+target_link_libraries(${lib_restart} ${SV_LIB_SOLVERIO_NAME}
 	${lib_leslib}
 	${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
 
@@ -119,9 +119,9 @@ ADD_LIBRARY(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
 #SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
 TARGET_LINK_LIBRARIES(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
 	${SV_MPI_Fortran_LIBRARIES}
-	lib_simvascular_solverio ${lib_restart})
+	${SV_LIB_SOLVERIO_NAME} ${lib_restart})
 if(SV_THREEDSOLVER_USE_SVLS)
-	target_link_libraries(${lib_flowsolver} lib_simvascular_svls)
+	target_link_libraries(${lib_flowsolver} ${SV_LIB_SVLS_NAME})
 endif()
 if(SV_THREEDSOLVER_USE_VTK)
 	target_link_libraries(${lib_flowsolver} ${lib_vtk})
@@ -147,7 +147,7 @@ TARGET_LINK_LIBRARIES(${SV_FLOWSOLVER_EXE} ${lib_flowsolver}
                       ${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES}
                       ${METIS_LIBRARY} ${SVLS_LIBRARY}
 		      ${SV_MPI_EXTRA_LIBRARY} ${LESLIB_LIBRARY}
-                      ${NSPCG_LIBRARY} lib_simvascular_solverio
+                      ${NSPCG_LIBRARY} ${SV_LIB_SOLVERIO_NAME}
                       ${VTKLIB}
                       )
 

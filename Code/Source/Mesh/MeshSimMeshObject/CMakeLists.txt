@@ -58,7 +58,7 @@ endif()
 
 if(SV_USE_ADAPTOR)
     target_link_libraries(${lib} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
-	    #lib_simvascular_solverio)
+	    #${SV_LIB_SOLVERIO_NAME})
 endif()
 
 if(SV_INSTALL_LIBS)

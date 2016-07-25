@@ -40,6 +40,6 @@ simvascular_add_executable(${SV_POSTSOLVER_EXE}
 target_link_libraries(${SV_POSTSOLVER_EXE}
 			${GLOBAL_LIBRARIES} ${INTELRUNTIME_LIBRARIES} ${ZLIB_LIBRARY}
 			${VTK_LIBRARIES}
-			lib_simvascular_solverio)
+			${SV_LIB_SOLVERIO_NAME})
 
 

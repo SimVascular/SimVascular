@@ -49,7 +49,7 @@ target_link_libraries(${lib}
 			${SV_LIB_MESH_NAME}
 			${SV_LIB_SOLID_NAME}
 			${SV_LIB_GEOM_NAME}
-			lib_simvascular_solverio
+			${SV_LIB_SOLVERIO_NAME}
 			${SV_LIB_GLOBALS_NAME}
 			${SV_LIB_UTILS_NAME}
 			${SV_LIB_TETGEN_MESH_NAME}

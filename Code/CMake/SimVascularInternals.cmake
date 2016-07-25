@@ -27,7 +27,14 @@ set(SV_LIBS ADAPTOR
             THIRDPARTY_SPARSE
             THIRDPARTY_TETGEN
             THIRDPARTY_VMTK
-            THIRDPARTY_ZLIB)
+            THIRDPARTY_ZLIB
+            PRESOLVER
+            THREEDSOLVER_DUMMY_LESLIB
+            THREEDSOLVER_FORTRAN
+            THREEDSOLVER_WRITE_RESTART
+            POSTSOLVER
+            SVLS
+            SOLVERIO)
 
 foreach(lib ${SV_LIBS})
   string(TOLOWER "SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
