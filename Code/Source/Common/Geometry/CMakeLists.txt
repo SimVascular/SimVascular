@@ -32,7 +32,7 @@
 # Geometry
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_sysgeom)
+set(lib ${SV_LIB_GEOM_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
@@ -80,7 +80,7 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-	lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository lib_simvascular_solid
+	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME}
 	)
 
 if(SV_USE_VMTK)

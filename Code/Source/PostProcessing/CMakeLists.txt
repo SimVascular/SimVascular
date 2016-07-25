@@ -2,7 +2,7 @@
 # PostProcessing
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_post)
+set(lib ${SV_LIB_POST_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx
@@ -19,7 +19,7 @@ target_link_libraries(${lib}
 			${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
 			${ZLIB_LIBRARY}
-			lib_simvascular_globals lib_simvascular_repository)
+			${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

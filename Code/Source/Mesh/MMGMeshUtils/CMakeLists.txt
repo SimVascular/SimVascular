@@ -31,7 +31,7 @@
 #-----------------------------------------------------------------------------
 # Plugin - MMG Mesh
 #-----------------------------------------------------------------------------
-set(lib lib_simvascular_mmg_mesh)
+set(lib ${SV_LIB_MMG_MESH_NAME})
 include_directories(${MMG_INCLUDE_DIR})
 
 SET(CXXSRCS cv_mmg_mesh_utils.cxx)
@@ -44,8 +44,8 @@ target_link_libraries(${lib}
    ${GLOBAL_LIBRARIES}
    ${MMG_LIBRARY}
    ${ZLIB_LIBRARY}
-   lib_simvascular_globals lib_simvascular_utils
-   lib_simvascular_polydatasolid lib_simvascular_mesh
+   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
+   ${SV_LIB_POLYDATA_SOLID_NAME} lib_simvascular_mesh
    )
 
 if(SV_INSTALL_LIBS)

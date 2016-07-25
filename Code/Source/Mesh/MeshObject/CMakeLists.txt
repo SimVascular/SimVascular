@@ -44,8 +44,8 @@ target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
 			${ZLIB_LIBRARY}
-			lib_simvascular_globals lib_simvascular_repository
-			lib_simvascular_solid
+			${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME}
+			${SV_LIB_SOLID_NAME}
             )
 
 if(SV_INSTALL_LIBS)

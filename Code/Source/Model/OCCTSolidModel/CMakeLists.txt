@@ -32,7 +32,7 @@
 # PolyData Solid
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_opencascade)
+set(lib ${SV_LIB_OpenCASCADE_SOLID_NAME})
 LIST(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
@@ -51,8 +51,8 @@ target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
 			${OpenCASCADE_LIBRARIES}
 			${FREETYPE_LIBRARY}
-			lib_simvascular_solid lib_simvascular_repository
-			lib_simvascular_globals lib_simvascular_utils lib_simvascular_sysgeom
+			${SV_LIB_SOLID_NAME} ${SV_LIB_REPOSITORY_NAME}
+                        ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_GEOM_NAME}
             )
 if(SV_USE_PYTHON)
    target_link_libraries(${lib} ${PYTHON_LIBRARY})

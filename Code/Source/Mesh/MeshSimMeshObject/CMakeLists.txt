@@ -27,7 +27,7 @@
  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  #
  #=========================================================================#
-SET(lib lib_simvascular_meshsim_mesh)
+SET(lib ${SV_LIB_MESHSIM_MESH_NAME})
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
 
@@ -46,19 +46,18 @@ target_link_libraries(${lib}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
 			${MESHSIM_LIBRARIES}
-			lib_simvascular_globals #lib_simvascular_mesh
-			lib_simvascular_utils)# lib_simvascular_sysgeom)
-			#lib_simvascular_repository
-			#lib_simvascular_solid)
+			${SV_LIB_GLOBALS_NAME}
+			${SV_LIB_UTILS_NAME})
+
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-	target_link_libraries(${lib} lib_simvascular_discrete)
+	target_link_libraries(${lib} ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
 endif()
 if(SV_USE_PARASOLID)
-    target_link_libraries(${lib} lib_simvascular_parasolid)
+    target_link_libraries(${lib} ${SV_LIB_PARASOLID_SOLID_NAME})
 endif()
 
 if(SV_USE_ADAPTOR)
-    target_link_libraries(${lib} lib_simvascular_meshsim_adaptor)
+    target_link_libraries(${lib} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
 	    #lib_simvascular_solverio)
 endif()
 

@@ -31,7 +31,7 @@
 #-----------------------------------------------------------------------------
 # Plugin - TetGen Mesh
 #-----------------------------------------------------------------------------
-set(lib lib_simvascular_tetgen_mesh)
+set(lib ${SV_LIB_TETGEN_MESH_NAME})
 LIST(APPEND PLUGINLIBS ${lib})
 include_directories(${TETGEN_INCLUDE_DIR})
 
@@ -45,7 +45,7 @@ if(SV_USE_VMTK)
 endif()
 
 if(SV_USE_MMG)
-  SET(OPTLIBS ${OPTLIBS} lib_simvascular_mmg_mesh ${MMG_LIBRARY})
+  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_MMG_MESH_NAME} ${MMG_LIBRARY})
 endif()
 
 target_link_libraries(${lib}
@@ -55,8 +55,8 @@ target_link_libraries(${lib}
    ${GLOBAL_LIBRARIES}
    ${TETGEN_LIBRARY}
    ${ZLIB_LIBRARY}
-   lib_simvascular_globals lib_simvascular_utils
-   lib_simvascular_polydatasolid lib_simvascular_mesh
+   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
+   ${SV_LIB_POLYDATA_SOLID_NAME} lib_simvascular_mesh
    )
 
 set_target_properties(${lib} PROPERTIES "COMPILE_DEFINITIONS" TETLIBRARY)

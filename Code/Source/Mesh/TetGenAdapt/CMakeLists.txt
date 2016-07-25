@@ -28,7 +28,7 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_tet_adaptor)
+set(lib ${SV_LIB_TETGEN_ADAPTOR_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
@@ -45,14 +45,14 @@ target_link_libraries(${lib}
 			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES}
-			lib_simvascular_adaptor
+                        ${SV_LIB_ADAPTOR_NAME}
 			lib_simvascular_mesh
-			lib_simvascular_solid
-			lib_simvascular_sysgeom
+			${SV_LIB_SOLID_NAME}
+			${SV_LIB_GEOM_NAME}
 			lib_simvascular_solverio
-			lib_simvascular_globals
-			lib_simvascular_utils
-			lib_simvascular_tetgen_mesh
+			${SV_LIB_GLOBALS_NAME}
+			${SV_LIB_UTILS_NAME}
+			${SV_LIB_TETGEN_MESH_NAME}
 )
 
 

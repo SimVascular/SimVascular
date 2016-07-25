@@ -9,53 +9,53 @@ if(NOT ${USE_SYSTEM_TCL})
 endif()
 
 if(SV_USE_TETGEN)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tetgen_mesh)
+	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_MESH_NAME})
 endif()
 #
 if(SV_USE_MMG)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_mmg_mesh)
+	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_MMG_MESH_NAME})
 endif()
 
 if(SV_USE_MESHSIM)
 	if (NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
-	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_mesh)
+	  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_MESH_NAME})
         endif()
 endif()
 
 if(SV_USE_MESHSIM_DISCRETE_MODEL)
 	if (NOT SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_discrete)
+	  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
         endif()
 endif()
 
 if(SV_USE_PARASOLID)
 	if (NOT SV_USE_PARASOLID_SHARED_LIBRARIES)
-	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_parasolid)
+	  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_PARASOLID_SOLID_NAME})
         endif()
 endif()
 
 if(SV_USE_OpenCASCADE)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_opencascade)
+	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_OpenCASCADE_SOLID_NAME})
 endif()
 
 if(SV_USE_ITK)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_itklset)
+	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_ITK_LSET_NAME})
   endif()
 
 if(SV_USE_TET_ADAPTOR)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_adaptor)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tet_adaptor)
+        SET(OPTLIBS ${OPTLIBS} ${SV_LIB_ADAPTOR_NAME})
+	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_TETGEN_ADAPTOR_NAME})
 endif()
 
 if (SV_USE_MESHSIM_ADAPTOR)
 	if(NOT SV_USE_MESHSIM_SHARED_LIBRARIES)
-	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_adaptor)
-	  SET(OPTLIBS ${OPTLIBS} lib_simvascular_meshsim_adaptor)
+	  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_ADAPTOR_NAME})
+	  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
         endif()
 endif()
 
 if (SV_USE_PYTHON)
-	SET(OPTLIBS ${OPTLIBS} lib_simvascular_tclpython)
+	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_PYTHON_INTERP_NAME})
 endif()
 
 
@@ -68,11 +68,11 @@ simvascular_add_executable(${SV_EXE}
 #message("OPTLIBS ${OPTLIBS}")
 
 target_link_libraries(${SV_EXE}
-			lib_simvascular_post lib_simvascular_image
-			lib_simvascular_repository lib_simvascular_lset
-			lib_simvascular_solid lib_simvascular_mesh
-			lib_simvascular_sysgeom lib_simvascular_utils
-			lib_simvascular_globals lib_simvascular_polydatasolid)
+			${SV_LIB_POST_NAME} ${SV_LIB_IMAGE_NAME}
+			${SV_LIB_REPOSITORY_NAME} ${SV_LIB_LSET_NAME}
+			${SV_LIB_SOLID_NAME} lib_simvascular_mesh
+                        ${SV_LIB_GEOM_NAME} ${SV_LIB_UTILS_NAME}
+			${SV_LIB_GLOBALS_NAME} ${SV_LIB_POLYDATA_SOLID_NAME})
 
 target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}

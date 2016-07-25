@@ -2,7 +2,7 @@
 # Repository
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_repository)
+set(lib ${SV_LIB_REPOSITORY_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
@@ -24,7 +24,7 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx)
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
-   lib_simvascular_globals lib_simvascular_utils
+   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
    )
 
 if(SV_INSTALL_LIBS)

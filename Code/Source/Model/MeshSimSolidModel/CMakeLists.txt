@@ -31,14 +31,12 @@
 SET(CXXSRCS cvMeshSimSolidModel.cxx)
 
 if(MESHSIM_MESHSIMSOLID_USE_SHARED_LIBRARIES)
-    add_library(lib_simvascular_meshsimsolid SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
+    add_library(${SV_LIB_MESHSIM_SOLID_NAME} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
 else()
-    add_library(lib_simvascular_meshsimsolid ${CXXSRCS} cv_meshsimsolid_init.cxx)
+    add_library(${SV_LIB_MESHSIM_SOLID_NAME} ${CXXSRCS} cv_meshsimsolid_init.cxx)
 endif()
 
-target_link_libraries(lib_simvascular_meshsimsolid
+target_link_libraries(${SV_LIB_MESHSIM_SOLID_NAME}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${MESHSIM_LIBRARIES}
 			${GLOBAL_LIBRARIES})
-			#${ZLIB_LIBRARY}
-			#lib_simvascular_globals lib_simvascular_mesh)

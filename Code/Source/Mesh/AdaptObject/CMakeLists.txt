@@ -28,7 +28,7 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_adaptor)
+ set(lib ${SV_LIB_ADAPTOR_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
@@ -49,8 +49,8 @@ target_link_libraries(${lib}
 			${INTELRUNTIME_LIBRARIES}
 			lib_simvascular_mesh
 			lib_simvascular_solverio
-			lib_simvascular_globals
-			lib_simvascular_utils
+			${SV_LIB_GLOBALS_NAME}
+			${SV_LIB_UTILS_NAME}
 )
 
 

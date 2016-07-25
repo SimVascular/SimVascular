@@ -28,7 +28,7 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_discrete)
+set(lib ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
 SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
@@ -42,7 +42,7 @@ target_link_libraries(${lib}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${GLOBAL_LIBRARIES})
 			#${ZLIB_LIBRARY}
-			#lib_simvascular_globals lib_simvascular_mesh)
+			#${SV_LIB_GLOBALS_NAME} lib_simvascular_mesh)
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

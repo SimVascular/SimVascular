@@ -32,7 +32,7 @@
 # Utils
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_utils)
+set(lib ${SV_LIB_UTILS_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
@@ -53,7 +53,7 @@ target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
-			lib_simvascular_globals
+			${SV_LIB_GLOBALS_NAME}
             )
 
 if(SV_INSTALL_LIBS)
