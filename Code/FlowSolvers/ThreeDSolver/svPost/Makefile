@@ -71,7 +71,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS) \
              $(OBJS) $(ZLIB_LIBS) $(VTK_LIBS) \
-             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+             $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT) \
              $(CXX_LIBS)
 	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
 	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)

@@ -38,4 +38,5 @@
 
 extern "C" SV_EXPORT_TCLPYTHON int Pythoninterp_Init( Tcl_Interp *interp );
 
+extern "C" SV_EXPORT_TCLPYTHON int Tclpython_Init(Tcl_Interp *interpreter);
 #endif // __CV_PYTHONINTERP_INIT_H

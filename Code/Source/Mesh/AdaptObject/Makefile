@@ -79,10 +79,10 @@ DLLSRCS = cv_adapt_init.cxx
 TARGET_LIB_NAME = simvascular_adaptor
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT) \
           $(ZLIB_LIBS)
 
 include $(TOP)/targetlib.mk

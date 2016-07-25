@@ -119,11 +119,10 @@ if {$tcl_platform(platform) == "windows"} {
 set gSimVascularTclInitLibs [list \
 				 [list Repos ${lib_prefix}simvascular_repository${so_postfix}] \
 				 [list myVtk {}] \
-				 [list Getinterp ${lib_prefix}simvascular_gettclinterp${so_postfix}] \
 				 [list Lset ${lib_prefix}simvascular_lset${so_postfix}] \
 				 [list Geom ${lib_prefix}simvascular_sysgeom${so_postfix}] \
 				 [list Image ${lib_prefix}simvascular_image${so_postfix}] \
-				 [list Math ${lib_prefix}simvascular_utils${so_postfix}] \
+				 [list Utils ${lib_prefix}simvascular_utils${so_postfix}] \
 				 [list Gdscpost ${lib_prefix}simvascular_post${so_postfix}] \
 				 [list Solid ${lib_prefix}simvascular_solid${so_postfix}] \
 				 [list Polydatasolid ${lib_prefix}simvascular_polydatasolid${so_postfix}] \
@@ -141,7 +140,7 @@ set gSimVascularTclInitLibs [list \
 				 ]
 
 if {$SV_USE_PYTHON == "ON"} {
-    lappend gSimVascularTclInitLibs [list Tclpython ${lib_prefix}simvascular_tclpython${so_postfix}]
+    lappend gSimVascularTclInitLibs [list Pythoninterp ${lib_prefix}simvascular_python_interp${so_postfix}]
 }
 
 foreach lib $gSimVascularTclInitLibs {
@@ -151,11 +150,11 @@ foreach lib $gSimVascularTclInitLibs {
     # try dynamic lib first
     if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
 	# then static lib
-	#if [catch {load {} [lindex $lib 0]} msg] {
-	#    puts "error ([lindex $lib 0]) $msg"
-	#}
+	if [catch {load {} [lindex $lib 0]} msg] {
+	    puts "error ([lindex $lib 0]) $msg"
+	}
     } else {
-	puts "loaded [lindex $lib 0]..."
+	puts "loaded [lindex $lib 0] dynamically"
     }
 }
 

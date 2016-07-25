@@ -50,11 +50,11 @@ DLLHDRS = cv_polydatasolid_init.h
 DLLSRCS = cv_polydatasolid_init.cxx
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+	  $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
 	  $(VMTK_LIBS)
 
-TARGET_LIB_NAME = simvascular_polydatasolid
+TARGET_LIB_NAME = simvascular_polydata_solid
 
 include $(TOP)/targetlib.mk

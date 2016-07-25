@@ -90,46 +90,46 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
 
 ifeq ($(SV_USE_PARASOLID),1)
   ifeq ($(SV_USE_PARASOLID_SHARED),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
   else
-    DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
   endif
 endif
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
-    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
   else
-    DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
   endif
 endif
 ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
   ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
   else
-    DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_solid$(LIBLINKEXT)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
   endif
 endif
 
 ifeq ($(SV_USE_VMTK),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+  DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 endif
 
 DLLLIBS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
 
 ifeq ($(SV_USE_VMTK),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+  DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 endif
 
 ifeq ($(SV_USE_ZLIB),1)
-  DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
+  DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT)
-DLLLIBS += $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT)
 DLLLIBS += $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
-DLLLIBS += $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT)
-DLLLIBS += $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
+DLLLIBS += $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT)
 DLLLIBS += $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
 ifeq ($(SV_USE_MESHSIM),1)
@@ -144,7 +144,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
   DLLLIBS += $(OPENCASCADE_LIBS)
 endif
 
-DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 
 DLLLIBS += $(VTK_LIBS)
 

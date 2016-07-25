@@ -757,15 +757,15 @@ GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
 LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS) $(PYTHON_LIB)
 
 ifneq ($(SV_USE_SHARED),1)
-  LFLAGS     += $(SVLIBFLAG)_lib_simvascular_lset$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_image$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_mesh$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_solid$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_sysgeom$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_repository$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_utils$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_post$(LIBLINKEXT) \
-              $(SVLIBFLAG)_lib_simvascular_polydatasolid$(LIBLINKEXT)
+  LFLAGS     += $(SVLIBFLAG)_simvascular_lset$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_post$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
 endif
 
 #
@@ -787,7 +787,7 @@ ifeq ($(SV_USE_VMTK),1)
      THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/vmtk
      VMTK_TOP = $(TOP)/../Code/ThirdParty/vmtk
      VMTK_INCDIR  = -I $(VMTK_TOP)
-     VMTK_LIBS    = $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+     VMTK_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 endif
 
 # ------
@@ -798,7 +798,7 @@ ifeq ($(SV_USE_SPARSE),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/sparse
   SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
   SPARSE_INCDIR  = -I $(SPARSE_TOP)
-  SPARSE_LIBS    = $(SVLIBFLAG)_lib_simvascular_sparse$(LIBLINKEXT)
+  SPARSE_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_sparse$(LIBLINKEXT)
 endif
 
 # ----
@@ -809,7 +809,7 @@ ifeq ($(SV_USE_ZLIB),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/zlib
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
-  ZLIB_LIBS    = $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
+  ZLIB_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
 endif
 
 # -----------------------------------------
@@ -825,7 +825,7 @@ ifeq ($(SV_USE_NSPCG),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/nspcg
   NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
   NSPCG_INCDIR  = -I $(NSPCG_TOP)
-  NSPCG_LIBS    = $(SVLIBFLAG)_lib_simvascular_nspcg$(LIBLINKEXT)
+  NSPCG_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_nspcg$(LIBLINKEXT)
 endif
 
 # -----------------------------------------
@@ -839,7 +839,7 @@ ifeq ($(SV_USE_TETGEN),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/tetgen
   TETGEN_TOP = $(TOP)/../Code/ThirdParty/tetgen
   TETGEN_INCDIR  = -I $(TETGEN_TOP)
-  TETGEN_LIBS    = $(SVLIBFLAG)_lib_simvascular_tetgen$(LIBLINKEXT)
+  TETGEN_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT)
 endif
 
 # ----
@@ -849,13 +849,13 @@ endif
 ifeq ($(SV_USE_DUMMY_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(SVLIBFLAG)_lib_simvascular_dummy_svLS$(LIBLINKEXT)
+    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_thirdparty_dummy_svLS$(LIBLINKEXT)
 endif
 
 ifeq ($(SV_USE_SOURCE_CODE_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(SVLIBFLAG)_lib_simvascular_svLS_$(MPI_NAME)$(LIBLINKEXT)
+    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_thirdparty_svLS_$(MPI_NAME)$(LIBLINKEXT)
 endif
 
 # -----
@@ -866,7 +866,7 @@ ifeq ($(SV_USE_METIS),1)
   THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/metis
   METIS_TOP = $(TOP)/../Code/ThirdParty/metis
   METIS_INCDIR  = -I $(METIS_TOP)
-  METIS_LIBS    = $(SVLIBFLAG)_lib_simvascular_metis$(LIBLINKEXT)
+  METIS_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_metis$(LIBLINKEXT)
 endif
 
 
@@ -982,7 +982,7 @@ ifeq ($(SV_USE_DUMMY_MPI),1)
   MPI_NAME      = nompi
   MPI_TOP       = ../dummyMPI
   MPI_INCDIR    = -I $(MPI_TOP)
-  MPI_LIBS      = $(LIBFLAG)_lib_simvascular_dummy_mpi$(LIBLINKEXT)
+  MPI_LIBS      = $(LIBFLAG)_simvascular_thirdparty_dummy_mpi$(LIBLINKEXT)
   MPI_SO_PATH   = 
   MPIEXEC_PATH  = 
   MPIEXEC       =

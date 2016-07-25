@@ -100,47 +100,47 @@ DLLSRCS = cv_meshsim_adapt_init.cxx
 DLLLIBS +=    $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT) \
               $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
               $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+              $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
               $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
               $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-              $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT)
+              $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
 
   ifeq ($(SV_USE_SOLVERIO),1)
-	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_MESHSIM),1)
   ifeq ($(SV_USE_MESHSIM_SHARED),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
     else
-	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
     else
-	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_PARASOLID),1)
     ifeq ($(SV_USE_PARASOLID_SHARED),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
     else
-	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
     endif
   endif
 
   ifeq ($(SV_USE_VMTK),1)
-	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_SOLVERIO),1)
-	DLLLIBS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_ZLIB),1)
-    DLLLIBS +=  $(SVLIBFLAG)_lib_simvascular_zlib$(LIBLINKEXT)
+    DLLLIBS +=  $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
   endif
 
 DLLLIBS += $(VTK_LIBS) $(OPENCASCADE_LIBS)

@@ -46,18 +46,11 @@ HDRS	= cv_misc_utils.h cv_vtk_utils.h cvTimer.h cvIntArrayList.h \
 CXXSRCS	= cv_misc_utils.cxx cv_vtk_utils.cxx cvTimer.cxx cvIntArrayList.cxx \
 	  cvStateArray.cxx cv_cgeom.cxx cvMath.cxx cv_arg.cxx cvFactoryRegistrar.cxx
 
-DLLHDRS = cv_math_init.h
-DLLSRCS = cv_math_init.cxx
-
-TARGET_SHARED = simvascular_math
-
-DLLHDRS2 = cv_get_tcl_interp_init.h
-DLLSRCS2 = cv_get_tcl_interp_init.cxx
-
-DLLLIBS2 = $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
-
-TARGET_LIB_NAME2 = simvascular_gettclinterp
+DLLHDRS = cv_utils_init.h cv_math_init.h cv_get_tcl_interp_init.h
+DLLSRCS = cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx
 
 TARGET_LIB_NAME = simvascular_utils
+
+DLLLIBS = $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
 include $(TOP)/targetlib.mk

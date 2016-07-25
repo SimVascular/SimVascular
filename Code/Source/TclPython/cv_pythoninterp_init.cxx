@@ -51,7 +51,7 @@
 #include "cv_globals.h"
 
 
-int PythonInterp_Init( Tcl_Interp *interp )
+int Pythoninterp_Init( Tcl_Interp *interp )
 {
   Tclpython_Init( interp );
 }

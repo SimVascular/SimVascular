@@ -32,6 +32,7 @@ set(SV_LIBS ADAPTOR
             THREEDSOLVER_DUMMY_LESLIB
             THREEDSOLVER_FORTRAN
             THREEDSOLVER_WRITE_RESTART
+            THREEDSOLVER_VTK
             POSTSOLVER
             SVLS
             SOLVERIO)

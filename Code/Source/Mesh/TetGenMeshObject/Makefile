@@ -72,14 +72,14 @@ DLLHDRS = cv_tetgen_mesh_init.h
 DLLSRCS = cv_tetgen_mesh_init.cxx
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydatasolid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(TETGEN_LIBS) $(VMTK_LIBS) $(SV_MMG_LIBS) $(ZLIB_LIBS)
 
-TARGET_LIB_NAME = simvascular_tetgen_mesh
+TARGET_LIB_NAME = simvascular_thirdparty_tetgen_mesh
 
 include $(TOP)/targetlib.mk
 

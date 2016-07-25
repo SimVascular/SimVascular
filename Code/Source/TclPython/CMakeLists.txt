@@ -37,11 +37,11 @@ include_directories(${PYTHON_INCLUDE_PATH}
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CSRCS} cv_pythoninterp_init.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} cv_pythoninterp_init.cxx ${CSRCS})
 
 target_link_libraries(${lib} ${SV_LIB_REPOSITORY_NAME}
 			     ${SV_LIB_GLOBALS_NAME}
-	${PYTHON_LIBRARY} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
+	                     ${PYTHON_LIBRARY} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
 
 install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
