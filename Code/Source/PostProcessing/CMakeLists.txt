@@ -6,13 +6,13 @@ set(lib lib_simvascular_post)
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx
-  cvCalculateTKE.cxx cv_post_init.cxx
+  cvCalculateTKE.cxx
             )
 SET(HDRS    cvConvertVisFiles.h cvCalculateWallShearStress.h
-  cvCalculateTKE.h cv_post_init.h
+  cvCalculateTKE.h
             )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_post_init.cxx)
 
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY}

@@ -41,7 +41,7 @@ if(SV_USE_PYTHON)
 endif()
 
 SET(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
-SET(HDRS cvOCCTSolidModel.h cv_occt_init.h cv_occtsolid_utils.h)
+SET(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
 

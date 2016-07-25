@@ -45,7 +45,6 @@ if(SV_USE_VMTK)
 endif()
 
 if(SV_USE_MMG)
-  include_directories(${MMG_INCLUDE_DIR})
   SET(OPTLIBS ${OPTLIBS} lib_simvascular_mmg_mesh ${MMG_LIBRARY})
 endif()
 

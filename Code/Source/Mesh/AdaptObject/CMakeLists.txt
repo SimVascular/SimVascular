@@ -33,13 +33,13 @@ LIST(APPEND CORELIBS ${lib})
 
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 
-set(HDRS cvAdaptObject.h cv_adapt_utils.h cv_adapt_init.h eispack.h)
-SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx cv_adapt_init.cxx eispack.cxx)
+SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx)
+set(HDRS cvAdaptObject.h cv_adapt_utils.h eispack.h)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS})
+  add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx)
 else()
-  add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+  add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx)
 endif()
 
 target_link_libraries(${lib}

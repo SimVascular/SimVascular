@@ -34,7 +34,7 @@
 set(lib lib_simvascular_vmtk)
 LIST(APPEND PLUGINLIBS ${lib})
 
-set(CXXSRCS vtkvmtkBoundaryLayerGenerator.cxx
+set(CXXSRCS cv_VMTK_utils.cxx vtkvmtkBoundaryLayerGenerator.cxx
 	vtkvmtkMath.cxx vtkvmtkItem.cxx
 	vtkvmtkStencil.cxx vtkvmtkDataSetItem.cxx vtkvmtkNeighborhood.cxx
 	vtkvmtkPolyBallLine.cxx
@@ -76,7 +76,7 @@ SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h
 	vtkvmtkPolyDataCenterlineGroupsClipper.h
 	)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_VMTK_utils.cxx)
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES}

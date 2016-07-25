@@ -35,10 +35,10 @@ include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 include_directories(${TETGEN_INCLUDE_DIR})
 
-set(HDRS cvTetGenAdapt.h cv_tetgen_adapt_init.h)
-SET(CXXSRCS cvTetGenAdapt.cxx cv_tetgen_adapt_init.cxx)
+set(HDRS cvTetGenAdapt.h)
+SET(CXXSRCS cvTetGenAdapt.cxx)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_adapt_init.cxx)
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}

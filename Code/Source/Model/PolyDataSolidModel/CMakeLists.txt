@@ -38,7 +38,7 @@ LIST(APPEND CORELIBS ${lib})
 SET(CXXSRCS cvPolyDataSolid.cxx cv_polydatasolid_utils.cxx
             vtkGetBoundaryFaces.cxx
             )
-SET(HDRS cvPolyDataSolid.h cv_polydatasolid_init.h
+SET(HDRS cvPolyDataSolid.h
          cv_polydatasolid_utils.h vtkGetBoundaryFaces.h
             )
 

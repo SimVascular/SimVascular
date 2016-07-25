@@ -10,16 +10,16 @@ include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 SET(CXXSRCS cvRepository.cxx cvRepositoryData.cxx
     cvDataObject.cxx cvPolyData.cxx
     cvStrPts.cxx cvUnstructuredGrid.cxx
-    cv_repos_init.cxx cvDataSet.cxx
+    cvDataSet.cxx
     )
 
 SET(HDRS cvRepository.h cvRepositoryData.h
     cvDataObject.h cvPolyData.h
     cvStrPts.h cvUnstructuredGrid.h
-    cv_repos_init.h cvDataSet.h
+    cvDataSet.h
     )
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_repos_init.cxx)
 
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
