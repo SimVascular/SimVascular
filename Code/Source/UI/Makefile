@@ -135,12 +135,12 @@ ifeq ($(SV_STATIC_BUILD),1)
   endif
   ifeq ($(SV_USE_TETGEN),1)
     ifneq ($(SV_USE_SHARED),1)
-      LFLAGS += $(SVLIBFLAG)_simvascular_thirdparty_tetgen_mesh$(LIBLINKEXT)
+      LFLAGS += $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT)
    endif
   endif
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
     ifneq ($(SV_USE_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_simvascular_thirdparty_tetgen_adaptor$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_tetgen_adaptor$(LIBLINKEXT)
         LFLAGS += $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif

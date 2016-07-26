@@ -849,13 +849,13 @@ endif
 ifeq ($(SV_USE_DUMMY_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_thirdparty_dummy_svLS$(LIBLINKEXT)
+    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_dummy_svLS$(LIBLINKEXT)
 endif
 
 ifeq ($(SV_USE_SOURCE_CODE_SVLS),1)
     SVLS_DEFS   = 
     SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_thirdparty_svLS_$(MPI_NAME)$(LIBLINKEXT)
+    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_svLS_$(MPI_NAME)$(LIBLINKEXT)
 endif
 
 # -----
@@ -982,7 +982,7 @@ ifeq ($(SV_USE_DUMMY_MPI),1)
   MPI_NAME      = nompi
   MPI_TOP       = ../dummyMPI
   MPI_INCDIR    = -I $(MPI_TOP)
-  MPI_LIBS      = $(LIBFLAG)_simvascular_thirdparty_dummy_mpi$(LIBLINKEXT)
+  MPI_LIBS      = $(LIBFLAG)_simvascular_dummy_mpi$(LIBLINKEXT)
   MPI_SO_PATH   = 
   MPIEXEC_PATH  = 
   MPIEXEC       =

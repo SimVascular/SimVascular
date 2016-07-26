@@ -82,7 +82,7 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT)
 
 ifeq ($(SV_USE_TETGEN),1)
-  DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_tetgen_mesh$(LIBLINKEXT)
+  DLLLIBS += $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT)
   DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT)
 endif
 
@@ -105,7 +105,7 @@ DLLLIBS += $(VTK_LIBS)
 DLLLIBS += $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
            $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_thirdparty_tetgen_adaptor
+TARGET_LIB_NAME = simvascular_tetgen_adaptor
 
 include $(TOP)/targetlib.mk
 

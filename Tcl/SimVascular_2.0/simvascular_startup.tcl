@@ -103,10 +103,10 @@ if {[info exists SV_USE_PYTHON] == 0} {
 
 if {$tcl_platform(platform) == "unix"} {
     if {$tcl_platform(os) == "Darwin"} {
-      set lib_prefix "lib"
+      set lib_prefix "lib_"
       set so_postfix ".dylib"
     } else {
-      set lib_prefix "lib"
+      set lib_prefix "lib_"
       set so_postfix ".so"
     }
 }

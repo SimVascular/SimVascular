@@ -38,7 +38,7 @@ set(SV_LIBS ADAPTOR
             SOLVERIO)
 
 foreach(lib ${SV_LIBS})
-  string(TOLOWER "SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
+  string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
   mark_as_superbuild(SV_LIB_${lib}_NAME)
   #set(SV_LIB_${lib}_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED")
   #if("${SV_LIBRARY_TYPE}" STREQUAL "ALL_STATIC")

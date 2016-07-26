@@ -32,7 +32,7 @@ FFLAGS   = $(GLOBAL_FFLAGS)
 
 FSRCS    = nspcg1.f nspcg2.f nspcg3.f nspcg4.f nspcg5.f
 
-TARGET_LIB_NAME = simvascular_nspcg
+TARGET_LIB_NAME = simvascular_thirdparty_nspcg
 
 include $(TOP)/targetlib.mk
 
