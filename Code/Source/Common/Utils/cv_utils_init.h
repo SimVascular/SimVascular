@@ -1,7 +1,7 @@
-/*=========================================================================
+/* Copyright (c) 2009-2011 Open Source Medical Software Corporation,
+ *                         University of California, San Diego.
  *
- * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved.
+ * All rights reserved.
  *
  * Portions of the code Copyright (c) 1998-2007 Stanford University,
  * Charles Taylor, Nathan Wilson, Ken Wang.
@@ -27,15 +27,14 @@
  * CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
  * TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
- *
-*=========================================================================*/
+ */
 
-#ifndef __CVGEOM_INIT_H
-#define __CVGEOM_INIT_H
+#ifndef __CVUTILS_INIT_H
+#define __CVUTILS_INIT_H
 
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" SV_EXPORT_SYSGEOM int Geom_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_UTILS int Utils_Init( Tcl_Interp *interp );
 
-#endif // __CVGEOM_INIT_H
+#endif // __UTILS_INIT_H

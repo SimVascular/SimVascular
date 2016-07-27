@@ -158,7 +158,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS)  $(SOLVER_STCKSZ) \
              $(OBJS) \
-             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+             $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT) \
 	     $(ZLIB_LIBS) $(VTK_LIBS) $(METIS_LIBS) $(LESLIB_LIBS) \
              $(SVLS_LIBS) $(MPI_LIBS) $(F90_LIBS) $(CXX_LIBS)
 	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi

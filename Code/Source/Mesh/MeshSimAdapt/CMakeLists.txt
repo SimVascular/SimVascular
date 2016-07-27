@@ -28,12 +28,12 @@
  #
  #=========================================================================#
 
- set(lib lib_simvascular_meshsim_adaptor)
+ set(lib ${SV_LIB_MESHSIM_ADAPTOR_NAME})
  LIST(APPEND CORELIBS ${lib})
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
-set(HDRS cvMeshSimAdapt.h cv_meshsim_adapt_init.h MeshSimInternal_phAdapt.h cvAdaptHelp.h)
+set(HDRS cvMeshSimAdapt.h MeshSimInternal_phAdapt.h cvAdaptHelp.h)
 SET(CXXSRCS cvMeshSimAdapt.cxx)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
@@ -47,17 +47,9 @@ target_link_libraries(${lib}
 			${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES})
-			#${ZLIB_LIBRARY}
-			#lib_simvascular_mesh
-			#lib_simvascular_solid
-			#lib_simvascular_sysgeom
-			#lib_simvascular_solverio
-			#lib_simvascular_globals
-			#lib_simvascular_utils
-			#lib_simvascular_adaptor)
 
 if(SV_USE_PARASOLID)
-	target_link_libraries(${lib} lib_simvascular_parasolid)
+	target_link_libraries(${lib} ${SV_LIB_PARASOLID_SOLID_NAME})
 endif()
 
 if(SV_INSTALL_LIBS)

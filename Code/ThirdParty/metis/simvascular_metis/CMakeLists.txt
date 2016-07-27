@@ -4,7 +4,7 @@ if (NOT METIS_LIBRARY_NAME)
     set(METIS_LIBRARY_NAME metis)
 endif()
 
-#set default build type to relwithdebinfo, also sets flags O2 on linux 
+#set default build type to relwithdebinfo, also sets flags O2 on linux
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
     set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
@@ -24,7 +24,6 @@ if(WIN32)
 endif()
 
 add_subdirectory(Lib)
-#message(STATUS "METIS_INSTALL_DIR: ${METIS_INSTALL_DIR}")
 
 #add_subdirectory(Programs)
 #add_subdirectory(Test)

@@ -11,12 +11,12 @@ SET(HDRS crc32.h deflate.h inffast.h inffixed.h inflate.h inftrees.h
 	 trees.h zconf.h zlib.h zutil.h)
 
 IF(WIN32)
-	IF(SV_BUILD_SHARED_LIBS)
+	IF(BUILD_SHARED_LIBS)
 		SET(ZLIB_DLL 1)
-	ENDIF(SV_BUILD_SHARED_LIBS)
+	ENDIF(BUILD_SHARED_LIBS)
 ENDIF(WIN32)
 
-set(lib lib_simvascular_zlib)
+set(lib ${SV_LIB_THIRDPARTY_ZLIB_NAME})
 add_library(${lib} ${SV_LIBRARY_TYPE} ${SRCS})
 
 if(SV_INSTALL_LIBS)

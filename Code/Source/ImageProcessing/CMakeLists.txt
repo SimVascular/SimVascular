@@ -2,7 +2,7 @@
 # Image
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_image)
+set(lib ${SV_LIB_IMAGE_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
@@ -23,7 +23,7 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx)
 target_link_libraries(${lib}
    ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
-   lib_simvascular_globals lib_simvascular_sysgeom)
+   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_GEOM_NAME})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

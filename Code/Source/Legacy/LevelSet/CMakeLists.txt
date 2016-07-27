@@ -2,7 +2,7 @@
 # Legacy Level Sets
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_lset)
+set(lib ${SV_LIB_LSET_NAME})
 
 LIST(APPEND CORELIBS ${lib})
 
@@ -29,7 +29,7 @@ target_link_libraries(${lib}
    ${ITK_LIBRARIES} ${VTK_LIBRARIES}
    ${TCL_LIBRARY} ${TK_LIBRARY}
    ${GLOBAL_LIBRARIES}
-   lib_simvascular_globals lib_simvascular_image)
+   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_IMAGE_NAME})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

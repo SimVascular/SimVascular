@@ -245,6 +245,7 @@ endif()
 
 # need the path to the dll's
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/RelWithDebInfo" developer_script_string)
 
 configure_file(${SV_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
@@ -294,6 +295,6 @@ if(UNIX)
 	install(FILES "README-install" DESTINATION ${SV_INSTALL_SCRIPT_DIR})
 	#install(CODE "execute_process(COMMAND \"${INSTALL_SYMLINK_FILE}\"")")
 endif()
-if(SV_BUILD_TESTING)
+if(BUILD_TESTING)
 	configure_file(executable_names.tcl.in ${SV_TEST_DIR}/common/executable_names.tcl)
 endif()

@@ -53,12 +53,12 @@ HDRS	= tclpython.h symcat.h
 
 CSRCS	= tclpython.c tclthread.c
 
-DLLHDRS =
+DLLHDRS = cv_pythoninterp_init.h
 
-DLLSRCS =
+DLLSRCS = cv_pythoninterp_init.cxx
 
 DLLLIBS = $(VTK_LIBS) $(PARASOLID_LIBS) $(PYTHON_LIB)
 
-TARGET_LIB_NAME = simvascular_tclpython
+TARGET_LIB_NAME = simvascular_python_interp
 
 include $(TOP)/targetlib.mk

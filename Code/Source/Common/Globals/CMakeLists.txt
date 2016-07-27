@@ -2,7 +2,7 @@
 # Image
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_globals)
+set(lib ${SV_LIB_GLOBALS_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})

@@ -23,8 +23,8 @@ mark_as_superbuild(SV_SUPERBUILD)
 set(SV_SUPERBUILD_LIBS_DIR "${svlibs_OPEN_URLBASE}" CACHE TYPE PATH)
 mark_as_superbuild(SV_SUPERBUILD_LIBS_DIR)
 
-option(SV_BUILD_SHARED_LIBS "Build ${PROJECT_NAME} as shared libraries." OFF)
-mark_as_superbuild(VARS SV_BUILD_SHARED_LIBS ALL_PROJECTS)
+option(BUILD_SHARED_LIBS "Build ${PROJECT_NAME} as shared libraries." OFF)
+mark_as_superbuild(VARS BUILD_SHARED_LIBS ALL_PROJECTS)
 
 set(SV_LIBRARY_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED" FORCE)
 set_property(CACHE SV_LIBRARY_TYPE PROPERTY STRINGS STATIC SHARED)
@@ -102,5 +102,5 @@ mark_as_superbuild(SV_USE_INTELRUNTIME)
 
 #-----------------------------------------------------------------------------
 # Enable Testing
-option(SV_BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
-mark_as_superbuild(VARS SV_BUILD_TESTING)
+option(BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
+mark_as_superbuild(VARS BUILD_TESTING)

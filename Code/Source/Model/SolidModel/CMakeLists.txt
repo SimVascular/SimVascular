@@ -32,7 +32,7 @@
 # Solid Model
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_solid)
+set(lib ${SV_LIB_SOLID_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
@@ -43,7 +43,7 @@ if(SV_USE_PYTHON)
 endif()
 
 SET(CXXSRCS cvSolidModel.cxx)
-SET(HDRS    cvSolidModel.h cv_solid_init.h)
+SET(HDRS    cvSolidModel.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
@@ -51,7 +51,7 @@ target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES} ${TETGEN_LIBRARY}
-			lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository
+			${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME}
             )
 if(SV_USE_PYTHON)
    target_link_libraries(${lib} ${PYTHON_LIBRARY})

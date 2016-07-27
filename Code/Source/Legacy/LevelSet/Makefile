@@ -74,7 +74,7 @@ TARGET_LIB_NAME = simvascular_lset
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_image$(LIBLINKEXT) \
 	  $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-	  $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+	  $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
 	  $(VMTK_LIBS)

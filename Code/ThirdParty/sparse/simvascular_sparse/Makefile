@@ -34,7 +34,7 @@ HDRS	= spConfig.h spDefs.h spMatrix.h
 
 CSRCS	= spAllocate.c spBuild.c spFactor.c spOutput.c spSolve.c spUtils.c spFortran.c
 
-TARGET_LIB_NAME = simvascular_sparse
+TARGET_LIB_NAME = simvascular_thirdparty_sparse
 
 include $(TOP)/targetlib.mk
 

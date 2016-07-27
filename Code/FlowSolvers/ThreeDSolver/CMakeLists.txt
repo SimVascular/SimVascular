@@ -34,7 +34,7 @@ set(INDENTS "${INDENTS}    ")
 # Include svLS Folder
 #include_directories(${SVLS_INCLUDE_DIR})
 
-set(SVLS_LIBRARY lib_simvascular_svls)
+set(SVLS_LIBRARY ${SV_LIB_SVLS_NAME})
 set(FLOWSOLVER_SUBDIRS ${FLOWSOLVER_SUBDIRS} svLS)
 
 #-----------------------------------------------------------------------------

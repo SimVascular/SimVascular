@@ -32,13 +32,13 @@
 # PolyData Solid
 #-----------------------------------------------------------------------------
 
-set(lib lib_simvascular_polydatasolid)
+set(lib ${SV_LIB_POLYDATA_SOLID_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cvPolyDataSolid.cxx cv_polydatasolid_utils.cxx
             vtkGetBoundaryFaces.cxx
             )
-SET(HDRS cvPolyDataSolid.h cv_polydatasolid_init.h
+SET(HDRS cvPolyDataSolid.h
          cv_polydatasolid_utils.h vtkGetBoundaryFaces.h
             )
 
@@ -47,10 +47,10 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx)
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
-			lib_simvascular_globals lib_simvascular_utils lib_simvascular_repository lib_simvascular_solid lib_simvascular_sysgeom
+                        ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME} ${SV_LIB_GEOM_NAME}
             )
 if(SV_USE_VMTK)
-    target_link_libraries(${lib} lib_simvascular_vmtk)
+    target_link_libraries(${lib} ${SV_LIB_THIRDPARTY_VMTK_NAME})
 endif()
 
 

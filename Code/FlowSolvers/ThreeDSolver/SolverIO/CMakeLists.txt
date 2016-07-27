@@ -28,7 +28,7 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_solverio)
+set(lib ${SV_LIB_SOLVERIO_NAME})
 SET(CXXSRCS cvSolverIO.cxx)
 set(HDRS cvSolverIO.h)
 

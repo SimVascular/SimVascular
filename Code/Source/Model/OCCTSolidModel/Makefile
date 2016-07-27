@@ -41,10 +41,10 @@ CXXSRCS	= cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx
 DLLHDRS = cv_occt_init.h
 DLLSRCS = cv_occt_init.cxx
 
-TARGET_LIB_NAME = simvascular_opencascade
+TARGET_LIB_NAME = simvascular_opencascade_solid
 
 DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_sysgeom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
 	  $(VMTK_LIBS) $(OPENCASCADE_LIBS)

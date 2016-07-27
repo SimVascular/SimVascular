@@ -119,73 +119,73 @@ ifeq ($(SV_STATIC_BUILD),1)
   endif
 
   ifeq ($(SV_USE_SOLVERIO),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_MESHSIM),1)
     ifneq ($(SV_USE_MESHSIM_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_mesh$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_mesh$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
     ifneq ($(SV_USE_MESHSIM_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_adaptor$(LIBLINKEXT)
-        LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_adaptor$(LIBLINKEXT)
+        LFLAGS += $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_TETGEN),1)
     ifneq ($(SV_USE_SHARED),1)
-      LFLAGS += $(SVLIBFLAG)_lib_simvascular_tetgen_mesh$(LIBLINKEXT)
+      LFLAGS += $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT)
    endif
   endif
   ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
     ifneq ($(SV_USE_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tet_adaptor$(LIBLINKEXT)
-        LFLAGS += $(SVLIBFLAG)_lib_simvascular_adaptor$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_tetgen_adaptor$(LIBLINKEXT)
+        LFLAGS += $(SVLIBFLAG)_simvascular_adaptor$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
     ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_discrete$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
     ifneq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_meshsim_solid$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_PARASOLID),1)
     ifneq ($(SV_USE_PARASOLID_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_parasolid$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
     endif
   endif
   ifeq ($(SV_USE_OPENCASCADE),1)
     ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_opencascade$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
     endif
   endif
 
   ifeq ($(SV_USE_VMTK),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_vmtk$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_ITK),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_itklset$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_SOLVERIO),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT)
   endif
 
   ifeq ($(SV_USE_MMG),1)
     ifneq ($(SV_USE_MMG_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_mmg_mesh$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT)
     endif
   endif
 
   ifeq ($(SV_USE_PYTHON),1)
     ifneq ($(SV_USE_PYTHON_SHARED),1)
-	LFLAGS += $(SVLIBFLAG)_lib_simvascular_tclpython$(LIBLINKEXT)
+	LFLAGS += $(SVLIBFLAG)_simvascular_python_interp$(LIBLINKEXT)
     endif
   endif
 
@@ -193,7 +193,7 @@ endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifneq ($(SV_USE_SHARED),1)
-    LFLAGS += $(SVLIBFLAG)_lib_simvascular_qtcode$(LIBLINKEXT)
+    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
   endif
 endif
 
@@ -201,7 +201,7 @@ endif
 ifeq ($(SV_USE_GLOBALS_SHARED),1)
   LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 else
-  LFLAGS += $(SVLIBFLAG)_lib_simvascular_globals$(LIBLINKEXT)
+  LFLAGS += $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 endif
 
 SRCS	= $(CXXSRCS) $(foreach name,$(COPIED_CXXSRCS),$(lastword $(subst /, ,$(name))))

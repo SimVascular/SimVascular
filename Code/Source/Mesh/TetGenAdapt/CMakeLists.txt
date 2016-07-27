@@ -28,31 +28,31 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_tet_adaptor)
+set(lib ${SV_LIB_TETGEN_ADAPTOR_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 include_directories(${TETGEN_INCLUDE_DIR})
 
-set(HDRS cvTetGenAdapt.h cv_tetgen_adapt_init.h)
-SET(CXXSRCS cvTetGenAdapt.cxx cv_tetgen_adapt_init.cxx)
+set(HDRS cvTetGenAdapt.h)
+SET(CXXSRCS cvTetGenAdapt.cxx)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_adapt_init.cxx)
 
 target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
 			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES}
-			lib_simvascular_adaptor
-			lib_simvascular_mesh
-			lib_simvascular_solid
-			lib_simvascular_sysgeom
-			lib_simvascular_solverio
-			lib_simvascular_globals
-			lib_simvascular_utils
-			lib_simvascular_tetgen_mesh
+                        ${SV_LIB_ADAPTOR_NAME}
+			${SV_LIB_MESH_NAME}
+			${SV_LIB_SOLID_NAME}
+			${SV_LIB_GEOM_NAME}
+			${SV_LIB_SOLVERIO_NAME}
+			${SV_LIB_GLOBALS_NAME}
+			${SV_LIB_UTILS_NAME}
+			${SV_LIB_TETGEN_MESH_NAME}
 )
 
 

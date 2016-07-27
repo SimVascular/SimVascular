@@ -1,5 +1,5 @@
-SET(HDRS ConnectVTKITK.h cvITKMacros.h 
-    cvMacros.h cvTCLMacros.h 
+SET(HDRS ConnectVTKITK.h cvITKMacros.h
+    cvMacros.h cvTCLMacros.h
     cvVTKMacros.h ImgInfo.h
     )
 if(SV_INSTALL_HEADERS)

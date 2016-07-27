@@ -99,7 +99,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(GLOBAL_LFLAGS) \
              $(OBJS) $(METIS_LIBS)  \
              $(SPARSE_LIBS) $(NSPCG_LIBS) $(ZLIB_LIBS) $(VTK_LIBS) \
-             $(SVLIBFLAG)_lib_simvascular_solverio$(LIBLINKEXT) \
+             $(SVLIBFLAG)_simvascular_solverio$(LIBLINKEXT) \
              $(F90_LIBS) $(CXX_LIBS)
 	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
 	ln -s $(notdir $(TARGET_EXE_FULL)) $(TARGET_EXE)

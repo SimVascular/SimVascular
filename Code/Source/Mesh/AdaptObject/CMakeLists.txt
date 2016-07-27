@@ -28,20 +28,18 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_adaptor)
+ set(lib ${SV_LIB_ADAPTOR_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 
-set(HDRS cvAdaptObject.h cv_adapt_utils.h cv_adapt_init.h eispack.h)
-SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx cv_adapt_init.cxx eispack.cxx)
+SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx)
+set(HDRS cvAdaptObject.h cv_adapt_utils.h eispack.h)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${CXXSRCS})
-elseif(SV_BUILD_SHARED_LIBS)
-  add_library(${lib} SHARED ${CXXSRCS})
+  add_library(${lib} SHARED ${CXXSRCS} cv_adapt_init.cxx)
 else()
-  add_library(${lib} STATIC ${CXXSRCS})
+  add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_adapt_init.cxx)
 endif()
 
 target_link_libraries(${lib}
@@ -49,10 +47,10 @@ target_link_libraries(${lib}
 			${ZLIB_LIBRARY} ${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
 			${INTELRUNTIME_LIBRARIES}
-			lib_simvascular_mesh
-			lib_simvascular_solverio
-			lib_simvascular_globals
-			lib_simvascular_utils
+			${SV_LIB_MESH_NAME}
+			${SV_LIB_SOLVERIO_NAME}
+			${SV_LIB_GLOBALS_NAME}
+			${SV_LIB_UTILS_NAME}
 )
 
 

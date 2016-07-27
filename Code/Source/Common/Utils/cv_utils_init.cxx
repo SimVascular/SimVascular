@@ -32,19 +32,13 @@
 
 #include "tcl.h"
 
-#include "cv_ITKLset_init.h"
-#include "cv_ITKUtils_init.h"
-#include "cv_ITKLset2d_init.h"
-#include "cv_ITKLset3d_init.h"
+#include "cv_utils_init.h"
+#include "cv_math_init.h"
+#include "cv_get_tcl_interp_init.h"
 
-int Itklset_Init( Tcl_Interp *interp ){
+int Utils_Init( Tcl_Interp *interp ) {
 
-  Itkutils_Init( interp );
-  Itkls2d_Init( interp );
-  Itkls3d_Init( interp );
-
-  return TCL_OK;
+  Math_Init( interp );
+  Getinterp_Init( interp);
 
 }
-
-

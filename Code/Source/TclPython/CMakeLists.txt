@@ -28,7 +28,7 @@
  #
  #=========================================================================#
 
-set(lib lib_simvascular_tclpython)
+set(lib ${SV_LIB_PYTHON_INTERP_NAME})
 include_directories(${PYTHON_INCLUDE_PATH}
 		    ${PYTHON_INCLUDE_DIR}
 		    ${PYTHON_INCLUDE_DIRS}
@@ -37,11 +37,11 @@ include_directories(${PYTHON_INCLUDE_PATH}
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CSRCS})
+add_library(${lib} ${SV_LIBRARY_TYPE} cv_pythoninterp_init.cxx ${CSRCS})
 
-target_link_libraries(${lib} lib_simvascular_repository
-			     lib_simvascular_globals
-	${PYTHON_LIBRARY} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
+target_link_libraries(${lib} ${SV_LIB_REPOSITORY_NAME}
+			     ${SV_LIB_GLOBALS_NAME}
+	                     ${PYTHON_LIBRARY} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
 
 install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables

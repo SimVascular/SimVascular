@@ -30,12 +30,13 @@
  *
 *=========================================================================*/
 
-#ifndef __CVGEOM_INIT_H
-#define __CVGEOM_INIT_H
+#ifndef __CV_PYTHONINTERP_INIT_H
+#define __CV_PYTHONINTERP_INIT_H
 
 #include "SimVascular.h"
 #include "tcl.h"
 
-extern "C" SV_EXPORT_SYSGEOM int Geom_Init( Tcl_Interp *interp );
+extern "C" SV_EXPORT_TCLPYTHON int Pythoninterp_Init( Tcl_Interp *interp );
 
-#endif // __CVGEOM_INIT_H
+extern "C" SV_EXPORT_TCLPYTHON int Tclpython_Init(Tcl_Interp *interpreter);
+#endif // __CV_PYTHONINTERP_INIT_H

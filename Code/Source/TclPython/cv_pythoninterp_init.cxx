@@ -30,12 +30,28 @@
  *
 *=========================================================================*/
 
-#ifndef __CVGEOM_INIT_H
-#define __CVGEOM_INIT_H
-
 #include "SimVascular.h"
-#include "tcl.h"
 
-extern "C" SV_EXPORT_SYSGEOM int Geom_Init( Tcl_Interp *interp );
+#include <stdio.h>
+#include <string.h>
+#include "cvRepository.h"
+#include "cvRepositoryData.h"
+#include "cv_pythoninterp_init.h"
 
-#endif // __CVGEOM_INIT_H
+#include "tclpython.h"
+
+// The following is needed for Windows
+#ifdef GetObject
+#undef GetObject
+#endif
+
+// Globals:
+// --------
+
+#include "cv_globals.h"
+
+
+int Pythoninterp_Init( Tcl_Interp *interp )
+{
+  Tclpython_Init( interp );
+}

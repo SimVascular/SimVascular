@@ -11,7 +11,7 @@ project(TETGEN)
 #Add a library to the project using the specified source files.
 # In Linux/Unix, it will creates the libtet.a
 ###SIMVASCULAR_CHANGE
-set(lib lib_simvascular_tet)
+set(lib ${SV_LIB_THIRDPARTY_TETGEN_NAME})
 add_library(${lib} ${SV_LIBRARY_TYPE} tetgen.cxx predicates.cxx)
 
 #Set properties on a target.

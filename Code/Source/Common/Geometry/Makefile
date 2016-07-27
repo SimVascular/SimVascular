@@ -100,6 +100,6 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(VMTK_LIBS)
 
-TARGET_LIB_NAME = simvascular_sysgeom
+TARGET_LIB_NAME = simvascular_geom
 
 include $(TOP)/targetlib.mk

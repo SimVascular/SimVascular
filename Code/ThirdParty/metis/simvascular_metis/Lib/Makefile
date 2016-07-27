@@ -44,7 +44,7 @@ CSRCS	= coarsen.c fm.c initpart.c match.c ccgraph.c memory.c \
        mrefine2.c minitpart2.c mbalance2.c mfm2.c \
        kvmetis.c kwayvolrefine.c kwayvolfm.c subdomains.c
 
-TARGET_LIB_NAME = simvascular_metis
+TARGET_LIB_NAME = simvascular_thirdparty_metis
 
 include $(TOP)/targetlib.mk
 
