@@ -120,23 +120,24 @@ set gSimVascularTclInitLibs [list \
 				 [list Repos ${lib_prefix}simvascular_repository${so_postfix}] \
 				 [list myVtk {}] \
 				 [list Lset ${lib_prefix}simvascular_lset${so_postfix}] \
-				 [list Geom ${lib_prefix}simvascular_sysgeom${so_postfix}] \
+				 [list Itklset ${lib_prefix}simvascular_itk_lset${so_postfix}] \
+				 [list Geom ${lib_prefix}simvascular_geom${so_postfix}] \
 				 [list Image ${lib_prefix}simvascular_image${so_postfix}] \
 				 [list Utils ${lib_prefix}simvascular_utils${so_postfix}] \
 				 [list Gdscpost ${lib_prefix}simvascular_post${so_postfix}] \
 				 [list Solid ${lib_prefix}simvascular_solid${so_postfix}] \
-				 [list Polydatasolid ${lib_prefix}simvascular_polydatasolid${so_postfix}] \
-				 [list Occtsolid ${lib_prefix}simvascular_opencascade${so_postfix}] \
+				 [list Polydatasolid ${lib_prefix}simvascular_polydata_solid${so_postfix}] \
+				 [list Occtsolid ${lib_prefix}simvascular_opencascade_solid${so_postfix}] \
 				 [list Gdscmesh ${lib_prefix}simvascular_mesh${so_postfix}] \
 				 [list Mmgmesh ${lib_prefix}simvascular_mmg_mesh${so_postfix}] \
 				 [list Tetgenmesh ${lib_prefix}simvascular_tetgen_mesh${so_postfix}] \
 				 [list Adapt ${lib_prefix}simvascular_adaptor${so_postfix}] \
-				 [list Tetgenadapt ${lib_prefix}simvascular_tet_adaptor${so_postfix}] \
+				 [list Tetgenadapt ${lib_prefix}simvascular_tetgen_adaptor${so_postfix}] \
 				 [list Meshsimmesh {}] \
 				 [list Meshsimadapt {}] \
+				 [list Meshsimsolid {}] \
 				 [list Meshsimdiscretesolid {}] \
 				 [list Parasolidsolid {}] \
-				 [list Itklset ${lib_prefix}simvascular_itklset${so_postfix}] \
 				 ]
 
 if {$SV_USE_PYTHON == "ON"} {
@@ -282,14 +283,6 @@ if {$SV_RELEASE_BUILD != 0} {
       puts "Found MeshSim Adapt.  Loading..."
       load $meshsimadaptdll Meshsimadapt
     }
-  }
-
-  if {$tcl_platform(platform) == "unix"} {
-    catch {load $env(SV_HOME)/lib_simvascular_parasolid.so  Parasolidsolid}
-    catch {load $env(SV_HOME)/lib_simvascular_meshsim_discrete.so Meshsimdiscretesolid}
-    catch {load $env(SV_HOME)/lib_simvascular_meshsim_solid.so Meshsimsolid}
-    catch {load $env(SV_HOME)/lib_simvascular_meshsim_mesh.so Meshsimmesh}
-    catch {load $env(SV_HOME)/lib_simvascular_meshsim_adaptor.so  Meshsimadapt}
   }
 
 } else {
