@@ -152,10 +152,14 @@ foreach lib $gSimVascularTclInitLibs {
     if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
 	# then static lib
 	if [catch {load {} [lindex $lib 0]} msg] {
+          if {$SV_RELEASE_BUILD == 0} {
 	    puts "error ([lindex $lib 0]) $msg"
+          }
 	}
     } else {
+      if {$SV_RELEASE_BUILD == 0} {
 	puts "loaded [lindex $lib 0] dynamically"
+      }
     }
 }
 

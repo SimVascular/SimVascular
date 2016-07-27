@@ -92,7 +92,7 @@ if (SV_THREEDSOLVER_USE_VARWALL)
 endif()
 
 # Libraries for the solver
-set(lib_vtk ${SV_LIB_THREEDSOLVER_VTK_SOLID_NAME})
+set(lib_vtk ${SV_LIB_THREEDSOLVER_VTK_NAME})
 set(lib_leslib ${SV_LIB_THREEDSOLVER_DUMMY_LESLIB_NAME})
 set(lib_restart ${SV_LIB_THREEDSOLVER_WRITE_RESTART_NAME})
 set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME})

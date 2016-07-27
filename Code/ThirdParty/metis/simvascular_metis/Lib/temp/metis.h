@@ -31,9 +31,9 @@
 #include <dmalloc.h>
 #endif
 
-#include <metis_defs.h>
-#include <metis_struct.h>
-#include <metis_macros.h>
-#include <metis_rename.h>
-#include <metis_proto.h>
+#include "./metis_defs.h"
+#include "./metis_struct.h"
+#include "./metis_macros.h"
+#include "./metis_rename.h"
+#include "./metis_proto.h"
 
