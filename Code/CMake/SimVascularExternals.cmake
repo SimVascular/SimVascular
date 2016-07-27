@@ -194,3 +194,7 @@ if(SV_USE_MMG)
     set(MMG_DIR ${SV_MMG_DIR})
   endif()
 endif()
+
+if(SV_DOWNLOAD_EXTERNALS)
+  simvascular_download_and_extract_tar(${SV_EXTERNALS_DOWNLOAD_URL} "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXTERNALS_BIN_DIR}")
+endif()

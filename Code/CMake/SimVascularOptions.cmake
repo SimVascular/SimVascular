@@ -57,6 +57,8 @@ mark_as_superbuild(SV_EXTERNALS_TOPLEVEL_DIR:PATH)
 option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
 mark_as_superbuild(SV_EXTERNALS_USE_TOPLEVEL_DIR)
 
+option(SV_DOWNLOAD_EXTERNALS "Option to download all externals from a remote location" OFF)
+
 #-----------------------------------------------------------------------------
 # ThirdParty
 option(SV_USE_ZLIB "Use ZLib" ON)

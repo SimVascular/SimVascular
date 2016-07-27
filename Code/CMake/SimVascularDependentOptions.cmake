@@ -274,3 +274,8 @@ if(NOT MSVC)
   endif()
 endif()
 
+#-----------------------------------------------------------------------------
+# External download options
+if(SV_DOWNLOAD_EXTERNALS)
+  set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.everything.tar.gz")
+endif()

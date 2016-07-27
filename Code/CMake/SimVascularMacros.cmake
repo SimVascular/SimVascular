@@ -425,3 +425,33 @@ macro(simvascular_get_external_path_from_include_dir pkg)
     set(SV_${pkg}_DIR ${TMP_DIR})
   endif()
 endmacro()
+
+macro(simvascular_download_and_extract_tar url destination)
+  get_filename_component(tar_file ${url} NAME)
+  set(tar_file "${destination}/${tar_file}")
+  if(NOT EXISTS ${destination})
+    file(MAKE_DIRECTORY ${destination})
+  endif()
+
+  if(NOT EXISTS ${tar_file})
+    file(DOWNLOAD "${url}" "${tar_file}" STATUS status)
+    list(GET status 0 error_code)
+    list(GET status 1 error_msg)
+    if(error_code)
+      message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+    endif()
+  endif()
+
+  message("BLAH")
+  set(check_extract_file "${tar_file}.extracted")
+  if(NOT EXISTS ${check_extract_file})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${tar_file}
+                    WORKING_DIRECTORY ${destination}
+                    RESULT_VARIABLE result
+                    ERROR_VARIABLE err_msg)
+    if(result)
+      message(FATAL_ERROR "error: Failed to Unpack ${tar_name} - ${err_msg}")
+    endif()
+    file(WRITE ${check_extract_file} "# ${tar_file} extracted")
+  endif()
+endmacro()
