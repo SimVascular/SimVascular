@@ -1,15 +1,20 @@
-rm -Rf ../../Code/ScriptBuild
-mkdir -p ../../Code/ScriptBuild
-pushd ../../Code/ScriptBuild
+rm -Rf ../../Code/NoFlowSolverAllExternalsBuild
+mkdir -p ../../Code/NoFlowSolverAllExternalsBuild
+pushd ../../Code/NoFlowSolverAllExternalsBuild
 
-export CC=clang
-export CXX=clang++
+#compilers
+export CC="clang"
+export CXX="clang++"
 
+#cmake
 export REPLACEME_SV_CMAKE_CMD="cmake"
 export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
 export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
+
+#externals
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MasterBuild/Externals"
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -18,6 +23,8 @@ export REPLACEME_SV_TOP_SRC_DIR_SV="../"
    -G "$REPLACEME_SV_CMAKE_GENERATOR" \
 \
    -DCMAKE_BUILD_TYPE="$REPLACEME_SV_CMAKE_BUILD_TYPE" \
+   -DBUILD_SHARED_LIBS=ON \
+   -DBUILD_TESTING=OFF \
 \
    -DSV_SUPERBUILD=OFF \
 \
@@ -46,7 +53,7 @@ export REPLACEME_SV_TOP_SRC_DIR_SV="../"
    -DSV_USE_VTK_SHARED=ON \
 \
    -DSV_EXTERNALS_USE_TOPLEVEL_DIR=ON \
-   -DSV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MasterBuild/Externals" \
+   -DSV_EXTERNALS_TOPLEVEL_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR" \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
