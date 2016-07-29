@@ -137,25 +137,25 @@ endif()
 
 # ITK
 #-----------------------------------------------------------------------------
-simvascular_add_new_external(ITK 4.8.0 ON ON itk)
+simvascular_add_new_external(ITK 4.7.1 ON ON itk)
 # If using extern directory, set dir with Config file!
 if(SV_USE_ITK)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
-    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-4.8)
+    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-4.7)
   endif()
 endif()
 
 # TCL is required
 #-----------------------------------------------------------------------------
 set(SV_USE_TCL ON CACHE BOOL "Must build with tcl" FORCE)
-simvascular_add_new_external(TCL 8.6.0 ON ON tcltk)
+simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
 if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
   set(TCL_DIR ${SV_TCL_DIR})
 endif()
 
 #PYTHON
 #-----------------------------------------------------------------------------
-simvascular_add_new_external(PYTHON 2.7 OFF ON python)
+simvascular_add_new_external(PYTHON 2.7.11 OFF ON python)
 
 # OpenCASCADE
 #-----------------------------------------------------------------------------
@@ -197,4 +197,5 @@ endif()
 
 if(SV_DOWNLOAD_EXTERNALS)
   simvascular_download_and_extract_tar(${SV_EXTERNALS_DOWNLOAD_URL} "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXTERNALS_BIN_DIR}")
+  set(SV_EXTERNALS_USE_TOPLEVEL_DIR ON CACHE BOOL "Set externals to download dir" FORCE)
 endif()
