@@ -1224,7 +1224,7 @@ proc geom_mapVectors {velocityMap inlet_mesh_face result} {
         repos_setLabel -obj sBdryPC -key color -value white
         catch {repos_setLabel -obj $meshFreeEdges -key color -value blue}
         catch {repos_setLabel -obj $segmentation -key color -value red}
-        gdscView sCtrMesh sCtrPC sNode sPt sBdryMesh sBdryPC line1 line2 $segmentation $meshFreeEdges
+        svView sCtrMesh sCtrPC sNode sPt sBdryMesh sBdryPC line1 line2 $segmentation $meshFreeEdges
         incr counter
     }
 
@@ -4729,7 +4729,7 @@ proc img_calcBaselineCorrectionEqn {region_list image_list order} {
                 catch {repos_delete -obj b_$i\_$j}
 		#solid_box3d -dims {0.3 0.3 0.3} -ctr [list $x $y 0] -result b_$i\_$j
                 #global bcGUIbaselineRen
-                #gdscGeneralView $bcGUIbaselineRen b_$i\_$j
+                #generalView $bcGUIbaselineRen b_$i\_$j
 	    }
 	}
       }
@@ -6119,7 +6119,7 @@ proc mesh_writeInflowFaceVtk {solidfile atrfile outfile} {
   solid_readNative -file $solidfile -obj $solid
   set faceid -1
   foreach face [$solid GetFaceIds] {
-    if {[$solid GetFaceAttr -attr gdscName -faceId $face] == "inflow"} {
+    if {[$solid GetFaceAttr -attr Name -faceId $face] == "inflow"} {
       set faceid $face
       break
     }
@@ -6227,7 +6227,7 @@ proc mesh_readMSS {filename resObj} {
         foreach id $faceids {
 	  if {$gOptions(meshing_solid_kernel) == "Parasolid"} { 
             set ident [$solid GetFaceAttr -attr identifier -faceId $id]
-            set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
+            set facename [$solid GetFaceAttr -attr Name -faceId $id]
 	  } elseif {$gOptions(meshing_solid_kernel) == "Discrete"} { 
             set ident $id
             set facename $gDiscreteModelFaceNames($id)
@@ -8390,7 +8390,7 @@ proc view_slice {fn} {
    set slice /tmp/view_slice
    catch {repos_delete -obj $slice}
    img2_readSlice $fn $slice
-   gdscView $slice
+   svView $slice
 }
 
    

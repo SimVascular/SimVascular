@@ -46,10 +46,10 @@ extern "C" SV_EXPORT_MESH int Mesh_Init( Tcl_Interp *interp );
 SV_EXPORT_MESH int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] );
 
-SV_EXPORT_MESH void DeletegdscMesh( ClientData clientData );
+SV_EXPORT_MESH void DeleteMesh( ClientData clientData );
 
 //Fake deletion function for an internal meshobject within AdaptObject. Meshobject is unregistered in destruction of AdaptObject.
-SV_EXPORT_MESH void fakeDeletegdscMesh( ClientData clientData );
+SV_EXPORT_MESH void fakeDeleteMesh( ClientData clientData );
 
 #endif // __CVMESH_INIT_H
 

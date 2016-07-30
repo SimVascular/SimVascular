@@ -488,9 +488,9 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   {
     TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
     if (i == 0)
-      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","wall");
+      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"Name","wall");
     else
-      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","cap");
+      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"Name","cap");
   }
 
   fprintf(stdout,"Lofting Vessel Done\n");
@@ -578,7 +578,7 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
     if (i >= (numFaces-numFilled))
     {
       OCCTUtils_SetFaceAttribute(
-	  tmpFace,shapetool_,*shapelabel_,"gdscName","cap");
+	  tmpFace,shapetool_,*shapelabel_,"Name","cap");
     }
     else if (attacher.IsModified(shape))
     {
@@ -1269,13 +1269,13 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
     int newid=-1;
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,newid);
     char *name;
-    OCCTUtils_GetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",&name);
+    OCCTUtils_GetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"Name",&name);
     if (!strncmp(name,"noname",6))
     {
       char newbname[255];
       numNew++;
       sprintf(newbname,"%s_%d",blendname,numNew);
-      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName",newbname);
+      OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"Name",newbname);
     }
     GProp_GProps faceProps;
     BRepGProp::LinearProperties(tmpFace,faceProps);
@@ -1680,7 +1680,7 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
-    OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","wall");
+    OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"Name","wall");
   }
 
   return CV_OK;

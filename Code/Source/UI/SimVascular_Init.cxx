@@ -198,7 +198,7 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 
   if ( Post_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on gdscPost_Init\n" );
+    fprintf( stderr, "error on Post_Init\n" );
     return TCL_ERROR;
   }
 
@@ -223,13 +223,13 @@ int SimVascular_Init( Tcl_Interp *interp )
 
 #ifdef SV_USE_MESHSIM
   if ( Mesh_Init(interp) == TCL_ERROR ) {
-      fprintf( stderr, "error on gdscMesh_Init\n" );
+      fprintf( stderr, "error on Mesh_Init\n" );
       return TCL_ERROR;
   }
 
 #elif defined SV_USE_TETGEN
   if ( Mesh_Init(interp) == TCL_ERROR ) {
-      fprintf( stderr, "error on gdscMesh_Init\n" );
+      fprintf( stderr, "error on Mesh_Init\n" );
       return TCL_ERROR;
   }
 #endif
@@ -270,7 +270,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 #ifdef SV_USE_MESHSIM
 #ifndef SV_USE_MESHSIM_SHARED
   if ( Meshsimmesh_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on gdscMesh_Init\n" );
+    fprintf( stderr, "error on Mesh_Init\n" );
     return TCL_ERROR;
   }
 #endif
@@ -288,7 +288,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 #ifdef SV_USE_MESHSIM_DISCRETE_MODEL
 #ifndef SV_USE_MESHSIM_DISCRETE_MODEL_SHARED
   if ( Meshsimdiscretesolid_Init(interp) == TCL_ERROR ) {
-    fprintf( stderr, "error on gdscMesh_Init\n" );
+    fprintf( stderr, "error on Mesh_Init\n" );
     return TCL_ERROR;
   }
 #endif

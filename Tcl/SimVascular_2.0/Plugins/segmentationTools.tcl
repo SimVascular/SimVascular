@@ -181,7 +181,7 @@ proc seg_writeAllPathDistanceMap { {fnamebase temp} {pathIds -1} } {
 		puts "Appending path with id: $id"
 		path_MakePolyData $splinePts $splinePd
 		repos_setLabel -obj $splinePd -key color -value white
-		gdscGeneralView $gRen3d $splinePd
+		generalView $gRen3d $splinePd
 		vtkapd AddInputData [repos_exportToVtk -src $splinePd]
 	}
 	set gRen3dFreeze 0
@@ -292,7 +292,7 @@ repos_importVtkPd -src [surfacer GetOutput] -dst $testPd
 
 global gRen3d
 repos_setLabel -obj $testPd -key color -value blue
-gdscGeneralView $gRen3d $testPd
+generalView $gRen3d $testPd
 
 catch {repos_delete -obj $testVol}
 
@@ -402,7 +402,7 @@ proc seg_ShowSplines { {pathIds -1} } {
     path_MakePolyData $splinePts $splinePd
 
      repos_setLabel -obj $splinePd -key color -value $color
-     gdscGeneralView $gRen3d $splinePd
+     generalView $gRen3d $splinePd
      set myact [vis_pGetActor $gRen3d $splinePd]
      set myprop [$myact GetProperty]
      $myprop SetLineWidth $thick
@@ -459,7 +459,7 @@ proc seg_AppendSplines { {pathIds -1} } {
     lappend splinePds $splinePd
     
      # repos_setLabel -obj $splinePd -key color -value $color
-     # gdscGeneralView $gRen3d $splinePd
+     # generalView $gRen3d $splinePd
      # set myact [vis_pGetActor $gRen3d $splinePd]
      # set myprop [$myact GetProperty]
      # $myprop SetLineWidth $thick
@@ -470,7 +470,7 @@ proc seg_AppendSplines { {pathIds -1} } {
   catch {repos_delete -obj $splinesPd}
   puts "Appending PDs"
   geom_appendPds $splinePds $splinesPd
-  gdscGeneralView $gRen3d $splinesPd
+  generalView $gRen3d $splinesPd
   set gRen3dFreeze 0
   vis_render $gRen3d
   return GDSC_OK

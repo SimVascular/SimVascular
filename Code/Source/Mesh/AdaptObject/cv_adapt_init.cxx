@@ -119,9 +119,9 @@ static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *i
 // Helper functions
 // ----------------
 
-static void gdscAdaptPrintMethods( Tcl_Interp *interp );
+static void AdaptPrintMethods( Tcl_Interp *interp );
 
-void DeletegdscAdapt( ClientData clientData );
+void DeleteAdapt( ClientData clientData );
 
 
 // ----------
@@ -243,7 +243,7 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make a new Tcl command:
   Tcl_SetResult( interp, adaptor->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvAdapt_ObjectCmd,
-		     (ClientData)adaptor, DeletegdscAdapt );
+		     (ClientData)adaptor, DeleteAdapt );
 
   return TCL_OK;
 }
@@ -255,7 +255,7 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
   if ( argc == 1 ) {
-    gdscAdaptPrintMethods( interp );
+    AdaptPrintMethods( interp );
     return TCL_OK;
   }
 
@@ -357,21 +357,21 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 }
 
 // -------------
-// DeletegdscAdapt
+// DeleteAdapt
 // -------------
 // This is the deletion call-back for cvAdaptObject object commands.
 
-void DeletegdscAdapt( ClientData clientData ) {
+void DeleteAdapt( ClientData clientData ) {
     cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
     gRepository->UnRegister( geom->GetName() );
 }
 
 // ------------
-// gdscAdaptPrintMethods
+// AdaptPrintMethods
 // ------------
 
-static void gdscAdaptPrintMethods( Tcl_Interp *interp )
+static void AdaptPrintMethods( Tcl_Interp *interp )
 {
 
   tcl_printstr(interp, "CreateInternalMeshObject\n");

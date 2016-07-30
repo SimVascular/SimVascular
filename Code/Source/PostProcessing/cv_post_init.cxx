@@ -59,54 +59,54 @@
 
 // Prototypes:
 
-int gdscPost_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
 
 // -------------
-// gdscPost_Init
+// Post_Init
 // -------------
 
 int Post_Init( Tcl_Interp *interp )
 {
-  Tcl_CreateCommand( interp, "post_readVisMesh", gdscPost_readVisMeshCmd,
+  Tcl_CreateCommand( interp, "post_readVisMesh", Post_readVisMeshCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_readVisRes", gdscPost_readVisResCmd,
+  Tcl_CreateCommand( interp, "post_readVisRes", Post_readVisResCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcWallShear", gdscPost_calcWallShearCmd,
+  Tcl_CreateCommand( interp, "post_calcWallShear", Post_calcWallShearCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcWallShearMean", gdscPost_calcWallShearMeanCmd,
+  Tcl_CreateCommand( interp, "post_calcWallShearMean", Post_calcWallShearMeanCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcWallShearPulse", gdscPost_calcWallShearPulseCmd,
+  Tcl_CreateCommand( interp, "post_calcWallShearPulse", Post_calcWallShearPulseCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcOSI", gdscPost_calcOSICmd,
+  Tcl_CreateCommand( interp, "post_calcOSI", Post_calcOSICmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcAvgPointData", gdscPost_calcAvgPointDataCmd,
+  Tcl_CreateCommand( interp, "post_calcAvgPointData", Post_calcAvgPointDataCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcTKE", gdscPost_calcTKECmd,
+  Tcl_CreateCommand( interp, "post_calcTKE", Post_calcTKECmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   return TCL_OK;
 }
 
 // -----------------------
-// gdscPost_readVisMeshCmd
+// Post_readVisMeshCmd
 // -----------------------
 
-int gdscPost_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -169,10 +169,10 @@ int gdscPost_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -----------------------
-// gdscPost_readVisResCmd
+// Post_readVisResCmd
 // -----------------------
 
-int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -422,10 +422,10 @@ int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -------------------------
-// gdscPost_calcWallShearCmd
+// Post_calcWallShearCmd
 // -------------------------
 
-int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -576,10 +576,10 @@ int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -----------------------------
-// gdscPost_calcWallShearMeanCmd
+// Post_calcWallShearMeanCmd
 // -----------------------------
 
-int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -704,10 +704,10 @@ int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // ------------------------------
-// gdscPost_calcWallShearPulseCmd
+// Post_calcWallShearPulseCmd
 // ------------------------------
 
-int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
 
@@ -833,10 +833,10 @@ int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -------------------
-// gdscPost_calcOSICmd
+// Post_calcOSICmd
 // -------------------
 
-int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -955,10 +955,10 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // ----------------------------
-// gdscPost_calcAvgPointDataCmd
+// Post_calcAvgPointDataCmd
 // ----------------------------
 
-int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -1085,10 +1085,10 @@ int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -------------------
-// gdscPost_calcTKECmd
+// Post_calcTKECmd
 // -------------------
 
-int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;

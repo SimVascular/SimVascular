@@ -542,7 +542,7 @@ proc guiSV_model_set_att_name {} {
    catch {repos_delete -obj $facepd}
    set faceid [lindex [$tv item .models.$kernel.$modelname.$currname -values] 1]
    if {$kernel == "OpenCASCADE" || $kernel == "Parasolid"} {
-     $modelname SetFaceAttr -attr gdscName -faceId $faceid -value $name
+     $modelname SetFaceAttr -attr Name -faceId $faceid -value $name
    }
    $modelname GetFacePolyData -face $faceid -result $facepd
    foreach key [repos_getLabelKeys -obj $oldpd] {
@@ -934,14 +934,14 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
   foreach id $faceIds {
     if {$kernel == "Parasolid"} {
       set staticFaceId [$modelname GetFaceAttr -attr identifier -faceId $id]
-      catch {set facename [$modelname GetFaceAttr -attr gdscName -faceId $id]}
+      catch {set facename [$modelname GetFaceAttr -attr Name -faceId $id]}
     } elseif {$kernel == "Discrete"} {
       set facename $gDiscreteModelFaceNames($id)
     } elseif {$kernel == "PolyData"} {
       set facename $gPolyDataFaceNames($id)
     } elseif {$kernel == "OpenCASCADE"} {
       set facename $gOCCTFaceNames($id)
-      $modelname SetFaceAttr -attr gdscName -faceId $id -value $facename
+      $modelname SetFaceAttr -attr Name -faceId $id -value $facename
     } else {
       return -code error "ERROR: Solid kernel $kernel is not a valid kernel"
     }
@@ -955,7 +955,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric"
       puts $errmsg
       set errorFaceName {}
-      catch {set errorFaceName [$modelname GetFaceAttr -faceId $id -attr gdscName]}
+      catch {set errorFaceName [$modelname GetFaceAttr -faceId $id -attr Name]}
       tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric)\n"
       #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
     }
@@ -965,7 +965,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
      set pretty_names {}
      set all_ids {}
      foreach i [$modelname GetFaceIds] {
-       catch {lappend pretty_names [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+       catch {lappend pretty_names [$modelname GetFaceAttr -attr Name -faceId $i]}
        lappend all_ids $i
      }
      set duplist [lsort -dictionary $pretty_names]
@@ -984,7 +984,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
        set dupid [lindex $duplistids $i]
        set newname [string trim $dup]_2
        set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       $modelname SetFaceAttr -attr Name -faceId $dupid -value $newname
        set facepd /models/$kernel/$modelname/$newname
        catch {repos_delete -obj $facepd}
        if {[catch {$modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric} errmsg] == 0} {
@@ -994,7 +994,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
 	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric"
 	 puts $errmsg
 	 set errorFaceName {}
-	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
+	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr Name]}
 	 tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric)\n"
 	 #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
        }
@@ -1007,7 +1007,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
 
   foreach id $faceIds {
     if {$kernel == "Parasolid"} {
-      catch {set facename [$modelname GetFaceAttr -attr gdscName -faceId $id]}
+      catch {set facename [$modelname GetFaceAttr -attr Name -faceId $id]}
       #catch {set staticFaceId [$modelname GetFaceAttr -attr identifier -faceId $id]}
       #guiSV_model_set_col_value $kernel.$modelname.$facename 1 $id/$staticFaceId
     } elseif {$kernel == "Discrete"} {
@@ -1354,7 +1354,7 @@ proc guiSV_model_display_object {object} {
     repos_setLabel -obj /models/$object -key color -value $modelcolor}
   if { [lsearch -exact [repos_getLabelKeys -obj /models/$object] opacity] < 0 } {
     repos_setLabel -obj /models/$object -key opacity -value $opacity}
-  gdscGeneralView $gRen3d /models/$object
+  generalView $gRen3d /models/$object
 }
 
 proc guiSV_model_set_col_value {object col value} {
@@ -1432,7 +1432,7 @@ proc guiSV_model_change_selected_color {} {
           catch {repos_clearLabel -obj $modelpd -key color}
           repos_setLabel -obj $modelpd -key color -value $color
           model_set_color $model $color
-	  gdscGeneralView $gRen3d $modelpd
+	  generalView $gRen3d $modelpd
 	  if {$PrePickedProperty != ""} {
 	    $PrePickedProperty SetColor $r $g $b
 	    if { [lsearch -exact [repos_getLabelKeys -obj $modelpd] opacity] >= 0 } {
@@ -1465,7 +1465,7 @@ proc guiSV_model_change_selected_color {} {
 	if {[repos_exists -obj $facepd]} {
 	  catch {repos_clearLabel -obj $facepd -key color}
 	  repos_setLabel -obj $facepd -key color -value "$r $g $b"
-	  gdscGeneralView $gRen3d $facepd
+	  generalView $gRen3d $facepd
 	  if {$PrePickedProperty != ""} {
 	    $PrePickedProperty SetColor $r $g $b
 	    if { [lsearch -exact [repos_getLabelKeys -obj $facepd] opacity] >= 0 } {
@@ -1502,7 +1502,7 @@ proc guiSV_model_change_selected_opacity {opacity} {
 	if {[repos_exists -obj $modelpd]} {
 	  catch {repos_clearLabel -obj $modelpd -key opacity}
 	  repos_setLabel -obj $modelpd -key opacity -value "$opacity"
-	  gdscGeneralView $gRen3d $modelpd
+	  generalView $gRen3d $modelpd
 	  if {$PrePickedProperty != ""} {
 	    if { [lsearch -exact [repos_getLabelKeys -obj $modelpd] color] >= 0 } {
 	      set tmpColor [repos_getLabel -obj $modelpd -key color]
@@ -1542,7 +1542,7 @@ proc guiSV_model_change_selected_opacity {opacity} {
 	if {[repos_exists -obj $facepd]} {
 	  catch {repos_clearLabel -obj $facepd -key opacity}
 	  repos_setLabel -obj $facepd -key opacity -value "$opacity"
-	  gdscGeneralView $gRen3d $facepd
+	  generalView $gRen3d $facepd
 	  if {$PrePickedProperty != ""} {
 	    if { [lsearch -exact [repos_getLabelKeys -obj $facepd] color] >= 0 } {
 	      set tmpColor [repos_getLabel -obj $facepd -key color]
@@ -2375,7 +2375,7 @@ proc guiSV_model_blend_selected_models {} {
   set faceids [$model GetFaceIds]
   foreach id $faceids {
     set ident [$model GetFaceAttr -attr identifier -faceId $id]
-    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+    set facename [$model GetFaceAttr -attr Name -faceId $id]
     if {$facename != ""} {
       set ids($facename) $id
     }
@@ -2400,8 +2400,8 @@ proc guiSV_model_blend_selected_models {} {
        continue
     }
     $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
-    set nameA [$model GetFaceAttr -attr gdscName -faceId $faceA]
-    set nameB [$model GetFaceAttr -attr gdscName -faceId $faceB]
+    set nameA [$model GetFaceAttr -attr Name -faceId $faceA]
+    set nameB [$model GetFaceAttr -attr Name -faceId $faceB]
     set wallblend 0
     if {[string range $nameA 0 4] == "wall_"} {
        set nameA [string range $nameA 5 end]
@@ -2421,7 +2421,7 @@ proc guiSV_model_blend_selected_models {} {
     # tag new faces
     set tagger 0
     foreach id [$model GetFaceIds] {
-      set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+      set facename [$model GetFaceAttr -attr Name -faceId $id]
       set value [lsearch -exact $faceids $id]
       if {$value < 0} {
         set name "$name\_$nameA\_$nameB"
@@ -2430,7 +2430,7 @@ proc guiSV_model_blend_selected_models {} {
   }
         incr tagger
         puts "new face id: $id ($name)"
-        $model SetFaceAttr -attr gdscName -faceId $id -value $name
+        $model SetFaceAttr -attr Name -faceId $id -value $name
       }
     }
     set faceids [$model GetFaceIds]
@@ -2438,7 +2438,7 @@ proc guiSV_model_blend_selected_models {} {
 
   set pretty_names {}
   foreach i [$model GetFaceIds] {
-    catch {lappend pretty_names [$model GetFaceAttr -attr gdscName -faceId $i]}
+    catch {lappend pretty_names [$model GetFaceAttr -attr Name -faceId $i]}
   }
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
     set duplist [lsort -dictionary $pretty_names]
@@ -2480,15 +2480,15 @@ proc guiSV_model_trim_model {} {
 
   set trimmedModel1 $gObjects(preop_trimmed1)
   set trimmedModel2 $gObjects(preop_trimmed2)
-  # rename the gdsc face ids so they range from 1 to n.
+  # rename the  face ids so they range from 1 to n.
   # this is required by phasta.
   foreach trimmedModel [list $trimmedModel1 $trimmedModel2] {
     set valid 1
     foreach i [$trimmedModel GetFaceIds] {
       set id {}
-      catch {set id [$trimmedModel GetFaceAttr -attr gdscId -faceId $i]}
+      catch {set id [$trimmedModel GetFaceAttr -attr Id -faceId $i]}
       if {$id != ""} {
-        $trimmedModel SetFaceAttr -attr gdscId -faceId $i -value $valid
+        $trimmedModel SetFaceAttr -attr Id -faceId $i -value $valid
         incr valid
       }
     }
@@ -2853,7 +2853,7 @@ proc guiSV_model_create_model_parasolid {} {
     set pretty_names {}
     set all_ids {}
     foreach i [$modelname GetFaceIds] {
-      catch {lappend pretty_names [$modelname GetFaceAttr -attr gdscName -faceId $i]}
+      catch {lappend pretty_names [$modelname GetFaceAttr -attr Name -faceId $i]}
       lappend all_ids $i
     }
     set isdups 0
@@ -2875,7 +2875,7 @@ proc guiSV_model_create_model_parasolid {} {
        set dupid [lindex $duplistids $i]
        set newname [string trim $dup]_2
        set msg "$msg  Duplicate face name $dup is being renamed to $newname\n"
-       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
+       $modelname SetFaceAttr -attr Name -faceId $dupid -value $newname
      }
   }
 
@@ -3292,7 +3292,7 @@ proc guiSV_model_add_to_backup_list {kernel model} {
   } else {
     foreach id [$name GetFaceIds] {
       if {$kernel == "Parasolid"} {
-        catch {set facename [$model GetFaceAttr -attr gdscName -faceId $id]}
+        catch {set facename [$model GetFaceAttr -attr Name -faceId $id]}
       } else {
         set facename [model_idface $kernel $model $id]
       }
@@ -3522,7 +3522,7 @@ proc guiSV_model_create_polydata_solid_from_nurbs {} {
   set facenames {}
   set idlist {}
   foreach faceid [$model GetFaceIds] {
-    catch {set facename [$model GetFaceAttr -attr gdscName -faceId $faceid]}
+    catch {set facename [$model GetFaceAttr -attr Name -faceId $faceid]}
     lappend facenames $facename
     set facepd /tmp/models/$kernel/$model/$facename
     if {[repos_exists -obj $facepd] == 1} {
@@ -3582,7 +3582,7 @@ proc guiSV_model_name_faces_from_reference {newmodel refmodel} {
   foreach faceid [$refmodel GetFaceIds] {
     set facename {}
     if {$kernel == "Parasolid"} {
-      catch {set facename [$refmodel GetFaceAttr -attr gdscName -faceId $faceid]}
+      catch {set facename [$refmodel GetFaceAttr -attr Name -faceId $faceid]}
     } else {
       set facename [model_idface $kernel $refmodel $faceid]
     }
@@ -3645,7 +3645,7 @@ proc guiSV_model_blend_selected_models {} {
   set faceids [$model GetFaceIds]
   foreach id $faceids {
     set ident [$model GetFaceAttr -attr identifier -faceId $id]
-    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+    set facename [$model GetFaceAttr -attr Name -faceId $id]
     if {$facename != ""} {
       set ids($facename) $id
     }
@@ -3670,8 +3670,8 @@ proc guiSV_model_blend_selected_models {} {
        continue
     }
     $model CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
-    set nameA [$model GetFaceAttr -attr gdscName -faceId $faceA]
-    set nameB [$model GetFaceAttr -attr gdscName -faceId $faceB]
+    set nameA [$model GetFaceAttr -attr Name -faceId $faceA]
+    set nameB [$model GetFaceAttr -attr Name -faceId $faceB]
     set wallblend 0
     if {[string range $nameA 0 4] == "wall_"} {
        set nameA [string range $nameA 5 end]
@@ -3691,7 +3691,7 @@ proc guiSV_model_blend_selected_models {} {
     # tag new faces
     set tagger 0
     foreach id [$model GetFaceIds] {
-      set facename [$model GetFaceAttr -attr gdscName -faceId $id]
+      set facename [$model GetFaceAttr -attr Name -faceId $id]
       set value [lsearch -exact $faceids $id]
       if {$value < 0} {
         set name "$name\_$nameA\_$nameB"
@@ -3700,7 +3700,7 @@ proc guiSV_model_blend_selected_models {} {
   }
         incr tagger
         puts "new face id: $id ($name)"
-        $model SetFaceAttr -attr gdscName -faceId $id -value $name
+        $model SetFaceAttr -attr Name -faceId $id -value $name
       }
     }
     set faceids [$model GetFaceIds]
@@ -3708,7 +3708,7 @@ proc guiSV_model_blend_selected_models {} {
 
   set pretty_names {}
   foreach i [$model GetFaceIds] {
-    catch {lappend pretty_names [$model GetFaceAttr -attr gdscName -faceId $i]}
+    catch {lappend pretty_names [$model GetFaceAttr -attr Name -faceId $i]}
   }
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
     set duplist [lsort -dictionary $pretty_names]

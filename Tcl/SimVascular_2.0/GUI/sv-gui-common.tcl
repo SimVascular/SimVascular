@@ -206,12 +206,12 @@ proc nateAFLB {} {
     set solid $surf/capped
     foreach i [$solid GetFaceIds] {
       set facename {}
-      catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $i]}
+      catch {set facename [$solid GetFaceAttr -attr Name -faceId $i]}
       if {$facename != "" && $facename != "inflow" && $facename != "inlet"} {
-        $solid SetFaceAttr -attr gdscName -faceId $i -value $grp
+        $solid SetFaceAttr -attr Name -faceId $i -value $grp
       } else {
         # we have a wall
-        $solid SetFaceAttr -attr gdscName -faceId $i -value wall_$grp
+        $solid SetFaceAttr -attr Name -faceId $i -value wall_$grp
       }
     }
 
@@ -220,7 +220,7 @@ proc nateAFLB {} {
 #
 #  A dot B
 #
-proc gdscAdotB {a b result} {
+proc svAdotB {a b result} {
   upvar $result adotb
   if {[llength $a] != 3} {
     puts "Error:  Invalid length of vector $a!"
@@ -239,7 +239,7 @@ proc gdscAdotB {a b result} {
 #
 #  calculate the magnitude of a vector
 #
-proc gdscVectorMagnitude {v} {
+proc vectorMagnitude {v} {
   if {[llength $v] != 3} {
      puts "Error:  Vector not of correct length!"
      return -code error GDSC_ERR
@@ -253,7 +253,7 @@ proc gdscVectorMagnitude {v} {
 #
 #  normalize a vector
 #
-proc gdscVectorNormalize {v} {
+proc vectorNormalize {v} {
   if {[llength $v] != 3} {
      puts "Error:  Vector not of correct length!"
      return -code error GDSC_ERR
@@ -261,7 +261,7 @@ proc gdscVectorNormalize {v} {
   set v1 [lindex $v 0]
   set v2 [lindex $v 1]
   set v3 [lindex $v 2]
-  set mag [gdscVectorMagnitude $v]
+  set mag [vectorMagnitude $v]
   if {$mag < 0.00001} {
      puts "Warning:  Trying to normalize a zero vector!"
      return "0 0 0"
@@ -281,7 +281,7 @@ proc gdscVectorNormalize {v} {
 #  it is assumed to already be a vector.
 #
 
-proc gdscAngleBetweenVectors {in1 in2 return_angle} {
+proc angleBetweenVectors {in1 in2 return_angle} {
 
   upvar $return_angle angle
   set angle {}
@@ -330,16 +330,16 @@ proc gdscAngleBetweenVectors {in1 in2 return_angle} {
 
   # calculate the angle between vector a and b.
   # This corresponds to a . b = | a | | b | cos (theta)
-  set a [gdscVectorNormalize [list $a1 $a2 $a3]]
-  set b [gdscVectorNormalize [list $b1 $b2 $b3]]
+  set a [vectorNormalize [list $a1 $a2 $a3]]
+  set b [vectorNormalize [list $b1 $b2 $b3]]
   #set a [list $a1 $a2 $a3]
   #set b [list $b1 $b2 $b3]
 
-  set magA [gdscVectorMagnitude $a]
-  set magB [gdscVectorMagnitude $b]
+  set magA [vectorMagnitude $a]
+  set magB [vectorMagnitude $b]
 
   set AdotB 0.0
-  gdscAdotB $a $b AdotB
+  svAdotB $a $b AdotB
   puts "a: $a  b: $b"
   puts "adotb: $AdotB mags: $magA  $magB  value:[expr double($AdotB)/double($magA*$magB)]"
   set angle [expr acos(double($AdotB)/($magA*$magB))]
@@ -352,7 +352,7 @@ proc gdscAngleBetweenVectors {in1 in2 return_angle} {
 #  in a vtkPolyData object
 #
 
-proc gdscGetPointsFromNthPoly {nth pd result} {
+proc getPointsFromNthPoly {nth pd result} {
 
   upvar $result points
   set points {}
@@ -541,7 +541,7 @@ proc vsclrCreateTrimBox {topLeft topRight botRight sizeofbox phaseplane} {
   # and a = normal, therefore the angle is just theta = acos(n[2]*1)
 
   puts "normal: $nrm"
-  set normal [gdscVectorNormalize $nrm]
+  set normal [vectorNormalize $nrm]
   set theta [expr acos(double([lindex $normal 2]))]
 
   # calculate rotation vector
@@ -555,12 +555,12 @@ proc vsclrCreateTrimBox {topLeft topRight botRight sizeofbox phaseplane} {
 
   # if the plane is already in z=const, then magnitude
   # of the cross product of normal and z axis zero
-  set magrot [gdscVectorMagnitude $rotvector]
+  set magrot [vectorMagnitude $rotvector]
 
   puts "magrot: $magrot"
   puts "rotvector: $rotvector"
   if {$magrot > 0.00001} {
-    set rotvector [gdscVectorNormalize $rotvector]
+    set rotvector [vectorNormalize $rotvector]
     set rtheta [expr double(2.0*3.14159265358979323846-double($theta))]
     # angle must be in degrees for vtk
     set rtheta [expr double($rtheta)*180.0/3.14159265358979323846]
@@ -595,12 +595,12 @@ proc vsclrCreateTrimBox {topLeft topRight botRight sizeofbox phaseplane} {
   prayer PostMultiply
   prayer RotateWXYZ 180.0 1 0 0
 
-  gdscGetPointsFromNthPoly 0 $dodo points
+  getPointsFromNthPoly 0 $dodo points
   puts "points: $points"
   # first rotate
-  gdscAngleBetweenVectors [list [lindex $points 0] [lindex $points 1]] \
+  angleBetweenVectors [list [lindex $points 0] [lindex $points 1]] \
                           [list 1 0 0] angle
-  gdscAngleBetweenVectors [list [lindex $points 2] [lindex $points 3]] \
+  angleBetweenVectors [list [lindex $points 2] [lindex $points 3]] \
                           [list 1 0 0] angle
   t1 PostMultiply
   t1 RotateWXYZ [expr double(270.0-double($angle)*180.0/3.14159265358979323846)] \
@@ -843,7 +843,7 @@ proc trimSolid {} {
 
   # tag surfaces so we now where the inflow is
   foreach i [joy_solid GetFaceIds] {
-     joy_solid SetFaceAttr -faceId $i -attr gdscName -value "inflow"
+     joy_solid SetFaceAttr -faceId $i -attr Name -value "inflow"
   }
 
   # Now do a Boolean subtraction
@@ -855,7 +855,7 @@ proc trimSolid {} {
 
   # tag surfaces so we now where the inflow is
   foreach i [joy_solid GetFaceIds] {
-     joy_solid SetFaceAttr -faceId $i -attr gdscName -value "inflow"
+     joy_solid SetFaceAttr -faceId $i -attr Name -value "inflow"
   }
 
   # Now do a Boolean subtraction
@@ -1863,7 +1863,7 @@ proc geom_flatten {normal boolean inpd rotated_norm outpd} {
 
   # if the plane is already in z=const, then magnitude
   # of the cross product of normal and z axis zero
-  set magrot [gdscVectorMagnitude $rotvector]
+  set magrot [vectorMagnitude $rotvector]
 
   #puts "\nCalculate the rotation angle and vector to transform the points"
   #puts "into a z=constant plane."
@@ -1892,7 +1892,7 @@ proc geom_flatten {normal boolean inpd rotated_norm outpd} {
   [$tmpPD GetPointData] SetVectors $tmpV
 
  if {$magrot > 0.00001} {
-    set rotvector [gdscVectorNormalize $rotvector]
+    set rotvector [vectorNormalize $rotvector]
     set rtheta [expr double(2.0*3.14159265358979323846-double($theta))]
     # angle must be in degrees for vtk
     set rtheta [expr double($rtheta)*180.0/3.14159265358979323846]
@@ -2148,7 +2148,7 @@ proc geom_createRatioMap {inlet_mesh_face radmax result} {
         repos_setLabel -obj sBdryPC -key color -value white
         catch {repos_setLabel -obj $meshFreeEdges -key color -value blue}
         catch {repos_setLabel -obj $segmentation -key color -value red}
-        gdscView sCtrMesh sCtrPC sNode sPt sBdryMesh sBdryPC line1 line2 $segmentation $meshFreeEdges
+        svView sCtrMesh sCtrPC sNode sPt sBdryMesh sBdryPC line1 line2 $segmentation $meshFreeEdges
         incr counter
     }
 

@@ -74,7 +74,7 @@ int cvMesh_LogoffCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] );
 
 
-// gdscMesh methods
+// Mesh methods
 // --------------------
 static int cvMesh_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
@@ -145,7 +145,7 @@ static int cvMesh_AdaptMtd( ClientData clientData, Tcl_Interp *interp,
 // Helper functions
 // ----------------
 
-static void gdscMeshPrintMethods( Tcl_Interp *interp );
+static void MeshPrintMethods( Tcl_Interp *interp );
 
 
 // ----------
@@ -233,7 +233,7 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make a new Tcl command:
   Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
-		     (ClientData)geom, DeletegdscMesh );
+		     (ClientData)geom, DeleteMesh );
 
   return TCL_OK;
 }
@@ -251,7 +251,7 @@ int cvMesh_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  gdscMeshPrintMethods( interp );
+  MeshPrintMethods( interp );
   return TCL_OK;
 }
 
@@ -296,7 +296,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] )
 {
   if ( argc == 1 ) {
-    gdscMeshPrintMethods( interp );
+    MeshPrintMethods( interp );
     return TCL_OK;
   }
 
@@ -438,30 +438,30 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -------------
-// DeletegdscMesh
+// DeleteMesh
 // -------------
 // This is the deletion call-back for cvMeshObject object commands.
 
-void DeletegdscMesh( ClientData clientData ) {
+void DeleteMesh( ClientData clientData ) {
     cvMeshObject *geom = (cvMeshObject *)clientData;
 
     gRepository->UnRegister( geom->GetName() );
 }
 
 // -------------
-// fakeDeletegdscMesh
+// fakeDeleteMesh
 // -------------
 // This is the deletion call-back for cvMeshObject object commands.
 
-void fakeDeletegdscMesh( ClientData clientData ) {
+void fakeDeleteMesh( ClientData clientData ) {
   ;
 }
 
 // ------------
-// gdscMeshPrintMethods
+// MeshPrintMethods
 // ------------
 
-static void gdscMeshPrintMethods( Tcl_Interp *interp )
+static void MeshPrintMethods( Tcl_Interp *interp )
 {
 
   // Note:  I've commented out some of the currently

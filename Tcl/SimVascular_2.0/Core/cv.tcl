@@ -802,7 +802,7 @@ proc post_tweak_pulsatile_bc {solid_fn mesh_surf_dir mesh_fn res_fns faceinfo ou
   # loop over the named faces on the specified solid model
   set faces {}
   foreach id [$solid GetFaceIds] {
-     set face [$solid GetFaceAttr -attr gdscName -faceId $id]
+     set face [$solid GetFaceAttr -attr Name -faceId $id]
      if {$face != ""} {
        lappend faces $face
        set unitOutwardNormal [$solid GetFaceNormal -face $id -u 0 -v 0]

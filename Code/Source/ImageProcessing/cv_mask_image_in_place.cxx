@@ -35,7 +35,7 @@
 #include <stdio.h>
 #include <math.h>
 
-int gdscMaskImageInPlace(vtkStructuredPoints *imgsp,
+int MaskImageInPlace(vtkStructuredPoints *imgsp,
                           vtkStructuredPoints *masksp,
                          double replaceVal,int notval) {
 

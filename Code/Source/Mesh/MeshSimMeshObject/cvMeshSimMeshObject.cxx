@@ -1820,7 +1820,7 @@ int cvMeshSimMeshObject::GetModelFaceInfo(char rtnstr[99999]) {
     while (modelface = GFIter_next(myGFiter)) {
       tmpstr[0] = '\0';
       char *namestr;
-      PsdUtils_GetFaceAttribute( "gdscName",GEN_getParasolidEntity(modelface), &namestr );
+      PsdUtils_GetFaceAttribute( "Name",GEN_getParasolidEntity(modelface), &namestr );
       sprintf(tmpstr,"%s {%i %i {%s}} ",rtnstr,GEN_getParasolidEntity(modelface),GEN_tag((GEntity*)modelface),namestr);
       rtnstr[0]='\0';
       sprintf(rtnstr,"%s",tmpstr);

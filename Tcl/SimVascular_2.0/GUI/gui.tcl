@@ -22940,8 +22940,8 @@ proc bcGUI_hand_tag_voxel { widget x y} {
 
   global bcGUImagWindow
   #global bcGUIpotWindow
-  gdscGeneralView $bcGUImagWindow(ren) $boxpd
-  #gdscGeneralView $bcGUIpotWindow(ren) $boxpd
+  generalView $bcGUImagWindow(ren) $boxpd
+  #generalView $bcGUIpotWindow(ren) $boxpd
   [$bcGUImagWindow(ren) GetRenderWindow] Render
   #[$bcGUIpotWindow(ren) GetRenderWindow] Render
 }
@@ -23667,20 +23667,20 @@ proc bcGUIchangeFrame { value} {
     set displayedImgObj {}
     if {$loop == "bcGUImagWindow"} {
       if {$bcGUImagWindow(showMagImg) == 1} {
-        gdscGeneralView $ren /gBC/pcdata/mag/$value
+        generalView $ren /gBC/pcdata/mag/$value
         set displayedImgObj /gBC/pcdata/mag/$value
       } elseif {$bcGUImagWindow(showVelImg) != 0} {
         global gBC
   if {$gBC(numVelComp) == 1} {
-          gdscGeneralView $ren /gBC/pcdata/phase/$value
+          generalView $ren /gBC/pcdata/phase/$value
           set displayedImgObj /gBC/pcdata/phase/$value
   } elseif {$gBC(numVelComp) == 3} {
-          gdscGeneralView $ren /gBC/pcdata/phase/$value/$bcGUImagWindow(showVelImg)
+          generalView $ren /gBC/pcdata/phase/$value/$bcGUImagWindow(showVelImg)
           set displayedImgObj /gBC/pcdata/phase/$value/$bcGUImagWindow(showVelImg)
   }
       }
     } else {
-      gdscGeneralView $ren /gBC/pcdata/pot/$value
+      generalView $ren /gBC/pcdata/pot/$value
       set displayedImgObj /gBC/pcdata/pot/$value
     }
 
@@ -23707,7 +23707,7 @@ proc bcGUIchangeFrame { value} {
     # display threshold
     if {$showThr == "1"} {
       if {[repos_exists -obj /gBC/pcdata/mag/$value/thr] == 1} {
-        gdscGeneralView $ren /gBC/pcdata/mag/$value/thr
+        generalView $ren /gBC/pcdata/mag/$value/thr
       }
     }
 
@@ -23715,7 +23715,7 @@ proc bcGUIchangeFrame { value} {
     if {$showSelectedThr == "1"} {
       if {[repos_exists -obj /gBC/pcdata/mag/$value/thr/selected] == 1} {
         set throbj /gBC/pcdata/mag/$value/thr/selected
-        gdscGeneralView $ren $throbj
+        generalView $ren $throbj
         # make the line more visible
         set actor [vis_pGetActor $ren $throbj]
         [$actor GetProperty] SetLineWidth 5
@@ -23740,7 +23740,7 @@ proc bcGUIchangeFrame { value} {
       solid_sphere -r $bcGUIradius -ctr $center -result $sphere
       repos_setLabel -obj $sphere -key color -value green
       repos_setLabel -obj $sphere -key opacity -value 0.33
-      gdscGeneralView $ren $sphere
+      generalView $ren $sphere
     }
 
     # set up warp displays
@@ -23832,7 +23832,7 @@ proc bcGUIchangeFrame { value} {
     if {$showLS == "1"} {
       set lsres /gBC/pcdata/mag/$value/ls
       if {[repos_exists -obj $lsres] == 1} {
-        gdscGeneralView $ren $lsres
+        generalView $ren $lsres
         # make the line more visible
         set actor [vis_pGetActor $ren $lsres]
         [$actor GetProperty] SetLineWidth 5
@@ -23874,7 +23874,7 @@ proc bcGUIchangeFrame { value} {
             $box GetPolyData -result $boxpd
             repos_setLabel -obj $boxpd -key opacity -value 0.25
             repos_setLabel -obj $boxpd -key color -value yellow
-            gdscGeneralView $ren $boxpd
+            generalView $ren $boxpd
     }
         }
       }
@@ -27166,15 +27166,15 @@ proc createPREOPmodelTrim {} {
 
   trimSolid
 
-  # rename the gdsc face ids so they range from 1 to n.
+  # rename the  face ids so they range from 1 to n.
   # this is required by phasta.
   foreach trimmedModel [list $gObjects(preop_trimmed1) $gObjects(preop_trimmed2)] {
     set valid 1
     foreach i [$trimmedModel GetFaceIds] {
       set id {}
-      catch {set id [$trimmedModel GetFaceAttr -attr gdscId -faceId $i]}
+      catch {set id [$trimmedModel GetFaceAttr -attr Id -faceId $i]}
       if {$id != ""} {
-        $trimmedModel SetFaceAttr -attr gdscId -faceId $i -value $valid
+        $trimmedModel SetFaceAttr -attr Id -faceId $i -value $valid
         incr valid
       }
     }
@@ -28428,7 +28428,7 @@ proc gui3DrunLS {} {
     repos_setLabel -obj $segPd -key color -value red
     repos_setLabel -obj $segPd -key opacity -value 0.75
 
-    gdscGeneralView $gRen3d $segPd
+    generalView $gRen3d $segPd
 }
 
 
@@ -28599,7 +28599,7 @@ proc guiBLENDSblend {} {
   set faceids [$solid GetFaceIds]
   foreach id $faceids {
     set ident [$solid GetFaceAttr -attr identifier -faceId $id]
-    set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
+    set facename [$solid GetFaceAttr -attr Name -faceId $id]
     if {$facename != ""} {
       set ids($facename) $id
     }
@@ -28624,8 +28624,8 @@ proc guiBLENDSblend {} {
        continue
     }
     $solid CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
-    set nameA [$solid GetFaceAttr -attr gdscName -faceId $faceA]
-    set nameB [$solid GetFaceAttr -attr gdscName -faceId $faceB]
+    set nameA [$solid GetFaceAttr -attr Name -faceId $faceA]
+    set nameB [$solid GetFaceAttr -attr Name -faceId $faceB]
     set wallblend 0
     if {[string range $nameA 0 4] == "wall_"} {
        set nameA [string range $nameA 5 end]
@@ -28645,7 +28645,7 @@ proc guiBLENDSblend {} {
     # tag new faces
     set tagger 0
     foreach id [$solid GetFaceIds] {
-      set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
+      set facename [$solid GetFaceAttr -attr Name -faceId $id]
       set value [lsearch -exact $faceids $id]
       if {$value < 0} {
         set name "$name\_$nameA\_$nameB"
@@ -28654,7 +28654,7 @@ proc guiBLENDSblend {} {
   }
         incr tagger
         puts "new face id: $id ($name)"
-        $solid SetFaceAttr -attr gdscName -faceId $id -value $name
+        $solid SetFaceAttr -attr Name -faceId $id -value $name
       }
     }
     set faceids [$solid GetFaceIds]
@@ -28662,7 +28662,7 @@ proc guiBLENDSblend {} {
 
   set pretty_names {}
   foreach i [$solid GetFaceIds] {
-    catch {lappend pretty_names [$solid GetFaceAttr -attr gdscName -faceId $i]}
+    catch {lappend pretty_names [$solid GetFaceAttr -attr Name -faceId $i]}
   }
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
     set duplist [lsort -dictionary $pretty_names]
@@ -29974,7 +29974,7 @@ proc guiFNMloadSolidModel { fn solid} {
   set pretty_names {}
   foreach i [$object GetFaceIds] {
     if {$solid_kernel == "Parasolid"} {
-      catch {lappend pretty_names [$object GetFaceAttr -attr gdscName -faceId $i]}
+      catch {lappend pretty_names [$object GetFaceAttr -attr Name -faceId $i]}
     } elseif {$solid_kernel == "Discrete"} {
       lappend pretty_names $gDiscreteModelFaceNames($i)
     } elseif {$solid_kernel == "PolyData"} {
@@ -31252,7 +31252,7 @@ proc guiMMmeshControlAttributesShow {} {
   if {$gOptions(meshing_solid_kernel) == "Parasolid"} {
     foreach i [$solid GetFaceIds] {
       set name ""
-      catch {set name [$solid GetFaceAttr -attr gdscName -faceId $i]}
+      catch {set name [$solid GetFaceAttr -attr Name -faceId $i]}
       if {$name == ""} {
          set name [$solid GetFaceAttr -attr identifier -faceId $i]
       }
@@ -31764,7 +31764,7 @@ proc guiMMwriteInflowFace {} {
 
   foreach face [$solid GetFaceIds] {
     set facename {}
-    catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $face]}
+    catch {set facename [$solid GetFaceAttr -attr Name -faceId $face]}
     if {$facename == "inflow"} {
       set faceid $face
       break
@@ -33422,7 +33422,7 @@ proc guiPPchooserShowAllPaths {} {
       }
       geom_openLinesFromPts $pts $obj
       repos_setLabel -obj $obj -key color -value $color
-      gdscGeneralView $gRen3d $obj
+      generalView $gRen3d $obj
       set myact [vis_pGetActor $gRen3d $obj]
       set myprop [$myact GetProperty]
       $myprop SetLineWidth $thick
@@ -33477,7 +33477,7 @@ proc guiPPchooserShowAllSplines {} {
     path_MakePolyData $splinePts $splinePd
 
      repos_setLabel -obj $splinePd -key color -value $color
-     gdscGeneralView $gRen3d $splinePd
+     generalView $gRen3d $splinePd
      set myact [vis_pGetActor $gRen3d $splinePd]
      set myprop [$myact GetProperty]
      $myprop SetLineWidth $thick
@@ -33587,7 +33587,7 @@ proc guiPPchooserShowPath {} {
       }
       geom_openLinesFromPts $pts $obj
       repos_setLabel -obj $obj -key color -value $color
-      gdscGeneralView $gRen3d $obj
+      generalView $gRen3d $obj
       set myact [vis_pGetActor $gRen3d $obj]
       set myprop [$myact GetProperty]
       $myprop SetLineWidth $thick
@@ -33614,7 +33614,7 @@ proc guiPPchooserShowPath {} {
       solid_box3d -dims [list $bdims $bdims $bdims] -ctr $pt -result $obj
       $obj GetPolyData -result $objpd
       repos_setLabel -obj $objpd -key color -value purple
-      gdscGeneralView $gRen3d $objpd
+      generalView $gRen3d $objpd
     }
   }
   set gRen3dFreeze 0
@@ -33659,7 +33659,7 @@ proc guiPPchooserShowSpline {} {
    set thick $gOptions(line_width_for_spline)
 
    repos_setLabel -obj $splinePd -key color -value $color
-   gdscGeneralView $gRen3d $splinePd
+   generalView $gRen3d $splinePd
    set myact [vis_pGetActor $gRen3d $splinePd]
    set myprop [$myact GetProperty]
    $myprop SetLineWidth $thick
@@ -35600,7 +35600,7 @@ proc guiPPsmoothUpdateBinaryDisplay {} {
      $box GetPolyData -result $boxpd
      repos_setLabel -obj $boxpd -key opacity -value 0.33
      repos_setLabel -obj $boxpd -key color -value yellow
-     gdscGeneralView $gRen3d $boxpd
+     generalView $gRen3d $boxpd
   } else {
      catch {repos_delete -obj $box}
      catch {repos_delete -obj $boxpd}
@@ -37162,13 +37162,13 @@ proc guiSVIMG_showMIP {} {
   if {$guiCVIMGvars(showMIP) >= 0} {
     catch {repos_delete -obj volume_image_MIP}
     img_createMIPfromVolume volume_image $guiCVIMGvars(showMIP) $guiCVIMGvars(mip_slice_range) volume_image_MIP
-    gdscView volume_image_MIP
-    wm deiconify .gdscRenWin
-    global gdscViewWindow
-    vis_renParallelProjection $gdscViewWindow(ren)
-    vis_renReset $gdscViewWindow(ren)
+    svView volume_image_MIP
+    wm deiconify .svRenWin
+    global viewWindow
+    vis_renParallelProjection $viewWindow(ren)
+    vis_renReset $viewWindow(ren)
   } else {
-    wm withdraw .gdscRenWin
+    wm withdraw .svRenWin
   }
 }
 
@@ -37391,7 +37391,7 @@ proc guiSV_group_change_selected_color {} {
       catch {repos_clearLabel -obj $member -key color}
       repos_setLabel -obj $member -key color -value $color
       group_set_color $grp $color
-       #gdscGeneralView $gRen3d $member
+       #generalView $gRen3d $member
       }
     set groupShow [lindex [$tv item .groups.all.$grp -values] 2]
     if {$groupShow == "X"} {
@@ -37549,7 +37549,7 @@ proc guiSV_group_display_selected_groups { showFlag} {
       } else {
         if { [lsearch -exact [repos_getLabelKeys -obj $member] color] < 0 } { repos_setLabel -obj $member -key color -value $grpcolor}
         if { [lsearch -exact [repos_getLabelKeys -obj $member] width] < 0 } { repos_setLabel -obj $member -key width -value $gOptions(line_width_for_groups)}
-        gdscGeneralView $gRen3d $member
+        generalView $gRen3d $member
       }
     }
 
@@ -38544,7 +38544,7 @@ proc guiSV_solid_change_selected_color {} {
       if {[repos_exists -obj $objName]} {
           catch {repos_clearLabel -obj $objName -key color}
           repos_setLabel -obj $objName -key color -value "$r $g $b"
-          gdscGeneralView $gRen3d $objName
+          generalView $gRen3d $objName
         }
     }
   }
@@ -38557,7 +38557,7 @@ proc guiSV_solid_change_selected_color {} {
       if {[repos_exists -obj $objName]} {
         catch {repos_clearLabel -obj $objName -key color}
         repos_setLabel -obj $objName -key color -value "$r $g $b"
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
       }
     }
   }
@@ -38586,7 +38586,7 @@ proc guiSV_solid_change_selected_opacity { opacity} {
       if {[repos_exists -obj $objName]} {
         catch {repos_clearLabel -obj $objName -key opacity}
         repos_setLabel -obj $objName -key opacity -value "$opacity"
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
       }
     }
   }
@@ -38599,7 +38599,7 @@ proc guiSV_solid_change_selected_opacity { opacity} {
       if {[repos_exists -obj $objName]} {
         catch {repos_clearLabel -obj $objName -key opacity}
         repos_setLabel -obj $objName -key opacity -value "$opacity"
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
       }
     }
   }
@@ -38626,7 +38626,7 @@ proc guiSV_solid_display_selected_groups { showFlag} {
          if {[vis_pExists $gRen3d $objName] != 1} {
               lsGUIloftGroup $grp
          } else {
-          gdscGeneralView $gRen3d $objName
+          generalView $gRen3d $objName
          }
          $tv item .groups.all.$grp -values [list $col1var "X" $col3var]
 
@@ -38662,7 +38662,7 @@ proc guiSV_solid_display_selected_groups { showFlag} {
           repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
         }
 
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
         $tv item .groups.3d.$grp -values [list $col1var "X" $col3var]
 
        } else {
@@ -38695,7 +38695,7 @@ proc guiSV_solid_loft_selected {} {
        set objName /guiGROUPS/polydatasurface/$grp
        lsGUIloftGroup $grp
        if {$col2var == "X"} {
-         gdscGeneralView $gRen3d $objName
+         generalView $gRen3d $objName
        } else {
          vis_pRm $gRen3d $objName
        }
@@ -39655,7 +39655,7 @@ proc guiVIScalcOutletFlows { type choice} {
    global gOptions
    if {$gOptions(meshing_solid_kernel) == "Parasolid"} {
      foreach id [$solid GetFaceIds] {
-       set face [$solid GetFaceAttr -attr gdscName -faceId $id]
+       set face [$solid GetFaceAttr -attr Name -faceId $id]
        if {$face != ""} {
          lappend faces $face
          set unitOutwardNormal [$solid GetFaceNormal -face $id -u 0 -v 0]
@@ -41815,7 +41815,7 @@ proc guiVISupdateFromSolid {} {
 
     set foundIt 0
     foreach face $faceIds {
-       if {[$model GetFaceAttr -attr gdscName -faceId $face] == $guiVISvars(faceName)} {
+       if {[$model GetFaceAttr -attr Name -faceId $face] == $guiVISvars(faceName)} {
           set foundIt 1
           break
        }
@@ -41830,7 +41830,7 @@ proc guiVISupdateFromSolid {} {
     catch {repos_delete -obj $pd}
     $model GetFacePolyData -face $face -result $pd
     set points {}
-    gdscGetPointsFromNthPoly 0 [repos_exportToVtk -src $pd] points
+    getPointsFromNthPoly 0 [repos_exportToVtk -src $pd] points
 
     set guiVISvars(p1) [lindex $points 0]
     set guiVISvars(p2) [lindex $points 1]
@@ -42690,7 +42690,7 @@ proc guiVISvolFlowSliceDisplaySphere {} {
     $solidsphere GetPolyData -result $spherepd  -max_edge_size $gOptions(facet_max_edge_size)
     repos_setLabel -obj $spherepd -key color -value blue
     repos_setLabel -obj $spherepd -key opacity -value 0.33
-    gdscGeneralView $gRen3d $spherepd
+    generalView $gRen3d $spherepd
     set guiVISvarsPrev(volFlowSlice_displaySphere) 1
     return
   }
@@ -43235,7 +43235,7 @@ proc guiWSSpopulateLB {} {
 
   set names {}
   foreach i [$solid GetFaceIds] {
-      set name [$solid GetFaceAttr -attr gdscName -faceId $i]
+      set name [$solid GetFaceAttr -attr Name -faceId $i]
       if {$name == ""} {
          continue
          #set name [$solid GetFaceAttr -attr identifier -faceId $i]
@@ -44175,15 +44175,15 @@ proc lsGUIchangeFrame { value} {
     catch {crd_ren $ren}
     catch {vis_warpRm $ren}
     if {$loop == "lsGUImagWindow"} {
-      gdscGeneralView $ren /tmp/lsGUI/mag
+      generalView $ren /tmp/lsGUI/mag
     } else {
-      gdscGeneralView $ren /tmp/lsGUI/pot
+      generalView $ren /tmp/lsGUI/pot
     }
 
     # display threshold
     if {$showThr == "1"} {
       if {[repos_exists -obj $baseName/thr] == 1} {
-        gdscGeneralView $ren $baseName/thr
+        generalView $ren $baseName/thr
       }
     }
 
@@ -44191,7 +44191,7 @@ proc lsGUIchangeFrame { value} {
     if {$showSelectedThr == "1"} {
       if {[repos_exists -obj $baseName/thr/selected] == 1} {
         set throbj $baseName/thr/selected
-        gdscGeneralView $ren $throbj
+        generalView $ren $throbj
         # make the line more visible
         set actor [vis_pGetActor $ren $throbj]
         [$actor GetProperty] SetLineWidth 5
@@ -44223,7 +44223,7 @@ proc lsGUIchangeFrame { value} {
       itkutils_GenerateCircle -result $sphere -r $phyRadius -x $phyCntrX -y $phyCntrY -z 0
       repos_setLabel -obj $sphere -key color -value $gOptions(color_for_seeds)
       repos_setLabel -obj $sphere -key opacity -value $gOptions(opacity_for_seeds)
-      gdscGeneralView $ren $sphere
+      generalView $ren $sphere
     }
 
     # display level set result
@@ -44243,7 +44243,7 @@ proc lsGUIchangeFrame { value} {
         catch {repos_clearLabel -obj $pdname -key width}
         repos_setLabel -obj $pdname -key color -value $gOptions(color_for_new_segmentations)
         repos_setLabel -obj $pdname -key width -value $gOptions(line_width_for_new_segmentations)
-        gdscGeneralView $ren $pdname
+        generalView $ren $pdname
       }
 
     }
@@ -44291,7 +44291,7 @@ proc lsGUIchangeFrame { value} {
         repos_setLabel -obj $segPd -key color -value $localKeys(color)
         repos_setLabel -obj $segPd -key width -value $gOptions(line_width_for_saved_surface)
 
-        gdscGeneralView $ren $segPd
+        generalView $ren $segPd
         }
       }
     }
@@ -44373,7 +44373,7 @@ proc lsGUIdisplayPath {} {
     path_MakePolyData $gPathPoints($pathId,splinePts) $objName
     set act [vis_pRepos $ren $objName]
     [$act GetProperty] SetLineWidth 2
-    eval [$act GetProperty] SetColor [gdscGetUnixColor red]
+    eval [$act GetProperty] SetColor [svGetUnixColor red]
   }
 }
 
@@ -46572,7 +46572,7 @@ proc lsGUIupdate3dWindow {} {
     set seg /lsGUI/$pathId/$posId/ls/oriented
     if {[repos_exists -obj $seg] != 0} {
       catch {vis_pRm $gRen3d $seg}
-      gdscGeneralView $gRen3d $seg
+      generalView $gRen3d $seg
       # make the line more visible
       set actor [vis_pGetActor $gRen3d $seg]
       [$actor GetProperty] SetLineWidth 3
@@ -46585,7 +46585,7 @@ proc lsGUIupdate3dWindow {} {
     set seg /lsGUI/$pathId/$posId/thr/oriented
     if {[repos_exists -obj $seg] != 0} {
       catch {vis_pRm $gRen3d $seg}
-      gdscGeneralView $gRen3d $seg
+      generalView $gRen3d $seg
       # make the line more visible
       set actor [vis_pGetActor $gRen3d $seg]
       [$actor GetProperty] SetLineWidth 3
@@ -47396,7 +47396,7 @@ proc smasherGUIhideFace {} {
   } else {
     repos_clearLabel -obj $objectname -key visible
     repos_setLabel -obj $objectname -key visible -value true
-    gdscGeneralView $gRen3d $objectname
+    generalView $gRen3d $objectname
   }
 
   if {[repos_getLabel -obj $objectname -key visible] == "true"} {
@@ -47587,7 +47587,7 @@ proc smasherGUIsmashIt {} {
       lappend smasherStaticFaceIds $staticFaceId
       set face_name "unknown_$faceId\_$staticFaceId"
       if {$solid_kernel == "Parasolid"} {
-        catch {set face_name [$smasherInputName GetFaceAttr -attr gdscName -faceId $faceId]}
+        catch {set face_name [$smasherInputName GetFaceAttr -attr Name -faceId $faceId]}
       } elseif {$solid_kernel == "Discrete"} {
         global gDiscreteModelFaceNames
         set face_name $gDiscreteModelFaceNames($faceId)
@@ -47607,7 +47607,7 @@ proc smasherGUIsmashIt {} {
       puts "problem with: $smasherInputName GetFacePolyData -result /tmp/smasher/$faceId/$staticFaceId -face $faceId $maxedgecmd $maxedgesize"
       puts $errmsg
       set errorFaceName {}
-      catch {set errorFaceName [$smasherInputName GetFaceAttr -faceId $faceId -attr gdscName]}
+      catch {set errorFaceName [$smasherInputName GetFaceAttr -faceId $faceId -attr Name]}
       tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($smasherInputName GetFacePolyData -result /tmp/smasher/$faceId/$staticFaceId -face $faceId $maxedgecmd $maxedgesize)\n"
       #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
     }
@@ -47619,7 +47619,7 @@ proc smasherGUIsmashIt {} {
   global gRen3d
   global gRen3dFreeze
   set gRen3dFreeze 1
-  gdscGeneralView $gRen3d $mylist
+  generalView $gRen3d $mylist
   set gRen3dFreeze 0
 
   for {set i 0} {$i < [llength $smasherFaceIds]} {incr i} {
@@ -47760,8 +47760,8 @@ proc smasherGUIupdateSel { curselection} {
  set identifier {}
 
  if {$solid_kernel == "Parasolid"} {
-   catch {set attrId [$smasherInputName GetFaceAttr -attr gdscId -faceId $faceId]}
-   catch {set attrName [$smasherInputName GetFaceAttr -attr gdscName -faceId $faceId]}
+   catch {set attrId [$smasherInputName GetFaceAttr -attr Id -faceId $faceId]}
+   catch {set attrName [$smasherInputName GetFaceAttr -attr Name -faceId $faceId]}
    catch {set identifier [$smasherInputName GetFaceAttr -attr identifier -faceId $faceId]}
  } elseif {$solid_kernel == "Discrete"} {
    global gDiscreteModelFaceNames
@@ -47936,7 +47936,7 @@ proc smasherSetAttName {} {
    # update the attribute information specified on the original model face
    set AttName [$symbolicName(smasherAttNameLabel) get]
    if {$solid_kernel == "Parasolid"} {
-     $smasherInputName SetFaceAttr -attr gdscName -faceId $faceId -value $AttName
+     $smasherInputName SetFaceAttr -attr Name -faceId $faceId -value $AttName
    } elseif {$solid_kernel == "Discrete"} {
      global gDiscreteModelFaceNames
      set gDiscreteModelFaceNames($faceId) $AttName
@@ -48329,7 +48329,7 @@ proc volGUIupdateIsosurface { context} {
       vis_lodSetOpacity $ren $contourpd 1.0
     } else {
       set actor [vis_pRepos $ren $contourpd]
-      eval [$actor GetProperty] SetColor [gdscGetUnixColor $gOptions(color_for_isosurface)]
+      eval [$actor GetProperty] SetColor [svGetUnixColor $gOptions(color_for_isosurface)]
       [$actor GetProperty] SetOpacity 0.33
       vis_render $ren
     }
@@ -48851,7 +48851,7 @@ proc wormGUIwriteMultipleFaces {} {
     set guiABC(bct_vtp_file) $org_bct_vtp_file
     set facename "missing"
     if {$solidkernel == "Parasolid"} {
-       set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
+       set facename [$solid GetFaceAttr -attr Name -faceId $id]
     } elseif {$solidkernel == "Discrete"} {
       global gDiscreteModelFaceNames
       set facename $gDiscreteModelFaceNames($id)
@@ -49148,7 +49148,7 @@ proc wormGUIwriteSpectrum {} {
   set face_name $guiABC(face_name)
   set foundIt 0
   foreach id [$solid GetFaceIds] {
-    if {[$solid GetFaceAttr -attr gdscName -faceId $id] == $face_name} {
+    if {[$solid GetFaceAttr -attr Name -faceId $id] == $face_name} {
       set foundIt 1
       break
     }

@@ -1272,7 +1272,7 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
   imgsp = ((cvStrPts*)img)->GetVtkStructuredPoints();
   masksp = ((cvStrPts*)mask)->GetVtkStructuredPoints();
 
-  int status = gdscMaskImageInPlace(imgsp,masksp,replaceVal,notval);
+  int status = MaskImageInPlace(imgsp,masksp,replaceVal,notval);
 
   if ( status == CV_ERROR ) {
     Tcl_AppendResult( interp, "Problem masking in place for ", objName,(char *)NULL );
