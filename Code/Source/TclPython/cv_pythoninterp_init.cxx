@@ -54,4 +54,5 @@
 int Pythoninterp_Init( Tcl_Interp *interp )
 {
   Tclpython_Init( interp );
+  return TCL_OK;
 }
