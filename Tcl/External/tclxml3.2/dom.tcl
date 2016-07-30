@@ -13,7 +13,7 @@
 #
 # $Id: dom.tcl,v 1.23 2004/02/25 20:10:28 balls Exp $
 
-# We need the xml package, so that we get Name defined
+# We need the xml package, so that we get gdscName defined
 
 package require xml 3.0
 
@@ -2196,7 +2196,7 @@ proc dom::tcl::Element:GetByTagName {token name args} {
     set cfg(-deep) [Boolean $cfg(-deep)]
 
     # Guard against arbitrary glob characters
-    # Checking that name is a legal XML Name does this
+    # Checking that name is a legal XML gdscName does this
     # However, '*' is permitted
     if {![regexp ^$::xml::Name\$ $name] && [string compare $name "*"]} {
 	return -code error "invalid element name"

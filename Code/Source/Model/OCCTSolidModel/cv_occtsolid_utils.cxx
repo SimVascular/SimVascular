@@ -256,10 +256,10 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
       int intcheck1,intcheck2;
       filletEdge = TopoDS::Edge(anEFsMap.FindKey(i));
       OCCTUtils_GetFaceAttribute(face1,shapetool,shapelabel,
-	  "Name",&name);
+	  "gdscName",&name);
       strncpy(nameA,name,sizeof(nameA));
       OCCTUtils_GetFaceAttribute(face2,shapetool,shapelabel,
-	  "Name",&name);
+	  "gdscName",&name);
       strncpy(nameB,name,sizeof(nameB));
 
       ////Trying to get a curvature measure
@@ -1374,7 +1374,7 @@ int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
  * @param shape input TopoDS_Shape to get attribute
  * @param shapetool the XDEDoc manager that contains attribute info
  * @param shapelabel the label for the shape registered in XDEDoc
- * @note attributes includ id, Name, and parent
+ * @note attributes includ id, gdscName, and parent
  * @return CV_OK if function completes properly
  */
 int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
@@ -1389,12 +1389,12 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     fprintf(stderr,"Face is not labelled and thus has no attribute\n");
     return CV_ERROR;
   }
-  if (!strncmp(attr,"Name",4))
+  if (!strncmp(attr,"gdscName",4))
   {
     TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
     if (nameLabel.IsNull())
     {
-      fprintf(stderr,"Name label doesn't exist, cannot retrive name\n");
+      fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
       return CV_ERROR;
     }
     Handle(TDataStd_ExtStringArray) NSTRING = new
@@ -1402,7 +1402,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     int isLabel = nameLabel.FindAttribute(TDataStd_ExtStringArray::GetID(),NSTRING);
     if (isLabel == 0)
     {
-      fprintf(stderr,"Name attribute does not exist on face\n");
+      fprintf(stderr,"gdscName attribute does not exist on face\n");
       return CV_ERROR;
     }
     returnString[0]='\0';
@@ -1414,7 +1414,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     TDF_Label parentLabel = tmpLabel.FindChild(2,Standard_False);
     if (parentLabel.IsNull())
     {
-      fprintf(stderr,"Name label doesn't exist, cannot retrive name\n");
+      fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
       return CV_ERROR;
     }
     Handle(TDataStd_ExtStringArray) PSTRING = new
@@ -1446,7 +1446,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
   }
   else
   {
-    fprintf(stderr,"Attribute %s is not attribute of shape. Options are Name, parent, id\n",attr);
+    fprintf(stderr,"Attribute %s is not attribute of shape. Options are gdscName, parent, id\n",attr);
     return CV_ERROR;
   }
 
@@ -1475,7 +1475,7 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
     fprintf(stderr,"Face is not labelled and thus has no attribute\n");
     return CV_ERROR;
   }
-  if (!strncmp(attr,"Name",4))
+  if (!strncmp(attr,"gdscName",4))
   {
     TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
     Handle(TDataStd_ExtStringArray) NSTRING = new
@@ -1503,7 +1503,7 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
   }
   else
   {
-    fprintf(stderr,"Attribute %s is not attribute of shape. Options are Name, parent, id\n",attr);
+    fprintf(stderr,"Attribute %s is not attribute of shape. Options are gdscName, parent, id\n",attr);
     return CV_ERROR;
   }
 
@@ -1528,15 +1528,15 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
   //Pass the face names first
   char *name;
   if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,labelSrc,"Name",&name) != CV_OK)
+	faceSrc,shapetool,labelSrc,"gdscName",&name) != CV_OK)
   {
-    fprintf(stderr,"Failure in getting Name for shape\n");
+    fprintf(stderr,"Failure in getting gdscName for shape\n");
     return CV_ERROR;
   }
   if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,labelDst,"Name",name) != CV_OK)
+	faceDst,shapetool,labelDst,"gdscName",name) != CV_OK)
   {
-    fprintf(stderr,"Failure in setting Name for shape\n");
+    fprintf(stderr,"Failure in setting gdscName for shape\n");
     return CV_ERROR;
   }
 

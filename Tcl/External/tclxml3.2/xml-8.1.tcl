@@ -43,14 +43,14 @@ namespace eval xml {
     # Various XML names and tokens
 
     variable NameChar $::sgml::NameChar
-    variable Name $::sgml::Name
+    variable gdscName $::sgml::Name
     variable Names $::sgml::Names
     variable Nmtoken $::sgml::Nmtoken
     variable Nmtokens $::sgml::Nmtokens
 
     # XML Namespaces names
 
-    # NCName ::= Name - ':'
+    # NCName ::= gdscName - ':'
     variable NCName $::sgml::Name
     regsub -all : $NCName {} NCName
     variable QName (${NCName}:)?$NCName		;# (Prefix ':')? LocalPart
@@ -82,7 +82,7 @@ namespace eval xml {
 #	the XML Namespace prefix and the Local-name
 #
 # Arguments:
-#	qname	XML Qualified Name (see XML Namespaces [6])
+#	qname	XML Qualified gdscName (see XML Namespaces [6])
 #
 # Results:
 #	Returns prefix and local-name as a Tcl list.

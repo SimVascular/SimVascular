@@ -206,12 +206,12 @@ proc nateAFLB {} {
     set solid $surf/capped
     foreach i [$solid GetFaceIds] {
       set facename {}
-      catch {set facename [$solid GetFaceAttr -attr Name -faceId $i]}
+      catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $i]}
       if {$facename != "" && $facename != "inflow" && $facename != "inlet"} {
-        $solid SetFaceAttr -attr Name -faceId $i -value $grp
+        $solid SetFaceAttr -attr gdscName -faceId $i -value $grp
       } else {
         # we have a wall
-        $solid SetFaceAttr -attr Name -faceId $i -value wall_$grp
+        $solid SetFaceAttr -attr gdscName -faceId $i -value wall_$grp
       }
     }
 
@@ -843,7 +843,7 @@ proc trimSolid {} {
 
   # tag surfaces so we now where the inflow is
   foreach i [joy_solid GetFaceIds] {
-     joy_solid SetFaceAttr -faceId $i -attr Name -value "inflow"
+     joy_solid SetFaceAttr -faceId $i -attr gdscName -value "inflow"
   }
 
   # Now do a Boolean subtraction
@@ -855,7 +855,7 @@ proc trimSolid {} {
 
   # tag surfaces so we now where the inflow is
   foreach i [joy_solid GetFaceIds] {
-     joy_solid SetFaceAttr -faceId $i -attr Name -value "inflow"
+     joy_solid SetFaceAttr -faceId $i -attr gdscName -value "inflow"
   }
 
   # Now do a Boolean subtraction
@@ -1957,7 +1957,7 @@ proc geom_createRatioMap {inlet_mesh_face radmax result} {
   #@c  notes.
   #@a  velocityMap:  Input PolyData with defined scalar data.
   #@a  inlet_mesh_face:  PolyData onto which to map the scalar data.
-  #@a  result:  Name of new repository PolyData object to be
+  #@a  result:  gdscName of new repository PolyData object to be
   #@a  result:  created.
   #@r  status
   #@note  This code does a simple mapping of the Womersley analytic

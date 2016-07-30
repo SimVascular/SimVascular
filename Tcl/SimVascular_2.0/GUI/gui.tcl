@@ -26828,7 +26828,7 @@ proc createPREOPloadsaveLoadVol {} {
       set yesno [tk_messageBox -default yes  -message "Would you like to save this volume as a VTI file?"  -title "Save Volume as VTI"  -type yesno]
       switch -- $yesno {
        yes {
-        set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File Name for Image File In VTI Format"]
+        set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File gdscName for Image File In VTI Format"]
         if {$filename != ""} {
          if {[file extension $filename] == ""} {
           set filename "$filename.vti"
@@ -27172,9 +27172,9 @@ proc createPREOPmodelTrim {} {
     set valid 1
     foreach i [$trimmedModel GetFaceIds] {
       set id {}
-      catch {set id [$trimmedModel GetFaceAttr -attr Id -faceId $i]}
+      catch {set id [$trimmedModel GetFaceAttr -attr gdscId -faceId $i]}
       if {$id != ""} {
-        $trimmedModel SetFaceAttr -attr Id -faceId $i -value $valid
+        $trimmedModel SetFaceAttr -attr gdscId -faceId $i -value $valid
         incr valid
       }
     }
@@ -28599,7 +28599,7 @@ proc guiBLENDSblend {} {
   set faceids [$solid GetFaceIds]
   foreach id $faceids {
     set ident [$solid GetFaceAttr -attr identifier -faceId $id]
-    set facename [$solid GetFaceAttr -attr Name -faceId $id]
+    set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
     if {$facename != ""} {
       set ids($facename) $id
     }
@@ -28624,8 +28624,8 @@ proc guiBLENDSblend {} {
        continue
     }
     $solid CreateEdgeBlend -faceA $faceA -faceB $faceB -radius $r
-    set nameA [$solid GetFaceAttr -attr Name -faceId $faceA]
-    set nameB [$solid GetFaceAttr -attr Name -faceId $faceB]
+    set nameA [$solid GetFaceAttr -attr gdscName -faceId $faceA]
+    set nameB [$solid GetFaceAttr -attr gdscName -faceId $faceB]
     set wallblend 0
     if {[string range $nameA 0 4] == "wall_"} {
        set nameA [string range $nameA 5 end]
@@ -28645,7 +28645,7 @@ proc guiBLENDSblend {} {
     # tag new faces
     set tagger 0
     foreach id [$solid GetFaceIds] {
-      set facename [$solid GetFaceAttr -attr Name -faceId $id]
+      set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
       set value [lsearch -exact $faceids $id]
       if {$value < 0} {
         set name "$name\_$nameA\_$nameB"
@@ -28654,7 +28654,7 @@ proc guiBLENDSblend {} {
   }
         incr tagger
         puts "new face id: $id ($name)"
-        $solid SetFaceAttr -attr Name -faceId $id -value $name
+        $solid SetFaceAttr -attr gdscName -faceId $id -value $name
       }
     }
     set faceids [$solid GetFaceIds]
@@ -28662,7 +28662,7 @@ proc guiBLENDSblend {} {
 
   set pretty_names {}
   foreach i [$solid GetFaceIds] {
-    catch {lappend pretty_names [$solid GetFaceAttr -attr Name -faceId $i]}
+    catch {lappend pretty_names [$solid GetFaceAttr -attr gdscName -faceId $i]}
   }
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
     set duplist [lsort -dictionary $pretty_names]
@@ -29687,7 +29687,7 @@ proc guiFILT { operation} {
     set yesno [tk_messageBox -default yes  -message "Would you like to save this volume as a VTI file?"  -title "Save Volume as VTI"  -type yesno]
     switch -- $yesno {
        yes {
-          set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File Name for Image File In VTI Format"]
+          set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File gdscName for Image File In VTI Format"]
     if {$filename != ""} {
       if {[file extension $filename] == ""} {
               set filename "$filename.vti"
@@ -29974,7 +29974,7 @@ proc guiFNMloadSolidModel { fn solid} {
   set pretty_names {}
   foreach i [$object GetFaceIds] {
     if {$solid_kernel == "Parasolid"} {
-      catch {lappend pretty_names [$object GetFaceAttr -attr Name -faceId $i]}
+      catch {lappend pretty_names [$object GetFaceAttr -attr gdscName -faceId $i]}
     } elseif {$solid_kernel == "Discrete"} {
       lappend pretty_names $gDiscreteModelFaceNames($i)
     } elseif {$solid_kernel == "PolyData"} {
@@ -31252,7 +31252,7 @@ proc guiMMmeshControlAttributesShow {} {
   if {$gOptions(meshing_solid_kernel) == "Parasolid"} {
     foreach i [$solid GetFaceIds] {
       set name ""
-      catch {set name [$solid GetFaceAttr -attr Name -faceId $i]}
+      catch {set name [$solid GetFaceAttr -attr gdscName -faceId $i]}
       if {$name == ""} {
          set name [$solid GetFaceAttr -attr identifier -faceId $i]
       }
@@ -31764,7 +31764,7 @@ proc guiMMwriteInflowFace {} {
 
   foreach face [$solid GetFaceIds] {
     set facename {}
-    catch {set facename [$solid GetFaceAttr -attr Name -faceId $face]}
+    catch {set facename [$solid GetFaceAttr -attr gdscName -faceId $face]}
     if {$facename == "inflow"} {
       set faceid $face
       break
@@ -39655,7 +39655,7 @@ proc guiVIScalcOutletFlows { type choice} {
    global gOptions
    if {$gOptions(meshing_solid_kernel) == "Parasolid"} {
      foreach id [$solid GetFaceIds] {
-       set face [$solid GetFaceAttr -attr Name -faceId $id]
+       set face [$solid GetFaceAttr -attr gdscName -faceId $id]
        if {$face != ""} {
          lappend faces $face
          set unitOutwardNormal [$solid GetFaceNormal -face $id -u 0 -v 0]
@@ -41815,7 +41815,7 @@ proc guiVISupdateFromSolid {} {
 
     set foundIt 0
     foreach face $faceIds {
-       if {[$model GetFaceAttr -attr Name -faceId $face] == $guiVISvars(faceName)} {
+       if {[$model GetFaceAttr -attr gdscName -faceId $face] == $guiVISvars(faceName)} {
           set foundIt 1
           break
        }
@@ -43235,7 +43235,7 @@ proc guiWSSpopulateLB {} {
 
   set names {}
   foreach i [$solid GetFaceIds] {
-      set name [$solid GetFaceAttr -attr Name -faceId $i]
+      set name [$solid GetFaceAttr -attr gdscName -faceId $i]
       if {$name == ""} {
          continue
          #set name [$solid GetFaceAttr -attr identifier -faceId $i]
@@ -47587,7 +47587,7 @@ proc smasherGUIsmashIt {} {
       lappend smasherStaticFaceIds $staticFaceId
       set face_name "unknown_$faceId\_$staticFaceId"
       if {$solid_kernel == "Parasolid"} {
-        catch {set face_name [$smasherInputName GetFaceAttr -attr Name -faceId $faceId]}
+        catch {set face_name [$smasherInputName GetFaceAttr -attr gdscName -faceId $faceId]}
       } elseif {$solid_kernel == "Discrete"} {
         global gDiscreteModelFaceNames
         set face_name $gDiscreteModelFaceNames($faceId)
@@ -47760,8 +47760,8 @@ proc smasherGUIupdateSel { curselection} {
  set identifier {}
 
  if {$solid_kernel == "Parasolid"} {
-   catch {set attrId [$smasherInputName GetFaceAttr -attr Id -faceId $faceId]}
-   catch {set attrName [$smasherInputName GetFaceAttr -attr Name -faceId $faceId]}
+   catch {set attrId [$smasherInputName GetFaceAttr -attr gdscId -faceId $faceId]}
+   catch {set attrName [$smasherInputName GetFaceAttr -attr gdscName -faceId $faceId]}
    catch {set identifier [$smasherInputName GetFaceAttr -attr identifier -faceId $faceId]}
  } elseif {$solid_kernel == "Discrete"} {
    global gDiscreteModelFaceNames
@@ -47936,7 +47936,7 @@ proc smasherSetAttName {} {
    # update the attribute information specified on the original model face
    set AttName [$symbolicName(smasherAttNameLabel) get]
    if {$solid_kernel == "Parasolid"} {
-     $smasherInputName SetFaceAttr -attr Name -faceId $faceId -value $AttName
+     $smasherInputName SetFaceAttr -attr gdscName -faceId $faceId -value $AttName
    } elseif {$solid_kernel == "Discrete"} {
      global gDiscreteModelFaceNames
      set gDiscreteModelFaceNames($faceId) $AttName
@@ -48851,7 +48851,7 @@ proc wormGUIwriteMultipleFaces {} {
     set guiABC(bct_vtp_file) $org_bct_vtp_file
     set facename "missing"
     if {$solidkernel == "Parasolid"} {
-       set facename [$solid GetFaceAttr -attr Name -faceId $id]
+       set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
     } elseif {$solidkernel == "Discrete"} {
       global gDiscreteModelFaceNames
       set facename $gDiscreteModelFaceNames($id)
@@ -49148,7 +49148,7 @@ proc wormGUIwriteSpectrum {} {
   set face_name $guiABC(face_name)
   set foundIt 0
   foreach id [$solid GetFaceIds] {
-    if {[$solid GetFaceAttr -attr Name -faceId $id] == $face_name} {
+    if {[$solid GetFaceAttr -attr gdscName -faceId $id] == $face_name} {
       set foundIt 1
       break
     }

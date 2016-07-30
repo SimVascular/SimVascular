@@ -313,7 +313,7 @@ proc xpath::ResolveWildcard {nodetest typetest wildcard literal} {
 	    return -code error "bad location step (nothing parsed)"
 	}
 	0,0,* {
-	    # Name wildcard specified
+	    # gdscName wildcard specified
 	    return *
 	}
 	*,0,0,* {

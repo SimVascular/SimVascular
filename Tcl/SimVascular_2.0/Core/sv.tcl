@@ -1014,7 +1014,7 @@ proc geom_mapVectors {velocityMap inlet_mesh_face result} {
   #@c  notes.
   #@a  velocityMap:  Input PolyData with defined vector data.
   #@a  inlet_mesh_face:  PolyData onto which to map the vector data.
-  #@a  result:  Name of new repository PolyData object to be
+  #@a  result:  gdscName of new repository PolyData object to be
   #@a  result:  created.
   #@r  status
   #@note  This code does a simple mapping of the vector data from
@@ -1805,7 +1805,7 @@ proc geom_createNormals {srcPd dstName} {
 proc group_exists {name} {
     #@author Ken Wang
     #@c Check to see if group exists.
-    #@a name:  Name of group.
+    #@a name:  gdscName of group.
     #@r Boolean (0 or 1).
     global gGroup
     set elems [array names gGroup]
@@ -1824,7 +1824,7 @@ proc group_exists {name} {
 proc group_create {name} {
     #@author Ken Wang
     #@c Create a group if it doesn't exist.
-    #@a name: Name of group to create.
+    #@a name: gdscName of group to create.
     #@r status (0 if group already existed, 1 if it was created).
     global gGroup
     if {[group_exists $name]} {return 0}
@@ -1840,7 +1840,7 @@ proc group_create {name} {
 proc group_delete {name} {
     #@author Ken Wang
     #@c Delete a group.
-    #@a name: Name of group to delete.
+    #@a name: gdscName of group to delete.
     #@r status (0 if group didn't exist, 1 if it was deleted).
     global gGroup
     global symbolicName
@@ -4274,10 +4274,10 @@ proc img_getSliceAtPathPoint {volumeImage path ptId ext rtnImg rtnPot} {
     #@a path:  format.
     #@a ptId:  A point id (index in the <a path> list).
     #@a ext:  Extent.
-    #@a rtnImg:  Name of StructuredPoints repository object
+    #@a rtnImg:  gdscName of StructuredPoints repository object
     #@a rtnImg:  object to create.  It is the image intensity on the
     #@a rtnImg:  slice.
-    #@a rtnPot:  Name of StructuredPoints repository object
+    #@a rtnPot:  gdscName of StructuredPoints repository object
     #@a rtnPot:  object to create.  It is the magnitude of the intensity
     #@a rtnPot:  gradient for the given slice.
     #@r status
@@ -6119,7 +6119,7 @@ proc mesh_writeInflowFaceVtk {solidfile atrfile outfile} {
   solid_readNative -file $solidfile -obj $solid
   set faceid -1
   foreach face [$solid GetFaceIds] {
-    if {[$solid GetFaceAttr -attr Name -faceId $face] == "inflow"} {
+    if {[$solid GetFaceAttr -attr gdscName -faceId $face] == "inflow"} {
       set faceid $face
       break
     }
@@ -6227,7 +6227,7 @@ proc mesh_readMSS {filename resObj} {
         foreach id $faceids {
 	  if {$gOptions(meshing_solid_kernel) == "Parasolid"} { 
             set ident [$solid GetFaceAttr -attr identifier -faceId $id]
-            set facename [$solid GetFaceAttr -attr Name -faceId $id]
+            set facename [$solid GetFaceAttr -attr gdscName -faceId $id]
 	  } elseif {$gOptions(meshing_solid_kernel) == "Discrete"} { 
             set ident $id
             set facename $gDiscreteModelFaceNames($id)

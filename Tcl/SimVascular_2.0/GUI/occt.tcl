@@ -121,12 +121,12 @@ proc guiSV_model_create_model_opencascade {} {
     set pretty_names {}
     set all_ids {}
     foreach i [$modelname GetFaceIds] {
-      catch {set type [$modelname GetFaceAttr -attr Name -faceId $i]}
+      catch {set type [$modelname GetFaceAttr -attr gdscName -faceId $i]}
       catch {set parent [$modelname GetFaceAttr -attr parent -faceId $i]}
       set facename "[string trim $type]_[string trim $parent]"
       lappend pretty_names $facename
       set gOCCTFaceNames($i) $facename
-      $modelname SetFaceAttr -attr Name -faceId $i -value $facename
+      $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
       lappend all_ids $i
     }
     set isdups 0
@@ -160,7 +160,7 @@ proc guiSV_model_create_model_opencascade {} {
          incr name_num
          set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
          set gOCCTFaceNames($dupid) $newname
-         $modelname SetFaceAttr -attr Name -faceId $dupid -value $newname
+         $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
        }
        set dupnum [expr $dupnum + $numdups]
      }
@@ -308,12 +308,12 @@ proc opencascade_loft_with_python {modelname cap resample_num} {
     set pretty_names {}
     set all_ids {}
     foreach i [$modelname GetFaceIds] {
-      catch {set type [$modelname GetFaceAttr -attr Name -faceId $i]}
+      catch {set type [$modelname GetFaceAttr -attr gdscName -faceId $i]}
       catch {set parent [$modelname GetFaceAttr -attr parent -faceId $i]}
       set facename "[string trim $type]_[string trim $parent]"
       lappend pretty_names $facename
       set gOCCTFaceNames($i) $facename
-      $modelname SetFaceAttr -attr Name -faceId $i -value $facename
+      $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
       lappend all_ids $i
     }
     set isdups 0
@@ -347,7 +347,7 @@ proc opencascade_loft_with_python {modelname cap resample_num} {
          incr name_num
          set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
          set gOCCTFaceNames($dupid) $newname
-         $modelname SetFaceAttr -attr Name -faceId $dupid -value $newname
+         $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
        }
        set dupnum [expr $dupnum + $numdups]
      }
@@ -595,7 +595,7 @@ proc guiSV_model_get_model_faces {} {
     } elseif {$kernel == "OpenCASCADE"} {
       set name "noname_$id"
       set gOCCTFaceNames($id) $name
-      $model SetFaceAttr -attr Name -faceId $id -value $name
+      $model SetFaceAttr -attr gdscName -faceId $id -value $name
     } else {
       return -code error "ERROR: Kernel type $kernel is invalid for this operation"
     }
@@ -631,7 +631,7 @@ proc guiSV_model_blend_selected_models_occt {} {
   #model_create $kernel $oldmodel
   set faceids [$model GetFaceIds]
   foreach id $faceids {
-    set facename [$model GetFaceAttr -attr Name -faceId $id]
+    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
     if {$facename != ""} {
       set ids($facename) $id
     }
@@ -664,13 +664,13 @@ proc guiSV_model_blend_selected_models_occt {} {
 
   set faceids [$model GetFaceIds]
   foreach id $faceids {
-    set facename [$model GetFaceAttr -attr Name -faceId $id]
+    set facename [$model GetFaceAttr -attr gdscName -faceId $id]
     set gOCCTFaceNames($id) $facename
   }
 
   set pretty_names {}
   foreach i [$model GetFaceIds] {
-    catch {lappend pretty_names [$model GetFaceAttr -attr Name -faceId $i]}
+    catch {lappend pretty_names [$model GetFaceAttr -attr gdscName -faceId $i]}
   }
   if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
     set duplist [lsort -dictionary $pretty_names]
@@ -796,12 +796,12 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
   set pretty_names {}
   set all_ids {}
   foreach i [$model GetFaceIds] {
-    catch {set type [$model GetFaceAttr -attr Name -faceId $i]}
+    catch {set type [$model GetFaceAttr -attr gdscName -faceId $i]}
     catch {set parent [$model GetFaceAttr -attr parent -faceId $i]}
     set facename "[string trim $type]_[string trim $parent]"
     lappend pretty_names $facename
     set gOCCTFaceNames($i) $facename
-    $model SetFaceAttr -attr Name -faceId $i -value $facename
+    $model SetFaceAttr -attr gdscName -faceId $i -value $facename
     lappend all_ids $i
   }
   set isdups 0
@@ -835,7 +835,7 @@ proc guiSV_model_create_model_opencascade_from_splines {} {
        incr name_num
        set msg "$msg  Duplicate face name $dup was renamed to $newname\n"
        set gOCCTFaceNames($dupid) $newname
-       $modelname SetFaceAttr -attr Name -faceId $dupid -value $newname
+       $modelname SetFaceAttr -attr gdscName -faceId $dupid -value $newname
      }
      set dupnum [expr $dupnum + $numdups]
    }

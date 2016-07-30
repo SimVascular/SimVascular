@@ -40,7 +40,7 @@ namespace eval xml {
     # Various XML names and tokens
 
     variable NameChar $::sgml::NameChar
-    variable Name $::sgml::Name
+    variable gdscName $::sgml::Name
     variable Names $::sgml::Names
     variable Nmtoken $::sgml::Nmtoken
     variable Nmtokens $::sgml::Nmtokens
