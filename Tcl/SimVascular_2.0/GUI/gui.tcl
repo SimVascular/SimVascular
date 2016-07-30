@@ -23951,7 +23951,7 @@ proc bcGUIcreateNewGroup {} {
     puts "ERROR: Could not create group $group."
     return -code error "ERROR: Could not create group $group."
   }
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -23967,7 +23967,7 @@ proc bcGUIdeleteGroup {} {
     puts "ERROR: Could not delete group $group."
     return -code error "ERROR: Could not delete group $group."
   }
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -25214,7 +25214,7 @@ proc bcGUImapToMeshCur {} {
   # update display
   bcGUIchangeFrame $frame
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -25509,7 +25509,7 @@ proc bcGUIrestoreGroup {} {
     return -code error "ERROR: Group $group does not exist."
   }
   group_restorePCMRISegs $group
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -26792,7 +26792,7 @@ proc createPREOPloadsaveLoadPCMRI {} {
    }
 
   bcGUIsetupCtrlWindow
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -26890,7 +26890,7 @@ proc createPREOPloadsaveLoadVol {} {
 
   guiVOLRENupdate init 0
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -27002,7 +27002,7 @@ proc createPREOPloadsavePCgetParams {} {
   }
   set gBC(size_of_trim_box) -400
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -30061,7 +30061,7 @@ proc guiGROUPSUpdateSource {} {
   # check that source name exists
   if {[group_exists $inGroup] == 0} {
     puts "ERROR:  Group doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   # insert the group items into the listbox
@@ -30071,7 +30071,7 @@ proc guiGROUPSUpdateSource {} {
     $lb insert end $id
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33432,7 +33432,7 @@ proc guiPPchooserShowAllPaths {} {
 
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33486,7 +33486,7 @@ proc guiPPchooserShowAllSplines {} {
 
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33619,7 +33619,7 @@ proc guiPPchooserShowPath {} {
   }
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -40118,7 +40118,7 @@ proc guiVISchangeStep { value} {
   global guiVISvarsPrev
 
   if {$guiVISvars(mesh_loaded) == 0} {
-    return GDSC_OK
+    return SV_OK
   }
 
   set theMesh $guiVISvars(mesh_vtk_obj)
@@ -40232,7 +40232,7 @@ proc guiVIScreateCutPlane { theMesh surfacePD} {
   # needed so that cutvol knows the plane location has changed!
   set guiVISvars(cutvol_planeLocChanged) 1
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -40501,7 +40501,7 @@ proc guiVISgetStepData { step} {
   #       when the gui is first created.
   global guiVISvars
   if {$guiVISvars(mesh_loaded) == 0} {
-    return GDSC_OK
+    return SV_OK
   }
 
   # this procedure either just returns the object
@@ -40882,7 +40882,7 @@ proc guiVISloadResults {} {
   set guiVISvarsPrev(currentStep) -1
   guiVISchangeStep 0
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -40900,7 +40900,7 @@ proc guiVISpickPointAcceptPoint {} {
     set guiVISvars(p3) $point
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -41132,7 +41132,7 @@ proc guiVISsetCutFromPC {} {
     }
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -41790,7 +41790,7 @@ proc guiVISupdateFromSolid {} {
     global guiVISvars
 
     #if {$guiVISvars(mesh_loaded) == 0} {
-    #   return GDSC_OK
+    #   return SV_OK
     #}
 
     set model $guiVISvars(solidModelName)
@@ -41845,7 +41845,7 @@ proc guiVISupdateFromSolid {} {
 
     catch {repos_delete -obj $pd}
 
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -41879,7 +41879,7 @@ proc guiVISupdateLegend {} {
 
   # want to use legend for guiCS, so don't require mesh to be loaded
   #if {$guiVISvars(mesh_loaded) == 0} {
-  #  return GDSC_OK
+  #  return SV_OK
   #}
 
   if {$guiVISvars(legend_showLegend) == 0 &&  $guiVISvarsPrev(legend_showLegend) == 0} {
@@ -47830,7 +47830,7 @@ proc smasherGUIwriteModel {} {
   global smasherInputName
   if {[repos_exists -obj $smasherInputName] == 0} {
     puts "ERROR:  Object $smasherInputName does not exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set solid_kernel $gOptions(meshing_solid_kernel)

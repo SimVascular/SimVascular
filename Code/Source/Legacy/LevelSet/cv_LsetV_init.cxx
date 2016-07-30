@@ -1090,7 +1090,7 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &imgName, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -1388,10 +1388,10 @@ static int LsetVKGI_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-eK", DOUBLE_Type, &eK, NULL, REQUIRED, 0, { 0 } },
     { "-eI", DOUBLE_Type, &eI, NULL, REQUIRED, 0, { 0 } },
-    { "-balloon", DOUBLE_Type, &balloon, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-gradIPow", DOUBLE_Type, &gradIPow, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-beta", DOUBLE_Type, &beta, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-localStop", INT_Type, &localStop, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-balloon", DOUBLE_Type, &balloon, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-gradIPow", DOUBLE_Type, &gradIPow, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-beta", DOUBLE_Type, &beta, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-localStop", INT_Type, &localStop, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1904,10 +1904,10 @@ static int LsetVPotential_SetConstMtd( ClientData clientData,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-eP", DOUBLE_Type, &eP, NULL, REQUIRED, 0, { 0 } },
-    { "-eK", DOUBLE_Type, &eK, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-Klow", DOUBLE_Type, &Klow, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-Kupp", DOUBLE_Type, &Kupp, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    //    { "-balloon", DOUBLE_Type, &balloon, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-eK", DOUBLE_Type, &eK, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-Klow", DOUBLE_Type, &Klow, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-Kupp", DOUBLE_Type, &Kupp, NULL, SV_OPTIONAL, 0, { 0 } },
+    //    { "-balloon", DOUBLE_Type, &balloon, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2056,11 +2056,11 @@ static int LsetVExpDecay_SetConstMtd( ClientData clientData,
   ARG_Entry arg_table[] = {
     { "-eI", DOUBLE_Type, &eI, NULL, REQUIRED, 0, { 0 } },
     { "-Kt", DOUBLE_Type, &Kt, NULL, REQUIRED, 0, { 0 } },
-    { "-clamp", BOOL_Type, &clamp, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-expand", BOOL_Type, &expand, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-eIneg", DOUBLE_Type, &eIneg, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-3d_curv", STRING_Type, &kt_name, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    //    { "-monotonic", BOOL_Type, &monotonic, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-clamp", BOOL_Type, &clamp, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-expand", BOOL_Type, &expand, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-eIneg", DOUBLE_Type, &eIneg, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-3d_curv", STRING_Type, &kt_name, NULL, SV_OPTIONAL, 0, { 0 } },
+    //    { "-monotonic", BOOL_Type, &monotonic, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -2367,7 +2367,7 @@ static int LsetVSmooth_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-lower_Kt", DOUBLE_Type, &lower_kt, NULL, REQUIRED, 0, { 0 } },
     { "-upper_Kt", DOUBLE_Type, &upper_kt, NULL, REQUIRED, 0, { 0 } },
-    { "-3d_curv", STRING_Type, &kt_name, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-3d_curv", STRING_Type, &kt_name, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {

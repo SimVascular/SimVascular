@@ -329,7 +329,7 @@ proc dcm_img2_readSlice {filename rtnImg} {
   # delete here?
   $myslice Delete
 
-  return GDSC_OK
+  return SV_OK
 }
 
 # ---------------------
@@ -347,7 +347,7 @@ proc dcm_img2_readSliceROI {filename rtnImg roi} {
 
   if {[file exists $filename] == 0} {
     puts "Error:  Filename $filename does not exist (or you don't have permission to read)."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set myslice [dcm_img_readSliceROI $filename $roi]
@@ -357,7 +357,7 @@ proc dcm_img2_readSliceROI {filename rtnImg roi} {
   # delete here?
   $myslice Delete
 
-  return GDSC_OK
+  return SV_OK
 }
 
 

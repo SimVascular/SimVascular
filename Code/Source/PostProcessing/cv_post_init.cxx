@@ -191,13 +191,13 @@ int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
     { "-grid", STRING_Type, &gridName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-stress", STRING_Type, &stressName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-transport", STRING_Type, &transportName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-traction", STRING_Type, &tractionName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-displacement", STRING_Type, &displacementName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-wss", STRING_Type, &wssName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-traction_nodes", LIST_Type, &tractionNodesList, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-stress", STRING_Type, &stressName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-transport", STRING_Type, &transportName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-traction", STRING_Type, &tractionName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-displacement", STRING_Type, &displacementName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-wss", STRING_Type, &wssName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-traction_nodes", LIST_Type, &tractionNodesList, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -437,8 +437,8 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, REQUIRED, 0, { 0 } },
-    { "-tensors", STRING_Type, &tensorsName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-tractions", STRING_Type, &tractionsName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tensors", STRING_Type, &tensorsName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-tractions", STRING_Type, &tractionsName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -596,7 +596,7 @@ int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-shearPdList", LIST_Type, &shearPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -725,7 +725,7 @@ int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-shearPdList", LIST_Type, &shearPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -854,7 +854,7 @@ int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
     { "-meanPd", STRING_Type, &meanPdName, NULL, REQUIRED, 0, { 0 } },
     { "-pulsePd", STRING_Type, &pulsePdName, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -975,7 +975,7 @@ int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-inputPdList", LIST_Type, &inputPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );

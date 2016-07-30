@@ -192,8 +192,8 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 3;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-meshfile", STRING_Type, &meshFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-meshfile", STRING_Type, &meshFileName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -1190,7 +1190,7 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
-    { "-surfile", STRING_Type, &SurfFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfile", STRING_Type, &SurfFileName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1271,7 +1271,7 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
-    { "-version", INT_Type, &smsver, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-version", INT_Type, &smsver, NULL, SV_OPTIONAL, 0, { 0 } },
 
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );

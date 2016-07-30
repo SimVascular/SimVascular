@@ -101,11 +101,11 @@ int MMG_RemeshCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-hmin", DOUBLE_Type, &hmin, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-hmax", DOUBLE_Type, &hmax, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-angle", DOUBLE_Type, &angle, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-hgrad", DOUBLE_Type, &hgrad, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-hausd", DOUBLE_Type, &hausd, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-hmin", DOUBLE_Type, &hmin, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-hmax", DOUBLE_Type, &hmax, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-angle", DOUBLE_Type, &angle, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-hgrad", DOUBLE_Type, &hgrad, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-hausd", DOUBLE_Type, &hausd, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {

@@ -411,7 +411,7 @@ proc seg_ShowSplines { {pathIds -1} } {
 
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 proc seg_AppendSplines { {pathIds -1} } {
@@ -473,7 +473,7 @@ proc seg_AppendSplines { {pathIds -1} } {
   generalView $gRen3d $splinesPd
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 proc seg_PrintSelectedGroups {} {

@@ -429,7 +429,7 @@ char *ARG_GenSyntaxStr( int argc, CONST84 char *argv[],
     case REQUIRED:
       Tcl_DStringAppend( &ds, "[R]", -1 );
       break;
-    case GDSC_OPTIONAL:
+    case SV_OPTIONAL:
     default:
       Tcl_DStringAppend( &ds, "[O]", -1 );
       break;

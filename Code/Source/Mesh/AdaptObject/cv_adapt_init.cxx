@@ -413,7 +413,7 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-meshfile", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)
@@ -811,8 +811,8 @@ static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 3;
   ARG_Entry arg_table[] = {
     { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
-    { "-option", INT_Type, &option, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-strategy", INT_Type, &strategy, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-option", INT_Type, &option, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-strategy", INT_Type, &strategy, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)

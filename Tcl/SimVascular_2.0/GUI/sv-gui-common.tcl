@@ -224,16 +224,16 @@ proc svAdotB {a b result} {
   upvar $result adotb
   if {[llength $a] != 3} {
     puts "Error:  Invalid length of vector $a!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   if {[llength $b] != 3} {
     puts "Error:  Invalid length of vector $b!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   set adotb [expr double([lindex $a 0]) * double ([lindex $b 0]) + \
             double([lindex $a 1]) * double ([lindex $b 1]) + \
             double([lindex $a 2]) * double ([lindex $b 2])]
-  return GDSC_OK
+  return SV_OK
 }
 
 #
@@ -242,7 +242,7 @@ proc svAdotB {a b result} {
 proc vectorMagnitude {v} {
   if {[llength $v] != 3} {
      puts "Error:  Vector not of correct length!"
-     return -code error GDSC_ERR
+     return -code error SV_ERR
   }
   set v1 [lindex $v 0]
   set v2 [lindex $v 1]
@@ -256,7 +256,7 @@ proc vectorMagnitude {v} {
 proc vectorNormalize {v} {
   if {[llength $v] != 3} {
      puts "Error:  Vector not of correct length!"
-     return -code error GDSC_ERR
+     return -code error SV_ERR
   }
   set v1 [lindex $v 0]
   set v2 [lindex $v 1]
@@ -265,7 +265,7 @@ proc vectorNormalize {v} {
   if {$mag < 0.00001} {
      puts "Warning:  Trying to normalize a zero vector!"
      return "0 0 0"
-     #return -code error GDSC_ERR
+     #return -code error SV_ERR
   }
   set v1 [expr double($v1)/double($mag)]
   set v2 [expr double($v2)/double($mag)]
@@ -291,11 +291,11 @@ proc angleBetweenVectors {in1 in2 return_angle} {
 
   if {[llength $in1] > 3} {
     puts "Error:  Vector with [llength $in1] components not of correct length!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   if {[llength $in2] > 3} {
     puts "Error:  Vector with [llength $in2] components not of correct length!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   set a1 {}
@@ -310,7 +310,7 @@ proc angleBetweenVectors {in1 in2 return_angle} {
     set a3 [expr double([lindex [lindex $in1 1] 2] - [lindex [lindex $in1 0] 2])]
   } else {
     puts "Error:  Invalid length of vector $in1!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   set b1 {}
@@ -325,7 +325,7 @@ proc angleBetweenVectors {in1 in2 return_angle} {
     set b3 [expr double([lindex [lindex $in2 1] 2] - [lindex [lindex $in2 0] 2])]
   } else {
     puts "Error:  Invalid length of vector $in2!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   # calculate the angle between vector a and b.
@@ -344,7 +344,7 @@ proc angleBetweenVectors {in1 in2 return_angle} {
   puts "adotb: $AdotB mags: $magA  $magB  value:[expr double($AdotB)/double($magA*$magB)]"
   set angle [expr acos(double($AdotB)/($magA*$magB))]
   puts "angle: $angle"
-  return GDSC_OK
+  return SV_OK
 }
 
 #
@@ -359,7 +359,7 @@ proc getPointsFromNthPoly {nth pd result} {
 
   if {[info commands $pd] == ""} {
     puts "Error: vtkPolyData object $pd does not exist!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   set mypoints [$pd GetPoints]
@@ -367,7 +367,7 @@ proc getPointsFromNthPoly {nth pd result} {
 
   if {$nth >= $numRegions} {
     puts "Error: Requested $nth cell exceeds limit of $numRegions in $pd."
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   set mypolys [$pd GetPolys]
@@ -396,7 +396,7 @@ proc getPointsFromNthPoly {nth pd result} {
     }
   }
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -690,15 +690,15 @@ proc rotatePlaneIntoXYZ {input output} {
 
   if {[repos_exists -obj $input] == "0"} {
     puts "Error: input $input does not exist in the repository!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   if {[repos_exists -obj $output] == "1"} {
     puts "Error: output $output exists!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   if {[repos_type -obj $input] != "PolyData"} {
     puts "Error: input $input is not of type PolyData!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   set t1 tmpRotatePlaneXYZ1
@@ -877,7 +877,7 @@ proc trimSolid {} {
   $plane Delete
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 # ------------
@@ -1824,15 +1824,15 @@ proc geom_flatten {normal boolean inpd rotated_norm outpd} {
 
   if {[repos_exists -obj $inpd] == "0"} {
     puts "ERROR:  Input PolyData $pd doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $inpd] != "PolyData"} {
     puts "ERROR:  Object $pd not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $outpd] == "1"} {
     puts "ERROR:  Output object $pd already exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   upvar $rotated_norm new_norm
@@ -1939,7 +1939,7 @@ proc geom_flatten {normal boolean inpd rotated_norm outpd} {
   catch {$tmpPt Delete}
   catch {$tmpV Delete}
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -1980,15 +1980,15 @@ proc geom_createRatioMap {inlet_mesh_face radmax result} {
 
   if {[repos_exists -obj $inlet_mesh_face] == "0"} {
     puts "ERROR:  Input PolyData $inlet_mesh_face doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $inlet_mesh_face] != "PolyData"} {
     puts "ERROR:  Object $inlet_mesh_face not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $result] == "1"} {
     puts "ERROR:  Output object $result exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set myFE /tmp/geom_mapScalars/myFE
@@ -2180,7 +2180,7 @@ proc geom_createRatioMap {inlet_mesh_face radmax result} {
   catch {$vVectors Delete}
   catch {$vScalars Delete}
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -2193,23 +2193,23 @@ proc geom_mapWomersleyMap {terms time viscosity omega density radmax flow_rate i
 
   if {[repos_exists -obj $inlet_mesh_face] == "0"} {
     puts "ERROR:  Input PolyData $inlet_mesh_face doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $inlet_mesh_face] != "PolyData"} {
     puts "ERROR:  Object $inlet_mesh_face not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $radiusMap] == "0"} {
     puts "ERROR:  Input radius map PolyData $radiusMap doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $radiusMap] != "PolyData"} {
     puts "ERROR:  Object $radiusMap not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $result] == "1"} {
     puts "ERROR:  Output object $result exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set vScalars tmp-geom_mapScalars-scalars
@@ -2312,7 +2312,7 @@ proc geom_mapWomersleyMap {terms time viscosity omega density radmax flow_rate i
   catch {$vScalars Delete}
   catch {$vVectors Delete}
 
-  return GDSC_OK
+  return SV_OK
 
 }
 # ---------

@@ -117,7 +117,7 @@ int Image_ReadHeaderCmd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &filename, NULL, REQUIRED, 0, { 0 } },
-    { "-protected", INT_Type, &readProtected, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-protected", INT_Type, &readProtected, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -292,7 +292,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
 
   int table_sz = 5;
   ARG_Entry arg_table[] = {
-    { "-magImage", STRING_Type, &magname, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-magImage", STRING_Type, &magname, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-phaseImage", STRING_Type, &phasename, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &result, NULL, REQUIRED, 0, { 0 } },
     { "-venc", DOUBLE_Type, &venc, NULL, REQUIRED, 0, { 0 } },
@@ -984,7 +984,7 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
     { "-start", LIST_Type, &startList, NULL, REQUIRED, 0, { 0 } },
     { "-thr", DOUBLE_Type, &thr, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-city_block", BOOL_Type, &useCityBlock, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-city_block", BOOL_Type, &useCityBlock, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -1097,9 +1097,9 @@ int Image_FindPathCmd( ClientData clientData, Tcl_Interp *interp,
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-stop", LIST_Type, &stopList, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-city_block", BOOL_Type, &useCityBlock, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-thin_passes", INT_Type, &maxIter, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-min_dist", INT_Type, &minqstop, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-city_block", BOOL_Type, &useCityBlock, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-thin_passes", INT_Type, &maxIter, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-min_dist", INT_Type, &minqstop, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
@@ -1213,8 +1213,8 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-obj", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
     { "-mask", STRING_Type, &maskName, NULL, REQUIRED, 0, { 0 } },
-    { "-value", DOUBLE_Type, &replaceVal, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-not", BOOL_Type, &notval, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-value", DOUBLE_Type, &replaceVal, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-not", BOOL_Type, &notval, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
