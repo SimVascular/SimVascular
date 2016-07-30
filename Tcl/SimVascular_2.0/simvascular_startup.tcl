@@ -124,11 +124,11 @@ set gSimVascularTclInitLibs [list \
 				 [list Geom ${lib_prefix}simvascular_geom${so_postfix}] \
 				 [list Image ${lib_prefix}simvascular_image${so_postfix}] \
 				 [list Utils ${lib_prefix}simvascular_utils${so_postfix}] \
-				 [list Gdscpost ${lib_prefix}simvascular_post${so_postfix}] \
+				 [list Post ${lib_prefix}simvascular_post${so_postfix}] \
 				 [list Solid ${lib_prefix}simvascular_solid${so_postfix}] \
 				 [list Polydatasolid ${lib_prefix}simvascular_polydata_solid${so_postfix}] \
 				 [list Occtsolid ${lib_prefix}simvascular_opencascade_solid${so_postfix}] \
-				 [list Gdscmesh ${lib_prefix}simvascular_mesh${so_postfix}] \
+				 [list Mesh ${lib_prefix}simvascular_mesh${so_postfix}] \
 				 [list Mmgmesh ${lib_prefix}simvascular_mmg_mesh${so_postfix}] \
 				 [list Tetgenmesh ${lib_prefix}simvascular_tetgen_mesh${so_postfix}] \
 				 [list Adapt ${lib_prefix}simvascular_adaptor${so_postfix}] \

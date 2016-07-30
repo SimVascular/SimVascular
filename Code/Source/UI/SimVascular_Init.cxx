@@ -156,7 +156,7 @@ int SimVascular_Init( Tcl_Interp *interp )
   SimVascularWelcome(interp);
 
   // include VTK
-  
+
   #ifndef VTK_BUILD_SHARED_LIBS
   # include "vtktcl_static_packages.h"
   #endif
@@ -197,7 +197,7 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-  if ( Gdscpost_Init(interp) == TCL_ERROR ) {
+  if ( Post_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on gdscPost_Init\n" );
     return TCL_ERROR;
   }
@@ -222,13 +222,13 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #ifdef SV_USE_MESHSIM
-  if ( Gdscmesh_Init(interp) == TCL_ERROR ) {
+  if ( Mesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on gdscMesh_Init\n" );
       return TCL_ERROR;
   }
 
 #elif defined SV_USE_TETGEN
-  if ( Gdscmesh_Init(interp) == TCL_ERROR ) {
+  if ( Mesh_Init(interp) == TCL_ERROR ) {
       fprintf( stderr, "error on gdscMesh_Init\n" );
       return TCL_ERROR;
   }
@@ -318,7 +318,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 #endif
 
 #endif
-  
+
   Tcl_Eval( interp, "if {[file exists [file join $env(HOME) .simvascular_rc]]} {          "
                     "  set tcl_rcFileName [file join $env(HOME) .simvascular_rc]           "
                     "} else {                                                         "

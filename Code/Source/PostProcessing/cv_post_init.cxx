@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -81,7 +81,7 @@ int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 // gdscPost_Init
 // -------------
 
-int Gdscpost_Init( Tcl_Interp *interp )
+int Post_Init( Tcl_Interp *interp )
 {
   Tcl_CreateCommand( interp, "post_readVisMesh", gdscPost_readVisMeshCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -416,7 +416,7 @@ int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   delete myconverter;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 }
 
@@ -570,7 +570,7 @@ int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
   delete wallshear;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 }
 
@@ -653,7 +653,7 @@ int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        return TCL_ERROR;
@@ -697,7 +697,7 @@ int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] shearPds;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
@@ -782,7 +782,7 @@ int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        return TCL_ERROR;
@@ -826,7 +826,7 @@ int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] shearPds;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
@@ -871,7 +871,7 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 
   // Foreach shear obj, check that it is in the repository and of the
   // correct type (i.e. cvPolyData).
- 
+
   src1 = gRepository->GetObject( meanPdName );
   if ( src1 == NULL ) {
       Tcl_AppendResult( interp, "couldn't find object ", meanPdName,
@@ -908,7 +908,7 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        return TCL_ERROR;
@@ -948,7 +948,7 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
   delete wallshear;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
@@ -1033,7 +1033,7 @@ int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        delete [] inputPds;
@@ -1078,7 +1078,7 @@ int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] inputPds;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
@@ -1178,7 +1178,7 @@ int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }

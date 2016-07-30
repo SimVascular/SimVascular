@@ -152,7 +152,7 @@ static void gdscMeshPrintMethods( Tcl_Interp *interp );
 // cvMesh_Init
 // ----------
 
-int Gdscmesh_Init( Tcl_Interp *interp )
+int Mesh_Init( Tcl_Interp *interp )
 {
   // Associate the mesh registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
@@ -164,13 +164,13 @@ int Gdscmesh_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "mesh_newObject", cvMesh_NewObjectCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_listMethods", cvMesh_ListMethodsCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_setKernel", cvMesh_SetMeshKernelCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_logon", cvMesh_LogonCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_logoff", cvMesh_LogoffCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   return TCL_OK;
 }
@@ -184,7 +184,7 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
   char *resultName;
-  char *meshFileName = NULL;  
+  char *meshFileName = NULL;
   char *solidFileName = NULL;
 
   char *usage;
@@ -193,7 +193,7 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
     { "-meshfile", STRING_Type, &meshFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -367,7 +367,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
 
-  // The method "Update" must be called before any of the other  
+  // The method "Update" must be called before any of the other
   // methods since it loads the mesh.  To avoid confusion, we
   // call this method directly prior to any other.
   cvMeshObject* geom = (cvMeshObject *)clientData;
@@ -376,7 +376,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
   }
- 
+
   if ( Tcl_StringMatch( argv[1], "Update" ) ) {
     // ignore this call now, it is done implicitly (see above)
     //if ( cvMesh_UpdateMtd( clientData, interp, argc, argv ) != TCL_OK ) {
@@ -393,7 +393,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
   } else if ( Tcl_StringMatch( argv[1], "WriteMetisAdjacency" ) ) {
     if ( cvMesh_WriteMetisAdjacencyMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
-    } 
+    }
   } else if ( Tcl_StringMatch( argv[1], "GetPolyData" ) ) {
     if ( cvMesh_GetPolyDataMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
@@ -433,7 +433,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   return TCL_OK;
-  
+
 }
 
 
@@ -444,7 +444,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 
 void DeletegdscMesh( ClientData clientData ) {
     cvMeshObject *geom = (cvMeshObject *)clientData;
-  
+
     gRepository->UnRegister( geom->GetName() );
 }
 
@@ -501,7 +501,7 @@ static void gdscMeshPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "Adapt\n");
   tcl_printstr(interp, "SetSolidKernel\n");
   tcl_printstr(interp, "GetModelFaceInfo\n");
-  
+
   return;
 }
 
@@ -549,7 +549,7 @@ static int cvMesh_PrintMtd( ClientData clientData, Tcl_Interp *interp,
   } else {
     return TCL_ERROR;
   }
- 
+
 }
 
 
