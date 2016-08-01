@@ -360,8 +360,8 @@ static int itkls2d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS )
 			{ "-Kc", DOUBLE_Type, &kc, NULL, REQUIRED, 0, { 0 } },
 			{ "-expRising", DOUBLE_Type, &expFactorRising, NULL, REQUIRED, 0, { 0 } },
 			{ "-expFalling", DOUBLE_Type, &expFactorFalling, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -391,8 +391,8 @@ static int itkls2d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS )
 	ARG_Entry arg_table[] = {
 			{ "-Klow", DOUBLE_Type, &klow, NULL, REQUIRED, 0, { 0 } },
 			{ "-Kupp", DOUBLE_Type, &kupp, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -421,7 +421,7 @@ static int itkls2d_GACLevelSetMtd( CXX_TCL_STDARGS )
 	int table_size = 2;
 	ARG_Entry arg_table[] = {
 			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );

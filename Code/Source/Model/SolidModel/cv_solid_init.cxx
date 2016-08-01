@@ -1714,7 +1714,7 @@ int Solid_Poly3dSolidCmd( ClientData clientData, Tcl_Interp *interp,
     { "-result", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-facet", STRING_Type, &facetMethodName, NULL, REQUIRED, 0, { 0 } },
-    { "-angle", DOUBLE_Type, &angle, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-angle", DOUBLE_Type, &angle, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2103,7 +2103,7 @@ int Solid_MakeApproxCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
     { "-src_pd", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
     { "-fit_tol", DOUBLE_Type, &tol, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2187,7 +2187,7 @@ int Solid_MakeInterpCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src_pd", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2276,12 +2276,12 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-srcs", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-continuity", INT_Type, &continuity, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-partype", INT_Type, &partype, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-w1", DOUBLE_Type, &w1, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-w2", DOUBLE_Type, &w2, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-w3", DOUBLE_Type, &w3, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-smooth", INT_Type, &smoothing, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-continuity", INT_Type, &continuity, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-partype", INT_Type, &partype, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-w1", DOUBLE_Type, &w1, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-w2", DOUBLE_Type, &w2, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-w3", DOUBLE_Type, &w3, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-smooth", INT_Type, &smoothing, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2639,7 +2639,7 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-smp", STRING_Type, &smpName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-smp", STRING_Type, &smpName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
     { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
   };
@@ -2749,7 +2749,7 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-smp", STRING_Type, &smpName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-smp", STRING_Type, &smpName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
     { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
   };
@@ -2859,7 +2859,7 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-smp", STRING_Type, &smpName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-smp", STRING_Type, &smpName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
     { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
   };
@@ -3486,8 +3486,8 @@ static int Solid_ClassifyPtMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-x", DOUBLE_Type, &x, NULL, REQUIRED, 0, { 0 } },
     { "-y", DOUBLE_Type, &y, NULL, REQUIRED, 0, { 0 } },
-    { "-z", DOUBLE_Type, &z, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-verbose", INT_Type, &v, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-z", DOUBLE_Type, &z, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-verbose", INT_Type, &v, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -3955,7 +3955,7 @@ static int Solid_WriteNativeMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &fn, NULL, REQUIRED, 0, { 0 } },
-    { "-version", INT_Type, &file_version, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-version", INT_Type, &file_version, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4080,7 +4080,7 @@ static int Solid_GetPolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } },  
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } },  
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4206,7 +4206,7 @@ static int Solid_GetFacePolyDataMtd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
     { "-face", INT_Type, &faceid, NULL, REQUIRED, 0, { 0 } },
-    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-max_edge_size", DOUBLE_Type, &max_dist, NULL, SV_OPTIONAL, 0, { 0 } }, 
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -4998,7 +4998,7 @@ static int Solid_CreateEdgeBlendMtd( ClientData clientData, Tcl_Interp *interp,
     { "-faceA", INT_Type, &faceA, NULL, REQUIRED, 0, { 0 } },
     { "-faceB", INT_Type, &faceB, NULL, REQUIRED, 0, { 0 } },
     { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
-    { "-fillshape", INT_Type, &filletshape, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-fillshape", INT_Type, &filletshape, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {

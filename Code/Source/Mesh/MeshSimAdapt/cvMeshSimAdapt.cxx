@@ -269,7 +269,7 @@ int cvMeshSimAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   meshobject_->SetName(mesh_name);
   Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
-		     (ClientData)meshobject_, fakeDeletegdscMesh );
+		     (ClientData)meshobject_, fakeDeleteMesh );
 
   if (solidFileName != NULL)
   {

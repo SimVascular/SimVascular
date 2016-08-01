@@ -34,28 +34,28 @@
 #===========================================================================    
 
 # --------
-# gdscView
+# svView
 # --------
 #
-proc gdscView args {
+proc svView args {
 
 #@author Nathan Wilson
-#@a args: passed directly onto <p gdscGeneralView> prepended
-#@a args: with vtkRenderer gdscViewWindow(ren) which is automatically
+#@a args: passed directly onto <p generalView> prepended
+#@a args: with vtkRenderer viewWindow(ren) which is automatically
 #@a args: created by this proc.
-#@c This is a user-friendly wrapper around <p gdscGeneralView>.
+#@c This is a user-friendly wrapper around <p generalView>.
 #@c
 #@c It allows the user to not worry about tracking which window
 #@c is being used for display, and clears the window prior to
-#@c updating.  See <p gdscGeneralView> for more discussion.
-#@r see <p gdscGeneralView>.
+#@c updating.  See <p generalView> for more discussion.
+#@r see <p generalView>.
   # check to see if the render window exists.  If it doesn't create it.
-  global gdscViewWindow
+  global viewWindow
 
   set createWindow 0
-  if {[info commands .gdscRenWin] == ""} {
+  if {[info commands .svRenWin] == ""} {
      set createWindow 1
-  } elseif {[info commands $gdscViewWindow(ren)] == ""} {
+  } elseif {[info commands $viewWindow(ren)] == ""} {
      set createWindow 1
   }
 
@@ -63,33 +63,33 @@ proc gdscView args {
   if {$createWindow == 0} {
 
     # clear the window of polydata objects
-    catch {vis_pRmAll $gdscViewWindow(ren)}
+    catch {vis_pRmAll $viewWindow(ren)}
 
     # clear the window of all other actors
-    set actorCollection [$gdscViewWindow(ren) GetActors]
+    set actorCollection [$viewWindow(ren) GetActors]
     set numActors [$actorCollection GetNumberOfItems]
     $actorCollection InitTraversal
     for {set i 0} {$i < $numActors} {incr i} {
        set actor [$actorCollection GetNextActor]
-       $gdscViewWindow(ren) RemoveActor $actor
+       $viewWindow(ren) RemoveActor $actor
 
     }
 
   } else {
 
-    set gdscViewWindow(exists) true
+    set viewWindow(exists) true
 
     # Briefly, the "vis_initgr" command
     # creates a vtk rendering window and returns the name
     # of a vtkRenderer object.  We store that returned value in
     # the variable "ren".
 
-    #set gdscViewWindow(ren) [vis_initgr gdscRenWin]
-    set gdscViewWindow(ren) [vis_initTKgr gdscRenWin "SimVascular Graphics Window" {} {}]
+    #set viewWindow(ren) [vis_initgr svRenWin]
+    set viewWindow(ren) [vis_initTKgr svRenWin "SimVascular Graphics Window" {} {}]
   }
 
   if {[llength $args] == 0} {
-    #puts "No objects specified in gdscView."
+    #puts "No objects specified in svView."
     #puts "Nothing done."
     return
   }
@@ -98,19 +98,19 @@ proc gdscView args {
   # displayed in the window.
 
   # need to be tricky so that args is handled properly
-  set gdscViewWindow(workRepPD) [eval {gdscGeneralView $gdscViewWindow(ren)} $args]
+  set viewWindow(workRepPD) [eval {generalView $viewWindow(ren)} $args]
 
-  catch {Reset .gdscRenWin.f1.r1 1 1}
+  catch {Reset .svRenWin.f1.r1 1 1}
 
 }
 
 # ---------------
-# gdscGeneralView
+# generalView
 # ---------------
 #
 
 
-proc gdscGeneralView args {
+proc generalView args {
 
 #@author Nathan Wilson
 #@a args: a vtkRenderer and a set of objects to display.
@@ -149,7 +149,7 @@ proc gdscGeneralView args {
   #  a "working list".
 
   if {[llength $args] < 1} {
-    puts "No objects specified in gdscGeneralView."
+    puts "No objects specified in generalView."
     puts "Nothing done."
     return
   }
@@ -164,7 +164,7 @@ proc gdscGeneralView args {
     foreach i [split $j] {
       if {[repos_exists -obj $i] == 0} {
           puts "Warning:  Object \"$i\" does not exist and"
-          puts "          is being ignored in gdscGeneralView."
+          puts "          is being ignored in generalView."
           continue
       }
       
@@ -174,7 +174,7 @@ proc gdscGeneralView args {
           [repos_type -obj $i] != "Mesh" && \
           [repos_type -obj $i] != "StructuredPts"} {
         puts "Warning:  Object \"$i\" is not of type SolidModel, PolyData,"
-        puts "          Mesh, or StructuredPts and is being ignored in gdscGeneralView."
+        puts "          Mesh, or StructuredPts and is being ignored in generalView."
         continue
       }
 
@@ -184,7 +184,7 @@ proc gdscGeneralView args {
 
   if {[llength $workObjs] == 0} {
     puts "Warning:  No valid objects in list passed to"
-    puts "          gdscGeneralView, nothing done."
+    puts "          generalView, nothing done."
     return
   }
  
@@ -208,15 +208,15 @@ proc gdscGeneralView args {
     } elseif {[repos_type -obj $i] == "SolidModel"} {
       global gOptions
       if {$gOptions(facet_max_edge_size) != ""} {
-        $i GetPolyData -result /tmp/gdscView/$i \
+        $i GetPolyData -result /tmp/svView/$i \
              -max_edge_size $gOptions(facet_max_edge_size)
       } else {
-        $i GetPolyData -result /tmp/gdscView/$i
+        $i GetPolyData -result /tmp/svView/$i
       }
-      lappend workPDS [repos_exportToVtk -src /tmp/gdscView/$i]
-      lappend workRepPD /tmp/gdscView/$i
+      lappend workPDS [repos_exportToVtk -src /tmp/svView/$i]
+      lappend workRepPD /tmp/svView/$i
     } elseif {[repos_type -obj $i] == "Mesh"} {
-      $i GetPolyData -result /tmp/gdscView/$i
+      $i GetPolyData -result /tmp/svView/$i
     } else {
       puts "Error:  Object $i not of type PolyData or SolidModel."
       return
@@ -293,7 +293,7 @@ proc gdscGeneralView args {
   # note: only the bgcolor color of the last object is used,
   #       the rest are ignored.
   if {[info globals $bgcolor] == ""} {
-      set rgb [gdscGetUnixColor $bgcolor]
+      set rgb [svGetUnixColor $bgcolor]
   } else {
       global $bgcolor
       set rgb [eval set $bgcolor]
@@ -308,7 +308,7 @@ proc gdscGeneralView args {
   # delete temporary polydata objects
   foreach i $workObjs {
     if {[repos_type -obj $i] == "SolidModel"} {
-      repos_delete -obj /tmp/gdscView/$i
+      repos_delete -obj /tmp/svView/$i
     } 
   }
 

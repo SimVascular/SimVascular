@@ -472,7 +472,7 @@ proc vis_deleteWindow {window ren} {
   catch {destroy .$window}
   catch {$ren Delete}
 
-  return GDSC_OK
+  return SV_OK
 }
 
 

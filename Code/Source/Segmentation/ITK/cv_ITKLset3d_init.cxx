@@ -367,8 +367,8 @@ static int itkls3d_PhaseOneLevelSetMtd( CXX_TCL_STDARGS )
 			{ "-Kc", DOUBLE_Type, &kc, NULL, REQUIRED, 0, { 0 } },
 			{ "-expRising", DOUBLE_Type, &expFactorRising, NULL, REQUIRED, 0, { 0 } },
 			{ "-expFalling", DOUBLE_Type, &expFactorFalling, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -398,8 +398,8 @@ static int itkls3d_PhaseTwoLevelSetMtd( CXX_TCL_STDARGS )
 	ARG_Entry arg_table[] = {
 			{ "-Klow", DOUBLE_Type, &klow, NULL, REQUIRED, 0, { 0 } },
 			{ "-Kupp", DOUBLE_Type, &kupp, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaFeat", DOUBLE_Type, &sigmaFeat, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-sigmaAdv", DOUBLE_Type, &sigmaAdv, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -428,9 +428,9 @@ static int itkls3d_GACLevelSetMtd( CXX_TCL_STDARGS )
 	int table_size = 4;
 	ARG_Entry arg_table[] = {
 			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-kappa", DOUBLE_Type, &kappa, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-iso", DOUBLE_Type, &iso, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-iso", DOUBLE_Type, &iso, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );
@@ -454,9 +454,9 @@ static int itkls3d_LaplacianLevelSetMtd( CXX_TCL_STDARGS )
 	int table_size = 4;
 	ARG_Entry arg_table[] = {
 			{ "-expFactor", DOUBLE_Type, &expFactor, NULL, REQUIRED, 0, { 0 } },
-			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-kappa", DOUBLE_Type, &kappa, NULL, GDSC_OPTIONAL, 0, { 0 } },
-			{ "-iso", DOUBLE_Type, &iso, NULL, GDSC_OPTIONAL, 0, { 0 } },
+			{ "-sigmaSpeed", DOUBLE_Type, &sigma, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-kappa", DOUBLE_Type, &kappa, NULL, SV_OPTIONAL, 0, { 0 } },
+			{ "-iso", DOUBLE_Type, &iso, NULL, SV_OPTIONAL, 0, { 0 } },
 	};
 
 	usage = ARG_GenSyntaxStr(2, argv, table_size, arg_table );

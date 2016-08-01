@@ -1925,7 +1925,7 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
     return CV_OK;
 }
 
-int gdscCalcU(double xx[3][5], double *d, double r, double s, double *u) {
+int calcU(double xx[3][5], double *d, double r, double s, double *u) {
 
     double uval;
     int i;
@@ -1957,7 +1957,7 @@ int gdscCalcU(double xx[3][5], double *d, double r, double s, double *u) {
 
 }
 
-int gdscCalcJacDet(double xx[3][5], double r, double s, double *determinant) {
+int calcJacDet(double xx[3][5], double r, double s, double *determinant) {
 
     /**************************************************************
      *  The code below was adapted from Finite Element Procedures *
@@ -2025,7 +2025,7 @@ int gdscCalcJacDet(double xx[3][5], double r, double s, double *determinant) {
 
 }
 
-int gdscIntegrateSurfElem(double crd[4][3], double *uvalues, double *q) {
+int integrateSurfElem(double crd[4][3], double *uvalues, double *q) {
 
   int i,j;
   double qflow = 0.0;
@@ -2057,7 +2057,7 @@ int gdscIntegrateSurfElem(double crd[4][3], double *uvalues, double *q) {
 
   // calculate a sample determinant, and rearrange points
   // if det. is negative.
-  if (gdscCalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
+  if (calcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
       double swapd,swapxx[3];
       // swap point 1 -> 4
       swapxx[1] = xx[1][1] ; swapxx[2] = xx[2][1];
@@ -2081,11 +2081,11 @@ int gdscIntegrateSurfElem(double crd[4][3], double *uvalues, double *q) {
   qflow = 0.0;
   for (i = 1; i <= 2; i++) {
     for (j = 1; j <= 2; j++) {
-      if (gdscCalcU(xx,d,a[i],a[j],&u) == CV_ERROR) {
+      if (calcU(xx,d,a[i],a[j],&u) == CV_ERROR) {
         fprintf(stderr,"ERROR: Problem calculating u.\n");
         return CV_ERROR;
       }
-      if (gdscCalcJacDet(xx,a[i],a[j],&det) == CV_ERROR) {
+      if (calcJacDet(xx,a[i],a[j],&det) == CV_ERROR) {
         fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n",det);
         return CV_ERROR;
       }
@@ -2187,7 +2187,7 @@ int geom_integrate_surface(vtkPolyData* pd, int tensorType, double *nrm, double 
       }
 
       qflow = 0.0;
-      if (gdscIntegrateSurfElem(crd, uvalues, &qflow) == CV_ERROR) {
+      if (integrateSurfElem(crd, uvalues, &qflow) == CV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *q = 0.0;
           return CV_ERROR;

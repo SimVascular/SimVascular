@@ -192,7 +192,7 @@ proc itklsUpdateView { window img baseName } {
 	}
 
 	catch {crd_ren $ren}
-	gdscGeneralView $ren $img
+	generalView $ren $img
 
 	if {$showInitSphere=="1"} {
 		set seedPd /tmp/lsGUI/seedPd
@@ -201,13 +201,13 @@ proc itklsUpdateView { window img baseName } {
 		repos_setLabel -obj $seedPd -key color -value $gOptions(color_for_seeds)
 		repos_setLabel -obj $seedPd -key width -value $gOptions(line_width_for_seeds)
       	repos_setLabel -obj $seedPd -key opacity -value $gOptions(opacity_for_seeds)
-		gdscGeneralView $ren $seedPd    
+		generalView $ren $seedPd    
 	}
 	
 	if {$showLS =="1"} {
 		if {[repos_exists -obj $baseName/ls/unclean] == 1} {
 			
-			gdscGeneralView $ren $baseName/ls/unclean
+			generalView $ren $baseName/ls/unclean
 		}
 
 		if {[repos_exists -obj $baseName/ls] == 1} {
@@ -216,7 +216,7 @@ proc itklsUpdateView { window img baseName } {
 			catch {repos_clearLabel -obj $pdname -key width}
 			repos_setLabel -obj $pdname -key color -value $gOptions(color_for_new_segmentations)
 			repos_setLabel -obj $pdname -key width -value $gOptions(line_width_for_new_segmentations)
-			gdscGeneralView $ren $pdname
+			generalView $ren $pdname
 		}
 
 	}
@@ -1254,7 +1254,7 @@ proc lsGUIloftGroup {group} {
 
 
 
-    gdscGeneralView $gRen3d $outPD
+    generalView $gRen3d $outPD
   } else {
     if {[vis_pGetActor $gRen3d $outPD] != ""} {
       vis_pRm $gRen3d $outPD

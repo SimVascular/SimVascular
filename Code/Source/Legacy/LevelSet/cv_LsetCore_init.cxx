@@ -766,9 +766,9 @@ static int LsetCore_SetTimeMtd( ClientData clientData, Tcl_Interp *interp,
 
   int table_size = 2;
   ARG_Entry arg_table[] = {
-    { "-simTime", DOUBLE_Type, &simTime, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cflFactor", DOUBLE_Type, &cflFactor, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    //    { "-dt", DOUBLE_Type, &dt, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-simTime", DOUBLE_Type, &simTime, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cflFactor", DOUBLE_Type, &cflFactor, NULL, SV_OPTIONAL, 0, { 0 } },
+    //    { "-dt", DOUBLE_Type, &dt, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {
@@ -961,9 +961,9 @@ static int LsetCore_SetGridMtd( ClientData clientData, Tcl_Interp *interp,
     { "-h", LIST_Type, &hlist, NULL, REQUIRED, 0, { 0 } },
     { "-dim", LIST_Type, &glist, NULL, REQUIRED, 0, { 0 } },
     { "-origin", LIST_Type, &olist, NULL, REQUIRED, 0, { 0 } },
-    { "-type", STRING_Type, &gridTypeStr, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-bandExt", LIST_Type, &blist, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-mineWd", DOUBLE_Type, &mineWd, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-type", STRING_Type, &gridTypeStr, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-bandExt", LIST_Type, &blist, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-mineWd", DOUBLE_Type, &mineWd, NULL, SV_OPTIONAL, 0, { 0 } },
   };
 
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
@@ -1997,7 +1997,7 @@ static int LsetCore_ExtractFrontMtd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-out", STRING_Type, &objName, NULL, REQUIRED, 0, { 0 } },
-    { "-closed", INT_Type, &closed, NULL, GDSC_OPTIONAL, 0, { 0 } }
+    { "-closed", INT_Type, &closed, NULL, SV_OPTIONAL, 0, { 0 } }
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_size, arg_table );
   if ( argc == 2 ) {

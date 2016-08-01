@@ -101,7 +101,7 @@ proc vis_vRm {ren objName} {
     catch {$transformF Delete}
 
     vis_render $ren
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -143,7 +143,7 @@ proc vis_vRmAll {ren} {
     }
 
     vis_render $ren
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -277,7 +277,7 @@ proc vis_vSetColor {ren objName r g b} {
 	[$act GetProperty] SetDiffuseColor $r $g $b
 	vis_render $ren
     }
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -306,7 +306,7 @@ proc vis_vSetScale {ren objName s} {
 	$obj SetScaleFactor $s
 	vis_render $ren
     }
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -328,7 +328,7 @@ proc vis_vColorWithScalars {ren objName} {
 	$map ScalarVisibilityOn
 	vis_render $ren
     }
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -350,5 +350,5 @@ proc vis_vColorWithoutScalars {ren objName} {
 	$map ScalarVisibilityOff
 	vis_render $ren
     }
-    return GDSC_OK
+    return SV_OK
 }

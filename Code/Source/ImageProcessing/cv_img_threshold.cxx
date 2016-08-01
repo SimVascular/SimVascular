@@ -36,7 +36,7 @@ int img_threshold (vtkStructuredPoints *image, vtkFloatingPointType thrMin, vtkF
                    int max_num_pts, cvPolyData **result) {
 
     // this code doesn't seem to work in vtk 5
-    //gdscThresholdPoints *throbj = gdscThresholdPoints::New();
+    //ThresholdPoints *throbj = ThresholdPoints::New();
     vtkThresholdPoints *throbj = vtkThresholdPoints::New();
     throbj->SetInputDataObject(image);
     // this method no longer exists in vtk 5

@@ -43,7 +43,7 @@ namespace eval sgml {
 
     # Various XML names
     variable NameChar \[-$Letter$Digit._:$CombiningChar$Extender\]
-    variable Name \[_:$BaseChar$Ideographic\]$NameChar*
+    variable gdscName \[_:$BaseChar$Ideographic\]$NameChar*
     variable Names ${Name}(?:$Wsp$Name)*
     variable Nmtoken $NameChar+
     variable Nmtokens ${Nmtoken}(?:$Wsp$Nmtoken)*

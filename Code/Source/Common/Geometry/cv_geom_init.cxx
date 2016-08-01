@@ -549,7 +549,7 @@ int Geom_UnionCmd( ClientData clientData, Tcl_Interp *interp,
     { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
     { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -639,7 +639,7 @@ int Geom_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
     { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
     { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -729,7 +729,7 @@ int Geom_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
     { "-a", STRING_Type, &aName, NULL, REQUIRED, 0, { 0 } },
     { "-b", STRING_Type, &bName, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -812,7 +812,7 @@ int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 2;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tol, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tol, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -949,8 +949,8 @@ int Geom_SetArrayForLocalOp_FaceCmd( ClientData clientData, Tcl_Interp *interp,
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
     { "-array", STRING_Type, &arrayName, NULL, REQUIRED, 0, { 0 } },
     { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1041,8 +1041,8 @@ int Geom_SetArrayForLocalOp_SphereCmd( ClientData clientData, Tcl_Interp *interp
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
     { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
     { "-center", LIST_Type, &ctrList, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1126,8 +1126,8 @@ int Geom_SetArrayForLocalOp_CellsCmd( ClientData clientData, Tcl_Interp *interp,
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
     { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1218,8 +1218,8 @@ int Geom_SetArrayForLocalOp_BlendCmd( ClientData clientData, Tcl_Interp *interp,
     { "-array", STRING_Type, &arrayName, NULL, REQUIRED, 0, { 0 } },
     { "-values", LIST_Type, &values, NULL, REQUIRED, 0, { 0 } },
     { "-radius", DOUBLE_Type, &radius, NULL, REQUIRED, 0, { 0 } },
-    { "-outarray", STRING_Type, &outArray, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-datatype", INT_Type, &dataType, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-outarray", STRING_Type, &outArray, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-datatype", INT_Type, &dataType, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1304,9 +1304,9 @@ int Geom_LocalDecimationCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-target", DOUBLE_Type, &target, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-target", DOUBLE_Type, &target, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1374,10 +1374,10 @@ int Geom_LocalLaplacianSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-relax", DOUBLE_Type, &relax, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-relax", DOUBLE_Type, &relax, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1447,11 +1447,11 @@ int Geom_LocalConstrainSmoothCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-constrainfactor", DOUBLE_Type, &constrainfactor, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-numcgsolves", INT_Type, &numcgsolves, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-constrainfactor", DOUBLE_Type, &constrainfactor, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-numcgsolves", INT_Type, &numcgsolves, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1519,9 +1519,9 @@ int Geom_LocalLinearSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1588,9 +1588,9 @@ int Geom_LocalButterflySubdivisionCmd( ClientData clientData, Tcl_Interp *interp
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1657,9 +1657,9 @@ int Geom_LocalLoopSubdivisionCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numiters", INT_Type, &numiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numiters", INT_Type, &numiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1731,14 +1731,14 @@ int Geom_LocalBlendCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &Name, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-numblenditers", INT_Type, &numblenditers, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-numsubblenditers", INT_Type, &numsubblenditers, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-numsubdivisioniters", INT_Type, &numsubdivisioniters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-numcgsmoothiters", INT_Type, &numcgsmoothiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-numlapsmoothiters", INT_Type, &numlapsmoothiters, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-targetdecimation", DOUBLE_Type, &targetdecimation, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-pointarray", STRING_Type, &pointArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-cellarray", STRING_Type, &cellArrayName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-numblenditers", INT_Type, &numblenditers, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-numsubblenditers", INT_Type, &numsubblenditers, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-numsubdivisioniters", INT_Type, &numsubdivisioniters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-numcgsmoothiters", INT_Type, &numcgsmoothiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-numlapsmoothiters", INT_Type, &numlapsmoothiters, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-targetdecimation", DOUBLE_Type, &targetdecimation, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-pointarray", STRING_Type, &pointArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-cellarray", STRING_Type, &cellArrayName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -1811,7 +1811,7 @@ int Geom_All_UnionCmd( ClientData clientData, Tcl_Interp *interp,
     { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
     { "-intertype", INT_Type, &interT, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tolerance", DOUBLE_Type, &tolerance, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tolerance", DOUBLE_Type, &tolerance, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -2656,7 +2656,7 @@ int Geom_AlignProfileCmd( ClientData clientData, Tcl_Interp *interp,
     { "-ref", STRING_Type, &refName, NULL, REQUIRED, 0, { 0 } },
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-vecMtd", BOOL_Type, &vecMtd, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-vecMtd", BOOL_Type, &vecMtd, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3646,7 +3646,7 @@ int Geom_MergePtsCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-tol", DOUBLE_Type, &tol, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tol", DOUBLE_Type, &tol, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3715,7 +3715,7 @@ int Geom_Warp3dPtsCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
     { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
-    { "-scale", DOUBLE_Type, &scale, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-scale", DOUBLE_Type, &scale, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -3928,10 +3928,10 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
     { "-numModes", INT_Type, &numModes, NULL, REQUIRED, 0, { 0 } },
     { "-useFFT", INT_Type, &useFFT, NULL, REQUIRED, 0, { 0 } },
     { "-useLinearSampleAlongLength", INT_Type, &useLinearSampleAlongLength, NULL, REQUIRED, 0, { 0 } },
-    { "-splineType", INT_Type, &splineType, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-bias", DOUBLE_Type, &bias, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-tension", DOUBLE_Type, &tension, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-continuity", DOUBLE_Type, &continuity, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-splineType", INT_Type, &splineType, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-bias", DOUBLE_Type, &bias, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-tension", DOUBLE_Type, &tension, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-continuity", DOUBLE_Type, &continuity, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -4336,7 +4336,7 @@ int Geom_SplinePtsToPathPlanCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
-    { "-file", STRING_Type, &filename, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-file", STRING_Type, &filename, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-numOutputPts", INT_Type, &numOutputPts, NULL, REQUIRED, 0, { 0 } },
     { "-flag", INT_Type, &flag, NULL, REQUIRED, 0, { 0 } },
   };

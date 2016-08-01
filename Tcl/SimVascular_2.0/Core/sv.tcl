@@ -104,7 +104,7 @@ proc bctdat_combine {inFiles outFile} {
       close $infp
     }
     close $outfp
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -151,7 +151,7 @@ proc bctdat_checkFile {bctdat_file} {
   puts "  Number of Nodes: $numNodes"
   close $fp
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -281,7 +281,7 @@ proc file_dos2unix {inFile outFile} {
     }
     close $infp
     close $outfp
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -323,7 +323,7 @@ proc file_cat {inFiles outFile} {
       close $infp
     }
     close $outfp
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -365,7 +365,7 @@ proc file_append {inFiles outFile} {
 
     }
 
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -714,7 +714,7 @@ proc geom_polygonFromPts {pts dstName} {
 
   if {[repos_exists -obj $dstName] == 1} {
     puts "Error: Object $dstName already exists!"
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set mypd tmp-polygonFromPts-pd
@@ -757,7 +757,7 @@ proc geom_polygonFromPts {pts dstName} {
   catch {$myconn Delete}
   catch {$mypts Delete}
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -819,15 +819,15 @@ proc geom_scaleScalars {src scaleFactor dst} {
 
   if {[repos_exists -obj $src] == "0"} {
     puts "ERROR:  Input PolyData $src doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $src] != "PolyData"} {
     puts "ERROR:  Object $src not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $dst] == "1"} {
     puts "ERROR:  Output object $dst exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   # tmp objects
@@ -845,7 +845,7 @@ proc geom_scaleScalars {src scaleFactor dst} {
 
   # clean up
   catch {repos_delete -obj $tmpobj}
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -868,15 +868,15 @@ proc geom_scaleVectorComponents {src scaleFactor dst} {
 
   if {[repos_exists -obj $src] == "0"} {
     puts "ERROR:  Input PolyData $src doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $src] != "PolyData"} {
     puts "ERROR:  Object $src not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $dst] == "1"} {
     puts "ERROR:  Output object $dst exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   # tmp objects
@@ -897,7 +897,7 @@ proc geom_scaleVectorComponents {src scaleFactor dst} {
 
   # clean up
   catch {repos_delete -obj $tmpobj}
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -923,19 +923,19 @@ proc geom_getSubsetOfPts {pd1 pd2 tol rnodes} {
   upvar $rnodes nodes
   if {[repos_exists -obj $pd1] == "0"} {
     puts "ERROR:  Input PolyData $pd1 doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $pd1] != "PolyData"} {
     puts "ERROR:  Object $pd1 not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $pd2] == "0"} {
     puts "ERROR:  Input PolyData $pd2 doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $pd2] != "PolyData"} {
     puts "ERROR:  Object $pd2 not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   # create a new polydata object containing only
@@ -959,7 +959,7 @@ proc geom_getSubsetOfPts {pd1 pd2 tol rnodes} {
     }
   }
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -981,11 +981,11 @@ proc geom_getPts {pd rnodes} {
   upvar $rnodes nodes
   if {[repos_exists -obj $pd] == "0"} {
     puts "ERROR:  Input PolyData $all_pd doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $pd] != "PolyData"} {
     puts "ERROR:  Object $all_pd not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set nodes {}
@@ -995,7 +995,7 @@ proc geom_getPts {pd rnodes} {
     lappend nodes $p
   }
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -1014,7 +1014,7 @@ proc geom_mapVectors {velocityMap inlet_mesh_face result} {
   #@c  notes.
   #@a  velocityMap:  Input PolyData with defined vector data.
   #@a  inlet_mesh_face:  PolyData onto which to map the vector data.
-  #@a  result:  Name of new repository PolyData object to be
+  #@a  result:  gdscName of new repository PolyData object to be
   #@a  result:  created.
   #@r  status
   #@note  This code does a simple mapping of the vector data from
@@ -1034,23 +1034,23 @@ proc geom_mapVectors {velocityMap inlet_mesh_face result} {
 
   if {[repos_exists -obj $velocityMap] == "0"} {
     puts "ERROR:  Input PolyData $velocityMap doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $velocityMap] != "PolyData"} {
     puts "ERROR:  Object $velocityMap not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $inlet_mesh_face] == "0"} {
     puts "ERROR:  Input PolyData $inlet_mesh_face doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $inlet_mesh_face] != "PolyData"} {
     puts "ERROR:  Object $inlet_mesh_face not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $result] == "1"} {
     puts "ERROR:  Output object $result exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set myFE /tmp/geom_mapScalars/myFE
@@ -1224,7 +1224,7 @@ proc geom_mapVectors {velocityMap inlet_mesh_face result} {
         repos_setLabel -obj sBdryPC -key color -value white
         catch {repos_setLabel -obj $meshFreeEdges -key color -value blue}
         catch {repos_setLabel -obj $segmentation -key color -value red}
-        gdscView sCtrMesh sCtrPC sNode sPt sBdryMesh sBdryPC line1 line2 $segmentation $meshFreeEdges
+        svView sCtrMesh sCtrPC sNode sPt sBdryMesh sBdryPC line1 line2 $segmentation $meshFreeEdges
         incr counter
     }
 
@@ -1302,7 +1302,7 @@ proc geom_mapVectors {velocityMap inlet_mesh_face result} {
   catch {$vVectors Delete}
   catch {$vScalars Delete}
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -1355,15 +1355,15 @@ proc geom_triangulate {input output} {
 
   if {[repos_exists -obj $input] == "0"} {
     puts "Error: input $input does not exist in the repository!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   if {[repos_exists -obj $output] == "1"} {
     puts "Error: output $output exists!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
   if {[repos_type -obj $input] != "PolyData"} {
     puts "Error: input $input is not of type PolyData!"
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   set triFilter tmp-geom_triangulate-filter
@@ -1378,7 +1378,7 @@ proc geom_triangulate {input output} {
 
   catch {$triFilter Delete}
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -1750,7 +1750,7 @@ proc geom_calcTransformMatrixToRASWithTol {xyzPts rasPts diffTol dirTol rotVectT
     return -code error "ERROR:  internal error in geom_calcTransformMatrixToRAS."
   }
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -1805,7 +1805,7 @@ proc geom_createNormals {srcPd dstName} {
 proc group_exists {name} {
     #@author Ken Wang
     #@c Check to see if group exists.
-    #@a name:  Name of group.
+    #@a name:  gdscName of group.
     #@r Boolean (0 or 1).
     global gGroup
     set elems [array names gGroup]
@@ -1824,7 +1824,7 @@ proc group_exists {name} {
 proc group_create {name} {
     #@author Ken Wang
     #@c Create a group if it doesn't exist.
-    #@a name: Name of group to create.
+    #@a name: gdscName of group to create.
     #@r status (0 if group already existed, 1 if it was created).
     global gGroup
     if {[group_exists $name]} {return 0}
@@ -1840,7 +1840,7 @@ proc group_create {name} {
 proc group_delete {name} {
     #@author Ken Wang
     #@c Delete a group.
-    #@a name: Name of group to delete.
+    #@a name: gdscName of group to delete.
     #@r status (0 if group didn't exist, 1 if it was deleted).
     global gGroup
     global symbolicName
@@ -2305,7 +2305,7 @@ proc group_details {name args} {
     }
     close $fp
   }
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -3400,7 +3400,7 @@ proc img_guessVolParams {filename} {
 
   #set gImageVol(filename) $filename
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -3480,12 +3480,12 @@ proc img_guessRASmin {filename} {
   foreach image $image_files {
     if {[file exists $image] == 0} {
       puts "Error:  Filename $image does not exist (or you don't have permission to read)."
-      return -code error GDSC_ERR
+      return -code error SV_ERR
     }
 
     if {[catch {set params [img_readHeader -file $image]} rtnstring] == 1} {
       puts "Error:  $rtnstring"
-      return -code error GDSC_ERR
+      return -code error SV_ERR
     }
 
     foreach i $params {
@@ -3528,7 +3528,7 @@ proc img_guessRASmin {filename} {
   global gImageVol
   set gImageVol(min_RAS) [list $minx $miny $minz]
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -3608,12 +3608,12 @@ proc img_guessRASmax {filename} {
   foreach image $image_files {
     if {[file exists $image] == 0} {
       puts "Error:  Filename $image does not exist (or you don't have permission to read)."
-      return -code error GDSC_ERR
+      return -code error SV_ERR
     }
 
     if {[catch {set params [img_readHeader -file $image]} rtnstring] == 1} {
       puts "Error:  $rtnstring"
-      return -code error GDSC_ERR
+      return -code error SV_ERR
     }
 
     foreach i $params {
@@ -3656,7 +3656,7 @@ proc img_guessRASmax {filename} {
   global gImageVol
   set gImageVol(max_RAS) [list $maxx $maxy $maxz]
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -3746,12 +3746,12 @@ proc img_findObliqueCornersMinMaxRAS {filename} {
   foreach image $image_files {
     if {[file exists $image] == 0} {
       puts "Error:  Filename $image does not exist (or you don't have permission to read)."
-      return -code error GDSC_ERR
+      return -code error SV_ERR
     }
 
     if {[catch {set params [img_readHeader -file $image]} rtnstring] == 1} {
       puts "Error:  $rtnstring"
-      return -code error GDSC_ERR
+      return -code error SV_ERR
     }
 
     foreach i $params {
@@ -3817,7 +3817,7 @@ proc img_findObliqueCornersMinMaxRAS {filename} {
     set gImageVol(max_RAS_$corner) [list $maxx($corner) $maxy($corner) $maxz($corner)]
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -3886,7 +3886,7 @@ proc img_calculateStatistics {img rtnAvg rtnDeviation rtnMin rtnMax} {
   #puts "0.33 * max: [expr 0.33*$max]"
   #puts "0.20 * max: [expr 0.2*$max]"
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -3905,7 +3905,7 @@ proc img2_readSlice_5X {filename rtnImg} {
 
   if {[file exists $filename] == 0} {
     puts "Error:  Filename $filename does not exist (or you don't have permission to read)."
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   #  The following few lines will read and create the following variables:
@@ -3936,7 +3936,7 @@ proc img2_readSlice_5X {filename rtnImg} {
   # delete here?
   $myslice Delete
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -3955,7 +3955,7 @@ proc img2_readSliceROI_5X {filename rtnImg roi} {
 
   if {[file exists $filename] == 0} {
     puts "Error:  Filename $filename does not exist (or you don't have permission to read)."
-    return -code error GDSC_ERR
+    return -code error SV_ERR
   }
 
   #  The following few lines will read and create the following variables:
@@ -3986,7 +3986,7 @@ proc img2_readSliceROI_5X {filename rtnImg roi} {
   # delete here?
   $myslice Delete
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -4036,11 +4036,11 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
     if {$slice == ""} {continue}
     if {[repos_exists -obj $slice] == "0"} {
       puts "ERROR:  Input Image $slice doesn't exist."
-      return -code error GDSC_ERROR
+      return -code error SV_ERROR
     }
     if {[repos_type -obj $slice] != "StructuredPts"} {
       puts "ERROR:  Object $slice not of type Image."
-      return -code error GDSC_ERROR
+      return -code error SV_ERROR
     }
     set image($i) [repos_exportToVtk -src $slice]
     set imageScalars($i) [[$image($i) GetPointData] GetScalars]
@@ -4048,25 +4048,25 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
   }
   if {$map(Z) == 0} {
     puts "ERROR:  Must have through plane component of velocity!"
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   if {[repos_exists -obj $segmentationPolyData] == "0"} {
     puts "ERROR:  Input PolyData $segmentationPolyData doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_type -obj $segmentationPolyData] != "PolyData"} {
     puts "ERROR:  Object $segmentationPolyData not of type PolyData."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
   if {[repos_exists -obj $resultPolyData] == "1"} {
     puts "ERROR:  Output object $resultPolyData exists."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   if {[llength $directions] != 3} {
     puts "ERROR:  Incorrect length of directions parameter ([llength $directions] != 3)"
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   # convert empty strings to zero values
@@ -4254,7 +4254,7 @@ proc img_createSegVelPD {velImageX velImageY velImageZ correctX correctY correct
   catch {$vPolyData Delete}
   catch {$delaunay Delete}
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -4274,10 +4274,10 @@ proc img_getSliceAtPathPoint {volumeImage path ptId ext rtnImg rtnPot} {
     #@a path:  format.
     #@a ptId:  A point id (index in the <a path> list).
     #@a ext:  Extent.
-    #@a rtnImg:  Name of StructuredPoints repository object
+    #@a rtnImg:  gdscName of StructuredPoints repository object
     #@a rtnImg:  object to create.  It is the image intensity on the
     #@a rtnImg:  slice.
-    #@a rtnPot:  Name of StructuredPoints repository object
+    #@a rtnPot:  gdscName of StructuredPoints repository object
     #@a rtnPot:  object to create.  It is the magnitude of the intensity
     #@a rtnPot:  gradient for the given slice.
     #@r status
@@ -4358,7 +4358,7 @@ proc img_getSliceAtPathPoint {volumeImage path ptId ext rtnImg rtnPot} {
     catch {$rs Delete}
     catch {$rs Delete}
 
-    return GDSC_OK
+    return SV_OK
 
 }
 
@@ -4568,7 +4568,7 @@ proc img_findPCMRIorientation {fn rtnxyz rtndirections} {
      puts "normal_to_plane = $normal_to_plane"
   }
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -4616,7 +4616,7 @@ proc img_calcTransformMatrixToRAS {imageFilename rtnMatrix4x4} {
 
   geom_calcTransformMatrixToRAS $pts $ptList $rtnMatrix4x4
   
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -4729,7 +4729,7 @@ proc img_calcBaselineCorrectionEqn {region_list image_list order} {
                 catch {repos_delete -obj b_$i\_$j}
 		#solid_box3d -dims {0.3 0.3 0.3} -ctr [list $x $y 0] -result b_$i\_$j
                 #global bcGUIbaselineRen
-                #gdscGeneralView $bcGUIbaselineRen b_$i\_$j
+                #generalView $bcGUIbaselineRen b_$i\_$j
 	    }
 	}
       }
@@ -5743,7 +5743,7 @@ proc lset2_loop {core acInterval ac maxTS rebuildPhiFreq} {
     return -code error "ERROR: Exceeded maximum number of time steps."
   }
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -6014,7 +6014,7 @@ proc lset2_main [list img pot \
   }
 
   #return $seg
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -6070,7 +6070,7 @@ proc intersect_lset {truePhi approxPhi interPgn} {
 
   # return the contour of the unioned phi vtk dataobj
   repos_importVtkPd -src [img_contour $true 0] -dst $interPgn
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -6143,7 +6143,7 @@ proc mesh_writeInflowFaceVtk {solidfile atrfile outfile} {
   catch {repos_delete -obj $solid}
   catch {repos_delete -obj $facePD}
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -7144,7 +7144,7 @@ proc post_getSurfMesh {mesh reposObj} {
   catch {repos_delete -obj $reposObj}
   repos_importVtkPd -src [$exterior GetOutput] -dst $reposObj
 
-  return GDSC_OK
+  return SV_OK
 
 }
 
@@ -8390,7 +8390,7 @@ proc view_slice {fn} {
    set slice /tmp/view_slice
    catch {repos_delete -obj $slice}
    img2_readSlice $fn $slice
-   gdscView $slice
+   svView $slice
 }
 
    

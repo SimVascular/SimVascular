@@ -36,8 +36,8 @@
 #include "tcl.h"
 
 #define REQUIRED 1
-#define GDSC_REQUIRED 1
-#define GDSC_OPTIONAL 0
+#define SV_REQUIRED 1
+#define SV_OPTIONAL 0
 #define MAX_EXCLUSIONS 10
 
 

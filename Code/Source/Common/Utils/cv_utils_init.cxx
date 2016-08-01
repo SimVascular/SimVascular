@@ -41,4 +41,6 @@ int Utils_Init( Tcl_Interp *interp ) {
   Math_Init( interp );
   Getinterp_Init( interp);
 
+  return TCL_OK;
+
 }
