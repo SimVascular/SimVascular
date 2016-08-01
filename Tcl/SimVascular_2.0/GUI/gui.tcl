@@ -22940,8 +22940,8 @@ proc bcGUI_hand_tag_voxel { widget x y} {
 
   global bcGUImagWindow
   #global bcGUIpotWindow
-  gdscGeneralView $bcGUImagWindow(ren) $boxpd
-  #gdscGeneralView $bcGUIpotWindow(ren) $boxpd
+  generalView $bcGUImagWindow(ren) $boxpd
+  #generalView $bcGUIpotWindow(ren) $boxpd
   [$bcGUImagWindow(ren) GetRenderWindow] Render
   #[$bcGUIpotWindow(ren) GetRenderWindow] Render
 }
@@ -23667,20 +23667,20 @@ proc bcGUIchangeFrame { value} {
     set displayedImgObj {}
     if {$loop == "bcGUImagWindow"} {
       if {$bcGUImagWindow(showMagImg) == 1} {
-        gdscGeneralView $ren /gBC/pcdata/mag/$value
+        generalView $ren /gBC/pcdata/mag/$value
         set displayedImgObj /gBC/pcdata/mag/$value
       } elseif {$bcGUImagWindow(showVelImg) != 0} {
         global gBC
   if {$gBC(numVelComp) == 1} {
-          gdscGeneralView $ren /gBC/pcdata/phase/$value
+          generalView $ren /gBC/pcdata/phase/$value
           set displayedImgObj /gBC/pcdata/phase/$value
   } elseif {$gBC(numVelComp) == 3} {
-          gdscGeneralView $ren /gBC/pcdata/phase/$value/$bcGUImagWindow(showVelImg)
+          generalView $ren /gBC/pcdata/phase/$value/$bcGUImagWindow(showVelImg)
           set displayedImgObj /gBC/pcdata/phase/$value/$bcGUImagWindow(showVelImg)
   }
       }
     } else {
-      gdscGeneralView $ren /gBC/pcdata/pot/$value
+      generalView $ren /gBC/pcdata/pot/$value
       set displayedImgObj /gBC/pcdata/pot/$value
     }
 
@@ -23707,7 +23707,7 @@ proc bcGUIchangeFrame { value} {
     # display threshold
     if {$showThr == "1"} {
       if {[repos_exists -obj /gBC/pcdata/mag/$value/thr] == 1} {
-        gdscGeneralView $ren /gBC/pcdata/mag/$value/thr
+        generalView $ren /gBC/pcdata/mag/$value/thr
       }
     }
 
@@ -23715,7 +23715,7 @@ proc bcGUIchangeFrame { value} {
     if {$showSelectedThr == "1"} {
       if {[repos_exists -obj /gBC/pcdata/mag/$value/thr/selected] == 1} {
         set throbj /gBC/pcdata/mag/$value/thr/selected
-        gdscGeneralView $ren $throbj
+        generalView $ren $throbj
         # make the line more visible
         set actor [vis_pGetActor $ren $throbj]
         [$actor GetProperty] SetLineWidth 5
@@ -23740,7 +23740,7 @@ proc bcGUIchangeFrame { value} {
       solid_sphere -r $bcGUIradius -ctr $center -result $sphere
       repos_setLabel -obj $sphere -key color -value green
       repos_setLabel -obj $sphere -key opacity -value 0.33
-      gdscGeneralView $ren $sphere
+      generalView $ren $sphere
     }
 
     # set up warp displays
@@ -23832,7 +23832,7 @@ proc bcGUIchangeFrame { value} {
     if {$showLS == "1"} {
       set lsres /gBC/pcdata/mag/$value/ls
       if {[repos_exists -obj $lsres] == 1} {
-        gdscGeneralView $ren $lsres
+        generalView $ren $lsres
         # make the line more visible
         set actor [vis_pGetActor $ren $lsres]
         [$actor GetProperty] SetLineWidth 5
@@ -23874,7 +23874,7 @@ proc bcGUIchangeFrame { value} {
             $box GetPolyData -result $boxpd
             repos_setLabel -obj $boxpd -key opacity -value 0.25
             repos_setLabel -obj $boxpd -key color -value yellow
-            gdscGeneralView $ren $boxpd
+            generalView $ren $boxpd
     }
         }
       }
@@ -23951,7 +23951,7 @@ proc bcGUIcreateNewGroup {} {
     puts "ERROR: Could not create group $group."
     return -code error "ERROR: Could not create group $group."
   }
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -23967,7 +23967,7 @@ proc bcGUIdeleteGroup {} {
     puts "ERROR: Could not delete group $group."
     return -code error "ERROR: Could not delete group $group."
   }
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -25214,7 +25214,7 @@ proc bcGUImapToMeshCur {} {
   # update display
   bcGUIchangeFrame $frame
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -25509,7 +25509,7 @@ proc bcGUIrestoreGroup {} {
     return -code error "ERROR: Group $group does not exist."
   }
   group_restorePCMRISegs $group
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -26792,7 +26792,7 @@ proc createPREOPloadsaveLoadPCMRI {} {
    }
 
   bcGUIsetupCtrlWindow
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -26828,7 +26828,7 @@ proc createPREOPloadsaveLoadVol {} {
       set yesno [tk_messageBox -default yes  -message "Would you like to save this volume as a VTI file?"  -title "Save Volume as VTI"  -type yesno]
       switch -- $yesno {
        yes {
-        set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File Name for Image File In VTI Format"]
+        set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File gdscName for Image File In VTI Format"]
         if {$filename != ""} {
          if {[file extension $filename] == ""} {
           set filename "$filename.vti"
@@ -26890,7 +26890,7 @@ proc createPREOPloadsaveLoadVol {} {
 
   guiVOLRENupdate init 0
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -27002,7 +27002,7 @@ proc createPREOPloadsavePCgetParams {} {
   }
   set gBC(size_of_trim_box) -400
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -27166,7 +27166,7 @@ proc createPREOPmodelTrim {} {
 
   trimSolid
 
-  # rename the gdsc face ids so they range from 1 to n.
+  # rename the  face ids so they range from 1 to n.
   # this is required by phasta.
   foreach trimmedModel [list $gObjects(preop_trimmed1) $gObjects(preop_trimmed2)] {
     set valid 1
@@ -28428,7 +28428,7 @@ proc gui3DrunLS {} {
     repos_setLabel -obj $segPd -key color -value red
     repos_setLabel -obj $segPd -key opacity -value 0.75
 
-    gdscGeneralView $gRen3d $segPd
+    generalView $gRen3d $segPd
 }
 
 
@@ -29687,7 +29687,7 @@ proc guiFILT { operation} {
     set yesno [tk_messageBox -default yes  -message "Would you like to save this volume as a VTI file?"  -title "Save Volume as VTI"  -type yesno]
     switch -- $yesno {
        yes {
-          set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File Name for Image File In VTI Format"]
+          set filename [tk_getSaveFile -filetypes {{VTI *.vti} {"All Files" *.*}} -title "Choose File gdscName for Image File In VTI Format"]
     if {$filename != ""} {
       if {[file extension $filename] == ""} {
               set filename "$filename.vti"
@@ -30061,7 +30061,7 @@ proc guiGROUPSUpdateSource {} {
   # check that source name exists
   if {[group_exists $inGroup] == 0} {
     puts "ERROR:  Group doesn't exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   # insert the group items into the listbox
@@ -30071,7 +30071,7 @@ proc guiGROUPSUpdateSource {} {
     $lb insert end $id
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33422,7 +33422,7 @@ proc guiPPchooserShowAllPaths {} {
       }
       geom_openLinesFromPts $pts $obj
       repos_setLabel -obj $obj -key color -value $color
-      gdscGeneralView $gRen3d $obj
+      generalView $gRen3d $obj
       set myact [vis_pGetActor $gRen3d $obj]
       set myprop [$myact GetProperty]
       $myprop SetLineWidth $thick
@@ -33432,7 +33432,7 @@ proc guiPPchooserShowAllPaths {} {
 
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33477,7 +33477,7 @@ proc guiPPchooserShowAllSplines {} {
     path_MakePolyData $splinePts $splinePd
 
      repos_setLabel -obj $splinePd -key color -value $color
-     gdscGeneralView $gRen3d $splinePd
+     generalView $gRen3d $splinePd
      set myact [vis_pGetActor $gRen3d $splinePd]
      set myprop [$myact GetProperty]
      $myprop SetLineWidth $thick
@@ -33486,7 +33486,7 @@ proc guiPPchooserShowAllSplines {} {
 
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33587,7 +33587,7 @@ proc guiPPchooserShowPath {} {
       }
       geom_openLinesFromPts $pts $obj
       repos_setLabel -obj $obj -key color -value $color
-      gdscGeneralView $gRen3d $obj
+      generalView $gRen3d $obj
       set myact [vis_pGetActor $gRen3d $obj]
       set myprop [$myact GetProperty]
       $myprop SetLineWidth $thick
@@ -33614,12 +33614,12 @@ proc guiPPchooserShowPath {} {
       solid_box3d -dims [list $bdims $bdims $bdims] -ctr $pt -result $obj
       $obj GetPolyData -result $objpd
       repos_setLabel -obj $objpd -key color -value purple
-      gdscGeneralView $gRen3d $objpd
+      generalView $gRen3d $objpd
     }
   }
   set gRen3dFreeze 0
   vis_render $gRen3d
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -33659,7 +33659,7 @@ proc guiPPchooserShowSpline {} {
    set thick $gOptions(line_width_for_spline)
 
    repos_setLabel -obj $splinePd -key color -value $color
-   gdscGeneralView $gRen3d $splinePd
+   generalView $gRen3d $splinePd
    set myact [vis_pGetActor $gRen3d $splinePd]
    set myprop [$myact GetProperty]
    $myprop SetLineWidth $thick
@@ -35600,7 +35600,7 @@ proc guiPPsmoothUpdateBinaryDisplay {} {
      $box GetPolyData -result $boxpd
      repos_setLabel -obj $boxpd -key opacity -value 0.33
      repos_setLabel -obj $boxpd -key color -value yellow
-     gdscGeneralView $gRen3d $boxpd
+     generalView $gRen3d $boxpd
   } else {
      catch {repos_delete -obj $box}
      catch {repos_delete -obj $boxpd}
@@ -37162,13 +37162,13 @@ proc guiSVIMG_showMIP {} {
   if {$guiCVIMGvars(showMIP) >= 0} {
     catch {repos_delete -obj volume_image_MIP}
     img_createMIPfromVolume volume_image $guiCVIMGvars(showMIP) $guiCVIMGvars(mip_slice_range) volume_image_MIP
-    gdscView volume_image_MIP
-    wm deiconify .gdscRenWin
-    global gdscViewWindow
-    vis_renParallelProjection $gdscViewWindow(ren)
-    vis_renReset $gdscViewWindow(ren)
+    svView volume_image_MIP
+    wm deiconify .svRenWin
+    global viewWindow
+    vis_renParallelProjection $viewWindow(ren)
+    vis_renReset $viewWindow(ren)
   } else {
-    wm withdraw .gdscRenWin
+    wm withdraw .svRenWin
   }
 }
 
@@ -37391,7 +37391,7 @@ proc guiSV_group_change_selected_color {} {
       catch {repos_clearLabel -obj $member -key color}
       repos_setLabel -obj $member -key color -value $color
       group_set_color $grp $color
-       #gdscGeneralView $gRen3d $member
+       #generalView $gRen3d $member
       }
     set groupShow [lindex [$tv item .groups.all.$grp -values] 2]
     if {$groupShow == "X"} {
@@ -37549,7 +37549,7 @@ proc guiSV_group_display_selected_groups { showFlag} {
       } else {
         if { [lsearch -exact [repos_getLabelKeys -obj $member] color] < 0 } { repos_setLabel -obj $member -key color -value $grpcolor}
         if { [lsearch -exact [repos_getLabelKeys -obj $member] width] < 0 } { repos_setLabel -obj $member -key width -value $gOptions(line_width_for_groups)}
-        gdscGeneralView $gRen3d $member
+        generalView $gRen3d $member
       }
     }
 
@@ -38544,7 +38544,7 @@ proc guiSV_solid_change_selected_color {} {
       if {[repos_exists -obj $objName]} {
           catch {repos_clearLabel -obj $objName -key color}
           repos_setLabel -obj $objName -key color -value "$r $g $b"
-          gdscGeneralView $gRen3d $objName
+          generalView $gRen3d $objName
         }
     }
   }
@@ -38557,7 +38557,7 @@ proc guiSV_solid_change_selected_color {} {
       if {[repos_exists -obj $objName]} {
         catch {repos_clearLabel -obj $objName -key color}
         repos_setLabel -obj $objName -key color -value "$r $g $b"
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
       }
     }
   }
@@ -38586,7 +38586,7 @@ proc guiSV_solid_change_selected_opacity { opacity} {
       if {[repos_exists -obj $objName]} {
         catch {repos_clearLabel -obj $objName -key opacity}
         repos_setLabel -obj $objName -key opacity -value "$opacity"
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
       }
     }
   }
@@ -38599,7 +38599,7 @@ proc guiSV_solid_change_selected_opacity { opacity} {
       if {[repos_exists -obj $objName]} {
         catch {repos_clearLabel -obj $objName -key opacity}
         repos_setLabel -obj $objName -key opacity -value "$opacity"
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
       }
     }
   }
@@ -38626,7 +38626,7 @@ proc guiSV_solid_display_selected_groups { showFlag} {
          if {[vis_pExists $gRen3d $objName] != 1} {
               lsGUIloftGroup $grp
          } else {
-          gdscGeneralView $gRen3d $objName
+          generalView $gRen3d $objName
          }
          $tv item .groups.all.$grp -values [list $col1var "X" $col3var]
 
@@ -38662,7 +38662,7 @@ proc guiSV_solid_display_selected_groups { showFlag} {
           repos_setLabel -obj $objName -key opacity -value $gOptions(opacity_for_saved_surface)
         }
 
-        gdscGeneralView $gRen3d $objName
+        generalView $gRen3d $objName
         $tv item .groups.3d.$grp -values [list $col1var "X" $col3var]
 
        } else {
@@ -38695,7 +38695,7 @@ proc guiSV_solid_loft_selected {} {
        set objName /guiGROUPS/polydatasurface/$grp
        lsGUIloftGroup $grp
        if {$col2var == "X"} {
-         gdscGeneralView $gRen3d $objName
+         generalView $gRen3d $objName
        } else {
          vis_pRm $gRen3d $objName
        }
@@ -40118,7 +40118,7 @@ proc guiVISchangeStep { value} {
   global guiVISvarsPrev
 
   if {$guiVISvars(mesh_loaded) == 0} {
-    return GDSC_OK
+    return SV_OK
   }
 
   set theMesh $guiVISvars(mesh_vtk_obj)
@@ -40232,7 +40232,7 @@ proc guiVIScreateCutPlane { theMesh surfacePD} {
   # needed so that cutvol knows the plane location has changed!
   set guiVISvars(cutvol_planeLocChanged) 1
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -40501,7 +40501,7 @@ proc guiVISgetStepData { step} {
   #       when the gui is first created.
   global guiVISvars
   if {$guiVISvars(mesh_loaded) == 0} {
-    return GDSC_OK
+    return SV_OK
   }
 
   # this procedure either just returns the object
@@ -40882,7 +40882,7 @@ proc guiVISloadResults {} {
   set guiVISvarsPrev(currentStep) -1
   guiVISchangeStep 0
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -40900,7 +40900,7 @@ proc guiVISpickPointAcceptPoint {} {
     set guiVISvars(p3) $point
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -41132,7 +41132,7 @@ proc guiVISsetCutFromPC {} {
     }
   }
 
-  return GDSC_OK
+  return SV_OK
 }
 
 
@@ -41790,7 +41790,7 @@ proc guiVISupdateFromSolid {} {
     global guiVISvars
 
     #if {$guiVISvars(mesh_loaded) == 0} {
-    #   return GDSC_OK
+    #   return SV_OK
     #}
 
     set model $guiVISvars(solidModelName)
@@ -41830,7 +41830,7 @@ proc guiVISupdateFromSolid {} {
     catch {repos_delete -obj $pd}
     $model GetFacePolyData -face $face -result $pd
     set points {}
-    gdscGetPointsFromNthPoly 0 [repos_exportToVtk -src $pd] points
+    getPointsFromNthPoly 0 [repos_exportToVtk -src $pd] points
 
     set guiVISvars(p1) [lindex $points 0]
     set guiVISvars(p2) [lindex $points 1]
@@ -41845,7 +41845,7 @@ proc guiVISupdateFromSolid {} {
 
     catch {repos_delete -obj $pd}
 
-    return GDSC_OK
+    return SV_OK
 }
 
 
@@ -41879,7 +41879,7 @@ proc guiVISupdateLegend {} {
 
   # want to use legend for guiCS, so don't require mesh to be loaded
   #if {$guiVISvars(mesh_loaded) == 0} {
-  #  return GDSC_OK
+  #  return SV_OK
   #}
 
   if {$guiVISvars(legend_showLegend) == 0 &&  $guiVISvarsPrev(legend_showLegend) == 0} {
@@ -42690,7 +42690,7 @@ proc guiVISvolFlowSliceDisplaySphere {} {
     $solidsphere GetPolyData -result $spherepd  -max_edge_size $gOptions(facet_max_edge_size)
     repos_setLabel -obj $spherepd -key color -value blue
     repos_setLabel -obj $spherepd -key opacity -value 0.33
-    gdscGeneralView $gRen3d $spherepd
+    generalView $gRen3d $spherepd
     set guiVISvarsPrev(volFlowSlice_displaySphere) 1
     return
   }
@@ -44175,15 +44175,15 @@ proc lsGUIchangeFrame { value} {
     catch {crd_ren $ren}
     catch {vis_warpRm $ren}
     if {$loop == "lsGUImagWindow"} {
-      gdscGeneralView $ren /tmp/lsGUI/mag
+      generalView $ren /tmp/lsGUI/mag
     } else {
-      gdscGeneralView $ren /tmp/lsGUI/pot
+      generalView $ren /tmp/lsGUI/pot
     }
 
     # display threshold
     if {$showThr == "1"} {
       if {[repos_exists -obj $baseName/thr] == 1} {
-        gdscGeneralView $ren $baseName/thr
+        generalView $ren $baseName/thr
       }
     }
 
@@ -44191,7 +44191,7 @@ proc lsGUIchangeFrame { value} {
     if {$showSelectedThr == "1"} {
       if {[repos_exists -obj $baseName/thr/selected] == 1} {
         set throbj $baseName/thr/selected
-        gdscGeneralView $ren $throbj
+        generalView $ren $throbj
         # make the line more visible
         set actor [vis_pGetActor $ren $throbj]
         [$actor GetProperty] SetLineWidth 5
@@ -44223,7 +44223,7 @@ proc lsGUIchangeFrame { value} {
       itkutils_GenerateCircle -result $sphere -r $phyRadius -x $phyCntrX -y $phyCntrY -z 0
       repos_setLabel -obj $sphere -key color -value $gOptions(color_for_seeds)
       repos_setLabel -obj $sphere -key opacity -value $gOptions(opacity_for_seeds)
-      gdscGeneralView $ren $sphere
+      generalView $ren $sphere
     }
 
     # display level set result
@@ -44243,7 +44243,7 @@ proc lsGUIchangeFrame { value} {
         catch {repos_clearLabel -obj $pdname -key width}
         repos_setLabel -obj $pdname -key color -value $gOptions(color_for_new_segmentations)
         repos_setLabel -obj $pdname -key width -value $gOptions(line_width_for_new_segmentations)
-        gdscGeneralView $ren $pdname
+        generalView $ren $pdname
       }
 
     }
@@ -44291,7 +44291,7 @@ proc lsGUIchangeFrame { value} {
         repos_setLabel -obj $segPd -key color -value $localKeys(color)
         repos_setLabel -obj $segPd -key width -value $gOptions(line_width_for_saved_surface)
 
-        gdscGeneralView $ren $segPd
+        generalView $ren $segPd
         }
       }
     }
@@ -44373,7 +44373,7 @@ proc lsGUIdisplayPath {} {
     path_MakePolyData $gPathPoints($pathId,splinePts) $objName
     set act [vis_pRepos $ren $objName]
     [$act GetProperty] SetLineWidth 2
-    eval [$act GetProperty] SetColor [gdscGetUnixColor red]
+    eval [$act GetProperty] SetColor [svGetUnixColor red]
   }
 }
 
@@ -46572,7 +46572,7 @@ proc lsGUIupdate3dWindow {} {
     set seg /lsGUI/$pathId/$posId/ls/oriented
     if {[repos_exists -obj $seg] != 0} {
       catch {vis_pRm $gRen3d $seg}
-      gdscGeneralView $gRen3d $seg
+      generalView $gRen3d $seg
       # make the line more visible
       set actor [vis_pGetActor $gRen3d $seg]
       [$actor GetProperty] SetLineWidth 3
@@ -46585,7 +46585,7 @@ proc lsGUIupdate3dWindow {} {
     set seg /lsGUI/$pathId/$posId/thr/oriented
     if {[repos_exists -obj $seg] != 0} {
       catch {vis_pRm $gRen3d $seg}
-      gdscGeneralView $gRen3d $seg
+      generalView $gRen3d $seg
       # make the line more visible
       set actor [vis_pGetActor $gRen3d $seg]
       [$actor GetProperty] SetLineWidth 3
@@ -47396,7 +47396,7 @@ proc smasherGUIhideFace {} {
   } else {
     repos_clearLabel -obj $objectname -key visible
     repos_setLabel -obj $objectname -key visible -value true
-    gdscGeneralView $gRen3d $objectname
+    generalView $gRen3d $objectname
   }
 
   if {[repos_getLabel -obj $objectname -key visible] == "true"} {
@@ -47607,7 +47607,7 @@ proc smasherGUIsmashIt {} {
       puts "problem with: $smasherInputName GetFacePolyData -result /tmp/smasher/$faceId/$staticFaceId -face $faceId $maxedgecmd $maxedgesize"
       puts $errmsg
       set errorFaceName {}
-      catch {set errorFaceName [$smasherInputName GetFaceAttr -faceId $faceId -attr gdscName]}
+      catch {set errorFaceName [$smasherInputName GetFaceAttr -faceId $faceId -attr Name]}
       tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($smasherInputName GetFacePolyData -result /tmp/smasher/$faceId/$staticFaceId -face $faceId $maxedgecmd $maxedgesize)\n"
       #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
     }
@@ -47619,7 +47619,7 @@ proc smasherGUIsmashIt {} {
   global gRen3d
   global gRen3dFreeze
   set gRen3dFreeze 1
-  gdscGeneralView $gRen3d $mylist
+  generalView $gRen3d $mylist
   set gRen3dFreeze 0
 
   for {set i 0} {$i < [llength $smasherFaceIds]} {incr i} {
@@ -47830,7 +47830,7 @@ proc smasherGUIwriteModel {} {
   global smasherInputName
   if {[repos_exists -obj $smasherInputName] == 0} {
     puts "ERROR:  Object $smasherInputName does not exist."
-    return -code error GDSC_ERROR
+    return -code error SV_ERROR
   }
 
   set solid_kernel $gOptions(meshing_solid_kernel)
@@ -48329,7 +48329,7 @@ proc volGUIupdateIsosurface { context} {
       vis_lodSetOpacity $ren $contourpd 1.0
     } else {
       set actor [vis_pRepos $ren $contourpd]
-      eval [$actor GetProperty] SetColor [gdscGetUnixColor $gOptions(color_for_isosurface)]
+      eval [$actor GetProperty] SetColor [svGetUnixColor $gOptions(color_for_isosurface)]
       [$actor GetProperty] SetOpacity 0.33
       vis_render $ren
     }

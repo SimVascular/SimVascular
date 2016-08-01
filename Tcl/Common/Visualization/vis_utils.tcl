@@ -73,7 +73,7 @@ proc vis_utilsGetRGBfromColorString {color} {
     # note: unix color defaults to 0.5 0.5 0.5 if color not found
     # check to make sure color exists
     if {[info globals $color] == ""} {
-     set rgb [gdscGetUnixColor $color]
+     set rgb [svGetUnixColor $color]
     } else {
      global $color
      set rgb [eval set $color]

@@ -74,7 +74,7 @@ int cvMesh_LogoffCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] );
 
 
-// gdscMesh methods
+// Mesh methods
 // --------------------
 static int cvMesh_GetKernelMtd( ClientData clientData, Tcl_Interp *interp,
 				int argc, CONST84 char *argv[] );
@@ -145,14 +145,14 @@ static int cvMesh_AdaptMtd( ClientData clientData, Tcl_Interp *interp,
 // Helper functions
 // ----------------
 
-static void gdscMeshPrintMethods( Tcl_Interp *interp );
+static void MeshPrintMethods( Tcl_Interp *interp );
 
 
 // ----------
 // cvMesh_Init
 // ----------
 
-int Gdscmesh_Init( Tcl_Interp *interp )
+int Mesh_Init( Tcl_Interp *interp )
 {
   // Associate the mesh registrar with the Tcl interpreter so it can be
   // retrieved by the DLLs.
@@ -164,13 +164,13 @@ int Gdscmesh_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "mesh_newObject", cvMesh_NewObjectCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_listMethods", cvMesh_ListMethodsCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );  
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_setKernel", cvMesh_SetMeshKernelCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_logon", cvMesh_LogonCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "mesh_logoff", cvMesh_LogoffCmd,
-  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL ); 
+  		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   return TCL_OK;
 }
@@ -184,7 +184,7 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
   char *resultName;
-  char *meshFileName = NULL;  
+  char *meshFileName = NULL;
   char *solidFileName = NULL;
 
   char *usage;
@@ -192,8 +192,8 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 3;
   ARG_Entry arg_table[] = {
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-meshfile", STRING_Type, &meshFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } }, 
+    { "-meshfile", STRING_Type, &meshFileName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_sz, arg_table );
   if ( argc == 1 ) {
@@ -233,7 +233,7 @@ int cvMesh_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make a new Tcl command:
   Tcl_SetResult( interp, geom->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvMesh_ObjectCmd,
-		     (ClientData)geom, DeletegdscMesh );
+		     (ClientData)geom, DeleteMesh );
 
   return TCL_OK;
 }
@@ -251,7 +251,7 @@ int cvMesh_ListMethodsCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  gdscMeshPrintMethods( interp );
+  MeshPrintMethods( interp );
   return TCL_OK;
 }
 
@@ -296,7 +296,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		     int argc, CONST84 char *argv[] )
 {
   if ( argc == 1 ) {
-    gdscMeshPrintMethods( interp );
+    MeshPrintMethods( interp );
     return TCL_OK;
   }
 
@@ -367,7 +367,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_OK;
   }
 
-  // The method "Update" must be called before any of the other  
+  // The method "Update" must be called before any of the other
   // methods since it loads the mesh.  To avoid confusion, we
   // call this method directly prior to any other.
   cvMeshObject* geom = (cvMeshObject *)clientData;
@@ -376,7 +376,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
   }
- 
+
   if ( Tcl_StringMatch( argv[1], "Update" ) ) {
     // ignore this call now, it is done implicitly (see above)
     //if ( cvMesh_UpdateMtd( clientData, interp, argc, argv ) != TCL_OK ) {
@@ -393,7 +393,7 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
   } else if ( Tcl_StringMatch( argv[1], "WriteMetisAdjacency" ) ) {
     if ( cvMesh_WriteMetisAdjacencyMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
-    } 
+    }
   } else if ( Tcl_StringMatch( argv[1], "GetPolyData" ) ) {
     if ( cvMesh_GetPolyDataMtd( clientData, interp, argc, argv ) != TCL_OK ) {
       return TCL_ERROR;
@@ -433,35 +433,35 @@ int cvMesh_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   return TCL_OK;
-  
+
 }
 
 
 // -------------
-// DeletegdscMesh
+// DeleteMesh
 // -------------
 // This is the deletion call-back for cvMeshObject object commands.
 
-void DeletegdscMesh( ClientData clientData ) {
+void DeleteMesh( ClientData clientData ) {
     cvMeshObject *geom = (cvMeshObject *)clientData;
-  
+
     gRepository->UnRegister( geom->GetName() );
 }
 
 // -------------
-// fakeDeletegdscMesh
+// fakeDeleteMesh
 // -------------
 // This is the deletion call-back for cvMeshObject object commands.
 
-void fakeDeletegdscMesh( ClientData clientData ) {
+void fakeDeleteMesh( ClientData clientData ) {
   ;
 }
 
 // ------------
-// gdscMeshPrintMethods
+// MeshPrintMethods
 // ------------
 
-static void gdscMeshPrintMethods( Tcl_Interp *interp )
+static void MeshPrintMethods( Tcl_Interp *interp )
 {
 
   // Note:  I've commented out some of the currently
@@ -501,7 +501,7 @@ static void gdscMeshPrintMethods( Tcl_Interp *interp )
   tcl_printstr(interp, "Adapt\n");
   tcl_printstr(interp, "SetSolidKernel\n");
   tcl_printstr(interp, "GetModelFaceInfo\n");
-  
+
   return;
 }
 
@@ -549,7 +549,7 @@ static int cvMesh_PrintMtd( ClientData clientData, Tcl_Interp *interp,
   } else {
     return TCL_ERROR;
   }
- 
+
 }
 
 
@@ -1190,7 +1190,7 @@ int cvMesh_LoadMeshMtd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
-    { "-surfile", STRING_Type, &SurfFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfile", STRING_Type, &SurfFileName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if ( argc == 2 ) {
@@ -1271,7 +1271,7 @@ int cvMesh_WriteMeshMtd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &FileName, NULL, REQUIRED, 0, { 0 } },
-    { "-version", INT_Type, &smsver, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-version", INT_Type, &smsver, NULL, SV_OPTIONAL, 0, { 0 } },
 
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );

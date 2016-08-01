@@ -55,7 +55,7 @@
 #include "MeshSim.h"
 #include "SimDiscrete.h"
 
-// these should probably match those found in gdscMeshSimObject.h
+// these should probably match those found in MeshSimObject.h
 #define MY_MESHSIM_VERTEX_ORDERING 1
 #define MY_MESHSIM_EDGE_ORDERING 1
 #define MY_MESHSIM_FACE_ORDERING 1

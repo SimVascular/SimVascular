@@ -1394,7 +1394,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     TDF_Label nameLabel = tmpLabel.FindChild(1,Standard_False);
     if (nameLabel.IsNull())
     {
-      fprintf(stderr,"Name label doesn't exist, cannot retrive name\n");
+      fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
       return CV_ERROR;
     }
     Handle(TDataStd_ExtStringArray) NSTRING = new
@@ -1414,7 +1414,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     TDF_Label parentLabel = tmpLabel.FindChild(2,Standard_False);
     if (parentLabel.IsNull())
     {
-      fprintf(stderr,"Name label doesn't exist, cannot retrive name\n");
+      fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
       return CV_ERROR;
     }
     Handle(TDataStd_ExtStringArray) PSTRING = new

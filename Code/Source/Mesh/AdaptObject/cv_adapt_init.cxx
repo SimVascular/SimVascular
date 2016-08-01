@@ -119,9 +119,9 @@ static int cvAdapt_WriteAdaptedSolutionMtd( ClientData clientData, Tcl_Interp *i
 // Helper functions
 // ----------------
 
-static void gdscAdaptPrintMethods( Tcl_Interp *interp );
+static void AdaptPrintMethods( Tcl_Interp *interp );
 
-void DeletegdscAdapt( ClientData clientData );
+void DeleteAdapt( ClientData clientData );
 
 
 // ----------
@@ -243,7 +243,7 @@ int cvAdapt_NewObjectCmd( ClientData clientData, Tcl_Interp *interp,
   // Make a new Tcl command:
   Tcl_SetResult( interp, adaptor->GetName(), TCL_VOLATILE );
   Tcl_CreateCommand( interp, Tcl_GetStringResult(interp), cvAdapt_ObjectCmd,
-		     (ClientData)adaptor, DeletegdscAdapt );
+		     (ClientData)adaptor, DeleteAdapt );
 
   return TCL_OK;
 }
@@ -255,7 +255,7 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 		      int argc, CONST84 char *argv[] )
 {
   if ( argc == 1 ) {
-    gdscAdaptPrintMethods( interp );
+    AdaptPrintMethods( interp );
     return TCL_OK;
   }
 
@@ -357,21 +357,21 @@ int cvAdapt_ObjectCmd( ClientData clientData, Tcl_Interp *interp,
 }
 
 // -------------
-// DeletegdscAdapt
+// DeleteAdapt
 // -------------
 // This is the deletion call-back for cvAdaptObject object commands.
 
-void DeletegdscAdapt( ClientData clientData ) {
+void DeleteAdapt( ClientData clientData ) {
     cvAdaptObject *geom = (cvAdaptObject *)clientData;
 
     gRepository->UnRegister( geom->GetName() );
 }
 
 // ------------
-// gdscAdaptPrintMethods
+// AdaptPrintMethods
 // ------------
 
-static void gdscAdaptPrintMethods( Tcl_Interp *interp )
+static void AdaptPrintMethods( Tcl_Interp *interp )
 {
 
   tcl_printstr(interp, "CreateInternalMeshObject\n");
@@ -413,7 +413,7 @@ static int cvAdapt_CreateInternalMeshObjectMtd( ClientData clientData, Tcl_Inter
   int table_sz = 2;
   ARG_Entry arg_table[] = {
     { "-meshfile", STRING_Type, &meshFileName, NULL, REQUIRED, 0, { 0 } },
-    { "-solidfile", STRING_Type, &solidFileName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-solidfile", STRING_Type, &solidFileName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)
@@ -811,8 +811,8 @@ static int cvAdapt_SetMetricMtd( ClientData clientData, Tcl_Interp *interp,
   int table_sz = 3;
   ARG_Entry arg_table[] = {
     { "-input", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
-    { "-option", INT_Type, &option, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-strategy", INT_Type, &strategy, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-option", INT_Type, &option, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-strategy", INT_Type, &strategy, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 2, argv, table_sz, arg_table );
   if (argc != 2)

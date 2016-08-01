@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -59,54 +59,54 @@
 
 // Prototypes:
 
-int gdscPost_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
-int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 			int argc, CONST84 char *argv[] );
 
 
 // -------------
-// gdscPost_Init
+// Post_Init
 // -------------
 
-int Gdscpost_Init( Tcl_Interp *interp )
+int Post_Init( Tcl_Interp *interp )
 {
-  Tcl_CreateCommand( interp, "post_readVisMesh", gdscPost_readVisMeshCmd,
+  Tcl_CreateCommand( interp, "post_readVisMesh", Post_readVisMeshCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_readVisRes", gdscPost_readVisResCmd,
+  Tcl_CreateCommand( interp, "post_readVisRes", Post_readVisResCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcWallShear", gdscPost_calcWallShearCmd,
+  Tcl_CreateCommand( interp, "post_calcWallShear", Post_calcWallShearCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcWallShearMean", gdscPost_calcWallShearMeanCmd,
+  Tcl_CreateCommand( interp, "post_calcWallShearMean", Post_calcWallShearMeanCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcWallShearPulse", gdscPost_calcWallShearPulseCmd,
+  Tcl_CreateCommand( interp, "post_calcWallShearPulse", Post_calcWallShearPulseCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcOSI", gdscPost_calcOSICmd,
+  Tcl_CreateCommand( interp, "post_calcOSI", Post_calcOSICmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcAvgPointData", gdscPost_calcAvgPointDataCmd,
+  Tcl_CreateCommand( interp, "post_calcAvgPointData", Post_calcAvgPointDataCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
-  Tcl_CreateCommand( interp, "post_calcTKE", gdscPost_calcTKECmd,
+  Tcl_CreateCommand( interp, "post_calcTKE", Post_calcTKECmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   return TCL_OK;
 }
 
 // -----------------------
-// gdscPost_readVisMeshCmd
+// Post_readVisMeshCmd
 // -----------------------
 
-int gdscPost_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -169,10 +169,10 @@ int gdscPost_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
 
 
 // -----------------------
-// gdscPost_readVisResCmd
+// Post_readVisResCmd
 // -----------------------
 
-int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -191,13 +191,13 @@ int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   ARG_Entry arg_table[] = {
     { "-file", STRING_Type, &fileName, NULL, REQUIRED, 0, { 0 } },
     { "-grid", STRING_Type, &gridName, NULL, REQUIRED, 0, { 0 } },
-    { "-result", STRING_Type, &resultName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-stress", STRING_Type, &stressName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-transport", STRING_Type, &transportName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-traction", STRING_Type, &tractionName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-displacement", STRING_Type, &displacementName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-wss", STRING_Type, &wssName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-traction_nodes", LIST_Type, &tractionNodesList, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-result", STRING_Type, &resultName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-stress", STRING_Type, &stressName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-transport", STRING_Type, &transportName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-traction", STRING_Type, &tractionName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-displacement", STRING_Type, &displacementName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-wss", STRING_Type, &wssName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-traction_nodes", LIST_Type, &tractionNodesList, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -416,16 +416,16 @@ int gdscPost_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   delete myconverter;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 }
 
 
 // -------------------------
-// gdscPost_calcWallShearCmd
+// Post_calcWallShearCmd
 // -------------------------
 
-int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -437,8 +437,8 @@ int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 4;
   ARG_Entry arg_table[] = {
     { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, REQUIRED, 0, { 0 } },
-    { "-tensors", STRING_Type, &tensorsName, NULL, GDSC_OPTIONAL, 0, { 0 } },
-    { "-tractions", STRING_Type, &tractionsName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-tensors", STRING_Type, &tensorsName, NULL, SV_OPTIONAL, 0, { 0 } },
+    { "-tractions", STRING_Type, &tractionsName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -570,16 +570,16 @@ int gdscPost_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
   delete wallshear;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 }
 
 
 // -----------------------------
-// gdscPost_calcWallShearMeanCmd
+// Post_calcWallShearMeanCmd
 // -----------------------------
 
-int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -596,7 +596,7 @@ int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-shearPdList", LIST_Type, &shearPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -653,7 +653,7 @@ int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        return TCL_ERROR;
@@ -697,17 +697,17 @@ int gdscPost_calcWallShearMeanCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] shearPds;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
 
 
 // ------------------------------
-// gdscPost_calcWallShearPulseCmd
+// Post_calcWallShearPulseCmd
 // ------------------------------
 
-int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
 
@@ -725,7 +725,7 @@ int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-shearPdList", LIST_Type, &shearPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -782,7 +782,7 @@ int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        return TCL_ERROR;
@@ -826,17 +826,17 @@ int gdscPost_calcWallShearPulseCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] shearPds;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
 
 
 // -------------------
-// gdscPost_calcOSICmd
+// Post_calcOSICmd
 // -------------------
 
-int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -854,7 +854,7 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
     { "-meanPd", STRING_Type, &meanPdName, NULL, REQUIRED, 0, { 0 } },
     { "-pulsePd", STRING_Type, &pulsePdName, NULL, REQUIRED, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
   if ( argc == 1 ) {
@@ -871,7 +871,7 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 
   // Foreach shear obj, check that it is in the repository and of the
   // correct type (i.e. cvPolyData).
- 
+
   src1 = gRepository->GetObject( meanPdName );
   if ( src1 == NULL ) {
       Tcl_AppendResult( interp, "couldn't find object ", meanPdName,
@@ -908,7 +908,7 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        return TCL_ERROR;
@@ -948,17 +948,17 @@ int gdscPost_calcOSICmd( ClientData clientData, Tcl_Interp *interp,
   delete wallshear;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
 
 
 // ----------------------------
-// gdscPost_calcAvgPointDataCmd
+// Post_calcAvgPointDataCmd
 // ----------------------------
 
-int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -975,7 +975,7 @@ int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   int table_size = 3;
   ARG_Entry arg_table[] = {
     { "-inputPdList", LIST_Type, &inputPdList, NULL, REQUIRED, 0, { 0 } },
-    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, GDSC_OPTIONAL, 0, { 0 } },
+    { "-surfaceMesh", STRING_Type, &surfaceMeshName, NULL, SV_OPTIONAL, 0, { 0 } },
     { "-result", STRING_Type, &resultName, NULL, REQUIRED, 0, { 0 } },
   };
   usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
@@ -1033,7 +1033,7 @@ int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
 
      surfaceMesh = gRepository->GetObject( surfaceMeshName );
      type = surfaceMesh->GetType();
- 
+
      if ( type != POLY_DATA_T ) {
        Tcl_AppendResult( interp, surfaceMeshName, " not of type cvPolyData", (char *)NULL );
        delete [] inputPds;
@@ -1078,17 +1078,17 @@ int gdscPost_calcAvgPointDataCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] inputPds;
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }
 
 
 // -------------------
-// gdscPost_calcTKECmd
+// Post_calcTKECmd
 // -------------------
 
-int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
+int Post_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
 		  int argc, CONST84 char *argv[] )
 {
   char *usage;
@@ -1178,7 +1178,7 @@ int gdscPost_calcTKECmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
-  
+
   return TCL_OK;
 
 }

@@ -116,5 +116,5 @@ proc call_python_lofting {groupName kutype kvtype putype pvtype uDeg vDeg Du0 Du
   #/python/lofted/$basename GetPolyData -result /python/lofted/$basename/vtk
 
   #catch {vis_pRm $gRen3d /python/lofted/$basename/vtk}
-  #gdscGeneralView $gRen3d /python/lofted/$basename/vtk
+  #generalView $gRen3d /python/lofted/$basename/vtk
 }

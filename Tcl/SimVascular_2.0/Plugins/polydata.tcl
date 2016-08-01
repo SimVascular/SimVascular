@@ -90,7 +90,7 @@ proc PolyDataCombine {} {
     set two {-1}
     foreach faceid $faceIds {
       if {$gPolyDataFaceNames($faceid) == $name} {
-	puts "Face Id # $faceid"
+	puts "Face gdscId # $faceid"
 	puts "Name: $gPolyDataFaceNames($faceid)"
         if {$iter == 0} {
           set one $faceid

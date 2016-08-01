@@ -42,7 +42,7 @@
 #include "vtkIntegrateAttributes.h"
 #include "vtkIntegrateFlowThroughSurface.h"
 
-int gdscCalcU(double xx[3][5], double *d, double r, double s, double *u) {
+int CalcU(double xx[3][5], double *d, double r, double s, double *u) {
 
   double uval;
   int i;
@@ -75,7 +75,7 @@ int gdscCalcU(double xx[3][5], double *d, double r, double s, double *u) {
 }
     
 
-int gdscCalcJacDet(double xx[3][5], double r, double s, double *determinant) {
+int CalcJacDet(double xx[3][5], double r, double s, double *determinant) {
 
   /**************************************************************
    *  The code below was adapted from Finite Element Procedures *
@@ -145,7 +145,7 @@ int gdscCalcJacDet(double xx[3][5], double r, double s, double *determinant) {
 }
 
 
-int gdscIntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uvalues, double *q) {
+int IntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uvalues, double *q) {
 
   // we map from the more intuitive 3-d coordinates of the
   // the cell as defined in vtk to the arrays used in the code
@@ -181,7 +181,7 @@ int gdscIntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *
 
   // calculate a sample determinant, and rearrange points 
   // if det. is negative.
-  if (gdscCalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
+  if (CalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
       double swapd,swapxx[3];
       // swap point 1 -> 4
       swapxx[1] = xx[1][1] ; swapxx[2] = xx[2][1];   
@@ -205,11 +205,11 @@ int gdscIntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *
   qflow = 0.0;
   for (i = 1; i <= 2; i++) {
     for (j = 1; j <= 2; j++) {
-      if (gdscCalcU(xx,d,a[i],a[j],&u) == CV_ERROR) {
+      if (CalcU(xx,d,a[i],a[j],&u) == CV_ERROR) {
         fprintf(stderr,"ERROR: Problem calculating u.\n");
         return CV_ERROR;
       }
-      if (gdscCalcJacDet(xx,a[i],a[j],&det) == CV_ERROR) {
+      if (CalcJacDet(xx,a[i],a[j],&det) == CV_ERROR) {
         fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n",det);
         return CV_ERROR;
       }
@@ -319,7 +319,7 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
       }
 
       qflow = 0.0;    
-      if (gdscIntegrateSurfElem(crd, uvalues, &qflow) == CV_ERROR) {
+      if (IntegrateSurfElem(crd, uvalues, &qflow) == CV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *q = 0.0;
           return CV_ERROR;
@@ -760,7 +760,7 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
       }
 
       energyElem = 0.0;    
-      if (gdscIntegrateSurfElem(crd, uvalues, &energyElem) == CV_ERROR) {
+      if (IntegrateSurfElem(crd, uvalues, &energyElem) == CV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *energy = 0.0;
           return CV_ERROR;

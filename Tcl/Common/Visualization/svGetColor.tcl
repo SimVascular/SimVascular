@@ -790,10 +790,10 @@ set gColorList {
        {0 0 0 "black"}}
 
 # ----------------
-# gdscGetUnixColor
+# svGetUnixColor
 # ----------------
 
-proc gdscGetUnixColor {name} {
+proc svGetUnixColor {name} {
 
   # @author Nathan Wilson
   # @c Returns the RGB values given a UNIX color name

@@ -73,7 +73,7 @@ proc model_iditems {name id} {
 proc model_exists {name} {
     #@author Adam Updegrove
     #@c Check to see if model exists.
-    #@a name:  Name of model.
+    #@a name:  gdscName of model.
     #@r Boolean (0 or 1).
     global gModel
     set elems [array names gModel]
@@ -91,7 +91,7 @@ proc model_exists {name} {
 proc model_create {kernel name} {
     #@author Adam Updegrove
     #@c Create a model if it doesn't exist.
-    #@a name: Name of model to create.
+    #@a name: gdscName of model to create.
     #@r status (0 if model already existed, 1 if it was created).
     global gModel
     global gKernel
@@ -121,7 +121,7 @@ proc model_create {kernel name} {
 proc model_delete {kernel name} {
     #@author Adam Updegrove
     #@c Delete a model.
-    #@a name: Name of model to delete.
+    #@a name: gdscName of model to delete.
     #@r status (0 if model didn't exist, 1 if it was deleted).
     global gModel
     global gKernel
@@ -955,7 +955,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
       puts "problem with: $modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric"
       puts $errmsg
       set errorFaceName {}
-      catch {set errorFaceName [$modelname GetFaceAttr -faceId $id -attr gdscName]}
+      catch {set errorFaceName [$modelname GetFaceAttr -faceId $id -attr Name]}
       tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $id -max_edge_size $facet_metric)\n"
       #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
     }
@@ -994,7 +994,7 @@ proc guiSV_model_add_faces_to_tree {kernel modelname} {
 	 puts "problem with: $modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric"
 	 puts $errmsg
 	 set errorFaceName {}
-	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr gdscName]}
+	 catch {set errorFaceName [$modelname GetFaceAttr -faceId $dupid -attr Name]}
 	 tk_messageBox -title "Problem Getting Facets on Face ($errorFaceName)" -type ok -message " face name: ($errorFaceName)\n error: ($errmsg)\n cmd: ($modelname GetFacePolyData -result $facepd -face $dupid -max_edge_size $facet_metric)\n"
 	 #return -code error "ERROR: cannot extract face ($staticFaceId ($faceId)).  Try a smaller facet size?"
        }
@@ -1354,7 +1354,7 @@ proc guiSV_model_display_object {object} {
     repos_setLabel -obj /models/$object -key color -value $modelcolor}
   if { [lsearch -exact [repos_getLabelKeys -obj /models/$object] opacity] < 0 } {
     repos_setLabel -obj /models/$object -key opacity -value $opacity}
-  gdscGeneralView $gRen3d /models/$object
+  generalView $gRen3d /models/$object
 }
 
 proc guiSV_model_set_col_value {object col value} {
@@ -1432,7 +1432,7 @@ proc guiSV_model_change_selected_color {} {
           catch {repos_clearLabel -obj $modelpd -key color}
           repos_setLabel -obj $modelpd -key color -value $color
           model_set_color $model $color
-	  gdscGeneralView $gRen3d $modelpd
+	  generalView $gRen3d $modelpd
 	  if {$PrePickedProperty != ""} {
 	    $PrePickedProperty SetColor $r $g $b
 	    if { [lsearch -exact [repos_getLabelKeys -obj $modelpd] opacity] >= 0 } {
@@ -1465,7 +1465,7 @@ proc guiSV_model_change_selected_color {} {
 	if {[repos_exists -obj $facepd]} {
 	  catch {repos_clearLabel -obj $facepd -key color}
 	  repos_setLabel -obj $facepd -key color -value "$r $g $b"
-	  gdscGeneralView $gRen3d $facepd
+	  generalView $gRen3d $facepd
 	  if {$PrePickedProperty != ""} {
 	    $PrePickedProperty SetColor $r $g $b
 	    if { [lsearch -exact [repos_getLabelKeys -obj $facepd] opacity] >= 0 } {
@@ -1502,7 +1502,7 @@ proc guiSV_model_change_selected_opacity {opacity} {
 	if {[repos_exists -obj $modelpd]} {
 	  catch {repos_clearLabel -obj $modelpd -key opacity}
 	  repos_setLabel -obj $modelpd -key opacity -value "$opacity"
-	  gdscGeneralView $gRen3d $modelpd
+	  generalView $gRen3d $modelpd
 	  if {$PrePickedProperty != ""} {
 	    if { [lsearch -exact [repos_getLabelKeys -obj $modelpd] color] >= 0 } {
 	      set tmpColor [repos_getLabel -obj $modelpd -key color]
@@ -1542,7 +1542,7 @@ proc guiSV_model_change_selected_opacity {opacity} {
 	if {[repos_exists -obj $facepd]} {
 	  catch {repos_clearLabel -obj $facepd -key opacity}
 	  repos_setLabel -obj $facepd -key opacity -value "$opacity"
-	  gdscGeneralView $gRen3d $facepd
+	  generalView $gRen3d $facepd
 	  if {$PrePickedProperty != ""} {
 	    if { [lsearch -exact [repos_getLabelKeys -obj $facepd] color] >= 0 } {
 	      set tmpColor [repos_getLabel -obj $facepd -key color]
@@ -2480,7 +2480,7 @@ proc guiSV_model_trim_model {} {
 
   set trimmedModel1 $gObjects(preop_trimmed1)
   set trimmedModel2 $gObjects(preop_trimmed2)
-  # rename the gdsc face ids so they range from 1 to n.
+  # rename the  face ids so they range from 1 to n.
   # this is required by phasta.
   foreach trimmedModel [list $trimmedModel1 $trimmedModel2] {
     set valid 1
