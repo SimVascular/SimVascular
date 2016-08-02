@@ -1,5 +1,10 @@
 set(FSRCS mpi_stubs.f)
 set(CSRCS mpi_stubs_c.c)
 
-ADD_LIBRARY(lib_fortran_simvascular_dummympi ${SV_LIBRARY_TYPE} ${FSRCS})
-ADD_LIBRARY(lib_extra_simvascular_dummympi ${SV_LIBRARY_TYPE} ${CSRCS})
+if(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
+  ADD_LIBRARY(lib_fortran_simvascular_dummympi SHARED ${FSRCS})
+  ADD_LIBRARY(lib_extra_simvascular_dummympi SHARED ${CSRCS})
+else()
+  ADD_LIBRARY(lib_fortran_simvascular_dummympi STATIC ${FSRCS})
+  ADD_LIBRARY(lib_extra_simvascular_dummympi STATIC ${CSRCS})
+endif()

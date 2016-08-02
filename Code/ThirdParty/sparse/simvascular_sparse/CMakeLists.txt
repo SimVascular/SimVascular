@@ -8,7 +8,11 @@ endif()
 set(HDRS spConfig.h spDefs.h spMatrix.h)
 set(CSRCS spAllocate.c spBuild.c spFactor.c spOutput.c spSolve.c spUtils.c spFortran.c)
 
-add_library(${SPARSE_LIBRARY_NAME} ${SV_LIBRARY_TYPE} ${CSRCS})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${SPARSE_LIBRARY_NAME} SHARED ${CSRCS})
+else()
+  add_library(${SPARSE_LIBRARY_NAME} STATIC ${CSRCS})
+endif()
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${SPARSE_LIBRARY_NAME}
