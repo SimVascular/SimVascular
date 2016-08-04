@@ -456,6 +456,9 @@ endif
 
 ifeq ($(SV_USE_QT),1)
     GLOBAL_DEFINES += -DSV_USE_QT
+  ifeq ($(SV_USE_QT_GUI),1)
+    GLOBAL_DEFINES += -DSV_USE_QT_GUI
+  endif
 endif
 
 ifeq ($(SV_USE_ZLIB),1)
