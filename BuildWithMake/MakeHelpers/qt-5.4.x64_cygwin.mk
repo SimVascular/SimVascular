@@ -5,6 +5,7 @@ ifeq ($(CLUSTER), x64_cygwin)
     QT_BIN_LIBS = $(QT_TOP_DIR)/bin
     QT_MOC_PARSER=$(QT_TOP_DIR)/bin/moc.exe
     QT_UIC_CMD=$(QT_TOP_DIR)/bin/uic.exe
+    QT_RCC_CMD=$(QT_TOP_DIR)/bin/rcc.exe
     QMAKE=$(QT_TOP_DIR)/bin/qmake.exe
     QT_INCDIRS = \
       -I$(QT_TOP_DIR)/include \
