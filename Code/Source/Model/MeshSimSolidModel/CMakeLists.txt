@@ -28,15 +28,30 @@
  #
  #=========================================================================#
 
+set(lib ${SV_LIB_MESHSIM_SOLID_NAME})
 SET(CXXSRCS cvMeshSimSolidModel.cxx)
+SET(HDRS cvMeshSimSolidModel.h)
 
 if(MESHSIM_MESHSIMSOLID_USE_SHARED_LIBRARIES)
-    add_library(${SV_LIB_MESHSIM_SOLID_NAME} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
+    add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
 else()
-    add_library(${SV_LIB_MESHSIM_SOLID_NAME} ${CXXSRCS} cv_meshsimsolid_init.cxx)
+    add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx)
 endif()
 
-target_link_libraries(${SV_LIB_MESHSIM_SOLID_NAME}
+target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${MESHSIM_LIBRARIES}
 			${GLOBAL_LIBRARIES})
+
+if(SV_INSTALL_LIBS)
+	install(TARGETS ${lib}
+		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
+		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT PluginLibraries
+		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT PluginLibraries
+		)
+endif()
+if(SV_INSTALL_HEADERS)
+	install(FILES ${HDRS}
+		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
+		)
+endif()

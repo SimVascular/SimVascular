@@ -30,6 +30,7 @@
 
 set(lib ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
 SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
+SET(HDRS cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h)
 
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
     add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
