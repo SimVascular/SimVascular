@@ -31,6 +31,13 @@
 
 #include "SimVascular.h"
 
+#ifdef SV_USE_QT_GUI
+#include "QmitkRegisterClasses.h"
+#include "../QtCode/Applications/svMainWindow.h"
+#include "../QtCode/Modules/AppBase/svApplication.h"
+//#include "qttclnotifier.h"
+#endif
+
 #include "cvIOstream.h"
 #include <time.h>
 #include <stdlib.h>
@@ -86,6 +93,25 @@ errno_t cv_getenv_s(
 
 #include "SimVascular_Init.h"
 
+/*
+#ifdef SV_USE_QT
+typedef void Tcl_MainLoopProc(void);
+void SimVascularTcl_MainLoop(void) {
+    QApplication::exec();
+}
+#endif
+
+#ifdef SV_USE_QT
+int main_only_qt(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
+    return app.exec();
+}
+#endif
+*/
+
 // ----
 // main
 // ----
@@ -119,6 +145,10 @@ errno_t cv_getenv_s(
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
     gSimVascularBatchMode = 1;
   }
+
+#ifdef SV_USE_QT_GUI
+   svApplication svapp(argc, argv);
+#endif
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
@@ -306,6 +336,23 @@ RegCloseKey(hKey2);
   
 #endif
 
+#ifdef SV_USE_QT_GUI
+  // Register Qmitk-dependent global instances
+  QmitkRegisterClasses();
+  svMainWindow svwindow;
+  //svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
+  svwindow.showMaximized();
+  return svapp.exec();
+#endif
+ 
+/*
+#ifdef SV_USE_QT
+  MainWindow w;
+  w.show();
+  //return qapp.exec();
+#endif
+*/
+ 
 if (gSimVascularBatchMode == 0) {
   Tk_Main( argc, argv, Tcl_AppInit );
 } else {
@@ -414,7 +461,26 @@ int Tcl_AppInit( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
+/*
+#ifndef WIN32
+#ifdef SV_USE_QT
+  // instantiate "notifier" to combine Tcl and Qt events
+  QtTclNotify::QtTclNotifier::setup();
+#endif
+#endif
+
+#ifndef WIN32
+#ifdef SV_USE_QT
+  // run Qt's event loop
+  typedef void Tcl_MainLoopProc(void);
+  //Tcl_SetMainLoop([]() { QApplication::exec(); });
+  Tcl_SetMainLoop(SimVascularTcl_MainLoop);
+#endif
+#endif
+*/
+  
   return TCL_OK;
+
 }
 
 

@@ -43,6 +43,37 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS)
 
+CXXFLAGS +=            -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/ctk-0.1 \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/PythonQt \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/Core/include \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgets/include \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgetsExt/include \
+          -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/PlanarFigure/include \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/CppMicroServices/core/include \
+          -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/CppMicroServices/core/src/util \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/Core \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgets \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgetsExt \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/PlanarFigure \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/CppMicroServices/core \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/Utilities/mbilog \
+           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/Overlays \
+           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/CppMicroServices/core/src/service \
+           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/CppMicroServices/core/src/module \
+           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/Segmentation/Algorithms \
+           -I C:/mitk9/MITK-build/Modules/Overlays \
+           -I C:/mitk9/MITK-build/Modules/QtWidgets \
+           -I C:/mitk9/MITK-build/Modules/Segmentation \
+           -I C:/mitk9/ep/src/CTK/Libs/Visualization/VTK/Core \
+           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/tinyxml \
+           -I . \
+           -I ../QtCode/Modules/Common \
+           -I ../QtCode/Modules/PathPlanning \
+           -I ../QtCode/Modules/AppBase \
+           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/ContourModel/DataManagement \
+           -I C:/mitk9/MITK-build/Modules/ContourModel
+
 HDRS	= 
 
 CXXSRCS = main.cxx SimVascular_Init.cxx
@@ -191,10 +222,42 @@ ifeq ($(SV_STATIC_BUILD),1)
 
 endif
 
+LFLAGS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
+
 ifeq ($(SV_USE_QT_GUI),1)
-  ifneq ($(SV_USE_SHARED),1)
-    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
-  endif
+LFLAGS += $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/bin \
+           $(LIBPATH_COMPILER_FLAG)C:/mitk9/MITK-build/lib/Release \
+           $(LIBFLAG)MitkQtWidgets.lib \
+           $(LIBFLAG)MitkQtWidgetsExt.lib \
+           $(LIBFLAG)MitkCore.lib \
+           $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/lib \
+           $(LIBFLAG)CTKCore.lib $(LIBFLAG)CTKWidgets.lib $(LIBFLAG)PythonQt.lib \
+           $(LIBFLAG)CTKCommandLineModulesBackendLocalProcess.lib \
+           $(LIBFLAG)CTKCommandLineModulesCore.lib \
+           $(LIBFLAG)CTKCommandLineModulesFrontendQtGui.lib \
+           $(LIBFLAG)CTKCore.lib \
+           $(LIBFLAG)CTKDICOMCore.lib \
+           $(LIBFLAG)CTKDICOMWidgets.lib \
+           $(LIBFLAG)CTKPluginFramework.lib \
+           $(LIBFLAG)CTKScriptingPythonCore.lib \
+           $(LIBFLAG)CTKScriptingPythonWidgets.lib \
+           $(LIBFLAG)CTKWidgets.lib \
+           $(LIBFLAG)CTKXNATCore.lib \
+           $(LIBFLAG)mbilog.lib \
+           $(LIBFLAG)tinyxml.lib \
+           $(LIBFLAG)CppMicroServices.lib
+
+LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+#  ifneq ($(SV_USE_SHARED),1)
+#    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
+#  endif
 endif
 
 # need to explicitly add in globals for executable
