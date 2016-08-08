@@ -48,6 +48,7 @@ target_link_libraries(${lib}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
 			${MESHSIM_LIBRARIES}
+			${SV_LIB_MESH_NAME}
 			${SV_LIB_GLOBALS_NAME}
 			${SV_LIB_UTILS_NAME})
 

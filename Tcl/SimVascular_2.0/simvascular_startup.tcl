@@ -307,7 +307,6 @@ if {$tcl_platform(platform) == "unix"} {
                                    [list Meshsimdiscretesolid ${lib_prefix}simvascular_meshsim_discrete_solid${so_postfix}] \
                                    [list Parasolidsolid ${lib_prefix}simvascular_parasolid_solid${so_postfix}] \
                                    ]
-  }
   foreach lib $gSimVascularTclInitLicensedLibs {
     if {[lindex $lib 1] == ""} {
         continue
@@ -326,6 +325,7 @@ if {$tcl_platform(platform) == "unix"} {
       }
     }
   }
+}
 
 # ------------------
 # Show splash screen
