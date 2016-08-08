@@ -10,8 +10,15 @@ matrix:
 sudo: false
 language: cpp
 
+compiler: gcc
+
+install: 
+  - if ["$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+
 addons:
   apt:
+    sources:
+    - ubuntu-toolchain-r-test
     packages:
     - curl
     - cmake
@@ -22,12 +29,10 @@ addons:
     - tcllib
     - tklib
     - gfortran
-    - g++-4.8
     - gcc-4.8
+    - g++-4.8
     sources:
     - kubuntu-backports
-
-compiler: gcc
 
 git:
   submodules: false
