@@ -28,7 +28,11 @@ endif()
 
 
 set(FSRCS nspcg1.f nspcg2.f nspcg3.f nspcg4.f nspcg5.f)
-add_library(${NSPCG_LIBRARY_NAME} ${SV_LIBRARY_TYPE} ${FSRCS})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${NSPCG_LIBRARY_NAME} SHARED ${FSRCS})
+else()
+  add_library(${NSPCG_LIBRARY_NAME} STATIC ${FSRCS})
+endif()
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${NSPCG_LIBRARY_NAME}

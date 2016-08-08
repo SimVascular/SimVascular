@@ -21,7 +21,11 @@ SET(FSRCS ADDBCMUL.f
 		SPARMUL.f)
 
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${FSRCS})
+if(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${FSRCS})
+else()
+  add_library(${lib} STATIC ${FSRCS})
+endif()
 
 target_link_libraries(${lib} ${MPI_LIBRARY} ${MPI_Fortran_LIBRARIES})
 
