@@ -12,7 +12,11 @@ project(TETGEN)
 # In Linux/Unix, it will creates the libtet.a
 ###SIMVASCULAR_CHANGE
 set(lib ${SV_LIB_THIRDPARTY_TETGEN_NAME})
-add_library(${lib} ${SV_LIBRARY_TYPE} tetgen.cxx predicates.cxx)
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${lib} SHARED tetgen.cxx predicates.cxx)
+else()
+  add_library(${lib} STATIC tetgen.cxx predicates.cxx)
+endif()
 
 #Set properties on a target.
 #We use this here to set -DTETLIBRARY for when compiling the

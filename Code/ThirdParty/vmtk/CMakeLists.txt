@@ -76,7 +76,11 @@ SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h
 	vtkvmtkPolyDataCenterlineGroupsClipper.h
 	)
 
-add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${CXXSRCS})
+else()
+  add_library(${lib} STATIC ${CXXSRCS})
+endif()
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES}

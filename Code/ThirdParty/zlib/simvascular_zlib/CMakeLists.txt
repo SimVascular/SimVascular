@@ -17,7 +17,11 @@ IF(WIN32)
 ENDIF(WIN32)
 
 set(lib ${SV_LIB_THIRDPARTY_ZLIB_NAME})
-add_library(${lib} ${SV_LIBRARY_TYPE} ${SRCS})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${lib} SHARED ${SRCS})
+else()
+  add_library(${lib} STATIC ${SRCS})
+endif()
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
