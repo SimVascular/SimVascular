@@ -13,6 +13,8 @@ language: cpp
 addons:
   apt:
     packages:
+    - gcc-5
+    - g++-5
     - curl
     - cmake
     - tcl8.5
