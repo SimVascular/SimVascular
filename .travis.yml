@@ -12,13 +12,11 @@ language: cpp
 
 compiler: gcc
 
-install: 
-  - if ["$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+install:
+  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 
 addons:
   apt:
-    sources:
-    - ubuntu-toolchain-r-test
     packages:
     - curl
     - cmake
@@ -32,6 +30,7 @@ addons:
     - gcc-4.8
     - g++-4.8
     sources:
+    - ubuntu-toolchain-r-test
     - kubuntu-backports
 
 git:
