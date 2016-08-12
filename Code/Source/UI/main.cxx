@@ -35,6 +35,13 @@
 #include "QmitkRegisterClasses.h"
 #include "../QtCode/Applications/svMainWindow.h"
 #include "../QtCode/Modules/AppBase/svApplication.h"
+
+#include "svProjectPluginActivator.h"
+#include "../QtCode/Extensions/sv.image/svImagePluginActivator.h"
+#include "../QtCode/Extensions/sv.mitksegmentation/svMitkSegmentationPluginActivator.h"
+#include "../QtCode/Extensions/sv.segmentation/svSegmentationPluginActivator.h"
+#include "../QtCode/Extensions/sv.pathplanning/svPathPlanningPluginActivator.h"
+
 //#include "qttclnotifier.h"
 #endif
 
@@ -115,6 +122,13 @@ int main_only_qt(int argc, char *argv[])
 // ----
 // main
 // ----
+
+  Q_IMPORT_PLUGIN(svProjectPluginActivator)
+  Q_IMPORT_PLUGIN(svImagePluginActivator)
+  Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
+  Q_IMPORT_PLUGIN(svMitkSegmentationPluginActivator)
+  Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
+
 
  FILE *simvascularstdout;
  FILE *simvascularstderr;
@@ -337,6 +351,28 @@ RegCloseKey(hKey2);
 #endif
 
 #ifdef SV_USE_QT_GUI
+  Q_INIT_RESOURCE(sv);
+  Q_INIT_RESOURCE(appbase);
+  Q_INIT_RESOURCE(svgeneral);
+ 
+  /*
+  svProjectPluginActivator* pplugin = new svProjectPluginActivator();
+  pplugin->start();
+
+  svImagePluginActivator* pimage = new svImagePluginActivator();
+  pimage->start();
+
+  svMitkSegmentationPluginActivator* svmitkplugin = new svMitkSegmentationPluginActivator();
+  svmitkplugin->start();
+
+  svSegmentationPluginActivator* svsegplugin = new svSegmentationPluginActivator();
+  svsegplugin->start();
+  
+  svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
+  svpathplugin->start();
+  */
+  
+  //Q_INIT_RESOURCE(segmentation);
   // Register Qmitk-dependent global instances
   QmitkRegisterClasses();
   svMainWindow svwindow;

@@ -41,7 +41,7 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
-           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS)
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS)
 
 CXXFLAGS +=            -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk \
            -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/ctk-0.1 \
@@ -71,6 +71,7 @@ CXXFLAGS +=            -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/m
            -I ../QtCode/Modules/Common \
            -I ../QtCode/Modules/PathPlanning \
            -I ../QtCode/Modules/AppBase \
+           -I ../QtCode/Extensions/sv.general \
            -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/ContourModel/DataManagement \
            -I C:/mitk9/MITK-build/Modules/ContourModel
 
@@ -227,9 +228,17 @@ LFLAGS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
 ifeq ($(SV_USE_QT_GUI),1)
 LFLAGS += $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/bin \
            $(LIBPATH_COMPILER_FLAG)C:/mitk9/MITK-build/lib/Release \
+           $(LIBFLAG)MitkSceneSerialization.lib \
            $(LIBFLAG)MitkQtWidgets.lib \
            $(LIBFLAG)MitkQtWidgetsExt.lib \
            $(LIBFLAG)MitkCore.lib \
+           $(LIBFLAG)MitkMapperExt.lib \
+           $(LIBFLAG)MitkImageDenoising.lib \
+           $(LIBFLAG)MitkDataTypesExt.lib \
+           $(LIBFLAG)MitkSegmentationUI.lib \
+           $(LIBFLAG)MitkSegmentation.lib \
+           $(LIBFLAG)MitkSurfaceInterpolation.lib \
+           $(LIBFLAG)MitkAlgorithmsExt.lib \
            $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/lib \
            $(LIBFLAG)CTKCore.lib $(LIBFLAG)CTKWidgets.lib $(LIBFLAG)PythonQt.lib \
            $(LIBFLAG)CTKCommandLineModulesBackendLocalProcess.lib \
@@ -250,6 +259,13 @@ LFLAGS += $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/b
 LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_general$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_image$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
@@ -278,7 +294,7 @@ TARGET_EXE = $(TOP)/Bin/simvascular.exe
 
 shared: pre directories $(TARGET_EXE_FULL)
 
-static: pre directories $(TARGET_EXE_FULL)
+static: directories $(TARGET_EXE_FULL)
 
 directories:
 	-mkdir -p $(BUILD_DIR)

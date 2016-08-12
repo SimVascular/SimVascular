@@ -180,7 +180,7 @@ moc:
 	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(name)).cxx))
 
 rcc:
-	$(foreach name,$(RCFILES),$(shell $(QT_RCC_CMD) $(name) -o rcc_$(basename $(notdir $(name))).cxx))
+	$(foreach name,$(RCFILES),$(shell $(QT_RCC_CMD) $(name) --name $(basename $(notdir $(name))) -o rcc_$(basename $(notdir $(name))).cxx))
 
 ui:
 	$(foreach name,$(UIFILES),$(shell $(QT_UIC_CMD) $(name) -o ui_$(basename $(name)).h))
