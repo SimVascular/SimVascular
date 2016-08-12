@@ -72,6 +72,7 @@ CXXFLAGS +=            -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/m
            -I ../QtCode/Modules/PathPlanning \
            -I ../QtCode/Modules/AppBase \
            -I ../QtCode/Extensions/sv.general \
+           -I ../QtCode/Extensions/sv.test \
            -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/ContourModel/DataManagement \
            -I C:/mitk9/MITK-build/Modules/ContourModel
 
@@ -266,6 +267,7 @@ LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_test$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \

@@ -41,6 +41,7 @@
 #include "../QtCode/Extensions/sv.mitksegmentation/svMitkSegmentationPluginActivator.h"
 #include "../QtCode/Extensions/sv.segmentation/svSegmentationPluginActivator.h"
 #include "../QtCode/Extensions/sv.pathplanning/svPathPlanningPluginActivator.h"
+#include "../QtCode/Extensions/sv.test/svTestPluginActivator.h"
 
 //#include "qttclnotifier.h"
 #endif
@@ -119,6 +120,12 @@ int main_only_qt(int argc, char *argv[])
 #endif
 */
 
+void
+catchDebugger() {
+    static volatile int debuggerPresent =0;
+    while (!debuggerPresent ); // assign debuggerPresent=1
+}
+
 // ----
 // main
 // ----
@@ -128,7 +135,7 @@ int main_only_qt(int argc, char *argv[])
   Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
   Q_IMPORT_PLUGIN(svMitkSegmentationPluginActivator)
   Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
-
+  Q_IMPORT_PLUGIN(svTestPluginActivator)
 
  FILE *simvascularstdout;
  FILE *simvascularstderr;
@@ -351,11 +358,13 @@ RegCloseKey(hKey2);
 #endif
 
 #ifdef SV_USE_QT_GUI
+
+  catchDebugger();
+		
   Q_INIT_RESOURCE(sv);
   Q_INIT_RESOURCE(appbase);
   Q_INIT_RESOURCE(svgeneral);
- 
-  /*
+
   svProjectPluginActivator* pplugin = new svProjectPluginActivator();
   pplugin->start();
 
@@ -370,7 +379,9 @@ RegCloseKey(hKey2);
   
   svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
   svpathplugin->start();
-  */
+
+  svTestPluginActivator* svtestplugin = new svTestPluginActivator();
+  svtestplugin->start();
   
   //Q_INIT_RESOURCE(segmentation);
   // Register Qmitk-dependent global instances
