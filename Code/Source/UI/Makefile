@@ -41,40 +41,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
-           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS)
-
-CXXFLAGS +=            -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/ctk-0.1 \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/PythonQt \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/Core/include \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgets/include \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgetsExt/include \
-          -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/PlanarFigure/include \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/CppMicroServices/core/include \
-          -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/CppMicroServices/core/src/util \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/Core \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgets \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/QtWidgetsExt \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/PlanarFigure \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/CppMicroServices/core \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/mitk/Utilities/mbilog \
-           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/Overlays \
-           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/CppMicroServices/core/src/service \
-           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/CppMicroServices/core/src/module \
-           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/Segmentation/Algorithms \
-           -I C:/mitk9/MITK-build/Modules/Overlays \
-           -I C:/mitk9/MITK-build/Modules/QtWidgets \
-           -I C:/mitk9/MITK-build/Modules/Segmentation \
-           -I C:/mitk9/ep/src/CTK/Libs/Visualization/VTK/Core \
-           -I C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/include/tinyxml \
-           -I . \
-           -I ../QtCode/Modules/Common \
-           -I ../QtCode/Modules/PathPlanning \
-           -I ../QtCode/Modules/AppBase \
-           -I ../QtCode/Extensions/sv.general \
-           -I ../QtCode/Extensions/sv.test \
-           -I C:/cygwin64/SV16/src/mitk-2016.03/Modules/ContourModel/DataManagement \
-           -I C:/mitk9/MITK-build/Modules/ContourModel
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
+           $(MITK_INCDIRS) $(MITK_DEFS)
 
 HDRS	= 
 
@@ -227,36 +195,6 @@ endif
 LFLAGS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
 
 ifeq ($(SV_USE_QT_GUI),1)
-LFLAGS += $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/bin \
-           $(LIBPATH_COMPILER_FLAG)C:/mitk9/MITK-build/lib/Release \
-           $(LIBFLAG)MitkSceneSerialization.lib \
-           $(LIBFLAG)MitkQtWidgets.lib \
-           $(LIBFLAG)MitkQtWidgetsExt.lib \
-           $(LIBFLAG)MitkCore.lib \
-           $(LIBFLAG)MitkMapperExt.lib \
-           $(LIBFLAG)MitkImageDenoising.lib \
-           $(LIBFLAG)MitkDataTypesExt.lib \
-           $(LIBFLAG)MitkSegmentationUI.lib \
-           $(LIBFLAG)MitkSegmentation.lib \
-           $(LIBFLAG)MitkSurfaceInterpolation.lib \
-           $(LIBFLAG)MitkAlgorithmsExt.lib \
-           $(LIBPATH_COMPILER_FLAG)C:/cygwin64/SV16/bin/vs12.5/x64/mitk-2016.03/lib \
-           $(LIBFLAG)CTKCore.lib $(LIBFLAG)CTKWidgets.lib $(LIBFLAG)PythonQt.lib \
-           $(LIBFLAG)CTKCommandLineModulesBackendLocalProcess.lib \
-           $(LIBFLAG)CTKCommandLineModulesCore.lib \
-           $(LIBFLAG)CTKCommandLineModulesFrontendQtGui.lib \
-           $(LIBFLAG)CTKCore.lib \
-           $(LIBFLAG)CTKDICOMCore.lib \
-           $(LIBFLAG)CTKDICOMWidgets.lib \
-           $(LIBFLAG)CTKPluginFramework.lib \
-           $(LIBFLAG)CTKScriptingPythonCore.lib \
-           $(LIBFLAG)CTKScriptingPythonWidgets.lib \
-           $(LIBFLAG)CTKWidgets.lib \
-           $(LIBFLAG)CTKXNATCore.lib \
-           $(LIBFLAG)mbilog.lib \
-           $(LIBFLAG)tinyxml.lib \
-           $(LIBFLAG)CppMicroServices.lib
-
 LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
@@ -308,7 +246,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
         $(LFLAGS) \
-        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
+        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(MITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
         $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
         $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS) $(SV_MMG_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
