@@ -60,6 +60,7 @@ MITK_INCDIRS = \
            -I$(MITK_SRCDIR)/Modules/SegmentationUI/Qmitk \
            -I$(MITK_SRCDIR)/Modules/SurfaceInterpolation \
            -I$(MITK_BLDDIR)/ep/src/CTK/Libs/Core \
+           -I$(MITK_BLDDIR)/ep/src/CTK/Libs/Scripting/Python/Core/ \
            -I$(MITK_BLDDIR)/ep/src/CTK/Libs/Scripting/Python/Widgets \
            -I$(MITK_BLDDIR)/ep/src/CTK/Libs/Visualization/VTK/Core \
            -I$(MITK_BLDDIR)/ep/src/CTK/Libs/Widgets \
@@ -90,6 +91,8 @@ MITK_LIBS = \
            $(LIBFLAG)CTKPluginFramework$(LIBLINKEXT) \
            $(LIBFLAG)CTKScriptingPythonCore$(LIBLINKEXT) \
            $(LIBFLAG)CTKScriptingPythonWidgets$(LIBLINKEXT) \
+           $(LIBFLAG)CTKVisualizationVTKCorePythonQt$(LIBLINKEXT) \
+           $(LIBFLAG)CTKVisualizationVTKCore$(LIBLINKEXT) \
            $(LIBFLAG)CTKWidgets$(LIBLINKEXT) \
            $(LIBFLAG)CTKXNATCore$(LIBLINKEXT) \
            $(LIBFLAG)mbilog$(LIBLINKEXT) \
