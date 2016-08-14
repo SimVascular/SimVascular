@@ -778,7 +778,8 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/QtCode/Modules/AppBase \
                      -I$(TOP)/../Code/Source/QtCode/Modules/Common \
                      -I$(TOP)/../Code/Source/QtCode/Modules/PathPlanning \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/Segmentation
+                     -I$(TOP)/../Code/Source/QtCode/Modules/Segmentation \
+                     -I$(TOP)/../Code/Source/QtCode/Applications
 endif
 
 # Link flags, which also need to be dealt with conditionally depending

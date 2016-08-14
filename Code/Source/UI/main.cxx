@@ -32,16 +32,17 @@
 #include "SimVascular.h"
 
 #ifdef SV_USE_QT_GUI
+#include "SimVascularQtGui.h"
 #include "QmitkRegisterClasses.h"
-#include "../QtCode/Applications/svMainWindow.h"
-#include "../QtCode/Modules/AppBase/svApplication.h"
+#include "svMainWindow.h"
+#include "svApplication.h"
 
 #include "svProjectPluginActivator.h"
-#include "../QtCode/Extensions/sv.image/svImagePluginActivator.h"
-#include "../QtCode/Extensions/sv.mitksegmentation/svMitkSegmentationPluginActivator.h"
-#include "../QtCode/Extensions/sv.segmentation/svSegmentationPluginActivator.h"
-#include "../QtCode/Extensions/sv.pathplanning/svPathPlanningPluginActivator.h"
-#include "../QtCode/Extensions/sv.test/svTestPluginActivator.h"
+#include "svImagePluginActivator.h"
+#include "svMitkSegmentationPluginActivator.h"
+#include "svSegmentationPluginActivator.h"
+#include "svPathPlanningPluginActivator.h"
+#include "svTestPluginActivator.h"
 
 //#include "qttclnotifier.h"
 #endif
