@@ -3,6 +3,7 @@ Code/SV3
 Tcl/.buildpath
 Tcl/.project
 Code/FlowSolvers/.cproject
+*/CMakeLists.txt.user
 
 !Code/ThirdParty/vmtk/.project
 !Code/Source/ImageProcessing/.project

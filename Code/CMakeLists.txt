@@ -101,6 +101,14 @@ if(BUILD_SV3)
     SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
   endif()
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SimVascular_CXX11_FLAG}")
+  if(WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0501 -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN -DNOMINMAX")
+  endif()
+endif()
+
+# SUPPRESS_VC_DEPRECATED_WARNINGS
+if(MSVC)
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -170,7 +178,7 @@ STRING(REGEX REPLACE
 #-----------------------------------------------------------------------------
 # PYTHON
 if(BUILD_SV3)
-  set(SV_USE_PYTHON ON)
+  #set(SV_USE_PYTHON ON)
 endif()
 if(SV_USE_PYTHON)
 	simvascular_external(PYTHON SYSTEM_DEFAULT SHARED_LIB)
