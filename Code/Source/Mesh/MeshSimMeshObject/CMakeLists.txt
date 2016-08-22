@@ -30,6 +30,8 @@
 SET(lib ${SV_LIB_MESHSIM_MESH_NAME})
 SET(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
+SET(HDRS cvMeshSimMeshObject.h
+  cvMeshSimMeshSystem.h)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
     add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
@@ -46,6 +48,7 @@ target_link_libraries(${lib}
 			${PARASOLID_LIBRARIES}
 			${GLOBAL_LIBRARIES}
 			${MESHSIM_LIBRARIES}
+			${SV_LIB_MESH_NAME}
 			${SV_LIB_GLOBALS_NAME}
 			${SV_LIB_UTILS_NAME})
 

@@ -55,14 +55,14 @@ unset(SV_THREEDSVOLER_USE_SVLS)
 # Include Initial Options
 include(SimVascularOptions)
 #-----------------------------------------------------------------------------
-# Include Dependent Options
-include(SimVascularDependentOptions)
-#-----------------------------------------------------------------------------
 # Include SimVascular Externals
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularExternals)
 include(SimVascularInternals)
+#-----------------------------------------------------------------------------
+# Include Dependent Options
+include(SimVascularDependentOptions)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables

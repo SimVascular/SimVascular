@@ -33,7 +33,7 @@
 include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 
-set(HDRS cvMeshSimAdapt.h MeshSimInternal_phAdapt.h cvAdaptHelp.h)
+set(HDRS cvMeshSimAdapt.h cvAdaptHelp.h)
 SET(CXXSRCS cvMeshSimAdapt.cxx)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
@@ -46,7 +46,8 @@ target_link_libraries(${lib}
 			${GLOBAL_LIBRARIES}
 			${VTK_LIBRARIES}
 			${TCL_LIBRARY} ${TK_LIBRARY}
-			${INTELRUNTIME_LIBRARIES})
+			${INTELRUNTIME_LIBRARIES}
+			${SV_LIB_ADAPTOR_NAME})
 
 if(SV_USE_PARASOLID)
 	target_link_libraries(${lib} ${SV_LIB_PARASOLID_SOLID_NAME})

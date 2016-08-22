@@ -133,11 +133,6 @@ set gSimVascularTclInitLibs [list \
 				 [list Tetgenmesh ${lib_prefix}simvascular_tetgen_mesh${so_postfix}] \
 				 [list Adapt ${lib_prefix}simvascular_adaptor${so_postfix}] \
 				 [list Tetgenadapt ${lib_prefix}simvascular_tetgen_adaptor${so_postfix}] \
-				 [list Meshsimmesh {}] \
-				 [list Meshsimadapt {}] \
-				 [list Meshsimsolid {}] \
-				 [list Meshsimdiscretesolid {}] \
-				 [list Parasolidsolid {}] \
 				 ]
 
 if {$SV_USE_PYTHON == "ON"} {
@@ -296,6 +291,40 @@ if {$SV_RELEASE_BUILD != 0} {
      catch {source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
   }
 
+}
+if {$tcl_platform(platform) == "unix"} {
+  if {$tcl_platform(os) == "Darwin"} {
+    set lib_prefix "lib_"
+    set so_postfix ".dylib"
+  } else {
+    set lib_prefix "lib_"
+    set so_postfix ".so"
+  }
+  set gSimVascularTclInitLicensedLibs [list \
+                                   [list Meshsimmesh ${lib_prefix}simvascular_meshsim_mesh${so_postfix}] \
+                                   [list Meshsimadapt ${lib_prefix}simvascular_meshsim_adaptor${so_postfix}] \
+                                   [list Meshsimsolid ${lib_prefix}simvascular_meshsim_solid${so_postfix}] \
+                                   [list Meshsimdiscretesolid ${lib_prefix}simvascular_meshsim_discrete_solid${so_postfix}] \
+                                   [list Parasolidsolid ${lib_prefix}simvascular_parasolid_solid${so_postfix}] \
+                                   ]
+  foreach lib $gSimVascularTclInitLicensedLibs {
+    if {[lindex $lib 1] == ""} {
+        continue
+    }
+    # try dynamic lib first
+    if [catch {load [lindex $lib 1] [lindex $lib 0]} msg] {
+        # then static lib
+        if [catch {load {} [lindex $lib 0]} msg] {
+          if {$SV_RELEASE_BUILD == 0} {
+            puts "error ([lindex $lib 0]) $msg"
+          }
+        }
+    } else {
+      if {$SV_RELEASE_BUILD == 0} {
+        puts "loaded [lindex $lib 0] dynamically"
+      }
+    }
+  }
 }
 
 # ------------------

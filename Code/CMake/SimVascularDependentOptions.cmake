@@ -166,9 +166,9 @@ if(SV_USE_OpenCASCADE_SHARED)
   set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
-if(SV_USE_VTK_SHARED)
+if(SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED AND NOT SV_SUPERBUILD)
   if(LINUX)
-  	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+  	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
   endif()
 endif()
 
