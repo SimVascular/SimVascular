@@ -242,6 +242,12 @@ SV_USE_VMTK = 1
 SV_USE_GDCM = 1
 
 # -----------------------------------------------------
+# Compile with MITK
+# -----------------------------------------------------
+
+SV_USE_MITK = 1
+
+# -----------------------------------------------------
 # Compile with glib & gts
 # -----------------------------------------------------
 
@@ -299,8 +305,6 @@ ifeq ($(CLUSTER), x64_cygwin)
     OPEN_SOFTWARE_BUILDS_TOPLEVEL = C:/cygwin64/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/src
     LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV16/licensed
-    MITK_OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/mvtk/build
-    MITK_OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/mvtk/src
 endif
 
 ifeq ($(CLUSTER), x64_linux)
@@ -356,6 +360,7 @@ ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     endif
 
     SV_USE_ITK = 0
+    SV_USE_MITK = 0
     SV_USE_GDCM = 0
     SV_USE_VMTK = 0
     SV_USE_TETGEN = 0
@@ -456,6 +461,9 @@ endif
 
 ifeq ($(SV_USE_QT),1)
     GLOBAL_DEFINES += -DSV_USE_QT
+  ifeq ($(SV_USE_QT_GUI),1)
+    GLOBAL_DEFINES += -DSV_USE_QT_GUI
+  endif
 endif
 
 ifeq ($(SV_USE_ZLIB),1)
@@ -464,6 +472,10 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   GLOBAL_DEFINES += -DSV_USE_ITK
+endif
+
+ifeq ($(SV_USE_MITK),1)
+  GLOBAL_DEFINES += -DSV_USE_MITK
 endif
 
 ifeq ($(SV_USE_GDCM),1)
@@ -585,6 +597,15 @@ ifeq ($(SV_USE_ITK),1)
      SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK
   else
      LIBDIRS += ../Code/Source/Segmentation/ITK
+  endif
+endif
+
+# for now, combine mitk code qt gui code
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/QtCode
+  else
+     LIBDIRS += ../Code/Source/QtCode
   endif
 endif
 
@@ -744,6 +765,21 @@ LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 
 ifeq ($(SV_USE_ITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
+endif
+
+# for now, combine the mitk and qt gui include dirs
+ifeq ($(SV_USE_MITK),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/QtCode/Extensions/sv.general \
+                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.image \
+                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.mitksegmentation \
+                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.pathplanning \
+                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.segmentation \
+                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.test \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/AppBase \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/Common \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/PathPlanning \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/Segmentation \
+                     -I$(TOP)/../Code/Source/QtCode/Applications
 endif
 
 # Link flags, which also need to be dealt with conditionally depending
@@ -951,7 +987,7 @@ ifeq ($(SV_USE_GDCM),1)
 
 endif
 
-# --------------
+# ---------------
 # Insight ToolKit
 # ---------------
 
@@ -967,6 +1003,26 @@ ifeq ($(SV_USE_ITK),1)
 
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/itk-4.7.1.x64_macosx.mk
+  endif
+
+endif
+
+# ----
+# MITK
+# ----
+
+ifeq ($(SV_USE_MITK),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/mitk-2016.03.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/mitk-2016.03.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/mitk-2016.03.x64_macosx.mk
   endif
 
 endif

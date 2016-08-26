@@ -41,7 +41,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
-           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS)
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
+           $(MITK_INCDIRS) $(MITK_DEFS)
 
 HDRS	= 
 
@@ -191,10 +192,28 @@ ifeq ($(SV_STATIC_BUILD),1)
 
 endif
 
+LFLAGS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
+
 ifeq ($(SV_USE_QT_GUI),1)
-  ifneq ($(SV_USE_SHARED),1)
-    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
-  endif
+LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_general$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_image$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_test$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+#  ifneq ($(SV_USE_SHARED),1)
+#    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
+#  endif
 endif
 
 # need to explicitly add in globals for executable
@@ -215,7 +234,7 @@ TARGET_EXE = $(TOP)/Bin/simvascular.exe
 
 shared: pre directories $(TARGET_EXE_FULL)
 
-static: pre directories $(TARGET_EXE_FULL)
+static: directories $(TARGET_EXE_FULL)
 
 directories:
 	-mkdir -p $(BUILD_DIR)
@@ -227,7 +246,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
         $(LFLAGS) \
-        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
+        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(MITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
         $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
         $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS) $(SV_MMG_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done

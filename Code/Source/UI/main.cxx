@@ -31,6 +31,22 @@
 
 #include "SimVascular.h"
 
+#ifdef SV_USE_QT_GUI
+#include "SimVascularQtGui.h"
+#include "QmitkRegisterClasses.h"
+#include "svMainWindow.h"
+#include "svApplication.h"
+
+#include "svProjectPluginActivator.h"
+#include "svImagePluginActivator.h"
+#include "svMitkSegmentationPluginActivator.h"
+#include "svSegmentationPluginActivator.h"
+#include "svPathPlanningPluginActivator.h"
+#include "svTestPluginActivator.h"
+
+//#include "qttclnotifier.h"
+#endif
+
 #include "cvIOstream.h"
 #include <time.h>
 #include <stdlib.h>
@@ -86,9 +102,41 @@ errno_t cv_getenv_s(
 
 #include "SimVascular_Init.h"
 
+/*
+#ifdef SV_USE_QT
+typedef void Tcl_MainLoopProc(void);
+void SimVascularTcl_MainLoop(void) {
+    QApplication::exec();
+}
+#endif
+
+#ifdef SV_USE_QT
+int main_only_qt(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
+    return app.exec();
+}
+#endif
+*/
+
+void
+catchDebugger() {
+    static volatile int debuggerPresent =0;
+    while (!debuggerPresent ); // assign debuggerPresent=1
+}
+
 // ----
 // main
 // ----
+
+  Q_IMPORT_PLUGIN(svProjectPluginActivator)
+  Q_IMPORT_PLUGIN(svImagePluginActivator)
+  Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
+  Q_IMPORT_PLUGIN(svMitkSegmentationPluginActivator)
+  Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
+  Q_IMPORT_PLUGIN(svTestPluginActivator)
 
  FILE *simvascularstdout;
  FILE *simvascularstderr;
@@ -119,6 +167,10 @@ errno_t cv_getenv_s(
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
     gSimVascularBatchMode = 1;
   }
+
+#ifdef SV_USE_QT_GUI
+   svApplication svapp(argc, argv);
+#endif
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
@@ -306,6 +358,49 @@ RegCloseKey(hKey2);
   
 #endif
 
+#ifdef SV_USE_QT_GUI
+
+  catchDebugger();
+		
+  Q_INIT_RESOURCE(sv);
+  Q_INIT_RESOURCE(appbase);
+  Q_INIT_RESOURCE(svgeneral);
+
+  svProjectPluginActivator* pplugin = new svProjectPluginActivator();
+  pplugin->start();
+
+  svImagePluginActivator* pimage = new svImagePluginActivator();
+  pimage->start();
+
+  svMitkSegmentationPluginActivator* svmitkplugin = new svMitkSegmentationPluginActivator();
+  svmitkplugin->start();
+
+  svSegmentationPluginActivator* svsegplugin = new svSegmentationPluginActivator();
+  svsegplugin->start();
+  
+  svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
+  svpathplugin->start();
+
+  svTestPluginActivator* svtestplugin = new svTestPluginActivator();
+  svtestplugin->start();
+  
+  //Q_INIT_RESOURCE(segmentation);
+  // Register Qmitk-dependent global instances
+  QmitkRegisterClasses();
+  svMainWindow svwindow;
+  //svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
+  svwindow.showMaximized();
+  return svapp.exec();
+#endif
+ 
+/*
+#ifdef SV_USE_QT
+  MainWindow w;
+  w.show();
+  //return qapp.exec();
+#endif
+*/
+ 
 if (gSimVascularBatchMode == 0) {
   Tk_Main( argc, argv, Tcl_AppInit );
 } else {
@@ -414,7 +509,26 @@ int Tcl_AppInit( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
+/*
+#ifndef WIN32
+#ifdef SV_USE_QT
+  // instantiate "notifier" to combine Tcl and Qt events
+  QtTclNotify::QtTclNotifier::setup();
+#endif
+#endif
+
+#ifndef WIN32
+#ifdef SV_USE_QT
+  // run Qt's event loop
+  typedef void Tcl_MainLoopProc(void);
+  //Tcl_SetMainLoop([]() { QApplication::exec(); });
+  Tcl_SetMainLoop(SimVascularTcl_MainLoop);
+#endif
+#endif
+*/
+  
   return TCL_OK;
+
 }
 
 

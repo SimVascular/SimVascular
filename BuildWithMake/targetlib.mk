@@ -176,15 +176,26 @@ ifndef NO_DEPEND
 -include $(DEPS)
 endif
 
+moc:
+	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(name)).cxx))
+
+rcc:
+	$(foreach name,$(RCFILES),$(shell $(QT_RCC_CMD) $(name) --name $(basename $(notdir $(name))) -o rcc_$(basename $(notdir $(name))).cxx))
+
+ui:
+	$(foreach name,$(UIFILES),$(shell $(QT_UIC_CMD) $(name) -o ui_$(basename $(name)).h))
+
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
 	for fn in *_wrap.cxx*; do /bin/rm -f $$fn; done
 	for fn in moc_*.cxx; do /bin/rm -f $$fn; done
+	for fn in ui_*.h; do /bin/rm -f $$fn; done
+	for fn in rcc_*.cxx; do /bin/rm -f $$fn; done
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
-	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
-	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
-	if [ -n "$(TARGET_SHARED3)" ];then for fn in $(TOP)/Lib/$(TARGET_SHARED3:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
+	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
+	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
+	if [ -n "$(TARGET_SHARED3)" ];then for fn in $(TARGET_SHARED3:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 
 veryclean: clean
 	if [ -e obj ];then /bin/rm -f -r obj;fi
