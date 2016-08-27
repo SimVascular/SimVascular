@@ -14,7 +14,7 @@ MITK_SYS_LIBS  =
 # Poco requires the _WIN32_WINNT to be set!  Set the value to Windows 10
 # should probably use #define _WIN32_WINNT_WIN10                  0x0A00 // Windows 10
 
-MITK_DEFS = -D_WIN32_WINNT=0x0A00 -DUS_MODULE_NAME=svlib
+MITK_DEFS = -D_WIN32_WINNT=0x0A00 -DUS_MODULE_NAME=svlib -DSV_NO_PYTHONQT_ALL
 
 MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include \
