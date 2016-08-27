@@ -769,15 +769,19 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/QtCode/Extensions/sv.general \
-                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.image \
-                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.mitksegmentation \
-                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.pathplanning \
-                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.segmentation \
-                     -I$(TOP)/../Code/Source/QtCode/Extensions/sv.test \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/AppBase \
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/QtCode/Plugins/mitk.image \
+                     -I$(TOP)/../Code/Source/QtCode/Plugins/mitk.segmentation \
+                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.general \
+                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.modeling \
+                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.pathplanning \
+                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.segmentation \
+                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.test \
                      -I$(TOP)/../Code/Source/QtCode/Modules/Common \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/PathPlanning \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/Model \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/Path \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/ProjectManagement \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/QtAppBase \
+                     -I$(TOP)/../Code/Source/QtCode/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/QtCode/Modules/Segmentation \
                      -I$(TOP)/../Code/Source/QtCode/Applications
 endif

@@ -255,8 +255,7 @@ ifneq ($(SV_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls
         # we need to check and see if we should be still rebasing 
         # the tcltk and vtk dlls
-	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
-          $(TCLTK_DLLS) $(VTK_DLLS)
+	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT)
 endif
 endif
 	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi

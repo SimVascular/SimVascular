@@ -131,13 +131,15 @@ catchDebugger() {
 // main
 // ----
 
+#ifdef SV_USE_QT_GUI
   Q_IMPORT_PLUGIN(svProjectPluginActivator)
   Q_IMPORT_PLUGIN(svImagePluginActivator)
   Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
   Q_IMPORT_PLUGIN(svMitkSegmentationPluginActivator)
   Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
   Q_IMPORT_PLUGIN(svTestPluginActivator)
-
+#endif
+  
  FILE *simvascularstdout;
  FILE *simvascularstderr;
 
