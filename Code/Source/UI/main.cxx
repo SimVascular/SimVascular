@@ -32,16 +32,16 @@
 #include "SimVascular.h"
 
 #ifdef SV_USE_QT_GUI
-#include "SimVascularQtGui.h"
 #include "QmitkRegisterClasses.h"
 #include "svMainWindow.h"
 #include "svApplication.h"
 
+#include "MitkImagePluginActivator.h"
+#include "MitkSegmentationPluginActivator.h"
+#include "svModelingPluginActivator.h"
 #include "svProjectPluginActivator.h"
-#include "svImagePluginActivator.h"
-#include "svMitkSegmentationPluginActivator.h"
-#include "svSegmentationPluginActivator.h"
 #include "svPathPlanningPluginActivator.h"
+#include "svSegmentationPluginActivator.h"
 #include "svTestPluginActivator.h"
 
 //#include "qttclnotifier.h"
@@ -133,10 +133,11 @@ catchDebugger() {
 
 #ifdef SV_USE_QT_GUI
   Q_IMPORT_PLUGIN(svProjectPluginActivator)
-  Q_IMPORT_PLUGIN(svImagePluginActivator)
+  Q_IMPORT_PLUGIN(MitkImagePluginActivator)
   Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
-  Q_IMPORT_PLUGIN(svMitkSegmentationPluginActivator)
+  Q_IMPORT_PLUGIN(MitkSegmentationPluginActivator)
   Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
+  Q_IMPORT_PLUGIN(svModelingPluginActivator)
   Q_IMPORT_PLUGIN(svTestPluginActivator)
 #endif
   
@@ -362,26 +363,29 @@ RegCloseKey(hKey2);
 
 #ifdef SV_USE_QT_GUI
 
-  catchDebugger();
+  //catchDebugger();
 		
   Q_INIT_RESOURCE(sv);
-  Q_INIT_RESOURCE(appbase);
+  Q_INIT_RESOURCE(qtappbase);
   Q_INIT_RESOURCE(svgeneral);
 
-  svProjectPluginActivator* pplugin = new svProjectPluginActivator();
-  pplugin->start();
+  svProjectPluginActivator* projectplugin = new svProjectPluginActivator();
+  projectplugin->start();
 
-  svImagePluginActivator* pimage = new svImagePluginActivator();
-  pimage->start();
+  MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
+  mitkimageplugin->start();
 
-  svMitkSegmentationPluginActivator* svmitkplugin = new svMitkSegmentationPluginActivator();
-  svmitkplugin->start();
+  MitkSegmentationPluginActivator* mitksegmentationplugin = new MitkSegmentationPluginActivator();
+  mitksegmentationplugin->start();
 
-  svSegmentationPluginActivator* svsegplugin = new svSegmentationPluginActivator();
-  svsegplugin->start();
+  svSegmentationPluginActivator* svsegmentationplugin = new svSegmentationPluginActivator();
+  svsegmentationplugin->start();
   
   svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
   svpathplugin->start();
+  
+  svModelingPluginActivator* svmodelplugin = new svModelingPluginActivator();
+  svmodelplugin->start();
 
   svTestPluginActivator* svtestplugin = new svTestPluginActivator();
   svtestplugin->start();

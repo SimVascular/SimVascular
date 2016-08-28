@@ -199,12 +199,16 @@ LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_general$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_image$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_test$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
@@ -234,7 +238,7 @@ TARGET_EXE = $(TOP)/Bin/simvascular.exe
 
 shared: pre directories $(TARGET_EXE_FULL)
 
-static: directories $(TARGET_EXE_FULL)
+static: pre directories $(TARGET_EXE_FULL)
 
 directories:
 	-mkdir -p $(BUILD_DIR)
