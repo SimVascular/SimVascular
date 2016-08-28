@@ -70,8 +70,12 @@ ifeq ($(SV_USE_GLIB),1)
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MPI),1)
+  ifdef $(MPI_SO_PATH)
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
+  endif
+  ifdef $(MPIEXEC_PATH)
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
+  endif
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PARASOLID),1)
@@ -117,6 +121,9 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
 endif
+ifeq ($(SV_USE_MITK),1)
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u $(SV_MITK_SO_PATH)`+g\"" >> tclscript
+endif
 endif
 ifeq ($(CLUSTER),x64_linux)
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
@@ -148,6 +155,9 @@ ifeq ($(SV_USE_ITK),1)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_MITK),1)
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
@@ -194,6 +204,9 @@ ifeq ($(SV_USE_ITK),1)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_MITK),1)
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
