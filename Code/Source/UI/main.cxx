@@ -44,7 +44,7 @@
 #include "svSegmentationPluginActivator.h"
 #include "svTestPluginActivator.h"
 
-//#include "qttclnotifier.h"
+#include "qttclnotifier.h"
 #endif
 
 #include "cvIOstream.h"
@@ -102,7 +102,6 @@ errno_t cv_getenv_s(
 
 #include "SimVascular_Init.h"
 
-/*
 #ifdef SV_USE_QT
 typedef void Tcl_MainLoopProc(void);
 void SimVascularTcl_MainLoop(void) {
@@ -110,6 +109,7 @@ void SimVascularTcl_MainLoop(void) {
 }
 #endif
 
+/*
 #ifdef SV_USE_QT
 int main_only_qt(int argc, char *argv[])
 {
@@ -122,7 +122,7 @@ int main_only_qt(int argc, char *argv[])
 */
 
 void
-catchDebugger() {
+svCatchDebugger() {
     static volatile int debuggerPresent =0;
     while (!debuggerPresent ); // assign debuggerPresent=1
 }
@@ -143,9 +143,17 @@ catchDebugger() {
   
  FILE *simvascularstdout;
  FILE *simvascularstderr;
-
+ bool use_qt_tcl_interp;
+ 
  int main( int argc, char *argv[] )
  {
+   
+  // default to tcl gui
+  bool use_tcl_gui = true;
+  bool use_qt_gui  = false; 
+  bool catch_debugger = false;
+  use_qt_tcl_interp = false;
+ 
   ios::sync_with_stdio();
 
 #ifdef BUILD_WITH_STDOUT_STDERR_REDIRECT
@@ -165,15 +173,76 @@ catchDebugger() {
   }
 #endif
 
+  fprintf(stdout,"argc %i\n",argc);
+ fflush(stdout);  
+  
+  if (argc != 0) {
+    
+    // default to tcl gui
+    for (int iarg = 1; iarg < argc;iarg++) {
+      bool foundValid = false;
+      bool warnInvalid = false;
+      fprintf(stdout,"processing command line option: %s\n",argv[iarg]);
+      if((!strcmp("-h",argv[iarg]))    ||
+	 (!strcmp("-help",argv[iarg])) ||
+	 (!strcmp("--help",argv[iarg]))) {
+	fprintf(stdout,"simvascular command line options:\n");
+	fprintf(stdout,"  -h, --help      : print this info and exit\n");
+	fprintf(stdout,"  -tcl, --tcl-gui : use TclTk GUI (default)\n");
+	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI\n");
+	fprintf(stdout,"  -d,--debug      : use Qt GUI\n");
+        fprintf(stdout,"  -ng ,--no-gui   : use command line mode (SV_BATCH_MODE overrides)\n");
+	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
+	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
+	exit(0);
+      }
+      if((!strcmp("--warn",argv[iarg]))) {
+	warnInvalid = true;
+	foundValid = true;
+      }
+      if((!strcmp("-tcl",argv[iarg]))    ||
+	 (!strcmp("--tcl-gui",argv[iarg]))) {
+	use_tcl_gui = true;
+	use_qt_gui = false;
+	foundValid = true;
+      }
+      if((!strcmp("-qt",argv[iarg]))    ||
+	 (!strcmp("--qt-gui",argv[iarg]))) {
+	use_qt_gui = true;
+	use_tcl_gui = false;
+	foundValid = true;
+      }
+      if((!strcmp("-d",argv[iarg]))    ||
+	 (!strcmp("--debug",argv[iarg]))) {
+	catch_debugger = true;
+	foundValid = true;
+      }
+      if((!strcmp("-ng",argv[iarg]))    ||
+	 (!strcmp("--no-gui",argv[iarg]))) {
+	gSimVascularBatchMode = 1;
+	foundValid = true;
+      }
+      if((!strcmp("--qt-tcl-interp",argv[iarg]))) {
+	use_qt_tcl_interp = true;
+	gSimVascularBatchMode = 1;
+	foundValid = true;
+      }
+      if (!foundValid && warnInvalid) {
+	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
+      } 
+    }
+  }
+
+  // enter infinite loop for debugger
+  if (catch_debugger) {
+    svCatchDebugger();
+  }
+    
   char *envstr=getenv("SV_BATCH_MODE");
   if (envstr != NULL) {
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
     gSimVascularBatchMode = 1;
   }
-
-#ifdef SV_USE_QT_GUI
-   svApplication svapp(argc, argv);
-#endif
 
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
@@ -361,59 +430,63 @@ RegCloseKey(hKey2);
   
 #endif
 
+  if (use_tcl_gui) {
+    if (gSimVascularBatchMode == 0) {
+      Tk_Main( argc, argv, Tcl_AppInit );
+    } else {
+      Tcl_Main (argc, argv, Tcl_AppInit);
+    }
+  }
+  
 #ifdef SV_USE_QT_GUI
 
-  //catchDebugger();
-		
-  Q_INIT_RESOURCE(sv);
-  Q_INIT_RESOURCE(qtappbase);
-  Q_INIT_RESOURCE(svgeneral);
+  if(use_qt_gui) {
 
-  svProjectPluginActivator* projectplugin = new svProjectPluginActivator();
-  projectplugin->start();
+   svApplication svapp(argc, argv);
+    
+    Q_INIT_RESOURCE(sv);
+    Q_INIT_RESOURCE(qtappbase);
+    Q_INIT_RESOURCE(svgeneral);
 
-  MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
-  mitkimageplugin->start();
+    svProjectPluginActivator* projectplugin = new svProjectPluginActivator();
+    projectplugin->start();
 
-  MitkSegmentationPluginActivator* mitksegmentationplugin = new MitkSegmentationPluginActivator();
-  mitksegmentationplugin->start();
+    MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
+    mitkimageplugin->start();
 
-  svSegmentationPluginActivator* svsegmentationplugin = new svSegmentationPluginActivator();
-  svsegmentationplugin->start();
+    MitkSegmentationPluginActivator* mitksegmentationplugin = new MitkSegmentationPluginActivator();
+    mitksegmentationplugin->start();
+
+    svSegmentationPluginActivator* svsegmentationplugin = new svSegmentationPluginActivator();
+    svsegmentationplugin->start();
   
-  svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
-  svpathplugin->start();
+    svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
+    svpathplugin->start();
   
-  svModelingPluginActivator* svmodelplugin = new svModelingPluginActivator();
-  svmodelplugin->start();
+    svModelingPluginActivator* svmodelplugin = new svModelingPluginActivator();
+    svmodelplugin->start();
 
-  svTestPluginActivator* svtestplugin = new svTestPluginActivator();
-  svtestplugin->start();
+    svTestPluginActivator* svtestplugin = new svTestPluginActivator();
+    svtestplugin->start();
   
-  //Q_INIT_RESOURCE(segmentation);
-  // Register Qmitk-dependent global instances
-  QmitkRegisterClasses();
-  svMainWindow svwindow;
-  //svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
-  svwindow.showMaximized();
-  return svapp.exec();
+    //Q_INIT_RESOURCE(segmentation);
+    // Register Qmitk-dependent global instances
+    QmitkRegisterClasses();
+    svMainWindow svwindow;
+    svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
+    svwindow.showMaximized();
+
+    if (use_qt_tcl_interp) {
+      Tcl_Main (argc, argv, Tcl_AppInit);
+    } else { 
+      return svapp.exec();
+    }
+    
+  }
+  
 #endif
  
-/*
-#ifdef SV_USE_QT
-  MainWindow w;
-  w.show();
-  //return qapp.exec();
-#endif
-*/
- 
-if (gSimVascularBatchMode == 0) {
-  Tk_Main( argc, argv, Tcl_AppInit );
-} else {
-  Tcl_Main (argc, argv, Tcl_AppInit);
-}
-
-return 0;
+  return 0;
 }
 
 
@@ -515,24 +588,22 @@ int Tcl_AppInit( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-/*
-#ifndef WIN32
-#ifdef SV_USE_QT
-  // instantiate "notifier" to combine Tcl and Qt events
-  QtTclNotify::QtTclNotifier::setup();
-#endif
-#endif
+  if (use_qt_tcl_interp) {
+    #ifndef WIN32
+    #ifdef SV_USE_QT
+      // instantiate "notifier" to combine Tcl and Qt events
+      QtTclNotify::QtTclNotifier::setup();
+    #endif
+    #endif
 
-#ifndef WIN32
-#ifdef SV_USE_QT
-  // run Qt's event loop
-  typedef void Tcl_MainLoopProc(void);
-  //Tcl_SetMainLoop([]() { QApplication::exec(); });
-  Tcl_SetMainLoop(SimVascularTcl_MainLoop);
-#endif
-#endif
-*/
-  
+    #ifndef WIN32
+    #ifdef SV_USE_QT
+      // run Qt's event loop
+      Tcl_SetMainLoop(SimVascularTcl_MainLoop);
+    #endif
+    #endif
+  }
+ 
   return TCL_OK;
 
 }
