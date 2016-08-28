@@ -94,6 +94,8 @@ mark_as_superbuild(SV_USE_MESHSIM)
 #-----------------------------------------------------------------------------
 option(SV_USE_THREEDSOLVER "Option to build flowsolver modules (requires Fortran)" OFF)
 mark_as_superbuild(SV_USE_THREEDSOLVER)
+option(SV_USE_THREEDSOLVER_SHARED_LIBRARIES "Option to build flowsolver libs as shared" OFF)
+mark_as_superbuild(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
 
 #-----------------------------------------------------------------------------
 # Remaining optional dependencies
@@ -106,3 +108,8 @@ mark_as_superbuild(SV_USE_INTELRUNTIME)
 # Enable Testing
 option(BUILD_TESTING "Build ${PROJECT_NAME} testing" OFF)
 mark_as_superbuild(VARS BUILD_TESTING)
+
+#-----------------------------------------------------------------------------
+# Thirdparty shared libs
+option(SV_USE_THIRDPARTY_SHARED_LIBRARIES "Option to build the thirdparty libs as shared" OFF)
+mark_as_superbuild(SV_USE_THIRDPARTY_SHARED_LIBRARIES)

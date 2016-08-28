@@ -12,7 +12,11 @@ set(CSRCS coarsen.c fm.c initpart.c match.c ccgraph.c memory.c
        mrefine2.c minitpart2.c mbalance2.c mfm2.c
        kvmetis.c kwayvolrefine.c kwayvolfm.c subdomains.c)
 
-add_library(${METIS_LIBRARY_NAME} ${SV_LIBRARY_TYPE} ${CSRCS})
+if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+  add_library(${METIS_LIBRARY_NAME} SHARED ${CSRCS})
+else()
+  add_library(${METIS_LIBRARY_NAME} STATIC ${CSRCS})
+endif()
 
 if(SV_INSTALL_LIBS)
      install(TARGETS ${METIS_LIBRARY_NAME}

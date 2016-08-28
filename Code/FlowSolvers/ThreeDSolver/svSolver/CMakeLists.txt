@@ -28,6 +28,12 @@
  #
  #=========================================================================#
 
+if(SV_USE_THREEDSOLVER_SHARED_LIBRARIES)
+  set(SV_THREEDSOLVER_LIBRARY_TYPE SHARED)
+else()
+  set(SV_THREEDSOLVER_LIBRARY_TYPE STATIC)
+endif()
+
 if(MSVC)
   string(REGEX REPLACE "STACK:10000000,10000000" "STACK:512000000,512000000" CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS}")
 endif()
@@ -99,7 +105,7 @@ set(lib_flowsolver ${SV_LIB_THREEDSOLVER_FORTRAN_NAME})
 # Include files for the USE_VTK VERSION
 if (SV_THREEDSOLVER_USE_VTK)
   SET(CXXSRCS ${CXXSRCS} use_vtk.cxx)
-  ADD_LIBRARY(${lib_vtk} ${SV_LIBRARY_TYPE} use_vtk.cxx)
+  ADD_LIBRARY(${lib_vtk} ${SV_THREEDSOLVER_LIBRARY_TYPE} use_vtk.cxx)
   target_link_libraries(${lib_vtk}
 	  ${VTK_LIBRARIES})
 endif()
@@ -107,15 +113,15 @@ endif()
 if(SV_THREEDSOLVER_USE_LESLIB)
   include_directories(${LESLIB_INCLUDE_DIR})
 else()# dummy leslib
-add_library(${lib_leslib} ${SV_LIBRARY_TYPE} leslib_dummy_prototypes.c)
+  add_library(${lib_leslib} ${SV_THREEDSOLVER_LIBRARY_TYPE} leslib_dummy_prototypes.c)
   set(LESLIB_LIBRARY ${lib_leslib})
 endif()
-add_library(${lib_restart} ${SV_LIBRARY_TYPE} ${CSRCS})
+add_library(${lib_restart} ${SV_THREEDSOLVER_LIBRARY_TYPE} ${CSRCS})
 target_link_libraries(${lib_restart} ${SV_LIB_SOLVERIO_NAME}
 	${lib_leslib}
 	${SV_MPI_EXTRA_LIBRARY} ${SV_MPI_Fortran_LIBRARIES})
 
-ADD_LIBRARY(${lib_flowsolver} ${SV_LIBRARY_TYPE} ${FSRCS})
+      ADD_LIBRARY(${lib_flowsolver} ${SV_THREEDSOLVER_LIBRARY_TYPE} ${FSRCS})
 #SET_TARGET_PROPERTIES(${lib_flowsolver} PROPERTIES COMPILE_FLAGS "-extend_source 132")
 TARGET_LINK_LIBRARIES(${lib_flowsolver} ${SV_MPI_EXTRA_LIBRARY}
 	${SV_MPI_Fortran_LIBRARIES}
