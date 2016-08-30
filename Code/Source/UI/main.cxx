@@ -139,6 +139,21 @@ svCatchDebugger() {
   Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
   Q_IMPORT_PLUGIN(svModelingPluginActivator)
   Q_IMPORT_PLUGIN(svTestPluginActivator)
+
+#include <usModuleImport.h>
+US_INITIALIZE_STATIC_MODULE(svcommon)
+  // problems with model!
+//US_INITIALIZE_STATIC_MODULE(svmodel)
+US_INITIALIZE_STATIC_MODULE(svpath)
+US_INITIALIZE_STATIC_MODULE(svprojectmanagement)
+US_INITIALIZE_STATIC_MODULE(svqtappbase)
+US_INITIALIZE_STATIC_MODULE(svqtwidgets)
+US_INITIALIZE_STATIC_MODULE(svsegmentation)
+US_INITIALIZE_STATIC_MODULE(svlib)
+
+  //US_INITIALIZE_STATIC_MODULE(svcommon)
+  // #US_INITIALIZE_SIMPORT_STATIC_MODULE_RESOURCES(svlib)
+
 #endif
   
  FILE *simvascularstdout;
@@ -441,9 +456,11 @@ RegCloseKey(hKey2);
 #ifdef SV_USE_QT_GUI
 
   if(use_qt_gui) {
-
+   
    svApplication svapp(argc, argv);
-    
+
+   // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
+ 
     Q_INIT_RESOURCE(sv);
     Q_INIT_RESOURCE(qtappbase);
     Q_INIT_RESOURCE(svgeneral);

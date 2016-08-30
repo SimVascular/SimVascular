@@ -199,14 +199,12 @@ LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_general$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_image$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_plugin_test$(LIBLINKEXT) \
@@ -215,6 +213,11 @@ LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+
+# problems with model!
+#LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+#          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT)
+
 #  ifneq ($(SV_USE_SHARED),1)
 #    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
 #  endif
@@ -233,12 +236,29 @@ DEPS	= $(SRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
+ifeq ($(SV_STATIC_BUILD),1)
+   OBJS += $(BUILD_DIR)/sv-cpp-resources.obj
+endif
+
 TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/simvascular.exe
 
 shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
+
+$(BUILD_DIR)/sv-cpp-resources.obj:
+	-rm -Rf ./static_cpp_resources
+	-mkdir -p ./static_cpp_resources
+	-cp -Rf ../QtCode/Modules/Path/resources ./static_cpp_resources/Path
+	-cp -Rf ../QtCode/Modules/QtAppBase/resources ./static_cpp_resources/QtAppBase
+	-cp -Rf ../QtCode/Modules/Segmentation/resources ./static_cpp_resources/Segmentation
+	-cd ./static_cpp_resources;zip -r res_0.zip Path/ QtAppBase/ Segmentation
+	-echo "#define US_RESOURCE      200" >> ./static_cpp_resources/sv-cpp-resources.rc
+	-echo "#define IDR_US_RESOURCE  101" >> ./static_cpp_resources/sv-cpp-resources.rc
+	-echo "IDR_US_RESOURCE US_RESOURCE res_0.zip" >> ./static_cpp_resources/sv-cpp-resources.rc
+	-cd ./static_cpp_resources;rc /fo sv-cpp-resources.res sv-cpp-resources.rc
+	-cd ./static_cpp_resources;cvtres /MACHINE:X64 /OUT:../$(BUILD_DIR)/sv-cpp-resources.obj sv-cpp-resources.res
 
 directories:
 	-mkdir -p $(BUILD_DIR)
@@ -280,6 +300,7 @@ clean:
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 
 veryclean: clean
+	if [ -e static_cpp_resources ];then /bin/rm -f -r static_cpp_resources;fi
 	if [ -e obj ];then /bin/rm -f -r obj;fi
 
 

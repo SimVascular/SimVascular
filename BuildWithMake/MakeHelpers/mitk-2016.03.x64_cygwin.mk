@@ -4,6 +4,8 @@
 
 MITK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/mitk-2016.03
 
+MITK_US_RESOURCE_COMPILER = $(MITK_BINDIR)/bin/RelWithDebInfo/usResourceCompiler.exe
+
 MITK_LIBDIRS = $(MITK_BINDIR)/lib
 MITK_BINDIRS = $(MITK_BINDIR)/bin
 SV_MITK_SO_PATH = $(MITK_BINDIRS)
@@ -14,7 +16,7 @@ MITK_SYS_LIBS  =
 # Poco requires the _WIN32_WINNT to be set!  Set the value to Windows 10
 # should probably use #define _WIN32_WINNT_WIN10                  0x0A00 // Windows 10
 
-MITK_DEFS = -D_WIN32_WINNT=0x0A00 -DUS_MODULE_NAME=svlib -DSV_NO_PYTHONQT_ALL
+MITK_DEFS = -D_WIN32_WINNT=0x0A00 -DSV_NO_PYTHONQT_ALL
 
 MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include \
