@@ -235,6 +235,17 @@ DEPS	= $(SRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
+OBJS    += \
+../QtCode/Modules/Common/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
+../QtCode/Modules/Model/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
+../QtCode/Modules/Path/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
+../QtCode/Modules/ProjectManagement/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
+../QtCode/Modules/QtAppBase/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
+../QtCode/Modules/QtWidgets/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
+../QtCode/Modules/Segmentation/obj/x64_cygwin/vs12.5-ifort/us_init.obj
+
+OBJS += $(BUILD_DIR)/sv-cpp-resources.obj
+
 ifeq ($(SV_STATIC_BUILD),1)
    OBJS += $(BUILD_DIR)/sv-cpp-resources.obj
 endif
@@ -249,10 +260,11 @@ static: pre directories $(TARGET_EXE_FULL)
 $(BUILD_DIR)/sv-cpp-resources.obj:
 	-rm -Rf ./static_cpp_resources
 	-mkdir -p ./static_cpp_resources
-	-cp -Rf ../QtCode/Modules/Path/resources ./static_cpp_resources/Path
-	-cp -Rf ../QtCode/Modules/QtAppBase/resources ./static_cpp_resources/QtAppBase
-	-cp -Rf ../QtCode/Modules/Segmentation/resources ./static_cpp_resources/Segmentation
-	-cd ./static_cpp_resources;zip -r res_0.zip Path/ QtAppBase/ Segmentation
+	-cp -Rf ../QtCode/Modules/Path/resources ./static_cpp_resources/svPath
+#	-cp -Rf ../QtCode/Modules/QtAppBase/resources ./static_cpp_resources/svQtAppBase
+	-cp -Rf ../QtCode/Modules/Segmentation/resources ./static_cpp_resources/svSegmentation
+#	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svQtAppBase/ svSegmentation
+	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svSegmentation/
 	-echo "#define US_RESOURCE      200" >> ./static_cpp_resources/sv-cpp-resources.rc
 	-echo "#define IDR_US_RESOURCE  101" >> ./static_cpp_resources/sv-cpp-resources.rc
 	-echo "IDR_US_RESOURCE US_RESOURCE res_0.zip" >> ./static_cpp_resources/sv-cpp-resources.rc

@@ -158,7 +158,7 @@ svCatchDebugger() {
 
   // seems to be missing from mitk's cppservices
   //US_IMPORT_MODULE_RESOURCES(...)
-  
+
 #ifdef US_STATIC_MODULE
   US_INITIALIZE_STATIC_MODULE(svcommon)
   US_INITIALIZE_STATIC_MODULE(svmodel)
@@ -174,12 +174,17 @@ svCatchDebugger() {
     /*
   US_IMPORT_MODULE(svcommon)
   US_IMPORT_MODULE(svmodel)
-  US_IMPORT_MODULE(svpath)
+    */
+    //US_INITIALIZE_MODULE("svPath")
+    /*
   US_IMPORT_MODULE(svprojectmanagement)
   US_IMPORT_MODULE(svqtappbase)
   US_IMPORT_MODULE(svqtwidgets)
   US_IMPORT_MODULE(svsegmentation)  
     */
+  //extern "C" void  _us_import_module_initializer_svsegmentation();
+  //extern "C" void  _us_import_module_initializer_svPath();
+
 #endif
 
 #endif
@@ -489,6 +494,9 @@ RegCloseKey(hKey2);
 
    // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
 
+   //_us_import_module_initializer_svsegmentation();
+   //_us_import_module_initializer_svPath();
+   
     #ifdef QT_STATICPLUGIN
    
     Q_INIT_RESOURCE(sv);
