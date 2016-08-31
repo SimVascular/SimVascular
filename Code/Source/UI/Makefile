@@ -214,9 +214,8 @@ LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_gui_main$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-# problems with model!
-#LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-#          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT)
+LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT)
 
 #  ifneq ($(SV_USE_SHARED),1)
 #    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)

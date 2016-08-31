@@ -132,30 +132,58 @@ svCatchDebugger() {
 // ----
 
 #ifdef SV_USE_QT_GUI
-  Q_IMPORT_PLUGIN(svProjectPluginActivator)
-  Q_IMPORT_PLUGIN(MitkImagePluginActivator)
-  Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
-  Q_IMPORT_PLUGIN(MitkSegmentationPluginActivator)
-  Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
-  Q_IMPORT_PLUGIN(svModelingPluginActivator)
-  Q_IMPORT_PLUGIN(svTestPluginActivator)
+  #ifdef QT_STATICPLUGIN
 
+    Q_IMPORT_PLUGIN(svProjectPluginActivator)
+    Q_IMPORT_PLUGIN(MitkImagePluginActivator)
+    Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
+    Q_IMPORT_PLUGIN(MitkSegmentationPluginActivator)
+    Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
+    Q_IMPORT_PLUGIN(svModelingPluginActivator)
+    Q_IMPORT_PLUGIN(svTestPluginActivator)
+
+/*
+    Q_IMPORT_PLUGIN(mitk_image)
+    Q_IMPORT_PLUGIN(mitk_segmentation)
+    Q_IMPORT_PLUGIN(sv_general)
+    Q_IMPORT_PLUGIN(sv_modeling)
+    Q_IMPORT_PLUGIN(sv_pathplanning)
+    Q_IMPORT_PLUGIN(sv_segmentation)
+    Q_IMPORT_PLUGIN(sv_test)
+*/
+
+  #endif
+    
 #include <usModuleImport.h>
-US_INITIALIZE_STATIC_MODULE(svcommon)
-  // problems with model!
-//US_INITIALIZE_STATIC_MODULE(svmodel)
-US_INITIALIZE_STATIC_MODULE(svpath)
-US_INITIALIZE_STATIC_MODULE(svprojectmanagement)
-US_INITIALIZE_STATIC_MODULE(svqtappbase)
-US_INITIALIZE_STATIC_MODULE(svqtwidgets)
-US_INITIALIZE_STATIC_MODULE(svsegmentation)
-US_INITIALIZE_STATIC_MODULE(svlib)
 
-  //US_INITIALIZE_STATIC_MODULE(svcommon)
-  // #US_INITIALIZE_SIMPORT_STATIC_MODULE_RESOURCES(svlib)
+  // seems to be missing from mitk's cppservices
+  //US_IMPORT_MODULE_RESOURCES(...)
+  
+#ifdef US_STATIC_MODULE
+  US_INITIALIZE_STATIC_MODULE(svcommon)
+  US_INITIALIZE_STATIC_MODULE(svmodel)
+  US_INITIALIZE_STATIC_MODULE(svpath)
+  US_INITIALIZE_STATIC_MODULE(svprojectmanagement)
+  US_INITIALIZE_STATIC_MODULE(svqtappbase)
+  US_INITIALIZE_STATIC_MODULE(svqtwidgets)
+  US_INITIALIZE_STATIC_MODULE(svsegmentation)
+  //US_INITIALIZE_STATIC_MODULE(svlib) (unneed, Applications dir???) 
+  // seems to be missing from mitk's cppservices
+  //US_INITIALIZE_IMPORT_STATIC_MODULE_RESOURCES(...)
+#else
+    /*
+  US_IMPORT_MODULE(svcommon)
+  US_IMPORT_MODULE(svmodel)
+  US_IMPORT_MODULE(svpath)
+  US_IMPORT_MODULE(svprojectmanagement)
+  US_IMPORT_MODULE(svqtappbase)
+  US_IMPORT_MODULE(svqtwidgets)
+  US_IMPORT_MODULE(svsegmentation)  
+    */
+#endif
 
 #endif
-  
+
  FILE *simvascularstdout;
  FILE *simvascularstderr;
  bool use_qt_tcl_interp;
@@ -460,7 +488,9 @@ RegCloseKey(hKey2);
    svApplication svapp(argc, argv);
 
    // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
- 
+
+    #ifdef QT_STATICPLUGIN
+   
     Q_INIT_RESOURCE(sv);
     Q_INIT_RESOURCE(qtappbase);
     Q_INIT_RESOURCE(svgeneral);
@@ -485,9 +515,11 @@ RegCloseKey(hKey2);
 
     svTestPluginActivator* svtestplugin = new svTestPluginActivator();
     svtestplugin->start();
-  
-    //Q_INIT_RESOURCE(segmentation);
+
+    #endif
+    
     // Register Qmitk-dependent global instances
+    
     QmitkRegisterClasses();
     svMainWindow svwindow;
     svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
