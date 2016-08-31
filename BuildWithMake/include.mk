@@ -273,7 +273,7 @@ LINK_WITH_DEBUG = 1
 # Static link
 # -----------------------------------------------------
 
-#MAKE_STATIC_BUILD = 1
+#SV_STATIC_BUILD = 1
 
 # if you need to override anything above for a given site, do it here
 # -----------------------------------------------------------------------

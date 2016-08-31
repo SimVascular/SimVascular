@@ -18,6 +18,10 @@ MITK_SYS_LIBS  =
 
 MITK_DEFS = -D_WIN32_WINNT=0x0A00 -DSV_NO_PYTHONQT_ALL
 
+ifeq ($(SV_USE_SHARED),0)
+  MITK_DEFS += -DUS_STATIC_MODULE
+endif
+
 MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include \
            -I$(MITK_BINDIR)/include/ctk \
