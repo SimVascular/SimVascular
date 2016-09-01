@@ -30,10 +30,10 @@ endif
       -I $(QT_TOP_DIR)/include/QtConcurrent \
       -I $(QT_TOP_DIR)/include/mkspecs/win32-msvc2013
     QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
-      $(LIBFLAG)Qt5Xml.lib \
-      $(LIBFLAG)Qt5Widgets.lib \
-      $(LIBFLAG)Qt5Gui.lib \
-      $(LIBFLAG)Qt5Concurrent.lib \
-      $(LIBFLAG)Qt5Core.lib
+      $(LIBFLAG)Qt5Xml$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Widgets$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Gui$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Concurrent$(LIBLINKEXT) \
+      $(LIBFLAG)Qt5Core$(LIBLINKEXT)
     QT_SO_PATH=$(QT_TOP_DIR)/bin
 endif

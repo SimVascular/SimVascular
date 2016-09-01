@@ -308,10 +308,10 @@ ifeq ($(CLUSTER), x64_cygwin)
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_BUILDS_TOPLEVEL =
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
-    LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/SV16/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)

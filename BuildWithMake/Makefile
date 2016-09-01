@@ -153,6 +153,9 @@ endif
 ifeq ($(SV_USE_ITK),1)
 	-echo "puts \"s+REPLACEME_ITK_SO_PATH+$(ITK_BIN_LIBS)+g\"" >> tclscript
 endif
+ifeq ($(SV_USE_QT),1)
+	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
+endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
 endif
@@ -204,6 +207,9 @@ ifeq ($(SV_USE_ITK),1)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_QT),1)
+	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
@@ -276,9 +282,11 @@ post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-postsolver-script >> mypost
 ifeq ($(CLUSTER),x64_linux)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
-elif ($(CLUSTER),x64_macosx)
+endif
+ifeq ($(CLUSTER),x64_macosx)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
-else
+endif
+ifeq ($(CLUSTER),x64_cygwin)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
 endif
 	-chmod a+rx sv

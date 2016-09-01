@@ -236,18 +236,18 @@ DEPS	= $(SRCS:.cxx=.d)
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
 OBJS    += \
-../QtCode/Modules/Common/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
-../QtCode/Modules/Model/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
-../QtCode/Modules/Path/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
-../QtCode/Modules/ProjectManagement/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
-../QtCode/Modules/QtAppBase/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
-../QtCode/Modules/QtWidgets/obj/x64_cygwin/vs12.5-ifort/us_init.obj \
-../QtCode/Modules/Segmentation/obj/x64_cygwin/vs12.5-ifort/us_init.obj
+../QtCode/Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../QtCode/Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../QtCode/Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../QtCode/Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../QtCode/Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../QtCode/Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../QtCode/Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
 
-OBJS += $(BUILD_DIR)/sv-cpp-resources.obj
+OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
 
 ifeq ($(SV_STATIC_BUILD),1)
-   OBJS += $(BUILD_DIR)/sv-cpp-resources.obj
+   OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
 endif
 
 TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
@@ -257,7 +257,7 @@ shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
 
-$(BUILD_DIR)/sv-cpp-resources.obj:
+$(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
 	-rm -Rf ./static_cpp_resources
 	-mkdir -p ./static_cpp_resources
 	-cp -Rf ../QtCode/Modules/Path/resources ./static_cpp_resources/svPath
@@ -265,11 +265,17 @@ $(BUILD_DIR)/sv-cpp-resources.obj:
 	-cp -Rf ../QtCode/Modules/Segmentation/resources ./static_cpp_resources/svSegmentation
 #	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svQtAppBase/ svSegmentation
 	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svSegmentation/
+ifeq ($(CLUSTER), x64_cygwin)
 	-echo "#define US_RESOURCE      200" >> ./static_cpp_resources/sv-cpp-resources.rc
 	-echo "#define IDR_US_RESOURCE  101" >> ./static_cpp_resources/sv-cpp-resources.rc
 	-echo "IDR_US_RESOURCE US_RESOURCE res_0.zip" >> ./static_cpp_resources/sv-cpp-resources.rc
 	-cd ./static_cpp_resources;rc /fo sv-cpp-resources.res sv-cpp-resources.rc
 	-cd ./static_cpp_resources;cvtres /MACHINE:X64 /OUT:../$(BUILD_DIR)/sv-cpp-resources.obj sv-cpp-resources.res
+endif
+ifeq ($(CLUSTER), x64_linux)
+	-cd ./static_cpp_resources;ld -o ../$(BUILD_DIR)/sv-cpp-resources.o -r -b binary res_0.zip
+	-cd ./static_cpp_resources;objcopy --rename-section .data=.rodata,alloc,load,readonly,data,contents ../$(BUILD_DIR)/sv-cpp-resources.o ../$(BUILD_DIR)/sv-cpp-resources.o
+endif
 
 directories:
 	-mkdir -p $(BUILD_DIR)
