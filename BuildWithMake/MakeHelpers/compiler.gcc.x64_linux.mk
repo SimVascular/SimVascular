@@ -47,4 +47,5 @@ endif
     LIBPATH_COMPILER_FLAG = -L
     LIBFLAG         = -l
     SVLIBFLAG       = -l
+    LIBLINKEXT      =
 endif

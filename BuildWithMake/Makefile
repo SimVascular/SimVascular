@@ -106,6 +106,7 @@ ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+`cygpath -u $(SV_FREETYPE_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_PYTHON_HOME+`cygpath -u $(PYTHON_HOME)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+`cygpath -u $(SV_PYTHON_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
@@ -166,6 +167,7 @@ ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_PYTHON_HOME+$(PYTHON_HOME)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
@@ -218,6 +220,7 @@ ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_PYTHON_HOME+$(PYTHON_HOME)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript

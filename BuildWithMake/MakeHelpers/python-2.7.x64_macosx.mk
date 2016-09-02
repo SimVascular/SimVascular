@@ -1,4 +1,5 @@
 ifeq ($(CLUSTER),x64_macosx)
+    PYTHON_HOME =
     PYTHON_TOP_DIR = /opt/local/Library/Frameworks/Python.framework/Versions/2.7
     PYTHON_INCDIR = -I$(PYTHON_TOP_DIR)/include/python2.7
     PYTHON_LIBDIR = 
