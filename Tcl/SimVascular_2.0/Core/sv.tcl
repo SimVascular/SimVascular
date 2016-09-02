@@ -6218,9 +6218,9 @@ proc mesh_readMSS {filename resObj} {
 	     source [lrange $line 1 end].facenames
              package require md5
 	     set mymd5 [::md5::md5 -hex -file [lrange $line 1 end]]
-             if {$mymd5 != $gDiscreteModelFaceNamesInfo(model_file_md5)} {
-	       return -code error "ERROR: dsm model ([lrange $line 1 end]) file doesn't match one used to generate facenames ([lindex $line 1].facenames)!"
-             }
+        #      if {$mymd5 != $gDiscreteModelFaceNamesInfo(model_file_md5)} {
+	       # return -code error "ERROR: dsm model ([lrange $line 1 end]) file doesn't match one used to generate facenames ([lindex $line 1].facenames)!"
+        #      }
 	   }
 	}
         set faceids [$solid GetFaceIds]

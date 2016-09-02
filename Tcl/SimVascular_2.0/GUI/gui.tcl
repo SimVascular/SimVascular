@@ -29940,9 +29940,9 @@ proc guiFNMloadSolidModel { fn solid} {
         source $filename.facenames
         package require md5
         set mymd5 [::md5::md5 -hex -file $filename]
-        if {$mymd5 != $gDiscreteModelFaceNamesInfo(model_file_md5)} {
-          return -code error "ERROR: dsm model ($filename) file doesn't match one used to generate facenames ($filename.facenames)!"
-        }
+        # if {$mymd5 != $gDiscreteModelFaceNamesInfo(model_file_md5)} {
+        #   return -code error "ERROR: dsm model ($filename) file doesn't match one used to generate facenames ($filename.facenames)!"
+        # }
       } else {
         set allids [$object GetFaceIds]
         foreach id $allids {
@@ -47489,9 +47489,9 @@ proc smasherGUIreadModel {} {
       source $fn.facenames
       package require md5
       set mymd5 [::md5::md5 -hex -file $fn]
-      if {$mymd5 != $gDiscreteModelFaceNamesInfo(model_file_md5)} {
-        return -code error "ERROR: dsm model ($fn) file doesn't match one used to generate facenames ($fn.facenames)!"
-      }
+      # if {$mymd5 != $gDiscreteModelFaceNamesInfo(model_file_md5)} {
+      #   return -code error "ERROR: dsm model ($fn) file doesn't match one used to generate facenames ($fn.facenames)!"
+      # }
     } else {
       set allids [$smasherInputName GetFaceIds]
       foreach id $allids {
