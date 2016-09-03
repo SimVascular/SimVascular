@@ -102,7 +102,7 @@ errno_t cv_getenv_s(
 
 #include "SimVascular_Init.h"
 
-#ifdef SV_USE_QT
+#ifdef SV_USE_QT_GUI
 typedef void Tcl_MainLoopProc(void);
 void SimVascularTcl_MainLoop(void) {
     QApplication::exec();

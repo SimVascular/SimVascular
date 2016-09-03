@@ -54,11 +54,11 @@ CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { icpc, vs10.1, vs12.5, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-12.5, mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
-CXX_COMPILER_VERSION = vs12.5
+CXX_COMPILER_VERSION = msvc-12.5
 FORTRAN_COMPILER_VERSION = ifort
 
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
@@ -245,7 +245,7 @@ SV_USE_GDCM = 1
 # Compile with MITK
 # -----------------------------------------------------
 
-SV_USE_MITK = 1
+SV_USE_MITK = 0
 
 # -----------------------------------------------------
 # Compile with glib & gts
@@ -498,7 +498,7 @@ ifeq ($(CLUSTER), x64_cygwin)
   ifeq ($(CXX_COMPILER_VERSION), vs10.1)
 	include $(TOP)/MakeHelpers/compiler.vs10.1.x64_cygwin.mk
   endif
-  ifeq ($(CXX_COMPILER_VERSION), vs12.5)
+  ifeq ($(CXX_COMPILER_VERSION), msvc-12.5)
 	include $(TOP)/MakeHelpers/compiler.vs12.5.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
