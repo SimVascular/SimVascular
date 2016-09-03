@@ -603,9 +603,9 @@ endif
 # for now, combine mitk code qt gui code
 ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/QtCode
+     SHARED_LIBDIRS += ../Code/Source/SV3
   else
-     LIBDIRS += ../Code/Source/QtCode
+     LIBDIRS += ../Code/Source/SV3
   endif
 endif
 
@@ -739,9 +739,9 @@ endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/QtCode
+     SHARED_LIBDIRS += ../Code/Source/SV3
   else
-     LIBDIRS += ../Code/Source/QtCode
+     LIBDIRS += ../Code/Source/SV3
   endif
 endif
 
@@ -769,21 +769,21 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/QtCode/Plugins/mitk.image \
-                     -I$(TOP)/../Code/Source/QtCode/Plugins/mitk.segmentation \
-                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.general \
-                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.modeling \
-                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.pathplanning \
-                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.segmentation \
-                     -I$(TOP)/../Code/Source/QtCode/Plugins/sv.test \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/Common \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/Model \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/Path \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/ProjectManagement \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/QtAppBase \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/QtCode/Modules/Segmentation \
-                     -I$(TOP)/../Code/Source/QtCode/Applications
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/SV3/Plugins/mitk.image \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/mitk.segmentation \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.general \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.modeling \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.pathplanning \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.segmentation \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.test \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Common \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Model \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Path \
+                     -I$(TOP)/../Code/Source/SV3/Modules/ProjectManagement \
+                     -I$(TOP)/../Code/Source/SV3/Modules/QtAppBase \
+                     -I$(TOP)/../Code/Source/SV3/Modules/QtWidgets \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Segmentation \
+                     -I$(TOP)/../Code/Source/SV3/Applications
 endif
 
 # Link flags, which also need to be dealt with conditionally depending
