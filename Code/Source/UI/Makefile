@@ -235,6 +235,7 @@ DEPS	= $(SRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
+ifeq ($(SV_USE_MITK),1)
 OBJS    += \
 ../QtCode/Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
 ../QtCode/Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
@@ -243,10 +244,9 @@ OBJS    += \
 ../QtCode/Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
 ../QtCode/Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
 ../QtCode/Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
+endif
 
-OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
-
-ifeq ($(SV_STATIC_BUILD),1)
+ifeq ($(SV_USE_MITK),1)
    OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
 endif
 
@@ -275,6 +275,11 @@ endif
 ifeq ($(CLUSTER), x64_linux)
 	-cd ./static_cpp_resources;ld -o ../$(BUILD_DIR)/sv-cpp-resources.o -r -b binary res_0.zip
 	-cd ./static_cpp_resources;objcopy --rename-section .data=.rodata,alloc,load,readonly,data,contents ../$(BUILD_DIR)/sv-cpp-resources.o ../$(BUILD_DIR)/sv-cpp-resources.o
+endif
+ifeq ($(CLUSTER), x64_macosx)
+	-cp usCMakeResourceDependencies.cxx ./static_cpp_resources
+	-cd ./static_cpp_resources;${CXX} ${GLOBAL_CXXFLAGS} -c usCMakeResourceDependencies.cxx -o stub.o
+	-cd ./static_cpp_resources;ld -r -sectcreate __TEXT us_resources res_0.zip stub.o -o ../$(BUILD_DIR)/sv-cpp-resources.o
 endif
 
 directories:

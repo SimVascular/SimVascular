@@ -1,8 +1,11 @@
 ifeq ($(CLUSTER),x64_macosx)
-    PYTHON_HOME =
-    PYTHON_TOP_DIR = /opt/local/Library/Frameworks/Python.framework/Versions/2.7
-    PYTHON_INCDIR = -I$(PYTHON_TOP_DIR)/include/python2.7
-    PYTHON_LIBDIR = 
-    PYTHON_LIB    = $(PYTHON_TOP_DIR)/lib/libpython2.7.dylib
-    PYTHON_SITE_PACKAGES = $(PYTHON_TOP_DIR)/lib/python2.7/site-packages
+    PYTHON_HOME   =  $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/python-2.7.11
+    PYTHON_BINDIR = $(PYTHON_HOME)/bin
+    PYTHON_INCDIR = -I$(PYTHON_HOME)/include/python2.7
+    PYTHON_LIBDIR = $(PYTHON_HOME)/lib
+    #PYTHON_LIB    = $(LIBPATH_COMPILER_FLAG)$(PYTHON_LIBDIR) $(LIBFLAG)python2.7$(LIBLINKEXT)
+    PYTHON_LIB    = $(PYTHON_LIBDIR)/libpython2.7.dylib
+    SV_PYTHON_SO_PATH = $(PYTHON_LIBDIR)
+    PYTHON_SITE_PACKAGES = $(PYTHON_HOME)/lib/python2.7\:$(PYTHON_HOME)/lib/python2.7/site-packages
 endif
+

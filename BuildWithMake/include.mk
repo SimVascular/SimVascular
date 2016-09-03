@@ -294,31 +294,31 @@ ifeq ($(CLUSTER), x64_cygwin)
   SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 endif
 ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = gcc-4.8
+  SVEXTERN_COMPILER_VERSION = gnu-4.8
 endif
 ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang-7.0
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL = C:/cygwin64/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/src
-    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV16/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/cygwin64/usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
+    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/ext/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL =
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   =
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/SV16/licensed
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /usr/local/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/SV16/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/SV16/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 # -------------------------------------------
@@ -326,7 +326,7 @@ endif
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.16"
-SV_FULL_VER_NO = "2.16.0719"
+SV_FULL_VER_NO = "2.16.0902"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
