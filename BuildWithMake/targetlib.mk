@@ -83,6 +83,10 @@ $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
              $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
+ifdef SV_COPY_DLL_TO_BIN_PLUGINS
+	mkdir -p $(TOP)/Bin/plugins
+	cp -f $(TARGET_SHARED) $(TOP)/Bin/plugins
+endif
 endif
 ifeq ($(CLUSTER),x64_macosx) 
 $(TARGET_SHARED):	$(DLLOBJS)
@@ -90,6 +94,10 @@ $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
 	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
              $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
+ifdef SV_COPY_DLL_TO_BIN_PLUGINS
+	mkdir -p $(TOP)/Bin/plugins
+	cp -f $(TARGET_SHARED) $(TOP)/Bin/plugins
+endif
 endif
 ifeq ($(CLUSTER),x64_cygwin)
 $(TARGET_SHARED):	$(DLLOBJS)
@@ -106,6 +114,11 @@ else
              /pdb:"$(TARGET_SHARED:.$(SOEXT)=.pdb)" \
              $(DLLOBJS) $(LFLAGS)
 #	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
+endif
+ifdef SV_COPY_DLL_TO_BIN_PLUGINS
+	mkdir -p $(TOP)/Bin/plugins
+	cp -f $(TARGET_SHARED) $(TOP)/Bin/plugins
+	cp -f $(TARGET_SHARED:.$(SOEXT)=.pdb) $(TOP)/Bin/plugins
 endif
 endif
 
@@ -197,6 +210,7 @@ clean:
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED3)" ];then for fn in $(TARGET_SHARED3:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
+	if [ -n "$(TOP)/Bin/plugins/lib_$(TARGET_LIB_NAME).$(SOEXT)" ];then for fn in $(TOP)/Bin/plugins/lib_$(TARGET_LIB_NAME).*; do /bin/rm -f $$fn; done;fi
 
 veryclean: clean
 	if [ -e obj ];then /bin/rm -f -r obj;fi
