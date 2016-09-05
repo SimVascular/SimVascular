@@ -50,6 +50,8 @@
 #include "cvIOstream.h"
 #include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "tcl.h"
 #include "tk.h"
@@ -64,7 +66,6 @@
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>
-#include <stdio.h>
 #include "Shlwapi.h"
 
 #define BUFSIZE 1024
