@@ -1,0 +1,93 @@
+#
+#  Microsoft Visual Studio 2010 x64 (installed with 64-bit Windows 7)
+#
+
+parse_reg_dir()
+{
+reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
+}
+
+parse_reg_dir_with_extra_space()
+{
+reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";$4="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
+}
+
+export VisualStudioVersion=12.0
+export Framework40Version=v4.0
+
+# GetWindowsSdkDir
+# GetWindowsSdkExecutablePath32
+# GetWindowsSdkExecutablePath64
+# GetExtensionSdkDir
+# GetVSInstallDir
+# GetVCInstallDir
+# GetFSharpInstallDir
+# GetFrameworkDir64
+# GetFrameworkVer64
+
+# SDK vars
+
+export WindowsSdkDir=`parse_reg_dir_with_extra_space "HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\Microsoft SDKs\\\\Windows\\\\v8.1" InstallationFolder`
+export ExtensionSdkDir=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft/\ SDKs/Windows/v8.1/ExtensionSDKs
+
+export WindowsSDK_ExecutablePath_x64=`parse_reg_dir_with_extra_space "HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\Microsoft SDKs\\\\Windows\\\\v8.1A\\\\WinSDK-NetFx40Tools-x64" InstallationFolder`
+
+export VS120COMNTOOLS=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VS7 $VisualStudioVersion`/Common7/Tools
+
+export VSINSTALLDIR=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VS7 $VisualStudioVersion`
+export VCINSTALLDIR=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 $VisualStudioVersion`
+
+FrameworkDIR32=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkDir32`
+FrameworkDIR64=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkDir64`
+FrameworkVersion32=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkVer32`
+FrameworkVersion64=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkVer64`
+
+export FrameworkDir=$FrameworkDir64
+export FrameworkVersion=$FrameworkVersion64
+
+PATH=`cygpath "$WindowsSdkDir/bin/x64"`\:`cygpath "$WindowsSdkDir/bin/x86"`\:$PATH
+
+INCLUDE=$WindowsSdkDir/include/shared\;$WindowsSdkDir/include/um\;$WindowsSdkDir/include/winrt\;$INCLUDE
+LIB=$WindowsSdkDir/lib/winv6.3/um/x64\;$LIB
+LIBPATH=$WindowsSdkDir/References/CommonConfiguration/Neutral\;$ExtensionSDKDir/Microsoft.VCLibs/12.0/References/CommonConfiguration/neutral\;$LIBPATH
+
+# set PATH
+
+PATH=`cygpath "$VSINSTALLDIR/Team Tools/Performance Tools/x64"`:`cygpath "$VSINSTALLDIR/Team Tools/Performance Tools"`:$PATH
+PATH=/cygdrive/c/Program\ Files/HTML\ Help\ Workshop:$PATH
+PATH=/cygdrive/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop:$PATH
+PATH=`cygpath "$VSINSTALLDIR/Common7/Tools"`:$PATH
+PATH=`cygpath "$VSINSTALLDIR/Common7/IDE"`:$PATH
+PATH=`cygpath "$VCINSTALLDIR/VCPackages"`:$PATH
+PATH=`cygpath "$FrameworkDir/$Framework40Version"`:$PATH
+PATH=`cygpath "$FrameworkDir/$FrameworkVersion"`:$PATH
+PATH=`cygpath "$VCINSTALLDIR/BIN/amd64"`:$PATH
+
+PATH=/cygdrive/c/Program\ Files/MSBuild/12.0/bin/amd64:$PATH
+PATH=/cygdrive/c/Program\ Files\ \(x86\)/MSBuild/12.0/bin/amd64:$PATH
+PATH=`cygpath "$VSINSTALLDIR/Common7/IDE/CommonExtensions/Microsoft/TestWindow"`:$PATH
+
+# set INCLUDE
+
+INCLUDE=$VCINSTALLDIR/atlmfc/include\;$INCLUDE
+INCLUDE=$VCINSTALLDIR/include\;$INCLUDE
+
+# set LIB
+
+LIB=$VCINSTALLDIR/ATLMFC/LIB/amd64\;$LIB
+LIB=$VCINSTALLDIR/LIB/amd64\;$LIB
+
+# set LIBPATH
+
+LIBPATH=$VCINSTALLDIR/ATLMFC/LIB/amd64\;$LIBPATH
+LIBPATH=$VCINSTALLDIR/LIB/amd64\;$LIBPATH
+LIBPATH=$FrameworkDir/$Framework40Version\;$LIBPATH
+LIBPATH=$FrameworkDir/$FrameworkVersion\;$LIBPATH
+
+export Platform=X64
+export CommandPromptType=Native
+
+export INCLUDE
+export LIB
+export PATH
+export LIBPATH

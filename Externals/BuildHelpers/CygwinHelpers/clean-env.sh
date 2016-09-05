@@ -1,0 +1,30 @@
+# visual studio 2010 defines
+export VS100COMNTOOLS=
+export VSINSTALLDIR=
+export VCINSTALLDIR=
+export FrameworkDir=
+export FrameworkVersion=
+export WindowsSdkDir=
+export Platform=
+export CommandPromptType=
+export INCLUDE=
+export LIB=
+export PATH=/usr/bin:/bin:/cygdrive/c/Windows/system32/reg:/cygdrive/c/Windows/system32:/cygdrive/c/Windows/SysWOW64
+export LIBPATH=
+# visual studio 2013 defines
+export VisualStudioVersion=
+export Framework40Version=
+export WindowsSdkDir=
+export ExtensionSdkDir=
+export WindowsSDK_ExecutablePath_x64=
+export VS120COMNTOOLS=
+export VSINSTALLDIR=
+export VCINSTALLDIR=
+export FrameworkDir=
+export FrameworkVersion=
+export Platform=
+export CommandPromptType=
+export INCLUDE=
+export LIB=
+export PATH=/usr/bin:/bin:/cygdrive/c/Windows/system32/reg:/cygdrive/c/Windows/system32:/cygdrive/c/Windows/SysWOW64
+export LIBPATH=
