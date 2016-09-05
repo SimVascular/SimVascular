@@ -603,9 +603,9 @@ endif
 # for now, combine mitk code qt gui code
 ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/SV3
+     SHARED_LIBDIRS += ../Code/Source/SV3/Modules
   else
-     LIBDIRS += ../Code/Source/SV3
+     LIBDIRS += ../Code/Source/SV3/Modules
   endif
 endif
 
@@ -739,9 +739,9 @@ endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/SV3
+     SHARED_LIBDIRS += ../Code/Source/SV3/Plugins
   else
-     LIBDIRS += ../Code/Source/SV3
+     LIBDIRS += ../Code/Source/SV3/Plugins
   endif
 endif
 
@@ -782,8 +782,7 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/SV3/Modules/ProjectManagement \
                      -I$(TOP)/../Code/Source/SV3/Modules/QtAppBase \
                      -I$(TOP)/../Code/Source/SV3/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Segmentation \
-                     -I$(TOP)/../Code/Source/SV3/Applications
+                     -I$(TOP)/../Code/Source/SV3/Modules/Segmentation
 endif
 
 # Link flags, which also need to be dealt with conditionally depending

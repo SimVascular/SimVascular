@@ -34,11 +34,11 @@ TOP = .
 
 include $(TOP)/include.mk
 
-all-shared: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-shared-build post-build
+all-shared: shared-pre-build static-build shared-build exec-shared-build
 
-all:	mixed
+all: mixed
 
-mixed: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-build post-build
+mixed: static-pre-build static-build shared-build exec-build
 
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
@@ -233,13 +233,24 @@ endif
 	-/usr/bin/tclsh tclscript > sedscript
 	-rm -f tclscript
 
-pre-build:
-	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
+common-pre-build: mksedscript create-svsolver-options-file post-build
 	mkdir -p Bin
 	mkdir -p Lib
+	mkdir -p Bin/plugins
 	mkdir -p ../Code/Source/Include/Make
 	touch ../Code/Source/Include/Make/simvascular_options.h
 	touch ../Code/Source/Include/Make/simvascular_version.h
+
+shared-pre-build: common-pre-build
+	cd ../Code/Source/SV3/Plugins;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) create_exports_h us-init-module
+
+static-pre-build: common-pre-build
+	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
+	cd ../Code/Source/SV3/Plugins;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) create_exports_h us-init-module
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
