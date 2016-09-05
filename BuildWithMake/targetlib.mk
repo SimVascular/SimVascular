@@ -198,6 +198,34 @@ rcc:
 ui:
 	$(foreach name,$(UIFILES),$(shell $(QT_UIC_CMD) $(name) -o ui_$(basename $(notdir $(name))).h))
 
+create_exports_h:
+	echo "#ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT_H" > $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#define $(MODULE_NAME_ALL_CAPS)_EXPORT_H" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#include \"SimVascular.h\""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#ifdef $(MODULE_NAME_ALL_CAPS)_STATIC_DEFINE"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#  define $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#  define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#    ifdef $(MODULE_NAME)_EXPORTS"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "       /* We are building this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#    else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "       /* We are using this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_IMPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#    endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#  endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#    define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+
+
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
