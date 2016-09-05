@@ -101,7 +101,7 @@
 #include "vtkMatrixToHomogeneousTransform.h"
 #include "vtkMatrixToLinearTransform.h"
 #include "vtkMergePoints.h"
-#include "vtkMultiThreader.h"
+//#include "vtkMultiThreader.h"
 #include "vtkMutexLock.h"
 #include "vtkObject.h"
 #include "vtkObjectFactory.h"

@@ -621,14 +621,6 @@ if {[lsearch -exact $envnames SIMVASCULAR_BATCH_MODE] < 0} {
 
 }
 
-# -------------------------
-# Source script if provided
-# -------------------------
-
-if {$argc >= 1} {
-   source [lindex $argv 0]
-}
-
 # ------------------
 # Load Python
 # ------------------
@@ -636,4 +628,18 @@ if {$argc >= 1} {
 if {$SV_USE_PYTHON == "ON"} {
   startTclPython
 }
+
+# -------------------------
+# Source script if provided
+# -------------------------
+
+if {$argc >= 1} {
+   puts "argc: $argc  argv: $argv"
+   if {[file exists [lindex $argv 0]]} { 
+       source [lindex $argv 0]
+   } else {
+       puts "ignored line: $argv"
+   }
+}
+
 

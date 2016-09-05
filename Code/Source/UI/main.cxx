@@ -31,9 +31,27 @@
 
 #include "SimVascular.h"
 
+#ifdef SV_USE_QT_GUI
+#include "QmitkRegisterClasses.h"
+#include "svMainWindow.h"
+#include "svApplication.h"
+
+#include "MitkImagePluginActivator.h"
+#include "MitkSegmentationPluginActivator.h"
+#include "svModelingPluginActivator.h"
+#include "svProjectPluginActivator.h"
+#include "svPathPlanningPluginActivator.h"
+#include "svSegmentationPluginActivator.h"
+#include "svTestPluginActivator.h"
+
+#include "qttclnotifier.h"
+#endif
+
 #include "cvIOstream.h"
 #include <time.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "tcl.h"
 #include "tk.h"
@@ -48,7 +66,6 @@
 #ifdef WIN32
 #include <windows.h>
 #include <tchar.h>
-#include <stdio.h>
 #include "Shlwapi.h"
 
 #define BUFSIZE 1024
@@ -86,15 +103,106 @@ errno_t cv_getenv_s(
 
 #include "SimVascular_Init.h"
 
+#ifdef SV_USE_QT_GUI
+typedef void Tcl_MainLoopProc(void);
+void SimVascularTcl_MainLoop(void) {
+    QApplication::exec();
+}
+#endif
+
+/*
+#ifdef SV_USE_QT
+int main_only_qt(int argc, char *argv[])
+{
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
+    return app.exec();
+}
+#endif
+*/
+
+void
+svCatchDebugger() {
+    static volatile int debuggerPresent =0;
+    while (!debuggerPresent ); // assign debuggerPresent=1
+}
+
 // ----
 // main
 // ----
 
+#ifdef SV_USE_QT_GUI
+  #ifdef QT_STATICPLUGIN
+
+    Q_IMPORT_PLUGIN(svProjectPluginActivator)
+    Q_IMPORT_PLUGIN(MitkImagePluginActivator)
+    Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
+    Q_IMPORT_PLUGIN(MitkSegmentationPluginActivator)
+    Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
+    Q_IMPORT_PLUGIN(svModelingPluginActivator)
+    Q_IMPORT_PLUGIN(svTestPluginActivator)
+
+/*
+    Q_IMPORT_PLUGIN(mitk_image)
+    Q_IMPORT_PLUGIN(mitk_segmentation)
+    Q_IMPORT_PLUGIN(sv_general)
+    Q_IMPORT_PLUGIN(sv_modeling)
+    Q_IMPORT_PLUGIN(sv_pathplanning)
+    Q_IMPORT_PLUGIN(sv_segmentation)
+    Q_IMPORT_PLUGIN(sv_test)
+*/
+
+  #endif
+    
+#include <usModuleImport.h>
+
+  // seems to be missing from mitk's cppservices
+  //US_IMPORT_MODULE_RESOURCES(...)
+
+#ifdef US_STATIC_MODULE
+  US_INITIALIZE_STATIC_MODULE(svcommon)
+  US_INITIALIZE_STATIC_MODULE(svmodel)
+  US_INITIALIZE_STATIC_MODULE(svpath)
+  US_INITIALIZE_STATIC_MODULE(svprojectmanagement)
+  US_INITIALIZE_STATIC_MODULE(svqtappbase)
+  US_INITIALIZE_STATIC_MODULE(svqtwidgets)
+  US_INITIALIZE_STATIC_MODULE(svsegmentation)
+  //US_INITIALIZE_STATIC_MODULE(svlib) (unneed, Applications dir???) 
+  // seems to be missing from mitk's cppservices
+  //US_INITIALIZE_IMPORT_STATIC_MODULE_RESOURCES(...)
+#else
+    /*
+  US_IMPORT_MODULE(svcommon)
+  US_IMPORT_MODULE(svmodel)
+    */
+    //US_INITIALIZE_MODULE("svPath")
+    /*
+  US_IMPORT_MODULE(svprojectmanagement)
+  US_IMPORT_MODULE(svqtappbase)
+  US_IMPORT_MODULE(svqtwidgets)
+  US_IMPORT_MODULE(svsegmentation)  
+    */
+  //extern "C" void  _us_import_module_initializer_svsegmentation();
+  //extern "C" void  _us_import_module_initializer_svPath();
+
+#endif
+
+#endif
+
  FILE *simvascularstdout;
  FILE *simvascularstderr;
-
+ bool use_qt_tcl_interp;
+ 
  int main( int argc, char *argv[] )
  {
+   
+  // default to tcl gui
+  bool use_tcl_gui = true;
+  bool use_qt_gui  = false; 
+  bool catch_debugger = false;
+  use_qt_tcl_interp = false;
+ 
   ios::sync_with_stdio();
 
 #ifdef BUILD_WITH_STDOUT_STDERR_REDIRECT
@@ -114,6 +222,71 @@ errno_t cv_getenv_s(
   }
 #endif
 
+  fprintf(stdout,"argc %i\n",argc);
+ fflush(stdout);  
+  
+  if (argc != 0) {
+    
+    // default to tcl gui
+    for (int iarg = 1; iarg < argc;iarg++) {
+      bool foundValid = false;
+      bool warnInvalid = false;
+      fprintf(stdout,"processing command line option: %s\n",argv[iarg]);
+      if((!strcmp("-h",argv[iarg]))    ||
+	 (!strcmp("-help",argv[iarg])) ||
+	 (!strcmp("--help",argv[iarg]))) {
+	fprintf(stdout,"simvascular command line options:\n");
+	fprintf(stdout,"  -h, --help      : print this info and exit\n");
+	fprintf(stdout,"  -tcl, --tcl-gui : use TclTk GUI (default)\n");
+	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI\n");
+	fprintf(stdout,"  -d,--debug      : use Qt GUI\n");
+        fprintf(stdout,"  -ng ,--no-gui   : use command line mode (SV_BATCH_MODE overrides)\n");
+	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
+	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
+	exit(0);
+      }
+      if((!strcmp("--warn",argv[iarg]))) {
+	warnInvalid = true;
+	foundValid = true;
+      }
+      if((!strcmp("-tcl",argv[iarg]))    ||
+	 (!strcmp("--tcl-gui",argv[iarg]))) {
+	use_tcl_gui = true;
+	use_qt_gui = false;
+	foundValid = true;
+      }
+      if((!strcmp("-qt",argv[iarg]))    ||
+	 (!strcmp("--qt-gui",argv[iarg]))) {
+	use_qt_gui = true;
+	use_tcl_gui = false;
+	foundValid = true;
+      }
+      if((!strcmp("-d",argv[iarg]))    ||
+	 (!strcmp("--debug",argv[iarg]))) {
+	catch_debugger = true;
+	foundValid = true;
+      }
+      if((!strcmp("-ng",argv[iarg]))    ||
+	 (!strcmp("--no-gui",argv[iarg]))) {
+	gSimVascularBatchMode = 1;
+	foundValid = true;
+      }
+      if((!strcmp("--qt-tcl-interp",argv[iarg]))) {
+	use_qt_tcl_interp = true;
+	gSimVascularBatchMode = 1;
+	foundValid = true;
+      }
+      if (!foundValid && warnInvalid) {
+	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
+      } 
+    }
+  }
+
+  // enter infinite loop for debugger
+  if (catch_debugger) {
+    svCatchDebugger();
+  }
+    
   char *envstr=getenv("SV_BATCH_MODE");
   if (envstr != NULL) {
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
@@ -306,13 +479,72 @@ RegCloseKey(hKey2);
   
 #endif
 
-if (gSimVascularBatchMode == 0) {
-  Tk_Main( argc, argv, Tcl_AppInit );
-} else {
-  Tcl_Main (argc, argv, Tcl_AppInit);
-}
+  if (use_tcl_gui) {
+    if (gSimVascularBatchMode == 0) {
+      Tk_Main( argc, argv, Tcl_AppInit );
+    } else {
+      Tcl_Main (argc, argv, Tcl_AppInit);
+    }
+  }
+  
+#ifdef SV_USE_QT_GUI
 
-return 0;
+  if(use_qt_gui) {
+   
+   svApplication svapp(argc, argv);
+
+   // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
+
+   //_us_import_module_initializer_svsegmentation();
+   //_us_import_module_initializer_svPath();
+   
+    #ifdef QT_STATICPLUGIN
+   
+    Q_INIT_RESOURCE(sv);
+    Q_INIT_RESOURCE(qtappbase);
+    Q_INIT_RESOURCE(svgeneral);
+
+    svProjectPluginActivator* projectplugin = new svProjectPluginActivator();
+    projectplugin->start();
+
+    MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
+    mitkimageplugin->start();
+
+    MitkSegmentationPluginActivator* mitksegmentationplugin = new MitkSegmentationPluginActivator();
+    mitksegmentationplugin->start();
+
+    svSegmentationPluginActivator* svsegmentationplugin = new svSegmentationPluginActivator();
+    svsegmentationplugin->start();
+  
+    svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
+    svpathplugin->start();
+  
+    svModelingPluginActivator* svmodelplugin = new svModelingPluginActivator();
+    svmodelplugin->start();
+
+    svTestPluginActivator* svtestplugin = new svTestPluginActivator();
+    svtestplugin->start();
+
+    #endif
+    
+    // Register Qmitk-dependent global instances
+    
+    QmitkRegisterClasses();
+    svMainWindow svwindow;
+    svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
+    svwindow.showMaximized();
+
+    if (use_qt_tcl_interp) {
+      Tcl_Main (argc, argv, Tcl_AppInit);
+    } else { 
+      return svapp.exec();
+    }
+    
+  }
+  
+#endif
+ 
+  return 0;
 }
 
 
@@ -414,7 +646,24 @@ int Tcl_AppInit( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
+  if (use_qt_tcl_interp) {
+    #ifndef WIN32
+    #ifdef SV_USE_QT
+      // instantiate "notifier" to combine Tcl and Qt events
+      QtTclNotify::QtTclNotifier::setup();
+    #endif
+    #endif
+
+    #ifndef WIN32
+    #ifdef SV_USE_QT
+      // run Qt's event loop
+      Tcl_SetMainLoop(SimVascularTcl_MainLoop);
+    #endif
+    #endif
+  }
+ 
   return TCL_OK;
+
 }
 
 

@@ -54,11 +54,11 @@ CLUSTER = x64_cygwin
 #CLUSTER = x64_linux
 
 # ---------------------------------------------------------------------
-# CXX_COMPILER_VERSION = { icpc, vs10.1, vs12.5, mingw-gcc, gcc}
+# CXX_COMPILER_VERSION = { icpc, vs10.1, msvc-12.5, mingw-gcc, gcc}
 # FORTRAN_COMPILER_VERSION = { ifort, mingw-gfortran, gfortran }
 # ---------------------------------------------------------------------
 
-CXX_COMPILER_VERSION = vs12.5
+CXX_COMPILER_VERSION = msvc-12.5
 FORTRAN_COMPILER_VERSION = ifort
 
 ifeq ($(LOCAL_DIR_CLUSTER_OVERRIDES),1)
@@ -242,6 +242,12 @@ SV_USE_VMTK = 1
 SV_USE_GDCM = 1
 
 # -----------------------------------------------------
+# Compile with MITK
+# -----------------------------------------------------
+
+SV_USE_MITK = 0
+
+# -----------------------------------------------------
 # Compile with glib & gts
 # -----------------------------------------------------
 
@@ -267,7 +273,7 @@ LINK_WITH_DEBUG = 1
 # Static link
 # -----------------------------------------------------
 
-#MAKE_STATIC_BUILD = 1
+#SV_STATIC_BUILD = 1
 
 # if you need to override anything above for a given site, do it here
 # -----------------------------------------------------------------------
@@ -288,33 +294,31 @@ ifeq ($(CLUSTER), x64_cygwin)
   SVEXTERN_COMPILER_VERSION = $(CXX_COMPILER_VERSION)
 endif
 ifeq ($(CLUSTER), x64_linux)
-  SVEXTERN_COMPILER_VERSION = gcc-4.8
+  SVEXTERN_COMPILER_VERSION = gnu-4.8
 endif
 ifeq ($(CLUSTER), x64_macosx)
   SVEXTERN_COMPILER_VERSION = clang-7.0
 endif
 
 ifeq ($(CLUSTER), x64_cygwin)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL = C:/cygwin64/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/src
-    LICENSED_SOFTWARE_TOPLEVEL = C:/cygwin64/SV16/licensed
-    MITK_OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/SV16/mvtk/build
-    MITK_OPEN_SOFTWARE_SOURCES_TOPLEVEL = C:/cygwin64/SV16/mvtk/src
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/cygwin64/usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
+    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/ext/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL =
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   =
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
-    LICENSED_SOFTWARE_TOPLEVEL      = /SV16/licensed
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_macosx)
-    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/SV16/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL = /usr/local/SV16/build/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/SV16/src
-    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/SV16/licensed
+    OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
+    LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 
 # -------------------------------------------
@@ -322,7 +326,7 @@ endif
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.16"
-SV_FULL_VER_NO = "2.16.0719"
+SV_FULL_VER_NO = "2.16.0902"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -356,6 +360,7 @@ ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
     endif
 
     SV_USE_ITK = 0
+    SV_USE_MITK = 0
     SV_USE_GDCM = 0
     SV_USE_VMTK = 0
     SV_USE_TETGEN = 0
@@ -456,6 +461,9 @@ endif
 
 ifeq ($(SV_USE_QT),1)
     GLOBAL_DEFINES += -DSV_USE_QT
+  ifeq ($(SV_USE_QT_GUI),1)
+    GLOBAL_DEFINES += -DSV_USE_QT_GUI
+  endif
 endif
 
 ifeq ($(SV_USE_ZLIB),1)
@@ -464,6 +472,10 @@ endif
 
 ifeq ($(SV_USE_ITK),1)
   GLOBAL_DEFINES += -DSV_USE_ITK
+endif
+
+ifeq ($(SV_USE_MITK),1)
+  GLOBAL_DEFINES += -DSV_USE_MITK
 endif
 
 ifeq ($(SV_USE_GDCM),1)
@@ -486,7 +498,7 @@ ifeq ($(CLUSTER), x64_cygwin)
   ifeq ($(CXX_COMPILER_VERSION), vs10.1)
 	include $(TOP)/MakeHelpers/compiler.vs10.1.x64_cygwin.mk
   endif
-  ifeq ($(CXX_COMPILER_VERSION), vs12.5)
+  ifeq ($(CXX_COMPILER_VERSION), msvc-12.5)
 	include $(TOP)/MakeHelpers/compiler.vs12.5.x64_cygwin.mk
   endif
   ifeq ($(FORTRAN_COMPILER_VERSION), ifort)
@@ -585,6 +597,15 @@ ifeq ($(SV_USE_ITK),1)
      SHARED_LIBDIRS += ../Code/Source/Segmentation/ITK
   else
      LIBDIRS += ../Code/Source/Segmentation/ITK
+  endif
+endif
+
+# for now, combine mitk code qt gui code
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/SV3/Modules
+  else
+     LIBDIRS += ../Code/Source/SV3/Modules
   endif
 endif
 
@@ -718,9 +739,9 @@ endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/QtCode
+     SHARED_LIBDIRS += ../Code/Source/SV3/Plugins
   else
-     LIBDIRS += ../Code/Source/QtCode
+     LIBDIRS += ../Code/Source/SV3/Plugins
   endif
 endif
 
@@ -744,6 +765,24 @@ LOCAL_INCDIR    := $(foreach i, ${LOCAL_SUBDIRS}, -I$(TOP)/$(i))
 
 ifeq ($(SV_USE_ITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Segmentation/ITK/Include
+endif
+
+# for now, combine the mitk and qt gui include dirs
+ifeq ($(SV_USE_MITK),1)
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/SV3/Plugins/mitk.image \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/mitk.segmentation \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.general \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.modeling \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.pathplanning \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.segmentation \
+                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.test \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Common \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Model \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Path \
+                     -I$(TOP)/../Code/Source/SV3/Modules/ProjectManagement \
+                     -I$(TOP)/../Code/Source/SV3/Modules/QtAppBase \
+                     -I$(TOP)/../Code/Source/SV3/Modules/QtWidgets \
+                     -I$(TOP)/../Code/Source/SV3/Modules/Segmentation
 endif
 
 # Link flags, which also need to be dealt with conditionally depending
@@ -951,7 +990,7 @@ ifeq ($(SV_USE_GDCM),1)
 
 endif
 
-# --------------
+# ---------------
 # Insight ToolKit
 # ---------------
 
@@ -967,6 +1006,26 @@ ifeq ($(SV_USE_ITK),1)
 
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/itk-4.7.1.x64_macosx.mk
+  endif
+
+endif
+
+# ----
+# MITK
+# ----
+
+ifeq ($(SV_USE_MITK),1)
+
+  ifeq ($(CLUSTER), x64_cygwin)
+	include $(TOP)/MakeHelpers/mitk-2016.03.x64_cygwin.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_linux)
+	include $(TOP)/MakeHelpers/mitk-2016.03.x64_linux.mk
+  endif
+
+  ifeq ($(CLUSTER), x64_macosx)
+	include $(TOP)/MakeHelpers/mitk-2016.03.x64_macosx.mk
   endif
 
 endif

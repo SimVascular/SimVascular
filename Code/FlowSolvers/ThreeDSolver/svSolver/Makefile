@@ -171,6 +171,7 @@ endif
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
+	for fn in *.mod; do /bin/rm -f $$fn;done
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
 
 veryclean: clean
