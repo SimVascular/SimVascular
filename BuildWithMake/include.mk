@@ -158,7 +158,7 @@ SV_USE_SYSTEM_PYTHON = 1
 
 SV_USE_QT = 1
 SV_USE_SYSTEM_QT = 1
-SV_USE_QT_GUI = 0
+SV_USE_QT_GUI = 1
 SV_USE_QT_GUI_SHARED = 1
 
 # -----------------------------------------------------
@@ -245,7 +245,7 @@ SV_USE_GDCM = 1
 # Compile with MITK
 # -----------------------------------------------------
 
-SV_USE_MITK = 0
+SV_USE_MITK = 1
 
 # -----------------------------------------------------
 # Compile with glib & gts
