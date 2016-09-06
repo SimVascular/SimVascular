@@ -217,8 +217,8 @@ proc modules_registry_query {regpath regpathwow key} {
     }
 }
 
-if {$SV_RELEASE_BUILD != 0} {
-  catch {package require tbcload}
+if {($SV_RELEASE_BUILD != 0) && ($tcl_plaform(platform) == "windows")} {
+    
   # why do I need to prevent this from being read on windows?
   if {$tcl_platform(platform) != "windows"} {
     source [file join $env(SV_HOME) Tcl SimVascular_2.0 General-code.tcl]
@@ -290,15 +290,18 @@ if {$SV_RELEASE_BUILD != 0} {
   if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
      catch {source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
   }
-
-}
-if {$tcl_platform(platform) == "unix"} {
-  if {$tcl_platform(os) == "Darwin"} {
-    set lib_prefix "lib_"
-    set so_postfix ".dylib"
-  } else {
-    set lib_prefix "lib_"
-    set so_postfix ".so"
+  
+  if {$tcl_platform(platform) == "unix"} {
+    if {$tcl_platform(os) == "Darwin"} {
+      set lib_prefix "lib_"
+      set so_postfix ".dylib"
+    } else {
+      set lib_prefix "lib_"
+      set so_postfix ".so"
+    }
+  } elseif {$tcl_platform(platform) == "windows"} {
+      set lib_prefix "lib_"
+      set so_postfix ".dll"
   }
   set gSimVascularTclInitLicensedLibs [list \
                                    [list Meshsimmesh ${lib_prefix}simvascular_meshsim_mesh${so_postfix}] \
@@ -324,7 +327,9 @@ if {$tcl_platform(platform) == "unix"} {
         puts "loaded [lindex $lib 0] dynamically"
       }
     }
+      
   }
+  
 }
 
 # ------------------
