@@ -74,7 +74,11 @@ if(SV_DEVELOPER_OUTPUT)
 endif()
 
 set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
-
+if (NOT CMAKE_CXX_COMPILER_VERSION)
+  message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
+                       version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
+endif()
+simvascular_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
 
 SET(USER_HOME_DIR $ENV{HOME})
 if(SV_DEVELOPER_OUTPUT)

@@ -57,7 +57,10 @@ mark_as_superbuild(SV_EXTERNALS_TOPLEVEL_DIR:PATH)
 option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
 mark_as_superbuild(SV_EXTERNALS_USE_TOPLEVEL_DIR)
 
+#-----------------------------------------------------------------------------
+# External download options
 option(SV_DOWNLOAD_EXTERNALS "Option to download all externals from a remote location" OFF)
+set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.everything.tar.gz")
 
 #-----------------------------------------------------------------------------
 # ThirdParty

@@ -89,7 +89,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    )
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 set(SV_${proj}_DIR ${${proj}_BIN_DIR})
-set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-4.8)
+set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION})
 mark_as_superbuild(${proj}_DIR})
 
 else()
