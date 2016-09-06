@@ -1,4 +1,4 @@
-EXTERNALS_TOP=/usr/local/sv
+EXTERNALS_TOP=/usr/local/sv/ext
 EXTERNALS_BUILD_TOP=/cygdrive/c/sv
 
 #
@@ -19,7 +19,7 @@ cp -Rf BuildHelpers $EXTERNALS_TOP/src
 # wget the original src files
 #
 
-source setup-sv-externals-wget-generic.sh
+source build-sv-externals-helper-wget-generic.sh
 mv Originals $EXTERNALS_TOP/src/BuildHelpers
 
 #
