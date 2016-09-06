@@ -41,7 +41,8 @@ include $(TOP)/include.mk
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
-           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS)
+           $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
+           $(MITK_INCDIRS) $(MITK_DEFS)
 
 HDRS	= 
 
@@ -191,10 +192,33 @@ ifeq ($(SV_STATIC_BUILD),1)
 
 endif
 
+LFLAGS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
+
 ifeq ($(SV_USE_QT_GUI),1)
-  ifneq ($(SV_USE_SHARED),1)
-    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
-  endif
+LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_general$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_image$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_test$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+
+LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT)
+
+#  ifneq ($(SV_USE_SHARED),1)
+#    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
+#  endif
 endif
 
 # need to explicitly add in globals for executable
@@ -210,12 +234,52 @@ DEPS	= $(SRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
+ifeq ($(SV_USE_MITK),1)
+OBJS    += \
+../SV3/Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../SV3/Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../SV3/Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../SV3/Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../SV3/Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../SV3/Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../SV3/Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
+endif
+
+ifeq ($(SV_USE_MITK),1)
+   OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
+endif
+
 TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/simvascular.exe
 
 shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
+
+$(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
+	-rm -Rf ./static_cpp_resources
+	-mkdir -p ./static_cpp_resources
+	-cp -Rf ../SV3/Modules/Path/resources ./static_cpp_resources/svPath
+#	-cp -Rf ../SV3/Modules/QtAppBase/resources ./static_cpp_resources/svQtAppBase
+	-cp -Rf ../SV3/Modules/Segmentation/resources ./static_cpp_resources/svSegmentation
+#	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svQtAppBase/ svSegmentation
+	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svSegmentation/
+ifeq ($(CLUSTER), x64_cygwin)
+	-echo "#define US_RESOURCE      200" >> ./static_cpp_resources/sv-cpp-resources.rc
+	-echo "#define IDR_US_RESOURCE  101" >> ./static_cpp_resources/sv-cpp-resources.rc
+	-echo "IDR_US_RESOURCE US_RESOURCE res_0.zip" >> ./static_cpp_resources/sv-cpp-resources.rc
+	-cd ./static_cpp_resources;rc /fo sv-cpp-resources.res sv-cpp-resources.rc
+	-cd ./static_cpp_resources;cvtres /MACHINE:X64 /OUT:../$(BUILD_DIR)/sv-cpp-resources.obj sv-cpp-resources.res
+endif
+ifeq ($(CLUSTER), x64_linux)
+	-cd ./static_cpp_resources;ld -o ../$(BUILD_DIR)/sv-cpp-resources.o -r -b binary res_0.zip
+	-cd ./static_cpp_resources;objcopy --rename-section .data=.rodata,alloc,load,readonly,data,contents ../$(BUILD_DIR)/sv-cpp-resources.o ../$(BUILD_DIR)/sv-cpp-resources.o
+endif
+ifeq ($(CLUSTER), x64_macosx)
+	-cp usCMakeResourceDependencies.cxx ./static_cpp_resources
+	-cd ./static_cpp_resources;${CXX} ${GLOBAL_CXXFLAGS} -c usCMakeResourceDependencies.cxx -o stub.o
+	-cd ./static_cpp_resources;ld -r -sectcreate __TEXT us_resources res_0.zip stub.o -o ../$(BUILD_DIR)/sv-cpp-resources.o
+endif
 
 directories:
 	-mkdir -p $(BUILD_DIR)
@@ -227,7 +291,7 @@ $(TARGET_EXE_FULL): $(OBJS)
 	for fn in $(basename $(TARGET_EXE_FULL)).pdb; do /bin/rm -f $$fn; done
 	$(LINK_EXE)$(TARGET_EXE_FULL) $(LFLAGS) $(OBJS) \
         $(LFLAGS) \
-        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
+        $(VMTK_LIBS) $(VTK_LIBS) $(ITK_LIBS) $(MITK_LIBS) $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(TETGEN_LIBS) $(ITK_LIBS) \
         $(ZLIB_LIBS) $(MPICH_LIBS) $(OPENCASCADE_LIBS) $(TCLTK_LIBS) $(CXX_LIBS) \
         $(PYTHON_LIB) $(SV_GDCM_LIBS) $(QT_LIBS) $(SV_FREETYPE_LIBS) $(SV_MMG_LIBS)
 	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
@@ -236,8 +300,7 @@ ifneq ($(SV_STATIC_BUILD),1)
         # can no longer rebase parasolid dlls
         # we need to check and see if we should be still rebasing 
         # the tcltk and vtk dlls
-	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT) \
-          $(TCLTK_DLLS) $(VTK_DLLS)
+	editbin /REBASE:BASEFILE $(TARGET_EXE_FULL) ../../../BuildWithMake/Lib/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)*.$(SOEXT)
 endif
 endif
 	if [ -e $(notdir $(TARGET_EXE_FULL)).pdb ];then mv $(basename $(TARGET_EXE_FULL)).pdb $(TOP)/Bin;fi
@@ -258,6 +321,7 @@ clean:
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 
 veryclean: clean
+	if [ -e static_cpp_resources ];then /bin/rm -f -r static_cpp_resources;fi
 	if [ -e obj ];then /bin/rm -f -r obj;fi
 
 

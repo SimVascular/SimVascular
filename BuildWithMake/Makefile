@@ -34,11 +34,11 @@ TOP = .
 
 include $(TOP)/include.mk
 
-all-shared: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-shared-build post-build
+all-shared: shared-pre-build static-build shared-build exec-shared-build
 
-all:	mixed
+all: mixed
 
-mixed: mksedscript pre-build create-svsolver-options-file static-build shared-build exec-build post-build
+mixed: static-pre-build static-build shared-build exec-build
 
 mksedscript:
 	if [ -e tclscript ];then /bin/rm -f tclscript;fi
@@ -70,8 +70,12 @@ ifeq ($(SV_USE_GLIB),1)
 	-echo "puts \"s+REPLACEME_GLIB_SO_PATH+`cygpath -u $(GLIB_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MPI),1)
+  ifdef $(MPI_SO_PATH)
 	-echo "puts \"s+REPLACEME_MPI_SO_PATH+`cygpath -u $(MPI_SO_PATH)`+g\"" >> tclscript
+  endif
+  ifdef $(MPIEXEC_PATH)
 	-echo "puts \"s+REPLACEME_MPIEXEC_PATH+`cygpath -u $(MPIEXEC_PATH)`+g\"" >> tclscript
+  endif
 	-echo "puts \"s+MPIEXEC+$(MPIEXEC)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PARASOLID),1)
@@ -102,10 +106,11 @@ ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+`cygpath -u $(SV_FREETYPE_SO_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_PYTHON_HOME+`cygpath -u $(PYTHON_HOME)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+`cygpath -u $(SV_PYTHON_SO_PATH)`+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES)\;$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES)\;$(VTK_PYTHON_PACKAGES);$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
 else
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
@@ -116,6 +121,9 @@ ifeq ($(SV_USE_QT),1)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_MITK),1)
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u $(SV_MITK_SO_PATH)`+g\"" >> tclscript
 endif
 endif
 ifeq ($(CLUSTER),x64_linux)
@@ -146,17 +154,24 @@ endif
 ifeq ($(SV_USE_ITK),1)
 	-echo "puts \"s+REPLACEME_ITK_SO_PATH+$(ITK_BIN_LIBS)+g\"" >> tclscript
 endif
+ifeq ($(SV_USE_QT),1)
+	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
+endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_MITK),1)
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_PYTHON_HOME+$(PYTHON_HOME)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES):$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
 else
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
@@ -195,14 +210,21 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
 endif
+ifeq ($(SV_USE_QT),1)
+	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
+endif
+ifeq ($(SV_USE_MITK),1)
+	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
+endif
 ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_PYTHON),1)
+	-echo "puts \"s+REPLACEME_PYTHON_HOME+$(PYTHON_HOME)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_PYTHON_SO_PATH+$(SV_PYTHON_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_PYTHON_SITE_PACKAGES+$(PYTHON_SITE_PACKAGES)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_VTK_PYTHON_PACKAGES+$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_PYTHON_PACKAGES+$(PYTHON_SITE_PACKAGES):$(VTK_PYTHON_PACKAGES):$(VTK_SO_PATH)+g\"" >> tclscript
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+ON+g\"" >> tclscript
 else
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
@@ -211,13 +233,24 @@ endif
 	-/usr/bin/tclsh tclscript > sedscript
 	-rm -f tclscript
 
-pre-build:
-	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
+common-pre-build: mksedscript create-svsolver-options-file post-build
 	mkdir -p Bin
 	mkdir -p Lib
+	mkdir -p Bin/plugins
 	mkdir -p ../Code/Source/Include/Make
 	touch ../Code/Source/Include/Make/simvascular_options.h
 	touch ../Code/Source/Include/Make/simvascular_version.h
+
+shared-pre-build: common-pre-build
+	cd ../Code/Source/SV3/Plugins;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) create_exports_h us-init-module
+
+static-pre-build: common-pre-build
+	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
+	cd ../Code/Source/SV3/Plugins;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/SV3/Modules;$(MAKE) create_exports_h us-init-module
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
@@ -263,9 +296,11 @@ post-build: mksedscript
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-postsolver-script >> mypost
 ifeq ($(CLUSTER),x64_linux)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-linux-script > mysolver
-elif ($(CLUSTER),x64_macosx)
+endif
+ifeq ($(CLUSTER),x64_macosx)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-macosx-script > mysolver
-else
+endif
+ifeq ($(CLUSTER),x64_cygwin)
 	-sed -f sedscript $(TOP)/Release/developer_wrapper_scripts/developer-flowsolver-windows-script > mysolver
 endif
 	-chmod a+rx sv

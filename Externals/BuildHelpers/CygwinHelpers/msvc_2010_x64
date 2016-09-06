@@ -1,0 +1,85 @@
+#
+#  Microsoft Visual Studio 2010 x64 (installed with 64-bit Windows 7)
+#
+
+parse_reg_dir()
+{
+reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
+}
+
+parse_reg_dir_with_extra_space()
+{
+reg query "$1" /v $2 | sed ':a;N;$!ba;s/\n//g;s+\\+/+g' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}' | awk '{$1="";$2="";$3="";$4="";print}' | awk '{gsub(/^[ \t]+/,"",$0);gsub(/^[ \t]+$/,"",$0);print}'
+}
+
+export VS100COMNTOOLS=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VS7 10.0`/Common7/Tools
+
+export VSINSTALLDIR=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VS7 10.0`
+export VCINSTALLDIR=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 10.0`
+
+#export VSINSTALLDIR=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0
+#export VCINSTALLDIR=/cygdrive/c/Program\ Files\ \(x86\)/Microsoft\ Visual\ Studio\ 10.0/VC
+
+FrameworkDir32=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkDir32`
+FrameworkDir64=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkDir64`
+FrameworkVersion32=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkVer32`
+FrameworkVersion64=`parse_reg_dir HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\VisualStudio\\\\SxS\\\\VC7 FrameworkVer64`
+
+Framework35Version=v3.5
+
+#export FrameworkDir64=/cygdrive/c/Windows/Microsoft.NET/Framework64
+#export FrameworkVersion64=v4.0.30319
+#export Framework35Version=v3.5
+
+export FrameworkDir=$FrameworkDir64
+export FrameworkVersion=$FrameworkVersion64
+
+# SDK vars
+
+export WindowsSdkDir=`parse_reg_dir_with_extra_space "HKLM\\\\SOFTWARE\\\\Wow6432Node\\\\Microsoft\\\\Microsoft SDKs\\\\Windows" CurrentInstallFolder`
+
+PATH=`cygpath "$WindowsSdkDir/bin/NETFX 4.0 Tools/x64"`\:`cygpath "$WindowsSdkDir/bin/x64"`\:`cygpath "$WindowsSdkDir/bin"`\:$PATH
+
+INCLUDE=$WindowsSdkDir/include\;$INCLUDE
+LIB=$WindowsSdkDir/lib/x64\;$LIB
+	
+#PATH=$WindowsSdkDir/bin/x64:$PATH
+#INCLUDE=`cygpath -m "$WindowsSdkDir\Include"`\;$INCLUDE
+#echo $INCLUDE
+#LIB=`cygpath -m "$WindowsSdkDir/Lib/winv6.3/um/x64"`\;$LIB
+
+# set PATH
+
+PATH=`cygpath "$VSINSTALLDIR/Team Tools/Performance Tools/x64"`:`cygpath "$VSINSTALLDIR/Team Tools/Performance Tools"`:$PATH
+PATH=/cygdrive/c/Program\ Files/HTML\ Help\ Workshop:/cygdrive/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop:$PATH
+PATH=`cygpath "$VSINSTALLDIR/Common7/Tools"`:$PATH
+PATH=`cygpath "$VSINSTALLDIR/Common7/IDE"`:$PATH
+PATH=`cygpath "$VCINSTALLDIR/VCPackages"`:$PATH
+PATH=`cygpath "$FrameworkDir/$Framework35Version"`:$PATH
+PATH=`cygpath "$FrameworkDir/$FrameworkVersion"`:$PATH
+PATH=`cygpath "$VCINSTALLDIR/BIN/amd64"`:$PATH
+
+# set INCLUDE
+
+INCLUDE=$VCINSTALLDIR/atlmfc/include\;$INCLUDE
+INCLUDE=$VCINSTALLDIR/include\;$INCLUDE
+
+# set LIB
+
+LIB=$VCINSTALLDIR/ATLMFC/LIB/amd64\;$LIB
+LIB=$VCINSTALLDIR/LIB/amd64\;$LIB
+
+# set LIBPATH
+
+LIBPATH=$VCINSTALLDIR/ATLMFC/LIB/amd64\;$LIBPATH
+LIBPATH=$VCINSTALLDIR/LIB/amd64\;$LIBPATH
+LIBPATH=$FrameworkDir/$Framework35Version\;$LIBPATH
+LIBPATH=$FrameworkDir/$FrameworkVersion\;$LIBPATH
+
+export Platform=X64
+export CommandPromptType=Native
+
+export INCLUDE
+export LIB
+export PATH
+export LIBPATH
