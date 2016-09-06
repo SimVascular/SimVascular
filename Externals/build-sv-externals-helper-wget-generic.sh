@@ -1,4 +1,4 @@
-export PARENT_URL=http://simvascular.stanford.edu/downloads/public/externals/originals/
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/src/originals/
 
 mkdir Originals
 pushd Originals
