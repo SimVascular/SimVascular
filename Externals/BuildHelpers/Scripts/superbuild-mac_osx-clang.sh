@@ -49,8 +49,8 @@ chmod a+rx ./tmp/compile.cmake.mmg.clang.sh
 # mitk
 sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/compile-cmake-mitk-generic.sh > tmp/compile.cmake.mitk.clang.sh
 chmod a+rx ./tmp/compile.cmake.mitk.clang.sh
-#sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/post-install-mitk-mac_osx.sh > tmp/post-install-mitk.sh
-#chmod a+rx ./tmp/post-install-mitk.sh
+sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh CompileScripts/post-install-mitk-mac_osx.sh > tmp/post-install-mitk-mac_osx.sh
+chmod a+rx ./tmp/post-install-mitk-mac_osx.sh
 
 # create script to create tar files
 sed -f CompileScripts/sed-script-x64_mac_osx-options-clang.sh Scripts/create-archives-mac_osx.sh > tmp/create-archives-mac_osx.clang.sh
@@ -93,7 +93,7 @@ chmod a+rx ./tmp/tar-to-zip-all.clang.sh
 
 # mitk
 ./tmp/compile.cmake.mitk.clang.sh >& ./tmp/stdout.mitk.clang.txt
-#./tmp/post-install-mitk-mac_osx.sh >& ./tmp/stdout.post-install-mac_osx.mitk.txt
+./tmp/post-install-mitk-mac_osx.sh >& ./tmp/stdout.post-install-mac_osx.mitk.txt
 
 #
 # create tar files for distrution
