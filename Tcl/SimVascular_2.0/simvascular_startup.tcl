@@ -217,7 +217,7 @@ proc modules_registry_query {regpath regpathwow key} {
     }
 }
 
-if {($SV_RELEASE_BUILD != 0) && ($tcl_plaform(platform) == "windows")} {
+if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
     
   # why do I need to prevent this from being read on windows?
   if {$tcl_platform(platform) != "windows"} {
