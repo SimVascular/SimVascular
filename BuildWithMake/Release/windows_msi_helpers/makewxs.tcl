@@ -36,14 +36,19 @@ set SV_FILES [lindex $argv 6]
 set SV_FULL_VER_NO [lindex $argv 7]
 set TCL_LIBRARY_TAIL [file tail [lindex $argv 8]]
 set TK_LIBRARY_TAIL [file tail [lindex $argv 9]]
+
 puts "SV_FILES $SV_FILES"
 
 global pwd
+global releasedir
+
+set pwd {P:/package}
+
 if {$tcl_platform(platform) == "windows"} {
-  set pwd [pwd]
+  set releasedir [pwd]
 } else {
   #assume cygwin
-  set pwd [exec cygpath -m [pwd]]
+  set releasedir [exec cygpath -m [pwd]]
 }
 
 puts "building wxs for $argv"
@@ -53,6 +58,7 @@ set outputRegistry 0
 proc file_find {dir wildcard args} {
 
   global pwd
+  global releasedir
   global SV_SHORT_NAME
   global TCL_LIBRARY_TAIL
   global TK_LIBRARY_TAIL
@@ -100,7 +106,7 @@ proc file_find {dir wildcard args} {
           global SV_EXECUTABLE
           if {[file tail $i] == $SV_EXECUTABLE} {
             global curdirID
-	    puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$pwd/$i' DiskId='1'>"
+	    puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$i' DiskId='1'>"
             puts $outfp "<Shortcut Id='ids12' Directory='ProgramMenuDir' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
 	    puts $outfp "<Shortcut Id='ids13' Directory='DesktopFolder' Name='$SV_VERSION' Arguments='Tcl/SimVascular_2.0/simvascular_startup.tcl' WorkingDirectory='$curdirID' Icon='idico' IconIndex='0' />"
             puts $outfp "</File>"
@@ -111,7 +117,7 @@ proc file_find {dir wildcard args} {
 
             puts $outfp "<RemoveFolder Id='RemoveProgramMenuDir' Directory='ProgramMenuDir' On='uninstall' />"
 	  } else {
-	  puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$pwd/$i' DiskId='1' />"
+	  puts $outfp "<File Id='id[format %04i $id]' Name='[file tail $i]' Source='$i' DiskId='1' />"
 	  }
       }
       lappend rtnme $i
@@ -178,7 +184,7 @@ puts $outfp "\t\t\t<Directory Id='INSTALLDIR' Name='$SV_SHORT_NAME'>"
 
 #puts $outfp "<Component Id='ain_id23' Guid='A7FFADE1-74BB-4CC8-8052-06B214B93701'>"
 
-file_find package/$SV_FILES/ *
+file_find $pwd/$SV_FILES/ *
 # need to do for each nested directory!
 #puts $outfp <Directory Id='id22' Name='bin'>
 #<Component Id='ain_id23' Guid='A7FFADE1-74BB-4CC8-8052-06B214B93701'>
@@ -219,7 +225,7 @@ puts $outfp "\t</Feature>"
 puts $outfp "</Feature>"
 
 puts $outfp "<Property Id='WIXUI_INSTALLDIR' Value='INSTALLDIR' />		<UIRef Id='WixUI_InstallDir' />"
-puts $outfp "<Icon Id='idico' SourceFile='$pwd\\windows_msi_helpers\\simvascular.ico' />"
+puts $outfp "<Icon Id='idico' SourceFile='$releasedir\\windows_msi_helpers\\simvascular.ico' />"
 puts $outfp "</Product>"
 puts $outfp "</Wix>"
 
