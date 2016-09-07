@@ -73,7 +73,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     list(APPEND additional_cmake_args
          -DModule_ITKOpenJPEG:BOOL=ON
     )
-    set(revision_tag "simvascular-patch-4.7.1")
+  #set(revision_tag "simvascular-patch-4.7.1")
 
   endif()
 
@@ -110,9 +110,6 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 set(SV_${proj}_DIR ${${proj}_BIN_DIR})
 set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION})
-if(SV_USE_QT_GUI)
-  set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-${${proj}_MAJOR_VERSION}.7)
-endif() 
 mark_as_superbuild(${proj}_DIR})
 
 else()

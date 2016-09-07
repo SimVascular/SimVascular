@@ -133,7 +133,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
         -DVTK_USE_SYSTEM_FREETYPE:BOOL=${VTK_USE_SYSTEM_FREETYPE}
      )
      
-     set(revision_tag "simvascular-patch-6.2b")
+   #set(revision_tag "simvascular-patch-6.2b")
   endif()
 
   ExternalProject_Add(${proj}

@@ -815,6 +815,13 @@ endif()
 #-----------------------------------------------------------------------------
 # MITK
 if(SV_USE_MITK)
+  #if(NOT SV_USE_CUSTOM_CTK)
+  #  set(CTK_DIR ${MITK_DIR}/../ep/src/CTK-build)
+  #  find_package(CTK)
+  #  mark_as_superbuild(CTK_DIR)
+  #  mark_as_superbuild(CTK_INCLUDE_DIRS)
+  #  mark_as_superbuild(CTK_LIBRARIES)
+  #endif()
   find_package(MITK)
   mark_as_superbuild(MITK_DIR)
   mark_as_superbuild(MITK_INCLUDE_DIR)

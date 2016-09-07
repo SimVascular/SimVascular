@@ -121,3 +121,13 @@ mark_as_superbuild(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
 # Option to build qt GUI
 option(SV_USE_QT_GUI "Option to build the SimVascular QT GUI" OFF)
 mark_as_superbuild(SV_USE_QT_GUI)
+
+#-----------------------------------------------------------------------------
+# Custom CTK
+option(SV_USE_CUSTOM_CTK "Option to build a custom CTK" OFF)
+mark_as_superbuild(SV_USE_CUSTOM_CTK)
+
+#-----------------------------------------------------------------------------
+# Custom SimpleITK
+option(SV_USE_CUSTOM_SimpleITK "Option to build a custom SimpleITK" OFF)
+mark_as_superbuild(SV_USE_CUSTOM_SimpleITK)
