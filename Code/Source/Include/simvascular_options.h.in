@@ -54,3 +54,7 @@
 #cmakedefine SV_USE_WIN32_REGISTRY @SV_USE_WIN32_REGISTRY@
 #cmakedefine SV_REGISTRY_TOPLEVEL "@SV_REGISTRY_TOPLEVEL@"
 #cmakedefine SV_USE_NOTIMER @SV_USE_NOTIMER@
+
+#cmakedefine SV_USE_QT_GUI @SV_USE_QT_GUI@ 
+#cmakedefine SV_USE_QT @SV_USE_QT@ 
+#cmakedefine SV_USE_MITK @SV_USE_MITK@ 

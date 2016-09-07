@@ -154,7 +154,7 @@ svCatchDebugger() {
 */
 
   #endif
-    
+
 #include <usModuleImport.h>
 
   // seems to be missing from mitk's cppservices
@@ -168,7 +168,7 @@ svCatchDebugger() {
   US_INITIALIZE_STATIC_MODULE(svqtappbase)
   US_INITIALIZE_STATIC_MODULE(svqtwidgets)
   US_INITIALIZE_STATIC_MODULE(svsegmentation)
-  //US_INITIALIZE_STATIC_MODULE(svlib) (unneed, Applications dir???) 
+  //US_INITIALIZE_STATIC_MODULE(svlib) (unneed, Applications dir???)
   // seems to be missing from mitk's cppservices
   //US_INITIALIZE_IMPORT_STATIC_MODULE_RESOURCES(...)
 #else
@@ -181,7 +181,7 @@ svCatchDebugger() {
   US_IMPORT_MODULE(svprojectmanagement)
   US_IMPORT_MODULE(svqtappbase)
   US_IMPORT_MODULE(svqtwidgets)
-  US_IMPORT_MODULE(svsegmentation)  
+  US_IMPORT_MODULE(svsegmentation)
     */
   //extern "C" void  _us_import_module_initializer_svsegmentation();
   //extern "C" void  _us_import_module_initializer_svPath();
@@ -193,16 +193,16 @@ svCatchDebugger() {
  FILE *simvascularstdout;
  FILE *simvascularstderr;
  bool use_qt_tcl_interp;
- 
+
  int main( int argc, char *argv[] )
  {
-   
+
   // default to tcl gui
   bool use_tcl_gui = true;
-  bool use_qt_gui  = false; 
+  bool use_qt_gui  = false;
   bool catch_debugger = false;
   use_qt_tcl_interp = false;
- 
+
   ios::sync_with_stdio();
 
 #ifdef BUILD_WITH_STDOUT_STDERR_REDIRECT
@@ -223,10 +223,10 @@ svCatchDebugger() {
 #endif
 
   fprintf(stdout,"argc %i\n",argc);
- fflush(stdout);  
-  
+ fflush(stdout);
+
   if (argc != 0) {
-    
+
     // default to tcl gui
     for (int iarg = 1; iarg < argc;iarg++) {
       bool foundValid = false;
@@ -278,7 +278,7 @@ svCatchDebugger() {
       }
       if (!foundValid && warnInvalid) {
 	fprintf(stderr,"Warning:  unknown option (%s) ignored!\n",argv[iarg]);
-      } 
+      }
     }
   }
 
@@ -286,7 +286,7 @@ svCatchDebugger() {
   if (catch_debugger) {
     svCatchDebugger();
   }
-    
+
   char *envstr=getenv("SV_BATCH_MODE");
   if (envstr != NULL) {
     fprintf(stdout,"\n  Using SimVascular in batch mode.\n");
@@ -342,7 +342,7 @@ svCatchDebugger() {
   }
 
   //printf("Value Read is %s\n", rundir);
- 
+
   // set the environment variables using the registry
   char oldpath[_MAX_ENV];
   char newpath[_MAX_ENV];
@@ -361,7 +361,7 @@ svCatchDebugger() {
   getenv_s( &requiredSize, oldpath, requiredSize, "PATH" );
 
   // prepend path with location of our shared libs
-  
+
   int newpathlength = 0;
   newpath[0]='\0';
 
@@ -373,9 +373,9 @@ svCatchDebugger() {
     }
   }
   newpath[newpathlength++]=';';
-  
+
   // now add original path
-  
+
   for (int i = 0; i < strlen(oldpath);i++) {
     newpath[newpathlength++]=oldpath[i];
     if (newpathlength == _MAX_ENV) {
@@ -386,12 +386,12 @@ svCatchDebugger() {
   newpath[newpathlength]='\0';
 
   _putenv_s( "PATH", newpath );
- 
+
   //fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
   //fprintf(stdout,"RUNDIR: %s\n",rundir);
   //fprintf(stdout,"NEW PATH: %s\n",newpath);
   //fprintf(stdout,"length of path: %i\n",newpathlength);
-  
+
    // set the environment variables using the registry
   char envvar[_MAX_ENV];
   char newvar[_MAX_ENV];
@@ -454,7 +454,7 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
 #endif
 
 #ifdef SV_USE_PYTHON
- 
+
   lszValue4[0]='\0';
   returnStatus2 = RegQueryValueEx(hKey2, "PythonPackagesDir", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
   //returnStatus2 = RegQueryValueEx(hKey2, "Python", NULL, &dwType4,(LPBYTE)&lszValue4, &dwSize4);
@@ -469,14 +469,14 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
   pythonpath[0]='\0';
   sprintf(pythonpath,"%s",lszValue4);
   fprintf(stdout,"%s\n",pythonpath);
-  
+
   _putenv_s( "PYTHONPATH", pythonpath );
 
 #endif
 
 RegCloseKey(hKey2);
 #endif
-  
+
 #endif
 
   if (use_tcl_gui) {
@@ -486,20 +486,20 @@ RegCloseKey(hKey2);
       Tcl_Main (argc, argv, Tcl_AppInit);
     }
   }
-  
+
 #ifdef SV_USE_QT_GUI
 
   if(use_qt_gui) {
-   
+
    svApplication svapp(argc, argv);
 
    // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
 
    //_us_import_module_initializer_svsegmentation();
    //_us_import_module_initializer_svPath();
-   
+
     #ifdef QT_STATICPLUGIN
-   
+
     Q_INIT_RESOURCE(sv);
     Q_INIT_RESOURCE(qtappbase);
     Q_INIT_RESOURCE(svgeneral);
@@ -515,10 +515,10 @@ RegCloseKey(hKey2);
 
     svSegmentationPluginActivator* svsegmentationplugin = new svSegmentationPluginActivator();
     svsegmentationplugin->start();
-  
+
     svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
     svpathplugin->start();
-  
+
     svModelingPluginActivator* svmodelplugin = new svModelingPluginActivator();
     svmodelplugin->start();
 
@@ -526,9 +526,9 @@ RegCloseKey(hKey2);
     svtestplugin->start();
 
     #endif
-    
+
     // Register Qmitk-dependent global instances
-    
+
     QmitkRegisterClasses();
     svMainWindow svwindow;
     svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
@@ -536,14 +536,14 @@ RegCloseKey(hKey2);
 
     if (use_qt_tcl_interp) {
       Tcl_Main (argc, argv, Tcl_AppInit);
-    } else { 
+    } else {
       return svapp.exec();
     }
-    
+
   }
-  
+
 #endif
- 
+
   return 0;
 }
 
@@ -661,7 +661,7 @@ int Tcl_AppInit( Tcl_Interp *interp )
     #endif
     #endif
   }
- 
+
   return TCL_OK;
 
 }

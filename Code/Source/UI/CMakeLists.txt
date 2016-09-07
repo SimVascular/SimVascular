@@ -1,3 +1,5 @@
+set(APP_NAME ${SV_EXE})
+set(APP_SHOW_CONSOLE ON)
 
 SET(CXXSRCS main.cxx SimVascular_Init.cxx)
 
@@ -58,6 +60,23 @@ if (SV_USE_PYTHON)
 	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_PYTHON_INTERP_NAME})
 endif()
 
+if(SV_USE_QT_GUI)
+	SET(OPTLIBS ${OPTLIBS} mitk_image
+                               mitk_segmentation
+                               sv_general
+                               sv_modeling
+                               sv_pathplanning
+                               sv_segmentation
+                               sv_test
+                               svCommon
+                               svModel
+                               svPath
+                               svProjectManagement
+                               svQtAppBase
+                               svQtWidgets
+                               svSegmentation
+                               svApplications)
+endif()
 
 simvascular_add_executable(${SV_EXE}
 	SRCS ${CXXSRCS}
@@ -83,5 +102,6 @@ target_link_libraries(${SV_EXE} ${OPTLIBS}
 			${GLOBAL_LIBRARIES}
 			${MMG_LIBRARY}
 			${FREETYPE_LIBRARY}
-                        ${PYTHON_LIBRARY})
-
+                        ${PYTHON_LIBRARY}
+                        ${MITK_LIBRARIES}
+                        ${QT_LIBRARIES})

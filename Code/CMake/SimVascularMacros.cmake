@@ -329,7 +329,27 @@ macro(simvascular_add_executable TARGET_NAME)
 	CMAKE_PARSE_ARGUMENTS("simvascular_add_executable" 
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS})
+
+        set(WINDOWS_ICON_RESOURCE_FILE "")
+        if(WIN32)
+          if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+            set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+          endif()
+        endif()
+
+        set(_app_compile_flags )
+        if(WIN32)
+          set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
+        endif()
+
+        if(WIN32)
+          add_executable(${TARGET_NAME} MACOSX_BUNDLE WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+        else()
+          add_executable(${TARGET_NAME} MACOSX_BUNDLE ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+        endif()
+
+        set_target_properties(${TARGET_NAME} PROPERTIES
+                      COMPILE_FLAGS "${_app_compile_flags}")
 
 	if(simvascular_add_executable_NO_SCRIPT)
 		if(	simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
@@ -353,12 +373,23 @@ macro(simvascular_add_executable TARGET_NAME)
 	endif()
 	# CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
 	if(simvascular_add_executable_INSTALL_DESTINATION)
-		if(simvascular_add_executable_COMPONENT)
-			set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
-		endif()
-		install(TARGETS ${TARGET_NAME}
-			RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
-			${_COMPARGS})
+          if(APPLE)
+            set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
+            set(icon_name "icon.icns")
+            set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
+            if(EXISTS "${icon_full_path}")
+              set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
+              file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
+              INSTALL (FILES ${icon_full_path} DESTINATION "${TARGET_NAME}.app/Contents/Resources/")
+            endif()
+          else()
+            if(simvascular_add_executable_COMPONENT)
+                    set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
+            endif()
+            install(TARGETS ${TARGET_NAME}
+                    RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
+                    ${_COMPARGS})
+          endif()
 	endif()
 
 endmacro()
