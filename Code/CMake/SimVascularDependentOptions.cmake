@@ -25,7 +25,9 @@ if(WIN32)
 
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
 	if(NOT IS64)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
+	    if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")
+		    set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
+		endif()
 	endif()
 	if(CYGWIN)
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCYGWIN")
@@ -67,14 +69,17 @@ if(MSVC)
 endif()
 # Visual Studio Linker Flags
 if(MSVC)
-	set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE:LIB")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrtd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MACHINE:X64 /subsystem:console /D__VC__")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000,10000000")
+# SUPPRESS_VC_DEPRECATED_WARNINGS
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+
+  #	set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE:LIB")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrtd.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MACHINE:X64 /subsystem:console /D__VC__")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000,10000000")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -164,12 +169,6 @@ endif()
 
 if(SV_USE_OpenCASCADE_SHARED)
   set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
-
-if(SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED AND NOT SV_SUPERBUILD)
-  if(LINUX)
-  	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-  endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -272,4 +271,52 @@ if(NOT MSVC)
 	  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 	  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# Gui Options: QT GUI
+
+if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
+  SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
+    if(NOT SimVascular_CXX11_FLAG)
+    # Older gcc compilers use -std=c++0x
+    SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
+  endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SimVascular_CXX11_FLAG}")
+  if(WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0501 -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN -DNOMINMAX")
+  endif()
+endif()
+
+if(SV_USE_QT_GUI)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
+    set(SimVascular_QT5_COMPONENTS Concurrent Designer OpenGL PrintSupport Script Sql Svg WebKitWidgets Xml XmlPatterns UiTools Help)
+    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
+    if(Qt5_DIR)
+      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
+      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
+      if(_result LESS 0)
+        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
+      endif()
+    endif()
+
+    set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
+
+    set(SV_USE_ITK "ON" CACHE BOOL "Initial cache" FORCE)
+    set(SV_USE_ITK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
+
+    set(SV_USE_MITK "ON" CACHE BOOL "Initial cache" FORCE)
+    set(SV_USE_MITK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
+
+    set(SV_USE_GDCM "ON" CACHE BOOL "Initial cache" FORCE)
+    set(SV_USE_GDCM_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
+
+    set(SV_USE_CTK "ON" CACHE BOOL "Initial cache" FORCE)
+    set(SV_USE_CTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
+
+    set(SV_USE_SimpleITK "ON" CACHE BOOL "Initial cache" FORCE)
+    set(SV_USE_SimpleITK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
+
+    set(SV_USE_PYTHON "ON" CACHE BOOL "Initial cache" FORCE)
+    set(SV_USE_SYSTEM_PYTHON "OFF" CACHE BOOL "Initial cache" FORCE)
 endif()

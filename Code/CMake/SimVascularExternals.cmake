@@ -197,6 +197,35 @@ if(SV_USE_MMG)
   endif()
 endif()
 
+# MITK
+#-----------------------------------------------------------------------------
+simvascular_add_new_external(MITK 2016.03.0 OFF ON mitk)
+if(SV_USE_MITK)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(MITK_DIR ${SV_MITK_DIR})
+  endif()
+endif()
+
+# CTK
+#-----------------------------------------------------------------------------
+simvascular_add_new_external(CTK 0.1 OFF ON ctk)
+if(SV_USE_CTK)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(CTK_DIR ${SV_CTK_DIR})
+  endif()
+endif()
+
+# SimpleITK
+#-----------------------------------------------------------------------------
+simvascular_add_new_external(SimpleITK 0.8.1 OFF ON simpleitk)
+if(SV_USE_SimpleITK)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(SimpleITK_DIR ${SV_SimpleITK_DIR})
+  endif()
+endif()
+
+# Download of Externals for quick build
+#-----------------------------------------------------------------------------
 if(SV_DOWNLOAD_EXTERNALS)
   simvascular_download_and_extract_tar(${SV_EXTERNALS_DOWNLOAD_URL} "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXTERNALS_BIN_DIR}")
   set(SV_EXTERNALS_USE_TOPLEVEL_DIR ON CACHE BOOL "Set externals to download dir" FORCE)

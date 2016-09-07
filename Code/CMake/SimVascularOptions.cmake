@@ -116,3 +116,8 @@ mark_as_superbuild(VARS BUILD_TESTING)
 # Thirdparty shared libs
 option(SV_USE_THIRDPARTY_SHARED_LIBRARIES "Option to build the thirdparty libs as shared" OFF)
 mark_as_superbuild(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
+
+#-----------------------------------------------------------------------------
+# Option to build qt GUI
+option(SV_USE_QT_GUI "Option to build the SimVascular QT GUI" OFF)
+mark_as_superbuild(SV_USE_QT_GUI)

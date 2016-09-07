@@ -60,6 +60,7 @@ include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularExternals)
 include(SimVascularInternals)
+include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Include Dependent Options
 include(SimVascularDependentOptions)
@@ -374,6 +375,52 @@ if(SV_USE_OpenCASCADE)
           simvascular_get_external_path_from_include_dir(OpenCASCADE)
         endif()
 endif()
+
+#-----------------------------------------------------------------------------
+# CTK
+if(SV_USE_CTK)
+    simvascular_external(CTK DOWNLOADABLE)
+    mark_as_superbuild(CTK_DIR)
+
+    if(SV_USE_CTK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} CTK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+    if(SV_USE_SYSTEM_CTK)
+      simvascular_get_external_path_from_include_dir(CTK)
+    endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# SimpleITK
+if(SV_USE_SimpleITK)
+    simvascular_external(SimpleITK DOWNLOADABLE)
+    mark_as_superbuild(SimpleITK_DIR)
+
+    if(SV_USE_SimpleITK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} SimpleITK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+    if(SV_USE_SYSTEM_SimpleITK)
+      simvascular_get_external_path_from_include_dir(SimpleITK)
+    endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# MITK
+if(SV_USE_MITK)
+    simvascular_external(MITK DOWNLOADABLE)
+    mark_as_superbuild(MITK_DIR)
+
+    if(SV_USE_MITK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+    if(SV_USE_SYSTEM_MITK)
+      simvascular_get_external_path_from_include_dir(MITK)
+    endif()
+endif()
+
 
 # Licensed Package Additions
 #-----------------------------------------------------------------------------
@@ -707,44 +754,71 @@ mark_as_superbuild(ALL_PROJECTS)
 # GDCM Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_GDCM)
-        find_package(GDCM)
-	mark_as_superbuild(GDCM_DIR)
-	mark_as_superbuild(GDCM_INCLUDE_DIR)
-	mark_as_superbuild(GDCM_LIBRARIES)
+  find_package(GDCM)
+  mark_as_superbuild(GDCM_DIR)
+  mark_as_superbuild(GDCM_INCLUDE_DIR)
+  mark_as_superbuild(GDCM_LIBRARIES)
 endif()
 
 # ITK Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_ITK)
-	find_package(ITK REQUIRED)
-	include(${ITK_USE_FILE})
+  find_package(ITK REQUIRED)
+  include(${ITK_USE_FILE})
 endif()
 
 # FREETYPE Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_FREETYPE)
-  	find_package(FREETYPE)
-	mark_as_superbuild(FREETYPE_DIR)
-	mark_as_superbuild(FREETYPE_INCLUDE_DIR)
-	mark_as_superbuild(FREETYPE_LIBRARIES)
+  find_package(FREETYPE)
+  mark_as_superbuild(FREETYPE_DIR)
+  mark_as_superbuild(FREETYPE_INCLUDE_DIR)
+  mark_as_superbuild(FREETYPE_LIBRARIES)
 endif()
 
 # OpenCASCADE Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_OpenCASCADE)
-	find_package(OpenCASCADE)
-	mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
-	mark_as_superbuild(OpenCASCADE_LIBRARIES)
-	mark_as_superbuild(OpenCASCADE_LIBRARY)
+  find_package(OpenCASCADE)
+  mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
+  mark_as_superbuild(OpenCASCADE_LIBRARIES)
+  mark_as_superbuild(OpenCASCADE_LIBRARY)
 endif()
 
 #-----------------------------------------------------------------------------
 # MMG Setup
 if(SV_USE_MMG)
-	find_package(MMG)
-	mark_as_superbuild(MMG_DIR)
-	mark_as_superbuild(MMG_INCLUDE_DIR)
-	mark_as_superbuild(MMG_LIBRARY)
+  find_package(MMG)
+  mark_as_superbuild(MMG_DIR)
+  mark_as_superbuild(MMG_INCLUDE_DIR)
+  mark_as_superbuild(MMG_LIBRARY)
+endif()
+
+#-----------------------------------------------------------------------------
+# CTK
+if(SV_USE_CTK)
+  find_package(CTK)
+  mark_as_superbuild(CTK_DIR)
+  mark_as_superbuild(CTK_INCLUDE_DIR)
+  mark_as_superbuild(CTK_LIBRARIES)
+endif()
+
+#-----------------------------------------------------------------------------
+# SimpleITK
+if(SV_USE_SimpleITK)
+  find_package(SimpleITK)
+  mark_as_superbuild(SimpleITK_DIR)
+  mark_as_superbuild(SimpleITK_INCLUDE_DIR)
+  mark_as_superbuild(SimpleITK_LIBRARIES)
+endif()
+
+#-----------------------------------------------------------------------------
+# MITK
+if(SV_USE_MITK)
+  find_package(MITK)
+  mark_as_superbuild(MITK_DIR)
+  mark_as_superbuild(MITK_INCLUDE_DIR)
+  mark_as_superbuild(MITK_LIBRARIES)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -892,3 +966,26 @@ endif()
 # Configure Exe Scripts, this should be the last subdirectory
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
+
+#--------------------------------------------------------------------
+# Build the QT Gui
+if(SV_USE_QT_GUI)
+
+    include_directories(
+      ${CMAKE_CURRENT_SOURCE_DIR}/CMake
+      ${CMAKE_CURRENT_SOURCE_DIR}
+      ${CMAKE_CURRENT_BINARY_DIR}
+      )
+
+    set(files
+      svConfigure.h
+      )
+    foreach(f ${files})
+      configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/${f}.in
+        ${CMAKE_CURRENT_BINARY_DIR}/${f}
+        )
+    endforeach()
+
+    add_subdirectory(SV3)
+endif()
