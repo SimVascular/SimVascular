@@ -119,6 +119,7 @@ endif()
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}/plugins" install_script_string)
 # set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 	# 				<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
 	# 					Value='[INSTALL_ROOT]\\@SV_INSTALL_EXTERNALS_RUNTIME_DIR@'

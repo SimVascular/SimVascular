@@ -380,7 +380,10 @@ macro(simvascular_add_executable TARGET_NAME)
             if(EXISTS "${icon_full_path}")
               set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
               file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
-              INSTALL (FILES ${icon_full_path} DESTINATION "${TARGET_NAME}.app/Contents/Resources/")
+              install(TARGETS ${TARGET_NAME}
+                      BUNDLE DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+                      ${_COMPARGS})
+              install(FILES ${icon_full_path} DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}/${TARGET_NAME}.app/Contents/Resources/")
             endif()
           else()
             if(simvascular_add_executable_COMPONENT)

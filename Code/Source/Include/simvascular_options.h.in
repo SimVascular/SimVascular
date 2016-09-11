@@ -58,3 +58,4 @@
 #cmakedefine SV_USE_QT_GUI @SV_USE_QT_GUI@ 
 #cmakedefine SV_USE_QT @SV_USE_QT@ 
 #cmakedefine SV_USE_MITK @SV_USE_MITK@ 
+#cmakedefine SV_NO_PYTHONQT_ALL @SV_NO_PYTHONQT_ALL@ 

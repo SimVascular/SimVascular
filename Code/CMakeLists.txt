@@ -64,6 +64,7 @@ include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Include Dependent Options
 include(SimVascularDependentOptions)
+include(SimVascularExternals)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
@@ -326,6 +327,8 @@ if(SV_USE_ITK)
 
 	set(USE_ITK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
+        include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
+        include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
         if(SV_USE_SYSTEM_ITK)
           simvascular_get_external_path_from_include_dir(ITK)
         endif()
@@ -822,12 +825,18 @@ if(SV_USE_MITK)
   #  mark_as_superbuild(CTK_INCLUDE_DIRS)
   #  mark_as_superbuild(CTK_LIBRARIES)
   #endif()
-  find_package(MITK)
+  find_package(MITK REQUIRED)
   mark_as_superbuild(MITK_DIR)
-  mark_as_superbuild(MITK_INCLUDE_DIR)
+  set(MITK_LIBRARIES MitkCore
+                     MitkQtWidgets
+                     MitkQtWidgetsExt
+                     MitkMapperExt
+                     MitkImageDenoising
+                     MitkSegmentationUI
+                     MitkSegmentation
+                     MitkSceneSerialization)
   mark_as_superbuild(MITK_LIBRARIES)
   include_directories(${CTK_INCLUDE_DIRS})
-  include_directories(${MITK_INCLUDE_DIR})
 endif()
 
 #-----------------------------------------------------------------------------
@@ -934,7 +943,7 @@ set(INDENTS "")
 # Include the Core subdirs
 # These are handled here because other sub directories depend on them
 # set
-set(SV_INCLUDE_DIRS
+set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS}
 			 	"Source/Include"
 			 	"FlowSolvers/Include"
 			 	)
@@ -952,24 +961,29 @@ endforeach()
 #--------------------------------------------------------------------
 # Includes for QT GUI
 if(SV_USE_QT_GUI)
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Applications")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/Common")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/Model")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/Path")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/ProjectManagement")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/QtAppBase")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/QtWidgets")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Modules/Segmentation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/mitk.image")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/mitk.segmentation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/sv.general")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/sv.modeling")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/sv.pathplanning")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/sv.segmentation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "SV3/Plugins/sv.test")
+  set(f svConfigure.h)
+  configure_file(
+    ${SV_SOURCE_DIR}/Source/Include/${f}.in
+    ${SV_SOURCE_DIR}/Source/Include/${f}
+    )
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/QtAppBase")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/QtWidgets")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Common")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Path")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Segmentation")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Model")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/ProjectManagement")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/mitk.image")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/mitk.segmentation")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.general")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.pathplanning")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.segmentation")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.modeling")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.test")
   foreach(dir ${SV_QT_GUI_LIBRARY_DIRS})
-          include_directories("${dir}")
+    include_directories(${dir})
   endforeach()
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
 endif()
 
 #-----------------------------------------------------------------------------
@@ -997,26 +1011,3 @@ endif()
 # Configure Exe Scripts, this should be the last subdirectory
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
-
-#--------------------------------------------------------------------
-# Build the QT Gui
-if(SV_USE_QT_GUI)
-
-    include_directories(
-      ${CMAKE_CURRENT_SOURCE_DIR}/CMake
-      ${CMAKE_CURRENT_SOURCE_DIR}
-      ${CMAKE_CURRENT_BINARY_DIR}
-      )
-
-    set(files
-      svConfigure.h
-      )
-    foreach(f ${files})
-      configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/CMake/${f}.in
-        ${CMAKE_CURRENT_BINARY_DIR}/${f}
-        )
-    endforeach()
-
-    add_subdirectory(SV3)
-endif()

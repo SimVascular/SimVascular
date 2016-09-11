@@ -118,12 +118,20 @@ option(SV_USE_THIRDPARTY_SHARED_LIBRARIES "Option to build the thirdparty libs a
 mark_as_superbuild(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
 
 #-----------------------------------------------------------------------------
+# Thirdparty shared libs
+option(SV_USE_MODULES_SHARED_LIBRARIES "Option to build the thirdparty libs as shared" ON)
+mark_as_superbuild(SV_USE_MODULES_SHARED_LIBRARIES)
+
+#-----------------------------------------------------------------------------
 # Option to build qt GUI
 option(SV_USE_QT_GUI "Option to build the SimVascular QT GUI" OFF)
 mark_as_superbuild(SV_USE_QT_GUI)
 
 option(SV_USE_QT "Option to build the SimVascular QT" OFF)
 mark_as_superbuild(SV_USE_QT)
+
+option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" ON)
+mark_as_superbuild(SV_NO_PYTHONQT_ALL)
 
 #-----------------------------------------------------------------------------
 # Custom CTK

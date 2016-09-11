@@ -144,13 +144,13 @@ svCatchDebugger() {
     Q_IMPORT_PLUGIN(svTestPluginActivator)
 
 /*
-    Q_IMPORT_PLUGIN(mitk_image)
-    Q_IMPORT_PLUGIN(mitk_segmentation)
-    Q_IMPORT_PLUGIN(sv_general)
-    Q_IMPORT_PLUGIN(sv_modeling)
-    Q_IMPORT_PLUGIN(sv_pathplanning)
-    Q_IMPORT_PLUGIN(sv_segmentation)
-    Q_IMPORT_PLUGIN(sv_test)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_image)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_mitksegmentation)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_general)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_modeling)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_pathplanning)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_segmentation)
+    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_test)
 */
 
   #endif
