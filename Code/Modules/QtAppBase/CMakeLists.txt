@@ -79,7 +79,12 @@ else()
   add_library(${lib} STATIC ${HDRS} ${CXXSRCS} ${UISrcs} ${QRCSrcs} ${MOCSrcs})
 endif()
 
-target_link_libraries(${lib} ${MITK_LIBRARIES} ${CTK_LIBRARIES})
+target_link_libraries(${lib}
+                      ${MITK_LIBRARIES}
+                      ${CTK_LIBRARIES}
+                      ${QT_LIBRARIES}
+                      ${VTK_LIBRARIES}
+                      ${ITK_LIBRARIES})
 
 set(module_name "svQtAppBase")
 string(TOUPPER ${module_name} MODULE_NAME)

@@ -4,16 +4,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(lib ${SV_LIB_QTGUI_MODULE_COMMON_NAME})
 
-set(DEPENDENT_EXTERNAL_LIBRARIES
-    MitkCore
-    ${VTK_LIBRARIES}
-    tinyxml
-)
-
-set(DEPENDENT_SV_LIBRARIES
-    _simvascular_utils
-)
-
 set(HDRS
     svMath3.h
     svVtkParametricSpline.h
@@ -34,7 +24,10 @@ else()
   add_library(${lib} STATIC ${HDRS} ${CXXSRCS})
 endif()
 
-target_link_libraries(${lib} ${DEPENDENT_EXTERNAL_LIBRARIES} ${DEPENDENT_SV_LIBRARIES})
+target_link_libraries(${lib} ${VTK_LIBRARIES}
+                             ${SV_LIB_UTILS_NAME}
+                             ${MITK_LIBRARIES}
+                             ${ITK_LIBRARIES})
 
 set(module_name "svCommon")
 string(TOUPPER ${module_name} MODULE_NAME)

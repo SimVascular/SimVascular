@@ -289,17 +289,6 @@ if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
 endif()
 
 if(SV_USE_QT_GUI)
-    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
-    set(SimVascular_QT5_COMPONENTS Concurrent Designer OpenGL PrintSupport Script Sql Svg WebKitWidgets Xml XmlPatterns UiTools Help)
-    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
-    if(Qt5_DIR)
-      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
-      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
-      if(_result LESS 0)
-        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
-      endif()
-    endif()
-
     set(SV_USE_VTK_SHARED "ON")
 
     set(SV_USE_ITK "ON")

@@ -4,11 +4,6 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(lib ${SV_LIB_QTGUI_MODULE_PROJECTMANAGEMENT_NAME})
 
-set(QT_CUSTOM_LIBRARIES
-  Qt5::Core
-  Qt5::Xml
-)
-
 set(HDRS
     svDataFolder.h
     svImageFolder.h
@@ -45,7 +40,9 @@ set(module_name "svProjectManagement")
 set_property(TARGET ${lib} PROPERTY US_MODULE_NAME ${module_name})
 set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${module_name})
 
-target_link_libraries(${lib} ${MITK_LIBRARIES} ${QT_CUSTOM_LIBRARIES})
+target_link_libraries(${lib} ${MITK_LIBRARIES}
+                             ${QT_LIBRARIES}
+                             ${ITK_LIBRARIES})
 
 if(RESOURCE_FILES)
     set(res_dir resources)

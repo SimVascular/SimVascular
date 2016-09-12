@@ -60,7 +60,16 @@ mark_as_superbuild(SV_EXTERNALS_USE_TOPLEVEL_DIR)
 #-----------------------------------------------------------------------------
 # External download options
 option(SV_DOWNLOAD_EXTERNALS "Option to download all externals from a remote location" OFF)
-set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.everything.tar.gz")
+if(APPLE)
+  set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.everything.tar.gz")
+endif()
+if(LINUX)
+  set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu_14/gnu-4.8/2016.09.05/linux.gnu-4.8.x64.everything-BUILD2016-09-05.tar.gz")
+endif()
+if(WIN32)
+  set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/10/msvc_2013/2016.09.05/windows.msvc-12.5.x64.everything-BUILD2016-09-05.tar.gz")
+endif()
+
 
 #-----------------------------------------------------------------------------
 # ThirdParty
@@ -132,6 +141,9 @@ mark_as_superbuild(SV_USE_QT)
 
 option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" ON)
 mark_as_superbuild(SV_NO_PYTHONQT_ALL)
+
+option(SV_USE_MITK_CONFIG "Option to use MITKConfig.cmake" OFF)
+mark_as_superbuild(SV_USE_MITK_CONFIG)
 
 #-----------------------------------------------------------------------------
 # Custom CTK

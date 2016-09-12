@@ -35,6 +35,7 @@ include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
 include(CheckLibraryExists)
 include(GetPrerequisites)
+include(GenerateExportHeader)
 
 SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -409,18 +410,48 @@ if(SV_USE_SimpleITK)
     endif()
 endif()
 
+if(SV_USE_QT_GUI)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
+    set(SimVascular_QT5_COMPONENTS Concurrent Designer OpenGL PrintSupport Script Sql Svg WebKitWidgets Xml XmlPatterns UiTools Help)
+    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
+    if(Qt5_DIR)
+      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
+      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
+      if(_result LESS 0)
+        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
+      endif()
+    endif()
+    if(NOT SV_USE_MITK_CONFIG)
+      set(QT_LIBRARIES "")
+      set(QT_INCLUDE_DIRS "")
+      foreach(comp ${SimVascular_QT5_COMPONENTS})
+        if(Qt5${comp}_LIBRARIES)
+          set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
+        endif()
+        if(Qt5${comp}_INCLUDE_DIRS)
+          set(QT_INCLUDE_DIRS ${QT_INCLUDE_DIRS} ${Qt5${comp}_INCLUDE_DIRS})
+        endif()
+      endforeach()
+      include_directories(${QT_INCLUDE_DIRS})
+
+      #CppMicroServices
+      find_package(CppMicroServices)
+    endif()
+endif()
+
 #-----------------------------------------------------------------------------
 # MITK
 if(SV_USE_MITK)
+  if(SV_USE_MITK_CONFIG)
+    simvascular_external(MITK DOWNLOADABLE NO_MODULE)
+  else()
     simvascular_external(MITK DOWNLOADABLE)
+  endif()
     mark_as_superbuild(MITK_DIR)
 
     if(SV_USE_MITK_SHARED)
       set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
       set(SV_INSTALL_EXTERNALS ON)
-    endif()
-    if(SV_USE_SYSTEM_MITK)
-      simvascular_get_external_path_from_include_dir(MITK)
     endif()
 endif()
 
@@ -818,24 +849,23 @@ endif()
 #-----------------------------------------------------------------------------
 # MITK
 if(SV_USE_MITK)
-  #if(NOT SV_USE_CUSTOM_CTK)
-  #  set(CTK_DIR ${MITK_DIR}/../ep/src/CTK-build)
-  #  find_package(CTK)
-  #  mark_as_superbuild(CTK_DIR)
-  #  mark_as_superbuild(CTK_INCLUDE_DIRS)
-  #  mark_as_superbuild(CTK_LIBRARIES)
-  #endif()
-  find_package(MITK REQUIRED)
+  if(SV_USE_MITK_CONFIG)
+    find_package(MITK NO_MODULE)
+    set(MITK_LIBRARIES MitkCore
+                       MitkQtWidgets
+                       MitkQtWidgetsExt
+                       MitkMapperExt
+                       MitkImageDenoising
+                       MitkSegmentationUI
+                       MitkSegmentation
+                       MitkSceneSerialization)
+  else()
+    find_package(MITK)
+  endif()
   mark_as_superbuild(MITK_DIR)
-  set(MITK_LIBRARIES MitkCore
-                     MitkQtWidgets
-                     MitkQtWidgetsExt
-                     MitkMapperExt
-                     MitkImageDenoising
-                     MitkSegmentationUI
-                     MitkSegmentation
-                     MitkSceneSerialization)
   mark_as_superbuild(MITK_LIBRARIES)
+  mark_as_superbuild(MTIK_INCLUDE_DIRS)
+  include_directories(${MITK_INCLUDE_DIRS})
   include_directories(${CTK_INCLUDE_DIRS})
 endif()
 
