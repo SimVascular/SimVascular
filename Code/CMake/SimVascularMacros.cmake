@@ -476,7 +476,6 @@ macro(simvascular_download_and_extract_tar url destination)
     endif()
   endif()
 
-  message("BLAH")
   set(check_extract_file "${tar_file}.extracted")
   if(NOT EXISTS ${check_extract_file})
     execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${tar_file}
