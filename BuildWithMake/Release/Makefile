@@ -50,15 +50,32 @@ SV_TIMESTAMP := $(shell echo "puts \"[clock seconds]\"" | tclsh)
 DIST_DIR_TOP = package/$(SV_VERSION)
 DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
 
+REAL_DIST_DIR_TOP = package/$(SV_VERSION)
+REAL_DIST_DIR := $(DIST_DIR_TOP)/$(SV_TIMESTAMP)
+
+ifeq ($(CLUSTER), x64_cygwin)
+  DIST_DIR_TOP := /cygdrive/p/package/$(SV_VERSION)
+  DIST_DIR := /cygdrive/p/package/$(SV_VERSION)/$(SV_TIMESTAMP)
+else
+  DIST_DIR_TOP := $(REAL_DIST_DIR_TOP)
+  DIST_DIR := $(REAL_DIST_DIR) 
+endif
+
 REMOTE_DIR_TOP = remote_install_$(SV_VERSION)
 
 ifneq ($(CLUSTER),x64_linux)
-  all: windows-distribution msi
+  all: use_subst windows-distribution msi
 else
   all: linux-distribution taritup taritup-meshsim-and-parasolid
 endif
 
-veryclean: msiclean msiclean-meshsim-and-parasolid msi-bundle-clean
+use_subst:
+ifeq ($(CLUSTER),x64_cygwin)
+	-subst P: /D
+	-subst P: $(shell cygpath -w `pwd`)
+endif
+
+veryclean: use_subst msiclean msiclean-meshsim-and-parasolid msi-bundle-clean
 	-rm -f tar_files/*.tar
 	-rm -f tar_files/*.tar.gz
 	-rm -Rf $(DIST_DIR_TOP)
@@ -223,11 +240,12 @@ copy-sv-executables:
 	-cp -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
 ifeq ($(SV_USE_PYTHON),1)
-	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_tclpython*.$(SOEXT)* $(DIST_DIR)
+	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_python_interp*.$(SOEXT)* $(DIST_DIR)
 endif
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_*.$(SOEXT)* $(DIST_DIR)
 	-rm -f $(DIST_DIR)/*simvascular_parasolid*.$(SOEXT)*
 	-rm -f $(DIST_DIR)/*simvascular_meshsim*.$(SOEXT)*
+	-cp -fR $(TOP)/Bin/plugins $(DIST_DIR)
 
 copy-sv-tcl-code:
 	-mkdir -p $(DIST_DIR)/Tcl
@@ -286,7 +304,7 @@ ifeq ($(SV_USE_GDCM),1)
 	-cp -f $(SV_GDCM_DLLS)/socketxx.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
-	-cp -fR $(PYTHON_BASE)/Lib $(DIST_DIR)/python-packages
+	-cp -fR $(PYTHON_HOME)/Lib $(DIST_DIR)/python-packages
 	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
@@ -297,11 +315,12 @@ endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
+ifeq ($(SV_USE_MITK),1)
+	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+endif
 
 copy-external-libs-windows-only:
 	-cp -f dicom2/dicom2-win32.exe $(DIST_DIR)/dicom2.exe
-	-cp -f dcmtk/dcmdump-win32.exe $(DIST_DIR)/dcmdump.exe
-	-cp -f dcmtk/dcmodify-win32.exe $(DIST_DIR)/dcmodify.exe
 ifeq ($(USE_GLIB),1)
 	-cp $(GLIB_DLLS) $(DIST_DIR)
 endif
@@ -311,8 +330,6 @@ endif
 
 copy-external-libs-linux-only:
 	-cp -f dicom2/dicom2-linux.exe $(DIST_DIR)/dicom2
-	-cp -f dcmtk/dcmdump-linux.exe $(DIST_DIR)/dcmdump
-	-cp -f dcmtk/dcmodify-linux.exe $(DIST_DIR)/dcmodify
 
 generate-wrapper-scripts:
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/$(SV_VERSION)

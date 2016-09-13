@@ -302,15 +302,15 @@ endif
 
 ifeq ($(CLUSTER), x64_cygwin)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = C:/cygwin64/usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/cygwin64/usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = C:/sv/build/$(SVEXTERN_COMPILER_VERSION)/x64
     OPEN_SOFTWARE_SOURCES_TOPLEVEL  = C:/cygwin64/usr/local/sv/ext/src
-    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/ext/licensed
+    LICENSED_SOFTWARE_TOPLEVEL      = C:/cygwin64/usr/local/sv/licensed
 endif
 
 ifeq ($(CLUSTER), x64_linux)
     OPEN_SOFTWARE_BINARIES_TOPLEVEL = /usr/local/sv/ext/bin/$(SVEXTERN_COMPILER_VERSION)/x64
-    OPEN_SOFTWARE_BUILDS_TOPLEVEL   =
-    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = 
+    OPEN_SOFTWARE_BUILDS_TOPLEVEL   = /usr/local/sv/ext/build/$(SVEXTERN_COMPILER_VERSION)/x64
+    OPEN_SOFTWARE_SOURCES_TOPLEVEL  = /usr/local/sv/ext/src
     LICENSED_SOFTWARE_TOPLEVEL      = /usr/local/sv/licensed
 endif
 

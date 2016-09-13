@@ -69,13 +69,13 @@ proc file_find {dir wildcard args} {
     if {!$outputRegistry} {
         set outputRegistry 1
         set regid 11
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_DISCRETE_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_discrete.dll' />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_DISCRETE_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_discrete_solid.dll' />"
         incr regid
 	puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_SOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_solid.dll' />"
         incr regid
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_MESHSIM_MESH_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_meshsim_mesh.dll' />"
         incr regid
-        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_PARASOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_parasolid.dll'  />"
+        puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_PARASOLID_DLL' Action='write' Type='string' Value='\[INSTALLDIR\]lib_simvascular_parasolid_solid.dll'  />"
         incr regid
         puts $outfp "<Registry Id='regid$regid' Root='HKLM' Key='Software\\SimVascular\\Modules\\ParasolidAndMeshSim' Name='SV_PARASOLID_PSCHEMA_DIR' Action='write' Type='string' Value='\[INSTALLDIR\]\schema' />"
 	incr regid
