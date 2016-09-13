@@ -184,9 +184,6 @@ if(SV_USE_PYTHON)
         set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
         set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
 	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
-        if(SV_USE_SYSTEM_PYTHON)
-          set(SV_PYTHON_DIR ${PYTHON_DIR})
-        endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -454,7 +451,6 @@ if(SV_USE_MITK)
       set(SV_INSTALL_EXTERNALS ON)
     endif()
 endif()
-
 
 # Licensed Package Additions
 #-----------------------------------------------------------------------------

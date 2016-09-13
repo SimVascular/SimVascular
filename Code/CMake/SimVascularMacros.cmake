@@ -343,9 +343,9 @@ macro(simvascular_add_executable TARGET_NAME)
         endif()
 
         if(WIN32)
-          add_executable(${TARGET_NAME} MACOSX_BUNDLE WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+          add_executable(${TARGET_NAME} WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
         else()
-          add_executable(${TARGET_NAME} MACOSX_BUNDLE ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+          add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
         endif()
 
         set_target_properties(${TARGET_NAME} PROPERTIES
@@ -381,9 +381,9 @@ macro(simvascular_add_executable TARGET_NAME)
               set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
               file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
               install(TARGETS ${TARGET_NAME}
-                      BUNDLE DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+                      RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
                       ${_COMPARGS})
-              install(FILES ${icon_full_path} DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}/${TARGET_NAME}.app/Contents/Resources/")
+                    #install(FILES ${icon_full_path} DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}/${TARGET_NAME}.app/Contents/Resources/")
             endif()
           else()
             if(simvascular_add_executable_COMPONENT)

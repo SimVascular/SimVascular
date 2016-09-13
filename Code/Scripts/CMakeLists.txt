@@ -172,6 +172,7 @@ if(SV_USE_PYTHON)
     endif()
     append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/bin" developer_script_string)
     append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" developer_script_string)
+    append_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" developer_script_string)
     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_VTK_DIR}/bin" developer_script_string)
     if(SV_ENABLE_DISTRIBUTION)
       set_env_string_concat(PYTHONHOME "${ENV_SV_HOME}/Externals" install_script_string)
@@ -246,6 +247,7 @@ endif()
 
 # need the path to the dll's
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/plugins" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/RelWithDebInfo" developer_script_string)
 

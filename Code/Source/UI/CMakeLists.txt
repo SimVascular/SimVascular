@@ -1,14 +1,19 @@
 set(APP_NAME ${SV_EXE})
 set(APP_SHOW_CONSOLE ON)
 
-SET(MOC_HDRS svMainWindow.h)
-SET(QRC_FILES
-    resources/sv.qrc
-)
-qt5_add_resources(QRCSRCS ${QRC_FILES})
-qt5_wrap_cpp(MOCSRCS ${MOC_HDRS})
+SET(CXXSRCS main.cxx SimVascular_Init.cxx)
 
-SET(CXXSRCS main.cxx SimVascular_Init.cxx svMainWindow.cxx ${QRCSRCS} ${MOCSRCS})
+if(SV_USE_QT_GUI)
+  SET(MOC_HDRS svMainWindow.h)
+  SET(QRC_FILES
+      resources/sv.qrc
+  )
+  qt5_add_resources(QRCSRCS ${QRC_FILES})
+  qt5_wrap_cpp(MOCSRCS ${MOC_HDRS})
+
+  set(CXXSRCS ${CXXSRCS} svMainWindow.cxx ${QRCSRCS} ${MOCSRCS})
+endif()
+
 
 UNSET(OPTLIBS)
 
