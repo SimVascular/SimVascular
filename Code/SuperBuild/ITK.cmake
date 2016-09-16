@@ -41,8 +41,7 @@ ExternalProject_Include_Dependencies(${proj}
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(revision_tag "v${${proj}_VERSION}")
-  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
-    GIT_TAG ${revision_tag})
+
   if(WIN32)
     set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
       CACHE PATH "On windows, there is a bug with ITK source code directory path length, you can change this path to avoid it")
@@ -59,8 +58,28 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
     set(${proj}_BIN_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
   endif()
 
+  set(additional_cmake_args )
+  if(SV_USE_QT_GUI)
+    if(MINGW)
+      set(additional_cmake_args
+          -DCMAKE_USE_WIN32_THREADS:BOOL=ON
+          -DCMAKE_USE_PTHREADS:BOOL=OFF)
+    endif()
+
+    list(APPEND additional_cmake_args
+         -DUSE_WRAP_ITK:BOOL=OFF
+    )
+
+    list(APPEND additional_cmake_args
+         -DModule_ITKOpenJPEG:BOOL=ON
+    )
+  #set(revision_tag "simvascular-patch-4.7.1")
+
+  endif()
+
   ExternalProject_Add(${proj}
-   ${location_args}
+   GIT_REPOSITORY "https://github.com/SimVascular/ITK.git"
+   GIT_TAG ${revision_tag}
    PREFIX ${${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_SRC_DIR}
    BINARY_DIR ${${proj}_BLD_DIR}
@@ -84,12 +103,13 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    -DCMAKE_INSTALL_PREFIX:STRING=${${proj}_BIN_DIR}
    -DITK_USE_SYSTEM_GDCM:BOOL=${SV_USE_GDCM}
    -DGDCM_DIR:PATH=${GDCM_DIR}
+   ${additional_cmake_args}
    DEPENDS
    ${${proj}_DEPENDENCIES}
    )
 set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
 set(SV_${proj}_DIR ${${proj}_BIN_DIR})
-set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-4.8)
+set(${proj}_DIR ${${proj}_BIN_DIR}/lib/cmake/ITK-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION})
 mark_as_superbuild(${proj}_DIR})
 
 else()

@@ -35,21 +35,25 @@ set(SV_LIBS ADAPTOR
             THREEDSOLVER_VTK
             POSTSOLVER
             SVLS
-            SOLVERIO)
+            SOLVERIO
+            QTGUI_PLUGIN_IMAGE
+            QTGUI_PLUGIN_MITKSEGMENTATION
+            QTGUI_PLUGIN_GENERAL
+            QTGUI_PLUGIN_PATHPLANNING
+            QTGUI_PLUGIN_MODELING
+            QTGUI_PLUGIN_SEGMENTATION
+            QTGUI_PLUGIN_TEST
+            QTGUI_MODULE_COMMON
+            QTGUI_MODULE_MODEL
+            QTGUI_MODULE_PATH
+            QTGUI_MODULE_PROJECTMANAGEMENT
+            QTGUI_MODULE_APPBASE
+            QTGUI_MODULE_QTWIDGETS
+            QTGUI_MODULE_SEGMENTATION)
 
 foreach(lib ${SV_LIBS})
   string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
   mark_as_superbuild(SV_LIB_${lib}_NAME)
-  #set(SV_LIB_${lib}_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED")
-  #if("${SV_LIBRARY_TYPE}" STREQUAL "ALL_STATIC")
-  #  set(SV_LIB_${lib}_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED" FORCE)
-  #endif()
-  #if("${SV_LIBRARY_TYPE}" STREQUAL "ALL_SHARED")
-  #  set(SV_LIB_${lib}_TYPE "SHARED" CACHE STRING "Options are STATIC or SHARED" FORCE)
-  #endif()
-  #set_property(CACHE SV_LIB_${lib}_TYPE PROPERTY STRINGS STATIC SHARED)
-  #mark_as_superbuild(SV_LIB_${lib}_TYPE)
-  #mark_as_advanced(SV_LIB_${lib}_TYPE)
 endforeach()
 
 

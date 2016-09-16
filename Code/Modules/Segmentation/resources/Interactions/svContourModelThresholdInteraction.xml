@@ -1,0 +1,28 @@
+<statemachine NAME="svContourModelThresholdInteractor">
+
+  <state name="Start" startstate="true">
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="UpdateDrawing">
+      <condition name="on_contour_plane" />
+      <action name="start_drawing" />
+    </transition>
+
+<!--    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="Start">
+      <condition name="on_contour_plane" inverted="true"/>
+    </transition>-->
+  </state>
+
+  <state name="UpdateDrawing">
+    <transition event_class="MouseMoveEvent" event_variant="PrimaryButtonPressedAndMouseMove" target="UpdateDrawing" >
+      <condition name="on_contour_plane" />
+      <action name="update_drawing" />
+    </transition>
+
+    <transition event_class="MouseReleaseEvent" event_variant="PrimaryButtonReleased" target="Final" >
+      <action name="finish_drawing" />"
+    </transition>
+  </state>
+
+  <state name="Final">
+  </state>
+
+</statemachine>

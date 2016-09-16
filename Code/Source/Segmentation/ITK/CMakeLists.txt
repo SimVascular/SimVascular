@@ -6,11 +6,9 @@ set(lib ${SV_LIB_ITK_LSET_NAME})
 
 LIST(APPEND PLUGINLIBS ${lib})
 
-include_directories(./Include)
 add_subdirectory(Include)
 
 # Contains Pure ITK Code, Mostly Level Set Code
-include_directories(./ITKCode)
 add_subdirectory(ITKCode)
 
 SET(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)

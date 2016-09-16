@@ -119,6 +119,7 @@ endif()
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}/plugins" install_script_string)
 # set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
 	# 				<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
 	# 					Value='[INSTALL_ROOT]\\@SV_INSTALL_EXTERNALS_RUNTIME_DIR@'
@@ -171,6 +172,7 @@ if(SV_USE_PYTHON)
     endif()
     append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/bin" developer_script_string)
     append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" developer_script_string)
+    append_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHONLIBS_MAJOR_VERSION}.${PYTHONLIBS_MINOR_VERSION}/site-packages" developer_script_string)
     append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_VTK_DIR}/bin" developer_script_string)
     if(SV_ENABLE_DISTRIBUTION)
       set_env_string_concat(PYTHONHOME "${ENV_SV_HOME}/Externals" install_script_string)
@@ -197,13 +199,13 @@ if(DEFINED ENV{TCLLIBPATH})
   set_env_string_concat(TCLLIBPATH "$ENV{TCLLIBPATH}" developer_script_string)
 else()
   if(NOT TCLLIBPATH)
-    set_env_string_concat(TCLLIBPATH "${SV_VTK_DIR}/lib/tcltk/vtk-6.2" developer_script_string)
+    set_env_string_concat(TCLLIBPATH "${SV_VTK_DIR}/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" developer_script_string)
   endif()
 endif()
 if(SV_ENABLE_DISTRIBUTION)
-  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/lib/tcltk/vtk-6.2" install_script_string)
+  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" install_script_string)
 else()
-  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/${SV_EXT_VTK_BIN_DIR}/lib/tcltk/vtk-6.2" install_script_string)
+  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/${SV_EXT_VTK_BIN_DIR}/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" install_script_string)
 endif()
 
 #----------------------------------------------------------------------------
@@ -245,6 +247,7 @@ endif()
 
 # need the path to the dll's
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin" developer_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/plugins" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/RelWithDebInfo" developer_script_string)
 

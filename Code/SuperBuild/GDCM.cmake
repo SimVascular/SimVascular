@@ -38,8 +38,7 @@ ExternalProject_Include_Dependencies(${proj}
 if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
 
   set(revision_tag "v${${proj}_VERSION}")
-  set(location_args GIT_REPOSITORY "https://github.com/SimVascular/GDCM.git"
-	  GIT_TAG ${revision_tag})
+
   if(WIN32)
     set(${proj}_PFX_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_PFX_DIR} 
       CACHE PATH "On windows, there is a bug with GDCM source code directory path length, you can change this path to avoid it")
@@ -57,7 +56,8 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
   endif()
 
   ExternalProject_Add(${proj}
-   ${location_args}
+   GIT_REPOSITORY "https://github.com/SimVascular/GDCM.git"
+   GIT_TAG ${revision_tag}
    PREFIX ${${proj}_PFX_DIR}
    SOURCE_DIR ${${proj}_SRC_DIR}
    BINARY_DIR ${${proj}_BLD_DIR}
@@ -82,7 +82,7 @@ if(NOT ${CMAKE_PROJECT_NAME}_USE_SYSTEM_${proj})
    )
  set(${proj}_SOURCE_DIR ${${proj}_SRC_DIR})
  set(SV_${proj}_DIR ${${proj}_BIN_DIR})
- set(${proj}_DIR ${${proj}_BIN_DIR}/lib/gdcm-2.6)
+ set(${proj}_DIR ${${proj}_BIN_DIR}/lib/gdcm-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION})
  mark_as_superbuild(${proj}_DIR})
 
 else()

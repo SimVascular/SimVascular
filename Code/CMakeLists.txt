@@ -35,6 +35,7 @@ include(SimVascularMacros)
 include(SimVascularSuperBuildURLs)
 include(CheckLibraryExists)
 include(GetPrerequisites)
+include(GenerateExportHeader)
 
 SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
@@ -60,9 +61,11 @@ include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularExternals)
 include(SimVascularInternals)
+include(SimVascularFunctionCheckCompilerFlags)
 #-----------------------------------------------------------------------------
 # Include Dependent Options
 include(SimVascularDependentOptions)
+include(SimVascularExternals)
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
@@ -173,17 +176,14 @@ if(SV_USE_PYTHON)
 		endif()
 		mark_as_superbuild(PYTHONLIBS_MAJOR_VERSION)
 		mark_as_superbuild(PYTHONLIBS_MINOR_VERSION)
-		set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
 	else()
 		message(STATUS "")
 		message(STATUS "Python Libs NOT FOUND")
 		message(STATUS "Make sure you have python installed on your system.")
 	endif()
+        set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
+        set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
 	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
-        if(SV_USE_SYSTEM_PYTHON)
-          set(SV_PYTHON_DIR ${PYTHON_DIR})
-        endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -325,6 +325,8 @@ if(SV_USE_ITK)
 
 	set(USE_ITK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
+        include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
+        include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
         if(SV_USE_SYSTEM_ITK)
           simvascular_get_external_path_from_include_dir(ITK)
         endif()
@@ -373,6 +375,81 @@ if(SV_USE_OpenCASCADE)
         if(SV_USE_SYSTEM_OpenCASCADE)
           simvascular_get_external_path_from_include_dir(OpenCASCADE)
         endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# CTK
+if(SV_USE_CTK)
+    simvascular_external(CTK DOWNLOADABLE)
+    mark_as_superbuild(CTK_DIR)
+
+    if(SV_USE_CTK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} CTK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+    if(SV_USE_SYSTEM_CTK)
+      simvascular_get_external_path_from_include_dir(CTK)
+    endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# SimpleITK
+if(SV_USE_SimpleITK)
+    simvascular_external(SimpleITK DOWNLOADABLE)
+    mark_as_superbuild(SimpleITK_DIR)
+
+    if(SV_USE_SimpleITK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} SimpleITK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
+    if(SV_USE_SYSTEM_SimpleITK)
+      simvascular_get_external_path_from_include_dir(SimpleITK)
+    endif()
+endif()
+
+if(SV_USE_QT_GUI)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
+    set(SimVascular_QT5_COMPONENTS Concurrent Designer OpenGL PrintSupport Script Sql Svg WebKitWidgets Xml XmlPatterns UiTools Help)
+    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
+    if(Qt5_DIR)
+      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
+      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
+      if(_result LESS 0)
+        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
+      endif()
+    endif()
+    if(NOT SV_USE_MITK_CONFIG)
+      set(QT_LIBRARIES "")
+      set(QT_INCLUDE_DIRS "")
+      foreach(comp ${SimVascular_QT5_COMPONENTS})
+        if(Qt5${comp}_LIBRARIES)
+          set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
+        endif()
+        if(Qt5${comp}_INCLUDE_DIRS)
+          set(QT_INCLUDE_DIRS ${QT_INCLUDE_DIRS} ${Qt5${comp}_INCLUDE_DIRS})
+        endif()
+      endforeach()
+      include_directories(${QT_INCLUDE_DIRS})
+
+      #CppMicroServices
+      find_package(CppMicroServices)
+    endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# MITK
+if(SV_USE_MITK)
+  if(SV_USE_MITK_CONFIG)
+    simvascular_external(MITK DOWNLOADABLE NO_MODULE)
+  else()
+    simvascular_external(MITK DOWNLOADABLE)
+  endif()
+    mark_as_superbuild(MITK_DIR)
+
+    if(SV_USE_MITK_SHARED)
+      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
+      set(SV_INSTALL_EXTERNALS ON)
+    endif()
 endif()
 
 # Licensed Package Additions
@@ -707,44 +784,85 @@ mark_as_superbuild(ALL_PROJECTS)
 # GDCM Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_GDCM)
-        find_package(GDCM)
-	mark_as_superbuild(GDCM_DIR)
-	mark_as_superbuild(GDCM_INCLUDE_DIR)
-	mark_as_superbuild(GDCM_LIBRARIES)
+  find_package(GDCM)
+  mark_as_superbuild(GDCM_DIR)
+  mark_as_superbuild(GDCM_INCLUDE_DIR)
+  mark_as_superbuild(GDCM_LIBRARIES)
 endif()
 
 # ITK Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_ITK)
-	find_package(ITK REQUIRED)
-	include(${ITK_USE_FILE})
+  find_package(ITK REQUIRED)
+  include(${ITK_USE_FILE})
 endif()
 
 # FREETYPE Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_FREETYPE)
-  	find_package(FREETYPE)
-	mark_as_superbuild(FREETYPE_DIR)
-	mark_as_superbuild(FREETYPE_INCLUDE_DIR)
-	mark_as_superbuild(FREETYPE_LIBRARIES)
+  find_package(FREETYPE)
+  mark_as_superbuild(FREETYPE_DIR)
+  mark_as_superbuild(FREETYPE_INCLUDE_DIR)
+  mark_as_superbuild(FREETYPE_LIBRARIES)
 endif()
 
 # OpenCASCADE Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_OpenCASCADE)
-	find_package(OpenCASCADE)
-	mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
-	mark_as_superbuild(OpenCASCADE_LIBRARIES)
-	mark_as_superbuild(OpenCASCADE_LIBRARY)
+  find_package(OpenCASCADE)
+  mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
+  mark_as_superbuild(OpenCASCADE_LIBRARIES)
+  mark_as_superbuild(OpenCASCADE_LIBRARY)
 endif()
 
 #-----------------------------------------------------------------------------
 # MMG Setup
 if(SV_USE_MMG)
-	find_package(MMG)
-	mark_as_superbuild(MMG_DIR)
-	mark_as_superbuild(MMG_INCLUDE_DIR)
-	mark_as_superbuild(MMG_LIBRARY)
+  find_package(MMG)
+  mark_as_superbuild(MMG_DIR)
+  mark_as_superbuild(MMG_INCLUDE_DIR)
+  mark_as_superbuild(MMG_LIBRARY)
+endif()
+
+#-----------------------------------------------------------------------------
+# CTK
+if(SV_USE_CTK)
+  find_package(CTK)
+  mark_as_superbuild(CTK_DIR)
+  mark_as_superbuild(CTK_INCLUDE_DIR)
+  mark_as_superbuild(CTK_LIBRARIES)
+endif()
+
+#-----------------------------------------------------------------------------
+# SimpleITK
+if(SV_USE_SimpleITK)
+  find_package(SimpleITK)
+  mark_as_superbuild(SimpleITK_DIR)
+  mark_as_superbuild(SimpleITK_INCLUDE_DIR)
+  mark_as_superbuild(SimpleITK_LIBRARIES)
+endif()
+
+#-----------------------------------------------------------------------------
+# MITK
+if(SV_USE_MITK)
+  if(SV_USE_MITK_CONFIG)
+    find_package(MITK NO_MODULE)
+    set(MITK_LIBRARIES MitkCore
+                       MitkQtWidgets
+                       MitkQtWidgetsExt
+                       MitkMapperExt
+                       MitkImageDenoising
+                       MitkSegmentationUI
+                       MitkSegmentation
+                       MitkSceneSerialization)
+  else()
+    find_package(MITK)
+  endif()
+  mark_as_superbuild(MITK_DIR)
+  mark_as_superbuild(MITK_LIBRARIES)
+  mark_as_superbuild(MTIK_INCLUDE_DIRS)
+  include_directories(${MITK_INCLUDE_DIRS})
+  include_directories(${CTK_INCLUDE_DIRS})
 endif()
 
 #-----------------------------------------------------------------------------
@@ -851,7 +969,7 @@ set(INDENTS "")
 # Include the Core subdirs
 # These are handled here because other sub directories depend on them
 # set
-set(SV_INCLUDE_DIRS
+set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS}
 			 	"Source/Include"
 			 	"FlowSolvers/Include"
 			 	)
@@ -866,6 +984,33 @@ foreach(dir ${SV_CORE_LIBRARY_DIRS})
 	include_directories("${dir}")
 endforeach()
 
+#--------------------------------------------------------------------
+# Includes for QT GUI
+if(SV_USE_QT_GUI)
+  set(f svConfigure.h)
+  configure_file(
+    ${SV_SOURCE_DIR}/Source/Include/${f}.in
+    ${SV_SOURCE_DIR}/Source/Include/${f}
+    )
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/QtAppBase")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/QtWidgets")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Common")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Path")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Segmentation")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/Model")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Modules/ProjectManagement")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/mitk.image")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/mitk.segmentation")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.general")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.pathplanning")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.segmentation")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.modeling")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Plugins/sv.test")
+  foreach(dir ${SV_QT_GUI_LIBRARY_DIRS})
+    include_directories(${dir})
+  endforeach()
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
+endif()
 
 #-----------------------------------------------------------------------------
 # Add directories

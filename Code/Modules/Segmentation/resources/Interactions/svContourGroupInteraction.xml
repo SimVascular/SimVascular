@@ -1,0 +1,151 @@
+<statemachine NAME="svContourGroupInteractor">
+
+  <state name="Start" startstate="true">
+    <!-- Contour is placed on current slice but has no control points-->
+<!--    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start">
+      <condition name="contour_exists_on_current_slice" />
+      <condition name="contour_has_control_points" inverted="true" />
+    </transition>-->
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="EditContour"> <!-- Contour is placed on current slice -->
+      <condition name="contour_exists_on_current_slice" />
+      <condition name="contour_has_control_points" />
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="PlaceContour"> <!-- No contour on current slice, but has a contour to place -->
+<!--      <condition name="contour_exists_on_current_slice" inverted="true"/>-->
+      <condition name="contour_exists_on_current_slice"/>
+      <condition name="group_has_unplaced_contour" />
+    </transition>
+
+    <!-- No contour on current slice -->
+<!--    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start">
+      <condition name="contour_exists_on_current_slice" inverted="true"/>
+      <condition name="group_has_unplaced_contour" inverted="true"/>
+    </transition>-->
+  </state>
+
+  <state name="PlaceContour">
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="ContourPlaced" >
+      <action name="add_initial_point" />
+    </transition>
+  </state>
+
+  <state name="ContourPlaced">
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="ContourPlaced" >
+      <condition name="on_contour_plane" />
+      <action name="move_current_point" />
+    </transition>
+
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="Start" >
+      <condition name="point_is_valid" />
+      <condition name="contour_is_finished" />
+      <action name="finalize_contour" />"
+    </transition>
+
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="ContourPlaced" >
+      <condition name="point_is_valid" />
+      <condition name="contour_is_finished" inverted="true" />
+      <action name="append_point" />
+    </transition>
+
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="ContourPlaced" > <!-- point is invalid -->
+      <condition name="point_is_valid" inverted="true" />
+    </transition>
+
+    <transition event_class="MouseDoubleClickEvent" event_variant="PrimaryButtonDoubleClick" target="Start" >
+      <condition name="minimal_contour_is_finished" />
+      <action name="finalize_contour" />"
+    </transition>
+
+    <transition event_class="MouseDoubleClickEvent" event_variant="PrimaryButtonDoubleClick" target="ContourPlaced" >
+      <condition name="minimal_contour_is_finished" inverted="true" />
+    </transition>
+  </state>
+
+  <state name="EditContour">
+  <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverPoint" >
+    <condition name="contour_exists_on_current_slice" />
+    <condition name="is_over_point" />
+<!--      <action name="start_hovering" />-->
+    <action name="select_point" />
+  </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverContour" >
+      <condition name="contour_exists_on_current_slice" />
+      <condition name="contour_has_control_points" />
+      <condition name="is_over_contour" />
+<!--      <condition name="is_over_point" inverted="true" />-->
+<!--      <action name="start_hovering" />-->
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="StdDelete" target="Start" >
+      <condition name="contour_exists_on_current_slice" />
+      <action name="delete_contour" />
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start">
+      <condition name="contour_exists_on_current_slice" />
+      <condition name="contour_has_control_points" inverted="true" />
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start">
+      <condition name="contour_exists_on_current_slice" inverted="true"/>
+    </transition>
+  </state>
+
+  <state name="OverPoint">
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="EditContour" >
+      <condition name="is_over_point" inverted="true" />
+      <action name="deselect_point" />
+    </transition>
+
+    <transition event_class="MousePressEvent" event_variant="SecondaryButtonPressed" target="EditContour" >
+<!--      <condition name="is_over_point" />-->
+      <action name="remove_selected_point" />
+      <action name="deselect_point" />
+    </transition>
+
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="MovementInitalized" >
+<!--      <condition name="is_over_point" inverted="true" />-->
+      <action name="init_move" />
+    </transition>
+  </state>
+
+  <state name="MovementInitalized">
+    <transition event_class="MouseMoveEvent" event_variant="PrimaryButtonPressedAndMouseMove" target="MovementInitalized">
+        <action name="move_current_point"/>
+    </transition>
+
+    <transition event_class="MouseReleaseEvent" event_variant="PrimaryButtonReleased" target="OverPoint">
+       <action name="finish_move"/>
+    </transition>
+  </state>
+
+  <state name="OverContour">
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="EditContour" >
+      <condition name="is_over_contour" inverted="true" />
+      <action name="hide_preview_point" />
+<!--      <action name="end_hovering" />-->
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="OverContour" >
+      <condition name="is_over_contour" />
+      <action name="set_preview_point" />
+    </transition>
+
+<!--    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="OverPoint" >
+      <condition name="point_is_valid" />
+      <condition name="contour_is_finished" inverted="true" />
+      <action name="insert_point" />
+      <action name="hide_preview_point" />
+    </transition>-->
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="MovementInitalized" >
+      <condition name="point_is_valid" />
+<!--      <condition name="contour_is_finished" inverted="true" />-->
+      <action name="insert_point" />
+      <action name="hide_preview_point" />
+    </transition>
+  </state>
+
+</statemachine>

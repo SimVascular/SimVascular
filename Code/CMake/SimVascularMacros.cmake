@@ -329,7 +329,27 @@ macro(simvascular_add_executable TARGET_NAME)
 	CMAKE_PARSE_ARGUMENTS("simvascular_add_executable" 
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS})
+
+        set(WINDOWS_ICON_RESOURCE_FILE "")
+        if(WIN32)
+          if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+            set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+          endif()
+        endif()
+
+        set(_app_compile_flags )
+        if(WIN32)
+          set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
+        endif()
+
+        if(WIN32)
+          add_executable(${TARGET_NAME} WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+        else()
+          add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+        endif()
+
+        set_target_properties(${TARGET_NAME} PROPERTIES
+                      COMPILE_FLAGS "${_app_compile_flags}")
 
 	if(simvascular_add_executable_NO_SCRIPT)
 		if(	simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
@@ -353,12 +373,26 @@ macro(simvascular_add_executable TARGET_NAME)
 	endif()
 	# CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
 	if(simvascular_add_executable_INSTALL_DESTINATION)
-		if(simvascular_add_executable_COMPONENT)
-			set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
-		endif()
-		install(TARGETS ${TARGET_NAME}
-			RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
-			${_COMPARGS})
+          if(APPLE)
+            set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
+            set(icon_name "icon.icns")
+            set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
+            if(EXISTS "${icon_full_path}")
+              set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
+              file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
+              install(TARGETS ${TARGET_NAME}
+                      RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+                      ${_COMPARGS})
+                    #install(FILES ${icon_full_path} DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}/${TARGET_NAME}.app/Contents/Resources/")
+            endif()
+          else()
+            if(simvascular_add_executable_COMPONENT)
+                    set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
+            endif()
+            install(TARGETS ${TARGET_NAME}
+                    RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
+                    ${_COMPARGS})
+          endif()
 	endif()
 
 endmacro()
@@ -424,4 +458,39 @@ macro(simvascular_get_external_path_from_include_dir pkg)
   else()
     set(SV_${pkg}_DIR ${TMP_DIR})
   endif()
+endmacro()
+
+macro(simvascular_download_and_extract_tar url destination)
+  get_filename_component(tar_file ${url} NAME)
+  set(tar_file "${destination}/${tar_file}")
+  if(NOT EXISTS ${destination})
+    file(MAKE_DIRECTORY ${destination})
+  endif()
+
+  if(NOT EXISTS ${tar_file})
+    file(DOWNLOAD "${url}" "${tar_file}" STATUS status)
+    list(GET status 0 error_code)
+    list(GET status 1 error_msg)
+    if(error_code)
+      message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
+    endif()
+  endif()
+
+  set(check_extract_file "${tar_file}.extracted")
+  if(NOT EXISTS ${check_extract_file})
+    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${tar_file}
+                    WORKING_DIRECTORY ${destination}
+                    RESULT_VARIABLE result
+                    ERROR_VARIABLE err_msg)
+    if(result)
+      message(FATAL_ERROR "error: Failed to Unpack ${tar_name} - ${err_msg}")
+    endif()
+    file(WRITE ${check_extract_file} "# ${tar_file} extracted")
+  endif()
+endmacro()
+
+macro(simvascular_get_major_minor_version version major_version minor_version)
+  string(REPLACE "." ";" version_list ${version})
+  list(GET version_list 0 ${major_version})
+  list(GET version_list 1 ${minor_version})
 endmacro()

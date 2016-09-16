@@ -25,7 +25,9 @@ if(WIN32)
 
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
 	if(NOT IS64)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
+	    if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")
+		    set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
+		endif()
 	endif()
 	if(CYGWIN)
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DCYGWIN")
@@ -67,14 +69,17 @@ if(MSVC)
 endif()
 # Visual Studio Linker Flags
 if(MSVC)
-	set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE:LIB")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrtd.lib")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MACHINE:X64 /subsystem:console /D__VC__")
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000,10000000")
+# SUPPRESS_VC_DEPRECATED_WARNINGS
+  add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+
+  #	set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE:LIB")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrtd.lib")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MACHINE:X64 /subsystem:console /D__VC__")
+  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000,10000000")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -131,9 +136,9 @@ if(BUILD_SHARED_LIBS)
 else()
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_STATIC_LINK -DSV_STATIC_BUILD")
 	set(SV_STATIC_BUILD "1")
-	set(SV_INSTALL_HEADERS OFF)
-	set(SV_INSTALL_EXTERNALS OFF)
-	set(SV_INSTALL_LIBS OFF)
+        set(SV_INSTALL_HEADERS ON)
+        set(SV_INSTALL_EXTERNALS ON)
+        set(SV_INSTALL_LIBS ON)
 endif()
 
 # Only FLowsolver
@@ -164,12 +169,6 @@ endif()
 
 if(SV_USE_OpenCASCADE_SHARED)
   set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
-
-if(SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED AND NOT SV_SUPERBUILD)
-  if(LINUX)
-  	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
-  endif()
 endif()
 
 #-----------------------------------------------------------------------------
@@ -274,3 +273,43 @@ if(NOT MSVC)
   endif()
 endif()
 
+#-----------------------------------------------------------------------------
+# Gui Options: QT GUI
+
+if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
+  SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
+    if(NOT SimVascular_CXX11_FLAG)
+    # Older gcc compilers use -std=c++0x
+    SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
+  endif()
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${SimVascular_CXX11_FLAG}")
+  if(WIN32)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_WIN32_WINNT=0x0501 -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN -DNOMINMAX")
+  endif()
+endif()
+
+if(SV_USE_QT_GUI)
+    set(SV_USE_VTK_SHARED "ON")
+
+    set(SV_USE_ITK "ON")
+    set(SV_USE_ITK_SHARED "ON")
+
+    set(SV_USE_MITK "ON")
+    set(SV_USE_MITK_SHARED "ON")
+
+    set(SV_USE_GDCM "ON")
+    set(SV_USE_GDCM_SHARED "ON")
+
+    if(SV_USE_CUSTOM_CTK)
+      set(SV_USE_CTK "ON")
+      set(SV_USE_CTK_SHARED "ON")
+    endif()
+
+    if(SV_USE_CUSTOM_SimpleITK)
+      set(SV_USE_SimpleITK "ON")
+      set(SV_USE_SimpleITK_SHARED "ON")
+    endif()
+
+    set(SV_USE_PYTHON "ON")
+    set(SV_USE_SYSTEM_PYTHON "OFF")
+endif()
