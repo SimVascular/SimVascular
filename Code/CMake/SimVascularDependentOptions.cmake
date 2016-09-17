@@ -313,3 +313,4 @@ if(SV_USE_QT_GUI)
     set(SV_USE_PYTHON "ON")
     set(SV_USE_SYSTEM_PYTHON "OFF")
 endif()
+
