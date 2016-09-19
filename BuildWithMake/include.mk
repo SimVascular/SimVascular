@@ -707,17 +707,6 @@ endif
 # *** (e.g. MIT or BSD or Apache 2.0)   ***
 # -----------------------------------------
 
-# --------
-# SolverIO
-# --------
-
-ifeq ($(SV_USE_SOLVERIO),1)
-  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/SolverIO
-  SOLVERIO_TOP = $(TOP)/../Code/ThirdParty/SolverIO
-  SOLVERIO_INCDIR  = -I $(SOLVERIO_TOP)
-  SOLVERIO_LIB     = $(SVLIBFLAG)_simvascular_thirdparty_solverio$(LIBLINKEXT)
-endif
-
 # ----
 # VMTK
 # ----
@@ -738,6 +727,17 @@ ifeq ($(SV_USE_ZLIB),1)
   ZLIB_TOP = $(TOP)/../Code/ThirdParty/zlib
   ZLIB_INCDIR  = -I $(ZLIB_TOP)
   ZLIB_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
+endif
+
+# --------
+# SolverIO
+# --------
+
+ifeq ($(SV_USE_SOLVERIO),1)
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/SolverIO
+  SOLVERIO_TOP = $(TOP)/../Code/ThirdParty/SolverIO
+  SOLVERIO_INCDIR  = -I $(SOLVERIO_TOP)
+  SOLVERIO_LIB     = $(SVLIBFLAG)_simvascular_thirdparty_solverio$(LIBLINKEXT)
 endif
 
 # -----------------------------------------

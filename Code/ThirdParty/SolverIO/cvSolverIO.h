@@ -46,8 +46,6 @@
 
 #include <stdio.h>
 
-#include "SimVascular.h"
-
 #ifdef SV_USE_ZLIB
    #include "simvascular_zlib.h"
 #else
