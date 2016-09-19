@@ -299,7 +299,7 @@ if(SV_USE_VMTK)
 endif()
 
 #-----------------------------------------------------------------------------
-# VMTK
+# SOLVERIO
 if(SV_USE_SOLVERIO)
         set(USE_SOLVERIO ON)
         set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/SolverIO")
