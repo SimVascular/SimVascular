@@ -3577,7 +3577,6 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
   double range[2];
   int max;
   int value=0;
-  int *wantval;
   vtkNew(vtkPolyData,tmp);
   tmp->DeepCopy(geom);
   vtkNew(vtkIntArray,newArray);
@@ -3585,7 +3584,6 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
   if (datatype == 0)
   {
     fprintf(stderr,"Sorry, this functionality is not currently available");
-    delete [] wantval;
   }
   else
   {

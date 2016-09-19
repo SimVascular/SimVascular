@@ -1,9 +1,0 @@
-This contains sparse with few custom changes for use in simvascular.
-This package is distributed under its own license agreement.
-We include them here for convience, without modification, except for the notes below.
-
-Added Files
--------------
-CMakeList.txt
-    -Support to build using CMake was added.
-

@@ -38,7 +38,7 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -98,7 +98,7 @@ clean:
 
 veryclean: clean
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
-	  rm ../../Include/Make/sv$$i\Exports.h) ; done
+	  rm ../Include/Make/sv$$i\Exports.h) ; done
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) veryclean ) ; done
