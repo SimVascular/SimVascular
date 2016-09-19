@@ -1,7 +1,0 @@
-
-# 3-D solver environment variables
-export FLOWSOLVER_CONFIG=$SV_HOME
-
-#export LES_LICENSE_SERVER=$SV_HOME/license.dat
-
-$SV_HOME/mpiexec.exe -noprompt -user 1 -localroot -localonly -env FLOWSOLVER_CONFIG $FLOWSOLVER_CONFIG  -n $1 $SV_HOME/flowsolver-bin.exe $2 $3

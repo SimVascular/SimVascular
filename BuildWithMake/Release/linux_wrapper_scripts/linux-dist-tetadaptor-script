@@ -1,4 +1,0 @@
-
-# run the executable
-$SV_HOME/tetadaptor-bin.exe $*
-
