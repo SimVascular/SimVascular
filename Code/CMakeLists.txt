@@ -297,13 +297,6 @@ if(SV_USE_VMTK)
 endif()
 
 #-----------------------------------------------------------------------------
-# SV_SOLVERIO
-if(SV_USE_SOLVERIO)
-	set(USE_SOLVERIO ON)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/SolverIO")
-endif()
-
-#-----------------------------------------------------------------------------
 # GDCM
 if(SV_USE_GDCM)
 	simvascular_external(GDCM DOWNLOADABLE)
@@ -462,6 +455,10 @@ endif()
 # Licensed Package Additions
 #-----------------------------------------------------------------------------
 if(SV_USE_MESHSIM_ADAPTOR)
+	set(SV_THREEDSOLVER_USE_SVLS ON)
+	set(SV_USE_FORTRAN ON)
+	set(SV_USE_MPI ON)
+	set(SV_USE_THREEDSOLVER ON)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -543,6 +540,82 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 	set(USE_MESHSIM ON)
 endif()
 message(STATUS "")
+#-----------------------------------------------------------------------------
+# Modules (Flowsolver)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# ThreeD Solver
+if(SV_USE_THREEDSOLVER)
+	option(SV_USE_SPARSE "Use sparse Library" ON)
+	option(SV_USE_METIS "Use metis Library" ON)
+	option(SV_USE_NSPCG "Use nspcg Library" ON)
+	set(SV_USE_FORTRAN ON)
+	set(SV_THREEDSOLVER_USE_SVLS ON)
+	set(SV_USE_MPI ON)
+	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
+	#set(FLOWSOLVER_CONFIG_PATHS
+	#	"${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
+	# find config file
+	#set(FLOWSOLVER_CONFIG_FILE "${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp")
+	#mark_as_superbuild(FLOWSOLVER_CONFIG_FILE)
+	#set(FLOWSOLVER_CONFIG_PATH ${OUTBIN_DIR})
+	#file(COPY ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${FLOWSOLVER_CONFIG_PATH})
+	#install(FILES ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
+endif()
+
+#-----------------------------------------------------------------------------
+# Solver IO
+if(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DBUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT")
+endif()
+
+#-----------------------------------------------------------------------------
+#  SVLS
+# svLS depends on the THREEDSOLVER build state so it must be here.
+if(SV_THREEDSOLVER_USE_SVLS)
+	set(SVLS_BUILD_TYPE "Source")
+	#simvascular_external(svls SVEXTERN_DEFAULT)
+	set(SV_USE_FORTRAN ON)
+	set(SV_USE_MPI ON)
+endif()
+
+if(SV_THREEDSOLVER_USE_LESLIB)
+	find_package(LESLIB REQUIRED)
+	mark_as_superbuild(VARS LESLIB_LIBRARY LESLIB_INCLUDE_DIR)
+endif()
+
+#-----------------------------------------------------------------------------
+# Add libraries for flowsolver
+if(SV_USE_SPARSE)
+	SET(USE_SPARSE ON)
+	simvascular_third_party(sparse)
+	if(NOT SV_USE_SYSTEM_SPARSE)
+          set(SPARSE_LIBRARY ${SV_LIB_THIRDPARTY_SPARSE_NAME})
+	else()
+		find_package(SPARSE)
+	endif()
+endif()
+
+if(SV_USE_METIS)
+	SET(USE_METIS ON)
+	simvascular_third_party(metis)
+	if(NOT SV_USE_SYSTEM_METIS)
+          set(METIS_LIBRARY ${SV_LIB_THIRDPARTY_METIS_NAME})
+	else()
+		find_package(METIS)
+	endif()
+endif()
+
+if(SV_USE_NSPCG)
+	SET(USE_NSPCG ON)
+	simvascular_third_party(nspcg)
+	if(NOT SV_USE_SYSTEM_NSPCG)
+          set(NSPCG_LIBRARY ${SV_LIB_THIRDPARTY_NSPCG_NAME})
+	else()
+		find_package(NSPCG)
+	endif()
+endif()
 
 #-----------------------------------------------------------------------------
 # Remaining optional dependencies
@@ -898,6 +971,7 @@ set(INDENTS "")
 # set
 set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS}
 			 	"Source/Include"
+			 	"FlowSolvers/Include"
 			 	)
 
 foreach(dir ${SV_INCLUDE_DIRS})
@@ -941,6 +1015,9 @@ endif()
 #-----------------------------------------------------------------------------
 # Add directories
 # Modules
+if(SV_USE_THREEDSOLVER)
+	add_subdirectory(FlowSolvers)
+endif()
 
 if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 	# Add the Core Direcotories
