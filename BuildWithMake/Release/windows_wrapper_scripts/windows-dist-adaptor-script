@@ -1,4 +1,0 @@
-
-# run the executable
-$SV_HOME/adaptor-bin.exe $*
-

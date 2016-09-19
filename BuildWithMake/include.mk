@@ -93,6 +93,12 @@ SV_USE_PARASOLID_SHARED = 1
 SV_USE_OPENCASCADE = 1
 SV_USE_OPENCASCADE_SHARED = 1
 
+# --------
+# SolverIO
+# --------
+
+SV_USE_SOLVERIO = 1
+
 # --------------------------------------
 # Control inclusion of meshSim functions
 # --------------------------------------
@@ -121,22 +127,6 @@ SV_USE_TETGEN_ADAPTOR = 1
 
 SV_USE_MMG = 1
 SV_USE_MMG_SHARED = 1
-
-# ----------------------------------------------
-# Control inclusion of leslib
-# {binary and dummy} are mutually exclusive opts
-# ----------------------------------------------
-
-SV_USE_BINARY_LESLIB = 0
-SV_USE_DUMMY_LESLIB = 1
-
-# --------------------------------------------------------
-# Control inclusion of svLS
-# {binary, dummy, source code} are mutually exclusive opts
-# --------------------------------------------------------
-
-SV_USE_DUMMY_SVLS = 0
-SV_USE_SOURCE_CODE_SVLS = 1
 
 # -----------------------------------------------------
 # Compile with zlib
@@ -175,49 +165,6 @@ SV_USE_SYSTEM_FREETYPE = 1
 SV_USE_SYSTEM_TCLTK = 0
 
 # -----------------------------------------------------
-# Compile with 3-D Solver and Related Programs
-# -----------------------------------------------------
-
-SV_USE_SOLVERIO = 1
-SV_USE_THREEDSOLVER = 1
-SV_USE_PRESOLVER = 1
-SV_USE_POSTSOLVER = 1
-
-# -----------------------------------------------------
-# Compile Flowsolver Modules
-# -----------------------------------------------------
-
-SV_THREEDSOLVER_USE_CORONARY = 1
-SV_THREEDSOLVER_USE_CLOSEDLOOP = 1
-SV_THREEDSOLVER_USE_VARWALL = 1
-SV_THREEDSOLVER_USE_VTK = 1
-
-# -----------------------------------------------------
-# Compile with MPI
-# -----------------------------------------------------
-
-SV_USE_MPI = 1
-SV_USE_OPENMPI = 0
-SV_USE_MPICH = 0
-
-# by default, only build with real mpi on windows
-ifeq ($(CLUSTER), x64_cygwin)
-  SV_USE_DUMMY_MPI = 0
-endif
-ifeq ($(CLUSTER), x64_linux)
-  SV_USE_DUMMY_MPI = 1
-endif
-ifeq ($(CLUSTER), x64_macosx)
-  SV_USE_DUMMY_MPI = 1
-endif
-
-# -----------------------------------------------------
-# Build only the 3D Solver
-# -----------------------------------------------------
-
-EXCLUDE_ALL_BUT_THREEDSOLVER ?= 0
-
-# -----------------------------------------------------
 # Compile with VTK
 # -----------------------------------------------------
 
@@ -246,21 +193,6 @@ SV_USE_GDCM = 1
 # -----------------------------------------------------
 
 SV_USE_MITK = 1
-
-# -----------------------------------------------------
-# Compile with glib & gts
-# -----------------------------------------------------
-
-SV_USE_GLIB = 0
-SV_USE_GTS  = 0
-
-# -----------------------------------------------------
-# Compile with sparse, metis, nspcg
-# -----------------------------------------------------
-
-SV_USE_SPARSE = 1
-SV_USE_METIS = 1
-SV_USE_NSPCG = 1
 
 # -----------------------------------------------------
 # Compile with Optimization
@@ -326,7 +258,7 @@ endif
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.16"
-SV_FULL_VER_NO = "2.16.0902"
+SV_FULL_VER_NO = "2.16.0918"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
@@ -350,22 +282,6 @@ ifeq ($(CLUSTER),x64_linux)
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=linux
-endif
-
-# by default don't build most third party
-# if we are only building the flow solver
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER), 1)
-    ifeq ($(SV_THREEDSOLVER_USE_VTK), 0)
-        SV_USE_VTK = 0
-    endif
-
-    SV_USE_ITK = 0
-    SV_USE_MITK = 0
-    SV_USE_GDCM = 0
-    SV_USE_VMTK = 0
-    SV_USE_TETGEN = 0
-    SV_USE_SPARSE = 0
-    SV_USE_NSPCG = 0
 endif
 
 # --------------
@@ -554,8 +470,6 @@ endif
 
 BUILD_DIR = obj/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)
 LIB_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)
-BUILD_MPI_DIR = obj/$(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)/$(MPI_NAME)
-LIB_MPI_BUILD_DIR = $(CLUSTER)/$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION)
 
 # ---------------------
 # Local lib directories
@@ -603,9 +517,9 @@ endif
 # for now, combine mitk code qt gui code
 ifeq ($(SV_USE_MITK),1)
   ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/SV3/Modules
+     SHARED_LIBDIRS += ../Code/Source/Modules
   else
-     LIBDIRS += ../Code/Source/SV3/Modules
+     LIBDIRS += ../Code/Source/Modules
   endif
 endif
 
@@ -669,23 +583,7 @@ ifeq ($(SV_USE_MESHSIM),1)
   endif
 endif
 
-ifneq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  EXECDIRS = ../Code/Source/UI
-else
-  EXECDIRS = 
-endif
-
-ifeq ($(SV_USE_THREEDSOLVER),1)
-     LIBDIRS += ../Code/FlowSolvers/ThreeDSolver
-     SOLVERIO_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver/SolverIO -I $(TOP)/../Code/FlowSolvers/Include/Make
-     THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
-     EXECDIRS += ../Code/FlowSolvers/ThreeDSolver
-endif
-
-ifeq ($(SV_USE_SOLVERIO),1)
-     LIBDIRS += ../Code/FlowSolvers/ThreeDSolver/SolverIO
-     THREEDSOLVER_INCDIR = -I $(TOP)/../Code/FlowSolvers/ThreeDSolver
-endif
+EXECDIRS = ../Code/Source/UI
 
 # need solverio for adaptor classes so add them after adding solverio
 
@@ -739,19 +637,10 @@ endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/SV3/Plugins
+     SHARED_LIBDIRS += ../Code/Source/Plugins
   else
-     LIBDIRS += ../Code/Source/SV3/Plugins
+     LIBDIRS += ../Code/Source/Plugins
   endif
-endif
-
-#
-#  override other options to build solver only!
-#
-
-ifeq ($(EXCLUDE_ALL_BUT_THREEDSOLVER),1)
-  LIBDIRS = ../Code/FlowSolvers/ThreeDSolver
-  EXECDIRS = ../Code/FlowSolvers/ThreeDSolver
 endif
 
 SUBDIRS         = $(LIBDIRS) $(EXECDIRS)
@@ -769,20 +658,20 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/SV3/Plugins/mitk.image \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/mitk.segmentation \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.general \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.modeling \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.pathplanning \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.segmentation \
-                     -I$(TOP)/../Code/Source/SV3/Plugins/sv.test \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Common \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Model \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Path \
-                     -I$(TOP)/../Code/Source/SV3/Modules/ProjectManagement \
-                     -I$(TOP)/../Code/Source/SV3/Modules/QtAppBase \
-                     -I$(TOP)/../Code/Source/SV3/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/SV3/Modules/Segmentation
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/mitk.image \
+                     -I$(TOP)/../Code/Source/Plugins/mitk.segmentation \
+                     -I$(TOP)/../Code/Source/Plugins/sv.general \
+                     -I$(TOP)/../Code/Source/Plugins/sv.modeling \
+                     -I$(TOP)/../Code/Source/Plugins/sv.pathplanning \
+                     -I$(TOP)/../Code/Source/Plugins/sv.segmentation \
+                     -I$(TOP)/../Code/Source/Plugins/sv.test \
+                     -I$(TOP)/../Code/Source/Modules/Common \
+                     -I$(TOP)/../Code/Source/Modules/Model \
+                     -I$(TOP)/../Code/Source/Modules/Path \
+                     -I$(TOP)/../Code/Source/Modules/ProjectManagement \
+                     -I$(TOP)/../Code/Source/Modules/QtAppBase \
+                     -I$(TOP)/../Code/Source/Modules/QtWidgets \
+                     -I$(TOP)/../Code/Source/Modules/Segmentation
 endif
 
 # Link flags, which also need to be dealt with conditionally depending
@@ -829,17 +718,6 @@ ifeq ($(SV_USE_VMTK),1)
      VMTK_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
 endif
 
-# ------
-# Sparse
-# ------
-
-ifeq ($(SV_USE_SPARSE),1)
-  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/sparse
-  SPARSE_TOP = $(TOP)/../Code/ThirdParty/sparse
-  SPARSE_INCDIR  = -I $(SPARSE_TOP)
-  SPARSE_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_sparse$(LIBLINKEXT)
-endif
-
 # ----
 # zlib
 # ----
@@ -851,21 +729,21 @@ ifeq ($(SV_USE_ZLIB),1)
   ZLIB_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT)
 endif
 
+# --------
+# SolverIO
+# --------
+
+ifeq ($(SV_USE_SOLVERIO),1)
+  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/SolverIO
+  SOLVERIO_TOP = $(TOP)/../Code/ThirdParty/SolverIO
+  SOLVERIO_INCDIR  = -I $(SOLVERIO_TOP)
+  SOLVERIO_LIB     = $(SVLIBFLAG)_simvascular_thirdparty_solverio$(LIBLINKEXT)
+endif
+
 # -----------------------------------------
 # ***  Optional Open Source Packages    ***
 # ***           (LGPL code)             ***
 # -----------------------------------------
-
-# ------
-# NSPCG
-# ------
-
-ifeq ($(SV_USE_NSPCG),1)
-  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/nspcg
-  NSPCG_TOP = $(TOP)/../Code/ThirdParty/nspcg
-  NSPCG_INCDIR  = -I $(NSPCG_TOP)
-  NSPCG_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_nspcg$(LIBLINKEXT)
-endif
 
 # -----------------------------------------
 # ***  Optional Open Source Packages    ***
@@ -881,36 +759,8 @@ ifeq ($(SV_USE_TETGEN),1)
   TETGEN_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT)
 endif
 
-# ----
-# svLS
-# ----
-
-ifeq ($(SV_USE_DUMMY_SVLS),1)
-    SVLS_DEFS   = 
-    SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_dummy_svLS$(LIBLINKEXT)
-endif
-
-ifeq ($(SV_USE_SOURCE_CODE_SVLS),1)
-    SVLS_DEFS   = 
-    SVLS_INCDIR = -I ../svLS
-    SVLS_LIBS   = $(SVLIBFLAG)_simvascular_svLS_$(MPI_NAME)$(LIBLINKEXT)
-endif
-
-# -----
-# Metis
-# -----
-
-ifeq ($(SV_USE_METIS),1)
-  THIRD_PARTY_LIBDIRS += ../Code/ThirdParty/metis
-  METIS_TOP = $(TOP)/../Code/ThirdParty/metis
-  METIS_INCDIR  = -I $(METIS_TOP)
-  METIS_LIBS    = $(SVLIBFLAG)_simvascular_thirdparty_metis$(LIBLINKEXT)
-endif
-
-
 #
-# ThirdParty software included from /sv_extern
+# ThirdParty software included from externals
 #
 
 # ---------------------------------------
@@ -1030,53 +880,6 @@ ifeq ($(SV_USE_MITK),1)
 
 endif
 
-# -----
-# MPI
-# -----
-
-ifeq ($(SV_USE_MPI),1)
-
-ifeq ($(SV_USE_DUMMY_MPI),1)
-
-  MPI_NAME      = nompi
-  MPI_TOP       = ../dummyMPI
-  MPI_INCDIR    = -I $(MPI_TOP)
-  MPI_LIBS      = $(LIBFLAG)_simvascular_dummy_mpi$(LIBLINKEXT)
-  MPI_SO_PATH   = 
-  MPIEXEC_PATH  = 
-  MPIEXEC       =
-
-else
-
-  MPI_NAME ?= mpi
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/msmpi.x64_cygwin.mk
-  endif
-
-  # on linux, use the OS installed version of mpich2
-  ifeq ($(CLUSTER), x64_linux)
-    ifeq ($(SV_USE_OPENMPI),1)
-      include $(TOP)/MakeHelpers/openmpi.x64_linux.mk
-    endif
-    ifeq ($(SV_USE_MPICH),1)
-      include $(TOP)/MakeHelpers/mpich.x64_linux.mk
-    endif
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-    ifeq ($(SV_USE_OPENMPI),1)
-      include $(TOP)/MakeHelpers/openmpi.x64_macosx.mk
-    endif
-    ifeq ($(SV_USE_MPICH),1)
-      include $(TOP)/MakeHelpers/mpich.x64_macosx.mk
-    endif
-  endif
-
-endif
-
-endif
-
 # -----------------------------------------
 # ***  Optional Open Source Packages    ***
 # ***           (GPL code)              ***
@@ -1100,38 +903,6 @@ ifeq ($(SV_USE_OPENCASCADE),1)
   ifeq ($(CLUSTER), x64_macosx)
 	include $(TOP)/MakeHelpers/opencascade-7.0.0.x64_macosx.mk
   endif
-
-endif
-
-# ----
-# glib
-# ----
-
-ifeq ($(SV_USE_GLIB),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/glib-2.36.4.x64_cygwin.mk
-  endif
-
-###  ifeq ($(CLUSTER), x64_linux)
-###	include $(TOP)/MakeHelpers/glib-??????.x64_linux.mk
-###  endif
-
-endif
-
-# ---
-# gts
-# ---
-
-ifeq ($(SV_USE_GTS),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/gts-2010.03.21.x64_cygwin.mk
-  endif
-
-###  ifeq ($(CLUSTER), x64_linux)
-###	include $(TOP)/MakeHelpers/gts-2010.03.21.x64_linux.mk
-###  endif
 
 endif
 
@@ -1259,44 +1030,6 @@ ifeq ($(SV_USE_MESHSIM),1)
   endif
 
   #No meshsim for mac osx
-
-endif
-
-# ------
-# LesLib
-# ------
-
-ifeq ($(SV_USE_BINARY_LESLIB),1)
-
-  ifeq ($(CLUSTER), x64_cygwin)
-	include $(TOP)/MakeHelpers/leslib-1.5.x64_cygwin.mk
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/leslib-1.5.x64_linux.mk
-  endif
-
-  #No leslib for mac osx
-
-endif
-
-ifeq ($(SV_USE_DUMMY_LESLIB),1)
-
-  LESLIB_INCDIR = 
-  LESLIB_LIBS   = 
-
-  ifeq ($(CLUSTER), x64_cygwin)
-    LESLIB_DEFS   = -DACUSIM_NT -DACUSIM_WIN -DACUSIM_WIN64
-    LESLIB_LIBS   = 
-  endif
-
-  ifeq ($(CLUSTER), x64_linux)
-    LESLIB_DEFS   = -DACUSIM_LINUX
-  endif
-
-  ifeq ($(CLUSTER), x64_macosx)
-    LESLIB_DEFS   = -DACUSIM_LINUX
-  endif
 
 endif
 

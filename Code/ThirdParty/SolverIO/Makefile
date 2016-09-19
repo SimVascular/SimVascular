@@ -1,7 +1,7 @@
 # Hey emacs, this is a -*- makefile -*-
 
 # Copyright (c) 2014-2015 The Regents of the University of California.
-# All Rights Reserved. 
+# All Rights Reserved.
 #
 # Portions of the code Copyright (c) 2009-2011 Open Source Medical
 # Software Corporation, University of California, San Diego.
@@ -38,55 +38,21 @@
 # THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 # DAMAGE.
 
+
 TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIEXT_DIRS = sv.general mitk.image mitk.segmentation \
-                  sv.modeling sv.pathplanning sv.segmentation sv.test
+# --------------
+# Compiler flags
+# --------------
 
-lib-complete: moc ui rcc lib
+CXXFLAGS = $(GLOBAL_CXXFLAGS) $(ZLIB_INCDIR) -I../../Source/Include/Make
 
-static-complete:  moc ui rcc static
+HDRS	= cvSolverIO.h
 
-shared-complete:  moc ui rcc shared
+CXXSRCS = cvSolverIO.cxx
 
-lib:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE)) ; done
+TARGET_LIB_NAME = simvascular_solverio
 
-static:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE)) ; done
-
-shared:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) shared) ; done
-
-moc:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) moc) ; done
-
-ui:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) ui) ; done
-
-rcc:
-	@for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) rcc) ; done
-
-clean:
-	for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) clean ) ; done
-
-veryclean: clean
-	for i in ${SVQTGUIEXT_DIRS}; do ( \
-	  cd $$i; \
-	  $(MAKE) veryclean ) ; done
+include $(TOP)/targetlib.mk
