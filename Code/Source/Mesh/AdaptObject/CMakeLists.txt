@@ -31,8 +31,6 @@
  set(lib ${SV_LIB_ADAPTOR_NAME})
 LIST(APPEND CORELIBS ${lib})
 
-include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
-
 SET(CXXSRCS cvAdaptObject.cxx cv_adapt_utils.cxx eispack.cxx)
 set(HDRS cvAdaptObject.h cv_adapt_utils.h eispack.h)
 
