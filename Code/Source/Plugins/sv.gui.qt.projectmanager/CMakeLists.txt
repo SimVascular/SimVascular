@@ -1,0 +1,7 @@
+project(my_demoproject_exampleplugin)
+
+MACRO_CREATE_MITK_CTK_PLUGIN(
+  EXPORT_DIRECTIVE DEMO_EXPORTS
+  EXPORTED_INCLUDE_SUFFIXES src
+  MODULE_DEPENDS MitkQtWidgetsExt MyDemoLib
+)

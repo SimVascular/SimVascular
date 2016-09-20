@@ -1,0 +1,47 @@
+set(H_FILES
+    svSegmentationUtils.h
+    svContour.h
+    svContourCircle.h
+    svContourEllipse.h
+    svContourPolygon.h
+    svContourTensionPolygon.h
+    svContourSplinePolygon.h
+    svContourOperation.h
+    svContourModel.h
+    svContourModelVtkMapper2D.h
+    svContourModelThresholdInteractor.h
+    svContourGroup.h
+    svContourGroupVtkMapper2D.h
+    svContourGroupVtkMapper3D.h
+    svContourGroupDataInteractor.h
+    svContourGroupIO.h
+    svSegmentationLegacyIO.h
+    svSegmentationObjectFactory.h
+)
+
+set(CPP_FILES
+    svSegmentationUtils.cxx
+    svContour.cxx
+    svContourCircle.cxx
+    svContourEllipse.cxx
+    svContourPolygon.cxx
+    svContourTensionPolygon.cxx
+    svContourSplinePolygon.cxx
+    svContourOperation.cxx
+    svContourModel.cxx
+    svContourModelVtkMapper2D.cxx
+    svContourModelThresholdInteractor.cxx
+    svContourGroup.cxx
+    svContourGroupVtkMapper2D.cxx
+    svContourGroupVtkMapper3D.cxx
+    svContourGroupDataInteractor.cxx
+    svContourGroupIO.cxx
+    svSegmentationLegacyIO.cxx
+    svSegmentationObjectFactory.cxx
+)
+
+set(RESOURCE_FILES
+    Interactions/svContourGroupInteraction.xml
+    Interactions/svContourModelThresholdInteraction.xml
+    Interactions/svSegmentationConfig.xml
+)
