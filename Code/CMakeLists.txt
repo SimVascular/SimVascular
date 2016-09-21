@@ -1001,7 +1001,7 @@ if(SV_USE_QT_GUI)
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
 #  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/mitk.image")
 #  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/mitk.segmentation")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.general")
+#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.gui.qt.projectmanager")
 #  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.pathplanning")
 #  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.segmentation")
 #  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.modeling")
@@ -1011,7 +1011,7 @@ if(SV_USE_QT_GUI)
 #  endforeach()
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
 
-#  set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Applications")
+  set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Applications")
 
 endif()
 
@@ -1030,12 +1030,44 @@ if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 		include_directories("${dir}")
 		add_subdirectory("${dir}")
 	endforeach()
-	message(STATUS "Executables")
-	foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
-		message(STATUS "	${dir}")
-		add_subdirectory("${dir}")
-	endforeach()
 endif()
+#----------------------------------------------------------------------------
+# Setup Plugins for provisioning file, must after add_subdirectory for Modules
+if(SV_USE_QT_GUI)
+  macro(GetMyTargetLibraries all_target_libraries varname)
+    set(re_ctkplugin "^sv_gui_qt_[a-zA-Z0-9_]+$")
+    set(_tmp_list)
+    list(APPEND _tmp_list ${all_target_libraries})
+    ctkMacroListFilter(_tmp_list re_ctkplugin OUTPUT_VARIABLE ${varname})
+  endmacro()
+
+  set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/Applications^^${PROJECT_NAME}_Apps/svWorkbench")
+  message(STATUS "sv app full path: ${sv_app_fullpath}")
+
+  include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
+  set(sv_plugins_fullpath "")
+  foreach(sv_plugin ${SV_PLUGINS})
+    list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
+  endforeach()
+
+  message(STATUS "sv_plugins_fullpath: ${sv_plugins_fullpath}")
+
+  ctkMacroSetupPlugins(${sv_plugins_fullpath}
+                     APPS ${sv_app_fullpath}
+                     BUILD_OPTION_PREFIX ${PROJECT_NAME}_
+                     BUILD_ALL ${${PROJECT_NAME}_BUILD_ALL_PLUGINS}
+                     COMPACT_OPTIONS)
+
+endif()
+
+if(NOT SV_ONLY_BUILD_FLOWSOLVER)
+        message(STATUS "Executables")
+        foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
+                message(STATUS "	${dir}")
+                add_subdirectory("${dir}")
+        endforeach()
+endif()
+
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
 include(SimVascularInstallLibs)

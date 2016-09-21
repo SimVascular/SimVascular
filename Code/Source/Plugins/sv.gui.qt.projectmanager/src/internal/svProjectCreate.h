@@ -2,12 +2,13 @@
 #define SVPROJECTCREATE_H
 
 #include <mitkDataStorage.h>
+#include <QWidget>
 
 namespace Ui {
 class svProjectCreate;
 }
 
-class svProjectCreate
+class svProjectCreate : public QWidget
 {
     Q_OBJECT
 
@@ -24,6 +25,8 @@ public slots:
     void Cancel();
 
     void ChoosePath();
+
+    void SetFocus();
 
 private:
     Ui::svProjectCreate *ui;

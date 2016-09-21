@@ -30,11 +30,6 @@ void svProjectCreate::SetFocus()
     ui->lineEditDir->setText(QDir::homePath());
 }
 
-void svProjectCreate::Activated()
-{
-    ui->lineEditProjectName->clear();
-}
-
 void svProjectCreate::CreateNewProject()
 {
     if(m_DataStorage.IsNull()) return;

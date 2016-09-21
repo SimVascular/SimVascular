@@ -1,6 +1,7 @@
 set(lib svCommon)
 
 MITK_CREATE_MODULE( ${lib}
+#    FORCE_SHARED
     DEPENDS MitkCore
     PACKAGE_DEPENDS
         PUBLIC tinyxml
@@ -23,7 +24,7 @@ if(SV_INSTALL_HEADERS)
         set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
     endif()
     if (EXISTS ${MODULE_FILES_CMAKE})
-      include(${MODULE_FILES_CMAKE})
+        include(${MODULE_FILES_CMAKE})
     endif()
     install(FILES ${H_FILES}
             DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders

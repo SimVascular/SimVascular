@@ -2,9 +2,9 @@
 <plugin>
   
   <extension point="org.blueberry.ui.views">
-    <view id="my.demoproject.views.demoview"
-          name="Demo"
-          class="QmitkDemoView"
+    <view id="sv.views.projectmanager"
+          name="Project Manager"
+          class="svProjectManagerView"
           icon="resources/icon.xpm" />
   </extension>
 
