@@ -1,2 +1,9 @@
+set(MITK_BUILD_org.mitk.gui.qt.basicimageprocessing ON CACHE BOOL "")
+set(MITK_BUILD_org.mitk.gui.qt.volumevisualization ON CACHE BOOL "")
 set(MITK_BUILD_org.mitk.gui.qt.segmentation ON CACHE BOOL "")
+set(MITK_BUILD_org.mitk.gui.qt.imagecropper ON CACHE BOOL "")
 set(MITK_BUILD_org.mitk.gui.qt.measurementtoolbox ON CACHE BOOL "")
+set(MITK_BUILD_org.mitk.gui.qt.moviemaker ON CACHE BOOL "")
+set(MITK_BUILD_org.mitk.gui.qt.registration ON CACHE BOOL "")
+set(MITK_BUILD_org.mitk.gui.qt.viewnavigator ON CACHE BOOL "")
+

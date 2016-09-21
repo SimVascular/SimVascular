@@ -2,18 +2,6 @@
 #include "svProjectCreate.h"
 #include "svProjectManager.h"
 
-// Blueberry
-//#include <berryISelectionService.h>
-//#include <berryIWorkbenchWindow.h>
-
-// mitk
-#include <mitkIRenderingManager.h>
-//#include <mitkDataStorage.h>
-//#include <mitkDataNode.h>
-//#include "mitkProperties.h"
-//#include <mitkNodePredicateBase.h>
-#include <mitkNodePredicateProperty.h>
-
 // Qt
 #include <QMessageBox>
 #include <QShortcut>
@@ -23,18 +11,16 @@
 #include <QVBoxLayout>
 #include <QPushButton>
 
-const std::string svProjectManagerView::VIEW_ID = "sv.views.projectmanager";
+const std::string svProjectManagerView::VIEW_ID = "org.sv.views.projectmanager";
 
 svProjectManagerView::svProjectManagerView()
 //    : m_SelectedDataNode(NULL)
     :m_Parent(NULL)
 {
-
 }
 
 svProjectManagerView::~svProjectManagerView()
 {
-
 }
 
 void svProjectManagerView::CreateQtPartControl( QWidget *parent )
@@ -42,8 +28,8 @@ void svProjectManagerView::CreateQtPartControl( QWidget *parent )
     m_Parent=parent;
 
     QVBoxLayout* vlayout = new QVBoxLayout(parent);
-    vlayout->setContentsMargins(0,0,0,0);
-    vlayout->setSpacing(0);
+    vlayout->setContentsMargins(5,5,5,5);
+    vlayout->setSpacing(10);
 
     parent->setLayout(vlayout);
 
@@ -96,38 +82,4 @@ void svProjectManagerView::SaveAllProjects()
 {
     svProjectManager::SaveAllProjects(GetDataStorage());
 }
-
-//void svProjectManagerView::SetFocus()
-//{
-//}
-
-//void svProjectManagerView::OnSelectionChanged( berry::IWorkbenchPart::Pointer /*source*/,
-//        const QList<mitk::DataNode::Pointer>& nodes )
-//{
-
-//    foreach( mitk::DataNode::Pointer node, nodes)
-//    {
-//        if(!node) continue;
-
-//        m_SelectedDataNode=node;
-
-//   }
-
-//}
-
-
-//void svProjectManagerView::NodeChanged(const mitk::DataNode* node){
-
-//}
-
-//void svProjectManagerView::NodeAdded(const mitk::DataNode* node){
-
-//}
-
-
-//void svProjectManagerView::NodeRemoved(const mitk::DataNode* node){
-
-//}
-
-
 

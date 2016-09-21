@@ -1,12 +1,25 @@
 #include "svProjectManagerPluginActivator.h"
-//#include <QtPlugin>
 #include "svProjectManagerView.h"
 #include "QmitkNodeDescriptorManager.h"
 #include "mitkNodePredicateDataType.h"
 
-using namespace mitk;
+//using namespace mitk;
 
 ctkPluginContext* svProjectManagerPluginActivator::m_Context = nullptr;
+
+svProjectManagerPluginActivator::svProjectManagerPluginActivator()
+{
+
+}
+
+svProjectManagerPluginActivator::~svProjectManagerPluginActivator()
+{
+    for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = m_DescriptorActionList.begin();it != m_DescriptorActionList.end(); it++)
+    {
+        // first== the NodeDescriptor; second== the registered QAction
+        (it->first)->RemoveAction(it->second);
+    }
+}
 
 void svProjectManagerPluginActivator::start(ctkPluginContext* context)
 {
@@ -141,5 +154,3 @@ void svProjectManagerPluginActivator::CloseProject(bool)
 //    }
 
 }
-
-//Q_EXPORT_PLUGIN2(my_demoproject_exampleplugin, mitk::PluginActivator)

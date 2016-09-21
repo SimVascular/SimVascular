@@ -2,8 +2,8 @@
 <plugin>
   
   <extension point="org.blueberry.ui.views">
-    <view id="sv.views.projectmanager"
-          name="Project Manager"
+    <view id="org.sv.views.projectmanager"
+          name="SV Project Manager"
           class="svProjectManagerView"
           icon="resources/icon.xpm" />
   </extension>

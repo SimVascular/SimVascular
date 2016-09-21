@@ -3,6 +3,6 @@
 
 set(SV_PLUGINS
 
-  sv.gui.qt.projectmanager:ON
+  org.sv.gui.qt.projectmanager:ON
 
 )

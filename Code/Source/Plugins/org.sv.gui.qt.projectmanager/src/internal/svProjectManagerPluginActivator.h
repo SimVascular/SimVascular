@@ -8,7 +8,7 @@
 #include <QAction>
 
 
-namespace mitk {
+//namespace mitk {
 
 class svProjectManagerPluginActivator :
         public QObject, public ctkPluginActivator
@@ -18,6 +18,12 @@ class svProjectManagerPluginActivator :
     Q_INTERFACES(ctkPluginActivator)
 
 public:
+
+    svProjectManagerPluginActivator();
+
+    virtual ~svProjectManagerPluginActivator();
+
+
     static ctkPluginContext* GetContext();
 
     void start(ctkPluginContext* context) override;
@@ -36,6 +42,6 @@ private:
 
 }; // svProjectManagerPluginActivator
 
-}
+//}
 
 #endif // SVPROJECTMANAGERPLUGINACTIVATOR_H

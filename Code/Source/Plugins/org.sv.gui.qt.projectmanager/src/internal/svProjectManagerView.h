@@ -1,9 +1,5 @@
-
-
 #ifndef SVPROJECTMANAGERVIEW_H
 #define SVPROJECTMANAGERVIEW_H
-
-//#include <berryISelectionListener.h>
 
 #include <QmitkAbstractView.h>
 

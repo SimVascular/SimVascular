@@ -1,9 +1,9 @@
-project(sv_gui_qt_projectmanager)
+project(org_sv_gui_qt_projectmanager)
 
 mitk_create_plugin(
   EXPORT_DIRECTIVE SV_QT_PROJECTMANAGER
   EXPORTED_INCLUDE_SUFFIXES src
-  MODULE_DEPENDS MitkQtWidgetsExt svPath svProjectManagement
+  MODULE_DEPENDS MitkQtWidgetsExt svProjectManagement
 )
 
 if(SV_INSTALL_LIBS)
