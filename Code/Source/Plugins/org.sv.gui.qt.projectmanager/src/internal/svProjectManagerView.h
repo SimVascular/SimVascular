@@ -19,12 +19,12 @@ public:
 
     void SetFocus() override {}
 
-    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
-                                    const QList<mitk::DataNode::Pointer> &nodes) override {}
+//    virtual void OnSelectionChanged(berry::IWorkbenchPart::Pointer part,
+//                                    const QList<mitk::DataNode::Pointer> &nodes) override {}
 
-    void NodeAdded(const mitk::DataNode* node) override {}
-    void NodeChanged(const mitk::DataNode* node) override {}
-    void NodeRemoved(const mitk::DataNode* node) override {}
+//    void NodeAdded(const mitk::DataNode* node) override {}
+//    void NodeChanged(const mitk::DataNode* node) override {}
+//    void NodeRemoved(const mitk::DataNode* node) override {}
 
 protected slots:
 

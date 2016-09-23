@@ -8,4 +8,9 @@
           icon="resources/icon.xpm" />
   </extension>
 
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <contextMenuAction nodeDescriptorName="svImageFolder" label="Add Image" icon="" class="svProjectAddImageAction" />
+  <contextMenuAction nodeDescriptorName="svProjectFolder" label="Close SV Project" icon="" class="svProjectCloseAction" />
+  </extension>
+
 </plugin>

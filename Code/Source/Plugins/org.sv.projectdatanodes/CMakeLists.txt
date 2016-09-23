@@ -1,9 +1,9 @@
-project(org_sv_gui_qt_projectmanager)
+project(org_sv_projectdatanodes)
 
-set(lib org_sv_gui_qt_projectmanager)
+set(lib org_sv_projectdatanodes)
 
 mitk_create_plugin(
-  EXPORT_DIRECTIVE SV_QT_PROJECTMANAGER
+  EXPORT_DIRECTIVE ORG_SV_PROJECTDATANODES
   EXPORTED_INCLUDE_SUFFIXES src
   MODULE_DEPENDS MitkQtWidgets svProjectManagement
 )

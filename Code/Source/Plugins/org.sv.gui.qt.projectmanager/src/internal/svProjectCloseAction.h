@@ -1,25 +1,21 @@
-#ifndef SVPROJECTCREATEACTION_H
-#define SVPROJECTCREATEACTION_H
+#ifndef SVPROJECTCLOSEACTION_H
+#define SVPROJECTCLOSEACTION_H
 
 #include <org_sv_gui_qt_projectmanager_Export.h>
 
-// Parent classes
-#include <QObject>
 #include <mitkIContextMenuAction.h>
-
-// Data members
 #include <mitkDataNode.h>
 
-//class QmitkStdMultiWidget;
+#include <QObject>
 
-class SV_QT_PROJECTMANAGER svProjectCreateAction : public QObject, public mitk::IContextMenuAction
+class SV_QT_PROJECTMANAGER svProjectCloseAction : public QObject, public mitk::IContextMenuAction
 {
   Q_OBJECT
   Q_INTERFACES(mitk::IContextMenuAction)
 
 public:
-  svProjectCreateAction();
-  ~svProjectCreateAction();
+  svProjectCloseAction();
+  ~svProjectCloseAction();
 
   // IContextMenuAction
   void Run(const QList<mitk::DataNode::Pointer> &selectedNodes) override;
@@ -29,8 +25,8 @@ public:
   void SetFunctionality(berry::QtViewPart *functionality) override {}
 
 private:
-  svProjectCreateAction(const svProjectCreateAction &);
-  svProjectCreateAction & operator=(const svProjectCreateAction &);
+  svProjectCloseAction(const svProjectCloseAction &);
+  svProjectCloseAction & operator=(const svProjectCloseAction &);
 
   mitk::DataStorage::Pointer m_DataStorage;
 
