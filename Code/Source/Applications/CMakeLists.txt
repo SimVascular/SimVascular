@@ -45,19 +45,19 @@ mitk_use_modules(TARGET ${SV_APP_NAME}
   PACKAGES Qt5|Widgets
 )
 
-## Add meta dependencies (e.g. on auto-load modules from depending modules)
-#if(TARGET ${CMAKE_PROJECT_NAME}-autoload)
-#  add_dependencies(${SV_APP_NAME} ${CMAKE_PROJECT_NAME}-autoload)
-#endif()
+# Add meta dependencies (e.g. on auto-load modules from depending modules)
+if(TARGET ${CMAKE_PROJECT_NAME}-autoload)
+  add_dependencies(${SV_APP_NAME} ${CMAKE_PROJECT_NAME}-autoload)
+endif()
 
-##Setting application icon for mac os x systems
-#set_target_properties(${SV_APP_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "icon.icns")
+#Setting application icon for mac os x systems
+set_target_properties(${SV_APP_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "icon.icns")
 
-#if(APPLE)
-#  install(FILES "icons/icon.icns" DESTINATION "${SV_APP_NAME}.app/Contents/Resources")
-#endif(APPLE)
+if(APPLE)
+  install(FILES "icons/icon.icns" DESTINATION "${SV_APP_NAME}.app/Contents/Resources")
+endif(APPLE)
 
-## Add a build time dependency to legacy BlueBerry bundles.
-#if(MITK_MODULES_ENABLED_PLUGINS)
-#  add_dependencies(${SV_APP_NAME} ${MITK_MODULES_ENABLED_PLUGINS})
-#endif()
+# Add a build time dependency to legacy BlueBerry bundles.
+if(MITK_MODULES_ENABLED_PLUGINS)
+  add_dependencies(${SV_APP_NAME} ${MITK_MODULES_ENABLED_PLUGINS})
+endif()

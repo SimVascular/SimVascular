@@ -1,8 +1,8 @@
 set(lib svModel)
 
 MITK_CREATE_MODULE( ${lib}
-#    FORCE_SHARED
-    DEPENDS svSegmentation
+    FORCE_SHARED
+    DEPENDS PUBLIC svSegmentation
     ADDITIONAL_LIBS
         ${SV_LIB_SOLID_NAME}
         ${SV_LIB_POLYDATA_SOLID_NAME}

@@ -1,8 +1,8 @@
 set(lib svQtWidgets)
 
 MITK_CREATE_MODULE( ${lib}
-#    FORCE_SHARED
-    DEPENDS MitkCore MitkQtWidgets MitkQtWidgetsExt svPath svSegmentation
+    FORCE_SHARED
+    DEPENDS PUBLIC MitkCore MitkQtWidgets MitkQtWidgetsExt svPath svSegmentation
 )
 
 if(SV_INSTALL_LIBS)

@@ -1,21 +1,20 @@
 #ifndef SVPATHCREATE_H
 #define SVPATHCREATE_H
 
-#include "svAbstractView.h"
+#include <mitkDataStorage.h>
+#include <QWidget>
 
 namespace Ui {
 class svPathCreate;
 }
 
-class svPathCreate : public svAbstractView
+class svPathCreate : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    static const QString EXTENSION_ID;
-
-    svPathCreate();
+    svPathCreate(mitk::DataStorage::Pointer dataStorage, QList<mitk::DataNode::Pointer> selectedNodes, int timeStep);
 
     virtual ~svPathCreate();
 
@@ -24,12 +23,6 @@ public slots:
     void CreatePath();
 
     void Cancel();
-
-    void ShowPathCreate();
-
-    void LoadLegacyPaths();
-
-    void SaveLegacyPaths();
 
     void ResetLineEditNumber(int index);
 
@@ -43,21 +36,25 @@ public slots:
 
     double GetVolumeImageSpacing();
 
+    void SetFocus();
+
 protected:
-
-    virtual void CreateQtPartControl(QWidget *parent) override;
-
-    virtual void SetFocus() override;
 
     Ui::svPathCreate *ui;
 
-    QWidget* m_Parent;
+    mitk::DataStorage::Pointer m_DataStorage;
+
+    QList<mitk::DataNode::Pointer> m_SelecteNodes;
+
+//    QWidget* m_Parent;
 
     bool m_CreatePath;
 
-    std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > mDescriptorActionList;
-
     mitk::DataNode::Pointer m_PathFolderNode;
+
+    int m_TimeStep;
+
+
 };
 
 #endif // SVPATHCREATE_H

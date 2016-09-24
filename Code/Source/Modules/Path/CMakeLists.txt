@@ -1,8 +1,8 @@
 set(lib svPath)
 
 MITK_CREATE_MODULE( ${lib}
-#    FORCE_SHARED
-    DEPENDS MitkCore svCommon
+    FORCE_SHARED
+    DEPENDS PUBLIC MitkCore svCommon
     ADDITIONAL_LIBS
         ${SV_LIB_GLOBALS_NAME}
         ${SV_LIB_UTILS_NAME}

@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
 <plugin>
-  <extension point="org.blueberry.ui.editors">
-    <editor
-      id="org.mitk.editors.stdmultiwidget"
-      name="Display"
-      icon="resources/StdMultiWidgetEditor.png"
-      extensions="mitk"
-      class="QmitkStdMultiWidgetEditor">
-    </editor>
+
+<!--  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.pathplanning"
+          name="Path Planning"
+          class="svPathEdit"
+          icon="resources/pathedit.png" />
+  </extension>-->
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+    <contextMenuAction nodeDescriptorName="svPathFolder" label="Create Path" icon=":/pathcreate.png" class="svPathCreateAction" />
   </extension>
 
-  <extension point="org.blueberry.ui.preferencePages">
-    <page id="org.mitk.StdMultiWidgetEditorPreferencePage" name="Standard Multi Widget"
-      class="QmitkStdMultiWidgetEditorPreferencePage" category="org.mitk.EditorsPreferencePage">
-      <keywordreference id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords"/>
-    </page>
-  </extension>
-
-  <extension point="org.blueberry.ui.keywords">
-    <keyword id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords" label="zooming"/>
-    <keyword id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords" label="panning"/>
-    <keyword id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords" label="level window"/>
-    <keyword id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords" label="PACS"/>
-    <keyword id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords" label="mouse"/>
-    <keyword id="org.mitk.StdMultiWidgetEditorPreferencePageKeywords" label="background"/>
-  </extension>
 </plugin>

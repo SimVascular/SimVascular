@@ -5,9 +5,11 @@
 
 #include <svPathExports.h>
 
+#include "svPathIO.h"
+
 #include "mitkCoreObjectFactoryBase.h"
 
-class svPathObjectFactory : public mitk::CoreObjectFactoryBase
+class SVPATH_EXPORT svPathObjectFactory : public mitk::CoreObjectFactoryBase
 {
 public:
     mitkClassMacro(svPathObjectFactory,mitk::CoreObjectFactoryBase);
@@ -30,6 +32,16 @@ protected:
 
 private:
 
+};
+
+struct SVPATH_EXPORT RegistersvPathObjectFactory{
+
+    RegistersvPathObjectFactory();
+
+    virtual ~RegistersvPathObjectFactory();
+
+    svPathObjectFactory::Pointer m_Factory;
+    svPathIO* m_svPathIO;
 };
 
 #endif // SVPATHOBJECTFACTORY_H

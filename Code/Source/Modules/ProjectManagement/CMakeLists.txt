@@ -1,8 +1,8 @@
 set(lib svProjectManagement)
 
 MITK_CREATE_MODULE( ${lib}
-#    FORCE_SHARED
-    DEPENDS MitkCore svPath svSegmentation svModel
+    FORCE_SHARED
+    DEPENDS PUBLIC MitkCore svPath svSegmentation svModel
     PACKAGE_DEPENDS PUBLIC Qt5|Core+Xml
 )
 

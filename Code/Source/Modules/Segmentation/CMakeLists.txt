@@ -1,7 +1,7 @@
 set(lib svSegmentation)
 
 MITK_CREATE_MODULE( ${lib}
-#    FORCE_SHARED
+    FORCE_SHARED
     DEPENDS MitkCore svCommon svPath
     ADDITIONAL_LIBS
         ${SV_LIB_GLOBALS_NAME}

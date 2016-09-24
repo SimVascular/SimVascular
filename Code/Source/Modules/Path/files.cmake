@@ -11,6 +11,9 @@ set(H_FILES
 )
 
 set(CPP_FILES
+
+#    svPathModuleActivator.cxx
+
     svPathElement.cxx
     svPath.cxx
     svPathOperation.cxx

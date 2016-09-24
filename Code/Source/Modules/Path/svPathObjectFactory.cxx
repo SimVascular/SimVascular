@@ -3,7 +3,6 @@
 #include "svPath.h"
 #include "svPathVtkMapper2D.h"
 #include "svPathVtkMapper3D.h"
-#include "svPathIO.h"
 
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
@@ -101,22 +100,17 @@ void svPathObjectFactory::RegisterIOFactories()
 {
 }
 
-struct RegistersvPathObjectFactory{
-  RegistersvPathObjectFactory()
+RegistersvPathObjectFactory::RegistersvPathObjectFactory()
     : m_Factory( svPathObjectFactory::New() )
   {
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_svPathIO=new svPathIO();
   }
 
-  ~RegistersvPathObjectFactory()
-  {
-    mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
-    delete m_svPathIO;
-  }
+RegistersvPathObjectFactory::~RegistersvPathObjectFactory()
+{
+  mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
+  delete m_svPathIO;
+}
 
-  svPathObjectFactory::Pointer m_Factory;
-  svPathIO* m_svPathIO;
-};
-
-static RegistersvPathObjectFactory registersvPathObjectFactory;
+//static RegistersvPathObjectFactory registersvPathObjectFactory;

@@ -1,8 +1,8 @@
 set(lib svCommon)
 
 MITK_CREATE_MODULE( ${lib}
-#    FORCE_SHARED
-    DEPENDS MitkCore
+    FORCE_SHARED
+    DEPENDS PUBLIC MitkCore
     PACKAGE_DEPENDS
         PUBLIC tinyxml
     ADDITIONAL_LIBS

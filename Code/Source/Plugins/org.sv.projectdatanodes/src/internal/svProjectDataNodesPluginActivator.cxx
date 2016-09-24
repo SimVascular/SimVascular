@@ -1,4 +1,5 @@
 #include "svProjectDataNodesPluginActivator.h"
+#include "svPathObjectFactory.h"
 
 #include "QmitkNodeDescriptorManager.h"
 #include "mitkNodePredicateDataType.h"
@@ -43,4 +44,4 @@ void svProjectDataNodesPluginActivator::stop(ctkPluginContext* context)
 {
 }
 
-
+static RegistersvPathObjectFactory registersvPathObjectFactory;

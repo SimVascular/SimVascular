@@ -1,32 +1,35 @@
 set(SRC_CPP_FILES
-    svPathCreate.cxx
-    svPathSmooth.cxx
-    svPathEdit.cxx
-    svPathPlanningPluginActivator.cxx
+
 )
 
 set(INTERNAL_CPP_FILES
+    svPathCreate.cxx
+    svPathCreateAction.cxx
+    svPathPlanningPluginActivator.cxx
 )
 
 set(MOC_H_FILES
-    src/svPathCreate.h
-    src/svPathSmooth.h
-    src/svPathEdit.h
-    src/svPathPlanningPluginActivator.h
+    src/internal/svPathCreate.h
+    src/internal/svPathCreateAction.h
+#    src/internal/svPathSmooth.h
+#    src/internal/svPathEdit.h
+    src/internal/svPathPlanningPluginActivator.h
 )
 
 set(UI_FILES
-    src/svPathCreate.ui
-    src/svPathSmooth.ui
-    src/svPathEdit.ui
+    src/internal/svPathCreate.ui
+#    src/internal/svPathSmooth.ui
+#    src/internal/svPathEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES
   plugin.xml
   resources/pathedit.png
+#  resources/pathcreate.png
 )
 
 set(QRC_FILES
+  resources/pathplanning.qrc
 )
 
 set(CPP_FILES )
