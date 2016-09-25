@@ -1,9 +1,8 @@
 #include "svPathPlanningPluginActivator.h"
 #include "svPathCreateAction.h"
-//#include "svPathEdit.h"
-//#include "svPathObjectFactory.h"
-//#include "svPathIO.h"
-//#include "mitkCoreObjectFactory.h"
+#include "svPathLegacyLoadAction.h"
+#include "svPathLegacySaveAction.h"
+#include "svPathEdit.h"
 
 //svPathPlanningPluginActivator* svPathPlanningPluginActivator::m_Instance = nullptr;
 //ctkPluginContext* svPathPlanningPluginActivator::m_Context = nullptr;
@@ -13,9 +12,11 @@ void svPathPlanningPluginActivator::start(ctkPluginContext* context)
 //    m_Instance = this;
 //    m_Context = context;
 
-//    BERRY_REGISTER_EXTENSION_CLASS(svPathEdit, context)
     BERRY_REGISTER_EXTENSION_CLASS(svPathCreateAction, context)
-            int x=2;
+    BERRY_REGISTER_EXTENSION_CLASS(svPathLegacyLoadAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svPathLegacySaveAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svPathEdit, context)
+
 }
 
 void svPathPlanningPluginActivator::stop(ctkPluginContext* context)

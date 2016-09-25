@@ -14,7 +14,7 @@ class svPathCreate : public QWidget
 
 public:
 
-    svPathCreate(mitk::DataStorage::Pointer dataStorage, QList<mitk::DataNode::Pointer> selectedNodes, int timeStep);
+    svPathCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep);
 
     virtual ~svPathCreate();
 
@@ -44,7 +44,7 @@ protected:
 
     mitk::DataStorage::Pointer m_DataStorage;
 
-    QList<mitk::DataNode::Pointer> m_SelecteNodes;
+    mitk::DataNode::Pointer m_SelecteNode;
 
 //    QWidget* m_Parent;
 

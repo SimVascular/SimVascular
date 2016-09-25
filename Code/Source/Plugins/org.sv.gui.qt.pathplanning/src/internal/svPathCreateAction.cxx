@@ -2,11 +2,7 @@
 
 #include <mitkNodePredicateDataType.h>
 
-#include <QmitkDataManagerView.h>
-
-//#include <QmitkIOUtil.h>
-
-//#include <QFileDialog>
+//#include <QmitkDataManagerView.h>
 
 svPathCreateAction::svPathCreateAction()
     : m_PathCreateWidget(NULL)
@@ -58,8 +54,10 @@ void svPathCreateAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes
             delete m_PathCreateWidget;
         }
 
-        m_PathCreateWidget=new svPathCreate(m_DataStorage, selectedNodes, timeStep);
+        m_PathCreateWidget=new svPathCreate(m_DataStorage, selectedNode, timeStep);
         m_PathCreateWidget->show();
+        m_PathCreateWidget->SetFocus();
+
 
     }
     catch(...)

@@ -1,21 +1,20 @@
 #ifndef SVPATHSMOOTH_H
 #define SVPATHSMOOTH_H
 
-#include "svAbstractView.h"
+#include <mitkDataStorage.h>
+#include <QWidget>
 
 namespace Ui {
 class svPathSmooth;
 }
 
-class svPathSmooth : public svAbstractView
+class svPathSmooth : public QWidget
 {
     Q_OBJECT
 
 public:
 
-    static const QString EXTENSION_ID;
-
-    svPathSmooth();
+    svPathSmooth(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep);
 
     virtual ~svPathSmooth();
 
@@ -25,16 +24,18 @@ public slots:
 
     void Cancel();
 
+    void SetFocus();
 
 protected:
 
-    virtual void CreateQtPartControl(QWidget *parent) override;
-
-    virtual void SetFocus() override;
-
     Ui::svPathSmooth *ui;
 
-    std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > mDescriptorActionList;
+    mitk::DataStorage::Pointer m_DataStorage;
+
+    mitk::DataNode::Pointer m_SelecteNode;
+
+    int m_TimeStep;
+
 };
 
 #endif // SVPATHSMOOTH_H

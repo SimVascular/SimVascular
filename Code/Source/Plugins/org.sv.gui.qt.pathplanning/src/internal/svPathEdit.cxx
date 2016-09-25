@@ -1,17 +1,18 @@
 #include "svPathEdit.h"
+#include "ui_svPathEdit.h"
 #include "svPathCreate.h"
 #include "svPathSmooth.h"
 #include "svPath.h"
 #include "svPathOperation.h"
 #include "svPathDataInteractor.h"
 #include "svMath3.h"
-#include <QmitkRenderWindow.h>
+
+//#include <QmitkRenderWindow.h>
 
 // mitk
 #include <mitkDataStorage.h>
 #include "mitkDataNode.h"
 #include "mitkProperties.h"
-//#include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
 #include <mitkNodePredicateDataType.h>
 
@@ -25,7 +26,7 @@
 #include <iostream>
 using namespace std;
 
-const QString svPathEdit::EXTENSION_ID = "sv.pathedit";
+const QString svPathEdit::EXTENSION_ID = "org.sv.views.pathedit";
 
 svPathEdit::svPathEdit():
     ui(new Ui::svPathEdit),
@@ -33,18 +34,19 @@ svPathEdit::svPathEdit():
     m_PathChangeObserverTag(0),
     m_PathNode(NULL),
     m_Path(NULL),
-    m_SmoothWidget(NULL)
+    m_DisplayWidget(NULL),
+    m_SmoothWidget(NULL),
+    m_PathCreateWidget(NULL)
 {
 }
 
 svPathEdit::~svPathEdit()
 {
-    for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = mDescriptorActionList.begin();it != mDescriptorActionList.end(); it++)
-    {
-        // first== the NodeDescriptor; second== the registered QAction
-        (it->first)->RemoveAction(it->second);
-    }
+    delete ui;
 
+    if(m_SmoothWidget) delete m_SmoothWidget;
+
+    if(m_PathCreateWidget) delete m_PathCreateWidget;
 }
 
 void svPathEdit::CreateQtPartControl( QWidget *parent )
@@ -53,7 +55,16 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     ui->setupUi(parent);
     //    parent->setMaximumWidth(500);
 
-    ui->resliceSlider->SetDisplayWidget(GetDisplayWidget());
+    m_DisplayWidget=GetActiveStdMultiWidget();
+
+    if(m_DisplayWidget==NULL)
+    {
+        parent->setEnabled(false);
+        MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
+        return;
+    }
+
+    ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
 //    ui->resliceSlider->setCheckBoxVisible(true);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
@@ -72,31 +83,54 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
 
     mitk::DataNode::Pointer parentNode=this->GetDataStorage()->GetNamedNode("Paths");
     if(parentNode) parentNode->GetBoolProperty("visible", m_ParentNodeOriginalVisible);
-
-    connect(GetDataManager()->GetTreeView(), SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowPathEditPaneForPath()));
-
-    QmitkNodeDescriptor* dataNodeDescriptor = getNodeDescriptorManager()->GetDescriptor("svPath");
-    QAction* action = new QAction(QIcon(":pathedit.png"), "Edit Path", this);
-    QObject::connect( action, SIGNAL( triggered() ) , this, SLOT( ShowPathEditPane() ) );
-    dataNodeDescriptor->AddAction(action,false);
-    mDescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(dataNodeDescriptor, action));
 }
 
-void svPathEdit::Activated()
+//void svPathEdit::Activated()
+//{
+//}
+
+//void svPathEdit::Deactivated()
+//{
+//}
+
+void svPathEdit::Visible()
 {
-    //    ClearAll();
-    OnSelectionChanged(GetCurrentSelection());
+//    OnSelectionChanged(GetCurrentSelection());
+    OnSelectionChanged(GetDataManagerSelection());
+
 }
 
-void svPathEdit::Deactivated()
+void svPathEdit::Hidden()
 {
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
 
-void svPathEdit::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes )
+//bool svPathEdit::IsExclusiveFunctionality() const
+//{
+//    return false;
+//}
+
+int svPathEdit::GetTimeStep()
 {
-    if(!IsActivated())
+    mitk::SliceNavigationController* timeNavigationController = NULL;
+    if(m_DisplayWidget)
+    {
+        timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
+    }
+
+    if(timeNavigationController)
+        return timeNavigationController->GetTime()->GetPos();
+    else
+        return 0;
+
+}
+
+//void svPathEdit::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes )
+void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+{
+//    if(!IsActivated())
+    if(!IsVisible())
     {
         return;
     }
@@ -104,7 +138,7 @@ void svPathEdit::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes 
     if(nodes.size()==0)
     {
         ClearAll();
-        setEnabled(false);
+        m_Parent->setEnabled(false);
         return;
     }
 
@@ -123,15 +157,15 @@ void svPathEdit::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes 
     if(!m_Path)
     {
         ClearAll();
-        setEnabled(false);
+        m_Parent->setEnabled(false);
         return;
     }
 
-    setEnabled(true);
+    m_Parent->setEnabled(true);
 
     ui->labelPathName->setText(QString::fromStdString(m_PathNode->GetName()));
 
-    int timeStep=GetTimeStep(m_Path);
+    int timeStep=GetTimeStep();
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
 
@@ -159,7 +193,9 @@ void svPathEdit::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes 
 
 void svPathEdit::NodeChanged(const mitk::DataNode* node)
 {
-    if(node->GetName()=="Paths"){//need change; using name is not good
+    mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("svPathFolder");
+
+    if(isPathFolder->CheckNode(node)){
         bool currentVisible=false;
         node->GetBoolProperty("visible", currentVisible);
         if(currentVisible!=m_ParentNodeOriginalVisible){
@@ -181,41 +217,7 @@ void svPathEdit::NodeAdded(const mitk::DataNode* node)
 
 void svPathEdit::NodeRemoved(const mitk::DataNode* node)
 {
-    OnSelectionChanged(GetCurrentSelection());
-}
-
-void svPathEdit::ShowPathEditPane()
-{
-    useExtension(EXTENSION_ID);
-}
-
-void svPathEdit::OpenPathCreateDialog()
-{
-    useExtension(svPathCreate::EXTENSION_ID);
-}
-
-
-void svPathEdit::ShowPathEditPaneForPath()
-{
-    QList<mitk::DataNode::Pointer> selectedNodes=GetCurrentSelection();
-    if(IsPath(selectedNodes))
-    {
-        ShowPathEditPane();
-    }
-}
-
-bool svPathEdit::IsPath(QList<mitk::DataNode::Pointer> nodes)
-{
-    if(!nodes.isEmpty())
-    {
-        mitk::DataNode::Pointer node=nodes.first();
-        if( node.IsNotNull() && dynamic_cast<svPath*>(node->GetData()) )
-        {
-            return true;
-        }
-
-    }
-    return false;
+    OnSelectionChanged(GetDataManagerSelection());
 }
 
 void svPathEdit::ClearAll()
@@ -244,7 +246,7 @@ void svPathEdit::UpdateGUI()
 {
     if(m_Path==NULL) return;
 
-    int timeStep=GetTimeStep(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -337,7 +339,7 @@ void svPathEdit::SetupResliceSlider()
     if(m_Path==NULL)
         return;
 
-    int timeStep=GetTimeStep(m_Path);
+    int timeStep=GetTimeStep();
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
 
@@ -395,21 +397,22 @@ void svPathEdit::ChangePath(){
 
     if(m_Path==NULL) return;
 
-    int timeStep=GetTimeStep(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
 
-    svPathCreate* pathCreateWidget=dynamic_cast<svPathCreate*>(GetExtension("sv.pathcreate"));
-    if(pathCreateWidget)
+    if(m_PathCreateWidget==NULL)
     {
-        pathCreateWidget->SetCreatePath(false);
-        pathCreateWidget->SetPathName(ui->labelPathName->text());
-        pathCreateWidget->SetSubdivisionType(pathElement->GetMethod());
-        pathCreateWidget->SetNumber(pathElement->GetCalculationNumber());
-        pathCreateWidget->show();
+        m_PathCreateWidget=new svPathCreate(this->GetDataStorage(), this->GetDataManagerSelection().front(), timeStep);
     }
 
+    m_PathCreateWidget->SetCreatePath(false);
+    m_PathCreateWidget->SetPathName(ui->labelPathName->text());
+    m_PathCreateWidget->SetSubdivisionType(pathElement->GetMethod());
+    m_PathCreateWidget->SetNumber(pathElement->GetCalculationNumber());
+    m_PathCreateWidget->show();
+    m_PathCreateWidget->SetFocus();
 }
 
 void svPathEdit::AddPoint(int index,mitk::Point3D point, int timeStep)
@@ -427,7 +430,7 @@ void svPathEdit::AddPoint(int index,mitk::Point3D point, int timeStep)
 
         m_Path->ExecuteOperation(doOp);
 
-        RequestRenderWindowUpdate();
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 
 }
@@ -439,10 +442,9 @@ void svPathEdit::SmartAdd()
         return;
     }
 
-    mitk::Point3D point=GetRenderWindowPart()->GetSelectedPosition();
+    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep(m_Path);
-    mitk::ScalarType timeInMs=GetTime(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -466,10 +468,9 @@ void svPathEdit::AddToEnd()
         return;
     }
 
-    mitk::Point3D point=GetRenderWindowPart()->GetSelectedPosition();
+    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep(m_Path);
-    mitk::ScalarType timeInMs=GetTime(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -493,10 +494,9 @@ void svPathEdit::AddToTop()
         return;
     }
 
-    mitk::Point3D point=GetRenderWindowPart()->GetSelectedPosition();
+    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep(m_Path);
-    mitk::ScalarType timeInMs=GetTime(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -518,10 +518,9 @@ void svPathEdit::InsertPointAbove()
         return;
     }
 
-    mitk::Point3D point=GetRenderWindowPart()->GetSelectedPosition();
+    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep(m_Path);
-    mitk::ScalarType timeInMs=GetTime(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -543,8 +542,7 @@ void svPathEdit::DeleteSelected(){
         return;
     }
 
-    int timeStep=GetTimeStep(m_Path);
-    mitk::ScalarType timeInMs=GetTime(m_Path);
+    int timeStep=GetTimeStep();
 
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL) return;
@@ -564,7 +562,7 @@ void svPathEdit::DeleteSelected(){
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
         m_Path->ExecuteOperation(doOp);
-        RequestRenderWindowUpdate();
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 }
 
@@ -574,7 +572,7 @@ void svPathEdit::SelectItem(const QModelIndex & idx){
 
     if(m_Path)
     {
-        int timeStep=GetTimeStep(m_Path);
+        int timeStep=GetTimeStep();
         svPathElement* pathElement=m_Path->GetPathElement(timeStep);
         if(pathElement==NULL) return;
 
@@ -595,7 +593,7 @@ void svPathEdit::SelectItem(const QModelIndex & idx){
             }
             else
             {
-                GetRenderWindowPart()->SetSelectedPosition(pathElement->GetControlPoint(index));
+                m_DisplayWidget->MoveCrossToPosition(pathElement->GetControlPoint(index));
             }
         }
         else
@@ -605,7 +603,7 @@ void svPathEdit::SelectItem(const QModelIndex & idx){
             m_Path->ExecuteOperation(doOp);
         }
 
-        RequestRenderWindowUpdate();
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
 
 }
@@ -614,11 +612,11 @@ void svPathEdit::SmoothCurrentPath()
 {
     if(m_SmoothWidget==NULL)
     {
-        m_SmoothWidget=new svPathSmooth();
-        m_SmoothWidget->CreatePartControl();
+        m_SmoothWidget=new svPathSmooth(GetDataStorage(), GetDataManagerSelection().front(), GetTimeStep());
     }
 
     m_SmoothWidget->show();
+    m_SmoothWidget->SetFocus();
 }
 
 

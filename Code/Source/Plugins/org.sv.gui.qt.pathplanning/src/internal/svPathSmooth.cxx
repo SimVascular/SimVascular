@@ -8,6 +8,7 @@
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
+#include <mitkRenderingManager.h>
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -15,32 +16,22 @@
 #include <iostream>
 using namespace std;
 
-const QString svPathSmooth::EXTENSION_ID = "sv.pathsmooth";
-
-svPathSmooth::svPathSmooth()
+svPathSmooth::svPathSmooth(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep)
     : ui(new Ui::svPathSmooth)
+    , m_DataStorage(dataStorage)
+    , m_SelecteNode(selectedNode)
+    , m_TimeStep(timeStep)
 {
+    ui->setupUi(this);
+    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(SmoothPath()));
+    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
+
+    move(400,400);
 }
 
 svPathSmooth::~svPathSmooth()
 {
-    for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = mDescriptorActionList.begin();it != mDescriptorActionList.end(); it++)
-    {
-        // first== the NodeDescriptor; second== the registered QAction
-        (it->first)->RemoveAction(it->second);
-    }
-
     delete ui;
-}
-
-void svPathSmooth::CreateQtPartControl( QWidget *parent )
-{
-    ui->setupUi(parent);
-    connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(SmoothPath()));
-    connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
-
-    parent->move(400,400);
-
 }
 
 void svPathSmooth::SetFocus( )
@@ -50,17 +41,15 @@ void svPathSmooth::SetFocus( )
 
 void svPathSmooth::SmoothPath()
 {
-    QList<mitk::DataNode::Pointer> nodes=GetCurrentSelection();
-    if(nodes.size()==0)
+    if(m_SelecteNode.IsNull())
     {
         return;
     }
 
-    mitk::DataNode::Pointer node=nodes.front();
-    svPath* path=dynamic_cast<svPath*>(node->GetData());
+    svPath* path=dynamic_cast<svPath*>(m_SelecteNode->GetData());
     if(path==NULL) return;
 
-    int timeStep=GetTimeStep(path);
+    int timeStep=m_TimeStep;
     svPathElement* pathElement=path->GetPathElement(timeStep);
     if(pathElement==NULL)
     {
@@ -89,7 +78,7 @@ void svPathSmooth::SmoothPath()
 
     path->ExecuteOperation(doOp);
 
-    RequestRenderWindowUpdate();
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     hide();
 }

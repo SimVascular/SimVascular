@@ -1,29 +1,30 @@
 #ifndef SVPATHEDIT_H
 #define SVPATHEDIT_H
 
-#include "svAbstractView.h"
-#include "ui_svPathEdit.h"
+//#include "ui_svPathEdit.h"
 
+#include "svPathSmooth.h"
+#include "svPathCreate.h"
 #include "svPath.h"
 
-#include <QmitkPointListView.h>
+#include <QmitkFunctionality.h>
+//#include <QmitkPointListView.h>
+#include <QmitkStdMultiWidget.h>
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
-#include <mitkSurface.h>
-#include <mitkPointSet.h>
 #include <mitkDataInteractor.h>
 #include <mitkImage.h>
 
-#include <vtkPoints.h>
-#include <vtkSmartPointer.h>
-#include <vtkActor.h>
+namespace Ui {
+  class svPathEdit;
+}
 
-class svPathEdit : public svAbstractView
+class svPathEdit : public QmitkFunctionality
 {  
-  Q_OBJECT
-  
-  public:  
+    Q_OBJECT
+
+public:
 
     static const QString EXTENSION_ID;
 
@@ -31,7 +32,7 @@ class svPathEdit : public svAbstractView
 
     virtual ~svPathEdit();
 
-  public slots:
+public slots:
 
     void ChangePath();
 
@@ -44,14 +45,6 @@ class svPathEdit : public svAbstractView
     void SmoothCurrentPath();
 
     void ClearAll();
-
-    void OpenPathCreateDialog();
-
-    void ShowPathEditPane();
-
-    void ShowPathEditPaneForPath();
-
-    bool IsPath(QList<mitk::DataNode::Pointer> nodes);
 
     void SelectItem(const QModelIndex & idx);
 
@@ -67,15 +60,19 @@ class svPathEdit : public svAbstractView
 
     void UpdateSlice();
 
+
+public:
+
+    int GetTimeStep();
+
     double GetVolumeImageSpacing();
 
     void GetImageRealBounds(double realBounds[6]);
 
-  protected:
-
     virtual void CreateQtPartControl(QWidget *parent) override;
 
-    virtual void OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes ) override;
+    //    virtual void OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes ) override;
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
 
     virtual void NodeChanged(const mitk::DataNode* node) override;
 
@@ -83,9 +80,17 @@ class svPathEdit : public svAbstractView
 
     virtual void NodeRemoved(const mitk::DataNode* node) override;
 
-    virtual void Activated() override;
+//    virtual void Activated() override;
 
-    virtual void Deactivated() override;
+//    virtual void Deactivated() override;
+
+    virtual void Visible() override;
+
+    virtual void Hidden() override;
+
+//    bool IsExclusiveFunctionality() const override;
+
+protected:
 
     long m_PathChangeObserverTag;
 
@@ -101,16 +106,17 @@ class svPathEdit : public svAbstractView
 
     QWidget* m_Parent;
 
-    std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > mDescriptorActionList;
-
-    QmitkPointListView* m_PointListView;
+    //    QmitkPointListView* m_PointListView;
 
     mitk::DataInteractor::Pointer m_DataInteractor;
 
-    svAbstractExtension* m_SmoothWidget;
+    svPathSmooth* m_SmoothWidget;
+
+    svPathCreate* m_PathCreateWidget;
 
     mitk::Image* m_Image;
 
+    QmitkStdMultiWidget* m_DisplayWidget;
 
 };
 

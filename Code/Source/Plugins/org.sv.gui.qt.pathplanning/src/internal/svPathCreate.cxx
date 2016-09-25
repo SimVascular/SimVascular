@@ -17,10 +17,10 @@
 #include <iostream>
 using namespace std;
 
-svPathCreate::svPathCreate(mitk::DataStorage::Pointer dataStorage, QList<mitk::DataNode::Pointer> selectedNodes, int timeStep)
+svPathCreate::svPathCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep)
     : ui(new Ui::svPathCreate)
     , m_DataStorage(dataStorage)
-    , m_SelecteNodes(selectedNodes)
+    , m_SelecteNode(selectedNode)
     , m_TimeStep(timeStep)
     , m_CreatePath(true)
     , m_PathFolderNode(NULL)
@@ -80,12 +80,12 @@ void svPathCreate::CreatePath()
     mitk::NodePredicateDataType::Pointer isPathNode = mitk::NodePredicateDataType::New("svPath");
     mitk::DataNode::Pointer pathNode=NULL;
 
-    if(m_SelecteNodes.size()==0)
+    if(m_SelecteNode.IsNull())
     {
         return;
     }
 
-    mitk::DataNode::Pointer node=m_SelecteNodes.front();
+    mitk::DataNode::Pointer node=m_SelecteNode;
 
     if(isPathFolder->CheckNode(node)){
         m_PathFolderNode=node;
