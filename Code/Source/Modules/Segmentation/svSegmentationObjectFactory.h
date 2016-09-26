@@ -6,7 +6,6 @@
 #include <svSegmentationExports.h>
 
 #include "svContourGroupIO.h"
-#include "mitkCoreObjectFactory.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 

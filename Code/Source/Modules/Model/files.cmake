@@ -5,8 +5,8 @@ set(H_FILES
     svModelUtils.h
     svModelIO.h
     svModelLegacyIO.h
+    svModelDataInteractor.h
     svModelObjectFactory.h
-    svSurface.h
 )
 
 set(CPP_FILES
@@ -16,7 +16,11 @@ set(CPP_FILES
     svModelUtils.cxx
     svModelIO.cxx
     svModelLegacyIO.cxx
+    svModelDataInteractor.cxx
     svModelObjectFactory.cxx
-    svSurface.cxx
 )
 
+set(RESOURCE_FILES
+    Interactions/svModelInteraction.xml
+    Interactions/svModelConfig.xml
+)

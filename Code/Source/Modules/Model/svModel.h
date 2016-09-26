@@ -1,21 +1,18 @@
 #ifndef SVMODEL_H
 #define SVMODEL_H
 
-#include "SimVascular.h"
-
 #include <svModelExports.h>
 
 #include "svModelElement.h"
 #include "svModelOperation.h"
-#include <svSurface.h>
 
 #include <mitkSurface.h>
 
-class SVMODEL_EXPORT svModel : public mitk::svSurface
+class SVMODEL_EXPORT svModel : public mitk::Surface
 {
 public:
 
-    mitkClassMacro(svModel, mitk::svSurface);
+    mitkClassMacro(svModel, mitk::Surface);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
@@ -56,5 +53,6 @@ itkEventMacro( svModelEvent, itk::AnyEvent );
 
 itkEventMacro( svModelExtendTimeRangeEvent, svModelEvent );
 itkEventMacro( svModelSetEvent, svModelEvent );
+itkEventMacro( svModelSetVtkPolyDataEvent, svModelEvent );
 
 #endif // SVMODEL_H

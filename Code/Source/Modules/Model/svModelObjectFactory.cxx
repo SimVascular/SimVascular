@@ -5,7 +5,7 @@
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
 #include "mitkDataNode.h"
-
+#include "mitkCoreObjectFactory.h"
 
 svModelObjectFactory::svModelObjectFactory()
   : mitk::CoreObjectFactoryBase()

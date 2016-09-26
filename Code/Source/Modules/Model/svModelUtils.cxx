@@ -33,7 +33,7 @@ vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*>
     return dst->GetVtkPolyData();
 }
 
-svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t, int noInterOut, double tol)
+static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -106,6 +106,46 @@ svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode
     modelElement->SetVtkPolyDataModel(solidvpd);
 
     return modelElement;
+}
+
+vtkPolyData* svModelUtils::CreateSolidModelPolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelUtils::svBlendParam* param)
+{
+    if(vpdsrc==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(vpdsrc);
+    cvPolyData *dst = NULL;
+
+    int vals[2];
+    vals[0]=faceID1;
+    vals[1]=faceID2;
+
+    if ( sys_geom_set_array_for_local_op_face_blend(src,&dst, "ModelFaceID", vals, 2, radius, "ActiveCells", 1)
+         != CV_OK )
+    {
+        MITK_ERROR << "poly blend (using radius) error ";
+        return NULL;
+    }
+
+    cvPolyData *dst2 = NULL;
+
+    if ( sys_geom_local_blend( dst, &dst2, param->numblenditers,
+                               param->numsubblenditers, param->numsubdivisioniters,
+                               param->numcgsmoothiters, param->numlapsmoothiters,
+                               param->targetdecimation,
+                               NULL, "ActiveCells")
+
+         != CV_OK )
+    {
+        MITK_ERROR << "poly blend error ";
+        return NULL;
+    }
+
+    vtkPolyData* vpd=dst2->GetVtkPolyData();
+    vpd->GetCellData()->RemoveArray("ActiveCells");
+
+    return vpd;
+
 }
 
 vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)

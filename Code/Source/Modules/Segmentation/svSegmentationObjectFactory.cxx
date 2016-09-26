@@ -4,6 +4,7 @@
 #include "svContourGroupVtkMapper2D.h"
 #include "svContourGroupVtkMapper3D.h"
 
+#include "mitkCoreObjectFactory.h"
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
 #include "mitkDataNode.h"

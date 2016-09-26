@@ -3,6 +3,7 @@
 svModelElement::svModelElement()
     : m_Type("PolyData")
     , m_VtkPolyDataModel(NULL)
+    , m_SelectedFaceIndex(-1)
 {
 }
 
@@ -131,4 +132,12 @@ void svModelElement::SetVtkPolyDataModel(vtkPolyData* vpdModel)
     m_VtkPolyDataModel=vpdModel;
 }
 
+int svModelElement::GetSelectedFaceIndex()
+{
+    return m_SelectedFaceIndex;
+}
 
+void svModelElement::SetSelectedFaceIndex(int idx)
+{
+    m_SelectedFaceIndex=idx;
+}

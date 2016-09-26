@@ -1,6 +1,3 @@
-
-#include "SimVascular.h"
-
 #include "svModel.h"
 
 svModel::svModel()
@@ -9,7 +6,7 @@ svModel::svModel()
 }
 
 svModel::svModel(const svModel &other)
-    : mitk::svSurface(other)
+    : mitk::Surface(other)
     , m_ModelElementSet(other.m_ModelElementSet.size())
 {
     for (std::size_t t = 0; t < other.m_ModelElementSet.size(); ++t)
@@ -111,6 +108,7 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
     //svModelElement* originalModelElement=m_ModelElementSet[timeStep];
 
     svModelElement* newModelElement=modelOperation->GetModelElement();
+    vtkPolyData* newVpd=modelOperation->GetVtkPolyData();
 
     switch (operation->GetOperationType())
     {
@@ -118,6 +116,20 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
     case svModelOperation::OpSETMODELELEMENT:
     {
         SetModelElement(newModelElement,timeStep);
+    }
+        break;
+
+    case svModelOperation::OpSETVTKPOLYDATA:
+    {
+        svModelElement* modelElement=GetModelElement(timeStep);
+        if(modelElement==NULL) return;
+
+        modelElement->SetVtkPolyDataModel(newVpd);
+        SetModelElement(modelElement,timeStep);
+
+        Modified();
+        this->InvokeEvent( svModelSetVtkPolyDataEvent() );
+
     }
         break;
 

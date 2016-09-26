@@ -4,7 +4,6 @@
 #include <svModelExports.h>
 
 #include "svModelIO.h"
-#include "mitkCoreObjectFactory.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 

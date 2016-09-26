@@ -3,7 +3,6 @@
 
 #include "svContourGroup.h"
 #include "svPath.h"
-#include "svSegmentationLegacyIO.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -47,42 +46,41 @@ void svContourGroupCreate::Activated()
     if(m_SelecteNode.IsNull())
         return;
 
+    mitk::DataNode::Pointer selectedNode=m_SelecteNode;
 
-        mitk::DataNode::Pointer selectedNode=m_SelecteNode;
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (selectedNode,isProjFolder,false);
 
-        mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
-        mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (selectedNode,isProjFolder,false);
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
 
-        if(rs->size()>0)
-        {
-            mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+        mitk::NodePredicateDataType::Pointer isSegFolder = mitk::NodePredicateDataType::New("svSegmentationFolder");
+        mitk::NodePredicateDataType::Pointer isGroupNode = mitk::NodePredicateDataType::New("svContourGroup");
 
-            mitk::NodePredicateDataType::Pointer isSegFolder = mitk::NodePredicateDataType::New("svSegmentationFolder");
-            mitk::NodePredicateDataType::Pointer isGroupNode = mitk::NodePredicateDataType::New("svContourGroup");
-
-            if(isSegFolder->CheckNode(selectedNode)){
-                m_SegFolderNode=selectedNode;
-            }else if(isGroupNode->CheckNode(selectedNode)){
-                mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(selectedNode);
-                if(rs->size()>0){
-                    m_SegFolderNode=rs->GetElement(0);
-                }
+        if(isSegFolder->CheckNode(selectedNode)){
+            m_SegFolderNode=selectedNode;
+        }else if(isGroupNode->CheckNode(selectedNode)){
+            mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(selectedNode);
+            if(rs->size()>0){
+                m_SegFolderNode=rs->GetElement(0);
             }
-
-            rs=m_DataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svPathFolder"));
-            if (rs->size()>0)
-            {
-                m_PathFolderNode=rs->GetElement(0);
-
-                rs=m_DataStorage->GetDerivations(m_PathFolderNode,mitk::NodePredicateDataType::New("svPath"));
-
-                for(int i=0;i<rs->size();i++)
-                {
-                    ui->comboBox->addItem(QString::fromStdString(rs->GetElement(i)->GetName()));
-                }
-            }
-
         }
+
+        rs=m_DataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svPathFolder"));
+        if (rs->size()>0)
+        {
+            m_PathFolderNode=rs->GetElement(0);
+
+            rs=m_DataStorage->GetDerivations(m_PathFolderNode,mitk::NodePredicateDataType::New("svPath"));
+
+            for(int i=0;i<rs->size();i++)
+            {
+                ui->comboBox->addItem(QString::fromStdString(rs->GetElement(i)->GetName()));
+            }
+        }
+
+    }
 
     ui->lineEditGroupName->clear();
 }

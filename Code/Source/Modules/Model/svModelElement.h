@@ -3,6 +3,8 @@
 
 #include <svModelExports.h>
 
+#include <mitkDataNode.h>
+
 #include "vtkPolyData.h"
 //#include "vtkSmartPointer.h"
 
@@ -16,6 +18,27 @@ public:
         int id;
         std::string name;
         vtkPolyData* vpd;
+
+        mitk::DataNode* node;
+
+//        float opacity;
+//        bool visible;
+//        double color[3];
+
+
+
+//        svFace()
+//            : id(0)
+//            , name("")
+//            , vpd(NULL)
+//            , opacity(1.0f)
+//            , visible(true)
+//        {
+//            color[0]=1.0;
+//            color[1]=1.0;
+//            color[2]=1.0;
+//        }
+
     };
 
     svModelElement();
@@ -64,6 +87,10 @@ public:
 
     void SetVtkPolyDataModel(vtkPolyData* vpdModel);
 
+    int GetSelectedFaceIndex();
+
+    void SetSelectedFaceIndex(int idx);
+
 
   protected:
 
@@ -78,6 +105,8 @@ public:
     std::vector<svFace*> m_Faces;
 
     vtkPolyData* m_VtkPolyDataModel;
+
+    int m_SelectedFaceIndex;
 
   };
 

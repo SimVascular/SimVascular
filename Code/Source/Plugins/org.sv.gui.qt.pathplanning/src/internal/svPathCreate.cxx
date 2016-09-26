@@ -2,7 +2,6 @@
 #include "ui_svPathCreate.h"
 
 #include "svPath.h"
-#include "svPathLegacyIO.h"
 #include "svPathOperation.h"
 
 #include <mitkDataStorage.h>

@@ -13,6 +13,19 @@ svModelOperation::svModelOperation(mitk::OperationType operationType, unsigned i
 {
 }
 
+svModelOperation::svModelOperation(mitk::OperationType operationType, vtkPolyData* vpd)
+    : mitk::Operation(operationType)
+    , m_vpd(vpd)
+{
+}
+
+svModelOperation::svModelOperation(mitk::OperationType operationType, unsigned int timeStep, vtkPolyData* vpd)
+    : mitk::Operation(operationType)
+    , m_TimeStep(timeStep)
+    , m_vpd(vpd)
+{
+}
+
 svModelOperation::~svModelOperation()
 {
 }
@@ -25,4 +38,9 @@ svModelElement* svModelOperation::GetModelElement()
 unsigned int svModelOperation::GetTimeStep() const
 {
     return m_TimeStep;
+}
+
+vtkPolyData* svModelOperation::GetVtkPolyData()
+{
+    return m_vpd;
 }
