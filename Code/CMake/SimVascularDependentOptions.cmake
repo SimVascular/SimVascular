@@ -153,10 +153,6 @@ if(SV_USE_TETGEN)
 	mark_as_superbuild(SV_USE_TET_ADAPTOR)
 endif()
 
-if(SV_USE_TET_ADAPTOR)
-	set(SV_USE_THREEDSOLVER ON)
-endif()
-
 if(SV_USE_PYTHON)
   set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
@@ -313,3 +309,4 @@ if(SV_USE_QT_GUI)
     set(SV_USE_PYTHON "ON")
     set(SV_USE_SYSTEM_PYTHON "OFF")
 endif()
+

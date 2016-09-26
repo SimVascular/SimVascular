@@ -1,3 +1,10 @@
+# need this since opencascade doesn't have freetype
+# path explicitly defined
+if(WIN32)
+get_filename_component(TMP_DIR_FREETYPE_LIBRARY ${FREETYPE_LIBRARY} DIRECTORY)
+link_directories(${TMP_DIR_FREETYPE_LIBRARY})
+endif()
+
 set(APP_NAME ${SV_EXE})
 set(APP_SHOW_CONSOLE ON)
 

@@ -193,6 +193,7 @@ macro(simvascular_third_party _pkg)
 	set(options OPTIONAL VERSION_EXACT 
 		DOWNLOADABLE SYSTEM_DEFAULT 
 		SVEXTERN_CONFIG ADD_INSTALL
+                SOLVER_DEPEND
 		)
 	set(oneValueArgs VERSION)
 	set(multiValueArgs PATHS HINTS COMPONENTS)
@@ -200,7 +201,11 @@ macro(simvascular_third_party _pkg)
 	CMAKE_PARSE_ARGUMENTS("simvascular_third_party" 
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	set(${_upper}_SUBDIR ThirdParty/${_pkg})
+        if(simvascular_third_party_SOLVER_DEPEND)
+          set(${_upper}_SUBDIR svSolver/Code/ThirdParty/${_pkg})
+        else()
+	  set(${_upper}_SUBDIR ThirdParty/${_pkg})
+        endif()
 	if(simvascular_third_party_SYSTEM_DEFAULT)
 		option(SV_USE_SYSTEM_${_upper} "Use system ${_pkg}" ON)
 	else()

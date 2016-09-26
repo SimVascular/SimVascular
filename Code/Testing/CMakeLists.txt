@@ -11,13 +11,9 @@ mark_as_superbuild(SV_RUN_GUI_TESTS)
 #TODO: Change this!
 if(UNIX)
   set(SV_TEST_EXE "${SV_DEVELOPER_SCRIPT_DIR}/mysim")
-  set(POSTSOLVER_TEST_EXE "${SV_DEVELOPER_SCRIPT_DIR}/mypost")
-  set(SOLVER_TEST_EXE "${SV_DEVELOPER_SCRIPT_DIR}/mysolver")
 endif()
 if(WIN32)
   set(SV_TEST_EXE "${SV_DEVELOPER_SCRIPT_DIR}/mysim.bat")
-  set(POSTSOLVER_TEST_EXE "${SV_DEVELOPER_SCRIPT_DIR}/mypost.bat")
-  set(SOLVER_TEST_EXE "${SV_DEVELOPER_SCRIPT_DIR}/mysolver.bat")
 endif()
 file(TO_NATIVE_PATH "${FLOWSOLVER_CONFIG_PATH}" FLOWSOLVER_CONFIG_NATIVE_PATH)
 if(SV_DEV_OUTPUT)
@@ -37,19 +33,4 @@ endif()
 
 if(SV_RUN_GUI_TESTS)
   add_test_return(StartUpTest ${SV_TEST_EXE} "${SV_TEST_DIR}/startup/startup.tcl" )
-endif()
-
-if(NOT SV_USE_DUMMY_MPICH2 AND MPIEXEC)
-  set(solver_cmd "${MPIEXEC} -n 1 ${SOLVER_TEST_EXE}")
-else()
-  set(solver_cmd "${SOLVER_TEST_EXE}")
-endif()
-add_test(NAME SolverSimpleTest
-  COMMAND  ${solver_cmd}
-  WORKING_DIRECTORY ${SV_TEST_DIR}/solver_basic)
-set_tests_properties(SolverSimpleTest
-    PROPERTIES ENVIRONMENT FLOWSOLVER_CONFIG=${FLOWSOLVER_CONFIG_NATIVE_PATH})
-set_tests_properties(SolverSimpleTest PROPERTIES FAIL_REGULAR_EXPRESSION "Input error;Input exception;BAD TERMINATION")
-if(WIN32)
-  file(COPY ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${SV_TEST_DIR}/solver_basic)
 endif()

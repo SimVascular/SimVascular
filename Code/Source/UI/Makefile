@@ -236,13 +236,13 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
 ifeq ($(SV_USE_MITK),1)
 OBJS    += \
-../SV3/Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../SV3/Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../SV3/Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../SV3/Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../SV3/Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../SV3/Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../SV3/Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
+../Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+../Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
 endif
 
 ifeq ($(SV_USE_MITK),1)
@@ -259,9 +259,9 @@ static: pre directories $(TARGET_EXE_FULL)
 $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
 	-rm -Rf ./static_cpp_resources
 	-mkdir -p ./static_cpp_resources
-	-cp -Rf ../SV3/Modules/Path/resources ./static_cpp_resources/svPath
-#	-cp -Rf ../SV3/Modules/QtAppBase/resources ./static_cpp_resources/svQtAppBase
-	-cp -Rf ../SV3/Modules/Segmentation/resources ./static_cpp_resources/svSegmentation
+	-cp -Rf ../Modules/Path/resources ./static_cpp_resources/svPath
+#	-cp -Rf ../Modules/QtAppBase/resources ./static_cpp_resources/svQtAppBase
+	-cp -Rf ../Modules/Segmentation/resources ./static_cpp_resources/svSegmentation
 #	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svQtAppBase/ svSegmentation
 	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svSegmentation/
 ifeq ($(CLUSTER), x64_cygwin)

@@ -279,6 +279,7 @@ else()
 endif()
 
 if(SV_USE_MESHSIM_ADAPTOR)
+    set(SV_USE_SOLVERIO ON)
     set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
 elseif(SV_USE_TET_ADAPTOR)
     set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
@@ -286,6 +287,7 @@ endif()
 
 if(SV_USE_TET_ADAPTOR)
 	SET(USE_TET_ADAPTOR ON)
+        set(SV_USE_SOLVERIO ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
 endif()
 
@@ -294,6 +296,13 @@ endif()
 if(SV_USE_VMTK)
 	set(USE_VMTK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
+endif()
+
+#-----------------------------------------------------------------------------
+# SOLVERIO
+if(SV_USE_SOLVERIO)
+        set(USE_SOLVERIO ON)
+        set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/SolverIO")
 endif()
 
 #-----------------------------------------------------------------------------
@@ -361,7 +370,6 @@ endif()
 #-----------------------------------------------------------------------------
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
-	#simvascular_third_party(opencascade)
 	simvascular_external(OpenCASCADE DOWNLOADABLE)
 	mark_as_superbuild(OpenCASCADE_DIR)
 	mark_as_superbuild(OpenCASCADE_SOURCE_DIR)
@@ -453,14 +461,6 @@ if(SV_USE_MITK)
 endif()
 
 # Licensed Package Additions
-#-----------------------------------------------------------------------------
-if(SV_USE_MESHSIM_ADAPTOR)
-	set(SV_THREEDSOLVER_USE_SVLS ON)
-	set(SV_USE_FORTRAN ON)
-	set(SV_USE_MPI ON)
-	set(SV_USE_THREEDSOLVER ON)
-endif()
-
 #-----------------------------------------------------------------------------
 # Parasolid
 if(SV_USE_PARASOLID)
@@ -589,7 +589,7 @@ endif()
 # Add libraries for flowsolver
 if(SV_USE_SPARSE)
 	SET(USE_SPARSE ON)
-	simvascular_third_party(sparse)
+        simvascular_third_party(sparse SOLVER_DEPEND)
 	if(NOT SV_USE_SYSTEM_SPARSE)
           set(SPARSE_LIBRARY ${SV_LIB_THIRDPARTY_SPARSE_NAME})
 	else()
@@ -599,7 +599,7 @@ endif()
 
 if(SV_USE_METIS)
 	SET(USE_METIS ON)
-	simvascular_third_party(metis)
+        simvascular_third_party(metis SOLVER_DEPEND)
 	if(NOT SV_USE_SYSTEM_METIS)
           set(METIS_LIBRARY ${SV_LIB_THIRDPARTY_METIS_NAME})
 	else()
@@ -609,7 +609,7 @@ endif()
 
 if(SV_USE_NSPCG)
 	SET(USE_NSPCG ON)
-	simvascular_third_party(nspcg)
+        simvascular_third_party(nspcg SOLVER_DEPEND)
 	if(NOT SV_USE_SYSTEM_NSPCG)
           set(NSPCG_LIBRARY ${SV_LIB_THIRDPARTY_NSPCG_NAME})
 	else()
@@ -910,12 +910,6 @@ if(SV_USE_TETGEN)
 	endif()
 endif()
 
-if(SV_USE_TET_ADAPTOR)
-	#set(SV_USE_FORTRAN ON)
-	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
-endif()
-
-
 if(SV_USE_VMTK)
 	# no extra setups
 endif()
@@ -971,8 +965,10 @@ set(INDENTS "")
 # set
 set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS}
 			 	"Source/Include"
-			 	"FlowSolvers/Include"
 			 	)
+if(SV_USE_THREEDSOLVER)
+  set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS} "svSolver/Code/FlowSolvers/Include")
+endif()
 
 foreach(dir ${SV_INCLUDE_DIRS})
 	add_subdirectory(${dir})
@@ -992,18 +988,18 @@ if(SV_USE_QT_GUI)
     ${SV_SOURCE_DIR}/Source/Include/${f}.in
     ${SV_BINARY_DIR}/Source/Include/${f}
     )
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtAppBase")
+
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Common")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Path")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Segmentation")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Model")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/ProjectManagement")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
+#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.projectnodes")
 #  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.projectmanager")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.pathplanning")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.segmentation")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.modeling")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.test")
+#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.pathplanning")
+#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.segmentation")
+#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.modeling")
 
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
 
@@ -1015,7 +1011,7 @@ endif()
 # Add directories
 # Modules
 if(SV_USE_THREEDSOLVER)
-	add_subdirectory(FlowSolvers)
+        add_subdirectory(svSolver/Code/FlowSolvers)
 endif()
 
 if(NOT SV_ONLY_BUILD_FLOWSOLVER)

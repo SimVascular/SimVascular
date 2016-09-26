@@ -232,6 +232,16 @@ endif()
 # Download of Externals for quick build
 #-----------------------------------------------------------------------------
 if(SV_DOWNLOAD_EXTERNALS)
+  if(APPLE)
+    set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.everything.tar.gz")
+  endif()
+  if(LINUX)
+    set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu_14/gnu-4.8/2016.09.05/linux.gnu-4.8.x64.everything-BUILD2016-09-05.tar.gz")
+  endif()
+  if(WIN32)
+    set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/10/msvc_2013/2016.09.05/windows.msvc-12.5.x64.everything-BUILD2016-09-05.tar.gz")
+  endif()
+
   simvascular_download_and_extract_tar(${SV_EXTERNALS_DOWNLOAD_URL} "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXTERNALS_BIN_DIR}")
   set(SV_EXTERNALS_USE_TOPLEVEL_DIR ON CACHE BOOL "Set externals to download dir" FORCE)
 endif()

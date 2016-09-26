@@ -1,15 +1,16 @@
 
-rm -Rf ../../bld
-mkdir -p ../../bld
-pushd ../../bld
+rm -Rf /cygdrive/c/sv-test-bld
+mkdir -p /cygdrive/c/sv-test-bld
 
 export REPLACEME_SV_CL_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/cl.exe"
 export REPLACEME_SV_IFORT_COMPILER="C:/Program Files (x86)/Intel/Composer XE 2013 SP1/bin/intel64/ifort.exe"
 export REPLACEME_SV_CMAKE_CMD="/cygdrive/c/Program Files/CMake/bin/cmake.exe"
 export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_CMAKE_GENERATOR="Visual Studio 12 2013 Win64"
-export REPLACEME_SV_TOP_SRC_DIR_SV=`pwd`/../Code
+export REPLACEME_SV_TOP_SRC_DIR_SV=`pwd`/../../Code
 export REPLACEME_SV_TOP_SRC_DIR_SV=`cygpath -m $REPLACEME_SV_TOP_SRC_DIR_SV`
+
+pushd /cygdrive/c/sv-test-bld
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -21,20 +22,18 @@ export REPLACEME_SV_TOP_SRC_DIR_SV=`cygpath -m $REPLACEME_SV_TOP_SRC_DIR_SV`
    -DCMAKE_INSTALL_PREFIX=`cygpath -m $PWD`/installed \
 \
    -DSV_SUPERBUILD=OFF \
+   -DBUILD_SHARED_LIBS:BOOL=OFF \
 \
    -DSV_EXTERN_LICENSED_BIN_DIR="C:/cygwin64/usr/local/sv/licensed" \
    -DSV_EXTERN_OPEN_BIN_DIR="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64" \
 \
-   -DSV_THREEDSOLVER_USE_VTK=ON \
-   -DSV_USE_TET_ADAPTOR=ON \
-   -DSV_USE_THREEDSOLVER=ON \
+   -DSV_USE_SOLVERIO=ON \
 \
+   -DSV_USE_TET_ADAPTOR=ON \
    -DSV_USE_FREETYPE=ON \
    -DSV_USE_FREETYPE_SHARED:BOOL=OFF \
    -DSV_USE_GDCM=ON \
    -DSV_USE_ITK=ON \
-   -DSV_USE_MPICH2=OFF \
-   -DSV_USE_MSMPI=ON \
    -DSV_USE_OpenCASCADE=ON \
    -DSV_USE_PYTHON=ON \
    -DSV_USE_QT=ON \
@@ -104,32 +103,6 @@ export REPLACEME_SV_TOP_SRC_DIR_SV=`cygpath -m $REPLACEME_SV_TOP_SRC_DIR_SV`
 -DMMG_DIR="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mmg-5.1.0" \
 -DMMG_INCLUDE_DIR="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mmg-5.1.0/include" \
 -DMMG_LIBRARY="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mmg-5.1.0/lib/mmg.lib" \
-\
--DMPIEXEC="C:/Program Files/Microsoft MPI/Bin/mpiexec.exe" \
--DMPIEXEC_MAX_NUMPROCS=2 \
--DMPIEXEC_NUMPROC_FLAG="-np" \
-\
--DMPI_CXX_COMPILER="$REPLACEME_SV_CL_COMPILER" \
--DMPI_CXX_COMPILE_FLAGS="" \
--DMPI_CXX_INCLUDE_PATH="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Include" \
--DMPI_CXX_LIBRARIES="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Lib/x64/msmpi.lib" \
--DMPI_CXX_LINK_FLAGS="" \
-\
--DMPI_C_COMPILER="$REPLACEME_SV_CL_COMPILER" \
--DMPI_C_COMPILE_FLAGS="" \
--DMPI_C_INCLUDE_PATH="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Include" \
--DMPI_C_LIBRARIES="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Lib/x64/msmpi.lib" \
--DMPI_C_LINK_FLAGS="" \
-\
--DMPI_Fortran_COMPILER="$REPLACEME_SV_IFORT_COMPILER" \
--DMPI_Fortran_COMPILE_FLAGS="-fpp /MD /Zi /O2 /W0 /4L132 /heap-arrays:256" \
--DMPI_Fortran_INCLUDE_PATH="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Include" \
--DMPI_Fortran_LIBRARIES="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Lib/x64/msmpifmc.lib" \
--DMPI_Fortran_LINK_FLAGS=/DEBUG \
-\
--DMPI_LIBRARY="$REPLACEME_SV_TOP_SRC_DIR_SV/ThirdParty/msmpi/Lib/x64/msmpi.lib" \
--DMPI_fmpich2_LIBRARY="" \
--DMPI_EXTRA_LIBRARY="" \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
  
