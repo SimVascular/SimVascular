@@ -1,8 +1,6 @@
 #ifndef SVPATHEDIT_H
 #define SVPATHEDIT_H
 
-//#include "ui_svPathEdit.h"
-
 #include "svPathSmooth.h"
 #include "svPathCreate.h"
 #include "svPath.h"

@@ -163,7 +163,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="svLevelSet2DWidget" name="lsParamWidget" native="true"/>
+             <widget class="QWidget" name="lsParamWidgetContainer" native="true"/>
             </item>
             <item>
              <widget class="QGroupBox" name="thresholdParamWidget">
@@ -525,12 +525,6 @@
    <class>svResliceSlider</class>
    <extends>QWidget</extends>
    <header location="global">svResliceSlider.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>svLevelSet2DWidget</class>
-   <extends>QWidget</extends>
-   <header location="global">svLevelSet2DWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

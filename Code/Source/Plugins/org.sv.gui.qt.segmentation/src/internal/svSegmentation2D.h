@@ -1,7 +1,6 @@
 #ifndef SVSEGMENTATION2D_H
 #define SVSEGMENTATION2D_H
 
-#include "svAbstractView.h"
 #include "svPath.h"
 #include "svSegmentationUtils.h"
 #include "svContourGroup.h"
@@ -12,6 +11,7 @@
 #include "svLevelSet2DWidget.h"
 #include "svLoftParamWidget.h"
 
+#include <QmitkFunctionality.h>
 #include <QmitkSliceWidget.h>
 #include <QmitkSliderNavigatorWidget.h>
 #include <QmitkStepperAdapter.h>
@@ -34,12 +34,11 @@
 #include <QPushButton>
 #include <QWidget>
 
-
 namespace Ui {
 class svSegmentation2D;
 }
 
-class svSegmentation2D : public svAbstractView
+class svSegmentation2D : public QmitkFunctionality
 {
     Q_OBJECT
 
@@ -81,12 +80,6 @@ public slots:
 
     void SelectItem(const QModelIndex & idx);
 
-    void ShowGroupEditPane();
-
-    void ShowGroupEditPaneForGroup();
-
-    bool IsContourGroup(QList<mitk::DataNode::Pointer> nodes);
-
     void ClearAll();
 
     void UpdatePreview();
@@ -121,68 +114,77 @@ public slots:
 
     void ContourChangingOff();
 
+public:
+
+    int GetTimeStep();
+
+    virtual void CreateQtPartControl(QWidget *parent) override;
+
+    virtual void OnSelectionChanged(std::vector<mitk::DataNode*> nodes) override;
+
+    virtual void NodeChanged(const mitk::DataNode* node) override;
+
+    virtual void NodeAdded(const mitk::DataNode* node) override;
+
+    virtual void NodeRemoved(const mitk::DataNode* node) override;
+
+//    virtual void Activated() override;
+
+//    virtual void Deactivated() override;
+
+    virtual void Visible() override;
+
+    virtual void Hidden() override;
+
 protected:
-  virtual void CreateQtPartControl(QWidget *parent) override;
 
-  virtual void OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes ) override;
+    QWidget* m_Parent;
 
-  virtual void NodeChanged(const mitk::DataNode* node) override;
+    QWidget* m_CurrentParamWidget;
 
-  virtual void NodeAdded(const mitk::DataNode* node) override;
+    svLevelSet2DWidget* m_LSParamWidget;
 
-  virtual void NodeRemoved(const mitk::DataNode* node) override;
+    svLoftParamWidget* m_LoftWidget;
 
-  virtual void Activated() override;
+    mitk::Image* m_Image;
 
-  virtual void Deactivated() override;
+    cvStrPts* m_cvImage;
 
-  QWidget* m_Parent;
+    Ui::svSegmentation2D *ui;
 
-  QWidget* m_CurrentParamWidget;
+    svContourGroup* m_ContourGroup;
 
-//  svLevelSet2DWidget* m_LSParamWidget;
+    svPath* m_Path;
 
-  svLoftParamWidget* m_LoftWidget;
+    mitk::DataNode::Pointer m_ContourGroupNode;
 
-  std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > mDescriptorActionList;
+    svContourGroupDataInteractor::Pointer m_DataInteractor;
 
-  mitk::Image* m_Image;
+    long m_ContourGroupChangeObserverTag;
 
-  cvStrPts* m_cvImage;
+    mitk::DataNode::Pointer m_LoftSurfaceNode;
 
-  Ui::svSegmentation2D *ui;
+    mitk::Surface::Pointer m_LoftSurface;
 
-  svContourGroup* m_ContourGroup;
+    bool groupCreated=false;
 
-  svPath* m_Path;
+    mitk::DataInteractor::Pointer m_PreviewDataNodeInteractor;
 
-  mitk::DataNode::Pointer m_ContourGroupNode;
+    mitk::DataNode::Pointer m_PreviewDataNode;
 
-  svContourGroupDataInteractor::Pointer m_DataInteractor;
+    long m_PreviewContourModelObserverFinishTag;
+    long m_PreviewContourModelObserverUpdateTag;
 
-  long m_ContourGroupChangeObserverTag;
+    svContourModel::Pointer m_PreviewContourModel;
 
-  mitk::DataNode::Pointer m_LoftSurfaceNode;
+    long m_StartLoftContourGroupObserverTag;
+    long m_StartLoftContourGroupObserverTag2;
+    long m_StartChangingContourObserverTag;
+    long m_EndChangingContourObserverTag;
 
-  mitk::Surface::Pointer m_LoftSurface;
+    bool m_ContourChanging;
 
-  bool groupCreated=false;
-
-  mitk::DataInteractor::Pointer m_PreviewDataNodeInteractor;
-
-  mitk::DataNode::Pointer m_PreviewDataNode;
-
-  long m_PreviewContourModelObserverFinishTag;
-  long m_PreviewContourModelObserverUpdateTag;
-
-  svContourModel::Pointer m_PreviewContourModel;
-
-  long m_StartLoftContourGroupObserverTag;
-  long m_StartLoftContourGroupObserverTag2;
-  long m_StartChangingContourObserverTag;
-  long m_EndChangingContourObserverTag;
-
-  bool m_ContourChanging;
+    QmitkStdMultiWidget* m_DisplayWidget;
 };
 
 #endif // SVSEGMENTATION2D_H

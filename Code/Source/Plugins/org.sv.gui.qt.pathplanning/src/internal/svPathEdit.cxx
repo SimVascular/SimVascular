@@ -7,8 +7,6 @@
 #include "svPathDataInteractor.h"
 #include "svMath3.h"
 
-//#include <QmitkRenderWindow.h>
-
 // mitk
 #include <mitkDataStorage.h>
 #include "mitkDataNode.h"

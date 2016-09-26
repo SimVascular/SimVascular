@@ -1,12 +1,11 @@
 #include "svModelObjectFactory.h"
 
 #include "svModel.h"
-#include "svModelIO.h"
 
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
 #include "mitkDataNode.h"
-#include "mitkCoreObjectFactory.h"
+
 
 svModelObjectFactory::svModelObjectFactory()
   : mitk::CoreObjectFactoryBase()
@@ -91,22 +90,17 @@ void svModelObjectFactory::RegisterIOFactories()
 {
 }
 
-struct RegistersvModelObjectFactory{
-  RegistersvModelObjectFactory()
+RegistersvModelObjectFactory::RegistersvModelObjectFactory()
     : m_Factory( svModelObjectFactory::New() )
-  {
+{
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_ModelIO=new svModelIO();
-  }
+}
 
-  ~RegistersvModelObjectFactory()
-  {
+RegistersvModelObjectFactory::~RegistersvModelObjectFactory()
+{
     mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
     delete m_ModelIO;
-  }
+}
 
-  svModelObjectFactory::Pointer m_Factory;
-  svModelIO* m_ModelIO;
-};
-
-static RegistersvModelObjectFactory registersvModelObjectFactory;
+//static RegistersvModelObjectFactory registersvModelObjectFactory;

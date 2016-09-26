@@ -27,12 +27,12 @@ void svPathPlanningPluginActivator::stop(ctkPluginContext* context)
 //    m_Instance = nullptr;
 }
 
-//ctkPluginContext* svProjectManagerPluginActivator::GetContext()
+//ctkPluginContext* svPathPlanningPluginActivator::GetContext()
 //{
 //  return m_Context;
 //}
 
-//svProjectManagerPluginActivator* svProjectManagerPluginActivator::GetInstance()
+//svPathPlanningPluginActivator* svPathPlanningPluginActivator::GetInstance()
 //{
 //    return m_Instance;
 //}

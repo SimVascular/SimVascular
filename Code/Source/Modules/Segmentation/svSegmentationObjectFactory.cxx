@@ -3,12 +3,10 @@
 #include "svContourModelVtkMapper2D.h"
 #include "svContourGroupVtkMapper2D.h"
 #include "svContourGroupVtkMapper3D.h"
-#include "svContourGroupIO.h"
 
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
 #include "mitkDataNode.h"
-#include "mitkCoreObjectFactory.h"
 
 svSegmentationObjectFactory::svSegmentationObjectFactory()
   : mitk::CoreObjectFactoryBase()
@@ -108,22 +106,17 @@ void svSegmentationObjectFactory::RegisterIOFactories()
 {
 }
 
-struct RegistersvSegmentationObjectFactory{
-  RegistersvSegmentationObjectFactory()
+RegistersvSegmentationObjectFactory::RegistersvSegmentationObjectFactory()
     : m_Factory( svSegmentationObjectFactory::New() )
-  {
+{
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_ContourGroupIO=new svContourGroupIO();
-  }
+}
 
-  ~RegistersvSegmentationObjectFactory()
-  {
+RegistersvSegmentationObjectFactory::~RegistersvSegmentationObjectFactory()
+{
     mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
     delete m_ContourGroupIO;
-  }
+}
 
-  svSegmentationObjectFactory::Pointer m_Factory;
-  svContourGroupIO* m_ContourGroupIO;
-};
-
-static RegistersvSegmentationObjectFactory registersvSegmentationObjectFactory;
+//static RegistersvSegmentationObjectFactory registersvSegmentationObjectFactory;

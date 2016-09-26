@@ -1,5 +1,6 @@
 #include "svSegmentation2D.h"
 #include "ui_svSegmentation2D.h"
+#include "ui_svLevelSet2DWidget.h"
 #include "ui_svLoftParamWidget.h"
 
 #include "svPath.h"
@@ -45,8 +46,6 @@
 #include <mitkProgressBar.h>
 #include <mitkSliceNavigationController.h>
 
-
-//#include <vtkTransform.h>
 #include <vtkPoints.h>
 #include <vtkPolyData.h>
 #include <vtkTransformPolyDataFilter.h>
@@ -63,7 +62,6 @@
 #include <vtkProperty.h>
 #include <vtkXMLImageDataReader.h>
 
-
 // Qt
 #include <QMessageBox>
 #include <QShortcut>
@@ -74,7 +72,7 @@ using namespace std;
 
 #include <math.h>
 
-const QString svSegmentation2D::EXTENSION_ID = "sv.segmentation2d";
+const QString svSegmentation2D::EXTENSION_ID = "org.sv.views.segmentation2d";
 
 svSegmentation2D::svSegmentation2D() :
     ui(new Ui::svSegmentation2D)
@@ -85,6 +83,7 @@ svSegmentation2D::svSegmentation2D() :
     m_Image=NULL;
     m_cvImage=NULL;
     m_LoftWidget=NULL;
+    m_LSParamWidget=NULL;
     m_StartLoftContourGroupObserverTag=0;
     m_StartLoftContourGroupObserverTag2=0;
     m_StartChangingContourObserverTag=0;
@@ -94,12 +93,11 @@ svSegmentation2D::svSegmentation2D() :
 
 svSegmentation2D::~svSegmentation2D()
 {
-    for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = mDescriptorActionList.begin();it != mDescriptorActionList.end(); it++)
-    {
-        (it->first)->RemoveAction(it->second);
-    }
-
     delete ui;
+
+    if(m_LoftWidget) delete m_LoftWidget;
+
+//    if(m_LSParamWidget) delete m_LSParamWidget;
 }
 
 void svSegmentation2D::CreateQtPartControl( QWidget *parent )
@@ -107,14 +105,32 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
     m_Parent=parent;
     ui->setupUi(parent);
 
-    ui->resliceSlider->SetDisplayWidget(GetDisplayWidget());
+    m_DisplayWidget=GetActiveStdMultiWidget();
+
+    if(m_DisplayWidget==NULL)
+    {
+        parent->setEnabled(false);
+        MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
+        return;
+    }
+
+    ui->resliceSlider->SetDisplayWidget(m_DisplayWidget);
     ui->resliceSlider->setCheckBoxVisible(false);
 //    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_NEAREST);
 //    ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_LINEAR);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
     m_CurrentParamWidget=NULL;
-    ui->lsParamWidget->hide();
+
+    QVBoxLayout* vlayout = new QVBoxLayout(ui->lsParamWidgetContainer);
+    vlayout->setContentsMargins(0,0,0,0);
+    vlayout->setSpacing(0);
+    ui->lsParamWidgetContainer->setLayout(vlayout);
+    m_LSParamWidget=new svLevelSet2DWidget(parent);
+    vlayout->addWidget(m_LSParamWidget);
+
+    ui->lsParamWidgetContainer->hide();
+
     ui->thresholdParamWidget->hide();
     ui->smoothWidget->hide();
     ui->splineWidget->hide();
@@ -135,14 +151,6 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
     connect(ui->btnDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
 
-    connect(GetDataManager()->GetTreeView(), SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowGroupEditPaneForGroup()));
-
-    QmitkNodeDescriptor* dataNodeDescriptor = getNodeDescriptorManager()->GetDescriptor("svContourGroup");
-    QAction* action = new QAction(QIcon(":contourgroupedit.png"), "Edit Contour Group", this);
-    QObject::connect( action, SIGNAL( triggered() ) , this, SLOT( ShowGroupEditPane() ) );
-    dataNodeDescriptor->AddAction(action,false);
-    mDescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(dataNodeDescriptor, action));
-
     connect(ui->checkBoxLoftingPreview, SIGNAL(clicked()), this, SLOT(LoftContourGroup()) );
     connect(ui->btnLoftingOptions, SIGNAL(clicked()), this, SLOT(ShowLoftWidget()) );
 
@@ -155,22 +163,37 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
 
 }
 
-void svSegmentation2D::Activated()
+void svSegmentation2D::Visible()
 {
     ui->resliceSlider->turnOnReslice(true);
-    OnSelectionChanged(GetCurrentSelection());
+    OnSelectionChanged(GetDataManagerSelection());
 }
 
-void svSegmentation2D::Deactivated()
+void svSegmentation2D::Hidden()
 {
-
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
 
-void svSegmentation2D::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& nodes )
+int svSegmentation2D::GetTimeStep()
 {
-    if(!IsActivated())
+    mitk::SliceNavigationController* timeNavigationController = NULL;
+    if(m_DisplayWidget)
+    {
+        timeNavigationController=m_DisplayWidget->GetTimeNavigationController();
+    }
+
+    if(timeNavigationController)
+        return timeNavigationController->GetTime()->GetPos();
+    else
+        return 0;
+
+}
+
+void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
+{
+//    if(!IsActivated())
+    if(!IsVisible())
     {
         return;
     }
@@ -178,7 +201,7 @@ void svSegmentation2D::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& 
     if(nodes.size()==0)
     {
         ClearAll();
-        setEnabled(false);
+        m_Parent->setEnabled(false);
         return;
     }
 
@@ -196,11 +219,11 @@ void svSegmentation2D::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& 
     if(!m_ContourGroup)
     {
         ClearAll();
-        setEnabled(false);
+        m_Parent->setEnabled(false);
         return;
     }
 
-    setEnabled(true);
+    m_Parent->setEnabled(true);
 
     std::string groupPathName=m_ContourGroup->GetPathName();
     int  groupPathID=m_ContourGroup->GetPathID();
@@ -263,7 +286,7 @@ void svSegmentation2D::OnSelectionChanged(const QList<mitk::DataNode::Pointer>& 
 
     m_cvImage=svSegmentationUtils::image2cvStrPts(m_Image);
 
-    int timeStep=GetTimeStep(m_Path);
+    int timeStep=GetTimeStep();
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
     if(pathElement==NULL)
         return;
@@ -338,7 +361,7 @@ void svSegmentation2D::InsertContour(svContour* contour, int contourIndex)
 
         contour->SetSelected(true);
 
-        int timeStep=GetTimeStep(m_ContourGroup);
+        int timeStep=GetTimeStep();
         svContourOperation* doOp = new svContourOperation(svContourOperation::OpINSERTCONTOUR,timeStep,contour,contourIndex);
 
         svContourOperation *undoOp = new svContourOperation(svContourOperation::OpREMOVECONTOUR,timeStep, contour, contourIndex);
@@ -348,7 +371,7 @@ void svSegmentation2D::InsertContour(svContour* contour, int contourIndex)
 
         m_ContourGroup->ExecuteOperation(doOp);
 
-        RequestRenderWindowUpdate();
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     }
 }
@@ -377,7 +400,7 @@ void svSegmentation2D::SetContour(int contourIndex, svContour* newContour)
     {
         svContour* originalContour=m_ContourGroup->GetContour(contourIndex);
 
-        int timeStep=GetTimeStep(m_ContourGroup);
+        int timeStep=GetTimeStep();
         svContourOperation* doOp = new svContourOperation(svContourOperation::OpSETCONTOUR,timeStep,newContour,contourIndex);
 
         svContourOperation *undoOp = new svContourOperation(svContourOperation::OpSETCONTOUR,timeStep, originalContour, contourIndex);
@@ -387,7 +410,7 @@ void svSegmentation2D::SetContour(int contourIndex, svContour* newContour)
 
         m_ContourGroup->ExecuteOperation(doOp);
 
-        RequestRenderWindowUpdate();
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     }
 }
@@ -398,7 +421,7 @@ void svSegmentation2D::RemoveContour(int contourIndex)
     {
         svContour* contour=m_ContourGroup->GetContour(contourIndex);
 
-        int timeStep=GetTimeStep(m_ContourGroup);
+        int timeStep=GetTimeStep();
         svContourOperation* doOp = new svContourOperation(svContourOperation::OpREMOVECONTOUR,timeStep,contour,contourIndex);
 
         svContourOperation *undoOp = new svContourOperation(svContourOperation::OpINSERTCONTOUR,timeStep, contour, contourIndex);
@@ -408,7 +431,7 @@ void svSegmentation2D::RemoveContour(int contourIndex)
 
         m_ContourGroup->ExecuteOperation(doOp);
 
-        RequestRenderWindowUpdate();
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
     }
 }
@@ -565,7 +588,7 @@ void svSegmentation2D::CreateContours(SegmentationMethod method)
         {
             case LEVELSET_METHOD:
             {
-                svSegmentationUtils::svLSParam tmpLSParam = ui->lsParamWidget->GetLSParam();
+                svSegmentationUtils::svLSParam tmpLSParam = m_LSParamWidget->GetLSParam();
                 contour=svSegmentationUtils::CreateLSContour(ui->resliceSlider->getPathPoint(posID),m_cvImage->GetVtkStructuredPoints(),&tmpLSParam,ui->resliceSlider->getResliceSize());
                 break;
             }
@@ -599,12 +622,12 @@ void svSegmentation2D::SetSecondaryWidgetsVisible(bool visible)
 
 void svSegmentation2D::CreateLSContour()
 {
-    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->lsParamWidget)
+    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->lsParamWidgetContainer)
     {
         if(m_CurrentParamWidget)
             m_CurrentParamWidget->hide();
 
-        m_CurrentParamWidget=ui->lsParamWidget;
+        m_CurrentParamWidget=ui->lsParamWidgetContainer;
         m_CurrentParamWidget->show();
 
         SetSecondaryWidgetsVisible(true);
@@ -688,7 +711,7 @@ void svSegmentation2D::FinishPreview()
     if(m_PreviewContourModel.IsNull())
          return;
 
-    int timeStep=GetTimeStep(m_PreviewContourModel);
+    int timeStep=GetTimeStep();
 
     svContour* contour=m_PreviewContourModel->GetContour(timeStep);
 
@@ -871,7 +894,7 @@ void svSegmentation2D::SelectItem(const QModelIndex & idx)
             m_ContourGroup->SetContourSelected(index,false);
         }
 
-        RequestRenderWindowImmediateUpdate();
+        mitk::RenderingManager::GetInstance()->ForceImmediateUpdateAll();
     }
 
 }
@@ -886,7 +909,7 @@ void svSegmentation2D::NodeAdded(const mitk::DataNode* node)
 
 void svSegmentation2D::NodeRemoved(const mitk::DataNode* node)
 {
-    OnSelectionChanged(GetCurrentSelection());
+    OnSelectionChanged(GetDataManagerSelection());
 }
 
 void svSegmentation2D::ClearAll()
@@ -922,12 +945,11 @@ void svSegmentation2D::ClearAll()
 
 }
 
-
 void svSegmentation2D::UpdateContourList()
 {
     if(m_ContourGroup==NULL) return;
 
-    int timeStep=GetTimeStep(m_ContourGroup);
+    int timeStep=GetTimeStep();
 
     ui->listWidget->clear();
 
@@ -949,34 +971,6 @@ void svSegmentation2D::UpdateContourList()
         ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
     }
 
-}
-
-void svSegmentation2D::ShowGroupEditPane()
-{
-    useExtension(EXTENSION_ID);
-}
-
-void svSegmentation2D::ShowGroupEditPaneForGroup()
-{
-    QList<mitk::DataNode::Pointer> selectedNodes=GetCurrentSelection();
-    if(IsContourGroup(selectedNodes))
-    {
-        ShowGroupEditPane();
-    }
-}
-
-bool svSegmentation2D::IsContourGroup(QList<mitk::DataNode::Pointer> nodes)
-{
-    if(!nodes.isEmpty())
-    {
-        mitk::DataNode::Pointer node=nodes.first();
-        if( node.IsNotNull() && dynamic_cast<svContourGroup*>(node->GetData()) )
-        {
-            return true;
-        }
-
-    }
-    return false;
 }
 
 void svSegmentation2D::LoftContourGroup()
@@ -1008,7 +1002,7 @@ void svSegmentation2D::LoftContourGroup()
             m_LoftSurfaceNode->SetVisibility(true);
         }
 
-        int timeStep=GetTimeStep(m_ContourGroup);
+        int timeStep=GetTimeStep();
 
         m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,timeStep),timeStep);
 
@@ -1021,7 +1015,7 @@ void svSegmentation2D::LoftContourGroup()
             m_LoftSurfaceNode->SetVisibility(false);
     }
 
-    RequestRenderWindowUpdate();
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
 }
 

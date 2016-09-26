@@ -3,6 +3,9 @@
 
 #include <svModelExports.h>
 
+#include "svModelIO.h"
+#include "mitkCoreObjectFactory.h"
+
 #include "mitkCoreObjectFactoryBase.h"
 
 class SVMODEL_EXPORT svModelObjectFactory : public mitk::CoreObjectFactoryBase
@@ -28,6 +31,15 @@ protected:
 
 private:
 
+};
+
+struct SVMODEL_EXPORT RegistersvModelObjectFactory{
+  RegistersvModelObjectFactory();
+
+  virtual ~RegistersvModelObjectFactory();
+
+  svModelObjectFactory::Pointer m_Factory;
+  svModelIO* m_ModelIO;
 };
 
 #endif // SVMODELOBJECTFACTORY_H

@@ -53,8 +53,6 @@ protected:
     mitk::DataNode::Pointer m_PathFolderNode;
 
     int m_TimeStep;
-
-
 };
 
 #endif // SVPATHCREATE_H

@@ -8,6 +8,7 @@ MITK_CREATE_MODULE( ${lib}
         ${SV_LIB_UTILS_NAME}
         ${SV_LIB_GEOM_NAME}
         ${SV_LIB_REPOSITORY_NAME}
+        ${SV_LIB_ITK_LSET_NAME}
 )
 
 if(SV_INSTALL_LIBS)
