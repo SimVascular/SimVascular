@@ -50,6 +50,15 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     parent->setMaximumWidth(450);
 
+    m_DisplayWidget=GetActiveStdMultiWidget();
+
+    if(m_DisplayWidget==NULL)
+    {
+        parent->setEnabled(false);
+        MITK_ERROR << "Plugin ModelEdit Init Error: No QmitkStdMultiWidget!";
+        return;
+    }
+
     connect(ui->btnUpdateModel, SIGNAL(clicked()), this, SLOT(ShowSegSelectionWidget()) );
 
     m_SegSelectionWidget=new svSegSelectionWidget();

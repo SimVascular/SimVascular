@@ -26,7 +26,6 @@ public:
 //        double color[3];
 
 
-
 //        svFace()
 //            : id(0)
 //            , name("")

@@ -3,16 +3,19 @@
 #include "svModelDataInteractor.h"
 #include "svModel.h"
 
-#include "mitkInteractionPositionEvent.h"
-#include "mitkInternalEvent.h"
+#include <mitkInteractionPositionEvent.h>
+#include <mitkInternalEvent.h>
 
-#include "mitkBaseRenderer.h"
-#include "mitkRenderingManager.h"
-#include "mitkPlaneGeometry.h"
-#include "mitkInternalEvent.h"
-#include "mitkDispatcher.h"
-#include "mitkBaseRenderer.h"
-#include "mitkUndoController.h"
+#include <mitkBaseRenderer.h>
+#include <mitkVtkPropRenderer.h>
+#include <mitkRenderingManager.h>
+#include <mitkPlaneGeometry.h>
+#include <mitkInternalEvent.h>
+#include <mitkDispatcher.h>
+#include <mitkBaseRenderer.h>
+#include <mitkUndoController.h>
+
+#include <vtkCellPicker.h>
 
 #include <iostream>
 using namespace std;
@@ -94,6 +97,15 @@ void svModelDataInteractor::SelectObject(mitk::StateMachineAction*, mitk::Intera
         return;
 
     modelElement->SetSelectedFaceIndex(m_SelectedFaceIndex);
+
+    mitk::VtkPropRenderer *renderer = interactionEvent->GetSender();
+    mitk::Point2D currentPickedDisplayPoint = positionEvent->GetPointerPositionOnScreen();
+//    vtkCellPicker* cellPicker=renderer->GetCellPicker();
+    vtkCellPicker* cellPicker=vtkCellPicker::New();
+
+    cellPicker->Pick(currentPickedDisplayPoint[0],currentPickedDisplayPoint[1],0,renderer->GetVtkRenderer());
+
+    cout<<"cell id: "<<cellPicker->GetCellId()<<endl;
 
     m_Model->InvokeEvent( svModelSelectFaceEvent() );
 
