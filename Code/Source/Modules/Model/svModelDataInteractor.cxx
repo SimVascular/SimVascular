@@ -100,8 +100,8 @@ void svModelDataInteractor::SelectObject(mitk::StateMachineAction*, mitk::Intera
 
     mitk::VtkPropRenderer *renderer = interactionEvent->GetSender();
     mitk::Point2D currentPickedDisplayPoint = positionEvent->GetPointerPositionOnScreen();
-//    vtkCellPicker* cellPicker=renderer->GetCellPicker();
-    vtkCellPicker* cellPicker=vtkCellPicker::New();
+    vtkCellPicker* cellPicker=renderer->GetCellPicker();
+//    vtkCellPicker* cellPicker=vtkCellPicker::New();
 
     cellPicker->Pick(currentPickedDisplayPoint[0],currentPickedDisplayPoint[1],0,renderer->GetVtkRenderer());
 

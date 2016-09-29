@@ -64,6 +64,8 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     m_SegSelectionWidget=new svSegSelectionWidget();
     m_SegSelectionWidget->move(400,400);
     m_SegSelectionWidget->hide();
+    m_SegSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
+
     connect(m_SegSelectionWidget->ui->buttonBox,SIGNAL(accepted()), this, SLOT(CreateModel()));
     connect(m_SegSelectionWidget->ui->buttonBox,SIGNAL(rejected()), this, SLOT(HideSegSelectionWidget()));
 
@@ -367,6 +369,7 @@ void svModelEdit::ShowSegSelectionWidget()
     //    m_SegSelectionWidget->ui->tableView->setColumnWidth(0,150);
     m_SegSelectionWidget->ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     m_SegSelectionWidget->show();
+
 }
 
 void svModelEdit::HideSegSelectionWidget()

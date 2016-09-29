@@ -1,9 +1,8 @@
 #include "svModelElement.h"
 
 svModelElement::svModelElement()
-    : m_Type("PolyData")
-    , m_VtkPolyDataModel(NULL)
-    , m_SelectedFaceIndex(-1)
+    : m_Type("")
+    , m_WholeVtkPolyData(NULL)
 {
 }
 
@@ -19,6 +18,12 @@ svModelElement::svModelElement(const svModelElement &other)
         svFace* face=new svFace;
         face->id=other.m_Faces[i]->id;
         face->name=other.m_Faces[i]->name;
+        face->opacity=other.m_Faces[i]->opacity;
+        face->visible=other.m_Faces[i]->visible;
+        face->color[0]=other.m_Faces[i]->color[0];
+        face->color[1]=other.m_Faces[i]->color[1];
+        face->color[2]=other.m_Faces[i]->color[2];
+        face->isWall=other.m_Faces[i]->isWall;
         vtkPolyData* vpd=NULL;
         if(other.m_Faces[i]->vpd)
         {
@@ -30,11 +35,11 @@ svModelElement::svModelElement(const svModelElement &other)
         m_Faces[i]=face;
     }
 
-    m_VtkPolyDataModel=NULL;
-    if(other.m_VtkPolyDataModel)
+    m_WholeVtkPolyData=NULL;
+    if(other.m_WholeVtkPolyData)
     {
-        m_VtkPolyDataModel=vtkPolyData::New();
-        m_VtkPolyDataModel->DeepCopy(other.m_VtkPolyDataModel);
+        m_WholeVtkPolyData=vtkPolyData::New();
+        m_WholeVtkPolyData->DeepCopy(other.m_WholeVtkPolyData);
     }
 }
 
@@ -43,15 +48,23 @@ svModelElement::~svModelElement()
     int faceNum=m_Faces.size();
     for(int i=0;i<faceNum;i++)
     {
+        if(m_Faces[i])
+        {
+
         if(m_Faces[i]->vpd)
         {
             m_Faces[i]->vpd->Delete();
         }
+
+        delete m_Faces[i];
+
+        }
+
     }
 
-    if(m_VtkPolyDataModel)
+    if(m_WholeVtkPolyData)
     {
-        m_VtkPolyDataModel->Delete();
+        m_WholeVtkPolyData->Delete();
     }
 }
 
@@ -95,11 +108,20 @@ void svModelElement::SetFaces(std::vector<svModelElement::svFace*> faces)
     m_Faces=faces;
 }
 
+svModelElement::svFace* GetFace(int id) const
+{
+    int idx=GetFaceIndex(id);
+    if(idx<0)
+        return NULL;
+    else
+        return m_Faces[indx];
+}
+
 int svModelElement::GetFaceIndex(int id) const
 {
     for(int i=0;i<m_Faces.size();i++)
     {
-        if(m_Faces[i]->id==id)
+        if(m_Faces[i]&&m_Faces[i]->id==id)
             return i;
     }
 
@@ -110,6 +132,8 @@ std::string svModelElement::GetFaceName(int id) const
 {
     int index=GetFaceIndex(id);
     if(index<0)
+        return "";
+    else if(!m_Faces[index])
         return "";
     else
         return m_Faces[index]->name;
@@ -122,22 +146,37 @@ void svModelElement::SetFaceName(std::string name, int id)
         m_Faces[index]->name=name;
 }
 
-vtkPolyData* svModelElement::GetVtkPolyDataModel() const
+vtkPolyData* svModelElement::GetWholeVtkPolyData() const
 {
-    return m_VtkPolyDataModel;
+    return m_WholeVtkPolyData;
 }
 
-void svModelElement::SetVtkPolyDataModel(vtkPolyData* vpdModel)
+void svModelElement::SetWholePolyData(vtkPolyData* wvpd)
 {
-    m_VtkPolyDataModel=vpdModel;
+    m_WholeVtkPolyData=wvpd;
 }
 
-int svModelElement::GetSelectedFaceIndex()
-{
-    return m_SelectedFaceIndex;
-}
+//int svModelElement::GetSelectedFaceIndex()
+//{
+//    return m_SelectedFaceIndex;
+//}
 
 void svModelElement::SetSelectedFaceIndex(int idx)
 {
-    m_SelectedFaceIndex=idx;
+    if(idx>-1&&idx<m_Faces.size())
+    {
+        if(m_Faces[idx])
+            m_Faces[idx]->selected=true;
+    }
+
+}
+
+void svModelElement::ClearFaceSelection()
+{
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i])
+            m_Faces[i]->selected=false;
+    }
+
 }

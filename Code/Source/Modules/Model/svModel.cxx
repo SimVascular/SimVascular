@@ -1,4 +1,5 @@
 #include "svModel.h"
+#include "svModelElementPolyData.h"
 
 svModel::svModel()
 {
@@ -121,10 +122,10 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
 
     case svModelOperation::OpSETVTKPOLYDATA:
     {
-        svModelElement* modelElement=GetModelElement(timeStep);
+        svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(GetModelElement(timeStep));
         if(modelElement==NULL) return;
 
-        modelElement->SetVtkPolyDataModel(newVpd);
+        modelElement->SetSolidModel(newVpd);
         SetModelElement(modelElement,timeStep);
 
         Modified();

@@ -19,24 +19,27 @@ public:
         std::string name;
         vtkPolyData* vpd;
 
-        mitk::DataNode* node;
+        bool selected;
 
-//        float opacity;
-//        bool visible;
-//        double color[3];
+        float opacity;
+        bool visible;
+        double color[3];
 
+        bool isWall; // wall or cap
 
-//        svFace()
-//            : id(0)
-//            , name("")
-//            , vpd(NULL)
-//            , opacity(1.0f)
-//            , visible(true)
-//        {
-//            color[0]=1.0;
-//            color[1]=1.0;
-//            color[2]=1.0;
-//        }
+        svFace()
+            : id(0)
+            , name("")
+            , vpd(NULL)
+            , selected(false)
+            , opacity(1.0f)
+            , visible(true)
+            , isWall(true)
+        {
+            color[0]=1.0;
+            color[1]=1.0;
+            color[2]=1.0;
+        }
 
     };
 
@@ -62,34 +65,25 @@ public:
 
     void SetFaces(std::vector<svFace*> faces);
 
+    svFace* GetFace(int id) const;
+
     int GetFaceIndex(int id) const;
 
     std::string GetFaceName(int id) const;
 
-    void SetFaceName(std::string name, int id);
+    void SetFaceName(std::string name, int id); //Todo: make virtual
 
+    vtkPolyData* GetWholeVtkPolyData() const;
 
+    void SetWholeVtkPolyData(vtkPolyData* wvpd);
 
-//    std::vector<std::string> GetFaceNames();
+    virtual vtkPolyData* CreateFaceVtkPolyData(int id) {}
 
-//    void SetFaceNames(std::vector<std::string> faceNames);
-
-//    std::string GetFaceName(int id);
-
-//    void SetFaceName(std::string faceName, int id);
-
-//    std::vector<vtkPolyData*> GetVtkPolyDataFaces();
-
-//    void SetVtkPolyDataFaces(std::vector<vtkPolyData*> vpdFaces);
-
-    vtkPolyData* GetVtkPolyDataModel() const;
-
-    void SetVtkPolyDataModel(vtkPolyData* vpdModel);
-
-    int GetSelectedFaceIndex();
+//    int GetSelectedFaceIndex();
 
     void SetSelectedFaceIndex(int idx);
 
+    void ClearFaceSelection();
 
   protected:
 
@@ -97,15 +91,9 @@ public:
 
     std::vector<std::string> m_SegNames;
 
-//    std::vector<std::string> m_FaceNames;
-
-//    std::vector<vtkPolyData*> m_VtkPolyDataFaces;
-
     std::vector<svFace*> m_Faces;
 
-    vtkPolyData* m_VtkPolyDataModel;
-
-    int m_SelectedFaceIndex;
+    vtkPolyData* m_WholeVtkPolyData;
 
   };
 

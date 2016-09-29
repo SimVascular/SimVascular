@@ -1,5 +1,6 @@
 set(H_FILES
     svModelElement.h
+    svModelElementPolyData.h
     svModelOperation.h
     svModel.h
     svModelUtils.h
@@ -11,6 +12,7 @@ set(H_FILES
 
 set(CPP_FILES
     svModelElement.cxx
+    svModelElementPolyData.cxx
     svModelOperation.cxx
     svModel.cxx
     svModelUtils.cxx

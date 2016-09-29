@@ -1,7 +1,8 @@
 #include "svModelIO.h"
 #include "svModel.h"
+#include "svModelElementPolyData.h"
 
-#include "cv_polydatasolid_utils.h"
+//#include "cv_polydatasolid_utils.h"
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
@@ -75,7 +76,10 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
             if(type=="PolyData")
             {
-                me=new svModelElement();
+                me=new svModelElementPolyData();
+
+                svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
+
                 std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
                 vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
 
@@ -88,7 +92,34 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                     vpdModel=vtkPolyData::New();
                     vpdModel->DeepCopy(pd);
                 }
-                me->SetVtkPolyDataModel(vpdModel);
+                mepd->SetSoliModel(vpdModel);
+
+                TiXmlElement* facesElement = meElement->FirstChildElement("faces");
+                std::vector<svModelElement::svFace*> faces;
+                for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
+                     faceElement != nullptr;
+                     faceElement =faceElement->NextSiblingElement("face") )
+                {
+                    if (faceElement == nullptr)
+                        continue;
+
+                    int id;
+                    std::string name;
+
+                    faceElement->QueryIntAttribute("id", &id);
+                    faceElement->QueryStringAttribute("name", &name);
+//                    vtkPolyData *facepd = vtkPolyData::New();
+//                    PlyDtaUtils_GetFacePolyData(mepd->GetSolidModel(), &id, facepd);
+                    vtkPolyData *facepd=mepd->CreateFaceVtkPolyData(id);
+                    svModelElement::svFace* face=new svModelElement::svFace;
+                    face->id=id;
+                    face->name=name;
+                    face->vpd=facepd;
+
+                    faces.push_back(face);
+                }
+                mepd->SetFaces(faces);
+
             }
 //            else if(type=="ParaSolid")
 //            {
@@ -110,30 +141,34 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             }
             me->SetSegNames(segNames);
 
-            TiXmlElement* facesElement = meElement->FirstChildElement("faces");
-            std::vector<svModelElement::svFace*> faces;
-            for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
-                 faceElement != nullptr;
-                 faceElement =faceElement->NextSiblingElement("face") )
-            {
-                if (faceElement == nullptr)
-                    continue;
 
-                int id;
-                std::string name;
+//            if(type=="PolyData")
+//            {
+//                TiXmlElement* facesElement = meElement->FirstChildElement("faces");
+//                std::vector<svModelElement::svFace*> faces;
+//                for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
+//                     faceElement != nullptr;
+//                     faceElement =faceElement->NextSiblingElement("face") )
+//                {
+//                    if (faceElement == nullptr)
+//                        continue;
 
-                faceElement->QueryIntAttribute("id", &id);
-                faceElement->QueryStringAttribute("name", &name);
-                vtkPolyData *facepd = vtkPolyData::New();
-                PlyDtaUtils_GetFacePolyData(me->GetVtkPolyDataModel(), &id, facepd);
-                svModelElement::svFace* face=new svModelElement::svFace;
-                face->id=id;
-                face->name=name;
-                face->vpd=facepd;
+//                    int id;
+//                    std::string name;
 
-                faces.push_back(face);
-            }
-            me->SetFaces(faces);
+//                    faceElement->QueryIntAttribute("id", &id);
+//                    faceElement->QueryStringAttribute("name", &name);
+//                    vtkPolyData *facepd = vtkPolyData::New();
+//                    PlyDtaUtils_GetFacePolyData(me->GetSolidModel(), &id, facepd);
+//                    svModelElement::svFace* face=new svModelElement::svFace;
+//                    face->id=id;
+//                    face->name=name;
+//                    face->vpd=facepd;
+
+//                    faces.push_back(face);
+//                }
+//                me->SetFaces(faces);
+//            }
 
             model->SetModelElement(me,timestep);
         } //model element
@@ -215,11 +250,13 @@ void svModelIO::Write()
         {
             std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
 
-            if(me->GetVtkPolyDataModel())
+             svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
+
+            if(mepd&&mepd->GetSolidModel())
             {
                 vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
                 writer->SetFileName(dataFileName.c_str());
-                writer->SetInputData(me->GetVtkPolyDataModel());
+                writer->SetInputData(mepd->GetSolidModel();
                 if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
                 {
                     mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
