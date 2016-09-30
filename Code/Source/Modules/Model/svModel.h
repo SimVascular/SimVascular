@@ -6,13 +6,13 @@
 #include "svModelElement.h"
 #include "svModelOperation.h"
 
-#include <mitkSurface.h>
+#include "mitkBaseData.h"
 
-class SVMODEL_EXPORT svModel : public mitk::Surface
+class SVMODEL_EXPORT svModel : public mitk::BaseData
 {
 public:
 
-    mitkClassMacro(svModel, mitk::Surface);
+    mitkClassMacro(svModel, mitk::BaseData);
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
@@ -20,19 +20,25 @@ public:
 
     virtual void ExecuteOperation(mitk::Operation *operation) override;
 
-//    virtual bool IsEmptyTimeStep(unsigned int t) const override;
+    virtual bool IsEmptyTimeStep(unsigned int t) const override;
 
     virtual unsigned int GetTimeSize() const;
-
-//    virtual vtkPolyData* GetVtkPolyData(unsigned int t=0) const override;
-
-//    virtual void SetVtkPolyData (vtkPolyData *polydata, unsigned int t=0) override;
-
-//    std::vector<svModelElement::svFace*> GetFaces(unsigned int t=0) const;
 
     svModelElement* GetModelElement(unsigned int t=0) const;
 
     void SetModelElement(svModelElement* modelElement, unsigned int t=0);
+
+    void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
+
+    void SetType(std::string type);
+
+    std::string GetType() const;
+
+    virtual void UpdateOutputInformation() override;
+    virtual void SetRequestedRegionToLargestPossibleRegion() override;
+    virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
+    virtual bool VerifyRequestedRegion() override;
+    virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
   protected:
 
@@ -42,10 +48,15 @@ public:
     svModel(const svModel &other);
     virtual ~svModel();
 
+    virtual void PrintSelf(std::ostream& os, itk::Indent indent) const override;
     virtual void ClearData() override;
     virtual void InitializeEmpty() override;
 
     std::vector< svModelElement* > m_ModelElementSet;
+
+    bool m_CalculateBoundingBox;
+
+    std::string m_Type;
 
 };
 

@@ -19,7 +19,7 @@ svModelOperation::svModelOperation(mitk::OperationType operationType, vtkPolyDat
 {
 }
 
-svModelOperation::svModelOperation(mitk::OperationType operationType, unsigned int timeStep, vtkPolyData* vpd)
+svModelOperation::svModelOperation(mitk::OperationType operationType, unsigned int timeStep, vtkSmartPointer<vtkPolyData> vpd)
     : mitk::Operation(operationType)
     , m_TimeStep(timeStep)
     , m_vpd(vpd)
@@ -40,7 +40,7 @@ unsigned int svModelOperation::GetTimeStep() const
     return m_TimeStep;
 }
 
-vtkPolyData* svModelOperation::GetVtkPolyData()
+vtkSmartPointer<vtkPolyData> svModelOperation::GetVtkPolyData()
 {
     return m_vpd;
 }

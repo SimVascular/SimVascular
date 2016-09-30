@@ -5,8 +5,8 @@
 
 #include <mitkDataNode.h>
 
-#include "vtkPolyData.h"
-//#include "vtkSmartPointer.h"
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 class SVMODEL_EXPORT svModelElement
 {
@@ -17,13 +17,13 @@ public:
     {
         int id;
         std::string name;
-        vtkPolyData* vpd;
+        vtkSmartPointer<vtkPolyData> vpd;
 
         bool selected;
 
         float opacity;
         bool visible;
-        double color[3];
+        float color[3];
 
         bool isWall; // wall or cap
 
@@ -36,9 +36,9 @@ public:
             , visible(true)
             , isWall(true)
         {
-            color[0]=1.0;
-            color[1]=1.0;
-            color[2]=1.0;
+            color[0]=1.0f;
+            color[1]=1.0f;
+            color[2]=1.0f;
         }
 
     };
@@ -73,17 +73,19 @@ public:
 
     void SetFaceName(std::string name, int id); //Todo: make virtual
 
-    vtkPolyData* GetWholeVtkPolyData() const;
+    vtkSmartPointer<vtkPolyData> GetWholeVtkPolyData() const;
 
-    void SetWholeVtkPolyData(vtkPolyData* wvpd);
+    void SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd);
 
-    virtual vtkPolyData* CreateFaceVtkPolyData(int id) {}
+    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {}
 
 //    int GetSelectedFaceIndex();
 
     void SetSelectedFaceIndex(int idx);
 
     void ClearFaceSelection();
+
+    void CalculateBoundingBox(double *bounds);
 
   protected:
 
@@ -93,7 +95,7 @@ public:
 
     std::vector<svFace*> m_Faces;
 
-    vtkPolyData* m_WholeVtkPolyData;
+    vtkSmartPointer<vtkPolyData> m_WholeVtkPolyData;
 
   };
 

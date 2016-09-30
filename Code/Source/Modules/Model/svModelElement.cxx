@@ -24,10 +24,10 @@ svModelElement::svModelElement(const svModelElement &other)
         face->color[1]=other.m_Faces[i]->color[1];
         face->color[2]=other.m_Faces[i]->color[2];
         face->isWall=other.m_Faces[i]->isWall;
-        vtkPolyData* vpd=NULL;
+        vtkSmartPointer<vtkPolyData> vpd=NULL;
         if(other.m_Faces[i]->vpd)
         {
-            vpd=vtkPolyData::New();
+            vpd=vtkSmartPointer<vtkPolyData>::New();
             vpd->DeepCopy(other.m_Faces[i]->vpd);
         }
         face->vpd=vpd;
@@ -38,7 +38,7 @@ svModelElement::svModelElement(const svModelElement &other)
     m_WholeVtkPolyData=NULL;
     if(other.m_WholeVtkPolyData)
     {
-        m_WholeVtkPolyData=vtkPolyData::New();
+        m_WholeVtkPolyData=vtkSmartPointer<vtkPolyData>::New();
         m_WholeVtkPolyData->DeepCopy(other.m_WholeVtkPolyData);
     }
 }
@@ -50,22 +50,19 @@ svModelElement::~svModelElement()
     {
         if(m_Faces[i])
         {
+//            if(m_Faces[i]->vpd)
+//            {
+//                m_Faces[i]->vpd->Delete();
+//            }
 
-        if(m_Faces[i]->vpd)
-        {
-            m_Faces[i]->vpd->Delete();
+            delete m_Faces[i];
         }
-
-        delete m_Faces[i];
-
-        }
-
     }
 
-    if(m_WholeVtkPolyData)
-    {
-        m_WholeVtkPolyData->Delete();
-    }
+//    if(m_WholeVtkPolyData)
+//    {
+//        m_WholeVtkPolyData->Delete();
+//    }
 }
 
 svModelElement* svModelElement::Clone()
@@ -146,12 +143,12 @@ void svModelElement::SetFaceName(std::string name, int id)
         m_Faces[index]->name=name;
 }
 
-vtkPolyData* svModelElement::GetWholeVtkPolyData() const
+vtkSmartPointer<vtkPolyData> svModelElement::GetWholeVtkPolyData() const
 {
     return m_WholeVtkPolyData;
 }
 
-void svModelElement::SetWholePolyData(vtkPolyData* wvpd)
+void svModelElement::SetWholePolyData(vtkSmartPointer<vtkPolyData> wvpd)
 {
     m_WholeVtkPolyData=wvpd;
 }
@@ -177,6 +174,23 @@ void svModelElement::ClearFaceSelection()
     {
         if(m_Faces[i])
             m_Faces[i]->selected=false;
+    }
+
+}
+
+void svModelElement::CalculateBoundingBox(double *bounds)
+{
+    bounds[0]=0;
+    bounds[1]=0;
+    bounds[2]=0;
+    bounds[3]=0;
+    bounds[4]=0;
+    bounds[5]=0;
+
+    if (m_WholeVtkPolyData != nullptr && m_WholeVtkPolyData->GetNumberOfPoints() > 0)
+    {
+      m_WholeVtkPolyData->ComputeBounds();
+      m_WholeVtkPolyData->GetBounds(bounds);
     }
 
 }

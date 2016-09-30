@@ -7,7 +7,7 @@
 
 #include <mitkDataNode.h>
 
-
+//#include <vtkSmartPointer.h>
 
 class SVMODEL_EXPORT svModelElementPolyData : public svModelElement
 {
@@ -22,15 +22,15 @@ public:
 
     virtual svModelElementPolyData* Clone() override;
 
-    virtual vtkPolyData* CreateFaceVtkPolyData(int id) override;
+    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) override;
 
-    vtkPolyData* GetSolidModel() const;
+//    vtkSmartPointer<vtkPolyData> GetSolidModel() const;
 
-    void SetSolidModel(vtkPolyData* solidModel);
+//    void SetSolidModel(vtkSmartPointer<vtkPolyData> solidModel);
 
   protected:
 
-    vtkPolyData* m_SolidModel;
+//    vtkSmartPointer<vtkPolyData> m_SolidModel;
 
   };
 

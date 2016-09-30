@@ -4,13 +4,11 @@
 
 svModelElementPolyData::svModelElementPolyData()
     : m_Type("PolyData")
-    , m_SolidModelPolyData(NULL)
 {
 }
 
 svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &other)
     : svModelElement(other)
-    , m_SolidModelPolyData(other.m_SolidModelPolyData)
 {
 }
 
@@ -23,28 +21,32 @@ svModelElementPolyData* svModelElementPolyData::Clone()
     return new svModelElementPolyData(*this);
 }
 
-vtkPolyData* svModelElementPolyData::CreateFaceVtkPolyData(int id)
+vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateFaceVtkPolyData(int id)
 {
-    vtkPolyData *facepd=NULL;
+    vtkPolyData* facepd=NULL;
 
-    if(m_SolidModel)
+    if(m_WholeVtkPolyData)
     {
         facepd = vtkPolyData::New();
-        PlyDtaUtils_GetFacePolyData(m_SolidModel, &id, facepd);
+//        PlyDtaUtils_GetFacePolyData(m_SolidModel, &id, facepd);
+        PlyDtaUtils_GetFacePolyData(m_WholeVtkPolyData.GetPointer(), &id, facepd);
     }
 
-    return facepd;
+    vtkSmartPointer<vtkPolyData> fpd
+      = vtkSmartPointer<vtkPolyData>::Take(facepd);
+
+    return fpd;
 }
 
-vtkPolyData* svModelElementPolyData::GetSolidModel() const
-{
-    return m_SolidModel;
-}
+//vtkPolyData* svModelElementPolyData::GetSolidModel() const
+//{
+//    return m_SolidModel;
+//}
 
-void svModelElementPolyData::SetSolidModel(vtkPolyData* solidModel)
-{
-    m_SolidModel=solidModel;
-    m_WholeVtkPolyData=solidModel;
-}
+//void svModelElementPolyData::SetSolidModel(vtkPolyData* solidModel)
+//{
+//    m_SolidModel=solidModel;
+//    m_WholeVtkPolyData=solidModel;
+//}
 
 

@@ -55,20 +55,21 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
             vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
             reader->SetFileName(filePath.toStdString().c_str());
             reader->Update();
-            vtkPolyData* pd=reader->GetOutput();
+            vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
             if(pd!=NULL)
             {
-                vtkPolyData* vpdModel=vtkPolyData::New();
-                vpdModel->DeepCopy(pd);
+                //                vtkPolyData* vpdModel=vtkPolyData::New();
+                //                vpdModel->DeepCopy(pd);
+
                 svModelElementPolyData* mepd=new svModelElementPolyData();
-                mepd->SetSolidModel(vpdModel);
+                mepd->SetWholeVtkPolyData(pd);
 
                 for(int i=0;i<faces.size();i++)
                 {
-//                    vtkPolyData *facepd = vtkPolyData::New();
-//                    int id=faces[i]->id;
-//                    PlyDtaUtils_GetFacePolyData(vpdModel, &id, facepd);
-                    vtkPolyData *facepd=mepd->CreateFaceVtkPolyData(faces[i]->id);
+                    //                    vtkPolyData *facepd = vtkPolyData::New();
+                    //                    int id=faces[i]->id;
+                    //                    PlyDtaUtils_GetFacePolyData(vpdModel, &id, facepd);
+                    vtkSmartPointer<vtkPolyData> facepd=mepd->CreateFaceVtkPolyData(faces[i]->id);
                     faces[i]->vpd=facepd;
                 }
 
@@ -118,7 +119,6 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
     if(!modelElement) return;
 
     std::string type=modelElement->GetType();
-    QString suffix;
 
     if(type=="PolyData")
     {
@@ -144,27 +144,25 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
             out<<"set gPolyDataFaceNamesInfo(model_file_name) {"<<fileName<<"}"<<endl;
 
 
-                std::vector<svModelElement::svFace*> faces=mepd->GetFaces();
-                for(int i=0;i<faces.size();i++){
-                    svModelElement::svFace* face=faces[i];
-                    if(face)
-                    {
-                        out<<"set gPolyDataFaceNames("<<face->id<<") {"<<QString::fromStdString(face->name)<<"}"<<endl;
-                    }
-                }
-
-                if(mepd->GetSolidModel())
+            std::vector<svModelElement::svFace*> faces=mepd->GetFaces();
+            for(int i=0;i<faces.size();i++){
+                svModelElement::svFace* face=faces[i];
+                if(face)
                 {
-                    vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-                    writer->SetFileName(filePath.toStdString().c_str());
-                    writer->SetInputData(mepd->GetSolidModel());
-                    if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-                    {
-                        mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
-                    }
+                    out<<"set gPolyDataFaceNames("<<face->id<<") {"<<QString::fromStdString(face->name)<<"}"<<endl;
                 }
+            }
 
-
+            if(mepd->GetWholeVtkPolyData())
+            {
+                vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
+                writer->SetFileName(filePath.toStdString().c_str());
+                writer->SetInputData(mepd->GetWholeVtkPolyData());
+                if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
+                {
+                    mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
+                }
+            }
 
             outputFile.close();
 
