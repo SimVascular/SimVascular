@@ -17,24 +17,24 @@ public:
     {
         int id;
         std::string name;
+        std::string type;//wall, cap, or empty if unknown
+
         vtkSmartPointer<vtkPolyData> vpd;
 
         bool selected;
 
-        float opacity;
         bool visible;
+        float opacity;
         float color[3];
-
-        bool isWall; // wall or cap
 
         svFace()
             : id(0)
             , name("")
+            , type("")
             , vpd(NULL)
             , selected(false)
-            , opacity(1.0f)
             , visible(true)
-            , isWall(true)
+            , opacity(1.0f)
         {
             color[0]=1.0f;
             color[1]=1.0f;

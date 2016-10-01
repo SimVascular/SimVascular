@@ -11,7 +11,7 @@
 #include "mitkLocalStorageHandler.h"
 
 #include <vtkSmartPointer.h>
-class vtkAssembly;
+#include <vtkPropAssembly.h>
 
 class SVMODEL_EXPORT svModelVtkMapper2D : public mitk::VtkMapper
 {
@@ -33,7 +33,7 @@ public:
 
         itk::TimeStamp m_LastUpdateTime;
 
-        vtkSmartPointer<vtkAssembly> m_PropAssembly;
+        vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
 
         LocalStorage();
 

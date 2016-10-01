@@ -18,12 +18,13 @@ svModelElement::svModelElement(const svModelElement &other)
         svFace* face=new svFace;
         face->id=other.m_Faces[i]->id;
         face->name=other.m_Faces[i]->name;
-        face->opacity=other.m_Faces[i]->opacity;
+        face->type=other.m_Faces[i]->type;
         face->visible=other.m_Faces[i]->visible;
+        face->opacity=other.m_Faces[i]->opacity;
         face->color[0]=other.m_Faces[i]->color[0];
         face->color[1]=other.m_Faces[i]->color[1];
         face->color[2]=other.m_Faces[i]->color[2];
-        face->isWall=other.m_Faces[i]->isWall;
+
         vtkSmartPointer<vtkPolyData> vpd=NULL;
         if(other.m_Faces[i]->vpd)
         {

@@ -22,7 +22,7 @@
 
 svModelVtkMapper2D::LocalStorage::LocalStorage()
 {
-    m_PropAssembly = vtkSmartPointer <vtkAssembly>::New();
+    m_PropAssembly = vtkSmartPointer <vtkPropAssembly>::New();
 }
 
 svModelVtkMapper2D::LocalStorage::~LocalStorage()
@@ -111,12 +111,12 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         return;
     }
 
-    localStorage->m_PropAssembly->VisibilityOn();
-    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
-
     svModel* model  = static_cast<svModel *>( node->GetData() );
     if(model==NULL)
+    {
+        localStorage->m_PropAssembly->VisibilityOff();
         return;
+    }
 //    mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
 
 //    mitk::ScalarType time =renderer->GetTime();
@@ -128,15 +128,22 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 
     svModelElement* me=model->GetModelElement(timestep);
     if(me==NULL)
+    {
+        localStorage->m_PropAssembly->VisibilityOff();
         return;
+    }
 
     vtkSmartPointer<vtkPolyData> wholePolyData=me->GetWholeVtkPolyData();
     if ((wholePolyData == NULL) || (wholePolyData->GetNumberOfPoints() < 1))
+    {
+        localStorage->m_PropAssembly->VisibilityOff();
         return;
+    }
 
     const mitk::PlaneGeometry* planeGeometry = renderer->GetCurrentWorldPlaneGeometry();
     if( ( planeGeometry == NULL ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
     {
+        localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
 
@@ -155,6 +162,17 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 
     bool showWholeSurface=false;
     node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
+
+    bool showFaces=true;
+    node->GetBoolProperty("show faces", showFaces, renderer);
+
+    if(!showWholeSurface&&!showFaces)
+    {
+        localStorage->m_PropAssembly->VisibilityOff();
+        return;
+    }
+
+    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
 
     if(showWholeSurface)
     {
@@ -186,13 +204,10 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         actor->GetProperty()->SetColor(color[0], color[1], color[2]);
         actor->GetProperty()->SetOpacity(opacity);
         actor->GetProperty()->SetLineWidth(lineWidth);
-        //actor->GetProperty()->SetLighting(0);
+        actor->GetProperty()->SetLighting(0);
 
         localStorage->m_PropAssembly->AddPart(actor );
     }
-
-    bool showFaces=true;
-    node->GetBoolProperty("show faces", showFaces, renderer);
 
     if(showFaces)
     {
@@ -239,14 +254,15 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
             }
             actor->GetProperty()->SetOpacity(face->opacity);
             actor->GetProperty()->SetLineWidth(lineWidth);
-            //        actor->GetProperty()->SetLighting(0);
+            actor->GetProperty()->SetLighting(0);
 
             localStorage->m_PropAssembly->AddPart(actor );
-
         }
 
     }
 
+    if(visible)
+        localStorage->m_PropAssembly->VisibilityOn();
 }
 
 void svModelVtkMapper2D::ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMapper> mapper, mitk::BaseRenderer* renderer)
@@ -311,10 +327,12 @@ void svModelVtkMapper2D::ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMapper
 void svModelVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
     //  mitk::IPropertyAliases* aliases = mitk::CoreServices::GetPropertyAliases();
+    node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
+    node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
-    node->AddProperty( "line width", mitk::FloatProperty::New(2.0f), renderer, overwrite );
+    node->AddProperty( "line 2D width", mitk::FloatProperty::New(2.0f), renderer, overwrite );
     //  aliases->AddAlias( "line width", "svModel.2D.Line Width", "svModel");
     node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );
     node->AddProperty( "layer", mitk::IntProperty::New(100), renderer, overwrite);

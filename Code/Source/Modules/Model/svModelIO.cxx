@@ -53,6 +53,9 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     }
 
     svModel::Pointer model = svModel::New();
+    std::string modelType="";
+    modelElement->QueryStringAttribute("type",&modelType);
+    model->SetType(modelType);
 
     int timestep=-1;
     for( TiXmlElement* timestepElement = modelElement->FirstChildElement("timestep");
@@ -110,16 +113,34 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                     continue;
 
                 int id;
-                std::string name;
+                std::string name="";
+                std::string type="";
+                std::string isVisible="true";
+                float opacity=1.0f;
+                float color1=1.0f;
+                float color2=1.0f;
+                float color3=1.0f;
 
                 faceElement->QueryIntAttribute("id", &id);
                 faceElement->QueryStringAttribute("name", &name);
-                //                    vtkPolyData *facepd = vtkPolyData::New();
-                //                    PlyDtaUtils_GetFacePolyData(me->GetWholeVtkPolyDatal(), &id, facepd);
+                faceElement->QueryStringAttribute("type", &type);
+                faceElement->QueryStringAttribute("visible", &isVisible);
+                faceElement->QueryFloatAttribute("opacity", &opacity);
+                faceElement->QueryFloatAttribute("color1", &color1);
+                faceElement->QueryFloatAttribute("color2", &color2);
+                faceElement->QueryFloatAttribute("color3", &color3);
+
                 vtkSmartPointer<vtkPolyData> facepd=me->CreateFaceVtkPolyData(id);
                 svModelElement::svFace* face=new svModelElement::svFace;
                 face->id=id;
                 face->name=name;
+                face->type=type;
+                face->visible=(isVisible=="true"?true:false);
+                face->opacity=opacity;
+                face->color[0]=color1;
+                face->color[1]=color2;
+                face->color[2]=color3;
+
                 face->vpd=facepd;
 
                 faces.push_back(face);
@@ -207,6 +228,7 @@ void svModelIO::Write()
     document.LinkEndChild(version);
 
     auto  modelElement = new TiXmlElement("model");
+    modelElement->SetAttribute("type", model->GetType());
     document.LinkEndChild(modelElement);
 
     for(int t=0;t<model->GetTimeSize();t++)
@@ -244,6 +266,12 @@ void svModelIO::Write()
             facesElement->LinkEndChild(faceElement);
             faceElement->SetAttribute("id", faces[i]->id);
             faceElement->SetAttribute("name", faces[i]->name);
+            faceElement->SetAttribute("type", faces[i]->type);
+            faceElement->SetAttribute("visible", faces[i]->visible?"true":"false");
+            faceElement->SetDoubleAttribute("opacity", faces[i]->opacity);
+            faceElement->SetDoubleAttribute("color1", faces[i]->color[0]);
+            faceElement->SetDoubleAttribute("color2", faces[i]->color[1]);
+            faceElement->SetDoubleAttribute("color3", faces[i]->color[2]);
         }
 
         if(me->GetType()=="PolyData")

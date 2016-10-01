@@ -53,18 +53,21 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
         return;
     }
 
-    ls->m_PropAssembly->VisibilityOn();
-    ls->m_PropAssembly->GetParts()->RemoveAllItems();
-
     svModel* model  = const_cast< svModel* >( this->GetInput() );
     if(model==NULL)
+    {
+        ls->m_PropAssembly->VisibilityOff();
         return;
+    }
 
     int timestep=this->GetTimestep();
 
     svModelElement* me=model->GetModelElement(timestep);
     if(me==NULL)
+    {
+        ls->m_PropAssembly->VisibilityOff();
         return;
+    }
 
     vtkSmartPointer<vtkPolyData> wholePolyData=me->GetWholeVtkPolyData();
     if (wholePolyData == NULL)
@@ -75,6 +78,17 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
     bool showWholeSurface=false;
     node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
+
+    bool showFaces=true;
+    node->GetBoolProperty("show faces", showFaces, renderer);
+
+    if(!showWholeSurface&&!showFaces)
+    {
+        ls->m_PropAssembly->VisibilityOff();
+        return;
+    }
+
+    ls->m_PropAssembly->GetParts()->RemoveAllItems();
 
     if(showWholeSurface)
     {
@@ -89,9 +103,6 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
         ls->m_PropAssembly->AddPart(actor );
     }
-
-    bool showFaces=true;
-    node->GetBoolProperty("show faces", showFaces, renderer);
 
     if(showFaces)
     {
@@ -117,6 +128,8 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
             vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
             actor->SetMapper(mapper);
 
+            ApplyAllProperties(renderer, mapper, actor);
+
             if(face->selected){
                 actor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
             }else{
@@ -124,16 +137,14 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
             }
             actor->GetProperty()->SetOpacity(face->opacity);
 
-            ApplyAllProperties(renderer, mapper, actor);
-
             ls->m_PropAssembly->AddPart(actor );
 
         }
 
     }
 
-//    if(visible)
-//        ls->m_PropAssembly->VisibilityOn();
+    if(visible)
+        ls->m_PropAssembly->VisibilityOn();
 }
 
 void svModelVtkMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
