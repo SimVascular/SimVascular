@@ -105,13 +105,13 @@ void svModelElement::SetFaces(std::vector<svModelElement::svFace*> faces)
     m_Faces=faces;
 }
 
-svModelElement::svFace* GetFace(int id) const
+svModelElement::svFace* svModelElement::GetFace(int id) const
 {
     int idx=GetFaceIndex(id);
     if(idx<0)
         return NULL;
     else
-        return m_Faces[indx];
+        return m_Faces[idx];
 }
 
 int svModelElement::GetFaceIndex(int id) const
@@ -148,7 +148,7 @@ vtkSmartPointer<vtkPolyData> svModelElement::GetWholeVtkPolyData() const
     return m_WholeVtkPolyData;
 }
 
-void svModelElement::SetWholePolyData(vtkSmartPointer<vtkPolyData> wvpd)
+void svModelElement::SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd)
 {
     m_WholeVtkPolyData=wvpd;
 }

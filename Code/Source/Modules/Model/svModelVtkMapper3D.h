@@ -1,45 +1,22 @@
-/*===================================================================
 
-The Medical Imaging Interaction Toolkit (MITK)
+#ifndef SVMODELVTKMAPPER3D_H
+#define SVMODELVTKMAPPER3D_H
 
-Copyright (c) German Cancer Research Center,
-Division of Medical and Biological Informatics.
-All rights reserved.
+#include <svModelExports.h>
 
-This software is distributed WITHOUT ANY WARRANTY; without
-even the implied warranty of MERCHANTABILITY or FITNESS FOR
-A PARTICULAR PURPOSE.
+#include "svModel.h"
 
-See LICENSE.txt or http://www.mitk.org for details.
-
-===================================================================*/
-
-#ifndef mitkSurfaceVtkMapper3D_h
-#define mitkSurfaceVtkMapper3D_h
-
-#include <MitkCoreExports.h>
-#include <mitkSurface.h>
 #include "mitkVtkMapper.h"
 #include "mitkBaseRenderer.h"
 #include "mitkLocalStorageHandler.h"
 
-#include <vtkActor.h>
+#include <vtkPropAssembly.h>
 #include <vtkPainterPolyDataMapper.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkPolyDataNormals.h>
+#include <vtkActor.h>
 #include <vtkPlaneCollection.h>
-#include <vtkDepthSortPolyData.h>
 #include <vtkSmartPointer.h>
 
-namespace mitk {
-  /**
-  * @brief Vtk-based mapper for Surfaces.
-  *
-  * The mapper renders a surface in 3D. The actor is adapted according to the geometry in
-  * the base class in mitk::VtkMapper::UpdateVtkTransform().
-  *
-
-  * Properties that can be set for surfaces and influence the surfaceVTKMapper3D are:
+/* Properties that can be set for surfaces and influence the svModelVtkMapper3D are:
   *
   *   - \b "Backface Culling": True enables backface culling, which means only front-facing polygons will be visualized. False/disabled by default.
   *   - \b "color": (ColorProperty) Diffuse color of the surface object (this property will be read when material.diffuseColor is not defined)
@@ -73,77 +50,72 @@ namespace mitk {
   * @ingroup Mapper
   */
 
-class MITKCORE_EXPORT SurfaceVtkMapper3D : public VtkMapper
+class SVMODEL_EXPORT svModelVtkMapper3D : public mitk::VtkMapper
 {
 public:
 
-  mitkClassMacro(SurfaceVtkMapper3D, VtkMapper);
+    mitkClassMacro(svModelVtkMapper3D, mitk::VtkMapper);
 
-  itkFactorylessNewMacro(Self)
-  itkCloneMacro(Self)
+    itkFactorylessNewMacro(Self)
+    itkCloneMacro(Self)
 
-  itkSetMacro(GenerateNormals, bool);
+    virtual const svModel* GetInput();
 
-  itkGetMacro(GenerateNormals, bool);
+    virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
 
-  virtual const mitk::Surface* GetInput();
+    virtual void ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor);
 
-  virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
-
-  virtual void ApplyAllProperties(mitk::BaseRenderer* renderer, vtkActor* actor);
-
-  static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
+    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
 
 protected:
-  SurfaceVtkMapper3D();
+    svModelVtkMapper3D();
 
-  virtual ~SurfaceVtkMapper3D();
+    virtual ~svModelVtkMapper3D();
 
-  virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
+    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
 
-  virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
+    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
 
-  /** Checks whether the specified property is a ClippingProperty and if yes,
-   * adds it to m_ClippingPlaneCollection (internal method). */
-  virtual void CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property );
-
-  bool m_GenerateNormals;
+    virtual void CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property );
 
 public:
 
-  class LocalStorage : public mitk::Mapper::BaseLocalStorage
-  {
+    class LocalStorage : public mitk::Mapper::BaseLocalStorage
+    {
     public:
 
-      vtkSmartPointer<vtkActor> m_Actor;
-      vtkSmartPointer<vtkPainterPolyDataMapper> m_VtkPolyDataMapper;
-      vtkSmartPointer<vtkPolyDataNormals> m_VtkPolyDataNormals;
-      vtkSmartPointer<vtkPlaneCollection> m_ClippingPlaneCollection;
-      vtkSmartPointer<vtkDepthSortPolyData> m_DepthSort;
-      itk::TimeStamp m_ShaderTimestampUpdate;
+        vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
+        vtkSmartPointer<vtkPlaneCollection> m_ClippingPlaneCollection;
 
-      LocalStorage()
-      {
-        m_VtkPolyDataMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-        m_VtkPolyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
-        m_Actor = vtkSmartPointer<vtkActor>::New();
-        m_ClippingPlaneCollection = vtkSmartPointer<vtkPlaneCollection>::New();
+//        vtkSmartPointer<vtkActor> m_Actor;
+//        vtkSmartPointer<vtkPainterPolyDataMapper> m_VtkPolyDataMapper;
+//        vtkSmartPointer<vtkPolyDataNormals> m_VtkPolyDataNormals;
 
-        m_Actor->SetMapper(m_VtkPolyDataMapper);
+//        vtkSmartPointer<vtkDepthSortPolyData> m_DepthSort;
 
-        m_DepthSort = vtkSmartPointer<vtkDepthSortPolyData>::New();
-      }
+        LocalStorage()
+        {
+            m_PropAssembly = vtkSmartPointer<vtkPropAssembly>::New();
+            m_ClippingPlaneCollection = vtkSmartPointer<vtkPlaneCollection>::New();
 
-      ~LocalStorage()
-      {
-      }
-  };
+//            m_VtkPolyDataMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+//            m_VtkPolyDataNormals = vtkSmartPointer<vtkPolyDataNormals>::New();
+//            m_Actor = vtkSmartPointer<vtkActor>::New();
+//            m_Actor->SetMapper(m_VtkPolyDataMapper);
 
-  mitk::LocalStorageHandler<LocalStorage> m_LSH;
+//            m_DepthSort = vtkSmartPointer<vtkDepthSortPolyData>::New();
+        }
 
-  static void ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer);
-  static void SetDefaultPropertiesForVtkProperty(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite);
+        ~LocalStorage()
+        {
+        }
+    };
+
+    mitk::LocalStorageHandler<LocalStorage> m_LSH;
+
+    static void ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer);
+    static void SetDefaultPropertiesForVtkProperty(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite);
 };
-} // namespace mitk
 
-#endif /* mitkSurfaceVtkMapper3D_h */
+
+#endif /* SVMODELVTKMAPPER3D_H */

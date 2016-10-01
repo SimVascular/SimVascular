@@ -3,8 +3,8 @@
 #include "cv_polydatasolid_utils.h"
 
 svModelElementPolyData::svModelElementPolyData()
-    : m_Type("PolyData")
 {
+    m_Type="PolyData";
 }
 
 svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &other)

@@ -1,24 +1,28 @@
 set(H_FILES
+    svModelUtils.h
     svModelElement.h
     svModelElementPolyData.h
     svModelOperation.h
     svModel.h
-    svModelUtils.h
+    svModelVtkMapper2D.h
+    svModelVtkMapper3D.h
+    svModelDataInteractor.h
     svModelIO.h
     svModelLegacyIO.h
-    svModelDataInteractor.h
     svModelObjectFactory.h
 )
 
 set(CPP_FILES
+    svModelUtils.cxx
     svModelElement.cxx
     svModelElementPolyData.cxx
     svModelOperation.cxx
     svModel.cxx
-    svModelUtils.cxx
+    svModelVtkMapper2D.cxx
+    svModelVtkMapper3D.cxx
+    svModelDataInteractor.cxx
     svModelIO.cxx
     svModelLegacyIO.cxx
-    svModelDataInteractor.cxx
     svModelObjectFactory.cxx
 )
 

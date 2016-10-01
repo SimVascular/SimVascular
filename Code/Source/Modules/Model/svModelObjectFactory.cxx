@@ -1,6 +1,8 @@
 #include "svModelObjectFactory.h"
 
-#include "svModel.h"
+//#include "svModel.h"
+#include "svModelVtkMapper2D.h"
+#include "svModelVtkMapper3D.h"
 
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
@@ -31,12 +33,16 @@ mitk::Mapper::Pointer svModelObjectFactory::CreateMapper(mitk::DataNode* node, M
   {
     if( dynamic_cast<svModel*>(node->GetData())!=NULL )
     {
+        newMapper = svModelVtkMapper2D::New();
+        newMapper->SetDataNode(node);
     }
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
     if( dynamic_cast<svModel*>(node->GetData())!=NULL )
     {
+        newMapper = svModelVtkMapper3D::New();
+        newMapper->SetDataNode(node);
     }
   }
   return newMapper;
@@ -48,13 +54,15 @@ void svModelObjectFactory::SetDefaultProperties(mitk::DataNode* node)
   if(node==NULL)
     return;
 
-  mitk::DataNode::Pointer nodePointer = node;
+//  mitk::DataNode::Pointer nodePointer = node;
 
   if(node->GetData() ==NULL)
     return;
 
   if( dynamic_cast<svModel*>(node->GetData())!=NULL )
   {
+      svModelVtkMapper2D::SetDefaultProperties(node);
+      svModelVtkMapper3D::SetDefaultProperties(node);
   }
 }
 

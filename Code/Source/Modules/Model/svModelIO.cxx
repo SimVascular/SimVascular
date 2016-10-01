@@ -124,7 +124,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
                 faces.push_back(face);
             }
-            mepd->SetFaces(faces);
+            me->SetFaces(faces);
 
             TiXmlElement* segsElement = meElement->FirstChildElement("segmentations");
             std::vector<std::string> segNames;

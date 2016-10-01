@@ -99,7 +99,7 @@ void svModelVtkMapper2D::Update(mitk::BaseRenderer* renderer)
 void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
     mitk::DataNode* node = GetDataNode();
-    if(ndoe==NULL)
+    if(node==NULL)
         return;
 
     LocalStorage* localStorage = m_LSH.GetLocalStorage(renderer);
@@ -111,14 +111,20 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         return;
     }
 
+    localStorage->m_PropAssembly->VisibilityOn();
+    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
+
     svModel* model  = static_cast<svModel *>( node->GetData() );
-    mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
+    if(model==NULL)
+        return;
+//    mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
 
-    mitk::ScalarType time =renderer->GetTime();
-    int timestep=0;
+//    mitk::ScalarType time =renderer->GetTime();
+//    int timestep=0;
 
-    if( time > itk::NumericTraits<mitk::ScalarType>::NonpositiveMin() )
-        timestep = dataTimeGeometry->TimePointToTimeStep( time );
+//    if( time > itk::NumericTraits<mitk::ScalarType>::NonpositiveMin() )
+//        timestep = dataTimeGeometry->TimePointToTimeStep( time );
+    int timestep=this->GetTimestep();
 
     svModelElement* me=model->GetModelElement(timestep);
     if(me==NULL)
@@ -127,9 +133,6 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     vtkSmartPointer<vtkPolyData> wholePolyData=me->GetWholeVtkPolyData();
     if ((wholePolyData == NULL) || (wholePolyData->GetNumberOfPoints() < 1))
         return;
-
-    localStorage->m_PropAssembly->VisibilityOn();
-    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
 
     const mitk::PlaneGeometry* planeGeometry = renderer->GetCurrentWorldPlaneGeometry();
     if( ( planeGeometry == NULL ) || ( !planeGeometry->IsValid() ) || ( !planeGeometry->HasReferenceGeometry() ))
@@ -150,10 +153,10 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     float lineWidth = 1.0f;
     node->GetFloatProperty("line width", lineWidth, renderer);
 
-    bool showSurface=false;
-    node->GetBoolProperty("show surface", showSurface, renderer);
+    bool showWholeSurface=false;
+    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
 
-    if(showSurface)
+    if(showWholeSurface)
     {
         float color[3]= { 1.0f, 1.0f, 1.0f };
         node->GetColor(color, renderer, "color");
@@ -308,7 +311,7 @@ void svModelVtkMapper2D::ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMapper
 void svModelVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
     //  mitk::IPropertyAliases* aliases = mitk::CoreServices::GetPropertyAliases();
-    node->AddProperty( "show surface", mitk::BoolProperty::New(false), renderer, overwrite );
+    node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
     node->AddProperty( "line width", mitk::FloatProperty::New(2.0f), renderer, overwrite );

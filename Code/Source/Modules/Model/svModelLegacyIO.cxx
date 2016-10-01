@@ -122,7 +122,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
 
     if(type=="PolyData")
     {
-        svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>modelElement;
+        svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(modelElement);
         if(!mepd) return;
 
         QString filePath2=filePath+".facenames";

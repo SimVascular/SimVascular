@@ -1,5 +1,7 @@
 #include "svModelUtils.h"
 
+#include "svModelElementPolyData.h"
+
 #include "SimVascular.h"
 #include "cv_sys_geom.h"
 #include "cvPolyData.h"
@@ -100,10 +102,10 @@ static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::D
           faces.push_back(face);
     }
 
-    svModelElement* modelElement=new svModelElement();
+    svModelElementPolyData* modelElement=new svModelElementPolyData();
     modelElement->SetSegNames(segNames);
     modelElement->SetFaces(faces);
-    modelElement->SetVtkPolyDataModel(solidvpd);
+    modelElement->SetWholeVtkPolyData(solidvpd);
 
     return modelElement;
 }

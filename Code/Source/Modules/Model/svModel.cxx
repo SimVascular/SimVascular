@@ -188,7 +188,7 @@ void svModel::SetType(std::string type)
     m_Type=type;
 }
 
-double svModel::GetType() const
+std::string svModel::GetType() const
 {
     return m_Type;
 }

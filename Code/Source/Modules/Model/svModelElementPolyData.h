@@ -1,5 +1,5 @@
-#ifndef SVMODELELEMENT_H
-#define SVMODELELEMENT_H
+#ifndef SVMODELELEMENTPOLYDATA_H
+#define SVMODELELEMENTPOLYDATA_H
 
 #include <svModelExports.h>
 
@@ -35,4 +35,4 @@ public:
   };
 
 
-#endif // SVMODELELEMENT_H
+#endif // SVMODELELEMENTPOLYDATA_H
