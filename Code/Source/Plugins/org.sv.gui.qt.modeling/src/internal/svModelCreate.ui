@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>369</width>
-    <height>141</height>
+    <height>167</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>90</y>
+     <y>120</y>
      <width>341</width>
      <height>32</height>
     </rect>
@@ -38,7 +38,7 @@
      <x>30</x>
      <y>30</y>
      <width>311</width>
-     <height>51</height>
+     <height>81</height>
     </rect>
    </property>
    <layout class="QFormLayout" name="formLayout">
@@ -51,6 +51,37 @@
     </item>
     <item row="0" column="1">
      <widget class="QLineEdit" name="lineEditModelName"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Model Type:</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="comboBoxType">
+      <item>
+       <property name="text">
+        <string>PolyData</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Parasolid</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>OpenCASCADE</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Discrete</string>
+       </property>
+      </item>
+     </widget>
     </item>
    </layout>
   </widget>

@@ -36,7 +36,7 @@ svModelCreate::~svModelCreate()
 
 void svModelCreate::SetFocus( )
 {
-    //ui->lineEditModelName->setFocus();
+    ui->lineEditModelName->setFocus();
 }
 
 void svModelCreate::CreateModel()
@@ -66,34 +66,46 @@ void svModelCreate::CreateModel()
 
     std::string modelName=ui->lineEditModelName->text().trimmed().toStdString();
 
-    if(m_CreateModel)
-    {
-        if(modelName==""){
-            QMessageBox::warning(NULL,"Model Empty","Please give a model name!");
-            return;
-        }
 
-        mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(modelName.c_str(),m_ModelFolderNode);
-        if(exitingNode){
-            QMessageBox::warning(NULL,"Model Already Created","Please use a different model name!");
-            return;
-        }
+    if(modelName==""){
+        QMessageBox::warning(NULL,"Model Empty","Please give a model name!");
+        return;
     }
 
-    if(m_CreateModel)
-    {
-        svModel::Pointer solidModel=svModel::New();
-
-        mitk::DataNode::Pointer solidModelNode = mitk::DataNode::New();
-        solidModelNode->SetData(solidModel);
-        solidModelNode->SetName(modelName);
-
-        m_DataStorage->Add(solidModelNode,m_ModelFolderNode);
+    mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(modelName.c_str(),m_ModelFolderNode);
+    if(exitingNode){
+        QMessageBox::warning(NULL,"Model Already Created","Please use a different model name!");
+        return;
     }
-    else if(!modelNode.IsNull())
-    {
 
+    int currentIndex=ui->comboBoxType->currentIndex();
+
+    svModel::Pointer solidModel=svModel::New();
+//    int timeStep=m_TimeStep;
+
+    switch(currentIndex)
+    {
+    case 0:
+        solidModel->SetType("PolyData");
+        break;
+    case 1:
+        solidModel->SetType("Parasolid");
+        break;
+    case 2:
+        solidModel->SetType("OpenCASCADE");
+        break;
+    case 3:
+        solidModel->SetType("Discrete");
+        break;
+    default:
+        return;
     }
+
+    mitk::DataNode::Pointer solidModelNode = mitk::DataNode::New();
+    solidModelNode->SetData(solidModel);
+    solidModelNode->SetName(modelName);
+
+    m_DataStorage->Add(solidModelNode,m_ModelFolderNode);
 
     hide();
 }

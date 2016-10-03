@@ -48,7 +48,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     m_Parent=parent;
     ui->setupUi(parent);
 
-    parent->setMaximumWidth(450);
+//    parent->setMaximumWidth(450);
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
@@ -399,8 +399,6 @@ void svModelEdit::CreateModel()
 
     rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("svSegmentationFolder"));
     if(rs->size()<1) return;
-
-    //    mitk::DataNode * 	GetNamedDerivedNode (const char *name, const mitk::DataNode *sourceNode, bool onlyDirectDerivations=true) const
 
     mitk::DataNode::Pointer segFolderNode=rs->GetElement(0);
     //    rs=GetDataStorage()->GetDerivations(segFolderNode);
