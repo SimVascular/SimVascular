@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>510</width>
-    <height>819</height>
+    <width>443</width>
+    <height>938</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QWidget" name="widget" native="true">
+    <widget class="QWidget" name="widgetTop" native="true">
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
        <number>0</number>
@@ -120,10 +120,10 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QWidget" name="widgetLeft" native="true">
+          <widget class="QWidget" name="widgetCenter" native="true">
            <layout class="QVBoxLayout" name="verticalLayout_6">
             <property name="spacing">
-             <number>0</number>
+             <number>10</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -138,117 +138,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QStackedWidget" name="stackedWidgetParam">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="currentIndex">
-               <number>1</number>
-              </property>
-              <widget class="QWidget" name="page_1">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_10">
-                <item>
-                 <widget class="QLabel" name="label_14">
-                  <property name="text">
-                   <string>Laplacian Smooth</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QCheckBox" name="checkBox">
-                  <property name="text">
-                   <string>CheckBox</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-              <widget class="QWidget" name="page_0">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <layout class="QVBoxLayout" name="verticalLayout_7">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>15</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_12">
-                  <property name="text">
-                   <string>Global Decimate</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QWidget" name="widget_4" native="true">
-                  <layout class="QFormLayout" name="formLayout">
-                   <property name="horizontalSpacing">
-                    <number>0</number>
-                   </property>
-                   <property name="verticalSpacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item row="0" column="0">
-                    <widget class="QLabel" name="label_13">
-                     <property name="text">
-                      <string>Targe rate:  </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item row="0" column="1">
-                    <widget class="QDoubleSpinBox" name="dsbTargetRateG">
-                     <property name="decimals">
-                      <number>2</number>
-                     </property>
-                     <property name="value">
-                      <double>0.250000000000000</double>
-                     </property>
-                    </widget>
-                   </item>
-                  </layout>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </widget>
-            </item>
-            <item>
-             <widget class="QStackedWidget" name="stackedWidget">
+             <widget class="QTabWidget" name="tabWidget">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
                 <horstretch>0</horstretch>
@@ -258,8 +148,11 @@
               <property name="currentIndex">
                <number>0</number>
               </property>
-              <widget class="QWidget" name="stackedWidgetPage1" native="true">
-               <layout class="QVBoxLayout" name="verticalLayout_2">
+              <widget class="QWidget" name="tabWidgetPage1" native="true">
+               <attribute name="title">
+                <string>Face List</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_9">
                 <property name="spacing">
                  <number>0</number>
                 </property>
@@ -275,6 +168,1269 @@
                 <property name="bottomMargin">
                  <number>0</number>
                 </property>
+                <item>
+                 <widget class="QWidget" name="widget_4" native="true">
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>5</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>5</number>
+                   </property>
+                   <item>
+                    <widget class="QListWidget" name="listWidget">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widgetRight" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_5">
+                      <property name="spacing">
+                       <number>5</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>5</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>5</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>5</number>
+                      </property>
+                      <item>
+                       <widget class="QToolBox" name="toolBox">
+                        <property name="sizePolicy">
+                         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                         </sizepolicy>
+                        </property>
+                        <property name="minimumSize">
+                         <size>
+                          <width>160</width>
+                          <height>500</height>
+                         </size>
+                        </property>
+                        <property name="maximumSize">
+                         <size>
+                          <width>160</width>
+                          <height>16777215</height>
+                         </size>
+                        </property>
+                        <property name="currentIndex">
+                         <number>0</number>
+                        </property>
+                        <widget class="QWidget" name="page_3">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>160</width>
+                           <height>376</height>
+                          </rect>
+                         </property>
+                         <property name="sizePolicy">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                           <horstretch>0</horstretch>
+                           <verstretch>0</verstretch>
+                          </sizepolicy>
+                         </property>
+                         <attribute name="label">
+                          <string>Face Ops</string>
+                         </attribute>
+                         <layout class="QVBoxLayout" name="verticalLayout_11">
+                          <property name="spacing">
+                           <number>6</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QPushButton" name="btnDelete">
+                            <property name="text">
+                             <string>Delete</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnCombine">
+                            <property name="text">
+                             <string>Combine</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QPushButton" name="btnFillHoleIDs">
+                            <property name="text">
+                             <string>Fill Holes IDs</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QToolBox" name="toolBox_2">
+                            <property name="sizePolicy">
+                             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                              <horstretch>0</horstretch>
+                              <verstretch>0</verstretch>
+                             </sizepolicy>
+                            </property>
+                            <property name="styleSheet">
+                             <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
+                            </property>
+                            <property name="currentIndex">
+                             <number>1</number>
+                            </property>
+                            <widget class="QWidget" name="page_7">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>215</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Extract</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_16">
+                              <property name="spacing">
+                               <number>6</number>
+                              </property>
+                              <property name="leftMargin">
+                               <number>9</number>
+                              </property>
+                              <property name="topMargin">
+                               <number>9</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>9</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>9</number>
+                              </property>
+                              <item>
+                               <widget class="QLabel" name="label_14">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Separation Angle:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="ctkSliderWidget" name="sliderSeparationAngle">
+                                <property name="decimals">
+                                 <number>0</number>
+                                </property>
+                                <property name="minimum">
+                                 <double>1.000000000000000</double>
+                                </property>
+                                <property name="maximum">
+                                 <double>90.000000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>45.000000000000000</double>
+                                </property>
+                                <property name="tickInterval">
+                                 <double>10.000000000000000</double>
+                                </property>
+                                <property name="synchronizeSiblings">
+                                 <set>ctkSliderWidget::NoSynchronize</set>
+                                </property>
+                                <property name="spinBoxAlignment">
+                                 <set>Qt::AlignLeading</set>
+                                </property>
+                                <property name="popupSlider">
+                                 <bool>false</bool>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnExtract">
+                                <property name="text">
+                                 <string>Extract</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_5">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_10">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>215</height>
+                              </rect>
+                             </property>
+                             <property name="sizePolicy">
+                              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                               <horstretch>0</horstretch>
+                               <verstretch>0</verstretch>
+                              </sizepolicy>
+                             </property>
+                             <attribute name="label">
+                              <string>Remesh</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_19">
+                              <item>
+                               <widget class="QLabel" name="label_15">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Remesh Size:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                                <property name="decimals">
+                                 <number>3</number>
+                                </property>
+                                <property name="singleStep">
+                                 <double>0.100000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>0.100000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnRemesh">
+                                <property name="text">
+                                 <string>Remesh</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_6">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_4">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>160</width>
+                           <height>376</height>
+                          </rect>
+                         </property>
+                         <attribute name="label">
+                          <string>Global Ops</string>
+                         </attribute>
+                         <layout class="QVBoxLayout" name="verticalLayout_7">
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QPushButton" name="btnFillHoles">
+                            <property name="text">
+                             <string>Fill Holes</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
+                           <widget class="QToolBox" name="toolBox_3">
+                            <property name="styleSheet">
+                             <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
+                            </property>
+                            <property name="currentIndex">
+                             <number>0</number>
+                            </property>
+                            <widget class="QWidget" name="page_8">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>188</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Decimation</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Decimation (Global)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_10">
+                              <item>
+                               <widget class="QLabel" name="label_13">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Targe rate:  </string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="dsbTargetRateG">
+                                <property name="decimals">
+                                 <number>2</number>
+                                </property>
+                                <property name="value">
+                                 <double>0.250000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnDecimateG">
+                                <property name="text">
+                                 <string>Decimate</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_9">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>188</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Lap. Smooth</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Laplacian Smooth (Global)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_17">
+                              <item>
+                               <widget class="QLabel" name="label_16">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Num Iters:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbLapItersG">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="maximum">
+                                 <number>1000</number>
+                                </property>
+                                <property name="singleStep">
+                                 <number>10</number>
+                                </property>
+                                <property name="value">
+                                 <number>100</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_17">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Relax Factor:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="dsbLapRelaxG">
+                                <property name="decimals">
+                                 <number>4</number>
+                                </property>
+                                <property name="maximum">
+                                 <double>10.000000000000000</double>
+                                </property>
+                                <property name="singleStep">
+                                 <double>0.010000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>0.001000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnLapSmoothG">
+                                <property name="text">
+                                 <string>Smooth</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_2">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_11">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>188</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>BF Subdiv.</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Butterfly Subdivision (Global)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_18">
+                              <item>
+                               <widget class="QLabel" name="label_18">
+                                <property name="text">
+                                 <string>Num Divisions:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbBFDivisionsG">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="value">
+                                 <number>2</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnBFSubdivideG">
+                                <property name="text">
+                                 <string>Subdivide</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_3">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_12">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>188</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>WS Smooth</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>WindowSync Smooth (Global)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_20">
+                              <item>
+                               <widget class="QLabel" name="label_19">
+                                <property name="text">
+                                 <string>Num Iters:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbWSItersG">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="maximum">
+                                 <number>200</number>
+                                </property>
+                                <property name="singleStep">
+                                 <number>10</number>
+                                </property>
+                                <property name="value">
+                                 <number>40</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_20">
+                                <property name="text">
+                                 <string>Band:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="dsbWSBandG">
+                                <property name="decimals">
+                                 <number>3</number>
+                                </property>
+                                <property name="singleStep">
+                                 <double>0.010000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>0.010000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnWSSmoothG">
+                                <property name="text">
+                                 <string>Smooth</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_7">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_13">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>188</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Densify</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Densify (Global)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_21">
+                              <item>
+                               <widget class="QLabel" name="label_12">
+                                <property name="text">
+                                 <string>Num Divisions:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbDensifyDivisionsG">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="maximum">
+                                 <number>20</number>
+                                </property>
+                                <property name="value">
+                                 <number>2</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnDensifyG">
+                                <property name="text">
+                                 <string>Subdivide</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_8">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_5">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>160</width>
+                           <height>376</height>
+                          </rect>
+                         </property>
+                         <attribute name="label">
+                          <string>Local Ops</string>
+                         </attribute>
+                         <layout class="QVBoxLayout" name="verticalLayout_22">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QToolBox" name="toolBox_4">
+                            <property name="styleSheet">
+                             <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
+                            </property>
+                            <property name="currentIndex">
+                             <number>0</number>
+                            </property>
+                            <widget class="QWidget" name="page_14">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>252</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Decimation</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Decimation (Local)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_23">
+                              <item>
+                               <widget class="QLabel" name="label_21">
+                                <property name="text">
+                                 <string>Target Rate:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="dsbTargetRateL">
+                                <property name="maximum">
+                                 <double>1.000000000000000</double>
+                                </property>
+                                <property name="singleStep">
+                                 <double>0.100000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>0.250000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnDecimateL">
+                                <property name="text">
+                                 <string>Decimate Local</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_9">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_15">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>252</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Lap. Smooth</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Laplacian Smooth (Local)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_12">
+                              <item>
+                               <widget class="QLabel" name="label_22">
+                                <property name="text">
+                                 <string>Num Iters:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbLapItersL">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="maximum">
+                                 <number>1000</number>
+                                </property>
+                                <property name="singleStep">
+                                 <number>10</number>
+                                </property>
+                                <property name="value">
+                                 <number>100</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_23">
+                                <property name="text">
+                                 <string>Relax Factor:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="dsbLapRelaxL">
+                                <property name="decimals">
+                                 <number>4</number>
+                                </property>
+                                <property name="maximum">
+                                 <double>10.000000000000000</double>
+                                </property>
+                                <property name="singleStep">
+                                 <double>0.010000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>0.001000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnLapSmoothL">
+                                <property name="text">
+                                 <string>Smooth Local</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_10">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_16">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>252</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Cstr. Smooth</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Constrain Smooth (Local)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_13">
+                              <item>
+                               <widget class="QLabel" name="label_24">
+                                <property name="text">
+                                 <string>Num Iters:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbCstrItersL">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="value">
+                                 <number>3</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_25">
+                                <property name="text">
+                                 <string>Constrain Factor:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QDoubleSpinBox" name="dsbCstrFactorL">
+                                <property name="decimals">
+                                 <number>2</number>
+                                </property>
+                                <property name="maximum">
+                                 <double>10.000000000000000</double>
+                                </property>
+                                <property name="singleStep">
+                                 <double>0.100000000000000</double>
+                                </property>
+                                <property name="value">
+                                 <double>0.200000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnCstrSmoothL">
+                                <property name="text">
+                                 <string>Smooth Local</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_11">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_17">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>252</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Linear Subdiv.</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Linear Subdivision (Local)</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_24">
+                              <item>
+                               <widget class="QLabel" name="label_26">
+                                <property name="text">
+                                 <string>Num Divisions:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbLinearDivisionsL">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="value">
+                                 <number>2</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnLSubdivideL">
+                                <property name="text">
+                                 <string>Subdivide Local</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_12">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_6">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>160</width>
+                           <height>376</height>
+                          </rect>
+                         </property>
+                         <attribute name="label">
+                          <string>Trim</string>
+                         </attribute>
+                         <attribute name="toolTip">
+                          <string>Cut Model by Plane</string>
+                         </attribute>
+                         <layout class="QVBoxLayout" name="verticalLayout_25">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>10</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QToolBox" name="toolBox_5">
+                            <property name="styleSheet">
+                             <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
+                            </property>
+                            <property name="currentIndex">
+                             <number>0</number>
+                            </property>
+                            <widget class="QWidget" name="page_18">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>150</width>
+                               <height>283</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>By Plane</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Cut Model By Plane</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_26">
+                              <item>
+                               <widget class="QCheckBox" name="checkBoxShowPlane">
+                                <property name="text">
+                                 <string>Show Plane</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnCutAbove">
+                                <property name="text">
+                                 <string>Cut Above</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnCutBelow">
+                                <property name="text">
+                                 <string>Cut Below</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_13">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_20">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>167</width>
+                               <height>283</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>By Box</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Cut Model by Box</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_27">
+                              <item>
+                               <widget class="QCheckBox" name="checkBoxShowBox">
+                                <property name="text">
+                                 <string>Show Box</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnCutBox">
+                                <property name="text">
+                                 <string>Cut within Box</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_14">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                            <widget class="QWidget" name="page_19">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>167</width>
+                               <height>283</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>By Path</string>
+                             </attribute>
+                             <attribute name="toolTip">
+                              <string>Cut Model by Path Plane</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_28">
+                              <item>
+                               <widget class="QCheckBox" name="checkBoxShowPath">
+                                <property name="text">
+                                 <string>Show Path</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_27">
+                                <property name="text">
+                                 <string>Select Path:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QComboBox" name="comboBoxPath"/>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_28">
+                                <property name="text">
+                                 <string>Path Point Idx:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="ctkSliderWidget" name="slidePath">
+                                <property name="decimals">
+                                 <number>0</number>
+                                </property>
+                                <property name="maximum">
+                                 <double>200.000000000000000</double>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnCutPathAbove">
+                                <property name="text">
+                                 <string>Cut Above</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnCutPathBelow">
+                                <property name="text">
+                                 <string>Cut Below</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_15">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
+                           </widget>
+                          </item>
+                         </layout>
+                        </widget>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer_4">
+                        <property name="orientation">
+                         <enum>Qt::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+              <widget class="QWidget" name="tabWidgetPage2">
+               <attribute name="title">
+                <string>Blend</string>
+               </attribute>
+               <layout class="QVBoxLayout" name="verticalLayout_2">
                 <item>
                  <widget class="QWidget" name="widget_3" native="true">
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -297,13 +1453,13 @@
                     <widget class="QWidget" name="widget_8" native="true">
                      <layout class="QVBoxLayout" name="verticalLayout_8">
                       <property name="spacing">
-                       <number>0</number>
+                       <number>5</number>
                       </property>
                       <property name="leftMargin">
                        <number>0</number>
                       </property>
                       <property name="topMargin">
-                       <number>0</number>
+                       <number>10</number>
                       </property>
                       <property name="rightMargin">
                        <number>0</number>
@@ -312,13 +1468,7 @@
                        <number>0</number>
                       </property>
                       <item>
-                       <widget class="QLabel" name="label_11">
-                        <property name="font">
-                         <font>
-                          <weight>75</weight>
-                          <bold>true</bold>
-                         </font>
-                        </property>
+                       <widget class="QPushButton" name="pushButton_3">
                         <property name="text">
                          <string>Blend Faces</string>
                         </property>
@@ -430,6 +1580,12 @@
                          </item>
                          <item row="0" column="2">
                           <widget class="QLabel" name="label_6">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="text">
                             <string>Sub Blend: </string>
                            </property>
@@ -437,6 +1593,12 @@
                          </item>
                          <item row="1" column="0">
                           <widget class="QLabel" name="label_5">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="text">
                             <string>Cstr. Smooth:</string>
                            </property>
@@ -444,6 +1606,12 @@
                          </item>
                          <item row="1" column="2">
                           <widget class="QLabel" name="label_7">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="text">
                             <string>Lap. Smooth: </string>
                            </property>
@@ -451,6 +1619,12 @@
                          </item>
                          <item row="0" column="0">
                           <widget class="QLabel" name="label_4">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="text">
                             <string>Blend:</string>
                            </property>
@@ -458,8 +1632,14 @@
                          </item>
                          <item row="2" column="0">
                           <widget class="QLabel" name="label_9">
+                           <property name="sizePolicy">
+                            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                             <horstretch>0</horstretch>
+                             <verstretch>0</verstretch>
+                            </sizepolicy>
+                           </property>
                            <property name="text">
-                            <string>Subdivision</string>
+                            <string>Subdivision:</string>
                            </property>
                           </widget>
                          </item>
@@ -474,316 +1654,7 @@
                 </item>
                </layout>
               </widget>
-              <widget class="QWidget" name="stackedWidgetPage2" native="true">
-               <layout class="QVBoxLayout" name="verticalLayout_9">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <property name="leftMargin">
-                 <number>0</number>
-                </property>
-                <property name="topMargin">
-                 <number>0</number>
-                </property>
-                <property name="rightMargin">
-                 <number>0</number>
-                </property>
-                <property name="bottomMargin">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="label_3">
-                  <property name="text">
-                   <string>Face List:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QListWidget" name="listWidget"/>
-                </item>
-               </layout>
-              </widget>
              </widget>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <widget class="QWidget" name="widgetRight" native="true">
-           <layout class="QVBoxLayout" name="verticalLayout_5">
-            <property name="spacing">
-             <number>5</number>
-            </property>
-            <property name="leftMargin">
-             <number>5</number>
-            </property>
-            <property name="topMargin">
-             <number>5</number>
-            </property>
-            <property name="rightMargin">
-             <number>0</number>
-            </property>
-            <property name="bottomMargin">
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="btnBlend">
-              <property name="text">
-               <string>Blend</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QWidget" name="widgetPolyDataOps" native="true">
-              <layout class="QVBoxLayout" name="verticalLayout_11">
-               <property name="spacing">
-                <number>3</number>
-               </property>
-               <property name="leftMargin">
-                <number>0</number>
-               </property>
-               <property name="topMargin">
-                <number>5</number>
-               </property>
-               <property name="rightMargin">
-                <number>0</number>
-               </property>
-               <property name="bottomMargin">
-                <number>10</number>
-               </property>
-               <item>
-                <widget class="Line" name="line">
-                 <property name="midLineWidth">
-                  <number>2</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_15">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Global Ops</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnFillHoles">
-                 <property name="text">
-                  <string>Fill Holes</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnDecimateG">
-                 <property name="text">
-                  <string>Decimate</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnLapSmoothG">
-                 <property name="text">
-                  <string>Lap. Smooth</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnBFSubdivideG">
-                 <property name="text">
-                  <string>BF Subdivide</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnWSSmoothG">
-                 <property name="text">
-                  <string>WS Smooth</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnDensifyG">
-                 <property name="text">
-                  <string>Densify</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_2">
-                 <property name="midLineWidth">
-                  <number>2</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_16">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Local Ops</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnDecimateL">
-                 <property name="text">
-                  <string>Decimate</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnLapSmoothL">
-                 <property name="text">
-                  <string>Lap. Smooth</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnCstrSmoothL">
-                 <property name="text">
-                  <string>Cstr. Smooth</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnLSubdivideL">
-                 <property name="text">
-                  <string>Linear Subdiv.</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_3">
-                 <property name="midLineWidth">
-                  <number>2</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_17">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Trim</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnTrimByPlane">
-                 <property name="text">
-                  <string>By Plane</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnTrimByPath">
-                 <property name="text">
-                  <string>By Path</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnTrimByBox">
-                 <property name="text">
-                  <string>By Box</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_4">
-                 <property name="midLineWidth">
-                  <number>2</number>
-                 </property>
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="label_18">
-                 <property name="font">
-                  <font>
-                   <weight>75</weight>
-                   <bold>true</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>Face Ops</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnExtract">
-                 <property name="text">
-                  <string>Extract</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnCombine">
-                 <property name="text">
-                  <string>Combine</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnRemesh">
-                 <property name="text">
-                  <string>Remesh</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnDelete">
-                 <property name="text">
-                  <string>Delete</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="btnFillHoleIDs">
-                 <property name="text">
-                  <string>Fill Holes IDs</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -796,6 +1667,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ctkSliderWidget</class>
+   <extends>QWidget</extends>
+   <header>ctkSliderWidget.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
