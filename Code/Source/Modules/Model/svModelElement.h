@@ -43,6 +43,34 @@ public:
 
     };
 
+    struct svBlendParamRadius
+    {
+        int faceID1;
+        int faceID2;
+        double radius;
+
+        svBlendParamRadius()
+            : faceID1(0)
+            , faceID2(0)
+            , radius(0.0)
+        {
+        }
+
+        svBlendParamRadius(int id1, int id2, double r)
+            : faceID1(id1)
+            , faceID2(id2)
+            , radius(r)
+        {
+        }
+
+        svBlendParamRadius(const svBlendParamRadius &other)
+            : faceID1(other.faceID1)
+            , faceID2(other.faceID2)
+            , radius(other.radius)
+        {
+        }
+    };
+
     svModelElement();
 
     svModelElement(const svModelElement &other);
@@ -94,6 +122,10 @@ public:
     bool IsFaceSelected(std::string name);
     bool IsFaceSelected(int id);
 
+    std::vector<svBlendParamRadius*> GetBlendRadii();
+
+    void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);
+
     void CalculateBoundingBox(double *bounds);
 
   protected:
@@ -105,6 +137,8 @@ public:
     std::vector<svFace*> m_Faces;
 
     vtkSmartPointer<vtkPolyData> m_WholeVtkPolyData;
+
+    std::vector<svBlendParamRadius*> m_BlendRadii;
 
   };
 

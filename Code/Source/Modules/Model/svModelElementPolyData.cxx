@@ -12,10 +12,6 @@ svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &oth
     : svModelElement(other)
 {
     m_BlendParam=new svBlendParam(*(other.m_BlendParam));
-    for(int i=0;i<other.m_BlendRadius;i++)
-    {
-        m_BlendRadius.push_back(new svBlendParamRadius(*(other.m_BlendRadius[i])));
-    }
 }
 
 svModelElementPolyData::~svModelElementPolyData()
@@ -60,12 +56,4 @@ svModelElementPolyData::svBlendParam* svModelElementPolyData::GetBlendParam()
     return m_BlendParam;
 }
 
-std::vector<svModelElementPolyData::svBlendParamRadius*> svModelElementPolyData::GetBlendRadius()
-{
-    return m_BlendRadius;
-}
 
-void svModelElementPolyData::SetBlendRadius(std::vector<svModelElementPolyData::svBlendParamRadius*> blendRadius)
-{
-    m_BlendRadius=blendRadius;
-}

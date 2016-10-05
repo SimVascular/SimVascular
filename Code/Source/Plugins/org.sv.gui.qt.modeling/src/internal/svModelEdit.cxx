@@ -34,7 +34,7 @@ svModelEdit::svModelEdit() :
 //    m_RemovingNode=false;
 
     m_ModelSelectFaceObserverTag=0;
-    m_ModelUpdateFaceObserverTag=0;
+    m_ModelUpdateObserverTag=0;
 }
 
 svModelEdit::~svModelEdit()
@@ -76,7 +76,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
    //for tab Blend
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
-    connect(ui->tabWidget,SIGNAL(currentChanged(int index)), this, SLOT(UpdateBlendFaceList(int index)) );
+    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendFaceList(int)) );
 }
 
 void svModelEdit::Visible()
@@ -120,13 +120,13 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     mitk::DataNode::Pointer modelNode=nodes.front();
 
-    if(m_ModelNode==modelNode)
-    {
-//        return;
-    }else
-    {
-        ui->tabWidget->setCurrentIndex(0);
-    }
+//    if(m_ModelNode==modelNode)
+//    {
+////        return;
+//    }else
+//    {
+//        ui->tabWidget->setCurrentIndex(0);
+//    }
 
     ClearAll();
 
@@ -140,6 +140,7 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     }
 
     m_Parent->setEnabled(true);
+    ui->tabWidget->setCurrentIndex(0);
 
     m_ModelType=m_Model->GetType();
 
@@ -155,9 +156,9 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     modelSelectFaceCommand->SetCallbackFunction(this, &svModelEdit::UpdateFaceListSelection);
     m_ModelSelectFaceObserverTag = m_Model->AddObserver( svModelSelectFaceEvent(), modelSelectFaceCommand);
 
-    itk::SimpleMemberCommand<svModelEdit>::Pointer modelUpdateFaceCommand = itk::SimpleMemberCommand<svModelEdit>::New();
-    modelUpdateFaceCommand->SetCallbackFunction(this, &svModelEdit::UpdateFacesAndNodes);
-    m_ModelUpdateFaceObserverTag = m_Model->AddObserver( svModelSetVtkPolyDataEvent(), modelUpdateFaceCommand);
+    itk::SimpleMemberCommand<svModelEdit>::Pointer modelUpdateCommand = itk::SimpleMemberCommand<svModelEdit>::New();
+    modelUpdateCommand->SetCallbackFunction(this, &svModelEdit::UpdateGUI);
+    m_ModelUpdateObserverTag = m_Model->AddObserver( svModelSetEvent(), modelUpdateCommand);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -183,17 +184,19 @@ void svModelEdit::UpdateGUI()
     if(!m_Model) return;
 
     svModelElement* modelElement=m_Model->GetModelElement();
-    if(!modelElement) return;
 
-    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
-
-    for(int i=0;i<faces.size();i++)
+    if(modelElement)
     {
-        svModelElement::svFace* face=faces[i];
-        if(face)
+        std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+
+        for(int i=0;i<faces.size();i++)
         {
-            QString item=QString::fromStdString(face->name);
-            ui->listWidget->addItem(item);
+            svModelElement::svFace* face=faces[i];
+            if(face)
+            {
+                QString item=QString::fromStdString(face->name);
+                ui->listWidget->addItem(item);
+            }
         }
     }
 
@@ -257,7 +260,7 @@ void svModelEdit::UpdateFaceListSelection()
     int count=ui->listWidget->count();
     for(int i=0;i<count;i++)
     {
-        std::string name=ui->listWidget->item(i)->text()->toStdString();
+        std::string name=ui->listWidget->item(i)->text().toStdString();
 
         if(modelElement->IsFaceSelected(name))
         {
@@ -308,7 +311,7 @@ void svModelEdit::SelectItem(const QModelIndex & idx)
 //            node->SetColor(1,1,1);
 //    }
 
-    UpdateFaceListSelection();
+//    UpdateFaceListSelection();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -344,9 +347,9 @@ void svModelEdit::ClearAll()
         m_Model->RemoveObserver(m_ModelSelectFaceObserverTag);
     }
 
-    if(m_Model && m_ModelUpdateFaceObserverTag)
+    if(m_Model && m_ModelUpdateObserverTag)
     {
-        m_Model->RemoveObserver(m_ModelUpdateFaceObserverTag);
+        m_Model->RemoveObserver(m_ModelUpdateObserverTag);
     }
 
     if(m_ModelNode)
@@ -371,7 +374,7 @@ void svModelEdit::ShowSegSelectionWidget()
 
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
+//    if(modelElement==NULL) return;
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -499,11 +502,14 @@ void svModelEdit::CreateModel()
     if(m_ModelType=="PolyData"){
         newModelElement=svModelUtils::CreateModelElementPolyData(segNodes);
     }
-    else if(m_ModeType=="Parasolid")
+    else if(m_ModelType=="Parasolid")
     {
 
     }
 
+    int timeStep=GetTimeStep();
+
+    mitk::OperationEvent::IncCurrObjectEventId();
     svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
     svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
     mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
@@ -517,48 +523,12 @@ void svModelEdit::CreateModel()
     UpdateGUI();
 }
 
-void svModelEdit::BlendModel()
+std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()
 {
-    if(m_Model==NULL) return;
-
-    int timeStep=GetTimeStep();
-    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
-
-    if(modelElement==NULL) return;
-
-    svModelElement* newModelElement=NULL;
-
-    if(m_ModelType=="PolyData"){
-
-
-        svModelElementPolyData::svBlendParam param=new svModelElementPolyData::svBlendPara();
-
-        param->numblenditers=ui->sbBlendIters->value;
-        param->numsubblenditers=ui->sbSubBlendIters->value();
-        param->numcgsmoothiters=ui->sbCstrSmoothIters->value();
-        param->numlapsmoothiters=ui->sbLapSmoothIters->value();
-        param->numsubdivisioniters=ui->sbSubdivisionIters->value();
-        param->targetdecimation=ui->dsbDecimation->value();
-
-
-
-
-    }
-
-
-
-
-
-    vtkPolyData* oldVpd=modelElement->GetVtkPolyDataModel();
-    if(oldVpd==NULL) return;
-
-
+    std::vector<svModelElement::svBlendParamRadius*> blendRadii;
 
     QString content=ui->plainTextEditBlend->toPlainText();
-
     QStringList list = content.split("\n");
-//    vtkPolyData* newVpd=NULL;
-    vtkPolyData* lastVpd=oldVpd;
 
     for(int i=0;i<list.size();i++)
     {
@@ -571,64 +541,101 @@ void svModelEdit::BlendModel()
 
         cout<<faceID1<<"...."<<faceID2<<"....."<<radius<<endl;
 
-        if(lastVpd==NULL) break;
-
-        lastVpd=svModelUtils::CreateSolidModelPolyDataByBlend(lastVpd, faceID1, faceID2, radius, param);
+        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
 
     }
 
-    vtkPolyData* newVpd=lastVpd;
+//    svModelElement::svBlendParamRadius* blendRadius=new svModelElement::svBlendParamRadius(1,2,0.05);
+//    blendRadii.push_back(new svModelElement::svBlendParamRadius(1,2,0.05));
 
-    if(newVpd==NULL) return;
-
-    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETVTKPOLYDATA,timeStep,newVpd);
-    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETVTKPOLYDATA,timeStep,oldVpd);
-    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set VtkPolyData");
-    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
-
-    m_Model->ExecuteOperation(doOp);
-
-    //    OnSelectionChanged(GetDataManagerSelection());
-        UpdateGUI();
+    return blendRadii;
 }
 
-void svModelEdit::UpdateFacesAndNodes()
+void svModelEdit::BlendModel()
 {
-    if(m_Model==NULL||m_ModelNode.IsNull()) return;
+    if(m_Model==NULL) return;
 
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
 
     if(modelElement==NULL) return;
 
-//    m_RemovingNode=true;
+    svModelElement* newModelElement=NULL;
 
-    mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=GetDataStorage()->GetDerivations(m_ModelNode,nullptr,false);
-    if( !nodesToRemove->empty())
+    std::vector<svModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
+
+    if(m_ModelType=="PolyData"){
+
+        svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(modelElement);
+        if(!mepd) return;
+
+        svModelElementPolyData::svBlendParam* param=new svModelElementPolyData::svBlendParam();
+
+        param->numblenditers=ui->sbBlendIters->value();
+        param->numsubblenditers=ui->sbSubBlendIters->value();
+        param->numcgsmoothiters=ui->sbCstrSmoothIters->value();
+        param->numlapsmoothiters=ui->sbLapSmoothIters->value();
+        param->numsubdivisioniters=ui->sbSubdivisionIters->value();
+        param->targetdecimation=ui->dsbDecimation->value();
+
+        newModelElement=svModelUtils::CreateModelElementPolyDataByBlend(mepd, blendRadii, param);
+    }
+    else if(m_ModelType=="Parasolid")
     {
-        GetDataStorage()->Remove(nodesToRemove);
+
     }
 
-    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+    if(newModelElement==NULL) return;
 
-    for(int i=0;i<faces.size();i++)
-    {
-        vtkPolyData *facepd = vtkPolyData::New();
-        int faceid=i+1;
-        PlyDtaUtils_GetFacePolyData(modelElement->GetVtkPolyDataModel(), &faceid, facepd);
-        faces[i]->vpd=facepd;
-        mitk::Surface::Pointer surface=mitk::Surface::New();
-        surface->SetVtkPolyData((faces[i]->vpd));
-        mitk::DataNode::Pointer surfaceNode = mitk::DataNode::New();
-        surfaceNode->SetData(surface);
-        surfaceNode->SetName(faces[i]->name);
-        surfaceNode->SetBoolProperty("pickable", true);
-        faces[i]->node=surfaceNode;
-        GetDataStorage()->Add(surfaceNode,m_ModelNode);
-    }
+    mitk::OperationEvent::IncCurrObjectEventId();
 
-//    m_RemovingNode=false;
+    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
+    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
-    OnSelectionChanged(GetDataManagerSelection());
+    m_Model->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
+
+//void svModelEdit::UpdateFacesAndNodes()
+//{
+//    if(m_Model==NULL||m_ModelNode.IsNull()) return;
+
+//    int timeStep=GetTimeStep();
+//    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+
+//    if(modelElement==NULL) return;
+
+////    m_RemovingNode=true;
+
+//    mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=GetDataStorage()->GetDerivations(m_ModelNode,nullptr,false);
+//    if( !nodesToRemove->empty())
+//    {
+//        GetDataStorage()->Remove(nodesToRemove);
+//    }
+
+//    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+
+//    for(int i=0;i<faces.size();i++)
+//    {
+//        vtkPolyData *facepd = vtkPolyData::New();
+//        int faceid=i+1;
+//        PlyDtaUtils_GetFacePolyData(modelElement->GetVtkPolyDataModel(), &faceid, facepd);
+//        faces[i]->vpd=facepd;
+//        mitk::Surface::Pointer surface=mitk::Surface::New();
+//        surface->SetVtkPolyData((faces[i]->vpd));
+//        mitk::DataNode::Pointer surfaceNode = mitk::DataNode::New();
+//        surfaceNode->SetData(surface);
+//        surfaceNode->SetName(faces[i]->name);
+//        surfaceNode->SetBoolProperty("pickable", true);
+//        faces[i]->node=surfaceNode;
+//        GetDataStorage()->Add(surfaceNode,m_ModelNode);
+//    }
+
+////    m_RemovingNode=false;
+
+//    OnSelectionChanged(GetDataManagerSelection());
+//}
 

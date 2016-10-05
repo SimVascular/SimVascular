@@ -35,7 +35,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, uns
     return dst->GetVtkPolyData();
 }
 
-static svModelElement* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -110,7 +110,7 @@ static svModelElement* svModelUtils::CreateModelElementPolyData(std::vector<mitk
     return modelElement;
 }
 
-vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelUtils::svBlendParamPolyData* param)
+vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param)
 {
     if(vpdsrc==NULL)
         return NULL;
@@ -150,10 +150,48 @@ vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID
 
 }
 
-
-svModelElement* svModelUtils::CreateModelElementPolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svBlendParamPolyData* param)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param)
 {
 
+    vtkSmartPointer<vtkPolyData> oldVpd=mepdsrc->GetWholeVtkPolyData();
+    if(oldVpd==NULL) return NULL;
+
+    vtkSmartPointer<vtkPolyData> lastVpd=oldVpd;
+
+    for(int i=0;i<blendRadii.size();i++)
+    {
+        int faceID1=0;
+        int faceID2=0;
+        double radius=0.0;
+        if(blendRadii[i] && blendRadii[i]->radius>0)
+        {
+            faceID1=blendRadii[i]->faceID1;
+            faceID2=blendRadii[i]->faceID2;
+            radius=blendRadii[i]->radius;
+
+        }
+
+//        cout<<faceID1<<"...."<<faceID2<<"....."<<radius<<endl;
+
+        lastVpd=svModelUtils::CreatePolyDataByBlend(lastVpd, faceID1, faceID2, radius, param);
+
+        if(lastVpd==NULL) return NULL;
+
+    }
+
+//    vtkPolyData* newVpd=lastVpd;
+
+//    if(newVpd==NULL) return;
+
+     svModelElementPolyData* mepddst =mepdsrc->Clone();
+     mepddst->SetWholeVtkPolyData(lastVpd);
+     std::vector<svModelElement::svFace*> faces=mepddst->GetFaces();
+     for(int i=0;i<faces.size();i++)
+     {
+         faces[i]->vpd=mepddst->CreateFaceVtkPolyData(faces[i]->id);
+     }
+
+     return mepddst;
 }
 
 vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)

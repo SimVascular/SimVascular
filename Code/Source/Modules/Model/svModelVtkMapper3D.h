@@ -10,6 +10,7 @@
 #include "mitkBaseRenderer.h"
 #include "mitkLocalStorageHandler.h"
 
+#include <vtkAssembly.h>
 #include <vtkPropAssembly.h>
 #include <vtkPainterPolyDataMapper.h>
 #include <vtkActor.h>
@@ -84,7 +85,8 @@ public:
     {
     public:
 
-        vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
+//        vtkSmartPointer<vtkPropAssembly> m_PropAssembly;
+        vtkSmartPointer<vtkAssembly> m_PropAssembly;
         vtkSmartPointer<vtkPlaneCollection> m_ClippingPlaneCollection;
 
 //        vtkSmartPointer<vtkActor> m_Actor;
@@ -95,7 +97,7 @@ public:
 
         LocalStorage()
         {
-            m_PropAssembly = vtkSmartPointer<vtkPropAssembly>::New();
+            m_PropAssembly = vtkSmartPointer<vtkAssembly>::New();
             m_ClippingPlaneCollection = vtkSmartPointer<vtkPlaneCollection>::New();
 
 //            m_VtkPolyDataMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();

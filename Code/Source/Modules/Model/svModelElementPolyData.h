@@ -13,27 +13,6 @@ class SVMODEL_EXPORT svModelElementPolyData : public svModelElement
 {
 public:
 
-    struct svBlendParamRadius
-    {
-        int id1;
-        int id2;
-        double radius;
-
-        svBlendParamRadius()
-            : id1(0)
-            , id2(0)
-            , radius(0.0)
-        {
-        }
-
-        svBlendParamRadius(const svBlendParamRadius &other)
-            : id1(other.id1)
-            , id2(other.id2)
-            , radius(other.radius)
-        {
-        }
-    };
-
     struct svBlendParam
     {
         int numblenditers;
@@ -79,18 +58,11 @@ public:
 
     svBlendParam* GetBlendParam();
 
-    std::vector<svBlendParamRadius*> GetBlendRadius();
-
-    void SetBlendRadius(std::vector<svBlendParamRadius*> blendRadius);
-
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;
 
     svBlendParam* m_BlendParam;
-
-    std::vector<svBlendParamRadius*> m_BlendRadius;
-
 
   };
 

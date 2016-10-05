@@ -19,6 +19,7 @@ svModelElement::svModelElement(const svModelElement &other)
         face->id=other.m_Faces[i]->id;
         face->name=other.m_Faces[i]->name;
         face->type=other.m_Faces[i]->type;
+        face->selected=other.m_Faces[i]->selected;
         face->visible=other.m_Faces[i]->visible;
         face->opacity=other.m_Faces[i]->opacity;
         face->color[0]=other.m_Faces[i]->color[0];
@@ -41,6 +42,11 @@ svModelElement::svModelElement(const svModelElement &other)
     {
         m_WholeVtkPolyData=vtkSmartPointer<vtkPolyData>::New();
         m_WholeVtkPolyData->DeepCopy(other.m_WholeVtkPolyData);
+    }
+
+    for(int i=0;i<other.m_BlendRadii.size();i++)
+    {
+        m_BlendRadii.push_back(new svBlendParamRadius(*(other.m_BlendRadii[i])));
     }
 }
 
@@ -115,7 +121,7 @@ svModelElement::svFace* svModelElement::GetFace(int id) const
         return m_Faces[idx];
 }
 
-svModelElement::svFace*  GetFace(std::string name) const
+svModelElement::svFace* svModelElement::GetFace(std::string name) const
 {
     return GetFace(GetFaceID(name));
 }
@@ -207,7 +213,6 @@ int svModelElement::GetFaceID(std::string name) const
     return -1;
 }
 
-
 bool svModelElement::IsFaceSelected(std::string name)
 {
     return GetFace(name)&&GetFace(name)->selected;
@@ -233,4 +238,14 @@ void svModelElement::CalculateBoundingBox(double *bounds)
       m_WholeVtkPolyData->GetBounds(bounds);
     }
 
+}
+
+std::vector<svModelElement::svBlendParamRadius*> svModelElement::GetBlendRadii()
+{
+    return m_BlendRadii;
+}
+
+void svModelElement::SetBlendRadii(std::vector<svModelElement::svBlendParamRadius*> blendRadii)
+{
+    m_BlendRadii=blendRadii;
 }

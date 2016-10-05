@@ -54,47 +54,48 @@ vtkProp* svModelVtkMapper2D::GetVtkProp(mitk::BaseRenderer * renderer)
     return ls->m_PropAssembly;
 }
 
-void svModelVtkMapper2D::Update(mitk::BaseRenderer* renderer)
-{
-    const mitk::DataNode* node = GetDataNode();
-    if( node == NULL )
-        return;
+//Comment the code below to make sure to always update the renderwindows
+//void svModelVtkMapper2D::Update(mitk::BaseRenderer* renderer)
+//{
+//    const mitk::DataNode* node = GetDataNode();
+//    if( node == NULL )
+//        return;
 
-    bool visible = true;
-    node->GetVisibility(visible, renderer, "visible");
-    if ( !visible )
-        return;
+//    bool visible = true;
+//    node->GetVisibility(visible, renderer, "visible");
+//    if ( !visible )
+//        return;
 
-    svModel* model  = static_cast<svModel*>( node->GetData() );
-    if ( model == NULL )
-        return;
+//    svModel* model  = static_cast<svModel*>( node->GetData() );
+//    if ( model == NULL )
+//        return;
 
-    this->CalculateTimeStep( renderer );
+//    this->CalculateTimeStep( renderer );
 
-    const mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
-    if ( ( dataTimeGeometry == NULL )
-         || ( dataTimeGeometry->CountTimeSteps() == 0 )
-         || ( !dataTimeGeometry->IsValidTimeStep( this->GetTimestep() ) ) )
-    {
-        return;
-    }
+//    const mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
+//    if ( ( dataTimeGeometry == NULL )
+//         || ( dataTimeGeometry->CountTimeSteps() == 0 )
+//         || ( !dataTimeGeometry->IsValidTimeStep( this->GetTimestep() ) ) )
+//    {
+//        return;
+//    }
 
-    model->UpdateOutputInformation();
-    LocalStorage* localStorage = m_LSH.GetLocalStorage(renderer);
+//    model->UpdateOutputInformation();
+//    LocalStorage* localStorage = m_LSH.GetLocalStorage(renderer);
 
-    //check if something important has changed and we need to rerender
-    if ( (localStorage->m_LastUpdateTime < node->GetMTime()) //was the node modified?
-         || (localStorage->m_LastUpdateTime < model->GetPipelineMTime()) //Was the data modified?
-         || (localStorage->m_LastUpdateTime < renderer->GetCurrentWorldPlaneGeometryUpdateTime()) //was the geometry modified?
-         || (localStorage->m_LastUpdateTime < renderer->GetCurrentWorldPlaneGeometry()->GetMTime())
-         || (localStorage->m_LastUpdateTime < node->GetPropertyList()->GetMTime()) //was a property modified?
-         || (localStorage->m_LastUpdateTime < node->GetPropertyList(renderer)->GetMTime()) )
-    {
-        this->GenerateDataForRenderer( renderer );
-    }
+//    //check if something important has changed and we need to rerender
+//    if ( (localStorage->m_LastUpdateTime < node->GetMTime()) //was the node modified?
+//         || (localStorage->m_LastUpdateTime < model->GetPipelineMTime()) //Was the data modified?
+//         || (localStorage->m_LastUpdateTime < renderer->GetCurrentWorldPlaneGeometryUpdateTime()) //was the geometry modified?
+//         || (localStorage->m_LastUpdateTime < renderer->GetCurrentWorldPlaneGeometry()->GetMTime())
+//         || (localStorage->m_LastUpdateTime < node->GetPropertyList()->GetMTime()) //was a property modified?
+//         || (localStorage->m_LastUpdateTime < node->GetPropertyList(renderer)->GetMTime()) )
+//    {
+//        this->GenerateDataForRenderer( renderer );
+//    }
 
-    localStorage->m_LastUpdateTime.Modified();
-}
+//    localStorage->m_LastUpdateTime.Modified();
+//}
 
 void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {

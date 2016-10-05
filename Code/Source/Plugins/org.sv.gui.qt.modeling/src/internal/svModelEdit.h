@@ -43,13 +43,15 @@ public slots:
 
     void UpdateFaceListSelection();
 
-    void UpdateFacesAndNodes();
+//    void UpdateFacesAndNodes();
 
     void UpdateBlendFaceList(int index);
 
 public:
 
     int GetTimeStep();
+
+    std::vector<svModelElement::svBlendParamRadius*> GetBlendRadii();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
@@ -88,7 +90,7 @@ protected:
     svModelDataInteractor::Pointer m_DataInteractor;
 
     long m_ModelSelectFaceObserverTag;
-    long m_ModelUpdateFaceObserverTag;
+    long m_ModelUpdateObserverTag;
 
     QmitkStdMultiWidget* m_DisplayWidget;
 };

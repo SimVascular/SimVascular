@@ -58,7 +58,7 @@ protected:
 
     void ApplyMapperProperties(vtkSmartPointer<vtkPolyDataMapper> mapper, mitk::BaseRenderer* renderer);
 
-    void Update(mitk::BaseRenderer* renderer) override;
+//    void Update(mitk::BaseRenderer* renderer) override;
 };
 
 #endif /* SVMODELVTKMAPPER2D_H */
