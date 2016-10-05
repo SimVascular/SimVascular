@@ -10,7 +10,7 @@
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
 
-vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
+vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
 {
     int groupNumber=segs.size();
     cvPolyData **srcs=new cvPolyData* [groupNumber];
@@ -35,7 +35,7 @@ vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*>
     return dst->GetVtkPolyData();
 }
 
-static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6)
+static svModelElement* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -51,7 +51,7 @@ static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::D
         }
     }
 
-    vtkPolyData* solidvpd=CreateSolidModelPolyData(segs,t,noInterOut,tol);
+    vtkPolyData* solidvpd=CreatePolyData(segs,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
 
     int *doublecaps;
@@ -110,7 +110,7 @@ static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::D
     return modelElement;
 }
 
-vtkPolyData* svModelUtils::CreateSolidModelPolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelUtils::svBlendParam* param)
+vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelUtils::svBlendParamPolyData* param)
 {
     if(vpdsrc==NULL)
         return NULL;
@@ -147,6 +147,12 @@ vtkPolyData* svModelUtils::CreateSolidModelPolyDataByBlend(vtkPolyData* vpdsrc, 
     vpd->GetCellData()->RemoveArray("ActiveCells");
 
     return vpd;
+
+}
+
+
+svModelElement* svModelUtils::CreateModelElementPolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svBlendParamPolyData* param)
+{
 
 }
 

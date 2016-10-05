@@ -115,6 +115,11 @@ svModelElement::svFace* svModelElement::GetFace(int id) const
         return m_Faces[idx];
 }
 
+svModelElement::svFace*  GetFace(std::string name) const
+{
+    return GetFace(GetFaceID(name));
+}
+
 int svModelElement::GetFaceIndex(int id) const
 {
     for(int i=0;i<m_Faces.size();i++)
@@ -128,13 +133,11 @@ int svModelElement::GetFaceIndex(int id) const
 
 std::string svModelElement::GetFaceName(int id) const
 {
-    int index=GetFaceIndex(id);
-    if(index<0)
-        return "";
-    else if(!m_Faces[index])
-        return "";
+    svFace* face=GetFace(id);
+    if(face)
+        return face->name;
     else
-        return m_Faces[index]->name;
+        return "";
 }
 
 void svModelElement::SetFaceName(std::string name, int id)
@@ -177,6 +180,42 @@ void svModelElement::ClearFaceSelection()
             m_Faces[i]->selected=false;
     }
 
+}
+
+void svModelElement::SetSelectedFace(int id)
+{
+    svFace* face=GetFace(id);
+    if(face)
+        face->selected=true;
+}
+
+void svModelElement::SetSelectedFace(std::string name)
+{
+    svFace* face=GetFace(name);
+    if(face)
+        face->selected=true;
+}
+
+int svModelElement::GetFaceID(std::string name) const
+{
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->name==name)
+            return m_Faces[i]->id;
+    }
+
+    return -1;
+}
+
+
+bool svModelElement::IsFaceSelected(std::string name)
+{
+    return GetFace(name)&&GetFace(name)->selected;
+}
+
+bool svModelElement::IsFaceSelected(int id)
+{
+    return GetFace(id)&&GetFace(id)->selected;
 }
 
 void svModelElement::CalculateBoundingBox(double *bounds)

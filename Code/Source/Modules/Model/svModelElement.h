@@ -67,7 +67,11 @@ public:
 
     svFace* GetFace(int id) const;
 
+    svFace* GetFace(std::string name) const;
+
     int GetFaceIndex(int id) const;
+
+    int GetFaceID(std::string name) const;
 
     std::string GetFaceName(int id) const;
 
@@ -84,6 +88,11 @@ public:
     void SetSelectedFaceIndex(int idx);
 
     void ClearFaceSelection();
+
+    void SetSelectedFace(int id);
+    void SetSelectedFace(std::string name);
+    bool IsFaceSelected(std::string name);
+    bool IsFaceSelected(int id);
 
     void CalculateBoundingBox(double *bounds);
 

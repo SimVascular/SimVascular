@@ -41,7 +41,11 @@ public slots:
 
     void BlendModel();
 
+    void UpdateFaceListSelection();
+
     void UpdateFacesAndNodes();
+
+    void UpdateBlendFaceList(int index);
 
 public:
 
@@ -73,11 +77,13 @@ protected:
 
     svModel* m_Model;
 
+    std::string m_ModelType;
+
     mitk::DataNode::Pointer m_ModelNode;
 
     svSegSelectionWidget* m_SegSelectionWidget;
 
-    bool m_RemovingNode;
+//    bool m_RemovingNode;
 
     svModelDataInteractor::Pointer m_DataInteractor;
 
