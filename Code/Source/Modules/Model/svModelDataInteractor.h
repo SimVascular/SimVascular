@@ -25,7 +25,7 @@ protected:
     virtual void DataNodeChanged() override;
 
     virtual bool CheckOverObject (const mitk::InteractionEvent*);
-    virtual void SelectObject (mitk::StateMachineAction*, mitk::InteractionEvent*);
+    virtual void SelectFace (mitk::StateMachineAction*, mitk::InteractionEvent*);
 
 private:
 

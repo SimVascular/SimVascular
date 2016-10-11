@@ -90,20 +90,40 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
     ls->m_PropAssembly->GetParts()->RemoveAllItems();
 
+//    if(showWholeSurface)
+//    {
+//        vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+//        mapper->SetInputData(wholePolyData);
+
+//        vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
+//        actor->SetMapper(mapper);
+
+//        Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
+//        ApplyAllProperties(renderer, mapper, actor);
+
+//        ls->m_PropAssembly->AddPart(actor );
+//        ls->m_Actor=actor;
+//    }else{
+//        ls->m_Actor=NULL;
+//    }
+
+    vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+    mapper->SetInputData(wholePolyData);
+
+    vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
+    actor->SetMapper(mapper);
+
+    Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
+    ApplyAllProperties(renderer, mapper, actor);
+
+    ls->m_Actor=actor;
+
     if(showWholeSurface)
     {
-        vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-        mapper->SetInputData(wholePolyData);
-
-        vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
-        actor->SetMapper(mapper);
-
-        Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
-        ApplyAllProperties(renderer, mapper, actor);
-
         ls->m_PropAssembly->AddPart(actor );
     }
 
+    ls->m_FaceActors.clear();
     if(showFaces)
     {
         float selectedColor[3]= { 1.0f, 1.0f, 0.0f };
@@ -122,29 +142,44 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
             if(!facePolyData)
                 continue;
 
-            vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-            mapper->SetInputData(facePolyData);
+            vtkSmartPointer<vtkPainterPolyDataMapper> faceMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+            faceMapper->SetInputData(facePolyData);
 
-            vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
-            actor->SetMapper(mapper);
+            vtkSmartPointer<vtkActor> faceActor= vtkSmartPointer<vtkActor>::New();
+            faceActor->SetMapper(faceMapper);
 
-            ApplyAllProperties(renderer, mapper, actor);
+            ApplyAllProperties(renderer, faceMapper, faceActor);
 
             if(face->selected){
-                actor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
+                faceActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
             }else{
-                actor->GetProperty()->SetColor(face->color[0], face->color[1], face->color[2]);
+                faceActor->GetProperty()->SetColor(face->color[0], face->color[1], face->color[2]);
             }
-            actor->GetProperty()->SetOpacity(face->opacity);
+            faceActor->GetProperty()->SetOpacity(face->opacity);
 
-            ls->m_PropAssembly->AddPart(actor );
+            ls->m_PropAssembly->AddPart(faceActor );
 
+            ls->m_FaceActors.push_back(faceActor);
         }
 
     }
 
     if(visible)
         ls->m_PropAssembly->VisibilityOn();
+}
+
+vtkSmartPointer<vtkActor> svModelVtkMapper3D::GetActor(mitk::BaseRenderer* renderer)
+{
+    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
+
+    return ls->m_Actor;
+}
+
+std::vector<vtkSmartPointer<vtkActor>> svModelVtkMapper3D::GetFaceActors(mitk::BaseRenderer* renderer)
+{
+    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
+
+    return ls->m_FaceActors;
 }
 
 void svModelVtkMapper3D::ResetMapper( mitk::BaseRenderer* renderer )

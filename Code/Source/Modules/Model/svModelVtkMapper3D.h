@@ -68,18 +68,8 @@ public:
 
     static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
 
-protected:
-    svModelVtkMapper3D();
-
-    virtual ~svModelVtkMapper3D();
-
-    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
-
-    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
-
-    virtual void CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property );
-
-public:
+    vtkSmartPointer<vtkActor> GetActor(mitk::BaseRenderer* renderer);
+    std::vector<vtkSmartPointer<vtkActor>> GetFaceActors(mitk::BaseRenderer* renderer);
 
     class LocalStorage : public mitk::Mapper::BaseLocalStorage
     {
@@ -94,6 +84,10 @@ public:
 //        vtkSmartPointer<vtkPolyDataNormals> m_VtkPolyDataNormals;
 
 //        vtkSmartPointer<vtkDepthSortPolyData> m_DepthSort;
+
+        vtkSmartPointer<vtkActor> m_Actor;
+
+        std::vector<vtkSmartPointer<vtkActor>> m_FaceActors;
 
         LocalStorage()
         {
@@ -117,6 +111,18 @@ public:
 
     static void ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer);
     static void SetDefaultPropertiesForVtkProperty(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite);
+
+protected:
+    svModelVtkMapper3D();
+
+    virtual ~svModelVtkMapper3D();
+
+    virtual void GenerateDataForRenderer(mitk::BaseRenderer* renderer) override;
+
+    virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
+
+    virtual void CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property );
+
 };
 
 
