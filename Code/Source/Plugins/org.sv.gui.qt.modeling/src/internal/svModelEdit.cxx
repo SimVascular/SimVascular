@@ -1,6 +1,5 @@
 #include "svModelEdit.h"
 #include "ui_svModelEdit.h"
-#include "ui_svSegSelectionWidget.h"
 
 #include "svModel.h"
 #include "svModelUtils.h"
@@ -30,8 +29,6 @@ svModelEdit::svModelEdit() :
     m_ModelNode=NULL;
 
     m_SegSelectionWidget=NULL;
-
-//    m_RemovingNode=false;
 
     m_ModelSelectFaceObserverTag=0;
     m_ModelUpdateObserverTag=0;
@@ -68,8 +65,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     m_SegSelectionWidget->hide();
     m_SegSelectionWidget->setWindowFlags(Qt::WindowStaysOnTopHint);
 
-    connect(m_SegSelectionWidget->ui->buttonBox,SIGNAL(accepted()), this, SLOT(CreateModel()));
-    connect(m_SegSelectionWidget->ui->buttonBox,SIGNAL(rejected()), this, SLOT(HideSegSelectionWidget()));
+    connect(m_SegSelectionWidget,SIGNAL(accepted()), this, SLOT(CreateModel()));
 
     //for tab Face List
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
@@ -290,7 +286,6 @@ void svModelEdit::NodeAdded(const mitk::DataNode* node)
 
 void svModelEdit::NodeRemoved(const mitk::DataNode* node)
 {
-//    OnSelectionChanged(GetDataManagerSelection());
 }
 
 void svModelEdit::ClearAll()
@@ -327,7 +322,6 @@ void svModelEdit::ShowSegSelectionWidget()
 
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
-//    if(modelElement==NULL) return;
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -347,82 +341,14 @@ void svModelEdit::ShowSegSelectionWidget()
     for(int i=0;i<rs->size();i++)
         segNodes.push_back(rs->GetElement(i));
 
-    int segNum=segNodes.size();
 
-    QStandardItemModel *itemModel;
-    itemModel = new QStandardItemModel(segNum,2,this);
-
-    for(int row = 0; row < segNum; row++)
-    {
-        for(int col = 0; col < 2; col++)
-        {
-//            QModelIndex index
-//                    = itemModel->index(row,col,QModelIndex());
-            //            if(col==0)
-            //            {
-            //                model->setData(index,QString::fromStdString(segNodes[row]->GetName()));
-            //            }
-            //            else if(col==1)
-            //            {
-            //                if(modelElement&&modelElement->HasSeg(segNodes[row]->GetName()))
-            //                    model->setData(index,true);
-            //                else
-            //                    model->setData(index,false);
-            //            }
-            if(col==0)
-            {
-                QStandardItem* item= new QStandardItem(QString::fromStdString(segNodes[row]->GetName()));
-                item->setEditable(false);
-                itemModel->setItem(row,col,item);
-            }
-            else if(col==1)
-            {
-                if(modelElement&&modelElement->HasSeg(segNodes[row]->GetName()))
-                {
-                    QStandardItem* item= new QStandardItem(true);
-                    item->setCheckable(true);
-                    item->setCheckState(Qt::Checked);
-                    itemModel->setItem(row,col,item);
-                }
-                else
-                {
-                    QStandardItem* item= new QStandardItem(false);
-                    item->setCheckable(true);
-                    item->setCheckState(Qt::Unchecked);
-                    itemModel->setItem(row,col,item);
-                }
-
-            }
-        }
-    }
-
-    QStringList headers;
-    headers << "Segmentation" << "Use";
-    itemModel->setHorizontalHeaderLabels(headers);
-
-    m_SegSelectionWidget->ui->tableView->setModel(itemModel);
-    //    m_SegSelectionWidget->ui->tableView->setColumnWidth(0,150);
-    m_SegSelectionWidget->ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    m_SegSelectionWidget->SetTableView(segNodes,modelElement);
     m_SegSelectionWidget->show();
-}
-
-void svModelEdit::HideSegSelectionWidget()
-{
-    m_SegSelectionWidget->hide();
 }
 
 void svModelEdit::CreateModel()
 {
-    std::vector<std::string> segNames;
-    int rowCount=m_SegSelectionWidget->ui->tableView->model()->rowCount(QModelIndex());
-    for(int i=0;i<rowCount;i++)
-    {
-        QModelIndex index= m_SegSelectionWidget->ui->tableView->model()->index(i,1, QModelIndex());
-        if(index.data(Qt::CheckStateRole) == Qt::Checked){
-            QModelIndex idx= m_SegSelectionWidget->ui->tableView->model()->index(i,0, QModelIndex());
-            segNames.push_back(idx.data().toString().toStdString());
-        }
-    }
+    std::vector<std::string> segNames=m_SegSelectionWidget->GetUsedSegNames();
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -435,12 +361,8 @@ void svModelEdit::CreateModel()
     if(rs->size()<1) return;
 
     mitk::DataNode::Pointer segFolderNode=rs->GetElement(0);
-    //    rs=GetDataStorage()->GetDerivations(segFolderNode);
-    //    if(rs->size()<1) return;
 
     std::vector<mitk::DataNode::Pointer> segNodes;
-    //    for(int i=0;i<rs->size();i++)
-    //        segNodes.push_back(rs->GetElement(i));
 
     for(int i=0;i<segNames.size();i++)
     {
@@ -470,9 +392,6 @@ void svModelEdit::CreateModel()
 
     m_Model->ExecuteOperation(doOp);
 
-    HideSegSelectionWidget();
-
-//    OnSelectionChanged(GetDataManagerSelection());
     UpdateGUI();
 }
 

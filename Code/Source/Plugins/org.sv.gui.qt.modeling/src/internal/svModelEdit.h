@@ -33,8 +33,6 @@ public slots:
 
     void ShowSegSelectionWidget();
 
-    void HideSegSelectionWidget();
-
     void UpdateGUI();
 
     void SelectItem(const QModelIndex & idx);
@@ -42,8 +40,6 @@ public slots:
     void BlendModel();
 
     void UpdateFaceListSelection();
-
-//    void UpdateFacesAndNodes();
 
     void UpdateBlendFaceList(int index);
 
@@ -84,8 +80,6 @@ protected:
     mitk::DataNode::Pointer m_ModelNode;
 
     svSegSelectionWidget* m_SegSelectionWidget;
-
-//    bool m_RemovingNode;
 
     svModelDataInteractor::Pointer m_DataInteractor;
 
