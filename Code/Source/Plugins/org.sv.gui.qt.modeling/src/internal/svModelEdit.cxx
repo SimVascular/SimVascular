@@ -81,6 +81,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
 void svModelEdit::Visible()
 {
+    ui->tabWidget->setCurrentIndex(0);
     OnSelectionChanged(GetDataManagerSelection());
 }
 
@@ -123,9 +124,6 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 //    if(m_ModelNode==modelNode)
 //    {
 ////        return;
-//    }else
-//    {
-//        ui->tabWidget->setCurrentIndex(0);
 //    }
 
     ClearAll();
@@ -169,9 +167,6 @@ void svModelEdit::UpdateGUI()
     //------------------------------------------------------------------------
     ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
     ui->labelModelType->setText(QString::fromStdString(m_ModelType));
-    //    svModelElement* modelElement=m_Model->GetModelElement();
-    //    if(modelElement)
-    //        ui->labelModelType->setText(QString::fromStdString(modelElement->GetType()));
 
     if(m_ModelType=="Parasolid" || m_ModelType=="OpenCASCADE")
         ui->btnConvert->show();
@@ -201,25 +196,6 @@ void svModelEdit::UpdateGUI()
     }
 
     UpdateFaceListSelection();
-
-//    for(int i=0;i<faces.size();i++)
-//    {
-//        svModelElement::svFace* face=faces[i];
-//        if(face&&face->selected)
-//        {
-//            QModelIndex mIndex=ui->listWidget->model()->index(i,0);
-//            ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
-////            SelectItem(mIndex);
-//        }
-//    }
-
-//    int selectedIndex=modelElement->GetSelectedFaceIndex();
-//    if(selectedIndex>-1)
-//    {
-//        QModelIndex mIndex=ui->listWidget->model()->index(selectedIndex,0);
-//        ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
-//        SelectItem(mIndex);
-//    }
 
     if(m_ModelType=="PolyData")
         ui->toolBoxPolyData->show();
@@ -270,17 +246,6 @@ void svModelEdit::UpdateFaceListSelection()
         }
     }
 
-
-    //            for(int i=0;i<faces.size();i++)
-    //            {
-    //                svModelElement::svFace* face=faces[i];
-    //                if(face&&face->selected)
-    //                {
-    //                    QModelIndex mIndex=ui->listWidget->model()->index(i,0);
-    //                    ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
-    //        //            SelectItem(mIndex);
-    //                }
-    //            }
 }
 
 void svModelEdit::SelectItem(const QModelIndex & idx)
@@ -300,18 +265,6 @@ void svModelEdit::SelectItem(const QModelIndex & idx)
 
     modelElement->ClearFaceSelection();
     modelElement->SetSelectedFace(selectedName);
-
-//    mitk::DataStorage::SetOfObjects::ConstPointer nodes=GetDataStorage()->GetDerivations(m_ModelNode);
-//    for(int i=0;i<nodes->size();i++)
-//    {
-//        mitk::DataNode::Pointer node=nodes->GetElement(i);
-//        if(node->GetName()==selectedName)
-//            node->SetColor(1,1,0);
-//        else
-//            node->SetColor(1,1,1);
-//    }
-
-//    UpdateFaceListSelection();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -545,9 +498,6 @@ std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()
 
     }
 
-//    svModelElement::svBlendParamRadius* blendRadius=new svModelElement::svBlendParamRadius(1,2,0.05);
-//    blendRadii.push_back(new svModelElement::svBlendParamRadius(1,2,0.05));
-
     return blendRadii;
 }
 
@@ -598,44 +548,4 @@ void svModelEdit::BlendModel()
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
-
-//void svModelEdit::UpdateFacesAndNodes()
-//{
-//    if(m_Model==NULL||m_ModelNode.IsNull()) return;
-
-//    int timeStep=GetTimeStep();
-//    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
-
-//    if(modelElement==NULL) return;
-
-////    m_RemovingNode=true;
-
-//    mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=GetDataStorage()->GetDerivations(m_ModelNode,nullptr,false);
-//    if( !nodesToRemove->empty())
-//    {
-//        GetDataStorage()->Remove(nodesToRemove);
-//    }
-
-//    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
-
-//    for(int i=0;i<faces.size();i++)
-//    {
-//        vtkPolyData *facepd = vtkPolyData::New();
-//        int faceid=i+1;
-//        PlyDtaUtils_GetFacePolyData(modelElement->GetVtkPolyDataModel(), &faceid, facepd);
-//        faces[i]->vpd=facepd;
-//        mitk::Surface::Pointer surface=mitk::Surface::New();
-//        surface->SetVtkPolyData((faces[i]->vpd));
-//        mitk::DataNode::Pointer surfaceNode = mitk::DataNode::New();
-//        surfaceNode->SetData(surface);
-//        surfaceNode->SetName(faces[i]->name);
-//        surfaceNode->SetBoolProperty("pickable", true);
-//        faces[i]->node=surfaceNode;
-//        GetDataStorage()->Add(surfaceNode,m_ModelNode);
-//    }
-
-////    m_RemovingNode=false;
-
-//    OnSelectionChanged(GetDataManagerSelection());
-//}
 
