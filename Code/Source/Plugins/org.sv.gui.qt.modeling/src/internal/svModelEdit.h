@@ -41,7 +41,15 @@ public slots:
 
     void UpdateFaceListSelection();
 
-    void UpdateBlendFaceList(int index);
+    void UpdateBlendTable(int index);
+
+    void TableViewBlendContextMenuRequested( const QPoint & index );
+
+    void SetRadius( bool checked = false );
+
+    void ClearRadius( bool checked = false );
+
+    void SetupBlendTable();
 
 public:
 
@@ -87,6 +95,11 @@ protected:
     long m_ModelUpdateObserverTag;
 
     QmitkStdMultiWidget* m_DisplayWidget;
+
+    QMenu* m_BlendTableMenu;
+
+    QStandardItemModel* m_BlendTableModel;
+
 };
 
 #endif // SVMODELEDIT_H

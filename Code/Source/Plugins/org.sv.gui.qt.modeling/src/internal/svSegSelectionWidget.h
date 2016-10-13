@@ -27,7 +27,7 @@ public:
 
 public slots:
 
-    void NodeTableViewContextMenuRequested( const QPoint & index );
+    void TableViewContextMenuRequested( const QPoint & index );
 
     void UseSelected ( bool checked = false );
     void UseAll ( bool checked = false );

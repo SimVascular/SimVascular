@@ -3,12 +3,13 @@
 
 svSegSelectionWidget::svSegSelectionWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::svSegSelectionWidget)
+    ui(new Ui::svSegSelectionWidget),
+    m_TableModel(NULL)
 {
     ui->setupUi(this);
 
     ui->tableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
-    ui->tableView->setSortingEnabled(true);
+//    ui->tableView->setSortingEnabled(true);
 
     m_NodeMenu = new QMenu(ui->tableView);
 
@@ -23,7 +24,7 @@ svSegSelectionWidget::svSegSelectionWidget(QWidget *parent) :
     QObject::connect( useNoneAction, SIGNAL( triggered(bool) ) , this, SLOT( UseNone(bool) ) );
 
     QObject::connect( ui->tableView, SIGNAL(customContextMenuRequested(const QPoint&))
-      , this, SLOT(NodeTableViewContextMenuRequested(const QPoint&)) );
+      , this, SLOT(TableViewContextMenuRequested(const QPoint&)) );
 
     connect(ui->buttonBox,SIGNAL(accepted()), this, SLOT(Confirm()));
     connect(ui->buttonBox,SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -110,7 +111,7 @@ void svSegSelectionWidget::Cancel()
 }
 
 
-void svSegSelectionWidget::NodeTableViewContextMenuRequested( const QPoint & pos )
+void svSegSelectionWidget::TableViewContextMenuRequested( const QPoint & pos )
 {
     m_NodeMenu->popup(QCursor::pos());
 }

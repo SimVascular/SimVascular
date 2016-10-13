@@ -450,30 +450,18 @@
                                </widget>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderSeparationAngle">
-                                <property name="decimals">
-                                 <number>0</number>
-                                </property>
+                               <widget class="QSpinBox" name="sbSeparationAngle">
                                 <property name="minimum">
-                                 <double>1.000000000000000</double>
+                                 <number>1</number>
                                 </property>
                                 <property name="maximum">
-                                 <double>90.000000000000000</double>
+                                 <number>90</number>
+                                </property>
+                                <property name="singleStep">
+                                 <number>10</number>
                                 </property>
                                 <property name="value">
-                                 <double>45.000000000000000</double>
-                                </property>
-                                <property name="tickInterval">
-                                 <double>10.000000000000000</double>
-                                </property>
-                                <property name="synchronizeSiblings">
-                                 <set>ctkSliderWidget::NoSynchronize</set>
-                                </property>
-                                <property name="spinBoxAlignment">
-                                 <set>Qt::AlignLeading</set>
-                                </property>
-                                <property name="popupSlider">
-                                 <bool>true</bool>
+                                 <number>45</number>
                                 </property>
                                </widget>
                               </item>
@@ -1750,6 +1738,21 @@
                 <string>Blend</string>
                </attribute>
                <layout class="QVBoxLayout" name="verticalLayout_2">
+                <property name="spacing">
+                 <number>5</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
                 <item>
                  <widget class="QWidget" name="widget_3" native="true">
                   <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -1794,14 +1797,17 @@
                        </widget>
                       </item>
                       <item>
-                       <widget class="QLabel" name="label_10">
-                        <property name="text">
-                         <string>Face1  Face2  Radius</string>
+                       <widget class="QTableView" name="tableViewBlend">
+                        <property name="contextMenuPolicy">
+                         <enum>Qt::CustomContextMenu</enum>
+                        </property>
+                        <property name="selectionBehavior">
+                         <enum>QAbstractItemView::SelectRows</enum>
+                        </property>
+                        <property name="sortingEnabled">
+                         <bool>true</bool>
                         </property>
                        </widget>
-                      </item>
-                      <item>
-                       <widget class="QPlainTextEdit" name="plainTextEditBlend"/>
                       </item>
                       <item>
                        <widget class="QWidget" name="widgetBlendDecimation" native="true">

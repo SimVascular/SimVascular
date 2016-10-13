@@ -126,6 +126,10 @@ public:
 
     void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);
 
+//    double GetBlendRadius(int faceID1, int faceID2);
+
+    svBlendParamRadius* GetBlendParamRadius(int faceID1, int faceID2);
+
     void CalculateBoundingBox(double *bounds);
 
   protected:
