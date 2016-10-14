@@ -159,27 +159,29 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
 
             TiXmlElement* blendRadiiElement = meElement->FirstChildElement("blend_radii");
-            std::vector<svModelElement::svBlendParamRadius*> blendRadii;
-            for( TiXmlElement* radiusElement = blendRadiiElement->FirstChildElement("face_pair");
-                 radiusElement != nullptr;
-                 radiusElement =blendRadiiElement->NextSiblingElement("face_pair") )
+            if(blendRadiiElement!=nullptr)
             {
-                if (radiusElement == nullptr)
-                    continue;
+                std::vector<svModelElement::svBlendParamRadius*> blendRadii;
+                for( TiXmlElement* radiusElement = blendRadiiElement->FirstChildElement("face_pair");
+                     radiusElement != nullptr;
+                     radiusElement =blendRadiiElement->NextSiblingElement("face_pair") )
+                {
+                    if (radiusElement == nullptr)
+                        continue;
 
-                int faceID1=0;
-                int faceID2=0;
-                double radius=0;
+                    int faceID1=0;
+                    int faceID2=0;
+                    double radius=0;
 
-                radiusElement->QueryIntAttribute("face_id1", &faceID1);
-                radiusElement->QueryIntAttribute("face_id2", &faceID2);
-                radiusElement->QueryDoubleAttribute("radius", &radius);
+                    radiusElement->QueryIntAttribute("face_id1", &faceID1);
+                    radiusElement->QueryIntAttribute("face_id2", &faceID2);
+                    radiusElement->QueryDoubleAttribute("radius", &radius);
 
-                blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+                    blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
 
+                }
+                me->SetBlendRadii(blendRadii);
             }
-            me->SetBlendRadii(blendRadii);
-
 
             if(type=="PolyData")
             {
@@ -187,13 +189,16 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 if(mepd)
                 {
                     TiXmlElement* blendElement = meElement->FirstChildElement("blend_param");
-                    svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
-                    blendElement->QueryIntAttribute("blend_iters", &(param->numblenditers));
-                    blendElement->QueryIntAttribute("sub_blend_iter", &(param->numsubblenditers));
-                    blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
-                    blendElement->QueryIntAttribute("lap_smooth_iter", &(param->numlapsmoothiters));
-                    blendElement->QueryIntAttribute("subdivision_iters", &(param->numsubdivisioniters));
-                    blendElement->QueryDoubleAttribute("decimation", &(param->targetdecimation));
+                    if(blendElement!=nullptr)
+                    {
+                        svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+                        blendElement->QueryIntAttribute("blend_iters", &(param->numblenditers));
+                        blendElement->QueryIntAttribute("sub_blend_iter", &(param->numsubblenditers));
+                        blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
+                        blendElement->QueryIntAttribute("lap_smooth_iter", &(param->numlapsmoothiters));
+                        blendElement->QueryIntAttribute("subdivision_iters", &(param->numsubdivisioniters));
+                        blendElement->QueryDoubleAttribute("decimation", &(param->targetdecimation));
+                    }
                 }
             }
 

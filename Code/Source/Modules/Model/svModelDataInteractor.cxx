@@ -65,7 +65,7 @@ void svModelDataInteractor::SelectFace(mitk::StateMachineAction*, mitk::Interact
     if(modelElement==NULL)
         return;
 
-    mitk::VtkPropRenderer *renderer = interactionEvent->GetSender();
+    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
 
     svModelVtkMapper3D* mapper=dynamic_cast<svModelVtkMapper3D*>(GetDataNode()->GetMapper(renderer->GetMapperID()));
 
@@ -96,7 +96,7 @@ void svModelDataInteractor::SelectFace(mitk::StateMachineAction*, mitk::Interact
     cellPicker->Pick(currentPickedDisplayPoint[0], currentPickedDisplayPoint[1], 0.0, renderer->GetVtkRenderer());
     cellPicker->PickFromListOff();
 
-    vtkSmartPointer<vtkPolyData> selectedFacePolyData=cellPicker->GetDataSet();
+    vtkPolyData* selectedFacePolyData=(vtkPolyData*)cellPicker->GetDataSet();
 
     modelElement->ClearFaceSelection();
 
@@ -106,7 +106,7 @@ void svModelDataInteractor::SelectFace(mitk::StateMachineAction*, mitk::Interact
     {
         for(int i=0;i<faces.size();i++)
         {
-            if(faces[i] && faces[i]->vpd==selectedFacePolyData)
+            if(faces[i] && faces[i]->vpd!=nullptr && faces[i]->vpd.GetPointer()==selectedFacePolyData)
             {
                 selectedFaceIndex=i;
                 break;

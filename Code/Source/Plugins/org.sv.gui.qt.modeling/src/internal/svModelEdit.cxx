@@ -292,7 +292,6 @@ void svModelEdit::UpdateFaceListSelection()
         ui->tableViewFaceList->clearSelection();
 
     int count=m_FaceListTableModel->rowCount();
-    cout<<"count: "<< count<<endl;
 
     for(int i=0;i<count;i++)
     {
@@ -303,9 +302,6 @@ void svModelEdit::UpdateFaceListSelection()
         {
             QModelIndex mIndex=m_FaceListTableModel->index(i,1);
             ui->tableViewFaceList->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
-            cout<<"i: "<<i<<" id: "<<id<<endl;
-//            ui->tableViewFaceList->selectRow(i);
-
         }
     }
 
@@ -1067,17 +1063,18 @@ void svModelEdit::CreateModel()
 
 std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()
 {
+    std::vector<svModelElement::svBlendParamRadius*> blendRadii;
+
     if(!m_Model)
-        return;
+        return blendRadii;
 
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
-    if(modelElement==NULL) return;
-
-    std::vector<svModelElement::svBlendParamRadius*> blendRadii;
+    if(modelElement==NULL)
+        return blendRadii;
 
     if(m_BlendTableModel==NULL)
-        return;
+        return blendRadii;
 
     int rowCount=m_BlendTableModel->rowCount();
 
