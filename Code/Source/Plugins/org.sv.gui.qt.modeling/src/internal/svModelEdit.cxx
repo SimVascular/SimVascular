@@ -79,7 +79,6 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     m_FaceListTableModel = new QStandardItemModel(this);
     ui->tableViewFaceList->setModel(m_FaceListTableModel);
     ui->tableViewFaceList->setItemDelegateForColumn(5,itemDelegate);
-    m_FaceListTableMenu=new QMenu(ui->tableViewFaceList);
 
     connect( m_FaceListTableModel, SIGNAL(itemChanged(QStandardItem*))
       , this, SLOT(UpdateFaceData(QStandardItem*)) );
@@ -99,6 +98,19 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
       , this
       , SLOT( ChangeColor ( const QModelIndex & ) ) );
 
+    m_FaceListTableMenu=new QMenu(ui->tableViewFaceList);
+    QAction* showAction=m_FaceListTableMenu->addAction("Show");
+    QAction* hideAction=m_FaceListTableMenu->addAction("Hide");
+    QAction* changeColorAction=m_FaceListTableMenu->addAction("Change Color");
+    QAction* changeOpacityAction=m_FaceListTableMenu->addAction("Change Opacity");
+
+    connect( showAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSelected(bool) ) );
+    connect( hideAction, SIGNAL( triggered(bool) ) , this, SLOT( HideSelected(bool) ) );
+    connect( changeColorAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeColorSelected(bool) ) );
+    connect( changeOpacityAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeOpacitySelected(bool) ) );
+
+    connect( ui->tableViewFaceList, SIGNAL(customContextMenuRequested(const QPoint&))
+      , this, SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
 
    //for tab Blend
     m_BlendTableModel = new QStandardItemModel(this);
@@ -304,27 +316,6 @@ void svModelEdit::UpdateFaceListSelection()
 
 }
 
-void svModelEdit::SelectItem(const QModelIndex & idx)
-{
-//    if(!m_Model)
-//        return;
-
-//    int timeStep=GetTimeStep();
-//    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
-//    if(modelElement==NULL) return;
-
-//    int index=idx.row();
-//    QListWidgetItem* item=ui->listWidget->item(index);
-//    if(!item) return;
-
-//    std::string selectedName=item->text().toStdString();
-
-//    modelElement->ClearFaceSelection();
-//    modelElement->SetSelectedFace(selectedName);
-
-//    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
-}
-
 void svModelEdit::SetupFaceListTable()
 {
     if(!m_Model)
@@ -448,10 +439,6 @@ void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*select
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
-//    if(indexesOfSelectedRows.size() < 1)
-//    {
-//        return;
-//    }
 
     modelElement->ClearFaceSelection();
 
@@ -550,6 +537,172 @@ void svModelEdit::ChangeColor(const QModelIndex &index)
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
+}
+
+void svModelEdit::TableViewFaceListContextMenuRequested( const QPoint & pos )
+{
+    m_FaceListTableMenu->popup(QCursor::pos());
+}
+
+void svModelEdit::ShowSelected( bool )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_FaceListTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
+        int id=itemID->text().toInt();
+        svModelElement::svFace* face=modelElement->GetFace(id);
+
+        if(face==NULL)
+            continue;
+
+        face->visible=true;
+
+        QStandardItem* itemV= m_FaceListTableModel->item(row,3);
+        itemV->setIcon(QIcon(":/show.png"));
+    }
+}
+
+void svModelEdit::HideSelected( bool )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_FaceListTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
+        int id=itemID->text().toInt();
+        svModelElement::svFace* face=modelElement->GetFace(id);
+
+        if(face==NULL)
+            continue;
+
+        face->visible=false;
+
+        QStandardItem* itemV= m_FaceListTableModel->item(row,3);
+        itemV->setIcon(QIcon(":/hide.png"));
+    }
+}
+
+void svModelEdit::ChangeOpacitySelected( bool )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_FaceListTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    bool ok;
+    float opacity=QInputDialog::getDouble(m_Parent, "Change Opacity", "Opacity:", 1.0, 0, 1.0, 2, &ok);
+
+    if(!ok)
+        return;
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
+        int id=itemID->text().toInt();
+        svModelElement::svFace* face=modelElement->GetFace(id);
+
+        if(face==NULL)
+            continue;
+
+        face->opacity=opacity;
+
+        QStandardItem* itemO= m_FaceListTableModel->item(row,5);
+        itemO->setData((double)(opacity), Qt::EditRole);
+    }
+}
+
+void svModelEdit::ChangeColorSelected( bool )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_FaceListTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    QColor newColor=QColorDialog::getColor(Qt::white,m_Parent,"Change Color");
+    if(!newColor.isValid())
+        return;
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
+        int id=itemID->text().toInt();
+        svModelElement::svFace* face=modelElement->GetFace(id);
+
+        if(face==NULL)
+            continue;
+
+        face->color[0]=newColor.red()/255.0f;
+        face->color[1]=newColor.green()/255.0f;
+        face->color[2]=newColor.blue()/255.0f;
+
+        QStandardItem* itemC= m_FaceListTableModel->item(row,4);
+        QBrush brush(newColor);
+        itemC->setBackground(brush);
+    }
 }
 
 void svModelEdit::UpdateBlendTable(int index)
@@ -677,10 +830,6 @@ void svModelEdit::TableBlendSelectionChanged( const QItemSelection & /*selected*
         return;
 
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
-//    if(indexesOfSelectedRows.size() < 1)
-//    {
-//        return;
-//    }
 
     modelElement->ClearFaceSelection();
 

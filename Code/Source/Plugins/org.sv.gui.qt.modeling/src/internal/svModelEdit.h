@@ -35,8 +35,6 @@ public slots:
 
     void UpdateGUI();
 
-    void SelectItem(const QModelIndex & idx);
-
     void BlendModel();
 
     void UpdateFaceListSelection();
@@ -68,6 +66,16 @@ public slots:
     void ToggleVisibility(const QModelIndex &index);
 
     void ChangeColor(const QModelIndex &index);
+
+    void TableViewFaceListContextMenuRequested( const QPoint & index );
+
+    void ShowSelected( bool checked = false );
+
+    void HideSelected( bool checked = false );
+
+    void ChangeOpacitySelected( bool checked = false );
+
+    void ChangeColorSelected( bool checked = false );
 
 
 public:
