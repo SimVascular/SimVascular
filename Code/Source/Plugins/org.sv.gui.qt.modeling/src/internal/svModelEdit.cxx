@@ -657,7 +657,7 @@ void svModelEdit::ChangeOpacitySelected( bool )
         face->opacity=opacity;
 
         QStandardItem* itemO= m_FaceListTableModel->item(row,5);
-        itemO->setData((double)(opacity), Qt::EditRole);
+        itemO->setData((int)(opacity*100)/100.0, Qt::EditRole);
     }
 }
 
