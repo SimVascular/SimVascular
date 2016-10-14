@@ -89,12 +89,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 reader->SetFileName(dataFileName.c_str());
                 reader->Update();
                 vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
-//                vtkSmartPointer<vtkPolyData> vpdModel=NULL;
-//                if(pd!=NULL)
-//                {
-//                    vpdModel=vtkSmartPointer<vtkPolyData>::New();
-//                    vpdModel->DeepCopy(pd);
-//                }
+
                 mepd->SetWholeVtkPolyData(pd);
 
             }
@@ -163,33 +158,44 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             me->SetSegNames(segNames);
 
 
-            //            if(type=="PolyData")
-            //            {
-            //                TiXmlElement* facesElement = meElement->FirstChildElement("faces");
-            //                std::vector<svModelElement::svFace*> faces;
-            //                for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
-            //                     faceElement != nullptr;
-            //                     faceElement =faceElement->NextSiblingElement("face") )
-            //                {
-            //                    if (faceElement == nullptr)
-            //                        continue;
+            TiXmlElement* blendRadiiElement = meElement->FirstChildElement("blend_radii");
+            std::vector<svModelElement::svBlendParamRadius*> blendRadii;
+            for( TiXmlElement* radiusElement = blendRadiiElement->FirstChildElement("face_pair");
+                 radiusElement != nullptr;
+                 radiusElement =blendRadiiElement->NextSiblingElement("face_pair") )
+            {
+                if (radiusElement == nullptr)
+                    continue;
 
-            //                    int id;
-            //                    std::string name;
+                int faceID1=0;
+                int faceID2=0;
+                double radius=0;
 
-            //                    faceElement->QueryIntAttribute("id", &id);
-            //                    faceElement->QueryStringAttribute("name", &name);
-            //                    vtkPolyData *facepd = vtkPolyData::New();
-            //                    PlyDtaUtils_GetFacePolyData(me->GetSolidModel(), &id, facepd);
-            //                    svModelElement::svFace* face=new svModelElement::svFace;
-            //                    face->id=id;
-            //                    face->name=name;
-            //                    face->vpd=facepd;
+                radiusElement->QueryIntAttribute("face_id1", &faceID1);
+                radiusElement->QueryIntAttribute("face_id2", &faceID2);
+                radiusElement->QueryDoubleAttribute("radius", &radius);
 
-            //                    faces.push_back(face);
-            //                }
-            //                me->SetFaces(faces);
-            //            }
+                blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+
+            }
+            me->SetBlendRadii(blendRadii);
+
+
+            if(type=="PolyData")
+            {
+                svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
+                if(mepd)
+                {
+                    TiXmlElement* blendElement = meElement->FirstChildElement("blend_param");
+                    svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+                    blendElement->QueryIntAttribute("blend_iters", &(param->numblenditers));
+                    blendElement->QueryIntAttribute("sub_blend_iter", &(param->numsubblenditers));
+                    blendElement->QueryIntAttribute("cstr_smooth_iter", &(param->numcgsmoothiters));
+                    blendElement->QueryIntAttribute("lap_smooth_iter", &(param->numlapsmoothiters));
+                    blendElement->QueryIntAttribute("subdivision_iters", &(param->numsubdivisioniters));
+                    blendElement->QueryDoubleAttribute("decimation", &(param->targetdecimation));
+                }
+            }
 
             model->SetModelElement(me,timestep);
         } //model element
@@ -274,6 +280,39 @@ void svModelIO::Write()
             faceElement->SetDoubleAttribute("color3", faces[i]->color[2]);
         }
 
+        //radii for blending
+        auto blendRadiiElement= new TiXmlElement("blend_radii");
+        meElement->LinkEndChild(blendRadiiElement);
+        std::vector<svModelElement::svBlendParamRadius*> blendRadii=me->GetBlendRadii();
+        for(int i=0;i<blendRadii.size();i++)
+        {
+            auto radiusElement=new TiXmlElement("face_pair");
+            blendRadiiElement->LinkEndChild(radiusElement);
+            radiusElement->SetAttribute("face_id1", blendRadii[i]->faceID1);
+            radiusElement->SetAttribute("face_id2", blendRadii[i]->faceID2);
+            radiusElement->SetDoubleAttribute("radius", blendRadii[i]->radius);
+        }
+
+        // blending param for PolyData
+        if(me->GetType()=="PolyData")
+        {
+            svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
+            if(mepd)
+            {
+                auto blendElement= new TiXmlElement("blend_param");
+                meElement->LinkEndChild(blendElement);
+                svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+
+                blendElement->SetAttribute("blend_iters", param->numblenditers);
+                blendElement->SetAttribute("sub_blend_iters", param->numsubblenditers);
+                blendElement->SetAttribute("cstr_smooth_iters", param->numcgsmoothiters);
+                blendElement->SetAttribute("lap_smooth_iters", param->numlapsmoothiters);
+                blendElement->SetAttribute("subdivision_iters", param->numsubdivisioniters);
+                blendElement->SetDoubleAttribute("decimation", param->targetdecimation);
+            }
+        }
+
+        //Output actual model data file
         if(me->GetType()=="PolyData")
         {
             std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";

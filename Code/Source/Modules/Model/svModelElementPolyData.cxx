@@ -56,4 +56,13 @@ svModelElementPolyData::svBlendParam* svModelElementPolyData::GetBlendParam()
     return m_BlendParam;
 }
 
+void svModelElementPolyData::AssignBlendParam(svModelElementPolyData::svBlendParam* param)
+{
+    m_BlendParam->numblenditers=param->numblenditers;
+    m_BlendParam->numsubblenditers=param->numsubblenditers;
+    m_BlendParam->numsubdivisioniters=param->numsubdivisioniters;
+    m_BlendParam->numcgsmoothiters=param->numcgsmoothiters;
+    m_BlendParam->numlapsmoothiters=param->numlapsmoothiters;
+    m_BlendParam->targetdecimation=param->targetdecimation;
+}
 

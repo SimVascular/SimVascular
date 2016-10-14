@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>432</width>
-    <height>781</height>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -283,12 +283,15 @@
                     <number>5</number>
                    </property>
                    <item>
-                    <widget class="QListWidget" name="listWidget">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
+                    <widget class="QTableView" name="tableViewFaceList">
+                     <property name="contextMenuPolicy">
+                      <enum>Qt::CustomContextMenu</enum>
+                     </property>
+                     <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                     </property>
+                     <property name="sortingEnabled">
+                      <bool>true</bool>
                      </property>
                     </widget>
                    </item>
@@ -579,7 +582,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>374</height>
+                           <height>356</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -876,7 +879,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>186</height>
+                               <height>168</height>
                               </rect>
                              </property>
                              <attribute name="label">

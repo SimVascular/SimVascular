@@ -5,6 +5,8 @@
 #include "svModelUtils.h"
 #include "svModelElementPolyData.h"
 
+#include "svFaceListDelegate.h"
+
 #include "cv_polydatasolid_utils.h"
 
 #include <mitkNodePredicateDataType.h>
@@ -72,19 +74,34 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect(m_SegSelectionWidget,SIGNAL(accepted()), this, SLOT(CreateModel()));
 
     //for tab Face List
-    connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
+    svFaceListDelegate* itemDelegate=new svFaceListDelegate(this);
+    m_FaceListTableModel = new QStandardItemModel(this);
+    ui->tableViewFaceList->setModel(m_FaceListTableModel);
+    ui->tableViewFaceList->setItemDelegateForColumn(4,itemDelegate);
+    m_FaceListTableMenu=new QMenu(ui->tableViewFaceList);
 
    //for tab Blend
+    m_BlendTableModel = new QStandardItemModel(this);
+    ui->tableViewBlend->setModel(m_BlendTableModel);
     m_BlendTableMenu=new QMenu(ui->tableViewBlend);
 
-    QAction* setRadiusAction=m_BlendTableMenu->addAction("Set Radius for Selected");
-    QAction* clearRadiusAction=m_BlendTableMenu->addAction("Clear Radius for Selected");
+    QAction* setRadiusAction=m_BlendTableMenu->addAction("Set Radius");
+    QAction* clearRadiusAction=m_BlendTableMenu->addAction("Clear Radius");
+    QAction* useSelectedBlendAction=m_BlendTableMenu->addAction("Use Selected Faces");
+    QAction* notUseSelectedBlendAction=m_BlendTableMenu->addAction("Not Use Selected Faces");
 
     connect( setRadiusAction, SIGNAL( triggered(bool) ) , this, SLOT( SetRadius(bool) ) );
     connect( clearRadiusAction, SIGNAL( triggered(bool) ) , this, SLOT( ClearRadius(bool) ) );
+    connect( useSelectedBlendAction, SIGNAL( triggered(bool) ) , this, SLOT( UseSelectedBlend(bool) ) );
+    connect( notUseSelectedBlendAction, SIGNAL( triggered(bool) ) , this, SLOT( NotUseSelectedBlend(bool) ) );
 
     connect( ui->tableViewBlend, SIGNAL(customContextMenuRequested(const QPoint&))
       , this, SLOT(TableViewBlendContextMenuRequested(const QPoint&)) );
+
+    connect( ui->tableViewBlend->selectionModel()
+      , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+      , this
+      , SLOT( TableBlendSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
 
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
@@ -187,25 +204,9 @@ void svModelEdit::UpdateGUI()
 
     //update tab face list
     //--------------------------------------------------------------------
-    ui->listWidget->clear();
     if(!m_Model) return;
 
-    svModelElement* modelElement=m_Model->GetModelElement();
-
-    if(modelElement)
-    {
-        std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
-
-        for(int i=0;i<faces.size();i++)
-        {
-            svModelElement::svFace* face=faces[i];
-            if(face)
-            {
-                QString item=QString::fromStdString(face->name);
-                ui->listWidget->addItem(item);
-            }
-        }
-    }
+    SetupFaceListTable();
 
     UpdateFaceListSelection();
 
@@ -231,6 +232,7 @@ void svModelEdit::UpdateGUI()
     {
         ui->widgetBlendDecimation->show();
         ui->groupBoxBlendIters->show();
+        UpdatePolyDataBlendParam();
     }else{
         ui->widgetBlendDecimation->hide();
         ui->groupBoxBlendIters->hide();
@@ -241,28 +243,49 @@ void svModelEdit::UpdateGUI()
 
 void svModelEdit::UpdateFaceListSelection()
 {
-    if(!m_Model) return;
-    svModelElement* modelElement=m_Model->GetModelElement();
-    if(!modelElement) return;
+//    if(!m_Model) return;
+//    svModelElement* modelElement=m_Model->GetModelElement();
+//    if(!modelElement) return;
 
-    ui->listWidget->selectionModel()->clearSelection();
+//    ui->listWidget->selectionModel()->clearSelection();
 
-    int count=ui->listWidget->count();
-    for(int i=0;i<count;i++)
-    {
-        std::string name=ui->listWidget->item(i)->text().toStdString();
+//    int count=ui->listWidget->count();
+//    for(int i=0;i<count;i++)
+//    {
+//        std::string name=ui->listWidget->item(i)->text().toStdString();
 
-        if(modelElement->IsFaceSelected(name))
-        {
-            QModelIndex mIndex=ui->listWidget->model()->index(i,0);
-            //                    ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
-            ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::Select);
-        }
-    }
+//        if(modelElement->IsFaceSelected(name))
+//        {
+//            QModelIndex mIndex=ui->listWidget->model()->index(i,0);
+//            //                    ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::ClearAndSelect);
+//            ui->listWidget->selectionModel()->select(mIndex, QItemSelectionModel::Select);
+//        }
+//    }
 
 }
 
 void svModelEdit::SelectItem(const QModelIndex & idx)
+{
+//    if(!m_Model)
+//        return;
+
+//    int timeStep=GetTimeStep();
+//    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+//    if(modelElement==NULL) return;
+
+//    int index=idx.row();
+//    QListWidgetItem* item=ui->listWidget->item(index);
+//    if(!item) return;
+
+//    std::string selectedName=item->text().toStdString();
+
+//    modelElement->ClearFaceSelection();
+//    modelElement->SetSelectedFace(selectedName);
+
+//    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+void svModelEdit::SetupFaceListTable()
 {
     if(!m_Model)
         return;
@@ -271,16 +294,65 @@ void svModelEdit::SelectItem(const QModelIndex & idx)
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
-    int index=idx.row();
-    QListWidgetItem* item=ui->listWidget->item(index);
-    if(!item) return;
+    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
 
-    std::string selectedName=item->text().toStdString();
+    m_FaceListTableModel->clear();
+    QStringList faceListHeaders;
+    faceListHeaders << "Name" << "Type" << "V" << "C" << "O";
+    m_FaceListTableModel->setHorizontalHeaderLabels(faceListHeaders);
+    m_FaceListTableModel->setColumnCount(5);
 
-    modelElement->ClearFaceSelection();
-    modelElement->SetSelectedFace(selectedName);
+    int rowIndex=-1;
 
-    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    for(int i=0;i<faces.size();i++)
+    {
+        if(faces[i]==NULL )
+            continue;
+
+        rowIndex++;
+        m_FaceListTableModel->insertRow(rowIndex);
+
+        QStandardItem* item;
+
+        item= new QStandardItem(QString::fromStdString(faces[i]->name));
+        item->setEditable(false);
+        m_FaceListTableModel->setItem(rowIndex, 0, item);
+
+        item= new QStandardItem(QString::fromStdString(faces[i]->type));
+        item->setEditable(false);
+        m_FaceListTableModel->setItem(rowIndex, 1, item);
+
+        item = new QStandardItem();
+        item->setEditable(false);
+        if(faces[i]->visible)
+        {
+            item->setIcon(QIcon(":/show.png"));
+        }else{
+            item->setIcon(QIcon(":/hide.png"));
+        }
+        m_FaceListTableModel->setItem(rowIndex,2,item);
+
+        item= new QStandardItem();
+        item->setEditable(false);
+        QBrush brush(QColor(255*faces[i]->color[0],255*faces[i]->color[1],255*faces[i]->color[2]));
+        item->setBackground(brush);
+        m_FaceListTableModel->setItem(rowIndex, 3, item);
+
+        item= new QStandardItem();
+        item->setData((double)(faces[i]->opacity), Qt::EditRole);
+        m_FaceListTableModel->setItem(rowIndex, 4, item);
+
+    }
+
+    ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Interactive);
+    ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(1,40);
+    ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(2,30);
+    ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(3,30);
+    ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Fixed);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(4,60);
 }
 
 void svModelEdit::UpdateBlendTable(int index)
@@ -293,8 +365,6 @@ void svModelEdit::UpdateBlendTable(int index)
 
 void svModelEdit::SetupBlendTable()
 {
-//    ui->tableViewBlend->clearContents();
-
     if(!m_Model)
         return;
 
@@ -304,9 +374,9 @@ void svModelEdit::SetupBlendTable()
 
     std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
 
-    m_BlendTableModel = new QStandardItemModel(this);
+    m_BlendTableModel->clear();
     QStringList blendHeaders;
-    blendHeaders << " " << "Face 1" << "Face 2" << "Radius";
+    blendHeaders << "Use" << "Face 1" << "Face 2" << "Radius";
     m_BlendTableModel->setHorizontalHeaderLabels(blendHeaders);
     m_BlendTableModel->setColumnCount(4);
 
@@ -330,7 +400,7 @@ void svModelEdit::SetupBlendTable()
             QStandardItem* item;
             svModelElement::svBlendParamRadius* blendParam= modelElement->GetBlendParamRadius(faces[i]->id, faces[j]->id);
 
-            item = new QStandardItem(true);
+            item = new QStandardItem();
             item->setCheckable(true);
             if(blendParam)
             {
@@ -362,6 +432,8 @@ void svModelEdit::SetupBlendTable()
             if(blendParam)
             {
                 item->setText(QString::number(blendParam->radius));
+                QBrush brush(Qt::lightGray);
+                item->setBackground(brush);
             }
 
             m_BlendTableModel->setItem(rowIndex, 3, item);
@@ -370,13 +442,65 @@ void svModelEdit::SetupBlendTable()
 
     }
 
-    ui->tableViewBlend->setModel(m_BlendTableModel);
-
-    ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
-    ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
-    ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
+    ui->tableViewBlend->setColumnWidth(0,60);
+    ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
+    ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Interactive);
     ui->tableViewBlend->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+}
 
+void svModelEdit::UpdatePolyDataBlendParam()
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+    if(mepd==NULL) return;
+
+    svModelElementPolyData::svBlendParam* param=mepd->GetBlendParam();
+
+    ui->dsbDecimation->setValue(param->targetdecimation);
+    ui->sbBlendIters->setValue(param->numblenditers);
+    ui->sbSubBlendIters->setValue(param->numsubblenditers);
+    ui->sbCstrSmoothIters->setValue(param->numcgsmoothiters);
+    ui->sbLapSmoothIters->setValue(param->numlapsmoothiters);
+    ui->sbSubdivisionIters->setValue(param->numsubdivisioniters);
+}
+
+void svModelEdit::TableBlendSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_BlendTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    modelElement->ClearFaceSelection();
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemFace1= m_BlendTableModel->item(row,1);
+        QStandardItem* itemFace2= m_BlendTableModel->item(row,2);
+
+        modelElement->SetSelectedFace(itemFace1->text().toStdString());
+        modelElement->SetSelectedFace(itemFace2->text().toStdString());
+    }
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+    UpdateFaceListSelection();
 }
 
 void svModelEdit::TableViewBlendContextMenuRequested( const QPoint & pos )
@@ -396,7 +520,7 @@ void svModelEdit::SetRadius(bool)
     }
 
     bool ok;
-    double radius=QInputDialog::getDouble(m_Parent, "Set Blending Radius", "Radius:", 0.05, 0, 100, 4, &ok);
+    double radius=QInputDialog::getDouble(m_Parent, "Set Blending Radius", "Radius:", 0.05, 0, 100, 3, &ok);
 
     if(!ok)
         return;
@@ -406,8 +530,6 @@ void svModelEdit::SetRadius(bool)
      {
        int row=(*it).row();
 
-       cout<<"row: "<<row<<endl;
-
        QStandardItem* item= m_BlendTableModel->item(row,3);
        item->setText(QString::number(radius));
      }
@@ -415,19 +537,66 @@ void svModelEdit::SetRadius(bool)
 
 void svModelEdit::ClearRadius(bool)
 {
-//    if(m_TableModel==NULL)
-//        return;
+    if(m_BlendTableModel==NULL)
+        return;
 
-//    int rowCount=m_TableModel->rowCount();
+    QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+      return;
+    }
 
-//    for (int i=0;i<rowCount;i++)
-//    {
-//        QStandardItem* item= m_TableModel->item(i,1);
-//        item->setCheckState(Qt::Checked);
-//    }
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+       ; it != indexesOfSelectedRows.end(); it++)
+     {
+       int row=(*it).row();
+
+       QStandardItem* item= m_BlendTableModel->item(row,3);
+       item->setText("");
+     }
 }
 
+void svModelEdit::UseSelectedBlend(bool)
+{
+    if(m_BlendTableModel==NULL)
+        return;
 
+    QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+      return;
+    }
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+       ; it != indexesOfSelectedRows.end(); it++)
+     {
+       int row=(*it).row();
+
+       QStandardItem* item= m_BlendTableModel->item(row,0);
+       item->setCheckState(Qt::Checked);
+     }
+}
+
+void svModelEdit::NotUseSelectedBlend(bool)
+{
+    if(m_BlendTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+      return;
+    }
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+       ; it != indexesOfSelectedRows.end(); it++)
+     {
+       int row=(*it).row();
+
+       QStandardItem* item= m_BlendTableModel->item(row,0);
+       item->setCheckState(Qt::Unchecked);
+     }
+}
 
 void svModelEdit::NodeChanged(const mitk::DataNode* node)
 {
@@ -466,7 +635,7 @@ void svModelEdit::ClearAll()
 
     ui->labelModelName->setText("");
     ui->labelModelType->setText("");
-    ui->listWidget->clear();
+//    ui->listWidget->clear();
 //    ui->plainTextEditBlend->clear();
 }
 
@@ -552,25 +721,39 @@ void svModelEdit::CreateModel()
 
 std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()
 {
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
     std::vector<svModelElement::svBlendParamRadius*> blendRadii;
 
-//    QString content=ui->plainTextEditBlend->toPlainText();
-//    QStringList list = content.split("\n");
+    if(m_BlendTableModel==NULL)
+        return;
 
-//    for(int i=0;i<list.size();i++)
-//    {
-//        QStringList list2 = list[i].split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-//        if(list2.size()!=3) continue;
+    int rowCount=m_BlendTableModel->rowCount();
 
-//        int faceID1=list2[0].trimmed().toInt();
-//        int faceID2=list2[1].trimmed().toInt();
-//        double radius=list2[2].trimmed().toDouble();
+    for (int i=0;i<rowCount;i++)
+    {
+        QStandardItem* itemUse= m_BlendTableModel->item(i,0);
+        QStandardItem* itemFace1= m_BlendTableModel->item(i,1);
+        QStandardItem* itemFace2= m_BlendTableModel->item(i,2);
+        QStandardItem* itemRadius= m_BlendTableModel->item(i,3);
 
-//        cout<<faceID1<<"...."<<faceID2<<"....."<<radius<<endl;
+        if(itemUse->checkState()==Qt::Unchecked || itemRadius->text().trimmed()=="")
+            continue;
 
-//        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+        double radius=itemRadius->text().trimmed().toDouble();
+        if(radius<=0)
+            continue;
 
-//    }
+        int faceID1=modelElement->GetFaceID(itemFace1->text().toStdString());
+        int faceID2=modelElement->GetFaceID(itemFace2->text().toStdString());
+
+        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+    }
 
     return blendRadii;
 }

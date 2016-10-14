@@ -49,7 +49,17 @@ public slots:
 
     void ClearRadius( bool checked = false );
 
+    void UseSelectedBlend( bool checked = false );
+
+    void NotUseSelectedBlend( bool checked = false );
+
     void SetupBlendTable();
+
+    void UpdatePolyDataBlendParam();
+
+    void TableBlendSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void SetupFaceListTable();
 
 public:
 
@@ -97,8 +107,10 @@ protected:
     QmitkStdMultiWidget* m_DisplayWidget;
 
     QMenu* m_BlendTableMenu;
-
     QStandardItemModel* m_BlendTableModel;
+
+    QMenu* m_FaceListTableMenu;
+    QStandardItemModel* m_FaceListTableModel;
 
 };
 

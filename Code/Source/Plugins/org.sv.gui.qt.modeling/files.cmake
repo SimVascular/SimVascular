@@ -9,6 +9,7 @@ set(INTERNAL_CPP_FILES
     svModelLegacySaveAction.cxx
     svSegSelectionWidget.cxx
     svModelEdit.cxx
+    svFaceListDelegate.cxx
     svModelingPluginActivator.cxx
 )
 
@@ -19,6 +20,7 @@ set(MOC_H_FILES
     src/internal/svModelLegacySaveAction.h
     src/internal/svSegSelectionWidget.h
     src/internal/svModelEdit.h
+    src/internal/svFaceListDelegate.h
     src/internal/svModelingPluginActivator.h
 )
 
@@ -34,7 +36,7 @@ set(CACHED_RESOURCE_FILES
 )
 
 set(QRC_FILES
-
+  resources/modeling.qrc
 )
 
 set(CPP_FILES )

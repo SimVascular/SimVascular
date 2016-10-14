@@ -58,6 +58,9 @@ public:
 
     svBlendParam* GetBlendParam();
 
+
+    void AssignBlendParam(svBlendParam* param);
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;

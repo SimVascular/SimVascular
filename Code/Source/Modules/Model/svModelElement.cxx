@@ -250,6 +250,25 @@ void svModelElement::SetBlendRadii(std::vector<svModelElement::svBlendParamRadiu
     m_BlendRadii=blendRadii;
 }
 
+void svModelElement::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
+{
+    for(int i=0;i<moreBlendRadii.size();i++)
+    {
+        svBlendParamRadius*  newParamRadius=moreBlendRadii[i];
+        svBlendParamRadius* existingParamRadius=GetBlendParamRadius(newParamRadius->faceID1, newParamRadius->faceID2);
+        if(existingParamRadius)
+        {
+            existingParamRadius->radius=newParamRadius->radius;
+            delete newParamRadius;
+        }
+        else
+        {
+            m_BlendRadii.push_back(newParamRadius);
+        }
+
+    }
+}
+
 //double svModelElement::GetBlendRadius(int faceID1, int faceID2)
 //{
 //    for(int i=0;i<m_BlendRadii.size();i++)

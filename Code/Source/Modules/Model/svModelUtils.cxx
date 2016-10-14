@@ -99,6 +99,11 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
           face->name=allNames[i];
           face->vpd=facepd;
 
+          if(face->name.substr(0,5)=="wall_")
+              face->type="wall";
+          else if(face->name.substr(0,4)=="cap_")
+              face->type="cap";
+
           faces.push_back(face);
     }
 
@@ -179,10 +184,6 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
 
     }
 
-//    vtkPolyData* newVpd=lastVpd;
-
-//    if(newVpd==NULL) return;
-
      svModelElementPolyData* mepddst =mepdsrc->Clone();
      mepddst->SetWholeVtkPolyData(lastVpd);
      std::vector<svModelElement::svFace*> faces=mepddst->GetFaces();
@@ -190,6 +191,11 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
      {
          faces[i]->vpd=mepddst->CreateFaceVtkPolyData(faces[i]->id);
      }
+
+     mepddst->AssignBlendParam(param);
+     delete param;
+
+     mepddst->AddBlendRadii(blendRadii);
 
      return mepddst;
 }
