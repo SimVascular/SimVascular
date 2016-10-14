@@ -370,7 +370,7 @@ void svModelEdit::SetupFaceListTable()
         m_FaceListTableModel->setItem(rowIndex, 4, item);
 
         item= new QStandardItem();
-        item->setData((double)(faces[i]->opacity), Qt::EditRole);
+        item->setData((int)(faces[i]->opacity*100)/100.0, Qt::EditRole);
         m_FaceListTableModel->setItem(rowIndex, 5, item);
 
     }
