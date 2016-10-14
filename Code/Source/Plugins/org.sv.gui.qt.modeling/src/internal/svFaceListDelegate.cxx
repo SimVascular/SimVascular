@@ -10,7 +10,7 @@ QWidget* svFaceListDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     int column=index.column();
 
     switch(column){
-    case 4:
+    case 5:
     {
         QDoubleSpinBox* dsb=new QDoubleSpinBox(parent);
         dsb->setMinimum(0);
@@ -29,7 +29,7 @@ void svFaceListDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     int column=index.column();
 
     switch(column){
-    case 4:
+    case 5:
     {
         QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
         if(dsb)
@@ -49,7 +49,7 @@ void svFaceListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     int column=index.column();
 
     switch(column){
-    case 4:
+    case 5:
     {
         QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
         if(dsb)
@@ -70,7 +70,7 @@ void svFaceListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptio
     int column=index.column();
 
     switch(column){
-    case 4:
+    case 5:
     {
         QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
         if(dsb)

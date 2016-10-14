@@ -61,6 +61,15 @@ public slots:
 
     void SetupFaceListTable();
 
+    void UpdateFaceData(QStandardItem* item);
+
+    void TableFaceListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void ToggleVisibility(const QModelIndex &index);
+
+    void ChangeColor(const QModelIndex &index);
+
+
 public:
 
     int GetTimeStep();
