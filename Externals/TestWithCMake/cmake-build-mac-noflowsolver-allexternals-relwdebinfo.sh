@@ -14,7 +14,9 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
-export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MasterBuild/Externals"
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/ext"
+#Qt5
+export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -35,6 +37,8 @@ export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Softw
    -DSV_USE_OpenCASCADE=ON \
    -DSV_USE_PYTHON=ON \
    -DSV_USE_MMG=ON \
+   -DSV_USE_MITK=ON \
+   -DSV_USE_QT_GUI=ON \
 \
    -DSV_USE_SYSTEM_FREETYPE=ON \
    -DSV_USE_SYSTEM_GDCM=ON \
@@ -44,6 +48,7 @@ export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Softw
    -DSV_USE_SYSTEM_TCL=ON \
    -DSV_USE_SYSTEM_VTK=ON \
    -DSV_USE_SYSTEM_MMG=ON \
+   -DSV_USE_SYSTEM_MITK=ON \
 \
    -DSV_USE_GDCM_SHARED=ON \
    -DSV_USE_FREETYPE_SHARED=ON \
@@ -54,6 +59,7 @@ export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Softw
 \
    -DSV_EXTERNALS_USE_TOPLEVEL_DIR=ON \
    -DSV_EXTERNALS_TOPLEVEL_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR" \
+   -Qt5_DIR=$Qt5_DIR \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
