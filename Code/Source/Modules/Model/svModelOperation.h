@@ -18,7 +18,7 @@ public:
 
     svModelOperation(mitk::OperationType operationType, vtkPolyData* vpd);
 
-    svModelOperation(mitk::OperationType operationType, unsigned int timeStep, vtkPolyData* vpd);
+    svModelOperation(mitk::OperationType operationType, unsigned int timeStep, vtkSmartPointer<vtkPolyData> vpd);
 
     virtual ~svModelOperation();
 
@@ -26,7 +26,7 @@ public:
 
     unsigned int GetTimeStep() const;
 
-    vtkPolyData* GetVtkPolyData();
+    vtkSmartPointer<vtkPolyData> GetVtkPolyData();
 
 private:
 
@@ -34,7 +34,7 @@ private:
 
     unsigned int m_TimeStep;
 
-    vtkPolyData* m_vpd;
+    vtkSmartPointer<vtkPolyData> m_vpd;
 
 };
 

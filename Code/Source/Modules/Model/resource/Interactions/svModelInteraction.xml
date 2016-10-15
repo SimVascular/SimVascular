@@ -1,19 +1,11 @@
 <statemachine NAME="svModelInteractor">
-    <state name="start" startstate="true" >
-        <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="over_object">
-            <condition name="isOverObject"/>
-<!--            <action name="selectObject"/>-->
+    <state name="Start" startstate="true" >
+    <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed_Shift" target="Start">
+<!--    <transition event_class="InteractionKeyEvent" event_variant="StdC" target="start">-->
+<!--            <condition name="isOverObject"/>-->
+            <action name="select_face"/>
         </transition>
     </state>
-    <state name="over_object" >
-        <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="start">
-            <condition name="isOverObject" inverted="true" />
- <!--           <action name="deselectObject"/>-->
-        </transition>
-        <transition event_class="MousePressEvent" event_variant="PrimaryButtonPressed" target="start">
-            <condition name="isOverObject"/>
-            <action name="selectObject"/>
-        </transition>
-    </state>
-
 </statemachine>
+
+

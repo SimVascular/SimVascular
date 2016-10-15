@@ -1,7 +1,29 @@
 <config>
   <event_variant name="MouseMove" class="MouseMoveEvent" >
   </event_variant>
+
   <event_variant name="PrimaryButtonPressed" class="MousePressEvent">
-      <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="EventButton" value="LeftMouseButton"/>
   </event_variant>
+
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Alt">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="alt"/>
+  </event_variant>
+
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Shift">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Ctrl">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="ctrl"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="StdC">
+    <attribute name="Key" value="C"/>
+<!--    <attribute name="Modifiers" value="shift,ctrl"/>-->
+  </event_variant>
+
 </config>

@@ -2,17 +2,21 @@
 
 #include "svModelDataInteractor.h"
 #include "svModel.h"
+#include "svModelVtkMapper3D.h"
 
-#include "mitkInteractionPositionEvent.h"
-#include "mitkInternalEvent.h"
+#include <mitkInteractionPositionEvent.h>
+#include <mitkInternalEvent.h>
 
-#include "mitkBaseRenderer.h"
-#include "mitkRenderingManager.h"
-#include "mitkPlaneGeometry.h"
-#include "mitkInternalEvent.h"
-#include "mitkDispatcher.h"
-#include "mitkBaseRenderer.h"
-#include "mitkUndoController.h"
+#include <mitkBaseRenderer.h>
+#include <mitkVtkPropRenderer.h>
+#include <mitkRenderingManager.h>
+#include <mitkPlaneGeometry.h>
+#include <mitkInternalEvent.h>
+#include <mitkDispatcher.h>
+#include <mitkBaseRenderer.h>
+#include <mitkUndoController.h>
+
+#include <vtkCellPicker.h>
 
 #include <iostream>
 using namespace std;
@@ -30,9 +34,9 @@ svModelDataInteractor::~svModelDataInteractor()
 
 void svModelDataInteractor::ConnectActionsAndFunctions()
 {
-    CONNECT_CONDITION("isOverObject", CheckOverObject);
+//    CONNECT_CONDITION("isOverObject", CheckOverObject);
 
-    CONNECT_FUNCTION("selectObject",SelectObject);
+    CONNECT_FUNCTION("select_face",SelectFace);
 }
 
 void svModelDataInteractor::DataNodeChanged()
@@ -48,57 +52,75 @@ void svModelDataInteractor::DataNodeChanged()
         m_Model = NULL;
 }
 
-bool svModelDataInteractor::CheckOverObject(const mitk::InteractionEvent* interactionEvent)
+void svModelDataInteractor::SelectFace(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
     if(positionEvent == NULL)
-        return false;
+        return;
 
     if(m_Model==NULL)
-        return false;
+        return;
 
     svModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL)
-        return false;
+        return;
+
+    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
+
+    svModelVtkMapper3D* mapper=dynamic_cast<svModelVtkMapper3D*>(GetDataNode()->GetMapper(renderer->GetMapperID()));
+
+    if(mapper==nullptr)
+        return;
 
     mitk::Point2D currentPickedDisplayPoint = positionEvent->GetPointerPositionOnScreen();
-    mitk::Point3D currentPickedPoint;
+    vtkSmartPointer<vtkCellPicker> cellPicker=vtkSmartPointer<vtkCellPicker>::New();
 
-    mitk::DataNode* pickedNode=interactionEvent->GetSender()->PickObject(currentPickedDisplayPoint, currentPickedPoint);
+    std::vector<vtkSmartPointer<vtkActor>> faceActors=mapper->GetFaceActors(renderer);
+    int faceNum=faceActors.size();
+    if(faceNum==0)
+        return;
+
+    for(int i=0;i<faceNum;i++)
+        cellPicker->AddPickList(faceActors[i]);
+
+
+    //           vtkSmartPointer<vtkActor> actor=mapper->GetActor(renderer);
+
+    //            if(actor==NULL)
+    //                return;
+
+    //                cellPicker->AddPickList(actor);
+
+
+    cellPicker->PickFromListOn();
+    cellPicker->Pick(currentPickedDisplayPoint[0], currentPickedDisplayPoint[1], 0.0, renderer->GetVtkRenderer());
+    cellPicker->PickFromListOff();
+
+    vtkPolyData* selectedFacePolyData=(vtkPolyData*)cellPicker->GetDataSet();
+
+    modelElement->ClearFaceSelection();
 
     std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
-
-    for(int i=0;i<faces.size();i++)
+    int selectedFaceIndex=-1;
+    if(selectedFacePolyData!=NULL)
     {
-        if(faces[i]->node!=NULL && faces[i]->node==pickedNode)
+        for(int i=0;i<faces.size();i++)
         {
-            m_SelectedFaceIndex=i;
-            return true;
+            if(faces[i] && faces[i]->vpd!=nullptr && faces[i]->vpd.GetPointer()==selectedFacePolyData)
+            {
+                selectedFaceIndex=i;
+                break;
+            }
         }
     }
 
-    return false;
-}
+    modelElement->SetSelectedFaceIndex(selectedFaceIndex);
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
-void svModelDataInteractor::SelectObject(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
-{
-    const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
-    if(positionEvent == NULL)
-        return;
-
-    if(m_Model==NULL)
-        return;
-
-    svModelElement* modelElement=m_Model->GetModelElement();
-    if(modelElement==NULL)
-        return;
-
-    modelElement->SetSelectedFaceIndex(m_SelectedFaceIndex);
+    //    cout<<"cell id: "<<cellPicker->GetCellId()<<endl;
 
     m_Model->InvokeEvent( svModelSelectFaceEvent() );
 
-//    this->GetDataNode()->SetColor(1.0, 0.0, 0.0);
-//    interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
 }
 
 

@@ -10,6 +10,9 @@
     <height>474</height>
    </rect>
   </property>
+  <property name="contextMenuPolicy">
+   <enum>Qt::CustomContextMenu</enum>
+  </property>
   <property name="windowTitle">
    <string>Create Solid Model</string>
   </property>
@@ -25,7 +28,17 @@
        </widget>
       </item>
       <item>
-       <widget class="QTableView" name="tableView"/>
+       <widget class="QTableView" name="tableView">
+        <property name="contextMenuPolicy">
+         <enum>Qt::CustomContextMenu</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectRows</enum>
+        </property>
+        <property name="sortingEnabled">
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

@@ -1,5 +1,7 @@
 #include "svModelUtils.h"
 
+#include "svModelElementPolyData.h"
+
 #include "SimVascular.h"
 #include "cv_sys_geom.h"
 #include "cvPolyData.h"
@@ -8,7 +10,7 @@
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
 
-vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
+vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
 {
     int groupNumber=segs.size();
     cvPolyData **srcs=new cvPolyData* [groupNumber];
@@ -33,7 +35,7 @@ vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*>
     return dst->GetVtkPolyData();
 }
 
-static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t, int noInterOut, double tol)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -49,7 +51,7 @@ static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::D
         }
     }
 
-    vtkPolyData* solidvpd=CreateSolidModelPolyData(segs,t,noInterOut,tol);
+    vtkPolyData* solidvpd=CreatePolyData(segs,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
 
     int *doublecaps;
@@ -97,18 +99,23 @@ static svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::D
           face->name=allNames[i];
           face->vpd=facepd;
 
+          if(face->name.substr(0,5)=="wall_")
+              face->type="wall";
+          else if(face->name.substr(0,4)=="cap_")
+              face->type="cap";
+
           faces.push_back(face);
     }
 
-    svModelElement* modelElement=new svModelElement();
+    svModelElementPolyData* modelElement=new svModelElementPolyData();
     modelElement->SetSegNames(segNames);
     modelElement->SetFaces(faces);
-    modelElement->SetVtkPolyDataModel(solidvpd);
+    modelElement->SetWholeVtkPolyData(solidvpd);
 
     return modelElement;
 }
 
-vtkPolyData* svModelUtils::CreateSolidModelPolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelUtils::svBlendParam* param)
+vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param)
 {
     if(vpdsrc==NULL)
         return NULL;
@@ -146,6 +153,51 @@ vtkPolyData* svModelUtils::CreateSolidModelPolyDataByBlend(vtkPolyData* vpdsrc, 
 
     return vpd;
 
+}
+
+svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param)
+{
+
+    vtkSmartPointer<vtkPolyData> oldVpd=mepdsrc->GetWholeVtkPolyData();
+    if(oldVpd==NULL) return NULL;
+
+    vtkSmartPointer<vtkPolyData> lastVpd=oldVpd;
+
+    for(int i=0;i<blendRadii.size();i++)
+    {
+        int faceID1=0;
+        int faceID2=0;
+        double radius=0.0;
+        if(blendRadii[i] && blendRadii[i]->radius>0)
+        {
+            faceID1=blendRadii[i]->faceID1;
+            faceID2=blendRadii[i]->faceID2;
+            radius=blendRadii[i]->radius;
+
+        }
+
+//        cout<<faceID1<<"...."<<faceID2<<"....."<<radius<<endl;
+
+        lastVpd=svModelUtils::CreatePolyDataByBlend(lastVpd, faceID1, faceID2, radius, param);
+
+        if(lastVpd==NULL) return NULL;
+
+    }
+
+     svModelElementPolyData* mepddst =mepdsrc->Clone();
+     mepddst->SetWholeVtkPolyData(lastVpd);
+     std::vector<svModelElement::svFace*> faces=mepddst->GetFaces();
+     for(int i=0;i<faces.size();i++)
+     {
+         faces[i]->vpd=mepddst->CreateFaceVtkPolyData(faces[i]->id);
+     }
+
+     mepddst->AssignBlendParam(param);
+     delete param;
+
+     mepddst->AddBlendRadii(blendRadii);
+
+     return mepddst;
 }
 
 vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)

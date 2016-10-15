@@ -33,19 +33,56 @@ public slots:
 
     void ShowSegSelectionWidget();
 
-    void HideSegSelectionWidget();
-
     void UpdateGUI();
-
-    void SelectItem(const QModelIndex & idx);
 
     void BlendModel();
 
-    void UpdateFacesAndNodes();
+    void UpdateFaceListSelection();
+
+    void UpdateBlendTable(int index);
+
+    void TableViewBlendContextMenuRequested( const QPoint & index );
+
+    void SetRadius( bool checked = false );
+
+    void ClearRadius( bool checked = false );
+
+    void UseSelectedBlend( bool checked = false );
+
+    void NotUseSelectedBlend( bool checked = false );
+
+    void SetupBlendTable();
+
+    void UpdatePolyDataBlendParam();
+
+    void TableBlendSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void SetupFaceListTable();
+
+    void UpdateFaceData(QStandardItem* item);
+
+    void TableFaceListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void ToggleVisibility(const QModelIndex &index);
+
+    void ChangeColor(const QModelIndex &index);
+
+    void TableViewFaceListContextMenuRequested( const QPoint & index );
+
+    void ShowSelected( bool checked = false );
+
+    void HideSelected( bool checked = false );
+
+    void ChangeOpacitySelected( bool checked = false );
+
+    void ChangeColorSelected( bool checked = false );
+
 
 public:
 
     int GetTimeStep();
+
+    std::vector<svModelElement::svBlendParamRadius*> GetBlendRadii();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
@@ -73,18 +110,25 @@ protected:
 
     svModel* m_Model;
 
+    std::string m_ModelType;
+
     mitk::DataNode::Pointer m_ModelNode;
 
     svSegSelectionWidget* m_SegSelectionWidget;
 
-    bool m_RemovingNode;
-
     svModelDataInteractor::Pointer m_DataInteractor;
 
     long m_ModelSelectFaceObserverTag;
-    long m_ModelUpdateFaceObserverTag;
+    long m_ModelUpdateObserverTag;
 
     QmitkStdMultiWidget* m_DisplayWidget;
+
+    QMenu* m_BlendTableMenu;
+    QStandardItemModel* m_BlendTableModel;
+
+    QMenu* m_FaceListTableMenu;
+    QStandardItemModel* m_FaceListTableModel;
+
 };
 
 #endif // SVMODELEDIT_H

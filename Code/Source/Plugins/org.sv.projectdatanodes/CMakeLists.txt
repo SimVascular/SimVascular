@@ -3,7 +3,7 @@ project(org_sv_projectdatanodes)
 set(lib org_sv_projectdatanodes)
 
 mitk_create_plugin(
-  EXPORT_DIRECTIVE ORG_SV_PROJECTDATANODES
+  EXPORT_DIRECTIVE SV_PROJECTDATANODES
   EXPORTED_INCLUDE_SUFFIXES src
   MODULE_DEPENDS MitkQtWidgets svProjectManagement svPath svSegmentation svModel
 )

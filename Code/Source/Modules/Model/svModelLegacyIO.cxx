@@ -1,8 +1,9 @@
 #include "svModelLegacyIO.h"
 
 #include "svModel.h"
+#include "svModelElementPolyData.h"
 
-#include "cv_polydatasolid_utils.h"
+//#include "cv_polydatasolid_utils.h"
 
 #include <QString>
 #include <QStringList>
@@ -18,66 +19,72 @@
 
 mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
 {
-    QString filePath2=filePath+".facenames";
-
-    QFile inputFile(filePath2);
-
     mitk::DataNode::Pointer modelNode=NULL;
 
     QFileInfo fileInfo(filePath);
     QString baseName = fileInfo.baseName();
+    QString suffix=fileInfo.suffix();
 
-    if (inputFile.open(QIODevice::ReadOnly))
+    if(suffix=="vtp")
     {
-        QTextStream in(&inputFile);
+        QString filePath2=filePath+".facenames";
 
-        std::vector<svModelElement::svFace*> faces;
+        QFile inputFile(filePath2);
 
-        while (!in.atEnd())
+        if (inputFile.open(QIODevice::ReadOnly))
         {
-            QString line = in.readLine();
+            QTextStream in(&inputFile);
 
-            if(line.contains("set gPolyDataFaceNames("))
+            std::vector<svModelElement::svFace*> faces;
+
+            while (!in.atEnd())
             {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                svModelElement::svFace* face=new svModelElement::svFace;
-                face->id=list[2].toInt();
-                face->name=list[3].toStdString();
-                faces.push_back(face);
+                QString line = in.readLine();
+
+                if(line.contains("set gPolyDataFaceNames("))
+                {
+                    QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    svModelElement::svFace* face=new svModelElement::svFace;
+                    face->id=list[2].toInt();
+                    face->name=list[3].toStdString();
+                    faces.push_back(face);
+                }
             }
-        }
-        inputFile.close();
+            inputFile.close();
 
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-        reader->SetFileName(filePath.toStdString().c_str());
-        reader->Update();
-        vtkPolyData* pd=reader->GetOutput();
-        if(pd!=NULL)
-        {
-            vtkPolyData* vpdModel=vtkPolyData::New();
-            vpdModel->DeepCopy(pd);
-            svModelElement* modelElement=new svModelElement();
-            modelElement->SetVtkPolyDataModel(vpdModel);
-
-            for(int i=0;i<faces.size();i++)
+            vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+            reader->SetFileName(filePath.toStdString().c_str());
+            reader->Update();
+            vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
+            if(pd!=NULL)
             {
-                vtkPolyData *facepd = vtkPolyData::New();
-                int id=faces[i]->id;
-                PlyDtaUtils_GetFacePolyData(vpdModel, &id, facepd);
-                faces[i]->vpd=facepd;
+                //                vtkPolyData* vpdModel=vtkPolyData::New();
+                //                vpdModel->DeepCopy(pd);
+
+                svModelElementPolyData* mepd=new svModelElementPolyData();
+                mepd->SetWholeVtkPolyData(pd);
+
+                for(int i=0;i<faces.size();i++)
+                {
+                    //                    vtkPolyData *facepd = vtkPolyData::New();
+                    //                    int id=faces[i]->id;
+                    //                    PlyDtaUtils_GetFacePolyData(vpdModel, &id, facepd);
+                    vtkSmartPointer<vtkPolyData> facepd=mepd->CreateFaceVtkPolyData(faces[i]->id);
+                    faces[i]->vpd=facepd;
+                }
+
+                mepd->SetFaces(faces);
+
+                svModel::Pointer model=svModel::New();
+                model->SetModelElement(mepd);
+
+                modelNode = mitk::DataNode::New();
+                modelNode->SetData(model);
+                modelNode->SetName(baseName.toStdString());
+
             }
 
-            modelElement->SetFaces(faces);
-
-            svModel::Pointer model=svModel::New();
-            model->SetModelElement(modelElement);
-
-            modelNode = mitk::DataNode::New();
-            modelNode->SetData(model);
-            modelNode->SetName(baseName.toStdString());
-
         }
-
     }
 
     return modelNode;
@@ -108,28 +115,36 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
     svModel* model=dynamic_cast<svModel*>(node->GetData());
     if(!model) return;
 
-    QString filePath2=filePath+".facenames";
+    svModelElement* modelElement=model->GetModelElement();
+    if(!modelElement) return;
 
-    QFile outputFile(filePath2);
-    if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    std::string type=modelElement->GetType();
+
+    if(type=="PolyData")
     {
-        QTextStream out(&outputFile);
-        //out.setRealNumberPrecision(17);
+        svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(modelElement);
+        if(!mepd) return;
 
-        QFileInfo fileInfo(filePath);
-        QString fileName = fileInfo.fileName();
+        QString filePath2=filePath+".facenames";
 
-        out<<"global gPolyDataFaceNames"<<endl;
-        out<<"global gPolyDataFaceNamesInfo"<<endl;
-
-        out<<"set gPolyDataFaceNamesInfo(timestamp) {1500000000}"<<endl;
-        //out<<"set gPolyDataFaceNamesInfo(model_file_md5) {FCCF69239480A681C5579A153F2D552A}"<<endl;
-        out<<"set gPolyDataFaceNamesInfo(model_file_name) {"<<fileName<<"}"<<endl;
-
-        svModelElement* modelElement=model->GetModelElement();
-        if(modelElement)
+        QFile outputFile(filePath2);
+        if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
-            std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+            QTextStream out(&outputFile);
+            //out.setRealNumberPrecision(17);
+
+            QFileInfo fileInfo(filePath);
+            QString fileName = fileInfo.fileName();
+
+            out<<"global gPolyDataFaceNames"<<endl;
+            out<<"global gPolyDataFaceNamesInfo"<<endl;
+
+            out<<"set gPolyDataFaceNamesInfo(timestamp) {1500000000}"<<endl;
+            //out<<"set gPolyDataFaceNamesInfo(model_file_md5) {FCCF69239480A681C5579A153F2D552A}"<<endl;
+            out<<"set gPolyDataFaceNamesInfo(model_file_name) {"<<fileName<<"}"<<endl;
+
+
+            std::vector<svModelElement::svFace*> faces=mepd->GetFaces();
             for(int i=0;i<faces.size();i++){
                 svModelElement::svFace* face=faces[i];
                 if(face)
@@ -138,23 +153,30 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
                 }
             }
 
-
-            if(modelElement->GetVtkPolyDataModel())
+            if(mepd->GetWholeVtkPolyData())
             {
                 vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
                 writer->SetFileName(filePath.toStdString().c_str());
-                writer->SetInputData(modelElement->GetVtkPolyDataModel());
+                writer->SetInputData(mepd->GetWholeVtkPolyData());
                 if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
                 {
                     mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
                 }
             }
 
-        }
+            outputFile.close();
 
-        outputFile.close();
+        }
+    }
+    else if(type=="ParaSolid")
+    {
 
     }
+    else if(type=="OpenCASCADE")
+    {
+
+    }
+
 
 }
 
@@ -164,7 +186,26 @@ void svModelLegacyIO::WriteFiles(mitk::DataStorage::SetOfObjects::ConstPointer m
 
     for(int i=0;i<modelNodes->size();i++){
         mitk::DataNode::Pointer node=modelNodes->GetElement(i);
-        QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(node->GetName())+".vtp");
+
+        if(!node) continue;
+
+        svModel* model=dynamic_cast<svModel*>(node->GetData());
+        if(!model) continue;
+
+        svModelElement* modelElement=model->GetModelElement();
+        if(!modelElement) continue;
+
+        std::string type=modelElement->GetType();
+        QString suffix;
+
+        if(type=="PolyData")
+            suffix="vtp";
+        else if(type=="ParaSolid")
+            suffix="xmt_txt";
+        else if(type=="OpenCASCADE")
+            suffix="occt";
+
+        QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(node->GetName())+"."+suffix);
         WriteFile(node, filePath);
     }
 
