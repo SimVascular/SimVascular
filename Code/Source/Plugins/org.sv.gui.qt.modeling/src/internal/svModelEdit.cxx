@@ -65,6 +65,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     }
 
     //for top part
+    //=================================================================
     connect(ui->btnUpdateModel, SIGNAL(clicked()), this, SLOT(ShowSegSelectionWidget()) );
 
     m_SegSelectionWidget=new svSegSelectionWidget();
@@ -75,6 +76,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect(m_SegSelectionWidget,SIGNAL(accepted()), this, SLOT(CreateModel()));
 
     //for tab Face List
+    //=================================================================
     svFaceListDelegate* itemDelegate=new svFaceListDelegate(this);
     m_FaceListTableModel = new QStandardItemModel(this);
     ui->tableViewFaceList->setModel(m_FaceListTableModel);
@@ -112,7 +114,14 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect( ui->tableViewFaceList, SIGNAL(customContextMenuRequested(const QPoint&))
       , this, SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
 
-   //for tab Blend
+    //face ops
+    //-----------------------------------------------------------------
+    connect(ui->btnDeleteFaces, SIGNAL(clicked()), this, SLOT(DeleteSelectedFaces()) );
+
+
+
+    //for tab Blend
+    //=====================================================================
     m_BlendTableModel = new QStandardItemModel(this);
     ui->tableViewBlend->setModel(m_BlendTableModel);
     m_BlendTableMenu=new QMenu(ui->tableViewBlend);
@@ -1149,3 +1158,65 @@ void svModelEdit::BlendModel()
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
+std::vector<int> svModelEdit::GetSelectedFaceIDs()
+{
+    std::vector<int> faceIDs;
+
+    if(!m_Model)
+        return faceIDs;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return faceIDs;
+
+    if(m_FaceListTableModel==NULL)
+        return faceIDs;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return faceIDs;
+    }
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
+        int id=itemID->text().toInt();
+        faceIDs.push_back(id);
+    }
+
+    return faceIDs;
+}
+
+void svModelEdit::DeleteSelectedFaces()
+{
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+
+    if(modelElement==NULL) return;
+
+    svModelElement* newModelElement=modelElement->Clone();
+
+    if(!newModelElement->DeleteFaces(GetSelectedFaceIDs()))
+    {
+        delete newModelElement;
+        return;
+    }
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
+    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+    m_Model->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+}

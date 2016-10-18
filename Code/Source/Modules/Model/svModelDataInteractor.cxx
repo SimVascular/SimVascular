@@ -84,14 +84,6 @@ void svModelDataInteractor::SelectFace(mitk::StateMachineAction*, mitk::Interact
         cellPicker->AddPickList(faceActors[i]);
 
 
-    //           vtkSmartPointer<vtkActor> actor=mapper->GetActor(renderer);
-
-    //            if(actor==NULL)
-    //                return;
-
-    //                cellPicker->AddPickList(actor);
-
-
     cellPicker->PickFromListOn();
     cellPicker->Pick(currentPickedDisplayPoint[0], currentPickedDisplayPoint[1], 0.0, renderer->GetVtkRenderer());
     cellPicker->PickFromListOff();

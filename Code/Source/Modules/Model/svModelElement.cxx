@@ -1,5 +1,7 @@
 #include "svModelElement.h"
 
+#include <vtkCellData.h>
+
 svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)
@@ -269,17 +271,6 @@ void svModelElement::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRad
     }
 }
 
-//double svModelElement::GetBlendRadius(int faceID1, int faceID2)
-//{
-//    for(int i=0;i<m_BlendRadii.size();i++)
-//    {
-//        if(m_BlendRadii[i] && m_BlendRadii[i]->faceID1==faceID1 &&  m_BlendRadii[i]->faceID2==faceID2)
-//            return m_BlendRadii[i]->radius;
-//    }
-
-//    return -1;
-//}
-
 svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(int faceID1, int faceID2)
 {
     for(int i=0;i<m_BlendRadii.size();i++)
@@ -289,4 +280,73 @@ svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(int face
     }
 
     return NULL;
+}
+
+void svModelElement::RemoveFace(int faceID)
+{
+    int idx=GetFaceIndex(faceID);
+
+    if(idx>-1)
+        m_Faces.erase(m_Faces.begin()+idx);
+}
+
+void svModelElement::RemoveFaceFromBlendParamRadii(int faceID)
+{
+
+    for(int i=m_BlendRadii.size()-1;i>-1;i--)
+    {
+        if( m_BlendRadii[i] && (m_BlendRadii[i]->faceID1==faceID || m_BlendRadii[i]->faceID2==faceID) )
+            m_BlendRadii.erase(m_BlendRadii.begin()+i);
+    }
+
+}
+
+bool svModelElement::DeleteFaces(std::vector<int> faceIDs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    std::string arrayname="ModelFaceID";
+    bool existing=false;
+
+//    int numArrays = m_WholeVtkPolyData->GetCellData()->GetNumberOfArrays();
+//    for (vtkIdType i=0;i<numArrays;i++)
+//    {
+//        if (strcmp(m_WholeVtkPolyData->GetCellData()->GetArrayName(i),arrayname.c_str())==0)
+//        {
+//            existing=true;
+//            break;
+//        }
+//    }
+
+    if(m_WholeVtkPolyData->GetCellData()->HasArray(arrayname.c_str()))
+        existing=true;
+
+    if(!existing)
+        return false;
+
+    for(int i=0;i<faceIDs.size();i++)
+    {
+        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
+        boundaryRegions = vtkIntArray::SafeDownCast(m_WholeVtkPolyData->GetCellData()-> GetScalars("ModelFaceID"));
+
+        m_WholeVtkPolyData->BuildLinks();
+
+        for (vtkIdType cellId=0; cellId< m_WholeVtkPolyData->GetNumberOfCells(); cellId++)
+        {
+          if (boundaryRegions->GetValue(cellId) == faceIDs[i])
+          {
+            m_WholeVtkPolyData->DeleteCell(cellId);
+          }
+        }
+
+        m_WholeVtkPolyData->RemoveDeletedCells();
+
+        RemoveFace(faceIDs[i]);
+
+        RemoveFaceFromBlendParamRadii(faceIDs[i]);
+
+    }
+
+    return true;
 }

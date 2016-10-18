@@ -103,7 +103,7 @@ public:
 
     std::string GetFaceName(int id) const;
 
-    void SetFaceName(std::string name, int id); //Todo: make virtual
+    virtual void SetFaceName(std::string name, int id);
 
     vtkSmartPointer<vtkPolyData> GetWholeVtkPolyData() const;
 
@@ -126,11 +126,14 @@ public:
 
     void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);
 
-//    double GetBlendRadius(int faceID1, int faceID2);
-
     svBlendParamRadius* GetBlendParamRadius(int faceID1, int faceID2);
 
     void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii);
+
+    void RemoveFace(int faceID);
+    void RemoveFaceFromBlendParamRadii(int faceID);
+
+    virtual bool DeleteFaces(std::vector<int> faceIDs);
 
     void CalculateBoundingBox(double *bounds);
 

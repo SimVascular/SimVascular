@@ -377,7 +377,7 @@
                            <number>0</number>
                           </property>
                           <item>
-                           <widget class="QPushButton" name="btnDelete">
+                           <widget class="QPushButton" name="btnDeleteFaces">
                             <property name="text">
                              <string>Delete</string>
                             </property>

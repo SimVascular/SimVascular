@@ -77,12 +77,16 @@ public slots:
 
     void ChangeColorSelected( bool checked = false );
 
+    void DeleteSelectedFaces();
+
 
 public:
 
     int GetTimeStep();
 
     std::vector<svModelElement::svBlendParamRadius*> GetBlendRadii();
+
+    std::vector<int> GetSelectedFaceIDs();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 

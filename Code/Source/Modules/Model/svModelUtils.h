@@ -37,6 +37,8 @@ public:
 
     static vtkPolyData* FillHolesWithIDs(vtkPolyData* inpd, int fillID, int fillType);
 
+    static bool CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname );
+
 };
 
 

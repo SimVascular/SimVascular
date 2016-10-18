@@ -79,13 +79,6 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
             allNames[2*numfaces]="cap_"+segNames[i]+"_2";
     }
 
-//    int numBoundaryRegions;
-//    int* faceIds=NULL;
-//    PlyDtaUtils_GetFaceIds( solidvpd, &numBoundaryRegions, &faceIds);
-
-//    cout<<numBoundaryRegions<<endl;
-//    cout<<faceIds[0]<<","<<faceIds[1]<<","<<faceIds[2]<<","<<faceIds[3]<<","<<faceIds[4]<<endl;
-
     std::vector<svModelElement::svFace*> faces;
 
     for(int i=0;i<totalNumFaces;i++)
@@ -412,4 +405,43 @@ vtkPolyData* svModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int f
     delete tmpcvpd;
 
     return outpd;
+}
+
+
+bool svModelUtils::CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname )
+{
+  vtkIdType i;
+  int numArrays;
+
+  if (datatype == 0)
+  {
+    numArrays = object->GetPointData()->GetNumberOfArrays();
+    for (i=0;i<numArrays;i++)
+    {
+      if (strcmp(object->GetPointData()->GetArrayName(i),arrayname.c_str())==0)
+      {
+        return true;
+      }
+    }
+
+//    if(object->GetPointData()->HasArray(arrayname.c_str()))
+//        return true;
+
+  }
+  else
+  {
+    numArrays = object->GetCellData()->GetNumberOfArrays();
+    for (i=0;i<numArrays;i++)
+    {
+      if (strcmp(object->GetCellData()->GetArrayName(i),arrayname.c_str())==0)
+      {
+        return true;
+      }
+    }
+
+//    if(object->GetCellData()->HasArray(arrayname.c_str()))
+//        return true;
+  }
+
+  return false;
 }
