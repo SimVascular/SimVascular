@@ -301,52 +301,42 @@ void svModelElement::RemoveFaceFromBlendParamRadii(int faceID)
 
 }
 
-bool svModelElement::DeleteFaces(std::vector<int> faceIDs)
+void svModelElement::ReplaceFaceIDForBlendParamRadii(int targetID, int loseID)
 {
-    if(m_WholeVtkPolyData==NULL)
-        return false;
-
-    std::string arrayname="ModelFaceID";
-    bool existing=false;
-
-//    int numArrays = m_WholeVtkPolyData->GetCellData()->GetNumberOfArrays();
-//    for (vtkIdType i=0;i<numArrays;i++)
-//    {
-//        if (strcmp(m_WholeVtkPolyData->GetCellData()->GetArrayName(i),arrayname.c_str())==0)
-//        {
-//            existing=true;
-//            break;
-//        }
-//    }
-
-    if(m_WholeVtkPolyData->GetCellData()->HasArray(arrayname.c_str()))
-        existing=true;
-
-    if(!existing)
-        return false;
-
-    for(int i=0;i<faceIDs.size();i++)
+    //replace
+    for(int i=0;i<m_BlendRadii.size();i++)
     {
-        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
-        boundaryRegions = vtkIntArray::SafeDownCast(m_WholeVtkPolyData->GetCellData()-> GetScalars("ModelFaceID"));
-
-        m_WholeVtkPolyData->BuildLinks();
-
-        for (vtkIdType cellId=0; cellId< m_WholeVtkPolyData->GetNumberOfCells(); cellId++)
+        if(m_BlendRadii[i] )
         {
-          if (boundaryRegions->GetValue(cellId) == faceIDs[i])
-          {
-            m_WholeVtkPolyData->DeleteCell(cellId);
-          }
+            if(m_BlendRadii[i]->faceID1==loseID)
+                m_BlendRadii[i]->faceID1=targetID;
+
+            if(m_BlendRadii[i]->faceID2==loseID)
+                m_BlendRadii[i]->faceID2=targetID;
         }
-
-        m_WholeVtkPolyData->RemoveDeletedCells();
-
-        RemoveFace(faceIDs[i]);
-
-        RemoveFaceFromBlendParamRadii(faceIDs[i]);
-
     }
 
-    return true;
+    //remove invalid ones, in which faceID1==faceID2
+    for(int i=m_BlendRadii.size()-1;i>-1;i--)
+    {
+        if(m_BlendRadii[i] && m_BlendRadii[i]->faceID1==m_BlendRadii[i]->faceID2)
+        {
+            m_BlendRadii.erase(m_BlendRadii.begin()+i);
+        }
+    }
+
+    //remove duplicate ones
+    for(int i=0;i<m_BlendRadii.size();i++)
+    {
+        for(int j=m_BlendRadii.size()-1;j>i;j--)
+        {
+            if(m_BlendRadii[i] && m_BlendRadii[j]
+                    && m_BlendRadii[i]->faceID1==m_BlendRadii[j]->faceID1
+                    && m_BlendRadii[i]->faceID2==m_BlendRadii[j]->faceID2)
+            {
+                m_BlendRadii.erase(m_BlendRadii.begin()+j);
+            }
+        }
+    }
+
 }

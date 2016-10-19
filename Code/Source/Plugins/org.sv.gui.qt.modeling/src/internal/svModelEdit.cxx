@@ -117,6 +117,8 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     //face ops
     //-----------------------------------------------------------------
     connect(ui->btnDeleteFaces, SIGNAL(clicked()), this, SLOT(DeleteSelectedFaces()) );
+    connect(ui->btnCombineFaces, SIGNAL(clicked()), this, SLOT(CombineSelectedFaces()) );
+    connect(ui->btnRemeshFaces, SIGNAL(clicked()), this, SLOT(RemeshSelectedFaces()) );
 
 
 
@@ -421,7 +423,7 @@ void svModelEdit::UpdateFaceData(QStandardItem* item)
 
     if(col==1)
     {
-        face->name=item->text().trimmed().toStdString();
+        modelElement->SetFaceName(item->text().trimmed().toStdString(), id);
     }else if(col==5){
         face->opacity=item->text().trimmed().toFloat();
     }
@@ -659,7 +661,7 @@ void svModelEdit::ChangeOpacitySelected( bool )
         if(face==NULL)
             continue;
 
-        face->opacity=opacity;
+//        face->opacity=opacity; //done by UpateFaceData()
 
         QStandardItem* itemO= m_FaceListTableModel->item(row,5);
         itemO->setData((int)(opacity*100)/100.0, Qt::EditRole);
@@ -1196,11 +1198,11 @@ void svModelEdit::DeleteSelectedFaces()
     if(m_Model==NULL) return;
 
     int timeStep=GetTimeStep();
-    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
 
     if(modelElement==NULL) return;
 
-    svModelElement* newModelElement=modelElement->Clone();
+    svModelElementPolyData* newModelElement=modelElement->Clone();
 
     if(!newModelElement->DeleteFaces(GetSelectedFaceIDs()))
     {
@@ -1212,7 +1214,67 @@ void svModelEdit::DeleteSelectedFaces()
 
     svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
     svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
-    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement by Deleting Faces");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+    m_Model->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+}
+
+void svModelEdit::CombineSelectedFaces()
+{
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+
+    if(modelElement==NULL) return;
+
+    svModelElementPolyData* newModelElement=modelElement->Clone();
+
+    if(!newModelElement->CombineFaces(GetSelectedFaceIDs()))
+    {
+        delete newModelElement;
+        return;
+    }
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
+    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement by Combining Faces");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+    m_Model->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+}
+
+void svModelEdit::RemeshSelectedFaces()
+{
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+
+    if(modelElement==NULL) return;
+
+    svModelElementPolyData* newModelElement=modelElement->Clone();
+
+    if(!newModelElement->RemeshFaces(GetSelectedFaceIDs(),ui->dsbRemeshSize->value()))
+    {
+        delete newModelElement;
+        return;
+    }
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
+    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement by Combining Faces");
     mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
     m_Model->ExecuteOperation(doOp);

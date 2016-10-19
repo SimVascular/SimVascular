@@ -61,6 +61,13 @@ public:
 
     void AssignBlendParam(svBlendParam* param);
 
+    bool DeleteFaces(std::vector<int> faceIDs);
+
+    bool CombineFaces(std::vector<int> faceIDs);
+
+    bool RemeshFaces(std::vector<int> faceIDs, double size);
+
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;

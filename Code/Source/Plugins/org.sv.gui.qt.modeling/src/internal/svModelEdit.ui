@@ -384,7 +384,7 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QPushButton" name="btnCombine">
+                           <widget class="QPushButton" name="btnCombineFaces">
                             <property name="text">
                              <string>Combine</string>
                             </property>
@@ -409,7 +409,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>1</number>
                             </property>
                             <widget class="QWidget" name="page_7">
                              <property name="geometry">
@@ -538,7 +538,7 @@
                                </widget>
                               </item>
                               <item>
-                               <widget class="QDoubleSpinBox" name="doubleSpinBox">
+                               <widget class="QDoubleSpinBox" name="dsbRemeshSize">
                                 <property name="decimals">
                                  <number>3</number>
                                 </property>
@@ -551,7 +551,7 @@
                                </widget>
                               </item>
                               <item>
-                               <widget class="QPushButton" name="btnRemesh">
+                               <widget class="QPushButton" name="btnRemeshFaces">
                                 <property name="text">
                                  <string>Remesh</string>
                                 </property>

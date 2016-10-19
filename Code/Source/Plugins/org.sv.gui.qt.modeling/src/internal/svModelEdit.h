@@ -79,6 +79,10 @@ public slots:
 
     void DeleteSelectedFaces();
 
+    void CombineSelectedFaces();
+
+    void RemeshSelectedFaces();
+
 
 public:
 

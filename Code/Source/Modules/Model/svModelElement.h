@@ -133,7 +133,7 @@ public:
     void RemoveFace(int faceID);
     void RemoveFaceFromBlendParamRadii(int faceID);
 
-    virtual bool DeleteFaces(std::vector<int> faceIDs);
+    void ReplaceFaceIDForBlendParamRadii(int targetID, int loseID);
 
     void CalculateBoundingBox(double *bounds);
 
