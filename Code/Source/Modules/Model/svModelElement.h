@@ -101,6 +101,10 @@ public:
 
     int GetFaceID(std::string name) const;
 
+    int GetMaxFaceID() const;
+
+    int GetFaceNumber() const;
+
     std::string GetFaceName(int id) const;
 
     virtual void SetFaceName(std::string name, int id);

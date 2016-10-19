@@ -67,6 +67,8 @@ public:
 
     bool RemeshFaces(std::vector<int> faceIDs, double size);
 
+    bool FillHolesWithIDs();
+
 
   protected:
 

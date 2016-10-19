@@ -445,3 +445,27 @@ bool svModelUtils::CheckArrayName(vtkDataSet *object,int datatype,std::string ar
 
   return false;
 }
+
+vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtkPolyData> inpd)
+{
+    vtkSmartPointer<vtkCleanPolyData> cleaner=vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->PointMergingOn();
+    cleaner->ConvertLinesToPointsOff();
+    cleaner->ConvertPolysToLinesOff();
+    cleaner->SetInputDataObject(inpd);
+    cleaner->Update();
+
+    vtkSmartPointer<vtkPolyDataNormals> orienter=vtkSmartPointer<vtkPolyDataNormals>::New();
+    orienter->SetInputDataObject(cleaner->GetOutput());
+    orienter->AutoOrientNormalsOn();
+    orienter->ComputePointNormalsOn();
+    orienter->FlipNormalsOn();
+    orienter->SplittingOff();
+    orienter->ComputeCellNormalsOn();
+    orienter->ConsistencyOn();
+    orienter->NonManifoldTraversalOff();
+    orienter->Update();
+
+    return orienter->GetOutput();
+}
+

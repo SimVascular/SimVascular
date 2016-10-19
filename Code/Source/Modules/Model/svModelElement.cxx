@@ -215,6 +215,23 @@ int svModelElement::GetFaceID(std::string name) const
     return -1;
 }
 
+int svModelElement::GetMaxFaceID() const
+{
+    int maxID=0;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->id>maxID)
+            maxID=m_Faces[i]->id;
+    }
+
+    return maxID;
+}
+
+int svModelElement::GetFaceNumber() const
+{
+    return m_Faces.size();
+}
+
 bool svModelElement::IsFaceSelected(std::string name)
 {
     return GetFace(name)&&GetFace(name)->selected;

@@ -1,5 +1,7 @@
 #include "svModelElementPolyData.h"
 
+#include "svModelUtils.h"
+
 #include "cv_polydatasolid_utils.h"
 #include "cv_VMTK_utils.h"
 
@@ -215,4 +217,42 @@ bool svModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
     }
 
     return true;
+}
+
+
+bool svModelElementPolyData::FillHolesWithIDs()
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    int maxFaceID=GetMaxFaceID();
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::FillHolesWithIDs(m_WholeVtkPolyData, maxFaceID, 2);
+    if(newvpd==NULL)
+        return false;
+
+    int *newFaceIDs;
+    int numFaces = 0;
+    if (PlyDtaUtils_GetFaceIds(newvpd,&numFaces,&newFaceIDs) != CV_OK)
+    {
+      fprintf(stderr,"Could not get face ids\n");
+      return false;
+    }
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<numFaces;i++)
+    {
+        int newID=newFaceIDs[i];
+        if(newID>maxFaceID){
+            svFace* face=new svFace;
+            face->id=newID;
+            face->name="noname_"+std::to_string(newID);;
+            face->vpd=CreateFaceVtkPolyData(newID);
+            m_Faces.push_back(face);
+        }
+
+    }
+
+    return true;
+
 }

@@ -384,16 +384,16 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QPushButton" name="btnCombineFaces">
+                           <widget class="QPushButton" name="btnFillHoleIDs">
                             <property name="text">
-                             <string>Combine</string>
+                             <string>Fill Holes IDs</string>
                             </property>
                            </widget>
                           </item>
                           <item>
-                           <widget class="QPushButton" name="btnFillHoleIDs">
+                           <widget class="QPushButton" name="btnCombineFaces">
                             <property name="text">
-                             <string>Fill Holes IDs</string>
+                             <string>Combine</string>
                             </property>
                            </widget>
                           </item>

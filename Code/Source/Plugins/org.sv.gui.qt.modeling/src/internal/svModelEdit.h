@@ -83,6 +83,8 @@ public slots:
 
     void RemeshSelectedFaces();
 
+    void FillHolesWithFaceIDs();
+
 
 public:
 

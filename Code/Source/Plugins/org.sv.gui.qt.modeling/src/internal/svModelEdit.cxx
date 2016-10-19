@@ -119,8 +119,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnDeleteFaces, SIGNAL(clicked()), this, SLOT(DeleteSelectedFaces()) );
     connect(ui->btnCombineFaces, SIGNAL(clicked()), this, SLOT(CombineSelectedFaces()) );
     connect(ui->btnRemeshFaces, SIGNAL(clicked()), this, SLOT(RemeshSelectedFaces()) );
-
-
+    connect(ui->btnFillHoleIDs, SIGNAL(clicked()), this, SLOT(FillHolesWithFaceIDs()) );
 
     //for tab Blend
     //=====================================================================
@@ -1281,4 +1280,33 @@ void svModelEdit::RemeshSelectedFaces()
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
+}
+
+void svModelEdit::FillHolesWithFaceIDs()
+{
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+
+    if(modelElement==NULL) return;
+
+    svModelElementPolyData* newModelElement=modelElement->Clone();
+
+    if(!newModelElement->FillHolesWithIDs())
+    {
+        delete newModelElement;
+        return;
+    }
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
+    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement by Combining Faces");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+    m_Model->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }

@@ -39,6 +39,8 @@ public:
 
     static bool CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname );
 
+    static vtkSmartPointer<vtkPolyData> OrientVtkPolyData(vtkSmartPointer<vtkPolyData> inpd);
+
 };
 
 
