@@ -19,6 +19,8 @@ class svModelEdit : public QmitkFunctionality
 
 public:
 
+    enum OperationType {DELETE_FACES, FILL_HOLES_WITH_IDS, COMBINE_FACES, REMESH_FACES, EXTRACT_FACES};
+
     static const QString EXTENSION_ID;
 
     svModelEdit();
@@ -77,14 +79,7 @@ public slots:
 
     void ChangeColorSelected( bool checked = false );
 
-    void DeleteSelectedFaces();
-
-    void CombineSelectedFaces();
-
-    void RemeshSelectedFaces();
-
-    void FillHolesWithFaceIDs();
-
+    void ModelOperate(int operationType);
 
 public:
 

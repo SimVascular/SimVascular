@@ -256,3 +256,37 @@ bool svModelElementPolyData::FillHolesWithIDs()
     return true;
 
 }
+
+bool svModelElementPolyData::ExtractFaces(double angle)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    int numFaces = 0;
+    if (PlyDtaUtils_GetBoundaryFaces(m_WholeVtkPolyData,angle,&numFaces) != CV_OK)
+    {
+        fprintf(stderr,"Could not extract faces\n");
+        return false;
+    }
+
+    int *faceIDs;
+    if (PlyDtaUtils_GetFaceIds(m_WholeVtkPolyData,&numFaces,&faceIDs) != CV_OK)
+    {
+        fprintf(stderr,"Could not get face ids\n");
+        return false;
+    }
+
+    m_Faces.clear();
+
+    for(int i=0;i<numFaces;i++)
+    {
+        svFace* face=new svFace;
+        face->id=faceIDs[i];
+        face->name="noname_"+std::to_string(faceIDs[i]);;
+        face->vpd=CreateFaceVtkPolyData(faceIDs[i]);
+        m_Faces.push_back(face);
+    }
+
+    return true;
+}
+
