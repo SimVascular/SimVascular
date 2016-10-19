@@ -498,8 +498,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>195</height>
+                               <width>113</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -609,12 +609,19 @@
                            </widget>
                           </item>
                           <item>
+                           <widget class="QPushButton" name="btnSelectLargestConnected">
+                            <property name="text">
+                             <string>Sel Lg Connected</string>
+                            </property>
+                           </widget>
+                          </item>
+                          <item>
                            <widget class="QToolBox" name="toolBox_3">
                             <property name="styleSheet">
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>4</number>
                             </property>
                             <widget class="QWidget" name="page_8">
                              <property name="geometry">
@@ -622,7 +629,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>168</height>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -697,7 +704,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>93</width>
+                               <width>125</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -808,8 +815,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>105</width>
-                               <height>94</height>
+                               <width>138</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -878,8 +885,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>168</height>
+                               <width>125</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -974,8 +981,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>105</width>
-                               <height>94</height>
+                               <width>138</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">

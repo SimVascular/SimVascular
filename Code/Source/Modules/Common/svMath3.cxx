@@ -268,3 +268,14 @@ bool svMath3::GetIntersectionPoint(mitk::PlaneGeometry* plane, mitk::Point3D poi
 
     return false;
 }
+
+double svMath3::GetMachineEpsilon()
+{
+    double num = 1.0;
+    double test = 1.0;
+
+    while ( num + test > num ) {
+      test /= 10.0;
+    }
+    return (test * 10.0);
+}

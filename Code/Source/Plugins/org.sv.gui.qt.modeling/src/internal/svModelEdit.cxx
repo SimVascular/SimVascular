@@ -137,6 +137,23 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnFillHoles, FILL_HOLES);
     connect(ui->btnFillHoles, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
+    signalMapper->setMapping(ui->btnSelectLargestConnected, SELECT_LARGEST_CONNECTED);
+    connect(ui->btnSelectLargestConnected, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnDecimateG, DECIMATE_GLOBAL);
+    connect(ui->btnDecimateG, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnLapSmoothG, LAPLACIAN_SMOOTH_GLOBAL);
+    connect(ui->btnLapSmoothG, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnBFSubdivideG, BUTTERFLY_SUBDIVIDE_GLOBAL);
+    connect(ui->btnBFSubdivideG, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnWSSmoothG, WINDOWSINC_SMOOTH_GLOBAL);
+    connect(ui->btnWSSmoothG, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnDensifyG, DENSIFY_GLOBAL);
+    connect(ui->btnDensifyG, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
 
@@ -768,6 +785,16 @@ void svModelEdit::SetupBlendTable()
                 continue;
 
             //To do: check if two faces are adjcent;
+            //Todo: create linking list in svModelElementPolyData, avoiding to create multiple times in the plugin
+//            vtkSmartPointer<vtkIntersectionPolyDataFilter> intersectionPolyDataFilter =
+//                    vtkSmartPointer<vtkIntersectionPolyDataFilter>::New();
+//            intersectionPolyDataFilter->SetInputData(0, facec[i]->vpd);
+//            intersectionPolyDataFilter->SetInputData(1, facec[j]->vpd);
+//            intersectionPolyDataFilter->Update();
+
+//            if(inintersectionPolyDataFilter->GetOutput()->GetNumberOfCells()<1)
+//                continue;
+
 
             rowIndex++;
             m_BlendTableModel->insertRow(rowIndex);
@@ -1243,6 +1270,24 @@ void svModelEdit::ModelOperate(int operationType)
         break;
     case FILL_HOLES:
         ok=newModelElement->FillHoles();
+        break;
+    case SELECT_LARGEST_CONNECTED:
+        ok=newModelElement->SelectLargestConnectedRegion();
+        break;
+    case DECIMATE_GLOBAL:
+        ok=newModelElement->Decimate(ui->dsbTargetRateG->value());
+        break;
+    case LAPLACIAN_SMOOTH_GLOBAL:
+        ok=newModelElement->LaplacianSmooth(ui->sbLapItersG->value(),ui->dsbLapRelaxG->value());
+        break;
+    case BUTTERFLY_SUBDIVIDE_GLOBAL:
+        ok=newModelElement->ButterflySubdivide(ui->sbBFDivisionsG->value());
+        break;
+    case WINDOWSINC_SMOOTH_GLOBAL:
+        ok=newModelElement->WindowSincSmooth(ui->sbWSItersG->value(),ui->dsbWSBandG->value());
+        break;
+    case DENSIFY_GLOBAL:
+        ok=newModelElement->Densify(ui->sbDensifyDivisionsG->value());
         break;
     default:
         break;

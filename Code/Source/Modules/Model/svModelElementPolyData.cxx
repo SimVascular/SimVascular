@@ -1,11 +1,18 @@
 #include "svModelElementPolyData.h"
 
+#include "svMath3.h"
 #include "svModelUtils.h"
 
 #include "cv_polydatasolid_utils.h"
 #include "cv_VMTK_utils.h"
 
 #include <vtkFillHolesFilter.h>
+#include <vtkPolyDataConnectivityFilter.h>
+#include <vtkQuadricDecimation.h>
+#include <vtkSmoothPolyDataFilter.h>
+#include <vtkButterflySubdivisionFilter.h>
+#include <vtkWindowedSincPolyDataFilter.h>
+#include <vtkDensifyPolyData.h>
 
 #include <iostream>
 using namespace std;
@@ -311,6 +318,163 @@ bool svModelElementPolyData::FillHoles()
     m_Faces.clear();
 
     m_BlendRadii.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::SelectLargestConnectedRegion()
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkCleanPolyData> merge = vtkSmartPointer<vtkCleanPolyData>::New();
+    merge->SetTolerance(svMath3::GetMachineEpsilon());
+    merge->SetInputDataObject(m_WholeVtkPolyData);
+    merge->Update();
+
+    vtkSmartPointer<vtkPolyData> mergedpd=merge->GetOutput();
+
+    vtkSmartPointer<vtkPolyDataConnectivityFilter> connfilt=vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
+    connfilt->SetInputDataObject(mergedpd);
+    connfilt->SetExtractionModeToLargestRegion();
+    connfilt->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=connfilt->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    m_Faces.clear();
+
+    m_BlendRadii.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::Decimate(double targetRate)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkQuadricDecimation> decimator=vtkSmartPointer<vtkQuadricDecimation>::New();
+    decimator->SetTargetReduction(targetRate);
+    decimator->SetInputDataObject(m_WholeVtkPolyData);
+    decimator->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=decimator->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    m_Faces.clear();
+
+    m_BlendRadii.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::LaplacianSmooth(int numIters, double relaxFactor)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkSmoothPolyDataFilter> smoother=vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
+    smoother->SetInputDataObject(m_WholeVtkPolyData);
+    smoother->SetRelaxationFactor(relaxFactor);
+    smoother->SetNumberOfIterations(numIters);
+    //smoother->SetFeatureAngle(30.0);
+    smoother->FeatureEdgeSmoothingOff();
+    smoother->BoundarySmoothingOff();
+    smoother->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=smoother->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    return true;
+}
+
+bool svModelElementPolyData::ButterflySubdivide(int numDivs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkButterflySubdivisionFilter> butt=vtkSmartPointer<vtkButterflySubdivisionFilter>::New();
+    butt->SetInputDataObject(m_WholeVtkPolyData);
+    butt->SetNumberOfSubdivisions(numDivs);
+    butt->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=butt->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    return true;
+}
+
+bool svModelElementPolyData::WindowSincSmooth(int numIters, double band)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkWindowedSincPolyDataFilter> smoother=vtkSmartPointer<vtkWindowedSincPolyDataFilter>::New();
+    smoother->SetInputDataObject(m_WholeVtkPolyData);
+    smoother->SetPassBand(band);
+    smoother->SetNumberOfIterations(numIters);
+    //smoother->SetFeatureAngle(30.0);
+    smoother->FeatureEdgeSmoothingOff();
+    smoother->BoundarySmoothingOff();
+    smoother->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=smoother->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    return true;
+}
+
+bool svModelElementPolyData::Densify(int numDivs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkDensifyPolyData> densy=vtkSmartPointer<vtkDensifyPolyData>::New();
+    densy->SetInputDataObject(m_WholeVtkPolyData);
+    densy->SetNumberOfSubdivisions(numDivs);
+    densy->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=densy->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
 
     return true;
 }

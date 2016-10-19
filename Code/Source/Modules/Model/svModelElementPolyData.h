@@ -73,6 +73,17 @@ public:
 
     bool FillHoles();
 
+    bool SelectLargestConnectedRegion();
+
+    bool Decimate(double targetRate);
+
+    bool LaplacianSmooth(int numIters, double relaxFactor);
+
+    bool ButterflySubdivide(int numDivs);
+
+    bool WindowSincSmooth(int numIters, double band);
+
+    bool Densify(int numDivs);
 
   protected:
 

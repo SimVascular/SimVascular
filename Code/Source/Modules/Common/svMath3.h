@@ -24,6 +24,8 @@ public:
     static bool InsideBounds(mitk::Point3D point, double bounds[6]);
 
     static bool GetIntersectionPoint(mitk::PlaneGeometry* plane, mitk::Point3D point, mitk::Vector3D direction,mitk::Point3D& interPoint);
+
+    static double GetMachineEpsilon();
 };
 
 #endif // SVMATH3_H
