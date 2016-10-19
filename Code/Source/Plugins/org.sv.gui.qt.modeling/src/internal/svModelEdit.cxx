@@ -134,6 +134,10 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnExtractFaces, EXTRACT_FACES);
     connect(ui->btnExtractFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
+    signalMapper->setMapping(ui->btnFillHoles, FILL_HOLES);
+    connect(ui->btnFillHoles, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
 
     //for tab Blend
@@ -1236,6 +1240,9 @@ void svModelEdit::ModelOperate(int operationType)
         break;
     case EXTRACT_FACES:
         ok=newModelElement->ExtractFaces(ui->sbSeparationAngle->value());
+        break;
+    case FILL_HOLES:
+        ok=newModelElement->FillHoles();
         break;
     default:
         break;

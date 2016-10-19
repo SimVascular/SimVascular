@@ -76,16 +76,28 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
         return;
     }
 
+    bool forceShowWholeSurface=false;
+    node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
+
+//    bool forceShowFaces=false;
+//    node->GetBoolProperty("show faces", forceShowFaces, renderer);
+
+//    if(!showWholeSurface&&!showFaces)
+//    {
+//        ls->m_PropAssembly->VisibilityOff();
+//        return;
+//    }
+
     bool showWholeSurface=false;
-    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
+    bool showFaces=false;
 
-    bool showFaces=true;
-    node->GetBoolProperty("show faces", showFaces, renderer);
-
-    if(!showWholeSurface&&!showFaces)
+    if(me->GetFaceNumber()>0)
     {
-        ls->m_PropAssembly->VisibilityOff();
-        return;
+        showWholeSurface=false||forceShowWholeSurface;
+        showFaces=true;
+    }else{
+        showWholeSurface=true;
+        showFaces=false;
     }
 
     ls->m_PropAssembly->GetParts()->RemoveAllItems();
@@ -553,7 +565,7 @@ void svModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
 
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
-    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
+//    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
 
     svModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(node,renderer,overwrite); // Shading

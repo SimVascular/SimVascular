@@ -19,7 +19,7 @@ class svModelEdit : public QmitkFunctionality
 
 public:
 
-    enum OperationType {DELETE_FACES, FILL_HOLES_WITH_IDS, COMBINE_FACES, REMESH_FACES, EXTRACT_FACES};
+    enum OperationType {DELETE_FACES, FILL_HOLES_WITH_IDS, COMBINE_FACES, REMESH_FACES, EXTRACT_FACES, FILL_HOLES};
 
     static const QString EXTENSION_ID;
 

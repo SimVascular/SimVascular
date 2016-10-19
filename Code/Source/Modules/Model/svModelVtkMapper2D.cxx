@@ -161,16 +161,31 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     float lineWidth = 1.0f;
     node->GetFloatProperty("line width", lineWidth, renderer);
 
+    bool forceShowWholeSurface=false;
+    node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
+
+//    bool showWholeSurface=false;
+//    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
+
+//    bool showFaces=true;
+//    node->GetBoolProperty("show faces", showFaces, renderer);
+
+//    if(!showWholeSurface&&!showFaces)
+//    {
+//        localStorage->m_PropAssembly->VisibilityOff();
+//        return;
+//    }
+
     bool showWholeSurface=false;
-    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
+    bool showFaces=false;
 
-    bool showFaces=true;
-    node->GetBoolProperty("show faces", showFaces, renderer);
-
-    if(!showWholeSurface&&!showFaces)
+    if(me->GetFaceNumber()>0)
     {
-        localStorage->m_PropAssembly->VisibilityOff();
-        return;
+        showWholeSurface=false||forceShowWholeSurface;
+        showFaces=true;
+    }else{
+        showWholeSurface=true;
+        showFaces=false;
     }
 
     localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
@@ -331,7 +346,7 @@ void svModelVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
-    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
+//    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
     node->AddProperty( "line 2D width", mitk::FloatProperty::New(2.0f), renderer, overwrite );
     //  aliases->AddAlias( "line width", "svModel.2D.Line Width", "svModel");

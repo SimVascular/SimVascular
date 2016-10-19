@@ -71,6 +71,8 @@ public:
 
     bool ExtractFaces(double angle);
 
+    bool FillHoles();
+
 
   protected:
 

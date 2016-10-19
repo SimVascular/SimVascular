@@ -5,6 +5,8 @@
 #include "cv_polydatasolid_utils.h"
 #include "cv_VMTK_utils.h"
 
+#include <vtkFillHolesFilter.h>
+
 #include <iostream>
 using namespace std;
 
@@ -139,7 +141,6 @@ bool svModelElementPolyData::CombineFaces(std::vector<int> faceIDs)
 
         loseID=faceIDs[i];
 
-
         vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
         boundaryRegions = vtkIntArray::SafeDownCast(m_WholeVtkPolyData->GetCellData()-> GetScalars("ModelFaceID"));
 
@@ -219,7 +220,6 @@ bool svModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
     return true;
 }
 
-
 bool svModelElementPolyData::FillHolesWithIDs()
 {
     if(m_WholeVtkPolyData==NULL)
@@ -287,6 +287,30 @@ bool svModelElementPolyData::ExtractFaces(double angle)
         m_Faces.push_back(face);
     }
 
+    m_BlendRadii.clear();
+
     return true;
 }
 
+bool svModelElementPolyData::FillHoles()
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkFillHolesFilter> filler=vtkSmartPointer<vtkFillHolesFilter>::New();
+    filler->SetHoleSize(filler->GetHoleSizeMaxValue());
+    filler->SetInputDataObject(m_WholeVtkPolyData);
+    filler->Update();
+
+    vtkSmartPointer<vtkPolyData> newvpd=filler->GetOutput();
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    m_Faces.clear();
+
+    m_BlendRadii.clear();
+
+    return true;
+}

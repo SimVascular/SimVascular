@@ -340,7 +340,7 @@
                          </size>
                         </property>
                         <property name="currentIndex">
-                         <number>0</number>
+                         <number>1</number>
                         </property>
                         <widget class="QWidget" name="page_3">
                          <property name="geometry">
@@ -386,7 +386,7 @@
                           <item>
                            <widget class="QPushButton" name="btnFillHoleIDs">
                             <property name="text">
-                             <string>Fill Holes IDs</string>
+                             <string>Fill Holes w. IDs</string>
                             </property>
                            </widget>
                           </item>
@@ -411,85 +411,6 @@
                             <property name="currentIndex">
                              <number>0</number>
                             </property>
-                            <widget class="QWidget" name="page_7">
-                             <property name="geometry">
-                              <rect>
-                               <x>0</x>
-                               <y>0</y>
-                               <width>138</width>
-                               <height>195</height>
-                              </rect>
-                             </property>
-                             <attribute name="label">
-                              <string>Extract</string>
-                             </attribute>
-                             <layout class="QVBoxLayout" name="verticalLayout_16">
-                              <property name="spacing">
-                               <number>5</number>
-                              </property>
-                              <property name="leftMargin">
-                               <number>5</number>
-                              </property>
-                              <property name="topMargin">
-                               <number>5</number>
-                              </property>
-                              <property name="rightMargin">
-                               <number>0</number>
-                              </property>
-                              <property name="bottomMargin">
-                               <number>5</number>
-                              </property>
-                              <item>
-                               <widget class="QLabel" name="label_14">
-                                <property name="sizePolicy">
-                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                                  <horstretch>0</horstretch>
-                                  <verstretch>0</verstretch>
-                                 </sizepolicy>
-                                </property>
-                                <property name="text">
-                                 <string>Sep. Angle:</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QSpinBox" name="sbSeparationAngle">
-                                <property name="minimum">
-                                 <number>1</number>
-                                </property>
-                                <property name="maximum">
-                                 <number>90</number>
-                                </property>
-                                <property name="singleStep">
-                                 <number>10</number>
-                                </property>
-                                <property name="value">
-                                 <number>45</number>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="btnExtractFaces">
-                                <property name="text">
-                                 <string>Extract Faces</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <spacer name="verticalSpacer_5">
-                                <property name="orientation">
-                                 <enum>Qt::Vertical</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>20</width>
-                                  <height>40</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                             </layout>
-                            </widget>
                             <widget class="QWidget" name="page_10">
                              <property name="geometry">
                               <rect>
@@ -572,6 +493,85 @@
                               </item>
                              </layout>
                             </widget>
+                            <widget class="QWidget" name="page_7">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>138</width>
+                               <height>195</height>
+                              </rect>
+                             </property>
+                             <attribute name="label">
+                              <string>Extract</string>
+                             </attribute>
+                             <layout class="QVBoxLayout" name="verticalLayout_16">
+                              <property name="spacing">
+                               <number>5</number>
+                              </property>
+                              <property name="leftMargin">
+                               <number>5</number>
+                              </property>
+                              <property name="topMargin">
+                               <number>5</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>5</number>
+                              </property>
+                              <item>
+                               <widget class="QLabel" name="label_14">
+                                <property name="sizePolicy">
+                                 <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                                  <horstretch>0</horstretch>
+                                  <verstretch>0</verstretch>
+                                 </sizepolicy>
+                                </property>
+                                <property name="text">
+                                 <string>Sep. Angle:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QSpinBox" name="sbSeparationAngle">
+                                <property name="minimum">
+                                 <number>1</number>
+                                </property>
+                                <property name="maximum">
+                                 <number>90</number>
+                                </property>
+                                <property name="singleStep">
+                                 <number>10</number>
+                                </property>
+                                <property name="value">
+                                 <number>45</number>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QPushButton" name="btnExtractFaces">
+                                <property name="text">
+                                 <string>Extract Faces</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <spacer name="verticalSpacer_5">
+                                <property name="orientation">
+                                 <enum>Qt::Vertical</enum>
+                                </property>
+                                <property name="sizeHint" stdset="0">
+                                 <size>
+                                  <width>20</width>
+                                  <height>40</height>
+                                 </size>
+                                </property>
+                               </spacer>
+                              </item>
+                             </layout>
+                            </widget>
                            </widget>
                           </item>
                          </layout>
@@ -604,7 +604,7 @@
                           <item>
                            <widget class="QPushButton" name="btnFillHoles">
                             <property name="text">
-                             <string>Fill Holes</string>
+                             <string>Fill Holes w/o IDs</string>
                             </property>
                            </widget>
                           </item>
@@ -614,15 +614,15 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>3</number>
+                             <number>0</number>
                             </property>
                             <widget class="QWidget" name="page_8">
                              <property name="geometry">
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
-                               <height>94</height>
+                               <width>138</width>
+                               <height>168</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -697,7 +697,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
+                               <width>93</width>
                                <height>146</height>
                               </rect>
                              </property>
