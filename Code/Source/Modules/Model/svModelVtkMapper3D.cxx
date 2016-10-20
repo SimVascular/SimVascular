@@ -180,7 +180,7 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
         ls->m_PropAssembly->VisibilityOn();
 }
 
-vtkSmartPointer<vtkActor> svModelVtkMapper3D::GetActor(mitk::BaseRenderer* renderer)
+vtkSmartPointer<vtkActor> svModelVtkMapper3D::GetWholeSurfaceActor(mitk::BaseRenderer* renderer)
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 

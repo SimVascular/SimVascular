@@ -117,12 +117,12 @@ public:
 
 //    int GetSelectedFaceIndex();
 
-    void SetSelectedFaceIndex(int idx);
+    void SelectFaceByIndex(int idx, bool select = true);
 
     void ClearFaceSelection();
 
-    void SetSelectedFace(int id);
-    void SetSelectedFace(std::string name);
+    void SelectFace(int id);
+    void SelectFace(std::string name);
     bool IsFaceSelected(std::string name);
     bool IsFaceSelected(int id);
 

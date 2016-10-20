@@ -170,12 +170,12 @@ void svModelElement::SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd)
 //    return m_SelectedFaceIndex;
 //}
 
-void svModelElement::SetSelectedFaceIndex(int idx)
+void svModelElement::SelectFaceByIndex(int idx, bool select)
 {
     if(idx>-1&&idx<m_Faces.size())
     {
         if(m_Faces[idx])
-            m_Faces[idx]->selected=true;
+            m_Faces[idx]->selected=select;
     }
 
 }
@@ -190,14 +190,14 @@ void svModelElement::ClearFaceSelection()
 
 }
 
-void svModelElement::SetSelectedFace(int id)
+void svModelElement::SelectFace(int id)
 {
     svFace* face=GetFace(id);
     if(face)
         face->selected=true;
 }
 
-void svModelElement::SetSelectedFace(std::string name)
+void svModelElement::SelectFace(std::string name)
 {
     svFace* face=GetFace(name);
     if(face)

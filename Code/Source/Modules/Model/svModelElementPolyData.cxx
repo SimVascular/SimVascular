@@ -478,3 +478,47 @@ bool svModelElementPolyData::Densify(int numDivs)
 
     return true;
 }
+
+std::vector<int> svModelElementPolyData::GetSelectedCellIDs()
+{
+    return m_SelectedCellIDs;
+}
+
+void svModelElementPolyData::ClearCellSelection()
+{
+    m_SelectedCellIDs.clear();
+}
+
+bool svModelElementPolyData::SelectCell(int cellID, bool select)
+{
+    int foundIndex=-1;
+    bool toUpdate=false;
+
+    for(int i=m_SelectedCellIDs.size()-1;i>-1;i--)
+    {
+        if(m_SelectedCellIDs[i]==cellID)
+        {
+            foundIndex=i;
+            break;
+        }
+    }
+
+    if(select)
+    {
+        if(foundIndex==-1)
+        {
+            m_SelectedCellIDs.push_back(cellID);
+            toUpdate=true;
+        }
+    }
+    else
+    {
+        if(foundIndex!=-1)
+        {
+            m_SelectedCellIDs.erase(m_SelectedCellIDs.begin()+foundIndex);
+            toUpdate=true;
+        }
+    }
+
+    return toUpdate;
+}

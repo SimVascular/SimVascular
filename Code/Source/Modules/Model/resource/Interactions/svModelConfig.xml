@@ -2,6 +2,10 @@
   <event_variant name="MouseMove" class="MouseMoveEvent" >
   </event_variant>
 
+  <event_variant name="MouseMove_Shift" class="MouseMoveEvent" >
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
   <event_variant name="PrimaryButtonPressed" class="MousePressEvent">
     <attribute name="EventButton" value="LeftMouseButton"/>
   </event_variant>
@@ -21,9 +25,30 @@
     <attribute name="Modifiers" value="ctrl"/>
   </event_variant>
 
-  <event_variant class="InteractionKeyEvent" name="StdC">
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S">
+    <attribute name="Key" value="S"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S_Shift">
+    <attribute name="Key" value="S"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_D">
+    <attribute name="Key" value="D"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_C">
     <attribute name="Key" value="C"/>
-<!--    <attribute name="Modifiers" value="shift,ctrl"/>-->
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_C_Shift">
+    <attribute name="Key" value="C"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
+    <attribute name="Key" value="E"/>
   </event_variant>
 
 </config>

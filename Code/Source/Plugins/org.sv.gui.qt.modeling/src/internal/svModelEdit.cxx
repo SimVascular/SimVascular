@@ -492,7 +492,7 @@ void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*select
         QStandardItem* itemID= m_FaceListTableModel->item(row,0);
         int id=itemID->text().toInt();
 
-        modelElement->SetSelectedFace(id);
+        modelElement->SelectFace(id);
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -893,8 +893,8 @@ void svModelEdit::TableBlendSelectionChanged( const QItemSelection & /*selected*
         QStandardItem* itemFace1= m_BlendTableModel->item(row,1);
         QStandardItem* itemFace2= m_BlendTableModel->item(row,2);
 
-        modelElement->SetSelectedFace(itemFace1->text().toStdString());
-        modelElement->SetSelectedFace(itemFace2->text().toStdString());
+        modelElement->SelectFace(itemFace1->text().toStdString());
+        modelElement->SelectFace(itemFace2->text().toStdString());
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();

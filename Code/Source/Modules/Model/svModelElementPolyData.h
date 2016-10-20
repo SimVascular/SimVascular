@@ -85,11 +85,19 @@ public:
 
     bool Densify(int numDivs);
 
+    std::vector<int> GetSelectedCellIDs();
+
+    void ClearCellSelection();
+
+    bool SelectCell(int cellID, bool select=true);
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;
 
     svBlendParam* m_BlendParam;
+
+    std::vector<int> m_SelectedCellIDs;
 
   };
 
