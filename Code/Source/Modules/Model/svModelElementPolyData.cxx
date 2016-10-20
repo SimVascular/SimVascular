@@ -25,6 +25,7 @@ svModelElementPolyData::svModelElementPolyData()
 
 svModelElementPolyData::svModelElementPolyData(const svModelElementPolyData &other)
     : svModelElement(other)
+    , m_SelectedCellIDs(other.m_SelectedCellIDs)
 {
     m_BlendParam=new svBlendParam(*(other.m_BlendParam));
 }
@@ -491,6 +492,9 @@ void svModelElementPolyData::ClearCellSelection()
 
 bool svModelElementPolyData::SelectCell(int cellID, bool select)
 {
+    if(cellID==-1)
+        return false;
+
     int foundIndex=-1;
     bool toUpdate=false;
 
@@ -521,4 +525,28 @@ bool svModelElementPolyData::SelectCell(int cellID, bool select)
     }
 
     return toUpdate;
+}
+
+bool svModelElementPolyData::DeleteCells(std::vector<int> cellIDs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    m_WholeVtkPolyData->BuildLinks();
+
+    for (int i=0; i<cellIDs.size();i++)
+    {
+        m_WholeVtkPolyData->DeleteCell(cellIDs[i]);
+    }
+
+    m_WholeVtkPolyData->RemoveDeletedCells();
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    m_SelectedCellIDs.clear();
+
+    return true;
 }

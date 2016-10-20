@@ -29,8 +29,20 @@
       <action name="select_cells"/>
     </transition>
 
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_B" target="start">
+      <action name="select_surrounding_cells"/>
+    </transition>
+
     <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_E" target="start">
       <action name="deselect_cell"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_E_Shift" target="start">
+      <action name="deselect_surrounding_cells"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="StdDelete" target="Start" >
+      <action name="delete_selected_faces_cells" />
     </transition>
 
   </state>

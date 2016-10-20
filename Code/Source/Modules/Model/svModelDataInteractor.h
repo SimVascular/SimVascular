@@ -41,7 +41,13 @@ protected:
 
     virtual void SelectCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
 
-    void SelectCell(mitk::InteractionEvent* interactionEvent, bool selecting, bool single);
+    virtual void SelectSurroundingCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void DeselectSurroundingCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    void SelectCell(mitk::InteractionEvent* interactionEvent, bool selecting, bool single, bool brushing=false);
+
+    virtual void DeleteSelectedFacesCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
 
 
 private:

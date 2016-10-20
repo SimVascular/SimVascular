@@ -18,6 +18,7 @@
 #include <mitkUndoController.h>
 
 #include <vtkCellPicker.h>
+#include <vtkIdList.h>
 
 #include <iostream>
 using namespace std;
@@ -44,7 +45,10 @@ void svModelDataInteractor::ConnectActionsAndFunctions()
     CONNECT_FUNCTION("deselect_face",DeselectFace);
     CONNECT_FUNCTION("select_single_cell",SelectSingleCell);
     CONNECT_FUNCTION("select_cells",SelectCells);
+    CONNECT_FUNCTION("select_surrounding_cells",SelectSurroundingCells);
     CONNECT_FUNCTION("deselect_cell",DeselectCell);
+    CONNECT_FUNCTION("deselect_surrounding_cells",DeselectSurroundingCells);
+    CONNECT_FUNCTION("delete_selected_faces_cells",DeleteSelectedFacesCells);
 }
 
 void svModelDataInteractor::DataNodeChanged()
@@ -90,11 +94,16 @@ void svModelDataInteractor::SelectFace(mitk::InteractionEvent* interactionEvent,
     if(m_Model==NULL)
         return;
 
-    svModelElement* modelElement=m_Model->GetModelElement();
+    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
+
+    int timeStep= renderer->GetTimeStep();
+
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL)
         return;
 
-    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
+    if(modelElement->GetWholeVtkPolyData()==NULL)
+        return;
 
     svModelVtkMapper3D* mapper=dynamic_cast<svModelVtkMapper3D*>(GetDataNode()->GetMapper(renderer->GetMapperID()));
 
@@ -160,16 +169,31 @@ void svModelDataInteractor::DeselectCell(mitk::StateMachineAction*, mitk::Intera
     SelectCell(interactionEvent, false, false);
 }
 
-void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent, bool selecting, bool single)
+void svModelDataInteractor::SelectSurroundingCells(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
+{
+    SelectCell(interactionEvent, true, false, true);
+}
+
+void svModelDataInteractor::DeselectSurroundingCells(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
+{
+    SelectCell(interactionEvent, false, false, true);
+}
+
+void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent, bool selecting, bool single, bool brushing)
 {
     if(m_Model==NULL)
         return;
 
-    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
+
+    int timeStep= renderer->GetTimeStep();
+
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
     if(modelElement==NULL)
         return;
 
-    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
+    if(modelElement->GetWholeVtkPolyData()==NULL)
+        return;
 
     svModelVtkMapper3D* mapper=dynamic_cast<svModelVtkMapper3D*>(GetDataNode()->GetMapper(renderer->GetMapperID()));
 
@@ -180,6 +204,9 @@ void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent,
     if(wholeSurfaceActor==NULL)
         return;
 
+    if(selecting && single)
+        modelElement->ClearCellSelection();
+
     vtkSmartPointer<vtkCellPicker> cellPicker=vtkSmartPointer<vtkCellPicker>::New();
     cellPicker->AddPickList(wholeSurfaceActor);
 
@@ -188,15 +215,91 @@ void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent,
     cellPicker->PickFromListOff();
 
     int cellID=cellPicker->GetCellId();
-
-    if(selecting && single)
-        modelElement->ClearCellSelection();
-
     if(cellID==-1)
+    {
+        mitk::RenderingManager::GetInstance()->RequestUpdateAll();
         return;
+    }
 
-    bool toUpdate=modelElement->SelectCell(cellID, selecting);
+    std::vector<int> cellIDs;
+    cellIDs.push_back(cellID);
+
+    if(brushing){
+
+        vtkSmartPointer<vtkIdList> cellPointIds = vtkSmartPointer<vtkIdList>::New();
+        modelElement->GetWholeVtkPolyData()->GetCellPoints(cellID, cellPointIds);
+
+        for(vtkIdType i = 0; i < cellPointIds->GetNumberOfIds(); i++)
+        {
+            vtkSmartPointer<vtkIdList> idList = vtkSmartPointer<vtkIdList>::New();
+            idList->InsertNextId(cellPointIds->GetId(i));
+
+            vtkSmartPointer<vtkIdList> neighborCellIds = vtkSmartPointer<vtkIdList>::New();
+
+            modelElement->GetWholeVtkPolyData()->GetCellNeighbors(cellID, idList, neighborCellIds);
+
+            for(vtkIdType j = 0; j < neighborCellIds->GetNumberOfIds(); j++)
+            {
+                cellIDs.push_back(neighborCellIds->GetId(j));
+            }
+        }
+
+    }
+
+    bool toUpdate=false;
+
+    for(int i=0;i<cellIDs.size();i++)
+    {
+        toUpdate=toUpdate||modelElement->SelectCell(cellIDs[i], selecting);
+    }
 
     if(toUpdate)
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+void svModelDataInteractor::DeleteSelectedFacesCells(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
+{
+    if(m_Model==NULL)
+        return;
+
+    mitk::VtkPropRenderer *renderer = (mitk::VtkPropRenderer*)interactionEvent->GetSender();
+
+    int timeStep= renderer->GetTimeStep();
+
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+    if(modelElement==NULL)
+        return;
+
+    if(modelElement->GetWholeVtkPolyData()==NULL)
+        return;
+
+    svModelElementPolyData* newModelElement=modelElement->Clone();
+
+    bool ok=false;
+
+    ok=newModelElement->DeleteCells(newModelElement->GetSelectedCellIDs());
+    if(!ok)
+    {
+        delete newModelElement;
+        return;
+    }
+
+    ok=newModelElement->DeleteFaces(newModelElement->GetSelectedFaceIDs());
+    if(!ok)
+    {
+        delete newModelElement;
+        return;
+    }
+
+//    mitk::OperationEvent::IncCurrObjectEventId();
+
+    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,0,newModelElement);
+    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,0,modelElement);
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement by Delete Faces, Cells");
+    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+
+    m_Model->ExecuteOperation(doOp);
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
 }

@@ -47,8 +47,13 @@
     <attribute name="Modifiers" value="shift"/>
   </event_variant>
 
-  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_B">
+    <attribute name="Key" value="B"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E_Shift">
     <attribute name="Key" value="E"/>
+    <attribute name="Modifiers" value="shift"/>
   </event_variant>
 
 </config>

@@ -400,13 +400,15 @@ vtkPolyData* svModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int f
     cvPolyData* tmpcvpd;
     sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType);
 
+    if(tmpcvpd==NULL)
+        return NULL;
+
     vtkPolyData* outpd=Orient(tmpcvpd->GetVtkPolyData());
 
     delete tmpcvpd;
 
     return outpd;
 }
-
 
 bool svModelUtils::CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname )
 {

@@ -126,6 +126,8 @@ public:
     bool IsFaceSelected(std::string name);
     bool IsFaceSelected(int id);
 
+    std::vector<int> GetSelectedFaceIDs();
+
     std::vector<svBlendParamRadius*> GetBlendRadii();
 
     void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);

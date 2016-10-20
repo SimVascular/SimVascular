@@ -91,6 +91,8 @@ public:
 
     bool SelectCell(int cellID, bool select=true);
 
+    bool DeleteCells(std::vector<int> cellIDs);
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;

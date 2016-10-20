@@ -1303,7 +1303,7 @@ void svModelEdit::ModelOperate(int operationType)
 
     svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
     svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
-    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement by Combining Faces");
+    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
     mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
     m_Model->ExecuteOperation(doOp);
