@@ -314,6 +314,9 @@ bool svModelElementPolyData::FillHoles()
     if(newvpd==NULL)
         return false;
 
+    if(newvpd->GetNumberOfCells()==0)
+        return false;
+
     m_WholeVtkPolyData=newvpd;
 
     m_Faces.clear();

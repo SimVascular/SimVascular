@@ -291,7 +291,7 @@ void svModelDataInteractor::DeleteSelectedFacesCells(mitk::StateMachineAction*, 
         return;
     }
 
-//    mitk::OperationEvent::IncCurrObjectEventId();
+    mitk::OperationEvent::IncCurrObjectEventId();
 
     svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,0,newModelElement);
     svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,0,modelElement);

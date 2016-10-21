@@ -398,7 +398,8 @@ vtkPolyData* svModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int f
     cvPolyData* cvpd=new cvPolyData(inpd);
     int numFilled=0;
     cvPolyData* tmpcvpd;
-    sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType);
+    if(sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType)!=CV_OK)
+        return NULL;
 
     if(tmpcvpd==NULL)
         return NULL;
