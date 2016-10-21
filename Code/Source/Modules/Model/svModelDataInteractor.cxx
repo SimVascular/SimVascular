@@ -250,7 +250,8 @@ void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent,
 
     for(int i=0;i<cellIDs.size();i++)
     {
-        toUpdate=toUpdate||modelElement->SelectCell(cellIDs[i], selecting);
+        bool toUpdate2=modelElement->SelectCell(cellIDs[i], selecting);
+        toUpdate=toUpdate||toUpdate2;
     }
 
     if(toUpdate)
