@@ -129,6 +129,12 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 //        ls->m_Actor=NULL;
 //    }
 
+    float edgeColor[3]= { 0.0f, 0.0f, 1.0f };
+    node->GetColor(edgeColor, renderer, "edge color");
+
+    bool showEdges=false;
+    node->GetBoolProperty("show edges", showEdges, renderer);
+
     vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
     mapper->SetInputData(wholePolyData);
 
@@ -137,6 +143,13 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
     Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
     ApplyAllProperties(renderer, mapper, actor);
+
+    if(showEdges)
+    {
+        actor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+        actor->GetProperty()->SetEdgeVisibility(1);
+        actor->GetProperty()->SetLineWidth(0.5);
+    }
 
     ls->m_Actor=actor;
 
@@ -178,6 +191,13 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
                 faceActor->GetProperty()->SetColor(face->color[0], face->color[1], face->color[2]);
             }
             faceActor->GetProperty()->SetOpacity(face->opacity);
+
+            if(showEdges)
+            {
+                faceActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+                faceActor->GetProperty()->SetEdgeVisibility(1);
+                faceActor->GetProperty()->SetLineWidth(0.51);
+            }
 
             ls->m_PropAssembly->AddPart(faceActor );
 
@@ -632,6 +652,9 @@ void svModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
 {
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
+
+    node->AddProperty( "edge color", mitk::ColorProperty::New(0.0f,0.0f,1.0f), renderer, overwrite );
+    node->AddProperty( "show edges", mitk::BoolProperty::New(true), renderer, overwrite );
 
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
 //    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
