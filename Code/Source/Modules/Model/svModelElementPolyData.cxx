@@ -553,3 +553,132 @@ bool svModelElementPolyData::DeleteCells(std::vector<int> cellIDs)
 
     return true;
 }
+
+bool svModelElementPolyData::MarkCells(std::vector<int> cellIDs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::MarkCells(m_WholeVtkPolyData, cellIDs);
+
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    return true;
+}
+
+bool svModelElementPolyData::MarkCellsBySphere(double radius, double center[3])
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::MarkCellsBySphere(m_WholeVtkPolyData, radius, center);
+
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    return true;
+}
+
+bool svModelElementPolyData::MarkCellsByFaces(std::vector<int> faceIDs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::MarkCellsByFaces(m_WholeVtkPolyData, faceIDs);
+
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    return true;
+}
+
+bool svModelElementPolyData::DecimateLocal(double targetRate)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::DecimateLocal(m_WholeVtkPolyData, targetRate);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    m_SelectedCellIDs.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::LaplacianSmoothLocal(int numIters, double relaxFactor)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::LaplacianSmoothLocal(m_WholeVtkPolyData, numIters, relaxFactor);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+//    m_SelectedCellIDs.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::ConstrainSmoothLocal(int numIters, double constrainFactor, int numCGSolves)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::ConstrainSmoothLocal(m_WholeVtkPolyData, numIters, constrainFactor, numCGSolves);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+//    m_SelectedCellIDs.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::LinearSubdivideLocal(int numDivs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::LinearSubdivideLocal(m_WholeVtkPolyData, numDivs);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    m_SelectedCellIDs.clear();
+
+    return true;
+}

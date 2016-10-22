@@ -472,3 +472,126 @@ vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtk
     return orienter->GetOutput();
 }
 
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCells(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> cellIDs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    int* cellIDArray = &cellIDs[0];
+
+    if ( sys_geom_set_array_for_local_op_cells(src, &dst, cellIDArray, cellIDs.size(), "ActiveCells", 1) != CV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by cell ids) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsBySphere(vtkSmartPointer<vtkPolyData> inpd, double radius, double center[3])
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_set_array_for_local_op_sphere(src, &dst, radius, center, "ActiveCells", 1) != CV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by sphere) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsByFaces(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> faceIDs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    int* faceIDArray = &faceIDs[0];
+
+    if ( sys_geom_set_array_for_local_op_face(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), "ActiveCells", 1) != CV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by face ids) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::DecimateLocal(vtkSmartPointer<vtkPolyData> inpd, double targetRate)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_quadric_decimation(src, &dst, targetRate, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local decimation error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::LaplacianSmoothLocal(vtkSmartPointer<vtkPolyData> inpd, int numIters, double relaxFactor)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_laplacian_smooth(src, &dst, numIters, relaxFactor, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local Laplacian smooth error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::ConstrainSmoothLocal(vtkSmartPointer<vtkPolyData> inpd, int numIters, double constrainFactor, int numCGSolves)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_constrain_smooth(src, &dst, numIters, constrainFactor, numCGSolves, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local constrain smooth error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::LinearSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local linear subdivision error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}

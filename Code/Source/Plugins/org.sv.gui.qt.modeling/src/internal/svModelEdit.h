@@ -4,6 +4,7 @@
 #include "svModel.h"
 #include "svSegSelectionWidget.h"
 #include "svModelDataInteractor.h"
+#include "svModelElementPolyData.h"
 
 #include <QmitkFunctionality.h>
 
@@ -20,7 +21,8 @@ class svModelEdit : public QmitkFunctionality
 public:
 
     enum OperationType {DELETE_FACES, FILL_HOLES_WITH_IDS, COMBINE_FACES, REMESH_FACES, EXTRACT_FACES
-                        , FILL_HOLES, SELECT_LARGEST_CONNECTED, DECIMATE_GLOBAL, LAPLACIAN_SMOOTH_GLOBAL, BUTTERFLY_SUBDIVIDE_GLOBAL, WINDOWSINC_SMOOTH_GLOBAL, DENSIFY_GLOBAL};
+                        , FILL_HOLES, SELECT_LARGEST_CONNECTED, DECIMATE_GLOBAL, LAPLACIAN_SMOOTH_GLOBAL, BUTTERFLY_SUBDIVIDE_GLOBAL, WINDOWSINC_SMOOTH_GLOBAL, DENSIFY_GLOBAL
+                        , DECIMATE_LOCAL, LAPLACIAN_SMOOTH_LOCAL, CONSTRAIN_SMOOTH_LOCAL, LINEAR_SUBDIVIDE_LOCAL};
 
     static const QString EXTENSION_ID;
 
@@ -81,6 +83,8 @@ public slots:
     void ChangeColorSelected( bool checked = false );
 
     void ModelOperate(int operationType);
+
+    bool MarkCells(svModelElementPolyData* modelElement);
 
 public:
 

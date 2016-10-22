@@ -1,9 +1,7 @@
 #include "svModelEdit.h"
 #include "ui_svModelEdit.h"
 
-#include "svModel.h"
 #include "svModelUtils.h"
-#include "svModelElementPolyData.h"
 
 #include "svFaceListDelegate.h"
 
@@ -117,7 +115,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect( ui->tableViewFaceList, SIGNAL(customContextMenuRequested(const QPoint&))
       , this, SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
 
-    //face ops
+    //various ops
     //-----------------------------------------------------------------
     signalMapper->setMapping(ui->btnDeleteFaces, DELETE_FACES);
     connect(ui->btnDeleteFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
@@ -154,6 +152,19 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     signalMapper->setMapping(ui->btnDensifyG, DENSIFY_GLOBAL);
     connect(ui->btnDensifyG, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnDecimateL, DECIMATE_LOCAL);
+    connect(ui->btnDecimateL, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnLapSmoothL, LAPLACIAN_SMOOTH_LOCAL);
+    connect(ui->btnLapSmoothL, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnCstrSmoothL, CONSTRAIN_SMOOTH_LOCAL);
+    connect(ui->btnCstrSmoothL, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnLSubdivideL, LINEAR_SUBDIVIDE_LOCAL);
+    connect(ui->btnLSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
 
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
 
@@ -1238,6 +1249,40 @@ std::vector<int> svModelEdit::GetSelectedFaceIDs()
     return faceIDs;
 }
 
+bool svModelEdit::MarkCells(svModelElementPolyData* modelElement)
+{
+
+    bool hasFaces=false;
+    if(modelElement->GetSelectedFaceIDs().size()>0)
+    {
+        hasFaces=true;
+        if(!modelElement->MarkCellsByFaces(modelElement->GetSelectedFaceIDs()))
+            return false;
+    }
+
+    bool hasCells=false;
+    if(modelElement->GetSelectedCellIDs().size()>0)
+    {
+        hasCells=true;
+        if(!modelElement->MarkCells(modelElement->GetSelectedCellIDs()))
+            return false;
+    }
+
+    bool hasSphere=false;
+//    if(sphere exists && radius>0)
+//    {
+//        hasSphere=true;
+//        if(!modelElement->MarkCellsBySphere(radius, center)))
+//            return false;
+//    }
+
+    if(!hasFaces && !hasCells && !hasSphere)
+        return false;
+    else
+        return true;
+
+}
+
 void svModelEdit::ModelOperate(int operationType)
 {
     if(m_Model==NULL) return;
@@ -1288,6 +1333,22 @@ void svModelEdit::ModelOperate(int operationType)
         break;
     case DENSIFY_GLOBAL:
         ok=newModelElement->Densify(ui->sbDensifyDivisionsG->value());
+        break;
+    case DECIMATE_LOCAL:
+        if(MarkCells(newModelElement))
+            ok=newModelElement->DecimateLocal(ui->dsbTargetRateL->value());
+        break;
+    case LAPLACIAN_SMOOTH_LOCAL:
+        if(MarkCells(newModelElement))
+            ok=newModelElement->LaplacianSmoothLocal(ui->sbLapItersL->value(),ui->dsbLapRelaxL->value());
+        break;
+    case CONSTRAIN_SMOOTH_LOCAL:
+        if(MarkCells(newModelElement))
+            ok=newModelElement->ConstrainSmoothLocal(ui->sbCstrItersL->value(),ui->dsbCstrFactorL->value());
+        break;
+    case LINEAR_SUBDIVIDE_LOCAL:
+        if(MarkCells(newModelElement))
+            ok=newModelElement->LinearSubdivideLocal(ui->sbLinearDivisionsL->value());
         break;
     default:
         break;

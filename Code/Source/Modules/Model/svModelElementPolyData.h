@@ -93,6 +93,20 @@ public:
 
     bool DeleteCells(std::vector<int> cellIDs);
 
+    bool MarkCells(std::vector<int> cellIDs);
+
+    bool MarkCellsBySphere(double radius, double center[3]);
+
+    bool MarkCellsByFaces(std::vector<int> faceIDs);
+
+    bool DecimateLocal(double targetRate);//mark cells befor calling it
+
+    bool LaplacianSmoothLocal(int numIters, double relaxFactor);//mark cells befor calling it
+
+    bool ConstrainSmoothLocal(int numIters, double constrainFactor, int numCGSolves = 30);//mark cells befor calling it
+
+    bool LinearSubdivideLocal(int numDivs);//mark cells befor calling it
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;
