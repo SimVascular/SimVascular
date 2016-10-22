@@ -8,6 +8,8 @@
 
 #include <QmitkFunctionality.h>
 
+#include <vtkSphereWidget.h>
+
 #include <QWidget>
 
 namespace Ui {
@@ -84,7 +86,7 @@ public slots:
 
     void ModelOperate(int operationType);
 
-    bool MarkCells(svModelElementPolyData* modelElement);
+    void ShowSphereInteractor(bool checked);
 
 public:
 
@@ -93,6 +95,8 @@ public:
     std::vector<svModelElement::svBlendParamRadius*> GetBlendRadii();
 
     std::vector<int> GetSelectedFaceIDs();
+
+    bool MarkCells(svModelElementPolyData* modelElement);
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
@@ -138,6 +142,8 @@ protected:
 
     QMenu* m_FaceListTableMenu;
     QStandardItemModel* m_FaceListTableModel;
+
+    vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 
 };
 

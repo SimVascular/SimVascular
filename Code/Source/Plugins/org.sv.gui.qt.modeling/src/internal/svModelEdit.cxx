@@ -38,6 +38,8 @@ svModelEdit::svModelEdit() :
 
     m_BlendTableMenu=NULL;
     m_BlendTableModel=NULL;
+
+    m_SphereWidget=NULL;
 }
 
 svModelEdit::~svModelEdit()
@@ -165,8 +167,9 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnLSubdivideL, LINEAR_SUBDIVIDE_LOCAL);
     connect(ui->btnLSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
-
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
+
+     connect(ui->checkBoxSphere, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
 
     //for tab Blend
     //=====================================================================
@@ -1269,12 +1272,12 @@ bool svModelEdit::MarkCells(svModelElementPolyData* modelElement)
     }
 
     bool hasSphere=false;
-//    if(sphere exists && radius>0)
-//    {
-//        hasSphere=true;
-//        if(!modelElement->MarkCellsBySphere(radius, center)))
-//            return false;
-//    }
+    if(m_SphereWidget!=NULL && m_SphereWidget->GetEnabled() && m_SphereWidget->GetRadius()>0)
+    {
+        hasSphere=true;
+        if(!modelElement->MarkCellsBySphere(m_SphereWidget->GetRadius(), m_SphereWidget->GetCenter()))
+            return false;
+    }
 
     if(!hasFaces && !hasCells && !hasSphere)
         return false;
@@ -1371,4 +1374,36 @@ void svModelEdit::ModelOperate(int operationType)
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
+}
+
+void svModelEdit::ShowSphereInteractor(bool checked)
+{
+    if(!checked)
+    {
+        if(m_SphereWidget!=NULL)
+        {
+            m_SphereWidget->Off();
+        }
+
+        return;
+    }
+
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+
+    if(modelElement==NULL) return;
+
+    if(modelElement->GetWholeVtkPolyData()==NULL) return;
+    if(m_SphereWidget==NULL)
+    {
+        m_SphereWidget = vtkSmartPointer<vtkSphereWidget>::New();
+        m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+    //    m_SphereWidget->SetRepresentationToSurface();
+    }
+    m_SphereWidget->SetInputData(modelElement->GetWholeVtkPolyData());
+    m_SphereWidget->PlaceWidget();
+
+    m_SphereWidget->On();
 }

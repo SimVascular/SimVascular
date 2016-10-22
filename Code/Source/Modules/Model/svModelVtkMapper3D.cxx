@@ -654,7 +654,7 @@ void svModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
 
     node->AddProperty( "edge color", mitk::ColorProperty::New(0.0f,0.0f,1.0f), renderer, overwrite );
-    node->AddProperty( "show edges", mitk::BoolProperty::New(true), renderer, overwrite );
+    node->AddProperty( "show edges", mitk::BoolProperty::New(false), renderer, overwrite );
 
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
 //    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
