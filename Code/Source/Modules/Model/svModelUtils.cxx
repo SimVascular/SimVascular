@@ -9,6 +9,9 @@
 
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
+#include <vtkPlaneSource.h>
+#include <vtkClipPolyData.h>
+#include <vtkImplicitDataSet.h>
 
 vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
 {
@@ -594,4 +597,72 @@ vtkSmartPointer<vtkPolyData> svModelUtils::LinearSubdivideLocal(vtkSmartPointer<
     }
 
     return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::CutByPlane(vtkSmartPointer<vtkPolyData> inpd, double origin[3], double point1[3], double point2[3], bool above )
+{
+    if(inpd==NULL)
+        return NULL;
+
+    vtkSmartPointer<vtkPlaneSource> plane= vtkSmartPointer<vtkPlaneSource>::New();
+    plane->SetOrigin(origin);
+    plane->SetPoint1(point1);
+    plane->SetPoint2(point2);
+    plane->Update();
+
+    double* nrm=plane->GetNormal();
+    nrm[0]=-nrm[0];
+    nrm[1]=-nrm[1];
+    nrm[2]=-nrm[2];
+
+    vtkSmartPointer<vtkPlane> impPlane=vtkSmartPointer<vtkPlane>::New();
+    impPlane->SetOrigin(origin);
+    impPlane->SetNormal(nrm);
+
+    vtkSmartPointer<vtkClipPolyData> clipper=vtkSmartPointer<vtkClipPolyData>::New();
+    clipper->SetInputData(inpd);
+    clipper->GenerateClippedOutputOn();
+    clipper->SetClipFunction(impPlane);
+    clipper->Update();
+
+    vtkSmartPointer<vtkFillHolesFilter> triangulator=vtkSmartPointer<vtkFillHolesFilter>::New();
+    if(above)
+    {
+        triangulator->SetInputData(clipper->GetOutput());
+    }
+    else
+    {
+        triangulator->SetInputData(clipper->GetClippedOutput());
+    }
+    triangulator->Update();
+
+    return triangulator->GetOutput();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::CutByBox(vtkSmartPointer<vtkPolyData> inpd, vtkSmartPointer<vtkPlanes> boxPlanes, bool inside)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    if(boxPlanes==NULL)
+        return NULL;
+
+    vtkSmartPointer<vtkClipPolyData> clipper=vtkSmartPointer<vtkClipPolyData>::New();
+    clipper->SetInputData(inpd);
+    clipper->GenerateClippedOutputOn();
+    clipper->SetClipFunction(boxPlanes);
+    clipper->Update();
+
+    vtkSmartPointer<vtkTriangleFilter> triangulator=vtkSmartPointer<vtkTriangleFilter>::New();
+    if(inside)
+    {
+        triangulator->SetInputData(clipper->GetOutput());
+    }
+    else
+    {
+        triangulator->SetInputData(clipper->GetClippedOutput());
+    }
+    triangulator->Update();
+
+    return triangulator->GetOutput();
 }

@@ -119,6 +119,8 @@ bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 
     }
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -176,6 +178,8 @@ bool svModelElementPolyData::CombineFaces(std::vector<int> faceIDs)
     svFace* face=GetFace(targetID);
     face->vpd=CreateFaceVtkPolyData(targetID);
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -225,6 +229,8 @@ bool svModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
         m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
     }
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -260,6 +266,8 @@ bool svModelElementPolyData::FillHolesWithIDs()
         }
 
     }
+
+    m_SelectedCellIDs.clear();
 
     return true;
 
@@ -297,6 +305,8 @@ bool svModelElementPolyData::ExtractFaces(double angle)
 
     m_BlendRadii.clear();
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -322,6 +332,8 @@ bool svModelElementPolyData::FillHoles()
     m_Faces.clear();
 
     m_BlendRadii.clear();
+
+    m_SelectedCellIDs.clear();
 
     return true;
 }
@@ -353,6 +365,8 @@ bool svModelElementPolyData::SelectLargestConnectedRegion()
 
     m_BlendRadii.clear();
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -375,6 +389,8 @@ bool svModelElementPolyData::Decimate(double targetRate)
     m_Faces.clear();
 
     m_BlendRadii.clear();
+
+    m_SelectedCellIDs.clear();
 
     return true;
 }
@@ -404,6 +420,8 @@ bool svModelElementPolyData::LaplacianSmooth(int numIters, double relaxFactor)
         m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
     }
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -427,6 +445,8 @@ bool svModelElementPolyData::ButterflySubdivide(int numDivs)
     {
         m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
     }
+
+    m_SelectedCellIDs.clear();
 
     return true;
 }
@@ -456,6 +476,8 @@ bool svModelElementPolyData::WindowSincSmooth(int numIters, double band)
         m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
     }
 
+    m_SelectedCellIDs.clear();
+
     return true;
 }
 
@@ -479,6 +501,8 @@ bool svModelElementPolyData::Densify(int numDivs)
     {
         m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
     }
+
+    m_SelectedCellIDs.clear();
 
     return true;
 }
@@ -682,3 +706,44 @@ bool svModelElementPolyData::LinearSubdivideLocal(int numDivs)
 
     return true;
 }
+
+bool svModelElementPolyData::CutByPlane(double origin[3], double point1[3], double point2[3], bool above )
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::CutByPlane(m_WholeVtkPolyData, origin, point1, point2, above);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    m_Faces.clear();
+
+    m_BlendRadii.clear();
+
+    m_SelectedCellIDs.clear();
+
+    return true;
+}
+
+bool svModelElementPolyData::CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, bool inside)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::CutByBox(m_WholeVtkPolyData, boxPlanes, inside);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    m_Faces.clear();
+
+    m_BlendRadii.clear();
+
+    m_SelectedCellIDs.clear();
+
+    return true;
+}
+

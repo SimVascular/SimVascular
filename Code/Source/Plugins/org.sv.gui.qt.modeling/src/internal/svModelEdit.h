@@ -9,6 +9,8 @@
 #include <QmitkFunctionality.h>
 
 #include <vtkSphereWidget.h>
+#include <vtkPlaneWidget.h>
+#include <vtkBoxWidget.h>
 
 #include <QWidget>
 
@@ -24,7 +26,8 @@ public:
 
     enum OperationType {DELETE_FACES, FILL_HOLES_WITH_IDS, COMBINE_FACES, REMESH_FACES, EXTRACT_FACES
                         , FILL_HOLES, SELECT_LARGEST_CONNECTED, DECIMATE_GLOBAL, LAPLACIAN_SMOOTH_GLOBAL, BUTTERFLY_SUBDIVIDE_GLOBAL, WINDOWSINC_SMOOTH_GLOBAL, DENSIFY_GLOBAL
-                        , DECIMATE_LOCAL, LAPLACIAN_SMOOTH_LOCAL, CONSTRAIN_SMOOTH_LOCAL, LINEAR_SUBDIVIDE_LOCAL};
+                        , DECIMATE_LOCAL, LAPLACIAN_SMOOTH_LOCAL, CONSTRAIN_SMOOTH_LOCAL, LINEAR_SUBDIVIDE_LOCAL
+                        , CUT_ABOVE, CUT_BELOW, CUT_BOX};
 
     static const QString EXTENSION_ID;
 
@@ -88,6 +91,16 @@ public slots:
 
     void ShowSphereInteractor(bool checked);
 
+    void ShowPlaneInteractor(bool checked);
+
+    void ShowBoxInteractor(bool checked);
+
+    void UpdatePathListForTrim();
+
+    void SetupSliderPathPlane(int idx);
+
+    void UpdatePlaneWidget(double idx);
+
 public:
 
     int GetTimeStep();
@@ -144,6 +157,10 @@ protected:
     QStandardItemModel* m_FaceListTableModel;
 
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
+    vtkSmartPointer<vtkPlaneWidget> m_PlaneWidget;
+    vtkSmartPointer<vtkBoxWidget> m_BoxWidget;
+
+    mitk::DataNode::Pointer m_PathFolderNode;
 
 };
 

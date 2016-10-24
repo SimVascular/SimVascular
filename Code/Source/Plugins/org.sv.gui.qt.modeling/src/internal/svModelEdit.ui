@@ -340,7 +340,7 @@
                          </size>
                         </property>
                         <property name="currentIndex">
-                         <number>1</number>
+                         <number>3</number>
                         </property>
                         <widget class="QWidget" name="page_3">
                          <property name="geometry">
@@ -628,8 +628,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>135</height>
+                               <width>90</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1174,8 +1174,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>232</height>
+                               <width>115</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1366,8 +1366,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>232</height>
+                               <width>129</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1480,7 +1480,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>263</height>
+                               <height>294</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1509,6 +1509,26 @@
                                <widget class="QCheckBox" name="checkBoxShowPlane">
                                 <property name="text">
                                  <string>Show Plane</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_27">
+                                <property name="text">
+                                 <string>Select Path:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QComboBox" name="comboBoxPathPlane"/>
+                              </item>
+                              <item>
+                               <widget class="ctkSliderWidget" name="sliderPathPlane">
+                                <property name="decimals">
+                                 <number>0</number>
+                                </property>
+                                <property name="maximum">
+                                 <double>200.000000000000000</double>
                                 </property>
                                </widget>
                               </item>
@@ -1546,8 +1566,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>122</width>
-                               <height>69</height>
+                               <width>138</width>
+                               <height>263</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1588,100 +1608,6 @@
                               </item>
                               <item>
                                <spacer name="verticalSpacer_14">
-                                <property name="orientation">
-                                 <enum>Qt::Vertical</enum>
-                                </property>
-                                <property name="sizeHint" stdset="0">
-                                 <size>
-                                  <width>20</width>
-                                  <height>40</height>
-                                 </size>
-                                </property>
-                               </spacer>
-                              </item>
-                             </layout>
-                            </widget>
-                            <widget class="QWidget" name="page_19">
-                             <property name="geometry">
-                              <rect>
-                               <x>0</x>
-                               <y>0</y>
-                               <width>107</width>
-                               <height>211</height>
-                              </rect>
-                             </property>
-                             <attribute name="label">
-                              <string>By Path</string>
-                             </attribute>
-                             <attribute name="toolTip">
-                              <string>Cut Model by Path Plane</string>
-                             </attribute>
-                             <layout class="QVBoxLayout" name="verticalLayout_28">
-                              <property name="spacing">
-                               <number>5</number>
-                              </property>
-                              <property name="leftMargin">
-                               <number>5</number>
-                              </property>
-                              <property name="topMargin">
-                               <number>5</number>
-                              </property>
-                              <property name="rightMargin">
-                               <number>0</number>
-                              </property>
-                              <property name="bottomMargin">
-                               <number>5</number>
-                              </property>
-                              <item>
-                               <widget class="QCheckBox" name="checkBoxShowPath">
-                                <property name="text">
-                                 <string>Show Path</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QLabel" name="label_27">
-                                <property name="text">
-                                 <string>Select Path:</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QComboBox" name="comboBoxPath"/>
-                              </item>
-                              <item>
-                               <widget class="QLabel" name="label_28">
-                                <property name="text">
-                                 <string>Path Point Idx:</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="ctkSliderWidget" name="slidePath">
-                                <property name="decimals">
-                                 <number>0</number>
-                                </property>
-                                <property name="maximum">
-                                 <double>200.000000000000000</double>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="btnCutPathAbove">
-                                <property name="text">
-                                 <string>Cut Above</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <widget class="QPushButton" name="btnCutPathBelow">
-                                <property name="text">
-                                 <string>Cut Below</string>
-                                </property>
-                               </widget>
-                              </item>
-                              <item>
-                               <spacer name="verticalSpacer_15">
                                 <property name="orientation">
                                  <enum>Qt::Vertical</enum>
                                 </property>

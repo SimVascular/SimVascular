@@ -7,7 +7,8 @@
 
 #include <mitkDataNode.h>
 
-//#include <vtkSmartPointer.h>
+#include <vtkSmartPointer.h>
+#include <vtkPlanes.h>
 
 class SVMODEL_EXPORT svModelElementPolyData : public svModelElement
 {
@@ -106,6 +107,10 @@ public:
     bool ConstrainSmoothLocal(int numIters, double constrainFactor, int numCGSolves = 30);//mark cells befor calling it
 
     bool LinearSubdivideLocal(int numDivs);//mark cells befor calling it
+
+    bool CutByPlane(double origin[3], double point1[3], double point2[3], bool above );
+
+    bool CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, bool inside);
 
   protected:
 

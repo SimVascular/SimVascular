@@ -2,8 +2,8 @@
 #include "ui_svModelEdit.h"
 
 #include "svModelUtils.h"
-
 #include "svFaceListDelegate.h"
+#include "svPath.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -13,6 +13,8 @@
 #include <mitkSliceNavigationController.h>
 
 #include <usModuleRegistry.h>
+
+#include <vtkProperty.h>
 
 #include <QTreeView>
 #include <QStandardItemModel>
@@ -40,6 +42,10 @@ svModelEdit::svModelEdit() :
     m_BlendTableModel=NULL;
 
     m_SphereWidget=NULL;
+    m_PlaneWidget=NULL;
+    m_BoxWidget=NULL;
+
+    m_PathFolderNode=NULL;
 }
 
 svModelEdit::~svModelEdit()
@@ -167,9 +173,30 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnLSubdivideL, LINEAR_SUBDIVIDE_LOCAL);
     connect(ui->btnLSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
+    signalMapper->setMapping(ui->btnCutAbove, CUT_ABOVE);
+    connect(ui->btnCutAbove, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnCutBelow, CUT_BELOW);
+    connect(ui->btnCutBelow, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnCutBox, CUT_BOX);
+    connect(ui->btnCutBox, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
     connect(signalMapper, SIGNAL(mapped(int)), this, SLOT(ModelOperate(int)));
 
-     connect(ui->checkBoxSphere, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
+    connect(ui->checkBoxSphere, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
+
+
+    //for trim
+    connect(ui->checkBoxShowPlane, SIGNAL(toggled(bool)), this, SLOT(ShowPlaneInteractor(bool)));
+    connect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
+
+    connect(ui->sliderPathPlane, SIGNAL(valueChanged(double)), this, SLOT(UpdatePlaneWidget(double )));
+
+
+    connect(ui->checkBoxShowBox, SIGNAL(toggled(bool)), this, SLOT(ShowBoxInteractor(bool)));
+
+
 
     //for tab Blend
     //=====================================================================
@@ -313,6 +340,9 @@ void svModelEdit::UpdateGUI()
         ui->widgetOCC->hide();
 
 
+    //----------------------
+    UpdatePathListForTrim();
+
     //update tab Blend
     //------------------------------------------------------
     if(m_ModelType=="Discrete")
@@ -331,6 +361,112 @@ void svModelEdit::UpdateGUI()
     }
 
     SetupBlendTable();
+}
+
+void svModelEdit::UpdatePathListForTrim()
+{
+    ui->comboBoxPathPlane->clear();
+    ui->comboBoxPathPlane->setEnabled(false);
+    ui->sliderPathPlane->setEnabled(false);
+
+    if(m_ModelNode.IsNull())
+        return;
+
+    disconnect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ModelNode,isProjFolder,false);
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svPathFolder"));
+        if (rs->size()>0)
+        {
+            m_PathFolderNode=rs->GetElement(0);
+
+            rs=GetDataStorage()->GetDerivations(rs->GetElement(0),mitk::NodePredicateDataType::New("svPath"));
+
+            for(int i=0;i<rs->size();i++)
+            {
+                ui->comboBoxPathPlane->addItem(QString::fromStdString(rs->GetElement(i)->GetName()));
+            }
+
+            if(rs->size()>0)
+            {
+                ui->comboBoxPathPlane->setEnabled(true);
+                ui->comboBoxPathPlane->setCurrentIndex(-1);
+
+            }
+        }
+
+    }
+
+    connect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
+}
+
+void svModelEdit::SetupSliderPathPlane(int idx)
+{
+    if(m_PathFolderNode.IsNull())
+        return;
+
+    QString selectedPathName=ui->comboBoxPathPlane->currentText();
+
+    mitk::DataNode::Pointer pathNode=GetDataStorage()->GetNamedDerivedNode (selectedPathName.toStdString().c_str(), m_PathFolderNode);
+    if(pathNode.IsNull())
+        return;
+
+    svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+    if(path==NULL)
+        return;
+
+    svPathElement* pe=path->GetPathElement(GetTimeStep());
+    if(pe==NULL)
+        return;
+
+    if(pe->GetPathPointNumber()>0)
+    {
+        ui->sliderPathPlane->setMinimum(0);
+        ui->sliderPathPlane->setMaximum(pe->GetPathPointNumber()-1);
+        ui->sliderPathPlane->setEnabled(true);
+    }else
+    {
+        ui->sliderPathPlane->setEnabled(false);
+    }
+
+}
+
+void svModelEdit::UpdatePlaneWidget(double idx)
+{
+    if(m_PlaneWidget==NULL || !m_PlaneWidget->GetEnabled())
+        return;
+
+    if(m_PathFolderNode.IsNull())
+        return;
+
+    QString selectedPathName=ui->comboBoxPathPlane->currentText();
+
+    mitk::DataNode::Pointer pathNode=GetDataStorage()->GetNamedDerivedNode (selectedPathName.toStdString().c_str(), m_PathFolderNode);
+    if(pathNode.IsNull())
+        return;
+
+    svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+    if(path==NULL)
+        return;
+
+    svPathElement* pe=path->GetPathElement(GetTimeStep());
+    if(pe==NULL)
+        return;
+
+    int posIdx=idx;
+
+    svPathElement::svPathPoint pathPoint=pe->GetPathPoint(posIdx);
+
+    m_PlaneWidget->SetCenter(pathPoint.pos[0],pathPoint.pos[1],pathPoint.pos[2]);
+    m_PlaneWidget->SetNormal(pathPoint.tangent[0],pathPoint.tangent[1],pathPoint.tangent[2]);
+    m_PlaneWidget->UpdatePlacement();
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 void svModelEdit::UpdateFaceListSelection()
@@ -1353,6 +1489,32 @@ void svModelEdit::ModelOperate(int operationType)
         if(MarkCells(newModelElement))
             ok=newModelElement->LinearSubdivideLocal(ui->sbLinearDivisionsL->value());
         break;
+    case CUT_ABOVE:
+        if(m_PlaneWidget!=NULL && m_PlaneWidget->GetEnabled())
+        {
+            double* origin=m_PlaneWidget->GetOrigin();
+            double* point1=m_PlaneWidget->GetPoint1();
+            double* point2=m_PlaneWidget->GetPoint2();
+            ok=newModelElement->CutByPlane(origin,point1,point2,true);
+        }
+        break;
+    case CUT_BELOW:
+        if(m_PlaneWidget!=NULL && m_PlaneWidget->GetEnabled())
+        {
+            double* origin=m_PlaneWidget->GetOrigin();
+            double* point1=m_PlaneWidget->GetPoint1();
+            double* point2=m_PlaneWidget->GetPoint2();
+            ok=newModelElement->CutByPlane(origin,point1,point2,false);
+        }
+        break;
+    case CUT_BOX:
+        if(m_BoxWidget!=NULL && m_BoxWidget->GetEnabled())
+        {
+            vtkSmartPointer<vtkPlanes> boxPlanes=vtkSmartPointer<vtkPlanes>::New();
+            m_BoxWidget->GetPlanes(boxPlanes);
+            ok=newModelElement->CutByBox(boxPlanes,true);
+        }
+        break;
     default:
         break;
     }
@@ -1402,8 +1564,83 @@ void svModelEdit::ShowSphereInteractor(bool checked)
         m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
     //    m_SphereWidget->SetRepresentationToSurface();
     }
+
     m_SphereWidget->SetInputData(modelElement->GetWholeVtkPolyData());
     m_SphereWidget->PlaceWidget();
 
     m_SphereWidget->On();
+}
+
+void svModelEdit::ShowPlaneInteractor(bool checked)
+{
+    if(!checked)
+    {
+        if(m_PlaneWidget!=NULL)
+        {
+            m_PlaneWidget->Off();
+        }
+
+        return;
+    }
+
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+
+    if(modelElement==NULL) return;
+
+    if(modelElement->GetWholeVtkPolyData()==NULL) return;
+    if(m_PlaneWidget==NULL)
+    {
+        m_PlaneWidget = vtkSmartPointer<vtkPlaneWidget>::New();
+        m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        m_PlaneWidget->GetHandleProperty()->SetOpacity(0.4);
+        m_PlaneWidget->GetPlaneProperty()->SetLineWidth(1);
+    //    m_PlaneWidget->SetRepresentationToSurface();
+    }
+
+    m_PlaneWidget->SetInputData(modelElement->GetWholeVtkPolyData());
+    m_PlaneWidget->PlaceWidget();
+
+    m_PlaneWidget->On();
+}
+
+void svModelEdit::ShowBoxInteractor(bool checked)
+{
+    if(!checked)
+    {
+        if(m_BoxWidget!=NULL)
+        {
+            m_BoxWidget->Off();
+        }
+
+        return;
+    }
+
+    if(m_Model==NULL) return;
+
+    int timeStep=GetTimeStep();
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement(timeStep));
+
+    if(modelElement==NULL) return;
+
+    if(modelElement->GetWholeVtkPolyData()==NULL) return;
+    if(m_BoxWidget==NULL)
+    {
+        m_BoxWidget = vtkSmartPointer<vtkBoxWidget>::New();
+        m_BoxWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
+        m_BoxWidget->OutlineCursorWiresOff();
+        m_BoxWidget->RotationEnabledOn();
+        m_BoxWidget->TranslationEnabledOn();
+        m_BoxWidget->GetHandleProperty()->SetOpacity(0.4);
+        m_BoxWidget->GetOutlineProperty()->SetLineWidth(1);
+//        m_BoxWidget->SetHandleSize(0.005);
+    //    m_BoxWidget->SetRepresentationToSurface();
+    }
+
+    m_BoxWidget->SetInputData(modelElement->GetWholeVtkPolyData());
+    m_BoxWidget->PlaceWidget();
+
+    m_BoxWidget->On();
 }
