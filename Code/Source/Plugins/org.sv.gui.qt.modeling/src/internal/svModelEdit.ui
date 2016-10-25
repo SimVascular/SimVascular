@@ -1472,7 +1472,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>1</number>
                             </property>
                             <widget class="QWidget" name="page_18">
                              <property name="geometry">
@@ -1567,7 +1567,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>263</height>
+                               <height>294</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1596,6 +1596,26 @@
                                <widget class="QCheckBox" name="checkBoxShowBox">
                                 <property name="text">
                                  <string>Show Box</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLabel" name="label_3">
+                                <property name="text">
+                                 <string>Select Path:</string>
+                                </property>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QComboBox" name="comboBoxPathBox"/>
+                              </item>
+                              <item>
+                               <widget class="ctkSliderWidget" name="sliderPathBox">
+                                <property name="decimals">
+                                 <number>0</number>
+                                </property>
+                                <property name="maximum">
+                                 <double>200.000000000000000</double>
                                 </property>
                                </widget>
                               </item>

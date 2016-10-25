@@ -4,6 +4,7 @@
 #include "svModelUtils.h"
 #include "svFaceListDelegate.h"
 #include "svPath.h"
+#include "svSegmentationUtils.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -186,17 +187,14 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->checkBoxSphere, SIGNAL(toggled(bool)), this, SLOT(ShowSphereInteractor(bool)));
 
-
     //for trim
     connect(ui->checkBoxShowPlane, SIGNAL(toggled(bool)), this, SLOT(ShowPlaneInteractor(bool)));
     connect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
-
     connect(ui->sliderPathPlane, SIGNAL(valueChanged(double)), this, SLOT(UpdatePlaneWidget(double )));
 
-
     connect(ui->checkBoxShowBox, SIGNAL(toggled(bool)), this, SLOT(ShowBoxInteractor(bool)));
-
-
+    connect(ui->comboBoxPathBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathBox(int )));
+    connect(ui->sliderPathBox, SIGNAL(valueChanged(double)), this, SLOT(UpdateBoxWidget(double )));
 
     //for tab Blend
     //=====================================================================
@@ -339,7 +337,6 @@ void svModelEdit::UpdateGUI()
     else
         ui->widgetOCC->hide();
 
-
     //----------------------
     UpdatePathListForTrim();
 
@@ -369,10 +366,17 @@ void svModelEdit::UpdatePathListForTrim()
     ui->comboBoxPathPlane->setEnabled(false);
     ui->sliderPathPlane->setEnabled(false);
 
+    ui->comboBoxPathBox->clear();
+    ui->comboBoxPathBox->setEnabled(false);
+    ui->sliderPathBox->setEnabled(false);
+
     if(m_ModelNode.IsNull())
         return;
 
     disconnect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
+
+    disconnect(ui->comboBoxPathBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathBox(int )));
+
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ModelNode,isProjFolder,false);
@@ -391,6 +395,7 @@ void svModelEdit::UpdatePathListForTrim()
             for(int i=0;i<rs->size();i++)
             {
                 ui->comboBoxPathPlane->addItem(QString::fromStdString(rs->GetElement(i)->GetName()));
+                ui->comboBoxPathBox->addItem(QString::fromStdString(rs->GetElement(i)->GetName()));
             }
 
             if(rs->size()>0)
@@ -398,12 +403,16 @@ void svModelEdit::UpdatePathListForTrim()
                 ui->comboBoxPathPlane->setEnabled(true);
                 ui->comboBoxPathPlane->setCurrentIndex(-1);
 
+                ui->comboBoxPathBox->setEnabled(true);
+                ui->comboBoxPathBox->setCurrentIndex(-1);
             }
         }
 
     }
 
     connect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
+
+    connect(ui->comboBoxPathBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathBox(int )));
 }
 
 void svModelEdit::SetupSliderPathPlane(int idx)
@@ -468,6 +477,70 @@ void svModelEdit::UpdatePlaneWidget(double idx)
     m_PlaneWidget->UpdatePlacement();
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
+
+void svModelEdit::SetupSliderPathBox(int idx)
+{
+    if(m_PathFolderNode.IsNull())
+        return;
+
+    QString selectedPathName=ui->comboBoxPathBox->currentText();
+
+    mitk::DataNode::Pointer pathNode=GetDataStorage()->GetNamedDerivedNode (selectedPathName.toStdString().c_str(), m_PathFolderNode);
+    if(pathNode.IsNull())
+        return;
+
+    svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+    if(path==NULL)
+        return;
+
+    svPathElement* pe=path->GetPathElement(GetTimeStep());
+    if(pe==NULL)
+        return;
+
+    if(pe->GetPathPointNumber()>0)
+    {
+        ui->sliderPathBox->setMinimum(0);
+        ui->sliderPathBox->setMaximum(pe->GetPathPointNumber()-1);
+        ui->sliderPathBox->setEnabled(true);
+    }else
+    {
+        ui->sliderPathBox->setEnabled(false);
+    }
+
+}
+
+void svModelEdit::UpdateBoxWidget(double idx)
+{
+    if(m_BoxWidget==NULL || !m_BoxWidget->GetEnabled())
+        return;
+
+    if(m_PathFolderNode.IsNull())
+        return;
+
+    QString selectedPathName=ui->comboBoxPathBox->currentText();
+
+    mitk::DataNode::Pointer pathNode=GetDataStorage()->GetNamedDerivedNode (selectedPathName.toStdString().c_str(), m_PathFolderNode);
+    if(pathNode.IsNull())
+        return;
+
+    svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+    if(path==NULL)
+        return;
+
+    svPathElement* pe=path->GetPathElement(GetTimeStep());
+    if(pe==NULL)
+        return;
+
+    int posIdx=idx;
+
+    svPathElement::svPathPoint pathPoint=pe->GetPathPoint(posIdx);
+
+    m_BoxWidget->PlaceWidget (-3, 3, -3, 3, -3, 3);
+    m_BoxWidget->SetTransform(svSegmentationUtils::GetvtkTransform(pathPoint));
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
 
 void svModelEdit::UpdateFaceListSelection()
 {

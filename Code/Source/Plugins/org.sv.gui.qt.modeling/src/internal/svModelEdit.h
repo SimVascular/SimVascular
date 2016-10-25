@@ -101,6 +101,10 @@ public slots:
 
     void UpdatePlaneWidget(double idx);
 
+    void SetupSliderPathBox(int idx);
+
+    void UpdateBoxWidget(double idx);
+
 public:
 
     int GetTimeStep();
