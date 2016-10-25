@@ -163,6 +163,9 @@ endif()
 #PYTHON
 #-----------------------------------------------------------------------------
 simvascular_add_new_external(PYTHON 2.7.11 OFF ON python)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR AND NOT SV_SUPERBUILD)
+    set(PYTHON_DIR ${SV_PYTHON_DIR})
+  endif()
 
 # OpenCASCADE
 #-----------------------------------------------------------------------------

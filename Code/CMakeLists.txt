@@ -1006,6 +1006,7 @@ if(SV_USE_QT_GUI)
     include_directories(${dir})
   endforeach()
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
+  include(SimVascularInstallQT)
 endif()
 
 #-----------------------------------------------------------------------------
