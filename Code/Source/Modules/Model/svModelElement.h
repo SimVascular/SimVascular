@@ -128,6 +128,10 @@ public:
 
     std::vector<int> GetSelectedFaceIDs();
 
+    std::vector<int> GetWallFaceIDs();
+
+    std::vector<int> GetCapFaceIDs();
+
     std::vector<svBlendParamRadius*> GetBlendRadii();
 
     void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);

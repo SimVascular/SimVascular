@@ -82,41 +82,58 @@ void svModelElementPolyData::AssignBlendParam(svModelElementPolyData::svBlendPar
     m_BlendParam->targetdecimation=param->targetdecimation;
 }
 
+//bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
+//{
+//    if(m_WholeVtkPolyData==NULL)
+//        return false;
+
+//    std::string arrayname="ModelFaceID";
+//    bool existing=false;
+
+//    if(m_WholeVtkPolyData->GetCellData()->HasArray(arrayname.c_str()))
+//        existing=true;
+
+//    if(!existing)
+//        return false;
+
+//    for(int i=0;i<faceIDs.size();i++)
+//    {
+//        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
+//        boundaryRegions = vtkIntArray::SafeDownCast(m_WholeVtkPolyData->GetCellData()-> GetScalars("ModelFaceID"));
+
+//        m_WholeVtkPolyData->BuildLinks();
+
+//        for (vtkIdType cellId=0; cellId< m_WholeVtkPolyData->GetNumberOfCells(); cellId++)
+//        {
+//          if (boundaryRegions->GetValue(cellId) == faceIDs[i])
+//          {
+//            m_WholeVtkPolyData->DeleteCell(cellId);
+//          }
+//        }
+
+//        m_WholeVtkPolyData->RemoveDeletedCells();
+
+//        RemoveFace(faceIDs[i]);
+
+//        RemoveFaceFromBlendParamRadii(faceIDs[i]);
+
+//    }
+
+//    m_SelectedCellIDs.clear();
+
+//    return true;
+//}
+
 bool svModelElementPolyData::DeleteFaces(std::vector<int> faceIDs)
 {
-    if(m_WholeVtkPolyData==NULL)
-        return false;
-
-    std::string arrayname="ModelFaceID";
-    bool existing=false;
-
-    if(m_WholeVtkPolyData->GetCellData()->HasArray(arrayname.c_str()))
-        existing=true;
-
-    if(!existing)
+    if(!svModelUtils::DeleteRegions(m_WholeVtkPolyData, faceIDs))
         return false;
 
     for(int i=0;i<faceIDs.size();i++)
     {
-        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
-        boundaryRegions = vtkIntArray::SafeDownCast(m_WholeVtkPolyData->GetCellData()-> GetScalars("ModelFaceID"));
-
-        m_WholeVtkPolyData->BuildLinks();
-
-        for (vtkIdType cellId=0; cellId< m_WholeVtkPolyData->GetNumberOfCells(); cellId++)
-        {
-          if (boundaryRegions->GetValue(cellId) == faceIDs[i])
-          {
-            m_WholeVtkPolyData->DeleteCell(cellId);
-          }
-        }
-
-        m_WholeVtkPolyData->RemoveDeletedCells();
-
         RemoveFace(faceIDs[i]);
 
         RemoveFaceFromBlendParamRadii(faceIDs[i]);
-
     }
 
     m_SelectedCellIDs.clear();

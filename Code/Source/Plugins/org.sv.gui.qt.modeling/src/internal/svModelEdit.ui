@@ -347,8 +347,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>140</width>
-                           <height>356</height>
+                           <width>126</width>
+                           <height>234</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -416,8 +416,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>195</height>
+                               <width>98</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <property name="sizePolicy">
@@ -581,8 +581,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>140</width>
-                           <height>356</height>
+                           <width>138</width>
+                           <height>294</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -628,7 +628,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>90</width>
+                               <width>98</width>
                                <height>94</height>
                               </rect>
                              </property>
@@ -704,7 +704,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>93</width>
+                               <width>98</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -885,7 +885,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>90</width>
+                               <width>98</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -981,8 +981,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>135</height>
+                               <width>105</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1058,8 +1058,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>140</width>
-                           <height>356</height>
+                           <width>121</width>
+                           <height>224</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1101,8 +1101,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>205</height>
+                               <width>127</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1479,8 +1479,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>294</height>
+                               <width>114</width>
+                               <height>189</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1673,6 +1673,13 @@
                           </widget>
                          </item>
                         </layout>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QPushButton" name="btnTest">
+                        <property name="text">
+                         <string>Test</string>
+                        </property>
                        </widget>
                       </item>
                       <item>

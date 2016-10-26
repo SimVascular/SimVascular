@@ -64,8 +64,6 @@ public:
 
     mitk::Point3D GetPoint(svVtkParametricSpline* svpp, double idx);
 
-    mitk::Vector3D GetPerpendicularNormalVector(mitk::Vector3D vec);
-
 protected:
 
     bool m_Closed;

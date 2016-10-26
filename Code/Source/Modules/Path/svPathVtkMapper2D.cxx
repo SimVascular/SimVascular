@@ -167,10 +167,9 @@ void svPathVtkMapper2D::CreateVTKRenderObjects(mitk::BaseRenderer* renderer)
     float control_point_size = m_Point2DSize*renderer->GetScaleFactorMMPerDisplayUnit();
     float path_point_size = m_SplinePoint2DSize*renderer->GetScaleFactorMMPerDisplayUnit();
 
-
     svPathElement* pathElement=input->GetPathElement(timeStep);
 
-    if (!pathElement||pathElement->GetControlPointNumber()==0)
+    if (!pathElement||(pathElement->GetControlPointNumber()==0 && pathElement->GetPathPointNumber()<2))
     {
         ls->m_PropAssembly->VisibilityOff();
         return;

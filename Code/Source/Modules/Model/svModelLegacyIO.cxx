@@ -48,6 +48,11 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
                     face->id=list[2].toInt();
                     face->name=list[3].toStdString();
                     faces.push_back(face);
+                    if(face->name.substr(0,4)=="wall")
+                        face->type="wall";
+                    else if(face->name.substr(0,3)=="cap")
+                        face->type="cap";
+
                 }
             }
             inputFile.close();
@@ -76,6 +81,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
                 mepd->SetFaces(faces);
 
                 svModel::Pointer model=svModel::New();
+                model->SetType(mepd->GetType());
                 model->SetModelElement(mepd);
 
                 modelNode = mitk::DataNode::New();

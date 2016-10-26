@@ -105,6 +105,8 @@ public slots:
 
     void UpdateBoxWidget(double idx);
 
+    void Test();
+
 public:
 
     int GetTimeStep();

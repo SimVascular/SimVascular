@@ -1,6 +1,8 @@
 #include "svModelUtils.h"
 
 #include "svModelElementPolyData.h"
+#include "svPathElement.h"
+#include "svMath3.h"
 
 #include "SimVascular.h"
 #include "cv_sys_geom.h"
@@ -12,6 +14,8 @@
 #include <vtkPlaneSource.h>
 #include <vtkClipPolyData.h>
 #include <vtkImplicitDataSet.h>
+#include <vtkThreshold.h>
+#include <vtkDataSetSurfaceFilter.h>
 
 vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
 {
@@ -666,3 +670,172 @@ vtkSmartPointer<vtkPolyData> svModelUtils::CutByBox(vtkSmartPointer<vtkPolyData>
 
     return triangulator->GetOutput();
 }
+
+bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs)
+{
+    if(inpd==NULL)
+        return false;
+
+    std::string arrayname="ModelFaceID";
+    bool existing=false;
+
+    if(inpd->GetCellData()->HasArray(arrayname.c_str()))
+        existing=true;
+
+    if(!existing)
+        return false;
+
+    for(int i=0;i<regionIDs.size();i++)
+    {
+        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
+        boundaryRegions = vtkIntArray::SafeDownCast(inpd->GetCellData()-> GetScalars("ModelFaceID"));
+
+        inpd->BuildLinks();
+
+        for (vtkIdType cellId=0; cellId< inpd->GetNumberOfCells(); cellId++)
+        {
+          if (boundaryRegions->GetValue(cellId) == regionIDs[i])
+          {
+            inpd->DeleteCell(cellId);
+          }
+        }
+
+        inpd->RemoveDeletedCells();
+    }
+
+    return true;
+}
+
+vtkPolyData* svModelUtils::CreateCenterlines(svModelElementPolyData* modelElement)
+{
+    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
+        return NULL;
+
+    svModelElementPolyData* me2=modelElement->Clone();
+    me2->DeleteFaces(me2->GetCapFaceIDs());
+
+    cvPolyData *src=new cvPolyData(me2->GetWholeVtkPolyData());
+    cvPolyData *capped = NULL;
+    int numCapCenterIDs;
+    int *capCenterIDs=NULL;
+
+    if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
+    {
+        delete me2;
+//        delete capped;
+        return NULL;
+    }
+
+    cvPolyData *tempCenterlines = NULL;
+    cvPolyData *voronoi = NULL;
+
+    int *sources=new int[1];
+    sources[0]=capCenterIDs[0];
+
+    int *targets=new int[numCapCenterIDs-1];
+    for(int i=1;i<numCapCenterIDs;i++)
+        targets[i-1]= capCenterIDs[i];
+
+    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
+    {
+        delete me2;
+        return NULL;
+    }
+
+    cvPolyData *centerlines=NULL;
+    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != CV_OK )
+    {
+        delete me2;
+        return NULL;
+    }
+
+//    cvPolyData *distance = NULL;
+//    if ( sys_geom_distancetocenterlines(src, centerlines, &distance) != CV_OK )
+//    {
+//        delete me2;
+//        return NULL;
+//    }
+
+    return centerlines->GetVtkPolyData();
+}
+
+std::vector<svPathElement::svPathPoint> svModelUtils::ConvertToPathPoints(std::vector<mitk::Point3D> posPoints)
+{
+    std::vector<svPathElement::svPathPoint> pathPoints;
+
+    for(int i=0;i<posPoints.size()-1;i++)
+    {
+        svPathElement::svPathPoint pathPoint;
+        pathPoint.pos=posPoints[i];
+        pathPoint.tangent=posPoints[i+1]-posPoints[i];
+        pathPoint.tangent.Normalize();
+        pathPoint.rotation=svMath3::GetPerpendicularNormalVector(pathPoint.tangent);
+
+        pathPoints.push_back(pathPoint);
+   }
+
+    svPathElement::svPathPoint lastPathPoint=pathPoints.back();
+    lastPathPoint.pos=posPoints.back();
+    pathPoints.push_back(lastPathPoint);
+
+    return pathPoints;
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue )
+{
+    vtkSmartPointer<vtkThreshold> thresholder=vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(pd);
+    thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
+    thresholder->ThresholdBetween(minValue, maxValue);
+    thresholder->Update();
+
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer=vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
+
+    return surfacer->GetOutput();
+}
+
+std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElementPolyData* modelElement)
+{
+    std::vector<svPathElement*> pathElements;
+
+    vtkSmartPointer<vtkPolyData> centerlinesPD=CreateCenterlines(modelElement);
+
+    if(centerlinesPD==NULL || !centerlinesPD->GetCellData()->HasArray("CenterlineIds"))
+        return pathElements;
+
+    int numCenterlines=centerlinesPD->GetCellData()->GetArray("CenterlineIds")->GetRange()[1]+1;
+
+    for(int i=0;i<numCenterlines;i++)
+    {
+        vtkSmartPointer<vtkPolyData> polyline=GetThresholdRegion(centerlinesPD,vtkDataObject::FIELD_ASSOCIATION_CELLS, "CenterlineIds", i, i);
+
+        vtkSmartPointer<vtkDataArray> groupArray=polyline->GetCellData()->GetArray("GroupIds");
+        int lowerValue=groupArray->GetRange()[0];
+        int upperValue=groupArray->GetRange()[1];
+
+        vtkSmartPointer<vtkPolyData> centerline=GetThresholdRegion(polyline,vtkDataObject::FIELD_ASSOCIATION_CELLS,"GroupIds",lowerValue,upperValue);
+        std::vector<mitk::Point3D> posPoints;
+        for(int j=0;j<centerline->GetNumberOfPoints();j++)
+        {
+            mitk::Point3D point;
+            point[0]=centerline->GetPoint(j)[0];
+            point[1]=centerline->GetPoint(j)[1];
+            point[2]=centerline->GetPoint(j)[2];
+
+            posPoints.push_back(point);
+        }
+
+        svPathElement* pe=new svPathElement();
+        pe->SetMethod(svPathElement::CONSTANT_TOTAL_NUMBER);
+        pe->SetCalculationNumber(centerline->GetNumberOfPoints());
+        //pe->SetControlPoints(controlPoints,false);
+        pe->SetPathPoints(ConvertToPathPoints(posPoints));
+
+        pathElements.push_back(pe);
+    }
+
+    return pathElements;
+}
+

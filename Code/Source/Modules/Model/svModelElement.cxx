@@ -254,6 +254,30 @@ std::vector<int> svModelElement::GetSelectedFaceIDs()
     return ids;
 }
 
+std::vector<int> svModelElement::GetWallFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->type=="wall")
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
+std::vector<int> svModelElement::GetCapFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->type=="cap")
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
 void svModelElement::CalculateBoundingBox(double *bounds)
 {
     bounds[0]=0;

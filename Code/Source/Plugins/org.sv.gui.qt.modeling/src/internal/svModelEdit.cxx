@@ -12,6 +12,7 @@
 #include <mitkSurface.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
+#include <mitkProgressBar.h>
 
 #include <usModuleRegistry.h>
 
@@ -223,6 +224,30 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
 //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
+
+
+       connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
+}
+
+void svModelEdit::Test()
+{
+    if(!m_Model) return;
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+    if(!modelElement) return;
+
+    mitk::Surface::Pointer surface=mitk::Surface::New();
+
+    vtkPolyData* centerlines=svModelUtils::CreateCenterlines(modelElement);
+    if(centerlines==NULL)
+        return;
+
+    surface->SetVtkPolyData(centerlines);
+
+    mitk::DataNode::Pointer node=mitk::DataNode::New();
+    node->SetName("centerlines");
+    node->SetData(surface);
+
+    GetDataStorage()->Add(node,m_ModelNode);
 }
 
 void svModelEdit::Visible()
@@ -1319,6 +1344,8 @@ void svModelEdit::CreateModel()
     svModelElement* newModelElement=NULL;
     svModelElement* modelElement=m_Model->GetModelElement();
 
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+
     if(m_ModelType=="PolyData"){
         newModelElement=svModelUtils::CreateModelElementPolyData(segNodes);
     }
@@ -1326,6 +1353,8 @@ void svModelEdit::CreateModel()
     {
 
     }
+
+    mitk::ProgressBar::GetInstance()->Progress();
 
     int timeStep=GetTimeStep();
 
@@ -1393,6 +1422,8 @@ void svModelEdit::BlendModel()
 
     std::vector<svModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
 
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+
     if(m_ModelType=="PolyData"){
 
         svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(modelElement);
@@ -1413,6 +1444,8 @@ void svModelEdit::BlendModel()
     {
 
     }
+
+    mitk::ProgressBar::GetInstance()->Progress();
 
     if(newModelElement==NULL) return;
 
@@ -1508,6 +1541,8 @@ void svModelEdit::ModelOperate(int operationType)
 
     bool ok=false;
 
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+
     switch(operationType)
     {
     case DELETE_FACES:
@@ -1592,6 +1627,8 @@ void svModelEdit::ModelOperate(int operationType)
         break;
     }
 
+    mitk::ProgressBar::GetInstance()->Progress();
+
     if(!ok)
     {
         delete newModelElement;
@@ -1668,7 +1705,7 @@ void svModelEdit::ShowPlaneInteractor(bool checked)
     {
         m_PlaneWidget = vtkSmartPointer<vtkPlaneWidget>::New();
         m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-        m_PlaneWidget->GetHandleProperty()->SetOpacity(0.4);
+        m_PlaneWidget->GetHandleProperty()->SetOpacity(0.8);
         m_PlaneWidget->GetPlaneProperty()->SetLineWidth(1);
     //    m_PlaneWidget->SetRepresentationToSurface();
     }
@@ -1706,7 +1743,7 @@ void svModelEdit::ShowBoxInteractor(bool checked)
         m_BoxWidget->OutlineCursorWiresOff();
         m_BoxWidget->RotationEnabledOn();
         m_BoxWidget->TranslationEnabledOn();
-        m_BoxWidget->GetHandleProperty()->SetOpacity(0.4);
+        m_BoxWidget->GetHandleProperty()->SetOpacity(0.6);
         m_BoxWidget->GetOutlineProperty()->SetLineWidth(1);
 //        m_BoxWidget->SetHandleSize(0.005);
     //    m_BoxWidget->SetRepresentationToSurface();
