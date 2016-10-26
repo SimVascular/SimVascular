@@ -135,7 +135,7 @@ void svPathCreate::CreatePath()
     if(m_CreatePath)
     {
         svPath::Pointer path = svPath::New();
-        path->SetPathID(maxPathID+10);
+        path->SetPathID(maxPathID+1);
         int timeStep=m_TimeStep;
 
         switch(currentIndex)

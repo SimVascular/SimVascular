@@ -7,6 +7,7 @@ set(INTERNAL_CPP_FILES
     svModelCreateAction.cxx
     svModelLegacyLoadAction.cxx
     svModelLegacySaveAction.cxx
+    svModelExtractPathsAction.cxx
     svSegSelectionWidget.cxx
     svModelEdit.cxx
     svFaceListDelegate.cxx
@@ -18,6 +19,7 @@ set(MOC_H_FILES
     src/internal/svModelCreateAction.h
     src/internal/svModelLegacyLoadAction.h
     src/internal/svModelLegacySaveAction.h
+    src/internal/svModelExtractPathsAction.h
     src/internal/svSegSelectionWidget.h
     src/internal/svModelEdit.h
     src/internal/svFaceListDelegate.h

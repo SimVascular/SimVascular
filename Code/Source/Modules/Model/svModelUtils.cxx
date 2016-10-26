@@ -706,22 +706,22 @@ bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<
     return true;
 }
 
-vtkPolyData* svModelUtils::CreateCenterlines(svModelElementPolyData* modelElement)
+vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
 {
     if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
         return NULL;
 
-    svModelElementPolyData* me2=modelElement->Clone();
-    me2->DeleteFaces(me2->GetCapFaceIDs());
+    vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
+    inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()));
 
-    cvPolyData *src=new cvPolyData(me2->GetWholeVtkPolyData());
+    cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *capped = NULL;
     int numCapCenterIDs;
     int *capCenterIDs=NULL;
 
     if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
     {
-        delete me2;
 //        delete capped;
         return NULL;
     }
@@ -738,21 +738,18 @@ vtkPolyData* svModelUtils::CreateCenterlines(svModelElementPolyData* modelElemen
 
     if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
     {
-        delete me2;
         return NULL;
     }
 
     cvPolyData *centerlines=NULL;
     if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != CV_OK )
     {
-        delete me2;
         return NULL;
     }
 
 //    cvPolyData *distance = NULL;
 //    if ( sys_geom_distancetocenterlines(src, centerlines, &distance) != CV_OK )
 //    {
-//        delete me2;
 //        return NULL;
 //    }
 
@@ -796,7 +793,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::GetThresholdRegion(vtkSmartPointer<vt
     return surfacer->GetOutput();
 }
 
-std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElementPolyData* modelElement)
+std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* modelElement)
 {
     std::vector<svPathElement*> pathElements;
 

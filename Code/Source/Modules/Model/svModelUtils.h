@@ -61,13 +61,13 @@ public:
 
     static bool DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs);
 
-    static vtkPolyData* CreateCenterlines(svModelElementPolyData* modelElement);
+    static vtkPolyData* CreateCenterlines(svModelElement* modelElement);
 
     static std::vector<svPathElement::svPathPoint> ConvertToPathPoints(std::vector<mitk::Point3D> posPoints);
 
     static vtkSmartPointer<vtkPolyData> GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue );
 
-    static std::vector<svPathElement*> CreatePathElements(svModelElementPolyData* modelElement);
+    static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
 };
 
 #endif /* SVMODELUTILS_H */

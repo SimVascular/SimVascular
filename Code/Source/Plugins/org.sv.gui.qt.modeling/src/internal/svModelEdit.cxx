@@ -13,6 +13,7 @@
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
 #include <mitkProgressBar.h>
+#include <mitkStatusBar.h>
 
 #include <usModuleRegistry.h>
 
@@ -226,29 +227,29 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
 
 
-       connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
+//       connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
 }
 
-void svModelEdit::Test()
-{
-    if(!m_Model) return;
-    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
-    if(!modelElement) return;
+//void svModelEdit::Test()
+//{
+//    if(!m_Model) return;
+//    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+//    if(!modelElement) return;
 
-    mitk::Surface::Pointer surface=mitk::Surface::New();
+//    mitk::Surface::Pointer surface=mitk::Surface::New();
 
-    vtkPolyData* centerlines=svModelUtils::CreateCenterlines(modelElement);
-    if(centerlines==NULL)
-        return;
+//    vtkPolyData* centerlines=svModelUtils::CreateCenterlines(modelElement);
+//    if(centerlines==NULL)
+//        return;
 
-    surface->SetVtkPolyData(centerlines);
+//    surface->SetVtkPolyData(centerlines);
 
-    mitk::DataNode::Pointer node=mitk::DataNode::New();
-    node->SetName("centerlines");
-    node->SetData(surface);
+//    mitk::DataNode::Pointer node=mitk::DataNode::New();
+//    node->SetName("centerlines");
+//    node->SetData(surface);
 
-    GetDataStorage()->Add(node,m_ModelNode);
-}
+//    GetDataStorage()->Add(node,m_ModelNode);
+//}
 
 void svModelEdit::Visible()
 {
@@ -401,7 +402,6 @@ void svModelEdit::UpdatePathListForTrim()
     disconnect(ui->comboBoxPathPlane, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathPlane(int )));
 
     disconnect(ui->comboBoxPathBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupSliderPathBox(int )));
-
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ModelNode,isProjFolder,false);
@@ -1542,6 +1542,9 @@ void svModelEdit::ModelOperate(int operationType)
     bool ok=false;
 
     mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+    mitk::StatusBar::GetInstance()->DisplayText("Processing model...");
+
+    BusyCursorOn();
 
     switch(operationType)
     {
@@ -1646,6 +1649,8 @@ void svModelEdit::ModelOperate(int operationType)
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
+    BusyCursorOff();
+    mitk::StatusBar::GetInstance()->DisplayText("");
 }
 
 void svModelEdit::ShowSphereInteractor(bool checked)

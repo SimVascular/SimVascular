@@ -3,6 +3,10 @@
 #include "svModelLegacyIO.h"
 #include <mitkNodePredicateDataType.h>
 
+#include <berryIPreferencesService.h>
+#include <berryIPreferences.h>
+#include <berryPlatform.h>
+
 #include <QFileDialog>
 
 svModelLegacyLoadAction::svModelLegacyLoadAction()
@@ -26,19 +30,39 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
     try
     {
-        QString modelDir = QFileDialog::getExistingDirectory(NULL, tr("Choose Directory"),
-                                                             QDir::homePath(),
-                                                             QFileDialog::ShowDirsOnly
-                                                             | QFileDialog::DontResolveSymlinks
-                                                             | QFileDialog::DontUseNativeDialog
-                                                             );
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+        if (prefService)
+        {
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        }
+        else
+        {
+            prefs = berry::IPreferences::Pointer(0);
+        }
 
-        if(modelDir.trimmed().isEmpty()) return;
+        QString lastFileOpenPath=QString();
+        if(prefs.IsNotNull())
+        {
+            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        }
 
-        std::vector<mitk::DataNode::Pointer> modelNodes=svModelLegacyIO::ReadFiles(modelDir);
+        QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Model")
+                                                             , lastFileOpenPath
+                                                             , tr("Models (*.vtp *.xmt_txt *.occt)")
+                                                             , NULL
+                                                             , QFileDialog::DontUseNativeDialog);
 
-        for(int i=0;i<modelNodes.size();i++)
-            m_DataStorage->Add(modelNodes[i],selectedNode);
+        if(modelFilePath.trimmed().isEmpty()) return;
+        mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
+        if(modelNode.IsNotNull())
+            m_DataStorage->Add(modelNode,selectedNode);
+
+        if(prefs.IsNotNull())
+        {
+            prefs->Put("LastFileOpenPath", modelFilePath);
+            prefs->Flush();
+        }
 
     }
     catch(...)
