@@ -92,6 +92,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     svFaceListDelegate* itemDelegate=new svFaceListDelegate(this);
     m_FaceListTableModel = new QStandardItemModel(this);
     ui->tableViewFaceList->setModel(m_FaceListTableModel);
+    ui->tableViewFaceList->setItemDelegateForColumn(2,itemDelegate);
     ui->tableViewFaceList->setItemDelegateForColumn(5,itemDelegate);
 
     connect( m_FaceListTableModel, SIGNAL(itemChanged(QStandardItem*))
@@ -115,11 +116,13 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     m_FaceListTableMenu=new QMenu(ui->tableViewFaceList);
     QAction* showAction=m_FaceListTableMenu->addAction("Show");
     QAction* hideAction=m_FaceListTableMenu->addAction("Hide");
+    QAction* changeTypeAction=m_FaceListTableMenu->addAction("Change Type");
     QAction* changeColorAction=m_FaceListTableMenu->addAction("Change Color");
     QAction* changeOpacityAction=m_FaceListTableMenu->addAction("Change Opacity");
 
     connect( showAction, SIGNAL( triggered(bool) ) , this, SLOT( ShowSelected(bool) ) );
     connect( hideAction, SIGNAL( triggered(bool) ) , this, SLOT( HideSelected(bool) ) );
+    connect( changeTypeAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeTypeSelected(bool) ) );
     connect( changeColorAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeColorSelected(bool) ) );
     connect( changeOpacityAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeOpacitySelected(bool) ) );
 
@@ -561,11 +564,10 @@ void svModelEdit::UpdateBoxWidget(double idx)
     svPathElement::svPathPoint pathPoint=pe->GetPathPoint(posIdx);
 
     m_BoxWidget->PlaceWidget (-3, 3, -3, 3, -3, 3);
-    m_BoxWidget->SetTransform(svSegmentationUtils::GetvtkTransform(pathPoint));
+    m_BoxWidget->SetTransform(svSegmentationUtils::GetvtkTransformBox(pathPoint,6));
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
-
 
 void svModelEdit::UpdateFaceListSelection()
 {
@@ -640,11 +642,9 @@ void svModelEdit::SetupFaceListTable()
         m_FaceListTableModel->setItem(rowIndex, 0, item);
 
         item= new QStandardItem(QString::fromStdString(faces[i]->name));
-//        item->setEditable(false);
         m_FaceListTableModel->setItem(rowIndex, 1, item);
 
         item= new QStandardItem(QString::fromStdString(faces[i]->type));
-        item->setEditable(false);
         m_FaceListTableModel->setItem(rowIndex, 2, item);
 
         item = new QStandardItem();
@@ -673,11 +673,11 @@ void svModelEdit::SetupFaceListTable()
     ui->tableViewFaceList->horizontalHeader()->resizeSection(0,20);
     ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->tableViewFaceList->horizontalHeader()->resizeSection(2,40);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(2,60);
     ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
-    ui->tableViewFaceList->horizontalHeader()->resizeSection(3,30);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(3,26);
     ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(4, QHeaderView::Fixed);
-    ui->tableViewFaceList->horizontalHeader()->resizeSection(4,30);
+    ui->tableViewFaceList->horizontalHeader()->resizeSection(4,26);
     ui->tableViewFaceList->horizontalHeader()->setSectionResizeMode(5, QHeaderView::Fixed);
     ui->tableViewFaceList->horizontalHeader()->resizeSection(5,60);
 
@@ -707,6 +707,8 @@ void svModelEdit::UpdateFaceData(QStandardItem* item)
     if(col==1)
     {
         modelElement->SetFaceName(item->text().trimmed().toStdString(), id);
+    }else if(col==2){
+        face->type=item->text().trimmed().toStdString();
     }else if(col==5){
         face->opacity=item->text().trimmed().toFloat();
     }
@@ -992,6 +994,51 @@ void svModelEdit::ChangeColorSelected( bool )
         QStandardItem* itemC= m_FaceListTableModel->item(row,4);
         QBrush brush(newColor);
         itemC->setBackground(brush);
+    }
+}
+
+void svModelEdit::ChangeTypeSelected( bool )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_FaceListTableModel==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewFaceList->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    QStringList items;
+    items << tr("wall") << tr("cap");
+
+    bool ok;
+    QString type = QInputDialog::getItem(m_Parent, "Change Type", "Type:", items, 0, false, &ok);
+    if (!ok || type.isEmpty())
+        return;
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_FaceListTableModel->item(row,0);
+        int id=itemID->text().toInt();
+        svModelElement::svFace* face=modelElement->GetFace(id);
+
+        if(face==NULL)
+            continue;
+
+//        face->type=type; //done by UpateFaceData()
+
+        QStandardItem* itemT= m_FaceListTableModel->item(row,2);
+        itemT->setData(type, Qt::EditRole);
     }
 }
 

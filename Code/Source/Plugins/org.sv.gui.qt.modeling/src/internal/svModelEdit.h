@@ -87,6 +87,8 @@ public slots:
 
     void ChangeColorSelected( bool checked = false );
 
+    void ChangeTypeSelected( bool checked = false );
+
     void ModelOperate(int operationType);
 
     void ShowSphereInteractor(bool checked);
