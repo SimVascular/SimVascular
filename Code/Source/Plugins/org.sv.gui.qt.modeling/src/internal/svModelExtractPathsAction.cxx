@@ -56,7 +56,7 @@ void svModelExtractPathsAction::Run(const QList<mitk::DataNode::Pointer> &select
         return;
     }
 
-    mitk::StatusBar::GetInstance()->DisplayText("Extracting paths from the model...");
+    mitk::StatusBar::GetInstance()->DisplayText("Extracting paths from the model... ( may take several minute or more)");
     m_Thread=new WorkThread(m_DataStorage,selectedNode);
 
     connect(m_Thread, SIGNAL(finished()), this, SLOT(UpdateStatus()));
