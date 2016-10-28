@@ -8,6 +8,7 @@ set(INTERNAL_CPP_FILES
   svProjectManagerView.cxx
   svProjectAddImageAction.cxx
   svProjectCloseAction.cxx
+  svProjectShowModelEdgesAction.cxx
 )
 
 set(MOC_H_FILES
@@ -16,6 +17,7 @@ set(MOC_H_FILES
   src/internal/svProjectManagerView.h
   src/internal/svProjectAddImageAction.h
   src/internal/svProjectCloseAction.h
+  src/internal/svProjectShowModelEdgesAction.h
 )
 
 set(UI_FILES

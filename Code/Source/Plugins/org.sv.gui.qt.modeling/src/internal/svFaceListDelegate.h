@@ -6,7 +6,7 @@
 #include <QObject>
 #include <QSize>
 #include <QDoubleSpinBox>
-
+#include <QComboBox>
 
 class svFaceListDelegate : public QItemDelegate
 {

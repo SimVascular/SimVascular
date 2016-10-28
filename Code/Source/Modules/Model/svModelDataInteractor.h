@@ -25,13 +25,35 @@ protected:
     virtual void DataNodeChanged() override;
 
 //    virtual bool CheckOverObject (const mitk::InteractionEvent*);
-    virtual void SelectFace (mitk::StateMachineAction*, mitk::InteractionEvent*);
+    virtual void GetPosition(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void SelectSingleFace(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void DeselectFace(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void SelectFaces(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    void SelectFace(mitk::InteractionEvent* interactionEvent, bool selecting, bool single);
+
+    virtual void SelectSingleCell(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void DeselectCell(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void SelectCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void SelectSurroundingCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    virtual void DeselectSurroundingCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    void SelectCell(mitk::InteractionEvent* interactionEvent, bool selecting, bool single, bool brushing=false);
+
+    virtual void DeleteSelectedFacesCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
 
 private:
 
       svModel* m_Model;
-
-      int m_SelectedFaceIndex;
+      mitk::Point2D m_CurrentPickedDisplayPoint;
 };
 
 itkEventMacro( svModelSelectFaceEvent, svModelEvent );

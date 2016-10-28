@@ -10,6 +10,13 @@ QWidget* svFaceListDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     int column=index.column();
 
     switch(column){
+    case 2:
+    {
+        QComboBox* cb=new QComboBox(parent);
+        cb->addItem("wall");
+        cb->addItem("cap");
+        return cb;
+    }
     case 5:
     {
         QDoubleSpinBox* dsb=new QDoubleSpinBox(parent);
@@ -29,6 +36,16 @@ void svFaceListDelegate::setEditorData(QWidget *editor, const QModelIndex &index
     int column=index.column();
 
     switch(column){
+    case 2:
+    {
+        QComboBox* cb=dynamic_cast<QComboBox*>(editor);
+        if(cb)
+        {
+            QString type=index.model()->data(index, Qt::EditRole).toString();
+            cb->setCurrentText(type);
+        }
+    }
+        break;
     case 5:
     {
         QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
@@ -49,6 +66,15 @@ void svFaceListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model
     int column=index.column();
 
     switch(column){
+    case 2:
+    {
+        QComboBox* cb=dynamic_cast<QComboBox*>(editor);
+        if(cb)
+        {
+            model->setData(index, cb->currentText(), Qt::EditRole);
+        }
+    }
+        break;
     case 5:
     {
         QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);
@@ -70,6 +96,15 @@ void svFaceListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptio
     int column=index.column();
 
     switch(column){
+    case 2:
+    {
+        QComboBox* cb=dynamic_cast<QComboBox*>(editor);
+        if(cb)
+        {
+            editor->setGeometry(option.rect);
+        }
+    }
+        break;
     case 5:
     {
         QDoubleSpinBox* dsb=dynamic_cast<QDoubleSpinBox*>(editor);

@@ -1,5 +1,7 @@
 #include "svModelElement.h"
 
+#include <vtkCellData.h>
+
 svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)
@@ -168,12 +170,12 @@ void svModelElement::SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd)
 //    return m_SelectedFaceIndex;
 //}
 
-void svModelElement::SetSelectedFaceIndex(int idx)
+void svModelElement::SelectFaceByIndex(int idx, bool select)
 {
     if(idx>-1&&idx<m_Faces.size())
     {
         if(m_Faces[idx])
-            m_Faces[idx]->selected=true;
+            m_Faces[idx]->selected=select;
     }
 
 }
@@ -188,14 +190,14 @@ void svModelElement::ClearFaceSelection()
 
 }
 
-void svModelElement::SetSelectedFace(int id)
+void svModelElement::SelectFace(int id)
 {
     svFace* face=GetFace(id);
     if(face)
         face->selected=true;
 }
 
-void svModelElement::SetSelectedFace(std::string name)
+void svModelElement::SelectFace(std::string name)
 {
     svFace* face=GetFace(name);
     if(face)
@@ -213,6 +215,23 @@ int svModelElement::GetFaceID(std::string name) const
     return -1;
 }
 
+int svModelElement::GetMaxFaceID() const
+{
+    int maxID=0;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->id>maxID)
+            maxID=m_Faces[i]->id;
+    }
+
+    return maxID;
+}
+
+int svModelElement::GetFaceNumber() const
+{
+    return m_Faces.size();
+}
+
 bool svModelElement::IsFaceSelected(std::string name)
 {
     return GetFace(name)&&GetFace(name)->selected;
@@ -221,6 +240,42 @@ bool svModelElement::IsFaceSelected(std::string name)
 bool svModelElement::IsFaceSelected(int id)
 {
     return GetFace(id)&&GetFace(id)->selected;
+}
+
+std::vector<int> svModelElement::GetSelectedFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->selected)
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
+std::vector<int> svModelElement::GetWallFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->type=="wall")
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
+std::vector<int> svModelElement::GetCapFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&m_Faces[i]->type=="cap")
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
 }
 
 void svModelElement::CalculateBoundingBox(double *bounds)
@@ -269,17 +324,6 @@ void svModelElement::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRad
     }
 }
 
-//double svModelElement::GetBlendRadius(int faceID1, int faceID2)
-//{
-//    for(int i=0;i<m_BlendRadii.size();i++)
-//    {
-//        if(m_BlendRadii[i] && m_BlendRadii[i]->faceID1==faceID1 &&  m_BlendRadii[i]->faceID2==faceID2)
-//            return m_BlendRadii[i]->radius;
-//    }
-
-//    return -1;
-//}
-
 svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(int faceID1, int faceID2)
 {
     for(int i=0;i<m_BlendRadii.size();i++)
@@ -289,4 +333,63 @@ svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(int face
     }
 
     return NULL;
+}
+
+void svModelElement::RemoveFace(int faceID)
+{
+    int idx=GetFaceIndex(faceID);
+
+    if(idx>-1)
+        m_Faces.erase(m_Faces.begin()+idx);
+}
+
+void svModelElement::RemoveFaceFromBlendParamRadii(int faceID)
+{
+
+    for(int i=m_BlendRadii.size()-1;i>-1;i--)
+    {
+        if( m_BlendRadii[i] && (m_BlendRadii[i]->faceID1==faceID || m_BlendRadii[i]->faceID2==faceID) )
+            m_BlendRadii.erase(m_BlendRadii.begin()+i);
+    }
+
+}
+
+void svModelElement::ReplaceFaceIDForBlendParamRadii(int targetID, int loseID)
+{
+    //replace
+    for(int i=0;i<m_BlendRadii.size();i++)
+    {
+        if(m_BlendRadii[i] )
+        {
+            if(m_BlendRadii[i]->faceID1==loseID)
+                m_BlendRadii[i]->faceID1=targetID;
+
+            if(m_BlendRadii[i]->faceID2==loseID)
+                m_BlendRadii[i]->faceID2=targetID;
+        }
+    }
+
+    //remove invalid ones, in which faceID1==faceID2
+    for(int i=m_BlendRadii.size()-1;i>-1;i--)
+    {
+        if(m_BlendRadii[i] && m_BlendRadii[i]->faceID1==m_BlendRadii[i]->faceID2)
+        {
+            m_BlendRadii.erase(m_BlendRadii.begin()+i);
+        }
+    }
+
+    //remove duplicate ones
+    for(int i=0;i<m_BlendRadii.size();i++)
+    {
+        for(int j=m_BlendRadii.size()-1;j>i;j--)
+        {
+            if(m_BlendRadii[i] && m_BlendRadii[j]
+                    && m_BlendRadii[i]->faceID1==m_BlendRadii[j]->faceID1
+                    && m_BlendRadii[i]->faceID2==m_BlendRadii[j]->faceID2)
+            {
+                m_BlendRadii.erase(m_BlendRadii.begin()+j);
+            }
+        }
+    }
+
 }

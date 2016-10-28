@@ -11,7 +11,8 @@
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
       <contextMenuAction nodeDescriptorName="svModelFolder" label="Create Model" icon="" class="svModelCreateAction" />
       <contextMenuAction nodeDescriptorName="svModelFolder" label="Load Legacy Model" icon="" class="svModelLegacyLoadAction" />
-      <contextMenuAction nodeDescriptorName="svModelFolder" label="Save Legacy Model" icon="" class="svModelLegacySaveAction" />
+      <contextMenuAction nodeDescriptorName="svModel" label="Extract Paths" icon="" class="svModelExtractPathsAction" />
+      <contextMenuAction nodeDescriptorName="svModel" label="Save Legacy Model" icon="" class="svModelLegacySaveAction" />
   </extension>
 
 </plugin>

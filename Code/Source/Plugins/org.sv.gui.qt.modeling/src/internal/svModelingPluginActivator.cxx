@@ -2,6 +2,7 @@
 #include "svModelCreateAction.h"
 #include "svModelLegacyLoadAction.h"
 #include "svModelLegacySaveAction.h"
+#include "svModelExtractPathsAction.h"
 #include "svModelEdit.h"
 
 //svModelingPluginActivator* svModelingPluginActivator::m_Instance = nullptr;
@@ -15,6 +16,7 @@ void svModelingPluginActivator::start(ctkPluginContext* context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelLegacyLoadAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelLegacySaveAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svModelExtractPathsAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svModelEdit, context)
 
 }

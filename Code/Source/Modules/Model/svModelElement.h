@@ -101,9 +101,13 @@ public:
 
     int GetFaceID(std::string name) const;
 
+    int GetMaxFaceID() const;
+
+    int GetFaceNumber() const;
+
     std::string GetFaceName(int id) const;
 
-    void SetFaceName(std::string name, int id); //Todo: make virtual
+    virtual void SetFaceName(std::string name, int id);
 
     vtkSmartPointer<vtkPolyData> GetWholeVtkPolyData() const;
 
@@ -113,24 +117,33 @@ public:
 
 //    int GetSelectedFaceIndex();
 
-    void SetSelectedFaceIndex(int idx);
+    void SelectFaceByIndex(int idx, bool select = true);
 
     void ClearFaceSelection();
 
-    void SetSelectedFace(int id);
-    void SetSelectedFace(std::string name);
+    void SelectFace(int id);
+    void SelectFace(std::string name);
     bool IsFaceSelected(std::string name);
     bool IsFaceSelected(int id);
+
+    std::vector<int> GetSelectedFaceIDs();
+
+    std::vector<int> GetWallFaceIDs();
+
+    std::vector<int> GetCapFaceIDs();
 
     std::vector<svBlendParamRadius*> GetBlendRadii();
 
     void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);
 
-//    double GetBlendRadius(int faceID1, int faceID2);
-
     svBlendParamRadius* GetBlendParamRadius(int faceID1, int faceID2);
 
     void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii);
+
+    void RemoveFace(int faceID);
+    void RemoveFaceFromBlendParamRadii(int faceID);
+
+    void ReplaceFaceIDForBlendParamRadii(int targetID, int loseID);
 
     void CalculateBoundingBox(double *bounds);
 

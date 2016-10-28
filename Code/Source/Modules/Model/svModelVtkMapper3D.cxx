@@ -1,5 +1,7 @@
 #include "svModelVtkMapper3D.h"
 
+#include "svModelElementPolyData.h"
+
 #include <mitkDataNode.h>
 #include <mitkProperties.h>
 #include <mitkColorProperty.h>
@@ -24,6 +26,14 @@
 #include <vtkPointData.h>
 #include <vtkPlaneCollection.h>
 #include <vtkSmartPointer.h>
+#include <vtkSelectionNode.h>
+#include <vtkSelectionNode.h>
+#include <vtkSelection.h>
+#include <vtkExtractSelection.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkDataSetMapper.h>
+#include <vtkIdTypeArray.h>
 
 const svModel* svModelVtkMapper3D::GetInput()
 {
@@ -76,16 +86,28 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
         return;
     }
 
+    bool forceShowWholeSurface=false;
+    node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
+
+//    bool forceShowFaces=false;
+//    node->GetBoolProperty("show faces", forceShowFaces, renderer);
+
+//    if(!showWholeSurface&&!showFaces)
+//    {
+//        ls->m_PropAssembly->VisibilityOff();
+//        return;
+//    }
+
     bool showWholeSurface=false;
-    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
+    bool showFaces=false;
 
-    bool showFaces=true;
-    node->GetBoolProperty("show faces", showFaces, renderer);
-
-    if(!showWholeSurface&&!showFaces)
+    if(me->GetFaceNumber()>0)
     {
-        ls->m_PropAssembly->VisibilityOff();
-        return;
+        showWholeSurface=false||forceShowWholeSurface;
+        showFaces=true;
+    }else{
+        showWholeSurface=true;
+        showFaces=false;
     }
 
     ls->m_PropAssembly->GetParts()->RemoveAllItems();
@@ -107,6 +129,12 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 //        ls->m_Actor=NULL;
 //    }
 
+    float edgeColor[3]= { 0.0f, 0.0f, 1.0f };
+    node->GetColor(edgeColor, renderer, "edge color");
+
+    bool showEdges=false;
+    node->GetBoolProperty("show edges", showEdges, renderer);
+
     vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
     mapper->SetInputData(wholePolyData);
 
@@ -115,6 +143,13 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
     Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
     ApplyAllProperties(renderer, mapper, actor);
+
+    if(showEdges)
+    {
+        actor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+        actor->GetProperty()->SetEdgeVisibility(1);
+        actor->GetProperty()->SetLineWidth(0.5);
+    }
 
     ls->m_Actor=actor;
 
@@ -157,6 +192,13 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
             }
             faceActor->GetProperty()->SetOpacity(face->opacity);
 
+            if(showEdges)
+            {
+                faceActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+                faceActor->GetProperty()->SetEdgeVisibility(1);
+                faceActor->GetProperty()->SetLineWidth(0.51);
+            }
+
             ls->m_PropAssembly->AddPart(faceActor );
 
             ls->m_FaceActors.push_back(faceActor);
@@ -164,11 +206,70 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
     }
 
+    //show selected cells
+    svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
+    if(mepd&&mepd->GetSelectedCellIDs().size()>0)
+    {
+        float selectedColor[3]= { 0.0f, 1.0f, 0.0f };
+        node->GetColor(selectedColor, renderer, "cell selected color");
+
+        std::vector<int> cellIDs=mepd->GetSelectedCellIDs();
+
+        vtkSmartPointer<vtkIdTypeArray> ids=vtkSmartPointer<vtkIdTypeArray>::New();
+        ids->SetNumberOfComponents(1);
+        for(int i=0;i<cellIDs.size();i++)
+            ids->InsertNextValue(cellIDs[i]);
+
+        vtkSmartPointer<vtkSelectionNode> selectionNode=vtkSmartPointer<vtkSelectionNode>::New();
+        //Field Type 0 is CELL
+        selectionNode->SetFieldType(0);
+        //Content Type 4 is INDICES
+        selectionNode->SetContentType(4);
+        selectionNode->SetSelectionList(ids);
+
+        vtkSmartPointer<vtkSelection> selection=vtkSmartPointer<vtkSelection>::New();
+        selection->AddNode(selectionNode);
+
+        vtkSmartPointer<vtkExtractSelection> extractSelection=vtkSmartPointer<vtkExtractSelection>::New();
+        extractSelection->SetInputData(0, mepd->GetWholeVtkPolyData());
+        extractSelection->SetInputData(1, selection);
+        extractSelection->Update();
+
+        vtkSmartPointer<vtkUnstructuredGrid> selected=vtkSmartPointer<vtkUnstructuredGrid>::New();
+        selected->ShallowCopy(extractSelection->GetOutput());
+
+//        vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+//        surfaceFilter->SetInputData(selected);
+//        surfaceFilter->Update();
+//        vtkSmartPointer<vtkPolyData> cellPolydata = surfaceFilter->GetOutput();
+
+//        vtkSmartPointer<vtkPainterPolyDataMapper> cellMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+//        cellMapper->SetInputData(cellPolydata);
+
+//        vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
+//        cellActor->SetMapper(cellMapper);
+
+//        ApplyAllProperties(renderer, cellMapper, cellActor);
+//        cellActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
+
+        vtkSmartPointer<vtkDataSetMapper> cellMapper=vtkSmartPointer<vtkDataSetMapper>::New();
+        cellMapper->SetInputData(selected);
+
+        vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
+        cellActor->SetMapper(cellMapper);
+        cellActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
+//        cellActor->GetProperty()->SetEdgeColor(selectedColor[0], selectedColor[1], selectedColor[2]);
+//        cellActor->GetProperty()->SetEdgeVisibility(1);
+//        cellActor->GetProperty()->SetLineWidth(3);
+
+        ls->m_PropAssembly->AddPart(cellActor);
+    }
+
     if(visible)
         ls->m_PropAssembly->VisibilityOn();
 }
 
-vtkSmartPointer<vtkActor> svModelVtkMapper3D::GetActor(mitk::BaseRenderer* renderer)
+vtkSmartPointer<vtkActor> svModelVtkMapper3D::GetWholeSurfaceActor(mitk::BaseRenderer* renderer)
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
@@ -552,9 +653,13 @@ void svModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
 
+    node->AddProperty( "edge color", mitk::ColorProperty::New(0.0f,0.0f,1.0f), renderer, overwrite );
+    node->AddProperty( "show edges", mitk::BoolProperty::New(false), renderer, overwrite );
+
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
-    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
+//    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
+    node->AddProperty( "cell selected color",mitk::ColorProperty::New(0,1,0),renderer, overwrite );
 
     svModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(node,renderer,overwrite); // Shading
 

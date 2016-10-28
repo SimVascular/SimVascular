@@ -53,6 +53,8 @@ public:
 
     static vtkTransform* GetvtkTransform(svPathElement::svPathPoint pathPoint);
 
+    static vtkTransform* GetvtkTransformBox(svPathElement::svPathPoint pathPoint, double boxHeight);
+
     static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::Vector3D spacing, double size);
 
     static mitk::PlaneGeometry::Pointer CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::Image* image, double size, bool useOnlyMinimumSpacing = false);

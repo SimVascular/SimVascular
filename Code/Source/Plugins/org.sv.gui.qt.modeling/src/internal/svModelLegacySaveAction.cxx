@@ -1,7 +1,12 @@
 #include "svModelLegacySaveAction.h"
 
+#include "svModel.h"
 #include "svModelLegacyIO.h"
 #include <mitkNodePredicateDataType.h>
+
+#include <berryIPreferencesService.h>
+#include <berryIPreferences.h>
+#include <berryPlatform.h>
 
 #include <QFileDialog>
 
@@ -17,27 +22,74 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
-    mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("svModelFolder");
+    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
 
-    if(!isModelFolder->CheckNode(selectedNode))
-    {
-        return;
-    }
+    svModel* model=dynamic_cast<svModel*>(selectedNode->GetData());
+    if(!model) return;
+
+    svModelElement* modelElement=model->GetModelElement();
+    if(!modelElement) return;
+
+    QString fileFilter;
+    std::string modelType=model->GetType();
+    if(modelType=="PolyData")
+        fileFilter=tr("Model (*.vtp)");
+    else if(modelType=="Parasolid")
+        fileFilter=tr("Model (*.xmt_txt)");
+    else if(modelType=="OpenCASCADE")
+        fileFilter=tr("Model (*.occt)");
 
     try
     {
-        QString modelDir = QFileDialog::getExistingDirectory(NULL, tr("Choose Directory"),
-                                                             QDir::homePath(),
-                                                             QFileDialog::ShowDirsOnly
-                                                             | QFileDialog::DontResolveSymlinks
-                                                             | QFileDialog::DontUseNativeDialog
-                                                             );
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+        if (prefService)
+        {
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        }
+        else
+        {
+            prefs = berry::IPreferences::Pointer(0);
+        }
 
-        if(modelDir.trimmed().isEmpty()) return;
+        QString lastFileSavePath=QString();
+        if(prefs.IsNotNull())
+        {
+            lastFileSavePath = prefs->Get("LastFileSavePath", "");
+        }
 
-        mitk::DataStorage::SetOfObjects::ConstPointer rsModel=m_DataStorage->GetDerivations(selectedNode,mitk::NodePredicateDataType::New("svModel"));
+        QString fileName = QFileDialog::getSaveFileName(NULL
+                                                        ,tr("Save Model")
+                                                        ,lastFileSavePath
+                                                        ,fileFilter
+                                                        ,NULL
+                                                        ,QFileDialog::DontUseNativeDialog
+                                                        );
+        if(fileName.trimmed().isEmpty()) return;
 
-        svModelLegacyIO::WriteFiles(rsModel, modelDir);
+        if(modelType=="PolyData")
+        {
+            if(!fileName.endsWith(".vtp"))
+                fileName=fileName+".vtp";
+        }
+        else if(modelType=="Parasolid")
+        {
+            if(!fileName.endsWith(".xmt_txt"))
+                fileName=fileName+".xmt_txt";
+        }
+        else if(modelType=="OpenCASCADE")
+        {
+            if(!fileName.endsWith(".occt"))
+                fileName=fileName+".occt";
+        }
+
+        svModelLegacyIO::WriteFile(selectedNode, fileName);
+
+        if(prefs.IsNotNull())
+        {
+            prefs->Put("LastFileSavePath", fileName);
+            prefs->Flush();
+        }
     }
     catch(...)
     {

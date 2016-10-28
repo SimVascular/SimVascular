@@ -147,6 +147,68 @@ vtkTransform* svSegmentationUtils::GetvtkTransform(svPathElement::svPathPoint pa
     return tr;
 }
 
+vtkTransform* svSegmentationUtils::GetvtkTransformBox(svPathElement::svPathPoint pathPoint,double boxHeight)
+{
+    double pos[3],nrm[3],xhat[3];
+
+    pos[0]=pathPoint.pos[0];
+    pos[1]=pathPoint.pos[1];
+    pos[2]=pathPoint.pos[2];
+
+    nrm[0]=pathPoint.tangent[0];
+    nrm[1]=pathPoint.tangent[1];
+    nrm[2]=pathPoint.tangent[2];
+
+    xhat[0]=pathPoint.rotation[0];
+    xhat[1]=pathPoint.rotation[1];
+    xhat[2]=pathPoint.rotation[2];
+
+    double zhat[3]={0,0,1};
+    double theta=math_radToDeg(math_angleBtw3DVectors(zhat,nrm));
+    double axis[3];
+    math_cross(axis,zhat,nrm);
+
+    vtkTransform* tmpTr=vtkTransform::New();
+    tmpTr->Identity();
+    tmpTr->RotateWXYZ(theta,axis);
+
+    vtkPoints* tmpPt=vtkPoints::New();
+    tmpPt->InsertNextPoint(1, 0, 0);
+
+    vtkPolyData* tmpPd=vtkPolyData::New();
+    tmpPd->SetPoints(tmpPt);
+
+    vtkTransformPolyDataFilter* tmpTf=vtkTransformPolyDataFilter::New();
+    tmpTf->SetInputDataObject(tmpPd);
+    tmpTf->SetTransform(tmpTr);
+    tmpTf->Update();
+    double pt[3];
+    tmpTf->GetOutput()->GetPoint(0,pt);
+
+    tmpTr->Delete();
+    tmpPt->Delete();
+    tmpPd->Delete();
+    tmpTf->Delete();
+
+    double rot=math_radToDeg(math_angleBtw3DVectors(pt,xhat));
+
+    double x[3];
+    math_cross(x,pt,xhat);
+    double d=math_dot(x,nrm);
+    if (d < 0.0) {
+        rot=-rot;
+    }
+
+    vtkTransform* tr=vtkTransform::New();
+    tr->Identity();
+    tr->Translate(pos);
+    tr->RotateWXYZ(rot,nrm);
+    tr->RotateWXYZ(theta,axis);
+    tr->Translate(0,0,boxHeight/4.0);
+
+    return tr;
+}
+
 mitk::PlaneGeometry::Pointer svSegmentationUtils::CreatePlaneGeometry(svPathElement::svPathPoint pathPoint, mitk::Vector3D spacing, double size)
 {
     vtkTransform* tr=GetvtkTransform(pathPoint);

@@ -68,7 +68,7 @@ public:
 
     static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
 
-    vtkSmartPointer<vtkActor> GetActor(mitk::BaseRenderer* renderer);
+    vtkSmartPointer<vtkActor> GetWholeSurfaceActor(mitk::BaseRenderer* renderer);
     std::vector<vtkSmartPointer<vtkActor>> GetFaceActors(mitk::BaseRenderer* renderer);
 
     class LocalStorage : public mitk::Mapper::BaseLocalStorage
