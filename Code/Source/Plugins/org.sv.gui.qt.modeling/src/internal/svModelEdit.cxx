@@ -575,7 +575,6 @@ void svModelEdit::UpdateFaceListSelection()
     svModelElement* modelElement=m_Model->GetModelElement();
     if(!modelElement) return;
 
-
     if(m_FaceListTableModel==NULL)
         return;
 
@@ -613,13 +612,14 @@ void svModelEdit::SetupFaceListTable()
     if(!m_Model)
         return;
 
+    m_FaceListTableModel->clear();
+
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
     std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
 
-    m_FaceListTableModel->clear();
     QStringList faceListHeaders;
     faceListHeaders << "ID" << "Name" << "Type" << "V" << "C" << "O";
     m_FaceListTableModel->setHorizontalHeaderLabels(faceListHeaders);
@@ -1055,13 +1055,14 @@ void svModelEdit::SetupBlendTable()
     if(!m_Model)
         return;
 
+    m_BlendTableModel->clear();
+
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
     std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
 
-    m_BlendTableModel->clear();
     QStringList blendHeaders;
     blendHeaders << "Use" << "Face 1" << "Face 2" << "Radius";
     m_BlendTableModel->setHorizontalHeaderLabels(blendHeaders);
@@ -1543,6 +1544,7 @@ std::vector<int> svModelEdit::GetSelectedFaceIDs()
 
 bool svModelEdit::MarkCells(svModelElementPolyData* modelElement)
 {
+    modelElement->RemoveActiveCells();
 
     bool hasFaces=false;
     if(modelElement->GetSelectedFaceIDs().size()>0)
@@ -1678,10 +1680,12 @@ void svModelEdit::ModelOperate(int operationType)
     }
 
     mitk::ProgressBar::GetInstance()->Progress();
+    BusyCursorOff();
 
     if(!ok)
     {
         delete newModelElement;
+        mitk::StatusBar::GetInstance()->DisplayText("Model pressing not successful");
         return;
     }
 
@@ -1696,8 +1700,7 @@ void svModelEdit::ModelOperate(int operationType)
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
-    BusyCursorOff();
-    mitk::StatusBar::GetInstance()->DisplayText("");
+    mitk::StatusBar::GetInstance()->DisplayText("Model processing done");
 }
 
 void svModelEdit::ShowSphereInteractor(bool checked)
