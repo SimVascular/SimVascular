@@ -125,7 +125,7 @@ void svModelExtractPathsAction::WorkThread::run()
 
             mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
             pathNode->SetData(path);
-            pathNode->SetName(selectedNode->GetName()+"_"+std::to_string(i+1));
+            pathNode->SetName(selectedNode->GetName()+"_centerline_"+std::to_string(i+1));
 
             mm_DataStorage->Add(pathNode,pathFolderNode);
         }
