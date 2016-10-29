@@ -44,6 +44,10 @@ private:
 
         QString GetStatus(){return m_Status;}
 
+        mitk::DataNode::Pointer GetPathFolderNode(){return m_PathFolderNode;}
+
+        std::vector<mitk::DataNode::Pointer> GetPathNodes(){return m_PathNodes;}
+
     private:
 
         void run();
@@ -52,7 +56,11 @@ private:
 
         mitk::DataStorage::Pointer mm_DataStorage;
 
+        mitk::DataNode::Pointer m_PathFolderNode;
+
         QString m_Status;
+
+        std::vector<mitk::DataNode::Pointer> m_PathNodes;
 
     };
 
