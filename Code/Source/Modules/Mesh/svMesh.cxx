@@ -74,16 +74,32 @@ void svMesh::CalculateBoundingBox(double *bounds)
 
 }
 
-bool svMesh::ExecuteCommands(std::vector<std::string> cmds)
+bool svMesh::ExecuteCommand(std::string cmd, std::string& msg)
+{
+    std::string flag;
+    double values[20]={0};
+    std::string strValues[5]={""};
+    bool option=false;
+
+    if(!ParseCommandInternal(cmd, flag, values, strValues, option, msg))
+        return false;
+
+    if(!Execute(flag, values, strValues, option, msg))
+        return false;
+
+    return true;
+}
+
+bool svMesh::ExecuteCommands(std::vector<std::string> cmds, std::string& msg)
 {
     for(int i=0;i<cmds.size();i++)
     {
-        svStringUtils::Trim(cmds[i]);
+        sv::trim(cmds[i]);
 
         if(cmds[i]=="")
             continue;
 
-        if(!ExecuteCommand(cmds[i]))
+        if(!ExecuteCommand(cmds[i], msg))
             return false;
     }
 
@@ -100,8 +116,8 @@ void svMesh::SetCommandHistory(std::vector<std::string> history)
     m_CommandHistory=history;
 }
 
-bool svMesh::ExcuteCommandHistory()
+bool svMesh::ExcuteCommandHistory(std::string& msg)
 {
-    ExecuteCommands(m_CommandHistory);
+    ExecuteCommands(m_CommandHistory, msg);
 }
 

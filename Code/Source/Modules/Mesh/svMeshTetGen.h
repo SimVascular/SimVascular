@@ -19,9 +19,17 @@ public:
 
     svMeshTetGen* Clone() override;
 
+    void InitNewMesher() override;
+
     bool SetModelElement(svModelElement* modelElement) override;
 
-    bool ExecuteCommand(std::string cmd) override;
+    bool Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg) override;
+
+    bool ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) override;
+
+    static bool ParseCommand(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg);
+
+    cvTetGenMeshObject* GetMesher();
 
   protected:
 

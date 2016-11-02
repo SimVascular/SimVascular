@@ -25,15 +25,21 @@ public:
 
     std::string GetType() const;
 
+    virtual void InitNewMesher() {}
+
     svModelElement* GetModelElement() const;
 
     virtual bool SetModelElement(svModelElement* modelElement);
 
     void CalculateBoundingBox(double *bounds);
 
-    virtual bool ExecuteCommand(std::string cmd) {}
+    bool ExecuteCommand(std::string cmd, std::string& msg);
 
-    bool ExecuteCommands(std::vector<std::string> cmds);
+    virtual bool Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg) {}
+
+    virtual bool ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) {}
+
+    bool ExecuteCommands(std::vector<std::string> cmds, std::string& msg);
 
 //    bool ExecuteCommandFile(std::string filePath);
 
@@ -41,7 +47,7 @@ public:
 
     void SetCommandHistory(std::vector<std::string> history);
 
-    bool ExcuteCommandHistory();
+    bool ExcuteCommandHistory(std::string& msg);
 
   protected:
 
