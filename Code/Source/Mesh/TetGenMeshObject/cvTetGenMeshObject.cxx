@@ -589,6 +589,37 @@ int cvTetGenMeshObject::LoadModel(char *filename) {
 
 }
 
+int cvTetGenMeshObject::LoadModel(vtkPolyData *pd) {
+
+  if (pd == NULL) {
+    return CV_ERROR;
+  }
+
+  // must load model before mesh!
+  if (inmesh_ != NULL) {
+    return CV_ERROR;
+  }
+
+  //polydatasolid cannot already exist
+  if (polydatasolid_ != NULL)
+  {
+    polydatasolid_->Delete();
+  }
+  if (originalpolydata_ != NULL) 
+  {
+    originalpolydata_->Delete();
+  }
+
+  originalpolydata_=vtkPolyData::New();
+  originalpolydata_->DeepCopy(pd);
+
+  polydatasolid_ = vtkPolyData::New();
+  polydatasolid_->DeepCopy(pd);
+
+  return CV_OK;
+
+}
+
 // --------------------
 //  GetBoundaryFaces
 // --------------------

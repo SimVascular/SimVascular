@@ -4,6 +4,7 @@ set(H_FILES
   svVtkParametricSpline.h
   svVtkUtils.h
   svXmlIOUtil.h
+  svStringUtils.h
 )
 
 set(CPP_FILES
@@ -12,5 +13,6 @@ set(CPP_FILES
   svVtkParametricSpline.cxx
   svVtkUtils.cxx
   svXmlIOUtil.cxx
+  svStringUtils.cxx
 )
 
