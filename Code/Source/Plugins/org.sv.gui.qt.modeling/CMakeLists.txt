@@ -5,7 +5,7 @@ set(lib org_sv_gui_qt_modeling)
 mitk_create_plugin(
   EXPORT_DIRECTIVE SV_QT_MODELING
   EXPORTED_INCLUDE_SUFFIXES src
-  MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel
+  MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel svMesh
 )
 
 if(SV_INSTALL_LIBS)

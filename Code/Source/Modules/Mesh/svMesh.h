@@ -49,6 +49,10 @@ public:
 
     bool ExcuteCommandHistory(std::string& msg);
 
+    vtkSmartPointer<vtkPolyData> GetSurfaceMesh();
+
+    vtkSmartPointer<vtkUnstructuredGrid> GetVolumeMesh();
+
   protected:
 
     std::string m_ModelName;

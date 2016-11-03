@@ -1,6 +1,7 @@
 #include "svMeshTetGen.h"
 
 #include "svStringUtils.h"
+#include "svModelUtils.h"
 
 #include "cvSolidModel.h"
 
@@ -41,6 +42,9 @@ void svMeshTetGen::InitNewMesher()
 
 bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
 {
+    if(m_cvTetGetMesh==NULL)
+        return false;
+
     if(!svMesh::SetModelElement(modelElement))
         return false;
 
@@ -67,6 +71,12 @@ bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
 
 bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg)
 {
+    if(m_cvTetGetMesh==NULL)
+    {
+        msg="No mesher created";
+        return false;
+    }
+
     if(flag=="")
     {
         msg="Empty Command";
@@ -75,11 +85,50 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
 
     if(option)
     {
+        if(flag=="LocalEdgeSize")
+        {
+            if(m_ModelElement==NULL)
+            {
+                msg="Model not assigned to the mesher";
+                return false;
+            }
+            int faceID=m_ModelElement->GetFaceID(strValues[0]);
+            if(faceID<0)
+            {
+                msg="ID not found for face: "+strValues[0];
+                return false;
+            }
+            double egdeSize=values[0];
+            values[0]=faceID;
+            values[1]=egdeSize;
+        }
+
         if(m_cvTetGetMesh->SetMeshOptions(flag.c_str(), 10, values)!=CV_OK)
         {
             msg="Failed in setting options with "+flag;
             return false;
         }
+    }
+    else if(flag=="useCenterlineRadius")
+    {
+        cvPolyData* solid=m_cvTetGetMesh->GetSolid();
+        if(solid==NULL)
+        {
+            msg="No mesher model";
+            return false;
+        }
+        vtkPolyData* centerlines=svModelUtils::CreateCenterlines(solid->GetVtkPolyData());
+        vtkPolyData* distance=svModelUtils::CalculateDistanceToCenterlines(centerlines, solid->GetVtkPolyData());
+        if(distance==NULL)
+        {
+            msg="Failed in calculating distance to centerlines";
+            return false;
+        }
+
+        //delete centerlines;
+        //delete solid;
+
+        m_cvTetGetMesh->SetVtkPolyDataObject(distance);
     }
     else if(flag=="functionBasedMeshing")
     {
@@ -125,8 +174,28 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="writeMesh")
     {
-        if(m_cvTetGetMesh->WriteMesh(NULL,0)!=CV_OK)
+        if(m_cvTetGetMesh->WriteMesh(NULL,0)==CV_OK)
         {
+            vtkPolyData* surfaceMesh=m_cvTetGetMesh->GetPolyData()->GetVtkPolyData();
+            vtkUnstructuredGrid* volumeMesh=m_cvTetGetMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();
+            if(surfaceMesh==NULL)
+            {
+                delete m_cvTetGetMesh;
+                m_cvTetGetMesh=NULL;
+                msg="Empty mesh created";
+                return false;
+            }
+            m_SurfaceMesh=vtkSmartPointer<vtkPolyData>::New();
+            m_SurfaceMesh->DeepCopy(surfaceMesh);
+            m_VolumeMesh=vtkSmartPointer<vtkUnstructuredGrid>::New();
+            m_VolumeMesh->DeepCopy(volumeMesh);
+            delete m_cvTetGetMesh;
+            m_cvTetGetMesh=NULL;
+        }
+        else
+        {
+            delete m_cvTetGetMesh;
+            m_cvTetGetMesh=NULL;
             msg="Failed in writing meshing";
             return false;
         }
@@ -151,7 +220,8 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
     option=false;
 
     std::string originalCmd=cmd;
-    sv::trim(cmd);
+    cmd=sv::trim(cmd);
+
     if(cmd=="")
     {
         flag="";
@@ -159,35 +229,34 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
         return true;
     }
 
-    sv::lower(cmd);
-
     std::vector<std::string> params=sv::split(cmd);
+
+    if(sv::lower(params[0])=="option")
+    {
+        params.erase(params.begin());
+    }
+
     int paramSize=params.size();
+    if(paramSize==0)
+    {
+        msg="Command not complete";
+        return false;
+    }
+
+    params[0]=sv::lower(params[0]);
 
     try{
 
-        if(paramSize==2 && params[0]=="surfacemesh")
+        if(paramSize==2 && (params[0]=="surfacemesh" || params[0]=="surface"))
         {
             flag="SurfaceMeshFlag";
             values[0]=std::stod(params[1]);
             option=true;
         }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="surface")
-        {
-            flag="SurfaceMeshFlag";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="volumemesh")
+        else if(paramSize==2 && (params[0]=="volumemesh" || params[0]=="volume"))
         {
             flag="VolumeMeshFlag";
             values[0]=std::stod(params[1]);
-            option=true;
-        }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="volume")
-        {
-            flag="VolumeMeshFlag";
-            values[0]=std::stod(params[2]);
             option=true;
         }
         else if(paramSize==2 && params[0]=="usemmg")
@@ -196,34 +265,10 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             option=true;
         }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="usemmg")
-        {
-            flag="UseMMG";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="globaledgesize")
+        else if(paramSize==2 && (params[0]=="globaledgesize" || params[0]=="gsize" || params[0]=="a"))
         {
             flag="GlobalEdgeSize";
             values[0]=std::stod(params[1]);
-            option=true;
-        }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="globaledgesize")
-        {
-            flag="GlobalEdgeSize";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="gsize")
-        {
-            flag="GlobalEdgeSize";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="a")
-        {
-            flag="GlobalEdgeSize";
-            values[0]=std::stod(params[2]);
             option=true;
         }
         else if(params[0]=="usecenterlineradius")
@@ -243,14 +288,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[1]=std::stod(params[2]);
             values[2]=std::stod(params[3]);
         }
-        else if(paramSize==3 && params[0]=="localedgesize")
-        {
-            flag="LocalEdgeSize";
-            values[0]=std::stod(params[2]);
-            strValues[0]=params[1];
-            option=true;
-        }
-        else if(paramSize==3 && params[0]=="localsize")
+        else if(paramSize==3 && (params[0]=="localedgesize" || params[0]=="localsize"))
         {
             flag="LocalEdgeSize";
             values[0]=std::stod(params[2]);
@@ -279,30 +317,13 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             option=true;
         }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="optimization")
-        {
-            flag="Optimization";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
         else if(paramSize==2 && params[0]=="qualityratio")
         {
             flag="QualityRatio";
             values[0]=std::stod(params[1]);
             option=true;
         }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="qualityratio")
-        {
-            flag="QualityRatio";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
         else if(params[0]=="nobisect")
-        {
-            flag="NoBisect";
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="nobisect")
         {
             flag="NoBisect";
             option=true;
@@ -325,18 +346,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             values[0]=std::stod(params[1]);
             option=true;
         }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="epsilon")
-        {
-            flag="Epsilon";
-            values[0]=std::stod(params[2]);
-            option=true;
-        }
         else if(params[0]=="nomerge")
-        {
-            flag="NoMerge";
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="nomerge")
         {
             flag="NoMerge";
             option=true;
@@ -346,17 +356,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             flag="Diagnose";
             option=true;
         }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="diagnose")
-        {
-            flag="Diagnose";
-            option=true;
-        }
         else if(params[0]=="check")
-        {
-            flag="Check";
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="check")
         {
             flag="Check";
             option=true;
@@ -366,17 +366,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             flag="Quiet";
             option=true;
         }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="quiet")
-        {
-            flag="Quiet";
-            option=true;
-        }
         else if(params[0]=="verbose")
-        {
-            flag="Verbose";
-            option=true;
-        }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="verbose")
         {
             flag="Verbose";
             option=true;
@@ -386,21 +376,10 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
             flag="MeshWallFirst";
             option=true;
         }
-        else if(paramSize==2 && params[0]=="option" && params[1]=="meshwallfirst")
-        {
-            flag="MeshWallFirst";
-            option=true;
-        }
         else if(paramSize==2 && params[0]=="hausd")
         {
             flag="Hausd";
             values[0]=std::stod(params[1]);
-            option=true;
-        }
-        else if(paramSize==3 && params[0]=="option" && params[1]=="hausd")
-        {
-            flag="Hausd";
-            values[0]=std::stod(params[2]);
             option=true;
         }
         else

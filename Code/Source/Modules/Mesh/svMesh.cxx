@@ -76,7 +76,7 @@ void svMesh::CalculateBoundingBox(double *bounds)
 
 bool svMesh::ExecuteCommand(std::string cmd, std::string& msg)
 {
-    std::string flag;
+    std::string flag="";
     double values[20]={0};
     std::string strValues[5]={""};
     bool option=false;
@@ -94,12 +94,12 @@ bool svMesh::ExecuteCommands(std::vector<std::string> cmds, std::string& msg)
 {
     for(int i=0;i<cmds.size();i++)
     {
-        sv::trim(cmds[i]);
+        std::string cmd=sv::trim(cmds[i]);
 
-        if(cmds[i]=="")
+        if(cmd=="")
             continue;
 
-        if(!ExecuteCommand(cmds[i], msg))
+        if(!ExecuteCommand(cmd, msg))
             return false;
     }
 
@@ -121,3 +121,12 @@ bool svMesh::ExcuteCommandHistory(std::string& msg)
     ExecuteCommands(m_CommandHistory, msg);
 }
 
+vtkSmartPointer<vtkPolyData> svMesh::GetSurfaceMesh()
+{
+    return m_SurfaceMesh;
+}
+
+vtkSmartPointer<vtkUnstructuredGrid> svMesh::GetVolumeMesh()
+{
+    return m_VolumeMesh;
+}

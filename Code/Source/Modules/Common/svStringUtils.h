@@ -32,13 +32,13 @@ namespace sv
 
     SVCOMMON_EXPORT std::vector<std::string> split(const std::string &s, char delim = ' ');
 
-    SVCOMMON_EXPORT std::string &ltrim(std::string &s);
+    SVCOMMON_EXPORT std::string ltrim(std::string s);
 
-    SVCOMMON_EXPORT std::string &rtrim(std::string &s);
+    SVCOMMON_EXPORT std::string rtrim(std::string s);
 
-    SVCOMMON_EXPORT std::string &trim(std::string &s);
+    SVCOMMON_EXPORT std::string trim(std::string s);
 
-    SVCOMMON_EXPORT std::string &lower(std::string &s);
+    SVCOMMON_EXPORT std::string lower(std::string s);
 }
 
 

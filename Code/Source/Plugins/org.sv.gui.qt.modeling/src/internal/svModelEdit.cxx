@@ -5,6 +5,7 @@
 #include "svFaceListDelegate.h"
 #include "svPath.h"
 #include "svSegmentationUtils.h"
+#include "svMeshTetGen.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -230,29 +231,60 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
 
 
-//       connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
+       connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
 }
 
-//void svModelEdit::Test()
-//{
-//    if(!m_Model) return;
-//    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
-//    if(!modelElement) return;
+void svModelEdit::Test()
+{
+    if(!m_Model) return;
+    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+    if(!modelElement) return;
 
-//    mitk::Surface::Pointer surface=mitk::Surface::New();
+    svMeshTetGen* mesh=new svMeshTetGen();
+    mesh->InitNewMesher();
+    mesh->SetModelElement(modelElement);
 
-//    vtkPolyData* centerlines=svModelUtils::CreateCenterlines(modelElement);
-//    if(centerlines==NULL)
-//        return;
+    std::vector<std::string> cmds;
+    cmds.push_back("option surface 1");
+    cmds.push_back("option volume 1");
+    cmds.push_back("option UseMMG 0");
+    cmds.push_back("option GlobalEdgeSize 0.25");
+//    cmds.push_back("useCenterlineRadius");
+//    cmds.push_back("functionBasedMeshing 0.25 DistanceToCenterlines");
+//    cmds.push_back("boundaryLayer 2 0.5 0.8");
+    cmds.push_back("localSize wall_iliac 0.1");
+//    cmds.push_back("sphereRefinement 0.12 1.8637  1.0828406967413695 3.1246050203889872 -7.911178134436409");
+    cmds.push_back("option Optimization 3");
+    cmds.push_back("option QualityRatio 1.4");
+    cmds.push_back("option NoBisect");
+    cmds.push_back("generateMesh");
+//    cmds.push_back("getBoundaries");
+    cmds.push_back("writeMesh");
 
-//    surface->SetVtkPolyData(centerlines);
+    std::string msg;
+    if(!mesh->ExecuteCommands(cmds, msg))
+    {
+        cout<<msg<<endl;
+        return;
+    }
 
-//    mitk::DataNode::Pointer node=mitk::DataNode::New();
-//    node->SetName("centerlines");
-//    node->SetData(surface);
+    mitk::Surface::Pointer surface=mitk::Surface::New();
 
-//    GetDataStorage()->Add(node,m_ModelNode);
-//}
+    vtkUnstructuredGrid* volumeMesh=mesh->GetVolumeMesh();
+    if(volumeMesh==NULL)
+    {
+        cout<<"Empty volume mesh"<<endl;
+        return;
+    }
+
+    surface->SetVtkPolyData(mesh->GetSurfaceMesh());
+
+    mitk::DataNode::Pointer node=mitk::DataNode::New();
+    node->SetName("surfacemesh");
+    node->SetData(surface);
+
+    GetDataStorage()->Add(node,m_ModelNode);
+}
 
 void svModelEdit::Visible()
 {

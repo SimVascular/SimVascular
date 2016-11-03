@@ -63,6 +63,10 @@ public:
 
     static vtkPolyData* CreateCenterlines(svModelElement* modelElement);
 
+    static vtkPolyData* CreateCenterlines(vtkPolyData* vpd);
+
+    static vtkPolyData* CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original);
+
     static std::vector<svPathElement::svPathPoint> ConvertToPathPoints(std::vector<mitk::Point3D> posPoints);
 
     static vtkSmartPointer<vtkPolyData> GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue );
