@@ -1,6 +1,4 @@
-#include "svModelVtkMapper3D.h"
-
-#include "svModelElementPolyData.h"
+#include "svMitkMeshMapper3D.h"
 
 #include <mitkDataNode.h>
 #include <mitkProperties.h>
@@ -35,20 +33,20 @@
 #include <vtkDataSetMapper.h>
 #include <vtkIdTypeArray.h>
 
-const svModel* svModelVtkMapper3D::GetInput()
+const svMitkMesh* svMitkMeshMapper3D::GetInput()
 {
-    return static_cast<const svModel * > ( GetDataNode()->GetData() );
+    return static_cast<const svMitkMesh * > ( GetDataNode()->GetData() );
 }
 
-svModelVtkMapper3D::svModelVtkMapper3D()
-{
-}
-
-svModelVtkMapper3D::~svModelVtkMapper3D()
+svMitkMeshMapper3D::svMitkMeshMapper3D()
 {
 }
 
-void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
+svMitkMeshMapper3D::~svMitkMeshMapper3D()
+{
+}
+
+void svMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 {
     mitk::DataNode* node = GetDataNode();
     if(node==NULL)
@@ -63,8 +61,8 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
         return;
     }
 
-    svModel* model  = const_cast< svModel* >( this->GetInput() );
-    if(model==NULL)
+    svMitkMesh* mitkMesh  = const_cast< svMitkMesh* >( this->GetInput() );
+    if(mitkMesh==NULL)
     {
         ls->m_PropAssembly->VisibilityOff();
         return;
@@ -72,33 +70,18 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
 
     int timestep=this->GetTimestep();
 
-    svModelElement* me=model->GetModelElement(timestep);
-    if(me==NULL)
+    svMesh* mesh=mitkMesh->GetMesh(timestep);
+    if(mesh==NULL)
     {
         ls->m_PropAssembly->VisibilityOff();
         return;
     }
 
-    vtkSmartPointer<vtkPolyData> wholePolyData=me->GetWholeVtkPolyData();
-    if (wholePolyData == NULL)
+    vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
+    if (surfaceMesh == NULL)
     {
         ls->m_PropAssembly->VisibilityOff();
         return;
-    }
-
-    bool forceShowWholeSurface=false;
-    node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
-
-    bool showWholeSurface=false;
-    bool showFaces=false;
-
-    if(me->GetFaceNumber()>0)
-    {
-        showWholeSurface=false||forceShowWholeSurface;
-        showFaces=true;
-    }else{
-        showWholeSurface=true;
-        showFaces=false;
     }
 
     ls->m_PropAssembly->GetParts()->RemoveAllItems();
@@ -110,7 +93,7 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
     node->GetBoolProperty("show edges", showEdges, renderer);
 
     vtkSmartPointer<vtkPainterPolyDataMapper> mapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-    mapper->SetInputData(wholePolyData);
+    mapper->SetInputData(surfaceMesh);
 
     vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
     actor->SetMapper(mapper);
@@ -126,144 +109,19 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
     }
 
     ls->m_Actor=actor;
-
-    if(showWholeSurface)
-    {
-        ls->m_PropAssembly->AddPart(actor );
-    }
-
-    ls->m_FaceActors.clear();
-    if(showFaces)
-    {
-        float selectedColor[3]= { 1.0f, 1.0f, 0.0f };
-        node->GetColor(selectedColor, renderer, "face selected color");
-
-        for(int i=0;i<me->GetFaces().size();i++)
-        {
-            svModelElement::svFace* face=me->GetFaces()[i];
-            if(!face)
-                continue;
-
-            if(!face->visible)
-                continue;
-
-            vtkSmartPointer<vtkPolyData> facePolyData=face->vpd;
-            if(!facePolyData)
-                continue;
-
-            vtkSmartPointer<vtkPainterPolyDataMapper> faceMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-            faceMapper->SetInputData(facePolyData);
-
-            vtkSmartPointer<vtkActor> faceActor= vtkSmartPointer<vtkActor>::New();
-            faceActor->SetMapper(faceMapper);
-
-            ApplyAllProperties(renderer, faceMapper, faceActor);
-
-            if(face->selected){
-                faceActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-            }else{
-                faceActor->GetProperty()->SetColor(face->color[0], face->color[1], face->color[2]);
-            }
-            faceActor->GetProperty()->SetOpacity(face->opacity);
-
-            if(showEdges)
-            {
-                faceActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
-                faceActor->GetProperty()->SetEdgeVisibility(1);
-                faceActor->GetProperty()->SetLineWidth(0.51);
-            }
-
-            ls->m_PropAssembly->AddPart(faceActor );
-
-            ls->m_FaceActors.push_back(faceActor);
-        }
-
-    }
-
-    //show selected cells
-    svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
-    if(mepd&&mepd->GetSelectedCellIDs().size()>0)
-    {
-        float selectedColor[3]= { 0.0f, 1.0f, 0.0f };
-        node->GetColor(selectedColor, renderer, "cell selected color");
-
-        std::vector<int> cellIDs=mepd->GetSelectedCellIDs();
-
-        vtkSmartPointer<vtkIdTypeArray> ids=vtkSmartPointer<vtkIdTypeArray>::New();
-        ids->SetNumberOfComponents(1);
-        for(int i=0;i<cellIDs.size();i++)
-            ids->InsertNextValue(cellIDs[i]);
-
-        vtkSmartPointer<vtkSelectionNode> selectionNode=vtkSmartPointer<vtkSelectionNode>::New();
-        //Field Type 0 is CELL
-        selectionNode->SetFieldType(0);
-        //Content Type 4 is INDICES
-        selectionNode->SetContentType(4);
-        selectionNode->SetSelectionList(ids);
-
-        vtkSmartPointer<vtkSelection> selection=vtkSmartPointer<vtkSelection>::New();
-        selection->AddNode(selectionNode);
-
-        vtkSmartPointer<vtkExtractSelection> extractSelection=vtkSmartPointer<vtkExtractSelection>::New();
-        extractSelection->SetInputData(0, mepd->GetWholeVtkPolyData());
-        extractSelection->SetInputData(1, selection);
-        extractSelection->Update();
-
-        vtkSmartPointer<vtkUnstructuredGrid> selected=vtkSmartPointer<vtkUnstructuredGrid>::New();
-        selected->ShallowCopy(extractSelection->GetOutput());
-
-//        vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
-//        surfaceFilter->SetInputData(selected);
-//        surfaceFilter->Update();
-//        vtkSmartPointer<vtkPolyData> cellPolydata = surfaceFilter->GetOutput();
-
-//        vtkSmartPointer<vtkPainterPolyDataMapper> cellMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
-//        cellMapper->SetInputData(cellPolydata);
-
-//        vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
-//        cellActor->SetMapper(cellMapper);
-
-//        ApplyAllProperties(renderer, cellMapper, cellActor);
-//        cellActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-
-        vtkSmartPointer<vtkDataSetMapper> cellMapper=vtkSmartPointer<vtkDataSetMapper>::New();
-        cellMapper->SetInputData(selected);
-
-        vtkSmartPointer<vtkActor> cellActor= vtkSmartPointer<vtkActor>::New();
-        cellActor->SetMapper(cellMapper);
-        cellActor->GetProperty()->SetColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-//        cellActor->GetProperty()->SetEdgeColor(selectedColor[0], selectedColor[1], selectedColor[2]);
-//        cellActor->GetProperty()->SetEdgeVisibility(1);
-//        cellActor->GetProperty()->SetLineWidth(3);
-
-        ls->m_PropAssembly->AddPart(cellActor);
-    }
+    ls->m_PropAssembly->AddPart(actor );
 
     if(visible)
         ls->m_PropAssembly->VisibilityOn();
 }
 
-vtkSmartPointer<vtkActor> svModelVtkMapper3D::GetWholeSurfaceActor(mitk::BaseRenderer* renderer)
-{
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
-
-    return ls->m_Actor;
-}
-
-std::vector<vtkSmartPointer<vtkActor>> svModelVtkMapper3D::GetFaceActors(mitk::BaseRenderer* renderer)
-{
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
-
-    return ls->m_FaceActors;
-}
-
-void svModelVtkMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
+void svMitkMeshMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     ls->m_PropAssembly->VisibilityOff();
 }
 
-void svModelVtkMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer)
+void svMitkMeshMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer)
 {
     // Backface culling
     {
@@ -404,7 +262,7 @@ void svModelVtkMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, 
     }
 }
 
-void svModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
+void svMitkMeshMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
@@ -572,13 +430,13 @@ void svModelVtkMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSma
     }
 }
 
-vtkProp *svModelVtkMapper3D::GetVtkProp(mitk::BaseRenderer *renderer)
+vtkProp *svMitkMeshMapper3D::GetVtkProp(mitk::BaseRenderer *renderer)
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
     return ls->m_PropAssembly;
 }
 
-void svModelVtkMapper3D::CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property )
+void svMitkMeshMapper3D::CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property )
 {
     LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
 
@@ -598,7 +456,7 @@ void svModelVtkMapper3D::CheckForClippingProperty( mitk::BaseRenderer* renderer,
     }
 }
 
-void svModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
+void svMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
     // Shading
     {
@@ -610,7 +468,9 @@ void svModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node
         node->AddProperty( "material.specularCoefficient", mitk::FloatProperty::New(1.0f)          , renderer, overwrite );
         node->AddProperty( "material.specularPower"      , mitk::FloatProperty::New(16.0f)          , renderer, overwrite );
 
-        node->AddProperty( "material.representation"      , mitk::VtkRepresentationProperty::New()  , renderer, overwrite );
+        mitk::VtkRepresentationProperty::Pointer rep=mitk::VtkRepresentationProperty ::New();
+        rep->SetRepresentationToWireframe();
+        node->AddProperty( "material.representation"      , rep  , renderer, overwrite );
         node->AddProperty( "material.interpolation"       , mitk::VtkInterpolationProperty::New()   , renderer, overwrite );
     }
 
@@ -622,32 +482,27 @@ void svModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node
     }
 }
 
-void svModelVtkMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
+void svMitkMeshMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
 
     node->AddProperty( "edge color", mitk::ColorProperty::New(0.0f,0.0f,1.0f), renderer, overwrite );
-    node->AddProperty( "show edges", mitk::BoolProperty::New(false), renderer, overwrite );
+    node->AddProperty( "show edges", mitk::BoolProperty::New(true), renderer, overwrite );
 
-    node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
-//    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
-    node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
-    node->AddProperty( "cell selected color",mitk::ColorProperty::New(0,1,0),renderer, overwrite );
-
-    svModelVtkMapper3D::SetDefaultPropertiesForVtkProperty(node,renderer,overwrite); // Shading
+    svMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(node,renderer,overwrite); // Shading
 
     node->AddProperty( "scalar visibility", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "color mode", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );
 
-    svModel* model = dynamic_cast<svModel*>(node->GetData());
+    svMitkMesh* mitkMesh = dynamic_cast<svMitkMesh*>(node->GetData());
 
-    if(model)
+    if(mitkMesh)
     {
-        svModelElement* modelElement=model->GetModelElement();
+        svMesh* mesh=mitkMesh->GetMesh();
 
-        if(modelElement && (modelElement->GetWholeVtkPolyData() != 0) && (modelElement->GetWholeVtkPolyData()->GetPointData() != NULL) && (modelElement->GetWholeVtkPolyData()->GetPointData()->GetScalars() != 0))
+        if(mesh && (mesh->GetSurfaceMesh() != 0) && (mesh->GetSurfaceMesh()->GetPointData() != NULL) && (mesh->GetSurfaceMesh()->GetPointData()->GetScalars() != 0))
         {
             node->AddProperty( "scalar visibility", mitk::BoolProperty::New(true), renderer, overwrite );
             node->AddProperty( "color mode", mitk::BoolProperty::New(true), renderer, overwrite );

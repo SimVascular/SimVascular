@@ -4,7 +4,7 @@
 
 svMesh::svMesh()
     : m_Type("")
-    , m_ModelName("")
+//    , m_ModelName("")
     , m_ModelElement(NULL)
     , m_SurfaceMesh(NULL)
     , m_VolumeMesh(NULL)
@@ -13,7 +13,7 @@ svMesh::svMesh()
 
 svMesh::svMesh(const svMesh &other)
     : m_Type(other.m_Type)
-    , m_ModelName(other.m_ModelName)
+//    , m_ModelName(other.m_ModelName)
     , m_ModelElement(other.m_ModelElement)
     , m_CommandHistory(other.m_CommandHistory)
 {
@@ -45,6 +45,16 @@ std::string svMesh::GetType() const
 {
     return m_Type;
 }
+
+//std::string svMesh::GetModelName() const
+//{
+//    return m_ModelName;
+//}
+
+//void svMesh::SetModelName(std::string name)
+//{
+//    m_ModelName=name;
+//}
 
 svModelElement* svMesh::GetModelElement() const
 {

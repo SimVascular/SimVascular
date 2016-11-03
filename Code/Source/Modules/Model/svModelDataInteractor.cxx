@@ -26,6 +26,7 @@ using namespace std;
 svModelDataInteractor::svModelDataInteractor()
     : mitk::DataInteractor()
     , m_Model(NULL)
+    , m_FaceSelectionOnly(false)
 {
     m_CurrentPickedDisplayPoint[0]=0;
     m_CurrentPickedDisplayPoint[1]=0;
@@ -33,6 +34,11 @@ svModelDataInteractor::svModelDataInteractor()
 
 svModelDataInteractor::~svModelDataInteractor()
 {
+}
+
+void svModelDataInteractor::SetFaceSelectionOnly(bool only)
+{
+    m_FaceSelectionOnly=only;
 }
 
 void svModelDataInteractor::ConnectActionsAndFunctions()
@@ -43,12 +49,16 @@ void svModelDataInteractor::ConnectActionsAndFunctions()
     CONNECT_FUNCTION("select_single_face",SelectSingleFace);
     CONNECT_FUNCTION("select_faces",SelectFaces);
     CONNECT_FUNCTION("deselect_face",DeselectFace);
-    CONNECT_FUNCTION("select_single_cell",SelectSingleCell);
-    CONNECT_FUNCTION("select_cells",SelectCells);
-    CONNECT_FUNCTION("select_surrounding_cells",SelectSurroundingCells);
-    CONNECT_FUNCTION("deselect_cell",DeselectCell);
-    CONNECT_FUNCTION("deselect_surrounding_cells",DeselectSurroundingCells);
-    CONNECT_FUNCTION("delete_selected_faces_cells",DeleteSelectedFacesCells);
+
+    if(!m_FaceSelectionOnly)
+    {
+        CONNECT_FUNCTION("select_single_cell",SelectSingleCell);
+        CONNECT_FUNCTION("select_cells",SelectCells);
+        CONNECT_FUNCTION("select_surrounding_cells",SelectSurroundingCells);
+        CONNECT_FUNCTION("deselect_cell",DeselectCell);
+        CONNECT_FUNCTION("deselect_surrounding_cells",DeselectSurroundingCells);
+        CONNECT_FUNCTION("delete_selected_faces_cells",DeleteSelectedFacesCells);
+    }
 }
 
 void svModelDataInteractor::DataNodeChanged()

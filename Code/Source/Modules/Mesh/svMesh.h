@@ -27,6 +27,10 @@ public:
 
     virtual void InitNewMesher() {}
 
+//    std::string GetModelName() const;
+
+//    void SetModelName(std::string name);
+
     svModelElement* GetModelElement() const;
 
     virtual bool SetModelElement(svModelElement* modelElement);
@@ -55,7 +59,7 @@ public:
 
   protected:
 
-    std::string m_ModelName;
+//    std::string m_ModelName;
 
     svModelElement* m_ModelElement;
 

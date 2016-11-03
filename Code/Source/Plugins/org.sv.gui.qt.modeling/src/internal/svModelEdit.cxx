@@ -5,7 +5,9 @@
 #include "svFaceListDelegate.h"
 #include "svPath.h"
 #include "svSegmentationUtils.h"
+
 #include "svMeshTetGen.h"
+#include "svMitkMesh.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -15,6 +17,7 @@
 #include <mitkSliceNavigationController.h>
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
+#include <mitkUnstructuredGrid.h>
 
 #include <usModuleRegistry.h>
 
@@ -268,21 +271,35 @@ void svModelEdit::Test()
         return;
     }
 
-    mitk::Surface::Pointer surface=mitk::Surface::New();
+//    mitk::Surface::Pointer surface=mitk::Surface::New();
 
-    vtkUnstructuredGrid* volumeMesh=mesh->GetVolumeMesh();
-    if(volumeMesh==NULL)
-    {
-        cout<<"Empty volume mesh"<<endl;
-        return;
-    }
+//    surface->SetVtkPolyData(mesh->GetSurfaceMesh());
 
-    surface->SetVtkPolyData(mesh->GetSurfaceMesh());
+//    mitk::DataNode::Pointer node=mitk::DataNode::New();
+//    node->SetName("surfacemesh");
+//    node->SetData(surface);
 
+//    vtkUnstructuredGrid* volumeMesh=mesh->GetVolumeMesh();
+//    if(volumeMesh==NULL)
+//    {
+//        cout<<"Empty volume mesh"<<endl;
+//        return;
+//    }
+
+//    mitk::UnstructuredGrid::Pointer grid=mitk::UnstructuredGrid::New();
+//    grid->SetVtkUnstructuredGrid(volumeMesh);
+//    mitk::DataNode::Pointer node2=mitk::DataNode::New();
+//    node2->SetName("volumemesh");
+//    node2->SetData(grid);
+
+//    GetDataStorage()->Add(node,m_ModelNode);
+//    GetDataStorage()->Add(node2,m_ModelNode);
+
+    svMitkMesh::Pointer mitkMesh=svMitkMesh::New();
+    mitkMesh->SetMesh(mesh);
     mitk::DataNode::Pointer node=mitk::DataNode::New();
-    node->SetName("surfacemesh");
-    node->SetData(surface);
-
+    node->SetName("mesh");
+    node->SetData(mitkMesh);
     GetDataStorage()->Add(node,m_ModelNode);
 }
 

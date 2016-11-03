@@ -5,7 +5,7 @@ set(lib org_sv_projectdatanodes)
 mitk_create_plugin(
   EXPORT_DIRECTIVE SV_PROJECTDATANODES
   EXPORTED_INCLUDE_SUFFIXES src
-  MODULE_DEPENDS MitkQtWidgets svProjectManagement svPath svSegmentation svModel
+  MODULE_DEPENDS MitkQtWidgets svProjectManagement svPath svSegmentation svModel svMesh
 )
 
 if(SV_INSTALL_LIBS)
