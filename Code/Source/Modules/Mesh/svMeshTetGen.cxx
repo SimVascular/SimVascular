@@ -52,8 +52,8 @@ bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
         return false;
 
     std::string modelType=modelElement->GetType();
-
-    SolidModel_KernelT kernel= SolidModel_KernelT_StrToEnum( modelType.c_str() );
+    char *mtype = const_cast<char *>(modelType.c_str());
+    SolidModel_KernelT kernel= SolidModel_KernelT_StrToEnum( mtype);
 
     m_cvTetGetMesh->SetSolidModelKernel(kernel);
 
@@ -102,8 +102,8 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
             values[0]=faceID;
             values[1]=egdeSize;
         }
-
-        if(m_cvTetGetMesh->SetMeshOptions(flag.c_str(), 10, values)!=CV_OK)
+        char *mflag = const_cast<char *>(flag.c_str());
+        if(m_cvTetGetMesh->SetMeshOptions(mflag, 10, values)!=CV_OK)
         {
             msg="Failed in setting options with "+flag;
             return false;
@@ -132,7 +132,8 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="functionBasedMeshing")
     {
-        if(m_cvTetGetMesh->SetSizeFunctionBasedMesh(values[0],strValues[0].c_str())!=CV_OK)
+        char *strv = const_cast<char *>(strValues[0].c_str());
+        if(m_cvTetGetMesh->SetSizeFunctionBasedMesh(values[0],strv)!=CV_OK)
         {
             msg="Failed in function based meshing, such as radius based";
             return false;
