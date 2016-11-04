@@ -5,6 +5,7 @@
 #include "svModelElementPolyData.h"
 
 #include "svMeshTetGen.h"
+#include "svMesh.h"
 #include "svMitkMesh.h"
 
 #include <mitkNodePredicateDataType.h>
@@ -21,6 +22,7 @@
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QSignalMapper>
+#include <QMessageBox>
 
 #include <iostream>
 using namespace std;
@@ -66,9 +68,51 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
     }
 
     connect(ui->btnCreateMesh, SIGNAL(clicked()), this, SLOT(CreateMesh()) );
+    connect(ui->btnRunHistory, SIGNAL(clicked()), this, SLOT(RunHistory()) );
+
 }
 
 void svMeshEdit::CreateMesh()
+{
+    RunCommands(true);
+
+//    if(!m_MitkMesh) return;
+
+//    if(!m_Model) return;
+//    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+//    if(!modelElement) return;
+
+//    svMeshTetGen* mesh=new svMeshTetGen();
+//    mesh->InitNewMesher();
+//    mesh->SetModelElement(modelElement);
+
+//    std::vector<std::string> cmds;
+
+//    QString text=ui->plainTextEdit->toPlainText();
+//    QStringList list=text.split("\n");
+
+//    for(int i=0;i<list.size();i++)
+//    {
+//        cmds.push_back(list[i].toStdString());
+//    }
+
+//    std::string msg;
+//    if(!mesh->ExecuteCommands(cmds, msg))
+//    {
+//        cout<<msg<<endl;
+//        return;
+//    }
+//    mesh->SetCommandHistory(cmds);
+
+//    m_MitkMesh->SetMesh(mesh);
+}
+
+void svMeshEdit::RunHistory()
+{
+    RunCommands(false);
+}
+
+void svMeshEdit::RunCommands(bool fromGUI)
 {
     if(!m_MitkMesh) return;
 
@@ -76,28 +120,56 @@ void svMeshEdit::CreateMesh()
     svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
     if(!modelElement) return;
 
-    svMeshTetGen* mesh=new svMeshTetGen();
+    svMesh* mesh=NULL;
+
+    if(fromGUI)
+    {
+        mesh=new svMeshTetGen();
+    }
+    else
+    {
+        mesh=m_MitkMesh->GetMesh(GetTimeStep());
+        if(mesh==NULL)
+        {
+            QMessageBox::warning(NULL,"Mesh Not Been Created!","The function is for an existing mesh!");
+            return;
+        }
+    }
+
     mesh->InitNewMesher();
     mesh->SetModelElement(modelElement);
 
-    std::vector<std::string> cmds;
-
-    QString text=ui->plainTextEdit->toPlainText();
-    QStringList list=text.split("\n");
-
-    for(int i=0;i<list.size();i++)
+    if(fromGUI)
     {
-        cmds.push_back(list[i].toStdString());
-    }
+        std::vector<std::string> cmds;
 
-    std::string msg;
-    if(!mesh->ExecuteCommands(cmds, msg))
+        QString text=ui->plainTextEdit->toPlainText();
+        QStringList list=text.split("\n");
+
+        for(int i=0;i<list.size();i++)
+        {
+            cmds.push_back(list[i].toStdString());
+        }
+
+        std::string msg;
+        if(!mesh->ExecuteCommands(cmds, msg))
+        {
+            QMessageBox::warning(NULL,"Error during executing",QString::fromStdString(msg));
+            return;
+        }
+        mesh->SetCommandHistory(cmds);
+
+        m_MitkMesh->SetMesh(mesh);
+    }
+    else
     {
-        cout<<msg<<endl;
-        return;
+        std::string msg;
+        if(!mesh->ExecuteCommandHistory(msg))
+        {
+            QMessageBox::warning(NULL,"Error during executing",QString::fromStdString(msg));
+            return;
+        }
     }
-
-    m_MitkMesh->SetMesh(mesh);
 }
 
 void svMeshEdit::Visible()

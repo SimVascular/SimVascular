@@ -35,6 +35,8 @@ public slots:
 
     void CreateMesh();
 
+    void RunHistory();
+
     void ClearAll();
 
     void UpdateGUI();
@@ -43,7 +45,9 @@ public:
 
     int GetTimeStep();
 
-    std::vector<int> GetSelectedFaceIDs();
+    void RunCommands(bool fromGUI = true);
+
+//    std::vector<int> GetSelectedFaceIDs();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 

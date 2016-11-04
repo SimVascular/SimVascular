@@ -51,7 +51,7 @@ public:
 
     void SetCommandHistory(std::vector<std::string> history);
 
-    bool ExcuteCommandHistory(std::string& msg);
+    bool ExecuteCommandHistory(std::string& msg);
 
     vtkSmartPointer<vtkPolyData> GetSurfaceMesh();
 

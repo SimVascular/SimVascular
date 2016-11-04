@@ -126,7 +126,7 @@ void svMesh::SetCommandHistory(std::vector<std::string> history)
     m_CommandHistory=history;
 }
 
-bool svMesh::ExcuteCommandHistory(std::string& msg)
+bool svMesh::ExecuteCommandHistory(std::string& msg)
 {
     ExecuteCommands(m_CommandHistory, msg);
 }
