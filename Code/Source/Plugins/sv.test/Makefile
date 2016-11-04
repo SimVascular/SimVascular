@@ -47,7 +47,10 @@ HDRS	= svTest.h \
 CXXSRCS	= svTest.cxx \
           svTestPluginActivator.cxx
 
-UIFILES =  
+UIFILES =
+
+QRCFILES =
+
 RCFILES = 
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
@@ -59,7 +62,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \

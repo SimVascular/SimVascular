@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -39,32 +39,28 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-          -DSV_EXPORT_QT_GUI_SEGMENTATION_COMPILE
+          -DSV_EXPORT_QT_GUI_PROJECTDATANODES_COMPILE \
+          -I../../../PluginFramework \
+          -DUS_MODULE_NAME=svProjectDataNodes
 
 HDRS	= \
-    svContourGroupCreate.h \
-    svLevelSet2DWidget.h \
-    svLoftParamWidget.h \
-    svSegmentation2D.h \
-    svSegmentationPluginActivator.h
+  svProjectDataNodesPluginActivator.h
 
 CXXSRCS	= \
-    svContourGroupCreate.cxx \
-    svLevelSet2DWidget.cxx \
-    svLoftParamWidget.cxx \
-    svSegmentation2D.cxx \
-    svSegmentationPluginActivator.cxx
+  svProjectDataNodesPluginActivator.cxx
 
-UIFILES = \
-    svContourGroupCreate.ui \
-    svLevelSet2DWidget.ui \
-    svLoftParamWidget.ui \
-    svSegmentation2D.ui
+UIFILES =
+
+QRCFILES = \
+  ../../resources/projectdatanodes.qrc
 
 RCFILES =    
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -72,7 +68,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
@@ -84,9 +80,9 @@ DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+EXTRA_MOC_INCDIRS = -I../../../PluginFramework
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_segmentation
+TARGET_LIB_NAME = simvascular_qtgui_plugin_projectdatanodes
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

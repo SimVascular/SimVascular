@@ -225,6 +225,34 @@ create_exports_h:
 	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 
+create_plugin_export_h:
+	echo  "// .NAME __$(PLUGIN_DIR_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "// The __$(PLUGIN_DIR_NAME)_Export captures some system differences between Unix" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "// and Windows operating systems. " >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#ifndef __$(PLUGIN_DIR_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#define __$(PLUGIN_DIR_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#include <QtGlobal>" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#  if defined($(PLUGIN_DIR_NAME)_EXPORTS)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#    define SV_QT_$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#    define SV_QT_$(PLUGIN_NAME) Q_DECL_IMPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#if !defined(SV_QT_$(PLUGIN_NAME))" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "//#  if defined(CTK_SHARED)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#    define SV_QT_$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "//#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "//#    define SV_QT_$(PLUGIN_NAME)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "//#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
 
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done

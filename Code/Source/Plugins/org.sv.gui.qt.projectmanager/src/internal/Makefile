@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -39,26 +39,46 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -DSV_EXPORT_QT_GUI_PATHPLANNING_COMPILE
+           -I../../../PluginFramework \
+          -I../../../org.mitk.gui.common/src \
+          -I../../../org.mitk.gui.qt.datamanager/src \
+          -I../../../org.mitk.gui.qt.common/src \
+         -I../../../org.blueberry.ui.qt/src \
+         -I../../../org.blueberry.core.runtime/src \
+        -I../../../org.blueberry.core.runtime/src/registry \
+        -I../../../org.mitk.core.services/src \
+         -I../../.. \
+        -DUS_PLATFORM_WINDOWS
 
-HDRS	=     svPathCreate.h \
-              svPathSmooth.h \
-              svPathEdit.h \
-              svPathPlanningPluginActivator.h
+HDRS	=  \
+  svProjectManagerPluginActivator.h \
+  svProjectCreate.h \
+  svProjectManagerView.h \
+  svProjectAddImageAction.h \
+  svProjectCloseAction.h \
+  svProjectShowModelEdgesAction.h
 
-CXXSRCS	=     svPathCreate.cxx \
-              svPathSmooth.cxx \
-              svPathEdit.cxx \
-              svPathPlanningPluginActivator.cxx
+CXXSRCS	= \
+  svProjectManagerPluginActivator.cxx \
+  svProjectCreate.cxx \
+  svProjectManagerView.cxx \
+  svProjectAddImageAction.cxx \
+  svProjectCloseAction.cxx \
+  svProjectShowModelEdgesAction.cxx
 
-UIFILES =     svPathCreate.ui \
-              svPathSmooth.ui \
-              svPathEdit.ui
+UIFILES = \
+  svProjectCreate.ui
+
+QRCFILES = \
+  ../../resources/projectmanager.qrc
 
 RCFILES = 
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -66,7 +86,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
@@ -77,9 +97,14 @@ DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
+          -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_pathplanning
+TARGET_LIB_NAME = simvascular_qtgui_plugin_projectmanager
+
+PLUGIN_DIR_NAME = org_sv_gui_qt_projectmanager
+
+PLUGIN_NAME = PROJECTMANAGER
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

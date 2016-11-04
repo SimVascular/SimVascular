@@ -46,8 +46,9 @@ SVQTGUIEXT_DIRS = org.sv.projectdatanodes \
                   org.sv.gui.qt.projectmanager \
                   org.sv.gui.qt.modeling \
                   org.sv.gui.qt.pathplanning \
-                  org.sv.gui.qt.segmentation \
-                  sv.test
+                  org.sv.gui.qt.segmentation
+# sv.test appears to be out of date
+# sv.test
 
 lib-complete: moc ui rcc lib
 
