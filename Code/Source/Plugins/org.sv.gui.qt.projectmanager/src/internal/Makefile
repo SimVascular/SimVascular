@@ -38,69 +38,27 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS)
+           $(MITK_INCDIRS) $(MITK_DEFS) \
+           -DSV_EXPORT_QT_GUI_PATHPLANNING_COMPILE
 
-MODULE_NAME = svSegmentation
-MODULE_NAME_ALL_CAPS = SVSEGMENTATION
-CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+HDRS	=     svPathCreate.h \
+              svPathSmooth.h \
+              svPathEdit.h \
+              svPathPlanningPluginActivator.h
 
-CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
+CXXSRCS	=     svPathCreate.cxx \
+              svPathSmooth.cxx \
+              svPathEdit.cxx \
+              svPathPlanningPluginActivator.cxx
 
-HDRS	= \
-    svSegmentationUtils.h \
-    svContour.h \
-    svContourCircle.h \
-    svContourEllipse.h \
-    svContourPolygon.h \
-    svContourTensionPolygon.h \
-    svContourSplinePolygon.h \
-    svContourOperation.h \
-    svContourModel.h \
-    svContourModelVtkMapper2D.h \
-    svContourModelThresholdInteractor.h \
-    svContourGroup.h \
-    svContourGroupVtkMapper2D.h \
-    svContourGroupVtkMapper3D.h \
-    svContourGroupDataInteractor.h \
-    svContourGroupIO.h \
-    svSegmentationLegacyIO.h \
-    svSegmentationObjectFactory.h
+UIFILES =     svPathCreate.ui \
+              svPathSmooth.ui \
+              svPathEdit.ui
 
-CXXSRCS	= \
-    svSegmentationUtils.cxx \
-    svContour.cxx \
-    svContourCircle.cxx \
-    svContourEllipse.cxx \
-    svContourPolygon.cxx \
-    svContourTensionPolygon.cxx \
-    svContourSplinePolygon.cxx \
-    svContourOperation.cxx \
-    svContourModel.cxx \
-    svContourModelVtkMapper2D.cxx \
-    svContourModelThresholdInteractor.cxx \
-    svContourGroup.cxx \
-    svContourGroupVtkMapper2D.cxx \
-    svContourGroupVtkMapper3D.cxx \
-    svContourGroupDataInteractor.cxx \
-    svContourGroupIO.cxx \
-    svSegmentationLegacyIO.cxx \
-    svSegmentationObjectFactory.cxx
+RCFILES = 
 
-CXXSRCS += us_init.cxx
-
-UIFILES = 
-
-# I don't know how to handle just xml files yet...
-RCFILES = \
-    resource/Interactions/svContourGroupInteraction.xml \
-    resource/Interactions/svContourModelThresholdInteraction.xml \
-    resource/Interactions/svSegmentationConfig.xml
-
-QRCFILES = 
-
-CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
-
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
+CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -108,14 +66,21 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS += \
+DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_qtgui_module_segmentation
+EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+
+TARGET_LIB_NAME = simvascular_qtgui_plugin_pathplanning
+
+SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
 include $(TOP)/targetlib.mk

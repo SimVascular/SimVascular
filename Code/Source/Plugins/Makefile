@@ -42,8 +42,12 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIEXT_DIRS = sv.general mitk.image mitk.segmentation \
-                  sv.modeling sv.pathplanning sv.segmentation sv.test
+SVQTGUIEXT_DIRS = org.sv.projectdatanodes \
+                  org.sv.gui.qt.projectmanager \
+                  org.sv.gui.qt.modeling \
+                  org.sv.gui.qt.pathplanning \
+                  org.sv.gui.qt.segmentation \
+                  sv.test
 
 lib-complete: moc ui rcc lib
 

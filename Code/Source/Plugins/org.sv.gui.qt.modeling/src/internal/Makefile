@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP= ../../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -38,69 +38,45 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS)
-
-MODULE_NAME = svSegmentation
-MODULE_NAME_ALL_CAPS = SVSEGMENTATION
-CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
-
-CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
+           $(MITK_INCDIRS) $(MITK_DEFS) \
+          -DSV_EXPORT_QT_GUI_TEST_COMPILE
 
 HDRS	= \
-    svSegmentationUtils.h \
-    svContour.h \
-    svContourCircle.h \
-    svContourEllipse.h \
-    svContourPolygon.h \
-    svContourTensionPolygon.h \
-    svContourSplinePolygon.h \
-    svContourOperation.h \
-    svContourModel.h \
-    svContourModelVtkMapper2D.h \
-    svContourModelThresholdInteractor.h \
-    svContourGroup.h \
-    svContourGroupVtkMapper2D.h \
-    svContourGroupVtkMapper3D.h \
-    svContourGroupDataInteractor.h \
-    svContourGroupIO.h \
-    svSegmentationLegacyIO.h \
-    svSegmentationObjectFactory.h
+    svModelCreate.h
+    svModelCreateAction.h
+    svModelLegacyLoadAction.h
+    svModelLegacySaveAction.h
+    svModelExtractPathsAction.h
+    svSegSelectionWidget.h
+    svModelEdit.h
+    svFaceListDelegate.h
+    svModelingPluginActivator.h
 
 CXXSRCS	= \
-    svSegmentationUtils.cxx \
-    svContour.cxx \
-    svContourCircle.cxx \
-    svContourEllipse.cxx \
-    svContourPolygon.cxx \
-    svContourTensionPolygon.cxx \
-    svContourSplinePolygon.cxx \
-    svContourOperation.cxx \
-    svContourModel.cxx \
-    svContourModelVtkMapper2D.cxx \
-    svContourModelThresholdInteractor.cxx \
-    svContourGroup.cxx \
-    svContourGroupVtkMapper2D.cxx \
-    svContourGroupVtkMapper3D.cxx \
-    svContourGroupDataInteractor.cxx \
-    svContourGroupIO.cxx \
-    svSegmentationLegacyIO.cxx \
-    svSegmentationObjectFactory.cxx
+    svModelCreate.cxx
+    svModelCreateAction.cxx
+    svModelLegacyLoadAction.cxx
+    svModelLegacySaveAction.cxx
+    svModelExtractPathsAction.cxx
+    svSegSelectionWidget.cxx
+    svModelEdit.cxx
+    svFaceListDelegate.cxx
+    svModelingPluginActivator.cxx
 
-CXXSRCS += us_init.cxx
+UIFILES =  \
+    svModelCreate.ui \
+    svSegSelectionWidget.ui \
+    svModelEdit.ui
 
-UIFILES = 
+#set(CACHED_RESOURCE_FILES
+#  plugin.xml
+#  resources/model.png
+#)
 
-# I don't know how to handle just xml files yet...
-RCFILES = \
-    resource/Interactions/svContourGroupInteraction.xml \
-    resource/Interactions/svContourModelThresholdInteraction.xml \
-    resource/Interactions/svSegmentationConfig.xml
+RCFILES =  ../resources/modeling.qrc
 
-QRCFILES = 
-
-CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
-
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
+CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -108,14 +84,21 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS += \
+DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_qtgui_module_segmentation
+TARGET_LIB_NAME = simvascular_qtgui_plugin_model
+
+EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+
+SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
 include $(TOP)/targetlib.mk

@@ -42,7 +42,7 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIMODULES_DIRS = Common QtAppBase Segmentation QtWidgets Path Model ProjectManagement
+SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model ProjectManagement
 
 lib-complete: create_exports_h us-init-module moc ui rcc lib
 

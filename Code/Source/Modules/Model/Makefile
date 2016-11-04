@@ -38,7 +38,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS)
+           $(MITK_INCDIRS) $(MITK_DEFS) \
+           $(VMTK_INCDIR)
 
 MODULE_NAME = svModel
 MODULE_NAME_ALL_CAPS = SVMODEL
@@ -46,34 +47,45 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
+    svModelUtils.h \
     svModelElement.h \
+    svModelElementPolyData.h \
     svModelOperation.h \
     svModel.h \
-    svModelUtils.h \
+    svModelVtkMapper2D.h \
+    svModelVtkMapper3D.h \
+    svModelDataInteractor.h \
     svModelIO.h \
     svModelLegacyIO.h \
-    svModelObjectFactory.h \
-    svSurface.h
+    svModelObjectFactory.h
 
 CXXSRCS	= \
+    svModelUtils.cxx \
     svModelElement.cxx \
+    svModelElementPolyData.cxx \
     svModelOperation.cxx \
     svModel.cxx \
-    svModelUtils.cxx \
+    svModelVtkMapper2D.cxx \
+    svModelVtkMapper3D.cxx \
+    svModelDataInteractor.cxx \
     svModelIO.cxx \
     svModelLegacyIO.cxx \
-    svModelObjectFactory.cxx \
-    svSurface.cxx
+    svModelObjectFactory.cxx
 
 CXXSRCS += us_init.cxx
 
 UIFILES = 
 
-RCFILES = 
+RCFILES = resource/Interactions/svModelInteraction.xml \
+          resource/Interactions/svModelConfig.xml
+
+QRCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -84,8 +96,9 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
@@ -93,6 +106,10 @@ DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+
+ifeq ($(SV_USE_VMTK),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
+endif
 
 TARGET_LIB_NAME = simvascular_qtgui_module_model
 

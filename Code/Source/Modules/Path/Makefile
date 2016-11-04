@@ -46,42 +46,42 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-          svPathElement.h \
-          svPath.h \
-          svPathOperation.h \
-          svPathDataInteractor.h \
-          svPathVtkMapper2D.h \
-          svPathVtkMapper3D.h \
-          svPathIO.h \
-          svPathLegacyIO.h \
-          svPathObjectFactory.h
+    svPathElement.h \
+    svPath.h \
+    svPathOperation.h \
+    svPathDataInteractor.h \
+    svPathVtkMapper2D.h \
+    svPathVtkMapper3D.h \
+    svPathIO.h \
+    svPathLegacyIO.h \
+    svPathObjectFactory.h
 
 CXXSRCS	= \
-          svPathElement.cxx \
-          svPath.cxx \
-          svPathOperation.cxx \
-          svPathDataInteractor.cxx \
-          svPathVtkMapper2D.cxx \
-          svPathVtkMapper3D.cxx \
-          svPathIO.cxx \
-          svPathLegacyIO.cxx \
-          svPathObjectFactory.cxx
+    svPathElement.cxx \
+    svPath.cxx \
+    svPathOperation.cxx \
+    svPathDataInteractor.cxx \
+    svPathVtkMapper2D.cxx \
+    svPathVtkMapper3D.cxx \
+    svPathIO.cxx \
+    svPathLegacyIO.cxx \
+    svPathObjectFactory.cxx
 
 CXXSRCS += us_init.cxx
 
 UIFILES = 
 
 # don't know how to handle non-qrc files
-#RCFILES = resources/Interactions/svPath.xml \
-#          resources/Interactions/svPathConfig.xml
+RCFILES = resource/Interactions/svPath.xml \
+          resource/Interactions/svPathConfig.xml
 
-RCFILES =
+QRCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
 CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.xml=.cxx)))
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
