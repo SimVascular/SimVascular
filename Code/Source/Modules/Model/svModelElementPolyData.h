@@ -112,6 +112,8 @@ public:
 
     bool CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, bool inside);
 
+    void RemoveActiveCells();
+
   protected:
 
 //    vtkSmartPointer<vtkPolyData> m_SolidModel;

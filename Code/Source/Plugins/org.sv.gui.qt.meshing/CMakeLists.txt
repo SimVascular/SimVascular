@@ -1,11 +1,11 @@
-project(org_sv_projectdatanodes)
+project(org_sv_gui_qt_meshing)
 
-set(lib org_sv_projectdatanodes)
+set(lib org_sv_gui_qt_meshing)
 
 mitk_create_plugin(
-  EXPORT_DIRECTIVE SV_PROJECTDATANODES
+  EXPORT_DIRECTIVE SV_QT_MESHING
   EXPORTED_INCLUDE_SUFFIXES src
-  MODULE_DEPENDS MitkQtWidgets svProjectManagement svPath svSegmentation svModel svMesh
+  MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel svMesh
 )
 
 if(SV_INSTALL_LIBS)
@@ -15,4 +15,3 @@ if(SV_INSTALL_LIBS)
         ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
     )
 endif()
-

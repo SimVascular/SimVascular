@@ -764,3 +764,11 @@ bool svModelElementPolyData::CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, bool
     return true;
 }
 
+
+void svModelElementPolyData::RemoveActiveCells()
+{
+    if(m_WholeVtkPolyData==NULL)
+        return;
+
+    m_WholeVtkPolyData->GetCellData()->RemoveArray("ActiveCells");
+}

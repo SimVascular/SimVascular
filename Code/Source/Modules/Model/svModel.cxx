@@ -11,17 +11,14 @@ svModel::svModel()
 svModel::svModel(const svModel &other)
     : mitk::BaseData(other)
     , m_Type(other.m_Type)
+    , m_ModelElementSet(other.GetTimeSize())
 {
-    if(m_ModelElementSet.empty())
-    {
     for (std::size_t t = 0; t < other.m_ModelElementSet.size(); ++t)
     {
-        m_ModelElementSet.push_back(other.m_ModelElementSet[t]->Clone());
-    }
-    }
-    else
-    {
-        InitializeEmpty();
+        if(other.m_ModelElementSet[t])
+            m_ModelElementSet.push_back(other.m_ModelElementSet[t]->Clone());
+        else
+            m_ModelElementSet.push_back(NULL);
     }
 }
 
@@ -50,7 +47,7 @@ void svModel::InitializeEmpty()
 
 bool svModel::IsEmptyTimeStep(unsigned int t) const
 {
-    return IsInitialized() && (GetModelElement(t) == NULL);
+//    return IsInitialized() && (GetModelElement(t) == NULL);
 
     if(!IsInitialized())
         return false;

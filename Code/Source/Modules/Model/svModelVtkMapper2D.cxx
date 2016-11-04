@@ -118,13 +118,7 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         localStorage->m_PropAssembly->VisibilityOff();
         return;
     }
-//    mitk::TimeGeometry *dataTimeGeometry = model->GetTimeGeometry();
 
-//    mitk::ScalarType time =renderer->GetTime();
-//    int timestep=0;
-
-//    if( time > itk::NumericTraits<mitk::ScalarType>::NonpositiveMin() )
-//        timestep = dataTimeGeometry->TimePointToTimeStep( time );
     int timestep=this->GetTimestep();
 
     svModelElement* me=model->GetModelElement(timestep);
@@ -159,22 +153,10 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     normal[2] = planeGeometry->GetNormal()[2];
 
     float lineWidth = 1.0f;
-    node->GetFloatProperty("line width", lineWidth, renderer);
+    node->GetFloatProperty("line 2D width", lineWidth, renderer);
 
     bool forceShowWholeSurface=false;
     node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
-
-//    bool showWholeSurface=false;
-//    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
-
-//    bool showFaces=true;
-//    node->GetBoolProperty("show faces", showFaces, renderer);
-
-//    if(!showWholeSurface&&!showFaces)
-//    {
-//        localStorage->m_PropAssembly->VisibilityOff();
-//        return;
-//    }
 
     bool showWholeSurface=false;
     bool showFaces=false;
@@ -346,10 +328,8 @@ void svModelVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
-//    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
     node->AddProperty( "line 2D width", mitk::FloatProperty::New(2.0f), renderer, overwrite );
-    //  aliases->AddAlias( "line width", "svModel.2D.Line Width", "svModel");
     node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );
     node->AddProperty( "layer", mitk::IntProperty::New(100), renderer, overwrite);
     Superclass::SetDefaultProperties(node, renderer, overwrite);

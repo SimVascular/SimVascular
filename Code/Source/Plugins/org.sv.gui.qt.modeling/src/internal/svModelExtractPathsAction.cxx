@@ -21,6 +21,10 @@ svModelExtractPathsAction::~svModelExtractPathsAction()
 
 void svModelExtractPathsAction::UpdateStatus()
 {
+    std::vector<mitk::DataNode::Pointer> pathNodes=m_Thread->GetPathNodes();
+    for(int i=0;i<pathNodes.size();i++)
+        m_DataStorage->Add(pathNodes[i],m_Thread->GetPathFolderNode());
+
     m_ProjFolderNode->SetBoolProperty("thread running",false);
     mitk::StatusBar::GetInstance()->DisplayText(m_Thread->GetStatus().toStdString().c_str());
 }
@@ -79,10 +83,14 @@ svModelExtractPathsAction::WorkThread::WorkThread(mitk::DataStorage::Pointer dat
 
 void svModelExtractPathsAction::WorkThread::run()
 {
+    m_PathNodes.clear();
+    m_Status="No valid data!";
+
     mitk::DataNode::Pointer selectedNode = m_SelectedNode;
 
     svModel* model=dynamic_cast<svModel*>(selectedNode->GetData());
-    if(!model) return;
+    if(!model)
+        return;
 
     svModelElement* modelElement=model->GetModelElement();
     if(!modelElement) return;
@@ -110,9 +118,9 @@ void svModelExtractPathsAction::WorkThread::run()
         if(rs->size()==0)
             return;
 
-        mitk::DataNode::Pointer pathFolderNode=rs->GetElement(0);
+        m_PathFolderNode=rs->GetElement(0);
 
-        int maxPathID=svPath::GetMaxPathID(mm_DataStorage->GetDerivations(pathFolderNode));
+        int maxPathID=svPath::GetMaxPathID(mm_DataStorage->GetDerivations(m_PathFolderNode));
 
         for(int i=0;i<pathElements.size();i++)
         {
@@ -125,9 +133,9 @@ void svModelExtractPathsAction::WorkThread::run()
 
             mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
             pathNode->SetData(path);
-            pathNode->SetName(selectedNode->GetName()+"_"+std::to_string(i+1));
+            pathNode->SetName(selectedNode->GetName()+"_centerline_"+std::to_string(i+1));
 
-            mm_DataStorage->Add(pathNode,pathFolderNode);
+            m_PathNodes.push_back(pathNode);
         }
 
         m_Status="Paths extracting done.";

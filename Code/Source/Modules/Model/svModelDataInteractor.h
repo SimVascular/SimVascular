@@ -49,11 +49,13 @@ protected:
 
     virtual void DeleteSelectedFacesCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
 
-
+    void SetFaceSelectionOnly(bool only = true);
 private:
 
       svModel* m_Model;
       mitk::Point2D m_CurrentPickedDisplayPoint;
+
+      bool m_FaceSelectionOnly;
 };
 
 itkEventMacro( svModelSelectFaceEvent, svModelEvent );

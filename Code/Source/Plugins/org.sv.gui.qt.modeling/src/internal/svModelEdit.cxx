@@ -6,6 +6,9 @@
 #include "svPath.h"
 #include "svSegmentationUtils.h"
 
+#include "svMeshTetGen.h"
+#include "svMitkMesh.h"
+
 #include "cv_polydatasolid_utils.h"
 
 #include <mitkNodePredicateDataType.h>
@@ -14,6 +17,7 @@
 #include <mitkSliceNavigationController.h>
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
+#include <mitkUnstructuredGrid.h>
 
 #include <usModuleRegistry.h>
 
@@ -230,28 +234,12 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
 
 
-//       connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
+//    connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
 }
 
 //void svModelEdit::Test()
 //{
-//    if(!m_Model) return;
-//    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
-//    if(!modelElement) return;
 
-//    mitk::Surface::Pointer surface=mitk::Surface::New();
-
-//    vtkPolyData* centerlines=svModelUtils::CreateCenterlines(modelElement);
-//    if(centerlines==NULL)
-//        return;
-
-//    surface->SetVtkPolyData(centerlines);
-
-//    mitk::DataNode::Pointer node=mitk::DataNode::New();
-//    node->SetName("centerlines");
-//    node->SetData(surface);
-
-//    GetDataStorage()->Add(node,m_ModelNode);
 //}
 
 void svModelEdit::Visible()
@@ -575,7 +563,6 @@ void svModelEdit::UpdateFaceListSelection()
     svModelElement* modelElement=m_Model->GetModelElement();
     if(!modelElement) return;
 
-
     if(m_FaceListTableModel==NULL)
         return;
 
@@ -613,13 +600,14 @@ void svModelEdit::SetupFaceListTable()
     if(!m_Model)
         return;
 
+    m_FaceListTableModel->clear();
+
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
     std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
 
-    m_FaceListTableModel->clear();
     QStringList faceListHeaders;
     faceListHeaders << "ID" << "Name" << "Type" << "V" << "C" << "O";
     m_FaceListTableModel->setHorizontalHeaderLabels(faceListHeaders);
@@ -1055,13 +1043,14 @@ void svModelEdit::SetupBlendTable()
     if(!m_Model)
         return;
 
+    m_BlendTableModel->clear();
+
     int timeStep=GetTimeStep();
     svModelElement* modelElement=m_Model->GetModelElement(timeStep);
     if(modelElement==NULL) return;
 
     std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
 
-    m_BlendTableModel->clear();
     QStringList blendHeaders;
     blendHeaders << "Use" << "Face 1" << "Face 2" << "Radius";
     m_BlendTableModel->setHorizontalHeaderLabels(blendHeaders);
@@ -1543,6 +1532,7 @@ std::vector<int> svModelEdit::GetSelectedFaceIDs()
 
 bool svModelEdit::MarkCells(svModelElementPolyData* modelElement)
 {
+    modelElement->RemoveActiveCells();
 
     bool hasFaces=false;
     if(modelElement->GetSelectedFaceIDs().size()>0)
@@ -1678,10 +1668,12 @@ void svModelEdit::ModelOperate(int operationType)
     }
 
     mitk::ProgressBar::GetInstance()->Progress();
+    BusyCursorOff();
 
     if(!ok)
     {
         delete newModelElement;
+        mitk::StatusBar::GetInstance()->DisplayText("Model pressing not successful");
         return;
     }
 
@@ -1696,8 +1688,7 @@ void svModelEdit::ModelOperate(int operationType)
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
-    BusyCursorOff();
-    mitk::StatusBar::GetInstance()->DisplayText("");
+    mitk::StatusBar::GetInstance()->DisplayText("Model processing done");
 }
 
 void svModelEdit::ShowSphereInteractor(bool checked)

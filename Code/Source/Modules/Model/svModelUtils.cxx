@@ -706,6 +706,56 @@ bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<
     return true;
 }
 
+//vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
+//{
+//    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
+//        return NULL;
+
+//    vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
+//    inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+//    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()));
+
+//    cvPolyData *src=new cvPolyData(inpd);
+//    cvPolyData *capped = NULL;
+//    int numCapCenterIDs;
+//    int *capCenterIDs=NULL;
+
+//    if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
+//    {
+////        delete capped;
+//        return NULL;
+//    }
+
+//    cvPolyData *tempCenterlines = NULL;
+//    cvPolyData *voronoi = NULL;
+
+//    int *sources=new int[1];
+//    sources[0]=capCenterIDs[0];
+
+//    int *targets=new int[numCapCenterIDs-1];
+//    for(int i=1;i<numCapCenterIDs;i++)
+//        targets[i-1]= capCenterIDs[i];
+
+//    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
+//    {
+//        return NULL;
+//    }
+
+//    cvPolyData *centerlines=NULL;
+//    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != CV_OK )
+//    {
+//        return NULL;
+//    }
+
+////    cvPolyData *distance = NULL;
+////    if ( sys_geom_distancetocenterlines(src, centerlines, &distance) != CV_OK )
+////    {
+////        return NULL;
+////    }
+
+//    return centerlines->GetVtkPolyData();
+//}
+
 vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
 {
     if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
@@ -713,9 +763,22 @@ vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
 
     vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
     inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
-    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()));
+    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()))
+    {
+        return NULL;
+    }
 
-    cvPolyData *src=new cvPolyData(inpd);
+    vtkPolyData* centerlines=CreateCenterlines(inpd);
+
+    return centerlines;
+}
+
+vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
+{
+    if(vpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(vpd);
     cvPolyData *capped = NULL;
     int numCapCenterIDs;
     int *capCenterIDs=NULL;
@@ -747,13 +810,23 @@ vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
         return NULL;
     }
 
-//    cvPolyData *distance = NULL;
-//    if ( sys_geom_distancetocenterlines(src, centerlines, &distance) != CV_OK )
-//    {
-//        return NULL;
-//    }
-
     return centerlines->GetVtkPolyData();
+}
+
+vtkPolyData* svModelUtils::CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
+{
+    if(centerlines==NULL || original==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(original);
+    cvPolyData *lines=new cvPolyData(centerlines);
+    cvPolyData *distance = NULL;
+    if ( sys_geom_distancetocenterlines(src, lines, &distance) != CV_OK )
+    {
+        return NULL;
+    }
+
+    return distance->GetVtkPolyData();
 }
 
 std::vector<svPathElement::svPathPoint> svModelUtils::ConvertToPathPoints(std::vector<mitk::Point3D> posPoints)

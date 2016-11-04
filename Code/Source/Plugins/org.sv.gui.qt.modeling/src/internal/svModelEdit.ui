@@ -1480,7 +1480,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>114</width>
-                               <height>189</height>
+                               <height>160</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1523,11 +1523,11 @@
                                <widget class="QComboBox" name="comboBoxPathPlane"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathPlane">
-                                <property name="decimals">
+                               <widget class="ctkSliderWidget" name="sliderPathPlane" native="true">
+                                <property name="decimals" stdset="0">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum">
+                                <property name="maximum" stdset="0">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
@@ -1610,11 +1610,11 @@
                                <widget class="QComboBox" name="comboBoxPathBox"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathBox">
-                                <property name="decimals">
+                               <widget class="ctkSliderWidget" name="sliderPathBox" native="true">
+                                <property name="decimals" stdset="0">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum">
+                                <property name="maximum" stdset="0">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
