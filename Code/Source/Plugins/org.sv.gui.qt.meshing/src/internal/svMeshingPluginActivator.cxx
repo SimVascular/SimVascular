@@ -1,5 +1,6 @@
 #include "svMeshingPluginActivator.h"
 #include "svMeshCreateAction.h"
+#include "svMeshEdit.h"
 
 //svMeshingPluginActivator* svMeshingPluginActivator::m_Instance = nullptr;
 //ctkPluginContext* svMeshingPluginActivator::m_Context = nullptr;
@@ -10,6 +11,7 @@ void svMeshingPluginActivator::start(ctkPluginContext* context)
 //    m_Context = context;
 
     BERRY_REGISTER_EXTENSION_CLASS(svMeshCreateAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svMeshEdit, context)
 }
 
 void svMeshingPluginActivator::stop(ctkPluginContext* context)

@@ -5,17 +5,20 @@ set(SRC_CPP_FILES
 set(INTERNAL_CPP_FILES
     svMeshCreate.cxx
     svMeshCreateAction.cxx
+    svMeshEdit.cxx
     svMeshingPluginActivator.cxx
 )
 
 set(MOC_H_FILES
     src/internal/svMeshCreate.h
     src/internal/svMeshCreateAction.h
+    src/internal/svMeshEdit.h
     src/internal/svMeshingPluginActivator.h
 )
 
 set(UI_FILES
     src/internal/svMeshCreate.ui
+    src/internal/svMeshEdit.ui
 )
 
 set(CACHED_RESOURCE_FILES

@@ -127,6 +127,7 @@ void svMeshCreate::CreateMesh()
     }
 
     svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
+    mitkMesh->SetModelName(selectedModelNode->GetName());
     if(model->GetType()=="PolyData")
         mitkMesh->SetType("TetGen");
     else if(model->GetType()=="OpenCASCADE")
