@@ -26,14 +26,6 @@ public:
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
-    virtual const svMitkMesh* GetInput();
-
-    virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
-
-    virtual void ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor);
-
-    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
-
     class LocalStorage : public mitk::Mapper::BaseLocalStorage
     {
     public:
@@ -54,6 +46,14 @@ public:
         }
     };
 
+    virtual const svMitkMesh* GetInput();
+
+    virtual vtkProp *GetVtkProp(mitk::BaseRenderer *renderer) override;
+
+    static void ApplyAllProperties(mitk::DataNode *node, mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor, mitk::LocalStorageHandler<LocalStorage>* handler, bool clipping = true);
+
+    static void SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer = NULL, bool overwrite = false);
+
     mitk::LocalStorageHandler<LocalStorage> m_LSH;
 
     static void ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, vtkProperty* property, mitk::BaseRenderer* renderer);
@@ -68,7 +68,7 @@ protected:
 
     virtual void ResetMapper( mitk::BaseRenderer* renderer ) override;
 
-    virtual void CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property );
+    static void CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property, mitk::LocalStorageHandler<LocalStorage>* handler );
 
 };
 
