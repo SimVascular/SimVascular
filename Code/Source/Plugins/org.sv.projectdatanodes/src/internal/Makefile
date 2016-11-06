@@ -40,8 +40,16 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
           -DSV_EXPORT_QT_GUI_PROJECTDATANODES_COMPILE \
+          -DUS_MODULE_NAME=svProjectDataNodes \
           -I../../../PluginFramework \
-          -DUS_MODULE_NAME=svProjectDataNodes
+          -I../../../org.mitk.gui.common/src \
+          -I../../../org.mitk.gui.qt.datamanager/src \
+          -I../../../org.mitk.gui.qt.common/src \
+         -I../../../org.blueberry.ui.qt/src \
+         -I../../../org.blueberry.core.runtime/src \
+        -I../../../org.blueberry.core.runtime/src/registry \
+        -I../../../org.mitk.core.services/src \
+         -I../../..
 
 HDRS	= \
   svProjectDataNodesPluginActivator.h
@@ -80,7 +88,8 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I../../../PluginFramework
+EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
+          -I../../../org.mitk.gui.qt.datamanager/src
 
 TARGET_LIB_NAME = simvascular_qtgui_plugin_projectdatanodes
 

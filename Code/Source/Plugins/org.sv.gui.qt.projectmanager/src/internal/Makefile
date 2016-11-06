@@ -40,15 +40,16 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            -I../../../PluginFramework \
-          -I../../../org.mitk.gui.common/src \
-          -I../../../org.mitk.gui.qt.datamanager/src \
-          -I../../../org.mitk.gui.qt.common/src \
-         -I../../../org.blueberry.ui.qt/src \
-         -I../../../org.blueberry.core.runtime/src \
-        -I../../../org.blueberry.core.runtime/src/registry \
-        -I../../../org.mitk.core.services/src \
-         -I../../.. \
-        -DUS_PLATFORM_WINDOWS
+           -I../../../org.mitk.gui.common/src \
+           -I../../../org.mitk.gui.qt.datamanager/src \
+           -I../../../org.mitk.gui.qt.common/src \
+           -I../../../org.blueberry.ui.qt/src \
+           -I../../../org.blueberry.core.runtime/src \
+           -I../../../org.blueberry.core.runtime/src/registry \
+           -I../../../org.mitk.core.services/src \
+           -I../../.. \
+          -DUS_MODULE_NAME=svProjectManager \
+          -Dorg_sv_gui_qt_projectmanager_EXPORTS
 
 HDRS	=  \
   svProjectManagerPluginActivator.h \
@@ -76,7 +77,7 @@ RCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
-CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+#CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
 
 CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
@@ -85,6 +86,15 @@ DLLHDRS =
 DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
+
+PLUGINLIBSDIR = C:/sv/mitk-2016.03/MITK-build/lib/plugins/RelWithDebInfo
+DLLLIBS += $(PLUGINLIBSDIR)/org_mitk_gui_common.lib \
+           $(PLUGINLIBSDIR)/org_mitk_gui_qt_datamanager.lib \
+           $(PLUGINLIBSDIR)/org_mitk_gui_qt_common.lib \
+           $(PLUGINLIBSDIR)/org_mitk_gui_qt_common_legacy.lib \
+           $(PLUGINLIBSDIR)/org_blueberry_ui_qt.lib \
+           $(PLUGINLIBSDIR)/org_blueberry_core_runtime.lib \
+           $(PLUGINLIBSDIR)/org_mitk_core_services.lib \
 
 DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
