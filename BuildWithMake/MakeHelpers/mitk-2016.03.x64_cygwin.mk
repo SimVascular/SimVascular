@@ -32,6 +32,7 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/ui_files \
            -I$(MITK_BINDIR)/include/mitk/AlgorithmsExt \
            -I$(MITK_BINDIR)/include/mitk/AlgorithmsExt/include \
+           -I$(MITK_BINDIR)/include/mitk/AppUtil/include \
            -I$(MITK_BINDIR)/include/mitk/Core \
            -I$(MITK_BINDIR)/include/mitk/Core/include \
            -I$(MITK_BINDIR)/include/mitk/CppMicroServices/core \
@@ -94,6 +95,7 @@ MITK_LIBS = \
            $(LIBFLAG)CTKXNATCore$(LIBLINKEXT) \
            $(LIBFLAG)mbilog$(LIBLINKEXT) \
            $(LIBFLAG)MitkAlgorithmsExt$(LIBLINKEXT) \
+           $(LIBFLAG)MitkAppUtil$(LIBLINKEXT) \
            $(LIBFLAG)MitkCore$(LIBLINKEXT) \
            $(LIBFLAG)MitkDataTypesExt$(LIBLINKEXT) \
            $(LIBFLAG)MitkImageDenoising$(LIBLINKEXT) \

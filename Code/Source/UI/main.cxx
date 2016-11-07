@@ -31,21 +31,12 @@
 
 #include "SimVascular.h"
 
-//#ifdef SV_USE_QT_GUI
-//#include "QmitkRegisterClasses.h"
-//#include "svMainWindow.h"
-//#include "svApplication.h"
-
-//#include "MitkImagePluginActivator.h"
-//#include "MitkSegmentationPluginActivator.h"
-//#include "svModelingPluginActivator.h"
-//#include "svProjectPluginActivator.h"
-//#include "svPathPlanningPluginActivator.h"
-//#include "svSegmentationPluginActivator.h"
-//#include "svTestPluginActivator.h"
-
-//#include "qttclnotifier.h"
-//#endif
+#ifdef SV_USE_QT_GUI
+  #include <QApplication>
+  #include "mitkBaseApplication.h"
+  #include <QVariant>
+#include "qttclnotifier.h"
+#endif
 
 #include "cvIOstream.h"
 #include <time.h>
@@ -103,24 +94,12 @@ errno_t cv_getenv_s(
 
 #include "SimVascular_Init.h"
 
-//#ifdef SV_USE_QT_GUI
-//typedef void Tcl_MainLoopProc(void);
-//void SimVascularTcl_MainLoop(void) {
-//    QApplication::exec();
-//}
-//#endif
-
-/*
-#ifdef SV_USE_QT
-int main_only_qt(int argc, char *argv[])
-{
-    QApplication app(argc, argv);
-    MainWindow window;
-    window.show();
-    return app.exec();
+#ifdef SV_USE_QT_GUI
+typedef void Tcl_MainLoopProc(void);
+void SimVascularTcl_MainLoop(void) {
+    QApplication::exec();
 }
 #endif
-*/
 
 void
 svCatchDebugger() {
@@ -132,63 +111,21 @@ svCatchDebugger() {
 // main
 // ----
 
-//#ifdef SV_USE_QT_GUI
-//  #ifdef QT_STATICPLUGIN
+//  Note: Static Modules don't seem to work for MITK plugins.
+//        This code should return an error for now.
 
-//    Q_IMPORT_PLUGIN(svProjectPluginActivator)
-//    Q_IMPORT_PLUGIN(MitkImagePluginActivator)
-//    Q_IMPORT_PLUGIN(svPathPlanningPluginActivator)
-//    Q_IMPORT_PLUGIN(MitkSegmentationPluginActivator)
-//    Q_IMPORT_PLUGIN(svSegmentationPluginActivator)
-//    Q_IMPORT_PLUGIN(svModelingPluginActivator)
-//    Q_IMPORT_PLUGIN(svTestPluginActivator)
-
-///*
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_image)
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_mitksegmentation)
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_general)
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_modeling)
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_pathplanning)
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_segmentation)
-//    Q_IMPORT_PLUGIN(_simvascular_qtgui_plugin_test)
-//*/
-
-//  #endif
-
-//#include <usModuleImport.h>
-
-//  // seems to be missing from mitk's cppservices
-//  //US_IMPORT_MODULE_RESOURCES(...)
-
-//#ifdef US_STATIC_MODULE
-//  US_INITIALIZE_STATIC_MODULE(svcommon)
-//  US_INITIALIZE_STATIC_MODULE(svmodel)
-//  US_INITIALIZE_STATIC_MODULE(svpath)
-//  US_INITIALIZE_STATIC_MODULE(svprojectmanagement)
-//  US_INITIALIZE_STATIC_MODULE(svqtappbase)
-//  US_INITIALIZE_STATIC_MODULE(svqtwidgets)
-//  US_INITIALIZE_STATIC_MODULE(svsegmentation)
-//  //US_INITIALIZE_STATIC_MODULE(svlib) (unneed, Applications dir???)
-//  // seems to be missing from mitk's cppservices
-//  //US_INITIALIZE_IMPORT_STATIC_MODULE_RESOURCES(...)
-//#else
-//    /*
-//  US_IMPORT_MODULE(svcommon)
-//  US_IMPORT_MODULE(svmodel)
-//    */
-//    //US_INITIALIZE_MODULE("svPath")
-//    /*
-//  US_IMPORT_MODULE(svprojectmanagement)
-//  US_IMPORT_MODULE(svqtappbase)
-//  US_IMPORT_MODULE(svqtwidgets)
-//  US_IMPORT_MODULE(svsegmentation)
-//    */
-//  //extern "C" void  _us_import_module_initializer_svsegmentation();
-//  //extern "C" void  _us_import_module_initializer_svPath();
-
-//#endif
-
-//#endif
+#ifdef SV_USE_QT_GUI
+  #ifdef QT_STATICPLUGIN
+    //Q_IMPORT_PLUGIN(...)
+  #endif
+  //#include <usModuleImport.h>
+  // seems to be missing from mitk's cppservices
+  //US_IMPORT_MODULE_RESOURCES(...)
+  #ifdef US_STATIC_MODULE
+    //US_INITIALIZE_STATIC_MODULE(...)
+    //US_INITIALIZE_IMPORT_STATIC_MODULE_RESOURCES(...)
+  #endif
+#endif
 
  FILE *simvascularstdout;
  FILE *simvascularstderr;
@@ -487,62 +424,45 @@ RegCloseKey(hKey2);
     }
   }
 
-//#ifdef SV_USE_QT_GUI
+#ifdef SV_USE_QT_GUI
 
-//  if(use_qt_gui) {
+  if(use_qt_gui) {
 
-//   svApplication svapp(argc, argv);
+     mitk::BaseApplication app(argc, argv);
 
-//   // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
+     // note: this command doesn't seem to work.
+     // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
+     #ifdef QT_STATICPLUGIN
+       //Q_INIT_RESOURCE(...);
+       // need to call activators for each plugin, e.g.
+       //MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
+       //mitkimageplugin->start();
+     #endif
+     
+     app.setSingleMode(true);
+     app.setApplicationName("SimVascular Workbench");
+     app.setOrganizationName("Stanford Medicine");
 
-//   //_us_import_module_initializer_svsegmentation();
-//   //_us_import_module_initializer_svPath();
+     // Preload the org.mitk.gui.qt.ext plug-in (and hence also QmitkExt) to speed
+     // up a clean-cache start. This also works around bugs in older gcc and glibc implementations,
+     // which have difficulties with multiple dynamic opening and closing of shared libraries with
+     // many global static initializers. It also helps if dependent libraries have weird static
+     // initialization methods and/or missing de-initialization code.
+     QStringList preloadLibs;
+     preloadLibs << "liborg_mitk_gui_qt_ext";
+     app.setPreloadLibraries(preloadLibs);
 
-//    #ifdef QT_STATICPLUGIN
+     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
+  
+    if (use_qt_tcl_interp) {
+      Tcl_Main (argc, argv, Tcl_AppInit);
+    } else {
+      return app.run();
+    }
 
-//    Q_INIT_RESOURCE(sv);
-//    Q_INIT_RESOURCE(qtappbase);
-//    Q_INIT_RESOURCE(svgeneral);
+  }
 
-//    svProjectPluginActivator* projectplugin = new svProjectPluginActivator();
-//    projectplugin->start();
-
-//    MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
-//    mitkimageplugin->start();
-
-//    MitkSegmentationPluginActivator* mitksegmentationplugin = new MitkSegmentationPluginActivator();
-//    mitksegmentationplugin->start();
-
-//    svSegmentationPluginActivator* svsegmentationplugin = new svSegmentationPluginActivator();
-//    svsegmentationplugin->start();
-
-//    svPathPlanningPluginActivator* svpathplugin = new svPathPlanningPluginActivator();
-//    svpathplugin->start();
-
-//    svModelingPluginActivator* svmodelplugin = new svModelingPluginActivator();
-//    svmodelplugin->start();
-
-//    svTestPluginActivator* svtestplugin = new svTestPluginActivator();
-//    svtestplugin->start();
-
-//    #endif
-
-//    // Register Qmitk-dependent global instances
-
-//    QmitkRegisterClasses();
-//    svMainWindow svwindow;
-//    svApplication::application()->pythonManager()->addObjectToPythonMain("svMainWindow", &svwindow);
-//    svwindow.showMaximized();
-
-//    if (use_qt_tcl_interp) {
-//      Tcl_Main (argc, argv, Tcl_AppInit);
-//    } else {
-//      return svapp.exec();
-//    }
-
-//  }
-
-//#endif
+#endif
 
   return 0;
 }
@@ -648,17 +568,17 @@ int Tcl_AppInit( Tcl_Interp *interp )
 
   if (use_qt_tcl_interp) {
     #ifndef WIN32
-//    #ifdef SV_USE_QT
-//      // instantiate "notifier" to combine Tcl and Qt events
-//      QtTclNotify::QtTclNotifier::setup();
-//    #endif
+    #ifdef SV_USE_QT
+      // instantiate "notifier" to combine Tcl and Qt events
+      QtTclNotify::QtTclNotifier::setup();
+    #endif
     #endif
 
     #ifndef WIN32
-//    #ifdef SV_USE_QT
-//      // run Qt's event loop
-//      Tcl_SetMainLoop(SimVascularTcl_MainLoop);
-//    #endif
+    #ifdef SV_USE_QT
+      // run Qt's event loop
+      Tcl_SetMainLoop(SimVascularTcl_MainLoop);
+    #endif
     #endif
   }
 
