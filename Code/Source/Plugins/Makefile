@@ -42,19 +42,19 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIEXT_DIRS = org.sv.projectdatanodes \
-                  org.sv.gui.qt.projectmanager \
-                  org.sv.gui.qt.modeling \
-                  org.sv.gui.qt.pathplanning \
-                  org.sv.gui.qt.segmentation
+SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
+                  org.sv.gui.qt.projectmanager/src/internal \
+                  org.sv.gui.qt.modeling/src/internal \
+                  org.sv.gui.qt.pathplanning/src/internal \
+                  org.sv.gui.qt.segmentation/src/internal
 # sv.test appears to be out of date
 # sv.test
 
 lib-complete: moc ui rcc lib
 
-static-complete:  moc ui rcc static
+static-complete:  create_plugin_export_h moc ui rcc static
 
-shared-complete:  moc ui rcc shared
+shared-complete:  create_plugin_export_h moc ui rcc shared
 
 lib:
 	@for i in ${SVQTGUIEXT_DIRS}; do ( \
@@ -85,6 +85,11 @@ rcc:
 	@for i in ${SVQTGUIEXT_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) rcc) ; done
+
+create_plugin_export_h:
+	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) create_plugin_export_h) ; done
 
 clean:
 	for i in ${SVQTGUIEXT_DIRS}; do ( \

@@ -262,6 +262,8 @@ clean:
 	for fn in ui_*.h; do /bin/rm -f $$fn; done
 	for fn in rcc_*.cxx; do /bin/rm -f $$fn; done
 	if [ -e us_init.cxx ];then /bin/rm -f us_init.cxx;fi
+	if [ -e $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h;fi
+	if [ -e $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h;fi
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
