@@ -191,20 +191,20 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
 void svPathEdit::NodeChanged(const mitk::DataNode* node)
 {
-    mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("svPathFolder");
+//    mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("svPathFolder");
 
-    if(isPathFolder->CheckNode(node)){
-        bool currentVisible=false;
-        node->GetBoolProperty("visible", currentVisible);
-        if(currentVisible!=m_ParentNodeOriginalVisible){
-            mitk::DataStorage::SetOfObjects::ConstPointer rs = this->GetDataStorage()->GetDerivations(node);
-            for(int i=0;i<rs->size();i++){
-                rs->GetElement(i)->SetVisibility(currentVisible);
-            }
-            m_ParentNodeOriginalVisible=currentVisible;
-        }
+//    if(isPathFolder->CheckNode(node)){
+//        bool currentVisible=false;
+//        node->GetBoolProperty("visible", currentVisible);
+//        if(currentVisible!=m_ParentNodeOriginalVisible){
+//            mitk::DataStorage::SetOfObjects::ConstPointer rs = this->GetDataStorage()->GetDerivations(node);
+//            for(int i=0;i<rs->size();i++){
+//                rs->GetElement(i)->SetVisibility(currentVisible);
+//            }
+//            m_ParentNodeOriginalVisible=currentVisible;
+//        }
 
-    }
+//    }
 
 }
 

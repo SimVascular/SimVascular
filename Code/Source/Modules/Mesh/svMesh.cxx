@@ -140,3 +140,13 @@ vtkSmartPointer<vtkUnstructuredGrid> svMesh::GetVolumeMesh()
 {
     return m_VolumeMesh;
 }
+
+void svMesh::SetSurfaceMesh(vtkSmartPointer<vtkPolyData> surfaceMesh)
+{
+    m_SurfaceMesh=surfaceMesh;
+}
+
+void svMesh::SetVolumeMesh(vtkSmartPointer<vtkUnstructuredGrid> volumeMesh)
+{
+    m_VolumeMesh=volumeMesh;
+}

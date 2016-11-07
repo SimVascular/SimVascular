@@ -3,7 +3,7 @@
 
 #include <svMeshExports.h>
 
-//#include "svMitkMeshIO.h"
+#include "svMitkMeshIO.h"
 
 #include "mitkCoreObjectFactoryBase.h"
 
@@ -38,7 +38,7 @@ struct SVMESH_EXPORT RegistersvMitkMeshObjectFactory{
   virtual ~RegistersvMitkMeshObjectFactory();
 
   svMitkMeshObjectFactory::Pointer m_Factory;
-//  svMitkMeshIO* m_MitkMeshIO;
+  svMitkMeshIO* m_MitkMeshIO;
 };
 
 #endif // SVMITKMESHOBJECTFACTORY_H
