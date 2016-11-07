@@ -39,28 +39,39 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-          -DSV_EXPORT_QT_GUI_TEST_COMPILE
+           -Dorg_sv_gui_qt_modeling_EXPORTS \
+           -I../../../PluginFramework \
+           -I../../../org.mitk.gui.common/src \
+           -I../../../org.mitk.gui.qt.datamanager/src \
+           -I../../../org.mitk.gui.qt.common/src \
+           -I../../../org.mitk.gui.qt.common.legacy/src \
+           -I../../../org.blueberry.ui.qt/src \
+           -I../../../org.blueberry.core.runtime/src \
+           -I../../../org.blueberry.core.runtime/src/registry \
+           -I../../../org.mitk.core.services/src \
+           -I../../.. \
+          -DUS_MODULE_NAME=svModeling
 
 HDRS	= \
-    svModelCreate.h
-    svModelCreateAction.h
-    svModelLegacyLoadAction.h
-    svModelLegacySaveAction.h
-    svModelExtractPathsAction.h
-    svSegSelectionWidget.h
-    svModelEdit.h
-    svFaceListDelegate.h
+    svModelCreate.h \
+    svModelCreateAction.h \
+    svModelLegacyLoadAction.h \
+    svModelLegacySaveAction.h \
+    svModelExtractPathsAction.h \
+    svSegSelectionWidget.h \
+    svModelEdit.h \
+    svFaceListDelegate.h \
     svModelingPluginActivator.h
 
 CXXSRCS	= \
-    svModelCreate.cxx
-    svModelCreateAction.cxx
-    svModelLegacyLoadAction.cxx
-    svModelLegacySaveAction.cxx
-    svModelExtractPathsAction.cxx
-    svSegSelectionWidget.cxx
-    svModelEdit.cxx
-    svFaceListDelegate.cxx
+    svModelCreate.cxx \
+    svModelCreateAction.cxx \
+    svModelLegacyLoadAction.cxx \
+    svModelLegacySaveAction.cxx \
+    svModelExtractPathsAction.cxx \
+    svSegSelectionWidget.cxx \
+    svModelEdit.cxx \
+    svFaceListDelegate.cxx \
     svModelingPluginActivator.cxx
 
 UIFILES =  \
@@ -68,15 +79,14 @@ UIFILES =  \
     svSegSelectionWidget.ui \
     svModelEdit.ui
 
-#set(CACHED_RESOURCE_FILES
-#  plugin.xml
-#  resources/model.png
-#)
+QRCFILES =  ../../resources/modeling.qrc
 
-RCFILES =  ../resources/modeling.qrc
+RCFILES = \
+  ../../plugin.xml \
+  ../../resources/model.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -84,10 +94,11 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
@@ -95,9 +106,25 @@ DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
+PLUGINLIBSDIR = C:/sv/mitk-2016.03/MITK-build/lib/plugins/RelWithDebInfo
+DLLLIBS += $(PLUGINLIBSDIR)/org_mitk_gui_common.lib \
+           $(PLUGINLIBSDIR)/org_mitk_gui_qt_datamanager.lib \
+           $(PLUGINLIBSDIR)/org_mitk_gui_qt_common.lib \
+           $(PLUGINLIBSDIR)/org_mitk_gui_qt_common_legacy.lib \
+           $(PLUGINLIBSDIR)/org_blueberry_ui_qt.lib \
+           $(PLUGINLIBSDIR)/org_blueberry_core_runtime.lib \
+           $(PLUGINLIBSDIR)/org_mitk_core_services.lib \
+
 TARGET_LIB_NAME = simvascular_qtgui_plugin_model
 
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
+          -I../../../org.mitk.gui.qt.datamanager/src
+
+TARGET_LIB_NAME = simvascular_qtgui_plugin_modeling
+
+PLUGIN_DIR_NAME = org_sv_gui_qt_modeling
+
+PLUGIN_NAME = MODELING
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

@@ -15,6 +15,11 @@
 #include "mitkPoint.h"
 #include "mitkPlaneGeometry.h"
 
+// somehow GetClassName is getting set to GetClassNameA on Windows
+#ifdef GetClassName
+#undef GetClassName
+#endif
+
 class SVSEGMENTATION_EXPORT svContour
 {
 
