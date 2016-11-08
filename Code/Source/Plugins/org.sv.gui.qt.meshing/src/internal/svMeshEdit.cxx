@@ -39,11 +39,13 @@ svMeshEdit::svMeshEdit() :
     m_ModelSelectFaceObserverTag=0;
     m_MeshUpdateObserverTag=0;
 
+    m_TableMenuLocalT=NULL;
+    m_TableModelLocalT=NULL;
+
     m_SphereTableMenu=NULL;
     m_SphereTableModel=NULL;
 
     m_SphereWidget=NULL;
-
 }
 
 svMeshEdit::~svMeshEdit()
@@ -67,44 +69,94 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
         return;
     }
 
-    connect(ui->btnCreateMesh, SIGNAL(clicked()), this, SLOT(CreateMesh()) );
-    connect(ui->btnRunHistory, SIGNAL(clicked()), this, SLOT(RunHistory()) );
-
+    SetupTetGenGUI(parent);
 }
 
-void svMeshEdit::CreateMesh()
+void svMeshEdit::SetupTetGenGUI(QWidget *parent )
+{
+    connect(ui->btnRunMesherT, SIGNAL(clicked()), this, SLOT(RunMesher()) );
+    connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(EstimateEdgeSize()) );
+
+    //for local table
+    m_TableModelLocalT = new QStandardItemModel(this);
+    ui->tableViewLocalT->setModel(m_TableModelLocalT);
+
+    connect( ui->tableViewLocalT->selectionModel()
+      , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+      , this
+      , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+
+    m_TableMenuLocalT=new QMenu(ui->tableViewLocalT);
+    QAction* setLocalSizeAction=m_TableMenuLocalT->addAction("Set Local Size");
+    QAction* clearLocalSizeAction=m_TableMenuLocalT->addAction("Clear Local Size");
+
+
+
+    connect(ui->btnRunHistoryT, SIGNAL(clicked()), this, SLOT(RunHistory()) );
+}
+
+void svMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
+{
+    if(!m_Model)
+        return;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return;
+
+    if(m_TableModelLocalT==NULL)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewLocalT->selectionModel()->selectedRows();
+
+    modelElement->ClearFaceSelection();
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+
+        QStandardItem* itemID= m_TableModelLocalT->item(row,0);
+        int id=itemID->text().toInt();
+
+        modelElement->SelectFace(id);
+    }
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+void svMeshEdit::EstimateEdgeSize()
+{
+    if(!m_MitkMesh) return;
+
+    if(!m_Model) return;
+    svModelElement* modelElement=dynamic_cast<svModelElement*>(m_Model->GetModelElement());
+    if(!modelElement) return;
+
+    double minArea=0;
+
+    std::vector<int> faceIDs=modelElement->GetAllFaceIDs();
+    for(int i=0;i<faceIDs.size();i++)
+    {
+        if(i==0)
+            minArea=modelElement->GetFaceArea(faceIDs[i]);
+        else
+        {
+            double area=modelElement->GetFaceArea(faceIDs[i]);
+            if(area<minArea)
+                minArea=area;
+        }
+    }
+
+    double edgeSize= sqrt(minArea/3.1415)/2.5;
+    edgeSize=round(10000*edgeSize)/10000;
+
+    ui->lineEditGlobalEdgeSizeT->setText(QString::number(edgeSize));
+}
+
+void svMeshEdit::RunMesher()
 {
     RunCommands(true);
-
-//    if(!m_MitkMesh) return;
-
-//    if(!m_Model) return;
-//    svModelElementPolyData* modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
-//    if(!modelElement) return;
-
-//    svMeshTetGen* mesh=new svMeshTetGen();
-//    mesh->InitNewMesher();
-//    mesh->SetModelElement(modelElement);
-
-//    std::vector<std::string> cmds;
-
-//    QString text=ui->plainTextEdit->toPlainText();
-//    QStringList list=text.split("\n");
-
-//    for(int i=0;i<list.size();i++)
-//    {
-//        cmds.push_back(list[i].toStdString());
-//    }
-
-//    std::string msg;
-//    if(!mesh->ExecuteCommands(cmds, msg))
-//    {
-//        cout<<msg<<endl;
-//        return;
-//    }
-//    mesh->SetCommandHistory(cmds);
-
-//    m_MitkMesh->SetMesh(mesh);
 }
 
 void svMeshEdit::RunHistory()
@@ -143,13 +195,13 @@ void svMeshEdit::RunCommands(bool fromGUI)
     {
         std::vector<std::string> cmds;
 
-        QString text=ui->plainTextEdit->toPlainText();
-        QStringList list=text.split("\n");
+//        QString text=ui->plainTextEdit->toPlainText();
+//        QStringList list=text.split("\n");
 
-        for(int i=0;i<list.size();i++)
-        {
-            cmds.push_back(list[i].toStdString());
-        }
+//        for(int i=0;i<list.size();i++)
+//        {
+//            cmds.push_back(list[i].toStdString());
+//        }
 
         std::string msg;
         if(!mesh->ExecuteCommands(cmds, msg))

@@ -33,7 +33,7 @@ public:
 
 public slots:
 
-    void CreateMesh();
+    void RunMesher();
 
     void RunHistory();
 
@@ -41,9 +41,15 @@ public slots:
 
     void UpdateGUI();
 
+    void EstimateEdgeSize();
+
+    void TableFaceListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
 public:
 
     int GetTimeStep();
+
+    void SetupTetGenGUI(QWidget *parent );
 
     void RunCommands(bool fromGUI = true);
 
@@ -81,10 +87,6 @@ protected:
 
     mitk::DataNode::Pointer m_MeshNode;
 
-//    mitk::DataNode::Pointer m_MeshFolderNode;
-
-//    mitk::DataNode::Pointer m_ModelNode;
-
 //    svMitkMeshDataInteractor::Pointer m_DataInteractor;
 
     long m_ModelSelectFaceObserverTag;
@@ -92,11 +94,11 @@ protected:
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
+    QMenu* m_TableMenuLocalT;
+    QStandardItemModel* m_TableModelLocalT;
+
     QMenu* m_SphereTableMenu;
     QStandardItemModel* m_SphereTableModel;
-
-    QMenu* m_FaceListTableMenu;
-    QStandardItemModel* m_FaceListTableModel;
 
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 

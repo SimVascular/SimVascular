@@ -736,7 +736,6 @@ void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*select
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
-
 void svModelEdit::ToggleVisibility(const QModelIndex &index){
 
     if(!m_Model)
