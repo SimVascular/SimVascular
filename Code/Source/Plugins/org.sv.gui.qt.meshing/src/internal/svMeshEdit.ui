@@ -232,7 +232,7 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>4</number>
+             <number>1</number>
             </property>
             <widget class="QWidget" name="page_3">
              <property name="geometry">
@@ -337,9 +337,15 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lineEditPortionT">
-                         <property name="text">
-                          <string>0.5</string>
+                        <widget class="QDoubleSpinBox" name="dsbPortionT">
+                         <property name="maximum">
+                          <double>1.000000000000000</double>
+                         </property>
+                         <property name="singleStep">
+                          <double>0.100000000000000</double>
+                         </property>
+                         <property name="value">
+                          <double>0.500000000000000</double>
                          </property>
                         </widget>
                        </item>
@@ -372,9 +378,15 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lineEditLayersT">
-                         <property name="text">
-                          <string>2</string>
+                        <widget class="QSpinBox" name="sbLayersT">
+                         <property name="minimum">
+                          <number>1</number>
+                         </property>
+                         <property name="maximum">
+                          <number>20</number>
+                         </property>
+                         <property name="value">
+                          <number>2</number>
                          </property>
                         </widget>
                        </item>
@@ -407,9 +419,18 @@
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLineEdit" name="lineEditRatioT">
-                         <property name="text">
-                          <string>0.8</string>
+                        <widget class="QDoubleSpinBox" name="dsbRatioT">
+                         <property name="minimum">
+                          <double>0.010000000000000</double>
+                         </property>
+                         <property name="maximum">
+                          <double>1.000000000000000</double>
+                         </property>
+                         <property name="singleStep">
+                          <double>0.100000000000000</double>
+                         </property>
+                         <property name="value">
+                          <double>0.800000000000000</double>
                          </property>
                         </widget>
                        </item>
@@ -519,6 +540,14 @@
              </layout>
             </widget>
             <widget class="QWidget" name="page_6">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>408</width>
+               <height>421</height>
+              </rect>
+             </property>
              <attribute name="label">
               <string>Local Size</string>
              </attribute>
@@ -542,7 +571,20 @@
                <widget class="QWidget" name="widget_8" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_8">
                  <item>
-                  <widget class="QTableView" name="tableViewLocalT"/>
+                  <widget class="QTableView" name="tableViewLocalT">
+                   <property name="contextMenuPolicy">
+                    <enum>Qt::CustomContextMenu</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::ExtendedSelection</enum>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                   <property name="sortingEnabled">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -550,6 +592,14 @@
              </layout>
             </widget>
             <widget class="QWidget" name="page_7">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>408</width>
+               <height>421</height>
+              </rect>
+             </property>
              <attribute name="label">
               <string>Regional Refinement</string>
              </attribute>
@@ -571,9 +621,67 @@
               </property>
               <item>
                <widget class="QWidget" name="widget_10" native="true">
-                <layout class="QVBoxLayout" name="verticalLayout_10">
+                <layout class="QHBoxLayout" name="horizontalLayout_11">
                  <item>
-                  <widget class="QTableView" name="tableViewRefinementT"/>
+                  <widget class="QTableView" name="tableViewRegionT">
+                   <property name="contextMenuPolicy">
+                    <enum>Qt::CustomContextMenu</enum>
+                   </property>
+                   <property name="selectionMode">
+                    <enum>QAbstractItemView::SingleSelection</enum>
+                   </property>
+                   <property name="selectionBehavior">
+                    <enum>QAbstractItemView::SelectRows</enum>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QWidget" name="widget_17" native="true">
+                   <layout class="QVBoxLayout" name="verticalLayout_10">
+                    <property name="spacing">
+                     <number>5</number>
+                    </property>
+                    <property name="leftMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="topMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="rightMargin">
+                     <number>0</number>
+                    </property>
+                    <property name="bottomMargin">
+                     <number>0</number>
+                    </property>
+                    <item>
+                     <widget class="QCheckBox" name="checkBoxSphereT">
+                      <property name="text">
+                       <string>Sphere</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <widget class="QPushButton" name="btnAddSphereT">
+                      <property name="text">
+                       <string>Add</string>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="verticalSpacer_4">
+                      <property name="orientation">
+                       <enum>Qt::Vertical</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>20</width>
+                        <height>40</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                   </layout>
+                  </widget>
                  </item>
                 </layout>
                </widget>
@@ -788,7 +896,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QCheckBox" name="checkBox_9">
+                  <widget class="QCheckBox" name="checkBoxFlagV">
                    <property name="text">
                     <string>Verbose: detailed info more output to .tgs file (-V)</string>
                    </property>
@@ -813,6 +921,14 @@
              </layout>
             </widget>
             <widget class="QWidget" name="page_8">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>408</width>
+               <height>421</height>
+              </rect>
+             </property>
              <attribute name="label">
               <string>Run Command History</string>
              </attribute>
@@ -840,6 +956,14 @@
              </layout>
             </widget>
             <widget class="QWidget" name="page_5">
+             <property name="geometry">
+              <rect>
+               <x>0</x>
+               <y>0</y>
+               <width>408</width>
+               <height>421</height>
+              </rect>
+             </property>
              <attribute name="label">
               <string>Adapt</string>
              </attribute>

@@ -4,7 +4,7 @@
 #include "svMitkMesh.h"
 #include "svModel.h"
 
-//#include "svMitkMeshDataInteractor.h"
+#include "svModelDataInteractor.h"
 
 #include <QmitkFunctionality.h>
 
@@ -45,6 +45,26 @@ public slots:
 
     void TableFaceListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
+    void SetLocal( bool checked = false );
+
+    void ClearLocal( bool checked = false );
+
+    void TableViewLocalContextMenuRequested( const QPoint & index );
+
+    void TableRegionListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void DeleteSelectedRegions( bool checked = false );
+
+    void TableViewRegionContextMenuRequested( const QPoint & index );
+
+    void UpdateFaceListSelection();
+
+    void UpdateTetGenGUI();
+
+    void AddSphere();
+
+    void ShowSphereInteractor(bool checked);
+
 public:
 
     int GetTimeStep();
@@ -52,6 +72,8 @@ public:
     void SetupTetGenGUI(QWidget *parent );
 
     void RunCommands(bool fromGUI = true);
+
+    void UpdateSphereData( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData) );
 
 //    std::vector<int> GetSelectedFaceIDs();
 
@@ -87,20 +109,24 @@ protected:
 
     mitk::DataNode::Pointer m_MeshNode;
 
-//    svMitkMeshDataInteractor::Pointer m_DataInteractor;
+    mitk::DataNode::Pointer m_ModelNode;
+
+    svModelDataInteractor::Pointer m_DataInteractor;
 
     long m_ModelSelectFaceObserverTag;
-    long m_MeshUpdateObserverTag;
+    long m_SphereObserverTag;
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
     QMenu* m_TableMenuLocalT;
     QStandardItemModel* m_TableModelLocalT;
 
-    QMenu* m_SphereTableMenu;
-    QStandardItemModel* m_SphereTableModel;
+    QMenu* m_TableMenuRegionT;
+    QStandardItemModel* m_TableModelRegionT;
 
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
+
+    int m_SelectedRegionIndex;
 
 };
 

@@ -15,6 +15,8 @@ public:
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
+    void SetFaceSelectionOnly(bool only = true);
+
 protected:
 
     svModelDataInteractor();
@@ -49,7 +51,6 @@ protected:
 
     virtual void DeleteSelectedFacesCells(mitk::StateMachineAction*, mitk::InteractionEvent*);
 
-    void SetFaceSelectionOnly(bool only = true);
 private:
 
       svModel* m_Model;
