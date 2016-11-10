@@ -136,6 +136,8 @@ public:
 
     double GetFaceArea(int id);
 
+    double GetMinFaceArea();
+
     std::vector<svBlendParamRadius*> GetBlendRadii();
 
     void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);

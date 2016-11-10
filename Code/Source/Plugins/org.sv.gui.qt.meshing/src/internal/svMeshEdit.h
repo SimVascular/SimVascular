@@ -9,8 +9,6 @@
 #include <QmitkFunctionality.h>
 
 #include <vtkSphereWidget.h>
-#include <vtkPlaneWidget.h>
-#include <vtkBoxWidget.h>
 
 #include <QWidget>
 #include <QStandardItemModel>
@@ -39,9 +37,13 @@ public slots:
 
     void ClearAll();
 
+    void AddObservers();
+
+    void RemoveObservers();
+
     void UpdateGUI();
 
-    void EstimateEdgeSize();
+    void SetEstimatedEdgeSize();
 
     void TableFaceListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
@@ -52,6 +54,8 @@ public slots:
     void TableViewLocalContextMenuRequested( const QPoint & index );
 
     void TableRegionListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+    void SetRegion( bool checked = false );
 
     void DeleteSelectedRegions( bool checked = false );
 
@@ -73,7 +77,13 @@ public:
 
     void RunCommands(bool fromGUI = true);
 
-    void UpdateSphereData( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData) );
+    double EstimateEdgeSize();
+
+    std::vector<std::string> CreateCmdsT();
+
+//    static void UpdateSphereData( vtkObject* caller, long unsigned int vtkNotUsed(eventId), void* vtkNotUsed(clientData), void* vtkNotUsed(callData) );
+
+    void UpdateSphereData();
 
 //    std::vector<int> GetSelectedFaceIDs();
 
@@ -114,7 +124,7 @@ protected:
     svModelDataInteractor::Pointer m_DataInteractor;
 
     long m_ModelSelectFaceObserverTag;
-    long m_SphereObserverTag;
+//    long m_SphereObserverTag;
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
@@ -124,9 +134,20 @@ protected:
     QMenu* m_TableMenuRegionT;
     QStandardItemModel* m_TableModelRegionT;
 
+    int m_SelectedRegionIndex;
+
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 
-    int m_SelectedRegionIndex;
+    bool m_UndoAble;
+
+//public:
+
+//    static vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
+
+//    static double m_Radius;
+//    static double m_CenterX;
+//    static double m_CenterY;
+//    static double m_CenterZ;
 
 };
 

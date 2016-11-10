@@ -300,6 +300,26 @@ double svModelElement::GetFaceArea(int id)
     return svModelUtils::CalculateVpdArea(face->vpd);
 }
 
+double svModelElement::GetMinFaceArea()
+{
+    double minArea=0;
+
+    std::vector<int> faceIDs=GetAllFaceIDs();
+    for(int i=0;i<faceIDs.size();i++)
+    {
+        if(i==0)
+            minArea=GetFaceArea(faceIDs[i]);
+        else
+        {
+            double area=GetFaceArea(faceIDs[i]);
+            if(area<minArea)
+                minArea=area;
+        }
+    }
+
+    return minArea;
+}
+
 void svModelElement::CalculateBoundingBox(double *bounds)
 {
     bounds[0]=0;
