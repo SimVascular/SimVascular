@@ -91,7 +91,6 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 
     if(m_SphereWidget==NULL)
     {
-//        m_SphereWidget = vtkSmartPointer<vtkSphereWidget>::New();
         m_SphereWidget = vtkSmartPointer<svVtkMeshSphereWidget>::New();
         m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
     //    m_SphereWidget->SetRepresentationToSurface();
@@ -727,7 +726,6 @@ void svMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(nodes.size()==0)
     {
-//        ClearAll();
         RemoveObservers();
         m_Parent->setEnabled(false);
         return;
@@ -743,27 +741,12 @@ void svMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-//    if(m_ModelNode==modelNode)
-//    {
-//        return;
-//    }
-
-//    ClearAll();
-
     if(m_MeshNode==meshNode)
     {
         AddObservers();
         m_Parent->setEnabled(true);
         return;
     }
-
-
-//    if(!m_MitkMesh)
-//    {
-//        ClearAll();
-//        m_Parent->setEnabled(false);
-//        return;
-//    }
 
     std::string modelName=mitkMesh->GetModelName();
 
