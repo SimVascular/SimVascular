@@ -138,12 +138,12 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
     mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<svMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     mitk::DataNode::Pointer simFolderNode=CreateDataFolder<svSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
 
-    imageFolderNode->AddProperty("previous visibility",mitk::StringProperty::New(false) );
-    pathFolderNode->AddProperty("previous visibility",mitk::StringProperty::New(false) );
-    segFolderNode->AddProperty("previous visibility",mitk::StringProperty::New(false) );
-    modelFolderNode->AddProperty("previous visibility",mitk::StringProperty::New(false) );
-    meshFolderNode->AddProperty("previous visibility",mitk::StringProperty::New(false) );
-    simFolderNode->AddProperty("previous visibility",mitk::StringProperty::New(false) );
+    imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    segFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    modelFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     if(!newProject)
     {

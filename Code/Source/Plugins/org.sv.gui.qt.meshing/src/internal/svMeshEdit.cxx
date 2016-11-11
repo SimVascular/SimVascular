@@ -501,11 +501,11 @@ void svMeshEdit::SetEstimatedEdgeSize()
 
 double svMeshEdit::EstimateEdgeSize()
 {
-    if(!m_MitkMesh) return;
+    if(!m_MitkMesh) return 0;
 
-    if(!m_Model) return;
+    if(!m_Model) return 0;
     svModelElement* modelElement=dynamic_cast<svModelElement*>(m_Model->GetModelElement());
-    if(!modelElement) return;
+    if(!modelElement) return 0;
 
     double edgeSize= sqrt(modelElement->GetMinFaceArea()/3.1415)/2.5;
     edgeSize=round(10000*edgeSize)/10000;
