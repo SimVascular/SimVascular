@@ -225,10 +225,10 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     m_Parent->setEnabled(true);
 
-    std::string groupPathName=m_ContourGroup->GetPathName();
+//    std::string groupPathName=m_ContourGroup->GetPathName();
     int  groupPathID=m_ContourGroup->GetPathID();
 
-    mitk::DataNode::Pointer pathNode=NULL;
+//    mitk::DataNode::Pointer pathNode=NULL;
     mitk::DataNode::Pointer imageNode=NULL;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ContourGroupNode,isProjFolder,false);

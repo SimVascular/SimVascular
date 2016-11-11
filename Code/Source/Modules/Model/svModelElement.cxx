@@ -1,4 +1,5 @@
 #include "svModelElement.h"
+#include "svModelUtils.h"
 
 #include <vtkCellData.h>
 
@@ -242,6 +243,18 @@ bool svModelElement::IsFaceSelected(int id)
     return GetFace(id)&&GetFace(id)->selected;
 }
 
+std::vector<int> svModelElement::GetAllFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i])
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
 std::vector<int> svModelElement::GetSelectedFaceIDs()
 {
     std::vector<int> ids;
@@ -276,6 +289,35 @@ std::vector<int> svModelElement::GetCapFaceIDs()
     }
 
     return ids;
+}
+
+double svModelElement::GetFaceArea(int id)
+{
+    svFace* face=GetFace(id);
+    if(face==NULL)
+        return 0;
+
+    return svModelUtils::CalculateVpdArea(face->vpd);
+}
+
+double svModelElement::GetMinFaceArea()
+{
+    double minArea=0;
+
+    std::vector<int> faceIDs=GetAllFaceIDs();
+    for(int i=0;i<faceIDs.size();i++)
+    {
+        if(i==0)
+            minArea=GetFaceArea(faceIDs[i]);
+        else
+        {
+            double area=GetFaceArea(faceIDs[i]);
+            if(area<minArea)
+                minArea=area;
+        }
+    }
+
+    return minArea;
 }
 
 void svModelElement::CalculateBoundingBox(double *bounds)

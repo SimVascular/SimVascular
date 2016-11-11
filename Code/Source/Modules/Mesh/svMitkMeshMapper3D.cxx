@@ -32,6 +32,7 @@
 #include <vtkDataSetSurfaceFilter.h>
 #include <vtkDataSetMapper.h>
 #include <vtkIdTypeArray.h>
+#include <vtkExtractGeometry.h>
 
 const svMitkMesh* svMitkMeshMapper3D::GetInput()
 {
@@ -99,7 +100,8 @@ void svMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
     actor->SetMapper(mapper);
 
     Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
-    ApplyAllProperties(renderer, mapper, actor);
+    this->ApplyShaderProperties(renderer);
+    ApplyAllProperties(node, renderer, mapper, actor, &m_LSH, true);
 
     if(showEdges)
     {
@@ -107,9 +109,9 @@ void svMitkMeshMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
         actor->GetProperty()->SetEdgeVisibility(1);
         actor->GetProperty()->SetLineWidth(0.5);
     }
-
     ls->m_Actor=actor;
-    ls->m_PropAssembly->AddPart(actor );
+
+    ls->m_PropAssembly->AddPart(ls->m_Actor);
 
     if(visible)
         ls->m_PropAssembly->VisibilityOn();
@@ -262,67 +264,65 @@ void svMitkMeshMapper3D::ApplyMitkPropertiesToVtkProperty(mitk::DataNode *node, 
     }
 }
 
-void svMitkMeshMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor)
+void svMitkMeshMapper3D::ApplyAllProperties(mitk::DataNode *node, mitk::BaseRenderer* renderer, vtkSmartPointer<vtkPainterPolyDataMapper> mapper, vtkSmartPointer<vtkActor> actor, mitk::LocalStorageHandler<LocalStorage>* handler, bool clipping)
 {
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
-
     // Applying shading properties
 //    Superclass::ApplyColorAndOpacityProperties( renderer, actor ) ;
-    this->ApplyShaderProperties(renderer);
+//    this->ApplyShaderProperties(renderer);
     // VTK Properties
-    ApplyMitkPropertiesToVtkProperty( this->GetDataNode(), actor->GetProperty(), renderer );
+    ApplyMitkPropertiesToVtkProperty( node, actor->GetProperty(), renderer );
 
     mitk::TransferFunctionProperty::Pointer transferFuncProp;
-    this->GetDataNode()->GetProperty(transferFuncProp, "Surface.TransferFunction", renderer);
+    node->GetProperty(transferFuncProp, "Surface.TransferFunction", renderer);
     if (transferFuncProp.IsNotNull() )
     {
         mapper->SetLookupTable(transferFuncProp->GetValue()->GetColorTransferFunction());
     }
 
     mitk::LookupTableProperty::Pointer lookupTableProp;
-    this->GetDataNode()->GetProperty(lookupTableProp, "LookupTable", renderer);
+    node->GetProperty(lookupTableProp, "LookupTable", renderer);
     if (lookupTableProp.IsNotNull() )
     {
         mapper->SetLookupTable(lookupTableProp->GetLookupTable()->GetVtkLookupTable());
     }
 
     mitk::LevelWindow levelWindow;
-    if(this->GetDataNode()->GetLevelWindow(levelWindow, renderer, "levelWindow"))
+    if(node->GetLevelWindow(levelWindow, renderer, "levelWindow"))
     {
         mapper->SetScalarRange(levelWindow.GetLowerWindowBound(),levelWindow.GetUpperWindowBound());
     }
-    else if(this->GetDataNode()->GetLevelWindow(levelWindow, renderer))
+    else if(node->GetLevelWindow(levelWindow, renderer))
     {
         mapper->SetScalarRange(levelWindow.GetLowerWindowBound(),levelWindow.GetUpperWindowBound());
     }
 
     bool scalarVisibility = false;
-    this->GetDataNode()->GetBoolProperty("scalar visibility", scalarVisibility);
+    node->GetBoolProperty("scalar visibility", scalarVisibility);
     mapper->SetScalarVisibility( (scalarVisibility ? 1 : 0) );
 
     if(scalarVisibility)
     {
         mitk::VtkScalarModeProperty* scalarMode;
-        if(this->GetDataNode()->GetProperty(scalarMode, "scalar mode", renderer))
+        if(node->GetProperty(scalarMode, "scalar mode", renderer))
             mapper->SetScalarMode(scalarMode->GetVtkScalarMode());
         else
             mapper->SetScalarModeToDefault();
 
         bool colorMode = false;
-        this->GetDataNode()->GetBoolProperty("color mode", colorMode);
+        node->GetBoolProperty("color mode", colorMode);
         mapper->SetColorMode( (colorMode ? 1 : 0) );
 
         double scalarsMin = 0;
-        this->GetDataNode()->GetDoubleProperty("ScalarsRangeMinimum", scalarsMin, renderer);
+        node->GetDoubleProperty("ScalarsRangeMinimum", scalarsMin, renderer);
 
         double scalarsMax = 1.0;
-        this->GetDataNode()->GetDoubleProperty("ScalarsRangeMaximum", scalarsMax, renderer);
+        node->GetDoubleProperty("ScalarsRangeMaximum", scalarsMax, renderer);
 
         mapper->SetScalarRange(scalarsMin,scalarsMax);
     }
 
     mitk::SmartPointerProperty::Pointer imagetextureProp =
-            dynamic_cast< mitk::SmartPointerProperty * >(GetDataNode()->GetProperty("Surface.Texture", renderer));
+            dynamic_cast< mitk::SmartPointerProperty * >(node->GetProperty("Surface.Texture", renderer));
 
     if(imagetextureProp.IsNotNull())
     {
@@ -358,10 +358,10 @@ void svMitkMeshMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSma
 
     // deprecated settings
     bool deprecatedUseCellData = false;
-    this->GetDataNode()->GetBoolProperty("deprecated useCellDataForColouring", deprecatedUseCellData);
+    node->GetBoolProperty("deprecated useCellDataForColouring", deprecatedUseCellData);
 
     bool deprecatedUsePointData = false;
-    this->GetDataNode()->GetBoolProperty("deprecated usePointDataForColouring", deprecatedUsePointData);
+    node->GetBoolProperty("deprecated usePointDataForColouring", deprecatedUsePointData);
 
     if (deprecatedUseCellData)
     {
@@ -376,12 +376,12 @@ void svMitkMeshMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSma
     else if (deprecatedUsePointData)
     {
         float scalarsMin = 0;
-        if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum")) != NULL)
-            scalarsMin = dynamic_cast<mitk::FloatProperty*>(this->GetDataNode()->GetProperty("ScalarsRangeMinimum"))->GetValue();
+        if (dynamic_cast<mitk::FloatProperty *>(node->GetProperty("ScalarsRangeMinimum")) != NULL)
+            scalarsMin = dynamic_cast<mitk::FloatProperty*>(node->GetProperty("ScalarsRangeMinimum"))->GetValue();
 
         float scalarsMax = 0.1;
-        if (dynamic_cast<mitk::FloatProperty *>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum")) != NULL)
-            scalarsMax = dynamic_cast<mitk::FloatProperty*>(this->GetDataNode()->GetProperty("ScalarsRangeMaximum"))->GetValue();
+        if (dynamic_cast<mitk::FloatProperty *>(node->GetProperty("ScalarsRangeMaximum")) != NULL)
+            scalarsMax = dynamic_cast<mitk::FloatProperty*>(node->GetProperty("ScalarsRangeMaximum"))->GetValue();
 
         mapper->SetScalarRange(scalarsMin,scalarsMax);
         mapper->SetColorModeToMapScalars();
@@ -392,7 +392,7 @@ void svMitkMeshMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSma
     }
 
     int deprecatedScalarMode = VTK_COLOR_MODE_DEFAULT;
-    if(this->GetDataNode()->GetIntProperty("deprecated scalar mode", deprecatedScalarMode, renderer))
+    if(node->GetIntProperty("deprecated scalar mode", deprecatedScalarMode, renderer))
     {
         mapper->SetScalarMode(deprecatedScalarMode);
         mapper->ScalarVisibilityOn();
@@ -403,31 +403,35 @@ void svMitkMeshMapper3D::ApplyAllProperties(mitk::BaseRenderer* renderer, vtkSma
     // Check whether one or more ClippingProperty objects have been defined for
     // this node. Check both renderer specific and global property lists, since
     // properties in both should be considered.
-    const mitk::PropertyList::PropertyMap *rendererProperties = this->GetDataNode()->GetPropertyList( renderer )->GetMap();
-    const mitk::PropertyList::PropertyMap *globalProperties = this->GetDataNode()->GetPropertyList( NULL )->GetMap();
+    const mitk::PropertyList::PropertyMap *rendererProperties = node->GetPropertyList( renderer )->GetMap();
+    const mitk::PropertyList::PropertyMap *globalProperties = node->GetPropertyList( NULL )->GetMap();
 
-    // Add clipping planes (if any)
-    ls->m_ClippingPlaneCollection->RemoveAllItems();
+   if(clipping)
+   {
+       // Add clipping planes (if any)
+       LocalStorage *ls = handler->GetLocalStorage(renderer);
+       ls->m_ClippingPlaneCollection->RemoveAllItems();
 
-    mitk::PropertyList::PropertyMap::const_iterator it;
-    for ( it = rendererProperties->begin(); it != rendererProperties->end(); ++it )
-    {
-        this->CheckForClippingProperty( renderer,(*it).second.GetPointer() );
-    }
+       mitk::PropertyList::PropertyMap::const_iterator it;
+       for ( it = rendererProperties->begin(); it != rendererProperties->end(); ++it )
+       {
+           CheckForClippingProperty( renderer,(*it).second.GetPointer(), handler);
+       }
 
-    for ( it = globalProperties->begin(); it != globalProperties->end(); ++it )
-    {
-        this->CheckForClippingProperty( renderer,(*it).second.GetPointer() );
-    }
+       for ( it = globalProperties->begin(); it != globalProperties->end(); ++it )
+       {
+           CheckForClippingProperty( renderer,(*it).second.GetPointer(), handler );
+       }
 
-    if ( ls->m_ClippingPlaneCollection->GetNumberOfItems() > 0 )
-    {
-        mapper->SetClippingPlanes( ls->m_ClippingPlaneCollection );
-    }
-    else
-    {
-        mapper->RemoveAllClippingPlanes();
-    }
+       if ( ls->m_ClippingPlaneCollection->GetNumberOfItems() > 0 )
+       {
+           mapper->SetClippingPlanes( ls->m_ClippingPlaneCollection );
+       }
+       else
+       {
+           mapper->RemoveAllClippingPlanes();
+       }
+   }
 }
 
 vtkProp *svMitkMeshMapper3D::GetVtkProp(mitk::BaseRenderer *renderer)
@@ -436,9 +440,9 @@ vtkProp *svMitkMeshMapper3D::GetVtkProp(mitk::BaseRenderer *renderer)
     return ls->m_PropAssembly;
 }
 
-void svMitkMeshMapper3D::CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property )
+void svMitkMeshMapper3D::CheckForClippingProperty( mitk::BaseRenderer* renderer, mitk::BaseProperty *property, mitk::LocalStorageHandler<LocalStorage>* handler )
 {
-    LocalStorage *ls = m_LSH.GetLocalStorage(renderer);
+    LocalStorage *ls = handler->GetLocalStorage(renderer);
 
     mitk::ClippingProperty *clippingProperty = dynamic_cast< mitk::ClippingProperty * >( property );
 
@@ -469,7 +473,7 @@ void svMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(mitk::DataNode* node
         node->AddProperty( "material.specularPower"      , mitk::FloatProperty::New(16.0f)          , renderer, overwrite );
 
         mitk::VtkRepresentationProperty::Pointer rep=mitk::VtkRepresentationProperty ::New();
-        rep->SetRepresentationToWireframe();
+//        rep->SetRepresentationToWireframe();
         node->AddProperty( "material.representation"      , rep  , renderer, overwrite );
         node->AddProperty( "material.interpolation"       , mitk::VtkInterpolationProperty::New()   , renderer, overwrite );
     }

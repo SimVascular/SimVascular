@@ -32,6 +32,9 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
 
             if(line.contains("/group/"))
             {
+                QStringList list = line.split("/");
+                contourGroup->SetPathName(list[1].toStdString());
+
                 svContour* contour= new svContour();
                 contourGroup->InsertContour(-1,contour);
 
@@ -40,7 +43,7 @@ mitk::DataNode::Pointer svSegmentationLegacyIO::ReadContourGroupFile(QString fil
                 pathPoint.id=line.toInt();
 
                 line = in.readLine();
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
 
                 int index;
 

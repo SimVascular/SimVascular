@@ -6,6 +6,7 @@ set(INTERNAL_CPP_FILES
     svMeshCreate.cxx
     svMeshCreateAction.cxx
     svMeshEdit.cxx
+    svVtkMeshSphereWidget.cxx
     svMeshingPluginActivator.cxx
 )
 

@@ -57,6 +57,10 @@ public:
 
     vtkSmartPointer<vtkUnstructuredGrid> GetVolumeMesh();
 
+    void SetSurfaceMesh(vtkSmartPointer<vtkPolyData> surfaceMesh);
+
+    void SetVolumeMesh(vtkSmartPointer<vtkUnstructuredGrid> volumeMesh);
+
   protected:
 
 //    std::string m_ModelName;

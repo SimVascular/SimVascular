@@ -3,6 +3,8 @@
 
 #include <org_sv_gui_qt_segmentation_Export.h>
 
+#include <svPath.h>
+
 #include <mitkIContextMenuAction.h>
 #include <mitkDataNode.h>
 
@@ -23,6 +25,8 @@ public:
   void SetSmoothed(bool smoothed) override {}
   void SetDecimated(bool decimated) override {}
   void SetFunctionality(berry::QtViewPart *functionality) override {}
+
+  svPath* GetPath(int groupPathID, mitk::DataNode::Pointer segFolderNode);
 
 private:
   svSegmentationLegacyLoadAction(const svSegmentationLegacyLoadAction &);

@@ -1,5 +1,9 @@
-
 #include "svMitkMeshMapper2D.h"
+#include "svMitkMeshMapper3D.h"
+
+#include "svPathElement.h"
+#include "svSegmentationUtils.h"
+#include "svMath3.h"
 
 //mitk includes
 #include <mitkDataNode.h>
@@ -9,6 +13,7 @@
 #include <mitkLookupTableProperty.h>
 #include <mitkVtkScalarModeProperty.h>
 #include <mitkTransferFunctionProperty.h>
+#include <mitkVtkRepresentationProperty.h>
 
 //vtk includes
 #include <vtkActor.h>
@@ -19,6 +24,11 @@
 #include <vtkAssembly.h>
 #include <vtkPointData.h>
 #include <vtkTransformPolyDataFilter.h>
+#include <vtkExtractGeometry.h>
+#include <vtkDataSetMapper.h>
+#include <vtkDataSetSurfaceFilter.h>
+#include <vtkPainterPolyDataMapper.h>
+#include <vtkPlanes.h>
 
 svMitkMeshMapper2D::LocalStorage::LocalStorage()
 {
@@ -100,6 +110,8 @@ void svMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         return;
     }
 
+    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
+
     double origin[3];
     origin[0] = planeGeometry->GetOrigin()[0];
     origin[1] = planeGeometry->GetOrigin()[1];
@@ -110,43 +122,139 @@ void svMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     normal[1] = planeGeometry->GetNormal()[1];
     normal[2] = planeGeometry->GetNormal()[2];
 
-    float lineWidth = 1.0f;
-    node->GetFloatProperty("line 2D width", lineWidth, renderer);
-
-    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
-
-
     float color[3]= { 1.0f, 1.0f, 1.0f };
     node->GetColor(color, renderer, "color");
     float opacity = 1.0f;
     node->GetOpacity(opacity, renderer, "opacity");
 
-    vtkSmartPointer<vtkPlane> cuttingPlane = vtkSmartPointer<vtkPlane>::New();
-    cuttingPlane->SetOrigin(origin);
-    cuttingPlane->SetNormal(normal);
+    bool showContour=true;
+    if(showContour)
+    {
+        float lineWidth = 1.0f;
+        node->GetFloatProperty("line 2D width", lineWidth, renderer);
 
-    vtkSmartPointer<vtkCutter> cutter = vtkSmartPointer<vtkCutter>::New();
-    cutter->SetCutFunction(cuttingPlane);
-    vtkSmartPointer<vtkLinearTransform> vtktransform = GetDataNode()->GetVtkTransform(this->GetTimestep());
-    vtkSmartPointer<vtkTransformPolyDataFilter> filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-    filter->SetTransform(vtktransform);
-    filter->SetInputData(surfaceMesh);
-    cutter->SetInputConnection(filter->GetOutputPort());
-    cutter->Update();
+        vtkSmartPointer<vtkPlane> cuttingPlane = vtkSmartPointer<vtkPlane>::New();
+        cuttingPlane->SetOrigin(origin);
+        cuttingPlane->SetNormal(normal);
 
-    vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-    mapper->ScalarVisibilityOff();
-    mapper->SetInputConnection(cutter->GetOutputPort());
-    ApplyMapperProperties(mapper, renderer);
+        vtkSmartPointer<vtkCutter> cutter = vtkSmartPointer<vtkCutter>::New();
+        cutter->SetCutFunction(cuttingPlane);
+        vtkSmartPointer<vtkLinearTransform> vtktransform = GetDataNode()->GetVtkTransform(this->GetTimestep());
+        vtkSmartPointer<vtkTransformPolyDataFilter> filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+        filter->SetTransform(vtktransform);
+        filter->SetInputData(surfaceMesh);
+        cutter->SetInputConnection(filter->GetOutputPort());
+        cutter->Update();
 
-    vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
-    actor->SetMapper(mapper);
-    actor->GetProperty()->SetColor(color[0], color[1], color[2]);
-    actor->GetProperty()->SetOpacity(opacity);
-    actor->GetProperty()->SetLineWidth(lineWidth);
-    actor->GetProperty()->SetLighting(0);
+        vtkSmartPointer<vtkPolyDataMapper> mapper = vtkSmartPointer<vtkPolyDataMapper>::New();
+        mapper->ScalarVisibilityOff();
+        mapper->SetInputConnection(cutter->GetOutputPort());
+        ApplyMapperProperties(mapper, renderer);
 
-    localStorage->m_PropAssembly->AddPart(actor );
+        vtkSmartPointer<vtkActor> actor= vtkSmartPointer<vtkActor>::New();
+        actor->SetMapper(mapper);
+        actor->GetProperty()->SetColor(color[0], color[1], color[2]);
+        actor->GetProperty()->SetOpacity(opacity);
+        actor->GetProperty()->SetLineWidth(lineWidth);
+        actor->GetProperty()->SetLighting(0);
+
+        localStorage->m_PropAssembly->AddPart(actor );
+    }
+
+    bool showInnerMesh=false;
+    node->GetBoolProperty("show inner", showInnerMesh, renderer);
+    if(showInnerMesh && mesh->GetVolumeMesh())
+    {
+        bool showEdges=false;
+        node->GetBoolProperty("show edges", showEdges, renderer);
+
+        float edgeColor[3]= { 0.0f, 0.0f, 1.0f };
+        node->GetColor(edgeColor, renderer, "edge color");
+
+        vtkSmartPointer<vtkPlane> cuttingPlane = vtkSmartPointer<vtkPlane>::New();
+        cuttingPlane->SetOrigin(origin);
+        cuttingPlane->SetNormal(normal);
+
+        vtkSmartPointer<vtkExtractGeometry> extracter = vtkSmartPointer<vtkExtractGeometry>::New();
+        extracter->ExtractBoundaryCellsOn();
+        extracter->SetImplicitFunction(cuttingPlane);
+        extracter->SetInputData(mesh->GetVolumeMesh());
+        extracter->Update();
+
+        vtkSmartPointer<vtkUnstructuredGrid> extracted=extracter->GetOutput();
+
+        cuttingPlane = vtkSmartPointer<vtkPlane>::New();
+        cuttingPlane->SetOrigin(origin);
+        double inverseNormal[3];
+        inverseNormal[0] = -normal[0];
+        inverseNormal[1] = -normal[1];
+        inverseNormal[2] = -normal[2];
+        cuttingPlane->SetNormal(inverseNormal);
+
+        extracter = vtkSmartPointer<vtkExtractGeometry>::New();
+        extracter->ExtractBoundaryCellsOn();
+        extracter->SetImplicitFunction(cuttingPlane);
+        extracter->SetInputData(extracted);
+        extracter->Update();
+
+//        svPathElement::svPathPoint pathPoint;
+//        pathPoint.pos[0]=origin[0];
+//        pathPoint.pos[1]=origin[1];
+//        pathPoint.pos[2]=origin[2];
+//        pathPoint.tangent[0]=normal[0];
+//        pathPoint.tangent[1]=normal[1];
+//        pathPoint.tangent[2]=normal[2];
+//        pathPoint.tangent.Normalize();
+//        pathPoint.rotation=svMath3::GetPerpendicularNormalVector(pathPoint.tangent);
+
+//        vtkSmartPointer<vtkPlanes> planes=vtkSmartPointer<vtkPlanes>::New();
+//        planes->SetBounds(-1000, 1000, -1000, 1000, -0.01, 0.01);
+//        planes->SetTransform(svSegmentationUtils::GetvtkTransformBox(pathPoint,0.0));
+
+//        vtkSmartPointer<vtkExtractGeometry> extracter = vtkSmartPointer<vtkExtractGeometry>::New();
+//        extracter->ExtractBoundaryCellsOn();
+//        extracter->SetImplicitFunction(planes);
+//        extracter->SetInputData(mesh->GetVolumeMesh());
+//        extracter->Update();
+
+        extracted=extracter->GetOutput();
+
+        //show grid
+//        vtkSmartPointer<vtkDataSetMapper> meshMapper=vtkSmartPointer<vtkDataSetMapper>::New();
+//        meshMapper->SetInputData(extracted);
+
+//        vtkSmartPointer<vtkActor> meshActor= vtkSmartPointer<vtkActor>::New();
+//        meshActor->SetMapper(meshMapper);
+//        meshActor->GetProperty()->SetColor(color[0], color[1], color[2]);
+//        meshActor->GetProperty()->SetOpacity(opacity);
+//        meshActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+//        meshActor->GetProperty()->SetEdgeVisibility(1);
+//        meshActor->GetProperty()->SetLineWidth(1);
+
+        //show surface
+        vtkSmartPointer<vtkDataSetSurfaceFilter> surfaceFilter = vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+        surfaceFilter->SetInputData(extracted);
+        surfaceFilter->Update();
+        vtkSmartPointer<vtkPolyData> meshPolydata = surfaceFilter->GetOutput();
+
+        vtkSmartPointer<vtkPainterPolyDataMapper> meshMapper = vtkSmartPointer<vtkPainterPolyDataMapper>::New();
+        meshMapper->SetInputData(meshPolydata);
+
+        vtkSmartPointer<vtkActor> meshActor= vtkSmartPointer<vtkActor>::New();
+        meshActor->SetMapper(meshMapper);
+
+        Superclass::ApplyColorAndOpacityProperties( renderer, meshActor ) ;
+        this->ApplyShaderProperties(renderer);
+        svMitkMeshMapper3D::ApplyAllProperties(node, renderer, meshMapper, meshActor, NULL, false);
+        if(showEdges)
+        {
+            meshActor->GetProperty()->SetEdgeColor(edgeColor[0], edgeColor[1], edgeColor[2]);
+            meshActor->GetProperty()->SetEdgeVisibility(1);
+            meshActor->GetProperty()->SetLineWidth(1.0);
+        }
+
+        localStorage->m_PropAssembly->AddPart(meshActor );
+    }
 
     if(visible)
         localStorage->m_PropAssembly->VisibilityOn();
@@ -215,8 +323,17 @@ void svMitkMeshMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
 {
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
-    node->AddProperty( "line 2D width", mitk::FloatProperty::New(1.0f), renderer, overwrite );
+    node->AddProperty( "line 2D width", mitk::FloatProperty::New(2.0f), renderer, overwrite );
+    node->AddProperty( "show inner", mitk::BoolProperty::New(false), renderer, overwrite );
+    node->AddProperty( "edge color", mitk::ColorProperty::New(0.0f,0.0f,1.0f), renderer, overwrite );
     node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );
     node->AddProperty( "layer", mitk::IntProperty::New(100), renderer, overwrite);
+
+    svMitkMeshMapper3D::SetDefaultPropertiesForVtkProperty(node,renderer,overwrite); // Shading
+
+    node->AddProperty( "scalar visibility", mitk::BoolProperty::New(false), renderer, overwrite );
+    node->AddProperty( "color mode", mitk::BoolProperty::New(false), renderer, overwrite );
+    node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );
+
     Superclass::SetDefaultProperties(node, renderer, overwrite);
 }

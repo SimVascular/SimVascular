@@ -909,3 +909,18 @@ std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* mod
     return pathElements;
 }
 
+double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
+{
+    if(vpd==NULL)
+        return 0;
+
+    double area=0;
+    cvPolyData *src=new cvPolyData(vpd);
+
+    if ( sys_geom_SurfArea(src, &area) != CV_OK )
+    {
+        return 0;
+    }
+
+    return area;
+}

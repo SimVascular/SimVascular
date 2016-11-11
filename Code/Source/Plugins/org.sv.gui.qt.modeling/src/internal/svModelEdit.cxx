@@ -736,7 +736,6 @@ void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*select
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
-
 void svModelEdit::ToggleVisibility(const QModelIndex &index){
 
     if(!m_Model)
@@ -1380,7 +1379,10 @@ void svModelEdit::CreateModel()
     svModelElement* newModelElement=NULL;
     svModelElement* modelElement=m_Model->GetModelElement();
 
-    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
+    mitk::StatusBar::GetInstance()->DisplayText("Creating model...");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
 
     if(m_ModelType=="PolyData"){
         newModelElement=svModelUtils::CreateModelElementPolyData(segNodes);
@@ -1390,7 +1392,9 @@ void svModelEdit::CreateModel()
 
     }
 
-    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOff();
+    mitk::ProgressBar::GetInstance()->Progress(2);
+    mitk::StatusBar::GetInstance()->DisplayText("Model has been created.");
 
     int timeStep=GetTimeStep();
 
@@ -1578,10 +1582,10 @@ void svModelEdit::ModelOperate(int operationType)
 
     bool ok=false;
 
-    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
     mitk::StatusBar::GetInstance()->DisplayText("Processing model...");
-
-    BusyCursorOn();
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
 
     switch(operationType)
     {
@@ -1667,8 +1671,8 @@ void svModelEdit::ModelOperate(int operationType)
         break;
     }
 
-    mitk::ProgressBar::GetInstance()->Progress();
-    BusyCursorOff();
+    WaitCursorOff();
+    mitk::ProgressBar::GetInstance()->Progress(2);
 
     if(!ok)
     {

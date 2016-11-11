@@ -99,13 +99,13 @@ RegistersvMitkMeshObjectFactory::RegistersvMitkMeshObjectFactory()
     : m_Factory( svMitkMeshObjectFactory::New() )
 {
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
-//    m_MitkMeshIO=new svMitkMeshIO();
+    m_MitkMeshIO=new svMitkMeshIO();
 }
 
 RegistersvMitkMeshObjectFactory::~RegistersvMitkMeshObjectFactory()
 {
     mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
-//    delete m_MitkMeshIO;
+    delete m_MitkMeshIO;
 }
 
 //static RegistersvMitkMeshObjectFactory registersvMitkMeshObjectFactory;

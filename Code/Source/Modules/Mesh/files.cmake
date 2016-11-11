@@ -5,6 +5,7 @@ set(H_FILES
     svMitkMeshOperation.h
     svMitkMeshMapper3D.h
     svMitkMeshMapper2D.h
+    svMitkMeshIO.h
     svMitkMeshObjectFactory.h
 )
 
@@ -15,6 +16,7 @@ set(CPP_FILES
     svMitkMeshOperation.cxx
     svMitkMeshMapper3D.cxx
     svMitkMeshMapper2D.cxx
+    svMitkMeshIO.cxx
     svMitkMeshObjectFactory.cxx
 )
 
