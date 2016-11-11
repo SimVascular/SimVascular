@@ -87,6 +87,8 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
         return;
     }
 
+    connect(ui->btnRunMesher, SIGNAL(clicked()), this, SLOT(RunMesher()) );
+
     SetupTetGenGUI(parent);
 
     if(m_SphereWidget==NULL)
@@ -101,7 +103,6 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 
 void svMeshEdit::SetupTetGenGUI(QWidget *parent )
 {
-    connect(ui->btnRunMesherT, SIGNAL(clicked()), this, SLOT(RunMesher()) );
     connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
 
     //for local table
@@ -144,7 +145,7 @@ void svMeshEdit::SetupTetGenGUI(QWidget *parent )
       , this, SLOT(TableViewRegionContextMenuRequested(const QPoint&)) );
 
     //for command history
-    connect(ui->btnRunHistoryT, SIGNAL(clicked()), this, SLOT(RunHistory()) );
+//    connect(ui->btnRunHistoryT, SIGNAL(clicked()), this, SLOT(RunHistory()) );
 
     //for adaptor
 }
@@ -525,6 +526,12 @@ void svMeshEdit::RunHistory()
 
 void svMeshEdit::RunCommands(bool fromGUI)
 {
+    if (QMessageBox::question(NULL, "Meshing", "The meshing may take a while. Do you want to continue?",
+                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+    {
+      return;
+    }
+
     if(!m_MitkMesh) return;
 
     if(!m_Model) return;
@@ -541,8 +548,12 @@ void svMeshEdit::RunCommands(bool fromGUI)
 //    else if(m_MeshType=="MeshSim")
 //        mesh=new svMeshMeshSim();
 
+    //add fake progress
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
+
     mitk::StatusBar::GetInstance()->DisplayText("Creating mesh...");
-    BusyCursorOn();
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
 
     newMesh->InitNewMesher();
     newMesh->SetModelElement(modelElement);
@@ -563,7 +574,8 @@ void svMeshEdit::RunCommands(bool fromGUI)
     std::string msg;
     if(!newMesh->ExecuteCommands(cmds, msg))
     {
-        BusyCursorOff();
+        WaitCursorOff();
+        mitk::ProgressBar::GetInstance()->Progress(2);
         QMessageBox::warning(NULL,"Error during executing",QString::fromStdString(msg));
         delete newMesh;
         return;
@@ -588,8 +600,9 @@ void svMeshEdit::RunCommands(bool fromGUI)
         delete originalMesh;
     }
 
+    WaitCursorOff();
+    mitk::ProgressBar::GetInstance()->Progress(2);
     mitk::StatusBar::GetInstance()->DisplayText("Meshing done.");
-    BusyCursorOff();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>426</width>
+    <width>434</width>
     <height>749</height>
    </rect>
   </property>
@@ -109,29 +109,15 @@
        </widget>
       </item>
       <item>
-       <widget class="QWidget" name="widget_9" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_30">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
+       <widget class="QWidget" name="widget_18" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout_13">
+         <item>
+          <widget class="QPushButton" name="btnRunMesher">
+           <property name="text">
+            <string>Run Mesher</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -185,13 +171,6 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QPushButton" name="btnRunMesherT">
-            <property name="text">
-             <string>Run Mesher</string>
-            </property>
-           </widget>
-          </item>
-          <item>
            <widget class="QWidget" name="widget_3" native="true">
             <layout class="QHBoxLayout" name="horizontalLayout">
              <property name="spacing">
@@ -232,15 +211,15 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>2</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="page_3">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>304</width>
-               <height>189</height>
+               <width>416</width>
+               <height>483</height>
               </rect>
              </property>
              <attribute name="label">
@@ -544,8 +523,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>408</width>
-               <height>421</height>
+               <width>416</width>
+               <height>483</height>
               </rect>
              </property>
              <attribute name="label">
@@ -570,6 +549,21 @@
               <item>
                <widget class="QWidget" name="widget_8" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_8">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
                  <item>
                   <widget class="QTableView" name="tableViewLocalT">
                    <property name="contextMenuPolicy">
@@ -596,8 +590,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>408</width>
-               <height>421</height>
+               <width>416</width>
+               <height>483</height>
               </rect>
              </property>
              <attribute name="label">
@@ -622,6 +616,21 @@
               <item>
                <widget class="QWidget" name="widget_10" native="true">
                 <layout class="QHBoxLayout" name="horizontalLayout_11">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
                  <item>
                   <widget class="QTableView" name="tableViewRegionT">
                    <property name="contextMenuPolicy">
@@ -693,8 +702,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>388</width>
-               <height>288</height>
+               <width>416</width>
+               <height>483</height>
               </rect>
              </property>
              <attribute name="label">
@@ -898,7 +907,7 @@
                  <item>
                   <widget class="QCheckBox" name="checkBoxFlagV">
                    <property name="text">
-                    <string>Verbose: detailed info more output to .tgs file (-V)</string>
+                    <string>Verbose: detailed info and output to .tgs file (-V)</string>
                    </property>
                   </widget>
                  </item>
@@ -920,48 +929,13 @@
               </item>
              </layout>
             </widget>
-            <widget class="QWidget" name="page_8">
-             <property name="geometry">
-              <rect>
-               <x>0</x>
-               <y>0</y>
-               <width>189</width>
-               <height>51</height>
-              </rect>
-             </property>
-             <attribute name="label">
-              <string>Run Command History</string>
-             </attribute>
-             <layout class="QVBoxLayout" name="verticalLayout_13">
-              <item>
-               <widget class="QPushButton" name="btnRunHistoryT">
-                <property name="text">
-                 <string>Run Command History</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="verticalSpacer_3">
-                <property name="orientation">
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>40</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </widget>
             <widget class="QWidget" name="page_5">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>98</width>
-               <height>28</height>
+               <width>416</width>
+               <height>483</height>
               </rect>
              </property>
              <attribute name="label">
