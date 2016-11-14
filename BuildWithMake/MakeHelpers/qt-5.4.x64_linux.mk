@@ -45,4 +45,5 @@ $(LIBFLAG)Qt5Gui$(LIBLINKEXT) \
       $(QT_LIBDIRS)/libicui18n.so.53 \
       $(QT_LIBDIRS)/libicudata.so.53
     QT_SO_PATH=$(QT_TOP_DIR)/lib
+    QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 endif

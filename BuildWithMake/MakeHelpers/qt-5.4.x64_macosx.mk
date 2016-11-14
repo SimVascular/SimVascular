@@ -36,6 +36,7 @@ endif
                  -F$(QT_TOP_DIR)/lib
 
     QT_SO_PATH=$(QT_TOP_DIR)/lib
+    QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 
     QT_LIBS= -F$(QT_TOP_DIR)/lib -framework QtWidgets -framework QtGui -framework QtCore \
              -framework QtXml -framework QtQml -framework QtConcurrent \

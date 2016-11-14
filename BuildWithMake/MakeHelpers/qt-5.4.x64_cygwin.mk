@@ -36,4 +36,5 @@ endif
       $(LIBFLAG)Qt5Concurrent$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Core$(LIBLINKEXT)
     QT_SO_PATH=$(QT_TOP_DIR)/bin
+    QT_PLUGIN_PATH=$(QT_TOP_DIR)/plugins
 endif
