@@ -223,16 +223,16 @@ common-pre-build: mksedscript post-build
 	touch ../Code/Source/Include/Make/simvascular_version.h
 
 shared-pre-build: common-pre-build
-	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h
-	cd ../Code/Source/Plugins;$(MAKE) moc rcc ui
-	cd ../Code/Source/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
-	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h
-	cd ../Code/Source/Plugins;$(MAKE) moc rcc ui
-	cd ../Code/Source/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
 
 shared-build:

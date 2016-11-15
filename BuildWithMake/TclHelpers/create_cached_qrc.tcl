@@ -1,9 +1,7 @@
 #/bin/tclsh
-proc create_cached_qrc_file args {
-    if {[llength $args] < 3} {
-	return -code error "ERROR: not enough params to create_manifest_qrc_file ($args)"
-    }
+#proc create_cached_qrc_file args {
     set symbolicName [lindex $argv 0]
+    set symbolicNamePeriod [regsub -all _ $symbolicName .]
     set outFile [lindex $argv 1]
     set file_args [lrange $argv 2 end]
     
@@ -12,7 +10,7 @@ proc create_cached_qrc_file args {
     }
 
     puts $outfp "<!DOCTYPE RCC><RCC version=\"1.0\">"
-    puts $outfp "<qresource prefix=\"/$symbolicName\">"
+    puts $outfp "<qresource prefix=\"/$symbolicNamePeriod\">"
     foreach i $file_args {
 	puts $outfp "<file>$i</file>"
     }
@@ -20,7 +18,7 @@ proc create_cached_qrc_file args {
     puts $outfp "</RCC>"
     
     close $outfp
-}
+#}
 
-create_cached_qrc_file $argv
+#create_cached_qrc_file $argv
 

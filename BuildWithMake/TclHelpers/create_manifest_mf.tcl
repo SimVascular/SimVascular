@@ -1,10 +1,11 @@
 #/bin/tclsh
 proc create_manifest_qrc_file {symbolicName outFile} {
+    set symbolicNamePeriod [regsub -all _ $symbolicName .]
     if [catch {set outfp [open $outFile w]}] {
 	return -code error "ERROR: filename does not exist ($inFile)!!"
     }
     puts $outfp "<!DOCTYPE RCC><RCC version=\"1.0\">"
-    puts $outfp "<qresource prefix=\"/$symbolicName/META-INF\">"
+    puts $outfp "<qresource prefix=\"/$symbolicNamePeriod/META-INF\">"
     puts $outfp "<file>MANIFEST.MF</file>"
     puts $outfp "</qresource>"
     puts $outfp "</RCC>"

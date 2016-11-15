@@ -77,6 +77,9 @@ UIFILES = \
 QRCFILES = \
     ../../resources/pathplanning.qrc
 
+QRCFILES += org_sv_gui_qt_pathplanning_manifest.qrc \
+            org_sv_gui_qt_pathplanning_cached.qrc
+
 RCFILES = \
     ../../plugin.xml \
     ../../resources/pathedit.png
@@ -85,7 +88,7 @@ CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
 #CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -116,7 +119,7 @@ DLLLIBS +=  \
 EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
           -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_pathplanning
+TARGET_LIB_NAME = org_sv_gui_qt_pathplanning
 
 PLUGIN_DIR_NAME = org_sv_gui_qt_pathplanning
 

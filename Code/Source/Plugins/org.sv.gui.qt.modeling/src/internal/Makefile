@@ -81,12 +81,15 @@ UIFILES =  \
 
 QRCFILES =  ../../resources/modeling.qrc
 
+QRCFILES += org_sv_gui_qt_modeling_manifest.qrc \
+           org_sv_gui_qt_modeling_cached.qrc
+
 RCFILES = \
   ../../plugin.xml \
   ../../resources/model.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -115,12 +118,10 @@ DLLLIBS += $(PLUGINLIBSDIR)/org_mitk_gui_common.lib \
            $(PLUGINLIBSDIR)/org_blueberry_core_runtime.lib \
            $(PLUGINLIBSDIR)/org_mitk_core_services.lib \
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_model
-
 EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
           -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_modeling
+TARGET_LIB_NAME = org_sv_gui_qt_modeling
 
 PLUGIN_DIR_NAME = org_sv_gui_qt_modeling
 

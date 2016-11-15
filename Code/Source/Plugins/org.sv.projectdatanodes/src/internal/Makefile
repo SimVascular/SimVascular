@@ -62,13 +62,16 @@ UIFILES =
 QRCFILES = \
   ../../resources/projectdatanodes.qrc
 
+QRCFILES += org_sv_projectdatanodes_manifest.qrc \
+            org_sv_projectdatanodes_cached.qrc
+
 RCFILES =    
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
 CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -91,7 +94,11 @@ DLLLIBS += \
 EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
           -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_projectdatanodes
+TARGET_LIB_NAME = org_sv_projectdatanodes
+
+PLUGIN_DIR_NAME = org_sv_projectdatanodes
+
+PLUGIN_NAME = PROJECTDATANODES
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

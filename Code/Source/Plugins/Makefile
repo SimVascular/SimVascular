@@ -50,11 +50,11 @@ SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
 # sv.test appears to be out of date
 # sv.test
 
-lib-complete: moc ui rcc lib
+lib-complete: moc ui qrc lib
 
-static-complete:  create_plugin_export_h moc ui rcc static
+static-complete:  create_plugin_export_h create_manifest_qrc create_cached_qrc moc ui qrc static
 
-shared-complete:  create_plugin_export_h moc ui rcc shared
+shared-complete:  create_plugin_export_h create_manifest_qrc create_cached_qrc moc ui qrc shared
 
 lib:
 	@for i in ${SVQTGUIEXT_DIRS}; do ( \
@@ -81,15 +81,25 @@ ui:
 	  cd $$i; \
 	  $(MAKE) ui) ; done
 
-rcc:
+qrc:
 	@for i in ${SVQTGUIEXT_DIRS}; do ( \
 	  cd $$i; \
-	  $(MAKE) rcc) ; done
+	  $(MAKE) qrc) ; done
 
 create_plugin_export_h:
 	@for i in ${SVQTGUIEXT_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) create_plugin_export_h) ; done
+
+create_manifest_qrc:
+	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) create_manifest_qrc) ; done
+
+create_cached_qrc:
+	@for i in ${SVQTGUIEXT_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) create_cached_qrc) ; done
 
 clean:
 	for i in ${SVQTGUIEXT_DIRS}; do ( \

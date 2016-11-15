@@ -78,14 +78,15 @@ UIFILES = \
     svLoftParamWidget.ui \
     svSegmentation2D.ui
 
-QRCFILES =
+QRCFILES = org_sv_gui_qt_segmentation_manifest.qrc \
+           org_sv_gui_qt_segmentation_cached.qrc
 
 RCFILES = \
   ../../plugin.xml \
   ../../resources/contourgroup.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -117,7 +118,7 @@ DLLLIBS +=  \
 EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
           -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_segmentation
+TARGET_LIB_NAME = org_sv_gui_qt_segmentation
 
 PLUGIN_DIR_NAME = org_sv_gui_qt_segmentation
 

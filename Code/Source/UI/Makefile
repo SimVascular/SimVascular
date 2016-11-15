@@ -203,11 +203,11 @@ LFLAGS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_modeling$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_projectdatanodes$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_projectmanager$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_modeling$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_projectdatanodes$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_projectmanager$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \

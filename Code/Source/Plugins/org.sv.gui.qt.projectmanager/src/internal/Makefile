@@ -73,13 +73,15 @@ UIFILES = \
 QRCFILES = \
   ../../resources/projectmanager.qrc
 
+QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc
+
 RCFILES = 
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
 #CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -111,7 +113,7 @@ DLLLIBS += \
 EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
           -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_projectmanager
+TARGET_LIB_NAME = org_sv_gui_qt_projectmanager
 
 PLUGIN_DIR_NAME = org_sv_gui_qt_projectmanager
 

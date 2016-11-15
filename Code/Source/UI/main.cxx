@@ -145,7 +145,7 @@ void nateApp::initializeLibraryPaths() {
   pluginPath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins";
   ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
     
-  QString symbolicName = "_simvascular_qtgui_plugin_modeling";
+  QString symbolicName = "org_sv_projectdatanodes";
   QString MypluginPath = ctkPluginFrameworkLauncher::getPluginPath(symbolicName);
   std::cout << "hey nathan look here (" << MypluginPath.toStdString() << ")";
    
@@ -514,10 +514,12 @@ RegCloseKey(hKey2);
      app.setApplicationName("SimVascular Workbench");
      app.setOrganizationName("Stanford Medicine");
 
-     //QStringList preloadLibs;
-     //preloadLibs << "liborg_mitk_gui_qt";
-     //app.setPreloadLibraries(preloadLibs);
-     
+     QStringList preloadLibs;
+     preloadLibs << "org_mitk_gui_qt";
+     app.setPreloadLibraries(preloadLibs);
+     preloadLibs << "org_sv_gui_projectdatanodes";
+     app.setPreloadLibraries(preloadLibs);  
+       
      app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
 
      //QString provisioningFilePath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/why.me";
@@ -598,11 +600,11 @@ RegCloseKey(hKey2);
     pluginsToStart.push_back("org_mitk_gui_qt_python");
     pluginsToStart.push_back("org_mitk_gui_qt_segmentation");
     pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
-    pluginsToStart.push_back("_simvascular_qtgui_plugin_modeling");
-    pluginsToStart.push_back("_simvascular_qtgui_plugin_pathplanning");
-    pluginsToStart.push_back("_simvascular_qtgui_plugin_projectdatanodes");
-    pluginsToStart.push_back("_simvascular_qtgui_plugin_projectmanager");
-    pluginsToStart.push_back("_simvascular_qtgui_plugin_segmentation");
+    pluginsToStart.push_back("org_sv_projectdatanodes");
+    pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
+    pluginsToStart.push_back("org_sv_gui_qt_modeling");
+    pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
+    pluginsToStart.push_back("org_sv_gui_qt_segmentation");
 
     app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
     // Use transient start with declared activation policy
