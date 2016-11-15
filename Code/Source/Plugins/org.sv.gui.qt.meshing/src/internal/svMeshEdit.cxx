@@ -91,6 +91,8 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 
     SetupTetGenGUI(parent);
 
+//    SetUpMeshSimGUI(parent);
+
     if(m_SphereWidget==NULL)
     {
         m_SphereWidget = vtkSmartPointer<svVtkMeshSphereWidget>::New();
@@ -104,6 +106,8 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 void svMeshEdit::SetupTetGenGUI(QWidget *parent )
 {
     connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
+
+    ui->toolBox->setCurrentIndex(0);
 
     //for local table
     m_TableModelLocalT = new QStandardItemModel(this);
@@ -824,10 +828,12 @@ void svMeshEdit::UpdateGUI()
 
     if(m_MeshType=="TetGen")
     {
+        ui->stackedWidget->setCurrentIndex(0);
         UpdateTetGenGUI();
     }
     else if(m_MeshType=="MeshSim")
     {
+//        ui->stackedWidget->setCurrentIndex(1);
 //        UpdateMeshSimGUI();
     }
 }

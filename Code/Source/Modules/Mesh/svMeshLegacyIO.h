@@ -3,6 +3,8 @@
 
 #include <svMeshExports.h>
 
+#include "svMesh.h"
+
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 #include <QString>
@@ -14,7 +16,7 @@ public:
   svMeshLegacyIO(){}
   virtual ~svMeshLegacyIO(){}
 
-  static void WriteFiles(mitk::DataNode::Pointer node, QString meshDir);
+  static void WriteFiles(svMesh* mesh, svModelElement* modelElement, QString meshDir);
 
 };
 

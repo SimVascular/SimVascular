@@ -17,7 +17,7 @@ public:
 
     static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
-    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int stats[], unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
     static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param);
 

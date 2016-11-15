@@ -135,6 +135,8 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     //various ops
     //-----------------------------------------------------------------
+    ui->toolBoxPolyData->setCurrentIndex(0);
+
     signalMapper->setMapping(ui->btnDeleteFaces, DELETE_FACES);
     connect(ui->btnDeleteFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
@@ -1384,29 +1386,43 @@ void svModelEdit::CreateModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
+    QString statusText="Model has been created.";
     if(m_ModelType=="PolyData"){
-        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes);
+        int stats[2]={0};
+        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,stats);
+        if(newModelElement==NULL)
+        {
+            statusText="Failed to create model.";
+        }
+        else
+        {
+            statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
+        }
     }
     else if(m_ModelType=="Parasolid")
     {
 
     }
 
+
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
-    mitk::StatusBar::GetInstance()->DisplayText("Model has been created.");
+    mitk::StatusBar::GetInstance()->DisplayText(statusText.toStdString().c_str());
 
-    int timeStep=GetTimeStep();
+    if(newModelElement!=NULL)
+    {
+        int timeStep=GetTimeStep();
 
-    mitk::OperationEvent::IncCurrObjectEventId();
-    svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
-    svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
-    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
-    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+        mitk::OperationEvent::IncCurrObjectEventId();
+        svModelOperation* doOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,newModelElement);
+        svModelOperation* undoOp = new svModelOperation(svModelOperation::OpSETMODELELEMENT,timeStep,modelElement);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Model, doOp, undoOp, "Set ModelElement");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
-    m_Model->ExecuteOperation(doOp);
+        m_Model->ExecuteOperation(doOp);
 
-    UpdateGUI();
+        UpdateGUI();
+    }
 }
 
 std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()

@@ -9,7 +9,8 @@
   </extension>
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
-      <contextMenuAction nodeDescriptorName="svMeshFolder" label="Create Mesh" icon="" class="svMeshCreateAction" />
+  <contextMenuAction nodeDescriptorName="svMeshFolder" label="Create Mesh" icon="" class="svMeshCreateAction" />
+  <contextMenuAction nodeDescriptorName="svMitkMesh" label="Save Legacy Mesh" icon="" class="svMeshLegacySaveAction" />
   </extension>
 
 </plugin>

@@ -7,6 +7,7 @@ set(INTERNAL_CPP_FILES
     svMeshCreateAction.cxx
     svMeshEdit.cxx
     svVtkMeshSphereWidget.cxx
+    svMeshLegacySaveAction.cxx
     svMeshingPluginActivator.cxx
 )
 
@@ -14,6 +15,7 @@ set(MOC_H_FILES
     src/internal/svMeshCreate.h
     src/internal/svMeshCreateAction.h
     src/internal/svMeshEdit.h
+    src/internal/svMeshLegacySaveAction.h
     src/internal/svMeshingPluginActivator.h
 )
 
