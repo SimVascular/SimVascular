@@ -93,9 +93,7 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
 
 void svPathEdit::Visible()
 {
-//    OnSelectionChanged(GetCurrentSelection());
     OnSelectionChanged(GetDataManagerSelection());
-
 }
 
 void svPathEdit::Hidden()
@@ -106,7 +104,7 @@ void svPathEdit::Hidden()
 
 //bool svPathEdit::IsExclusiveFunctionality() const
 //{
-//    return false;
+//    return true;
 //}
 
 int svPathEdit::GetTimeStep()
@@ -134,6 +132,7 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(nodes.size()==0)
     {
+        ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         m_Parent->setEnabled(false);
         return;
@@ -153,6 +152,10 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(!m_Path)
     {
+        mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+        if(!isContourGroup->CheckNode(pathNode))
+            ui->resliceSlider->turnOnReslice(false);
+
         ClearAll();
         m_Parent->setEnabled(false);
         return;
@@ -184,7 +187,7 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     pointMoveCommand->SetCallbackFunction(this, &svPathEdit::UpdateSlice);
     m_PointMoveObserverTag = m_Path->AddObserver( svPathFinishMovePointEvent(), pointMoveCommand);
 
-     SetupResliceSlider();
+    SetupResliceSlider();
 
 }
 
