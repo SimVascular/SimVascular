@@ -1005,7 +1005,7 @@ void svModelEdit::ChangeTypeSelected( bool )
     }
 
     QStringList items;
-    items << tr("wall") << tr("cap");
+    items << tr("wall") << tr("inlet") << tr("outlet") << tr("cap");
 
     bool ok;
     QString type = QInputDialog::getItem(m_Parent, "Change Type", "Type:", items, 0, false, &ok);
@@ -1061,12 +1061,12 @@ void svModelEdit::SetupBlendTable()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL || faces[i]->type=="cap")
+        if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet")
             continue;
 
         for(int j=i+1;j<faces.size();j++)
         {
-            if(faces[j]==NULL || faces[j]->type=="cap")
+            if(faces[j]==NULL || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet")
                 continue;
 
             //To do: check if two faces are adjcent;

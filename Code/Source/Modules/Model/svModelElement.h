@@ -17,7 +17,7 @@ public:
     {
         int id;
         std::string name;
-        std::string type;//wall, cap, or empty if unknown
+        std::string type;//wall, cap, inlet, or empty if unknown
 
         vtkSmartPointer<vtkPolyData> vpd;
 

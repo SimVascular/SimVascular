@@ -70,6 +70,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Model Used:</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -100,6 +107,13 @@
          </item>
          <item>
           <widget class="QLabel" name="labelMeshType">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelModelName">
            <property name="text">
             <string/>
            </property>
@@ -219,7 +233,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>626</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">
@@ -524,7 +538,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>626</height>
+               <height>600</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -609,7 +623,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>626</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">
@@ -727,7 +741,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>626</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">
@@ -959,7 +973,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>626</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">

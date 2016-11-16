@@ -548,7 +548,18 @@ void svMeshEdit::RunCommands(bool fromGUI)
     svMesh* newMesh=NULL;
 
     if(m_MeshType=="TetGen")
+    {
+        QString ges=ui->lineEditGlobalEdgeSizeT->text().trimmed();
+        bool ok=false;
+        ges.toDouble(&ok);
+        if(!ok)
+        {
+            QMessageBox::warning(NULL,"Warning","Error in Global Egde Size!");
+            return;
+        }
+
         newMesh=new svMeshTetGen();
+    }
 //    else if(m_MeshType=="MeshSim")
 //        mesh=new svMeshMeshSim();
 
@@ -630,12 +641,12 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
     else
         cmds.push_back("option UseMMG 1");
 
-    cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().toStdString());
+    cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString());
 
     if(ui->checkBoxRadiusBasedT->isChecked())
     {
         cmds.push_back("useCenterlineRadius");
-        cmds.push_back("functionBasedMeshing "+ ui->lineEditGlobalEdgeSizeT->text().toStdString() +" DistanceToCenterlines");
+        cmds.push_back("functionBasedMeshing "+ ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString() +" DistanceToCenterlines");
     }
 
     if(ui->checkBoxBoundaryLayerT->isChecked())
@@ -819,6 +830,7 @@ void svMeshEdit::UpdateGUI()
     //======================================================================
     ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
     ui->labelMeshType->setText(QString::fromStdString(m_MeshType));
+    ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
 
     if(!m_MitkMesh)
         return;
@@ -1262,7 +1274,7 @@ void svMeshEdit::ClearAll()
 
     ui->labelMeshName->setText("");
     ui->labelMeshType->setText("");
-
+    ui->labelModelName->setText("");
 }
 
 
