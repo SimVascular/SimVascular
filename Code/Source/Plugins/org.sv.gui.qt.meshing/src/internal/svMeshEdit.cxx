@@ -915,7 +915,7 @@ void svMeshEdit::UpdateTetGenGUI()
     ui->tableViewLocalT->horizontalHeader()->resizeSection(0,20);
     ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->tableViewLocalT->horizontalHeader()->resizeSection(2,40);
+    ui->tableViewLocalT->horizontalHeader()->resizeSection(2,60);
     ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
     ui->tableViewLocalT->horizontalHeader()->resizeSection(3,80);
 
