@@ -134,6 +134,10 @@ public:
 
     std::vector<int> GetCapFaceIDs();
 
+    std::vector<int> GetInletFaceIDs();
+
+    std::vector<int> GetOutletFaceIDs();
+
     double GetFaceArea(int id);
 
     double GetMinFaceArea();

@@ -200,7 +200,15 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         }
 
         simFolderNode->SetVisibility(false);
-
+        QDir dirSim(projPath);
+        dirSim.cd(simFolderName);
+        fileInfoList=dirSim.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
+        for(int i=0;i<fileInfoList.size();i++)
+        {
+            mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            jobNode->SetVisibility(false);
+            dataStorage->Add(jobNode,simFolderNode);
+        }
     }
 
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
@@ -377,6 +385,23 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".msh");
+        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+    }
+
+    //sava simjobs
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+
+    mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+    std::string simFolderName=simFolderNode->GetName();
+
+    rs=dataStorage->GetDerivations(simFolderNode,mitk::NodePredicateDataType::New("svMitkSimJob"));
+
+    QDir dirSim(QString::fromStdString(projPath));
+    dirSim.cd(QString::fromStdString(simFolderName));
+
+    for(int i=0;i<rs->size();i++)
+    {
+        QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".sjb");
         mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
     }
 }

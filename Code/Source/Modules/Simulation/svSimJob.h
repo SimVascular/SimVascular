@@ -3,13 +3,6 @@
 
 #include <svSimulationExports.h>
 
-#include <svModelElement.h>
-
-#include <vtkSmartPointer.h>
-
-#include <vtkPolyData.h>
-#include <vtkUnstructuredGrid.h>
-
 #include <map>
 
 class SVSIMULATION_EXPORT svSimJob
@@ -29,29 +22,35 @@ public:
 
 //    void SetStatus(std::string status);
 
-    std::map<std::string,std::string>& GetBasicProps();
+    void SetBasicProps(std::map<std::string,std::string> basicProps);
+    std::map<std::string,std::string> GetBasicProps() const;
     void SetBasicProp(const std::string& key, std::string value);
-    std::string GetBasicProp(const std::string& key);
+    std::string GetBasicProp(const std::string& key) const;
 
-    std::map<std::string,std::map<std::string,std::string>>& GetInletProps();
+    void SetInletProps(std::map<std::string,std::map<std::string,std::string>> inletProps);
+    std::map<std::string,std::map<std::string,std::string>> GetInletProps() const;
     void SetInletProp(const std::string& inletName, const std::string& key, std::string value);
-    std::string GetInletProp(const std::string& inletName, const std::string& key);
+    std::string GetInletProp(const std::string& inletName, const std::string& key) const;
 
-    std::map<std::string,std::string>& GetOutletProps();
+    void SetOutletProps(std::map<std::string,std::string> outletProps);
+    std::map<std::string,std::string> GetOutletProps() const;
     void SetOutletProp(const std::string& key, std::string value);
-    std::string GetOutletProp(const std::string& key);
+    std::string GetOutletProp(const std::string& key) const;
 
-    std::map<std::string,std::string>& GetWallProps();
+    void SetWallProps(std::map<std::string,std::string> wallProps);
+    std::map<std::string,std::string> GetWallProps() const;
     void SetWallProp(const std::string& key, std::string value);
-    std::string GetWallProp(const std::string& key);
+    std::string GetWallProp(const std::string& key) const;
 
-    std::map<std::string,std::string>& GetSolverProps();
+    void SetSolverProps(std::map<std::string,std::string> solverProps);
+    std::map<std::string,std::string> GetSolverProps() const;
     void SetSolverProp(const std::string& key, std::string value);
-    std::string GetSolverProp(const std::string& key);
+    std::string GetSolverProp(const std::string& key) const;
 
-    std::map<std::string,std::string>& GetRunProps();
+    void SetRunProps(std::map<std::string,std::string> runProps);
+    std::map<std::string,std::string> GetRunProps() const;
     void SetRunProp(const std::string& key, std::string value);
-    std::string GetRunProp(const std::string& key);
+    std::string GetRunProp(const std::string& key) const;
 
   protected:
 

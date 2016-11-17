@@ -66,6 +66,7 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
         TiXmlElement* bpElement = jobElement->FirstChildElement("basic_props");
         if(bpElement != nullptr)
         {
+            std::map<std::string,std::string> basicProps;
             for( TiXmlElement* element = bpElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
@@ -78,13 +79,15 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                 element->QueryStringAttribute("key", &key);
                 element->QueryStringAttribute("value", &value);
 
-                job->GetBasicProps()[key]=value;
+                basicProps[key]=value;
             }
+            job->SetBasicProps(basicProps);
         }
 
         TiXmlElement* ipElement = jobElement->FirstChildElement("inlet_props");
         if(ipElement != nullptr)
         {
+            std::map<std::string,std::map<std::string,std::string>> inletProps;
             for( TiXmlElement* ielement = ipElement->FirstChildElement("inlet");
                  ielement != nullptr;
                  ielement =ielement->NextSiblingElement("inlet") )
@@ -107,15 +110,17 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                     element->QueryStringAttribute("key", &key);
                     element->QueryStringAttribute("value", &value);
 
-                    job->GetInletProps()[name][key]=value;
+                    inletProps[name][key]=value;
                 }
 
             }
+            job->SetInletProps(inletProps);
         }
 
         TiXmlElement* opElement = jobElement->FirstChildElement("outlet_props");
         if(opElement != nullptr)
         {
+            std::map<std::string,std::string> outletProps;
             for( TiXmlElement* element = opElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
@@ -128,13 +133,15 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                 element->QueryStringAttribute("key", &key);
                 element->QueryStringAttribute("value", &value);
 
-                job->GetOutletProps()[key]=value;
+                outletProps[key]=value;
             }
+            job->SetOutletProps(outletProps);
         }
 
         TiXmlElement* wpElement = jobElement->FirstChildElement("wall_props");
         if(wpElement != nullptr)
         {
+            std::map<std::string,std::string> wallProps;
             for( TiXmlElement* element = wpElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
@@ -147,13 +154,15 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                 element->QueryStringAttribute("key", &key);
                 element->QueryStringAttribute("value", &value);
 
-                job->GetWallProps()[key]=value;
+                wallProps[key]=value;
             }
+            job->SetWallProps(wallProps);
         }
 
         TiXmlElement* spElement = jobElement->FirstChildElement("solver_props");
         if(spElement != nullptr)
         {
+            std::map<std::string,std::string> solverProps;
             for( TiXmlElement* element = spElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
@@ -166,13 +175,15 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                 element->QueryStringAttribute("key", &key);
                 element->QueryStringAttribute("value", &value);
 
-                job->GetSolverProps()[key]=value;
+                solverProps[key]=value;
             }
+            job->SetSolverProps(solverProps);
         }
 
         TiXmlElement* rpElement = jobElement->FirstChildElement("run_props");
         if(rpElement != nullptr)
         {
+            std::map<std::string,std::string> runProps;
             for( TiXmlElement* element = rpElement->FirstChildElement("prop");
                  element != nullptr;
                  element =element->NextSiblingElement("prop") )
@@ -185,8 +196,9 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                 element->QueryStringAttribute("key", &key);
                 element->QueryStringAttribute("value", &value);
 
-                job->GetRunProps()[key]=value;
+                runProps[key]=value;
             }
+            job->SetRunProps(runProps);
         }
 
         mitkSimJob->SetSimJob(job);
