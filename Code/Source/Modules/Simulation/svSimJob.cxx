@@ -1,6 +1,7 @@
 #include "svSimJob.h"
 
 svSimJob::svSimJob()
+    :m_PrescribedCapNumber(0)
 {
 }
 
@@ -63,24 +64,24 @@ std::string svSimJob::GetInletProp(const std::string& inletName, const std::stri
     return m_InletProps[inletName][key];
 }
 
-void svSimJob::SetOutletProps(std::map<std::string,std::string> outletProps)
+void svSimJob::SetOutletProps(std::map<std::string,std::map<std::string,std::string>> outletProps)
 {
     m_OutletProps=outletProps;
 }
 
-std::map<std::string,std::string> svSimJob::GetOutletProps() const
+std::map<std::string,std::map<std::string,std::string>> svSimJob::GetOutletProps() const
 {
     return m_OutletProps;
 }
 
-void svSimJob::SetOutletProp(const std::string& key, std::string value)
+void svSimJob::SetOutletProp(const std::string& outletName, const std::string& key, std::string value)
 {
-    m_OutletProps[key]=value;
+    m_OutletProps[outletName][key]=value;
 }
 
-std::string svSimJob::GetOutletProp(const std::string& key) const
+std::string svSimJob::GetOutletProp(const std::string& outletName, const std::string& key) const
 {
-    return m_OutletProps[key];
+    return m_OutletProps[outletName][key];
 }
 
 void svSimJob::SetWallProps(std::map<std::string,std::string> wallProps)
@@ -101,6 +102,26 @@ void svSimJob::SetWallProp(const std::string& key, std::string value)
 std::string svSimJob::GetWallProp(const std::string& key) const
 {
     return m_WallProps[key];
+}
+
+void svSimJob::SetVarProps(std::map<std::string,std::map<std::string,std::string>> varProps)
+{
+    m_VarProps=varProps;
+}
+
+std::map<std::string,std::map<std::string,std::string>> svSimJob::GetVarProps() const
+{
+    return m_VarProps;
+}
+
+void svSimJob::SetVarProp(const std::string& faceName, const std::string& key, std::string value)
+{
+    m_VarProps[faceName][key]=value;
+}
+
+std::string svSimJob::GetVarProp(const std::string& faceName, const std::string& key) const
+{
+    return m_VarProps[faceName][key];
 }
 
 void svSimJob::SetSolverProps(std::map<std::string,std::string> solverProps)
@@ -141,4 +162,24 @@ void svSimJob::SetRunProp(const std::string& key, std::string value)
 std::string svSimJob::GetRunProp(const std::string& key) const
 {
     return m_RunProps[key];
+}
+
+void svSimJob::SetIDs(std::map<std::string,int> IDs)
+{
+    m_IDs=IDs;
+}
+
+std::map<std::string,int> svSimJob::GetIDs() const
+{
+    return m_IDs;
+}
+
+void svSimJob::SetPrescribedCapNumber(int number)
+{
+    m_PrescribedCapNumber=number;
+}
+
+int svSimJob::GetPrescribedCapNumber()
+{
+    return m_PrescribedCapNumber;
 }

@@ -75,7 +75,7 @@ void svMeshLegacyIO::WriteFiles(svMesh* mesh, svModelElement* modelElement, QStr
         cleaner->PieceInvariantOff();
         cleaner->SetInputData(wallAppender->GetOutput());
         cleaner->Update();
-        vtpFilePath=meshDir+"/wall_combined.vtp";
+        vtpFilePath=meshDir+"/walls_combined.vtp";
         vtpFilePath=QDir::toNativeSeparators(vtpFilePath);
         vtpWriter->SetInputData(cleaner->GetOutput());
         vtpWriter->SetFileName(vtpFilePath.toStdString().c_str());
