@@ -29,7 +29,7 @@ void svSimJob::SetBasicProps(std::map<std::string,std::string> basicProps)
     m_BasicProps=basicProps;
 }
 
-std::map<std::string,std::string> svSimJob::GetBasicProps() const
+std::map<std::string,std::string> svSimJob::GetBasicProps()
 {
     return m_BasicProps;
 }
@@ -39,7 +39,7 @@ void svSimJob::SetBasicProp(const std::string& key, std::string value)
     m_BasicProps[key]=value;
 }
 
-std::string svSimJob::GetBasicProp(const std::string& key) const
+std::string svSimJob::GetBasicProp(const std::string& key)
 {
     return m_BasicProps[key];
 }
@@ -49,7 +49,7 @@ void svSimJob::SetInletProps(std::map<std::string,std::map<std::string,std::stri
     m_InletProps=inletProps;
 }
 
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetInletProps() const
+std::map<std::string,std::map<std::string,std::string>> svSimJob::GetInletProps()
 {
     return m_InletProps;
 }
@@ -59,7 +59,7 @@ void svSimJob::SetInletProp(const std::string& inletName, const std::string& key
     m_InletProps[inletName][key]=value;
 }
 
-std::string svSimJob::GetInletProp(const std::string& inletName, const std::string& key) const
+std::string svSimJob::GetInletProp(const std::string& inletName, const std::string& key)
 {
     return m_InletProps[inletName][key];
 }
@@ -69,7 +69,7 @@ void svSimJob::SetOutletProps(std::map<std::string,std::map<std::string,std::str
     m_OutletProps=outletProps;
 }
 
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetOutletProps() const
+std::map<std::string,std::map<std::string,std::string>> svSimJob::GetOutletProps()
 {
     return m_OutletProps;
 }
@@ -79,7 +79,7 @@ void svSimJob::SetOutletProp(const std::string& outletName, const std::string& k
     m_OutletProps[outletName][key]=value;
 }
 
-std::string svSimJob::GetOutletProp(const std::string& outletName, const std::string& key) const
+std::string svSimJob::GetOutletProp(const std::string& outletName, const std::string& key)
 {
     return m_OutletProps[outletName][key];
 }
@@ -89,7 +89,7 @@ void svSimJob::SetWallProps(std::map<std::string,std::string> wallProps)
     m_WallProps=wallProps;
 }
 
-std::map<std::string,std::string> svSimJob::GetWallProps() const
+std::map<std::string,std::string> svSimJob::GetWallProps()
 {
     return m_WallProps;
 }
@@ -99,7 +99,7 @@ void svSimJob::SetWallProp(const std::string& key, std::string value)
     m_WallProps[key]=value;
 }
 
-std::string svSimJob::GetWallProp(const std::string& key) const
+std::string svSimJob::GetWallProp(const std::string& key)
 {
     return m_WallProps[key];
 }
@@ -109,7 +109,7 @@ void svSimJob::SetVarProps(std::map<std::string,std::map<std::string,std::string
     m_VarProps=varProps;
 }
 
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetVarProps() const
+std::map<std::string,std::map<std::string,std::string>> svSimJob::GetVarProps()
 {
     return m_VarProps;
 }
@@ -119,7 +119,7 @@ void svSimJob::SetVarProp(const std::string& faceName, const std::string& key, s
     m_VarProps[faceName][key]=value;
 }
 
-std::string svSimJob::GetVarProp(const std::string& faceName, const std::string& key) const
+std::string svSimJob::GetVarProp(const std::string& faceName, const std::string& key)
 {
     return m_VarProps[faceName][key];
 }
@@ -129,7 +129,7 @@ void svSimJob::SetSolverProps(std::map<std::string,std::string> solverProps)
     m_SolverProps=solverProps;
 }
 
-std::map<std::string,std::string> svSimJob::GetSolverProps() const
+std::map<std::string,std::string> svSimJob::GetSolverProps()
 {
     return m_SolverProps;
 }
@@ -139,7 +139,7 @@ void svSimJob::SetSolverProp(const std::string& key, std::string value)
     m_SolverProps[key]=value;
 }
 
-std::string svSimJob::GetSolverProp(const std::string& key) const
+std::string svSimJob::GetSolverProp(const std::string& key)
 {
     return m_SolverProps[key];
 }
@@ -149,7 +149,7 @@ void svSimJob::SetRunProps(std::map<std::string,std::string> runProps)
     m_RunProps=runProps;
 }
 
-std::map<std::string,std::string> svSimJob::GetRunProps() const
+std::map<std::string,std::string> svSimJob::GetRunProps()
 {
     return m_RunProps;
 }
@@ -159,7 +159,7 @@ void svSimJob::SetRunProp(const std::string& key, std::string value)
     m_RunProps[key]=value;
 }
 
-std::string svSimJob::GetRunProp(const std::string& key) const
+std::string svSimJob::GetRunProp(const std::string& key)
 {
     return m_RunProps[key];
 }
@@ -169,7 +169,7 @@ void svSimJob::SetIDs(std::map<std::string,int> IDs)
     m_IDs=IDs;
 }
 
-std::map<std::string,int> svSimJob::GetIDs() const
+std::map<std::string,int> svSimJob::GetIDs()
 {
     return m_IDs;
 }

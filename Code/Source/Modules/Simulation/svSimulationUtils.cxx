@@ -219,7 +219,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
     return ss.str();
 }
 
-static std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
+std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
 {
     std::stringstream ss;
     std::map<std::string,int> IDs=job->GetIDs();
