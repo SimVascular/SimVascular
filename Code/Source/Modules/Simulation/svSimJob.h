@@ -21,24 +21,15 @@ public:
 
     virtual svSimJob* Clone();
 
-//    std::string GetStatus();
-
-//    void SetStatus(std::string status);
-
     void SetBasicProps(std::map<std::string,std::string> basicProps);
     std::map<std::string,std::string> GetBasicProps();
     void SetBasicProp(const std::string& key, std::string value);
     std::string GetBasicProp(const std::string& key);
 
-    void SetInletProps(std::map<std::string,std::map<std::string,std::string>> inletProps);
-    std::map<std::string,std::map<std::string,std::string>> GetInletProps();
-    void SetInletProp(const std::string& inletName, const std::string& key, std::string value);
-    std::string GetInletProp(const std::string& inletName, const std::string& key);
-
-    void SetOutletProps(std::map<std::string,std::map<std::string,std::string>> outletProps);
-    std::map<std::string,std::map<std::string,std::string>> GetOutletProps();
-    void SetOutletProp(const std::string& outletName, const std::string& key, std::string value);
-    std::string GetOutletProp(const std::string& outletName, const std::string& key);
+    void SetCapProps(std::map<std::string,std::map<std::string,std::string>> capProps);
+    std::map<std::string,std::map<std::string,std::string>> GetCapProps();
+    void SetCapProp(const std::string& outletName, const std::string& key, std::string value);
+    std::string GetCapProp(const std::string& capName, const std::string& key);
 
     void SetWallProps(std::map<std::string,std::string> wallProps);
     std::map<std::string,std::string> GetWallProps();
@@ -63,15 +54,16 @@ public:
     void SetIDs(std::map<std::string,int> IDs);
     std::map<std::string,int> GetIDs();
 
-    void SetPrescribedCapNumber(int number);
-    int GetPrescribedCapNumber();
+    void SetVelocityCapNumber(int number);
+    int GetVelocityCapNumber();
+
+    void SetPressureCapNumber(int number);
+    int GetPressureCapNumber();
 
   protected:
 
-//    std::string m_Status;
     std::map<std::string,std::string> m_BasicProps;
-    std::map<std::string,std::map<std::string,std::string>> m_InletProps;
-    std::map<std::string,std::map<std::string,std::string>> m_OutletProps;
+    std::map<std::string,std::map<std::string,std::string>> m_CapProps;
     std::map<std::string,std::string> m_WallProps;
     std::map<std::string,std::map<std::string,std::string>> m_VarProps;
     std::map<std::string,std::string> m_SolverProps;
@@ -79,7 +71,8 @@ public:
 
     std::map<std::string,int> m_IDs;
 
-    int m_PrescribedCapNumber; //for caps with prescribed velosities
+    int m_VelocityCapNumber; //for caps with prescribed velosities
+    int m_PressureCapNumber; //for caps with prescribed velosities
 
   };
 

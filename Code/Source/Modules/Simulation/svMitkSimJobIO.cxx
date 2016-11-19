@@ -84,21 +84,21 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
             job->SetBasicProps(basicProps);
         }
 
-        TiXmlElement* ipElement = jobElement->FirstChildElement("inlet_props");
-        if(ipElement != nullptr)
+        TiXmlElement* cpElement = jobElement->FirstChildElement("cap_props");
+        if(cpElement != nullptr)
         {
-            std::map<std::string,std::map<std::string,std::string>> inletProps;
-            for( TiXmlElement* ielement = ipElement->FirstChildElement("inlet");
-                 ielement != nullptr;
-                 ielement =ielement->NextSiblingElement("inlet") )
+            std::map<std::string,std::map<std::string,std::string>> capProps;
+            for( TiXmlElement* celement = cpElement->FirstChildElement("cap");
+                 celement != nullptr;
+                 celement =celement->NextSiblingElement("cap") )
             {
-                if (ielement == nullptr)
+                if (celement == nullptr)
                     continue;
 
                 std::string name="";
-                ielement->QueryStringAttribute("name", &name);
+                celement->QueryStringAttribute("name", &name);
 
-                for( TiXmlElement* element = ielement->FirstChildElement("prop");
+                for( TiXmlElement* element = celement->FirstChildElement("prop");
                      element != nullptr;
                      element =element->NextSiblingElement("prop") )
                 {
@@ -110,66 +110,12 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
                     element->QueryStringAttribute("key", &key);
                     element->QueryStringAttribute("value", &value);
 
-                    inletProps[name][key]=value;
+                    capProps[name][key]=value;
                 }
 
             }
-            job->SetInletProps(inletProps);
+            job->SetCapProps(capProps);
         }
-
-        TiXmlElement* opElement = jobElement->FirstChildElement("outlet_props");
-        if(opElement != nullptr)
-        {
-            std::map<std::string,std::map<std::string,std::string>> outletProps;
-            for( TiXmlElement* oelement = opElement->FirstChildElement("outlet");
-                 oelement != nullptr;
-                 oelement =oelement->NextSiblingElement("outlet") )
-            {
-                if (oelement == nullptr)
-                    continue;
-
-                std::string name="";
-                oelement->QueryStringAttribute("name", &name);
-
-                for( TiXmlElement* element = oelement->FirstChildElement("prop");
-                     element != nullptr;
-                     element =element->NextSiblingElement("prop") )
-                {
-                    if (element == nullptr)
-                        continue;
-
-                    std::string key="";
-                    std::string value="";
-                    element->QueryStringAttribute("key", &key);
-                    element->QueryStringAttribute("value", &value);
-
-                    outletProps[name][key]=value;
-                }
-
-            }
-            job->SetOutletProps(outletProps);
-        }
-
-//        TiXmlElement* opElement = jobElement->FirstChildElement("outlet_props");
-//        if(opElement != nullptr)
-//        {
-//            std::map<std::string,std::string> outletProps;
-//            for( TiXmlElement* element = opElement->FirstChildElement("prop");
-//                 element != nullptr;
-//                 element =element->NextSiblingElement("prop") )
-//            {
-//                if (element == nullptr)
-//                    continue;
-
-//                std::string key="";
-//                std::string value="";
-//                element->QueryStringAttribute("key", &key);
-//                element->QueryStringAttribute("value", &value);
-
-//                outletProps[key]=value;
-//            }
-//            job->SetOutletProps(outletProps);
-//        }
 
         TiXmlElement* wpElement = jobElement->FirstChildElement("wall_props");
         if(wpElement != nullptr)
@@ -325,16 +271,16 @@ void svMitkSimJobIO::Write()
             it++;
         }
 
-        auto ipElement = new TiXmlElement("inlet_props");
-        jobElement->LinkEndChild(ipElement);
-        std::map<std::string, std::map<std::string, std::string>> inletProps=job->GetInletProps();
-        std::map<std::string, std::map<std::string, std::string>>::iterator itit = inletProps.begin();
-        while(itit != inletProps.end())
+        auto cpElement = new TiXmlElement("cap_props");
+        jobElement->LinkEndChild(cpElement);
+        std::map<std::string, std::map<std::string, std::string>> capProps=job->GetCapProps();
+        auto itit = capProps.begin();
+        while(itit != capProps.end())
         {
-            auto ielement = new TiXmlElement("inlet");
-            ipElement->LinkEndChild(ielement);
+            auto celement = new TiXmlElement("cap");
+            cpElement->LinkEndChild(celement);
 
-            ielement->SetAttribute("name", itit->first);
+            celement->SetAttribute("name", itit->first);
 
             std::map<std::string, std::string> props=itit->second;
 
@@ -342,7 +288,7 @@ void svMitkSimJobIO::Write()
             while(it != props.end())
             {
                 auto element = new TiXmlElement("prop");
-                ielement->LinkEndChild(element);
+                celement->LinkEndChild(element);
                 element->SetAttribute("key", it->first);
                 element->SetAttribute("value", it->second);
                 it++;
@@ -350,45 +296,6 @@ void svMitkSimJobIO::Write()
 
             itit++;
         }
-
-        auto opElement = new TiXmlElement("outlet_props");
-        jobElement->LinkEndChild(opElement);
-        std::map<std::string, std::map<std::string, std::string>> outletProps=job->GetOutletProps();
-        itit = outletProps.begin();
-        while(itit != outletProps.end())
-        {
-            auto oelement = new TiXmlElement("outlet");
-            opElement->LinkEndChild(oelement);
-
-            oelement->SetAttribute("name", itit->first);
-
-            std::map<std::string, std::string> props=itit->second;
-
-            it = props.begin();
-            while(it != props.end())
-            {
-                auto element = new TiXmlElement("prop");
-                oelement->LinkEndChild(element);
-                element->SetAttribute("key", it->first);
-                element->SetAttribute("value", it->second);
-                it++;
-            }
-
-            itit++;
-        }
-
-//        auto opElement = new TiXmlElement("outlet_props");
-//        jobElement->LinkEndChild(opElement);
-//        std::map<std::string,std::string> outletProps=job->GetOutletProps();
-//        it = outletProps.begin();
-//        while(it != outletProps.end())
-//        {
-//            auto element = new TiXmlElement("prop");
-//            opElement->LinkEndChild(element);
-//            element->SetAttribute("key", it->first);
-//            element->SetAttribute("value", it->second);
-//            it++;
-//        }
 
         auto wpElement = new TiXmlElement("wall_props");
         jobElement->LinkEndChild(wpElement);

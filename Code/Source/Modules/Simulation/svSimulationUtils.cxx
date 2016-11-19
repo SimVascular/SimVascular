@@ -13,19 +13,29 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
 
     ss << "mesh_and_adjncy_vtu mesh-complete/mesh-complete.mesh.vtu\n";
 
-    //set ids
+    //set ids for caps
     //================================================================
     int id=1;
-    IDs["mesh-complete.exterior"]=id;
+//    IDs["mesh-complete.exterior"]=id;
+    ss << "set_surface_id_vtp mesh-complete/mesh-complete.exterior.vtp 1\n";
+
     std::string setIDPrefix="set_surface_id_vtp mesh-complete/mesh-surfaces/";
-    auto inletProps=job->GetInletProps();
-    int inletNumber=0;
-    auto it = inletProps.begin();
-    while(it != inletProps.end())
+    auto capProps=job->GetCapProps();
+    int velocityCapNumber=0;
+    int pressureCapNumber=0;
+    auto it = capProps.begin();
+    while(it != capProps.end())
     {
         if(it->first!="")
         {
-            inletNumber++;
+            auto props=it->second;
+            if(props["BC Type"]=="Prescribed Velocities"){
+                velocityCapNumber++;
+            }
+            else
+            {
+                pressureCapNumber++;
+            }
 
             id++;
             IDs[it->first]=id;
@@ -34,74 +44,62 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
         it++;
     }
     job->SetIDs(IDs);
-    job->SetPrescribedCapNumber(inletNumber);
+    job->SetVelocityCapNumber(velocityCapNumber);
+    job->SetPressureCapNumber(pressureCapNumber);
 
-    auto outletProps=job->GetOutletProps();
-    it = outletProps.begin();
-    while(it != outletProps.end())
-    {
-        if(it->first!="")
-        {
-            id++;
-            IDs[it->first]=id;
-            ss << setIDPrefix << it->first <<".vtp " << id <<"\n";
-        }
-        it++;
-    }
-
-    //set bct for inlets
+    //set bct for prescribed velocity cap
     //=================================================================
     auto basicProps=job->GetBasicProps();
-    if(inletNumber>0)
+    if(velocityCapNumber>0)
     {
         ss << "fluid_density " << basicProps["Fluid Density"] <<"\n";
         ss << "fluid_viscosity " << basicProps["Fluid Viscosity"] <<"\n";
-    }
 
-    it = inletProps.begin();
-    while(it != inletProps.end())
-    {
-        if(it->first!="")
+        it = capProps.begin();
+        while(it != capProps.end())
         {
-            ss << "prescribed_velocities_vtp mesh-complete/mesh-surfaces/" << it->first <<".vtp\n";
+            if(it->first!=""&&it->second["BC Type"]=="Prescribed Velocities")
+            {
+                ss << "prescribed_velocities_vtp mesh-complete/mesh-surfaces/" << it->first <<".vtp\n";
 
-            auto props=it->second;
-            ss << "bct_analytical_shape " << props["Analytic Shape"] <<"\n";
-            if(props["Period"]=="")
-            {
-                ss << "bct_period " << basicProps["Period"] <<"\n";
+                auto props=it->second;
+                ss << "bct_analytical_shape " << props["Analytic Shape"] <<"\n";
+                if(props["Period"]=="")
+                {
+                    ss << "bct_period " << basicProps["Period"] <<"\n";
+                }
+                else
+                {
+                    ss << "bct_period " << props["Period"] <<"\n";
+                }
+                ss << "bct_point_number " << props["Point Number"] <<"\n";
+                ss << "bct_fourier_mode_number " << props["Fourier Modes"] <<"\n";
+                if(props["Flip Normal"]=="true")
+                {
+                    ss << "bct_flip\n";
+                }
+                ss << "bct_create mesh-complete/mesh-surfaces/" << it->first << ".vtp " << it->first <<".flow\n";
             }
-            else
-            {
-                ss << "bct_period " << props["Period"] <<"\n";
-            }
-            ss << "bct_point_number " << props["Point Number"] <<"\n";
-            ss << "bct_fourier_mode_number " << props["Fourier Modes"] <<"\n";
-            if(props["Flip Normal"]=="true")
-            {
-                ss << "bct_flip\n";
-            }
-            ss << "bct_create mesh-complete/mesh-surfaces/" << it->first << ".vtp " << it->first <<".flow\n";
+            it++;
         }
-        it++;
-    }
-    if(inletNumber>1)
-    {
-        ss << "bct_merge_on\n";
-    }
 
-    ss << "bct_write_dat " << outputDir << "/bct.dat\n";
-    ss << "bct_write_vtp " << outputDir << "/bct.vtp\n";
-
-    //set outlets
-    //====================================================================
-    it = outletProps.begin();
-    while(it != outletProps.end())
-    {
-        if(it->first!="")
+        if(velocityCapNumber>1)
         {
-            auto props=it->second;
-            ss << "pressure_vtp mesh-complete/mesh-surfaces/" << it->first << ".vtp " << props["Pressure"] << "\n";
+            ss << "bct_merge_on\n";
+        }
+
+        ss << "bct_write_dat " << outputDir << "/bct.dat\n";
+        ss << "bct_write_vtp " << outputDir << "/bct.vtp\n";
+    }
+
+    //set prescribed pressure cap
+    //====================================================================
+    it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!=""&&it->second["BC Type"]=="Prescribed Pressure")
+        {
+            ss << "pressure_vtp mesh-complete/mesh-surfaces/" << it->first << ".vtp " << it->second["Pressure"] << "\n";
         }
         it++;
     }
@@ -192,14 +190,14 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
 
     ss << "2\n";
 
-    auto outletProps=job->GetOutletProps();
-    auto it = outletProps.begin();
-    while(it != outletProps.end())
+    auto capProps=job->GetCapProps();
+    auto it = capProps.begin();
+    while(it != capProps.end())
     {
         if(it->first!="")
         {
             auto props=it->second;
-            if(props["Type"]=="RCR")
+            if(props["BC Type"]=="RCR")
             {
                 auto values=sv::split(props["Values"]);
                 if(values.size()==3)
@@ -227,39 +225,43 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     auto basicProps=job->GetBasicProps();
     auto solverProps=job->GetSolverProps();
 
+    //Fluid Properties
+    //======================================================
+    ss << "Density: " << basicProps["Fluid Density"] <<"\n";
+    ss << "Viscosity: " << basicProps["Fluid Viscosity"] <<"\n";
+    ss << "\n";
+
     //Time Steps
     //======================================================
     ss << "Number of Timesteps: " << solverProps["Number of Timesteps"] <<"\n";
     ss << "Time Step Size: " << solverProps["Time Step Size"] <<"\n";
+    ss << "\n";
 
     //Output Control
     //======================================================
     ss << "Number of Timesteps between Restarts: " << solverProps["Number of Timesteps between Restarts"] <<"\n";
-    ss << "Print Average Solution: " << solverProps["Output Average Solution"] <<"\n";
-    ss << "Print Error Indicators: " << solverProps["Output Error Indicators"] <<"\n";
     if(solverProps["Output Surface Stress"]=="True")
     {
         ss << "Number of Force Surfaces: 1\n";
         ss << "Surface ID's for Force Calculation: 1\n";
         ss << "Force Calculation Method: " << solverProps["Surface Stress Calculation Method"] <<"\n";
     }
-
-    //Fluid Properties
-    //======================================================
-    ss << "Density: " << basicProps["Fluid Density"] <<"\n";
-    ss << "Viscosity: " << basicProps["Fluid Viscosity"] <<"\n";
+    ss << "Print Average Solution: " << solverProps["Output Average Solution"] <<"\n";
+    ss << "Print Error Indicators: " << solverProps["Output Error Indicators"] <<"\n";
+    ss << "\n";
 
     //BCT Prescribed Velocities
     //======================================================
-    if(job->GetPrescribedCapNumber()>0)
+    if(job->GetVelocityCapNumber()>0)
         ss << "Time Varying Boundary Conditions From File: True\n";
     else
         ss << "Time Varying Boundary Conditions From File: False\n";
 
+    ss << "\n";
+
     //Step Construction
     //=====================================================
     int stepNumber=std::stoi(solverProps["Step Construction"]);
-    std::string stepStr=solverProps["Step Construction"];
     if(stepNumber>0)
     {
         ss << "Step Construction:";
@@ -268,16 +270,164 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
 
         ss << "\n";
     }
+    ss << "\n";
 
-    //BC: R, RCR, COR, IMP, CLOSELOOP, BACKFLOW
+    //BC: coupling
     //==================================================
+    auto capProps=job->GetCapProps();
     ss << "Pressure Coupling: " << solverProps["Pressure Coupling"] <<"\n";
-//    ss << "Number of Coupled Surfaces: " <<    <<"\n";
+    ss << "Number of Coupled Surfaces: " << job->GetPressureCapNumber() <<"\n";
+    ss << "\n";
+
+    //BC: Resistance
+    //===================================================
+    std::vector<int> RIDs;
+    std::vector<std::string> RValues;
+    auto it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="Resistance")
+        {
+            RIDs.push_back(IDs[it->first]);
+            RValues.push_back(it->second["Values"]);
+        }
+        it++;
+    }
+    if(RIDs.size()>0)
+    {
+        ss << "Number of Resistance Surfaces: " << RIDs.size() <<"\n";
+
+        ss << "List of Resistance Surfaces:";
+        for(int i=0;i<RIDs.size();i++)
+        {
+            ss << " " << RIDs[i];
+        }
+        ss << "\n";
+
+        ss << "Resistance Values:";
+        for(int i=0;i<RValues.size();i++)
+        {
+            ss << " " << RValues[i];
+        }
+        ss << "\n";
+
+        ss << "\n";
+    }
+
+    //BC: RCR
+    //===================================================
+    std::vector<int> RCRIDs;
+    it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="RCR")
+        {
+            RCRIDs.push_back(IDs[it->first]);
+        }
+        it++;
+    }
+    if(RCRIDs.size()>0)
+    {
+        ss << "Number of RCR Surfaces: " << RCRIDs.size() <<"\n";
+
+        ss << "List of RCR Surfaces:";
+        for(int i=0;i<RCRIDs.size();i++)
+        {
+            ss << " " << RCRIDs[i];
+        }
+        ss << "\n";
+
+        ss << "RCR Values From File: True\n";
+
+        ss << "\n";
+    }
+
+    //BC: Impedance
+    //===================================================
+    std::vector<int> ImpIDs;
+    it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="Impedance")
+        {
+            ImpIDs.push_back(IDs[it->first]);
+        }
+        it++;
+    }
+    if(ImpIDs.size()>0)
+    {
+        ss << "Number of Impedance Surfaces: " << ImpIDs.size() <<"\n";
+
+        ss << "List of Impedance Surfaces:";
+        for(int i=0;i<ImpIDs.size();i++)
+        {
+            ss << " " << ImpIDs[i];
+        }
+        ss << "\n";
+
+        ss << "Impedance From File: True\n";
+
+        ss << "\n";
+    }
+
+    //BC: Coronary
+    //===================================================
+    std::vector<int> CorIDs;
+    it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="Coronary")
+        {
+            CorIDs.push_back(IDs[it->first]);
+        }
+        it++;
+    }
+    if(CorIDs.size()>0)
+    {
+        ss << "Number of COR Surfaces: " << CorIDs.size() <<"\n";
+
+        ss << "List of COR Surfaces:";
+        for(int i=0;i<CorIDs.size();i++)
+        {
+            ss << " " << CorIDs[i];
+        }
+        ss << "\n";
+
+        ss << "COR Values From File: True\n";
+
+        ss << "\n";
+    }
+
+    //BC: Closedloop
+    //===================================================
+    //to do
+
+
+    //BC: Backflow Control
+    //===================================================
+    ss << "Backflow Stabilization Coefficient: " << solverProps["Backflow Stabilization Coefficient"] <<"\n";
 
 
     //Deformable
     //==================================================
-    ss << "Density of Vessel Wall: " << solverProps["Density of Vessel Wall"] <<"\n";
+    auto wallProps=job->GetWallProps();
+    if(wallProps["Type"]=="deformable")
+    {
+        ss << "Deformable Wall: True\n";
+        ss << "Thickness of Vessel Wall: " << wallProps["Thickness"] << "\n";
+        ss << "Young Mod of Vessel Wall: " << wallProps["Elastic Modulus"] << "\n";
+        ss << "Density of Vessel Wall: " << wallProps["Density"] <<"\n";
+        ss << "Poisson Ratio of Vessel Wall: " << wallProps["Poisson Ratio"] << "\n";
+        ss << "Shear Constant of Vessel Wall: " << wallProps["Shear Constant"] << "\n";
+    }
+    else if(wallProps["Type"]=="variable")
+    {
+        ss << "Deformable Wall: True\n";
+        ss << "Variable Wall Thickness and Young Mod: True\n";
+        ss << "Density of Vessel Wall: " << wallProps["Density"] <<"\n";
+        ss << "Poisson Ratio of Vessel Wall: " << wallProps["Poisson Ratio"] << "\n";
+        ss << "Shear Constant of Vessel Wall: " << wallProps["Shear Constant"] << "\n";
+    }
 
     //Advanced
     //======================================================

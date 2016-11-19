@@ -1139,6 +1139,8 @@ void svMeshEdit::ShowSphereInteractor(bool checked)
     m_SphereWidget->PlaceWidget();
 
     m_SphereWidget->On();
+
+    TableRegionListSelectionChanged(QItemSelection(),QItemSelection());
 }
 
 void svMeshEdit::UpdateSphereData()

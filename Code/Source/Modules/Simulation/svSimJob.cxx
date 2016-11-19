@@ -1,14 +1,14 @@
 #include "svSimJob.h"
 
 svSimJob::svSimJob()
-    :m_PrescribedCapNumber(0)
+    : m_VelocityCapNumber(0)
+    , m_PressureCapNumber(0)
 {
 }
 
 svSimJob::svSimJob(const svSimJob &other)
     : m_BasicProps(other.m_BasicProps)
-    , m_InletProps(other.m_InletProps)
-    , m_OutletProps(other.m_OutletProps)
+    , m_CapProps(other.m_CapProps)
     , m_WallProps(other.m_WallProps)
     , m_SolverProps(other.m_SolverProps)
     , m_RunProps(other.m_RunProps)
@@ -44,44 +44,24 @@ std::string svSimJob::GetBasicProp(const std::string& key)
     return m_BasicProps[key];
 }
 
-void svSimJob::SetInletProps(std::map<std::string,std::map<std::string,std::string>> inletProps)
+void svSimJob::SetCapProps(std::map<std::string,std::map<std::string,std::string>> capProps)
 {
-    m_InletProps=inletProps;
+    m_CapProps=capProps;
 }
 
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetInletProps()
+std::map<std::string,std::map<std::string,std::string>> svSimJob::GetCapProps()
 {
-    return m_InletProps;
+    return m_CapProps;
 }
 
-void svSimJob::SetInletProp(const std::string& inletName, const std::string& key, std::string value)
+void svSimJob::SetCapProp(const std::string& capName, const std::string& key, std::string value)
 {
-    m_InletProps[inletName][key]=value;
+    m_CapProps[capName][key]=value;
 }
 
-std::string svSimJob::GetInletProp(const std::string& inletName, const std::string& key)
+std::string svSimJob::GetCapProp(const std::string& capName, const std::string& key)
 {
-    return m_InletProps[inletName][key];
-}
-
-void svSimJob::SetOutletProps(std::map<std::string,std::map<std::string,std::string>> outletProps)
-{
-    m_OutletProps=outletProps;
-}
-
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetOutletProps()
-{
-    return m_OutletProps;
-}
-
-void svSimJob::SetOutletProp(const std::string& outletName, const std::string& key, std::string value)
-{
-    m_OutletProps[outletName][key]=value;
-}
-
-std::string svSimJob::GetOutletProp(const std::string& outletName, const std::string& key)
-{
-    return m_OutletProps[outletName][key];
+    return m_CapProps[capName][key];
 }
 
 void svSimJob::SetWallProps(std::map<std::string,std::string> wallProps)
@@ -174,12 +154,22 @@ std::map<std::string,int> svSimJob::GetIDs()
     return m_IDs;
 }
 
-void svSimJob::SetPrescribedCapNumber(int number)
+void svSimJob::SetVelocityCapNumber(int number)
 {
-    m_PrescribedCapNumber=number;
+    m_VelocityCapNumber=number;
 }
 
-int svSimJob::GetPrescribedCapNumber()
+int svSimJob::GetVelocityCapNumber()
 {
-    return m_PrescribedCapNumber;
+    return m_VelocityCapNumber;
+}
+
+void svSimJob::SetPressureCapNumber(int number)
+{
+    m_PressureCapNumber=number;
+}
+
+int svSimJob::GetPressureCapNumber()
+{
+    return m_PressureCapNumber;
 }

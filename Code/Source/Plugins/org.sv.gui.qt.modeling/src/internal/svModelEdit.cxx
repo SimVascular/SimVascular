@@ -1005,7 +1005,8 @@ void svModelEdit::ChangeTypeSelected( bool )
     }
 
     QStringList items;
-    items << tr("wall") << tr("inlet") << tr("outlet") << tr("cap");
+//    items << tr("wall") << tr("inlet") << tr("outlet") << tr("cap");
+    items << tr("wall") << tr("cap");
 
     bool ok;
     QString type = QInputDialog::getItem(m_Parent, "Change Type", "Type:", items, 0, false, &ok);

@@ -111,7 +111,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
           if(face->name.substr(0,5)=="wall_")
               face->type="wall";
           else if(face->name.substr(0,4)=="cap_")
-              face->type="outlet";
+              face->type="cap";
 
           faces.push_back(face);
     }
