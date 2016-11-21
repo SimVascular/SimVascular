@@ -18,6 +18,7 @@ set(HDRS
     svApplication.h
     svBasicFunctionality.h
     svCollapsiblePane.h
+    svDisableGLHiDPI.h
     svDisplayEditor.h
     svDnDFrameWidget.h
     svExtensionManager.h
@@ -42,6 +43,7 @@ set(CXXSRCS
     svApplication.cxx
     svBasicFunctionality.cxx
     svCollapsiblePane.cxx
+    svDisableGLHiDPI.mm
     svDisplayEditor.cxx
     svDnDFrameWidget.cxx
     svExtensionManager.cxx

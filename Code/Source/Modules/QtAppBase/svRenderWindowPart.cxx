@@ -1,5 +1,6 @@
 #include "svRenderWindowPart.h"
 #include "svApplication.h"
+#include "svDisableGLHiDPI.h"
 
 
 svRenderWindowPart::svRenderWindowPart()
@@ -27,7 +28,11 @@ QHash<QString,QmitkRenderWindow*> svRenderWindowPart::GetQmitkRenderWindows()
 
 QmitkRenderWindow* svRenderWindowPart::GetQmitkRenderWindow(const QString& id)
 {
-	return GetQmitkRenderWindows()[id];
+        QmitkRenderWindow *renderWindow = GetQmitkRenderWindows()[id];
+#ifdef __APPLE__
+        disableGLHiDPI(renderWindow->winId());
+#endif
+	return renderWindow;
 }
 
 mitk::RenderingManager* svRenderWindowPart::GetRenderingManager()

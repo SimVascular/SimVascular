@@ -218,7 +218,7 @@ proc modules_registry_query {regpath regpathwow key} {
 }
 
 if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
-    
+
   # why do I need to prevent this from being read on windows?
   if {$tcl_platform(platform) != "windows"} {
     source [file join $env(SV_HOME) Tcl SimVascular_2.0 General-code.tcl]
@@ -286,11 +286,21 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
 
 } else {
 
-  source [file join $env(SV_HOME) Tcl SimVascular_2.0 simvascular_developer_startup.tcl]
+  if {$SV_RELEASE_BUILD == 1} {
+    if {$tcl_platform(platform) != "windows"} {
+      source [file join $env(SV_HOME) Tcl SimVascular_2.0 General-code.tcl]
+    }
+    foreach codefile [glob [file join $env(SV_HOME) Tcl SimVascular_2.0 *code.tcl]] {
+      source $codefile
+    }
+  } else {
+    source [file join $env(SV_HOME) Tcl SimVascular_2.0 simvascular_developer_startup.tcl]
+  }
+
   if {[lsearch -exact $envnames SV_BATCH_MODE] < 0} {
      catch {source [file join $env(SV_HOME) Tcl SimVascular_2.0 GUI splash.tcl]}
   }
-  
+
   if {$tcl_platform(platform) == "unix"} {
     if {$tcl_platform(os) == "Darwin"} {
       set lib_prefix "lib_"
@@ -327,9 +337,9 @@ if {($SV_RELEASE_BUILD != 0) && ($tcl_platform(platform) == "windows")} {
         puts "loaded [lindex $lib 0] dynamically"
       }
     }
-      
+
   }
-  
+
 }
 
 # ------------------
@@ -640,7 +650,7 @@ if {$SV_USE_PYTHON == "ON"} {
 
 if {$argc >= 1} {
    puts "argc: $argc  argv: $argv"
-   if {[file exists [lindex $argv 0]]} { 
+   if {[file exists [lindex $argv 0]]} {
        source [lindex $argv 0]
    } else {
        puts "ignored line: $argv"

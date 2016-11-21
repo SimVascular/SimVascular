@@ -1,4 +1,5 @@
 #include "svDisplayEditor.h"
+#include "svDisableGLHiDPI.h"
 #include <mitkBaseRenderer.h>
 #include <mitkTimeGeometry.h>
 #include <mitkRenderingManager.h>
@@ -26,7 +27,12 @@ void svDisplayEditor::CreateQtPartControl( QWidget *parent )
     mitk::RenderingManager::GetInstance()->InitializeViews(geo);
 
     // Initialize bottom-right view as 3D view
+    QmitkRenderWindow *renderWindow = m_DisplayWidget->GetRenderWindow4();
     m_DisplayWidget->GetRenderWindow4()->GetRenderer()->SetMapperID(mitk::BaseRenderer::Standard3D);
+#ifdef __APPLE__
+        disableGLHiDPI(renderWindow->winId());
+#endif
+    renderWindow->GetRenderer()->SetMapperID(mitk::BaseRenderer::Standard3D);
 
     // Enable standard handler for levelwindow-slider
     m_DisplayWidget->EnableStandardLevelWindow();
