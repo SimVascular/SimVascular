@@ -34,6 +34,10 @@ public:
 
     std::string GetModelName() const;
 
+    std::string GetStatus() const;
+
+    void SetStatus(std::string status);
+
   protected:
 
     mitkCloneMacro(Self);
@@ -53,6 +57,8 @@ public:
     std::string m_MeshName;
 
     std::string m_ModelName;
+
+    std::string m_Status;
 
 };
 

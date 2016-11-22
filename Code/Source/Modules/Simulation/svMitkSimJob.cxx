@@ -4,6 +4,7 @@ svMitkSimJob::svMitkSimJob()
     : m_Job(NULL)
     , m_MeshName("")
     , m_ModelName("")
+    , m_Status("No Data Files")
 {
     this->InitializeEmpty();
 }
@@ -89,4 +90,14 @@ void svMitkSimJob::SetModelName(std::string modelName)
 std::string svMitkSimJob::GetModelName() const
 {
     return m_ModelName;
+}
+
+void svMitkSimJob::SetStatus(std::string status)
+{
+    m_Status=status;
+}
+
+std::string svMitkSimJob::GetStatus() const
+{
+    return m_Status;
 }
