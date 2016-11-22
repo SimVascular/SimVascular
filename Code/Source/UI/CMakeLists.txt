@@ -80,7 +80,7 @@ if (SV_USE_PYTHON)
 endif()
 
 #if(SV_USE_QT_GUI)
-#  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_QTGUI_PLUGIN_IMAGE_NAME}
+#  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_QTGUI_SVWORKBENCH_NAME})
 #                         ${SV_LIB_QTGUI_PLUGIN_MITKSEGMENTATION_NAME}
 #                         ${SV_LIB_QTGUI_PLUGIN_GENERAL_NAME}
 #                         ${SV_LIB_QTGUI_PLUGIN_MODELING_NAME}
@@ -96,22 +96,90 @@ endif()
 #                         ${SV_LIB_QTGUI_MODULE_SEGMENTATION_NAME})
 #endif()
 
-simvascular_add_executable(${SV_EXE}
-	SRCS ${CXXSRCS}
-	DEV_SCRIPT_NAME "mysim"
-	INSTALL_SCRIPT_NAME "simvascular"
-	INSTALL_COMPONENT CoreExecutables
-	INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
-#message("OPTLIBS ${OPTLIBS}")
+#simvascular_add_executable(${SV_EXE}
+#	SRCS ${CXXSRCS}
+#	DEV_SCRIPT_NAME "mysim"
+#	INSTALL_SCRIPT_NAME "simvascular"
+#	INSTALL_COMPONENT CoreExecutables
+#	INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
+##message("OPTLIBS ${OPTLIBS}")
 
-target_link_libraries(${SV_EXE}
+
+#--------------------------------TMP-------------------------------------------
+set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
+list(APPEND SV_SCRIPT_TARGETS_WORK "${SV_EXE}")
+list(REMOVE_DUPLICATES SV_SCRIPT_TARGETS_WORK)
+set(SV_SCRIPT_TARGETS ${SV_SCRIPT_TARGETS_WORK} CACHE INTERNAL "" FORCE)
+
+set(DEV_SCRIPT_NAME "mysim")
+set(${SV_EXE}_DEVELOPER_SCRIPT_NAME ${DEV_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+set(${SV_EXE}_EXECUTABLE_NAME ${${SV_EXE}_DEVELOPER_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+
+set(INSTALL_SCRIPT_NAME "simvascular")
+set(${SV_EXE}_INSTALL_SCRIPT_NAME ${INSTALL_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
+
+set(_app_options)
+#if(SV_SHOW_CONSOLE_WINDOW)
+  list(APPEND _app_options SHOW_CONSOLE)
+#endif()
+
+set(SV_WORKBENCH_PROVISIONING_FILE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.provisioning" CACHE INTERNAL "svWorkbench provisioning file" FORCE)
+
+set(_exclude_plugins
+  org.blueberry.test
+  org.blueberry.uitest
+  org.mitk.gui.qt.coreapplication
+  org.mitk.gui.qt.diffusionimagingapp
+  org.mitk.example.gui.customviewer
+  org.mitk.example.gui.customviewer.views
+  org.mitk.example.gui.selectionservicemitk
+  org.mitk.example.gui.selectionservicemitk.views
+  org.mitk.example.gui.selectionserviceqt
+  org.mitk.example.gui.extensionpointcontribution
+  org.mitk.example.gui.extensionpointdefinition
+  org.mitk.example.gui.minimalapplication
+  org.mitk.example.gui.multipleperspectives
+)
+
+mitkFunctionCreateBlueBerryApplication(
+  NAME ${SV_EXE}
+  SOURCES ${CXXSRCS}
+  DESCRIPTION "SimVascular Workbench"
+  EXCLUDE_PLUGINS ${_exclude_plugins}
+  ${_app_options}
+)
+
+mitk_use_modules(TARGET ${SV_EXE}
+  MODULES MitkAppUtil
+  PACKAGES Qt5|Widgets
+)
+
+# Add meta dependencies (e.g. on auto-load modules from depending modules)
+if(TARGET ${CMAKE_PROJECT_NAME}-autoload)
+  add_dependencies(${SV_EXE} ${CMAKE_PROJECT_NAME}-autoload)
+endif()
+
+#Setting application icon for mac os x systems
+set_target_properties(${SV_EXE} PROPERTIES MACOSX_BUNDLE_ICON_FILE "icon.icns")
+
+if(APPLE)
+  install(FILES "icons/icon.icns" DESTINATION "${SV_EXE}.app/Contents/Resources")
+endif(APPLE)
+
+# Add a build time dependency to legacy BlueBerry bundles.
+if(MITK_MODULES_ENABLED_PLUGINS)
+  add_dependencies(${SV_EXE} ${MITK_MODULES_ENABLED_PLUGINS})
+endif()
+#--------------------------------TMP-------------------------------------------
+
+target_link_libraries(${SV_EXE} PRIVATE
 			${SV_LIB_POST_NAME} ${SV_LIB_IMAGE_NAME}
 			${SV_LIB_REPOSITORY_NAME} ${SV_LIB_LSET_NAME}
 			${SV_LIB_SOLID_NAME} ${SV_LIB_MESH_NAME}
                         ${SV_LIB_GEOM_NAME} ${SV_LIB_UTILS_NAME}
 			${SV_LIB_GLOBALS_NAME} ${SV_LIB_POLYDATA_SOLID_NAME})
 
-target_link_libraries(${SV_EXE} ${OPTLIBS}
+                      target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
 			${OpenCASCADE_LIBRARIES}

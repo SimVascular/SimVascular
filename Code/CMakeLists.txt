@@ -848,6 +848,7 @@ if(SV_USE_MITK)
   if(SV_USE_MITK_CONFIG)
     find_package(MITK NO_MODULE)
     set(MITK_LIBRARIES MitkCore
+                       MitkAppUtil
                        MitkQtWidgets
                        MitkQtWidgetsExt
                        MitkMapperExt
@@ -996,15 +997,21 @@ if(SV_USE_QT_GUI)
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Mesh")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/ProjectManagement")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.projectnodes")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.projectmanager")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.pathplanning")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.segmentation")
-#  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.modeling")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.projectdatanodes")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.projectmanager")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.pathplanning")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.segmentation")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.modeling")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.meshing")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Applications")
+  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.test")
+  foreach(dir ${SV_QT_GUI_LIBRARY_DIRS})
+    include_directories(${dir})
+  endforeach()
 
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
 
-  set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Applications")
+  #set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Applications")
 
 endif()
 
@@ -1034,8 +1041,8 @@ if(SV_USE_QT_GUI)
     ctkMacroListFilter(_tmp_list re_ctkplugin OUTPUT_VARIABLE ${varname})
   endmacro()
 
-  set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/Applications^^${PROJECT_NAME}_Apps/svWorkbench")
-  message(STATUS "sv app full path: ${sv_app_fullpath}")
+  #set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/Applications^^${PROJECT_NAME}_Apps/svWorkbench")
+  #message(STATUS "sv app full path: ${sv_app_fullpath}")
 
   include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
   set(sv_plugins_fullpath "")
