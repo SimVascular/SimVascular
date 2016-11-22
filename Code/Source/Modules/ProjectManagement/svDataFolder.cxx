@@ -1,6 +1,5 @@
 #include "svDataFolder.h"
 
-
 svDataFolder::svDataFolder()
 {
     this->InitializeEmpty();
@@ -26,7 +25,6 @@ void svDataFolder::InitializeEmpty()
     //    Superclass::InitializeTimeGeometry(1);
     //    m_Initialized = true;
 }
-
 
 void svDataFolder::SetRequestedRegionToLargestPossibleRegion()
 {

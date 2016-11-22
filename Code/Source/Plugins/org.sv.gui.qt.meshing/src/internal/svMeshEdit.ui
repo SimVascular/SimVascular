@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>434</width>
-    <height>749</height>
+    <height>892</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -70,6 +70,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string>Model Used:</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>
@@ -100,6 +107,13 @@
          </item>
          <item>
           <widget class="QLabel" name="labelMeshType">
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="labelModelName">
            <property name="text">
             <string/>
            </property>
@@ -211,7 +225,7 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>3</number>
+             <number>2</number>
             </property>
             <widget class="QWidget" name="page_3">
              <property name="geometry">
@@ -219,7 +233,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>483</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">
@@ -524,8 +538,20 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>483</height>
+               <height>600</height>
               </rect>
+             </property>
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>0</height>
+              </size>
              </property>
              <attribute name="label">
               <string>Local Size</string>
@@ -566,6 +592,12 @@
                  </property>
                  <item>
                   <widget class="QTableView" name="tableViewLocalT">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="contextMenuPolicy">
                     <enum>Qt::CustomContextMenu</enum>
                    </property>
@@ -591,7 +623,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>483</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">
@@ -633,6 +665,12 @@
                  </property>
                  <item>
                   <widget class="QTableView" name="tableViewRegionT">
+                   <property name="sizePolicy">
+                    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                     <horstretch>0</horstretch>
+                     <verstretch>0</verstretch>
+                    </sizepolicy>
+                   </property>
                    <property name="contextMenuPolicy">
                     <enum>Qt::CustomContextMenu</enum>
                    </property>
@@ -703,7 +741,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>483</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">
@@ -935,7 +973,7 @@
                <x>0</x>
                <y>0</y>
                <width>416</width>
-               <height>483</height>
+               <height>600</height>
               </rect>
              </property>
              <attribute name="label">

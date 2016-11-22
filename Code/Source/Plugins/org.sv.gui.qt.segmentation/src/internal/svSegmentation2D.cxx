@@ -165,7 +165,7 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
 
 void svSegmentation2D::Visible()
 {
-    ui->resliceSlider->turnOnReslice(true);
+//    ui->resliceSlider->turnOnReslice(true);
     OnSelectionChanged(GetDataManagerSelection());
 }
 
@@ -174,6 +174,11 @@ void svSegmentation2D::Hidden()
     ui->resliceSlider->turnOnReslice(false);
     ClearAll();
 }
+
+//bool svSegmentation2D::IsExclusiveFunctionality() const
+//{
+//    return true;
+//}
 
 int svSegmentation2D::GetTimeStep()
 {
@@ -200,6 +205,7 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(nodes.size()==0)
     {
+        ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         m_Parent->setEnabled(false);
         return;
@@ -209,6 +215,7 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(m_ContourGroupNode==groupNode)
     {
+        ui->resliceSlider->turnOnReslice(true);
         return;
     }
 
@@ -218,6 +225,7 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     m_ContourGroup=dynamic_cast<svContourGroup*>(groupNode->GetData());
     if(!m_ContourGroup)
     {
+        ui->resliceSlider->turnOnReslice(false);
         ClearAll();
         m_Parent->setEnabled(false);
         return;
@@ -344,6 +352,8 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     bool lofting=false;
     m_ContourGroupNode->GetBoolProperty("lofting",lofting);
     ui->checkBoxLoftingPreview->setChecked(lofting);
+
+    ui->resliceSlider->turnOnReslice(true);
 }
 
 double svSegmentation2D::GetVolumeImageSpacing()

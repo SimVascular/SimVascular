@@ -42,10 +42,10 @@ void svMeshTetGen::InitNewMesher()
 
 bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
 {
-    if(m_cvTetGetMesh==NULL)
+    if(!svMesh::SetModelElement(modelElement))
         return false;
 
-    if(!svMesh::SetModelElement(modelElement))
+    if(m_cvTetGetMesh==NULL)
         return false;
 
     if(modelElement==NULL||modelElement->GetWholeVtkPolyData()==NULL)

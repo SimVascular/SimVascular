@@ -17,7 +17,7 @@ public:
     {
         int id;
         std::string name;
-        std::string type;//wall, cap, or empty if unknown
+        std::string type;//wall, cap, inlet, or empty if unknown
 
         vtkSmartPointer<vtkPolyData> vpd;
 
@@ -133,6 +133,10 @@ public:
     std::vector<int> GetWallFaceIDs();
 
     std::vector<int> GetCapFaceIDs();
+
+    std::vector<int> GetInletFaceIDs();
+
+    std::vector<int> GetOutletFaceIDs();
 
     double GetFaceArea(int id);
 

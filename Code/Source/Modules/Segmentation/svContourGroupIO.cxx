@@ -179,31 +179,37 @@ std::vector<mitk::BaseData::Pointer> svContourGroupIO::Read()
 
             //control points without updating contour points
             TiXmlElement* controlpointsElement = contourElement->FirstChildElement("control_points");
-            std::vector<mitk::Point3D> controlPoints;
-            for( TiXmlElement* pointElement = controlpointsElement->FirstChildElement("point");
-                 pointElement != nullptr;
-                 pointElement = pointElement->NextSiblingElement("point") )
+            if(controlpointsElement!=nullptr)
             {
-                if (pointElement == nullptr)
-                    continue;
+                std::vector<mitk::Point3D> controlPoints;
+                for( TiXmlElement* pointElement = controlpointsElement->FirstChildElement("point");
+                     pointElement != nullptr;
+                     pointElement = pointElement->NextSiblingElement("point") )
+                {
+                    if (pointElement == nullptr)
+                        continue;
 
-                controlPoints.push_back(svXmlIOUtil::GetPoint(pointElement));
+                    controlPoints.push_back(svXmlIOUtil::GetPoint(pointElement));
+                }
+                contour->SetControlPoints(controlPoints,false);
             }
-            contour->SetControlPoints(controlPoints,false);
 
             //contour points
             TiXmlElement* contourpointsElement = contourElement->FirstChildElement("contour_points");
-            std::vector<mitk::Point3D> contourPoints;
-            for( TiXmlElement* pointElement = contourpointsElement->FirstChildElement("point");
-                 pointElement != nullptr;
-                 pointElement = pointElement->NextSiblingElement("point") )
+            if(contourpointsElement!=nullptr)
             {
-                if (pointElement == nullptr)
-                    continue;
+                std::vector<mitk::Point3D> contourPoints;
+                for( TiXmlElement* pointElement = contourpointsElement->FirstChildElement("point");
+                     pointElement != nullptr;
+                     pointElement = pointElement->NextSiblingElement("point") )
+                {
+                    if (pointElement == nullptr)
+                        continue;
 
-                contourPoints.push_back(svXmlIOUtil::GetPoint(pointElement));
+                    contourPoints.push_back(svXmlIOUtil::GetPoint(pointElement));
+                }
+                contour->SetContourPoints(contourPoints,false);
             }
-            contour->SetContourPoints(contourPoints,false);
 
             group->InsertContour(-1,contour,timestep);
         } //contour

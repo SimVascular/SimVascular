@@ -6,8 +6,6 @@
 #include <svProjectManagementExports.h>
 
 #include "mitkBaseData.h"
-#include "mitkDataNode.h"
-#include "mitkDataStorage.h"
 
 class SVPROJECTMANAGEMENT_EXPORT svDataFolder : public mitk::BaseData
 {

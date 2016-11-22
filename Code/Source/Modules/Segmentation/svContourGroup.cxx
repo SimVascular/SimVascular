@@ -54,7 +54,8 @@ void svContourGroup::InitializeEmpty()
 
 bool svContourGroup::IsEmptyTimeStep(unsigned int t) const
 {
-    return IsInitialized() && (GetSize(t) == 0);
+//    return IsInitialized() && (GetSize(t) == 0);
+    return false;
 }
 
 void svContourGroup::Expand( unsigned int timeSteps )

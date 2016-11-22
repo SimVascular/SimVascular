@@ -14,7 +14,10 @@ QWidget* svFaceListDelegate::createEditor(QWidget *parent, const QStyleOptionVie
     {
         QComboBox* cb=new QComboBox(parent);
         cb->addItem("wall");
+//        cb->addItem("inlet");
+//        cb->addItem("outlet");
         cb->addItem("cap");
+
         return cb;
     }
     case 5:
