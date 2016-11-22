@@ -38,6 +38,11 @@ void svMitkSimJob::InitializeEmpty()
 //    m_Initialized = true;
 }
 
+bool svMitkSimJob::IsEmptyTimeStep(unsigned int t) const
+{
+    return false;
+}
+
 void svMitkSimJob::SetRequestedRegionToLargestPossibleRegion()
 {
 }

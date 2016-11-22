@@ -54,15 +54,17 @@ bool svMitkMesh::IsEmptyTimeStep(unsigned int t) const
 {
 //    return IsInitialized() && (GetMesh(t) == NULL);
 
-    if(!IsInitialized())
-        return false;
+//    if(!IsInitialized())
+//        return false;
 
-    return GetMesh(t) == NULL || GetMesh(t)->GetSurfaceMesh() == NULL || (
-                GetMesh(t)->GetSurfaceMesh()->GetNumberOfLines() == 0 &&
-                GetMesh(t)->GetSurfaceMesh()->GetNumberOfPolys() == 0 &&
-                GetMesh(t)->GetSurfaceMesh()->GetNumberOfStrips() == 0 &&
-                GetMesh(t)->GetSurfaceMesh()->GetNumberOfVerts() == 0
-                );
+//    return GetMesh(t) == NULL || GetMesh(t)->GetSurfaceMesh() == NULL || (
+//                GetMesh(t)->GetSurfaceMesh()->GetNumberOfLines() == 0 &&
+//                GetMesh(t)->GetSurfaceMesh()->GetNumberOfPolys() == 0 &&
+//                GetMesh(t)->GetSurfaceMesh()->GetNumberOfStrips() == 0 &&
+//                GetMesh(t)->GetSurfaceMesh()->GetNumberOfVerts() == 0
+//                );
+
+    return false;
 }
 
 void svMitkMesh::Expand(unsigned int timeSteps)

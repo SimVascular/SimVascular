@@ -15,6 +15,8 @@ public:
     itkFactorylessNewMacro(Self)
     itkCloneMacro(Self)
 
+    virtual bool IsEmptyTimeStep(unsigned int t) const override;
+
     virtual void SetRequestedRegionToLargestPossibleRegion() override;
     virtual bool RequestedRegionIsOutsideOfTheBufferedRegion() override;
     virtual bool VerifyRequestedRegion() override;

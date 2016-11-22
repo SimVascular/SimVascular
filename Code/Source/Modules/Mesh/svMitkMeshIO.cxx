@@ -17,7 +17,7 @@
 
 #include <fstream>
 
-static mitk::CustomMimeType CreatesvModelMimeType()
+static mitk::CustomMimeType CreatesvMeshMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svmesh");
     mimeType.SetCategory("Mesh");
@@ -28,7 +28,7 @@ static mitk::CustomMimeType CreatesvModelMimeType()
 }
 
 svMitkMeshIO::svMitkMeshIO()
-    : mitk::AbstractFileIO(svMitkMesh::GetStaticNameOfClass(), CreatesvModelMimeType(), "SimVascular Mesh")
+    : mitk::AbstractFileIO(svMitkMesh::GetStaticNameOfClass(), CreatesvMeshMimeType(), "SimVascular Mesh")
 {
     this->RegisterService();
 }
@@ -205,7 +205,7 @@ void svMitkMeshIO::Write()
         //Output actual mesh data file
         if(mesh->GetType()=="TetGen")
         {
-            if(mesh&&mesh->GetSurfaceMesh())
+            if(mesh->GetSurfaceMesh())
             {
                 std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
                 vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
@@ -217,7 +217,7 @@ void svMitkMeshIO::Write()
                 }
             }
 
-            if(mesh&&mesh->GetVolumeMesh())
+            if(mesh->GetVolumeMesh())
             {
                 std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
                 vtkSmartPointer<vtkXMLUnstructuredGridWriter> writer = vtkSmartPointer<vtkXMLUnstructuredGridWriter>::New();

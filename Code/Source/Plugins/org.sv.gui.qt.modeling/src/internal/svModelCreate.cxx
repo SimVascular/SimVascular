@@ -26,6 +26,7 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateModel()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
+    connect(ui->lineEditModelName, SIGNAL(returnPressed()), this, SLOT(CreateModel()));
     move(400,400);
 }
 

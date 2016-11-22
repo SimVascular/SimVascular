@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+<!--  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.simjobedit"
+          name="Edit Job"
+          class="svSimJobEdit"
+          icon="resources/simulation.png" />
+  </extension>-->
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <contextMenuAction nodeDescriptorName="svSimulationFolder" label="Create Simulation Job" icon="" class="svSimJobCreateAction" />
+<!--  <contextMenuAction nodeDescriptorName="svMitkSimJob" label="Export Job Data Files" icon="" class="svSimJobExportAction" />-->
+  </extension>
+
+</plugin>

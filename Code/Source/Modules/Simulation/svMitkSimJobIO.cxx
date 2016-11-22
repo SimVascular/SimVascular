@@ -9,7 +9,7 @@
 
 #include <fstream>
 
-static mitk::CustomMimeType CreatesvModelMimeType()
+static mitk::CustomMimeType CreatesvSimJobMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svjob");
     mimeType.SetCategory("Simulation");
@@ -20,7 +20,7 @@ static mitk::CustomMimeType CreatesvModelMimeType()
 }
 
 svMitkSimJobIO::svMitkSimJobIO()
-    : mitk::AbstractFileIO(svMitkSimJob::GetStaticNameOfClass(), CreatesvModelMimeType(), "SimVascular Job")
+    : mitk::AbstractFileIO(svMitkSimJob::GetStaticNameOfClass(), CreatesvSimJobMimeType(), "SimVascular Job")
 {
     this->RegisterService();
 }

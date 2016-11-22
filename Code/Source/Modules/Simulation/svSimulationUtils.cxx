@@ -74,7 +74,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
                 }
                 ss << "bct_point_number " << props["Point Number"] <<"\n";
                 ss << "bct_fourier_mode_number " << props["Fourier Modes"] <<"\n";
-                if(props["Flip Normal"]=="true")
+                if(props["Flip Normal"]=="True")
                 {
                     ss << "bct_flip\n";
                 }
@@ -97,7 +97,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
     it = capProps.begin();
     while(it != capProps.end())
     {
-        if(it->first!=""&&it->second["BC Type"]=="Prescribed Pressure")
+        if(it->first!="" && it->second["BC Type"]!="" && it->second["BC Type"]!="Prescribed Velocities")
         {
             ss << "pressure_vtp mesh-complete/mesh-surfaces/" << it->first << ".vtp " << it->second["Pressure"] << "\n";
         }
@@ -286,7 +286,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     auto it = capProps.begin();
     while(it != capProps.end())
     {
-        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="Resistance")
+        if(it->first!="" && it->second["BC Type"]=="Resistance")
         {
             RIDs.push_back(IDs[it->first]);
             RValues.push_back(it->second["Values"]);
@@ -320,7 +320,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     it = capProps.begin();
     while(it != capProps.end())
     {
-        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="RCR")
+        if(it->first!="" && it->second["BC Type"]=="RCR")
         {
             RCRIDs.push_back(IDs[it->first]);
         }
@@ -348,7 +348,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     it = capProps.begin();
     while(it != capProps.end())
     {
-        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="Impedance")
+        if(it->first!="" && it->second["BC Type"]=="Impedance")
         {
             ImpIDs.push_back(IDs[it->first]);
         }
@@ -376,7 +376,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     it = capProps.begin();
     while(it != capProps.end())
     {
-        if(it->first!="" && it->second["BC Type"]=="Prescribed Pressure" && it->second["Sub Type"]=="Coronary")
+        if(it->first!="" && it->second["BC Type"]=="Coronary")
         {
             CorIDs.push_back(IDs[it->first]);
         }
