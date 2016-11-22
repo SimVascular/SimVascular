@@ -63,8 +63,13 @@ svModelElement* svMesh::GetModelElement() const
 
 bool svMesh::SetModelElement(svModelElement* modelElement)
 {
-    m_ModelElement=modelElement;
+    SetModelElementOnly(modelElement);
     return true;
+}
+
+void svMesh::SetModelElementOnly(svModelElement* modelElement)
+{
+    m_ModelElement=modelElement;
 }
 
 void svMesh::CalculateBoundingBox(double *bounds)

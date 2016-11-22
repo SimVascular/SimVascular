@@ -136,6 +136,8 @@ public:
 
     virtual void Hidden() override;
 
+//    bool IsExclusiveFunctionality() const override;
+
 protected:
 
     QWidget* m_Parent;

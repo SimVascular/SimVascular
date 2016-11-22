@@ -35,6 +35,8 @@ public:
 
     virtual bool SetModelElement(svModelElement* modelElement);
 
+    void SetModelElementOnly(svModelElement* modelElement);
+
     void CalculateBoundingBox(double *bounds);
 
     bool ExecuteCommand(std::string cmd, std::string& msg);

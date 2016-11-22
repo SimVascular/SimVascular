@@ -284,7 +284,31 @@ std::vector<int> svModelElement::GetCapFaceIDs()
     std::vector<int> ids;
     for(int i=0;i<m_Faces.size();i++)
     {
-        if(m_Faces[i]&&m_Faces[i]->type=="cap")
+        if(m_Faces[i]&&(m_Faces[i]->type=="cap"||m_Faces[i]->type=="inlet"||m_Faces[i]->type=="outlet"))
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
+std::vector<int> svModelElement::GetInletFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&& m_Faces[i]->type=="inlet")
+           ids.push_back(m_Faces[i]->id);
+    }
+
+    return ids;
+}
+
+std::vector<int> svModelElement::GetOutletFaceIDs()
+{
+    std::vector<int> ids;
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        if(m_Faces[i]&&(m_Faces[i]->type=="cap" || m_Faces[i]->type=="outlet"))
            ids.push_back(m_Faces[i]->id);
     }
 

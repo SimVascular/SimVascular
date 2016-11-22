@@ -3,6 +3,7 @@
 #include "svSegmentationObjectFactory.h"
 #include "svModelObjectFactory.h"
 #include "svMitkMeshObjectFactory.h"
+#include "svMitkSimulationObjectFactory.h"
 
 #include "QmitkNodeDescriptorManager.h"
 #include "mitkNodePredicateDataType.h"
@@ -44,6 +45,8 @@ void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
     mitk::NodePredicateDataType::Pointer isSimulationFolder = mitk::NodePredicateDataType::New("svSimulationFolder");
     descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("svSimulationFolder"), QString(":svsimfolder.png"), isSimulationFolder, descriptorManager));
 
+    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+    descriptorManager->AddDescriptor(new QmitkNodeDescriptor(tr("svMitkSimJob"), QString(":svsimjob.png"), isSimJob, descriptorManager));
 }
 
 void svProjectDataNodesPluginActivator::stop(ctkPluginContext* context)
@@ -54,3 +57,4 @@ static RegistersvPathObjectFactory registersvPathObjectFactory;
 static RegistersvSegmentationObjectFactory registersvSegmentationObjectFactory;
 static RegistersvModelObjectFactory registersvModelObjectFactory;
 static RegistersvMitkMeshObjectFactory registersvMitkMeshObjectFactory;
+static RegistersvMitkSimulationObjectFactory registersvMitkSimulationObjectFactory;

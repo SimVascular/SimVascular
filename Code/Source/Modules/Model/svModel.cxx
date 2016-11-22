@@ -49,15 +49,16 @@ bool svModel::IsEmptyTimeStep(unsigned int t) const
 {
 //    return IsInitialized() && (GetModelElement(t) == NULL);
 
-    if(!IsInitialized())
-        return false;
+//    if(!IsInitialized())
+//        return false;
 
-    return GetModelElement(t) == NULL || GetModelElement(t)->GetWholeVtkPolyData() == NULL || (
-                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfLines() == 0 &&
-                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfPolys() == 0 &&
-                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfStrips() == 0 &&
-                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfVerts() == 0
-                );
+//    return GetModelElement(t) == NULL || GetModelElement(t)->GetWholeVtkPolyData() == NULL || (
+//                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfLines() == 0 &&
+//                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfPolys() == 0 &&
+//                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfStrips() == 0 &&
+//                GetModelElement(t)->GetWholeVtkPolyData()->GetNumberOfVerts() == 0
+//                );
+    return false;
 }
 
 void svModel::Expand(unsigned int timeSteps)

@@ -91,6 +91,8 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 
     SetupTetGenGUI(parent);
 
+//    SetUpMeshSimGUI(parent);
+
     if(m_SphereWidget==NULL)
     {
         m_SphereWidget = vtkSmartPointer<svVtkMeshSphereWidget>::New();
@@ -104,6 +106,8 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
 void svMeshEdit::SetupTetGenGUI(QWidget *parent )
 {
     connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
+
+    ui->toolBox->setCurrentIndex(0);
 
     //for local table
     m_TableModelLocalT = new QStandardItemModel(this);
@@ -544,7 +548,18 @@ void svMeshEdit::RunCommands(bool fromGUI)
     svMesh* newMesh=NULL;
 
     if(m_MeshType=="TetGen")
+    {
+        QString ges=ui->lineEditGlobalEdgeSizeT->text().trimmed();
+        bool ok=false;
+        ges.toDouble(&ok);
+        if(!ok)
+        {
+            QMessageBox::warning(NULL,"Warning","Error in Global Egde Size!");
+            return;
+        }
+
         newMesh=new svMeshTetGen();
+    }
 //    else if(m_MeshType=="MeshSim")
 //        mesh=new svMeshMeshSim();
 
@@ -626,12 +641,12 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
     else
         cmds.push_back("option UseMMG 1");
 
-    cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().toStdString());
+    cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString());
 
     if(ui->checkBoxRadiusBasedT->isChecked())
     {
         cmds.push_back("useCenterlineRadius");
-        cmds.push_back("functionBasedMeshing "+ ui->lineEditGlobalEdgeSizeT->text().toStdString() +" DistanceToCenterlines");
+        cmds.push_back("functionBasedMeshing "+ ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString() +" DistanceToCenterlines");
     }
 
     if(ui->checkBoxBoundaryLayerT->isChecked())
@@ -815,6 +830,7 @@ void svMeshEdit::UpdateGUI()
     //======================================================================
     ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
     ui->labelMeshType->setText(QString::fromStdString(m_MeshType));
+    ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
 
     if(!m_MitkMesh)
         return;
@@ -824,10 +840,12 @@ void svMeshEdit::UpdateGUI()
 
     if(m_MeshType=="TetGen")
     {
+        ui->stackedWidget->setCurrentIndex(0);
         UpdateTetGenGUI();
     }
     else if(m_MeshType=="MeshSim")
     {
+//        ui->stackedWidget->setCurrentIndex(1);
 //        UpdateMeshSimGUI();
     }
 }
@@ -897,7 +915,7 @@ void svMeshEdit::UpdateTetGenGUI()
     ui->tableViewLocalT->horizontalHeader()->resizeSection(0,20);
     ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Interactive);
     ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
-    ui->tableViewLocalT->horizontalHeader()->resizeSection(2,40);
+    ui->tableViewLocalT->horizontalHeader()->resizeSection(2,60);
     ui->tableViewLocalT->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Fixed);
     ui->tableViewLocalT->horizontalHeader()->resizeSection(3,80);
 
@@ -1121,6 +1139,8 @@ void svMeshEdit::ShowSphereInteractor(bool checked)
     m_SphereWidget->PlaceWidget();
 
     m_SphereWidget->On();
+
+    TableRegionListSelectionChanged(QItemSelection(),QItemSelection());
 }
 
 void svMeshEdit::UpdateSphereData()
@@ -1256,7 +1276,7 @@ void svMeshEdit::ClearAll()
 
     ui->labelMeshName->setText("");
     ui->labelMeshType->setText("");
-
+    ui->labelModelName->setText("");
 }
 
 

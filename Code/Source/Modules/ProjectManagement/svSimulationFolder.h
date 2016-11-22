@@ -8,8 +8,6 @@
 #include "svDataFolder.h"
 
 #include "mitkBaseData.h"
-#include "mitkDataNode.h"
-#include "mitkDataStorage.h"
 
 class SVPROJECTMANAGEMENT_EXPORT svSimulationFolder : public svDataFolder
 {

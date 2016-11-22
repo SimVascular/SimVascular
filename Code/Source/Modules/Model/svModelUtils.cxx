@@ -42,7 +42,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, uns
     return dst->GetVtkPolyData();
 }
 
-svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t, int noInterOut, double tol)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int stats[], unsigned int t, int noInterOut, double tol)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -61,34 +61,43 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     vtkPolyData* solidvpd=CreatePolyData(segs,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
 
-    int *doublecaps;
-    int numfaces=0;
-
     cvPolyData *src=new cvPolyData(solidvpd);
     cvPolyData *dst = NULL;
+
+    if(sys_geom_checksurface(src,stats,tol)!=CV_OK)
+        return NULL;
+
+    int *doublecaps;
+    int numfaces=0;
 
     sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces);
 
     solidvpd=dst->GetVtkPolyData();
 
-    int totalNumFaces=0;
-    for(int i=0;i<numfaces;i++)
+    int numSeg=segNames.size();
+    int numCap2=0;
+    for(int i=numSeg-1;i>-1;i--)
     {
-        totalNumFaces=totalNumFaces+doublecaps[i]+2;
+        if(doublecaps[i]!=0)
+        {
+            numCap2=doublecaps[i];
+            break;
+        }
     }
-    std::string *allNames=new std::string[totalNumFaces];
 
-    for(int i=0;i<numfaces;i++)
+    std::string *allNames=new std::string[2*numSeg+numCap2];
+
+    for(int i=0;i<numSeg;i++)
     {
         allNames[i]="wall_"+segNames[i];
-        allNames[i+numfaces]="cap_"+segNames[i];
+        allNames[numSeg+i]="cap_"+segNames[i];
         if(doublecaps[i]!=0)
-            allNames[2*numfaces]="cap_"+segNames[i]+"_2";
+            allNames[2*numSeg+doublecaps[i]-1]="cap_"+segNames[i]+"_2";
     }
 
     std::vector<svModelElement::svFace*> faces;
 
-    for(int i=0;i<totalNumFaces;i++)
+    for(int i=0;i<2*numSeg+numCap2;i++)
     {
           vtkPolyData *facepd = vtkPolyData::New();
           int faceid=i+1;
@@ -106,6 +115,8 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
 
           faces.push_back(face);
     }
+
+    delete[] allNames;
 
     svModelElementPolyData* modelElement=new svModelElementPolyData();
     modelElement->SetSegNames(segNames);
@@ -175,8 +186,6 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
             radius=blendRadii[i]->radius;
 
         }
-
-//        cout<<faceID1<<"...."<<faceID2<<"....."<<radius<<endl;
 
         lastVpd=svModelUtils::CreatePolyDataByBlend(lastVpd, faceID1, faceID2, radius, param);
 
@@ -705,56 +714,6 @@ bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<
 
     return true;
 }
-
-//vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
-//{
-//    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
-//        return NULL;
-
-//    vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
-//    inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
-//    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()));
-
-//    cvPolyData *src=new cvPolyData(inpd);
-//    cvPolyData *capped = NULL;
-//    int numCapCenterIDs;
-//    int *capCenterIDs=NULL;
-
-//    if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
-//    {
-////        delete capped;
-//        return NULL;
-//    }
-
-//    cvPolyData *tempCenterlines = NULL;
-//    cvPolyData *voronoi = NULL;
-
-//    int *sources=new int[1];
-//    sources[0]=capCenterIDs[0];
-
-//    int *targets=new int[numCapCenterIDs-1];
-//    for(int i=1;i<numCapCenterIDs;i++)
-//        targets[i-1]= capCenterIDs[i];
-
-//    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
-//    {
-//        return NULL;
-//    }
-
-//    cvPolyData *centerlines=NULL;
-//    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != CV_OK )
-//    {
-//        return NULL;
-//    }
-
-////    cvPolyData *distance = NULL;
-////    if ( sys_geom_distancetocenterlines(src, centerlines, &distance) != CV_OK )
-////    {
-////        return NULL;
-////    }
-
-//    return centerlines->GetVtkPolyData();
-//}
 
 vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
 {

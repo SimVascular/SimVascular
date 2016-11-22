@@ -99,63 +99,69 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 //            }
 
             TiXmlElement* facesElement = meElement->FirstChildElement("faces");
-            std::vector<svModelElement::svFace*> faces;
-            for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
-                 faceElement != nullptr;
-                 faceElement =faceElement->NextSiblingElement("face") )
+            if(facesElement!=nullptr)
             {
-                if (faceElement == nullptr)
-                    continue;
+                std::vector<svModelElement::svFace*> faces;
+                for( TiXmlElement* faceElement = facesElement->FirstChildElement("face");
+                     faceElement != nullptr;
+                     faceElement =faceElement->NextSiblingElement("face") )
+                {
+                    if (faceElement == nullptr)
+                        continue;
 
-                int id;
-                std::string name="";
-                std::string type="";
-                std::string isVisible="true";
-                float opacity=1.0f;
-                float color1=1.0f;
-                float color2=1.0f;
-                float color3=1.0f;
+                    int id;
+                    std::string name="";
+                    std::string type="";
+                    std::string isVisible="true";
+                    float opacity=1.0f;
+                    float color1=1.0f;
+                    float color2=1.0f;
+                    float color3=1.0f;
 
-                faceElement->QueryIntAttribute("id", &id);
-                faceElement->QueryStringAttribute("name", &name);
-                faceElement->QueryStringAttribute("type", &type);
-                faceElement->QueryStringAttribute("visible", &isVisible);
-                faceElement->QueryFloatAttribute("opacity", &opacity);
-                faceElement->QueryFloatAttribute("color1", &color1);
-                faceElement->QueryFloatAttribute("color2", &color2);
-                faceElement->QueryFloatAttribute("color3", &color3);
+                    faceElement->QueryIntAttribute("id", &id);
+                    faceElement->QueryStringAttribute("name", &name);
+                    faceElement->QueryStringAttribute("type", &type);
+                    faceElement->QueryStringAttribute("visible", &isVisible);
+                    faceElement->QueryFloatAttribute("opacity", &opacity);
+                    faceElement->QueryFloatAttribute("color1", &color1);
+                    faceElement->QueryFloatAttribute("color2", &color2);
+                    faceElement->QueryFloatAttribute("color3", &color3);
 
-                vtkSmartPointer<vtkPolyData> facepd=me->CreateFaceVtkPolyData(id);
-                svModelElement::svFace* face=new svModelElement::svFace;
-                face->id=id;
-                face->name=name;
-                face->type=type;
-                face->visible=(isVisible=="true"?true:false);
-                face->opacity=opacity;
-                face->color[0]=color1;
-                face->color[1]=color2;
-                face->color[2]=color3;
+                    vtkSmartPointer<vtkPolyData> facepd=me->CreateFaceVtkPolyData(id);
+                    svModelElement::svFace* face=new svModelElement::svFace;
+                    face->id=id;
+                    face->name=name;
+                    face->type=type;
+                    face->visible=(isVisible=="true"?true:false);
+                    face->opacity=opacity;
+                    face->color[0]=color1;
+                    face->color[1]=color2;
+                    face->color[2]=color3;
 
-                face->vpd=facepd;
+                    face->vpd=facepd;
 
-                faces.push_back(face);
+                    faces.push_back(face);
+                }
+                me->SetFaces(faces);
             }
-            me->SetFaces(faces);
 
             TiXmlElement* segsElement = meElement->FirstChildElement("segmentations");
-            std::vector<std::string> segNames;
-            for( TiXmlElement* segElement = segsElement->FirstChildElement("seg");
-                 segElement != nullptr;
-                 segElement = segElement->NextSiblingElement("seg") )
+            if(segsElement!=nullptr)
             {
-                if (segElement == nullptr)
-                    continue;
+                std::vector<std::string> segNames;
+                for( TiXmlElement* segElement = segsElement->FirstChildElement("seg");
+                     segElement != nullptr;
+                     segElement = segElement->NextSiblingElement("seg") )
+                {
+                    if (segElement == nullptr)
+                        continue;
 
-                std::string name;
-                segElement->QueryStringAttribute("name", &name);
-                segNames.push_back(name);
+                    std::string name;
+                    segElement->QueryStringAttribute("name", &name);
+                    segNames.push_back(name);
+                }
+                me->SetSegNames(segNames);
             }
-            me->SetSegNames(segNames);
 
 
             TiXmlElement* blendRadiiElement = meElement->FirstChildElement("blend_radii");
@@ -273,16 +279,19 @@ void svModelIO::Write()
         std::vector<svModelElement::svFace*> faces=me->GetFaces();
         for(int i=0;i<faces.size();i++)
         {
-            auto faceElement=new TiXmlElement("face");
-            facesElement->LinkEndChild(faceElement);
-            faceElement->SetAttribute("id", faces[i]->id);
-            faceElement->SetAttribute("name", faces[i]->name);
-            faceElement->SetAttribute("type", faces[i]->type);
-            faceElement->SetAttribute("visible", faces[i]->visible?"true":"false");
-            faceElement->SetDoubleAttribute("opacity", faces[i]->opacity);
-            faceElement->SetDoubleAttribute("color1", faces[i]->color[0]);
-            faceElement->SetDoubleAttribute("color2", faces[i]->color[1]);
-            faceElement->SetDoubleAttribute("color3", faces[i]->color[2]);
+            if(faces[i])
+            {
+                auto faceElement=new TiXmlElement("face");
+                facesElement->LinkEndChild(faceElement);
+                faceElement->SetAttribute("id", faces[i]->id);
+                faceElement->SetAttribute("name", faces[i]->name);
+                faceElement->SetAttribute("type", faces[i]->type);
+                faceElement->SetAttribute("visible", faces[i]->visible?"true":"false");
+                faceElement->SetDoubleAttribute("opacity", faces[i]->opacity);
+                faceElement->SetDoubleAttribute("color1", faces[i]->color[0]);
+                faceElement->SetDoubleAttribute("color2", faces[i]->color[1]);
+                faceElement->SetDoubleAttribute("color3", faces[i]->color[2]);
+            }
         }
 
         //radii for blending
@@ -291,11 +300,14 @@ void svModelIO::Write()
         std::vector<svModelElement::svBlendParamRadius*> blendRadii=me->GetBlendRadii();
         for(int i=0;i<blendRadii.size();i++)
         {
-            auto radiusElement=new TiXmlElement("face_pair");
-            blendRadiiElement->LinkEndChild(radiusElement);
-            radiusElement->SetAttribute("face_id1", blendRadii[i]->faceID1);
-            radiusElement->SetAttribute("face_id2", blendRadii[i]->faceID2);
-            radiusElement->SetDoubleAttribute("radius", blendRadii[i]->radius);
+            if(blendRadii[i])
+            {
+                auto radiusElement=new TiXmlElement("face_pair");
+                blendRadiiElement->LinkEndChild(radiusElement);
+                radiusElement->SetAttribute("face_id1", blendRadii[i]->faceID1);
+                radiusElement->SetAttribute("face_id2", blendRadii[i]->faceID2);
+                radiusElement->SetDoubleAttribute("radius", blendRadii[i]->radius);
+            }
         }
 
         // blending param for PolyData
