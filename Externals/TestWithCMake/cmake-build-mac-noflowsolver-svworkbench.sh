@@ -39,6 +39,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_USE_MMG=ON \
    -DSV_USE_MITK=ON \
    -DSV_USE_QT_GUI=ON \
+   -DSV_USE_TET_ADAPTOR=ON \
 \
    -DSV_USE_SYSTEM_FREETYPE=ON \
    -DSV_USE_SYSTEM_GDCM=ON \
@@ -64,11 +65,14 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DOpenCASCADE_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/opencascade-7.0.0/lib/cmake/opencascade" \
    -DTCL_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/tcltk-8.6.4" \
    -DPYTHON_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/python-2.7.11" \
-   -DMITK_DIR="/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/MITK-build" \
-   -DSV_USE_MITK_CONFIG=ON \
+   -DFREETYPE_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/freetype-2.6.3" \
+   -DMITK_DIR="/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/install" \
 \
    -Qt5_DIR=$Qt5_DIR \
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
 popd
+
+#   -DMITK_DIR="/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/MITK-build" \
+#   -DSV_USE_MITK_CONFIG=ON \
