@@ -178,7 +178,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
         ss << "append_displacements " << outputDir <<"/restart.0.1" << "\n";
     }
 
-    ss << "write_numstart " << outputDir <<"/numstart.dat" << "\n";
+//    ss << "write_numstart " << outputDir <<"/numstart.dat" << "\n";
 
     return ss.str();
 }

@@ -140,15 +140,6 @@ protected:
 
     bool m_UndoAble;
 
-//public:
-
-//    static vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
-
-//    static double m_Radius;
-//    static double m_CenterX;
-//    static double m_CenterY;
-//    static double m_CenterZ;
-
 };
 
 #endif // SVMESHEDIT_H

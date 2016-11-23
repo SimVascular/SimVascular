@@ -21,8 +21,6 @@
 
 #include <QTreeView>
 #include <QInputDialog>
-#include <QColorDialog>
-#include <QSignalMapper>
 #include <QMessageBox>
 
 #include <iostream>
@@ -147,9 +145,6 @@ void svMeshEdit::SetupTetGenGUI(QWidget *parent )
 
     connect( ui->tableViewRegionT, SIGNAL(customContextMenuRequested(const QPoint&))
       , this, SLOT(TableViewRegionContextMenuRequested(const QPoint&)) );
-
-    //for command history
-//    connect(ui->btnRunHistoryT, SIGNAL(clicked()), this, SLOT(RunHistory()) );
 
     //for adaptor
 }
