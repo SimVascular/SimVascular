@@ -29,33 +29,46 @@ public:
 
 public slots:
 
-    void ClearAll();
+//    void ClearAll();
 
-    void AddObservers();
+//    void AddObservers();
 
-    void RemoveObservers();
+//    void RemoveObservers();
 
-    void UpdateGUI();
+//    void UpdateGUI();
 
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
-    void SetCapBC( bool checked = false );
+    void TableViewCapDoubleClicked(const QModelIndex& index);
 
-    void TableWallSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+    void TableViewCapContextMenuRequested(const QPoint& pos);
 
-    void SetVarProp( bool checked = false );
+    void ShowCapBCWidget( bool checked = false );
 
-    void CreateDataFiles();
+    void SetDistalPressure( bool checked = false );
 
-    void RunJob();
+    void SetCapBC();
 
-    //void ImportOtherFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
 
-    void ConvertResults();
+
+
+
+//    void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+
+//    void SetVarProp( bool checked = false );
+
+
+//    void UpdateFaceListSelection();
+
+//    void CreateDataFiles();
+
+//    void RunJob();
+
+//    void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
+
+//    void ConvertResults();
 
 public:
-
-    int GetTimeStep();
 
     virtual void CreateQtPartControl(QWidget *parent) override;
 
@@ -95,13 +108,17 @@ private:
 
     QmitkStdMultiWidget* m_DisplayWidget;
 
+    QStandardItemModel* m_TableModelBasic;
+
     QStandardItemModel* m_TableModelCap;
     QMenu* m_TableMenuCap;
 
-    QStandardItemModel* m_TableModelWall;
-    QMenu* m_TableMenuWall;
+    QStandardItemModel* m_TableModelVar;
+    QMenu* m_TableMenuVar;
 
     svCapBCWidget* m_CapBCWidget;
+
+    QStandardItemModel* m_TableModelSolver;
 
 };
 

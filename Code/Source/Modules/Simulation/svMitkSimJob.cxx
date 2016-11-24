@@ -35,8 +35,8 @@ void svMitkSimJob::ClearData()
 
 void svMitkSimJob::InitializeEmpty()
 {
-//    Superclass::InitializeTimeGeometry(1);
-//    m_Initialized = true;
+    Superclass::InitializeTimeGeometry(1);
+    m_Initialized = true;
 }
 
 bool svMitkSimJob::IsEmptyTimeStep(unsigned int t) const

@@ -5,7 +5,8 @@ set(SRC_CPP_FILES
 set(INTERNAL_CPP_FILES
     svSimJobCreate.cxx
     svSimJobCreateAction.cxx
-#    svSimJobEdit.cxx
+    svCapBCWidget.cxx
+    svSimulationView.cxx
 #    svSimJobExportAction.cxx
     svSimulationPluginActivator.cxx
 )
@@ -13,14 +14,16 @@ set(INTERNAL_CPP_FILES
 set(MOC_H_FILES
     src/internal/svSimJobCreate.h
     src/internal/svSimJobCreateAction.h
-#    src/internal/svSimJobEdit.h
+    src/internal/svCapBCWidget.h
+    src/internal/svSimulationView.h
 #    src/internal/svSimJobExportAction.h
     src/internal/svSimulationPluginActivator.h
 )
 
 set(UI_FILES
     src/internal/svSimJobCreate.ui
-#    src/internal/svSimJobEdit.ui
+    src/internal/svCapBCWidget.ui
+    src/internal/svSimulationView.ui
 )
 
 set(CACHED_RESOURCE_FILES

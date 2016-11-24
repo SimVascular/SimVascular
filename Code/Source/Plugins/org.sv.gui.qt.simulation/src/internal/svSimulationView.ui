@@ -171,7 +171,11 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QTableView" name="tableViewBasic"/>
+           <widget class="QTableView" name="tableViewBasic">
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -222,26 +226,15 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QTableView" name="tableViewCap"/>
-             </item>
-             <item>
-              <widget class="QPlainTextEdit" name="plainTextEdit">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
+              <widget class="QTableView" name="tableViewCap">
+               <property name="contextMenuPolicy">
+                <enum>Qt::CustomContextMenu</enum>
                </property>
-               <property name="plainText">
-                <string>BC Type: Prescribed Velocities, or Pressure
-Values (R, RCR): 
-Distal Pressure: 
-Analytic Shape:
-Point Number:
-Fourier Modes:
-Flip Normal
-Flow Rate File
-</string>
+               <property name="selectionBehavior">
+                <enum>QAbstractItemView::SelectRows</enum>
+               </property>
+               <property name="sortingEnabled">
+                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -456,14 +449,13 @@ Flow Rate File
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditKCons"/>
+                    <widget class="QLineEdit" name="lineEditKcons"/>
                    </item>
                   </layout>
-                  <zorder>widget_9</zorder>
                   <zorder>lineEditNu</zorder>
                   <zorder>label_7</zorder>
                   <zorder>label_8</zorder>
-                  <zorder>lineEditKCons</zorder>
+                  <zorder>lineEditKcons</zorder>
                  </widget>
                 </item>
                 <item>
@@ -544,7 +536,7 @@ Flow Rate File
                     </widget>
                    </item>
                    <item>
-                    <widget class="QTableView" name="tableViewVariable"/>
+                    <widget class="QTableView" name="tableViewVar"/>
                    </item>
                   </layout>
                  </widget>
@@ -669,9 +661,9 @@ Flow Rate File
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="btnImportOtherFiles">
+                 <widget class="QPushButton" name="btnImportFiles">
                   <property name="text">
-                   <string>Import Other Files</string>
+                   <string>Import Files ...</string>
                   </property>
                  </widget>
                 </item>
@@ -983,8 +975,6 @@ Flow Rate File
                  </widget>
                 </item>
                </layout>
-               <zorder>widget_15</zorder>
-               <zorder>btnExport</zorder>
               </widget>
              </item>
              <item>
