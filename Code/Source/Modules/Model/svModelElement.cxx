@@ -3,6 +3,12 @@
 
 #include <vtkCellData.h>
 
+// dummy prototype, must be overridden
+vtkSmartPointer<vtkPolyData> svModelElement::CreateFaceVtkPolyData(int id) {
+  vtkSmartPointer<vtkPolyData> foo;
+  return foo;
+}
+
 svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)

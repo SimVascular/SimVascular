@@ -42,7 +42,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(TCLTK_INCDIR) $(VTK_INCDIRS) \
            $(ZLIB_INCDIR) $(PARASOLID_INCDIR) $(MESHSIM_INCDIR) $(TETGEN_INCDIR) \
            $(ITK_INCDIRS) $(OPENCASCADE_INCDIR) $(OPENCASCADE_DEFS) $(SV_MMG_INCDIR) \
            $(PYTHON_INCDIR) $(SV_GDCM_INCDIR) $(QT_INCDIRS) $(QT_DEFS) \
-           $(MITK_INCDIRS) $(MITK_DEFS)
+           $(MITK_INCDIRS) $(MITK_DEFS) \
+           -I../Plugins/PluginFramework
 
 HDRS	= 
 
@@ -195,27 +196,24 @@ endif
 LFLAGS += $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT)
 
 ifeq ($(SV_USE_QT_GUI),1)
-LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+LFLAGS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_general$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_image$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_mitksegmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_test$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_apputil$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_modeling$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_projectdatanodes$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_projectmanager$(LIBLINKEXT) \
+          $(SVLIBFLAG)org_sv_gui_qt_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
-
-LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_plugin_model$(LIBLINKEXT)
-
 #  ifneq ($(SV_USE_SHARED),1)
 #    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
 #  endif
@@ -234,16 +232,17 @@ DEPS	= $(SRCS:.cxx=.d)
 
 OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 
-ifeq ($(SV_USE_MITK),1)
-OBJS    += \
-../Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
-../Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
-endif
+### nate: why did I include this, for static libs maybe?
+#ifeq ($(SV_USE_MITK),1)
+#OBJS    += \
+#../Modules/Common/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+#../Modules/Model/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+#../Modules/Path/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+#../Modules/ProjectManagement/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+#../Modules/QtAppBase/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+#../Modules/QtWidgets/$(BUILD_DIR)/us_init.$(OBJECTEXT) \
+#../Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
+#endif
 
 ifeq ($(SV_USE_MITK),1)
    OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
@@ -259,11 +258,10 @@ static: pre directories $(TARGET_EXE_FULL)
 $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
 	-rm -Rf ./static_cpp_resources
 	-mkdir -p ./static_cpp_resources
-	-cp -Rf ../Modules/Path/resources ./static_cpp_resources/svPath
-#	-cp -Rf ../Modules/QtAppBase/resources ./static_cpp_resources/svQtAppBase
-	-cp -Rf ../Modules/Segmentation/resources ./static_cpp_resources/svSegmentation
-#	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svQtAppBase/ svSegmentation
-	-cd ./static_cpp_resources;zip -r res_0.zip svPath/ svSegmentation/
+	-cp -Rf ../Modules/Model/resource ./static_cpp_resources/svModel
+	-cp -Rf ../Modules/Path/resource ./static_cpp_resources/svPath
+	-cp -Rf ../Modules/Segmentation/resource ./static_cpp_resources/svSegmentation
+	-cd ./static_cpp_resources;zip -r res_0.zip svModel/ svPath/ svSegmentation/
 ifeq ($(CLUSTER), x64_cygwin)
 	-echo "#define US_RESOURCE      200" >> ./static_cpp_resources/sv-cpp-resources.rc
 	-echo "#define IDR_US_RESOURCE  101" >> ./static_cpp_resources/sv-cpp-resources.rc
@@ -316,7 +314,9 @@ endif
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	for fn in $(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	for fn in $(TARGET_EXE_FULL)*; do /bin/rm -f $$fn; done
+	for fn in $(basename $(TARGET_EXE_FULL)).*;do /bin/rm -f $$fn; done
 	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 

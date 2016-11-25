@@ -113,7 +113,7 @@ public:
 
     void SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd);
 
-    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {}
+    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id);
 
 //    int GetSelectedFaceIndex();
 

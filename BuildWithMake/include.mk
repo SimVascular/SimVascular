@@ -658,18 +658,16 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/mitk.image \
-                     -I$(TOP)/../Code/Source/Plugins/mitk.segmentation \
-                     -I$(TOP)/../Code/Source/Plugins/sv.general \
-                     -I$(TOP)/../Code/Source/Plugins/sv.modeling \
-                     -I$(TOP)/../Code/Source/Plugins/sv.pathplanning \
-                     -I$(TOP)/../Code/Source/Plugins/sv.segmentation \
-                     -I$(TOP)/../Code/Source/Plugins/sv.test \
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.mitk.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
                      -I$(TOP)/../Code/Source/Modules/Model \
                      -I$(TOP)/../Code/Source/Modules/Path \
                      -I$(TOP)/../Code/Source/Modules/ProjectManagement \
-                     -I$(TOP)/../Code/Source/Modules/QtAppBase \
                      -I$(TOP)/../Code/Source/Modules/QtWidgets \
                      -I$(TOP)/../Code/Source/Modules/Segmentation
 endif

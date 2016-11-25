@@ -7,7 +7,7 @@ class svProjectDataNodesPluginActivator :
         public QObject, public ctkPluginActivator
 {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "org_sv_projectnodes")
+    Q_PLUGIN_METADATA(IID "org_sv_projectdatanodes")
     Q_INTERFACES(ctkPluginActivator)
 
 public:

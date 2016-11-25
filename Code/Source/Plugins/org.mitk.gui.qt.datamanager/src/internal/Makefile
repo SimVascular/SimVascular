@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -39,26 +39,44 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -DSV_EXPORT_QT_GUI_PATHPLANNING_COMPILE
+           -Dorg_mitk_gui_qt_datamanager_EXPORTS \
+          -DUS_MODULE_NAME=datamanager \
+	  -I../..
 
-HDRS	=     svPathCreate.h \
-              svPathSmooth.h \
-              svPathEdit.h \
-              svPathPlanningPluginActivator.h
+HDRS	= \
+  QmitkDataManagerView.h \
+  QmitkDataManagerPreferencePage.h \
+  QmitkDataManagerHotkeysPrefPage.h \
+  QmitkNodeTableViewKeyFilter.h \
+  QmitkInfoDialog.h \
+  QmitkDataManagerItemDelegate.h \
+  mitkPluginActivator.h
 
-CXXSRCS	=     svPathCreate.cxx \
-              svPathSmooth.cxx \
-              svPathEdit.cxx \
-              svPathPlanningPluginActivator.cxx
+CXXSRCS	=  \
+  berrySingleNodeSelection.cxx \
+  QmitkDataManagerView.cxx \
+  QmitkDataManagerPreferencePage.cxx \
+  QmitkDataManagerHotkeysPrefPage.cxx \
+  mitkPluginActivator.cxx \
+  QmitkNodeTableViewKeyFilter.cxx \
+  QmitkInfoDialog.cxx \
+  QmitkDataManagerItemDelegate.cxx
 
-UIFILES =     svPathCreate.ui \
-              svPathSmooth.ui \
-              svPathEdit.ui
+UIFILES =
 
-RCFILES = 
+QRCFILES = \
+    ../../resources/datamanager.qrc
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+QRCFILES += org_mitk_gui_qt_datamanager_manifest.qrc \
+            org_mitk_gui_qt_datamanager_cached.qrc
+
+RCFILES = \
+    ../../plugin.xml \
+    ../../resources/DataManager_48.png
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -66,7 +84,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
@@ -77,9 +95,14 @@ DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+#EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_pathplanning
+TARGET_LIB_NAME = org_mitk_gui_qt_datamanager
+
+PLUGIN_SYMBOLIC_NAME = org.mitk.gui.qt.datamanager
+PLUGIN_EXPORTS_NAME = org_mitk_gui_qt_datamanager
+PLUGIN_EXPORTS_PREFIX = MITK_QT_
+PLUGIN_NAME = DATAMANAGER
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

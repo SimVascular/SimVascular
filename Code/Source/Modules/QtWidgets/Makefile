@@ -53,7 +53,16 @@ CXXSRCS += us_init.cxx
 
 UIFILES = 
 
+# don't know how to handle non-qrc files
+RCFILES = 
+
+QRCFILES =
+
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -64,7 +73,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
@@ -72,10 +81,6 @@ DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
-
-UIFILES = 
-
-RCFILES = 
 
 TARGET_LIB_NAME = simvascular_qtgui_module_qtwidgets
 

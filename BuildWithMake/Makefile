@@ -102,6 +102,7 @@ endif
 
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+`cygpath -u $(QT_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+`cygpath -u $(QT_PLUGIN_PATH)`+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+`cygpath -u $(SV_OPENCASCADE_SO_PATH)`+g\"" >> tclscript
@@ -137,6 +138,7 @@ ifeq ($(SV_USE_ITK),1)
 endif
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-echo "puts \"s+REPLACEME_SV_OPENCASCADE_SO_PATH+$(SV_OPENCASCADE_SO_PATH)+g\"" >> tclscript
@@ -190,6 +192,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 ifeq ($(SV_USE_QT),1)
 	-echo "puts \"s+REPLACEME_QT_SO_PATH+$(QT_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_QT_PLUGIN_PATH+$(QT_PLUGIN_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
@@ -220,14 +223,16 @@ common-pre-build: mksedscript post-build
 	touch ../Code/Source/Include/Make/simvascular_version.h
 
 shared-pre-build: common-pre-build
-	cd ../Code/Source/Plugins;$(MAKE) moc rcc ui
-	cd ../Code/Source/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
-	cd ../Code/Source/Plugins;$(MAKE) moc rcc ui
-	cd ../Code/Source/Modules;$(MAKE) moc rcc ui
+	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
+	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
+	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
 
 shared-build:

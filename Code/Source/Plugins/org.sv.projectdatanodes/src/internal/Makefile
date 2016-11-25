@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP=../../../../BuildWithMake
+TOP=../../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -39,29 +39,28 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-          -DSV_EXPORT_QT_GUI_TEST_COMPILE
+           -Dorg_sv_projectdatanodes_EXPORTS \
+           -DUS_MODULE_NAME=svProjectDataNodes
 
 HDRS	= \
-    svModelCreate.h \
-    svSegSelectionWidget.h \
-    svModelEdit.h \
-    svModelingPluginActivator.h
+  svProjectDataNodesPluginActivator.h
 
 CXXSRCS	= \
-    svModelCreate.cxx \
-    svSegSelectionWidget.cxx \
-    svModelEdit.cxx \
-    svModelingPluginActivator.cxx
+  svProjectDataNodesPluginActivator.cxx
 
-UIFILES =  \
-    svModelCreate.ui \
-    svSegSelectionWidget.ui \
-    svModelEdit.ui
+UIFILES =
 
-RCFILES = 
+QRCFILES = \
+  ../../resources/projectdatanodes.qrc
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+QRCFILES += org_sv_projectdatanodes_manifest.qrc \
+            org_sv_projectdatanodes_cached.qrc
+
+RCFILES =    
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -69,20 +68,26 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_model
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
 
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
+TARGET_LIB_NAME = org_sv_projectdatanodes
+
+PLUGIN_SYMBOLIC_NAME = org_sv_projectdatanodes
+PLUGIN_EXPORTS_NAME = org_sv_projectdatanodes
+PLUGIN_EXPORTS_PREFIX = SV_QT_
+PLUGIN_NAME = PROJECTDATANODES
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
