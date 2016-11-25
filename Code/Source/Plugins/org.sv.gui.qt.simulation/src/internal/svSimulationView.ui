@@ -153,7 +153,7 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>0</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
@@ -452,7 +452,11 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditNu"/>
+                    <widget class="QLineEdit" name="lineEditNu">
+                     <property name="text">
+                      <string>0.5</string>
+                     </property>
+                    </widget>
                    </item>
                    <item>
                     <widget class="QLabel" name="label_8">
@@ -462,7 +466,11 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QLineEdit" name="lineEditKcons"/>
+                    <widget class="QLineEdit" name="lineEditKcons">
+                     <property name="text">
+                      <string>0.833333</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                   <zorder>lineEditNu</zorder>
@@ -549,7 +557,17 @@
                     </widget>
                    </item>
                    <item>
-                    <widget class="QTableView" name="tableViewVar"/>
+                    <widget class="QTableView" name="tableViewVar">
+                     <property name="contextMenuPolicy">
+                      <enum>Qt::CustomContextMenu</enum>
+                     </property>
+                     <property name="selectionBehavior">
+                      <enum>QAbstractItemView::SelectRows</enum>
+                     </property>
+                     <property name="sortingEnabled">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -607,7 +625,11 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QTableView" name="tableViewSolver"/>
+           <widget class="QTableView" name="tableViewSolver">
+            <property name="selectionBehavior">
+             <enum>QAbstractItemView::SelectRows</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -844,7 +866,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QFrame" name="frame_12">
+              <widget class="QFrame" name="frame_13">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>

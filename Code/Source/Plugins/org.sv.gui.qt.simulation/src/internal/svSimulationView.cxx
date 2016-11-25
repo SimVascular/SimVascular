@@ -118,6 +118,29 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 
     connect(m_CapBCWidget,SIGNAL(accepted()), this, SLOT(SetCapBC()));
 
+    //for wall panel and var table
+    connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(WallTypeSelectionChanged(int )));
+
+    ui->widgetConstant->hide();
+    ui->widgetVariable->hide();
+
+    m_TableModelVar = new QStandardItemModel(this);
+    ui->tableViewVar->setModel(m_TableModelVar);
+
+    connect( ui->tableViewVar->selectionModel()
+             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+             , this
+             , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+
+    connect( ui->tableViewVar, SIGNAL(customContextMenuRequested(const QPoint&))
+             , this, SLOT(TableViewVarContextMenuRequested(const QPoint&)) );
+
+    m_TableMenuVar=new QMenu(ui->tableViewVar);
+    QAction* setVarThicknessAction=m_TableMenuVar->addAction("Set Thickness");
+    QAction* setVarEAction=m_TableMenuVar->addAction("Set Elastic Modulus ");
+    connect( setVarThicknessAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarThickness(bool) ) );
+    connect( setVarEAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarE(bool) ) );
+
 
 
 
@@ -212,7 +235,7 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateGUICap();
 
-    //        UpdateGUIWall();
+    UpdateGUIWall();
 
     //        UpdateGUISolver();
 
@@ -395,9 +418,33 @@ void svSimulationView::UpdateFaceListSelection()
              , this
              , SLOT( TableCapSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
+
     //for tableViewVar
+    disconnect( ui->tableViewVar->selectionModel()
+                , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+                , this
+                , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
+    ui->tableViewVar->clearSelection();
 
+    count=m_TableModelVar->rowCount();
+
+    for(int i=0;i<count;i++)
+    {
+        QStandardItem* itemName= m_TableModelVar->item(i,0);
+        std::string name=itemName->text().toStdString();
+
+        if(modelElement->IsFaceSelected(name))
+        {
+            QModelIndex mIndex=m_TableModelVar->index(i,1);
+            ui->tableViewVar->selectionModel()->select(mIndex, QItemSelectionModel::Select|QItemSelectionModel::Rows);
+        }
+    }
+
+    connect( ui->tableViewVar->selectionModel()
+             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+             , this
+             , SLOT( TableVarSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
 }
 
@@ -625,15 +672,164 @@ void svSimulationView::UpdateGUICap()
 
 }
 
+void svSimulationView::WallTypeSelectionChanged(int index)
+{
+    switch(index)
+    {
+    case 0:
+        ui->widgetConstant->hide();
+        ui->widgetVariable->hide();
+        break;
+    case 1:
+        ui->widgetThicknessE->show();
+        ui->widgetConstant->show();
+        ui->widgetVariable->hide();
+        break;
+    case 2:
+        ui->widgetThicknessE->hide();
+        ui->widgetConstant->show();
+        ui->widgetVariable->show();
+        break;
+    default:
+        break;
+    }
+}
 
+void svSimulationView::TableVarSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
+{
+    if(!m_Model)
+        return;
 
+    svModelElement* modelElement=m_Model->GetModelElement();
+    if(modelElement==NULL) return;
 
+    QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
 
+    modelElement->ClearFaceSelection();
 
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+        std::string name= m_TableModelVar->item(row,0)->text().toStdString();
+        modelElement->SelectFace(name);
+    }
 
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
 
+void svSimulationView::TableViewVarContextMenuRequested( const QPoint & pos )
+{
+    m_TableMenuVar->popup(QCursor::pos());
+}
 
+void svSimulationView::SetVarThickness(bool)
+{
+    QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
 
+    bool ok=false;
+    QString thickness=QInputDialog::getText(m_Parent, "Set Thickness", "Thickness:", QLineEdit::Normal, "", &ok);
+
+    if(!ok)
+        return;
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+        m_TableModelVar->item(row,2)->setText(thickness);
+    }
+}
+
+void svSimulationView::SetVarE(bool)
+{
+    QModelIndexList indexesOfSelectedRows = ui->tableViewVar->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    bool ok=false;
+    QString modulus=QInputDialog::getText(m_Parent, "Set Elastic Modulus", "Elastic Modulus:", QLineEdit::Normal, "", &ok);
+
+    if(!ok)
+        return;
+
+    for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
+        m_TableModelVar->item(row,3)->setText(modulus);
+    }
+}
+
+void svSimulationView::UpdateGUIWall()
+{
+    if(!m_MitkJob)
+        return;
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job==NULL)
+    {
+        job=new svSimJob();
+    }
+
+    if(job->GetWallProp("Type")=="rigid")
+        ui->comboBoxWallType->setCurrentIndex(0);
+    else if(job->GetWallProp("Type")=="deformable")
+        ui->comboBoxWallType->setCurrentIndex(1);
+    else if(job->GetWallProp("Type")=="variable")
+        ui->comboBoxWallType->setCurrentIndex(2);
+
+    svModelElement* modelElement=m_Model->GetModelElement();
+    if(modelElement==NULL) return;
+
+    m_TableModelVar->clear();
+
+    QStringList varHeaders;
+    varHeaders << "Name" << "Type" << "Thickness" << "E. Modulus";
+    m_TableModelVar->setHorizontalHeaderLabels(varHeaders);
+    m_TableModelVar->setColumnCount(4);
+
+    std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+    int rowIndex=-1;
+    for(int i=0;i<faces.size();i++)
+    {
+        svModelElement::svFace* face=faces[i];
+        if(face==NULL )
+            continue;
+
+        rowIndex++;
+        m_TableModelVar->insertRow(rowIndex);
+
+        QStandardItem* item;
+
+        item= new QStandardItem(QString::fromStdString(face->name));
+        item->setEditable(false);
+        m_TableModelVar->setItem(rowIndex, 0, item);
+
+        item= new QStandardItem(QString::fromStdString(face->type));
+        item->setEditable(false);
+        m_TableModelVar->setItem(rowIndex, 1, item);
+
+        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Thickness")));
+        m_TableModelVar->setItem(rowIndex, 2, item);
+
+        item= new QStandardItem(QString::fromStdString(job->GetVarProp(face->name,"Elastic Modulus")));
+        m_TableModelVar->setItem(rowIndex, 3, item);
+    }
+
+    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
+    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewVar->horizontalHeader()->resizeSection(1,60);
+    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Fixed);
+    ui->tableViewVar->horizontalHeader()->resizeSection(2,80);
+    ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
+}
 
 svSimJob* svSimulationView::CreateJob(std::string& msg)
 {
@@ -744,6 +940,120 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
             }
         }
     }
+
+    //for wall and var
+    int wallTypeIndex=ui->comboBoxWallType->currentIndex();
+    if(wallTypeIndex==0)
+    {
+        job->SetWallProp("Type","rigid");
+    }
+    else if(wallTypeIndex==1)
+    {
+        job->SetWallProp("Type","deformable");
+
+        std::string thickness=ui->lineEditThinkness->text().trimmed().toStdString();
+        if(!IsDouble(thickness))
+        {
+            msg="wall thickness error: " + thickness;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Thickness",thickness);
+
+        std::string modulus=ui->lineEditE->text().trimmed().toStdString();
+        if(!IsDouble(modulus))
+        {
+            msg="wall elastic modulus error: " + modulus;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Elastic Modulus",modulus);
+
+        std::string nu=ui->lineEditNu->text().trimmed().toStdString();
+        if(!IsDouble(nu))
+        {
+            msg="wall Poisson ratio error: " + nu;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Poisson Ratio",nu);
+
+        std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
+        if(!IsDouble(kcons))
+        {
+            msg="wall shear constant error: " + kcons;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Shear Constant",kcons);
+
+        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
+        if(!IsDouble(pressure))
+        {
+            msg="wall pressure error: " + pressure;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Pressure",pressure);
+
+    }
+    else if(wallTypeIndex==2)
+    {
+        job->SetWallProp("Type","variable");
+
+        std::string nu=ui->lineEditNu->text().trimmed().toStdString();
+        if(!IsDouble(nu))
+        {
+            msg="wall Poisson ratio error: " + nu;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Poisson Ratio",nu);
+
+        std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
+        if(!IsDouble(kcons))
+        {
+            msg="wall shear constant error: " + kcons;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Shear Constant",kcons);
+
+        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
+        if(!IsDouble(pressure))
+        {
+            msg="wall pressure error: " + pressure;
+            delete job;
+            return NULL;
+        }
+        job->SetWallProp("Pressure",pressure);
+
+        for(int i=0;i<m_TableModelVar->rowCount();i++)
+        {
+            std::string faceName=m_TableModelVar->item(i,0)->text().toStdString();
+            std::string thickness=m_TableModelVar->item(i,2)->text().trimmed().toStdString();
+            std::string modulus=m_TableModelVar->item(i,3)->text().trimmed().toStdString();
+
+            if(!IsDouble(thickness))
+            {
+                msg="wall thickness error: " + thickness;
+                delete job;
+                return NULL;
+            }
+
+            if(!IsDouble(modulus))
+            {
+                msg="wall elastic modulus error: " + modulus;
+                delete job;
+                return NULL;
+            }
+
+            job->SetVarProp(faceName,"Thickness", thickness);
+            job->SetVarProp(faceName,"Elastic Modulus", modulus);
+
+        }
+    }
+
 
 
 

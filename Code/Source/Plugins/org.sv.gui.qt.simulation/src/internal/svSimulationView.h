@@ -56,15 +56,17 @@ public slots:
     void UpdateGUICap();
 
 
+    void WallTypeSelectionChanged(int index);
 
+    void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
+    void TableViewVarContextMenuRequested(const QPoint& pos);
 
+    void SetVarE( bool checked = false );
 
-//    void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
+    void SetVarThickness( bool checked = false );
 
-//    void SetVarProp( bool checked = false );
-
-
+    void UpdateGUIWall();
 
 
 //    void CreateDataFiles();
