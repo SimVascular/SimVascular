@@ -100,9 +100,9 @@ EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanage
 
 TARGET_LIB_NAME = org_sv_gui_qt_segmentation
 
-PLUGIN_DIR_NAME = org_sv_gui_qt_segmentation
-
-PLUGIN_DEFINE_PREFIX = SV_QT_
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_segmentation
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_segmentation
+PLUGIN_EXPORTS_PREFIX = SV_QT_
 PLUGIN_NAME = SEGMENTATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1

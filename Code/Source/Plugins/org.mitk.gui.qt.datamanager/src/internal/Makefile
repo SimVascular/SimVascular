@@ -99,9 +99,9 @@ DLLLIBS +=  \
 
 TARGET_LIB_NAME = org_mitk_gui_qt_datamanager
 
-PLUGIN_DIR_NAME = org_mitk_gui_qt_datamanager
-
-PLUGIN_DEFINE_PREFIX = MITK_QT_
+PLUGIN_SYMBOLIC_NAME = org.mitk.gui.qt.datamanager
+PLUGIN_EXPORTS_NAME = org_mitk_gui_qt_datamanager
+PLUGIN_EXPORTS_PREFIX = MITK_QT_
 PLUGIN_NAME = DATAMANAGER
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1

@@ -231,39 +231,39 @@ create_exports_h:
 	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 
 create_plugin_export_h:
-	echo  "// .NAME __$(PLUGIN_DIR_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "// The __$(PLUGIN_DIR_NAME)_Export captures some system differences between Unix" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "// and Windows operating systems. " >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#ifndef __$(PLUGIN_DIR_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#define __$(PLUGIN_DIR_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#include <QtGlobal>" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#  if defined($(PLUGIN_DIR_NAME)_EXPORTS)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#    define $(PLUGIN_DEFINE_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#    define $(PLUGIN_DEFINE_PREFIX)$(PLUGIN_NAME) Q_DECL_IMPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#if !defined($(PLUGIN_DEFINE_PREFIX)$(PLUGIN_NAME))" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "//#  if defined(CTK_SHARED)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#    define $(PLUGIN_DEFINE_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "//#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "//#    define $(PLUGIN_DEFINE_PREFIX)$(PLUGIN_NAME)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "//#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
-	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h
+	echo  "// .NAME __$(PLUGIN_EXPORTS_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "// The __$(PLUGIN_EXPORTS_NAME)_Export captures some system differences between Unix" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "// and Windows operating systems. " >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#ifndef __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#define __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#include <QtGlobal>" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#  if defined($(PLUGIN_EXPORTS_NAME)_EXPORTS)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_IMPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#if !defined($(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME))" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#  if defined(CTK_SHARED)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
 
 create_manifest_qrc:
-	-tclsh $(TOP)/TclHelpers/create_manifest_mf.tcl $(PLUGIN_DIR_NAME) $(PLUGIN_DIR_NAME)_manifest.qrc ../../manifest_headers.cmake MANIFEST.MF
+	-tclsh $(TOP)/TclHelpers/create_manifest_mf.tcl $(PLUGIN_SYMBOLIC_NAME) $(PLUGIN_EXPORTS_NAME)_manifest.qrc ../../manifest_headers.cmake MANIFEST.MF
 
 create_cached_qrc:
-	-tclsh $(TOP)/TclHelpers/create_cached_qrc.tcl $(PLUGIN_DIR_NAME) $(PLUGIN_DIR_NAME)_cached.qrc $(RCFILES)
+	-tclsh $(TOP)/TclHelpers/create_cached_qrc.tcl $(PLUGIN_EXPORTS_NAME) $(PLUGIN_EXPORTS_NAME)_cached.qrc $(RCFILES)
 
 us-init-module:
 	-echo "#include <usModuleInitialization.h>" > us_init.cxx
@@ -280,7 +280,7 @@ clean:
 	for fn in *_cached.qrc; do /bin/rm -f $$fn; done
 	if [ -e MANIFEST.MF ];then /bin/rm -f MANIFEST.MF;fi
 	if [ -e us_init.cxx ];then /bin/rm -f us_init.cxx;fi
-	if [ -e $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(PLUGIN_DIR_NAME)_Export.h;fi
+	if [ -e $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h;fi
 	if [ -e $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h;fi
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
