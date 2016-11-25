@@ -585,7 +585,7 @@ RegCloseKey(hKey2);
      //app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "a.b.c.d");
 
      // can set a provisioning file here, but we hard code the plugins below
-     QString provisioningFilePath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/nate.provisioning";
+     QString provisioningFilePath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-25-svworkbench/BuildWithMake/nate.provisioning";
      app.setProvisioningFilePath(provisioningFilePath);
 
      /*

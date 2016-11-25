@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP= ../../../../../../BuildWithMake
+TOP=../../../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -36,49 +36,31 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
-           $(ZLIB_INCDIR) \
-           $(TETGEN_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_modeling_EXPORTS \
-          -DUS_MODULE_NAME=svModeling
+           -Dorg_sv_gui_qt_simulation_EXPORTS \
+           -DUS_MODULE_NAME=svSimulation
 
 HDRS	= \
-    svModelCreate.h \
-    svModelCreateAction.h \
-    svModelLegacyLoadAction.h \
-    svModelLegacySaveAction.h \
-    svModelExtractPathsAction.h \
-    svSegSelectionWidget.h \
-    svModelEdit.h \
-    svFaceListDelegate.h \
-    svModelingPluginActivator.h
+    svSimJobCreate.h \
+    svSimJobCreateAction.h \
+    svSimulationPluginActivator.h
 
 CXXSRCS	= \
-    svModelCreate.cxx \
-    svModelCreateAction.cxx \
-    svModelLegacyLoadAction.cxx \
-    svModelLegacySaveAction.cxx \
-    svModelExtractPathsAction.cxx \
-    svSegSelectionWidget.cxx \
-    svModelEdit.cxx \
-    svFaceListDelegate.cxx \
-    svModelingPluginActivator.cxx
+    svSimJobCreate.cxx \
+    svSimJobCreateAction.cxx \
+    svSimulationPluginActivator.cxx
 
-UIFILES =  \
-    svModelCreate.ui \
-    svSegSelectionWidget.ui \
-    svModelEdit.ui
+UIFILES = \
+    svSimJobCreate.ui
 
-QRCFILES =  ../../resources/modeling.qrc
-
-QRCFILES += org_sv_gui_qt_modeling_manifest.qrc \
-           org_sv_gui_qt_modeling_cached.qrc
+QRCFILES = org_sv_gui_qt_simulation_manifest.qrc \
+           org_sv_gui_qt_simulation_cached.qrc
 
 RCFILES = \
   ../../plugin.xml \
-  ../../resources/model.png
+  ../../resources/simulation.png
 
 CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
@@ -91,10 +73,11 @@ DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_simulation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
@@ -103,12 +86,12 @@ DLLLIBS +=  \
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
 
-TARGET_LIB_NAME = org_sv_gui_qt_modeling
+TARGET_LIB_NAME = org_sv_gui_qt_simulation
 
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_modeling
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_modeling
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_simulation
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_simulation
 PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = MODELING
+PLUGIN_NAME = SIMULATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 

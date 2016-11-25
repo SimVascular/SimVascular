@@ -1,6 +1,49 @@
 #include "svMeshTetGen.h"
 
-#include "svStringUtils.h"
+// can't get this to resolve properly on windows!
+//#include "svStringUtils.h"
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
+
+static std::vector<std::string> svStringUtils__split(const std::string &s, char delim)
+{
+    std::stringstream ss(s);
+    std::string item;
+    std::vector<std::string> elems;
+    while (std::getline(ss, item, delim)) {
+        if (item.length() > 0) {
+            elems.push_back(item);
+        }
+    }
+    return elems;
+}
+
+static std::string svStringUtils__ltrim(std::string s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+static std::string svStringUtils__rtrim(std::string s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+static std::string svStringUtils__trim(std::string s) {
+    return svStringUtils__ltrim(svStringUtils__rtrim(s));
+}
+
+static std::string svStringUtils__lower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
+
 #include "svModelUtils.h"
 
 #include "cvSolidModel.h"
@@ -221,7 +264,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
     option=false;
 
     std::string originalCmd=cmd;
-    cmd=sv::trim(cmd);
+    cmd=svStringUtils__trim(cmd);
 
     if(cmd=="")
     {
@@ -230,9 +273,9 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
         return true;
     }
 
-    std::vector<std::string> params=sv::split(cmd);
+std::vector<std::string> params=svStringUtils__split(cmd,' ');
 
-    if(sv::lower(params[0])=="option")
+    if(svStringUtils__lower(params[0])=="option")
     {
         params.erase(params.begin());
     }
@@ -244,7 +287,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
         return false;
     }
 
-    params[0]=sv::lower(params[0]);
+    params[0]=svStringUtils__lower(params[0]);
 
     try{
 

@@ -1,6 +1,48 @@
 #include "svMesh.h"
 
-#include "svStringUtils.h"
+// can't get this to resolve properly on windows!
+//#include "svStringUtils.h"
+#include <string>
+#include <vector>
+#include <sstream>
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
+
+static std::vector<std::string> svStringUtils__split(const std::string &s, char delim)
+{
+    std::stringstream ss(s);
+    std::string item;
+    std::vector<std::string> elems;
+    while (std::getline(ss, item, delim)) {
+        if (item.length() > 0) {
+            elems.push_back(item);
+        }
+    }
+    return elems;
+}
+
+static std::string svStringUtils__ltrim(std::string s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
+
+static std::string svStringUtils__rtrim(std::string s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
+
+static std::string svStringUtils__trim(std::string s) {
+    return svStringUtils__ltrim(svStringUtils__rtrim(s));
+}
+
+static std::string svStringUtils__lower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
 
 svMesh::svMesh()
     : m_Type("")
@@ -109,7 +151,7 @@ bool svMesh::ExecuteCommands(std::vector<std::string> cmds, std::string& msg)
 {
     for(int i=0;i<cmds.size();i++)
     {
-        std::string cmd=sv::trim(cmds[i]);
+        std::string cmd=svStringUtils__trim(cmds[i]);
 
         if(cmd=="")
             continue;
@@ -133,7 +175,10 @@ void svMesh::SetCommandHistory(std::vector<std::string> history)
 
 bool svMesh::ExecuteCommandHistory(std::string& msg)
 {
-    ExecuteCommands(m_CommandHistory, msg);
+    if(!ExecuteCommands(m_CommandHistory, msg)) {
+            return false;
+    }
+    return true;
 }
 
 vtkSmartPointer<vtkPolyData> svMesh::GetSurfaceMesh()

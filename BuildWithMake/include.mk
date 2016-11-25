@@ -660,16 +660,20 @@ endif
 ifeq ($(SV_USE_MITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.mitk.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
                      -I$(TOP)/../Code/Source/Modules/Model \
+                     -I$(TOP)/../Code/Source/Modules/Mesh \
                      -I$(TOP)/../Code/Source/Modules/Path \
                      -I$(TOP)/../Code/Source/Modules/ProjectManagement \
                      -I$(TOP)/../Code/Source/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/Modules/Segmentation
+                     -I$(TOP)/../Code/Source/Modules/Segmentation \
+                     -I$(TOP)/../Code/Source/Modules/Simulation
 endif
 
 # Link flags, which also need to be dealt with conditionally depending

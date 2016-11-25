@@ -25,21 +25,24 @@
 //    static std::string &ToLower(std::string &s);
 //};
 
-namespace sv
+//namespace sv
+
+class SVCOMMON_EXPORT svStringUtils
 {
 
+ public:
 //    SVCOMMON_EXPORT std::vector<std::string> Split(const std::string & s, std::string rgx_str = "\\s+");
 
-    SVCOMMON_EXPORT std::vector<std::string> split(const std::string &s, char delim = ' ');
+   static std::vector<std::string> split(const std::string &s, char delim = ' ');
 
-    SVCOMMON_EXPORT std::string ltrim(std::string s);
+   static std::string ltrim(std::string s);
 
-    SVCOMMON_EXPORT std::string rtrim(std::string s);
+   static std::string rtrim(std::string s);
 
-    SVCOMMON_EXPORT std::string trim(std::string s);
+   static std::string trim(std::string s);
 
-    SVCOMMON_EXPORT std::string lower(std::string s);
-}
+   static std::string lower(std::string s);
+};
 
 
 #endif // SVSTRINGUTILS_H

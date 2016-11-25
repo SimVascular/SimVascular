@@ -42,7 +42,7 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model ProjectManagement
+SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Mesh Model ProjectManagement Simulation
 
 SVQTGUIMODULES_DIRS += Mitk/AppUtil/src
 

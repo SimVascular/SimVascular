@@ -27,7 +27,7 @@
 # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
 # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-TOP= ../../../../../../BuildWithMake
+TOP=../../../../BuildWithMake
 
 include $(TOP)/include.mk
 
@@ -36,52 +36,42 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
-           $(ZLIB_INCDIR) \
-           $(TETGEN_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_sv_gui_qt_modeling_EXPORTS \
-          -DUS_MODULE_NAME=svModeling
+           $(MITK_INCDIRS) $(MITK_DEFS)
+
+MODULE_NAME = svSimulation
+MODULE_NAME_ALL_CAPS = SVSIMULATION
+CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+
+CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svModelCreate.h \
-    svModelCreateAction.h \
-    svModelLegacyLoadAction.h \
-    svModelLegacySaveAction.h \
-    svModelExtractPathsAction.h \
-    svSegSelectionWidget.h \
-    svModelEdit.h \
-    svFaceListDelegate.h \
-    svModelingPluginActivator.h
+    svSimJob.h \
+    svMitkSimJob.h \
+    svMitkSimJobIO.h \
+    svSimulationUtils.h \
+    svMitkSimulationObjectFactory.h
 
 CXXSRCS	= \
-    svModelCreate.cxx \
-    svModelCreateAction.cxx \
-    svModelLegacyLoadAction.cxx \
-    svModelLegacySaveAction.cxx \
-    svModelExtractPathsAction.cxx \
-    svSegSelectionWidget.cxx \
-    svModelEdit.cxx \
-    svFaceListDelegate.cxx \
-    svModelingPluginActivator.cxx
+    svSimJob.cxx \
+    svMitkSimJob.cxx \
+    svMitkSimJobIO.cxx \
+    svSimulationUtils.cxx \
+    svMitkSimulationObjectFactory.cxx
 
-UIFILES =  \
-    svModelCreate.ui \
-    svSegSelectionWidget.ui \
-    svModelEdit.ui
+CXXSRCS += us_init.cxx
 
-QRCFILES =  ../../resources/modeling.qrc
+UIFILES = 
 
-QRCFILES += org_sv_gui_qt_modeling_manifest.qrc \
-           org_sv_gui_qt_modeling_cached.qrc
+# I don't know how to handle just xml files yet...
+RCFILES =
 
-RCFILES = \
-  ../../plugin.xml \
-  ../../resources/model.png
+QRCFILES = 
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -89,27 +79,14 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
-
-TARGET_LIB_NAME = org_sv_gui_qt_modeling
-
-PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_modeling
-PLUGIN_EXPORTS_NAME = org_sv_gui_qt_modeling
-PLUGIN_EXPORTS_PREFIX = SV_QT_
-PLUGIN_NAME = MODELING
-
-SV_COPY_DLL_TO_BIN_PLUGINS = 1
+TARGET_LIB_NAME = simvascular_qtgui_module_simulation
 
 include $(TOP)/targetlib.mk

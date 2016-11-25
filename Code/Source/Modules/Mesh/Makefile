@@ -36,32 +36,52 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(VTK_INCDIRS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
+           $(ZLIB_INCDIR) \
+           $(TETGEN_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS) \
-          -DSV_EXPORT_QT_GUI_TEST_COMPILE
+           $(MITK_INCDIRS) $(MITK_DEFS)
+
+MODULE_NAME = svMesh
+MODULE_NAME_ALL_CAPS = SVMESH
+CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+
+CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svModelCreate.h \
-    svSegSelectionWidget.h \
-    svModelEdit.h \
-    svModelingPluginActivator.h
+    svMesh.h \
+    svMeshTetGen.h \
+    svMitkMesh.h \
+    svMitkMeshOperation.h \
+    svMitkMeshMapper3D.h \
+    svMitkMeshMapper2D.h \
+    svMitkMeshIO.h \
+    svMeshLegacyIO.h \
+    svMitkMeshObjectFactory.h
 
 CXXSRCS	= \
-    svModelCreate.cxx \
-    svSegSelectionWidget.cxx \
-    svModelEdit.cxx \
-    svModelingPluginActivator.cxx
+    svMesh.cxx \
+    svMeshTetGen.cxx \
+    svMitkMesh.cxx \
+    svMitkMeshOperation.cxx \
+    svMitkMeshMapper3D.cxx \
+    svMitkMeshMapper2D.cxx \
+    svMitkMeshIO.cxx \
+    svMeshLegacyIO.cxx \
+    svMitkMeshObjectFactory.cxx
 
-UIFILES =  \
-    svModelCreate.ui \
-    svSegSelectionWidget.ui \
-    svModelEdit.ui
+CXXSRCS += us_init.cxx
 
-RCFILES = 
+UIFILES = 
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+# I don't know how to handle just xml files yet...
+RCFILES =
+
+QRCFILES = 
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -69,21 +89,22 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_tetgen_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_thirdparty_tetgen$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_thirdparty_zlib$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-TARGET_LIB_NAME = simvascular_qtgui_plugin_model
-
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
-
-SV_COPY_DLL_TO_BIN_PLUGINS = 1
+TARGET_LIB_NAME = simvascular_qtgui_module_mesh
 
 include $(TOP)/targetlib.mk
