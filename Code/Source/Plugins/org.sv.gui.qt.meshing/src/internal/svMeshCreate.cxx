@@ -139,6 +139,7 @@ void svMeshCreate::CreateMesh()
         QMessageBox::warning(NULL,"The model type is unknown and not supported","Please make sure the model is valid!");
         return;
     }
+    mitkMesh->SetDataModified();
 
     mitk::DataNode::Pointer meshNode = mitk::DataNode::New();
     meshNode->SetData(mitkMesh);

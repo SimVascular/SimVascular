@@ -41,6 +41,10 @@ public slots:
 
     void ClearAll();
 
+    void AddObservers();
+
+    void RemoveObservers();
+
     void ShowSegSelectionWidget();
 
     void UpdateGUI();
@@ -107,8 +111,6 @@ public slots:
 
     void UpdateBoxWidget(double idx);
 
-//    void Test();
-
 public:
 
     int GetTimeStep();
@@ -169,6 +171,8 @@ protected:
     vtkSmartPointer<vtkBoxWidget> m_BoxWidget;
 
     mitk::DataNode::Pointer m_PathFolderNode;
+
+    bool m_OperatingWholeTableModel;
 
 };
 

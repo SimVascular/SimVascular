@@ -766,6 +766,7 @@ void svSimulationView::SaveToManager()
     }
 
     m_MitkJob->SetSimJob(job);
+    m_MitkJob->SetDataModified();
 }
 
 bool svSimulationView::IsInt(std::string value)

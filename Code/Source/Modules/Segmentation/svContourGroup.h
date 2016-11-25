@@ -175,6 +175,9 @@ public:
 
     svLoftingParam* GetLoftingParam() const {return m_LoftingParam;}
 
+    bool IsDataModified(){return m_DataModified;}
+    void SetDataModified(bool modified = true){m_DataModified=modified;}
+
   protected:
 
     mitkCloneMacro(Self);
@@ -204,6 +207,8 @@ public:
 
     //lofting parameters as public
     svLoftingParam *m_LoftingParam;
+
+    bool m_DataModified;
 
   };
 

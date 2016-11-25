@@ -6,6 +6,7 @@ svContourGroup::svContourGroup()
     : m_CalculateBoundingBox(true)
     , m_GroupID(-1)
     , m_CurrentIndexOn2DView(-2)
+    , m_DataModified(false)
 {
     this->InitializeEmpty();
     m_LoftingParam=new svContourGroup::svLoftingParam();
@@ -16,6 +17,7 @@ svContourGroup::svContourGroup(const svContourGroup &other)
     , m_PathID(other.m_PathID)
     , m_PathName(other.m_PathName)
     , m_ContourSets(other.GetTimeSize())
+    , m_DataModified(true)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {
@@ -356,6 +358,7 @@ void svContourGroup::ExecuteOperation( mitk::Operation* operation )
     {
         InsertControlPoint(contourIndex,index,point,timeStep);
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
     }
         break;
 
@@ -363,6 +366,7 @@ void svContourGroup::ExecuteOperation( mitk::Operation* operation )
     {
         SetControlPoint(contourIndex,index, point, timeStep);
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
     }
         break;
 
@@ -370,6 +374,7 @@ void svContourGroup::ExecuteOperation( mitk::Operation* operation )
     {
         RemoveControlPoint(contourIndex,index,timeStep);
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
     }
         break;
 
@@ -377,6 +382,7 @@ void svContourGroup::ExecuteOperation( mitk::Operation* operation )
     {
         InsertContour(contourIndex,contour,timeStep);
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
     }
         break;
 
@@ -384,6 +390,7 @@ void svContourGroup::ExecuteOperation( mitk::Operation* operation )
     {
         RemoveContour(contourIndex,timeStep);
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
     }
         break;
 
@@ -391,6 +398,7 @@ void svContourGroup::ExecuteOperation( mitk::Operation* operation )
     {
         SetContour(contourIndex,contour,timeStep);
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
     }
         break;
 

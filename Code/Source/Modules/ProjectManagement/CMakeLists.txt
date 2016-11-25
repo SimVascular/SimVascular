@@ -2,7 +2,7 @@ set(lib svProjectManagement)
 
 MITK_CREATE_MODULE( ${lib}
     FORCE_SHARED
-    DEPENDS PUBLIC MitkCore svPath svSegmentation svModel
+    DEPENDS PUBLIC MitkCore svPath svSegmentation svModel svMesh svSimulation
     PACKAGE_DEPENDS PUBLIC Qt5|Core+Xml
 )
 

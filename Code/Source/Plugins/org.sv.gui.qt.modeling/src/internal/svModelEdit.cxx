@@ -42,6 +42,7 @@ svModelEdit::svModelEdit() :
 
     m_SegSelectionWidget=NULL;
 
+    m_DataInteractor=NULL;
     m_ModelSelectFaceObserverTag=0;
     m_ModelUpdateObserverTag=0;
 
@@ -53,6 +54,8 @@ svModelEdit::svModelEdit() :
     m_BoxWidget=NULL;
 
     m_PathFolderNode=NULL;
+
+    m_OperatingWholeTableModel=false;
 }
 
 svModelEdit::~svModelEdit()
@@ -235,14 +238,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
 //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
 
-
-//    connect(ui->btnTest, SIGNAL(clicked()), this, SLOT(Test()) );
 }
-
-//void svModelEdit::Test()
-//{
-
-//}
 
 void svModelEdit::Visible()
 {
@@ -252,7 +248,8 @@ void svModelEdit::Visible()
 
 void svModelEdit::Hidden()
 {
-    ClearAll();
+//    ClearAll();
+    RemoveObservers();
 }
 
 int svModelEdit::GetTimeStep()
@@ -279,49 +276,41 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(nodes.size()==0)
     {
-        ClearAll();
+        RemoveObservers();
         m_Parent->setEnabled(false);
         return;
     }
 
     mitk::DataNode::Pointer modelNode=nodes.front();
+    svModel* model=dynamic_cast<svModel*>(modelNode->GetData());
 
-//    if(m_ModelNode==modelNode)
-//    {
-////        return;
-//    }
-
-    ClearAll();
-
-    m_ModelNode=modelNode;
-    m_Model=dynamic_cast<svModel*>(modelNode->GetData());
-    if(!m_Model)
+    if(!model)
     {
-        ClearAll();
+        RemoveObservers();
         m_Parent->setEnabled(false);
         return;
     }
 
-    m_Parent->setEnabled(true);
-    ui->tabWidget->setCurrentIndex(0);
+    if(m_ModelNode==modelNode)
+    {
+        AddObservers();
+        m_Parent->setEnabled(true);
+        return;
+    }
 
+    if(m_ModelNode.IsNotNull())
+        RemoveObservers();
+
+    m_ModelNode=modelNode;
+    m_Model=model;
     m_ModelType=m_Model->GetType();
 
+    m_Parent->setEnabled(true);
+    AddObservers();
+
+    ui->tabWidget->setCurrentIndex(0);
+
     UpdateGUI();
-
-    m_DataInteractor = svModelDataInteractor::New();
-    m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
-    m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
-    m_DataInteractor->SetDataNode(m_ModelNode);
-
-    //Add Observers
-    itk::SimpleMemberCommand<svModelEdit>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svModelEdit>::New();
-    modelSelectFaceCommand->SetCallbackFunction(this, &svModelEdit::UpdateFaceListSelection);
-    m_ModelSelectFaceObserverTag = m_Model->AddObserver( svModelSelectFaceEvent(), modelSelectFaceCommand);
-
-    itk::SimpleMemberCommand<svModelEdit>::Pointer modelUpdateCommand = itk::SimpleMemberCommand<svModelEdit>::New();
-    modelUpdateCommand->SetCallbackFunction(this, &svModelEdit::UpdateGUI);
-    m_ModelUpdateObserverTag = m_Model->AddObserver( svModelSetEvent(), modelUpdateCommand);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -602,6 +591,7 @@ void svModelEdit::SetupFaceListTable()
     if(!m_Model)
         return;
 
+    m_OperatingWholeTableModel=true;
     m_FaceListTableModel->clear();
 
     int timeStep=GetTimeStep();
@@ -672,6 +662,8 @@ void svModelEdit::SetupFaceListTable()
     ui->tableViewFaceList->horizontalHeader()->resizeSection(5,60);
 
     ui->tableViewFaceList->setColumnHidden(0,true);
+
+    m_OperatingWholeTableModel=false;
 }
 
 void svModelEdit::UpdateFaceData(QStandardItem* item)
@@ -703,7 +695,10 @@ void svModelEdit::UpdateFaceData(QStandardItem* item)
         face->opacity=item->text().trimmed().toFloat();
     }
 
-    if(col!=1)
+    if(!m_OperatingWholeTableModel)
+        m_Model->SetDataModified();
+
+    if(col==5)
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 
 }
@@ -767,11 +762,13 @@ void svModelEdit::ToggleVisibility(const QModelIndex &index){
     {
         face->visible=false;
         itemV->setIcon(QIcon(":/hide.png"));
+        m_Model->SetDataModified();
     }
     else
     {
         face->visible=true;
         itemV->setIcon(QIcon(":/show.png"));
+        m_Model->SetDataModified();
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -812,6 +809,7 @@ void svModelEdit::ChangeColor(const QModelIndex &index)
     face->color[0]=newColor.red()/255.0f;
     face->color[1]=newColor.green()/255.0f;
     face->color[2]=newColor.blue()/255.0f;
+    m_Model->SetDataModified();
 
     QBrush brush(newColor);
     itemC->setBackground(brush);
@@ -856,6 +854,7 @@ void svModelEdit::ShowSelected( bool )
             continue;
 
         face->visible=true;
+        m_Model->SetDataModified();
 
         QStandardItem* itemV= m_FaceListTableModel->item(row,3);
         itemV->setIcon(QIcon(":/show.png"));
@@ -893,6 +892,7 @@ void svModelEdit::HideSelected( bool )
             continue;
 
         face->visible=false;
+        m_Model->SetDataModified();
 
         QStandardItem* itemV= m_FaceListTableModel->item(row,3);
         itemV->setIcon(QIcon(":/hide.png"));
@@ -979,6 +979,7 @@ void svModelEdit::ChangeColorSelected( bool )
         face->color[0]=newColor.red()/255.0f;
         face->color[1]=newColor.green()/255.0f;
         face->color[2]=newColor.blue()/255.0f;
+        m_Model->SetDataModified();
 
         QStandardItem* itemC= m_FaceListTableModel->item(row,4);
         QBrush brush(newColor);
@@ -1296,16 +1297,43 @@ void svModelEdit::NodeRemoved(const mitk::DataNode* node)
 {
 }
 
-void svModelEdit::ClearAll()
+void svModelEdit::AddObservers()
+{
+    if(m_DataInteractor.IsNull())
+    {
+        m_DataInteractor = svModelDataInteractor::New();
+        m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
+        m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
+        m_DataInteractor->SetDataNode(m_ModelNode);
+    }
+
+    if(m_ModelSelectFaceObserverTag==0)
+    {
+        itk::SimpleMemberCommand<svModelEdit>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svModelEdit>::New();
+        modelSelectFaceCommand->SetCallbackFunction(this, &svModelEdit::UpdateFaceListSelection);
+        m_ModelSelectFaceObserverTag = m_Model->AddObserver( svModelSelectFaceEvent(), modelSelectFaceCommand);
+    }
+
+    if(m_ModelUpdateObserverTag==0)
+    {
+        itk::SimpleMemberCommand<svModelEdit>::Pointer modelUpdateCommand = itk::SimpleMemberCommand<svModelEdit>::New();
+        modelUpdateCommand->SetCallbackFunction(this, &svModelEdit::UpdateGUI);
+        m_ModelUpdateObserverTag = m_Model->AddObserver( svModelSetEvent(), modelUpdateCommand);
+    }
+}
+
+void svModelEdit::RemoveObservers()
 {
     if(m_Model && m_ModelSelectFaceObserverTag)
     {
         m_Model->RemoveObserver(m_ModelSelectFaceObserverTag);
+        m_ModelSelectFaceObserverTag=0;
     }
 
     if(m_Model && m_ModelUpdateObserverTag)
     {
         m_Model->RemoveObserver(m_ModelUpdateObserverTag);
+        m_ModelUpdateObserverTag=0;
     }
 
     if(m_ModelNode)
@@ -1313,14 +1341,15 @@ void svModelEdit::ClearAll()
         m_ModelNode->SetDataInteractor(NULL);
         m_DataInteractor=NULL;
     }
+}
 
+void svModelEdit::ClearAll()
+{
     m_Model=NULL;
     m_ModelNode=NULL;
 
     ui->labelModelName->setText("");
     ui->labelModelType->setText("");
-//    ui->listWidget->clear();
-//    ui->plainTextEditBlend->clear();
 }
 
 void svModelEdit::ShowSegSelectionWidget()
