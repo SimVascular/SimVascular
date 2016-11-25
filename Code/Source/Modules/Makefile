@@ -44,6 +44,8 @@ include $(TOP)/include.mk
 
 SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model ProjectManagement
 
+SVQTGUIMODULES_DIRS += Mitk/AppUtil
+
 lib-complete: create_exports_h us-init-module moc ui qrc lib
 
 static-complete:  create_exports_h us-init-module moc ui qrc static
@@ -88,8 +90,7 @@ qrc:
 us-init-module:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
-	  echo "#include <usModuleInitialization.h>" > us_init.cxx; \
-          echo "US_INITIALIZE_MODULE" >> us_init.cxx) ; done
+	  $(MAKE) us-init-module) ; done
 
 clean:
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \
@@ -98,7 +99,8 @@ clean:
 
 veryclean: clean
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
-	  rm ../Include/Make/sv$$i\Exports.h) ; done
+	  rm -f ../Include/Make/sv$$i\Exports.h; \
+	  rm -f ../Include/Make/mitk$$i\Exports.h) ; done
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) veryclean ) ; done
