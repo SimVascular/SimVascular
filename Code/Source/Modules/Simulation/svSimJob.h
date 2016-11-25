@@ -28,7 +28,7 @@ public:
 
     void SetCapProps(std::map<std::string,std::map<std::string,std::string>> capProps);
     std::map<std::string,std::map<std::string,std::string>> GetCapProps();
-    void SetCapProp(const std::string& outletName, const std::string& key, std::string value);
+    void SetCapProp(const std::string& capName, const std::string& key, std::string value);
     std::string GetCapProp(const std::string& capName, const std::string& key);
 
     void SetWallProps(std::map<std::string,std::string> wallProps);

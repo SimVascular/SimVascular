@@ -6,6 +6,7 @@ set(INTERNAL_CPP_FILES
     svSimJobCreate.cxx
     svSimJobCreateAction.cxx
     svCapBCWidget.cxx
+    svTableCapDelegate.cxx
     svSimulationView.cxx
 #    svSimJobExportAction.cxx
     svSimulationPluginActivator.cxx
@@ -15,6 +16,7 @@ set(MOC_H_FILES
     src/internal/svSimJobCreate.h
     src/internal/svSimJobCreateAction.h
     src/internal/svCapBCWidget.h
+    src/internal/svTableCapDelegate.h
     src/internal/svSimulationView.h
 #    src/internal/svSimJobExportAction.h
     src/internal/svSimulationPluginActivator.h

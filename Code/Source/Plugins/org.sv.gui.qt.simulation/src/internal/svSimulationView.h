@@ -29,13 +29,17 @@ public:
 
 public slots:
 
-//    void ClearAll();
+    void SaveToManager();
 
-//    void AddObservers();
+    void ClearAll();
 
-//    void RemoveObservers();
+    void AddObservers();
 
-//    void UpdateGUI();
+    void RemoveObservers();
+
+    void UpdateFaceListSelection();
+
+    void UpdateGUIBasic();
 
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
@@ -49,6 +53,9 @@ public slots:
 
     void SetCapBC();
 
+    void UpdateGUICap();
+
+
 
 
 
@@ -58,7 +65,7 @@ public slots:
 //    void SetVarProp( bool checked = false );
 
 
-//    void UpdateFaceListSelection();
+
 
 //    void CreateDataFiles();
 
@@ -87,6 +94,15 @@ public:
     virtual void Visible() override;
 
     virtual void Hidden() override;
+
+    svSimJob* CreateJob(std::string& msg);
+
+    bool IsDouble(std::string value);
+
+    bool AreDouble(std::string values, int* count = NULL);
+
+    bool IsInt(std::string value);
+
 
 private:
 

@@ -53,9 +53,9 @@ void svCapBCWidget::UpdateGUI(std::string capName, std::map<std::string, std::st
 
     QString period=QString::fromStdString(props["Period"]);
     if(period=="")
-        ui->lineEditModeNumber->setText("");
+        ui->lineEditPeriod->setText("");
     else
-        ui->lineEditModeNumber->setText(period);
+        ui->lineEditPeriod->setText(period);
 
     ui->checkBoxFlip->setChecked(props["Flip Normal"]=="True"?true:false);
 
@@ -73,7 +73,7 @@ bool svCapBCWidget::CreateProps()
     std::map<std::string, std::string> props;
 
     std::string bcType=ui->comboBoxBCType->currentText().toStdString();
-    bool ok;
+
     if(bcType=="Prescribed Velocities")
     {
         props["BC Type"]=bcType;
@@ -82,7 +82,7 @@ bool svCapBCWidget::CreateProps()
         QString pointNum=ui->lineEditPointNumber->text().trimmed();
         if(!IsDouble(pointNum))
         {
-            QMessageBox::warning(NULL,"Point Number Error","Please provide value in a correct format!");
+            QMessageBox::warning(this,"Point Number Error","Please provide value in a correct format!");
             return false;
         }
         props["Point Number"]=pointNum.toStdString();
@@ -90,7 +90,7 @@ bool svCapBCWidget::CreateProps()
         QString modeNum=ui->lineEditModeNumber->text().trimmed();
         if(!IsDouble(modeNum))
         {
-            QMessageBox::warning(NULL,"Fourier Modes Error","Please provide value in a correct format!");
+            QMessageBox::warning(this,"Fourier Modes Error","Please provide value in a correct format!");
             return false;
         }
         props["Fourier Modes"]=modeNum.toStdString();
@@ -100,13 +100,19 @@ bool svCapBCWidget::CreateProps()
         {
             if(!IsDouble(period))
             {
-                QMessageBox::warning(NULL,"Period Error","Please provide value in a correct format!");
+                QMessageBox::warning(this,"Period Error","Please provide value in a correct format!");
                 return false;
             }
             props["Period"]=period.toStdString();
         }
 
         props["Flip Normal"]=ui->checkBoxFlip->isChecked()?"True":"False";
+
+        if(m_FlowrateContent=="")
+        {
+            QMessageBox::warning(this,"No Flowrate Inof","Please provide flow rate data!");
+            return false;
+        }
 
         props["Original File"]=ui->labelLoadFile->text().toStdString();
 
@@ -122,7 +128,7 @@ bool svCapBCWidget::CreateProps()
         {
             if(!IsDouble(pressure))
             {
-                QMessageBox::warning(NULL,"Pressure Error","Please provide value in a correct format!");
+                QMessageBox::warning(this,"Pressure Error","Please provide value in a correct format!");
                 return false;
             }
             props["Pressure"]=pressure.toStdString();
@@ -131,22 +137,19 @@ bool svCapBCWidget::CreateProps()
         QString values=ui->lineEditBCValues->text().trimmed();
         if(bcType=="Resistance")
         {
-            if(values!="")
+            if(!IsDouble(values))
             {
-                if(!IsDouble(values))
-                {
-                    QMessageBox::warning(NULL,"R Value Error","Please provide value in a correct format!");
-                    return false;
-                }
-                props["Values"]=values.toStdString();
+                QMessageBox::warning(this,"R Value Error","Please provide value in a correct format!");
+                return false;
             }
+            props["Values"]=values.toStdString();
         }
         else if(bcType=="RCR")
         {
             int count=0;
             if(!AreDouble(values,&count) || count!=3)
             {
-                QMessageBox::warning(NULL,"RCR Values Error","Please provide values in a correct format!");
+                QMessageBox::warning(this,"RCR Values Error","Please provide values in a correct format!");
                 return false;
             }
             props["Values"]=values.toStdString();
