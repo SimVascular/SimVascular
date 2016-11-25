@@ -44,11 +44,11 @@ include $(TOP)/include.mk
 
 SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model ProjectManagement
 
-lib-complete: create_exports_h us-init-module moc ui rcc lib
+lib-complete: create_exports_h us-init-module moc ui qrc lib
 
-static-complete:  create_exports_h us-init-module moc ui rcc static
+static-complete:  create_exports_h us-init-module moc ui qrc static
 
-shared-complete: create_exports_h us-init-module moc ui rcc shared
+shared-complete: create_exports_h us-init-module moc ui qrc shared
 
 lib:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
@@ -80,10 +80,10 @@ ui:
 	  cd $$i; \
 	  $(MAKE) ui) ; done
 
-rcc:
+qrc:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
-	  $(MAKE) rcc) ; done
+	  $(MAKE) qrc) ; done
 
 us-init-module:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \

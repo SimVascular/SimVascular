@@ -203,6 +203,7 @@ LFLAGS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_apputil$(LIBLINKEXT) \
           $(SVLIBFLAG)org_sv_gui_qt_modeling$(LIBLINKEXT) \
           $(SVLIBFLAG)org_sv_gui_qt_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)org_sv_projectdatanodes$(LIBLINKEXT) \
@@ -313,7 +314,9 @@ endif
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
-	for fn in $(TOP)/Bin/$(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	for fn in $(TARGET_EXE)*; do /bin/rm -f $$fn; done
+	for fn in $(TARGET_EXE_FULL)*; do /bin/rm -f $$fn; done
+	for fn in $(basename $(TARGET_EXE_FULL)).*;do /bin/rm -f $$fn; done
 	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 

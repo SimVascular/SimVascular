@@ -39,17 +39,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-          -DSV_EXPORT_QT_GUI_PROJECTDATANODES_COMPILE \
-          -DUS_MODULE_NAME=svProjectDataNodes \
-          -I../../../PluginFramework \
-          -I../../../org.mitk.gui.common/src \
-          -I../../../org.mitk.gui.qt.datamanager/src \
-          -I../../../org.mitk.gui.qt.common/src \
-         -I../../../org.blueberry.ui.qt/src \
-         -I../../../org.blueberry.core.runtime/src \
-        -I../../../org.blueberry.core.runtime/src/registry \
-        -I../../../org.mitk.core.services/src \
-         -I../../..
+           -Dorg_sv_projectdatanodes_EXPORTS \
+           -DUS_MODULE_NAME=svProjectDataNodes
 
 HDRS	= \
   svProjectDataNodesPluginActivator.h
@@ -68,8 +59,6 @@ QRCFILES += org_sv_projectdatanodes_manifest.qrc \
 RCFILES =    
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
-
-CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
 
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
@@ -91,13 +80,13 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
-          -I../../../org.mitk.gui.qt.datamanager/src
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
 
 TARGET_LIB_NAME = org_sv_projectdatanodes
 
 PLUGIN_DIR_NAME = org_sv_projectdatanodes
 
+PLUGIN_DEFINE_PREFIX = SV_QT_
 PLUGIN_NAME = PROJECTDATANODES
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1

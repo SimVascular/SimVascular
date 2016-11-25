@@ -1,7 +1,7 @@
 ifeq ($(CLUSTER), x64_cygwin)
     QT_TOP_DIR	= C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl
 
-    QT_DEFS = -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DNDEBUG -DQT_PLUGIN
+    QT_DEFS = -DWIN32 -DWIN64 -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB -DQT_XML_LIB -DQT_CONCURRENT_LIB -DQT_NETWORK_LIB -DNDEBUG -DQT_PLUGIN
 
 ifeq ($(SV_USE_SHARED),0)
   QT_DEFS += -DQT_STATICPLUGIN
@@ -20,6 +20,7 @@ endif
       -I$(QT_TOP_DIR)/include/QtCore \
       -I$(QT_TOP_DIR)/include/QtXml \
       -I$(QT_TOP_DIR)/include/QtConcurrent \
+      -I$(QT_TOP_DIR)/include/QtNetwork \
       -I$(QT_TOP_DIR)/include/mkspecs/win32-msvc2013
     QT_MOC_INCDIRS = \
       -I $(QT_TOP_DIR)/include \
@@ -28,8 +29,10 @@ endif
       -I $(QT_TOP_DIR)/include/QtCore \
       -I $(QT_TOP_DIR)/include/QtXml \
       -I $(QT_TOP_DIR)/include/QtConcurrent \
+      -I $(QT_TOP_DIR)/include/QtNetwork \
       -I $(QT_TOP_DIR)/include/mkspecs/win32-msvc2013
     QT_LIBS =    $(LIBPATH_COMPILER_FLAG)$(QT_LIBDIRS) \
+      $(LIBFLAG)Qt5Network$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Xml$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Widgets$(LIBLINKEXT) \
       $(LIBFLAG)Qt5Gui$(LIBLINKEXT) \

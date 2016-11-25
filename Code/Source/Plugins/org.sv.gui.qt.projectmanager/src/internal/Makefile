@@ -39,17 +39,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -I../../../PluginFramework \
-           -I../../../org.mitk.gui.common/src \
-           -I../../../org.mitk.gui.qt.datamanager/src \
-           -I../../../org.mitk.gui.qt.common/src \
-           -I../../../org.blueberry.ui.qt/src \
-           -I../../../org.blueberry.core.runtime/src \
-           -I../../../org.blueberry.core.runtime/src/registry \
-           -I../../../org.mitk.core.services/src \
-           -I../../.. \
-          -DUS_MODULE_NAME=svProjectManager \
-          -Dorg_sv_gui_qt_projectmanager_EXPORTS
+          -Dorg_sv_gui_qt_projectmanager_EXPORTS \
+          -DUS_MODULE_NAME=svProjectManager
 
 HDRS	=  \
   svProjectManagerPluginActivator.h \
@@ -79,8 +70,6 @@ RCFILES =
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
-#CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
-
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
@@ -88,15 +77,6 @@ DLLHDRS =
 DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
-
-PLUGINLIBSDIR = C:/sv/mitk-2016.03/MITK-build/lib/plugins/RelWithDebInfo
-DLLLIBS += $(PLUGINLIBSDIR)/org_mitk_gui_common.lib \
-           $(PLUGINLIBSDIR)/org_mitk_gui_qt_datamanager.lib \
-           $(PLUGINLIBSDIR)/org_mitk_gui_qt_common.lib \
-           $(PLUGINLIBSDIR)/org_mitk_gui_qt_common_legacy.lib \
-           $(PLUGINLIBSDIR)/org_blueberry_ui_qt.lib \
-           $(PLUGINLIBSDIR)/org_blueberry_core_runtime.lib \
-           $(PLUGINLIBSDIR)/org_mitk_core_services.lib \
 
 DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
@@ -110,13 +90,13 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I../../../PluginFramework \
-          -I../../../org.mitk.gui.qt.datamanager/src
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
 
 TARGET_LIB_NAME = org_sv_gui_qt_projectmanager
 
 PLUGIN_DIR_NAME = org_sv_gui_qt_projectmanager
 
+PLUGIN_DEFINE_PREFIX = SV_QT_
 PLUGIN_NAME = PROJECTMANAGER
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1

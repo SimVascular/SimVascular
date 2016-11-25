@@ -659,10 +659,11 @@ endif
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
      LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.mitk.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
                      -I$(TOP)/../Code/Source/Modules/Model \
                      -I$(TOP)/../Code/Source/Modules/Path \

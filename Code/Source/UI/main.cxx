@@ -33,9 +33,10 @@
 
 #ifdef SV_USE_QT_GUI
   #include <QApplication>
-#include <QDir>
-  #include "mitkBaseApplication.h"
+  #include <QDir>
   #include <QVariant>
+#include <QDebug>
+  #include "mitkBaseApplication.h"
   #include "ctkPluginFrameworkLauncher.h"
   #include "qttclnotifier.h"
 #endif
@@ -111,44 +112,69 @@ svCatchDebugger() {
 }
 
 #ifdef SV_USE_QT_GUI
-class nateApp : public mitk::BaseApplication {
+class simvascularApp : public mitk::BaseApplication {
 
   public:
   
-  nateApp(int argc, char** argv);
-  ~nateApp();
+  simvascularApp(int argc, char** argv);
+  ~simvascularApp();
 
   protected:
   void initializeLibraryPaths();
   
 };
 
-nateApp::nateApp(int argc, char** argv) : BaseApplication(argc, argv)
+simvascularApp::simvascularApp(int argc, char* argv[]) : BaseApplication(argc, argv)
+{
+  fprintf(stdout,"\n\n *** simvascularApp init: m_argc (%i) *** \n\n",argc);
+  fflush (stdout);
+
+  fprintf(stdout,"\n\n *** simvascularApp init: m_argv (%p) *** \n\n",argv);
+  fflush (stdout);
+    
+  //setArgs(int argc, char* argv[])
+}
+
+simvascularApp::~simvascularApp()
 {
 }
 
-nateApp::~nateApp()
-{
-}
+void simvascularApp::initializeLibraryPaths() {
 
-void nateApp::initializeLibraryPaths() {
-  //QString plugin_dirs = "C:/sv/mitk-2016.03/MITK-build/bin/plugins";
-  //ctkPluginFrameworkLauncher::addSearchPath(plugin_dirs);
-  fprintf(stdout,"whoa doggggy!\n");
+  fprintf(stdout,"\n\n *** simvascularApp: initializeLibraryPaths! *** \n\n");
+  fflush (stdout);
+  
+  fprintf(stdout,"\n\n *** simvascularApp: m_argc (%i) *** \n\n",this->getArgc());
+  fflush (stdout);
 
-  QString pluginPath = "C:/sv/mitk-2016.03/ep/src/CTK-build/CTK-build/bin/RelWithDebInfo";
-  ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-  pluginPath = "C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo";
-  ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-  pluginPath = "C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo";
-  ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+  fprintf(stdout,"\n\n *** simvascularApp: m_argv (%p) *** \n\n",this->getArgv());
+  fflush (stdout);
+  
+  fprintf(stdout,"\n\n *** simvascularApp: m_argv (%s) *** \n\n",(this->getArgv())[0]);
+  fflush (stdout);
+  
+  QString pluginPath;
+  
+  //pluginPath = "C:/sv/mitk-2016.03/ep/src/CTK-build/CTK-build/bin/RelWithDebInfo";
+  //ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+  //std::cout << "   " << pluginPath.toStdString() << std::endl;
+  
+  //pluginPath = "C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo";
+  //ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+  //std::cout << "   " << pluginPath.toStdString() << std::endl;
+ 
+  //pluginPath = "C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins";
+  //ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+  //std::cout << "   " << pluginPath.toStdString() << std::endl;
+
+  //pluginPath = "C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin";
+  //ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+  //std::cout << "   " << pluginPath.toStdString() << std::endl;
+  
   pluginPath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins";
   ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-    
-  QString symbolicName = "org_sv_projectdatanodes";
-  QString MypluginPath = ctkPluginFrameworkLauncher::getPluginPath(symbolicName);
-  std::cout << "hey nathan look here (" << MypluginPath.toStdString() << ")";
-   
+  std::cout << "   " << pluginPath.toStdString() << std::endl;
+
   /*
   QStringList suffixes;
   suffixes << "plugins";
@@ -158,16 +184,14 @@ void nateApp::initializeLibraryPaths() {
   // we add a couple of standard library search paths for plug-ins
   QDir appDir(QCoreApplication::applicationDirPath());
 
-  // walk one directory up and add bin and lib sub-dirs; this
-  // might be redundant
-  //appDir.cdUp();
-
   foreach(QString suffix, suffixes)
   {
-    ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
-    std::cout << appDir.absoluteFilePath(suffix).toStdString();
+    //ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
+    std::cout << "   " << appDir.absoluteFilePath(suffix).toStdString() << std::endl;
   }
   */
+  
+  std::cout << std::flush;
   
   fflush(stdout);
   return;
@@ -244,7 +268,7 @@ void nateApp::initializeLibraryPaths() {
 	fprintf(stdout,"  -h, --help      : print this info and exit\n");
 	fprintf(stdout,"  -tcl, --tcl-gui : use TclTk GUI (default)\n");
 	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI\n");
-	fprintf(stdout,"  -d,--debug      : use Qt GUI\n");
+	fprintf(stdout,"  -d,--debug      : infinite loop for debugging\n");
         fprintf(stdout,"  -ng ,--no-gui   : use command line mode (SV_BATCH_MODE overrides)\n");
 	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
 	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
@@ -499,10 +523,10 @@ RegCloseKey(hKey2);
      // intentionally remove any additional params when calling qt gui 
      int single_argc = 1;
      //mitk::BaseApplication app(single_argc, argv);
-     nateApp app(single_argc, argv);
+     simvascularApp app(single_argc, argv);
 
      // note: this command doesn't seem to work.
-     // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svcommon svmodel svpath svprojectmanagement svqtappbase svqtwidgets svsegmentation svlib)
+     // US_LOAD_IMPORTED_MODULES_INTO_MAIN(svmodel svpath ...)
      #ifdef QT_STATICPLUGIN
        //Q_INIT_RESOURCE(...);
        // need to call activators for each plugin, e.g.
@@ -515,31 +539,88 @@ RegCloseKey(hKey2);
      app.setOrganizationName("Stanford Medicine");
 
      QStringList preloadLibs;
-     preloadLibs << "org_mitk_gui_qt";
-     app.setPreloadLibraries(preloadLibs);
-     preloadLibs << "org_sv_gui_projectdatanodes";
-     app.setPreloadLibraries(preloadLibs);  
-       
-     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
 
-     //QString provisioningFilePath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/why.me";
-     QString provisioningFilePath = "";
+     preloadLibs << "org_mitk_gui_qt";
+     //preloadLibs << "";
+     app.setPreloadLibraries(preloadLibs);
+
+     /*
+    preloadLibs << "liborg_sv_projectdatanodes.dll";
+    preloadLibs << "liborg_commontk_eventadmin.dll";
+    preloadLibs << "liborg_blueberry_core_runtime.dll";
+    preloadLibs << "liborg_blueberry_core_expressions.dll";
+    preloadLibs << "liborg_blueberry_core_commands.dll";
+    preloadLibs << "liborg_blueberry_ui_qt.dll";
+    preloadLibs << "liborg_blueberry_ui_qt_help.dll";
+    preloadLibs << "liborg_blueberry_ui_qt_log.dll";
+    preloadLibs << "liborg_mitk_core_services.dll";
+    preloadLibs << "liborg_mitk_gui_common.dll";
+    preloadLibs << "liborg_mitk_planarfigure.dll";
+    preloadLibs << "liborg_mitk_core_ext.dll";
+    preloadLibs << "liborg_mitk_gui_qt_application.dll";
+    preloadLibs << "liborg_mitk_gui_qt_ext.dll";
+    preloadLibs << "liborg_mitk_gui_qt_extapplication.dll";
+    preloadLibs << "liborg_mitk_gui_qt_common.dll";
+    preloadLibs << "liborg_mitk_gui_qt_stdmultiwidgeteditor.dll";
+    preloadLibs << "liborg_mitk_gui_qt_common_legacy.dll";
+    preloadLibs << "liborg_mitk_gui_qt_datamanager.dll";
+    preloadLibs << "liborg_mitk_gui_qt_properties.dll";
+    preloadLibs << "liborg_mitk_gui_qt_basicimageprocessing.dll";
+    preloadLibs << "liborg_mitk_gui_qt_dicom.dll";
+    preloadLibs << "liborg_mitk_gui_qt_geometrytools.dll";
+    preloadLibs << "liborg_mitk_gui_qt_imagecropper.dll";
+    preloadLibs << "liborg_mitk_gui_qt_imagenavigator.dll";
+    preloadLibs << "liborg_mitk_gui_qt_measurementtoolbox.dll";
+    preloadLibs << "liborg_mitk_gui_qt_python.dll";
+    preloadLibs << "liborg_mitk_gui_qt_segmentation.dll";
+    preloadLibs << "liborg_mitk_gui_qt_volumevisualization.dll";
+    preloadLibs << "liborg_sv_projectdatanodes.dll";
+    preloadLibs << "liborg_sv_gui_qt_projectmanager.dll";
+    preloadLibs << "liborg_sv_gui_qt_modeling.dll";
+    preloadLibs << "liborg_sv_gui_qt_pathplanning.dll";
+    preloadLibs << "liborg_sv_gui_qt_segmentation.dll";
+     */
+
+     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
+     //app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "a.b.c.d");
+
+     // can set a provisioning file here, but we hard code the plugins below
+     QString provisioningFilePath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/nate.provisioning";
      app.setProvisioningFilePath(provisioningFilePath);
 
-    QString plugin_dirs = "";
-    app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
+     /*
+     ////QString plugin_dirs = "";
+     ////app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
      
     QStringList pluginsToStart;
+    QString pluginPath;
 
-    QString pluginPath = "C:/sv/mitk-2016.03/ep/src/CTK-build/CTK-build/bin/RelWithDebInfo";
+    // ctk
+    ////pluginPath = "C:/sv/mitk-2016.03/ep/src/CTK-build/CTK-build/bin/RelWithDebInfo";
+    pluginPath = "C:/nate/ctk/bin/RelWithDebInfo";
     ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-    pluginPath = "C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo";
-    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-
-    //pluginsToStart.push_back("liborg_mitk_gui_qt_ext.dll");
+    std::cout << "   Adding path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
     
-    //pluginsToStart.push_back("file:///C:/sv/mitk-2016.03/ep/src/CTK-build/CTK-build/bin/RelWithDebInfo/liborg_commontk_configadmin.dll");
+    // plugins
+    //pluginPath = "C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins";
+    //pluginPath = "C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo";
+    pluginPath = "C:/nate/plugins/RelWithDebInfo";
+    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+    std::cout << "   Adding path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+    
+    // sv plugins
+    pluginPath = "C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins";
+    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+    std::cout << "   Adding path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
 
+    // example of explicit URL filename for windows
+    // pluginsToStart.push_back("file:///C:/foo/bar.dll");
+
+    QString testLibName = "org_blueberry_core_runtime";
+    QString MypluginPath = ctkPluginFrameworkLauncher::getPluginPath(testLibName);
+    std::cout << "\n\n  checking for (" << MypluginPath.toStdString() << ")" << std::endl << std::flush;
+     */
+     
     /*
     pluginsToStart.push_back("file:///C:/sv/mitk-2016.03/ep/src/CTK-build/CTK-build/bin/RelWithDebInfo/liborg_commontk_eventadmin.dll");
     pluginsToStart.push_back("file:///C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo/liborg_blueberry_core_runtime.dll");
@@ -569,9 +650,46 @@ RegCloseKey(hKey2);
     pluginsToStart.push_back("file:///C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo/liborg_mitk_gui_qt_python.dll");
     pluginsToStart.push_back("file:///C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo/liborg_mitk_gui_qt_segmentation.dll");
     pluginsToStart.push_back("file:///C:/sv/mitk-2016.03/MITK-build/bin/plugins/RelWithDebInfo/liborg_mitk_gui_qt_volumevisualization.dll");
+    pluginsToStart.push_back("file:///C:/nate/ctk/bin/RelWithDebInfo/liborg_commontk_configadmin.dll");
+    pluginsToStart.push_back("file:///C:/nate/ctk/bin/RelWithDebInfo/liborg_commontk_eventadmin.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_blueberry_core_runtime.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_blueberry_core_expressions.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_blueberry_core_commands.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_blueberry_ui_qt.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_blueberry_ui_qt_help.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_blueberry_ui_qt_log.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_core_services.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_common.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_planarfigure.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_core_ext.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_application.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_ext.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_extapplication.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_common.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_stdmultiwidgeteditor.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_common_legacy.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_datamanager.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_properties.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_basicimageprocessing.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_dicom.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_geometrytools.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_imagecropper.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_imagenavigator.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_measurementtoolbox.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_python.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_segmentation.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03/bin/plugins/liborg_mitk_gui_qt_volumevisualization.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins/liborg_sv_projectdatanodes.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins/liborg_sv_gui_qt_projectmanager.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins/liborg_sv_gui_qt_modeling.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins/liborg_sv_gui_qt_pathplanning.dll");
+    pluginsToStart.push_back("file:///C:/cygwin64/home/nwilson/gitwork/osmsc/simvascular/branches/2016-11-03-svworkbench/BuildWithMake/Bin/plugins/liborg_sv_gui_qt_segmentation.dll");
     */
     
     // remove lib prefix and dll postfix
+
+    //pluginsToStart.push_back("org_commontk_configadmin");
+    /*
     pluginsToStart.push_back("org_commontk_eventadmin");
     pluginsToStart.push_back("org_blueberry_core_runtime");
     pluginsToStart.push_back("org_blueberry_core_expressions");
@@ -605,11 +723,22 @@ RegCloseKey(hKey2);
     pluginsToStart.push_back("org_sv_gui_qt_modeling");
     pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
     pluginsToStart.push_back("org_sv_gui_qt_segmentation");
+    */
 
-    app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
-    // Use transient start with declared activation policy
-    ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
-    app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
+     /*
+    for (QStringList::iterator it =  pluginsToStart.begin();
+         it !=  pluginsToStart.end(); ++it) {             
+        QString current = *it;                 
+        qDebug() << "[[" << current << "]]";
+    }
+     */
+     
+     //app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
+    //Use transient start with declared activation policy
+     //    ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
+     //app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
+
+    std::cout << "Argv " << argv[0] << std::endl << std::flush;
    
     if (use_qt_tcl_interp) {
       Tcl_Main (argc, argv, Tcl_AppInit);
