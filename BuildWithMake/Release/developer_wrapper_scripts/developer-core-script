@@ -25,7 +25,7 @@ export SV_USE_PYTHON=REPLACEME_SV_USE_PYTHON
 # YOU PROBABLY DON'T NEED TO CHANGE ANYTHING BELOW THIS LINE.  #
 ################################################################
 
-# simvascular addition
+# SimVascular addition
 export LD_LIBRARY_PATH=$SV_HOME/BuildWithMake/Lib/$LIB_BUILD_DIR:$LD_LIBRARY_PATH
 
 # Tcl/Tk additions
@@ -89,6 +89,7 @@ export LD_LIBRARY_PATH=REPLACEME_SV_OPENCASCADE_SO_PATH:$LD_LIBRARY_PATH
 
 # MITK additions
 export LD_LIBRARY_PATH=REPLACEME_SV_MITK_SO_PATH:$LD_LIBRARY_PATH
+export SV_PLUGIN_DIR=REPLACEME_SV_MITK_SO_PATH/plugins
 
 # needed for macosx
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
@@ -103,6 +104,7 @@ export TK_LIBRARY=`cygpath --windows -t mixed $TK_LIBRARY`
 export TKCXIMAGE_DLL=`cygpath --windows -t mixed $TKCXIMAGE_DLL`
 export P_SCHEMA=`cygpath --windows -t mixed $P_SCHEMA`
 export SIM_LICENSE_FILE=`cygpath --windows -t mixed $SIM_LICENSE_FILE`
+export SV_PLUGIN_DIR=`cygpath --windows -t mixed $SV_PLUGIN_DIR`
 export PATH=$LD_LIBRARY_PATH:$PATH
 ;;
 esac
