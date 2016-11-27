@@ -69,6 +69,9 @@ public slots:
     void UpdateGUIWall();
 
 
+    void UpdateGUISolver();
+
+
 //    void CreateDataFiles();
 
 //    void RunJob();

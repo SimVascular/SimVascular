@@ -7,6 +7,7 @@ set(INTERNAL_CPP_FILES
     svSimJobCreateAction.cxx
     svCapBCWidget.cxx
     svTableCapDelegate.cxx
+    svTableSolverDelegate.cxx
     svSimulationView.cxx
 #    svSimJobExportAction.cxx
     svSimulationPluginActivator.cxx
@@ -17,6 +18,7 @@ set(MOC_H_FILES
     src/internal/svSimJobCreateAction.h
     src/internal/svCapBCWidget.h
     src/internal/svTableCapDelegate.h
+    src/internal/svTableSolverDelegate.h
     src/internal/svSimulationView.h
 #    src/internal/svSimJobExportAction.h
     src/internal/svSimulationPluginActivator.h
@@ -34,6 +36,7 @@ set(CACHED_RESOURCE_FILES
 )
 
 set(QRC_FILES
+  resources/simulation.qrc
 )
 
 set(CPP_FILES )

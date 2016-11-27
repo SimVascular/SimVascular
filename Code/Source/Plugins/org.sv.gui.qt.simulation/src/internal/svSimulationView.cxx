@@ -2,6 +2,7 @@
 #include "ui_svSimulationView.h"
 
 #include "svTableCapDelegate.h"
+#include "svTableSolverDelegate.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
@@ -14,6 +15,8 @@
 #include <QTreeView>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QDomDocument>
+#include <QDomElement>
 
 const QString svSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -141,9 +144,11 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect( setVarThicknessAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarThickness(bool) ) );
     connect( setVarEAction, SIGNAL( triggered(bool) ) , this, SLOT( SetVarE(bool) ) );
 
-
-
-
+    //for solver table
+    m_TableModelSolver = new QStandardItemModel(this);
+    ui->tableViewSolver->setModel(m_TableModelSolver);
+    svTableSolverDelegate* itemSolverDelegate=new svTableSolverDelegate(this);
+    ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     //for data file and run
 //    connect(ui->btnCreateDataFiles, SIGNAL(clicked()), this, SLOT(CreateDataFiles()) );
@@ -237,7 +242,7 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateGUIWall();
 
-    //        UpdateGUISolver();
+    UpdateGUISolver();
 
     //        UpdateGUIRun();
 
@@ -329,54 +334,41 @@ void svSimulationView::UpdateGUIBasic()
         job=new svSimJob();
     }
 
-    m_TableModelBasic->clear();
-
     QStringList basicHeaders;
     basicHeaders << "Parameter" << "Value";
     m_TableModelBasic->setHorizontalHeaderLabels(basicHeaders);
     m_TableModelBasic->setColumnCount(2);
 
-    QStandardItem* item;
+    QList<QStandardItem*> parList;
+    QList<QStandardItem*> valueList;
+    QString value;
 
-    item= new QStandardItem("Fluid Density");
-    item->setEditable(false);
-    m_TableModelBasic->setItem(0, 0, item);
+    parList<<new QStandardItem("Fluid Density");
+    value=QString::fromStdString(job->GetBasicProp("Fluid Density"));
+    valueList<<new QStandardItem(value==""?QString("1.06"):value);
 
-    QString density=QString::fromStdString(job->GetBasicProp("Fluid Density"));
-    item= new QStandardItem(density==""?QString("1.06"):density);
-    m_TableModelBasic->setItem(0, 1, item);
+    parList<<new QStandardItem("Fluid Viscosity");
+    value=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
+    valueList<<new QStandardItem(value==""?QString("0.04"):value);
 
-    item= new QStandardItem("Fluid Viscosity");
-    item->setEditable(false);
-    m_TableModelBasic->setItem(1, 0, item);
+    parList<<new QStandardItem("Period");
+    value=QString::fromStdString(job->GetBasicProp("Period"));
+    valueList<<new QStandardItem(value==""?QString("1.0"):value);
 
-    QString viscosity=QString::fromStdString(job->GetBasicProp("Fluid Viscosity"));
-    item= new QStandardItem(viscosity==""?QString("0.04"):viscosity);
-    m_TableModelBasic->setItem(1, 1, item);
+    parList<<new QStandardItem("Initial Pressure");
+    value=QString::fromStdString(job->GetBasicProp("Initial Pressure"));
+    valueList<<new QStandardItem(value==""?QString("0"):value);
 
-    item= new QStandardItem("Period");
-    item->setEditable(false);
-    m_TableModelBasic->setItem(2, 0, item);
+    parList<<new QStandardItem("Initial Velocities");
+    value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
+    valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
 
-    QString period=QString::fromStdString(job->GetBasicProp("Period"));
-    item= new QStandardItem(period==""?QString("1.0"):period);
-    m_TableModelBasic->setItem(2, 1, item);
 
-    item= new QStandardItem("Initial Pressure");
-    item->setEditable(false);
-    m_TableModelBasic->setItem(3, 0, item);
-
-    QString initP=QString::fromStdString(job->GetBasicProp("Initial Pressure"));
-    item= new QStandardItem(initP==""?QString("0"):initP);
-    m_TableModelBasic->setItem(3, 1, item);
-
-    item= new QStandardItem("Initial Velocities");
-    item->setEditable(false);
-    m_TableModelBasic->setItem(4, 0, item);
-
-    QString initV=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
-    item= new QStandardItem(initV==""?QString("0 0 0"):initV);
-    m_TableModelBasic->setItem(4, 1, item);
+    for(int i=0;i<parList.size();i++)
+    {
+        m_TableModelBasic->setItem(i, 0, parList[i]);
+        m_TableModelBasic->setItem(i, 1, valueList[i]);
+    }
 
     ui->tableViewBasic->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->tableViewBasic->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
@@ -831,6 +823,96 @@ void svSimulationView::UpdateGUIWall()
     ui->tableViewVar->horizontalHeader()->setSectionResizeMode(3, QHeaderView::Stretch);
 }
 
+void svSimulationView::UpdateGUISolver()
+{
+    if(!m_MitkJob)
+        return;
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job==NULL)
+    {
+        job=new svSimJob();
+    }
+
+    QStringList solverHeaders;
+    solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
+    m_TableModelSolver->setHorizontalHeaderLabels(solverHeaders);
+    int colCount=solverHeaders.size();
+    m_TableModelSolver->setColumnCount(colCount);
+
+    QFile xmlFile(":solvertemplate.xml");
+    if(!xmlFile.open(QIODevice::ReadOnly))
+    {
+        QMessageBox::warning(NULL,"Info Missing","Solver Parameter Table template file not found");
+        return;
+    }
+
+    QDomDocument doc("solvertemplate");
+//    QString *em=NULL;
+    if(!doc.setContent(&xmlFile))
+    {
+        QMessageBox::warning(NULL,"File Template Error","Format Error.");
+        return;
+    }
+    xmlFile.close();
+
+    QDomElement templateElement = doc.firstChildElement("template");
+    QDomNodeList sectionList=templateElement.elementsByTagName("section");
+    int rowIndex=-1;
+    for(int i=0;i<sectionList.size();i++)
+    {
+        QDomNode sectionNode=sectionList.item(i);
+        if(sectionNode.isNull()) continue;
+
+        QDomElement sectionElement=sectionNode.toElement();
+        if(sectionElement.isNull()) continue;
+
+        QString name=sectionElement.attribute("name");
+        rowIndex++;
+        QStandardItem* item= new QStandardItem(name);
+        item->setEditable(false);
+        QBrush brushGray(Qt::lightGray);
+        item->setBackground(brushGray);
+        m_TableModelSolver->setItem(rowIndex, 0, item);
+        ui->tableViewSolver->setSpan(rowIndex,0,1,colCount);
+
+        QDomNodeList parList=sectionElement.elementsByTagName("param");
+        for(int j=0;j<parList.size();j++)
+        {
+            QDomNode parNode=parList.item(j);
+            if(parNode.isNull()) continue;
+
+            QDomElement parElement=parNode.toElement();
+            if(parElement.isNull()) continue;
+
+            rowIndex++;
+            QStandardItem* item= new QStandardItem(parElement.attribute("name"));
+            item->setEditable(false);
+            item->setToolTip(parElement.attribute("name"));
+            m_TableModelSolver->setItem(rowIndex, 0, item);
+
+            std::string value=job->GetSolverProp(parElement.attribute("name").toStdString());
+            item= new QStandardItem(value==""?parElement.attribute("value"):QString::fromStdString(value));
+            m_TableModelSolver->setItem(rowIndex, 1, item);
+
+            item= new QStandardItem(parElement.attribute("type"));
+            item->setEditable(false);
+            m_TableModelSolver->setItem(rowIndex, 2, item);
+
+            item= new QStandardItem(parElement.attribute("enum_list"));
+            item->setEditable(false);
+            m_TableModelSolver->setItem(rowIndex, 3, item);
+        }
+    }
+
+    ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Stretch);
+    ui->tableViewSolver->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Fixed);
+    ui->tableViewSolver->horizontalHeader()->resizeSection(1,120);
+
+    ui->tableViewSolver->setColumnHidden(2,true);
+    ui->tableViewSolver->setColumnHidden(3,true);
+}
+
 svSimJob* svSimulationView::CreateJob(std::string& msg)
 {
     svSimJob* job=new svSimJob();
@@ -1054,7 +1136,31 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
         }
     }
 
+    for(int i=0;i<m_TableModelSolver->rowCount();i++)
+    {
+        std::string parName=m_TableModelSolver->item(i,0)->text().toStdString();
+        QStandardItem* valueItem=m_TableModelSolver->item(i,1);
+        if(valueItem==NULL)
+            continue;
 
+        std::string value=valueItem->text().trimmed().toStdString();
+        std::string type=m_TableModelSolver->item(i,2)->text().toStdString();
+
+        if(type=="int"&&!IsInt(value))
+        {
+            msg=parName+ " value error: " + value;
+            delete job;
+            return NULL;
+        }
+        else if(type=="double"&&!IsDouble(value))
+        {
+            msg=parName+ " value error: " + value;
+            delete job;
+            return NULL;
+        }
+
+        job->SetSolverProp(parName, value);
+    }
 
 
     return job;
