@@ -203,7 +203,6 @@ LFLAGS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_apputil$(LIBLINKEXT) \
           $(SVLIBFLAG)org_sv_gui_qt_modeling$(LIBLINKEXT) \
           $(SVLIBFLAG)org_sv_gui_qt_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)org_sv_projectdatanodes$(LIBLINKEXT) \
@@ -217,6 +216,10 @@ LFLAGS +=  \
 #  ifneq ($(SV_USE_SHARED),1)
 #    LFLAGS += $(SVLIBFLAG)_simvascular_qtcode$(LIBLINKEXT)
 #  endif
+
+# if we want to modify apputil, uncomment here!
+#LFLAGS += $(SVLIBFLAG)_simvascular_qtgui_module_apputil$(LIBLINKEXT) \
+
 endif
 
 # need to explicitly add in globals for executable
