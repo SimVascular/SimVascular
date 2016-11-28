@@ -11,11 +11,11 @@ export MPIF90="/opt/local/bin/mpif90"
 export MPIEXEC="/opt/local/bin/mpiexec"
 
 #mpi paths and libs
-export MPI_INCLUDE_PATH="/opt/local/include/mpich-gcc5"
-export LIB_MPI="/opt/local/lib/mpich-gcc5/libmpi.dylib"
-export LIB_PMPI="/opt/local/lib/mpich-gcc5/libpmpi.dylib"
-export LIB_MPICXX="/opt/local/lib/mpich-gcc5/libmpicxx.dylib"
-export LIB_MPIFORT="/opt/local/lib/mpich-gcc5/libmpifort.dylib"
+export MPI_INCLUDE_PATH="/opt/local/include/mpich-gcc48"
+export LIB_MPI="/opt/local/lib/mpich-gcc48/libmpi.dylib"
+export LIB_PMPI="/opt/local/lib/mpich-gcc48/libpmpi.dylib"
+export LIB_MPICXX="/opt/local/lib/mpich-gcc48/libmpicxx.dylib"
+export LIB_MPIFORT="/opt/local/lib/mpich-gcc48/libmpifort.dylib"
 export MPI_LINK_FLAGS="-Wl -headerpad_max_install_names -flat_namespace -commons,use_dylibs"
 
 #cmake
@@ -26,7 +26,9 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
-export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Code/MasterBuild/Externals"
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/ext"
+#Qt5
+export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -51,6 +53,8 @@ export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Softw
    -DSV_USE_OpenCASCADE=ON \
    -DSV_USE_PYTHON=ON \
    -DSV_USE_MMG=ON \
+   -DSV_USE_MITK=ON \
+   -DSV_USE_QT_GUI=ON \
 \
    -DSV_USE_SYSTEM_FREETYPE=ON \
    -DSV_USE_SYSTEM_GDCM=ON \
@@ -60,6 +64,7 @@ export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Softw
    -DSV_USE_SYSTEM_TCL=ON \
    -DSV_USE_SYSTEM_VTK=ON \
    -DSV_USE_SYSTEM_MMG=ON \
+   -DSV_USE_SYSTEM_MITK=ON \
 \
    -DSV_USE_GDCM_SHARED=ON \
    -DSV_USE_FREETYPE_SHARED=ON \
@@ -70,6 +75,7 @@ export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Softw
 \
    -DSV_EXTERNALS_USE_TOPLEVEL_DIR=ON \
    -DSV_EXTERNALS_TOPLEVEL_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR" \
+   -Qt5_DIR=$Qt5_DIR \
 \
   -DMPIEXEC="$MPIEXEC" \
   -DMPIEXEC_MAX_NUMPROCS=4 \
