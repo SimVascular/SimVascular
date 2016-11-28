@@ -32,6 +32,7 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/ui_files \
            -I$(MITK_BINDIR)/include/mitk/AlgorithmsExt \
            -I$(MITK_BINDIR)/include/mitk/AlgorithmsExt/include \
+           -I$(MITK_BINDIR)/include/mitk/AppUtil/include \
            -I$(MITK_BINDIR)/include/mitk/Core \
            -I$(MITK_BINDIR)/include/mitk/Core/include \
            -I$(MITK_BINDIR)/include/mitk/CppMicroServices/core \
@@ -76,7 +77,55 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/Modules/SurfaceInterpolation \
            -I$(MITK_BINDIR)/include/mitk/Utilities/mbilog
 
-MITK_LIBS = \
+# Plugin Includes (exports give in include/mitk/exports)
+#MITK_PLUGIN_INCDIRS = \
+           -I$(MITK_BINDIR)/include/ctk/PluginFramework \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.common \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.datamanager \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common.legacy \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/registry \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.core.services
+
+MITK_PLUGIN_INCDIRS = \
+           -I$(MITK_BINDIR)/include/ctk/PluginFramework \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.common \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common.legacy \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.application \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/registry \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.core.services
+
+
+EXTRA_MOC_INCDIRS := $(MITK_PLUGIN_INCDIRS)
+
+MITK_INCDIRS += $(MITK_PLUGIN_INCDIRS)
+
+#MITK_PLUGIN_LIBS += \
+             $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_datamanager$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_common_legacy$(LIBLINKEXT) \
+             $(LIBFLAG)org_blueberry_ui_qt$(LIBLINKEXT) \
+             $(LIBFLAG)org_blueberry_core_runtime$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT)
+
+MITK_PLUGIN_LIBS += \
+             $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_common_legacy$(LIBLINKEXT) \
+             $(LIBFLAG)org_blueberry_ui_qt$(LIBLINKEXT) \
+             $(LIBFLAG)org_blueberry_core_runtime$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT)
+
+MITK_LIBS = $(MITK_PLUGIN_LIBS)
+
+MITK_LIBS += \
            $(LIBPATH_COMPILER_FLAG)$(MITK_BINDIR)/lib \
            $(LIBFLAG)CppMicroServices$(LIBLINKEXT) \
            $(LIBFLAG)CTKCommandLineModulesBackendLocalProcess$(LIBLINKEXT) \
@@ -93,7 +142,9 @@ MITK_LIBS = \
            $(LIBFLAG)CTKWidgets$(LIBLINKEXT) \
            $(LIBFLAG)CTKXNATCore$(LIBLINKEXT) \
            $(LIBFLAG)mbilog$(LIBLINKEXT) \
+           $(LIBFLAG)qtsingleapplication$(LIBLINKEXT) \
            $(LIBFLAG)MitkAlgorithmsExt$(LIBLINKEXT) \
+           $(LIBFLAG)MitkAppUtil$(LIBLINKEXT) \
            $(LIBFLAG)MitkCore$(LIBLINKEXT) \
            $(LIBFLAG)MitkDataTypesExt$(LIBLINKEXT) \
            $(LIBFLAG)MitkImageDenoising$(LIBLINKEXT) \

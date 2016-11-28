@@ -1,9 +1,11 @@
 #ifndef SVPROJECTMANAGERPLUGINACTIVATOR_H
 #define SVPROJECTMANAGERPLUGINACTIVATOR_H
 
+#include <org_sv_gui_qt_projectmanager_Export.h>
+
 #include <ctkPluginActivator.h>
 
-class svProjectManagerPluginActivator :
+class SV_QT_PROJECTMANAGER svProjectManagerPluginActivator :
         public QObject, public ctkPluginActivator
 {
     Q_OBJECT

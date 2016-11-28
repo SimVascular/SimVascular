@@ -109,7 +109,7 @@ bool svMesh::ExecuteCommands(std::vector<std::string> cmds, std::string& msg)
 {
     for(int i=0;i<cmds.size();i++)
     {
-        std::string cmd=sv::trim(cmds[i]);
+        std::string cmd=svStringUtils_trim(cmds[i]);
 
         if(cmd=="")
             continue;
@@ -133,7 +133,10 @@ void svMesh::SetCommandHistory(std::vector<std::string> history)
 
 bool svMesh::ExecuteCommandHistory(std::string& msg)
 {
-    ExecuteCommands(m_CommandHistory, msg);
+    if(!ExecuteCommands(m_CommandHistory, msg)) {
+            return false;
+    }
+    return true;
 }
 
 vtkSmartPointer<vtkPolyData> svMesh::GetSurfaceMesh()

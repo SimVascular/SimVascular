@@ -42,13 +42,15 @@ TOP=../../../BuildWithMake
 
 include $(TOP)/include.mk
 
-SVQTGUIMODULES_DIRS = Common QtAppBase Segmentation QtWidgets Path Model ProjectManagement
+SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model Mesh ProjectManagement Simulation
 
-lib-complete: create_exports_h us-init-module moc ui rcc lib
+SVQTGUIMODULES_DIRS += Mitk/AppUtil/src
 
-static-complete:  create_exports_h us-init-module moc ui rcc static
+lib-complete: create_exports_h us-init-module moc ui qrc lib
 
-shared-complete: create_exports_h us-init-module moc ui rcc shared
+static-complete:  create_exports_h us-init-module moc ui qrc static
+
+shared-complete: create_exports_h us-init-module moc ui qrc shared
 
 lib:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
@@ -80,16 +82,15 @@ ui:
 	  cd $$i; \
 	  $(MAKE) ui) ; done
 
-rcc:
+qrc:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
-	  $(MAKE) rcc) ; done
+	  $(MAKE) qrc) ; done
 
 us-init-module:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
-	  echo "#include <usModuleInitialization.h>" > us_init.cxx; \
-          echo "US_INITIALIZE_MODULE" >> us_init.cxx) ; done
+	  $(MAKE) us-init-module) ; done
 
 clean:
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \
@@ -98,7 +99,8 @@ clean:
 
 veryclean: clean
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
-	  rm ../Include/Make/sv$$i\Exports.h) ; done
+	  rm -f ../Include/Make/sv$$i\Exports.h; \
+	  rm -f ../Include/Make/mitk$$i\Exports.h) ; done
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) veryclean ) ; done

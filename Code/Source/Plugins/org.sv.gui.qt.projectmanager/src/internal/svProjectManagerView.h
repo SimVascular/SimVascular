@@ -1,9 +1,11 @@
 #ifndef SVPROJECTMANAGERVIEW_H
 #define SVPROJECTMANAGERVIEW_H
 
+#include <org_sv_gui_qt_projectmanager_Export.h>
+
 #include <QmitkAbstractView.h>
 
-class svProjectManagerView : public QmitkAbstractView
+class SV_QT_PROJECTMANAGER svProjectManagerView : public QmitkAbstractView
 {  
     Q_OBJECT
 

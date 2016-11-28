@@ -199,7 +199,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
             auto props=it->second;
             if(props["BC Type"]=="RCR")
             {
-                auto values=sv::split(props["Values"]);
+	      auto values=svStringUtils_split(props["Values"],' ');
                 if(values.size()==3)
                 {
                     ss << "2\n";

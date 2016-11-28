@@ -7,39 +7,64 @@
 
 #include <string>
 #include <vector>
+#include <sstream>
+#include <algorithm>
+#include <functional>
+#include <cctype>
+#include <locale>
 
-//class SVCOMMON_EXPORT svStringUtils
-//{
-//public:
+// I'm having problems getting the static members to resolve properly on MSVC,
+// so use private static functions instead.
 
-////    static std::vector<std::string> Split(const std::string & s, std::string rgx_str = "\\s+");
+static std::vector<std::string> svStringUtils_split(const std::string &s, char delim)
+{
+    std::stringstream ss(s);
+    std::string item;
+    std::vector<std::string> elems;
+    while (std::getline(ss, item, delim)) {
+        if (item.length() > 0) {
+            elems.push_back(item);
+        }
+    }
+    return elems;
+}
 
-//    static std::vector<std::string> Split(const std::string &s, char delim = ' ');
+static std::string svStringUtils_ltrim(std::string s) {
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))));
+    return s;
+}
 
-//    static std::string &LTrim(std::string &s);
+static std::string svStringUtils_rtrim(std::string s) {
+    s.erase(std::find_if(s.rbegin(), s.rend(),
+            std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+    return s;
+}
 
-//    static std::string &RTrim(std::string &s);
+static std::string svStringUtils_trim(std::string s) {
+    return svStringUtils_ltrim(svStringUtils_rtrim(s));
+}
 
-//    static std::string &Trim(std::string &s);
+static std::string svStringUtils_lower(std::string s) {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+    return s;
+}
 
-//    static std::string &ToLower(std::string &s);
-//};
-
-namespace sv
+class SVCOMMON_EXPORT svStringUtils
 {
 
-//    SVCOMMON_EXPORT std::vector<std::string> Split(const std::string & s, std::string rgx_str = "\\s+");
+ public:
 
-    SVCOMMON_EXPORT std::vector<std::string> split(const std::string &s, char delim = ' ');
+   static std::vector<std::string> split(const std::string &s, char delim = ' ');
 
-    SVCOMMON_EXPORT std::string ltrim(std::string s);
+   static std::string ltrim(std::string s);
 
-    SVCOMMON_EXPORT std::string rtrim(std::string s);
+   static std::string rtrim(std::string s);
 
-    SVCOMMON_EXPORT std::string trim(std::string s);
+   static std::string trim(std::string s);
 
-    SVCOMMON_EXPORT std::string lower(std::string s);
-}
+   static std::string lower(std::string s);
+};
 
 
 #endif // SVSTRINGUTILS_H

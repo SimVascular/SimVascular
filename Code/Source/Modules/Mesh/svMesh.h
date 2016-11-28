@@ -41,9 +41,9 @@ public:
 
     bool ExecuteCommand(std::string cmd, std::string& msg);
 
-    virtual bool Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg) {}
+    virtual bool Execute(std::string flag, double values[20], std::string strValues[5], bool option, std::string& msg) {return false;}
 
-    virtual bool ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) {}
+    virtual bool ParseCommandInternal(std::string cmd, std::string& flag, double values[20], std::string strValues[5], bool& option, std::string& msg) {return false;}
 
     bool ExecuteCommands(std::vector<std::string> cmds, std::string& msg);
 

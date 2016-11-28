@@ -47,24 +47,24 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-          svSegmentationUtils.h \
-          svContour.h \
-          svContourCircle.h \
-          svContourEllipse.h \
-          svContourPolygon.h \
-          svContourTensionPolygon.h \
-          svContourSplinePolygon.h \
-          svContourOperation.h \
-          svContourModel.h \
-          svContourModelVtkMapper2D.h \
-          svContourModelThresholdInteractor.h \
-          svContourGroup.h \
-          svContourGroupVtkMapper2D.h \
-          svContourGroupVtkMapper3D.h \
-          svContourGroupDataInteractor.h \
-          svContourGroupIO.h \
-          svSegmentationLegacyIO.h \
-          svSegmentationObjectFactory.h
+    svSegmentationUtils.h \
+    svContour.h \
+    svContourCircle.h \
+    svContourEllipse.h \
+    svContourPolygon.h \
+    svContourTensionPolygon.h \
+    svContourSplinePolygon.h \
+    svContourOperation.h \
+    svContourModel.h \
+    svContourModelVtkMapper2D.h \
+    svContourModelThresholdInteractor.h \
+    svContourGroup.h \
+    svContourGroupVtkMapper2D.h \
+    svContourGroupVtkMapper3D.h \
+    svContourGroupDataInteractor.h \
+    svContourGroupIO.h \
+    svSegmentationLegacyIO.h \
+    svSegmentationObjectFactory.h
 
 CXXSRCS	= \
     svSegmentationUtils.cxx \
@@ -91,17 +91,16 @@ CXXSRCS += us_init.cxx
 UIFILES = 
 
 # I don't know how to handle just xml files yet...
+RCFILES = \
+    resource/Interactions/svContourGroupInteraction.xml \
+    resource/Interactions/svContourModelThresholdInteraction.xml \
+    resource/Interactions/svSegmentationConfig.xml
 
-#RCFILES = \
-#    Interactions/svContourGroupInteraction.xml \
-#    Interactions/svContourModelThresholdInteraction.xml \
-#    Interactions/svSegmentationConfig.xml
-
-RCFILES = 
+QRCFILES = 
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.xml=.cxx)))
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -109,7 +108,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \

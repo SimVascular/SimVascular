@@ -193,6 +193,7 @@ SV_USE_GDCM = 1
 # -----------------------------------------------------
 
 SV_USE_MITK = 1
+SV_IGNORE_PROVISIONING_FILE = 1
 
 # -----------------------------------------------------
 # Compile with Optimization
@@ -392,6 +393,10 @@ endif
 
 ifeq ($(SV_USE_MITK),1)
   GLOBAL_DEFINES += -DSV_USE_MITK
+endif
+
+ifeq ($(SV_IGNORE_PROVISIONING_FILE),1)
+  GLOBAL_DEFINES += -DSV_IGNORE_PROVISIONING_FILE
 endif
 
 ifeq ($(SV_USE_GDCM),1)
@@ -658,20 +663,22 @@ endif
 
 # for now, combine the mitk and qt gui include dirs
 ifeq ($(SV_USE_MITK),1)
-     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/mitk.image \
-                     -I$(TOP)/../Code/Source/Plugins/mitk.segmentation \
-                     -I$(TOP)/../Code/Source/Plugins/sv.general \
-                     -I$(TOP)/../Code/Source/Plugins/sv.modeling \
-                     -I$(TOP)/../Code/Source/Plugins/sv.pathplanning \
-                     -I$(TOP)/../Code/Source/Plugins/sv.segmentation \
-                     -I$(TOP)/../Code/Source/Plugins/sv.test \
+     LOCAL_INCDIR += -I$(TOP)/../Code/Source/Plugins/org.sv.projectdatanodes/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.projectmanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.meshing/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.modeling/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.mitk.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
                      -I$(TOP)/../Code/Source/Modules/Model \
+                     -I$(TOP)/../Code/Source/Modules/Mesh \
                      -I$(TOP)/../Code/Source/Modules/Path \
                      -I$(TOP)/../Code/Source/Modules/ProjectManagement \
-                     -I$(TOP)/../Code/Source/Modules/QtAppBase \
                      -I$(TOP)/../Code/Source/Modules/QtWidgets \
-                     -I$(TOP)/../Code/Source/Modules/Segmentation
+                     -I$(TOP)/../Code/Source/Modules/Segmentation \
+                     -I$(TOP)/../Code/Source/Modules/Simulation
 endif
 
 # Link flags, which also need to be dealt with conditionally depending
@@ -680,7 +687,12 @@ endif
 # -----
 
 # include path to find libs when linking
-GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
+ifeq ($(CLUSTER), x64_cygwin)
+  TOP_WINDOWS_STYLE=$(shell cygpath -m $(TOP))
+  GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP_WINDOWS_STYLE)/Lib/$(LIB_BUILD_DIR)
+else
+  GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
+endif
 
 LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS) $(PYTHON_LIB)
 
