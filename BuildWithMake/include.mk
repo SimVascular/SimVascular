@@ -682,7 +682,12 @@ endif
 # -----
 
 # include path to find libs when linking
-GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
+ifeq ($(CLUSTER), x64_cygwin)
+  TOP_WINDOWS_STYLE=$(shell cygpath -m $(TOP))
+  GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP_WINDOWS_STYLE)/Lib/$(LIB_BUILD_DIR)
+else
+  GLOBAL_LFLAGS 	 += $(LIBPATH_COMPILER_FLAG)$(TOP)/Lib/$(LIB_BUILD_DIR)
+endif
 
 LFLAGS 	 = $(GLOBAL_LFLAGS) $(VTK_LIBS) $(TCLTK_LIBS) $(PYTHON_LIB)
 
