@@ -130,6 +130,7 @@ void svModelExtractPathsAction::WorkThread::run()
             path->SetMethod(pathElements[i]->GetMethod());
             path->SetCalculationNumber(pathElements[i]->GetCalculationNumber());
             path->SetPathElement(pathElements[i]);
+            path->SetDataModified();
 
             mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
             pathNode->SetData(path);

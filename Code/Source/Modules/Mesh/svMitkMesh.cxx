@@ -5,6 +5,7 @@ svMitkMesh::svMitkMesh()
     : m_CalculateBoundingBox(true)
     , m_Type("")
     , m_ModelName("")
+    , m_DataModified(false)
 {
     this->InitializeEmpty();
 }
@@ -14,6 +15,7 @@ svMitkMesh::svMitkMesh(const svMitkMesh &other)
     , m_Type(other.m_Type)
     , m_ModelName(other.m_ModelName)
     , m_MeshSet(other.GetTimeSize())
+    , m_DataModified(true)
 {
     for (std::size_t t = 0; t < other.m_MeshSet.size(); ++t)
     {
@@ -145,6 +147,7 @@ void svMitkMesh::ExecuteOperation( mitk::Operation* operation )
     case svMitkMeshOperation::OpSETMESH:
     {
         SetMesh(newMesh,timeStep);
+        m_DataModified=true;
     }
         break;
 

@@ -29,7 +29,7 @@ const QString svPathEdit::EXTENSION_ID = "org.sv.views.pathedit";
 svPathEdit::svPathEdit():
     ui(new Ui::svPathEdit),
     m_ParentNodeOriginalVisible(true),
-    m_PathChangeObserverTag(0),
+    m_PathChangeObserverTag(-1),
     m_PathNode(NULL),
     m_Path(NULL),
     m_DisplayWidget(NULL),
@@ -208,9 +208,10 @@ void svPathEdit::NodeRemoved(const mitk::DataNode* node)
 void svPathEdit::ClearAll()
 {
     //Remove Observer
-    if(m_Path && m_PathChangeObserverTag)
+    if(m_Path && m_PathChangeObserverTag!=-1)
     {
         m_Path->RemoveObserver(m_PathChangeObserverTag);
+        m_PathChangeObserverTag=-1;
     }
 
     if(m_PathNode)

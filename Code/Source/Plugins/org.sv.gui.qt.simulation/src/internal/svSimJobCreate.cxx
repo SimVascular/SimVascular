@@ -129,6 +129,7 @@ void svSimJobCreate::CreateJob()
 
     svMitkSimJob::Pointer mitkJob = svMitkSimJob::New();
     mitkJob->SetModelName(selectedModelNode->GetName());
+    mitkJob->SetDataModified();
 
     mitk::DataNode::Pointer jobNode = mitk::DataNode::New();
     jobNode->SetData(mitkJob);

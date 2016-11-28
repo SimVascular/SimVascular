@@ -10,6 +10,7 @@ svSimJob::svSimJob(const svSimJob &other)
     : m_BasicProps(other.m_BasicProps)
     , m_CapProps(other.m_CapProps)
     , m_WallProps(other.m_WallProps)
+    , m_VarProps(other.m_VarProps)
     , m_SolverProps(other.m_SolverProps)
     , m_RunProps(other.m_RunProps)
 {

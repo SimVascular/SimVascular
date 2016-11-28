@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>434</width>
-    <height>892</height>
+    <width>469</width>
+    <height>786</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -225,15 +225,15 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>2</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="page_3">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>416</width>
-               <height>600</height>
+               <width>451</width>
+               <height>494</height>
               </rect>
              </property>
              <attribute name="label">
@@ -537,8 +537,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>416</width>
-               <height>600</height>
+               <width>451</width>
+               <height>494</height>
               </rect>
              </property>
              <property name="sizePolicy">
@@ -622,8 +622,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>416</width>
-               <height>600</height>
+               <width>451</width>
+               <height>494</height>
               </rect>
              </property>
              <attribute name="label">
@@ -740,8 +740,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>416</width>
-               <height>600</height>
+               <width>451</width>
+               <height>494</height>
               </rect>
              </property>
              <attribute name="label">
@@ -766,6 +766,21 @@
               <item>
                <widget class="QWidget" name="widget_11" native="true">
                 <layout class="QVBoxLayout" name="verticalLayout_12">
+                 <property name="spacing">
+                  <number>5</number>
+                 </property>
+                 <property name="leftMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="topMargin">
+                  <number>0</number>
+                 </property>
+                 <property name="rightMargin">
+                  <number>5</number>
+                 </property>
+                 <property name="bottomMargin">
+                  <number>5</number>
+                 </property>
                  <item>
                   <widget class="QWidget" name="widget_12" native="true">
                    <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -972,8 +987,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>416</width>
-               <height>600</height>
+               <width>451</width>
+               <height>494</height>
               </rect>
              </property>
              <attribute name="label">

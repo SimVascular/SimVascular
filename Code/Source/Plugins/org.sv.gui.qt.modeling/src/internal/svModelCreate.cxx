@@ -82,6 +82,7 @@ void svModelCreate::CreateModel()
     int currentIndex=ui->comboBoxType->currentIndex();
 
     svModel::Pointer solidModel=svModel::New();
+    solidModel->SetDataModified();
 //    int timeStep=m_TimeStep;
 
     switch(currentIndex)
