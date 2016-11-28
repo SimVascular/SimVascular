@@ -94,7 +94,6 @@ include(SimVascularPythonSetup)
 # TEMPORARY FUNCTION WITH CTK AND MITK FUNCTIONS/MACROS
 #-----------------------------------------------------------------------------
 include(FeatureSummary)
-include(SimVascularTmpFunctions)
 
 #-----------------------------------------------------------------------------
 # Setting up default directories for SimVascular Externals
@@ -1004,21 +1003,19 @@ if(SV_USE_QT_GUI)
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Simulation")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/ProjectManagement")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
+  if(NOT SV_USE_MITK_CONFIG)
     set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.projectdatanodes")
     set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.projectmanager")
     set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.pathplanning")
     set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.segmentation")
     set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.modeling")
     set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.meshing")
-  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Applications")
-  #set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.test")
+  endif()
   foreach(dir ${SV_QT_GUI_LIBRARY_DIRS})
     include_directories(${dir})
   endforeach()
 
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
-
-  #set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/Applications")
 
 endif()
 
@@ -1040,32 +1037,34 @@ if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 endif()
 #----------------------------------------------------------------------------
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
-#if(SV_USE_QT_GUI)
-#  macro(GetMyTargetLibraries all_target_libraries varname)
-#    set(re_ctkplugin "^org_sv_[a-zA-Z0-9_]+$")
-#    set(_tmp_list)
-#    list(APPEND _tmp_list ${all_target_libraries})
-#    svMacroListFilter(_tmp_list re_ctkplugin OUTPUT_VARIABLE ${varname})
-#  endmacro()
-#
-#  set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/UI^^${PROJECT_NAME}_Apps/simvascular")
-#  message(STATUS "sv app full path: ${sv_app_fullpath}")
-#
-#  include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
-#  set(sv_plugins_fullpath "")
-#  foreach(sv_plugin ${SV_PLUGINS})
-#    list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
-#  endforeach()
-#
-#  message(STATUS "sv_plugins_fullpath: ${sv_plugins_fullpath}")
-#
-#  svMacroSetupPlugins(${sv_plugins_fullpath}
-#                     APPS ${sv_app_fullpath}
-#                     BUILD_OPTION_PREFIX ${PROJECT_NAME}_
-#                     BUILD_ALL ${${PROJECT_NAME}_BUILD_ALL_PLUGINS}
-#                     COMPACT_OPTIONS)
-#
-#endif()
+if(SV_USE_MITK_CONFIG)
+  if(SV_USE_QT_GUI)
+    macro(GetMyTargetLibraries all_target_libraries varname)
+      set(re_ctkplugin "^org_sv_[a-zA-Z0-9_]+$")
+      set(_tmp_list)
+      list(APPEND _tmp_list ${all_target_libraries})
+      ctkMacroListFilter(_tmp_list re_ctkplugin OUTPUT_VARIABLE ${varname})
+    endmacro()
+
+    set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/UI^^${PROJECT_NAME}_Apps/simvascular")
+    message(STATUS "sv app full path: ${sv_app_fullpath}")
+
+    include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
+    set(sv_plugins_fullpath "")
+    foreach(sv_plugin ${SV_PLUGINS})
+      list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
+    endforeach()
+
+    message(STATUS "sv_plugins_fullpath: ${sv_plugins_fullpath}")
+
+    ctkMacroSetupPlugins(${sv_plugins_fullpath}
+                       APPS ${sv_app_fullpath}
+                       BUILD_OPTION_PREFIX ${PROJECT_NAME}_
+                       BUILD_ALL ${${PROJECT_NAME}_BUILD_ALL_PLUGINS}
+                       COMPACT_OPTIONS)
+
+  endif()
+endif()
 
 if(NOT SV_ONLY_BUILD_FLOWSOLVER)
         message(STATUS "Executables")

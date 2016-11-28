@@ -71,14 +71,6 @@
 #   US_<component>_COMPILE_DEFINITIONS_DEBUG
 #
 
-#DGraph
-#----------------------------------------------------------------------------
-find_program(DGraph_EXECUTABLE DGraph
-  PATHS "${MITK_DIR}/bin"
-  PATH_SUFFIXES Release Debug RelWithDebInfo MinSizeRel)
-mark_as_advanced(DGraph_EXECUTABLE)
-#----------------------------------------------------------------------------
-
 set(US_RCC_EXECUTABLE_NAME usResourceCompiler)
 set(US_MODULE_INIT_TEMPLATE "${SV_SOURCE_DIR}/CMake/CppMicroServices/usModuleInit.cpp")
 set(US_RESOURCE_RC_TEMPLATE "${SV_SOURCE_DIR}/CMake/CppMicroServices/us_resources.rc.in")
