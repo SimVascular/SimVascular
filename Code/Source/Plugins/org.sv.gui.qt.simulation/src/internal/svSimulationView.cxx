@@ -29,7 +29,7 @@ svSimulationView::svSimulationView() :
     m_ModelNode=NULL;
 
     m_DataInteractor=NULL;
-    m_ModelSelectFaceObserverTag=0;
+    m_ModelSelectFaceObserverTag=-1;
 
     m_TableModelBasic=NULL;
 
@@ -279,16 +279,22 @@ void svSimulationView::Hidden()
 
 void svSimulationView::AddObservers()
 {
-    if(m_DataInteractor.IsNull())
+    if(m_ModelNode.IsNotNull())
     {
-        m_DataInteractor = svModelDataInteractor::New();
-        m_DataInteractor->SetFaceSelectionOnly();
-        m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
-        m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
-        m_DataInteractor->SetDataNode(m_ModelNode);
+        if(m_ModelNode->GetDataInteractor().IsNull())
+        {
+            m_DataInteractor = svModelDataInteractor::New();
+            m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetDataNode(m_ModelNode);
+        }
+        m_ModelNode->SetStringProperty("interactor user","simulation");
+        svModelDataInteractor* interactor=dynamic_cast<svModelDataInteractor*>(m_ModelNode->GetDataInteractor().GetPointer());
+        if(interactor)
+            interactor->SetFaceSelectionOnly();
     }
 
-    if(m_ModelSelectFaceObserverTag==0)
+    if(m_ModelSelectFaceObserverTag==-1)
     {
         itk::SimpleMemberCommand<svSimulationView>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svSimulationView>::New();
         modelSelectFaceCommand->SetCallbackFunction(this, &svSimulationView::UpdateFaceListSelection);
@@ -298,17 +304,20 @@ void svSimulationView::AddObservers()
 
 void svSimulationView::RemoveObservers()
 {
-    if(m_Model && m_ModelSelectFaceObserverTag)
+    if(m_Model && m_ModelSelectFaceObserverTag!=-1)
     {
         m_Model->RemoveObserver(m_ModelSelectFaceObserverTag);
-        m_ModelSelectFaceObserverTag=0;
+        m_ModelSelectFaceObserverTag=-1;
     }
 
     if(m_ModelNode)
     {
-        m_ModelNode->SetDataInteractor(NULL);
-        m_DataInteractor=NULL;
+        std::string user="";
+        m_ModelNode->GetStringProperty("interactor user", user);
+        if(user=="simulation")
+            m_ModelNode->SetDataInteractor(NULL);
     }
+    m_DataInteractor=NULL;
 }
 
 void svSimulationView::ClearAll()

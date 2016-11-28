@@ -50,15 +50,12 @@ void svModelDataInteractor::ConnectActionsAndFunctions()
     CONNECT_FUNCTION("select_faces",SelectFaces);
     CONNECT_FUNCTION("deselect_face",DeselectFace);
 
-    if(!m_FaceSelectionOnly)
-    {
-        CONNECT_FUNCTION("select_single_cell",SelectSingleCell);
-        CONNECT_FUNCTION("select_cells",SelectCells);
-        CONNECT_FUNCTION("select_surrounding_cells",SelectSurroundingCells);
-        CONNECT_FUNCTION("deselect_cell",DeselectCell);
-        CONNECT_FUNCTION("deselect_surrounding_cells",DeselectSurroundingCells);
-        CONNECT_FUNCTION("delete_selected_faces_cells",DeleteSelectedFacesCells);
-    }
+    CONNECT_FUNCTION("select_single_cell",SelectSingleCell);
+    CONNECT_FUNCTION("select_cells",SelectCells);
+    CONNECT_FUNCTION("select_surrounding_cells",SelectSurroundingCells);
+    CONNECT_FUNCTION("deselect_cell",DeselectCell);
+    CONNECT_FUNCTION("deselect_surrounding_cells",DeselectSurroundingCells);
+    CONNECT_FUNCTION("delete_selected_faces_cells",DeleteSelectedFacesCells);
 }
 
 void svModelDataInteractor::DataNodeChanged()
@@ -191,6 +188,9 @@ void svModelDataInteractor::DeselectSurroundingCells(mitk::StateMachineAction*, 
 
 void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent, bool selecting, bool single, bool brushing)
 {
+    if(m_FaceSelectionOnly)
+        return;
+
     if(m_Model==NULL)
         return;
 
@@ -270,6 +270,9 @@ void svModelDataInteractor::SelectCell(mitk::InteractionEvent* interactionEvent,
 
 void svModelDataInteractor::DeleteSelectedFacesCells(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent)
 {
+    if(m_FaceSelectionOnly)
+        return;
+
     if(m_Model==NULL)
         return;
 

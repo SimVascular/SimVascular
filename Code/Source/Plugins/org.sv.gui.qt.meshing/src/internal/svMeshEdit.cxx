@@ -37,7 +37,7 @@ svMeshEdit::svMeshEdit() :
     m_ModelNode=NULL;
 
     m_DataInteractor=NULL;
-    m_ModelSelectFaceObserverTag=0;
+    m_ModelSelectFaceObserverTag=-1;
 
     m_TableModelLocalT=NULL;
     m_TableMenuLocalT=NULL;
@@ -1220,16 +1220,22 @@ void svMeshEdit::NodeRemoved(const mitk::DataNode* node)
 
 void svMeshEdit::AddObservers()
 {
-    if(m_DataInteractor.IsNull())
+    if(m_ModelNode.IsNotNull())
     {
-        m_DataInteractor = svModelDataInteractor::New();
-        m_DataInteractor->SetFaceSelectionOnly();
-        m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
-        m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
-        m_DataInteractor->SetDataNode(m_ModelNode);
+        if(m_ModelNode->GetDataInteractor().IsNull())
+        {
+            m_DataInteractor = svModelDataInteractor::New();
+            m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetDataNode(m_ModelNode);
+        }
+        m_ModelNode->SetStringProperty("interactor user","meshing");
+        svModelDataInteractor* interactor=dynamic_cast<svModelDataInteractor*>(m_ModelNode->GetDataInteractor().GetPointer());
+        if(interactor)
+            interactor->SetFaceSelectionOnly();
     }
 
-    if(m_ModelSelectFaceObserverTag==0)
+    if(m_ModelSelectFaceObserverTag==-1)
     {
         itk::SimpleMemberCommand<svMeshEdit>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svMeshEdit>::New();
         modelSelectFaceCommand->SetCallbackFunction(this, &svMeshEdit::UpdateFaceListSelection);
@@ -1243,17 +1249,20 @@ void svMeshEdit::AddObservers()
 
 void svMeshEdit::RemoveObservers()
 {
-    if(m_Model && m_ModelSelectFaceObserverTag)
+    if(m_Model && m_ModelSelectFaceObserverTag!=-1)
     {
         m_Model->RemoveObserver(m_ModelSelectFaceObserverTag);
-        m_ModelSelectFaceObserverTag=0;
+        m_ModelSelectFaceObserverTag=-1;
     }
 
     if(m_ModelNode)
     {
-        m_ModelNode->SetDataInteractor(NULL);
-        m_DataInteractor=NULL;
+        std::string user="";
+        m_ModelNode->GetStringProperty("interactor user", user);
+        if(user=="meshing")
+            m_ModelNode->SetDataInteractor(NULL);
     }
+    m_DataInteractor=NULL;
 
     svVtkMeshSphereWidget* sphereWidget=dynamic_cast<svVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
     if(sphereWidget)

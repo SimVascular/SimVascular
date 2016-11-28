@@ -43,8 +43,8 @@ svModelEdit::svModelEdit() :
     m_SegSelectionWidget=NULL;
 
     m_DataInteractor=NULL;
-    m_ModelSelectFaceObserverTag=0;
-    m_ModelUpdateObserverTag=0;
+    m_ModelSelectFaceObserverTag=-1;
+    m_ModelUpdateObserverTag=-1;
 
     m_BlendTableMenu=NULL;
     m_BlendTableModel=NULL;
@@ -281,8 +281,8 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    mitk::DataNode::Pointer modelNode=nodes.front();
-    svModel* model=dynamic_cast<svModel*>(modelNode->GetData());
+    mitk::DataNode::Pointer selectedNode=nodes.front();
+    svModel* model=dynamic_cast<svModel*>(selectedNode->GetData());
 
     if(!model)
     {
@@ -291,7 +291,7 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    if(m_ModelNode==modelNode)
+    if(m_ModelNode==selectedNode)
     {
         AddObservers();
         m_Parent->setEnabled(true);
@@ -301,7 +301,7 @@ void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(m_ModelNode.IsNotNull())
         RemoveObservers();
 
-    m_ModelNode=modelNode;
+    m_ModelNode=selectedNode;
     m_Model=model;
     m_ModelType=m_Model->GetType();
 
@@ -1299,22 +1299,29 @@ void svModelEdit::NodeRemoved(const mitk::DataNode* node)
 
 void svModelEdit::AddObservers()
 {
-    if(m_DataInteractor.IsNull())
+    if(m_ModelNode.IsNotNull())
     {
-        m_DataInteractor = svModelDataInteractor::New();
-        m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
-        m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
-        m_DataInteractor->SetDataNode(m_ModelNode);
+        if(m_ModelNode->GetDataInteractor().IsNull())
+        {
+            m_DataInteractor = svModelDataInteractor::New();
+            m_DataInteractor->LoadStateMachine("svModelInteraction.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetEventConfig("svModelConfig.xml", us::ModuleRegistry::GetModule("svModel"));
+            m_DataInteractor->SetDataNode(m_ModelNode);
+        }
+        m_ModelNode->SetStringProperty("interactor user","modeling");
+        svModelDataInteractor* interactor=dynamic_cast<svModelDataInteractor*>(m_ModelNode->GetDataInteractor().GetPointer());
+        if(interactor)
+            interactor->SetFaceSelectionOnly(false);
     }
 
-    if(m_ModelSelectFaceObserverTag==0)
+    if(m_ModelSelectFaceObserverTag==-1)
     {
         itk::SimpleMemberCommand<svModelEdit>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svModelEdit>::New();
         modelSelectFaceCommand->SetCallbackFunction(this, &svModelEdit::UpdateFaceListSelection);
         m_ModelSelectFaceObserverTag = m_Model->AddObserver( svModelSelectFaceEvent(), modelSelectFaceCommand);
     }
 
-    if(m_ModelUpdateObserverTag==0)
+    if(m_ModelUpdateObserverTag==-1)
     {
         itk::SimpleMemberCommand<svModelEdit>::Pointer modelUpdateCommand = itk::SimpleMemberCommand<svModelEdit>::New();
         modelUpdateCommand->SetCallbackFunction(this, &svModelEdit::UpdateGUI);
@@ -1324,23 +1331,26 @@ void svModelEdit::AddObservers()
 
 void svModelEdit::RemoveObservers()
 {
-    if(m_Model && m_ModelSelectFaceObserverTag)
+    if(m_Model && m_ModelSelectFaceObserverTag!=-1)
     {
         m_Model->RemoveObserver(m_ModelSelectFaceObserverTag);
-        m_ModelSelectFaceObserverTag=0;
+        m_ModelSelectFaceObserverTag=-1;
     }
 
-    if(m_Model && m_ModelUpdateObserverTag)
+    if(m_Model && m_ModelUpdateObserverTag!=-1)
     {
         m_Model->RemoveObserver(m_ModelUpdateObserverTag);
-        m_ModelUpdateObserverTag=0;
+        m_ModelUpdateObserverTag=-1;
     }
 
     if(m_ModelNode)
     {
-        m_ModelNode->SetDataInteractor(NULL);
-        m_DataInteractor=NULL;
+        std::string user="";
+        m_ModelNode->GetStringProperty("interactor user", user);
+        if(user=="modeling")
+            m_ModelNode->SetDataInteractor(NULL);
     }
+    m_DataInteractor=NULL;
 }
 
 void svModelEdit::ClearAll()
