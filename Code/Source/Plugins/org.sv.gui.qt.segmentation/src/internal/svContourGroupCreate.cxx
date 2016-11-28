@@ -121,6 +121,7 @@ void svContourGroupCreate::CreateGroup()
 
     svContourGroup::Pointer group = svContourGroup::New();
     group->SetPathName(selectedPathNode->GetName());
+    group->SetDataModified();
 
     svPath* selectedPath=dynamic_cast<svPath*>(selectedPathNode->GetData());
     if(selectedPath)

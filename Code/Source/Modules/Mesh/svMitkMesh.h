@@ -44,6 +44,9 @@ public:
     virtual bool VerifyRequestedRegion() override;
     virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
+    bool IsDataModified(){return m_DataModified;}
+    void SetDataModified(bool modified = true){m_DataModified=modified;}
+
   protected:
 
     mitkCloneMacro(Self);
@@ -64,6 +67,7 @@ public:
 
     std::string m_ModelName;
 
+    bool m_DataModified;
 };
 
 itkEventMacro( svMitkMeshEvent, itk::AnyEvent );

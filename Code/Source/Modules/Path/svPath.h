@@ -71,7 +71,8 @@ public:
     virtual bool VerifyRequestedRegion() override;
     virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
-//    void PathChanged();
+    bool IsDataModified();
+    void SetDataModified(bool modified = true);
 
   protected:
 
@@ -104,6 +105,7 @@ public:
 
     svPathOperation::PathOperationType m_OperationType;
 
+    bool m_DataModified;
   };
 
 SVPATH_EXPORT bool Equal( const svPath* leftHandSide, const svPath* rightHandSide, mitk::ScalarType eps, bool verbose );

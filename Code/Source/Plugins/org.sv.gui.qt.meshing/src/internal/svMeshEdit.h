@@ -51,7 +51,7 @@ public slots:
 
     void ClearLocal( bool checked = false );
 
-    void TableViewLocalContextMenuRequested( const QPoint & index );
+    void TableViewLocalContextMenuRequested( const QPoint & pos );
 
     void TableRegionListSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
@@ -59,7 +59,7 @@ public slots:
 
     void DeleteSelectedRegions( bool checked = false );
 
-    void TableViewRegionContextMenuRequested( const QPoint & index );
+    void TableViewRegionContextMenuRequested( const QPoint & pos );
 
     void UpdateFaceListSelection();
 
@@ -139,15 +139,6 @@ protected:
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 
     bool m_UndoAble;
-
-//public:
-
-//    static vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
-
-//    static double m_Radius;
-//    static double m_CenterX;
-//    static double m_CenterY;
-//    static double m_CenterZ;
 
 };
 

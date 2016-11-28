@@ -53,10 +53,13 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
     svMitkSimJob::Pointer mitkSimJob = svMitkSimJob::New();
     std::string modelName="";
     std::string meshName="";
+    std::string status="";
     mjElement->QueryStringAttribute("model_name",&modelName);
     mjElement->QueryStringAttribute("mesh_name",&meshName);
+    mjElement->QueryStringAttribute("status",&status);
     mitkSimJob->SetModelName(modelName);
     mitkSimJob->SetMeshName(meshName);
+    mitkSimJob->SetStatus(status);
 
     TiXmlElement* jobElement = mjElement->FirstChildElement("job");
     if(jobElement != nullptr)
@@ -249,6 +252,7 @@ void svMitkSimJobIO::Write()
     auto  mjElement = new TiXmlElement("mitk_job");
     mjElement->SetAttribute("model_name", mitkSimJob->GetModelName());
     mjElement->SetAttribute("mesh_name", mitkSimJob->GetMeshName());
+    mjElement->SetAttribute("status", mitkSimJob->GetStatus());
     document.LinkEndChild(mjElement);
 
     svSimJob* job=mitkSimJob->GetSimJob();

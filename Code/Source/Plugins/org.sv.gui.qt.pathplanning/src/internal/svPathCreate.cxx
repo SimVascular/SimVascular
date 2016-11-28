@@ -165,6 +165,8 @@ void svPathCreate::CreatePath()
         pathElement->SetSpacing(path->GetSpacing());
 
         path->SetPathElement(pathElement,timeStep);
+        path->SetDataModified();
+
         mitk::DataNode::Pointer pathNode = mitk::DataNode::New();
         pathNode->SetData(path);
         pathNode->SetName(pathName);

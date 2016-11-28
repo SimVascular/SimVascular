@@ -7,6 +7,7 @@ svPath::svPath()
     , m_Method(svPathElement::CONSTANT_TOTAL_NUMBER)
     , m_CalculationNumber(100)
     , m_Spacing(0)
+    , m_DataModified(false)
 {
     this->InitializeEmpty();
 }
@@ -18,6 +19,7 @@ svPath::svPath(const svPath &other)
     , m_CalculationNumber(other.m_CalculationNumber)
     , m_Spacing(other.m_Spacing)
     , m_PathElementSet(other.GetTimeSize())
+    , m_DataModified(true)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {
@@ -177,6 +179,7 @@ void svPath::ExecuteOperation( mitk::Operation* operation )
             originalPathElement->SetControlPointSelected(index,true);
             m_CalculateBoundingBox = true;
             m_NewControlPoint=point;
+            m_DataModified=true;
             this->Modified();
             this->InvokeEvent( svPathPointInsertEvent() );
         }
@@ -190,6 +193,7 @@ void svPath::ExecuteOperation( mitk::Operation* operation )
             originalPathElement->SetControlPoint(index,point);
             m_CalculateBoundingBox = true;
             m_NewControlPoint=point;
+            m_DataModified=true;
             this->Modified();
             this->InvokeEvent( svPathPointMoveEvent() );
         }
@@ -202,6 +206,7 @@ void svPath::ExecuteOperation( mitk::Operation* operation )
         {
             originalPathElement->RemoveControlPoint(index);
             m_CalculateBoundingBox = true;
+            m_DataModified=true;
             this->Modified();
             this->InvokeEvent( svPathPointRemoveEvent() );
         }
@@ -213,7 +218,6 @@ void svPath::ExecuteOperation( mitk::Operation* operation )
         if(originalPathElement)
         {
             originalPathElement->SetControlPointSelected(index,selected);
-//            m_CalculateBoundingBox = true;
             this->Modified();
             this->InvokeEvent( svPathPointSelectEvent() );
         }
@@ -225,7 +229,6 @@ void svPath::ExecuteOperation( mitk::Operation* operation )
         if(originalPathElement)
         {
             originalPathElement->DeselectControlPoint();
-//            m_CalculateBoundingBox = true;
             this->Modified();
             this->InvokeEvent( svPathPointSelectEvent() );
         }
@@ -236,6 +239,7 @@ void svPath::ExecuteOperation( mitk::Operation* operation )
     {
         m_PathElementSet[timeStep]=newPathElement;
         m_CalculateBoundingBox = true;
+        m_DataModified=true;
         this->Modified();
         this->InvokeEvent( svPathSetEvent() );
     }
@@ -375,6 +379,16 @@ void svPath::PrintSelf( std::ostream& os, itk::Indent indent ) const
             }
         }
     }
+}
+
+bool svPath::IsDataModified()
+{
+    return m_DataModified;
+}
+
+void svPath::SetDataModified(bool modified)
+{
+    m_DataModified=modified;
 }
 
 bool Equal( const svPath* leftHandSide, const svPath* rightHandSide, mitk::ScalarType eps, bool verbose )
