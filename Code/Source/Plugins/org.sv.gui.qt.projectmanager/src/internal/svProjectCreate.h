@@ -1,14 +1,16 @@
 #ifndef SVPROJECTCREATE_H
 #define SVPROJECTCREATE_H
 
+#include <org_sv_gui_qt_projectmanager_Export.h>
+
 #include <mitkDataStorage.h>
 #include <QWidget>
 
 namespace Ui {
-class svProjectCreate;
+class SV_QT_PROJECTMANAGER svProjectCreate;
 }
 
-class svProjectCreate : public QWidget
+class SV_QT_PROJECTMANAGER svProjectCreate : public QWidget
 {
     Q_OBJECT
 

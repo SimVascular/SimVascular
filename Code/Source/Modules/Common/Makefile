@@ -45,15 +45,32 @@ MODULE_NAME_ALL_CAPS = SVCOMMON
 CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
-HDRS	= svMath3.h  svSpline.h  svVtkParametricSpline.h  svXmlIOUtil.h
+HDRS	=   svMath3.h \
+            svSpline.h \
+            svVtkParametricSpline.h \
+            svVtkUtils.h \
+            svXmlIOUtil.h
 
-CXXSRCS	= svMath3.cxx  svSpline.cxx  svVtkParametricSpline.cxx  svXmlIOUtil.cxx
+CXXSRCS	=   svMath3.cxx \
+            svSpline.cxx \
+            svVtkParametricSpline.cxx \
+            svVtkUtils.cxx \
+            svXmlIOUtil.cxx
 
 CXXSRCS += us_init.cxx
 
 UIFILES = 
 
+# don't know how to handle non-qrc files
 RCFILES = 
+
+QRCFILES =
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix ui_,$(UIFILES:.ui=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 

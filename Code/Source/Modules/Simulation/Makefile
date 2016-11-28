@@ -38,33 +38,40 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
-           $(MITK_INCDIRS) $(MITK_DEFS) \
-          -DSV_EXPORT_QT_GUI_SEGMENTATION_COMPILE
+           $(MITK_INCDIRS) $(MITK_DEFS)
+
+MODULE_NAME = svSimulation
+MODULE_NAME_ALL_CAPS = SVSIMULATION
+CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
+
+CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-    svContourGroupCreate.h \
-    svLevelSet2DWidget.h \
-    svLoftParamWidget.h \
-    svSegmentation2D.h \
-    svSegmentationPluginActivator.h
+    svSimJob.h \
+    svMitkSimJob.h \
+    svMitkSimJobIO.h \
+    svSimulationUtils.h \
+    svMitkSimulationObjectFactory.h
 
 CXXSRCS	= \
-    svContourGroupCreate.cxx \
-    svLevelSet2DWidget.cxx \
-    svLoftParamWidget.cxx \
-    svSegmentation2D.cxx \
-    svSegmentationPluginActivator.cxx
+    svSimJob.cxx \
+    svMitkSimJob.cxx \
+    svMitkSimJobIO.cxx \
+    svSimulationUtils.cxx \
+    svMitkSimulationObjectFactory.cxx
 
-UIFILES = \
-    svContourGroupCreate.ui \
-    svLevelSet2DWidget.ui \
-    svLoftParamWidget.ui \
-    svSegmentation2D.ui
+CXXSRCS += us_init.cxx
 
-RCFILES =    
+UIFILES = 
 
-CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+# I don't know how to handle just xml files yet...
+RCFILES =
+
+QRCFILES = 
+
+CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
+
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -72,22 +79,14 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = -I ../../Modules/QtAppBase
-
-TARGET_LIB_NAME = simvascular_qtgui_plugin_segmentation
-
-SV_COPY_DLL_TO_BIN_PLUGINS = 1
+TARGET_LIB_NAME = simvascular_qtgui_module_simulation
 
 include $(TOP)/targetlib.mk

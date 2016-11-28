@@ -44,8 +44,13 @@ SRCS	= $(CXXSRCS)
 
 DEPS	= $(CXXSRCS:.cxx=.d)
 
-TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(STATICEXT)
-TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(SOEXT)
+ifdef PLUGIN_NAME
+  TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib$(TARGET_LIB_NAME).$(STATICEXT)
+  TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib$(TARGET_LIB_NAME).$(SOEXT)
+else
+  TARGET_LIB = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(STATICEXT)
+  TARGET_SHARED = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME).$(SOEXT)
+endif
 
 ifdef TARGET_LIB_NAME2
   TARGET_LIB2 = $(TOP)/Lib/$(LIB_BUILD_DIR)/lib_$(TARGET_LIB_NAME2).$(STATICEXT)
@@ -192,8 +197,8 @@ endif
 moc:
 	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(notdir $(name))).cxx))
 
-rcc:
-	$(foreach name,$(RCFILES),$(shell $(QT_RCC_CMD) $(name) --name $(basename $(notdir $(name))) -o rcc_$(basename $(notdir $(name))).cxx))
+qrc:
+	$(foreach name,$(QRCFILES),$(shell $(QT_RCC_CMD) $(name) --name $(basename $(notdir $(name))) -o qrc_$(basename $(notdir $(name))).cxx))
 
 ui:
 	$(foreach name,$(UIFILES),$(shell $(QT_UIC_CMD) $(name) -o ui_$(basename $(notdir $(name))).h))
@@ -225,6 +230,44 @@ create_exports_h:
 	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 
+create_plugin_export_h:
+	echo  "// .NAME __$(PLUGIN_EXPORTS_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "// The __$(PLUGIN_EXPORTS_NAME)_Export captures some system differences between Unix" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "// and Windows operating systems. " >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#ifndef __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#define __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#include <QtGlobal>" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#  if defined($(PLUGIN_EXPORTS_NAME)_EXPORTS)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_IMPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#if !defined($(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME))" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#  if defined(CTK_SHARED)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "//#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+
+create_manifest_qrc:
+	-tclsh $(TOP)/TclHelpers/create_manifest_mf.tcl $(PLUGIN_SYMBOLIC_NAME) $(PLUGIN_EXPORTS_NAME)_manifest.qrc ../../manifest_headers.cmake MANIFEST.MF
+
+create_cached_qrc:
+	-tclsh $(TOP)/TclHelpers/create_cached_qrc.tcl $(PLUGIN_EXPORTS_NAME) $(PLUGIN_EXPORTS_NAME)_cached.qrc $(RCFILES)
+
+us-init-module:
+	-echo "#include <usModuleInitialization.h>" > us_init.cxx
+	-echo "US_INITIALIZE_MODULE" >> us_init.cxx
 
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
@@ -232,13 +275,18 @@ clean:
 	for fn in *_wrap.cxx*; do /bin/rm -f $$fn; done
 	for fn in moc_*.cxx; do /bin/rm -f $$fn; done
 	for fn in ui_*.h; do /bin/rm -f $$fn; done
-	for fn in rcc_*.cxx; do /bin/rm -f $$fn; done
+	for fn in qrc_*.cxx; do /bin/rm -f $$fn; done
+	for fn in *_manifest.qrc; do /bin/rm -f $$fn; done
+	for fn in *_cached.qrc; do /bin/rm -f $$fn; done
+	if [ -e MANIFEST.MF ];then /bin/rm -f MANIFEST.MF;fi
 	if [ -e us_init.cxx ];then /bin/rm -f us_init.cxx;fi
+	if [ -e $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h;fi
+	if [ -e $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h;fi
 	for fn in $(TOP)/Lib/$(TARGET_LIB); do /bin/rm -f $$fn; done
 	if [ -n "$(TARGET_SHARED)" ];then for fn in $(TARGET_SHARED:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED2)" ];then for fn in $(TARGET_SHARED2:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
 	if [ -n "$(TARGET_SHARED3)" ];then for fn in $(TARGET_SHARED3:.$(SOEXT)=.*); do /bin/rm -f $$fn; done;fi
-	if [ -n "$(TOP)/Bin/plugins/lib_$(TARGET_LIB_NAME).$(SOEXT)" ];then for fn in $(TOP)/Bin/plugins/lib_$(TARGET_LIB_NAME).*; do /bin/rm -f $$fn; done;fi
+	if [ -n "$(TOP)/Bin/plugins/lib$(TARGET_LIB_NAME).$(SOEXT)" ];then for fn in $(TOP)/Bin/plugins/lib$(TARGET_LIB_NAME).*; do /bin/rm -f $$fn; done;fi
 
 veryclean: clean
 	if [ -e obj ];then /bin/rm -f -r obj;fi
