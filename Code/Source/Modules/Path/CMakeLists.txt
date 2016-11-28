@@ -1,51 +1,26 @@
+set(lib svPath)
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
+#svFunctionCreateModule( ${lib}
+#    FORCE_SHARED
+#    DEPENDS PUBLIC MitkCore svCommon
+#    ADDITIONAL_LIBS
+#        ${SV_LIB_GLOBALS_NAME}
+#        ${SV_LIB_UTILS_NAME}
+#        ${SV_LIB_GEOM_NAME}
+#)
 
-set(lib ${SV_LIB_QTGUI_MODULE_PATH_NAME})
-
-set(HDRS
-    svPathElement.h
-    svPath.h
-    svPathOperation.h
-    svPathDataInteractor.h
-    svPathVtkMapper2D.h
-    svPathVtkMapper3D.h
-    svPathIO.h
-    svPathLegacyIO.h
-    svPathObjectFactory.h
-)
-
-set(CXXSRCS
-    svPathElement.cxx
-    svPath.cxx
-    svPathOperation.cxx
-    svPathDataInteractor.cxx
-    svPathVtkMapper2D.cxx
-    svPathVtkMapper3D.cxx
-    svPathIO.cxx
-    svPathLegacyIO.cxx
-    svPathObjectFactory.cxx
-)
-
-set(RESOURCE_FILES
-    Interactions/svPath.xml
-    Interactions/svPathConfig.xml
-)
-
-#find_package(CppMicroServices QUIET NO_MODULE REQUIRED)
-usFunctionGenerateModuleInit(CXXSRCS)
+#---------------------------------TRYING OLD----------------------------------
+include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
+usFunctionGenerateModuleInit(CPP_FILES)
 
 if(RESOURCE_FILES)
-    usFunctionGetResourceSource(TARGET ${lib} OUT CXXSRCS)
+  usFunctionGetResourceSource(TARGET ${lib} OUT CPP_FILES)
 endif()
 
 if(SV_USE_MODULES_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${HDRS} ${CXXSRCS} ${UISrcs} ${QRCSrcs})
+  add_library(${lib} SHARED ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs})
 else()
-  add_library(${lib} STATIC ${HDRS} ${CXXSRCS} ${UISrcs} ${QRCSrcs})
+  add_library(${lib} STATIC ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs})
 endif()
 
 set(module_name svPath)
@@ -57,10 +32,10 @@ target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${SV_LIB_GLOBALS_NAME}
                              ${SV_LIB_UTILS_NAME}
                              ${SV_LIB_GEOM_NAME}
-                             ${SV_LIB_QTGUI_MODULE_COMMON_NAME})
+                             svCommon)
 
 if(RESOURCE_FILES)
-    set(res_dir resources)
+    set(res_dir resource)
     usFunctionAddResources(TARGET ${lib}
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${res_dir}
                            FILES ${RESOURCE_FILES})
@@ -82,16 +57,27 @@ generate_export_header(${lib}
 )
 
 target_include_directories(${lib} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(${lib} PUBLIC ${CMAKE_CURRENT_BINARY_DIR}/../Common)
+#---------------------------------TRYING OLD----------------------------------
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
-		)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+    )
 endif()
+
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+    set(MODULE_FILES_CMAKE files.cmake)
+    if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
+        set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+    endif()
+    if (EXISTS ${MODULE_FILES_CMAKE})
+        include(${MODULE_FILES_CMAKE})
+    endif()
+    install(FILES ${H_FILES}
+            DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
 endif()
+

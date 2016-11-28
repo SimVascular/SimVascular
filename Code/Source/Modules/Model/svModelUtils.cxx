@@ -1,5 +1,9 @@
 #include "svModelUtils.h"
 
+#include "svModelElementPolyData.h"
+#include "svPathElement.h"
+#include "svMath3.h"
+
 #include "SimVascular.h"
 #include "cv_sys_geom.h"
 #include "cvPolyData.h"
@@ -7,8 +11,13 @@
 
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
+#include <vtkPlaneSource.h>
+#include <vtkClipPolyData.h>
+#include <vtkImplicitDataSet.h>
+#include <vtkThreshold.h>
+#include <vtkDataSetSurfaceFilter.h>
 
-vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
+vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, unsigned int t, int noInterOut, double tol)
 {
     int groupNumber=segs.size();
     cvPolyData **srcs=new cvPolyData* [groupNumber];
@@ -33,7 +42,7 @@ vtkPolyData* svModelUtils::CreateSolidModelPolyData(std::vector<svContourGroup*>
     return dst->GetVtkPolyData();
 }
 
-svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode::Pointer> segNodes, unsigned int t, int noInterOut, double tol)
+svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int stats[], unsigned int t, int noInterOut, double tol)
 {
     std::vector<svContourGroup*> segs;
     std::vector<std::string> segNames;
@@ -49,44 +58,46 @@ svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode
         }
     }
 
-    vtkPolyData* solidvpd=CreateSolidModelPolyData(segs,t,noInterOut,tol);
+    vtkPolyData* solidvpd=CreatePolyData(segs,t,noInterOut,tol);
     if(solidvpd==NULL) return NULL;
-
-    int *doublecaps;
-    int numfaces=0;
 
     cvPolyData *src=new cvPolyData(solidvpd);
     cvPolyData *dst = NULL;
+
+    if(sys_geom_checksurface(src,stats,tol)!=CV_OK)
+        return NULL;
+
+    int *doublecaps;
+    int numfaces=0;
 
     sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces);
 
     solidvpd=dst->GetVtkPolyData();
 
-    int totalNumFaces=0;
-    for(int i=0;i<numfaces;i++)
+    int numSeg=segNames.size();
+    int numCap2=0;
+    for(int i=numSeg-1;i>-1;i--)
     {
-        totalNumFaces=totalNumFaces+doublecaps[i]+2;
+        if(doublecaps[i]!=0)
+        {
+            numCap2=doublecaps[i];
+            break;
+        }
     }
-    std::string *allNames=new std::string[totalNumFaces];
 
-    for(int i=0;i<numfaces;i++)
+    std::string *allNames=new std::string[2*numSeg+numCap2];
+
+    for(int i=0;i<numSeg;i++)
     {
         allNames[i]="wall_"+segNames[i];
-        allNames[i+numfaces]="cap_"+segNames[i];
+        allNames[numSeg+i]="cap_"+segNames[i];
         if(doublecaps[i]!=0)
-            allNames[2*numfaces]="cap_"+segNames[i]+"_2";
+            allNames[2*numSeg+doublecaps[i]-1]="cap_"+segNames[i]+"_2";
     }
-
-//    int numBoundaryRegions;
-//    int* faceIds=NULL;
-//    PlyDtaUtils_GetFaceIds( solidvpd, &numBoundaryRegions, &faceIds);
-
-//    cout<<numBoundaryRegions<<endl;
-//    cout<<faceIds[0]<<","<<faceIds[1]<<","<<faceIds[2]<<","<<faceIds[3]<<","<<faceIds[4]<<endl;
 
     std::vector<svModelElement::svFace*> faces;
 
-    for(int i=0;i<totalNumFaces;i++)
+    for(int i=0;i<2*numSeg+numCap2;i++)
     {
           vtkPolyData *facepd = vtkPolyData::New();
           int faceid=i+1;
@@ -97,15 +108,105 @@ svModelElement* svModelUtils::CreateSolidModelElement(std::vector<mitk::DataNode
           face->name=allNames[i];
           face->vpd=facepd;
 
+          if(face->name.substr(0,5)=="wall_")
+              face->type="wall";
+          else if(face->name.substr(0,4)=="cap_")
+              face->type="cap";
+
           faces.push_back(face);
     }
 
-    svModelElement* modelElement=new svModelElement();
+    delete[] allNames;
+
+    svModelElementPolyData* modelElement=new svModelElementPolyData();
     modelElement->SetSegNames(segNames);
     modelElement->SetFaces(faces);
-    modelElement->SetVtkPolyDataModel(solidvpd);
+    modelElement->SetWholeVtkPolyData(solidvpd);
 
     return modelElement;
+}
+
+vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param)
+{
+    if(vpdsrc==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(vpdsrc);
+    cvPolyData *dst = NULL;
+
+    int vals[2];
+    vals[0]=faceID1;
+    vals[1]=faceID2;
+
+    if ( sys_geom_set_array_for_local_op_face_blend(src,&dst, "ModelFaceID", vals, 2, radius, "ActiveCells", 1)
+         != CV_OK )
+    {
+        MITK_ERROR << "poly blend (using radius) error ";
+        return NULL;
+    }
+
+    cvPolyData *dst2 = NULL;
+
+    if ( sys_geom_local_blend( dst, &dst2, param->numblenditers,
+                               param->numsubblenditers, param->numsubdivisioniters,
+                               param->numcgsmoothiters, param->numlapsmoothiters,
+                               param->targetdecimation,
+                               NULL, "ActiveCells")
+
+         != CV_OK )
+    {
+        MITK_ERROR << "poly blend error ";
+        return NULL;
+    }
+
+    vtkPolyData* vpd=dst2->GetVtkPolyData();
+    vpd->GetCellData()->RemoveArray("ActiveCells");
+
+    return vpd;
+
+}
+
+svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param)
+{
+
+    vtkSmartPointer<vtkPolyData> oldVpd=mepdsrc->GetWholeVtkPolyData();
+    if(oldVpd==NULL) return NULL;
+
+    vtkSmartPointer<vtkPolyData> lastVpd=oldVpd;
+
+    for(int i=0;i<blendRadii.size();i++)
+    {
+        int faceID1=0;
+        int faceID2=0;
+        double radius=0.0;
+        if(blendRadii[i] && blendRadii[i]->radius>0)
+        {
+            faceID1=blendRadii[i]->faceID1;
+            faceID2=blendRadii[i]->faceID2;
+            radius=blendRadii[i]->radius;
+
+        }
+
+        lastVpd=svModelUtils::CreatePolyDataByBlend(lastVpd, faceID1, faceID2, radius, param);
+
+        if(lastVpd==NULL) return NULL;
+
+    }
+
+     svModelElementPolyData* mepddst =mepdsrc->Clone();
+     mepddst->SetWholeVtkPolyData(lastVpd);
+     std::vector<svModelElement::svFace*> faces=mepddst->GetFaces();
+     for(int i=0;i<faces.size();i++)
+     {
+         faces[i]->vpd=mepddst->CreateFaceVtkPolyData(faces[i]->id);
+     }
+
+     mepddst->AssignBlendParam(param);
+     delete param;
+
+     mepddst->AddBlendRadii(blendRadii);
+
+     return mepddst;
 }
 
 vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)
@@ -313,11 +414,472 @@ vtkPolyData* svModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int f
     cvPolyData* cvpd=new cvPolyData(inpd);
     int numFilled=0;
     cvPolyData* tmpcvpd;
-    sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType);
+    if(sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType)!=CV_OK)
+        return NULL;
+
+    if(tmpcvpd==NULL)
+        return NULL;
 
     vtkPolyData* outpd=Orient(tmpcvpd->GetVtkPolyData());
 
     delete tmpcvpd;
 
     return outpd;
+}
+
+bool svModelUtils::CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname )
+{
+  vtkIdType i;
+  int numArrays;
+
+  if (datatype == 0)
+  {
+    numArrays = object->GetPointData()->GetNumberOfArrays();
+    for (i=0;i<numArrays;i++)
+    {
+      if (strcmp(object->GetPointData()->GetArrayName(i),arrayname.c_str())==0)
+      {
+        return true;
+      }
+    }
+
+//    if(object->GetPointData()->HasArray(arrayname.c_str()))
+//        return true;
+
+  }
+  else
+  {
+    numArrays = object->GetCellData()->GetNumberOfArrays();
+    for (i=0;i<numArrays;i++)
+    {
+      if (strcmp(object->GetCellData()->GetArrayName(i),arrayname.c_str())==0)
+      {
+        return true;
+      }
+    }
+
+//    if(object->GetCellData()->HasArray(arrayname.c_str()))
+//        return true;
+  }
+
+  return false;
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtkPolyData> inpd)
+{
+    vtkSmartPointer<vtkCleanPolyData> cleaner=vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->PointMergingOn();
+    cleaner->ConvertLinesToPointsOff();
+    cleaner->ConvertPolysToLinesOff();
+    cleaner->SetInputDataObject(inpd);
+    cleaner->Update();
+
+    vtkSmartPointer<vtkPolyDataNormals> orienter=vtkSmartPointer<vtkPolyDataNormals>::New();
+    orienter->SetInputDataObject(cleaner->GetOutput());
+    orienter->AutoOrientNormalsOn();
+    orienter->ComputePointNormalsOn();
+    orienter->FlipNormalsOn();
+    orienter->SplittingOff();
+    orienter->ComputeCellNormalsOn();
+    orienter->ConsistencyOn();
+    orienter->NonManifoldTraversalOff();
+    orienter->Update();
+
+    return orienter->GetOutput();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCells(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> cellIDs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    int* cellIDArray = &cellIDs[0];
+
+    if ( sys_geom_set_array_for_local_op_cells(src, &dst, cellIDArray, cellIDs.size(), "ActiveCells", 1) != CV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by cell ids) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsBySphere(vtkSmartPointer<vtkPolyData> inpd, double radius, double center[3])
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_set_array_for_local_op_sphere(src, &dst, radius, center, "ActiveCells", 1) != CV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by sphere) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsByFaces(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> faceIDs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    int* faceIDArray = &faceIDs[0];
+
+    if ( sys_geom_set_array_for_local_op_face(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), "ActiveCells", 1) != CV_OK )
+    {
+        MITK_ERROR << "poly marking cells (by face ids) error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::DecimateLocal(vtkSmartPointer<vtkPolyData> inpd, double targetRate)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_quadric_decimation(src, &dst, targetRate, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local decimation error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::LaplacianSmoothLocal(vtkSmartPointer<vtkPolyData> inpd, int numIters, double relaxFactor)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_laplacian_smooth(src, &dst, numIters, relaxFactor, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local Laplacian smooth error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::ConstrainSmoothLocal(vtkSmartPointer<vtkPolyData> inpd, int numIters, double constrainFactor, int numCGSolves)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_constrain_smooth(src, &dst, numIters, constrainFactor, numCGSolves, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local constrain smooth error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::LinearSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local linear subdivision error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::CutByPlane(vtkSmartPointer<vtkPolyData> inpd, double origin[3], double point1[3], double point2[3], bool above )
+{
+    if(inpd==NULL)
+        return NULL;
+
+    vtkSmartPointer<vtkPlaneSource> plane= vtkSmartPointer<vtkPlaneSource>::New();
+    plane->SetOrigin(origin);
+    plane->SetPoint1(point1);
+    plane->SetPoint2(point2);
+    plane->Update();
+
+    double* nrm=plane->GetNormal();
+    nrm[0]=-nrm[0];
+    nrm[1]=-nrm[1];
+    nrm[2]=-nrm[2];
+
+    vtkSmartPointer<vtkPlane> impPlane=vtkSmartPointer<vtkPlane>::New();
+    impPlane->SetOrigin(origin);
+    impPlane->SetNormal(nrm);
+
+    vtkSmartPointer<vtkClipPolyData> clipper=vtkSmartPointer<vtkClipPolyData>::New();
+    clipper->SetInputData(inpd);
+    clipper->GenerateClippedOutputOn();
+    clipper->SetClipFunction(impPlane);
+    clipper->Update();
+
+    vtkSmartPointer<vtkFillHolesFilter> triangulator=vtkSmartPointer<vtkFillHolesFilter>::New();
+    if(above)
+    {
+        triangulator->SetInputData(clipper->GetOutput());
+    }
+    else
+    {
+        triangulator->SetInputData(clipper->GetClippedOutput());
+    }
+    triangulator->Update();
+
+    return triangulator->GetOutput();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::CutByBox(vtkSmartPointer<vtkPolyData> inpd, vtkSmartPointer<vtkPlanes> boxPlanes, bool inside)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    if(boxPlanes==NULL)
+        return NULL;
+
+    vtkSmartPointer<vtkClipPolyData> clipper=vtkSmartPointer<vtkClipPolyData>::New();
+    clipper->SetInputData(inpd);
+    clipper->GenerateClippedOutputOn();
+    clipper->SetClipFunction(boxPlanes);
+    clipper->Update();
+
+    vtkSmartPointer<vtkTriangleFilter> triangulator=vtkSmartPointer<vtkTriangleFilter>::New();
+    if(inside)
+    {
+        triangulator->SetInputData(clipper->GetOutput());
+    }
+    else
+    {
+        triangulator->SetInputData(clipper->GetClippedOutput());
+    }
+    triangulator->Update();
+
+    return triangulator->GetOutput();
+}
+
+bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<int> regionIDs)
+{
+    if(inpd==NULL)
+        return false;
+
+    std::string arrayname="ModelFaceID";
+    bool existing=false;
+
+    if(inpd->GetCellData()->HasArray(arrayname.c_str()))
+        existing=true;
+
+    if(!existing)
+        return false;
+
+    for(int i=0;i<regionIDs.size();i++)
+    {
+        vtkSmartPointer<vtkIntArray> boundaryRegions = vtkSmartPointer<vtkIntArray>::New();
+        boundaryRegions = vtkIntArray::SafeDownCast(inpd->GetCellData()-> GetScalars("ModelFaceID"));
+
+        inpd->BuildLinks();
+
+        for (vtkIdType cellId=0; cellId< inpd->GetNumberOfCells(); cellId++)
+        {
+          if (boundaryRegions->GetValue(cellId) == regionIDs[i])
+          {
+            inpd->DeleteCell(cellId);
+          }
+        }
+
+        inpd->RemoveDeletedCells();
+    }
+
+    return true;
+}
+
+vtkPolyData* svModelUtils::CreateCenterlines(svModelElement* modelElement)
+{
+    if(modelElement==NULL || modelElement->GetWholeVtkPolyData()==NULL)
+        return NULL;
+
+    vtkSmartPointer<vtkPolyData> inpd=vtkSmartPointer<vtkPolyData>::New();
+    inpd->DeepCopy(modelElement->GetWholeVtkPolyData());
+    if(!DeleteRegions(inpd,modelElement->GetCapFaceIDs()))
+    {
+        return NULL;
+    }
+
+    vtkPolyData* centerlines=CreateCenterlines(inpd);
+
+    return centerlines;
+}
+
+vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
+{
+    if(vpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(vpd);
+    cvPolyData *capped = NULL;
+    int numCapCenterIDs;
+    int *capCenterIDs=NULL;
+
+    if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
+    {
+//        delete capped;
+        return NULL;
+    }
+
+    cvPolyData *tempCenterlines = NULL;
+    cvPolyData *voronoi = NULL;
+
+    int *sources=new int[1];
+    sources[0]=capCenterIDs[0];
+
+    int *targets=new int[numCapCenterIDs-1];
+    for(int i=1;i<numCapCenterIDs;i++)
+        targets[i-1]= capCenterIDs[i];
+
+    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
+    {
+        return NULL;
+    }
+
+    cvPolyData *centerlines=NULL;
+    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != CV_OK )
+    {
+        return NULL;
+    }
+
+    return centerlines->GetVtkPolyData();
+}
+
+vtkPolyData* svModelUtils::CalculateDistanceToCenterlines(vtkPolyData* centerlines, vtkPolyData* original)
+{
+    if(centerlines==NULL || original==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(original);
+    cvPolyData *lines=new cvPolyData(centerlines);
+    cvPolyData *distance = NULL;
+    if ( sys_geom_distancetocenterlines(src, lines, &distance) != CV_OK )
+    {
+        return NULL;
+    }
+
+    return distance->GetVtkPolyData();
+}
+
+std::vector<svPathElement::svPathPoint> svModelUtils::ConvertToPathPoints(std::vector<mitk::Point3D> posPoints)
+{
+    std::vector<svPathElement::svPathPoint> pathPoints;
+
+    for(int i=0;i<posPoints.size()-1;i++)
+    {
+        svPathElement::svPathPoint pathPoint;
+        pathPoint.pos=posPoints[i];
+        pathPoint.tangent=posPoints[i+1]-posPoints[i];
+        pathPoint.tangent.Normalize();
+        pathPoint.rotation=svMath3::GetPerpendicularNormalVector(pathPoint.tangent);
+
+        pathPoints.push_back(pathPoint);
+   }
+
+    svPathElement::svPathPoint lastPathPoint=pathPoints.back();
+    lastPathPoint.pos=posPoints.back();
+    pathPoints.push_back(lastPathPoint);
+
+    return pathPoints;
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::GetThresholdRegion(vtkSmartPointer<vtkPolyData> pd, vtkDataObject::FieldAssociations dataType, std::string arrayName, double minValue, double maxValue )
+{
+    vtkSmartPointer<vtkThreshold> thresholder=vtkSmartPointer<vtkThreshold>::New();
+    thresholder->SetInputData(pd);
+    thresholder->SetInputArrayToProcess(0, 0, 0, dataType, arrayName.c_str());
+    thresholder->ThresholdBetween(minValue, maxValue);
+    thresholder->Update();
+
+    vtkSmartPointer<vtkDataSetSurfaceFilter> surfacer=vtkSmartPointer<vtkDataSetSurfaceFilter>::New();
+    surfacer->SetInputData(thresholder->GetOutput());
+    surfacer->Update();
+
+    return surfacer->GetOutput();
+}
+
+std::vector<svPathElement*> svModelUtils::CreatePathElements(svModelElement* modelElement)
+{
+    std::vector<svPathElement*> pathElements;
+
+    vtkSmartPointer<vtkPolyData> centerlinesPD=CreateCenterlines(modelElement);
+
+    if(centerlinesPD==NULL || !centerlinesPD->GetCellData()->HasArray("CenterlineIds"))
+        return pathElements;
+
+    int numCenterlines=centerlinesPD->GetCellData()->GetArray("CenterlineIds")->GetRange()[1]+1;
+
+    for(int i=0;i<numCenterlines;i++)
+    {
+        vtkSmartPointer<vtkPolyData> polyline=GetThresholdRegion(centerlinesPD,vtkDataObject::FIELD_ASSOCIATION_CELLS, "CenterlineIds", i, i);
+
+        vtkSmartPointer<vtkDataArray> groupArray=polyline->GetCellData()->GetArray("GroupIds");
+        int lowerValue=groupArray->GetRange()[0];
+        int upperValue=groupArray->GetRange()[1];
+
+        vtkSmartPointer<vtkPolyData> centerline=GetThresholdRegion(polyline,vtkDataObject::FIELD_ASSOCIATION_CELLS,"GroupIds",lowerValue,upperValue);
+        std::vector<mitk::Point3D> posPoints;
+        for(int j=0;j<centerline->GetNumberOfPoints();j++)
+        {
+            mitk::Point3D point;
+            point[0]=centerline->GetPoint(j)[0];
+            point[1]=centerline->GetPoint(j)[1];
+            point[2]=centerline->GetPoint(j)[2];
+
+            posPoints.push_back(point);
+        }
+
+        svPathElement* pe=new svPathElement();
+        pe->SetMethod(svPathElement::CONSTANT_TOTAL_NUMBER);
+        pe->SetCalculationNumber(centerline->GetNumberOfPoints());
+        //pe->SetControlPoints(controlPoints,false);
+        pe->SetPathPoints(ConvertToPathPoints(posPoints));
+
+        pathElements.push_back(pe);
+    }
+
+    return pathElements;
+}
+
+double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
+{
+    if(vpd==NULL)
+        return 0;
+
+    double area=0;
+    cvPolyData *src=new cvPolyData(vpd);
+
+    if ( sys_geom_SurfArea(src, &area) != CV_OK )
+    {
+        return 0;
+    }
+
+    return area;
 }

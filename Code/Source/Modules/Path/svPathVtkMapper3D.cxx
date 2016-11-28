@@ -105,7 +105,7 @@ void svPathVtkMapper3D::CreateVTKRenderObjects()
 
     svPathElement* pathElement=input->GetPathElement(timestep);
 
-    if (pathElement==NULL || pathElement->GetControlPointNumber()==0)
+    if (pathElement==NULL||(pathElement->GetControlPointNumber()==0 && pathElement->GetPathPointNumber()<2))
     {
         m_PropAssembly->VisibilityOff();
         return;
@@ -172,7 +172,7 @@ void svPathVtkMapper3D::CreateVTKRenderObjects()
 
     //-------------------Spline Points and Spline----------------
 
-    if(pathElement->GetControlPointNumber()>1)
+    if(pathElement->GetPathPointNumber()>1)
     {
         //create spline
         bool makeSpline = false;

@@ -268,3 +268,56 @@ bool svMath3::GetIntersectionPoint(mitk::PlaneGeometry* plane, mitk::Point3D poi
 
     return false;
 }
+
+double svMath3::GetMachineEpsilon()
+{
+    double num = 1.0;
+    double test = 1.0;
+
+    while ( num + test > num ) {
+      test /= 10.0;
+    }
+    return (test * 10.0);
+}
+
+mitk::Vector3D svMath3::GetPerpendicularNormalVector(mitk::Vector3D vec)
+{
+    mitk::Vector3D pvec;
+
+    pvec.Fill(0);
+
+    if(vec[0]==0&&vec[1]==0&&vec[2]==0)
+    {
+        //        pvec[2]=1;
+        return pvec;
+    }
+
+    int replaceIdx;
+
+    double dotProduct=0;
+
+    if(std::abs(vec[2])>0.0001)
+    {
+        pvec[1]=1;
+        replaceIdx=2;
+        dotProduct=vec[0]*pvec[0]+vec[1]*pvec[1];
+    }
+    else if(std::abs(vec[1])>0.0001)
+    {
+        pvec[0]=1;
+        replaceIdx=1;
+        dotProduct=vec[0]*pvec[0]+vec[2]*pvec[2];
+    }
+    else
+    {
+        pvec[2]=1;
+        replaceIdx=0;
+        dotProduct=vec[1]*pvec[1]+vec[2]*pvec[2];
+    }
+
+    pvec[replaceIdx]=-dotProduct/vec[replaceIdx];
+
+    pvec.Normalize();
+
+    return pvec;
+}

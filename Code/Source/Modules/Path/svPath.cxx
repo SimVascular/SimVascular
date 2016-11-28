@@ -47,7 +47,8 @@ void svPath::InitializeEmpty()
 
 bool svPath::IsEmptyTimeStep(unsigned int t) const
 {
-    return IsInitialized() && (GetPathElement(t) == NULL);
+//    return IsInitialized() && (GetPathElement(t) == NULL);
+    return false;
 }
 
 void svPath::Expand( unsigned int timeSteps )

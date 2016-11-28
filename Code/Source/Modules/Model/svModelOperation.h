@@ -10,11 +10,15 @@ class SVMODEL_EXPORT svModelOperation : public mitk::Operation
 {
 public:
 
-    enum ModelOperationType {OpINSERTMODELELEMENT, OpREMOVEMODELELEMENT, OpSETMODELELEMENT};
+    enum ModelOperationType {OpINSERTMODELELEMENT, OpREMOVEMODELELEMENT, OpSETMODELELEMENT, OpSETVTKPOLYDATA};
 
     svModelOperation(mitk::OperationType operationType, svModelElement* modelElement);
 
     svModelOperation(mitk::OperationType operationType, unsigned int timeStep, svModelElement* modelElement);
+
+    svModelOperation(mitk::OperationType operationType, vtkPolyData* vpd);
+
+    svModelOperation(mitk::OperationType operationType, unsigned int timeStep, vtkSmartPointer<vtkPolyData> vpd);
 
     virtual ~svModelOperation();
 
@@ -22,11 +26,15 @@ public:
 
     unsigned int GetTimeStep() const;
 
+    vtkSmartPointer<vtkPolyData> GetVtkPolyData();
+
 private:
 
     svModelElement* m_ModelElement;
 
     unsigned int m_TimeStep;
+
+    vtkSmartPointer<vtkPolyData> m_vpd;
 
 };
 

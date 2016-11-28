@@ -271,6 +271,9 @@ void svResliceSlider::potentialOnRefetch()
 
 void svResliceSlider::restoreDisplayWidget()
 {
+    if(currentImageNode.IsNull())
+        return;
+
     if(stepperSynchronized){
         disconnect(intensityStepper, SIGNAL(Refetch()), this, SLOT(intensityOnRefetch()));
         disconnect(potentialStepper, SIGNAL(Refetch()), this, SLOT(potentialOnRefetch()));

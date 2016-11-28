@@ -1,70 +1,30 @@
+set(lib svSegmentation)
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#svFunctionCreateModule( ${lib}
+#    FORCE_SHARED
+#    DEPENDS MitkCore svCommon svPath
+#    ADDITIONAL_LIBS
+#        ${SV_LIB_GLOBALS_NAME}
+#        ${SV_LIB_UTILS_NAME}
+#        ${SV_LIB_GEOM_NAME}
+#        ${SV_LIB_REPOSITORY_NAME}
+#        ${SV_LIB_ITK_LSET_NAME}
+#)
 
-set(lib ${SV_LIB_QTGUI_MODULE_SEGMENTATION_NAME})
-
-set(HDRS
-    svSegmentationUtils.h
-    svContour.h
-    svContourCircle.h
-    svContourEllipse.h
-    svContourPolygon.h
-    svContourTensionPolygon.h
-    svContourSplinePolygon.h
-    svContourOperation.h
-    svContourModel.h
-    svContourModelVtkMapper2D.h
-    svContourModelThresholdInteractor.h
-    svContourGroup.h
-    svContourGroupVtkMapper2D.h
-    svContourGroupVtkMapper3D.h
-    svContourGroupDataInteractor.h
-    svContourGroupIO.h
-    svSegmentationLegacyIO.h
-    svSegmentationObjectFactory.h
-
-)
-
-set(CXXSRCS
-    svSegmentationUtils.cxx
-    svContour.cxx
-    svContourCircle.cxx
-    svContourEllipse.cxx
-    svContourPolygon.cxx
-    svContourTensionPolygon.cxx
-    svContourSplinePolygon.cxx
-    svContourOperation.cxx
-    svContourModel.cxx
-    svContourModelVtkMapper2D.cxx
-    svContourModelThresholdInteractor.cxx
-    svContourGroup.cxx
-    svContourGroupVtkMapper2D.cxx
-    svContourGroupVtkMapper3D.cxx
-    svContourGroupDataInteractor.cxx
-    svContourGroupIO.cxx
-    svSegmentationLegacyIO.cxx
-    svSegmentationObjectFactory.cxx
-)
-
-set(RESOURCE_FILES
-    Interactions/svContourGroupInteraction.xml
-    Interactions/svContourModelThresholdInteraction.xml
-    Interactions/svSegmentationConfig.xml
-)
-
+#---------------------------------TRYING OLD----------------------------------
+include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
 #find_package(CppMicroServices QUIET NO_MODULE REQUIRED)
-usFunctionGenerateModuleInit(CXXSRCS)
+usFunctionGenerateModuleInit(CPP_FILES)
 
 if(RESOURCE_FILES)
-    usFunctionGetResourceSource(TARGET ${lib} OUT CXXSRCS)
+  usFunctionGetResourceSource(TARGET ${lib} OUT CPP_FILES)
 endif()
 
 #include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
 if(SV_USE_MODULES_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${HDRS} ${CXXSRCS} )
+  add_library(${lib} SHARED ${H_FILES} ${CPP_FILES} )
 else()
-  add_library(${lib} STATIC ${HDRS} ${CXXSRCS} )
+  add_library(${lib} STATIC ${H_FILES} ${CPP_FILES} )
 endif()
 
 set(module_name svSegmentation)
@@ -79,11 +39,11 @@ target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${SV_LIB_GEOM_NAME}
                              ${SV_LIB_REPOSITORY_NAME}
                              ${SV_LIB_ITK_LSET_NAME}
-                             ${SV_LIB_QTGUI_MODULE_COMMON_NAME}
-                             ${SV_LIB_QTGUI_MODULE_PATH_NAME})
+                             svCommon
+                             svPath)
 
 if(RESOURCE_FILES)
-    set(res_dir resources)
+    set(res_dir resource)
     usFunctionAddResources(TARGET ${lib}
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${res_dir}
                            FILES ${RESOURCE_FILES})
@@ -105,16 +65,26 @@ generate_export_header(${lib}
 )
 
 target_include_directories(${lib} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+#---------------------------------TRYING OLD----------------------------------
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
-		)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+    )
 endif()
+
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+    set(MODULE_FILES_CMAKE files.cmake)
+    if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
+        set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+    endif()
+    if (EXISTS ${MODULE_FILES_CMAKE})
+       include(${MODULE_FILES_CMAKE})
+    endif()
+    install(FILES ${H_FILES}
+            DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
 endif()
+

@@ -1,5 +1,6 @@
 #include "svSpline.h"
 #include "svVtkParametricSpline.h"
+#include "svMath3.h"
 
 #include "vtkParametricSpline.h"
 #include "vtkSmartPointer.h"
@@ -136,48 +137,6 @@ double svSpline::GetLength(svVtkParametricSpline* svpp, double t1, double t2)
     return totalLength;
 }
 
-mitk::Vector3D svSpline::GetPerpendicularNormalVector(mitk::Vector3D vec)
-{
-    mitk::Vector3D pvec;
-
-    pvec.Fill(0);
-
-    if(vec[0]==0&&vec[1]==0&&vec[2]==0)
-    {
-        //        pvec[2]=1;
-        return pvec;
-    }
-
-    int replaceIdx;
-
-    double dotProduct=0;
-
-    if(std::abs(vec[2])>0.0001)
-    {
-        pvec[1]=1;
-        replaceIdx=2;
-        dotProduct=vec[0]*pvec[0]+vec[1]*pvec[1];
-    }
-    else if(std::abs(vec[1])>0.0001)
-    {
-        pvec[0]=1;
-        replaceIdx=1;
-        dotProduct=vec[0]*pvec[0]+vec[2]*pvec[2];
-    }
-    else
-    {
-        pvec[2]=1;
-        replaceIdx=0;
-        dotProduct=vec[1]*pvec[1]+vec[2]*pvec[2];
-    }
-
-    pvec[replaceIdx]=-dotProduct/vec[replaceIdx];
-
-    pvec.Normalize();
-
-    return pvec;
-}
-
 void svSpline::Update()
 {
     m_SplinePoints.clear();
@@ -242,7 +201,7 @@ void svSpline::Update()
             splinePointID++;
             splinePoint.tangent=pt1-ptx;
             splinePoint.tangent.Normalize();
-            splinePoint.rotation=GetPerpendicularNormalVector(splinePoint.tangent);
+            splinePoint.rotation=svMath3::GetPerpendicularNormalVector(splinePoint.tangent);
             m_SplinePoints.push_back(splinePoint);
             break;
         }
@@ -254,7 +213,7 @@ void svSpline::Update()
         splinePointID++;
         splinePoint.tangent=ptx-pt1;
         splinePoint.tangent.Normalize();
-        splinePoint.rotation=GetPerpendicularNormalVector(splinePoint.tangent);
+        splinePoint.rotation=svMath3::GetPerpendicularNormalVector(splinePoint.tangent);
         m_SplinePoints.push_back(splinePoint);
 
         for(int j=1;j<interNumber;j++)
@@ -270,7 +229,7 @@ void svSpline::Update()
             splinePoint.pos=pt1;
             splinePoint.tangent=ptx-pt1;
             splinePoint.tangent.Normalize();
-            splinePoint.rotation=GetPerpendicularNormalVector(splinePoint.tangent);
+            splinePoint.rotation=svMath3::GetPerpendicularNormalVector(splinePoint.tangent);
             m_SplinePoints.push_back(splinePoint);
         }
 

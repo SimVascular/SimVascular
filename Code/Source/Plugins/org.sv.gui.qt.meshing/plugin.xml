@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.meshedit"
+          name="Edit Mesh"
+          class="svMeshEdit"
+          icon="resources/mesh.png" />
+  </extension>
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+  <contextMenuAction nodeDescriptorName="svMeshFolder" label="Create Mesh" icon="" class="svMeshCreateAction" />
+  <contextMenuAction nodeDescriptorName="svMitkMesh" label="Save Legacy Mesh" icon="" class="svMeshLegacySaveAction" />
+  </extension>
+
+</plugin>

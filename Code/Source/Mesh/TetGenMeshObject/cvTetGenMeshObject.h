@@ -109,6 +109,7 @@ class SV_EXPORT_TETGEN_MESH cvTetGenMeshObject : public cvMeshObject {
 
   // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
+  int LoadModel(vtkPolyData *pd);
   int GetBoundaryFaces(double angle);
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();

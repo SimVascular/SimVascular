@@ -1,7 +1,8 @@
 #include "svModelObjectFactory.h"
 
-#include "svModel.h"
-#include "svModelIO.h"
+//#include "svModel.h"
+#include "svModelVtkMapper2D.h"
+#include "svModelVtkMapper3D.h"
 
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
@@ -32,12 +33,16 @@ mitk::Mapper::Pointer svModelObjectFactory::CreateMapper(mitk::DataNode* node, M
   {
     if( dynamic_cast<svModel*>(node->GetData())!=NULL )
     {
+        newMapper = svModelVtkMapper2D::New();
+        newMapper->SetDataNode(node);
     }
   }
   else if ( id == mitk::BaseRenderer::Standard3D )
   {
     if( dynamic_cast<svModel*>(node->GetData())!=NULL )
     {
+        newMapper = svModelVtkMapper3D::New();
+        newMapper->SetDataNode(node);
     }
   }
   return newMapper;
@@ -49,13 +54,15 @@ void svModelObjectFactory::SetDefaultProperties(mitk::DataNode* node)
   if(node==NULL)
     return;
 
-  mitk::DataNode::Pointer nodePointer = node;
+//  mitk::DataNode::Pointer nodePointer = node;
 
   if(node->GetData() ==NULL)
     return;
 
   if( dynamic_cast<svModel*>(node->GetData())!=NULL )
   {
+      svModelVtkMapper2D::SetDefaultProperties(node);
+      svModelVtkMapper3D::SetDefaultProperties(node);
   }
 }
 
@@ -91,22 +98,17 @@ void svModelObjectFactory::RegisterIOFactories()
 {
 }
 
-struct RegistersvModelObjectFactory{
-  RegistersvModelObjectFactory()
+RegistersvModelObjectFactory::RegistersvModelObjectFactory()
     : m_Factory( svModelObjectFactory::New() )
-  {
+{
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_ModelIO=new svModelIO();
-  }
+}
 
-  ~RegistersvModelObjectFactory()
-  {
+RegistersvModelObjectFactory::~RegistersvModelObjectFactory()
+{
     mitk::CoreObjectFactory::GetInstance()->UnRegisterExtraFactory( m_Factory );
     delete m_ModelIO;
-  }
+}
 
-  svModelObjectFactory::Pointer m_Factory;
-  svModelIO* m_ModelIO;
-};
-
-static RegistersvModelObjectFactory registersvModelObjectFactory;
+//static RegistersvModelObjectFactory registersvModelObjectFactory;

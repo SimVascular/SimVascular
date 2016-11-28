@@ -26,26 +26,34 @@ vtkProp* svContourGroupVtkMapper3D::GetVtkProp(mitk::BaseRenderer* renderer)
 
 void svContourGroupVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 {
+    LocalStorage *localStorage = m_LSH.GetLocalStorage(renderer);
+
     mitk::DataNode* node = GetDataNode();
     if( node == NULL )
         return;
 
-    LocalStorage *localStorage = m_LSH.GetLocalStorage(renderer);
+    bool visible = true;
+    node->GetVisibility(visible, renderer, "visible");
+    if(!visible)
+    {
+        localStorage->m_Assembly->VisibilityOff();
+        return;
+    }
 
     svContourGroup* contourGroup = static_cast< svContourGroup* >(node->GetData() );
 
     int t = this->GetTimestep();
 
-//    localStorage->m_Assembly->Delete();
+    //    localStorage->m_Assembly->Delete();
 
-    localStorage->m_Assembly=vtkSmartPointer<vtkPropAssembly>::New();
+    //    localStorage->m_Assembly=vtkSmartPointer<vtkPropAssembly>::New();
 
-//    if(contourGroup==NULL||contourGroup->GetSize(t)==0){
-//        localStorage->m_Assembly->VisibilityOff();
-//        return;
-//    }
+    //    if(contourGroup==NULL||contourGroup->GetSize(t)==0){
+    //        localStorage->m_Assembly->VisibilityOff();
+    //        return;
+    //    }
 
-//    localStorage->m_Assembly->VisibilityOn();
+    localStorage->m_Assembly->VisibilityOn();
 
     localStorage->m_Assembly->GetParts()->RemoveAllItems();
 
@@ -295,14 +303,14 @@ void svContourGroupVtkMapper3D::ResetMapper( mitk::BaseRenderer* renderer )
 
 svContourGroupVtkMapper3D::LocalStorage* svContourGroupVtkMapper3D::GetLocalStorage(mitk::BaseRenderer* renderer)
 {
-  return m_LSH.GetLocalStorage(renderer);
+    return m_LSH.GetLocalStorage(renderer);
 }
 
 
 svContourGroupVtkMapper3D::LocalStorage::LocalStorage()
 {
     m_Assembly = vtkSmartPointer<vtkPropAssembly>::New();
-//    m_contourToPolyData = mitk::ContourModelToSurfaceFilter::New();
+    //    m_contourToPolyData = mitk::ContourModelToSurfaceFilter::New();
 }
 
 

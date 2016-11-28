@@ -91,6 +91,11 @@ include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
 
 #-----------------------------------------------------------------------------
+# TEMPORARY FUNCTION WITH CTK AND MITK FUNCTIONS/MACROS
+#-----------------------------------------------------------------------------
+include(FeatureSummary)
+
+#-----------------------------------------------------------------------------
 # Setting up default directories for SimVascular Externals
 # Note: *These can be changes by the user if they have moved the sv_extern directories*
 # This is part of he legacy build system
@@ -848,6 +853,7 @@ if(SV_USE_MITK)
   if(SV_USE_MITK_CONFIG)
     find_package(MITK NO_MODULE)
     set(MITK_LIBRARIES MitkCore
+                       MitkAppUtil
                        MitkQtWidgets
                        MitkQtWidgetsExt
                        MitkMapperExt
@@ -986,27 +992,31 @@ if(SV_USE_QT_GUI)
   set(f svConfigure.h)
   configure_file(
     ${SV_SOURCE_DIR}/Source/Include/${f}.in
-    ${SV_SOURCE_DIR}/Source/Include/${f}
+    ${SV_BINARY_DIR}/Source/Include/${f}
     )
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtAppBase")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
+
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Common")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Path")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Segmentation")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Model")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Mesh")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Simulation")
   set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/ProjectManagement")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/mitk.image")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/mitk.segmentation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.general")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.pathplanning")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.segmentation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.modeling")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/sv.test")
+  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
+  if(NOT SV_USE_MITK_CONFIG)
+    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.projectdatanodes")
+    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.projectmanager")
+    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.pathplanning")
+    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.segmentation")
+    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.modeling")
+    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.meshing")
+  endif()
   foreach(dir ${SV_QT_GUI_LIBRARY_DIRS})
     include_directories(${dir})
   endforeach()
+
   set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
-  include(SimVascularInstallQT)
+
 endif()
 
 #-----------------------------------------------------------------------------
@@ -1024,12 +1034,46 @@ if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 		include_directories("${dir}")
 		add_subdirectory("${dir}")
 	endforeach()
-	message(STATUS "Executables")
-	foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
-		message(STATUS "	${dir}")
-		add_subdirectory("${dir}")
-	endforeach()
 endif()
+#----------------------------------------------------------------------------
+# Setup Plugins for provisioning file, must after add_subdirectory for Modules
+if(SV_USE_MITK_CONFIG)
+  if(SV_USE_QT_GUI)
+    macro(GetMyTargetLibraries all_target_libraries varname)
+      set(re_ctkplugin "^org_sv_[a-zA-Z0-9_]+$")
+      set(_tmp_list)
+      list(APPEND _tmp_list ${all_target_libraries})
+      ctkMacroListFilter(_tmp_list re_ctkplugin OUTPUT_VARIABLE ${varname})
+    endmacro()
+
+    set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/UI^^${PROJECT_NAME}_Apps/simvascular")
+    message(STATUS "sv app full path: ${sv_app_fullpath}")
+
+    include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
+    set(sv_plugins_fullpath "")
+    foreach(sv_plugin ${SV_PLUGINS})
+      list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
+    endforeach()
+
+    message(STATUS "sv_plugins_fullpath: ${sv_plugins_fullpath}")
+
+    ctkMacroSetupPlugins(${sv_plugins_fullpath}
+                       APPS ${sv_app_fullpath}
+                       BUILD_OPTION_PREFIX ${PROJECT_NAME}_
+                       BUILD_ALL ${${PROJECT_NAME}_BUILD_ALL_PLUGINS}
+                       COMPACT_OPTIONS)
+
+  endif()
+endif()
+
+if(NOT SV_ONLY_BUILD_FLOWSOLVER)
+        message(STATUS "Executables")
+        foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
+                message(STATUS "	${dir}")
+                add_subdirectory("${dir}")
+        endforeach()
+endif()
+
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
 include(SimVascularInstallLibs)

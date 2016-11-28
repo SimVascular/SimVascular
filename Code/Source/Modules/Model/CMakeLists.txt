@@ -1,55 +1,39 @@
+set(lib svModel)
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#svFunctionCreateModule( ${lib}
+#    FORCE_SHARED
+#    DEPENDS PUBLIC svSegmentation
+#    ADDITIONAL_LIBS
+#        ${SV_LIB_SOLID_NAME}
+#        ${SV_LIB_POLYDATA_SOLID_NAME}
+#        ${SV_LIB_THIRDPARTY_VMTK_NAME}
+#)
 
-set(lib ${SV_LIB_QTGUI_MODULE_MODEL_NAME})
-
-set(HDRS
-    svModelElement.h
-    svModelOperation.h
-    svModel.h
-    svModelUtils.h
-    svModelIO.h
-    svModelLegacyIO.h
-    svModelObjectFactory.h
-    svSurface.h
-)
-
-set(CXXSRCS
-    svModelElement.cxx
-    svModelOperation.cxx
-    svModel.cxx
-    svModelUtils.cxx
-    svModelIO.cxx
-    svModelLegacyIO.cxx
-    svModelObjectFactory.cxx
-    svSurface.cxx
-)
-
-set(RESOURCE_FILES
-)
-
-usFunctionGenerateModuleInit(CXXSRCS)
+#---------------------------------TRYING OLD----------------------------------
+include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
+usFunctionGenerateModuleInit(CPP_FILES)
 
 if(RESOURCE_FILES)
-    usFunctionGetResourceSource(TARGET ${lib} OUT CXXSRCS)
+  usFunctionGetResourceSource(TARGET ${lib} OUT CPP_FILES)
 endif()
 
 if(SV_USE_MODULES_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${HDRS} ${CXXSRCS})
+  add_library(${lib} SHARED ${H_FILES} ${CPP_FILES})
 else()
-  add_library(${lib} STATIC ${HDRS} ${CXXSRCS})
+  add_library(${lib} STATIC ${H_FILES} ${CPP_FILES})
 endif()
 
-set(module_name "svModel")
-
+set(module_name svModel)
 set_property(TARGET ${lib} PROPERTY US_MODULE_NAME ${module_name})
 set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${module_name})
 
-target_link_libraries(${lib} ${SV_LIB_SOLID_NAME} ${SV_LIB_POLYDATA_SOLID_NAME} ${SV_LIB_QTGUI_MODULE_SEGMENTATION_NAME})
+target_link_libraries(${lib} svSegmentation
+                             ${SV_LIB_SOLID_NAME}
+                             ${SV_LIB_POLYDATA_SOLID_NAME}
+                             ${SV_LIB_THIRDPARTY_VMTK_NAME})
 
 if(RESOURCE_FILES)
-    set(res_dir resources)
+    set(res_dir resource)
     usFunctionAddResources(TARGET ${lib}
                            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${res_dir}
                            FILES ${RESOURCE_FILES})
@@ -71,16 +55,26 @@ generate_export_header(${lib}
 )
 
 target_include_directories(${lib} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+#---------------------------------TRYING OLD----------------------------------
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
-		)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+    )
 endif()
+
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+    set(MODULE_FILES_CMAKE files.cmake)
+    if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
+        set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+    endif()
+    if (EXISTS ${MODULE_FILES_CMAKE})
+        include(${MODULE_FILES_CMAKE})
+    endif()
+    install(FILES ${H_FILES}
+            DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
 endif()
+

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="Remove.png">Remove_48.png</file>
+        <file alias="SaveAll.png">SaveAll_48.png</file>
+    </qresource>
+</RCC>

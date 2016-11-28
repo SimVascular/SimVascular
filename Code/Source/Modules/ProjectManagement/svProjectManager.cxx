@@ -73,7 +73,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
     QString pathFolderName="Paths";
     QString segFolderName="Segmentations";
     QString modelFolderName="Models";
-    QString meshFolerName="Meshes";
+    QString meshFolderName="Meshes";
     QString simFolderName="Simulations";
 
     QDir dir(projParentDir);
@@ -94,7 +94,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         dir.mkdir(pathFolderName);
         dir.mkdir(segFolderName);
         dir.mkdir(modelFolderName);
-        dir.mkdir(meshFolerName);
+        dir.mkdir(meshFolderName);
         dir.mkdir(simFolderName);
     }else{
 
@@ -123,7 +123,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         pathFolderName=projDesc.firstChildElement("paths").attribute("folder_name");
         segFolderName=projDesc.firstChildElement("segmentations").attribute("folder_name");
         modelFolderName=projDesc.firstChildElement("models").attribute("folder_name");
-        meshFolerName=projDesc.firstChildElement("meshes").attribute("folder_name");
+        meshFolderName=projDesc.firstChildElement("meshes").attribute("folder_name");
         simFolderName=projDesc.firstChildElement("simulations").attribute("folder_name");
 
     }
@@ -135,17 +135,25 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
     mitk::DataNode::Pointer pathFolderNode=CreateDataFolder<svPathFolder>(dataStorage, pathFolderName, projectFolderNode);
     mitk::DataNode::Pointer segFolderNode=CreateDataFolder<svSegmentationFolder>(dataStorage,segFolderName, projectFolderNode);
     mitk::DataNode::Pointer modelFolderNode=CreateDataFolder<svModelFolder>(dataStorage, modelFolderName, projectFolderNode);
-    mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<svMeshFolder>(dataStorage, meshFolerName, projectFolderNode);
+    mitk::DataNode::Pointer meshFolderNode=CreateDataFolder<svMeshFolder>(dataStorage, meshFolderName, projectFolderNode);
     mitk::DataNode::Pointer simFolderNode=CreateDataFolder<svSimulationFolder>(dataStorage, simFolderName, projectFolderNode);
+
+    imageFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    pathFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    segFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    modelFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    meshFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
+    simFolderNode->AddProperty("previous visibility",mitk::BoolProperty::New(false) );
 
     if(!newProject)
     {
+        imageFolderNode->SetVisibility(false);
         for(int i=0;i<imageFilePathList.size();i++)
         {
             mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePathList[i].toStdString());
+            imageNode->SetVisibility(false);
             dataStorage->Add(imageNode,imageFolderNode);
         }
-
 
         pathFolderNode->SetVisibility(false);
         QDir dir1(projPath);
@@ -180,6 +188,27 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             dataStorage->Add(modelNode,modelFolderNode);
         }
 
+        meshFolderNode->SetVisibility(false);
+        QDir dirMesh(projPath);
+        dirMesh.cd(meshFolderName);
+        fileInfoList=dirMesh.entryInfoList(QStringList("*.msh"), QDir::Files, QDir::Name);
+        for(int i=0;i<fileInfoList.size();i++)
+        {
+            mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            meshNode->SetVisibility(false);
+            dataStorage->Add(meshNode,meshFolderNode);
+        }
+
+        simFolderNode->SetVisibility(false);
+        QDir dirSim(projPath);
+        dirSim.cd(simFolderName);
+        fileInfoList=dirSim.entryInfoList(QStringList("*.sjb"), QDir::Files, QDir::Name);
+        for(int i=0;i<fileInfoList.size();i++)
+        {
+            mitk::DataNode::Pointer jobNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
+            jobNode->SetVisibility(false);
+            dataStorage->Add(jobNode,simFolderNode);
+        }
     }
 
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
@@ -339,6 +368,40 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".mdl");
+        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+    }
+
+    //save mesh
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+
+    mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+    std::string meshFolderName=meshFolderNode->GetName();
+
+    rs=dataStorage->GetDerivations(meshFolderNode,mitk::NodePredicateDataType::New("svMitkMesh"));
+
+    QDir dirMesh(QString::fromStdString(projPath));
+    dirMesh.cd(QString::fromStdString(meshFolderName));
+
+    for(int i=0;i<rs->size();i++)
+    {
+        QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".msh");
+        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+    }
+
+    //sava simjobs
+    rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+
+    mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+    std::string simFolderName=simFolderNode->GetName();
+
+    rs=dataStorage->GetDerivations(simFolderNode,mitk::NodePredicateDataType::New("svMitkSimJob"));
+
+    QDir dirSim(QString::fromStdString(projPath));
+    dirSim.cd(QString::fromStdString(simFolderName));
+
+    for(int i=0;i<rs->size();i++)
+    {
+        QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".sjb");
         mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
     }
 }

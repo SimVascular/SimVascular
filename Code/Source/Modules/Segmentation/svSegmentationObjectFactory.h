@@ -5,6 +5,8 @@
 
 #include <svSegmentationExports.h>
 
+#include "svContourGroupIO.h"
+
 #include "mitkCoreObjectFactoryBase.h"
 
 class SVSEGMENTATION_EXPORT svSegmentationObjectFactory : public mitk::CoreObjectFactoryBase
@@ -30,6 +32,15 @@ protected:
 
 private:
 
+};
+
+struct SVSEGMENTATION_EXPORT RegistersvSegmentationObjectFactory{
+  RegistersvSegmentationObjectFactory();
+
+  virtual ~RegistersvSegmentationObjectFactory();
+
+  svSegmentationObjectFactory::Pointer m_Factory;
+  svContourGroupIO* m_ContourGroupIO;
 };
 
 #endif // SVSEGMENTATIONOBJECTFACTORY_H

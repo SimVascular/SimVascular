@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.segmentation2d"
+          name="Edit Contour Group"
+          class="svSegmentation2D"
+          icon="resources/contourgroup.png" />
+  </extension>
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Create Contour Group" icon="" class="svContourGroupCreateAction" />
+      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Load Legacy Segmentations" icon="" class="svSegmentationLegacyLoadAction" />
+      <contextMenuAction nodeDescriptorName="svSegmentationFolder" label="Save Legacy Segmentations" icon="" class="svSegmentationLegacySaveAction" />
+  </extension>
+
+</plugin>

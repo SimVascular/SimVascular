@@ -1,0 +1,51 @@
+<statemachine NAME="svModelInteractor">
+  <state name="Start" startstate="true" >
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove" target="Start" >
+      <action name="get_position" />
+    </transition>
+
+    <transition event_class="MouseMoveEvent" event_variant="MouseMove_Shift" target="Start" >
+      <action name="get_position" />
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_S" target="start">
+      <action name="select_single_face"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_S_Shift" target="start">
+      <action name="select_faces"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_D" target="start">
+      <action name="deselect_face"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_C" target="start">
+      <action name="select_single_cell"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_C_Shift" target="start">
+      <action name="select_cells"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_B" target="start">
+      <action name="select_surrounding_cells"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_E" target="start">
+      <action name="deselect_cell"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="KeyPressed_E_Shift" target="start">
+      <action name="deselect_surrounding_cells"/>
+    </transition>
+
+    <transition event_class="InteractionKeyEvent" event_variant="StdDelete" target="Start" >
+      <action name="delete_selected_faces_cells" />
+    </transition>
+
+  </state>
+</statemachine>
+
+

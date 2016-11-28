@@ -1,0 +1,63 @@
+<config>
+  <event_variant name="MouseMove" class="MouseMoveEvent" >
+  </event_variant>
+
+  <event_variant name="MouseMove_Shift" class="MouseMoveEvent" >
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant name="PrimaryButtonPressed" class="MousePressEvent">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+  </event_variant>
+
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Alt">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="alt"/>
+  </event_variant>
+
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Shift">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant class="MousePressEvent" name="PrimaryButtonPressed_Ctrl">
+    <attribute name="EventButton" value="LeftMouseButton"/>
+    <attribute name="Modifiers" value="ctrl"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S">
+    <attribute name="Key" value="S"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_S_Shift">
+    <attribute name="Key" value="S"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_D">
+    <attribute name="Key" value="D"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_C">
+    <attribute name="Key" value="C"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_C_Shift">
+    <attribute name="Key" value="C"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_B">
+    <attribute name="Key" value="B"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E">
+    <attribute name="Key" value="E"/>
+  </event_variant>
+
+  <event_variant class="InteractionKeyEvent" name="KeyPressed_E_Shift">
+    <attribute name="Key" value="E"/>
+    <attribute name="Modifiers" value="shift"/>
+  </event_variant>
+
+</config>

@@ -52,11 +52,12 @@ set(${proj}_LIBNAMES CppMicroServices
                      CTKPluginFramework
                      CTKScriptingPythonCore
                      CTKScriptingPythonWidgets
-                     CTKVisualizationVTKCore
+                     #CTKVisualizationVTKCore
                      CTKWidgets
                      CTKXNATCore
                      mbilog
                      MitkAlgorithmsExt
+                     MitkAppUtil
                      MitkCore
                      MitkContourModel
                      MitkDataTypesExt
@@ -69,7 +70,15 @@ set(${proj}_LIBNAMES CppMicroServices
                      MitkSegmentationUI
                      MitkSurfaceInterpolation
                      PythonQt
-                     tinyxml)
+                     tinyxml
+                     mbilog
+                     org_mitk_core_services
+                     org_mitk_gui_common
+                     org_mitk_gui_qt_common
+                     org_mitk_gui_qt_common_legacy
+                     org_mitk_gui_qt_datamanager
+                     org_blueberry_ui_qt
+                     org_blueberry_core_runtime)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
@@ -79,10 +88,11 @@ set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
 set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "signature_of_eigen3_matrix_library"             #eigen3
                     "mitkVersion.h"                                  #mitk
-                    "usGlobalConfig.h"                             #mitk/configs
+                    "usGlobalConfig.h"                               #mitk/configs
                     "MitkAlgorithmsExtExports.h"                     #mitk/exports
                     "ui_QmitkAboutDialogGUI.h"                       #mitk/ui_files
                     "itkIntelligentBinaryClosingFilter.h"            #mitk/AlgorithmsExt/include
+                    "mitkBaseApplication.h"                          #mitk/AppUtil/include
                     "itkImportMitkImageContainer.h"                  #mitk/Core/include
                     "usAny.h"                                        #mitk/CppMicroServices/core/include
                     "mitkAffineBaseDataInteractor3D.h"               #mitk/DataTypesExt/include
@@ -111,6 +121,7 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets   
                     "PythonQt.h"                                     #PythonQt
                     "tinyxml.h"                                      #tinyxml
+                    "mitkIContextMenuAction.h"                       #mitk/plugins
                     )
 
 #-----------------------------------------------------------------------------
@@ -122,7 +133,8 @@ set(lib_sub_path "lib")
 set(${proj}_POSSIBLE_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
 	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS} 
-		"${p}/${lib_sub_path}")
+		"${p}/${lib_sub_path}"
+		"${p}/${lib_sub_path}/plugins")
 endforeach()
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
@@ -158,6 +170,7 @@ list(LENGTH ${proj}_LIBNAMES ${proj}_NUMLIBS_EXPECTED)
 #message("${${proj}_NUMLIBS} ${${proj}_NUMLIBS_EXPECTED}")
 if (NOT ${proj}_NUMLIBS EQUAL ${proj}_NUMLIBS_EXPECTED)
 	set(${proj}_LIBRARIES_WORK "${proj}_LIBRARIES-NOTFOUND")
+        message(FATAL_ERROR "${proj}_LIBS_MISSING: ${${proj}_LIBS_MISSING}")
 endif()
 
 set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING 
@@ -192,6 +205,7 @@ set(possible_sub_paths ctk
                        mitk/exports
                        mitk/ui_files
                        mitk/AlgorithmsExt/include
+                       mitk/AppUtil/include
                        mitk/Core/include
                        mitk/CppMicroServices/core/include
                        mitk/DataTypesExt/include
@@ -219,7 +233,8 @@ set(possible_sub_paths ctk
                        mitk/Modules/SurfaceInterpolation
                        mitk/Modules/QtWidgets
                        PythonQt
-                       tinyxml)
+                       tinyxml
+                       mitk/plugins)
 
 foreach(sub_path ${possible_sub_paths})
   set(${proj}_POSSIBLE_INCLUDE_PATHS "${${proj}_POSSIBLE_INCLUDE_PATHS}" "${${proj}_DIR}/${inc_sub_path}/${sub_path}")

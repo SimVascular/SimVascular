@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.pathedit"
+          name="Edit Path"
+          class="svPathEdit"
+          icon="resources/pathedit.png" />
+  </extension>
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+      <contextMenuAction nodeDescriptorName="svPathFolder" label="Create Path" icon=":/pathcreate.png" class="svPathCreateAction" />
+      <contextMenuAction nodeDescriptorName="svPathFolder" label="Load Legacy Paths" icon="" class="svPathLegacyLoadAction" />
+      <contextMenuAction nodeDescriptorName="svPathFolder" label="Save Legacy Paths" icon="" class="svPathLegacySaveAction" />
+  </extension>
+
+</plugin>

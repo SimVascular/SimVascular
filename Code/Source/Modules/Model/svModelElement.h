@@ -3,8 +3,10 @@
 
 #include <svModelExports.h>
 
-#include "vtkPolyData.h"
-//#include "vtkSmartPointer.h"
+#include <mitkDataNode.h>
+
+#include <vtkPolyData.h>
+#include <vtkSmartPointer.h>
 
 class SVMODEL_EXPORT svModelElement
 {
@@ -15,7 +17,58 @@ public:
     {
         int id;
         std::string name;
-        vtkPolyData* vpd;
+        std::string type;//wall, cap, inlet, or empty if unknown
+
+        vtkSmartPointer<vtkPolyData> vpd;
+
+        bool selected;
+
+        bool visible;
+        float opacity;
+        float color[3];
+
+        svFace()
+            : id(0)
+            , name("")
+            , type("")
+            , vpd(NULL)
+            , selected(false)
+            , visible(true)
+            , opacity(1.0f)
+        {
+            color[0]=1.0f;
+            color[1]=1.0f;
+            color[2]=1.0f;
+        }
+
+    };
+
+    struct svBlendParamRadius
+    {
+        int faceID1;
+        int faceID2;
+        double radius;
+
+        svBlendParamRadius()
+            : faceID1(0)
+            , faceID2(0)
+            , radius(0.0)
+        {
+        }
+
+        svBlendParamRadius(int id1, int id2, double r)
+            : faceID1(id1)
+            , faceID2(id2)
+            , radius(r)
+        {
+        }
+
+        svBlendParamRadius(const svBlendParamRadius &other)
+            : faceID1(other.faceID1)
+            , faceID2(other.faceID2)
+            , radius(other.radius)
+        {
+        }
     };
 
     svModelElement();
@@ -40,30 +93,69 @@ public:
 
     void SetFaces(std::vector<svFace*> faces);
 
+    svFace* GetFace(int id) const;
+
+    svFace* GetFace(std::string name) const;
+
     int GetFaceIndex(int id) const;
+
+    int GetFaceID(std::string name) const;
+
+    int GetMaxFaceID() const;
+
+    int GetFaceNumber() const;
 
     std::string GetFaceName(int id) const;
 
-    void SetFaceName(std::string name, int id);
+    virtual void SetFaceName(std::string name, int id);
 
+    vtkSmartPointer<vtkPolyData> GetWholeVtkPolyData() const;
 
+    void SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd);
 
-//    std::vector<std::string> GetFaceNames();
+    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {}
 
-//    void SetFaceNames(std::vector<std::string> faceNames);
+//    int GetSelectedFaceIndex();
 
-//    std::string GetFaceName(int id);
+    void SelectFaceByIndex(int idx, bool select = true);
 
-//    void SetFaceName(std::string faceName, int id);
+    void ClearFaceSelection();
 
-//    std::vector<vtkPolyData*> GetVtkPolyDataFaces();
+    void SelectFace(int id);
+    void SelectFace(std::string name);
+    bool IsFaceSelected(std::string name);
+    bool IsFaceSelected(int id);
 
-//    void SetVtkPolyDataFaces(std::vector<vtkPolyData*> vpdFaces);
+    std::vector<int> GetAllFaceIDs();
 
-    vtkPolyData* GetVtkPolyDataModel() const;
+    std::vector<int> GetSelectedFaceIDs();
 
-    void SetVtkPolyDataModel(vtkPolyData* vpdModel);
+    std::vector<int> GetWallFaceIDs();
 
+    std::vector<int> GetCapFaceIDs();
+
+    std::vector<int> GetInletFaceIDs();
+
+    std::vector<int> GetOutletFaceIDs();
+
+    double GetFaceArea(int id);
+
+    double GetMinFaceArea();
+
+    std::vector<svBlendParamRadius*> GetBlendRadii();
+
+    void SetBlendRadii(std::vector<svBlendParamRadius*> blendRadii);
+
+    svBlendParamRadius* GetBlendParamRadius(int faceID1, int faceID2);
+
+    void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii);
+
+    void RemoveFace(int faceID);
+    void RemoveFaceFromBlendParamRadii(int faceID);
+
+    void ReplaceFaceIDForBlendParamRadii(int targetID, int loseID);
+
+    void CalculateBoundingBox(double *bounds);
 
   protected:
 
@@ -71,13 +163,11 @@ public:
 
     std::vector<std::string> m_SegNames;
 
-//    std::vector<std::string> m_FaceNames;
-
-//    std::vector<vtkPolyData*> m_VtkPolyDataFaces;
-
     std::vector<svFace*> m_Faces;
 
-    vtkPolyData* m_VtkPolyDataModel;
+    vtkSmartPointer<vtkPolyData> m_WholeVtkPolyData;
+
+    std::vector<svBlendParamRadius*> m_BlendRadii;
 
   };
 

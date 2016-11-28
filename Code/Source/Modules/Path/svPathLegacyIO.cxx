@@ -18,13 +18,16 @@ std::vector<mitk::DataNode::Pointer> svPathLegacyIO::ReadFile(QString filePath)
     QHash<int,QString> IDNames;
     QHash<int,int> IDSplineNum;
 
+    QHash<int,std::vector<svPathElement::svPathPoint>> dataHash;
+
     QFile inputFile(filePath);
     if (inputFile.open(QIODevice::ReadOnly))
     {
         QTextStream in(&inputFile);
         while (!in.atEnd())
         {
-            QString line = in.readLine().toLower();
+//            QString line = in.readLine().toLower();
+            QString line = in.readLine();
 
             if(line.contains("set",Qt::CaseInsensitive) && line.contains("gPathPoints",Qt::CaseInsensitive) && line.contains("name",Qt::CaseInsensitive))
             {
@@ -61,6 +64,39 @@ std::vector<mitk::DataNode::Pointer> svPathLegacyIO::ReadFile(QString filePath)
 
             }
 
+            if(line.contains("set",Qt::CaseInsensitive) && line.contains("gPathPoints",Qt::CaseInsensitive) && line.contains("splinePts",Qt::CaseInsensitive)
+                    && line.contains("list",Qt::CaseInsensitive) )
+            {
+                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                int id=list[2].toInt();
+
+                std::vector<svPathElement::svPathPoint> pathPoints;
+
+                line = in.readLine();
+                int posID=-1;
+                while (!line.contains("]"))
+                {
+                    posID++;
+                    QStringList listx = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    svPathElement::svPathPoint pathPoint;
+                    pathPoint.id=posID;
+                    pathPoint.pos[0]=listx[1].toDouble();
+                    pathPoint.pos[1]=listx[2].toDouble();
+                    pathPoint.pos[2]=listx[3].toDouble();
+                    pathPoint.tangent[0]=listx[5].toDouble();
+                    pathPoint.tangent[1]=listx[6].toDouble();
+                    pathPoint.tangent[2]=listx[7].toDouble();
+                    pathPoint.rotation[0]=listx[9].toDouble();
+                    pathPoint.rotation[1]=listx[10].toDouble();
+                    pathPoint.rotation[2]=listx[11].toDouble();
+                    pathPoints.push_back(pathPoint);
+
+                    line = in.readLine();
+                }
+
+                dataHash[id]=pathPoints;
+            }
+
         }
         inputFile.close();
 
@@ -80,7 +116,8 @@ std::vector<mitk::DataNode::Pointer> svPathLegacyIO::ReadFile(QString filePath)
             {
                 controlPoints.push_back(dataList[i][j]);
             }
-            pe->SetControlPoints(controlPoints);
+            pe->SetControlPoints(controlPoints,false);
+            pe->SetPathPoints(dataHash[IDList[i]]);
 
             path->SetPathElement(pe);
 

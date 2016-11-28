@@ -1,39 +1,24 @@
+set(lib svProjectManagement)
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+#svFunctionCreateModule( ${lib}
+#    FORCE_SHARED
+#    DEPENDS PUBLIC MitkCore svPath svSegmentation svModel
+#    PACKAGE_DEPENDS PUBLIC Qt5|Core+Xml
+#)
 
-set(lib ${SV_LIB_QTGUI_MODULE_PROJECTMANAGEMENT_NAME})
-
-set(HDRS
-    svDataFolder.h
-    svImageFolder.h
-    svPathFolder.h
-    svSegmentationFolder.h
-    svModelFolder.h
-    svMeshFolder.h
-    svSimulationFolder.h
-    svProjectManager.h
-)
-
-set(CXXSRCS
-    svDataFolder.cxx
-    svProjectManager.cxx
-)
-
-set(RESOURCE_FILES
-)
-
+#---------------------------------TRYING OLD----------------------------------
+include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
 #find_package(CppMicroServices QUIET NO_MODULE REQUIRED)
-usFunctionGenerateModuleInit(CXXSRCS)
+usFunctionGenerateModuleInit(CPP_FILES)
 
 if(RESOURCE_FILES)
-    usFunctionGetResourceSource(TARGET ${lib} OUT CXXSRCS)
+  usFunctionGetResourceSource(TARGET ${lib} OUT CPP_FILES)
 endif()
 
 if(SV_USE_MODULES_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${HDRS} ${CXXSRCS} ${UISrcs} ${QRCSrcs})
+  add_library(${lib} SHARED ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs})
 else()
-  add_library(${lib} STATIC ${HDRS} ${CXXSRCS} ${UISrcs} ${QRCSrcs})
+  add_library(${lib} STATIC ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs})
 endif()
 
 set(module_name "svProjectManagement")
@@ -67,16 +52,26 @@ generate_export_header(${lib}
 )
 
 target_include_directories(${lib} PUBLIC ${CMAKE_CURRENT_BINARY_DIR})
+#---------------------------------TRYING OLD----------------------------------
 
 if(SV_INSTALL_LIBS)
-	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
-		)
+    install(TARGETS ${lib}
+        RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+        LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+        ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+    )
 endif()
+
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
-		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-		)
+    set(MODULE_FILES_CMAKE files.cmake)
+    if(NOT IS_ABSOLUTE ${MODULE_FILES_CMAKE})
+        set(MODULE_FILES_CMAKE ${CMAKE_CURRENT_SOURCE_DIR}/${MODULE_FILES_CMAKE})
+    endif()
+    if (EXISTS ${MODULE_FILES_CMAKE})
+        include(${MODULE_FILES_CMAKE})
+    endif()
+    install(FILES ${H_FILES}
+            DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
 endif()
+

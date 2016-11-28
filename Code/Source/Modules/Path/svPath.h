@@ -35,7 +35,6 @@ public:
 
     void SetPathElement(svPathElement* pathElement, unsigned int t = 0);
 
-
     void CalculateBoundingBox(double *bounds,unsigned int t = 0 );
 
     int GetPathID() const;

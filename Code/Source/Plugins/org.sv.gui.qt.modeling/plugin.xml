@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+
+  <extension point="org.blueberry.ui.views">
+    <view id="org.sv.views.modeledit"
+          name="Edit Model"
+          class="svModelEdit"
+          icon="resources/model.png" />
+  </extension>
+
+  <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
+      <contextMenuAction nodeDescriptorName="svModelFolder" label="Create Model" icon="" class="svModelCreateAction" />
+      <contextMenuAction nodeDescriptorName="svModelFolder" label="Load Legacy Model" icon="" class="svModelLegacyLoadAction" />
+      <contextMenuAction nodeDescriptorName="svModel" label="Extract Paths" icon="" class="svModelExtractPathsAction" />
+      <contextMenuAction nodeDescriptorName="svModel" label="Save Legacy Model" icon="" class="svModelLegacySaveAction" />
+  </extension>
+
+</plugin>
