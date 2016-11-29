@@ -637,3 +637,287 @@ configure_file("${SV_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_
   set(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
 endfunction()
+
+###########################################################################
+#
+#  Library:   CTK
+#
+#  Copyright (c) Kitware Inc.
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0.txt
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+#
+###########################################################################
+
+#!
+#! This macro could be invoked using two different signatures:
+#!   ctkFunctionGetTargetLibraries(TARGET_LIBS)
+#! or
+#!   ctkFunctionGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
+#!
+#! Without specifying the second argument, the current folder will be used.
+#!
+#! \ingroup CMakeUtilities
+function(svFunctionGetTargetLibraries varname)
+
+  set(expanded_target_library_list)
+
+  set(TARGET_DIRECTORY ${ARGV1})
+  set(_target_name )
+  if("${TARGET_DIRECTORY}" STREQUAL "")
+    set(TARGET_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+    set(_target_name ${PROJECT_NAME})
+  endif()
+
+  set(filepath ${TARGET_DIRECTORY}/target_libraries.cmake)
+  set(manifestpath ${TARGET_DIRECTORY}/manifest_headers.cmake)
+
+  # Check if "target_libraries.cmake" or "manifest_headers.cmake" file exists
+  if(NOT EXISTS ${filepath} AND NOT EXISTS ${manifestpath})
+    message(FATAL_ERROR "${filepath} or ${manifestpath} doesn't exists !")
+  endif()
+
+  # Make sure the variable is cleared
+  set(target_libraries )
+  set(Require-Plugin )
+
+  if(EXISTS ${filepath})
+    # Let's make sure target_libraries contains only strings
+    file(STRINGS "${filepath}" stringtocheck) # read content of 'filepath' into 'stringtocheck'
+    string(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    foreach(incorrect_element ${incorrect_elements})
+      string(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      message(FATAL_ERROR "In ${filepath}, ${incorrect_element} should be replaced by ${correct_element}")
+    endforeach()
+
+    include(${filepath})
+
+    if(_target_name)
+      list(APPEND target_libraries "${${_target_name}_OPTIONAL_DEPENDENCIES}")
+    endif()
+
+    # Loop over all target library, if it does *NOT* start with "CTK",
+    # let's resolve the variable to access its content
+    foreach(target_library ${target_libraries})
+      if(${target_library} MATCHES "^CTK[a-zA-Z0-9]+$" OR
+         ${target_library} MATCHES "^org_commontk_[a-zA-Z0-9_]+$")
+        list(APPEND expanded_target_library_list ${target_library})
+      else()
+        list(APPEND expanded_target_library_list "${${target_library}}")
+      endif()
+    endforeach()
+  endif()
+
+  if(EXISTS ${manifestpath})
+    # Let's make sure Require-Plugins contains only strings
+    file(STRINGS "${manifestpath}" stringtocheck) # read content of 'manifestpath' into 'stringtocheck'
+    string(REGEX MATCHALL "[^\\#]\\$\\{.*\\}" incorrect_elements ${stringtocheck})
+    foreach(incorrect_element ${incorrect_elements})
+      string(REGEX REPLACE "\\$|\\{|\\}" "" correct_element ${incorrect_element})
+      message(FATAL_ERROR "In ${manifestpath}, ${incorrect_element} should be replaced by ${correct_element}")
+    endforeach()
+
+    include(${manifestpath})
+
+    # Loop over all plugin dependencies,
+    foreach(plugin_symbolicname ${Require-Plugin})
+      string(REPLACE "." "_" plugin_library ${plugin_symbolicname})
+      list(APPEND expanded_target_library_list ${plugin_library})
+    endforeach()
+  endif()
+  
+  # Pass the list of target libraries to the caller
+  set(${varname} ${expanded_target_library_list} PARENT_SCOPE)
+
+endfunction()
+
+#
+# Depends on:
+#  CTK/CMake/ctkMacroParseArguments.cmake
+#
+
+#! \ingroup CMakeUtilities
+macro(svMacroGeneratePluginResourceFile QRC_SRCS)
+
+  svMacroParseArguments(MY
+    "NAME;PREFIX;RESOURCES;BINARY_RESOURCES"
+    ""
+    ${ARGN}
+    )
+
+  set(_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${MY_NAME}")
+
+  set(_qrc_content
+"<!DOCTYPE RCC><RCC version=\"1.0\">
+<qresource prefix=\"/${MY_PREFIX}\">
+")
+
+  if(MY_RESOURCES)
+    foreach(_resource_file ${MY_RESOURCES})
+      configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${_resource_file}" "${CMAKE_CURRENT_BINARY_DIR}/${_resource_file}" COPYONLY)
+      set(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
+")
+    endforeach()
+  endif()
+
+  if(MY_BINARY_RESOURCES)
+    foreach(_resource_file ${MY_BINARY_RESOURCES})
+      set(_qrc_content "${_qrc_content}<file>${_resource_file}</file>
+")
+    endforeach()
+  endif()
+
+  set(_qrc_content "${_qrc_content}</qresource>
+</RCC>
+")
+configure_file("${SV_SOURCE_DIR}/CMake/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
+
+  qt5_add_resources(${QRC_SRCS} ${_qrc_filepath})
+
+endmacro()
+
+function(SimVascularCreatePlugin)
+  # single value arguments
+  set(arg_single
+    EXPORT_DIRECTIVE # (required) TODO: could be generated via CMake as it is done for MITK modules already
+  )
+
+  # multiple value arguments
+  set(arg_multiple
+    MODULE_DEPENDS            # (optional)
+    PACKAGE_DEPENDS
+  )
+
+  cmake_parse_arguments(_PLUGIN "${arg_options}" "${arg_single}" "${arg_multiple}" ${ARGN})
+
+  # Print a warning if the project name does not match the directory name
+  get_filename_component(_dir_name ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+  string(REPLACE "." "_" _dir_name_with_ ${_dir_name})
+  if(NOT _dir_name_with_ STREQUAL ${PROJECT_NAME})
+    message(WARNING "Discouraged mismatch of plug-in project name [${PROJECT_NAME}] and top-level directory name [${CMAKE_CURRENT_SOURCE_DIR}].")
+  endif()
+  set(lib_name ${PROJECT_NAME})
+
+  include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
+  usFunctionGenerateModuleInit(CPP_FILES)
+
+  #------------------------------------QT-------------------------------------
+  qt5_wrap_ui(UISrcs ${UI_FILES})
+  qt5_add_resources(QRCSrcs ${QRC_FILES})
+  set(MOC_OPTIONS "-DBOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION -DBOOST_TT_HAS_OPERATOR_HPP_INCLUDED")
+  foreach(moc_src ${MOC_H_FILES})
+    qt5_wrap_cpp(MOCSrcs ${moc_src} OPTIONS -f${moc_src} ${MOC_OPTIONS} TARGET ${lib_name})
+  endforeach()
+  #------------------------------------QT-------------------------------------
+
+  #---------------------------------MANIFEST----------------------------------
+  # If a file named manifest_headers.cmake exists, read it
+  set(CTK_QT_VERSION 5.4)
+  set(manifest_headers_dep )
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake)
+    set(manifest_headers_dep "${CMAKE_CURRENT_SOURCE_DIR}/manifest_headers.cmake")
+  endif()
+
+  string(REPLACE "_" "." Plugin-SymbolicName ${lib_name})
+
+  # Add the generated manifest qrc file
+  set(manifest_qrc_src )
+  svFunctionGeneratePluginManifest(manifest_qrc_src
+    ACTIVATIONPOLICY ${Plugin-ActivationPolicy}
+    CATEGORY ${Plugin-Category}
+    CONTACT_ADDRESS ${Plugin-ContactAddress}
+    COPYRIGHT ${Plugin-Copyright}
+    DESCRIPTION ${Plugin-Description}
+    DOC_URL ${Plugin-DocURL}
+    ICON ${Plugin-Icon}
+    LICENSE ${Plugin-License}
+    NAME ${Plugin-Name}
+    REQUIRE_PLUGIN ${Require-Plugin}
+    SYMBOLIC_NAME ${Plugin-SymbolicName}
+    VENDOR ${Plugin-Vendor}
+    VERSION ${Plugin-Version}
+    CUSTOM_HEADERS ${Custom-Headers}
+    )
+
+  if(manifest_headers_dep)
+    set_property(SOURCE ${manifest_qrc_src} APPEND
+                   PROPERTY OBJECT_DEPENDS ${manifest_headers_dep})
+  endif()
+  list(APPEND QRCSrcs ${manifest_qrc_src})
+  #---------------------------------MANIFEST----------------------------------
+
+  #------------------------------PLUGIN RESOURCE------------------------------
+  svMacroGeneratePluginResourcefile(resource_qrc_src
+  NAME ${lib_name}_cached.qrc
+  PREFIX ${Plugin-SymbolicName}
+  RESOURCES ${CACHED_RESOURCE_FILES})
+  list(APPEND QRCSrcs ${resource_qrc_src})
+  #------------------------------PLUGIN RESOURCE------------------------------
+
+  #------------------------------CREATE PLUGIN--------------------------------
+  add_library(${lib_name} SHARED ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs} ${MOCSrcs})
+
+  set_property(TARGET ${lib_name} PROPERTY US_MODULE_NAME ${lib_name})
+  set_property(TARGET ${lib_name} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${lib_name})
+
+  target_link_libraries(${lib_name} PRIVATE ${MITK_LIBRARIES} ${CTK_LIBRARIES}${ITK_LIBRARIES})
+  #------------------------------CREATE PLUGIN--------------------------------
+
+  foreach(depender ${_PLUGIN_MODULE_DEPENDS})
+    if(NOT "${depender}" STREQUAL "MitkQtWidgets")
+      target_link_libraries(${lib_name} PRIVATE ${depender})
+    endif()
+  endforeach()
+
+  #---------------------------------MITK DEPENDS-----------------------------
+  #svFunctionGetTargetLibraries(MITK_MODULE_DEPENDS "")
+  #message(${MITK_MODULE_DEPENDS})
+  #target_link_libraries(${lib_name} PRIVATE ${MITK_MODULE_DEPENDS})
+  #---------------------------------MITK DEPENDS-----------------------------
+
+  #--------------------------------EXPORT HEADER-----------------------------
+  set_target_properties(${lib_name}
+      PROPERTIES
+      COMPILE_FLAGS "-DQT_PLUGIN"
+      LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins
+      RUNTIME_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/plugins
+  )
+
+  set(MODULE_EXPORT_DEFINE ${_PLUGIN_EXPORT_DIRECTIVE})
+
+  set(_export_macro_names
+    EXPORT_MACRO_NAME ${MODULE_EXPORT_DEFINE}
+    NO_EXPORT_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_NO_EXPORT
+    DEPRECATED_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_DEPRECATED
+    NO_DEPRECATED_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_NO_DEPRECATED
+  )
+  generate_export_header(${lib_name}
+    ${_export_macro_names}
+    EXPORT_FILE_NAME ${lib_name}_Export.h
+  )
+
+  target_include_directories(${lib_name} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  #--------------------------------EXPORT HEADER-----------------------------
+
+  if(MSVC)
+      foreach( OUTPUTCONFIG ${CMAKE_CONFIGURATION_TYPES} )
+          string( TOUPPER ${OUTPUTCONFIG} OUTPUTCONFIG )
+          set_target_properties(${lib_name}
+              PROPERTIES
+              LIBRARY_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins
+              RUNTIME_OUTPUT_DIRECTORY_${OUTPUTCONFIG} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins
+          )
+      endforeach( OUTPUTCONFIG CMAKE_CONFIGURATION_TYPES )
+  endif()
+
+endfunction()

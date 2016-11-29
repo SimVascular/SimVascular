@@ -199,20 +199,19 @@ target_link_libraries(${SV_EXE} PRIVATE
                         ${SV_LIB_GEOM_NAME} ${SV_LIB_UTILS_NAME}
 			${SV_LIB_GLOBALS_NAME} ${SV_LIB_POLYDATA_SOLID_NAME})
 
-                      target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${OpenCASCADE_LIBRARIES}
-			${ZLIB_LIBRARY} ${ITK_LIBRARIES}
-			${INTELRUNTIME_LIBRARIES}
-			${GLOBAL_LIBRARIES}
-			${MMG_LIBRARY}
-			${FREETYPE_LIBRARY}
-                        ${PYTHON_LIBRARY}
-                        ${MITK_LIBRARIES}
-                        ${CTK_LIBRARIES}
-                        ${QT_LIBRARIES})
-                      message("${MITK_LIBRARIES}")
+target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
+  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
+  ${OpenCASCADE_LIBRARIES}
+  ${ZLIB_LIBRARY} ${ITK_LIBRARIES}
+  ${INTELRUNTIME_LIBRARIES}
+  ${GLOBAL_LIBRARIES}
+  ${MMG_LIBRARY}
+  ${FREETYPE_LIBRARY}
+  ${PYTHON_LIBRARY}
+  ${MITK_LIBRARIES}
+  ${CTK_LIBRARIES}
+  ${QT_LIBRARIES})
 
 if(WIN32)
   target_link_libraries(${SV_EXE} PRIVATE ${QT_QTMAIN_LIBRARY})

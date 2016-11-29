@@ -134,7 +134,7 @@ set(${proj}_POSSIBLE_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
 	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS} 
 		"${p}/${lib_sub_path}"
-		"${p}/${lib_sub_path}/plugins")
+                "${p}/${lib_sub_path}/plugins")
 endforeach()
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})

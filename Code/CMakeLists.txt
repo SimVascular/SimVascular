@@ -91,11 +91,6 @@ include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
 
 #-----------------------------------------------------------------------------
-# TEMPORARY FUNCTION WITH CTK AND MITK FUNCTIONS/MACROS
-#-----------------------------------------------------------------------------
-include(FeatureSummary)
-
-#-----------------------------------------------------------------------------
 # Setting up default directories for SimVascular Externals
 # Note: *These can be changes by the user if they have moved the sv_extern directories*
 # This is part of he legacy build system
