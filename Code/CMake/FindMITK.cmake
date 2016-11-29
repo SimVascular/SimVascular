@@ -72,6 +72,7 @@ set(${proj}_LIBNAMES CppMicroServices
                      PythonQt
                      tinyxml
                      mbilog
+                     PocoUtil
                      org_mitk_core_services
                      org_mitk_gui_common
                      org_mitk_gui_qt_common
