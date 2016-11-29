@@ -8,6 +8,12 @@
 #include "svMeshFolder.h"
 #include "svSimulationFolder.h"
 
+#include "svPath.h"
+#include "svContourGroup.h"
+#include "svModel.h"
+#include "svMitkMesh.h"
+#include "svMitkSimJob.h"
+
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>
 #include <mitkRenderingManager.h>
@@ -314,7 +320,6 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
 }
 
-
 void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode)
 {
     std::string projPath;
@@ -333,8 +338,15 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     for(int i=0;i<rs->size();i++)
     {
-        QString	filePath=dir.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".pth");
-        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+        svPath *path=dynamic_cast<svPath*>(node->GetData());
+        if(path==NULL || !path->IsDataModified())
+            continue;
+
+        QString	filePath=dir.absoluteFilePath(QString::fromStdString(node->GetName())+".pth");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        path->SetDataModified(false);
     }
 
     //save contour groups
@@ -350,8 +362,15 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     for(int i=0;i<rs->size();i++)
     {
-        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".ctgr");
-        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+        svContourGroup *contourGroup=dynamic_cast<svContourGroup*>(node->GetData());
+        if(contourGroup==NULL || !contourGroup->IsDataModified())
+            continue;
+
+        QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        contourGroup->SetDataModified(false);
     }
 
     //save models
@@ -367,8 +386,15 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     for(int i=0;i<rs->size();i++)
     {
-        QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".mdl");
-        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+        svModel *model=dynamic_cast<svModel*>(node->GetData());
+        if(model==NULL || !model->IsDataModified())
+            continue;
+
+        QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(node->GetName())+".mdl");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        model->SetDataModified(false);
     }
 
     //save mesh
@@ -384,8 +410,15 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     for(int i=0;i<rs->size();i++)
     {
-        QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".msh");
-        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+        svMitkMesh *mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
+        if(mitkMesh==NULL || !mitkMesh->IsDataModified())
+            continue;
+
+        QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(node->GetName())+".msh");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        mitkMesh->SetDataModified(false);
     }
 
     //sava simjobs
@@ -401,8 +434,15 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     for(int i=0;i<rs->size();i++)
     {
-        QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(rs->GetElement(i)->GetName())+".sjb");
-        mitk::IOUtil::Save(rs->GetElement(i)->GetData(),filePath.toStdString());
+        mitk::DataNode::Pointer node=rs->GetElement(i);
+        svMitkSimJob *mitkJob=dynamic_cast<svMitkSimJob*>(node->GetData());
+        if(mitkJob==NULL || !mitkJob->IsDataModified())
+            continue;
+
+        QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(node->GetName())+".sjb");
+        mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
+
+        mitkJob->SetDataModified(false);
     }
 }
 

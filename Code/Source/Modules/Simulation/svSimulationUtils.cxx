@@ -178,7 +178,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
         ss << "append_displacements " << outputDir <<"/restart.0.1" << "\n";
     }
 
-    ss << "write_numstart " << outputDir <<"/numstart.dat" << "\n";
+//    ss << "write_numstart " << outputDir <<"/numstart.dat" << "\n";
 
     return ss.str();
 }
@@ -199,7 +199,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
             auto props=it->second;
             if(props["BC Type"]=="RCR")
             {
-                auto values=sv::split(props["Values"]);
+	      auto values=svStringUtils_split(props["Values"],' ');
                 if(values.size()==3)
                 {
                     ss << "2\n";
@@ -244,10 +244,10 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     {
         ss << "Number of Force Surfaces: 1\n";
         ss << "Surface ID's for Force Calculation: 1\n";
-        ss << "Force Calculation Method: " << solverProps["Surface Stress Calculation Method"] <<"\n";
+        ss << "Force Calculation Method: " << solverProps["Force Calculation Method"] <<"\n";
     }
-    ss << "Print Average Solution: " << solverProps["Output Average Solution"] <<"\n";
-    ss << "Print Error Indicators: " << solverProps["Output Error Indicators"] <<"\n";
+    ss << "Print Average Solution: " << solverProps["Print Average Solution"] <<"\n";
+    ss << "Print Error Indicators: " << solverProps["Print Error Indicators"] <<"\n";
     ss << "\n";
 
     //BCT Prescribed Velocities
@@ -272,15 +272,9 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     }
     ss << "\n";
 
-    //BC: coupling
-    //==================================================
-    auto capProps=job->GetCapProps();
-    ss << "Pressure Coupling: " << solverProps["Pressure Coupling"] <<"\n";
-    ss << "Number of Coupled Surfaces: " << job->GetPressureCapNumber() <<"\n";
-    ss << "\n";
-
     //BC: Resistance
     //===================================================
+    auto capProps=job->GetCapProps();
     std::vector<int> RIDs;
     std::vector<std::string> RValues;
     auto it = capProps.begin();
@@ -402,12 +396,6 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     //===================================================
     //to do
 
-
-    //BC: Backflow Control
-    //===================================================
-    ss << "Backflow Stabilization Coefficient: " << solverProps["Backflow Stabilization Coefficient"] <<"\n";
-
-
     //Deformable
     //==================================================
     auto wallProps=job->GetWallProps();
@@ -431,6 +419,18 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
 
     //Advanced
     //======================================================
+
+    //BC: coupling
+    //==================================================
+    ss << "Pressure Coupling: " << solverProps["Pressure Coupling"] <<"\n";
+    ss << "Number of Coupled Surfaces: " << job->GetPressureCapNumber() <<"\n";
+    ss << "\n";
+
+    //BC: Backflow Control
+    //===================================================
+    ss << "Backflow Stabilization Coefficient: " << solverProps["Backflow Stabilization Coefficient"] <<"\n";
+
+
     //Non-linear Iteration Control
     //--------------------------------------------------
     ss << "Residual Control: " << solverProps["Residual Control"] <<"\n";
@@ -438,7 +438,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     ss << "Minimum Required Iterations: " << solverProps["Minimum Required Iterations"] <<"\n";
     //Linear Solver
     //--------------------------------------------------
-    ss << "svLS Type: " << solverProps["Linear Solver Type"] <<"\n";
+    ss << "svLS Type: " << solverProps["svLS Type"] <<"\n";
     ss << "Number of Krylov Vectors per GMRES Sweep: " << solverProps["Number of Krylov Vectors per GMRES Sweep"] <<"\n";
     ss << "Number of Solves per Left-hand-side Formation: " << solverProps["Number of Solves per Left-hand-side Formation"] <<"\n";
     ss << "Tolerance on Momentum Equations: " << solverProps["Tolerance on Momentum Equations"] <<"\n";
@@ -447,7 +447,7 @@ std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)
     ss << "Maximum Number of Iterations for svLS NS Solver: " << solverProps["Maximum Number of Iterations for svLS NS Solver"] <<"\n";
     ss << "Maximum Number of Iterations for svLS Momentum Loop: " << solverProps["Maximum Number of Iterations for svLS Momentum Loop"] <<"\n";
     ss << "Maximum Number of Iterations for svLS Continuity Loop: " << solverProps["Maximum Number of Iterations for svLS Continuity Loop"] <<"\n";
-    //Discretiztion Control
+    //Discretization Control
     //----------------------------------------------------
     ss << "Time Integration Rule: " << solverProps["Time Integration Rule"] <<"\n";
     ss << "Time Integration Rho Infinity: " << solverProps["Time Integration Rho Infinity"] <<"\n";

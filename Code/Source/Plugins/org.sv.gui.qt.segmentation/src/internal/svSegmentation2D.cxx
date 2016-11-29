@@ -77,17 +77,17 @@ const QString svSegmentation2D::EXTENSION_ID = "org.sv.views.segmentation2d";
 svSegmentation2D::svSegmentation2D() :
     ui(new Ui::svSegmentation2D)
 {
-    m_ContourGroupChangeObserverTag=0;
+    m_ContourGroupChangeObserverTag=-1;
     m_ContourGroup=NULL;
     m_Path=NULL;
     m_Image=NULL;
     m_cvImage=NULL;
     m_LoftWidget=NULL;
     m_LSParamWidget=NULL;
-    m_StartLoftContourGroupObserverTag=0;
-    m_StartLoftContourGroupObserverTag2=0;
-    m_StartChangingContourObserverTag=0;
-    m_EndChangingContourObserverTag=0;
+    m_StartLoftContourGroupObserverTag=-1;
+    m_StartLoftContourGroupObserverTag2=-1;
+    m_StartChangingContourObserverTag=-1;
+    m_EndChangingContourObserverTag=-1;
     m_ContourChanging=false;
 }
 
@@ -925,19 +925,34 @@ void svSegmentation2D::NodeRemoved(const mitk::DataNode* node)
 void svSegmentation2D::ClearAll()
 {
     //Remove Observer
-    if(m_ContourGroup && m_ContourGroupChangeObserverTag)
+    if(m_ContourGroup && m_ContourGroupChangeObserverTag!=-1)
     {
         m_ContourGroup->RemoveObserver(m_ContourGroupChangeObserverTag);
+        m_ContourGroupChangeObserverTag=-1;
     }
 
-    if(m_ContourGroup && m_StartLoftContourGroupObserverTag)
+    if(m_ContourGroup && m_StartLoftContourGroupObserverTag!=-1)
     {
         m_ContourGroup->RemoveObserver(m_StartLoftContourGroupObserverTag);
+        m_StartLoftContourGroupObserverTag=-1;
     }
 
-    if(m_ContourGroup && m_StartLoftContourGroupObserverTag2)
+    if(m_ContourGroup && m_StartLoftContourGroupObserverTag2!=-1)
     {
         m_ContourGroup->RemoveObserver(m_StartLoftContourGroupObserverTag2);
+        m_StartLoftContourGroupObserverTag2=-1;
+    }
+
+    if(m_ContourGroup && m_StartChangingContourObserverTag!=-1)
+    {
+        m_ContourGroup->RemoveObserver(m_StartChangingContourObserverTag);
+        m_StartChangingContourObserverTag=-1;
+    }
+
+    if(m_ContourGroup && m_EndChangingContourObserverTag!=-1)
+    {
+        m_ContourGroup->RemoveObserver(m_EndChangingContourObserverTag);
+        m_EndChangingContourObserverTag=-1;
     }
 
     if(m_ContourGroupNode)

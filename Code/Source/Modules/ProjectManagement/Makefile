@@ -46,28 +46,31 @@ CXXFLAGS += -D$(MODULE_NAME)_EXPORTS
 CXXFLAGS += -DUS_MODULE_NAME="$(MODULE_NAME)"
 
 HDRS	= \
-          svDataFolder.h \
-          svImageFolder.h \
-          svPathFolder.h \
-          svSegmentationFolder.h \
-          svModelFolder.h \
-          svMeshFolder.h \
-          svSimulationFolder.h \
-          svProjectManager.h
+    svDataFolder.h \
+    svProjectFolder.h \
+    svImageFolder.h \
+    svPathFolder.h \
+    svSegmentationFolder.h \
+    svModelFolder.h \
+    svMeshFolder.h \
+    svSimulationFolder.h \
+    svProjectManager.h
 
 CXXSRCS	= \
-          svDataFolder.cxx \
-          svProjectManager.cxx
+    svDataFolder.cxx \
+    svProjectManager.cxx
 
 CXXSRCS += us_init.cxx
 
 UIFILES = 
 
+QRCFILES = 
+
 RCFILES = 
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
-CXXSRCS += $(addprefix rcc_,$(notdir $(RCFILES:.qrc=.cxx)))
+CXXSRCS += $(addprefix rcc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
 
@@ -78,7 +81,7 @@ DLLSRCS =
 
 DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
-DLLLIBS +=  $(SVLIBFLAG)_simvascular_qtgui_module_appbase$(LIBLINKEXT) \
+DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \

@@ -4,6 +4,7 @@
 svModel::svModel()
     : m_CalculateBoundingBox(true)
     , m_Type("")
+    , m_DataModified(false)
 {
     this->InitializeEmpty();
 }
@@ -12,6 +13,7 @@ svModel::svModel(const svModel &other)
     : mitk::BaseData(other)
     , m_Type(other.m_Type)
     , m_ModelElementSet(other.GetTimeSize())
+    , m_DataModified(true)
 {
     for (std::size_t t = 0; t < other.m_ModelElementSet.size(); ++t)
     {
@@ -29,8 +31,9 @@ svModel::~svModel()
 
 void svModel::ClearData()
 {
-//    for(int t=0;t<m_ModelElementSet.size();t++)
-//        delete m_ModelElementSet[t];
+    for(int t=0;t<m_ModelElementSet.size();t++)
+        delete m_ModelElementSet[t];
+
     m_ModelElementSet.clear();
     Superclass::ClearData();
 }
@@ -141,6 +144,7 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
     case svModelOperation::OpSETMODELELEMENT:
     {
         SetModelElement(newModelElement,timeStep);
+        m_DataModified=true;
     }
         break;
 
@@ -150,11 +154,9 @@ void svModel::ExecuteOperation( mitk::Operation* operation )
         if(modelElement==NULL) return;
 
         modelElement->SetWholeVtkPolyData(newVpd);
-//        modelElement->SetSolidModel(newVpd);
-//        SetModelElement(modelElement,timeStep);
 
         m_CalculateBoundingBox = true;
-
+        m_DataModified=true;
         this->Modified();
         this->UpdateOutputInformation();
         this->InvokeEvent( svModelSetVtkPolyDataEvent() );

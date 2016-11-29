@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<template >
+    <format version="1.0" />
+    <section name="Time Step Parameters">
+        <param name="Number of Timesteps" value="" type="int" />
+        <param name="Time Step Size" value="" type="double" />
+    </section>
+    <section name="Output Control">
+        <param name="Number of Timesteps between Restarts" value="" type="int" />
+        <param name="Force Calculation Method" value="Velocity Based" type="enum" enum_list="Velocity Based;Residual Based;Both"/>
+        <param name="Print Average Solution" value="True" type="enum" enum_list="True;False"/>
+        <param name="Print Error Indicators" value="False" type="enum" enum_list="True;False"/>
+    </section>
+    <section name="Step Construction">
+        <param name="Step Construction" value="2" type="int" />
+    </section>
+    <section name="============Advanced Parameters============">
+        <param name="Pressure Coupling" value="Implicit" type="enum" enum_list="Implicit;Explicit;P-Implicit;None"/>
+        <param name="Backflow Stabilization Coefficient" value="0.2" type="double" />
+    </section>
+    <section name="Non-linear Iteration Control">
+        <param name="Residual Control" value="True" type="enum" enum_list="True;False"/>
+        <param name="Residual Criteria" value="0.01" type="double" />
+        <param name="Minimum Required Iterations" value="3" type="int" />
+    </section>
+    <section name="Linear Solver">
+        <param name="svLS Type" value="NS" type="enum" enum_list="NS;GMRES;CG" />
+        <param name="Number of Krylov Vectors per GMRES Sweep" value="100" type="int" />
+        <param name="Number of Solves per Left-hand-side Formation" value="1" type="int" />
+        <param name="Tolerance on Momentum Equations" value="0.05" type="double" />
+        <param name="Tolerance on Continuity Equations" value="0.4" type="double" />
+        <param name="Tolerance on svLS NS Solver" value="0.4" type="double" />
+        <param name="Maximum Number of Iterations for svLS NS Solver" value="1" type="int" />
+        <param name="Maximum Number of Iterations for svLS Momentum Loop" value="2" type="int" />
+        <param name="Maximum Number of Iterations for svLS Continuity Loop" value="400" type="int" />
+    </section>
+    <section name="Discretization Control">
+        <param name="Time Integration Rule" value="Second Order" type="enum" enum_list="First Order;Second Order" />
+        <param name="Time Integration Rho Infinity" value="0.5" type="double" min="0" max="1" />
+        <param name="Flow Advection Form" value="Convective" type="enum" enum_list="Convective;Conservative" />
+        <param name="Quadrature Rule on Interior" value="2" type="1;2;3;4" />
+        <param name="Quadrature Rule on Boundary" value="3" type="1;2;3;4" />
+    </section>
+</template>

@@ -221,7 +221,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
     option=false;
 
     std::string originalCmd=cmd;
-    cmd=sv::trim(cmd);
+    cmd=svStringUtils_trim(cmd);
 
     if(cmd=="")
     {
@@ -230,9 +230,9 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
         return true;
     }
 
-    std::vector<std::string> params=sv::split(cmd);
+std::vector<std::string> params=svStringUtils_split(cmd,' ');
 
-    if(sv::lower(params[0])=="option")
+    if(svStringUtils_lower(params[0])=="option")
     {
         params.erase(params.begin());
     }
@@ -244,7 +244,7 @@ bool svMeshTetGen::ParseCommand(std::string cmd, std::string& flag, double value
         return false;
     }
 
-    params[0]=sv::lower(params[0]);
+    params[0]=svStringUtils_lower(params[0]);
 
     try{
 

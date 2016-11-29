@@ -59,6 +59,16 @@ cp -f -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_S
 cp -f -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/lib
 cp -f $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_LIB_FILE_EXTENSION $MITK_BINDIR/lib
 
+# copying more than needed here, but not sure how many of the subdirectories are required.
+cp -Rf  $MITK_BLDDIR/ep/src/CTK/Libs/PluginFramework $MITK_BINDIR/include/ctk
+
+for i in $(find $MITK_BLDDIR/ep/src/CTK-build -name "*Export.h"); do
+    echo "$i  $(basename $i)"
+    cp -f $i $MITK_BINDIR/include/ctk
+done
+
+cp -f $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib
+
 # mitk files
 
 cp -f -d $MITK_BLDDIR/MITK-build/bin/$MITK_BLDTYPE/*.REPLACEME_SV_SO_FILE_EXTENSION* $MITK_BINDIR/bin
@@ -72,6 +82,53 @@ mkdir -p $MITK_BINDIR/include/mitk/ui_files
 mkdir -p $MITK_BINDIR/include/mitk/Modules
 
 cp $MITK_BLDDIR/MITK-build/*.h $MITK_BINDIR/include/mitk
+
+#
+#  plugins
+#
+
+# currently require the following plugins:
+#
+# org.blueberry.core.runtime  (nested)
+# org.blueberry.ui.qt (nested)
+# org.mitk.core.services 
+# org.mitk.gui.common
+# org.mitk.gui.qt.common
+# org.mitk.gui.qt.common.legacy
+# org.mitk.gui.qt.datamanager
+
+for i in $MITK_SRCDIR/Plugins/org.mitk.*/src; do
+    mkdir -p $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $i))
+    cp -R $i/*.h $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $i))
+done
+
+for i in $MITK_SRCDIR/Plugins/org.mitk.*/src/*; do
+    if [ -d $i ];then \
+      mkdir -p $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $(dirname $i)))/$(basename $i); \
+      cp -R $i/*.h $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $(dirname $i)))/$(basename $i); \
+    fi
+done
+
+for i in $MITK_SRCDIR/Plugins/org.blueberry.*/src; do
+    mkdir -p $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $i))
+    cp -R $i/*.h $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $i))
+done
+
+for i in $MITK_SRCDIR/Plugins/org.blueberry.*/src/*; do
+    if [ -d $i ];then \
+      mkdir -p $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $(dirname $i)))/$(basename $i); \
+      cp -R $i/*.h $MITK_BINDIR/include/mitk/plugins/$(basename $(dirname $(dirname $i)))/$(basename $i); \
+    fi
+done
+
+for i in $(find $MITK_BLDDIR/MITK-build/Plugins -name "*Export.h"); do
+    echo "$i  $(basename $i)"
+    cp -f $i $MITK_BINDIR/include/mitk/exports
+done
+
+#
+# everything else
+#
 
 for i in $(dirname $MITK_SRCDIR/Modules/*/include); do
     mkdir -p $MITK_BINDIR/include/mitk/$(basename $i)
@@ -94,11 +151,6 @@ for i in $(find $MITK_BLDDIR -name "*Exports.h"); do
 done
 
 for i in $(find $MITK_BLDDIR/MITK-build/Modules -name "*Export.h"); do
-    echo "$i  $(basename $i)"
-    cp -f $i $MITK_BINDIR/include/mitk/exports
-done
-
-for i in $(find $MITK_BLDDIR/ep/src/CTK-build -name "*Export.h"); do
     echo "$i  $(basename $i)"
     cp -f $i $MITK_BINDIR/include/mitk/exports
 done

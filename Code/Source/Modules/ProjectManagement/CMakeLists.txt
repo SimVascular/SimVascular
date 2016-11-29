@@ -16,9 +16,9 @@ if(RESOURCE_FILES)
 endif()
 
 if(SV_USE_MODULES_SHARED_LIBRARIES)
-  add_library(${lib} SHARED ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs})
+  add_library(${lib} SHARED ${H_FILES} ${CPP_FILES} )
 else()
-  add_library(${lib} STATIC ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs})
+  add_library(${lib} STATIC ${H_FILES} ${CPP_FILES} )
 endif()
 
 set(module_name "svProjectManagement")
@@ -26,8 +26,13 @@ set_property(TARGET ${lib} PROPERTY US_MODULE_NAME ${module_name})
 set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${module_name})
 
 target_link_libraries(${lib} ${MITK_LIBRARIES}
-                             ${QT_LIBRARIES}
-                             ${ITK_LIBRARIES})
+                             ${ITK_LIBRARIES}
+                             svPath
+                             svSegmentation
+                             svModel
+                             svMesh
+                             svSimulation
+)
 
 if(RESOURCE_FILES)
     set(res_dir resources)

@@ -37,7 +37,8 @@ target_link_libraries(${lib} ${VTK_LIBRARIES}
                              ${SV_LIB_THIRDPARTY_VMTK_NAME}
                              ${SV_LIB_MESH_NAME}
                              ${SV_LIB_TETGEN_MESH_NAME}
-                             ${SV_LIB_TETGEN_ADAPTOR_NAME})
+#                             ${SV_LIB_TETGEN_ADAPTOR_NAME}
+)
 
 if(RESOURCE_FILES)
     set(res_dir resource)
