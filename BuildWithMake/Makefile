@@ -227,6 +227,7 @@ shared-pre-build: common-pre-build
 	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/UI;$(MAKE) moc
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
@@ -234,6 +235,7 @@ static-pre-build: common-pre-build
 	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/UI;$(MAKE) moc
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \
