@@ -3,6 +3,7 @@
 
 #include "svTableCapDelegate.h"
 #include "svTableSolverDelegate.h"
+#include "svMitkMesh.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
@@ -151,7 +152,11 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     //for data file and run
-//    connect(ui->btnCreateDataFiles, SIGNAL(clicked()), this, SLOT(CreateDataFiles()) );
+
+
+
+    connect(ui->btnCreateDataFiles, SIGNAL(clicked()), this, SLOT(CreateDataFiles()) );
+    connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
 
 }
 
@@ -244,7 +249,7 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateGUISolver();
 
-    //        UpdateGUIRun();
+    UpdateGUIJob();
 
     UpdateFaceListSelection();
 
@@ -920,6 +925,54 @@ void svSimulationView::UpdateGUISolver()
 
     ui->tableViewSolver->setColumnHidden(2,true);
     ui->tableViewSolver->setColumnHidden(3,true);
+}
+
+void svSimulationView::UpdateGUIJob()
+{
+    if(!m_MitkJob)
+        return;
+
+    std::string modelName=m_MitkJob->GetModelName();
+    std::vector<std::string> meshNames;
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+            rs=GetDataStorage()->GetDerivations(meshFolderNode);
+
+            for(int i=0;i<rs->size();i++)
+            {
+                svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(rs->GetElement(i)->GetData());
+                if(mitkMesh&&mitkMesh->GetModelName()==modelName)
+                {
+                    meshNames.push_back(rs->GetElement(i)->GetName());
+                }
+            }
+        }
+    }
+
+    ui->comboBoxMeshName->clear();
+    for(int i=0;i<meshNames.size();i++)
+        ui->comboBoxMeshName->addItem(QString::fromStdString(meshNames[i]));
+}
+
+void svSimulationView::CreateDataFiles()
+{
+
+}
+
+void svSimulationView::ImportFiles()
+{
+
+
 }
 
 svSimJob* svSimulationView::CreateJob(std::string& msg)

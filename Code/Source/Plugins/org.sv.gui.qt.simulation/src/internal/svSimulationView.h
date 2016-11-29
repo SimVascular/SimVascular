@@ -72,11 +72,14 @@ public slots:
     void UpdateGUISolver();
 
 
-//    void CreateDataFiles();
+    void UpdateGUIJob();
+
+    void CreateDataFiles();
+
+    void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
 
 //    void RunJob();
 
-//    void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
 
 //    void ConvertResults();
 
