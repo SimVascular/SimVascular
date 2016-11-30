@@ -2,7 +2,7 @@
 # MITK
 # ----
 
-MITK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/mitk-2016.03/special
+MITK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/mitk-2016.03
 
 MITK_US_RESOURCE_COMPILER = $(MITK_BINDIR)/bin/usResourceCompiler
 
@@ -168,4 +168,5 @@ MITK_LIBS += \
            $(LIBFLAG)PocoNet$(LIBLINKEXT) \
            $(LIBFLAG)PocoXML$(LIBLINKEXT) \
            $(LIBFLAG)PocoZip$(LIBLINKEXT) \
-           $(LIBFLAG)PocoUtil$(LIBLINKEXT)
+           $(LIBFLAG)PocoUtil$(LIBLINKEXT) \
+           $(LIBFLAG)CppMicroServices$(LIBLINKEXT)

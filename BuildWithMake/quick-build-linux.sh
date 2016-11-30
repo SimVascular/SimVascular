@@ -1,6 +1,6 @@
 #/bin/bash
 
-export PARENT_URL=http://http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu_14/gnu-4.8/2016.09.05
+export PARENT_URL=http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu_14/gnu-4.8/2016.11.29
 
 # default is windows, so override with gnu compilers and linux
 
@@ -12,8 +12,8 @@ export EXTERNALS_TOP=/usr/local/sv/ext
 
 sudo mkdir -p $EXTERNALS_TOP
 sudo chmod -R a+rwx $EXTERNALS_TOP
-mkdir $EXTERNALS_TOP/tarfiles
-mkdir $EXTERNALS_TOP/bin
+mkdir -p $EXTERNALS_TOP/tarfiles
+mkdir -p $EXTERNALS_TOP/bin/gnu-4.8/x64
 
 pushd $EXTERNALS_TOP/tarfiles
 wget $PARENT_URL/linux.gnu-4.8.x64.freetype-2.6.3-BUILD2016-09-05.tar.gz
@@ -27,8 +27,8 @@ wget $PARENT_URL/linux.gnu-4.8.x64.tcltk-8.6.4-BUILD2016-09-05.tar.gz
 wget $PARENT_URL/linux.gnu-4.8.x64.vtk-6.2.0-BUILD2016-09-05.tar.gz
 popd
 
-pushd $EXTERNALS_TOP/bin
-for i in ../tarfiles/linux.gnu-4.8.x64.*.tar.gz; do
+pushd $EXTERNALS_TOP/bin/gnu-4.8/x64
+for i in $EXTERNALS_TOP/tarfiles/linux.gnu-4.8.x64.*.tar.gz; do
     tar xvzf $i
 done
 popd
