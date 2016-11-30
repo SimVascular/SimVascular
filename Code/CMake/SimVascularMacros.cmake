@@ -504,7 +504,7 @@ endmacro()
 #! See http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #!
 #! \ingroup CMakeUtilities
-macro(svMacroParseArguments prefix arg_names option_names)
+macro(simvascular_parse_arguments prefix arg_names option_names)
   set(DEFAULT_ARGS)
   foreach(arg_name ${arg_names})
     set(${prefix}_${arg_name})
@@ -536,9 +536,9 @@ macro(svMacroParseArguments prefix arg_names option_names)
 endmacro()
 
 
-function(svFunctionGeneratePluginManifest QRC_SRCS)
+function(simvascular_generate_plugin_manifest QRC_SRCS)
 
-  svMacroParseArguments(MY
+  simvascular_parse_arguments(MY
     "ACTIVATIONPOLICY;CATEGORY;CONTACT_ADDRESS;COPYRIGHT;DESCRIPTION;DOC_URL;ICON;LICENSE;NAME;REQUIRE_PLUGIN;SYMBOLIC_NAME;VENDOR;VERSION;CUSTOM_HEADERS"
     ""
     ${ARGN}
@@ -658,16 +658,7 @@ endfunction()
 #
 ###########################################################################
 
-#!
-#! This macro could be invoked using two different signatures:
-#!   ctkFunctionGetTargetLibraries(TARGET_LIBS)
-#! or
-#!   ctkFunctionGetTargetLibraries(TARGET_LIBS "/path/to/ctk_target_dir")
-#!
-#! Without specifying the second argument, the current folder will be used.
-#!
-#! \ingroup CMakeUtilities
-function(svFunctionGetTargetLibraries varname)
+function(simvascular_get_target_libraries varname)
 
   set(expanded_target_library_list)
 
@@ -740,15 +731,10 @@ function(svFunctionGetTargetLibraries varname)
 
 endfunction()
 
-#
-# Depends on:
-#  CTK/CMake/ctkMacroParseArguments.cmake
-#
-
 #! \ingroup CMakeUtilities
-macro(svMacroGeneratePluginResourceFile QRC_SRCS)
+macro(simvascular_generate_plugin_resource_file QRC_SRCS)
 
-  svMacroParseArguments(MY
+  simvascular_parse_arguments(MY
     "NAME;PREFIX;RESOURCES;BINARY_RESOURCES"
     ""
     ${ARGN}
@@ -785,7 +771,7 @@ configure_file("${SV_SOURCE_DIR}/CMake/plugin_resources_cached.qrc.in" "${_qrc_f
 
 endmacro()
 
-function(SimVascularCreatePlugin)
+function(simvascular_create_plugin)
   # single value arguments
   set(arg_single
     EXPORT_DIRECTIVE # (required) TODO: could be generated via CMake as it is done for MITK modules already
@@ -832,7 +818,7 @@ function(SimVascularCreatePlugin)
 
   # Add the generated manifest qrc file
   set(manifest_qrc_src )
-  svFunctionGeneratePluginManifest(manifest_qrc_src
+  simvascular_generate_plugin_manifest(manifest_qrc_src
     ACTIVATIONPOLICY ${Plugin-ActivationPolicy}
     CATEGORY ${Plugin-Category}
     CONTACT_ADDRESS ${Plugin-ContactAddress}
@@ -857,7 +843,7 @@ function(SimVascularCreatePlugin)
   #---------------------------------MANIFEST----------------------------------
 
   #------------------------------PLUGIN RESOURCE------------------------------
-  svMacroGeneratePluginResourcefile(resource_qrc_src
+  simvascular_generate_plugin_resource_file(resource_qrc_src
   NAME ${lib_name}_cached.qrc
   PREFIX ${Plugin-SymbolicName}
   RESOURCES ${CACHED_RESOURCE_FILES})
@@ -880,7 +866,7 @@ function(SimVascularCreatePlugin)
   endforeach()
 
   #---------------------------------MITK DEPENDS-----------------------------
-  #svFunctionGetTargetLibraries(MITK_MODULE_DEPENDS "")
+  #simvascular_get_target_libraries(MITK_MODULE_DEPENDS "")
   #message(${MITK_MODULE_DEPENDS})
   #target_link_libraries(${lib_name} PRIVATE ${MITK_MODULE_DEPENDS})
   #---------------------------------MITK DEPENDS-----------------------------
@@ -921,3 +907,203 @@ function(SimVascularCreatePlugin)
   endif()
 
 endfunction()
+
+#! \ingroup CMakeUtilities
+function(simvascular_extract_option_name_and_value my_opt var_opt_name var_opt_value)
+
+ # Make sure option is correctly formated
+  if(NOT "${my_opt}" MATCHES "^[- :/A-Za-z0-9._]+:(ON|OFF)$")
+    message(FATAL_ERROR "Option ${my_opt} is incorrect. Options should be specified using the following format OPT1:[ON|OFF]. For example OPT1:OFF or OPT2:ON")
+  endif()
+
+  # Extract option name and option default value
+  string(REGEX REPLACE ":(ON|OFF)$" "\\\\;\\1" my_opt_list ${my_opt})
+  set(my_opt_list ${my_opt_list})
+  list(GET my_opt_list 0 opt_name)
+  list(GET my_opt_list 1 opt_value)
+
+  set(${var_opt_name} ${opt_name} PARENT_SCOPE)
+  set(${var_opt_value} ${opt_value} PARENT_SCOPE)
+endfunction()
+
+#!
+#!
+#! \brief Create a provisioning file
+#!
+#! \param FILE <provisioning-file> (required) An absolute filename for
+#!                                 the new provisioning file.
+#! \param INCLUDE <file-list> (optional) A list of additional provisioning files
+#!                            which should be included.
+#! \param EXCLUDE_PLUGINS <plugin-list> (optional) A list of plug-in symbolic names which should be excluded
+#!                                      from the provisioning entries.
+#! \param NO_INSTALL (option) Suppress the creation of an additional provisioning file suitable for packaging.
+#!
+#! This function creates a provisioning file which can be used to provision a BlueBerry
+#! application. The syntax of entries in the file is
+#! \code
+#! (READ|INSTALL|START) <file-url>
+#! \endcode
+#! READ includes the file at <file-url> and interprets it as a provisioning file, INSTALL installs <file-url>,
+#! and START installs and starts <file-url> as a plug-in in the framework.
+#!
+#! <p>
+#! For example the following provisioning file instructs the BlueBerry framework to read the entries in
+#! a file called SomeApp.provisioning and subsequently INSTALL and START the plug-in com.mycompany.plugin
+#! \code
+#! READ file:///opt/etc/SomeApp.provisioning
+#! START file:///opt/mycompany/plugins/libcom_mycompany_plugin.so
+#! \endcode
+#!
+#! <p>
+#! An example invocation of this macro may look like:
+#! \code
+#! set(_my_prov_file "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/MyApp.provisioning")
+#! set(_my_plugins
+#!   com.mycompany.plugin
+#!   org.mitk.gui.qt.extapplication
+#! )
+#! FunctionCreateProvisioningFile(FILE ${_my_prov_file} PLUGINS ${_my_plugins})
+#! \endcode
+#!
+#! \note This function will automatically create entries for all plug-in
+#! dependencies of the specified plug-ins.
+#!
+function(simvascular_create_provisioning_file)
+
+  cmake_parse_arguments(_PROV "NO_INSTALL" "FILE" "INCLUDE;PLUGINS;EXCLUDE_PLUGINS" ${ARGN})
+
+  if(NOT _PROV_FILE)
+    message(SEND_ERROR "FILE argument must not be empty")
+    return()
+  endif()
+
+  set(out_var )
+  set(out_var_install )
+  if(WIN32)
+    set(file_url "file:///")
+  else()
+    set(file_url "file://")
+  endif()
+
+  # Include other provisioning files
+  foreach(incl ${_PROV_INCLUDE})
+    get_filename_component(incl_filename "${incl}" NAME)
+    set(out_var "${out_var}READ ${file_url}${incl}\n")
+    set(out_var_install "${out_var_install}READ ${file_url}@EXECUTABLE_DIR/${incl_filename}\n")
+  endforeach()
+
+  if(_PROV_INCLUDE)
+    set(out_var "${out_var}\n")
+    set(out_var_install "${out_var_install}\n")
+  endif()
+
+  # List all plugins
+  # Temporary list of mitk libraries. In the future, will use installed cmake files
+  #-------------------------------TMP-------------------------------------------
+  set(MITK_PLUGIN_LIBRARIES org_commontk_configadmin;org_commontk_eventadmin;org_blueberry_core_runtime;org_blueberry_core_expressions;org_blueberry_core_commands;org_blueberry_ui_qt;org_blueberry_ui_qt_help;org_blueberry_ui_qt_log;org_mitk_core_services;org_mitk_gui_common;org_mitk_planarfigure;org_mitk_core_ext;org_mitk_gui_qt_application;org_mitk_gui_qt_ext;org_mitk_gui_qt_extapplication;org_mitk_gui_qt_common;org_mitk_gui_qt_stdmultiwidgeteditor;org_mitk_gui_qt_common_legacy;org_mitk_gui_qt_datamanager;org_mitk_gui_qt_properties;org_mitk_gui_qt_basicimageprocessing;org_mitk_gui_qt_dicom;org_mitk_gui_qt_geometrytools;org_mitk_gui_qt_imagecropper;org_mitk_gui_qt_imagenavigator;org_mitk_gui_qt_measurementtoolbox;org_mitk_gui_qt_python;org_mitk_gui_qt_registration;org_mitk_gui_qt_segmentation;org_mitk_gui_qt_volumevisualization)
+
+  set_property(GLOBAL APPEND PROPERTY CTK_PLUGIN_LIBRARIES_VARS MITK_PLUGIN_LIBRARIES)
+  set(MITK_PLUGIN_LIBRARIES_set 1)
+
+  set(_plugin_list )
+    foreach(_plugin ${MITK_PLUGIN_LIBRARIES})
+    string(REPLACE "." "_" _plugin_target ${_plugin})
+    set(plugin_url "${file_url}${MITK_PLUGIN_LIBRARY_DIR}/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    set(plugin_url_install "${file_url}@EXECUTABLE_DIR/../Externals/lib/plugins/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+    set(out_var "${out_var}START ${plugin_url}\n")
+    set(out_var_install "${out_var_install}START ${plugin_url_install}\n")
+  endforeach()
+
+  if(_PROV_PLUGINS)
+    foreach(_plugin ${_PROV_PLUGINS})
+      string(REPLACE "." "_" _plugin_target ${_plugin})
+      list(APPEND _plugin_list ${_plugin_target})
+    endforeach()
+  endif()
+
+  set(_exclude_targets )
+  if(_PROV_EXCLUDE_PLUGINS)
+    # Convert the plug-in symbolic names to valid target names
+    foreach(_exclude_entry ${_PROV_EXCLUDE_PLUGINS})
+      string(REPLACE "." "_" _exclude_target ${_exclude_entry})
+      list(APPEND _exclude_targets ${_exclude_target})
+    endforeach()
+    list(REMOVE_ITEM _plugin_list ${_exclude_targets})
+  endif()
+  # Go through the list of plug-ins
+  foreach(plugin ${_plugin_list})
+    set(_plugin_target)
+    if(TARGET ${plugin})
+      # The entry already is a valid target (either imported or declared in the current project)
+      set(_plugin_target ${plugin})
+    elseif(${plugin} MATCHES "^[- :/A-Za-z0-9._]+:(ON|OFF)$")
+      # Check if the entry if of the form "Some/Dir/org.my.plugin:OPTION"
+      simvascular_extract_option_name_and_value(${plugin} plugin_name_with_dirs plugin_value)
+      string(REPLACE "/" ";" _tokens ${plugin_name_with_dirs})
+      list(GET _tokens -1 plugin_name)
+      string(REPLACE "." "_" _plugin_target_name ${plugin_name})
+      if(TARGET ${_plugin_target_name})
+        # Check if the extracted last directory entry is a valid target
+        set(_plugin_target ${_plugin_target_name})
+      endif()
+    endif()
+
+    if(_plugin_target)
+      # We got a valid target, either imported or from this project.
+      set(_plugin_location)
+      get_target_property(_is_imported ${_plugin_target} IMPORTED)
+      if(_is_imported)
+        get_target_property(_plugin_location ${_plugin_target} IMPORTED_LOCATION)
+        if(NOT _plugin_location)
+          get_target_property(_plugin_configs ${_plugin_target} IMPORTED_CONFIGURATIONS)
+          foreach(_plugin_config ${_plugin_configs})
+            get_target_property(_plugin_location ${_plugin_target} IMPORTED_LOCATION_${_plugin_config})
+            if(_plugin_location)
+              if(CMAKE_CONFIGURATION_TYPES)
+                # Strip the last directory and filename
+                string(REGEX REPLACE "(.*)/[^/]*/[^/]*$" "\\1" _plugin_location "${_plugin_location}")
+              else()
+                # Just strip the filename
+                get_filename_component(_plugin_location "${_plugin_location}" PATH)
+              endif()
+              break()
+            endif()
+          endforeach()
+        endif()
+      else()
+        if(WIN32)
+          get_target_property(_plugin_location ${_plugin_target} RUNTIME_OUTPUT_DIRECTORY)
+        else()
+          get_target_property(_plugin_location ${_plugin_target} LIBRARY_OUTPUT_DIRECTORY)
+        endif()
+      endif()
+
+      set(plugin_url "${file_url}${_plugin_location}/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+      set(plugin_url_install "${file_url}@EXECUTABLE_DIR/../Lib/plugins/lib${_plugin_target}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+
+      set(out_var "${out_var}START ${plugin_url}\n")
+      set(out_var_install "${out_var_install}START ${plugin_url_install}\n")
+    else()
+      #message(WARNING "Ignoring unknown plug-in target \"${plugin}\" for provisioning.")
+    endif()
+
+  endforeach()
+
+  file(WRITE ${_PROV_FILE} "${out_var}")
+
+  if(NOT _PROV_NO_INSTALL)
+    file(WRITE ${_PROV_FILE}.install "${out_var_install}")
+  endif()
+
+endfunction()
+
+macro(simvascular_get_subdirs result curdir)
+  file(GLOB children RELATIVE ${curdir} ${curdir}/*)
+  set(dirlist "")
+  foreach(child ${children})
+    if(IS_DIRECTORY ${curdir}/${child})
+      list(APPEND dirlist ${child})
+    endif()
+  endforeach()
+  set(${result} ${dirlist})
+endmacro()

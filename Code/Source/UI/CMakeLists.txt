@@ -81,36 +81,8 @@ if (SV_USE_PYTHON)
 	SET(OPTLIBS ${OPTLIBS} ${SV_LIB_PYTHON_INTERP_NAME})
 endif()
 
-if(SV_USE_QT_GUI)
-  #  SET(OPTLIBS ${OPTLIBS} ${SV_LIB_QTGUI_SVWORKBENCH_NAME})
-  #                         ${SV_LIB_QTGUI_PLUGIN_MITKSEGMENTATION_NAME}
-  #                         ${SV_LIB_QTGUI_PLUGIN_GENERAL_NAME}
-  #                         ${SV_LIB_QTGUI_PLUGIN_MODELING_NAME}
-  #                         ${SV_LIB_QTGUI_PLUGIN_PATHPLANNING_NAME}
-  #                         ${SV_LIB_QTGUI_PLUGIN_SEGMENTATION_NAME}
-  #                         ${SV_LIB_QTGUI_PLUGIN_TEST_NAME}
-  #                         ${SV_LIB_QTGUI_MODULE_COMMON_NAME}
-  #                         ${SV_LIB_QTGUI_MODULE_MODEL_NAME}
-  #                         ${SV_LIB_QTGUI_MODULE_PATH_NAME}
-  #                         ${SV_LIB_QTGUI_MODULE_PROJECTMANAGEMENT_NAME}
-  #                         ${SV_LIB_QTGUI_MODULE_APPBASE}
-  #                         ${SV_LIB_QTGUI_MODULE_QTWIDGETS_NAME}
-  #                         ${SV_LIB_QTGUI_MODULE_SEGMENTATION_NAME})
-  # SET(OPTLIBS ${OPTLIBS} svCommon
-  #                        svProjectManagement
-  #                        svSegmentation
-  #                        svModel
-  #                        svPath
-  #                        svMesh
-  #                        svSimulation
-  #                        svQtWidgets
-  #                        org_sv_projectdatanodes
-  #                        org_sv_gui_qt_projectmanager
-  #                        org_sv_gui_qt_segmentation
-  #                        org_sv_gui_qt_modeling
-  #                        org_sv_gui_qt_pathplanning
-  #                        org_sv_gui_qt_meshing)
-endif()
+
+set(SV_WORKBENCH_PROVISIONING_FILE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.provisioning" CACHE INTERNAL "svWorkbench provisioning file" FORCE)
 
 if (NOT SV_USE_MITK_CONFIG)
   simvascular_add_executable(${SV_EXE}
@@ -120,6 +92,21 @@ if (NOT SV_USE_MITK_CONFIG)
           INSTALL_COMPONENT CoreExecutables
           INSTALL_DESTINATION ${SV_INSTALL_RUNTIME_DIR})
   #message("OPTLIBS ${OPTLIBS}")
+
+  simvascular_create_provisioning_file(
+          FILE ${SV_WORKBENCH_PROVISIONING_FILE}
+          PLUGINS ${SV_PLUGINS}
+          EXCLUDE_PLUGINS ${exclude_plugins})
+  install(FILES "${SV_WORKBENCH_PROVISIONING_FILE}.install"
+          DESTINATION ${SV_INSTALL_RUNTIME_DIR}
+          RENAME "${SV_EXE}.provisioning")
+
+  # Create a .ini file for initial parameters
+  if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${SV_EXE}.ini")
+    configure_file(${SV_EXE}.ini
+      ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.ini)
+  endif()
+
 else()
   #-------------------------------TMP-------------------------------------------
   set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
@@ -138,8 +125,6 @@ else()
   #if(SV_SHOW_CONSOLE_WINDOW)
     list(APPEND _app_options SHOW_CONSOLE)
   #endif()
-
-  set(SV_WORKBENCH_PROVISIONING_FILE "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${SV_EXE}.provisioning" CACHE INTERNAL "svWorkbench provisioning file" FORCE)
 
   set(_exclude_plugins
     org.blueberry.test
@@ -199,6 +184,9 @@ target_link_libraries(${SV_EXE} PRIVATE
                         ${SV_LIB_GEOM_NAME} ${SV_LIB_UTILS_NAME}
 			${SV_LIB_GLOBALS_NAME} ${SV_LIB_POLYDATA_SOLID_NAME})
 
+                      target_link_libraries(${SV_EXE} PRIVATE "/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/install/lib/libMitkAppUtil.dylib")
+                      target_link_libraries(${SV_EXE} PRIVATE "/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/install/lib/libPocoUtil.dylib")
+                      target_link_libraries(${SV_EXE} PRIVATE "/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/install/lib/libCTKPluginFramework.dylib")
 target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
   ${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
@@ -209,7 +197,7 @@ target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
   ${MMG_LIBRARY}
   ${FREETYPE_LIBRARY}
   ${PYTHON_LIBRARY}
-  ${MITK_LIBRARIES}
+  #${MITK_LIBRARIES}
   ${CTK_LIBRARIES}
   ${QT_LIBRARIES})
 

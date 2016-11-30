@@ -186,9 +186,12 @@ if(${proj}_LIBRARIES)
 		set(temp_path ${${proj}_LIBRARIES})
 	else()
 		list(GET ${proj}_LIBRARIES 1 temp_path)
+                list(GET ${proj}_LIBRARIES -1 temp_path_2)
 	endif()
         get_filename_component(${proj}_LIBRARY_DIR ${temp_path} PATH)
         mark_as_superbuild(${proj}_LIBRARY_DIR:PATH)
+        get_filename_component(${proj}_PLUGIN_LIBRARY_DIR ${temp_path_2} PATH)
+        mark_as_superbuild(${proj}_PLUGIN_LIBRARY_DIR:PATH)
 endif()
 
 #-----------------------------------------------------------------------------
