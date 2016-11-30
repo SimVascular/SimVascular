@@ -184,9 +184,9 @@ void simvascularApp::initializeLibraryPaths() {
   //  This is SV code to start using env variables and registry
   //  to specify library paths.
   //
-  
-#ifdef WIN32  
+
   // read environment variables for plugin paths
+#ifdef WIN32
   char plugin_env[_MAX_ENV];
   size_t requiredSize;
   plugin_env[0]='\0';
@@ -200,6 +200,15 @@ void simvascularApp::initializeLibraryPaths() {
     exit(-1);
   } else {
     getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_DIR" );
+    QString pluginPath = plugin_env;
+    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+    std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+  }
+#else
+  char *plugin_env = getenv("SV_PLUGIN_DIR");
+  if (plugin_env == NULL) {
+    std::cerr << "Warning:  SV_PLUGIN_DIR doesn't exist!\n" << std::endl << std::flush;  
+  } else {
     QString pluginPath = plugin_env;
     ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
     std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
