@@ -109,6 +109,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u $(SV_MITK_SO_PATH)`+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_MITK_PLUGIN_PATH+`cygpath -u $(SV_MITK_PLUGIN_PATH)`+g\"" >> tclscript
 endif
 endif
 ifeq ($(CLUSTER),x64_linux)
@@ -145,6 +146,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_MITK_PLUGIN_PATH+$(SV_MITK_PLUGIN_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
@@ -196,6 +198,7 @@ ifeq ($(SV_USE_QT),1)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+$(SV_MITK_SO_PATH)+g\"" >> tclscript
+	-echo "puts \"s+REPLACEME_SV_MITK_PLUGIN_PATH+$(SV_MITK_PLUGIN_PATH)+g\"" >> tclscript
 endif
 ifeq ($(SV_USE_FREETYPE),1)
 	-echo "puts \"s+REPLACEME_SV_FREETYPE_SO_PATH+$(SV_FREETYPE_SO_PATH)+g\"" >> tclscript
@@ -227,6 +230,7 @@ shared-pre-build: common-pre-build
 	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/UI;$(MAKE) moc
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
@@ -234,6 +238,7 @@ static-pre-build: common-pre-build
 	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/UI;$(MAKE) moc
 
 shared-build:
 	for i in ${SHARED_LIBDIRS}; do ( \

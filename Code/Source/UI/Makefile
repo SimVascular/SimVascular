@@ -48,6 +48,13 @@ HDRS	=
 
 CXXSRCS = main.cxx SimVascular_Init.cxx
 
+ifneq ($(CLUSTER),x64_cygwin)
+  ifeq ($(SV_USE_QT),1)
+    HDRS    += qttclnotifier.h
+    CXXSRCS += qttclnotifier.cxx moc_qttclnotifier.cxx
+  endif
+endif
+
 ifeq ($(SV_STATIC_BUILD),1)  
 
   COPIED_CXXSRCS += ../Common/Geometry/cv_geom_init.cxx \
@@ -257,6 +264,9 @@ shared: pre directories $(TARGET_EXE_FULL)
 
 static: pre directories $(TARGET_EXE_FULL)
 
+moc:
+	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(notdir $(name))).cxx))
+
 $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
 	-rm -Rf ./static_cpp_resources
 	-mkdir -p ./static_cpp_resources
@@ -320,6 +330,7 @@ clean:
 	for fn in $(TARGET_EXE_FULL)*; do /bin/rm -f $$fn; done
 	for fn in $(basename $(TARGET_EXE_FULL)).*;do /bin/rm -f $$fn; done
 	for fn in $(notdir $(COPIED_CXXSRCS)); do /bin/rm -f $$fn;done
+	for fn in moc_*.cxx; do /bin/rm -f $$fn;done
 	for fn in coffbase.txt; do /bin/rm -f $$fn;done
 
 veryclean: clean
