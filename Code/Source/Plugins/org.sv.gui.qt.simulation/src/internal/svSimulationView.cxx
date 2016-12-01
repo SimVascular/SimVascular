@@ -21,6 +21,8 @@
 #include <QDomDocument>
 #include <QDomElement>
 #include <QDir>
+#include <QProcess>
+#include <QFileDialog>
 
 const QString svSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -163,12 +165,10 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     //for data file and run
-
-
-
     connect(ui->btnCreateDataFiles, SIGNAL(clicked()), this, SLOT(CreateDataFiles()) );
     connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
 
+    //for export results
 }
 
 void svSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
@@ -1055,6 +1055,13 @@ void svSimulationView::CreateDataFiles()
     if(simFolderName=="")
         return;
 
+    if(m_PresolverPath=="")
+    {
+        QMessageBox::warning(m_Parent,"Presolver Missing","Please provide presolver in Preferences");
+        WaitCursorOff();
+        return;
+    }
+
 //    mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
     WaitCursorOn();
 
@@ -1070,56 +1077,94 @@ void svSimulationView::CreateDataFiles()
         return;
     }
 
+    QDir dir(QString::fromStdString(projPath));
+    QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
+    dir.mkpath(jobPath);
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file");
     QString svpreFielContent=QString::fromStdString(svSimulationUtils::CreatePreSolverFileContent(job));
+    QFile svpreFile(jobPath+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
+    if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&svpreFile);
+        out<<svpreFielContent;
+        svpreFile.close();
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
+    QString meshCompletePath=jobPath+"/mesh-complete";
+    dir.mkpath(meshCompletePath);
+    svMeshLegacyIO::WriteFiles(mesh,modelElement, meshCompletePath);
+
+    mitk::StatusBar::GetInstance()->DisplayText("Create Data files: bct, restart, geombc,etc.");
+    QProcess *presolverProcess = new QProcess(m_Parent);
+    presolverProcess->setWorkingDirectory(jobPath);
+    presolverProcess->start(m_PresolverPath, QStringList());
+
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
     QString solverFielContent=QString::fromStdString(svSimulationUtils::CreateFlowSolverFileContent(job));
+    QFile solverFile(jobPath+"/solver.inp");
+    if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&solverFile);
+        out<<solverFielContent;
+        solverFile.close();
+    }
 
     mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat if applicable");
     QString rcrtFielContent=QString::fromStdString(svSimulationUtils::CreateRCRTFileContent(job));
-
-
-    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
-    QDir dir(QString::fromStdString(projPath));
-//    dir.cd(QString::fromStdString(simFolderName));
-//    dir.mkdir(QString::fromStdString(m_JobNode->GetName()));
-//    dir.cd(QString::fromStdString(m_JobNode->GetName()));
-    std::string jobPath=projPath+"/"+simFolderName+"/"+m_JobNode->GetName();
-    std::string meshCompletePath=jobPath+"/mesh-complete";
-    dir.mkpath(QString::fromStdString(meshCompletePath));
-    svMeshLegacyIO::WriteFiles(mesh,modelElement, QString::fromStdString(meshCompletePath));
-
-    mitk::StatusBar::GetInstance()->DisplayText("Create Data files: bct, restart, geombc,etc.");
-
-
-
-
-
-
-
-
-
-
-    //create job dir if not exists and create temp dir if not exists and maybe empty temp dir
-
-    //output mesh-complete into the temp dir
-
-    //output .svpre into the temp dir
-
-    //run presolver with output to the job dir
-
-
-
-
-
+    QFile rcrtFile(jobPath+"/rcrt.dat");
+    if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&rcrtFile);
+        out<<rcrtFielContent;
+        rcrtFile.close();
+    }
 }
 
 void svSimulationView::ImportFiles()
 {
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+    std::string simFolderName="";
+    std::string projPath="";
 
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+        projFolderNode->GetStringProperty("project path", projPath);
 
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+            simFolderName=simFolderNode->GetName();
+        }
+    }
+
+    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files");
+
+    for(int i=0;i<filePaths.size();i++)
+    {
+        QString filePath=filePaths[i];
+        QFileInfo fi(filePath);
+        QString fileName=fi.fileName();
+        QString newFilePath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName())+"/"+fileName;
+        if (QFile::exists(newFilePath))
+        {
+            if (QMessageBox::question(m_Parent, "Overwrite File?", "Do you want to overwrite the file (" +fileName +") in the job?",
+                                      QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+            {
+              continue;
+            }
+
+            QFile::remove(newFilePath);
+        }
+
+        QFile::copy(filePath, newFilePath);
+    }
 }
 
 svSimJob* svSimulationView::CreateJob(std::string& msg)

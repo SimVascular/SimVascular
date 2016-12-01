@@ -113,35 +113,35 @@ bool svSimulationPreferencePage::PerformOk()
     QString customTemplatePath=m_Ui->lineEditCustomTemplatePath->text().trimmed();
     QString postsolverPath=m_Ui->lineEditPostsolverPath->text().trimmed();
 
-    if(presolverPath=="")
-    {
-        QMessageBox::warning(m_Control,"Presolver Missing","Please provide SimVascular presolver.");
-        return false;
-    }
+//    if(presolverPath=="")
+//    {
+//        QMessageBox::warning(m_Control,"Presolver Missing","Please provide SimVascular presolver.");
+//        return false;
+//    }
 
-    if(flowsolverPath=="")
-    {
-        QMessageBox::warning(m_Control,"Flowsolver Missing","Please provide SimVascular flowsolver.");
-        return false;
-    }
+//    if(flowsolverPath=="")
+//    {
+//        QMessageBox::warning(m_Control,"Flowsolver Missing","Please provide SimVascular flowsolver.");
+//        return false;
+//    }
 
-    if(useMPI && MPIExecPath=="")
-    {
-        QMessageBox::warning(m_Control,"MPIExec Missing","Please provide mpiexec.");
-        return false;
-    }
+//    if(useMPI && MPIExecPath=="")
+//    {
+//        QMessageBox::warning(m_Control,"MPIExec Missing","Please provide mpiexec.");
+//        return false;
+//    }
 
-    if(useCustom && customTemplatePath=="")
-    {
-        QMessageBox::warning(m_Control,"Custom Template Missing","Please provide SimVascular Solver Input Template File.");
-        return false;
-    }
+//    if(useCustom && customTemplatePath=="")
+//    {
+//        QMessageBox::warning(m_Control,"Custom Template Missing","Please provide SimVascular Solver Input Template File.");
+//        return false;
+//    }
 
-    if(postsolverPath=="")
-    {
-        QMessageBox::warning(m_Control,"Postsolver Missing","Please provide SimVascular postsolver.");
-        return false;
-    }
+//    if(postsolverPath=="")
+//    {
+//        QMessageBox::warning(m_Control,"Postsolver Missing","Please provide SimVascular postsolver.");
+//        return false;
+//    }
 
     m_Preferences->Put("presolver path", presolverPath);
 
