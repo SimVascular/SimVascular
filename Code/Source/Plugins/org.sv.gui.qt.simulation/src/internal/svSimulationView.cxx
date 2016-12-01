@@ -46,6 +46,14 @@ svSimulationView::svSimulationView() :
     m_CapBCWidget=NULL;
 
     m_TableModelSolver=NULL;
+
+    m_PresolverPath="";
+    m_FlowsolverPath="";
+    m_UseMPI=true;
+    m_MPIExecPath="";
+    m_UseCustom=false;
+    m_SolverTemplatePath="";
+    m_PostsolverPath="";
 }
 
 svSimulationView::~svSimulationView()
@@ -163,6 +171,19 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 
 }
 
+void svSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+{
+    if(prefs==NULL)
+        return;
+
+    m_PresolverPath=prefs->Get("presolver path","");
+    m_FlowsolverPath=prefs->Get("flowsolver path","");
+    m_UseMPI=prefs->GetBool("use mpi", true);
+    m_MPIExecPath=prefs->Get("mpiexec path","");
+    m_UseCustom=prefs->GetBool("use custom", false);
+    m_SolverTemplatePath=prefs->Get("solver template path","");
+    m_PostsolverPath=prefs->Get("postsolver path","");
+}
 
 void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
@@ -982,7 +1003,7 @@ void svSimulationView::CreateDataFiles()
 
     if(modelElement==NULL)
     {
-        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.";
+        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.");
         return;
     }
 
@@ -1017,15 +1038,12 @@ void svSimulationView::CreateDataFiles()
 
     if(mesh==NULL)
     {
-        QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.";
+        QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
         return;
     }
 
-
-
-
-
-    std::string projPath=projFolderNode->GetStringProperty("project path", projPath);
+    std::string projPath="";
+    projFolderNode->GetStringProperty("project path", projPath);
     rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
     std::string simFolderName="";
     if (rs->size()>0)
@@ -1063,12 +1081,12 @@ void svSimulationView::CreateDataFiles()
     QString rcrtFielContent=QString::fromStdString(svSimulationUtils::CreateRCRTFileContent(job));
 
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete");
+    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
     QDir dir(QString::fromStdString(projPath));
 //    dir.cd(QString::fromStdString(simFolderName));
 //    dir.mkdir(QString::fromStdString(m_JobNode->GetName()));
 //    dir.cd(QString::fromStdString(m_JobNode->GetName()));
-    std::string jobPath=projectPath+"/"+simFolderName+"/"+m_JobNode->GetName();
+    std::string jobPath=projPath+"/"+simFolderName+"/"+m_JobNode->GetName();
     std::string meshCompletePath=jobPath+"/mesh-complete";
     dir.mkpath(QString::fromStdString(meshCompletePath));
     svMeshLegacyIO::WriteFiles(mesh,modelElement, QString::fromStdString(meshCompletePath));

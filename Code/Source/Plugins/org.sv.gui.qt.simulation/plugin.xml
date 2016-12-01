@@ -13,4 +13,10 @@
 <!--  <contextMenuAction nodeDescriptorName="svMitkSimJob" label="Export Job Data Files" icon="" class="svSimJobExportAction" />-->
   </extension>
 
+  <extension point="org.blueberry.ui.preferencePages">
+    <page id="org.sv.gui.qt.SimulationPreferencePage" name="SimVascular Simulation" class="svSimulationPreferencePage">
+      <keywordreference id="org.sv.gui.qt.SimulationPreferencePageKeywords"></keywordreference>
+    </page>
+  </extension>
+
 </plugin>

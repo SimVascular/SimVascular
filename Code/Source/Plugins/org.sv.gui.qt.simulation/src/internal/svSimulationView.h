@@ -8,6 +8,8 @@
 
 #include <QmitkFunctionality.h>
 
+#include <berryIBerryPreferences.h>
+
 #include <QWidget>
 #include <QStandardItemModel>
 
@@ -103,6 +105,8 @@ public:
 
     virtual void Hidden() override;
 
+    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+
     svSimJob* CreateJob(std::string& msg);
 
     bool IsDouble(std::string value);
@@ -143,6 +147,14 @@ private:
     svCapBCWidget* m_CapBCWidget;
 
     QStandardItemModel* m_TableModelSolver;
+
+    QString m_PresolverPath;
+    QString m_FlowsolverPath;
+    bool m_UseMPI;
+    QString m_MPIExecPath;
+    bool m_UseCustom;
+    QString m_SolverTemplatePath;
+    QString m_PostsolverPath;
 
 };
 
