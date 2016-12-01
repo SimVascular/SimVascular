@@ -12,7 +12,7 @@ class SVSIMULATION_EXPORT svSimulationUtils
 
 public:
 
-    static std::string CreatePreSolverFileContent(svSimJob* job, std::string outputDir);
+    static std::string CreatePreSolverFileContent(svSimJob* job, std::string outputDir="");
 
     static std::string CreateRCRTFileContent(svSimJob* job);
 

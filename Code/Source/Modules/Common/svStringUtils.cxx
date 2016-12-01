@@ -6,7 +6,7 @@
 #include <cctype>
 #include <locale>
 
-static std::vector<std::string> svStringUtils::split(const std::string &s, char delim)
+std::vector<std::string> svStringUtils::split(const std::string &s, char delim)
 {
     std::stringstream ss(s);
     std::string item;
@@ -19,23 +19,23 @@ static std::vector<std::string> svStringUtils::split(const std::string &s, char 
     return elems;
 }
 
-static std::string svStringUtils::ltrim(std::string s) {
+std::string svStringUtils::ltrim(std::string s) {
     s.erase(s.begin(), std::find_if(s.begin(), s.end(),
             std::not1(std::ptr_fun<int, int>(std::isspace))));
     return s;
 }
 
-static std::string svStringUtils::rtrim(std::string s) {
+std::string svStringUtils::rtrim(std::string s) {
     s.erase(std::find_if(s.rbegin(), s.rend(),
             std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
     return s;
 }
 
-static std::string svStringUtils::trim(std::string s) {
+std::string svStringUtils::trim(std::string s) {
     return ltrim(rtrim(s));
 }
 
-static std::string svStringUtils::lower(std::string s) {
+std::string svStringUtils::lower(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(), ::tolower);
     return s;
 }

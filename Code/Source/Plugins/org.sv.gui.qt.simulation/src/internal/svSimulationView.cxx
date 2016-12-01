@@ -4,6 +4,8 @@
 #include "svTableCapDelegate.h"
 #include "svTableSolverDelegate.h"
 #include "svMitkMesh.h"
+#include "svMeshLegacyIO.h"
+#include "svSimulationUtils.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
@@ -18,6 +20,7 @@
 #include <QMessageBox>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QDir>
 
 const QString svSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -857,7 +860,7 @@ void svSimulationView::UpdateGUISolver()
     QFile xmlFile(":solvertemplate.xml");
     if(!xmlFile.open(QIODevice::ReadOnly))
     {
-        QMessageBox::warning(NULL,"Info Missing","Solver Parameter Table template file not found");
+        QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
         return;
     }
 
@@ -865,7 +868,7 @@ void svSimulationView::UpdateGUISolver()
 //    QString *em=NULL;
     if(!doc.setContent(&xmlFile))
     {
-        QMessageBox::warning(NULL,"File Template Error","Format Error.");
+        QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
         return;
     }
     xmlFile.close();
@@ -962,10 +965,136 @@ void svSimulationView::UpdateGUIJob()
     ui->comboBoxMeshName->clear();
     for(int i=0;i<meshNames.size();i++)
         ui->comboBoxMeshName->addItem(QString::fromStdString(meshNames[i]));
+
+    int foundIndex=ui->comboBoxMeshName->findText(QString::fromStdString(m_MitkJob->GetMeshName()));
+    ui->comboBoxMeshName->setCurrentIndex(foundIndex);
 }
 
 void svSimulationView::CreateDataFiles()
 {
+    if(!m_MitkJob)
+        return;
+
+    svModelElement* modelElement=NULL;
+
+    if(m_Model)
+        modelElement=m_Model->GetModelElement();
+
+    if(modelElement==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.";
+        return;
+    }
+
+    std::string meshName=ui->comboBoxMeshName->currentText().toStdString();
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    svMesh* mesh=NULL;
+    mitk::DataNode::Pointer projFolderNode=NULL;
+
+    if(rs->size()>0)
+    {
+        projFolderNode=rs->GetElement(0);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+
+            mitk::DataNode::Pointer meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
+            if(meshNode.IsNotNull())
+            {
+                svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(meshNode->GetData());
+                if(mitkMesh)
+                {
+                    mesh=mitkMesh->GetMesh();
+                }
+            }
+        }
+    }
+
+    if(mesh==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.";
+        return;
+    }
+
+
+
+
+
+    std::string projPath=projFolderNode->GetStringProperty("project path", projPath);
+    rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+    std::string simFolderName="";
+    if (rs->size()>0)
+    {
+        mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+        simFolderName=simFolderNode->GetName();
+    }
+
+    if(simFolderName=="")
+        return;
+
+//    mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
+    WaitCursorOn();
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
+    std::string msg;
+
+    svSimJob* job=CreateJob(msg);
+
+    if(job==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
+        WaitCursorOff();
+        return;
+    }
+
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file");
+    QString svpreFielContent=QString::fromStdString(svSimulationUtils::CreatePreSolverFileContent(job));
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
+    QString solverFielContent=QString::fromStdString(svSimulationUtils::CreateFlowSolverFileContent(job));
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat if applicable");
+    QString rcrtFielContent=QString::fromStdString(svSimulationUtils::CreateRCRTFileContent(job));
+
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete");
+    QDir dir(QString::fromStdString(projPath));
+//    dir.cd(QString::fromStdString(simFolderName));
+//    dir.mkdir(QString::fromStdString(m_JobNode->GetName()));
+//    dir.cd(QString::fromStdString(m_JobNode->GetName()));
+    std::string jobPath=projectPath+"/"+simFolderName+"/"+m_JobNode->GetName();
+    std::string meshCompletePath=jobPath+"/mesh-complete";
+    dir.mkpath(QString::fromStdString(meshCompletePath));
+    svMeshLegacyIO::WriteFiles(mesh,modelElement, QString::fromStdString(meshCompletePath));
+
+    mitk::StatusBar::GetInstance()->DisplayText("Create Data files: bct, restart, geombc,etc.");
+
+
+
+
+
+
+
+
+
+
+    //create job dir if not exists and create temp dir if not exists and maybe empty temp dir
+
+    //output mesh-complete into the temp dir
+
+    //output .svpre into the temp dir
+
+    //run presolver with output to the job dir
+
+
+
+
 
 }
 
@@ -1239,7 +1368,7 @@ void svSimulationView::SaveToManager()
 
     if(job==NULL)
     {
-        QMessageBox::warning(NULL,"Parameter Values Error",QString::fromStdString(msg));
+        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
         return;
     }
 

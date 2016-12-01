@@ -41,6 +41,9 @@
       <item>
        <widget class="QWidget" name="widget_3" native="true">
         <layout class="QFormLayout" name="formLayout">
+         <property name="labelAlignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
          <property name="horizontalSpacing">
           <number>5</number>
          </property>
@@ -66,6 +69,9 @@
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
            </property>
            <property name="text">
             <string>Job Name:</string>
@@ -153,15 +159,15 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>5</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>595</height>
+           <width>411</width>
+           <height>558</height>
           </rect>
          </property>
          <attribute name="label">
@@ -197,8 +203,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>595</height>
+           <width>411</width>
+           <height>558</height>
           </rect>
          </property>
          <attribute name="label">
@@ -261,8 +267,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>595</height>
+           <width>411</width>
+           <height>558</height>
           </rect>
          </property>
          <attribute name="label">
@@ -601,8 +607,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>595</height>
+           <width>411</width>
+           <height>558</height>
           </rect>
          </property>
          <attribute name="label">
@@ -638,8 +644,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>595</height>
+           <width>411</width>
+           <height>558</height>
           </rect>
          </property>
          <attribute name="label">
@@ -780,17 +786,17 @@
                  </widget>
                 </item>
                 <item row="0" column="1">
-                 <widget class="ctkSliderWidget" name="sliderNumProcs">
-                  <property name="decimals">
+                 <widget class="ctkSliderWidget" name="sliderNumProcs" native="true">
+                  <property name="decimals" stdset="0">
                    <number>0</number>
                   </property>
-                  <property name="pageStep">
+                  <property name="pageStep" stdset="0">
                    <double>40.000000000000000</double>
                   </property>
-                  <property name="minimum">
+                  <property name="minimum" stdset="0">
                    <double>1.000000000000000</double>
                   </property>
-                  <property name="maximum">
+                  <property name="maximum" stdset="0">
                    <double>64.000000000000000</double>
                   </property>
                  </widget>
@@ -824,8 +830,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>595</height>
+           <width>411</width>
+           <height>558</height>
           </rect>
          </property>
          <attribute name="label">
