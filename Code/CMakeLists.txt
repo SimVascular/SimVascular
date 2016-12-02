@@ -1074,6 +1074,8 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
-include(SimVascularInstallQT)
+if(SV_USE_QT_GUI)
+  include(SimVascularInstallQT)
+endif()
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)
