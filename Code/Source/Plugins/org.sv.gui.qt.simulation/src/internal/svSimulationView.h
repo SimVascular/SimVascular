@@ -57,7 +57,6 @@ public slots:
 
     void UpdateGUICap();
 
-
     void WallTypeSelectionChanged(int index);
 
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
@@ -76,14 +75,19 @@ public slots:
 
     void UpdateGUIJob();
 
-    void CreateDataFiles();
+    void ExportInputFiles();
+
+    void ExportAllFiles();
+
+    void CreateAllFiles();
 
     void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
 
-//    void RunJob();
+    void RunJob();
 
+    void SetResultDir();
 
-//    void ConvertResults();
+    void ExportResults();
 
 public:
 
@@ -108,6 +112,8 @@ public:
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 
     svSimJob* CreateJob(std::string& msg);
+
+    bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob);
 
     bool IsDouble(std::string value);
 
