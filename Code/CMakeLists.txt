@@ -91,11 +91,6 @@ include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
 
 #-----------------------------------------------------------------------------
-# TEMPORARY FUNCTION WITH CTK AND MITK FUNCTIONS/MACROS
-#-----------------------------------------------------------------------------
-include(FeatureSummary)
-
-#-----------------------------------------------------------------------------
 # Setting up default directories for SimVascular Externals
 # Note: *These can be changes by the user if they have moved the sv_extern directories*
 # This is part of he legacy build system
@@ -866,6 +861,9 @@ if(SV_USE_MITK)
   endif()
   mark_as_superbuild(MITK_DIR)
   mark_as_superbuild(MITK_LIBRARIES)
+  mark_as_superbuild(MITK_LIBRARY_DIR)
+  mark_as_superbuild(MITK_PLUGIN_LIBRARIES)
+  mark_as_superbuild(MITK_PLUGIN_LIBRARY_DIR)
   mark_as_superbuild(MTIK_INCLUDE_DIRS)
   include_directories(${MITK_INCLUDE_DIRS})
   include_directories(${CTK_INCLUDE_DIRS})
@@ -1037,6 +1035,7 @@ if(NOT SV_ONLY_BUILD_FLOWSOLVER)
 endif()
 #----------------------------------------------------------------------------
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
+include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
 if(SV_USE_MITK_CONFIG)
   if(SV_USE_QT_GUI)
     macro(GetMyTargetLibraries all_target_libraries varname)
@@ -1049,7 +1048,6 @@ if(SV_USE_MITK_CONFIG)
     set(sv_app_fullpath "${CMAKE_CURRENT_SOURCE_DIR}/Source/UI^^${PROJECT_NAME}_Apps/simvascular")
     message(STATUS "sv app full path: ${sv_app_fullpath}")
 
-    include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
     set(sv_plugins_fullpath "")
     foreach(sv_plugin ${SV_PLUGINS})
       list(APPEND sv_plugins_fullpath "Source/Plugins/${sv_plugin}")
@@ -1076,5 +1074,8 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
+if(SV_USE_QT_GUI)
+  include(SimVascularInstallQT)
+endif()
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)

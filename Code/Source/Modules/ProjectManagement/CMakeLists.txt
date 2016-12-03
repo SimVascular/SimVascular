@@ -27,6 +27,7 @@ set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${
 
 target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${ITK_LIBRARIES}
+                             ${QT_LIBRARIES}
                              svPath
                              svSegmentation
                              svModel

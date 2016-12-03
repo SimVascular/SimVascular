@@ -72,13 +72,15 @@ set(${proj}_LIBNAMES CppMicroServices
                      PythonQt
                      tinyxml
                      mbilog
-                     org_mitk_core_services
-                     org_mitk_gui_common
-                     org_mitk_gui_qt_common
-                     org_mitk_gui_qt_common_legacy
-                     org_mitk_gui_qt_datamanager
-                     org_blueberry_ui_qt
-                     org_blueberry_core_runtime)
+                     PocoUtil)
+
+set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
+                            org_mitk_gui_common
+                            org_mitk_gui_qt_common
+                            org_mitk_gui_qt_common_legacy
+                            org_mitk_gui_qt_datamanager
+                            org_blueberry_ui_qt
+                            org_blueberry_core_runtime)
 
 # Add requestion components
 set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
@@ -133,8 +135,7 @@ set(lib_sub_path "lib")
 set(${proj}_POSSIBLE_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
 	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS} 
-		"${p}/${lib_sub_path}"
-		"${p}/${lib_sub_path}/plugins")
+		"${p}/${lib_sub_path}")
 endforeach()
 
 set(${proj}_LIBS_MISSING ${${proj}_LIBNAMES})
@@ -188,6 +189,72 @@ if(${proj}_LIBRARIES)
 	endif()
         get_filename_component(${proj}_LIBRARY_DIR ${temp_path} PATH)
         mark_as_superbuild(${proj}_LIBRARY_DIR:PATH)
+endif()
+
+#-----------------------------------------------------------------------------
+# Find Plugins
+#-----------------------------------------------------------------------------
+set(${proj}_POSSIBLE_PATHS ${${proj}_DIR})
+set(lib_sub_path "lib")
+
+set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS)
+foreach(p ${${proj}_POSSIBLE_PATHS})
+  set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS} 
+		"${p}/${lib_sub_path}/plugins")
+endforeach()
+
+set(${proj}_PLUGIN_LIBS_MISSING ${${proj}_PLUGIN_LIBNAMES})
+list(REMOVE_DUPLICATES ${proj}_PLUGIN_LIBS_MISSING)
+set(${proj}_PLUGIN_LIBRARIES_WORK "")
+foreach(lib ${${proj}_PLUGIN_LIBNAMES})
+	#find library
+        find_library(${proj}_${lib}_PLUGIN_LIBRARY
+		NAMES
+		${lib}
+		PATHS
+                ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
+		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll
+		NO_DEFAULT_PATH)
+              find_library(${proj}_${lib}_PLUGIN_PLUGIN_LIBRARY
+		NAMES
+		${lib}
+		PATHS
+                ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
+		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll)
+              set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
+              mark_as_advanced(${proj}_${lib}_PLUGIN_LIBRARY)
+              if(${proj}_${lib}_PLUGIN_LIBRARY)
+                set(${proj}_PLUGIN_LIBRARIES_WORK ${${proj}_PLUGIN_LIBRARIES_WORK} "${${proj}_${lib}_PLUGIN_LIBRARY}")
+                list(REMOVE_ITEM ${proj}_PLUGIN_LIBS_MISSING ${lib})
+	endif()
+endforeach()
+
+#message("${proj}_PLUGIN_LIBRARIES_WORK: ${${proj}_PLUGIN_LIBRARIES_WORK}")
+
+list(LENGTH ${proj}_PLUGIN_LIBRARIES_WORK ${proj}_NUMPLUGINS)
+list(LENGTH ${proj}_PLUGIN_LIBNAMES ${proj}_NUMPLUGINS_EXPECTED)
+#message("${${proj}_NUMPLUGINS} ${${proj}_NUMPLUGINS_EXPECTED}")
+if (NOT ${proj}_NUMPLUGINS EQUAL ${proj}_NUMPLUGINS_EXPECTED)
+  message("WHJHHWWHHW: ${${proj}_NUMPLUGINS} ${${proj}_NUMPLUGINS_EXPECTED}")
+  set(${proj}_PLUGIN_LIBRARIES_WORK "${proj}_PLUGIN_LIBRARIES-NOTFOUND")
+  message(FATAL_ERROR "${proj}_PLUGIN_LIBS_MISSING: ${${proj}_PLUGIN_LIBS_MISSING}")
+endif()
+
+set(${proj}_PLUGIN_LIBRARIES  ${${proj}_PLUGIN_LIBRARIES_WORK} CACHE STRING 
+	"${proj} libraries to link against" FORCE)
+
+# Clean up.  If all libraries were found remove cache entries.
+if(${proj}_PLUGIN_LIBRARIES)
+  foreach(lib ${${proj}_PLUGIN_LIBNAMES})
+    unset(${proj}_${lib}_PLUGIN_LIBRARY CACHE)
+	endforeach()
+        if(${proj}_NUMPLUGINS_EXPECTED EQUAL 1)
+          set(temp_path ${${proj}_PLUGIN_LIBRARIES})
+	else()
+          list(GET ${proj}_PLUGIN_LIBRARIES 1 temp_path)
+	endif()
+        get_filename_component(${proj}_PLUGIN_LIBRARY_DIR ${temp_path} PATH)
+        mark_as_superbuild(${proj}_PLUGIN_LIBRARY_DIR:PATH)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -286,7 +353,7 @@ list(GET ${proj}_INCLUDE_DIRS 0 ${proj}_INCLUDE_DIR)
 # Handle Standard Args
 find_package_handle_standard_args(${proj} 
 	FOUND_VAR ${proj}_FOUND
-        REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_LIBRARY_DIR
+        REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_LIBRARY_DIR ${proj}_PLUGIN_LIBRARIES ${proj}_PLUGIN_LIBRARY_DIR
 	VERSION_VAR ${proj}_VERSION
         FAIL_MESSAGE "Could NOT find ${proj} missing component: ${${proj}_LIBS_MISSING} and ${${proj}_HEADERS_MISSING}")
 set(${proj}_LIBRARY ${${proj}_LIBRARIES})

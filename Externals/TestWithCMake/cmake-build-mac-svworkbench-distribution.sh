@@ -1,16 +1,29 @@
-rm -Rf ../../Code/WorkbenchBuild
-mkdir -p ../../Code/WorkbenchBuild
-pushd ../../Code/WorkbenchBuild
+rm -Rf ../../Code/WorkbenchDistBuild
+mkdir -p ../../Code/WorkbenchDistBuild
+pushd ../../Code/WorkbenchDistBuild
 
 #compilers
 export CC="clang"
 export CXX="clang++"
+export MPICC="/opt/local/bin/mpicc"
+export MPICXX="/opt/local/bin/mpicxx"
+export MPIF90="/opt/local/bin/mpif90"
+export MPIEXEC="/opt/local/bin/mpiexec"
+
+#mpi paths and libs
+export MPI_INCLUDE_PATH="/opt/local/include/mpich-gcc48"
+export LIB_MPI="/opt/local/lib/mpich-gcc48/libmpi.dylib"
+export LIB_PMPI="/opt/local/lib/mpich-gcc48/libpmpi.dylib"
+export LIB_MPICXX="/opt/local/lib/mpich-gcc48/libmpicxx.dylib"
+export LIB_MPIFORT="/opt/local/lib/mpich-gcc48/libmpifort.dylib"
+export MPI_LINK_FLAGS="-Wl -headerpad_max_install_names -flat_namespace -commons,use_dylibs"
 
 #cmake
 export REPLACEME_SV_CMAKE_CMD="cmake"
 export REPLACEME_SV_CMAKE_GENERATOR="Unix Makefiles"
 export REPLACEME_SV_CMAKE_BUILD_TYPE="RelWithDebInfo"
 export REPLACEME_SV_MAKE_CMD="make -j8"
+export REPLACEME_SV_CPACK_CMD="cpack"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
@@ -29,6 +42,11 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DBUILD_TESTING=OFF \
 \
    -DSV_SUPERBUILD=OFF \
+   -DSV_ENABLE_DISTRIBUTION=ON \
+\
+   -DSV_USE_TET_ADAPTOR=ON \
+   -DSV_USE_THREEDSOLVER=ON \
+   -DSV_THREEDSOLVER_USE_VTK=ON \
 \
    -DSV_USE_FREETYPE=ON \
    -DSV_USE_GDCM=ON \
@@ -39,7 +57,6 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_USE_MMG=ON \
    -DSV_USE_MITK=ON \
    -DSV_USE_QT_GUI=ON \
-   -DSV_USE_TET_ADAPTOR=ON \
 \
    -DSV_USE_SYSTEM_FREETYPE=ON \
    -DSV_USE_SYSTEM_GDCM=ON \
@@ -70,11 +87,37 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 \
    -Qt5_DIR=$Qt5_DIR \
 \
+  -DMPIEXEC="$MPIEXEC" \
+  -DMPIEXEC_MAX_NUMPROCS=4 \
+  -DMPIEXEC_NUMPROC_FLAG="-np" \
+\
+  -DMPI_CXX_COMPILER="$MPICXX" \
+  -DMPI_CXX_COMPILE_FLAGS="" \
+  -DMPI_CXX_INCLUDE_PATH="$MPI_INCLUDE_PATH" \
+  -DMPI_CXX_LIBRARIES="$LIB_MPICXX;$LIB_MPI;$LIB_PMPI" \
+  -DMPI_CXX_LINK_FLAGS="$MPI_LINK_FLAGS" \
+\
+  -DMPI_C_COMPILER="$MPICC" \
+  -DMPI_C_COMPILE_FLAGS="" \
+  -DMPI_C_INCLUDE_PATH="$MPI_INCLUDE_PATH" \
+  -DMPI_C_LIBRARIES="$LIB_MPI;$LIB_PMPI" \
+  -DMPI_C_LINK_FLAGS="$MPI_LINK_FLAGS" \
+\
+  -DMPI_Fortran_COMPILER="$MPIF90" \
+  -DMPI_Fortran_COMPILE_FLAGS="" \
+  -DMPI_Fortran_INCLUDE_PATH="$MPI_INCLUDE_PATH" \
+  -DMPI_Fortran_LIBRARIES="$LIB_MPIFORT;$LIB_MPI;$LIB_PMPI" \
+  -DMPI_Fortran_LINK_FLAGS="$MPI_LINK_FLAGS" \
+\
+  -DMPI_LIBRARY="$LIB_MPICXX" \
+  -DMPI_fmpich2_LIBRARY="" \
+  -DMPI_EXTRA_LIBRARY="" \
+\
+\
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
 $REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
 
-$REPLACEME_SV_CPACK_CMD >& stdout-cpack.txt
+#$REPLACEME_SV_CPACK_CMD >& stdout-cpack.txt
 
 popd
-

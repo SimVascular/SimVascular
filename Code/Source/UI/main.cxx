@@ -115,13 +115,13 @@ svCatchDebugger() {
 class simvascularApp : public mitk::BaseApplication {
 
   public:
-  
+
   simvascularApp(int argc, char** argv);
   ~simvascularApp();
 
   protected:
   void initializeLibraryPaths();
-  
+
 };
 
 simvascularApp::simvascularApp(int argc, char* argv[]) : BaseApplication(argc, argv)
@@ -131,7 +131,7 @@ simvascularApp::simvascularApp(int argc, char* argv[]) : BaseApplication(argc, a
 
   fprintf(stdout,"\n\n *** simvascularApp init: m_argv (%p) *** \n\n",argv);
   fflush (stdout);
-    
+
   //setArgs(int argc, char* argv[])
 }
 
@@ -145,12 +145,12 @@ void simvascularApp::initializeLibraryPaths() {
 
   QStringList suffixes;
   QDir appDir;
-  
+
   //
   // This is the default behavior in AppUtil for MITK.
   // This should be replaced without hardcoded paths!
   //
-  
+
   suffixes << "plugins";
 #ifdef WIN32
   suffixes << "bin/plugins";
@@ -193,8 +193,8 @@ void simvascularApp::initializeLibraryPaths() {
   requiredSize = 0;
   getenv_s( &requiredSize, NULL, 0, "SV_PLUGIN_DIR");
 
-  if (requiredSize == 0) {  
-    std::cerr << "Warning:  SV_PLUGIN_DIR doesn't exist!\n" << std::endl << std::flush;  
+  if (requiredSize == 0) {
+    std::cerr << "Warning:  SV_PLUGIN_DIR doesn't exist!\n" << std::endl << std::flush;
   } else if (requiredSize >= _MAX_ENV) {
     std::cerr << "FATAL ERROR:  SV_PLUGIN_DIR to long!\n" << std::endl << std::flush;
     exit(-1);
@@ -214,7 +214,7 @@ void simvascularApp::initializeLibraryPaths() {
     std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
   }
 #endif
-  
+
   suffixes << "plugins";
   suffixes << "bin/plugins";
   suffixes << "lib/plugins";
@@ -226,7 +226,7 @@ void simvascularApp::initializeLibraryPaths() {
   //  This code is a debugging check to make sure that all of the dll's
   //  can be found in the search path.
   //
-  
+
   foreach(QString suffix, suffixes)
   {
     ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
@@ -235,14 +235,14 @@ void simvascularApp::initializeLibraryPaths() {
 
   QVariant pluginsToStartVariant = this->getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS);
   QStringList pluginsToStart = pluginsToStartVariant.toStringList();
-  
+
   for (QStringList::iterator it =  pluginsToStart.begin();
        it !=  pluginsToStart.end(); ++it) {
      QString current = *it;
      QString MypluginPath = ctkPluginFrameworkLauncher::getPluginPath(current);
      std::cout << "  plugin (" << current.toStdString() << ")" << std::endl << std::flush;
      std::cout << "    resolves to [" << MypluginPath.toStdString() << "]" << std::endl << std::flush;
-  }   
+  }
 
   return;
 }
@@ -569,8 +569,8 @@ RegCloseKey(hKey2);
 #ifdef SV_USE_QT_GUI
 
   if(use_qt_gui) {
-   
-     // intentionally remove any additional params when calling qt gui 
+
+     // intentionally remove any additional params when calling qt gui
      int single_argc = 1;
      //mitk::BaseApplication app(single_argc, argv);
      simvascularApp app(single_argc, argv);
@@ -583,7 +583,7 @@ RegCloseKey(hKey2);
        //MitkImagePluginActivator* mitkimageplugin = new MitkImagePluginActivator();
        //mitkimageplugin->start();
      #endif
-     
+
      app.setSingleMode(true);
      app.setApplicationName("SimVascular_Workbench");
      app.setOrganizationName("Stanford_University");
@@ -601,13 +601,13 @@ RegCloseKey(hKey2);
 
      QString plugin_dirs = "";
      app.setProperty(mitk::BaseApplication::ARG_PLUGIN_DIRS, "");
-     
+
      QStringList pluginsToStart;
      QString pluginPath;
-     
+
      // Note: You can specify full URL filenames as well, e.g.
      // pluginsToStart.push_back("file:///C:/.../liborg_commontk_eventadmin.dll");
-  
+
      // remove lib prefix and dll postfix
      pluginsToStart.push_back("org_commontk_configadmin");
      pluginsToStart.push_back("org_commontk_eventadmin");
@@ -653,12 +653,12 @@ RegCloseKey(hKey2);
      pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
 
      app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
-     
+
      //Use transient start with declared activation policy
      ctkPlugin::StartOptions startOptions(ctkPlugin::START_TRANSIENT | ctkPlugin::START_ACTIVATION_POLICY);
      app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS_START_OPTIONS, static_cast<int>(startOptions));
 #endif
-   
+
      if (use_qt_tcl_interp) {
        Tcl_Main (argc, argv, Tcl_AppInit);
      } else {
