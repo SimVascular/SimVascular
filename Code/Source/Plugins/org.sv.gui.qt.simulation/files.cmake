@@ -9,7 +9,7 @@ set(INTERNAL_CPP_FILES
     svTableCapDelegate.cxx
     svTableSolverDelegate.cxx
     svSimulationView.cxx
-#    svSimJobExportAction.cxx
+    svSimulationPreferencePage.cxx
     svSimulationPluginActivator.cxx
 )
 
@@ -20,13 +20,14 @@ set(MOC_H_FILES
     src/internal/svTableCapDelegate.h
     src/internal/svTableSolverDelegate.h
     src/internal/svSimulationView.h
-#    src/internal/svSimJobExportAction.h
+    src/internal/svSimulationPreferencePage.h
     src/internal/svSimulationPluginActivator.h
 )
 
 set(UI_FILES
     src/internal/svSimJobCreate.ui
     src/internal/svCapBCWidget.ui
+    src/internal/svSimulationPreferencePage.ui
     src/internal/svSimulationView.ui
 )
 

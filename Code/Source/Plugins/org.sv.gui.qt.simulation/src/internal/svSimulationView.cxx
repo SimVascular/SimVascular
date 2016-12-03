@@ -3,12 +3,19 @@
 
 #include "svTableCapDelegate.h"
 #include "svTableSolverDelegate.h"
+#include "svMitkMesh.h"
+#include "svMeshLegacyIO.h"
+#include "svSimulationUtils.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
+
+#include <berryIPreferencesService.h>
+#include <berryIPreferences.h>
+#include <berryPlatform.h>
 
 #include <usModuleRegistry.h>
 
@@ -17,6 +24,10 @@
 #include <QMessageBox>
 #include <QDomDocument>
 #include <QDomElement>
+#include <QDir>
+#include <QProcess>
+#include <QFileDialog>
+#include <QThread>
 
 const QString svSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -42,6 +53,14 @@ svSimulationView::svSimulationView() :
     m_CapBCWidget=NULL;
 
     m_TableModelSolver=NULL;
+
+    m_PresolverPath="";
+    m_FlowsolverPath="";
+    m_UseMPI=true;
+    m_MPIExecPath="";
+    m_UseCustom=false;
+    m_SolverTemplatePath="";
+    m_PostsolverPath="";
 }
 
 svSimulationView::~svSimulationView()
@@ -86,6 +105,7 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
 
+    ui->toolBox->setCurrentIndex(0);
 
     //for basic table
     m_TableModelBasic = new QStandardItemModel(this);
@@ -151,10 +171,36 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     //for data file and run
-//    connect(ui->btnCreateDataFiles, SIGNAL(clicked()), this, SLOT(CreateDataFiles()) );
+    connect(ui->btnExportInputFiles, SIGNAL(clicked()), this, SLOT(ExportInputFiles()) );
+    connect(ui->btnExportAllFiles, SIGNAL(clicked()), this, SLOT(ExportAllFiles()) );
+    connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
+    connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
+    connect(ui->btnRunJob, SIGNAL(clicked()), this, SLOT(RunJob()) );
 
+    //for export results
+    connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
+    connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
+
+    //get paths for the external solvers
+    berry::IPreferences::Pointer prefs = this->GetPreferences();
+    berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
+    //    InitializePreferences(berryprefs);
+    this->OnPreferencesChanged(berryprefs);
 }
 
+void svSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+{
+    if(prefs==NULL)
+        return;
+
+    m_PresolverPath=prefs->Get("presolver path","");
+    m_FlowsolverPath=prefs->Get("flowsolver path","");
+    m_UseMPI=prefs->GetBool("use mpi", true);
+    m_MPIExecPath=prefs->Get("mpiexec path","");
+    m_UseCustom=prefs->GetBool("use custom", false);
+    m_SolverTemplatePath=prefs->Get("solver template path","");
+    m_PostsolverPath=prefs->Get("postsolver path","");
+}
 
 void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
@@ -244,7 +290,7 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateGUISolver();
 
-    //        UpdateGUIRun();
+    UpdateGUIJob();
 
     UpdateFaceListSelection();
 
@@ -785,6 +831,15 @@ void svSimulationView::UpdateGUIWall()
         ui->comboBoxWallType->setCurrentIndex(1);
     else if(job->GetWallProp("Type")=="variable")
         ui->comboBoxWallType->setCurrentIndex(2);
+    else
+        ui->comboBoxWallType->setCurrentIndex(0);
+
+    ui->lineEditThickness->setText(QString::fromStdString(job->GetWallProp("Thickness")));
+    ui->lineEditE->setText(QString::fromStdString(job->GetWallProp("Elastic Modulus")));
+    ui->lineEditNu->setText(QString::fromStdString(job->GetWallProp("Poisson Ratio")));
+    ui->lineEditKcons->setText(QString::fromStdString(job->GetWallProp("Shear Constant")));
+    ui->lineEditWallDensity->setText(QString::fromStdString(job->GetWallProp("Density")));
+    ui->lineEditPressure->setText(QString::fromStdString(job->GetWallProp("Pressure")));
 
     svModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL) return;
@@ -849,18 +904,22 @@ void svSimulationView::UpdateGUISolver()
     int colCount=solverHeaders.size();
     m_TableModelSolver->setColumnCount(colCount);
 
-    QFile xmlFile(":solvertemplate.xml");
+    QString templateFilePath=":solvertemplate.xml";
+    if(m_UseCustom)
+        templateFilePath=m_SolverTemplatePath;
+
+    QFile xmlFile(templateFilePath);
     if(!xmlFile.open(QIODevice::ReadOnly))
     {
-        QMessageBox::warning(NULL,"Info Missing","Solver Parameter Table template file not found");
+        QMessageBox::warning(m_Parent,"Info Missing","Solver Parameter Table template file not found");
         return;
     }
 
     QDomDocument doc("solvertemplate");
-//    QString *em=NULL;
+    //    QString *em=NULL;
     if(!doc.setContent(&xmlFile))
     {
-        QMessageBox::warning(NULL,"File Template Error","Format Error.");
+        QMessageBox::warning(m_Parent,"File Template Error","Format Error.");
         return;
     }
     xmlFile.close();
@@ -920,6 +979,457 @@ void svSimulationView::UpdateGUISolver()
 
     ui->tableViewSolver->setColumnHidden(2,true);
     ui->tableViewSolver->setColumnHidden(3,true);
+}
+
+void svSimulationView::UpdateGUIJob()
+{
+    if(!m_MitkJob)
+        return;
+
+    std::string modelName=m_MitkJob->GetModelName();
+    std::vector<std::string> meshNames;
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+            rs=GetDataStorage()->GetDerivations(meshFolderNode);
+
+            for(int i=0;i<rs->size();i++)
+            {
+                svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(rs->GetElement(i)->GetData());
+                if(mitkMesh&&mitkMesh->GetModelName()==modelName)
+                {
+                    meshNames.push_back(rs->GetElement(i)->GetName());
+                }
+            }
+        }
+    }
+
+    ui->comboBoxMeshName->clear();
+    for(int i=0;i<meshNames.size();i++)
+        ui->comboBoxMeshName->addItem(QString::fromStdString(meshNames[i]));
+
+    int foundIndex=ui->comboBoxMeshName->findText(QString::fromStdString(m_MitkJob->GetMeshName()));
+    ui->comboBoxMeshName->setCurrentIndex(foundIndex);
+
+    int coreNum=QThread::idealThreadCount();
+    ui->sliderNumProcs->setMaximum(coreNum);
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job==NULL)
+        return;
+
+    std::string pNum=job->GetRunProp("Number of Processes");
+    ui->sliderNumProcs->setValue(pNum==""?1:QString::fromStdString(pNum).toInt());
+}
+
+void svSimulationView::ExportInputFiles()
+{
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileSavePath=QString();
+    if(prefs.IsNotNull())
+    {
+        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+    }
+
+    QString dir = QFileDialog::getExistingDirectory(m_Parent
+                                                    , tr("Choose Directory")
+                                                    , lastFileSavePath
+                                                    , QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks
+                                                    | QFileDialog::DontUseNativeDialog
+                                                    );
+
+    if(dir.isEmpty()) return;
+
+    WaitCursorOn();
+
+    CreateDataFiles(dir, false, true);
+
+    WaitCursorOff();
+}
+
+void svSimulationView::ExportAllFiles()
+{
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileSavePath=QString();
+    if(prefs.IsNotNull())
+    {
+        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+    }
+
+    QString dir = QFileDialog::getExistingDirectory(m_Parent
+                                                    , tr("Choose Directory")
+                                                    , lastFileSavePath
+                                                    , QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks
+                                                    | QFileDialog::DontUseNativeDialog
+                                                    );
+
+    if(dir.isEmpty()) return;
+
+    WaitCursorOn();
+
+    CreateDataFiles(dir, true, true);
+
+    WaitCursorOff();
+}
+
+void svSimulationView::CreateAllFiles()
+{
+    if(!m_MitkJob)
+        return;
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    std::string projPath="";
+    std::string simFolderName="";
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+        projFolderNode->GetStringProperty("project path", projPath);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+            simFolderName=simFolderNode->GetName();
+        }
+    }
+
+    QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
+
+    WaitCursorOn();
+
+    CreateDataFiles(jobPath, true, true);
+
+    WaitCursorOff();
+}
+
+void svSimulationView::RunJob()
+{
+    if(!m_MitkJob)
+        return;
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+    std::string projPath="";
+    std::string simFolderName="";
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+        projFolderNode->GetStringProperty("project path", projPath);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+            simFolderName=simFolderNode->GetName();
+        }
+    }
+
+    QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
+
+    if(m_FlowsolverPath=="")
+    {
+        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide flowsolver in Preferences");
+        return;
+    }
+
+    if(m_UseMPI && m_MPIExecPath=="")
+    {
+        QMessageBox::warning(m_Parent,"MPIExec Missing","Please provide mpiexec in Preferences");
+        return;
+    }
+
+    std::string startingNumber=ui->lineEditStartStepNum->text().trimmed().toStdString();
+    if(startingNumber!="")
+    {
+        if(!IsInt(startingNumber))
+        {
+            QMessageBox::warning(m_Parent,"Parameter Error","Please provide starting step number in correct format.");
+            return;
+        }
+    }
+
+    if(startingNumber!="")
+    {
+        QString runPath=jobPath;
+        if(m_UseMPI && ui->sliderNumProcs->value()>1)
+        {
+            runPath=jobPath+"/"+QString::number(ui->sliderNumProcs->value())+"-procs_case";
+        }
+
+        QFile numStartFile(runPath+"/numstart.dat");
+        if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream out(&numStartFile);
+            out<<QString::fromStdString(startingNumber+"\n");
+            numStartFile.close();
+        }
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
+    WaitCursorOn();
+
+    QProcess *flowsolverProcess = new QProcess(m_Parent);
+    flowsolverProcess->setWorkingDirectory(jobPath);
+
+    if(m_UseMPI)
+    {
+        QStringList arguments;
+        arguments << "-n" << QString::number(ui->sliderNumProcs->value())<< m_FlowsolverPath;
+        flowsolverProcess->start(m_MPIExecPath, arguments);
+        flowsolverProcess->waitForFinished(-1);
+    }
+    else
+    {
+        flowsolverProcess->start(m_FlowsolverPath, QStringList());
+        flowsolverProcess->waitForFinished(-1);
+    }
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job)
+        job->SetRunProp("Number of Processes",QString::number(ui->sliderNumProcs->value()).toStdString());
+
+    m_MitkJob->SetStatus("Simulation done");
+    ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+
+    mitk::StatusBar::GetInstance()->DisplayText("Simulation done");
+    WaitCursorOff();
+}
+
+bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bool updateJob)
+{
+    if(!m_MitkJob)
+        return false;
+
+    svModelElement* modelElement=NULL;
+
+    if(m_Model)
+        modelElement=m_Model->GetModelElement();
+
+    if(modelElement==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Model Unavailable","Please make sure the model exists ans is valid.");
+        return false;
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating Job");
+    std::string msg;
+
+    svSimJob* job=CreateJob(msg);
+
+    if(job==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
+        return false;
+    }
+
+    QDir dir(outputDir);
+    dir.mkpath(outputDir);
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file");
+    QString svpreFielContent=QString::fromStdString(svSimulationUtils::CreatePreSolverFileContent(job));
+    QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
+    if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&svpreFile);
+        out<<svpreFielContent;
+        svpreFile.close();
+    }
+
+    auto capProps=job->GetCapProps();
+    auto it = capProps.begin();
+    while(it != capProps.end())
+    {
+        if(it->first!=""&&it->second["BC Type"]=="Prescribed Velocities")
+        {
+            auto props=it->second;
+            std::ofstream out(outputDir.toStdString()+"/"+it->first+".flow");
+            out << props["Flow Rate"];
+            out.close();
+        }
+        it++;
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("Creating solver.inp");
+    QString solverFielContent=QString::fromStdString(svSimulationUtils::CreateFlowSolverFileContent(job));
+    QFile solverFile(outputDir+"/solver.inp");
+    if(solverFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&solverFile);
+        out<<solverFielContent;
+        solverFile.close();
+    }
+
+    QFile numStartFile(outputDir+"/numstart.dat");
+    if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    {
+        QTextStream out(&numStartFile);
+        out<<"0\n";
+        numStartFile.close();
+    }
+
+    QString rcrtFielContent=QString::fromStdString(svSimulationUtils::CreateRCRTFileContent(job));
+    if(rcrtFielContent!="")
+    {
+        mitk::StatusBar::GetInstance()->DisplayText("Creating rcrt.dat");
+        QFile rcrtFile(outputDir+"/rcrt.dat");
+        if(rcrtFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream out(&rcrtFile);
+            out<<rcrtFielContent;
+            rcrtFile.close();
+        }
+    }
+
+    std::string meshName="";
+    if(outputAllFiles)
+    {
+        if(m_PresolverPath=="")
+        {
+            QMessageBox::warning(m_Parent,"Presolver Missing","Please provide presolver in Preferences");
+            return false;
+        }
+
+        meshName=ui->comboBoxMeshName->currentText().toStdString();
+
+        mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+        mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+
+        svMesh* mesh=NULL;
+        mitk::DataNode::Pointer projFolderNode=NULL;
+
+        if(rs->size()>0)
+        {
+            projFolderNode=rs->GetElement(0);
+
+            rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+            if (rs->size()>0)
+            {
+                mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
+
+                mitk::DataNode::Pointer meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
+                if(meshNode.IsNotNull())
+                {
+                    svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(meshNode->GetData());
+                    if(mitkMesh)
+                    {
+                        mesh=mitkMesh->GetMesh();
+                    }
+                }
+            }
+        }
+
+        if(mesh==NULL)
+        {
+            QMessageBox::warning(m_Parent,"Mesh Unavailable","Please make sure the mesh exists and is valid.");
+            return false;
+        }
+
+        mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
+        QString meshCompletePath=outputDir+"/mesh-complete";
+        dir.mkpath(meshCompletePath);
+        svMeshLegacyIO::WriteFiles(mesh,modelElement, meshCompletePath);
+
+        mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
+        QProcess *presolverProcess = new QProcess(m_Parent);
+        presolverProcess->setWorkingDirectory(outputDir);
+        QStringList arguments;
+        arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
+        presolverProcess->start(m_PresolverPath, arguments);
+        presolverProcess->waitForFinished(-1);
+    }
+
+    if(updateJob)
+    {
+        m_MitkJob->SetSimJob(job);
+        m_MitkJob->SetMeshName(meshName);
+        m_MitkJob->SetStatus("Data files created");
+        ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+        m_MitkJob->SetDataModified();
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("Files have been created.");
+
+    return true;
+}
+
+void svSimulationView::ImportFiles()
+{
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
+    std::string simFolderName="";
+    std::string projPath="";
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+        projFolderNode->GetStringProperty("project path", projPath);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
+
+        if (rs->size()>0)
+        {
+            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
+            simFolderName=simFolderNode->GetName();
+        }
+    }
+
+    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files");
+
+    for(int i=0;i<filePaths.size();i++)
+    {
+        QString filePath=filePaths[i];
+        QFileInfo fi(filePath);
+        QString fileName=fi.fileName();
+        QString newFilePath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName())+"/"+fileName;
+        if (QFile::exists(newFilePath))
+        {
+            if (QMessageBox::question(m_Parent, "Overwrite File?", "Do you want to overwrite the file (" +fileName +") in the job?",
+                                      QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+            {
+                continue;
+            }
+
+            QFile::remove(newFilePath);
+        }
+
+        QFile::copy(filePath, newFilePath);
+    }
 }
 
 svSimJob* svSimulationView::CreateJob(std::string& msg)
@@ -1042,7 +1552,7 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
     {
         job->SetWallProp("Type","deformable");
 
-        std::string thickness=ui->lineEditThinkness->text().trimmed().toStdString();
+        std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
         if(!IsDouble(thickness))
         {
             msg="wall thickness error: " + thickness;
@@ -1077,6 +1587,22 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
             return NULL;
         }
         job->SetWallProp("Shear Constant",kcons);
+
+        std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
+        if(wallDensity!="")
+        {
+            if(!IsDouble(wallDensity))
+            {
+                msg="wall density error: " + wallDensity;
+                delete job;
+                return NULL;
+            }
+            job->SetWallProp("Density",wallDensity);
+        }
+        else
+        {
+            job->SetWallProp("Density",job->GetBasicProp("Fluid Density"));
+        }
 
         std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
         if(!IsDouble(pressure))
@@ -1186,12 +1712,151 @@ void svSimulationView::SaveToManager()
 
     if(job==NULL)
     {
-        QMessageBox::warning(NULL,"Parameter Values Error",QString::fromStdString(msg));
+        QMessageBox::warning(m_Parent,"Parameter Values Error",QString::fromStdString(msg));
         return;
     }
 
     m_MitkJob->SetSimJob(job);
     m_MitkJob->SetDataModified();
+}
+
+void svSimulationView::SetResultDir()
+{
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileSavePath=QString();
+    if(prefs.IsNotNull())
+    {
+        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+    }
+
+    QString dir = QFileDialog::getExistingDirectory(m_Parent
+                                                    , tr("Choose Result Directory")
+                                                    , lastFileSavePath
+                                                    , QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks
+                                                    | QFileDialog::DontUseNativeDialog
+                                                    );
+
+    if(dir.isEmpty()) return;
+
+    ui->lineEditResultDir->setText(dir);
+}
+
+void svSimulationView::ExportResults()
+{
+    if(m_PostsolverPath=="")
+    {
+        QMessageBox::warning(m_Parent,"Postsolver Missing","Please provide postsolver in Preferences");
+        return;
+    }
+
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileSavePath=QString();
+    if(prefs.IsNotNull())
+    {
+        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+    }
+
+    QString exportDir = QFileDialog::getExistingDirectory(m_Parent
+                                                    , tr("Choose Export Directory")
+                                                    , lastFileSavePath
+                                                    , QFileDialog::ShowDirsOnly
+                                                    | QFileDialog::DontResolveSymlinks
+                                                    | QFileDialog::DontUseNativeDialog
+                                                    );
+
+    if(exportDir.isEmpty())
+        return;
+
+    QString resultDir=ui->lineEditResultDir->text();
+    QDir rdir(resultDir);
+    if(!rdir.exists())
+    {
+        QMessageBox::warning(m_Parent,"Result dir not exists","Please provide valid result dir");
+        return;
+    }
+
+    QString startNo=ui->lineEditStart->text().trimmed();
+    if(!IsInt(startNo.toStdString()))
+    {
+        QMessageBox::warning(m_Parent,"Start Step Error","Please provide start step number in correct format.");
+        return;
+    }
+
+    QString stopNo=ui->lineEditStop->text().trimmed();
+    if(!IsInt(stopNo.toStdString()))
+    {
+        QMessageBox::warning(m_Parent,"Stop Step Error","Please provide stop step number in correct format.");
+        return;
+    }
+
+    QString increment=ui->lineEditIncrement->text().trimmed();
+    if(!IsInt(increment.toStdString()))
+    {
+        QMessageBox::warning(m_Parent,"Increment Error","Please provide increment in correct format.");
+        return;
+    }
+
+    QStringList arguments;
+    arguments << "-all";
+    arguments << "-indir" << resultDir;
+    arguments << "-outdir" << exportDir;
+    arguments << "-start" << startNo;
+    arguments << "-stop" << stopNo;
+    arguments << "-incr" << increment;
+    if(ui->checkBoxSingleFile->isChecked())
+        arguments << "-vtkcombo";
+
+    if(ui->checkBoxVolume->isChecked())
+    {
+       if(ui->checkBoxSingleFile->isChecked())
+           arguments << "-vtu" << "all_results.vtu";
+       else
+           arguments << "-vtu" << "all_results";
+    }
+
+    if(ui->checkBoxSurface->isChecked())
+    {
+       if(ui->checkBoxSingleFile->isChecked())
+           arguments << "-vtp" << "all_results.vtp";
+       else
+           arguments << "-vtp" << "all_results";
+    }
+
+    if(ui->checkBoxToRestart->isChecked())
+        arguments << "-ph" << "-laststep";
+
+    mitk::StatusBar::GetInstance()->DisplayText("Exporting results.");
+    WaitCursorOn();
+
+    QProcess *postsolverProcess = new QProcess(m_Parent);
+    postsolverProcess->setWorkingDirectory(exportDir);
+
+    postsolverProcess->start(m_PostsolverPath, arguments);
+    postsolverProcess->waitForFinished(-1);
+
+    mitk::StatusBar::GetInstance()->DisplayText("Results exported.");
+    WaitCursorOff();
 }
 
 bool svSimulationView::IsInt(std::string value)
