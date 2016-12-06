@@ -1332,6 +1332,7 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bo
 
         svMesh* mesh=NULL;
         mitk::DataNode::Pointer projFolderNode=NULL;
+        mitk::DataNode::Pointer meshNode=NULL;
 
         if(rs->size()>0)
         {
@@ -1342,7 +1343,7 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bo
             {
                 mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
 
-                mitk::DataNode::Pointer meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
+                meshNode=GetDataStorage()->GetNamedDerivedNode(meshName.c_str(),meshFolderNode);
                 if(meshNode.IsNotNull())
                 {
                     svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(meshNode->GetData());
@@ -1363,7 +1364,11 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bo
         mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
         QString meshCompletePath=outputDir+"/mesh-complete";
         dir.mkpath(meshCompletePath);
-        svMeshLegacyIO::WriteFiles(mesh,modelElement, meshCompletePath);
+        if(!svMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath))
+        {
+            QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
+            return false;
+        }
 
         mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
         QProcess *presolverProcess = new QProcess(m_Parent);

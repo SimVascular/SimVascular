@@ -13,6 +13,7 @@
 #include "svModel.h"
 #include "svMitkMesh.h"
 #include "svMitkSimJob.h"
+#include "svMitkMeshIO.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>

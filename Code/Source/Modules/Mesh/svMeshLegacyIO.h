@@ -6,7 +6,7 @@
 #include "svMesh.h"
 
 #include "mitkDataNode.h"
-#include "mitkDataStorage.h"
+
 #include <QString>
 
 class SVMESH_EXPORT svMeshLegacyIO
@@ -16,7 +16,10 @@ public:
   svMeshLegacyIO(){}
   virtual ~svMeshLegacyIO(){}
 
-  static void WriteFiles(svMesh* mesh, svModelElement* modelElement, QString meshDir);
+  static bool WriteFiles(mitk::DataNode::Pointer meshNode, svModelElement* modelElement, QString meshDir);
+
+  static bool WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, svModelElement* modelElement, QString meshDir);
+
 
 };
 

@@ -3,7 +3,13 @@
 
 #include <svMeshExports.h>
 
-#include "mitkAbstractFileIO.h"
+#include "svMitkMesh.h"
+
+#include <mitkAbstractFileIO.h>
+
+#include <vtkSmartPointer.h>
+#include <vtkPolyData.h>
+#include <vtkUnstructuredGrid.h>
 
 class SVMESH_EXPORT svMitkMeshIO : public mitk::AbstractFileIO
 {
@@ -18,16 +24,24 @@ public:
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
-    void SetReadMeshData(bool read);
+    static svMitkMesh::Pointer ReadFromFile(std::string fileName, bool readSurfaceMesh, bool readVolumeMesh);
 
-    static svMitkMeshIO* GetSingleton();
+    static vtkSmartPointer<vtkPolyData> GetSurfaceMesh(std::string fileName);// use mesh file .msh name, not vtp file name
+
+    static vtkSmartPointer<vtkUnstructuredGrid> GetVolumeMesh(std::string fileName);// use mesh file .msh name, not vtu file name
+
+    static std::string GetMeshType(std::string fileName);
+
+//    void SetReadMeshData(bool read);
+
+//    static svMitkMeshIO* GetSingleton();
 
 private:
     svMitkMeshIO* IOClone() const override;
 
-    bool m_ReadMeshData;
+//    bool m_ReadMeshData;
 
-    static svMitkMeshIO* m_Singleton;
+//    static svMitkMeshIO* m_Singleton;
 };
 
 #endif // SVMITKMESHIO_H

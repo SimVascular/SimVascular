@@ -500,18 +500,18 @@ void svMitkMeshMapper3D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "color mode", mitk::BoolProperty::New(false), renderer, overwrite );
     node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );
 
-    svMitkMesh* mitkMesh = dynamic_cast<svMitkMesh*>(node->GetData());
+//    svMitkMesh* mitkMesh = dynamic_cast<svMitkMesh*>(node->GetData());
 
-    if(mitkMesh)
-    {
-        svMesh* mesh=mitkMesh->GetMesh();
+//    if(mitkMesh)
+//    {
+//        svMesh* mesh=mitkMesh->GetMesh();
 
-        if(mesh && (mesh->GetSurfaceMesh() != 0) && (mesh->GetSurfaceMesh()->GetPointData() != NULL) && (mesh->GetSurfaceMesh()->GetPointData()->GetScalars() != 0))
-        {
+//        if(mesh && (mesh->GetSurfaceMesh() != 0) && (mesh->GetSurfaceMesh()->GetPointData() != NULL) && (mesh->GetSurfaceMesh()->GetPointData()->GetScalars() != 0))
+//        {
             node->AddProperty( "scalar visibility", mitk::BoolProperty::New(true), renderer, overwrite );
             node->AddProperty( "color mode", mitk::BoolProperty::New(true), renderer, overwrite );
-        }
-    }
+//        }
+//    }
 
     // Backface culling
     node->AddProperty( "Backface Culling", mitk::BoolProperty::New(false), renderer, overwrite );

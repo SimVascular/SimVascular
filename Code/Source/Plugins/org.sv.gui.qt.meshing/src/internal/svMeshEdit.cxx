@@ -527,7 +527,29 @@ void svMeshEdit::RunHistory()
 
 void svMeshEdit::RunCommands(bool fromGUI)
 {
-    if (QMessageBox::question(NULL, "Meshing", "The meshing may take a while. Do you want to continue?",
+    int timeStep=GetTimeStep();
+    svMesh* originalMesh=m_MitkMesh->GetMesh(timeStep);
+    if(originalMesh->GetSurfaceMesh()==NULL)
+    {
+        std::string path="";
+        m_MeshNode->GetStringProperty("path",path);
+        if(path!="")
+        {
+            std::string surfaceFileName = path+"/"+m_MeshNode->GetName()+".vtp";
+            std::ifstream surfaceFile(surfaceFileName);
+            if(surfaceFile)
+            {
+                if (QMessageBox::question(m_Parent, "Previous Mesh exists", "Previous mesh created already, but not loaded from file. Do you want to create new mesh?",
+                                          QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+                {
+                  return;
+                }
+            }
+        }
+
+    }
+
+    if (QMessageBox::question(m_Parent, "Meshing", "The meshing may take a while. Do you want to continue?",
                               QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
     {
       return;
@@ -540,8 +562,6 @@ void svMeshEdit::RunCommands(bool fromGUI)
     svModelElement* modelElement=m_Model->GetModelElement();
     if(!modelElement) return;
 
-    int timeStep=GetTimeStep();
-    svMesh* originalMesh=m_MitkMesh->GetMesh(timeStep);
     svMesh* newMesh=NULL;
 
     if(m_MeshType=="TetGen")
@@ -551,7 +571,7 @@ void svMeshEdit::RunCommands(bool fromGUI)
         ges.toDouble(&ok);
         if(!ok)
         {
-            QMessageBox::warning(NULL,"Warning","Error in Global Egde Size!");
+            QMessageBox::warning(m_Parent,"Warning","Error in Global Egde Size!");
             return;
         }
 
@@ -588,7 +608,7 @@ void svMeshEdit::RunCommands(bool fromGUI)
     {
         WaitCursorOff();
         mitk::ProgressBar::GetInstance()->Progress(2);
-        QMessageBox::warning(NULL,"Error during executing",QString::fromStdString(msg));
+        QMessageBox::warning(m_Parent,"Error during executing",QString::fromStdString(msg));
         delete newMesh;
         return;
     }
@@ -973,7 +993,7 @@ void svMeshEdit::UpdateTetGenGUI()
 
         if(!svMeshTetGen::ParseCommand(cmdHistory[i],flag,values,strValues,option,msg))
         {
-            QMessageBox::warning(NULL,"Parsing Error","Error in parsing command history!");
+            QMessageBox::warning(m_Parent,"Parsing Error","Error in parsing command history!");
             return;
         }
 
@@ -1212,23 +1232,23 @@ void svMeshEdit::NodeChanged(const mitk::DataNode* node)
     {
         ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
 
-        bool visible=false;
-        node->GetVisibility(visible, nullptr);
-        if(!visible)
-            return;
+//        bool visible=false;
+//        node->GetVisibility(visible, nullptr);
+//        if(!visible)
+//            return;
 
-        svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
-        svMesh* mesh=NULL;
-        if(mitkMesh)
-            mesh=mitkMesh->GetMesh();
+//        svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
+//        svMesh* mesh=NULL;
+//        if(mitkMesh)
+//            mesh=mitkMesh->GetMesh();
 
-        if(mesh==NULL)
-        {
-            svMitkMeshIO* meshIO=svMitkMeshIO::GetSingleton();
-            meshIO->SetReadMeshData(true);
-            svProjectManager::LoadData(node);
-            meshIO->SetReadMeshData(false);
-        }
+//        if(mesh==NULL)
+//        {
+//            svMitkMeshIO* meshIO=svMitkMeshIO::GetSingleton();
+//            meshIO->SetReadMeshData(true);
+//            svProjectManager::LoadData(node);
+//            meshIO->SetReadMeshData(false);
+//        }
     }
 }
 

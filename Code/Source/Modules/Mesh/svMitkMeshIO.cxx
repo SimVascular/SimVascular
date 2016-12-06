@@ -29,133 +29,35 @@ static mitk::CustomMimeType CreatesvMeshMimeType()
 
 svMitkMeshIO::svMitkMeshIO()
     : mitk::AbstractFileIO(svMitkMesh::GetStaticNameOfClass(), CreatesvMeshMimeType(), "SimVascular Mesh")
-    , m_ReadMeshData(false)
+//    , m_ReadMeshData(false)
 {
     this->RegisterService();
-    m_Singleton=this;
+//    m_Singleton=this;
 }
 
-void svMitkMeshIO::SetReadMeshData(bool read)
-{
-    m_ReadMeshData=read;
-}
+//void svMitkMeshIO::SetReadMeshData(bool read)
+//{
+//    m_ReadMeshData=read;
+//}
 
-svMitkMeshIO* svMitkMeshIO::m_Singleton = NULL;
+//svMitkMeshIO* svMitkMeshIO::m_Singleton = NULL;
 
-svMitkMeshIO* svMitkMeshIO::GetSingleton()
-{
-    return m_Singleton;
-}
+//svMitkMeshIO* svMitkMeshIO::GetSingleton()
+//{
+//    return m_Singleton;
+//}
 
 std::vector<mitk::BaseData::Pointer> svMitkMeshIO::Read()
 {
-    TiXmlDocument document;
-
     std::string fileName=GetInputLocation();
-
-    if (!document.LoadFile(fileName))
-    {
-        mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
-        std::vector<mitk::BaseData::Pointer> empty;
-        return empty;
-    }
-
-    //    TiXmlElement* version = document.FirstChildElement("format");
-
-    TiXmlElement* mmElement = document.FirstChildElement("mitk_mesh");
-
-    if(!mmElement){
-        //        MITK_ERROR << "No Mesh data in "<< fileName;
-        mitkThrow() << "No Mesh data in "<< fileName;
-    }
-
-    svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
-    std::string meshType="";
-    std::string modelName="";
-    mmElement->QueryStringAttribute("type",&meshType);
-    mmElement->QueryStringAttribute("model_name",&modelName);
-    mitkMesh->SetType(meshType);
-    mitkMesh->SetModelName(modelName);
-
-    int timestep=-1;
-    for( TiXmlElement* timestepElement = mmElement->FirstChildElement("timestep");
-         timestepElement != nullptr;
-         timestepElement = timestepElement->NextSiblingElement("timestep") )
-    {
-        if (timestepElement == nullptr)
-            continue;
-
-        //        timestepElement->QueryIntAttribute("id",&timestep);
-        timestep++;
-        mitkMesh->Expand(timestep+1);
-
-        TiXmlElement* meshElement = timestepElement->FirstChildElement("mesh");
-        if(meshElement != nullptr && m_ReadMeshData)
-        {
-            std::string type;
-            meshElement->QueryStringAttribute("type", &type);
-
-            svMesh* mesh=NULL;
-
-            if(type=="TetGen")
-            {
-                mesh=new svMeshTetGen();
-            }
-//            else if(type=="MeshSim")
-//            {
-//                mesh=new svMeshMeshSim();
-//            }
-
-            TiXmlElement* chElement = meshElement->FirstChildElement("command_history");
-            if(chElement != nullptr)
-            {
-                std::vector<std::string> cmdHistory;
-                for( TiXmlElement* cmdElement = chElement->FirstChildElement("command");
-                     cmdElement != nullptr;
-                     cmdElement =cmdElement->NextSiblingElement("command") )
-                {
-                    if (cmdElement == nullptr)
-                        continue;
-
-                    std::string cmd="";
-                    cmdElement->QueryStringAttribute("content", &cmd);
-
-                    cmdHistory.push_back(cmd);
-                }
-                mesh->SetCommandHistory(cmdHistory);
-            }
-
-            std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
-            std::ifstream surfaceFile(surfaceFileName);
-            if (surfaceFile) {
-                vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-
-                reader->SetFileName(surfaceFileName.c_str());
-                reader->Update();
-                vtkSmartPointer<vtkPolyData> surfaceMesh=reader->GetOutput();
-
-                mesh->SetSurfaceMesh(surfaceMesh);
-            }
-
-            std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
-            std::ifstream volumeFile(volumeFileName);
-            if (volumeFile) {
-                vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
-
-                reader->SetFileName(volumeFileName.c_str());
-                reader->Update();
-                vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=reader->GetOutput();
-
-                mesh->SetVolumeMesh(volumeMesh);
-            }
-
-            mitkMesh->SetMesh(mesh,timestep);
-        } //mesh
-
-    }//timestep
+    svMitkMesh::Pointer mitkMesh=ReadFromFile(fileName,false,false);
 
     std::vector<mitk::BaseData::Pointer> result;
+    if (mitkMesh.IsNull())
+    {
+        return result;
+    }
+
     result.push_back(mitkMesh.GetPointer());
     return result;
 }
@@ -270,3 +172,172 @@ svMitkMeshIO* svMitkMeshIO::IOClone() const
     return new svMitkMeshIO(*this);
 }
 
+svMitkMesh::Pointer svMitkMeshIO::ReadFromFile(std::string fileName, bool readSurfaceMesh, bool readVolumeMesh)
+{
+    TiXmlDocument document;
+
+    if (!document.LoadFile(fileName))
+    {
+//        mitkThrow() << "Could not open/read/parse " << fileName;
+        MITK_ERROR << "Could not open/read/parse " << fileName;
+        return NULL;
+    }
+
+    //    TiXmlElement* version = document.FirstChildElement("format");
+
+    TiXmlElement* mmElement = document.FirstChildElement("mitk_mesh");
+
+    if(!mmElement){
+        MITK_ERROR << "No Mesh data in "<< fileName;
+//        mitkThrow() << "No Mesh data in "<< fileName;
+        return NULL;
+    }
+
+    svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
+    std::string meshType="";
+    std::string modelName="";
+    mmElement->QueryStringAttribute("type",&meshType);
+    mmElement->QueryStringAttribute("model_name",&modelName);
+    mitkMesh->SetType(meshType);
+    mitkMesh->SetModelName(modelName);
+
+    int timestep=-1;
+    for( TiXmlElement* timestepElement = mmElement->FirstChildElement("timestep");
+         timestepElement != nullptr;
+         timestepElement = timestepElement->NextSiblingElement("timestep") )
+    {
+        if (timestepElement == nullptr)
+            continue;
+
+        //        timestepElement->QueryIntAttribute("id",&timestep);
+        timestep++;
+        mitkMesh->Expand(timestep+1);
+
+        TiXmlElement* meshElement = timestepElement->FirstChildElement("mesh");
+//        if(meshElement != nullptr && m_ReadMeshData)
+        if(meshElement != nullptr)
+        {
+            std::string type;
+            meshElement->QueryStringAttribute("type", &type);
+
+            svMesh* mesh=NULL;
+
+            if(type=="TetGen")
+            {
+                mesh=new svMeshTetGen();
+            }
+//            else if(type=="MeshSim")
+//            {
+//                mesh=new svMeshMeshSim();
+//            }
+
+            TiXmlElement* chElement = meshElement->FirstChildElement("command_history");
+            if(chElement != nullptr)
+            {
+                std::vector<std::string> cmdHistory;
+                for( TiXmlElement* cmdElement = chElement->FirstChildElement("command");
+                     cmdElement != nullptr;
+                     cmdElement =cmdElement->NextSiblingElement("command") )
+                {
+                    if (cmdElement == nullptr)
+                        continue;
+
+                    std::string cmd="";
+                    cmdElement->QueryStringAttribute("content", &cmd);
+
+                    cmdHistory.push_back(cmd);
+                }
+                mesh->SetCommandHistory(cmdHistory);
+            }
+
+            if(readSurfaceMesh)
+            {
+                vtkSmartPointer<vtkPolyData> surfaceMesh=GetSurfaceMesh(fileName);
+                if(surfaceMesh)
+                    mesh->SetSurfaceMesh(surfaceMesh);
+            }
+
+            if(readVolumeMesh)
+            {
+                vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=GetVolumeMesh(fileName);
+                if(volumeMesh)
+                    mesh->SetVolumeMesh(volumeMesh);
+            }
+
+            mitkMesh->SetMesh(mesh,timestep);
+        } //mesh
+
+    }//timestep
+
+    return mitkMesh;
+}
+
+vtkSmartPointer<vtkPolyData> svMitkMeshIO::GetSurfaceMesh(std::string fileName)
+{
+//    std::string meshType=GetMeshType(fileName);
+
+//    if(meshType=="")
+//        return NULL;
+
+    vtkSmartPointer<vtkPolyData> surfaceMesh=NULL;
+
+    std::string surfaceFileName=fileName.substr(0,fileName.find_last_of("."))+".vtp";
+    std::ifstream surfaceFile(surfaceFileName);
+    if (surfaceFile) {
+        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+
+        reader->SetFileName(surfaceFileName.c_str());
+        reader->Update();
+        surfaceMesh=reader->GetOutput();
+    }
+
+    return surfaceMesh;
+}
+
+vtkSmartPointer<vtkUnstructuredGrid> svMitkMeshIO::GetVolumeMesh(std::string fileName)
+{
+    //    std::string meshType=GetMeshType(fileName);
+
+    //    if(meshType=="")
+    //        return NULL;
+
+        vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=NULL;
+
+        std::string volumeFileName=fileName.substr(0,fileName.find_last_of("."))+".vtu";
+        std::ifstream volumeFile(volumeFileName);
+        if (volumeFile) {
+            vtkSmartPointer<vtkXMLUnstructuredGridReader> reader = vtkSmartPointer<vtkXMLUnstructuredGridReader>::New();
+
+            reader->SetFileName(volumeFileName.c_str());
+            reader->Update();
+            volumeMesh=reader->GetOutput();
+        }
+
+        return volumeMesh;
+}
+
+std::string svMitkMeshIO::GetMeshType(std::string fileName)
+{
+    TiXmlDocument document;
+
+    if (!document.LoadFile(fileName))
+    {
+//        mitkThrow() << "Could not open/read/parse " << fileName;
+        MITK_ERROR << "Could not open/read/parse " << fileName;
+        return "";
+    }
+
+    TiXmlElement* mmElement = document.FirstChildElement("mitk_mesh");
+
+    if(!mmElement){
+        MITK_ERROR << "No Mesh data in "<< fileName;
+//        mitkThrow() << "No Mesh data in "<< fileName;
+        return "";
+    }
+
+    std::string meshType="";
+
+    mmElement->QueryStringAttribute("type",&meshType);
+
+    return meshType;
+}
