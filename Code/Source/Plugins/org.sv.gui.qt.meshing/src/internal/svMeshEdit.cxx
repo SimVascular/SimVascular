@@ -8,6 +8,8 @@
 #include "svMesh.h"
 #include "svMitkMesh.h"
 #include "svMitkMeshOperation.h"
+#include "svMitkMeshIO.h"
+#include "svProjectManager.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
@@ -1207,7 +1209,27 @@ void svMeshEdit::UpdateFaceListSelection()
 void svMeshEdit::NodeChanged(const mitk::DataNode* node)
 {
     if(m_MeshNode==node)
+    {
         ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
+
+        bool visible=false;
+        node->GetVisibility(visible, nullptr);
+        if(!visible)
+            return;
+
+        svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
+        svMesh* mesh=NULL;
+        if(mitkMesh)
+            mesh=mitkMesh->GetMesh();
+
+        if(mesh==NULL)
+        {
+            svMitkMeshIO* meshIO=svMitkMeshIO::GetSingleton();
+            meshIO->SetReadMeshData(true);
+            svProjectManager::LoadData(node);
+            meshIO->SetReadMeshData(false);
+        }
+    }
 }
 
 void svMeshEdit::NodeAdded(const mitk::DataNode* node)

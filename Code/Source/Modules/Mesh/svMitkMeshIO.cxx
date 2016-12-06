@@ -29,8 +29,22 @@ static mitk::CustomMimeType CreatesvMeshMimeType()
 
 svMitkMeshIO::svMitkMeshIO()
     : mitk::AbstractFileIO(svMitkMesh::GetStaticNameOfClass(), CreatesvMeshMimeType(), "SimVascular Mesh")
+    , m_ReadMeshData(false)
 {
     this->RegisterService();
+    m_Singleton=this;
+}
+
+void svMitkMeshIO::SetReadMeshData(bool read)
+{
+    m_ReadMeshData=read;
+}
+
+svMitkMeshIO* svMitkMeshIO::m_Singleton = NULL;
+
+svMitkMeshIO* svMitkMeshIO::GetSingleton()
+{
+    return m_Singleton;
 }
 
 std::vector<mitk::BaseData::Pointer> svMitkMeshIO::Read()
@@ -77,7 +91,7 @@ std::vector<mitk::BaseData::Pointer> svMitkMeshIO::Read()
         mitkMesh->Expand(timestep+1);
 
         TiXmlElement* meshElement = timestepElement->FirstChildElement("mesh");
-        if(meshElement != nullptr)
+        if(meshElement != nullptr && m_ReadMeshData)
         {
             std::string type;
             meshElement->QueryStringAttribute("type", &type);

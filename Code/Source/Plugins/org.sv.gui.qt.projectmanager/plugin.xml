@@ -9,7 +9,7 @@
   </extension>
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
-    <contextMenuAction nodeDescriptorName="svImageFolder" label="Add Image" icon="" class="svProjectAddImageAction" />
+    <contextMenuAction nodeDescriptorName="svImageFolder" label="Add/Replace Image" icon="" class="svProjectAddImageAction" />
     <contextMenuAction nodeDescriptorName="svProjectFolder" label="Close SV Project" icon="" class="svProjectCloseAction" />
     <contextMenuAction nodeDescriptorName="svModel" label="Show/Hide Edges" icon="" class="svProjectShowModelEdgesAction" />
   </extension>

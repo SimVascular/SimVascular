@@ -18,8 +18,16 @@ public:
     void Write() override;
     mitk::IFileIO::ConfidenceLevel GetWriterConfidenceLevel() const override;
 
+    void SetReadMeshData(bool read);
+
+    static svMitkMeshIO* GetSingleton();
+
 private:
     svMitkMeshIO* IOClone() const override;
+
+    bool m_ReadMeshData;
+
+    static svMitkMeshIO* m_Singleton;
 };
 
 #endif // SVMITKMESHIO_H
