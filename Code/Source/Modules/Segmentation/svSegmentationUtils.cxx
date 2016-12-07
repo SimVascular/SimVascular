@@ -428,53 +428,6 @@ cvStrPts* svSegmentationUtils::GetSlicevtkImage(svPathElement::svPathPoint pathP
     return vtkImageData2cvStrPts(rs->GetOutput());
 }
 
-//cvStrPts* svSegmentationUtils::image2cvStrPts(mitk::Image* image)
-//{
-//    vtkImageData* vtkImg=image->GetVtkImageData();
-//    mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
-//    mitk::BaseGeometry::BoundsArrayType extent=image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetBounds();
-
-//    vtkStructuredPoints *mysp = vtkStructuredPoints::New();
-//    mysp->ShallowCopy(vtkImg);
-
-//    int whole[6];
-//    double *spacing, origin[3];
-
-////    vtkImg->GetExtent(whole);
-//    whole[0]=extent[0];
-//    whole[1]=extent[1]-1;
-//    whole[2]=extent[2];
-//    whole[3]=extent[3]-1;
-//    whole[4]=extent[4];
-//    whole[5]=extent[5]-1;
-
-//    spacing = vtkImg->GetSpacing();
-////    vtkImg->GetOrigin(origin);
-
-//    origin[0] = spacing[0] * whole[0] +org[0];
-//    origin[1] = spacing[1] * whole[2] +org[1];
-//    whole[1] -= whole[0];
-//    whole[3] -= whole[2];
-//    whole[0] = 0;
-//    whole[2] = 0;
-//    // shift Z origin for 3-D images
-////    if (whole[4] > 0 && whole[5] > 0) {
-//        origin[2] = spacing[2] * whole[4]+org[2];
-//        whole[5] -= whole[4];
-//        whole[4] = 0;
-////    }
-//    mysp->SetExtent(whole);
-//    mysp->SetOrigin(origin);
-//    mysp->SetSpacing(spacing);
-
-//    cvStrPts *sp;
-//    sp = new cvStrPts (mysp);
-
-//    //    mysp->Delete();
-
-//    return sp;
-//}
-
 cvStrPts* svSegmentationUtils::image2cvStrPts(mitk::Image* image)
 {
     vtkImageData* vtkImg=svVtkUtils::MitkImage2VtkImage(image);

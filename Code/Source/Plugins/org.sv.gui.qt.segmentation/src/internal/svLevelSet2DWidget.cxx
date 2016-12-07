@@ -25,25 +25,6 @@ svSegmentationUtils::svLSParam svLevelSet2DWidget::GetLSParam()
 {
     svSegmentationUtils::svLSParam lsparam;
 
-//    svSegmentationUtils::svLSParam* param=&lsparam;
-
-//    param->radius=ui->lineRadius->text().trimmed().toDouble();
-
-//    param->sigmaFeat1=ui->lineFeat1->text().trimmed().toDouble();
-//    param->sigmaAdv1=ui->lineAdv1->text().trimmed().toDouble();
-//    param->kc=ui->lineKthr->text().trimmed().toDouble();
-//    param->expFactorRising=ui->lineRise->text().trimmed().toDouble();
-//    param->expFactorFalling=ui->lineFall->text().trimmed().toDouble();
-//    param->maxIter1=ui->lineMaxIters1->text().trimmed().toInt();
-//    param->maxErr1=ui->lineMaxErr1->text().trimmed().toDouble();
-
-//    param->sigmaFeat2=ui->lineFeat2->text().trimmed().toDouble();
-//    param->sigmaAdv2=ui->lineAdv2->text().trimmed().toDouble();
-//    param->kupp=ui->lineKupp->text().trimmed().toDouble();
-//    param->klow=ui->lineKlow->text().trimmed().toDouble();
-//    param->maxIter2=ui->lineMaxIters2->text().trimmed().toInt();
-//    param->maxErr2=ui->lineMaxErr2->text().trimmed().toDouble();
-
     lsparam.radius=ui->lineRadius->text().trimmed().toDouble();
 
     lsparam.sigmaFeat1=ui->lineFeat1->text().trimmed().toDouble();

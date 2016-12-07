@@ -215,7 +215,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int a
     svContourGroup::svLoftingParam* usedParam= contourGroup->GetLoftingParam();
     if(param!=NULL) usedParam=param;
 
-    std::vector<svContour*> contourSet=contourGroup->GetContourSet(t);
+    std::vector<svContour*> contourSet=contourGroup->GetValidContourSet(t);
 
     return CreateLoftSurface(contourSet,usedParam,addCaps);
 }
