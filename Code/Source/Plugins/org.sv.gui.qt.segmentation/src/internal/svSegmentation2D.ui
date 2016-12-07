@@ -148,7 +148,7 @@
           <widget class="QWidget" name="paramWidget" native="true">
            <layout class="QVBoxLayout" name="paramLayout">
             <property name="spacing">
-             <number>0</number>
+             <number>30</number>
             </property>
             <property name="leftMargin">
              <number>0</number>
@@ -163,17 +163,24 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QWidget" name="lsParamWidgetContainer" native="true"/>
+             <widget class="QFrame" name="lsParamWidgetContainer">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
+              </property>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
+              </property>
+             </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="thresholdParamWidget">
-              <property name="title">
-               <string>Threshold</string>
+             <widget class="QFrame" name="thresholdWidgetContainer">
+              <property name="frameShape">
+               <enum>QFrame::StyledPanel</enum>
               </property>
-              <property name="flat">
-               <bool>false</bool>
+              <property name="frameShadow">
+               <enum>QFrame::Raised</enum>
               </property>
-              <layout class="QHBoxLayout" name="horizontalLayout_2">
+              <layout class="QHBoxLayout" name="horizontalLayout_7">
                <property name="spacing">
                 <number>0</number>
                </property>
@@ -181,7 +188,7 @@
                 <number>0</number>
                </property>
                <property name="topMargin">
-                <number>2</number>
+                <number>0</number>
                </property>
                <property name="rightMargin">
                 <number>0</number>
@@ -190,23 +197,50 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="checkBoxPresetThreshold">
-                 <property name="text">
-                  <string> Preset</string>
+                <widget class="QGroupBox" name="thresholdParamWidget">
+                 <property name="title">
+                  <string>Threshold</string>
                  </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="ctkSliderWidget" name="sliderThreshold" native="true">
-                 <property name="enabled">
-                  <bool>true</bool>
+                 <property name="flat">
+                  <bool>false</bool>
                  </property>
-                 <property name="decimals" stdset="0">
-                  <number>1</number>
-                 </property>
-                 <property name="tickInterval" stdset="0">
-                  <double>0.000000000000000</double>
-                 </property>
+                 <layout class="QHBoxLayout" name="horizontalLayout_2">
+                  <property name="spacing">
+                   <number>0</number>
+                  </property>
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>2</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QCheckBox" name="checkBoxPresetThreshold">
+                    <property name="text">
+                     <string> Preset</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="ctkSliderWidget" name="sliderThreshold">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="decimals">
+                     <number>1</number>
+                    </property>
+                    <property name="tickInterval">
+                     <double>0.000000000000000</double>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </widget>
                </item>
               </layout>
@@ -380,6 +414,16 @@
           <number>0</number>
          </property>
          <item>
+          <widget class="Line" name="line_6">
+           <property name="midLineWidth">
+            <number>2</number>
+           </property>
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="btnLevelSet">
            <property name="text">
             <string>LevelSet</string>
@@ -508,6 +552,7 @@
         <zorder>btnSmooth</zorder>
         <zorder>line_2</zorder>
         <zorder>line_3</zorder>
+        <zorder>line_6</zorder>
        </widget>
       </item>
      </layout>

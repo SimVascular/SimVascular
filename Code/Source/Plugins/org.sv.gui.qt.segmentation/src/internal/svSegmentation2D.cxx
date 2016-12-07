@@ -21,51 +21,14 @@
 
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
+#include <mitkStatusBar.h>
+#include <mitkProgressBar.h>
+#include <mitkNodePredicateDataType.h>
 
 #include <usModuleRegistry.h>
 
-#include <QmitkRenderWindow.h>
-#include <QmitkSliceWidget.h>
-#include <QmitkStepperAdapter.h>
-
-// mitk
-#include <mitkDataStorage.h>
-#include "mitkDataNode.h"
-#include "mitkProperties.h"
-#include <mitkInteractionConst.h>
-#include <mitkPointOperation.h>
-#include <mitkOperationEvent.h>
-#include <mitkUndoController.h>
-#include <mitkNodePredicateDataType.h>
-#include <mitkStandaloneDataStorage.h>
-#include <mitkPlanarRectangle.h>
-#include <mitkImage.h>
-#include <mitkLookupTable.h>
-#include <mitkLookupTableProperty.h>
-#include <mitkExtractSliceFilter.h>
-#include <mitkProgressBar.h>
-#include <mitkSliceNavigationController.h>
-
-#include <vtkPoints.h>
-#include <vtkPolyData.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkImageReslice.h>
-#include <vtkLookupTable.h>
-#include <vtkTexture.h>
-#include <vtkPlaneSource.h>
-#include <vtkTextureMapToPlane.h>
-#include <vtkDataSetMapper.h>
-#include <vtkActor.h>
-#include <vtkOutlineFilter.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkRendererCollection.h>
-#include <vtkProperty.h>
-#include <vtkXMLImageDataReader.h>
-
 // Qt
 #include <QMessageBox>
-#include <QShortcut>
-#include <QTreeView>
 
 #include <iostream>
 using namespace std;
@@ -131,7 +94,7 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
 
     ui->lsParamWidgetContainer->hide();
 
-    ui->thresholdParamWidget->hide();
+    ui->thresholdWidgetContainer->hide();
     ui->smoothWidget->hide();
     ui->splineWidget->hide();
     ui->batchWidget->hide();
@@ -448,9 +411,6 @@ void svSegmentation2D::RemoveContour(int contourIndex)
 
 std::vector<int> svSegmentation2D::GetBatchList()
 {
-//    std::vector<int> list={20,30,40,50,60,70,80,90};
-//    return list;
-
     std::vector<int> batchList;
 
     int maxID=ui->resliceSlider->GetSliceNumber();
@@ -609,14 +569,26 @@ void svSegmentation2D::CreateContours(SegmentationMethod method)
                 break;
         }
 
-        contour=PostprocessContour(contour);
+        if(contour && contour->GetContourPointNumber()>2)
+        {
+            contour=PostprocessContour(contour);
 
-        InsertContourByPathPosPoint(contour);
+            InsertContourByPathPosPoint(contour);
 
-        LoftContourGroup();
+            LoftContourGroup();
+
+            mitk::StatusBar::GetInstance()->DisplayText("contour added");
+        }
+        else
+        {
+            if(contour)
+                delete contour;
+
+            if(posList.size()==1)
+                QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
+        }
 
         mitk::ProgressBar::GetInstance()->Progress(1);
-
     }
 
     //LoftContourGroup();
@@ -651,12 +623,12 @@ void svSegmentation2D::CreateLSContour()
 
 void svSegmentation2D::CreateThresholdContour()
 {
-    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->thresholdParamWidget)
+    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->thresholdWidgetContainer)
     {
         if(m_CurrentParamWidget)
             m_CurrentParamWidget->hide();
 
-        m_CurrentParamWidget=ui->thresholdParamWidget;
+        m_CurrentParamWidget=ui->thresholdWidgetContainer;
         m_CurrentParamWidget->show();
 
         SetSecondaryWidgetsVisible(true);
@@ -715,7 +687,6 @@ void svSegmentation2D::UpdatePreview()
     }
 }
 
-
 void svSegmentation2D::FinishPreview()
 {
     if(m_PreviewContourModel.IsNull())
@@ -725,11 +696,23 @@ void svSegmentation2D::FinishPreview()
 
     svContour* contour=m_PreviewContourModel->GetContour(timeStep);
 
-    contour=PostprocessContour(contour);
+    if(contour && contour->GetContourPointNumber()>2)
+    {
+        contour=PostprocessContour(contour);
 
-    mitk::OperationEvent::IncCurrObjectEventId();
+        mitk::OperationEvent::IncCurrObjectEventId();
 
-    InsertContourByPathPosPoint(contour);
+        InsertContourByPathPosPoint(contour);
+
+        LoftContourGroup();
+    }
+    else
+    {
+        if(contour)
+            delete contour;
+
+        QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
+    }
 
     if( m_PreviewContourModelObserverFinishTag)
     {
@@ -748,7 +731,6 @@ void svSegmentation2D::FinishPreview()
         GetDataStorage()->Remove(m_PreviewDataNode);
     }
 
-    LoftContourGroup();
 }
 
 void svSegmentation2D::CreateCircle()
@@ -859,7 +841,12 @@ void svSegmentation2D::SmoothSelected()
 //    int fourierNumber=12;
     int fourierNumber=ui->spinBoxSmoothNumber->value();
 
-    int index= ui->listWidget->selectionModel()->selectedRows().front().row();
+    QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+
+    if(selectedRows.isEmpty())
+        return;
+
+    int index= selectedRows.front().row();
 
     svContour* smoothedContour=m_ContourGroup->GetContour(index)->CreateSmoothedContour(fourierNumber);
 

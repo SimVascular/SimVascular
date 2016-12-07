@@ -690,7 +690,7 @@ vtkPolyData* svSegmentationUtils::orientBack(vtkPolyData* srcPd, mitk::PlaneGeom
     return pd;
 }
 
-std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed)
+std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed, double seedPoint[3])
 {
     vtkSmartPointer<vtkContourFilter> contourFilter=vtkSmartPointer<vtkContourFilter>::New();
     contourFilter->SetInputDataObject(imageSlice);
@@ -708,7 +708,9 @@ std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData
     vtkSmartPointer<vtkPolyDataConnectivityFilter> connectFilter=vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
 //    connectFilter->SetInputData(cleanContour);
     connectFilter->SetInputData(uncleanContour);
-    connectFilter->SetExtractionModeToLargestRegion();
+//    connectFilter->SetExtractionModeToLargestRegion();
+    connectFilter->SetExtractionModeToClosestPointRegion();
+    connectFilter->SetClosestPoint(seedPoint);
     connectFilter->Update();
 
     vtkSmartPointer<vtkPolyData> selectedContour=connectFilter->GetOutput();
@@ -764,7 +766,8 @@ svContour* svSegmentationUtils::CreateThresholdContour(svPathElement::svPathPoin
     cvStrPts*  strPts=GetSlicevtkImage(pathPoint, volumeimage,  size);
 
     bool ifClosed;
-    std::vector<mitk::Point3D> contourPoints=GetThresholdContour(strPts->GetVtkStructuredPoints(), thresholdValue, pathPoint, ifClosed);
+    double point[3]={0};
+    std::vector<mitk::Point3D> contourPoints=GetThresholdContour(strPts->GetVtkStructuredPoints(), thresholdValue, pathPoint, ifClosed, point);
 
     contour->SetClosed(ifClosed);
     contour->SetContourPoints(contourPoints);

@@ -460,7 +460,7 @@ void svContourGroupDataInteractor::AddInitialPoint(mitk::StateMachineAction*, mi
     m_LastPoint=point;
 
     // Invoke event to notify listeners that placement of this PF starts now
-      group->InvokeEvent( StartChangingContourEvent() );
+    group->InvokeEvent( StartChangingContourEvent() );
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
 
@@ -519,13 +519,12 @@ void svContourGroupDataInteractor::FinalizeContour( mitk::StateMachineAction*, m
     if(group==NULL)
         return;
 
-      group->InvokeEvent( EndChangingContourEvent() );
-      group->InvokeEvent( StartLoftContourGroupEvent() );
+    group->InvokeEvent( EndChangingContourEvent() );
+//    group->InvokeEvent( StartLoftContourGroupEvent() );
+    group->InvokeEvent( svContourChangeEvent() );
 
     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
-
 }
-
 
 void svContourGroupDataInteractor::AppendPoint( mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )
 {
