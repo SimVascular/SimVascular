@@ -20,7 +20,7 @@
 static mitk::CustomMimeType CreatesvMeshMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svmesh");
-    mimeType.SetCategory("Mesh");
+    mimeType.SetCategory("SimVascular Files");
     mimeType.AddExtension("msh");
     mimeType.SetComment("SimVascular Mesh");
 

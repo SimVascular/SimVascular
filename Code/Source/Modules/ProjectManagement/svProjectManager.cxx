@@ -14,6 +14,7 @@
 #include "svMitkMesh.h"
 #include "svMitkSimJob.h"
 #include "svMitkMeshIO.h"
+#include "svVtkUtils.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>
@@ -22,6 +23,9 @@
 #include <mitkIMimeTypeProvider.h>
 #include <mitkMimeType.h>
 #include <mitkCustomMimeType.h>
+
+#include <vtkImageData.h>
+#include <vtkXMLImageDataWriter.h>
 
 #include <QDir>
 #include <QDomDocument>
@@ -343,7 +347,20 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
         std::string ipath=projPath+"/"+imageFolderNode->GetName();
         std::string ifilePath=ipath+"/"+imageName.toStdString();
         imageNode->SetStringProperty("path",ipath.c_str());
-        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
+        mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
+        if(image)
+        {
+            vtkImageData* vtkImg=svVtkUtils::MitkImage2VtkImage(image);
+            if(vtkImg)
+            {
+                vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+                writer->SetFileName(ifilePath.c_str());
+                writer->SetInputData(vtkImg);
+                writer->Write();
+            }
+        }
+
+//        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
     }
     else
     {

@@ -16,7 +16,7 @@
 static mitk::CustomMimeType CreatesvModelMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svmodel");
-    mimeType.SetCategory("Model");
+    mimeType.SetCategory("SimVascular Files");
     mimeType.AddExtension("mdl");
     mimeType.SetComment("SimVascular Model");
 

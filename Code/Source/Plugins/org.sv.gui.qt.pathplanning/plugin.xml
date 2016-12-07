@@ -3,7 +3,7 @@
 
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.pathedit"
-          name="Edit Path"
+          name="SV Path Planning"
           class="svPathEdit"
           icon="resources/pathedit.png" />
   </extension>

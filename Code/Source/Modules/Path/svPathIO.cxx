@@ -8,7 +8,7 @@
 static mitk::CustomMimeType CreatesvPathMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svpath");
-    mimeType.SetCategory("Path");
+    mimeType.SetCategory("SimVascular Files");
     mimeType.AddExtension("pth");
     mimeType.SetComment("SimVascular Path");
 

@@ -12,7 +12,7 @@
 static mitk::CustomMimeType CreatesvSimJobMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svjob");
-    mimeType.SetCategory("Simulation");
+    mimeType.SetCategory("SimVascular Files");
     mimeType.AddExtension("sjb");
     mimeType.SetComment("SimVascular Job");
 

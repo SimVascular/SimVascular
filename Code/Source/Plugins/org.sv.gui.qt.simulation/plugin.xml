@@ -3,7 +3,7 @@
 
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.simulation"
-          name="Simulation"
+          name="SV Simulation"
           class="svSimulationView"
           icon="resources/simulation.png" />
   </extension>

@@ -3,7 +3,7 @@
 
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.modeledit"
-          name="Edit Model"
+          name="SV Modeling"
           class="svModelEdit"
           icon="resources/model.png" />
   </extension>
