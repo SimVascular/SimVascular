@@ -585,10 +585,11 @@ RegCloseKey(hKey2);
      #endif
 
      app.setSingleMode(true);
-     app.setApplicationName("SimVascular_Workbench");
-     app.setOrganizationName("Stanford_University");
+     app.setApplicationName("SimVascular Workbench");
+     app.setOrganizationName("Stanford Medicine");
 
-     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
+//     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.sv.gui.qt.application.svworkbench");
+     app.setProperty(mitk::BaseApplication::PROP_APPLICATION, "org.sv.qt.application");
 
      QStringList preloadLibs;
      preloadLibs << "liborg_mitk_gui_qt_ext";

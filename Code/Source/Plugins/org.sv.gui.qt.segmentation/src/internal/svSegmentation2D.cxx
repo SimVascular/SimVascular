@@ -1109,5 +1109,6 @@ void svSegmentation2D::ContourChangingOn()
 void svSegmentation2D::ContourChangingOff()
 {
     m_ContourChanging=false;
-    m_CurrentSegButton->setStyleSheet("");
+    if(m_CurrentSegButton)
+        m_CurrentSegButton->setStyleSheet("");
 }

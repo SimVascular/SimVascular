@@ -2,7 +2,7 @@
 <plugin>
 
   <extension point="org.blueberry.ui.views">
-    <view id="org.sv.views.modeledit"
+    <view id="org.sv.views.modeling"
           name="SV Modeling"
           class="svModelEdit"
           icon="resources/model.png" />

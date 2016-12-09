@@ -28,7 +28,7 @@
 #include <iostream>
 using namespace std;
 
-const QString svMeshEdit::EXTENSION_ID = "org.sv.views.meshedit";
+const QString svMeshEdit::EXTENSION_ID = "org.sv.views.meshing";
 
 svMeshEdit::svMeshEdit() :
     ui(new Ui::svMeshEdit)

@@ -6,4 +6,5 @@ set(target_libraries
   org_blueberry_ui_qt
   org_blueberry_ui_qt_help
   org_mitk_gui_qt_extapplication
+  org_sv_gui_qt_application
 )

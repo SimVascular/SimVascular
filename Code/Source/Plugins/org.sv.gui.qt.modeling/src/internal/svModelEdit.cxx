@@ -32,7 +32,7 @@
 #include <iostream>
 using namespace std;
 
-const QString svModelEdit::EXTENSION_ID = "org.sv.views.modeledit";
+const QString svModelEdit::EXTENSION_ID = "org.sv.views.modeling";
 
 svModelEdit::svModelEdit() :
     ui(new Ui::svModelEdit)
