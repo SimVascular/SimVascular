@@ -8,5 +8,6 @@
         <file alias="svmodelfolder.png">svmodelfolder.png</file>
         <file alias="svmeshfolder.png">svmeshfolder.png</file>
         <file alias="svsimfolder.png">svsimfolder.png</file>
+        <file alias="remove.png">remove.png</file>
     </qresource>
 </RCC>
