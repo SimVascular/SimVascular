@@ -7,7 +7,7 @@
 #include <QWidget>
 
 namespace Ui {
-class SV_QT_PROJECTMANAGER svProjectCreate;
+class SV_QT_APPLICATION svProjectCreate;
 }
 
 class SV_QT_APPLICATION svProjectCreate : public QWidget

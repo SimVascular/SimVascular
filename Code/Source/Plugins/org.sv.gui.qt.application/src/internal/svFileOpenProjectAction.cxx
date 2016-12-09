@@ -30,11 +30,20 @@ svFileOpenProjectAction::svFileOpenProjectAction(berry::IWorkbenchWindow::Pointe
     this->Init(window.GetPointer());
 }
 
-svFileOpenProjectAction::svFileOpenProjectAction(berry::IWorkbenchWindow* window)
+svFileOpenProjectAction::svFileOpenProjectAction(const QIcon & icon, berry::IWorkbenchWindow::Pointer window)
+    : QAction(0)
+    , m_Window(nullptr)
+{
+    this->Init(window.GetPointer());
+    this->setIcon(icon);
+}
+
+svFileOpenProjectAction::svFileOpenProjectAction(const QIcon & icon, berry::IWorkbenchWindow* window)
     : QAction(0)
     , m_Window(nullptr)
 {
     this->Init(window);
+    this->setIcon(icon);
 }
 
 void svFileOpenProjectAction::Init(berry::IWorkbenchWindow* window)

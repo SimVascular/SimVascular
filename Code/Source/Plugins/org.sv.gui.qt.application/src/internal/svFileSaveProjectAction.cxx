@@ -30,17 +30,26 @@ svFileSaveProjectAction::svFileSaveProjectAction(berry::IWorkbenchWindow::Pointe
     this->Init(window.GetPointer());
 }
 
-svFileSaveProjectAction::svFileSaveProjectAction(berry::IWorkbenchWindow* window)
+svFileSaveProjectAction::svFileSaveProjectAction(const QIcon & icon, berry::IWorkbenchWindow::Pointer window)
+    : QAction(0)
+    , m_Window(nullptr)
+{
+    this->Init(window.GetPointer());
+    this->setIcon(icon);
+}
+
+svFileSaveProjectAction::svFileSaveProjectAction(const QIcon & icon, berry::IWorkbenchWindow* window)
     : QAction(0)
     , m_Window(nullptr)
 {
     this->Init(window);
+    this->setIcon(icon);
 }
 
 void svFileSaveProjectAction::Init(berry::IWorkbenchWindow* window)
 {
     m_Window = window;
-    this->setText("&Save All SV Projects");
+    this->setText("&Save SV Projects");
     this->setToolTip("Save all SimVascular Projects");
 
     this->connect(this, SIGNAL(triggered(bool)), this, SLOT(Run()));

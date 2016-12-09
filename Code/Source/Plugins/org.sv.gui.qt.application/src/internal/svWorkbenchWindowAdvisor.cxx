@@ -741,7 +741,30 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
                                                                       *perspIt, perspGroup);
             mapPerspIdToAction.insert((*perspIt)->GetId(), perspAction);
         }
-        perspMenu->addActions(perspGroup->actions());
+//        perspMenu->addActions(perspGroup->actions());
+        std::map<int, QAction*> perActionMap;
+        QList<QAction*> perActionList=perspGroup->actions();
+        for(int i=0;i<perActionList.size();i++)
+        {
+            int idx=0;
+            if(perActionList[i]->text()=="SimVascular")
+                idx=1;
+            else if(perActionList[i]->text()=="Viewer")
+                idx=2;
+            else if(perActionList[i]->text()=="Visualization")
+                idx=3;
+            else
+                continue;
+
+            perActionMap[idx]=perActionList[i];
+        }
+        std::map<int, QAction*>::const_iterator perMapIter;
+        QList<QAction*> orderedPerList;
+        for (perMapIter = perActionMap.begin(); perMapIter != perActionMap.end(); ++perMapIter)
+        {
+            orderedPerList.push_back((*perMapIter).second);
+        }
+        perspMenu->addActions(orderedPerList);
 
         // ===== Help menu ====================================
         QMenu* helpMenu = menuBar->addMenu("&Help");
@@ -765,19 +788,19 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     auto mainActionsToolBar = new QToolBar;
     mainActionsToolBar->setObjectName("mainActionsToolBar");
     mainActionsToolBar->setContextMenuPolicy(Qt::PreventContextMenu);
-//#ifdef __APPLE__
-//    mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextUnderIcon );
-//#else
-//    mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextBesideIcon );
-//#endif
+#ifdef __APPLE__
+    mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextUnderIcon );
+#else
+    mainActionsToolBar->setToolButtonStyle ( Qt::ToolButtonTextBesideIcon );
+#endif
 
     imageNavigatorAction = new QAction(QIcon(":/org.mitk.gui.qt.ext/Slider.png"), "&Image Navigator", nullptr);
     bool imageNavigatorViewFound = window->GetWorkbench()->GetViewRegistry()->Find("org.mitk.views.imagenavigator");
 
-    if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
-    {
-        openDicomEditorAction = new QmitkOpenDicomEditorAction(QIcon(":/org.mitk.gui.qt.ext/dcm-icon.png"),window);
-    }
+//    if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
+//    {
+//        openDicomEditorAction = new QmitkOpenDicomEditorAction(QIcon(":/org.mitk.gui.qt.ext/dcm-icon.png"),window);
+//    }
 
     if (imageNavigatorViewFound)
     {
@@ -834,10 +857,11 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     if (viewNavigatorFound)
     {
         mainActionsToolBar->addAction(viewNavigatorAction);
-    }    if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
-    {
-        mainActionsToolBar->addAction(openDicomEditorAction);
     }
+//    if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
+//    {
+//        mainActionsToolBar->addAction(openDicomEditorAction);
+//    }
 
     mainWindow->addToolBar(mainActionsToolBar);
 
@@ -860,6 +884,12 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     if (showViewToolbar)
     {
         mainWindow->addToolBar(qSVToolbar);
+
+        if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
+        {
+            openDicomEditorAction = new QmitkOpenDicomEditorAction(QIcon(":/org.mitk.gui.qt.ext/dcm-icon.png"),window);
+            qSVToolbar->addAction(openDicomEditorAction);
+        }
 
         for (auto viewAction : svViewActions)
         {
@@ -1252,7 +1282,8 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
 
     if(showSVVersionInfo)
     {
-        title += QString(" ") + SV_FULL_VER_NO;
+//        title += QString(" ") + SV_FULL_VER_NO;
+        title += QString(" 3.0");
     }
 
     if (showVersionInfo)
@@ -1289,11 +1320,12 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
         }
         if (!label.isEmpty())
         {
-            title = label + " - " + title;
+//            title = label + " - " + title;
+            title = title + " - " + label;
         }
     }
 
-    title += " (Not for use in diagnosis or treatment of patients)";
+//    title += " (Not for use in diagnosis or treatment of patients)";
 
     return title;
 }
@@ -1403,7 +1435,7 @@ void svWorkbenchWindowAdvisor::PostWindowClose()
 
 QString svWorkbenchWindowAdvisor::GetQSettingsFile() const
 {
-    QFileInfo settingsInfo = QmitkCommonExtPlugin::getContext()->getDataFile(QT_SETTINGS_FILENAME);
+    QFileInfo settingsInfo = svApplicationPluginActivator::getContext()->getDataFile(QT_SETTINGS_FILENAME);
     return settingsInfo.canonicalFilePath();
 }
 

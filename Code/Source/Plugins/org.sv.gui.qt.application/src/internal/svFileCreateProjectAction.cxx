@@ -5,8 +5,8 @@
 //#include "svProjectManager.h"
 
 //#include <QFileDialog>
-//#include <QMessageBox>
-//#include <QApplication>
+#include <QMessageBox>
+#include <QApplication>
 
 //#include <mitkSceneIO.h>
 #include <mitkProgressBar.h>
@@ -31,11 +31,20 @@ svFileCreateProjectAction::svFileCreateProjectAction(berry::IWorkbenchWindow::Po
     this->Init(window.GetPointer());
 }
 
-svFileCreateProjectAction::svFileCreateProjectAction(berry::IWorkbenchWindow* window)
+svFileCreateProjectAction::svFileCreateProjectAction(const QIcon & icon, berry::IWorkbenchWindow::Pointer window)
+    : QAction(0)
+    , m_Window(nullptr)
+{
+    this->Init(window.GetPointer());
+    this->setIcon(icon);
+}
+
+svFileCreateProjectAction::svFileCreateProjectAction(const QIcon & icon, berry::IWorkbenchWindow* window)
     : QAction(0)
     , m_Window(nullptr)
 {
     this->Init(window);
+    this->setIcon(icon);
 }
 
 void svFileCreateProjectAction::Init(berry::IWorkbenchWindow* window)

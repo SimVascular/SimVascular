@@ -1,6 +1,8 @@
 #ifndef SVFILESAVEPROJECTACTION_H
 #define SVFILESAVEPROJECTACTION_H
 
+#include <org_sv_gui_qt_application_Export.h>
+
 #ifdef __MINGW32__
 // We need to inlclude winbase.h here in order to declare
 // atomic intrinsics like InterlockedIncrement correctly.
@@ -8,15 +10,10 @@
 #include <windows.h>
 #endif
 
+#include <berryIWorkbenchWindow.h>
+
 #include <QAction>
-
-#include <org_sv_gui_qt_application_Export.h>
-
-#include <berrySmartPointer.h>
-
-namespace berry {
-struct IWorkbenchWindow;
-}
+#include <QIcon>
 
 class SV_QT_APPLICATION svFileSaveProjectAction : public QAction
 {
@@ -24,12 +21,13 @@ class SV_QT_APPLICATION svFileSaveProjectAction : public QAction
 
 public:
 
-    svFileSaveProjectAction(berry::SmartPointer<berry::IWorkbenchWindow> window);
-    svFileSaveProjectAction(berry::IWorkbenchWindow* window);
+    svFileSaveProjectAction(berry::IWorkbenchWindow::Pointer window);
+    svFileSaveProjectAction(const QIcon & icon, berry::IWorkbenchWindow::Pointer window);
+    svFileSaveProjectAction(const QIcon & icon, berry::IWorkbenchWindow* window);
 
 protected slots:
 
-    void Run();
+    virtual void Run();
 
 private:
 
