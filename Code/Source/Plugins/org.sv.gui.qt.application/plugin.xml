@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
+
 <plugin>
   <extension id="org.sv.qt.application" point="org.blueberry.osgi.applications">
     <application>
@@ -11,14 +11,14 @@
     <product name="SimVascular Workbench" application="org.sv.qt.application" />
   </extension>
 
-  <extension point="org.blueberry.ui.intro">
+<!--  <extension point="org.blueberry.ui.intro">
     <intro id="org.sv.qt.applicationintro"
       class="svWorkbenchIntroPart"
       role="editor"/>
     <introProductBinding
       productId="org.sv.gui.qt.application.svworkbench"
       introId="org.sv.qt.applicationintro"/>
-  </extension>
+  </extension>-->
 
   <extension point="org.blueberry.ui.perspectives">
     <perspective

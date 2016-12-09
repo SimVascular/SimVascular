@@ -4,8 +4,8 @@ set(SRC_CPP_FILES
 
 set(INTERNAL_CPP_FILES
   svProjectManagerPluginActivator.cxx
-#  svProjectCreate.cxx
-#  svProjectManagerView.cxx
+  svProjectCreate.cxx
+  svProjectManagerView.cxx
   svProjectAddImageAction.cxx
   svProjectCloseAction.cxx
   svProjectShowModelEdgesAction.cxx
@@ -13,15 +13,15 @@ set(INTERNAL_CPP_FILES
 
 set(MOC_H_FILES
   src/internal/svProjectManagerPluginActivator.h
-#  src/internal/svProjectCreate.h
-#  src/internal/svProjectManagerView.h
+  src/internal/svProjectCreate.h
+  src/internal/svProjectManagerView.h
   src/internal/svProjectAddImageAction.h
   src/internal/svProjectCloseAction.h
   src/internal/svProjectShowModelEdgesAction.h
 )
 
 set(UI_FILES
-#  src/internal/svProjectCreate.ui
+  src/internal/svProjectCreate.ui
 )
 
 set(CACHED_RESOURCE_FILES

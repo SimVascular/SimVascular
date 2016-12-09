@@ -3,11 +3,9 @@
 //#include <QtWidgetsExtRegisterClasses.h>
 
 //#include "QmitkAboutHandler.h"
-//#include "QmitkAppInstancesPreferencePage.h"
-//#include "QmitkExternalProgramsPreferencePage.h"
-//#include "QmitkInputDevicesPrefPage.h"
-
-//#include "QmitkModuleView.h"
+#include "svDefaultPerspective.h"
+//#include "svWorkbenchIntroPart.h"
+#include "svApplication.h"
 
 //#include <mitkIDataStorageService.h>
 //#include <mitkSceneIO.h>
@@ -59,11 +57,8 @@ void svApplicationPluginActivator::start(ctkPluginContext* context)
     //  QtWidgetsExtRegisterClasses();
 
     //  BERRY_REGISTER_EXTENSION_CLASS(QmitkAboutHandler, context)
-    //  BERRY_REGISTER_EXTENSION_CLASS(QmitkAppInstancesPreferencePage, context)
-    //  BERRY_REGISTER_EXTENSION_CLASS(QmitkExternalProgramsPreferencePage, context)
-    //  BERRY_REGISTER_EXTENSION_CLASS(QmitkInputDevicesPrefPage, context)
-
-    //  BERRY_REGISTER_EXTENSION_CLASS(QmitkModuleView, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svDefaultPerspective, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svApplication, context)
 
     //  if (qApp->metaObject()->indexOfSignal("messageReceived(QByteArray)") > -1)
     //  {
