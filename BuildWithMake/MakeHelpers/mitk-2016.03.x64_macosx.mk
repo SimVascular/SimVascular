@@ -78,7 +78,7 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/Utilities/mbilog
 
 # Plugin Includes (exports give in include/mitk/exports)
-#MITK_PLUGIN_INCDIRS = \
+MITK_PLUGIN_INCDIRS = \
            -I$(MITK_BINDIR)/include/ctk/PluginFramework \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.common \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.datamanager \
@@ -89,7 +89,7 @@ MITK_INCDIRS = \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/registry \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.core.services
 
-MITK_PLUGIN_INCDIRS = \
+#MITK_PLUGIN_INCDIRS = \
            -I$(MITK_BINDIR)/include/ctk/PluginFramework \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.common \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
@@ -159,4 +159,6 @@ MITK_LIBS += \
            $(LIBFLAG)MitkSegmentationUI$(LIBLINKEXT) \
            $(LIBFLAG)MitkSurfaceInterpolation$(LIBLINKEXT) \
            $(LIBFLAG)PythonQt$(LIBLINKEXT) \
-           $(LIBFLAG)tinyxml$(LIBLINKEXT)
+           $(LIBFLAG)tinyxml$(LIBLINKEXT) \
+           $(LIBFLAG)PocoUtil$(LIBLINKEXT)
+

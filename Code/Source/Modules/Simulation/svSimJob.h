@@ -26,8 +26,8 @@ public:
     void SetBasicProp(const std::string& key, std::string value);
     std::string GetBasicProp(const std::string& key);
 
-    void SetCapProps(std::map<std::string,std::map<std::string,std::string>> capProps);
-    std::map<std::string,std::map<std::string,std::string>> GetCapProps();
+    void SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps);
+    std::map<std::string,std::map<std::string,std::string> > GetCapProps();
     void SetCapProp(const std::string& capName, const std::string& key, std::string value);
     std::string GetCapProp(const std::string& capName, const std::string& key);
 
@@ -36,8 +36,8 @@ public:
     void SetWallProp(const std::string& key, std::string value);
     std::string GetWallProp(const std::string& key);
 
-    void SetVarProps(std::map<std::string,std::map<std::string,std::string>> varProps);
-    std::map<std::string,std::map<std::string,std::string>> GetVarProps();
+    void SetVarProps(std::map<std::string,std::map<std::string,std::string> > varProps);
+    std::map<std::string,std::map<std::string,std::string> > GetVarProps();
     void SetVarProp(const std::string& faceName, const std::string& key, std::string value);
     std::string GetVarProp(const std::string& faceName, const std::string& key);
 
@@ -63,9 +63,9 @@ public:
   protected:
 
     std::map<std::string,std::string> m_BasicProps;
-    std::map<std::string,std::map<std::string,std::string>> m_CapProps;
+    std::map<std::string,std::map<std::string,std::string> > m_CapProps;
     std::map<std::string,std::string> m_WallProps;
-    std::map<std::string,std::map<std::string,std::string>> m_VarProps;
+    std::map<std::string,std::map<std::string,std::string> > m_VarProps;
     std::map<std::string,std::string> m_SolverProps;
     std::map<std::string,std::string> m_RunProps;
 

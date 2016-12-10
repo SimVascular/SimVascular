@@ -1,6 +1,6 @@
 ifeq ($(CLUSTER), x64_macosx)
     SHELL           =/bin/sh
-    CXX             = clang++ -pthread -w
+    CXX             = clang++ -std=c++11 -pthread -w
     CC              = clang -pthread -w
     CXXDEP          = $(CXX) -MM
     CCDEP           = $(CC) -MM

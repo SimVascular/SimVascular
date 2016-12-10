@@ -48,8 +48,7 @@ SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
                   org.sv.gui.qt.pathplanning/src/internal \
                   org.sv.gui.qt.segmentation/src/internal \
                   org.sv.gui.qt.meshing/src/internal \
-                  org.sv.gui.qt.simulation/src/internal \
-                  org.mitk.gui.qt.datamanager/src/internal
+                  org.sv.gui.qt.simulation/src/internal
 # sv.test appears to be out of date
 # sv.test
 

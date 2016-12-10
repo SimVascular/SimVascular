@@ -1,0 +1,1096 @@
+diff -aur mitk-2016.03/CMake/mitkFunctionCreateModule.cmake mitk-simvascular/CMake/mitkFunctionCreateModule.cmake
+--- mitk-2016.03/CMake/mitkFunctionCreateModule.cmake	2016-08-15 16:50:00.988987100 -0700
++++ mitk-simvascular/CMake/mitkFunctionCreateModule.cmake	2016-12-09 18:50:35.903668100 -0800
+@@ -126,6 +126,7 @@
+ 
+   set(_macro_options
+       FORCE_STATIC           # force building this module as a static library
++      FORCE_SHARED           # force building this module as a shared library
+       HEADERS_ONLY           # this module is a headers-only library
+       GCC_DEFAULT_VISIBILITY # do not use gcc visibility flags - all symbols will be exported
+       NO_DEFAULT_INCLUDE_DIRS # do not add default include directories like "include" or "."
+@@ -339,7 +340,7 @@
+       set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+     endif()
+ 
+-    if(MODULE_WARNINGS_AS_ERRORS)
++    if(MODULE_WARNINGS_AS_ERRORS_IGNORED)
+       if(MSVC_VERSION)
+         mitkFunctionCheckCAndCXXCompilerFlags("/WX" module_c_flags module_cxx_flags)
+       else()
+@@ -367,12 +368,16 @@
+       endif()
+     endif(MODULE_WARNINGS_AS_ERRORS)
+ 
++    set(_STATIC )
++
+     if(MODULE_FORCE_STATIC)
+       set(_STATIC STATIC)
+-    else()
+-      set(_STATIC )
+     endif(MODULE_FORCE_STATIC)
+ 
++    if(MODULE_FORCE_SHARED)
++      set(_STATIC SHARED)
++    endif(MODULE_FORCE_SHARED)
++
+     if(NOT MODULE_HEADERS_ONLY)
+       if(NOT MODULE_NO_INIT OR RESOURCE_FILES)
+         find_package(CppMicroServices QUIET NO_MODULE REQUIRED)
+diff -aur mitk-2016.03/CMake/mitkMacroCreateExecutable.cmake mitk-simvascular/CMake/mitkMacroCreateExecutable.cmake
+--- mitk-2016.03/CMake/mitkMacroCreateExecutable.cmake	2016-08-15 16:50:01.111999600 -0700
++++ mitk-simvascular/CMake/mitkMacroCreateExecutable.cmake	2016-12-09 18:50:35.911079400 -0800
+@@ -50,7 +50,7 @@
+   if(EXEC_NO_INIT)
+     list(APPEND _EXEC_OPTIONS NO_INIT)
+   endif()
+-  if(EXEC_WARNINGS_AS_ERRORS)
++  if(EXEC_WARNINGS_AS_ERRORS_IGNORED)
+     list(APPEND _EXEC_OPTIONS WARNINGS_AS_ERRORS)
+   endif()
+   if(EXEC_NO_FEATURE_INFO)
+diff -aur mitk-2016.03/CMake/mitkMacroInstall.cmake mitk-simvascular/CMake/mitkMacroInstall.cmake
+--- mitk-2016.03/CMake/mitkMacroInstall.cmake	2016-08-15 16:50:01.135001100 -0700
++++ mitk-simvascular/CMake/mitkMacroInstall.cmake	2016-12-09 18:50:35.916937800 -0800
+@@ -170,6 +170,7 @@
+     set(DIRS \"${_search_paths}\")
+ 
+     set(_additional_search_paths ${_install_LIBRARY_DIRS})
++    set(_additional_search_paths \"${_additional_search_paths};${GDCM_DIR}/../;${VTK_DIR}/../../;${ITK_DIR}/../../\")
+     if(_additional_search_paths)
+       set(DIRS \"\${DIRS};\${_additional_search_paths}\")
+     endif()
+diff -aur mitk-2016.03/CMake/PackageDepends/MITK_VTK_Config.cmake mitk-simvascular/CMake/PackageDepends/MITK_VTK_Config.cmake
+--- mitk-2016.03/CMake/PackageDepends/MITK_VTK_Config.cmake	2016-08-15 16:50:00.892972700 -0700
++++ mitk-simvascular/CMake/PackageDepends/MITK_VTK_Config.cmake	2016-12-09 18:50:35.884327100 -0800
+@@ -1,4 +1,5 @@
+-find_package(VTK COMPONENTS ${VTK_REQUIRED_COMPONENTS_BY_MODULE} REQUIRED)
++#find_package(VTK COMPONENTS ${VTK_REQUIRED_COMPONENTS_BY_MODULE} REQUIRED)
++find_package(VTK REQUIRED)
+ if(VTK_FOUND AND NOT VTK_BUILD_SHARED_LIBS)
+   message(FATAL_ERROR "MITK only supports a VTK which was built with shared libraries. Turn on BUILD_SHARED_LIBS in your VTK config.")
+ endif()
+diff -aur mitk-2016.03/CMakeExternals/CTK.cmake mitk-simvascular/CMakeExternals/CTK.cmake
+--- mitk-2016.03/CMakeExternals/CTK.cmake	2016-08-15 16:50:01.198011800 -0700
++++ mitk-simvascular/CMakeExternals/CTK.cmake	2016-12-09 18:50:35.924749800 -0800
+@@ -26,6 +26,12 @@
+         list(APPEND proj_DEPENDENCIES Python)
+       endif()
+       list(APPEND ctk_optional_cache_args
++           if(DEFINED EXTERNAL_VTK_DIR)
++	     -DVTK_DIR:PATH=${EXTERNAL_VTK_DIR}
++	   endif()
++           -DCTK_LIB_Visualization/VTK/Core:BOOL=ON
++           -DCTK_LIB_Scripting/Python/Core:BOOL=ON
++	   -DCTK_LIB_Scripting/Python/Core_PYTHONQT_USE_VTK:BOOL=ON
+            -DCTK_LIB_Scripting/Python/Widgets:BOOL=ON
+            -DCTK_ENABLE_Python_Wrapping:BOOL=ON
+            -DCTK_APP_ctkSimplePythonShell:BOOL=ON
+diff -aur mitk-2016.03/CMakeExternals/SimpleITK.cmake mitk-simvascular/CMakeExternals/SimpleITK.cmake
+--- mitk-2016.03/CMakeExternals/SimpleITK.cmake	2016-08-15 16:50:01.378036800 -0700
++++ mitk-simvascular/CMakeExternals/SimpleITK.cmake	2016-12-09 18:50:35.932562100 -0800
+@@ -111,7 +111,8 @@
+ 
+       if( MITK_USE_SYSTEM_PYTHON )
+         ExternalProject_Add_Step(${proj} sitk_python_install_step
+-          COMMAND PYTHONUSERBASE=${_install_dir} ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
++          #COMMAND PYTHONUSERBASE=${_install_dir} ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
++	  #COMMAND ${PYTHON_EXECUTABLE} setup.py install --prefix=${_install_dir}
+           DEPENDEES install
+           WORKING_DIRECTORY ${_sitk_build_dir}/Wrapping/PythonPackage
+         )
+diff -aur mitk-2016.03/CMakeLists.txt mitk-simvascular/CMakeLists.txt
+--- mitk-2016.03/CMakeLists.txt	2016-08-15 16:50:01.415038700 -0700
++++ mitk-simvascular/CMakeLists.txt	2016-12-09 10:56:44.418180300 -0800
+@@ -204,7 +204,7 @@
+ 
+ if(MITK_USE_QT)
+   set(MITK_QT5_MINIMUM_VERSION 5.0.0)
+-  set(MITK_QT5_COMPONENTS Concurrent OpenGL PrintSupport Script Sql Svg Widgets WebKitWidgets Xml XmlPatterns UiTools Help)
++  set(MITK_QT5_COMPONENTS Concurrent OpenGL PrintSupport Script Sql Svg Widgets WebKitWidgets Xml XmlPatterns UiTools Help LinguistTools)
+   if(APPLE)
+     set(MITK_QT5_COMPONENTS ${MITK_QT5_COMPONENTS} DBus)
+   endif()
+@@ -262,8 +262,8 @@
+ mitkFunctionAddExternalProject(NAME Vigra     OFF          DEPENDS HDF5)
+ 
+ # These are "hard" dependencies and always set to ON
+-mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
+ mitkFunctionAddExternalProject(NAME VTK       ON           NO_CACHE)
++mitkFunctionAddExternalProject(NAME ITK       ON           NO_CACHE)
+ mitkFunctionAddExternalProject(NAME Boost     ON           NO_CACHE)
+ 
+ mitkFunctionAddExternalProject(NAME SimpleITK OFF          DEPENDS ITK GDCM SWIG)
+@@ -830,6 +830,11 @@
+   ${CMAKE_MODULE_PATH}
+   )
+ 
++if(MITK_USE_GDCM)
++  find_package(GDCM REQUIRED)
++  include(${GDCM_USE_FILE})
++endif()
++
+ if(MITK_USE_DCMTK)
+   # Due to the preferred CONFIG mode in find_package calls above,
+   # the DCMTKConfig.cmake file is read, which does not provide useful
+diff -aur mitk-2016.03/Modules/Classification/CLUtilities/CMakeLists.txt mitk-simvascular/Modules/Classification/CLUtilities/CMakeLists.txt
+--- mitk-2016.03/Modules/Classification/CLUtilities/CMakeLists.txt	2016-08-15 16:50:04.626457000 -0700
++++ mitk-simvascular/Modules/Classification/CLUtilities/CMakeLists.txt	2016-12-09 10:56:46.180661100 -0800
+@@ -1,6 +1,8 @@
+ MITK_CREATE_MODULE(
+   DEPENDS MitkCore MitkCLCore
+-  PACKAGE_DEPENDS PUBLIC Eigen
++  PACKAGE_DEPENDS 
++    PUBLIC Eigen
++    PUBLIC  ITK|ITKImageLabel+ITKConnectedComponents+ITKImageCompare+ITKMathematicalMorphology+ITKBinaryMathematicalMorphology
+   WARNINGS_AS_ERRORS
+ )
+ 
+diff -aur mitk-2016.03/Modules/Core/CMakeLists.txt mitk-simvascular/Modules/Core/CMakeLists.txt
+--- mitk-2016.03/Modules/Core/CMakeLists.txt	2016-08-15 16:50:05.337548600 -0700
++++ mitk-simvascular/Modules/Core/CMakeLists.txt	2016-12-09 18:50:35.941350500 -0800
+@@ -18,9 +18,9 @@
+     # We privately use/link all ITK modules in order to support all IO, Transform, etc.
+     # factories from ITK which are registered "automatically" via a factory manager.
+     PRIVATE ITK
+-    PUBLIC  VTK|vtkFiltersTexture+vtkFiltersParallel+vtkImagingStencil+vtkImagingMath+vtkInteractionStyle+vtkRenderingOpenGL+vtkRenderingVolumeOpenGL+vtkRenderingFreeTypeOpenGL+vtkRenderingLabel+vtkInteractionWidgets+vtkIOGeometry+vtkIOXML
++    PUBLIC  VTK|vtkFiltersTexture+vtkFiltersParallel+vtkImagingStencil+vtkImagingMath+vtkInteractionStyle+vtkRenderingOpenGL+vtkRenderingVolumeOpenGL+vtkRenderingFreeTypeOpenGL+vtkRenderingLabel+vtkInteractionWidgets+vtkIOGeometry+vtkIOXML+vtkImagingStatistics
+     PUBLIC  Boost
+-  WARNINGS_AS_ERRORS
++#  WARNINGS_AS_ERRORS
+   SUBPROJECTS MITK-Core
+   # Do not automatically create CppMicroServices initialization code.
+   # Because the VTK 6 "auto-init" functionality injects file-local static
+@@ -73,6 +73,6 @@
+   target_link_libraries(${MODULE_TARGET} PRIVATE psapi.lib)
+ endif(MSVC_IDE OR MSVC_VERSION OR MINGW)
+ 
+-add_subdirectory(TestingHelper)
++#add_subdirectory(TestingHelper)
+ 
+-add_subdirectory(test)
++#add_subdirectory(test)
+diff -aur mitk-2016.03/Modules/Core/include/mitkExtractSliceFilter.h mitk-simvascular/Modules/Core/include/mitkExtractSliceFilter.h
+--- mitk-2016.03/Modules/Core/include/mitkExtractSliceFilter.h	2016-08-15 16:50:05.771609300 -0700
++++ mitk-simvascular/Modules/Core/include/mitkExtractSliceFilter.h	2016-12-09 10:56:46.870830400 -0800
+@@ -85,6 +85,10 @@
+     /** \brief Resampling grid corresponds to: false->image    true->worldgeometry*/
+     void SetInPlaneResampleExtentByGeometry(bool inPlaneResampleExtentByGeometry){ this->m_InPlaneResampleExtentByGeometry = inPlaneResampleExtentByGeometry; }
+ 
++    void SetInPlaneResampleSizeByGeometry(bool inPlaneResampleSizeByGeometry){ this->m_InPlaneResampleSizeByGeometry = inPlaneResampleSizeByGeometry; }
++
++    void SetInPlaneResampleExtentByMinimumSpacing(bool inPlaneResampleExtentByMinimumSpacing){this->m_InPlaneResampleExtentByMinimumSpacing = inPlaneResampleExtentByMinimumSpacing;}
++
+     /** \brief Sets the output dimension of the slice*/
+     void SetOutputDimensionality(unsigned int dimension){ this->m_OutputDimension = dimension; }
+ 
+@@ -168,6 +172,10 @@
+ 
+     bool m_InPlaneResampleExtentByGeometry;//Resampling grid corresponds to:  false->image    true->worldgeometry
+ 
++    bool m_InPlaneResampleSizeByGeometry;//Use Renderer Plane extents
++
++    bool m_InPlaneResampleExtentByMinimumSpacing;
++
+     mitk::ScalarType* m_OutPutSpacing;
+ 
+     bool m_VtkOutputRequested;
+diff -aur mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp mitk-simvascular/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp
+--- mitk-2016.03/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp	2016-08-15 16:50:07.228798400 -0700
++++ mitk-simvascular/Modules/Core/src/Algorithms/mitkExtractSliceFilter.cpp	2016-12-09 10:56:47.247358500 -0800
+@@ -36,6 +36,8 @@
+   m_InterpolationMode = ExtractSliceFilter::RESLICE_NEAREST;
+   m_ResliceTransform = nullptr;
+   m_InPlaneResampleExtentByGeometry = false;
++  m_InPlaneResampleSizeByGeometry = false;
++  m_InPlaneResampleExtentByMinimumSpacing = false;
+   m_OutPutSpacing = new mitk::ScalarType[2];
+   m_OutputDimension = 2;
+   m_ZSpacing = 1.0;
+@@ -186,8 +188,15 @@
+         // Resampling grid corresponds to the current world geometry. This
+         // means that the spacing of the output 2D image depends on the
+         // currently selected world geometry, and *not* on the image itself.
+-        extent[0] = m_WorldGeometry->GetExtent( 0 );
+-        extent[1] = m_WorldGeometry->GetExtent( 1 );
++        extent[0] = planeGeometry->GetExtent( 0 );
++        extent[1] = planeGeometry->GetExtent( 1 );
++      }
++      else if(m_InPlaneResampleExtentByMinimumSpacing)
++      {
++    	    const mitk::Vector3D &imageSpacing = inputTimeGeometry->GetGeometryForTimeStep(0)->GetSpacing();
++            double minSpacing=std::min(imageSpacing[0],std::min(imageSpacing[1],imageSpacing[2]));
++            extent[0]=planeGeometry->GetExtentInMM( 0 )/minSpacing;
++            extent[1]=planeGeometry->GetExtentInMM( 1 )/minSpacing;
+       }
+       else
+       {
+@@ -305,12 +314,14 @@
+   int xMin, xMax, yMin, yMax;
+ 
+   xMin = yMin = 0;
+-  xMax = static_cast< int >( extent[0]);
+-  yMax = static_cast< int >( extent[1]);
++  xMax = static_cast< int >( std::round(extent[0]));
++  yMax = static_cast< int >( std::round(extent[1]));
+ 
+-  double sliceBounds[6];
+-  if (m_WorldGeometry->GetReferenceGeometry())
++  if(!m_InPlaneResampleSizeByGeometry)
+   {
++   double sliceBounds[6];
++   if (m_WorldGeometry->GetReferenceGeometry())
++   {
+     for (auto & sliceBound : sliceBounds)
+     {
+       sliceBound = 0.0;
+@@ -324,8 +335,8 @@
+       yMin = static_cast< int >( sliceBounds[2] / m_OutPutSpacing[1] + 0.5 );
+       yMax = static_cast< int >( sliceBounds[3] / m_OutPutSpacing[1] + 0.5 );
+     } // ELSE we use the default values
++   }
+   }
+-
+   // Set the output extents! First included pixel index and last included pixel index
+   // xMax and yMax are one after the last pixel. so they have to be decremented by 1.
+   // In case we have a 2D image, xMax or yMax might be 0. in this case, do not decrement, but take 0.
+diff -aur mitk-2016.03/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp mitk-simvascular/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp
+--- mitk-2016.03/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp	2016-08-15 16:50:08.083910500 -0700
++++ mitk-simvascular/Modules/Core/src/DataManagement/mitkSlicedGeometry3D.cpp	2016-12-09 10:56:47.421898500 -0800
+@@ -65,7 +65,7 @@
+       }
+       else
+       {
+-        PlaneGeometry* geometry2D = other.m_PlaneGeometries[s]->Clone();
++        PlaneGeometry::Pointer geometry2D = other.m_PlaneGeometries[s]->Clone();
+         assert(geometry2D!=nullptr);
+         SetPlaneGeometry(geometry2D, s);
+       }
+diff -aur mitk-2016.03/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp mitk-simvascular/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp
+--- mitk-2016.03/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp	2016-08-15 16:50:09.224054000 -0700
++++ mitk-simvascular/Modules/Core/src/Rendering/mitkImageVtkMapper2D.cpp	2016-12-09 10:56:47.658060800 -0800
+@@ -52,6 +52,8 @@
+ #include <vtkCellArray.h>
+ #include <vtkCamera.h>
+ #include <vtkColorTransferFunction.h>
++#include <vtkImageGradientMagnitude.h>
++#include <vtkImageHistogramStatistics.h>
+ 
+ //ITK
+ #include <itkRGBAPixel.h>
+@@ -166,6 +168,13 @@
+   datanode->GetBoolProperty("in plane resample extent by geometry", inPlaneResampleExtentByGeometry, renderer);
+   localStorage->m_Reslicer->SetInPlaneResampleExtentByGeometry(inPlaneResampleExtentByGeometry);
+ 
++  bool inPlaneResampleSizeByGeometry = false;
++  datanode->GetBoolProperty("in plane resample size by geometry", inPlaneResampleSizeByGeometry, renderer);
++  localStorage->m_Reslicer->SetInPlaneResampleSizeByGeometry(inPlaneResampleSizeByGeometry);
++
++  bool inPlaneResampleExtentByMinimumSpacing = false;
++  datanode->GetBoolProperty("in plane resample extent by minimum spacing", inPlaneResampleExtentByMinimumSpacing, renderer);
++  localStorage->m_Reslicer->SetInPlaneResampleExtentByMinimumSpacing(inPlaneResampleExtentByMinimumSpacing);
+ 
+   // Initialize the interpolation mode for resampling; switch to nearest
+   // neighbor if the input image is too small.
+@@ -288,6 +297,60 @@
+     localStorage->m_ReslicedImage = localStorage->m_Reslicer->GetVtkOutput();
+   }
+ 
++  bool showGradient= false;
++  datanode->GetBoolProperty("show gradient", showGradient, renderer);
++  if (showGradient)
++  {
++	  vtkSmartPointer<vtkImageGradientMagnitude> gradientFilter = vtkSmartPointer<vtkImageGradientMagnitude>::New();
++      gradientFilter->HandleBoundariesOn();
++      gradientFilter->SetInputData(localStorage->m_ReslicedImage);
++      gradientFilter->Update();
++
++      // "background" pixels produce very large gradients at border
++      int extent[6];
++      gradientFilter->GetOutput()->GetExtent(extent);
++
++      for (int y = extent[2]; y <=extent[3] ; ++y)
++      {
++          for (int x = extent[0]; x <= extent[1]; ++x)
++          {
++              if (fabsf(localStorage->m_ReslicedImage->GetScalarComponentAsDouble(x, y, 0, 0) - (-32768.0)) < 1e-3)
++              {
++            	  gradientFilter->GetOutput()->SetScalarComponentFromDouble(x, y, 0, 0, 0);
++              }
++
++              int offsets[][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
++
++              for (size_t i = 0; i < sizeof(offsets) / sizeof(offsets[0]); ++i) {
++                  int xoff = x + offsets[i][0];
++                  int yoff = y + offsets[i][1];
++
++                  if (xoff < extent[0] || xoff > extent[1] || yoff < extent[2] || yoff > extent[3]) {
++                      continue;
++                  }
++
++                  if (fabsf(localStorage->m_ReslicedImage->GetScalarComponentAsDouble(xoff, yoff, 0, 0) - (-32768.0)) < 1e-3)
++                  {
++                	  gradientFilter->GetOutput()->SetScalarComponentFromDouble(x, y, 0, 0, 0);
++                      break;
++                  }
++              }
++          }
++      }
++
++      localStorage->m_ReslicedImage = gradientFilter->GetOutput();
++
++      vtkSmartPointer<vtkImageHistogramStatistics> stats = vtkSmartPointer<vtkImageHistogramStatistics>::New();
++      stats->SetInputData(localStorage->m_ReslicedImage);
++      stats->GenerateHistogramImageOff();
++      stats->Update();
++
++      mitk::LevelWindow levelWindow;
++      levelWindow.SetRangeMinMax(stats->GetAutoRange()[0], stats->GetAutoRange()[1]);
++      levelWindow.SetWindowBounds(stats->GetAutoRange()[0], stats->GetAutoRange()[1]);
++      datanode->SetLevelWindow(levelWindow, renderer, "gradientlevelwindow");
++  }
++
+   // Bounds information for reslicing (only reuqired if reference geometry
+   // is present)
+   //this used for generating a vtkPLaneSource with the right size
+@@ -296,7 +359,20 @@
+   {
+     sliceBound = 0.0;
+   }
+-  localStorage->m_Reslicer->GetClippedPlaneBounds(sliceBounds);
++
++  if(inPlaneResampleSizeByGeometry)
++  {
++      double widthInMM = planeGeometry->GetExtentInMM( 0 );
++      double heightInMM = planeGeometry->GetExtentInMM( 1 );
++      sliceBounds[0] = 0.0;
++      sliceBounds[1] = widthInMM;
++      sliceBounds[2] = 0.0;
++      sliceBounds[3] = heightInMM;
++  }
++  else
++  {
++    localStorage->m_Reslicer->GetClippedPlaneBounds(sliceBounds);
++  }
+ 
+   //get the spacing of the slice
+   localStorage->m_mmPerPixel = localStorage->m_Reslicer->GetOutputSpacing();
+@@ -308,16 +384,29 @@
+     {
+       textureClippingBound = 0.0;
+     }
+-    // Calculate the actual bounds of the transformed plane clipped by the
+-    // dataset bounding box; this is required for drawing the texture at the
+-    // correct position during 3D mapping.
+-    mitk::PlaneClipping::CalculateClippedPlaneBounds( input->GetGeometry(), planeGeometry, textureClippingBounds );
+-
+-    textureClippingBounds[0] = static_cast< int >( textureClippingBounds[0] / localStorage->m_mmPerPixel[0] + 0.5 );
+-    textureClippingBounds[1] = static_cast< int >( textureClippingBounds[1] / localStorage->m_mmPerPixel[0] + 0.5 );
+-    textureClippingBounds[2] = static_cast< int >( textureClippingBounds[2] / localStorage->m_mmPerPixel[1] + 0.5 );
+-    textureClippingBounds[3] = static_cast< int >( textureClippingBounds[3] / localStorage->m_mmPerPixel[1] + 0.5 );
+ 
++    if(inPlaneResampleSizeByGeometry)
++    {
++        double widthInMM = planeGeometry->GetExtentInMM( 0 );
++        double heightInMM = planeGeometry->GetExtentInMM( 1 );
++
++        textureClippingBounds[0] = 0.0;
++        textureClippingBounds[1] = widthInMM / localStorage->m_mmPerPixel[0];
++        textureClippingBounds[2] = 0.0;
++        textureClippingBounds[3] = heightInMM / localStorage->m_mmPerPixel[1];
++    }
++    else
++    {
++        // Calculate the actual bounds of the transformed plane clipped by the
++        // dataset bounding box; this is required for drawing the texture at the
++        // correct position during 3D mapping.
++        mitk::PlaneClipping::CalculateClippedPlaneBounds( input->GetGeometry(), planeGeometry, textureClippingBounds );
++
++        textureClippingBounds[0] = static_cast< int >( textureClippingBounds[0] / localStorage->m_mmPerPixel[0] + 0.5 );
++        textureClippingBounds[1] = static_cast< int >( textureClippingBounds[1] / localStorage->m_mmPerPixel[0] + 0.5 );
++        textureClippingBounds[2] = static_cast< int >( textureClippingBounds[2] / localStorage->m_mmPerPixel[1] + 0.5 );
++        textureClippingBounds[3] = static_cast< int >( textureClippingBounds[3] / localStorage->m_mmPerPixel[1] + 0.5 );
++    }
+     //clipping bounds for cutting the image
+     localStorage->m_LevelWindowFilter->SetClippingBounds(textureClippingBounds);
+   }
+@@ -439,7 +528,10 @@
+   LocalStorage *localStorage = this->GetLocalStorage( renderer );
+ 
+   LevelWindow levelWindow;
+-  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
++//  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, "levelwindow" );
++  bool showGradient = false;
++  this->GetDataNode()->GetBoolProperty("show gradient", showGradient, renderer);
++  this->GetDataNode()->GetLevelWindow( levelWindow, renderer, showGradient? "gradientlevelwindow" : "levelwindow" );
+   localStorage->m_LevelWindowFilter->GetLookupTable()->SetRange( levelWindow.GetLowerWindowBound(), levelWindow.GetUpperWindowBound() );
+ 
+   mitk::LevelWindow opacLevelWindow;
+@@ -591,7 +683,7 @@
+   vtkLookupTable* usedLookupTable = localStorage->m_ColorLookupTable;
+ 
+   // If lookup table or transferfunction use is requested...
+-  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable"));
++  mitk::LookupTableProperty::Pointer lookupTableProp = dynamic_cast<mitk::LookupTableProperty*>(this->GetDataNode()->GetProperty("LookupTable", renderer));
+ 
+   if( lookupTableProp.IsNotNull() ) // is a lookuptable set?
+   {
+@@ -686,6 +778,8 @@
+   else node->AddProperty( "reslice interpolation", mitk::VtkResliceInterpolationProperty::New() );
+   node->AddProperty( "texture interpolation", mitk::BoolProperty::New( false ) );
+   node->AddProperty( "in plane resample extent by geometry", mitk::BoolProperty::New( false ) );
++  node->AddProperty( "in plane resample size by geometry", mitk::BoolProperty::New( false ) );
++  node->AddProperty( "in plane resample extent by minimum spacing", mitk::BoolProperty::New( false ) );
+   node->AddProperty( "bounding box", mitk::BoolProperty::New( false ) );
+ 
+   mitk::RenderingModeProperty::Pointer renderingModeProperty = mitk::RenderingModeProperty::New();
+diff -aur mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp mitk-simvascular/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp
+--- mitk-2016.03/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp	2016-08-15 16:50:09.263560400 -0700
++++ mitk-simvascular/Modules/Core/src/Rendering/mitkPlaneGeometryDataVtkMapper3D.cpp	2016-12-09 10:56:47.677592400 -0800
+@@ -310,6 +310,13 @@
+         tubeRadius = sqrt( m_SurfaceCreator->GetBoundingBox()->GetDiagonalLength2() ) / 450.0;
+       }
+ 
++      bool useGeometryBoundingBox = false;
++      if(GetDataNode()->GetBoolProperty("in plane resample size by geometry", useGeometryBoundingBox, renderer))
++      {
++          if(useGeometryBoundingBox)
++        	  m_SurfaceCreator->SetUseBoundingBox(false);
++      }
++
+       // Calculate the surface of the PlaneGeometry
+       m_SurfaceCreator->Update();
+       Surface *surface = m_SurfaceCreator->GetOutput();
+diff -aur mitk-2016.03/Modules/CppMicroServices/core/src/util/usThreads_p.h mitk-simvascular/Modules/CppMicroServices/core/src/util/usThreads_p.h
+--- mitk-2016.03/Modules/CppMicroServices/core/src/util/usThreads_p.h	2016-08-15 16:50:11.113304500 -0700
++++ mitk-simvascular/Modules/CppMicroServices/core/src/util/usThreads_p.h	2016-12-09 18:48:28.884362200 -0800
+@@ -59,6 +59,13 @@
+     #endif
+     #include <windows.h>
+ 
++    // 2016-12-09 - problems with maro replacement on msvc 2013
++    #ifdef UNICODE
++    #define CreateMutex  CreateMutexW
++    #else
++    #define CreateMutex  CreateMutexA
++    #endif // !UNICODE
++
+     #define US_THREADS_MUTEX(x)           HANDLE (x);
+     #define US_THREADS_MUTEX_INIT(x)
+     #define US_THREADS_MUTEX_CTOR(x)      : x(::CreateMutex(NULL, FALSE, NULL))
+diff -aur mitk-2016.03/Modules/OpenViewCore/CMakeLists.txt mitk-simvascular/Modules/OpenViewCore/CMakeLists.txt
+--- mitk-2016.03/Modules/OpenViewCore/CMakeLists.txt	2016-08-15 16:50:22.745856300 -0700
++++ mitk-simvascular/Modules/OpenViewCore/CMakeLists.txt	2016-12-09 10:52:50.273893100 -0800
+@@ -1,4 +1,4 @@
+ MITK_CREATE_MODULE(
+-  PACKAGE_DEPENDS Qt5|Core+Quick VTK|vtkGUISupportQt OpenGL
++  PACKAGE_DEPENDS Qt5|Core+Quick VTK|vtkGUISupportQt+vtkRenderingFreeType OpenGL
+   )
+ 
+diff -aur mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindow.cpp mitk-simvascular/Modules/QtWidgets/src/QmitkRenderWindow.cpp
+--- mitk-2016.03/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2016-08-15 16:50:24.191062800 -0700
++++ mitk-simvascular/Modules/QtWidgets/src/QmitkRenderWindow.cpp	2016-12-09 17:55:01.744811500 -0800
+@@ -24,6 +24,8 @@
+ #include <QTimer>
+ #include <QDragEnterEvent>
+ #include <QDropEvent>
++#include <QSurfaceFormat>
++#include <QWindow>
+ #include "mitkMousePressEvent.h"
+ #include "mitkMouseMoveEvent.h"
+ #include "mitkMouseDoubleClickEvent.h"
+@@ -35,6 +37,14 @@
+ #include "QmitkRenderWindowMenu.h"
+ #include "QmitkMimeTypes.h"
+ 
++#ifdef __APPLE__
++#include <Cocoa/Cocoa.h>
++void disableGLHiDPI( long a_id ){
++  NSView* view = reinterpret_cast<NSView*>( a_id );
++  [view setWantsBestResolutionOpenGLSurface:NO];
++}
++#endif
++
+ QmitkRenderWindow::QmitkRenderWindow(QWidget *parent,
+   QString name,
+   mitk::VtkPropRenderer* /*renderer*/,
+@@ -47,6 +57,10 @@
+   newform.setSamples(8);
+   this->setFormat(newform);*/
+ 
++  QSurfaceFormat surfaceFormat = windowHandle()->format();
++  surfaceFormat.setStencilBufferSize(8);
++  windowHandle()->setFormat(surfaceFormat);
++
+   if (renderingMode == mitk::BaseRenderer::RenderingMode::DepthPeeling)
+   {
+     GetRenderWindow()->SetMultiSamples(0);
+@@ -65,6 +79,11 @@
+ 
+   setFocusPolicy(Qt::StrongFocus);
+   setMouseTracking(true);
++
++#ifdef __APPLE__
++  disableGLHiDPI(this->winId());
++#endif
++
+ }
+ 
+ QmitkRenderWindow::~QmitkRenderWindow()
+diff -aur mitk-2016.03/Modules/Segmentation/CMakeLists.txt mitk-simvascular/Modules/Segmentation/CMakeLists.txt
+--- mitk-2016.03/Modules/Segmentation/CMakeLists.txt	2016-08-15 16:50:28.020599100 -0700
++++ mitk-simvascular/Modules/Segmentation/CMakeLists.txt	2016-12-09 10:56:52.010961600 -0800
+@@ -2,7 +2,7 @@
+   INCLUDE_DIRS Algorithms Controllers DataManagement Interactions Rendering SegmentationUtilities/BooleanOperations SegmentationUtilities/MorphologicalOperations
+   DEPENDS MitkAlgorithmsExt MitkIpSegmentation MitkIpFunc MitkLegacyAdaptors MitkSurfaceInterpolation MitkGraphAlgorithms MitkContourModel MitkMultilabel
+   PACKAGE_DEPENDS
+-    PUBLIC ITK|ITKBinaryMathematicalMorphology+ITKLabelVoting+ITKRegionGrowing+ITKFastMarching+ITKAnisotropicSmoothing+ITKWatersheds
++    PUBLIC ITK|ITKBinaryMathematicalMorphology+ITKLabelVoting+ITKRegionGrowing+ITKFastMarching+ITKAnisotropicSmoothing+ITKWatersheds+ITKDistanceMap
+ )
+ 
+ add_subdirectory(Testing)
+diff -aur mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp	2016-08-15 16:50:45.072902600 -0700
++++ mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerPreferencePage.cpp	2016-12-09 10:56:53.461423100 -0800
+@@ -96,7 +96,7 @@
+ void QmitkDataManagerPreferencePage::Update()
+ {
+   m_EnableSingleEditing->setChecked(m_DataManagerPreferencesNode->GetBool("Single click property editing", true));
+-  m_PlaceNewNodesOnTop->setChecked(m_DataManagerPreferencesNode->GetBool("Place new nodes on top", true));
++  m_PlaceNewNodesOnTop->setChecked(m_DataManagerPreferencesNode->GetBool("Place new nodes on top", false));
+   m_ShowHelperObjects->setChecked(m_DataManagerPreferencesNode->GetBool("Show helper objects", false));
+   m_ShowNodesContainingNoData->setChecked(m_DataManagerPreferencesNode->GetBool("Show nodes containing no data", false));
+   m_UseSurfaceDecimation->setChecked(m_DataManagerPreferencesNode->GetBool("Use surface decimation", true));
+diff -aur mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.cpp mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.cpp
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.cpp	2016-08-15 16:50:45.112908000 -0700
++++ mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.cpp	2016-12-09 16:47:04.125070000 -0800
+@@ -125,7 +125,7 @@
+   m_NodeTreeModel = new QmitkDataStorageTreeModel(this->GetDataStorage());
+   m_NodeTreeModel->setParent( parent );
+   m_NodeTreeModel->SetPlaceNewNodesOnTop(
+-      prefs->GetBool("Place new nodes on top", true) );
++      prefs->GetBool("Place new nodes on top", false) );
+   m_SurfaceDecimation = prefs->GetBool("Use surface decimation", false);
+   // Prepare filters
+   m_HelperObjectFilterPredicate = mitk::NodePredicateOr::New(
+@@ -143,6 +143,7 @@
+   m_NodeTreeView->setHeaderHidden(true);
+   m_NodeTreeView->setSelectionMode( QAbstractItemView::ExtendedSelection );
+   m_NodeTreeView->setSelectionBehavior( QAbstractItemView::SelectRows );
++  m_NodeTreeView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+   m_NodeTreeView->setAlternatingRowColors(true);
+   m_NodeTreeView->setDragEnabled(true);
+   m_NodeTreeView->setDropIndicatorShown(true);
+@@ -152,8 +153,8 @@
+   m_NodeTreeView->setTextElideMode(Qt::ElideMiddle);
+   m_NodeTreeView->installEventFilter(new QmitkNodeTableViewKeyFilter(this));
+ 
+-  m_ItemDelegate = new QmitkDataManagerItemDelegate(m_NodeTreeView);
+-  m_NodeTreeView->setItemDelegate(m_ItemDelegate);
++  // m_ItemDelegate = new QmitkDataManagerItemDelegate(m_NodeTreeView);
++  // m_NodeTreeView->setItemDelegate(m_ItemDelegate);
+ 
+   QObject::connect( m_NodeTreeView, SIGNAL(customContextMenuRequested(const QPoint&))
+     , this, SLOT(NodeTableViewContextMenuRequested(const QPoint&)) );
+@@ -211,11 +212,11 @@
+   unknownDataNodeDescriptor->AddAction(saveAction);
+   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,saveAction));
+ 
+-  QAction* removeAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Remove_48.png"), "Remove", this);
+-  QObject::connect( removeAction, SIGNAL( triggered(bool) )
+-    , this, SLOT( RemoveSelectedNodes(bool) ) );
+-  unknownDataNodeDescriptor->AddAction(removeAction);
+-  m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
++  // QAction* removeAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Remove_48.png"), "Remove", this);
++  // QObject::connect( removeAction, SIGNAL( triggered(bool) )
++  //   , this, SLOT( RemoveSelectedNodes(bool) ) );
++  // unknownDataNodeDescriptor->AddAction(removeAction);
++  // m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
+ 
+   QAction* reinitAction = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/Refresh_48.png"), "Reinit", this);
+   QObject::connect( reinitAction, SIGNAL( triggered(bool) )
+@@ -378,6 +379,12 @@
+     , this, SLOT( SurfaceRepresentationMenuAboutToShow() ) );
+   surfaceDataNodeDescriptor->AddAction(m_SurfaceRepresentation, false);
+   m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(surfaceDataNodeDescriptor, m_SurfaceRepresentation));
++  QmitkNodeDescriptor* svModelDataNodeDescriptor =
++    QmitkNodeDescriptorManager::GetInstance()->GetDescriptor("svModel");
++  svModelDataNodeDescriptor->AddAction(m_SurfaceRepresentation, false);
++  QmitkNodeDescriptor* meshDataNodeDescriptor =
++    QmitkNodeDescriptorManager::GetInstance()->GetDescriptor("svMitkMesh");
++  meshDataNodeDescriptor->AddAction(m_SurfaceRepresentation, false);
+ 
+   QAction* showOnlySelectedNodes
+     = new QAction(QIcon(":/org.mitk.gui.qt.datamanager/ShowSelectedNode_48.png")
+@@ -436,11 +443,13 @@
+   mitk::IContextMenuAction* contextMenuAction = confElem->CreateExecutableExtension<mitk::IContextMenuAction>("class");
+ 
+   QString className = confElem->GetAttribute("class");
+-  QString smoothed = confElem->GetAttribute("smoothed");
++  
++  contextMenuAction->SetDataStorage(this->GetDataStorage());
++  contextMenuAction->SetFunctionality(this);
+ 
+   if(className == "QmitkCreatePolygonModelAction")
+   {
+-    contextMenuAction->SetDataStorage(this->GetDataStorage());
++    QString smoothed = confElem->GetAttribute("smoothed");
+     if(smoothed == "false")
+     {
+       contextMenuAction->SetSmoothed(false);
+@@ -451,20 +460,13 @@
+     }
+     contextMenuAction->SetDecimated(m_SurfaceDecimation);
+   }
+-  else if(className == "QmitkStatisticsAction")
+-  {
+-    contextMenuAction->SetFunctionality(this);
+-  }
+-  else if(className == "QmitkCreateSimulationAction")
+-  {
+-    contextMenuAction->SetDataStorage(this->GetDataStorage());
+-  }
++
+   contextMenuAction->Run( this->GetCurrentSelection() ); // run the action
+ }
+ 
+ void QmitkDataManagerView::OnPreferencesChanged(const berry::IBerryPreferences* prefs)
+ {
+-  if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", true) )
++  if( m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() !=  prefs->GetBool("Place new nodes on top", false) )
+     m_NodeTreeModel->SetPlaceNewNodesOnTop( !m_NodeTreeModel->GetPlaceNewNodesOnTopFlag() );
+ 
+   bool hideHelperObjects = !prefs->GetBool("Show helper objects", false);
+@@ -910,11 +912,37 @@
+   _QmitkInfoDialog.exec();
+ }
+ 
+-void QmitkDataManagerView::NodeChanged(const mitk::DataNode* /*node*/)
++void QmitkDataManagerView::NodeChanged(const mitk::DataNode* node)
+ {
+   // m_FilterModel->invalidate();
+   // fix as proposed by R. Khlebnikov in the mitk-users mail from 02.09.2014
+   QMetaObject::invokeMethod( m_FilterModel, "invalidate", Qt::QueuedConnection );
++
++    mitk::NodePredicateOr::Pointer predicateTypes = mitk::NodePredicateOr::New();
++    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("svImageFolder"));
++    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("svPathFolder"));
++    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("svSegmentationFolder"));
++    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("svModelFolder"));
++    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("svMeshFolder"));
++    predicateTypes->AddPredicate(mitk::NodePredicateDataType::New("svSimulationFolder"));
++
++    if(predicateTypes->CheckNode(node)){
++        bool previousVisible=false;
++        node->GetBoolProperty("previous visibility", previousVisible);
++        bool currentVisible=false;
++        node->GetBoolProperty("visible", currentVisible);
++        if(currentVisible!=previousVisible){
++            mitk::DataStorage::SetOfObjects::ConstPointer rs = this->GetDataStorage()->GetDerivations(node);
++            for(int i=0;i<rs->size();i++){
++                rs->GetElement(i)->SetVisibility(currentVisible);
++            }
++            
++            mitk::DataNode* nodex=const_cast<mitk::DataNode*>(node);
++            nodex->SetBoolProperty("previous visibility",currentVisible);
++        }
++
++    }
++
+ }
+ 
+ QItemSelectionModel *QmitkDataManagerView::GetDataNodeSelectionModel() const
+diff -aur mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h	2016-08-15 16:50:45.116907800 -0700
++++ mitk-simvascular/Plugins/org.mitk.gui.qt.datamanager/src/QmitkDataManagerView.h	2016-12-09 16:47:04.130929600 -0800
+@@ -72,6 +72,8 @@
+   ///
+   virtual ~QmitkDataManagerView();
+ 
++  QTreeView* GetTreeView(){return m_NodeTreeView;}
++
+ public slots:
+   ///
+   /// Invoked when the opacity slider changed
+diff -aur mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp	2016-08-15 16:50:57.830648200 -0700
++++ mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.cpp	2016-12-09 10:56:55.300324500 -0800
+@@ -109,6 +109,7 @@
+   m_Preferences->PutBool("Show level/window widget", m_Ui->m_ShowLevelWindowWidget->isChecked());
+   m_Preferences->PutBool("PACS like mouse interaction", m_Ui->m_PACSLikeMouseMode->isChecked());
+   m_Preferences->PutInt("Rendering Mode", m_Ui->m_RenderingMode->currentIndex());
++  m_Preferences->PutBool("Show Department Logo", m_Ui->m_ShowDepartmentLogo->isChecked());
+ 
+   return true;
+ }
+@@ -158,6 +159,7 @@
+   m_Ui->m_PACSLikeMouseMode->setChecked(m_Preferences->GetBool("PACS like mouse interaction", false));
+   int mode= m_Preferences->GetInt("Rendering Mode",0);
+   m_Ui->m_RenderingMode->setCurrentIndex(mode);
++  m_Ui->m_ShowDepartmentLogo->setChecked(m_Preferences->GetBool("Show Department Logo", false));
+   m_Ui->m_CrosshairGapSize->setValue(m_Preferences->GetInt("crosshair gap size", 32));
+ }
+ 
+diff -aur mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2016-08-15 16:50:57.838648900 -0700
++++ mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/internal/QmitkStdMultiWidgetEditorPreferencePage.ui	2016-12-09 10:56:55.304231200 -0800
+@@ -7,14 +7,40 @@
+     <x>0</x>
+     <y>0</y>
+     <width>518</width>
+-    <height>431</height>
++    <height>419</height>
+    </rect>
+   </property>
+   <property name="windowTitle">
+    <string>External Programs</string>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+-   <item row="10" column="1">
++   <property name="verticalSpacing">
++    <number>6</number>
++   </property>
++   <item row="2" column="0" colspan="3">
++    <widget class="QCheckBox" name="m_PACSLikeMouseMode">
++     <property name="layoutDirection">
++      <enum>Qt::LeftToRight</enum>
++     </property>
++     <property name="text">
++      <string>Use PACS like mouse interaction (select left mouse button action)</string>
++     </property>
++     <property name="tristate">
++      <bool>false</bool>
++     </property>
++    </widget>
++   </item>
++   <item row="11" column="0">
++    <widget class="QLabel" name="label_6">
++     <property name="toolTip">
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the renderwindow from the multi widget.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++     </property>
++     <property name="text">
++      <string>Render windows</string>
++     </property>
++    </widget>
++   </item>
++   <item row="11" column="1">
+     <widget class="QComboBox" name="m_RenderWindowChooser">
+      <item>
+       <property name="text">
+@@ -38,43 +64,27 @@
+      </item>
+     </widget>
+    </item>
+-   <item row="11" column="0">
+-    <widget class="QLabel" name="label_2">
+-     <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If two colors are set, a gradient background is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++   <item row="1" column="0" colspan="3">
++    <widget class="QCheckBox" name="m_ShowLevelWindowWidget">
++     <property name="layoutDirection">
++      <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+-      <string>Background color</string>
++      <string>Show level/window widget</string>
++     </property>
++     <property name="checked">
++      <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+-   <item row="15" column="0">
+-    <widget class="QPushButton" name="m_ResetButton">
++   <item row="12" column="1">
++    <widget class="QPushButton" name="m_ColorButton1">
+      <property name="text">
+-      <string>Reset preferences</string>
++      <string/>
+      </property>
+     </widget>
+    </item>
+-   <item row="6" column="1" colspan="2">
+-    <widget class="QComboBox" name="m_RenderingMode">
+-     <item>
+-      <property name="text">
+-       <string>Standard Rendering</string>
+-      </property>
+-     </item>
+-     <item>
+-      <property name="text">
+-       <string>Enable Multisampling (Antialiasing)</string>
+-      </property>
+-     </item>
+-     <item>
+-      <property name="text">
+-       <string>Enable Depth Peeling</string>
+-      </property>
+-     </item>
+-    </widget>
+-   </item>
+-   <item row="7" column="0" colspan="3">
++   <item row="8" column="0" colspan="3">
+     <widget class="QLabel" name="label">
+      <property name="text">
+       <string>* Changes require restart of MITK.
+@@ -84,51 +94,27 @@
+      </property>
+     </widget>
+    </item>
+-   <item row="9" column="1">
+-    <widget class="QSpinBox" name="m_CrosshairGapSize">
+-     <property name="value">
+-      <number>32</number>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="8" column="0" colspan="3">
+-    <widget class="Line" name="line_3">
+-     <property name="orientation">
+-      <enum>Qt::Horizontal</enum>
+-     </property>
+-    </widget>
++   <item row="15" column="1" colspan="2">
++    <widget class="QLineEdit" name="m_RenderWindowDecorationText"/>
+    </item>
+    <item row="14" column="0">
+-    <widget class="QLabel" name="label_8">
+-     <property name="toolTip">
+-      <string>The small text on the button left of each renderwindow.</string>
+-     </property>
+-     <property name="text">
+-      <string>Corner annotation</string>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="9" column="0">
+-    <widget class="QLabel" name="label_9">
++    <widget class="QLabel" name="label_7">
+      <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gap in the middle of the crosshair in pixels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The color is used for the following decorations (of each renderwindow):&lt;/p&gt;&lt;p&gt;Rectangle border&lt;/p&gt;&lt;p&gt;Corner annotation&lt;/p&gt;&lt;p&gt;Crosshair&lt;/p&gt;&lt;p&gt;Plane geometry helper objects (3D Planes)&lt;/p&gt;&lt;p&gt;Image navigator borders&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+-      <string>Crosshair gap size</string>
++      <string>Decoration color</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="13" column="0">
+-    <widget class="QLabel" name="label_7">
+-     <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The color is used for the following decorations (of each renderwindow):&lt;/p&gt;&lt;p&gt;Rectangle border&lt;/p&gt;&lt;p&gt;Corner annotation&lt;/p&gt;&lt;p&gt;Crosshair&lt;/p&gt;&lt;p&gt;Plane geometry helper objects (3D Planes)&lt;/p&gt;&lt;p&gt;Image navigator borders&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+-     </property>
++   <item row="7" column="0">
++    <widget class="QLabel" name="label_5">
+      <property name="text">
+-      <string>Decoration color</string>
++      <string>Rendering Mode*</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="13" column="1">
++   <item row="14" column="1">
+     <widget class="QPushButton" name="m_RenderWindowDecorationColor">
+      <property name="text">
+       <string/>
+@@ -136,67 +122,77 @@
+     </widget>
+    </item>
+    <item row="10" column="0">
+-    <widget class="QLabel" name="label_6">
++    <widget class="QLabel" name="label_9">
+      <property name="toolTip">
+-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Choose the renderwindow from the multi widget.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The gap in the middle of the crosshair in pixels.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+      <property name="text">
+-      <string>Render windows</string>
++      <string>Crosshair gap size</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="1" column="0" colspan="3">
+-    <widget class="QCheckBox" name="m_ShowLevelWindowWidget">
+-     <property name="layoutDirection">
+-      <enum>Qt::LeftToRight</enum>
++   <item row="9" column="0" colspan="3">
++    <widget class="Line" name="line_3">
++     <property name="orientation">
++      <enum>Qt::Horizontal</enum>
+      </property>
+-     <property name="text">
+-      <string>Show level/window widget</string>
++    </widget>
++   </item>
++   <item row="12" column="0">
++    <widget class="QLabel" name="label_2">
++     <property name="toolTip">
++      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If two colors are set, a gradient background is generated.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      </property>
+-     <property name="checked">
+-      <bool>true</bool>
++     <property name="text">
++      <string>Background color</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="2" column="0" colspan="3">
+-    <widget class="QCheckBox" name="m_PACSLikeMouseMode">
+-     <property name="layoutDirection">
+-      <enum>Qt::LeftToRight</enum>
++   <item row="7" column="1" colspan="2">
++    <widget class="QComboBox" name="m_RenderingMode">
++     <item>
++      <property name="text">
++       <string>Standard Rendering</string>
++      </property>
++     </item>
++     <item>
++      <property name="text">
++       <string>Enable Multisampling (Antialiasing)</string>
++      </property>
++     </item>
++     <item>
++      <property name="text">
++       <string>Enable Depth Peeling</string>
++      </property>
++     </item>
++    </widget>
++   </item>
++   <item row="15" column="0">
++    <widget class="QLabel" name="label_8">
++     <property name="toolTip">
++      <string>The small text on the button left of each renderwindow.</string>
+      </property>
+      <property name="text">
+-      <string>Use PACS like mouse interaction (select left mouse button action)</string>
+-     </property>
+-     <property name="tristate">
+-      <bool>false</bool>
++      <string>Corner annotation</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="11" column="2">
+-    <widget class="QPushButton" name="m_ColorButton2">
++   <item row="16" column="0">
++    <widget class="QPushButton" name="m_ResetButton">
+      <property name="text">
+-      <string/>
++      <string>Reset preferences</string>
+      </property>
+     </widget>
+    </item>
+-   <item row="3" column="0" colspan="3">
++   <item row="4" column="0" colspan="3">
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+-   <item row="6" column="0">
+-    <widget class="QLabel" name="label_5">
+-     <property name="text">
+-      <string>Rendering Mode*</string>
+-     </property>
+-    </widget>
+-   </item>
+-   <item row="14" column="1" colspan="2">
+-    <widget class="QLineEdit" name="m_RenderWindowDecorationText"/>
+-   </item>
+-   <item row="11" column="1">
+-    <widget class="QPushButton" name="m_ColorButton1">
++   <item row="12" column="2">
++    <widget class="QPushButton" name="m_ColorButton2">
+      <property name="text">
+       <string/>
+      </property>
+@@ -218,6 +214,20 @@
+      </property>
+     </widget>
+    </item>
++   <item row="10" column="1">
++    <widget class="QSpinBox" name="m_CrosshairGapSize">
++     <property name="value">
++      <number>32</number>
++     </property>
++    </widget>
++   </item>
++   <item row="3" column="0">
++    <widget class="QCheckBox" name="m_ShowDepartmentLogo">
++     <property name="text">
++      <string>Show Department Logo</string>
++     </property>
++    </widget>
++   </item>
+   </layout>
+  </widget>
+  <resources/>
+diff -aur mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp
+--- mitk-2016.03/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2016-08-15 16:50:57.821648500 -0700
++++ mitk-simvascular/Plugins/org.mitk.gui.qt.stdmultiwidgeteditor/src/QmitkStdMultiWidgetEditor.cpp	2016-12-09 10:56:55.289583200 -0800
+@@ -424,6 +424,16 @@
+   bool newMode = prefs->GetBool("PACS like mouse interaction", false);
+   d->m_MouseModeToolbar->setVisible( newMode );
+   d->m_StdMultiWidget->GetMouseModeSwitcher()->SetInteractionScheme( newMode ? mitk::MouseModeSwitcher::PACS : mitk::MouseModeSwitcher::MITK );
++  
++  bool showLogo = prefs->GetBool("Show Department Logo", false);
++  if(showLogo)
++  {
++    d->m_StdMultiWidget->EnableDepartmentLogo();
++  }
++  else
++  {
++    d->m_StdMultiWidget->DisableDepartmentLogo();
++  }
+ }
+ 
+ mitk::Color QmitkStdMultiWidgetEditor::HexColorToMitkColor(const QString& widgetColorInHex)
+diff -aur mitk-2016.03/Plugins/PluginList.cmake mitk-simvascular/Plugins/PluginList.cmake
+--- mitk-2016.03/Plugins/PluginList.cmake	2016-08-15 16:50:33.908388600 -0700
++++ mitk-simvascular/Plugins/PluginList.cmake	2016-12-09 18:50:35.950141400 -0800
+@@ -37,26 +37,26 @@
+   org.mitk.gui.qt.datamanager:ON
+   org.mitk.gui.qt.datamanagerlight:OFF
+   org.mitk.gui.qt.properties:ON
+-  org.mitk.gui.qt.basicimageprocessing:OFF
+-  org.mitk.gui.qt.dicom:OFF
++  org.mitk.gui.qt.basicimageprocessing:ON
++  org.mitk.gui.qt.dicom:ON
+   org.mitk.gui.qt.diffusionimaging:OFF
+   org.mitk.gui.qt.dosevisualization:OFF
+-  org.mitk.gui.qt.geometrytools:OFF
++  org.mitk.gui.qt.geometrytools:ON
+   org.mitk.gui.qt.igtexamples:OFF
+   org.mitk.gui.qt.igttracking:OFF
+   org.mitk.gui.qt.openigtlink:OFF
+-  org.mitk.gui.qt.imagecropper:OFF
++  org.mitk.gui.qt.imagecropper:ON
+   org.mitk.gui.qt.imagenavigator:ON
+   org.mitk.gui.qt.viewnavigator:OFF
+   org.mitk.gui.qt.materialeditor:OFF
+-  org.mitk.gui.qt.measurementtoolbox:OFF
++  org.mitk.gui.qt.measurementtoolbox:ON
+   org.mitk.gui.qt.moviemaker:OFF
+   org.mitk.gui.qt.pointsetinteraction:OFF
+   org.mitk.gui.qt.pointsetinteractionmultispectrum:OFF
+-  org.mitk.gui.qt.python:OFF
++  org.mitk.gui.qt.python:ON
+   org.mitk.gui.qt.registration:OFF
+   org.mitk.gui.qt.remeshing:OFF
+-  org.mitk.gui.qt.segmentation:OFF
++  org.mitk.gui.qt.segmentation:ON
+   org.mitk.gui.qt.simulation:OFF
+   org.mitk.gui.qt.aicpregistration:OFF
+   org.mitk.gui.qt.toftutorial:OFF
+@@ -64,7 +64,7 @@
+   org.mitk.gui.qt.tubegraph:OFF
+   org.mitk.gui.qt.ugvisualization:OFF
+   org.mitk.gui.qt.ultrasound:OFF
+-  org.mitk.gui.qt.volumevisualization:OFF
++  org.mitk.gui.qt.volumevisualization:ON
+   org.mitk.gui.qt.eventrecorder:OFF
+   org.mitk.gui.qt.xnat:OFF
+   org.mitk.gui.qt.spectrocamrecorder:OFF

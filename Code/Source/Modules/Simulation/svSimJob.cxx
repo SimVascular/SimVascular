@@ -45,12 +45,12 @@ std::string svSimJob::GetBasicProp(const std::string& key)
     return m_BasicProps[key];
 }
 
-void svSimJob::SetCapProps(std::map<std::string,std::map<std::string,std::string>> capProps)
+void svSimJob::SetCapProps(std::map<std::string,std::map<std::string,std::string> > capProps)
 {
     m_CapProps=capProps;
 }
 
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetCapProps()
+std::map<std::string,std::map<std::string,std::string> > svSimJob::GetCapProps()
 {
     return m_CapProps;
 }
@@ -85,12 +85,12 @@ std::string svSimJob::GetWallProp(const std::string& key)
     return m_WallProps[key];
 }
 
-void svSimJob::SetVarProps(std::map<std::string,std::map<std::string,std::string>> varProps)
+void svSimJob::SetVarProps(std::map<std::string,std::map<std::string,std::string> > varProps)
 {
     m_VarProps=varProps;
 }
 
-std::map<std::string,std::map<std::string,std::string>> svSimJob::GetVarProps()
+std::map<std::string,std::map<std::string,std::string> > svSimJob::GetVarProps()
 {
     return m_VarProps;
 }
