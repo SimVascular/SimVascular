@@ -15,10 +15,6 @@ mkdir -p $MITK_BINDIR/bin/plugins
 mkdir -p $MITK_BINDIR/lib
 mkdir -p $MITK_BINDIR/include
 
-mkdir -p $MITK_BINDIR/bin
-mkdir -p $MITK_BINDIR/lib
-mkdir -p $MITK_BINDIR/include
-
 cp -Rfl $MITK_BLDDIR/MITK-build/bin $MITK_BINDIR
 cp -Rfl $MITK_BLDDIR/MITK-build/lib $MITK_BINDIR
 cp -Rfl $MITK_BLDDIR/ep/bin $MITK_BINDIR
