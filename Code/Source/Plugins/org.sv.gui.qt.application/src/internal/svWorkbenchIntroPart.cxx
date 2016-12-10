@@ -76,19 +76,18 @@ svWorkbenchIntroPart::~svWorkbenchIntroPart()
 
 }
 
-
 void svWorkbenchIntroPart::CreateQtPartControl(QWidget* parent)
 {
     if (!m_Controls)
     {
         // create GUI widgets
-        m_Controls = new Ui::QmitkWelcomeScreenViewControls;
+        m_Controls = new Ui::svWelcomeScreenViewControls;
         m_Controls->setupUi(parent);
         // create a QWebView as well as a QWebPage and QWebFrame within the QWebview
         m_view = new QWebView(parent);
         m_view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
 
-        QUrl urlQtResource(QString("qrc:/org.mitk.gui.qt.welcomescreen/mitkworkbenchwelcomeview.html"),  QUrl::TolerantMode );
+        QUrl urlQtResource(QString("qrc:/org.sv.gui.qt.welcomescreen/svworkbenchwelcomeview.html"),  QUrl::TolerantMode );
         m_view->load( urlQtResource );
 
         // adds the webview as a widget
@@ -137,7 +136,7 @@ void svWorkbenchIntroPart::DelegateMeTo(const QUrl& showMeNext)
 
             // search the Workbench for opened StdMultiWidgets to ensure the focus does not stay on the welcome screen and is switched to
             // a render window editor if one available
-            ctkPluginContext* context = svApplicationPluginActivator::GetDefault()->GetPluginContext();
+            ctkPluginContext* context = svApplicationPluginActivator::getContext();
             mitk::IDataStorageService* service = nullptr;
             ctkServiceReference serviceRef = context->getServiceReference<mitk::IDataStorageService>();
             if (serviceRef) service = context->getService<mitk::IDataStorageService>(serviceRef);

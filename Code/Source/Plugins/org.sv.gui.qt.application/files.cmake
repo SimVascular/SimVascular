@@ -11,7 +11,7 @@ set(INTERNAL_CPP_FILES
   svWorkbenchWindowAdvisor.cxx
   svAppWorkbenchAdvisor.cxx
   svAboutDialog.cxx
-#  svWorkbenchIntroPart.cxx
+  svWorkbenchIntroPart.cxx
   svDefaultPerspective.cxx
 )
 
@@ -26,14 +26,14 @@ set(MOC_H_FILES
   src/internal/svWorkbenchWindowAdvisorHack.h
   src/internal/svAppWorkbenchAdvisor.h
   src/internal/svAboutDialog.h
-#  src/internal/svWorkbenchIntroPart.h
+  src/internal/svWorkbenchIntroPart.h
   src/internal/svDefaultPerspective.h
 )
 
 set(UI_FILES
   src/internal/svProjectCreate.ui
   src/internal/svAboutDialog.ui
-#  src/internal/perspectives/svWelcomeScreenViewControls.ui
+  src/internal/svWelcomeScreenViewControls.ui
 )
 
 set(CACHED_RESOURCE_FILES
@@ -43,7 +43,7 @@ set(CACHED_RESOURCE_FILES
 
 set(QRC_FILES
 resources/svApplication.qrc
-#resources/welcome/svWelcomeScreenView.qrc
+resources/welcome/svWelcomeScreenView.qrc
 )
 
 set(CPP_FILES )

@@ -11,14 +11,14 @@
     <product name="SimVascular Workbench" application="org.sv.qt.application" />
   </extension>
 
-<!--  <extension point="org.blueberry.ui.intro">
+  <extension point="org.blueberry.ui.intro">
     <intro id="org.sv.qt.applicationintro"
       class="svWorkbenchIntroPart"
       role="editor"/>
     <introProductBinding
       productId="org.sv.gui.qt.application.svworkbench"
       introId="org.sv.qt.applicationintro"/>
-  </extension>-->
+  </extension>
 
   <extension point="org.blueberry.ui.perspectives">
     <perspective

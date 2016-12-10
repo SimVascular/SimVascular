@@ -679,7 +679,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         redoAction->setToolTip("execute the last action that was undone again (not supported by all modules)");
 
         // ==== Views Menu ==========================
-        QMenu* viewMenu = menuBar->addMenu("&Views");
+        QMenu* viewMenu = menuBar->addMenu("&Tools");
         if(svViewActions.size()>0)
         {
             for (auto viewAction : svViewActions)
@@ -771,7 +771,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
 
         // ===== Help menu ====================================
         QMenu* helpMenu = menuBar->addMenu("&Help");
-//        helpMenu->addAction("&Welcome",this, SLOT(onIntro()));
+        helpMenu->addAction("&Welcome",this, SLOT(onIntro()));
 //        helpMenu->addAction("&Open Help Perspective", this, SLOT(onHelpOpenHelpPerspective()));
 //        helpMenu->addAction("&Context Help",this, SLOT(onHelp()),  QKeySequence("F1"));
         helpMenu->addAction("&About",this, SLOT(onAbout()));
