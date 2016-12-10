@@ -159,4 +159,6 @@ MITK_LIBS += \
            $(LIBFLAG)MitkSegmentationUI$(LIBLINKEXT) \
            $(LIBFLAG)MitkSurfaceInterpolation$(LIBLINKEXT) \
            $(LIBFLAG)PythonQt$(LIBLINKEXT) \
-           $(LIBFLAG)tinyxml$(LIBLINKEXT)
+           $(LIBFLAG)tinyxml$(LIBLINKEXT) \
+           $(LIBFLAG)PocoUtil$(LIBLINKEXT)
+

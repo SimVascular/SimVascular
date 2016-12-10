@@ -90,7 +90,7 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
         TiXmlElement* cpElement = jobElement->FirstChildElement("cap_props");
         if(cpElement != nullptr)
         {
-            std::map<std::string,std::map<std::string,std::string>> capProps;
+            std::map<std::string,std::map<std::string,std::string> > capProps;
             for( TiXmlElement* celement = cpElement->FirstChildElement("cap");
                  celement != nullptr;
                  celement =celement->NextSiblingElement("cap") )
@@ -144,7 +144,7 @@ std::vector<mitk::BaseData::Pointer> svMitkSimJobIO::Read()
         TiXmlElement* vpElement = jobElement->FirstChildElement("var_props");
         if(vpElement != nullptr)
         {
-            std::map<std::string,std::map<std::string,std::string>> varProps;
+            std::map<std::string,std::map<std::string,std::string> > varProps;
             for( TiXmlElement* felement = vpElement->FirstChildElement("face");
                  felement != nullptr;
                  felement =felement->NextSiblingElement("face") )
@@ -277,7 +277,7 @@ void svMitkSimJobIO::Write()
 
         auto cpElement = new TiXmlElement("cap_props");
         jobElement->LinkEndChild(cpElement);
-        std::map<std::string, std::map<std::string, std::string>> capProps=job->GetCapProps();
+        std::map<std::string, std::map<std::string, std::string> > capProps=job->GetCapProps();
         auto itit = capProps.begin();
         while(itit != capProps.end())
         {
@@ -316,7 +316,7 @@ void svMitkSimJobIO::Write()
 
         auto vpElement = new TiXmlElement("var_props");
         jobElement->LinkEndChild(vpElement);
-        std::map<std::string, std::map<std::string, std::string>> varProps=job->GetVarProps();
+        std::map<std::string, std::map<std::string, std::string> > varProps=job->GetVarProps();
         itit = varProps.begin();
         while(itit != varProps.end())
         {

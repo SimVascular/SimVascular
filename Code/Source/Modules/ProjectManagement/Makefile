@@ -83,6 +83,12 @@ DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 
 DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_mesh$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_simulation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
