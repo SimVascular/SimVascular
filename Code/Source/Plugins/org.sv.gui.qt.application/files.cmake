@@ -10,6 +10,7 @@ set(INTERNAL_CPP_FILES
   svProjectCreate.cxx
   svWorkbenchWindowAdvisor.cxx
   svAppWorkbenchAdvisor.cxx
+  svAboutDialog.cxx
 #  svWorkbenchIntroPart.cxx
   svDefaultPerspective.cxx
 )
@@ -24,12 +25,14 @@ set(MOC_H_FILES
   src/internal/svWorkbenchWindowAdvisor.h
   src/internal/svWorkbenchWindowAdvisorHack.h
   src/internal/svAppWorkbenchAdvisor.h
+  src/internal/svAboutDialog.h
 #  src/internal/svWorkbenchIntroPart.h
   src/internal/svDefaultPerspective.h
 )
 
 set(UI_FILES
   src/internal/svProjectCreate.ui
+  src/internal/svAboutDialog.ui
 #  src/internal/perspectives/svWelcomeScreenViewControls.ui
 )
 

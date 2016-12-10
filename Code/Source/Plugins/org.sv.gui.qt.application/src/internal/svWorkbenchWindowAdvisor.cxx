@@ -7,6 +7,7 @@
 #include "svFileCreateProjectAction.h"
 #include "svFileOpenProjectAction.h"
 #include "svFileSaveProjectAction.h"
+#include "svAboutDialog.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -68,7 +69,6 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QLabel>
-#include <QmitkAboutDialog.h>
 
 svWorkbenchWindowAdvisorHack *svWorkbenchWindowAdvisorHack::undohack = new svWorkbenchWindowAdvisorHack();
 
@@ -1348,7 +1348,7 @@ void svWorkbenchWindowAdvisorHack::onHelpOpenHelpPerspective()
 
 void svWorkbenchWindowAdvisorHack::onAbout()
 {
-    auto   aboutDialog = new QmitkAboutDialog(QApplication::activeWindow(),nullptr);
+    auto   aboutDialog = new svAboutDialog(QApplication::activeWindow(),nullptr);
     aboutDialog->open();
 }
 
@@ -1413,11 +1413,11 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
     if (showVersionInfo)
     {
         // add version informatioin
-        QString versions = QString(" (MITK %1 Qt %2 VTK %3.%4.%5 ITK %6.%7.%8)")
+        QString versions = QString(" (MITK %1 VTK %2.%3.%4 ITK %5.%6.%7 Qt %8)")
                 .arg(MITK_VERSION_STRING)
-                .arg(QT_VERSION_STR)
                 .arg(VTK_MAJOR_VERSION).arg(VTK_MINOR_VERSION).arg(VTK_BUILD_VERSION)
-                .arg(ITK_VERSION_MAJOR).arg(ITK_VERSION_MINOR).arg(ITK_VERSION_PATCH);
+                .arg(ITK_VERSION_MAJOR).arg(ITK_VERSION_MINOR).arg(ITK_VERSION_PATCH)
+                .arg(QT_VERSION_STR);
 
         title += versions;
     }
