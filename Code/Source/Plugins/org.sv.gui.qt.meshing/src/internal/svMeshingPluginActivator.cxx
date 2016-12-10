@@ -1,6 +1,8 @@
 #include "svMeshingPluginActivator.h"
 #include "svMeshCreateAction.h"
 #include "svMeshLegacySaveAction.h"
+#include "svMeshLoadSurfaceAction.h"
+#include "svMeshLoadVolumeAction.h"
 #include "svMeshEdit.h"
 
 //svMeshingPluginActivator* svMeshingPluginActivator::m_Instance = nullptr;
@@ -13,6 +15,8 @@ void svMeshingPluginActivator::start(ctkPluginContext* context)
 
     BERRY_REGISTER_EXTENSION_CLASS(svMeshCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svMeshLegacySaveAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svMeshLoadSurfaceAction, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svMeshLoadVolumeAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svMeshEdit, context)
 }
 

@@ -95,7 +95,6 @@ void svMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         return;
     }
 
-    //Todo: cut volume mesh, instead of using surface mesh
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
     if ((surfaceMesh == NULL) || (surfaceMesh->GetNumberOfPoints() < 1))
     {
@@ -128,7 +127,7 @@ void svMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     node->GetOpacity(opacity, renderer, "opacity");
 
     bool showContour=true;
-    if(showContour)
+    if(showContour && mesh->GetSurfaceMesh())
     {
         float lineWidth = 1.0f;
         node->GetFloatProperty("line 2D width", lineWidth, renderer);
@@ -142,7 +141,7 @@ void svMitkMeshMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
         vtkSmartPointer<vtkLinearTransform> vtktransform = GetDataNode()->GetVtkTransform(this->GetTimestep());
         vtkSmartPointer<vtkTransformPolyDataFilter> filter = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
         filter->SetTransform(vtktransform);
-        filter->SetInputData(surfaceMesh);
+        filter->SetInputData(mesh->GetSurfaceMesh());
         cutter->SetInputConnection(filter->GetOutputPort());
         cutter->Update();
 

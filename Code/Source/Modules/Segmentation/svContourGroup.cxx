@@ -224,6 +224,19 @@ void svContourGroup::RemoveContour(int contourIndex, unsigned int t)
     }
 }
 
+void svContourGroup::RemoveInvalidContours(unsigned int t)
+{
+    if(t<m_ContourSets.size() )
+    {
+        for(int i=m_ContourSets[t].size()-1;i>-1;i--)
+        {
+            svContour* contour=m_ContourSets[t][i];
+            if(contour==NULL || contour->GetContourPointNumber()<3)
+                RemoveContour(i,t);
+        }
+    }
+}
+
 void svContourGroup::SetContour(int contourIndex, svContour* contour, unsigned int t)
 {
     if(t<m_ContourSets.size())
@@ -586,6 +599,19 @@ void svContourGroup::SetCurrentIndexOn2DView(int index)
 std::vector<svContour*> svContourGroup::GetContourSet(unsigned int t)
 {
     return m_ContourSets[t];
+}
+
+std::vector<svContour*> svContourGroup::GetValidContourSet(unsigned int t)
+{
+    std::vector<svContour*> contourSet;
+    for(int i=0;i<m_ContourSets[t].size();i++)
+    {
+        svContour* contour=m_ContourSets[t][i];
+        if(contour && contour->GetContourPointNumber()>2)
+            contourSet.push_back(contour);
+    }
+
+    return contourSet;
 }
 
 //int svContourGroup::GetInsertingContourIndexByPathPosID(int posID, unsigned int t)

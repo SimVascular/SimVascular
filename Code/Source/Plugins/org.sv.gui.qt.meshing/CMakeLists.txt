@@ -6,12 +6,12 @@ if (SV_USE_MITK_CONFIG)
   mitk_create_plugin(
     EXPORT_DIRECTIVE SV_QT_MESHING
     EXPORTED_INCLUDE_SUFFIXES src
-    MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel svMesh
+    MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel svMesh svProjectManagement
   )
 else()
   simvascular_create_plugin(
     EXPORT_DIRECTIVE SV_QT_MESHING
-    MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel svMesh
+    MODULE_DEPENDS MitkQtWidgets svPath svSegmentation svModel svMesh svProjectManagement
   )
 endif()
 

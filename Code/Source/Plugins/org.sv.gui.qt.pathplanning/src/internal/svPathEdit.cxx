@@ -24,7 +24,7 @@
 #include <iostream>
 using namespace std;
 
-const QString svPathEdit::EXTENSION_ID = "org.sv.views.pathedit";
+const QString svPathEdit::EXTENSION_ID = "org.sv.views.pathplanning";
 
 svPathEdit::svPathEdit():
     ui(new Ui::svPathEdit),

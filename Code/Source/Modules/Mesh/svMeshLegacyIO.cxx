@@ -1,4 +1,5 @@
 #include "svMeshLegacyIO.h"
+#include "svMitkMeshIO.h"
 
 #include "cv_polydatasolid_utils.h"
 
@@ -10,13 +11,45 @@
 #include <vtkAppendPolyData.h>
 #include <vtkCleanPolyData.h>
 
-void svMeshLegacyIO::WriteFiles(svMesh* mesh, svModelElement* modelElement, QString meshDir)
+bool svMeshLegacyIO::WriteFiles(mitk::DataNode::Pointer meshNode, svModelElement* modelElement, QString meshDir)
 {
-    if(!mesh) return;
+    if(meshNode.IsNull())
+        return false;
+
+    svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(meshNode->GetData());
+    if(!mitkMesh)
+        return false;
+
+    svMesh* mesh=mitkMesh->GetMesh();
+    if(!mesh)
+        return false;
+
+    std::string path="";
+    meshNode->GetStringProperty("path",path);
+    if(path=="")
+        return false;
+
+    std::string meshFileName = path+"/"+meshNode->GetName()+".msh";
 
     vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
+    if(surfaceMesh==NULL)
+    {
+        surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
+    }
+
     vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
-    if(!surfaceMesh || !volumeMesh || !modelElement) return;
+    if(volumeMesh==NULL)
+    {
+        volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
+    }
+
+    return WriteFiles(surfaceMesh, volumeMesh, modelElement, meshDir);
+}
+
+bool svMeshLegacyIO::WriteFiles(vtkSmartPointer<vtkPolyData> surfaceMesh, vtkSmartPointer<vtkUnstructuredGrid> volumeMesh, svModelElement* modelElement, QString meshDir)
+{
+    if(!surfaceMesh || !volumeMesh || !modelElement)
+        return false;
 
     QString vtuFilePath=meshDir+"/mesh-complete.mesh.vtu";
     vtuFilePath=QDir::toNativeSeparators(vtuFilePath);
@@ -82,6 +115,7 @@ void svMeshLegacyIO::WriteFiles(svMesh* mesh, svModelElement* modelElement, QStr
         vtpWriter->Write();
     }
 
+    return true;
 }
 
 

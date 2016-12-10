@@ -3,6 +3,11 @@
 
 #include <ctkPluginActivator.h>
 
+#include <QmitkNodeDescriptor.h>
+#include <mitkDataStorage.h>
+
+#include <QAction>
+
 class svProjectDataNodesPluginActivator :
         public QObject, public ctkPluginActivator
 {
@@ -12,8 +17,28 @@ class svProjectDataNodesPluginActivator :
 
 public:
 
+    svProjectDataNodesPluginActivator();
+    ~svProjectDataNodesPluginActivator();
+
     void start(ctkPluginContext* context) override;
     void stop(ctkPluginContext* context) override;
+
+    mitk::DataStorage::Pointer GetDataStorage();
+    std::list< mitk::DataNode::Pointer > GetSelectedDataNodes();
+
+    void SetupDataManagerDoubleClick();
+
+public slots:
+
+    void RemoveSelectedNodes( bool checked = false );
+    void RenameSelectedNode( bool checked = false );
+    void ShowSVView();
+
+protected:
+    std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > m_DescriptorActionList;
+
+private:
+    static ctkPluginContext* m_Context;
 
 }; 
 
