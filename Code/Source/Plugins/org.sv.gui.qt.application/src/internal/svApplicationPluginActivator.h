@@ -1,12 +1,10 @@
 #ifndef SVAPPLICATIONPLUGINACTIVATOR_H
 #define SVAPPLICATIONPLUGINACTIVATOR_H
 
-//#include <ctkPluginActivator.h>
 #include <berryAbstractUICTKPlugin.h>
 
 #include <QString>
 
-//class svApplicationPluginActivator : public QObject, public ctkPluginActivator
 class svApplicationPluginActivator : public berry::AbstractUICTKPlugin
 
 {
@@ -28,12 +26,7 @@ public:
 
 private:
 
-    //  void loadDataFromDisk(const QStringList& args, bool globalReinit);
-    //  void startNewInstance(const QStringList& args, const QStringList &files);
-
 private Q_SLOTS:
-
-    //  void handleIPCMessage(const QByteArray &msg);
 
 private:
 

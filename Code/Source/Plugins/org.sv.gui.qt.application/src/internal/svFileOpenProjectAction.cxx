@@ -7,21 +7,14 @@
 #include <QMessageBox>
 #include <QApplication>
 
-//#include <mitkSceneIO.h>
+#include <berryPlatform.h>
+#include <berryIPreferences.h>
+#include <berryIPreferencesService.h>
+
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
-//#include <mitkNodePredicateNot.h>
-//#include <mitkNodePredicateProperty.h>
-//#include <mitkProperties.h>
 
-//#include <mitkCoreObjectFactory.h>
-//#include <mitkDataStorageEditorInput.h>
 #include <mitkIDataStorageService.h>
-//#include <berryIEditorPart.h>
-//#include <berryIWorkbenchPage.h>
-//#include <berryIWorkbenchWindow.h>
-//#include <berryIPreferencesService.h>
-//#include <berryPlatform.h>
 
 svFileOpenProjectAction::svFileOpenProjectAction(berry::IWorkbenchWindow::Pointer window)
     : QAction(0)
@@ -59,8 +52,6 @@ void svFileOpenProjectAction::Run()
 {
     try
     {
-        static QString m_LastPath;
-
         mitk::IDataStorageReference::Pointer dsRef;
 
         {
@@ -87,8 +78,28 @@ void svFileOpenProjectAction::Run()
 
         mitk::DataStorage::Pointer dataStorage = dsRef->GetDataStorage();
 
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+       if (prefService)
+       {
+           prefs = prefService->GetSystemPreferences()->Node("/General");
+       }
+       else
+       {
+           prefs = berry::IPreferences::Pointer(0);
+       }
+
+       QString lastSVProjPath=QString();
+       if(prefs.IsNotNull())
+       {
+           lastSVProjPath = prefs->Get("LastSVProjPath", "");
+       }
+
+
+
+
         QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose Project"),
-                                                        m_LastPath,
+                                                        lastSVProjPath,
                                                         QFileDialog::ShowDirsOnly
                                                         | QFileDialog::DontResolveSymlinks
                                                         | QFileDialog::DontUseNativeDialog
@@ -96,9 +107,14 @@ void svFileOpenProjectAction::Run()
 
         if(projPath.trimmed().isEmpty()) return;
 
-        m_LastPath=projPath.trimmed();
+        lastSVProjPath=projPath.trimmed();
+        if(prefs.IsNotNull())
+        {
+            prefs->Put("LastSVProjPath", lastSVProjPath);
+            prefs->Flush();
+        }
 
-        QDir dir(m_LastPath);
+        QDir dir(lastSVProjPath);
         if(dir.exists(".svproj"))
         {
             QString projName=dir.dirName();

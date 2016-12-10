@@ -1,6 +1,9 @@
 #ifndef SVWORKBENCHWINDOWADVISOR_H
 #define SVWORKBENCHWINDOWADVISOR_H
 
+#include <mitkDataNode.h>
+#include <mitkDataStorage.h>
+
 #include <berryWorkbenchWindowAdvisor.h>
 
 #include <berryIPartListener.h>
@@ -70,6 +73,10 @@ public:
     void SetViewExcludeList(const QList<QString> &v);
     QList<QString> GetViewExcludeList();
 
+    mitk::DataStorage::Pointer GetDataStorage();
+    std::list< mitk::DataNode::Pointer > GetSelectedDataNodes();
+    void SetupDataManagerDoubleClick();
+
 protected slots:
 
     virtual void onIntro();
@@ -77,15 +84,12 @@ protected slots:
     virtual void onHelpOpenHelpPerspective();
     virtual void onAbout();
 
+    void ShowSVView();
+
     void ExitApplication();
 
 private:
 
-  /**
-   * Hooks the listeners needed on the window
-   *
-   * @param configurer
-   */
   void HookTitleUpdateListeners(berry::IWorkbenchWindowConfigurer::Pointer configurer);
 
   QString ComputeTitle();
@@ -94,11 +98,6 @@ private:
 
   QString GetQSettingsFile() const;
 
-  /**
-   * Updates the window title. Format will be: [pageInput -]
-   * [currentPerspective -] [editorInput -] [workspaceLocation -] productName
-   * @param editorHidden TODO
-   */
   void UpdateTitle(bool editorHidden);
 
   void PropertyChange(const berry::Object::Pointer& /*source*/, int propId);

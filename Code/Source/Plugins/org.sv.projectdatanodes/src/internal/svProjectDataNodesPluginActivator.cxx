@@ -96,7 +96,7 @@ void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
     unknownDataNodeDescriptor->AddAction(renameAction,false);
     m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,renameAction));
 
-    SetupDataManagerDoubleClick();
+//    SetupDataManagerDoubleClick();
 }
 
 void svProjectDataNodesPluginActivator::stop(ctkPluginContext* context)
@@ -254,28 +254,29 @@ void svProjectDataNodesPluginActivator::RenameSelectedNode( bool )
     }
 }
 
+//berry::PlatformUI::GetWorkbench() doesn't work, this function not used.
 void svProjectDataNodesPluginActivator::SetupDataManagerDoubleClick()
 {
-//    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
-//    if(workbench==NULL)
-//        return;
+    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
+    if(workbench==NULL)
+        return;
 
-//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow();
-//    if(window.IsNull())
-//        return;
+    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow();
+    if(window.IsNull())
+        return;
 
-//    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
-//    if(page.IsNull())
-//        return;
+    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+    if(page.IsNull())
+        return;
 
-//    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
-//    if(dataManagerView.IsNull())
-//        return;
+    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
+    if(dataManagerView.IsNull())
+        return;
 
-//    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
-//    QTreeView* treeView=dataManager->GetTreeView();
+    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
+    QTreeView* treeView=dataManager->GetTreeView();
 
-//    QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
+    QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
 }
 
 void svProjectDataNodesPluginActivator::ShowSVView()

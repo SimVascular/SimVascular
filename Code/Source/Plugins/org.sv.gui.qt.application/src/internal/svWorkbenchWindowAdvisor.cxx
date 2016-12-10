@@ -17,6 +17,7 @@
 #include <QRegExp>
 #include <QTextStream>
 #include <QSettings>
+#include <QTreeView>
 
 #include <ctkPluginException.h>
 #include <service/event/ctkEventAdmin.h>
@@ -50,6 +51,7 @@
 #include <QmitkMemoryUsageIndicatorView.h>
 #include <QmitkPreferencesDialog.h>
 #include <QmitkOpenDicomEditorAction.h>
+#include <QmitkDataManagerView.h>
 
 #include <itkConfigure.h>
 #include <vtkConfigure.h>
@@ -57,6 +59,7 @@
 #include <mitkIDataStorageService.h>
 #include <mitkIDataStorageReference.h>
 #include <mitkDataStorageEditorInput.h>
+#include <mitkNodePredicateDataType.h>
 #include <mitkWorkbenchUtil.h>
 #include <vtkVersionMacros.h>
 
@@ -776,8 +779,6 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     }
     else
     {
-        //undoAction = new QAction(QIcon::fromTheme("edit-undo",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-undo.svg")),
-        //  "&Undo", nullptr);
         undoAction = new QmitkUndoAction(QIcon::fromTheme("edit-undo",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-undo.svg")), nullptr);
         undoAction->setShortcut(QKeySequence::Undo);
         redoAction = new QmitkRedoAction(QIcon::fromTheme("edit-redo",QIcon(":/org_mitk_icons/icons/tango/scalable/actions/edit-redo.svg")), nullptr);
@@ -796,11 +797,6 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
 
     imageNavigatorAction = new QAction(QIcon(":/org.mitk.gui.qt.ext/Slider.png"), "&Image Navigator", nullptr);
     bool imageNavigatorViewFound = window->GetWorkbench()->GetViewRegistry()->Find("org.mitk.views.imagenavigator");
-
-//    if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
-//    {
-//        openDicomEditorAction = new QmitkOpenDicomEditorAction(QIcon(":/org.mitk.gui.qt.ext/dcm-icon.png"),window);
-//    }
 
     if (imageNavigatorViewFound)
     {
@@ -844,9 +840,6 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         viewNavigatorAction->setToolTip("Toggle View Navigator");
     }
 
-//    mainActionsToolBar->addAction(fileOpenAction);
-//    mainActionsToolBar->addAction(fileSaveProjectAction);
-//    mainActionsToolBar->addAction(closeProjectAction);
     mainActionsToolBar->addAction(saveSVProjectAction);
     mainActionsToolBar->addAction(undoAction);
     mainActionsToolBar->addAction(redoAction);
@@ -858,10 +851,6 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     {
         mainActionsToolBar->addAction(viewNavigatorAction);
     }
-//    if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
-//    {
-//        mainActionsToolBar->addAction(openDicomEditorAction);
-//    }
 
     mainWindow->addToolBar(mainActionsToolBar);
 
@@ -885,12 +874,6 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     {
         mainWindow->addToolBar(qSVToolbar);
 
-        if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
-        {
-            openDicomEditorAction = new QmitkOpenDicomEditorAction(QIcon(":/org.mitk.gui.qt.ext/dcm-icon.png"),window);
-            qSVToolbar->addAction(openDicomEditorAction);
-        }
-
         for (auto viewAction : svViewActions)
         {
             qSVToolbar->addAction(viewAction);
@@ -906,6 +889,12 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
     if (showViewToolbar)
     {
         mainWindow->addToolBar(qToolbar);
+
+        if(this->GetWindowConfigurer()->GetWindow()->GetWorkbench()->GetEditorRegistry()->FindEditor("org.mitk.editors.dicomeditor"))
+        {
+            openDicomEditorAction = new QmitkOpenDicomEditorAction(QIcon(":/org.mitk.gui.qt.ext/dcm-icon.png"),window);
+            qToolbar->addAction(openDicomEditorAction);
+        }
 
         for (auto viewAction : otherViewActions)
         {
@@ -937,6 +926,9 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         auto memoryIndicator = new QmitkMemoryUsageIndicatorView();
         qStatusBar->addPermanentWidget(memoryIndicator, 0);
     }
+
+
+
 }
 
 void svWorkbenchWindowAdvisor::PreWindowOpen()
@@ -984,6 +976,143 @@ void svWorkbenchWindowAdvisor::PostWindowOpen()
             mitk::WorkbenchUtil::OpenEditor(configurer->GetWindow()->GetActivePage(),dsInput);
         }
     }
+
+    SetupDataManagerDoubleClick();
+
+}
+
+
+mitk::DataStorage::Pointer svWorkbenchWindowAdvisor::GetDataStorage()
+{
+    mitk::IDataStorageReference::Pointer dsRef;
+
+    ctkPluginContext* context=svApplicationPluginActivator::getContext();
+
+    mitk::IDataStorageService* dss = nullptr;
+    ctkServiceReference dsServiceRef = context->getServiceReference<mitk::IDataStorageService>();
+    if (dsServiceRef)
+    {
+        dss = context->getService<mitk::IDataStorageService>(dsServiceRef);
+    }
+
+    if (!dss)
+    {
+        QString msg = "IDataStorageService service not available. Unable to save sv projects.";
+        MITK_WARN << msg.toStdString();
+        return NULL;
+    }
+
+    // Get the active data storage (or the default one, if none is active)
+    dsRef = dss->GetDataStorage();
+    context->ungetService(dsServiceRef);
+
+    if(dsRef.IsNull())
+        return NULL;
+
+    return dsRef->GetDataStorage();
+}
+
+std::list< mitk::DataNode::Pointer > svWorkbenchWindowAdvisor::GetSelectedDataNodes()
+{
+    std::list< mitk::DataNode::Pointer > selectedList;
+
+    berry::IWorkbenchWindow::Pointer window=berry::PlatformUI::GetWorkbench()->GetActiveWorkbenchWindow();
+
+    if(window.IsNull())
+        return selectedList;
+
+    berry::ISelectionService* selectionService =window->GetSelectionService();
+    if(selectionService==NULL)
+        return selectedList;
+
+    mitk::DataNodeSelection::ConstPointer nodeSelection = selectionService->GetSelection().Cast<const mitk::DataNodeSelection>();
+    if(nodeSelection.IsNull())
+        return selectedList;
+
+    return nodeSelection->GetSelectedDataNodes();
+}
+
+void svWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
+{
+    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
+    if(workbench==NULL)
+        return;
+
+    int count=workbench->GetWorkbenchWindowCount();
+
+//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow(); //not active window set yet
+    if(workbench->GetWorkbenchWindows().size()==0)
+        return;
+
+    berry::IWorkbenchWindow::Pointer window=workbench->GetWorkbenchWindows()[0];
+    if(window.IsNull())
+        return;
+
+    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+    if(page.IsNull())
+        return;
+
+    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
+    if(dataManagerView.IsNull())
+        return;
+
+    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
+    QTreeView* treeView=dataManager->GetTreeView();
+
+    QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
+}
+
+
+void svWorkbenchWindowAdvisor::ShowSVView()
+{
+    berry::IWorkbenchWindow::Pointer window=berry::PlatformUI::GetWorkbench()->GetActiveWorkbenchWindow();
+
+    if(window.IsNull())
+        return;
+
+    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+    if(page.IsNull())
+        return;
+
+    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
+    if(list.size()==0)
+        return;
+
+    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+
+    if(nodes.size() < 1)
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer selectedNode = nodes.front();
+
+    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
+    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
+    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
+    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+
+    if(isPath->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.pathplanning");
+    }
+    else if(isContourGroup->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.segmentation2d");
+    }
+    else if(isModel->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.modeling");
+    }
+    else if(isMesh->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.meshing");
+    }
+    else if(isSimJob->CheckNode(selectedNode))
+    {
+       page->ShowView("org.sv.views.simulation");
+    }
 }
 
 void svWorkbenchWindowAdvisor::onIntro()
@@ -1005,11 +1134,6 @@ void svWorkbenchWindowAdvisor::onAbout()
 {
     svWorkbenchWindowAdvisorHack::undohack->onAbout();
 }
-
-//--------------------------------------------------------------------------------
-// Ugly hack from here on. Feel free to delete when command framework
-// and undo buttons are done.
-//--------------------------------------------------------------------------------
 
 svWorkbenchWindowAdvisorHack::svWorkbenchWindowAdvisorHack() : QObject()
 {

@@ -10,12 +10,7 @@
 #include <windows.h>
 #endif
 
-//#include <berrySmartPointer.h>
 #include <berryIWorkbenchWindow.h>
-
-//namespace berry {
-//struct IWorkbenchWindow;
-//}
 
 #include <QAction>
 #include <QIcon>
@@ -42,4 +37,4 @@ private:
 };
 
 
-#endif /*svFileCreateProjectAction_H*/
+#endif /*SVFILECREATEPROJECTACTION_H*/

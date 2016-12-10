@@ -3,25 +3,12 @@
 #include "svApplicationPluginActivator.h"
 #include "svProjectManager.h"
 
-//#include <QFileDialog>
 #include <QMessageBox>
 #include <QApplication>
 
-//#include <mitkSceneIO.h>
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
-//#include <mitkNodePredicateNot.h>
-//#include <mitkNodePredicateProperty.h>
-//#include <mitkProperties.h>
-
-//#include <mitkCoreObjectFactory.h>
-//#include <mitkDataStorageEditorInput.h>
 #include <mitkIDataStorageService.h>
-//#include <berryIEditorPart.h>
-//#include <berryIWorkbenchPage.h>
-//#include <berryIWorkbenchWindow.h>
-//#include <berryIPreferencesService.h>
-//#include <berryPlatform.h>
 
 svFileSaveProjectAction::svFileSaveProjectAction(berry::IWorkbenchWindow::Pointer window)
     : QAction(0)
