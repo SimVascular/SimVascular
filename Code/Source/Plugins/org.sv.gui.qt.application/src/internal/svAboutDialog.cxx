@@ -52,7 +52,7 @@ QString svAboutDialog::GetAboutText() const
 
 QString svAboutDialog::GetCaptionText() const
 {
-  return m_GUI.m_CaptionLabel->text();
+//  return m_GUI.m_CaptionLabel->text();
 }
 
 QString svAboutDialog::GetRevisionText() const
@@ -67,7 +67,7 @@ void svAboutDialog::SetAboutText(const QString &text)
 
 void svAboutDialog::SetCaptionText(const QString &text)
 {
-  m_GUI.m_CaptionLabel->setText(text);
+//  m_GUI.m_CaptionLabel->setText(text);
 }
 
 void svAboutDialog::SetRevisionText(const QString &text)

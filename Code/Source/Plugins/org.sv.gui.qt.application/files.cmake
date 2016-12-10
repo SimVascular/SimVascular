@@ -24,7 +24,6 @@ set(MOC_H_FILES
   src/internal/svProjectCreate.h
   src/internal/svWorkbenchWindowAdvisor.h
   src/internal/svWorkbenchWindowAdvisorHack.h
-  src/internal/svAppWorkbenchAdvisor.h
   src/internal/svAboutDialog.h
   src/internal/svWorkbenchIntroPart.h
   src/internal/svDefaultPerspective.h

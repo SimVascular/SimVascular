@@ -9,8 +9,9 @@
         <file>pics/button_mitk.png</file>
         <file>pics/WelcomeMITK.png</file>
         <file>svworkbenchwelcomeview.html</file>
+        <file>pics/svLogo.png</file>
     </qresource>
-    <qresource prefix="/org.mitk.gui.qt.welcomescreen.welcome.tutorial">
+    <qresource prefix="/org.sv.gui.qt.welcomescreen.welcome.tutorial">
         <file>WelcomePresentation.html</file>
         <file>js/reveal.js</file>
         <file>css/print/paper.css</file>
