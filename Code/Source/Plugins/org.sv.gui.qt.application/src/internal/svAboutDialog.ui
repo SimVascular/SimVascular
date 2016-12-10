@@ -65,7 +65,8 @@ p, li { white-space: pre-wrap; }
           </sizepolicy>
          </property>
          <property name="text">
-          <string>Revision: 
+          <string>Version: 3.0 
+Revision: 
 Description:</string>
          </property>
          <property name="alignment">
@@ -95,7 +96,7 @@ Description:</string>
         <x>0</x>
         <y>0</y>
         <width>582</width>
-        <height>248</height>
+        <height>231</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout">
