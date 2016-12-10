@@ -670,7 +670,6 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.mitk.gui.qt.datamanager/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
                      -I$(TOP)/../Code/Source/Modules/Model \
                      -I$(TOP)/../Code/Source/Modules/Mesh \

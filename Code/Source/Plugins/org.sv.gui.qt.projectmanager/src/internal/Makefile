@@ -64,7 +64,8 @@ UIFILES = \
 QRCFILES = \
   ../../resources/projectmanager.qrc
 
-QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc
+QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc \
+            org_sv_gui_qt_projectmanager_cached.qrc
 
 RCFILES = 
 

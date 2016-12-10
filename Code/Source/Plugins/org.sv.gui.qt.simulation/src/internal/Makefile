@@ -45,18 +45,30 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 HDRS	= \
     svSimJobCreate.h \
     svSimJobCreateAction.h \
+    svCapBCWidget.h \
+    svTableCapDelegate.h \
+    svTableSolverDelegate.h \
+    svSimulationView.h \
     svSimulationPluginActivator.h
 
 CXXSRCS	= \
     svSimJobCreate.cxx \
     svSimJobCreateAction.cxx \
+    svCapBCWidget.cxx \
+    svTableCapDelegate.cxx \
+    svTableSolverDelegate.cxx \
+    svSimulationView.cxx \
     svSimulationPluginActivator.cxx
 
 UIFILES = \
-    svSimJobCreate.ui
+    svSimJobCreate.ui \
+    svCapBCWidget.ui \
+    svSimulationView.ui
 
-QRCFILES = org_sv_gui_qt_simulation_manifest.qrc \
-           org_sv_gui_qt_simulation_cached.qrc
+QRCFILES = ../../resources/simulation.qrc
+
+QRCFILES += org_sv_gui_qt_simulation_manifest.qrc \
+            org_sv_gui_qt_simulation_cached.qrc
 
 RCFILES = \
   ../../plugin.xml \
