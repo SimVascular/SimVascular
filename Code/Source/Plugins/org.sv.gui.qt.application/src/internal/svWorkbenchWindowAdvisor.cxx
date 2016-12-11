@@ -1407,16 +1407,17 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
         title = productName;
     }
 
-    if(showSVVersionInfo)
-    {
-//        title += QString(" ") + SV_FULL_VER_NO;
-        title += QString(" 3.0");
-    }
+//    if(showSVVersionInfo)
+//    {
+////        title += QString(" ") + SV_FULL_VER_NO;
+////        title += QString(" 3.0");
+//    }
 
     if (showVersionInfo)
     {
         // add version informatioin
-        QString versions = QString(" (MITK %1 VTK %2.%3.%4 ITK %5.%6.%7 Qt %8)")
+        QString versions = QString(" (SimVascular %1 MITK %2 VTK %3.%4.%5 ITK %6.%7.%8 Qt %9)")
+                .arg("3.0")
                 .arg(MITK_VERSION_STRING)
                 .arg(VTK_MAJOR_VERSION).arg(VTK_MINOR_VERSION).arg(VTK_BUILD_VERSION)
                 .arg(ITK_VERSION_MAJOR).arg(ITK_VERSION_MINOR).arg(ITK_VERSION_PATCH)
