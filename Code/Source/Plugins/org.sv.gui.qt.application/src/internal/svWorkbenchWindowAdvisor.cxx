@@ -774,7 +774,9 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         helpMenu->addAction("&Welcome",this, SLOT(onIntro()));
 //        helpMenu->addAction("&Open Help Perspective", this, SLOT(onHelpOpenHelpPerspective()));
 //        helpMenu->addAction("&Context Help",this, SLOT(onHelp()),  QKeySequence("F1"));
+#ifndef __APPLE__
         helpMenu->addSeparator();
+#endif
         helpMenu->addAction("&About SimVascular",this, SLOT(onAbout()));
         // =====================================================
     }
