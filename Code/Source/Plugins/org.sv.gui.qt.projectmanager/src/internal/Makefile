@@ -67,7 +67,9 @@ QRCFILES = \
 QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc \
             org_sv_gui_qt_projectmanager_cached.qrc
 
-RCFILES = 
+RCFILES = \
+  ../../resources/icon.xpm \
+  ../../plugin.xml
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
