@@ -13,13 +13,14 @@ proc create_manifest_qrc_file {symbolicName outFile} {
 }
 
 proc parse_manifest_headers_cmake_file {symbolicName inFile outFile} {
+    set symbolicNamePeriod [regsub -all _ $symbolicName .]
     if [catch {set infp [open $inFile r]}] {
 	return -code error "ERROR: filename does not exist ($inFile)!!"
     }
     if [catch {set outfp [open $outFile w]}] {
 	return -code error "ERROR: filename does not exist ($inFile)!!"
     }
-    puts $outfp "Plugin-SymbolicName: $symbolicName"
+    puts $outfp "Plugin-SymbolicName: $symbolicNamePeriod"
     while {[gets $infp line] >= 0} {
 	set args {}
 	set line [string trim $line]

@@ -1,6 +1,6 @@
 
-rm -Rf /cygdrive/c/sv-test-bld
-mkdir -p /cygdrive/c/sv-test-bld
+rm -Rf /cygdrive/c/svtest
+mkdir -p /cygdrive/c/svtest
 
 export REPLACEME_SV_CL_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/cl.exe"
 export REPLACEME_SV_IFORT_COMPILER="C:/Program Files (x86)/Intel/Composer XE 2013 SP1/bin/intel64/ifort.exe"
@@ -10,7 +10,7 @@ export REPLACEME_SV_CMAKE_GENERATOR="Visual Studio 12 2013 Win64"
 export REPLACEME_SV_TOP_SRC_DIR_SV=`pwd`/../../Code
 export REPLACEME_SV_TOP_SRC_DIR_SV=`cygpath -m $REPLACEME_SV_TOP_SRC_DIR_SV`
 
-pushd /cygdrive/c/sv-test-bld
+pushd /cygdrive/c/svtest
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -38,6 +38,8 @@ pushd /cygdrive/c/sv-test-bld
    -DSV_USE_PYTHON=ON \
    -DSV_USE_QT=ON \
    -DSV_USE_MMG=ON \
+   -DSV_USE_MITK=ON \
+   -DSV_USE_QT_GUI=ON \
 \
    -DSV_USE_SYSTEM_FREETYPE=ON \
    -DSV_USE_SYSTEM_GDCM=ON \
@@ -48,6 +50,8 @@ pushd /cygdrive/c/sv-test-bld
    -DSV_USE_SYSTEM_TCL=ON \
    -DSV_USE_SYSTEM_VTK=ON \
    -DSV_USE_SYSTEM_MMG=ON \
+   -DSV_USE_SYSTEM_MITK=ON \
+   -DSV_USE_MITK_CONFIG:BOOL=ON \
 \
    -DGDCM_USE_SHARED=ON \
    -DFREETYPE_USE_SHARED=OFF \
@@ -72,6 +76,7 @@ pushd /cygdrive/c/sv-test-bld
    -DQt5Sql_DIR="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5Sql" \
    -DVTK_DIR="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/vtk-6.2.0/lib/cmake/vtk-6.2" \
    -DVTK_PYTHON_SITE_PACKAGES="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/vtk-6.2.0/lib/python2.7/site-packages" \
+   -DMITK_DIR:PATH="C:/sv/mitk-2016.03/MITK-build" \
 \
    -DGDCM_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/gdcm-2.6.1/bin" \
    -DITK_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/itk-4.7.1/bin" \
