@@ -75,6 +75,48 @@ elseif(MINGW)
     )
 endif()
 
+#If using Qt
+if(SV_EXTERNALS_USE_QT)
+  #MINGW specific flags
+  if(MINGW)
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DCMAKE_USE_WIN32_THREADS:BOOL=ON
+      -DCMAKE_USE_PTHREADS:BOOL=OFF
+      -DVTK_USE_VIDEO4WINDOWS:BOOL=OFF # no header files provided by MinGW
+      )
+  endif()
+  #WIN32 specific flags
+  if(WIN32)
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DVTK_DO_NOT_DEFINE_OSTREAM_SLL:BOOL=ON
+      -DVTK_DO_NOT_DEFINE_OSTREAM_ULL:BOOL=ON
+      )
+  endif()
+
+  foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
+    if(Qt5${comp}_LIBRARIES)
+      list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+        -DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
+      )
+    endif()
+  endforeach()
+
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DQt5_DIR:PATH:STRING=${Qt5_DIR}
+    -DVTK_QT_VERSION:STRING=5
+    -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+    -DModule_vtkGUISupportQt:BOOL=ON
+    -DModule_vtkGUISupportQtWebkit:BOOL=ON
+    -DModule_vtkGUISupportQtSQL:BOOL=ON
+    -DModule_vtkRenderingQt:BOOL=ON
+    -DVTK_Group_Qt:BOOL=ON
+    -DModule_vtkTestingRendering:BOOL=ON
+    -DVTK_MAKE_INSTANTIATORS:BOOL=ON
+    -DVTK_WINDOWS_PYTHON_DEBUGGABLE:BOOL=OFF
+    )
+endif()
+
 #If using TCL
 if(SV_EXTERNALS_BUILD_TCL)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS

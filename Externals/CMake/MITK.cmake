@@ -60,18 +60,19 @@ mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
 set(SV_EXTERNALS_${proj}_GIT_TAG "simvascular-patch-2016.03.0" CACHE STRING "Tag for ${proj}")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
 
+set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
 #Special for Qt, make sure that MITK uses the same libs we are!
 foreach(comp ${SV_EXTERNALS_Qt5_COMPONENTS})
   if(Qt5${comp}_LIBRARIES)
-    get_filename_component(${comp}_DIR ${Qt5${comp}_LIBRARIES} DIRECTORY)
     list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
-      -DQt5${comp}_DIR:PATH=${${comp}_DIR}}
+      -DQt5${comp}_DIR:PATH=${Qt5${comp}_DIR}
     )
   endif()
 endforeach()
 
 #If using PYTHON
 if(SV_EXTERNALS_BUILD_PYTHON)
+  file(MAKE_DIRECTORY "${SV_EXTERNALS_${proj}_BLD_DIR}/lib/python${SV_EXTERNALS_PYTHON_MAJOR_VERSION}.${SV_EXTERNALS_PYTHON_MINOR_VERSION}/site-packages")
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
    -DPYTHON_EXECUTABLE:FILEPATH=${SV_EXTERNALS_PYTHON_EXECUTABLE}
    -DPYTHON_INCLUDE_DIRS:PATH=${SV_EXTERNALS_PYTHON_INCLUDE_DIR}
@@ -101,6 +102,16 @@ if(SV_EXTERNALS_BUILD_ITK)
     )
 endif()
 
+# Configure file for custom install!!!
+if(APPLE)
+  set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-mac_osx.sh)
+elseif(LINUX)
+  set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-linux.sh)
+else()
+  set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-windows.sh)
+endif()
+configure_file(${SV_EXTERNALS_CMAKE_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
+
 # Add external project
 ExternalProject_Add(${proj}
   GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
@@ -110,7 +121,7 @@ ExternalProject_Add(${proj}
   BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
   DEPENDS ${${proj}_DEPENDENCIES}
   UPDATE_COMMAND ""
-  INSTALL_COMMAND ""
+  INSTALL_COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}
    CMAKE_CACHE_ARGS
     -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
     -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
@@ -135,7 +146,7 @@ ExternalProject_Add(${proj}
     -DSWIG_DIR:PATH=${SWIG_DIR}
     -DSWIG_VERSION:STRING=${SWIG_VERSION}
     -DQt5_DIR:PATH:STRING=${Qt5_DIR}
-    -DQT_QMAKE_EXECUTABLE:FILEPATH=qmake
+    -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
     -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
     ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
     )

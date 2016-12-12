@@ -87,9 +87,10 @@ if(SV_EXTERNALS_USE_QT)
     UiTools)
   find_package(Qt5 COMPONENTS ${SV_EXTERNALS_Qt5_COMPONENTS} REQUIRED)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Add each external to be built. Full list and initial options are specified in SvExtOption.cmake
+# Add each external to be built. Full list and initial options are specified in SvExtOptions.cmake
 foreach(proj ${SV_EXTERNALS_LIST})
   if(SV_EXTERNALS_BUILD_${proj})
     if(EXISTS "${SV_EXTERNALS_CMAKE_DIR}/${proj}.cmake")
@@ -97,3 +98,4 @@ foreach(proj ${SV_EXTERNALS_LIST})
     endif()
   endif()
 endforeach()
+#-----------------------------------------------------------------------------

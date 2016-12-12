@@ -19,7 +19,7 @@ set(SV_EXTERNALS_GIT_URL "http://github.com/SimVascular" CACHE STRING "Git URL f
 option(SV_EXTERNALS_USE_QT "Enable QT Plugin" OFF)
 
 # Add externals with default values of version, build_with, shared, dirname,
-# and optional install dir name. Order matters; put independent packages first
+# and optional install dirname. Order matters; put independent packages first
 #-----------------------------------------------------------------------------
 # TCL
 sv_externals_add_new_external(TCL 8.6.4 ON ON tcl tcltk)

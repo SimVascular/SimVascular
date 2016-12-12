@@ -35,6 +35,15 @@ set(${proj}_DEPENDENCIES "")
 set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/python/python-2.7.11-cmakebuild.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
 mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
 
+set(SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS )
+if(WIN32)
+  #list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+  #  -DCMAKE_ASM_COMPILER:FILEPATH="C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/cl.exe"
+  #  -DCMAKE_ASM_MASM_COMPILER:FILEPATH="C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/ml64.exe"
+  #  -DCMAKE_ASM_MASM_COMPILE_OBJECT="<CMAKE_ASM_MASM_COMPILER> <FLAGS> /c /Fo <OBJECT> <SOURCE>"
+  #  )
+endif()
+
 # Add external project
 ExternalProject_Add(${proj}
   URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
@@ -58,6 +67,7 @@ ExternalProject_Add(${proj}
     -DENABLE_CTYPES:BOOL=ON
     -DBUILTIN_CTYPES:BOOL=ON
     -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
+    ${SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS}
   )
 #TODO Add install rpath
 

@@ -41,6 +41,21 @@ mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
 set(SV_EXTERNALS_${proj}_GIT_TAG "v${SV_EXTERNALS_${proj}_VERSION}" CACHE STRING "Tag for ${proj}")
 mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
 
+#If using Qt
+if(SV_EXTERNALS_USE_QT)
+  #MINGW specific flags
+  if(MINGW)
+    list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+      -DCMAKE_USE_WIN32_THREADS:BOOL=ON
+      -DCMAKE_USE_PTHREADS:BOOL=OFF
+      )
+  endif()
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DUSE_WRAP_ITK:BOOL=OFF
+    -DModule_ITKOpenJPEG:BOOL=ON
+    )
+endif()
+
 #If using GDCM
 if(SV_EXTERNALS_BUILD_GDCM)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
