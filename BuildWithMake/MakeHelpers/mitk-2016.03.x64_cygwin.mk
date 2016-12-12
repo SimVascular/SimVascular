@@ -7,7 +7,7 @@ MITK_BINDIR = $(OPEN_SOFTWARE_BINARIES_TOPLEVEL)/mitk-2016.03
 MITK_US_RESOURCE_COMPILER = $(MITK_BINDIR)/bin/RelWithDebInfo/usResourceCompiler.exe
 
 MITK_LIBDIRS = $(MITK_BINDIR)/lib
-SV_MITK_PLUGIN_PATH = $(MITK_BINDIR)/bin/plugins
+SV_MITK_PLUGIN_PATH = $(MITK_BINDIR)/bin/plugins/RelWithDebInfo
 MITK_BINDIRS = $(MITK_BINDIR)/bin
 SV_MITK_SO_PATH = $(MITK_BINDIRS)
 MITK_DLLS    = $(MITK_BINDIRS)/*.$(SOEXT)
@@ -81,41 +81,26 @@ MITK_INCDIRS = \
 # Plugin Includes (exports give in include/mitk/exports)
 MITK_PLUGIN_INCDIRS = \
            -I$(MITK_BINDIR)/include/ctk/PluginFramework \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.core.services \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.common \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.datamanager \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common.legacy \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/registry \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.core.services
-
-#MITK_PLUGIN_INCDIRS = \
-           -I$(MITK_BINDIR)/include/ctk/PluginFramework \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.common \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common.legacy \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.application \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.common.legacy \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.datamanager \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.gui.qt.ext \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.ui.qt/application \
            -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/registry \
-           -I$(MITK_BINDIR)/include/mitk/plugins/org.mitk.core.services
-
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/application \
+           -I$(MITK_BINDIR)/include/mitk/plugins/org.blueberry.core.runtime/registry
 
 EXTRA_MOC_INCDIRS := $(MITK_PLUGIN_INCDIRS)
 
 MITK_INCDIRS += $(MITK_PLUGIN_INCDIRS)
 
-#MITK_PLUGIN_LIBS += \
-             $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
-             $(LIBFLAG)org_mitk_gui_qt_datamanager$(LIBLINKEXT) \
-             $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
-             $(LIBFLAG)org_mitk_gui_qt_common_legacy$(LIBLINKEXT) \
-             $(LIBFLAG)org_blueberry_ui_qt$(LIBLINKEXT) \
-             $(LIBFLAG)org_blueberry_core_runtime$(LIBLINKEXT) \
-             $(LIBFLAG)org_mitk_core_services$(LIBLINKEXT)
-
 MITK_PLUGIN_LIBS += \
+             $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_ext$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \

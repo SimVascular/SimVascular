@@ -44,8 +44,6 @@ include $(TOP)/include.mk
 
 SVQTGUIMODULES_DIRS = Common Segmentation QtWidgets Path Model Mesh ProjectManagement Simulation
 
-#SVQTGUIMODULES_DIRS += Mitk/AppUtil/src
-
 lib-complete: create_exports_h us-init-module moc ui qrc lib
 
 static-complete:  create_exports_h us-init-module moc ui qrc static

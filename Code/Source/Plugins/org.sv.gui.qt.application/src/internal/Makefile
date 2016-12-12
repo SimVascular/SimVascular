@@ -39,43 +39,45 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           -Dorg_mitk_gui_qt_datamanager_EXPORTS \
-          -DUS_MODULE_NAME=datamanager \
-	  -I../..
+           -Dorg_sv_gui_qt_application_EXPORTS \
+           -DUS_MODULE_NAME=svApplication
 
 HDRS	= \
-  QmitkDataManagerView.h \
-  QmitkDataManagerPreferencePage.h \
-  QmitkDataManagerHotkeysPrefPage.h \
-  QmitkNodeTableViewKeyFilter.h \
-  QmitkInfoDialog.h \
-  QmitkDataManagerItemDelegate.h \
-  mitkPluginActivator.h
+  svApplication.h \
+  svApplicationPluginActivator.h \
+  svFileCreateProjectAction.h \
+  svFileOpenProjectAction.h \
+  svFileSaveProjectAction.h \
+  svProjectCreate.h \
+  svWorkbenchWindowAdvisor.h \
+  svWorkbenchWindowAdvisorHack.h \
+  svAppWorkbenchAdvisor.h \
+  svDefaultPerspective.h
 
-CXXSRCS	=  \
-  berrySingleNodeSelection.cxx \
-  QmitkDataManagerView.cxx \
-  QmitkDataManagerPreferencePage.cxx \
-  QmitkDataManagerHotkeysPrefPage.cxx \
-  mitkPluginActivator.cxx \
-  QmitkNodeTableViewKeyFilter.cxx \
-  QmitkInfoDialog.cxx \
-  QmitkDataManagerItemDelegate.cxx
+CXXSRCS	= \
+  svApplication.cxx \
+  svApplicationPluginActivator.cxx \
+  svFileCreateProjectAction.cxx \
+  svFileOpenProjectAction.cxx \
+  svFileSaveProjectAction.cxx \
+  svProjectCreate.cxx \
+  svWorkbenchWindowAdvisor.cxx \
+  svAppWorkbenchAdvisor.cxx \
+  svDefaultPerspective.cxx
 
-UIFILES =
+UIFILES = \
+  svProjectCreate.ui
 
-QRCFILES = \
-    ../../resources/datamanager.qrc
+QRCFILES = ../../resources/svApplication.qrc
 
-QRCFILES += org_mitk_gui_qt_datamanager_manifest.qrc \
-            org_mitk_gui_qt_datamanager_cached.qrc
+QRCFILES += org_sv_gui_qt_application_manifest.qrc \
+            org_sv_gui_qt_application_cached.qrc
 
 RCFILES = \
-    ../../plugin.xml \
-    ../../resources/DataManager_48.png
+  ../../plugin.xml \
+  ../../resources/icon.png
 
-CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
-
+CXXSRCS += $(addprefix moc_,$(notdir $(HDRS:.h=.cxx)))
 CXXSRCS += $(addprefix qrc_,$(notdir $(QRCFILES:.qrc=.cxx)))
 
 DLLHDRS =
@@ -87,22 +89,25 @@ DLLLIBS += $(PYTHON_LIB) $(VTK_LIBS) $(ITK_LIBS) $(QT_LIBS) $(MITK_LIBS)
 DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_common$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_simulation$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-#EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 
-TARGET_LIB_NAME = org_mitk_gui_qt_datamanager
+TARGET_LIB_NAME = org_sv_gui_qt_application
 
-PLUGIN_SYMBOLIC_NAME = org.mitk.gui.qt.datamanager
-PLUGIN_EXPORTS_NAME = org_mitk_gui_qt_datamanager
-PLUGIN_EXPORTS_PREFIX = MITK_QT_
-PLUGIN_NAME = DATAMANAGER
+PLUGIN_SYMBOLIC_NAME = org_sv_gui_qt_application
+PLUGIN_EXPORTS_NAME = org_sv_gui_qt_application
+PLUGIN_EXPORTS_PREFIX = SV_QT_
+PLUGIN_NAME = APPLICATION
 
 SV_COPY_DLL_TO_BIN_PLUGINS = 1
 
