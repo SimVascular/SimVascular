@@ -19,7 +19,7 @@
 # % sudo apt-get install libXmu-dev     (mitk)
 # % sudo apt-get install libXi-dev      (mitk)
 # % sudo apt-get install libtiff4-dev   (mitk)
-# % sudo apt-get install wrap0-dev      (mitk)
+# % sudo apt-get install libwrap0-dev   (mitk)
 # % sudo apt-get install libssl-dev     (python)
 # % sudo apt-get install swig3.0        (gdcm, mitk)
 #
