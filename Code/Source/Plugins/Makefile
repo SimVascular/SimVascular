@@ -49,9 +49,7 @@ SVQTGUIEXT_DIRS = org.sv.projectdatanodes/src/internal \
                   org.sv.gui.qt.segmentation/src/internal \
                   org.sv.gui.qt.meshing/src/internal \
                   org.sv.gui.qt.simulation/src/internal \
-                  org.mitk.gui.qt.datamanager/src/internal
-# sv.test appears to be out of date
-# sv.test
+                  org.sv.gui.qt.application/src/internal
 
 lib-complete: moc ui qrc lib
 

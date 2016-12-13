@@ -6,10 +6,13 @@
 #include <berryPlatform.h>
 
 #include <mitkNodePredicateDataType.h>
+#include <mitkStatusBar.h>
 
 #include <QmitkIOUtil.h>
 
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QApplication>
 
 svProjectAddImageAction::svProjectAddImageAction()
 {
@@ -64,15 +67,27 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
             prefs->Flush();
         }
 
-        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode);
+        bool copy=false;
 
+        if (QMessageBox::question(NULL, "Copyt into Project?", "Do you want to copy the image as vti into the project?",
+                                  QMessageBox::Yes | QMessageBox::No) == QMessageBox::Yes)
+        {
+            copy=true;
+        }
+
+        mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
+        QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
+
+        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode,copy);
+
+        mitk::StatusBar::GetInstance()->DisplayText("Imaged changed");
+        QApplication::restoreOverrideCursor();
     }
     catch(...)
     {
         MITK_ERROR << "Image adding failed!";
     }
 }
-
 
 void svProjectAddImageAction::SetDataStorage(mitk::DataStorage *dataStorage)
 {

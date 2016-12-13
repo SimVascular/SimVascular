@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <plugin>
   
-  <extension point="org.blueberry.ui.views">
+<!--  <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.projectmanager"
           name="SV Project Manager"
           class="svProjectManagerView"
           icon="resources/icon.xpm" />
-  </extension>
+  </extension>-->
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
-    <contextMenuAction nodeDescriptorName="svImageFolder" label="Add Image" icon="" class="svProjectAddImageAction" />
+    <contextMenuAction nodeDescriptorName="svImageFolder" label="Add/Replace Image" icon="" class="svProjectAddImageAction" />
     <contextMenuAction nodeDescriptorName="svProjectFolder" label="Close SV Project" icon="" class="svProjectCloseAction" />
     <contextMenuAction nodeDescriptorName="svModel" label="Show/Hide Edges" icon="" class="svProjectShowModelEdgesAction" />
   </extension>

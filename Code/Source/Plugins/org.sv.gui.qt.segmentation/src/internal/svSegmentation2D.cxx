@@ -21,51 +21,14 @@
 
 #include <mitkOperationEvent.h>
 #include <mitkUndoController.h>
+#include <mitkStatusBar.h>
+#include <mitkProgressBar.h>
+#include <mitkNodePredicateDataType.h>
 
 #include <usModuleRegistry.h>
 
-#include <QmitkRenderWindow.h>
-#include <QmitkSliceWidget.h>
-#include <QmitkStepperAdapter.h>
-
-// mitk
-#include <mitkDataStorage.h>
-#include "mitkDataNode.h"
-#include "mitkProperties.h"
-#include <mitkInteractionConst.h>
-#include <mitkPointOperation.h>
-#include <mitkOperationEvent.h>
-#include <mitkUndoController.h>
-#include <mitkNodePredicateDataType.h>
-#include <mitkStandaloneDataStorage.h>
-#include <mitkPlanarRectangle.h>
-#include <mitkImage.h>
-#include <mitkLookupTable.h>
-#include <mitkLookupTableProperty.h>
-#include <mitkExtractSliceFilter.h>
-#include <mitkProgressBar.h>
-#include <mitkSliceNavigationController.h>
-
-#include <vtkPoints.h>
-#include <vtkPolyData.h>
-#include <vtkTransformPolyDataFilter.h>
-#include <vtkImageReslice.h>
-#include <vtkLookupTable.h>
-#include <vtkTexture.h>
-#include <vtkPlaneSource.h>
-#include <vtkTextureMapToPlane.h>
-#include <vtkDataSetMapper.h>
-#include <vtkActor.h>
-#include <vtkOutlineFilter.h>
-#include <vtkPolyDataMapper.h>
-#include <vtkRendererCollection.h>
-#include <vtkProperty.h>
-#include <vtkXMLImageDataReader.h>
-
 // Qt
 #include <QMessageBox>
-#include <QShortcut>
-#include <QTreeView>
 
 #include <iostream>
 using namespace std;
@@ -121,6 +84,7 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
     m_CurrentParamWidget=NULL;
+    m_CurrentSegButton=NULL;
 
     QVBoxLayout* vlayout = new QVBoxLayout(ui->lsParamWidgetContainer);
     vlayout->setContentsMargins(0,0,0,0);
@@ -131,7 +95,7 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
 
     ui->lsParamWidgetContainer->hide();
 
-    ui->thresholdParamWidget->hide();
+    ui->thresholdWidgetContainer->hide();
     ui->smoothWidget->hide();
     ui->splineWidget->hide();
     ui->batchWidget->hide();
@@ -448,9 +412,6 @@ void svSegmentation2D::RemoveContour(int contourIndex)
 
 std::vector<int> svSegmentation2D::GetBatchList()
 {
-//    std::vector<int> list={20,30,40,50,60,70,80,90};
-//    return list;
-
     std::vector<int> batchList;
 
     int maxID=ui->resliceSlider->GetSliceNumber();
@@ -609,14 +570,26 @@ void svSegmentation2D::CreateContours(SegmentationMethod method)
                 break;
         }
 
-        contour=PostprocessContour(contour);
+        if(contour && contour->GetContourPointNumber()>2)
+        {
+            contour=PostprocessContour(contour);
 
-        InsertContourByPathPosPoint(contour);
+            InsertContourByPathPosPoint(contour);
 
-        LoftContourGroup();
+            LoftContourGroup();
+
+            mitk::StatusBar::GetInstance()->DisplayText("contour added");
+        }
+        else
+        {
+            if(contour)
+                delete contour;
+
+            if(posList.size()==1)
+                QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
+        }
 
         mitk::ProgressBar::GetInstance()->Progress(1);
-
     }
 
     //LoftContourGroup();
@@ -629,16 +602,35 @@ void svSegmentation2D::SetSecondaryWidgetsVisible(bool visible)
     ui->batchWidget->setVisible(visible);
 }
 
+void svSegmentation2D::ResetGUI()
+{
+    if(m_CurrentParamWidget)
+    {
+        m_CurrentParamWidget->hide();
+        m_CurrentParamWidget=NULL;
+    }
+
+    if(m_CurrentSegButton)
+        m_CurrentSegButton->setStyleSheet("");
+
+    FinishPreview();//remove node, data, interaction for interactive threshold
+
+    if(m_ContourGroup)
+        m_ContourGroup->RemoveInvalidContours(GetTimeStep());
+
+    m_ContourChanging=false;
+}
 
 void svSegmentation2D::CreateLSContour()
 {
     if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->lsParamWidgetContainer)
     {
-        if(m_CurrentParamWidget)
-            m_CurrentParamWidget->hide();
+        ResetGUI();
 
         m_CurrentParamWidget=ui->lsParamWidgetContainer;
         m_CurrentParamWidget->show();
+
+        m_CurrentSegButton=ui->btnLevelSet;
 
         SetSecondaryWidgetsVisible(true);
 
@@ -651,13 +643,14 @@ void svSegmentation2D::CreateLSContour()
 
 void svSegmentation2D::CreateThresholdContour()
 {
-    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->thresholdParamWidget)
+    if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->thresholdWidgetContainer)
     {
-        if(m_CurrentParamWidget)
-            m_CurrentParamWidget->hide();
+        ResetGUI();
 
-        m_CurrentParamWidget=ui->thresholdParamWidget;
+        m_CurrentParamWidget=ui->thresholdWidgetContainer;
         m_CurrentParamWidget->show();
+
+        m_CurrentSegButton=ui->btnThreshold;
 
         SetSecondaryWidgetsVisible(true);
 
@@ -669,6 +662,11 @@ void svSegmentation2D::CreateThresholdContour()
         CreateContours(THRESHOLD_METHOD);
         return;
     }
+
+    if(m_CurrentSegButton->styleSheet().trimmed()!="")
+        return;
+
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
     cvStrPts*  strPts=svSegmentationUtils::GetSlicevtkImage(ui->resliceSlider->getCurrentPathPoint(), m_cvImage->GetVtkStructuredPoints(), ui->resliceSlider->getResliceSize());
 
@@ -715,7 +713,6 @@ void svSegmentation2D::UpdatePreview()
     }
 }
 
-
 void svSegmentation2D::FinishPreview()
 {
     if(m_PreviewContourModel.IsNull())
@@ -725,11 +722,23 @@ void svSegmentation2D::FinishPreview()
 
     svContour* contour=m_PreviewContourModel->GetContour(timeStep);
 
-    contour=PostprocessContour(contour);
+    if(contour && contour->GetContourPointNumber()>2)
+    {
+        contour=PostprocessContour(contour);
 
-    mitk::OperationEvent::IncCurrObjectEventId();
+        mitk::OperationEvent::IncCurrObjectEventId();
 
-    InsertContourByPathPosPoint(contour);
+        InsertContourByPathPosPoint(contour);
+
+        LoftContourGroup();
+    }
+    else
+    {
+        if(contour)
+            delete contour;
+
+//        QMessageBox::warning(NULL,"No Valid Contour Created","Contour not created and added since it's invalid");
+    }
 
     if( m_PreviewContourModelObserverFinishTag)
     {
@@ -746,18 +755,19 @@ void svSegmentation2D::FinishPreview()
         m_PreviewDataNode->SetDataInteractor(NULL);
         m_PreviewDataNodeInteractor=NULL;
         GetDataStorage()->Remove(m_PreviewDataNode);
+        m_PreviewDataNode=NULL;
     }
 
-    LoftContourGroup();
+    m_PreviewContourModel=NULL;
+    ui->btnThreshold->setStyleSheet("");
 }
 
 void svSegmentation2D::CreateCircle()
 {
-    if(m_CurrentParamWidget)
-    {
-        m_CurrentParamWidget->hide();
-        m_CurrentParamWidget=NULL;
-    }
+    ResetGUI();
+
+    m_CurrentSegButton=ui->btnCircle;
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
     SetSecondaryWidgetsVisible(false);
 
@@ -775,11 +785,10 @@ void svSegmentation2D::CreateCircle()
 
 void svSegmentation2D::CreateEllipse()
 {
-    if(m_CurrentParamWidget)
-    {
-        m_CurrentParamWidget->hide();
-        m_CurrentParamWidget=NULL;
-    }
+    ResetGUI();
+
+    m_CurrentSegButton=ui->btnEllipse;
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
     SetSecondaryWidgetsVisible(false);
 
@@ -797,11 +806,7 @@ void svSegmentation2D::CreateEllipse()
 
 void svSegmentation2D::CreateSplinePoly()
 {
-    if(m_CurrentParamWidget)
-    {
-        m_CurrentParamWidget->hide();
-        m_CurrentParamWidget=NULL;
-    }
+    ResetGUI();
 
     SetSecondaryWidgetsVisible(false);
 
@@ -815,6 +820,10 @@ void svSegmentation2D::CreateSplinePoly()
         int splineControlNumber=ui->spinBoxControlNumber->value();
         contour=svContourSplinePolygon::CreateByFitting(existingContour,splineControlNumber);
     }else{
+
+        m_CurrentSegButton=ui->btnSplinePoly;
+        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+
         contour=new svContourSplinePolygon();
         contour->SetClosed(false);
         contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
@@ -832,11 +841,10 @@ void svSegmentation2D::CreateSplinePoly()
 
 void svSegmentation2D::CreatePolygon()
 {
-    if(m_CurrentParamWidget)
-    {
-        m_CurrentParamWidget->hide();
-        m_CurrentParamWidget=NULL;
-    }
+    ResetGUI();
+
+    m_CurrentSegButton=ui->btnPolygon;
+    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
     SetSecondaryWidgetsVisible(false);
 
@@ -859,7 +867,12 @@ void svSegmentation2D::SmoothSelected()
 //    int fourierNumber=12;
     int fourierNumber=ui->spinBoxSmoothNumber->value();
 
-    int index= ui->listWidget->selectionModel()->selectedRows().front().row();
+    QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+
+    if(selectedRows.isEmpty())
+        return;
+
+    int index= selectedRows.front().row();
 
     svContour* smoothedContour=m_ContourGroup->GetContour(index)->CreateSmoothedContour(fourierNumber);
 
@@ -1029,6 +1042,7 @@ void svSegmentation2D::LoftContourGroup()
 
         int timeStep=GetTimeStep();
 
+        m_ContourGroup->RemoveInvalidContours(timeStep);
         m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,timeStep),timeStep);
 
     }
@@ -1095,4 +1109,6 @@ void svSegmentation2D::ContourChangingOn()
 void svSegmentation2D::ContourChangingOff()
 {
     m_ContourChanging=false;
+    if(m_CurrentSegButton)
+        m_CurrentSegButton->setStyleSheet("");
 }

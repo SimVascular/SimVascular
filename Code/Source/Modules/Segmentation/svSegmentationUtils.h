@@ -44,6 +44,27 @@ public:
         int maxIter2;
         double maxErr2;
 
+        svLSParam()
+            : ctrx(0.0)
+            , ctry(0.0)
+            , ctrz(0.0)
+            , radius(0.3)
+            , sigmaFeat1(2.5)
+            , sigmaAdv1(0.0)
+            , kc(0.6)
+            , expFactorRising(0.25)
+            , expFactorFalling(0.5)
+            , maxIter1(2000)
+            , maxErr1(0.001)
+            , sigmaFeat2(1.5)
+            , sigmaAdv2(0.0)
+            , kupp(0.8)
+            , klow(0.09)
+            , maxIter2(1000)
+            , maxErr2(0.0005)
+        {
+        }
+
     };
 
     svSegmentationUtils();
@@ -78,7 +99,7 @@ public:
     static vtkPolyData* orientBack(vtkPolyData* srcPd, mitk::PlaneGeometry* planeGeometry);
 
 
-    static std::vector<mitk::Point3D> GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed);
+    static std::vector<mitk::Point3D> GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed, double seedPoint[3]);
 
     static svContour* CreateThresholdContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size);
 

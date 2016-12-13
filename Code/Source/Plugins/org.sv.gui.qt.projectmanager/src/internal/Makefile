@@ -64,9 +64,12 @@ UIFILES = \
 QRCFILES = \
   ../../resources/projectmanager.qrc
 
-QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc
+QRCFILES += org_sv_gui_qt_projectmanager_manifest.qrc \
+            org_sv_gui_qt_projectmanager_cached.qrc
 
-RCFILES = 
+RCFILES = \
+  ../../resources/icon.xpm \
+  ../../plugin.xml
 
 CXXSRCS += $(addprefix moc_,$(HDRS:.h=.cxx))
 
@@ -90,7 +93,7 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 
 TARGET_LIB_NAME = org_sv_gui_qt_projectmanager
 

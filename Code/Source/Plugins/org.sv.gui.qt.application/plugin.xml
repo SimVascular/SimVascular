@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin>
+  <extension id="org.sv.qt.application" point="org.blueberry.osgi.applications">
+    <application>
+      <run class="svApplication"/>
+    </application>
+  </extension>
+
+  <extension id="svworkbench" point="org.blueberry.core.runtime.products">
+    <product name="SimVascular Workbench" application="org.sv.qt.application" />
+  </extension>
+
+  <extension point="org.blueberry.ui.intro">
+    <intro id="org.sv.qt.applicationintro"
+      class="svWorkbenchIntroPart"
+      role="editor"/>
+    <introProductBinding
+      productId="org.sv.gui.qt.application.svworkbench"
+      introId="org.sv.qt.applicationintro"/>
+  </extension>
+
+  <extension point="org.blueberry.ui.perspectives">
+    <perspective
+      id="org.sv.application.defaultperspective"
+      name="SimVascular"
+      class="svDefaultPerspective"
+      icon="resources/icon.png">
+    </perspective>
+  </extension>
+</plugin>

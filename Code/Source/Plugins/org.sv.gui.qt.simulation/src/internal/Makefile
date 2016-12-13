@@ -45,18 +45,33 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 HDRS	= \
     svSimJobCreate.h \
     svSimJobCreateAction.h \
+    svCapBCWidget.h \
+    svTableCapDelegate.h \
+    svTableSolverDelegate.h \
+    svSimulationView.h \
+    svSimulationPreferencePage.h \
     svSimulationPluginActivator.h
 
 CXXSRCS	= \
     svSimJobCreate.cxx \
     svSimJobCreateAction.cxx \
+    svCapBCWidget.cxx \
+    svTableCapDelegate.cxx \
+    svTableSolverDelegate.cxx \
+    svSimulationView.cxx \
+    svSimulationPreferencePage.cxx \
     svSimulationPluginActivator.cxx
 
 UIFILES = \
-    svSimJobCreate.ui
+    svSimJobCreate.ui \
+    svCapBCWidget.ui \
+    svSimulationPreferencePage.ui \
+    svSimulationView.ui
 
-QRCFILES = org_sv_gui_qt_simulation_manifest.qrc \
-           org_sv_gui_qt_simulation_cached.qrc
+QRCFILES = ../../resources/simulation.qrc
+
+QRCFILES += org_sv_gui_qt_simulation_manifest.qrc \
+            org_sv_gui_qt_simulation_cached.qrc
 
 RCFILES = \
   ../../plugin.xml \
@@ -76,6 +91,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_simulation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_mesh$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
@@ -84,7 +100,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 
 TARGET_LIB_NAME = org_sv_gui_qt_simulation
 

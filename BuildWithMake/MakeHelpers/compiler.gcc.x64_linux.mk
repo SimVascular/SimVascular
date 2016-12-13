@@ -37,7 +37,7 @@ ifeq ($(LINK_WITH_DEBUG),1)
     GLOBAL_LFLAGS   += -g
 endif
     GLOBAL_LFLAGS   += -lm
-    SHARED_LFLAGS   =
+    SHARED_LFLAGS   = -Wl,-z,defs
     STATIC_FLAG     =
     DYNAMIC_FLAG    =
     TEMPLATE_AR     = $(AR)

@@ -13,7 +13,7 @@
 static mitk::CustomMimeType CreatesvContourGroupMimeType()
 {
     mitk::CustomMimeType mimeType(mitk::IOMimeTypes::DEFAULT_BASE_NAME() + ".svcontourgroup");
-    mimeType.SetCategory("ContourGroup");
+    mimeType.SetCategory("SimVascular Files");
     mimeType.AddExtension("ctgr");
     mimeType.SetComment("SimVascular ContourGroup");
 

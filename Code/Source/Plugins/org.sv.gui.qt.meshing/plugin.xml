@@ -2,15 +2,17 @@
 <plugin>
 
   <extension point="org.blueberry.ui.views">
-    <view id="org.sv.views.meshedit"
-          name="Edit Mesh"
+    <view id="org.sv.views.meshing"
+          name="SV Meshing"
           class="svMeshEdit"
           icon="resources/mesh.png" />
   </extension>
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
-  <contextMenuAction nodeDescriptorName="svMeshFolder" label="Create Mesh" icon="" class="svMeshCreateAction" />
-  <contextMenuAction nodeDescriptorName="svMitkMesh" label="Save Legacy Mesh" icon="" class="svMeshLegacySaveAction" />
+    <contextMenuAction nodeDescriptorName="svMeshFolder" label="Create Mesh" icon="" class="svMeshCreateAction" />
+    <contextMenuAction nodeDescriptorName="svMitkMesh" label="Save Legacy Mesh" icon="" class="svMeshLegacySaveAction" />
+    <contextMenuAction nodeDescriptorName="svMitkMesh" label="Load/Unload Sufurface Mesh" icon="" class="svMeshLoadSurfaceAction" />
+    <contextMenuAction nodeDescriptorName="svMitkMesh" label="Load/Unload Volume Mesh" icon="" class="svMeshLoadVolumeAction" />
   </extension>
 
 </plugin>

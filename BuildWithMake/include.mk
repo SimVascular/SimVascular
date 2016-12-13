@@ -519,15 +519,6 @@ ifeq ($(SV_USE_ITK),1)
   endif
 endif
 
-# for now, combine mitk code qt gui code
-ifeq ($(SV_USE_MITK),1)
-  ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Modules
-  else
-     LIBDIRS += ../Code/Source/Modules
-  endif
-endif
-
 ifeq ($(SV_USE_MMG),1)
   ifeq ($(SV_USE_MMG_SHARED),1)
      SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
@@ -637,8 +628,17 @@ ifeq ($(SV_USE_PYTHON),1)
 endif
 
 # -------------------------
-# Qt
+# Qt & MITK
 # -------------------------
+
+# for now, combine mitk code qt gui code
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Modules
+  else
+     LIBDIRS += ../Code/Source/Modules
+  endif
+endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
@@ -670,7 +670,7 @@ ifeq ($(SV_USE_MITK),1)
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.pathplanning/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.segmentation/src/internal \
                      -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.simulation/src/internal \
-                     -I$(TOP)/../Code/Source/Plugins/org.mitk.gui.qt.datamanager/src/internal \
+                     -I$(TOP)/../Code/Source/Plugins/org.sv.gui.qt.application/src/internal \
                      -I$(TOP)/../Code/Source/Modules/Common \
                      -I$(TOP)/../Code/Source/Modules/Model \
                      -I$(TOP)/../Code/Source/Modules/Mesh \

@@ -1,4 +1,5 @@
 #include "svSegmentationUtils.h"
+#include "svVtkUtils.h"
 
 #include "SimVascular.h"
 #include "cvStrPts.h"
@@ -41,8 +42,6 @@
 
 #include <iostream>
 using namespace std;
-
-
 
 double SV_PI=3.1415926535;
 
@@ -429,50 +428,15 @@ cvStrPts* svSegmentationUtils::GetSlicevtkImage(svPathElement::svPathPoint pathP
     return vtkImageData2cvStrPts(rs->GetOutput());
 }
 
-
 cvStrPts* svSegmentationUtils::image2cvStrPts(mitk::Image* image)
 {
-    vtkImageData* vtkImg=image->GetVtkImageData();
-    mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
-    mitk::BaseGeometry::BoundsArrayType extent=image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetBounds();
+    vtkImageData* vtkImg=svVtkUtils::MitkImage2VtkImage(image);
 
     vtkStructuredPoints *mysp = vtkStructuredPoints::New();
     mysp->ShallowCopy(vtkImg);
 
-    int whole[6];
-    double *spacing, origin[3];
-
-//    vtkImg->GetExtent(whole);
-    whole[0]=extent[0];
-    whole[1]=extent[1]-1;
-    whole[2]=extent[2];
-    whole[3]=extent[3]-1;
-    whole[4]=extent[4];
-    whole[5]=extent[5]-1;
-
-    spacing = vtkImg->GetSpacing();
-//    vtkImg->GetOrigin(origin);
-
-    origin[0] = spacing[0] * whole[0] +org[0];
-    origin[1] = spacing[1] * whole[2] +org[1];
-    whole[1] -= whole[0];
-    whole[3] -= whole[2];
-    whole[0] = 0;
-    whole[2] = 0;
-    // shift Z origin for 3-D images
-//    if (whole[4] > 0 && whole[5] > 0) {
-        origin[2] = spacing[2] * whole[4]+org[2];
-        whole[5] -= whole[4];
-        whole[4] = 0;
-//    }
-    mysp->SetExtent(whole);
-    mysp->SetOrigin(origin);
-    mysp->SetSpacing(spacing);
-
     cvStrPts *sp;
     sp = new cvStrPts (mysp);
-
-    //    mysp->Delete();
 
     return sp;
 }
@@ -679,7 +643,7 @@ vtkPolyData* svSegmentationUtils::orientBack(vtkPolyData* srcPd, mitk::PlaneGeom
     return pd;
 }
 
-std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed)
+std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed, double seedPoint[3])
 {
     vtkSmartPointer<vtkContourFilter> contourFilter=vtkSmartPointer<vtkContourFilter>::New();
     contourFilter->SetInputDataObject(imageSlice);
@@ -697,7 +661,9 @@ std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData
     vtkSmartPointer<vtkPolyDataConnectivityFilter> connectFilter=vtkSmartPointer<vtkPolyDataConnectivityFilter>::New();
 //    connectFilter->SetInputData(cleanContour);
     connectFilter->SetInputData(uncleanContour);
-    connectFilter->SetExtractionModeToLargestRegion();
+//    connectFilter->SetExtractionModeToLargestRegion();
+    connectFilter->SetExtractionModeToClosestPointRegion();
+    connectFilter->SetClosestPoint(seedPoint);
     connectFilter->Update();
 
     vtkSmartPointer<vtkPolyData> selectedContour=connectFilter->GetOutput();
@@ -753,7 +719,8 @@ svContour* svSegmentationUtils::CreateThresholdContour(svPathElement::svPathPoin
     cvStrPts*  strPts=GetSlicevtkImage(pathPoint, volumeimage,  size);
 
     bool ifClosed;
-    std::vector<mitk::Point3D> contourPoints=GetThresholdContour(strPts->GetVtkStructuredPoints(), thresholdValue, pathPoint, ifClosed);
+    double point[3]={0};
+    std::vector<mitk::Point3D> contourPoints=GetThresholdContour(strPts->GetVtkStructuredPoints(), thresholdValue, pathPoint, ifClosed, point);
 
     contour->SetClosed(ifClosed);
     contour->SetContourPoints(contourPoints);

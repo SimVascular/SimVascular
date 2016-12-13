@@ -8,6 +8,8 @@
 
 #include <QmitkFunctionality.h>
 
+#include <berryIBerryPreferences.h>
+
 #include <QWidget>
 #include <QStandardItemModel>
 
@@ -55,7 +57,6 @@ public slots:
 
     void UpdateGUICap();
 
-
     void WallTypeSelectionChanged(int index);
 
     void TableVarSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
@@ -72,13 +73,21 @@ public slots:
     void UpdateGUISolver();
 
 
-//    void CreateDataFiles();
+    void UpdateGUIJob();
 
-//    void RunJob();
+    void ExportInputFiles();
 
-//    void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
+    void ExportAllFiles();
 
-//    void ConvertResults();
+    void CreateAllFiles();
+
+    void ImportFiles();//like rcrt.dat, cort.dat, Qhistor.dat, impt.dat,etc.
+
+    void RunJob();
+
+    void SetResultDir();
+
+    void ExportResults();
 
 public:
 
@@ -100,7 +109,11 @@ public:
 
     virtual void Hidden() override;
 
+    virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
+
     svSimJob* CreateJob(std::string& msg);
+
+    bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob);
 
     bool IsDouble(std::string value);
 
@@ -140,6 +153,14 @@ private:
     svCapBCWidget* m_CapBCWidget;
 
     QStandardItemModel* m_TableModelSolver;
+
+    QString m_PresolverPath;
+    QString m_FlowsolverPath;
+    bool m_UseMPI;
+    QString m_MPIExecPath;
+    bool m_UseCustom;
+    QString m_SolverTemplatePath;
+    QString m_PostsolverPath;
 
 };
 

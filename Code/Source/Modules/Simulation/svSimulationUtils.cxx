@@ -11,6 +11,9 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
     std::stringstream ss;
     std::map<std::string,int> IDs;
 
+    if(outputDir!="")
+        outputDir=outputDir+"/";
+
     ss << "mesh_and_adjncy_vtu mesh-complete/mesh-complete.mesh.vtu\n";
 
     //set ids for caps
@@ -88,8 +91,8 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
             ss << "bct_merge_on\n";
         }
 
-        ss << "bct_write_dat " << outputDir << "/bct.dat\n";
-        ss << "bct_write_vtp " << outputDir << "/bct.vtp\n";
+        ss << "bct_write_dat " << outputDir << "bct.dat\n";
+        ss << "bct_write_vtp " << outputDir << "bct.vtp\n";
     }
 
     //set prescribed pressure cap
@@ -122,7 +125,7 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
         ss << "deformable_kcons " << wallProps["Shear Constant"] << "\n";
         ss << "deformable_pressure " << wallProps["Pressure"] << "\n";
         ss << "deformable_solve_displacements\n";
-        ss << "wall_displacements_write_vtp " << outputDir <<"/displacement.vtp" << "\n";
+        ss << "wall_displacements_write_vtp " << outputDir <<"displacement.vtp" << "\n";
     }
     else if(wallProps["Type"]=="variable")
     {
@@ -162,23 +165,23 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
         }
         ss << "solve_varwall_E\n";
 
-        ss << "varwallprop_write_vtp " << outputDir <<"/varwallprop.vtp" << "\n";
+        ss << "varwallprop_write_vtp " << outputDir <<"varwallprop.vtp" << "\n";
 
         ss << "deformable_nu " << wallProps["Poisson Ratio"] << "\n";
         ss << "deformable_kcons " << wallProps["Shear Constant"] << "\n";
         ss << "deformable_pressure " << wallProps["Pressure"] << "\n";
         ss << "deformable_solve_varwall_displacements\n";
-        ss << "wall_displacements_write_vtp " << outputDir <<"/displacement.vtp" << "\n";
+        ss << "wall_displacements_write_vtp " << outputDir <<"displacement.vtp" << "\n";
     }
 
-    ss << "write_geombc " << outputDir <<"/geombc.dat.1" << "\n";
-    ss << "write_restart " << outputDir <<"/restart.0.1" << "\n";
+    ss << "write_geombc " << outputDir <<"geombc.dat.1" << "\n";
+    ss << "write_restart " << outputDir <<"restart.0.1" << "\n";
     if(deformable)
     {
-        ss << "append_displacements " << outputDir <<"/restart.0.1" << "\n";
+        ss << "append_displacements " << outputDir <<"restart.0.1" << "\n";
     }
 
-//    ss << "write_numstart " << outputDir <<"/numstart.dat" << "\n";
+//    ss << "write_numstart " << outputDir <<"numstart.dat" << "\n";
 
     return ss.str();
 }
@@ -188,7 +191,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
     std::stringstream ss;
     auto basicProps=job->GetBasicProps();
 
-    ss << "2\n";
+//    ss << "2\n";
 
     auto capProps=job->GetCapProps();
     auto it = capProps.begin();
@@ -214,7 +217,12 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
         it++;
     }
 
-    return ss.str();
+    if(ss.str()=="")
+        return "";
+    else
+        return "2\n"+ss.str();;
+
+//    return ss.str();
 }
 
 std::string svSimulationUtils::CreateFlowSolverFileContent(svSimJob* job)

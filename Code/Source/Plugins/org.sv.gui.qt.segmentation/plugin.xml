@@ -3,7 +3,7 @@
 
   <extension point="org.blueberry.ui.views">
     <view id="org.sv.views.segmentation2d"
-          name="Edit Contour Group"
+          name="SV 2D Segmentation"
           class="svSegmentation2D"
           icon="resources/contourgroup.png" />
   </extension>

@@ -67,15 +67,31 @@ void svContourModelThresholdInteractor::StartDrawing(mitk::StateMachineAction*, 
     if (m_Contour==NULL)
         return;
 
+    mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+    const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
+
     m_Contour->SetFinished(false);
     //    mitk::OperationEvent::IncCurrObjectEventId();
 
     m_LastPoint = positionEvent->GetPositionInWorld();
 
     vtkImageData* imageSlice=m_Contour->GetVtkImageSlice();
-
     if(imageSlice==NULL)
         return;
+
+    double spacing[3];
+    double origin[3];
+    int extent[6];
+    imageSlice->GetSpacing(spacing);
+    imageSlice->GetOrigin(origin);
+    imageSlice->GetExtent(extent);
+
+    mitk::Point2D p2Dmm;
+    rendererPlaneGeometry->Map(m_LastPoint, p2Dmm);
+    double seedPoint[3]={0};
+    seedPoint[0]=p2Dmm[0]-(extent[1]-extent[0]+1)*spacing[0]/2.0;
+    seedPoint[1]=p2Dmm[1]-(extent[3]-extent[2]+1)*spacing[1]/2.0;
+    seedPoint[2]=0.0;
 
     double range[2];
     imageSlice->GetScalarRange(range);
@@ -88,7 +104,7 @@ void svContourModelThresholdInteractor::StartDrawing(mitk::StateMachineAction*, 
     svPathElement::svPathPoint pathPoint=m_Contour->GetPathPoint();
 
     bool ifClosed;
-    std::vector<mitk::Point3D> contourPoints=svSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed);
+    std::vector<mitk::Point3D> contourPoints=svSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed, seedPoint);
 
     m_Contour->SetClosed(ifClosed);
     m_Contour->SetContourPoints(contourPoints);
@@ -111,7 +127,7 @@ void svContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*,
         return;
 
     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
-    const mitk::PlaneGeometry *renderingPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
+    const mitk::PlaneGeometry *rendererPlaneGeometry = renderer->GetCurrentWorldPlaneGeometry();
 
     mitk::Point3D point = positionEvent->GetPositionInWorld();
     mitk::Point2D newDisplayPosition;
@@ -129,9 +145,25 @@ void svContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*,
     svPathElement::svPathPoint pathPoint=m_Contour->GetPathPoint();
 
     vtkImageData* imageSlice=m_Contour->GetVtkImageSlice();
+    if(imageSlice==NULL)
+        return;
+
+    double spacing[3];
+    double origin[3];
+    int extent[6];
+    imageSlice->GetSpacing(spacing);
+    imageSlice->GetOrigin(origin);
+    imageSlice->GetExtent(extent);
+
+    mitk::Point2D p2Dmm;
+    rendererPlaneGeometry->Map(m_LastPoint, p2Dmm);
+    double seedPoint[3]={0};
+    seedPoint[0]=p2Dmm[0]-(extent[1]-extent[0]+1)*spacing[0]/2.0;
+    seedPoint[1]=p2Dmm[1]-(extent[3]-extent[2]+1)*spacing[1]/2.0;
+    seedPoint[2]=0.0;
 
     bool ifClosed;
-    std::vector<mitk::Point3D> contourPoints=svSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed);
+    std::vector<mitk::Point3D> contourPoints=svSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed, seedPoint);
 
     m_Contour->SetClosed(ifClosed);
     m_Contour->SetContourPoints(contourPoints);
@@ -141,7 +173,6 @@ void svContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*,
     model->InvokeEvent( UpdateInteractionContourModelEvent() );
 
     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
-
 }
 
 void svContourModelThresholdInteractor::FinishDrawing(mitk::StateMachineAction*, mitk::InteractionEvent* interactionEvent )

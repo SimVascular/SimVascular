@@ -11,6 +11,7 @@
 #include <berryPlatform.h>
 
 #include <QFileDialog>
+#include <QMessageBox>
 
 svMeshLegacySaveAction::svMeshLegacySaveAction()
 {
@@ -22,16 +23,16 @@ svMeshLegacySaveAction::~svMeshLegacySaveAction()
 
 void svMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
-    mitk::DataNode::Pointer selectedNode = selectedNodes[0];
+    mitk::DataNode::Pointer meshNode = selectedNodes[0];
 
-    svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(selectedNode->GetData());
+    svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(meshNode->GetData());
     if(!mitkMesh) return;
 
     std::string modelName=mitkMesh->GetModelName();
 
     mitk::DataNode::Pointer modelNode=NULL;
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (selectedNode,isProjFolder,false);
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (meshNode,isProjFolder,false);
 
     if(rs->size()>0)
     {
@@ -83,7 +84,11 @@ void svMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
 
         if(dir.isEmpty()) return;
 
-        svMeshLegacyIO::WriteFiles(mitkMesh->GetMesh(),model->GetModelElement(), dir);
+        if(!svMeshLegacyIO::WriteFiles(meshNode,model->GetModelElement(), dir))
+        {
+            QMessageBox::warning(NULL,"Mesh info missing","Please make sure the mesh exists and is valid.");
+            return;
+        }
 
         if(prefs.IsNotNull())
         {

@@ -112,6 +112,8 @@ public:
 
     void RemoveContour(int contourIndex, unsigned int t = 0);
 
+    void RemoveInvalidContours(unsigned int t = 0);
+
     void SetContour(int contourIndex, svContour* contour, unsigned int t = 0);
 
     bool IsContourSelected(int contourIndex, unsigned int t = 0);
@@ -172,6 +174,8 @@ public:
     void SetCurrentIndexOn2DView(int index);
 
     std::vector<svContour*> GetContourSet(unsigned int t = 0);
+
+    std::vector<svContour*> GetValidContourSet(unsigned int t = 0);//contour points > 1
 
     svLoftingParam* GetLoftingParam() const {return m_LoftingParam;}
 

@@ -13,10 +13,19 @@
 #include "svModel.h"
 #include "svMitkMesh.h"
 #include "svMitkSimJob.h"
+#include "svMitkMeshIO.h"
+#include "svVtkUtils.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkIOUtil.h>
 #include <mitkRenderingManager.h>
+#include <mitkCoreServices.h>
+#include <mitkIMimeTypeProvider.h>
+#include <mitkMimeType.h>
+#include <mitkCustomMimeType.h>
+
+#include <vtkImageData.h>
+#include <vtkXMLImageDataWriter.h>
 
 #include <QDir>
 #include <QDomDocument>
@@ -123,7 +132,12 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
             QDomElement imageElement=imageNode.toElement();
             if(imageElement.isNull()) continue;
 
-            imageFilePathList<<imageElement.attribute("path");
+            QString inProj=imageElement.attribute("in_project");
+
+            if(inProj=="yes")
+                imageFilePathList<<(projPath+"/"+imageFolderName+"/"+imageElement.attribute("name"));
+            else
+                imageFilePathList<<imageElement.attribute("path");
         }
 
         pathFolderName=projDesc.firstChildElement("paths").attribute("folder_name");
@@ -157,7 +171,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         for(int i=0;i<imageFilePathList.size();i++)
         {
             mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePathList[i].toStdString());
-            imageNode->SetVisibility(false);
+//            imageNode->SetVisibility(false);
             dataStorage->Add(imageNode,imageFolderNode);
         }
 
@@ -270,14 +284,11 @@ void svProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
 }
 
 // so far, no copy into project
-void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode)
+void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject)
 {
     mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
 
-    dataStorage->Add(imageNode,imageFolderNode);
-
     mitk::RenderingManager::GetInstance()->InitializeViewsByBoundingObjects(dataStorage);
-
 
     //add image to config
 
@@ -302,10 +313,63 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
     QDomElement projDesc = doc.firstChildElement("projectDescription");
     QDomElement imagesElement=projDesc.firstChildElement("images");
 
+    QDomElement previousImgElement=imagesElement.firstChildElement("image");
+    if(!previousImgElement.isNull())
+    {
+        QString inProj=previousImgElement.attribute("in_project");
+
+        if(inProj=="yes")
+        {
+            QString piPath=QString::fromStdString(projPath+"/"+imageFolderNode->GetName()+"/"+previousImgElement.attribute("name").toStdString());
+            QFile piFile(piPath);
+            piFile.remove();
+        }
+
+        mitk::DataStorage::SetOfObjects::ConstPointer nodesToRemove=dataStorage->GetDerivations(imageFolderNode,nullptr,false);
+        if( !nodesToRemove->empty())
+        {
+            dataStorage->Remove(nodesToRemove);
+        }
+
+        imagesElement.removeChild(previousImgElement);
+    }
+
     QDomElement imgElement = doc.createElement("image");
-    imgElement.setAttribute("in_project","no");
-    imgElement.setAttribute("path",imageFilePath);
-    imgElement.setAttribute("name","");
+    if(copyIntoProject)
+    {
+        imgElement.setAttribute("in_project","yes");
+        QString imageName=QString::fromStdString(imageNode->GetName());
+        if(imageName.size()>15)
+            imageName=imageName.mid(0,15);
+
+        imageName=imageName+".vti";
+        imgElement.setAttribute("name",imageName);
+        std::string ipath=projPath+"/"+imageFolderNode->GetName();
+        std::string ifilePath=ipath+"/"+imageName.toStdString();
+        imageNode->SetStringProperty("path",ipath.c_str());
+        mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
+        if(image)
+        {
+            vtkImageData* vtkImg=svVtkUtils::MitkImage2VtkImage(image);
+            if(vtkImg)
+            {
+                vtkSmartPointer<vtkXMLImageDataWriter> writer = vtkSmartPointer<vtkXMLImageDataWriter>::New();
+                writer->SetFileName(ifilePath.c_str());
+                writer->SetInputData(vtkImg);
+                writer->Write();
+            }
+        }
+
+//        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
+    }
+    else
+    {
+        imgElement.setAttribute("in_project","no");
+        imgElement.setAttribute("path",imageFilePath);
+    }
+
+    dataStorage->Add(imageNode,imageFolderNode);
+
     imagesElement.appendChild(imgElement);
 
     QString xml = doc.toString(4);
@@ -316,7 +380,6 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
         QTextStream out(&file);
         out << xml <<endl;
     }
-
 
 }
 
@@ -411,6 +474,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         mitk::DataNode::Pointer node=rs->GetElement(i);
+
         svMitkMesh *mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
         if(mitkMesh==NULL || !mitkMesh->IsDataModified())
             continue;
@@ -453,4 +517,57 @@ void svProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorage)
     {
         SaveProject(dataStorage, rs->GetElement(i));
     }
+}
+
+void svProjectManager::LoadData(mitk::DataNode::Pointer dataNode)
+{
+    std::string path="";
+    dataNode->GetStringProperty("path",path);
+    if(path=="")
+        return;
+
+    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
+    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
+    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
+    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+    std::string extension="";
+    if(isPath->CheckNode(dataNode))
+    {
+        extension="pth";
+    }
+    else if(isContourGroup->CheckNode(dataNode))
+    {
+        extension="ctgr";
+    }
+    else if(isModel->CheckNode(dataNode))
+    {
+        extension="mdl";
+    }
+    else if(isMesh->CheckNode(dataNode))
+    {
+        extension="msh";
+    }
+    else if(isSimJob->CheckNode(dataNode))
+    {
+        extension="sjb";
+    }
+
+    std::vector<mitk::BaseData::Pointer> vdata = mitk::IOUtil::Load(path+"/"+dataNode->GetName()+"."+extension);
+    if(vdata.size()>0)
+    {
+        dataNode->SetData(vdata[0]);
+    }
+}
+
+mitk::DataNode::Pointer svProjectManager::GetProjectFolderNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode)
+{
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (dataNode,isProjFolder,false);
+
+    mitk::DataNode::Pointer projFolderNode=NULL;
+    if(rs->size()>0)
+        projFolderNode=rs->GetElement(0);
+
+    return projFolderNode;
 }

@@ -114,6 +114,8 @@ public slots:
 
     void ContourChangingOff();
 
+    void ResetGUI();
+
 public:
 
     int GetTimeStep();
@@ -143,6 +145,8 @@ protected:
     QWidget* m_Parent;
 
     QWidget* m_CurrentParamWidget;
+
+    QWidget* m_CurrentSegButton;
 
     svLevelSet2DWidget* m_LSParamWidget;
 

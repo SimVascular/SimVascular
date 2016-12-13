@@ -19,7 +19,7 @@
 # % sudo apt-get install libXmu-dev     (mitk)
 # % sudo apt-get install libXi-dev      (mitk)
 # % sudo apt-get install libtiff4-dev   (mitk)
-# % sudo apt-get install wrap0-dev      (mitk)
+# % sudo apt-get install libwrap0-dev   (mitk)
 # % sudo apt-get install libssl-dev     (python)
 # % sudo apt-get install swig3.0        (gdcm, mitk)
 #
@@ -39,6 +39,7 @@
 #
 # % cd /usr/local/bin
 # % sudo ln -s ../package/cmake-3.6.1-Linux-x86_64/bin/ccmake .
+# % sudo ln -s ../package/cmake-3.6.1-Linux-x86_64/bin/cmake .
 # % sudo ln -s ../package/cmake-3.6.1-Linux-x86_64/bin/cmake-gui .
 # % sudo ln -s ../package/cmake-3.6.1-Linux-x86_64/bin/cpack .
 # % sudo ln -s ../package/cmake-3.6.1-Linux-x86_64/bin/ctest .
@@ -46,7 +47,7 @@
 #
 # You need to install Qt 5.4 from the Qt company installers.
 #
-# Qt: /usr/local/package/Qt5.4.2
+# Qt: /opt/Qt5.4.2
 #
 
 #  NOTE: the installers for tcllib and tklib are interactive.

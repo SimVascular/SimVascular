@@ -49,6 +49,8 @@ HDRS	= \
     svMeshCreateAction.h \
     svMeshEdit.h \
     svMeshLegacySaveAction.h \
+    svMeshLoadSurfaceAction.h \
+    svMeshLoadVolumeAction.h \
     svMeshingPluginActivator.h
 
 CXXSRCS	= \
@@ -57,6 +59,8 @@ CXXSRCS	= \
     svMeshEdit.cxx \
     svVtkMeshSphereWidget.cxx \
     svMeshLegacySaveAction.cxx \
+    svMeshLoadSurfaceAction.cxx \
+    svMeshLoadVolumeAction.cxx \
     svMeshingPluginActivator.cxx
 
 UIFILES = \
@@ -92,7 +96,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS) -I../../../org.mitk.gui.qt.datamanager/src
+EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 
 TARGET_LIB_NAME = org_sv_gui_qt_meshing
 

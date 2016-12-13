@@ -14,7 +14,7 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #Qt5
-export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
+export Qt5_DIR=/opt/Qt5.4.2/5.4/gcc_64/lib/cmake/Qt5"
 export EXTERNALS_DIR="/usr/local/sv/ext"
 
 sudo mkdir -p $EXTERNALS_DIR

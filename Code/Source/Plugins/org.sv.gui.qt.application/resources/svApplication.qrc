@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/org.sv.gui.qt.application">
+        <file>icon.png</file>
+        <file>CloseSV.png</file>
+        <file>SaveAllSV.png</file>
+    </qresource>
+</RCC>
