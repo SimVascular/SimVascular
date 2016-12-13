@@ -86,8 +86,8 @@ ifeq ($(CLUSTER),x64_linux)
 $(TARGET_SHARED):	$(DLLOBJS)
 	for fn in $(TARGET_SHARED); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED:.$(SOEXT)=.$(STATICEXT)); do /bin/rm -f $$fn; done
-	$(SHAR) $(SHARED_LFLAGS) $(TARGET_SHARED)  \
-             $(DLLOBJS) $(LFLAGS) $(DLLLIBS)
+	$(SHAR) $(TARGET_SHARED)  \
+             $(DLLOBJS) $(LFLAGS) $(DLLLIBS) $(SHARED_LFLAGS)
 ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	mkdir -p $(TOP)/Bin/plugins
 	cp -f $(TARGET_SHARED) $(TOP)/Bin/plugins
@@ -129,8 +129,8 @@ endif
 
 ifeq ($(CLUSTER),x64_linux) 
 $(TOP)/Lib/$(TARGET_SHARED2):	$(DLLOBJS2)
-	$(SHAR) $(SHARED_LFLAGS) $(TARGETDIR)/$(TARGET_SHARED2)              \
-             $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2)
+	$(SHAR) $(TARGETDIR)/$(TARGET_SHARED2)              \
+             $(DLLOBJS2) $(LFLAGS) $(DLLLIBS2) $(SHARED_LFLAGS)
 	for fn in $(TOP)/Lib/$(TARGET_SHARED2); do /bin/rm -f $$fn; done
 	for fn in $(TARGET_SHARED2); do /bin/mv -f $$fn $(TOP)/Lib; done
 endif

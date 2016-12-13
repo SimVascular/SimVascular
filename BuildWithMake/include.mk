@@ -519,15 +519,6 @@ ifeq ($(SV_USE_ITK),1)
   endif
 endif
 
-# for now, combine mitk code qt gui code
-ifeq ($(SV_USE_MITK),1)
-  ifeq ($(SV_USE_SHARED),1)
-     SHARED_LIBDIRS += ../Code/Source/Modules
-  else
-     LIBDIRS += ../Code/Source/Modules
-  endif
-endif
-
 ifeq ($(SV_USE_MMG),1)
   ifeq ($(SV_USE_MMG_SHARED),1)
      SHARED_LIBDIRS += ../Code/Source/Mesh/MMGMeshUtils
@@ -637,8 +628,17 @@ ifeq ($(SV_USE_PYTHON),1)
 endif
 
 # -------------------------
-# Qt
+# Qt & MITK
 # -------------------------
+
+# for now, combine mitk code qt gui code
+ifeq ($(SV_USE_MITK),1)
+  ifeq ($(SV_USE_SHARED),1)
+     SHARED_LIBDIRS += ../Code/Source/Modules
+  else
+     LIBDIRS += ../Code/Source/Modules
+  endif
+endif
 
 ifeq ($(SV_USE_QT_GUI),1)
   ifeq ($(SV_USE_QT_GUI_SHARED),1)
