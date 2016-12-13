@@ -1,8 +1,19 @@
 #-----------------------------------------------------------------------------
 # Toplevel directories for src, bin, build or externals
+set(SV_EXTERNALS_ARCH_DIR "x64")
+
+set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
+if (NOT CMAKE_CXX_COMPILER_VERSION)
+  message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
+                       version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
+endif()
+sv_externals_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
+string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
+set(SV_EXTERNALS_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
+
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${CMAKE_BINARY_DIR}/Externals/src"
   CACHE PATH "Directory where source files for externals will be put")
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals/bin"
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals/bin/${SV_EXTERNALS_COMPILER_DIR}/${SV_EXTERNALS_ARCH_DIR}"
   CACHE PATH "Directory where install files for externals will be put")
 set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "${CMAKE_BINARY_DIR}/Externals/build"
   CACHE PATH "Directory where build files for externals will be put")
@@ -28,6 +39,16 @@ sv_externals_add_new_external(TCL 8.6.4 ON ON tcl tcltk)
 #-----------------------------------------------------------------------------
 # TK
 sv_externals_add_new_external(TK 8.6.4 ON ON tk tcltk)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# TCLLIB
+sv_externals_add_new_external(TCLLIB 1.17 ON ON tcllib)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# TKLIB
+sv_externals_add_new_external(TKLIB 0.6 ON ON tklib tklib)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

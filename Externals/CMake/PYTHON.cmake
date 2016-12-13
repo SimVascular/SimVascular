@@ -44,6 +44,29 @@ if(WIN32)
   #  )
 endif()
 
+# PYTHON variables needed later on
+if(SV_EXTERNALS_BUILD_${proj}_SHARED)
+  set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+else()
+  set(${proj}_LIBRARY_NAME libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
+
+set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
+set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
+set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/${${proj}_LIBRARY_NAME})
+get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
+set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_${proj}_LIBRARY_DIR}/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}/site-packages)
+
+if(APPLE)
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
+    COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
+    COMMAND cp /opt/local/lib/libcrypto.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
+    COMMAND cp /opt/local/lib/libssl.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
+    COMMAND cp /opt/local/lib/libz.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR})
+else()
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
+endif()
+
 # Add external project
 ExternalProject_Add(${proj}
   URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
@@ -51,6 +74,7 @@ ExternalProject_Add(${proj}
   SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
   BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
   DEPENDS ${${proj}_DEPENDENCIES}
+  INSTALL_COMMAND ${SV_EXTERNALS_${proj}_CUSTOM_INSTALL}
   UPDATE_COMMAND ""
   CMAKE_CACHE_ARGS
     -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
@@ -58,7 +82,7 @@ ExternalProject_Add(${proj}
     -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_MACOSX_RPATH:INTERNAL=1
+    -DCMAKE_MACOSX_RPATH:BOOL=ON
     -DBUILD_TESTING:BOOL=OFF
     -DBUILD_LIBPYTHON_SHARED:BOOL=${SV_EXTERNALS_BUILD_${proj}_SHARED}
     -DENABLE_SSL:BOOL=ON
@@ -71,13 +95,3 @@ ExternalProject_Add(${proj}
   )
 #TODO Add install rpath
 
-# PYTHON variables needed later on
-set(SV_EXTERNALS_${proj}_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
-set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
-if(SV_EXTERNALS_BUILD_${proj}_SHARED)
-  set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
-else()
-  set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/libpython${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
-endif()
-get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
-set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_${proj}_LIBRARY_DIR}/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}/site-packages)

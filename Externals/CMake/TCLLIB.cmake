@@ -25,37 +25,31 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 #-----------------------------------------------------------------------------
-# PYTHON
-set(proj MMG)
+# TCLLIB
+set(proj TCLLIB)
 
 # Dependencies
-set(${proj}_DEPENDENCIES "")
+set(${proj}_DEPENDENCIES "TCL" "TK")
 
-# Git info
-set(SV_EXTERNALS_${proj}_GIT_URL "${SV_EXTERNALS_GIT_URL}/mmg.git" CACHE STRING "Location of ${proj}, can be web address or local path")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_URL)
-set(SV_EXTERNALS_${proj}_GIT_TAG "v${SV_EXTERNALS_${proj}_VERSION}" CACHE STRING "Tag for ${proj}")
-mark_as_advanced(SV_EXTERNALS_${proj}_GIT_TAG)
+# Source URL
+set(SV_EXTERNALS_${proj}_SOURCE_URL "${SV_EXTERNALS_STANFORD_URL}/tcltk/tcllib-${SV_EXTERNALS_${proj}_VERSION}.tar.gz" CACHE STRING "Location of ${proj}, can be web address or local path")
+mark_as_advanced(SV_EXTERNALS_${proj}_SOURCE_URL)
+
+if(UNIX)
+  set(SV_EXTERNALS_${proj}_INSTALL_COMMAND yes | ${SV_EXTERNALS_TCLSH_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/installer.tcl -no-gui)
+else()
+  set(SV_EXTERNALS_${proj}_INSTALL_COMMAND ${SV_EXTERNALS_TCLSH_EXECUTABLE} ${SV_EXTERNALS_${proj}_SRC_DIR}/installer.tcl -no-gui /y)
+endif()
 
 # Add external project
 ExternalProject_Add(${proj}
-  GIT_REPOSITORY ${SV_EXTERNALS_${proj}_GIT_URL}
-  GIT_TAG ${SV_EXTERNALS_${proj}_GIT_TAG}
+  URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
   PREFIX ${SV_EXTERNALS_${proj}_PFX_DIR}
   SOURCE_DIR ${SV_EXTERNALS_${proj}_SRC_DIR}
   BINARY_DIR ${SV_EXTERNALS_${proj}_BLD_DIR}
   DEPENDS ${${proj}_DEPENDENCIES}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND ${SV_EXTERNALS_${proj}_INSTALL_COMMAND}
   UPDATE_COMMAND ""
-  CMAKE_CACHE_ARGS
-    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-    -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
-    -DCMAKE_MACOSX_RPATH:BOOL=ON
-    -DLIBMMG2D_SHARED:BOOL=${SV_EXTERNALS_BUILD_${proj}_SHARED}
-    -DLIBMMG3D_SHARED:BOOL=${SV_EXTERNALS_BUILD_${proj}_SHARED}
-    -DLIBMMGS_SHARED:BOOL=${SV_EXTERNALS_BUILD_${proj}_SHARED}
-    -DLIBMMG_SHARED:BOOL=${SV_EXTERNALS_BUILD_${proj}_SHARED}
-    -DCMAKE_INSTALL_PREFIX:STRING=${SV_EXTERNALS_${proj}_BIN_DIR}
   )

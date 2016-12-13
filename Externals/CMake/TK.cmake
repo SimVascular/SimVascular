@@ -64,6 +64,28 @@ else()
     --enable-64bit)
 endif()
 
+# TK variables needed later on
+if(SV_EXTERNALS_BUILD_${proj}_SHARED)
+  set(${proj}_LIBRARY_NAME libtk${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
+else()
+  set(${proj}_LIBRARY_NAME libtk${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
+endif()
+
+set(SV_EXTERNALS_WISH_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/wish${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
+set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include)
+set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/${${proj}_LIBRARY_NAME})
+get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
+
+# Special install rules
+if(APPLE)
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
+    COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
+    COMMAND install_name_tool -change ${SV_EXTERNALS_TCL_LIBRARY} ${TCL_LIBRARY_NAME} ${SV_EXTERNALS_WISH_EXECUTABLE}
+    COMMAND install_name_tool -change ${SV_EXTERNALS_${proj}_LIBRARY} ${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_WISH_EXECUTABLE})
+else()
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
+endif()
+
 # Add external project
 ExternalProject_Add(${proj}
   URL ${SV_EXTERNALS_${proj}_SOURCE_URL}
@@ -73,20 +95,4 @@ ExternalProject_Add(${proj}
   DEPENDS ${${proj}_DEPENDENCIES}
   CONFIGURE_COMMAND CC=${CMAKE_C_COMPILER} ${SV_EXTERNALS_${proj}_SRC_DIR}/${SV_EXTERNALS_${proj}_URL_EXTENSION}/configure -C ${SV_EXTERNALS_${proj}_CONFIGURE_OPTIONS}
   UPDATE_COMMAND ""
-  CMAKE_CACHE_ARGS
-    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
-    -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
-    -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
-    -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
   )
-
-# TK variables needed later on
-set(SV_EXTERNALS_WISH_EXECUTABLE ${SV_EXTERNALS_${proj}_BIN_DIR}/bin/wish${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION})
-set(SV_EXTERNALS_${proj}_INCLUDE_DIR ${SV_EXTERNALS_${proj}_BIN_DIR}/include)
-if(SV_EXTERNALS_BUILD_${proj}_SHARED)
-  set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/libtk${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_SHARED_LIBRARY_SUFFIX})
-else()
-  set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/libtk${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}${CMAKE_STATIC_LIBRARY_SUFFIX})
-endif()
-get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
