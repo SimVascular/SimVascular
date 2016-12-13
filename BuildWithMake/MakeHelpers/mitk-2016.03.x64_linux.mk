@@ -101,6 +101,7 @@ MITK_INCDIRS += $(MITK_PLUGIN_INCDIRS)
 
 MITK_PLUGIN_LIBS += \
              $(LIBFLAG)org_mitk_gui_qt_application$(LIBLINKEXT) \
+             $(LIBFLAG)org_mitk_gui_qt_datamanager$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_ext$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_common$(LIBLINKEXT) \
              $(LIBFLAG)org_mitk_gui_qt_common$(LIBLINKEXT) \
