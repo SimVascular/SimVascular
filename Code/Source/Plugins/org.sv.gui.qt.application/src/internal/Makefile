@@ -51,7 +51,8 @@ HDRS	= \
   svProjectCreate.h \
   svWorkbenchWindowAdvisor.h \
   svWorkbenchWindowAdvisorHack.h \
-  svAppWorkbenchAdvisor.h \
+  svAboutDialog.h \
+  svWorkbenchIntroPart.h \
   svDefaultPerspective.h
 
 CXXSRCS	= \
@@ -63,12 +64,18 @@ CXXSRCS	= \
   svProjectCreate.cxx \
   svWorkbenchWindowAdvisor.cxx \
   svAppWorkbenchAdvisor.cxx \
+  svAboutDialog.cxx \
+  svWorkbenchIntroPart.cxx \
   svDefaultPerspective.cxx
 
 UIFILES = \
-  svProjectCreate.ui
+  svProjectCreate.ui \
+  svAboutDialog.ui \
+  svWelcomeScreenViewControls.ui
 
-QRCFILES = ../../resources/svApplication.qrc
+QRCFILES = \
+  ../../resources/svApplication.qrc \
+  ../../resources/welcome/svWelcomeScreenView.qrc
 
 QRCFILES += org_sv_gui_qt_application_manifest.qrc \
             org_sv_gui_qt_application_cached.qrc

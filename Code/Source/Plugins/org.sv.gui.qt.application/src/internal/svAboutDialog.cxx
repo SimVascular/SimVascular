@@ -52,6 +52,7 @@ QString svAboutDialog::GetAboutText() const
 
 QString svAboutDialog::GetCaptionText() const
 {
+    return NULL;
 //  return m_GUI.m_CaptionLabel->text();
 }
 
