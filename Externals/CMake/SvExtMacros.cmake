@@ -70,6 +70,12 @@ macro(sv_externals_add_new_external proj version use shared dirname)
   if(SV_EXTERNALS_LIST)
     list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
   endif()
+
+  # Add install step for each external
+  if(EXISTS ${SV_EXTERNALS_TAR_INSTALL_DIR})
+    install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${dirname}.tar.gz ${SV_EXTERNALS_${proj}_BIN_DIR}
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR})")
+  endif()
 endmacro()
 
 #-----------------------------------------------------------------------------

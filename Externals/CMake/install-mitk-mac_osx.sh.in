@@ -51,6 +51,10 @@ $GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt
 $GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
 $GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
+# Poco
+
+$GCP -rfl -d $MITK_BLDDIR/ep/src/Poco-build/lib/libPoco*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+
 # CTK
 
 $GMKDIR -p $MITK_BINDIR/include/ctk

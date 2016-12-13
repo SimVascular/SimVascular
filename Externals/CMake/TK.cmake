@@ -79,6 +79,7 @@ get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_L
 # Special install rules
 if(APPLE)
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
+    COMMAND chmod -R u+w,a+rx ${SV_EXTERNALS_${proj}_BIN_DIR}
     COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
     COMMAND install_name_tool -change ${SV_EXTERNALS_TCL_LIBRARY} ${TCL_LIBRARY_NAME} ${SV_EXTERNALS_WISH_EXECUTABLE}
     COMMAND install_name_tool -change ${SV_EXTERNALS_${proj}_LIBRARY} ${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_WISH_EXECUTABLE})

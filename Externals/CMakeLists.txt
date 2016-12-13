@@ -48,8 +48,20 @@ Project(SV_EXTERNALS)
 #-----------------------------------------------------------------------------
 # CMake functions
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
-	"${CMAKE_MODULE_PATH}")
+  "${CMAKE_MODULE_PATH}")
 set(SV_EXTERNALS_CMAKE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/CMake")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Set a default build type (if none was specified)
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+  message(STATUS "Setting build type to 'RelWithDebInfo' as none was specified.")
+  set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING "Choose the type of build." FORCE)
+  mark_as_advanced(CMAKE_BUILD_TYPE)
+  # Set the possible values of build type for cmake-gui
+  set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
+    "MinSizeRel" "RelWithDebInfo")
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -98,4 +110,12 @@ foreach(proj ${SV_EXTERNALS_LIST})
     endif()
   endif()
 endforeach()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Tar up everything
+if(SV_EXTERNALS_TAR_INSTALL_DIR)
+  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf EVERYTHING.tar.gz ${SV_EXTERNALS_TAR_INSTALL_DIR}
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})")
+endif()
 #-----------------------------------------------------------------------------

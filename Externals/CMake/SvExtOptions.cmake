@@ -19,15 +19,25 @@ set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "${CMAKE_BINARY_DIR}/Externals/build"
   CACHE PATH "Directory where build files for externals will be put")
 set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${CMAKE_BINARY_DIR}/Externals/prefix"
   CACHE PATH "Directory where prefix files for externals will be put")
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Tar install directory
+set(SV_EXTERNALS_TAR_INSTALL_DIR "tar_output"
+  CACHE PATH "Directory where source files for externals will be put")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# URLs for external downloads and git repositories
 set(SV_EXTERNALS_STANFORD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/src/originals" CACHE STRING "URL with source downloads for externals")
 set(SV_EXTERNALS_GIT_URL "http://github.com/SimVascular" CACHE STRING "Git URL for SimVascular")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Qt
 # First external is not built by the project but is required if building
 # MITK
-option(SV_EXTERNALS_USE_QT "Enable QT Plugin" OFF)
+option(SV_EXTERNALS_USE_QT "Enable QT Plugin" ON)
 
 # Add externals with default values of version, build_with, shared, dirname,
 # and optional install dirname. Order matters; put independent packages first
@@ -93,10 +103,10 @@ sv_externals_add_new_external(ITK 4.7.1 ON ON itk)
 
 #-----------------------------------------------------------------------------
 # OpenCASCADE
-sv_externals_add_new_external(OpenCASCADE 7.0.0 OFF ON opencascade)
+sv_externals_add_new_external(OpenCASCADE 7.0.0 ON ON opencascade)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # MITK
-sv_externals_add_new_external(MITK 2016.03 OFF ON mitk)
+sv_externals_add_new_external(MITK 2016.03 ON ON mitk)
 #-----------------------------------------------------------------------------
