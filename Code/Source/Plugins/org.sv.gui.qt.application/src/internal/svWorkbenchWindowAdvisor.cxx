@@ -7,6 +7,7 @@
 #include "svFileCreateProjectAction.h"
 #include "svFileOpenProjectAction.h"
 #include "svFileSaveProjectAction.h"
+#include "svAboutDialog.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -68,7 +69,6 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QLabel>
-#include <QmitkAboutDialog.h>
 
 svWorkbenchWindowAdvisorHack *svWorkbenchWindowAdvisorHack::undohack = new svWorkbenchWindowAdvisorHack();
 
@@ -679,7 +679,7 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
         redoAction->setToolTip("execute the last action that was undone again (not supported by all modules)");
 
         // ==== Views Menu ==========================
-        QMenu* viewMenu = menuBar->addMenu("&Views");
+        QMenu* viewMenu = menuBar->addMenu("&Tools");
         if(svViewActions.size()>0)
         {
             for (auto viewAction : svViewActions)
@@ -771,10 +771,13 @@ void svWorkbenchWindowAdvisor::PostWindowCreate()
 
         // ===== Help menu ====================================
         QMenu* helpMenu = menuBar->addMenu("&Help");
-//        helpMenu->addAction("&Welcome",this, SLOT(onIntro()));
+        helpMenu->addAction("&Welcome",this, SLOT(onIntro()));
 //        helpMenu->addAction("&Open Help Perspective", this, SLOT(onHelpOpenHelpPerspective()));
 //        helpMenu->addAction("&Context Help",this, SLOT(onHelp()),  QKeySequence("F1"));
-        helpMenu->addAction("&About",this, SLOT(onAbout()));
+#ifndef __APPLE__
+        helpMenu->addSeparator();
+#endif
+        helpMenu->addAction("&About SimVascular",this, SLOT(onAbout()));
         // =====================================================
     }
     else
@@ -1348,7 +1351,7 @@ void svWorkbenchWindowAdvisorHack::onHelpOpenHelpPerspective()
 
 void svWorkbenchWindowAdvisorHack::onAbout()
 {
-    auto   aboutDialog = new QmitkAboutDialog(QApplication::activeWindow(),nullptr);
+    auto   aboutDialog = new svAboutDialog(QApplication::activeWindow(),nullptr);
     aboutDialog->open();
 }
 
@@ -1404,20 +1407,21 @@ QString svWorkbenchWindowAdvisor::ComputeTitle()
         title = productName;
     }
 
-    if(showSVVersionInfo)
-    {
-//        title += QString(" ") + SV_FULL_VER_NO;
-        title += QString(" 3.0");
-    }
+//    if(showSVVersionInfo)
+//    {
+////        title += QString(" ") + SV_FULL_VER_NO;
+////        title += QString(" 3.0");
+//    }
 
     if (showVersionInfo)
     {
         // add version informatioin
-        QString versions = QString(" (MITK %1 Qt %2 VTK %3.%4.%5 ITK %6.%7.%8)")
+        QString versions = QString(" (SimVascular %1 MITK %2 VTK %3.%4.%5 ITK %6.%7.%8 Qt %9)")
+                .arg("3.0")
                 .arg(MITK_VERSION_STRING)
-                .arg(QT_VERSION_STR)
                 .arg(VTK_MAJOR_VERSION).arg(VTK_MINOR_VERSION).arg(VTK_BUILD_VERSION)
-                .arg(ITK_VERSION_MAJOR).arg(ITK_VERSION_MINOR).arg(ITK_VERSION_PATCH);
+                .arg(ITK_VERSION_MAJOR).arg(ITK_VERSION_MINOR).arg(ITK_VERSION_PATCH)
+                .arg(QT_VERSION_STR);
 
         title += versions;
     }

@@ -63,7 +63,7 @@ function Button(moduleName, moduleLink, picFilename, moduleDescr){
   this.bttnID = "bttn" + moduleName.replace(/\s/g,'');
   this.modName = moduleName;
   this.modLink = moduleLink;
-  this.picPath = "qrc:/org.mitk.gui.qt.welcomescreen/pics/" + picFilename;
+  this.picPath = "qrc:/org.sv.gui.qt.welcomescreen/pics/" + picFilename;
   this.modDescr = moduleDescr;
 
   // Methods

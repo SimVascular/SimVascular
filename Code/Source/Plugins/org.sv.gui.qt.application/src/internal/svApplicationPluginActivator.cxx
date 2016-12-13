@@ -1,8 +1,7 @@
 #include "svApplicationPluginActivator.h"
 
-//#include "QmitkAboutHandler.h"
 #include "svDefaultPerspective.h"
-//#include "svWorkbenchIntroPart.h"
+#include "svWorkbenchIntroPart.h"
 #include "svApplication.h"
 
 #include <mitkVersion.h>
@@ -35,9 +34,7 @@ void svApplicationPluginActivator::start(ctkPluginContext* context)
 
     this->_context = context;
 
-    //  QtWidgetsExtRegisterClasses();
-
-    //  BERRY_REGISTER_EXTENSION_CLASS(QmitkAboutHandler, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svWorkbenchIntroPart, context)
     BERRY_REGISTER_EXTENSION_CLASS(svDefaultPerspective, context)
     BERRY_REGISTER_EXTENSION_CLASS(svApplication, context)
 
