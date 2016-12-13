@@ -7,9 +7,9 @@
         <file>pics/experimental.png</file>
         <file>pics/button_mitka.png</file>
         <file>pics/button_mitk.png</file>
-        <file>pics/WelcomeMITK.png</file>
         <file>svworkbenchwelcomeview.html</file>
         <file>pics/svLogo.png</file>
+        <file>pics/svLogoIconOriginal.png</file>
     </qresource>
     <qresource prefix="/org.sv.gui.qt.welcomescreen.welcome.tutorial">
         <file>WelcomePresentation.html</file>
@@ -38,7 +38,6 @@
         <file>images/welcome/ImageNavigator.png</file>
         <file>images/welcome/LayoutList.png</file>
         <file>images/welcome/Levelwindow.png</file>
-        <file>images/welcome/MITK.png</file>
         <file>images/welcome/MITKArrow.png</file>
         <file>images/welcome/MITKArrow2.png</file>
         <file>images/welcome/MITKPoint.png</file>
@@ -51,10 +50,13 @@
         <file>images/welcome/Toolbar.png</file>
         <file>images/welcome/ToolbarLeft.png</file>
         <file>images/welcome/ToolbarRight.png</file>
-        <file>images/welcome/WelcomePage.png</file>
         <file>lib/css/zenburn.css</file>
         <file>lib/js/classList.js</file>
         <file>lib/js/head.min.js</file>
         <file>lib/js/html5shiv.js</file>
+        <file>images/welcome/svLogo.png</file>
+        <file>images/welcome/WelcomePage.png</file>
+        <file>images/welcome/ToolbarMiddle.png</file>
+        <file>images/welcome/DisplayWindowCoronal.png</file>
     </qresource>
 </RCC>

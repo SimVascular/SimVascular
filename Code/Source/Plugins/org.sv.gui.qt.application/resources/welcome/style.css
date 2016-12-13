@@ -95,7 +95,7 @@ img{border:none;}
 }
 
 .welcomTutorialButton {
-    background-image: url(qrc:/org.sv.gui.qt.welcomescreen/pics/WelcomeMITK.png);
+    background-image: url(qrc:/org.sv.gui.qt.welcomescreen/pics/svLogoIconOriginal.png);
 }
 
 .textLink{
