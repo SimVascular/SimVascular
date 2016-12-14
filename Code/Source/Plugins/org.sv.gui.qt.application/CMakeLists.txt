@@ -15,6 +15,8 @@ else()
   )
 endif()
 
+target_include_directories(${lib} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/../org.sv.gui.qt.projectmanager")
+
 if(SV_INSTALL_LIBS)
     install(TARGETS ${lib}
         RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR}/plugins COMPONENT CoreExecutables
