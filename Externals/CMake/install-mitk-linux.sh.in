@@ -31,26 +31,26 @@ $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CMakeExternals/Install/lib $MITK_BINDIR
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.@CMAKE_SHARED_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.h $MITK_BINDIR/include
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/* $MITK_BINDIR/bin
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*CTK*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/liborg*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*CTK*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/liborg*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins
 
 
 # copy qRestAPI from CTK-build
 
 $GMKDIR -p $MITK_BINDIR/include/qRestAPI
 $GCP -fl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI/*.h $MITK_BINDIR/include/qRestAPI
-$GCP -fl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/$MITK_BLDTYPE/libqRestAPI.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/$MITK_BLDTYPE/libqRestAPI.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/$MITK_BLDTYPE/libqRestAPI.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -fl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # copy PythonQt from CTK-build
 
 $GMKDIR -p $MITK_BINDIR/include/PythonQt
 $GCP -fl $MITK_BLDDIR/ep/src/CTK-build/PythonQt/src/*.h $MITK_BINDIR/include/PythonQt
 $GCP -fl $MITK_BLDDIR/ep/src/CTK-build/PythonQt/src/gui/*.h $MITK_BINDIR/include/PythonQt
-$GCP -fl $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -fl $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # CTK
 
@@ -63,9 +63,9 @@ $GCP -fl $MITK_BLDDIR/ep/src/CTK/Libs/Scripting/Python/Widgets/*.h $MITK_BINDIR/
 $GCP -fl $MITK_BLDDIR/ep/src/CTK/Libs/Visualization/VTK/Core/*.h $MITK_BINDIR/include/ctk
 $GCP -fl $MITK_BLDDIR/ep/src/CTK/Libs/Widgets/*.h $MITK_BINDIR/include/ctk
 
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-$GCP -fl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -fl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -fl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
 
 # copying more than needed here, but not sure how many of the subdirectories are required.
 $GCP -Rf  $MITK_BLDDIR/ep/src/CTK/Libs/PluginFramework $MITK_BINDIR/include/ctk
@@ -75,13 +75,13 @@ for i in $(find $MITK_BLDDIR/ep/src/CTK-build -name "*Export.h"); do
     $GCP -fl $i $MITK_BINDIR/include/ctk
 done
 
-$GCP -fl $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib
+$GCP -fl $MITK_BLDDIR/MITK-build/lib/plugins/* $MITK_BINDIR/lib
 
 # mitk files
 
-#$GCP -fl -d $MITK_BLDDIR/MITK-build/bin/$MITK_BLDTYPE/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-#$GCP -fl -d $MITK_BLDDIR/MITK-build/lib/$MITK_BLDTYPE/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-#$GCP -fl $MITK_BLDDIR/MITK-build/lib/$MITK_BLDTYPE/*.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
+#$GCP -fl -d $MITK_BLDDIR/MITK-build/bin/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+#$GCP -fl -d $MITK_BLDDIR/MITK-build/lib/*.@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+#$GCP -fl $MITK_BLDDIR/MITK-build/lib/*.@CMAKE_STATIC_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
 
 $GMKDIR -p $MITK_BINDIR/include/mitk
 $GMKDIR -p $MITK_BINDIR/include/mitk/configs

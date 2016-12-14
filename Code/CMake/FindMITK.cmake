@@ -72,13 +72,16 @@ set(${proj}_LIBNAMES CppMicroServices
                      PythonQt
                      tinyxml
                      mbilog
+                     PocoFoundation
                      PocoUtil)
 
 set(${proj}_PLUGIN_LIBNAMES org_mitk_core_services
                             org_mitk_gui_common
+                            org_mitk_gui_qt_application
                             org_mitk_gui_qt_common
                             org_mitk_gui_qt_common_legacy
                             org_mitk_gui_qt_datamanager
+                            org_mitk_gui_qt_ext
                             org_blueberry_ui_qt
                             org_blueberry_core_runtime)
 
@@ -88,6 +91,7 @@ set(${proj}_LIBNAMES ${${proj}_LIBNAMES} ${${proj}_FIND_COMPONENTS})
 #-----------------------------------------------------------------------------
 # Header
 set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
+                    "ctkPluginFrameworkLauncher.h"                   #ctk/PluginFramework
                     "signature_of_eigen3_matrix_library"             #eigen3
                     "mitkVersion.h"                                  #mitk
                     "usGlobalConfig.h"                               #mitk/configs
@@ -111,19 +115,31 @@ set(${proj}_HEADERS "ctkAbstractFactory.h"                           #ctk
                     "usLDAPExpr_p.h"                                 #mitk/Modules/CppMicroServices/core/src/service
                     "usAtomicInt_p.h"                                #mitk/Modules/CppMicroServices/core/src/util
                     "itkLocalVariationImageFilter.h"                 #mitk/Modules/ImageDenoising
-                    "mitkGL.h"                                       #mitk/Modules/LegacyGL                  
-                    "mitkLabel.h"                                    #mitk/Modules/Multilabel                
-                    "mitkLogoOverlay.h"                              #mitk/Modules/Overlays                  
-                    "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms   
-                    "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers  
-                    "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions 
-                    "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI      
-                    "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk      
-                    "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation      
-                    "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets   
+                    "mitkGL.h"                                       #mitk/Modules/LegacyGL
+                    "mitkLabel.h"                                    #mitk/Modules/Multilabel
+                    "mitkLogoOverlay.h"                              #mitk/Modules/Overlays
+                    "itkAdaptiveThresholdIterator.h"                 #mitk/Modules/Segmentation/Algorithms
+                    "mitkSegmentationInterpolationController.h"      #mitk/Modules/Segmentation/Controllers
+                    "mitkAdaptiveRegionGrowingTool.h"                #mitk/Modules/Segmentation/Interactions
+                    "ui_QmitkAdaptiveRegionGrowingToolGUIControls.h" #mitk/Modules/SegmentationUI
+                    "QmitkAdaptiveRegionGrowingToolGUI.h"            #mitk/Modules/SegmentationUI/Qmitk
+                    "mitkSurfaceInterpolationController.h"           #mitk/Modules/SurfaceInterpolation
+                    "ui_QmitkFileReaderOptionsDialog.h"              #mitk/Modules/QtWidgets
                     "PythonQt.h"                                     #PythonQt
                     "tinyxml.h"                                      #tinyxml
-                    "mitkIContextMenuAction.h"                       #mitk/plugins
+                    "mitkIDataStorageService.h"                      #mitk/plugins/org.mitk.core.services
+                    "mitkDataNodeSelection.h"                        #mitk/plugins/org.mitk.gui.common
+                    "QmitkFileOpenAction.h"                          #mitk/plugins/org.mitk.gui.qt.application
+                    "QmitkAbstractView.h"                            #mitk/plugins/org.mitk.gui.qt.common
+                    "QmitkFunctionality.h"                           #mitk/plugins/org.mitk.gui.qt.common.legacy
+                    "mitkIContextMenuAction.h"                       #mitk/plugins/org.mitk.gui.qt.datamanager
+                    "QmitkExtActionBarAdvisor.h"                     #mitk/plugins/org.mitk.gui.qt.ext
+                    "berryMacros.h"                                  #mitk/plugins/org.blueberry.core.runtime
+                    "berryIApplication.h"                            #mitk/plugins/org.blueberry.core.runtime/application
+                    "berryIConfigurationElement.h"                   #mitk/plugins/org.blueberry.core.runtime/registry
+                    "berryQtViewPart.h"                              #mitk/plugins/org.blueberry.ui.qt
+                    "berryQtWorkbenchAdvisor.h"                      #mitk/plugins/org.blueberry.ui.qt/application
+                    "berryIntroPart.h"                               #mitk/plugins/org.blueberry.ui.qt/intro
                     )
 
 #-----------------------------------------------------------------------------
@@ -134,7 +150,7 @@ set(lib_sub_path "lib")
 
 set(${proj}_POSSIBLE_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
-	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS} 
+	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
 		"${p}/${lib_sub_path}")
 endforeach()
 
@@ -174,7 +190,7 @@ if (NOT ${proj}_NUMLIBS EQUAL ${proj}_NUMLIBS_EXPECTED)
         message(FATAL_ERROR "${proj}_LIBS_MISSING: ${${proj}_LIBS_MISSING}")
 endif()
 
-set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING 
+set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 	"${proj} libraries to link against" FORCE)
 
 # Clean up.  If all libraries were found remove cache entries.
@@ -199,7 +215,7 @@ set(lib_sub_path "lib")
 
 set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS)
 foreach(p ${${proj}_POSSIBLE_PATHS})
-  set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS} 
+  set(${proj}_POSSIBLE_PLUGIN_LIB_PATHS ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
 		"${p}/${lib_sub_path}/plugins")
 endforeach()
 
@@ -240,7 +256,7 @@ if (NOT ${proj}_NUMPLUGINS EQUAL ${proj}_NUMPLUGINS_EXPECTED)
   message(FATAL_ERROR "${proj}_PLUGIN_LIBS_MISSING: ${${proj}_PLUGIN_LIBS_MISSING}")
 endif()
 
-set(${proj}_PLUGIN_LIBRARIES  ${${proj}_PLUGIN_LIBRARIES_WORK} CACHE STRING 
+set(${proj}_PLUGIN_LIBRARIES  ${${proj}_PLUGIN_LIBRARIES_WORK} CACHE STRING
 	"${proj} libraries to link against" FORCE)
 
 # Clean up.  If all libraries were found remove cache entries.
@@ -262,10 +278,11 @@ endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Setup search paths for header	
+# Setup search paths for header
 set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_DIR})
 set(inc_sub_path "include")
 set(possible_sub_paths ctk
+                       ctk/PluginFramework
                        eigen3
                        mitk
                        mitk/configs
@@ -301,7 +318,19 @@ set(possible_sub_paths ctk
                        mitk/Modules/QtWidgets
                        PythonQt
                        tinyxml
-                       mitk/plugins)
+                       mitk/plugins/org.mitk.core.services
+                       mitk/plugins/org.mitk.gui.common
+                       mitk/plugins/org.mitk.gui.qt.application
+                       mitk/plugins/org.mitk.gui.qt.common
+                       mitk/plugins/org.mitk.gui.qt.common.legacy
+                       mitk/plugins/org.mitk.gui.qt.datamanager
+                       mitk/plugins/org.mitk.gui.qt.ext
+                       mitk/plugins/org.blueberry.core.runtime
+                       mitk/plugins/org.blueberry.core.runtime/application
+                       mitk/plugins/org.blueberry.core.runtime/registry
+                       mitk/plugins/org.blueberry.ui.qt
+                       mitk/plugins/org.blueberry.ui.qt/application
+                       mitk/plugins/org.blueberry.ui.qt/intro)
 
 foreach(sub_path ${possible_sub_paths})
   set(${proj}_POSSIBLE_INCLUDE_PATHS "${${proj}_POSSIBLE_INCLUDE_PATHS}" "${${proj}_DIR}/${inc_sub_path}/${sub_path}")
@@ -345,13 +374,13 @@ if (NOT ${proj}_NUMHEADERS EQUAL ${proj}_NUMHEADERS_EXPECTED)
 endif()
 
 set(${proj}_HEADERS_WORK ${${proj}_DIR}/include ${${proj}_HEADERS_WORK})
-set(${proj}_INCLUDE_DIRS  ${${proj}_HEADERS_WORK} CACHE STRING 
+set(${proj}_INCLUDE_DIRS  ${${proj}_HEADERS_WORK} CACHE STRING
 	"${proj} include directories" FORCE)
 list(GET ${proj}_INCLUDE_DIRS 0 ${proj}_INCLUDE_DIR)
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args
-find_package_handle_standard_args(${proj} 
+find_package_handle_standard_args(${proj}
 	FOUND_VAR ${proj}_FOUND
         REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_LIBRARY_DIR ${proj}_PLUGIN_LIBRARIES ${proj}_PLUGIN_LIBRARY_DIR
 	VERSION_VAR ${proj}_VERSION
