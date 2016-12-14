@@ -114,8 +114,9 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # Tar up everything
-if(SV_EXTERNALS_TAR_INSTALL_DIR)
-  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf EVERYTHING.tar.gz ${SV_EXTERNALS_TAR_INSTALL_DIR}
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR})")
+set(SV_EXTERNALS_EVERYTHING}_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.${${proj}_VERSION_DIR}-BUILD${TODAY})
+if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
+  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
+    WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")
 endif()
 #-----------------------------------------------------------------------------
