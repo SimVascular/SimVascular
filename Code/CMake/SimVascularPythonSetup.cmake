@@ -28,7 +28,7 @@ macro(py_cmd)
 	set(options MESSAGE DEV_MESSAGE)
 	set(oneValueArgs OUTPUT_VARIABLE)
 	set(multiValueArgs FILES CODE)
-	CMAKE_PARSE_ARGUMENTS("" 
+	CMAKE_PARSE_ARGUMENTS(""
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 	if(_CODE)
@@ -40,30 +40,27 @@ macro(py_cmd)
 endmacro()
 
 set(SV_NO_RENDERER 0)
-mark_as_superbuild(SV_NO_RENDERER)
 
-if(NOT SV_SUPERBUILD)
-	py_cmd(CODE "puts \"[clock seconds]\""
-		OUTPUT_VARIABLE SV_TIMESTAMP)
-	
-	set(SV_SOURCE_PYTHON_DIR ${SV_SOURCE_HOME}/Python)
-	set(SV_BINARY_PYTHON_DIR ${SV_BINARY_HOME}/Python)
-	set(SV_PYTHON ${SV_BINARY_PYTHON_DIR})
-	add_custom_target(copy-py ALL)
-	add_custom_command(TARGET copy-py POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_PYTHON_DIR}
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_PYTHON_DIR}
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_PYTHON_DIR} ${SV_BINARY_PYTHON_DIR}
-		COMMENT "Copying Python Directory..."
-		)
-	
-	#include(SimVascularPythonConfigure)
-	
-	#-----------------------------------------------------------------------------
-	# Install Steps
-	#-----------------------------------------------------------------------------
-	
-	include(PreparePython)
+py_cmd(CODE "puts \"[clock seconds]\""
+        OUTPUT_VARIABLE SV_TIMESTAMP)
 
-	install(DIRECTORY ${TEMP_DIR}/Python DESTINATION ${SV_INSTALL_SCRIPT_DIR})
-endif()
+set(SV_SOURCE_PYTHON_DIR ${SV_SOURCE_HOME}/Python)
+set(SV_BINARY_PYTHON_DIR ${SV_BINARY_HOME}/Python)
+set(SV_PYTHON ${SV_BINARY_PYTHON_DIR})
+add_custom_target(copy-py ALL)
+add_custom_command(TARGET copy-py POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_PYTHON_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_PYTHON_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_PYTHON_DIR} ${SV_BINARY_PYTHON_DIR}
+        COMMENT "Copying Python Directory..."
+        )
+
+#include(SimVascularPythonConfigure)
+
+#-----------------------------------------------------------------------------
+# Install Steps
+#-----------------------------------------------------------------------------
+
+include(PreparePython)
+
+install(DIRECTORY ${TEMP_DIR}/Python DESTINATION ${SV_INSTALL_SCRIPT_DIR})
