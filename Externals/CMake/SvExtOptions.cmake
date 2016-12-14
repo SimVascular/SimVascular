@@ -23,8 +23,9 @@ set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${CMAKE_BINARY_DIR}/Externals/prefix"
 
 #-----------------------------------------------------------------------------
 # Tar install directory
-set(SV_EXTERNALS_TAR_INSTALL_DIR "tar_output"
+set(SV_EXTERNALS_TAR_INSTALL_DIR "${CMAKE_BINARY_DIR}/tar_output"
   CACHE PATH "Directory where source files for externals will be put")
+file(MAKE_DIRECTORY "${SV_EXTERNALS_TAR_INSTALL_DIR}")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

@@ -30,9 +30,3 @@
  #=========================================================================#
 
 set(SV_INCLUDE_DIRS_WORK ${SV_INCLUDE_DIRS})
-
-if(SV_SUPERBUILD)
-	RETURN()
-	###### RETURN_SUPERBUILD ######
-endif()
-

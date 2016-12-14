@@ -5,8 +5,6 @@ include(${CMAKE_CURRENT_SOURCE_DIR}/SimVascularTestMacros.cmake)
 option(SV_RUN_GUI_TESTS "Option to run GUI testing when performing test" ON)
 set(SV_TEST_DIR "" CACHE PATH "Path to SV automated test files")
 set(SV_TEST_SAVEOUT_DIR "${OUTBIN_DIR}/Testing/" CACHE PATH "Path to SV automated test files" FORCE)
-mark_as_superbuild(SV_TEST_DIR)
-mark_as_superbuild(SV_RUN_GUI_TESTS)
 
 #TODO: Change this!
 if(UNIX)

@@ -28,7 +28,6 @@
 # These are SimVascular build and version that are presented to the user to modify
 set(SV_RELEASE_TYPE "Release" CACHE STRING "This specificies which install dir and GUIDs to use, is also used in header files")
 set_property(CACHE SV_RELEASE_TYPE PROPERTY STRINGS Release Beta)
-mark_as_superbuild(SV_RELEASE_TYPE:BOOL)
 mark_as_advanced(SV_RELEASE_TYPE)
 
 set(SV_VERSION "simvascular")

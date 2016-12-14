@@ -204,7 +204,6 @@ if(${proj}_LIBRARIES)
 		list(GET ${proj}_LIBRARIES 1 temp_path)
 	endif()
         get_filename_component(${proj}_LIBRARY_DIR ${temp_path} PATH)
-        mark_as_superbuild(${proj}_LIBRARY_DIR:PATH)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -270,7 +269,6 @@ if(${proj}_PLUGIN_LIBRARIES)
           list(GET ${proj}_PLUGIN_LIBRARIES 1 temp_path)
 	endif()
         get_filename_component(${proj}_PLUGIN_LIBRARY_DIR ${temp_path} PATH)
-        mark_as_superbuild(${proj}_PLUGIN_LIBRARY_DIR:PATH)
 endif()
 
 #-----------------------------------------------------------------------------

@@ -8,10 +8,6 @@ if(APPLE)
 	#	set(CMAKE_OSX_SYSROOT "" CACHE STRING "" FORCE)
 	# Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
 	#       we ensure that the bitness will be properly detected.
-	mark_as_superbuild(
-		VARS
-		CMAKE_OSX_ARCHITECTURES:STRING CMAKE_OSX_SYSROOT:PATH
-		CMAKE_OSX_DEPLOYMENT_TARGET:STRING)
 
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/lib")
 endif()
@@ -21,7 +17,6 @@ endif()
 if(WIN32)
 	option(SV_USE_WIN32_REGISTRY "Use Windows registry to obtain certain settings (install mode)" OFF)
 	mark_as_advanced(SV_USE_WIN32_REGISTRY)
-	mark_as_superbuild(SV_USE_WIN32_REGISTRY:BOOL)
 
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
 	if(NOT IS64)
@@ -45,10 +40,8 @@ if(WIN32)
 	endif()
 
 	set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} Shlwapi.lib")
-	mark_as_superbuild(CMAKE_CXX_STANDARD_LIBRARIES)
 
 	option(SV_USE_TKCXIMAGE "Use TKCXImage (Legacy)" OFF)
-	mark_as_superbuild(SV_USE_TKCXIMAGE)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -106,16 +99,12 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
 		"MinSizeRel" "RelWithDebInfo")
 endif()
-if(NOT CMAKE_CONFIGURATION_TYPES)
-	mark_as_superbuild(VARS CMAKE_BUILD_TYPE ALL_PROJECTS)
-endif()
 
 #-----------------------------------------------------------------------------
 # Renderer
 if (SV_NO_RENDERER)
 	# Needs to be 1 not 'true'
 	set(SV_NO_RENDERER 1)
-	mark_as_superbuild(SV_NO_RENDERER)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -150,7 +139,6 @@ endif()
 # Plugins
 if(SV_USE_TETGEN)
 	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
-	mark_as_superbuild(SV_USE_TET_ADAPTOR)
 endif()
 
 if(SV_USE_PYTHON)
@@ -186,11 +174,6 @@ else()
 	unset(MESHSIM_LICENSE_IN_WIN32_REGISTRY  CACHE)
 	unset(SV_USE_MESHSIM_DISCRETE_MODEL CACHE)
 endif()
-mark_as_superbuild(SV_USE_MESHSIM:BOOL)
-mark_as_superbuild(SV_USE_MESHSIM_DISCRETE_MODEL:BOOL)
-mark_as_superbuild(MESHSIM_LICENSE_IN_WIN32_REGISTRY:BOOL)
-mark_as_superbuild(MESHSIM_USE_LICENSE_FILE:BOOL)
-mark_as_superbuild(MESHSIM_EMBED_LICENSE_KEYS:BOOL)
 
 #---
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
@@ -199,14 +182,12 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 		if(BUILD_SHARED_LIBS)
 			set(SV_USE_MESHSIM_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
 		endif()
-		mark_as_superbuild(SV_USE_MESHSIM_SHARED_LIBRARIES)
 	endif()
 	if(SV_USE_MESHSIM_DISCRETE_MODEL)
 		option(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES "Build MeshSim Discrete Solid as shared libraries" OFF)
 		if(BUILD_SHARED_LIBS)
 			set(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
 		endif()
-		mark_as_superbuild(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
 	endif()
 endif()
 
@@ -230,15 +211,6 @@ if(SV_USE_THREEDSOLVER)
 	option(SV_THREEDSOLVER_USE_CLOSEDLOOP "" ON)
 	option(SV_THREEDSOLVER_USE_VARWALL "" ON)
         option(SV_THREEDSOLVER_USE_VTK "" ON)
-	mark_as_superbuild(SV_USE_THREEDSOLVER)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SOLVERIO)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SVPRE)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SVPOST)
-	mark_as_superbuild(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_CORONARY)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_CLOSEDLOOP)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_VARWALL)
-	mark_as_superbuild(SV_THREEDSOLVER_USE_VTK)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -248,14 +220,12 @@ if(SV_USE_THREEDSOLVER)
 	if(SV_THREEDSOLVER_USE_SVLS)
 		set(USE_SVLS 1)
 	endif()
-	mark_as_superbuild(SV_THREEDSOLVER_USE_SVLS)
 	set(SVLS_BUILD_TYPE "Source")
 
 	option(SV_THREEDSOLVER_USE_LESLIB "Use leslib as linear solver" OFF )
 	if(SV_THREEDSOLVER_USE_LESLIB)
 		set(SV_USE_LESLIB 1)
 	endif()
-	mark_as_superbuild(SV_THREEDSOLVER_USE_LESLIB)
 endif()
 
 #-----------------------------------------------------------------------------

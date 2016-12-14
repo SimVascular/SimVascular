@@ -54,9 +54,8 @@ set(SV_LIBS ADAPTOR
 
 foreach(lib ${SV_LIBS})
   string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
-  mark_as_superbuild(SV_LIB_${lib}_NAME)
 endforeach()
 
 
 
-                
+

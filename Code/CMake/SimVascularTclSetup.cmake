@@ -28,7 +28,7 @@ macro(tcl_cmd)
 	set(options MESSAGE DEV_MESSAGE)
 	set(oneValueArgs OUTPUT_VARIABLE)
 	set(multiValueArgs FILES CODE)
-	CMAKE_PARSE_ARGUMENTS("" 
+	CMAKE_PARSE_ARGUMENTS(""
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 	if(_CODE)
@@ -38,7 +38,7 @@ macro(tcl_cmd)
 		message(AUTHOR_WARNING "No tclsh command specicied. Command not run")
 	endif()
 	if(TCL_TCLSH)
-		exec_program(${TCL_TCLSH} 
+		exec_program(${TCL_TCLSH}
 			ARGS ${TEMP_DIR}/tmp.tcl
 			OUTPUT_VARIABLE ${_OUTPUT_VARIABLE}
 			)
@@ -49,49 +49,47 @@ macro(tcl_cmd)
 	endif()
 endmacro()
 
-if(NOT SV_SUPERBUILD)
-	set(TCL_CONFIG_FILES)
-	tcl_cmd(CODE "puts \"[clock seconds]\""
-		OUTPUT_VARIABLE SV_TIMESTAMP)
-	
-	set(SV_SOURCE_TCL_DIR ${SV_SOURCE_HOME}/Tcl)
-	set(SV_BINARY_TCL_DIR ${SV_BINARY_HOME}/Tcl)
-	set(SV_TCL ${SV_BINARY_TCL_DIR})
-	add_custom_target(copy-tcl ALL)
-	add_custom_command(TARGET copy-tcl POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_TCL_DIR}
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_TCL_DIR}
-		COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_TCL_DIR} ${SV_BINARY_TCL_DIR}
-		COMMENT "Copying Tcl Directory..."
-		)
-	
+set(TCL_CONFIG_FILES)
+tcl_cmd(CODE "puts \"[clock seconds]\""
+        OUTPUT_VARIABLE SV_TIMESTAMP)
 
-	set(TCL_STARTUP_CONFIG_FILE "${TEMP_DIR}/startup_configure.tcl")
-	set(TCL_SPLASH_CONFIG_FILE "${TEMP_DIR}/splash_configure.tcl")
-	set(TCL_EXTERNAL_CONFIG_FILE "${TEMP_DIR}/externals_configure.tcl")
+set(SV_SOURCE_TCL_DIR ${SV_SOURCE_HOME}/Tcl)
+set(SV_BINARY_TCL_DIR ${SV_BINARY_HOME}/Tcl)
+set(SV_TCL ${SV_BINARY_TCL_DIR})
+add_custom_target(copy-tcl ALL)
+add_custom_command(TARGET copy-tcl POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_TCL_DIR}
+        COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_TCL_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_TCL_DIR} ${SV_BINARY_TCL_DIR}
+        COMMENT "Copying Tcl Directory..."
+        )
 
-	include(SimVascularTclConfigure)
 
-	set(TCL_CONFIG_FILES 
-		${TCL_SPLASH_CONFIG_FILE} ${TCL_STARTUP_CONFIG_FILE} ${TCL_EXTERNAL_CONFIG_FILE})
+set(TCL_STARTUP_CONFIG_FILE "${TEMP_DIR}/startup_configure.tcl")
+set(TCL_SPLASH_CONFIG_FILE "${TEMP_DIR}/splash_configure.tcl")
+set(TCL_EXTERNAL_CONFIG_FILE "${TEMP_DIR}/externals_configure.tcl")
 
-	foreach(tcl_file ${TCL_CONFIG_FILES})
-		dev_message("Configuring ${tcl_file}")
-		add_custom_command(TARGET copy-tcl POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SV_BINARY_TCL_DIR}
-			COMMENT "Copying ${tcl_file}..."
-			)
-		add_dependencies(copy-tcl ${tcl_file})
-	endforeach()
-	
-	#-----------------------------------------------------------------------------
-	# Install Steps
-	#-----------------------------------------------------------------------------
-	
-	include(PrepareTcl)
+include(SimVascularTclConfigure)
 
-	install(DIRECTORY ${TEMP_DIR}/Tcl DESTINATION ${SV_INSTALL_SCRIPT_DIR})
-	install(FILES ${TCL_CONFIG_FILES}
-		DESTINATION ${SV_INSTALL_TCL_CODE_DIR}
-		)
-endif()
+set(TCL_CONFIG_FILES
+        ${TCL_SPLASH_CONFIG_FILE} ${TCL_STARTUP_CONFIG_FILE} ${TCL_EXTERNAL_CONFIG_FILE})
+
+foreach(tcl_file ${TCL_CONFIG_FILES})
+        dev_message("Configuring ${tcl_file}")
+        add_custom_command(TARGET copy-tcl POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SV_BINARY_TCL_DIR}
+                COMMENT "Copying ${tcl_file}..."
+                )
+        add_dependencies(copy-tcl ${tcl_file})
+endforeach()
+
+#-----------------------------------------------------------------------------
+# Install Steps
+#-----------------------------------------------------------------------------
+
+include(PrepareTcl)
+
+install(DIRECTORY ${TEMP_DIR}/Tcl DESTINATION ${SV_INSTALL_SCRIPT_DIR})
+install(FILES ${TCL_CONFIG_FILES}
+        DESTINATION ${SV_INSTALL_TCL_CODE_DIR}
+        )

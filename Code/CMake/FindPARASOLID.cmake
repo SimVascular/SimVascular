@@ -70,7 +70,7 @@ elseif(WIN32 AND NOT IS64)
 endif()
 
 foreach(p ${${proj}_POSSIBLE_PATHS})
-	set(${proj}_POSSIBLE_PATHS ${${proj}_POSSIBLE_PATHS} 
+	set(${proj}_POSSIBLE_PATHS ${${proj}_POSSIBLE_PATHS}
 		"${p}/${sub_path}")
 endforeach()
 #message("${proj}_POSSIBLE_PATHS: ${${proj}_POSSIBLE_PATHS}")
@@ -89,7 +89,7 @@ endif()
 
 set(${proj}_POSSIBLE_LIB_PATHS )
 foreach(p ${${proj}_POSSIBLE_PATHS})
-	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS} 
+	set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS}
 		"${p}/${lib_sub_path}")
 endforeach()
 set(${proj}_POSSIBLE_LIB_PATHS ${${proj}_POSSIBLE_LIB_PATHS} ${${proj}_LIB_DIR} )
@@ -138,7 +138,7 @@ if (NOT ${proj}_NUMLIBS EQUAL ${proj}_NUMLIBS_EXPECTED)
 	set(${proj}_LIBRARIES_WORK "${proj}_LIBRARIES-NOTFOUND")
 endif()
 
-set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING 
+set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 	"${proj} libraries to link against" FORCE)
 
 # Clean up.  If all libraries were found remove cache entries.
@@ -152,7 +152,6 @@ if(${proj}_LIBRARIES)
 		list(GET ${proj}_LIBRARIES 1 temp_path)
 	endif()
 	get_filename_component(PARASOLID_DLL_PATH ${temp_path} PATH)
-	mark_as_superbuild(PARASOLID_DLL_PATH:PATH)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -160,7 +159,7 @@ endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Setup search paths for header	
+# Setup search paths for header
 
 set(${proj}_POSSIBLE_INCLUDE_PATHS ${${proj}_POSSIBLE_PATHS})
 foreach(p ${${proj}_POSSIBLE_PATHS})
@@ -194,7 +193,7 @@ FIND_PATH(${proj}_INCLUDE_DIR
 	)
 
 #-----
-# Find Schema 
+# Find Schema
 find_path(${proj}_SCHEMA_DIR
 	NAMES sch_0_15.sch_txt sch_13006.sch_txt sch_18007.sch_txt
 	PATHS ${${proj}_INCLUDE_DIR}/schema
@@ -226,7 +225,7 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Handle Standard Args
-find_package_handle_standard_args(${proj} 
+find_package_handle_standard_args(${proj}
 	FOUND_VAR ${proj}_FOUND
 	REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_DLL_PATH
 	VERSION_VAR ${proj}_VERSION

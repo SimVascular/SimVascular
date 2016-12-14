@@ -47,11 +47,6 @@ if(SV_USE_MESHSIM_DISCRETE_MODEL)
 	set(SV_LICENSED_LIBRARY_DIRS ${SV_LICENSED_LIBRARY_DIRS} MeshSimDiscreteSolidModel)
 endif()
 
-if(SV_SUPERBUILD)
-	RETURN()
-	###### RETURN_SUPERBUILD ######
-endif()
-
 #-----------------------------------------------------------------------------
 # Add the Core directories
 if(SV_LICENSED_LIBRARY_DIRS)

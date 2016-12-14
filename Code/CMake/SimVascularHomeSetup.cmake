@@ -28,7 +28,6 @@ if(NOT TEMP_DIR)
 set(TEMP_DIR ${SV_BINARY_DIR}/tmp)
 file(MAKE_DIRECTORY ${TEMP_DIR})
 endif()
-mark_as_superbuild(TEMP_DIR)
 
 get_filename_component(SV_SOURCE_HOME ${SV_SOURCE_DIR}/../ ABSOLUTE)
 dev_message("SimVascular Source Home: ${SV_SOURCE_HOME}")
@@ -39,13 +38,3 @@ endif()
 set(SV_HOME ${SV_BINARY_HOME})
 set(SV_DISTRIBUTION_DIR ${SV_SOURCE_HOME}/Distribution)
 set(SV_BINARY_DISTRIBUTION_DIR ${SV_BINARY_HOME}/Distribution)
-
-mark_as_superbuild(VARS
-	SV_SOURCE_HOME:PATH
-	SV_BINARY_HOME:PATH
-	SV_HOME:PATH
-	SV_SOURCE_TCL_DIR:PATH
-	SV_BINARY_TCL_DIR:PATH
-	SV_TCL:PATH
-	SV_DISTRIBUTION_DIR:PATH
-	)

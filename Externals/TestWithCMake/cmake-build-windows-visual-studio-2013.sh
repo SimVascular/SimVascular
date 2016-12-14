@@ -21,7 +21,6 @@ pushd /cygdrive/c/svtest
    -DCMAKE_BUILD_TYPE="$REPLACEME_SV_CMAKE_BUILD_TYPE" \
    -DCMAKE_INSTALL_PREFIX=`cygpath -m $PWD`/installed \
 \
-   -DSV_SUPERBUILD=OFF \
    -DBUILD_SHARED_LIBS:BOOL=OFF \
 \
    -DSV_EXTERN_LICENSED_BIN_DIR="C:/cygwin64/usr/local/sv/licensed" \

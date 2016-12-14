@@ -26,7 +26,6 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 set(SV_EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
 set(SV_EXTERNAL_PROJECT_FILE_PREFIX "")
 include(ExternalProject)
-include(ExternalProjectDependency)
 include(CheckLibraryExists)
 
 #-----------------------------------------------------------------------------
@@ -41,10 +40,6 @@ SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 SET(CMAKE_INSTALL_RPATH "")
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-mark_as_superbuild(CMAKE_SKIP_BUILD_RPATH)
-mark_as_superbuild(CMAKE_SKIP_BUILD_WITH_INSTALL_RPATH)
-mark_as_superbuild(CMAKE_INSTALL_RPATH)
-mark_as_superbuild(CMAKE_INSTALL_RPATH_USE_LINK_RPATH)
 #-----------------------------------------------------------------------------
 # unset NEED variables
 unset(SV_USE_FORTRAN)
@@ -144,26 +139,11 @@ endif()
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
-      #mark_as_superbuild(
-      #	VARS
-      #	TCL_INCLUDE_PATH:PATH
-      #	TCL_LIBRARY:FILEPATH
-      #	TCL_TCLSH:FILEPATH
-      #	TK_INCLUDE_PATH:PATH
-      #	TK_LIBRARY:FILEPATH
-      #	TK_WISH:FILEPATH
-      #	ALL_PROJECTS)
 
 #-----------------------------------------------------------------------------
 # PYTHON
 if(SV_USE_PYTHON)
 	simvascular_external(PYTHON SYSTEM_DEFAULT SHARED_LIB)
-	mark_as_superbuild(
-		PYTHONLIBS_FOUND
-		PYTHON_INCLUDE_PATH
-		PYTHON_LIBRARIES
-		PYTHON_INCLUDE_DIRS
-		PYTHONLIBS_VERSION_STRING)
 
 	if(PYTHONLIBS_FOUND)
 		if(NOT WIN32)
@@ -174,8 +154,6 @@ if(SV_USE_PYTHON)
 		  set (PYTHONLIBS_MAJOR_VERSION 2)
 		  set (PYTHONLIBS_MINOR_VERSION 7)
 		endif()
-		mark_as_superbuild(PYTHONLIBS_MAJOR_VERSION)
-		mark_as_superbuild(PYTHONLIBS_MINOR_VERSION)
 	else()
 		message(STATUS "")
 		message(STATUS "Python Libs NOT FOUND")
@@ -198,7 +176,6 @@ simvascular_external(VTK DOWNLOADABLE
         vtkFiltersFlowPaths vtkWrappingTcl
 	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
 	vtkFiltersCore vtkIOLegacy)
-mark_as_superbuild(VTK_DIR)
 if(SV_USE_SYSTEM_VTK)
   simvascular_get_external_path_from_include_dir(VTK)
 endif()
@@ -211,8 +188,6 @@ if(WIN32)
 		if(TKCXIMAGE_DLL)
 			set(TKCXIMAGE_DLL_LIBRARY ${TKCXIMAGE_DLL})
 			get_filename_component(TKCXIMAGE_DLL_PATH ${TKCXIMAGE_DLL} DIRECTORY CACHE)
-			mark_as_superbuild(TKCXIMAGE_DLL)
-			mark_as_superbuild(TKCXIMAGE_DLL_PATH)
 			set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "TKCXIMAGE")
 		endif()
 	endif()
@@ -239,9 +214,6 @@ endif()
 if(SV_USE_MMG)
 	simvascular_external(MMG DOWNLOADABLE)
 	set(USE_MMG ON)
-	mark_as_superbuild(MMG_DIR)
-	mark_as_superbuild(MMG_INCLUDE_DIR)
-	mark_as_superbuild(MMG_LIBRARY)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
 	if(SV_USE_MMG_SHARED)
 	  set(SV_INSTALL_EXTERNALS ON)
@@ -309,8 +281,6 @@ endif()
 # GDCM
 if(SV_USE_GDCM)
 	simvascular_external(GDCM DOWNLOADABLE)
-	mark_as_superbuild(GDCM_DIR)
-	mark_as_superbuild(GDCM_SOURCE_DIR)
 	set(USE_GDCM ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
 	if(SV_USE_GDCM_SHARED)
@@ -330,7 +300,6 @@ if(SV_USE_ITK)
 		set(SV_INSTALL_EXTERNALS ON)
 	endif()
 	simvascular_external(ITK DOWNLOADABLE)
-        mark_as_superbuild(ITK_DIR)
 
 	set(USE_ITK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
@@ -354,8 +323,6 @@ endif()
 # FREETYPE
 if(SV_USE_FREETYPE)
 	simvascular_external(FREETYPE DOWNLOADABLE)
-	mark_as_superbuild(FREETYPE_DIR)
-	mark_as_superbuild(FREETYPE_SOURCE_DIR)
 	set(USE_FREETYPE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
 	if(SV_USE_FREETYPE_SHARED)
@@ -371,8 +338,6 @@ endif()
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
 	simvascular_external(OpenCASCADE DOWNLOADABLE)
-	mark_as_superbuild(OpenCASCADE_DIR)
-	mark_as_superbuild(OpenCASCADE_SOURCE_DIR)
 	set(USE_OpenCASCADE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
@@ -389,7 +354,6 @@ endif()
 # CTK
 if(SV_USE_CTK)
     simvascular_external(CTK DOWNLOADABLE)
-    mark_as_superbuild(CTK_DIR)
 
     if(SV_USE_CTK_SHARED)
       set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} CTK)
@@ -404,7 +368,6 @@ endif()
 # SimpleITK
 if(SV_USE_SimpleITK)
     simvascular_external(SimpleITK DOWNLOADABLE)
-    mark_as_superbuild(SimpleITK_DIR)
 
     if(SV_USE_SimpleITK_SHARED)
       set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} SimpleITK)
@@ -452,7 +415,6 @@ if(SV_USE_MITK)
   else()
     simvascular_external(MITK DOWNLOADABLE)
   endif()
-    mark_as_superbuild(MITK_DIR)
 
     if(SV_USE_MITK_SHARED)
       set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
@@ -468,13 +430,7 @@ if(SV_USE_PARASOLID)
 			simvascular_external(PARASOLID SYSTEM_DEFAULT SHARED_LIB)
 			if(WIN32)
 				set(SV_EXTRA_PATHS ${SV_EXTRA_PATHS} ${PARASOLID_DLL_PATH})
-				mark_as_superbuild(PARASOLID_DLL_PATH:PATH)
 			endif()
-			mark_as_superbuild(PARASOLID_DIR)
-			mark_as_superbuild(PARASOLID_INCLUDE_DIR)
-			mark_as_superbuild(PARASOLID_LIBRARIES)
-			mark_as_superbuild(PARASOLID_LIBRARY)
-			mark_as_superbuild(PARASOLID_SCHEMA_DIR)
 			SET(USE_PARASOLID ON)
 			set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PARASOLID")
 			set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
@@ -482,7 +438,6 @@ if(SV_USE_PARASOLID)
 			if (BUILD_SHARED_LIBS)
 				set(SV_USE_PARASOLID_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
 			endif()
-			mark_as_superbuild(SV_USE_PARASOLID_SHARED_LIBRARIES)
 		else()
 			message("Parasolid requires an extra license.")
 		endif()
@@ -506,18 +461,13 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 	endif()
 	if(SV_USE_PARASOLID)
 		set(MESHSIM_MODELER "parasolid")
-		mark_as_superbuild(MESHSIM_MODELER:STRING)
 	endif()
 	if(MESHSIM_MODELER MATCHES "parasolid")
         set(MESHSIM_SIMPARASOLID_VERSION SimParasolid270 CACHE STRING "When using parasolid, you need to specify which veriosn of the bridge library to use.")
         set(MESHSIM_ACCEPTED_SIMPARASOLID_VERSIONS SimParasolid271 SimParasolid270 SimParasolid260 SimParasolid251 SimParasolid250 SimParasolid241)
 		SET_PROPERTY(CACHE MESHSIM_SIMPARASOLID_VERSION PROPERTY STRINGS ${MESHSIM_ACCEPTED_SIMPARASOLID_VERSIONS})
-		mark_as_superbuild(MESHSIM_SIMPARASOLID_VERSION)
 	endif()
 	simvascular_external(MESHSIM COMPONENTS ${MESHSIM_COMP} ${MESHSIM_SIMPARASOLID_VERSION} SHARED_LIB SYSTEM_DEFAULT)
-	mark_as_superbuild(MESHSIM_DIR)
-	mark_as_superbuild(MESHSIM_INCLUDE_DIR)
-	mark_as_superbuild(MESHSIM_LIBRARIES)
 	if(MESHSIM_USE_LICENSE_FILE)
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DMESHSIM_USE_LICENSE_FILE")
 		find_file(MESHSIM_LICENSE_FILE meshsim-license.dat PATHS ${MESHSIM_LICENSE_DIR})
@@ -530,7 +480,6 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 		else()
 			message(STATUS "MeshSim License: ${MESHSIM_LICENSE_FILE}")
 		endif()
-		mark_as_superbuild(MESHSIM_LICENSE_FILE)
 	else()
 		unset(MESHSIM_LICENSE_FILE)
 	endif()
@@ -558,7 +507,6 @@ if(SV_USE_THREEDSOLVER)
 	#	"${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
 	# find config file
 	#set(FLOWSOLVER_CONFIG_FILE "${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp")
-	#mark_as_superbuild(FLOWSOLVER_CONFIG_FILE)
 	#set(FLOWSOLVER_CONFIG_PATH ${OUTBIN_DIR})
 	#file(COPY ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${FLOWSOLVER_CONFIG_PATH})
 	#install(FILES ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
@@ -582,7 +530,6 @@ endif()
 
 if(SV_THREEDSOLVER_USE_LESLIB)
 	find_package(LESLIB REQUIRED)
-	mark_as_superbuild(VARS LESLIB_LIBRARY LESLIB_INCLUDE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -630,9 +577,6 @@ if(SV_USE_INTELRUNTIME OR SV_USE_INTEL)
 	endif()
 	set(SV_USE_INTELRUNTIME ON)
 	set(SV_USE_INTEL ON)
-	mark_as_superbuild(VARS
-		INTELRUNTIME_LIB_DIR:PATH
-		INTELRUNTIME_LIBRARIES)
 else()
 	unset(INTELRUNTIME_LIBRARIES CACHE)
 endif()
@@ -664,14 +608,6 @@ if(SV_USE_MPI OR USE_MPI)
 			set(MPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY} ${MPI_fmpich2_LIBRARY} ${MPI_CXX_LIBRARIES})
 			#message("${MPI_EXTRA_LIBRARY}")
 		endif()
-
-		mark_as_superbuild(
-			VARS
-			MPI_Fortran_COMPILER:FILEPATH
-			MPI_C_COMPILER:FILEPATH
-			MPI_CXX_COMPILER:FILEPATH
-			MPIEXEC
-			ALL_PROJECTS)
 
 		# include_directories(${MPI_Fortran_INCLUDE_PATH})
 		if(SV_DEVELOPER_OUTPUT)
@@ -713,52 +649,22 @@ if(SV_USE_WIN32_REGISTRY_FORCE_OFF)
 	set(SV_USE_WIN32_REGISTRY OFF)
 	message(STATUS "Forcing SV_USE_WIN32_REGISTRY off, even in distribution mode")
 	message(STATUS "SV_USE_WIN32_REGISTRY: ${SV_USE_WIN32_REGISTRY}")
-	mark_as_superbuild(SV_USE_WIN32_REGISTRY_FORCE_OFF:BOOL)
 endif()
-mark_as_superbuild(SV_USE_WIN32_REGISTRY:BOOL)
+
 #-----------------------------------------------------------------------------
-# Superbuild
-#-----------------------------------------------------------------------------
-# Anything after this will not be executed if in
-# superbuild mode.
-#-----------------------------------------------------------------------------
-set(git_protocol "git")
-mark_as_superbuild(git_protocol)
+message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
+file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
+install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
 
-ExternalProject_Include_Dependencies(${PROJECT_NAME}
-	PROJECT_VAR PROJECT_NAME)
-if(SV_SUPERBUILD)
-
-	message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
-	file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
-	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
-
-	# Git Check (superbuild)
-	find_package(Git REQUIRED)
-	option(SV_USE_GIT
-		"If behind a firewall turn this off to use http instead." ON)
-
-	dev_message("Superbuild Mode!")
-	if(SV_ENABLE_DISTRIBUTION)
-		add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
-	endif()
-	include(Superbuild)
-	RETURN()
-else()
-	message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
-	file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
-	install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
-
-	if(SV_ENABLE_DISTRIBUTION)
-		add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
-	endif()
+if(SV_ENABLE_DISTRIBUTION)
+        add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
 endif()
 #-----------------------------------------------------------------------------
 # Now we need to finish configuring now that the external projects are configured
 #-----------------------------------------------------------------------------
 foreach(proj ${SV_EXTERNALS_LIST})
   if(SV_USE_${proj}_SHARED)
-    ExternalProject_Install_CMake_NoSB(${proj})
+    simvascular_install_external(${proj})
   endif()
 endforeach()
 
@@ -771,23 +677,12 @@ if(WIN32)
 endif()
 
 find_package(TCL)
-mark_as_superbuild(TCL_DIR:PATH)
-mark_as_superbuild(TCL_INCLUDE_PATH:PATH)
-mark_as_superbuild(TCL_LIBRARY:FILEPATH)
-mark_as_superbuild(TCL_TCLSH:FILEPATH)
-mark_as_superbuild(TK_INCLUDE_PATH:PATH)
-mark_as_superbuild(TK_LIBRARY:FILEPATH)
-mark_as_superbuild(TK_WISH:FILEPATH)
-mark_as_superbuild(ALL_PROJECTS)
 
 #-----------------------------------------------------------------------------
 # GDCM Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_GDCM)
   find_package(GDCM)
-  mark_as_superbuild(GDCM_DIR)
-  mark_as_superbuild(GDCM_INCLUDE_DIR)
-  mark_as_superbuild(GDCM_LIBRARIES)
 endif()
 
 # ITK Setup
@@ -801,45 +696,30 @@ endif()
 #-----------------------------------------------------------------------------
 if(SV_USE_FREETYPE)
   find_package(FREETYPE)
-  mark_as_superbuild(FREETYPE_DIR)
-  mark_as_superbuild(FREETYPE_INCLUDE_DIR)
-  mark_as_superbuild(FREETYPE_LIBRARIES)
 endif()
 
 # OpenCASCADE Setup
 #-----------------------------------------------------------------------------
 if(SV_USE_OpenCASCADE)
   find_package(OpenCASCADE)
-  mark_as_superbuild(OpenCASCADE_INCLUDE_DIR)
-  mark_as_superbuild(OpenCASCADE_LIBRARIES)
-  mark_as_superbuild(OpenCASCADE_LIBRARY)
 endif()
 
 #-----------------------------------------------------------------------------
 # MMG Setup
 if(SV_USE_MMG)
   find_package(MMG)
-  mark_as_superbuild(MMG_DIR)
-  mark_as_superbuild(MMG_INCLUDE_DIR)
-  mark_as_superbuild(MMG_LIBRARY)
 endif()
 
 #-----------------------------------------------------------------------------
 # CTK
 if(SV_USE_CTK)
   find_package(CTK)
-  mark_as_superbuild(CTK_DIR)
-  mark_as_superbuild(CTK_INCLUDE_DIR)
-  mark_as_superbuild(CTK_LIBRARIES)
 endif()
 
 #-----------------------------------------------------------------------------
 # SimpleITK
 if(SV_USE_SimpleITK)
   find_package(SimpleITK)
-  mark_as_superbuild(SimpleITK_DIR)
-  mark_as_superbuild(SimpleITK_INCLUDE_DIR)
-  mark_as_superbuild(SimpleITK_LIBRARIES)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -859,12 +739,6 @@ if(SV_USE_MITK)
   else()
     find_package(MITK)
   endif()
-  mark_as_superbuild(MITK_DIR)
-  mark_as_superbuild(MITK_LIBRARIES)
-  mark_as_superbuild(MITK_LIBRARY_DIR)
-  mark_as_superbuild(MITK_PLUGIN_LIBRARIES)
-  mark_as_superbuild(MITK_PLUGIN_LIBRARY_DIR)
-  mark_as_superbuild(MTIK_INCLUDE_DIRS)
   include_directories(${MITK_INCLUDE_DIRS})
   include_directories(${CTK_INCLUDE_DIRS})
 endif()
