@@ -40,7 +40,6 @@ export REPLACEME_PARASOLID_DIR="/Users/adamupdegrove/Documents/Software/SimVascu
    -DBUILD_SHARED_LIBS=ON \
    -DBUILD_TESTING=OFF \
 \
-   -DSV_SUPERBUILD=OFF \
    -DSV_ENABLE_DISTRIBUTION=ON \
 \
    -DSV_USE_TET_ADAPTOR=ON \

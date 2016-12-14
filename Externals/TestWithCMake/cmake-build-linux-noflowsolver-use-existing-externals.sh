@@ -30,8 +30,6 @@ export EXTERNALS_DIR="/usr/local/sv/ext"
    -DBUILD_SHARED_LIBS=ON \
    -DBUILD_TESTING=OFF \
 \
-   -DSV_SUPERBUILD=OFF \
-\
    -DSV_USE_FREETYPE=ON \
    -DSV_USE_GDCM=ON \
    -DSV_USE_ITK=ON \

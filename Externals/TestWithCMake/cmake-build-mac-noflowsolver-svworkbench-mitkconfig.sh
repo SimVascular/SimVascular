@@ -28,8 +28,6 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DBUILD_SHARED_LIBS=ON \
    -DBUILD_TESTING=OFF \
 \
-   -DSV_SUPERBUILD=OFF \
-\
    -DSV_USE_FREETYPE=ON \
    -DSV_USE_GDCM=ON \
    -DSV_USE_ITK=ON \

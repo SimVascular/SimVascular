@@ -64,10 +64,8 @@ if(APPLE AND GNU)
 endif()
 
 
-set(SV_EXTERNALS_OPEN_BIN_DIR 
+set(SV_EXTERNALS_OPEN_BIN_DIR
 	${SV_EXTERN_DEFAULT}/${OpenLibs_Bin_REL_PATH} CACHE PATH "Location of")
-      mark_as_superbuild(SV_EXTERN_OPEN_BIN_DIR)
 
-set(SV_EXTERN_LICENSED_BIN_DIR 
+set(SV_EXTERN_LICENSED_BIN_DIR
 	${SV_EXTERN_DEFAULT}/${LicensedLibs_Bin_REL_PATH} CACHE PATH "Location of")
-      mark_as_superbuild(SV_EXTERN_LICENSED_BIN_DIR)
