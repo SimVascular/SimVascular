@@ -45,12 +45,10 @@ SET(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
 
-link_directories(${FREETYPE_DIR}/lib)
 target_link_libraries(${lib}
 			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 			${GLOBAL_LIBRARIES}
 			${OpenCASCADE_LIBRARIES}
-			${FREETYPE_LIBRARY}
 			${SV_LIB_SOLID_NAME} ${SV_LIB_REPOSITORY_NAME}
                         ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_GEOM_NAME}
             )

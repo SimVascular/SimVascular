@@ -332,6 +332,7 @@ if(SV_USE_FREETYPE)
         if(SV_USE_SYSTEM_FREETYPE)
           set(SV_FREETYPE_DIR ${FREETYPE_DIR})
         endif()
+  link_directories(${FREETYPE_DIR}/lib)
 endif()
 
 #-----------------------------------------------------------------------------

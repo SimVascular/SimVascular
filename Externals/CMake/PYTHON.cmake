@@ -58,6 +58,9 @@ get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_L
 set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_${proj}_LIBRARY_DIR}/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}/site-packages)
 
 if(APPLE)
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DCMAKE_PREFIX_PATH:PATH=/opt/local
+    )
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install
     COMMAND install_name_tool -id @rpath/${${proj}_LIBRARY_NAME} ${SV_EXTERNALS_${proj}_LIBRARY}
     COMMAND cp /opt/local/lib/libcrypto.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
