@@ -1389,13 +1389,14 @@ void svModelEdit::ShowSegSelectionWidget()
         segNodes.push_back(rs->GetElement(i));
 
 
-    m_SegSelectionWidget->SetTableView(segNodes,modelElement);
+    m_SegSelectionWidget->SetTableView(segNodes,modelElement,m_ModelType);
     m_SegSelectionWidget->show();
 }
 
 void svModelEdit::CreateModel()
 {
     std::vector<std::string> segNames=m_SegSelectionWidget->GetUsedSegNames();
+    int numSampling=m_SegSelectionWidget->GetNumSampling();
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -1429,7 +1430,7 @@ void svModelEdit::CreateModel()
     QString statusText="Model has been created.";
     if(m_ModelType=="PolyData"){
         int stats[2]={0};
-        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,stats);
+        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats);
         if(newModelElement==NULL)
         {
             statusText="Failed to create model.";

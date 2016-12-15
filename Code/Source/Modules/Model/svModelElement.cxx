@@ -3,21 +3,17 @@
 
 #include <vtkCellData.h>
 
-// dummy prototype, must be overridden
-vtkSmartPointer<vtkPolyData> svModelElement::CreateFaceVtkPolyData(int id) {
-  vtkSmartPointer<vtkPolyData> foo;
-  return foo;
-}
-
 svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)
+    , m_NumSampling(0)
 {
 }
 
 svModelElement::svModelElement(const svModelElement &other)
     : m_Type(other.m_Type)
     , m_SegNames(other.m_SegNames)
+    , m_NumSampling(other.m_NumSampling)
 {
     int faceNum=other.m_Faces.size();
     m_Faces.resize(faceNum);
@@ -464,4 +460,14 @@ void svModelElement::ReplaceFaceIDForBlendParamRadii(int targetID, int loseID)
         }
     }
 
+}
+
+void svModelElement::SetNumSampling(int num)
+{
+    m_NumSampling=num;
+}
+
+int svModelElement::GetNumSampling()
+{
+    return m_NumSampling;
 }

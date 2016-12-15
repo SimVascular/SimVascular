@@ -113,7 +113,7 @@ public:
 
     void SetWholeVtkPolyData(vtkSmartPointer<vtkPolyData> wvpd);
 
-    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id);
+    virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {return NULL;}
 
 //    int GetSelectedFaceIndex();
 
@@ -157,6 +157,10 @@ public:
 
     void CalculateBoundingBox(double *bounds);
 
+    void SetNumSampling(int num);
+
+    int GetNumSampling();
+
   protected:
 
     std::string m_Type;
@@ -168,6 +172,8 @@ public:
     vtkSmartPointer<vtkPolyData> m_WholeVtkPolyData;
 
     std::vector<svBlendParamRadius*> m_BlendRadii;
+
+    int m_NumSampling;
 
   };
 

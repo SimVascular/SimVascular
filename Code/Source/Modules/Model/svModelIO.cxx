@@ -73,7 +73,9 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
         if(meElement != nullptr)
         {
             std::string type;
+            int numSampling=0;
             meElement->QueryStringAttribute("type", &type);
+            meElement->QueryIntAttribute("num_sampling", &numSampling);
 
             svModelElement* me;
 
@@ -97,6 +99,8 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 //            {
 //                me=new svModelElementParaSolid();
 //            }
+
+            me->SetNumSampling(numSampling);
 
             TiXmlElement* facesElement = meElement->FirstChildElement("faces");
             if(facesElement!=nullptr)
@@ -261,6 +265,7 @@ void svModelIO::Write()
         auto meElement = new TiXmlElement("model_element");
         timestepElement->LinkEndChild(meElement);
         meElement->SetAttribute("type",me->GetType());
+        meElement->SetAttribute("num_sampling", me->GetNumSampling());
 
         auto segsElement= new TiXmlElement("segmentations");
         meElement->LinkEndChild(segsElement);
