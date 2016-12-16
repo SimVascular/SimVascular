@@ -32,6 +32,7 @@ target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${SV_LIB_GLOBALS_NAME}
                              ${SV_LIB_UTILS_NAME}
                              ${SV_LIB_GEOM_NAME}
+                             ${QT_LIBRARIES}
                              svCommon)
 
 if(RESOURCE_FILES)

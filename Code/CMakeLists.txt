@@ -21,12 +21,14 @@ Project(SV)
 # Superbuild
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 	"${CMAKE_MODULE_PATH}")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # CMake Includes
 include(CheckLibraryExists)
 include(GetPrerequisites)
 include(GenerateExportHeader)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # SimVascular Includes
@@ -34,6 +36,7 @@ include(SimVascularMacros)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularFunctionCheckCompilerFlags)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # RPATH handling
@@ -75,6 +78,7 @@ set(SV_EXE "simvascular")
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # start internal cache variables
@@ -83,6 +87,7 @@ set(SV_CORE_LIBRARY_DIRS "")
 set(SV_MODULE_DIRS "")
 set(SV_PLUGIN_DIRS "")
 set(SV_CORE_EXECUTABLE_DIRS "")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # SimVascular Setup
@@ -91,6 +96,7 @@ include(SimVascularInstallSetup)
 include(SimVascularHomeSetup)
 include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Package and Subdirectory Logic
@@ -113,32 +119,37 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 
 #-----------------------------------------------------------------------------
 # Modules
-set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
-  "Source/Modules/Common"
-  "Source/Modules/Path"
-  "Source/Modules/Segmentation"
-  "Source/Modules/Model"
-  "Source/Modules/Mesh"
-  "Source/Modules/Simulation"
-  "Source/Modules/ProjectManagement"
-  "Source/Modules/QtWidgets")
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Plugins
-if(NOT SV_USE_MITK_CONFIG)
-  set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
-    "Source/Plugins/org.sv.projectdatanodes"
-    "Source/Plugins/org.sv.gui.qt.projectmanager"
-    "Source/Plugins/org.sv.gui.qt.pathplanning"
-    "Source/Plugins/org.sv.gui.qt.segmentation"
-    "Source/Plugins/org.sv.gui.qt.modeling"
-    "Source/Plugins/org.sv.gui.qt.simulation"
-    "Source/Plugins/org.sv.gui.qt.application")
+if(SV_USE_QT_GUI)
+  set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
+    "Source/Modules/Common"
+    "Source/Modules/Path"
+    "Source/Modules/Segmentation"
+    "Source/Modules/Model"
+    "Source/Modules/Mesh"
+    "Source/Modules/Simulation"
+    "Source/Modules/ProjectManagement"
+    "Source/Modules/QtWidgets")
 endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Plugins
+if(SV_USE_QT_GUI)
+  if(NOT SV_USE_MITK_CONFIG)
+    set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
+      "Source/Plugins/org.sv.projectdatanodes"
+      "Source/Plugins/org.sv.gui.qt.projectmanager"
+      "Source/Plugins/org.sv.gui.qt.pathplanning"
+      "Source/Plugins/org.sv.gui.qt.segmentation"
+      "Source/Plugins/org.sv.gui.qt.modeling"
+      "Source/Plugins/org.sv.gui.qt.simulation"
+      "Source/Plugins/org.sv.gui.qt.application")
+  endif()
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Executables
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
 #-----------------------------------------------------------------------------
 
@@ -162,53 +173,12 @@ endif(DOXYGEN_FOUND)
 
 #-----------------------------------------------------------------------------
 # TCL
-simvascular_external(TCL DOWNLOADABLE SHARED_LIB)
-if(SV_USE_SYSTEM_TCL)
-  set(SV_TCL_DIR ${TCL_DIR})
-endif()
+simvascular_external(TCL)
+set(SV_TCL_DIR ${TCL_DIR})
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
 
-#-----------------------------------------------------------------------------
-# PYTHON
-if(SV_USE_PYTHON)
-	simvascular_external(PYTHON SYSTEM_DEFAULT SHARED_LIB)
-
-	if(PYTHONLIBS_FOUND)
-		if(NOT WIN32)
-		  string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
-		  list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
-		  list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
-	        else()
-		  set (PYTHONLIBS_MAJOR_VERSION 2)
-		  set (PYTHONLIBS_MINOR_VERSION 7)
-		endif()
-	else()
-		message(STATUS "")
-		message(STATUS "Python Libs NOT FOUND")
-		message(STATUS "Make sure you have python installed on your system.")
-	endif()
-        set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
-        set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
-	set(SV_DEPENDS ${SV_DEPENDS} "PYTHON")
-endif()
-
-#-----------------------------------------------------------------------------
-# VTK
-set(SV_DEPENDS ${SV_DEPENDS} "TCL")
-if(SV_USE_VTK_SHARED)
-	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
-	set(SV_INSTALL_EXTERNALS ON)
-endif()
-simvascular_external(VTK DOWNLOADABLE
-	COMPONENTS
-        vtkFiltersFlowPaths vtkWrappingTcl
-	vtkRenderingTk vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
-	vtkFiltersCore vtkIOLegacy)
-if(SV_USE_SYSTEM_VTK)
-  simvascular_get_external_path_from_include_dir(VTK)
-endif()
 
 #-----------------------------------------------------------------------------
 # tkcximage (Legacy)
@@ -231,7 +201,7 @@ if(SV_USE_ZLIB)
 	if(NOT SV_USE_SYSTEM_ZLIB)
           set(ZLIB_LIBRARY ${SV_LIB_THIRDPARTY_ZLIB_NAME})
 	else()
-		find_package(ZLIB)
+		simvascular_external(ZLIB)
 	endif()
 else()
 	unset(ZLIB_LIBRARY CACHE)
@@ -242,17 +212,15 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugin Mmg
 if(SV_USE_MMG)
-	simvascular_external(MMG DOWNLOADABLE)
+	simvascular_external(MMG)
 	set(USE_MMG ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
 	if(SV_USE_MMG_SHARED)
 	  set(SV_INSTALL_EXTERNALS ON)
 	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
 	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
-        endif()
-      if(SV_USE_SYSTEM_MMG)
-        simvascular_get_external_path_from_include_dir(MMG)
-      endif()
+  endif()
+  simvascular_get_external_path_from_include_dir(MMG)
 endif()
 
 #-----------------------------------------------------------------------------
@@ -310,7 +278,7 @@ endif()
 #-----------------------------------------------------------------------------
 # GDCM
 if(SV_USE_GDCM)
-	simvascular_external(GDCM DOWNLOADABLE)
+	simvascular_external(GDCM)
 	set(USE_GDCM ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
 	if(SV_USE_GDCM_SHARED)
@@ -329,16 +297,67 @@ if(SV_USE_ITK)
 		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
 		set(SV_INSTALL_EXTERNALS ON)
 	endif()
-	simvascular_external(ITK DOWNLOADABLE)
+	simvascular_external(ITK)
+  include(${ITK_USE_FILE})
 
 	set(USE_ITK ON)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
-        include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
-        include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
-        if(SV_USE_SYSTEM_ITK)
-          simvascular_get_external_path_from_include_dir(ITK)
-        endif()
+    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
+    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
+  simvascular_get_external_path_from_include_dir(ITK)
 endif()
+
+#-----------------------------------------------------------------------------
+# PYTHON
+if(SV_USE_PYTHON)
+  simvascular_external(PYTHON SHARED_LIB)
+
+	if(PYTHONLIBS_FOUND)
+		if(NOT WIN32)
+		  string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
+		  list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
+		  list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
+	        else()
+		  set (PYTHONLIBS_MAJOR_VERSION 2)
+		  set (PYTHONLIBS_MINOR_VERSION 7)
+		endif()
+	else()
+		message(STATUS "")
+		message(STATUS "Python Libs NOT FOUND")
+		message(STATUS "Make sure you have python installed on your system.")
+	endif()
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
+  set(VTK_PYTHON_MODULES vtkWrappingPythonCore)
+endif()
+
+#-----------------------------------------------------------------------------
+# VTK
+if(SV_USE_VTK_SHARED)
+	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
+	set(SV_INSTALL_EXTERNALS ON)
+endif()
+simvascular_external(VTK
+	COMPONENTS
+    vtkFiltersFlowPaths
+    vtkWrappingTcl
+	  vtkRenderingTk
+    vtkCommonDataModel
+    vtkCommonCore
+    vtkChartsCore
+    vtkCommonExecutionModel
+	  vtkFiltersCore
+    vtkIOLegacy
+    vtkIOPLY
+    vtkIOXML
+    vtkImagingStencil
+    ${VTK_PYTHON_MODULES})
+include(${VTK_USE_FILE})
+set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
+simvascular_get_external_path_from_include_dir(VTK)
+#-----------------------------------------------------------------------------
+
 
 #---
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
@@ -352,23 +371,21 @@ endif()
 #-----------------------------------------------------------------------------
 # FREETYPE
 if(SV_USE_FREETYPE)
-	simvascular_external(FREETYPE DOWNLOADABLE)
+	simvascular_external(FREETYPE)
 	set(USE_FREETYPE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
 	if(SV_USE_FREETYPE_SHARED)
 	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
 	  set(SV_INSTALL_EXTERNALS ON)
 	endif()
-        if(SV_USE_SYSTEM_FREETYPE)
-          set(SV_FREETYPE_DIR ${FREETYPE_DIR})
-        endif()
+  set(SV_FREETYPE_DIR ${FREETYPE_DIR})
   link_directories(${FREETYPE_DIR}/lib)
 endif()
 
 #-----------------------------------------------------------------------------
 # OpenCASCADE
 if(SV_USE_OpenCASCADE)
-	simvascular_external(OpenCASCADE DOWNLOADABLE)
+	simvascular_external(OpenCASCADE)
 	set(USE_OpenCASCADE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
@@ -376,42 +393,52 @@ if(SV_USE_OpenCASCADE)
 	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
 	  set(SV_INSTALL_EXTERNALS ON)
 	endif()
-        if(SV_USE_SYSTEM_OpenCASCADE)
-          simvascular_get_external_path_from_include_dir(OpenCASCADE)
-        endif()
+  simvascular_get_external_path_from_include_dir(OpenCASCADE)
 endif()
 
 #-----------------------------------------------------------------------------
 # CTK
 if(SV_USE_CTK)
-    simvascular_external(CTK DOWNLOADABLE)
+    simvascular_external(CTK)
 
     if(SV_USE_CTK_SHARED)
       set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} CTK)
       set(SV_INSTALL_EXTERNALS ON)
     endif()
-    if(SV_USE_SYSTEM_CTK)
-      simvascular_get_external_path_from_include_dir(CTK)
-    endif()
+    simvascular_get_external_path_from_include_dir(CTK)
 endif()
 
 #-----------------------------------------------------------------------------
 # SimpleITK
 if(SV_USE_SimpleITK)
-    simvascular_external(SimpleITK DOWNLOADABLE)
+    simvascular_external(SimpleITK)
 
     if(SV_USE_SimpleITK_SHARED)
       set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} SimpleITK)
       set(SV_INSTALL_EXTERNALS ON)
     endif()
-    if(SV_USE_SYSTEM_SimpleITK)
-      simvascular_get_external_path_from_include_dir(SimpleITK)
-    endif()
+    simvascular_get_external_path_from_include_dir(SimpleITK)
 endif()
 
 if(SV_USE_QT_GUI)
     set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
-    set(SimVascular_QT5_COMPONENTS Concurrent Designer OpenGL PrintSupport Script Sql Svg WebKitWidgets Xml XmlPatterns UiTools Help)
+    set(SimVascular_QT5_COMPONENTS
+      Concurrent
+      Core
+      Designer
+      Gui
+      Help
+      OpenGL
+      PrintSupport
+      Script
+      Sql
+      Svg
+      WebKitWidgets
+      WebKit
+      Widgets
+      Xml
+      XmlPatterns
+      UiTools)
     find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
     if(Qt5_DIR)
       get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
@@ -442,15 +469,25 @@ endif()
 # MITK
 if(SV_USE_MITK)
   if(SV_USE_MITK_CONFIG)
-    simvascular_external(MITK DOWNLOADABLE NO_MODULE)
+    find_package(MITK NO_MODULE)
+    set(MITK_LIBRARIES MitkCore
+                       MitkAppUtil
+                       MitkQtWidgets
+                       MitkQtWidgetsExt
+                       MitkMapperExt
+                       MitkImageDenoising
+                       MitkSegmentationUI
+                       MitkSegmentation
+                       MitkSceneSerialization)
   else()
-    simvascular_external(MITK DOWNLOADABLE)
+    simvascular_external(MITK)
   endif()
-
-    if(SV_USE_MITK_SHARED)
-      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
-      set(SV_INSTALL_EXTERNALS ON)
-    endif()
+  if(SV_USE_MITK_SHARED)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
+    set(SV_INSTALL_EXTERNALS ON)
+  endif()
+  include_directories(${MITK_INCLUDE_DIRS})
+  include_directories(${CTK_INCLUDE_DIRS})
 endif()
 
 # Licensed Package Additions
@@ -601,13 +638,11 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable Interl Runtime libs if we need or want them
-if(SV_USE_INTELRUNTIME OR SV_USE_INTEL)
-	simvascular_external(INTELRUNTIME SYSTEM_DEFAULT SHARED_LIB)
+if(SV_USE_INTEL)
+	simvascular_external(INTELRUNTIME)
 	if(SV_USE_SYSTEM_ZLIB)
 		set(INTELRUNTIME_LIB_DIR "" CACHE PATH "A directory where intel runtimes may be, use this if its not in the path")
 	endif()
-	set(SV_USE_INTELRUNTIME ON)
-	set(SV_USE_INTEL ON)
 else()
 	unset(INTELRUNTIME_LIBRARIES CACHE)
 endif()
@@ -627,10 +662,9 @@ endif()
 
 #-----------------------------------------------------------------------------
 # Enable MPI
-if(SV_USE_MPI OR USE_MPI)
-	set(SV_USE_MPI ON)
+if(SV_USE_MPI)
 	if (NOT SV_USE_DUMMY_MPICH2)
-		simvascular_external(MPI SYSTEM_DEFAULT SHARED_LIB)
+		simvascular_external(MPI)
 		if(MPI_FOUND)
 			get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
 		endif()
@@ -707,104 +741,6 @@ if(WIN32)
 	GET_FILENAME_COMPONENT(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
 endif()
 
-find_package(TCL)
-
-#-----------------------------------------------------------------------------
-# GDCM Setup
-#-----------------------------------------------------------------------------
-if(SV_USE_GDCM)
-  find_package(GDCM)
-endif()
-
-# ITK Setup
-#-----------------------------------------------------------------------------
-if(SV_USE_ITK)
-  find_package(ITK REQUIRED)
-  include(${ITK_USE_FILE})
-endif()
-
-# FREETYPE Setup
-#-----------------------------------------------------------------------------
-if(SV_USE_FREETYPE)
-  find_package(FREETYPE)
-endif()
-
-# OpenCASCADE Setup
-#-----------------------------------------------------------------------------
-if(SV_USE_OpenCASCADE)
-  find_package(OpenCASCADE)
-endif()
-
-#-----------------------------------------------------------------------------
-# MMG Setup
-if(SV_USE_MMG)
-  find_package(MMG)
-endif()
-
-#-----------------------------------------------------------------------------
-# CTK
-if(SV_USE_CTK)
-  find_package(CTK)
-endif()
-
-#-----------------------------------------------------------------------------
-# SimpleITK
-if(SV_USE_SimpleITK)
-  find_package(SimpleITK)
-endif()
-
-#-----------------------------------------------------------------------------
-# MITK
-if(SV_USE_MITK)
-  if(SV_USE_MITK_CONFIG)
-    find_package(MITK NO_MODULE)
-    set(MITK_LIBRARIES MitkCore
-                       MitkAppUtil
-                       MitkQtWidgets
-                       MitkQtWidgetsExt
-                       MitkMapperExt
-                       MitkImageDenoising
-                       MitkSegmentationUI
-                       MitkSegmentation
-                       MitkSceneSerialization)
-  else()
-    find_package(MITK)
-  endif()
-  include_directories(${MITK_INCLUDE_DIRS})
-  include_directories(${CTK_INCLUDE_DIRS})
-endif()
-
-#-----------------------------------------------------------------------------
-# VTK Setup
-find_package(VTK COMPONENTS
-	vtkFiltersFlowPaths vtkWrappingTcl vtkRenderingTk
-	vtkCommonDataModel vtkCommonCore vtkChartsCore vtkCommonExecutionModel
-	vtkFiltersCore vtkIOLegacy ${VTK_MODULES_ENABLED})
-include(${VTK_USE_FILE})
-include(VTKSVConfig)
-#Does not pick up vtkCommonCoreTCL, need to add manually
-set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
-if(SV_USE_VTK_SHARED)
-  set(SV_INSTALL_EXTERNALS ON)
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
-endif()
-# SV uses non stanard libraries, this adds them, also adds the intel libraries
-#file(GLOB_RECURSE vtk_new_libs RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*TCL*${CMAKE_STATIC_LIBRARY_SUFFIX}")
-#file(GLOB_RECURSE vtk_new_libs2 RELATIVE ${VTK_DIR}/lib/ "${VTK_DIR}/lib/*Tcl*${CMAKE_STATIC_LIBRARY_SUFFIX}")
-#list(APPEND vtk_new_libs ${vtk_new_libs2})
-#string(REGEX REPLACE [a-z|A-Z]*/${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
-#if (CMAKE_STATIC_LIBRARY_PREFIX)
-#	string(REGEX REPLACE ${CMAKE_STATIC_LIBRARY_PREFIX} "" vtk_new_libs "${vtk_new_libs}")
-#endif()
-#string(REGEX REPLACE "-[0-9]\\.*[0-9]\\${CMAKE_STATIC_LIBRARY_SUFFIX}" "" vtk_new_libs "${vtk_new_libs}")
-#list(REMOVE_DUPLICATES vtk_new_libs)
-#
-#set(VTK_LIBRARIES ${VTK_LIBRARIES} ${vtk_new_libs})
-if(${VTK_DIR} MATCHES "intel")
-	#message(STATUS "VTK appears to be built with intel, adding libraries")
-	set(VTK_LIBRARIES ${VTK_LIBRARIES} ${INTELRUNTIME_LIBRARIES})
-endif()
-
 #-----------------------------------------------------------------------------
 # TetGen Setup
 if(SV_USE_TETGEN)
@@ -831,12 +767,6 @@ if(SV_USE_PARASOLID)
 	endif()
 	if (SV_USE_PARASOLID_SHARED_LIBRARIES)
 		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PARASOLID_SHARED")
-	endif()
-endif()
-
-if(SV_USE_OpenCASCADE)
-	if(OpenCASCADE_FOUND)
-		include_directories(${OpenCASCADE_INCLUDE_DIR})
 	endif()
 endif()
 
@@ -924,7 +854,7 @@ endforeach()
 
 # Add the Plugins
 message(STATUS "Plugins:")
-foreach(dir ${SV_PLUGINS_DIRS})
+foreach(dir ${SV_PLUGIN_DIRS})
   message(STATUS "	${dir}")
   include_directories("${dir}")
   add_subdirectory("${dir}")

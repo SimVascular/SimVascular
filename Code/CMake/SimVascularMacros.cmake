@@ -69,91 +69,59 @@ macro(simvascular_external _pkg)
 
 	dev_message("Configuring ${_pkg}")
 
-	set(options OPTIONAL VERSION_EXACT
-		DOWNLOADABLE SYSTEM_DEFAULT
-		SVEXTERN_CONFIG ADD_INSTALL SHARED_LIB NO_MODULE
+  # Function options
+  set(options OPTIONAL
+    SHARED_LIB NO_MODULE REQUIRED
 		)
-	set(oneValueArgs VERSION)
+  # Multiple value args
 	set(multiValueArgs PATHS HINTS COMPONENTS)
 
-	CMAKE_PARSE_ARGUMENTS("simvascular_external"
+	cmake_parse_arguments("simvascular_external"
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
+  # Components
 	set(EXTRA_ARGS)
 	if(simvascular_external_COMPONENTS)
 		set(EXTRA_ARGS COMPONENTS ${simvascular_external_COMPONENTS})
 	endif()
+
+  # No modules
 	if(simvascular_external_NO_MODULE)
 		set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
 	endif()
-	#message("EXTRA_ARGS: ${EXTRA_ARGS}")
-	set(${_pkg}_VERSION ${simvascular_external_VERSION})
-	if(simvascular_external_VERSION_EXACT)
-		set(${_pkg}_VERSION ${${_pkg}_VERSION} EXACT)
+
+  # Required
+  if(simvascular_external_REQUIRED)
+    set(EXTRA_ARGS ${EXTRA_ARGS} REQUIRED)
 	endif()
 
+  # Default PATHS
 	unset(ARG_STRING)
 	set(_paths "${simvascular_external_PATHS}")
 	if(NOT simvascular_external_PATHS)
 		set(_paths "${CMAKE_MODULE_PATH}")
 	endif()
 
-	#message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
+  # Find Package
+  find_package(${_pkg} ${EXTRA_ARGS})
 
-	if(simvascular_external_SYSTEM_DEFAULT)
-		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" ON)
-		mark_as_advanced(SV_USE_SYSTEM_${_pkg})
-	else()
-		option(SV_USE_SYSTEM_${_pkg} "Use system ${_pkg}" OFF)
-	endif()
-
-        if((simvascular_external_SVEXTERN_CONFIG) OR
-		(simvascular_external_SVEXTERN_CONFIG AND SV_USE_SYSTEM_${_pkg}))
-
-          find_package(${_pkg} ${EXTRA_ARGS}
-                    PATHS ${CMAKE_CURRENT_SOURCE_DIR}/CMake
-                    NO_CMAKE_MODULE_PATH
-                    NO_DEFAULT_PATH)
-	else()
-          find_package(${_pkg} ${EXTRA_ARGS})
-	endif()
-
-	if(simvascular_external_DOWNLOADABLE)
-		set(SV_DEPENDS ${SV_DEPENDS} ${_pkg})
-		list( REMOVE_DUPLICATES SV_DEPENDS )
-	endif()
-
-	if(SV_USE_${_pkg})
-		set(USE_${_pkg} ON)
-	endif()
-
+  # Add to shared libs
 	if(simvascular_external_SHARED_LIB)
 		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
 	endif()
 
+  # Include include directories
 	if(${_pkg}_FOUND)
-	        message(STATUS "PKG ${_pkg} found!")
+	  message(STATUS "PKG ${_pkg} found!")
 		if( ${_pkg}_INCLUDE_DIR )
 			dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
 			# This get many of them
 			include_directories(${${_pkg}_INCLUDE_DIR})
 		endif()
-		if(SV_INSTALL_EXTERNALS)
-			if(simvascular_external_ADD_INSTALL)
-				getListOfVars("${_pkg}" "LIBRARY" ${_pkg}_VARS_INSTALL)
-				# print_vars(${_pkg}_VARS_INSTALL)
-				foreach(lib_install ${${_pkg}_VARS_INSTALL})
-					list(APPEND ${_pkg}_LIBRARY_INSTALL "${${lib_install}}")
-				endforeach()
-				#list(REMOVE_DUPLICATES ${_pkg}_LIBRARY_INSTALL)
-				#message(STATUS "${_pkg}_LIBRARY_INSTALL: ${${_pkg}_LIBRARY_INSTALL}")
-				#install(FILES "${${_pkg}_LIBRARY_INSTALL}" DESTINATION ${SV_INSTALL_EXTERNAL_LIBRARY_DIR})
-			endif()
-		endif()
 	endif()
-	unset(simvascular_external_SVEXTERN_CONFIG)
-	unset(simvascular_external_ADD_INSTALL)
+
+  # Developer help
 	if(SV_DEVELOPER_OUTPUT)
 		message(STATUS "Finished Configuring ${_pkg}")
 		message(STATUS "")
@@ -173,7 +141,6 @@ macro(unset_simvascular_external _pkg)
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-	unset(SV_USE_SYSTEM_${_pkg})
 	list(REMOVE_ITEM SV_DEPENDS ${_pkg})
 endmacro()
 

@@ -113,7 +113,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
-$REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
+#$REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
 
 #$REPLACEME_SV_CPACK_CMD >& stdout-cpack.txt
 
