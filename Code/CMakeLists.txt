@@ -118,6 +118,59 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Optional Core Libs
+# Tetgen
+if(SV_USE_TETGEN)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
+endif()
+# Meshsim
+if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
+endif()
+if(SV_USE_MESHSIM_DISCRETE_MODEL)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/MeshSimDiscreteSolidModel")
+endif()
+# Adaptors
+if(SV_USE_MESHIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
+    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
+endif()
+if(SV_USE_MESHSIM_ADAPTOR)
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
+endif()
+if(SV_USE_TETGEN_ADAPTOR)
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
+endif()
+# VMTK
+if(SV_USE_VMTK)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
+endif()
+# SolverIO
+if(SV_USE_SOLVERIO)
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/SolverIO")
+endif()
+# MMG
+if(SV_USE_MMG)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
+endif()
+# ITK
+if(SV_USE_ITK)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
+endif()
+# PYTHON
+if(SV_USE_PYTHON)
+  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
+endif()
+# OpenCASCADE
+if(SV_USE_OpenCASCADE)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
+endif()
+# PARASOLID
+if(SV_USE_PARASOLID)
+	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Modules
 if(SV_USE_QT_GUI)
   set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
@@ -153,6 +206,8 @@ endif()
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
 #-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Doxygen
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
 	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
@@ -165,10 +220,6 @@ if(DOXYGEN_FOUND)
 		COMMENT "Generating API documentation with Doxygen" VERBATIM
 		)
 endif(DOXYGEN_FOUND)
-
-#-----------------------------------------------------------------------------
-# We can not begin enabling libraries
-# Libraries that we always need...
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -178,10 +229,10 @@ set(SV_TCL_DIR ${TCL_DIR})
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
-
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# tkcximage (Legacy)
+# Tkcximage (Legacy)
 if(WIN32)
 	if(SV_USE_TKCXIMAGE)
 		find_library(TKCXIMAGE_DLL tkcximage)
@@ -192,39 +243,27 @@ if(WIN32)
 		endif()
 	endif()
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# ThirdParty!
 #-----------------------------------------------------------------------------
 # ZLIB
 if(SV_USE_ZLIB)
 	SET(USE_ZLIB ON)
 	simvascular_third_party(zlib)
 	if(NOT SV_USE_SYSTEM_ZLIB)
-          set(ZLIB_LIBRARY ${SV_LIB_THIRDPARTY_ZLIB_NAME})
+    set(ZLIB_LIBRARY ${SV_LIB_THIRDPARTY_ZLIB_NAME})
 	else()
 		simvascular_external(ZLIB)
 	endif()
 else()
 	unset(ZLIB_LIBRARY CACHE)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Begin Plugin Logic
-#-----------------------------------------------------------------------------
-# Plugin Mmg
-if(SV_USE_MMG)
-	simvascular_external(MMG)
-	set(USE_MMG ON)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MMGMeshUtils")
-	if(SV_USE_MMG_SHARED)
-	  set(SV_INSTALL_EXTERNALS ON)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
-	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
-  endif()
-  simvascular_get_external_path_from_include_dir(MMG)
-endif()
-
-#-----------------------------------------------------------------------------
-# Plugin Tetgen
+# Tetgen
 if(SV_USE_TETGEN)
 	SET(USE_TETGEN ON)
 	simvascular_third_party(tetgen)
@@ -243,37 +282,24 @@ if(SV_USE_TETGEN)
 	else()
 		message(FATAL_ERROR "Unknown Tetgen versions, please specify!")
 	endif()
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
 else()
 	unset(TETGEN_LIBRARY CACHE)
 endif()
 
-if(SV_USE_MESHSIM_ADAPTOR)
-    set(SV_USE_SOLVERIO ON)
-    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
-elseif(SV_USE_TET_ADAPTOR)
-    set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/AdaptObject")
-endif()
-
-if(SV_USE_TET_ADAPTOR)
-	SET(USE_TET_ADAPTOR ON)
-        set(SV_USE_SOLVERIO ON)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenAdapt")
-endif()
 
 #-----------------------------------------------------------------------------
-# VMTK
-if(SV_USE_VMTK)
-	set(USE_VMTK ON)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/vmtk")
+# MMG
+if(SV_USE_MMG)
+	simvascular_external(MMG)
+	set(USE_MMG ON)
+	if(SV_USE_MMG_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
+	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
+  endif()
+  simvascular_get_external_path_from_include_dir(MMG)
 endif()
-
 #-----------------------------------------------------------------------------
-# SOLVERIO
-if(SV_USE_SOLVERIO)
-        set(USE_SOLVERIO ON)
-        set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "ThirdParty/SolverIO")
-endif()
 
 #-----------------------------------------------------------------------------
 # GDCM
@@ -301,7 +327,6 @@ if(SV_USE_ITK)
   include(${ITK_USE_FILE})
 
 	set(USE_ITK ON)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Segmentation/ITK")
     include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
     include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
   simvascular_get_external_path_from_include_dir(ITK)
@@ -326,7 +351,6 @@ if(SV_USE_PYTHON)
 		message(STATUS "Python Libs NOT FOUND")
 		message(STATUS "Make sure you have python installed on your system.")
 	endif()
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/TclPython")
   set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
   set(VTK_PYTHON_MODULES vtkWrappingPythonCore)
 endif()
@@ -359,15 +383,6 @@ simvascular_get_external_path_from_include_dir(VTK)
 #-----------------------------------------------------------------------------
 
 
-#---
-if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimMeshObject")
-endif()
-
-if(SV_USE_MESHSIM_ADAPTOR)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/MeshSimAdapt")
-endif()
-
 #-----------------------------------------------------------------------------
 # FREETYPE
 if(SV_USE_FREETYPE)
@@ -388,7 +403,6 @@ if(SV_USE_OpenCASCADE)
 	simvascular_external(OpenCASCADE)
 	set(USE_OpenCASCADE ON)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/OCCTSolidModel")
 	if(SV_USE_OpenCASCADE_SHARED)
 	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
 	  set(SV_INSTALL_EXTERNALS ON)
@@ -501,7 +515,6 @@ if(SV_USE_PARASOLID)
 			endif()
 			SET(USE_PARASOLID ON)
 			set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PARASOLID")
-			set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Licensed/ParasolidSolidModel")
 			option(SV_USE_PARASOLID_SHARED_LIBRARIES "Build Parasolid as shared libraries" OFF)
 			if (BUILD_SHARED_LIBS)
 				set(SV_USE_PARASOLID_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
@@ -510,9 +523,6 @@ if(SV_USE_PARASOLID)
 			message("Parasolid requires an extra license.")
 		endif()
 
-endif()
-if(SV_USE_MESHSIM_DISCRETE_MODEL)
-	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Model/MeshSimDiscreteSolidModel")
 endif()
 
 #-----------------------------------------------------------------------------

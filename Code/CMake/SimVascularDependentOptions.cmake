@@ -133,13 +133,16 @@ endif()
 #-----------------------------------------------------------------------------
 # Plugins
 if(SV_USE_TETGEN)
-	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
+  option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" OFF)
 endif()
 
 if(SV_USE_PYTHON)
   set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
+if(SV_USE_MESHSIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
+  set(SV_USE_SOLVERIO ON)
+endif()
 #-----------------------------------------------------------------------------
 # Open Source Software Options: Solid Models - OpenCASCADE
 if(SV_USE_OpenCASCADE)
