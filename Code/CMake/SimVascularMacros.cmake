@@ -1066,3 +1066,41 @@ macro(simvascular_add_new_external proj version use shared dirname)
 endmacro()
 #-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# System Macros
+macro(env_variable_to_value_variable value_variable variable)
+	if(WIN32 AND NOT UNIX)
+		set(${value_variable} "%${variable}%")
+	endif()
+	if(UNIX)
+		set(${value_variable} "$${variable}")
+	endif()
+endmacro()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+function(append_env_string evn_var value output_variable)
+	env_variable_to_value_variable(ENV_VALUE ${evn_var})
+	set(${output_variable} "${ENV_SET_COMMAND} ${evn_var}=${ENV_VALUE}${ENV_SEPERATOR}${value}" PARENT_SCOPE)
+endfunction()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+function(set_env_string evn_var value output_variable)
+	set(${output_variable} "${ENV_SET_COMMAND} ${evn_var}=${value}\n" PARENT_SCOPE)
+endfunction()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+macro(set_env_string_concat evn_var value output_variable)
+	set_env_string(${evn_var} ${value} _tmp)
+	set(${output_variable} "${${output_variable}}${_tmp}")
+endmacro()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+macro(append_env_string_concat evn_var value output_variable)
+	append_env_string(${evn_var} ${value} _tmp)
+	set(${output_variable} "${${output_variable}}${_tmp}\n")
+endmacro()
+#-----------------------------------------------------------------------------

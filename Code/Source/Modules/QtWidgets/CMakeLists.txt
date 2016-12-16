@@ -1,8 +1,8 @@
-set(lib svQtWidgets)
+set(lib ${SV_LIB_MODULE_QTWIDGETS_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
-#    DEPENDS PUBLIC MitkCore MitkQtWidgets MitkQtWidgetsExt svPath svSegmentation
+#    DEPENDS PUBLIC MitkCore MitkQtWidgets MitkQtWidgetsExt ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_SEGMENTATION_NAME}
 #)
 #---------------------------------TRYING OLD----------------------------------
 include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
@@ -15,7 +15,7 @@ if(SV_USE_MODULES_SHARED_LIBRARIES)
 else()
   add_library(${lib} STATIC ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs} ${MOCSrcs})
 endif()
-target_link_libraries(${lib} ${MITK_LIBRARIES} svPath svSegmentation)
+target_link_libraries(${lib} ${MITK_LIBRARIES} ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_SEGMENTATION_NAME})
 
 set(module_name svQtWidgets)
 string(TOUPPER ${module_name} MODULE_NAME)

@@ -1,8 +1,8 @@
-set(lib svMesh)
+set(lib ${SV_LIB_MODULE_MESH_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
-#    DEPENDS PUBLIC svModel
+#    DEPENDS PUBLIC ${SV_LIB_MODULE_MODEL}
 #    ADDITIONAL_LIBS
 #        ${SV_LIB_SOLID_NAME}
 #        ${SV_LIB_POLYDATA_SOLID_NAME}
@@ -31,7 +31,7 @@ set_property(TARGET ${lib} PROPERTY US_MODULE_NAME ${module_name})
 set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${module_name})
 
 target_link_libraries(${lib} ${VTK_LIBRARIES}
-                             svModel
+                             ${SV_LIB_MODULE_MODEL_NAME}
                              ${SV_LIB_SOLID_NAME}
                              ${SV_LIB_POLYDATA_SOLID_NAME}
                              ${SV_LIB_THIRDPARTY_VMTK_NAME}

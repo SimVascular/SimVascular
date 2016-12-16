@@ -24,15 +24,24 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#-----------------------------------------------------------------------------
+# System architecture
 if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "64" AND NOT APPLE)
-	SET(ARCH "x64")
+	set(ARCH "x64")
 	set(IS64 TRUE)
 elseif(APPLE)
 	#uname -p does not work correctly on OS X, we are going to assume its x64
 	SET(ARCH "x64")
 	set(IS64 TRUE)
+else()
+	SET(ARCH "x32")
+  set(IS64 FALSE)
 endif()
+set(SV_ARCH_DIR "${ARCH}")
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# OS
 set(SV_OS "${CMAKE_SYSTEM_NAME}")
 IF("${CMAKE_SYSTEM}" MATCHES "Linux")
 	SET(LINUX TRUE)
@@ -67,24 +76,35 @@ if(UNIX)
 		set(DYLD "LD")
 	endif()
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Cluster
 set(CLUSTER "${ARCH}_${SV_OS}")
 if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "${CLUSTER}")
 endif()
 
+#-----------------------------------------------------------------------------
+# Compiler
 set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
 if (NOT CMAKE_CXX_COMPILER_VERSION)
   message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
                        version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
 endif()
 simvascular_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Environment Home
 SET(USER_HOME_DIR $ENV{HOME})
 if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "Home dir: ${USER_HOME_DIR}")
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Install root dir
 if(NOT SV_INSTALL_ROOT_DIR)
   set(SV_INSTALL_ROOT_DIR "SV")
 endif()
@@ -93,11 +113,10 @@ if(NOT WIN32)
     set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
   endif()
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Set external project directory
-# Set src, build, bin dirs for externals
-# Set options for externals
+# Set external project directories
 set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "src")
 
 set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "bin")
@@ -105,7 +124,10 @@ set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "bin")
 set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "build")
 
 set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "prefix")
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Set platforms directories
 if(APPLE)
   set(SV_PLATFORM_DIR "mac_osx")
 elseif(LINUX)
@@ -116,11 +138,10 @@ else()
   set(SV_PLATFORM_DIR "unsupported")
 endif()
 
-set(SV_COMPILER_DIR "")
+#-----------------------------------------------------------------------------
+# Set src, build, bin dirs for externals
 string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
 set(SV_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
-
-set(SV_ARCH_DIR "x64")
 
 set(SV_EXTERNALS_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_SRC_DIR}")
 set(SV_EXTERNALS_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_BLD_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
@@ -128,33 +149,3 @@ set(SV_EXTERNALS_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_PFX_DIR}")
 set(SV_EXTERNALS_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
 #-----------------------------------------------------------------------------
 
-#-----
-# System Macros
-#
-macro(env_variable_to_value_variable value_variable variable)
-	if(WIN32 AND NOT UNIX)
-		set(${value_variable} "%${variable}%")
-	endif()
-	if(UNIX)
-		set(${value_variable} "$${variable}")
-	endif()
-endmacro()
-
-function(append_env_string evn_var value output_variable)
-	env_variable_to_value_variable(ENV_VALUE ${evn_var})
-	set(${output_variable} "${ENV_SET_COMMAND} ${evn_var}=${ENV_VALUE}${ENV_SEPERATOR}${value}" PARENT_SCOPE)
-endfunction()
-
-function(set_env_string evn_var value output_variable)
-	set(${output_variable} "${ENV_SET_COMMAND} ${evn_var}=${value}\n" PARENT_SCOPE)
-endfunction()
-
-macro(set_env_string_concat evn_var value output_variable)
-	set_env_string(${evn_var} ${value} _tmp)
-	set(${output_variable} "${${output_variable}}${_tmp}")
-endmacro()
-
-macro(append_env_string_concat evn_var value output_variable)
-	append_env_string(${evn_var} ${value} _tmp)
-	set(${output_variable} "${${output_variable}}${_tmp}\n")
-endmacro()

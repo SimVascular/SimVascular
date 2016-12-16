@@ -1,8 +1,8 @@
-set(lib svSegmentation)
+set(lib ${SV_LIB_MODULE_SEGMENTATION_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
-#    DEPENDS MitkCore svCommon svPath
+#    DEPENDS MitkCore ${SV_LIB_MODULE_COMMON_NAME} ${SV_LIB_MODULE_PATH_NAME}
 #    ADDITIONAL_LIBS
 #        ${SV_LIB_GLOBALS_NAME}
 #        ${SV_LIB_UTILS_NAME}
@@ -39,8 +39,8 @@ target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${SV_LIB_GEOM_NAME}
                              ${SV_LIB_REPOSITORY_NAME}
                              ${SV_LIB_ITK_LSET_NAME}
-                             svCommon
-                             svPath)
+                             ${SV_LIB_MODULE_COMMON_NAME}
+                             ${SV_LIB_MODULE_PATH_NAME})
 
 if(RESOURCE_FILES)
     set(res_dir resource)

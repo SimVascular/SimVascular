@@ -19,7 +19,6 @@ if(NOT SV_INSTALL_SCRIPT_DIR)
 endif()
 
 if(NOT SV_INSTALL_RUNTIME_DIR)
-  # CHANGE FOR EXECUTABLE RENAME REMOVE
   set(SV_INSTALL_RUNTIME_DIR "Bin")
 endif()
 
@@ -52,8 +51,9 @@ if(NOT SV_INSTALL_TCL_CODE_DIR)
   set(SV_INSTALL_TCL_CODE_DIR Tcl)
 endif()
 #-----------------------------------------------------------------------------
-# Third Party install locations
+
 #-----------------------------------------------------------------------------
+# Third Party install locations
 if(NOT SV_INSTALL_EXTERNALS_RUNTIME_DIR)
   set(SV_INSTALL_EXTERNALS_RUNTIME_DIR lib)
 endif()
@@ -79,9 +79,9 @@ if(NOT SV_INSTALL_EXTERNAL_EXE_DIR)
 endif()
 
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Parasolid install locations
-#-----------------------------------------------------------------------------
-#-----------------------------------------------------------------------------
 if(NOT SV_INSTALL_PARASOLID_RUNTIME_DIR)
   if(WIN32)
     set(SV_INSTALL_PARASOLID_RUNTIME_DIR ".")
@@ -101,17 +101,10 @@ else()
   set(SV_INSTALL_RUNTIME_DIR ".")
 endif()
 endif()
+#-----------------------------------------------------------------------------
 
-#install(CODE "set(ENV{PATH} \"${CMAKE_INSTALL_PREFIX}\")")
-
-
-#if(NOT SV_INSTALL_EXPORT_NAME)
-#  set(SV_INSTALL_EXPORT_NAME SVTargets)
-#endif()
-# if(NOT SV_INSTALL_PACKAGE_DIR)
-#   set(SV_INSTALL_PACKAGE_DIR "lib/cmake/simvascular-${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}")
-# endif()
-
+#-----------------------------------------------------------------------------
+# Get list of vars starting with SV_INSTALL and make native install var
 getListOfVarsPrefix("SV_INSTALL" _VARLIST)
 foreach(_var ${_VARLIST})
   string(REPLACE "SV_INSTALL" "SV_INSTALL_NATIVE" _var_native ${_var})
@@ -128,12 +121,10 @@ if(SV_DEVELOPER_OUTPUT)
   list(INSERT _VARLIST 0 CMAKE_INSTALL_PREFIX)
   print_vars(_VARLIST)
 endif()
-
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Setup Output directories for compiling
-#-----------------------------------------------------------------------------
-#
 if(NOT DEFINED OUTBIN_DIR OR NOT DEFINED OUTLIB_DIR)
   set(OUTBIN_DIR "${SV_BINARY_DIR}/Bin")
   set(OUTLIB_DIR ${SV_BINARY_DIR}/Lib)
@@ -165,7 +156,7 @@ if(SV_DEVELOPER_OUTPUT)
     SCRIPT_DIR)
   print_vars(_VARLIST)
 endif()
-
+#-----------------------------------------------------------------------------
 
 
 

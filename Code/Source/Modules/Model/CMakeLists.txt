@@ -1,8 +1,8 @@
-set(lib svModel)
+set(lib ${SV_LIB_MODULE_MODEL_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
-#    DEPENDS PUBLIC svSegmentation
+#    DEPENDS PUBLIC ${SV_LIB_MODULE_SEGMENTATION_NAME}
 #    ADDITIONAL_LIBS
 #        ${SV_LIB_SOLID_NAME}
 #        ${SV_LIB_POLYDATA_SOLID_NAME}
@@ -27,7 +27,7 @@ set(module_name svModel)
 set_property(TARGET ${lib} PROPERTY US_MODULE_NAME ${module_name})
 set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${module_name})
 
-target_link_libraries(${lib} svSegmentation
+target_link_libraries(${lib} ${SV_LIB_MODULE_SEGMENTATION_NAME}
                              ${SV_LIB_SOLID_NAME}
                              ${SV_LIB_POLYDATA_SOLID_NAME}
                              ${SV_LIB_THIRDPARTY_VMTK_NAME})

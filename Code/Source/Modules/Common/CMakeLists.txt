@@ -1,4 +1,4 @@
-set(lib svCommon)
+set(lib ${SV_LIB_MODULE_COMMON_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED

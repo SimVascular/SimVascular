@@ -24,11 +24,16 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#-----------------------------------------------------------------------------
+# Temp dir for TCL
 if(NOT TEMP_DIR)
-set(TEMP_DIR ${SV_BINARY_DIR}/tmp)
-file(MAKE_DIRECTORY ${TEMP_DIR})
+  set(TEMP_DIR ${SV_BINARY_DIR}/tmp)
+  file(MAKE_DIRECTORY ${TEMP_DIR})
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# SV HOME
 get_filename_component(SV_SOURCE_HOME ${SV_SOURCE_DIR}/../ ABSOLUTE)
 dev_message("SimVascular Source Home: ${SV_SOURCE_HOME}")
 if(NOT SV_BINARY_HOME)
@@ -38,3 +43,11 @@ endif()
 set(SV_HOME ${SV_BINARY_HOME})
 set(SV_DISTRIBUTION_DIR ${SV_SOURCE_HOME}/Distribution)
 set(SV_BINARY_DISTRIBUTION_DIR ${SV_BINARY_HOME}/Distribution)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Build type
+set(SV_BUILD_TYPE "CMAKE" CACHE STRING "Designate CMAKE build" FORCE)
+set_property(CACHE SV_BUILD_TYPE PROPERTY STRINGS CMAKE)
+mark_as_advanced(SV_BUILD_TYPE)
+#-----------------------------------------------------------------------------

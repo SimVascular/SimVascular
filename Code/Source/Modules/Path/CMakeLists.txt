@@ -1,8 +1,8 @@
-set(lib svPath)
+set(lib ${SV_LIB_MODULE_PATH_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
-#    DEPENDS PUBLIC MitkCore svCommon
+#    DEPENDS PUBLIC MitkCore ${SV_LIB_MODULE_COMMON_NAME}
 #    ADDITIONAL_LIBS
 #        ${SV_LIB_GLOBALS_NAME}
 #        ${SV_LIB_UTILS_NAME}
@@ -33,7 +33,7 @@ target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${SV_LIB_UTILS_NAME}
                              ${SV_LIB_GEOM_NAME}
                              ${QT_LIBRARIES}
-                             svCommon)
+                             ${SV_LIB_MODULE_COMMON_NAME})
 
 if(RESOURCE_FILES)
     set(res_dir resource)

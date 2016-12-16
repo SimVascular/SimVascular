@@ -1,8 +1,8 @@
-set(lib svProjectManagement)
+set(lib ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME})
 
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
-#    DEPENDS PUBLIC MitkCore svPath svSegmentation svModel
+#    DEPENDS PUBLIC MitkCore ${SV_LIB_MODULE_PATH_NAME} ${SV_LIB_MODULE_SEGMENTATION_NAME} ${SV_LIB_MODULE_MODEL_NAME}
 #    PACKAGE_DEPENDS PUBLIC Qt5|Core+Xml
 #)
 
@@ -28,12 +28,12 @@ set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${
 target_link_libraries(${lib} ${MITK_LIBRARIES}
                              ${ITK_LIBRARIES}
                              ${QT_LIBRARIES}
-                             svCommon
-                             svPath
-                             svSegmentation
-                             svModel
-                             svMesh
-                             svSimulation
+                             ${SV_LIB_MODULE_COMMON_NAME}
+                             ${SV_LIB_MODULE_PATH_NAME}
+                             ${SV_LIB_MODULE_SEGMENTATION_NAME}
+                             ${SV_LIB_MODULE_MODEL_NAME}
+                             ${SV_LIB_MODULE_MESH_NAME}
+                             ${SV_LIB_MODULE_SIMULATION_NAME}
 )
 
 if(RESOURCE_FILES)
