@@ -372,6 +372,7 @@ simvascular_external(VTK
     vtkChartsCore
     vtkCommonExecutionModel
 	  vtkFiltersCore
+	  vtkFiltersVerdict
     vtkIOLegacy
     vtkIOPLY
     vtkIOXML
