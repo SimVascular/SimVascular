@@ -36,6 +36,8 @@ include(SimVascularMacros)
 include(SimVascularSystemCheck)
 include(SimVascularVersion)
 include(SimVascularFunctionCheckCompilerFlags)
+include(SimVascularInstallSetup)
+include(SimVascularHomeSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -54,11 +56,7 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 #-----------------------------------------------------------------------------
 # Include Initial Options
 include(SimVascularOptions)
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Include SimVascular Externals
-include(SimVascularExternals)
+include(SimVascularDependentOptions)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -67,9 +65,30 @@ include(SimVascularInternals)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Include Dependent Options
-include(SimVascularDependentOptions)
+# Include SimVascular Externals
 include(SimVascularExternals)
+foreach(proj ${SV_EXTERNALS_LIST})
+  if(SV_USE_${proj}_SHARED AND SV_USE_EXTERNALS_TOPLEVEL_DIR)
+    simvascular_install_external(${proj})
+  endif()
+endforeach()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Include SimVascular Third Party
+include(SimVascularThirdParty)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Include SimVascular Licensed
+include(SimVascularLicensed)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Include Solver - TEMPORARY
+if(SV_USE_THREEDSOLVER)
+  include(SimVascularSolver)
+endif()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -90,10 +109,8 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# SimVascular Setup
+# Tcl Python Setup
 #-----------------------------------------------------------------------------
-include(SimVascularInstallSetup)
-include(SimVascularHomeSetup)
 include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
 #-----------------------------------------------------------------------------
@@ -223,493 +240,6 @@ endif(DOXYGEN_FOUND)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# TCL
-simvascular_external(TCL)
-set(SV_TCL_DIR ${TCL_DIR})
-
-STRING(REGEX REPLACE
-	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Tkcximage (Legacy)
-if(WIN32)
-	if(SV_USE_TKCXIMAGE)
-		find_library(TKCXIMAGE_DLL tkcximage)
-		if(TKCXIMAGE_DLL)
-			set(TKCXIMAGE_DLL_LIBRARY ${TKCXIMAGE_DLL})
-			get_filename_component(TKCXIMAGE_DLL_PATH ${TKCXIMAGE_DLL} DIRECTORY CACHE)
-			set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "TKCXIMAGE")
-		endif()
-	endif()
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# ThirdParty!
-#-----------------------------------------------------------------------------
-# ZLIB
-if(SV_USE_ZLIB)
-	SET(USE_ZLIB ON)
-	simvascular_third_party(zlib)
-	if(NOT SV_USE_SYSTEM_ZLIB)
-    set(ZLIB_LIBRARY ${SV_LIB_THIRDPARTY_ZLIB_NAME})
-	else()
-		simvascular_external(ZLIB)
-	endif()
-else()
-	unset(ZLIB_LIBRARY CACHE)
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Tetgen
-if(SV_USE_TETGEN)
-	SET(USE_TETGEN ON)
-	simvascular_third_party(tetgen)
-	if(NOT SV_USE_SYSTEM_TETGEN)
-		set(TETGEN_VERSION "1.5.1")
-                set(TETGEN_LIBRARY ${SV_LIB_THIRDPARTY_TETGEN_NAME})
-	else()
-		find_package(TETGEN)
-	endif()
-	if(TETGEN_VERSION MATCHES "1.5.1")
-		set(TETGEN151 ON)
-	elseif(TETGEN_VERSION MATCHES "1.5.0")
-		set(TETGEN150 ON)
-	elseif(TETGEN_VERSION MATCHES "1.4.3")
-		set(TETGEN143 ON)
-	else()
-		message(FATAL_ERROR "Unknown Tetgen versions, please specify!")
-	endif()
-else()
-	unset(TETGEN_LIBRARY CACHE)
-endif()
-
-
-#-----------------------------------------------------------------------------
-# MMG
-if(SV_USE_MMG)
-	simvascular_external(MMG)
-	set(USE_MMG ON)
-	if(SV_USE_MMG_SHARED)
-	  set(SV_INSTALL_EXTERNALS ON)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
-	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
-  endif()
-  simvascular_get_external_path_from_include_dir(MMG)
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# GDCM
-if(SV_USE_GDCM)
-	simvascular_external(GDCM)
-	set(USE_GDCM ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
-	if(SV_USE_GDCM_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
-        if(SV_USE_SYSTEM_GDCM)
-          simvascular_get_external_path_from_include_dir(GDCM)
-        endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# Plugin LevelSets
-if(SV_USE_ITK)
-	if(SV_USE_ITK_SHARED)
-		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
-		set(SV_INSTALL_EXTERNALS ON)
-	endif()
-	simvascular_external(ITK)
-  include(${ITK_USE_FILE})
-
-	set(USE_ITK ON)
-    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
-    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
-  simvascular_get_external_path_from_include_dir(ITK)
-endif()
-
-#-----------------------------------------------------------------------------
-# PYTHON
-if(SV_USE_PYTHON)
-  simvascular_external(PYTHON SHARED_LIB)
-
-	if(PYTHONLIBS_FOUND)
-		if(NOT WIN32)
-		  string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
-		  list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
-		  list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
-	        else()
-		  set (PYTHONLIBS_MAJOR_VERSION 2)
-		  set (PYTHONLIBS_MINOR_VERSION 7)
-		endif()
-	else()
-		message(STATUS "")
-		message(STATUS "Python Libs NOT FOUND")
-		message(STATUS "Make sure you have python installed on your system.")
-	endif()
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
-  set(VTK_PYTHON_MODULES vtkWrappingPythonCore)
-endif()
-
-#-----------------------------------------------------------------------------
-# VTK
-if(SV_USE_VTK_SHARED)
-	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
-	set(SV_INSTALL_EXTERNALS ON)
-endif()
-simvascular_external(VTK
-	COMPONENTS
-    vtkFiltersFlowPaths
-    vtkWrappingTcl
-	  vtkRenderingTk
-    vtkCommonDataModel
-    vtkCommonCore
-    vtkChartsCore
-    vtkCommonExecutionModel
-	  vtkFiltersCore
-	  vtkFiltersVerdict
-    vtkIOLegacy
-    vtkIOPLY
-    vtkIOXML
-    vtkImagingStencil
-    ${VTK_PYTHON_MODULES})
-include(${VTK_USE_FILE})
-set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
-simvascular_get_external_path_from_include_dir(VTK)
-#-----------------------------------------------------------------------------
-
-
-#-----------------------------------------------------------------------------
-# FREETYPE
-if(SV_USE_FREETYPE)
-	simvascular_external(FREETYPE)
-	set(USE_FREETYPE ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
-	if(SV_USE_FREETYPE_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
-  set(SV_FREETYPE_DIR ${FREETYPE_DIR})
-  link_directories(${FREETYPE_DIR}/lib)
-endif()
-
-#-----------------------------------------------------------------------------
-# OpenCASCADE
-if(SV_USE_OpenCASCADE)
-	simvascular_external(OpenCASCADE)
-	set(USE_OpenCASCADE ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
-	if(SV_USE_OpenCASCADE_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
-  simvascular_get_external_path_from_include_dir(OpenCASCADE)
-endif()
-
-#-----------------------------------------------------------------------------
-# CTK
-if(SV_USE_CTK)
-    simvascular_external(CTK)
-
-    if(SV_USE_CTK_SHARED)
-      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} CTK)
-      set(SV_INSTALL_EXTERNALS ON)
-    endif()
-    simvascular_get_external_path_from_include_dir(CTK)
-endif()
-
-#-----------------------------------------------------------------------------
-# SimpleITK
-if(SV_USE_SimpleITK)
-    simvascular_external(SimpleITK)
-
-    if(SV_USE_SimpleITK_SHARED)
-      set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} SimpleITK)
-      set(SV_INSTALL_EXTERNALS ON)
-    endif()
-    simvascular_get_external_path_from_include_dir(SimpleITK)
-endif()
-
-if(SV_USE_QT_GUI)
-    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
-    set(SimVascular_QT5_COMPONENTS
-      Concurrent
-      Core
-      Designer
-      Gui
-      Help
-      OpenGL
-      PrintSupport
-      Script
-      Sql
-      Svg
-      WebKitWidgets
-      WebKit
-      Widgets
-      Xml
-      XmlPatterns
-      UiTools)
-    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
-    if(Qt5_DIR)
-      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
-      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
-      if(_result LESS 0)
-        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
-      endif()
-    endif()
-    if(NOT SV_USE_MITK_CONFIG)
-      set(QT_LIBRARIES "")
-      set(QT_INCLUDE_DIRS "")
-      foreach(comp ${SimVascular_QT5_COMPONENTS})
-        if(Qt5${comp}_LIBRARIES)
-          set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
-        endif()
-        if(Qt5${comp}_INCLUDE_DIRS)
-          set(QT_INCLUDE_DIRS ${QT_INCLUDE_DIRS} ${Qt5${comp}_INCLUDE_DIRS})
-        endif()
-      endforeach()
-      include_directories(${QT_INCLUDE_DIRS})
-
-      #CppMicroServices
-      find_package(CppMicroServices)
-    endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# MITK
-if(SV_USE_MITK)
-  if(SV_USE_MITK_CONFIG)
-    find_package(MITK NO_MODULE)
-    set(MITK_LIBRARIES MitkCore
-                       MitkAppUtil
-                       MitkQtWidgets
-                       MitkQtWidgetsExt
-                       MitkMapperExt
-                       MitkImageDenoising
-                       MitkSegmentationUI
-                       MitkSegmentation
-                       MitkSceneSerialization)
-  else()
-    simvascular_external(MITK)
-  endif()
-  if(SV_USE_MITK_SHARED)
-    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
-    set(SV_INSTALL_EXTERNALS ON)
-  endif()
-  include_directories(${MITK_INCLUDE_DIRS})
-  include_directories(${CTK_INCLUDE_DIRS})
-endif()
-
-# Licensed Package Additions
-#-----------------------------------------------------------------------------
-# Parasolid
-if(SV_USE_PARASOLID)
-		if(EXISTS ${SV_SOURCE_DIR}/Licensed/ParasolidSolidModel/CMakeLists.txt)
-			simvascular_external(PARASOLID SYSTEM_DEFAULT SHARED_LIB)
-			if(WIN32)
-				set(SV_EXTRA_PATHS ${SV_EXTRA_PATHS} ${PARASOLID_DLL_PATH})
-			endif()
-			SET(USE_PARASOLID ON)
-			set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PARASOLID")
-			option(SV_USE_PARASOLID_SHARED_LIBRARIES "Build Parasolid as shared libraries" OFF)
-			if (BUILD_SHARED_LIBS)
-				set(SV_USE_PARASOLID_SHARED_LIBRARIES "ON" CACHE BOOL "Force ON" FORCE)
-			endif()
-		else()
-			message("Parasolid requires an extra license.")
-		endif()
-
-endif()
-
-#-----------------------------------------------------------------------------
-# MeshSim
-unset(MESHSIM_MODELER)
-if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
-	unset(MESHSIM_COMP)
-	if(APPLE)
-		message(FATAL_ERROR "MeshSim not available on macos")
-	endif()
-	if(SV_USE_MESHSIM_DISCRETE_MODEL)
-		set(USE_DISCRETE_MODEL ON)
-		set(MESHSIM_COMP SimDiscrete)
-	endif()
-	if(SV_USE_PARASOLID)
-		set(MESHSIM_MODELER "parasolid")
-	endif()
-	if(MESHSIM_MODELER MATCHES "parasolid")
-        set(MESHSIM_SIMPARASOLID_VERSION SimParasolid270 CACHE STRING "When using parasolid, you need to specify which veriosn of the bridge library to use.")
-        set(MESHSIM_ACCEPTED_SIMPARASOLID_VERSIONS SimParasolid271 SimParasolid270 SimParasolid260 SimParasolid251 SimParasolid250 SimParasolid241)
-		SET_PROPERTY(CACHE MESHSIM_SIMPARASOLID_VERSION PROPERTY STRINGS ${MESHSIM_ACCEPTED_SIMPARASOLID_VERSIONS})
-	endif()
-	simvascular_external(MESHSIM COMPONENTS ${MESHSIM_COMP} ${MESHSIM_SIMPARASOLID_VERSION} SHARED_LIB SYSTEM_DEFAULT)
-	if(MESHSIM_USE_LICENSE_FILE)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DMESHSIM_USE_LICENSE_FILE")
-		find_file(MESHSIM_LICENSE_FILE meshsim-license.dat PATHS ${MESHSIM_LICENSE_DIR})
-		if(NOT MESHSIM_LICENSE_FILE)
-			message(STATUS "")
-			message(STATUS "MeshSim license NOT FOUND or specified.  Build will continue with a placeholder")
-			message(STATUS "You will need to copy the license file into the build after compilation to use MeshSim functionality.")
-
-			set(MESHSIM_LICENSE_FILE meshsim-license.dat)
-		else()
-			message(STATUS "MeshSim License: ${MESHSIM_LICENSE_FILE}")
-		endif()
-	else()
-		unset(MESHSIM_LICENSE_FILE)
-	endif()
-	if(MESHSIM_EMBED_LICENSE_KEYS)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DMESHSIM_EMBED_LICENSE_KEYS")
-	endif()
-	set(USE_MESHSIM ON)
-endif()
-message(STATUS "")
-#-----------------------------------------------------------------------------
-# Modules (Flowsolver)
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# ThreeD Solver
-if(SV_USE_THREEDSOLVER)
-	option(SV_USE_SPARSE "Use sparse Library" ON)
-	option(SV_USE_METIS "Use metis Library" ON)
-	option(SV_USE_NSPCG "Use nspcg Library" ON)
-	set(SV_USE_FORTRAN ON)
-	set(SV_THREEDSOLVER_USE_SVLS ON)
-	set(SV_USE_MPI ON)
-	set(SV_THREEDSOLVER_USE_SOLVERIO ON)
-	#set(FLOWSOLVER_CONFIG_PATHS
-	#	"${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver" CACHE TYPE PATH)
-	# find config file
-	#set(FLOWSOLVER_CONFIG_FILE "${SV_SOURCE_DIR}/Modules/ThreeDSolver/IncompressibleSolver/Solver/default.inp")
-	#set(FLOWSOLVER_CONFIG_PATH ${OUTBIN_DIR})
-	#file(COPY ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${FLOWSOLVER_CONFIG_PATH})
-	#install(FILES ${FLOWSOLVER_CONFIG_FILE} DESTINATION ${SV_INSTALL_RUNTIME_DIR})
-endif()
-
-#-----------------------------------------------------------------------------
-# Solver IO
-if(SV_THREEDSOLVER_SOLVERIO_REDIRECT)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DBUILD_WITH_FLOWSOLVER_STDOUT_STDERR_REDIRECT")
-endif()
-
-#-----------------------------------------------------------------------------
-#  SVLS
-# svLS depends on the THREEDSOLVER build state so it must be here.
-if(SV_THREEDSOLVER_USE_SVLS)
-	set(SVLS_BUILD_TYPE "Source")
-	#simvascular_external(svls SVEXTERN_DEFAULT)
-	set(SV_USE_FORTRAN ON)
-	set(SV_USE_MPI ON)
-endif()
-
-if(SV_THREEDSOLVER_USE_LESLIB)
-	find_package(LESLIB REQUIRED)
-endif()
-
-#-----------------------------------------------------------------------------
-# Add libraries for flowsolver
-if(SV_USE_SPARSE)
-	SET(USE_SPARSE ON)
-        simvascular_third_party(sparse SOLVER_DEPEND)
-	if(NOT SV_USE_SYSTEM_SPARSE)
-          set(SPARSE_LIBRARY ${SV_LIB_THIRDPARTY_SPARSE_NAME})
-	else()
-		find_package(SPARSE)
-	endif()
-endif()
-
-if(SV_USE_METIS)
-	SET(USE_METIS ON)
-        simvascular_third_party(metis SOLVER_DEPEND)
-	if(NOT SV_USE_SYSTEM_METIS)
-          set(METIS_LIBRARY ${SV_LIB_THIRDPARTY_METIS_NAME})
-	else()
-		find_package(METIS)
-	endif()
-endif()
-
-if(SV_USE_NSPCG)
-	SET(USE_NSPCG ON)
-        simvascular_third_party(nspcg SOLVER_DEPEND)
-	if(NOT SV_USE_SYSTEM_NSPCG)
-          set(NSPCG_LIBRARY ${SV_LIB_THIRDPARTY_NSPCG_NAME})
-	else()
-		find_package(NSPCG)
-	endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# Remaining optional dependencies
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Enable Interl Runtime libs if we need or want them
-if(SV_USE_INTEL)
-	simvascular_external(INTELRUNTIME)
-	if(SV_USE_SYSTEM_ZLIB)
-		set(INTELRUNTIME_LIB_DIR "" CACHE PATH "A directory where intel runtimes may be, use this if its not in the path")
-	endif()
-else()
-	unset(INTELRUNTIME_LIBRARIES CACHE)
-endif()
-
-#-----------------------------------------------------------------------------
-# Enable Fortran
-if(SV_USE_FORTRAN)
-	enable_language(Fortran)
-	if(CMAKE_Fortran_COMPILER_ID MATCHES "GNU")
-		#set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-fbounds-check")
-		set(CMAKE_Fortran_FLAGS "-ffixed-line-length-132 -cpp")
-	else()
-		#set(CMAKE_Fortran_FLAGS_RELWITHDEBINFO "-check bounds")
-		set(CMAKE_Fortran_FLAGS "-132 -fpp")
-	endif()
-endif()
-
-#-----------------------------------------------------------------------------
-# Enable MPI
-if(SV_USE_MPI)
-	if (NOT SV_USE_DUMMY_MPICH2)
-		simvascular_external(MPI)
-		if(MPI_FOUND)
-			get_filename_component(MPI_LIBRARY_DIR ${MPI_LIBRARY} PATH)
-		endif()
-		if(WIN32)
-			find_library(MPI_fmpich2_LIBRARY NAMES fmpich2 HINTS ${MPI_LIBRARY_DIR})
-			set(MPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY} ${MPI_fmpich2_LIBRARY} ${MPI_CXX_LIBRARIES})
-			#message("${MPI_EXTRA_LIBRARY}")
-		endif()
-
-		# include_directories(${MPI_Fortran_INCLUDE_PATH})
-		if(SV_DEVELOPER_OUTPUT)
-			#getListOfVarsPrefix("MPI" _VARLIST)
-			#print_vars(_VARLIST)
-		endif()
-		if(SV_USE_MSMPI)
-			# TODO(jmerkow): Change this.
-			set(SV_MPI_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ThirdParty/msmpi/")
-			set(SV_MPI_LIB_DIR  "${SV_MPI_DIR}/Lib/x64/")
-			set(SV_MPI_INCLUDE_PATH "${SV_MPI_DIR}/Include/;${SV_MPI_DIR}/Include/x64/")
-			set(SV_MPI_EXTRA_LIBRARY "")
-			set(SV_MPI_Fortran_LIBRARIES "${SV_MPI_LIB_DIR}/msmpi.lib;${SV_MPI_LIB_DIR}/msmpifmc.lib;${SV_MPI_LIB_DIR}/msmpifec.lib")
-		else()
-			set(SV_MPI_EXTRA_LIBRARY ${MPI_EXTRA_LIBRARY})
-			set(SV_MPI_Fortran_LIBRARIES ${MPI_Fortran_LIBRARIES})
-			set(SV_MPI_INCLUDE_PATH ${MPI_Fortran_INCLUDE_PATH})
-		endif()
-		include_directories(${SV_MPI_INCLUDE_PATH})
-	else()
-		set(SV_MPI_EXTRA_LIBRARY lib_extra_simvascular_dummympi)
-		set(SV_MPI_Fortran_LIBRARIES lib_fortran_simvascular_dummympi)
-	endif()
-endif()
-
-#-----------------------------------------------------------------------------
 # Enable Testing
 if(BUILD_TESTING)
 	enable_testing()
@@ -726,8 +256,10 @@ if(SV_USE_WIN32_REGISTRY_FORCE_OFF)
 	message(STATUS "Forcing SV_USE_WIN32_REGISTRY off, even in distribution mode")
 	message(STATUS "SV_USE_WIN32_REGISTRY: ${SV_USE_WIN32_REGISTRY}")
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Put timestamp
 message(STATUS "Install timestamp: ${SV_RELEASE_TIMESTAMP}")
 file(WRITE "${TEMP_DIR}/release-date" "${SV_RELEASE_TIMESTAMP}")
 install(FILES "${TEMP_DIR}/release-date" DESTINATION ${SV_INSTALL_HOME_DIR})
@@ -736,67 +268,6 @@ if(SV_ENABLE_DISTRIBUTION)
         add_subdirectory(${SV_DISTRIBUTION_DIR} ${SV_BINARY_DISTRIBUTION_DIR})
 endif()
 #-----------------------------------------------------------------------------
-# Now we need to finish configuring now that the external projects are configured
-#-----------------------------------------------------------------------------
-foreach(proj ${SV_EXTERNALS_LIST})
-  if(SV_USE_${proj}_SHARED)
-    simvascular_install_external(${proj})
-  endif()
-endforeach()
-
-#-----------------------------------------------------------------------------
-# TCL Setup
-# TCL has two include directories, the macro only includes one.
-include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
-if(WIN32)
-	GET_FILENAME_COMPONENT(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
-endif()
-
-#-----------------------------------------------------------------------------
-# TetGen Setup
-if(SV_USE_TETGEN)
-	if(TETGEN_VERSION MATCHES "1.5.1")
-		set(TETGEN151 ON)
-	elseif(TETGEN_VERSION MATCHES "1.5.0")
-		set(TETGEN150 ON)
-	elseif(TETGEN_VERSION MATCHES "1.4.3")
-		set(TETGEN143 ON)
-	else()
-		message(FATAL_ERROR "Unknown Tetgen versions, please specify!")
-	endif()
-endif()
-
-if(SV_USE_VMTK)
-	# no extra setups
-endif()
-
-#-----------------------------------------------------------------------------
-# Find parasolid dll on windows to definitions
-if(SV_USE_PARASOLID)
-	if(PARASOLID_FOUND)
-		include_directories(${PARASOLID_INCLUDE_DIR})
-	endif()
-	if (SV_USE_PARASOLID_SHARED_LIBRARIES)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PARASOLID_SHARED")
-	endif()
-endif()
-
-if(SV_USE_MESHSIM)
-	if(MESHSIM_FOUND)
-		include_directories(${MESHSIM_INCLUDE_DIR})
-	endif()
-	if (SV_USE_MESHSIM_SHARED_LIBRARIES)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MESHSIM_SHARED")
-	endif()
-endif()
-
-if (SV_USE_MESHSIM_DISCRETE_SMODEL)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MESHSIM_DISCRETE_MODEL")
-	if (SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-		set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MESHSIM_DISCRETE_MODEL_SHARED")
-	endif()
-endif()
-
 
 #-----------------------------------------------------------------------------
 # Add GLOBAL_DEFINES to definitions
@@ -829,16 +300,6 @@ endforeach()
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
 	include_directories("${dir}")
 endforeach()
-
-#--------------------------------------------------------------------
-# Includes for QT GUI
-if(SV_USE_QT_GUI)
-  set(f svConfigure.h)
-  configure_file(
-    ${SV_SOURCE_DIR}/Source/Include/${f}.in
-    ${SV_BINARY_DIR}/Source/Include/${f}
-    )
-endif()
 
 #-----------------------------------------------------------------------------
 # Add directories
@@ -911,7 +372,7 @@ endforeach()
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory
 if(SV_USE_QT_GUI)
-  include(SimVascularInstallQT)
+  include(SimVascularInstallQt)
 endif()
 include(SimVascularInstallLibs)
 add_subdirectory(Scripts)

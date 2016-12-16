@@ -24,204 +24,271 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-# Set external project directory
-# Set src, build, bin dirs for externals
-# Set options for externals
 #-----------------------------------------------------------------------------
-if(NOT SV_INSTALL_ROOT_DIR)
-  set(SV_INSTALL_ROOT_DIR "SV")
-endif()
-if(NOT WIN32)
-  if(NOT CMAKE_INSTALL_PREFIX MATCHES "${SV_INSTALL_ROOT_DIR}")
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
-  endif()
-endif()
-
-set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "src")
-
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "bin")
-
-set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "build")
-
-set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "prefix")
-
-if(APPLE)
-  set(SV_PLATFORM_DIR "mac_osx")
-elseif(LINUX)
-  set(SV_PLATFORM_DIR "linux")
-elseif(WIN64)
-  set(SV_PLATFORM_DIR "win")
-else()
-  set(SV_PLATFORM_DIR "unsupported")
-endif()
-
-set(SV_COMPILER_DIR "")
-string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
-set(SV_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
-
-set(SV_ARCH_DIR "x64")
-
-set(SV_EXTERNALS_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_SRC_DIR}")
-set(SV_EXTERNALS_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_BLD_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
-set(SV_EXTERNALS_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_PFX_DIR}")
-set(SV_EXTERNALS_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
-
-macro(simvascular_add_new_external proj version use shared dirname)
-  option(SV_USE_${proj} "Enable ${proj} Plugin" ${use})
-  option(SV_USE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
-
-  set(${proj}_VERSION "${version}" CACHE TYPE STRING)
-  simvascular_get_major_minor_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION)
-  set(SV_EXT_${proj}_SRC_DIR ${SV_EXTERNALS_SRC_DIR}/${dirname}-${${proj}_VERSION})
-  set(SV_EXT_${proj}_BIN_DIR ${SV_EXTERNALS_BIN_DIR}/${dirname}-${${proj}_VERSION})
-  set(SV_EXT_${proj}_BLD_DIR ${SV_EXTERNALS_BLD_DIR}/${dirname}-${${proj}_VERSION})
-  set(SV_EXT_${proj}_PFX_DIR ${SV_EXTERNALS_PFX_DIR}/${dirname}-${${proj}_VERSION})
-
-  if(NOT SV_INSTALL_${proj}_RUNTIME_DIR)
-    set(SV_INSTALL_${proj}_RUNTIME_DIR ${SV_EXT_${proj}_BIN_DIR}/bin)
-  endif()
-
-  if(NOT SV_INSTALL_${proj}_LIBRARY_DIR)
-    set(SV_INSTALL_${proj}_LIBRARY_DIR ${SV_EXT_${proj}_BIN_DIR}/lib)
-  endif()
-
-  if(NOT SV_INSTALL_${proj}_ARCHIVE_DIR)
-    set(SV_INSTALL_${proj}_ARCHIVE_DIR ${SV_EXT_${proj}_BIN_DIR}/lib)
-  endif()
-
-  if(NOT SV_INSTALL_${proj}_INCLUDE_DIR)
-    set(SV_INSTALL_${proj}_INCLUDE_DIR ${SV_EXT_${proj}_BIN_DIR}/include)
-  endif()
-
-  if(SV_USE_${proj})
-    list(APPEND SV_EXTERNALS_LIST ${proj})
-    list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
-    set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
-    if("${proj}" STREQUAL "MITK")
-      if(SV_USE_MITK_CONFIG)
-        set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}/MITK-build)
+# QT
+if(SV_USE_QT_GUI)
+    set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH}" CACHE PATH "")
+    set(SimVascular_QT5_COMPONENTS
+      Concurrent
+      Core
+      Designer
+      Gui
+      Help
+      OpenGL
+      PrintSupport
+      Script
+      Sql
+      Svg
+      WebKitWidgets
+      WebKit
+      Widgets
+      Xml
+      XmlPatterns
+      UiTools)
+    find_package(Qt5 COMPONENTS ${SimVascular_QT5_COMPONENTS} REQUIRED)
+    if(Qt5_DIR)
+      get_filename_component(_Qt5_DIR "${Qt5_DIR}/../../../" ABSOLUTE)
+      list(FIND CMAKE_PREFIX_PATH "${_Qt5_DIR}" _result)
+      if(_result LESS 0)
+        set(CMAKE_PREFIX_PATH "${_Qt5_DIR};${CMAKE_PREFIX_PATH}" CACHE PATH "" FORCE)
       endif()
     endif()
-    set(SV_USE_SYSTEM_${proj} "ON" CACHE BOOL "External ${proj} must be used" FORCE)
+    if(NOT SV_USE_MITK_CONFIG)
+      set(QT_LIBRARIES "")
+      set(QT_INCLUDE_DIRS "")
+      foreach(comp ${SimVascular_QT5_COMPONENTS})
+        if(Qt5${comp}_LIBRARIES)
+          set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt5${comp}_LIBRARIES})
+        endif()
+        if(Qt5${comp}_INCLUDE_DIRS)
+          set(QT_INCLUDE_DIRS ${QT_INCLUDE_DIRS} ${Qt5${comp}_INCLUDE_DIRS})
+        endif()
+      endforeach()
+      include_directories(${QT_INCLUDE_DIRS})
+
+      #CppMicroServices
+      find_package(CppMicroServices)
+    endif()
+
+    set(f svConfigure.h)
+    configure_file(
+      ${SV_SOURCE_DIR}/Source/Include/${f}.in
+      ${SV_BINARY_DIR}/Source/Include/${f}
+      )
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# TCL
+if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+  set(TCL_DIR ${SV_TCL_DIR})
+endif()
+simvascular_external(TCL)
+set(SV_TCL_DIR ${TCL_DIR})
+
+STRING(REGEX REPLACE
+	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
+# TCL has two include directories, the macro only includes one.
+include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+if(WIN32)
+	GET_FILENAME_COMPONENT(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Tkcximage (Legacy)
+if(WIN32)
+	if(SV_USE_TKCXIMAGE)
+		find_library(TKCXIMAGE_DLL tkcximage)
+		if(TKCXIMAGE_DLL)
+			set(TKCXIMAGE_DLL_LIBRARY ${TKCXIMAGE_DLL})
+			get_filename_component(TKCXIMAGE_DLL_PATH ${TKCXIMAGE_DLL} DIRECTORY CACHE)
+			set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "TKCXIMAGE")
+		endif()
+	endif()
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# PYTHON
+if(SV_USE_PYTHON)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(PYTHON_DIR ${SV_PYTHON_DIR})
   endif()
-endmacro()
+  simvascular_external(PYTHON SHARED_LIB)
+  set(SV_PYTHON_DIR ${PYTHON_DIR})
+
+	if(PYTHONLIBS_FOUND)
+		if(NOT WIN32)
+		  string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
+		  list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
+		  list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
+	        else()
+		  set (PYTHONLIBS_MAJOR_VERSION 2)
+		  set (PYTHONLIBS_MINOR_VERSION 7)
+		endif()
+	else()
+		message(STATUS "")
+		message(STATUS "Python Libs NOT FOUND")
+		message(STATUS "Make sure you have python installed on your system.")
+	endif()
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
+  set(VTK_PYTHON_MODULES vtkWrappingPythonCore)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# FREETYPE
+if(SV_USE_FREETYPE)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(FREETYPE_DIR ${SV_FREETYPE_DIR})
+  endif()
+	simvascular_external(FREETYPE)
+	set(USE_FREETYPE ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
+	if(SV_USE_FREETYPE_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
+  set(SV_FREETYPE_DIR ${FREETYPE_DIR})
+  link_directories(${FREETYPE_DIR}/lib)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# GDCM
+if(SV_USE_GDCM)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(GDCM_DIR ${SV_GDCM_DIR}/lib/gdcm-${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION})
+  endif()
+	simvascular_external(GDCM)
+	set(USE_GDCM ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
+	if(SV_USE_GDCM_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
+  simvascular_get_external_path_from_include_dir(GDCM)
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# ITK
+if(SV_USE_ITK)
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-${ITK_MAJOR_VERSION}.${ITK_MINOR_VERSION})
+  endif()
+	if(SV_USE_ITK_SHARED)
+		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
+		set(SV_INSTALL_EXTERNALS ON)
+	endif()
+	simvascular_external(ITK)
+  include(${ITK_USE_FILE})
+
+	set(USE_ITK ON)
+    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
+    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
+  simvascular_get_external_path_from_include_dir(ITK)
+endif()
+#-----------------------------------------------------------------------------
 
 # VTK
 #-----------------------------------------------------------------------------
-# VTK is required
-set(SV_USE_VTK ON CACHE BOOL "Must build with vtk" FORCE)
-simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
+# VTK must come after ITK because ITK_USE_FILE resets vtk components and
+# messes up everything
 if(NOT SV_INSTALL_VTK_TCL_DIR)
   set(SV_INSTALL_VTK_TCL_DIR ${SV_EXT_VTK_BIN_DIR}/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION})
 endif()
 if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
   set(VTK_DIR ${SV_VTK_DIR}/lib/cmake/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION})
 endif()
-
-
-# ITK
-#-----------------------------------------------------------------------------
-simvascular_add_new_external(ITK 4.7.1 ON ON itk)
-# If using extern directory, set dir with Config file!
-if(SV_USE_ITK)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-${ITK_MAJOR_VERSION}.${ITK_MINOR_VERSION})
-  endif()
+if(SV_USE_VTK_SHARED)
+	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
+	set(SV_INSTALL_EXTERNALS ON)
 endif()
-
-# TCL is required
+simvascular_external(VTK
+	COMPONENTS
+    vtkFiltersFlowPaths
+    vtkWrappingTcl
+	  vtkRenderingTk
+    vtkCommonDataModel
+    vtkCommonCore
+    vtkChartsCore
+    vtkCommonExecutionModel
+	  vtkFiltersCore
+	  vtkFiltersVerdict
+    vtkIOLegacy
+    vtkIOPLY
+    vtkIOXML
+    vtkImagingStencil
+    ${VTK_PYTHON_MODULES})
+include(${VTK_USE_FILE})
+set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
+simvascular_get_external_path_from_include_dir(VTK)
 #-----------------------------------------------------------------------------
-set(SV_USE_TCL ON CACHE BOOL "Must build with tcl" FORCE)
-simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
-if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-  set(TCL_DIR ${SV_TCL_DIR})
-endif()
 
-#PYTHON
 #-----------------------------------------------------------------------------
-simvascular_add_new_external(PYTHON 2.7.11 OFF ON python)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(PYTHON_DIR ${SV_PYTHON_DIR})
-  endif()
-
 # OpenCASCADE
-#-----------------------------------------------------------------------------
-simvascular_add_new_external(OpenCASCADE 7.0.0 OFF ON opencascade)
 # If using extern directory, set dir with Config file!
 if(SV_USE_OpenCASCADE)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
     set(OpenCASCADE_DIR ${SV_OpenCASCADE_DIR}/lib/cmake/opencascade)
   endif()
+	simvascular_external(OpenCASCADE)
+	set(USE_OpenCASCADE ON)
+	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
+	if(SV_USE_OpenCASCADE_SHARED)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
+	  set(SV_INSTALL_EXTERNALS ON)
+	endif()
+  simvascular_get_external_path_from_include_dir(OpenCASCADE)
 endif()
 
-# GDCM
 #-----------------------------------------------------------------------------
-simvascular_add_new_external(GDCM 2.6.1 OFF ON gdcm)
-# If using extern directory, set dir with Config file!
-if(SV_USE_GDCM)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(GDCM_DIR ${SV_GDCM_DIR}/lib/gdcm-${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION})
-  endif()
-endif()
-
-# FREETYPE
-#-----------------------------------------------------------------------------
-simvascular_add_new_external(FREETYPE 2.6.3 OFF ON freetype)
-if(SV_USE_FREETYPE)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(FREETYPE_DIR ${SV_FREETYPE_DIR})
-  endif()
-endif()
-
 # MMG
-#-----------------------------------------------------------------------------
-simvascular_add_new_external(MMG 5.1.0 OFF OFF mmg)
 if(SV_USE_MMG)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
     set(MMG_DIR ${SV_MMG_DIR})
   endif()
+	simvascular_external(MMG)
+	set(USE_MMG ON)
+	if(SV_USE_MMG_SHARED)
+	  set(SV_INSTALL_EXTERNALS ON)
+	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
+	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
+  endif()
+  simvascular_get_external_path_from_include_dir(MMG)
 endif()
-
-# MITK
 #-----------------------------------------------------------------------------
-simvascular_add_new_external(MITK 2016.03 OFF ON mitk)
+
+#-----------------------------------------------------------------------------
+# MITK
 if(SV_USE_MITK)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
     set(MITK_DIR ${SV_MITK_DIR})
   endif()
+  if(SV_USE_MITK_CONFIG)
+    find_package(MITK NO_MODULE)
+    set(MITK_LIBRARIES MitkCore
+                       MitkAppUtil
+                       MitkQtWidgets
+                       MitkQtWidgetsExt
+                       MitkMapperExt
+                       MitkImageDenoising
+                       MitkSegmentationUI
+                       MitkSegmentation
+                       MitkSceneSerialization)
+  else()
+    simvascular_external(MITK)
+  endif()
+  if(SV_USE_MITK_SHARED)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} MITK)
+    set(SV_INSTALL_EXTERNALS ON)
+  endif()
+  include_directories(${MITK_INCLUDE_DIRS})
+  include_directories(${CTK_INCLUDE_DIRS})
 endif()
-
-# CTK
 #-----------------------------------------------------------------------------
-simvascular_add_new_external(CTK 0.1 OFF ON ctk)
-if(SV_USE_CTK)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(CTK_DIR ${SV_CTK_DIR})
-  endif()
-endif()
-
-# SimpleITK
-#-----------------------------------------------------------------------------
-simvascular_add_new_external(SimpleITK 0.8.1 OFF ON simpleitk)
-if(SV_USE_SimpleITK)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(SimpleITK_DIR ${SV_SimpleITK_DIR})
-  endif()
-endif()
-
-# Download of Externals for quick build
-#-----------------------------------------------------------------------------
-if(SV_DOWNLOAD_EXTERNALS)
-  if(APPLE)
-    set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/mac_osx/10.10/latest/mac_osx.clang-7.0.x64.everything.tar.gz")
-  endif()
-  if(LINUX)
-    set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/linux/ubuntu_14/gnu-4.8/2016.09.05/linux.gnu-4.8.x64.everything-BUILD2016-09-05.tar.gz")
-  endif()
-  if(WIN32)
-    set(SV_EXTERNALS_DOWNLOAD_URL "http://simvascular.stanford.edu/downloads/public/simvascular/externals/windows/10/msvc_2013/2016.09.05/windows.msvc-12.5.x64.everything-BUILD2016-09-05.tar.gz")
-  endif()
-
-  simvascular_download_and_extract_tar(${SV_EXTERNALS_DOWNLOAD_URL} "${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXTERNALS_BIN_DIR}")
-  set(SV_EXTERNALS_USE_TOPLEVEL_DIR ON CACHE BOOL "Set externals to download dir" FORCE)
-endif()

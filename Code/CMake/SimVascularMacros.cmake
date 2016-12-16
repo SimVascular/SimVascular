@@ -1105,3 +1105,44 @@ function(simvascular_install_external project_name)
   endif()
 
 endfunction()
+
+# simvascular_add_new_external
+macro(simvascular_add_new_external proj version use shared dirname)
+  option(SV_USE_${proj} "Enable ${proj} Plugin" ${use})
+  option(SV_USE_${proj}_SHARED "Build ${proj} libraries as shared libs" ${shared})
+
+  set(${proj}_VERSION "${version}" CACHE TYPE STRING)
+  simvascular_get_major_minor_version(${${proj}_VERSION} ${proj}_MAJOR_VERSION ${proj}_MINOR_VERSION)
+  set(SV_EXT_${proj}_SRC_DIR ${SV_EXTERNALS_SRC_DIR}/${dirname}-${${proj}_VERSION})
+  set(SV_EXT_${proj}_BIN_DIR ${SV_EXTERNALS_BIN_DIR}/${dirname}-${${proj}_VERSION})
+  set(SV_EXT_${proj}_BLD_DIR ${SV_EXTERNALS_BLD_DIR}/${dirname}-${${proj}_VERSION})
+  set(SV_EXT_${proj}_PFX_DIR ${SV_EXTERNALS_PFX_DIR}/${dirname}-${${proj}_VERSION})
+
+  if(NOT SV_INSTALL_${proj}_RUNTIME_DIR)
+    set(SV_INSTALL_${proj}_RUNTIME_DIR ${SV_EXT_${proj}_BIN_DIR}/bin)
+  endif()
+
+  if(NOT SV_INSTALL_${proj}_LIBRARY_DIR)
+    set(SV_INSTALL_${proj}_LIBRARY_DIR ${SV_EXT_${proj}_BIN_DIR}/lib)
+  endif()
+
+  if(NOT SV_INSTALL_${proj}_ARCHIVE_DIR)
+    set(SV_INSTALL_${proj}_ARCHIVE_DIR ${SV_EXT_${proj}_BIN_DIR}/lib)
+  endif()
+
+  if(NOT SV_INSTALL_${proj}_INCLUDE_DIR)
+    set(SV_INSTALL_${proj}_INCLUDE_DIR ${SV_EXT_${proj}_BIN_DIR}/include)
+  endif()
+
+  if(SV_USE_${proj})
+    list(APPEND SV_EXTERNALS_LIST ${proj})
+    list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
+    set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+    if("${proj}" STREQUAL "MITK")
+      if(SV_USE_MITK_CONFIG)
+        set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}/MITK-build)
+      endif()
+    endif()
+  endif()
+endmacro()
+

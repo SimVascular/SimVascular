@@ -34,7 +34,7 @@ elseif(APPLE)
 endif()
 
 set(SV_OS "${CMAKE_SYSTEM_NAME}")
-IF("${CMAKE_SYSTEM}" MATCHES "Linux")	
+IF("${CMAKE_SYSTEM}" MATCHES "Linux")
 	SET(LINUX TRUE)
 elseif(WIN32)
 	set(WINDOWS TRUE)
@@ -84,6 +84,49 @@ SET(USER_HOME_DIR $ENV{HOME})
 if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "Home dir: ${USER_HOME_DIR}")
 endif()
+
+if(NOT SV_INSTALL_ROOT_DIR)
+  set(SV_INSTALL_ROOT_DIR "SV")
+endif()
+if(NOT WIN32)
+  if(NOT CMAKE_INSTALL_PREFIX MATCHES "${SV_INSTALL_ROOT_DIR}")
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
+  endif()
+endif()
+
+#-----------------------------------------------------------------------------
+# Set external project directory
+# Set src, build, bin dirs for externals
+# Set options for externals
+set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "src")
+
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "bin")
+
+set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "build")
+
+set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "prefix")
+
+if(APPLE)
+  set(SV_PLATFORM_DIR "mac_osx")
+elseif(LINUX)
+  set(SV_PLATFORM_DIR "linux")
+elseif(WIN64)
+  set(SV_PLATFORM_DIR "win")
+else()
+  set(SV_PLATFORM_DIR "unsupported")
+endif()
+
+set(SV_COMPILER_DIR "")
+string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
+set(SV_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
+
+set(SV_ARCH_DIR "x64")
+
+set(SV_EXTERNALS_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_SRC_DIR}")
+set(SV_EXTERNALS_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_BLD_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
+set(SV_EXTERNALS_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_PFX_DIR}")
+set(SV_EXTERNALS_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
+#-----------------------------------------------------------------------------
 
 #-----
 # System Macros

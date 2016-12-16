@@ -1,3 +1,4 @@
+include(CMakeFindFrameworks)
 if(CYGWIN)
   find_program(TCL_TCLSH NAMES cygtclsh83 cygtclsh80)
 endif()
@@ -76,9 +77,10 @@ if(TCL_TCLSH)
                    OUTPUT_STRIP_TRAILING_WHITESPACE)
 endif()
 
+include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set TIFF_FOUND to TRUE if
 # all listed variables are TRUE
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Tclsh
+find_package_handle_standard_args(Tclsh
                                   REQUIRED_VARS TCL_TCLSH
                                   VERSION_VAR TCLSH_VERSION_STRING)
 

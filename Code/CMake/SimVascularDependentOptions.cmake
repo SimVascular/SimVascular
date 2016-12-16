@@ -136,10 +136,6 @@ if(SV_USE_TETGEN)
   option(SV_USE_TETGEN_ADAPTOR "Option to use open source mesh adaption" OFF)
 endif()
 
-if(SV_USE_PYTHON)
-  set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
-
 if(SV_USE_MESHSIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
   set(SV_USE_SOLVERIO ON)
 endif()
@@ -147,10 +143,6 @@ endif()
 # Open Source Software Options: Solid Models - OpenCASCADE
 if(SV_USE_OpenCASCADE)
   set(SV_USE_FREETYPE "ON" CACHE BOOL "Force freetype on" FORCE)
-endif()
-
-if(SV_USE_OpenCASCADE_SHARED)
-  set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
 endif()
 
 #-----------------------------------------------------------------------------

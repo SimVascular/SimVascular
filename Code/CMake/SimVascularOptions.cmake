@@ -36,8 +36,40 @@ set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/Externals" CACHE PATH "Extern
 option(SV_EXTERNALS_USE_TOPLEVEL_DIR "If ON, SV_EXTERNALS_TOPLEVEL_DIR will be used as location for external packages" OFF)
 
 #-----------------------------------------------------------------------------
-# External download options
-option(SV_DOWNLOAD_EXTERNALS "Option to download all externals from a remote location" OFF)
+# TCL
+simvascular_add_new_external(TCL 8.6.4 ON ON tcltk)
+
+#-----------------------------------------------------------------------------
+#PYTHON
+simvascular_add_new_external(PYTHON 2.7.11 OFF ON python)
+
+#-----------------------------------------------------------------------------
+#FREETYPE
+simvascular_add_new_external(FREETYPE 2.6.3 OFF ON freetype)
+
+#-----------------------------------------------------------------------------
+# MMG
+simvascular_add_new_external(MMG 5.1.0 OFF OFF mmg)
+
+#-----------------------------------------------------------------------------
+# VTK
+simvascular_add_new_external(VTK 6.2.0 ON ON vtk)
+
+#-----------------------------------------------------------------------------
+# GDCM
+simvascular_add_new_external(GDCM 2.6.1 OFF ON gdcm)
+
+#-----------------------------------------------------------------------------
+# ITK
+simvascular_add_new_external(ITK 4.7.1 ON ON itk)
+
+#-----------------------------------------------------------------------------
+# OpenCASCADE
+simvascular_add_new_external(OpenCASCADE 7.0.0 OFF ON opencascade)
+
+#-----------------------------------------------------------------------------
+# MITK
+simvascular_add_new_external(MITK 2016.03 OFF ON mitk)
 
 #-----------------------------------------------------------------------------
 # ThirdParty

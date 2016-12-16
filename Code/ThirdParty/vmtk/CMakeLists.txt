@@ -84,8 +84,6 @@ endif()
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES}
-	${TCL_LIBRARY}
-	${TK_LIBRARY}
 	)
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
