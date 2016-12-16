@@ -33,8 +33,6 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
-    --debug-output \
-\
    -G "$REPLACEME_SV_CMAKE_GENERATOR" \
 \
    -DCMAKE_BUILD_TYPE="$REPLACEME_SV_CMAKE_BUILD_TYPE" \
@@ -44,7 +42,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_ENABLE_DISTRIBUTION=ON \
 \
    -DSV_USE_TET_ADAPTOR=ON \
-   -DSV_USE_THREEDSOLVER=ON \
+   -DSV_USE_THREEDSOLVER=OFF \
    -DSV_THREEDSOLVER_USE_VTK=ON \
 \
    -DSV_USE_FREETYPE=ON \

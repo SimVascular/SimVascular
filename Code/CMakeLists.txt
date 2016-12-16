@@ -13,7 +13,6 @@ if (POLICY CMP0054)
 	cmake_policy(SET CMP0054 OLD)
 endif()
 
-
 #-----------------------------------------------------------------------------
 Project(SV)
 #-----------------------------------------------------------------------------
@@ -23,74 +22,75 @@ Project(SV)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/CMake"
 	"${CMAKE_MODULE_PATH}")
 
-set(SV_EXTERNAL_PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Superbuild)
-set(SV_EXTERNAL_PROJECT_FILE_PREFIX "")
-include(ExternalProject)
-include(CheckLibraryExists)
-
 #-----------------------------------------------------------------------------
-# Include Macros
-include(SimVascularMacros)
-include(SimVascularSuperBuildURLs)
+# CMake Includes
 include(CheckLibraryExists)
 include(GetPrerequisites)
 include(GenerateExportHeader)
 
-SET(CMAKE_SKIP_BUILD_RPATH  TRUE)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
-SET(CMAKE_INSTALL_RPATH "")
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 #-----------------------------------------------------------------------------
-# unset NEED variables
-unset(SV_USE_FORTRAN)
-unset(SV_USE_MPI)
-unset(SV_USE_INTEL)
-unset(SV_THREEDSVOLER_USE_SVLS)
+# SimVascular Includes
+include(SimVascularMacros)
+include(SimVascularSystemCheck)
+include(SimVascularVersion)
+include(SimVascularFunctionCheckCompilerFlags)
+
+#-----------------------------------------------------------------------------
+# RPATH handling
+# Don't skip the full RPATH for the build tree
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+# Don't use the install RPATH
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+# The RPATH that will be used when installing
+SET(CMAKE_INSTALL_RPATH "")
+# Don't automatically add determined parts of the RPATH which point to
+# directories outside the build tree to the install tree
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Include Initial Options
 include(SimVascularOptions)
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Include SimVascular Externals
-include(SimVascularSystemCheck)
-include(SimVascularVersion)
 include(SimVascularExternals)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Include SimVascular Internals
 include(SimVascularInternals)
-include(SimVascularFunctionCheckCompilerFlags)
+#-----------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------------
 # Include Dependent Options
 include(SimVascularDependentOptions)
 include(SimVascularExternals)
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Set EXE names for the executables
 set(SV_EXE "simvascular")
-set(SV_MESHSIM_ADAPTOR_EXE "svadapt")
 set(SV_PRESOLVER_EXE "svpre")
 set(SV_FLOWSOLVER_EXE "svsolver")
 set(SV_POSTSOLVER_EXE "svpost")
-set(SV_TET_ADAPTOR_EXE "svtetadapt")
 
 #-----------------------------------------------------------------------------
 # start internal cache variables
 set(SV_INCLUDE_DIRS "")
 set(SV_CORE_LIBRARY_DIRS "")
+set(SV_MODULE_DIRS "")
+set(SV_PLUGIN_DIRS "")
 set(SV_CORE_EXECUTABLE_DIRS "")
 
 #-----------------------------------------------------------------------------
-# Includes
+# SimVascular Setup
 #-----------------------------------------------------------------------------
 include(SimVascularInstallSetup)
 include(SimVascularHomeSetup)
 include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
-
-#-----------------------------------------------------------------------------
-# Setting up default directories for SimVascular Externals
-# Note: *These can be changes by the user if they have moved the sv_extern directories*
-# This is part of he legacy build system
-
-#include(SetupSimVascularExternalsDefaults)
 
 #-----------------------------------------------------------------------------
 # Package and Subdirectory Logic
@@ -109,8 +109,38 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/PostProcessing"
 	"Source/Mesh/MeshObject"
 	"Source/Model/PolyDataSolidModel")
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Modules
+set(SV_MODULE_DIRS ${SV_MODULE_DIRS}
+  "Source/Modules/Common"
+  "Source/Modules/Path"
+  "Source/Modules/Segmentation"
+  "Source/Modules/Model"
+  "Source/Modules/Mesh"
+  "Source/Modules/Simulation"
+  "Source/Modules/ProjectManagement"
+  "Source/Modules/QtWidgets")
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Plugins
+if(NOT SV_USE_MITK_CONFIG)
+  set(SV_PLUGIN_DIRS ${SV_PLUGIN_DIRS}
+    "Source/Plugins/org.sv.projectdatanodes"
+    "Source/Plugins/org.sv.gui.qt.projectmanager"
+    "Source/Plugins/org.sv.gui.qt.pathplanning"
+    "Source/Plugins/org.sv.gui.qt.segmentation"
+    "Source/Plugins/org.sv.gui.qt.modeling"
+    "Source/Plugins/org.sv.gui.qt.simulation"
+    "Source/Plugins/org.sv.gui.qt.application")
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
+#-----------------------------------------------------------------------------
 
 find_package(Doxygen)
 if(DOXYGEN_FOUND)
@@ -866,48 +896,39 @@ if(SV_USE_QT_GUI)
     ${SV_SOURCE_DIR}/Source/Include/${f}.in
     ${SV_BINARY_DIR}/Source/Include/${f}
     )
-
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Common")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Path")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Segmentation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Model")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Mesh")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/Simulation")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/ProjectManagement")
-  set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Modules/QtWidgets")
-  if(NOT SV_USE_MITK_CONFIG)
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.projectdatanodes")
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.projectmanager")
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.pathplanning")
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.segmentation")
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.modeling")
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.simulation")
-    set(SV_QT_GUI_LIBRARY_DIRS ${SV_QT_GUI_LIBRARY_DIRS} "Source/Plugins/org.sv.gui.qt.application")
-  endif()
-  foreach(dir ${SV_QT_GUI_LIBRARY_DIRS})
-    include_directories(${dir})
-  endforeach()
-
-  set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} ${SV_QT_GUI_LIBRARY_DIRS})
-
 endif()
 
 #-----------------------------------------------------------------------------
 # Add directories
 # Modules
 if(SV_USE_THREEDSOLVER)
-        add_subdirectory(svSolver/Code/FlowSolvers)
+  add_subdirectory(svSolver/Code/FlowSolvers)
 endif()
 
-if(NOT SV_ONLY_BUILD_FLOWSOLVER)
-	# Add the Core Direcotories
-	message(STATUS "Libraries:")
-	foreach(dir ${SV_CORE_LIBRARY_DIRS})
-		message(STATUS "	${dir}")
-		include_directories("${dir}")
-		add_subdirectory("${dir}")
-	endforeach()
-endif()
+# Add the Core Direcotories
+message(STATUS "Libraries:")
+foreach(dir ${SV_CORE_LIBRARY_DIRS})
+  message(STATUS "	${dir}")
+  include_directories("${dir}")
+  add_subdirectory("${dir}")
+endforeach()
+
+# Add the Modules
+message(STATUS "Modules:")
+foreach(dir ${SV_MODULE_DIRS})
+  message(STATUS "	${dir}")
+  include_directories("${dir}")
+  add_subdirectory("${dir}")
+endforeach()
+
+# Add the Plugins
+message(STATUS "Plugins:")
+foreach(dir ${SV_PLUGINS_DIRS})
+  message(STATUS "	${dir}")
+  include_directories("${dir}")
+  add_subdirectory("${dir}")
+endforeach()
+
 #----------------------------------------------------------------------------
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
 include(${CMAKE_CURRENT_SOURCE_DIR}/Source/Plugins/PluginList.cmake)
@@ -939,13 +960,11 @@ if(SV_USE_MITK_CONFIG)
   endif()
 endif()
 
-if(NOT SV_ONLY_BUILD_FLOWSOLVER)
-        message(STATUS "Executables")
-        foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
-                message(STATUS "	${dir}")
-                add_subdirectory("${dir}")
-        endforeach()
-endif()
+message(STATUS "Executables")
+foreach(dir ${SV_CORE_EXECUTABLE_DIRS})
+        message(STATUS "	${dir}")
+        add_subdirectory("${dir}")
+endforeach()
 
 #-----------------------------------------------------------------------------
 # Configure Exe Scripts, this should be the last subdirectory

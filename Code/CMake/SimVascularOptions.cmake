@@ -19,9 +19,6 @@ set(SV_LIBRARY_TYPE "STATIC" CACHE STRING "Options are STATIC or SHARED" FORCE)
 set_property(CACHE SV_LIBRARY_TYPE PROPERTY STRINGS STATIC SHARED)
 
 #-----------------------------------------------------------------------------
-# SimVascular Build options
-option(SV_ONLY_BUILD_FLOWSOLVER "Option ONLY build the 3D Solver (No GUI)" OFF)
-
 option(SV_SUPPRESS_WARNINGS "Option to suppress all compiler warnings while compiling" ON)
 
 #-----------------------------------------------------------------------------

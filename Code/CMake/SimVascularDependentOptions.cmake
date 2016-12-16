@@ -130,11 +130,6 @@ else()
         set(SV_INSTALL_LIBS ON)
 endif()
 
-# Only FLowsolver
-if(SV_ONLY_BUILD_FLOWSOLVER)
-	set(SV_USE_THREEDSOLVER ON)
-endif()
-
 #-----------------------------------------------------------------------------
 # Plugins
 if(SV_USE_TETGEN)
