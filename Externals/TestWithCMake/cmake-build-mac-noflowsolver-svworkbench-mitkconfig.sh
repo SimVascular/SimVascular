@@ -37,7 +37,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DSV_USE_MMG=ON \
    -DSV_USE_MITK=ON \
    -DSV_USE_QT_GUI=ON \
-   -DSV_USE_TET_ADAPTOR=ON \
+   -DSV_USE_TETGEN_ADAPTOR=ON \
 \
    -DSV_USE_SYSTEM_FREETYPE=ON \
    -DSV_USE_SYSTEM_GDCM=ON \

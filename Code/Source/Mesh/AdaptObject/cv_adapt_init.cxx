@@ -144,7 +144,7 @@ int Adapt_Init( Tcl_Interp *interp )
   // Initialize
   cvAdaptObject::gCurrentKernel = KERNEL_INVALID;
 
-#ifdef USE_TET_ADAPTOR
+#ifdef USE_TETGEN_ADAPTOR
   cvAdaptObject::gCurrentKernel = KERNEL_TETGEN;
 #endif
 

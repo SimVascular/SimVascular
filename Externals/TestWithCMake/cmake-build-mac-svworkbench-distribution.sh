@@ -41,7 +41,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 \
    -DSV_ENABLE_DISTRIBUTION=ON \
 \
-   -DSV_USE_TET_ADAPTOR=ON \
+   -DSV_USE_TETGEN_ADAPTOR=ON \
    -DSV_USE_THREEDSOLVER=OFF \
    -DSV_THREEDSOLVER_USE_VTK=ON \
 \

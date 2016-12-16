@@ -103,7 +103,7 @@
   #include "cv_ITKLset_init.h"
 #endif
 
-#ifdef SV_USE_TET_ADAPTOR
+#ifdef SV_USE_TETGEN_ADAPTOR
   #include "cv_adapt_init.h"
   #include "cv_tetgen_adapt_init.h"
 #endif
@@ -253,14 +253,14 @@ int SimVascular_Init( Tcl_Interp *interp )
     fprintf( stderr, "error on Adapt_Init\n" );
     return TCL_ERROR;
   }
-#elif defined SV_USE_TET_ADAPTOR
+#elif defined SV_USE_TETGEN_ADAPTOR
   if ( Adapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Adapt_Init\n" );
     return TCL_ERROR;
   }
 #endif
 
-#ifdef SV_USE_TET_ADAPTOR
+#ifdef SV_USE_TETGEN_ADAPTOR
   if ( Tetgenadapt_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on TetGenAdapt_Init\n" );
     return TCL_ERROR;

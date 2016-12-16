@@ -75,7 +75,7 @@ set gExternalPrograms(cvpresolver) [file join $bindir ${SV_PRESOLVER_EXE}$execbi
 set gExternalPrograms(cvpostsolver) [file join $bindir ${SV_POSTSOLVER_EXE}$execbinext]
 set gExternalPrograms(cvflowsolver) [file join $bindir ${SV_FLOWSOLVER_EXE}$execbinext]
 set gExternalPrograms(cvadaptor) [file join $bindir ${SV_MESHSIM_ADAPTOR_EXE}$execbinext]
-set gExternalPrograms(cvtetadaptor) [file join $bindir ${SV_TET_ADAPTOR_EXE}$execbinext]
+set gExternalPrograms(cvtetadaptor) [file join $bindir ${SV_TETGEN_ADAPTOR_EXE}$execbinext]
 set gExternalPrograms(gdcmdump) gdcmdump
 set gExternalPrograms(dicom2) [file join $homedir dicom2${CMAKE_EXECUTABLE_SUFFIX}]
 ")
