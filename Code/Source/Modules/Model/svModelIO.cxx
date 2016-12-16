@@ -2,7 +2,9 @@
 #include "svModel.h"
 #include "svModelElementPolyData.h"
 
-//#include "cv_polydatasolid_utils.h"
+#ifdef SV_USE_OPENCASCADE
+#include "svModelElementOCCT.h"
+#endif
 
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
@@ -31,6 +33,8 @@ svModelIO::svModelIO()
 
 std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 {
+    std::vector<mitk::BaseData::Pointer> result;
+
     TiXmlDocument document;
 
     std::string fileName=GetInputLocation();
@@ -39,8 +43,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
         //        MITK_ERROR << "Could not open/read/parse " << fileName;
-        std::vector<mitk::BaseData::Pointer> empty;
-        return empty;
+        return result;
     }
 
     //    TiXmlElement* version = document.FirstChildElement("format");
@@ -50,6 +53,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     if(!modelElement){
         //        MITK_ERROR << "No Model data in "<< fileName;
         mitkThrow() << "No Model data in "<< fileName;
+        return result;
     }
 
     svModel::Pointer model = svModel::New();
@@ -72,12 +76,15 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
         TiXmlElement* meElement = timestepElement->FirstChildElement("model_element");
         if(meElement != nullptr)
         {
-            std::string type;
-            int numSampling=0;
+            std::string type="";
             meElement->QueryStringAttribute("type", &type);
-            meElement->QueryIntAttribute("num_sampling", &numSampling);
+            if(type=="")
+            {
+                mitkThrow() << "No type info available when trying to load the model ";
+                return result;
+            }
 
-            svModelElement* me;
+            svModelElement* me=NULL;
 
             if(type=="PolyData")
             {
@@ -95,11 +102,35 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 mepd->SetWholeVtkPolyData(pd);
 
             }
-//            else if(type=="ParaSolid")
-//            {
-//                me=new svModelElementParaSolid();
-//            }
 
+#ifdef SV_USE_OPENCASCADE
+            if(type=="OpenCASCADE")
+            {
+                me=new svModelElementOCCT();
+                svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
+                std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".brep";
+                cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
+                occtSolid->ReadNative(dataFileName.c_str());
+                meocct->SetOCCTSolid(occtSolid);
+
+                double maxDist=0;
+                if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
+                {
+                    meocct->SetMaxDist(maxDist);
+                }
+
+                meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
+            }
+#endif
+
+            if(me==NULL)
+            {
+                mitkThrow() << "No support in reading file of "<< type;
+                return result;
+            }
+
+            int numSampling=0;
+            meElement->QueryIntAttribute("num_sampling", &numSampling);
             me->SetNumSampling(numSampling);
 
             TiXmlElement* facesElement = meElement->FirstChildElement("faces");
@@ -187,7 +218,8 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                     radiusElement->QueryIntAttribute("face_id2", &faceID2);
                     radiusElement->QueryDoubleAttribute("radius", &radius);
 
-                    blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+//                    blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+                    blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,me->GetFaceName(faceID1),me->GetFaceName(faceID2),radius));
 
                 }
                 me->SetBlendRadii(blendRadii);
@@ -217,7 +249,6 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
     }//timestep
 
-    std::vector<mitk::BaseData::Pointer> result;
     result.push_back(model.GetPointer());
     return result;
 }
@@ -315,9 +346,9 @@ void svModelIO::Write()
             }
         }
 
-        // blending param for PolyData
         if(me->GetType()=="PolyData")
         {
+            // for PolyData
             svModelElementPolyData* mepd=dynamic_cast<svModelElementPolyData*>(me);
             if(mepd)
             {
@@ -334,6 +365,18 @@ void svModelIO::Write()
             }
         }
 
+#ifdef SV_USE_OPENCASCADE
+        if(me->GetType()=="OpenCASCADE")
+        {
+            //for OpenCASCADE
+            svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
+            if(meocct)
+            {
+                meElement->SetDoubleAttribute("max_dist", meocct->GetMaxDist());
+            }
+        }
+#endif
+
         //Output actual model data file
         if(me->GetType()=="PolyData")
         {
@@ -348,10 +391,27 @@ void svModelIO::Write()
                 writer->SetInputData(mepd->GetWholeVtkPolyData());
                 if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
                 {
-                    mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
+                    mitkThrow() << "PolyData model writing error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
                 }
             }
         }
+
+#ifdef SV_USE_OPENCASCADE
+        if(me->GetType()=="OpenCASCADE")
+        {
+            std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".brep";
+
+            svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
+
+            if(meocct&&meocct->GetOCCTSolid())
+            {
+               if (meocct->GetOCCTSolid()->WriteNative(0,dataFileName.c_str()) != CV_OK )
+                {
+                    mitkThrow() << "OpenCASCADE model writing error: ";
+                }
+            }
+        }
+#endif
 
     }
 

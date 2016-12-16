@@ -9,10 +9,6 @@
 #include "cvPolyData.h"
 #include "cv_polydatasolid_utils.h"
 
-#ifdef SV_USE_OPENCASCADE
-   #include "cvOCCTSolidModel.h"
-#endif
-
 #include <vtkCellType.h>
 #include <vtkFillHolesFilter.h>
 #include <vtkPlaneSource.h>
@@ -103,21 +99,21 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
 
     for(int i=0;i<2*numSeg+numCap2;i++)
     {
-          vtkPolyData *facepd = vtkPolyData::New();
-          int faceid=i+1;
-          PlyDtaUtils_GetFacePolyData(solidvpd, &faceid, facepd);
+        vtkPolyData *facepd = vtkPolyData::New();
+        int faceid=i+1;
+        PlyDtaUtils_GetFacePolyData(solidvpd, &faceid, facepd);
 
-          svModelElement::svFace* face =new svModelElement::svFace;
-          face->id=faceid;
-          face->name=allNames[i];
-          face->vpd=facepd;
+        svModelElement::svFace* face =new svModelElement::svFace;
+        face->id=faceid;
+        face->name=allNames[i];
+        face->vpd=facepd;
 
-          if(face->name.substr(0,5)=="wall_")
-              face->type="wall";
-          else if(face->name.substr(0,4)=="cap_")
-              face->type="cap";
+        if(face->name.substr(0,5)=="wall_")
+            face->type="wall";
+        else if(face->name.substr(0,4)=="cap_")
+            face->type="cap";
 
-          faces.push_back(face);
+        faces.push_back(face);
     }
 
     delete[] allNames;
@@ -198,20 +194,20 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyDataByBlend(svModelE
 
     }
 
-     svModelElementPolyData* mepddst =mepdsrc->Clone();
-     mepddst->SetWholeVtkPolyData(lastVpd);
-     std::vector<svModelElement::svFace*> faces=mepddst->GetFaces();
-     for(int i=0;i<faces.size();i++)
-     {
-         faces[i]->vpd=mepddst->CreateFaceVtkPolyData(faces[i]->id);
-     }
+    svModelElementPolyData* mepddst =mepdsrc->Clone();
+    mepddst->SetWholeVtkPolyData(lastVpd);
+    std::vector<svModelElement::svFace*> faces=mepddst->GetFaces();
+    for(int i=0;i<faces.size();i++)
+    {
+        faces[i]->vpd=mepddst->CreateFaceVtkPolyData(faces[i]->id);
+    }
 
-     mepddst->AssignBlendParam(param);
-     delete param;
+    mepddst->AssignBlendParam(param);
+    delete param;
 
-     mepddst->AddBlendRadii(blendRadii);
+    mepddst->AddBlendRadii(blendRadii);
 
-     return mepddst;
+    return mepddst;
 }
 
 vtkPolyData* svModelUtils::CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, int addCaps, unsigned int t,  svContourGroup::svLoftingParam* param)
@@ -443,40 +439,40 @@ vtkPolyData* svModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int f
 
 bool svModelUtils::CheckArrayName(vtkDataSet *object,int datatype,std::string arrayname )
 {
-  vtkIdType i;
-  int numArrays;
+    vtkIdType i;
+    int numArrays;
 
-  if (datatype == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
+    if (datatype == 0)
     {
-      if (strcmp(object->GetPointData()->GetArrayName(i),arrayname.c_str())==0)
-      {
-        return true;
-      }
+        numArrays = object->GetPointData()->GetNumberOfArrays();
+        for (i=0;i<numArrays;i++)
+        {
+            if (strcmp(object->GetPointData()->GetArrayName(i),arrayname.c_str())==0)
+            {
+                return true;
+            }
+        }
+
+        //    if(object->GetPointData()->HasArray(arrayname.c_str()))
+        //        return true;
+
+    }
+    else
+    {
+        numArrays = object->GetCellData()->GetNumberOfArrays();
+        for (i=0;i<numArrays;i++)
+        {
+            if (strcmp(object->GetCellData()->GetArrayName(i),arrayname.c_str())==0)
+            {
+                return true;
+            }
+        }
+
+        //    if(object->GetCellData()->HasArray(arrayname.c_str()))
+        //        return true;
     }
 
-//    if(object->GetPointData()->HasArray(arrayname.c_str()))
-//        return true;
-
-  }
-  else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (strcmp(object->GetCellData()->GetArrayName(i),arrayname.c_str())==0)
-      {
-        return true;
-      }
-    }
-
-//    if(object->GetCellData()->HasArray(arrayname.c_str()))
-//        return true;
-  }
-
-  return false;
+    return false;
 }
 
 vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtkPolyData> inpd)
@@ -717,10 +713,10 @@ bool svModelUtils::DeleteRegions(vtkSmartPointer<vtkPolyData> inpd, std::vector<
 
         for (vtkIdType cellId=0; cellId< inpd->GetNumberOfCells(); cellId++)
         {
-          if (boundaryRegions->GetValue(cellId) == regionIDs[i])
-          {
-            inpd->DeleteCell(cellId);
-          }
+            if (boundaryRegions->GetValue(cellId) == regionIDs[i])
+            {
+                inpd->DeleteCell(cellId);
+            }
         }
 
         inpd->RemoveDeletedCells();
@@ -758,7 +754,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
 
     if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
     {
-//        delete capped;
+        //        delete capped;
         return NULL;
     }
 
@@ -815,7 +811,7 @@ std::vector<svPathElement::svPathPoint> svModelUtils::ConvertToPathPoints(std::v
         pathPoint.rotation=svMath3::GetPerpendicularNormalVector(pathPoint.tangent);
 
         pathPoints.push_back(pathPoint);
-   }
+    }
 
     svPathElement::svPathPoint lastPathPoint=pathPoints.back();
     lastPathPoint.pos=posPoints.back();
@@ -898,12 +894,14 @@ double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
     return area;
 }
 
+#ifdef SV_USE_OPENCASCADE
+
 cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps)
 {
     int contourNumber=contourSet.size();
 
     if(contourNumber==0 || numSamplingPts==0)
-        reutrn NULL;
+        return NULL;
 
     int numSuperPts=0;
     for(int i=0;i<contourNumber;i++)
@@ -927,7 +925,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
         cvPolyData* cvpd=new cvPolyData(vtkpd);
         cvPolyData* cvpd2=sys_geom_sampleLoop(cvpd,numSuperPts);
 
-//        delete cvpd;
+        //        delete cvpd;
 
         if(cvpd2==NULL)
         {
@@ -953,7 +951,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
                 cvpd3=sys_geom_AlignByDist(alignedContours[i-1],superSampledContours[i]);
 
 
-//            delete superSampledContours[i];
+            //            delete superSampledContours[i];
 
             if(cvpd3==NULL)
             {
@@ -970,7 +968,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     {
         cvPolyData * cvpd4=sys_geom_sampleLoop(alignedContours[i],newNumSamplingPts);
 
-//        delete alignedContours[i];
+        //        delete alignedContours[i];
 
         if(cvpd4==NULL)
         {
@@ -988,11 +986,11 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
 
         int status=curve->MakeInterpCurveLoop(sampledContours[i],closed);
 
-//        delete sampledContours[i];
+        //        delete sampledContours[i];
 
         if ( status != CV_OK )
         {
-//            delete curve;
+            //            delete curve;
             MITK_ERROR << "error in curve loop construction ";
             return NULL;
         }
@@ -1043,7 +1041,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     return surfFinal;
 }
 
-cvOCCTSolidModel* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, unsigned int t)
+svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, double maxDist, unsigned int t)
 {
     std::vector<cvOCCTSolidModel*> loftedSolids;
     std::vector<std::string> segNames;
@@ -1066,33 +1064,219 @@ cvOCCTSolidModel* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataNod
     cvOCCTSolidModel* unionSolid=loftedSolids[0];
 
     cvOCCTSolidModel* previousUnionSolid=NULL;
-//    SolidModel_SimplifyT smp = SM_Simplify_All;
+    //    SolidModel_SimplifyT smp = SM_Simplify_All;
     for(int i=1;i<loftedSolids.size();i++)
     {
         previousUnionSolid=unionSolid;
         unionSolid=new cvOCCTSolidModel();
         unionSolid->Union(loftedSolids[i],previousUnionSolid);
-//        delete previousUnionSolid;
-//        delete loftedSolids[i];
+        //        delete previousUnionSolid;
+        //        delete loftedSolids[i];
     }
 
 
     //setup face names
+    int numFaces;
+    int *ids;
+    int status=unionSolid->GetFaceIds( &numFaces, &ids);
+    if(status != CV_OK )
+    {
+        //        delete unionSolid;
+        MITK_ERROR << "GetFaceIds: error on object";
+        return NULL;
+    }
 
+    std::vector<int> faceIDs;
+    std::vector<std::string> faceNames;
+    for(int i=0;i<numFaces;i++)
+    {
+        faceIDs.push_back(ids[i]);
+        char *value;
+        char *parent;
+        unionSolid->GetFaceAttribute("gdscName",ids[i],&value);
+        unionSolid->GetFaceAttribute("parent",ids[i],&parent);
+        std::string type(value);
+        std::string groupName(parent);
+        faceNames.push_back(type+"_"+groupName);
+    }
 
+    for(int i=0;i<faceNames.size()-1;i++)
+    {
+        int idx=1;
+        for(int j=i+1;j<faceNames.size();j++)
+        {
+            if(faceNames[i]==faceNames[j])
+            {
+                idx++;
+                std::stringstream ss;
+                ss << idx;
+                std::string idxStr = ss.str();
+                faceNames[j]=faceNames[j]+"_"+idxStr;
+            }
+        }
+    }
 
+    for(int i=0;i<numFaces;i++)
+    {
+        unionSolid->SetFaceAttribute("gdscName",ids[i],faceNames[i].c_str());
+    }
+
+    cvPolyData* cvwholevpd=unionSolid->GetPolyData(1,maxDist);
+    if(cvwholevpd==NULL || cvwholevpd->GetVtkPolyData()==NULL)
+        return NULL;
+
+    std::vector<svModelElement::svFace*> faces;
+
+    for(int i=0;i<numFaces;i++)
+    {
+        cvPolyData* cvfacevpd=unionSolid->GetFacePolyData(ids[i],1,maxDist);
+        if(cvfacevpd==NULL || cvfacevpd->GetVtkPolyData()==NULL)
+            return NULL;
+
+        svModelElement::svFace* face =new svModelElement::svFace;
+        face->id=ids[i];
+        face->name=faceNames[i];
+        face->vpd=cvfacevpd->GetVtkPolyData();
+
+        if(face->name.substr(0,5)=="wall_")
+            face->type="wall";
+        else if(face->name.substr(0,4)=="cap_")
+            face->type="cap";
+
+        faces.push_back(face);
+    }
 
     svModelElementOCCT* modelElement=new svModelElementOCCT();
     modelElement->SetSegNames(segNames);
     modelElement->SetFaces(faces);
-    modelElement->SetWholeVtkPolyData(solidvpd);
+    modelElement->SetWholeVtkPolyData(cvwholevpd->GetVtkPolyData());
     modelElement->SetNumSampling(numSamplingPts);
+    modelElement->SetOCCTSolid(unionSolid);
+    modelElement->SetMaxDist(maxDist);
 
     return modelElement;
-
-
 }
 
+
+//int svModelUtils::GetFaceIDFromOCCTSolid(cvOCCTSolidModel* occtSolid, std::string faceName)
+//{
+//    int id=-1;
+
+//    if(occtSolid==NULL)
+//        return id;
+
+//    int numFaces;
+//    int *ids;
+//    int status=occtSolid->GetFaceIds( &numFaces, &ids);
+//    if(status!=CV_OK)
+//        return id;
+
+//    for(int i=0;i<numFaces;i++)
+//    {
+//        char *value;
+//        occtSolid->GetFaceAttribute("gdscName",ids[i],&value);
+//        std::string name(value);
+//        if(name==faceName)
+//            return ids[i];
+//    }
+
+//    return id;
+//}
+
+svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOCCT* meocctsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii)
+{
+    if(meocctsrc==NULL || meocctsrc->GetOCCTSolid()==NULL)
+        return NULL;
+
+    svModelElementOCCT* meocctdst =meocctsrc->Clone();
+
+    cvOCCTSolidModel* occtSolid=meocctdst->GetOCCTSolid();
+
+    for(int i=0;i<blendRadii.size();i++)
+    {
+        if(blendRadii[i] && blendRadii[i]->radius>0)
+        {
+//            int faceID1=GetFaceIDFromOCCTSolid(occtSolid,blendRadii[i]->faceName1);
+//            int faceID2=GetFaceIDFromOCCTSolid(occtSolid,blendRadii[i]->faceName2);
+            int faceID1=meocctdst->GetFaceIDFromOCCTSolid(blendRadii[i]->faceName1);
+            int faceID2=meocctdst->GetFaceIDFromOCCTSolid(blendRadii[i]->faceName2);
+            double radius=blendRadii[i]->radius;
+
+            if(occtSolid->CreateEdgeBlend(faceID1,faceID2,radius,0)!=CV_OK)
+            {
+                delete meocctdst;
+                MITK_ERROR << "OpenCASCADE model blending failed";
+                return NULL;
+            }
+        }
+    }
+
+    int numFaces;
+    int *ids;
+    int status=occtSolid->GetFaceIds( &numFaces, &ids);
+    if(status != CV_OK )
+    {
+        delete meocctdst;
+        MITK_ERROR << "OpenCASCADE model GetFaceIds: error on object";
+        return NULL;
+    }
+
+    vtkSmartPointer<vtkPolyData> wholevpd=meocctdst->CreateWholeVtkPolyData();
+    if(wholevpd==NULL)
+    {
+        delete meocctdst;
+        return NULL;
+    }
+
+    meocctdst->SetWholeVtkPolyData(meocctdst->CreateWholeVtkPolyData());
+
+
+    std::vector<svModelElement::svFace*> oldFaces=meocctsrc->GetFaces();
+    std::vector<svModelElement::svFace*> faces;
+    for(int i=0;i<numFaces;i++)
+    {
+        vtkSmartPointer<vtkPolyData> facevpd=meocctdst->CreateFaceVtkPolyData(ids[i]);
+        if(facevpd==NULL)
+        {
+            delete meocctdst;
+            return NULL;
+        }
+
+        svModelElement::svFace* face =new svModelElement::svFace;
+        char *value;
+        occtSolid->GetFaceAttribute("gdscName",ids[i],&value);
+        std::string name(value);
+        face->id=ids[i];
+        face->name=name;
+        face->vpd=facevpd;
+
+        for(int j=0;j<oldFaces.size();j++)
+        {
+            if(face->name==oldFaces[j]->name)
+            {
+                face->type=oldFaces[j]->type;
+                break;
+            }
+        }
+
+        if(face->type=="")
+        {
+            if(face->name.substr(0,5)=="wall_")
+                face->type="wall";
+            else if(face->name.substr(0,4)=="cap_")
+                face->type="cap";
+        }
+
+        faces.push_back(face);
+    }
+
+    meocctdst->SetFaces(faces);
+    meocctdst->AddBlendRadii(blendRadii);
+
+    return meocctdst;
+}
+
+#endif
 
 
 

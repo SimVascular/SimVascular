@@ -403,6 +403,17 @@ svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(int face
     return NULL;
 }
 
+svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(std::string faceName1, std::string faceName2)
+{
+    for(int i=0;i<m_BlendRadii.size();i++)
+    {
+        if(m_BlendRadii[i] && m_BlendRadii[i]->faceName1==faceName1 &&  m_BlendRadii[i]->faceName2==faceName2)
+            return m_BlendRadii[i];
+    }
+
+    return NULL;
+}
+
 void svModelElement::RemoveFace(int faceID)
 {
     int idx=GetFaceIndex(faceID);

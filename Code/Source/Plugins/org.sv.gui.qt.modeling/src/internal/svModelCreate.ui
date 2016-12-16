@@ -68,17 +68,12 @@
       </item>
       <item>
        <property name="text">
-        <string>Parasolid</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
         <string>OpenCASCADE</string>
        </property>
       </item>
       <item>
        <property name="text">
-        <string>Discrete</string>
+        <string>Parasolid</string>
        </property>
       </item>
      </widget>

@@ -1440,11 +1440,16 @@ void svModelEdit::CreateModel()
             statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
         }
     }
-    else if(m_ModelType=="Parasolid")
+#ifdef SV_USE_OPENCASCADE
+    else if(m_ModelType=="OpenCASCADE")
     {
-
+        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling);
+        if(newModelElement==NULL)
+        {
+            statusText="Failed to create model.";
+        }
     }
-
+#endif
 
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
@@ -1497,10 +1502,12 @@ std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()
         if(radius<=0)
             continue;
 
-        int faceID1=modelElement->GetFaceID(itemFace1->text().toStdString());
-        int faceID2=modelElement->GetFaceID(itemFace2->text().toStdString());
+        std::string faceName1=itemFace1->text().toStdString();
+        std::string faceName2=itemFace2->text().toStdString();
+        int faceID1=modelElement->GetFaceID(faceName1);
+        int faceID2=modelElement->GetFaceID(faceName2);
 
-        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,faceName1,faceName2,radius));
     }
 
     return blendRadii;
@@ -1519,7 +1526,10 @@ void svModelEdit::BlendModel()
 
     std::vector<svModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
 
-    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
+    mitk::StatusBar::GetInstance()->DisplayText("Blending model...");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
 
     if(m_ModelType=="PolyData"){
 
@@ -1537,12 +1547,19 @@ void svModelEdit::BlendModel()
 
         newModelElement=svModelUtils::CreateModelElementPolyDataByBlend(mepd, blendRadii, param);
     }
-    else if(m_ModelType=="Parasolid")
+#ifdef SV_USE_OPENCASCADE
+    else if(m_ModelType=="OpenCASCADE")
     {
+        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(modelElement);
+        if(!meocct) return;
 
+        newModelElement=svModelUtils::CreateModelElementOCCTByBlend(meocct, blendRadii);
     }
+#endif
 
+    WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress();
+    mitk::StatusBar::GetInstance()->DisplayText("Blending done.");
 
     if(newModelElement==NULL) return;
 
@@ -1554,6 +1571,10 @@ void svModelEdit::BlendModel()
     mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
     m_Model->ExecuteOperation(doOp);
+
+//    SetupFaceListTable();
+
+//    UpdateFaceListSelection();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }

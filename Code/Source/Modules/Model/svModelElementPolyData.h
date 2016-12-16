@@ -53,6 +53,8 @@ public:
 
     virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) override;
 
+    virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() override;
+
 //    vtkSmartPointer<vtkPolyData> GetSolidModel() const;
 
 //    void SetSolidModel(vtkSmartPointer<vtkPolyData> solidModel);

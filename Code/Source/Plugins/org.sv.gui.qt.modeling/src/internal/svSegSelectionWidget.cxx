@@ -89,13 +89,21 @@ void svSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer> seg
 
     int numSampling=0;
     if(modelElement)
+    {
         numSampling=modelElement->GetNumSampling();
 
-    if(numSampling>0)
-        ui->lineEditNumSampling->setText(QString::number(numSampling));
+        if(numSampling>0)
+            ui->lineEditNumSampling->setText(QString::number(numSampling));
+        else
+            ui->lineEditNumSampling->setText("");
+    }
     else
-        ui->lineEditNumSampling->setText("");
-
+    {
+        if(type=="PolyData")
+            ui->lineEditNumSampling->setText("");
+        else
+            ui->lineEditNumSampling->setText("20");
+    }
 }
 
 std::vector<std::string> svSegSelectionWidget::GetUsedSegNames()
@@ -163,7 +171,6 @@ void svSegSelectionWidget::Cancel()
 {
     hide();
 }
-
 
 void svSegSelectionWidget::TableViewContextMenuRequested( const QPoint & pos )
 {

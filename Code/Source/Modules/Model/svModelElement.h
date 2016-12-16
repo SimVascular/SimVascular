@@ -3,8 +3,6 @@
 
 #include <svModelExports.h>
 
-#include <mitkDataNode.h>
-
 #include <vtkPolyData.h>
 #include <vtkSmartPointer.h>
 
@@ -48,17 +46,32 @@ public:
         int faceID1;
         int faceID2;
         double radius;
+        std::string faceName1;
+        std::string faceName2;
 
         svBlendParamRadius()
             : faceID1(0)
             , faceID2(0)
             , radius(0.0)
+            , faceName1("")
+            , faceName2("")
         {
         }
 
         svBlendParamRadius(int id1, int id2, double r)
             : faceID1(id1)
             , faceID2(id2)
+            , faceName1("")
+            , faceName2("")
+            , radius(r)
+        {
+        }
+
+        svBlendParamRadius(int id1, int id2, std::string name1, std::string name2, double r)
+            : faceID1(id1)
+            , faceID2(id2)
+            , faceName1(name1)
+            , faceName2(name2)
             , radius(r)
         {
         }
@@ -66,6 +79,8 @@ public:
         svBlendParamRadius(const svBlendParamRadius &other)
             : faceID1(other.faceID1)
             , faceID2(other.faceID2)
+            , faceName1(other.faceName1)
+            , faceName2(other.faceName2)
             , radius(other.radius)
         {
         }
@@ -115,6 +130,8 @@ public:
 
     virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) {return NULL;}
 
+    virtual vtkSmartPointer<vtkPolyData> CreateWholeVtkPolyData() {return NULL;}
+
 //    int GetSelectedFaceIndex();
 
     void SelectFaceByIndex(int idx, bool select = true);
@@ -148,7 +165,9 @@ public:
 
     svBlendParamRadius* GetBlendParamRadius(int faceID1, int faceID2);
 
-    void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii);
+    svBlendParamRadius* GetBlendParamRadius(std::string faceName1, std::string faceName2);
+
+    virtual void AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii);
 
     void RemoveFace(int faceID);
     void RemoveFaceFromBlendParamRadii(int faceID);

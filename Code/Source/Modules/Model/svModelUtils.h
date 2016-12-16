@@ -3,10 +3,17 @@
 
 #include <svModelExports.h>
 
+#include "simvascular_options.h"
+
 #include "svContour.h"
 #include "svContourGroup.h"
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
+#include "svModelElementOCCT.h"
+
+#ifdef SV_USE_OPENCASCADE
+   #include "svModelElementOCCT.h"
+#endif
 
 #include <mitkDataStorage.h>
 
@@ -74,6 +81,18 @@ public:
     static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
 
     static double CalculateVpdArea(vtkPolyData* vpd);
+
+#ifdef SV_USE_OPENCASCADE
+
+    static cvOCCTSolidModel* CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps);
+
+    static svModelElementOCCT* CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, double maxDist = 20.0, unsigned int t = 0);
+
+    static svModelElementOCCT* CreateModelElementOCCTByBlend(svModelElementOCCT* meocctsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii);
+
+
+#endif
+
 };
 
 #endif /* SVMODELUTILS_H */

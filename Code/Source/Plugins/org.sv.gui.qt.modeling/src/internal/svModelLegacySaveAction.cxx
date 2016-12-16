@@ -33,11 +33,12 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
     QString fileFilter;
     std::string modelType=model->GetType();
     if(modelType=="PolyData")
-        fileFilter=tr("Model (*.vtp)");
-    else if(modelType=="Parasolid")
-        fileFilter=tr("Model (*.xmt_txt)");
+        fileFilter=tr("VTK PolyData (*.vtp)");
     else if(modelType=="OpenCASCADE")
-        fileFilter=tr("Model (*.occt)");
+//        fileFilter=tr("OpenCASCADE (*.brep); STEP (*.step); STL (*.stl); IGES (*.iges)");
+        fileFilter=tr("OpenCASCADE (*.brep *.step *.stl *.iges)");
+    else if(modelType=="Parasolid")
+        fileFilter=tr("Parasolid (*.xmt_txt)");
 
     try
     {
@@ -72,17 +73,16 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
             if(!fileName.endsWith(".vtp"))
                 fileName=fileName+".vtp";
         }
+        else if(modelType=="OpenCASCADE")
+        {
+            if(!fileName.endsWith(".brep") && !fileName.endsWith(".step") && !fileName.endsWith(".stl") && !fileName.endsWith(".iges"))
+                fileName=fileName+".brep";
+        }
         else if(modelType=="Parasolid")
         {
             if(!fileName.endsWith(".xmt_txt"))
                 fileName=fileName+".xmt_txt";
         }
-        else if(modelType=="OpenCASCADE")
-        {
-            if(!fileName.endsWith(".occt"))
-                fileName=fileName+".occt";
-        }
-
         svModelLegacyIO::WriteFile(selectedNode, fileName);
 
         if(prefs.IsNotNull())
