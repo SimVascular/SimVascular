@@ -26,21 +26,37 @@
 
 include (CMakeParseArguments)
 
+#-----------------------------------------------------------------------------
+# print_vars - This is a simple marco to print out a list of variables
+# with their names and value, used mostly for debugging
+#
+macro(print_vars _VARLIST)
+	foreach(var ${${_VARLIST}})
+		message(STATUS "${var}: ${${var}}")
+	endforeach()
+	message(STATUS "")
+endmacro()
+
+macro(dev_print_vars _VARLIST)
+	foreach(var ${${_VARLIST}})
+		dev_message("${var}: ${${var}}")
+	endforeach()
+	message(STATUS "")
+endmacro()
+
+#-----------------------------------------------------------------------------
+# dev_message - This is macro to print a developer message for a string
+#
 macro(dev_message string)
 	if(SV_DEVELOPER_OUTPUT)
 		message("DEV: ${string}")
 	endif()
 endmacro()
-MACRO(LIST_CONTAINS var value)
-	SET(${var})
-	FOREACH (value2 ${ARGN})
-		IF (${value} STREQUAL ${value2})
-			SET(${var} TRUE)
-		ENDIF (${value} STREQUAL ${value2})
-	ENDFOREACH (value2)
-ENDMACRO(LIST_CONTAINS)
 
-MACRO(glob_dirs _newlist )
+#-----------------------------------------------------------------------------
+# simvascular_glob_dirs - searches a directory for a list of files
+#
+macro(simvascular_glob_dirs _newlist )
 	set(${_newlist})
 	foreach(value ${ARGN})
 		if(IS_DIRECTORY ${value})
@@ -49,7 +65,11 @@ MACRO(glob_dirs _newlist )
 	endforeach()
 endmacro()
 
-MACRO(combine_files output_file)
+#-----------------------------------------------------------------------------
+# simvascular_combine_files - combines contents of a list of files into one
+# file
+#
+macro(simvascular_combine_files output_file)
 	set(ACCUM_SCRIPT_STRING)
 	set(TEMP_SCRIPT)
 	foreach(file ${ARGN})
@@ -128,21 +148,6 @@ macro(simvascular_external _pkg)
 	endif()
 endmacro()
 #-----------------------------------------------------------------------------
-# unset_simvascular_external
-#
-macro(unset_simvascular_external _pkg)
-	string(TOLOWER "${_pkg}" _lower)
-
-	set(options OPTIONAL VERSION_EXACT DOWNLOADABLE SVEXTERN_DEFAULT SVEXTERN_CONFIG)
-	set(oneValueArgs VERSION)
-	set(multiValueArgs PATHS HINTS)
-
-	CMAKE_PARSE_ARGUMENTS("simvascular_external"
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-
-	list(REMOVE_ITEM SV_DEPENDS ${_pkg})
-endmacro()
 
 #-----------------------------------------------------------------------------
 # simvascular_third_party
@@ -154,7 +159,7 @@ macro(simvascular_third_party _pkg)
 	set(options OPTIONAL VERSION_EXACT
 		DOWNLOADABLE SYSTEM_DEFAULT
 		SVEXTERN_CONFIG ADD_INSTALL
-                SOLVER_DEPEND
+    SOLVER_DEPEND
 		)
 	set(oneValueArgs VERSION)
 	set(multiValueArgs PATHS HINTS COMPONENTS)
@@ -182,28 +187,11 @@ macro(simvascular_third_party _pkg)
 		set(${_upper}_LIBRARIES)
 		set(${_upper}_LIBRARY)
 	else()
-                set(${_upper}_LIBRARY_NAME _simvascular_thirdparty_${_lower})
-                add_subdirectory(${${_upper}_SUBDIR}/simvascular_${_lower})
+    set(${_upper}_LIBRARY_NAME _simvascular_thirdparty_${_lower})
+    add_subdirectory(${${_upper}_SUBDIR}/simvascular_${_lower})
 	endif()
 endmacro()
 #-----------------------------------------------------------------------------
-# print_vars - THis is a simple marco to print out a list of variables
-# with their names and value, used mostly for debugging
-#
-macro(print_vars _VARLIST)
-	foreach(var ${${_VARLIST}})
-		message(STATUS "${var}: ${${var}}")
-	endforeach()
-	message(STATUS "")
-endmacro()
-
-macro(dev_print_vars _VARLIST)
-	foreach(var ${${_VARLIST}})
-		dev_message("${var}: ${${var}}")
-	endforeach()
-	message(STATUS "")
-endmacro()
-
 
 #-----------------------------------------------------------------------------
 # listvars2vars - THis is a simple marco to print out a list of variables
@@ -217,18 +205,7 @@ macro(listvars2vals _VARLIST _VALS)
 	set(${_VALS} ${_vals})
 	unset(_vals)
 endmacro()
-
 #-----------------------------------------------------------------------------
-# create_GUID -
-#
-macro(create_GUID GUID)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/temp "")
-	file(TIMESTAMP ${CMAKE_CURRENT_BINARY_DIR}/temp TIME %S%M%H%j%y UTC)
-	file(WRITE ${CMAKE_CURRENT_BINARY_DIR}/temp "${TIME}")
-	file(MD5 ${CMAKE_CURRENT_BINARY_DIR}/temp TIME)
-	string(SUBSTRING ${TIME} 0 6 ${GUID})
-	file(REMOVE ${CMAKE_CURRENT_BINARY_DIR}/temp)
-endmacro()
 
 #-----------------------------------------------------------------------------
 # getListOfVars -
@@ -271,12 +248,14 @@ endfunction()
 #-----------------------------------------------------------------------------
 # check_library_exists_concat -
 #
-MACRO (check_library_exists_concat LIBRARY SYMBOL VARIABLE)
+macro(check_library_exists_concat LIBRARY SYMBOL VARIABLE)
 	check_library_exists ("${LIBRARY};${LINK_LIBS}" ${SYMBOL} "" ${VARIABLE})
-	IF (${VARIABLE})
-		SET (LINK_LIBS ${LINK_LIBS} ${LIBRARY})
-	ENDIF (${VARIABLE})
-ENDMACRO ()
+	if(${VARIABLE})
+		set(LINK_LIBS ${LINK_LIBS} ${LIBRARY})
+	endif(${VARIABLE})
+endmacro()
+#-----------------------------------------------------------------------------
+
 #-----------------------------------------------------------------------------
 # simvascular_add_executable -
 #
@@ -289,30 +268,30 @@ macro(simvascular_add_executable TARGET_NAME)
 	unset(simvascular_add_executable_DEV_SCRIPT_NAME)
 	unset(simvascular_add_executable_NO_SCRIPT)
 
-	CMAKE_PARSE_ARGUMENTS("simvascular_add_executable"
+	cmake_parse_arguments("simvascular_add_executable"
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 
-        set(WINDOWS_ICON_RESOURCE_FILE "")
-        if(WIN32)
-          if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
-            set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
-          endif()
-        endif()
+  set(WINDOWS_ICON_RESOURCE_FILE "")
+  if(WIN32)
+    if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+      set(WINDOWS_ICON_RESOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/icons/${TARGET_NAME}.rc")
+    endif()
+  endif()
 
-        set(_app_compile_flags )
-        if(WIN32)
-          set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
-        endif()
+  set(_app_compile_flags )
+  if(WIN32)
+    set(_app_compile_flags "${_app_compile_flags} -DPOCO_NO_UNWINDOWS -DWIN32_LEAN_AND_MEAN")
+  endif()
 
-        if(WIN32)
-          add_executable(${TARGET_NAME} WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
-        else()
-          add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
-        endif()
+  if(WIN32)
+    add_executable(${TARGET_NAME} WIN32 ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+  else()
+    add_executable(${TARGET_NAME} ${simvascular_add_executable_SRCS} ${WINDOWS_ICON_RESOURCE_FILE})
+  endif()
 
-        set_target_properties(${TARGET_NAME} PROPERTIES
-                      COMPILE_FLAGS "${_app_compile_flags}")
+  set_target_properties(${TARGET_NAME} PROPERTIES
+    COMPILE_FLAGS "${_app_compile_flags}")
 
 	if(simvascular_add_executable_NO_SCRIPT)
 		if(	simvascular_add_executable_DEV_SCRIPT_NAME OR simvascular_add_executable_INSTALL_SCRIPT_NAME )
@@ -320,6 +299,7 @@ macro(simvascular_add_executable TARGET_NAME)
 		endif()
 		set(${TARGET_NAME}_EXECUTABLE_NAME ${TARGET_NAME} CACHE INTERNAL "" FORCE)
 	endif()
+
 	if(NOT simvascular_add_executable_NO_SCRIPT)
 		IF(simvascular_add_executable_DEV_SCRIPT_NAME)
 			set(SV_SCRIPT_TARGETS_WORK ${SV_SCRIPT_TARGETS})
@@ -332,34 +312,32 @@ macro(simvascular_add_executable TARGET_NAME)
 		if(simvascular_add_executable_INSTALL_SCRIPT_NAME)
 			set(${TARGET_NAME}_INSTALL_SCRIPT_NAME ${simvascular_add_executable_INSTALL_SCRIPT_NAME} CACHE INTERNAL "" FORCE)
 		endif()
-
 	endif()
 	# CHANGE FOR EXECUTABLE RENAME REMOVE (re enable if statement)
 	if(simvascular_add_executable_INSTALL_DESTINATION)
-          if(APPLE)
-            set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
-            set(icon_name "icon.icns")
-            set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
-            if(EXISTS "${icon_full_path}")
-              set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
-              #file(COPY ${icon_full_path} DESTINATION "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${TARGET_NAME}.app/Contents/Resources/")
-              install(TARGETS ${TARGET_NAME}
-                      RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
-                      ${_COMPARGS})
-                    #install(FILES ${icon_full_path} DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}/${TARGET_NAME}.app/Contents/Resources/")
-            endif()
-          else()
-            if(simvascular_add_executable_COMPONENT)
-                    set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
-            endif()
-            install(TARGETS ${TARGET_NAME}
-                    RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
-                    ${_COMPARGS})
-          endif()
+    if(APPLE)
+      set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_NAME "${TARGET_NAME}")
+      set(icon_name "icon.icns")
+      set(icon_full_path "${CMAKE_CURRENT_SOURCE_DIR}/icons/${icon_name}")
+      if(EXISTS "${icon_full_path}")
+        set_target_properties(${TARGET_NAME} PROPERTIES MACOSX_BUNDLE_ICON_FILE "${icon_name}")
+        install(TARGETS ${TARGET_NAME}
+          RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+          ${_COMPARGS})
+      endif()
+    else()
+      if(simvascular_add_executable_COMPONENT)
+        set(_COMPARGS "COMPONENT ${simvascular_add_executable_COMPONENT}")
+      endif()
+      install(TARGETS ${TARGET_NAME}
+        RUNTIME DESTINATION ${simvascular_add_executable_INSTALL_DESTINATION}
+        ${_COMPARGS})
+    endif()
 	endif()
-
 endmacro()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 function(sv_list_match resultVar str)
   set(result)
   foreach(ITR ${ARGN})
@@ -370,37 +348,9 @@ function(sv_list_match resultVar str)
   endforeach()
   set(${resultVar} ${result} PARENT_SCOPE)
 endfunction()
+#-----------------------------------------------------------------------------
 
-function(simvascular_dir_switch DIR_ONE DIR_TWO)
-  set(TMP_DIR ${${DIR_ONE}})
-  set(${DIR_ONE} ${${DIR_TWO}} PARENT_SCOPE)
-  set(${DIR_TWO} ${TMP_DIR} PARENT_SCOPE)
-endfunction()
-
-macro(simvascular_find_package pkg)
-  if(${pkg}_CONFIG_DIR)
-    simvascular_dir_switch(${pkg}_DIR ${pkg}_CONFIG_DIR)
-  endif()
-
-  find_package(${pkg} ${ARGN})
-
-  if(${pkg}_CONFIG_DIR)
-    simvascular_dir_switch(${pkg}_DIR ${pkg}_CONFIG_DIR)
-  endif()
-endmacro()
-
-macro(simvascular_find_config_file pkg)
-  if(SV_${pkg}_DIR AND (NOT "${SV_${pkg}_DIR}" STREQUAL ""))
-    file(GLOB_RECURSE ${pkg}_CONFIGS ${${pkg}_DIR} ${${pkg}_DIR}/${pkg}Config.cmake*)
-    if(${pkg}_CONFIGS)
-      list(LENGTH ${pkg}_CONFIGS CONFIG_LIST_LENGTH)
-      math(EXPR LIST_INDEX ${CONFIG_LIST_LENGTH}-1)
-      list(GET ${pkg}_CONFIGS ${LIST_INDEX} ${pkg}_CONFIG_FILE)
-      get_filename_component(${pkg}_DIR ${${pkg}_CONFIG_FILE} DIRECTORY)
-    endif()
-  endif()
-endmacro()
-
+#-----------------------------------------------------------------------------
 macro(simvascular_get_external_path_from_include_dir pkg)
   if(NOT ${pkg}_DIR)
     message(FATAL_ERROR "${pkg}_DIR is not set and must be set if using system")
@@ -421,42 +371,18 @@ macro(simvascular_get_external_path_from_include_dir pkg)
     set(SV_${pkg}_DIR ${TMP_DIR})
   endif()
 endmacro()
+#-----------------------------------------------------------------------------
 
-macro(simvascular_download_and_extract_tar url destination)
-  get_filename_component(tar_file ${url} NAME)
-  set(tar_file "${destination}/${tar_file}")
-  if(NOT EXISTS ${destination})
-    file(MAKE_DIRECTORY ${destination})
-  endif()
-
-  if(NOT EXISTS ${tar_file})
-    file(DOWNLOAD "${url}" "${tar_file}" STATUS status)
-    list(GET status 0 error_code)
-    list(GET status 1 error_msg)
-    if(error_code)
-      message(FATAL_ERROR "error: Failed to download ${url} - ${error_msg}")
-    endif()
-  endif()
-
-  set(check_extract_file "${tar_file}.extracted")
-  if(NOT EXISTS ${check_extract_file})
-    execute_process(COMMAND ${CMAKE_COMMAND} -E tar xzf ${tar_file}
-                    WORKING_DIRECTORY ${destination}
-                    RESULT_VARIABLE result
-                    ERROR_VARIABLE err_msg)
-    if(result)
-      message(FATAL_ERROR "error: Failed to Unpack ${tar_name} - ${err_msg}")
-    endif()
-    file(WRITE ${check_extract_file} "# ${tar_file} extracted")
-  endif()
-endmacro()
-
+#-----------------------------------------------------------------------------
+# Separate string by periods to get portions before and after first period
 macro(simvascular_get_major_minor_version version major_version minor_version)
   string(REPLACE "." ";" version_list ${version})
   list(GET version_list 0 ${major_version})
   list(GET version_list 1 ${minor_version})
 endmacro()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 #!
 #! See http://www.cmake.org/Wiki/CMakeMacroParseArguments
 #!
@@ -491,8 +417,9 @@ macro(simvascular_parse_arguments prefix arg_names option_names)
   endforeach()
   set(${prefix}_${current_arg_name} ${current_arg_list})
 endmacro()
+#-----------------------------------------------------------------------------
 
-
+#-----------------------------------------------------------------------------
 function(simvascular_generate_plugin_manifest QRC_SRCS)
 
   simvascular_parse_arguments(MY
@@ -582,8 +509,8 @@ function(simvascular_generate_plugin_manifest QRC_SRCS)
 </RCC>
 ")
 
-configure_file("${SV_SOURCE_DIR}/CMake/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
-configure_file("${SV_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
+  configure_file("${SV_SOURCE_DIR}/CMake/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
+  configure_file("${SV_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
     QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
@@ -594,27 +521,9 @@ configure_file("${SV_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_
   set(${QRC_SRCS} ${${QRC_SRCS}} ${_qrc_src} PARENT_SCOPE)
 
 endfunction()
+#-----------------------------------------------------------------------------
 
-###########################################################################
-#
-#  Library:   CTK
-#
-#  Copyright (c) Kitware Inc.
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0.txt
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-#
-###########################################################################
-
+#-----------------------------------------------------------------------------
 function(simvascular_get_target_libraries varname)
 
   set(expanded_target_library_list)
@@ -687,7 +596,9 @@ function(simvascular_get_target_libraries varname)
   set(${varname} ${expanded_target_library_list} PARENT_SCOPE)
 
 endfunction()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 #! \ingroup CMakeUtilities
 macro(simvascular_generate_plugin_resource_file QRC_SRCS)
 
@@ -864,7 +775,9 @@ function(simvascular_create_plugin)
   endif()
 
 endfunction()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 #! \ingroup CMakeUtilities
 function(simvascular_extract_option_name_and_value my_opt var_opt_name var_opt_value)
 
@@ -882,7 +795,9 @@ function(simvascular_extract_option_name_and_value my_opt var_opt_name var_opt_v
   set(${var_opt_name} ${opt_name} PARENT_SCOPE)
   set(${var_opt_value} ${opt_value} PARENT_SCOPE)
 endfunction()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 #!
 #!
 #! \brief Create a provisioning file
@@ -1053,7 +968,9 @@ function(simvascular_create_provisioning_file)
   endif()
 
 endfunction()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 macro(simvascular_get_subdirs result curdir)
   file(GLOB children RELATIVE ${curdir} ${curdir}/*)
   set(dirlist "")
@@ -1105,7 +1022,9 @@ function(simvascular_install_external project_name)
   endif()
 
 endfunction()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 # simvascular_add_new_external
 macro(simvascular_add_new_external proj version use shared dirname)
   option(SV_USE_${proj} "Enable ${proj} Plugin" ${use})
@@ -1145,4 +1064,5 @@ macro(simvascular_add_new_external proj version use shared dirname)
     endif()
   endif()
 endmacro()
+#-----------------------------------------------------------------------------
 

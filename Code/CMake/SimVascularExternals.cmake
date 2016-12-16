@@ -88,10 +88,12 @@ set(SV_TCL_DIR ${TCL_DIR})
 
 STRING(REGEX REPLACE
 	"^.*libtcl([0-9]\\.*[0-9]).*$" "\\1" TCL_VERSION "${TCL_LIBRARY}")
+get_filename_component(TCL_LIBRARY_PATH "${TCL_LIBRARY}" PATH)
+link_directories(${TCL_LIBRARY_PATH})
 # TCL has two include directories, the macro only includes one.
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 if(WIN32)
-	GET_FILENAME_COMPONENT(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
+	get_filename_component(TCL_DLL_PATH "${TCL_TCLSH}" PATH)
 endif()
 #-----------------------------------------------------------------------------
 

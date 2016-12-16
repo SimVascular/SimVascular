@@ -263,7 +263,3 @@ mark_as_advanced(
   TCL_LIBRARY
   TK_LIBRARY
   )
-
-# This is actually required for some builds of OpenCASCADE
-message("Note: explicitly adding TCL_LIBRARY_PATH to link path.")
-link_directories(${TCL_LIBRARY_PATH})

@@ -273,12 +273,14 @@ endif()
 # Add GLOBAL_DEFINES to definitions
 dev_message(" Global Flags: ${GLOBAL_DEFINES}")
 add_definitions(${GLOBAL_DEFINES})
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add Local Includes
 set(LOCAL_LIBDIR Lib)
 set(SV_SCRIPT_TARGETS "" CACHE INTERNAL "" FORCE)
 set(INDENTS "")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Include the Core subdirs
@@ -300,6 +302,7 @@ endforeach()
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
 	include_directories("${dir}")
 endforeach()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Add directories
@@ -331,6 +334,7 @@ foreach(dir ${SV_PLUGIN_DIRS})
   include_directories("${dir}")
   add_subdirectory("${dir}")
 endforeach()
+#-----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
 # Setup Plugins for provisioning file, must after add_subdirectory for Modules
