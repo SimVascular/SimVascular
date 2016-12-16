@@ -1091,11 +1091,11 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataN
     for(int i=0;i<numFaces;i++)
     {
         faceIDs.push_back(ids[i]);
-        char *value;
-        char *parent;
+        char *value=NULL;
+        char *parent=NULL;
         unionSolid->GetFaceAttribute("gdscName",ids[i],&value);
-        unionSolid->GetFaceAttribute("parent",ids[i],&parent);
         std::string type(value);
+        unionSolid->GetFaceAttribute("parent",ids[i],&parent);
         std::string groupName(parent);
         faceNames.push_back(type+"_"+groupName);
     }
@@ -1157,32 +1157,6 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataN
     return modelElement;
 }
 
-
-//int svModelUtils::GetFaceIDFromOCCTSolid(cvOCCTSolidModel* occtSolid, std::string faceName)
-//{
-//    int id=-1;
-
-//    if(occtSolid==NULL)
-//        return id;
-
-//    int numFaces;
-//    int *ids;
-//    int status=occtSolid->GetFaceIds( &numFaces, &ids);
-//    if(status!=CV_OK)
-//        return id;
-
-//    for(int i=0;i<numFaces;i++)
-//    {
-//        char *value;
-//        occtSolid->GetFaceAttribute("gdscName",ids[i],&value);
-//        std::string name(value);
-//        if(name==faceName)
-//            return ids[i];
-//    }
-
-//    return id;
-//}
-
 svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOCCT* meocctsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii)
 {
     if(meocctsrc==NULL || meocctsrc->GetOCCTSolid()==NULL)
@@ -1196,17 +1170,15 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOC
     {
         if(blendRadii[i] && blendRadii[i]->radius>0)
         {
-//            int faceID1=GetFaceIDFromOCCTSolid(occtSolid,blendRadii[i]->faceName1);
-//            int faceID2=GetFaceIDFromOCCTSolid(occtSolid,blendRadii[i]->faceName2);
-            int faceID1=meocctdst->GetFaceIDFromOCCTSolid(blendRadii[i]->faceName1);
-            int faceID2=meocctdst->GetFaceIDFromOCCTSolid(blendRadii[i]->faceName2);
+            int faceID1=meocctdst->GetFaceIDFromInnerSolid(blendRadii[i]->faceName1);
+            int faceID2=meocctdst->GetFaceIDFromInnerSolid(blendRadii[i]->faceName2);
             double radius=blendRadii[i]->radius;
 
             if(occtSolid->CreateEdgeBlend(faceID1,faceID2,radius,0)!=CV_OK)
             {
                 delete meocctdst;
                 MITK_ERROR << "OpenCASCADE model blending failed";
-                return NULL;
+//                return NULL;
             }
         }
     }

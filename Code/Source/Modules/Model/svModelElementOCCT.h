@@ -6,6 +6,7 @@
 //#include "simvascular_options.h"
 
 #include "svModelElement.h"
+#include "svModelElementPolyData.h"
 
 //#ifdef SV_USE_OPENCASCADE
 #include "cvOCCTSolidModel.h"
@@ -31,11 +32,13 @@ public:
 
     virtual void SetFaceName(std::string name, int id) override;
 
-    int GetFaceIDFromOCCTSolid(std::string faceName);
+    int GetFaceIDFromInnerSolid(std::string faceName);
 
     double GetMaxDist();
 
     void SetMaxDist(double maxDist);
+
+    svModelElementPolyData* ConverToPolyDataModel();
 
     cvOCCTSolidModel* GetOCCTSolid();
 

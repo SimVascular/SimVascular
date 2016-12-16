@@ -39,6 +39,32 @@ public:
             color[2]=1.0f;
         }
 
+        svFace(const svFace &other, bool copyData = true)
+            : id(other.id)
+            , name(other.name)
+            , type(other.type)
+            , selected(other.selected)
+            , visible(other.visible)
+            , opacity(other.opacity)
+        {
+            color[0]=other.color[0];
+            color[1]=other.color[1];
+            color[2]=other.color[2];
+
+            if(copyData)
+            {
+                vtkSmartPointer<vtkPolyData> othervpd=NULL;
+                if(other.vpd)
+                {
+                    othervpd=vtkSmartPointer<vtkPolyData>::New();
+                    othervpd->DeepCopy(other.vpd);
+                }
+                vpd=othervpd;
+            }
+            else
+                vpd=NULL;
+        }
+
     };
 
     struct svBlendParamRadius

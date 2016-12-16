@@ -80,7 +80,7 @@ void svModelElementOCCT::SetOCCTSolid(cvOCCTSolidModel* occtSolid)
     m_OCCTSolid=occtSolid;
 }
 
-int svModelElementOCCT::GetFaceIDFromOCCTSolid(std::string faceName)
+int svModelElementOCCT::GetFaceIDFromInnerSolid(std::string faceName)
 {
     int id=-1;
 
@@ -127,8 +127,8 @@ void svModelElementOCCT::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlen
     {
         if(m_BlendRadii[i])
         {
-            int faceID1=GetFaceIDFromOCCTSolid(m_BlendRadii[i]->faceName1);
-            int faceID2=GetFaceIDFromOCCTSolid(m_BlendRadii[i]->faceName2);
+            int faceID1=GetFaceIDFromInnerSolid(m_BlendRadii[i]->faceName1);
+            int faceID2=GetFaceIDFromInnerSolid(m_BlendRadii[i]->faceName2);
             m_BlendRadii[i]->faceID1=faceID1;
             m_BlendRadii[i]->faceID2=faceID2;
         }
@@ -146,4 +146,12 @@ void svModelElementOCCT::SetFaceName(std::string name, int id)
             m_OCCTSolid->SetFaceAttribute("gdscName",id,name.c_str());
 
     }
+}
+
+svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
+{
+    svModelElementPolyData* mepd=new svModelElementPolyData();
+    mepd->SetSegNames(GetSegNames());
+    mepd->SetWholeVtkPolyData(CreateWholeVtkPolyData());
+
 }

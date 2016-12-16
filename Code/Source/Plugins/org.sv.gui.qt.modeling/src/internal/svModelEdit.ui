@@ -160,14 +160,42 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QPushButton" name="btnConvert">
-           <property name="text">
-            <string>Convert to PolyData...</string>
-           </property>
-          </widget>
-         </item>
         </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widgetAnalytic" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>5</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="btnChangeFacet">
+        <property name="text">
+         <string>Change Facet Size...</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnConvert">
+        <property name="text">
+         <string>Convert to PolyData...</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -347,8 +375,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>126</width>
-                           <height>234</height>
+                           <width>140</width>
+                           <height>356</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -416,8 +444,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
-                               <height>94</height>
+                               <width>138</width>
+                               <height>195</height>
                               </rect>
                              </property>
                              <property name="sizePolicy">
@@ -581,8 +609,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>138</width>
-                           <height>294</height>
+                           <width>140</width>
+                           <height>356</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -628,7 +656,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
+                               <width>90</width>
                                <height>94</height>
                               </rect>
                              </property>
@@ -704,7 +732,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
+                               <width>93</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -885,7 +913,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
+                               <width>90</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -981,8 +1009,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>105</width>
-                               <height>94</height>
+                               <width>138</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1058,8 +1086,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>121</width>
-                           <height>224</height>
+                           <width>140</width>
+                           <height>356</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1101,8 +1129,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
-                               <height>94</height>
+                               <width>138</width>
+                               <height>205</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1441,7 +1469,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>356</height>
+                           <height>398</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1480,7 +1508,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>114</width>
-                               <height>160</height>
+                               <height>189</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1523,11 +1551,11 @@
                                <widget class="QComboBox" name="comboBoxPathPlane"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathPlane" native="true">
-                                <property name="decimals" stdset="0">
+                               <widget class="ctkSliderWidget" name="sliderPathPlane">
+                                <property name="decimals">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum" stdset="0">
+                                <property name="maximum">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
@@ -1567,7 +1595,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>294</height>
+                               <height>336</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1610,11 +1638,11 @@
                                <widget class="QComboBox" name="comboBoxPathBox"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathBox" native="true">
-                                <property name="decimals" stdset="0">
+                               <widget class="ctkSliderWidget" name="sliderPathBox">
+                                <property name="decimals">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum" stdset="0">
+                                <property name="maximum">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
@@ -1665,28 +1693,8 @@
                          <property name="bottomMargin">
                           <number>0</number>
                          </property>
-                         <item>
-                          <widget class="QPushButton" name="btnExtractOCC">
-                           <property name="text">
-                            <string>Extract Faces</string>
-                           </property>
-                          </widget>
-                         </item>
                         </layout>
                        </widget>
-                      </item>
-                      <item>
-                       <spacer name="verticalSpacer_4">
-                        <property name="orientation">
-                         <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeHint" stdset="0">
-                         <size>
-                          <width>20</width>
-                          <height>40</height>
-                         </size>
-                        </property>
-                       </spacer>
                       </item>
                      </layout>
                     </widget>
