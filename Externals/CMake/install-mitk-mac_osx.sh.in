@@ -31,25 +31,25 @@ $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CMakeExternals/Install/lib $MITK_BINDIR
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*@CMAKE_SHARED_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.h $MITK_BINDIR/include
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/* $MITK_BINDIR/bin
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*CTK*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/liborg*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*CTK*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/liborg*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins
 
 # copy qRestAPI from CTK-build
 
 $GMKDIR -p $MITK_BINDIR/include/qRestAPI
 $GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI/*.h $MITK_BINDIR/include/qRestAPI
-$GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/$MITK_BLDTYPE/libqRestAPI.lib $MITK_BINDIR/lib
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/$MITK_BLDTYPE/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/$MITK_BLDTYPE/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI.lib $MITK_BINDIR/lib
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/libqRestAPI@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # copy PythonQt from CTK-build
 
 $GMKDIR -p $MITK_BINDIR/include/PythonQt
 $GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/PythonQt/src/*.h $MITK_BINDIR/include/PythonQt
 $GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/PythonQt/src/gui/*.h $MITK_BINDIR/include/PythonQt
-$GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt.lib $MITK_BINDIR/lib
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/$MITK_BLDTYPE/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt.lib $MITK_BINDIR/lib
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/PythonQt-build/libPythonQt@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 
 # Poco
 
@@ -66,9 +66,9 @@ $GCP -rfl $MITK_BLDDIR/ep/src/CTK/Libs/Scripting/Python/Widgets/*.h $MITK_BINDIR
 $GCP -rfl $MITK_BLDDIR/ep/src/CTK/Libs/Visualization/VTK/Core/*.h $MITK_BINDIR/include/ctk
 $GCP -rfl $MITK_BLDDIR/ep/src/CTK/Libs/Widgets/*.h $MITK_BINDIR/include/ctk
 
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-$GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/$MITK_BLDTYPE/*.lib $MITK_BINDIR/lib
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*.lib $MITK_BINDIR/lib
 
 # copying more than needed here, but not sure how many of the subdirectories are required.
 $GCP -Rf  $MITK_BLDDIR/ep/src/CTK/Libs/PluginFramework $MITK_BINDIR/include/ctk
@@ -78,13 +78,13 @@ for i in $(find $MITK_BLDDIR/ep/src/CTK-build -name "*Export.h"); do
     $GCP -rfl $i $MITK_BINDIR/include/ctk
 done
 
-$GCP -rfl $MITK_BLDDIR/MITK-build/lib/plugins/$MITK_BLDTYPE/* $MITK_BINDIR/lib
+$GCP -rfl $MITK_BLDDIR/MITK-build/lib/plugins/* $MITK_BINDIR/lib
 
 # mitk files
 
-$GCP -rfl -d $MITK_BLDDIR/MITK-build/bin/$MITK_BLDTYPE/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
-$GCP -rfl -d $MITK_BLDDIR/MITK-build/lib/$MITK_BLDTYPE/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
-$GCP -rfl $MITK_BLDDIR/MITK-build/lib/$MITK_BLDTYPE/*.lib $MITK_BINDIR/lib
+$GCP -rfl -d $MITK_BLDDIR/MITK-build/bin/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/bin
+$GCP -rfl -d $MITK_BLDDIR/MITK-build/lib/*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
+$GCP -rfl $MITK_BLDDIR/MITK-build/lib/*.lib $MITK_BINDIR/lib
 
 $GMKDIR -p $MITK_BINDIR/include/mitk
 $GMKDIR -p $MITK_BINDIR/include/mitk/configs
@@ -102,7 +102,7 @@ $GCP $MITK_BLDDIR/MITK-build/*.h $MITK_BINDIR/include/mitk
 #
 # org.blueberry.core.runtime  (nested)
 # org.blueberry.ui.qt (nested)
-# org.mitk.core.services 
+# org.mitk.core.services
 # org.mitk.gui.common
 # org.mitk.gui.qt.common
 # org.mitk.gui.qt.common.legacy
@@ -189,7 +189,7 @@ done
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/Segmentation/Interactions
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
-	   
+
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/ContourModel
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/ImageDenoising
            $GMKDIR -p $MITK_BINDIR/include/mitk/Modules/LegacyGL
@@ -220,7 +220,7 @@ done
            $GCP -rfl $MITK_SRCDIR/Modules/SegmentationUI/Qmitk/*.h $MITK_BINDIR/include/mitk/Modules/SegmentationUI/Qmitk
            $GCP -rfl $MITK_SRCDIR/Modules/SurfaceInterpolation/*.h $MITK_BINDIR/include/mitk/Modules/SurfaceInterpolation
            $GCP -rfl $MITK_SRCDIR/Utilities/mbilog/*.h $MITK_BINDIR/include/mitk/Utilities/mbilog
-	   
+
            $GCP -rfl $MITK_BLDDIR/MITK-build/Modules/ContourModel/*.h $MITK_BINDIR/include/mitk/Modules/ContourModel
            $GCP -rfl $MITK_BLDDIR/MITK-build/Modules/ImageDenoising/*.h $MITK_BINDIR/include/mitk/Modules/ImageDenoising
            $GCP -rfl $MITK_BLDDIR/MITK-build/Modules/LegacyGL/*.h $MITK_BINDIR/include/mitk/Modules/LegacyGL
