@@ -19,7 +19,6 @@ set(H_FILES
 )
 endif()
 
-
 set(CPP_FILES
     svModelUtils.cxx
     svModelElement.cxx

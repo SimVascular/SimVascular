@@ -97,7 +97,8 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         else if(suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges")
         {
             cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
-            occtSolid->ReadNative(filePath.toStdString().c_str());
+            char* fpath=const_cast<char*>(filePath.toStdString().c_str());
+            occtSolid->ReadNative(fpath);
             if(occtSolid)
             {
                 svModelElementOCCT* meocct=new svModelElementOCCT();
@@ -227,7 +228,8 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
 
         if(meocct->GetOCCTSolid())
         {
-            if (meocct->GetOCCTSolid()->WriteNative(0,filePath.toStdString().c_str()) != CV_OK )
+            char* fpath=const_cast<char*>(filePath.toStdString().c_str());
+            if (meocct->GetOCCTSolid()->WriteNative(0,fpath) != CV_OK )
              {
                  mitkThrow() << "OpenCASCADE model writing error: ";
              }

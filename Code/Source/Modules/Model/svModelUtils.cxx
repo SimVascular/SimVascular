@@ -978,7 +978,8 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
         sampledContours[i]=cvpd4;
     }
 
-    cvOCCTSolidModel **curveList=new cvOCCTSolidModel*[contourNumber];
+//    cvOCCTSolidModel **curveList=new cvOCCTSolidModel*[contourNumber];
+    cvSolidModel **curveList=new cvSolidModel*[contourNumber];
     int closed=1;
     for(int i=0;i<contourNumber;i++)
     {
@@ -1035,7 +1036,9 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
 
     for(int i=0;i<numFaces;i++)
     {
-        surfFinal->SetFaceAttribute("parent",faces[i],groupName.c_str());
+        char* gn=const_cast<char*>(groupName.c_str());
+
+        surfFinal->SetFaceAttribute("parent",faces[i],gn);
     }
 
     return surfFinal;
@@ -1118,7 +1121,9 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataN
 
     for(int i=0;i<numFaces;i++)
     {
-        unionSolid->SetFaceAttribute("gdscName",ids[i],faceNames[i].c_str());
+        char* fn=const_cast<char*>(faceNames[i].c_str());
+
+        unionSolid->SetFaceAttribute("gdscName",ids[i],fn);
     }
 
     cvPolyData* cvwholevpd=unionSolid->GetPolyData(1,maxDist);

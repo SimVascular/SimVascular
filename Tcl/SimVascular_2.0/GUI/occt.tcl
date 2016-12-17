@@ -129,10 +129,6 @@ proc guiSV_model_create_model_opencascade {} {
       $modelname SetFaceAttr -attr gdscName -faceId $i -value $facename
       lappend all_ids $i
     }
-
-    puts $all_ids
-    puts $pretty_names
-
     set isdups 0
     if {[llength [lsort -unique $pretty_names]] != [llength $pretty_names]} {
      set isdups 1

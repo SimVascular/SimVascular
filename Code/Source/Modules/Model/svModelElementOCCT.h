@@ -3,14 +3,10 @@
 
 #include <svModelExports.h>
 
-//#include "simvascular_options.h"
-
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
 
-//#ifdef SV_USE_OPENCASCADE
 #include "cvOCCTSolidModel.h"
-//#endif
 
 class SVMODEL_EXPORT svModelElementOCCT : public svModelElement
 {

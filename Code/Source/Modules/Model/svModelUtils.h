@@ -9,8 +9,6 @@
 #include "svContourGroup.h"
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
-#include "svModelElementOCCT.h"
-
 #ifdef SV_USE_OPENCASCADE
    #include "svModelElementOCCT.h"
 #endif

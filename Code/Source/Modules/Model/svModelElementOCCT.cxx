@@ -143,7 +143,10 @@ void svModelElementOCCT::SetFaceName(std::string name, int id)
     {
         m_Faces[index]->name=name;
         if(m_OCCTSolid)
-            m_OCCTSolid->SetFaceAttribute("gdscName",id,name.c_str());
+        {
+            char* nc=const_cast<char*>(name.c_str());
+            m_OCCTSolid->SetFaceAttribute("gdscName",id,nc);
+        }
 
     }
 }
