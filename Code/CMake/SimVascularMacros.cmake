@@ -778,6 +778,23 @@ endfunction()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+function(simvascular_create_module)
+
+  set(arg_single
+    MODULE_NAME # (required) TODO: could be generated via CMake as it is done for MITK modules already
+  )
+
+  # multiple value arguments
+  set(arg_multiple
+    LIBRARY_DEPENDS            # (optional)
+    PACKAGE_DEPENDS
+  )
+
+cmake_parse_arguments(_MODULE "${arg_options}" "${arg_single}" "${arg_multiple}" ${ARGN})
+
+endfunction()
+#-----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
 #! \ingroup CMakeUtilities
 function(simvascular_extract_option_name_and_value my_opt var_opt_name var_opt_value)
 
