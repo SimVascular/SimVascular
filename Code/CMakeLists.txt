@@ -67,11 +67,6 @@ include(SimVascularInternals)
 #-----------------------------------------------------------------------------
 # Include SimVascular Externals
 include(SimVascularExternals)
-foreach(proj ${SV_EXTERNALS_LIST})
-  if(SV_USE_${proj}_SHARED AND SV_USE_EXTERNALS_TOPLEVEL_DIR)
-    simvascular_install_external(${proj})
-  endif()
-endforeach()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------

@@ -81,7 +81,7 @@ endif()
 #-----------------------------------------------------------------------------
 # TCL
 if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-  set(TCL_DIR ${SV_TCL_DIR})
+  set(TCL_DIR ${SV_TCL_DIR} CACHE PATH "Force TCL dir to externals" FORCE)
 endif()
 simvascular_external(TCL)
 set(SV_TCL_DIR ${TCL_DIR})
@@ -117,25 +117,26 @@ endif()
 # PYTHON
 if(SV_USE_PYTHON)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(PYTHON_DIR ${SV_PYTHON_DIR})
+    set(PYTHON_DIR ${SV_PYTHON_DIR} CACHE PATH "Force PYTHON dir to externals" FORCE)
   endif()
   simvascular_external(PYTHON SHARED_LIB)
   set(SV_PYTHON_DIR ${PYTHON_DIR})
 
-	if(PYTHONLIBS_FOUND)
-		if(NOT WIN32)
-		  string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
-		  list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
-		  list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
-	        else()
-		  set (PYTHONLIBS_MAJOR_VERSION 2)
-		  set (PYTHONLIBS_MINOR_VERSION 7)
-		endif()
-	else()
-		message(STATUS "")
-		message(STATUS "Python Libs NOT FOUND")
-		message(STATUS "Make sure you have python installed on your system.")
-	endif()
+  if(PYTHONLIBS_FOUND)
+    if(NOT WIN32)
+      string(REPLACE "." ";" PYTHONLIBS_VERSION_LIST "${PYTHONLIBS_VERSION_STRING}")
+      list(GET PYTHONLIBS_VERSION_LIST 0 PYTHONLIBS_MAJOR_VERSION)
+      list(GET PYTHONLIBS_VERSION_LIST 1 PYTHONLIBS_MINOR_VERSION)
+    else()
+      set (PYTHONLIBS_MAJOR_VERSION 2)
+      set (PYTHONLIBS_MINOR_VERSION 7)
+    endif()
+    include_directories(${PYTHON_INCLUDE_DIR})
+  else()
+    message(STATUS "")
+    message(STATUS "Python Libs NOT FOUND")
+    message(STATUS "Make sure you have python installed on your system.")
+  endif()
   set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_PYTHON")
   set(VTK_PYTHON_MODULES vtkWrappingPythonCore)
 endif()
@@ -145,15 +146,15 @@ endif()
 # FREETYPE
 if(SV_USE_FREETYPE)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(FREETYPE_DIR ${SV_FREETYPE_DIR})
+    set(FREETYPE_DIR ${SV_FREETYPE_DIR} CACHE PATH "Force FREETYPE dir to externals" FORCE)
   endif()
-	simvascular_external(FREETYPE)
-	set(USE_FREETYPE ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
-	if(SV_USE_FREETYPE_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
+  simvascular_external(FREETYPE)
+  set(USE_FREETYPE ON)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_FREETYPE")
+  if(SV_USE_FREETYPE_SHARED)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} FREETYPE)
+    set(SV_INSTALL_EXTERNALS ON)
+  endif()
   set(SV_FREETYPE_DIR ${FREETYPE_DIR})
   link_directories(${FREETYPE_DIR}/lib)
 endif()
@@ -163,36 +164,16 @@ endif()
 # GDCM
 if(SV_USE_GDCM)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(GDCM_DIR ${SV_GDCM_DIR}/lib/gdcm-${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION})
+    set(GDCM_DIR ${SV_GDCM_DIR}/lib/gdcm-${GDCM_MAJOR_VERSION}.${GDCM_MINOR_VERSION} CACHE PATH "Force GDCM dir to externals" FORCE)
   endif()
-	simvascular_external(GDCM)
-	set(USE_GDCM ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
-	if(SV_USE_GDCM_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
+  simvascular_external(GDCM)
+  set(USE_GDCM ON)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_GDCM")
+  if(SV_USE_GDCM_SHARED)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} GDCM)
+    set(SV_INSTALL_EXTERNALS ON)
+  endif()
   simvascular_get_external_path_from_include_dir(GDCM)
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# ITK
-if(SV_USE_ITK)
-  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-${ITK_MAJOR_VERSION}.${ITK_MINOR_VERSION})
-  endif()
-	if(SV_USE_ITK_SHARED)
-		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
-		set(SV_INSTALL_EXTERNALS ON)
-	endif()
-	simvascular_external(ITK)
-  include(${ITK_USE_FILE})
-
-	set(USE_ITK ON)
-    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
-    include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
-  simvascular_get_external_path_from_include_dir(ITK)
 endif()
 #-----------------------------------------------------------------------------
 
@@ -204,48 +185,87 @@ if(NOT SV_INSTALL_VTK_TCL_DIR)
   set(SV_INSTALL_VTK_TCL_DIR ${SV_EXT_VTK_BIN_DIR}/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION})
 endif()
 if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-  set(VTK_DIR ${SV_VTK_DIR}/lib/cmake/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION})
+  set(VTK_DIR ${SV_VTK_DIR}/lib/cmake/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION} CACHE PATH "Force VTK dir to externals" FORCE)
 endif()
 if(SV_USE_VTK_SHARED)
-	set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
-  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED")
-	set(SV_INSTALL_EXTERNALS ON)
+  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} VTK)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_VTK_SHARED -DVTK_BUILD_SHARED_LIBS")
+  set(SV_INSTALL_EXTERNALS ON)
 endif()
 simvascular_external(VTK
-	COMPONENTS
-    vtkFiltersFlowPaths
-    vtkWrappingTcl
-	  vtkRenderingTk
-    vtkCommonDataModel
-    vtkCommonCore
-    vtkChartsCore
-    vtkCommonExecutionModel
-	  vtkFiltersCore
-	  vtkFiltersVerdict
-    vtkIOLegacy
-    vtkIOPLY
-    vtkIOXML
-    vtkImagingStencil
-    ${VTK_PYTHON_MODULES})
+  COMPONENTS
+  vtkFiltersFlowPaths
+  vtkWrappingTcl
+  vtkRenderingTk
+  vtkCommonDataModel
+  vtkCommonCore
+  vtkChartsCore
+  vtkCommonExecutionModel
+  vtkFiltersCore
+  vtkFiltersVerdict
+  vtkIOLegacy
+  vtkIOPLY
+  vtkIOXML
+  vtkImagingStencil
+  vtktiff
+  ${VTK_PYTHON_MODULES}
+  NO_DEFAULT_PATH)
 include(${VTK_USE_FILE})
+if(SV_USE_PYTHON)
+  list(REMOVE_AT VTK_LIBRARIES -1)
+  get_target_property(VTK_PYTHON_INTERFACE vtkWrappingPythonCore INTERFACE_LINK_LIBRARIES)
+  simvascular_list_replace(VTK_PYTHON_INTERFACE 1 ${PYTHON_LIBRARY})
+  set_target_properties(vtkWrappingPythonCore PROPERTIES INTERFACE_LINK_LIBRARIES "${VTK_PYTHON_INTERFACE}")
+endif()                             
+get_target_property(VTK_TCL_INTERFACE vtkCommonCoreTCL INTERFACE_LINK_LIBRARIES)
+simvascular_list_replace(VTK_TCL_INTERFACE 2 ${TCL_LIBRARY})
+set_target_properties(vtkCommonCoreTCL PROPERTIES INTERFACE_LINK_LIBRARIES "${VTK_TCL_INTERFACE}")
 set(VTK_LIBRARIES ${VTK_LIBRARIES} vtkCommonCoreTCL)
 simvascular_get_external_path_from_include_dir(VTK)
+set(CMAKE_PREFIX_PATH "${VTK_DIR}" "${CMAKE_PREFIX_PATH}")
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# ITK
+# ITK resets the vtk dir and variables (very annoying), must set a temp
+# vtk dir to reset at the end
+if(SV_USE_ITK)
+  set(TEMP_VTK_DIR ${VTK_DIR})
+  set(TEMP_VTK_LIBRARIES ${VTK_LIBRARIES})
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(ITK_DIR ${SV_ITK_DIR}/lib/cmake/ITK-${ITK_MAJOR_VERSION}.${ITK_MINOR_VERSION} CACHE PATH "Force ITK dir to externals" FORCE)
+  endif()
+  if(SV_USE_ITK_SHARED)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ITK)
+    set(SV_INSTALL_EXTERNALS ON)
+  endif()
+  simvascular_external(ITK)
+  include(${ITK_USE_FILE})
+
+  set(USE_ITK ON)
+  include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/Include")
+  include_directories("${SV_SOURCE_DIR}/Source/Segmentation/ITK/ITKCode")
+  simvascular_get_external_path_from_include_dir(ITK)
+  set(VTK_DIR ${TEMP_VTK_DIR} CACHE PATH "Must reset VTK dir after processing ITK" FORCE)
+  set(VTK_LIBRARIES ${TEMP_VTK_LIBRARIES})
+endif()
+#-----------------------------------------------------------------------------
+
 
 #-----------------------------------------------------------------------------
 # OpenCASCADE
 # If using extern directory, set dir with Config file!
 if(SV_USE_OpenCASCADE)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(OpenCASCADE_DIR ${SV_OpenCASCADE_DIR}/lib/cmake/opencascade)
+    set(OpenCASCADE_DIR ${SV_OpenCASCADE_DIR}/lib/cmake/opencascade CACHE PATH "Force OpenCASCADE dir to externals" FORCE)
   endif()
-	simvascular_external(OpenCASCADE)
-	set(USE_OpenCASCADE ON)
-	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
-	if(SV_USE_OpenCASCADE_SHARED)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
-	  set(SV_INSTALL_EXTERNALS ON)
-	endif()
+  simvascular_external(OpenCASCADE)
+  set(USE_OpenCASCADE ON)
+  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_OPENCASCADE")
+  if(SV_USE_OpenCASCADE_SHARED)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} OpenCASCADE)
+    set(SV_INSTALL_EXTERNALS ON)
+  endif()
   simvascular_get_external_path_from_include_dir(OpenCASCADE)
 endif()
 
@@ -253,14 +273,14 @@ endif()
 # MMG
 if(SV_USE_MMG)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(MMG_DIR ${SV_MMG_DIR})
+    set(MMG_DIR ${SV_MMG_DIR} CACHE PATH "Force MMG dir to externals" FORCE)
   endif()
-	simvascular_external(MMG)
-	set(USE_MMG ON)
-	if(SV_USE_MMG_SHARED)
-	  set(SV_INSTALL_EXTERNALS ON)
-	  set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
-	  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
+  simvascular_external(MMG)
+  set(USE_MMG ON)
+  if(SV_USE_MMG_SHARED)
+    set(SV_INSTALL_EXTERNALS ON)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "MMG")
+    set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_USE_MMG_SHARED")
   endif()
   simvascular_get_external_path_from_include_dir(MMG)
 endif()
@@ -270,7 +290,7 @@ endif()
 # MITK
 if(SV_USE_MITK)
   if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
-    set(MITK_DIR ${SV_MITK_DIR})
+    set(MITK_DIR ${SV_MITK_DIR} CACHE PATH "Force MITK dir to externals" FORCE)
   endif()
   if(SV_USE_MITK_CONFIG)
     find_package(MITK NO_MODULE)
@@ -293,4 +313,13 @@ if(SV_USE_MITK)
   include_directories(${MITK_INCLUDE_DIRS})
   include_directories(${CTK_INCLUDE_DIRS})
 endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Install
+foreach(proj ${SV_EXTERNALS_LIST})
+  if(SV_USE_${proj}_SHARED AND SV_USE_EXTERNALS_TOPLEVEL_DIR)
+    simvascular_install_external(${proj})
+  endif()
+endforeach()
 #-----------------------------------------------------------------------------

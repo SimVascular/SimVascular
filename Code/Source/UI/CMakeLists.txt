@@ -189,6 +189,7 @@ target_link_libraries(${SV_EXE} PRIVATE ${OPTLIBS}
                       ${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
                       ${OpenCASCADE_LIBRARIES}
                       ${ZLIB_LIBRARY} ${ITK_LIBRARIES}
+		      ${GDCM_LIBRARIES}
                       ${INTELRUNTIME_LIBRARIES}
                       ${GLOBAL_LIBRARIES}
                       ${MMG_LIBRARY}

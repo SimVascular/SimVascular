@@ -90,62 +90,73 @@ macro(simvascular_external _pkg)
 	dev_message("Configuring ${_pkg}")
 
   # Function options
-  set(options OPTIONAL
-    SHARED_LIB NO_MODULE REQUIRED
-		)
+  set(arg_options SHARED_LIB NO_MODULE REQUIRED NO_DEFAULT_PATH)
   # Multiple value args
-	set(multiValueArgs PATHS HINTS COMPONENTS)
+  set(arg_single VERSION)
+  # Multiple value args
+  set(arg_multiple PATHS HINTS COMPONENTS)
 
-	cmake_parse_arguments("simvascular_external"
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
+  cmake_parse_arguments("simvascular_external"
+   "${arg_options}"
+   "${arg_single}" "${arg_multiple}" ${ARGN} )
 
   # Components
-	set(EXTRA_ARGS)
-	if(simvascular_external_COMPONENTS)
-		set(EXTRA_ARGS COMPONENTS ${simvascular_external_COMPONENTS})
-	endif()
+  set(EXTRA_ARGS)
+  if(simvascular_external_COMPONENTS)
+    set(EXTRA_ARGS COMPONENTS ${simvascular_external_COMPONENTS})
+  endif()
 
   # No modules
-	if(simvascular_external_NO_MODULE)
-		set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
-	endif()
+  if(simvascular_external_NO_MODULE)
+  	set(EXTRA_ARGS ${EXTRA_ARGS} NO_MODULE)
+  endif()
 
   # Required
   if(simvascular_external_REQUIRED)
     set(EXTRA_ARGS ${EXTRA_ARGS} REQUIRED)
-	endif()
+  endif()
+
+  # No default path
+  if(simvascular_external_NO_DEFAULT_PATH)
+    set(EXTRA_ARGS ${EXTRA_ARGS} NO_DEFAULT_PATH)
+  endif()
+
+  if(simvascular_external_VERSION)
+    set(EXTRA_ARGS ${simvascular_external_VERSION} EXACT ${EXTRA_ARGS})
+  endif()
 
   # Default PATHS
-	unset(ARG_STRING)
-	set(_paths "${simvascular_external_PATHS}")
-	if(NOT simvascular_external_PATHS)
-		set(_paths "${CMAKE_MODULE_PATH}")
-	endif()
+  unset(ARG_STRING)
+  set(_paths "${simvascular_external_PATHS}")
+  if(NOT simvascular_external_PATHS)
+    set(_paths "${CMAKE_MODULE_PATH}")
+  endif()
+
+  #message(STATUS "Search paths for ${_pkg}Config.cmake: ${_paths}")
 
   # Find Package
   find_package(${_pkg} ${EXTRA_ARGS})
 
   # Add to shared libs
-	if(simvascular_external_SHARED_LIB)
-		set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
-	endif()
+  if(simvascular_external_SHARED_LIB)
+    set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
+  endif()
 
   # Include include directories
-	if(${_pkg}_FOUND)
-	  message(STATUS "PKG ${_pkg} found!")
-		if( ${_pkg}_INCLUDE_DIR )
-			dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
-			# This get many of them
-			include_directories(${${_pkg}_INCLUDE_DIR})
-		endif()
-	endif()
+  if(${_pkg}_FOUND)
+    message(STATUS "PKG ${_pkg} found!")
+    if( ${_pkg}_INCLUDE_DIR )
+    	dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
+    	# This get many of them
+    	include_directories(${${_pkg}_INCLUDE_DIR})
+    endif()
+  endif()
 
   # Developer help
-	if(SV_DEVELOPER_OUTPUT)
-		message(STATUS "Finished Configuring ${_pkg}")
-		message(STATUS "")
-	endif()
+  if(SV_DEVELOPER_OUTPUT)
+    message(STATUS "Finished Configuring ${_pkg}")
+    message(STATUS "")
+  endif()
 endmacro()
 #-----------------------------------------------------------------------------
 
@@ -1074,6 +1085,11 @@ macro(simvascular_add_new_external proj version use shared dirname)
     list(APPEND SV_EXTERNALS_LIST ${proj})
     list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
     set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
+    if(NOT ${proj}_DIR)
+      set(${proj}_DIR "" CACHE PATH "For external projects with a Config.cmake file, path to that file; for externals without a Config.cmake, the path to the toplevel bin directory")
+    else()
+      set(${proj}_DIR "${${proj}_DIR}" CACHE PATH "For external projects with a Config.cmake file, path to that file; for externals without a Config.cmake, the path to the toplevel bin directory")
+    endif()
     if("${proj}" STREQUAL "MITK")
       if(SV_USE_MITK_CONFIG)
         set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}/MITK-build)
@@ -1121,3 +1137,32 @@ macro(append_env_string_concat evn_var value output_variable)
 	set(${output_variable} "${${output_variable}}${_tmp}\n")
 endmacro()
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+macro(simvascular_list_replace LIST INDEX NEWVALUE)
+  list(INSERT ${LIST} ${INDEX} ${NEWVALUE})
+  math(EXPR __INDEX "${INDEX} + 1")
+  list (REMOVE_AT ${LIST} ${__INDEX})
+endmacro()
+
+function(print_target_properties tgt)
+  if(NOT TARGET ${tgt})
+    message("There is no target named '${tgt}'")
+      return()
+    endif()
+
+    execute_process(COMMAND cmake --help-property-list OUTPUT_VARIABLE CMAKE_PROPERTY_LIST)
+    # Convert command output into a CMake list
+    STRING(REGEX REPLACE ";" "\\\\;" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+    STRING(REGEX REPLACE "\n" ";" CMAKE_PROPERTY_LIST "${CMAKE_PROPERTY_LIST}")
+
+    foreach (prop ${CMAKE_PROPERTY_LIST})
+      string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" prop ${prop})
+      # message ("Checking ${prop}")
+      get_property(propval TARGET ${tgt} PROPERTY ${prop} SET)
+      if (propval)
+        get_target_property(propval ${tgt} ${prop})
+        message ("${tgt} ${prop} = ${propval}")
+      endif()
+   endforeach(prop)
+endfunction(print_target_properties)
