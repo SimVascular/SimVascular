@@ -3,27 +3,22 @@
 #-----------------------------------------------------------------------------
 
 set(lib ${SV_LIB_POST_NAME})
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 
-SET(CXXSRCS cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx
-  cvCalculateTKE.cxx
-            )
-SET(HDRS    cvConvertVisFiles.h cvCalculateWallShearStress.h
-  cvCalculateTKE.h
-            )
+set(CXXSRCS cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx cvCalculateTKE.cxx)
+set(HDRS cvConvertVisFiles.h cvCalculateWallShearStress.h cvCalculateTKE.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_post_init.cxx)
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY}
-			${TK_LIBRARY}
-			${GLOBAL_LIBRARIES}
-			${ZLIB_LIBRARY}
-			${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME})
+	${VTK_LIBRARIES} ${TCL_LIBRARY}
+	${TK_LIBRARY}
+	${ZLIB_LIBRARY}
+	${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)

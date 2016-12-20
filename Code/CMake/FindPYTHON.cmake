@@ -10,12 +10,12 @@
 #
 # ::
 #
-#   PYTHONLIBS_FOUND           - have the Python libs been found
+#   PYTHON_FOUND           - have the Python libs been found
 #   PYTHON_LIBRARIES           - path to the python library
 #   PYTHON_INCLUDE_PATH        - path to where Python.h is found (deprecated)
 #   PYTHON_INCLUDE_DIRS        - path to where Python.h is found
 #   PYTHON_DEBUG_LIBRARIES     - path to the debug library (deprecated)
-#   PYTHONLIBS_VERSION_STRING  - version of the Python libs found (since CMake 2.8.8)
+#   PYTHON_VERSION_STRING  - version of the Python libs found (since CMake 2.8.8)
 #
 #
 #
@@ -224,7 +224,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
     file(STRINGS "${PYTHON_INCLUDE_DIR}/patchlevel.h" python_version_str
          REGEX "^#define[ \t]+PY_VERSION[ \t]+\"[^\"]+\"")
     string(REGEX REPLACE "^#define[ \t]+PY_VERSION[ \t]+\"([^\"]+)\".*" "\\1"
-                         PYTHONLIBS_VERSION_STRING "${python_version_str}")
+                         PYTHON_VERSION_STRING "${python_version_str}")
     unset(python_version_str)
   endif()
 
@@ -285,9 +285,9 @@ else()
 endif()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(PythonLibs
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PYTHON
                                   REQUIRED_VARS PYTHON_LIBRARIES PYTHON_INCLUDE_DIRS
-                                  VERSION_VAR PYTHONLIBS_VERSION_STRING)
+                                  VERSION_VAR PYTHON_VERSION_STRING)
 
 # PYTHON_ADD_MODULE(<name> src1 src2 ... srcN) is used to build modules for python.
 # PYTHON_WRITE_MODULES_HEADER(<filename>) writes a header file you can include

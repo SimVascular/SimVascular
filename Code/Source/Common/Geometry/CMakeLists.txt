@@ -33,11 +33,11 @@
 #-----------------------------------------------------------------------------
 
 set(lib ${SV_LIB_GEOM_NAME})
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-SET(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
+set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	cv_spline.cxx cv_integrate_surface.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
 	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx
@@ -56,7 +56,7 @@ SET(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
 	vtkConstrainedBlend.cxx)
-SET(HDRS cv_sys_geom.h cv_ggems.h
+set(HDRS cv_sys_geom.h cv_ggems.h
 	cv_spline.h cv_integrate_surface.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
 	vtkSurfaceVectors.h vtkIntersectionPolyDataFilter2.h
@@ -89,11 +89,9 @@ if(SV_USE_VMTK)
 		)
 endif()
 
-
-
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)

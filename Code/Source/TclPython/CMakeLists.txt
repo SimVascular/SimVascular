@@ -30,9 +30,9 @@
 
 set(lib ${SV_LIB_PYTHON_INTERP_NAME})
 include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS}
-		    ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+  ${PYTHON_INCLUDE_DIR}
+  ${PYTHON_INCLUDE_DIRS}
+  ${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
@@ -40,14 +40,18 @@ set(HDRS  tclpython.h symcat.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} cv_pythoninterp_init.cxx ${CSRCS})
 
 target_link_libraries(${lib} ${SV_LIB_REPOSITORY_NAME}
-			     ${SV_LIB_GLOBALS_NAME}
-	                     ${PYTHON_LIBRARY} ${TCL_LIBRARY} ${TK_LIBRARY} ${GLOBAL_LIBRARIES})
+  ${SV_LIB_GLOBALS_NAME} ${PYTHON_LIBRARY}
+  ${TCL_LIBRARY} ${TK_LIBRARY})
 
-install(TARGETS ${lib}
+if(SV_INSTALL_LIBS)
+  install(TARGETS ${lib}
     RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
-	LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
-	ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
-	)
-install(FILES ${HDRS}
-	DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
-	)
+    LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
+    ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
+    )
+endif()
+if(SV_INSTALL_HEADERS)
+  install(FILES ${HDRS}
+    DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
+    )
+endif()

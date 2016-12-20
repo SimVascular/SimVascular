@@ -1,4 +1,4 @@
-SET(HDRS itkVascularPhaseOneLevelSetFunction.hxx
+set(HDRS itkVascularPhaseOneLevelSetFunction.hxx
 	itkVascularPhaseOneLevelSetImageFilter.hxx
 	itkVascularPhaseTwoLevelSetFunction.hxx
 	itkVascularPhaseTwoLevelSetImageFilter.hxx

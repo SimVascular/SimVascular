@@ -1,3 +1,30 @@
+# Copyright (c) 2014-2015 The Regents of the University of California.
+# All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#-----------------------------------------------------------------------------
 # Options and defined depending on the system, and the intial options
 #-----------------------------------------------------------------------------
 # APPLE
@@ -17,8 +44,8 @@ if(WIN32)
 
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
 	if(NOT IS64)
-	    if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")
-		    set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
+	  if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")
+		  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
 		endif()
 	endif()
 	if(CYGWIN)
@@ -32,7 +59,7 @@ if(WIN32)
 		if(HAVE_WSOCK_GETHOSTNAME)
 			set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} wsock32.lib")
 		else()
-			MESSAGE(AUTHOR_WARNING "gethostname has not beed found! The flowsolver will not compile")
+			message(AUTHOR_WARNING "gethostname has not beed found! The flowsolver will not compile")
 		endif()
 	endif()
 
@@ -224,7 +251,7 @@ endif()
 # Gui Options: Qt GUI
 if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
   SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
-    if(NOT SimVascular_CXX11_FLAG)
+  if(NOT SimVascular_CXX11_FLAG)
     # Older gcc compilers use -std=c++0x
     SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
   endif()
@@ -235,18 +262,18 @@ if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
 endif()
 
 if(SV_USE_QT_GUI)
-    set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_ITK "ON" CACHE BOOL "Force ON" FORCE)
-    set(SV_USE_ITK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_ITK "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_ITK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_MITK "ON" CACHE BOOL "Force ON" FORCE)
-    set(SV_USE_MITK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_MITK "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_MITK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_GDCM "ON" CACHE BOOL "Force ON" FORCE)
-    set(SV_USE_GDCM_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_GDCM "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_GDCM_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
-    set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 endif()
 #-----------------------------------------------------------------------------

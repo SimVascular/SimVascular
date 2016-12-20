@@ -78,8 +78,8 @@ set(US_CMAKE_RESOURCE_DEPENDENCIES_CPP "${SV_SOURCE_DIR}/CMake/CppMicroServices/
 
 # The CppMicroServices resource compiler
 find_program(US_RCC_EXECUTABLE ${US_RCC_EXECUTABLE_NAME}
-             PATHS "${MITK_DIR}/bin"
-             PATH_SUFFIXES Release Debug RelWithDebInfo MinSizeRel)
+  PATHS "${MITK_DIR}/bin"
+  PATH_SUFFIXES Release Debug RelWithDebInfo MinSizeRel)
 mark_as_advanced(US_RCC_EXECUTABLE)
 
 # Include helper macros
@@ -98,9 +98,6 @@ include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionCheckResourceLinking.
 include("${SV_SOURCE_DIR}/CMake/CppMicroServices/usFunctionGetResourceSource.cmake")
 
 usFunctionCheckResourceLinking()
-
-# Global include directory
-#set(US_INCLUDE_DIRS "/usr/local/sv/ext/src/mitk-2016.03/Modules/CppMicroServices/third_party;/usr/local/sv/ext/build/clang-7.0/x64/mitk-2016.03/MITK-build/Modules/CppMicroServices/include")
 
 # Clear variables
 set(US_LIBRARIES )

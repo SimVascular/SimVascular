@@ -90,9 +90,9 @@ macro(simvascular_external _pkg)
 	dev_message("Configuring ${_pkg}")
 
   # Function options
-  set(arg_options SHARED_LIB NO_MODULE REQUIRED NO_DEFAULT_PATH)
+  set(arg_options NO_MODULE REQUIRED NO_DEFAULT_PATH)
   # Multiple value args
-  set(arg_single VERSION)
+  set(arg_single VERSION SHARED_LIB)
   # Multiple value args
   set(arg_multiple PATHS HINTS COMPONENTS)
 
@@ -139,6 +139,7 @@ macro(simvascular_external _pkg)
 
   # Add to shared libs
   if(simvascular_external_SHARED_LIB)
+    set(SV_INSTALL_EXTERNALS ON)
     set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} ${_pkg})
   endif()
 
@@ -149,6 +150,11 @@ macro(simvascular_external _pkg)
     	dev_message("Including dir: ${${_pkg}_INCLUDE_DIR}")
     	# This get many of them
     	include_directories(${${_pkg}_INCLUDE_DIR})
+    endif()
+    if( ${_pkg}_INCLUDE_DIRS )
+      dev_message("Including dir: ${${_pkg}_INCLUDE_DIRS}")
+    	# This get many of them
+      include_directories(${${_pkg}_INCLUDE_DIRS})
     endif()
   endif()
 
@@ -1083,7 +1089,6 @@ macro(simvascular_add_new_external proj version use shared dirname)
 
   if(SV_USE_${proj})
     list(APPEND SV_EXTERNALS_LIST ${proj})
-    list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
     set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BIN_DIR})
     if(NOT ${proj}_DIR)
       set(${proj}_DIR "" CACHE PATH "For external projects with a Config.cmake file, path to that file; for externals without a Config.cmake, the path to the toplevel bin directory")
@@ -1095,6 +1100,9 @@ macro(simvascular_add_new_external proj version use shared dirname)
         set(SV_${proj}_DIR ${SV_EXTERNALS_TOPLEVEL_DIR}/${SV_EXT_${proj}_BLD_DIR}/MITK-build)
       endif()
     endif()
+  endif()
+  if(SV_EXTERNALS_LIST)
+    list(REMOVE_DUPLICATES SV_EXTERNALS_LIST)
   endif()
 endmacro()
 #-----------------------------------------------------------------------------
@@ -1139,12 +1147,35 @@ endmacro()
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+macro(simvascular_property_list_find_and_replace TARGET PROPERTY VALUE NEWVALUE)
+  get_target_property(_LIST_VAR ${TARGET} ${PROPERTY})
+  simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
+  set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+endmacro()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+macro(simvascular_list_find_and_replace LIST VALUE NEWVALUE)
+  set(_COUNT "0")
+  foreach(ITEM ${${LIST}})
+    string(REGEX MATCH "${VALUE}" _FOUND ${ITEM})
+    if(_FOUND)
+      simvascular_list_replace(${LIST} ${_COUNT} ${NEWVALUE})
+    endif()
+    math(EXPR _COUNT "${_COUNT}+1")
+  endforeach()
+endmacro()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 macro(simvascular_list_replace LIST INDEX NEWVALUE)
   list(INSERT ${LIST} ${INDEX} ${NEWVALUE})
   math(EXPR __INDEX "${INDEX} + 1")
   list (REMOVE_AT ${LIST} ${__INDEX})
 endmacro()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 function(print_target_properties tgt)
   if(NOT TARGET ${tgt})
     message("There is no target named '${tgt}'")
@@ -1166,3 +1197,4 @@ function(print_target_properties tgt)
       endif()
    endforeach(prop)
 endfunction(print_target_properties)
+#-----------------------------------------------------------------------------

@@ -24,43 +24,17 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-macro(py_cmd)
-	set(options MESSAGE DEV_MESSAGE)
-	set(oneValueArgs OUTPUT_VARIABLE)
-	set(multiValueArgs FILES CODE)
-	CMAKE_PARSE_ARGUMENTS(""
-		"${options}"
-		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
-	if(_CODE)
-		file(WRITE ${TEMP_DIR}/tmp.py "${_CODE}")
-	endif()
-	if(_CODE)
-		file(REMOVE ${TEMP_DIR}/tmp.py)
-	endif()
-endmacro()
-
-set(SV_NO_RENDERER 0)
-
-py_cmd(CODE "puts \"[clock seconds]\""
-        OUTPUT_VARIABLE SV_TIMESTAMP)
-
-set(SV_SOURCE_PYTHON_DIR ${SV_SOURCE_HOME}/Python)
-set(SV_BINARY_PYTHON_DIR ${SV_BINARY_HOME}/Python)
-set(SV_PYTHON ${SV_BINARY_PYTHON_DIR})
-add_custom_target(copy-py ALL)
-add_custom_command(TARGET copy-py POST_BUILD
-  COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_PYTHON_DIR}
-  COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_PYTHON_DIR}
-  COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_PYTHON_DIR} ${SV_BINARY_PYTHON_DIR}
-  COMMENT "Copying Python Directory..."
-  )
-
-#include(SimVascularPythonConfigure)
-
 #-----------------------------------------------------------------------------
-# Install Steps
+# MMG
+set(proj MMG)
+if(SV_USE_${proj})
+  # If using toplevel dir, foce MMG_DIR to be the SV_MMG_DIR set by the
+  # simvascular_add_new_external macro
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
+  endif()
+  simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+  # Set SV_MMG_DIR to the directory that was found to contain MMG
+  set(SV_${proj}_DIR ${${proj}_DIR})
+endif()
 #-----------------------------------------------------------------------------
-
-include(PreparePython)
-
-install(DIRECTORY ${TEMP_DIR}/Python DESTINATION ${SV_INSTALL_SCRIPT_DIR})

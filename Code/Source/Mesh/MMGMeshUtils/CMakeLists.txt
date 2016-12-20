@@ -40,13 +40,12 @@ SET(HDRS cv_mmg_mesh_utils.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx)
 
 target_link_libraries(${lib}
-   ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-   ${GLOBAL_LIBRARIES}
-   ${MMG_LIBRARY}
-   ${ZLIB_LIBRARY}
-   ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
-   ${SV_LIB_POLYDATA_SOLID_NAME} ${SV_LIB_MESH_NAME}
-   )
+  ${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${MMG_LIBRARY}
+  ${ZLIB_LIBRARY}
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
+  ${SV_LIB_POLYDATA_SOLID_NAME} ${SV_LIB_MESH_NAME}
+  )
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

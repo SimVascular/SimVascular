@@ -26,49 +26,49 @@
 
 
 file(REMOVE_RECURSE ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
-	file(COPY ${SV_SOURCE_TCL_DIR} DESTINATION ${TEMP_DIR})
-	file(RENAME ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
-	file(MAKE_DIRECTORY ${TEMP_DIR}/Tcl/SimVascular_2.0)
+file(COPY ${SV_SOURCE_TCL_DIR} DESTINATION ${TEMP_DIR})
+file(RENAME ${TEMP_DIR}/Tcl ${TEMP_DIR}/UnTcl)
+file(MAKE_DIRECTORY ${TEMP_DIR}/Tcl/SimVascular_2.0)
 
-	set(TOP_TCL_DIRS Common Visualization SimVascular_2.0)
+set(TOP_TCL_DIRS Common Visualization SimVascular_2.0)
 
-	foreach(dir ${TOP_TCL_DIRS})
-		set(this_dir ${TEMP_DIR}/UnTcl/${dir}/)
-		string(LENGTH ${this_dir} begin)
-		file(GLOB temp_list ${this_dir}*)
-		simvascular_glob_dirs(SUBDIRS ${temp_list})
+foreach(dir ${TOP_TCL_DIRS})
+	set(this_dir ${TEMP_DIR}/UnTcl/${dir}/)
+	string(LENGTH ${this_dir} begin)
+	file(GLOB temp_list ${this_dir}*)
+	simvascular_glob_dirs(SUBDIRS ${temp_list})
 
-		foreach(subdir ${SUBDIRS})
-			file(GLOB files ${subdir}/*.tcl)
-			string(SUBSTRING ${subdir} ${begin} -1 tclfile)
-			set(tclfile "${tclfile}-code.tcl")
-			dev_message("Generating ${tclfile}")
-			#message("${tclfile}\n${files}")
-			simvascular_combine_files(temp ${files})
-			file(WRITE ${TEMP_DIR}/Tcl/SimVascular_2.0/${tclfile} "${temp}")
-		endforeach()
+	foreach(subdir ${SUBDIRS})
+		file(GLOB files ${subdir}/*.tcl)
+		string(SUBSTRING ${subdir} ${begin} -1 tclfile)
+		set(tclfile "${tclfile}-code.tcl")
+		dev_message("Generating ${tclfile}")
+		#message("${tclfile}\n${files}")
+		simvascular_combine_files(temp ${files})
+		file(WRITE ${TEMP_DIR}/Tcl/SimVascular_2.0/${tclfile} "${temp}")
 	endforeach()
+endforeach()
 
-	file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_startup.tcl
-		DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
-	file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_vtk_init.tcl
-		DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
-	file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_logo.jpg
-		DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
-		file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/splash.gif
-		DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
-	file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular.rc
-		DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
-	file(COPY ${TEMP_DIR}/UnTcl/External
-		DESTINATION ${TEMP_DIR}/Tcl/)
-	file(COPY ${TEMP_DIR}/UnTcl/Help
-		DESTINATION ${TEMP_DIR}/Tcl/)
+file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_startup.tcl
+	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
+file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_vtk_init.tcl
+	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
+file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular_logo.jpg
+	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
+	file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/splash.gif
+	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
+file(COPY ${TEMP_DIR}/UnTcl/SimVascular_2.0/simvascular.rc
+	DESTINATION ${TEMP_DIR}/Tcl/SimVascular_2.0/)
+file(COPY ${TEMP_DIR}/UnTcl/External
+	DESTINATION ${TEMP_DIR}/Tcl/)
+file(COPY ${TEMP_DIR}/UnTcl/Help
+	DESTINATION ${TEMP_DIR}/Tcl/)
 
-	file(REMOVE_RECURSE ${TEMP_DIR}/UnTcl)
+file(REMOVE_RECURSE ${TEMP_DIR}/UnTcl)
 
-	exec_program(${TCL_TCLSH}
-		ARGS
-		${SV_SOURCE_DIR}/../Distribution/create_tclIndex.tcl
-		${TEMP_DIR}/Tcl/SimVascular_2.0/
-		OUTPUT_VARIABLE TCLOUT
-		)
+exec_program(${TCL_TCLSH}
+	ARGS
+	${SV_SOURCE_DIR}/../Distribution/create_tclIndex.tcl
+	${TEMP_DIR}/Tcl/SimVascular_2.0/
+	OUTPUT_VARIABLE TCLOUT
+	)

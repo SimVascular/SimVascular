@@ -33,32 +33,34 @@
 #-----------------------------------------------------------------------------
 
 set(lib ${SV_LIB_OpenCASCADE_SOLID_NAME})
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 if(SV_USE_PYTHON)
 	include_directories(${PYTHON_INCLUDE_PATH}
-		    ${PYTHON_INCLUDE_DIR}
-		    ${PYTHON_INCLUDE_DIRS})
+	  ${PYTHON_INCLUDE_DIR}
+	  ${PYTHON_INCLUDE_DIRS})
+endif()
+if(SV_USE_FREETYPE)
+  link_directories(${FREETYPE_LIBRARY_DIR})
 endif()
 
-SET(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
-SET(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
+set(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
+set(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${GLOBAL_LIBRARIES}
-			${OpenCASCADE_LIBRARIES}
-			${SV_LIB_SOLID_NAME} ${SV_LIB_REPOSITORY_NAME}
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${OpenCASCADE_LIBRARIES}
+	${SV_LIB_SOLID_NAME} ${SV_LIB_REPOSITORY_NAME}
                         ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_GEOM_NAME}
             )
 if(SV_USE_PYTHON)
-   target_link_libraries(${lib} ${PYTHON_LIBRARY})
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)

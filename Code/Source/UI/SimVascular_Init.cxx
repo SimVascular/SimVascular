@@ -72,7 +72,7 @@
   #include "cv_meshsim_mesh_init.h"
 #endif
 
-#ifdef SV_USE_OPENCASCADE
+#ifdef SV_USE_OpenCASCADE
   #include "cv_occt_init.h"
 #endif
 
@@ -147,7 +147,7 @@ void SimVascularWelcome( Tcl_Interp *interp )
   return;
 }
 
-#ifndef VTK_BUILD_SHARED_LIBS
+#ifndef SV_USE_VTK_SHARED
 # include "vtktcl_static_prototypes.h"
 #endif
 
@@ -157,7 +157,7 @@ int SimVascular_Init( Tcl_Interp *interp )
 
   // include VTK
 
-  #ifndef VTK_BUILD_SHARED_LIBS
+  #ifndef SV_USE_VTK_SHARED
   # include "vtktcl_static_packages.h"
   #endif
 
@@ -212,8 +212,8 @@ int SimVascular_Init( Tcl_Interp *interp )
     return TCL_ERROR;
   }
 
-#ifdef SV_USE_OPENCASCADE
-#ifndef SV_USE_OPENCASCADE_SHARED
+#ifdef SV_USE_OpenCASCADE
+#ifndef SV_USE_OpenCASCADE_SHARED
   if ( Occtsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Opencascade_Init\n" );
     return TCL_ERROR;

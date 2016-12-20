@@ -1,3 +1,31 @@
+# Copyright (c) 2014-2015 The Regents of the University of California.
+# All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+#-----------------------------------------------------------------------------
+# Initial cpack setup
 if(WIN32)
 	find_path(INTEL_REDIST_DIR names fmpich2.dll PATHS $ENV{PATH})
 	file(GLOB INTEL_REDIST_DLLS "${INTEL_REDIST_DIR}/*.dll")
@@ -15,110 +43,62 @@ install(PROGRAMS ${CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS}
 	DESTINATION ${SV_INSTALL_RUNTIME_DIR}
 	COMPONENT SystemRuntimes)
 
-INCLUDE(InstallRequiredSystemLibraries)
+include(InstallRequiredSystemLibraries)
 include(CPackComponent)
 
-SET(CPACK_PACKAGE_NAME "SimVascular")
-SET(CPACK_PACKAGE_VENDOR "SimVascular.org")
-SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SimVascular - Cardiovascular Modeling and Simulation Application")
-SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.txt")
-SET(CPACK_PACKAGE_VERSION_MAJOR ${SV_MAJOR_VERSION})
-SET(CPACK_PACKAGE_VERSION_MINOR ${SV_MINOR_VERSION})
-SET(CPACK_PACKAGE_VERSION_PATCH ${SV_PATCH_VERSION})
+set(CPACK_PACKAGE_NAME "SimVascular")
+set(CPACK_PACKAGE_VENDOR "SimVascular.org")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "SimVascular - Cardiovascular Modeling and Simulation Application")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/license.txt")
+set(CPACK_PACKAGE_VERSION_MAJOR ${SV_MAJOR_VERSION})
+set(CPACK_PACKAGE_VERSION_MINOR ${SV_MINOR_VERSION})
+set(CPACK_PACKAGE_VERSION_PATCH ${SV_PATCH_VERSION})
 set(INSTALL_TYPE_STR)
 
 if(Licensed_PARASOLID)
 	set(INSTALL_TYPE_STR "${INSTALL_TYPE_STR}-parasolid")
 endif()
 
+set(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${${PROJECT_NAME}_BINARY_DIR};SimVascular;ALL;/")
+#-----------------------------------------------------------------------------
 
-SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${${PROJECT_NAME}_BINARY_DIR};SimVascular;ALL;/")
-#if(SV_INSTALL_EXTERNALS)
-#	IF(EXISTS "${VTK_DIR}/CMakeCache.txt")
-#		SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${VTK_DIR};VTK;ALL;/")
-#	ENDIF(EXISTS "${VTK_DIR}/CMakeCache.txt")
-#	IF(EXISTS "${ITK_DIR}/CMakeCache.txt")
-#		SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${ITK_DIR};ITK;ALL;/")
-#	ENDIF(EXISTS "${ITK_DIR}/CMakeCache.txt")
-#	IF(EXISTS "${OpenCASCADE_DIR}/CMakeCache.txt")
-#		SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${OpenCASCADE_DIR};OpenCASCADE;ALL;/")
-#	ENDIF(EXISTS "${OpenCASCADE_DIR}/CMakeCache.txt")
-#	IF(EXISTS "${GDCM_DIR}/CMakeCache.txt")
-#		SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};${GDCM_DIR};GDCM;ALL;/")
-#	ENDIF(EXISTS "${GDCM_DIR}/CMakeCache.txt")
-#	IF(EXISTS "${FREETYPE_DIR}/CMakeCache.txt")
-#		SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};FREETYPE;FREETYPE;ALL;/")
-#	ENDIF(EXISTS "${FREETYPE_DIR}/CMakeCache.txt")
-#	IF(EXISTS "${MMG_DIR}/CMakeCache.txt")
-#		SET(CPACK_INSTALL_CMAKE_PROJECTS "${CPACK_INSTALL_CMAKE_PROJECTS};MMG;MMG;ALL;/")
-#	ENDIF(EXISTS "${MMG_DIR}/CMakeCache.txt")
-#endif()
-
-#------------------------------------------------
-
-# foreach(_t Core Plugin Module)
-# 	string(TOUPPER "${_t}" _tupper)
-
-# 	set(CPACK_COMPONENT_${_tupper}EXECUTABLES_GROUP "${_t}")
-# 	set(CPACK_COMPONENT_${_tupper}CORELIBRARIES_GROUP "${_t}")
-# 	set(CPACK_COMPONENT_${_tupper}COREEHEADERS_GROUP "${_t}")
-# 	set(CPACK_COMPONENT_${_tupper}EXECUTABLES_DISPLAY_NAME "Application Files")
-# 	set(CPACK_COMPONENT_${_tupper}LIBRARIES_DISPLAY_NAME "Libraries")
-# 	set(CPACK_COMPONENT_${_tupper}HEADERS_DISPLAY_NAME "Headers")
-# 	set(CPACK_COMPONENT_${_tupper}EXECUTABLES_DEPENDS ${_t}Libraries)
-
-# 	list(APPEND CPACK_COMPONENTS_ALL ${_t}Executables ${_t}Libraries ${_t}Headers)
-# endforeach()
-
-# set(CPACK_COMPONENT_GROUP_CORE_DISPLAY_NAME "Main Application")
-# set(CPACK_COMPONENT_GROUP_CORE_DESCRIPTION "Core files required for all components in SimVascular")
-
-# set(CPACK_COMPONENT_GROUP_PLUGIN_DISPLAY_NAME "Plugins")
-# set(CPACK_COMPONENT_GROUP_PLUGIN_DESCRIPTION "Plugins that provide expanded functionality for SimVascular")
-
-# set(CPACK_COMPONENT_GROUP_MODULE_DISPLAY_NAME "FlowSolver Apps")
-# set(CPACK_COMPONENT_GROUP_MODULE_DESCRIPTION "Software to compute blood flow")
-
-
-
-
-#------------------------------------------------
-
+#-----------------------------------------------------------------------------
+# LINUX setup
 if(LINUX)
 	SET(CPACK_GENERATOR "TGZ")
 	set(CPACK_INCLUDE_TOPLEVEL_DIRECTORY ON)
 	SET(CPACK_PACKAGE_FILE_NAME "simvascular-${SV_FULL_VERSION}-Linux-x64${INSTALL_TYPE_STR}")
 endif()
+#-----------------------------------------------------------------------------
 
-
-IF(APPLE)
-	#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh.in ${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh)
-
+#-----------------------------------------------------------------------------
+# APPLE setup
+if(APPLE)
 	# Use the bundle-generator on osx ...
-	SET(CPACK_GENERATOR "Bundle")
-	SET(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/OSX/SimVascular.icns")
+	set(CPACK_GENERATOR "Bundle")
+	set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/OSX/SimVascular.icns")
 	if(SV_RELEASE_TYPE MATCHES "^Release$")
 		set(CPACK_BUNDLE_NAME "SimVascular")
 	elseif(SV_RELEASE_TYPE MATCHES "^Beta$")
 		set(CPACK_BUNDLE_NAME "SimVascular-Beta")
 	endif()
 
-	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/OSX/Info.plist.in
+	configure_file(${CMAKE_CURRENT_SOURCE_DIR}/OSX/Info.plist.in
 		${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist @ONLY)
 
-	SET(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist")
-	SET(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh")
-	SET(CPACK_PACKAGE_FILE_NAME "simvascular-${SV_FULL_VERSION}-darwin-x86_64${INSTALL_TYPE_STR}")
+	set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_BINARY_DIR}/OSX/Info.plist")
+	set(CPACK_BUNDLE_STARTUP_COMMAND "${CMAKE_CURRENT_SOURCE_DIR}/OSX/simvascular.sh")
+	set(CPACK_PACKAGE_FILE_NAME "simvascular-${SV_FULL_VERSION}-darwin-x86_64${INSTALL_TYPE_STR}")
 
 	if(SV_DEVELOPER_OUTPUT)
 		message(STATUS "CPACK_PACKAGE_FILE_NAME: ${CPACK_PACKAGE_FILE_NAME}.dmg")
 	endif()
-ENDIF(APPLE)
+endif(APPLE)
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# WINDOWS
 if(WIN32)
-	#set(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/windows/simvascular.ico")
-	#set(CPACK_PACKAGE_EXECUTABLES ${SV_EXE};SimVascular;)
-	#set(CPACK_CREATE_DESKTOP_LINKS ${SV_EXE})
 	set(CPACK_MONOLITHIC_INSTALL 1)
 	set(CPACK_COMPONENTS_IGNORE_GROUPS 1)
 	find_path(INTEL_REDIST_DIR names fmpich2.dll PATHS $ENV{PATH})
@@ -143,36 +123,17 @@ if(WIN32)
 			set(CPACK_WIX_UPGRADE_GUID "39C845FF-68E1-4AA7-B329-3407B47B3361")
 		endif()
 
-		SET(CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${SV_FULL_VERSION}-Win-x64${INSTALL_TYPE_STR}")
+		set(CPACK_PACKAGE_FILE_NAME "${PACKAGE_NAME}-${SV_FULL_VERSION}-Win-x64${INSTALL_TYPE_STR}")
 		set(CPACK_WIX_PATCH_FILE "${TEMP_DIR}/patch.xml")
 		set(CPACK_WIX_PRODUCT_ICON "${CMAKE_CURRENT_SOURCE_DIR}/windows/SimVascular.ico")
 		configure_file("${CMAKE_CURRENT_SOURCE_DIR}/windows/mywix.template-notargets.in" "${CMAKE_CURRENT_BINARY_DIR}/mywix.template")
 		set(CPACK_WIX_TEMPLATE "${CMAKE_CURRENT_BINARY_DIR}/mywix.template")
 	endif()
 endif()
+#-----------------------------------------------------------------------------
 
 if(CPACK_PACKAGE_FILENAME_TAG)
 	SET(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_FILE_NAME}-${CPACK_PACKAGE_FILENAME_TAG}")
 endif()
 message(STATUS "Packname name: ${CPACK_PACKAGE_FILE_NAME}")
 include(CPack)
-
-
-
-
-#------ dev reference
-# COREEXECUTABLES
-# CORELIBRARIES
-# COREHEADERS
-
-# PLUGINEXECUTABLES
-# PLUGINLIBRARIES
-# PLUGINHEADERS
-
-# MODULEEXECUTABLES
-# MODULELIBRARIES
-# MODULEHEADERS
-
-# CPACK_COMPONENT_RUNTIMEEXECUTABLES_DISPLAY_NAME
-# CPACK_COMPONENT_RUNTIMEEXECUTABLES_DESCRIPTION
-# CPACK_COMPONENT_RUNTIMEEXECUTABLES_DEPENDS

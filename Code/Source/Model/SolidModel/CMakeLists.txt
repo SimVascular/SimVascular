@@ -33,7 +33,7 @@
 #-----------------------------------------------------------------------------
 
 set(lib ${SV_LIB_SOLID_NAME})
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
 if(SV_USE_PYTHON)
@@ -42,24 +42,23 @@ if(SV_USE_PYTHON)
 		    ${PYTHON_INCLUDE_DIRS})
 endif()
 
-SET(CXXSRCS cvSolidModel.cxx)
-SET(HDRS    cvSolidModel.h)
+set(CXXSRCS cvSolidModel.cxx)
+set(HDRS    cvSolidModel.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES}
-			${GLOBAL_LIBRARIES} ${TETGEN_LIBRARY}
-			${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME}
-            )
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${PARASOLID_LIBRARIES} ${TETGEN_LIBRARY}
+	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME}
+  )
 if(SV_USE_PYTHON)
-   target_link_libraries(${lib} ${PYTHON_LIBRARY})
+  target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)
