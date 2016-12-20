@@ -122,7 +122,7 @@ macro(simvascular_external _pkg)
   endif()
 
   if(simvascular_external_VERSION)
-    set(EXTRA_ARGS ${simvascular_external_VERSION} EXACT ${EXTRA_ARGS})
+    set(EXTRA_ARGS ${simvascular_external_VERSION} ${EXTRA_ARGS})
   endif()
 
   # Default PATHS
