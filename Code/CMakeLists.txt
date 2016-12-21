@@ -323,8 +323,7 @@ endif()
 
 foreach(dir ${SV_INCLUDE_DIRS})
 	add_subdirectory(${dir})
-	include_directories(${SV_SOURCE_DIR}/${dir}
-						${SV_BINARY_DIR}/${dir})
+	include_directories(${SV_SOURCE_DIR}/${dir} ${SV_BINARY_DIR}/${dir})
 endforeach()
 
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
@@ -349,6 +348,10 @@ endforeach()
 
 # Add the Modules
 message(STATUS "Modules:")
+foreach(dir ${SV_MODULE_DIRS})
+	include_directories(${SV_SOURCE_DIR}/${dir})
+  include_directories(${SV_BINARY_DIR}/${dir})
+endforeach()
 foreach(dir ${SV_MODULE_DIRS})
   message(STATUS "	${dir}")
   include_directories("${dir}")

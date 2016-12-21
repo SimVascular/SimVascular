@@ -798,7 +798,9 @@ endfunction()
 function(simvascular_create_module)
 
   set(arg_single
-    MODULE_NAME # (required) TODO: could be generated via CMake as it is done for MITK modules already
+    TARGET
+    EXPORT_DIRECTIVE
+    SHARED_LIB
   )
 
   # multiple value arguments
@@ -807,7 +809,62 @@ function(simvascular_create_module)
     PACKAGE_DEPENDS
   )
 
-cmake_parse_arguments(_MODULE "${arg_options}" "${arg_single}" "${arg_multiple}" ${ARGN})
+  cmake_parse_arguments(_MODULE "${arg_options}" "${arg_single}" "${arg_multiple}" ${ARGN})
+
+  if(NOT _MODULE_TARGET)
+    message(FATAL_ERROR "Must provide target for module creation")
+  endif()
+  if(NOT _MODULE_EXPORT_DIRECTIVE)
+    message(FATAL_ERROR "Must provide name for header export")
+  endif()
+  set(MODULE_LIB_TYPE "SHARED")
+  if(DEFINED _MODULE_SHARED_LIB AND NOT _MODULE_SHARED_LIB)
+    set(MODULE_LIB_TYPE "STATIC")
+  endif()
+
+  include(${CMAKE_CURRENT_SOURCE_DIR}/files.cmake)
+  qt5_wrap_ui(UISrcs ${UI_FILES})
+  qt5_add_resources(QRCSrcs ${QRC_FILES})
+  qt5_wrap_cpp(MOCSrcs ${MOC_H_FILES})
+
+  usFunctionGenerateModuleInit(CPP_FILES)
+  if(RESOURCE_FILES)
+    usFunctionGetResourceSource(TARGET ${_MODULE_TARGET} OUT CPP_FILES)
+  endif()
+
+  add_library(${_MODULE_TARGET} ${MODULE_LIB_TYPE} ${H_FILES} ${CPP_FILES} ${UISrcs} ${QRCSrcs} ${MOCSrcs})
+
+  set_property(TARGET ${_MODULE_TARGET} PROPERTY US_MODULE_NAME ${_MODULE_EXPORT_DIRECTIVE})
+  set_property(TARGET ${_MODULE_TARGET} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${_MODULE_EXPORT_DIRECTIVE})
+
+  target_link_libraries(${_MODULE_TARGET} PRIVATE
+    ${_MODULE_LIBRARY_DEPENDS}
+    ${_MODULE_PACKAGE_DEPENDS})
+
+  if(RESOURCE_FILES)
+      set(res_dir resource)
+      usFunctionAddResources(TARGET ${_MODULE_TARGET}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/${res_dir}
+        FILES ${RESOURCE_FILES})
+      usFunctionEmbedResources(TARGET ${_MODULE_TARGET})
+  endif()
+
+
+  string(TOUPPER ${_MODULE_EXPORT_DIRECTIVE} MODULE_NAME)
+  set(MODULE_EXPORT_DEFINE ${MODULE_NAME}_EXPORT)
+
+  set(_export_macro_names
+    EXPORT_MACRO_NAME ${MODULE_EXPORT_DEFINE}
+    NO_EXPORT_MACRO_NAME ${MODULE_NAME}_NO_EXPORT
+    DEPRECATED_MACRO_NAME ${MODULE_NAME}_DEPRECATED
+    NO_DEPRECATED_MACRO_NAME ${MODULE_NAME}_NO_DEPRECATED
+    )
+  generate_export_header(${_MODULE_TARGET}
+    ${_export_macro_names}
+    EXPORT_FILE_NAME ${_MODULE_EXPORT_DIRECTIVE}Exports.h
+    )
+
+  target_include_directories(${_MODULE_TARGET} PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 
 endfunction()
 #-----------------------------------------------------------------------------
