@@ -56,6 +56,11 @@ vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateFaceVtkPolyData(int i
     return fpd;
 }
 
+vtkSmartPointer<vtkPolyData> svModelElementPolyData::CreateWholeVtkPolyData()
+{
+    return m_WholeVtkPolyData;
+}
+
 //vtkPolyData* svModelElementPolyData::GetSolidModel() const
 //{
 //    return m_SolidModel;

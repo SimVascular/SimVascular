@@ -21,9 +21,11 @@ public:
     explicit svSegSelectionWidget(QWidget *parent = 0);
     ~svSegSelectionWidget();
 
-    void SetTableView(std::vector<mitk::DataNode::Pointer> segNodes, svModelElement* modelElement);
+    void SetTableView(std::vector<mitk::DataNode::Pointer> segNodes, svModelElement* modelElement, std::string type);
 
     std::vector<std::string> GetUsedSegNames();
+
+    int GetNumSampling();
 
 public slots:
 
@@ -46,6 +48,12 @@ private:
     QStandardItemModel* m_TableModel;
 
     Ui::svSegSelectionWidget *ui;
+
+    int m_NumSampling;
+
+    svModelElement* m_ModelElement;
+
+    std::string m_ModelType;
 
 };
 

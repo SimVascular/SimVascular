@@ -1,4 +1,5 @@
 #include "svModelLegacyLoadAction.h"
+#include "simvascular_options.h"
 
 #include "svModelLegacyIO.h"
 #include <mitkNodePredicateDataType.h>
@@ -47,9 +48,17 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
             lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
         }
 
+        QString filter="Legacy Models (*.vtp";
+
+#ifdef SV_USE_OPENCASCADE
+        filter=filter+" *.brep *.step *.stl *.iges";
+#endif
+
+        filter=filter+")";
+
         QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Model")
                                                              , lastFileOpenPath
-                                                             , tr("Models (*.vtp *.xmt_txt *.occt)")
+                                                             , tr(filter.toStdString().c_str())
                                                              , NULL
                                                              , QFileDialog::DontUseNativeDialog);
 

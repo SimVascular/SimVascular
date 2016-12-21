@@ -1,10 +1,15 @@
 #include "svSegSelectionWidget.h"
 #include "ui_svSegSelectionWidget.h"
 
-svSegSelectionWidget::svSegSelectionWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::svSegSelectionWidget),
-    m_TableModel(NULL)
+#include <QMessageBox>
+
+svSegSelectionWidget::svSegSelectionWidget(QWidget *parent)
+    : QWidget(parent)
+    , ui(new Ui::svSegSelectionWidget)
+    , m_TableModel(NULL)
+    , m_NumSampling(0)
+    , m_ModelElement(NULL)
+    , m_ModelType("")
 {
     ui->setupUi(this);
 
@@ -35,8 +40,11 @@ svSegSelectionWidget::~svSegSelectionWidget()
     delete ui;
 }
 
-void svSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer> segNodes, svModelElement* modelElement)
+void svSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer> segNodes, svModelElement* modelElement, std::string type)
 {
+    m_ModelElement=modelElement;
+    m_ModelType=type;
+
     int segNum=segNodes.size();
 
     m_TableModel = new QStandardItemModel(segNum,2,this);
@@ -78,6 +86,24 @@ void svSegSelectionWidget::SetTableView(std::vector<mitk::DataNode::Pointer> seg
 
     ui->tableView->setModel(m_TableModel);
     //ui->tableView->setColumnWidth(0,150);
+
+    int numSampling=0;
+    if(modelElement)
+    {
+        numSampling=modelElement->GetNumSampling();
+
+        if(numSampling>0)
+            ui->lineEditNumSampling->setText(QString::number(numSampling));
+        else
+            ui->lineEditNumSampling->setText("");
+    }
+    else
+    {
+        if(type=="PolyData")
+            ui->lineEditNumSampling->setText("");
+        else
+            ui->lineEditNumSampling->setText("20");
+    }
 }
 
 std::vector<std::string> svSegSelectionWidget::GetUsedSegNames()
@@ -99,8 +125,44 @@ std::vector<std::string> svSegSelectionWidget::GetUsedSegNames()
     return segNames;
 }
 
+int svSegSelectionWidget::GetNumSampling()
+{
+    return m_NumSampling;
+}
+
 void svSegSelectionWidget::Confirm()
 {
+    QString strNum=ui->lineEditNumSampling->text().trimmed();
+
+    if(strNum=="")
+    {
+        if(m_ModelType!="PolyData")
+        {
+            QMessageBox::warning(this,"Value Mising","Pleases provide the number of sampling points.");
+            return;
+        }
+
+        m_NumSampling=0;
+    }
+    else
+    {
+        bool ok;
+        int num=strNum.toInt(&ok);
+        if(ok)
+        {
+            if(num<1)
+            {
+                QMessageBox::warning(this,"Value Error","Pleases give a positive integer format if you want to provide the number of sampling points.");
+                return;
+            }
+            m_NumSampling=num;
+        }
+        else
+        {
+            QMessageBox::warning(this,"Format Error","Pleases give a correct format if you want to provide the number of sampling points.");
+            return;
+        }
+    }
     hide();
     emit accepted();
 }
@@ -109,7 +171,6 @@ void svSegSelectionWidget::Cancel()
 {
     hide();
 }
-
 
 void svSegSelectionWidget::TableViewContextMenuRequested( const QPoint & pos )
 {

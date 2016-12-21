@@ -28,6 +28,7 @@
 #include <QInputDialog>
 #include <QColorDialog>
 #include <QSignalMapper>
+#include <QMessageBox>
 
 #include <iostream>
 using namespace std;
@@ -72,7 +73,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     QSignalMapper* signalMapper = new QSignalMapper(this);
 
-//    parent->setMaximumWidth(450);
+    //    parent->setMaximumWidth(450);
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
@@ -94,6 +95,9 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     connect(m_SegSelectionWidget,SIGNAL(accepted()), this, SLOT(CreateModel()));
 
+    connect(ui->btnChangeFacet, SIGNAL(clicked()), this, SLOT(ChangeFacetSize()) );
+    connect(ui->btnConvert, SIGNAL(clicked()), this, SLOT(ConvertToPolyDataModel()) );
+
     //for tab Face List
     //=================================================================
     svFaceListDelegate* itemDelegate=new svFaceListDelegate(this);
@@ -103,22 +107,22 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     ui->tableViewFaceList->setItemDelegateForColumn(5,itemDelegate);
 
     connect( m_FaceListTableModel, SIGNAL(itemChanged(QStandardItem*))
-      , this, SLOT(UpdateFaceData(QStandardItem*)) );
+             , this, SLOT(UpdateFaceData(QStandardItem*)) );
 
     connect( ui->tableViewFaceList->selectionModel()
-      , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-      , this
-      , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+             , this
+             , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
     connect( ui->tableViewFaceList
-      , SIGNAL( doubleClicked( const QModelIndex & ) )
-      , this
-      , SLOT( ToggleVisibility ( const QModelIndex & ) ) );
+             , SIGNAL( doubleClicked( const QModelIndex & ) )
+             , this
+             , SLOT( ToggleVisibility ( const QModelIndex & ) ) );
 
     connect( ui->tableViewFaceList
-      , SIGNAL( doubleClicked( const QModelIndex & ) )
-      , this
-      , SLOT( ChangeColor ( const QModelIndex & ) ) );
+             , SIGNAL( doubleClicked( const QModelIndex & ) )
+             , this
+             , SLOT( ChangeColor ( const QModelIndex & ) ) );
 
     m_FaceListTableMenu=new QMenu(ui->tableViewFaceList);
     QAction* showAction=m_FaceListTableMenu->addAction("Show");
@@ -134,7 +138,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect( changeOpacityAction, SIGNAL( triggered(bool) ) , this, SLOT( ChangeOpacitySelected(bool) ) );
 
     connect( ui->tableViewFaceList, SIGNAL(customContextMenuRequested(const QPoint&))
-      , this, SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
+             , this, SLOT(TableViewFaceListContextMenuRequested(const QPoint&)) );
 
     //various ops
     //-----------------------------------------------------------------
@@ -227,16 +231,16 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect( notUseSelectedBlendAction, SIGNAL( triggered(bool) ) , this, SLOT( NotUseSelectedBlend(bool) ) );
 
     connect( ui->tableViewBlend, SIGNAL(customContextMenuRequested(const QPoint&))
-      , this, SLOT(TableViewBlendContextMenuRequested(const QPoint&)) );
+             , this, SLOT(TableViewBlendContextMenuRequested(const QPoint&)) );
 
     connect( ui->tableViewBlend->selectionModel()
-      , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-      , this
-      , SLOT( TableBlendSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+             , this
+             , SLOT( TableBlendSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
 
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
-//    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
+    //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
 
 }
 
@@ -248,7 +252,7 @@ void svModelEdit::Visible()
 
 void svModelEdit::Hidden()
 {
-//    ClearAll();
+    //    ClearAll();
     RemoveObservers();
 }
 
@@ -268,7 +272,7 @@ int svModelEdit::GetTimeStep()
 
 void svModelEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 {
-//    if(!IsActivated())
+    //    if(!IsActivated())
     if(!IsVisible())
     {
         return;
@@ -323,9 +327,9 @@ void svModelEdit::UpdateGUI()
     ui->labelModelType->setText(QString::fromStdString(m_ModelType));
 
     if(m_ModelType=="Parasolid" || m_ModelType=="OpenCASCADE")
-        ui->btnConvert->show();
+        ui->widgetAnalytic->show();
     else
-        ui->btnConvert->hide();
+        ui->widgetAnalytic->hide();
 
     //update tab face list
     //--------------------------------------------------------------------
@@ -558,12 +562,12 @@ void svModelEdit::UpdateFaceListSelection()
         return;
 
     disconnect( ui->tableViewFaceList->selectionModel()
-      , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-      , this
-      , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+                , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+                , this
+                , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
 
-        ui->tableViewFaceList->clearSelection();
+    ui->tableViewFaceList->clearSelection();
 
     int count=m_FaceListTableModel->rowCount();
 
@@ -580,9 +584,9 @@ void svModelEdit::UpdateFaceListSelection()
     }
 
     connect( ui->tableViewFaceList->selectionModel()
-      , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
-      , this
-      , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
+             , SIGNAL( selectionChanged ( const QItemSelection &, const QItemSelection & ) )
+             , this
+             , SLOT( TableFaceListSelectionChanged ( const QItemSelection &, const QItemSelection & ) ) );
 
 }
 
@@ -689,6 +693,7 @@ void svModelEdit::UpdateFaceData(QStandardItem* item)
     if(col==1)
     {
         modelElement->SetFaceName(item->text().trimmed().toStdString(), id);
+        SetupBlendTable();
     }else if(col==2){
         face->type=item->text().trimmed().toStdString();
     }else if(col==5){
@@ -935,7 +940,7 @@ void svModelEdit::ChangeOpacitySelected( bool )
         if(face==NULL)
             continue;
 
-//        face->opacity=opacity; //done by UpateFaceData()
+        //        face->opacity=opacity; //done by UpateFaceData()
 
         QStandardItem* itemO= m_FaceListTableModel->item(row,5);
         itemO->setData((int)(opacity*100)/100.0, Qt::EditRole);
@@ -1006,7 +1011,7 @@ void svModelEdit::ChangeTypeSelected( bool )
     }
 
     QStringList items;
-//    items << tr("wall") << tr("inlet") << tr("outlet") << tr("cap");
+    //    items << tr("wall") << tr("inlet") << tr("outlet") << tr("cap");
     items << tr("wall") << tr("cap");
 
     bool ok;
@@ -1026,7 +1031,7 @@ void svModelEdit::ChangeTypeSelected( bool )
         if(face==NULL)
             continue;
 
-//        face->type=type; //done by UpateFaceData()
+        //        face->type=type; //done by UpateFaceData()
 
         QStandardItem* itemT= m_FaceListTableModel->item(row,2);
         itemT->setData(type, Qt::EditRole);
@@ -1038,7 +1043,7 @@ void svModelEdit::UpdateBlendTable(int index)
     if(index!=1)
         return;
 
-//    SetupBlendTable();
+    //    SetupBlendTable();
 }
 
 void svModelEdit::SetupBlendTable()
@@ -1073,14 +1078,14 @@ void svModelEdit::SetupBlendTable()
 
             //To do: check if two faces are adjcent;
             //Todo: create linking list in svModelElementPolyData, avoiding to create multiple times in the plugin
-//            vtkSmartPointer<vtkIntersectionPolyDataFilter> intersectionPolyDataFilter =
-//                    vtkSmartPointer<vtkIntersectionPolyDataFilter>::New();
-//            intersectionPolyDataFilter->SetInputData(0, facec[i]->vpd);
-//            intersectionPolyDataFilter->SetInputData(1, facec[j]->vpd);
-//            intersectionPolyDataFilter->Update();
+            //            vtkSmartPointer<vtkIntersectionPolyDataFilter> intersectionPolyDataFilter =
+            //                    vtkSmartPointer<vtkIntersectionPolyDataFilter>::New();
+            //            intersectionPolyDataFilter->SetInputData(0, facec[i]->vpd);
+            //            intersectionPolyDataFilter->SetInputData(1, facec[j]->vpd);
+            //            intersectionPolyDataFilter->Update();
 
-//            if(inintersectionPolyDataFilter->GetOutput()->GetNumberOfCells()<1)
-//                continue;
+            //            if(inintersectionPolyDataFilter->GetOutput()->GetNumberOfCells()<1)
+            //                continue;
 
 
             rowIndex++;
@@ -1201,7 +1206,7 @@ void svModelEdit::SetRadius(bool)
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
-      return;
+        return;
     }
 
     bool ok;
@@ -1211,13 +1216,13 @@ void svModelEdit::SetRadius(bool)
         return;
 
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-       ; it != indexesOfSelectedRows.end(); it++)
-     {
-       int row=(*it).row();
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
 
-       QStandardItem* item= m_BlendTableModel->item(row,3);
-       item->setText(QString::number(radius));
-     }
+        QStandardItem* item= m_BlendTableModel->item(row,3);
+        item->setText(QString::number(radius));
+    }
 }
 
 void svModelEdit::ClearRadius(bool)
@@ -1228,17 +1233,17 @@ void svModelEdit::ClearRadius(bool)
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
-      return;
+        return;
     }
 
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-       ; it != indexesOfSelectedRows.end(); it++)
-     {
-       int row=(*it).row();
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
 
-       QStandardItem* item= m_BlendTableModel->item(row,3);
-       item->setText("");
-     }
+        QStandardItem* item= m_BlendTableModel->item(row,3);
+        item->setText("");
+    }
 }
 
 void svModelEdit::UseSelectedBlend(bool)
@@ -1249,17 +1254,17 @@ void svModelEdit::UseSelectedBlend(bool)
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
-      return;
+        return;
     }
 
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-       ; it != indexesOfSelectedRows.end(); it++)
-     {
-       int row=(*it).row();
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
 
-       QStandardItem* item= m_BlendTableModel->item(row,0);
-       item->setCheckState(Qt::Checked);
-     }
+        QStandardItem* item= m_BlendTableModel->item(row,0);
+        item->setCheckState(Qt::Checked);
+    }
 }
 
 void svModelEdit::NotUseSelectedBlend(bool)
@@ -1270,17 +1275,17 @@ void svModelEdit::NotUseSelectedBlend(bool)
     QModelIndexList indexesOfSelectedRows = ui->tableViewBlend->selectionModel()->selectedRows();
     if(indexesOfSelectedRows.size() < 1)
     {
-      return;
+        return;
     }
 
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
-       ; it != indexesOfSelectedRows.end(); it++)
-     {
-       int row=(*it).row();
+         ; it != indexesOfSelectedRows.end(); it++)
+    {
+        int row=(*it).row();
 
-       QStandardItem* item= m_BlendTableModel->item(row,0);
-       item->setCheckState(Qt::Unchecked);
-     }
+        QStandardItem* item= m_BlendTableModel->item(row,0);
+        item->setCheckState(Qt::Unchecked);
+    }
 }
 
 void svModelEdit::NodeChanged(const mitk::DataNode* node)
@@ -1389,13 +1394,14 @@ void svModelEdit::ShowSegSelectionWidget()
         segNodes.push_back(rs->GetElement(i));
 
 
-    m_SegSelectionWidget->SetTableView(segNodes,modelElement);
+    m_SegSelectionWidget->SetTableView(segNodes,modelElement,m_ModelType);
     m_SegSelectionWidget->show();
 }
 
 void svModelEdit::CreateModel()
 {
     std::vector<std::string> segNames=m_SegSelectionWidget->GetUsedSegNames();
+    int numSampling=m_SegSelectionWidget->GetNumSampling();
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSubset(isProjFolder);
@@ -1421,6 +1427,7 @@ void svModelEdit::CreateModel()
     svModelElement* newModelElement=NULL;
     svModelElement* modelElement=m_Model->GetModelElement();
 
+    mitk::ProgressBar::GetInstance()->Reset();
     mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
     mitk::StatusBar::GetInstance()->DisplayText("Creating model...");
     mitk::ProgressBar::GetInstance()->Progress();
@@ -1429,7 +1436,7 @@ void svModelEdit::CreateModel()
     QString statusText="Model has been created.";
     if(m_ModelType=="PolyData"){
         int stats[2]={0};
-        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,stats);
+        newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats);
         if(newModelElement==NULL)
         {
             statusText="Failed to create model.";
@@ -1439,11 +1446,16 @@ void svModelEdit::CreateModel()
             statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
         }
     }
-    else if(m_ModelType=="Parasolid")
+#ifdef SV_USE_OPENCASCADE
+    else if(m_ModelType=="OpenCASCADE")
     {
-
+        newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling);
+        if(newModelElement==NULL)
+        {
+            statusText="Failed to create model.";
+        }
     }
-
+#endif
 
     WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress(2);
@@ -1461,7 +1473,7 @@ void svModelEdit::CreateModel()
 
         m_Model->ExecuteOperation(doOp);
 
-        UpdateGUI();
+//        UpdateGUI();
     }
 }
 
@@ -1496,10 +1508,12 @@ std::vector<svModelElement::svBlendParamRadius*> svModelEdit::GetBlendRadii()
         if(radius<=0)
             continue;
 
-        int faceID1=modelElement->GetFaceID(itemFace1->text().toStdString());
-        int faceID2=modelElement->GetFaceID(itemFace2->text().toStdString());
+        std::string faceName1=itemFace1->text().toStdString();
+        std::string faceName2=itemFace2->text().toStdString();
+        int faceID1=modelElement->GetFaceID(faceName1);
+        int faceID2=modelElement->GetFaceID(faceName2);
 
-        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,radius));
+        blendRadii.push_back(new svModelElement::svBlendParamRadius(faceID1,faceID2,faceName1,faceName2,radius));
     }
 
     return blendRadii;
@@ -1518,7 +1532,11 @@ void svModelEdit::BlendModel()
 
     std::vector<svModelElement::svBlendParamRadius*> blendRadii=GetBlendRadii();
 
-    mitk::ProgressBar::GetInstance()->AddStepsToDo(1);
+    mitk::ProgressBar::GetInstance()->Reset();
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
+    mitk::StatusBar::GetInstance()->DisplayText("Blending model...");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
 
     if(m_ModelType=="PolyData"){
 
@@ -1536,12 +1554,19 @@ void svModelEdit::BlendModel()
 
         newModelElement=svModelUtils::CreateModelElementPolyDataByBlend(mepd, blendRadii, param);
     }
-    else if(m_ModelType=="Parasolid")
+#ifdef SV_USE_OPENCASCADE
+    else if(m_ModelType=="OpenCASCADE")
     {
+        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(modelElement);
+        if(!meocct) return;
 
+        newModelElement=svModelUtils::CreateModelElementOCCTByBlend(meocct, blendRadii);
     }
+#endif
 
+    WaitCursorOff();
     mitk::ProgressBar::GetInstance()->Progress();
+    mitk::StatusBar::GetInstance()->DisplayText("Blending done.");
 
     if(newModelElement==NULL) return;
 
@@ -1553,6 +1578,10 @@ void svModelEdit::BlendModel()
     mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
 
     m_Model->ExecuteOperation(doOp);
+
+    //    SetupFaceListTable();
+
+    //    UpdateFaceListSelection();
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -1638,6 +1667,7 @@ void svModelEdit::ModelOperate(int operationType)
 
     bool ok=false;
 
+    mitk::ProgressBar::GetInstance()->Reset();
     mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
     mitk::StatusBar::GetInstance()->DisplayText("Processing model...");
     mitk::ProgressBar::GetInstance()->Progress();
@@ -1775,7 +1805,7 @@ void svModelEdit::ShowSphereInteractor(bool checked)
     {
         m_SphereWidget = vtkSmartPointer<vtkSphereWidget>::New();
         m_SphereWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
-    //    m_SphereWidget->SetRepresentationToSurface();
+        //    m_SphereWidget->SetRepresentationToSurface();
     }
 
     m_SphereWidget->SetInputData(modelElement->GetWholeVtkPolyData());
@@ -1810,7 +1840,7 @@ void svModelEdit::ShowPlaneInteractor(bool checked)
         m_PlaneWidget->SetInteractor(m_DisplayWidget->GetRenderWindow4()->GetVtkRenderWindow()->GetInteractor());
         m_PlaneWidget->GetHandleProperty()->SetOpacity(0.8);
         m_PlaneWidget->GetPlaneProperty()->SetLineWidth(1);
-    //    m_PlaneWidget->SetRepresentationToSurface();
+        //    m_PlaneWidget->SetRepresentationToSurface();
     }
 
     m_PlaneWidget->SetInputData(modelElement->GetWholeVtkPolyData());
@@ -1848,12 +1878,179 @@ void svModelEdit::ShowBoxInteractor(bool checked)
         m_BoxWidget->TranslationEnabledOn();
         m_BoxWidget->GetHandleProperty()->SetOpacity(0.6);
         m_BoxWidget->GetOutlineProperty()->SetLineWidth(1);
-//        m_BoxWidget->SetHandleSize(0.005);
-    //    m_BoxWidget->SetRepresentationToSurface();
+        //        m_BoxWidget->SetHandleSize(0.005);
+        //    m_BoxWidget->SetRepresentationToSurface();
     }
 
     m_BoxWidget->SetInputData(modelElement->GetWholeVtkPolyData());
     m_BoxWidget->PlaceWidget();
 
     m_BoxWidget->On();
+}
+
+void svModelEdit::ChangeFacetSize()
+{
+    if(m_Model==NULL || m_Model->GetModelElement(GetTimeStep())==NULL)
+        return;
+
+    double facetSize=0;
+    QString sizeType="";
+
+#ifdef SV_USE_OPENCASCADE
+    if(m_ModelType=="OpenCASCADE")
+    {
+        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
+        if(meocct==NULL)
+            return;
+
+        sizeType="Max Angle Dev";
+        facetSize=meocct->GetMaxDist();
+
+    }
+#endif
+
+    if(m_ModelType=="Parasolid")
+    {
+//        svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
+//        if(meps==NULL)
+//            return;
+
+//        sizeType="Max Edge Size";
+//        faceSize=meps->GetMaxDist();
+    }
+
+    if(sizeType=="")
+        return;
+
+    QString title="Change Facet "+ sizeType;
+    QString title2=sizeType+":";
+
+    bool ok=false;
+    double newSize = QInputDialog::getDouble(m_Parent, tr(title.toStdString().c_str()),tr(title2.toStdString().c_str())
+                                             , facetSize, 0.01, 100.0, 2, &ok);
+
+    if(!ok)
+        return;
+
+    mitk::ProgressBar::GetInstance()->Reset();
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
+    mitk::StatusBar::GetInstance()->DisplayText("Creating surface with new facet size...");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
+
+#ifdef SV_USE_OPENCASCADE
+    if(m_ModelType=="OpenCASCADE")
+    {
+        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
+        meocct->SetMaxDist(newSize);
+        meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
+        std::vector<svModelElement::svFace*> faces=meocct->GetFaces();
+        for(int i=0;i<faces.size();i++)
+        {
+            faces[i]->vpd=meocct->CreateFaceVtkPolyData(faces[i]->id);
+        }
+        m_Model->SetDataModified();
+    }
+#endif
+
+    if(m_ModelType=="Parasolid")
+    {
+    }
+
+    mitk::StatusBar::GetInstance()->DisplayText("New surface has been created with new facet size.");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOff();
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+}
+
+void svModelEdit::ConvertToPolyDataModel()
+{
+    if(m_Model==NULL || m_Model->GetModelElement(GetTimeStep())==NULL)
+        return;
+
+    bool ok=false;
+    QString newModelName=QInputDialog::getText(m_Parent, "Create PolyData Model", "Model Name:", QLineEdit::Normal, "", &ok);
+
+    if(!ok)
+        return;
+
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_ModelNode);
+    if(rs->size()==0)
+        return;
+
+    mitk::DataNode::Pointer modelFolderNode=rs->GetElement(0);
+
+    mitk::DataNode::Pointer exitingNode=GetDataStorage()->GetNamedDerivedNode(newModelName.toStdString().c_str(),modelFolderNode);
+    if(exitingNode){
+        QMessageBox::warning(m_Parent,"Model Already Created","Please use a different model name!");
+        return;
+    }
+
+    svModelElement* modelElement=NULL;
+
+    mitk::ProgressBar::GetInstance()->Reset();
+    mitk::ProgressBar::GetInstance()->AddStepsToDo(2);
+    mitk::StatusBar::GetInstance()->DisplayText("Converting to PolyData model...");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOn();
+
+#ifdef SV_USE_OPENCASCADE
+    if(m_ModelType=="OpenCASCADE")
+    {
+        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
+        if(meocct)
+        {
+            svModelElementPolyData* mepd=new svModelElementPolyData();
+            mepd->SetSegNames(meocct->GetSegNames());
+
+            vtkSmartPointer<vtkPolyData> wholevpd=NULL;
+            if(meocct->GetWholeVtkPolyData())
+            {
+                wholevpd=vtkSmartPointer<vtkPolyData>::New();
+                wholevpd->DeepCopy(meocct->GetWholeVtkPolyData());
+            }
+            mepd->SetWholeVtkPolyData(wholevpd);
+
+            std::vector<svModelElement::svFace*> faces;
+            std::vector<svModelElement::svFace*> oldFaces=meocct->GetFaces();
+            for(int i=0;i<oldFaces.size();i++)
+            {
+                if(oldFaces[i])
+                {
+                    svModelElement::svFace* face=new svModelElement::svFace(*(oldFaces[i]),false);
+
+                    vtkSmartPointer<vtkPolyData> facevpd=NULL;
+                    if(oldFaces[i]->vpd)
+                    {
+                        facevpd=vtkSmartPointer<vtkPolyData>::New();
+                        facevpd->DeepCopy(oldFaces[i]->vpd);
+                    }
+                    face->vpd=facevpd;
+                    faces.push_back(face);
+                }
+            }
+            mepd->SetFaces(faces);
+            modelElement=mepd;
+        }
+    }
+#endif
+
+    mitk::StatusBar::GetInstance()->DisplayText("PolyData model has been created.");
+    mitk::ProgressBar::GetInstance()->Progress();
+    WaitCursorOff();
+
+    if(modelElement==NULL)
+        return;
+
+    svModel::Pointer solidModel=svModel::New();
+    solidModel->SetDataModified();
+    solidModel->SetType(modelElement->GetType());
+    solidModel->SetModelElement(modelElement);
+
+    mitk::DataNode::Pointer solidModelNode = mitk::DataNode::New();
+    solidModelNode->SetData(solidModel);
+    solidModelNode->SetName(newModelName.toStdString());
+
+    GetDataStorage()->Add(solidModelNode,modelFolderNode);
 }

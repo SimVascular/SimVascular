@@ -3,47 +3,43 @@
 
 #include <vtkCellData.h>
 
-// dummy prototype, must be overridden
-vtkSmartPointer<vtkPolyData> svModelElement::CreateFaceVtkPolyData(int id) {
-  vtkSmartPointer<vtkPolyData> foo;
-  return foo;
-}
-
 svModelElement::svModelElement()
     : m_Type("")
     , m_WholeVtkPolyData(NULL)
+    , m_NumSampling(0)
 {
 }
 
 svModelElement::svModelElement(const svModelElement &other)
     : m_Type(other.m_Type)
     , m_SegNames(other.m_SegNames)
+    , m_NumSampling(other.m_NumSampling)
 {
     int faceNum=other.m_Faces.size();
     m_Faces.resize(faceNum);
 
     for(int i=0;i<faceNum;i++)
     {
-        svFace* face=new svFace;
-        face->id=other.m_Faces[i]->id;
-        face->name=other.m_Faces[i]->name;
-        face->type=other.m_Faces[i]->type;
-        face->selected=other.m_Faces[i]->selected;
-        face->visible=other.m_Faces[i]->visible;
-        face->opacity=other.m_Faces[i]->opacity;
-        face->color[0]=other.m_Faces[i]->color[0];
-        face->color[1]=other.m_Faces[i]->color[1];
-        face->color[2]=other.m_Faces[i]->color[2];
+//        svFace* face=new svFace;
+//        face->id=other.m_Faces[i]->id;
+//        face->name=other.m_Faces[i]->name;
+//        face->type=other.m_Faces[i]->type;
+//        face->selected=other.m_Faces[i]->selected;
+//        face->visible=other.m_Faces[i]->visible;
+//        face->opacity=other.m_Faces[i]->opacity;
+//        face->color[0]=other.m_Faces[i]->color[0];
+//        face->color[1]=other.m_Faces[i]->color[1];
+//        face->color[2]=other.m_Faces[i]->color[2];
 
-        vtkSmartPointer<vtkPolyData> vpd=NULL;
-        if(other.m_Faces[i]->vpd)
-        {
-            vpd=vtkSmartPointer<vtkPolyData>::New();
-            vpd->DeepCopy(other.m_Faces[i]->vpd);
-        }
-        face->vpd=vpd;
+//        vtkSmartPointer<vtkPolyData> vpd=NULL;
+//        if(other.m_Faces[i]->vpd)
+//        {
+//            vpd=vtkSmartPointer<vtkPolyData>::New();
+//            vpd->DeepCopy(other.m_Faces[i]->vpd);
+//        }
+//        face->vpd=vpd;
 
-        m_Faces[i]=face;
+        m_Faces[i]=new svFace(*(other.m_Faces[i]),true);
     }
 
     m_WholeVtkPolyData=NULL;
@@ -407,6 +403,17 @@ svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(int face
     return NULL;
 }
 
+svModelElement::svBlendParamRadius* svModelElement::GetBlendParamRadius(std::string faceName1, std::string faceName2)
+{
+    for(int i=0;i<m_BlendRadii.size();i++)
+    {
+        if(m_BlendRadii[i] && m_BlendRadii[i]->faceName1==faceName1 &&  m_BlendRadii[i]->faceName2==faceName2)
+            return m_BlendRadii[i];
+    }
+
+    return NULL;
+}
+
 void svModelElement::RemoveFace(int faceID)
 {
     int idx=GetFaceIndex(faceID);
@@ -464,4 +471,14 @@ void svModelElement::ReplaceFaceIDForBlendParamRadii(int targetID, int loseID)
         }
     }
 
+}
+
+void svModelElement::SetNumSampling(int num)
+{
+    m_NumSampling=num;
+}
+
+int svModelElement::GetNumSampling()
+{
+    return m_NumSampling;
 }

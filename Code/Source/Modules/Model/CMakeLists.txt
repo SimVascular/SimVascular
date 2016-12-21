@@ -1,5 +1,14 @@
 set(lib svModel)
 
+set(OTHER_OPT_LIBS )
+
+if(SV_USE_OpenCASCADE)
+  set(OTHER_OPT_LIBS
+    ${OTHER_OPT_LIBS}
+    ${SV_LIB_OpenCASCADE_SOLID_NAME}
+  )
+endif()
+
 #svFunctionCreateModule( ${lib}
 #    FORCE_SHARED
 #    DEPENDS PUBLIC svSegmentation
@@ -7,6 +16,7 @@ set(lib svModel)
 #        ${SV_LIB_SOLID_NAME}
 #        ${SV_LIB_POLYDATA_SOLID_NAME}
 #        ${SV_LIB_THIRDPARTY_VMTK_NAME}
+#        ${OTHER_OPT_LIBS}
 #)
 
 #---------------------------------TRYING OLD----------------------------------
@@ -30,7 +40,8 @@ set_property(TARGET ${lib} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${
 target_link_libraries(${lib} svSegmentation
                              ${SV_LIB_SOLID_NAME}
                              ${SV_LIB_POLYDATA_SOLID_NAME}
-                             ${SV_LIB_THIRDPARTY_VMTK_NAME})
+                             ${SV_LIB_THIRDPARTY_VMTK_NAME}
+                             ${OTHER_OPT_LIBS})
 
 if(RESOURCE_FILES)
     set(res_dir resource)
