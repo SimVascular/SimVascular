@@ -12,6 +12,13 @@ set(H_FILES
     svModelObjectFactory.h
 )
 
+if(SV_USE_OpenCASCADE)
+  set(H_FILES
+      ${H_FILES}
+      svModelElementOCCT.h
+  )
+endif()
+
 set(CPP_FILES
     svModelUtils.cxx
     svModelElement.cxx
@@ -25,6 +32,13 @@ set(CPP_FILES
     svModelLegacyIO.cxx
     svModelObjectFactory.cxx
 )
+
+if(SV_USE_OpenCASCADE)
+  set(CPP_FILES
+      ${CPP_FILES}
+      svModelElementOCCT.cxx
+  )
+endif()
 
 set(RESOURCE_FILES
     Interactions/svModelInteraction.xml

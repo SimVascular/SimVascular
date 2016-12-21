@@ -1,6 +1,8 @@
 #include "svModelCreate.h"
 #include "ui_svModelCreate.h"
 
+#include "simvascular_options.h"
+
 #include "svModel.h"
 
 #include <mitkDataStorage.h>
@@ -27,6 +29,13 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateModel()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
     connect(ui->lineEditModelName, SIGNAL(returnPressed()), this, SLOT(CreateModel()));
+
+    ui->comboBoxType->clear();
+    ui->comboBoxType->addItem("PolyData");
+#ifdef SV_USE_OPENCASCADE
+    ui->comboBoxType->addItem("OpenCASCADE");
+#endif
+
     move(400,400);
 }
 
@@ -79,29 +88,17 @@ void svModelCreate::CreateModel()
         return;
     }
 
+    QString currentType=ui->comboBoxType->currentText().trimmed();
     int currentIndex=ui->comboBoxType->currentIndex();
 
     svModel::Pointer solidModel=svModel::New();
     solidModel->SetDataModified();
 //    int timeStep=m_TimeStep;
 
-    switch(currentIndex)
-    {
-    case 0:
-        solidModel->SetType("PolyData");
-        break;
-    case 1:
-        solidModel->SetType("Parasolid");
-        break;
-    case 2:
-        solidModel->SetType("OpenCASCADE");
-        break;
-    case 3:
-        solidModel->SetType("Discrete");
-        break;
-    default:
+    if(currentIndex<0 || currentType=="")
         return;
-    }
+
+    solidModel->SetType(currentType.toStdString());
 
     mitk::DataNode::Pointer solidModelNode = mitk::DataNode::New();
     solidModelNode->SetData(solidModel);

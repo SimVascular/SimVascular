@@ -1,5 +1,14 @@
 set(lib ${SV_LIB_MODULE_MODEL_NAME})
 
+set(OTHER_OPT_LIBS )
+
+if(SV_USE_OpenCASCADE)
+  set(OTHER_OPT_LIBS
+    ${OTHER_OPT_LIBS}
+    ${SV_LIB_OpenCASCADE_SOLID_NAME}
+  )
+endif()
+
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
@@ -16,7 +25,8 @@ simvascular_create_module(
   ${SV_LIB_MODULE_SEGMENTATION_NAME}
   ${SV_LIB_SOLID_NAME}
   ${SV_LIB_POLYDATA_SOLID_NAME}
-  ${SV_LIB_THIRDPARTY_VMTK_NAME})
+  ${SV_LIB_THIRDPARTY_VMTK_NAME}
+  ${OTHER_OPT_LIBS})
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)

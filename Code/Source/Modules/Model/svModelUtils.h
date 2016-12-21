@@ -3,10 +3,15 @@
 
 #include <svModelExports.h>
 
+#include "simvascular_options.h"
+
 #include "svContour.h"
 #include "svContourGroup.h"
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
+#ifdef SV_USE_OPENCASCADE
+   #include "svModelElementOCCT.h"
+#endif
 
 #include <mitkDataStorage.h>
 
@@ -15,17 +20,17 @@ class SVMODEL_EXPORT svModelUtils
 
 public:
 
-    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static vtkPolyData* CreatePolyData(std::vector<svContourGroup*> groups, int numSamplingPts, unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
-    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int stats[], unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
+    static svModelElementPolyData* CreateModelElementPolyData(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, int stats[], unsigned int t = 0, int noInterOut = 1, double tol = 1e-6);
 
     static vtkPolyData* CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID1, int faceID2, double radius, svModelElementPolyData::svBlendParam* param);
 
     static svModelElementPolyData* CreateModelElementPolyDataByBlend(svModelElementPolyData* mepdsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii, svModelElementPolyData::svBlendParam* param);
 
-    static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int addCaps, unsigned int t = 0,  svContourGroup::svLoftingParam* param = NULL);
+    static vtkPolyData* CreateLoftSurface(svContourGroup* contourGroup, int numSamplingPts, int addCaps, unsigned int t = 0,  svContourGroup::svLoftingParam* param = NULL);
 
-    static vtkPolyData* CreateLoftSurface(std::vector<svContour*> contourSet, svContourGroup::svLoftingParam* param, int addCaps);
+    static vtkPolyData* CreateLoftSurface(std::vector<svContour*> contourSet, int numSamplingPts, svContourGroup::svLoftingParam* param, int addCaps);
 
     static vtkPolyData* CreateOrientOpenPolySolidVessel(vtkPolyData* inpd);
 
@@ -74,6 +79,18 @@ public:
     static std::vector<svPathElement*> CreatePathElements(svModelElement* modelElement);
 
     static double CalculateVpdArea(vtkPolyData* vpd);
+
+#ifdef SV_USE_OPENCASCADE
+
+    static cvOCCTSolidModel* CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps);
+
+    static svModelElementOCCT* CreateModelElementOCCT(std::vector<mitk::DataNode::Pointer> segNodes, int numSamplingPts, double maxDist = 20.0, unsigned int t = 0);
+
+    static svModelElementOCCT* CreateModelElementOCCTByBlend(svModelElementOCCT* meocctsrc, std::vector<svModelElement::svBlendParamRadius*> blendRadii);
+
+
+#endif
+
 };
 
 #endif /* SVMODELUTILS_H */

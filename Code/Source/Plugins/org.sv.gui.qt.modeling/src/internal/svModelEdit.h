@@ -111,6 +111,10 @@ public slots:
 
     void UpdateBoxWidget(double idx);
 
+    void ChangeFacetSize();
+
+    void ConvertToPolyDataModel();
+
 public:
 
     int GetTimeStep();
