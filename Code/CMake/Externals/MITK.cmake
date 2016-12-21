@@ -54,6 +54,9 @@ if(SV_USE_${proj})
     set(VTK_LIBRARIES ${TEMP_VTK_LIBRARIES})
   else()
     simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+    # Copy of necessary resource files are in SV CMake dir. usResourceCompiler
+    # is in mitk bin directory
+    find_package(CppMicroServices)
   endif()
 endif()
 #-----------------------------------------------------------------------------

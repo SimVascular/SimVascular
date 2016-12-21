@@ -75,9 +75,6 @@ if(SV_USE_QT_GUI)
     endforeach()
     include_directories(${QT_INCLUDE_DIRS})
 
-    # Copy of necessary resource files are in SV CMake dir. usResourceCompiler
-    # is in mitk bin directory
-    find_package(CppMicroServices)
   endif()
 endif()
 #-----------------------------------------------------------------------------
