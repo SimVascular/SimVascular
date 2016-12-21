@@ -14,7 +14,7 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
-export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/ext"
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Externals/Build/Externals"
 #Qt5
 export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 
@@ -64,7 +64,7 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
    -DTCL_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/tcltk-8.6.4" \
    -DPYTHON_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/python-2.7.11" \
    -DFREETYPE_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/bin/clang-7.0/x64/freetype-2.6.3" \
-   -DMITK_DIR="/Users/adamupdegrove/Documents/Software/MITK-11-21-2016/Build/MITK-build" \
+   -DMITK_DIR="$REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR/build/mitk-2016.03/MITK-build" \
    -DSV_USE_MITK_CONFIG=ON \
 \
    -Qt5_DIR=$Qt5_DIR \

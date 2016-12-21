@@ -34,6 +34,10 @@ if(SV_USE_${proj})
     set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
   endif()
   if(SV_USE_${proj}_CONFIG)
+    # ITK resets the vtk dir and variables (very annoying), must set temp vars
+    # vtk dir to reset at the end
+    set(TEMP_VTK_DIR ${VTK_DIR})
+    set(TEMP_VTK_LIBRARIES ${VTK_LIBRARIES})
     find_package(${proj} NO_MODULE)
     set(${proj}_LIBRARIES
       MitkCore
@@ -45,6 +49,9 @@ if(SV_USE_${proj})
       MitkSegmentationUI
       MitkSegmentation
       MitkSceneSerialization)
+    # Reset VTK vars
+    set(VTK_DIR ${TEMP_VTK_DIR} CACHE PATH "Must reset VTK dir after processing ${proj}" FORCE)
+    set(VTK_LIBRARIES ${TEMP_VTK_LIBRARIES})
   else()
     simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
   endif()
