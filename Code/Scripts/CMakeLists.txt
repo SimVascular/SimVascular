@@ -12,16 +12,14 @@ if(WIN32 AND NOT UNIX)
 	set_env_string_concat(SV_HOME "%~dp0" core_str)
 endif()
 
-set(core_vars 	SV_OS SOFTWARE_PLATFORM COMPILER_VERSION
+set(core_vars SV_OS SOFTWARE_PLATFORM COMPILER_VERSION
 	SV_VERSION OPEN_SOFTWARE_BINARIES_TOPLEVEL
 	LICENSED_SOFTWARE_TOPLEVEL SV_STATIC_BUILD)
-
 
 foreach(var ${core_vars})
 	set_env_string_concat(${var} "\@${var}\@" core_str)
 	string(CONFIGURE "${core_str}" core_str @ONLY)
 endforeach()
-
 
 set(SCRIPT_FILES ${HOME_FILE_STRING})
 if(UNIX)
@@ -75,128 +73,61 @@ endif()
 
 #----------------------------------------------------------------------------
 # Opensource Externals Install Rules
-#----------------------------------------------------------------------------
-foreach(lib ${SV_EXTERNAL_SHARED_LIBS})
-        dev_message("SV_USE_SYSTEM_${lib} ${SV_USE_SYSTEM_${lib}}")
+set(developer_script_string "${developer_script_string}# Externals link directories\n")
+set(install_script_string "${install_script_string}# Externals link directories\n")
+
+foreach(proj ${SV_EXTERNAL_SHARED_LIBS})
+  dev_message("Install ${proj}")
+  dev_message("SV_${lib}_DIR: ${SV_${proj}_DIR}")
 	# For Each library that we have linked against
-	if(${lib}_DLL_PATH)
-	        dev_message("${lib}_DLL_PATH: ${${lib}_DLL_PATH}")
+	if(${proj}_DLL_PATH)
+	  dev_message("${proj}_DLL_PATH: ${${proj}_DLL_PATH}")
 		# If there is a DLL path associated with it, go ahead and add it to the scripts
-		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" developer_script_string)
+		append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${proj}_DLL_PATH}" developer_script_string)
 	endif()
 
 	# on unix systems we only need this path if its installed (moved)
 	# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
-	if(SV_INSTALL_${lib}_LIBRARY_DIR)
-		#if there is an install library directory, add it to the path for installation, it will be installed there.
-                append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${lib}_DIR}/lib" developer_script_string)
+	if(SV_INSTALL_${proj}_LIBRARY_DIR)
+  #if there is an install library directory, add it to the path for installation, it will be installed there.
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/lib" developer_script_string)
 		if(NOT SV_ENABLE_DISTRIBUTION)
-		  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_${lib}_LIBRARY_DIR}" install_script_string)
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${proj}_LIBRARY_DIR}" install_script_string)
 		endif()
 	endif()
-	if(SV_INSTALL_${lib}_RUNTIME_DIR)
-		# if there is an install runtime directory, add it to the path for installation
-		# set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
-			# 	<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
-			# 		Value='[INSTALL_ROOT]\\${SV_INSTALL_${lib}_RUNTIME_DIR}'
-			# 		Permanent='yes' Part='last' Action='set' System='yes' />")
-                        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${lib}_DIR}/bin" developer_script_string)
+	if(SV_INSTALL_${proj}_RUNTIME_DIR)
+    # if there is an install runtime directory, add it to the path for installation
+    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/bin" developer_script_string)
 		if(NOT SV_ENABLE_DISTRIBUTION)
-		  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_${lib}_RUNTIME_DIR}" install_script_string)
+		  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${proj}_RUNTIME_DIR}" install_script_string)
 		endif()
 	endif()
-	if(NOT SV_USE_SYSTEM_${lib})
-        else()
-	        if(${lib}_DLL_PATH)
-		        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${${lib}_DLL_PATH}" install_script_string)
-	        endif()
-        endif()
 endforeach()
+
 if(SV_ENABLE_DISTRIBUTION)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/lib" install_script_string)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/lib/plugins" install_script_string)
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib" install_script_string)
+  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib/plugins" install_script_string)
 endif()
-# This is a catch all if no DLL_PATH was specified but we will need the so for installed libraries.
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}" install_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}" install_script_string)
-append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}/plugins" install_script_string)
-set_env_string_concat(DYLD_FALLBACK_FRAMEWORK_PATH "${ENV_SV_HOME}/Externals/lib" install_script_string)
-# set(FRAGMENT_INJECTION_STRING "${FRAGMENT_INJECTION_STRING}
-	# 				<Environment Id='UpdatePath.runtime.${lib}' Name='PATH'
-	# 					Value='[INSTALL_ROOT]\\@SV_INSTALL_EXTERNALS_RUNTIME_DIR@'
-	# 					Permanent='yes' Part='last' Action='set' System='yes' />")
+#----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
 # TCL Install Rules
-#----------------------------------------------------------------------------
+set(developer_script_string "${developer_script_string}\n# Tcl environment variables\n")
+set(install_script_string "${install_script_string}\n# Tcl environment variables\n")
+
 if(SV_USE_TKCXIMAGE)
 	if(TKCXIMAGE_DLL)
 		set_env_string_concat(TKCXIMAGE_DLL "${TKCXIMAGE_DLL}" developer_script_string)
 	endif()
 endif()
 
-if (SV_USE_SYSTEM_TCL)
-	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.6" developer_script_string)
-	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.6" developer_script_string)
-endif()
-
-if(NOT SV_USE_SYSTEM_TCL OR SV_INSTALL_SYSTEM_LIBS)
-	#Lib additions
-	set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.6" developer_script_string)
-	set_env_string_concat(TK_LIBRARY "${TK_LIBRARY_PATH}/tk8.6" developer_script_string)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${TCL_LIBRARY_PATH}" developer_script_string)
-	set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/Externals/${SV_INSTALL_TCL_LIBRARY_DIR}/tcl8.6" install_script_string)
-	set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/Externals/${SV_INSTALL_TCL_LIBRARY_DIR}/tk8.6" install_script_string)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_TCL_LIBRARY_DIR}" install_script_string)
-endif()
-if(SV_ENABLE_DISTRIBUTION)
-  set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/Externals/lib/tcl8.6" install_script_string)
-  set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/Externals/lib/tk8.6" install_script_string)
-endif()
-
-#----------------------------------------------------------------------------
-# PYTHON Install Rules
-#----------------------------------------------------------------------------
-if(SV_USE_PYTHON)
-      if(PYTHON_SITE_PACKAGES)
-	       append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)
-	       append_env_string_concat(PYTHONPATH "${PYTHON_CORE_PACKAGES}" developer_script_string)
-	       append_env_string_concat(PATH "${PYTHON_DLL_PATH}" developer_script_string)
-      endif()
-      if(SV_USE_SYSTEM_VTK)
-	if(VTK_DLL_PATH)
-	 append_env_string_concat(PYTHONPATH "${VTK_DLL_PATH}" developer_script_string)
-	endif()
-	if(VTK_PYTHON_SITE_PACKAGES)
-	 append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
-       endif()
-    endif()
-    append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/bin" developer_script_string)
-    append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
-    append_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
-    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_VTK_DIR}/bin" developer_script_string)
-    if(SV_ENABLE_DISTRIBUTION)
-      set_env_string_concat(PYTHONHOME "${ENV_SV_HOME}/Externals" install_script_string)
-      set_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/Externals/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
-    else()
-      append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/Externals/${SV_INSTALL_VTK_LIBRARY_DIR}/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
-      append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/Externals/${SV_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
-      append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/Externals/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
-      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_VTK_RUNTIME_DIR}" install_script_string)
-    endif()
-endif()
+set_env_string_concat(TCL_LIBRARY "${TCL_LIBRARY_PATH}/tcl8.6" developer_script_string)
+set_env_string_concat(TK_LIBRARY "${TCL_LIBRARY_PATH}/tk8.6" developer_script_string)
+set_env_string_concat(TCL_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tcl8.6" install_script_string)
+set_env_string_concat(TK_LIBRARY "${ENV_SV_HOME}/${SV_INSTALL_TCL_LIBRARY_DIR}/tk8.6" install_script_string)
 
 #----------------------------------------------------------------------------
 # VTK TCL Install Rules
-#----------------------------------------------------------------------------
-if (NOT SV_USE_SYSTEM_VTK)
-  if(SV_USE_VTK_SHARED)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_VTK_DIR}/lib" developer_script_string)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_VTK_LIBRARY_DIR}" install_script_string)
-  endif()
-endif()
-
 if(DEFINED ENV{TCLLIBPATH})
   set_env_string_concat(TCLLIBPATH "$ENV{TCLLIBPATH}" developer_script_string)
 else()
@@ -204,55 +135,58 @@ else()
     set_env_string_concat(TCLLIBPATH "${SV_VTK_DIR}/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" developer_script_string)
   endif()
 endif()
-if(SV_ENABLE_DISTRIBUTION)
-  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" install_script_string)
-else()
-  set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/Externals/${SV_EXT_VTK_BIN_DIR}/lib/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" install_script_string)
-endif()
+set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}/tcltk/vtk-${VTK_MAJOR_VERSION}.${VTK_MINOR_VERSION}" install_script_string)
+#----------------------------------------------------------------------------
 
 #----------------------------------------------------------------------------
-# ITK Install Rules
-#----------------------------------------------------------------------------
-# ITK built as shared for install
-if (NOT SV_USE_SYSTEM_ITK)
-  if(SV_USE_ITK AND SV_USE_ITK_SHARED)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_ITK_DIR}/lib" developer_script_string)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_ITK_LIBRARY_DIR}" install_script_string)
+# PYTHON Install Rules
+if(SV_USE_PYTHON)
+  set(developer_script_string "${developer_script_string}\n# Python environment variables\n")
+  set(install_script_string "${install_script_string}\n# Python environment variables\n")
+
+  # PYTHONHOME
+  set_env_string_concat(PYTHONHOME "${SV_PYTHON_DIR}" developer_script_string)
+  set_env_string_concat(PYTHONHOME "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_RUNTIME_DIR}/.." install_script_string)
+
+  # PYTHONPATH
+  set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
+  append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
+  set_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_LIBRARY_DIR}/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
+  if(NOT SV_ENABLE_DISTRIBUTION)
+    append_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
   endif()
-endif()
 
-#----------------------------------------------------------------------------
-# OpenCASCADE Install Rules
-#----------------------------------------------------------------------------
-# If using opencascade for install
-if (NOT SV_USE_SYSTEM_OpenCASCADE)
-  if(OpenCASCADE_DIR)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_OpenCASCADE_DIR}/lib" developer_script_string)
-        append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/Externals/${SV_INSTALL_OpenCASCADE_LIBRARY_DIR}" install_script_string)
+  # Add to PYTHONHOME or PYTHONPATH if SITE_PACAKGES information is given
+	if(VTK_PYTHON_SITE_PACKAGES)
+	  append_env_string_concat(PYTHONPATH "${VTK_PYTHON_SITE_PACKAGES}" developer_script_string)
   endif()
- endif()
+  if(PYTHON_SITE_PACKAGES)
+    append_env_string_concat(PYTHONPATH "${PYTHON_SITE_PACKAGES}" developer_script_string)
+    append_env_string_concat(PYTHONPATH "${PYTHON_CORE_PACKAGES}" developer_script_string)
+    append_env_string_concat(PATH "${PYTHON_DLL_PATH}" developer_script_string)
+  endif()
 
-# DONT THINK WE SHOULD HAVE THESE!
-# If using system installs, add paths to shared libs if needed
-if(SV_USE_SYSTEM_GDCM AND GDCM_DLL_PATH)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${GDCM_DLL_PATH}" developer_script_string)
 endif()
-if(SV_USE_SYSTEM_OpenCASCADE AND OpenCASCADE_DLL_PATH)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${OpenCASCADE_DLL_PATH}" developer_script_string)
-endif()
-if(SV_USE_SYSTEM_QT AND QT_DLL_PATH)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${QT_DLL_PATH}" developer_script_string)
-endif()
-if(SV_USE_SYSTEM_TCL AND TCL_DLL_PATH)
-	append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${TCL_DLL_PATH}" developer_script_string)
-endif()
+#----------------------------------------------------------------------------
 
-# need the path to the dll's
+#----------------------------------------------------------------------------
+# This is a catch all if no DLL_PATH was specified but we will need the so for installed libraries.
+set(developer_script_string "${developer_script_string}\n# SimVascular runtime locations\n")
+set(install_script_string "${install_script_string}\n# SimVascular runtime locations\n")
+
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_RUNTIME_DIR}" install_script_string)
+append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}/plugins" install_script_string)
+set_env_string_concat(DYLD_FALLBACK_FRAMEWORK_PATH "${ENV_SV_HOME}/${SV_EXTERNALS_INSTALL_PREFIX}/lib" install_script_string)
+
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib/plugins" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Lib" developer_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${CMAKE_BINARY_DIR}/Bin/RelWithDebInfo" developer_script_string)
+#----------------------------------------------------------------------------
 
+#----------------------------------------------------------------------------
 configure_file(${SV_SOURCE_DIR}/../Distribution/windows/registry-patch-notargets.xml.in "${TEMP_DIR}/patch.xml" @ONLY)
 set(PREAMBLE_DEVELOPER_FILE "${TEMP_DIR}/developer-preample")
 set(PREAMBLE_INSTALL_FILE "${TEMP_DIR}/install-preample")
@@ -292,14 +226,13 @@ foreach(tar ${SV_SCRIPT_TARGETS})
 	if(UNIX)
 		file(APPEND ${INSTALL_SYMLINK_FILE} "rm -f /usr/local/bin/${${tar}_INSTALL_SCRIPT_NAME}${WIN_BAT}\n")
 		file(APPEND ${INSTALL_SYMLINK_FILE} "ln -s $DIR/${${tar}_INSTALL_SCRIPT_NAME}${WIN_BAT} /usr/local/bin/${${tar}_INSTALL_SCRIPT_NAME}${WIN_BAT}\n")
-		#file(APPEND ${INSTALL_SYMLINK_FILE} "chmod a+x /usr/local/bin/${${tar}_INSTALL_SCRIPT_NAME}${WIN_BAT}\n")
 	endif()
 endforeach()
 if(UNIX)
 	install(PROGRAMS ${INSTALL_SYMLINK_FILE} DESTINATION ${SV_INSTALL_SCRIPT_DIR})
 	install(FILES "README-install" DESTINATION ${SV_INSTALL_SCRIPT_DIR})
-	#install(CODE "execute_process(COMMAND \"${INSTALL_SYMLINK_FILE}\"")")
 endif()
 if(BUILD_TESTING)
 	configure_file(executable_names.tcl.in ${SV_TEST_DIR}/common/executable_names.tcl)
 endif()
+#----------------------------------------------------------------------------

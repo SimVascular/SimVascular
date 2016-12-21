@@ -30,6 +30,7 @@ $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CMakeExternals/Install/include $MITK_BIN
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CMakeExternals/Install/lib $MITK_BINDIR
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*@CMAKE_SHARED_LIBRARY_SUFFIX@ $MITK_BINDIR/lib
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/qRestAPI-build/*.h $MITK_BINDIR/include
+mv $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/Python $MITK_BINDIR/ep/src/CTK-build/CTK-build/bin/CTKPython
 $GCP -Rfl $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/* $MITK_BINDIR/bin
 $GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/*CTK*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib
 $GCP -rfl -d $MITK_BLDDIR/ep/src/CTK-build/CTK-build/bin/liborg*@CMAKE_SHARED_LIBRARY_SUFFIX@* $MITK_BINDIR/lib/plugins

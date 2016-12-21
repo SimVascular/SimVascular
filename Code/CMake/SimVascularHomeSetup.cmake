@@ -25,6 +25,39 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #-----------------------------------------------------------------------------
+# Environment Home
+SET(USER_HOME_DIR $ENV{HOME})
+if(SV_DEVELOPER_OUTPUT)
+	message(STATUS "Home dir: ${USER_HOME_DIR}")
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Install root dir
+if(NOT SV_INSTALL_ROOT_DIR)
+  set(SV_INSTALL_ROOT_DIR "SV")
+endif()
+if(NOT WIN32)
+  if(NOT CMAKE_INSTALL_PREFIX MATCHES "${SV_INSTALL_ROOT_DIR}")
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
+  endif()
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Set platforms directories
+if(APPLE)
+  set(SV_PLATFORM_DIR "mac_osx")
+elseif(LINUX)
+  set(SV_PLATFORM_DIR "linux")
+elseif(WIN64)
+  set(SV_PLATFORM_DIR "win")
+else()
+  set(SV_PLATFORM_DIR "unsupported")
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Temp dir for TCL
 if(NOT TEMP_DIR)
   set(TEMP_DIR ${SV_BINARY_DIR}/tmp)

@@ -76,7 +76,7 @@ set(${proj}_LIBRARIES ${${proj}_LIBRARIES} vtkCommonCoreTCL)
 if(NOT SV_INSTALL_${proj}_TCL_DIR)
   set(SV_INSTALL_${proj}_TCL_DIR ${SV_EXT_${proj}_BIN_DIR}/lib/tcltk/vtk-${${proj}_MAJOR_VERSION}.${${proj}_MINOR_VERSION})
 endif()
-  # Set SV_VTK_DIR to the toplevel VTK if it exists
+# Set SV_VTK_DIR to the toplevel VTK if it exists
 simvascular_get_external_path_from_include_dir(${proj})
 # Finally add VTK_DIR to the front of prefix path so that the correct vtk
 # is found by itk

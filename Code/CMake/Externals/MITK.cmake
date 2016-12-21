@@ -57,6 +57,8 @@ if(SV_USE_${proj})
     # Copy of necessary resource files are in SV CMake dir. usResourceCompiler
     # is in mitk bin directory
     find_package(CppMicroServices)
+    # Set SV_MITK_DIR to the toplevel MITK if it exists
+    get_filename_component(SV_${proj}_DIR ${${proj}_INCLUDE_DIR} DIRECTORY)
   endif()
 endif()
 #-----------------------------------------------------------------------------

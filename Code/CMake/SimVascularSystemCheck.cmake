@@ -93,59 +93,7 @@ if (NOT CMAKE_CXX_COMPILER_VERSION)
                        version with -DCMAKE_CXX_COMPILER_VERSION='major_version'.'minor_version'")
 endif()
 simvascular_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
-#-----------------------------------------------------------------------------
 
-#-----------------------------------------------------------------------------
-# Environment Home
-SET(USER_HOME_DIR $ENV{HOME})
-if(SV_DEVELOPER_OUTPUT)
-	message(STATUS "Home dir: ${USER_HOME_DIR}")
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Install root dir
-if(NOT SV_INSTALL_ROOT_DIR)
-  set(SV_INSTALL_ROOT_DIR "SV")
-endif()
-if(NOT WIN32)
-  if(NOT CMAKE_INSTALL_PREFIX MATCHES "${SV_INSTALL_ROOT_DIR}")
-    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
-  endif()
-endif()
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Set external project directories
-set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "src")
-
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "bin")
-
-set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "build")
-
-set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "prefix")
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Set platforms directories
-if(APPLE)
-  set(SV_PLATFORM_DIR "mac_osx")
-elseif(LINUX)
-  set(SV_PLATFORM_DIR "linux")
-elseif(WIN64)
-  set(SV_PLATFORM_DIR "win")
-else()
-  set(SV_PLATFORM_DIR "unsupported")
-endif()
-
-#-----------------------------------------------------------------------------
-# Set src, build, bin dirs for externals
 string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
 set(SV_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
-
-set(SV_EXTERNALS_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_SRC_DIR}")
-set(SV_EXTERNALS_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_BLD_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
-set(SV_EXTERNALS_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_PFX_DIR}")
-set(SV_EXTERNALS_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/${SV_COMPILER_DIR}/${SV_ARCH_DIR}")
 #-----------------------------------------------------------------------------
-

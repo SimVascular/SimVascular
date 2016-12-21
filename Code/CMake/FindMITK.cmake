@@ -195,7 +195,7 @@ set(${proj}_LIBRARIES  ${${proj}_LIBRARIES_WORK} CACHE STRING
 # Clean up.  If all libraries were found remove cache entries.
 if(${proj}_LIBRARIES)
 	foreach(lib ${${proj}_LIBNAMES})
-		unset(${proj}_${lib}_LIBRARY CACHE)
+		unset(${proj}_${lib}_LIBRARY)
 	endforeach()
 	if(${proj}_NUMLIBS_EXPECTED EQUAL 1)
 		set(temp_path ${${proj}_LIBRARIES})
@@ -259,7 +259,7 @@ set(${proj}_PLUGIN_LIBRARIES  ${${proj}_PLUGIN_LIBRARIES_WORK} CACHE STRING
 # Clean up.  If all libraries were found remove cache entries.
 if(${proj}_PLUGIN_LIBRARIES)
   foreach(lib ${${proj}_PLUGIN_LIBNAMES})
-    unset(${proj}_${lib}_PLUGIN_LIBRARY CACHE)
+    unset(${proj}_${lib}_PLUGIN_LIBRARY)
 	endforeach()
         if(${proj}_NUMPLUGINS_EXPECTED EQUAL 1)
           set(temp_path ${${proj}_PLUGIN_LIBRARIES})
@@ -358,7 +358,6 @@ foreach(header ${${proj}_HEADERS})
                 list(REMOVE_ITEM ${proj}_HEADERS_MISSING ${header})
               endif()
 endforeach()
-
 
 list(LENGTH ${proj}_HEADERS_WORK ${proj}_NUMHEADERS)
 list(LENGTH ${proj}_HEADERS ${proj}_NUMHEADERS_EXPECTED)

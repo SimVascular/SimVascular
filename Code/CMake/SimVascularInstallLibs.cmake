@@ -186,7 +186,7 @@ foreach(exe ${EXTERNAL_EXES})
     )
 
   if(NOT EXTERNALEXE_${_EXE})
-    message(STATUS "${exe} was not found. Skipping install")
+    dev_message(STATUS "${exe} was not found. Skipping install")
     add_custom_target(${exe}-copy ALL
       COMMENT "${exe} was not found, functionality may be impaired"
       )
