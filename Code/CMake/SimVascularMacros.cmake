@@ -513,7 +513,7 @@ function(simvascular_generate_plugin_manifest QRC_SRCS)
     endforeach()
   endif()
 
-  set(_manifest_filename "MANIFEST.MF")
+  set(_manifest_filename "SimVascularManifest.mf")
   set(_manifest_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_manifest_filename}")
   string(REPLACE "." "_" _symbolic_name ${MY_SYMBOLIC_NAME})
   set(_manifest_qrc_filepath "${CMAKE_CURRENT_BINARY_DIR}/${_symbolic_name}_manifest.qrc")
@@ -526,8 +526,8 @@ function(simvascular_generate_plugin_manifest QRC_SRCS)
 </RCC>
 ")
 
-  configure_file("${SV_SOURCE_DIR}/CMake/MANIFEST.MF.in" "${_manifest_filepath}" @ONLY)
-  configure_file("${SV_SOURCE_DIR}/CMake/plugin_manifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
+  configure_file("${SV_SOURCE_DIR}/CMake/SimVascularManifest.mf.in" "${_manifest_filepath}" @ONLY)
+  configure_file("${SV_SOURCE_DIR}/CMake/SimVascularPluginManifest.qrc.in" "${_manifest_qrc_filepath}" @ONLY)
 
   if (CTK_QT_VERSION VERSION_GREATER "4")
     QT5_ADD_RESOURCES(_qrc_src ${_manifest_qrc_filepath})
@@ -650,7 +650,7 @@ macro(simvascular_generate_plugin_resource_file QRC_SRCS)
   set(_qrc_content "${_qrc_content}</qresource>
 </RCC>
 ")
-configure_file("${SV_SOURCE_DIR}/CMake/plugin_resources_cached.qrc.in" "${_qrc_filepath}" @ONLY)
+configure_file("${SV_SOURCE_DIR}/CMake/SimVascularPluginResources.qrc.in" "${_qrc_filepath}" @ONLY)
 
   qt5_add_resources(${QRC_SRCS} ${_qrc_filepath})
 

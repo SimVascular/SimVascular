@@ -132,7 +132,6 @@ set(SV_CORE_EXECUTABLE_DIRS "")
 
 #-----------------------------------------------------------------------------
 # Tcl Python Setup
-#-----------------------------------------------------------------------------
 include(SimVascularTclSetup)
 include(SimVascularPythonSetup)
 #-----------------------------------------------------------------------------
@@ -157,7 +156,25 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
+	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
+	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
+		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
+	add_custom_target(doc
+		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API documentation with Doxygen" VERBATIM
+		)
+endif(DOXYGEN_FOUND)
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
 # Optional Core Libs
+#-----------------------------------------------------------------------------
 # Tetgen
 if(SV_USE_TETGEN)
 	set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS} "Source/Mesh/TetGenMeshObject")
@@ -246,22 +263,6 @@ set(SV_CORE_EXECUTABLE_DIRS ${SV_CORE_EXECUTABLE_DIRS} "Source/UI")
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
-	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
-	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
-		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
-	add_custom_target(doc
-		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen" VERBATIM
-		)
-endif(DOXYGEN_FOUND)
-#-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
 # Enable Testing
 if(BUILD_TESTING)
 	enable_testing()
@@ -308,9 +309,7 @@ set(INDENTS "")
 # Include the Core subdirs
 # These are handled here because other sub directories depend on them
 # set
-set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS}
-			 	"Source/Include"
-			 	)
+set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS} "Source/Include")
 if(SV_USE_THREEDSOLVER)
   set(SV_INCLUDE_DIRS ${SV_INCLUDE_DIRS} "svSolver/Code/FlowSolvers/Include")
 endif()
@@ -328,6 +327,16 @@ endforeach()
 
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
 	include_directories("${dir}")
+endforeach()
+
+foreach(dir ${SV_MODULE_DIRS})
+	include_directories(${SV_SOURCE_DIR}/${dir})
+  include_directories(${SV_BINARY_DIR}/${dir})
+endforeach()
+
+foreach(dir ${SV_PLUGIN_DIRS})
+	include_directories(${SV_SOURCE_DIR}/${dir})
+  include_directories(${SV_BINARY_DIR}/${dir})
 endforeach()
 #-----------------------------------------------------------------------------
 
@@ -348,10 +357,6 @@ endforeach()
 
 # Add the Modules
 message(STATUS "Modules:")
-foreach(dir ${SV_MODULE_DIRS})
-	include_directories(${SV_SOURCE_DIR}/${dir})
-  include_directories(${SV_BINARY_DIR}/${dir})
-endforeach()
 foreach(dir ${SV_MODULE_DIRS})
   message(STATUS "	${dir}")
   include_directories("${dir}")

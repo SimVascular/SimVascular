@@ -27,8 +27,7 @@ export REPLACEME_SV_CPACK_CMD="cpack"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
-#export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/sv_externals"
-export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Externals/Build/Externals/bin/clang-7.0/x64"
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/sv_externals"
 #Qt5
 export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 
