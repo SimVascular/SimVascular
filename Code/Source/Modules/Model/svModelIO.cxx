@@ -2,7 +2,9 @@
 #include "svModel.h"
 #include "svModelElementPolyData.h"
 
-#ifdef SV_USE_OPENCASCADE
+#include "simvascular_options.h"
+
+#ifdef SV_USE_OpenCASCADE
 #include "svModelElementOCCT.h"
 #endif
 
@@ -103,7 +105,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
             }
 
-#ifdef SV_USE_OPENCASCADE
+#ifdef SV_USE_OpenCASCADE
             if(type=="OpenCASCADE")
             {
                 me=new svModelElementOCCT();
@@ -366,7 +368,7 @@ void svModelIO::Write()
             }
         }
 
-#ifdef SV_USE_OPENCASCADE
+#ifdef SV_USE_OpenCASCADE
         if(me->GetType()=="OpenCASCADE")
         {
             //for OpenCASCADE
@@ -397,7 +399,7 @@ void svModelIO::Write()
             }
         }
 
-#ifdef SV_USE_OPENCASCADE
+#ifdef SV_USE_OpenCASCADE
         if(me->GetType()=="OpenCASCADE")
         {
             std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".brep";
