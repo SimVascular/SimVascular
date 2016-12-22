@@ -5,7 +5,7 @@
 
 #include "simvascular_options.h"
 
-#ifdef SV_USE_OPENCASCADE
+#ifdef SV_USE_OpenCASCADE
 #include "cv_globals.h"
 #include <TDocStd_Document.hxx>
 #include <XCAFDoc_DocumentTool.hxx>
@@ -114,7 +114,7 @@ RegistersvModelObjectFactory::RegistersvModelObjectFactory()
     mitk::CoreObjectFactory::GetInstance()->RegisterExtraFactory( m_Factory );
     m_ModelIO=new svModelIO();
 
-#ifdef SV_USE_OPENCASCADE
+#ifdef SV_USE_OpenCASCADE
     Handle(XCAFApp_Application) OCCTManager = static_cast<XCAFApp_Application*>(gOCCTManager);
     //gOCCTManager = new AppStd_Application;
     OCCTManager = XCAFApp_Application::GetApplication();
