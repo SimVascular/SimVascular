@@ -24,48 +24,39 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(SV_EXTERN_POSSIBLE_DIRS ${USER_HOME_DIR}/Externals /sv_extern C:/cygwin/sv_extern/
-	/c/cygwin/sv_extern/ c:/sv_extern/)
-
-if(LINUX)
-	set(SV_EXTERN_DEFAULT "/Externals")
-	set(OpenLibs_Bin_REL_PATH "bin/linux/intel_13.0/x64" CACHE PATH "sv extern open lib directory")
-	set(LicensedLibs_Bin_REL_PATH "/licensed" CACHE PATH "sv extern licensed lib directory")
+#-----------------------------------------------------------------------------
+# TCL
+set(proj TCL)
+# If using toplevel dir, foce TCL_DIR to be the SV_TCL_DIR set by the
+# simvascular_add_new_external macro
+if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+  set(${proj}_DIR ${SV_${proj}_DIR} CACHE PATH "Force ${proj} dir to externals" FORCE)
 endif()
+# Find TCL
+simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
+# Set SV_TCL_DIR to the directory that was found to contain TCL
+set(SV_${proj}_DIR ${${proj}_DIR})
 
-if(CYGWIN AND NOT IS64)
-	set(SV_EXTERN_DEFAULT "/Externals")
-	set(OpenLibs_Bin_REL_PATH "bin/win/vs10sp1/x86")
-	set(LicensedLibs_Bin_REL_PATH "/licensed/")
+# Get found ${proj} version
+get_filename_component(${proj}_LIBRARY_PATH "${${proj}_LIBRARY}" PATH)
+link_directories(${${proj}_LIBRARY_PATH})
+# TCL has two include directories, the macro only includes one.
+include_directories(${${proj}_INCLUDE_PATH} ${TK_INCLUDE_PATH})
+if(WIN32)
+	get_filename_component(${proj}_DLL_PATH "${${proj}_TCLSH}" PATH)
 endif()
+#-----------------------------------------------------------------------------
 
-if(CYGWIN AND IS64)
-	set(SV_EXTERN_DEFAULT /sv_extern/)
-	set(OpenLibs_Bin_REL_PATH "/sv_extern/bin/win/vs10sp1/x64")
-	set(LicensedLibs_Bin_REL_PATH "/licensed/")
+#-----------------------------------------------------------------------------
+# Tkcximage (Legacy)
+if(WIN32)
+	if(SV_USE_TKCXIMAGE)
+		find_library(TKCXIMAGE_DLL tkcximage)
+		if(TKCXIMAGE_DLL)
+			set(TKCXIMAGE_DLL_LIBRARY ${TKCXIMAGE_DLL})
+			get_filename_component(TKCXIMAGE_DLL_PATH ${TKCXIMAGE_DLL} DIRECTORY CACHE)
+			set(SV_EXTERNAL_SHARED_LIBS ${SV_EXTERNAL_SHARED_LIBS} "TKCXIMAGE")
+		endif()
+	endif()
 endif()
-
-if(WIN32 AND IS64 AND NOT CYGWIN)
-	set(SV_EXTERN_DEFAULT "C:/cygwin/sv_extern")
-	set(OpenLibs_Bin_REL_PATH "bin/win/vs10sp1/x64/")
-	set(LicensedLibs_Bin_REL_PATH "/licensed/")
-endif()
-
-if(APPLE AND CLANG)
-	set(SV_EXTERN_DEFAULT "${USER_HOME_DIR}/Externals")
-	set(OpenLibs_Bin_REL_PATH "bin/mac_osx/clang/x64/")
-	set(LicensedLibs_Bin_REL_PATH "/licensed/")
-endif()
-
-if(APPLE AND GNU)
-	set(SV_EXTERN_DEFAULT "${USER_HOME_DIR}/Externals")
-	set(OpenLibs_Bin_REL_PATH "bin/mac_osx/gnu/x64/")
-	set(LicensedLibs_Bin_REL_PATH "/licensed/")
-endif()
-
-
-set(SV_EXTERNALS_OPEN_BIN_DIR
-	${SV_EXTERN_DEFAULT}/${OpenLibs_Bin_REL_PATH} CACHE PATH "Location of")
-
-set(SV_EXTERN_LICENSED_BIN_DIR
-	${SV_EXTERN_DEFAULT}/${LicensedLibs_Bin_REL_PATH} CACHE PATH "Location of")
+#-----------------------------------------------------------------------------

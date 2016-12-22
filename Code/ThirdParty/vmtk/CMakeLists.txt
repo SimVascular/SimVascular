@@ -46,9 +46,9 @@ set(CXXSRCS cv_VMTK_utils.cxx vtkvmtkBoundaryLayerGenerator.cxx
 	vtkvmtkCapPolyData.cxx vtkvmtkSurfaceProjection.cxx
 	vtkvmtkPolyDataToUnstructuredGridFilter.cxx vtkvmtkSimpleCapPolyData.cxx
 	vtkvmtkUnstructuredGridTetraFilter.cxx vtkvmtkAppendFilter.cxx
-        vtkvmtkMinHeap.cxx vtkvmtkNonManifoldSteepestDescent.cxx
-        vtkvmtkVoronoiDiagram3D.cxx vtkvmtkNonManifoldFastMarching.cxx
-        vtkvmtkSimplifyVoronoiDiagram.cxx vtkvmtkInternalTetrahedraExtractor.cxx
+  vtkvmtkMinHeap.cxx vtkvmtkNonManifoldSteepestDescent.cxx
+  vtkvmtkVoronoiDiagram3D.cxx vtkvmtkNonManifoldFastMarching.cxx
+  vtkvmtkSimplifyVoronoiDiagram.cxx vtkvmtkInternalTetrahedraExtractor.cxx
 	vtkvmtkSteepestDescentLineTracer.cxx vtkvmtkPolyDataCenterlines.cxx
 	vtkvmtkCenterlineBranchExtractor.cxx vtkvmtkCenterlineSphereDistance.cxx
 	vtkvmtkCenterlineUtilities.cxx vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
@@ -84,8 +84,6 @@ endif()
 
 target_link_libraries(${lib}
 	${VTK_LIBRARIES}
-	${TCL_LIBRARY}
-	${TK_LIBRARY}
 	)
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

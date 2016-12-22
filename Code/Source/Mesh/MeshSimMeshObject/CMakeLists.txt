@@ -27,41 +27,39 @@
  # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  #
  #=========================================================================#
-SET(lib ${SV_LIB_MESHSIM_MESH_NAME})
-SET(CXXSRCS cvMeshSimMeshObject.cxx
+set(lib ${SV_LIB_MESHSIM_MESH_NAME})
+set(CXXSRCS cvMeshSimMeshObject.cxx
           cvMeshSimMeshSystem.cxx stats.cxx scorecXYZ.cxx)
-SET(HDRS cvMeshSimMeshObject.h
+set(HDRS cvMeshSimMeshObject.h
   cvMeshSimMeshSystem.h)
 
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
-    add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 else()
-    add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_mesh_init.cxx)
+  add_library(${lib} STATIC ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 endif()
 
 if(SV_USE_ADAPTOR)
-    include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
+  include_directories(${SV_SOURCE_DIR}/FlowSolvers/ThreeDSolver/SolverIO/)
 endif()
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES}
-			${GLOBAL_LIBRARIES}
-			${MESHSIM_LIBRARIES}
-			${SV_LIB_MESH_NAME}
-			${SV_LIB_GLOBALS_NAME}
-			${SV_LIB_UTILS_NAME})
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${PARASOLID_LIBRARIES}
+	${MESHSIM_LIBRARIES}
+	${SV_LIB_MESH_NAME}
+	${SV_LIB_GLOBALS_NAME}
+	${SV_LIB_UTILS_NAME})
 
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
 	target_link_libraries(${lib} ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
 endif()
 if(SV_USE_PARASOLID)
-    target_link_libraries(${lib} ${SV_LIB_PARASOLID_SOLID_NAME})
+  target_link_libraries(${lib} ${SV_LIB_PARASOLID_SOLID_NAME})
 endif()
 
 if(SV_USE_ADAPTOR)
-    target_link_libraries(${lib} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
-	    #${SV_LIB_SOLVERIO_NAME})
+  target_link_libraries(${lib} ${SV_LIB_MESHSIM_ADAPTOR_NAME})
 endif()
 
 if(SV_INSTALL_LIBS)

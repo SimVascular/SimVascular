@@ -24,17 +24,26 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#-----------------------------------------------------------------------------
+# System architecture
 if("${CMAKE_SYSTEM_PROCESSOR}" MATCHES "64" AND NOT APPLE)
-	SET(ARCH "x64")
+	set(ARCH "x64")
 	set(IS64 TRUE)
 elseif(APPLE)
 	#uname -p does not work correctly on OS X, we are going to assume its x64
 	SET(ARCH "x64")
 	set(IS64 TRUE)
+else()
+	SET(ARCH "x32")
+  set(IS64 FALSE)
 endif()
+set(SV_ARCH_DIR "${ARCH}")
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# OS
 set(SV_OS "${CMAKE_SYSTEM_NAME}")
-IF("${CMAKE_SYSTEM}" MATCHES "Linux")	
+IF("${CMAKE_SYSTEM}" MATCHES "Linux")
 	SET(LINUX TRUE)
 elseif(WIN32)
 	set(WINDOWS TRUE)
@@ -67,12 +76,17 @@ if(UNIX)
 		set(DYLD "LD")
 	endif()
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Cluster
 set(CLUSTER "${ARCH}_${SV_OS}")
 if(SV_DEVELOPER_OUTPUT)
 	message(STATUS "${CLUSTER}")
 endif()
 
+#-----------------------------------------------------------------------------
+# Compiler
 set(COMPILER_VERSION ${CMAKE_CXX_COMPILER_ID})
 if (NOT CMAKE_CXX_COMPILER_VERSION)
   message(FATAL_ERROR "Compiler version does not exist; must specify the compiler
@@ -80,38 +94,6 @@ if (NOT CMAKE_CXX_COMPILER_VERSION)
 endif()
 simvascular_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJOR_VERSION COMPILER_MINOR_VERSION)
 
-SET(USER_HOME_DIR $ENV{HOME})
-if(SV_DEVELOPER_OUTPUT)
-	message(STATUS "Home dir: ${USER_HOME_DIR}")
-endif()
-
-#-----
-# System Macros
-#
-macro(env_variable_to_value_variable value_variable variable)
-	if(WIN32 AND NOT UNIX)
-		set(${value_variable} "%${variable}%")
-	endif()
-	if(UNIX)
-		set(${value_variable} "$${variable}")
-	endif()
-endmacro()
-
-function(append_env_string evn_var value output_variable)
-	env_variable_to_value_variable(ENV_VALUE ${evn_var})
-	set(${output_variable} "${ENV_SET_COMMAND} ${evn_var}=${ENV_VALUE}${ENV_SEPERATOR}${value}" PARENT_SCOPE)
-endfunction()
-
-function(set_env_string evn_var value output_variable)
-	set(${output_variable} "${ENV_SET_COMMAND} ${evn_var}=${value}\n" PARENT_SCOPE)
-endfunction()
-
-macro(set_env_string_concat evn_var value output_variable)
-	set_env_string(${evn_var} ${value} _tmp)
-	set(${output_variable} "${${output_variable}}${_tmp}")
-endmacro()
-
-macro(append_env_string_concat evn_var value output_variable)
-	append_env_string(${evn_var} ${value} _tmp)
-	set(${output_variable} "${${output_variable}}${_tmp}\n")
-endmacro()
+string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
+set(SV_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
+#-----------------------------------------------------------------------------

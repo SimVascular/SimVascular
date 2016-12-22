@@ -24,11 +24,49 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-if(NOT TEMP_DIR)
-set(TEMP_DIR ${SV_BINARY_DIR}/tmp)
-file(MAKE_DIRECTORY ${TEMP_DIR})
+#-----------------------------------------------------------------------------
+# Environment Home
+SET(USER_HOME_DIR $ENV{HOME})
+if(SV_DEVELOPER_OUTPUT)
+	message(STATUS "Home dir: ${USER_HOME_DIR}")
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Install root dir
+if(NOT SV_INSTALL_ROOT_DIR)
+  set(SV_INSTALL_ROOT_DIR "SV")
+endif()
+if(NOT WIN32)
+  if(NOT CMAKE_INSTALL_PREFIX MATCHES "${SV_INSTALL_ROOT_DIR}")
+    set(CMAKE_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX}/${SV_INSTALL_ROOT_DIR})
+  endif()
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Set platforms directories
+if(APPLE)
+  set(SV_PLATFORM_DIR "mac_osx")
+elseif(LINUX)
+  set(SV_PLATFORM_DIR "linux")
+elseif(WIN64)
+  set(SV_PLATFORM_DIR "win")
+else()
+  set(SV_PLATFORM_DIR "unsupported")
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Temp dir for TCL
+if(NOT TEMP_DIR)
+  set(TEMP_DIR ${SV_BINARY_DIR}/tmp)
+  file(MAKE_DIRECTORY ${TEMP_DIR})
+endif()
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# SV HOME
 get_filename_component(SV_SOURCE_HOME ${SV_SOURCE_DIR}/../ ABSOLUTE)
 dev_message("SimVascular Source Home: ${SV_SOURCE_HOME}")
 if(NOT SV_BINARY_HOME)
@@ -38,3 +76,11 @@ endif()
 set(SV_HOME ${SV_BINARY_HOME})
 set(SV_DISTRIBUTION_DIR ${SV_SOURCE_HOME}/Distribution)
 set(SV_BINARY_DISTRIBUTION_DIR ${SV_BINARY_HOME}/Distribution)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# Build type
+set(SV_BUILD_TYPE "CMAKE" CACHE STRING "Designate CMAKE build" FORCE)
+set_property(CACHE SV_BUILD_TYPE PROPERTY STRINGS CMAKE)
+mark_as_advanced(SV_BUILD_TYPE)
+#-----------------------------------------------------------------------------

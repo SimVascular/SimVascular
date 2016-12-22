@@ -10,12 +10,12 @@
 #
 # ::
 #
-#   PYTHONLIBS_FOUND           - have the Python libs been found
+#   PYTHON_FOUND           - have the Python libs been found
 #   PYTHON_LIBRARIES           - path to the python library
 #   PYTHON_INCLUDE_PATH        - path to where Python.h is found (deprecated)
 #   PYTHON_INCLUDE_DIRS        - path to where Python.h is found
 #   PYTHON_DEBUG_LIBRARIES     - path to the debug library (deprecated)
-#   PYTHONLIBS_VERSION_STRING  - version of the Python libs found (since CMake 2.8.8)
+#   PYTHON_VERSION_STRING  - version of the Python libs found (since CMake 2.8.8)
 #
 #
 #
@@ -72,7 +72,7 @@ endif()
 
 include(CMakeFindFrameworks)
 # Search for the python framework on Apple.
-CMAKE_FIND_FRAMEWORKS(Python)
+cmake_find_frameworks(Python)
 
 # Save CMAKE_FIND_FRAMEWORK
 if(DEFINED CMAKE_FIND_FRAMEWORK)
@@ -88,29 +88,29 @@ set(_PYTHON2_VERSIONS 2.7 2.6 2.5 2.4 2.3 2.2 2.1 2.0)
 set(_PYTHON3_VERSIONS 3.6 3.5 3.4 3.3 3.2 3.1 3.0)
 
 if(PythonLibs_FIND_VERSION)
-	message("FIND_VERSION")
-    if(PythonLibs_FIND_VERSION_COUNT GREATER 1)
-        set(_PYTHON_FIND_MAJ_MIN "${PythonLibs_FIND_VERSION_MAJOR}.${PythonLibs_FIND_VERSION_MINOR}")
-        unset(_PYTHON_FIND_OTHER_VERSIONS)
-        if(PythonLibs_FIND_VERSION_EXACT)
-            if(_PYTHON_FIND_MAJ_MIN STREQUAL PythonLibs_FIND_VERSION)
-                set(_PYTHON_FIND_OTHER_VERSIONS "${PythonLibs_FIND_VERSION}")
-            else()
-                set(_PYTHON_FIND_OTHER_VERSIONS "${PythonLibs_FIND_VERSION}" "${_PYTHON_FIND_MAJ_MIN}")
-            endif()
-        else()
-            foreach(_PYTHON_V ${_PYTHON${PythonLibs_FIND_VERSION_MAJOR}_VERSIONS})
-                if(NOT _PYTHON_V VERSION_LESS _PYTHON_FIND_MAJ_MIN)
-                    list(APPEND _PYTHON_FIND_OTHER_VERSIONS ${_PYTHON_V})
-                endif()
-             endforeach()
-        endif()
-        unset(_PYTHON_FIND_MAJ_MIN)
+  if(PythonLibs_FIND_VERSION_COUNT GREATER 1)
+    set(_PYTHON_FIND_MAJ_MIN "${PythonLibs_FIND_VERSION_MAJOR}.${PythonLibs_FIND_VERSION_MINOR}")
+    unset(_PYTHON_FIND_OTHER_VERSIONS)
+    if(PythonLibs_FIND_VERSION_EXACT)
+      if(_PYTHON_FIND_MAJ_MIN STREQUAL PythonLibs_FIND_VERSION)
+        set(_PYTHON_FIND_OTHER_VERSIONS "${PythonLibs_FIND_VERSION}")
+      else()
+        set(_PYTHON_FIND_OTHER_VERSIONS "${PythonLibs_FIND_VERSION}" "${_PYTHON_FIND_MAJ_MIN}")
+      endif()
     else()
-        set(_PYTHON_FIND_OTHER_VERSIONS ${_PYTHON${PythonLibs_FIND_VERSION_MAJOR}_VERSIONS})
+      foreach(_PYTHON_V ${_PYTHON${PythonLibs_FIND_VERSION_MAJOR}_VERSIONS})
+        if(NOT _PYTHON_V VERSION_LESS _PYTHON_FIND_MAJ_MIN)
+          list(APPEND _PYTHON_FIND_OTHER_VERSIONS ${_PYTHON_V})
+        endif()
+       endforeach()
     endif()
+    unset(_PYTHON_FIND_MAJ_MIN)
+  else()
+    set(_PYTHON_FIND_OTHER_VERSIONS ${_PYTHON${PythonLibs_FIND_VERSION_MAJOR}_VERSIONS})
+  endif()
 else()
-    set(_PYTHON_FIND_OTHER_VERSIONS ${_PYTHON3_VERSIONS} ${_PYTHON2_VERSIONS} ${_PYTHON1_VERSIONS})
+	#set(_PYTHON_FIND_OTHER_VERSIONS ${_PYTHON3_VERSIONS} ${_PYTHON2_VERSIONS} ${_PYTHON1_VERSIONS})
+  set(_PYTHON_FIND_OTHER_VERSIONS ${_PYTHON2_VERSIONS})
 endif()
 
 # Set up the versions we know about, in the order we will search. Always add
@@ -224,7 +224,7 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
     file(STRINGS "${PYTHON_INCLUDE_DIR}/patchlevel.h" python_version_str
          REGEX "^#define[ \t]+PY_VERSION[ \t]+\"[^\"]+\"")
     string(REGEX REPLACE "^#define[ \t]+PY_VERSION[ \t]+\"([^\"]+)\".*" "\\1"
-                         PYTHONLIBS_VERSION_STRING "${python_version_str}")
+                         PYTHON_VERSION_STRING "${python_version_str}")
     unset(python_version_str)
   endif()
 
@@ -249,15 +249,11 @@ foreach(_CURRENT_VERSION ${_Python_VERSIONS})
 		  /usr/local/bin
 		  NO_DEFAULT_PATH)
 endforeach()
-mark_as_advanced(
-  PYTHON_EXECUTABLE
-)
 
 unset(_Python_INCLUDE_PATH_HINT)
 unset(_Python_LIBRARY_PATH_HINT)
 
 mark_as_advanced(
-  PYTHON_DEBUG_LIBRARY
   PYTHON_LIBRARY
   PYTHON_INCLUDE_DIR
 )
@@ -289,9 +285,9 @@ else()
 endif()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(PythonLibs
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PYTHON
                                   REQUIRED_VARS PYTHON_LIBRARIES PYTHON_INCLUDE_DIRS
-                                  VERSION_VAR PYTHONLIBS_VERSION_STRING)
+                                  VERSION_VAR PYTHON_VERSION_STRING)
 
 # PYTHON_ADD_MODULE(<name> src1 src2 ... srcN) is used to build modules for python.
 # PYTHON_WRITE_MODULES_HEADER(<filename>) writes a header file you can include

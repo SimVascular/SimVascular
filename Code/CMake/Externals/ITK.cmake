@@ -24,37 +24,29 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-set(proj GLIB)
-set(${proj}_NEEDED_LIBS glib-2.0)
-if(SV_USE_SYSTEM_${proj})
-	if(LINUX)		
-		#set(GLIB_FULL_PATH "${OpenLibs_Bin_Directory}/${GLIB_PATH_PREFIX}")
-		message(ERROR "GLIB not support on Linux Systems")
-	endif()
-	if(LINUX OR APPLE)
-		set(${proj}_PATH_PREFIX "glib-2.0" CACHE TYPE PATH)
-		set(${proj}_FULL_PATH "/opt/local/include/${${proj}_PATH_PREFIX}")
-		set(${proj}_LIB_DIR "${SV_EXTERN_OPEN_BIN_DIR}/libs")
-		set(${proj}_DLL_DIR "/opt/local/bin")
-		set(${proj}_INCLUDE_DIR "${${proj}_FULL_PATH};/opt/local/lib/${${proj}_PATH_PREFIX}/include;${${proj}_FULL_PATH}/glib;${${proj}_FULL_PATH}/gio;${${proj}_FULL_PATH}/gobject;")
-	endif()
+#-----------------------------------------------------------------------------
+# ITK
+set(proj ITK)
+if(SV_USE_${proj})
+  # ITK resets the vtk dir and variables (very annoying), must set temp vars
+  # vtk dir to reset at the end
+  set(TEMP_VTK_DIR ${VTK_DIR})
+  set(TEMP_VTK_LIBRARIES ${VTK_LIBRARIES})
+  # If using toplevel dir, foce ITK_DIR to be the SV_ITK_DIR set by the
+  # simvascular_add_new_external macro
+  if(SV_EXTERNALS_USE_TOPLEVEL_DIR)
+    set(${proj}_DIR ${SV_${proj}_DIR}/lib/cmake/${proj}-${${proj}_MAJOR_VERSION}.${ITK_MINOR_VERSION} CACHE PATH "Force ${proj} dir to externals" FORCE)
+  endif()
+  # Find ITK
+  simvascular_external(${proj} SHARED_LIB ${SV_USE_${proj}_SHARED} VERSION ${${proj}_VERSION})
 
-	if(CYGWIN AND IS64)
-		set(${proj}_PATH_PREFIX "glib-2.36.4" CACHE TYPE PATH)
-		set(${proj}_FULL_PATH "${OpenLibs_Bin_Directory}/${${proj}_PATH_PREFIX}")
-		set(${proj}_LIB_DIR "${${proj}_FULL_PATH}/lib")
-		set(${proj}_DLL_DIR "${${proj}_FULL_PATH}/bin")
-		set(${proj}_INCLUDE_DIR "${${proj}_FULL_PATH}/include/glib-2.0;${${proj}_FULL_PATH}/lib/glib-2.0/include;")
-	endif()
+  # Include cmake file provided by ITK to define libs and include dirs
+  include(${${proj}_USE_FILE})
 
-	if(CYGWIN AND NOT IS64)
-		message(ERROR "GLIB not supported on 32-bit Cygwin")
-	endif()
-else()
-	message(STATUS "${proj} Superbuild!")
+  # Set SV_ITK_DIR to the toplevel ITK if it exists
+  simvascular_get_external_path_from_include_dir(${proj})
+  # Reset VTK vars
+  set(VTK_DIR ${TEMP_VTK_DIR} CACHE PATH "Must reset VTK dir after processing ${proj}" FORCE)
+  set(VTK_LIBRARIES ${TEMP_VTK_LIBRARIES})
 endif()
-
-GENLIBS(${proj}_LIBRARY "${${proj}_NEEDED_LIBS}" "${proj}" "${${proj}_LIB_DIR}")
-
-link_directories(${${proj}_LIB_DIR})
-include_directories(${${proj}_INCLUDE_DIR})
+#-----------------------------------------------------------------------------

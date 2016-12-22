@@ -29,20 +29,19 @@
  #=========================================================================#
 
 set(lib ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
-SET(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
-SET(HDRS cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h)
+set(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
+set(HDRS cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h)
 
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
-    add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
 else()
-    add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx)
+  add_library(${lib} STATIC ${CXXSRCS} cv_discrete_init.cxx)
 endif()
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
-			${GLOBAL_LIBRARIES}
-			${SV_LIB_SOLID_NAME})
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${PARASOLID_LIBRARIES} ${MESHSIM_LIBRARIES}
+	${SV_LIB_SOLID_NAME})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

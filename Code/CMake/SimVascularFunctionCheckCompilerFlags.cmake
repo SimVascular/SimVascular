@@ -30,6 +30,8 @@
 include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
 
+#-----------------------------------------------------------------------------
+# Function taken froom mitk to check and see if compiler flag works
 function(SimVascularFunctionCheckCompilerFlags CXX_FLAG_TO_TEST RESULT_VAR)
 
   if(CXX_FLAG_TO_TEST STREQUAL "")
@@ -50,7 +52,9 @@ function(SimVascularFunctionCheckCompilerFlags CXX_FLAG_TO_TEST RESULT_VAR)
   endif()
 
 endfunction()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
 function(SimVascularFunctionCheckCAndCXXCompilerFlags FLAG_TO_TEST C_RESULT_VAR CXX_RESULT_VAR)
 
   if(FLAG_TO_TEST STREQUAL "")
@@ -105,3 +109,4 @@ function(SimVascularFunctionCheckCAndCXXCompilerFlags FLAG_TO_TEST C_RESULT_VAR 
   endif()
 
 endfunction()
+#-----------------------------------------------------------------------------

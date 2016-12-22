@@ -33,15 +33,14 @@ SET(CXXSRCS cvMeshSimSolidModel.cxx)
 SET(HDRS cvMeshSimSolidModel.h)
 
 if(MESHSIM_MESHSIMSOLID_USE_SHARED_LIBRARIES)
-    add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
+  add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
 else()
-    add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx)
+  add_library(${lib} ${CXXSRCS} cv_meshsimsolid_init.cxx)
 endif()
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${MESHSIM_LIBRARIES}
-			${GLOBAL_LIBRARIES})
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${MESHSIM_LIBRARIES})
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

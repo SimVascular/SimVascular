@@ -9,8 +9,7 @@ configure_file(simvascular_version.h.in ${CMAKE_CURRENT_BINARY_DIR}/simvascular_
 
 configure_file(simvascular_options.h.in ${CMAKE_CURRENT_BINARY_DIR}/simvascular_options.h)
 
-SET(HDRS cvIOstream.h cvVTK.h SimVascular.h
-	)
+set(HDRS cvIOstream.h cvVTK.h SimVascular.h)
 if(SV_INSTALL_HEADERS)
 	install(FILES ${HDRS}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR} COMPONENT CoreHeaders

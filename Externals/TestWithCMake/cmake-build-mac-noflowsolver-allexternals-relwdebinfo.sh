@@ -14,13 +14,12 @@ export REPLACEME_SV_MAKE_CMD="make -j8"
 export REPLACEME_SV_TOP_SRC_DIR_SV="../"
 
 #externals
-export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/ext"
+#export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/usr/local/sv/ext"
+export REPLACEME_SV_EXTERNALS_TOPLEVEL_DIR="/Users/adamupdegrove/Documents/Software/SimVascular/MyMaster/Externals/Build/Externals"
 #Qt5
 export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 
 "$REPLACEME_SV_CMAKE_CMD" \
-\
-    --debug-output \
 \
    -G "$REPLACEME_SV_CMAKE_GENERATOR" \
 \
@@ -61,6 +60,6 @@ export Qt5_DIR="/usr/local/package/Qt5.4.2/5.4/clang_64/lib/cmake/Qt5"
 \
  "$REPLACEME_SV_TOP_SRC_DIR_SV" >& stdout-cmake-config.txt
 
-$REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
+#$REPLACEME_SV_MAKE_CMD >& stdout-compile.txt
 
 popd

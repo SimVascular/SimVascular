@@ -13,10 +13,10 @@ set(H_FILES
 )
 
 if(SV_USE_OpenCASCADE)
-set(H_FILES
-    ${H_FILES}
-    svModelElementOCCT.h
-)
+  set(H_FILES
+      ${H_FILES}
+      svModelElementOCCT.h
+  )
 endif()
 
 set(CPP_FILES
@@ -34,10 +34,10 @@ set(CPP_FILES
 )
 
 if(SV_USE_OpenCASCADE)
-set(CPP_FILES
-    ${CPP_FILES}
-    svModelElementOCCT.cxx
-)
+  set(CPP_FILES
+      ${CPP_FILES}
+      svModelElementOCCT.cxx
+  )
 endif()
 
 set(RESOURCE_FILES

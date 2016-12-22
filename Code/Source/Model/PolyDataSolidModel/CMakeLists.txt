@@ -33,30 +33,26 @@
 #-----------------------------------------------------------------------------
 
 set(lib ${SV_LIB_POLYDATA_SOLID_NAME})
-LIST(APPEND CORELIBS ${lib})
+list(APPEND CORELIBS ${lib})
 
-SET(CXXSRCS cvPolyDataSolid.cxx cv_polydatasolid_utils.cxx
-            vtkGetBoundaryFaces.cxx
-            )
-SET(HDRS cvPolyDataSolid.h
-         cv_polydatasolid_utils.h vtkGetBoundaryFaces.h
-            )
+set(CXXSRCS cvPolyDataSolid.cxx cv_polydatasolid_utils.cxx vtkGetBoundaryFaces.cxx)
+set(HDRS cvPolyDataSolid.h cv_polydatasolid_utils.h vtkGetBoundaryFaces.h)
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx)
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${GLOBAL_LIBRARIES}
-                        ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME} ${SV_LIB_GEOM_NAME}
-            )
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+  ${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME}
+  ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME} ${SV_LIB_GEOM_NAME}
+  )
 if(SV_USE_VMTK)
-    target_link_libraries(${lib} ${SV_LIB_THIRDPARTY_VMTK_NAME})
+  target_link_libraries(${lib} ${SV_LIB_THIRDPARTY_VMTK_NAME})
 endif()
 
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)

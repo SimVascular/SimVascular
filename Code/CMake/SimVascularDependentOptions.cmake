@@ -1,16 +1,40 @@
-# Options and defined depending on the system, and the intial options
+# Copyright (c) 2014-2015 The Regents of the University of California.
+# All Rights Reserved.
+#
+# Permission is hereby granted, free of charge, to any person obtaining
+# a copy of this software and associated documentation files (the
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
+# distribute, sublicense, and/or sell copies of the Software, and to
+# permit persons to whom the Software is furnished to do so, subject
+# to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included
+# in all copies or substantial portions of the Software.
+#
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+# IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+# PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+# OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+# EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+# PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+# LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+# NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 #-----------------------------------------------------------------------------
+# Options and defined depending on the system, and the intial options
 #-----------------------------------------------------------------------------
 # APPLE
 if(APPLE)
 	set ( CMAKE_OSX_ARCHITECTURES "" CACHE STRING "" FORCE )
-	#	set(CMAKE_OSX_DEPLOYMENT_TARGET "" CACHE STRING "" FORCE )
-	#	set(CMAKE_OSX_SYSROOT "" CACHE STRING "" FORCE)
 	# Note: By setting CMAKE_OSX_* variables before any enable_language() or project() calls,
 	#       we ensure that the bitness will be properly detected.
-
 	set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/opt/local/lib")
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # WIN32
@@ -20,8 +44,8 @@ if(WIN32)
 
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DWINDOWS -DWIN32")
 	if(NOT IS64)
-	    if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")
-		    set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
+	  if(NOT "${CMAKE_GENERATOR}" MATCHES ".*Win64")
+		  set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -D_X86_")
 		endif()
 	endif()
 	if(CYGWIN)
@@ -35,7 +59,7 @@ if(WIN32)
 		if(HAVE_WSOCK_GETHOSTNAME)
 			set (CMAKE_CXX_STANDARD_LIBRARIES "${CMAKE_CXX_STANDARD_LIBRARIES} wsock32.lib")
 		else()
-			MESSAGE(AUTHOR_WARNING "gethostname has not beed found! The flowsolver will not compile")
+			message(AUTHOR_WARNING "gethostname has not beed found! The flowsolver will not compile")
 		endif()
 	endif()
 
@@ -43,6 +67,7 @@ if(WIN32)
 
 	option(SV_USE_TKCXIMAGE "Use TKCXImage (Legacy)" OFF)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # LINUX
@@ -54,30 +79,21 @@ if(LINUX)
 	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
 	set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -pthread -static")
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Visual Studio flags
 if(MSVC)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DMSVC /EHsc")
-endif()
-# Visual Studio Linker Flags
-if(MSVC)
-# SUPPRESS_VC_DEPRECATED_WARNINGS
+  # SUPPRESS_VC_DEPRECATED_WARNINGS
   add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_CRT_NONSTDC_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
-
-  #	set(CMAKE_EXE_LINKER_FLAGS "/LARGEADDRESSAWARE /INCREMENTAL:NO /FIXED:NO /RELEASE /NOLOGO")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /VERBOSE:LIB")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libc.lib /NODEFAULTLIB:libcd.lib")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmt.lib /NODEFAULTLIB:libcpmt.lib")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:libcmtd.lib /NODEFAULTLIB:libcpmtd.lib")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:msvcrtd.lib")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /MACHINE:X64 /subsystem:console /D__VC__")
-  #	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /STACK:10000000,10000000")
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # All OS
 set(SV_USE_NOTIMER ON)
+#-----------------------------------------------------------------------------
 
 # Compiler Flags
 #-----------------------------------------------------------------------------
@@ -88,6 +104,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	add_definitions("-fpermissive")
 endif()
 set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -pthread -static")
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Set a default build type (if none was specified)
@@ -99,6 +116,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
 	set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release"
 		"MinSizeRel" "RelWithDebInfo")
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Renderer
@@ -106,6 +124,7 @@ if (SV_NO_RENDERER)
 	# Needs to be 1 not 'true'
 	set(SV_NO_RENDERER 1)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # These flags are stored (as opposed to adding directly with ADD_DEFINITIONS)
@@ -113,10 +132,10 @@ endif()
 if(CMAKE_COMPILER_IS_GNUCXX)
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DGCC")
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Shared Libs
-#-----------------------------------------------------------------------------
 if(BUILD_SHARED_LIBS)
 	set(SV_LIBRARY_TYPE "SHARED" CACHE STRING "Shared cache" FORCE)
 	set(SV_STATIC_BUILD "0")
@@ -125,35 +144,25 @@ if(BUILD_SHARED_LIBS)
 else()
 	set(GLOBAL_DEFINES "${GLOBAL_DEFINES} -DSV_STATIC_LINK -DSV_STATIC_BUILD")
 	set(SV_STATIC_BUILD "1")
-        set(SV_INSTALL_HEADERS ON)
-        set(SV_INSTALL_EXTERNALS ON)
-        set(SV_INSTALL_LIBS ON)
+  set(SV_INSTALL_HEADERS OFF)
+  set(SV_INSTALL_LIBS ON)
 endif()
-
-# Only FLowsolver
-if(SV_ONLY_BUILD_FLOWSOLVER)
-	set(SV_USE_THREEDSOLVER ON)
-endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Plugins
-if(SV_USE_TETGEN)
-	option(SV_USE_TET_ADAPTOR "Option to use open source mesh adaption" OFF)
+# SolverIO
+if(SV_USE_MESHSIM_ADAPTOR OR SV_USE_TETGEN_ADAPTOR)
+  set(SV_USE_SOLVERIO ON)
 endif()
-
-if(SV_USE_PYTHON)
-  set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Open Source Software Options: Solid Models - OpenCASCADE
 if(SV_USE_OpenCASCADE)
+  # OpenCASCADE links to freetype, must be used too
   set(SV_USE_FREETYPE "ON" CACHE BOOL "Force freetype on" FORCE)
 endif()
-
-if(SV_USE_OpenCASCADE_SHARED)
-  set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Initial cache" FORCE)
-endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Commercial Software Options: Meshing - MeshSim
@@ -175,7 +184,6 @@ else()
 	unset(SV_USE_MESHSIM_DISCRETE_MODEL CACHE)
 endif()
 
-#---
 if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 	if(SV_USE_MESHSIM)
 		option(SV_USE_MESHSIM_SHARED_LIBRARIES "Build MeshSim as shared libraries" OFF)
@@ -191,13 +199,11 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 	endif()
 endif()
 
-#-----------------------------------------------------------------------------
-# Adaptor Options
-# Adaptor converts objects between the different solid models.
 if(SV_USE_MESHSIM_ADAPTOR)
-	set(SV_USE_THREEDSOLVER ON)
-	set(SV_USE_MESHSIM ON)
+  set(SV_USE_THREEDSOLVER "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_MESHSIM "ON" CACHE BOOL "Force ON" FORCE)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Solver Build Options (Modules)
@@ -210,8 +216,9 @@ if(SV_USE_THREEDSOLVER)
 	option(SV_THREEDSOLVER_USE_CORONARY "" ON)
 	option(SV_THREEDSOLVER_USE_CLOSEDLOOP "" ON)
 	option(SV_THREEDSOLVER_USE_VARWALL "" ON)
-        option(SV_THREEDSOLVER_USE_VTK "" ON)
+  option(SV_THREEDSOLVER_USE_VTK "" ON)
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Linear Solver Options: SVLS
@@ -227,24 +234,24 @@ if(SV_USE_THREEDSOLVER)
 		set(SV_USE_LESLIB 1)
 	endif()
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
 # Set flags for shared libs
 if(NOT MSVC)
   if (SV_USE_PARASOLID_SHARED_LIBRARIES OR SV_USE_MESHSIM_SHARED_LIBRARIES OR
-      SV_USE_ITK_SHARED OR SV_USE_VTK_SHARED OR
-		  BUILD_SHARED_LIBS)
+    SV_USE_ITK_SHARED OR SV_USE_VTK_SHARED OR BUILD_SHARED_LIBS)
 	  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
 	  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
   endif()
 endif()
+#-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
-# Gui Options: QT GUI
-
+# Gui Options: Qt GUI
 if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
   SimVascularFunctionCheckCompilerFlags("-std=c++11" SimVascular_CXX11_FLAG)
-    if(NOT SimVascular_CXX11_FLAG)
+  if(NOT SimVascular_CXX11_FLAG)
     # Older gcc compilers use -std=c++0x
     SimVascularFunctionCheckCompilerFlags("-std=c++0x" SimVascular_CXX11_FLAG)
   endif()
@@ -255,28 +262,18 @@ if(SV_USE_QT_GUI OR (SV_USE_OpenCASCADE AND SV_USE_OpenCASCADE_SHARED))
 endif()
 
 if(SV_USE_QT_GUI)
-    set(SV_USE_VTK_SHARED "ON")
+  set(SV_USE_VTK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_ITK "ON")
-    set(SV_USE_ITK_SHARED "ON")
+  set(SV_USE_ITK "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_ITK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_MITK "ON")
-    set(SV_USE_MITK_SHARED "ON")
+  set(SV_USE_MITK "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_MITK_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    set(SV_USE_GDCM "ON")
-    set(SV_USE_GDCM_SHARED "ON")
+  set(SV_USE_GDCM "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_GDCM_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 
-    if(SV_USE_CUSTOM_CTK)
-      set(SV_USE_CTK "ON")
-      set(SV_USE_CTK_SHARED "ON")
-    endif()
-
-    if(SV_USE_CUSTOM_SimpleITK)
-      set(SV_USE_SimpleITK "ON")
-      set(SV_USE_SimpleITK_SHARED "ON")
-    endif()
-
-    set(SV_USE_PYTHON "ON")
-    set(SV_USE_SYSTEM_PYTHON "OFF")
+  set(SV_USE_PYTHON "ON" CACHE BOOL "Force ON" FORCE)
+  set(SV_USE_PYTHON_SHARED "ON" CACHE BOOL "Force ON" FORCE)
 endif()
-
+#-----------------------------------------------------------------------------

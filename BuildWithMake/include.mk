@@ -2,26 +2,26 @@
 
 # Copyright (c) 2009-2011 Open Source Medical Software Corporation,
 #                         University of California, San Diego.
-# 
-# All rights reserved. 
+#
+# All rights reserved.
 #
 # Portions copyright (c) 1999-2007 Stanford University,
 # Nathan Wilson, Ken Wang, Charles Taylor.
-# 
+#
 # See SimVascular Acknowledgements file for additional
-# contributors to the source code. 
+# contributors to the source code.
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -80,7 +80,7 @@ SV_USE_GLOBALS_SHARED = 1
 # Note that Geodesic allows for multiple kernels to be built into a
 # single executable.  In order to include a kernel, uncomment its line
 # in the following short section.  In order to exclude a kernel,
-# set the value to something other than 1 in global_overrides.mk or 
+# set the value to something other than 1 in global_overrides.mk or
 # via the make command line.
 
 SV_USE_PARASOLID = 0
@@ -255,7 +255,7 @@ ifeq ($(CLUSTER), x64_macosx)
 endif
 
 # -------------------------------------------
-#   Release version numbers for SimVascular 
+#   Release version numbers for SimVascular
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.16"
@@ -272,13 +272,13 @@ else
 -include $(TOP)/global_overrides.mk
 endif
 
-ifeq ($(CLUSTER),x64_cygwin) 
+ifeq ($(CLUSTER),x64_cygwin)
   SV_VERSION  = simvascular
   SV_PLATFORM = x64
   SV_POSTFIX=
   SV_OS=windows
 endif
-ifeq ($(CLUSTER),x64_linux) 
+ifeq ($(CLUSTER),x64_linux)
   SV_VERSION  = simvascular
   SV_PLATFORM = x64
   SV_POSTFIX=
@@ -323,15 +323,15 @@ ifeq ($(SV_USE_PARASOLID_SHARED),1)
     GLOBAL_DEFINES += -DSV_USE_PARASOLID_SHARED
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
-    GLOBAL_DEFINES += -DSV_USE_OPENCASCADE
+    GLOBAL_DEFINES += -DSV_USE_OpenCASCADE
 endif
 ifeq ($(SV_USE_OPENCASCADE_SHARED),1)
-    GLOBAL_DEFINES += -DSV_USE_OPENCASCADE_SHARED
+    GLOBAL_DEFINES += -DSV_USE_OpenCASCADE_SHARED
 endif
 
-ifeq ($(SV_USE_MESHSIM),1) 
+ifeq ($(SV_USE_MESHSIM),1)
   GLOBAL_DEFINES += -DSV_USE_MESHSIM
-  ifeq ($(SV_USE_MESHSIM_SHARED),1) 
+  ifeq ($(SV_USE_MESHSIM_SHARED),1)
     GLOBAL_DEFINES += -DSV_USE_MESHSIM_SHARED
   endif
   ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
@@ -346,7 +346,7 @@ ifeq ($(SV_USE_MESHSIM),1)
   ifeq ($(SV+USE_MESHSIM_SOLID_MODEL_SHARED),1)
     GLOBAL_DEFINES += -DSV_USE_MESHSIM_SOLID_MODEL_SHARED
   endif
-  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1) 
+  ifeq ($(SV_USE_MESHSIM_ADAPTOR),1)
     GLOBAL_DEFINES += -DSV_USE_MESHSIM_ADAPTOR
   endif
   ifeq ($(SV_USE_WIN32_REGISTRY),1)
@@ -361,10 +361,10 @@ ifeq ($(SV_USE_MESHSIM),1)
   endif
 endif
 
-ifeq ($(SV_USE_TETGEN),1) 
+ifeq ($(SV_USE_TETGEN),1)
   GLOBAL_DEFINES += -DSV_USE_TETGEN
-  ifeq ($(SV_USE_TETGEN_ADAPTOR),1) 
-    GLOBAL_DEFINES += -DSV_USE_TET_ADAPTOR
+  ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
+    GLOBAL_DEFINES += -DSV_USE_TETGEN_ADAPTOR
   endif
 endif
 

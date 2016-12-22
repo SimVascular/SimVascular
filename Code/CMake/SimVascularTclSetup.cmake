@@ -28,7 +28,7 @@ macro(tcl_cmd)
 	set(options MESSAGE DEV_MESSAGE)
 	set(oneValueArgs OUTPUT_VARIABLE)
 	set(multiValueArgs FILES CODE)
-	CMAKE_PARSE_ARGUMENTS(""
+	cmake_parse_arguments(""
 		"${options}"
 		"${oneValueArgs}" "${multiValueArgs}" ${ARGN} )
 	if(_CODE)
@@ -51,19 +51,18 @@ endmacro()
 
 set(TCL_CONFIG_FILES)
 tcl_cmd(CODE "puts \"[clock seconds]\""
-        OUTPUT_VARIABLE SV_TIMESTAMP)
+  OUTPUT_VARIABLE SV_TIMESTAMP)
 
 set(SV_SOURCE_TCL_DIR ${SV_SOURCE_HOME}/Tcl)
 set(SV_BINARY_TCL_DIR ${SV_BINARY_HOME}/Tcl)
 set(SV_TCL ${SV_BINARY_TCL_DIR})
 add_custom_target(copy-tcl ALL)
 add_custom_command(TARGET copy-tcl POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_TCL_DIR}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_TCL_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_TCL_DIR} ${SV_BINARY_TCL_DIR}
-        COMMENT "Copying Tcl Directory..."
-        )
-
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_TCL_DIR}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_TCL_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_TCL_DIR} ${SV_BINARY_TCL_DIR}
+  COMMENT "Copying Tcl Directory..."
+  )
 
 set(TCL_STARTUP_CONFIG_FILE "${TEMP_DIR}/startup_configure.tcl")
 set(TCL_SPLASH_CONFIG_FILE "${TEMP_DIR}/splash_configure.tcl")
@@ -72,24 +71,23 @@ set(TCL_EXTERNAL_CONFIG_FILE "${TEMP_DIR}/externals_configure.tcl")
 include(SimVascularTclConfigure)
 
 set(TCL_CONFIG_FILES
-        ${TCL_SPLASH_CONFIG_FILE} ${TCL_STARTUP_CONFIG_FILE} ${TCL_EXTERNAL_CONFIG_FILE})
+  ${TCL_SPLASH_CONFIG_FILE} ${TCL_STARTUP_CONFIG_FILE} ${TCL_EXTERNAL_CONFIG_FILE})
 
 foreach(tcl_file ${TCL_CONFIG_FILES})
-        dev_message("Configuring ${tcl_file}")
-        add_custom_command(TARGET copy-tcl POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SV_BINARY_TCL_DIR}
-                COMMENT "Copying ${tcl_file}..."
-                )
-        add_dependencies(copy-tcl ${tcl_file})
+  dev_message("Configuring ${tcl_file}")
+  add_custom_command(TARGET copy-tcl POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy ${tcl_file} ${SV_BINARY_TCL_DIR}
+    COMMENT "Copying ${tcl_file}..."
+    )
+  add_dependencies(copy-tcl ${tcl_file})
 endforeach()
 
 #-----------------------------------------------------------------------------
 # Install Steps
 #-----------------------------------------------------------------------------
-
 include(PrepareTcl)
 
 install(DIRECTORY ${TEMP_DIR}/Tcl DESTINATION ${SV_INSTALL_SCRIPT_DIR})
 install(FILES ${TCL_CONFIG_FILES}
-        DESTINATION ${SV_INSTALL_TCL_CODE_DIR}
-        )
+  DESTINATION ${SV_INSTALL_TCL_CODE_DIR}
+  )

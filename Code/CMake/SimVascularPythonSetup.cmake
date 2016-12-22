@@ -49,11 +49,11 @@ set(SV_BINARY_PYTHON_DIR ${SV_BINARY_HOME}/Python)
 set(SV_PYTHON ${SV_BINARY_PYTHON_DIR})
 add_custom_target(copy-py ALL)
 add_custom_command(TARGET copy-py POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_PYTHON_DIR}
-        COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_PYTHON_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_PYTHON_DIR} ${SV_BINARY_PYTHON_DIR}
-        COMMENT "Copying Python Directory..."
-        )
+  COMMAND ${CMAKE_COMMAND} -E remove_directory ${SV_BINARY_PYTHON_DIR}
+  COMMAND ${CMAKE_COMMAND} -E make_directory ${SV_BINARY_PYTHON_DIR}
+  COMMAND ${CMAKE_COMMAND} -E copy_directory ${SV_SOURCE_PYTHON_DIR} ${SV_BINARY_PYTHON_DIR}
+  COMMENT "Copying Python Directory..."
+  )
 
 #include(SimVascularPythonConfigure)
 

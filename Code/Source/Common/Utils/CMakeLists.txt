@@ -36,29 +36,28 @@ set(lib ${SV_LIB_UTILS_NAME})
 LIST(APPEND CORELIBS ${lib})
 
 SET(CXXSRCS cv_misc_utils.cxx cv_vtk_utils.cxx
-            cvTimer.cxx cvIntArrayList.cxx
-            cvStateArray.cxx cv_cgeom.cxx
-            cvMath.cxx cv_arg.cxx
-            cvFactoryRegistrar.cxx
-            )
-SET(HDRS    cv_misc_utils.h cv_vtk_utils.h
-            cvTimer.h cvIntArrayList.h
-            cvStateArray.h cv_cgeom.h
-            cvMath.h cv_arg.h cvFactoryRegistrar.h
-            )
+  cvTimer.cxx cvIntArrayList.cxx
+  cvStateArray.cxx cv_cgeom.cxx
+  cvMath.cxx cv_arg.cxx
+  cvFactoryRegistrar.cxx
+  )
+SET(HDRS cv_misc_utils.h cv_vtk_utils.h
+  cvTimer.h cvIntArrayList.h
+  cvStateArray.h cv_cgeom.h
+  cvMath.h cv_arg.h cvFactoryRegistrar.h
+  )
 
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx)
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${PARASOLID_LIBRARIES}
-			${GLOBAL_LIBRARIES}
-			${SV_LIB_GLOBALS_NAME}
-            )
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${PARASOLID_LIBRARIES}
+	${SV_LIB_GLOBALS_NAME}
+  )
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
-	    RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
+	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
 		LIBRARY DESTINATION ${SV_INSTALL_LIBRARY_DIR} COMPONENT CoreLibraries
 		ARCHIVE DESTINATION ${SV_INSTALL_ARCHIVE_DIR} COMPONENT CoreLibraries
 		)

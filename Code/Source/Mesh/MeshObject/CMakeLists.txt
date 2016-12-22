@@ -41,12 +41,11 @@ SET(HDRS cvMeshObject.h cvMeshSystem.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx)
 
 target_link_libraries(${lib}
-			${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
-			${GLOBAL_LIBRARIES}
-			${ZLIB_LIBRARY}
-			${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME}
-			${SV_LIB_SOLID_NAME}
-            )
+	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
+	${ZLIB_LIBRARY}
+	${SV_LIB_GLOBALS_NAME} ${SV_LIB_REPOSITORY_NAME}
+	${SV_LIB_SOLID_NAME}
+  )
 
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}

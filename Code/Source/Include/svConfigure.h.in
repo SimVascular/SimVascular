@@ -1,9 +1,0 @@
-#ifndef SVCONFIGURE_H
-#define SVCONFIGURE_H
-
-#define VTK_DIR "@VTK_DIR@"
-#define CTK_DIR "@CTK_DIR@"
-#define SimpleITK_DIR "@SimpleITK_DIR@"
-#define MITK_DIR "@MITK_DIR@"
-
-#endif // SVCONFIGURE_H

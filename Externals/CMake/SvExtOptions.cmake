@@ -11,13 +11,15 @@ sv_externals_get_major_minor_version(${CMAKE_CXX_COMPILER_VERSION} COMPILER_MAJO
 string(TOLOWER "${COMPILER_VERSION}" COMPILER_VERSION_LOWER)
 set(SV_EXTERNALS_COMPILER_DIR "${COMPILER_VERSION_LOWER}-${COMPILER_MAJOR_VERSION}.${COMPILER_MINOR_VERSION}")
 
-set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${CMAKE_BINARY_DIR}/Externals/src"
+set(SV_EXTERNALS_TOPLEVEL_DIR "${CMAKE_BINARY_DIR}/sv_externals" CACHE PATH "Externals toplevel directory")
+
+set(SV_EXTERNALS_TOPLEVEL_SRC_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/src"
   CACHE PATH "Directory where source files for externals will be put")
-set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${CMAKE_BINARY_DIR}/Externals/bin/${SV_EXTERNALS_COMPILER_DIR}/${SV_EXTERNALS_ARCH_DIR}"
+set(SV_EXTERNALS_TOPLEVEL_BIN_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/bin/${SV_EXTERNALS_COMPILER_DIR}/${SV_EXTERNALS_ARCH_DIR}"
   CACHE PATH "Directory where install files for externals will be put")
-set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "${CMAKE_BINARY_DIR}/Externals/build"
+set(SV_EXTERNALS_TOPLEVEL_BLD_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/build"
   CACHE PATH "Directory where build files for externals will be put")
-set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${CMAKE_BINARY_DIR}/Externals/prefix"
+set(SV_EXTERNALS_TOPLEVEL_PFX_DIR "${SV_EXTERNALS_TOPLEVEL_DIR}/prefix"
   CACHE PATH "Directory where prefix files for externals will be put")
 #-----------------------------------------------------------------------------
 

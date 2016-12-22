@@ -34,7 +34,10 @@ set(SV_VERSION "simvascular")
 if(SV_RELEASE_TYPE MATCHES "^Beta$")
 	set(SV_VERSION "simvascular-beta")
 endif()
+#-----------------------------------------------------------------------------
 
+#-----------------------------------------------------------------------------
+# Timestamp
 string(TIMESTAMP DATE_IMESTAMP %y%m%d)
 math(EXPR SV_VERSION_TIMESTAMP "${DATE_IMESTAMP}-140000")
 string(TIMESTAMP SV_RELEASE_TIMESTAMP %y%m%d%H%M%S)
@@ -42,9 +45,10 @@ set(SV_PLATFORM ${ARCH})
 set(SV_MAJOR_VERSION 2)
 set(SV_MINOR_VERSION 0)
 set(SV_PATCH_VERSION ${SV_VERSION_TIMESTAMP})
+#-----------------------------------------------------------------------------
 
-
-
+#-----------------------------------------------------------------------------
+# Other helpful sv variables
 set(SV_RELEASE_BUILD 0)
 set(SV_MAJOR_VER_NO ${SV_MAJOR_VERSION})
 set(SV_FULL_VER_NO
@@ -54,3 +58,4 @@ set(SV_FULL_VERSION
 set(SV_REGISTRY_TOPLEVEL "SV")
 
 message(STATUS "SimVascular Version: ${SV_VERSION} ${SV_MAJOR_VERSION}.${SV_MINOR_VERSION}.${SV_PATCH_VERSION}")
+#-----------------------------------------------------------------------------
