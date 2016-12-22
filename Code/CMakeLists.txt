@@ -137,6 +137,22 @@ include(SimVascularPythonSetup)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# Doxygen
+find_package(Doxygen)
+if(DOXYGEN_FOUND)
+	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
+	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
+	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
+		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
+	add_custom_target(doc
+		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating API documentation with Doxygen" VERBATIM
+		)
+endif(DOXYGEN_FOUND)
+#-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
 # Package and Subdirectory Logic
 # Now we begin actually doing the logic to figure out which directories to add#
 # and finding the libraries that those parts need.
@@ -154,23 +170,6 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/Mesh/MeshObject"
 	"Source/Model/PolyDataSolidModel")
 #-----------------------------------------------------------------------------
-
-#-----------------------------------------------------------------------------
-# Doxygen
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-	file(TO_NATIVE_PATH "${SV_BINARY_DIR}/Doxygen/" SV_DOCS_DIR_WORK)
-	set(SV_DOCS_DIR ${SV_DOCS_DIR_WORK} CACHE PATH "Location to place docs")
-	configure_file(${SV_SOURCE_DIR}/../Documentation/simvascular.Doxyfile.in
-		${SV_BINARY_DIR}/simvascular.Doxyfile @ONLY)
-	add_custom_target(doc
-		${DOXYGEN_EXECUTABLE} ${SV_BINARY_DIR}/simvascular.Doxyfile
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating API documentation with Doxygen" VERBATIM
-		)
-endif(DOXYGEN_FOUND)
-#-----------------------------------------------------------------------------
-
 
 #-----------------------------------------------------------------------------
 # Optional Core Libs

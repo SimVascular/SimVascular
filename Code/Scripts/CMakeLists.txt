@@ -90,14 +90,18 @@ foreach(proj ${SV_EXTERNAL_SHARED_LIBS})
 	# if this library was not specified USE_SYSTEM, it will need to be installed, and the path updated.
 	if(SV_INSTALL_${proj}_LIBRARY_DIR)
   #if there is an install library directory, add it to the path for installation, it will be installed there.
-  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/lib" developer_script_string)
+    if(SV_${proj}_DIR)
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/lib" developer_script_string)
+    endif()
 		if(NOT SV_ENABLE_DISTRIBUTION)
       append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${proj}_LIBRARY_DIR}" install_script_string)
 		endif()
 	endif()
 	if(SV_INSTALL_${proj}_RUNTIME_DIR)
     # if there is an install runtime directory, add it to the path for installation
-    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/bin" developer_script_string)
+    if(SV_${proj}_DIR)
+      append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${SV_${proj}_DIR}/bin" developer_script_string)
+    endif()
 		if(NOT SV_ENABLE_DISTRIBUTION)
 		  append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_${proj}_RUNTIME_DIR}" install_script_string)
 		endif()
@@ -145,11 +149,15 @@ if(SV_USE_PYTHON)
   set(install_script_string "${install_script_string}\n# Python environment variables\n")
 
   # PYTHONHOME
-  set_env_string_concat(PYTHONHOME "${SV_PYTHON_DIR}" developer_script_string)
+  if(SV_PYTHON_DIR)
+    set_env_string_concat(PYTHONHOME "${SV_PYTHON_DIR}" developer_script_string)
+  endif()
   set_env_string_concat(PYTHONHOME "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_RUNTIME_DIR}/.." install_script_string)
 
   # PYTHONPATH
-  set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
+  if(SV_PYTHON_DIR)
+    set_env_string_concat(PYTHONPATH "${SV_PYTHON_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
+  endif()
   append_env_string_concat(PYTHONPATH "${SV_VTK_DIR}/lib/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" developer_script_string)
   set_env_string_concat(PYTHONPATH "${ENV_SV_HOME}/${SV_INSTALL_PYTHON_LIBRARY_DIR}/python${PYTHON_MAJOR_VERSION}.${PYTHON_MINOR_VERSION}/site-packages" install_script_string)
   if(NOT SV_ENABLE_DISTRIBUTION)

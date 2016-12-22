@@ -253,11 +253,6 @@ endforeach()
 unset(_Python_INCLUDE_PATH_HINT)
 unset(_Python_LIBRARY_PATH_HINT)
 
-mark_as_advanced(
-  PYTHON_LIBRARY
-  PYTHON_INCLUDE_DIR
-)
-
 # We use PYTHON_INCLUDE_DIR, PYTHON_LIBRARY and PYTHON_DEBUG_LIBRARY for the
 # cache entries because they are meant to specify the location of a single
 # library. We now set the variables listed by the documentation for this
@@ -271,10 +266,6 @@ set(PYTHON_LIBRARY_DEBUG "${PYTHON_DEBUG_LIBRARY}")
 set(PYTHON_LIBRARY_RELEASE "${PYTHON_LIBRARY}")
 include(SelectLibraryConfigurations)
 SELECT_LIBRARY_CONFIGURATIONS(PYTHON)
-# SELECT_LIBRARY_CONFIGURATIONS() sets ${PREFIX}_FOUND if it has a library.
-# Unset this, this prefix doesn't match the module prefix, they are different
-# for historical reasons.
-unset(PYTHON_FOUND)
 
 # Restore CMAKE_FIND_FRAMEWORK
 if(DEFINED _PythonLibs_CMAKE_FIND_FRAMEWORK)
@@ -285,9 +276,16 @@ else()
 endif()
 
 include(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(PYTHON
-                                  REQUIRED_VARS PYTHON_LIBRARIES PYTHON_INCLUDE_DIRS
-                                  VERSION_VAR PYTHON_VERSION_STRING)
+find_package_handle_standard_args(PythonLibs
+  FOUND_VAR PYTHONLIBS_FOUND
+  REQUIRED_VARS PYTHON_LIBRARY PYTHON_INCLUDE_DIR PYTHON_EXECUTABLE
+  VERSION_VAR PYTHON_VERSION_STRING
+  FAIL_MESSAGE "Could not find PYTHON")
+if(PYTHONLIBS_FOUND)
+  set(PYTHON_FOUND TRUE)
+else()
+  set(PYTHON_FOUND FALSE)
+endif()
 
 # PYTHON_ADD_MODULE(<name> src1 src2 ... srcN) is used to build modules for python.
 # PYTHON_WRITE_MODULES_HEADER(<filename>) writes a header file you can include
