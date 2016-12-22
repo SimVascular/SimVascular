@@ -1191,8 +1191,12 @@ endmacro()
 #-----------------------------------------------------------------------------
 macro(simvascular_property_list_find_and_replace TARGET PROPERTY VALUE NEWVALUE)
   get_target_property(_LIST_VAR ${TARGET} ${PROPERTY})
-  simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
-  set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+  if("${_LIST_VAR}" STREQUAL "_LIST_VAR-NOTFOUND")
+    dev_message("Property list find and replace, property ${PROPERTY} not found")
+  else()
+    simvascular_list_find_and_replace(_LIST_VAR "${VALUE}" ${NEWVALUE})
+    set_target_properties(${TARGET} PROPERTIES ${PROPERTY} "${_LIST_VAR}")
+  endif()
 endmacro()
 #-----------------------------------------------------------------------------
 
