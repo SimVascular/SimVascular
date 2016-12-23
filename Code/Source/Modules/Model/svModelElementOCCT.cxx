@@ -181,7 +181,7 @@ svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
         ids[i]=oldFaces[i]->id;
         facevpds[i]=new cvPolyData(oldFaces[i]->vpd);
 
-        svModelElement::svFace* face=new svModelElement::svFace(*(oldFaces[i]));
+        svModelElement::svFace* face=new svModelElement::svFace(*(oldFaces[i]),false);
 
         faces.push_back(face);
     }
@@ -196,6 +196,12 @@ svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
     }
 
     mepd->SetWholeVtkPolyData(dst->GetVtkPolyData());
+
+    for(int i=0;i<numFaces;i++)
+    {
+        faces[i]->vpd=mepd->CreateFaceVtkPolyData(faces[i]->id);
+    }
+
     mepd->SetFaces(faces);
 
     return mepd;
