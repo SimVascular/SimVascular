@@ -227,7 +227,8 @@ endif()
 # Handle Standard Args
 find_package_handle_standard_args(${proj}
 	FOUND_VAR ${proj}_FOUND
-	REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_DLL_PATH
-	VERSION_VAR ${proj}_VERSION
-	FAIL_MESSAGE "Could NOT find ${proj} missing component: ${${proj}_LIBS_MISSING} causing:")
+	# REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES ${proj}_DLL_PATH
+	# VERSION_VAR ${proj}_VERSION
+	# FAIL_MESSAGE "Could NOT find ${proj} missing component: ${${proj}_LIBS_MISSING} causing:"
+	)
 set(${proj}_LIBRARY ${${proj}_LIBRARIES})

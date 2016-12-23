@@ -2,6 +2,8 @@
 
 #include "svModelUtils.h"
 
+#include "cv_sys_geom.h"
+
 #include <iostream>
 using namespace std;
 
@@ -155,6 +157,46 @@ svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
 {
     svModelElementPolyData* mepd=new svModelElementPolyData();
     mepd->SetSegNames(GetSegNames());
-    mepd->SetWholeVtkPolyData(CreateWholeVtkPolyData());
 
+    vtkSmartPointer<vtkPolyData> wholevpd=NULL;
+    if(GetWholeVtkPolyData())
+    {
+        wholevpd=vtkSmartPointer<vtkPolyData>::New();
+        wholevpd->DeepCopy(GetWholeVtkPolyData());
+    }
+
+    if(wholevpd==NULL)
+        return NULL;
+
+    cvPolyData* src=new cvPolyData(wholevpd);
+
+    std::vector<svModelElement::svFace*> oldFaces=GetFaces();
+    std::vector<svModelElement::svFace*> faces;
+    int numFaces=oldFaces.size();
+    int* ids=new int[numFaces];
+    cvPolyData **facevpds=new cvPolyData*[numFaces];
+
+    for(int i=0;i<numFaces;i++)
+    {
+        ids[i]=oldFaces[i]->id;
+        facevpds[i]=new cvPolyData(oldFaces[i]->vpd);
+
+        svModelElement::svFace* face=new svModelElement::svFace(*(oldFaces[i]));
+
+        faces.push_back(face);
+    }
+
+    cvPolyData *dst=NULL;
+    if ( sys_geom_assign_ids_based_on_faces(src,facevpds,numFaces,ids,&dst ) != CV_OK ) {
+        if(dst!=NULL)
+            delete dst;
+
+        delete [] ids;
+        return NULL;
+    }
+
+    mepd->SetWholeVtkPolyData(dst->GetVtkPolyData());
+    mepd->SetFaces(faces);
+
+    return mepd;
 }

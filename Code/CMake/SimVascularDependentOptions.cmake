@@ -200,7 +200,7 @@ if(SV_USE_MESHSIM OR SV_USE_MESHSIM_DISCRETE_MODEL)
 endif()
 
 if(SV_USE_MESHSIM_ADAPTOR)
-  set(SV_USE_THREEDSOLVER "ON" CACHE BOOL "Force ON" FORCE)
+  # set(SV_USE_THREEDSOLVER "ON" CACHE BOOL "Force ON" FORCE)
   set(SV_USE_MESHSIM "ON" CACHE BOOL "Force ON" FORCE)
 endif()
 #-----------------------------------------------------------------------------

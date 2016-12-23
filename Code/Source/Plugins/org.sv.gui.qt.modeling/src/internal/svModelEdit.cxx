@@ -2001,37 +2001,7 @@ void svModelEdit::ConvertToPolyDataModel()
         svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
         if(meocct)
         {
-            svModelElementPolyData* mepd=new svModelElementPolyData();
-            mepd->SetSegNames(meocct->GetSegNames());
-
-            vtkSmartPointer<vtkPolyData> wholevpd=NULL;
-            if(meocct->GetWholeVtkPolyData())
-            {
-                wholevpd=vtkSmartPointer<vtkPolyData>::New();
-                wholevpd->DeepCopy(meocct->GetWholeVtkPolyData());
-            }
-            mepd->SetWholeVtkPolyData(wholevpd);
-
-            std::vector<svModelElement::svFace*> faces;
-            std::vector<svModelElement::svFace*> oldFaces=meocct->GetFaces();
-            for(int i=0;i<oldFaces.size();i++)
-            {
-                if(oldFaces[i])
-                {
-                    svModelElement::svFace* face=new svModelElement::svFace(*(oldFaces[i]),false);
-
-                    vtkSmartPointer<vtkPolyData> facevpd=NULL;
-                    if(oldFaces[i]->vpd)
-                    {
-                        facevpd=vtkSmartPointer<vtkPolyData>::New();
-                        facevpd->DeepCopy(oldFaces[i]->vpd);
-                    }
-                    face->vpd=facevpd;
-                    faces.push_back(face);
-                }
-            }
-            mepd->SetFaces(faces);
-            modelElement=mepd;
+            modelElement=meocct->ConverToPolyDataModel();
         }
     }
 #endif

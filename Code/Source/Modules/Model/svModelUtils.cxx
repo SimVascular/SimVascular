@@ -1205,8 +1205,7 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOC
         return NULL;
     }
 
-    meocctdst->SetWholeVtkPolyData(meocctdst->CreateWholeVtkPolyData());
-
+    meocctdst->SetWholeVtkPolyData(wholevpd);
 
     std::vector<svModelElement::svFace*> oldFaces=meocctsrc->GetFaces();
     std::vector<svModelElement::svFace*> faces;
