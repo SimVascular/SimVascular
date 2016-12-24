@@ -1,6 +1,8 @@
 #include "svMeshCreate.h"
 #include "ui_svMeshCreate.h"
 
+#include "simvascular_options.h"
+
 #include "svMitkMesh.h"
 #include "svModel.h"
 
@@ -83,6 +85,46 @@ void svMeshCreate::Activated()
     }
 
     ui->lineEditMeshName->clear();
+
+    connect(ui->comboBox, SIGNAL(currentIndexChanged(int)), this, SLOT(SetupMeshType(int )));
+    ui->comboBox->setCurrentIndex(-1);
+    if(ui->comboBox->count()>0)
+        ui->comboBox->setCurrentIndex(0);
+
+}
+
+void svMeshCreate::SetupMeshType(int idx)
+{
+    ui->comboBoxMeshType->clear();
+
+    if(ui->comboBox->currentIndex()!=-1)
+    {
+        std::string modelName=ui->comboBox->currentText().toStdString();
+        mitk::DataNode::Pointer modelNode=m_DataStorage->GetNamedDerivedNode(modelName.c_str(),m_ModelFolderNode);
+        if(modelNode.IsNull())
+        {
+            ui->comboBoxMeshType->clear();
+            return;
+        }
+
+        svModel* model=dynamic_cast<svModel*>(modelNode->GetData());
+        if(model==NULL)
+        {
+            ui->comboBoxMeshType->clear();
+            return;
+        }
+
+        std::string modelType=model->GetType();
+
+        ui->comboBoxMeshType->addItem("TetGen");
+
+#ifdef SV_USE_MESHSIM
+            ui->comboBoxMeshType->addItem("MeshSim");
+            if(modelType=="Parasolid")
+                ui->comboBoxMeshType->setCurrentText("MeshSim");
+#endif
+
+    }
 }
 
 void svMeshCreate::SetFocus( )
@@ -96,6 +138,12 @@ void svMeshCreate::CreateMesh()
     if(selectedModelName=="")
     {
         QMessageBox::warning(NULL,"No Model Selected","Please select a model!");
+        return;
+    }
+
+    if(ui->comboBoxMeshType->currentIndex()==-1)
+    {
+        QMessageBox::warning(NULL,"No Type Selected","Please select a mesh type!");
         return;
     }
 
@@ -128,17 +176,18 @@ void svMeshCreate::CreateMesh()
 
     svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
     mitkMesh->SetModelName(selectedModelNode->GetName());
-    if(model->GetType()=="PolyData")
-        mitkMesh->SetType("TetGen");
-    else if(model->GetType()=="OpenCASCADE")
-        mitkMesh->SetType("MeshSim");
-    else if(model->GetType()=="Parasolid")
-        mitkMesh->SetType("MeshSim");
-    else
-    {
-        QMessageBox::warning(NULL,"The model type is unknown and not supported","Please make sure the model is valid!");
-        return;
-    }
+    mitkMesh->SetType(ui->comboBoxMeshType->currentText().toStdString());
+//    if(model->GetType()=="PolyData")
+//        mitkMesh->SetType("TetGen");
+//    else if(model->GetType()=="OpenCASCADE")
+//        mitkMesh->SetType("MeshSim");
+//    else if(model->GetType()=="Parasolid")
+//        mitkMesh->SetType("MeshSim");
+//    else
+//    {
+//        QMessageBox::warning(NULL,"The model type is unknown and not supported","Please make sure the model is valid!");
+//        return;
+//    }
     mitkMesh->SetDataModified();
 
     mitk::DataNode::Pointer meshNode = mitk::DataNode::New();

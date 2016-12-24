@@ -11,6 +11,10 @@
 #include "svMitkMeshIO.h"
 #include "svProjectManager.h"
 
+#ifdef SV_USE_OpenCASCADE
+#include "svModelElementOCCT.h"
+#endif
+
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -108,6 +112,11 @@ void svMeshEdit::SetupTetGenGUI(QWidget *parent )
     connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
 
     ui->toolBox->setCurrentIndex(0);
+
+    ui->frameMMG->hide();
+#ifdef SV_USE_MMG
+    ui->frameMMG->show();
+#endif
 
     //for local table
     m_TableModelLocalT = new QStandardItemModel(this);
@@ -529,7 +538,7 @@ void svMeshEdit::RunCommands(bool fromGUI)
 {
     int timeStep=GetTimeStep();
     svMesh* originalMesh=m_MitkMesh->GetMesh(timeStep);
-    if(originalMesh->GetSurfaceMesh()==NULL)
+    if(originalMesh&&originalMesh->GetSurfaceMesh()==NULL)
     {
         std::string path="";
         m_MeshNode->GetStringProperty("path",path);
@@ -559,7 +568,23 @@ void svMeshEdit::RunCommands(bool fromGUI)
 
     if(!m_Model) return;
 
-    svModelElement* modelElement=m_Model->GetModelElement();
+    svModelElementPolyData* modelElement=NULL;
+    modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
+
+#ifdef SV_USE_OpenCASCADE
+    if(modelElement==NULL)
+    {
+        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
+        if(meocct)
+        {
+            mitk::StatusBar::GetInstance()->DisplayText("converting OpenCASCADE to PolyData...");
+            WaitCursorOn();
+            modelElement=meocct->ConverToPolyDataModel();
+            WaitCursorOff();
+        }
+    }
+#endif
+
     if(!modelElement) return;
 
     svMesh* newMesh=NULL;
@@ -579,6 +604,9 @@ void svMeshEdit::RunCommands(bool fromGUI)
     }
 //    else if(m_MeshType=="MeshSim")
 //        mesh=new svMeshMeshSim();
+
+    if(newMesh==NULL)
+        return;
 
     //add fake progress
     mitk::ProgressBar::GetInstance()->AddStepsToDo(3);
@@ -654,9 +682,16 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
         cmds.push_back("option volume 0");
 
     if(ui->checkBoxRadiusBasedT->isChecked())
-        cmds.push_back("option UseMMG 0");
-    else
+    {
+        ui->checkBoxMMG->setChecked(false);
+    }
+
+    if(ui->checkBoxMMG->isChecked())
         cmds.push_back("option UseMMG 1");
+    else
+        cmds.push_back("option UseMMG 0");
+
+    cmds.push_back("setWalls");
 
     cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString());
 

@@ -28,6 +28,8 @@ public slots:
 
     void Activated();
 
+    void SetupMeshType(int idx);
+
 protected:
 
     Ui::svMeshCreate *ui;
