@@ -19,6 +19,13 @@ if(SV_USE_OpenCASCADE)
   )
 endif()
 
+if(SV_USE_PARASOLID)
+  set(H_FILES
+      ${H_FILES}
+      svModelElementParasolid.h
+  )
+endif()
+
 set(CPP_FILES
     svModelUtils.cxx
     svModelElement.cxx
@@ -37,6 +44,13 @@ if(SV_USE_OpenCASCADE)
   set(CPP_FILES
       ${CPP_FILES}
       svModelElementOCCT.cxx
+  )
+endif()
+
+if(SV_USE_PARASOLID)
+  set(CPP_FILES
+      ${CPP_FILES}
+      svModelElementParasolid.cxx
   )
 endif()
 

@@ -102,7 +102,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
             if(occtSolid)
             {
                 svModelElementOCCT* meocct=new svModelElementOCCT();
-                meocct->SetOCCTSolid(occtSolid);
+                meocct->SetInnerSolid(occtSolid);
                 meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
 
                 for(int i=0;i<faces.size();i++)
@@ -226,10 +226,10 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
         svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(modelElement);
         if(!meocct) return;
 
-        if(meocct->GetOCCTSolid())
+        if(meocct->GetInnerSolid())
         {
             char* fpath=const_cast<char*>(filePath.toStdString().c_str());
-            if (meocct->GetOCCTSolid()->WriteNative(0,fpath) != CV_OK )
+            if (meocct->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
              {
                  mitkThrow() << "OpenCASCADE model writing error: ";
              }

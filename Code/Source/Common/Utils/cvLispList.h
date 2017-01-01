@@ -76,7 +76,7 @@ PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 
 #include <assert.h>
-#define Assert assert
+#define cvAssert assert
 
 
 typedef int Bool;
@@ -191,7 +191,7 @@ class cvLispListIterator {
     Bool IsDone() { return current == NULL; };
 				// return TRUE if we are at the end of the list
 
-    T Item() { Assert(!IsDone()); return current->item; };
+    T Item() { cvAssert(!IsDone()); return current->item; };
 				// return current element on list
 
     void Next() { current = current->next; };		

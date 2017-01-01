@@ -114,7 +114,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
                 char* df=const_cast<char*>(dataFileName.c_str());
                 occtSolid->ReadNative(df);
-                meocct->SetOCCTSolid(occtSolid);
+                meocct->SetInnerSolid(occtSolid);
 
                 double maxDist=0;
                 if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
@@ -406,10 +406,10 @@ void svModelIO::Write()
 
             svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
 
-            if(meocct&&meocct->GetOCCTSolid())
+            if(meocct&&meocct->GetInnerSolid())
             {
                char* df=const_cast<char*>(dataFileName.c_str());
-                if (meocct->GetOCCTSolid()->WriteNative(0,df) != CV_OK )
+                if (meocct->GetInnerSolid()->WriteNative(0,df) != CV_OK )
                 {
                     mitkThrow() << "OpenCASCADE model writing error: ";
                 }

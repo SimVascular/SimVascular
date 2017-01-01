@@ -9,6 +9,13 @@ if(SV_USE_OpenCASCADE)
   )
 endif()
 
+if(SV_USE_PARASOLID)
+  set(OTHER_OPT_LIBS
+    ${OTHER_OPT_LIBS}
+    ${SV_LIB_PARASOLID_SOLID_NAME}
+  )
+endif()
+
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(

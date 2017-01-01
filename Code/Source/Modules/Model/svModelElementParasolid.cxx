@@ -1,39 +1,39 @@
-#include "svModelElementOCCT.h"
+#include "svModelElementParasolid.h"
 
-//#include "svModelUtils.h"
+#include "svModelUtils.h"
 
 #include "cv_sys_geom.h"
 
 #include <iostream>
 using namespace std;
 
-svModelElementOCCT::svModelElementOCCT()
+svModelElementParasolid::svModelElementParasolid()
 {
-    m_Type="OpenCASCADE";
+    m_Type="Parasolid";
     m_InnerSolid=NULL;
-    m_MaxDist=20.0;
+    m_MaxDist=1.0;
 }
 
-svModelElementOCCT::svModelElementOCCT(const svModelElementOCCT &other)
+svModelElementParasolid::svModelElementParasolid(const svModelElementParasolid &other)
     : svModelElement(other)
     , m_MaxDist(other.m_MaxDist)
 {
-    m_InnerSolid=new cvOCCTSolidModel();
+    m_InnerSolid=new cvParasolidSolidModel();
     m_InnerSolid->Copy(*(other.m_InnerSolid));
 }
 
-svModelElementOCCT::~svModelElementOCCT()
+svModelElementParasolid::~svModelElementParasolid()
 {
     if(m_InnerSolid)
         delete m_InnerSolid;
 }
 
-svModelElementOCCT* svModelElementOCCT::Clone()
+svModelElementParasolid* svModelElementParasolid::Clone()
 {
-    return new svModelElementOCCT(*this);
+    return new svModelElementParasolid(*this);
 }
 
-vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateFaceVtkPolyData(int id)
+vtkSmartPointer<vtkPolyData> svModelElementParasolid::CreateFaceVtkPolyData(int id)
 {
     if(m_InnerSolid==NULL)
         return NULL;
@@ -50,7 +50,7 @@ vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateFaceVtkPolyData(int id)
 //    return fpd;
 }
 
-vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateWholeVtkPolyData()
+vtkSmartPointer<vtkPolyData> svModelElementParasolid::CreateWholeVtkPolyData()
 {
     if(m_InnerSolid==NULL)
         return NULL;
@@ -62,27 +62,27 @@ vtkSmartPointer<vtkPolyData> svModelElementOCCT::CreateWholeVtkPolyData()
     return cvwholevpd->GetVtkPolyData();
 }
 
-double svModelElementOCCT::GetMaxDist()
+double svModelElementParasolid::GetMaxDist()
 {
     return m_MaxDist;
 }
 
-void svModelElementOCCT::SetMaxDist(double maxDist)
+void svModelElementParasolid::SetMaxDist(double maxDist)
 {
     m_MaxDist=maxDist;
 }
 
-cvOCCTSolidModel* svModelElementOCCT::GetInnerSolid()
+cvParasolidSolidModel* svModelElementParasolid::GetInnerSolid()
 {
     return m_InnerSolid;
 }
 
-void svModelElementOCCT::SetInnerSolid(cvOCCTSolidModel* occtSolid)
+void svModelElementParasolid::SetInnerSolid(cvParasolidSolidModel* innerSolid)
 {
-    m_InnerSolid=occtSolid;
+    m_InnerSolid=innerSolid;
 }
 
-int svModelElementOCCT::GetFaceIDFromInnerSolid(std::string faceName)
+int svModelElementParasolid::GetFaceIDFromInnerSolid(std::string faceName)
 {
     int id=-1;
 
@@ -107,7 +107,7 @@ int svModelElementOCCT::GetFaceIDFromInnerSolid(std::string faceName)
     return id;
 }
 
-void svModelElementOCCT::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
+void svModelElementParasolid::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlendRadii)
 {
     for(int i=0;i<moreBlendRadii.size();i++)
     {
@@ -138,7 +138,7 @@ void svModelElementOCCT::AddBlendRadii(std::vector<svBlendParamRadius*> moreBlen
 
 }
 
-void svModelElementOCCT::SetFaceName(std::string name, int id)
+void svModelElementParasolid::SetFaceName(std::string name, int id)
 {
     int index=GetFaceIndex(id);
     if(index>-1)
@@ -153,7 +153,7 @@ void svModelElementOCCT::SetFaceName(std::string name, int id)
     }
 }
 
-svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
+svModelElementPolyData* svModelElementParasolid::ConverToPolyDataModel()
 {
     svModelElementPolyData* mepd=new svModelElementPolyData();
     mepd->SetSegNames(GetSegNames());
