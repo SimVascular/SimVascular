@@ -80,8 +80,8 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
         }
         else if(modelType=="Parasolid")
         {
-            if(!fileName.endsWith(".xmt_txt"))
-                fileName=fileName+".xmt_txt";
+            if(fileName.endsWith(".xmt_txt"))
+                fileName=fileName.remove(".xmt_txt");
         }
         svModelLegacyIO::WriteFile(selectedNode, fileName);
 

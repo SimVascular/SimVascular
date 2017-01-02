@@ -15,6 +15,10 @@
 #include "svModelElementOCCT.h"
 #endif
 
+#ifdef SV_USE_PARASOLID
+#include "svModelElementParasolid.h"
+#endif
+
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -574,12 +578,26 @@ void svMeshEdit::RunCommands(bool fromGUI)
 #ifdef SV_USE_OpenCASCADE
     if(modelElement==NULL)
     {
-        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
-        if(meocct)
+        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
+        if(me)
         {
             mitk::StatusBar::GetInstance()->DisplayText("converting OpenCASCADE to PolyData...");
             WaitCursorOn();
-            modelElement=meocct->ConverToPolyDataModel();
+            modelElement=me->ConverToPolyDataModel();
+            WaitCursorOff();
+        }
+    }
+#endif
+
+#ifdef SV_USE_PARASOLID
+    if(modelElement==NULL)
+    {
+        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement());
+        if(me)
+        {
+            mitk::StatusBar::GetInstance()->DisplayText("converting Parasolid to PolyData...");
+            WaitCursorOn();
+            modelElement=me->ConverToPolyDataModel();
             WaitCursorOff();
         }
     }

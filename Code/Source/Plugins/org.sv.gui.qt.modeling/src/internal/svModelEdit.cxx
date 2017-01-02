@@ -1439,7 +1439,7 @@ void svModelEdit::CreateModel()
         newModelElement=svModelUtils::CreateModelElementPolyData(segNodes,numSampling,stats);
         if(newModelElement==NULL)
         {
-            statusText="Failed to create model.";
+            statusText="Failed to create PolyData model.";
         }
         else
         {
@@ -1452,7 +1452,17 @@ void svModelEdit::CreateModel()
         newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling);
         if(newModelElement==NULL)
         {
-            statusText="Failed to create model.";
+            statusText="Failed to create OpenCASCADE model.";
+        }
+    }
+#endif
+#ifdef SV_USE_PARASOLID
+    else if(m_ModelType=="Parasolid")
+    {
+        newModelElement=svModelUtils::CreateModelElementParasolid(segNodes,numSampling);
+        if(newModelElement==NULL)
+        {
+            statusText="Failed to create Parasolid model.";
         }
     }
 #endif
@@ -1557,10 +1567,19 @@ void svModelEdit::BlendModel()
 #ifdef SV_USE_OpenCASCADE
     else if(m_ModelType=="OpenCASCADE")
     {
-        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(modelElement);
-        if(!meocct) return;
+        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(modelElement);
+        if(!me) return;
 
-        newModelElement=svModelUtils::CreateModelElementOCCTByBlend(meocct, blendRadii);
+        newModelElement=svModelUtils::CreateModelElementOCCTByBlend(me, blendRadii);
+    }
+#endif
+#ifdef SV_USE_PARASOLID
+    else if(m_ModelType=="Parasolid")
+    {
+        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(modelElement);
+        if(!me) return;
+
+        newModelElement=svModelUtils::CreateModelElementParasolidByBlend(me, blendRadii);
     }
 #endif
 
@@ -1899,25 +1918,28 @@ void svModelEdit::ChangeFacetSize()
 #ifdef SV_USE_OpenCASCADE
     if(m_ModelType=="OpenCASCADE")
     {
-        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
-        if(meocct==NULL)
+        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
+        if(me==NULL)
             return;
 
         sizeType="Max Angle Dev";
-        facetSize=meocct->GetMaxDist();
+        facetSize=me->GetMaxDist();
 
     }
 #endif
 
+#ifdef SV_USE_PARASOLID
     if(m_ModelType=="Parasolid")
     {
-//        svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
-//        if(meps==NULL)
-//            return;
+        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
+        if(me==NULL)
+            return;
 
-//        sizeType="Max Edge Size";
-//        faceSize=meps->GetMaxDist();
+        sizeType="Max Edge Sizev";
+        facetSize=me->GetMaxDist();
+
     }
+#endif
 
     if(sizeType=="")
         return;
@@ -1941,21 +1963,32 @@ void svModelEdit::ChangeFacetSize()
 #ifdef SV_USE_OpenCASCADE
     if(m_ModelType=="OpenCASCADE")
     {
-        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
-        meocct->SetMaxDist(newSize);
-        meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
-        std::vector<svModelElement::svFace*> faces=meocct->GetFaces();
+        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
+        me->SetMaxDist(newSize);
+        me->SetWholeVtkPolyData(me->CreateWholeVtkPolyData());
+        std::vector<svModelElement::svFace*> faces=me->GetFaces();
         for(int i=0;i<faces.size();i++)
         {
-            faces[i]->vpd=meocct->CreateFaceVtkPolyData(faces[i]->id);
+            faces[i]->vpd=me->CreateFaceVtkPolyData(faces[i]->id);
         }
         m_Model->SetDataModified();
     }
 #endif
 
+#ifdef SV_USE_PARASOLID
     if(m_ModelType=="Parasolid")
     {
+        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
+        me->SetMaxDist(newSize);
+        me->SetWholeVtkPolyData(me->CreateWholeVtkPolyData());
+        std::vector<svModelElement::svFace*> faces=me->GetFaces();
+        for(int i=0;i<faces.size();i++)
+        {
+            faces[i]->vpd=me->CreateFaceVtkPolyData(faces[i]->id);
+        }
+        m_Model->SetDataModified();
     }
+#endif
 
     mitk::StatusBar::GetInstance()->DisplayText("New surface has been created with new facet size.");
     mitk::ProgressBar::GetInstance()->Progress();
@@ -1998,10 +2031,21 @@ void svModelEdit::ConvertToPolyDataModel()
 #ifdef SV_USE_OpenCASCADE
     if(m_ModelType=="OpenCASCADE")
     {
-        svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
-        if(meocct)
+        svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());
+        if(me)
         {
-            modelElement=meocct->ConverToPolyDataModel();
+            modelElement=me->ConverToPolyDataModel();
+        }
+    }
+#endif
+
+#ifdef SV_USE_PARASOLID
+    if(m_ModelType=="Parasolid")
+    {
+        svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement());
+        if(me)
+        {
+            modelElement=me->ConverToPolyDataModel();
         }
     }
 #endif

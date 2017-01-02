@@ -12,6 +12,10 @@
 #include <XCAFApp_Application.hxx>
 #endif
 
+#ifdef SV_USE_PARASOLID
+#include "cv_parasolid_utils.h"
+#endif
+
 #include "mitkProperties.h"
 #include "mitkBaseRenderer.h"
 #include "mitkDataNode.h"
@@ -128,6 +132,12 @@ RegistersvModelObjectFactory::RegistersvModelObjectFactory()
     if ( !XCAFDoc_DocumentTool::IsXCAFDocument(doc))
     {
       MITK_ERROR<<"OCCT XDE is not setup correctly, file i/o and register of solid will not work correctly";
+    }
+#endif
+
+#ifdef SV_USE_PARASOLID
+    if (PsdUtils_Init() != CV_OK) {
+      MITK_ERROR<<"Parasolid Uitls init error";
     }
 #endif
 
