@@ -49,7 +49,7 @@
       <item>
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Number of Sampling Pts</string>
+         <string>Number of Sampling Points:</string>
         </property>
        </widget>
       </item>
