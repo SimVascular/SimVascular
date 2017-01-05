@@ -5,7 +5,11 @@ proc startTclPython {} {
   global tcl_platform
 
   global gPythonInterp
-  set gPythonInterp [::python::interp new]
+  if [catch {set gPythonInterp [::python::interp new]} msg] {
+    set gPythonInterp "error_in_python_init"
+    puts "ERROR in pythoninterp int ($msg)"
+    return
+  }
   #$gPythonInterp exec {print("Python Available")}
 
   #Create TclPyString global to pass string between tcl and python
