@@ -39,7 +39,7 @@ include $(TOP)/include.mk
 # --------------
 
 CXXFLAGS = $(GLOBAL_CXXFLAGS) $(LOCAL_INCDIR) $(VTK_INCDIRS) \
-	   $(SHAPES_INCDIR)
+	   $(TCLTK_INCDIR)
 
 HDRS	= cv_VMTK_utils.h \
           vtkvmtkAppendFilter.h \

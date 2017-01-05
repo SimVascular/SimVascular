@@ -156,5 +156,5 @@ svModelElementPolyData* svModelElementOCCT::ConverToPolyDataModel()
     svModelElementPolyData* mepd=new svModelElementPolyData();
     mepd->SetSegNames(GetSegNames());
     mepd->SetWholeVtkPolyData(CreateWholeVtkPolyData());
-
+    return mepd;
 }
