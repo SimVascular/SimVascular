@@ -48,4 +48,5 @@ endif
     LIBFLAG         = -l
     SVLIBFLAG       = -l
     LIBLINKEXT      =
+    SV_QUIET_FLAG   = @
 endif

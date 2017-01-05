@@ -53,4 +53,5 @@ endif
     LIBCMD          = lib 
     SVLIBFLAG       =lib
     LIBLINKEXT      =.lib
+    SV_QUIET_FLAG   = @
 endif

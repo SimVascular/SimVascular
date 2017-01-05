@@ -46,4 +46,5 @@ endif
     LIBFLAG         = -l
     LIBCMD          = lib 
     SVLIBFLAG       = -llib
+    SV_QUIET_FLAG   = @
 endif
