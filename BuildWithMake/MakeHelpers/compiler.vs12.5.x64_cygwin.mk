@@ -11,14 +11,14 @@ ifeq ($(CLUSTER), x64_cygwin)
     AR              = lib -out:
 ifeq ($(MAKE_FULLY_OPTIMIZED),1)
     DEBUG_FLAGS     = 
-    OPT_FLAGS       = /MD /Ox /EHsc /MP /FS
+    OPT_FLAGS       = /nologo /MD /Ox /EHsc /MP /FS
 else
   ifeq ($(MAKE_OPTIMIZED),1)
     DEBUG_FLAGS     =
-    OPT_FLAGS       = /MD /Zi /O2 /EHsc /GS /MP /FS
+    OPT_FLAGS       = /nologo /MD /Zi /O2 /EHsc /GS /MP /FS
   else
     OPT_FLAGS       = 
-    DEBUG_FLAGS     = /MD /Zi /Od /EHsc -D_CRT_SECURE_NO_DEPRECATE /GS /GR /MP /FS
+    DEBUG_FLAGS     = /nologo /MD /Zi /Od /EHsc -D_CRT_SECURE_NO_DEPRECATE /GS /GR /MP /FS
   endif
 endif
     SHAR            = "/cygdrive/c/Program Files (x86)/Microsoft Visual Studio 12.0/VC/BIN/amd64/link.exe"
@@ -53,4 +53,5 @@ endif
     LIBCMD          = lib 
     SVLIBFLAG       =lib
     LIBLINKEXT      =.lib
+    SV_QUIET_FLAG   = @
 endif

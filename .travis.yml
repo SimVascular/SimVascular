@@ -1,34 +1,27 @@
+dist: trusty
+sudo: required
+
 env:
-  - WITH_CMAKE=true VTK_VERSION=6.2 ITK_VERSION=4.8 PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=false
-  - WITH_CMAKE=true VTK_VERSION=6.2 ITK_VERSION=4.8 PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=true
-  - WITH_CMAKE=true VTK_VERSION=6.0 ITK_VERSION=4.5 PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=false
+  - WITH_CMAKE=true BUILD_TEST=false
+  - WITH_CMAKE=false BUILD_TEST=false
+
 matrix:
  allow_failures:
-   - env: WITH_CMAKE=true VTK_VERSION=6.0 ITK_VERSION=4.5 PREBUILD_ITKVTK=true BUILD_SOLVER=false BUILD_TEST=false
 
-
-sudo: false
 language: cpp
 
 compiler: gcc
 
 install:
-  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
+#  - if [ "$CXX" = "g++" ]; then export CXX="g++-4.8" CC="gcc-4.8"; fi
 
 addons:
   apt:
     packages:
-    - curl
-    - cmake
-    - tcl8.5
-    - tk8.5
-    - tcl8.5-dev
-    - tk8.5-dev
-    - tcllib
-    - tklib
-    - gfortran
-    - gcc-4.8
-    - g++-4.8
+    - libglu1-mesa-dev
+    - libxt-dev
+    - libxi-dev
+
     sources:
     - ubuntu-toolchain-r-test
     - kubuntu-backports
@@ -40,32 +33,26 @@ before_install:
   - export NUM_THREADS=4
   - export cwd=$(pwd)
   - export SCRIPTS=$cwd/travis
-  - export EXTERNALS_DIR=/home/travis/external
-  - export VTK_SOURCE_DIR=$EXTERNALS_DIR/vtk-$VTK_VERSION
-  - export VTK_DIR=$EXTERNALS_DIR/vtk-$VTK_VERSION-build
-  - export TCLLIBPATH=$VTK_DIR/Wrapping/Tcl
-  - export ITK_SOURCE_DIR=$EXTERNALS_DIR/itk-$ITK_VERSION
-  - export ITK_DIR=$EXTERNALS_DIR/itk-$ITK_VERSION-build
+  - export EXTERNALS_TOP=$cwd/ext
+  - $SCRIPTS/travis_get_qt.sh
+  - $SCRIPTS/travis_get_externals.sh
   - export BUILD_DIR=$cwd/build
+  - export SV_CODE_DIR=$cwd/Code
   - export SV_TEST_DIR=$HOME/test/
   - if $BUILD_TEST; then $SCRIPTS/travis_get_test_data.sh; fi
+  - echo "CLUSTER=x64_linux" > BuildWithMake/cluster_overrides.mk
+  - echo "CXX_COMPILER_VERSION=gcc" >> BuildWithMake/cluster_overrides.mk
+  - echo "FORTRAN_COMPILER_VERSION=gfortran" >> BuildWithMake/cluster_overrides.mk
+  - echo "OPEN_SOFTWARE_BINARIES_TOPLEVEL=$EXTERNALS_TOP/bin/gnu-4.8/x64" > BuildWithMake/global_overrides.mk
+  - echo "OPEN_SOFTWARE_BUILDS_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
+  - echo "OPEN_SOFTWARE_SOURCES_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
+  - echo "LICENSED_SOFTWARE_TOPLEVEL=" >> BuildWithMake/global_overrides.mk
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1280x1024x16"
-  # - sudo apt-get install -qq mpich2 tklib
 
 cache:
   directories:
-  - /home/travis/external/vtk-6.0
-  - /home/travis/external/vtk-6.0-build
-  - /home/travis/external/itk-4.5
-  - /home/travis/external/itk-4.5-build
-  - /home/travis/external/vtk-6.2
-  - /home/travis/external/vtk-6.2-build
-  - /home/travis/external/itk-4.8
-  - /home/travis/external/itk-4.8-build
 
 before_script:
-  - $SCRIPTS/travis_build_vtk.sh
-  - $SCRIPTS/travis_build_itk.sh
   - $SCRIPTS/travis_before_script_cleanup.sh
   #- if ! $WITH_CMAKE; then $ fi
 

@@ -44,4 +44,5 @@ endif
     LIBPATH_COMPILER_FLAG = -L
     LIBFLAG         = -l
     SVLIBFLAG       = -l
+    SV_QUIET_FLAG   = @
 endif
