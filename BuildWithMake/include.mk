@@ -169,6 +169,7 @@ SV_USE_SYSTEM_TCLTK = 0
 # -----------------------------------------------------
 
 SV_USE_VTK = 1
+SV_USE_VTK_SHARED = 1
 
 # -----------------------------------------------------
 # Compile with ITK
@@ -409,6 +410,10 @@ endif
 
 ifeq ($(SV_USE_GTS),1)
   GLOBAL_DEFINES += -DSV_USE_GTS -DNATIVE_WIN32
+endif
+
+ifeq ($(SV_USE_VTK),1)
+  GLOBAL_DEFINES += -DSV_USE_VTK -DSV_USE_VTK_SHARED
 endif
 
 # ----------------------------------

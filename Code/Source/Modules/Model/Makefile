@@ -39,7 +39,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           $(VMTK_INCDIR)
+           $(VMTK_INCDIR) \
+           $(OPENCASCADE_INCDIR)
 
 MODULE_NAME = svModel
 MODULE_NAME_ALL_CAPS = SVMODEL
@@ -59,6 +60,11 @@ HDRS	= \
     svModelLegacyIO.h \
     svModelObjectFactory.h
 
+ifeq ($(SV_USE_OPENCASCADE),1)
+    HDRS +=  svModelElementOCCT.h
+endif
+
+
 CXXSRCS	= \
     svModelUtils.cxx \
     svModelElement.cxx \
@@ -71,6 +77,10 @@ CXXSRCS	= \
     svModelIO.cxx \
     svModelLegacyIO.cxx \
     svModelObjectFactory.cxx
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+    CXXSRCS += svModelElementOCCT.cxx
+endif
 
 CXXSRCS += us_init.cxx
 
@@ -101,11 +111,17 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+
+ifeq ($(SV_USE_OPENCASCADE),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+	DLLLIBS += $(OPENCASCADE_LIBS)
+endif
 
 ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
