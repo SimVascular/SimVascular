@@ -54,13 +54,17 @@ svSimulationView::svSimulationView() :
 
     m_TableModelSolver=NULL;
 
-    m_PresolverPath="";
-    m_FlowsolverPath="";
+    m_InternalPresolverPath="";
+    m_InternalFlowsolverPath="";
+    m_InternalPostsolverPath="";
+
+    m_ExternalPresolverPath="";
+    m_ExternalFlowsolverPath="";
     m_UseMPI=true;
     m_MPIExecPath="";
     m_UseCustom=false;
     m_SolverTemplatePath="";
-    m_PostsolverPath="";
+    m_ExternalPostsolverPath="";
 }
 
 svSimulationView::~svSimulationView()
@@ -181,6 +185,12 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     connect(ui->toolButtonResultDir, SIGNAL(clicked()), this, SLOT(SetResultDir()) );
     connect(ui->btnExportResults, SIGNAL(clicked()), this, SLOT(ExportResults()) );
 
+    //get path for the internal solvers
+    QString applicationPath=QCoreApplication::applicationDirPath();
+    m_InternalPresolverPath=applicationPath+"/svpre";
+    m_InternalFlowsolverPath=applicationPath+"/svsolver";
+    m_InternalPostsolverPath=applicationPath+"/svpost";
+
     //get paths for the external solvers
     berry::IPreferences::Pointer prefs = this->GetPreferences();
     berry::IBerryPreferences* berryprefs = dynamic_cast<berry::IBerryPreferences*>(prefs.GetPointer());
@@ -193,13 +203,13 @@ void svSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* pref
     if(prefs==NULL)
         return;
 
-    m_PresolverPath=prefs->Get("presolver path","");
-    m_FlowsolverPath=prefs->Get("flowsolver path","");
+    m_ExternalPresolverPath=prefs->Get("presolver path","");
+    m_ExternalFlowsolverPath=prefs->Get("flowsolver path","");
     m_UseMPI=prefs->GetBool("use mpi", true);
     m_MPIExecPath=prefs->Get("mpiexec path","");
     m_UseCustom=prefs->GetBool("use custom", false);
     m_SolverTemplatePath=prefs->Get("solver template path","");
-    m_PostsolverPath=prefs->Get("postsolver path","");
+    m_ExternalPostsolverPath=prefs->Get("postsolver path","");
 }
 
 void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
@@ -1062,7 +1072,7 @@ void svSimulationView::ExportInputFiles()
 
     WaitCursorOn();
 
-    CreateDataFiles(dir, false, true);
+    CreateDataFiles(dir, false, true, true);
 
     WaitCursorOff();
 }
@@ -1098,7 +1108,7 @@ void svSimulationView::ExportAllFiles()
 
     WaitCursorOn();
 
-    CreateDataFiles(dir, true, true);
+    CreateDataFiles(dir, true, true, true);
 
     WaitCursorOff();
 }
@@ -1131,7 +1141,7 @@ void svSimulationView::CreateAllFiles()
 
     WaitCursorOn();
 
-    CreateDataFiles(jobPath, true, true);
+    CreateDataFiles(jobPath, true, true, false);
 
     WaitCursorOff();
 }
@@ -1162,7 +1172,11 @@ void svSimulationView::RunJob()
 
     QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
 
-    if(m_FlowsolverPath=="")
+    QString flowsolverPath=m_InternalFlowsolverPath;
+    if(flowsolverPath=="")
+        flowsolverPath=m_ExternalFlowsolverPath;
+
+    if(flowsolverPath=="")
     {
         QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide flowsolver in Preferences");
         return;
@@ -1210,13 +1224,13 @@ void svSimulationView::RunJob()
     if(m_UseMPI)
     {
         QStringList arguments;
-        arguments << "-n" << QString::number(ui->sliderNumProcs->value())<< m_FlowsolverPath;
+        arguments << "-n" << QString::number(ui->sliderNumProcs->value())<< flowsolverPath;
         flowsolverProcess->start(m_MPIExecPath, arguments);
         flowsolverProcess->waitForFinished(-1);
     }
     else
     {
-        flowsolverProcess->start(m_FlowsolverPath, QStringList());
+        flowsolverProcess->start(flowsolverPath, QStringList());
         flowsolverProcess->waitForFinished(-1);
     }
 
@@ -1231,7 +1245,7 @@ void svSimulationView::RunJob()
     WaitCursorOff();
 }
 
-bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bool updateJob)
+bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
     if(!m_MitkJob)
         return false;
@@ -1258,10 +1272,13 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bo
         return false;
     }
 
+    if(createFolder)
+        outputDir=outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-files";
+
     QDir dir(outputDir);
     dir.mkpath(outputDir);
 
-    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file");
+    mitk::StatusBar::GetInstance()->DisplayText("Creating svpre file...");
     QString svpreFielContent=QString::fromStdString(svSimulationUtils::CreatePreSolverFileContent(job));
     QFile svpreFile(outputDir+"/"+QString::fromStdString(m_JobNode->GetName())+".svpre");
     if(svpreFile.open(QIODevice::WriteOnly | QIODevice::Text))
@@ -1319,7 +1336,11 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bo
     std::string meshName="";
     if(outputAllFiles)
     {
-        if(m_PresolverPath=="")
+        QString presolverPath=m_InternalPresolverPath;
+        if(presolverPath=="")
+            presolverPath=m_ExternalPresolverPath;
+
+        if(presolverPath=="")
         {
             QMessageBox::warning(m_Parent,"Presolver Missing","Please provide presolver in Preferences");
             return false;
@@ -1375,7 +1396,7 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles,bo
         presolverProcess->setWorkingDirectory(outputDir);
         QStringList arguments;
         arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-        presolverProcess->start(m_PresolverPath, arguments);
+        presolverProcess->start(presolverPath, arguments);
         presolverProcess->waitForFinished(-1);
     }
 
@@ -1759,7 +1780,11 @@ void svSimulationView::SetResultDir()
 
 void svSimulationView::ExportResults()
 {
-    if(m_PostsolverPath=="")
+    QString postsolverPath=m_InternalPostsolverPath;
+    if(postsolverPath=="")
+        postsolverPath=m_ExternalPostsolverPath;
+
+    if(postsolverPath=="")
     {
         QMessageBox::warning(m_Parent,"Postsolver Missing","Please provide postsolver in Preferences");
         return;
@@ -1792,6 +1817,10 @@ void svSimulationView::ExportResults()
 
     if(exportDir.isEmpty())
         return;
+
+    exportDir=exportDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-results";
+    QDir exdir(exportDir);
+    exdir.mkpath(exportDir);
 
     QString resultDir=ui->lineEditResultDir->text();
     QDir rdir(resultDir);
@@ -1857,7 +1886,7 @@ void svSimulationView::ExportResults()
     QProcess *postsolverProcess = new QProcess(m_Parent);
     postsolverProcess->setWorkingDirectory(exportDir);
 
-    postsolverProcess->start(m_PostsolverPath, arguments);
+    postsolverProcess->start(postsolverPath, arguments);
     postsolverProcess->waitForFinished(-1);
 
     mitk::StatusBar::GetInstance()->DisplayText("Results exported.");
