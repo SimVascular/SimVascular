@@ -213,12 +213,12 @@ int SimVascular_Init( Tcl_Interp *interp )
   }
 
 #ifdef SV_USE_OpenCASCADE
-#ifndef SV_USE_OpenCASCADE_SHARED
+//#ifndef SV_USE_OpenCASCADE_SHARED
   if ( Occtsolid_Init(interp) == TCL_ERROR ) {
     fprintf( stderr, "error on Opencascade_Init\n" );
     return TCL_ERROR;
   }
-#endif
+//#endif
 #endif
 
 #ifdef SV_USE_MESHSIM

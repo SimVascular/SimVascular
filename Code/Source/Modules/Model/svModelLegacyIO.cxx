@@ -8,6 +8,10 @@
 #include "svModelElementOCCT.h"
 #endif
 
+#ifdef SV_USE_PARASOLID
+#include "svModelElementParasolid.h"
+#endif
+
 #include <QString>
 #include <QStringList>
 #include <QList>
@@ -31,100 +35,173 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
 
     QString handler="";
     if(suffix=="vtp")
-        handler="set gPolyDataFaceNames(";
-    else if(suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges")
-        handler="set gOCCTFaceNames(";
-    else
-        return modelNode;
-
-
-    QFile inputFile(filePath2);
-    if (inputFile.open(QIODevice::ReadOnly))
     {
-        QTextStream in(&inputFile);
+        handler="set gPolyDataFaceNames(";
 
         std::vector<svModelElement::svFace*> faces;
 
-        while (!in.atEnd())
+        QFile inputFile(filePath2);
+        if (inputFile.open(QIODevice::ReadOnly))
         {
-            QString line = in.readLine();
+            QTextStream in(&inputFile);
 
-            if(line.contains(handler))
+            while (!in.atEnd())
             {
-                QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
-                svModelElement::svFace* face=new svModelElement::svFace;
-                face->id=list[2].toInt();
-                face->name=list[3].toStdString();
-                faces.push_back(face);
-                if(face->name.substr(0,4)=="wall")
-                    face->type="wall";
-                else if(face->name.substr(0,3)=="cap")
-                    face->type="cap";
+                QString line = in.readLine();
 
-            }
-        }
-        inputFile.close();
-
-        if(suffix=="vtp")
-        {
-            vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-            reader->SetFileName(filePath.toStdString().c_str());
-            reader->Update();
-            vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
-            if(pd!=NULL)
-            {
-                svModelElementPolyData* mepd=new svModelElementPolyData();
-                mepd->SetWholeVtkPolyData(pd);
-
-                for(int i=0;i<faces.size();i++)
+                if(line.contains(handler))
                 {
-                    vtkSmartPointer<vtkPolyData> facepd=mepd->CreateFaceVtkPolyData(faces[i]->id);
-                    faces[i]->vpd=facepd;
+                    QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    svModelElement::svFace* face=new svModelElement::svFace;
+                    face->id=list[2].toInt();
+                    face->name=list[3].toStdString();
+                    faces.push_back(face);
+                    if(face->name.substr(0,4)=="wall")
+                        face->type="wall";
+                    else if(face->name.substr(0,3)=="cap")
+                        face->type="cap";
+
                 }
-
-                mepd->SetFaces(faces);
-
-                svModel::Pointer model=svModel::New();
-                model->SetType(mepd->GetType());
-                model->SetModelElement(mepd);
-
-                modelNode = mitk::DataNode::New();
-                modelNode->SetData(model);
-                modelNode->SetName(baseName.toStdString());
             }
+            inputFile.close();
         }
-#ifdef SV_USE_OpenCASCADE
-        else if(suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges")
+
+        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
+        reader->SetFileName(filePath.toStdString().c_str());
+        reader->Update();
+        vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
+        if(pd!=NULL)
         {
-            cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
-            char* fpath=const_cast<char*>(filePath.toStdString().c_str());
-            occtSolid->ReadNative(fpath);
-            if(occtSolid)
+            svModelElementPolyData* mepd=new svModelElementPolyData();
+            mepd->SetWholeVtkPolyData(pd);
+
+            for(int i=0;i<faces.size();i++)
             {
-                svModelElementOCCT* meocct=new svModelElementOCCT();
-                meocct->SetOCCTSolid(occtSolid);
-                meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
-
-                for(int i=0;i<faces.size();i++)
-                {
-                    vtkSmartPointer<vtkPolyData> facepd=meocct->CreateFaceVtkPolyData(faces[i]->id);
-                    faces[i]->vpd=facepd;
-                }
-
-                meocct->SetFaces(faces);
-
-                svModel::Pointer model=svModel::New();
-                model->SetType(meocct->GetType());
-                model->SetModelElement(meocct);
-
-                modelNode = mitk::DataNode::New();
-                modelNode->SetData(model);
-                modelNode->SetName(baseName.toStdString());
+                vtkSmartPointer<vtkPolyData> facepd=mepd->CreateFaceVtkPolyData(faces[i]->id);
+                faces[i]->vpd=facepd;
             }
-        }
-#endif
 
+            mepd->SetFaces(faces);
+
+            svModel::Pointer model=svModel::New();
+            model->SetType(mepd->GetType());
+            model->SetModelElement(mepd);
+            model->SetDataModified();
+
+            modelNode = mitk::DataNode::New();
+            modelNode->SetData(model);
+            modelNode->SetName(baseName.toStdString());
+        }
     }
+#ifdef SV_USE_OpenCASCADE
+    else if(suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges")
+    {
+        handler="set gOCCTFaceNames(";
+
+        std::vector<svModelElement::svFace*> faces;
+
+        QFile inputFile(filePath2);
+        if (inputFile.open(QIODevice::ReadOnly))
+        {
+            QTextStream in(&inputFile);
+
+            while (!in.atEnd())
+            {
+                QString line = in.readLine();
+
+                if(line.contains(handler))
+                {
+                    QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+                    svModelElement::svFace* face=new svModelElement::svFace;
+                    face->id=list[2].toInt();
+                    face->name=list[3].toStdString();
+                    faces.push_back(face);
+                    if(face->name.substr(0,4)=="wall")
+                        face->type="wall";
+                    else if(face->name.substr(0,3)=="cap")
+                        face->type="cap";
+
+                }
+            }
+            inputFile.close();
+        }
+
+        cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
+        char* fpath=const_cast<char*>(filePath.toStdString().c_str());
+        occtSolid->ReadNative(fpath);
+        if(occtSolid)
+        {
+            svModelElementOCCT* meocct=new svModelElementOCCT();
+            meocct->SetInnerSolid(occtSolid);
+            meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
+
+            for(int i=0;i<faces.size();i++)
+            {
+                vtkSmartPointer<vtkPolyData> facepd=meocct->CreateFaceVtkPolyData(faces[i]->id);
+                faces[i]->vpd=facepd;
+            }
+
+            meocct->SetFaces(faces);
+
+            svModel::Pointer model=svModel::New();
+            model->SetType(meocct->GetType());
+            model->SetModelElement(meocct);
+            model->SetDataModified();
+
+            modelNode = mitk::DataNode::New();
+            modelNode->SetData(model);
+            modelNode->SetName(baseName.toStdString());
+        }
+    }
+#endif
+#ifdef SV_USE_PARASOLID
+    else if(suffix=="xmt_txt")
+    {
+        cvParasolidSolidModel* parasolid=new cvParasolidSolidModel();
+        char* fpath=const_cast<char*>(filePath.toStdString().c_str());
+        parasolid->ReadNative(fpath);
+
+        svModelElementParasolid* meps=new svModelElementParasolid();
+        meps->SetInnerSolid(parasolid);
+        meps->SetWholeVtkPolyData(meps->CreateWholeVtkPolyData());
+
+        int numFaces;
+        int *ids;
+        int status=parasolid->GetFaceIds( &numFaces, &ids);
+
+        std::vector<svModelElement::svFace*> faces;
+        for(int i=0;i<numFaces;i++)
+        {
+            vtkSmartPointer<vtkPolyData> facevpd=meps->CreateFaceVtkPolyData(ids[i]);
+
+            svModelElement::svFace* face =new svModelElement::svFace;
+            char *value;
+            parasolid->GetFaceAttribute("gdscName",ids[i],&value);
+            std::string name(value);
+            face->id=ids[i];
+            face->name=name;
+            face->vpd=facevpd;
+
+            if(face->name.substr(0,5)=="wall_")
+                face->type="wall";
+            else
+                face->type="cap";
+
+            faces.push_back(face);
+        }
+
+        meps->SetFaces(faces);
+
+        svModel::Pointer model=svModel::New();
+        model->SetType(meps->GetType());
+        model->SetModelElement(meps);
+        model->SetDataModified();
+
+        modelNode = mitk::DataNode::New();
+        modelNode->SetData(model);
+        modelNode->SetName(baseName.toStdString());
+    }
+#endif
 
     return modelNode;
 }
@@ -166,42 +243,47 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
         handler="gPolyDataFaceNames";
     else if(type=="OpenCASCADE")
         handler="gOCCTFaceNames";
+    else if(type=="Parasolid")
+        handler="";
     else
     {
         mitkThrow() << "Model type not support ";
         return;
     }
 
-    QFile outputFile(filePath2);
-    if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+    if(handler!="")
     {
-        QTextStream out(&outputFile);
-        //out.setRealNumberPrecision(17);
+        QFile outputFile(filePath2);
+        if(outputFile.open(QIODevice::WriteOnly | QIODevice::Text))
+        {
+            QTextStream out(&outputFile);
+            //out.setRealNumberPrecision(17);
 
-        QFileInfo fileInfo(filePath);
-        QString fileName = fileInfo.fileName();
+            QFileInfo fileInfo(filePath);
+            QString fileName = fileInfo.fileName();
 
-        out<<"global "<<handler<<endl;
-        out<<"global "<<handler<<"Info"<<endl;
+            out<<"global "<<handler<<endl;
+            out<<"global "<<handler<<"Info"<<endl;
 
-        out<<"set "<<handler<<"Info(timestamp) {1500000000}"<<endl;
-        //out<<"set "<<handler<<"Info(model_file_md5) {FCCF69239480A681C5579A153F2D552A}"<<endl;
-        out<<"set "<<handler<<"Info(model_file_name) {"<<fileName<<"}"<<endl;
+            out<<"set "<<handler<<"Info(timestamp) {1500000000}"<<endl;
+            //out<<"set "<<handler<<"Info(model_file_md5) {FCCF69239480A681C5579A153F2D552A}"<<endl;
+            out<<"set "<<handler<<"Info(model_file_name) {"<<fileName<<"}"<<endl;
 
-        std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
-        for(int i=0;i<faces.size();i++){
-            svModelElement::svFace* face=faces[i];
-            if(face)
-            {
-                out<<"set gPolyDataFaceNames("<<face->id<<") {"<<QString::fromStdString(face->name)<<"}"<<endl;
+            std::vector<svModelElement::svFace*> faces=modelElement->GetFaces();
+            for(int i=0;i<faces.size();i++){
+                svModelElement::svFace* face=faces[i];
+                if(face)
+                {
+                    out<<"set gPolyDataFaceNames("<<face->id<<") {"<<QString::fromStdString(face->name)<<"}"<<endl;
+                }
             }
-        }
 
-        outputFile.close();
-    }
-    else
-    {
-        return;
+            outputFile.close();
+        }
+        else
+        {
+            return;
+        }
     }
 
     if(type=="PolyData")
@@ -226,17 +308,32 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
         svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(modelElement);
         if(!meocct) return;
 
-        if(meocct->GetOCCTSolid())
+        if(meocct->GetInnerSolid())
         {
             char* fpath=const_cast<char*>(filePath.toStdString().c_str());
-            if (meocct->GetOCCTSolid()->WriteNative(0,fpath) != CV_OK )
+            if (meocct->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
              {
                  mitkThrow() << "OpenCASCADE model writing error: ";
              }
         }
     }
 #endif
+#ifdef SV_USE_PARASOLID
+    else if(type=="Parasolid")
+    {
+        svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(modelElement);
+        if(!meps) return;
 
+        if(meps->GetInnerSolid())
+        {
+            char* fpath=const_cast<char*>(filePath.toStdString().c_str());
+            if (meps->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
+             {
+                 mitkThrow() << "Parasolid model writing error: ";
+             }
+        }
+    }
+#endif
 }
 
 void svModelLegacyIO::WriteFiles(mitk::DataStorage::SetOfObjects::ConstPointer modelNodes, QString modelDir)

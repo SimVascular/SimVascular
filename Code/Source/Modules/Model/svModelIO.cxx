@@ -8,6 +8,10 @@
 #include "svModelElementOCCT.h"
 #endif
 
+#ifdef SV_USE_PARASOLID
+#include "svModelElementParasolid.h"
+#endif
+
 #include <mitkCustomMimeType.h>
 #include <mitkIOMimeTypes.h>
 
@@ -114,7 +118,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
                 char* df=const_cast<char*>(dataFileName.c_str());
                 occtSolid->ReadNative(df);
-                meocct->SetOCCTSolid(occtSolid);
+                meocct->SetInnerSolid(occtSolid);
 
                 double maxDist=0;
                 if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
@@ -123,6 +127,27 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 }
 
                 meocct->SetWholeVtkPolyData(meocct->CreateWholeVtkPolyData());
+            }
+#endif
+
+#ifdef SV_USE_PARASOLID
+            if(type=="Parasolid")
+            {
+                svModelElementParasolid* meps=new svModelElementParasolid();
+                me=meps;
+                std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".xmt_txt";
+                cvParasolidSolidModel* parasolid=new cvParasolidSolidModel();
+                char* df=const_cast<char*>(dataFileName.c_str());
+                parasolid->ReadNative(df);
+                meps->SetInnerSolid(parasolid);
+
+                double maxDist=0;
+                if(meElement->QueryDoubleAttribute("max_dist", &maxDist)==TIXML_SUCCESS)
+                {
+                    meps->SetMaxDist(maxDist);
+                }
+
+                meps->SetWholeVtkPolyData(meps->CreateWholeVtkPolyData());
             }
 #endif
 
@@ -246,6 +271,48 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                     }
                 }
             }
+
+#ifdef SV_USE_PARASOLID
+            //update face ids (face ids change when loading parasolid file and are become different from info in .mdl file)
+            if(type=="Parasolid")
+            {
+                svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(me);
+                if(meps)
+                {
+                    std::vector<svModelElement::svBlendParamRadius*> blendRadii=meps->GetBlendRadii();
+                    //set face names
+                    for(int i=0;i<blendRadii.size();i++)
+                    {
+                        if(blendRadii[i])
+                        {
+                            blendRadii[i]->faceName1=meps->GetFaceName(blendRadii[i]->faceID1);
+                            blendRadii[i]->faceName2=meps->GetFaceName(blendRadii[i]->faceID2);
+                        }
+                    }
+
+                    //update face id and vpd
+                    std::vector<svModelElement::svFace*> faces=meps->GetFaces();
+                    for(int i=0;i<faces.size();i++)
+                    {
+                        faces[i]->id=meps->GetFaceIDFromInnerSolid(faces[i]->name);
+                        faces[i]->vpd=meps->CreateFaceVtkPolyData(faces[i]->id);
+                    }
+
+                    //update face id
+                    for(int i=0;i<blendRadii.size();i++)
+                    {
+                        if(blendRadii[i])
+                        {
+                            int faceID1=meps->GetFaceID(blendRadii[i]->faceName1);
+                            int faceID2=meps->GetFaceID(blendRadii[i]->faceName2);
+                            blendRadii[i]->faceID1=faceID1;
+                            blendRadii[i]->faceID2=faceID2;
+                        }
+                    }
+
+                }
+            }
+#endif
 
             model->SetModelElement(me,timestep);
         } //model element
@@ -380,6 +447,18 @@ void svModelIO::Write()
         }
 #endif
 
+#ifdef SV_USE_PARASOLID
+        if(me->GetType()=="Parasolid")
+        {
+            //for Parasolid
+            svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(me);
+            if(meps)
+            {
+                meElement->SetDoubleAttribute("max_dist", meps->GetMaxDist());
+            }
+        }
+#endif
+
         //Output actual model data file
         if(me->GetType()=="PolyData")
         {
@@ -406,12 +485,30 @@ void svModelIO::Write()
 
             svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(me);
 
-            if(meocct&&meocct->GetOCCTSolid())
+            if(meocct&&meocct->GetInnerSolid())
             {
                char* df=const_cast<char*>(dataFileName.c_str());
-                if (meocct->GetOCCTSolid()->WriteNative(0,df) != CV_OK )
+                if (meocct->GetInnerSolid()->WriteNative(0,df) != CV_OK )
                 {
                     mitkThrow() << "OpenCASCADE model writing error: ";
+                }
+            }
+        }
+#endif
+
+#ifdef SV_USE_PARASOLID
+        if(me->GetType()=="Parasolid")
+        {
+            std::string dataFileName=fileName.substr(0,fileName.find_last_of("."));
+
+            svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(me);
+
+            if(meps&&meps->GetInnerSolid())
+            {
+               char* df=const_cast<char*>(dataFileName.c_str());
+                if (meps->GetInnerSolid()->WriteNative(0,df) != CV_OK )
+                {
+                    mitkThrow() << "Parasolid model writing error: ";
                 }
             }
         }

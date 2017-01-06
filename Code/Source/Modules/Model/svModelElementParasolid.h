@@ -1,24 +1,24 @@
-#ifndef SVMODELELEMENTOCCT_H
-#define SVMODELELEMENTOCCT_H
+#ifndef SVMODELELEMENTPARASOLID_H
+#define SVMODELELEMENTPARASOLID_H
 
 #include <svModelExports.h>
 
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
 
-#include "cvOCCTSolidModel.h"
+#include "cvParasolidSolidModel.h"
 
-class SVMODEL_EXPORT svModelElementOCCT : public svModelElement
+class SVMODEL_EXPORT svModelElementParasolid : public svModelElement
 {
 public:
 
-    svModelElementOCCT();
+    svModelElementParasolid();
 
-    svModelElementOCCT(const svModelElementOCCT &other);
+    svModelElementParasolid(const svModelElementParasolid &other);
 
-    virtual ~svModelElementOCCT();
+    virtual ~svModelElementParasolid();
 
-    virtual svModelElementOCCT* Clone() override;
+    virtual svModelElementParasolid* Clone() override;
 
     virtual vtkSmartPointer<vtkPolyData> CreateFaceVtkPolyData(int id) override;
 
@@ -36,17 +36,17 @@ public:
 
     svModelElementPolyData* ConverToPolyDataModel();
 
-    cvOCCTSolidModel* GetInnerSolid();
+    cvParasolidSolidModel* GetInnerSolid();
 
-    void SetInnerSolid(cvOCCTSolidModel* innerSolid);
+    void SetInnerSolid(cvParasolidSolidModel* innerSolid);
 
 protected:
 
-    cvOCCTSolidModel* m_InnerSolid;
+    cvParasolidSolidModel* m_InnerSolid;
 
     double m_MaxDist;
 
 };
 
 
-#endif // SVMODELELEMENTOCCT_H
+#endif // SVMODELELEMENTPARASOLID_H

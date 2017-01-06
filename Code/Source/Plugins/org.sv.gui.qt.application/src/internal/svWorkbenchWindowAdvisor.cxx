@@ -64,6 +64,7 @@
 #include <mitkWorkbenchUtil.h>
 #include <vtkVersionMacros.h>
 
+#include <mitkImage.h>
 #include <mitkUndoController.h>
 #include <mitkVerboseLimitedLinearUndo.h>
 #include <QToolBar>
@@ -1096,7 +1097,13 @@ void svWorkbenchWindowAdvisor::ShowSVView()
     mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
     mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
 
-    if(isPath->CheckNode(selectedNode))
+    if( selectedNode.IsNotNull() && dynamic_cast<mitk::Image*>(selectedNode->GetData()) )
+    {
+      if( dynamic_cast<mitk::Image*>(selectedNode->GetData())->GetDimension()>=3 )
+      {
+          page->ShowView("org.mitk.views.volumevisualization");
+      }
+    }else if(isPath->CheckNode(selectedNode))
     {
        page->ShowView("org.sv.views.pathplanning");
     }

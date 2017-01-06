@@ -115,7 +115,7 @@ cvLispList<T>::cvLispList()
 template <class T>
 cvLispList<T>::~cvLispList()
 {
-    Assert(this->IsEmpty());		// make sure list is empty
+    cvAssert(this->IsEmpty());		// make sure list is empty
 }
 
 //----------------------------------------------------------------------
@@ -135,7 +135,7 @@ cvLispList<T>::Append(T item)
 {
     cvLispListElement<T> *element = new cvLispListElement<T>(item);
 
-    Assert(!this->IsInList(item));
+    cvAssert(!this->IsInList(item));
     if (this->IsEmpty()) {		// list is empty
 	first = element;
 	last = element;
@@ -144,7 +144,7 @@ cvLispList<T>::Append(T item)
 	last = element;
     }
     numInList++;
-    Assert(this->IsInList(item));
+    cvAssert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -158,7 +158,7 @@ cvLispList<T>::Prepend(T item)
 {
     cvLispListElement<T> *element = new cvLispListElement<T>(item);
 
-    Assert(!this->IsInList(item));
+    cvAssert(!this->IsInList(item));
     if (this->IsEmpty()) {		// list is empty
 	first = element;
 	last = element;
@@ -167,7 +167,7 @@ cvLispList<T>::Prepend(T item)
 	first = element;
     }
     numInList++;
-    Assert(this->IsInList(item));
+    cvAssert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -186,7 +186,7 @@ cvLispList<T>::RemoveFront()
     cvLispListElement<T> *element = first;
     T thing;
 
-    Assert(!this->IsEmpty());
+    cvAssert(!this->IsEmpty());
 
     thing = first->item;
     if (first == last) {	// list had one item, now has none
@@ -212,12 +212,12 @@ cvLispList<T>::Remove(T item)
     cvLispListElement<T> *prev, *ptr;
     T removed;
 
-    Assert(this->IsInList(item));
+    cvAssert(this->IsInList(item));
 
     // if first item on list is match, then remove from front
     if (item == first->item) {
         removed = RemoveFront();
-        Assert(item == removed);
+        cvAssert(item == removed);
     } else {
 	prev = first;
         for (ptr = first->next; ptr != NULL; prev = ptr, ptr = ptr->next) {
@@ -231,9 +231,9 @@ cvLispList<T>::Remove(T item)
 		break;
 	    }
         }
-	Assert(ptr != NULL);	// should always find item!
+        cvAssert(ptr != NULL);	// should always find item!
     }
-    Assert(!this->IsInList(item));
+    cvAssert(!this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -303,7 +303,7 @@ cvSortedList<T>::Insert(T item)
     cvLispListElement<T> *element = new cvLispListElement<T>(item);
     cvLispListElement<T> *ptr;		// keep track
 
-    Assert(!this->IsInList(item));
+    cvAssert(!this->IsInList(item));
     if (this->IsEmpty()) {			// if list is empty, put at front
         this->first = element;
         this->last = element;
@@ -323,7 +323,7 @@ cvSortedList<T>::Insert(T item)
 	this->last = element;
     }
     this->numInList++;
-    Assert(this->IsInList(item));
+    cvAssert(this->IsInList(item));
 }
 
 //----------------------------------------------------------------------
@@ -342,16 +342,16 @@ cvLispList<T>::SanityCheck() const
     int numFound;
 
     if (first == NULL) {
-	Assert((numInList == 0) && (last == NULL));
+        cvAssert((numInList == 0) && (last == NULL));
     } else if (first == last) {
-	Assert((numInList == 1) && (last->next == NULL));
+        cvAssert((numInList == 1) && (last->next == NULL));
     } else {
         for (numFound = 1, ptr = first; ptr != last; ptr = ptr->next) {
 	    numFound++;
-            Assert(numFound <= numInList);	// prevent infinite loop
+            cvAssert(numFound <= numInList);	// prevent infinite loop
         }
-        Assert(numFound == numInList);
-        Assert(last->next == NULL);
+        cvAssert(numFound == numInList);
+        cvAssert(last->next == NULL);
     }
 }
 
@@ -369,24 +369,24 @@ cvLispList<T>::SelfTest(T *p, int numEntries)
 
     SanityCheck();
     // check various ways that list is empty
-    Assert(this->IsEmpty() && (first == NULL));
+    cvAssert(this->IsEmpty() && (first == NULL));
     for (; !iterator->IsDone(); iterator->Next()) {
-      //	AssertNOTREACHED();	// nothing on list
+      //	cvAssertNOTREACHED();	// nothing on list
     }
 
     for (i = 0; i < numEntries; i++) {
 	 Append(p[i]);
-	 Assert(this->IsInList(p[i]));
-	 Assert(!this->IsEmpty());
+         cvAssert(this->IsInList(p[i]));
+         cvAssert(!this->IsEmpty());
      }
      SanityCheck();
 
      // should be able to get out everything we put in
      for (i = 0; i < numEntries; i++) {
 	 Remove(p[i]);
-         Assert(!this->IsInList(p[i]));
+         cvAssert(!this->IsInList(p[i]));
      }
-     Assert(this->IsEmpty());
+     cvAssert(this->IsEmpty());
      SanityCheck();
      delete iterator;
 }
@@ -408,7 +408,7 @@ cvSortedList<T>::SanityCheck() const
     if (this->first != this->last) {
       for (prev = this->first, ptr = (this->first)->next; ptr != NULL;
 						prev = ptr, ptr = ptr->next) {
-            Assert(compare(prev->item, ptr->item) <= 0);
+            cvAssert(compare(prev->item, ptr->item) <= 0);
         }
     }
 }
@@ -429,20 +429,20 @@ cvSortedList<T>::SelfTest(T *p, int numEntries)
 
     for (i = 0; i < numEntries; i++) {
 	 Insert(p[i]);
-	 Assert(this->IsInList(p[i]));
+         cvAssert(this->IsInList(p[i]));
      }
      SanityCheck();
 
      // should be able to get out everything we put in
      for (i = 0; i < numEntries; i++) {
 	 q[i] = this->RemoveFront();
-         Assert(!this->IsInList(q[i]));
+         cvAssert(!this->IsInList(q[i]));
      }
-     Assert(this->IsEmpty());
+     cvAssert(this->IsEmpty());
 
      // make sure everything came out in the right order
      for (i = 0; i < (numEntries - 1); i++) {
-	 Assert(compare(q[i], q[i + 1]) <= 0);
+         cvAssert(compare(q[i], q[i + 1]) <= 0);
      }
      SanityCheck();
 

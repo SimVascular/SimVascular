@@ -745,7 +745,7 @@
                 <item row="2" column="0" colspan="2">
                  <widget class="QPushButton" name="btnExportAllFiles">
                   <property name="text">
-                   <string>Export All Files...</string>
+                   <string>Export Input and Data Files...</string>
                   </property>
                  </widget>
                 </item>
@@ -818,7 +818,7 @@
                 <item row="0" column="0" colspan="3">
                  <widget class="QPushButton" name="btnCreateAllFiles">
                   <property name="text">
-                   <string>Create All Files in Job</string>
+                   <string>Create Input and Data Files in Job</string>
                   </property>
                  </widget>
                 </item>

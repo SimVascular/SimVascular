@@ -14,7 +14,7 @@
    <enum>Qt::CustomContextMenu</enum>
   </property>
   <property name="windowTitle">
-   <string>Create Solid Model</string>
+   <string>Set Inlet/Outlet BCs</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>

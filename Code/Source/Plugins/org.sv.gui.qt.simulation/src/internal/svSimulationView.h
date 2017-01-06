@@ -113,14 +113,13 @@ public:
 
     svSimJob* CreateJob(std::string& msg);
 
-    bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob);
+    bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
 
     bool IsDouble(std::string value);
 
     bool AreDouble(std::string values, int* count = NULL);
 
     bool IsInt(std::string value);
-
 
 private:
 
@@ -154,13 +153,17 @@ private:
 
     QStandardItemModel* m_TableModelSolver;
 
-    QString m_PresolverPath;
-    QString m_FlowsolverPath;
+    QString m_InternalPresolverPath;
+    QString m_InternalFlowsolverPath;
+    QString m_InternalPostsolverPath;
+
+    QString m_ExternalPresolverPath;
+    QString m_ExternalFlowsolverPath;
     bool m_UseMPI;
     QString m_MPIExecPath;
     bool m_UseCustom;
     QString m_SolverTemplatePath;
-    QString m_PostsolverPath;
+    QString m_ExternalPostsolverPath;
 
 };
 

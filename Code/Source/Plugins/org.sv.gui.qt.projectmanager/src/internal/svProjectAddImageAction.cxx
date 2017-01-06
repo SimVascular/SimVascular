@@ -80,7 +80,7 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
         svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode,copy);
 
-        mitk::StatusBar::GetInstance()->DisplayText("Imaged changed");
+        mitk::StatusBar::GetInstance()->DisplayText("Imaged Added");
         QApplication::restoreOverrideCursor();
     }
     catch(...)

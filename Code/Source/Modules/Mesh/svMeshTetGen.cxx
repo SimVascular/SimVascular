@@ -60,11 +60,11 @@ bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
     if(m_cvTetGetMesh->LoadModel(modelElement->GetWholeVtkPolyData())!=CV_OK)
         return false;
 
-    //set walls
-    //m_cvTetGetMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
-    std::vector<int> wallFaceIDs=modelElement->GetWallFaceIDs();
-    if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=CV_OK)
-        return false;
+//    //set walls
+//    //m_cvTetGetMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
+//    std::vector<int> wallFaceIDs=modelElement->GetWallFaceIDs();
+//    if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=CV_OK)
+//        return false;
 
     return true;
 }
@@ -105,9 +105,24 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         char *mflag = const_cast<char *>(flag.c_str());
         if(m_cvTetGetMesh->SetMeshOptions(mflag, 10, values)!=CV_OK)
         {
-            msg="Failed in setting options with "+flag;
+            msg="Failed in setting walls";
             return false;
         }
+    }
+    else if(flag=="setWalls")
+    {
+        if(m_ModelElement==NULL)
+        {
+            msg="Model not assigned to the mesher";
+            return false;
+        }
+
+        std::vector<int> wallFaceIDs=m_ModelElement->GetWallFaceIDs();
+        if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=CV_OK)
+        {
+            return false;
+        }
+
     }
     else if(flag=="useCenterlineRadius")
     {
@@ -265,6 +280,10 @@ std::vector<std::string> params=svStringUtils_split(cmd,' ');
             flag="UseMMG";
             values[0]=std::stod(params[1]);
             option=true;
+        }
+        else if(params[0]=="setwalls")
+        {
+            flag="setWalls";
         }
         else if(paramSize==2 && (params[0]=="globaledgesize" || params[0]=="gsize" || params[0]=="a"))
         {

@@ -53,6 +53,9 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
 #ifdef SV_USE_OpenCASCADE
         filter=filter+" *.brep *.step *.stl *.iges";
 #endif
+#ifdef SV_USE_PARASOLID
+        filter=filter+" *.xmt_txt";
+#endif
 
         filter=filter+")";
 

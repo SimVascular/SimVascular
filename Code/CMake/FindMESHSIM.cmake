@@ -196,8 +196,8 @@ endif()
 #message("${LIB_FULLNAMES}")
 find_package_handle_standard_args(${proj}
 	FOUND_VAR ${proj}_FOUND
-	REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES
-	VERSION_VAR ${proj}_VERSION
+	# REQUIRED_VARS ${proj}_DIR ${proj}_INCLUDE_DIR ${proj}_LIBRARIES
+	# VERSION_VAR ${proj}_VERSION
 	)
 if(NOT ${proj}_FOUND)
 	message(STATUS "${proj}: could not find ${${proj}_LIBS_MISSING}")

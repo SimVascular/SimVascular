@@ -370,6 +370,12 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
     dataStorage->Add(imageNode,imageFolderNode);
 
+    mitk::BaseData::Pointer mimage = imageNode->GetData();
+    if ( mimage.IsNotNull() && mimage->GetTimeGeometry()->IsValid() )
+    {
+       mitk::RenderingManager::GetInstance()->InitializeViews(mimage->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+    }
+
     imagesElement.appendChild(imgElement);
 
     QString xml = doc.toString(4);
