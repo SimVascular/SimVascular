@@ -5,6 +5,9 @@
 
 #include "cv_polydatasolid_utils.h"
 #include "cv_VMTK_utils.h"
+#ifdef SV_USE_MMG
+#include "cv_mmg_mesh_utils.h"
+#endif
 
 #include <vtkFillHolesFilter.h>
 #include <vtkPolyDataConnectivityFilter.h>
@@ -390,6 +393,43 @@ bool svModelElementPolyData::SelectLargestConnectedRegion()
     m_SelectedCellIDs.clear();
 
     return true;
+}
+
+bool svModelElementPolyData::RemeshG(double hmax, double hmin)
+{
+#ifdef SV_USE_MMG
+    if(m_WholeVtkPolyData==NULL)
+    {
+      return false;
+    }
+
+    double hausd = 0.01;
+    double angle = 45.0;
+    double hgrad = 1.1;
+    vtkDoubleArray *meshSizingFunction = NULL;
+    int useSizingFunction = 0;
+    int numAddedRefines = 0;
+
+  if ( MMGUtils_SurfaceRemeshing( m_WholeVtkPolyData, hmin, hmax, hausd, angle, hgrad,
+	  useSizingFunction, meshSizingFunction, numAddedRefines) != CV_OK ) {
+      fprintf(stderr,"Issue while remeshing surface\n");
+      return false;
+    }
+
+    //update all faces; some excluded faces may be remeshed
+    for(int i=0;i<m_Faces.size();i++)
+    {
+      m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    m_SelectedCellIDs.clear();
+
+    return true;
+#else
+
+    fprintf(stderr,"MMG module does not exist, cannot remesh\n");
+    return false;
+#endif
 }
 
 bool svModelElementPolyData::Decimate(double targetRate)

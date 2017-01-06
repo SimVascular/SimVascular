@@ -165,6 +165,11 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnSelectLargestConnected, SELECT_LARGEST_CONNECTED);
     connect(ui->btnSelectLargestConnected, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
+#ifdef SV_USE_MMG
+    signalMapper->setMapping(ui->btnRemeshG, REMESH_GLOBAL);
+    connect(ui->btnRemeshG, SIGNAL(clicked()),signalMapper, SLOT(map()));
+#endif
+
     signalMapper->setMapping(ui->btnDecimateG, DECIMATE_GLOBAL);
     connect(ui->btnDecimateG, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
@@ -1715,6 +1720,12 @@ void svModelEdit::ModelOperate(int operationType)
     case SELECT_LARGEST_CONNECTED:
         ok=newModelElement->SelectLargestConnectedRegion();
         break;
+#ifdef SV_USE_MMG
+    case REMESH_GLOBAL:
+        ok=newModelElement->RemeshG(ui->dsbRemeshTargetEdgeSizeG->value(),
+            ui->dsbRemeshTargetEdgeSizeG->value());
+        break;
+#endif
     case DECIMATE_GLOBAL:
         ok=newModelElement->Decimate(ui->dsbTargetRateG->value());
         break;
