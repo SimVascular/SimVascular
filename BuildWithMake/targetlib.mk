@@ -204,60 +204,60 @@ ui:
 	$(foreach name,$(UIFILES),$(shell $(QT_UIC_CMD) $(name) -o ui_$(basename $(notdir $(name))).h))
 
 create_exports_h:
-	echo "#ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT_H" > $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#define $(MODULE_NAME_ALL_CAPS)_EXPORT_H" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#include \"SimVascular.h\""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#ifdef $(MODULE_NAME_ALL_CAPS)_STATIC_DEFINE"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#  define $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#  define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#    ifdef $(MODULE_NAME)_EXPORTS"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "       /* We are building this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#    else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "       /* We are using this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_IMPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#    endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#  endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#    define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
-	echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT_H" > $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#define $(MODULE_NAME_ALL_CAPS)_EXPORT_H" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#include \"SimVascular.h\""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#ifdef $(MODULE_NAME_ALL_CAPS)_STATIC_DEFINE"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#  define $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#  define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#    ifdef $(MODULE_NAME)_EXPORTS"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "       /* We are building this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#    else"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "       /* We are using this library */"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#      define $(MODULE_NAME_ALL_CAPS)_EXPORT SV_DLL_IMPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#    endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#  endif"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#  ifndef $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#    define $(MODULE_NAME_ALL_CAPS)_NO_EXPORT"  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo ""  >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
+	@echo "#endif" >> $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h
 
 create_plugin_export_h:
-	echo  "// .NAME __$(PLUGIN_EXPORTS_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "// The __$(PLUGIN_EXPORTS_NAME)_Export captures some system differences between Unix" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "// and Windows operating systems. " >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#ifndef __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#define __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#include <QtGlobal>" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#  if defined($(PLUGIN_EXPORTS_NAME)_EXPORTS)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_IMPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#if !defined($(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME))" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "//#  if defined(CTK_SHARED)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "//#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "//#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "//#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
-	echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "// .NAME __$(PLUGIN_EXPORTS_NAME)_Export - manage Windows system differences" > $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "// .SECTION Description" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "// The __$(PLUGIN_EXPORTS_NAME)_Export captures some system differences between Unix" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "// and Windows operating systems. " >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#ifndef __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#define __$(PLUGIN_EXPORTS_NAME)_Export_h" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#include <QtGlobal>" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#if defined(Q_OS_WIN) || defined(Q_OS_SYMBIAN)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#  if defined($(PLUGIN_EXPORTS_NAME)_EXPORTS)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_IMPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#if !defined($(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME))" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "//#  if defined(CTK_SHARED)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME) Q_DECL_EXPORT" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "//#  else" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "//#    define $(PLUGIN_EXPORTS_PREFIX)$(PLUGIN_NAME)" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "//#  endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
+	@echo  "#endif" >> $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h
 
 create_manifest_qrc:
 	-tclsh $(TOP)/TclHelpers/create_manifest_mf.tcl $(PLUGIN_SYMBOLIC_NAME) $(PLUGIN_EXPORTS_NAME)_manifest.qrc ../../manifest_headers.cmake MANIFEST.MF
@@ -266,8 +266,8 @@ create_cached_qrc:
 	-tclsh $(TOP)/TclHelpers/create_cached_qrc.tcl $(PLUGIN_EXPORTS_NAME) $(PLUGIN_EXPORTS_NAME)_cached.qrc $(RCFILES)
 
 us-init-module:
-	-echo "#include <usModuleInitialization.h>" > us_init.cxx
-	-echo "US_INITIALIZE_MODULE" >> us_init.cxx
+	-@echo "#include <usModuleInitialization.h>" > us_init.cxx
+	-@echo "US_INITIALIZE_MODULE" >> us_init.cxx
 
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done

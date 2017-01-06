@@ -1,6 +1,6 @@
 ------------------------------------------------------------------------
             Compiling Instructions for SimVascular on Linux
-                       Revised 2016-11-29
+                       Revised 2017-01-04
 ------------------------------------------------------------------------
 
 --------
@@ -38,6 +38,7 @@ The following packages are required to build simvascular
 ### for vtk
 % sudo apt-get install libglu1-mesa-dev
 % sudo apt-get install libxt-dev
+% sudo apt-get install libxi-dev
 
 ### used by SV to read DICOM headers
 % sudo apt-get install dcmtk

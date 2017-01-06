@@ -20,31 +20,39 @@ $(BUILD_MPI_DIR)/%.d: %.c
               [ -s $@ ] || rm -f $@'
 
 $(BUILD_DIR)/%.o: %.cxx
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.c
-	$(CC) $(CCFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(CC) $(CCFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.f
-	$(F90) $(FFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(F90) $(FFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/%.o: %.f90
-	$(F90) $(FFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(F90) $(FFLAGS) -c $< -o $@
 
 $(BUILD_MPI_DIR)/%.o: %.cxx
-	mkdir -p $(dir $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)mkdir -p $(dir $@)
+	echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(CXX) $(CXXFLAGS) -c $< -o $@
 
 $(BUILD_MPI_DIR)/%.o: %.c
-	mkdir -p $(dir $@)
-	$(CC) $(CCFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)mkdir -p $(dir $@)
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(CC) $(CCFLAGS) -c $< -o $@
 
 $(BUILD_MPI_DIR)/%.o: %.f
-	mkdir -p $(dir $@)
-	$(F90) $(FFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)mkdir -p $(dir $@)
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(F90) $(FFLAGS) -c $< -o $@
 
 $(BUILD_MPI_DIR)/%.o: %.f90
-	mkdir -p $(dir $@)
-	$(F90) $(FFLAGS) -c $< -o $@
+	$(SV_QUIET_FLAG)mkdir -p $(dir $@)
+	$(SV_QUIET_FLAG)echo "  building src ($<)"
+	$(SV_QUIET_FLAG)$(F90) $(FFLAGS) -c $< -o $@
 
 endif
