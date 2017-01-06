@@ -250,9 +250,9 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     //for mmg remesh
     //=====================================================================
-    ui->btnRemeshG->setEnabled(false);
+    ui->page_19->hide();
 #ifdef SV_USE_MMG
-    ui->btnRemeshG->setEnabled(true);
+    ui->page_19->show();
 #endif
 
 }
