@@ -33,6 +33,8 @@ set(CXXSRCS cvMeshSimMeshObject.cxx
 set(HDRS cvMeshSimMeshObject.h
   cvMeshSimMeshSystem.h)
 
+add_definitions("-DSV_EXPORT_MESHSIM_MESH_COMPILE")
+
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
   add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_mesh_init.cxx)
 else()

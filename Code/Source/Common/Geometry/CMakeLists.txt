@@ -76,6 +76,8 @@ set(HDRS cv_sys_geom.h cv_ggems.h
 	vtkFindSeparateRegions.h vtkGetSphereRegions.h
 	vtkConstrainedBlend.h)
 
+add_definitions("-DSV_EXPORT_SYSGEOM_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
 
 target_link_libraries(${lib}

@@ -38,6 +38,8 @@ include_directories(${TETGEN_INCLUDE_DIR})
 set(HDRS cvTetGenAdapt.h)
 set(CXXSRCS cvTetGenAdapt.cxx)
 
+add_definitions("-DSV_EXPORT_TETGEN_ADAPTOR_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_adapt_init.cxx)
 
 target_link_libraries(${lib}

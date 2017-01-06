@@ -61,6 +61,10 @@ set(SV_LIBS ${SV_LIBS}
 #-----------------------------------------------------------------------------
 # Make library name
 foreach(lib ${SV_LIBS})
-  string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
+  if(WIN32)
+    string(TOLOWER "lib_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
+  else()
+    string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
+  endif()    
 endforeach()
 #-----------------------------------------------------------------------------

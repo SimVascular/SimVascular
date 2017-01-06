@@ -38,6 +38,8 @@ LIST(APPEND CORELIBS ${lib})
 SET(CXXSRCS cvMeshObject.cxx cvMeshSystem.cxx)
 SET(HDRS cvMeshObject.h cvMeshSystem.h)
 
+add_definitions("-DSV_EXPORT_MESH_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mesh_init.cxx)
 
 target_link_libraries(${lib}

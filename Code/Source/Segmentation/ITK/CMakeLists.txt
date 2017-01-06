@@ -15,6 +15,8 @@ set(CXXSRCS  cvITKUtils.cxx cvITKLevelSet.cxx)
 set(HDRS cvITKLevelSet.h cvITKLevelSetBase.h)
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_ITKUtils_init.cxx cv_ITKLset2d_init.cxx cv_ITKLset3d_init.cxx cv_ITKLset_init.cxx)
 
+add_definitions("-DSV_EXPORT_SEGITK_COMPILE")
+
 TARGET_LINK_LIBRARIES(${lib}
  ${SV_LIB_REPOSITORY_NAME}
  ${ITK_LIBRARIES} ${VTK_LIBRARIES})

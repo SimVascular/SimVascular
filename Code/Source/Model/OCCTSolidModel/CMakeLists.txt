@@ -46,6 +46,8 @@ endif()
 set(CXXSRCS cvOCCTSolidModel.cxx cv_occtsolid_utils.cxx)
 set(HDRS cvOCCTSolidModel.h cv_occtsolid_utils.h)
 
+add_definitions("-DSV_EXPORT_OPENCASCADE_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_occt_init.cxx)
 
 target_link_libraries(${lib}
