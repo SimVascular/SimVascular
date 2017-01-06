@@ -41,7 +41,7 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            $(VMTK_INCDIR) \
            $(OPENCASCADE_INCDIR) \
-					 $(MMG_INCDIR)
+					 $(SV_MMG_INCDIR)
 
 MODULE_NAME = svModel
 MODULE_NAME_ALL_CAPS = SVMODEL
