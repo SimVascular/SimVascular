@@ -10,15 +10,15 @@
 #
 # Permission is hereby granted, free of charge, to any person obtaining
 # a copy of this software and associated documentation files (the
-# "Software"), to deal in the Software without restriction, including 
-# without limitation the rights to use, copy, modify, merge, publish, 
+# "Software"), to deal in the Software without restriction, including
+# without limitation the rights to use, copy, modify, merge, publish,
 # distribute, sublicense, and/or sell copies of the Software, and to
 # permit persons to whom the Software is furnished to do so, subject
 # to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included 
+#
+# The above copyright notice and this permission notice shall be included
 # in all copies or substantial portions of the Software.
-# 
+#
 # THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
 # OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 # MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -40,7 +40,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            $(VMTK_INCDIR) \
-           $(OPENCASCADE_INCDIR)
+           $(OPENCASCADE_INCDIR) \
+					 $(MMG_INCDIR)
 
 MODULE_NAME = svModel
 MODULE_NAME_ALL_CAPS = SVMODEL
@@ -84,7 +85,7 @@ endif
 
 CXXSRCS += us_init.cxx
 
-UIFILES = 
+UIFILES =
 
 RCFILES = resource/Interactions/svModelInteraction.xml \
           resource/Interactions/svModelConfig.xml
@@ -125,6 +126,11 @@ endif
 
 ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)
+	DLLLIBS += $(SV_MMG_LIBS)
+endif
+
+ifeq ($(SV_USE_MMG),1)
+	DLLLIBS += $(SVLIBFLAG)_simvascular_mmg_mesh$(LIBLINKEXT)
 endif
 
 TARGET_LIB_NAME = simvascular_qtgui_module_model

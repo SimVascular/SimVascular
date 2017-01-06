@@ -246,6 +246,14 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
     //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
+    //
+
+    //for mmg remesh
+    //=====================================================================
+    ui->btnRemeshG->setEnabled(false);
+#ifdef SV_USE_MMG
+    ui->btnRemeshG->setEnabled(true);
+#endif
 
 }
 
