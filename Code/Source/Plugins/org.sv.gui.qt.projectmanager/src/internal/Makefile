@@ -44,22 +44,17 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 
 HDRS	=  \
   svProjectManagerPluginActivator.h \
-  svProjectCreate.h \
-  svProjectManagerView.h \
   svProjectAddImageAction.h \
   svProjectCloseAction.h \
   svProjectShowModelEdgesAction.h
 
 CXXSRCS	= \
   svProjectManagerPluginActivator.cxx \
-  svProjectCreate.cxx \
-  svProjectManagerView.cxx \
   svProjectAddImageAction.cxx \
   svProjectCloseAction.cxx \
   svProjectShowModelEdgesAction.cxx
 
-UIFILES = \
-  svProjectCreate.ui
+UIFILES = 
 
 QRCFILES = \
   ../../resources/projectmanager.qrc

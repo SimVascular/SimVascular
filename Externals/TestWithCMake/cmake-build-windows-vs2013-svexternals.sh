@@ -1,6 +1,6 @@
 
-rm -Rf /cygdrive/c/svtest
-mkdir -p /cygdrive/c/svtest
+rm -Rf /cygdrive/c/svsv
+mkdir -p /cygdrive/c/svsv
 
 export REPLACEME_SV_CL_COMPILER="C:/Program Files (x86)/Microsoft Visual Studio 12.0/VC/bin/amd64/cl.exe"
 export REPLACEME_SV_IFORT_COMPILER="C:/Program Files (x86)/Intel/Composer XE 2013 SP1/bin/intel64/ifort.exe"
@@ -10,7 +10,7 @@ export REPLACEME_SV_CMAKE_GENERATOR="Visual Studio 12 2013 Win64"
 export REPLACEME_SV_TOP_SRC_DIR_SV=`pwd`/../../Code
 export REPLACEME_SV_TOP_SRC_DIR_SV=`cygpath -m $REPLACEME_SV_TOP_SRC_DIR_SV`
 
-pushd /cygdrive/c/svtest
+pushd /cygdrive/c/svsv
 
 "$REPLACEME_SV_CMAKE_CMD" \
 \
@@ -51,7 +51,7 @@ pushd /cygdrive/c/svtest
    -DSV_USE_SYSTEM_VTK=ON \
    -DSV_USE_SYSTEM_MMG=ON \
    -DSV_USE_SYSTEM_MITK=ON \
-   -DSV_USE_MITK_CONFIG:BOOL=ON \
+   -DSV_USE_MITK_CONFIG:BOOL=OFF \
 \
    -DSV_USE_GDCM_SHARED=ON \
    -DSV_USE_FREETYPE_SHARED=ON \
@@ -86,12 +86,13 @@ pushd /cygdrive/c/svtest
    -DQt5Sql_DIR="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/lib/cmake/Qt5Sql" \
    -DVTK_DIR="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/vtk-6.2.0/lib/cmake/vtk-6.2" \
    -DVTK_PYTHON_SITE_PACKAGES="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/vtk-6.2.0/lib/python2.7/site-packages" \
-   -DMITK_DIR:PATH="C:/sv/mitk-2016.03/MITK-build" \
+   -DMITK_DIR:PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/mitk-2016.03" \
 \
    -DGDCM_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/gdcm-2.6.1/bin" \
    -DITK_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/itk-4.7.1/bin" \
    -DOpenCASCADE_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/opencascade-7.0.0/bin" \
-   -DQT_DLL_PATH="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/bin" \
+   -DQT_DLL_PATH:PATH="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/bin" \
+   -DQT_PLUGIN_PATH:PATH="C:/OpenSource/Qt/Qt5.4.2/5.4/msvc2013_64_opengl/plugins" \
    -DTCL_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/tcltk-8.6.4/bin" \
    -DVTK_DLL_PATH="C:/cygwin64/usr/local/sv/ext/bin/msvc-12.5/x64/vtk-6.2.0/bin" \
 \

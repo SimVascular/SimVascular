@@ -23,6 +23,8 @@ set(HDRS cvLevelSet.h cvLevelSetNode.h
   cvLevelSetVelocityImage.h
   )
 
+add_definitions("-DSV_EXPORT_LSET_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_LsetCore_init.cxx cv_LsetV_init.cxx cv_Lset_init.cxx)
 
 target_link_libraries(${lib}

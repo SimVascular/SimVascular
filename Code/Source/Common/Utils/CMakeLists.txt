@@ -47,6 +47,8 @@ SET(HDRS cv_misc_utils.h cv_vtk_utils.h
   cvMath.h cv_arg.h cvFactoryRegistrar.h
   )
 
+add_definitions("-DSV_EXPORT_UTILS_COMPILE")
+	
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_utils_init.cxx cv_math_init.cxx cv_get_tcl_interp_init.cxx)
 
 target_link_libraries(${lib}

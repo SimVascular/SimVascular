@@ -73,8 +73,29 @@ endif()
 
 #----------------------------------------------------------------------------
 # Opensource Externals Install Rules
-set(developer_script_string "${developer_script_string}# Externals link directories\n")
-set(install_script_string "${install_script_string}# Externals link directories\n")
+if(WIN32)
+  set(developer_script_string "${developer_script_string}REM Externals link directories\n")
+  set(install_script_string "${install_script_string}REM Externals link directories\n")
+else()
+  set(developer_script_string "${developer_script_string}# Externals link directories\n")
+  set(install_script_string "${install_script_string}# Externals link directories\n")
+endif()
+
+# Add Qt if it was used
+if(SV_USE_QT OR SV_USE_QT_GUI)
+  if(QT_DLL_PATH)
+    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${QT_DLL_PATH}" developer_script_string)
+    set_env_string_concat(QT_PLUGIN_PATH "${QT_PLUGIN_PATH}" developer_script_string)
+  endif()
+endif()
+
+# Add MITK if it was used (not sure why this isn't being added already)
+if (SV_USE_MITK)
+  if (MITK_DIR)
+    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/bin" developer_script_string)
+    append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${MITK_DIR}/lib" developer_script_string)
+  endif()
+endif()
 
 foreach(proj ${SV_EXTERNAL_SHARED_LIBS})
   dev_message("Install ${proj}")
@@ -116,8 +137,13 @@ endif()
 
 #----------------------------------------------------------------------------
 # TCL Install Rules
-set(developer_script_string "${developer_script_string}\n# Tcl environment variables\n")
-set(install_script_string "${install_script_string}\n# Tcl environment variables\n")
+if(WIN32)
+  set(developer_script_string "${developer_script_string}\nREM Tcl environment variables\n")
+  set(install_script_string "${install_script_string}\nREM Tcl environment variables\n")
+else()
+  set(developer_script_string "${developer_script_string}\n# Tcl environment variables\n")
+  set(install_script_string "${install_script_string}\n# Tcl environment variables\n")
+endif()
 
 if(SV_USE_TKCXIMAGE)
 	if(TKCXIMAGE_DLL)
@@ -145,9 +171,13 @@ set_env_string_concat(TCLLIBPATH "${ENV_SV_HOME}/${SV_INSTALL_VTK_LIBRARY_DIR}/t
 #----------------------------------------------------------------------------
 # PYTHON Install Rules
 if(SV_USE_PYTHON)
-  set(developer_script_string "${developer_script_string}\n# Python environment variables\n")
-  set(install_script_string "${install_script_string}\n# Python environment variables\n")
-
+  if(WIN32)
+    set(developer_script_string "${developer_script_string}\nREM Python environment variables\n")
+    set(install_script_string "${install_script_string}\nREM Python environment variables\n")
+  else()
+    set(developer_script_string "${developer_script_string}\n# Python environment variables\n")
+    set(install_script_string "${install_script_string}\n# Python environment variables\n")
+  endif()
   # PYTHONHOME
   if(SV_PYTHON_DIR)
     set_env_string_concat(PYTHONHOME "${SV_PYTHON_DIR}" developer_script_string)
@@ -179,8 +209,13 @@ endif()
 
 #----------------------------------------------------------------------------
 # This is a catch all if no DLL_PATH was specified but we will need the so for installed libraries.
-set(developer_script_string "${developer_script_string}\n# SimVascular runtime locations\n")
-set(install_script_string "${install_script_string}\n# SimVascular runtime locations\n")
+if(WIN32)
+  set(developer_script_string "${developer_script_string}\nREM SimVascular runtime locations\n")
+  set(install_script_string "${install_script_string}\nREM SimVascular runtime locations\n")
+else()
+  set(developer_script_string "${developer_script_string}\n# SimVascular runtime locations\n")
+  set(install_script_string "${install_script_string}\n# SimVascular runtime locations\n")
+endif()
 
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_LIBRARY_DIR}" install_script_string)
 append_env_string_concat(${ENV_LIBRARY_PATH_VARIABLE} "${ENV_SV_HOME}/${SV_INSTALL_HOME_DIR}" install_script_string)

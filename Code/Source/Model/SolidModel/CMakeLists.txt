@@ -45,6 +45,8 @@ endif()
 set(CXXSRCS cvSolidModel.cxx)
 set(HDRS    cvSolidModel.h)
 
+add_definitions("-DSV_EXPORT_SOLID_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 target_link_libraries(${lib}

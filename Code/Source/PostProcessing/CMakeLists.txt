@@ -8,6 +8,8 @@ list(APPEND CORELIBS ${lib})
 set(CXXSRCS cvConvertVisFiles.cxx cvCalculateWallShearStress.cxx cvCalculateTKE.cxx)
 set(HDRS cvConvertVisFiles.h cvCalculateWallShearStress.h cvCalculateTKE.h)
 
+add_definitions("-DSV_EXPORT_POST_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_post_init.cxx)
 
 target_link_libraries(${lib}

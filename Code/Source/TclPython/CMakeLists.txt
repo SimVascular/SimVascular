@@ -37,6 +37,8 @@ include_directories(${PYTHON_INCLUDE_PATH}
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
+add_definitions("-DSV_EXPORT_TCLPYTHON_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} cv_pythoninterp_init.cxx ${CSRCS})
 
 target_link_libraries(${lib} ${SV_LIB_REPOSITORY_NAME}

@@ -37,6 +37,8 @@ include_directories(${MMG_INCLUDE_DIR})
 SET(CXXSRCS cv_mmg_mesh_utils.cxx)
 SET(HDRS cv_mmg_mesh_utils.h)
 
+add_definitions("-DSV_EXPORT_MMG_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_mmg_mesh_init.cxx)
 
 target_link_libraries(${lib}
