@@ -1091,12 +1091,12 @@ void svModelEdit::SetupBlendTable()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet")
+        if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet" || faces[i]->name.substr(0,10)=="wall_blend")
             continue;
 
         for(int j=i+1;j<faces.size();j++)
         {
-            if(faces[j]==NULL || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet")
+            if(faces[j]==NULL || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet" || faces[j]->name.substr(0,10)=="wall_blend")
                 continue;
 
             //To do: check if two faces are adjcent;
