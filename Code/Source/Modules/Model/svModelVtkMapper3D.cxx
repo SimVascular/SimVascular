@@ -113,8 +113,8 @@ void svModelVtkMapper3D::GenerateDataForRenderer(mitk::BaseRenderer* renderer)
     int numProps=ls->m_PropAssembly->GetParts()->GetNumberOfItems();
     for(int i=0;i<numProps;i++)
     {
-        vtkObject* obj= ls->m_PropAssembly->GetParts()->GetItemAsObject(i);
-        ls->m_PropAssembly->RemovePart(obj);
+        vtkProp3D* prop= (vtkProp3D*)ls->m_PropAssembly->GetParts()->GetItemAsObject(i);
+        ls->m_PropAssembly->RemovePart(prop);
     }
 
     float edgeColor[3]= { 0.0f, 0.0f, 1.0f };

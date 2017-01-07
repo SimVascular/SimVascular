@@ -58,8 +58,8 @@ void svContourGroupVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *ren
     int numProps=localStorage->m_Assembly->GetParts()->GetNumberOfItems();
     for(int i=0;i<numProps;i++)
     {
-        vtkObject* obj= localStorage->m_Assembly->GetParts()->GetItemAsObject(i);
-        localStorage->m_Assembly->RemovePart(obj);
+        vtkProp* prop= (vtkProp*)localStorage->m_Assembly->GetParts()->GetItemAsObject(i);
+        localStorage->m_Assembly->RemovePart(prop);
     }
 
     int lineWidth=1;

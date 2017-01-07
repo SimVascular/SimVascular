@@ -185,8 +185,8 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     int numProps=localStorage->m_PropAssembly->GetParts()->GetNumberOfItems();
     for(int i=0;i<numProps;i++)
     {
-        vtkObject* obj= localStorage->m_PropAssembly->GetParts()->GetItemAsObject(i);
-        localStorage->m_PropAssembly->RemovePart(obj);
+        vtkProp* prop= (vtkProp*)localStorage->m_PropAssembly->GetParts()->GetItemAsObject(i);
+        localStorage->m_PropAssembly->RemovePart(prop);
     }
 
     if(showWholeSurface)
