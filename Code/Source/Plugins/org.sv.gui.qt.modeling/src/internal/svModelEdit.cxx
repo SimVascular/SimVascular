@@ -255,10 +255,10 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     QString title=ui->toolBoxGlobalOps->itemText(idx);
     widgetGRemesh->hide();
     ui->toolBoxGlobalOps->removeItem(idx);
-//#ifdef SV_USE_MMG
-//    ui->toolBoxGlobalOps->insertItem(idx,widgetGRemesh,title);
-//    widgetGRemesh->show();
-//#endif
+#ifdef SV_USE_MMG
+    ui->toolBoxGlobalOps->insertItem(idx,widgetGRemesh,title);
+    widgetGRemesh->show();
+#endif
 
 }
 
