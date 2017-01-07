@@ -78,6 +78,8 @@ public:
 
     bool SelectLargestConnectedRegion();
 
+    bool RemeshG(double hmax, double hmin);
+
     bool Decimate(double targetRate);
 
     bool LaplacianSmooth(int numIters, double relaxFactor);

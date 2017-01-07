@@ -16,6 +16,13 @@ if(SV_USE_PARASOLID)
   )
 endif()
 
+if(SV_USE_MMG)
+  set(OTHER_OPT_LIBS
+    ${OTHER_OPT_LIBS}
+    ${SV_LIB_MMG_MESH_NAME}
+  )
+endif()
+
 #-----------------------------------------------------------------------------
 # Create module
 simvascular_create_module(
