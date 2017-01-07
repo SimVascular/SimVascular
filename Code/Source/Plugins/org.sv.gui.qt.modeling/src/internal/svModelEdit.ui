@@ -376,7 +376,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>378</height>
+                           <height>398</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -444,8 +444,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>128</width>
-                               <height>228</height>
+                               <width>138</width>
+                               <height>237</height>
                               </rect>
                              </property>
                              <property name="sizePolicy">
@@ -526,8 +526,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
-                               <height>85</height>
+                               <width>138</width>
+                               <height>237</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -607,10 +607,10 @@
                         <widget class="QWidget" name="page_4">
                          <property name="geometry">
                           <rect>
-                           <x>-6</x>
+                           <x>0</x>
                            <y>0</y>
-                           <width>153</width>
-                           <height>378</height>
+                           <width>140</width>
+                           <height>398</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -644,14 +644,22 @@
                            </widget>
                           </item>
                           <item>
-                           <widget class="QToolBox" name="toolBox_3">
+                           <widget class="QToolBox" name="toolBoxGlobalOps">
                             <property name="styleSheet">
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>1</number>
+                             <number>0</number>
                             </property>
                             <widget class="QWidget" name="page_19">
+                             <property name="geometry">
+                              <rect>
+                               <x>0</x>
+                               <y>0</y>
+                               <width>138</width>
+                               <height>146</height>
+                              </rect>
+                             </property>
                              <attribute name="label">
                               <string>Remesh</string>
                              </attribute>
@@ -659,6 +667,21 @@
                               <string>Remesh (Global remesh using mmg)</string>
                              </attribute>
                              <layout class="QVBoxLayout" name="verticalLayout_35">
+                              <property name="spacing">
+                               <number>5</number>
+                              </property>
+                              <property name="leftMargin">
+                               <number>5</number>
+                              </property>
+                              <property name="topMargin">
+                               <number>5</number>
+                              </property>
+                              <property name="rightMargin">
+                               <number>0</number>
+                              </property>
+                              <property name="bottomMargin">
+                               <number>5</number>
+                              </property>
                               <item>
                                <widget class="QLabel" name="label_28">
                                 <property name="sizePolicy">
@@ -709,8 +732,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>141</width>
-                               <height>102</height>
+                               <width>138</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <property name="cursor">
@@ -791,8 +814,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>141</width>
-                               <height>135</height>
+                               <width>138</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -902,8 +925,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>141</width>
-                               <height>102</height>
+                               <width>138</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -972,8 +995,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>141</width>
-                               <height>135</height>
+                               <width>138</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1068,8 +1091,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>141</width>
-                               <height>102</height>
+                               <width>138</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1146,7 +1169,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>378</height>
+                           <height>398</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1181,7 +1204,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>3</number>
                             </property>
                             <widget class="QWidget" name="page_14">
                              <property name="geometry">
@@ -1189,7 +1212,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>221</height>
+                               <height>247</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1261,8 +1284,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>128</width>
-                               <height>135</height>
+                               <width>138</width>
+                               <height>247</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1360,8 +1383,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>128</width>
-                               <height>135</height>
+                               <width>138</width>
+                               <height>247</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1453,8 +1476,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>141</width>
-                               <height>85</height>
+                               <width>138</width>
+                               <height>247</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1528,7 +1551,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>378</height>
+                           <height>398</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1566,8 +1589,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>113</width>
-                               <height>129</height>
+                               <width>114</width>
+                               <height>189</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1610,11 +1633,11 @@
                                <widget class="QComboBox" name="comboBoxPathPlane"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathPlane" native="true">
-                                <property name="decimals" stdset="0">
+                               <widget class="ctkSliderWidget" name="sliderPathPlane">
+                                <property name="decimals">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum" stdset="0">
+                                <property name="maximum">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
@@ -1654,7 +1677,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>310</height>
+                               <height>336</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1697,11 +1720,11 @@
                                <widget class="QComboBox" name="comboBoxPathBox"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathBox" native="true">
-                                <property name="decimals" stdset="0">
+                               <widget class="ctkSliderWidget" name="sliderPathBox">
+                                <property name="decimals">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum" stdset="0">
+                                <property name="maximum">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>

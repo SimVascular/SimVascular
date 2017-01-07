@@ -3,6 +3,7 @@
 #include "svProjectAddImageAction.h"
 #include "svProjectCloseAction.h"
 #include "svProjectShowModelEdgesAction.h"
+#include "svProjectShowModelFullAction.h"
 
 //svProjectManagerPluginActivator* svProjectManagerPluginActivator::m_Instance = nullptr;
 //ctkPluginContext* svProjectManagerPluginActivator::m_Context = nullptr;
@@ -16,7 +17,7 @@ void svProjectManagerPluginActivator::start(ctkPluginContext* context)
     BERRY_REGISTER_EXTENSION_CLASS(svProjectAddImageAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svProjectCloseAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svProjectShowModelEdgesAction, context)
-
+    BERRY_REGISTER_EXTENSION_CLASS(svProjectShowModelFullAction, context)
 }
 
 void svProjectManagerPluginActivator::stop(ctkPluginContext* context)

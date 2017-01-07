@@ -155,22 +155,39 @@ void svModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     float lineWidth = 1.0f;
     node->GetFloatProperty("line 2D width", lineWidth, renderer);
 
-    bool forceShowWholeSurface=false;
-    node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
-
     bool showWholeSurface=false;
-    bool showFaces=false;
+    node->GetBoolProperty("show whole surface", showWholeSurface, renderer);
 
-    if(me->GetFaceNumber()>0)
-    {
-        showWholeSurface=false||forceShowWholeSurface;
-        showFaces=true;
-    }else{
+    bool showFaces=true;
+    node->GetBoolProperty("show faces", showFaces, renderer);
+
+    if(me->GetFaceNumber()==0)
         showWholeSurface=true;
-        showFaces=false;
-    }
 
-    localStorage->m_PropAssembly->GetParts()->RemoveAllItems();
+    if(showWholeSurface)
+        showFaces=false;
+
+//    bool forceShowWholeSurface=false;
+//    node->GetBoolProperty("show whole surface", forceShowWholeSurface, renderer);
+
+//    bool showWholeSurface=false;
+//    bool showFaces=false;
+
+//    if(me->GetFaceNumber()>0)
+//    {
+//        showWholeSurface=false||forceShowWholeSurface;
+//        showFaces=true;
+//    }else{
+//        showWholeSurface=true;
+//        showFaces=false;
+//    }
+
+    int numProps=localStorage->m_PropAssembly->GetParts()->GetNumberOfItems();
+    for(int i=0;i<numProps;i++)
+    {
+        vtkProp* prop= (vtkProp*)localStorage->m_PropAssembly->GetParts()->GetItemAsObject(i);
+        localStorage->m_PropAssembly->RemovePart(prop);
+    }
 
     if(showWholeSurface)
     {
@@ -328,6 +345,7 @@ void svModelVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRe
     node->AddProperty( "color", mitk::ColorProperty::New(1.0f,1.0f,1.0f), renderer, overwrite );
     node->AddProperty( "opacity", mitk::FloatProperty::New(1.0), renderer, overwrite );
     node->AddProperty( "show whole surface", mitk::BoolProperty::New(false), renderer, overwrite );
+    node->AddProperty( "show faces", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "face selected color",mitk::ColorProperty::New(1,1,0),renderer, overwrite );
     node->AddProperty( "line 2D width", mitk::FloatProperty::New(2.0f), renderer, overwrite );
     node->AddProperty( "scalar mode", mitk::VtkScalarModeProperty::New(), renderer, overwrite );

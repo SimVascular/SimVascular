@@ -250,9 +250,14 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     //for mmg remesh
     //=====================================================================
-    ui->page_19->hide();
+    int idx=0;
+    QWidget* widgetGRemesh=ui->toolBoxGlobalOps->widget(idx);
+    QString title=ui->toolBoxGlobalOps->itemText(idx);
+    widgetGRemesh->hide();
+    ui->toolBoxGlobalOps->removeItem(idx);
 #ifdef SV_USE_MMG
-    ui->page_19->show();
+    ui->toolBoxGlobalOps->insertItem(idx,widgetGRemesh,title);
+    widgetGRemesh->show();
 #endif
 
 }
@@ -781,12 +786,14 @@ void svModelEdit::ToggleVisibility(const QModelIndex &index){
         face->visible=false;
         itemV->setIcon(QIcon(":/hide.png"));
         m_Model->SetDataModified();
+        m_Model->Modified();
     }
     else
     {
         face->visible=true;
         itemV->setIcon(QIcon(":/show.png"));
         m_Model->SetDataModified();
+        m_Model->Modified();
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -915,6 +922,9 @@ void svModelEdit::HideSelected( bool )
         QStandardItem* itemV= m_FaceListTableModel->item(row,3);
         itemV->setIcon(QIcon(":/hide.png"));
     }
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
 }
 
 void svModelEdit::ChangeOpacitySelected( bool )
@@ -1081,12 +1091,12 @@ void svModelEdit::SetupBlendTable()
 
     for(int i=0;i<faces.size();i++)
     {
-        if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet")
+        if(faces[i]==NULL || faces[i]->type=="cap" || faces[i]->type=="inlet" || faces[i]->type=="outlet" || faces[i]->name.substr(0,10)=="wall_blend")
             continue;
 
         for(int j=i+1;j<faces.size();j++)
         {
-            if(faces[j]==NULL || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet")
+            if(faces[j]==NULL || faces[j]->type=="cap" || faces[j]->type=="inlet" || faces[j]->type=="outlet" || faces[j]->name.substr(0,10)=="wall_blend")
                 continue;
 
             //To do: check if two faces are adjcent;
