@@ -32,6 +32,8 @@ set(lib ${SV_LIB_MESHSIM_DISCRETE_SOLID_NAME})
 set(CXXSRCS cvMeshSimDiscreteSolidModel.cxx cv_discrete_utils.cxx)
 set(HDRS cvMeshSimDiscreteSolidModel.h cv_discrete_utils.h)
 
+add_definitions("-DSV_EXPORT_DISCRETE_COMPILE")
+
 if(SV_USE_MESHSIM_DISCRETE_SHARED_LIBRARIES)
   add_library(${lib} SHARED ${CXXSRCS} cv_discrete_init.cxx)
 else()

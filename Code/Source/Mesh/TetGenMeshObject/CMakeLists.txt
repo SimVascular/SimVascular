@@ -38,6 +38,8 @@ include_directories(${TETGEN_INCLUDE_DIR})
 SET(CXXSRCS cvTetGenMeshObject.cxx cvTetGenMeshSystem.cxx cv_tetgenmesh_utils.cxx)
 SET(HDRS cvTetGenMeshObject.h cvTetGenMeshSystem.h cv_tetgenmesh_utils.h)
 
+add_definitions("-DSV_EXPORT_TETGEN_MESH_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_tetgen_mesh_init.cxx)
 
 if(SV_USE_VMTK)

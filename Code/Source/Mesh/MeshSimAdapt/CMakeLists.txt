@@ -36,6 +36,8 @@ include_directories(${FLOWSOLVER_OPTIONS_HEADER_PATH})
 set(HDRS cvMeshSimAdapt.h cvAdaptHelp.h)
 SET(CXXSRCS cvMeshSimAdapt.cxx)
 
+add_definitions("-DSV_EXPORT_MESHSIM_ADAPTOR_COMPILE")
+
 if(SV_USE_MESHSIM_SHARED_LIBRARIES)
   add_library(${lib} SHARED ${CXXSRCS} cv_meshsim_adapt_init.cxx)
 else()

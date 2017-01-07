@@ -18,6 +18,8 @@ set(HDRS cv_image.h cv_img_offsets.h
   cv_mask_image_in_place.h
   )
 
+add_definitions("-DSV_EXPORT_IMAGE_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_image_init.cxx)
 
 target_link_libraries(${lib}

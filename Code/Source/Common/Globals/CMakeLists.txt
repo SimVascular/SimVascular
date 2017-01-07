@@ -10,6 +10,8 @@ include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 set(CXXSRCS cv_globals.cxx)
 set(HDRS cv_globals.h)
 
+add_definitions("-DSV_EXPORT_GLOBALS_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS})
 
 if(SV_INSTALL_LIBS)

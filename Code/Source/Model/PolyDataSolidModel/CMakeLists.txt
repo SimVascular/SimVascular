@@ -38,6 +38,8 @@ list(APPEND CORELIBS ${lib})
 set(CXXSRCS cvPolyDataSolid.cxx cv_polydatasolid_utils.cxx vtkGetBoundaryFaces.cxx)
 set(HDRS cvPolyDataSolid.h cv_polydatasolid_utils.h vtkGetBoundaryFaces.h)
 
+add_definitions("-DSV_EXPORT_POLYDATASOLID_COMPILE")
+
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_polydatasolid_init.cxx)
 
 target_link_libraries(${lib}

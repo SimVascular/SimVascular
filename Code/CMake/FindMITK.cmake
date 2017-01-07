@@ -221,20 +221,21 @@ set(${proj}_PLUGIN_LIBS_MISSING ${${proj}_PLUGIN_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_PLUGIN_LIBS_MISSING)
 set(${proj}_PLUGIN_LIBRARIES_WORK "")
 foreach(lib ${${proj}_PLUGIN_LIBNAMES})
+        message("${proj}_${lib}_PLUGIN_LIBRARY")
 	#find library
         find_library(${proj}_${lib}_PLUGIN_LIBRARY
 		NAMES
 		${lib}
 		PATHS
                 ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll
+		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE}
 		NO_DEFAULT_PATH)
               find_library(${proj}_${lib}_PLUGIN_PLUGIN_LIBRARY
 		NAMES
 		${lib}
 		PATHS
                 ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll)
+		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE})
               set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
               if(${proj}_${lib}_PLUGIN_LIBRARY)
                 set(${proj}_PLUGIN_LIBRARIES_WORK ${${proj}_PLUGIN_LIBRARIES_WORK} "${${proj}_${lib}_PLUGIN_LIBRARY}")
