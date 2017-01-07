@@ -242,6 +242,15 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnBlend, SIGNAL(clicked()), this, SLOT(BlendModel()) );
     //    connect(ui->tabWidget,SIGNAL(currentChanged(int)), this, SLOT(UpdateBlendTable(int)) );
 
+    //hide and show a page in qtoolbox
+//    int idx=0;
+//    QWidget* widget=ui->toolBox_3->widget(idx);
+//    QString title=ui->toolBox_3->itemText(idx);
+//    widget->hide();
+//    ui->toolBox_3->removeItem(idx);
+
+//    ui->toolBox_3->insertItem(0,widget,title);
+//    widget->show();
 }
 
 void svModelEdit::Visible()
@@ -768,12 +777,14 @@ void svModelEdit::ToggleVisibility(const QModelIndex &index){
         face->visible=false;
         itemV->setIcon(QIcon(":/hide.png"));
         m_Model->SetDataModified();
+        m_Model->Modified();
     }
     else
     {
         face->visible=true;
         itemV->setIcon(QIcon(":/show.png"));
         m_Model->SetDataModified();
+        m_Model->Modified();
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -902,6 +913,9 @@ void svModelEdit::HideSelected( bool )
         QStandardItem* itemV= m_FaceListTableModel->item(row,3);
         itemV->setIcon(QIcon(":/hide.png"));
     }
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
 }
 
 void svModelEdit::ChangeOpacitySelected( bool )

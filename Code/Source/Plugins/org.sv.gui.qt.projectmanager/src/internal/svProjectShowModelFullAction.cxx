@@ -1,4 +1,4 @@
-#include "svProjectShowModelEdgesAction.h"
+#include "svProjectShowModelFullAction.h"
 #include "svProjectManager.h"
 
 #include <berryIPreferencesService.h>
@@ -9,15 +9,15 @@
 #include <mitkProperties.h>
 #include <mitkRenderingManager.h>
 
-svProjectShowModelEdgesAction::svProjectShowModelEdgesAction()
+svProjectShowModelFullAction::svProjectShowModelFullAction()
 {
 }
 
-svProjectShowModelEdgesAction::~svProjectShowModelEdgesAction()
+svProjectShowModelFullAction::~svProjectShowModelFullAction()
 {
 }
 
-void svProjectShowModelEdgesAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
+void svProjectShowModelFullAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
@@ -30,19 +30,19 @@ void svProjectShowModelEdgesAction::Run(const QList<mitk::DataNode::Pointer> &se
 
     try
     {
-        bool showEdges=false;
-        selectedNode->GetBoolProperty("show edges", showEdges);
-        selectedNode->SetProperty( "show edges", mitk::BoolProperty::New(!showEdges));
+        bool showWholeSurface=false;
+        selectedNode->GetBoolProperty("show whole surface", showWholeSurface);
+        selectedNode->SetProperty( "show whole surface", mitk::BoolProperty::New(!showWholeSurface));
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
     catch(...)
     {
-        MITK_ERROR << "Model showing/hiding edges failed!";
+        MITK_ERROR << "Model showing full model/faces edges failed!";
     }
 }
 
 
-void svProjectShowModelEdgesAction::SetDataStorage(mitk::DataStorage *dataStorage)
+void svProjectShowModelFullAction::SetDataStorage(mitk::DataStorage *dataStorage)
 {
     m_DataStorage = dataStorage;
 }

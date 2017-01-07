@@ -12,6 +12,7 @@
     <contextMenuAction nodeDescriptorName="svImageFolder" label="Add/Replace Image" icon="" class="svProjectAddImageAction" />
     <contextMenuAction nodeDescriptorName="svProjectFolder" label="Close SV Project" icon="" class="svProjectCloseAction" />
     <contextMenuAction nodeDescriptorName="svModel" label="Show/Hide Edges" icon="" class="svProjectShowModelEdgesAction" />
+    <contextMenuAction nodeDescriptorName="svModel" label="Show Full/Faces" icon="" class="svProjectShowModelFullAction" />
   </extension>
 
 </plugin>

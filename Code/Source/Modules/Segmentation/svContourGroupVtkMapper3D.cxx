@@ -55,7 +55,12 @@ void svContourGroupVtkMapper3D::GenerateDataForRenderer( mitk::BaseRenderer *ren
 
     localStorage->m_Assembly->VisibilityOn();
 
-    localStorage->m_Assembly->GetParts()->RemoveAllItems();
+    int numProps=localStorage->m_Assembly->GetParts()->GetNumberOfItems();
+    for(int i=0;i<numProps;i++)
+    {
+        vtkObject* obj= localStorage->m_Assembly->GetParts()->GetItemAsObject(i);
+        localStorage->m_Assembly->RemovePart(obj);
+    }
 
     int lineWidth=1;
     node->GetIntProperty("line.width", lineWidth, renderer);
