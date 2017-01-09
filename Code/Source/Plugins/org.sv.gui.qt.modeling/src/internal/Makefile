@@ -105,24 +105,16 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
 ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
-  ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
-  endif
 endif
 ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
-  ifneq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
-  endif
 endif
 ifeq ($(SV_USE_PARASOLID),1)
-  ifneq ($(SV_USE_PARASOLID_SHARED),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
-  endif
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
-  ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
-  endif
 endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(OPENCASCADE_LIBS)
