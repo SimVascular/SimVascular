@@ -40,8 +40,10 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
            $(VMTK_INCDIR) \
+	   $(SV_MMG_INCDIR) \
            $(OPENCASCADE_INCDIR) \
-					 $(SV_MMG_INCDIR)
+           $(MESHSIM_INCDIR) \
+           $(PARASOLID_INCDIR)
 
 MODULE_NAME = svModel
 MODULE_NAME_ALL_CAPS = SVMODEL
@@ -65,6 +67,9 @@ ifeq ($(SV_USE_OPENCASCADE),1)
     HDRS +=  svModelElementOCCT.h
 endif
 
+ifeq ($(SV_USE_PARASOLID),1)
+    HDRS +=  svModelElementParasolid.h
+endif
 
 CXXSRCS	= \
     svModelUtils.cxx \
@@ -81,6 +86,10 @@ CXXSRCS	= \
 
 ifeq ($(SV_USE_OPENCASCADE),1)
     CXXSRCS += svModelElementOCCT.cxx
+endif
+
+ifeq ($(SV_USE_PARASOLID),1)
+    CXXSRCS += svModelElementParasolid.cxx
 endif
 
 CXXSRCS += us_init.cxx
@@ -119,10 +128,20 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
-	DLLLIBS += $(OPENCASCADE_LIBS)
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
 endif
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+endif
+ifeq ($(SV_USE_PARASOLID),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+endif
+
+DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(OPENCASCADE_LIBS)
 
 ifeq ($(SV_USE_VMTK),1)
 	DLLLIBS += $(SVLIBFLAG)_simvascular_thirdparty_vmtk$(LIBLINKEXT)

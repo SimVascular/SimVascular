@@ -1034,16 +1034,12 @@ ifeq ($(SV_USE_MESHSIM),1)
 
   SIM_LICENSE_FILE = Licenses/MeshSim/license.dat
 
-  ifeq ($(SV_USE_PARASOLID),1)
-    MESHSIM_MODELER=parasolid
-  endif
-
   ifeq ($(CLUSTER), x64_cygwin)
 	include $(TOP)/MakeHelpers/meshsim-9.0-151017-vs12.x64_cygwin.mk
   endif
 
   ifeq ($(CLUSTER), x64_linux)
-	include $(TOP)/MakeHelpers/meshsim-9.0-150704.x64_linux.mk
+	include $(TOP)/MakeHelpers/meshsim-9.0-151017.x64_linux.mk
   endif
 
   #No meshsim for mac osx
