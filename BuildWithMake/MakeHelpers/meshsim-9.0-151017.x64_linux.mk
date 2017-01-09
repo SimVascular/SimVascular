@@ -5,7 +5,7 @@ ifeq ($(CLUSTER), x64_linux)
     MESHSIM_LIBS     = -L$(MESHSIM_LIBDIR) \
                        -lSimAdvMeshing -lSimMeshing -lSimMeshTools
     MESHSIM_SO_PATH  = $(MESHSIM_LIBDIR)
-    ifeq ($(SV_USE_PARASOLID),parasolid)
+    ifeq ($(SV_USE_PARASOLID),1)
       MESHSIM_LIBS   += -lSimParasolid260
     endif 
     ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
