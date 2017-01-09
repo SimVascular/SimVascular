@@ -37,6 +37,8 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
 	   $(TCLTK_INCDIR) \
            $(PYTHON_INCDIR) \
            $(OPENCASCADE_INCDIR) \
+           $(MESHSIM_INCDIR) \
+           $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
@@ -97,10 +99,28 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-ifeq ($(SV_USE_OPENCASCADE),1)
-	DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
-	DLLLIBS += $(OPENCASCADE_LIBS)
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+  ifneq ($(SV_USE_MESHSIM_DISCRETE_MODEL_SHARED),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
+  endif
 endif
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+  ifneq ($(SV_USE_MESHSIM_SOLID_MODEL_SHARED),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
+  endif
+endif
+ifeq ($(SV_USE_PARASOLID),1)
+  ifneq ($(SV_USE_PARASOLID_SHARED),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
+  endif
+endif
+ifeq ($(SV_USE_OPENCASCADE),1)
+  ifneq ($(SV_USE_OPENCASCADE_SHARED),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
+  endif
+endif
+
+DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(OPENCASCADE_LIBS)
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 

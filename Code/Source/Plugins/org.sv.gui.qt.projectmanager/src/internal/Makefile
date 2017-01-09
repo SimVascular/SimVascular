@@ -46,13 +46,15 @@ HDRS	=  \
   svProjectManagerPluginActivator.h \
   svProjectAddImageAction.h \
   svProjectCloseAction.h \
-  svProjectShowModelEdgesAction.h
+  svProjectShowModelEdgesAction.h \
+  svProjectShowModelFullAction.h
 
 CXXSRCS	= \
   svProjectManagerPluginActivator.cxx \
   svProjectAddImageAction.cxx \
   svProjectCloseAction.cxx \
-  svProjectShowModelEdgesAction.cxx
+  svProjectShowModelEdgesAction.cxx \
+  svProjectShowModelFullAction.cxx
 
 UIFILES = 
 
