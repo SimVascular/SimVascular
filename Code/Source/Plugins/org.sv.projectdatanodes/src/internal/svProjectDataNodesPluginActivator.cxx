@@ -18,7 +18,7 @@
 #include <berryISelectionService.h>
 #include <berryIWorkbenchPage.h>
 #include <berryIWorkbench.h>
-#include <QmitkDataManagerView.h>
+//#include <QmitkDataManagerView.h>
 
 #include <QMessageBox>
 #include <QInputDialog>
