@@ -115,6 +115,10 @@ public slots:
 
     void ConvertToPolyDataModel();
 
+    void SetEstimatedEdgeSize();
+
+    double EstimateEdgeSize();
+
 public:
 
     int GetTimeStep();

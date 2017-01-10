@@ -124,6 +124,19 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     modelElement->SetWholeVtkPolyData(solidvpd);
     modelElement->SetNumSampling(numSamplingPts);
 
+
+    bool ok = false;
+    if(modelElement->MarkCellsByFaces(modelElement->GetCapFaceIDs()))
+    {
+      int numDivs = 1;
+      ok=modelElement->LinearSubdivideLocal(numDivs);
+    }
+    if(!ok)
+    {
+      MITK_ERROR << "Failed to subdivide caps of created PolyData";
+      return NULL;
+    }
+
     return modelElement;
 }
 
