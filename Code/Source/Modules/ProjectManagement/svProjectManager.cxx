@@ -438,6 +438,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     {
         dir.remove(QString::fromStdString(removeList[i])+".pth");
     }
+    pathFolder->ClearRemoveList();
 
     //save contour groups
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSegmentationFolder"));
@@ -471,6 +472,8 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+
         contourGroup->SetDataModified(false);
     }
 
@@ -478,6 +481,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     {
         dirSeg.remove(QString::fromStdString(removeList[i])+".ctgr");
     }
+    segFolder->ClearRemoveList();
 
     //save models
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svModelFolder"));
@@ -511,6 +515,8 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(node->GetName())+".mdl");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirModel.absolutePath().toStdString().c_str());
+
         model->SetDataModified(false);
     }
 
@@ -521,6 +527,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         dirModel.remove(QString::fromStdString(removeList[i])+".brep");
         dirModel.remove(QString::fromStdString(removeList[i])+".xmt_txt");
     }
+    modelFolder->ClearRemoveList();
 
     //save mesh
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
@@ -554,6 +561,8 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(node->GetName())+".msh");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirMesh.absolutePath().toStdString().c_str());
+
         mitkMesh->SetDataModified(false);
     }
 
@@ -563,6 +572,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         dirMesh.remove(QString::fromStdString(removeList[i])+".vtp");
         dirMesh.remove(QString::fromStdString(removeList[i])+".vtu");
     }
+    meshFolder->ClearRemoveList();
 
     //sava simjobs
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
@@ -596,6 +606,8 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
         QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(node->GetName())+".sjb");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirSim.absolutePath().toStdString().c_str());
+
         mitkJob->SetDataModified(false);
     }
 
@@ -603,6 +615,7 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     {
         dirSim.remove(QString::fromStdString(removeList[i])+".sjb");
     }
+    simFolder->ClearRemoveList();
 }
 
 void svProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorage)
