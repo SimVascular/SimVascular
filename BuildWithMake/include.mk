@@ -259,8 +259,8 @@ endif
 #   Release version numbers for SimVascular
 # -------------------------------------------
 
-SV_MAJOR_VER_NO = "2.16"
-SV_FULL_VER_NO = "2.16.0918"
+SV_MAJOR_VER_NO = "2.17"
+SV_FULL_VER_NO = "2.17.0109"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 
