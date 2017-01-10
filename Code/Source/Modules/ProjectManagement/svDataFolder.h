@@ -25,6 +25,11 @@ public:
     virtual bool VerifyRequestedRegion() override;
     virtual void SetRequestedRegion(const itk::DataObject *data) override;
 
+    std::vector<std::string> GetNodeNamesToRemove();
+    void AddToRemoveList(std::string nodeName);
+    void ClearRemoveList();
+
+
 //    bool isActive();
 //    void SetActive(bool active);
 
@@ -44,6 +49,8 @@ protected:
 //    bool m_CalculateBoundingBox;
 
 //    bool m_Active;
+
+        std::vector<std::string> m_NodeNamesToRemove;
 
   };
 

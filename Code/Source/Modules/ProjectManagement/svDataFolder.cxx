@@ -44,5 +44,17 @@ void svDataFolder::SetRequestedRegion(const DataObject * )
 {
 }
 
+std::vector<std::string> svDataFolder::GetNodeNamesToRemove()
+{
+    return m_NodeNamesToRemove;
+}
 
+void svDataFolder::AddToRemoveList(std::string nodeName)
+{
+    m_NodeNamesToRemove.push_back(nodeName);
+}
 
+void svDataFolder::ClearRemoveList()
+{
+    m_NodeNamesToRemove.clear();
+}

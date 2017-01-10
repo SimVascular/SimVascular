@@ -5,7 +5,10 @@
 #include "svMitkMeshObjectFactory.h"
 #include "svMitkSimulationObjectFactory.h"
 #include "svDataFolder.h"
+#include "svDataNodeOperation.h"
 
+#include <mitkOperationEvent.h>
+#include <mitkUndoController.h>
 #include <QmitkNodeDescriptorManager.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkIDataStorageService.h>
@@ -32,7 +35,8 @@ ctkPluginContext* svProjectDataNodesPluginActivator::m_Context = nullptr;
 
 svProjectDataNodesPluginActivator::svProjectDataNodesPluginActivator()
 {
-
+    m_UndoEnabled=true;
+    m_Interface=new svDataNodeOperationInterface;
 }
 
 svProjectDataNodesPluginActivator::~svProjectDataNodesPluginActivator()
@@ -203,14 +207,34 @@ void svProjectDataNodesPluginActivator::RemoveSelectedNodes( bool )
     if(answerButton == QMessageBox::Yes)
     {
 
-
+        bool incCurrEventId=false;
         for (std::vector<mitk::DataNode::Pointer>::iterator it = selectedNodes.begin()
              ; it != selectedNodes.end(); it++)
         {
             node = *it;
             if( !isDataFolder->CheckNode(node))
             {
-                dataStorage->Remove(node);
+//                dataStorage->Remove(node);
+                if(!incCurrEventId&&m_UndoEnabled)
+                {
+                    mitk::OperationEvent::IncCurrObjectEventId();
+                    incCurrEventId=true;
+                }
+
+                mitk::DataNode::Pointer parentNode=NULL;
+                mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (node);
+                if(rs.IsNotNull()&&rs->size()>0)
+                    parentNode=rs->GetElement(0);
+
+                svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,dataStorage,node,parentNode);
+                if(m_UndoEnabled)
+                {
+                    svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,dataStorage,node,parentNode);
+                    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Remove DataNode");
+                    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+                }
+
+                m_Interface->ExecuteOperation(doOp);
             }
             //      if (m_GlobalReinitOnNodeDelete)
             //          this->GlobalReinit(false);
@@ -255,79 +279,79 @@ void svProjectDataNodesPluginActivator::RenameSelectedNode( bool )
 }
 
 //berry::PlatformUI::GetWorkbench() doesn't work, this function not used.
-void svProjectDataNodesPluginActivator::SetupDataManagerDoubleClick()
-{
-    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
-    if(workbench==NULL)
-        return;
+//void svProjectDataNodesPluginActivator::SetupDataManagerDoubleClick()
+//{
+//    berry::IWorkbench* workbench=berry::PlatformUI::GetWorkbench();
+//    if(workbench==NULL)
+//        return;
 
-    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow();
-    if(window.IsNull())
-        return;
+//    berry::IWorkbenchWindow::Pointer window=workbench->GetActiveWorkbenchWindow();
+//    if(window.IsNull())
+//        return;
 
-    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
-    if(page.IsNull())
-        return;
+//    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+//    if(page.IsNull())
+//        return;
 
-    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
-    if(dataManagerView.IsNull())
-        return;
+//    berry::IViewPart::Pointer dataManagerView = window->GetActivePage()->FindView("org.mitk.views.datamanager");
+//    if(dataManagerView.IsNull())
+//        return;
 
-    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
-    QTreeView* treeView=dataManager->GetTreeView();
+//    QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
+//    QTreeView* treeView=dataManager->GetTreeView();
 
-    QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
-}
+//    QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
+//}
 
-void svProjectDataNodesPluginActivator::ShowSVView()
-{
-    berry::IWorkbenchWindow::Pointer window=berry::PlatformUI::GetWorkbench()->GetActiveWorkbenchWindow();
+//void svProjectDataNodesPluginActivator::ShowSVView()
+//{
+//    berry::IWorkbenchWindow::Pointer window=berry::PlatformUI::GetWorkbench()->GetActiveWorkbenchWindow();
 
-    if(window.IsNull())
-        return;
+//    if(window.IsNull())
+//        return;
 
-    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
-    if(page.IsNull())
-        return;
+//    berry::IWorkbenchPage::Pointer page = window->GetActivePage();
+//    if(page.IsNull())
+//        return;
 
-    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
-    if(list.size()==0)
-        return;
+//    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
+//    if(list.size()==0)
+//        return;
 
-    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+//    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
 
-    if(nodes.size() < 1)
-    {
-        return;
-    }
+//    if(nodes.size() < 1)
+//    {
+//        return;
+//    }
 
-    mitk::DataNode::Pointer selectedNode = nodes.front();
+//    mitk::DataNode::Pointer selectedNode = nodes.front();
 
-    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
-    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
-    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
-    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
-    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+//    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
+//    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+//    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
+//    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
+//    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
 
-    if(isPath->CheckNode(selectedNode))
-    {
-       page->ShowView("org.sv.views.pathplanning");
-    }
-    else if(isContourGroup->CheckNode(selectedNode))
-    {
-       page->ShowView("org.sv.views.segmentation2d");
-    }
-    else if(isModel->CheckNode(selectedNode))
-    {
-       page->ShowView("org.sv.views.modeling");
-    }
-    else if(isMesh->CheckNode(selectedNode))
-    {
-       page->ShowView("org.sv.views.meshing");
-    }
-    else if(isSimJob->CheckNode(selectedNode))
-    {
-       page->ShowView("org.sv.views.simulation");
-    }
+//    if(isPath->CheckNode(selectedNode))
+//    {
+//       page->ShowView("org.sv.views.pathplanning");
+//    }
+//    else if(isContourGroup->CheckNode(selectedNode))
+//    {
+//       page->ShowView("org.sv.views.segmentation2d");
+//    }
+//    else if(isModel->CheckNode(selectedNode))
+//    {
+//       page->ShowView("org.sv.views.modeling");
+//    }
+//    else if(isMesh->CheckNode(selectedNode))
+//    {
+//       page->ShowView("org.sv.views.meshing");
+//    }
+//    else if(isSimJob->CheckNode(selectedNode))
+//    {
+//       page->ShowView("org.sv.views.simulation");
+//    }
 
-}
+//}
