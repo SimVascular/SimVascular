@@ -232,21 +232,45 @@ bool svModelElementPolyData::RemeshFaces(std::vector<int> faceIDs, double size)
         }
     }
 
-    int meshcaps = 1;
-    int preserveedges = 0;
-    //     int triangleoutput = 1;
-    double collapseanglethreshold = 0;
-    double trianglesplitfactor = 0;
-    int useSizeFunction = 0;
-    std::string markerListName = "ModelFaceID";
-
-    if (VMTKUtils_SurfaceRemeshing(m_WholeVtkPolyData,size,meshcaps,preserveedges,
-                                   trianglesplitfactor,collapseanglethreshold,excluded,
-                                   markerListName,useSizeFunction,NULL) != CV_OK)
+#ifdef SV_USE_MMG
+    if (excluded->GetNumberOfIds() == m_Faces.size())
     {
-        fprintf(stderr,"Issue while remeshing surface\n");
-        return false;
+      double hausd = 0.01;
+      double angle = 45.0;
+      double hgrad = 1.1;
+      vtkDoubleArray *meshSizingFunction = NULL;
+      int useSizingFunction = 0;
+      int numAddedRefines = 0;
+
+      if ( MMGUtils_SurfaceRemeshing( m_WholeVtkPolyData, size, size, hausd, angle, hgrad,
+        useSizingFunction, meshSizingFunction, numAddedRefines) != CV_OK ) {
+          fprintf(stderr,"Issue while remeshing surface\n");
+          return false;
+        }
+      }
+    else
+    {
+#endif
+
+      int meshcaps = 1;
+      int preserveedges = 0;
+      //     int triangleoutput = 1;
+      double collapseanglethreshold = 0;
+      double trianglesplitfactor = 0;
+      int useSizeFunction = 0;
+      std::string markerListName = "ModelFaceID";
+
+      if (VMTKUtils_SurfaceRemeshing(m_WholeVtkPolyData,size,meshcaps,preserveedges,
+                                     trianglesplitfactor,collapseanglethreshold,excluded,
+                                     markerListName,useSizeFunction,NULL) != CV_OK)
+      {
+          fprintf(stderr,"Issue while remeshing surface\n");
+          return false;
+      }
+
+#ifdef SV_USE_MMG
     }
+#endif
 
     //update all faces; some excluded faces may be remeshed
     for(int i=0;i<m_Faces.size();i++)

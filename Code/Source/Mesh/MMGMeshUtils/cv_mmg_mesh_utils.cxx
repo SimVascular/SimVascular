@@ -308,6 +308,13 @@ int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
 
 int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, double hausd, double angle, double hgrad, int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines)
 {
+  vtkSmartPointer<vtkCleanPolyData> cleaner =
+    vtkSmartPointer<vtkCleanPolyData>::New();
+  cleaner->SetInputData(surface);
+  cleaner->Update();
+
+  surface->DeepCopy(cleaner->GetOutput());
+
   if (hmax < hmin)
   {
     fprintf(stderr,"Max edge size is smaller than min edge size!\n");
@@ -415,12 +422,22 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
 
     pd->DeepCopy(surfacer->GetOutput());
   }
-  vtkSmartPointer<vtkCleanPolyData> cleaner =
-    vtkSmartPointer<vtkCleanPolyData>::New();
+
   cleaner->SetInputData(pd);
   cleaner->Update();
 
-  surface->DeepCopy(cleaner->GetOutput());
+  vtkSmartPointer<vtkPolyDataNormals> normaler =
+    vtkSmartPointer<vtkPolyDataNormals>::New();
+  normaler->SetInputData(cleaner->GetOutput());
+  normaler->ConsistencyOn();
+  normaler->AutoOrientNormalsOn();
+  normaler->FlipNormalsOff();
+  normaler->ComputePointNormalsOn();
+  normaler->ComputeCellNormalsOff();
+  normaler->SplittingOn();
+  normaler->Update();
+
+  surface->DeepCopy(normaler->GetOutput());
   pd->Delete();
 
   MMGS_Free_all(MMG5_ARG_start,

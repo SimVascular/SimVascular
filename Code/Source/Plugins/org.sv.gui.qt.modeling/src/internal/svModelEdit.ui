@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>432</width>
+    <width>481</width>
     <height>692</height>
    </rect>
   </property>
@@ -368,7 +368,7 @@
                          </size>
                         </property>
                         <property name="currentIndex">
-                         <number>1</number>
+                         <number>0</number>
                         </property>
                         <widget class="QWidget" name="page_3">
                          <property name="geometry">
@@ -376,7 +376,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>398</height>
+                           <height>378</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -444,8 +444,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>237</height>
+                               <width>128</width>
+                               <height>228</height>
                               </rect>
                              </property>
                              <property name="sizePolicy">
@@ -487,15 +487,19 @@
                                </widget>
                               </item>
                               <item>
-                               <widget class="QDoubleSpinBox" name="dsbRemeshSize">
-                                <property name="decimals">
-                                 <number>3</number>
+                               <widget class="QPushButton" name="btnEstimateEdgeSize0">
+                                <property name="text">
+                                 <string>Estimate Size</string>
                                 </property>
-                                <property name="singleStep">
-                                 <double>0.100000000000000</double>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="lineEditEstimateEdgeSize0">
+                                <property name="text">
+                                 <string>0.25</string>
                                 </property>
-                                <property name="value">
-                                 <double>0.100000000000000</double>
+                                <property name="placeholderText">
+                                 <string/>
                                 </property>
                                </widget>
                               </item>
@@ -526,8 +530,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>237</height>
+                               <width>128</width>
+                               <height>228</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -609,8 +613,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>140</width>
-                           <height>398</height>
+                           <width>153</width>
+                           <height>378</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -656,8 +660,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>146</height>
+                               <width>141</width>
+                               <height>107</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -696,12 +700,19 @@
                                </widget>
                               </item>
                               <item>
-                               <widget class="QDoubleSpinBox" name="dsbRemeshTargetEdgeSizeG">
-                                <property name="decimals">
-                                 <number>2</number>
+                               <widget class="QPushButton" name="btnEstimateEdgeSize1">
+                                <property name="text">
+                                 <string>Estimate Size</string>
                                 </property>
-                                <property name="value">
-                                 <double>0.250000000000000</double>
+                               </widget>
+                              </item>
+                              <item>
+                               <widget class="QLineEdit" name="lineEditEstimateEdgeSize1">
+                                <property name="text">
+                                 <string>0.25</string>
+                                </property>
+                                <property name="placeholderText">
+                                 <string/>
                                 </property>
                                </widget>
                               </item>
@@ -732,8 +743,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>146</height>
+                               <width>101</width>
+                               <height>85</height>
                               </rect>
                              </property>
                              <property name="cursor">
@@ -814,8 +825,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>146</height>
+                               <width>98</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -925,8 +936,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>146</height>
+                               <width>104</width>
+                               <height>85</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -995,8 +1006,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>146</height>
+                               <width>98</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1091,8 +1102,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>146</height>
+                               <width>104</width>
+                               <height>85</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1169,7 +1180,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>398</height>
+                           <height>378</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1212,7 +1223,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>247</height>
+                               <height>85</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1284,8 +1295,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>247</height>
+                               <width>128</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1383,8 +1394,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>247</height>
+                               <width>128</width>
+                               <height>135</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1476,8 +1487,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>138</width>
-                               <height>247</height>
+                               <width>141</width>
+                               <height>221</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1551,7 +1562,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>140</width>
-                           <height>398</height>
+                           <height>378</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1589,8 +1600,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>114</width>
-                               <height>189</height>
+                               <width>113</width>
+                               <height>129</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1633,11 +1644,11 @@
                                <widget class="QComboBox" name="comboBoxPathPlane"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathPlane">
-                                <property name="decimals">
+                               <widget class="ctkSliderWidget" name="sliderPathPlane" native="true">
+                                <property name="decimals" stdset="0">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum">
+                                <property name="maximum" stdset="0">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
@@ -1677,7 +1688,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>138</width>
-                               <height>336</height>
+                               <height>310</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1720,11 +1731,11 @@
                                <widget class="QComboBox" name="comboBoxPathBox"/>
                               </item>
                               <item>
-                               <widget class="ctkSliderWidget" name="sliderPathBox">
-                                <property name="decimals">
+                               <widget class="ctkSliderWidget" name="sliderPathBox" native="true">
+                                <property name="decimals" stdset="0">
                                  <number>0</number>
                                 </property>
-                                <property name="maximum">
+                                <property name="maximum" stdset="0">
                                  <double>200.000000000000000</double>
                                 </property>
                                </widget>
