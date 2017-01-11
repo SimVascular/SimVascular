@@ -635,6 +635,23 @@ vtkSmartPointer<vtkPolyData> svModelUtils::LinearSubdivideLocal(vtkSmartPointer<
     return dst->GetVtkPolyData();
 }
 
+vtkSmartPointer<vtkPolyData> svModelUtils::LoopSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_loop_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local loop subdivision error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
 vtkSmartPointer<vtkPolyData> svModelUtils::CutByPlane(vtkSmartPointer<vtkPolyData> inpd, double origin[3], double point1[3], double point2[3], bool above )
 {
     if(inpd==NULL)

@@ -63,6 +63,8 @@ public:
 
     static vtkSmartPointer<vtkPolyData> LinearSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs);
 
+    static vtkSmartPointer<vtkPolyData> LoopSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs);
+
     static vtkSmartPointer<vtkPolyData> CutByPlane(vtkSmartPointer<vtkPolyData> inpd, double origin[3], double point1[3], double point2[3], bool above );
 
     static vtkSmartPointer<vtkPolyData> CutByBox(vtkSmartPointer<vtkPolyData> inpd, vtkSmartPointer<vtkPlanes> boxPlanes, bool inside);

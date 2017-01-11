@@ -199,6 +199,9 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     signalMapper->setMapping(ui->btnLSubdivideL, LINEAR_SUBDIVIDE_LOCAL);
     connect(ui->btnLSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
+    signalMapper->setMapping(ui->btnLoopSubdivideL, LOOP_SUBDIVIDE_LOCAL);
+    connect(ui->btnLoopSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
     signalMapper->setMapping(ui->btnCutAbove, CUT_ABOVE);
     connect(ui->btnCutAbove, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
@@ -1799,6 +1802,10 @@ void svModelEdit::ModelOperate(int operationType)
     case LINEAR_SUBDIVIDE_LOCAL:
         if(MarkCells(newModelElement))
             ok=newModelElement->LinearSubdivideLocal(ui->sbLinearDivisionsL->value());
+        break;
+    case LOOP_SUBDIVIDE_LOCAL:
+        if(MarkCells(newModelElement))
+            ok=newModelElement->LoopSubdivideLocal(ui->sbLoopDivisionsL->value());
         break;
     case CUT_ABOVE:
         if(m_PlaneWidget!=NULL && m_PlaneWidget->GetEnabled())

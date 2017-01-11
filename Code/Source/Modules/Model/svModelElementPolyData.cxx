@@ -793,6 +793,27 @@ bool svModelElementPolyData::LinearSubdivideLocal(int numDivs)
     return true;
 }
 
+bool svModelElementPolyData::LoopSubdivideLocal(int numDivs)
+{
+    if(m_WholeVtkPolyData==NULL)
+        return false;
+
+    vtkSmartPointer<vtkPolyData> newvpd=svModelUtils::LoopSubdivideLocal(m_WholeVtkPolyData, numDivs);
+    if(newvpd==NULL)
+        return false;
+
+    m_WholeVtkPolyData=newvpd;
+
+    for(int i=0;i<m_Faces.size();i++)
+    {
+        m_Faces[i]->vpd=CreateFaceVtkPolyData(m_Faces[i]->id);
+    }
+
+    m_SelectedCellIDs.clear();
+
+    return true;
+}
+
 bool svModelElementPolyData::CutByPlane(double origin[3], double point1[3], double point2[3], bool above )
 {
     if(m_WholeVtkPolyData==NULL)

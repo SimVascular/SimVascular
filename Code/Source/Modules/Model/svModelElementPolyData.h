@@ -112,6 +112,8 @@ public:
 
     bool LinearSubdivideLocal(int numDivs);//mark cells befor calling it
 
+    bool LoopSubdivideLocal(int numDivs);//mark cells befor calling it
+
     bool CutByPlane(double origin[3], double point1[3], double point2[3], bool above );
 
     bool CutByBox(vtkSmartPointer<vtkPlanes> boxPlanes, bool inside);
