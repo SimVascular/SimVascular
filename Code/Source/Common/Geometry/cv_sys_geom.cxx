@@ -3728,6 +3728,8 @@ int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
 
     vtkNew(vtkPolyDataNormals,normaler);
     normaler->SetInputData(smoother->GetOutput());
+    normaler->ComputePointNormalsOff();
+    normaler->ComputeCellNormalsOn();
     normaler->SplittingOff();
     normaler->Update();
 
@@ -3798,6 +3800,8 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
 
     vtkNew(vtkPolyDataNormals,normaler);
     normaler->SetInputData(smoother->GetOutput());
+    normaler->ComputePointNormalsOff();
+    normaler->ComputeCellNormalsOn();
     normaler->SplittingOff();
     normaler->Update();
 

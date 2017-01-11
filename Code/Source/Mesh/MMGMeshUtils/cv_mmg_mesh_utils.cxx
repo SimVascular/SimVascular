@@ -432,9 +432,9 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   normaler->ConsistencyOn();
   normaler->AutoOrientNormalsOn();
   normaler->FlipNormalsOff();
-  normaler->ComputePointNormalsOn();
-  normaler->ComputeCellNormalsOff();
-  normaler->SplittingOn();
+  normaler->ComputePointNormalsOff();
+  normaler->ComputeCellNormalsOn();
+  normaler->SplittingOff();
   normaler->Update();
 
   surface->DeepCopy(normaler->GetOutput());

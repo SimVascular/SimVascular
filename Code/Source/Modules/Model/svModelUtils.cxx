@@ -394,7 +394,7 @@ vtkPolyData* svModelUtils::Orient(vtkPolyData* inpd)
     vtkSmartPointer<vtkPolyDataNormals> orienter = vtkSmartPointer<vtkPolyDataNormals>::New();
     orienter->SetInputData(cleaner->GetOutput());
     orienter->AutoOrientNormalsOn();
-    orienter->ComputePointNormalsOn();
+    orienter->ComputePointNormalsOff();
     orienter->FlipNormalsOn();
     orienter->SplittingOff();
     orienter->ComputeCellNormalsOn();
@@ -500,7 +500,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtk
     vtkSmartPointer<vtkPolyDataNormals> orienter=vtkSmartPointer<vtkPolyDataNormals>::New();
     orienter->SetInputDataObject(cleaner->GetOutput());
     orienter->AutoOrientNormalsOn();
-    orienter->ComputePointNormalsOn();
+    orienter->ComputePointNormalsOff();
     orienter->FlipNormalsOn();
     orienter->SplittingOff();
     orienter->ComputeCellNormalsOn();
