@@ -17,13 +17,14 @@ svMitkSimJob::svMitkSimJob(const svMitkSimJob &other)
     , m_ModelName(other.m_ModelName)
     , m_JobSet(other.GetTimeSize())
     , m_DataModified(true)
+    , m_CalculateBoundingBox(true)
 {
     for (std::size_t t = 0; t < other.m_JobSet.size(); ++t)
     {
         if(other.m_JobSet[t])
-            m_JobSet.push_back(other.m_JobSet[t]->Clone());
-        else
-            m_JobSet.push_back(NULL);
+            m_JobSet[t]=other.m_JobSet[t]->Clone();
+//        else
+//            m_JobSet.push_back(NULL);
     }
 }
 

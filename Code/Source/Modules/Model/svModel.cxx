@@ -14,13 +14,14 @@ svModel::svModel(const svModel &other)
     , m_Type(other.m_Type)
     , m_ModelElementSet(other.GetTimeSize())
     , m_DataModified(true)
+    , m_CalculateBoundingBox(true)
 {
     for (std::size_t t = 0; t < other.m_ModelElementSet.size(); ++t)
     {
         if(other.m_ModelElementSet[t])
-            m_ModelElementSet.push_back(other.m_ModelElementSet[t]->Clone());
-        else
-            m_ModelElementSet.push_back(NULL);
+            m_ModelElementSet[t]=other.m_ModelElementSet[t]->Clone();
+//        else
+//            m_ModelElementSet.push_back(NULL);
     }
 }
 

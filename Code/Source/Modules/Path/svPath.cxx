@@ -20,10 +20,11 @@ svPath::svPath(const svPath &other)
     , m_Spacing(other.m_Spacing)
     , m_PathElementSet(other.GetTimeSize())
     , m_DataModified(true)
+    , m_CalculateBoundingBox(true)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {
-        m_PathElementSet.push_back(other.GetPathElement(t)->Clone());
+        m_PathElementSet[t]=other.GetPathElement(t)->Clone();
     }
 }
 

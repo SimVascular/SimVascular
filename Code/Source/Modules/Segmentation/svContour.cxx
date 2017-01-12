@@ -48,6 +48,7 @@ svContour::svContour(const svContour &other)
     , m_ControlPoints(other.m_ControlPoints)
     , m_ContourPoints(other.m_ContourPoints)
     , m_Extendable(other.m_Extendable)
+    , m_Selected(other.m_Selected)
 {
 //    SetPlaneGeometry(other.m_PlaneGeometry);
     SetPathPoint(other.m_PathPoint);

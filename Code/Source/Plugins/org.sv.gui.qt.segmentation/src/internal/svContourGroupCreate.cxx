@@ -3,10 +3,13 @@
 
 #include "svContourGroup.h"
 #include "svPath.h"
+#include "svDataNodeOperation.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
+#include <mitkUndoController.h>
+#include <mitkOperationEvent.h>
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -22,6 +25,8 @@ svContourGroupCreate::svContourGroupCreate(mitk::DataStorage::Pointer dataStorag
     , m_SegFolderNode(NULL)
     , m_PathFolderNode(NULL)
 {
+    m_Interface=new svDataNodeOperationInterface;
+
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateGroup()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -133,7 +138,18 @@ void svContourGroupCreate::CreateGroup()
     groupNode->SetData(group);
     groupNode->SetName(groupName);
 
-    m_DataStorage->Add(groupNode,m_SegFolderNode);
+//    m_DataStorage->Add(groupNode,m_SegFolderNode);
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    bool undoEnabled=true;
+    svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,groupNode,m_SegFolderNode);
+    if(undoEnabled)
+    {
+        svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,groupNode,m_SegFolderNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(doOp);
 
     hide();
 }

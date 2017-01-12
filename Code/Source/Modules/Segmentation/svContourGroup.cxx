@@ -18,6 +18,7 @@ svContourGroup::svContourGroup(const svContourGroup &other)
     , m_PathName(other.m_PathName)
     , m_ContourSets(other.GetTimeSize())
     , m_DataModified(true)
+    , m_CalculateBoundingBox(true)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {

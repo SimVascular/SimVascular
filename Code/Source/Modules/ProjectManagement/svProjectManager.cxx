@@ -171,7 +171,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         for(int i=0;i<imageFilePathList.size();i++)
         {
             mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePathList[i].toStdString());
-//            imageNode->SetVisibility(false);
+            //            imageNode->SetVisibility(false);
             dataStorage->Add(imageNode,imageFolderNode);
         }
 
@@ -360,7 +360,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
             }
         }
 
-//        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
+        //        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
     }
     else
     {
@@ -373,7 +373,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
     mitk::BaseData::Pointer mimage = imageNode->GetData();
     if ( mimage.IsNotNull() && mimage->GetTimeGeometry()->IsValid() )
     {
-       mitk::RenderingManager::GetInstance()->InitializeViews(mimage->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+        mitk::RenderingManager::GetInstance()->InitializeViews(mimage->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
     }
 
     imagesElement.appendChild(imgElement);
@@ -702,5 +702,68 @@ void svProjectManager::RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mi
 
     svDataFolder* folder=dynamic_cast<svDataFolder*>(parentNode->GetData());
     folder->AddToRemoveList(dataNode->GetName());
+
+}
+
+void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName)
+{
+    std::string name=dataNode->GetName();
+
+    std::string path="";
+    dataNode->GetStringProperty("path", path);
+
+    dataNode->SetName(newName);
+
+    if(path=="")
+        return;
+
+    //rename the corresponding files and folder if applicable, for svPath, svContourGroup, svModel, svMitkMesh,svMitkSimJob
+    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
+    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
+    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
+    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+
+    std::vector<std::string> extensions;
+    if(isPath->CheckNode(dataNode))
+    {
+        extensions.push_back(".pth");
+    }
+    else if(isContourGroup->CheckNode(dataNode))
+    {
+        extensions.push_back(".ctgr");
+    }
+    else if(isModel->CheckNode(dataNode))
+    {
+        extensions.push_back(".mdl");
+        extensions.push_back(".vtp");
+#ifdef SV_USE_OpenCASCADE
+        extensions.push_back(".brep");
+#endif
+#ifdef SV_USE_PARASOLID
+        extensions.push_back(".xmt_txt");
+#endif
+    }
+    else if(isMesh->CheckNode(dataNode))
+    {
+        extensions.push_back(".msh");
+        extensions.push_back(".vtp");
+        extensions.push_back(".vtu");
+    }
+    else if(isSimJob->CheckNode(dataNode))
+    {
+        extensions.push_back(".sjb");
+        extensions.push_back("");//for folder
+    }
+    else
+        return;
+
+
+    QDir dir(QString::fromStdString(path));
+    for(int i=0;i<extensions.size();i++)
+    {
+        dir.rename(QString::fromStdString(name+extensions[i]),QString::fromStdString(newName+extensions[i]));
+    }
+
 
 }

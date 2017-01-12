@@ -5,10 +5,13 @@
 
 #include "svMitkMesh.h"
 #include "svModel.h"
+#include "svDataNodeOperation.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
+#include <mitkUndoController.h>
+#include <mitkOperationEvent.h>
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -24,6 +27,8 @@ svMeshCreate::svMeshCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNod
     , m_MeshFolderNode(NULL)
     , m_ModelFolderNode(NULL)
 {
+    m_Interface=new svDataNodeOperationInterface;
+
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateMesh()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -194,7 +199,18 @@ void svMeshCreate::CreateMesh()
     meshNode->SetData(mitkMesh);
     meshNode->SetName(meshName);
 
-    m_DataStorage->Add(meshNode,m_MeshFolderNode);
+//    m_DataStorage->Add(meshNode,m_MeshFolderNode);
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    bool undoEnabled=true;
+    svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,meshNode,m_MeshFolderNode);
+    if(undoEnabled)
+    {
+        svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,meshNode,m_MeshFolderNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(doOp);
 
     hide();
 }

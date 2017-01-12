@@ -1,7 +1,7 @@
 #ifndef SVPROJECTDATANODESPLUGINACTIVATOR_H
 #define SVPROJECTDATANODESPLUGINACTIVATOR_H
 
-#include <svDataNodeOperationInterface.h>
+#include "svDataNodeOperationInterface.h"
 
 #include <ctkPluginActivator.h>
 
@@ -36,6 +36,9 @@ public slots:
     void RenameSelectedNode( bool checked = false );
 //    void ShowSVView();
 
+    void CopyDataNode( bool checked );
+    void PasteDataNode( bool checked );
+
 protected:
     std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > m_DescriptorActionList;
 
@@ -45,6 +48,12 @@ private:
     bool m_UndoEnabled;
 
     svDataNodeOperationInterface* m_Interface;
+
+//    void SetCopyDataNode(mitk::DataNode::Pointer dataNode);
+
+//    mitk::DataNode::Pointer GetCopyDataNode();
+
+    mitk::DataNode::Pointer  m_CopyDataNode;
 }; 
 
 #endif // SVPROJECTDATANODESPLUGINACTIVATOR_H
