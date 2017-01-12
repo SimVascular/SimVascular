@@ -12,7 +12,7 @@ ifeq ($(CLUSTER), x64_cygwin)
                        $(LIBFLAG)SimMeshing$(LIBLINKEXT) \
                        $(LIBFLAG)SimMeshTools$(LIBLINKEXT) \
                        $(LIBFLAG)SimModel$(LIBLINKEXT)
-    ifeq ($(MESHSIM_MODELER),parasolid)
+    ifeq ($(SV_USE_PARASOLID),1)
       MESHSIM_LIBS   := $(MESHSIM_LIBS) $(LIBFLAG)SimParasolid270$(LIBLINKEXT)
     endif 
     ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)

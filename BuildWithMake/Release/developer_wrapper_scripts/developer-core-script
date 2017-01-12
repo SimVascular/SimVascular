@@ -90,8 +90,8 @@ export LD_LIBRARY_PATH=REPLACEME_SV_OPENCASCADE_SO_PATH:$LD_LIBRARY_PATH
 
 # MITK additions
 export LD_LIBRARY_PATH=REPLACEME_SV_MITK_SO_PATH:$LD_LIBRARY_PATH
-export SV_PLUGIN_DIR=REPLACEME_SV_MITK_PLUGIN_PATH
-export LD_LIBRARY_PATH=$SV_PLUGIN_DIR:$LD_LIBRARY_PATH
+export SV_PLUGIN_PATH=REPLACEME_SV_MITK_PLUGIN_PATH
+export LD_LIBRARY_PATH=$SV_PLUGIN_PATH:$LD_LIBRARY_PATH
 
 # needed for macosx
 export DYLD_LIBRARY_PATH=$LD_LIBRARY_PATH
@@ -106,7 +106,7 @@ export TK_LIBRARY=`cygpath --windows -t mixed $TK_LIBRARY`
 export TKCXIMAGE_DLL=`cygpath --windows -t mixed $TKCXIMAGE_DLL`
 export P_SCHEMA=`cygpath --windows -t mixed $P_SCHEMA`
 export SIM_LICENSE_FILE=`cygpath --windows -t mixed $SIM_LICENSE_FILE`
-export SV_PLUGIN_DIR=`cygpath --windows -t mixed $SV_PLUGIN_DIR`
+export SV_PLUGIN_PATH=`cygpath --windows -t mixed $SV_PLUGIN_PATH`
 export PATH=$LD_LIBRARY_PATH:$PATH
 ;;
 esac

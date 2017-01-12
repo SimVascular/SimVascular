@@ -154,6 +154,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->btnCombineFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnRemeshFaces, REMESH_FACES);
+    connect(ui->btnEstimateEdgeSize0, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
     connect(ui->btnRemeshFaces, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnExtractFaces, EXTRACT_FACES);
@@ -167,6 +168,7 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
 #ifdef SV_USE_MMG
     signalMapper->setMapping(ui->btnRemeshG, REMESH_GLOBAL);
+    connect(ui->btnEstimateEdgeSize1, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
     connect(ui->btnRemeshG, SIGNAL(clicked()),signalMapper, SLOT(map()));
 #endif
 
@@ -196,6 +198,9 @@ void svModelEdit::CreateQtPartControl( QWidget *parent )
 
     signalMapper->setMapping(ui->btnLSubdivideL, LINEAR_SUBDIVIDE_LOCAL);
     connect(ui->btnLSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
+
+    signalMapper->setMapping(ui->btnLoopSubdivideL, LOOP_SUBDIVIDE_LOCAL);
+    connect(ui->btnLoopSubdivideL, SIGNAL(clicked()),signalMapper, SLOT(map()));
 
     signalMapper->setMapping(ui->btnCutAbove, CUT_ABOVE);
     connect(ui->btnCutAbove, SIGNAL(clicked()),signalMapper, SLOT(map()));
@@ -1727,8 +1732,20 @@ void svModelEdit::ModelOperate(int operationType)
         ok=newModelElement->CombineFaces(GetSelectedFaceIDs());
         break;
     case REMESH_FACES:
-        ok=newModelElement->RemeshFaces(GetSelectedFaceIDs(),ui->dsbRemeshSize->value());
-        break;
+        {
+          QString qstring_size=ui->lineEditEstimateEdgeSize0->text().trimmed();
+          bool valid_number=false;
+          double edge_size = qstring_size.toDouble(&valid_number);
+          if(valid_number)
+          {
+            ok=newModelElement->RemeshFaces(GetSelectedFaceIDs(), edge_size);
+          }
+          else
+          {
+            QMessageBox::warning(m_Parent,"Warning","Error in Egde Size!");
+          }
+          break;
+        }
     case EXTRACT_FACES:
         ok=newModelElement->ExtractFaces(ui->sbSeparationAngle->value());
         break;
@@ -1740,9 +1757,20 @@ void svModelEdit::ModelOperate(int operationType)
         break;
 #ifdef SV_USE_MMG
     case REMESH_GLOBAL:
-        ok=newModelElement->RemeshG(ui->dsbRemeshTargetEdgeSizeG->value(),
-            ui->dsbRemeshTargetEdgeSizeG->value());
-        break;
+        {
+          QString qstring_size=ui->lineEditEstimateEdgeSize1->text().trimmed();
+          bool valid_number=false;
+          double edge_size = qstring_size.toDouble(&valid_number);
+          if(valid_number)
+          {
+            ok=newModelElement->RemeshG(edge_size, edge_size);
+          }
+          else
+          {
+            QMessageBox::warning(m_Parent,"Warning","Error in Egde Size!");
+          }
+          break;
+        }
 #endif
     case DECIMATE_GLOBAL:
         ok=newModelElement->Decimate(ui->dsbTargetRateG->value());
@@ -1774,6 +1802,10 @@ void svModelEdit::ModelOperate(int operationType)
     case LINEAR_SUBDIVIDE_LOCAL:
         if(MarkCells(newModelElement))
             ok=newModelElement->LinearSubdivideLocal(ui->sbLinearDivisionsL->value());
+        break;
+    case LOOP_SUBDIVIDE_LOCAL:
+        if(MarkCells(newModelElement))
+            ok=newModelElement->LoopSubdivideLocal(ui->sbLoopDivisionsL->value());
         break;
     case CUT_ABOVE:
         if(m_PlaneWidget!=NULL && m_PlaneWidget->GetEnabled())
@@ -2096,4 +2128,28 @@ void svModelEdit::ConvertToPolyDataModel()
     solidModelNode->SetName(newModelName.toStdString());
 
     GetDataStorage()->Add(solidModelNode,modelFolderNode);
+}
+
+void svModelEdit::SetEstimatedEdgeSize()
+{
+    double edgeSize=EstimateEdgeSize();
+
+    ui->lineEditEstimateEdgeSize0->setText(QString::number(edgeSize));
+    ui->lineEditEstimateEdgeSize1->setText(QString::number(edgeSize));
+}
+
+
+double svModelEdit::EstimateEdgeSize()
+{
+    if(m_Model==NULL || m_Model->GetModelElement(GetTimeStep())==NULL)
+        return 0;
+
+    int timeStep=GetTimeStep();
+    svModelElement* modelElement=m_Model->GetModelElement(timeStep);
+    if(modelElement==NULL) return 0;
+
+    double edgeSize= sqrt(modelElement->GetMinFaceArea()/3.1415)/2.5;
+    edgeSize=round(10000*edgeSize)/10000;
+
+    return edgeSize;
 }

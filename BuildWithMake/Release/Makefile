@@ -41,7 +41,6 @@ include $(TOP)/include.mk
 SV_CLUSTER = $(CLUSTER)
 
 ifneq ($(CLUSTER),x64_linux)
-#WIXUI_PATH := $(shell cygpath -m $(OPEN_SOFTWARE_PRECOMPILED_TOPLEVEL)/wix-2.0.5805.0)
 WIXUI_PATH := /cygdrive/c/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 WIXUI_WIN_PATH = C:/Program\ Files\ \(x86\)/WiX\ Toolset\ v3.9/bin
 endif
@@ -60,8 +59,6 @@ else
   DIST_DIR_TOP := $(REAL_DIST_DIR_TOP)
   DIST_DIR := $(REAL_DIST_DIR) 
 endif
-
-REMOTE_DIR_TOP = remote_install_$(SV_VERSION)
 
 ifneq ($(CLUSTER),x64_linux)
   all: use_subst windows-distribution msi
@@ -149,6 +146,7 @@ msiclean:
 	-rm -f *~
 	-rm -f $(SV_VERSION).msi
 	-rm -f tmp/simvascular.wixpdb
+	-rm -f simvascular.wixpdb
 	-rm -f tmp/sv.wixobj
 	-rm -f tmp/sv.wxs
 	-rm -f tmp/uuidgen.exe*
@@ -181,30 +179,8 @@ msi-bundle: msi-bundle-clean mksedscript
 	-echo "Run light..."
 	-$(WIXUI_PATH)/light.exe tmp/bundle.wixobj -ext WixBalExtension -ext WixUIExtension -ext WixUtilExtension -out simvascular-bundle.exe
 
-msi: msiclean msi-simvascular msiclean-meshsim-and-parasolid msi-meshsim-and-parasolid msi-bundle
-
-remote-linux-distribution: mksedscript linux-distribution
-	-rm -Rf $(REMOTE_DIR_TOP)
-	-mkdir -p $(REMOTE_DIR_TOP)/dist_files
-	-cp tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)*.tar.gz $(REMOTE_DIR_TOP)/dist_files
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-clean-install.sh > $(REMOTE_DIR_TOP)/simvascular-clean-install-$(SV_PLATFORM).sh
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-update-install.sh > $(REMOTE_DIR_TOP)/simvascular-update-install-$(SV_PLATFORM).sh
-	-sed -f tmp/sedscript platform_independent_scripts/generic-launch-script > $(REMOTE_DIR_TOP)/dist_files/generic_launch_script
-	-tar --preserve -cvf tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar $(REMOTE_DIR_TOP)
-	-chmod a+rx $(REMOTE_DIR_TOP)/*.sh
-	-chmod a+rx $(REMOTE_DIR_TOP)/dist_files/generic_launch_script
-	-gzip tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar 
-
-remote-windows-distribution: mksedscript windows-distribution
-	-rm -Rf $(REMOTE_DIR_TOP)
-	-mkdir -p $(REMOTE_DIR_TOP)/dist_files
-	-cp tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)*.tar.gz $(REMOTE_DIR_TOP)/dist_files
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-clean-install.sh > $(REMOTE_DIR_TOP)/simvascular-clean-install-$(SV_PLATFORM).sh
-	-sed -f tmp/sedscript linux_installer_scripts/linux-remote-update-install.sh > $(REMOTE_DIR_TOP)/simvascular-update-install-$(SV_PLATFORM).sh
-	-chmod a+rx $(REMOTE_DIR_TOP)/*.sh
-	-tar --preserve -cvf tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar $(REMOTE_DIR_TOP)
-	-gzip tar_files/simvascular-$(SV_OS)-$(SV_PLATFORM)-remote-install.`awk '{print $$2"-"$$3"-"$$6}' tmp/release-date`.tar 
-
+#msi: msiclean msi-simvascular msiclean-meshsim-and-parasolid msi-meshsim-and-parasolid msi-bundle
+msi: msiclean msi-simvascular
 
 mksedscript:
 	-mkdir -p tmp
@@ -234,10 +210,6 @@ common-pre-distribution: tmp/sedscript
 
 copy-sv-executables:
 	-cp -f $(TOP)/Bin/simvascular.exe $(DIST_DIR)/simvascular-bin.exe
-	-cp -f $(TOP)/Bin/presolver.exe $(DIST_DIR)/presolver-bin.exe
-	-cp -f $(TOP)/Bin/postsolver.exe $(DIST_DIR)/postsolver-bin.exe
-	-cp -f $(TOP)/Bin/flowsolver-$(MPI_NAME).exe $(DIST_DIR)/flowsolver-bin.exe
-	-cp -f $(TOP)/../Code/FlowSolvers/ThreeDSolver/svSolver/default.inp $(DIST_DIR)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_globals*.$(SOEXT)* $(DIST_DIR)
 ifeq ($(SV_USE_PYTHON),1)
 	-cp -f $(TOP)/Lib/$(LIB_BUILD_DIR)/*simvascular_python_interp*.$(SOEXT)* $(DIST_DIR)
@@ -304,19 +276,34 @@ ifeq ($(SV_USE_GDCM),1)
 	-cp -f $(SV_GDCM_DLLS)/socketxx.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_PYTHON),1)
-	-cp -fR $(PYTHON_HOME)/Lib $(DIST_DIR)/python-packages
-	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
+#	-cp -fR $(PYTHON_HOME)/Lib $(DIST_DIR)/python-packages
+#	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/python-packages
+	-cp -fR $(PYTHON_HOME) $(DIST_DIR)/Python27
+	-cp -fR $(VTK_PYTHON_PACKAGES) $(DIST_DIR)/Python27/Lib/vtk-packages
 	-cp -f $(SV_PYTHON_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 	-cp -Rf $(TOP)/../Python $(DIST_DIR)/Python
 endif
 ifeq ($(SV_USE_QT),1)
 	-cp -f $(QT_BIN_LIBS)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fR $(QT_PLUGIN_PATH) $(DIST_DIR)/qt-plugins 
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_MITK),1)
+	-mkdir -p $(DIST_DIR)/mitk/bin
+	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
+	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
+	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
 	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+ifeq ($(CLUSTER), x64_cygwin)
+	-mkdir -p $(DIST_DIR)/mitk/bin/plugins
+	-cp -fR $(SV_MITK_PLUGIN_PATH) $(DIST_DIR)/mitk/bin/plugins
+	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins/RelWithDebInfo
+else
+	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/bin/plugins
+	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins
+endif
 endif
 
 copy-external-libs-windows-only:
@@ -333,30 +320,20 @@ copy-external-libs-linux-only:
 
 generate-wrapper-scripts:
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/$(SV_VERSION)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/flowsolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/presolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/postsolver$(SV_POSTFIX)
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-core-script > $(DIST_DIR)/xfsv$(SV_POSTFIX)
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-simvascular-script >> $(DIST_DIR)/$(SV_VERSION)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-flowsolver-script >> $(DIST_DIR)/flowsolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-presolver-script >> $(DIST_DIR)/presolver$(SV_POSTFIX)
-	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-postsolver-script >> $(DIST_DIR)/postsolver$(SV_POSTFIX)
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-xfsv-script >> $(DIST_DIR)/xfsv$(SV_POSTFIX)
 	-cp -f $(SV_OS)_wrapper_scripts/$(SV_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SV_VERSION)-cmdline
 	-cat $(DIST_DIR)/$(SV_VERSION) >> $(DIST_DIR)/$(SV_VERSION)-cmdline
 
 common-post-distribution:
 	-sed -f tmp/sedscript platform_independent_scripts/post-install.sh > $(DIST_DIR)/post-install.sh
-	-sed -f tmp/sedscript platform_independent_scripts/post-solver-install.sh > $(DIST_DIR)/post-solver-install.sh
 	-sed -f tmp/sedscript platform_independent_scripts/generic-launch-script > $(DIST_DIR)/generic_launch_script
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)
 	-chmod -f a+rx $(DIST_DIR)/*.sh
 	-chmod -f a+rx $(DIST_DIR)/generic_launch_script
 	-chmod -f a+rx $(DIST_DIR)/$(SV_VERSION)
 	-chmod -f a+rx $(DIST_DIR)/$(SV_VERSION)-cmdline
-	-chmod -f a+rx $(DIST_DIR)/flowsolver$(SV_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/presolver$(SV_POSTFIX)
-	-chmod -f a+rx $(DIST_DIR)/postsolver$(SV_POSTFIX)
 	-chmod -f a+rx $(DIST_DIR)/*.$(SOEXT)*
 	-chmod -f -R a+rx $(DIST_DIR)
 	-chmod -f -R u+w $(DIST_DIR)

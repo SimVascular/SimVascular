@@ -124,6 +124,19 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     modelElement->SetWholeVtkPolyData(solidvpd);
     modelElement->SetNumSampling(numSamplingPts);
 
+
+    bool ok = false;
+    if(modelElement->MarkCellsByFaces(modelElement->GetCapFaceIDs()))
+    {
+      int numDivs = 1;
+      ok=modelElement->LinearSubdivideLocal(numDivs);
+    }
+    if(!ok)
+    {
+      MITK_ERROR << "Failed to subdivide caps of created PolyData";
+      return NULL;
+    }
+
     return modelElement;
 }
 
@@ -381,7 +394,7 @@ vtkPolyData* svModelUtils::Orient(vtkPolyData* inpd)
     vtkSmartPointer<vtkPolyDataNormals> orienter = vtkSmartPointer<vtkPolyDataNormals>::New();
     orienter->SetInputData(cleaner->GetOutput());
     orienter->AutoOrientNormalsOn();
-    orienter->ComputePointNormalsOn();
+    orienter->ComputePointNormalsOff();
     orienter->FlipNormalsOn();
     orienter->SplittingOff();
     orienter->ComputeCellNormalsOn();
@@ -487,7 +500,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::OrientVtkPolyData(vtkSmartPointer<vtk
     vtkSmartPointer<vtkPolyDataNormals> orienter=vtkSmartPointer<vtkPolyDataNormals>::New();
     orienter->SetInputDataObject(cleaner->GetOutput());
     orienter->AutoOrientNormalsOn();
-    orienter->ComputePointNormalsOn();
+    orienter->ComputePointNormalsOff();
     orienter->FlipNormalsOn();
     orienter->SplittingOff();
     orienter->ComputeCellNormalsOn();
@@ -616,6 +629,23 @@ vtkSmartPointer<vtkPolyData> svModelUtils::LinearSubdivideLocal(vtkSmartPointer<
     if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
     {
         MITK_ERROR << "poly local linear subdivision error ";
+        return NULL;
+    }
+
+    return dst->GetVtkPolyData();
+}
+
+vtkSmartPointer<vtkPolyData> svModelUtils::LoopSubdivideLocal(vtkSmartPointer<vtkPolyData> inpd, int numDivs)
+{
+    if(inpd==NULL)
+        return NULL;
+
+    cvPolyData *src=new cvPolyData(inpd);
+    cvPolyData *dst = NULL;
+
+    if ( sys_geom_local_loop_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
+    {
+        MITK_ERROR << "poly local loop subdivision error ";
         return NULL;
     }
 

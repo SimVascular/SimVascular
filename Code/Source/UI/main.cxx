@@ -65,6 +65,15 @@
 
 #define BUFSIZE 1024
 #define BUF_SIZE 1024
+
+#ifndef GetShortPathName
+  #ifdef UNICODE
+    #define GetShortPathName GetShortPathNameW
+  #else
+    #define GetShortPathName GetShortPathNameA
+  #endif // !UNICODE
+#endif
+
 #endif
 
 #ifdef WIN32
@@ -191,23 +200,23 @@ void simvascularApp::initializeLibraryPaths() {
   size_t requiredSize;
   plugin_env[0]='\0';
   requiredSize = 0;
-  getenv_s( &requiredSize, NULL, 0, "SV_PLUGIN_DIR");
+  getenv_s( &requiredSize, NULL, 0, "SV_PLUGIN_PATH");
 
   if (requiredSize == 0) {
-    std::cerr << "Warning:  SV_PLUGIN_DIR doesn't exist!\n" << std::endl << std::flush;
+    std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
   } else if (requiredSize >= _MAX_ENV) {
-    std::cerr << "FATAL ERROR:  SV_PLUGIN_DIR to long!\n" << std::endl << std::flush;
+    std::cerr << "FATAL ERROR:  SV_PLUGIN_PATH to long!\n" << std::endl << std::flush;
     exit(-1);
   } else {
-    getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_DIR" );
+    getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_PATH" );
     QString pluginPath = plugin_env;
     ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
     std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
   }
 #else
-  char *plugin_env = getenv("SV_PLUGIN_DIR");
+  char *plugin_env = getenv("SV_PLUGIN_PATH");
   if (plugin_env == NULL) {
-    std::cerr << "Warning:  SV_PLUGIN_DIR doesn't exist!\n" << std::endl << std::flush;  
+    std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;  
   } else {
     QString pluginPath = plugin_env;
     ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
@@ -375,23 +384,42 @@ void simvascularApp::initializeLibraryPaths() {
 #ifdef WIN32
 #ifdef SV_USE_WIN32_REGISTRY
 
-  HKEY hKey2;
-  LONG returnStatus2;
-  DWORD dwType2=REG_SZ;
-  DWORD dwSize2=255;
   char rundir[255];
   rundir[0]='\0';
+
+  HKEY hKey2;
+  LONG returnStatus2;
+  
+  DWORD dwType2=REG_SZ;
+  DWORD dwSize2=255;
+  char lszValue2[255];
+  SecureZeroMemory(lszValue2,sizeof(lszValue2));
 
   DWORD dwType3=REG_SZ;
   DWORD dwSize3=255;
   char lszValue3[255];
-  lszValue3[0]='\0';
-
+  SecureZeroMemory(lszValue3,sizeof(lszValue3));
+  
   DWORD dwType4=REG_SZ;
-  DWORD dwSize4=255;
-  char lszValue4[255];
-  lszValue4[0]='\0';
+  DWORD dwSize4=1024;
+  char lszValue4[1024];
+  SecureZeroMemory(lszValue4,sizeof(lszValue4));
+  
+  DWORD dwType5=REG_SZ;
+  DWORD dwSize5=1024;
+  char lszValue5[1024];
+  SecureZeroMemory(lszValue5,sizeof(lszValue5));
+    
+  DWORD dwType6=REG_SZ;
+  DWORD dwSize6=1024;
+  char lszValue6[1024];
+  SecureZeroMemory(lszValue6,sizeof(lszValue6));
 
+  DWORD dwType7=REG_SZ;
+  DWORD dwSize7=255;
+  char lszValue7[255];
+  SecureZeroMemory(lszValue7,sizeof(lszValue7));
+  
   char mykey[1024];
   mykey[0]='\0';
   sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
@@ -550,6 +578,63 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
   fprintf(stdout,"%s\n",pythonpath);
 
   _putenv_s( "PYTHONPATH", pythonpath );
+
+  lszValue7[0]='\0';
+  returnStatus2 = RegQueryValueEx(hKey2, "PythonHome", NULL, &dwType7,(LPBYTE)&lszValue7, &dwSize7);
+  fprintf(stdout,"PythonHome: %s\n",lszValue7);
+
+  if (returnStatus2 != ERROR_SUCCESS) {
+    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV PythohHome not found!\n\n");
+    exit(-1);
+  }
+
+  char pythonhomepath[_MAX_ENV];
+  pythonhomepath[0]='\0';
+  sprintf(pythonhomepath,"%s",lszValue7);
+  fprintf(stdout,"%s\n",pythonhomepath);
+
+  _putenv_s( "PYTHONHOME", pythonhomepath );
+
+  
+#endif
+
+#ifdef SV_USE_QT_GUI
+
+  lszValue5[0]='\0';
+  returnStatus2 = RegQueryValueEx(hKey2, "SV_PLUGIN_PATH", NULL, &dwType5,(LPBYTE)&lszValue5, &dwSize5);
+  fprintf(stdout,"SV_PLUGIN_PATH: %s\n",lszValue5);
+
+  if (returnStatus2 != ERROR_SUCCESS) {
+    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  SV_PLUGIN_PATH not found!\n\n");
+    exit(-1);
+  }
+
+  char sv_plugin_path[_MAX_ENV];
+  sv_plugin_path[0]='\0';
+  sprintf(sv_plugin_path,"%s",lszValue5);
+  fprintf(stdout,"%s\n",sv_plugin_path);
+
+  _putenv_s( "SV_PLUGIN_PATH", sv_plugin_path );
+
+#endif
+  
+#ifdef SV_USE_QT
+
+  lszValue6[0]='\0';
+  returnStatus2 = RegQueryValueEx(hKey2, "QT_PLUGIN_PATH", NULL, &dwType6,(LPBYTE)&lszValue6, &dwSize6);
+  fprintf(stdout,"QT_PLUGIN_PATH: %s\n",lszValue6);
+
+  if (returnStatus2 != ERROR_SUCCESS) {
+    fprintf(stderr,"  FATAL ERROR: Invalid application registry.  QT_PLUGIN_PATH not found!\n\n");
+    exit(-1);
+  }
+
+  char qt_plugin_path[_MAX_ENV];
+  qt_plugin_path[0]='\0';
+  sprintf(qt_plugin_path,"%s",lszValue6);
+  fprintf(stdout,"%s\n",qt_plugin_path);
+
+  _putenv_s( "QT_PLUGIN_PATH", qt_plugin_path );
 
 #endif
 
