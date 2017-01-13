@@ -16,13 +16,14 @@ svMitkMesh::svMitkMesh(const svMitkMesh &other)
     , m_ModelName(other.m_ModelName)
     , m_MeshSet(other.GetTimeSize())
     , m_DataModified(true)
+    , m_CalculateBoundingBox(true)
 {
     for (std::size_t t = 0; t < other.m_MeshSet.size(); ++t)
     {
         if(other.m_MeshSet[t])
-            m_MeshSet.push_back(other.m_MeshSet[t]->Clone());
-        else
-            m_MeshSet.push_back(NULL);
+            m_MeshSet[t]=other.m_MeshSet[t]->Clone();
+//        else
+//            m_MeshSet.push_back(NULL);
     }
 }
 

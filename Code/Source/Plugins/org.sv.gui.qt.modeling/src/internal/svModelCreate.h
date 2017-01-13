@@ -1,6 +1,7 @@
 #ifndef SVMODELCREATE_H
 #define SVMODELCREATE_H
 
+#include "svDataNodeOperationInterface.h"
 #include <mitkDataStorage.h>
 #include <QWidget>
 
@@ -41,6 +42,8 @@ protected:
     mitk::DataNode::Pointer m_SelecteNode;
 
     int m_TimeStep;
+
+    svDataNodeOperationInterface* m_Interface;
 };
 
 #endif // SVMODELCREATE_H

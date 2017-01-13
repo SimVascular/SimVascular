@@ -8,10 +8,14 @@ set(H_FILES
     svMeshFolder.h
     svSimulationFolder.h
     svProjectManager.h
+    svDataNodeOperation.h
+    svDataNodeOperationInterface.h
 )
 
 set(CPP_FILES
     svDataFolder.cxx
     svProjectManager.cxx
+    svDataNodeOperation.cxx
+    svDataNodeOperationInterface.cxx
 )
 

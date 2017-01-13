@@ -3,10 +3,13 @@
 
 #include "svMitkSimJob.h"
 #include "svModel.h"
+#include "svDataNodeOperation.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
 #include <mitkNodePredicateDataType.h>
+#include <mitkUndoController.h>
+#include <mitkOperationEvent.h>
 
 #include <QMessageBox>
 #include <QFileDialog>
@@ -22,6 +25,8 @@ svSimJobCreate::svSimJobCreate(mitk::DataStorage::Pointer dataStorage, mitk::Dat
     , m_SimulationFolderNode(NULL)
     , m_ModelFolderNode(NULL)
 {
+    m_Interface=new svDataNodeOperationInterface;
+
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateJob()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -135,7 +140,18 @@ void svSimJobCreate::CreateJob()
     jobNode->SetData(mitkJob);
     jobNode->SetName(jobName);
 
-    m_DataStorage->Add(jobNode,m_SimulationFolderNode);
+//    m_DataStorage->Add(jobNode,m_SimulationFolderNode);
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    bool undoEnabled=true;
+    svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,jobNode,m_SimulationFolderNode);
+    if(undoEnabled)
+    {
+        svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,jobNode,m_SimulationFolderNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(doOp);
 
     hide();
 }

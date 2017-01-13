@@ -4,6 +4,7 @@
 #include "simvascular_options.h"
 
 #include "svModel.h"
+#include "svDataNodeOperation.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -25,6 +26,8 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
     , m_CreateModel(true)
     , m_ModelFolderNode(NULL)
 {
+    m_Interface=new svDataNodeOperationInterface;
+
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateModel()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -107,7 +110,18 @@ void svModelCreate::CreateModel()
     solidModelNode->SetData(solidModel);
     solidModelNode->SetName(modelName);
 
-    m_DataStorage->Add(solidModelNode,m_ModelFolderNode);
+//    m_DataStorage->Add(solidModelNode,m_ModelFolderNode);
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    bool undoEnabled=true;
+    svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,solidModelNode,m_ModelFolderNode);
+    if(undoEnabled)
+    {
+        svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,solidModelNode,m_ModelFolderNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(doOp);
 
     hide();
 }

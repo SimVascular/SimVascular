@@ -1,6 +1,7 @@
 #ifndef SVPATHCREATE_H
 #define SVPATHCREATE_H
 
+#include "svDataNodeOperationInterface.h"
 #include <mitkDataStorage.h>
 #include <QWidget>
 
@@ -53,6 +54,8 @@ protected:
     mitk::DataNode::Pointer m_PathFolderNode;
 
     int m_TimeStep;
+
+    svDataNodeOperationInterface* m_Interface;
 };
 
 #endif // SVPATHCREATE_H

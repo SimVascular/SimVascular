@@ -171,7 +171,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         for(int i=0;i<imageFilePathList.size();i++)
         {
             mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePathList[i].toStdString());
-//            imageNode->SetVisibility(false);
+            //            imageNode->SetVisibility(false);
             dataStorage->Add(imageNode,imageFolderNode);
         }
 
@@ -360,7 +360,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
             }
         }
 
-//        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
+        //        mitk::IOUtil::Save(imageNode->GetData(),ifilePath);
     }
     else
     {
@@ -373,7 +373,7 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
     mitk::BaseData::Pointer mimage = imageNode->GetData();
     if ( mimage.IsNotNull() && mimage->GetTimeGeometry()->IsValid() )
     {
-       mitk::RenderingManager::GetInstance()->InitializeViews(mimage->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
+        mitk::RenderingManager::GetInstance()->InitializeViews(mimage->GetTimeGeometry(), mitk::RenderingManager::REQUEST_UPDATE_ALL, true );
     }
 
     imagesElement.appendChild(imgElement);
@@ -391,6 +391,8 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
 
 void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer projFolderNode)
 {
+    std::vector<std::string> removeList;
+
     std::string projPath;
     projFolderNode->GetStringProperty("project path",projPath);
 
@@ -399,6 +401,10 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
 
     mitk::DataNode::Pointer pathFolderNode=rs->GetElement(0);
     std::string pathFolderName=pathFolderNode->GetName();
+    svPathFolder* pathFolder=dynamic_cast<svPathFolder*>(pathFolderNode->GetData());
+    removeList.clear();
+    if(pathFolder)
+        removeList=pathFolder->GetNodeNamesToRemove();
 
     rs=dataStorage->GetDerivations(pathFolderNode,mitk::NodePredicateDataType::New("svPath"));
 
@@ -408,21 +414,41 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         mitk::DataNode::Pointer node=rs->GetElement(i);
+
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
         svPath *path=dynamic_cast<svPath*>(node->GetData());
-        if(path==NULL || !path->IsDataModified())
+        if(path==NULL || (!path->IsDataModified() && dir.exists(QString::fromStdString(node->GetName())+".pth")) )
             continue;
 
         QString	filePath=dir.absoluteFilePath(QString::fromStdString(node->GetName())+".pth");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dir.absolutePath().toStdString().c_str());
+
         path->SetDataModified(false);
     }
+
+    //delete files using removeList
+    for(int i=0;i<removeList.size();i++)
+    {
+        dir.remove(QString::fromStdString(removeList[i])+".pth");
+    }
+    pathFolder->ClearRemoveList();
 
     //save contour groups
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSegmentationFolder"));
 
     mitk::DataNode::Pointer segFolderNode=rs->GetElement(0);
     std::string segFolderName=segFolderNode->GetName();
+    svSegmentationFolder* segFolder=dynamic_cast<svSegmentationFolder*>(segFolderNode->GetData());
+    removeList.clear();
+    if(segFolder)
+        removeList=segFolder->GetNodeNamesToRemove();
 
     rs=dataStorage->GetDerivations(segFolderNode,mitk::NodePredicateDataType::New("svContourGroup"));
 
@@ -432,21 +458,40 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         mitk::DataNode::Pointer node=rs->GetElement(i);
+
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
         svContourGroup *contourGroup=dynamic_cast<svContourGroup*>(node->GetData());
-        if(contourGroup==NULL || !contourGroup->IsDataModified())
+        if(contourGroup==NULL || (!contourGroup->IsDataModified() && dirSeg.exists(QString::fromStdString(node->GetName())+".ctgr")) )
             continue;
 
         QString	filePath=dirSeg.absoluteFilePath(QString::fromStdString(node->GetName())+".ctgr");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirSeg.absolutePath().toStdString().c_str());
+
         contourGroup->SetDataModified(false);
     }
+
+    for(int i=0;i<removeList.size();i++)
+    {
+        dirSeg.remove(QString::fromStdString(removeList[i])+".ctgr");
+    }
+    segFolder->ClearRemoveList();
 
     //save models
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svModelFolder"));
 
     mitk::DataNode::Pointer modelFolderNode=rs->GetElement(0);
     std::string modelFolderName=modelFolderNode->GetName();
+    svModelFolder* modelFolder=dynamic_cast<svModelFolder*>(modelFolderNode->GetData());
+    removeList.clear();
+    if(modelFolder)
+        removeList=modelFolder->GetNodeNamesToRemove();
 
     rs=dataStorage->GetDerivations(modelFolderNode,mitk::NodePredicateDataType::New("svModel"));
 
@@ -456,21 +501,43 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         mitk::DataNode::Pointer node=rs->GetElement(i);
+
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
         svModel *model=dynamic_cast<svModel*>(node->GetData());
-        if(model==NULL || !model->IsDataModified())
+        if(model==NULL || (!model->IsDataModified() && dirModel.exists(QString::fromStdString(node->GetName())+".mdl")) )
             continue;
 
         QString	filePath=dirModel.absoluteFilePath(QString::fromStdString(node->GetName())+".mdl");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirModel.absolutePath().toStdString().c_str());
+
         model->SetDataModified(false);
     }
+
+    for(int i=0;i<removeList.size();i++)
+    {
+        dirModel.remove(QString::fromStdString(removeList[i])+".mdl");
+        dirModel.remove(QString::fromStdString(removeList[i])+".vtp");
+        dirModel.remove(QString::fromStdString(removeList[i])+".brep");
+        dirModel.remove(QString::fromStdString(removeList[i])+".xmt_txt");
+    }
+    modelFolder->ClearRemoveList();
 
     //save mesh
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
 
     mitk::DataNode::Pointer meshFolderNode=rs->GetElement(0);
     std::string meshFolderName=meshFolderNode->GetName();
+    svMeshFolder* meshFolder=dynamic_cast<svMeshFolder*>(meshFolderNode->GetData());
+    removeList.clear();
+    if(meshFolder)
+        removeList=meshFolder->GetNodeNamesToRemove();
 
     rs=dataStorage->GetDerivations(meshFolderNode,mitk::NodePredicateDataType::New("svMitkMesh"));
 
@@ -481,21 +548,41 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     {
         mitk::DataNode::Pointer node=rs->GetElement(i);
 
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
         svMitkMesh *mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
-        if(mitkMesh==NULL || !mitkMesh->IsDataModified())
+        if(mitkMesh==NULL || (!mitkMesh->IsDataModified() && dirMesh.exists(QString::fromStdString(node->GetName())+".msh")) )
             continue;
 
         QString	filePath=dirMesh.absoluteFilePath(QString::fromStdString(node->GetName())+".msh");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirMesh.absolutePath().toStdString().c_str());
+
         mitkMesh->SetDataModified(false);
     }
+
+    for(int i=0;i<removeList.size();i++)
+    {
+        dirMesh.remove(QString::fromStdString(removeList[i])+".msh");
+        dirMesh.remove(QString::fromStdString(removeList[i])+".vtp");
+        dirMesh.remove(QString::fromStdString(removeList[i])+".vtu");
+    }
+    meshFolder->ClearRemoveList();
 
     //sava simjobs
     rs=dataStorage->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
 
     mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
     std::string simFolderName=simFolderNode->GetName();
+    svSimulationFolder* simFolder=dynamic_cast<svSimulationFolder*>(simFolderNode->GetData());
+    removeList.clear();
+    if(simFolder)
+        removeList=simFolder->GetNodeNamesToRemove();
 
     rs=dataStorage->GetDerivations(simFolderNode,mitk::NodePredicateDataType::New("svMitkSimJob"));
 
@@ -505,15 +592,30 @@ void svProjectManager::SaveProject(mitk::DataStorage::Pointer dataStorage, mitk:
     for(int i=0;i<rs->size();i++)
     {
         mitk::DataNode::Pointer node=rs->GetElement(i);
+
+        for(int j=removeList.size()-1;j>-1;j--)
+        {
+            if(removeList[j]==node->GetName())
+                removeList.erase(removeList.begin()+j);
+        }
+
         svMitkSimJob *mitkJob=dynamic_cast<svMitkSimJob*>(node->GetData());
-        if(mitkJob==NULL || !mitkJob->IsDataModified())
+        if(mitkJob==NULL || (!mitkJob->IsDataModified() && dirSim.exists(QString::fromStdString(node->GetName())+".sjb")) )
             continue;
 
         QString	filePath=dirSim.absoluteFilePath(QString::fromStdString(node->GetName())+".sjb");
         mitk::IOUtil::Save(node->GetData(),filePath.toStdString());
 
+        node->SetStringProperty("path",dirSim.absolutePath().toStdString().c_str());
+
         mitkJob->SetDataModified(false);
     }
+
+    for(int i=0;i<removeList.size();i++)
+    {
+        dirSim.remove(QString::fromStdString(removeList[i])+".sjb");
+    }
+    simFolder->ClearRemoveList();
 }
 
 void svProjectManager::SaveAllProjects(mitk::DataStorage::Pointer dataStorage)
@@ -576,4 +678,92 @@ mitk::DataNode::Pointer svProjectManager::GetProjectFolderNode(mitk::DataStorage
         projFolderNode=rs->GetElement(0);
 
     return projFolderNode;
+}
+
+void svProjectManager::AddDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode)
+{
+    if(parentNode.IsNull())
+        dataStorage->Add(dataNode);
+    else
+        dataStorage->Add(dataNode,parentNode);
+}
+
+void svProjectManager::RemoveDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, mitk::DataNode::Pointer parentNode)
+{
+    dataStorage->Remove(dataNode);
+
+    if(parentNode.IsNull())
+        return;
+
+    mitk::TNodePredicateDataType<svDataFolder>::Pointer isDataFolder= mitk::TNodePredicateDataType<svDataFolder>::New();
+
+    if(!isDataFolder->CheckNode(parentNode))
+        return;
+
+    svDataFolder* folder=dynamic_cast<svDataFolder*>(parentNode->GetData());
+    folder->AddToRemoveList(dataNode->GetName());
+
+}
+
+void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer dataNode, std::string newName)
+{
+    std::string name=dataNode->GetName();
+
+    std::string path="";
+    dataNode->GetStringProperty("path", path);
+
+    dataNode->SetName(newName);
+
+    if(path=="")
+        return;
+
+    //rename the corresponding files and folder if applicable, for svPath, svContourGroup, svModel, svMitkMesh,svMitkSimJob
+    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
+    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
+    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
+    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+
+    std::vector<std::string> extensions;
+    if(isPath->CheckNode(dataNode))
+    {
+        extensions.push_back(".pth");
+    }
+    else if(isContourGroup->CheckNode(dataNode))
+    {
+        extensions.push_back(".ctgr");
+    }
+    else if(isModel->CheckNode(dataNode))
+    {
+        extensions.push_back(".mdl");
+        extensions.push_back(".vtp");
+#ifdef SV_USE_OpenCASCADE
+        extensions.push_back(".brep");
+#endif
+#ifdef SV_USE_PARASOLID
+        extensions.push_back(".xmt_txt");
+#endif
+    }
+    else if(isMesh->CheckNode(dataNode))
+    {
+        extensions.push_back(".msh");
+        extensions.push_back(".vtp");
+        extensions.push_back(".vtu");
+    }
+    else if(isSimJob->CheckNode(dataNode))
+    {
+        extensions.push_back(".sjb");
+        extensions.push_back("");//for folder
+    }
+    else
+        return;
+
+
+    QDir dir(QString::fromStdString(path));
+    for(int i=0;i<extensions.size();i++)
+    {
+        dir.rename(QString::fromStdString(name+extensions[i]),QString::fromStdString(newName+extensions[i]));
+    }
+
+
 }

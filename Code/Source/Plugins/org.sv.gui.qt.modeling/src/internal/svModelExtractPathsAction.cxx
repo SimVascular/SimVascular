@@ -4,15 +4,19 @@
 #include "svModelUtils.h"
 #include "svModel.h"
 #include "svPath.h"
+#include "svDataNodeOperation.h"
 
 #include <mitkNodePredicateDataType.h>
 #include <mitkStatusBar.h>
+#include <mitkOperationEvent.h>
+#include <mitkUndoController.h>
 
 #include <QMessageBox>
 
 svModelExtractPathsAction::svModelExtractPathsAction()
 {
     m_Thread=NULL;
+    m_Interface=new svDataNodeOperationInterface;
 }
 
 svModelExtractPathsAction::~svModelExtractPathsAction()
@@ -22,8 +26,23 @@ svModelExtractPathsAction::~svModelExtractPathsAction()
 void svModelExtractPathsAction::UpdateStatus()
 {
     std::vector<mitk::DataNode::Pointer> pathNodes=m_Thread->GetPathNodes();
+//    for(int i=0;i<pathNodes.size();i++)
+//        m_DataStorage->Add(pathNodes[i],m_Thread->GetPathFolderNode());
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    bool undoEnabled=true;
     for(int i=0;i<pathNodes.size();i++)
-        m_DataStorage->Add(pathNodes[i],m_Thread->GetPathFolderNode());
+    {
+        svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,pathNodes[i],m_Thread->GetPathFolderNode());
+        if(undoEnabled)
+        {
+            svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,pathNodes[i],m_Thread->GetPathFolderNode());
+            mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+            mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+        }
+        m_Interface->ExecuteOperation(doOp);
+    }
 
     m_ProjFolderNode->SetBoolProperty("thread running",false);
     mitk::StatusBar::GetInstance()->DisplayText(m_Thread->GetStatus().toStdString().c_str());

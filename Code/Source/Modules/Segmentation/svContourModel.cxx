@@ -10,10 +10,11 @@ svContourModel::svContourModel()
 svContourModel::svContourModel(const svContourModel &other)
     : BaseData(other)
     , m_ContourSet(other.GetTimeSize())
+    , m_CalculateBoundingBox(true)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {
-        m_ContourSet.push_back(other.GetContour(t)->Clone());
+        m_ContourSet[t]=other.GetContour(t)->Clone();
     }
 }
 

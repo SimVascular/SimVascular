@@ -2,6 +2,7 @@
 #define SVMODELEXTRACTPATHSACTION_H
 
 #include <org_sv_gui_qt_modeling_Export.h>
+#include "svDataNodeOperationInterface.h"
 
 #include <mitkIContextMenuAction.h>
 #include <mitkDataNode.h>
@@ -35,6 +36,8 @@ private:
     mitk::DataStorage::Pointer m_DataStorage;
 
     mitk::DataNode::Pointer m_ProjFolderNode;
+
+    svDataNodeOperationInterface* m_Interface;
 
     class WorkThread : public QThread
     {

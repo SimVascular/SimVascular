@@ -3,6 +3,7 @@
 
 #include "svPath.h"
 #include "svPathOperation.h"
+#include "svDataNodeOperation.h"
 
 #include <mitkDataStorage.h>
 #include <mitkDataNode.h>
@@ -24,7 +25,9 @@ svPathCreate::svPathCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNod
     , m_CreatePath(true)
     , m_PathFolderNode(NULL)
 {
-//    m_Parent=parent;
+    m_Interface=new svDataNodeOperationInterface;
+
+    //    m_Parent=parent;
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreatePath()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
@@ -171,7 +174,18 @@ void svPathCreate::CreatePath()
         pathNode->SetData(path);
         pathNode->SetName(pathName);
 
-        m_DataStorage->Add(pathNode,m_PathFolderNode);
+//        m_DataStorage->Add(pathNode,m_PathFolderNode);
+        mitk::OperationEvent::IncCurrObjectEventId();
+
+        bool undoEnabled=true;
+        svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,m_DataStorage,pathNode,m_PathFolderNode);
+        if(undoEnabled)
+        {
+            svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,m_DataStorage,pathNode,m_PathFolderNode);
+            mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+            mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+        }
+        m_Interface->ExecuteOperation(doOp);
     }
     else if(!pathNode.IsNull())
     {
@@ -202,6 +216,8 @@ void svPathCreate::CreatePath()
             return;
         }
         changedPathElement->CreatePathPoints();//update
+
+        mitk::OperationEvent::IncCurrObjectEventId();
 
         svPathOperation* doOp = new svPathOperation(svPathOperation::OpSETPATHELEMENT,timeStep,changedPathElement);
         svPathOperation* undoOp = new svPathOperation(svPathOperation::OpSETPATHELEMENT,timeStep,pathElement);
