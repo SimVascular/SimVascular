@@ -11,7 +11,7 @@ if(SV_USE_MITK_CONFIG)
 else()
   simvascular_create_plugin(
     EXPORT_DIRECTIVE SV_QT_APPLICATION
-    MODULE_DEPENDS MitkQtWidgets MitkQtWidgetsExt org_mitk_gui_qt_datamanager ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
+    MODULE_DEPENDS MitkQtWidgets ${SV_LIB_MODULE_PROJECTMANAGEMENT_NAME}
   )
 endif()
 
