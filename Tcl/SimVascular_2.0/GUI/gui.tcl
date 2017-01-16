@@ -36438,7 +36438,7 @@ proc guiRUNSOLVERlaunchSolver { system} {
   set PRESOLVER     $gExternalPrograms(svpre)
   set POSTSOLVER    $gExternalPrograms(svpost)
   set MPIEXEC       $gExternalPrograms(mpiexec)
-  if {$num_procs == 1} {
+  if {$system == "no_mpi"} {
       set SOLVER        $gExternalPrograms(svsolver-nompi)
       set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(svsolver-nompi)]
   } else {
