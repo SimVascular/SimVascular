@@ -469,25 +469,27 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
   if {$SV_RELEASE_BUILD != 1} {
 
     # developer build
-    set gExternalPrograms(cvpresolver)  [file join $executable_home presolver$execbinext]
-    set gExternalPrograms(cvpostsolver) [file join $simvascular_home mypost]
-    set gExternalPrograms(cvflowsolver) [file join $simvascular_home mysolver]
-    set gExternalPrograms(mpiexec)      mpiexec
-    set gExternalPrograms(dicom2)       [file join $simvascular_home dicom2$execext]
-    set gExternalPrograms(dcmodify)     dcmodify$execext
-    set gExternalPrograms(dcmdump)      $rundir dcmdump$execext
-    set gExternalPrograms(gdcmdump)     $rundir gdcmdump$execext
+    set gExternalPrograms(svpre)          [file join $simvascular_home mypre]
+    set gExternalPrograms(svpost)         [file join $simvascular_home mypost]
+    set gExternalPrograms(svsolver-nompi) [file join $simvascular_home mysolver-nompi]
+    set gExternalPrograms(svsolver-mpi)   [file join $simvascular_home mysolver-mpi]
+    set gExternalPrograms(mpiexec)        mpiexec
+    set gExternalPrograms(dicom2)         [file join $simvascular_home dicom2$execext]
+    set gExternalPrograms(dcmodify)       dcmodify$execext
+    set gExternalPrograms(dcmdump)        dcmdump$execext
+    set gExternalPrograms(gdcmdump)       gdcmdump$execext
 
   } else {
 
      # installed release build
-     set gExternalPrograms(cvpresolver)  [file join $executable_home presolver$execbinext]
-     set gExternalPrograms(cvpostsolver) [file join $executable_home postsolver$execbinext]
-     set gExternalPrograms(cvflowsolver) [file join $executable_home flowsolver$execbinext]
-     set gExternalPrograms(mpiexec)      mpiexec
-     set gExternalPrograms(dicom2)       [file join $simvascular_home dicom2$execext]
-     set gExternalPrograms(dcmdump)      [file join $simvascular_home dcmdump$execext]
-     set gExternalPrograms(gdcmdump)     [file join $simvascular_home gdcmdump$execext]
+     set gExternalPrograms(svpre)          [file join $executable_home svpre$execbinext]
+     set gExternalPrograms(svpost)         [file join $executable_home svpost$execbinext]
+     set gExternalPrograms(svsolver-nompi) [file join $executable_home svsolver-nompi$execbinext]
+     set gExternalPrograms(svsolver-mpi)   [file join $executable_home svsolver-mpi$execbinext]
+     set gExternalPrograms(mpiexec)        mpiexec
+     set gExternalPrograms(dicom2)         [file join $simvascular_home dicom2$execext]
+     set gExternalPrograms(dcmdump)        [file join $simvascular_home dcmdump$execext]
+     set gExternalPrograms(gdcmdump)       [file join $simvascular_home gdcmdump$execext]
 
      # use registry to find seperately installed svsolver package on windows
      if {$tcl_platform(platform) == "windows"} {	
@@ -497,7 +499,7 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
        if {$svpre_exe != ""} {		    
 	  if [file exists $svpre_exe] {
 	      puts "Found svPre ($svpre_exe)"
-	      set gExternalPrograms(cvpresolver) $svpre_exe
+	      regsub -all {\\} $svpre_exe / gExternalPrograms(svpre)
 	  }
        }
        set svpost_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
@@ -506,16 +508,25 @@ if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
        if {$svpost_exe != ""} {		    
 	  if [file exists $svpost_exe] {
 	      puts "Found svPost ($svpost_exe)"
-	      set gExternalPrograms(cvpostsolver) $svpost_exe
+	      regsub -all {\\} $svpost_exe / gExternalPrograms(svpost)
 	  }
        }
-       set svsolver_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+       set svsolver_nompi_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
 			                        HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
-				                SVSOLVER_EXE]
-       if {$svsolver_exe != ""} {		    
-	  if [file exists $svsolver_exe] {
-	      puts "Found svSolver ($svsolver_exe)"
-	      set gExternalPrograms(cvflowsolver) $svsolver_exe
+				                SVSOLVER_NOMPI_EXE]
+       if {$svsolver_nompi_exe != ""} {		    
+	  if [file exists $svsolver_nompi_exe] {
+	      puts "Found svSolver ($svsolver_nompi_exe)"
+	      regsub -all {\\} $svsolver_nompi_exe / gExternalPrograms(svsolver-nompi)
+	  }
+       }
+       set svsolver_msmpi_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                        HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                SVSOLVER_MSMPI_EXE]
+       if {$svsolver_msmpi_exe != ""} {		    
+	  if [file exists $svsolver_msmpi_exe] {
+	      puts "Found svSolver ($svsolver_msmpi_exe)"
+	      regsub -all {\\} $svsolver_msmpi_exe / gExternalPrograms(svsolver-mpi)
 	  }
        }
      }
