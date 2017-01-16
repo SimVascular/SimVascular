@@ -48,10 +48,10 @@ svProjectDataNodesPluginActivator::svProjectDataNodesPluginActivator()
 
 svProjectDataNodesPluginActivator::~svProjectDataNodesPluginActivator()
 {
-    for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = m_DescriptorActionList.begin();it != m_DescriptorActionList.end(); it++)
-    {
-        (it->first)->RemoveAction(it->second);
-    }
+    //for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = m_DescriptorActionList.begin();it != m_DescriptorActionList.end(); it++)
+    //{
+    //    (it->first)->RemoveAction(it->second);
+    //}
 }
 
 void svProjectDataNodesPluginActivator::start(ctkPluginContext* context)
