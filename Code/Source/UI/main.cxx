@@ -216,7 +216,7 @@ void simvascularApp::initializeLibraryPaths() {
 #else
   char *plugin_env = getenv("SV_PLUGIN_PATH");
   if (plugin_env == NULL) {
-    std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;  
+    std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
   } else {
     QString pluginPath = plugin_env;
     ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
@@ -286,8 +286,8 @@ void simvascularApp::initializeLibraryPaths() {
  {
 
   // default to tcl gui
-  bool use_tcl_gui = false;
-  bool use_qt_gui  = true;
+  bool use_tcl_gui = true;
+  bool use_qt_gui  = false;
   bool catch_debugger = false;
   use_qt_tcl_interp = false;
 
@@ -389,7 +389,7 @@ void simvascularApp::initializeLibraryPaths() {
 
   HKEY hKey2;
   LONG returnStatus2;
-  
+
   DWORD dwType2=REG_SZ;
   DWORD dwSize2=255;
   char lszValue2[255];
@@ -399,17 +399,17 @@ void simvascularApp::initializeLibraryPaths() {
   DWORD dwSize3=255;
   char lszValue3[255];
   SecureZeroMemory(lszValue3,sizeof(lszValue3));
-  
+
   DWORD dwType4=REG_SZ;
   DWORD dwSize4=1024;
   char lszValue4[1024];
   SecureZeroMemory(lszValue4,sizeof(lszValue4));
-  
+
   DWORD dwType5=REG_SZ;
   DWORD dwSize5=1024;
   char lszValue5[1024];
   SecureZeroMemory(lszValue5,sizeof(lszValue5));
-    
+
   DWORD dwType6=REG_SZ;
   DWORD dwSize6=1024;
   char lszValue6[1024];
@@ -419,7 +419,7 @@ void simvascularApp::initializeLibraryPaths() {
   DWORD dwSize7=255;
   char lszValue7[255];
   SecureZeroMemory(lszValue7,sizeof(lszValue7));
-  
+
   char mykey[1024];
   mykey[0]='\0';
   sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
@@ -595,7 +595,7 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
 
   _putenv_s( "PYTHONHOME", pythonhomepath );
 
-  
+
 #endif
 
 #ifdef SV_USE_QT_GUI
@@ -617,7 +617,7 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
   _putenv_s( "SV_PLUGIN_PATH", sv_plugin_path );
 
 #endif
-  
+
 #ifdef SV_USE_QT
 
   lszValue6[0]='\0';
