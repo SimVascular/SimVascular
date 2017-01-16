@@ -450,81 +450,88 @@ if {$tcl_platform(platform) == "windows"} {
   }
 }
 
-# for windows, we call the executables directly so don't append
-# "32" to names like on linux when running 32-bit versions
+#
+#  Set the paths to external binaries called by the GUI
+#
+
 global gExternalPrograms
+
+# cmake build directly creates a tcl script with the executable paths
 if {[file exists [file join $simvascular_home/Tcl/externals_configure.tcl]] } {
-  source [file join $simvascular_home/Tcl/externals_configure.tcl]
+
+    source [file join $simvascular_home/Tcl/externals_configure.tcl]
+
+} else {
+	
+  set executable_home $simvascular_home
+  set gExternalPrograms(rundir) $rundir
+
+  if {$SV_RELEASE_BUILD != 1} {
+
+    # developer build
+    set gExternalPrograms(svpre)          [file join $simvascular_home mypre]
+    set gExternalPrograms(svpost)         [file join $simvascular_home mypost]
+    set gExternalPrograms(svsolver-nompi) [file join $simvascular_home mysolver-nompi]
+    set gExternalPrograms(svsolver-mpi)   [file join $simvascular_home mysolver-mpi]
+    set gExternalPrograms(mpiexec)        mpiexec
+    set gExternalPrograms(dicom2)         [file join $simvascular_home dicom2$execext]
+    set gExternalPrograms(dcmodify)       dcmodify$execext
+    set gExternalPrograms(dcmdump)        dcmdump$execext
+    set gExternalPrograms(gdcmdump)       gdcmdump$execext
+
   } else {
-    set executable_home $simvascular_home
-    if {($SV_VERSION == "simvascular32") && ($tcl_platform(platform) != "windows")} {
-      set gExternalPrograms(cvpresolver) [file join $rundir presolver32$execbinext]
-      set gExternalPrograms(cvpostsolver) [file join $rundir postsolver32$execbinext]
-      set gExternalPrograms(cvadaptor) [file join $rundir adaptor32$execbinext]
-      set gExternalPrograms(cvtetadaptor) [file join $rundir tetadaptor32$execbinext]
-      set gExternalPrograms(cvflowsolver) [file join $rundir flowsolver32$execbinext]
-      set gExternalPrograms(cvsolver) [file join $rundir solver32$execext]
-      set gExternalPrograms(mpiexec) mpiexec
-      set gExternalPrograms(dicom2) [file join $rundir dicom2$execext]
-      if {$tcl_platform(platform) == "windows"} {
-        set gExternalPrograms(dcmodify) [file join $rundir dcmodify$execext]
-        set gExternalPrograms(dcmdump) [file join $rundir dcmdump$execext]
-        } else {
-          set gExternalPrograms(dcmodify) dcmodify
-          set gExternalPrograms(dcmdump) dcmdump
-        }
-        set gExternalPrograms(gdcmdump) gdcmdump
-        set gExternalPrograms(rundir) $rundir
-        } else {
-          if {$SV_RELEASE_BUILD == 1} {
-            set gExternalPrograms(cvpresolver) [file join $executable_home presolver$execbinext]
-            set gExternalPrograms(cvpostsolver) [file join $executable_home postsolver$execbinext]
-	    set gExternalPrograms(cvadaptor) [file join $executable_home adaptor$execbinext]
-	    if {$tcl_platform(platform) == "windows"} {
-	      if {![file exists $gExternalPrograms(cvadaptor)]} {
-                  set meshsimdll [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\Modules\\ParasolidAndMeshSim \
-			         HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\Modules\\ParasolidAndMeshSim \
-				 SV_MESHSIM_MESH_DLL]
-		  if {$meshsimdll != ""} {
-		      set gExternalPrograms(cvadaptor) [file join [file dirname $meshsimdll] [file tail $gExternalPrograms(cvadaptor)]]
-		  }
-	      }
-	    }
-            set gExternalPrograms(cvtetadaptor) [file join $executable_home tetadaptor$execbinext]
-            set gExternalPrograms(cvflowsolver) [file join $executable_home flowsolver$execbinext]
-            #    set gExternalPrograms(cvsolver) [file join $simvascular_home solver$execext]
-            #    TODO What to do for mpiexec?
-            set gExternalPrograms(mpiexec) mpiexec
-            set gExternalPrograms(dicom2) [file join $simvascular_home dicom2$execext]
-            } else {
-              set gExternalPrograms(cvpresolver) [file join $executable_home presolver$execbinext]
-              set gExternalPrograms(cvpostsolver) [file join $simvascular_home mypost]
-              set gExternalPrograms(cvadaptor) [file join $simvascular_home myadaptor]
-              set gExternalPrograms(cvtetadaptor) [file join $simvascular_home mytetadaptor]
-              set gExternalPrograms(cvflowsolver) [file join $simvascular_home mysolver]
-              #    set gExternalPrograms(cvsolver) [file join $simvascular_home mysolver$execext]
-              #    TODO What to do for mpiexec?
-              set gExternalPrograms(mpiexec) mpiexec
-              set gExternalPrograms(dicom2) [file join $simvascular_home dicom2$execext]
 
-            }
-            if {$tcl_platform(platform) == "windows"} {
-              set gExternalPrograms(dcmodify) [file join $rundir dcmodify$execext]
-              set gExternalPrograms(dcmdump) [file join $rundir dcmdump$execext]
-              } else {
-                set gExternalPrograms(dcmodify) dcmodify
-                set gExternalPrograms(dcmdump) dcmdump
-              }
-              set gExternalPrograms(gdcmdump) gdcmdump
-              set gExternalPrograms(rundir) $rundir
-            }
+     # installed release build
+     set gExternalPrograms(svpre)          [file join $executable_home svpre$execbinext]
+     set gExternalPrograms(svpost)         [file join $executable_home svpost$execbinext]
+     set gExternalPrograms(svsolver-nompi) [file join $executable_home svsolver-nompi$execbinext]
+     set gExternalPrograms(svsolver-mpi)   [file join $executable_home svsolver-mpi$execbinext]
+     set gExternalPrograms(mpiexec)        mpiexec
+     set gExternalPrograms(dicom2)         [file join $simvascular_home dicom2$execext]
+     set gExternalPrograms(dcmdump)        [file join $simvascular_home dcmdump$execext]
+     set gExternalPrograms(gdcmdump)       [file join $simvascular_home gdcmdump$execext]
 
-            # try and find the default mpiexec on ubuntu
-            #if {$tcl_platform(platform) != "windows" && $SV_RELEASE_BUILD} {
-            #  set gExternalPrograms(mpiexec) [file join $env(SV_HOME) [file tail $gExternalPrograms(mpiexec)]]
-            #}
-
-          }
+     # use registry to find seperately installed svsolver package on windows
+     if {$tcl_platform(platform) == "windows"} {	
+       set svpre_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                     HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				             SVPRE_EXE]
+       if {$svpre_exe != ""} {		    
+	  if [file exists $svpre_exe] {
+	      puts "Found svPre ($svpre_exe)"
+	      regsub -all {\\} $svpre_exe / gExternalPrograms(svpre)
+	  }
+       }
+       set svpost_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+		  	                      HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				              SVPOST_EXE]
+       if {$svpost_exe != ""} {		    
+	  if [file exists $svpost_exe] {
+	      puts "Found svPost ($svpost_exe)"
+	      regsub -all {\\} $svpost_exe / gExternalPrograms(svpost)
+	  }
+       }
+       set svsolver_nompi_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                        HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                SVSOLVER_NOMPI_EXE]
+       if {$svsolver_nompi_exe != ""} {		    
+	  if [file exists $svsolver_nompi_exe] {
+	      puts "Found svSolver ($svsolver_nompi_exe)"
+	      regsub -all {\\} $svsolver_nompi_exe / gExternalPrograms(svsolver-nompi)
+	  }
+       }
+       set svsolver_msmpi_exe [modules_registry_query HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver \
+			                        HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\SimVascular\\svSolver \
+				                SVSOLVER_MSMPI_EXE]
+       if {$svsolver_msmpi_exe != ""} {		    
+	  if [file exists $svsolver_msmpi_exe] {
+	      puts "Found svSolver ($svsolver_msmpi_exe)"
+	      regsub -all {\\} $svsolver_msmpi_exe / gExternalPrograms(svsolver-mpi)
+	  }
+       }
+     }
+   }		   
+}
 
 #
 #  use registry to find mpiexec on windows

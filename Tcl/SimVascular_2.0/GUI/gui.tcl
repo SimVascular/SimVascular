@@ -30834,7 +30834,7 @@ proc guiMMcreateCondensedFile {} {
   }
 
   global gExternalPrograms
-  set cvpost $gExternalPrograms(cvpostsolver)
+  set cvpost $gExternalPrograms(svpost)
   puts "PostSolver Dir"
   puts $cvpost
 
@@ -30842,7 +30842,7 @@ proc guiMMcreateCondensedFile {} {
 
   global gFilenames
   set gFilenames(solution_file) $guiMMvars(error_input_dir)/restart.$stepnum.0
-  #tk_messageBox -message $msg -title "cvpostsolver output" -icon info -type ok
+  #tk_messageBox -message $msg -title "svpost output" -icon info -type ok
   guiSVMSGshow $msg
 }
 
@@ -31822,7 +31822,7 @@ proc guiMMwriteSUPRE {} {
     set [lindex $i 0] [lindex $i 1]
   }
 
-  puts "Create script file for cvpresolver."
+  puts "Create script file for svpre."
   set fp [open $gFilenames(supre_script_file) w]
   puts $fp "number_of_variables 5"
   puts $fp "number_of_nodes $number_of_nodes"
@@ -32096,10 +32096,10 @@ proc guiPHASTArunSupre {} {
 
   global gFilenames
 
-  set yesno [tk_messageBox -message "Run cvpresolver?" -default no -icon question -type yesno]
+  set yesno [tk_messageBox -message "Run svpre?" -default no -icon question -type yesno]
   if {$yesno == "no"} {return}
 
-  set yesno [tk_messageBox -message "Use currently loaded cvpresolver script?  This will save/overwrite the cvpresolver script file." -default yes -icon question -type yesno]
+  set yesno [tk_messageBox -message "Use currently loaded svpre script?  This will save/overwrite the svpre script file." -default yes -icon question -type yesno]
   if {$yesno == "yes"} {
     guiPHASTAsaveSupreFile
   }
@@ -32108,12 +32108,12 @@ proc guiPHASTArunSupre {} {
 
   global gExternalPrograms
 
-  catch {exec $gExternalPrograms(cvpresolver) $fn} msg
+  catch {exec $gExternalPrograms(svpre) $fn} msg
   set fp [open "$fn.log" w]
-  puts $fp "Executing:  $gExternalPrograms(cvpresolver) $fn >& $fn.log"
+  puts $fp "Executing:  $gExternalPrograms(svpre) $fn >& $fn.log"
   puts $fp $msg
   close $fp
-  #tk_messageBox -message $msg -title "cvpresolver output" -icon info -type ok
+  #tk_messageBox -message $msg -title "svpre output" -icon info -type ok
   guiSVMSGshow $msg
 }
 
@@ -32302,10 +32302,10 @@ proc guiPOSTconvertFilesToVTK {} {
   }
   set cmdstr "-all -indir \"$indir\" -outdir \"$outdir\" $vtkcombo $simunitsflag -start $start -stop $stop -incr $increment $makevtu $vtufn $makevtp $vtpfn $laststep $wallflag $wallfile $calcws $applywd $muflag $mu"
 
-  puts "executing cvpostsolver with cmdstr: $cmdstr"
+  puts "executing svpost with cmdstr: $cmdstr"
 
   global gExternalPrograms
-  catch {eval exec \"$gExternalPrograms(cvpostsolver)\" $cmdstr} msg
+  catch {eval exec \"$gExternalPrograms(svpost)\" $cmdstr} msg
   guiSVMSGshow $msg
 }
 
@@ -32348,7 +32348,7 @@ proc guiPOSTp2vis {} {
   }
 
   global gExternalPrograms
-  set cvpost $gExternalPrograms(cvpostsolver)
+  set cvpost $gExternalPrograms(svpost)
 
   for {set i $startnum} {$i <= $endnum} {incr i $incrnum} {
     puts "creating file $prefix\_res$i.vis"
@@ -36435,12 +36435,16 @@ proc guiRUNSOLVERlaunchSolver { system} {
   puts "Run Solver."
 
   global gExternalPrograms
-  set PRESOLVER     $gExternalPrograms(cvpresolver)
-  set POSTSOLVER    $gExternalPrograms(cvpostsolver)
+  set PRESOLVER     $gExternalPrograms(svpre)
+  set POSTSOLVER    $gExternalPrograms(svpost)
   set MPIEXEC       $gExternalPrograms(mpiexec)
-  set SOLVER        $gExternalPrograms(cvflowsolver)
-  set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(cvflowsolver)]
-  set ADAPTOR       $gExternalPrograms(cvadaptor)
+  if {$system == "no_mpi"} {
+      set SOLVER        $gExternalPrograms(svsolver-nompi)
+      set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(svsolver-nompi)]
+  } else {
+      set SOLVER        $gExternalPrograms(svsolver-mpi)
+      set FLOWSOLVER_CONFIG [file dirname $gExternalPrograms(svsolver-mpi)]
+  }
 
   set stdout_file $guiRUNSOLVERvars(log_dir)
 

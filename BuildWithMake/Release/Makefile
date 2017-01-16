@@ -296,6 +296,7 @@ ifeq ($(SV_USE_MITK),1)
 	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
 	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
 	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
 ifeq ($(CLUSTER), x64_cygwin)
 	-mkdir -p $(DIST_DIR)/mitk/bin/plugins
 	-cp -fR $(SV_MITK_PLUGIN_PATH) $(DIST_DIR)/mitk/bin/plugins
