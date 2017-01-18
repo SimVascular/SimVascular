@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>469</width>
+    <width>403</width>
     <height>786</height>
    </rect>
   </property>
@@ -225,14 +225,14 @@
           <item>
            <widget class="QToolBox" name="toolBox">
             <property name="currentIndex">
-             <number>0</number>
+             <number>3</number>
             </property>
             <widget class="QWidget" name="page_3">
              <property name="geometry">
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>451</width>
+               <width>385</width>
                <height>494</height>
               </rect>
              </property>
@@ -571,7 +571,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>451</width>
+               <width>385</width>
                <height>494</height>
               </rect>
              </property>
@@ -656,7 +656,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>451</width>
+               <width>385</width>
                <height>494</height>
               </rect>
              </property>
@@ -774,7 +774,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>451</width>
+               <width>385</width>
                <height>494</height>
               </rect>
              </property>
@@ -1021,8 +1021,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>451</width>
-               <height>494</height>
+               <width>98</width>
+               <height>28</height>
               </rect>
              </property>
              <attribute name="label">
