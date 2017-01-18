@@ -15,7 +15,7 @@
 #include "svModelElementOCCT.h"
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
 #include "svModelElementParasolid.h"
 #endif
 
@@ -589,7 +589,7 @@ void svMeshEdit::RunCommands(bool fromGUI)
     }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     if(modelElement==NULL)
     {
         svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement());

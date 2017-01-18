@@ -1484,7 +1484,7 @@ void svModelEdit::CreateModel()
         }
     }
 #endif
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     else if(m_ModelType=="Parasolid")
     {
         newModelElement=svModelUtils::CreateModelElementParasolid(segNodes,numSampling);
@@ -1601,7 +1601,7 @@ void svModelEdit::BlendModel()
         newModelElement=svModelUtils::CreateModelElementOCCTByBlend(me, blendRadii);
     }
 #endif
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     else if(m_ModelType=="Parasolid")
     {
         svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(modelElement);
@@ -1989,7 +1989,7 @@ void svModelEdit::ChangeFacetSize()
     }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     if(m_ModelType=="Parasolid")
     {
         svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
@@ -2036,7 +2036,7 @@ void svModelEdit::ChangeFacetSize()
     }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     if(m_ModelType=="Parasolid")
     {
         svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement(GetTimeStep()));
@@ -2100,7 +2100,7 @@ void svModelEdit::ConvertToPolyDataModel()
     }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     if(m_ModelType=="Parasolid")
     {
         svModelElementParasolid* me=dynamic_cast<svModelElementParasolid*>(m_Model->GetModelElement());

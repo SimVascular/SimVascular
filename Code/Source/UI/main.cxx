@@ -62,6 +62,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include "Shlwapi.h"
+#include <Shlobj.h>
 
 #define BUFSIZE 1024
 #define BUF_SIZE 1024
@@ -282,6 +283,15 @@ void simvascularApp::initializeLibraryPaths() {
  FILE *simvascularstderr;
  bool use_qt_tcl_interp;
 
+inline bool file_exists (char* name) {
+    if (FILE *file = fopen(name, "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}
+
  int main( int argc, char *argv[] )
  {
 
@@ -311,8 +321,46 @@ void simvascularApp::initializeLibraryPaths() {
 #endif
 
   fprintf(stdout,"argc %i\n",argc);
- fflush(stdout);
+  fflush(stdout);
 
+  // check for file to select default qt gui on win32
+#ifdef WIN32  
+  CHAR user_home_path[MAX_PATH];
+  if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, user_home_path))) {
+    fprintf(stdout,"User home path: %s\n",user_home_path);
+    char default_gui_qt_filename[255];
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,"simvascular_default_gui_qt.txt");
+    fprintf(stdout,"filename: %s\n",default_gui_qt_filename);
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,".simvascular_default_gui_qt.txt");
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,"simvascular_default_gui_qt");
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,".simvascular_default_gui_qt");
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+  }
+#endif
+  
   if (argc != 0) {
 
     // default to tcl gui

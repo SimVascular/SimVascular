@@ -123,7 +123,7 @@ void svMeshCreate::SetupMeshType(int idx)
 
         ui->comboBoxMeshType->addItem("TetGen");
 
-#ifdef SV_USE_MESHSIM
+#ifdef SV_USE_MESHSIM_QT_GUI
             ui->comboBoxMeshType->addItem("MeshSim");
             if(modelType=="Parasolid")
                 ui->comboBoxMeshType->setCurrentText("MeshSim");
