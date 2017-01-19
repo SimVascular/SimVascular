@@ -53,7 +53,6 @@ CXXSRCS += us_init.cxx
 
 UIFILES = 
 
-# don't know how to handle non-qrc files
 RCFILES = 
 
 QRCFILES =

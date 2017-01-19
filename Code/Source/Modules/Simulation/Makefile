@@ -64,7 +64,6 @@ CXXSRCS += us_init.cxx
 
 UIFILES = 
 
-# I don't know how to handle just xml files yet...
 RCFILES =
 
 QRCFILES = 

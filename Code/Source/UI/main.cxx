@@ -136,13 +136,6 @@ class simvascularApp : public mitk::BaseApplication {
 
 simvascularApp::simvascularApp(int argc, char* argv[]) : BaseApplication(argc, argv)
 {
-  fprintf(stdout,"\n\n *** simvascularApp init: m_argc (%i) *** \n\n",argc);
-  fflush (stdout);
-
-  fprintf(stdout,"\n\n *** simvascularApp init: m_argv (%p) *** \n\n",argv);
-  fflush (stdout);
-
-  //setArgs(int argc, char* argv[])
 }
 
 simvascularApp::~simvascularApp()
@@ -210,9 +203,18 @@ void simvascularApp::initializeLibraryPaths() {
     exit(-1);
   } else {
     getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_PATH" );
-    QString pluginPath = plugin_env;
-    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-    std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+    char seps[] = ";";  
+    char *token;
+    token = strtok( plugin_env, seps ); 
+    while( token != NULL ) {  
+      // While there are tokens in "string"  
+      printf( " %s\n", token );  
+      QString pluginPath = token;
+      ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+      std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+      // Get next token
+      token = strtok( NULL, seps );
+    }
   }
 #else
   char *plugin_env = getenv("SV_PLUGIN_PATH");
