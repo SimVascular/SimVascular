@@ -253,9 +253,10 @@ OBJS    = $(addprefix $(BUILD_DIR)/,$(SRCS:.cxx=.$(OBJECTEXT)))
 #../Modules/Segmentation/$(BUILD_DIR)/us_init.$(OBJECTEXT)
 #endif
 
-ifeq ($(SV_USE_MITK),1)
-   OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
-endif
+# only for static case?
+#ifeq ($(SV_USE_MITK),1)
+#   OBJS += $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT)
+#endif
 
 TARGET_EXE_FULL = $(TOP)/Bin/simvascular-$(CXX_COMPILER_VERSION)-$(FORTRAN_COMPILER_VERSION).exe
 TARGET_EXE = $(TOP)/Bin/simvascular.exe
@@ -267,6 +268,7 @@ static: pre directories $(TARGET_EXE_FULL)
 moc:
 	$(foreach name,$(HDRS),$(shell $(QT_MOC_PARSER) $(QT_DEFS) $(QT_MOC_INCDIRS) $(EXTRA_MOC_INCDIRS) $(name) -o moc_$(basename $(notdir $(name))).cxx))
 
+# only for static case
 $(BUILD_DIR)/sv-cpp-resources.$(OBJECTEXT):
 	-rm -Rf ./static_cpp_resources
 	-mkdir -p ./static_cpp_resources

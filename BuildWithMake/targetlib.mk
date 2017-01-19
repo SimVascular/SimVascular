@@ -120,6 +120,9 @@ else
              $(DLLOBJS) $(LFLAGS)
 #	$(LIBCMD) /out:"$(TARGET_SHARED:.$(SOEXT)=.lib)" $(DLLOBJS)
 endif
+ifdef SV_APPEND_CPPMICROSERVICES_TO_DLL
+	$(MITK_US_RESOURCE_COMPILER) --append $(TARGET_SHARED) ./cppmicroservices_shared/res_0.zip 
+endif
 ifdef SV_COPY_DLL_TO_BIN_PLUGINS
 	mkdir -p $(TOP)/Bin/plugins
 	cp -f $(TARGET_SHARED) $(TOP)/Bin/plugins
@@ -269,6 +272,12 @@ us-init-module:
 	-@echo "#include <usModuleInitialization.h>" > us_init.cxx
 	-@echo "US_INITIALIZE_MODULE" >> us_init.cxx
 
+create_cppmicroservices_file:
+	-rm -Rf ./cppmicroservices_shared
+	-mkdir -p ./cppmicroservices_shared/$(MODULE_NAME)/Interactions
+	for fn in $(RCFILES); do /bin/cp -f $$fn ./cppmicroservices_shared/$(MODULE_NAME)/Interactions;done
+	-cd ./cppmicroservices_shared;zip -r res_0.zip $(MODULE_NAME)
+
 clean:
 	for fn in $(BUILD_DIR); do /bin/rm -f -r $$fn;done
 	for fn in *~; do /bin/rm -f $$fn;done
@@ -279,6 +288,7 @@ clean:
 	for fn in *_manifest.qrc; do /bin/rm -f $$fn; done
 	for fn in *_cached.qrc; do /bin/rm -f $$fn; done
 	if [ -e MANIFEST.MF ];then /bin/rm -f MANIFEST.MF;fi
+	if [ -e cppmicroservices_shared ];then /bin/rm -fR cppmicroservices_shared;fi
 	if [ -e us_init.cxx ];then /bin/rm -f us_init.cxx;fi
 	if [ -e $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(PLUGIN_EXPORTS_NAME)_Export.h;fi
 	if [ -e $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h ];then /bin/rm -f $(TOP)/../Code/Source/Include/Make/$(MODULE_NAME)Exports.h;fi

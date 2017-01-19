@@ -48,7 +48,7 @@ lib-complete: create_exports_h us-init-module moc ui qrc lib
 
 static-complete:  create_exports_h us-init-module moc ui qrc static
 
-shared-complete: create_exports_h us-init-module moc ui qrc shared
+shared-complete: create_exports_h us-init-module moc ui qrc create_cppmicroservices_file shared
 
 lib:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
@@ -89,6 +89,11 @@ us-init-module:
 	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
 	  cd $$i; \
 	  $(MAKE) us-init-module) ; done
+
+create_cppmicroservices_file:
+	@for i in ${SVQTGUIMODULES_DIRS}; do ( \
+	  cd $$i; \
+	  $(MAKE) create_cppmicroservices_file) ; done
 
 clean:
 	for i in ${SVQTGUIMODULES_DIRS}; do ( \

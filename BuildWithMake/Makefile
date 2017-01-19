@@ -229,7 +229,7 @@ shared-pre-build: common-pre-build
 	cd ../Code/Source/Plugins;$(MAKE) create_plugin_export_h create_manifest_qrc create_cached_qrc
 	cd ../Code/Source/Plugins;$(MAKE) moc qrc ui
 	cd ../Code/Source/Modules;$(MAKE) moc qrc ui
-	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module
+	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
 	cd ../Code/Source/UI;$(MAKE) moc
 
 static-pre-build: common-pre-build
