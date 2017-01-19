@@ -93,6 +93,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_mesh$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_qtwidgets$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \

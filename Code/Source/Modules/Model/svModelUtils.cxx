@@ -1283,7 +1283,7 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOC
 
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
 
 cvParasolidSolidModel* svModelUtils::CreateLoftSurfaceParasolid(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps)
 {

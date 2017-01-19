@@ -8,7 +8,7 @@
 #include "svModelElementOCCT.h"
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
 #include "svModelElementParasolid.h"
 #endif
 
@@ -130,7 +130,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
             if(type=="Parasolid")
             {
                 svModelElementParasolid* meps=new svModelElementParasolid();
@@ -272,7 +272,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 }
             }
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
             //update face ids (face ids change when loading parasolid file and are become different from info in .mdl file)
             if(type=="Parasolid")
             {
@@ -447,7 +447,7 @@ void svModelIO::Write()
         }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
         if(me->GetType()=="Parasolid")
         {
             //for Parasolid
@@ -496,7 +496,7 @@ void svModelIO::Write()
         }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
         if(me->GetType()=="Parasolid")
         {
             std::string dataFileName=fileName.substr(0,fileName.find_last_of("."));

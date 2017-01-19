@@ -8,7 +8,7 @@
 #include "svModelElementOCCT.h"
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
 #include "svModelElementParasolid.h"
 #endif
 
@@ -154,7 +154,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         }
     }
 #endif
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     else if(suffix=="xmt_txt")
     {
         cvParasolidSolidModel* parasolid=new cvParasolidSolidModel();
@@ -318,7 +318,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
         }
     }
 #endif
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     else if(type=="Parasolid")
     {
         svModelElementParasolid* meps=dynamic_cast<svModelElementParasolid*>(modelElement);

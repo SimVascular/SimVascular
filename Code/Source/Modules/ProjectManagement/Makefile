@@ -54,11 +54,15 @@ HDRS	= \
     svModelFolder.h \
     svMeshFolder.h \
     svSimulationFolder.h \
-    svProjectManager.h
+    svProjectManager.h \
+    svDataNodeOperation.h \
+    svDataNodeOperationInterface.h
 
 CXXSRCS	= \
     svDataFolder.cxx \
-    svProjectManager.cxx
+    svProjectManager.cxx \
+    svDataNodeOperation.cxx \
+    svDataNodeOperationInterface.cxx
 
 CXXSRCS += us_init.cxx
 

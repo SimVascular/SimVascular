@@ -67,7 +67,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
     HDRS +=  svModelElementOCCT.h
 endif
 
-ifeq ($(SV_USE_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     HDRS +=  svModelElementParasolid.h
 endif
 
@@ -88,7 +88,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
     CXXSRCS += svModelElementOCCT.cxx
 endif
 
-ifeq ($(SV_USE_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     CXXSRCS += svModelElementParasolid.cxx
 endif
 
@@ -128,13 +128,13 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)
