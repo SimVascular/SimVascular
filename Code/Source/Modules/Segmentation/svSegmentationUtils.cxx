@@ -479,7 +479,7 @@ cvStrPts* svSegmentationUtils::vtkImageData2cvStrPts(vtkImageData* vtkImg)
     return sp;
 }
 
-svContour* svSegmentationUtils::CreateLSContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, svLSParam* param, double size)
+svContour* svSegmentationUtils::CreateLSContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, svLSParam* param, double size,  bool forceClosed)
 {
     //stage 1
     //**************************
@@ -601,7 +601,7 @@ svContour* svSegmentationUtils::CreateLSContour(svPathElement::svPathPoint pathP
         contourPoints.push_back(pt);
     }
 
-    contour->SetClosed(ifClosed);
+    contour->SetClosed(ifClosed||forceClosed);
     contour->SetContourPoints(contourPoints);
 
     return contour;
@@ -709,7 +709,7 @@ std::vector<mitk::Point3D> svSegmentationUtils::GetThresholdContour(vtkImageData
     return contourPoints;
 }
 
-svContour* svSegmentationUtils::CreateThresholdContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size)
+svContour* svSegmentationUtils::CreateThresholdContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size, bool forceClosed)
 {
     svContour* contour=new svContour();
     contour->SetPlaced(true);
@@ -722,7 +722,7 @@ svContour* svSegmentationUtils::CreateThresholdContour(svPathElement::svPathPoin
     double point[3]={0};
     std::vector<mitk::Point3D> contourPoints=GetThresholdContour(strPts->GetVtkStructuredPoints(), thresholdValue, pathPoint, ifClosed, point);
 
-    contour->SetClosed(ifClosed);
+    contour->SetClosed(ifClosed||forceClosed);
     contour->SetContourPoints(contourPoints);
 
     return contour;

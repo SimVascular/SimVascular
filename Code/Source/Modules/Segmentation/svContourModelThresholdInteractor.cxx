@@ -106,7 +106,8 @@ void svContourModelThresholdInteractor::StartDrawing(mitk::StateMachineAction*, 
     bool ifClosed;
     std::vector<mitk::Point3D> contourPoints=svSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed, seedPoint);
 
-    m_Contour->SetClosed(ifClosed);
+    bool forceClosed=true;
+    m_Contour->SetClosed(ifClosed||forceClosed);
     m_Contour->SetContourPoints(contourPoints);
 
     interactionEvent->GetSender()->GetRenderingManager()->RequestUpdateAll();
@@ -165,7 +166,8 @@ void svContourModelThresholdInteractor::UpdateDrawing(mitk::StateMachineAction*,
     bool ifClosed;
     std::vector<mitk::Point3D> contourPoints=svSegmentationUtils::GetThresholdContour(imageSlice, thresholdValue, pathPoint, ifClosed, seedPoint);
 
-    m_Contour->SetClosed(ifClosed);
+    bool forceClosed=true;
+    m_Contour->SetClosed(ifClosed||forceClosed);
     m_Contour->SetContourPoints(contourPoints);
 
     m_CurrentValue=thresholdValue;

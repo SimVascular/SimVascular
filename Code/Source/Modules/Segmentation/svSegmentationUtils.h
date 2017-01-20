@@ -94,14 +94,14 @@ public:
     static cvStrPts* vtkImageData2cvStrPts(vtkImageData* vtkImg);
 
 
-    static svContour* CreateLSContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, svLSParam* param, double size);
+    static svContour* CreateLSContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, svLSParam* param, double size, bool forceClosed = true);
 
     static vtkPolyData* orientBack(vtkPolyData* srcPd, mitk::PlaneGeometry* planeGeometry);
 
 
     static std::vector<mitk::Point3D> GetThresholdContour(vtkImageData* imageSlice, double thresholdValue, svPathElement::svPathPoint pathPoint, bool& ifClosed, double seedPoint[3]);
 
-    static svContour* CreateThresholdContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size);
+    static svContour* CreateThresholdContour(svPathElement::svPathPoint pathPoint, vtkImageData* volumeimage, double thresholdValue, double size, bool forceClosed = true);
 
 
     static std::deque<int> GetOrderedPtIDs(vtkCellArray* lines, bool& ifClosed);
