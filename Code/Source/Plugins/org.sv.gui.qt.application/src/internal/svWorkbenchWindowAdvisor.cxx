@@ -1061,9 +1061,9 @@ void svWorkbenchWindowAdvisor::SetupDataManagerDoubleClick()
         return;
 
     QmitkDataManagerView* dataManager=dynamic_cast<QmitkDataManagerView*>(dataManagerView.GetPointer());
-    QTreeView* treeView=dataManager->GetTreeView();
+    //nate QTreeView* treeView=dataManager->GetTreeView();
 
-    QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
+    //nate QObject::connect(treeView, SIGNAL(doubleClicked(const QModelIndex &)), this, SLOT(ShowSVView()));
 }
 
 
