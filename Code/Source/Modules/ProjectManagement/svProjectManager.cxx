@@ -740,7 +740,7 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
 #ifdef SV_USE_OpenCASCADE
         extensions.push_back(".brep");
 #endif
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
         extensions.push_back(".xmt_txt");
 #endif
     }

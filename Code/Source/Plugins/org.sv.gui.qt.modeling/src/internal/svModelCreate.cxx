@@ -38,7 +38,7 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
 #ifdef SV_USE_OpenCASCADE
     ui->comboBoxType->addItem("OpenCASCADE");
 #endif
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     ui->comboBoxType->addItem("Parasolid");
 #endif
 

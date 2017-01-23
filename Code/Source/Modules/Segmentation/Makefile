@@ -90,7 +90,7 @@ CXXSRCS += us_init.cxx
 
 UIFILES = 
 
-# I don't know how to handle just xml files yet...
+SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
 RCFILES = \
     resource/Interactions/svContourGroupInteraction.xml \
     resource/Interactions/svContourModelThresholdInteraction.xml \

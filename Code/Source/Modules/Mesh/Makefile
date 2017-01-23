@@ -77,7 +77,6 @@ CXXSRCS += us_init.cxx
 
 UIFILES = 
 
-# I don't know how to handle just xml files yet...
 RCFILES =
 
 QRCFILES = 
@@ -108,13 +107,13 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)

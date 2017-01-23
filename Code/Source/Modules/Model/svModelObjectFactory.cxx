@@ -12,7 +12,7 @@
 #include <XCAFApp_Application.hxx>
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
 #include "cv_parasolid_utils.h"
 #endif
 
@@ -135,7 +135,7 @@ RegistersvModelObjectFactory::RegistersvModelObjectFactory()
     }
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
     if (PsdUtils_Init() != CV_OK) {
       MITK_ERROR<<"Parasolid Uitls init error";
     }

@@ -97,6 +97,7 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_qtgui_module_model$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_segmentation$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_qtgui_module_pathplanning$(LIBLINKEXT) \
+          $(SVLIBFLAG)_simvascular_qtgui_module_projectmanagement$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_itk_lset$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
@@ -104,13 +105,13 @@ DLLLIBS +=  \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
 
-ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_DISCRETE_MODEL_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_discrete_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_MESHSIM_SOLID_MODEL),1)
+ifeq ($(SV_USE_MESHSIM_SOLID_MODEL_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_meshsim_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_PARASOLID),1)
+ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
 endif
 ifeq ($(SV_USE_OPENCASCADE),1)

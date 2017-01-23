@@ -71,7 +71,7 @@ CXXSRCS += us_init.cxx
 
 UIFILES = 
 
-# don't know how to handle non-qrc files
+SV_APPEND_CPPMICROSERVICES_TO_DLL = 1
 RCFILES = resource/Interactions/svPath.xml \
           resource/Interactions/svPathConfig.xml
 

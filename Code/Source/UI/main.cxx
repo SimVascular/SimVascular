@@ -62,6 +62,7 @@
 #include <windows.h>
 #include <tchar.h>
 #include "Shlwapi.h"
+#include <Shlobj.h>
 
 #define BUFSIZE 1024
 #define BUF_SIZE 1024
@@ -135,13 +136,6 @@ class simvascularApp : public mitk::BaseApplication {
 
 simvascularApp::simvascularApp(int argc, char* argv[]) : BaseApplication(argc, argv)
 {
-  fprintf(stdout,"\n\n *** simvascularApp init: m_argc (%i) *** \n\n",argc);
-  fflush (stdout);
-
-  fprintf(stdout,"\n\n *** simvascularApp init: m_argv (%p) *** \n\n",argv);
-  fflush (stdout);
-
-  //setArgs(int argc, char* argv[])
 }
 
 simvascularApp::~simvascularApp()
@@ -209,14 +203,23 @@ void simvascularApp::initializeLibraryPaths() {
     exit(-1);
   } else {
     getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_PATH" );
-    QString pluginPath = plugin_env;
-    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-    std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+    char seps[] = ";";  
+    char *token;
+    token = strtok( plugin_env, seps ); 
+    while( token != NULL ) {  
+      // While there are tokens in "string"  
+      printf( " %s\n", token );  
+      QString pluginPath = token;
+      ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+      std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+      // Get next token
+      token = strtok( NULL, seps );
+    }
   }
 #else
   char *plugin_env = getenv("SV_PLUGIN_PATH");
   if (plugin_env == NULL) {
-    std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;  
+    std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
   } else {
     QString pluginPath = plugin_env;
     ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
@@ -282,12 +285,21 @@ void simvascularApp::initializeLibraryPaths() {
  FILE *simvascularstderr;
  bool use_qt_tcl_interp;
 
+inline bool file_exists (char* name) {
+    if (FILE *file = fopen(name, "r")) {
+        fclose(file);
+        return true;
+    } else {
+        return false;
+    }   
+}
+
  int main( int argc, char *argv[] )
  {
 
   // default to tcl gui
-  bool use_tcl_gui = false;
-  bool use_qt_gui  = true;
+  bool use_tcl_gui = true;
+  bool use_qt_gui  = false;
   bool catch_debugger = false;
   use_qt_tcl_interp = false;
 
@@ -311,8 +323,46 @@ void simvascularApp::initializeLibraryPaths() {
 #endif
 
   fprintf(stdout,"argc %i\n",argc);
- fflush(stdout);
+  fflush(stdout);
 
+  // check for file to select default qt gui on win32
+#ifdef WIN32  
+  CHAR user_home_path[MAX_PATH];
+  if (SUCCEEDED(SHGetFolderPathA(NULL, CSIDL_PROFILE, NULL, 0, user_home_path))) {
+    fprintf(stdout,"User home path: %s\n",user_home_path);
+    char default_gui_qt_filename[255];
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,"simvascular_default_gui_qt.txt");
+    fprintf(stdout,"filename: %s\n",default_gui_qt_filename);
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,".simvascular_default_gui_qt.txt");
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,"simvascular_default_gui_qt");
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+    default_gui_qt_filename[0]='\0';
+    sprintf(default_gui_qt_filename,"%s\\%s",user_home_path,".simvascular_default_gui_qt");
+    if (file_exists(default_gui_qt_filename)) {
+      use_tcl_gui = false;
+      use_qt_gui  = true;
+      fprintf(stdout,"Note: Defaulting to qt gui because (%s) exists.",default_gui_qt_filename);
+    }
+  }
+#endif
+  
   if (argc != 0) {
 
     // default to tcl gui
@@ -389,7 +439,7 @@ void simvascularApp::initializeLibraryPaths() {
 
   HKEY hKey2;
   LONG returnStatus2;
-  
+
   DWORD dwType2=REG_SZ;
   DWORD dwSize2=255;
   char lszValue2[255];
@@ -399,17 +449,17 @@ void simvascularApp::initializeLibraryPaths() {
   DWORD dwSize3=255;
   char lszValue3[255];
   SecureZeroMemory(lszValue3,sizeof(lszValue3));
-  
+
   DWORD dwType4=REG_SZ;
   DWORD dwSize4=1024;
   char lszValue4[1024];
   SecureZeroMemory(lszValue4,sizeof(lszValue4));
-  
+
   DWORD dwType5=REG_SZ;
   DWORD dwSize5=1024;
   char lszValue5[1024];
   SecureZeroMemory(lszValue5,sizeof(lszValue5));
-    
+
   DWORD dwType6=REG_SZ;
   DWORD dwSize6=1024;
   char lszValue6[1024];
@@ -419,7 +469,7 @@ void simvascularApp::initializeLibraryPaths() {
   DWORD dwSize7=255;
   char lszValue7[255];
   SecureZeroMemory(lszValue7,sizeof(lszValue7));
-  
+
   char mykey[1024];
   mykey[0]='\0';
   sprintf(mykey,"%s\\%s\\%s %s","SOFTWARE",SV_REGISTRY_TOPLEVEL,SV_VERSION,SV_MAJOR_VER_NO);
@@ -595,7 +645,7 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
 
   _putenv_s( "PYTHONHOME", pythonhomepath );
 
-  
+
 #endif
 
 #ifdef SV_USE_QT_GUI
@@ -617,7 +667,7 @@ getenv_s( &requiredSize, envvar, requiredSize, "P_SCHEMA" );
   _putenv_s( "SV_PLUGIN_PATH", sv_plugin_path );
 
 #endif
-  
+
 #ifdef SV_USE_QT
 
   lszValue6[0]='\0';

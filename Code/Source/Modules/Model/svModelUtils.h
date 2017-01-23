@@ -14,7 +14,7 @@
    #include "svModelElementOCCT.h"
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
    #include "svModelElementParasolid.h"
 #endif
 
@@ -95,7 +95,7 @@ public:
 
 #endif
 
-#ifdef SV_USE_PARASOLID
+#ifdef SV_USE_PARASOLID_QT_GUI
 
     static cvParasolidSolidModel* CreateLoftSurfaceParasolid(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps);
 

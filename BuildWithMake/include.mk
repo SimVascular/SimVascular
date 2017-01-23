@@ -260,7 +260,7 @@ endif
 # -------------------------------------------
 
 SV_MAJOR_VER_NO = "2.17"
-SV_FULL_VER_NO = "2.17.0109"
+SV_FULL_VER_NO = "2.17.0118"
 SV_USE_WIN32_REGISTRY=0
 SV_REGISTRY_TOPLEVEL=SIMVASCULAR
 

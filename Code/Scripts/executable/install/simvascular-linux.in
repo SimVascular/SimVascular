@@ -13,7 +13,12 @@ $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $*
 esac
 ;;
 *)
-$SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+if [ -e ~/.simvascular_default_qt ]
+then
+  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ -qt$*
+else
+  $SV_HOME/@SV_INSTALL_RUNTIME_DIR@/@SV_EXE@@CMAKE_EXECUTABLE_SUFFIX@ $SV_HOME/Tcl/SimVascular_2.0/simvascular_startup.tcl $*
+fi
 ;;
 esac
 
