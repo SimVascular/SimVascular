@@ -34,9 +34,9 @@ public slots:
 
     void ChangePath();
 
-    void AddToEnd();
+//    void AddToEnd();
 
-    void AddToTop();
+//    void AddToTop();
 
     void AddPoint(int index, mitk::Point3D, int timeStep);
 
@@ -46,7 +46,7 @@ public slots:
 
     void SelectItem(const QModelIndex & idx);
 
-    void InsertPointAbove();
+//    void InsertPointAbove();
 
     void DeleteSelected();
 

@@ -25,7 +25,7 @@ public slots:
 
     void Cancel();
 
-    void ResetLineEditNumber(int index);
+    void ResetNumberSpacing(int index);
 
     void SetCreatePath(bool create);
 

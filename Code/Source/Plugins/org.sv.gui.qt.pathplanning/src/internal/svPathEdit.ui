@@ -174,30 +174,45 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="buttonSmartAdd">
+          <widget class="QLabel" name="label">
            <property name="text">
-            <string>Smart Add</string>
+            <string>Adding Mode:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnAddToEnd">
-           <property name="text">
-            <string>Add to End</string>
-           </property>
+          <widget class="QComboBox" name="comboBoxAddingMode">
+           <item>
+            <property name="text">
+             <string>Smart</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Beginning</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>End</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Before</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>After</string>
+            </property>
+           </item>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnAddToTop">
+          <widget class="QPushButton" name="buttonAdd">
            <property name="text">
-            <string>Add to Top</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="buttonInsertAbove">
-           <property name="text">
-            <string>Insert Above</string>
+            <string>Add</string>
            </property>
           </widget>
          </item>
@@ -212,9 +227,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="btnSmooth">
+          <widget class="QPushButton" name="buttonDelete">
            <property name="text">
-            <string>Smooth</string>
+            <string>Delete</string>
            </property>
           </widget>
          </item>
@@ -229,9 +244,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="buttonDelete">
+          <widget class="QPushButton" name="btnSmooth">
            <property name="text">
-            <string>Delete</string>
+            <string>Smooth Path</string>
            </property>
           </widget>
          </item>

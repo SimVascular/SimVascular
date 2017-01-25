@@ -67,17 +67,17 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
     connect(ui->btnChange, SIGNAL(clicked()), this, SLOT(ChangePath()) );
-    connect(ui->buttonSmartAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
-    connect(ui->buttonInsertAbove, SIGNAL(clicked()), this, SLOT(InsertPointAbove()) );
-    connect(ui->btnAddToEnd, SIGNAL(clicked()), this, SLOT(AddToEnd()) );
-    connect(ui->btnAddToTop, SIGNAL(clicked()), this, SLOT(AddToTop()) );
+    connect(ui->buttonAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
+//    connect(ui->buttonInsertAbove, SIGNAL(clicked()), this, SLOT(InsertPointAbove()) );
+//    connect(ui->btnAddToEnd, SIGNAL(clicked()), this, SLOT(AddToEnd()) );
+//    connect(ui->btnAddToTop, SIGNAL(clicked()), this, SLOT(AddToTop()) );
     connect(ui->buttonDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
 
     connect(ui->btnSmooth,SIGNAL(clicked()), this, SLOT(SmoothCurrentPath()) );
 
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+A"), parent);
-    connect(shortcut, SIGNAL(activated()), ui->buttonSmartAdd, SLOT(click()));
+    connect(shortcut, SIGNAL(activated()), ui->buttonAdd, SLOT(click()));
 
     mitk::DataNode::Pointer parentNode=this->GetDataStorage()->GetNamedNode("Paths");
     if(parentNode) parentNode->GetBoolProperty("visible", m_ParentNodeOriginalVisible);
@@ -441,86 +441,111 @@ void svPathEdit::SmartAdd()
         return;
     }
 
-    int index=pathElement->GetInsertintIndexByDistance(point);
+    int index=-2;
+
+    int selectedModeIndex=ui->comboBoxAddingMode->currentIndex();
+
+    switch(selectedModeIndex)
+    {
+    case 0:
+        index=pathElement->GetInsertintIndexByDistance(point);
+        break;
+    case 1:
+        index=0;
+        break;
+    case 2:
+        index=-1;
+        break;
+    case 3:
+        index= ui->listWidget->selectionModel()->selectedRows().front().row();
+        break;
+    case 4:
+        index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
+        break;
+    default:
+        break;
+    }
+
+    if(index==-2)
+        return;
 
     AddPoint(index,point,timeStep);
-
 }
 
-void svPathEdit::AddToEnd()
-{
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
-        return;
-    }
+//void svPathEdit::AddToEnd()
+//{
+//    if(m_Path==NULL){
+//        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+//        return;
+//    }
 
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+//    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep();
+//    int timeStep=GetTimeStep();
 
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+//    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
+//    if(pathElement==NULL) return;
 
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
-    {
-        return;
-    }
+//    //Check if the point already exists
+//    if(pathElement->SearchControlPoint(point,0)!=-2)
+//    {
+//        return;
+//    }
 
-    //    int index=currentPath->GetSize(timeStep);
-    int index=-1;
+//    //    int index=currentPath->GetSize(timeStep);
+//    int index=-1;
 
-    AddPoint(index,point,timeStep);
-}
+//    AddPoint(index,point,timeStep);
+//}
 
-void svPathEdit::AddToTop()
-{
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
-        return;
-    }
+//void svPathEdit::AddToTop()
+//{
+//    if(m_Path==NULL){
+//        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+//        return;
+//    }
 
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+//    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep();
+//    int timeStep=GetTimeStep();
 
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+//    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
+//    if(pathElement==NULL) return;
 
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
-    {
-        return;
-    }
+//    //Check if the point already exists
+//    if(pathElement->SearchControlPoint(point,0)!=-2)
+//    {
+//        return;
+//    }
 
-    AddPoint(0,point,timeStep);
-}
+//    AddPoint(0,point,timeStep);
+//}
 
-void svPathEdit::InsertPointAbove()
-{
+//void svPathEdit::InsertPointAbove()
+//{
 
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
-        return;
-    }
+//    if(m_Path==NULL){
+//        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+//        return;
+//    }
 
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
+//    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep();
+//    int timeStep=GetTimeStep();
 
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
+//    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
+//    if(pathElement==NULL) return;
 
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
-    {
-        return;
-    }
+//    //Check if the point already exists
+//    if(pathElement->SearchControlPoint(point,0)!=-2)
+//    {
+//        return;
+//    }
 
-    int index= ui->listWidget->selectionModel()->selectedRows().front().row();
-    AddPoint(index,point,timeStep);
+//    int index= ui->listWidget->selectionModel()->selectedRows().front().row();
+//    AddPoint(index,point,timeStep);
 
-}
+//}
 
 void svPathEdit::DeleteSelected(){
     if(m_Path==NULL){
