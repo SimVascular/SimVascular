@@ -149,7 +149,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
     }
 
     mitk::DataNode::Pointer projectFolderNode= CreateDataFolder<svProjectFolder>(dataStorage,projName);
-    projectFolderNode->AddProperty( "project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
+    projectFolderNode->AddProperty("project path",mitk::StringProperty::New(projPath.toStdString().c_str()));
 
     mitk::DataNode::Pointer imageFolderNode=CreateDataFolder<svImageFolder>(dataStorage, imageFolderName, projectFolderNode);
     mitk::DataNode::Pointer pathFolderNode=CreateDataFolder<svPathFolder>(dataStorage, pathFolderName, projectFolderNode);

@@ -615,7 +615,7 @@ void svPathVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 
     if(needGenerateData)
     {
-        // create new vtk render objects (e.g. a circle for a point)
+        //create new vtk render objects (e.g. a circle for a point)
         this->CreateVTKRenderObjects(renderer);
     }
 }

@@ -5,12 +5,15 @@
 
 #include <svPathExports.h>
 
-#include "itkObject.h"
-#include "itkSmartPointer.h"
-#include "itkObjectFactory.h"
-#include "mitkCommon.h"
-#include "mitkDataInteractor.h"
 #include "svPath.h"
+
+#include <mitkCommon.h>
+#include <mitkDataInteractor.h>
+#include <mitkInteractionPositionEvent.h>
+
+#include <itkObject.h>
+#include <itkSmartPointer.h>
+#include <itkObjectFactory.h>
 
 class SVPATH_EXPORT svPathDataInteractor: public mitk::DataInteractor
 {
@@ -22,7 +25,7 @@ public:
 
     void SetAccuracy(double accuracy);
 
-    double GetAccuracy();
+    double GetAccuracy(const mitk::InteractionPositionEvent* positionEvent);
 
 protected:
     svPathDataInteractor();
@@ -46,11 +49,16 @@ protected:
 
     virtual void SelectPoint(mitk::StateMachineAction*, mitk::InteractionEvent*);
 
-
     virtual void UnSelectAll(mitk::StateMachineAction*, mitk::InteractionEvent*);
 
-
     virtual void Abort(mitk::StateMachineAction*, mitk::InteractionEvent*);
+
+    int SearchControlPoint(
+            const mitk::InteractionPositionEvent* positionEvent,
+            svPathElement* pathElement
+            ) const;
+
+    bool IsOn2DView(const mitk::InteractionEvent* interactionEvent) const;
 
     mitk::Point3D m_LastPoint;
 
@@ -60,7 +68,7 @@ protected:
 
     svPathElement* m_PathElement;
 
-    double m_SelectionAccuracy; // accuracy that's needed to select a point
+//    double m_SelectionAccuracy; // accuracy that's needed to select a point
 
 };
 

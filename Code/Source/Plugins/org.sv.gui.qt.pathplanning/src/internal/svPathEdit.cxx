@@ -190,7 +190,6 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     UpdateGUI();
 
     m_DataInteractor = svPathDataInteractor::New();
-    m_DataInteractor->SetAccuracy(GetVolumeImageSpacing());
     m_DataInteractor->LoadStateMachine("svPath.xml", us::ModuleRegistry::GetModule("svPath"));
     m_DataInteractor->SetEventConfig("svPathConfig.xml", us::ModuleRegistry::GetModule("svPath"));
     m_DataInteractor->SetDataNode(m_PathNode);
