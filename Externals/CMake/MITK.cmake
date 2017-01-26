@@ -107,10 +107,13 @@ endif()
 # Configure file for custom install!!!
 if(APPLE)
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-mac_osx.sh)
+  set(SV_${proj}_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 elseif(LINUX)
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-linux.sh)
+  set(SV_${proj}_CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fpermissive -Wno-deprecated-declarations")
 else()
   set(SV_EXTERNALS_${proj}_INSTALL_SCRIPT install-mitk-windows.sh)
+  set(SV_${proj}_CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 endif()
 configure_file(${SV_EXTERNALS_CMAKE_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}.in "${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}" @ONLY)
 
@@ -125,9 +128,9 @@ ExternalProject_Add(${proj}
   UPDATE_COMMAND ""
   INSTALL_COMMAND ${SV_EXTERNALS_${proj}_BIN_DIR}/${SV_EXTERNALS_${proj}_INSTALL_SCRIPT}
    CMAKE_CACHE_ARGS
-    -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
+   -DCMAKE_CXX_COMPILER:STRING=${CMAKE_CXX_COMPILER}
     -DCMAKE_C_COMPILER:STRING=${CMAKE_C_COMPILER}
-    -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
+    -DCMAKE_CXX_FLAGS:STRING=${SV_${proj}_CMAKE_CXX_FLAGS}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
     -DCMAKE_BUILD_TYPE:STRING=${CMAKE_BUILD_TYPE}
     -DCMAKE_MACOSX_RPATH:BOOL=ON

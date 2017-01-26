@@ -72,6 +72,28 @@ include(SvExtMacros)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
+# OS
+set(SV_OS "${CMAKE_SYSTEM_NAME}")
+IF("${CMAKE_SYSTEM}" MATCHES "Linux")
+	SET(LINUX TRUE)
+elseif(WIN32)
+	set(WINDOWS TRUE)
+endif()
+
+if(WIN32)
+	if("${CMAKE_SIZEOF_VOID_P}" EQUAL 8)
+		set(WIN64 TRUE)
+	else()
+		set(WIN64 FALSE)
+	endif()
+	set(ENV_SET_COMMAND "set")
+	set(ENV_PATH_VARIABLE "PATH")
+	set(ENV_LIBRARY_PATH_VARIABLE "PATH")
+	set(ENV_SEPERATOR ";")
+	set(DIR_SEPERATOR "\\")
+endif()
+
+#-----------------------------------------------------------------------------
 # Initial options
 include(SvExtOptions)
 #-----------------------------------------------------------------------------
@@ -114,9 +136,9 @@ endforeach()
 
 #-----------------------------------------------------------------------------
 # Tar up everything
-set(SV_EXTERNALS_EVERYTHING}_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.${${proj}_VERSION_DIR}-BUILD${TODAY})
+set(SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME ${SV_EXTERNALS_PLATFORM_DIR}.${SV_EXTERNALS_COMPILER_DIR}.${SV_EXTERNALS_ARCH_DIR}.${${proj}_VERSION_DIR}-BUILD${TODAY})
 if(EXISTS "${SV_EXTERNALS_TAR_INSTALL_DIR}")
-  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
+  install(CODE "execute_process(COMMAND ${CMAKE_COMMAND} -E tar -czvf ${SV_EXTERNALS_TAR_INSTALL_DIR}/${SV_EXTERNALS_EVERYTHING_TAR_INSTALL_NAME}.tar.gz ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}
     WORKING_DIRECTORY ${SV_EXTERNALS_TOPLEVEL_BIN_DIR}/../)")
 endif()
 #-----------------------------------------------------------------------------
