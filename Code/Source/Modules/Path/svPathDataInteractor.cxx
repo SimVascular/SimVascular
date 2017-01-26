@@ -36,9 +36,12 @@ double svPathDataInteractor::GetAccuracy(const mitk::InteractionPositionEvent* p
         if(IsOn2DView(positionEvent))
         {
             mitk::BaseRenderer *renderer = positionEvent->GetSender();
-            pointsize=10.0f;
-            GetDataNode()->GetFloatProperty("point 2D display size", pointsize, renderer);
-            pointsize=2*pointsize*renderer->GetScaleFactorMMPerDisplayUnit();
+            if(renderer)
+            {
+                pointsize=10.0f;
+                GetDataNode()->GetFloatProperty("point 2D display size", pointsize, renderer);
+                pointsize=2*pointsize*renderer->GetScaleFactorMMPerDisplayUnit();
+            }
         }
         else
         {
