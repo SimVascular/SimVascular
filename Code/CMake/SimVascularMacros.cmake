@@ -1082,10 +1082,12 @@ function(simvascular_install_external project_name)
   endif()
   if(EXISTS ${SV_${proj}_DIR})
     if(EXISTS ${SV_${proj}_DIR}/lib)
-      install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${LIB_DESTINATION})
+      install(DIRECTORY ${SV_${proj}_DIR}/lib DESTINATION ${LIB_DESTINATION}
+        USE_SOURCE_PERMISSIONS)
     endif()
     if(EXISTS ${SV_${proj}_DIR}/bin)
-      install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION})
+      install(DIRECTORY ${SV_${proj}_DIR}/bin DESTINATION ${LIB_DESTINATION}
+        USE_SOURCE_PERMISSIONS)
     endif()
   endif()
 

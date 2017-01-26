@@ -57,6 +57,9 @@ set(SV_EXTERNALS_${proj}_LIBRARY ${SV_EXTERNALS_${proj}_BIN_DIR}/lib/${${proj}_L
 get_filename_component(SV_EXTERNALS_${proj}_LIBRARY_DIR ${SV_EXTERNALS_${proj}_LIBRARY} DIRECTORY)
 set(SV_EXTERNALS_${proj}_SITE_DIR ${SV_EXTERNALS_${proj}_LIBRARY_DIR}/python${SV_EXTERNALS_${proj}_MAJOR_VERSION}.${SV_EXTERNALS_${proj}_MINOR_VERSION}/site-packages)
 
+if(LINUX)
+endif()
+
 if(APPLE)
   list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
     -DCMAKE_PREFIX_PATH:PATH=/opt/local
@@ -66,6 +69,11 @@ if(APPLE)
     COMMAND cp /opt/local/lib/libcrypto.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
     COMMAND cp /opt/local/lib/libssl.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR}
     COMMAND cp /opt/local/lib/libz.dylib ${SV_EXTERNALS_${proj}_LIBRARY_DIR})
+elseif(LINUX)
+  list(APPEND SV_EXTERNALS_${proj}_ADDITIONAL_CMAKE_ARGS
+    -DCMAKE_INSTALL_RPATH:PATH=${SV_EXTERNALS_${proj}_LIBRARY_DIR}
+    )
+  set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
 else()
   set(SV_EXTERNALS_${proj}_CUSTOM_INSTALL make install)
 endif()
