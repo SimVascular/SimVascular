@@ -133,8 +133,8 @@ protected:
     //  bool m_ShowDistantLines;        // "show distant lines" property
     int m_LineWidth;                // "line width" property
     int m_PointLineWidth;           // "point line width" property
-    int m_Point2DSize;              // "point 2D size" property, in display units
-    int m_SplinePoint2DSize;        // "spline point 2D size" property, in display units
+    float m_Point2DSize;              // "point 2D size" property, in display units
+    float m_SplinePoint2DSize;        // "spline point 2D size" property, in display units
     //  int m_IDShapeProperty;          // ID for mitkPointSetShape Enumeration Property "Pointset.2D.shape"
     //  bool m_FillShape;               // "Pointset.2D.fill shape" property
     float m_DistanceToPlane;        // "point 2D distance to plane" property

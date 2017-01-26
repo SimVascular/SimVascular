@@ -22,6 +22,8 @@ public:
 
     void SetAccuracy(double accuracy);
 
+    double GetAccuracy();
+
 protected:
     svPathDataInteractor();
     virtual ~svPathDataInteractor();

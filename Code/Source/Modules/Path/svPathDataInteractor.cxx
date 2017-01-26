@@ -10,9 +10,9 @@
 #include "mitkBaseRenderer.h"
 #include "mitkUndoController.h"
 
-svPathDataInteractor::svPathDataInteractor():
-    m_SelectionAccuracy(0.35)
+svPathDataInteractor::svPathDataInteractor()
 {
+    SetAccuracy(0.35);
 }
 
 svPathDataInteractor::~svPathDataInteractor()
@@ -22,6 +22,20 @@ svPathDataInteractor::~svPathDataInteractor()
 void svPathDataInteractor::SetAccuracy(double accuracy)
 {
     m_SelectionAccuracy = accuracy;
+    if (GetDataNode()!=NULL)
+    {
+        GetDataNode()->AddProperty( "selection accuracy", mitk::DoubleProperty::New(accuracy), NULL, true );
+    }
+}
+
+double svPathDataInteractor::GetAccuracy()
+{
+    double accuracy=0.1;
+    if (GetDataNode()!=NULL)
+    {
+        GetDataNode()->GetDoubleProperty("selection accuracy", accuracy);
+    }
+    return accuracy;
 }
 
 void svPathDataInteractor::ConnectActionsAndFunctions()
@@ -69,7 +83,7 @@ bool svPathDataInteractor::IsOverPoint(const mitk::InteractionEvent *interaction
     if(pathElement==NULL)
         return false;
 
-    int index=pathElement->SearchControlPoint(point,m_SelectionAccuracy);
+    int index=pathElement->SearchControlPoint(point,GetAccuracy());
     if (index != -2)
         return true;
 
@@ -141,7 +155,7 @@ void svPathDataInteractor::RemovePoint(mitk::StateMachineAction*, mitk::Interact
         if(pathElement==NULL)
             return;
 
-        int index = pathElement->SearchControlPoint(point, m_SelectionAccuracy);
+        int index = pathElement->SearchControlPoint(point, GetAccuracy());
         if (index != -2)
         {
             mitk::Point3D originalPoint = pathElement->GetControlPoint(index);
@@ -323,7 +337,7 @@ void svPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::Interact
             return;
 
         mitk::Point3D point = positionEvent->GetPositionInWorld();
-        int index = pathElement->SearchControlPoint(point, m_SelectionAccuracy);
+        int index = pathElement->SearchControlPoint(point, GetAccuracy());
         if (index != -2)
         {
             //first deselect the other points
