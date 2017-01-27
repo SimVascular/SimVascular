@@ -116,6 +116,8 @@ public slots:
 
     void ResetGUI();
 
+    void UpdatePathResliceSize(double newSize);
+
 public:
 
     int GetTimeStep();

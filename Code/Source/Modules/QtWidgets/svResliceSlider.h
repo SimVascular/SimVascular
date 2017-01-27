@@ -82,6 +82,9 @@ public slots:
 
     void SetStartingSlicePos(int pos);
 
+signals:
+    void resliceSizeChanged(double newSize);
+
 protected:
 
     bool stepperSynchronized;

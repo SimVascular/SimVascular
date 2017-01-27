@@ -27,7 +27,6 @@ const QString svPathEdit::EXTENSION_ID = "org.sv.views.pathplanning";
 
 svPathEdit::svPathEdit():
     ui(new Ui::svPathEdit),
-    m_ParentNodeOriginalVisible(true),
     m_PathChangeObserverTag(-1),
     m_PathNode(NULL),
     m_Path(NULL),
@@ -77,8 +76,7 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+A"), parent);
     connect(shortcut, SIGNAL(activated()), ui->buttonAdd, SLOT(click()));
 
-    mitk::DataNode::Pointer parentNode=this->GetDataStorage()->GetNamedNode("Paths");
-    if(parentNode) parentNode->GetBoolProperty("visible", m_ParentNodeOriginalVisible);
+    connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 }
 
 //void svPathEdit::Activated()
@@ -357,8 +355,13 @@ void svPathEdit::SetupResliceSlider()
         ui->resliceSlider->setPathPoints(pathElement->GetExtendedPathPoints(realBounds,GetVolumeImageSpacing(),startingIndex));
         ui->resliceSlider->SetStartingSlicePos(startingIndex);
         ui->resliceSlider->setImageNode(m_ImageNode);
-        ui->resliceSlider->setResliceSize(5.0);
-
+        double resliceSize=m_Path->GetResliceSize();
+        if(resliceSize==0)
+        {
+            resliceSize=5.0;
+            m_Path->SetResliceSize(resliceSize);
+        }
+        ui->resliceSlider->setResliceSize(resliceSize);
         ui->resliceSlider->setEnabled(true);
         if(ui->resliceSlider->isResliceOn())
             ui->resliceSlider->updateReslice();
@@ -608,4 +611,8 @@ void svPathEdit::SmoothCurrentPath()
     m_SmoothWidget->SetFocus();
 }
 
-
+void svPathEdit::UpdatePathResliceSize(double newSize)
+{
+    if(m_Path)
+        m_Path->SetResliceSize(newSize);
+}

@@ -58,6 +58,10 @@ std::vector<mitk::BaseData::Pointer> svPathIO::Read()
     path->SetCalculationNumber(calculationNumber);
     path->SetSpacing(spacing);
 
+    double resliceSize=5.0;
+    pathElement->QueryDoubleAttribute("reslice_size", &resliceSize);
+    path->SetResliceSize(resliceSize);
+
     int timestep=-1;
     for( TiXmlElement* timestepElement = pathElement->FirstChildElement("timestep");
          timestepElement != nullptr;
@@ -161,6 +165,7 @@ void svPathIO::Write()
     pathElement->SetAttribute("method", path->GetMethod());
     pathElement->SetAttribute("calculation_number", path->GetCalculationNumber());
     pathElement->SetDoubleAttribute("spacing", path->GetSpacing());
+    pathElement->SetDoubleAttribute("reslice_size", path->GetResliceSize());
     document.LinkEndChild(pathElement);
 
     for(int t=0;t<path->GetTimeSize();t++)

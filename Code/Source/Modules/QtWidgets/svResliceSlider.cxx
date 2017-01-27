@@ -408,6 +408,7 @@ void svResliceSlider::updateResliceSize()
             updateReslice();
             setSlicePos(index);
         }
+         emit resliceSizeChanged(newSize);
     }
 }
 

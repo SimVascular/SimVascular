@@ -55,6 +55,7 @@ public slots:
 
     void UpdateSlice();
 
+    void UpdatePathResliceSize(double newSize);
 
 public:
 
@@ -94,8 +95,6 @@ protected:
     mitk::DataNode::Pointer m_PathNode;
 
     svPath* m_Path;
-
-    bool m_ParentNodeOriginalVisible;
 
     Ui::svPathEdit *ui;
 
