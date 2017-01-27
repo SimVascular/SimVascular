@@ -288,6 +288,24 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         }
     }
 
+    //set tag index for contours in the group
+    for(int i=0;i<m_ContourGroup->GetSize(timeStep);i++)
+    {
+        svContour* contour=m_ContourGroup->GetContour(i,timeStep);
+        if(contour==NULL) continue;
+
+        for(int j=0;j<pathPoints.size();j++)
+        {
+            if(pathPoints[j].pos==contour->GetPathPosPoint())
+            {
+                contour->SetTagIndex(j);
+                break;
+            }
+        }
+    }
+    m_PathPoints=pathPoints;
+
+    //set resice slider
     ui->resliceSlider->setPathPoints(pathPoints);
     ui->resliceSlider->setImageNode(imageNode);
     double resliceSize=m_ContourGroup->GetResliceSize();
@@ -376,7 +394,14 @@ void svSegmentation2D::InsertContourByPathPosPoint(svContour* contour)
         {
             SetContour(index, contour);
         }else{
-            index=m_ContourGroup->GetInsertingContourIndexByPathPosPoint(contour->GetPathPosPoint());
+            for(int i=0;i<m_PathPoints.size();i++)
+            {
+                if(m_PathPoints[i].pos==contour->GetPathPosPoint())
+                    contour->SetTagIndex(i);
+            }
+
+//            index=m_ContourGroup->GetInsertingContourIndexByPathPosPoint(contour->GetPathPosPoint());
+            index=m_ContourGroup->GetInsertingContourIndexByTagIndex(contour->GetTagIndex());
             InsertContour(contour,index);
         }
     }

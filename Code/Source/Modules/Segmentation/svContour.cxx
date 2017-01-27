@@ -17,7 +17,8 @@ svContour::svContour()
       m_Extendable( false ),
       m_Selected(false),
       m_MinControlPointNumber(2),
-      m_MaxControlPointNumber(2)
+      m_MaxControlPointNumber(2),
+      m_TagIndex(0)
  {
     for (int i=0;i<5;i++)
     {

@@ -193,6 +193,8 @@ protected:
     bool m_ContourChanging;
 
     QmitkStdMultiWidget* m_DisplayWidget;
+
+    std::vector<svPathElement::svPathPoint> m_PathPoints;
 };
 
 #endif // SVSEGMENTATION2D_H
