@@ -14,9 +14,6 @@
 #include "mitkBaseRenderer.h"
 #include "mitkUndoController.h"
 
-#include <iostream>
-using namespace std;
-
 svContourGroupDataInteractor::svContourGroupDataInteractor()
     : mitk::DataInteractor()
     , m_SelectionAccuracy(0.1)
@@ -171,7 +168,8 @@ bool svContourGroupDataInteractor::PointIsValid( const mitk::InteractionEvent* i
                 mitk::Point3D previousPoint=m_Contour->GetControlPoint(i);
 
                 double dis=point.EuclideanDistanceTo(previousPoint);
-                tooClose=dis<m_SelectionAccuracy;
+
+                tooClose=dis<GetSelectionAccuracy();
 
                 if ( tooClose )
                     return false;
@@ -333,7 +331,7 @@ int svContourGroupDataInteractor::SearchCoutourPoint(
         mitk::Point3D firstContourPoint;
         mitk::Point3D previousContourPoint;
 
-        double selectionDistance=m_SelectionAccuracy;
+        double selectionDistance=2*GetSelectionAccuracy();
 
         bool firstPoint=true;
         for(int i=0;i<contour->GetContourPointNumber();i++)
@@ -422,7 +420,7 @@ int svContourGroupDataInteractor::SearchControlPoint(
         {
             mitk::Point3D point=contour->GetControlPoint(i);
 
-            if ( point3d.EuclideanDistanceTo( point ) < m_SelectionAccuracy )
+            if ( point3d.EuclideanDistanceTo( point ) < GetSelectionAccuracy() )
             {
                 return i;
             }
@@ -807,6 +805,18 @@ void svContourGroupDataInteractor::SetSelectionAccuracy( mitk::ScalarType accura
     m_SelectionAccuracy = accuracy;
 }
 
+mitk::ScalarType svContourGroupDataInteractor::GetSelectionAccuracy() const
+{
+    float pointsize=(float)(2*m_SelectionAccuracy);
+    if (GetDataNode()!=NULL)
+    {
+        GetDataNode()->GetFloatProperty("point.3dsize", pointsize);
+    }
+
+    double accuracy=(double)(pointsize);
+
+    return accuracy;
+}
 
 void svContourGroupDataInteractor::SetMinimumPointDistance( mitk::ScalarType minimumDistance )
 {

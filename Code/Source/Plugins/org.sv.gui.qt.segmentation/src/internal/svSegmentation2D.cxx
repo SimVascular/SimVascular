@@ -125,6 +125,7 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
     connect(m_LoftWidget->ui->btnApply, SIGNAL(clicked()), this, SLOT(ApplyLofting()) );
     connect(m_LoftWidget->ui->btnClose, SIGNAL(clicked()), this, SLOT(HideLoftWidget()) );
 
+    connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 }
 
 void svSegmentation2D::Visible()
@@ -274,6 +275,14 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         int insertingIndex=svMath3::GetInsertintIndexByDistance(pathPosPoints, contour->GetPathPosPoint(), false);
         if(insertingIndex!=-2)
         {
+            svPathElement::svPathPoint pp1=pathElement->GetPathPoint(insertingIndex);
+            svPathElement::svPathPoint pp2=contour->GetPathPoint();
+
+            //if the two path points have the same position and tangent, do not add
+            if(pp1.pos[0]==pp2.pos[0] && pp1.pos[1]==pp2.pos[1] && pp1.pos[2]==pp2.pos[2]
+               && pp1.tangent[0]==pp2.tangent[0] && pp1.tangent[1]==pp2.tangent[1] && pp1.tangent[2]==pp2.tangent[2])
+                continue;
+
             pathPosPoints.insert(pathPosPoints.begin()+insertingIndex,contour->GetPathPosPoint());
             pathPoints.insert(pathPoints.begin()+insertingIndex,contour->GetPathPoint());
         }
@@ -281,7 +290,13 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     ui->resliceSlider->setPathPoints(pathPoints);
     ui->resliceSlider->setImageNode(imageNode);
-    ui->resliceSlider->setResliceSize(5.0);
+    double resliceSize=m_ContourGroup->GetResliceSize();
+    if(resliceSize==0)
+    {
+        resliceSize=5.0;
+        m_ContourGroup->SetResliceSize(resliceSize);
+    }
+    ui->resliceSlider->setResliceSize(resliceSize);
     ui->resliceSlider->updateReslice();
 
     m_DataInteractor = svContourGroupDataInteractor::New();
@@ -1043,7 +1058,8 @@ void svSegmentation2D::LoftContourGroup()
         int timeStep=GetTimeStep();
 
         m_ContourGroup->RemoveInvalidContours(timeStep);
-        m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,0,timeStep),timeStep);
+        if(m_ContourGroup->GetSize()>1)
+            m_LoftSurface->SetVtkPolyData(svModelUtils::CreateLoftSurface(m_ContourGroup,0,0,timeStep),timeStep);
 
     }
     else
@@ -1111,4 +1127,10 @@ void svSegmentation2D::ContourChangingOff()
     m_ContourChanging=false;
     if(m_CurrentSegButton)
         m_CurrentSegButton->setStyleSheet("");
+}
+
+void svSegmentation2D::UpdatePathResliceSize(double newSize)
+{
+    if(m_ContourGroup)
+        m_ContourGroup->SetResliceSize(newSize);
 }

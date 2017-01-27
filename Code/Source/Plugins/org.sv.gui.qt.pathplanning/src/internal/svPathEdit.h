@@ -4,6 +4,7 @@
 #include "svPathSmooth.h"
 #include "svPathCreate.h"
 #include "svPath.h"
+#include "svPathDataInteractor.h"
 
 #include <QmitkFunctionality.h>
 //#include <QmitkPointListView.h>
@@ -34,11 +35,7 @@ public slots:
 
     void ChangePath();
 
-    void AddToEnd();
-
-    void AddToTop();
-
-    void AddPoint(int index, mitk::Point3D, int timeStep);
+    void AddPoint(mitk::Point3D);
 
     void SmoothCurrentPath();
 
@@ -46,11 +43,11 @@ public slots:
 
     void SelectItem(const QModelIndex & idx);
 
-    void InsertPointAbove();
-
     void DeleteSelected();
 
     void SmartAdd();
+
+    void ManuallyAdd();
 
     void UpdateGUI();
 
@@ -58,6 +55,7 @@ public slots:
 
     void UpdateSlice();
 
+    void UpdatePathResliceSize(double newSize);
 
 public:
 
@@ -98,21 +96,21 @@ protected:
 
     svPath* m_Path;
 
-    bool m_ParentNodeOriginalVisible;
-
     Ui::svPathEdit *ui;
 
     QWidget* m_Parent;
 
     //    QmitkPointListView* m_PointListView;
 
-    mitk::DataInteractor::Pointer m_DataInteractor;
+    svPathDataInteractor::Pointer m_DataInteractor;
 
     svPathSmooth* m_SmoothWidget;
 
     svPathCreate* m_PathCreateWidget;
 
     mitk::Image* m_Image;
+
+    mitk::DataNode::Pointer m_ImageNode;
 
     QmitkStdMultiWidget* m_DisplayWidget;
 

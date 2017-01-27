@@ -399,7 +399,7 @@ void svResliceSlider::updateResliceSize()
 {
     bool ok;
     double newSize = QInputDialog::getDouble(this, tr("Change Reslice Size"),tr("Reslice Size:")
-                                          , resliceSize, 1.0, 100.0, 2, &ok);
+                                          , resliceSize, 0.1, 100.0, 2, &ok);
     if(ok){
         resliceSize=newSize;
         if(isResliceOn())
@@ -408,6 +408,7 @@ void svResliceSlider::updateResliceSize()
             updateReslice();
             setSlicePos(index);
         }
+         emit resliceSizeChanged(newSize);
     }
 }
 

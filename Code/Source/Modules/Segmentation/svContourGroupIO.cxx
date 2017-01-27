@@ -55,6 +55,10 @@ std::vector<mitk::BaseData::Pointer> svContourGroupIO::Read()
     groupElement->QueryIntAttribute("path_id",&pathID);
     group->SetPathID(pathID);
 
+    double resliceSize=5.0;
+    groupElement->QueryDoubleAttribute("reslice_size", &resliceSize);
+    group->SetResliceSize(resliceSize);
+
     int timestep=-1;
     for( TiXmlElement* timestepElement = groupElement->FirstChildElement("timestep");
          timestepElement != nullptr;
@@ -248,6 +252,7 @@ void svContourGroupIO::Write()
     auto  groupElement = new TiXmlElement("contourgroup");
     groupElement->SetAttribute("path_name", group->GetPathName());
     groupElement->SetAttribute("path_id", group->GetPathID());
+    groupElement->SetDoubleAttribute("reslice_size", group->GetResliceSize());
     document.LinkEndChild(groupElement);
 
     for(int t=0;t<group->GetTimeSize();t++)

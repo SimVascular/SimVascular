@@ -25,7 +25,7 @@ public slots:
 
     void Cancel();
 
-    void ResetLineEditNumber(int index);
+    void ResetNumberSpacing(int index);
 
     void SetCreatePath(bool create);
 
@@ -33,7 +33,7 @@ public slots:
 
     void SetSubdivisionType(int index);
 
-    void SetNumber(int number);
+    void SetNumber(QString number);
 
     double GetVolumeImageSpacing();
 
@@ -56,6 +56,8 @@ protected:
     int m_TimeStep;
 
     svDataNodeOperationInterface* m_Interface;
+
+    bool m_UpdateNumberSpacing;
 };
 
 #endif // SVPATHCREATE_H

@@ -75,7 +75,7 @@ svContourModelVtkMapper2D::svContourModelVtkMapper2D()
       m_ShowPoints(true),
       m_LineWidth(2),
       m_PointLineWidth(1),
-      m_Point2DSize(80),
+      m_Point2DSize(80.0f),
       m_DistanceToPlane(4.0f)
 {
 }
@@ -377,7 +377,8 @@ void svContourModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *ren
         ls->m_PropAssembly->VisibilityOn();
     }
     node->GetBoolProperty("show points",        m_ShowPoints, renderer);
-    node->GetIntProperty("point.size",       m_Point2DSize, renderer);
+    node->GetFloatProperty("point.displaysize",       m_Point2DSize, renderer);
+    m_Point2DSize=10*m_Point2DSize;
     node->GetIntProperty("point.linewidth",    m_PointLineWidth, renderer);
     node->GetIntProperty("line.width",          m_LineWidth, renderer);
 
@@ -473,7 +474,7 @@ void svContourModelVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *ren
 void svContourModelVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRenderer* renderer, bool overwrite)
 {
     node->AddProperty( "show points", mitk::BoolProperty::New(true), renderer, overwrite );
-    node->AddProperty( "point.size", mitk::IntProperty::New(80), renderer, overwrite );
+    node->AddProperty( "point.displaysize", mitk::FloatProperty::New(8.0f), renderer, overwrite );
     node->AddProperty( "point.linewidth", mitk::IntProperty::New(1), renderer, overwrite );
 
     node->AddProperty( "line.width", mitk::IntProperty::New(2), renderer, overwrite );

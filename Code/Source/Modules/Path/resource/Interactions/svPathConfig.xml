@@ -13,11 +13,11 @@
   </event_variant>
   <event_variant class="MousePressEvent" name="DeletePoint">
     <attribute name="EventButton" value="RightMouseButton"/>
-<!--    <attribute name="Modifiers" value="ctrl"/>-->
+    <attribute name="Modifiers" value="ctrl"/>
   </event_variant>
   <event_variant class="MousePressEvent" name="AddPointClick">
     <attribute name="EventButton" value="LeftMouseButton"/>
-    <attribute name="Modifiers" value="shift"/>
+    <attribute name="Modifiers" value="ctrl"/>
   </event_variant>
   <event_variant class="MousePressEvent" name="StartMove">
     <attribute name="EventButton" value="LeftMouseButton"/>

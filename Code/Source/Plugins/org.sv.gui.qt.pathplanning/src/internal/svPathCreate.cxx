@@ -24,6 +24,7 @@ svPathCreate::svPathCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNod
     , m_TimeStep(timeStep)
     , m_CreatePath(true)
     , m_PathFolderNode(NULL)
+    , m_UpdateNumberSpacing(true)
 {
     m_Interface=new svDataNodeOperationInterface;
 
@@ -32,8 +33,31 @@ svPathCreate::svPathCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataNod
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreatePath()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
     connect(ui->lineEditPathName, SIGNAL(returnPressed()), this, SLOT(CreatePath()));
-    connect(ui->comboBoxSubdivisionType, SIGNAL(currentIndexChanged(int)), this, SLOT(ResetLineEditNumber(int )));
+    connect(ui->comboBoxSubdivisionType, SIGNAL(currentIndexChanged(int)), this, SLOT(ResetNumberSpacing(int )));
     connect(ui->lineEditNumber, SIGNAL(returnPressed()), this, SLOT(CreatePath()));
+
+    mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("svPathFolder");
+    mitk::NodePredicateDataType::Pointer isPathNode = mitk::NodePredicateDataType::New("svPath");
+    mitk::DataNode::Pointer pathNode=NULL;
+
+    if(m_SelecteNode.IsNull())
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer node=m_SelecteNode;
+
+    if(isPathFolder->CheckNode(node)){
+        m_PathFolderNode=node;
+    }
+    else if(isPathNode->CheckNode(node)){
+        pathNode=node;
+        mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(node);
+        if(rs->size()>0){
+            m_PathFolderNode=rs->GetElement(0);
+        }
+    }
+
     move(400,400);
 }
 
@@ -47,16 +71,32 @@ void svPathCreate::SetFocus( )
     ui->lineEditPathName->setFocus();
 }
 
-void svPathCreate::ResetLineEditNumber(int index)
+void svPathCreate::ResetNumberSpacing(int index)
 {
     if(index==2)
     {
-        ui->lineEditNumber->setEnabled(false);
-        ui->lineEditNumber->setText("");
+        ui->labelNumberSpacing->setText("Spacing:");
+        if(!m_UpdateNumberSpacing)
+            return;
+
+        double spacing=GetVolumeImageSpacing();
+        if(spacing==-1.0)
+        {
+            ui->lineEditNumber->setText("");
+            QMessageBox::warning(this,"No image found","Please provide a value for spacing!");
+        }
+        else
+        {
+            ui->lineEditNumber->setText(QString::number(spacing));
+            QMessageBox::information(this,"Image found","The spacing is filled with the minimum image spacing.");
+        }
     }
     else
     {
-        ui->lineEditNumber->setEnabled(true);
+        ui->labelNumberSpacing->setText("Number:");
+        if(!m_UpdateNumberSpacing)
+            return;
+
         if(index==0)
             ui->lineEditNumber->setText("100");
         else
@@ -78,33 +118,6 @@ void svPathCreate::SetCreatePath(bool create)
 
 void svPathCreate::CreatePath()
 {
-    mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("svPathFolder");
-    mitk::NodePredicateDataType::Pointer isPathNode = mitk::NodePredicateDataType::New("svPath");
-    mitk::DataNode::Pointer pathNode=NULL;
-
-    if(m_SelecteNode.IsNull())
-    {
-        return;
-    }
-
-    mitk::DataNode::Pointer node=m_SelecteNode;
-
-    if(isPathFolder->CheckNode(node)){
-        m_PathFolderNode=node;
-    }
-    else if(isPathNode->CheckNode(node)){
-        pathNode=node;
-        mitk::DataStorage::SetOfObjects::ConstPointer rs = m_DataStorage->GetSources(node);
-        if(rs->size()>0){
-            m_PathFolderNode=rs->GetElement(0);
-        }else{
-            return;
-        }
-    }
-    else{
-        return;
-    }
-
     std::string pathName=ui->lineEditPathName->text().trimmed().toStdString();
 
     if(m_CreatePath)
@@ -114,7 +127,12 @@ void svPathCreate::CreatePath()
             return;
         }
 
-        mitk::DataNode::Pointer exitingNode=m_DataStorage->GetNamedDerivedNode(pathName.c_str(),m_PathFolderNode);
+        mitk::DataNode::Pointer exitingNode=NULL;
+        if(m_PathFolderNode.IsNull())
+            exitingNode=m_DataStorage->GetNamedNode(pathName);
+        else
+            exitingNode=m_DataStorage->GetNamedDerivedNode(pathName.c_str(),m_PathFolderNode);
+
         if(exitingNode){
             QMessageBox::warning(NULL,"Path Already Created","Please use a different path name!");
             return;
@@ -123,13 +141,22 @@ void svPathCreate::CreatePath()
 
     int currentIndex=ui->comboBoxSubdivisionType->currentIndex();
 
-    int subdivisionNum=ui->lineEditNumber->text().trimmed().toInt();
-    if(currentIndex==0&&subdivisionNum<2){
-        QMessageBox::warning(NULL,"Total Point Number Too Small","Please give a number >= 2 at least!");
+    bool ok=false;
+
+    int subdivisionNum=ui->lineEditNumber->text().trimmed().toInt(&ok);
+    if(currentIndex==0 && (!ok || subdivisionNum<2)){
+        QMessageBox::warning(NULL,"Total Point Number Not Valid","Please give a valid number >= 2!");
         return;
     }
-    if(currentIndex==1&&subdivisionNum<1){
-        QMessageBox::warning(NULL,"Subdivision Number Too Small","Please give a number >= 1 at least!");
+    if(currentIndex==1 && (!ok || subdivisionNum<1)){
+        QMessageBox::warning(NULL,"Subdivision Number Not Valid","Please give a valid number >= 1!");
+        return;
+    }
+
+    ok=false;
+    double spacing=ui->lineEditNumber->text().trimmed().toDouble(&ok);
+    if(currentIndex==2 && (!ok || spacing<=0)){
+        QMessageBox::warning(NULL,"Spacing Not Valid","Please give a valid value > 0!");
         return;
     }
 
@@ -155,7 +182,7 @@ void svPathCreate::CreatePath()
             break;
         case 2:
             path->SetMethod(svPathElement::CONSTANT_SPACING);
-            path->SetSpacing(GetVolumeImageSpacing());
+            path->SetSpacing(spacing);
             path->SetCalculationNumber(0);
             break;
         default:
@@ -187,9 +214,9 @@ void svPathCreate::CreatePath()
         }
         m_Interface->ExecuteOperation(doOp);
     }
-    else if(!pathNode.IsNull())
+    else if(m_SelecteNode.IsNotNull())
     {
-        svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+        svPath* path=dynamic_cast<svPath*>(m_SelecteNode->GetData());
         int timeStep=m_TimeStep;
         svPathElement* pathElement=path->GetPathElement(timeStep);
         svPathElement* changedPathElement=pathElement->Clone();
@@ -209,8 +236,9 @@ void svPathCreate::CreatePath()
             break;
         case 2:
             changedPathElement->SetMethod(svPathElement::CONSTANT_SPACING);
-            changedPathElement->SetSpacing(GetVolumeImageSpacing());
+            changedPathElement->SetSpacing(spacing);
             changedPathElement->SetCalculationNumber(0);
+
             break;
         default:
             return;
@@ -233,7 +261,10 @@ void svPathCreate::CreatePath()
 
 double svPathCreate::GetVolumeImageSpacing()
 {
-    double minSpacing=0.1;
+    double minSpacing=-1.0;
+
+    if(m_PathFolderNode.IsNull())
+        return minSpacing;
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (m_PathFolderNode,isProjFolder,false);
@@ -275,10 +306,12 @@ void svPathCreate::SetPathName(QString pathName)
 
 void svPathCreate::SetSubdivisionType(int index)
 {
+    m_UpdateNumberSpacing=false;
     ui->comboBoxSubdivisionType->setCurrentIndex(index);
+    m_UpdateNumberSpacing=true;
 }
 
-void svPathCreate::SetNumber(int number)
+void svPathCreate::SetNumber(QString number)
 {
-     ui->lineEditNumber->setText(QString::number(number));
+     ui->lineEditNumber->setText(number);
 }

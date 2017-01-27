@@ -10,8 +10,7 @@
 #include "mitkBaseRenderer.h"
 #include "mitkUndoController.h"
 
-svPathDataInteractor::svPathDataInteractor():
-    m_SelectionAccuracy(0.35)
+svPathDataInteractor::svPathDataInteractor()
 {
 }
 
@@ -21,7 +20,38 @@ svPathDataInteractor::~svPathDataInteractor()
 
 void svPathDataInteractor::SetAccuracy(double accuracy)
 {
-    m_SelectionAccuracy = accuracy;
+//    m_SelectionAccuracy = accuracy;
+//    if (GetDataNode()!=NULL)
+//    {
+//        GetDataNode()->AddProperty("selection accuracy", mitk::DoubleProperty::New(accuracy));
+//    }
+}
+
+double svPathDataInteractor::GetAccuracy(const mitk::InteractionPositionEvent* positionEvent) const
+{
+    double accuracy=0.1;
+    if (GetDataNode()!=NULL && positionEvent!=NULL)
+    {
+        float pointsize=0.0f;
+        if(IsOn2DView(positionEvent))
+        {
+            mitk::BaseRenderer *renderer = positionEvent->GetSender();
+            if(renderer)
+            {
+                pointsize=10.0f;
+                GetDataNode()->GetFloatProperty("point 2D display size", pointsize, renderer);
+                pointsize=2*pointsize*renderer->GetScaleFactorMMPerDisplayUnit();
+            }
+        }
+        else
+        {
+            pointsize=0.2f;
+            GetDataNode()->GetFloatProperty("point size", pointsize);
+        }
+
+        accuracy=(double)(pointsize/2);
+    }
+    return accuracy;
 }
 
 void svPathDataInteractor::ConnectActionsAndFunctions()
@@ -56,6 +86,49 @@ void svPathDataInteractor::DataNodeChanged()
     }
 }
 
+int svPathDataInteractor::SearchControlPoint(
+        const mitk::InteractionPositionEvent* positionEvent,
+        svPathElement* pathElement
+        ) const
+{
+//     if(IsOn2DView(positionEvent))
+//     {
+//         mitk::BaseRenderer *renderer = positionEvent->GetSender();
+
+//         mitk::Point2D displayPosition = positionEvent->GetPointerPositionOnScreen();
+
+//         mitk::Point2D displayControlPoint;
+
+//         for ( int i=pathElement->GetControlPointNumber()-1; i>=0; i-- )
+//         {
+//             mitk::Point3D point=pathElement->GetControlPoint(i);
+
+//             renderer->WorldToDisplay( point, displayControlPoint );
+
+//              if ( displayPosition.EuclideanDistanceTo( displayControlPoint ) < 5.0 )
+//             {
+//                 return i;
+//             }
+//         }
+//     }
+//     else
+//     {
+//         mitk::Point3D point = positionEvent->GetPositionInWorld();
+//         return pathElement->SearchControlPoint(point,GetAccuracy());
+//     }
+
+     mitk::Point3D point = positionEvent->GetPositionInWorld();
+     return pathElement->SearchControlPoint(point,GetAccuracy(positionEvent));
+
+     return -2;
+}
+
+bool svPathDataInteractor::IsOn2DView(const mitk::InteractionEvent* interactionEvent) const
+{
+     mitk::BaseRenderer *renderer = interactionEvent->GetSender();
+     return renderer->GetMapperID()==mitk::BaseRenderer::Standard2D;
+}
+
 bool svPathDataInteractor::IsOverPoint(const mitk::InteractionEvent *interactionEvent)
 {
     const mitk::InteractionPositionEvent* positionEvent = dynamic_cast<const mitk::InteractionPositionEvent*>(interactionEvent);
@@ -69,7 +142,7 @@ bool svPathDataInteractor::IsOverPoint(const mitk::InteractionEvent *interaction
     if(pathElement==NULL)
         return false;
 
-    int index=pathElement->SearchControlPoint(point,m_SelectionAccuracy);
+    int index=SearchControlPoint(positionEvent,pathElement);
     if (index != -2)
         return true;
 
@@ -141,7 +214,7 @@ void svPathDataInteractor::RemovePoint(mitk::StateMachineAction*, mitk::Interact
         if(pathElement==NULL)
             return;
 
-        int index = pathElement->SearchControlPoint(point, m_SelectionAccuracy);
+        int index = SearchControlPoint(positionEvent,pathElement);
         if (index != -2)
         {
             mitk::Point3D originalPoint = pathElement->GetControlPoint(index);
@@ -323,7 +396,7 @@ void svPathDataInteractor::SelectPoint(mitk::StateMachineAction*, mitk::Interact
             return;
 
         mitk::Point3D point = positionEvent->GetPositionInWorld();
-        int index = pathElement->SearchControlPoint(point, m_SelectionAccuracy);
+        int index = SearchControlPoint(positionEvent,pathElement);
         if (index != -2)
         {
             //first deselect the other points

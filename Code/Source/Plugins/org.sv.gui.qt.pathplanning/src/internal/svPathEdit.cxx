@@ -4,7 +4,6 @@
 #include "svPathSmooth.h"
 #include "svPath.h"
 #include "svPathOperation.h"
-#include "svPathDataInteractor.h"
 #include "svMath3.h"
 
 // mitk
@@ -19,7 +18,7 @@
 // Qt
 #include <QMessageBox>
 #include <QShortcut>
-#include <QTreeView>
+#include <QInputDialog>
 
 #include <iostream>
 using namespace std;
@@ -28,13 +27,13 @@ const QString svPathEdit::EXTENSION_ID = "org.sv.views.pathplanning";
 
 svPathEdit::svPathEdit():
     ui(new Ui::svPathEdit),
-    m_ParentNodeOriginalVisible(true),
     m_PathChangeObserverTag(-1),
     m_PathNode(NULL),
     m_Path(NULL),
     m_DisplayWidget(NULL),
     m_SmoothWidget(NULL),
-    m_PathCreateWidget(NULL)
+    m_PathCreateWidget(NULL),
+    m_ImageNode(NULL)
 {
 }
 
@@ -67,20 +66,17 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
     connect(ui->btnChange, SIGNAL(clicked()), this, SLOT(ChangePath()) );
-    connect(ui->buttonSmartAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
-    connect(ui->buttonInsertAbove, SIGNAL(clicked()), this, SLOT(InsertPointAbove()) );
-    connect(ui->btnAddToEnd, SIGNAL(clicked()), this, SLOT(AddToEnd()) );
-    connect(ui->btnAddToTop, SIGNAL(clicked()), this, SLOT(AddToTop()) );
+    connect(ui->buttonAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
+    connect(ui->buttonAddManually, SIGNAL(clicked()), this, SLOT(ManuallyAdd()) );
     connect(ui->buttonDelete, SIGNAL(clicked()), this, SLOT(DeleteSelected()) );
     connect(ui->listWidget,SIGNAL(clicked(const QModelIndex&)), this, SLOT(SelectItem(const QModelIndex&)) );
 
     connect(ui->btnSmooth,SIGNAL(clicked()), this, SLOT(SmoothCurrentPath()) );
 
     QShortcut *shortcut = new QShortcut(QKeySequence("Ctrl+A"), parent);
-    connect(shortcut, SIGNAL(activated()), ui->buttonSmartAdd, SLOT(click()));
+    connect(shortcut, SIGNAL(activated()), ui->buttonAdd, SLOT(click()));
 
-    mitk::DataNode::Pointer parentNode=this->GetDataStorage()->GetNamedNode("Paths");
-    if(parentNode) parentNode->GetBoolProperty("visible", m_ParentNodeOriginalVisible);
+    connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 }
 
 //void svPathEdit::Activated()
@@ -159,6 +155,24 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         ClearAll();
         m_Parent->setEnabled(false);
         return;
+    }
+
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+
+        rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("svImageFolder"));
+        if(rs->size()>0)
+        {
+            mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
+            rs=GetDataStorage()->GetDerivations(imageFolderNode);
+            if(rs->size()<1) return;
+            m_ImageNode=rs->GetElement(0);
+            m_Image=dynamic_cast<mitk::Image*>(m_ImageNode->GetData());
+
+        }
     }
 
     m_Parent->setEnabled(true);
@@ -300,27 +314,30 @@ void svPathEdit::UpdateSlice()
 
 void svPathEdit::SetupResliceSlider()
 {
-    mitk::DataNode::Pointer imageNode=NULL;
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
-    if(rs->size()>0)
-    {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+//    mitk::DataNode::Pointer imageNode=NULL;
+//    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+//    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_PathNode,isProjFolder,false);
+//    if(rs->size()>0)
+//    {
+//        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
 
-        rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("svImageFolder"));
-        if(rs->size()>0)
-        {
+//        rs=GetDataStorage()->GetDerivations (projFolderNode,mitk::NodePredicateDataType::New("svImageFolder"));
+//        if(rs->size()>0)
+//        {
 
-            mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
-            rs=GetDataStorage()->GetDerivations(imageFolderNode);
-            if(rs->size()<1) return;
-            imageNode=rs->GetElement(0);
-            m_Image=dynamic_cast<mitk::Image*>(imageNode->GetData());
+//            mitk::DataNode::Pointer imageFolderNode=rs->GetElement(0);
+//            rs=GetDataStorage()->GetDerivations(imageFolderNode);
+//            if(rs->size()<1) return;
+//            imageNode=rs->GetElement(0);
+//            m_Image=dynamic_cast<mitk::Image*>(imageNode->GetData());
 
-        }
-    }
+//        }
+//    }
 
-    if(imageNode.IsNull()) return;
+//    if(imageNode.IsNull()) return;
+
+    if(m_ImageNode.IsNull())
+        return;
 
     if(m_Path==NULL)
         return;
@@ -337,9 +354,14 @@ void svPathEdit::SetupResliceSlider()
         GetImageRealBounds(realBounds);
         ui->resliceSlider->setPathPoints(pathElement->GetExtendedPathPoints(realBounds,GetVolumeImageSpacing(),startingIndex));
         ui->resliceSlider->SetStartingSlicePos(startingIndex);
-        ui->resliceSlider->setImageNode(imageNode);
-        ui->resliceSlider->setResliceSize(5.0);
-
+        ui->resliceSlider->setImageNode(m_ImageNode);
+        double resliceSize=m_Path->GetResliceSize();
+        if(resliceSize==0)
+        {
+            resliceSize=5.0;
+            m_Path->SetResliceSize(resliceSize);
+        }
+        ui->resliceSlider->setResliceSize(resliceSize);
         ui->resliceSlider->setEnabled(true);
         if(ui->resliceSlider->isResliceOn())
             ui->resliceSlider->updateReslice();
@@ -396,13 +418,59 @@ void svPathEdit::ChangePath(){
     m_PathCreateWidget->SetCreatePath(false);
     m_PathCreateWidget->SetPathName(ui->labelPathName->text());
     m_PathCreateWidget->SetSubdivisionType(pathElement->GetMethod());
-    m_PathCreateWidget->SetNumber(pathElement->GetCalculationNumber());
+
+    if(pathElement->GetMethod()==svPathElement::CONSTANT_SPACING)
+        m_PathCreateWidget->SetNumber(QString::number(pathElement->GetSpacing()));
+    else
+        m_PathCreateWidget->SetNumber(QString::number(pathElement->GetCalculationNumber()));
+
     m_PathCreateWidget->show();
     m_PathCreateWidget->SetFocus();
 }
 
-void svPathEdit::AddPoint(int index,mitk::Point3D point, int timeStep)
+void svPathEdit::AddPoint(mitk::Point3D point)
 {
+    if(m_Path==NULL){
+        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+        return;
+    }
+
+    int timeStep=GetTimeStep();
+
+    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
+    if(pathElement==NULL) return;
+
+    //Check if the point already exists
+    if(pathElement->SearchControlPoint(point,0)!=-2)
+    {
+        return;
+    }
+
+    int index=-2;
+
+    int selectedModeIndex=ui->comboBoxAddingMode->currentIndex();
+
+    switch(selectedModeIndex)
+    {
+    case 0:
+        index=pathElement->GetInsertintIndexByDistance(point);
+        break;
+    case 1:
+        index=0;
+        break;
+    case 2:
+        index=-1;
+        break;
+    case 3:
+        index= ui->listWidget->selectionModel()->selectedRows().front().row();
+        break;
+    case 4:
+        index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
+        break;
+    default:
+        break;
+    }
+
     if(index!=-2 ){
 
         //        UnselectAll(timeStep, timeInMs,true);
@@ -423,103 +491,41 @@ void svPathEdit::AddPoint(int index,mitk::Point3D point, int timeStep)
 
 void svPathEdit::SmartAdd()
 {
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
-        return;
-    }
-
     mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
 
-    int timeStep=GetTimeStep();
-
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
-
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
-    {
-        return;
-    }
-
-    int index=pathElement->GetInsertintIndexByDistance(point);
-
-    AddPoint(index,point,timeStep);
-
+    AddPoint(point);
 }
 
-void svPathEdit::AddToEnd()
+void svPathEdit::ManuallyAdd()
 {
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
+    bool ok;
+    QString text = QInputDialog::getText(m_Parent, tr("Point Coordinates"),
+                                         tr("x,y,z or x y z:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (!ok || text.trimmed().isEmpty())
         return;
-    }
 
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-
-    int timeStep=GetTimeStep();
-
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
-
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
+    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    if(list.size()!=3)
     {
+        QMessageBox::warning(m_Parent,"Coordinates Missing","Please provide valid coordinates for the point!");
         return;
     }
 
-    //    int index=currentPath->GetSize(timeStep);
-    int index=-1;
+    mitk::Point3D point;
 
-    AddPoint(index,point,timeStep);
-}
-
-void svPathEdit::AddToTop()
-{
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
-        return;
-    }
-
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-
-    int timeStep=GetTimeStep();
-
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
-
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
+    for(int i=0;i<list.size();i++)
     {
-        return;
+        ok=false;
+        point[i]=list[i].toDouble(&ok);
+        if(!ok)
+        {
+            QMessageBox::warning(m_Parent,"Coordinates Invalid","Please provide valid coordinates for the point!");
+            return;
+        }
     }
 
-    AddPoint(0,point,timeStep);
-}
-
-void svPathEdit::InsertPointAbove()
-{
-
-    if(m_Path==NULL){
-        QMessageBox::information(NULL,"No Path Selected","Please select a path in data manager!");
-        return;
-    }
-
-    mitk::Point3D point=m_DisplayWidget->GetCrossPosition();
-
-    int timeStep=GetTimeStep();
-
-    svPathElement* pathElement=m_Path->GetPathElement(timeStep);
-    if(pathElement==NULL) return;
-
-    //Check if the point already exists
-    if(pathElement->SearchControlPoint(point,0)!=-2)
-    {
-        return;
-    }
-
-    int index= ui->listWidget->selectionModel()->selectedRows().front().row();
-    AddPoint(index,point,timeStep);
-
+    AddPoint(point);
 }
 
 void svPathEdit::DeleteSelected(){
@@ -605,4 +611,8 @@ void svPathEdit::SmoothCurrentPath()
     m_SmoothWidget->SetFocus();
 }
 
-
+void svPathEdit::UpdatePathResliceSize(double newSize)
+{
+    if(m_Path)
+        m_Path->SetResliceSize(newSize);
+}

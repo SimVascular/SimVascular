@@ -62,6 +62,10 @@ public:
 
     int GetCalculationNumber() const;
 
+    double GetResliceSize() const {return m_ResliceSize;}
+
+    void SetResliceSize(double size) {m_ResliceSize=size;}
+
     svPathOperation::PathOperationType GetOperationType();
 
     //virtual methods, that need to be implemented
@@ -106,6 +110,8 @@ public:
     svPathOperation::PathOperationType m_OperationType;
 
     bool m_DataModified;
+
+    double m_ResliceSize;
   };
 
 SVPATH_EXPORT bool Equal( const svPath* leftHandSide, const svPath* rightHandSide, mitk::ScalarType eps, bool verbose );

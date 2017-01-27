@@ -106,7 +106,7 @@ protected:
     bool m_ShowPoints;              // "show points" property
     int m_LineWidth;                // "line width" property
     int m_PointLineWidth;           // "point line width" property
-    int m_Point2DSize;              // "point 2D size" property
+    float m_Point2DSize;              // "point 2D size" property
     float m_DistanceToPlane;        // "point 2D distance to plane" property
 
 

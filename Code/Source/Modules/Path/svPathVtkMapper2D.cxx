@@ -92,10 +92,10 @@ svPathVtkMapper2D::svPathVtkMapper2D()
       m_ShowPoints(true),
       m_LineWidth(1),
       m_PointLineWidth(1),
-      m_Point2DSize(100),
-      m_SplinePoint2DSize(60),
+      m_Point2DSize(100.0f),
       m_DistanceToPlane(4.0f)
 {
+    m_SplinePoint2DSize=0.6f*m_Point2DSize;
 }
 
 svPathVtkMapper2D::~svPathVtkMapper2D()
@@ -495,8 +495,10 @@ void svPathVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
     }
     node->GetBoolProperty("show points",        m_ShowPoints, renderer);
     node->GetBoolProperty("show spline points",      m_ShowSplinePoints, renderer);
-    node->GetIntProperty("point 2D size",       m_Point2DSize, renderer);
-    node->GetIntProperty("spline point 2D size",       m_SplinePoint2DSize, renderer);
+    node->GetFloatProperty("point 2D display size",       m_Point2DSize, renderer);
+    m_Point2DSize=10*m_Point2DSize;
+    m_SplinePoint2DSize=0.6f*m_Point2DSize;
+
     node->GetIntProperty("point line width",    m_PointLineWidth, renderer);
     node->GetFloatProperty("point 2D distance to plane", m_DistanceToPlane, renderer );
 
@@ -613,7 +615,7 @@ void svPathVtkMapper2D::GenerateDataForRenderer( mitk::BaseRenderer *renderer )
 
     if(needGenerateData)
     {
-        // create new vtk render objects (e.g. a circle for a point)
+        //create new vtk render objects (e.g. a circle for a point)
         this->CreateVTKRenderObjects(renderer);
     }
 }
@@ -624,8 +626,7 @@ void svPathVtkMapper2D::SetDefaultProperties(mitk::DataNode* node, mitk::BaseRen
 
     node->AddProperty( "show points", mitk::BoolProperty::New(true), renderer, overwrite );
     node->AddProperty( "show spline points", mitk::BoolProperty::New(true), renderer, overwrite );
-    node->AddProperty( "point 2D size", mitk::IntProperty::New(100), renderer, overwrite );
-    node->AddProperty( "spline point 2D size", mitk::IntProperty::New(60), renderer, overwrite );
+    node->AddProperty( "point 2D display size", mitk::FloatProperty::New(10.0f), renderer, overwrite );
     node->AddProperty( "point line width", mitk::IntProperty::New(2), renderer, overwrite );
     node->AddProperty( "point 2D distance to plane", mitk::FloatProperty::New(0.01f), renderer, overwrite );
     node->AddProperty( "unselected color",mitk::ColorProperty::New(0,0,1),renderer, overwrite );

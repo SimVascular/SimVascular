@@ -19,6 +19,8 @@ public:
 
     void SetSelectionAccuracy( mitk::ScalarType accuracy );
 
+    mitk::ScalarType GetSelectionAccuracy() const;
+
     void SetMinimumPointDistance( mitk::ScalarType minimumDistance );
 
     void SetInteraction3D(bool use3D);
