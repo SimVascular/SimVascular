@@ -275,6 +275,14 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         int insertingIndex=svMath3::GetInsertintIndexByDistance(pathPosPoints, contour->GetPathPosPoint(), false);
         if(insertingIndex!=-2)
         {
+            svPathElement::svPathPoint pp1=pathElement->GetPathPoint(insertingIndex);
+            svPathElement::svPathPoint pp2=contour->GetPathPoint();
+
+            //if the two path points have the same position and tangent, do not add
+            if(pp1.pos[0]==pp2.pos[0] && pp1.pos[1]==pp2.pos[1] && pp1.pos[2]==pp2.pos[2]
+               && pp1.tangent[0]==pp2.tangent[0] && pp1.tangent[1]==pp2.tangent[1] && pp1.tangent[2]==pp2.tangent[2])
+                continue;
+
             pathPosPoints.insert(pathPosPoints.begin()+insertingIndex,contour->GetPathPosPoint());
             pathPoints.insert(pathPoints.begin()+insertingIndex,contour->GetPathPoint());
         }
