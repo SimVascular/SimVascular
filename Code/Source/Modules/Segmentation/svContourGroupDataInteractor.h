@@ -19,7 +19,7 @@ public:
 
     void SetSelectionAccuracy( mitk::ScalarType accuracy );
 
-    mitk::ScalarType GetSelectionAccuracy();
+    mitk::ScalarType GetSelectionAccuracy() const;
 
     void SetMinimumPointDistance( mitk::ScalarType minimumDistance );
 

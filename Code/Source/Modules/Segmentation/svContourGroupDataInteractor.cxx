@@ -805,7 +805,7 @@ void svContourGroupDataInteractor::SetSelectionAccuracy( mitk::ScalarType accura
     m_SelectionAccuracy = accuracy;
 }
 
-mitk::ScalarType svContourGroupDataInteractor::GetSelectionAccuracy()
+mitk::ScalarType svContourGroupDataInteractor::GetSelectionAccuracy() const
 {
     float pointsize=(float)(2*m_SelectionAccuracy);
     if (GetDataNode()!=NULL)

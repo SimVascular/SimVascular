@@ -25,7 +25,7 @@ public:
 
     void SetAccuracy(double accuracy);
 
-    double GetAccuracy(const mitk::InteractionPositionEvent* positionEvent);
+    double GetAccuracy(const mitk::InteractionPositionEvent* positionEvent) const;
 
 protected:
     svPathDataInteractor();

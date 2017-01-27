@@ -27,7 +27,7 @@ void svPathDataInteractor::SetAccuracy(double accuracy)
 //    }
 }
 
-double svPathDataInteractor::GetAccuracy(const mitk::InteractionPositionEvent* positionEvent)
+double svPathDataInteractor::GetAccuracy(const mitk::InteractionPositionEvent* positionEvent) const
 {
     double accuracy=0.1;
     if (GetDataNode()!=NULL && positionEvent!=NULL)
