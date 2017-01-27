@@ -52,6 +52,12 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     ui->setupUi(parent);
     //    parent->setMaximumWidth(500);
 
+    ui->comboBoxAddingMode->setItemText(svPath::SMART,"Smart");
+    ui->comboBoxAddingMode->setItemText(svPath::BEGINNING,"Beginning");
+    ui->comboBoxAddingMode->setItemText(svPath::END,"End");
+    ui->comboBoxAddingMode->setItemText(svPath::BEFORE,"Before");
+    ui->comboBoxAddingMode->setItemText(svPath::AFTER,"After");
+
     m_DisplayWidget=GetActiveStdMultiWidget();
 
     if(m_DisplayWidget==NULL)
@@ -77,6 +83,8 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     connect(shortcut, SIGNAL(activated()), ui->buttonAdd, SLOT(click()));
 
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
+
+    connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
 }
 
 //void svPathEdit::Activated()
@@ -203,6 +211,7 @@ void svPathEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     SetupResliceSlider();
 
+    ui->comboBoxAddingMode->setCurrentIndex(m_Path->GetAddingMode());
 }
 
 void svPathEdit::NodeChanged(const mitk::DataNode* node)
@@ -452,19 +461,19 @@ void svPathEdit::AddPoint(mitk::Point3D point)
 
     switch(selectedModeIndex)
     {
-    case 0:
+    case svPath::SMART:
         index=pathElement->GetInsertintIndexByDistance(point);
         break;
-    case 1:
+    case svPath::BEGINNING:
         index=0;
         break;
-    case 2:
+    case svPath::END:
         index=-1;
         break;
-    case 3:
+    case svPath::BEFORE:
         index= ui->listWidget->selectionModel()->selectedRows().front().row();
         break;
-    case 4:
+    case svPath::AFTER:
         index= ui->listWidget->selectionModel()->selectedRows().front().row()+1;
         break;
     default:
@@ -615,4 +624,9 @@ void svPathEdit::UpdatePathResliceSize(double newSize)
 {
     if(m_Path)
         m_Path->SetResliceSize(newSize);
+}
+
+void svPathEdit::UpdateAddingMode(int mode)
+{
+    m_Path->SetAddingMode(mode);
 }

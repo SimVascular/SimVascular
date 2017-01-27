@@ -203,27 +203,27 @@
           <widget class="QComboBox" name="comboBoxAddingMode">
            <item>
             <property name="text">
-             <string>Smart</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Beginning</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>End</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Before</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>After</string>
+             <string/>
             </property>
            </item>
           </widget>

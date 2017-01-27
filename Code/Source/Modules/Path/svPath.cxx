@@ -9,6 +9,7 @@ svPath::svPath()
     , m_Spacing(0)
     , m_DataModified(false)
     , m_ResliceSize(5.0)
+    , m_AddingMode(SMART)
 {
     this->InitializeEmpty();
 }
@@ -23,6 +24,7 @@ svPath::svPath(const svPath &other)
     , m_DataModified(true)
     , m_CalculateBoundingBox(true)
     , m_ResliceSize(other.m_ResliceSize)
+    , m_AddingMode(other.m_AddingMode)
 {
     for (std::size_t t = 0; t < other.GetTimeSize(); ++t)
     {

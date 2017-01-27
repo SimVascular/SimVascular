@@ -70,8 +70,9 @@ void svPathSmooth::SmoothPath()
 
     svPathElement* smoothedPathElement=pathElement->CreateSmoothedPathElement(sampleRate,numModes,controlPointsBased);
 
-    svPathOperation* doOp = new svPathOperation(svPathOperation::OpSETPATHELEMENT,timeStep,smoothedPathElement);
+    mitk::OperationEvent::IncCurrObjectEventId();
 
+    svPathOperation* doOp = new svPathOperation(svPathOperation::OpSETPATHELEMENT,timeStep,smoothedPathElement);
     svPathOperation* undoOp = new svPathOperation(svPathOperation::OpSETPATHELEMENT,timeStep,pathElement);
     mitk::OperationEvent *operationEvent = new mitk::OperationEvent(path, doOp, undoOp, "Set PathElement");
     mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
