@@ -34,13 +34,37 @@ if(SV_EXTERNALS_BUILD_TCL)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "TCL")
 endif()
+if(SV_EXTERNALS_BUILD_TCLLIB)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "TCLLIB")
+endif()
 if(SV_EXTERNALS_BUILD_TK)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "TK")
 endif()
+if(SV_EXTERNALS_BUILD_TKLIB)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "TKLIB")
+endif()
 if(SV_EXTERNALS_BUILD_PYTHON)
   set(${proj}_DEPENDENCIES
     ${${proj}_DEPENDENCIES} "PYTHON")
+endif()
+if(SV_EXTERNALS_BUILD_PIP)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "PIP")
+endif()
+if(SV_EXTERNALS_BUILD_NUMPY)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "NUMPY")
+endif()
+if(SV_EXTERNALS_BUILD_GDCM)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "GDCM")
+endif()
+if(SV_EXTERNALS_BUILD_FREETYPE)
+  set(${proj}_DEPENDENCIES
+    ${${proj}_DEPENDENCIES} "FREETYPE")
 endif()
 
 # Git info
