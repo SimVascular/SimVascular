@@ -66,7 +66,7 @@ HDRS	= \
     svModelLegacyIO.h \
     svModelObjectFactory.h
 
-ifeq ($(SV_USE_OPENCASCADE),1)
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     HDRS +=  svModelElementOCCT.h
 endif
 
@@ -87,7 +87,7 @@ CXXSRCS	= \
     svModelLegacyIO.cxx \
     svModelObjectFactory.cxx
 
-ifeq ($(SV_USE_OPENCASCADE),1)
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     CXXSRCS += svModelElementOCCT.cxx
 endif
 
