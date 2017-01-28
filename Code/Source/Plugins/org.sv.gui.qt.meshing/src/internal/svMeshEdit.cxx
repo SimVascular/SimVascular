@@ -11,6 +11,8 @@
 #include "svMitkMeshIO.h"
 #include "svProjectManager.h"
 
+#include "svModelElementPolyData.h"
+
 #ifdef SV_USE_OpenCASCADE
 #include "svModelElementOCCT.h"
 #endif

@@ -554,6 +554,19 @@ inline bool file_exists (char* name) {
   }
   newpath[newpathlength++]=';';
 
+  // need mitk path, sigh.
+  char mitkrunpath[_MAX_ENV];
+  mitkrunpath[0]='\0';
+  sprintf(mitkrunpath,"%s\\%s",rundir,"mitk/bin");
+  for (int i = 0; i < strlen(mitkrunpath);i++) {
+    newpath[newpathlength++]=mitkrunpath[i];
+    if (newpathlength == _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  path to long!\n");
+      exit(-1);
+    }
+  }  
+  newpath[newpathlength++]=';';
+  
   // now add original path
 
   for (int i = 0; i < strlen(oldpath);i++) {
@@ -567,10 +580,10 @@ inline bool file_exists (char* name) {
 
   _putenv_s( "PATH", newpath );
 
-  //fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
+  fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
   //fprintf(stdout,"RUNDIR: %s\n",rundir);
-  //fprintf(stdout,"NEW PATH: %s\n",newpath);
-  //fprintf(stdout,"length of path: %i\n",newpathlength);
+  fprintf(stdout,"NEW PATH: %s\n",newpath);
+  fprintf(stdout,"length of path: %i\n",newpathlength);
 
    // set the environment variables using the registry
   char envvar[_MAX_ENV];
