@@ -33,6 +33,12 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
 fi
 
 #
+# wget all source code
+#
+
+source Scripts/build-sv-externals-helper-wget-generic.sh
+
+#
 # unpack all of the source code
 #
 
