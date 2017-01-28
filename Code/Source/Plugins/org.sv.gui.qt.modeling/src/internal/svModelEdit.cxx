@@ -1474,7 +1474,7 @@ void svModelEdit::CreateModel()
             statusText=statusText+" Number of Free Edges: "+ QString::number(stats[0])+", Number of Bad Edges: "+ QString::number(stats[1]);
         }
     }
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(m_ModelType=="OpenCASCADE")
     {
         newModelElement=svModelUtils::CreateModelElementOCCT(segNodes,numSampling);
@@ -1592,7 +1592,7 @@ void svModelEdit::BlendModel()
 
         newModelElement=svModelUtils::CreateModelElementPolyDataByBlend(mepd, blendRadii, param);
     }
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(m_ModelType=="OpenCASCADE")
     {
         svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(modelElement);
@@ -1976,7 +1976,7 @@ void svModelEdit::ChangeFacetSize()
     double facetSize=0;
     QString sizeType="";
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     if(m_ModelType=="OpenCASCADE")
     {
         svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
@@ -2021,7 +2021,7 @@ void svModelEdit::ChangeFacetSize()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     if(m_ModelType=="OpenCASCADE")
     {
         svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement(GetTimeStep()));
@@ -2089,7 +2089,7 @@ void svModelEdit::ConvertToPolyDataModel()
     mitk::ProgressBar::GetInstance()->Progress();
     WaitCursorOn();
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     if(m_ModelType=="OpenCASCADE")
     {
         svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());

@@ -13,7 +13,7 @@
 
 #include "svModelElementPolyData.h"
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
 #include "svModelElementOCCT.h"
 #endif
 
@@ -577,7 +577,7 @@ void svMeshEdit::RunCommands(bool fromGUI)
     svModelElementPolyData* modelElement=NULL;
     modelElement=dynamic_cast<svModelElementPolyData*>(m_Model->GetModelElement());
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     if(modelElement==NULL)
     {
         svModelElementOCCT* me=dynamic_cast<svModelElementOCCT*>(m_Model->GetModelElement());

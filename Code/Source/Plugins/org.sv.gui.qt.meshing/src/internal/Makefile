@@ -41,11 +41,14 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS) \
-           $(OPENCASCADE_INCDIR) \
            $(MESHSIM_INCDIR) \
            $(PARASOLID_INCDIR) \
            -Dorg_sv_gui_qt_meshing_EXPORTS \
            -DUS_MODULE_NAME=svMeshing
+
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+    CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
 
 HDRS	= \
     svMeshCreate.h \
@@ -109,11 +112,15 @@ endif
 ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_OPENCASCADE),1)
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(OPENCASCADE_LIBS)
+DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
+
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+    DLLLIBS += $(OPENCASCADE_LIBS)
+endif
 
 EXTRA_MOC_INCDIRS = $(MITK_PLUGIN_INCDIRS)
 

@@ -50,7 +50,7 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
         QString filter="Legacy Models (*.vtp";
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
         filter=filter+" *.brep *.step *.stl *.iges";
 #endif
 #ifdef SV_USE_PARASOLID_QT_GUI

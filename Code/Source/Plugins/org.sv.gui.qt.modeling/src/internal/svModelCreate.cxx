@@ -35,7 +35,7 @@ svModelCreate::svModelCreate(mitk::DataStorage::Pointer dataStorage, mitk::DataN
 
     ui->comboBoxType->clear();
     ui->comboBoxType->addItem("PolyData");
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     ui->comboBoxType->addItem("OpenCASCADE");
 #endif
 #ifdef SV_USE_PARASOLID_QT_GUI
