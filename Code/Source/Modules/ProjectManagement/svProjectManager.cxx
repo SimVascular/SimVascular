@@ -737,7 +737,7 @@ void svProjectManager::RenameDataNode(mitk::DataStorage::Pointer dataStorage, mi
     {
         extensions.push_back(".mdl");
         extensions.push_back(".vtp");
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
         extensions.push_back(".brep");
 #endif
 #ifdef SV_USE_PARASOLID_QT_GUI

@@ -38,12 +38,15 @@ CXXFLAGS = $(GLOBAL_CXXFLAGS) \
            $(PYTHON_INCDIR) \
            $(ZLIB_INCDIR) \
            $(TETGEN_INCDIR) \
-           $(OPENCASCADE_INCDIR) \
            $(MESHSIM_INCDIR) \
            $(PARASOLID_INCDIR) \
            $(QT_INCDIRS) $(QT_DEFS) \
 	   $(ITK_INCDIRS) \
            $(MITK_INCDIRS) $(MITK_DEFS)
+
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+    CXXFLAGS += $(OPENCASCADE_INCDIR)
+endif
 
 MODULE_NAME = svMesh
 MODULE_NAME_ALL_CAPS = SVMESH
@@ -116,11 +119,15 @@ endif
 ifeq ($(SV_USE_PARASOLID_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_parasolid_solid$(LIBLINKEXT)
 endif
-ifeq ($(SV_USE_OPENCASCADE),1)
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
 endif
 
-DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS) $(OPENCASCADE_LIBS)
+DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
+
+ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
+    DLLLIBS += $(OPENCASCADE_LIBS)
+endif
 
 TARGET_LIB_NAME = simvascular_qtgui_module_mesh
 
