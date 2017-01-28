@@ -19,7 +19,7 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    mkdir -p tar_output
    rm -Rf zip_output
    mkdir -p zip_output
-   SV_SUPER_OPTIONS="UNTAR_UNZIP_ALL TAR_EVERYTHING ZIP_EVERYTHING"
+   SV_SUPER_OPTIONS="UNTAR_UNZIP_ALL ARCHIVE_EVERYTHING ZIP_EVERYTHING"
    SV_SUPER_OPTIONS="WGET_TCL         UNTAR_TCL         BUILD_TCL         ARCHIVE_TCL         ZIP_TCL         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_PYTHON      UNTAR_PYTHON      BUILD_PYTHON      ARCHIVE_PYTHON      ZIP_PYTHON      $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_NUMPY       UNTAR_NUMPY       BUILD_NUMPY       ARCHIVE_NUMPY       ZIP_NUMPY       $SV_SUPER_OPTIONS"
@@ -199,10 +199,7 @@ fi
 # create tar files for distrution
 #
 
-if [[ $SV_SUPER_OPTIONS == *ARCHIVE_* ]]; then
-  ./tmp/create-archives-windows.cl.sh >& ./tmp/stdout.create-archives-windows.cl.txt
-fi
+./tmp/create-archives-windows.cl.sh >& ./tmp/stdout.create-archives-windows.cl.txt
 
-if [[ $SV_SUPER_OPTIONS == *ZIP_* ]]; then
-  ./tmp/tar-to-zip-all.windows.cl.sh >& ./tmp/stdout.tar-to-zip-all.windows.cl.txt
-fi
+./tmp/tar-to-zip-all.windows.cl.sh >& ./tmp/stdout.tar-to-zip-all.windows.cl.txt
+

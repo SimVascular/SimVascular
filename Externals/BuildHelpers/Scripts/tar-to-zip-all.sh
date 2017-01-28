@@ -116,7 +116,7 @@ mkdir -p zip_output_tmp
 
 # everything
 if [[ $SV_SUPER_OPTIONS == *ZIP_EVERYTHING* ]]; then
-  echo "TAR_EVERYTHING"
+  echo "ZIP_EVERYTHING"
   REPLACEME_TAR -C zip_output_tmp/ -xvzf tar_output/REPLACEME_SV_PLATFORM.REPLACEME_SV_COMPILER_BIN_DIR.REPLACEME_SV_ARCH_DIR.everything-BUILD${BUILDDATE}.tar.gz
   pushd zip_output_tmp
   REPLACEME_ZIP -r ../zip_output/REPLACEME_SV_PLATFORM.REPLACEME_SV_COMPILER_BIN_DIR.REPLACEME_SV_ARCH_DIR.everything-BUILD${BUILDDATE}.zip \
