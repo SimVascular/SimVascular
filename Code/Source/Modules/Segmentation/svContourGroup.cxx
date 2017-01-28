@@ -577,7 +577,7 @@ int svContourGroup::GetInsertingContourIndexByPathPosPoint(mitk::Point3D posPoin
     return svMath3::GetInsertintIndexByDistance(GetContourPathPosPoints(t),posPoint);
 }
 
-int svContourGroup::GetInsertingContourIndexByTagIndex(int tagIndex, unsigned int t = 0)
+int svContourGroup::GetInsertingContourIndexByTagIndex(int tagIndex, unsigned int t)
 {
     for(int i=0;i<GetSize(t);i++)
     {

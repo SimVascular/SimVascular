@@ -257,5 +257,9 @@ svContour* svContourEllipse::CreateByFitting(svContour* contour)
     newContour->SetControlPoints(controlPoints,false);
     newContour->SetControlPoint(2,pt1);
 
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
+    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
+
     return newContour;
 }

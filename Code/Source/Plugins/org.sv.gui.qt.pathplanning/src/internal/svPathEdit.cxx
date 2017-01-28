@@ -628,5 +628,5 @@ void svPathEdit::UpdatePathResliceSize(double newSize)
 
 void svPathEdit::UpdateAddingMode(int mode)
 {
-    m_Path->SetAddingMode(mode);
+    m_Path->SetAddingMode((svPath::AddingMode)mode);
 }

@@ -228,14 +228,14 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="ctkSliderWidget" name="sliderThreshold">
+                   <widget class="ctkSliderWidget" name="sliderThreshold" native="true">
                     <property name="enabled">
                      <bool>true</bool>
                     </property>
-                    <property name="decimals">
+                    <property name="decimals" stdset="0">
                      <number>1</number>
                     </property>
-                    <property name="tickInterval">
+                    <property name="tickInterval" stdset="0">
                      <double>0.000000000000000</double>
                     </property>
                    </widget>
@@ -441,20 +441,17 @@
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line_3">
-           <property name="lineWidth">
-            <number>1</number>
-           </property>
-           <property name="midLineWidth">
-            <number>2</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QLabel" name="label_2">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="btnCircle">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="text">
             <string>Circle</string>
            </property>
@@ -468,6 +465,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnEllipse">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="text">
             <string>Ellipse</string>
            </property>
@@ -475,6 +475,9 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnSplinePoly">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="text">
             <string>SplinePoly</string>
            </property>
@@ -482,24 +485,18 @@
          </item>
          <item>
           <widget class="QPushButton" name="btnPolygon">
+           <property name="contextMenuPolicy">
+            <enum>Qt::CustomContextMenu</enum>
+           </property>
            <property name="text">
             <string>Polygon</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line">
-           <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
-           </property>
-           <property name="lineWidth">
-            <number>1</number>
-           </property>
-           <property name="midLineWidth">
-            <number>2</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -511,12 +508,30 @@
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line_2">
-           <property name="midLineWidth">
-            <number>2</number>
+          <widget class="QLabel" name="label_4">
+           <property name="text">
+            <string/>
            </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnCopy">
+           <property name="text">
+            <string>Copy</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnPaste">
+           <property name="text">
+            <string>Paste</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -548,11 +563,14 @@
         <zorder>btnSplinePoly</zorder>
         <zorder>btnDelete</zorder>
         <zorder>btnThreshold</zorder>
-        <zorder>line</zorder>
         <zorder>btnSmooth</zorder>
-        <zorder>line_2</zorder>
-        <zorder>line_3</zorder>
         <zorder>line_6</zorder>
+        <zorder>btnCopy</zorder>
+        <zorder>btnPaste</zorder>
+        <zorder>label_2</zorder>
+        <zorder>label_3</zorder>
+        <zorder>label_4</zorder>
+        <zorder>label_5</zorder>
        </widget>
       </item>
      </layout>

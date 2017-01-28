@@ -118,6 +118,27 @@ public slots:
 
     void UpdatePathResliceSize(double newSize);
 
+    void ManualContextMenuRequested();
+
+    void ManualCircleContextMenuRequested(const QPoint&);
+    void ManualEllipseContextMenuRequested(const QPoint&);
+    void ManualSplinePolyContextMenuRequested(const QPoint&);
+    void ManualPolygonContextMenuRequested(const QPoint&);
+
+    void CreateManualCircle( bool checked = false );
+
+    void CreateManualEllipse( bool checked = false );
+
+    void CreateManualSplinePoly( bool checked = false );
+
+    void CreateManualPolygon( bool checked = false );
+
+    void CreateManualPolygonType(bool spline);
+
+    void CopyContour();
+
+    void PasteContour();
+
 public:
 
     int GetTimeStep();
@@ -195,6 +216,10 @@ protected:
     QmitkStdMultiWidget* m_DisplayWidget;
 
     std::vector<svPathElement::svPathPoint> m_PathPoints;
+
+    QMenu* m_ManualMenu;
+
+    svContour* m_CopyContour;
 };
 
 #endif // SVSEGMENTATION2D_H

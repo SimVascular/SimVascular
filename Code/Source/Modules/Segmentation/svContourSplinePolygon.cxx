@@ -127,5 +127,9 @@ svContour* svContourSplinePolygon::CreateByFitting(svContour* contour, int divis
     newContour->SetClosed(contour->IsClosed());
     newContour->SetControlPoints(controlPoints);
 
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
+    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
+
     return newContour;
 }
