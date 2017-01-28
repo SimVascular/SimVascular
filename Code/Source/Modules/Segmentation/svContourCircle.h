@@ -28,6 +28,8 @@ public:
 
     void AssignCenterScalingPoints() override;
 
+    static svContour* CreateByFitting(svContour* contour);
+
   protected:
 
   };

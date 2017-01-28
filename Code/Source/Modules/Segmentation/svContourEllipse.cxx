@@ -206,3 +206,56 @@ void svContourEllipse::PlaceControlPoints(mitk::Point3D point)
     svContour::PlaceControlPoints(point);
     m_ControlPointSelectedIndex = 2;
 }
+
+svContour* svContourEllipse::CreateByFitting(svContour* contour)
+{
+    double maxDist=0.0;
+    double minDist=0.0;
+    int minIndex=0;
+    int maxIndex=0;
+    mitk::Point3D centerPoint,point;
+    centerPoint=contour->GetControlPoint(0);
+    mitk::Point3D pt1,pt2;
+
+    for(int i=0;i<contour->GetContourPointNumber();i++)
+    {
+//        contour->GetPlaneGeometry()->Map(contour->GetContourPoint(i), point);
+        point=contour->GetContourPoint(i);
+        double dist=centerPoint.EuclideanDistanceTo(point);
+        if(i==0)
+        {
+            minDist=dist;
+            pt2=point;
+        }
+        if(dist>maxDist)
+        {
+            maxDist=dist;
+            maxIndex=i;
+            pt1=point;
+        }
+        if(dist<minDist)
+        {
+            minDist=dist;
+            minIndex=i;
+            pt2=point;
+        }
+    }
+
+    std::vector<mitk::Point3D> controlPoints;
+    mitk::Point3D pttemp;;
+    controlPoints.push_back(centerPoint);
+    controlPoints.push_back(pttemp);
+    controlPoints.push_back(pt1);
+    controlPoints.push_back(pt2);
+
+    svContourEllipse* newContour=new svContourEllipse();
+    newContour->SetAsCircle(false);
+    newContour->SetPathPoint(contour->GetPathPoint());
+    newContour->SetPlaced(true);
+    newContour->SetMethod(contour->GetMethod());
+//    newContour->SetClosed(contour->IsClosed());
+    newContour->SetControlPoints(controlPoints,false);
+    newContour->SetControlPoint(2,pt1);
+
+    return newContour;
+}

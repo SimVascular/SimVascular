@@ -34,6 +34,8 @@ public:
 
     void PlaceControlPoints(mitk::Point3D point) override;
 
+    static svContour* CreateByFitting(svContour* contour);
+
   protected:
 
     bool m_TreatAsCircle;

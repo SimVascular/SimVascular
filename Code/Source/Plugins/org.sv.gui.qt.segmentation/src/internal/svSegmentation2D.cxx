@@ -802,44 +802,89 @@ void svSegmentation2D::FinishPreview()
     ui->btnThreshold->setStyleSheet("");
 }
 
-void svSegmentation2D::CreateCircle()
-{
-    ResetGUI();
+//void svSegmentation2D::CreateEllipse()
+//{
+//    ResetGUI();
 
-    m_CurrentSegButton=ui->btnCircle;
-    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+//    m_CurrentSegButton=ui->btnEllipse;
+//    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    SetSecondaryWidgetsVisible(false);
+//    SetSecondaryWidgetsVisible(false);
 
-    svContour* contour=new svContourCircle();
-    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+//    svContour* contour=new svContourEllipse();
+//    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+//    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+//    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
 
-    mitk::OperationEvent::IncCurrObjectEventId();
+//    mitk::OperationEvent::IncCurrObjectEventId();
 
-    m_ContourChanging=true;
+//    m_ContourChanging=true;
 
-    InsertContourByPathPosPoint(contour);
-}
+//    InsertContourByPathPosPoint(contour);
+//}
 
 void svSegmentation2D::CreateEllipse()
 {
     ResetGUI();
 
-    m_CurrentSegButton=ui->btnEllipse;
-    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
     SetSecondaryWidgetsVisible(false);
 
-    svContour* contour=new svContourEllipse();
+    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+
+    svContour* existingContour=m_ContourGroup->GetContour(index);
+
+    svContour* contour=NULL;
+    if(existingContour && existingContour->GetContourPointNumber()>2)
+    {
+        contour=svContourEllipse::CreateByFitting(existingContour);
+    }else{
+
+        m_CurrentSegButton=ui->btnEllipse;
+        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+
+        contour=new svContourEllipse();
+        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+        m_ContourChanging=true;
+    }
+
     contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
-    m_ContourChanging=true;
+    InsertContourByPathPosPoint(contour);
+}
+
+void svSegmentation2D::CreateCircle()
+{
+    ResetGUI();
+
+    SetSecondaryWidgetsVisible(false);
+
+    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+
+    svContour* existingContour=m_ContourGroup->GetContour(index);
+
+    svContour* contour=NULL;
+    if(existingContour && existingContour->GetContourPointNumber()>2)
+    {
+        contour=svContourCircle::CreateByFitting(existingContour);
+    }else{
+
+        m_CurrentSegButton=ui->btnCircle;
+        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+
+        contour=new svContourCircle();
+        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+        m_ContourChanging=true;
+    }
+
+    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+
+    mitk::OperationEvent::IncCurrObjectEventId();
 
     InsertContourByPathPosPoint(contour);
 }

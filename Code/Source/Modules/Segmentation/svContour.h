@@ -200,6 +200,8 @@ public:
     int GetTagIndex() {return m_TagIndex;}
     void SetTagIndex(int idx) {m_TagIndex=idx;}
 
+    double GetArea();
+
   protected:
 
     bool m_Selected;
