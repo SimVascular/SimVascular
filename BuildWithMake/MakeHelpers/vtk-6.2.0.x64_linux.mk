@@ -17,7 +17,6 @@ VTK_PYTHON_PACKAGES = $(VTK_BINDIR)/lib/python2.7/site-packages
 VTK_INCDIRS = \
 -I$(VTK_INCLUDE_DIR_BASE) \
 -I$(VTK_INCLUDE_DIR_BASE)/vtkexpat \
--I$(VTK_INCLUDE_DIR_BASE)/vtkfreetype \
 -I$(VTK_INCLUDE_DIR_BASE)/vtkgl2ps \
 -I$(VTK_INCLUDE_DIR_BASE)/vtkjpeg \
 -I$(VTK_INCLUDE_DIR_BASE)/vtkjsoncpp \
@@ -32,6 +31,10 @@ VTK_INCDIRS = \
 -I$(VTK_INCLUDE_DIR_BASE)/vtkzlib \
 -I$(VTK_INCLUDE_DIR_BASE)/alglib \
 -I$(VTK_INCLUDE_DIR_BASE)/TclTk
+
+ifneq ($(SV_USE_FREETYPE),1)
+  VTK_INCDIRS += -I$(VTK_INCLUDE_DIR_BASE)/vtkfreetype
+endif
 
 #
 #  libraries for svSolver only
@@ -248,7 +251,6 @@ VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtkalglib-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkexpat-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkftgl-6.2$(LIBLINKEXT) \
-		$(LIBFLAG)vtkfreetype-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkgl2ps-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkjpeg-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkjsoncpp-6.2$(LIBLINKEXT) \
@@ -262,6 +264,10 @@ VTK_LIBS +=     $(LIBPATH_COMPILER_FLAG)$(VTK_LIBDIRS) \
 		$(LIBFLAG)vtktiff-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkverdict-6.2$(LIBLINKEXT) \
 		$(LIBFLAG)vtkzlib-6.2$(LIBLINKEXT) \
+
+ifneq ($(SV_USE_FREETYPE),1)
+  VTK_LIBS +=   $(LIBFLAG)vtkfreetype-6.2$(LIBLINKEXT)
+endif
 
 #
 #  libraries for svPre, svPost, svSolver
