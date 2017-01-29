@@ -246,6 +246,11 @@ svContour* svContourEllipse::CreateByFitting(svContour* contour)
     controlPoints.push_back(centerPoint);
     controlPoints.push_back(pttemp);
     controlPoints.push_back(pt1);
+    double area=contour->GetArea();
+    double a=centerPoint.EuclideanDistanceTo(pt1);
+    double b=area/vnl_math::pi/a;
+    double b0=centerPoint.EuclideanDistanceTo(pt2);
+    pt2=centerPoint+(pt2-centerPoint)*b/b0;
     controlPoints.push_back(pt2);
 
     svContourEllipse* newContour=new svContourEllipse();
