@@ -27,7 +27,14 @@ if [ -z "$SV_SUPER_OPTIONS" ]; then
    SV_SUPER_OPTIONS="WGET_OPENCASCADE UNTAR_OPENCASCADE BUILD_OPENCASCADE ARCHIVE_OPENCASCADE ZIP_OPENCASCADE $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_MMG         UNTAR_MMG         BUILD_MMG         ARCHIVE_MMG         ZIP_MMG         $SV_SUPER_OPTIONS"
    SV_SUPER_OPTIONS="WGET_MITK        UNTAR_MITK        BUILD_MITK        ARCHIVE_MITK        ZIP_MITK        $SV_SUPER_OPTIONS"
+   export SV_SUPER_OPTIONS
 fi
+
+#
+# wget all source code
+#
+
+source Scripts/build-sv-externals-helper-wget-generic.sh
 
 #
 # unpack all of the source code
@@ -195,7 +202,7 @@ fi
 # create tar files for distrution
 #
 
-./tmp/create-archives-mac_osx.clang.sh >& ./tmp/stdout.create-archives-mac_osx.clang.txt
+source ./tmp/create-archives-mac_osx.clang.sh >& ./tmp/stdout.create-archives-mac_osx.clang.txt
 
-./tmp/tar-to-zip-all.clang.sh >& ./tmp/stdout.tar-to-zip-all.clang.txt
+source ./tmp/tar-to-zip-all.clang.sh >& ./tmp/stdout.tar-to-zip-all.clang.txt
 

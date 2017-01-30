@@ -4,7 +4,7 @@
 #include "svModel.h"
 #include "svModelElementPolyData.h"
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
 #include "svModelElementOCCT.h"
 #endif
 
@@ -93,7 +93,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
             modelNode->SetName(baseName.toStdString());
         }
     }
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges")
     {
         handler="set gOCCTFaceNames(";
@@ -302,7 +302,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
             }
         }
     }
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
     else if(type=="OpenCASCADE")
     {
         svModelElementOCCT* meocct=dynamic_cast<svModelElementOCCT*>(modelElement);

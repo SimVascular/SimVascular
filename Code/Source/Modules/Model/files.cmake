@@ -12,7 +12,7 @@ set(H_FILES
     svModelObjectFactory.h
 )
 
-if(SV_USE_OpenCASCADE)
+if(SV_USE_OpenCASCADE_QT_GUI)
   set(H_FILES
       ${H_FILES}
       svModelElementOCCT.h
@@ -40,7 +40,7 @@ set(CPP_FILES
     svModelObjectFactory.cxx
 )
 
-if(SV_USE_OpenCASCADE)
+if(SV_USE_OpenCASCADE_QT_GUI)
   set(CPP_FILES
       ${CPP_FILES}
       svModelElementOCCT.cxx

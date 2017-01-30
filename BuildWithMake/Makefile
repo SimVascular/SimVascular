@@ -109,7 +109,7 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-echo "puts \"s+REPLACEME_SV_MITK_SO_PATH+`cygpath -u $(SV_MITK_SO_PATH)`+g\"" >> tclscript
-	-echo "puts \"s+REPLACEME_SV_MITK_PLUGIN_PATH+`cygpath -u $(SV_MITK_PLUGIN_PATH)`+g\"" >> tclscript
+	-echo "s+REPLACEME_SV_MITK_PLUGIN_PATH+$(SV_MITK_PLUGIN_PATH)+g" >> sedscript
 endif
 endif
 ifeq ($(CLUSTER),x64_linux)
@@ -214,7 +214,7 @@ else
 	-echo "puts \"s+REPLACEME_SV_USE_PYTHON+OFF+g\"" >> tclscript
 endif
 endif
-	-/usr/bin/tclsh tclscript > sedscript
+	-/usr/bin/tclsh tclscript >> sedscript
 	-rm -f tclscript
 
 common-pre-build: mksedscript post-build

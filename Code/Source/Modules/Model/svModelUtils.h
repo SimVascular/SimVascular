@@ -10,7 +10,7 @@
 #include "svModelElement.h"
 #include "svModelElementPolyData.h"
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
    #include "svModelElementOCCT.h"
 #endif
 
@@ -85,7 +85,7 @@ public:
 
     static double CalculateVpdArea(vtkPolyData* vpd);
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
 
     static cvOCCTSolidModel* CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps);
 

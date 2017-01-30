@@ -291,16 +291,17 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 	-cp -f $(SV_OPENCASCADE_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 endif
 ifeq ($(SV_USE_MITK),1)
-	-mkdir -p $(DIST_DIR)/mitk/bin
-	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
-	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
-	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
-	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+	-mkdir -p $(DIST_DIR)/mitk
 	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
+	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+#	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
+#	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
+#	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
 ifeq ($(CLUSTER), x64_cygwin)
-	-mkdir -p $(DIST_DIR)/mitk/bin/plugins
-	-cp -fR $(SV_MITK_PLUGIN_PATH) $(DIST_DIR)/mitk/bin/plugins
-	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins/RelWithDebInfo
+	-cp -fRd $(MITK_BINDIRS) $(DIST_DIR)/mitk
+#	-mkdir -p $(DIST_DIR)/mitk/bin/plugins
+#	-cp -fR $(SV_MITK_PLUGIN_PATH) $(DIST_DIR)/mitk/bin/plugins
+#	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins/RelWithDebInfo
 else
 	-cp -f $(SV_MITK_PLUGIN_PATH)/* $(DIST_DIR)/mitk/bin/plugins
 	-cp -f $(SV_MITK_SO_PATH)/liborg*.$(SOEXT)* $(DIST_DIR)/mitk/bin/plugins

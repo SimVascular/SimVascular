@@ -924,7 +924,7 @@ double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
     return area;
 }
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
 
 cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> contourSet, std::string groupName, int numSamplingPts, int vecFlag, int addCaps)
 {

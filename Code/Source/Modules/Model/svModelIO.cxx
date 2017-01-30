@@ -4,7 +4,7 @@
 
 #include "simvascular_options.h"
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
 #include "svModelElementOCCT.h"
 #endif
 
@@ -109,7 +109,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
             }
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
             if(type=="OpenCASCADE")
             {
                 me=new svModelElementOCCT();
@@ -435,7 +435,7 @@ void svModelIO::Write()
             }
         }
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
         if(me->GetType()=="OpenCASCADE")
         {
             //for OpenCASCADE
@@ -478,7 +478,7 @@ void svModelIO::Write()
             }
         }
 
-#ifdef SV_USE_OpenCASCADE
+#ifdef SV_USE_OpenCASCADE_QT_GUI
         if(me->GetType()=="OpenCASCADE")
         {
             std::string dataFileName=fileName.substr(0,fileName.find_last_of("."))+".brep";

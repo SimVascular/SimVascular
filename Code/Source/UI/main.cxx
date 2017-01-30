@@ -146,42 +146,7 @@ void simvascularApp::initializeLibraryPaths() {
 
   std::cout << "\n\n *** simvascularApp: initializeLibraryPaths! *** \n\n" << std::endl << std::flush;
 
-  QStringList suffixes;
-  QDir appDir;
-
-  //
-  // This is the default behavior in AppUtil for MITK.
-  // This should be replaced without hardcoded paths!
-  //
-
-  suffixes << "plugins";
-#ifdef WIN32
-  suffixes << "bin/plugins";
-#ifdef CMAKE_INTDIR
-  suffixes << "bin/" CMAKE_INTDIR "/plugins";
-#endif
-#else
-  suffixes << "lib/plugins";
-#ifdef CMAKE_INTDIR
-  suffixes << "lib/" CMAKE_INTDIR "/plugins";
-#endif
-#endif
-
-#ifdef __APPLE__
-  suffixes << "../../plugins";
-#endif
-
-  // we add a couple of standard library search paths for plug-ins
-  appDir = QCoreApplication::applicationDirPath();
-
-  // walk one directory up and add bin and lib sub-dirs; this
-  // might be redundant
-  appDir.cdUp();
-
-  foreach(QString suffix, suffixes)
-  {
-    ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
-  }
+  bool found_sv_plugin_path = false;
 
   //
   //  This is SV code to start using env variables and registry
@@ -202,6 +167,7 @@ void simvascularApp::initializeLibraryPaths() {
     std::cerr << "FATAL ERROR:  SV_PLUGIN_PATH to long!\n" << std::endl << std::flush;
     exit(-1);
   } else {
+    found_sv_plugin_path = true;
     getenv_s( &requiredSize, plugin_env, requiredSize, "SV_PLUGIN_PATH" );
     char seps[] = ";";  
     char *token;
@@ -221,30 +187,79 @@ void simvascularApp::initializeLibraryPaths() {
   if (plugin_env == NULL) {
     std::cerr << "Warning:  SV_PLUGIN_PATH doesn't exist!\n" << std::endl << std::flush;
   } else {
-    QString pluginPath = plugin_env;
-    ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
-    std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+    found_sv_plugin_path = true;
+    char seps[] = ":";  
+    char *token;
+    token = strtok( plugin_env, seps ); 
+    while( token != NULL ) {  
+      // While there are tokens in "string"  
+      printf( " %s\n", token );  
+      QString pluginPath = token;
+      ctkPluginFrameworkLauncher::addSearchPath(pluginPath);
+      std::cout << "   Adding to plugin search path (" << pluginPath.toStdString() << ")" << std::endl << std::flush;
+      // Get next token
+      token = strtok( NULL, seps );
+    }
   }
 #endif
 
-  suffixes << "plugins";
-  suffixes << "bin/plugins";
-  suffixes << "lib/plugins";
+  //
+  // This is the default behavior in AppUtil for MITK.
+  //
 
-  // we add a couple of standard library search paths for plug-ins
-  appDir = QCoreApplication::applicationDirPath();
+  if (!found_sv_plugin_path) {
+    QStringList suffixes;
+    QDir appDir;
+    
+    suffixes << "plugins";
+#ifdef WIN32
+    suffixes << "bin/plugins";
+#ifdef CMAKE_INTDIR
+    suffixes << "bin/" CMAKE_INTDIR "/plugins";
+#endif
+#else
+    suffixes << "lib/plugins";
+#ifdef CMAKE_INTDIR
+    suffixes << "lib/" CMAKE_INTDIR "/plugins";
+#endif
+#endif
 
+#ifdef __APPLE__
+    suffixes << "../../plugins";
+#endif
+
+    // we add a couple of standard library search paths for plug-ins
+    appDir = QCoreApplication::applicationDirPath();
+
+    // walk one directory up and add bin and lib sub-dirs; this
+    // might be redundant
+    appDir.cdUp();
+
+    foreach(QString suffix, suffixes)
+    {
+      ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
+    }
+  
+    suffixes << "plugins";
+    suffixes << "bin/plugins";
+    suffixes << "lib/plugins";
+
+    // we add a couple of standard library search paths for plug-ins
+    appDir = QCoreApplication::applicationDirPath();
+
+    foreach(QString suffix, suffixes)
+    {
+      ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
+      std::cout << "Adding to plugin search path (" << appDir.absoluteFilePath(suffix).toStdString() <<  ")" << std::endl << std::flush;
+    }
+  
+  }
+  
   //
   //  This code is a debugging check to make sure that all of the dll's
   //  can be found in the search path.
   //
-
-  foreach(QString suffix, suffixes)
-  {
-    ctkPluginFrameworkLauncher::addSearchPath(appDir.absoluteFilePath(suffix));
-    std::cout << "Adding to plugin search path (" << appDir.absoluteFilePath(suffix).toStdString() <<  ")" << std::endl << std::flush;
-  }
-
+  
   QVariant pluginsToStartVariant = this->getProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS);
   QStringList pluginsToStart = pluginsToStartVariant.toStringList();
 
@@ -300,6 +315,7 @@ inline bool file_exists (char* name) {
   // default to tcl gui
   bool use_tcl_gui = true;
   bool use_qt_gui  = false;
+  bool use_workbench  = false;
   bool catch_debugger = false;
   use_qt_tcl_interp = false;
 
@@ -376,11 +392,12 @@ inline bool file_exists (char* name) {
 	fprintf(stdout,"simvascular command line options:\n");
 	fprintf(stdout,"  -h, --help      : print this info and exit\n");
 	fprintf(stdout,"  -tcl, --tcl-gui : use TclTk GUI\n");
-	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI (default)\n");
+	fprintf(stdout,"  -qt, --qt-gui   : use Qt GUI\n");
 	fprintf(stdout,"  -d,--debug      : infinite loop for debugging\n");
         fprintf(stdout,"  -ng ,--no-gui   : use command line mode (SV_BATCH_MODE overrides)\n");
 	fprintf(stdout,"  --qt-tcl-interp : use command line tcl interp with qt gui\n");
 	fprintf(stdout,"  --warn          : warn if invalid cmd line params (off by default)\n");
+	fprintf(stdout,"  --workbench     : use mitk workbench application\n");
 	exit(0);
       }
       if((!strcmp("--warn",argv[iarg]))) {
@@ -412,6 +429,12 @@ inline bool file_exists (char* name) {
       if((!strcmp("--qt-tcl-interp",argv[iarg]))) {
 	use_qt_tcl_interp = true;
 	gSimVascularBatchMode = 1;
+	foundValid = true;
+      }
+      if((!strcmp("--workbench",argv[iarg]))) {
+	use_qt_gui = true;
+	use_tcl_gui = false;
+	use_workbench = true;
 	foundValid = true;
       }
       if (!foundValid && warnInvalid) {
@@ -531,6 +554,19 @@ inline bool file_exists (char* name) {
   }
   newpath[newpathlength++]=';';
 
+  // need mitk path, sigh.
+  char mitkrunpath[_MAX_ENV];
+  mitkrunpath[0]='\0';
+  sprintf(mitkrunpath,"%s\\%s",rundir,"mitk/bin");
+  for (int i = 0; i < strlen(mitkrunpath);i++) {
+    newpath[newpathlength++]=mitkrunpath[i];
+    if (newpathlength == _MAX_ENV) {
+      fprintf(stderr,"FATAL ERROR:  path to long!\n");
+      exit(-1);
+    }
+  }  
+  newpath[newpathlength++]=';';
+  
   // now add original path
 
   for (int i = 0; i < strlen(oldpath);i++) {
@@ -544,10 +580,10 @@ inline bool file_exists (char* name) {
 
   _putenv_s( "PATH", newpath );
 
-  //fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
+  fprintf(stdout,"ORIGINAL PATH: %s\n",oldpath);
   //fprintf(stdout,"RUNDIR: %s\n",rundir);
-  //fprintf(stdout,"NEW PATH: %s\n",newpath);
-  //fprintf(stdout,"length of path: %i\n",newpathlength);
+  fprintf(stdout,"NEW PATH: %s\n",newpath);
+  fprintf(stdout,"length of path: %i\n",newpathlength);
 
    // set the environment variables using the registry
   char envvar[_MAX_ENV];
@@ -720,13 +756,17 @@ RegCloseKey(hKey2);
      #endif
 
      app.setSingleMode(true);
-     app.setApplicationName("SimVascular Workbench");
-     app.setOrganizationName("Stanford Medicine");
+     app.setApplicationName("SimVascularApplication");
+     app.setOrganizationName("SimVascular");
 
-//     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
-     app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.sv.gui.qt.application.svworkbench");
-//     app.setProperty(mitk::BaseApplication::PROP_APPLICATION, "org.sv.qt.application");
-
+     if (use_workbench) {
+       fprintf(stdout,"Note: Using WorkBench App.\n");
+       fflush(stdout);
+       app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.mitk.gui.qt.extapplication.workbench");
+     } else {
+       app.setProperty(mitk::BaseApplication::PROP_PRODUCT, "org.sv.gui.qt.application.svworkbench");
+     }
+     
      QStringList preloadLibs;
      preloadLibs << "liborg_mitk_gui_qt_ext";
      app.setPreloadLibraries(preloadLibs);
@@ -777,19 +817,17 @@ RegCloseKey(hKey2);
      pluginsToStart.push_back("org_mitk_gui_qt_volumevisualization");
 
      // SimVascular plugins
-     pluginsToStart.push_back("org_sv_projectdatanodes");
-     pluginsToStart.push_back("org_sv_gui_qt_application");
-     pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
-     pluginsToStart.push_back("org_sv_gui_qt_modeling");
-     pluginsToStart.push_back("org_sv_gui_qt_segmentation");
-     pluginsToStart.push_back("org_sv_gui_qt_meshing");
-     pluginsToStart.push_back("org_sv_gui_qt_simulation");
-
-     //  NOTE:
-     //  "ERROR: BlueBerry Workbench not running!"
-     //  is happening because of projectmanager.
-     pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
-
+     if (!use_workbench) {
+       pluginsToStart.push_back("org_sv_gui_qt_application");
+       pluginsToStart.push_back("org_sv_projectdatanodes");
+       pluginsToStart.push_back("org_sv_gui_qt_projectmanager");
+       pluginsToStart.push_back("org_sv_gui_qt_pathplanning");
+       pluginsToStart.push_back("org_sv_gui_qt_modeling");
+       pluginsToStart.push_back("org_sv_gui_qt_segmentation");
+       pluginsToStart.push_back("org_sv_gui_qt_meshing");
+       pluginsToStart.push_back("org_sv_gui_qt_simulation");
+     }
+     
      app.setProperty(ctkPluginFrameworkLauncher::PROP_PLUGINS, pluginsToStart);
 
      //Use transient start with declared activation policy
