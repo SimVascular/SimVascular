@@ -159,7 +159,7 @@ else
 	CL /Fetmp/uuidgen.exe /Fotmp/uuidgen.obj windows_msi_helpers/uuidgen.c ole32.lib
 endif
 	-echo "Create WXS file..."
-	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) simvascular-bin.exe $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY)
+	-tclsh windows_msi_helpers/makewxs.tcl $(SV_VERSION) $(SV_PLATFORM) $(DIST_DIR_TOP) $(SV_MAJOR_VER_NO) Releases$(SV_POSTFIX) sv.bat $(SV_VERSION) $(SV_FULL_VER_NO) $(TCL_LIBRARY) $(TK_LIBRARY)
 	-echo "Run candle..."
 	-$(WIXUI_PATH)/candle.exe -ext WixUIExtension -ext WixUtilExtension -out tmp/sv.wixobj tmp/sv.wxs
 	-echo "Run light..."
@@ -292,8 +292,8 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-mkdir -p $(DIST_DIR)/mitk
-	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
-	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+#	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
+#	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 #	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
 #	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
 #	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
@@ -327,6 +327,10 @@ generate-wrapper-scripts:
 	-sed -f tmp/sedscript $(SV_OS)_wrapper_scripts/$(SV_OS)-dist-xfsv-script >> $(DIST_DIR)/xfsv$(SV_POSTFIX)
 	-cp -f $(SV_OS)_wrapper_scripts/$(SV_OS)-simvascular-cmdline-script $(DIST_DIR)/$(SV_VERSION)-cmdline
 	-cat $(DIST_DIR)/$(SV_VERSION) >> $(DIST_DIR)/$(SV_VERSION)-cmdline
+ifeq ($(CLUSTER),x64_cygwin)
+	-cp -f $(SV_OS)_wrapper_scripts/sv.bat $(DIST_DIR)
+	-chmod a+rx $(DIST_DIR)/sv.bat
+endif
 
 common-post-distribution:
 	-sed -f tmp/sedscript platform_independent_scripts/post-install.sh > $(DIST_DIR)/post-install.sh
