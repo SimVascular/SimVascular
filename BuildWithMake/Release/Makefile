@@ -292,8 +292,8 @@ ifeq ($(SV_USE_OPENCASCADE),1)
 endif
 ifeq ($(SV_USE_MITK),1)
 	-mkdir -p $(DIST_DIR)/mitk
-	-cp -fR $(MITK_BINDIRS)/dcm* $(DIST_DIR)
-	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
+#	-cp -fR $(MITK_BINDIRS)/*.exe $(DIST_DIR)
+#	-cp -f $(SV_MITK_SO_PATH)/*.$(SOEXT)* $(DIST_DIR)
 #	-cp -fR $(MITK_BINDIRS)/MitkCore $(DIST_DIR)/mitk/bin
 #	-cp -fR $(MITK_BINDIRS)/MitkPython $(DIST_DIR)/mitk/bin
 #	-cp -fR $(MITK_BINDIRS)/Python $(DIST_DIR)/mitk/bin
