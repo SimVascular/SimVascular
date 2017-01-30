@@ -95,3 +95,38 @@ void svContourCircle::CreateContourPoints()
 void svContourCircle::AssignCenterScalingPoints()
 {
 }
+
+svContour* svContourCircle::CreateByFitting(svContour* contour)
+{
+    double area=contour->GetArea();
+    double radius=sqrt(area/vnl_math::pi);
+    mitk::Point2D centerPoint, boundaryPoint;
+
+    contour->GetPlaneGeometry()->Map(contour->GetControlPoint(0), centerPoint );
+
+    boundaryPoint[0]=centerPoint[0]+radius;
+    boundaryPoint[1]=centerPoint[1];
+
+    std::vector<mitk::Point3D> controlPoints;
+
+    mitk::Point3D pt1,pt2;
+
+    contour->GetPlaneGeometry()->Map(centerPoint,pt1);
+    contour->GetPlaneGeometry()->Map(boundaryPoint,pt2);
+
+    controlPoints.push_back(pt1);
+    controlPoints.push_back(pt2);
+
+    svContourCircle* newContour=new svContourCircle();
+    newContour->SetPathPoint(contour->GetPathPoint());
+    newContour->SetPlaced(true);
+    newContour->SetMethod(contour->GetMethod());
+//    newContour->SetClosed(contour->IsClosed());
+    newContour->SetControlPoints(controlPoints);
+
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
+    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
+
+    return newContour;
+}

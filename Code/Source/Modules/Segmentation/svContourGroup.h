@@ -146,6 +146,8 @@ public:
 
     int GetContourIndexByPathPosPoint(mitk::Point3D posPoint, unsigned int t = 0);
 
+    int GetInsertingContourIndexByTagIndex(int tagIndex, unsigned int t = 0);
+
     //virtual methods, that need to be implemented
     virtual void UpdateOutputInformation() override;
     virtual void SetRequestedRegionToLargestPossibleRegion() override;

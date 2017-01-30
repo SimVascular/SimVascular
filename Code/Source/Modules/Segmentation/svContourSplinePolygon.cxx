@@ -115,7 +115,7 @@ svContour* svContourSplinePolygon::CreateByFitting(svContour* contour, int divis
         controlPoints.push_back(point);
     }
 
-    //just add the first two points as the last point
+    //just add the first two points using the last point
     controlPoints.insert(controlPoints.begin(),point);
     controlPoints.insert(controlPoints.begin(),point);
 
@@ -126,6 +126,10 @@ svContour* svContourSplinePolygon::CreateByFitting(svContour* contour, int divis
     newContour->SetMethod(contour->GetMethod());
     newContour->SetClosed(contour->IsClosed());
     newContour->SetControlPoints(controlPoints);
+
+    newContour->SetSubdivisionType(contour->GetSubdivisionType());
+    newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
+    newContour->SetSubdivisionNumber(contour->GetSubdivisionNumber());
 
     return newContour;
 }

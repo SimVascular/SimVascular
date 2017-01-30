@@ -66,7 +66,7 @@
       <item row="0" column="2">
        <widget class="QPushButton" name="btnChange">
         <property name="text">
-         <string>Change</string>
+         <string>Change Type</string>
         </property>
        </widget>
       </item>
@@ -94,13 +94,6 @@
         </property>
         <property name="text">
          <string>Path Point Number:</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QPushButton" name="btnSmooth">
-        <property name="text">
-         <string>Smooth</string>
         </property>
        </widget>
       </item>
@@ -180,6 +173,9 @@
       <item>
        <widget class="QWidget" name="widget_5" native="true">
         <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>6</number>
+         </property>
          <property name="leftMargin">
           <number>0</number>
          </property>
@@ -203,38 +199,35 @@
           <widget class="QComboBox" name="comboBoxAddingMode">
            <item>
             <property name="text">
-             <string>Smart</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Beginning</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>End</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>Before</string>
+             <string/>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>After</string>
+             <string/>
             </property>
            </item>
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line_3">
-           <property name="midLineWidth">
-            <number>2</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QLabel" name="label_3">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -253,12 +246,9 @@
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line">
-           <property name="midLineWidth">
-            <number>2</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          <widget class="QLabel" name="label_5">
+           <property name="text">
+            <string/>
            </property>
           </widget>
          </item>
@@ -270,12 +260,16 @@
           </widget>
          </item>
          <item>
-          <widget class="Line" name="line_2">
-           <property name="midLineWidth">
-            <number>2</number>
+          <widget class="QLabel" name="label_7">
+           <property name="text">
+            <string/>
            </property>
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnSmooth">
+           <property name="text">
+            <string>Smooth</string>
            </property>
           </widget>
          </item>

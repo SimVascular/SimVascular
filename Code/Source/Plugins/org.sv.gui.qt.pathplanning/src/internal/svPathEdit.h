@@ -57,6 +57,8 @@ public slots:
 
     void UpdatePathResliceSize(double newSize);
 
+    void UpdateAddingMode(int mode);
+
 public:
 
     int GetTimeStep();

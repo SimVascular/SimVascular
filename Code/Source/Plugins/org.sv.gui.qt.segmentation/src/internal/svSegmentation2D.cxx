@@ -29,6 +29,7 @@
 
 // Qt
 #include <QMessageBox>
+#include <QInputDialog>
 
 #include <iostream>
 using namespace std;
@@ -52,6 +53,9 @@ svSegmentation2D::svSegmentation2D() :
     m_StartChangingContourObserverTag=-1;
     m_EndChangingContourObserverTag=-1;
     m_ContourChanging=false;
+
+    m_ManualMenu=NULL;
+    m_CopyContour=NULL;
 }
 
 svSegmentation2D::~svSegmentation2D()
@@ -126,6 +130,32 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
     connect(m_LoftWidget->ui->btnClose, SIGNAL(clicked()), this, SLOT(HideLoftWidget()) );
 
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
+
+//    m_ManualMenu=new QMenu(ui->btnManual);
+
+//    QAction* createManualCircleAction=m_ManualMenu->addAction("Circle");
+//    QAction* createManualEllipseAction=m_ManualMenu->addAction("Ellipse");
+//    QAction* createManualSplinePolyAction=m_ManualMenu->addAction("SplinePoly");
+//    QAction* createManualPolygonAction=m_ManualMenu->addAction("Polygon");
+
+//    connect( createManualCircleAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualCircle(bool) ) );
+//    connect( createManualEllipseAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualEllipse(bool) ) );
+//    connect( createManualSplinePolyAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualSplinePoly(bool) ) );
+//    connect( createManualPolygonAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualPolygon(bool) ) );
+
+//    connect( ui->btnManual, SIGNAL(clicked()), this, SLOT(ManualContextMenuRequested()) );
+
+    connect( ui->btnCircle, SIGNAL(customContextMenuRequested(const QPoint&))
+             , this, SLOT(ManualCircleContextMenuRequested(const QPoint&)) );
+    connect( ui->btnEllipse, SIGNAL(customContextMenuRequested(const QPoint&))
+             , this, SLOT(ManualEllipseContextMenuRequested(const QPoint&)) );
+    connect( ui->btnSplinePoly, SIGNAL(customContextMenuRequested(const QPoint&))
+             , this, SLOT(ManualSplinePolyContextMenuRequested(const QPoint&)) );
+    connect( ui->btnPolygon, SIGNAL(customContextMenuRequested(const QPoint&))
+             , this, SLOT(ManualPolygonContextMenuRequested(const QPoint&)) );
+
+    connect(ui->btnCopy, SIGNAL(clicked()), this, SLOT(CopyContour()) );
+    connect(ui->btnPaste, SIGNAL(clicked()), this, SLOT(PasteContour()) );
 }
 
 void svSegmentation2D::Visible()
@@ -288,6 +318,24 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         }
     }
 
+    //set tag index for contours in the group
+    for(int i=0;i<m_ContourGroup->GetSize(timeStep);i++)
+    {
+        svContour* contour=m_ContourGroup->GetContour(i,timeStep);
+        if(contour==NULL) continue;
+
+        for(int j=0;j<pathPoints.size();j++)
+        {
+            if(pathPoints[j].pos==contour->GetPathPosPoint())
+            {
+                contour->SetTagIndex(j);
+                break;
+            }
+        }
+    }
+    m_PathPoints=pathPoints;
+
+    //set resice slider
     ui->resliceSlider->setPathPoints(pathPoints);
     ui->resliceSlider->setImageNode(imageNode);
     double resliceSize=m_ContourGroup->GetResliceSize();
@@ -376,7 +424,14 @@ void svSegmentation2D::InsertContourByPathPosPoint(svContour* contour)
         {
             SetContour(index, contour);
         }else{
-            index=m_ContourGroup->GetInsertingContourIndexByPathPosPoint(contour->GetPathPosPoint());
+            for(int i=0;i<m_PathPoints.size();i++)
+            {
+                if(m_PathPoints[i].pos==contour->GetPathPosPoint())
+                    contour->SetTagIndex(i);
+            }
+
+//            index=m_ContourGroup->GetInsertingContourIndexByPathPosPoint(contour->GetPathPosPoint());
+            index=m_ContourGroup->GetInsertingContourIndexByTagIndex(contour->GetTagIndex());
             InsertContour(contour,index);
         }
     }
@@ -777,44 +832,89 @@ void svSegmentation2D::FinishPreview()
     ui->btnThreshold->setStyleSheet("");
 }
 
-void svSegmentation2D::CreateCircle()
-{
-    ResetGUI();
+//void svSegmentation2D::CreateEllipse()
+//{
+//    ResetGUI();
 
-    m_CurrentSegButton=ui->btnCircle;
-    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+//    m_CurrentSegButton=ui->btnEllipse;
+//    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
 
-    SetSecondaryWidgetsVisible(false);
+//    SetSecondaryWidgetsVisible(false);
 
-    svContour* contour=new svContourCircle();
-    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
-    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
-    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+//    svContour* contour=new svContourEllipse();
+//    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+//    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+//    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
 
-    mitk::OperationEvent::IncCurrObjectEventId();
+//    mitk::OperationEvent::IncCurrObjectEventId();
 
-    m_ContourChanging=true;
+//    m_ContourChanging=true;
 
-    InsertContourByPathPosPoint(contour);
-}
+//    InsertContourByPathPosPoint(contour);
+//}
 
 void svSegmentation2D::CreateEllipse()
 {
     ResetGUI();
 
-    m_CurrentSegButton=ui->btnEllipse;
-    m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
-
     SetSecondaryWidgetsVisible(false);
 
-    svContour* contour=new svContourEllipse();
+    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+
+    svContour* existingContour=m_ContourGroup->GetContour(index);
+
+    svContour* contour=NULL;
+    if(existingContour && existingContour->GetContourPointNumber()>2)
+    {
+        contour=svContourEllipse::CreateByFitting(existingContour);
+    }else{
+
+        m_CurrentSegButton=ui->btnEllipse;
+        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+
+        contour=new svContourEllipse();
+        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+        m_ContourChanging=true;
+    }
+
     contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
     contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
-    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
 
     mitk::OperationEvent::IncCurrObjectEventId();
 
-    m_ContourChanging=true;
+    InsertContourByPathPosPoint(contour);
+}
+
+void svSegmentation2D::CreateCircle()
+{
+    ResetGUI();
+
+    SetSecondaryWidgetsVisible(false);
+
+    int index=m_ContourGroup->GetContourIndexByPathPosPoint(ui->resliceSlider->getCurrentPathPoint().pos);
+
+    svContour* existingContour=m_ContourGroup->GetContour(index);
+
+    svContour* contour=NULL;
+    if(existingContour && existingContour->GetContourPointNumber()>2)
+    {
+        contour=svContourCircle::CreateByFitting(existingContour);
+    }else{
+
+        m_CurrentSegButton=ui->btnCircle;
+        m_CurrentSegButton->setStyleSheet("background-color: lightskyblue");
+
+        contour=new svContourCircle();
+        contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+
+        m_ContourChanging=true;
+    }
+
+    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+
+    mitk::OperationEvent::IncCurrObjectEventId();
 
     InsertContourByPathPosPoint(contour);
 }
@@ -1133,4 +1233,335 @@ void svSegmentation2D::UpdatePathResliceSize(double newSize)
 {
     if(m_ContourGroup)
         m_ContourGroup->SetResliceSize(newSize);
+}
+
+void svSegmentation2D::ManualContextMenuRequested()
+{
+    m_ManualMenu->popup(QCursor::pos());
+}
+
+void svSegmentation2D::ManualCircleContextMenuRequested(const QPoint&)
+{
+    CreateManualCircle();
+}
+
+void svSegmentation2D::ManualEllipseContextMenuRequested(const QPoint&)
+{
+    CreateManualEllipse();
+}
+
+void svSegmentation2D::ManualSplinePolyContextMenuRequested(const QPoint&)
+{
+    CreateManualSplinePoly();
+}
+
+void svSegmentation2D::ManualPolygonContextMenuRequested(const QPoint&)
+{
+    CreateManualPolygon();
+}
+
+void svSegmentation2D::CreateManualCircle(bool)
+{
+    bool ok;
+    QString text = QInputDialog::getText(m_Parent, tr("Circle Input"),
+                                         tr("radius, or x y radius:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (!ok || text.trimmed().isEmpty())
+        return;
+
+    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    if(list.size()!=1 && list.size()!=3)
+    {
+        QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
+        return;
+    }
+
+    mitk::Point2D centerPoint,boundaryPoint;
+    centerPoint[0]=0;
+    centerPoint[1]=0;
+    double radius;
+
+    for(int i=0;i<list.size();i++)
+    {
+        ok=false;
+        if(list.size()==3 && (i==0 || i==1))
+            centerPoint[i]=list[i].toDouble(&ok);
+        else
+            radius=list[i].toDouble(&ok);
+        if(!ok)
+        {
+            QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
+            return;
+        }
+    }
+
+    ResetGUI();
+    SetSecondaryWidgetsVisible(false);
+
+    svContour* contour=new svContourCircle();
+    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+    contour->SetPlaced(true);
+    contour->SetMethod(contour->GetMethod());
+
+    centerPoint[0]+=contour->GetPlaneGeometry()->GetSpacing()[0]*contour->GetPlaneGeometry()->GetBounds()[1]/2;
+    centerPoint[1]+=contour->GetPlaneGeometry()->GetSpacing()[1]*contour->GetPlaneGeometry()->GetBounds()[3]/2;
+    boundaryPoint[0]=centerPoint[0]+radius;
+    boundaryPoint[1]=centerPoint[1];
+
+    mitk::Point3D pt1,pt2;
+    contour->GetPlaneGeometry()->Map(centerPoint,pt1);
+    contour->GetPlaneGeometry()->Map(boundaryPoint,pt2);
+    std::vector<mitk::Point3D> controlPoints;
+    controlPoints.push_back(pt1);
+    controlPoints.push_back(pt2);
+
+    contour->SetControlPoints(controlPoints);
+
+    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    InsertContourByPathPosPoint(contour);
+}
+
+void svSegmentation2D::CreateManualEllipse(bool)
+{
+    bool ok;
+    QString text = QInputDialog::getText(m_Parent, tr("Ellipse Input"),
+                                         tr("a b, or a b theta, or x y a b, or x y a b theta:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (!ok || text.trimmed().isEmpty())
+        return;
+
+    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    if(list.size()!=2 && list.size()!=3 && list.size()!=4 && list.size()!=5)
+    {
+        QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
+        return;
+    }
+
+    mitk::Point2D centerPoint,boundaryPoint1,boundaryPoint2;
+    double x=0;
+    double y=0;
+    double a=0;
+    double b=0;
+    double theta=0;
+
+    for(int i=0;i<list.size();i++)
+    {
+        ok=false;
+        double value=list[i].toDouble(&ok);
+        if(!ok)
+        {
+            QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
+            return;
+        }
+
+        if(list.size()==2)
+        {
+            if(i==0) a=value;
+            else if(i==1) b=value;
+        }
+
+        if(list.size()==3)
+        {
+            if(i==0) a=value;
+            else if(i==1) b=value;
+            else if(i==2) theta=value;
+        }
+
+        if(list.size()==4)
+        {
+            if(i==0) x=value;
+            else if(i==1) y=value;
+            else if(i==2) a=value;
+            else if(i==3) b=value;
+        }
+
+        if(list.size()==5)
+        {
+            if(i==0) x=value;
+            else if(i==1) y=value;
+            else if(i==2) a=value;
+            else if(i==3) b=value;
+            else if(i==4) theta=value;
+        }
+    }
+
+    ResetGUI();
+    SetSecondaryWidgetsVisible(false);
+
+    svContourEllipse* contour=new svContourEllipse();
+    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+    contour->SetPlaced(true);
+    contour->SetMethod(contour->GetMethod());
+    contour->SetAsCircle(false);
+
+    centerPoint[0]=x+contour->GetPlaneGeometry()->GetSpacing()[0]*contour->GetPlaneGeometry()->GetBounds()[1]/2;
+    centerPoint[1]=y+contour->GetPlaneGeometry()->GetSpacing()[1]*contour->GetPlaneGeometry()->GetBounds()[3]/2;
+    boundaryPoint1[0]=centerPoint[0]+a*cos(theta/180.0*vnl_math::pi);
+    boundaryPoint1[1]=centerPoint[1]+a*sin(theta/180.0*vnl_math::pi);
+    boundaryPoint2[0]=centerPoint[0]+b*cos((theta+90)/180.0*vnl_math::pi);
+    boundaryPoint2[1]=centerPoint[1]+b*sin((theta+90)/180.0*vnl_math::pi);
+
+    mitk::Point3D pt0,pt2,pt3;
+    contour->GetPlaneGeometry()->Map(centerPoint,pt0);
+    contour->GetPlaneGeometry()->Map(boundaryPoint1,pt2);
+    contour->GetPlaneGeometry()->Map(boundaryPoint2,pt3);
+    std::vector<mitk::Point3D> controlPoints;
+    controlPoints.push_back(pt0);
+    controlPoints.push_back(pt0);
+    controlPoints.push_back(pt2);
+    controlPoints.push_back(pt3);
+
+    contour->SetControlPoints(controlPoints,false);
+    contour->SetControlPoint(2,pt2);
+
+    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    InsertContourByPathPosPoint(contour);
+}
+
+void svSegmentation2D::CreateManualPolygonType(bool spline)
+{
+    bool ok;
+    QString text = QInputDialog::getText(m_Parent, tr("Polygon Input"),
+                                         tr("x1 y1 x2 y2 x3 y3...:"), QLineEdit::Normal,
+                                         "", &ok);
+    if (!ok || text.trimmed().isEmpty())
+        return;
+
+    QStringList list = text.trimmed().split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
+    if(list.size()%2!=0)
+    {
+        QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
+        return;
+    }
+
+    std::vector<mitk::Point2D> points;
+
+    for(int i=0;i<list.size();i=i+2)
+    {
+        bool ok1=false;
+        bool ok2=false;
+        double value1=list[i].toDouble(&ok1);
+        double value2=list[i+1].toDouble(&ok2);
+        if(!ok1 || !ok2)
+        {
+            QMessageBox::warning(m_Parent,"Input Invalid","Please provide valid input!");
+            return;
+        }
+
+        mitk::Point2D point;
+        point[0]=value1;
+        point[1]=value2;
+
+        points.push_back(point);
+    }
+
+    ResetGUI();
+    SetSecondaryWidgetsVisible(false);
+
+    svContour* contour=NULL;
+    if(spline)
+        contour=new svContourSplinePolygon();
+    else
+        contour=new svContourPolygon();
+
+    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+    contour->SetPlaced(true);
+    contour->SetMethod(contour->GetMethod());
+
+    mitk::Point3D pt;
+    pt[0]=0;
+    pt[1]=0;
+    pt[2]=0;
+
+    std::vector<mitk::Point3D> controlPoints;
+    controlPoints.push_back(pt);
+    controlPoints.push_back(pt);
+
+    double dx=contour->GetPlaneGeometry()->GetSpacing()[0]*contour->GetPlaneGeometry()->GetBounds()[1]/2;
+    double dy=contour->GetPlaneGeometry()->GetSpacing()[1]*contour->GetPlaneGeometry()->GetBounds()[3]/2;
+
+    for(int i=0;i<points.size();i++)
+    {
+        mitk::Point2D pt2d;
+        pt2d[0]=points[i][0]+dx;
+        pt2d[1]=points[i][1]+dy;
+        contour->GetPlaneGeometry()->Map(pt2d,pt);
+        controlPoints.push_back(pt);
+    }
+
+    contour->SetControlPoints(controlPoints);
+
+    contour->SetSubdivisionType(svContour::CONSTANT_SPACING);
+    contour->SetSubdivisionSpacing(GetVolumeImageSpacing());
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    InsertContourByPathPosPoint(contour);
+}
+
+void svSegmentation2D::CreateManualSplinePoly(bool)
+{
+    CreateManualPolygonType(true);
+}
+
+void svSegmentation2D::CreateManualPolygon(bool)
+{
+    CreateManualPolygonType(false);
+}
+
+void svSegmentation2D::CopyContour()
+{
+    QModelIndexList selectedRows=ui->listWidget->selectionModel()->selectedRows();
+    if(selectedRows.size()>0 && m_ContourGroup)
+    {
+        m_CopyContour=m_ContourGroup->GetContour(selectedRows.front().row(),GetTimeStep());
+    }
+}
+
+void svSegmentation2D::PasteContour()
+{
+    if(m_CopyContour==NULL)
+        return;
+
+    svContour* contour=m_CopyContour->Clone();
+    mitk::PlaneGeometry* oldPlaneGeometry=m_CopyContour->GetPlaneGeometry();
+    std::vector<mitk::Point3D> controlPoints;
+    std::vector<mitk::Point3D> contourPoints;
+
+    contour->SetPathPoint(ui->resliceSlider->getCurrentPathPoint());
+    for(int i=0;i<contour->GetControlPointNumber();i++)
+    {
+        mitk::Point2D p2d;
+        mitk::Point3D p3d;
+        oldPlaneGeometry->Map(contour->GetControlPoint(i),p2d);
+        contour->GetPlaneGeometry()->Map(p2d,p3d);
+
+        controlPoints.push_back(p3d);
+    }
+    for(int i=0;i<contour->GetContourPointNumber();i++)
+    {
+        mitk::Point2D p2d;
+        mitk::Point3D p3d;
+        oldPlaneGeometry->Map(contour->GetContourPoint(i),p2d);
+        contour->GetPlaneGeometry()->Map(p2d,p3d);
+
+        contourPoints.push_back(p3d);
+    }
+
+    contour->SetControlPoints(controlPoints,false);
+    contour->SetContourPoints(contourPoints,false);
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    InsertContourByPathPosPoint(contour);
+
+    LoftContourGroup();
 }

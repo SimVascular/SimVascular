@@ -175,7 +175,30 @@ void svPathDataInteractor::AddPoint(mitk::StateMachineAction* stateMachineAction
 
 //        pathElement->DeselectControlPoint();
 
-        int index=pathElement->GetInsertintIndexByDistance(newPoint);
+        int index=-2;
+
+        int selectedMode=m_Path->GetAddingMode();
+
+        switch(selectedMode)
+        {
+        case svPath::SMART:
+            index=pathElement->GetInsertintIndexByDistance(newPoint);
+            break;
+        case svPath::BEGINNING:
+            index=0;
+            break;
+        case svPath::END:
+            index=-1;
+            break;
+        case svPath::BEFORE:
+            index= pathElement->GetControlPointSelectedIndex();
+            break;
+        case svPath::AFTER:
+            index= pathElement->GetControlPointSelectedIndex()+1;
+            break;
+        default:
+            break;
+        }
 
         if(index!=-2){
             svPathOperation* doOp = new svPathOperation(svPathOperation::OpINSERTCONTROLPOINT,timeStep, newPoint, index);
