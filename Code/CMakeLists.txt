@@ -250,6 +250,7 @@ if(SV_USE_QT_GUI)
       "Source/Plugins/org.sv.gui.qt.pathplanning"
       "Source/Plugins/org.sv.gui.qt.segmentation"
       "Source/Plugins/org.sv.gui.qt.modeling"
+      "Source/Plugins/org.sv.gui.qt.meshing"
       "Source/Plugins/org.sv.gui.qt.simulation"
       "Source/Plugins/org.sv.gui.qt.application")
   endif()
