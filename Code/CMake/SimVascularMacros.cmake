@@ -741,7 +741,7 @@ function(simvascular_create_plugin)
   set_property(TARGET ${lib_name} PROPERTY US_MODULE_NAME ${lib_name})
   set_property(TARGET ${lib_name} APPEND PROPERTY COMPILE_DEFINITIONS US_MODULE_NAME=${lib_name})
 
-  target_link_libraries(${lib_name} PRIVATE ${MITK_LIBRARIES} ${MITK_PLUGIN_LIBRARIES} ${CTK_LIBRARIES} ${ITK_LIBRARIES} ${QT_LIBRARIES})
+  target_link_libraries(${lib_name} PRIVATE ${MITK_LIBRARIES} ${MITK_PLUGIN_LIBRARIES} ${CTK_LIBRARIES} ${VTK_LIBRARIES} ${ITK_LIBRARIES} ${QT_LIBRARIES})
   #------------------------------CREATE PLUGIN--------------------------------
 
   foreach(depender ${_PLUGIN_MODULE_DEPENDS})
