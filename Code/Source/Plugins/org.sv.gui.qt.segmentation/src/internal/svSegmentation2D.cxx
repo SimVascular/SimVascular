@@ -620,7 +620,7 @@ void svSegmentation2D::CreateContours(SegmentationMethod method)
 
         if(usingBatch)
         {
-            ui->resliceSlider->setSlicePos(posID);
+//            ui->resliceSlider->setSlicePos(posID);
         }
 
         svContour* contour=NULL;

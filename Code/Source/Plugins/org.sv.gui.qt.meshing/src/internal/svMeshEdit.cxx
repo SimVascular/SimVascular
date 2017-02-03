@@ -666,17 +666,21 @@ void svMeshEdit::RunCommands(bool fromGUI)
     if(m_UndoAble)
     {
         mitk::OperationEvent::IncCurrObjectEventId();
+    }
 
-        svMitkMeshOperation* doOp = new svMitkMeshOperation(svMitkMeshOperation::OpSETMESH,timeStep,newMesh);
+    svMitkMeshOperation* doOp = new svMitkMeshOperation(svMitkMeshOperation::OpSETMESH,timeStep,newMesh);
+
+    if(m_UndoAble)
+    {
         svMitkMeshOperation* undoOp = new svMitkMeshOperation(svMitkMeshOperation::OpSETMESH,timeStep,originalMesh);
         mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_MitkMesh, doOp, undoOp, "Set Mesh");
         mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
-
-        m_MitkMesh->ExecuteOperation(doOp);
     }
-    else
+
+    m_MitkMesh->ExecuteOperation(doOp);
+
+    if(!m_UndoAble)
     {
-        m_MitkMesh->SetMesh(newMesh);
         delete originalMesh;
     }
 
