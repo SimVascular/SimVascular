@@ -888,6 +888,7 @@ void svMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(m_Model==NULL)
     {
         m_Parent->setEnabled(false);
+        QMessageBox::warning(m_Parent,"No Model Found","No model found for this mesh!");
     }
     else
     {
@@ -906,7 +907,10 @@ void svMeshEdit::UpdateGUI()
     //======================================================================
     ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
     ui->labelMeshType->setText(QString::fromStdString(m_MeshType));
-    ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+    if(m_ModelNode.IsNotNull())
+        ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+    else
+        ui->labelModelName->setText("No model found");
 
     if(!m_MitkMesh)
         return;
@@ -1290,24 +1294,6 @@ void svMeshEdit::NodeChanged(const mitk::DataNode* node)
     if(m_MeshNode==node)
     {
         ui->labelMeshName->setText(QString::fromStdString(m_MeshNode->GetName()));
-
-//        bool visible=false;
-//        node->GetVisibility(visible, nullptr);
-//        if(!visible)
-//            return;
-
-//        svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(node->GetData());
-//        svMesh* mesh=NULL;
-//        if(mitkMesh)
-//            mesh=mitkMesh->GetMesh();
-
-//        if(mesh==NULL)
-//        {
-//            svMitkMeshIO* meshIO=svMitkMeshIO::GetSingleton();
-//            meshIO->SetReadMeshData(true);
-//            svProjectManager::LoadData(node);
-//            meshIO->SetReadMeshData(false);
-//        }
     }
 }
 
@@ -1336,7 +1322,7 @@ void svMeshEdit::AddObservers()
             interactor->SetFaceSelectionOnly();
     }
 
-    if(m_ModelSelectFaceObserverTag==-1)
+    if(m_Model && m_ModelSelectFaceObserverTag==-1)
     {
         itk::SimpleMemberCommand<svMeshEdit>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svMeshEdit>::New();
         modelSelectFaceCommand->SetCallbackFunction(this, &svMeshEdit::UpdateFaceListSelection);

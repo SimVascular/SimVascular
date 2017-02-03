@@ -290,7 +290,10 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     //======================================================================
     ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
     ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-    ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+    if(m_ModelNode.IsNotNull())
+        ui->labelModelName->setText(QString::fromStdString(m_ModelNode->GetName()));
+    else
+        ui->labelModelName->setText("Model not found");
 
     UpdateGUIBasic();
 
@@ -350,7 +353,7 @@ void svSimulationView::AddObservers()
             interactor->SetFaceSelectionOnly();
     }
 
-    if(m_ModelSelectFaceObserverTag==-1)
+    if(m_Model && m_ModelSelectFaceObserverTag==-1)
     {
         itk::SimpleMemberCommand<svSimulationView>::Pointer modelSelectFaceCommand = itk::SimpleMemberCommand<svSimulationView>::New();
         modelSelectFaceCommand->SetCallbackFunction(this, &svSimulationView::UpdateFaceListSelection);
@@ -649,6 +652,9 @@ void svSimulationView::UpdateGUICap()
     if(!m_MitkJob)
         return;
 
+    if(!m_Model)
+        return;
+
     svModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL) return;
 
@@ -850,6 +856,9 @@ void svSimulationView::UpdateGUIWall()
     ui->lineEditKcons->setText(QString::fromStdString(job->GetWallProp("Shear Constant")));
     ui->lineEditWallDensity->setText(QString::fromStdString(job->GetWallProp("Density")));
     ui->lineEditPressure->setText(QString::fromStdString(job->GetWallProp("Pressure")));
+
+    if(!m_Model)
+        return;
 
     svModelElement* modelElement=m_Model->GetModelElement();
     if(modelElement==NULL) return;

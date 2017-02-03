@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>474</width>
+    <width>439</width>
     <height>692</height>
    </rect>
   </property>
@@ -368,7 +368,7 @@
                          </size>
                         </property>
                         <property name="currentIndex">
-                         <number>2</number>
+                         <number>3</number>
                         </property>
                         <widget class="QWidget" name="page_3">
                          <property name="geometry">
@@ -530,8 +530,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>237</height>
+                               <width>125</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -653,7 +653,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>5</number>
+                             <number>0</number>
                             </property>
                             <widget class="QWidget" name="page_19">
                              <property name="geometry">
@@ -743,8 +743,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>146</height>
+                               <width>92</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <property name="cursor">
@@ -825,7 +825,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
+                               <width>93</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -936,8 +936,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>146</height>
+                               <width>105</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1006,7 +1006,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
+                               <width>90</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -1102,8 +1102,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>146</height>
+                               <width>105</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1174,25 +1174,11 @@
                           </item>
                          </layout>
                         </widget>
-                        <widget class="QWidget" name="page_5">
-                         <property name="geometry">
-                          <rect>
-                           <x>0</x>
-                           <y>0</y>
-                           <width>129</width>
-                           <height>398</height>
-                          </rect>
-                         </property>
+                        <widget class="QWidget" name="page">
                          <attribute name="label">
                           <string>Local Ops</string>
                          </attribute>
-                         <layout class="QVBoxLayout" name="verticalLayout_22" stretch="0,0">
-                          <property name="spacing">
-                           <number>6</number>
-                          </property>
-                          <property name="sizeConstraint">
-                           <enum>QLayout::SetDefaultConstraint</enum>
-                          </property>
+                         <layout class="QVBoxLayout" name="verticalLayout_22">
                           <property name="leftMargin">
                            <number>2</number>
                           </property>
@@ -1208,7 +1194,7 @@
                           <item>
                            <widget class="QCheckBox" name="checkBoxSphere">
                             <property name="text">
-                             <string>Show Sphere</string>
+                             <string>Show Sphere    </string>
                             </property>
                            </widget>
                           </item>
@@ -1225,7 +1211,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
+                               <width>132</width>
                                <height>215</height>
                               </rect>
                              </property>
@@ -1298,7 +1284,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
+                               <width>132</width>
                                <height>215</height>
                               </rect>
                              </property>
@@ -1397,7 +1383,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
+                               <width>132</width>
                                <height>215</height>
                               </rect>
                              </property>
@@ -1490,7 +1476,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
+                               <width>132</width>
                                <height>215</height>
                               </rect>
                              </property>
@@ -1560,7 +1546,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>127</width>
+                               <width>132</width>
                                <height>215</height>
                               </rect>
                              </property>
@@ -1620,8 +1606,8 @@
                                 </property>
                                 <property name="sizeHint" stdset="0">
                                  <size>
-                                  <width>38</width>
-                                  <height>64</height>
+                                  <width>20</width>
+                                  <height>40</height>
                                  </size>
                                 </property>
                                </spacer>
@@ -1642,7 +1628,7 @@
                           </rect>
                          </property>
                          <property name="sizePolicy">
-                          <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
                            <horstretch>0</horstretch>
                            <verstretch>0</verstretch>
                           </sizepolicy>
@@ -1675,7 +1661,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>1</number>
                             </property>
                             <widget class="QWidget" name="page_18">
                              <property name="geometry">
@@ -1683,7 +1669,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>154</width>
-                               <height>336</height>
+                               <height>305</height>
                               </rect>
                              </property>
                              <attribute name="label">
