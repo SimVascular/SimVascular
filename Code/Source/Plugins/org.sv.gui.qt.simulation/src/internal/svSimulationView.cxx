@@ -1181,13 +1181,13 @@ void svSimulationView::RunJob()
 
     QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
 
-    QString flowsolverPath=m_InternalFlowsolverPath;
+    QString flowsolverPath=m_ExternalFlowsolverPath;
     if(flowsolverPath=="")
-        flowsolverPath=m_ExternalFlowsolverPath;
+        flowsolverPath=m_InternalFlowsolverPath;
 
-    if(flowsolverPath=="")
+    if(flowsolverPath=="" || !QFile(flowsolverPath).exists())
     {
-        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide flowsolver in Preferences");
+        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide an existing flowsolver");
         return;
     }
 
@@ -1345,13 +1345,13 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
     std::string meshName="";
     if(outputAllFiles)
     {
-        QString presolverPath=m_InternalPresolverPath;
+        QString presolverPath=m_ExternalPresolverPath;
         if(presolverPath=="")
-            presolverPath=m_ExternalPresolverPath;
+            presolverPath=m_InternalPresolverPath;
 
-        if(presolverPath=="")
+        if(presolverPath=="" || !QFile(presolverPath).exists())
         {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please provide presolver in Preferences");
+            QMessageBox::warning(m_Parent,"Presolver Missing","Please provide an existing presolver");
             return false;
         }
 
@@ -1789,13 +1789,13 @@ void svSimulationView::SetResultDir()
 
 void svSimulationView::ExportResults()
 {
-    QString postsolverPath=m_InternalPostsolverPath;
+    QString postsolverPath=m_ExternalPostsolverPath;
     if(postsolverPath=="")
-        postsolverPath=m_ExternalPostsolverPath;
+        postsolverPath=m_InternalPostsolverPath;
 
-    if(postsolverPath=="")
+    if(postsolverPath=="" || !QFile(postsolverPath).exists())
     {
-        QMessageBox::warning(m_Parent,"Postsolver Missing","Please provide postsolver in Preferences");
+        QMessageBox::warning(m_Parent,"Postsolver Missing","Please provide an existing postsolver");
         return;
     }
 
