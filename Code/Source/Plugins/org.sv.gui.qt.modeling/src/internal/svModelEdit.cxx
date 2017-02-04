@@ -1996,7 +1996,7 @@ void svModelEdit::ChangeFacetSize()
         if(me==NULL)
             return;
 
-        sizeType="Max Edge Sizev";
+        sizeType="Max Edge Size";
         facetSize=me->GetMaxDist();
 
     }

@@ -14,9 +14,15 @@ class svPathSmooth : public QWidget
 
 public:
 
-    svPathSmooth(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep);
+    svPathSmooth();
 
     virtual ~svPathSmooth();
+
+    void SetDataStorage(mitk::DataStorage::Pointer dataStorage);
+
+    void SetSelectedNode(mitk::DataNode::Pointer selectedNode);
+
+    void SetTimeStep(int timeStep);
 
 public slots:
 

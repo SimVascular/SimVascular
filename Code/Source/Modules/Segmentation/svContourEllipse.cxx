@@ -213,14 +213,13 @@ svContour* svContourEllipse::CreateByFitting(svContour* contour)
     double minDist=0.0;
     int minIndex=0;
     int maxIndex=0;
-    mitk::Point3D centerPoint,point;
-    centerPoint=contour->GetControlPoint(0);
-    mitk::Point3D pt1,pt2;
+    mitk::Point2D centerPoint,point;
+    contour->GetPlaneGeometry()->Map(contour->GetControlPoint(0),centerPoint);
+    mitk::Point2D pt1,pt2;
 
     for(int i=0;i<contour->GetContourPointNumber();i++)
     {
-//        contour->GetPlaneGeometry()->Map(contour->GetContourPoint(i), point);
-        point=contour->GetContourPoint(i);
+        contour->GetPlaneGeometry()->Map(contour->GetContourPoint(i), point);
         double dist=centerPoint.EuclideanDistanceTo(point);
         if(i==0)
         {
@@ -241,29 +240,37 @@ svContour* svContourEllipse::CreateByFitting(svContour* contour)
         }
     }
 
-    std::vector<mitk::Point3D> controlPoints;
-    mitk::Point3D pttemp;;
-    controlPoints.push_back(centerPoint);
-    controlPoints.push_back(pttemp);
-    controlPoints.push_back(pt1);
     double area=contour->GetArea();
     double a=centerPoint.EuclideanDistanceTo(pt1);
     if(a>0)
     {
-        pt2[0]=centerPoint[0];
-        pt2[1]=centerPoint[1]+area/vnl_math::pi/a;;
+        mitk::Vector2D vec1 = pt1 - centerPoint;
+        mitk::Vector2D vec2;
+        vec2[0]=vec1[1];
+        vec2[1]=vec1[0];
+        vec2[0]*=-1;
+        vec2.Normalize();
+        vec2 *=(area/vnl_math::pi/a);
 
+        pt2=centerPoint+vec2;
     }
-    controlPoints.push_back(pt2);
+
+    std::vector<mitk::Point3D> controlPoints;
+    mitk::Point3D pttemp;
+    contour->GetPlaneGeometry()->Map(centerPoint,pttemp);
+    controlPoints.push_back(pttemp);
+    controlPoints.push_back(pttemp);
+    contour->GetPlaneGeometry()->Map(pt1,pttemp);
+    controlPoints.push_back(pttemp);
+    contour->GetPlaneGeometry()->Map(pt2,pttemp);
+    controlPoints.push_back(pttemp);
 
     svContourEllipse* newContour=new svContourEllipse();
     newContour->SetAsCircle(false);
     newContour->SetPathPoint(contour->GetPathPoint());
     newContour->SetPlaced(true);
     newContour->SetMethod(contour->GetMethod());
-//    newContour->SetClosed(contour->IsClosed());
-    newContour->SetControlPoints(controlPoints,false);
-    newContour->SetControlPoint(2,pt1);
+    newContour->SetControlPoints(controlPoints);
 
     newContour->SetSubdivisionType(contour->GetSubdivisionType());
     newContour->SetSubdivisionSpacing(contour->GetSubdivisionSpacing());
@@ -271,3 +278,4 @@ svContour* svContourEllipse::CreateByFitting(svContour* contour)
 
     return newContour;
 }
+

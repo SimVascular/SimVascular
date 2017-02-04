@@ -131,20 +131,6 @@ void svSegmentation2D::CreateQtPartControl( QWidget *parent )
 
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 
-//    m_ManualMenu=new QMenu(ui->btnManual);
-
-//    QAction* createManualCircleAction=m_ManualMenu->addAction("Circle");
-//    QAction* createManualEllipseAction=m_ManualMenu->addAction("Ellipse");
-//    QAction* createManualSplinePolyAction=m_ManualMenu->addAction("SplinePoly");
-//    QAction* createManualPolygonAction=m_ManualMenu->addAction("Polygon");
-
-//    connect( createManualCircleAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualCircle(bool) ) );
-//    connect( createManualEllipseAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualEllipse(bool) ) );
-//    connect( createManualSplinePolyAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualSplinePoly(bool) ) );
-//    connect( createManualPolygonAction, SIGNAL( triggered(bool) ) , this, SLOT( CreateManualPolygon(bool) ) );
-
-//    connect( ui->btnManual, SIGNAL(clicked()), this, SLOT(ManualContextMenuRequested()) );
-
     connect( ui->btnCircle, SIGNAL(customContextMenuRequested(const QPoint&))
              , this, SLOT(ManualCircleContextMenuRequested(const QPoint&)) );
     connect( ui->btnEllipse, SIGNAL(customContextMenuRequested(const QPoint&))
@@ -275,7 +261,7 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(!m_Image){
         QMessageBox::warning(NULL,"No image found for this project","Make sure the image is loaded!");
-        return;
+//        return;
     }
 
     if(!m_Path){
@@ -287,7 +273,10 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateContourList();
 
-    m_cvImage=svSegmentationUtils::image2cvStrPts(m_Image);
+    if(m_Image)
+        m_cvImage=svSegmentationUtils::image2cvStrPts(m_Image);
+    else
+        m_cvImage=NULL;
 
     int timeStep=GetTimeStep();
     svPathElement* pathElement=m_Path->GetPathElement(timeStep);
@@ -371,8 +360,10 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     flagOffCommand->SetCallbackFunction(this, &svSegmentation2D::ContourChangingOff);
     m_EndChangingContourObserverTag = m_ContourGroup->AddObserver( EndChangingContourEvent(), flagOffCommand);
 
-    double range[2];
-    m_cvImage->GetVtkStructuredPoints()->GetScalarRange(range);
+    double range[2]={0,100};
+    if(m_cvImage)
+        m_cvImage->GetVtkStructuredPoints()->GetScalarRange(range);
+
     ui->sliderThreshold->setMinimum(range[0]);
     ui->sliderThreshold->setMaximum(range[1]);
 
@@ -385,8 +376,12 @@ void svSegmentation2D::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
 double svSegmentation2D::GetVolumeImageSpacing()
 {
-    mitk::Vector3D spacing=m_Image->GetGeometry()->GetSpacing();
-    double minSpacing=std::min(spacing[0],std::min(spacing[1],spacing[2]));
+    double minSpacing=0.1;
+    if(m_Image)
+    {
+        mitk::Vector3D spacing=m_Image->GetGeometry()->GetSpacing();
+        minSpacing=std::min(spacing[0],std::min(spacing[1],spacing[2]));
+    }
     return minSpacing;
 }
 
@@ -585,6 +580,9 @@ svContour* svSegmentation2D::PostprocessContour(svContour* contour)
 
 void svSegmentation2D::CreateContours(SegmentationMethod method)
 {
+    if(m_cvImage==NULL)
+        return;
+
     bool usingBatch;
     std::vector<int> posList;
     if(ui->checkBoxBatch->isChecked())
@@ -620,7 +618,7 @@ void svSegmentation2D::CreateContours(SegmentationMethod method)
 
         if(usingBatch)
         {
-            ui->resliceSlider->setSlicePos(posID);
+//            ui->resliceSlider->setSlicePos(posID);
         }
 
         svContour* contour=NULL;
@@ -713,6 +711,9 @@ void svSegmentation2D::CreateLSContour()
 
 void svSegmentation2D::CreateThresholdContour()
 {
+    if(m_cvImage==NULL)
+        return;
+
     if(m_CurrentParamWidget==NULL||m_CurrentParamWidget!=ui->thresholdWidgetContainer)
     {
         ResetGUI();
