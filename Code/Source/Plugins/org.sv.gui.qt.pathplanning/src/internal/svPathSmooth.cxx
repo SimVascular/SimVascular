@@ -11,16 +11,9 @@
 #include <mitkRenderingManager.h>
 
 #include <QMessageBox>
-#include <QFileDialog>
 
-#include <iostream>
-using namespace std;
-
-svPathSmooth::svPathSmooth(mitk::DataStorage::Pointer dataStorage, mitk::DataNode::Pointer selectedNode, int timeStep)
+svPathSmooth::svPathSmooth()
     : ui(new Ui::svPathSmooth)
-    , m_DataStorage(dataStorage)
-    , m_SelecteNode(selectedNode)
-    , m_TimeStep(timeStep)
 {
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(SmoothPath()));
@@ -32,6 +25,21 @@ svPathSmooth::svPathSmooth(mitk::DataStorage::Pointer dataStorage, mitk::DataNod
 svPathSmooth::~svPathSmooth()
 {
     delete ui;
+}
+
+void svPathSmooth::SetDataStorage(mitk::DataStorage::Pointer dataStorage)
+{
+    m_DataStorage=dataStorage;
+}
+
+void svPathSmooth::SetSelectedNode(mitk::DataNode::Pointer selectedNode)
+{
+    m_SelecteNode=selectedNode;
+}
+
+void svPathSmooth::SetTimeStep(int timeStep)
+{
+    m_TimeStep=timeStep;
 }
 
 void svPathSmooth::SetFocus( )

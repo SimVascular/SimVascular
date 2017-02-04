@@ -606,15 +606,17 @@ void svPathEdit::SelectItem(const QModelIndex & idx){
 
         mitk::RenderingManager::GetInstance()->RequestUpdateAll();
     }
-
 }
 
 void svPathEdit::SmoothCurrentPath()
 {
     if(m_SmoothWidget==NULL)
     {
-        m_SmoothWidget=new svPathSmooth(GetDataStorage(), GetDataManagerSelection().front(), GetTimeStep());
+        m_SmoothWidget=new svPathSmooth();
     }
+    m_SmoothWidget->SetDataStorage(GetDataStorage());
+    m_SmoothWidget->SetSelectedNode(GetDataManagerSelection().front());
+    m_SmoothWidget->SetTimeStep(GetTimeStep());
 
     m_SmoothWidget->show();
     m_SmoothWidget->SetFocus();

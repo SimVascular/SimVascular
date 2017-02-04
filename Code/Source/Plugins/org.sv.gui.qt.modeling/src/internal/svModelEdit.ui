@@ -368,15 +368,15 @@
                          </size>
                         </property>
                         <property name="currentIndex">
-                         <number>3</number>
+                         <number>1</number>
                         </property>
                         <widget class="QWidget" name="page_3">
                          <property name="geometry">
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>153</width>
-                           <height>398</height>
+                           <width>126</width>
+                           <height>234</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -444,8 +444,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>237</height>
+                               <width>114</width>
+                               <height>128</height>
                               </rect>
                              </property>
                              <property name="sizePolicy">
@@ -530,7 +530,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>125</width>
+                               <width>113</width>
                                <height>94</height>
                               </rect>
                              </property>
@@ -609,14 +609,6 @@
                          </layout>
                         </widget>
                         <widget class="QWidget" name="page_4">
-                         <property name="geometry">
-                          <rect>
-                           <x>0</x>
-                           <y>0</y>
-                           <width>153</width>
-                           <height>398</height>
-                          </rect>
-                         </property>
                          <attribute name="label">
                           <string>Global Ops</string>
                          </attribute>
@@ -653,7 +645,7 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>0</number>
+                             <number>2</number>
                             </property>
                             <widget class="QWidget" name="page_19">
                              <property name="geometry">
@@ -743,7 +735,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>92</width>
+                               <width>98</width>
                                <height>94</height>
                               </rect>
                              </property>
@@ -825,7 +817,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>93</width>
+                               <width>151</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -896,16 +888,19 @@
                               <item>
                                <widget class="QDoubleSpinBox" name="dsbLapRelaxG">
                                 <property name="decimals">
-                                 <number>4</number>
+                                 <number>3</number>
+                                </property>
+                                <property name="minimum">
+                                 <double>0.010000000000000</double>
                                 </property>
                                 <property name="maximum">
-                                 <double>10.000000000000000</double>
+                                 <double>0.050000000000000</double>
                                 </property>
                                 <property name="singleStep">
                                  <double>0.010000000000000</double>
                                 </property>
                                 <property name="value">
-                                 <double>0.001000000000000</double>
+                                 <double>0.010000000000000</double>
                                 </property>
                                </widget>
                               </item>
@@ -1006,7 +1001,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>90</width>
+                               <width>98</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -1175,6 +1170,14 @@
                          </layout>
                         </widget>
                         <widget class="QWidget" name="page">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>134</width>
+                           <height>398</height>
+                          </rect>
+                         </property>
                          <attribute name="label">
                           <string>Local Ops</string>
                          </attribute>
@@ -1204,15 +1207,15 @@
                              <string notr="true">QToolBox::tab{Background-color:cadetblue;}</string>
                             </property>
                             <property name="currentIndex">
-                             <number>4</number>
+                             <number>1</number>
                             </property>
                             <widget class="QWidget" name="page_14">
                              <property name="geometry">
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>132</width>
-                               <height>215</height>
+                               <width>127</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1343,16 +1346,19 @@
                               <item>
                                <widget class="QDoubleSpinBox" name="dsbLapRelaxL">
                                 <property name="decimals">
-                                 <number>4</number>
+                                 <number>3</number>
+                                </property>
+                                <property name="minimum">
+                                 <double>0.010000000000000</double>
                                 </property>
                                 <property name="maximum">
-                                 <double>10.000000000000000</double>
+                                 <double>0.050000000000000</double>
                                 </property>
                                 <property name="singleStep">
                                  <double>0.010000000000000</double>
                                 </property>
                                 <property name="value">
-                                 <double>0.001000000000000</double>
+                                 <double>0.010000000000000</double>
                                 </property>
                                </widget>
                               </item>
@@ -1383,8 +1389,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>132</width>
-                               <height>215</height>
+                               <width>120</width>
+                               <height>146</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1476,8 +1482,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>132</width>
-                               <height>215</height>
+                               <width>111</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1668,8 +1674,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>154</width>
-                               <height>305</height>
+                               <width>114</width>
+                               <height>189</height>
                               </rect>
                              </property>
                              <attribute name="label">
