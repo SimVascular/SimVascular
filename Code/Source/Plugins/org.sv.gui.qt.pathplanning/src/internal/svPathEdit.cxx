@@ -60,7 +60,13 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
-    if(m_DisplayWidget==NULL)
+    if(m_DisplayWidget)
+    {
+        m_DisplayWidget->GetWidgetPlane1()->SetIntProperty("Crosshair.Gap Size", 0);
+        m_DisplayWidget->GetWidgetPlane2()->SetIntProperty("Crosshair.Gap Size", 0);
+        m_DisplayWidget->GetWidgetPlane3()->SetIntProperty("Crosshair.Gap Size", 0);
+    }
+    else
     {
         parent->setEnabled(false);
         MITK_ERROR << "Plugin PathEdit Init Error: No QmitkStdMultiWidget!";
@@ -85,6 +91,8 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
     connect(ui->resliceSlider,SIGNAL(resliceSizeChanged(double)), this, SLOT(UpdatePathResliceSize(double)) );
 
     connect(ui->comboBoxAddingMode, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAddingMode(int )));
+
+    mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 //void svPathEdit::Activated()
