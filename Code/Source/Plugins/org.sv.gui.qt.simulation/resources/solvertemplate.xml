@@ -7,6 +7,7 @@
     </section>
     <section name="Output Control">
         <param name="Number of Timesteps between Restarts" value="" type="int" />
+        <param name="Output Surface Stress" value="True" type="enum" enum_list="True;False"/>
         <param name="Force Calculation Method" value="Velocity Based" type="enum" enum_list="Velocity Based;Residual Based;Both"/>
         <param name="Print Average Solution" value="True" type="enum" enum_list="True;False"/>
         <param name="Print Error Indicators" value="False" type="enum" enum_list="True;False"/>

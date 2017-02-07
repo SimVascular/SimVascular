@@ -210,7 +210,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
                     ss << values[1] <<"\n";
                     ss << values[2] <<"\n";
                     ss << "0.0 " << props["Pressure"] <<"\n";
-                    ss << basicProps["Period"] << props["Pressure"] <<"\n";
+                    ss << basicProps["Period"] << " " << props["Pressure"] <<"\n";
                 }
             }
         }
