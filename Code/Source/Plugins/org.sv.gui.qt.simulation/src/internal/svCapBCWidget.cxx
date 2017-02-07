@@ -192,7 +192,7 @@ void svCapBCWidget::LoadFlowrateFromFile()
         lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
     }
 
-    QString flowrateFilePath = QFileDialog::getOpenFileName(this, tr("Open Image File")
+    QString flowrateFilePath = QFileDialog::getOpenFileName(this, tr("Load Flow File")
                                                             , lastFileOpenPath
                                                             , tr("All Files (*.*)")
                                                             , NULL
