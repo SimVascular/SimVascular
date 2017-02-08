@@ -59,6 +59,12 @@ std::vector<mitk::BaseData::Pointer> svContourGroupIO::Read()
     groupElement->QueryDoubleAttribute("reslice_size", &resliceSize);
     group->SetResliceSize(resliceSize);
 
+    std::string point2dsize="",point3dsize="";
+    groupElement->QueryStringAttribute("point_2D_display_size", &point2dsize);
+    groupElement->QueryStringAttribute("point_size", &point3dsize);
+    group->SetProp("point 2D display size",point2dsize);
+    group->SetProp("point size",point3dsize);
+
     int timestep=-1;
     for( TiXmlElement* timestepElement = groupElement->FirstChildElement("timestep");
          timestepElement != nullptr;
@@ -253,6 +259,8 @@ void svContourGroupIO::Write()
     groupElement->SetAttribute("path_name", group->GetPathName());
     groupElement->SetAttribute("path_id", group->GetPathID());
     groupElement->SetDoubleAttribute("reslice_size", group->GetResliceSize());
+    groupElement->SetAttribute("point_2D_display_size",group->GetProp("point 2D display size"));
+    groupElement->SetAttribute("point_size",group->GetProp("point size"));
     document.LinkEndChild(groupElement);
 
     for(int t=0;t<group->GetTimeSize();t++)

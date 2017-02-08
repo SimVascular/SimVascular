@@ -10,6 +10,8 @@ set(INTERNAL_CPP_FILES
     svLevelSet2DWidget.cxx
     svLoftParamWidget.cxx
     svSegmentation2D.cxx
+    svContourGroupPoint2DSizeAction.cxx
+    svContourGroupPoint3DSizeAction.cxx
     svSegmentationPluginActivator.cxx
 )
 
@@ -21,6 +23,8 @@ set(MOC_H_FILES
     src/internal/svLevelSet2DWidget.h
     src/internal/svLoftParamWidget.h
     src/internal/svSegmentation2D.h
+    src/internal/svContourGroupPoint2DSizeAction.h
+    src/internal/svContourGroupPoint3DSizeAction.h
     src/internal/svSegmentationPluginActivator.h
 )
 

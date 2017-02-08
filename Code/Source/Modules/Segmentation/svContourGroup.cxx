@@ -635,6 +635,16 @@ std::vector<svContour*> svContourGroup::GetValidContourSet(unsigned int t)
     return contourSet;
 }
 
+void svContourGroup::SetProp(const std::string& key, std::string value)
+{
+    m_Props[key]=value;
+}
+
+std::string svContourGroup::GetProp(const std::string& key)
+{
+    return m_Props[key];
+}
+
 //int svContourGroup::GetInsertingContourIndexByPathPosID(int posID, unsigned int t)
 //{
 //    if(GetSize(t)==0)

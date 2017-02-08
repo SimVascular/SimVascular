@@ -13,6 +13,11 @@
 #include "mitkDataNode.h"
 #include "mitkDataStorage.h"
 
+#include <map>
+#include <sstream>
+#include <iostream>
+#include <string>
+
 class SVPATH_EXPORT svPath : public mitk::BaseData
 {
 public:
@@ -83,6 +88,10 @@ public:
     AddingMode GetAddingMode() { return m_AddingMode;}
     void SetAddingMode(AddingMode mode) { m_AddingMode=mode;}
 
+    void SetProp(const std::string& key, std::string value);
+    std::string GetProp(const std::string& key);
+    std::map<std::string,std::string> GetProps() {return m_Props;}
+
   protected:
 
     mitkCloneMacro(Self);
@@ -119,6 +128,8 @@ public:
     double m_ResliceSize;
 
     AddingMode m_AddingMode;
+
+    std::map<std::string,std::string> m_Props;
   };
 
 SVPATH_EXPORT bool Equal( const svPath* leftHandSide, const svPath* rightHandSide, mitk::ScalarType eps, bool verbose );

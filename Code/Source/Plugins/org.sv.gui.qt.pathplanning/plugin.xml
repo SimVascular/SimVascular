@@ -12,6 +12,8 @@
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Create Path" icon=":/pathcreate.png" class="svPathCreateAction" />
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Load Legacy Paths" icon="" class="svPathLegacyLoadAction" />
       <contextMenuAction nodeDescriptorName="svPathFolder" label="Save Legacy Paths" icon="" class="svPathLegacySaveAction" />
+      <contextMenuAction nodeDescriptorName="svPath" label="Point 2D Size" icon="" class="svPathPoint2DSizeAction" />
+      <contextMenuAction nodeDescriptorName="svPath" label="Point 3D Size" icon="" class="svPathPoint3DSizeAction" />
   </extension>
 
 </plugin>
