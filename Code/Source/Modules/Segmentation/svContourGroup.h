@@ -194,7 +194,7 @@ public:
     void SetResliceSize(double size) {m_ResliceSize=size;}
 
     void SetProp(const std::string& key, std::string value);
-    std::string GetProp(const std::string& key);
+    std::string GetProp(const std::string& key) const;
     std::map<std::string,std::string> GetProps() {return m_Props;}
 
   protected:
