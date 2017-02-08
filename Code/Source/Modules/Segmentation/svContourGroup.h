@@ -10,6 +10,11 @@
 #include "mitkBaseData.h"
 #include "mitkPoint.h"
 
+#include <map>
+#include <sstream>
+#include <iostream>
+#include <string>
+
 class SVSEGMENTATION_EXPORT svContourGroup : public mitk::BaseData
 {
 public:
@@ -188,6 +193,10 @@ public:
 
     void SetResliceSize(double size) {m_ResliceSize=size;}
 
+    void SetProp(const std::string& key, std::string value);
+    std::string GetProp(const std::string& key) const;
+    std::map<std::string,std::string> GetProps() {return m_Props;}
+
   protected:
 
     mitkCloneMacro(Self);
@@ -222,6 +231,7 @@ public:
 
     double m_ResliceSize;
 
+    std::map<std::string,std::string> m_Props;
   };
 
 itkEventMacro( svContourGroupAllEvent, itk::AnyEvent );

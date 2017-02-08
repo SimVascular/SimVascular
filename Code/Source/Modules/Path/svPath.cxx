@@ -396,6 +396,17 @@ void svPath::SetDataModified(bool modified)
     m_DataModified=modified;
 }
 
+void svPath::SetProp(const std::string& key, std::string value)
+{
+    m_Props[key]=value;
+}
+
+std::string svPath::GetProp(const std::string& key) const
+{
+    std::map<std::string,std::string>* p=const_cast<std::map<std::string,std::string>*>(&m_Props);
+    return (*p)[key];
+}
+
 bool Equal( const svPath* leftHandSide, const svPath* rightHandSide, mitk::ScalarType eps, bool verbose )
 {
     if((leftHandSide == nullptr) || (rightHandSide == nullptr))

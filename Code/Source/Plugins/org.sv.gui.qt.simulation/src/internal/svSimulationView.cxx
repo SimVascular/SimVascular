@@ -115,6 +115,9 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     m_TableModelBasic = new QStandardItemModel(this);
     ui->tableViewBasic->setModel(m_TableModelBasic);
 
+    connect( ui->tableViewBasic, SIGNAL(doubleClicked(const QModelIndex&))
+             , this, SLOT(TableViewBasicDoubleClicked(const QModelIndex&)) );
+
     //for cap table
     m_TableModelCap = new QStandardItemModel(this);
     ui->tableViewCap->setModel(m_TableModelCap);
@@ -423,6 +426,10 @@ void svSimulationView::UpdateGUIBasic()
     value=QString::fromStdString(job->GetBasicProp("Period"));
     valueList<<new QStandardItem(value==""?QString("1.0"):value);
 
+    parList<<new QStandardItem("IC File");
+    value=QString::fromStdString(job->GetBasicProp("IC File"));
+    valueList<<new QStandardItem(value);
+
     parList<<new QStandardItem("Initial Pressure");
     value=QString::fromStdString(job->GetBasicProp("Initial Pressure"));
     valueList<<new QStandardItem(value==""?QString("0"):value);
@@ -430,7 +437,6 @@ void svSimulationView::UpdateGUIBasic()
     parList<<new QStandardItem("Initial Velocities");
     value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
     valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
-
 
     for(int i=0;i<parList.size();i++)
     {
@@ -440,6 +446,53 @@ void svSimulationView::UpdateGUIBasic()
 
     ui->tableViewBasic->horizontalHeader()->setSectionResizeMode(0, QHeaderView::ResizeToContents);
     ui->tableViewBasic->horizontalHeader()->setSectionResizeMode(1, QHeaderView::Stretch);
+}
+
+void svSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
+{
+    if(index.column()!=0)
+        return;
+
+    QModelIndexList indexesOfSelectedRows = ui->tableViewBasic->selectionModel()->selectedRows();
+    if(indexesOfSelectedRows.size() < 1)
+    {
+        return;
+    }
+
+    int row=indexesOfSelectedRows[0].row();
+    QStandardItem* itemName= m_TableModelBasic->item(row,0);
+    if(itemName->text()!="IC File")
+        return;
+
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFileOpenPath=QString();
+    if(prefs.IsNotNull())
+    {
+        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+    }
+
+
+    QString icFilePath = QFileDialog::getOpenFileName(m_Parent, tr("Select IC File")
+                                                            , lastFileOpenPath
+                                                            , tr("All Files (*.*)")
+                                                            , NULL
+                                                            , QFileDialog::DontUseNativeDialog);
+
+    if (icFilePath.isEmpty())
+        return;
+
+    QStandardItem* itemValue= m_TableModelBasic->item(row,1);
+    itemValue->setText(icFilePath);
 }
 
 void svSimulationView::UpdateFaceListSelection()
@@ -1157,6 +1210,12 @@ void svSimulationView::CreateAllFiles()
 
 void svSimulationView::RunJob()
 {
+    if (QMessageBox::question(m_Parent, "Run Job", "Are you sure to run the job? It may take a while to finish.",
+                              QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+    {
+      return;
+    }
+
     if(!m_MitkJob)
         return;
 
@@ -1345,16 +1404,6 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
     std::string meshName="";
     if(outputAllFiles)
     {
-        QString presolverPath=m_ExternalPresolverPath;
-        if(presolverPath=="")
-            presolverPath=m_InternalPresolverPath;
-
-        if(presolverPath=="" || !QFile(presolverPath).exists())
-        {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please provide an existing presolver");
-            return false;
-        }
-
         meshName=ui->comboBoxMeshName->currentText().toStdString();
 
         mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
@@ -1400,13 +1449,31 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             return false;
         }
 
-        mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
-        QProcess *presolverProcess = new QProcess(m_Parent);
-        presolverProcess->setWorkingDirectory(outputDir);
-        QStringList arguments;
-        arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-        presolverProcess->start(presolverPath, arguments);
-        presolverProcess->waitForFinished(-1);
+        QString presolverPath=m_ExternalPresolverPath;
+        if(presolverPath=="")
+            presolverPath=m_InternalPresolverPath;
+
+        if(presolverPath=="" || !QFile(presolverPath).exists())
+        {
+            QMessageBox::warning(m_Parent,"Presolver Missing","Please provide an existing presolver");
+        }
+        else
+        {
+            QString icFile=(QString::fromStdString(job->GetBasicProp("IC File"))).trimmed();
+            if(icFile!="" && QFile(icFile).exists())
+            {
+                QString newFilePath=outputDir+"/restart.0.1";
+                QFile::copy(icFile, newFilePath);
+            }
+
+            mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
+            QProcess *presolverProcess = new QProcess(m_Parent);
+            presolverProcess->setWorkingDirectory(outputDir);
+            QStringList arguments;
+            arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
+            presolverProcess->start(presolverPath, arguments);
+            presolverProcess->waitForFinished(-1);
+        }
     }
 
     if(updateJob)
@@ -1671,6 +1738,22 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
         }
         job->SetWallProp("Shear Constant",kcons);
 
+        std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
+        if(wallDensity!="")
+        {
+            if(!IsDouble(wallDensity))
+            {
+                msg="wall density error: " + wallDensity;
+                delete job;
+                return NULL;
+            }
+            job->SetWallProp("Density",wallDensity);
+        }
+        else
+        {
+            job->SetWallProp("Density",job->GetBasicProp("Fluid Density"));
+        }
+
         std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
         if(!IsDouble(pressure))
         {
@@ -1686,14 +1769,14 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
             std::string thickness=m_TableModelVar->item(i,2)->text().trimmed().toStdString();
             std::string modulus=m_TableModelVar->item(i,3)->text().trimmed().toStdString();
 
-            if(!IsDouble(thickness))
+            if(thickness!="" && !IsDouble(thickness))
             {
                 msg="wall thickness error: " + thickness;
                 delete job;
                 return NULL;
             }
 
-            if(!IsDouble(modulus))
+            if(modulus!="" && !IsDouble(modulus))
             {
                 msg="wall elastic modulus error: " + modulus;
                 delete job;

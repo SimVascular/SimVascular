@@ -9,6 +9,8 @@ set(INTERNAL_CPP_FILES
     svPathLegacySaveAction.cxx
     svPathSmooth.cxx
     svPathEdit.cxx
+    svPathPoint2DSizeAction.cxx
+    svPathPoint3DSizeAction.cxx
     svPathPlanningPluginActivator.cxx
 )
 
@@ -19,6 +21,8 @@ set(MOC_H_FILES
     src/internal/svPathLegacySaveAction.h
     src/internal/svPathSmooth.h
     src/internal/svPathEdit.h
+    src/internal/svPathPoint2DSizeAction.h
+    src/internal/svPathPoint3DSizeAction.h
     src/internal/svPathPlanningPluginActivator.h
 )
 

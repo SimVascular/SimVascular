@@ -183,6 +183,27 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         {
             mitk::DataNode::Pointer pathNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             pathNode->SetVisibility(false);
+
+            svPath* path=dynamic_cast<svPath*>(pathNode->GetData());
+            if(path)
+            {
+                auto props=path->GetProps();
+                auto it = props.begin();
+                while(it != props.end())
+                {
+                    if(it->first=="point 2D display size"
+                    || it->first=="point size")
+                    {
+                        if(it->second!="")
+                        {
+                            float value=(float)(std::stod(it->second));
+                            pathNode->SetFloatProperty(it->first.c_str(),value);
+                        }
+                    }
+                    it++;
+                }
+            }
+
             dataStorage->Add(pathNode,pathFolderNode);
         }
 
@@ -194,6 +215,32 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         {
             mitk::DataNode::Pointer contourGroupNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             contourGroupNode->SetVisibility(false);
+
+            svContourGroup* group=dynamic_cast<svContourGroup*>(contourGroupNode->GetData());
+            if(group)
+            {
+                auto props=group->GetProps();
+                auto it = props.begin();
+                while(it != props.end())
+                {
+                    if(it->second!="")
+                    {
+                        if(it->first=="point 2D display size")
+                        {
+                            float value=(float)(std::stod(it->second));
+                            contourGroupNode->SetFloatProperty("point.displaysize",value);
+                        }
+                        else if(it->first=="point size")
+                        {
+                            float value=(float)(std::stod(it->second));
+                            contourGroupNode->SetFloatProperty("point.3dsize",value);
+                        }
+                    }
+
+                    it++;
+                }
+            }
+
             dataStorage->Add(contourGroupNode,segFolderNode);
         }
 

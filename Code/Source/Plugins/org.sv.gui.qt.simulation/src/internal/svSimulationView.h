@@ -43,6 +43,8 @@ public slots:
 
     void UpdateGUIBasic();
 
+    void TableViewBasicDoubleClicked(const QModelIndex& index);
+
     void TableCapSelectionChanged( const QItemSelection & selected, const QItemSelection & deselected );
 
     void TableViewCapDoubleClicked(const QModelIndex& index);

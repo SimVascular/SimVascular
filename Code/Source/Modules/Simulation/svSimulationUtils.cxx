@@ -175,7 +175,9 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
     }
 
     ss << "write_geombc " << outputDir <<"geombc.dat.1" << "\n";
-    ss << "write_restart " << outputDir <<"restart.0.1" << "\n";
+    if(basicProps["IC File"]=="")
+        ss << "write_restart " << outputDir <<"restart.0.1" << "\n";
+
     if(deformable)
     {
         ss << "append_displacements " << outputDir <<"restart.0.1" << "\n";
@@ -210,7 +212,7 @@ std::string svSimulationUtils::CreateRCRTFileContent(svSimJob* job)
                     ss << values[1] <<"\n";
                     ss << values[2] <<"\n";
                     ss << "0.0 " << props["Pressure"] <<"\n";
-                    ss << basicProps["Period"] << props["Pressure"] <<"\n";
+                    ss << basicProps["Period"] << " " << props["Pressure"] <<"\n";
                 }
             }
         }
