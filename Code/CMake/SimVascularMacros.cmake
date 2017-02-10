@@ -341,6 +341,10 @@ macro(simvascular_add_executable TARGET_NAME)
         install(TARGETS ${TARGET_NAME}
           RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
           ${_COMPARGS})
+      else()
+        install(TARGETS ${TARGET_NAME}
+          RUNTIME DESTINATION "${simvascular_add_executable_INSTALL_DESTINATION}"
+          ${_COMPARGS})
       endif()
     else()
       if(simvascular_add_executable_COMPONENT)
