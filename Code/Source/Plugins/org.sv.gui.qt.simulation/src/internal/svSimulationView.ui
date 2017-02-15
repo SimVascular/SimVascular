@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>435</width>
+    <width>417</width>
     <height>866</height>
    </rect>
   </property>
@@ -20,12 +20,24 @@
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>5</number>
+   </property>
+   <property name="topMargin">
+    <number>5</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QWidget" name="widget_16" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_10">
-      <property name="spacing">
-       <number>5</number>
-      </property>
+    <widget class="QWidget" name="widget_18" native="true">
+     <layout class="QGridLayout" name="gridLayout_6">
       <property name="leftMargin">
        <number>0</number>
       </property>
@@ -36,97 +48,79 @@
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
-      <item>
-       <widget class="QWidget" name="widget_3" native="true">
-        <layout class="QGridLayout" name="gridLayout_4">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <item row="0" column="1">
-          <widget class="QLabel" name="labelJobName">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="layoutDirection">
-            <enum>Qt::LeftToRight</enum>
-           </property>
-           <property name="text">
-            <string>Job Name:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2">
-          <widget class="QPushButton" name="btnSave">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Save to Manager</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0">
-          <widget class="QLabel" name="label_4">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text">
-            <string>Job Status:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Model Used:</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QLabel" name="labelModelName">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" colspan="2">
-          <widget class="QLabel" name="labelJobStatus">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
+      <property name="spacing">
+       <number>5</number>
+      </property>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Job Status:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelJobName">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Model Used:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLabel" name="labelJobStatus">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
+        <property name="text">
+         <string>Job Name:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLabel" name="labelModelName">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="btnSave">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Save to Manager</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -160,8 +154,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>585</height>
+           <width>425</width>
+           <height>569</height>
           </rect>
          </property>
          <attribute name="label">
@@ -197,8 +191,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>585</height>
+           <width>425</width>
+           <height>569</height>
           </rect>
          </property>
          <attribute name="label">
@@ -261,8 +255,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>585</height>
+           <width>425</width>
+           <height>569</height>
           </rect>
          </property>
          <attribute name="label">
@@ -611,8 +605,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>585</height>
+           <width>425</width>
+           <height>569</height>
           </rect>
          </property>
          <attribute name="label">
@@ -648,8 +642,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>585</height>
+           <width>425</width>
+           <height>569</height>
           </rect>
          </property>
          <attribute name="label">
@@ -851,8 +845,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>417</width>
-           <height>585</height>
+           <width>407</width>
+           <height>599</height>
           </rect>
          </property>
          <attribute name="label">

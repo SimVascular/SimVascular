@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
+    <width>367</width>
     <height>564</height>
    </rect>
   </property>
@@ -35,14 +35,17 @@
       <property name="horizontalSpacing">
        <number>5</number>
       </property>
-      <property name="leftMargin">
+      <property name="verticalSpacing">
        <number>5</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
       </property>
       <property name="topMargin">
        <number>5</number>
       </property>
       <property name="rightMargin">
-       <number>5</number>
+       <number>0</number>
       </property>
       <property name="bottomMargin">
        <number>5</number>
@@ -65,13 +68,26 @@
     </widget>
    </item>
    <item>
-    <widget class="svResliceSlider" name="resliceSlider" native="true"/>
+    <widget class="Line" name="line">
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <property name="midLineWidth">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
    </item>
-   <item alignment="Qt::AlignLeft">
-    <widget class="QWidget" name="widget_4" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
+   <item>
+    <widget class="QWidget" name="widget_6" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_8">
       <property name="spacing">
-       <number>40</number>
+       <number>0</number>
       </property>
       <property name="leftMargin">
        <number>0</number>
@@ -83,7 +99,38 @@
        <number>0</number>
       </property>
       <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <widget class="svResliceSlider" name="resliceSlider" native="true"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWidget" name="widget_7" native="true">
+     <layout class="QHBoxLayout" name="horizontalLayout_9">
+      <property name="spacing">
        <number>0</number>
+      </property>
+      <property name="leftMargin">
+       <number>0</number>
+      </property>
+      <property name="topMargin">
+       <number>3</number>
+      </property>
+      <property name="rightMargin">
+       <number>0</number>
+      </property>
+      <property name="bottomMargin">
+       <number>3</number>
       </property>
       <item>
        <widget class="QCheckBox" name="checkBoxLoftingPreview">
@@ -101,11 +148,18 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>Options...</string>
+         <string>Lofting Parameters...</string>
         </property>
        </widget>
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>
@@ -118,7 +172,7 @@
        <number>0</number>
       </property>
       <property name="topMargin">
-       <number>5</number>
+       <number>3</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
@@ -228,14 +282,14 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="ctkSliderWidget" name="sliderThreshold" native="true">
+                   <widget class="ctkSliderWidget" name="sliderThreshold">
                     <property name="enabled">
                      <bool>true</bool>
                     </property>
-                    <property name="decimals" stdset="0">
+                    <property name="decimals">
                      <number>1</number>
                     </property>
-                    <property name="tickInterval" stdset="0">
+                    <property name="tickInterval">
                      <double>0.000000000000000</double>
                     </property>
                    </widget>

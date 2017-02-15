@@ -6,16 +6,31 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>439</width>
-    <height>692</height>
+    <width>429</width>
+    <height>716</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>0</number>
+   </property>
+   <property name="leftMargin">
+    <number>5</number>
+   </property>
+   <property name="topMargin">
+    <number>5</number>
+   </property>
+   <property name="rightMargin">
+    <number>5</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
    <item>
-    <widget class="QWidget" name="widgetTop" native="true">
+    <widget class="QWidget" name="widget_10" native="true">
      <layout class="QGridLayout" name="gridLayout">
       <property name="leftMargin">
        <number>0</number>
@@ -27,143 +42,81 @@
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="spacing">
        <number>5</number>
       </property>
+      <item row="1" column="1">
+       <widget class="QLabel" name="labelModelType">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Model Type:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Model Name: </string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="labelModelName">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="btnUpdateModel">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text">
+         <string>Create Model ...</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
    <item>
-    <widget class="QWidget" name="widget" native="true">
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-      <property name="leftMargin">
-       <number>0</number>
-      </property>
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <property name="rightMargin">
-       <number>0</number>
-      </property>
-      <property name="bottomMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QWidget" name="widget_6" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_15">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="label">
-           <property name="text">
-            <string>Model Name: </string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="label_2">
-           <property name="text">
-            <string>Model Type:</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QWidget" name="widget_7" native="true">
-        <layout class="QVBoxLayout" name="verticalLayout_29">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="labelModelName">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="labelModelType">
-           <property name="text">
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
-       <widget class="QWidget" name="widget_9" native="true">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout_30">
-         <property name="spacing">
-          <number>5</number>
-         </property>
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="btnUpdateModel">
-           <property name="text">
-            <string>Create Model ...</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
-     </layout>
+    <widget class="Line" name="line">
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <property name="lineWidth">
+      <number>2</number>
+     </property>
+     <property name="midLineWidth">
+      <number>1</number>
+     </property>
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
     </widget>
    </item>
    <item>
@@ -182,7 +135,7 @@
        <number>0</number>
       </property>
       <property name="bottomMargin">
-       <number>5</number>
+       <number>0</number>
       </property>
       <item>
        <widget class="QPushButton" name="btnChangeFacet">
@@ -217,7 +170,7 @@
        <number>0</number>
       </property>
       <property name="topMargin">
-       <number>0</number>
+       <number>5</number>
       </property>
       <property name="rightMargin">
        <number>0</number>
@@ -375,8 +328,8 @@
                           <rect>
                            <x>0</x>
                            <y>0</y>
-                           <width>126</width>
-                           <height>234</height>
+                           <width>153</width>
+                           <height>435</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -444,8 +397,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>114</width>
-                               <height>128</height>
+                               <width>151</width>
+                               <height>274</height>
                               </rect>
                              </property>
                              <property name="sizePolicy">
@@ -609,6 +562,14 @@
                          </layout>
                         </widget>
                         <widget class="QWidget" name="page_4">
+                         <property name="geometry">
+                          <rect>
+                           <x>0</x>
+                           <y>0</y>
+                           <width>138</width>
+                           <height>435</height>
+                          </rect>
+                         </property>
                          <attribute name="label">
                           <string>Global Ops</string>
                          </attribute>
@@ -652,8 +613,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>146</height>
+                               <width>127</width>
+                               <height>128</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -735,7 +696,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
+                               <width>92</width>
                                <height>94</height>
                               </rect>
                              </property>
@@ -817,8 +778,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>151</width>
-                               <height>146</height>
+                               <width>136</width>
+                               <height>183</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1001,7 +962,7 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>98</width>
+                               <width>90</width>
                                <height>146</height>
                               </rect>
                              </property>
@@ -1175,7 +1136,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>134</width>
-                           <height>398</height>
+                           <height>435</height>
                           </rect>
                          </property>
                          <attribute name="label">
@@ -1288,7 +1249,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>132</width>
-                               <height>215</height>
+                               <height>252</height>
                               </rect>
                              </property>
                              <attribute name="label">
@@ -1552,8 +1513,8 @@
                               <rect>
                                <x>0</x>
                                <y>0</y>
-                               <width>132</width>
-                               <height>215</height>
+                               <width>111</width>
+                               <height>94</height>
                               </rect>
                              </property>
                              <property name="layoutDirection">
@@ -1630,7 +1591,7 @@
                            <x>0</x>
                            <y>0</y>
                            <width>156</width>
-                           <height>398</height>
+                           <height>435</height>
                           </rect>
                          </property>
                          <property name="sizePolicy">
@@ -1762,7 +1723,7 @@
                                <x>0</x>
                                <y>0</y>
                                <width>154</width>
-                               <height>336</height>
+                               <height>373</height>
                               </rect>
                              </property>
                              <attribute name="label">
