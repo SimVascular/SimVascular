@@ -1586,7 +1586,7 @@ svModelElementParasolid* svModelUtils::CreateModelElementParasolidByBlend(svMode
             {
                 delete mepsdst;
                 MITK_ERROR << "Parasolid model blending failed";
-                //                return NULL;
+                return NULL;
             }
 
             bool wallblended=false;
