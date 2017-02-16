@@ -440,6 +440,7 @@ void svSimulationView::UpdateGUIBasic()
 
     for(int i=0;i<parList.size();i++)
     {
+        parList[i]->setEditable(false);
         m_TableModelBasic->setItem(i, 0, parList[i]);
         m_TableModelBasic->setItem(i, 1, valueList[i]);
     }

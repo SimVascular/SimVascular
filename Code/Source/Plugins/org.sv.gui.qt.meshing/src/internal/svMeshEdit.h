@@ -69,6 +69,8 @@ public slots:
 
     void ShowSphereInteractor(bool checked);
 
+    void DisplayMeshInfo();
+
 public:
 
     int GetTimeStep();

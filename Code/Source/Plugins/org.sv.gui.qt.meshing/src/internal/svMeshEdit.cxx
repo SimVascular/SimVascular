@@ -111,6 +111,8 @@ void svMeshEdit::CreateQtPartControl( QWidget *parent )
         svVtkMeshSphereWidget* sphereWidget=dynamic_cast<svVtkMeshSphereWidget*>(m_SphereWidget.GetPointer());
         sphereWidget->SetMeshEdit(this);
     }
+
+    connect(ui->btnMeshInfo, SIGNAL(clicked()), this, SLOT(DisplayMeshInfo()) );
 }
 
 void svMeshEdit::SetupTetGenGUI(QWidget *parent )
@@ -118,11 +120,6 @@ void svMeshEdit::SetupTetGenGUI(QWidget *parent )
     connect(ui->btnEstimateT, SIGNAL(clicked()), this, SLOT(SetEstimatedEdgeSize()) );
 
     ui->toolBox->setCurrentIndex(0);
-
-    ui->frameMMG->hide();
-#ifdef SV_USE_MMG
-    ui->frameMMG->show();
-#endif
 
     //for local table
     m_TableModelLocalT = new QStandardItemModel(this);
@@ -689,6 +686,9 @@ void svMeshEdit::RunCommands(bool fromGUI)
     mitk::StatusBar::GetInstance()->DisplayText("Meshing done.");
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
+
+    DisplayMeshInfo();
+
 }
 
 std::vector<std::string> svMeshEdit::CreateCmdsT()
@@ -705,19 +705,20 @@ std::vector<std::string> svMeshEdit::CreateCmdsT()
     else
         cmds.push_back("option volume 0");
 
-    if(ui->checkBoxRadiusBasedT->isChecked())
+    if(ui->checkBoxRadiusBasedT->isChecked() || ui->checkBoxBoundaryLayerT->isChecked())
     {
-        ui->checkBoxMMG->setChecked(false);
+        cmds.push_back("option UseMMG 0");
+        ui->checkBoxFastMeshing->setChecked(false);
+    }
+    else
+    {
+        cmds.push_back("option UseMMG 1");
     }
 
-    if(ui->checkBoxMMG->isChecked())
-        cmds.push_back("option UseMMG 1");
-    else
-        cmds.push_back("option UseMMG 0");
-
-    cmds.push_back("setWalls");
-
     cmds.push_back("option GlobalEdgeSize "+ui->lineEditGlobalEdgeSizeT->text().trimmed().toStdString());
+
+    if(!ui->checkBoxFastMeshing->isChecked())
+        cmds.push_back("setWalls");
 
     if(ui->checkBoxRadiusBasedT->isChecked())
     {
@@ -949,6 +950,8 @@ void svMeshEdit::UpdateTetGenGUI()
     ui->checkBoxSurfaceT->setChecked(true);
     ui->checkBoxVolumeT->setChecked(true);
 
+    ui->checkBoxFastMeshing->setChecked(false);
+
     //local size
     m_TableModelLocalT->clear();
 
@@ -1007,7 +1010,7 @@ void svMeshEdit::UpdateTetGenGUI()
     m_TableModelRegionT->clear();
 
     QStringList regionListHeaders;
-    regionListHeaders << "Type" << "Local Size" << "Parameters";
+    regionListHeaders << "Type" << "Local Size" << "Radius x y z";
     m_TableModelRegionT->setHorizontalHeaderLabels(regionListHeaders);
     m_TableModelRegionT->setColumnCount(3);
 
@@ -1049,6 +1052,9 @@ void svMeshEdit::UpdateTetGenGUI()
     std::string msg="";
     int regionRowIndex=-1;
 
+    if(cmdHistory.size()>0)
+        ui->checkBoxFastMeshing->setChecked(true);
+
     for(int i=0;i<cmdHistory.size();i++)
     {
         if(cmdHistory[i]=="")
@@ -1088,6 +1094,10 @@ void svMeshEdit::UpdateTetGenGUI()
                 ui->checkBoxVolumeT->setChecked(false);
             else
                 ui->checkBoxVolumeT->setChecked(true);
+        }
+        else if(flag=="setWalls")
+        {
+            ui->checkBoxFastMeshing->setChecked(false);
         }
         else if(flag=="Optimization")
         {
@@ -1370,4 +1380,58 @@ void svMeshEdit::ClearAll()
     ui->labelModelName->setText("");
 }
 
+void svMeshEdit::DisplayMeshInfo()
+{
+    if(m_MeshNode.IsNull())
+        return;
+
+    svMitkMesh* mitkMesh=dynamic_cast<svMitkMesh*>(m_MeshNode->GetData());
+    if(!mitkMesh)
+        return;
+
+    svMesh* mesh=mitkMesh->GetMesh();
+    if(!mesh)
+        return;
+
+    std::string path="";
+    m_MeshNode->GetStringProperty("path",path);
+    std::string meshFileName = path+"/"+m_MeshNode->GetName()+".msh";
+
+    vtkSmartPointer<vtkPolyData> surfaceMesh=mesh->GetSurfaceMesh();
+    if(surfaceMesh==NULL && path!="")
+    {
+        surfaceMesh=svMitkMeshIO::GetSurfaceMesh(meshFileName);
+    }
+
+    vtkSmartPointer<vtkUnstructuredGrid> volumeMesh=mesh->GetVolumeMesh();
+    if(volumeMesh==NULL && path!="")
+    {
+        volumeMesh=svMitkMeshIO::GetVolumeMesh(meshFileName);
+    }
+
+    int num_nodes = 0;
+    int nMeshFaces = 0;
+    int num_elems = 0;
+    int nMeshEdges = 0;
+
+    if(surfaceMesh)
+    {
+      nMeshFaces = surfaceMesh->GetNumberOfCells();
+      nMeshEdges=nMeshFaces*3/2;
+    }
+
+    if(volumeMesh)
+    {
+      num_nodes = volumeMesh->GetNumberOfPoints();
+      num_elems = volumeMesh->GetNumberOfCells();
+    }
+
+    QString stat="Number of Nodes: " + QString::number(num_nodes)
+            + "\n" + "Number of Elems: " + QString::number(num_elems)
+            + "\n" + "Number of Edges: " + QString::number(nMeshEdges)
+            + "\n" + "Number of Faces: " + QString::number(nMeshFaces);
+
+
+    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:\n\n"+stat);
+}
 

@@ -57,7 +57,15 @@ bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
 
     m_cvTetGetMesh->SetSolidModelKernel(kernel);
 
-    if(m_cvTetGetMesh->LoadModel(modelElement->GetWholeVtkPolyData())!=CV_OK)
+    vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+    cleaner->SetInputData(modelElement->GetWholeVtkPolyData());
+    cleaner->Update();
+
+    vtkSmartPointer<vtkPolyData> vtkpd=vtkSmartPointer<vtkPolyData>::New();
+    vtkpd->DeepCopy(cleaner->GetOutput());
+    vtkpd->BuildLinks();
+
+    if(m_cvTetGetMesh->LoadModel(vtkpd)!=CV_OK)
         return false;
 
 //    //set walls
@@ -120,6 +128,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         std::vector<int> wallFaceIDs=m_ModelElement->GetWallFaceIDs();
         if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=CV_OK)
         {
+            msg="Failed ot set walls";
             return false;
         }
 
