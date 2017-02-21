@@ -123,6 +123,10 @@ public:
 
     bool IsInt(std::string value);
 
+#if defined(Q_OS_WIN)
+    QString GetRegistryValue(QString key);
+#endif
+
 private:
 
     QWidget* m_Parent;
@@ -158,6 +162,7 @@ private:
     QString m_InternalPresolverPath;
     QString m_InternalFlowsolverPath;
     QString m_InternalPostsolverPath;
+    QString m_InternalMPIExecPath;
 
     QString m_ExternalPresolverPath;
     QString m_ExternalFlowsolverPath;
@@ -166,6 +171,7 @@ private:
     bool m_UseCustom;
     QString m_SolverTemplatePath;
     QString m_ExternalPostsolverPath;
+    QString m_ExternalMPIExecPath;
 
 };
 

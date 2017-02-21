@@ -28,6 +28,7 @@
 #include <QProcess>
 #include <QFileDialog>
 #include <QThread>
+#include <QSettings>
 
 const QString svSimulationView::EXTENSION_ID = "org.sv.views.simulation";
 
@@ -57,14 +58,15 @@ svSimulationView::svSimulationView() :
     m_InternalPresolverPath="";
     m_InternalFlowsolverPath="";
     m_InternalPostsolverPath="";
+    m_InternalMPIExecPath="";
 
     m_ExternalPresolverPath="";
     m_ExternalFlowsolverPath="";
     m_UseMPI=true;
-    m_MPIExecPath="";
     m_UseCustom=false;
     m_SolverTemplatePath="";
     m_ExternalPostsolverPath="";
+    m_ExternalMPIExecPath="";
 }
 
 svSimulationView::~svSimulationView()
@@ -190,9 +192,45 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
 
     //get path for the internal solvers
     QString applicationPath=QCoreApplication::applicationDirPath();
-    m_InternalPresolverPath=applicationPath+"/svpre";
-    m_InternalFlowsolverPath=applicationPath+"/svsolver";
-    m_InternalPostsolverPath=applicationPath+"/svpost";
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_MAC)
+    QString filePath1=applicationPath+"/../svpre";
+    QString filePath2=applicationPath+"/svpre";
+    if(QFile(filePath1).exists())
+        m_InternalPresolverPath=filePath1;
+    else if(QFile(filePath2).exists())
+        m_InternalPresolverPath=filePath2;
+
+    filePath1=applicationPath+"/../svsolver";
+    filePath2=applicationPath+"/svsolver";
+    if(QFile(filePath1).exists())
+        m_InternalFlowsolverPath=filePath1;
+    else if(QFile(filePath2).exists())
+        m_InternalFlowsolverPath=filePath2;
+
+    filePath1=applicationPath+"/../svpost";
+    filePath2=applicationPath+"/svpost";
+    if(QFile(filePath1).exists())
+        m_InternalPostsolverPath=filePath1;
+    else if(QFile(filePath2).exists())
+        m_InternalPostsolverPath=filePath2;
+#endif
+
+#if defined(Q_OS_WIN)
+    m_InternalPresolverPath=GetRegistryValue("SVPRE_EXE");
+    m_InternalFlowsolverPath=GetRegistryValue("SVSOLVER_MSMPI_EXE");
+    m_InternalPostsolverPath=GetRegistryValue("SVPOST_EXE");
+#endif
+
+#if defined(Q_OS_LINUX) || defined(Q_OS_WIN)
+    m_InternalMPIExecPath="mpiexec";
+#endif
+
+#if defined(Q_OS_MAC)
+    QString filePath=applicationPath+"/../mpiexec";
+    if(QFile(filePath).exists())
+        m_InternalMPIExecPath=filePath;
+#endif
 
     //get paths for the external solvers
     berry::IPreferences::Pointer prefs = this->GetPreferences();
@@ -209,7 +247,7 @@ void svSimulationView::OnPreferencesChanged(const berry::IBerryPreferences* pref
     m_ExternalPresolverPath=prefs->Get("presolver path","");
     m_ExternalFlowsolverPath=prefs->Get("flowsolver path","");
     m_UseMPI=prefs->GetBool("use mpi", true);
-    m_MPIExecPath=prefs->Get("mpiexec path","");
+    m_ExternalMPIExecPath=prefs->Get("mpiexec path","");
     m_UseCustom=prefs->GetBool("use custom", false);
     m_SolverTemplatePath=prefs->Get("solver template path","");
     m_ExternalPostsolverPath=prefs->Get("postsolver path","");
@@ -1245,16 +1283,25 @@ void svSimulationView::RunJob()
     if(flowsolverPath=="")
         flowsolverPath=m_InternalFlowsolverPath;
 
-    if(flowsolverPath=="" || !QFile(flowsolverPath).exists())
+    if(flowsolverPath=="")
     {
         QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide an existing flowsolver");
         return;
     }
 
-    if(m_UseMPI && m_MPIExecPath=="")
+
+    QString mpiExecPath="";
+    if(m_UseMPI)
     {
-        QMessageBox::warning(m_Parent,"MPIExec Missing","Please provide mpiexec in Preferences");
-        return;
+        mpiExecPath=m_ExternalMPIExecPath;
+        if(mpiExecPath=="")
+            mpiExecPath=m_InternalMPIExecPath;
+
+        if(mpiExecPath=="")
+        {
+            QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide an existing flowsolver");
+            return;
+        }
     }
 
     std::string startingNumber=ui->lineEditStartStepNum->text().trimmed().toStdString();
@@ -1294,7 +1341,7 @@ void svSimulationView::RunJob()
     {
         QStringList arguments;
         arguments << "-n" << QString::number(ui->sliderNumProcs->value())<< flowsolverPath;
-        flowsolverProcess->start(m_MPIExecPath, arguments);
+        flowsolverProcess->start(mpiExecPath, arguments);
         flowsolverProcess->waitForFinished(-1);
     }
     else
@@ -1454,9 +1501,10 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
         if(presolverPath=="")
             presolverPath=m_InternalPresolverPath;
 
-        if(presolverPath=="" || !QFile(presolverPath).exists())
+//        if(presolverPath=="" || !QFile(presolverPath).exists())
+        if(presolverPath=="")
         {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please provide an existing presolver");
+            QMessageBox::warning(m_Parent,"Presolver Missing","Please make presolver exists!");
         }
         else
         {
@@ -2016,5 +2064,23 @@ bool svSimulationView::AreDouble(std::string values, int* count)
     return true;
 }
 
+#if defined(Q_OS_WIN)
+QString svSimulationView::GetRegistryValue(QString key)
+{
+    QString value="";
+
+    QSettings settings1("HKEY_LOCAL_MACHINE\\SOFTWARE\\SimVascular\\svSolver", QSettings::NativeFormat);
+    QString value1=settings1.value(key).toString().trimmed();
+    if(value1!="")
+        return value1;
+
+    QSettings settings2("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\SimVascular\\svSolver", QSettings::NativeFormat);
+    QString value2=settings1.value(key).toString().trimmed();
+    if(value2!="")
+        return value2;
+
+    return "";
+}
+#endif
 
 
