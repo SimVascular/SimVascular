@@ -1537,7 +1537,6 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             presolverProcess->setArguments(arguments);
             svProcessHandler* handler=new svProcessHandler(presolverProcess,m_Parent);
             handler->Start();
-            delete handler;
         }
     }
 
@@ -2048,7 +2047,6 @@ void svSimulationView::ExportResults()
 
     svProcessHandler* handler=new svProcessHandler(postsolverProcess,m_Parent);
     handler->Start();
-    delete handler;
 
     mitk::StatusBar::GetInstance()->DisplayText("Results exported.");
 }
@@ -2150,11 +2148,13 @@ void svProcessHandler::Start()
 
     m_MessageBox= new QMessageBox(m_Parent);
     m_MessageBox->setWindowTitle("Processing");
-    m_MessageBox->setText("Processing data and creating files...");
-    QAbstractButton *stopButton = m_MessageBox->addButton(tr("Stop"), QMessageBox::ActionRole);
+    m_MessageBox->setText("Processing data and creating files...                                 ");
+    m_MessageBox->setInformativeText("Click \"OK\" to continue in background.\nClick \"Abort\" to terminate.");
+    m_MessageBox->setStandardButtons(QMessageBox::Ok | QMessageBox::Abort);
+    m_MessageBox->setDefaultButton(QMessageBox::Ok);
 
-    m_MessageBox->exec();
-    if ( m_MessageBox && m_MessageBox->clickedButton() == stopButton)
+    int ret = m_MessageBox->exec();
+    if(ret==QMessageBox::Abort && m_Process)
         m_Process->kill();
 }
 
@@ -2191,7 +2191,11 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
     if(m_Process)
         mb.setDetailedText(m_Process->readAll());
 
+    mb.setDefaultButton(QMessageBox::Ok);
+
     mb.exec();
+
+    delete this;
 }
 
 svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
@@ -2285,27 +2289,9 @@ void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitSt
 void svSolverProcessHandler::UpdateStatus()
 {
     int currentStep=0;
-    QFile numStartFile(m_RunDir+"/numstart.dat");
-    if (numStartFile.open(QIODevice::ReadOnly))
-    {
-        QTextStream in(&numStartFile);
-        QString stepStr=in.readLine();
-        bool ok;
-        int step=stepStr.toInt(&ok);
-        if(ok)
-            currentStep=step;
-
-        numStartFile.close();
-    }
-
-    double progress=0;
-    if(currentStep>m_StartStep && m_TotalSteps>0)
-        progress=(currentStep-m_StartStep)*1.0/m_TotalSteps;
-
-    m_JobNode->SetDoubleProperty("running progress", progress);
+    QString info="";
 
     QFile historFile(m_RunDir+"/histor.dat");
-    QString info="";
     if (historFile.open(QIODevice::ReadOnly))
     {
         QTextStream in(&historFile);
@@ -2314,8 +2300,21 @@ void svSolverProcessHandler::UpdateStatus()
         QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
         info=list.last();
 
+        list=info.split(QRegExp("\\s+"),QString::SkipEmptyParts);
+        QString stepStr=list.first();
+        bool ok;
+        int step=stepStr.toInt(&ok);
+        if(ok)
+            currentStep=step;
+
         historFile.close();
     }
+
+    double progress=0;
+    if(currentStep>m_StartStep && m_TotalSteps>0)
+        progress=(currentStep-m_StartStep)*1.0/m_TotalSteps;
+
+    m_JobNode->SetDoubleProperty("running progress", progress);
 
     QString status=QString::fromStdString(m_JobNode->GetName())+": running, " +QString::number((int)(progress*100))+"% completed. Info: "+info;
     mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
