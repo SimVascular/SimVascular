@@ -1280,7 +1280,7 @@ void svSimulationView::RunJob()
 
     if(flowsolverPath=="")
     {
-        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide an existing flowsolver");
+        QMessageBox::warning(m_Parent,"Flowsolver Missing","Please make sure flowsolver exists!");
         return;
     }
 
@@ -1294,7 +1294,7 @@ void svSimulationView::RunJob()
 
         if(mpiExecPath=="")
         {
-            QMessageBox::warning(m_Parent,"Flowsolver Missing","Please provide an existing flowsolver");
+            QMessageBox::warning(m_Parent,"MPIExec Missing","Please make sure mpiexec exists!");
             return;
         }
     }
@@ -1517,7 +1517,7 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
 //        if(presolverPath=="" || !QFile(presolverPath).exists())
         if(presolverPath=="")
         {
-            QMessageBox::warning(m_Parent,"Presolver Missing","Please make presolver exists!");
+            QMessageBox::warning(m_Parent,"Presolver Missing","Please make sure presolver exists!");
         }
         else
         {
@@ -1945,7 +1945,7 @@ void svSimulationView::ExportResults()
 
     if(postsolverPath=="" || !QFile(postsolverPath).exists())
     {
-        QMessageBox::warning(m_Parent,"Postsolver Missing","Please provide an existing postsolver");
+        QMessageBox::warning(m_Parent,"Postsolver Missing","Please make sure postsolver exists!");
         return;
     }
 
