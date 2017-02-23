@@ -232,6 +232,11 @@ void svProjectDataNodesPluginActivator::RemoveSelectedNodes( bool )
             node = *it;
             if( !isDataFolder->CheckNode(node))
             {
+                bool running=false;
+                node->GetBoolProperty("running",running);
+                if(running)
+                    continue;
+
 //                dataStorage->Remove(node);
                 if(!incCurrEventId&&m_UndoEnabled)
                 {
@@ -284,6 +289,14 @@ void svProjectDataNodesPluginActivator::RenameSelectedNode( bool )
         mitk::TNodePredicateDataType<svDataFolder>::Pointer isDataFolder= mitk::TNodePredicateDataType<svDataFolder>::New();
         if( isDataFolder->CheckNode(node))
         {
+            return;
+        }
+
+        bool running=false;
+        node->GetBoolProperty("running",running);
+        if(running)
+        {
+            QMessageBox::warning(NULL,"Job Running","You can't rename it since it has a job running.");
             return;
         }
 

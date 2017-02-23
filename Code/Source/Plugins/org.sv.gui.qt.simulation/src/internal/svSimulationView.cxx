@@ -12,6 +12,7 @@
 #include <mitkSliceNavigationController.h>
 #include <mitkProgressBar.h>
 #include <mitkStatusBar.h>
+#include <mitkGenericProperty.h>
 
 #include <berryIPreferencesService.h>
 #include <berryIPreferences.h>
@@ -109,7 +110,8 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     //        return;
     //    }
 
-    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
+    ui->btnSave->hide();
+//    connect(ui->btnSave, SIGNAL(clicked()), this, SLOT(SaveToManager()) );
 
     ui->toolBox->setCurrentIndex(0);
 
@@ -348,13 +350,18 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateFaceListSelection();
 
+    UpdateJobStatus();
+
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
 
 void svSimulationView::NodeChanged(const mitk::DataNode* node)
 {
-    if(m_JobNode==node)
+    if(m_JobNode.IsNotNull() && m_JobNode==node)
+    {
         ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
+        UpdateJobStatus();
+    }
 }
 
 void svSimulationView::NodeAdded(const mitk::DataNode* node)
@@ -1171,11 +1178,7 @@ void svSimulationView::ExportInputFiles()
 
     if(dir.isEmpty()) return;
 
-    WaitCursorOn();
-
     CreateDataFiles(dir, false, true, true);
-
-    WaitCursorOff();
 }
 
 void svSimulationView::ExportAllFiles()
@@ -1207,11 +1210,7 @@ void svSimulationView::ExportAllFiles()
 
     if(dir.isEmpty()) return;
 
-    WaitCursorOn();
-
     CreateDataFiles(dir, true, true, true);
-
-    WaitCursorOff();
 }
 
 void svSimulationView::CreateAllFiles()
@@ -1240,11 +1239,7 @@ void svSimulationView::CreateAllFiles()
 
     QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
 
-    WaitCursorOn();
-
     CreateDataFiles(jobPath, true, true, false);
-
-    WaitCursorOff();
 }
 
 void svSimulationView::RunJob()
@@ -1314,14 +1309,14 @@ void svSimulationView::RunJob()
         }
     }
 
+    QString runPath=jobPath;
+    if(m_UseMPI && ui->sliderNumProcs->value()>1)
+    {
+        runPath=jobPath+"/"+QString::number(ui->sliderNumProcs->value())+"-procs_case";
+    }
+
     if(startingNumber!="")
     {
-        QString runPath=jobPath;
-        if(m_UseMPI && ui->sliderNumProcs->value()>1)
-        {
-            runPath=jobPath+"/"+QString::number(ui->sliderNumProcs->value())+"-procs_case";
-        }
-
         QFile numStartFile(runPath+"/numstart.dat");
         if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
@@ -1331,8 +1326,30 @@ void svSimulationView::RunJob()
         }
     }
 
+    int startStep=0;
+    QFile numFile(runPath+"/numstart.dat");
+    if (numFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream in(&numFile);
+        QString stepStr=in.readLine();
+        bool ok;
+        int step=stepStr.toInt(&ok);
+        if(ok)
+            startStep=step;
+
+        numFile.close();
+    }
+
+    int totalSteps=100;//initial none zero value
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job)
+    {
+        job->SetRunProp("Number of Processes",QString::number(ui->sliderNumProcs->value()).toStdString());
+        QString tstr=QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
+        totalSteps=tstr.toInt();
+    }
+
     mitk::StatusBar::GetInstance()->DisplayText("Running simulation");
-    WaitCursorOn();
 
     QProcess *flowsolverProcess = new QProcess(m_Parent);
     flowsolverProcess->setWorkingDirectory(jobPath);
@@ -1341,24 +1358,17 @@ void svSimulationView::RunJob()
     {
         QStringList arguments;
         arguments << "-n" << QString::number(ui->sliderNumProcs->value())<< flowsolverPath;
-        flowsolverProcess->start(mpiExecPath, arguments);
-        flowsolverProcess->waitForFinished(-1);
+        flowsolverProcess->setProgram(mpiExecPath);
+        flowsolverProcess->setArguments(arguments);
     }
     else
     {
-        flowsolverProcess->start(flowsolverPath, QStringList());
-        flowsolverProcess->waitForFinished(-1);
+        flowsolverProcess->setProgram(flowsolverPath);
+        flowsolverProcess->setArguments(QStringList());
     }
 
-    svSimJob* job=m_MitkJob->GetSimJob();
-    if(job)
-        job->SetRunProp("Number of Processes",QString::number(ui->sliderNumProcs->value()).toStdString());
-
-    m_MitkJob->SetStatus("Simulation done");
-    ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-
-    mitk::StatusBar::GetInstance()->DisplayText("Simulation done");
-    WaitCursorOff();
+    svSolverProcessHandler* handler=new svSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
+    handler->Start();
 }
 
 bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
@@ -1491,8 +1501,11 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
         mitk::StatusBar::GetInstance()->DisplayText("Creating mesh-complete files");
         QString meshCompletePath=outputDir+"/mesh-complete";
         dir.mkpath(meshCompletePath);
-        if(!svMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath))
-        {
+        WaitCursorOn();
+        bool ok=svMeshLegacyIO::WriteFiles(meshNode,modelElement, meshCompletePath);
+        WaitCursorOff();
+        if(!ok)
+        { 
             QMessageBox::warning(m_Parent,"Mesh info missing","Please make sure the mesh exists and is valid.");
             return false;
         }
@@ -1518,10 +1531,13 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
             mitk::StatusBar::GetInstance()->DisplayText("Creating Data files: bct, restart, geombc,etc.");
             QProcess *presolverProcess = new QProcess(m_Parent);
             presolverProcess->setWorkingDirectory(outputDir);
+            presolverProcess->setProgram(presolverPath);
             QStringList arguments;
             arguments << QString::fromStdString(m_JobNode->GetName()+".svpre");
-            presolverProcess->start(presolverPath, arguments);
-            presolverProcess->waitForFinished(-1);
+            presolverProcess->setArguments(arguments);
+            svProcessHandler* handler=new svProcessHandler(presolverProcess,m_Parent);
+            handler->Start();
+            delete handler;
         }
     }
 
@@ -1529,7 +1545,9 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
     {
         m_MitkJob->SetSimJob(job);
         m_MitkJob->SetMeshName(meshName);
-        m_MitkJob->SetStatus("Data files created");
+        if(!createFolder)
+            m_MitkJob->SetStatus("Input/Data files created");
+
         ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
         m_MitkJob->SetDataModified();
     }
@@ -2022,16 +2040,17 @@ void svSimulationView::ExportResults()
         arguments << "-ph" << "-laststep";
 
     mitk::StatusBar::GetInstance()->DisplayText("Exporting results.");
-    WaitCursorOn();
 
     QProcess *postsolverProcess = new QProcess(m_Parent);
     postsolverProcess->setWorkingDirectory(exportDir);
+    postsolverProcess->setProgram(postsolverPath);
+    postsolverProcess->setArguments(arguments);
 
-    postsolverProcess->start(postsolverPath, arguments);
-    postsolverProcess->waitForFinished(-1);
+    svProcessHandler* handler=new svProcessHandler(postsolverProcess,m_Parent);
+    handler->Start();
+    delete handler;
 
     mitk::StatusBar::GetInstance()->DisplayText("Results exported.");
-    WaitCursorOff();
 }
 
 bool svSimulationView::IsInt(std::string value)
@@ -2075,7 +2094,7 @@ QString svSimulationView::GetRegistryValue(QString key)
         return value1;
 
     QSettings settings2("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\SimVascular\\svSolver", QSettings::NativeFormat);
-    QString value2=settings1.value(key).toString().trimmed();
+    QString value2=settings2.value(key).toString().trimmed();
     if(value2!="")
         return value2;
 
@@ -2083,4 +2102,221 @@ QString svSimulationView::GetRegistryValue(QString key)
 }
 #endif
 
+void svSimulationView::UpdateJobStatus()
+{
+    if(m_JobNode.IsNull())
+        return;
 
+    bool running=false;
+    double runningProgress=0;
+    m_JobNode->GetBoolProperty("running",running);
+    m_JobNode->GetDoubleProperty("running progress",runningProgress);
+    if(running)
+    {
+        ui->labelJobStatus->setText("Running: "+QString::number((int)(runningProgress*100))+"% completed");
+        ui->frameRun->setEnabled(false);
+    }
+    else
+    {
+        ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
+        ui->frameRun->setEnabled(true);
+    }
+
+}
+
+svProcessHandler::svProcessHandler(QProcess* process, QWidget* parent)
+    : m_Process(process)
+    , m_Parent(parent)
+    , m_MessageBox(NULL)
+{
+}
+
+svProcessHandler::~svProcessHandler()
+{
+    if(m_Process)
+        delete m_Process;
+
+    if(m_MessageBox)
+        delete m_MessageBox;
+}
+
+void svProcessHandler::Start()
+{
+    if(m_Process==NULL)
+        return;
+
+    connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
+    m_Process->start();
+
+    m_MessageBox= new QMessageBox(m_Parent);
+    m_MessageBox->setWindowTitle("Processing");
+    m_MessageBox->setText("Processing data and creating files...");
+    QAbstractButton *stopButton = m_MessageBox->addButton(tr("Stop"), QMessageBox::ActionRole);
+
+    m_MessageBox->exec();
+    if ( m_MessageBox && m_MessageBox->clickedButton() == stopButton)
+        m_Process->kill();
+}
+
+void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    if(m_MessageBox)
+    {
+        delete m_MessageBox;
+        m_MessageBox=NULL;
+    }
+
+    QString title="";
+    QString text="";
+    QMessageBox::Icon icon=QMessageBox::NoIcon;
+    QMessageBox mb(m_Parent);
+
+    if(exitStatus==QProcess::NormalExit)
+    {
+        title="Finished";
+        text="Data files have been created.                                                                                         ";
+        icon=QMessageBox::Information;
+    }
+    else
+    {
+        title="Not finished";
+        text="Failed to finish creating data files.                                                                                 ";
+        icon=QMessageBox::Warning;
+    }
+
+    mb.setWindowTitle(title);
+    mb.setText(text);
+    mb.setIcon(icon);
+
+    if(m_Process)
+        mb.setDetailedText(m_Process->readAll());
+
+    mb.exec();
+}
+
+svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
+    : m_Process(process)
+    , m_JobNode(jobNode)
+    , m_StartStep(startStep)
+    , m_TotalSteps(totalSteps)
+    , m_RunDir(runDir)
+    , m_Parent(parent)
+    , m_Timer(NULL)
+{
+}
+
+svSolverProcessHandler::~svSolverProcessHandler()
+{
+    if(m_Process)
+        delete m_Process;
+
+    if(m_Timer)
+        delete m_Timer;
+}
+
+void svSolverProcessHandler::Start()
+{
+    if(m_Process==NULL)
+        return;
+
+    connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
+
+    m_JobNode->SetBoolProperty("running", true);
+    m_JobNode->SetDoubleProperty("running progress", 0);
+    mitk::GenericProperty<svSolverProcessHandler*>::Pointer solverProcessProp=mitk::GenericProperty<svSolverProcessHandler*>::New(this);
+    m_JobNode->SetProperty("process handler",solverProcessProp);
+
+    m_Process->start();
+
+    m_Timer = new QTimer(this);
+    connect(m_Timer, SIGNAL(timeout()), this, SLOT(UpdateStatus()));
+    m_Timer->start(3000);
+}
+
+void svSolverProcessHandler::KillProcess()
+{
+    if(m_Process)
+        m_Process->kill();
+}
+
+void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
+{
+    QString title="";
+    QString text="";
+    QMessageBox::Icon icon=QMessageBox::NoIcon;
+    QMessageBox mb(NULL); //svSimualtionView maybe doesn't exist.
+    QString status="";
+
+    if(exitStatus==QProcess::NormalExit)
+    {
+        title="Finished";
+        text="Job "+QString::fromStdString(m_JobNode->GetName())+": Finished.";
+        icon=QMessageBox::Information;
+        status="Simulation done";
+    }
+    else
+    {
+        title="Not finished";
+        text="Job "+QString::fromStdString(m_JobNode->GetName())+": Failed to finish.";
+        icon=QMessageBox::Warning;
+        status="Simulation failed";
+    }
+
+    mb.setWindowTitle(title);
+    mb.setText(text+"                                                                                         ");
+    mb.setIcon(icon);
+
+    if(m_Process)
+        mb.setDetailedText(m_Process->readAll());
+
+    mb.exec();
+
+    svMitkSimJob* mitkJob=dynamic_cast<svMitkSimJob*>(m_JobNode->GetData());
+    mitkJob->SetStatus(status.toStdString());
+
+    m_JobNode->SetBoolProperty("running",false);
+    m_JobNode->SetDoubleProperty("running progress", 0);
+
+    mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
+
+    delete this;
+}
+
+void svSolverProcessHandler::UpdateStatus()
+{
+    int currentStep=0;
+    QFile numStartFile(m_RunDir+"/numstart.dat");
+    if (numStartFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream in(&numStartFile);
+        QString stepStr=in.readLine();
+        bool ok;
+        int step=stepStr.toInt(&ok);
+        if(ok)
+            currentStep=step;
+
+        numStartFile.close();
+    }
+
+    double progress=0;
+    if(currentStep>m_StartStep && m_TotalSteps>0)
+        progress=(currentStep-m_StartStep)*1.0/m_TotalSteps;
+
+    m_JobNode->SetDoubleProperty("running progress", progress);
+
+    QFile historFile(m_RunDir+"/histor.dat");
+    QString info="";
+    if (historFile.open(QIODevice::ReadOnly))
+    {
+        QTextStream in(&historFile);
+        QString content=in.readAll();
+
+        QStringList list=content.split(QRegExp("[\r\n]"),QString::SkipEmptyParts);
+        info=list.last();
+
+        historFile.close();
+    }
+
+    QString status=QString::fromStdString(m_JobNode->GetName())+": running, " +QString::number((int)(progress*100))+"% completed. Info: "+info;
+    mitk::StatusBar::GetInstance()->DisplayText(status.toStdString().c_str());
+}

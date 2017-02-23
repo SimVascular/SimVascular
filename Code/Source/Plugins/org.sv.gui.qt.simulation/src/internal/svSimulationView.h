@@ -12,6 +12,8 @@
 
 #include <QWidget>
 #include <QStandardItemModel>
+#include <QProcess>
+#include <QMessageBox>
 
 namespace Ui {
 class svSimulationView;
@@ -90,6 +92,8 @@ public slots:
     void SetResultDir();
 
     void ExportResults();
+
+    void UpdateJobStatus();
 
 public:
 
@@ -172,6 +176,68 @@ private:
     QString m_SolverTemplatePath;
     QString m_ExternalPostsolverPath;
     QString m_ExternalMPIExecPath;
+};
+
+class svProcessHandler : public QObject
+{
+    Q_OBJECT
+
+public:
+    svProcessHandler(QProcess* process, QWidget* parent=NULL);
+    virtual ~svProcessHandler();
+
+    void Start();
+
+public slots:
+
+    void AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+
+private:
+
+    QProcess* m_Process;
+
+    QWidget* m_Parent;
+
+    QMessageBox* m_MessageBox;
+
+
+};
+
+class svSolverProcessHandler : public QObject
+{
+    Q_OBJECT
+
+public:
+    svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    virtual ~svSolverProcessHandler();
+
+    void Start();
+
+    void KillProcess();
+
+public slots:
+
+    void AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus);
+
+    void UpdateStatus();
+
+private:
+
+    QProcess* m_Process;
+
+    QWidget* m_Parent;
+
+    QMessageBox* m_MessageBox;
+
+    mitk::DataNode::Pointer m_JobNode;
+
+    QTimer* m_Timer;
+
+    int m_StartStep;
+
+    int m_TotalSteps;
+
+    QString m_RunDir;
 
 };
 
