@@ -81,7 +81,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="label_5">
            <property name="text">
-            <string>MPIEXEC:</string>
+            <string>MPIExec:</string>
            </property>
           </widget>
          </item>
@@ -95,7 +95,7 @@
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditMPIExecPath">
            <property name="text">
-            <string>mpiexec</string>
+            <string/>
            </property>
           </widget>
          </item>
@@ -254,21 +254,21 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Extenral Postsolver:</string>
+         <string>Postsolver:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>External Flowsolver:</string>
+         <string>Flowsolver:</string>
         </property>
        </widget>
       </item>
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>External Presolver:</string>
+         <string>Presolver:</string>
         </property>
        </widget>
       </item>

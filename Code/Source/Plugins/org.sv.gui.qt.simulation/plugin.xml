@@ -9,7 +9,8 @@
   </extension>
 
   <extension point="org.mitk.gui.qt.datamanager.contextMenuActions">
-  <contextMenuAction nodeDescriptorName="svSimulationFolder" label="Create Simulation Job" icon="" class="svSimJobCreateAction" />
+    <contextMenuAction nodeDescriptorName="svSimulationFolder" label="Create Simulation Job" icon="" class="svSimJobCreateAction" />
+    <contextMenuAction nodeDescriptorName="svMitkSimJob" label="Stop Simulation" icon="" class="svSimJobStopAction" />
 <!--  <contextMenuAction nodeDescriptorName="svMitkSimJob" label="Export Job Data Files" icon="" class="svSimJobExportAction" />-->
   </extension>
 

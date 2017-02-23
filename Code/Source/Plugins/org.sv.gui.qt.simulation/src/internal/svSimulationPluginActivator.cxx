@@ -2,6 +2,7 @@
 #include "svSimJobCreateAction.h"
 #include "svSimulationPreferencePage.h"
 #include "svSimulationView.h"
+#include "svSimJobStopAction.h"
 
 //svSimulationPluginActivator* svSimulationPluginActivator::m_Instance = nullptr;
 //ctkPluginContext* svSimulationPluginActivator::m_Context = nullptr;
@@ -14,6 +15,7 @@ void svSimulationPluginActivator::start(ctkPluginContext* context)
     BERRY_REGISTER_EXTENSION_CLASS(svSimJobCreateAction, context)
     BERRY_REGISTER_EXTENSION_CLASS(svSimulationPreferencePage, context)
     BERRY_REGISTER_EXTENSION_CLASS(svSimulationView, context)
+    BERRY_REGISTER_EXTENSION_CLASS(svSimJobStopAction, context)
 }
 
 void svSimulationPluginActivator::stop(ctkPluginContext* context)

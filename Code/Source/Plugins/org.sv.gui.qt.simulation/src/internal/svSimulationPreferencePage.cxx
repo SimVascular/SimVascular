@@ -164,7 +164,7 @@ void svSimulationPreferencePage::Update()
     m_Ui->lineEditPresolverPath->setText(m_Preferences->Get("presolver path",""));
     m_Ui->lineEditFlowsolverPath->setText(m_Preferences->Get("flowsolver path",""));
     m_Ui->checkBoxUseMPI->setChecked(m_Preferences->GetBool("use mpi", true));
-    m_Ui->lineEditMPIExecPath->setText(m_Preferences->Get("mpiexec path","mpiexec"));
+    m_Ui->lineEditMPIExecPath->setText(m_Preferences->Get("mpiexec path",""));
     m_Ui->checkBoxUseCustom->setChecked(m_Preferences->GetBool("use custom", false));
     m_Ui->lineEditCustomTemplatePath->setText(m_Preferences->Get("solver template path",""));
     m_Ui->lineEditPostsolverPath->setText(m_Preferences->Get("postsolver path",""));

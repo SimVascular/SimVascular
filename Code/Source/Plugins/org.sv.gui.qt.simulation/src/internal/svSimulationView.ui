@@ -147,15 +147,15 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>5</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>425</width>
-           <height>569</height>
+           <width>407</width>
+           <height>599</height>
           </rect>
          </property>
          <attribute name="label">
@@ -191,8 +191,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>425</width>
-           <height>569</height>
+           <width>407</width>
+           <height>599</height>
           </rect>
          </property>
          <attribute name="label">
@@ -255,8 +255,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>425</width>
-           <height>569</height>
+           <width>407</width>
+           <height>599</height>
           </rect>
          </property>
          <attribute name="label">
@@ -605,8 +605,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>425</width>
-           <height>569</height>
+           <width>407</width>
+           <height>599</height>
           </rect>
          </property>
          <attribute name="label">
@@ -642,8 +642,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>425</width>
-           <height>569</height>
+           <width>407</width>
+           <height>599</height>
           </rect>
          </property>
          <attribute name="label">
@@ -747,7 +747,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QFrame" name="frame_12">
+              <widget class="QFrame" name="frameRun">
                <property name="frameShape">
                 <enum>QFrame::StyledPanel</enum>
                </property>
