@@ -52,7 +52,8 @@ set(CXXSRCS cv_VMTK_utils.cxx vtkvmtkBoundaryLayerGenerator.cxx
 	vtkvmtkSteepestDescentLineTracer.cxx vtkvmtkPolyDataCenterlines.cxx
 	vtkvmtkCenterlineBranchExtractor.cxx vtkvmtkCenterlineSphereDistance.cxx
 	vtkvmtkCenterlineUtilities.cxx vtkvmtkCenterlineSplittingAndGroupingFilter.cxx
-	vtkvmtkPolyDataCenterlineGroupsClipper.cxx
+  vtkvmtkPolyDataCenterlineGroupsClipper.cxx vtkvmtkMergeCenterlines.cxx
+  vtkvmtkCenterlineBifurcationReferenceSystems.cxx vtkvmtkReferenceSystemUtilities.cxx
 	)
 SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h
 	vtkvmtkBoundaryLayerGenerator.h vtkvmtkBoundaryReferenceSystems.h
@@ -73,7 +74,8 @@ SET(HDRS cv_VMTK_utils.h vtkvmtkAppendFilter.h
 	vtkvmtkInternalTetrahedraExtractor.h vtkvmtkPolyDataCenterlines.h
 	vtkvmtkCenterlineBranchExtractor.h vtkvmtkCenterlineSphereDistance.h
 	vtkvmtkCenterlineUtilities.h vtkvmtkCenterlineSplittingAndGroupingFilter.h
-	vtkvmtkPolyDataCenterlineGroupsClipper.h
+  vtkvmtkPolyDataCenterlineGroupsClipper.h vtkvmtkMergeCenterlines.h
+  vtkvmtkCenterlineBifurcationReferenceSystems.h vtkvmtkReferenceSystemUtilities.h
 	)
 
 if(SV_USE_THIRDPARTY_SHARED_LIBRARIES)
