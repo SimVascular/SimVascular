@@ -778,15 +778,23 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
         return NULL;
 
     cvPolyData *src=new cvPolyData(vpd);
-    cvPolyData *capped = NULL;
+    cvPolyData *cleaned = NULL;
+    cvPolyData *capped  = NULL;
     int numCapCenterIDs;
     int *capCenterIDs=NULL;
 
-    if ( sys_geom_cap(src, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
+    cleaned = sys_geom_Clean(src);
+    delete src;
+
+    if ( sys_geom_cap(cleaned, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
     {
         //        delete capped;
+        delete cleaned;
+        if (capped != NULL)
+          delete capped;
         return NULL;
     }
+    delete cleaned;
 
     cvPolyData *tempCenterlines = NULL;
     cvPolyData *voronoi = NULL;
@@ -800,14 +808,27 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
 
     if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
     {
+        delete capped;
         return NULL;
     }
+    delete capped;
+
+    cvPolyData *temp2Centerlines=NULL;
+    if ( sys_geom_separatecenterlines(tempCenterlines, &temp2Centerlines) != CV_OK )
+    {
+        delete tempCenterlines;
+        return NULL;
+    }
+    delete tempCenterlines;
 
     cvPolyData *centerlines=NULL;
-    if ( sys_geom_separatecenterlines(tempCenterlines, &centerlines) != CV_OK )
+    int mergeblanked = 1;
+    if (sys_geom_mergecenterlines(temp2Centerlines, mergeblanked, &centerlines) != CV_OK )
     {
-        return NULL;
+      delete temp2Centerlines;
+      return NULL;
     }
+    delete temp2Centerlines;
 
     return centerlines->GetVtkPolyData();
 }

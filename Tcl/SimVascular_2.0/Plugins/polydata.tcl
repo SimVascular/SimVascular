@@ -332,8 +332,10 @@ proc PolyDataVMTKGetCenterIds {obj objType} {
 
   set polydata /tmp/polydata/precap
   set cappedgeom /tmp/polydata/postcap
+  set cleanpoly /tmp/polydata/cleanpoly
   catch {repos_delete -obj $polydata}
   catch {repos_delete -obj $cappedgeom}
+  catch {repos_delete -obj $cleanpoly}
 
   if {$objType == "solid"} {
     $obj GetPolyData -result $polydata
@@ -341,7 +343,9 @@ proc PolyDataVMTKGetCenterIds {obj objType} {
     $obj GetSolid -result $polydata
   }
 
-  set gCenterlineIds [geom_cap -src $polydata -result $cappedgeom -captype 1]
+  geom_clean -src $polydata -dst $cleanpoly
+
+  set gCenterlineIds [geom_cap -src $cleanpoly -result $cappedgeom -captype 1]
 
   return $cappedgeom
 }
@@ -362,10 +366,11 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
   set originalsolid /tmp/polydata/originalsolid
   set centerlines [string trim $original]_centerlines
   set tmplines /tmp/polydata/tmplines
+  set tmp2lines /tmp/polydata/tmp2lines
   set voronoi /tmp/polydata/voronoi
   set distance /tmp/polydata/distance
   catch {repos_delete -obj $originalsolid}
-  catch {repos_delete -obj $tmplines}
+  catch {repos_delete -obj $tmp2lines}
   catch {repos_delete -obj $centerlines}
   catch {repos_delete -obj $voronoi}
   catch {repos_delete -obj $distance}
@@ -379,7 +384,9 @@ proc PolyDataVMTKCenterlines {polydata original objType} {
 
   geom_centerlines -src $polydata -sourcelist [lindex $gCenterlineIds 0] -targetlist [lrange $gCenterlineIds 1 [llength $gCenterlineIds]] -linesresult $tmplines -voronoiresult $voronoi
 
-  geom_separatecenterlines -lines $tmplines -result $centerlines
+  geom_separatecenterlines -lines $tmplines -result $tmp2lines
+
+  geom_mergecenterlines -lines $tmp2lines -result $centerlines
 
   geom_distancetocenterlines -src $originalsolid -lines $centerlines -result $distance
 

@@ -74,6 +74,7 @@
 #include "vtkvmtkCapPolyData.h"
 #include "vtkvmtkSimpleCapPolyData.h"
 #include "vtkvmtkPolyDataCenterlineGroupsClipper.h"
+#include "vtkvmtkMergeCenterlines.h"
 #endif
 
 #include "vtkMultiplePolyDataIntersectionFilter.h"
@@ -697,6 +698,31 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
   }
   return CV_OK;
 }
+
+/* ----------------- */
+/* sys_geom_Clean */
+/* ----------------- */
+
+cvPolyData *sys_geom_Clean( cvPolyData *src )
+{
+  cvPolyData *dst;
+  vtkPolyData *srcPd = src->GetVtkPolyData();
+  vtkPolyData *pd;
+
+
+  vtkNew(vtkCleanPolyData, cleaner);
+  cleaner->SetInputData(srcPd);
+  cleaner->Update();
+
+  pd = vtkPolyData::New();
+  pd->DeepCopy(cleaner->GetOutput());
+
+  dst = new cvPolyData( pd );
+  pd->Delete();
+  return dst;
+}
+
+
 
 /* ------------------------ */
 /* sys_geom_ReverseAllCells */
@@ -4146,6 +4172,60 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
 }
 
 /* -------------- */
+/* sys_geom_mergecenterlines */
+/* -------------- */
+
+/** @author Adam Updegrove
+ *  @author updega2@gmail.com
+ *  @author UC Berkeley
+ *  @author shaddenlab.berkeley.edu
+ *
+ *  @brief Function to merge centerlines from a vtkPolyData surface
+ *  @brief Must be called after separation of centerlines into groups
+ *  @brief VTMK is called to do this.
+ *  @param *sources list of source cap ids
+ *  @param nsources number of source cap ids
+ *  @param *targets list of target cap ids
+ *  @param ntargets number of target cap ids
+ *  @param **lines returned center lines as vtkPolyData
+ *  @param ** voronoi returned voronoi diagram as vtkPolyData
+ *  @return CV_OK if the VTMK function executes properly
+ */
+
+int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
+		cvPolyData **merged)
+{
+  vtkPolyData *geom = lines->GetVtkPolyData();
+  cvPolyData *result1 = NULL;
+  *merged = NULL;
+
+  vtkNew(vtkvmtkMergeCenterlines, merger);
+  try {
+    std::cout<<"Merging Sections..."<<endl;
+    merger->SetInputData(geom);
+    merger->SetBlankingArrayName("Blanking");
+    merger->SetRadiusArrayName("MaximumInscribedSphereRadius");
+    merger->SetGroupIdsArrayName("GroupIds");
+    merger->SetCenterlineIdsArrayName("CenterlineIds");
+    merger->SetTractIdsArrayName("TractIds");
+    merger->SetMergeBlanked(mergeblanked);
+    merger->Update();
+
+    result1 = new cvPolyData( merger->GetOutput() );
+    *merged = result1;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in centerline merging.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+
+  return CV_OK;
+}
+
+/* -------------- */
 /* sys_geom_separatecenterlines */
 /* -------------- */
 
@@ -4172,7 +4252,7 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
 
   vtkNew(vtkvmtkCenterlineBranchExtractor,brancher);
   try {
-    std::cout<<"Separating Sections..."<<endl;
+    std::cout<<"Grouping Sections..."<<endl;
     brancher->SetInputData(geom);
     brancher->SetBlankingArrayName("Blanking");
     brancher->SetRadiusArrayName("MaximumInscribedSphereRadius");
