@@ -3,6 +3,7 @@ sudo: required
 
 env:
   - WITH_CMAKE=true BUILD_TEST=false
+  - WITH_CMAKE=false BUILD_TEST=false
 matrix:
  allow_failures:
   - env: WITH_CMAKE=false BUILD_TEST=false
