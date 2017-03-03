@@ -49,6 +49,8 @@ HDRS	= \
     svPathLegacySaveAction.h \
     svPathSmooth.h \
     svPathEdit.h \
+    svPathPoint2DSizeAction.h \
+    svPathPoint3DSizeAction.h \
     svPathPlanningPluginActivator.h
 
 CXXSRCS	=  \
@@ -58,6 +60,8 @@ CXXSRCS	=  \
     svPathLegacySaveAction.cxx \
     svPathSmooth.cxx \
     svPathEdit.cxx \
+    svPathPoint2DSizeAction.cxx \
+    svPathPoint3DSizeAction.cxx \
     svPathPlanningPluginActivator.cxx
 
 UIFILES = \
