@@ -103,6 +103,9 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
         int faceid=i+1;
         PlyDtaUtils_GetFacePolyData(solidvpd, &faceid, facepd);
 
+        if(facepd==NULL||facepd->GetNumberOfPoints()==0)
+            continue;
+
         svModelElement::svFace* face =new svModelElement::svFace;
         face->id=faceid;
         face->name=allNames[i];
