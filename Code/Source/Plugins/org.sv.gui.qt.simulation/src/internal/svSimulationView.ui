@@ -36,7 +36,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QWidget" name="widget_18" native="true">
+    <widget class="QWidget" name="widgetTop" native="true">
      <layout class="QGridLayout" name="gridLayout_6">
       <property name="leftMargin">
        <number>0</number>
@@ -815,7 +815,7 @@
           </rect>
          </property>
          <attribute name="label">
-          <string>Export Results</string>
+          <string>Convert Results</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_13">
           <property name="spacing">
@@ -902,7 +902,7 @@
                       </font>
                      </property>
                      <property name="text">
-                      <string>Run Dir:</string>
+                      <string>Result Dir (containing restart files):</string>
                      </property>
                     </widget>
                    </item>
@@ -938,7 +938,11 @@
                     </widget>
                    </item>
                    <item row="0" column="0">
-                    <widget class="QLineEdit" name="lineEditResultDir"/>
+                    <widget class="QLineEdit" name="lineEditResultDir">
+                     <property name="toolTip">
+                      <string>The directory which contains the restart files output from simulation</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1132,7 +1136,7 @@
                 <item>
                  <widget class="QPushButton" name="btnExportResults">
                   <property name="text">
-                   <string>Export ...</string>
+                   <string>Convert ...</string>
                   </property>
                  </widget>
                 </item>

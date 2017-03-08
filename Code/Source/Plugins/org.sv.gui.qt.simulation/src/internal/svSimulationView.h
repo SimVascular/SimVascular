@@ -23,6 +23,8 @@ class svSimulationView : public QmitkFunctionality
 {
     Q_OBJECT
 
+    friend class svSolverProcessHandler;
+
 public:
 
     static const QString EXTENSION_ID;
@@ -127,6 +129,8 @@ public:
 
     bool IsInt(std::string value);
 
+    void EnableTool(bool able);
+
 #if defined(Q_OS_WIN)
     QString GetRegistryValue(QString key);
 #endif
@@ -208,7 +212,7 @@ class svSolverProcessHandler : public QObject
     Q_OBJECT
 
 public:
-    svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent=NULL);
+    svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, svSimulationView* simView, QWidget* parent=NULL);
     virtual ~svSolverProcessHandler();
 
     void Start();
@@ -238,6 +242,8 @@ private:
     int m_TotalSteps;
 
     QString m_RunDir;
+
+    svSimulationView* m_SimView;
 
 };
 

@@ -266,7 +266,7 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(nodes.size()==0)
     {
         RemoveObservers();
-        m_Parent->setEnabled(false);
+        EnableTool(false);
         return;
     }
 
@@ -276,14 +276,14 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     if(!mitkJob)
     {
         RemoveObservers();
-        m_Parent->setEnabled(false);
+        EnableTool(false);
         return;
     }
 
     if(m_JobNode==jobNode)
     {
         AddObservers();
-        m_Parent->setEnabled(true);
+        EnableTool(true);
         return;
     }
 
@@ -321,11 +321,11 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     if(m_Model==NULL)
     {
-        m_Parent->setEnabled(false);
+        EnableTool(false);
     }
     else
     {
-        m_Parent->setEnabled(true);
+        EnableTool(true);
         AddObservers();
     }
 
@@ -1380,7 +1380,7 @@ void svSimulationView::RunJob()
         flowsolverProcess->setArguments(QStringList());
     }
 
-    svSolverProcessHandler* handler=new svSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
+    svSolverProcessHandler* handler=new svSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,this,m_Parent);
     handler->Start();
 }
 
@@ -1931,7 +1931,10 @@ void svSimulationView::SetResultDir()
     }
 
     QString lastFileSavePath=QString();
-    if(prefs.IsNotNull())
+    QString currentPath=ui->lineEditResultDir->text().trimmed();
+    if(QDir(currentPath).exists())
+        lastFileSavePath=currentPath;
+    else if(prefs.IsNotNull())
     {
         lastFileSavePath = prefs->Get("LastFileSavePath", "");
     }
@@ -1980,15 +1983,14 @@ void svSimulationView::ExportResults()
     QString exportDir = QFileDialog::getExistingDirectory(m_Parent
                                                     , tr("Choose Export Directory")
                                                     , lastFileSavePath
-                                                    , QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks
+                                                    , QFileDialog::DontResolveSymlinks
                                                     | QFileDialog::DontUseNativeDialog
                                                     );
 
     if(exportDir.isEmpty())
         return;
 
-    exportDir=exportDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-results";
+    exportDir=exportDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-converted-results";
     QDir exdir(exportDir);
     exdir.mkpath(exportDir);
 
@@ -2091,6 +2093,16 @@ bool svSimulationView::AreDouble(std::string values, int* count)
         (*count)=list.size();
 
     return true;
+}
+
+void svSimulationView::EnableTool(bool able)
+{
+    ui->widgetTop->setEnabled(able);
+    ui->page->setEnabled(able);
+    ui->page_2->setEnabled(able);
+    ui->page_3->setEnabled(able);
+    ui->page_4->setEnabled(able);
+    ui->page_5->setEnabled(able);
 }
 
 #if defined(Q_OS_WIN)
@@ -2210,12 +2222,13 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
     delete this;
 }
 
-svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
+svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, svSimulationView* simView, QWidget* parent)
     : m_Process(process)
     , m_JobNode(jobNode)
     , m_StartStep(startStep)
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
+    , m_SimView(simView)
     , m_Parent(parent)
     , m_Timer(NULL)
 {
@@ -2269,6 +2282,8 @@ void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitSt
         text="Job "+QString::fromStdString(m_JobNode->GetName())+": Finished.";
         icon=QMessageBox::Information;
         status="Simulation done";
+        if(m_JobNode.IsNotNull() && m_JobNode->IsSelected() && m_SimView)
+            m_SimView->ui->lineEditResultDir->setText(m_RunDir);
     }
     else
     {
