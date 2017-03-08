@@ -79,9 +79,9 @@ public slots:
 
     void UpdateGUIJob();
 
-    void ExportInputFiles();
+//    void ExportInputFiles();
 
-    void ExportAllFiles();
+//    void ExportAllFiles();
 
     void CreateAllFiles();
 

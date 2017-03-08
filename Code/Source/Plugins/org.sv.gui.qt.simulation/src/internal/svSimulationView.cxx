@@ -182,8 +182,8 @@ void svSimulationView::CreateQtPartControl( QWidget *parent )
     ui->tableViewSolver->setItemDelegateForColumn(1,itemSolverDelegate);
 
     //for data file and run
-    connect(ui->btnExportInputFiles, SIGNAL(clicked()), this, SLOT(ExportInputFiles()) );
-    connect(ui->btnExportAllFiles, SIGNAL(clicked()), this, SLOT(ExportAllFiles()) );
+//    connect(ui->btnExportInputFiles, SIGNAL(clicked()), this, SLOT(ExportInputFiles()) );
+//    connect(ui->btnExportAllFiles, SIGNAL(clicked()), this, SLOT(ExportAllFiles()) );
     connect(ui->btnCreateAllFiles, SIGNAL(clicked()), this, SLOT(CreateAllFiles()) );
     connect(ui->btnImportFiles, SIGNAL(clicked()), this, SLOT(ImportFiles()) );
     connect(ui->btnRunJob, SIGNAL(clicked()), this, SLOT(RunJob()) );
@@ -1149,69 +1149,69 @@ void svSimulationView::UpdateGUIJob()
     ui->sliderNumProcs->setValue(pNum==""?1:QString::fromStdString(pNum).toInt());
 }
 
-void svSimulationView::ExportInputFiles()
-{
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = berry::IPreferences::Pointer(0);
-    }
+//void svSimulationView::ExportInputFiles()
+//{
+//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+//    berry::IPreferences::Pointer prefs;
+//    if (prefService)
+//    {
+//        prefs = prefService->GetSystemPreferences()->Node("/General");
+//    }
+//    else
+//    {
+//        prefs = berry::IPreferences::Pointer(0);
+//    }
 
-    QString lastFileSavePath=QString();
-    if(prefs.IsNotNull())
-    {
-        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-    }
+//    QString lastFileSavePath=QString();
+//    if(prefs.IsNotNull())
+//    {
+//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+//    }
 
-    QString dir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Directory")
-                                                    , lastFileSavePath
-                                                    , QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks
-                                                    | QFileDialog::DontUseNativeDialog
-                                                    );
+//    QString dir = QFileDialog::getExistingDirectory(m_Parent
+//                                                    , tr("Choose Directory")
+//                                                    , lastFileSavePath
+//                                                    , QFileDialog::ShowDirsOnly
+//                                                    | QFileDialog::DontResolveSymlinks
+//                                                    | QFileDialog::DontUseNativeDialog
+//                                                    );
 
-    if(dir.isEmpty()) return;
+//    if(dir.isEmpty()) return;
 
-    CreateDataFiles(dir, false, true, true);
-}
+//    CreateDataFiles(dir, false, true, true);
+//}
 
-void svSimulationView::ExportAllFiles()
-{
-    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-    berry::IPreferences::Pointer prefs;
-    if (prefService)
-    {
-        prefs = prefService->GetSystemPreferences()->Node("/General");
-    }
-    else
-    {
-        prefs = berry::IPreferences::Pointer(0);
-    }
+//void svSimulationView::ExportAllFiles()
+//{
+//    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+//    berry::IPreferences::Pointer prefs;
+//    if (prefService)
+//    {
+//        prefs = prefService->GetSystemPreferences()->Node("/General");
+//    }
+//    else
+//    {
+//        prefs = berry::IPreferences::Pointer(0);
+//    }
 
-    QString lastFileSavePath=QString();
-    if(prefs.IsNotNull())
-    {
-        lastFileSavePath = prefs->Get("LastFileSavePath", "");
-    }
+//    QString lastFileSavePath=QString();
+//    if(prefs.IsNotNull())
+//    {
+//        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+//    }
 
-    QString dir = QFileDialog::getExistingDirectory(m_Parent
-                                                    , tr("Choose Directory")
-                                                    , lastFileSavePath
-                                                    , QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks
-                                                    | QFileDialog::DontUseNativeDialog
-                                                    );
+//    QString dir = QFileDialog::getExistingDirectory(m_Parent
+//                                                    , tr("Choose Directory")
+//                                                    , lastFileSavePath
+//                                                    , QFileDialog::ShowDirsOnly
+//                                                    | QFileDialog::DontResolveSymlinks
+//                                                    | QFileDialog::DontUseNativeDialog
+//                                                    );
 
-    if(dir.isEmpty()) return;
+//    if(dir.isEmpty()) return;
 
-    CreateDataFiles(dir, true, true, true);
-}
+//    CreateDataFiles(dir, true, true, true);
+//}
 
 void svSimulationView::CreateAllFiles()
 {
@@ -1273,6 +1273,11 @@ void svSimulationView::RunJob()
     }
 
     QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
+    if(!QDir(jobPath).exists())
+    {
+        QMessageBox::warning(m_Parent,"Unable to run","Please make sure data files have been created!");
+        return;
+    }
 
     QString flowsolverPath=m_ExternalFlowsolverPath;
     if(flowsolverPath=="")
@@ -1283,7 +1288,6 @@ void svSimulationView::RunJob()
         QMessageBox::warning(m_Parent,"Flowsolver Missing","Please make sure flowsolver exists!");
         return;
     }
-
 
     QString mpiExecPath="";
     if(m_UseMPI)
@@ -1299,6 +1303,13 @@ void svSimulationView::RunJob()
         }
     }
 
+    QString runPath=jobPath;
+    int numProcs=ui->sliderNumProcs->value();
+    if(m_UseMPI && numProcs>1)
+    {
+        runPath=jobPath+"/"+QString::number(numProcs)+"-procs_case";
+    }
+
     std::string startingNumber=ui->lineEditStartStepNum->text().trimmed().toStdString();
     if(startingNumber!="")
     {
@@ -1307,16 +1318,17 @@ void svSimulationView::RunJob()
             QMessageBox::warning(m_Parent,"Parameter Error","Please provide starting step number in correct format.");
             return;
         }
-    }
 
-    QString runPath=jobPath;
-    if(m_UseMPI && ui->sliderNumProcs->value()>1)
-    {
-        runPath=jobPath+"/"+QString::number(ui->sliderNumProcs->value())+"-procs_case";
-    }
+        QString runRestart=runPath+"/restart."+QString::fromStdString(startingNumber)+".1";
+        QString jobRestart=jobPath+"/restart."+QString::fromStdString(startingNumber)+".1";
 
-    if(startingNumber!="")
-    {
+        if( (QDir(runPath).exists() && !QFile(runRestart).exists())
+                || (numProcs>1 && !QDir(runPath).exists() && !QFile(jobRestart).exists()) )
+        {
+            QMessageBox::warning(m_Parent,"Unable to run","Please make sure starting step number is right");
+            return;
+        }
+
         QFile numStartFile(runPath+"/numstart.dat");
         if(numStartFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
@@ -1324,6 +1336,7 @@ void svSimulationView::RunJob()
             out<<QString::fromStdString(startingNumber+"\n");
             numStartFile.close();
         }
+
     }
 
     int startStep=0;
@@ -1344,7 +1357,7 @@ void svSimulationView::RunJob()
     svSimJob* job=m_MitkJob->GetSimJob();
     if(job)
     {
-        job->SetRunProp("Number of Processes",QString::number(ui->sliderNumProcs->value()).toStdString());
+        job->SetRunProp("Number of Processes",QString::number(numProcs).toStdString());
         QString tstr=QString::fromStdString(job->GetSolverProp("Number of Timesteps"));
         totalSteps=tstr.toInt();
     }
@@ -1357,7 +1370,7 @@ void svSimulationView::RunJob()
     if(m_UseMPI)
     {
         QStringList arguments;
-        arguments << "-n" << QString::number(ui->sliderNumProcs->value())<< flowsolverPath;
+        arguments << "-n" << QString::number(numProcs)<< flowsolverPath;
         flowsolverProcess->setProgram(mpiExecPath);
         flowsolverProcess->setArguments(arguments);
     }
@@ -1926,8 +1939,7 @@ void svSimulationView::SetResultDir()
     QString dir = QFileDialog::getExistingDirectory(m_Parent
                                                     , tr("Choose Result Directory")
                                                     , lastFileSavePath
-                                                    , QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks
+                                                    , QFileDialog::DontResolveSymlinks
                                                     | QFileDialog::DontUseNativeDialog
                                                     );
 
@@ -2112,12 +2124,12 @@ void svSimulationView::UpdateJobStatus()
     if(running)
     {
         ui->labelJobStatus->setText("Running: "+QString::number((int)(runningProgress*100))+"% completed");
-        ui->frameRun->setEnabled(false);
+        ui->widgetRun->setEnabled(false);
     }
     else
     {
         ui->labelJobStatus->setText(QString::fromStdString(m_MitkJob->GetStatus()));
-        ui->frameRun->setEnabled(true);
+        ui->widgetRun->setEnabled(true);
     }
 
 }
