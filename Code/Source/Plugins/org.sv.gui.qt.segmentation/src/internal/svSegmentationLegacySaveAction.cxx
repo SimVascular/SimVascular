@@ -28,8 +28,7 @@ void svSegmentationLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &s
     {
         QString segDir = QFileDialog::getExistingDirectory(NULL, tr("Choose Directory"),
                                                              QDir::homePath(),
-                                                             QFileDialog::ShowDirsOnly
-                                                             | QFileDialog::DontResolveSymlinks
+                                                             QFileDialog::DontResolveSymlinks
                                                              | QFileDialog::DontUseNativeDialog
                                                              );
 

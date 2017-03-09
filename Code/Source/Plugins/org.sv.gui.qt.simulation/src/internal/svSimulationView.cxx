@@ -1932,7 +1932,7 @@ void svSimulationView::SetResultDir()
 
     QString lastFileSavePath=QString();
     QString currentPath=ui->lineEditResultDir->text().trimmed();
-    if(QDir(currentPath).exists())
+    if(currentPath!="" && QDir(currentPath).exists())
         lastFileSavePath=currentPath;
     else if(prefs.IsNotNull())
     {
@@ -1990,7 +1990,11 @@ void svSimulationView::ExportResults()
     if(exportDir.isEmpty())
         return;
 
-    exportDir=exportDir+"/"+QString::fromStdString(m_JobNode->GetName())+"-converted-results";
+    QString jobName("");
+    if(m_JobNode.IsNotNull())
+        jobName=QString::fromStdString(m_JobNode->GetName())+"-";
+
+    exportDir=exportDir+"/"+jobName+"converted-results";
     QDir exdir(exportDir);
     exdir.mkpath(exportDir);
 

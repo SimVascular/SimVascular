@@ -1432,6 +1432,6 @@ void svMeshEdit::DisplayMeshInfo()
             + "\n" + "Number of Faces: " + QString::number(nMeshFaces);
 
 
-    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:\n\n"+stat);
+    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:           \n\n"+stat);
 }
 

@@ -77,14 +77,16 @@ void svMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
         QString dir = QFileDialog::getExistingDirectory(NULL
                                                         , tr("Choose Directory")
                                                         , lastFileSavePath
-                                                        , QFileDialog::ShowDirsOnly
-                                                        | QFileDialog::DontResolveSymlinks
+                                                        , QFileDialog::DontResolveSymlinks
                                                         | QFileDialog::DontUseNativeDialog
                                                         );
 
         if(dir.isEmpty()) return;
 
-        if(!svMeshLegacyIO::WriteFiles(meshNode,model->GetModelElement(), dir))
+        QString outputDir=dir+"/"+QString::fromStdString(meshNode->GetName()+"-mesh-complete");
+        QDir().mkpath(outputDir);
+
+        if(!svMeshLegacyIO::WriteFiles(meshNode,model->GetModelElement(), outputDir))
         {
             QMessageBox::warning(NULL,"Mesh info missing","Please make sure the mesh exists and is valid.");
             return;

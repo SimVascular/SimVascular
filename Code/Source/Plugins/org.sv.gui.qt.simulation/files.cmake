@@ -11,6 +11,7 @@ set(INTERNAL_CPP_FILES
     svSimulationView.cxx
     svSimulationPreferencePage.cxx
     svSimJobStopAction.cxx
+    svSimJobExportAction.cxx
     svSimulationPluginActivator.cxx
 )
 
@@ -23,6 +24,7 @@ set(MOC_H_FILES
     src/internal/svSimulationView.h
     src/internal/svSimulationPreferencePage.h
     src/internal/svSimJobStopAction.h
+    src/internal/svSimJobExportAction.h
     src/internal/svSimulationPluginActivator.h
 )
 

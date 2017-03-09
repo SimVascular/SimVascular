@@ -46,6 +46,12 @@ void svSimJobStopAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes
 //            timeStep=timeNavigationController->GetTime()->GetPos();
 //        }
 
+        if (QMessageBox::question(NULL, "Stop Simulation", "Are you sure to stop simulatin for this job?",
+                                  QMessageBox::Yes | QMessageBox::No) != QMessageBox::Yes)
+        {
+          return;
+        }
+
           bool running=false;
           selectedNode->GetBoolProperty("running",running);
 
