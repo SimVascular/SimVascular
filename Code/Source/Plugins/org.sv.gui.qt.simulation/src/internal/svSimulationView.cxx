@@ -348,6 +348,8 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
 
     UpdateGUIJob();
 
+    UpdateGUIRunDir();
+
     UpdateFaceListSelection();
 
     UpdateJobStatus();
@@ -361,6 +363,15 @@ void svSimulationView::NodeChanged(const mitk::DataNode* node)
     {
         ui->labelJobName->setText(QString::fromStdString(m_JobNode->GetName()));
         UpdateJobStatus();
+
+        bool updateRunDir=false;
+        m_JobNode->GetBoolProperty("update rundir",updateRunDir);
+        if(updateRunDir)
+        {
+            UpdateGUIRunDir();
+            m_JobNode->SetBoolProperty("update rundir",false);
+        }
+
     }
 }
 
@@ -1149,6 +1160,32 @@ void svSimulationView::UpdateGUIJob()
     ui->sliderNumProcs->setValue(pNum==""?1:QString::fromStdString(pNum).toInt());
 }
 
+void svSimulationView::UpdateGUIRunDir()
+{
+    ui->lineEditResultDir->clear();
+
+    if(m_JobNode.IsNull())
+        return;
+
+    QString jobPath=GetJobPath();
+    if(jobPath=="")
+        return;
+
+    if(!m_MitkJob)
+        return;
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job==NULL)
+        return;
+
+    std::string pNum=job->GetRunProp("Number of Processes");
+    if(pNum=="")
+        return;
+
+    QString runDir=pNum=="1"?jobPath:jobPath+"/"+QString::fromStdString(pNum)+"-procs_case";
+    ui->lineEditResultDir->setText(runDir);
+}
+
 //void svSimulationView::ExportInputFiles()
 //{
 //    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
@@ -1213,10 +1250,12 @@ void svSimulationView::UpdateGUIJob()
 //    CreateDataFiles(dir, true, true, true);
 //}
 
-void svSimulationView::CreateAllFiles()
+QString svSimulationView::GetJobPath()
 {
-    if(!m_MitkJob)
-        return;
+    QString jobPath="";
+
+    if(m_JobNode.IsNull())
+        return jobPath;
 
     mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
     mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
@@ -1234,12 +1273,19 @@ void svSimulationView::CreateAllFiles()
         {
             mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
             simFolderName=simFolderNode->GetName();
+            jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
         }
     }
 
-    QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
+    return jobPath;
+}
 
-    CreateDataFiles(jobPath, true, true, false);
+void svSimulationView::CreateAllFiles()
+{
+    if(!m_MitkJob)
+        return;
+
+    CreateDataFiles(GetJobPath(), true, true, false);
 }
 
 void svSimulationView::RunJob()
@@ -1253,27 +1299,8 @@ void svSimulationView::RunJob()
     if(!m_MitkJob)
         return;
 
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
-
-    std::string projPath="";
-    std::string simFolderName="";
-
-    if(rs->size()>0)
-    {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-        projFolderNode->GetStringProperty("project path", projPath);
-
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
-        if (rs->size()>0)
-        {
-            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
-            simFolderName=simFolderNode->GetName();
-        }
-    }
-
-    QString jobPath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName());
-    if(!QDir(jobPath).exists())
+    QString jobPath=GetJobPath();
+    if(jobPath=="" || !QDir(jobPath).exists())
     {
         QMessageBox::warning(m_Parent,"Unable to run","Please make sure data files have been created!");
         return;
@@ -1380,13 +1407,16 @@ void svSimulationView::RunJob()
         flowsolverProcess->setArguments(QStringList());
     }
 
-    svSolverProcessHandler* handler=new svSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,this,m_Parent);
+    svSolverProcessHandler* handler=new svSolverProcessHandler(flowsolverProcess,m_JobNode,startStep,totalSteps,runPath,m_Parent);
     handler->Start();
 }
 
 bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder)
 {
     if(!m_MitkJob)
+        return false;
+
+    if(outputDir=="")
         return false;
 
     svModelElement* modelElement=NULL;
@@ -1571,24 +1601,10 @@ bool svSimulationView::CreateDataFiles(QString outputDir, bool outputAllFiles, b
 
 void svSimulationView::ImportFiles()
 {
-    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
-    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources (m_JobNode,isProjFolder,false);
-    std::string simFolderName="";
-    std::string projPath="";
+    QString jobPath=GetJobPath();
 
-    if(rs->size()>0)
-    {
-        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
-        projFolderNode->GetStringProperty("project path", projPath);
-
-        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svSimulationFolder"));
-
-        if (rs->size()>0)
-        {
-            mitk::DataNode::Pointer simFolderNode=rs->GetElement(0);
-            simFolderName=simFolderNode->GetName();
-        }
-    }
+    if(jobPath=="")
+        return;
 
     QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files");
 
@@ -1597,7 +1613,7 @@ void svSimulationView::ImportFiles()
         QString filePath=filePaths[i];
         QFileInfo fi(filePath);
         QString fileName=fi.fileName();
-        QString newFilePath=QString::fromStdString(projPath+"/"+simFolderName+"/"+m_JobNode->GetName())+"/"+fileName;
+        QString newFilePath=jobPath+"/"+fileName;
         if (QFile::exists(newFilePath))
         {
             if (QMessageBox::question(m_Parent, "Overwrite File?", "Do you want to overwrite the file (" +fileName +") in the job?",
@@ -2226,13 +2242,12 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
     delete this;
 }
 
-svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, svSimulationView* simView, QWidget* parent)
+svSolverProcessHandler::svSolverProcessHandler(QProcess* process, mitk::DataNode::Pointer jobNode, int startStep, int totalSteps, QString runDir, QWidget* parent)
     : m_Process(process)
     , m_JobNode(jobNode)
     , m_StartStep(startStep)
     , m_TotalSteps(totalSteps)
     , m_RunDir(runDir)
-    , m_SimView(simView)
     , m_Parent(parent)
     , m_Timer(NULL)
 {
@@ -2250,6 +2265,9 @@ svSolverProcessHandler::~svSolverProcessHandler()
 void svSolverProcessHandler::Start()
 {
     if(m_Process==NULL)
+        return;
+
+    if(m_JobNode.IsNull())
         return;
 
     connect(m_Process,SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(AfterProcessFinished(int,QProcess::ExitStatus)));
@@ -2274,6 +2292,9 @@ void svSolverProcessHandler::KillProcess()
 
 void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus exitStatus)
 {
+    if(m_JobNode.IsNull())
+        return;
+
     QString title="";
     QString text="";
     QMessageBox::Icon icon=QMessageBox::NoIcon;
@@ -2286,8 +2307,7 @@ void svSolverProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitSt
         text="Job "+QString::fromStdString(m_JobNode->GetName())+": Finished.";
         icon=QMessageBox::Information;
         status="Simulation done";
-        if(m_JobNode.IsNotNull() && m_JobNode->IsSelected() && m_SimView)
-            m_SimView->ui->lineEditResultDir->setText(m_RunDir);
+        m_JobNode->SetBoolProperty("update rundir",true);
     }
     else
     {
