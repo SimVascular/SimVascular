@@ -44,6 +44,8 @@
 #define CVSOLVER_IO_OK 1
 #define CVSOLVER_IO_ERROR 0
 
+#include "SimVascular.h"
+
 #include <stdio.h>
 
 #ifdef SV_USE_ZLIB
