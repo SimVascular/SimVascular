@@ -174,7 +174,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
                     int id;
                     std::string name="";
-                    std::string type="";
+                    std::string facetype="";
                     std::string isVisible="true";
                     float opacity=1.0f;
                     float color1=1.0f;
@@ -183,18 +183,21 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
 
                     faceElement->QueryIntAttribute("id", &id);
                     faceElement->QueryStringAttribute("name", &name);
-                    faceElement->QueryStringAttribute("type", &type);
+                    faceElement->QueryStringAttribute("type", &facetype);
                     faceElement->QueryStringAttribute("visible", &isVisible);
                     faceElement->QueryFloatAttribute("opacity", &opacity);
                     faceElement->QueryFloatAttribute("color1", &color1);
                     faceElement->QueryFloatAttribute("color2", &color2);
                     faceElement->QueryFloatAttribute("color3", &color3);
 
-                    vtkSmartPointer<vtkPolyData> facepd=me->CreateFaceVtkPolyData(id);
+                    vtkSmartPointer<vtkPolyData> facepd=NULL;
+                    //face id not exists in parasolid, so skip this and set later.
+                    if(type!="Parasolid")
+                        facepd=me->CreateFaceVtkPolyData(id);
                     svModelElement::svFace* face=new svModelElement::svFace;
                     face->id=id;
                     face->name=name;
-                    face->type=type;
+                    face->type=facetype;
                     face->visible=(isVisible=="true"?true:false);
                     face->opacity=opacity;
                     face->color[0]=color1;

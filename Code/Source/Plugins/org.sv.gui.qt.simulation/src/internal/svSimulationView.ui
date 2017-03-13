@@ -647,7 +647,7 @@
           </rect>
          </property>
          <attribute name="label">
-          <string>Create Data Files and Run Job</string>
+          <string>Create Files and Run Simulation</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <property name="spacing">
@@ -706,7 +706,7 @@
                 <item row="7" column="0" colspan="3">
                  <widget class="QPushButton" name="btnRunJob">
                   <property name="text">
-                   <string>Run Job</string>
+                   <string>Run Simulation</string>
                   </property>
                  </widget>
                 </item>
@@ -727,7 +727,7 @@
                 <item row="1" column="0" colspan="3">
                  <widget class="QPushButton" name="btnCreateAllFiles">
                   <property name="text">
-                   <string>Create Input and Data Files</string>
+                   <string>Create Data Files for Simulation</string>
                   </property>
                  </widget>
                 </item>
