@@ -636,6 +636,13 @@ void svSimulationView::TableCapSelectionChanged( const QItemSelection & /*select
         int row=(*it).row();
         std::string name= m_TableModelCap->item(row,0)->text().toStdString();
         modelElement->SelectFace(name);
+
+        if(it==indexesOfSelectedRows.begin()){
+            double faceArea=modelElement->GetFaceArea(modelElement->GetFaceID(name));
+            QString info="Face area of "+QString::fromStdString(name)+": "+QString::number(faceArea);
+            mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
+        }
+
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
@@ -962,8 +969,17 @@ void svSimulationView::UpdateGUIWall()
 
     ui->lineEditThickness->setText(QString::fromStdString(job->GetWallProp("Thickness")));
     ui->lineEditE->setText(QString::fromStdString(job->GetWallProp("Elastic Modulus")));
-    ui->lineEditNu->setText(QString::fromStdString(job->GetWallProp("Poisson Ratio")));
-    ui->lineEditKcons->setText(QString::fromStdString(job->GetWallProp("Shear Constant")));
+
+    QString pratio=QString::fromStdString(job->GetWallProp("Poisson Ratio"));
+    if(pratio=="")
+        pratio="0.5";
+    QString kconst=QString::fromStdString(job->GetWallProp("Shear Constant"));
+    if(kconst=="")
+        kconst="0.833333";
+
+    ui->lineEditNu->setText(pratio);
+    ui->lineEditKcons->setText(kconst);
+
     ui->lineEditWallDensity->setText(QString::fromStdString(job->GetWallProp("Density")));
     ui->lineEditPressure->setText(QString::fromStdString(job->GetWallProp("Pressure")));
 

@@ -65,6 +65,8 @@ public slots:
 
     void UpdateTetGenGUI();
 
+    void UpdateAdaptGUI(int selected);
+
     void AddSphere();
 
     void ShowSphereInteractor(bool checked);

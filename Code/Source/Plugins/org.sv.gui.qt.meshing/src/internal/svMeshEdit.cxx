@@ -161,6 +161,9 @@ void svMeshEdit::SetupTetGenGUI(QWidget *parent )
       , this, SLOT(TableViewRegionContextMenuRequested(const QPoint&)) );
 
     //for adaptor
+    connect(ui->comboBoxOption, SIGNAL(currentIndexChanged(int)), this, SLOT()
+
+
 }
 
 void svMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
@@ -1180,6 +1183,9 @@ void svMeshEdit::UpdateTetGenGUI()
 
     }
 
+    //adaptor options
+
+
 }
 
 void svMeshEdit::AddSphere()
@@ -1435,3 +1441,26 @@ void svMeshEdit::DisplayMeshInfo()
     QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:           \n\n"+stat);
 }
 
+void svMeshEdit::UpdateAdaptGUI(int selected)
+{
+    switch(selected)
+    {
+    case 0:
+        ui->widgetRestartFile->show();
+        ui->widgetResultFile->hide();
+        ui->widgetStartStep->hide();
+        ui->widgetStepIncrement->hide;
+        ui->labelEndStep->setText("Step Number");
+        break;
+    case 1:
+        ui->widgetRestartFile->hide();
+        ui->widgetResultFile->show();
+        ui->widgetStartStep->hide();
+        ui->widgetStepIncrement->hide;
+        ui->labelEndStep->setText("Step Number");
+        break;
+    case 2:
+        break;
+    default:
+    }
+}
