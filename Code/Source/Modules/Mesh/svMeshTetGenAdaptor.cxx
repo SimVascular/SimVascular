@@ -41,12 +41,12 @@ bool svMeshTetGenAdaptor::SetModelElement(svModelElement *modelElement)
 
 bool svMeshTetGenAdaptor::LoadMeshFromResultVTUFile(std::string filePath)
 {
-    return (m_cvTetGenAdaptor && m_cvTetGenAdaptor->LoadMesh(filePath.c_str())==CV_OK);
+    return (m_cvTetGenAdaptor && m_cvTetGenAdaptor->LoadMesh(const_cast<char*>(filePath.c_str()))==CV_OK);
 }
 
 bool svMeshTetGenAdaptor::SetAdaptOptions(std::string flag, double value)
 {
-    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->SetAdaptOptions(flag.c_str(),value)==CV_OK;
+    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->SetAdaptOptions(const_cast<char*>(flag.c_str()),value)==CV_OK;
 }
 
 bool svMeshTetGenAdaptor::Adapt()
@@ -61,7 +61,7 @@ bool svMeshTetGenAdaptor::Adapt()
 
 bool svMeshTetGenAdaptor::WriteAdaptedSolution(std::string filePath)
 {
-    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->WriteAdaptedSolution(filePath.c_str())==CV_OK;
+    return m_cvTetGenAdaptor && m_cvTetGenAdaptor->WriteAdaptedSolution(const_cast<char*>(filePath.c_str()))==CV_OK;
 }
 
 svMeshTetGen* svMeshTetGenAdaptor::GetAdaptedMesh()
