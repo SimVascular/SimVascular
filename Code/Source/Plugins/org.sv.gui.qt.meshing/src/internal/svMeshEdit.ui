@@ -1129,64 +1129,17 @@
                      <widget class="QComboBox" name="comboBoxOption">
                       <item>
                        <property name="text">
-                        <string>Use Restart File</string>
+                        <string>Use One Step</string>
                        </property>
                       </item>
                       <item>
                        <property name="text">
-                        <string>Use Result File (vtu)</string>
-                       </property>
-                      </item>
-                      <item>
-                       <property name="text">
-                        <string>Use Result File (vtu) and Recalculate Average</string>
+                        <string>Use Multiple Steps</string>
                        </property>
                       </item>
                      </widget>
                     </item>
                    </layout>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QWidget" name="widgetRestartFile" native="true">
-                   <layout class="QHBoxLayout" name="horizontalLayout_13">
-                    <property name="spacing">
-                     <number>2</number>
-                    </property>
-                    <property name="leftMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="topMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="rightMargin">
-                     <number>0</number>
-                    </property>
-                    <property name="bottomMargin">
-                     <number>0</number>
-                    </property>
-                    <item>
-                     <widget class="QLabel" name="label_9">
-                      <property name="text">
-                       <string>Restart File:</string>
-                      </property>
-                     </widget>
-                    </item>
-                    <item>
-                     <widget class="QLineEdit" name="lineEditRestartFile"/>
-                    </item>
-                    <item>
-                     <widget class="QToolButton" name="toolButtonRestartFile">
-                      <property name="text">
-                       <string>...</string>
-                      </property>
-                     </widget>
-                    </item>
-                   </layout>
-                   <zorder>label_9</zorder>
-                   <zorder>lineEditRestartFile</zorder>
-                   <zorder>label_9</zorder>
-                   <zorder>toolButtonRestartFile</zorder>
                   </widget>
                  </item>
                  <item>
@@ -1346,7 +1299,11 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEditErrorFactor"/>
+                     <widget class="QLineEdit" name="lineEditErrorFactor">
+                      <property name="text">
+                       <string>0.2</string>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </widget>
@@ -1377,7 +1334,11 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEditMinEdgeSize"/>
+                     <widget class="QLineEdit" name="lineEditMinEdgeSize">
+                      <property name="text">
+                       <string>1.0</string>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </widget>
@@ -1408,7 +1369,11 @@
                      </widget>
                     </item>
                     <item>
-                     <widget class="QLineEdit" name="lineEditMaxEdgeSize"/>
+                     <widget class="QLineEdit" name="lineEditMaxEdgeSize">
+                      <property name="text">
+                       <string>1.0</string>
+                      </property>
+                     </widget>
                     </item>
                    </layout>
                   </widget>

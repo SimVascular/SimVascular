@@ -5,6 +5,7 @@
 #include "svModel.h"
 
 #include "svModelDataInteractor.h"
+#include "svDataNodeOperationInterface.h"
 
 #include <QmitkFunctionality.h>
 
@@ -73,6 +74,10 @@ public slots:
 
     void DisplayMeshInfo();
 
+    void SetResultFile();
+
+    void Adapt();
+
 public:
 
     int GetTimeStep();
@@ -109,6 +114,10 @@ public:
 
     virtual void Hidden() override;
 
+    bool IsDouble(QString value);
+
+    bool IsInt(QString value);
+
 protected:
 
     QWidget* m_Parent;
@@ -143,6 +152,8 @@ protected:
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 
     bool m_UndoAble;
+
+    svDataNodeOperationInterface* m_Interface;
 
 };
 
