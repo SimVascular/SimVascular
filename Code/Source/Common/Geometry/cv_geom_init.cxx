@@ -220,6 +220,9 @@ int Geom_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
 
+int Geom_CleanCmd( ClientData clientData, Tcl_Interp *interp,
+                           int argc, CONST84 char *argv[] );
+
 int Geom_CapIdSetCmd( ClientData clientData, Tcl_Interp *interp,
                            int argc, CONST84 char *argv[] );
 
@@ -274,6 +277,9 @@ int Geom_GroupPolyDataCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
 int Geom_SeparateCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] );
+
+int Geom_MergeCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
 int Geom_CapCmd( ClientData clientData, Tcl_Interp *interp,
@@ -407,6 +413,8 @@ int Geom_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_checksurface", Geom_CheckSurfaceCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+ Tcl_CreateCommand( interp, "geom_clean", Geom_CleanCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_set_ids_for_caps", Geom_CapIdSetCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
  Tcl_CreateCommand( interp, "geom_local_decimation", Geom_LocalDecimationCmd,
@@ -443,6 +451,8 @@ int Geom_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "geom_distancetocenterlines", Geom_DistanceToCenterlinesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_separatecenterlines", Geom_SeparateCenterlinesCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "geom_mergecenterlines", Geom_MergeCenterlinesCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_cap", Geom_CapCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -847,6 +857,75 @@ int Geom_CheckSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
   sprintf( rtnstr, "%d %d",stats[0],stats[1]);
   Tcl_SetResult( interp, rtnstr, TCL_VOLATILE);
 
+  return TCL_OK;
+}
+
+// ------------
+// Geom_CleanCmd
+// ------------
+
+int Geom_CleanCmd( ClientData clientData, Tcl_Interp *interp,
+		  int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *srcName;
+  char *dstName;
+  cvRepositoryData *src;
+  cvPolyData *dst;
+  RepositoryDataT type;
+
+  int table_size = 2;
+  ARG_Entry arg_table[] = {
+    { "-src", STRING_Type, &srcName, NULL, REQUIRED, 0, { 0 } },
+    { "-dst", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+
+  // Retrieve source object:
+  src = gRepository->GetObject( srcName );
+  if ( src == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", srcName, (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  type = src->GetType();
+  if ( type != POLY_DATA_T ) {
+    Tcl_AppendResult( interp, srcName, " not of type cvPolyData", (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Make sure the specified dst object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  dst = sys_geom_Clean( (cvPolyData*)src );
+  if ( dst == NULL ) {
+    Tcl_AppendResult( interp, "error cleaning ", srcName, (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
   return TCL_OK;
 }
 
@@ -5999,7 +6078,7 @@ int Geom_SeparateCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
 
   if ( sys_geom_separatecenterlines( (cvPolyData*)linesSrc, (cvPolyData**)(&separateDst) )
        != CV_OK ) {
-    Tcl_SetResult( interp, "error separating centerlines", TCL_STATIC );
+    Tcl_SetResult( interp, "error grouping centerlines", TCL_STATIC );
     return TCL_ERROR;
   }
 
@@ -6011,6 +6090,71 @@ int Geom_SeparateCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   Tcl_SetResult( interp, separateDst->GetName(), TCL_VOLATILE );
+//  Tcl_SetResult( interp, voronoiDst->GetName(), TCL_VOLATILE );
+
+  return TCL_OK;
+}
+
+int Geom_MergeCenterlinesCmd( ClientData clientData, Tcl_Interp *interp,
+		    int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  char *linesName;
+  char *mergeName;
+  int mergeblanked = 1;
+  cvRepositoryData *linesSrc;
+  cvRepositoryData *mergeDst = NULL;
+  RepositoryDataT type;
+
+  int table_size = 3;
+  ARG_Entry arg_table[] = {
+    { "-lines", STRING_Type, &linesName, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &mergeName, NULL, REQUIRED, 0, { 0 } },
+    { "-mergeblanked", INT_Type, &mergeblanked, NULL, SV_OPTIONAL, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    ARG_FreeListArgvs( table_size, arg_table );
+    return TCL_ERROR;
+  }
+
+  // Retrieve source object:
+  linesSrc = gRepository->GetObject( linesName );
+  if ( linesSrc == NULL ) {
+    Tcl_AppendResult( interp, "couldn't find object ", linesName,
+		      (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  type = linesSrc->GetType();
+  if ( type != POLY_DATA_T ) {
+    Tcl_AppendResult( interp, linesName, " not of type cvPolyData", (char *)NULL );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  if ( sys_geom_mergecenterlines( (cvPolyData*)linesSrc, mergeblanked, (cvPolyData**)(&mergeDst) )
+       != CV_OK ) {
+    Tcl_SetResult( interp, "error merging centerlines", TCL_STATIC );
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( mergeName, mergeDst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", mergeName,
+		      " in repository", (char *)NULL );
+    delete mergeDst;
+    return TCL_ERROR;
+  }
+
+  Tcl_SetResult( interp, mergeDst->GetName(), TCL_VOLATILE );
 //  Tcl_SetResult( interp, voronoiDst->GetName(), TCL_VOLATILE );
 
   return TCL_OK;

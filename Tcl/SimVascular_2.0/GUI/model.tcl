@@ -1702,6 +1702,7 @@ proc guiVMTKCenterlines {} {
   set firstsolid /models/$kernel/$model
   set newsolid /tmp/polydata/newsolid
   set finalsolid /tmp/polydata/finalsolid
+  set cleanpoly /tmp/polydata/cleanpoly
   catch {repos_delete -obj $firstsolid}
   catch {repos_delete -obj $newsolid}
   catch {repos_delete -obj $finalsolid}
