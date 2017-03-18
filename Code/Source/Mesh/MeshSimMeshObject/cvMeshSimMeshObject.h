@@ -128,6 +128,7 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
 
   // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
+  int LoadModel(vtkPolyData *pd){return CV_ERROR;}
   int GetBoundaryFaces(double angle) {return CV_ERROR;}
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();

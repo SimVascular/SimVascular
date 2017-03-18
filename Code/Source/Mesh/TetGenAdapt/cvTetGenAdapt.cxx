@@ -330,6 +330,34 @@ int cvTetGenAdapt::LoadModel(char *fileName)
   return CV_OK;
 }
 
+int cvTetGenAdapt::LoadModel(vtkPolyData *pd)
+{
+  if (pd==NULL)
+    return CV_ERROR;
+
+  if (insurface_mesh_ != NULL)
+    insurface_mesh_->Delete();
+
+  insurface_mesh_ = vtkPolyData::New();
+
+  insurface_mesh_ ->DeepCopy(pd);
+  printf("\n-- Loaded Model...\n");
+  printf(" Total # of faces: %d\n", insurface_mesh_->GetNumberOfCells());
+  printf(" Total # of vertices: %d\n", insurface_mesh_->GetNumberOfPoints());
+  insurface_mesh_->BuildLinks();
+
+  if (meshobject_ == NULL)
+  {
+    fprintf(stderr,"Mesh object must first be created before loading\n");
+    return CV_ERROR;
+  }
+  if (meshobject_->LoadModel(pd) != CV_OK)
+    return CV_ERROR;
+
+  return CV_OK;
+}
+
+
 // -----------------------
 //  LoadMesh
 // -----------------------
@@ -350,6 +378,24 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
   ugreader->SetFileName(fileName);
   ugreader->Update();
   inmesh_->DeepCopy(ugreader->GetOutput());
+  printf("\n-- Loaded Mesh...\n");
+  printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
+  printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
+  inmesh_->BuildLinks();
+
+  return CV_OK;
+}
+
+int cvTetGenAdapt::LoadMesh(vtkUnstructuredGrid* ug)
+{
+  if (ug==NULL)
+    return CV_ERROR;
+
+  if (inmesh_ != NULL)
+    inmesh_->Delete();
+
+  inmesh_ = vtkUnstructuredGrid::New();
+  inmesh_->DeepCopy(ug);
   printf("\n-- Loaded Mesh...\n");
   printf(" Total # of elements: %d\n", inmesh_->GetNumberOfCells());
   printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
@@ -1060,7 +1106,7 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 
     int nVar = 5; //Number of variables in solution
     if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
-	  options.poly_) != CV_OK)
+	  options.poly_,true) != CV_OK)
     {
       fprintf(stderr,"Could not get solution from mesh\n");
       return CV_ERROR;

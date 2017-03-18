@@ -17,7 +17,9 @@ simvascular_create_module(
   ${SV_LIB_THIRDPARTY_VMTK_NAME}
   ${SV_LIB_MESH_NAME}
   ${SV_LIB_TETGEN_MESH_NAME}
-  ${SV_LIB_SOLID_NAME})
+  ${SV_LIB_SOLID_NAME}
+  ${SV_LIB_TETGEN_ADAPTOR_NAME}
+)
 #-----------------------------------------------------------------------------
 
 if(SV_INSTALL_LIBS)

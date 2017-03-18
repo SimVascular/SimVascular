@@ -424,7 +424,8 @@ int AdaptUtils_getAttachedArray( double *&valueArray,
                        vtkUnstructuredGrid *mesh,
 		       std::string dataName,
                        int nVar,
-                       int poly)
+                       int poly,
+                       bool for_restart)
 {
   if(poly!=1) {
       fprintf(stderr,"\nError in getAttachedData()\n");
@@ -444,14 +445,34 @@ int AdaptUtils_getAttachedArray( double *&valueArray,
   valueArray = new double[nshg*nVar];
 
   int count = 0;
-  for (pointId = 0;pointId<nshg;pointId++)
+  if(for_restart)
   {
-    for (i=0;i<nVar;i++)
+    for (pointId = 0;pointId<nshg;pointId++)
+        valueArray[count++] = solutionArray->GetComponent(pointId,3);
+
+    for (i=0;i<3;i++)
     {
+      for (pointId = 0;pointId<nshg;pointId++)
+      {
+        valueArray[count++] = solutionArray->GetComponent(pointId,i);
+      }
+    }
+
+    for (pointId = 0;pointId<nshg;pointId++)
+      valueArray[count++] = solutionArray->GetComponent(pointId,4);
+  }
+  else
+  {
+    for (pointId = 0;pointId<nshg;pointId++)
+    {
+      for (i=0;i<nVar;i++)
+      {
       //valueArray[pointId+i*nshg] = solutionArray->GetComponent(pointId,i);
       valueArray[count++] = solutionArray->GetComponent(pointId,i);
+      }
     }
   }
+
   return CV_OK;
 }
 
@@ -520,7 +541,7 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
       outSol->SetComponent(pointId,i,vel[i]);
     }
     outSol->SetComponent(pointId,3,inPress->GetValue(closestPoint));
-    outSol->SetComponent(pointId,4,sqrt(pow(vel[0],2)+pow(vel[1],2)+pow(vel[3],2)));
+    outSol->SetComponent(pointId,4,sqrt(pow(vel[0],2)+pow(vel[1],2)+pow(vel[2],2)));
   }
 
   outmesh->GetPointData()->AddArray(outSol);

@@ -546,8 +546,11 @@ std::vector<svPathElement::svPathPoint> svPathElement::GetExtendedPathPoints(dou
     }
 
     std::vector<svPathElement::svPathPoint> extendedPathPoints=GetPathPoints();
-    extendedPathPoints.insert(extendedPathPoints.begin(),beginPathPoints.begin(),beginPathPoints.end()-1);
-    extendedPathPoints.insert(extendedPathPoints.end(),endPathPoints.begin()+1,endPathPoints.end());
+    if(beginFound)
+        extendedPathPoints.insert(extendedPathPoints.begin(),beginPathPoints.begin(),beginPathPoints.end()-1);
+
+    if(endFound)
+        extendedPathPoints.insert(extendedPathPoints.end(),endPathPoints.begin()+1,endPathPoints.end());
 
     return extendedPathPoints;
 }

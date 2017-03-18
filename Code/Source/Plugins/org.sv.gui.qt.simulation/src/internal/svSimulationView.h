@@ -76,12 +76,13 @@ public slots:
 
     void UpdateGUISolver();
 
-
     void UpdateGUIJob();
 
-    void ExportInputFiles();
+    void UpdateGUIRunDir();
 
-    void ExportAllFiles();
+//    void ExportInputFiles();
+
+//    void ExportAllFiles();
 
     void CreateAllFiles();
 
@@ -126,6 +127,10 @@ public:
     bool AreDouble(std::string values, int* count = NULL);
 
     bool IsInt(std::string value);
+
+    void EnableTool(bool able);
+
+    QString GetJobPath();
 
 #if defined(Q_OS_WIN)
     QString GetRegistryValue(QString key);
@@ -238,7 +243,6 @@ private:
     int m_TotalSteps;
 
     QString m_RunDir;
-
 };
 
 #endif // SVSIMULATIONVIEW_H

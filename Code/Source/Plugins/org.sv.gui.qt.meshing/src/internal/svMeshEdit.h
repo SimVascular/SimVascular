@@ -5,6 +5,7 @@
 #include "svModel.h"
 
 #include "svModelDataInteractor.h"
+#include "svDataNodeOperationInterface.h"
 
 #include <QmitkFunctionality.h>
 
@@ -65,11 +66,17 @@ public slots:
 
     void UpdateTetGenGUI();
 
+    void UpdateAdaptGUI(int selected);
+
     void AddSphere();
 
     void ShowSphereInteractor(bool checked);
 
     void DisplayMeshInfo();
+
+    void SetResultFile();
+
+    void Adapt();
 
 public:
 
@@ -107,6 +114,10 @@ public:
 
     virtual void Hidden() override;
 
+    bool IsDouble(QString value);
+
+    bool IsInt(QString value);
+
 protected:
 
     QWidget* m_Parent;
@@ -141,6 +152,8 @@ protected:
     vtkSmartPointer<vtkSphereWidget> m_SphereWidget;
 
     bool m_UndoAble;
+
+    svDataNodeOperationInterface* m_Interface;
 
 };
 

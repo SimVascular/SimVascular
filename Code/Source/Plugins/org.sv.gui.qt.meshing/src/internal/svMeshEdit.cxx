@@ -21,6 +21,13 @@
 #include "svModelElementParasolid.h"
 #endif
 
+#include "svMeshTetGenAdaptor.h"
+#include "svDataNodeOperation.h"
+
+#include <berryIPreferencesService.h>
+#include <berryIPreferences.h>
+#include <berryPlatform.h>
+
 #include <mitkNodePredicateDataType.h>
 #include <mitkUndoController.h>
 #include <mitkSliceNavigationController.h>
@@ -30,10 +37,12 @@
 #include <usModuleRegistry.h>
 
 #include <vtkProperty.h>
+#include <vtkXMLUnstructuredGridReader.h>
 
 #include <QTreeView>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QFileDialog>
 
 #include <iostream>
 using namespace std;
@@ -62,6 +71,8 @@ svMeshEdit::svMeshEdit() :
     m_SelectedRegionIndex=-1;
 
     m_UndoAble=false;
+
+    m_Interface=new svDataNodeOperationInterface;
 }
 
 svMeshEdit::~svMeshEdit()
@@ -161,6 +172,13 @@ void svMeshEdit::SetupTetGenGUI(QWidget *parent )
       , this, SLOT(TableViewRegionContextMenuRequested(const QPoint&)) );
 
     //for adaptor
+    connect(ui->comboBoxOption, SIGNAL(currentIndexChanged(int)), this, SLOT(UpdateAdaptGUI(int)));
+    ui->comboBoxOption->setCurrentIndex(0);
+    UpdateAdaptGUI(0);
+
+    connect(ui->toolButtonResultFile, SIGNAL(clicked()), this, SLOT(SetResultFile()));
+
+    connect(ui->btnAdapt, SIGNAL(clicked()), this, SLOT(Adapt()));
 }
 
 void svMeshEdit::TableFaceListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
@@ -1180,6 +1198,9 @@ void svMeshEdit::UpdateTetGenGUI()
 
     }
 
+    //adaptor options
+    ui->lineEditMaxEdgeSize->setText(ui->lineEditGlobalEdgeSizeT->text());
+
 }
 
 void svMeshEdit::AddSphere()
@@ -1432,6 +1453,255 @@ void svMeshEdit::DisplayMeshInfo()
             + "\n" + "Number of Faces: " + QString::number(nMeshFaces);
 
 
-    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:\n\n"+stat);
+    QMessageBox::information(m_Parent,"Mesh Statistics","Mesh done. Statistics:           \n\n"+stat);
 }
 
+void svMeshEdit::UpdateAdaptGUI(int selected)
+{
+    switch(selected)
+    {
+    case 0:
+        ui->widgetStartStep->hide();
+        ui->widgetStepIncrement->hide();
+        ui->labelEndStep->setText("Step Number:");
+        break;
+    case 1:
+        ui->widgetStartStep->show();
+        ui->widgetStepIncrement->show();
+        ui->labelEndStep->setText("End Step Number:");
+        break;
+    }
+}
+
+void svMeshEdit::SetResultFile()
+{
+    QString lastFileOpenPath="";
+
+    QString previousFilePath=ui->lineEditResultFile->text().trimmed();
+    if(QFile(previousFilePath).exists())
+        lastFileOpenPath=previousFilePath;
+
+    if(lastFileOpenPath=="")
+    {
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+        if (prefService)
+        {
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        }
+        else
+        {
+            prefs = berry::IPreferences::Pointer(0);
+        }
+
+        if(prefs.IsNotNull())
+        {
+            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        }
+    }
+
+    QString resultVtuFile = QFileDialog::getOpenFileName(m_Parent, tr("Select Result VTU File")
+                                                            , lastFileOpenPath
+                                                            , tr("All Files (*.*)")
+                                                            , NULL
+                                                            , QFileDialog::DontUseNativeDialog);
+
+    if (resultVtuFile.isEmpty())
+        return;
+
+    ui->lineEditResultFile->setText(resultVtuFile);
+}
+
+void svMeshEdit::Adapt()
+{
+    if(m_MeshNode.IsNull())
+        return;
+
+    if(m_ModelNode.IsNull())
+        return;
+
+    if(m_Model==NULL)
+        return;
+
+    svModelElement* modelElement=m_Model->GetModelElement();
+    if(modelElement==NULL)
+        return;
+
+    bool ok;
+    QString adaptedMeshName = QInputDialog::getText(m_Parent, tr("Name for Adapted Mesh"),
+                                                    tr("Mesh Name:"), QLineEdit::Normal,
+                                                    QString("adapted-")+QString::fromStdString(m_MeshNode->GetName()), &ok);
+    if (!ok || adaptedMeshName.isEmpty())
+        return;
+
+    mitk::DataNode::Pointer meshFolderNode=NULL;
+    std::string meshFolderPath="";
+    mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
+    mitk::DataStorage::SetOfObjects::ConstPointer rs=GetDataStorage()->GetSources(m_MeshNode,isProjFolder,false);
+
+    if(rs->size()>0)
+    {
+        mitk::DataNode::Pointer projFolderNode=rs->GetElement(0);
+        std::string projPath="";
+        projFolderNode->GetStringProperty("project path", projPath);
+
+        rs=GetDataStorage()->GetDerivations(projFolderNode,mitk::NodePredicateDataType::New("svMeshFolder"));
+        if (rs->size()>0)
+        {
+            meshFolderNode=rs->GetElement(0);
+            meshFolderPath=projPath+"/"+meshFolderNode->GetName();
+        }
+    }
+    if(meshFolderPath=="")
+        return;
+
+    int currentIndex=ui->comboBoxOption->currentIndex();
+
+    //check if user inputs are valid
+    QString resultFile=ui->lineEditResultFile->text().trimmed();
+    if(!QFile(resultFile).exists())
+    {
+        QMessageBox::warning(m_Parent,"File not existing","Make sure the result vtu file exists!");
+        return;
+    }
+
+    QString startStep="0";
+    QString stepInc="1";
+    if(currentIndex==1)
+    {
+        startStep =ui->lineEditStartStep->text().trimmed();
+        if(!IsInt(startStep))
+        {
+            QMessageBox::warning(m_Parent,"Format error","Please provide start step in a correct format!");
+            return;
+        }
+        stepInc =ui->lineEditStepIncrement->text().trimmed();
+        if(!IsInt(stepInc))
+        {
+            QMessageBox::warning(m_Parent,"Format error","Please provide step increment in a correct format!");
+            return;
+        }
+    }
+
+    QString endStep=ui->lineEditEndStep->text().trimmed();
+    if(!IsInt(endStep))
+    {
+        QMessageBox::warning(m_Parent,"Format error","Please provide step number in a correct format!");
+        return;
+    }
+
+    QString errorFactor=ui->lineEditErrorFactor->text().trimmed();
+    if(!IsDouble(errorFactor))
+    {
+        QMessageBox::warning(m_Parent,"Format error","Please provide erro factor in a correct format!");
+        return;
+    }
+
+    QString minSize=ui->lineEditMinEdgeSize->text().trimmed();
+    if(!IsDouble(minSize))
+    {
+        QMessageBox::warning(m_Parent,"Format error","Please provide min edge size in a correct format!");
+        return;
+    }
+
+    QString maxSize=ui->lineEditMaxEdgeSize->text().trimmed();
+    if(!IsDouble(maxSize))
+    {
+        QMessageBox::warning(m_Parent,"Format error","Please provide max edge size in a correct format!");
+        return;
+    }
+
+    svMeshTetGenAdaptor* adaptor=new svMeshTetGenAdaptor();
+
+    if(!adaptor->SetModelElement(modelElement))
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in loading model.");
+        delete adaptor;
+        return;
+    }
+
+    if(!adaptor->LoadMeshFromResultVTUFile(resultFile.toStdString()))
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in loading result mesh.");
+        delete adaptor;
+        return;
+    }
+
+    adaptor->SetAdaptOptions("strategy",1);
+    adaptor->SetAdaptOptions("metric_option",currentIndex+2);
+    adaptor->SetAdaptOptions("outstep",endStep.toInt());
+    adaptor->SetAdaptOptions("ratio",errorFactor.toDouble());
+    adaptor->SetAdaptOptions("hmin",minSize.toDouble());
+    adaptor->SetAdaptOptions("hmax",maxSize.toDouble());
+    if(currentIndex==1)
+    {
+        adaptor->SetAdaptOptions("instep",startStep.toInt());
+        adaptor->SetAdaptOptions("step_incr",stepInc.toInt());
+    }
+
+    if(!adaptor->Adapt())
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in adapting the mesh.");
+        delete adaptor;
+        return;
+    }
+
+    QString solutionFilePath=QString::fromStdString(meshFolderPath)+"/adapted-restart."+endStep+".1";
+    solutionFilePath=QDir::toNativeSeparators(solutionFilePath);
+
+    if(!adaptor->WriteAdaptedSolution(solutionFilePath.toStdString()))
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in writing adapted solution (restart).");
+        delete adaptor;
+        return;
+    }
+
+    svMeshTetGen* adaptedMesh=adaptor->GetAdaptedMesh();
+    delete adaptor;
+    if(adaptedMesh==NULL)
+    {
+        QMessageBox::warning(m_Parent,"Error","Failed in getting adapted mesh.");
+        return;
+    }
+
+    std::vector<std::string> cmds;
+    cmds.push_back("option GlobalEdgeSize "+maxSize.toStdString());
+    adaptedMesh->SetCommandHistory(cmds);
+
+    svMitkMesh::Pointer mitkMesh = svMitkMesh::New();
+    mitkMesh->SetModelName(m_ModelNode->GetName());
+    mitkMesh->SetType(adaptedMesh->GetType());
+    mitkMesh->SetMesh(adaptedMesh);
+    mitkMesh->SetDataModified();
+
+    mitk::DataNode::Pointer meshNode = mitk::DataNode::New();
+    meshNode->SetData(mitkMesh);
+    meshNode->SetName(adaptedMeshName.toStdString());
+
+    bool undoEnabled=true;
+    if(undoEnabled)
+        mitk::OperationEvent::IncCurrObjectEventId();
+
+    svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,GetDataStorage(),meshNode,meshFolderNode);
+    if(undoEnabled)
+    {
+        svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,GetDataStorage(),meshNode,meshFolderNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Add DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(doOp);
+}
+
+bool svMeshEdit::IsInt(QString value)
+{
+    bool ok;
+    value.toInt(&ok);
+    return ok;
+}
+
+bool svMeshEdit::IsDouble(QString value)
+{
+    bool ok;
+    value.toDouble(&ok);
+    return ok;
+}

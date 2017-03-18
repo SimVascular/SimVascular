@@ -334,7 +334,7 @@
             <item>
              <widget class="QCheckBox" name="checkBoxSmooth">
               <property name="text">
-               <string>Smooth   Fouriere Number:</string>
+               <string>Smooth   Fourier Number:</string>
               </property>
              </widget>
             </item>

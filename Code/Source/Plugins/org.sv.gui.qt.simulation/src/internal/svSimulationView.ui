@@ -36,7 +36,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QWidget" name="widget_18" native="true">
+    <widget class="QWidget" name="widgetTop" native="true">
      <layout class="QGridLayout" name="gridLayout_6">
       <property name="leftMargin">
        <number>0</number>
@@ -147,7 +147,7 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>4</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
@@ -647,7 +647,7 @@
           </rect>
          </property>
          <attribute name="label">
-          <string>Create Data Files and Run Job</string>
+          <string>Create Files and Run Simulation</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_11">
           <property name="spacing">
@@ -684,22 +684,70 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QFrame" name="frame_11">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QGridLayout" name="gridLayout_3">
-                <item row="0" column="0" colspan="2">
-                 <widget class="QPushButton" name="btnExportInputFiles">
+              <widget class="QWidget" name="widgetRun" native="true">
+               <layout class="QGridLayout" name="gridLayout">
+                <property name="topMargin">
+                 <number>9</number>
+                </property>
+                <item row="2" column="0" colspan="3">
+                 <widget class="QPushButton" name="btnImportFiles">
                   <property name="text">
-                   <string>Export Only Input Files...</string>
+                   <string>Import Extra Files (Optional) ...</string>
                   </property>
                  </widget>
                 </item>
-                <item row="1" column="0" colspan="2">
+                <item row="4" column="0">
+                 <widget class="QLabel" name="label_12">
+                  <property name="text">
+                   <string>Starting Step Number:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="7" column="0" colspan="3">
+                 <widget class="QPushButton" name="btnRunJob">
+                  <property name="text">
+                   <string>Run Simulation</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="0">
+                 <widget class="QLabel" name="label_11">
+                  <property name="text">
+                   <string>Number of Processes:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="4" column="2">
+                 <widget class="QLineEdit" name="lineEditStartStepNum">
+                  <property name="text">
+                   <string/>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" colspan="3">
+                 <widget class="QPushButton" name="btnCreateAllFiles">
+                  <property name="text">
+                   <string>Create Data Files for Simulation</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="3" column="2">
+                 <widget class="ctkSliderWidget" name="sliderNumProcs">
+                  <property name="decimals">
+                   <number>0</number>
+                  </property>
+                  <property name="pageStep">
+                   <double>40.000000000000000</double>
+                  </property>
+                  <property name="minimum">
+                   <double>1.000000000000000</double>
+                  </property>
+                  <property name="maximum">
+                   <double>64.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="0" colspan="3">
                  <widget class="QWidget" name="widget_15" native="true">
                   <layout class="QHBoxLayout" name="horizontalLayout_7">
                    <property name="spacing">
@@ -736,91 +784,8 @@
                   </layout>
                  </widget>
                 </item>
-                <item row="2" column="0" colspan="2">
-                 <widget class="QPushButton" name="btnExportAllFiles">
-                  <property name="text">
-                   <string>Export Input and Data Files...</string>
-                  </property>
-                 </widget>
-                </item>
                </layout>
               </widget>
-             </item>
-             <item>
-              <widget class="QFrame" name="frameRun">
-               <property name="frameShape">
-                <enum>QFrame::StyledPanel</enum>
-               </property>
-               <property name="frameShadow">
-                <enum>QFrame::Raised</enum>
-               </property>
-               <layout class="QGridLayout" name="gridLayout">
-                <property name="topMargin">
-                 <number>9</number>
-                </property>
-                <item row="1" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnImportFiles">
-                  <property name="text">
-                   <string>Import Extra Files into Job...</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="0">
-                 <widget class="QLabel" name="label_12">
-                  <property name="text">
-                   <string>Starting Step Number:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="6" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnRunJob">
-                  <property name="text">
-                   <string>Run Job</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="0">
-                 <widget class="QLabel" name="label_11">
-                  <property name="text">
-                   <string>Number of Processes:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item row="3" column="2">
-                 <widget class="QLineEdit" name="lineEditStartStepNum">
-                  <property name="text">
-                   <string/>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="2">
-                 <widget class="ctkSliderWidget" name="sliderNumProcs">
-                  <property name="decimals">
-                   <number>0</number>
-                  </property>
-                  <property name="pageStep">
-                   <double>40.000000000000000</double>
-                  </property>
-                  <property name="minimum">
-                   <double>1.000000000000000</double>
-                  </property>
-                  <property name="maximum">
-                   <double>64.000000000000000</double>
-                  </property>
-                 </widget>
-                </item>
-                <item row="0" column="0" colspan="3">
-                 <widget class="QPushButton" name="btnCreateAllFiles">
-                  <property name="text">
-                   <string>Create Input and Data Files in Job</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <widget class="QWidget" name="widget_12" native="true"/>
              </item>
              <item>
               <spacer name="verticalSpacer_2">
@@ -850,7 +815,7 @@
           </rect>
          </property>
          <attribute name="label">
-          <string>Export Results</string>
+          <string>Convert Results</string>
          </attribute>
          <layout class="QVBoxLayout" name="verticalLayout_13">
           <property name="spacing">
@@ -937,7 +902,7 @@
                       </font>
                      </property>
                      <property name="text">
-                      <string>Result Dir:</string>
+                      <string>Result Dir (containing restart files):</string>
                      </property>
                     </widget>
                    </item>
@@ -973,7 +938,11 @@
                     </widget>
                    </item>
                    <item row="0" column="0">
-                    <widget class="QLineEdit" name="lineEditResultDir"/>
+                    <widget class="QLineEdit" name="lineEditResultDir">
+                     <property name="toolTip">
+                      <string>The directory which contains the restart files output from simulation</string>
+                     </property>
+                    </widget>
                    </item>
                   </layout>
                  </widget>
@@ -1167,7 +1136,7 @@
                 <item>
                  <widget class="QPushButton" name="btnExportResults">
                   <property name="text">
-                   <string>Export ...</string>
+                   <string>Convert ...</string>
                   </property>
                  </widget>
                 </item>

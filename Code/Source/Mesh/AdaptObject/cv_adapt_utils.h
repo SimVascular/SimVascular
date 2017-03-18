@@ -124,7 +124,7 @@ SV_EXPORT_ADAPTOR int AdaptUtils_attachArray ( double *valueArray, vtkUnstructur
 // memory is allocated within the function
 // user has to delete the memory
 SV_EXPORT_ADAPTOR int AdaptUtils_getAttachedArray ( double *&valueArray, vtkUnstructuredGrid *mesh,
-                       std::string dataName, int nVar, int poly);
+                       std::string dataName, int nVar, int poly, bool for_restart=false);
 
 // just take the value from any adjacent vertex
 SV_EXPORT_ADAPTOR int AdaptUtils_fix4SolutionTransfer (vtkUnstructuredGrid *inmesh,vtkUnstructuredGrid *outmesh,int outstep);

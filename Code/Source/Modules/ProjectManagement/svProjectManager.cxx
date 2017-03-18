@@ -251,7 +251,7 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         for(int i=0;i<fileInfoList.size();i++)
         {
             mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            modelNode->SetVisibility(false);
+            modelNode->SetVisibility(i==0);
             dataStorage->Add(modelNode,modelFolderNode);
         }
 

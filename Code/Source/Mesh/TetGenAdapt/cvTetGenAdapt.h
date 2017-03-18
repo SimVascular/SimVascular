@@ -98,10 +98,13 @@ public:
   int Copy( const cvAdaptObject& src);
   int CreateInternalMeshObject(Tcl_Interp *interp,char *meshFileName,
 		  char *solidFileName);
+  int SetMeshObject(cvMeshObject* meshobj) {meshobject_=meshobj; return CV_OK;}
 
   //Setup Operations
   int LoadModel(char *fileName);
+  int LoadModel(vtkPolyData *pd);
   int LoadMesh(char *fileName);
+  int LoadMesh(vtkUnstructuredGrid* ug);
   int LoadSolutionFromFile(char *fileName);
   int LoadYbarFromFile(char *fileName);
   int LoadAvgSpeedFromFile(char *fileName);
