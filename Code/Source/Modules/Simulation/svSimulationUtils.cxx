@@ -58,6 +58,9 @@ std::string svSimulationUtils::CreatePreSolverFileContent(svSimJob* job, std::st
         ss << "fluid_density " << basicProps["Fluid Density"] <<"\n";
         ss << "fluid_viscosity " << basicProps["Fluid Viscosity"] <<"\n";
 
+        ss << "initial_pressure " << basicProps["Initial Pressure"] <<"\n";
+        ss << "initial_velocity " << basicProps["Initial Velocities"] <<"\n";
+
         it = capProps.begin();
         while(it != capProps.end())
         {

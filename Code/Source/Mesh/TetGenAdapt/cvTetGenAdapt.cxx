@@ -1106,7 +1106,7 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 
     int nVar = 5; //Number of variables in solution
     if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
-	  options.poly_) != CV_OK)
+	  options.poly_,true) != CV_OK)
     {
       fprintf(stderr,"Could not get solution from mesh\n");
       return CV_ERROR;

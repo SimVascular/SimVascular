@@ -493,6 +493,7 @@ void svSimulationView::UpdateGUIBasic()
     parList<<new QStandardItem("Initial Velocities");
     value=QString::fromStdString(job->GetBasicProp("Initial Velocities"));
     valueList<<new QStandardItem(value==""?QString("0 0 0"):value);
+//    valueList<<new QStandardItem(value==""?QString("0.0001 0.0001 0.0001"):value);
 
     for(int i=0;i<parList.size();i++)
     {
@@ -2093,7 +2094,12 @@ void svSimulationView::ExportResults()
     QProcess *postsolverProcess = new QProcess(m_Parent);
     postsolverProcess->setWorkingDirectory(exportDir);
     postsolverProcess->setProgram(postsolverPath);
+
+#if defined(Q_OS_WIN)
+    postsolverProcess->setNativeArguments(arguments.join(" "));
+#else
     postsolverProcess->setArguments(arguments);
+#endif
 
     svProcessHandler* handler=new svProcessHandler(postsolverProcess,m_Parent);
     handler->Start();
