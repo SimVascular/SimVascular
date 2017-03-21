@@ -1475,39 +1475,45 @@ void svMeshEdit::UpdateAdaptGUI(int selected)
 
 void svMeshEdit::SetResultFile()
 {
-    QString lastFileOpenPath="";
+    QString lastFileOpenPath=ui->lineEditResultFile->text().trimmed();
 
-    QString previousFilePath=ui->lineEditResultFile->text().trimmed();
-    if(QFile(previousFilePath).exists())
-        lastFileOpenPath=previousFilePath;
-
-    if(lastFileOpenPath=="")
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
     {
-        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
-        berry::IPreferences::Pointer prefs;
-        if (prefService)
-        {
-            prefs = prefService->GetSystemPreferences()->Node("/General");
-        }
-        else
-        {
-            prefs = berry::IPreferences::Pointer(0);
-        }
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
+    {
+        lastFileOpenPath="";
 
         if(prefs.IsNotNull())
         {
             lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
         }
+        if(lastFileOpenPath=="")
+            lastFileOpenPath=QDir::homePath();
     }
 
     QString resultVtuFile = QFileDialog::getOpenFileName(m_Parent, tr("Select Result VTU File")
                                                             , lastFileOpenPath
-                                                            , tr("All Files (*.*)")
+                                                            , tr("VTU Files (*.vtu)")
                                                             , NULL
                                                             , QFileDialog::DontUseNativeDialog);
-
-    if (resultVtuFile.isEmpty())
+    resultVtuFile=resultVtuFile.trimmed();
+    if(resultVtuFile.isEmpty())
         return;
+
+    if(prefs.IsNotNull())
+     {
+         prefs->Put("LastFileOpenPath", resultVtuFile);
+         prefs->Flush();
+     }
 
     ui->lineEditResultFile->setText(resultVtuFile);
 }

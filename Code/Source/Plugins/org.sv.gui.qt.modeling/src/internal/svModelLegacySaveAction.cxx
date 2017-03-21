@@ -53,20 +53,25 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
             prefs = berry::IPreferences::Pointer(0);
         }
 
-        QString lastFileSavePath=QString();
+        QString lastFileSavePath="";
         if(prefs.IsNotNull())
         {
             lastFileSavePath = prefs->Get("LastFileSavePath", "");
         }
 
+        if(lastFileSavePath=="")
+            lastFileSavePath=QDir::homePath();
+
         QString fileName = QFileDialog::getSaveFileName(NULL
-                                                        ,tr("Save Model")
+                                                        ,tr("Export as Legacy Model")
                                                         ,lastFileSavePath
                                                         ,fileFilter
                                                         ,NULL
                                                         ,QFileDialog::DontUseNativeDialog
                                                         );
-        if(fileName.trimmed().isEmpty()) return;
+
+        fileName=fileName.trimmed();
+        if(fileName.isEmpty()) return;
 
         if(modelType=="PolyData")
         {

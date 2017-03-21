@@ -48,7 +48,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
+//        MITK_ERROR << "Could not open/read/parse " << fileName;
         return result;
     }
 
@@ -57,7 +57,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     TiXmlElement* modelElement = document.FirstChildElement("model");
 
     if(!modelElement){
-        //        MITK_ERROR << "No Model data in "<< fileName;
+//        MITK_ERROR << "No Model data in "<< fileName;
         mitkThrow() << "No Model data in "<< fileName;
         return result;
     }
@@ -87,6 +87,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             if(type=="")
             {
                 mitkThrow() << "No type info available when trying to load the model ";
+//                MITK_ERROR << "No type info available when trying to load the model ";
                 return result;
             }
 
@@ -154,6 +155,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             if(me==NULL)
             {
                 mitkThrow() << "No support in reading file of "<< type;
+//                MITK_ERROR << "No support in reading file of "<< type;
                 return result;
             }
 

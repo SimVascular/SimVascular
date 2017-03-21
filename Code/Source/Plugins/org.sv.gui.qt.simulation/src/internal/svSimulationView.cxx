@@ -522,6 +522,9 @@ void svSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
     if(itemName->text()!="IC File")
         return;
 
+    QStandardItem* itemValue= m_TableModelBasic->item(row,1);
+    QString lastFileOpenPath=itemValue->text().trimmed();
+
     berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
     berry::IPreferences::Pointer prefs;
     if (prefService)
@@ -533,23 +536,32 @@ void svSimulationView::TableViewBasicDoubleClicked(const QModelIndex& index)
         prefs = berry::IPreferences::Pointer(0);
     }
 
-    QString lastFileOpenPath=QString();
-    if(prefs.IsNotNull())
+    if(lastFileOpenPath=="" || !QFile(lastFileOpenPath).exists())
     {
-        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        if(prefs.IsNotNull())
+        {
+            lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
+        }
+        if(lastFileOpenPath=="")
+            lastFileOpenPath=QDir::homePath();
     }
 
-
-    QString icFilePath = QFileDialog::getOpenFileName(m_Parent, tr("Select IC File")
+    QString icFilePath = QFileDialog::getOpenFileName(m_Parent, tr("Select IC File (Restart)")
                                                             , lastFileOpenPath
-                                                            , tr("All Files (*.*)")
+                                                            , tr("All Files (*)")
                                                             , NULL
                                                             , QFileDialog::DontUseNativeDialog);
 
+    icFilePath=icFilePath.trimmed();
     if (icFilePath.isEmpty())
         return;
 
-    QStandardItem* itemValue= m_TableModelBasic->item(row,1);
+    if(prefs.IsNotNull())
+     {
+         prefs->Put("LastFileOpenPath", icFilePath);
+         prefs->Flush();
+     }
+
     itemValue->setText(icFilePath);
 }
 
@@ -1623,7 +1635,34 @@ void svSimulationView::ImportFiles()
     if(jobPath=="")
         return;
 
-    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files");
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+
+    QString lastFilePath="";
+    if(prefs.IsNotNull())
+    {
+        lastFilePath = prefs->Get("LastFileOpenPath", "");
+    }
+    if(lastFilePath=="")
+        lastFilePath=QDir::homePath();
+
+    QStringList filePaths = QFileDialog::getOpenFileNames(m_Parent, "Choose Files", lastFilePath, tr("All Files (*)")
+                                                          ,NULL,QFileDialog::DontUseNativeDialog);
+
+    if(filePaths.size()>0)
+        if(prefs.IsNotNull())
+         {
+             prefs->Put("LastFileOpenPath", filePaths.first());
+             prefs->Flush();
+         }
 
     for(int i=0;i<filePaths.size();i++)
     {
@@ -1963,23 +2002,32 @@ void svSimulationView::SetResultDir()
         prefs = berry::IPreferences::Pointer(0);
     }
 
-    QString lastFileSavePath=QString();
+    QString lastFileOpenPath="";
     QString currentPath=ui->lineEditResultDir->text().trimmed();
     if(currentPath!="" && QDir(currentPath).exists())
-        lastFileSavePath=currentPath;
+        lastFileOpenPath=currentPath;
     else if(prefs.IsNotNull())
     {
-        lastFileSavePath = prefs->Get("LastFileSavePath", "");
+        lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
     }
+    if(lastFileOpenPath=="")
+        lastFileOpenPath=QDir::homePath();
 
     QString dir = QFileDialog::getExistingDirectory(m_Parent
                                                     , tr("Choose Result Directory")
-                                                    , lastFileSavePath
+                                                    , lastFileOpenPath
                                                     , QFileDialog::DontResolveSymlinks
                                                     | QFileDialog::DontUseNativeDialog
                                                     );
 
+    dir=dir.trimmed();
     if(dir.isEmpty()) return;
+
+    if(prefs.IsNotNull())
+    {
+        prefs->Put("LastFileOpenPath", dir);
+        prefs->Flush();
+    }
 
     ui->lineEditResultDir->setText(dir);
 }
@@ -2007,11 +2055,13 @@ void svSimulationView::ExportResults()
         prefs = berry::IPreferences::Pointer(0);
     }
 
-    QString lastFileSavePath=QString();
+    QString lastFileSavePath="";
     if(prefs.IsNotNull())
     {
         lastFileSavePath = prefs->Get("LastFileSavePath", "");
     }
+    if(lastFileSavePath=="")
+        lastFileSavePath=QDir::homePath();
 
     QString exportDir = QFileDialog::getExistingDirectory(m_Parent
                                                     , tr("Choose Export Directory")
@@ -2020,8 +2070,15 @@ void svSimulationView::ExportResults()
                                                     | QFileDialog::DontUseNativeDialog
                                                     );
 
+    exportDir=exportDir.trimmed();
     if(exportDir.isEmpty())
         return;
+
+    if(prefs.IsNotNull())
+     {
+         prefs->Put("LastFileSavePath", exportDir);
+         prefs->Flush();
+     }
 
     QString jobName("");
     if(m_JobNode.IsNotNull())

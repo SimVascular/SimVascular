@@ -89,30 +89,24 @@ void svFileOpenProjectAction::Run()
            prefs = berry::IPreferences::Pointer(0);
        }
 
-       QString lastSVProjPath=QString();
+       QString lastSVProjPath="";
        if(prefs.IsNotNull())
        {
-           lastSVProjPath = prefs->Get("LastSVProjPath", "");
+           lastSVProjPath = prefs->Get("LastSVProjPath", prefs->Get("LastSVProjCreatParentPath", ""));
        }
 
+       if(lastSVProjPath=="")
+           lastSVProjPath=QDir::homePath();
 
-
-
-        QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose Project"),
+       QString projPath = QFileDialog::getExistingDirectory(NULL, tr("Choose Project"),
                                                         lastSVProjPath,
-                                                        QFileDialog::ShowDirsOnly
-                                                        | QFileDialog::DontResolveSymlinks
+                                                        QFileDialog::DontResolveSymlinks
                                                         | QFileDialog::DontUseNativeDialog
                                                         );
 
         if(projPath.trimmed().isEmpty()) return;
 
         lastSVProjPath=projPath.trimmed();
-        if(prefs.IsNotNull())
-        {
-            prefs->Put("LastSVProjPath", lastSVProjPath);
-            prefs->Flush();
-        }
 
         QDir dir(lastSVProjPath);
         if(dir.exists(".svproj"))
@@ -130,6 +124,11 @@ void svFileOpenProjectAction::Run()
             mitk::ProgressBar::GetInstance()->Progress(2);
             mitk::StatusBar::GetInstance()->DisplayText("SV project loaded.");
             QApplication::restoreOverrideCursor();
+            if(prefs.IsNotNull())
+            {
+                prefs->Put("LastSVProjPath", lastSVProjPath);
+                prefs->Flush();
+            }
         }else{
             QMessageBox::warning(NULL,"Invalid Project","No project config file found!");
         }

@@ -1,7 +1,11 @@
 #include "svPathLegacyLoadAction.h"
 
 #include "svPathLegacyIO.h"
+
 #include <mitkNodePredicateDataType.h>
+#include <berryPlatform.h>
+#include <berryIPreferences.h>
+#include <berryIPreferencesService.h>
 
 #include <QFileDialog>
 
@@ -26,10 +30,30 @@ void svPathLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
 
     try
     {
-        QString fileName = QFileDialog::getOpenFileName(NULL, tr("Load Legacy Paths"),
-                                                        QDir::homePath(),
+        berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+        berry::IPreferences::Pointer prefs;
+        if (prefService)
+        {
+            prefs = prefService->GetSystemPreferences()->Node("/General");
+        }
+        else
+        {
+            prefs = berry::IPreferences::Pointer(0);
+        }
+
+        QString lastFilePath="";
+        if(prefs.IsNotNull())
+        {
+            lastFilePath = prefs->Get("LastFileOpenPath", "");
+        }
+        if(lastFilePath=="")
+            lastFilePath=QDir::homePath();
+
+        QString fileName = QFileDialog::getOpenFileName(NULL, tr("Import Legacy Paths (Choose File)"),
+                                                        lastFilePath,
                                                         tr("SimVascular Legacy Paths (*.paths)"),NULL,QFileDialog::DontUseNativeDialog);
 
+        fileName=fileName.trimmed();
         if(!fileName.isEmpty()){
 
             std::vector<mitk::DataNode::Pointer> newNodes=svPathLegacyIO::ReadFile(fileName);
@@ -38,6 +62,11 @@ void svPathLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
                 m_DataStorage->Add(newNodes[i],selectedNode);
             }
 
+            if(prefs.IsNotNull())
+             {
+                 prefs->Put("LastFileOpenPath", fileName);
+                 prefs->Flush();
+             }
         }
 
     }

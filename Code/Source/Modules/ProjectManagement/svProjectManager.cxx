@@ -248,11 +248,28 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         QDir dirModel(projPath);
         dirModel.cd(modelFolderName);
         fileInfoList=dirModel.entryInfoList(QStringList("*.mdl"), QDir::Files, QDir::Name);
+        bool firstModel=true;
         for(int i=0;i<fileInfoList.size();i++)
         {
-            mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
-            modelNode->SetVisibility(i==0);
-            dataStorage->Add(modelNode,modelFolderNode);
+            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
+
+            try
+            {
+                mitk::DataNode::Pointer modelNode=mitk::IOUtil::LoadDataNode(filePath);
+                if(firstModel)
+                {
+                    modelNode->SetVisibility(true);
+                    firstModel=false;
+                }
+                else
+                    modelNode->SetVisibility(false);
+
+                dataStorage->Add(modelNode,modelFolderNode);
+            }
+            catch(...)
+            {
+                MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
+            }
         }
 
         meshFolderNode->SetVisibility(false);
@@ -261,9 +278,17 @@ void svProjectManager::AddProject(mitk::DataStorage::Pointer dataStorage, QStrin
         fileInfoList=dirMesh.entryInfoList(QStringList("*.msh"), QDir::Files, QDir::Name);
         for(int i=0;i<fileInfoList.size();i++)
         {
+            std::string filePath=fileInfoList[i].absoluteFilePath().toStdString();
+            try
+            {
             mitk::DataNode::Pointer meshNode=mitk::IOUtil::LoadDataNode(fileInfoList[i].absoluteFilePath().toStdString());
             meshNode->SetVisibility(false);
             dataStorage->Add(meshNode,meshFolderNode);
+            }
+            catch(...)
+            {
+                MITK_ERROR << "Failed to load file (maybe unsupported data type): " << filePath;
+            }
         }
 
         simFolderNode->SetVisibility(false);
@@ -326,12 +351,10 @@ void svProjectManager::WriteEmptyConfigFile(QString projConfigFilePath)
         QTextStream out(&file);
         out << xml <<endl;
     }
-
-
 }
 
 // so far, no copy into project
-void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject)
+void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString imageFilePath, mitk::DataNode::Pointer imageFolderNode, bool copyIntoProject, double scaleFactor)
 {
     mitk::DataNode::Pointer imageNode=mitk::IOUtil::LoadDataNode(imageFilePath.toStdString());
 
@@ -397,6 +420,17 @@ void svProjectManager::AddImage(mitk::DataStorage::Pointer dataStorage, QString 
         mitk::Image* image=dynamic_cast<mitk::Image*>(imageNode->GetData());
         if(image)
         {
+            if(scaleFactor>0)
+            {
+                mitk::Point3D org = image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetOrigin();
+                mitk::Vector3D spacing=image->GetTimeGeometry()->GetGeometryForTimeStep(0)->GetSpacing();
+                org[0]*=scaleFactor;
+                org[1]*=scaleFactor;
+                org[2]*=scaleFactor;
+                image->SetOrigin(org);
+                image->SetSpacing(scaleFactor*spacing);
+            }
+
             vtkImageData* vtkImg=svVtkUtils::MitkImage2VtkImage(image);
             if(vtkImg)
             {

@@ -3,23 +3,48 @@
 
 #include "svProjectManager.h"
 
+#include <berryPlatform.h>
+#include <berryIPreferences.h>
+#include <berryIPreferencesService.h>
+
 #include <QMessageBox>
 #include <QFile>
 #include <QFileDialog>
 #include <QDir>
 
-QString svProjectCreate::m_LastPath="";
-
 svProjectCreate::svProjectCreate(mitk::DataStorage::Pointer dataStorage)
     : ui(new Ui::svProjectCreate)
     , m_DataStorage(dataStorage)
-//    , m_SelectedDataNode(NULL)
+    , m_LastPath("")
 {
     ui->setupUi(this);
     connect(ui->buttonBox, SIGNAL(accepted()), this, SLOT(CreateNewProject()));
     connect(ui->buttonBox, SIGNAL(rejected()), this, SLOT(Cancel()));
     connect(ui->btnBrowse, SIGNAL(clicked()), this, SLOT(ChoosePath()));
+
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+   if (prefService)
+   {
+       prefs = prefService->GetSystemPreferences()->Node("/General");
+   }
+   else
+   {
+       prefs = berry::IPreferences::Pointer(0);
+   }
+
+   if(prefs.IsNotNull())
+   {
+       m_LastPath = prefs->Get("LastSVProjCreatParentPath", "");
+   }
+
+   if(m_LastPath=="")
+       m_LastPath=QDir::homePath();
+
+   ui->lineEditDir->setText(m_LastPath);
 }
+
+
 
 svProjectCreate::~svProjectCreate()
 {
@@ -29,10 +54,6 @@ svProjectCreate::~svProjectCreate()
 void svProjectCreate::SetFocus()
 {
     ui->lineEditProjectName->setFocus();
-    if(m_LastPath=="")
-        ui->lineEditDir->setText(QDir::homePath());
-    else
-        ui->lineEditDir->setText(m_LastPath);
 }
 
 void svProjectCreate::CreateNewProject()
@@ -56,8 +77,6 @@ void svProjectCreate::CreateNewProject()
     }
 
     QDir dir(projParentDir);
-    m_LastPath=projParentDir;
-
     if(dir.exists(projName))
     {
         QMessageBox::warning(NULL,"Project Exists","Please give a new project!");
@@ -66,12 +85,31 @@ void svProjectCreate::CreateNewProject()
 
     svProjectManager::AddProject(m_DataStorage, projName,projParentDir,true);
 
+    m_LastPath=projParentDir;
+    berry::IPreferencesService* prefService = berry::Platform::GetPreferencesService();
+    berry::IPreferences::Pointer prefs;
+    if (prefService)
+    {
+        prefs = prefService->GetSystemPreferences()->Node("/General");
+    }
+    else
+    {
+        prefs = berry::IPreferences::Pointer(0);
+    }
+    if(prefs.IsNotNull())
+    {
+        prefs->Put("LastSVProjCreatParentPath", m_LastPath);
+        prefs->Flush();
+    }
+
     hide();
+    deleteLater();
 }
 
 void svProjectCreate::Cancel()
 {
     hide();
+    deleteLater();
 }
 
 void svProjectCreate::ChoosePath()
@@ -80,13 +118,9 @@ void svProjectCreate::ChoosePath()
     if(path=="" || !QDir(path).exists())
         path=m_LastPath;
 
-    if(path=="" || !QDir(path).exists())
-        path=QDir::homePath();
-
     QString dir = QFileDialog::getExistingDirectory(this, tr("Choose Directory"),
                                                     path,
-                                                    QFileDialog::ShowDirsOnly
-                                                    | QFileDialog::DontResolveSymlinks
+                                                    QFileDialog::DontResolveSymlinks
                                                     | QFileDialog::DontUseNativeDialog
                                                     );
     dir=dir.trimmed();

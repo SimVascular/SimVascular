@@ -42,11 +42,14 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
             prefs = berry::IPreferences::Pointer(0);
         }
 
-        QString lastFileOpenPath=QString();
+        QString lastFileOpenPath="";
         if(prefs.IsNotNull())
         {
             lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
         }
+
+        if(lastFileOpenPath=="")
+            lastFileOpenPath=QDir::homePath();
 
         QString filter="Legacy Models (*.vtp";
 
@@ -59,13 +62,16 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
         filter=filter+")";
 
-        QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Model")
+        QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Legacy Model")
                                                              , lastFileOpenPath
                                                              , tr(filter.toStdString().c_str())
                                                              , NULL
                                                              , QFileDialog::DontUseNativeDialog);
 
-        if(modelFilePath.trimmed().isEmpty()) return;
+        modelFilePath=modelFilePath.trimmed();
+        if(modelFilePath.isEmpty())
+            return;
+
         mitk::DataNode::Pointer modelNode=svModelLegacyIO::ReadFile(modelFilePath);
         if(modelNode.IsNotNull())
             m_DataStorage->Add(modelNode,selectedNode);
