@@ -1,6 +1,11 @@
 #ifndef SVWORKBENCHWINDOWADVISOR_H
 #define SVWORKBENCHWINDOWADVISOR_H
 
+#include <org_sv_gui_qt_application_Export.h>
+
+#include "svDataNodeOperationInterface.h"
+
+#include <QmitkNodeDescriptor.h>
 #include <mitkDataNode.h>
 #include <mitkDataStorage.h>
 
@@ -12,8 +17,7 @@
 #include <berryWorkbenchAdvisor.h>
 #include <berryWorkbenchWindowAdvisor.h>
 
-#include <org_sv_gui_qt_application_Export.h>
-
+#include <QAction>
 #include <QList>
 
 class QAction;
@@ -76,6 +80,7 @@ public:
     mitk::DataStorage::Pointer GetDataStorage();
     std::list< mitk::DataNode::Pointer > GetSelectedDataNodes();
     void SetupDataManagerDoubleClick();
+    void AddCustomMenuItemsForDataManager();
 
 protected slots:
 
@@ -87,6 +92,15 @@ protected slots:
     void ShowSVView();
 
     void ExitApplication();
+
+    void RemoveSelectedNodes( bool checked = false );
+    void RenameSelectedNode( bool checked = false );
+
+    void CopyDataNode( bool checked );
+    void PasteDataNode( bool checked );
+
+protected:
+    std::vector< std::pair< QmitkNodeDescriptor*, QAction* > > m_DescriptorActionList;
 
 private:
 
@@ -163,6 +177,12 @@ private:
   QAction* saveSVProjectAction;
   QList<QAction*> svViewActions;
   QList<QAction*> otherViewActions;
+
+  bool m_UndoEnabled;
+
+  svDataNodeOperationInterface* m_Interface;
+
+  mitk::DataNode::Pointer  m_CopyDataNode;
 
 };
 

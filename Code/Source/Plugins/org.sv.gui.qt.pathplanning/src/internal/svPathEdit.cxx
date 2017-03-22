@@ -33,6 +33,7 @@ svPathEdit::svPathEdit():
     m_DisplayWidget(NULL),
     m_SmoothWidget(NULL),
     m_PathCreateWidget(NULL),
+    m_PathCreateWidget2(NULL),
     m_ImageNode(NULL)
 {
 }
@@ -44,6 +45,8 @@ svPathEdit::~svPathEdit()
     if(m_SmoothWidget) delete m_SmoothWidget;
 
     if(m_PathCreateWidget) delete m_PathCreateWidget;
+
+    if(m_PathCreateWidget2) delete m_PathCreateWidget2;
 }
 
 void svPathEdit::CreateQtPartControl( QWidget *parent )
@@ -77,6 +80,7 @@ void svPathEdit::CreateQtPartControl( QWidget *parent )
 //    ui->resliceSlider->setCheckBoxVisible(true);
     ui->resliceSlider->SetResliceMode(mitk::ExtractSliceFilter::RESLICE_CUBIC);
 
+    connect(ui->btnNewPath, SIGNAL(clicked()), this, SLOT(NewPath()) );
     connect(ui->btnChange, SIGNAL(clicked()), this, SLOT(ChangePath()) );
     connect(ui->buttonAdd, SIGNAL(clicked()), this, SLOT(SmartAdd()) );
     connect(ui->buttonAddManually, SIGNAL(clicked()), this, SLOT(ManuallyAdd()) );
@@ -245,7 +249,7 @@ void svPathEdit::ClearAll()
         m_PathChangeObserverTag=-1;
     }
 
-    if(m_PathNode)
+    if(m_PathNode.IsNotNull())
     {
         m_PathNode->SetDataInteractor(NULL);
         m_DataInteractor=NULL;
@@ -639,4 +643,29 @@ void svPathEdit::UpdatePathResliceSize(double newSize)
 void svPathEdit::UpdateAddingMode(int mode)
 {
     m_Path->SetAddingMode((svPath::AddingMode)mode);
+}
+
+void svPathEdit::NewPath()
+{
+    if(m_PathNode.IsNull())
+        return;
+
+    if(m_PathCreateWidget2)
+    {
+        delete m_PathCreateWidget2;
+    }
+
+    m_PathCreateWidget2=new svPathCreate(GetDataStorage(), m_PathNode, 0);
+
+    if(m_Path)
+    {
+        m_PathCreateWidget2->SetSubdivisionType(m_Path->GetMethod());
+        if(m_Path->GetMethod()==svPathElement::CONSTANT_SPACING)
+            m_PathCreateWidget2->SetNumber(QString::number(m_Path->GetSpacing()));
+        else
+            m_PathCreateWidget2->SetNumber(QString::number(m_Path->GetCalculationNumber()));
+    }
+
+    m_PathCreateWidget2->show();
+    m_PathCreateWidget2->SetFocus();
 }
