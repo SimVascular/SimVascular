@@ -38,8 +38,6 @@ list(APPEND CORELIBS ${lib})
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
 set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
-  vtkBooleanOperationPolyDataFilter2.cxx
-  vtkIntersectionPolyDataFilter2.cxx
 	cv_spline.cxx cv_integrate_surface.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
 	vtkSurfaceVectors.cxx
@@ -56,12 +54,9 @@ set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
 	vtkConstrainedBlend.cxx)
 set(HDRS cv_sys_geom.h cv_ggems.h
-  vtkBooleanOperationPolyDataFilter2.cxx
-  vtkIntersectionPolyDataFilter2.cxx
 	cv_spline.h cv_integrate_surface.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
 	vtkSurfaceVectors.h
-	vtkBooleanOperationPolyDataFilter2.h
 	vtkFillHolesFilterWithIds.h
 	vtkLoftPolyDataSolid.h
 	vtkLocalQuadricDecimation.h

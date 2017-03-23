@@ -65,15 +65,28 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     cvPolyData *dst = NULL;
 
     if(sys_geom_checksurface(src,stats,tol)!=CV_OK)
-        return NULL;
+    {
+      solidvpd->Delete();
+      return NULL;
+    }
 
     int *doublecaps;
     int numfaces=0;
 
     if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != CV_OK)
+    {
+      solidvpd->Delete();
       return NULL;
+    }
 
-    solidvpd=dst->GetVtkPolyData();
+    vtkSmartPointer<vtkPolyData> forClean =
+      vtkSmartPointer<vtkPolyData>::New();
+    forClean->DeepCopy(dst->GetVtkPolyData());
+    vtkSmartPointer<vtkPolyData> nowClean =
+      vtkSmartPointer<vtkPolyData>::New();
+    nowClean = svModelUtils::OrientVtkPolyData(forClean);
+
+    solidvpd->DeepCopy(nowClean);;
 
     int numSeg=segNames.size();
     int numCap2=0;
