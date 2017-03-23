@@ -70,7 +70,8 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     int *doublecaps;
     int numfaces=0;
 
-    sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces);
+    if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != CV_OK)
+      return NULL;
 
     solidvpd=dst->GetVtkPolyData();
 

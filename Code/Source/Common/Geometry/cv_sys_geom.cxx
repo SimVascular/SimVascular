@@ -78,8 +78,8 @@
 #endif
 
 #include "vtkSVMultiplePolyDataIntersectionFilter.h"
-#include "vtkSVLoopBooleanPolyDataFilter.h"
-#include "vtkSVLoopIntersectionPolyDataFilter.h"
+#include "vtkBooleanOperationPolyDataFilter2.h"
+#include "vtkIntersectionPolyDataFilter2.h"
 #include "vtkLoftPolyDataSolid.h"
 #include "vtkXMLPolyDataWriter.h"
 
@@ -490,7 +490,7 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
   *dst = NULL;
 
   try {
-    vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
+    vtkNew(vtkBooleanOperationPolyDataFilter2,booleanOperator);
     booleanOperator->SetInputData(0,a);
     booleanOperator->SetInputData(1,b);
     booleanOperator->SetOperationToUnion();
@@ -624,7 +624,7 @@ int sys_geom_intersect( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvP
   *dst = NULL;
 
   try {
-    vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
+    vtkNew(vtkBooleanOperationPolyDataFilter2,booleanOperator);
     booleanOperator->SetInputData(0,a);
     booleanOperator->SetInputData(1,b);
     booleanOperator->SetOperationToIntersection();
@@ -654,7 +654,7 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
   *dst = NULL;
 
   try {
-    vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
+    vtkNew(vtkBooleanOperationPolyDataFilter2,booleanOperator);
     booleanOperator->SetInputData(0,a);
     booleanOperator->SetInputData(1,b);
     booleanOperator->SetOperationToDifference();
@@ -678,7 +678,7 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
 
   try {
     double surfstats[2];
-    vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(pd,surfstats,tolerance);
+    vtkIntersectionPolyDataFilter2::CleanAndCheckSurface(pd,surfstats,tolerance);
     stats[0] = surfstats[0];
     stats[1] = surfstats[1];
 
@@ -4709,7 +4709,6 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
   vtkNew(vtkIntArray,faceids);
   if (VtkUtils_PDCheckArrayName(geom,1,"CapID") != CV_OK)
   {
-    fprintf(stderr,"First\n");
     fprintf(stderr,"CapID Array is not on the surface\n");
     return CV_ERROR;
   }

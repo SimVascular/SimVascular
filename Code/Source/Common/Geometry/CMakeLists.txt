@@ -38,6 +38,8 @@ list(APPEND CORELIBS ${lib})
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
 set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
+  vtkBooleanOperationPolyDataFilter2.cxx
+  vtkIntersectionPolyDataFilter2.cxx
 	cv_spline.cxx cv_integrate_surface.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
 	vtkSurfaceVectors.cxx
@@ -54,6 +56,8 @@ set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
 	vtkConstrainedBlend.cxx)
 set(HDRS cv_sys_geom.h cv_ggems.h
+  vtkBooleanOperationPolyDataFilter2.cxx
+  vtkIntersectionPolyDataFilter2.cxx
 	cv_spline.h cv_integrate_surface.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
 	vtkSurfaceVectors.h
@@ -78,7 +82,7 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME}
-  ${VTSV_LIBRARIES}
+  ${SV_LIB_VTKSVBOOLEAN_NAME}
 	)
 
 if(SV_USE_VMTK)

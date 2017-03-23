@@ -777,7 +777,6 @@ function(simvascular_create_plugin)
     NO_DEPRECATED_MACRO_NAME ${_PLUGIN_EXPORT_DIRECTIVE}_NO_DEPRECATED
   )
 
-  set(DEFINE_NO_DEPRECATED 0)
   generate_export_header(${lib_name}
     ${_export_macro_names}
     EXPORT_FILE_NAME ${lib_name}_Export.h
@@ -865,7 +864,6 @@ function(simvascular_create_module)
     DEPRECATED_MACRO_NAME ${MODULE_NAME}_DEPRECATED
     NO_DEPRECATED_MACRO_NAME ${MODULE_NAME}_NO_DEPRECATED
     )
-  set(DEFINE_NO_DEPRECATED 0)
   generate_export_header(${_MODULE_TARGET}
     ${_export_macro_names}
     EXPORT_FILE_NAME ${_MODULE_EXPORT_DIRECTIVE}Exports.h

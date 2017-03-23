@@ -162,6 +162,12 @@ set(SV_CORE_LIBRARY_DIRS ${SV_CORE_LIBRARY_DIRS}
 	"Source/Common/Globals"
 	"Source/Common/Utils"
 	"Source/Common/Repository"
+  "Source/vtkSV/Common"
+  "Source/vtkSV/Filters"
+  "Source/vtkSV/Modules/Boolean"
+  "Source/vtkSV/Modules/Geometry"
+  "Source/vtkSV/Modules/NURBS"
+  "Source/vtkSV/Modules/Parameterization"
 	"Source/ImageProcessing"
 	"Source/Common/Geometry"
 	"Source/Legacy/LevelSet"
@@ -326,17 +332,15 @@ foreach(dir ${SV_INCLUDE_DIRS})
 endforeach()
 
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
-	include_directories("${dir}")
+	include_directories(${SV_SOURCE_DIR}/${dir} ${SV_BINARY_DIR}/${dir})
 endforeach()
 
 foreach(dir ${SV_MODULE_DIRS})
-	include_directories(${SV_SOURCE_DIR}/${dir})
-  include_directories(${SV_BINARY_DIR}/${dir})
+	include_directories(${SV_SOURCE_DIR}/${dir} ${SV_BINARY_DIR}/${dir})
 endforeach()
 
 foreach(dir ${SV_PLUGIN_DIRS})
-	include_directories(${SV_SOURCE_DIR}/${dir})
-  include_directories(${SV_BINARY_DIR}/${dir})
+	include_directories(${SV_SOURCE_DIR}/${dir} ${SV_BINARY_DIR}/${dir})
 endforeach()
 #-----------------------------------------------------------------------------
 
@@ -346,11 +350,6 @@ endforeach()
 if(SV_USE_THREEDSOLVER)
   add_subdirectory(svSolver/Code/FlowSolvers)
 endif()
-
-# Add vtkSV target
-add_subdirectory("${SV_SOURCE_DIR}/Source/vtkSV")
-include("${SV_BINARY_DIR}/Source/vtkSV/vtkSVConfig.cmake")
-include_directories("${VTKSV_INCLUDE_DIRS}")
 
 # Add the Core Direcotories
 message(STATUS "Libraries:")

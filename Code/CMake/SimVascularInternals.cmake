@@ -56,6 +56,15 @@ set(SV_LIBS ${SV_LIBS}
   POSTSOLVER
   SVLS
   SOLVERIO)
+
+# vtkSV Libraries
+set(SV_LIBS ${SV_LIBS}
+  VTKSVBOOLEAN
+  VTKSVCOMMON
+  VTKSVFILTERS
+  VTKSVGEOMETRY
+  VTKSVNURBS
+  VTKSVPARAMETERIZATION)
 #-----------------------------------------------------------------------------
 
 #-----------------------------------------------------------------------------
@@ -65,6 +74,6 @@ foreach(lib ${SV_LIBS})
     string(TOLOWER "lib_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
   else()
     string(TOLOWER "_SIMVASCULAR_${lib}" SV_LIB_${lib}_NAME)
-  endif()    
+  endif()
 endforeach()
 #-----------------------------------------------------------------------------
