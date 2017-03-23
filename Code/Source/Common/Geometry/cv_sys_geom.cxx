@@ -77,9 +77,9 @@
 #include "vtkvmtkMergeCenterlines.h"
 #endif
 
-#include "vtkMultiplePolyDataIntersectionFilter.h"
-#include "vtkBooleanOperationPolyDataFilter2.h"
-#include "vtkIntersectionPolyDataFilter2.h"
+#include "vtkSVMultiplePolyDataIntersectionFilter.h"
+#include "vtkSVLoopBooleanPolyDataFilter.h"
+#include "vtkSVLoopIntersectionPolyDataFilter.h"
 #include "vtkLoftPolyDataSolid.h"
 #include "vtkXMLPolyDataWriter.h"
 
@@ -490,7 +490,7 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
   *dst = NULL;
 
   try {
-    vtkNew(vtkBooleanOperationPolyDataFilter2,booleanOperator);
+    vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
     booleanOperator->SetInputData(0,a);
     booleanOperator->SetInputData(1,b);
     booleanOperator->SetOperationToUnion();
@@ -517,7 +517,7 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
   cvPolyData *result = NULL;
   *dst = NULL;
 
-  vtkNew(vtkMultiplePolyDataIntersectionFilter,vesselInter);
+  vtkNew(vtkSVMultiplePolyDataIntersectionFilter,vesselInter);
   for (int i=0;i<numSrcs;i++)
   {
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
@@ -624,7 +624,7 @@ int sys_geom_intersect( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvP
   *dst = NULL;
 
   try {
-    vtkNew(vtkBooleanOperationPolyDataFilter2,booleanOperator);
+    vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
     booleanOperator->SetInputData(0,a);
     booleanOperator->SetInputData(1,b);
     booleanOperator->SetOperationToIntersection();
@@ -654,7 +654,7 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
   *dst = NULL;
 
   try {
-    vtkNew(vtkBooleanOperationPolyDataFilter2,booleanOperator);
+    vtkNew(vtkSVLoopBooleanPolyDataFilter,booleanOperator);
     booleanOperator->SetInputData(0,a);
     booleanOperator->SetInputData(1,b);
     booleanOperator->SetOperationToDifference();
@@ -678,7 +678,7 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
 
   try {
     double surfstats[2];
-    vtkIntersectionPolyDataFilter2::CleanAndCheckSurface(pd,surfstats,tolerance);
+    vtkSVLoopIntersectionPolyDataFilter::CleanAndCheckSurface(pd,surfstats,tolerance);
     stats[0] = surfstats[0];
     stats[1] = surfstats[1];
 

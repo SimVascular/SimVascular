@@ -347,6 +347,11 @@ if(SV_USE_THREEDSOLVER)
   add_subdirectory(svSolver/Code/FlowSolvers)
 endif()
 
+# Add vtkSV target
+add_subdirectory("${SV_SOURCE_DIR}/Source/vtkSV")
+include("${SV_BINARY_DIR}/Source/vtkSV/vtkSVConfig.cmake")
+include_directories("${VTKSV_INCLUDE_DIRS}")
+
 # Add the Core Direcotories
 message(STATUS "Libraries:")
 foreach(dir ${SV_CORE_LIBRARY_DIRS})
