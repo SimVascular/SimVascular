@@ -633,6 +633,8 @@ void svSimulationView::UpdateFaceListSelection()
 
 void svSimulationView::TableCapSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
+    mitk::StatusBar::GetInstance()->DisplayText("");
+
     if(!m_Model)
         return;
 
@@ -652,7 +654,7 @@ void svSimulationView::TableCapSelectionChanged( const QItemSelection & /*select
 
         if(it==indexesOfSelectedRows.begin()){
             double faceArea=modelElement->GetFaceArea(modelElement->GetFaceID(name));
-            QString info="Face area of "+QString::fromStdString(name)+": "+QString::number(faceArea);
+            QString info="Face "+QString::fromStdString(name)+": Area="+QString::number(faceArea);
             mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
         }
 

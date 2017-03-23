@@ -13,6 +13,7 @@
       <contextMenuAction nodeDescriptorName="svModelFolder" label="Import Legacy Model" icon="" class="svModelLegacyLoadAction" />
       <contextMenuAction nodeDescriptorName="svModel" label="Extract Paths" icon="" class="svModelExtractPathsAction" />
       <contextMenuAction nodeDescriptorName="svModel" label="Export as Legacy Model" icon="" class="svModelLegacySaveAction" />
+      <contextMenuAction nodeDescriptorName="svModel" label="Export Cap Info" icon="" class="svModelFaceInfoExportAction" />
   </extension>
 
 </plugin>

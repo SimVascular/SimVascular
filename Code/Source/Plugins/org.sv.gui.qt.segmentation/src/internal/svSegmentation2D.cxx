@@ -1018,6 +1018,8 @@ void svSegmentation2D::SelectItem(const QModelIndex & idx)
 {
     int index=idx.row();
 
+    mitk::StatusBar::GetInstance()->DisplayText("");
+
     if(m_ContourGroup)
     {
         if(m_ContourGroup->GetSelectedContourIndex()==-2 || !m_ContourGroup->IsContourSelected(index))
@@ -1032,6 +1034,12 @@ void svSegmentation2D::SelectItem(const QModelIndex & idx)
             if(contour)
             {
                 ui->resliceSlider->moveToPathPosPoint(contour->GetPathPosPoint());
+
+                mitk::Point3D centerPoint=contour->GetCenterPoint();
+                QString info="Contour Geometry Info: Area="+QString::number(contour->GetArea())
+                        +", Perimeter="+QString::number(contour->GetPerimeter())
+                        +", Center Point=("+QString::number(centerPoint[0])+","+QString::number(centerPoint[1])+","+QString::number(centerPoint[2])+")";
+                mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
             }
         }
         else
