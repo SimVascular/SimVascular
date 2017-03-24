@@ -40,41 +40,13 @@ include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
 	cv_spline.cxx cv_integrate_surface.cxx
 	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
-	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx
-	vtkBooleanOperationPolyDataFilter2.cxx
-	vtkDelaunay2D_60.cxx
-	vtkMultiplePolyDataIntersectionFilter.cxx
-	vtkFillHolesFilterWithIds.cxx
-	vtkLoftPolyDataSolid.cxx
-	vtkLocalQuadricDecimation.cxx
-	vtkLocalInterpolatingSubdivisionFilter.cxx
-	vtkLocalApproximatingSubdivisionFilter.cxx
-	vtkLocalLinearSubdivisionFilter.cxx
-	vtkLocalButterflySubdivisionFilter.cxx
-	vtkLocalLoopSubdivisionFilter.cxx
-	vtkLocalSmoothPolyDataFilter.cxx
-	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx
-	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx
-	vtkConstrainedBlend.cxx)
+	vtkSurfaceVectors.cxx
+	vtkLoftPolyDataSolid.cxx)
 set(HDRS cv_sys_geom.h cv_ggems.h
 	cv_spline.h cv_integrate_surface.h
 	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
-	vtkSurfaceVectors.h vtkIntersectionPolyDataFilter2.h
-	vtkBooleanOperationPolyDataFilter2.h
-	vtkDelaunay2D_60.h
-	vtkMultiplePolyDataIntersectionFilter.h
-	vtkFillHolesFilterWithIds.h
-	vtkLoftPolyDataSolid.h
-	vtkLocalQuadricDecimation.h
-	vtkLocalInterpolatingSubdivisionFilter.h
-	vtkLocalApproximatingSubdivisionFilter.h
-	vtkLocalLinearSubdivisionFilter.h
-	vtkLocalButterflySubdivisionFilter.h
-	vtkLocalLoopSubdivisionFilter.h
-	vtkLocalSmoothPolyDataFilter.h
-	vtkCGSmooth.h svMath.h sparse_matrix.h
-	vtkFindSeparateRegions.h vtkGetSphereRegions.h
-	vtkConstrainedBlend.h)
+	vtkSurfaceVectors.h
+	vtkLoftPolyDataSolid.h)
 
 add_definitions("-DSV_EXPORT_SYSGEOM_COMPILE")
 
@@ -83,6 +55,7 @@ add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_geom_init.cxx)
 target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${SV_LIB_GLOBALS_NAME} ${SV_LIB_UTILS_NAME} ${SV_LIB_REPOSITORY_NAME} ${SV_LIB_SOLID_NAME}
+  ${SV_LIB_VTKSVBOOLEAN_NAME} ${SV_LIB_VTKSVGEOMETRY_NAME} ${SV_LIB_VTKSVFILTERS_NAME}
 	)
 
 if(SV_USE_VMTK)

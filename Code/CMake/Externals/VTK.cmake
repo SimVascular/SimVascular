@@ -47,6 +47,7 @@ simvascular_external(${proj}
   vtkChartsCore
   vtkCommonExecutionModel
   vtkFiltersCore
+  vtkFiltersTexture
   vtkFiltersVerdict
   vtkIOLegacy
   vtkIOPLY

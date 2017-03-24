@@ -172,6 +172,7 @@ foreach(lib ${${proj}_LIBNAMES})
 		PATHS
 		${${proj}_POSSIBLE_LIB_PATHS}
 		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll)
+	mark_as_advanced(${proj}_${lib}_LIBRARY)
 	set(${proj}_LIB_FULLNAMES ${${proj}_LIB_FULLNAMES} ${proj}_${lib}_LIBRARY)
 	if(${proj}_${lib}_LIBRARY)
 		set(${proj}_LIBRARIES_WORK ${${proj}_LIBRARIES_WORK} "${${proj}_${lib}_LIBRARY}")
@@ -221,25 +222,25 @@ set(${proj}_PLUGIN_LIBS_MISSING ${${proj}_PLUGIN_LIBNAMES})
 list(REMOVE_DUPLICATES ${proj}_PLUGIN_LIBS_MISSING)
 set(${proj}_PLUGIN_LIBRARIES_WORK "")
 foreach(lib ${${proj}_PLUGIN_LIBNAMES})
-        message("${proj}_${lib}_PLUGIN_LIBRARY")
 	#find library
-        find_library(${proj}_${lib}_PLUGIN_LIBRARY
-		NAMES
-		${lib}
-		PATHS
-                ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE}
-		NO_DEFAULT_PATH)
-              find_library(${proj}_${lib}_PLUGIN_PLUGIN_LIBRARY
-		NAMES
-		${lib}
-		PATHS
-                ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
-		${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE})
-              set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
-              if(${proj}_${lib}_PLUGIN_LIBRARY)
-                set(${proj}_PLUGIN_LIBRARIES_WORK ${${proj}_PLUGIN_LIBRARIES_WORK} "${${proj}_${lib}_PLUGIN_LIBRARY}")
-                list(REMOVE_ITEM ${proj}_PLUGIN_LIBS_MISSING ${lib})
+    find_library(${proj}_${lib}_PLUGIN_LIBRARY
+      NAMES
+      ${lib}
+      PATHS
+      ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
+      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE}
+      NO_DEFAULT_PATH)
+    find_library(${proj}_${lib}_PLUGIN_LIBRARY
+      NAMES
+      ${lib}
+      PATHS
+      ${${proj}_POSSIBLE_PLUGIN_LIB_PATHS}
+      ${${proj}_DIR} ${${proj}_DIR}/shared_object ${${proj}_DIR}/dll ${${proj}_DIR}/lib/plugins/${CMAKE_BUILD_TYPE})
+    mark_as_advanced(${proj}_${lib}_PLUGIN_LIBRARY)
+    set(${proj}_PLUGIN_LIB_FULLNAMES ${${proj}_PLUGIN_LIB_FULLNAMES} ${proj}_${lib}_PLUGIN_LIBRARY)
+    if(${proj}_${lib}_PLUGIN_LIBRARY)
+    set(${proj}_PLUGIN_LIBRARIES_WORK ${${proj}_PLUGIN_LIBRARIES_WORK} "${${proj}_${lib}_PLUGIN_LIBRARY}")
+    list(REMOVE_ITEM ${proj}_PLUGIN_LIBS_MISSING ${lib})
 	endif()
 endforeach()
 
@@ -249,7 +250,6 @@ list(LENGTH ${proj}_PLUGIN_LIBRARIES_WORK ${proj}_NUMPLUGINS)
 list(LENGTH ${proj}_PLUGIN_LIBNAMES ${proj}_NUMPLUGINS_EXPECTED)
 #message("${${proj}_NUMPLUGINS} ${${proj}_NUMPLUGINS_EXPECTED}")
 if (NOT ${proj}_NUMPLUGINS EQUAL ${proj}_NUMPLUGINS_EXPECTED)
-  message("WHJHHWWHHW: ${${proj}_NUMPLUGINS} ${${proj}_NUMPLUGINS_EXPECTED}")
   set(${proj}_PLUGIN_LIBRARIES_WORK "${proj}_PLUGIN_LIBRARIES-NOTFOUND")
   message(FATAL_ERROR "${proj}_PLUGIN_LIBS_MISSING: ${${proj}_PLUGIN_LIBS_MISSING}")
 endif()
@@ -340,19 +340,20 @@ set(${proj}_HEADERS_MISSING ${${proj}_HEADERS})
 list(REMOVE_DUPLICATES ${proj}_HEADERS_MISSING)
 set(${proj}_HEADERS_WORK "")
 foreach(header ${${proj}_HEADERS})
-              FIND_PATH(${proj}_${header}_HEADER
+              find_path(${proj}_${header}_HEADER
                       NAMES ${header}
                       PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS}
                       ${${proj}_DIR} ${${proj}_DIR}/include
                       NO_DEFAULT_PATH
                       )
 
-              FIND_PATH(${proj}_${header}_HEADER
+              find_path(${proj}_${header}_HEADER
                       NAMES ${header}
                       PATHS ${${proj}_POSSIBLE_INCLUDE_PATHS}
                       ${${proj}_DIR} ${${proj}_DIR}/include
                       )
 
+              mark_as_advanced(${proj}_${header}_HEADER)
               set(${proj}_HEADER_FULLNAMES ${${proj}_HEADER_FULLNAMES} ${proj}_${header}_HEADER)
               if(${proj}_${header}_HEADER)
                 set(${proj}_HEADERS_WORK ${${proj}_HEADERS_WORK} "${${proj}_${header}_HEADER}")

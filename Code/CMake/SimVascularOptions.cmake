@@ -150,3 +150,36 @@ option(SV_NO_PYTHONQT_ALL "Option to use PythonQt_all" ON)
 
 option(SV_USE_MITK_CONFIG "Option to use MITKConfig.cmake" OFF)
 #-----------------------------------------------------------------------------
+
+#-----------------------------------------------------------------------------
+# vtkSVOptions
+# Build regular libraries instead of typical build system
+option(VTKSV_BUILD_LIBS_AS_VTK_MODULES "Option to build the vtkSV libs as vtk modules" OFF)
+
+# Different modules in vtkSV
+option(VTKSV_BUILD_FILTERS                 "Option to build the filters"        ON)
+set(VTKSV_BUILD_FILTERS ON CACHE BOOL      "Always ON, but needed for vtkSV" FORCE)
+mark_as_advanced(VTKSV_BUILD_FILTERS)
+
+option(VTKSV_BUILD_MODULE_NURBS            "Option to build the NURBS code"     ON)
+set(VTKSV_BUILD_NURBS ON CACHE BOOL        "Always ON, but needed for vtkSV" FORCE)
+mark_as_advanced(VTKSV_BUILD_NURBS)
+
+option(VTKSV_BUILD_MODULE_BOOLEAN          "Option to build the Boolean code"    ON)
+set(VTKSV_BUILD_BOOLEAN ON CACHE BOOL      "Always ON, but needed for vtkSV"  FORCE)
+mark_as_advanced(VTKSV_BUILD_BOOLEAN)
+
+option(VTKSV_BUILD_MODULE_PARAMETERIZATION     "Option to build the Parameterization code" ON)
+set(VTKSV_BUILD_PARAMETERIZATION ON CACHE BOOL "Always ON, but needed for vtkSV"        FORCE)
+mark_as_advanced(VTKSV_BUILD_PARAMETERIZATION)
+
+option(VTKSV_BUILD_MODULE_GEOMETRY     "Option to build the Geometry code"    ON)
+set(VTKSV_BUILD_GEOMETRY ON CACHE BOOL "Always ON, but needed for vtkSV"   FORCE)
+mark_as_advanced(VTKSV_BUILD_GEOMETRY)
+
+# Needed install dirs (not really options, but easier to place here with everything else for vtksV)
+set(VTKSV_INSTALL_RUNTIME_DIR ${SV_INSTALL_RUNTIME_DIR})
+set(VTKSV_INSTALL_LIBRARY_DIR ${SV_INSTALL_LIBRARY_DIR})
+set(VTKSV_INSTALL_ARCHIVE_DIR ${SV_INSTALL_ARCHIVE_DIR})
+set(VTKSV_INSTALL_INCLUDE_DIR ${SV_INSTALL_INCLUDE_DIR})
+#-----------------------------------------------------------------------------

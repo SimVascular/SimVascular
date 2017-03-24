@@ -43,7 +43,7 @@
 #include "cvPolyDataSolid.h"
 #include "vtkPolyData.h"
 #include "vtkSmartPointer.h"
-#include "vtkBooleanOperationPolyDataFilter2.h"
+#include "vtkSVLoopBooleanPolyDataFilter.h"
 #include "vtkCubeSource.h"
 #include "cv_get_tcl_interp_init.h"
 #include "cv_polydatasolid_utils.h"
@@ -459,11 +459,11 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
     fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
-  vtkBooleanOperationPolyDataFilter2 *intersectPolyData;
+  vtkSVLoopBooleanPolyDataFilter *intersectPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
 
-  intersectPolyData = vtkBooleanOperationPolyDataFilter2::New();
+  intersectPolyData = vtkSVLoopBooleanPolyDataFilter::New();
   pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
   pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();;
 
@@ -522,11 +522,11 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
     return CV_ERROR;
   }
 
-  vtkBooleanOperationPolyDataFilter2 *unionPolyData;
+  vtkSVLoopBooleanPolyDataFilter *unionPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
 
-  unionPolyData = vtkBooleanOperationPolyDataFilter2::New();
+  unionPolyData = vtkSVLoopBooleanPolyDataFilter::New();
   pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
   pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();
 
@@ -584,11 +584,11 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
     fprintf(stderr,"Model not of type POLYDATA\n");
     return CV_ERROR;
   }
-  vtkBooleanOperationPolyDataFilter2 *subtractPolyData;
+  vtkSVLoopBooleanPolyDataFilter *subtractPolyData;
   vtkPolyData *pd1;
   vtkPolyData *pd2;
 
-  subtractPolyData = vtkBooleanOperationPolyDataFilter2::New();
+  subtractPolyData = vtkSVLoopBooleanPolyDataFilter::New();
   pd1 = (a->GetPolyData(0,0.))->GetVtkPolyData();
   pd2 = (b->GetPolyData(0,0.))->GetVtkPolyData();;
 
