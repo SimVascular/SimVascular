@@ -28,16 +28,6 @@
  *
  *=========================================================================*/
 
-/** @file vtkSVLocalQuadricDecimation.cxx
- *  @brief This implements the vtkSVLocalQuadricDecimation or localized
- *  decimation techniques
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
-
 #include "vtkSVLocalQuadricDecimation.h"
 #include "vtkCellArray.h"
 #include "vtkCellData.h"
@@ -54,12 +44,18 @@
 #include "vtkPriorityQueue.h"
 #include "vtkTriangle.h"
 #include "vtkSmartPointer.h"
+#include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVLocalQuadricDecimation);
 
 
-//----------------------------------------------------------------------------
+// ----------------------
+// Constructor
+// ----------------------
 vtkSVLocalQuadricDecimation::vtkSVLocalQuadricDecimation()
 {
   this->Edges = vtkEdgeTable::New();
@@ -90,15 +86,18 @@ vtkSVLocalQuadricDecimation::vtkSVLocalQuadricDecimation()
 
   this->ActualReduction = 0.0;
 
-  this->DecimateCellArrayName = 0;
-  this->DecimatePointArrayName = 0;
+  this->DecimateCellArrayName  = NULL;
+  this->DecimatePointArrayName = NULL;
+
   this->UseCellArray = 0;
   this->UsePointArray = 0;
 
   this->changedPoint = NULL;
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// Destructor
+// ----------------------
 vtkSVLocalQuadricDecimation::~vtkSVLocalQuadricDecimation()
 {
   this->Edges->Delete();
@@ -106,8 +105,22 @@ vtkSVLocalQuadricDecimation::~vtkSVLocalQuadricDecimation()
   this->EndPoint1List->Delete();
   this->EndPoint2List->Delete();
   this->TargetPoints->Delete();
+
+  if (this->DecimateCellArrayName != NULL)
+  {
+    delete [] this->DecimateCellArrayName;
+    this->DecimateCellArrayName = NULL;
+  }
+  if (this->DecimatePointArrayName != NULL)
+  {
+    delete [] this->DecimatePointArrayName;
+    this->DecimatePointArrayName = NULL;
+  }
 }
 
+// ----------------------
+// SetPointAttributeArray
+// ----------------------
 void vtkSVLocalQuadricDecimation::SetPointAttributeArray(vtkIdType ptId,
                                                   const double *x)
 {
@@ -144,6 +157,9 @@ void vtkSVLocalQuadricDecimation::SetPointAttributeArray(vtkIdType ptId,
     }
 }
 
+// ----------------------
+// GetPointAttributeArray
+// ----------------------
 void vtkSVLocalQuadricDecimation::GetPointAttributeArray(vtkIdType ptId, double *x)
 {
   int i;
@@ -179,7 +195,9 @@ void vtkSVLocalQuadricDecimation::GetPointAttributeArray(vtkIdType ptId, double 
     }
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// RequestData
+// ----------------------
 int vtkSVLocalQuadricDecimation::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
@@ -226,6 +244,11 @@ int vtkSVLocalQuadricDecimation::RequestData(
 
   if (this->UsePointArray)
   {
+    if (this->DecimatePointArrayName == NULL)
+    {
+      std::cout<<"No DecimatePointArrayName given." << endl;
+      return SV_ERROR;
+    }
     if (this->GetDecimateArrays(input,0) != 1)
     {
       vtkErrorMacro("Need point array on mesh to be able to local decimation");
@@ -234,6 +257,11 @@ int vtkSVLocalQuadricDecimation::RequestData(
   }
   if (this->UseCellArray)
   {
+    if (this->DecimateCellArrayName == NULL)
+    {
+      std::cout<<"No DecimateCellArrayName given." << endl;
+      return SV_ERROR;
+    }
     if (this->GetDecimateArrays(input,1) != 1)
     {
       vtkErrorMacro("Need cell array on mesh to be able to local decimation");
@@ -463,7 +491,9 @@ int vtkSVLocalQuadricDecimation::RequestData(
   return 1;
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// InitializeQuadrics
+// ----------------------
 void vtkSVLocalQuadricDecimation::InitializeQuadrics(vtkIdType numPts)
 {
   vtkPolyData *input = this->Mesh;
@@ -624,6 +654,9 @@ void vtkSVLocalQuadricDecimation::InitializeQuadrics(vtkIdType numPts)
 }
 
 
+// ----------------------
+// AddBoundaryConstraints
+// ----------------------
 void vtkSVLocalQuadricDecimation::AddBoundaryConstraints(void)
 {
   vtkPolyData *input = this->Mesh;
@@ -708,7 +741,9 @@ void vtkSVLocalQuadricDecimation::AddBoundaryConstraints(void)
   delete [] QEM;
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// AddQuadric
+// ----------------------
 void vtkSVLocalQuadricDecimation::AddQuadric(vtkIdType oldPtId, vtkIdType newPtId)
 {
   int i;
@@ -720,7 +755,9 @@ void vtkSVLocalQuadricDecimation::AddQuadric(vtkIdType oldPtId, vtkIdType newPtI
     }
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// FindAffetedEdges
+// ----------------------
 void vtkSVLocalQuadricDecimation::FindAffectedEdges(vtkIdType p1Id, vtkIdType p2Id,
                                               vtkIdList *edges)
 {
@@ -760,7 +797,9 @@ void vtkSVLocalQuadricDecimation::FindAffectedEdges(vtkIdType p1Id, vtkIdType p2
     }
 }
 
-// FIXME: memory allocation clean up
+// ----------------------
+// UpdateEdgeData
+// ----------------------
 void vtkSVLocalQuadricDecimation::UpdateEdgeData(vtkIdType pt0Id, vtkIdType pt1Id)
 {
   vtkIdList *changedEdges = vtkIdList::New();
@@ -845,7 +884,9 @@ void vtkSVLocalQuadricDecimation::UpdateEdgeData(vtkIdType pt0Id, vtkIdType pt1I
   return;
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// ComputeCost
+// ----------------------
 double vtkSVLocalQuadricDecimation::ComputeCost(vtkIdType edgeId, double *x)
 {
   static const double errorNumber = 1e-10;
@@ -944,7 +985,9 @@ double vtkSVLocalQuadricDecimation::ComputeCost(vtkIdType edgeId, double *x)
 }
 
 
-//----------------------------------------------------------------------------
+// ----------------------
+// ComputeCost2
+// ----------------------
 double vtkSVLocalQuadricDecimation::ComputeCost2(vtkIdType edgeId, double *x)
 {
   // this function is so ugly because the functionality of converting an QEM
@@ -1144,6 +1187,9 @@ double vtkSVLocalQuadricDecimation::ComputeCost2(vtkIdType edgeId, double *x)
 }
 
 
+// ----------------------
+// CollapseEdge
+// ----------------------
 int vtkSVLocalQuadricDecimation::CollapseEdge(vtkIdType pt0Id, vtkIdType pt1Id)
 {
   int j, numDeleted=0;
@@ -1194,9 +1240,12 @@ int vtkSVLocalQuadricDecimation::CollapseEdge(vtkIdType pt0Id, vtkIdType pt1Id)
 }
 
 
-// triangle t0, t1, t2 and point x
-// determins if t0 and x are on the same side of the plane defined by
-// t1 and t2, and parallel to the normal of the triangle
+// ----------------------
+// TrianglePlaneCheck
+// ----------------------
+/// \details triangle t0, t1, t2 and point x
+/// determins if t0 and x are on the same side of the plane defined by
+/// t1 and t2, and parallel to the normal of the triangle
 int vtkSVLocalQuadricDecimation::TrianglePlaneCheck(const double t0[3],
                                              const double t1[3],
                                              const double t2[3],
@@ -1238,6 +1287,9 @@ int vtkSVLocalQuadricDecimation::TrianglePlaneCheck(const double t0[3],
     }
 }
 
+// ----------------------
+// IsGoodPlacement
+// ----------------------
 int vtkSVLocalQuadricDecimation::IsGoodPlacement(vtkIdType pt0Id, vtkIdType pt1Id,
 const double *x)
 {
@@ -1294,6 +1346,9 @@ const double *x)
 }
 
 
+// ----------------------
+// ComputeNumberOfComponents
+// ----------------------
 void vtkSVLocalQuadricDecimation::ComputeNumberOfComponents(void)
 {
   vtkPointData *pd = this->Mesh->GetPointData();
@@ -1406,7 +1461,9 @@ void vtkSVLocalQuadricDecimation::ComputeNumberOfComponents(void)
   vtkDebugMacro("Number of components: " << this->NumberOfComponents);
 }
 
-//----------------------------------------------------------------------------
+// ----------------------
+// PrintSelf
+// ----------------------
 void vtkSVLocalQuadricDecimation::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -1434,36 +1491,23 @@ void vtkSVLocalQuadricDecimation::PrintSelf(ostream& os, vtkIndent indent)
   os << indent << "Tensors Weight: " << this->TensorsWeight << "\n";
 }
 
+// ----------------------
+// GetDecimateArrays
+// ----------------------
 int vtkSVLocalQuadricDecimation::GetDecimateArrays(vtkPolyData *object, int type)
 {
   vtkIdType i;
-  int exists = 0;
   int numArrays;
 
+  // Set array name
+  std::string arrayName;
   if (type == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetPointData()->GetArrayName(i),
-	    this->DecimatePointArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->DecimatePointArrayName;
   else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetCellData()->GetArrayName(i),
-	    this->DecimateCellArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->DecimateCellArrayName;
+
+  // Check if array exists
+  int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
   if (exists)
   {
@@ -1479,6 +1523,9 @@ int vtkSVLocalQuadricDecimation::GetDecimateArrays(vtkPolyData *object, int type
   return exists;
 }
 
+// ----------------------
+// CorrectPointData
+// ----------------------
 void vtkSVLocalQuadricDecimation::CorrectPointData(vtkPolyData *object)
 {
   vtkIdType i,j;
@@ -1506,6 +1553,9 @@ void vtkSVLocalQuadricDecimation::CorrectPointData(vtkPolyData *object)
   object->DeepCopy(objectCopy);
 }
 
+// ----------------------
+// SetFixedPoints
+// ----------------------
 int vtkSVLocalQuadricDecimation::SetFixedPoints(vtkPolyData *object, int numTris)
 {
   vtkIdType npts,*pts;
@@ -1516,11 +1566,11 @@ int vtkSVLocalQuadricDecimation::SetFixedPoints(vtkPolyData *object, int numTris
       {
         object->GetCellPoints(i,npts,pts);
         if (this->DecimateCellArray->GetValue(i) != 1)
-	{
+        {
           for (int j=0;j<npts;j++)
             this->fixedPoint[pts[j]] = 1;
-	}
-	else
+        }
+        else
           numTris++;
       }
   }
@@ -1530,21 +1580,21 @@ int vtkSVLocalQuadricDecimation::SetFixedPoints(vtkPolyData *object, int numTris
       numTris = 0;
     for (int i = 0; i <  object->GetNumberOfCells(); i++)
       {
-	int fixed=0;
+        int fixed=0;
         object->GetCellPoints(i,npts,pts);
         for (int j=0;j<npts;j++)
-	{
-	  if (this->DecimatePointArray->GetValue(pts[j]) != 1)
-	  {
-	    if (!this->fixedPoint[pts[j]])
-	    {
-	      this->fixedPoint[pts[j]] = 1;
-	      fixed++;
-	    }
-	  }
-	}
-	if (fixed == 0)
-	  numTris++;
+        {
+          if (this->DecimatePointArray->GetValue(pts[j]) != 1)
+          {
+            if (!this->fixedPoint[pts[j]])
+            {
+              this->fixedPoint[pts[j]] = 1;
+              fixed++;
+            }
+          }
+        }
+        if (fixed == 0)
+          numTris++;
       }
   }
 

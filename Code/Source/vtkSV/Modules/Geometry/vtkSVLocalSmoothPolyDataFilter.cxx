@@ -43,6 +43,7 @@
 #include "vtkPolyData.h"
 #include "vtkPolygon.h"
 #include "vtkSmartPointer.h"
+#include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 #include "vtkTriangleFilter.h"
 
@@ -149,12 +150,9 @@ vtkSVLocalSmoothPolyDataFilter::vtkSVLocalSmoothPolyDataFilter()
   // optional second input
   this->SetNumberOfInputPorts(2);
 
-  //this->SmoothCellArray = vtkIntArray::New();
-  //this->SmoothPointArray = vtkIntArray::New();
-  //this->ConstrainArray = vtkIntArray::New();
-  this->SmoothCellArrayName = 0;
-  this->SmoothPointArrayName = 0;
-  this->ConstrainArrayName = 0;
+  this->SmoothCellArrayName  = NULL;
+  this->SmoothPointArrayName = NULL;
+  this->ConstrainArrayName   = NULL;
   this->UseCellArray = 0;
   this->UsePointArray = 0;
 
@@ -163,9 +161,21 @@ vtkSVLocalSmoothPolyDataFilter::vtkSVLocalSmoothPolyDataFilter()
 
 vtkSVLocalSmoothPolyDataFilter::~vtkSVLocalSmoothPolyDataFilter()
 {
-  //this->SmoothCellArray->Delete();
-  //this->SmoothPointArray->Delete();
-  //this->ConstrainArray->Delete();
+  if (this->SmoothCellArrayName != NULL)
+  {
+    delete [] this->SmoothCellArrayName;
+    this->SmoothCellArrayName = NULL;
+  }
+  if (this->SmoothPointArrayName != NULL)
+  {
+    delete [] this->SmoothPointArrayName;
+    this->SmoothPointArrayName = NULL;
+  }
+  if (this->ConstrainArrayName != NULL)
+  {
+    delete [] this->ConstrainArrayName;
+    this->ConstrainArrayName = NULL;
+  }
 }
 
 void vtkSVLocalSmoothPolyDataFilter::SetSourceData(vtkPolyData *source)
@@ -249,6 +259,11 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
     }
   if (this->UsePointArray)
   {
+    if (this->SmoothPointArrayName == NULL)
+    {
+      std::cout<<"No PointArrayName given." << endl;
+      return SV_ERROR;
+    }
     if (this->GetSmoothArrays(input,0) != 1)
     {
       vtkErrorMacro("Need point array on mesh to be able to local smooth");
@@ -257,6 +272,11 @@ int vtkSVLocalSmoothPolyDataFilter::RequestData(
   }
   if (this->UseCellArray)
   {
+    if (this->SmoothCellArrayName == NULL)
+    {
+      std::cout<<"No PointArrayName given." << endl;
+      return SV_ERROR;
+    }
     if (this->GetSmoothArrays(input,1) != 1)
     {
       vtkErrorMacro("Need cell array on mesh to be able to local smooth");
@@ -824,33 +844,17 @@ void vtkSVLocalSmoothPolyDataFilter::PrintSelf(ostream& os, vtkIndent indent)
 int vtkSVLocalSmoothPolyDataFilter::GetSmoothArrays(vtkPolyData *object, int type)
 {
   vtkIdType i;
-  int exists = 0;
   int numArrays;
 
+  // Set array name
+  std::string arrayName;
   if (type == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetPointData()->GetArrayName(i),
-	    this->SmoothPointArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->SmoothPointArrayName;
   else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetCellData()->GetArrayName(i),
-	    this->SmoothCellArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->SmoothCellArrayName;
+
+  // Check if array exists
+  int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
   if (exists)
   {

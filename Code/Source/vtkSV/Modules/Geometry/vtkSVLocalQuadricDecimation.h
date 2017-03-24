@@ -56,26 +56,28 @@ public:
   void PrintSelf(ostream& os, vtkIndent indent);
   static vtkSVLocalQuadricDecimation *New();
 
-  // Description:
-  // Set/Get the desired reduction (expressed as a fraction of the original
-  // number of triangles). The actual reduction may be less depending on
-  // triangulation and topological constraints.
+  //@{
+  /// \brief Set/Get the desired reduction (expressed as a fraction of the original
+  /// number of triangles). The actual reduction may be less depending on
+  /// triangulation and topological constraints.
   vtkSetClampMacro(TargetReduction, double, 0.0, 1.0);
   vtkGetMacro(TargetReduction, double);
+  //@}
 
-  // Description:
-  // Decide whether to include data attributes in the error metric. If off,
-  // then only geometric error is used to control the decimation. By default
-  // the attribute errors are off.
+  //@{
+  /// \brief Decide whether to include data attributes in the error metric. If off,
+  /// then only geometric error is used to control the decimation. By default
+  /// the attribute errors are off.
   vtkSetMacro(AttributeErrorMetric, int);
   vtkGetMacro(AttributeErrorMetric, int);
   vtkBooleanMacro(AttributeErrorMetric, int);
+  //@}
 
-  // Description:
-  // If attribute errors are to be included in the metric (i.e.,
-  // AttributeErrorMetric is on), then the following flags control which
-  // attributes are to be included in the error calculation. By default all
-  // of these are on.
+  //@{
+  /// \brief If attribute errors are to be included in the metric (i.e.,
+  /// AttributeErrorMetric is on), then the following flags control which
+  /// attributes are to be included in the error calculation. By default all
+  /// of these are on.
   vtkSetMacro(ScalarsAttribute, int);
   vtkGetMacro(ScalarsAttribute, int);
   vtkBooleanMacro(ScalarsAttribute, int);
@@ -91,11 +93,12 @@ public:
   vtkSetMacro(TensorsAttribute, int);
   vtkGetMacro(TensorsAttribute, int);
   vtkBooleanMacro(TensorsAttribute, int);
+  //@}
 
-  // Description:
-  // Set/Get the scaling weight contribution of the attribute. These
-  // values are used to weight the contribution of the attributes
-  // towards the error metric.
+  //@{
+  /// \brief Set/Get the scaling weight contribution of the attribute. These
+  /// values are used to weight the contribution of the attributes
+  /// towards the error metric.
   vtkSetMacro(ScalarsWeight, double);
   vtkSetMacro(VectorsWeight, double);
   vtkSetMacro(NormalsWeight, double);
@@ -106,30 +109,34 @@ public:
   vtkGetMacro(NormalsWeight, double);
   vtkGetMacro(TCoordsWeight, double);
   vtkGetMacro(TensorsWeight, double);
+  //@}
 
   vtkSetStringMacro(DecimateCellArrayName);
   vtkGetStringMacro(DecimateCellArrayName);
   vtkSetStringMacro(DecimatePointArrayName);
   vtkGetStringMacro(DecimatePointArrayName);
 
-  // Description:
-  // Turn on/off the use of point array for constraint local operation.
-  // If value in array equals 1, nodes will be decimated
+  //@{
+  //\brief Turn on/off the use of point array for constraint local operation.
+  /// If value in array equals 1, nodes will be decimated
   vtkSetMacro(UsePointArray,int);
   vtkGetMacro(UsePointArray,int);
   vtkBooleanMacro(UsePointArray,int);
+  //@}
 
-  // Description:
-  // Turn on/off the use of cell array for constraint on local operation.
-  // If value in array equals 1, nodes of cell will be decimated
+  //@{
+  /// \brief Turn on/off the use of cell array for constraint on local operation.
+  /// If value in array equals 1, nodes of cell will be decimated
   vtkSetMacro(UseCellArray,int);
   vtkGetMacro(UseCellArray,int);
   vtkBooleanMacro(UseCellArray,int);
+  //@}
 
-  // Description:
-  // Get the actual reduction. This value is only valid after the
-  // filter has executed.
+  //@{
+  /// \brief Get the actual reduction. This value is only valid after the
+  /// filter has executed.
   vtkGetMacro(ActualReduction, double);
+  //@}
 
 protected:
   vtkSVLocalQuadricDecimation();

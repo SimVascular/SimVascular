@@ -28,14 +28,15 @@
  *
  *=========================================================================*/
 
-/** @file vtkSVLocalLinearSubdivisionFilter.h
- *  @brief This is localized subdivision methods specifically for linear
+/**
+ *  \class vtkSVLocalLinearSubdivisionFilter
+ *  \brief This is localized subdivision methods specifically for linear
  *  subdivision
  *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
+ *  \author Adam Updegrove
+ *  \author updega2@gmail.com
+ *  \author UC Berkeley
+ *  \author shaddenlab.berkeley.edu
  */
 
 #ifndef vtkSVLocalLinearSubdivisionFilter_h

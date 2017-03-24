@@ -54,9 +54,14 @@
 #include "vtkMath.h"
 #include "vtkSVGlobals.h"
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVFillHolesFilterWithIds);
 
-//------------------------------------------------------------------------
+// ----------------------
+// Constructor
+// ----------------------
 vtkSVFillHolesFilterWithIds::vtkSVFillHolesFilterWithIds()
 {
   this->FillType = VTK_NUM_FILLED;
@@ -67,7 +72,9 @@ vtkSVFillHolesFilterWithIds::vtkSVFillHolesFilterWithIds()
   this->capIdArray = vtkIntArray::New();
 }
 
-//------------------------------------------------------------------------
+// ----------------------
+// Destructor
+// ----------------------
 vtkSVFillHolesFilterWithIds::~vtkSVFillHolesFilterWithIds()
 {
   if (this->capIdArray)
@@ -76,7 +83,9 @@ vtkSVFillHolesFilterWithIds::~vtkSVFillHolesFilterWithIds()
   }
 }
 
-//------------------------------------------------------------------------
+// ----------------------
+// RequestData
+// ----------------------
 int vtkSVFillHolesFilterWithIds::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
@@ -138,12 +147,9 @@ int vtkSVFillHolesFilterWithIds::RequestData(
   Mesh->BuildLinks();
 
   for (int i = 0;i< numPolys;i++)
-  {
     this->capIdArray->InsertNextValue(-1);
-  }
 
   // Allocate storage for lines/points (arbitrary allocation sizes)
-  //
   vtkPolyData *Lines = vtkPolyData::New();
   vtkCellArray *newLines = vtkCellArray::New();
   newLines->Allocate(numPts/10);
@@ -257,10 +263,10 @@ int vtkSVFillHolesFilterWithIds::RequestData(
               {
               if (this->FillType == VTK_NUM_FILLED)
                 this->capIdArray->InsertNextValue(this->NumberOfHolesFilled);
-	      else if (this->FillType == VTK_FILL_ID)
-		this->capIdArray->InsertNextValue(this->FillId);
-	      else
-		this->capIdArray->InsertNextValue(this->FillId + this->NumberOfHolesFilled);
+              else if (this->FillType == VTK_FILL_ID)
+                this->capIdArray->InsertNextValue(this->FillId);
+              else
+                this->capIdArray->InsertNextValue(this->FillId + this->NumberOfHolesFilled);
               newCells->InsertNextCell(3);
               newCells->InsertCellPoint(polygon->PointIds->GetId(neighbors->GetId(i)));
               newCells->InsertCellPoint(polygon->PointIds->GetId(neighbors->GetId(i+1)));
@@ -305,7 +311,9 @@ int vtkSVFillHolesFilterWithIds::RequestData(
   return 1;
 }
 
-//------------------------------------------------------------------------
+// ----------------------
+// PrintSelf
+// ----------------------
 void vtkSVFillHolesFilterWithIds::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);

@@ -1,19 +1,19 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -28,30 +28,29 @@
  *
  *=========================================================================*/
 
-/** @file vtkLoftPolyDataSolid.h
- *  @brief This is the filter to perform the intersection between multiple
- *  @brief vessels
+/**
+ *  \class vtkSVLoftPolyDataSolid
+ *  \brief This is the filter to perform the intersection between multiple
+ *  vessels
  *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com 
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu 
+ *  \author Adam Updegrove
+ *  \author updega2@gmail.com
+ *  \author UC Berkeley
+ *  \author shaddenlab.berkeley.edu
  */
 
-#ifndef __vtkLoftPolyDataSolid_h
-#define __vtkLoftPolyDataSolid_h
+#ifndef vtkSVLoftPolyDataSolid_h
+#define vtkSVLoftPolyDataSolid_h
 
-#include "SimVascular.h"
-
-#include "vtkFiltersCoreModule.h" // For export macro
 #include "vtkPolyDataAlgorithm.h"
+#include "vtkSVFiltersModule.h"
 
-class SV_EXPORT_SYSGEOM vtkLoftPolyDataSolid : public vtkPolyDataAlgorithm
+class VTKSVFILTERS_EXPORT vtkSVLoftPolyDataSolid : public vtkPolyDataAlgorithm
 {
 public:
-  static vtkLoftPolyDataSolid *New();
+  static vtkSVLoftPolyDataSolid *New();
 
-  vtkTypeMacro(vtkLoftPolyDataSolid,vtkPolyDataAlgorithm);
+  vtkTypeMacro(vtkSVLoftPolyDataSolid,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
   // Description:
@@ -122,7 +121,7 @@ public:
 
   vtkSetMacro(SplineType,int);
   vtkGetMacro(SplineType,int);
-  
+
   vtkSetMacro(Bias,double);
   vtkGetMacro(Bias,double);
 
@@ -134,8 +133,8 @@ public:
 
 //ETX
 protected:
-  vtkLoftPolyDataSolid();
-  ~vtkLoftPolyDataSolid();
+  vtkSVLoftPolyDataSolid();
+  ~vtkSVLoftPolyDataSolid();
 
   // Flag for selecting parallel streaming behavior
   int ParallelStreaming;
@@ -157,18 +156,18 @@ protected:
 
   double **createArray(int a, int b);
   void deleteArray(double **ptr, int a, int b);
-  int linearInterpolate(double **orgPts, int numOrgPts, double t0, 
+  int linearInterpolate(double **orgPts, int numOrgPts, double t0,
                               double dt, int numOutPts, double ***outPts);
-  int linearInterpolateCurve(double **orgPts, int numOrgPts, int closed, 
+  int linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
                              int numOutPts, double ***rtnOutPts);
   int curveLength(double **pts, int numPts, int closed, double *length);
 
 
-  int smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes, 
+  int smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes,
                           int numOutPts, double ***rtnOutPts);
   void FFT(double Qdata[],int nn,int isign);
   int FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms, double ***terms);
-  int inverseFFT(double **terms, int numTerms, double t0, double dt, double omega, 
+  int inverseFFT(double **terms, int numTerms, double t0, double dt, double omega,
                  int numRtnPts, double ***rtnPts);
 
   //User defined booleans for filter management
@@ -187,10 +186,8 @@ protected:
   double Tension;
 
 private:
-  vtkLoftPolyDataSolid(const vtkLoftPolyDataSolid&);  // Not implemented.
-  void operator=(const vtkLoftPolyDataSolid&);  // Not implemented.
+  vtkSVLoftPolyDataSolid(const vtkSVLoftPolyDataSolid&);  // Not implemented.
+  void operator=(const vtkSVLoftPolyDataSolid&);  // Not implemented.
 };
 
 #endif
-
-

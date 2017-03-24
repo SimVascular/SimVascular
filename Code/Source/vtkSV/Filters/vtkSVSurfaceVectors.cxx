@@ -1,7 +1,7 @@
 /*=========================================================================
 
   Program:   Visualization Toolkit
-  Module:    vtkSurfaceVectors.cxx
+  Module:    vtkSVSurfaceVectors.cxx
 
   Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
   All rights reserved.
@@ -12,7 +12,7 @@
      PURPOSE.  See the above copyright notice for more information.
 
 =========================================================================*/
-#include "vtkSurfaceVectors.h"
+#include "vtkSVSurfaceVectors.h"
 
 #include "vtkCellType.h"
 #include "vtkDataSet.h"
@@ -26,27 +26,36 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkTriangle.h"
 
-vtkStandardNewMacro(vtkSurfaceVectors);
+// ----------------------
+// StandardNewMacro
+// ----------------------
+vtkStandardNewMacro(vtkSVSurfaceVectors);
 
-//-----------------------------------------------------------------------------
-// Construct with feature angle=30, splitting and consistency turned on, 
+// ----------------------
+// Constructor
+// ----------------------
+// Construct with feature angle=30, splitting and consistency turned on,
 // flipNormals turned off, and non-manifold traversal turned on.
-vtkSurfaceVectors::vtkSurfaceVectors()
+vtkSVSurfaceVectors::vtkSVSurfaceVectors()
 {
-  this->ConstraintMode = vtkSurfaceVectors::Parallel;
+  this->ConstraintMode = vtkSVSurfaceVectors::Parallel;
 
   // by default process active point vectors
   this->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS,
                                vtkDataSetAttributes::VECTORS);
 }
 
-//-----------------------------------------------------------------------------
-vtkSurfaceVectors::~vtkSurfaceVectors()
+// ----------------------
+// Destructor
+// ----------------------
+vtkSVSurfaceVectors::~vtkSVSurfaceVectors()
 {
 }
 
-//-----------------------------------------------------------------------------
-int vtkSurfaceVectors::RequestUpdateExtent(
+// ----------------------
+// RequestUpdateExtent
+// ----------------------
+int vtkSVSurfaceVectors::RequestUpdateExtent(
                                            vtkInformation * vtkNotUsed(request),
                                            vtkInformationVector **inputVector,
                                            vtkInformationVector *outputVector)
@@ -54,25 +63,27 @@ int vtkSurfaceVectors::RequestUpdateExtent(
   // get the info objects
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  
-  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(), 
+
+  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(),
               outInfo->Get(vtkStreamingDemandDrivenPipeline::
                            UPDATE_NUMBER_OF_GHOST_LEVELS()) + 1);
 
   return 1;
 }
 
-//-----------------------------------------------------------------------------
+// ----------------------
+// RequestData
+// ----------------------
 // Generate normals for polygon meshesPrint
 //----------------------------------------------------------------------------
-int vtkSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
+int vtkSVSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
                                    vtkInformationVector **inputVector,
                                    vtkInformationVector *outputVector)
 {
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  
+
   // get the input and output
   vtkDataSet *input = vtkDataSet::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
@@ -105,7 +116,7 @@ int vtkSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
   // We could generate both ...
   if(numPoints)
     {
-    if (this->ConstraintMode == vtkSurfaceVectors::PerpendicularScale)
+    if (this->ConstraintMode == vtkSVSurfaceVectors::PerpendicularScale)
       {
       newScalars = vtkDoubleArray::New();
       newScalars->SetNumberOfComponents(1);
@@ -120,7 +131,7 @@ int vtkSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
       newVectors->SetName(inVectors->GetName());
       }
     }
-    
+
   for (pointId = 0; pointId < numPoints; ++pointId)
     {
     input->GetPointCells(pointId, cellIds);
@@ -130,7 +141,7 @@ int vtkSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
     for (i = 0; i < cellIds->GetNumberOfIds(); ++i)
       {
       cellId = cellIds->GetId(i);
-      cellType = input->GetCellType(cellId);  
+      cellType = input->GetCellType(cellId);
       if (cellType == VTK_VOXEL || cellType == VTK_POLYGON ||
           cellType == VTK_TRIANGLE || cellType == VTK_QUAD)
         {
@@ -176,14 +187,14 @@ int vtkSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
       {
       vtkMath::Normalize(normal);
       k = vtkMath::Dot(normal, inVector);
-      if (this->ConstraintMode == vtkSurfaceVectors::Parallel)
+      if (this->ConstraintMode == vtkSVSurfaceVectors::Parallel)
         {
         // Remove non orthogonal component.
         inVector[0] = inVector[0] - (normal[0]*k);
         inVector[1] = inVector[1] - (normal[1]*k);
         inVector[2] = inVector[2] - (normal[2]*k);
         }
-      else if (this->ConstraintMode == vtkSurfaceVectors::Perpendicular)
+      else if (this->ConstraintMode == vtkSVSurfaceVectors::Perpendicular)
         { // Keep only the orthogonal component.
         inVector[0] = normal[0]*k;
         inVector[1] = normal[1]*k;
@@ -213,26 +224,28 @@ int vtkSurfaceVectors::RequestData(vtkInformation *vtkNotUsed(request),
     }
   cellIds->Delete();
   ptIds->Delete();
-  
+
   // Not implemented for data set.
   //output->RemoveGhostCells
   return 1;
-}        
-       
-//-----------------------------------------------------------------------------
-void vtkSurfaceVectors::PrintSelf(ostream& os, vtkIndent indent)
+}
+
+// ----------------------
+// PrintSelf
+// ----------------------
+void vtkSVSurfaceVectors::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
-  
-  if (this->ConstraintMode == vtkSurfaceVectors::Parallel)
+
+  if (this->ConstraintMode == vtkSVSurfaceVectors::Parallel)
     {
     os << indent << "ConstraintMode: Parallel\n";
     }
-  else if (this->ConstraintMode == vtkSurfaceVectors::Perpendicular)
+  else if (this->ConstraintMode == vtkSVSurfaceVectors::Perpendicular)
     {
     os << indent << "ConstraintMode: Perpendicular\n";
     }
-  else if (this->ConstraintMode == vtkSurfaceVectors::PerpendicularScale)
+  else if (this->ConstraintMode == vtkSVSurfaceVectors::PerpendicularScale)
     {
     os << indent << "ConstraintMode: PerpendicularScale\n";
     }
@@ -241,4 +254,3 @@ void vtkSurfaceVectors::PrintSelf(ostream& os, vtkIndent indent)
     os << indent << "ConstraintMode: Unknown\n";
     }
 }
-

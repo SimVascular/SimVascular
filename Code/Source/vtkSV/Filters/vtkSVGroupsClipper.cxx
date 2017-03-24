@@ -548,9 +548,9 @@ void vtkSVGroupsClipper::PrintSelf(ostream& os, vtkIndent indent)
   if (this->CenterlineRadiusArrayName != NULL)
     os << indent << "Centerline radius array name: " << this->CenterlineRadiusArrayName << "\n";
   if (this->GroupIdsArrayName != NULL)
-    os << indent << "Group ids array name: " << GroupIdsArrayName << "\n";
+    os << indent << "Group ids array name: " << this->GroupIdsArrayName << "\n";
   if (this->BlankingArrayName != NULL)
-    os << indent << "Blanking array name: " << BlankingArrayName << "\n";
+    os << indent << "Blanking array name: " << this->BlankingArrayName << "\n";
   if (this->CenterlineGroupIds != NULL)
   {
     os << indent << "Target values to clip: "<< "\n";

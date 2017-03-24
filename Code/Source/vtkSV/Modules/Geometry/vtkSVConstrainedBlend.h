@@ -53,38 +53,80 @@ public:
   vtkTypeMacro(vtkSVConstrainedBlend, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set name for cell array to be used to determine the in between sections
+  //@{
+  /// \brief Set name for cell array or point array to use for blending
   vtkGetStringMacro(CellArrayName);
   vtkSetStringMacro(CellArrayName);
   vtkGetStringMacro(PointArrayName);
   vtkSetStringMacro(PointArrayName);
+  //@}
 
+  //@{
+  /// \brief Get/Set weight for constrained smoothing. Default 0.2.
   vtkGetMacro(Weight,double);
   vtkSetMacro(Weight,double);
+  //@}
 
+  //@{
+  /// \brief Indicate whether point or cell arrays should be used.
   vtkGetMacro(UsePointArray,int);
   vtkSetMacro(UsePointArray,int);
   vtkBooleanMacro(UsePointArray,int);
   vtkGetMacro(UseCellArray,int);
   vtkSetMacro(UseCellArray,int);
   vtkBooleanMacro(UseCellArray,int);
+  //@}
 
+  //@{
+  /// \brief Get/Set Number of blending operations. This is essentially
+  /// the same as running the filter multiple times.
   vtkGetMacro(NumBlendOperations,int);
   vtkSetMacro(NumBlendOperations,int);
+  //@}
+
+  //@{
+  /// \brief Get/Set Number of sub blending operations. A sub blend consists of
+  /// constrained smoothing, laplacain smoothing, decimation, and subdivision,
+  /// in that order and all with their own respective iterations.
   vtkGetMacro(NumSubBlendOperations,int);
   vtkSetMacro(NumSubBlendOperations,int);
+  //@}
+
+  //@{
+  /// \brief Get/Set the number of constrained smoothings to perform within
+  /// each sub blend
   vtkGetMacro(NumConstrainedSmoothOperations,int);
   vtkSetMacro(NumConstrainedSmoothOperations,int);
+  //@}
+
+  //@{
+  /// \brief Get/Set the number of laplacian smoothings to perform within
+  /// each sub blend
   vtkGetMacro(NumLapSmoothOperations,int);
   vtkSetMacro(NumLapSmoothOperations,int);
+  //@}
+
+  //@{
+  /// \brief Get/Set the number of maximum conjugate gradient iterations used
+  /// for the constrained smoothing.
+  /// each sub blend
   vtkGetMacro(NumGradientSolves,int);
   vtkSetMacro(NumGradientSolves,int);
+  //@}
+
+  //@{
+  /// \brief Get/Set the number of subdivision iterations to perform within
+  /// each sub blend
   vtkGetMacro(NumSubdivisionIterations,int);
   vtkSetMacro(NumSubdivisionIterations,int);
+  //@}
 
+  //@{
+  /// \brief Get/Set the target reduction in the decimation filter
+  /// each sub blend
   vtkGetMacro(DecimationTargetReduction,double);
   vtkSetMacro(DecimationTargetReduction,double);
+  //@}
 
 protected:
   vtkSVConstrainedBlend();
@@ -101,10 +143,19 @@ protected:
   char* CellArrayName;
   char* PointArrayName;
 
+  /// \brief Set the PointArray and CellArray
   int GetArrays(vtkPolyData *object,int type);
+
+  /// \brief Run decimation filter
   int Decimate(vtkPolyData *pd);
+
+  /// \brief Run subdivision filter
   int Subdivide(vtkPolyData *pd);
+
+  /// \brief Run laplcain smooth filter
   int LaplacianSmooth(vtkPolyData *pd);
+
+  /// \brief Run constrained smooth filter
   int ConstrainedSmooth(vtkPolyData *pd);
 
   int UsePointArray;

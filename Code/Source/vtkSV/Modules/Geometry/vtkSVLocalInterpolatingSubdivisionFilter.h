@@ -28,13 +28,14 @@
  *
  *=========================================================================*/
 
-/** @file vtkSVLocalInterpolatingSubdivisionFilter.h
- *  @brief This implements localized subdivision
+/**
+ *  \class vtkSVLocalInterpolatingSubdivisionFilter
+ *  \brief This implements localized subdivision
  *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
+ *  \author Adam Updegrove
+ *  \author updega2@gmail.com
+ *  \author UC Berkeley
+ *  \author shaddenlab.berkeley.edu
  */
 
 #ifndef vtkSVLocalInterpolatingSubdivisionFilter_h
@@ -76,7 +77,7 @@ public:
 
 protected:
   vtkSVLocalInterpolatingSubdivisionFilter();
-  ~vtkSVLocalInterpolatingSubdivisionFilter() {}
+  ~vtkSVLocalInterpolatingSubdivisionFilter();
 
   int RequestData(vtkInformation *, vtkInformationVector **, vtkInformationVector *);
   virtual int GenerateSubdivisionPoints (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD) = 0;

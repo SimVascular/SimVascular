@@ -46,18 +46,42 @@
 #include "vtkInformationVector.h"
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
+#include "vtkSVGeneralUtils.h"
+#include "vtkSVGlobals.h"
 
-
-// Construct object with number of subdivisions set to 1.
+// ----------------------
+// Constructor
+// ----------------------
 vtkSVLocalInterpolatingSubdivisionFilter::vtkSVLocalInterpolatingSubdivisionFilter()
 {
-  this->SubdivideCellArrayName = 0;
-  this->SubdividePointArrayName = 0;
+  this->SubdivideCellArrayName  = NULL;
+  this->SubdividePointArrayName = NULL;
+
   this->NumberOfSubdivisions = 1;
   this->UseCellArray = 0;
   this->UsePointArray = 0;
 }
 
+// ----------------------
+// Destructor
+// ----------------------
+vtkSVLocalInterpolatingSubdivisionFilter::~vtkSVLocalInterpolatingSubdivisionFilter()
+{
+  if (this->SubdivideCellArrayName != NULL)
+  {
+    delete [] this->SubdivideCellArrayName;
+    this->SubdivideCellArrayName = NULL;
+  }
+  if (this->SubdividePointArrayName != NULL)
+  {
+    delete [] this->SubdividePointArrayName;
+    this->SubdividePointArrayName = NULL;
+  }
+}
+
+// ----------------------
+// RequestData
+// ----------------------
 int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
@@ -124,6 +148,23 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
     vtkWarningMacro( << this->GetClassName() << " only operates on triangles, but this data set has no triangles to operate on.");
     inputDS->Delete();
     return 1;
+    }
+
+    if (this->UsePointArray)
+    {
+      if (this->SubdividePointArrayName == NULL)
+      {
+        std::cout<<"No PointArrayName given." << endl;
+        return SV_ERROR;
+      }
+    }
+    if (this->UseCellArray)
+    {
+      if (this->SubdivideCellArrayName == NULL)
+      {
+        std::cout<<"No CellArrayName given." << endl;
+        return SV_ERROR;
+      }
     }
 
   for (level = 0; level < this->NumberOfSubdivisions; level++)
@@ -204,6 +245,9 @@ int vtkSVLocalInterpolatingSubdivisionFilter::RequestData(
   return 1;
 }
 
+// ----------------------
+// FindEdge
+// ----------------------
 int vtkSVLocalInterpolatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
                                                  vtkIdType cellId,
                                                  vtkIdType p1, vtkIdType p2,
@@ -244,6 +288,9 @@ int vtkSVLocalInterpolatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
   return 0;
 }
 
+// ----------------------
+// InterpolatePosition
+// ----------------------
 vtkIdType vtkSVLocalInterpolatingSubdivisionFilter::InterpolatePosition (
         vtkPoints *inputPts, vtkPoints *outputPts,
         vtkIdList *stencil, double *weights)
@@ -268,6 +315,9 @@ vtkIdType vtkSVLocalInterpolatingSubdivisionFilter::InterpolatePosition (
 }
 
 
+// ----------------------
+// GenerateSubdivisionCells
+// ----------------------
 void vtkSVLocalInterpolatingSubdivisionFilter::GenerateSubdivisionCells (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkCellArray *outputPolys, vtkCellData *outputCD)
 {
   vtkIdType numCells = inputDS->GetNumberOfCells();
@@ -466,6 +516,9 @@ void vtkSVLocalInterpolatingSubdivisionFilter::GenerateSubdivisionCells (vtkPoly
     }
 }
 
+// ----------------------
+// PrintSelf
+// ----------------------
 void vtkSVLocalInterpolatingSubdivisionFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -473,36 +526,23 @@ void vtkSVLocalInterpolatingSubdivisionFilter::PrintSelf(ostream& os, vtkIndent 
   os << indent << "Number of subdivisions: " << this->NumberOfSubdivisions << endl;
 }
 
+// ----------------------
+// GetSubdivideArrays
+// ----------------------
 int vtkSVLocalInterpolatingSubdivisionFilter::GetSubdivideArrays(vtkPolyData *object, int type)
 {
   vtkIdType i;
-  int exists = 0;
   int numArrays;
 
+  // Set array name
+  std::string arrayName;
   if (type == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetPointData()->GetArrayName(i),
-	    this->SubdividePointArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->SubdividePointArrayName;
   else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetCellData()->GetArrayName(i),
-	    this->SubdivideCellArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->SubdivideCellArrayName;
+
+  // Check if array exists
+  int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
   if (exists)
   {

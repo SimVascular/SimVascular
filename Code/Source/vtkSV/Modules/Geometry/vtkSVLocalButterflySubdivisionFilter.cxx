@@ -25,11 +25,20 @@
 #include "vtkSmartPointer.h"
 #include "vtkSVGlobals.h"
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVLocalButterflySubdivisionFilter);
 
+// ----------------------
+// butterflyWeights
+// ----------------------
 static double butterflyWeights[8] =
   {.5, .5, .125, .125, -.0625, -.0625, -.0625, -.0625};
 
+// ----------------------
+// GenerateSubdivisionPoints
+// ----------------------
 int vtkSVLocalButterflySubdivisionFilter::GenerateSubdivisionPoints(
   vtkPolyData *inputDS, vtkIntArray *edgeData, vtkPoints *outputPts,
   vtkPointData *outputPD)
@@ -204,6 +213,9 @@ int vtkSVLocalButterflySubdivisionFilter::GenerateSubdivisionPoints(
   return 1;
 }
 
+// ----------------------
+// GenerateLoopStencil
+// ----------------------
 void vtkSVLocalButterflySubdivisionFilter::GenerateLoopStencil(
   vtkIdType p1, vtkIdType p2, vtkPolyData *polys, vtkIdList *stencilIds,
   double *weights)
@@ -310,6 +322,9 @@ void vtkSVLocalButterflySubdivisionFilter::GenerateLoopStencil(
   cellIds->Delete();
 }
 
+// ----------------------
+// GenerateBoundaryStencil
+// ----------------------
 void vtkSVLocalButterflySubdivisionFilter::GenerateBoundaryStencil(
   vtkIdType p1, vtkIdType p2, vtkPolyData *polys, vtkIdList *stencilIds,
   double *weights)
@@ -375,6 +390,9 @@ void vtkSVLocalButterflySubdivisionFilter::GenerateBoundaryStencil(
   cellIds->Delete();
 }
 
+// ----------------------
+// GenerateButterflyStencil
+// ----------------------
 void vtkSVLocalButterflySubdivisionFilter::GenerateButterflyStencil (
   vtkIdType p1, vtkIdType p2, vtkPolyData *polys, vtkIdList *stencilIds,
   double *weights)
@@ -535,6 +553,9 @@ void vtkSVLocalButterflySubdivisionFilter::GenerateButterflyStencil (
   cellIds->Delete();
 }
 
+// ----------------------
+// SetFixedCells
+// ----------------------
 int vtkSVLocalButterflySubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdivideCell)
 {
   int numCells = pd->GetNumberOfPolys();

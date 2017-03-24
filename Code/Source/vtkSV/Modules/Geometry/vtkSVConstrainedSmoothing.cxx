@@ -43,34 +43,39 @@
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
 #include "vtkPolyData.h"
-#include "vtkUnstructuredGrid.h"
 #include "vtkCellArray.h"
 #include "vtkIntArray.h"
 #include "vtkDoubleArray.h"
 #include "vtkCellData.h"
 #include "vtkPointData.h"
 #include "vtkSmartPointer.h"
-#include "vtkSmoothPolyDataFilter.h"
+#include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVMathUtils.h"
 #include "vtkSVSparseMatrix.h"
 #include "vtkFloatArray.h"
 #include "vtkPolyDataNormals.h"
-#include "vtkCellLocator.h"
 #include "vtkGenericCell.h"
 #include "vtkMath.h"
 
 
 #include <iostream>
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVConstrainedSmoothing);
 
+// ----------------------
+// Constructor
+// ----------------------
 vtkSVConstrainedSmoothing::vtkSVConstrainedSmoothing()
 {
-    this->CellArrayName = 0;
-    this->PointArrayName = 0;
+    this->CellArrayName  = NULL;
+    this->PointArrayName = NULL;
+
     this->UsePointArray = 0;
-    this->UseCellArray = 0;
+    this->UseCellArray  = 0;
 
     this->Weight = 0.0;
     this->NumSmoothOperations = 5;
@@ -80,19 +85,50 @@ vtkSVConstrainedSmoothing::vtkSVConstrainedSmoothing()
     this->NumFixedPoints = 0;
 }
 
+// ----------------------
+// Destructor
+// ----------------------
 vtkSVConstrainedSmoothing::~vtkSVConstrainedSmoothing()
 {
+  if (this->CellArrayName != NULL)
+  {
+    delete [] this->CellArrayName;
+    this->CellArrayName = NULL;
+  }
+  if (this->PointArrayName != NULL)
+  {
+    delete [] this->PointArrayName;
+    this->PointArrayName = NULL;
+  }
 }
 
+// ----------------------
+// PrintSelf
+// ----------------------
 void vtkSVConstrainedSmoothing::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os, indent);
+
+  if (this->CellArrayName != NULL)
+    os << indent << "Cell array name: " << this->CellArrayName << "\n";
+  if (this->PointArrayName != NULL)
+    os << indent << "Point array name: " << this->PointArrayName << "\n";
+
+  os << indent << "Weight: " << this->Weight << "\n";
+
+  os << indent << "Use point array: " << this->UsePointArray << "\n";
+  os << indent << "Use cell array: " << this->UseCellArray << "\n";
+
+  os << indent << "Number of smooth operations: " << this->NumSmoothOperations << "\n";
+  os << indent << "Number of conjugate gradient iterations: " << this->NumGradientSolves << "\n";
 }
 
-// Generate Separated Surfaces with Region ID Numbers
-int vtkSVConstrainedSmoothing::RequestData(
-                                 vtkInformation *vtkNotUsed(request),
-                                 vtkInformationVector **inputVector,
-                                 vtkInformationVector *outputVector)
+// ----------------------
+// RequestData
+// ----------------------
+int vtkSVConstrainedSmoothing::RequestData(vtkInformation *vtkNotUsed(request),
+                                           vtkInformationVector **inputVector,
+                                           vtkInformationVector *outputVector)
 {
     // get the input and output
     vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
@@ -116,23 +152,33 @@ int vtkSVConstrainedSmoothing::RequestData(
     if (numPolys < 1)
     {
         vtkDebugMacro("No input!");
-	return 1;
+        return SV_OK;
     }
 
     if (this->UsePointArray)
     {
+      if (this->PointArrayName == NULL)
+      {
+        std::cout<<"No PointArrayName given." << endl;
+        return SV_ERROR;
+      }
       if (this->GetArrays(input,0) != 1)
       {
-	std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
-	return 0;
+        std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
+        return SV_ERROR;
       }
     }
     if (this->UseCellArray)
     {
+      if (this->CellArrayName == NULL)
+      {
+        std::cout<<"No CellArrayName given." << endl;
+        return SV_ERROR;
+      }
       if (this->GetArrays(input,1) != 1)
       {
-	std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
-	return 0;
+        std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
+        return SV_ERROR;
       }
     }
 
@@ -141,43 +187,30 @@ int vtkSVConstrainedSmoothing::RequestData(
     vtkNew(vtkPolyData, tmp);
     tmp->DeepCopy(input);
     for (int i=0;i<this->NumSmoothOperations;i++)
-      this->CGSmooth(input,tmp);
+      this->ConstainedSmooth(input,tmp);
 
     delete [] this->fixedPt;
     output->DeepCopy(tmp);
-    return 1;
+    return SV_OK;
 }
 
+// ----------------------
+// GetArrays
+// ----------------------
 int vtkSVConstrainedSmoothing::GetArrays(vtkPolyData *object,int type)
 {
   vtkIdType i;
-  int exists = 0;
   int numArrays;
 
+  // Set array name
+  std::string arrayName;
   if (type == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetPointData()->GetArrayName(i),
-	    this->PointArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->PointArrayName;
   else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetCellData()->GetArrayName(i),
-	    this->CellArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->CellArrayName;
+
+  // Check if array exists
+  int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
   if (exists)
   {
@@ -197,6 +230,9 @@ int vtkSVConstrainedSmoothing::GetArrays(vtkPolyData *object,int type)
   return exists;
 }
 
+// ----------------------
+// SetFixedPoints
+// ----------------------
 int vtkSVConstrainedSmoothing::SetFixedPoints(vtkPolyData *pd)
 {
   int numPoints = pd->GetNumberOfPoints();
@@ -215,8 +251,8 @@ int vtkSVConstrainedSmoothing::SetFixedPoints(vtkPolyData *pd)
     {
       if (this->PointArray->GetValue(pointId) != 1)
       {
-	this->fixedPt[pointId] = 1;
-	this->NumFixedPoints++;
+        this->fixedPt[pointId] = 1;
+        this->NumFixedPoints++;
       }
     }
   }
@@ -229,36 +265,39 @@ int vtkSVConstrainedSmoothing::SetFixedPoints(vtkPolyData *pd)
       pd->GetCellPoints(cellId,npts,pts);
       for (int i=0;i<npts;i++)
       {
-	p1 = pts[i];
-	p2 = pts[(i+1)%(npts)];
+        p1 = pts[i];
+        p2 = pts[(i+1)%(npts)];
         vtkNew(vtkIdList, neighbors);
-	pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
-	vtkIdType numNei = neighbors->GetNumberOfIds();
-	if (numNei > 0)
-	{
-	  vtkIdType neighCell = neighbors->GetId(0);
-	  if (this->CellArray->GetValue(neighCell) != 1)
-	  {
-	    if (this->fixedPt[p1] != 1)
-	    {
-	      this->fixedPt[p1] = 1;
-	      this->NumFixedPoints++;
-	    }
-	    if (this->fixedPt[p2] != 1)
-	    {
-	      this->fixedPt[p2] = 1;
-	      this->NumFixedPoints++;
-	    }
-	  }
-	}
+        pd->GetCellEdgeNeighbors(cellId,p1,p2,neighbors);
+        vtkIdType numNei = neighbors->GetNumberOfIds();
+        if (numNei > 0)
+        {
+          vtkIdType neighCell = neighbors->GetId(0);
+          if (this->CellArray->GetValue(neighCell) != 1)
+          {
+            if (this->fixedPt[p1] != 1)
+            {
+              this->fixedPt[p1] = 1;
+              this->NumFixedPoints++;
+            }
+            if (this->fixedPt[p2] != 1)
+            {
+              this->fixedPt[p2] = 1;
+              this->NumFixedPoints++;
+            }
+          }
+        }
       }
     }
   }
 
-  return 1;
+  return SV_OK;
 }
 
-int vtkSVConstrainedSmoothing::CGSmooth(vtkPolyData *original,vtkPolyData *current)
+// ----------------------
+// ConstrainedSmooth
+// ----------------------
+int vtkSVConstrainedSmoothing::ConstainedSmooth(vtkPolyData *original,vtkPolyData *current)
 {
   double pt[3];
   double smoothpt[3];
@@ -271,7 +310,7 @@ int vtkSVConstrainedSmoothing::CGSmooth(vtkPolyData *original,vtkPolyData *curre
 
   vtkFloatArray *normals;
   normals = vtkFloatArray::SafeDownCast(
-        	  normaler->GetOutput()->GetPointData()->GetNormals());
+    normaler->GetOutput()->GetPointData()->GetNormals());
   std::cout<<"num normals: "<<normals->GetNumberOfTuples()<<endl;
   std::cout<<"Num points: "<<numPoints<<endl;
 
@@ -301,8 +340,8 @@ int vtkSVConstrainedSmoothing::CGSmooth(vtkPolyData *original,vtkPolyData *curre
     double direction = vtkMath::Dot(normal, distance);
     double norm = vtkMath::Normalize(normal);
     double dist = sqrt(pow(distance[0],2) +
-		       pow(distance[1],2) +
-		       pow(distance[2],2));
+		                   pow(distance[1],2) +
+		                   pow(distance[2],2));
     for (int i=0;i<3;i++)
     {
       double weighting = normal[i];
@@ -326,10 +365,10 @@ int vtkSVConstrainedSmoothing::CGSmooth(vtkPolyData *original,vtkPolyData *curre
     {
       for (int i=0;i<3;i++)
       {
-	int x_row = numPoints*3 + ((int) pointId)*3 + i;
-	int x_column = ((int) pointId)*3 + i;
-	A->SetElement(x_row,x_column,1);
-	b[x_row] = 0.0;
+        int x_row = numPoints*3 + ((int) pointId)*3 + i;
+        int x_column = ((int) pointId)*3 + i;
+        A->SetElement(x_row,x_column,1);
+        b[x_row] = 0.0;
       }
 
       std::set<vtkIdType> neighborPts;
@@ -340,14 +379,14 @@ int vtkSVConstrainedSmoothing::CGSmooth(vtkPolyData *original,vtkPolyData *curre
       it = neighborPts.begin();
       while (it != neighborPts.end())
       {
-	for (int i=0;i<3;i++)
-	{
-	  int x_row = numPoints*3 + ((int) pointId)*3 + i;
-	  int x_column = ((int) *it)*3 + i;
-	  double value = -1.0/numNeighborPts;
-	  A->SetElement(x_row,x_column,value);
-	}
-	++it;
+        for (int i=0;i<3;i++)
+        {
+          int x_row = numPoints*3 + ((int) pointId)*3 + i;
+          int x_column = ((int) *it)*3 + i;
+          double value = -1.0/numNeighborPts;
+          A->SetElement(x_row,x_column,value);
+        }
+        ++it;
       }
     }
   }
@@ -368,17 +407,20 @@ int vtkSVConstrainedSmoothing::CGSmooth(vtkPolyData *original,vtkPolyData *curre
     {
       for (int i=0;i<3;i++)
       {
-	int x_loc = 3*((int) pointId) + i;
-	newpt[i] = x[x_loc];
+        int x_loc = 3*((int) pointId) + i;
+        newpt[i] = x[x_loc];
       }
     }
     newPoints->InsertPoint(pointId,newpt);
   }
   current->SetPoints(newPoints);
 
-  return 1;
+  return SV_OK;
 }
 
+// ----------------------
+// GetAttachedPoints
+// ----------------------
 int vtkSVConstrainedSmoothing::GetAttachedPoints(vtkPolyData *pd, vtkIdType nodeId,std::set<vtkIdType> *attachedPts)
 {
   vtkIdType npts,*pts;
@@ -398,6 +440,5 @@ int vtkSVConstrainedSmoothing::GetAttachedPoints(vtkPolyData *pd, vtkIdType node
       }
     }
   }
-  return 1;
+  return SV_OK;
 }
-

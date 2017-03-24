@@ -54,27 +54,45 @@ public:
   vtkTypeMacro(vtkSVConstrainedSmoothing, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set name for cell array to be used to determine the in between sections
+  //@{
+  /// \brief Set name for cell array or point array to use for blending
   vtkGetStringMacro(CellArrayName);
   vtkSetStringMacro(CellArrayName);
   vtkGetStringMacro(PointArrayName);
   vtkSetStringMacro(PointArrayName);
+  //@}
 
+  //@{
+  /// \brief Get/Set weight for constrained smoothing. Default 0.2.
   vtkGetMacro(Weight,double);
   vtkSetMacro(Weight,double);
+  //@}
 
+  //@{
+  /// \brief Indicate whether point or cell arrays should be used.
   vtkGetMacro(UsePointArray,int);
   vtkSetMacro(UsePointArray,int);
   vtkBooleanMacro(UsePointArray,int);
   vtkGetMacro(UseCellArray,int);
   vtkSetMacro(UseCellArray,int);
   vtkBooleanMacro(UseCellArray,int);
+  //@}
 
+  //@{
+  /// \brief Get/Set the number of constrained smoothing operations. Set to
+  /// 1, a normal laplacian smooth is performed. More than 1, and the weight
+  /// kicks in and will attempt to retain the original surface.
   vtkGetMacro(NumSmoothOperations,int);
   vtkSetMacro(NumSmoothOperations,int);
+  //@}
+
+  //@{
+  /// \brief Get/Set the number of maximum conjugate gradient iterations used
+  /// for the constrained smoothing.
+  /// each sub blend
   vtkGetMacro(NumGradientSolves,int);
   vtkSetMacro(NumGradientSolves,int);
+  //@}
 
 protected:
   vtkSVConstrainedSmoothing();
@@ -94,7 +112,7 @@ protected:
   int UseCellArray;
 
   int GetArrays(vtkPolyData *object,int type);
-  int CGSmooth(vtkPolyData *original,vtkPolyData *current);
+  int ConstainedSmooth(vtkPolyData *original,vtkPolyData *current);
   int GetAttachedPoints(vtkPolyData *pd, vtkIdType nodeId, std::set<vtkIdType> *attachedPts);
   int SetFixedPoints(vtkPolyData *pd);
 

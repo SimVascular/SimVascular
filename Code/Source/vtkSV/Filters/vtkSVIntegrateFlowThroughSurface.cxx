@@ -1,18 +1,34 @@
 /*=========================================================================
+ *
+ * Copyright (c) 2014 The Regents of the University of California.
+ * All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *=========================================================================*/
 
-  Program:   Visualization Toolkit
-  Module:    vtkIntegrateFlowThroughSurface.cxx
-
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#include "vtkIntegrateFlowThroughSurface.h"
+#include "vtkSVIntegrateFlowThroughSurface.h"
 
 #include "vtkCellData.h"
 #include "vtkCompositeDataIterator.h"
@@ -23,31 +39,40 @@
 #include "vtkMultiBlockDataSet.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
-#include "vtkIntegrateAttributes.h"
+#include "vtkSVIntegrateAttributes.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
-#include "vtkSurfaceVectors.h"
+#include "vtkSVSurfaceVectors.h"
 #include "vtkUnstructuredGrid.h"
 #include "vtkSmartPointer.h"
 
-vtkStandardNewMacro(vtkIntegrateFlowThroughSurface);
+// ----------------------
+// StandardNewMacro
+// ----------------------
+vtkStandardNewMacro(vtkSVIntegrateFlowThroughSurface);
 
-//-----------------------------------------------------------------------------
-vtkIntegrateFlowThroughSurface::vtkIntegrateFlowThroughSurface()
+// ----------------------
+// Constructor
+// ----------------------
+vtkSVIntegrateFlowThroughSurface::vtkSVIntegrateFlowThroughSurface()
 {
   // by default process active point vectors
   this->SetInputArrayToProcess(0,0,0,vtkDataObject::FIELD_ASSOCIATION_POINTS,
                                vtkDataSetAttributes::VECTORS);
 }
 
-//-----------------------------------------------------------------------------
-vtkIntegrateFlowThroughSurface::~vtkIntegrateFlowThroughSurface()
+// ----------------------
+// Destructor
+// ----------------------
+vtkSVIntegrateFlowThroughSurface::~vtkSVIntegrateFlowThroughSurface()
 {
 }
 
-//-----------------------------------------------------------------------------
-int vtkIntegrateFlowThroughSurface::RequestUpdateExtent(
+// ----------------------
+// RequestUpdateExtent
+// ----------------------
+int vtkSVIntegrateFlowThroughSurface::RequestUpdateExtent(
                                            vtkInformation * vtkNotUsed(request),
                                            vtkInformationVector **inputVector,
                                            vtkInformationVector *outputVector)
@@ -55,16 +80,18 @@ int vtkIntegrateFlowThroughSurface::RequestUpdateExtent(
   // get the info objects
   vtkInformation* outInfo = outputVector->GetInformationObject(0);
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
-  
-  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(), 
+
+  inInfo->Set(vtkStreamingDemandDrivenPipeline::UPDATE_NUMBER_OF_GHOST_LEVELS(),
               outInfo->Get(vtkStreamingDemandDrivenPipeline::
                            UPDATE_NUMBER_OF_GHOST_LEVELS()) + 1);
 
   return 1;
 }
 
-//-----------------------------------------------------------------------------
-vtkDataSet* vtkIntegrateFlowThroughSurface::GenerateSurfaceVectors(
+// ----------------------
+// GenerateSurfaceVectors
+// ----------------------
+vtkDataSet* vtkSVIntegrateFlowThroughSurface::GenerateSurfaceVectors(
   vtkDataSet* input)
 {
   vtkDataSet* inputCopy = input->NewInstance();
@@ -80,7 +107,7 @@ vtkDataSet* vtkIntegrateFlowThroughSurface::GenerateSurfaceVectors(
   inputCopy->GetCellData()->AddArray(
     input->GetCellData()->GetArray("vtkGhostLevels"));
 
-  vtkSurfaceVectors* dot = vtkSurfaceVectors::New();
+  vtkSVSurfaceVectors* dot = vtkSVSurfaceVectors::New();
   dot->SetInputDataObject(inputCopy);
   dot->SetConstraintModeToPerpendicularScale();
   dot->Update();
@@ -95,8 +122,10 @@ vtkDataSet* vtkIntegrateFlowThroughSurface::GenerateSurfaceVectors(
   return outputCopy;
 }
 
-//-----------------------------------------------------------------------------
-int vtkIntegrateFlowThroughSurface::RequestData(
+// ----------------------
+// RequestData
+// ----------------------
+int vtkSVIntegrateFlowThroughSurface::RequestData(
   vtkInformation *request,
   vtkInformationVector **inputVector,
   vtkInformationVector *outputVector)
@@ -104,7 +133,7 @@ int vtkIntegrateFlowThroughSurface::RequestData(
   // get the info objects
   vtkInformation *inInfo = inputVector[0]->GetInformationObject(0);
   vtkInformation *outInfo = outputVector->GetInformationObject(0);
-  
+
   // get the input and output
   vtkSmartPointer<vtkDataObject> input = inInfo->Get(vtkDataObject::DATA_OBJECT());
 
@@ -113,10 +142,10 @@ int vtkIntegrateFlowThroughSurface::RequestData(
   vtkUnstructuredGrid *output = vtkUnstructuredGrid::SafeDownCast(
     outInfo->Get(vtkDataObject::DATA_OBJECT()));
 
-  vtkIntegrateAttributes* integrate = vtkIntegrateAttributes::New();
+  vtkSVIntegrateAttributes* integrate = vtkSVIntegrateAttributes::New();
   vtkCompositeDataSet *hdInput = vtkCompositeDataSet::SafeDownCast(
     inInfo->Get(vtkDataObject::DATA_OBJECT()));
-  if (hdInput) 
+  if (hdInput)
     {
     vtkMultiBlockDataSet* hds = vtkMultiBlockDataSet::New();
     vtkCompositeDataIterator* iter = hdInput->NewIterator();
@@ -161,7 +190,7 @@ int vtkIntegrateFlowThroughSurface::RequestData(
 
   integrate->ProcessRequest(request, inputVector, outputVector);
 
-  if (hdInput) 
+  if (hdInput)
     {
     inInfo->Set(vtkDataObject::DATA_OBJECT(), hdInput);
     }
@@ -169,33 +198,39 @@ int vtkIntegrateFlowThroughSurface::RequestData(
     {
     inInfo->Set(vtkDataObject::DATA_OBJECT(), dsInput);
     }
-  
+
   vtkDataArray* flow = output->GetPointData()->GetArray("Perpendicular Scale");
   if (flow)
     {
     flow->SetName("Surface Flow");
-    }  
-  
+    }
+
   integrate->Delete();
   integrate = 0;
 
   return 1;
-}        
+}
 
-//----------------------------------------------------------------------------
-vtkExecutive* vtkIntegrateFlowThroughSurface::CreateDefaultExecutive()
+// ----------------------
+// CreateDefaultExecutive
+// ----------------------
+vtkExecutive* vtkSVIntegrateFlowThroughSurface::CreateDefaultExecutive()
 {
   return vtkCompositeDataPipeline::New();
 }
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateFlowThroughSurface::PrintSelf(ostream& os, vtkIndent indent)
+// ----------------------
+// PrintSelf
+// ----------------------
+void vtkSVIntegrateFlowThroughSurface::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 }
 
-//----------------------------------------------------------------------------
-int vtkIntegrateFlowThroughSurface::FillInputPortInformation(
+// ----------------------
+// FillInputPortInformation
+// ----------------------
+int vtkSVIntegrateFlowThroughSurface::FillInputPortInformation(
   int port, vtkInformation* info)
 {
   if(!this->Superclass::FillInputPortInformation(port, info))

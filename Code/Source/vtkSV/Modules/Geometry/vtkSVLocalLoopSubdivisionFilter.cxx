@@ -28,11 +28,20 @@
 #include "vtkStreamingDemandDrivenPipeline.h"
 #include "vtkSVGlobals.h"
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVLocalLoopSubdivisionFilter);
 
+// ----------------------
+// loopWeights
+// ----------------------
 static double LoopWeights[4] =
   {.375, .375, .125, .125};
 
+// ----------------------
+// GenerateSubdivision
+// ----------------------
 int vtkSVLocalLoopSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inputDS,vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD)
 {
   double *weights;
@@ -183,6 +192,9 @@ int vtkSVLocalLoopSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inp
   return 1;
 }
 
+// ----------------------
+// GenerateStencil
+// ----------------------
 void vtkSVLocalLoopSubdivisionFilter::GenerateEvenStencil (vtkIdType p1,
                                                     vtkPolyData *polys,
                                                     vtkIdList *stencilIds,
@@ -322,6 +334,9 @@ void vtkSVLocalLoopSubdivisionFilter::GenerateEvenStencil (vtkIdType p1,
   ptIds->Delete();
 }
 
+// ----------------------
+// GenerateOddStencil
+// ----------------------
 void vtkSVLocalLoopSubdivisionFilter::GenerateOddStencil (vtkIdType p1, vtkIdType p2,
                                                    vtkPolyData *polys,
                                                    vtkIdList *stencilIds,
@@ -367,6 +382,9 @@ void vtkSVLocalLoopSubdivisionFilter::GenerateOddStencil (vtkIdType p1, vtkIdTyp
   cellIds->Delete();
 }
 
+// ----------------------
+// RequestUpdateExtent
+// ----------------------
 int vtkSVLocalLoopSubdivisionFilter::RequestUpdateExtent(
   vtkInformation *request,
   vtkInformationVector **inputVector,
@@ -396,6 +414,9 @@ int vtkSVLocalLoopSubdivisionFilter::RequestUpdateExtent(
   return 1;
 }
 
+// ----------------------
+// RequestData
+// ----------------------
 int vtkSVLocalLoopSubdivisionFilter::RequestData(
   vtkInformation *request,
   vtkInformationVector **inputVector,
@@ -433,6 +454,9 @@ int vtkSVLocalLoopSubdivisionFilter::RequestData(
   return this->Superclass::RequestData(request, inputVector, outputVector);
 }
 
+// ----------------------
+// SetFixedCells
+// ----------------------
 int vtkSVLocalLoopSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdivideCell)
 {
   int numCells = pd->GetNumberOfPolys();
