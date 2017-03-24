@@ -105,9 +105,16 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 reader->SetFileName(dataFileName.c_str());
                 reader->Update();
                 vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
+                pd->BuildLinks();
 
-                mepd->SetWholeVtkPolyData(pd);
+                vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
+                cleaner->SetInputData(pd);
+                cleaner->Update();
 
+                vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
+                cleanpd->BuildLinks();
+
+                mepd->SetWholeVtkPolyData(cleanpd);
             }
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI

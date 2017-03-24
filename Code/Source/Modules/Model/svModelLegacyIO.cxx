@@ -3,6 +3,7 @@
 
 #include "svModel.h"
 #include "svModelElementPolyData.h"
+#include "cv_polydatasolid_utils.h"
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI
 #include "svModelElementOCCT.h"
@@ -33,8 +34,9 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
     QString suffix=fileInfo.suffix();
     QString filePath2=filePath+".facenames";
 
+    bool modelTypeDecided=false;
     QString handler="";
-    if(suffix=="vtp")
+    if(suffix=="vtp" ||suffix=="vtk" || suffix=="stl" || suffix=="ply")
     {
         handler="set gPolyDataFaceNames(";
 
@@ -51,6 +53,8 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
 
                 if(line.contains(handler))
                 {
+                    modelTypeDecided=true;
+
                     QStringList list = line.split(QRegExp("[(),{}\\s+]"), QString::SkipEmptyParts);
                     svModelElement::svFace* face=new svModelElement::svFace;
                     face->id=list[2].toInt();
@@ -65,11 +69,24 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
             }
             inputFile.close();
         }
+        else
+        {
+            //no .facenames, assume it's vtp model for stl file
+            modelTypeDecided=true;
+        }
 
-        vtkSmartPointer<vtkXMLPolyDataReader> reader = vtkSmartPointer<vtkXMLPolyDataReader>::New();
-        reader->SetFileName(filePath.toStdString().c_str());
-        reader->Update();
-        vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
+        vtkSmartPointer<vtkPolyData> pd1=vtkSmartPointer<vtkPolyData>::New();
+        if(PlyDtaUtils_ReadNative(const_cast<char*>(filePath.toStdString().c_str()),pd1) != CV_OK)
+        {
+          return modelNode;
+        }
+
+        vtkSmartPointer<vtkCleanPolyData> cleaner = vtkSmartPointer<vtkCleanPolyData>::New();
+        cleaner->SetInputData(pd1);
+        cleaner->Update();
+        vtkSmartPointer<vtkPolyData> pd=cleaner->GetOutput();
+        pd->BuildLinks();
+
         if(pd!=NULL)
         {
             svModelElementPolyData* mepd=new svModelElementPolyData();
@@ -93,8 +110,9 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
             modelNode->SetName(baseName.toStdString());
         }
     }
+
 #ifdef SV_USE_OpenCASCADE_QT_GUI
-    else if(suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges")
+    if(!modelTypeDecided && (suffix=="brep" || suffix=="step" || suffix=="stl" || suffix=="iges"))
     {
         handler="set gOCCTFaceNames(";
 
@@ -127,8 +145,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         }
 
         cvOCCTSolidModel* occtSolid=new cvOCCTSolidModel();
-        char* fpath=const_cast<char*>(filePath.toStdString().c_str());
-        occtSolid->ReadNative(fpath);
+        occtSolid->ReadNative(const_cast<char*>(filePath.toStdString().c_str()));
         if(occtSolid)
         {
             svModelElementOCCT* meocct=new svModelElementOCCT();
@@ -154,8 +171,9 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         }
     }
 #endif
+
 #ifdef SV_USE_PARASOLID_QT_GUI
-    else if(suffix=="xmt_txt")
+    if(!modelTypeDecided && suffix=="xmt_txt")
     {
         cvParasolidSolidModel* parasolid=new cvParasolidSolidModel();
         char* fpath=const_cast<char*>(filePath.toStdString().c_str());
@@ -293,12 +311,8 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
 
         if(mepd->GetWholeVtkPolyData())
         {
-            vtkSmartPointer<vtkXMLPolyDataWriter> writer = vtkSmartPointer<vtkXMLPolyDataWriter>::New();
-            writer->SetFileName(filePath.toStdString().c_str());
-            writer->SetInputData(mepd->GetWholeVtkPolyData());
-            if (writer->Write() == 0 || writer->GetErrorCode() != 0 )
-            {
-                mitkThrow() << "vtkXMLPolyDataWriter error: " << vtkErrorCode::GetStringFromErrorCode(writer->GetErrorCode());
+            if (PlyDtaUtils_WriteNative(mepd->GetWholeVtkPolyData(), 0, const_cast<char*>(filePath.toStdString().c_str()) ) != CV_OK) {
+                mitkThrow() << "PolyData model writing error.";
             }
         }
     }
@@ -313,7 +327,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
             char* fpath=const_cast<char*>(filePath.toStdString().c_str());
             if (meocct->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
              {
-                 mitkThrow() << "OpenCASCADE model writing error: ";
+                 mitkThrow() << "OpenCASCADE model writing error.";
              }
         }
     }
@@ -329,7 +343,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
             char* fpath=const_cast<char*>(filePath.toStdString().c_str());
             if (meps->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
              {
-                 mitkThrow() << "Parasolid model writing error: ";
+                 mitkThrow() << "Parasolid model writing error.";
              }
         }
     }

@@ -51,7 +51,7 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
         if(lastFileOpenPath=="")
             lastFileOpenPath=QDir::homePath();
 
-        QString filter="Legacy Models (*.vtp";
+        QString filter="Solid Models (*.vtp *.vtk *.stl *.ply";
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI
         filter=filter+" *.brep *.step *.stl *.iges";
@@ -62,7 +62,7 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
 
         filter=filter+")";
 
-        QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Legacy Model")
+        QString modelFilePath = QFileDialog::getOpenFileName(NULL, tr("Load Solid Model")
                                                              , lastFileOpenPath
                                                              , tr(filter.toStdString().c_str())
                                                              , NULL
@@ -85,7 +85,7 @@ void svModelLegacyLoadAction::Run(const QList<mitk::DataNode::Pointer> &selected
     }
     catch(...)
     {
-        MITK_ERROR << "Legacy Model Loading Error!";
+        MITK_ERROR << "Model Loading Error!";
     }
 }
 
