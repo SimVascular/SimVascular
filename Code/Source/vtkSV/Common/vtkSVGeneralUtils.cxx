@@ -66,6 +66,8 @@
 #include "vtkDataSet.h"
 #include "vtkUnstructuredGrid.h"
 
+#include <algorithm>
+
 // ----------------------
 // MakePlane
 // ----------------------
