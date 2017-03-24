@@ -147,7 +147,7 @@
       <item>
        <widget class="QToolBox" name="toolBox">
         <property name="currentIndex">
-         <number>5</number>
+         <number>4</number>
         </property>
         <widget class="QWidget" name="page">
          <property name="geometry">
@@ -686,8 +686,20 @@
              <item>
               <widget class="QWidget" name="widgetRun" native="true">
                <layout class="QGridLayout" name="gridLayout">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
                 <property name="topMargin">
-                 <number>9</number>
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>5</number>
                 </property>
                 <item row="2" column="0" colspan="3">
                  <widget class="QPushButton" name="btnImportFiles">

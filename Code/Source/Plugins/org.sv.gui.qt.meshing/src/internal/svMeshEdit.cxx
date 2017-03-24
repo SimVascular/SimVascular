@@ -864,12 +864,13 @@ void svMeshEdit::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    if(m_MeshNode==meshNode)
-    {
-        AddObservers();
-        m_Parent->setEnabled(true);
-        return;
-    }
+    //comment this section to make sure always update GUI
+//    if(m_MeshNode==meshNode)
+//    {
+//        AddObservers();
+//        m_Parent->setEnabled(true);
+//        return;
+//    }
 
     std::string modelName=mitkMesh->GetModelName();
 

@@ -68,6 +68,8 @@ svSimulationView::svSimulationView() :
     m_SolverTemplatePath="";
     m_ExternalPostsolverPath="";
     m_ExternalMPIExecPath="";
+
+    m_ConnectionEnabled=false;
 }
 
 svSimulationView::~svSimulationView()
@@ -95,6 +97,46 @@ svSimulationView::~svSimulationView()
     if(m_CapBCWidget)
         delete m_CapBCWidget;
 }
+
+void svSimulationView::EnableConnection(bool able)
+{
+    if(able && !m_ConnectionEnabled)
+    {
+        connect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        connect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        connect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
+        connect(ui->lineEditThickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        connect(ui->lineEditE, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        connect(ui->lineEditNu, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        connect(ui->lineEditKcons, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        connect(ui->lineEditWallDensity, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        connect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        connect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        connect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        connect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
+        connect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+        m_ConnectionEnabled=able;
+    }
+
+    if(!able && m_ConnectionEnabled)
+    {
+        disconnect(m_TableModelBasic, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        disconnect(m_TableModelCap, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->comboBoxWallType,SIGNAL(currentIndexChanged(int )), this, SLOT(UpdateSimJob( )));
+        disconnect(ui->lineEditThickness, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->lineEditE, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->lineEditNu, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->lineEditKcons, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->lineEditWallDensity, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->lineEditPressure, SIGNAL(textChanged(QString)), this, SLOT(UpdateSimJob()));
+        disconnect(m_TableModelVar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        disconnect(m_TableModelSolver, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(UpdateSimJob()));
+        disconnect(ui->comboBoxMeshName, SIGNAL(currentIndexChanged(int )), this, SLOT(UdpateSimJobMeshName( )));
+        disconnect(ui->sliderNumProcs, SIGNAL(valueChanged(double)), this, SLOT(UpdateSimJobNumProcs()));
+        m_ConnectionEnabled=able;
+    }
+}
+
 
 void svSimulationView::CreateQtPartControl( QWidget *parent )
 {
@@ -280,12 +322,13 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    if(m_JobNode==jobNode)
-    {
-        AddObservers();
-        EnableTool(true);
-        return;
-    }
+    //comment this section to make sure always update GUI
+//    if(m_JobNode==jobNode)
+//    {
+//        AddObservers();
+//        EnableTool(true);
+//        return;
+//    }
 
     std::string modelName=mitkJob->GetModelName();
 
@@ -338,6 +381,8 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     else
         ui->labelModelName->setText("Model not found");
 
+    EnableConnection(false);
+
     UpdateGUIBasic();
 
     UpdateGUICap();
@@ -353,6 +398,8 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
     UpdateFaceListSelection();
 
     UpdateJobStatus();
+
+    EnableConnection(true);
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();
 }
@@ -1687,7 +1734,7 @@ void svSimulationView::ImportFiles()
     }
 }
 
-svSimJob* svSimulationView::CreateJob(std::string& msg)
+svSimJob* svSimulationView::CreateJob(std::string& msg, bool checkValidity)
 {
     svSimJob* job=new svSimJob();
 
@@ -1697,23 +1744,26 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
         std::string par=m_TableModelBasic->item(i,0)->text().toStdString();
         std::string values=m_TableModelBasic->item(i,1)->text().trimmed().toStdString();
 
-        if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Period" || par=="Initial Pressure")
+        if(checkValidity)
         {
-            if(!IsDouble(values))
+            if(par=="Fluid Density" || par=="Fluid Viscosity" || par=="Period" || par=="Initial Pressure")
             {
-                msg=par + " value error: " + values;
-                delete job;
-                return NULL;
+                if(!IsDouble(values))
+                {
+                    msg=par + " value error: " + values;
+                    delete job;
+                    return NULL;
+                }
             }
-        }
-        else if(par=="Initial Velocities")
-        {
-            int count=0;
-            if(!AreDouble(values,&count) || count!=3)
+            else if(par=="Initial Velocities")
             {
-                msg=par + " value error: " + values;
-                delete job;
-                return NULL;
+                int count=0;
+                if(!AreDouble(values,&count) || count!=3)
+                {
+                    msg=par + " value error: " + values;
+                    delete job;
+                    return NULL;
+                }
             }
         }
 
@@ -1729,11 +1779,15 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
         if(bcType=="Prescribed Velocities")
         {
             std::string flowrateContent=m_TableModelCap->item(i,9)->text().trimmed().toStdString();
-            if(flowrateContent=="")
+
+            if(checkValidity)
             {
-                msg=capName + ": no flowrate data";
-                delete job;
-                return NULL;
+                if(flowrateContent=="")
+                {
+                    msg=capName + ": no flowrate data";
+                    delete job;
+                    return NULL;
+                }
             }
 
             std::string shape=m_TableModelCap->item(i,4)->text().trimmed().toStdString();
@@ -1754,46 +1808,49 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
         }
         else if(bcType!="")
         {
-            job->SetCapProp(capName,"BC Type", bcType);
-
             std::string values=m_TableModelCap->item(i,2)->text().trimmed().toStdString();
-            if(bcType=="Resistance")
+            std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
+
+            if(checkValidity)
             {
-                if(!IsDouble(values))
+                if(bcType=="Resistance")
                 {
-                    msg=capName + " R value error: " + values;
-                    delete job;
-                    return NULL;
+                    if(!IsDouble(values))
+                    {
+                        msg=capName + " R value error: " + values;
+                        delete job;
+                        return NULL;
+                    }
                 }
-                job->SetCapProp(capName,"Values", values);
-            }
-            else if(bcType=="RCR")
-            {
-                int count=0;
-                if(!AreDouble(values,&count)||count!=3)
+                else if(bcType=="RCR")
                 {
-                    msg=capName + " RCR values error: " + values;
-                    delete job;
-                    return NULL;
+                    int count=0;
+                    if(!AreDouble(values,&count)||count!=3)
+                    {
+                        msg=capName + " RCR values error: " + values;
+                        delete job;
+                        return NULL;
+                    }
                 }
-                job->SetCapProp(capName,"Values", values);
+
+                if(pressure!="")
+                {
+                    if(!IsDouble(pressure))
+                    {
+                        msg=capName + " pressure error: " + pressure;
+                        delete job;
+                        return NULL;
+                    }
+                }
+                else
+                {
+                    pressure="0";
+                }
             }
 
-            std::string pressure=m_TableModelCap->item(i,3)->text().trimmed().toStdString();
-            if(pressure!="")
-            {
-                if(!IsDouble(pressure))
-                {
-                    msg=capName + " pressure error: " + pressure;
-                    delete job;
-                    return NULL;
-                }
-                job->SetCapProp(capName,"Pressure",pressure);
-            }
-            else
-            {
-                job->SetCapProp(capName,"Pressure","0");
-            }
+            job->SetCapProp(capName,"BC Type", bcType);
+            job->SetCapProp(capName,"Values", values);
+            job->SetCapProp(capName,"Pressure",pressure);
         }
     }
 
@@ -1805,115 +1862,122 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
     }
     else if(wallTypeIndex==1)
     {
-        job->SetWallProp("Type","deformable");
-
         std::string thickness=ui->lineEditThickness->text().trimmed().toStdString();
-        if(!IsDouble(thickness))
-        {
-            msg="wall thickness error: " + thickness;
-            delete job;
-            return NULL;
-        }
-        job->SetWallProp("Thickness",thickness);
-
         std::string modulus=ui->lineEditE->text().trimmed().toStdString();
-        if(!IsDouble(modulus))
-        {
-            msg="wall elastic modulus error: " + modulus;
-            delete job;
-            return NULL;
-        }
-        job->SetWallProp("Elastic Modulus",modulus);
-
         std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        if(!IsDouble(nu))
-        {
-            msg="wall Poisson ratio error: " + nu;
-            delete job;
-            return NULL;
-        }
-        job->SetWallProp("Poisson Ratio",nu);
-
         std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        if(!IsDouble(kcons))
-        {
-            msg="wall shear constant error: " + kcons;
-            delete job;
-            return NULL;
-        }
-        job->SetWallProp("Shear Constant",kcons);
-
         std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        if(wallDensity!="")
+        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
+
+        if(checkValidity)
         {
-            if(!IsDouble(wallDensity))
+            if(!IsDouble(thickness))
             {
-                msg="wall density error: " + wallDensity;
+                msg="wall thickness error: " + thickness;
                 delete job;
                 return NULL;
             }
-            job->SetWallProp("Density",wallDensity);
-        }
-        else
-        {
-            job->SetWallProp("Density",job->GetBasicProp("Fluid Density"));
+
+            if(!IsDouble(modulus))
+            {
+                msg="wall elastic modulus error: " + modulus;
+                delete job;
+                return NULL;
+            }
+
+            if(!IsDouble(nu))
+            {
+                msg="wall Poisson ratio error: " + nu;
+                delete job;
+                return NULL;
+            }
+
+            if(!IsDouble(kcons))
+            {
+                msg="wall shear constant error: " + kcons;
+                delete job;
+                return NULL;
+            }
+
+            if(wallDensity!="")
+            {
+                if(!IsDouble(wallDensity))
+                {
+                    msg="wall density error: " + wallDensity;
+                    delete job;
+                    return NULL;
+                }
+            }
+            else
+            {
+                wallDensity=job->GetBasicProp("Fluid Density");
+            }
+
+            if(!IsDouble(pressure))
+            {
+                msg="wall pressure error: " + pressure;
+                delete job;
+                return NULL;
+            }
         }
 
-        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-        if(!IsDouble(pressure))
-        {
-            msg="wall pressure error: " + pressure;
-            delete job;
-            return NULL;
-        }
+        job->SetWallProp("Type","deformable");
+        job->SetWallProp("Thickness",thickness);
+        job->SetWallProp("Elastic Modulus",modulus);
+        job->SetWallProp("Poisson Ratio",nu);
+        job->SetWallProp("Shear Constant",kcons);
+        job->SetWallProp("Density",wallDensity);
         job->SetWallProp("Pressure",pressure);
-
     }
     else if(wallTypeIndex==2)
     {
-        job->SetWallProp("Type","variable");
-
         std::string nu=ui->lineEditNu->text().trimmed().toStdString();
-        if(!IsDouble(nu))
-        {
-            msg="wall Poisson ratio error: " + nu;
-            delete job;
-            return NULL;
-        }
-        job->SetWallProp("Poisson Ratio",nu);
-
         std::string kcons=ui->lineEditKcons->text().trimmed().toStdString();
-        if(!IsDouble(kcons))
-        {
-            msg="wall shear constant error: " + kcons;
-            delete job;
-            return NULL;
-        }
-        job->SetWallProp("Shear Constant",kcons);
-
         std::string wallDensity=ui->lineEditWallDensity->text().trimmed().toStdString();
-        if(wallDensity!="")
+        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
+
+        if(checkValidity)
         {
-            if(!IsDouble(wallDensity))
+            if(!IsDouble(nu))
             {
-                msg="wall density error: " + wallDensity;
+                msg="wall Poisson ratio error: " + nu;
                 delete job;
                 return NULL;
             }
-            job->SetWallProp("Density",wallDensity);
-        }
-        else
-        {
-            job->SetWallProp("Density",job->GetBasicProp("Fluid Density"));
+
+            if(!IsDouble(kcons))
+            {
+                msg="wall shear constant error: " + kcons;
+                delete job;
+                return NULL;
+            }
+
+            if(wallDensity!="")
+            {
+                if(!IsDouble(wallDensity))
+                {
+                    msg="wall density error: " + wallDensity;
+                    delete job;
+                    return NULL;
+                }
+            }
+            else
+            {
+                wallDensity=job->GetBasicProp("Fluid Density");
+            }
+
+            if(!IsDouble(pressure))
+            {
+                msg="wall pressure error: " + pressure;
+                delete job;
+                return NULL;
+            }
         }
 
-        std::string pressure=ui->lineEditPressure->text().trimmed().toStdString();
-        if(!IsDouble(pressure))
-        {
-            msg="wall pressure error: " + pressure;
-            delete job;
-            return NULL;
-        }
+        job->SetWallProp("Type","variable");
+        job->SetWallProp("Poisson Ratio",nu);
+        job->SetWallProp("Shear Constant",kcons);
+        job->SetWallProp("Density",wallDensity);
         job->SetWallProp("Pressure",pressure);
 
         for(int i=0;i<m_TableModelVar->rowCount();i++)
@@ -1922,47 +1986,58 @@ svSimJob* svSimulationView::CreateJob(std::string& msg)
             std::string thickness=m_TableModelVar->item(i,2)->text().trimmed().toStdString();
             std::string modulus=m_TableModelVar->item(i,3)->text().trimmed().toStdString();
 
-            if(thickness!="" && !IsDouble(thickness))
+            if(checkValidity)
             {
-                msg="wall thickness error: " + thickness;
-                delete job;
-                return NULL;
-            }
+                if(thickness!="" && !IsDouble(thickness))
+                {
+                    msg="wall thickness error: " + thickness;
+                    delete job;
+                    return NULL;
+                }
 
-            if(modulus!="" && !IsDouble(modulus))
-            {
-                msg="wall elastic modulus error: " + modulus;
-                delete job;
-                return NULL;
+                if(modulus!="" && !IsDouble(modulus))
+                {
+                    msg="wall elastic modulus error: " + modulus;
+                    delete job;
+                    return NULL;
+                }
             }
 
             job->SetVarProp(faceName,"Thickness", thickness);
             job->SetVarProp(faceName,"Elastic Modulus", modulus);
-
         }
     }
 
     for(int i=0;i<m_TableModelSolver->rowCount();i++)
     {
-        std::string parName=m_TableModelSolver->item(i,0)->text().toStdString();
+        std::string parName=m_TableModelSolver->item(i,0)->text().trimmed().toStdString();
         QStandardItem* valueItem=m_TableModelSolver->item(i,1);
         if(valueItem==NULL)
             continue;
 
         std::string value=valueItem->text().trimmed().toStdString();
-        std::string type=m_TableModelSolver->item(i,2)->text().toStdString();
+        std::string type=m_TableModelSolver->item(i,2)->text().trimmed().toStdString();
 
-        if(type=="int"&&!IsInt(value))
+        if(checkValidity )
         {
-            msg=parName+ " value error: " + value;
-            delete job;
-            return NULL;
-        }
-        else if(type=="double"&&!IsDouble(value))
-        {
-            msg=parName+ " value error: " + value;
-            delete job;
-            return NULL;
+            if(value=="")
+            {
+                msg=parName+ " missing value";
+                delete job;
+                return NULL;
+            }
+            else if(type=="int"&&!IsInt(value))
+            {
+                msg=parName+ " value error: " + value;
+                delete job;
+                return NULL;
+            }
+            else if(type=="double"&&!IsDouble(value))
+            {
+                msg=parName+ " value error: " + value;
+                delete job;
+                return NULL;
+            }
         }
 
         job->SetSolverProp(parName, value);
@@ -2088,7 +2163,7 @@ void svSimulationView::ExportResults()
 
     exportDir=exportDir+"/"+jobName+"converted-results";
     QDir exdir(exportDir);
-    exdir.mkpath(exportDir);
+    exdir.mkpath(exportDir);    
 
     QString resultDir=ui->lineEditResultDir->text();
     QDir rdir(resultDir);
@@ -2120,6 +2195,8 @@ void svSimulationView::ExportResults()
     }
 
     QStringList arguments;
+    resultDir="\""+resultDir+"\"";//in case there are spaceing in the dir name
+    exportDir="\""+exportDir+"\"";//in case there are spaceing in the dir name
     arguments << "-all";
     arguments << "-indir" << resultDir;
     arguments << "-outdir" << exportDir;
@@ -2153,12 +2230,7 @@ void svSimulationView::ExportResults()
     QProcess *postsolverProcess = new QProcess(m_Parent);
     postsolverProcess->setWorkingDirectory(exportDir);
     postsolverProcess->setProgram(postsolverPath);
-
-#if defined(Q_OS_WIN)
-    postsolverProcess->setNativeArguments(arguments.join(" "));
-#else
     postsolverProcess->setArguments(arguments);
-#endif
 
     svProcessHandler* handler=new svProcessHandler(postsolverProcess,m_Parent);
     handler->Start();
@@ -2204,6 +2276,52 @@ void svSimulationView::EnableTool(bool able)
     ui->page_3->setEnabled(able);
     ui->page_4->setEnabled(able);
     ui->page_5->setEnabled(able);
+}
+
+void svSimulationView::UpdateSimJob()
+{
+    if(!m_MitkJob)
+        return;
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    std::string numProcsStr="";
+    if(job)
+    {
+        numProcsStr=job->GetRunProp("Number of Processes");
+    }
+
+    std::string msg="";
+    svSimJob* newJob=CreateJob(msg,false);
+    if(newJob==NULL)
+        return;
+
+    newJob->SetRunProp("Number of Processes",numProcsStr);
+    m_MitkJob->SetSimJob(newJob);
+    m_MitkJob->SetDataModified();
+}
+
+void svSimulationView::UdpateSimJobMeshName()
+{
+    if(!m_MitkJob)
+        return;
+
+    std::string meshName=ui->comboBoxMeshName->currentText().toStdString();
+    m_MitkJob->SetMeshName(meshName);
+    m_MitkJob->SetDataModified();
+}
+
+void svSimulationView::UpdateSimJobNumProcs()
+{
+    if(!m_MitkJob)
+        return;
+
+    svSimJob* job=m_MitkJob->GetSimJob();
+    if(job)
+    {
+        std::string numProcsStr=QString::number((int)(ui->sliderNumProcs->value())).toStdString();
+        job->SetRunProp("Number of Processes",numProcsStr);
+        m_MitkJob->SetDataModified();
+    }
 }
 
 #if defined(Q_OS_WIN)
@@ -2314,8 +2432,8 @@ void svProcessHandler::AfterProcessFinished(int exitCode, QProcess::ExitStatus e
     mb.setIcon(icon);
 
     if(m_Process)
-        mb.setDetailedText(m_Process->readAll());
-
+//        mb.setDetailedText(m_Process->readAll());
+    mb.setDetailedText(m_Process->readAllStandardOutput()+"\n"+m_Process->readAllStandardError());
     mb.setDefaultButton(QMessageBox::Ok);
 
     mb.exec();
