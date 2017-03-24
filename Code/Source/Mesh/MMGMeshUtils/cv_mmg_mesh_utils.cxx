@@ -33,10 +33,10 @@
 #include "vtkCellArray.h"
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkEdgeTable.h"
-#include "vtkFindSeparateRegions.h"
 #include "vtkIdList.h"
 #include "vtkPoints.h"
 #include "vtkSmartPointer.h"
+#include "vtkSVFindSeparateRegions.h"
 #include "vtkThreshold.h"
 
 #include "cv_mmg_mesh_utils.h"
@@ -69,10 +69,10 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     fprintf(stderr,"Cannot use sizing function without a function!");
     return CV_ERROR;
   }
-  vtkSmartPointer<vtkFindSeparateRegions> separator =
-    vtkSmartPointer<vtkFindSeparateRegions>::New();
+  vtkSmartPointer<vtkSVFindSeparateRegions> separator =
+    vtkSmartPointer<vtkSVFindSeparateRegions>::New();
   separator->SetInputData(polydatasolid);
-  separator->SetArrayName("ModelFaceID");
+  separator->SetCellArrayName("ModelFaceID");
   separator->SetOutPointArrayName("ModelFaceBoundaryPts");
   separator->Update();
   polydatasolid->DeepCopy(separator->GetOutput());

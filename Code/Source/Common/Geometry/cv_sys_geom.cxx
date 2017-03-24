@@ -47,25 +47,15 @@
 #include "vtkSmartPointer.h"
 #include "vtkSortDataArray.h"
 #include "vtkPolygon.h"
-#include "vtkFillHolesFilterWithIds.h"
+#include "vtkSVFillHolesFilterWithIds.h"
 #include "vtkThreshold.h"
 #include "vtkConnectivityFilter.h"
 #include "vtkDataSetSurfaceFilter.h"
 #include "vtkAppendPolyData.h"
 #include "vtkOBBTree.h"
 
-#include "vtkLocalQuadricDecimation.h"
-#include "vtkLocalSmoothPolyDataFilter.h"
-#include "vtkLocalLinearSubdivisionFilter.h"
-#include "vtkLocalButterflySubdivisionFilter.h"
-#include "vtkLocalLoopSubdivisionFilter.h"
-#include "vtkCGSmooth.h"
-#include "vtkConstrainedBlend.h"
-#include "vtkFindSeparateRegions.h"
-#include "vtkGetSphereRegions.h"
-
-#define vtkNew(type,name) \
-  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+#include "vtkSVFindSeparateRegions.h"
+#include "vtkSVGetSphereRegions.h"
 
 #ifdef SV_USE_VMTK
 #include "vtkvmtkPolyDataDistanceToCenterlines.h"
@@ -77,13 +67,23 @@
 #include "vtkvmtkMergeCenterlines.h"
 #endif
 
-#include "vtkSVMultiplePolyDataIntersectionFilter.h"
+#include "vtkLoftPolyDataSolid.h"
+#include "vtkSVConstrainedSmoothing.h"
+#include "vtkSVConstrainedBlend.h"
+#include "vtkSVLocalButterflySubdivisionFilter.h"
+#include "vtkSVLocalLinearSubdivisionFilter.h"
+#include "vtkSVLocalLoopSubdivisionFilter.h"
+#include "vtkSVLocalSmoothPolyDataFilter.h"
+#include "vtkSVLocalQuadricDecimation.h"
 #include "vtkSVLoopBooleanPolyDataFilter.h"
 #include "vtkSVLoopIntersectionPolyDataFilter.h"
-#include "vtkLoftPolyDataSolid.h"
-#include "vtkXMLPolyDataWriter.h"
+#include "vtkSVMultiplePolyDataIntersectionFilter.h"
 
 #include "cv_polydatasolid_utils.h"
+
+#define vtkNew(type,name) \
+  vtkSmartPointer<type> name = vtkSmartPointer<type>::New()
+
 
 /* ----------------- */
 /* sys_geom_DeepCopy */
@@ -3621,14 +3621,14 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
     vtkNew(vtkIdList,targetCells);
     for (int i=0; i< nvals; i++)
       targetCells->InsertNextId((vals[i]));
-    vtkNew(vtkFindSeparateRegions,separator);
+    vtkNew(vtkSVFindSeparateRegions,separator);
     separator->SetInputData(tmp);
     separator->SetOutPointArrayName("BoundaryPoints");
-    separator->SetArrayName(inarrayname);
-    separator->SetCellIds(targetCells);
+    separator->SetCellArrayName(inarrayname);
+    separator->SetTargetCellIds(targetCells);
     separator->Update();
 
-    vtkNew(vtkGetSphereRegions,sphereSetter);
+    vtkNew(vtkSVGetSphereRegions,sphereSetter);
     sphereSetter->SetInputData(separator->GetOutput());
     sphereSetter->SetOutCellArrayName(outarrayname);
     sphereSetter->SetCellArrayName(inarrayname);
@@ -3675,7 +3675,7 @@ int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkLocalQuadricDecimation,decimator);
+    vtkNew(vtkSVLocalQuadricDecimation,decimator);
     decimator->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -3736,7 +3736,7 @@ int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkLocalSmoothPolyDataFilter,smoother);
+    vtkNew(vtkSVLocalSmoothPolyDataFilter,smoother);
     smoother->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -3807,7 +3807,7 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkCGSmooth,smoother);
+    vtkNew(vtkSVConstrainedSmoothing,smoother);
     smoother->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -3875,7 +3875,7 @@ int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int nu
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkLocalLinearSubdivisionFilter,subdivider);
+    vtkNew(vtkSVLocalLinearSubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -3934,7 +3934,7 @@ int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkLocalButterflySubdivisionFilter,subdivider);
+    vtkNew(vtkSVLocalButterflySubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -3993,7 +3993,7 @@ int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numi
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkLocalLoopSubdivisionFilter,subdivider);
+    vtkNew(vtkSVLocalLoopSubdivisionFilter,subdivider);
     subdivider->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -4055,7 +4055,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
   fprintf(stdout,"Point Array Name: %s\n",pointarrayname);
   fprintf(stdout,"Cell Array Name: %s\n",cellarrayname);
   try {
-    vtkNew(vtkConstrainedBlend,blender);
+    vtkNew(vtkSVConstrainedBlend,blender);
     blender->SetInputData(geom);
     if (pointarrayname != 0)
     {
@@ -4070,7 +4070,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
     blender->SetNumBlendOperations(numblenditers);
     blender->SetNumSubBlendOperations(numsubblenditers);
     blender->SetNumSubdivisionIterations(numsubdivisioniters);
-    blender->SetNumCGSmoothOperations(numcgsmoothiters);
+    blender->SetNumConstrainedSmoothOperations(numcgsmoothiters);
     blender->SetNumLapSmoothOperations(numlapsmoothiters);
     blender->SetDecimationTargetReduction(targetdecimation);
     blender->Update();
@@ -4489,8 +4489,8 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
   try {
 
     std::cout<<"Capping Surface..."<<endl;
-    vtkSmartPointer<vtkFillHolesFilterWithIds> capper =
-	    vtkSmartPointer<vtkFillHolesFilterWithIds>::New();
+    vtkSmartPointer<vtkSVFillHolesFilterWithIds> capper =
+	    vtkSmartPointer<vtkSVFillHolesFilterWithIds>::New();
     capper->SetInputData(geom);
     capper->SetFillId(fillId);
     //Fill type, 0 for number of holes filled, 1 for a fillid, and 2 for
