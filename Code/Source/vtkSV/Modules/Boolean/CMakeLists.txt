@@ -126,7 +126,7 @@ endif()
 #------------------------------------------------------------------------------
 # Executables
 if(VTKSV_BUILD_FILTER_EXES)
-  set(EXE_LIST Boolean VesselIntersection)
+  set(EXE_LIST Boolean)
   foreach(exe ${EXE_LIST})
     add_executable(${exe} ${exe}.cxx)
     target_link_libraries(${exe} ${VTK_LIBRARIES} ${SV_LIB_VTKSVBOOLEAN_NAME} ${SV_LIB_VTKSVCOMMON_NAME})

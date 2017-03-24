@@ -36,12 +36,14 @@ set(SRCS vtkSVFindGeodesicPath.cxx vtkSVFindSeparateRegions.cxx vtkSVGetBoundary
   vtkSVGroupsClipper.cxx vtkSVPolyBallLine.cxx vtkSVHausdorffDistance.cxx
   vtkSVMapInterpolator.cxx vtkSVPassDataArray.cxx vtkSVPullApartPolyData.cxx
   vtkSVPlacePointsOnS2.cxx vtkSVCheckRotation.cxx vtkSVGetSphereRegions.cxx
-  vtkSVFillHolesFilterWithIds.cxx)
+  vtkSVFillHolesFilterWithIds.cxx vtkSVIntegrateFlowThroughSurface.cxx
+  vtkSVLoftPolyDataSolid.cxx vtkSVIntegrateAttributes.cxx vtkSVSurfaceVectors.cxx)
 set(HDRS vtkSVFindGeodesicPath.h   vtkSVFindSeparateRegions.h   vtkSVGetBoundaryFaces.h
   vtkSVGroupsClipper.h   vtkSVPolyBallLine.h   vtkSVHausdorffDistance.h
   vtkSVMapInterpolator.h   vtkSVPassDataArray.cxx vtkSVPullApartPolyData.h
   vtkSVPlacePointsOnS2.h vtkSVCheckRotation.h vtkSVGetSphereRegions.h
-  vtkSVFillHolesFilterWithIds.h)
+  vtkSVFillHolesFilterWithIds.h vtkSVIntegrateFlowThroughSurface.cxx
+  vtkSVLoftPolyDataSolid.h vtkSVIntegrateAttributes.h vtkSVSurfaceVectors.cxx)
 #------------------------------------------------------------------------------
 
 #------------------------------------------------------------------------------

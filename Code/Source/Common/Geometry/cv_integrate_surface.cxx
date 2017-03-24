@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -29,7 +29,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "SimVascular.h" 
+#include "SimVascular.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -39,8 +39,8 @@
 #include "cvPolyData.h"
 #include "cv_vtk_utils.h"
 
-#include "vtkIntegrateAttributes.h"
-#include "vtkIntegrateFlowThroughSurface.h"
+#include "vtkSVIntegrateAttributes.h"
+#include "vtkSVIntegrateFlowThroughSurface.h"
 
 int CalcU(double xx[3][5], double *d, double r, double s, double *u) {
 
@@ -55,7 +55,7 @@ int CalcU(double xx[3][5], double *d, double r, double s, double *u) {
   sp = 1.0 + s;
   rm = 1.0 - r;
   sm = 1.0 - s;
-  
+
   // interpolation functions
 
   h[1] = 0.25 * rp * sp;
@@ -73,7 +73,7 @@ int CalcU(double xx[3][5], double *d, double r, double s, double *u) {
   return CV_OK;
 
 }
-    
+
 
 int CalcJacDet(double xx[3][5], double r, double s, double *determinant) {
 
@@ -93,7 +93,7 @@ int CalcJacDet(double xx[3][5], double r, double s, double *determinant) {
   sp = 1.0 + s;
   rm = 1.0 - r;
   sm = 1.0 - s;
-  
+
   // interpolation functions
 
   h[1] = 0.25 * rp * sp;
@@ -137,7 +137,7 @@ int CalcJacDet(double xx[3][5], double r, double s, double *determinant) {
     //fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n"
     //     ,det);
     return CV_ERROR;
-  }  
+  }
 
   *determinant = det;
   return CV_OK;
@@ -179,16 +179,16 @@ int IntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uval
       d[i] = uvalues[i-1];
   }
 
-  // calculate a sample determinant, and rearrange points 
+  // calculate a sample determinant, and rearrange points
   // if det. is negative.
   if (CalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
       double swapd,swapxx[3];
       // swap point 1 -> 4
-      swapxx[1] = xx[1][1] ; swapxx[2] = xx[2][1];   
+      swapxx[1] = xx[1][1] ; swapxx[2] = xx[2][1];
       xx[1][1] = xx[1][4] ; xx[2][1] = xx[2][4];
       xx [1][4] = swapxx[1] ; xx[2][4] = swapxx[2];
       // swap point 2 -> 3
-      swapxx[1] = xx[1][2] ; swapxx[2] = xx[2][2];   
+      swapxx[1] = xx[1][2] ; swapxx[2] = xx[2][2];
       xx[1][2] = xx[1][3] ; xx[2][2] = xx[2][3];
       xx [1][3] = swapxx[1] ; xx[2][3] = swapxx[2];
       // swap d1 -> d4
@@ -223,7 +223,7 @@ int IntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uval
       }
     }
   }
- 
+
   *q = qflow;
   return CV_OK;
 
@@ -260,13 +260,13 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
     if (scalars == NULL) {
         fprintf(stderr,"ERROR: No scalars!\n");
         return CV_ERROR;
-    } 
+    }
   } else {
     vectors = pd->GetPointData()->GetVectors();
     if (vectors == NULL) {
         fprintf(stderr,"ERROR: No vectors!\n");
         return CV_ERROR;
-    } 
+    }
   }
 
   if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
@@ -286,7 +286,7 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
       if (nElemNodes < 3 || nElemNodes > 4) {
           fprintf(stderr,"ERROR:  Invalid number of nodes in element (%i).\n",nElemNodes);
           return CV_ERROR;
-      }         
+      }
 
       conn[0]=polys[polyIndex++];
       conn[1]=polys[polyIndex++];
@@ -318,7 +318,7 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
           }
       }
 
-      qflow = 0.0;    
+      qflow = 0.0;
       if (IntegrateSurfElem(crd, uvalues, &qflow) == CV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *q = 0.0;
@@ -364,13 +364,13 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
     if (scalars == NULL) {
         fprintf(stderr,"ERROR: No scalars!\n");
         return CV_ERROR;
-    } 
+    }
   } else {
     vectors = pd->GetPointData()->GetVectors();
     if (vectors == NULL) {
         fprintf(stderr,"ERROR: No vectors!\n");
         return CV_ERROR;
-    } 
+    }
   }
 
   // make sure we have normals on pd
@@ -379,7 +379,7 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
   vtkUnstructuredGrid* answer;
 
   if (tensorType == 1) {
-    vtkIntegrateFlowThroughSurface* integrator = vtkIntegrateFlowThroughSurface::New();
+    vtkSVIntegrateFlowThroughSurface* integrator = vtkSVIntegrateFlowThroughSurface::New();
     integrator->SetInputDataObject(pd);
     integrator->Update();
     answer = integrator->GetOutput();
@@ -387,7 +387,7 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
     areatotal = ((answer->GetCellData())->GetArray("Area"))->GetTuple1(0);
     integrator->Delete();
   } else {
-    vtkIntegrateAttributes* integrateAtts = vtkIntegrateAttributes::New();
+    vtkSVIntegrateAttributes* integrateAtts = vtkSVIntegrateAttributes::New();
     integrateAtts->SetInputDataObject(pd);
     integrateAtts->Update();
     answer = integrateAtts->GetOutput();
@@ -433,7 +433,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
   double x[3];
   double w[3];
   double F[3];
- 
+
   // gaussian weights  (pg 467 Bathe)
   double r[3],s[3],gaussW[3];
   r[0] = 0.16666666666667;
@@ -488,8 +488,8 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
 
   mycell->Points = mypts;
   mycell->PointIds = myids;
-   
-  polys->InitTraversal(); 
+
+  polys->InitTraversal();
   for (i = 0; i < numPolys; i++) {
     polys->GetNextCell(celltype,ids);
     if (celltype != 3) {
@@ -533,7 +533,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
 //    qflow = area*(scalars->GetTuple1(ids[0])+scalars->GetTuple1(ids[1])+scalars->GetTuple1(ids[2]))/3.0;
 
     //fprintf(stdout,"cell %i  qflow  %lf  area %lf\n",i,qflow,vtkTriangle::TriangleArea(xx[0],xx[1],xx[2]));
-                
+
     qtotal = qtotal + qflow;
   }
 
@@ -570,7 +570,7 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
   double x[3];
   double w[3];
   double F[3];
- 
+
   // gaussian weights  (pg 467 Bathe)
   double r[3],s[3],gaussW[3];
   r[0] = 0.16666666666667;
@@ -623,8 +623,8 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
 
   mycell->Points = mypts;
   mycell->PointIds = myids;
-   
-  polys->InitTraversal(); 
+
+  polys->InitTraversal();
   for (i = 0; i < numPolys; i++) {
     polys->GetNextCell(celltype,ids);
     if (celltype != 3) {
@@ -663,13 +663,13 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
 //    qflow = area*(scalars->GetTuple1(ids[0])+scalars->GetTuple1(ids[1])+scalars->GetTuple1(ids[2]))/3.0;
 
 //    fprintf(stdout,"cell %i  qflow  %lf  area %lf\n",i,qflow,vtkTriangle::TriangleArea(xx[0],xx[1],xx[2]));
-    
+
 //    double wssthresh = 1;
         if (scalars->GetTuple1(ids[0]) <= wssthresh & scalars->GetTuple1(ids[1]) <= wssthresh & scalars->GetTuple1(ids[2])<=wssthresh) {
             qtotal = qtotal + qflow;
             atotal = atotal + area;
-        }           
-  }     
+        }
+  }
 
   *q = qtotal;
   *a = atotal;
@@ -730,7 +730,7 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
       if (nElemNodes < 3 || nElemNodes > 4) {
           fprintf(stderr,"ERROR:  Invalid number of nodes in element (%i).\n",nElemNodes);
           return CV_ERROR;
-      }         
+      }
 
       conn[0]=polys[polyIndex++];
       conn[1]=polys[polyIndex++];
@@ -759,7 +759,7 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
         uvalues[j] = ( p + 0.5 * rho * vmag * vmag ) * VdotN;
       }
 
-      energyElem = 0.0;    
+      energyElem = 0.0;
       if (IntegrateSurfElem(crd, uvalues, &energyElem) == CV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *energy = 0.0;

@@ -28,16 +28,6 @@
  *
  *=========================================================================*/
 
-/** @file vtkSVLocalLinearSubdivisionFilter.cxx
- *  @brief This is localized subdivision methods specifically for linear
- *  subdivision
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
-
 #include "vtkSVLocalLinearSubdivisionFilter.h"
 
 #include "vtkCellArray.h"
@@ -49,8 +39,14 @@
 #include "vtkSmartPointer.h"
 #include "vtkSVGlobals.h"
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVLocalLinearSubdivisionFilter);
 
+// ----------------------
+// GenerateSubdivisionPoints
+// ----------------------
 int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *inputDS, vtkIntArray *edgeData, vtkPoints *outputPts, vtkPointData *outputPD)
 {
   vtkIdType *pts = 0;
@@ -159,6 +155,9 @@ int vtkSVLocalLinearSubdivisionFilter::GenerateSubdivisionPoints (vtkPolyData *i
   return 1;
 }
 
+// ----------------------
+// SetFixedCells
+// ----------------------
 int vtkSVLocalLinearSubdivisionFilter::SetFixedCells(vtkPolyData *pd, int *noSubdivideCell)
 {
   int numCells = pd->GetNumberOfPolys();

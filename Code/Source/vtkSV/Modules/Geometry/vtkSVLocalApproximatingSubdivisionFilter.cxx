@@ -24,19 +24,43 @@
 #include "vtkPointData.h"
 #include "vtkPolyData.h"
 #include "vtkStreamingDemandDrivenPipeline.h"
+#include "vtkSVGeneralUtils.h"
+#include "vtkSVGlobals.h"
 #include "vtkUnsignedCharArray.h"
 
-
-// Construct object with number of subdivisions set to 1.
+// ----------------------
+// Constructor
+// ----------------------
 vtkSVLocalApproximatingSubdivisionFilter::vtkSVLocalApproximatingSubdivisionFilter()
 {
-  this->SubdivideCellArrayName = 0;
-  this->SubdividePointArrayName = 0;
+  this->SubdivideCellArrayName  = NULL;
+  this->SubdividePointArrayName = NULL;
+
   this->NumberOfSubdivisions = 1;
   this->UseCellArray = 0;
   this->UsePointArray = 0;
 }
 
+// ----------------------
+// Destructor
+// ----------------------
+vtkSVLocalApproximatingSubdivisionFilter::~vtkSVLocalApproximatingSubdivisionFilter()
+{
+  if (this->SubdivideCellArrayName != NULL)
+  {
+    delete [] this->SubdivideCellArrayName;
+    this->SubdivideCellArrayName = NULL;
+  }
+  if (this->SubdividePointArrayName != NULL)
+  {
+    delete [] this->SubdividePointArrayName;
+    this->SubdividePointArrayName = NULL;
+  }
+}
+
+// ----------------------
+// RequestData
+// ----------------------
 int vtkSVLocalApproximatingSubdivisionFilter::RequestData(
   vtkInformation *vtkNotUsed(request),
   vtkInformationVector **inputVector,
@@ -80,6 +104,23 @@ int vtkSVLocalApproximatingSubdivisionFilter::RequestData(
   inputDS->CopyAttributes(input);
   inputDS->GetPointData()->PassData(input->GetPointData());
   inputDS->GetCellData()->PassData(input->GetCellData());
+
+  if (this->UsePointArray)
+  {
+    if (this->SubdividePointArrayName == NULL)
+    {
+      std::cout<<"No PointArrayName given." << endl;
+      return SV_ERROR;
+    }
+  }
+  if (this->UseCellArray)
+  {
+    if (this->SubdivideCellArrayName == NULL)
+    {
+      std::cout<<"No CellArrayName given." << endl;
+      return SV_ERROR;
+    }
+  }
 
   int abort=0;
   for (level = 0; level < this->NumberOfSubdivisions && !abort; level++)
@@ -166,6 +207,9 @@ int vtkSVLocalApproximatingSubdivisionFilter::RequestData(
   return 1;
 }
 
+// ----------------------
+// FindEdge
+// ----------------------
 int vtkSVLocalApproximatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
                                                  vtkIdType cellId,
                                                  vtkIdType p1, vtkIdType p2,
@@ -206,6 +250,9 @@ int vtkSVLocalApproximatingSubdivisionFilter::FindEdge (vtkPolyData *mesh,
   return static_cast<int>(edgeData->GetComponent(currentCellId,edgeId));
 }
 
+// ----------------------
+// InterpolatePosition
+// ----------------------
 vtkIdType vtkSVLocalApproximatingSubdivisionFilter::InterpolatePosition (
         vtkPoints *inputPts, vtkPoints *outputPts,
         vtkIdList *stencil, double *weights)
@@ -230,6 +277,9 @@ vtkIdType vtkSVLocalApproximatingSubdivisionFilter::InterpolatePosition (
   return outputPts->InsertNextPoint (x);
 }
 
+// ----------------------
+// KeepPosition
+// ----------------------
 vtkIdType vtkSVLocalApproximatingSubdivisionFilter::KeepPosition (
         vtkPoints *inputPts, vtkPoints *outputPts,
         vtkIdList *stencil, double *weights)
@@ -239,6 +289,9 @@ vtkIdType vtkSVLocalApproximatingSubdivisionFilter::KeepPosition (
   return outputPts->InsertNextPoint (x);
 }
 
+// ----------------------
+// GenerateSubdivisionCells
+// ----------------------
 void vtkSVLocalApproximatingSubdivisionFilter::GenerateSubdivisionCells (
   vtkPolyData *inputDS, vtkIntArray *edgeData, vtkCellArray *outputPolys,
   vtkCellData *outputCD)
@@ -439,6 +492,9 @@ void vtkSVLocalApproximatingSubdivisionFilter::GenerateSubdivisionCells (
     }
 }
 
+// ----------------------
+// PrintSelf
+// ----------------------
 void vtkSVLocalApproximatingSubdivisionFilter::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -447,36 +503,23 @@ void vtkSVLocalApproximatingSubdivisionFilter::PrintSelf(ostream& os, vtkIndent 
      << this->NumberOfSubdivisions << endl;
 }
 
+// ----------------------
+// GetSubdivideArrays
+// ----------------------
 int vtkSVLocalApproximatingSubdivisionFilter::GetSubdivideArrays(vtkPolyData *object, int type)
 {
   vtkIdType i;
-  int exists = 0;
   int numArrays;
 
+  // Set array name
+  std::string arrayName;
   if (type == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetPointData()->GetArrayName(i),
-	    this->SubdividePointArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->SubdividePointArrayName;
   else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetCellData()->GetArrayName(i),
-	    this->SubdivideCellArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->SubdivideCellArrayName;
+
+  // Check if array exists
+  int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
   if (exists)
   {
@@ -491,4 +534,3 @@ int vtkSVLocalApproximatingSubdivisionFilter::GetSubdivideArrays(vtkPolyData *ob
 
   return exists;
 }
-

@@ -28,31 +28,21 @@
  *
  *=========================================================================*/
 
-// .NAME vtkSVGetSphereRegions - Get Boundary Faces from poldata and label them with integers
-// .SECTION Description
-// vtkSVGetSphereRegions is a filter to extract the boundary surfaces of a model, separate the surace into multiple regions and number each region.
-
-// .SECTION Caveats
-// To see the coloring of the lines you may have to set the ScalarMode
-// instance variable of the mapper to SetScalarModeToUseCellData(). (This
-// is only a problem if there are point data scalars.)
-
-// .SECTION See Also
-// vtkExtractEdges
-
-/** @file vtkSVGetSphereRegions.h
- *  @brief This is a vtk filter to extract the boundaries from a vtk. It uses
- *  the common conventions to be able to load this filter into Paraview and
- *  use it as a filter.
- *  @details This filter is based off of the vtkFeatureEdges filter which
- *  finds lines and points that are defined as the separation between two
- *  faces based on the angle difference in the normals between these faces
+/**
+ *  \class vtkSVGetSphereRegions
+ *  \brief This filter is intended purely for geometries with a branching
+ *  structure with a cell data array defining the different branches of the
+ *  geometry. It will find the boundary between these regions, find a centroid
+ *  of the branching region, create a sphere around the branching region,
+ *  and set the value to 1 in an output data array within this sphere region.
+ *  Cells with the different data is given with CellArrayName.
+ *  Points defining a boundary should be indicated with the PointArrayName. This
+ *  can be easily found using the vtkSVFindSeparateRegionsFilter.
  *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- *  @note Most functions in class call functions in cv_polydatasolid_utils.
+ *  \author Adam Updegrove
+ *  \author updega2@gmail.com
+ *  \author UC Berkeley
+ *  \author shaddenlab.berkeley.edu
  */
 
 #ifndef vtkSVGetSphereRegions_h
@@ -68,17 +58,27 @@ public:
   vtkTypeMacro(vtkSVGetSphereRegions, vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Set name for cell array to be used to determine the in between sections
+  //@{
+  /// \brief Array name defining the separate branches.
   vtkGetStringMacro(CellArrayName);
   vtkSetStringMacro(CellArrayName);
+  //@}
+  //@{
+  /// \brief Array name defining points that are the boundary between CellArrayName values.
+  /// Use vtkSVFindSeparateRegions to get these points.
   vtkGetStringMacro(PointArrayName);
   vtkSetStringMacro(PointArrayName);
+  //@{
+  /// \brief Array name given to points within sphere of bifurcating region.
   vtkGetStringMacro(OutCellArrayName);
   vtkSetStringMacro(OutCellArrayName);
+  //@}
 
+  //@{
+  /// \brief Set/Get the sphere radius. Same radius used for all boundaries.
   vtkGetMacro(SphereRadius, double);
   vtkSetMacro(SphereRadius, double);
+  //@}
 
 protected:
   vtkSVGetSphereRegions();
@@ -89,7 +89,13 @@ protected:
 		  vtkInformationVector **inputVector,
 		  vtkInformationVector *outputVector);
 
+  /** \brief Sets the arrays using the given CellArrayName and PointArrayName. */
+  int GetArrays(vtkPolyData *object,int type);
+
+  /** \brief Finds the loops of the boundary points. */
   int GetClosedEdgeLoops(vtkPolyData *pd, vtkPolyData *linepd,int *numLoops);
+
+  /** \brief Sets the sphere regions at each boundary loop. */
   int SetSphereRegions(vtkPolyData *pd, vtkPolyData *linepd,int numLoops);
 
   vtkIntArray *CellArray;
@@ -100,8 +106,6 @@ protected:
   char* OutCellArrayName;
 
   double SphereRadius;
-
-  int GetArrays(vtkPolyData *object,int type);
 
 private:
   vtkSVGetSphereRegions(const vtkSVGetSphereRegions&);  // Not implemented.

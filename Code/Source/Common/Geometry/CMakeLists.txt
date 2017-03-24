@@ -38,15 +38,9 @@ list(APPEND CORELIBS ${lib})
 include_directories(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
 set(CXXSRCS cv_sys_geom.cxx cv_ggems.cxx
-	cv_spline.cxx cv_integrate_surface.cxx
-	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx
-	vtkSurfaceVectors.cxx
-	vtkLoftPolyDataSolid.cxx)
+	cv_spline.cxx cv_integrate_surface.cxx)
 set(HDRS cv_sys_geom.h cv_ggems.h
-	cv_spline.h cv_integrate_surface.h
-	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h
-	vtkSurfaceVectors.h
-	vtkLoftPolyDataSolid.h)
+	cv_spline.h cv_integrate_surface.h)
 
 add_definitions("-DSV_EXPORT_SYSGEOM_COMPILE")
 

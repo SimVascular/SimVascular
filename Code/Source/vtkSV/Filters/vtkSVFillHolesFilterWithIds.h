@@ -28,14 +28,15 @@
  *
  *=========================================================================*/
 
-/** @file vtkSVFillHolesFilterWithIds.h
- *  @brief This is a filter to be able to apply ids to the surfaces that
- *  @brief fill the holes
+/**
+ *  \class vtkSVFillHolesFilterWithIds
+ *  \brief This is a filter to be able to apply ids to the surfaces that
+ *  fill the holes
  *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
+ *  \author Adam Updegrove
+ *  \author updega2@gmail.com
+ *  \author UC Berkeley
+ *  \author shaddenlab.berkeley.edu
  */
 
 #ifndef vtkSVFillHolesFilterWithIds_h
@@ -49,32 +50,37 @@ class vtkAbstractTransform;
 class VTKSVFILTERS_EXPORT vtkSVFillHolesFilterWithIds : public vtkPolyDataAlgorithm
 {
 public:
-  // Description:
   // Standard methods for instantiation, type information and printing.
   static vtkSVFillHolesFilterWithIds *New();
   vtkTypeMacro(vtkSVFillHolesFilterWithIds,vtkPolyDataAlgorithm);
   void PrintSelf(ostream& os, vtkIndent indent);
 
-  // Description:
-  // Specify the maximum hole size to fill. This is represented as a radius
-  // to the bounding circumsphere containing the hole.  Note that this is an
-  // approximate area; the actual area cannot be computed without first
-  // triangulating the hole.
+  //@{
+  /// \brief Specify the maximum hole size to fill. This is represented as a radius
+  /// to the bounding circumsphere containing the hole.  Note that this is an
+  /// approximate area; the actual area cannot be computed without first
+  /// triangulating the hole.
   vtkSetClampMacro(HoleSize, double, 0.0, VTK_FLOAT_MAX);
   vtkGetMacro(HoleSize, double);
+  //@}
 
-  // Description:
-  // Integer describing the number of holes filled
+  /// \brief Integer describing the number of holes filled
   vtkGetMacro(NumberOfHolesFilled, int);
 
-  // Description:
-  // Integer describing the number of holes filled
+  //@{
+  /// \brief If CapFillType set to VTK_FILL_ID, this value is used
+  /// to set the falue at all caps. Default is -1.
   vtkGetMacro(FillId, int);
   vtkSetMacro(FillId, int);
+  //@}
 
+  //@{
+  /// \brief Set the cap fill type, 0 - number filled, 1 - fillid.
   vtkGetMacro(FillType, int);
   vtkSetMacro(FillType, int);
+  //@}
 
+  /// \brief FillType VTK_NUM_FILLED and VTK_FILL_ID implemented.
   enum CapFillType
   {
     VTK_NUM_FILLED=0,

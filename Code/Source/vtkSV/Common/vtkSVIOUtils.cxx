@@ -177,12 +177,14 @@ int vtkSVIOUtils::ReadInputFile(std::string inputFilename, vtkPolyData *polydata
   // If it is an stl, read
   if(!strncmp(ext.c_str(),"stl",3))
   {
-    vtkSVIOUtils::ReadSTLFile(inputFilename, polydata);
+    if (vtkSVIOUtils::ReadSTLFile(inputFilename, polydata) != SV_OK)
+      return SV_ERROR;
   }
   // If it is a vtp, read
   else if(!strncmp(ext.c_str(),"vtp",3))
   {
-    vtkSVIOUtils::ReadVTPFile(inputFilename, polydata);
+    if (vtkSVIOUtils::ReadVTPFile(inputFilename, polydata) != SV_OK)
+      return SV_ERROR;
   }
   // Other file types are not supported
   else

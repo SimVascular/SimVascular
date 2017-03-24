@@ -67,7 +67,7 @@
 #include "vtkvmtkMergeCenterlines.h"
 #endif
 
-#include "vtkLoftPolyDataSolid.h"
+#include "vtkSVLoftPolyDataSolid.h"
 #include "vtkSVConstrainedSmoothing.h"
 #include "vtkSVConstrainedBlend.h"
 #include "vtkSVLocalButterflySubdivisionFilter.h"
@@ -2362,7 +2362,7 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
   cvPolyData *result = NULL;
   *dst = NULL;
 
-  vtkNew(vtkLoftPolyDataSolid,lofter);
+  vtkNew(vtkSVLoftPolyDataSolid,lofter);
   for (int i=0;i<numSrcs;i++)
   {
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();

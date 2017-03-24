@@ -2507,7 +2507,6 @@ int vtkSVLoopIntersectionPolyDataFilter::RequestData(
   obbTree0->IntersectWithOBBTree
     (obbTree1, 0, vtkSVLoopIntersectionPolyDataFilter::
      Impl::FindTriangleIntersections, impl);
-  fprintf(stdout,"Triangle intersections found\n");
 
   int rawLines = outputIntersection->GetNumberOfLines();
 

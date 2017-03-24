@@ -39,17 +39,14 @@
 
 #include "vtkSVConstrainedBlend.h"
 
-#include "vtkFloatArray.h"
+#include "vtkCellData.h"
 #include "vtkInformation.h"
 #include "vtkInformationVector.h"
 #include "vtkObjectFactory.h"
+#include "vtkPointData.h"
 #include "vtkPolyData.h"
-#include "vtkUnstructuredGrid.h"
 #include "vtkCellArray.h"
 #include "vtkIntArray.h"
-#include "vtkDoubleArray.h"
-#include "vtkCellData.h"
-#include "vtkPointData.h"
 #include "vtkSmartPointer.h"
 #include "vtkSVConstrainedSmoothing.h"
 #include "vtkSVGeneralUtils.h"
@@ -58,18 +55,21 @@
 #include "vtkSVLocalSmoothPolyDataFilter.h"
 #include "vtkSVLocalQuadricDecimation.h"
 #include "vtkPolyDataNormals.h"
-#include "vtkCellLocator.h"
-#include "vtkGenericCell.h"
-#include "vtkMath.h"
 
 #include <iostream>
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
 vtkStandardNewMacro(vtkSVConstrainedBlend);
 
+// ----------------------
+// Constructor
+// ----------------------
 vtkSVConstrainedBlend::vtkSVConstrainedBlend()
 {
-    this->CellArrayName = 0;
-    this->PointArrayName = 0;
+    this->CellArrayName  = NULL;
+    this->PointArrayName = NULL;
     this->Weight = 0.2;
 
     this->UsePointArray = 0;
@@ -85,19 +85,56 @@ vtkSVConstrainedBlend::vtkSVConstrainedBlend()
     this->NumSubdivisionIterations = 1;
 }
 
+// ----------------------
+// Destructor
+// ----------------------
 vtkSVConstrainedBlend::~vtkSVConstrainedBlend()
 {
+  if (this->CellArrayName != NULL)
+  {
+    delete [] this->CellArrayName;
+    this->CellArrayName = NULL;
+  }
+  if (this->PointArrayName != NULL)
+  {
+    delete [] this->PointArrayName;
+    this->PointArrayName = NULL;
+  }
 }
 
+// ----------------------
+// PrintSelf
+// ----------------------
 void vtkSVConstrainedBlend::PrintSelf(ostream& os, vtkIndent indent)
 {
+  this->Superclass::PrintSelf(os, indent);
+
+  if (this->CellArrayName != NULL)
+    os << indent << "Cell array name: " << this->CellArrayName << "\n";
+  if (this->PointArrayName != NULL)
+    os << indent << "Point array name: " << this->PointArrayName << "\n";
+
+  os << indent << "Weight: " << this->Weight << "\n";
+
+  os << indent << "Use point array: " << this->UsePointArray << "\n";
+  os << indent << "Use cell array: " << this->UseCellArray << "\n";
+
+  os << indent << "Number of blend operations: " << this->NumBlendOperations << "\n";
+  os << indent << "Number of sub blend operations: " << this->NumSubBlendOperations << "\n";
+  os << indent << "Number of constrained smooth operations: " << this->NumConstrainedSmoothOperations << "\n";
+  os << indent << "Number of laplacian smooth operations: " << this->NumLapSmoothOperations << "\n";
+  os << indent << "Relaxation factor: " << this->RelaxationFactor << "\n";
+  os << indent << "Number of conjugate gradient iterations: " << this->NumGradientSolves << "\n";
+  os << indent << "Target reduction for decimation: " << this->DecimationTargetReduction << "\n";
+  os << indent << "Number of iterations in subdivision: " << this->NumSubdivisionIterations << "\n";
 }
 
-// Generate Separated Surfaces with Region ID Numbers
-int vtkSVConstrainedBlend::RequestData(
-                                 vtkInformation *vtkNotUsed(request),
-                                 vtkInformationVector **inputVector,
-                                 vtkInformationVector *outputVector)
+// ----------------------
+// RequestData
+// ----------------------
+int vtkSVConstrainedBlend::RequestData(vtkInformation *vtkNotUsed(request),
+                                       vtkInformationVector **inputVector,
+                                       vtkInformationVector *outputVector)
 {
     // get the input and output
     vtkPolyData *input = vtkPolyData::GetData(inputVector[0]);
@@ -120,24 +157,34 @@ int vtkSVConstrainedBlend::RequestData(
     //Check the input to make sure it is there
     if (numPolys < 1)
     {
-        vtkDebugMacro("No input!");
-	return 1;
+      vtkDebugMacro("No input!");
+      return SV_OK;
     }
 
     if (this->UsePointArray)
     {
+      if (this->PointArrayName == NULL)
+      {
+        std::cout<<"No PointArrayName given." << endl;
+        return SV_ERROR;
+      }
       if (this->GetArrays(input,0) != 1)
       {
-	std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
-	return 0;
+        std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
+        return SV_ERROR;
       }
     }
     if (this->UseCellArray)
     {
+      if (this->CellArrayName == NULL)
+      {
+        std::cout<<"No CellArrayName given." << endl;
+        return SV_ERROR;
+      }
       if (this->GetArrays(input,1) != 1)
       {
-	std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
-	return 0;
+        std::cout<<"No Cell Array Named "<<this->CellArrayName<<" on surface"<<endl;
+        return SV_ERROR;
       }
     }
 
@@ -147,53 +194,36 @@ int vtkSVConstrainedBlend::RequestData(
     {
       for (int j=0;j<this->NumSubBlendOperations;j++)
       {
-        std::cout<<"ConstrainedSmooth!"<<endl;
-	this->ConstrainedSmooth(tmp);
+        this->ConstrainedSmooth(tmp);
 
-        std::cout<<"LapSmooth!"<<endl;
-	this->LaplacianSmooth(tmp);
+        this->LaplacianSmooth(tmp);
 
-        std::cout<<"Decimate!"<<endl;
         this->Decimate(tmp);
       }
-      std::cout<<"Subdivide!"<<endl;
       this->Subdivide(tmp);
     }
 
     output->DeepCopy(tmp);
-    return 1;
+    return SV_OK;
 }
 
+// ----------------------
+// GetArrays
+// ----------------------
 int vtkSVConstrainedBlend::GetArrays(vtkPolyData *object,int type)
 {
   vtkIdType i;
-  int exists = 0;
   int numArrays;
 
+  // Set array name
+  std::string arrayName;
   if (type == 0)
-  {
-    numArrays = object->GetPointData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetPointData()->GetArrayName(i),
-	    this->PointArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->PointArrayName;
   else
-  {
-    numArrays = object->GetCellData()->GetNumberOfArrays();
-    for (i=0;i<numArrays;i++)
-    {
-      if (!strcmp(object->GetCellData()->GetArrayName(i),
-	    this->CellArrayName))
-      {
-	exists = 1;
-      }
-    }
-  }
+    arrayName = this->CellArrayName;
+
+  // Check if array exists
+  int exists = vtkSVGeneralUtils::CheckArrayExists(object, type, arrayName);
 
   if (exists)
   {
@@ -213,6 +243,9 @@ int vtkSVConstrainedBlend::GetArrays(vtkPolyData *object,int type)
   return exists;
 }
 
+// ----------------------
+// Decimate
+// ----------------------
 int vtkSVConstrainedBlend::Decimate(vtkPolyData *pd) {
   vtkNew(vtkSVLocalQuadricDecimation, decimator);
   decimator->SetInputData(pd);
@@ -235,7 +268,7 @@ int vtkSVConstrainedBlend::Decimate(vtkPolyData *pd) {
     if (this->GetArrays(pd,0) != 1)
     {
       std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
-      return 0;
+      return SV_ERROR;
     }
   }
   if (this->UseCellArray)
@@ -243,13 +276,16 @@ int vtkSVConstrainedBlend::Decimate(vtkPolyData *pd) {
     if (this->GetArrays(pd,1) != 1)
     {
       std::cout<<"No Point Array Named "<<this->CellArrayName<<" on surface"<<endl;
-      return 0;
+      return SV_ERROR;
     }
   }
 
-  return 1;
+  return SV_OK;
 }
 
+// ----------------------
+// Subdivide
+// ----------------------
 int vtkSVConstrainedBlend::Subdivide(vtkPolyData *pd) {
   vtkNew(vtkSVLocalLoopSubdivisionFilter, subdivider);
 
@@ -273,7 +309,7 @@ int vtkSVConstrainedBlend::Subdivide(vtkPolyData *pd) {
     if (this->GetArrays(pd,0) != 1)
     {
       std::cout<<"No Point Array Named "<<this->PointArrayName<<" on surface"<<endl;
-      return 0;
+      return SV_ERROR;
     }
   }
   if (this->UseCellArray)
@@ -281,12 +317,15 @@ int vtkSVConstrainedBlend::Subdivide(vtkPolyData *pd) {
     if (this->GetArrays(pd,1) != 1)
     {
       std::cout<<"No Point Array Named "<<this->CellArrayName<<" on surface"<<endl;
-      return 0;
+      return SV_ERROR;
     }
   }
-  return 1;
+  return SV_OK;
 }
 
+// ----------------------
+// ConstrainedSmooth
+// ----------------------
 int vtkSVConstrainedBlend::ConstrainedSmooth(vtkPolyData *pd)
 {
   vtkNew(vtkSVConstrainedSmoothing, smoother);
@@ -307,9 +346,12 @@ int vtkSVConstrainedBlend::ConstrainedSmooth(vtkPolyData *pd)
   smoother->Update();
 
   pd->DeepCopy(smoother->GetOutput());
-  return 1;
+  return SV_OK;
 }
 
+// ----------------------
+// LaplacianSmooth
+// ----------------------
 int vtkSVConstrainedBlend::LaplacianSmooth(vtkPolyData *pd)
 {
   vtkNew(vtkSVLocalSmoothPolyDataFilter, smoother);
@@ -330,7 +372,5 @@ int vtkSVConstrainedBlend::LaplacianSmooth(vtkPolyData *pd)
   smoother->Update();
 
   pd->DeepCopy(smoother->GetOutput());
-  return 1;
+  return SV_OK;
 }
-
-

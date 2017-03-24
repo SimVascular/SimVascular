@@ -922,7 +922,6 @@ int vtkSVLoopBooleanPolyDataFilter::RequestData(
     }
 
   // Get intersected versions
-  fprintf(stdout,"Running Intersection...\n");
   vtkNew(vtkSVLoopIntersectionPolyDataFilter, polydataIntersection);
   polydataIntersection->SetInputConnection
     (0, this->GetInputConnection(0, 0));
@@ -937,7 +936,6 @@ int vtkSVLoopBooleanPolyDataFilter::RequestData(
     this->Status = 0;
     return SV_ERROR;
     }
-  fprintf(stdout,"Intersection done\n");
 
   this->NumberOfIntersectionPoints =
           polydataIntersection->GetNumberOfIntersectionPoints();

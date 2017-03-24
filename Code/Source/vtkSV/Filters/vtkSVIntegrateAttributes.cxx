@@ -1,18 +1,33 @@
 /*=========================================================================
-
-  Program:   Visualization Toolkit
-  Module:    vtkIntegrateAttributes.cxx
-
-  Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
-  All rights reserved.
-  See Copyright.txt or http://www.kitware.com/Copyright.htm for details.
-
-     This software is distributed WITHOUT ANY WARRANTY; without even
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
-     PURPOSE.  See the above copyright notice for more information.
-
-=========================================================================*/
-#include "vtkIntegrateAttributes.h"
+ *
+ * Copyright (c) 2014-2015 The Regents of the University of California.
+ * All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining
+ * a copy of this software and associated documentation files (the
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
+ * distribute, sublicense, and/or sell copies of the Software, and to
+ * permit persons to whom the Software is furnished to do so, subject
+ * to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included
+ * in all copies or substantial portions of the Software.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+ * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
+ * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
+ * PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER
+ * OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+ * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+ * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+ * PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+ * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+ * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ *=========================================================================*/
+#include "vtkSVIntegrateAttributes.h"
 
 #include "vtkCellData.h"
 #include "vtkCellType.h"
@@ -35,10 +50,15 @@
 #include "vtkTriangle.h"
 #include "vtkUnstructuredGrid.h"
 
+// ----------------------
+// StandardNewMacro
+// ----------------------
+vtkStandardNewMacro(vtkSVIntegrateAttributes);
 
-vtkStandardNewMacro(vtkIntegrateAttributes);
-
-class vtkIntegrateAttributes::vtkFieldList :
+// ----------------------
+// FieldList
+// ----------------------
+class vtkSVIntegrateAttributes::vtkFieldList :
   public vtkDataSetAttributes::FieldList
 {
 public:
@@ -47,8 +67,10 @@ public:
       { this->vtkDataSetAttributes::FieldList::SetFieldIndex(i, index); }
 };
 
-//-----------------------------------------------------------------------------
-vtkIntegrateAttributes::vtkIntegrateAttributes()
+// ----------------------
+// Constructor
+// ----------------------
+vtkSVIntegrateAttributes::vtkSVIntegrateAttributes()
 {
   this->IntegrationDimension = 0;
   this->Sum = 0.0;
@@ -64,8 +86,10 @@ vtkIntegrateAttributes::vtkIntegrateAttributes()
 #endif
 }
 
-//-----------------------------------------------------------------------------
-vtkIntegrateAttributes::~vtkIntegrateAttributes()
+// ----------------------
+// Destructor
+// ----------------------
+vtkSVIntegrateAttributes::~vtkSVIntegrateAttributes()
 {
 
 #ifdef VTK_USE_PARALLEL
@@ -79,10 +103,12 @@ vtkIntegrateAttributes::~vtkIntegrateAttributes()
 }
 
 
-#ifdef VTK_USE_PARALLEL
-//----------------------------------------------------------------------------
-void vtkIntegrateAttributes::SetController(vtkMultiProcessController *controller)
+// ----------------------
+// SetController
+// ----------------------
+void vtkSVIntegrateAttributes::SetController(vtkMultiProcessController *controller)
 {
+#ifdef VTK_USE_PARALLEL
   if(this->Controller)
     {
     this->Controller->UnRegister(this);
@@ -94,17 +120,22 @@ void vtkIntegrateAttributes::SetController(vtkMultiProcessController *controller
     {
     this->Controller->Register(this);
     }
-}
 #endif
+}
 
-//----------------------------------------------------------------------------
-vtkExecutive* vtkIntegrateAttributes::CreateDefaultExecutive()
+
+// ----------------------
+// CreateDefaultExecutive
+// ----------------------
+vtkExecutive* vtkSVIntegrateAttributes::CreateDefaultExecutive()
 {
   return vtkCompositeDataPipeline::New();
 }
 
-//----------------------------------------------------------------------------
-int vtkIntegrateAttributes::FillInputPortInformation(int port,
+// ----------------------
+// FillInputPortInformation
+// ----------------------
+int vtkSVIntegrateAttributes::FillInputPortInformation(int port,
                                                      vtkInformation* info)
 {
   if(!this->Superclass::FillInputPortInformation(port, info))
@@ -115,8 +146,10 @@ int vtkIntegrateAttributes::FillInputPortInformation(int port,
   return 1;
 }
 
-//-----------------------------------------------------------------------------
-int vtkIntegrateAttributes::CompareIntegrationDimension(vtkDataSet* output,
+// ----------------------
+// CompareIntegrationDimension
+// ----------------------
+int vtkSVIntegrateAttributes::CompareIntegrationDimension(vtkDataSet* output,
                                                         int dim)
 {
   // higher dimension prevails
@@ -133,12 +166,14 @@ int vtkIntegrateAttributes::CompareIntegrationDimension(vtkDataSet* output,
   return (this->IntegrationDimension == dim);
 }
 
-//----------------------------------------------------------------------------
-void vtkIntegrateAttributes::ExecuteBlock(
+// ----------------------
+// ExecutiveBlock
+// ----------------------
+void vtkSVIntegrateAttributes::ExecuteBlock(
   vtkDataSet* input, vtkUnstructuredGrid* output,
   int fieldset_index,
-  vtkIntegrateAttributes::vtkFieldList& pdList,
-  vtkIntegrateAttributes::vtkFieldList& cdList)
+  vtkSVIntegrateAttributes::vtkFieldList& pdList,
+  vtkSVIntegrateAttributes::vtkFieldList& cdList)
 {
   vtkDataArray* ghostLevelArray =
     input->GetCellData()->GetArray("vtkGhostLevels");
@@ -316,8 +351,10 @@ void vtkIntegrateAttributes::ExecuteBlock(
   this->FieldListIndex = 0;
 }
 
-//-----------------------------------------------------------------------------
-int vtkIntegrateAttributes::RequestData(vtkInformation*,
+// ----------------------
+// RequestData
+// ----------------------
+int vtkSVIntegrateAttributes::RequestData(vtkInformation*,
                                         vtkInformationVector** inputVector,
                                         vtkInformationVector* outputVector)
 {
@@ -507,8 +544,8 @@ int vtkIntegrateAttributes::RequestData(vtkInformation*,
     msg[2] = this->SumCenter[0];
     msg[3] = this->SumCenter[1];
     msg[4] = this->SumCenter[2];
-    this->Controller->Send(msg, 5, 0, vtkIntegrateAttributes::IntegrateAttrInfo);
-    this->Controller->Send(output, 0, vtkIntegrateAttributes::IntegrateAttrData);
+    this->Controller->Send(msg, 5, 0, vtkSVIntegrateAttributes::IntegrateAttrInfo);
+    this->Controller->Send(output, 0, vtkSVIntegrateAttributes::IntegrateAttrData);
     // Done sending.  Reset output so satellites will have empty data.
     output->Initialize();
     }
@@ -521,11 +558,11 @@ int vtkIntegrateAttributes::RequestData(vtkInformation*,
       this->Controller->Receive(msg,
                                 5,
                                 id,
-                                vtkIntegrateAttributes::IntegrateAttrInfo);
+                                vtkSVIntegrateAttributes::IntegrateAttrInfo);
       vtkUnstructuredGrid* tmp = vtkUnstructuredGrid::New();
       this->Controller->Receive(tmp,
                                 id,
-                                vtkIntegrateAttributes::IntegrateAttrData);
+                                vtkSVIntegrateAttributes::IntegrateAttrData);
       if (this->CompareIntegrationDimension(output, (int)(msg[0])))
         {
         this->Sum += msg[1];
@@ -571,9 +608,11 @@ int vtkIntegrateAttributes::RequestData(vtkInformation*,
   return 1;
 }
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::AllocateAttributes(
-  vtkIntegrateAttributes::vtkFieldList& fieldList,
+// ----------------------
+// AllocateAttributes
+// ----------------------
+void vtkSVIntegrateAttributes::AllocateAttributes(
+  vtkSVIntegrateAttributes::vtkFieldList& fieldList,
   vtkDataSetAttributes* outda)
 {
   int numArrays = fieldList.GetNumberOfFields();
@@ -600,8 +639,10 @@ void vtkIntegrateAttributes::AllocateAttributes(
     }
 }
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::ZeroAttributes(vtkDataSetAttributes* outda)
+// ----------------------
+// ZeroAttributes
+// ----------------------
+void vtkSVIntegrateAttributes::ZeroAttributes(vtkDataSetAttributes* outda)
 {
   int numArrays, i, numComponents, j;
   vtkDataArray* outArray;
@@ -616,11 +657,14 @@ void vtkIntegrateAttributes::ZeroAttributes(vtkDataSetAttributes* outda)
       }
     }
 }
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::IntegrateData1(vtkDataSetAttributes* inda,
+
+// ----------------------
+// IntegrateData1
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateData1(vtkDataSetAttributes* inda,
   vtkDataSetAttributes* outda,
   vtkIdType pt1Id, double k,
-  vtkIntegrateAttributes::vtkFieldList& fieldList, int index)
+  vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
   int numArrays, i, numComponents, j;
   vtkDataArray* inArray;
@@ -647,11 +691,14 @@ void vtkIntegrateAttributes::IntegrateData1(vtkDataSetAttributes* inda,
       }
     }
 }
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::IntegrateData2(vtkDataSetAttributes* inda,
+
+// ----------------------
+// IntegrateData2
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateData2(vtkDataSetAttributes* inda,
   vtkDataSetAttributes* outda,
   vtkIdType pt1Id, vtkIdType pt2Id, double k,
-  vtkIntegrateAttributes::vtkFieldList& fieldList, int index)
+  vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
   int numArrays, i, numComponents, j;
   vtkDataArray* inArray;
@@ -679,13 +726,15 @@ void vtkIntegrateAttributes::IntegrateData2(vtkDataSetAttributes* inda,
       }
     }
 }
-//-----------------------------------------------------------------------------
+// ----------------------
+// IntegrateData3
+// ----------------------
 // Is the extra performance worth duplicating this code with IntergrateData2.
-void vtkIntegrateAttributes::IntegrateData3(vtkDataSetAttributes* inda,
+void vtkSVIntegrateAttributes::IntegrateData3(vtkDataSetAttributes* inda,
   vtkDataSetAttributes* outda,
   vtkIdType pt1Id, vtkIdType pt2Id,
   vtkIdType pt3Id, double k,
-  vtkIntegrateAttributes::vtkFieldList& fieldList, int index)
+  vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
   int numArrays, i, numComponents, j;
   vtkDataArray* inArray;
@@ -715,14 +764,16 @@ void vtkIntegrateAttributes::IntegrateData3(vtkDataSetAttributes* inda,
     }
 }
 
-//-----------------------------------------------------------------------------
+// ----------------------
+// IntegrateData4
+// ----------------------
 // Is the extra performance worth duplicating this code with IntergrateData2.
-void vtkIntegrateAttributes::IntegrateData4(vtkDataSetAttributes* inda,
+void vtkSVIntegrateAttributes::IntegrateData4(vtkDataSetAttributes* inda,
   vtkDataSetAttributes* outda,
   vtkIdType pt1Id, vtkIdType pt2Id,
   vtkIdType pt3Id, vtkIdType pt4Id,
   double k,
-  vtkIntegrateAttributes::vtkFieldList& fieldList, int index)
+  vtkSVIntegrateAttributes::vtkFieldList& fieldList, int index)
 {
   int numArrays, i, numComponents, j;
   vtkDataArray* inArray;
@@ -753,9 +804,11 @@ void vtkIntegrateAttributes::IntegrateData4(vtkDataSetAttributes* inda,
     }
 }
 
-//-----------------------------------------------------------------------------
+// ----------------------
+// IntegrateSatelliteData
+// ----------------------
 // Used to sum arrays from all processes.
-void vtkIntegrateAttributes::IntegrateSatelliteData(vtkDataSetAttributes* inda,
+void vtkSVIntegrateAttributes::IntegrateSatelliteData(vtkDataSetAttributes* inda,
                                                     vtkDataSetAttributes* outda)
 {
   if (inda->GetNumberOfArrays() != outda->GetNumberOfArrays())
@@ -791,8 +844,10 @@ void vtkIntegrateAttributes::IntegrateSatelliteData(vtkDataSetAttributes* inda,
     }
 }
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::IntegratePolyLine(vtkDataSet* input,
+// ----------------------
+// IntegratePolyLine
+// ----------------------
+void vtkSVIntegrateAttributes::IntegratePolyLine(vtkDataSet* input,
                                                vtkUnstructuredGrid* output,
                                                vtkIdType cellId,
                                                vtkIdList* ptIds)
@@ -833,9 +888,10 @@ void vtkIntegrateAttributes::IntegratePolyLine(vtkDataSet* input,
     }
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkIntegrateAttributes::IntegrateGeneral1DCell(vtkDataSet* input,
+// ----------------------
+// IntegrateGeneral1DCell
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateGeneral1DCell(vtkDataSet* input,
                                                vtkUnstructuredGrid* output,
                                                vtkIdType cellId,
                                                vtkIdList* ptIds)
@@ -886,8 +942,10 @@ vtkIntegrateAttributes::IntegrateGeneral1DCell(vtkDataSet* input,
     }
 }
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::IntegrateTriangleStrip(vtkDataSet* input,
+// ----------------------
+// IntegrateTriangleStrip
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateTriangleStrip(vtkDataSet* input,
                                                     vtkUnstructuredGrid* output,
                                                     vtkIdType cellId,
                                                     vtkIdList* ptIds)
@@ -905,9 +963,11 @@ void vtkIntegrateAttributes::IntegrateTriangleStrip(vtkDataSet* input,
     }
 }
 
-//-----------------------------------------------------------------------------
-// Works for convex polygons, and interpoaltion is not correct.
-void vtkIntegrateAttributes::IntegratePolygon(vtkDataSet* input,
+// ----------------------
+// IntegratePolygon
+// ----------------------
+/// \details Works for convex polygons, and interpoaltion is not correct.
+void vtkSVIntegrateAttributes::IntegratePolygon(vtkDataSet* input,
                                               vtkUnstructuredGrid* output,
                                               vtkIdType cellId,
                                               vtkIdList* ptIds)
@@ -925,9 +985,11 @@ void vtkIntegrateAttributes::IntegratePolygon(vtkDataSet* input,
     }
 }
 
-//-----------------------------------------------------------------------------
-// For axis alligned rectangular cells
-void vtkIntegrateAttributes::IntegratePixel(vtkDataSet* input,
+// ----------------------
+// IntegratePixel
+// ----------------------
+/// \details For axis alligned rectangular cells
+void vtkSVIntegrateAttributes::IntegratePixel(vtkDataSet* input,
                                             vtkUnstructuredGrid* output,
                                             vtkIdType cellId,
                                             vtkIdList* cellPtIds)
@@ -972,8 +1034,10 @@ void vtkIntegrateAttributes::IntegratePixel(vtkDataSet* input,
     *this->CellFieldList, this->FieldListIndex);
 }
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::IntegrateTriangle(vtkDataSet* input,
+// ----------------------
+// IntegrateTriangle
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateTriangle(vtkDataSet* input,
                                                vtkUnstructuredGrid* output,
                                                vtkIdType cellId,
                                                vtkIdType pt1Id,
@@ -1024,9 +1088,10 @@ void vtkIntegrateAttributes::IntegrateTriangle(vtkDataSet* input,
     *this->CellFieldList, this->FieldListIndex);
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkIntegrateAttributes::IntegrateGeneral2DCell(vtkDataSet* input,
+// ----------------------
+// IntegrateGeneral2DCell
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateGeneral2DCell(vtkDataSet* input,
                                                vtkUnstructuredGrid* output,
                                                vtkIdType cellId,
                                                vtkIdList* ptIds)
@@ -1054,9 +1119,11 @@ vtkIntegrateAttributes::IntegrateGeneral2DCell(vtkDataSet* input,
     }
 }
 
-//-----------------------------------------------------------------------------
-// For Tetrahedral cells
-void vtkIntegrateAttributes::IntegrateTetrahedron(vtkDataSet* input,
+// ----------------------
+// IntegrateTetrahedron
+// ----------------------
+/// \details For Tetrahedral cells
+void vtkSVIntegrateAttributes::IntegrateTetrahedron(vtkDataSet* input,
                                                   vtkUnstructuredGrid* output,
                                                   vtkIdType cellId,
                                                   vtkIdType pt1Id,
@@ -1104,9 +1171,11 @@ void vtkIntegrateAttributes::IntegrateTetrahedron(vtkDataSet* input,
 
 }
 
-//-----------------------------------------------------------------------------
-// For axis alligned hexahedral cells
-void vtkIntegrateAttributes::IntegrateVoxel(vtkDataSet* input,
+// ----------------------
+// IntegrateVoxel
+// ----------------------
+/// \details For axis alligned hexahedral cells
+void vtkSVIntegrateAttributes::IntegrateVoxel(vtkDataSet* input,
                                             vtkUnstructuredGrid* output,
                                             vtkIdType cellId,
                                             vtkIdList* cellPtIds)
@@ -1176,9 +1245,10 @@ void vtkIntegrateAttributes::IntegrateVoxel(vtkDataSet* input,
                        *this->PointFieldList, this->FieldListIndex);
 }
 
-//-----------------------------------------------------------------------------
-void
-vtkIntegrateAttributes::IntegrateGeneral3DCell(vtkDataSet* input,
+// ----------------------
+// IntegrateGeneral3DCell
+// ----------------------
+void vtkSVIntegrateAttributes::IntegrateGeneral3DCell(vtkDataSet* input,
                                                vtkUnstructuredGrid* output,
                                                vtkIdType cellId,
                                                vtkIdList* ptIds)
@@ -1210,8 +1280,10 @@ vtkIntegrateAttributes::IntegrateGeneral3DCell(vtkDataSet* input,
 }
 
 
-//-----------------------------------------------------------------------------
-void vtkIntegrateAttributes::PrintSelf(ostream& os, vtkIndent indent)
+// ----------------------
+// PrintSelf
+// ----------------------
+void vtkSVIntegrateAttributes::PrintSelf(ostream& os, vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
 

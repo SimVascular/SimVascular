@@ -28,16 +28,7 @@
  *
  *=========================================================================*/
 
-/** @file vtkLoftPolyDataSolid.cxx
- *  @brief This is the filter to loft a solid from segmentation groups
- *
- *  @author Adam Updegrove
- *  @author updega2@gmail.com
- *  @author UC Berkeley
- *  @author shaddenlab.berkeley.edu
- */
-
-#include "vtkLoftPolyDataSolid.h"
+#include "vtkSVLoftPolyDataSolid.h"
 
 #include "vtkAlgorithmOutput.h"
 #include "vtkCellArray.h"
@@ -57,15 +48,19 @@
 #include "vtkParametricSpline.h"
 #include "vtkSpline.h"
 
-#include "cv_polydatasolid_utils.h"
 #include <string>
 #include <sstream>
 #include <iostream>
 
-vtkStandardNewMacro(vtkLoftPolyDataSolid);
+// ----------------------
+// StandardNewMacro
+// ----------------------
+vtkStandardNewMacro(vtkSVLoftPolyDataSolid);
 
-//----------------------------------------------------------------------------
-vtkLoftPolyDataSolid::vtkLoftPolyDataSolid()
+// ----------------------
+// Constructor
+// ----------------------
+vtkSVLoftPolyDataSolid::vtkSVLoftPolyDataSolid()
 {
   this->ParallelStreaming = 0;
   this->UserManagedInputs = 0;
@@ -84,14 +79,18 @@ vtkLoftPolyDataSolid::vtkLoftPolyDataSolid()
   this->Continuity = 0;
 }
 
-//----------------------------------------------------------------------------
-vtkLoftPolyDataSolid::~vtkLoftPolyDataSolid()
+// ----------------------
+// Destructor
+// ----------------------
+vtkSVLoftPolyDataSolid::~vtkSVLoftPolyDataSolid()
 {
 }
 
-//----------------------------------------------------------------------------
-// Add a dataset to the list of data to append.
-void vtkLoftPolyDataSolid::AddInputData(vtkPolyData *ds)
+// ----------------------
+// AddInputData
+// ----------------------
+/// \details Add a dataset to the list of data to append.
+void vtkSVLoftPolyDataSolid::AddInputData(vtkPolyData *ds)
 {
   if (this->UserManagedInputs)
     {
@@ -102,9 +101,11 @@ void vtkLoftPolyDataSolid::AddInputData(vtkPolyData *ds)
   this->Superclass::AddInputData(ds);
 }
 
-//----------------------------------------------------------------------------
-// Remove a dataset from the list of data to append.
-void vtkLoftPolyDataSolid::RemoveInputData(vtkPolyData *ds)
+// ----------------------
+// AddInputData
+// ----------------------
+/// \details Remove a dataset from the list of data to append.
+void vtkSVLoftPolyDataSolid::RemoveInputData(vtkPolyData *ds)
 {
   if (this->UserManagedInputs)
     {
@@ -128,10 +129,12 @@ void vtkLoftPolyDataSolid::RemoveInputData(vtkPolyData *ds)
     }
 }
 
-//----------------------------------------------------------------------------
-// make ProcessObject function visible
-// should only be used when UserManagedInputs is true.
-void vtkLoftPolyDataSolid::SetNumberOfInputs(int num)
+// ----------------------
+// SetNumberOfInputs
+// ----------------------
+/// \details make ProcessObject function visible
+/// should only be used when UserManagedInputs is true.
+void vtkSVLoftPolyDataSolid::SetNumberOfInputs(int num)
 {
   if (!this->UserManagedInputs)
     {
@@ -144,8 +147,10 @@ void vtkLoftPolyDataSolid::SetNumberOfInputs(int num)
   this->SetNumberOfInputConnections(0, num);
 }
 
-//----------------------------------------------------------------------------
-void vtkLoftPolyDataSolid::
+// ----------------------
+// SetNumberDataByNumber
+// ----------------------
+void vtkSVLoftPolyDataSolid::
 SetInputDataByNumber(int num, vtkPolyData* input)
 {
   vtkTrivialProducer* tp = vtkTrivialProducer::New();
@@ -154,9 +159,11 @@ SetInputDataByNumber(int num, vtkPolyData* input)
   tp->Delete();
 }
 
-//----------------------------------------------------------------------------
-// Set Nth input, should only be used when UserManagedInputs is true.
-void vtkLoftPolyDataSolid::
+// ----------------------
+// SetInputConnectionByNumber
+// ----------------------
+/// \details Set Nth input, should only be used when UserManagedInputs is true.
+void vtkSVLoftPolyDataSolid::
 SetInputConnectionByNumber(int num,vtkAlgorithmOutput *input)
 {
   if (!this->UserManagedInputs)
@@ -171,18 +178,12 @@ SetInputConnectionByNumber(int num,vtkAlgorithmOutput *input)
   this->SetNthInputConnection(0, num, input);
 }
 
-//Function to turn an integer into a string
-std::string intToString(int i)
-{
-  std::stringstream out;
-  out << i;
-  return out.str();
-}
-
-//----------------------------------------------------------------------------
+// ----------------------
+// RequestData
+// ----------------------
 // This method is much too long, and has to be broken up!
 // Append data sets into single polygonal data set.
-int vtkLoftPolyDataSolid::RequestData(
+int vtkSVLoftPolyDataSolid::RequestData(
     vtkInformation *vtkNotUsed(request),
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector)
@@ -205,8 +206,10 @@ int vtkLoftPolyDataSolid::RequestData(
   return 1;
 }
 
-//----------------------------------------------------------------------------
-int vtkLoftPolyDataSolid::RequestUpdateExtent(
+// ----------------------
+// RequestUpdateExtent
+// ----------------------
+int vtkSVLoftPolyDataSolid::RequestUpdateExtent(
     vtkInformation *vtkNotUsed(request),
     vtkInformationVector **inputVector,
     vtkInformationVector *outputVector)
@@ -274,15 +277,19 @@ int vtkLoftPolyDataSolid::RequestUpdateExtent(
   return 1;
 }
 
-//----------------------------------------------------------------------------
-vtkPolyData *vtkLoftPolyDataSolid::GetInput(int idx)
+// ----------------------
+// GetInput
+// ----------------------
+vtkPolyData *vtkSVLoftPolyDataSolid::GetInput(int idx)
 {
   return vtkPolyData::SafeDownCast(
     this->GetExecutive()->GetInputData(0, idx));
 }
 
-//----------------------------------------------------------------------------
-void vtkLoftPolyDataSolid::PrintSelf(ostream& os,
+// ----------------------
+// PrintSelf
+// ----------------------
+void vtkSVLoftPolyDataSolid::PrintSelf(ostream& os,
     vtkIndent indent)
 {
   this->Superclass::PrintSelf(os,indent);
@@ -297,8 +304,10 @@ void vtkLoftPolyDataSolid::PrintSelf(ostream& os,
   os << "NumOutPtsAlongLength: " << this->NumOutPtsAlongLength <<endl;
 }
 
-//----------------------------------------------------------------------------
-int vtkLoftPolyDataSolid::FillInputPortInformation(
+// ----------------------
+// FillInputPortInformation
+// ----------------------
+int vtkSVLoftPolyDataSolid::FillInputPortInformation(
     int port, vtkInformation *info)
 {
   if (!this->Superclass::FillInputPortInformation(port, info))
@@ -309,7 +318,10 @@ int vtkLoftPolyDataSolid::FillInputPortInformation(
   return 1;
 }
 
-int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
+// ----------------------
+// LoftSolid
+// ----------------------
+int vtkSVLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
     vtkPolyData *outputPD)
 {
   vtkKochanekSpline *splineX;
@@ -540,8 +552,11 @@ int vtkLoftPolyDataSolid::LoftSolid(vtkPolyData *inputs[], int numInputs,
   return 1;
 }
 
-// dynamically allocate a 2-dimensional array
-double **vtkLoftPolyDataSolid::createArray(int a, int b) {
+// ----------------------
+// createArray
+// ----------------------
+/// \details dynamically allocate a 2-dimensional array
+double **vtkSVLoftPolyDataSolid::createArray(int a, int b) {
     double ** rtn = new double*[a+1];
     if (rtn == NULL) {
         printf("ERROR: Memory allocation error.\n");
@@ -560,15 +575,21 @@ double **vtkLoftPolyDataSolid::createArray(int a, int b) {
     return rtn;
 }
 
-// dynamically deallocate a 2-dimensional array
-void vtkLoftPolyDataSolid::deleteArray(double **ptr, int a, int b) {
+// ----------------------
+// deleteArray
+// ----------------------
+/// \details dynamically deallocate a 2-dimensional array
+void vtkSVLoftPolyDataSolid::deleteArray(double **ptr, int a, int b) {
     for (int i = 0; i < a+1; i++) {
         delete ptr[i];
     }
     delete ptr;
 }
 
-int vtkLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, double t0,
+// ----------------------
+// LinearInterpolate
+// ----------------------
+int vtkSVLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, double t0,
                             double dt, int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -633,7 +654,10 @@ int vtkLoftPolyDataSolid::linearInterpolate(double **orgPts, int numOrgPts, doub
 
 }
 
-int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
+// ----------------------
+// LinearInterpolateCurve
+// ----------------------
+int vtkSVLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
                                      int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -733,7 +757,10 @@ int vtkLoftPolyDataSolid::linearInterpolateCurve(double **orgPts, int numOrgPts,
 
 }
 
-int vtkLoftPolyDataSolid::curveLength(double **pts, int numPts, int closed, double *length) {
+// ----------------------
+// curveLength
+// ----------------------
+int vtkSVLoftPolyDataSolid::curveLength(double **pts, int numPts, int closed, double *length) {
 
     // This method takes an original set of points and returns the length
     // of the line 2-D line.
@@ -769,7 +796,10 @@ int vtkLoftPolyDataSolid::curveLength(double **pts, int numPts, int closed, doub
     return 1;
 }
 
-int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes,
+// ----------------------
+// smoothCurve
+// ----------------------
+int vtkSVLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumModes,
                                      int numOutPts, double ***rtnOutPts) {
 
     // This method takes an original set of points and returns a
@@ -909,7 +939,10 @@ int vtkLoftPolyDataSolid::smoothCurve(double **orgPts, int numOrgPts, int closed
 
 }
 
-int vtkLoftPolyDataSolid::inverseFFT(double **terms, int numTerms, double t0, double dt, double omega,
+// ----------------------
+// inverseFFT
+// ----------------------
+int vtkSVLoftPolyDataSolid::inverseFFT(double **terms, int numTerms, double t0, double dt, double omega,
                          int numRtnPts, double ***rtnPts) {
 
   int i,j;
@@ -937,7 +970,10 @@ int vtkLoftPolyDataSolid::inverseFFT(double **terms, int numTerms, double t0, do
 
 #define SWAP(a,b) tempr=(a);(a)=(b);(b)=tempr
 
-void vtkLoftPolyDataSolid::FFT(double data[],int nn,int isign) {
+// ----------------------
+// FFT
+// ----------------------
+void vtkSVLoftPolyDataSolid::FFT(double data[],int nn,int isign) {
 
 	int n,mmax,m,j,istep,i;
 	double wtemp,wr,wpr,wpi,wi,theta;
@@ -985,7 +1021,10 @@ void vtkLoftPolyDataSolid::FFT(double data[],int nn,int isign) {
 
 #undef SWAP
 
-int vtkLoftPolyDataSolid::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms, double ***rtnterms) {
+// ----------------------
+// FFT
+// ----------------------
+int vtkSVLoftPolyDataSolid::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms, double ***rtnterms) {
 
     int i;
 
