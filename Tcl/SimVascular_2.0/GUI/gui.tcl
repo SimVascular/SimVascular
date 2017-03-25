@@ -49704,6 +49704,7 @@ set {guiABC(spectrum_z_file)} {usrNBC3.var}
 set {guiABC(type_of_profile)} {womersley}
 set {guiABC(viscosity)} {0.004 g/(mm*s)}
 global {guiBOOLEANvars}
+set {guiBOOLEANvars(use_NURBS)} {0}
 set {guiBOOLEANvars(add_caps_to_vessels)} {1}
 set {guiBOOLEANvars(linear_sampling_along_length_multiplier)} {10}
 set {guiBOOLEANvars(no_inter_output)} {1}
@@ -50464,8 +50465,8 @@ set {guiPYLOFTvars(Du0)}  {0.0}
 set {guiPYLOFTvars(DuN)}  {0.0}
 set {guiPYLOFTvars(Dv0)}  {0.0}
 set {guiPYLOFTvars(DvN)}  {0.0}
-set {guiPYLOFTvars(kuType)}  {avg}
-set {guiPYLOFTvars(kvType)}  {endderiv}
+set {guiPYLOFTvars(kuType)}  {average}
+set {guiPYLOFTvars(kvType)}  {derivative}
 set {guiPYLOFTvars(puType)}  {centripetal}
 set {guiPYLOFTvars(pvType)}  {centripetal}
 global {guiTRIMvars}
