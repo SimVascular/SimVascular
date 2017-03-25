@@ -137,7 +137,6 @@ void svSimulationView::EnableConnection(bool able)
     }
 }
 
-
 void svSimulationView::CreateQtPartControl( QWidget *parent )
 {
     m_Parent=parent;
@@ -322,7 +321,7 @@ void svSimulationView::OnSelectionChanged(std::vector<mitk::DataNode*> nodes )
         return;
     }
 
-    //comment this section to make sure always update GUI
+    //comment this section to always update
 //    if(m_JobNode==jobNode)
 //    {
 //        AddObservers();
@@ -507,6 +506,8 @@ void svSimulationView::UpdateGUIBasic()
     {
         job=new svSimJob();
     }
+
+    m_TableModelBasic->clear();
 
     QStringList basicHeaders;
     basicHeaders << "Parameter" << "Value";
@@ -1104,6 +1105,8 @@ void svSimulationView::UpdateGUISolver()
     {
         job=new svSimJob();
     }
+
+    m_TableModelSolver->clear();
 
     QStringList solverHeaders;
     solverHeaders << "Parameter" << "Value" << "Type" << "Value List";
@@ -2195,8 +2198,6 @@ void svSimulationView::ExportResults()
     }
 
     QStringList arguments;
-    resultDir="\""+resultDir+"\"";//in case there are spaceing in the dir name
-    exportDir="\""+exportDir+"\"";//in case there are spaceing in the dir name
     arguments << "-all";
     arguments << "-indir" << resultDir;
     arguments << "-outdir" << exportDir;
