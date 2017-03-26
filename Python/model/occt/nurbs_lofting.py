@@ -26,7 +26,7 @@ def getzerobasis(u,deg,ktype):
 	nk = m+1
 
 	#Calculate the knot vector, uniform interp for middle knots
-	if (ktype == 'endderiv'):
+	if (ktype == 'derivative'):
 		m = m+2
 	knots = getknots(u,p,ktype)
 
@@ -90,7 +90,7 @@ def getrbasis(u,deg,w,ktype):
 	#-----------------#
 	# For now using weight of one everywhere
 	weight = 1.0
-	if (ktype == 'endderiv'):
+	if (ktype == 'derivative'):
 		nc = nc+2
 
 	sumNp = np.zeros((nc))
@@ -132,13 +132,13 @@ def nurbs3d(x,y,z,u,v,w,xdeg,ydeg,kutype,kvtype,Du0,DuN,Dv0,DvN):
 	#Solve the system
 	Rx,xknots = getrbasis(u,xdeg,w[:,0],kutype)
 	Ry,yknots = getrbasis(v,ydeg,w[0,:],kvtype)
-	if (kutype == 'endderiv'):
+	if (kutype == 'derivative'):
 		x,y,z,Rx = addderivdata(x.T,y.T,z.T,Rx,xknots,p,Du0,DuN)
 		x = x.T
 		y = y.T
 		z = z.T
 		ncy = ncy+2
-	if (kvtype == 'endderiv'):
+	if (kvtype == 'derivative'):
 		x,y,z,Ry = addderivdata(x,y,z,Ry,yknots,q,Dv0,DvN)
 		ncx = ncx+2
 	Rxinv = np.linalg.inv(Rx)
@@ -255,14 +255,14 @@ def getknots(u,p,type='equal'):
 
 	if (type == 'equal'):
 		knots = np.hstack((np.zeros(p),np.linspace(0,1,nk-2*p),np.ones(p)))
-	elif (type == 'avg'):
+	elif (type == 'average'):
 		knots = np.zeros(nk)
 		knots[m-p:m+1] = 1.0
 		for j in range(1,n-p+1):
 			for i in range(j,j+p):
 				knots[j+p] = knots[j+p]+u[i]
 			knots[j+p] = (1.0/p)*knots[j+p]
-	elif (type == 'endderiv'):
+	elif (type == 'derivative'):
 		m = p+n+3
 		knots = np.zeros(nk+2)
 		knots[m-p:m+1] = 1.0
@@ -273,7 +273,7 @@ def getknots(u,p,type='equal'):
 		knots[m-p:m+1] = 1.0
 
 	else:
-		print 'Type specified is not an option. Options are: equal,avg,endderiv'
+		print 'Type specified is not an option. Options are: equal,average,derivative'
 
 	return knots
 
@@ -281,8 +281,8 @@ def loft(argv):
    allpoints = 0
    putype    = 'equal'
    pvtype    = 'equal'
-   kutype    = 'avg'
-   kvtype    = 'avg'
+   kutype    = 'average'
+   kvtype    = 'average'
    p         = 2
    q         = 2
    Du0       = [0.0]
@@ -460,18 +460,18 @@ def calc_seg_perp_vector(Xpts,Ypts,Zpts,direction):
 #  @param pvtype, the type of parametrization to use in v direction. Same options
 #	  available as in the u direction.
 #  @param kutype, the type of knot spacing to use in u dierction. Can be 'equal',
-#	  'avg', or 'endderiv'. 'Equal' does not guarantee an invertible system.
-#	  'avg' is better for unevenly spaced data, and 'endderiv' allows the
+#	  'average', or 'derivative'. 'Equal' does not guarantee an invertible system.
+#	  'average' is better for unevenly spaced data, and 'derivative' allows the
 #	  input of end derivative constraints.
 #  @param p, the order of the surface in the u direction
 #  @param q, the order of the surface in the v direction
-#  @param Du0, If 'endderiv' is specified for the kutype, then Du0 is the
+#  @param Du0, If 'derivative' is specified for the kutype, then Du0 is the
 #	  vector derivative for the beginning of the interpolation in u.
-#  @param DuN, If 'endderiv' is specified for the kutype, then DuN is the
+#  @param DuN, If 'derivative' is specified for the kutype, then DuN is the
 #	  vector derivative for the end of the interpolation in u.
-#  @param Dv0, If 'endderiv' is specified for the kvtype, then Dv0 is the
+#  @param Dv0, If 'derivative' is specified for the kvtype, then Dv0 is the
 #	  vector derivative for the beginning of the interpolation in v.
-#  @param DvN, If 'endderiv' is specified for the kvtype, then DvN is the
+#  @param DvN, If 'derivative' is specified for the kvtype, then DvN is the
 #	  vector derivative for the end of the interpolation in v.
 def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 
@@ -496,10 +496,10 @@ def nurbs_func(allpoints,putype,pvtype,kutype,kvtype,p,q,Du0,DuN,Dv0,DvN):
 	nkx = r+1
 	nky = s+1
 
-	if (kutype != 'endderiv' and ncx <= p):
+	if (kutype != 'derivative' and ncx <= p):
 		print 'Need more input points or lower degree of surface'
 		return 0
-	if (kvtype != 'endderiv' and ncy <= q):
+	if (kvtype != 'derivative' and ncy <= q):
 		print 'Need more input points or lower degree of surface'
 		return 0
 

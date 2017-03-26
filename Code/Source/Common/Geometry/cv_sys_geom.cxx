@@ -77,6 +77,7 @@
 #include "vtkSVLocalQuadricDecimation.h"
 #include "vtkSVLoopBooleanPolyDataFilter.h"
 #include "vtkSVLoopIntersectionPolyDataFilter.h"
+#include "vtkSVLoftNURBSSurface.h"
 #include "vtkSVMultiplePolyDataIntersectionFilter.h"
 
 #include "cv_polydatasolid_utils.h"
@@ -2393,6 +2394,65 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
   return CV_OK;
 }
 
+/* -------------- */
+/* sys_geom_loft_solid_with_nurbs */
+/* -------------- */
+
+int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
+                                   int vDegree, double uSpacing, double vSpacing,
+                                   char *uKnotSpanType, char *vKnotSpanType,
+                                   char *uParametricSpanType, char *vParametricSpanType,
+                                   cvPolyData **dst )
+{
+  cvPolyData *result = NULL;
+  *dst = NULL;
+
+  vtkNew(vtkSVLoftNURBSSurface,lofter);
+  for (int i=0;i<numSrcs;i++)
+  {
+    // Get input polydata for segmentation
+    vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
+
+    // Get 1st point and copy to the end. For watertight surface, we need
+    // to provide first point at the beginning and end.
+    double tmpPt[3];
+    newPd->GetPoint(0, tmpPt);
+    newPd->GetPoints()->InsertNextPoint(tmpPt);
+    lofter->AddInputData(newPd);
+  }
+
+  // Set up lofter
+  lofter->SetUDegree(uDegree);
+  lofter->SetVDegree(vDegree);
+  lofter->SetPolyDataUSpacing(uSpacing);
+  lofter->SetPolyDataVSpacing(vSpacing);
+  lofter->SetUKnotSpanType(uKnotSpanType);
+  lofter->SetVKnotSpanType(vKnotSpanType);
+  lofter->SetUParametricSpanType(uParametricSpanType);
+  lofter->SetVParametricSpanType(vParametricSpanType);
+  try {
+    lofter->Update();
+
+
+    // The NURBS is a vtkPolyDataAlgorithm and thus, returns a PolyData
+    // representation. To get the NURBS surface use GetSurface()
+
+    // Triangulate the surface
+    vtkNew(vtkTriangleFilter, triangulator);
+    triangulator->SetInputData(lofter->GetOutput());
+    triangulator->Update();
+
+    result = new cvPolyData(triangulator->GetOutput());
+    *dst = result;
+  }
+  catch (...) {
+    fprintf(stderr,"ERROR in creating solid with nurbs lofting.\n");
+    fflush(stderr);
+    return CV_ERROR;
+  }
+
+  return CV_OK;
+}
 
 // ---------------------
 // sys_geom_2DWindingNum

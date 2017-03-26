@@ -145,6 +145,9 @@ int Geom_sampleLoopCmd( ClientData clientData, Tcl_Interp *interp,
 int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 			   int argc, CONST84 char *argv[] );
 
+int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] );
+
 int Geom_2dWindingNumCmd( ClientData clientData, Tcl_Interp *interp,
 			  int argc, CONST84 char *argv[] );
 
@@ -362,6 +365,8 @@ int Geom_Init( Tcl_Interp *interp )
   Tcl_CreateCommand( interp, "geom_sampleLoop", Geom_sampleLoopCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_loftSolid", Geom_loftSolidCmd,
+		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
+  Tcl_CreateCommand( interp, "geom_loftSolidWithNURBS", Geom_loftSolidWithNURBSCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
   Tcl_CreateCommand( interp, "geom_2dWindingNum", Geom_2dWindingNumCmd,
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -4068,6 +4073,115 @@ int Geom_loftSolidCmd( ClientData clientData, Tcl_Interp *interp,
 			  numLinearPtsAlongLength,numModes,splineType,bias,tension,continuity,
 			  (cvPolyData**)(&dst) )
        != CV_OK ) {
+    Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
+    delete dst;
+    delete [] srcs;
+    return TCL_ERROR;
+  }
+
+  if ( !( gRepository->Register( dstName, dst ) ) ) {
+    Tcl_AppendResult( interp, "error registering obj ", dstName,
+		      " in repository", (char *)NULL );
+    delete dst;
+    return TCL_ERROR;
+  }
+
+  Tcl_SetResult( interp, dst->GetName(), TCL_VOLATILE );
+  return TCL_OK;
+}
+
+// ---------------------
+// Geom_loftSolidWithNURBSCmd
+// ---------------------
+
+int Geom_loftSolidWithNURBSCmd( ClientData clientData, Tcl_Interp *interp,
+			   int argc, CONST84 char *argv[] )
+{
+  char *usage;
+  int numSrcs;
+  ARG_List srcList;
+  char *dstName;
+  cvRepositoryData *src;
+  cvPolyData *dst;
+  RepositoryDataT type;
+  cvPolyData **srcs;
+  int uDegree = 2;
+  int vDegree = 2;
+  double uSpacing = 0.01;
+  double vSpacing = 0.01;
+  char *uKnotSpanType;
+  char *vKnotSpanType;
+  char *uParametricSpanType;
+  char *vParametricSpanType;
+
+  int table_size = 10;
+  ARG_Entry arg_table[] = {
+    { "-srclist", LIST_Type, &srcList, NULL, REQUIRED, 0, { 0 } },
+    { "-result", STRING_Type, &dstName, NULL, REQUIRED, 0, { 0 } },
+    { "-uDegree", INT_Type, &uDegree, NULL, REQUIRED, 0, { 0 } },
+    { "-vDegree", INT_Type, &vDegree, NULL, REQUIRED, 0, { 0 } },
+    { "-uSpacing", DOUBLE_Type, &uSpacing, NULL, REQUIRED, 0, { 0 } },
+    { "-vSpacing", DOUBLE_Type, &vSpacing, NULL, REQUIRED, 0, { 0 } },
+    { "-uKnotSpanType", STRING_Type, &uKnotSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-vKnotSpanType", STRING_Type, &vKnotSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-uParametricSpanType", STRING_Type, &uParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+    { "-vParametricSpanType", STRING_Type, &vParametricSpanType, NULL, REQUIRED, 0, { 0 } },
+  };
+  usage = ARG_GenSyntaxStr( 1, argv, table_size, arg_table );
+  if ( argc == 1 ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_OK;
+  }
+  if ( ARG_ParseTclStr( interp, argc, argv, 1,
+			table_size, arg_table ) != TCL_OK ) {
+    Tcl_SetResult( interp, usage, TCL_VOLATILE );
+    return TCL_ERROR;
+  }
+
+  // Do work of command:
+  numSrcs = srcList.argc;
+
+  // Foreach src obj, check that it is in the repository and of the
+  // correct type (i.e. cvSolidModel).  Also build up the array of
+  // cvSolidModel*'s to pass to cvSolidModel::MakeLoftedSurf.
+
+  srcs = new cvPolyData * [numSrcs];
+
+  for (int i = 0; i < numSrcs; i++ ) {
+    src = gRepository->GetObject( srcList.argv[i] );
+    if ( src == NULL ) {
+      Tcl_AppendResult( interp, "couldn't find object ", srcList.argv[i],
+			(char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] srcs;
+      return TCL_ERROR;
+    }
+    type = src->GetType();
+    if ( type != POLY_DATA_T ) {
+      Tcl_AppendResult( interp, "object ", srcList.argv[i],
+			" not of type cvPolyData", (char *)NULL );
+      ARG_FreeListArgvs( table_size, arg_table );
+      delete [] srcs;
+      return TCL_ERROR;
+    }
+    srcs[i] = (cvPolyData *) src;
+  }
+
+  // We're done with the src object names:
+  ARG_FreeListArgvs( table_size, arg_table );
+
+  // Make sure the specified result object does not exist:
+  if ( gRepository->Exists( dstName ) ) {
+    Tcl_AppendResult( interp, "object ", dstName, " already exists",
+		      (char *)NULL );
+    delete [] srcs;
+    return TCL_ERROR;
+  }
+
+  if ( sys_geom_loft_solid_with_nurbs(srcs, numSrcs, uDegree, vDegree, uSpacing,
+                                      vSpacing, uKnotSpanType, vKnotSpanType,
+                                      uParametricSpanType, vParametricSpanType,
+			                                (cvPolyData**)(&dst) ) != CV_OK ) {
     Tcl_SetResult( interp, "poly manipulation error", TCL_STATIC );
     delete dst;
     delete [] srcs;

@@ -279,7 +279,7 @@ int vtkSVNURBSUtils::GetUs(vtkPoints *xyz, std::string type, vtkDoubleArray *U)
   }
   else
   {
-    fprintf(stderr,"Type specified is not recognized\n");
+    fprintf(stderr,"Type %s is not recognized\n", type.c_str());
     return SV_ERROR;
   }
 
@@ -309,7 +309,7 @@ int vtkSVNURBSUtils::GetKnots(vtkDoubleArray *U, int p, std::string type, vtkDou
   }
   else
   {
-    fprintf(stderr,"Type specified is not recognized\n");
+    fprintf(stderr,"Type %s is not recognized\n", type.c_str());
     return SV_ERROR;
   }
   fprintf(stdout,"Length of Knots: %lld\n", knots->GetNumberOfTuples());

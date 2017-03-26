@@ -41,6 +41,7 @@
 #include "vtkSVGeneralUtils.h"
 #include "vtkSVGlobals.h"
 #include "vtkSVLoopBooleanPolyDataFilter.h"
+#include "vtkSVIOUtils.h"
 #include "vtkTrivialProducer.h"
 #include "vtkSmartPointer.h"
 #include "vtkBoundingBox.h"

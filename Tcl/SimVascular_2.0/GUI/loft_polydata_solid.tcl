@@ -487,7 +487,25 @@ proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLengt
     set tension          $guiBOOLEANvars(tension)
     set continuity       $guiBOOLEANvars(continuity)
 
-    geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD -splineType $splineType -bias $bias -tension $tension -continuity $continuity
+    if $guiBOOLEANvars(use_NURBS) {
+      global guiPYLOFTvars
+      set uDeg   $guiPYLOFTvars(uDeg)
+      set vDeg   $guiPYLOFTvars(vDeg)
+      set Du0    $guiPYLOFTvars(Du0)
+      set DuN    $guiPYLOFTvars(DuN)
+      set Dv0    $guiPYLOFTvars(Dv0)
+      set DvN    $guiPYLOFTvars(DvN)
+      set kuType $guiPYLOFTvars(kuType)
+      set kvType $guiPYLOFTvars(kvType)
+      set puType $guiPYLOFTvars(puType)
+      set pvType $guiPYLOFTvars(pvType)
+
+      set uSpacing [expr 1.0/$numOutPtsInSegs]
+      set vSpacing [expr 1.0/$numOutPtsAlongLength]
+      geom_loftSolidWithNURBS -srclist $all_segs -vDegree $uDeg -uDegree $vDeg -uSpacing $vSpacing -vSpacing $uSpacing -uKnotSpanType $kvType -vKnotSpanType $kuType -uParametricSpanType $pvType -vParametricSpanType $puType -result $unorientedPD
+    } else {
+      geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD -splineType $splineType -bias $bias -tension $tension -continuity $continuity
+    }
 
     if {$addCaps} {
       polysolid_orient_closed_vessel $unorientedPD $outPD
