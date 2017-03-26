@@ -2410,9 +2410,18 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   vtkNew(vtkSVLoftNURBSSurface,lofter);
   for (int i=0;i<numSrcs;i++)
   {
+    // Get input polydata for segmentation
     vtkPolyData *newPd = srcs[i]->GetVtkPolyData();
+
+    // Get 1st point and copy to the end. For watertight surface, we need
+    // to provide first point at the beginning and end.
+    double tmpPt[3];
+    newPd->GetPoint(0, tmpPt);
+    newPd->GetPoints()->InsertNextPoint(tmpPt);
     lofter->AddInputData(newPd);
   }
+
+  // Set up lofter
   lofter->SetUDegree(uDegree);
   lofter->SetVDegree(vDegree);
   lofter->SetPolyDataUSpacing(uSpacing);
@@ -2424,9 +2433,16 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   try {
     lofter->Update();
 
+
     // The NURBS is a vtkPolyDataAlgorithm and thus, returns a PolyData
     // representation. To get the NURBS surface use GetSurface()
-    result = new cvPolyData(lofter->GetOutput());
+
+    // Triangulate the surface
+    vtkNew(vtkTriangleFilter, triangulator);
+    triangulator->SetInputData(lofter->GetOutput());
+    triangulator->Update();
+
+    result = new cvPolyData(triangulator->GetOutput());
     *dst = result;
   }
   catch (...) {

@@ -30,6 +30,7 @@
 
 #include "vtkSVNURBSCurve.h"
 
+#include "vtkCleanPolyData.h"
 #include "vtkSVNURBSUtils.h"
 #include "vtkPointData.h"
 #include "vtkObjectFactory.h"
@@ -268,6 +269,15 @@ int vtkSVNURBSCurve::GeneratePolyDataRepresentation(const double spacing)
   // Update the curve representation
   this->CurveRepresentation->SetPoints(surfacePoints);
   this->CurveRepresentation->SetLines(surfaceLines);
+
+  // Clean the curve in case of duplicate points (closed curve)
+  vtkNew(vtkCleanPolyData, cleaner);
+  cleaner->SetInputData(this->CurveRepresentation);
+  cleaner->Update();
+
+  // Get clean output and build links
+  this->CurveRepresentation->DeepCopy(cleaner->GetOutput());
+  this->CurveRepresentation->BuildLinks();
 
   return SV_OK;
 }

@@ -31,6 +31,7 @@
 #include "vtkSVNURBSSurface.h"
 
 #include "vtkCellArray.h"
+#include "vtkCleanPolyData.h"
 #include "vtkSVNURBSUtils.h"
 #include "vtkObjectFactory.h"
 #include "vtkPointData.h"
@@ -408,6 +409,14 @@ int vtkSVNURBSSurface::GeneratePolyDataRepresentation(const double uSpacing,
   // Update the surface representation
   this->SurfaceRepresentation->SetPoints(finalGrid->GetPoints());
   this->SurfaceRepresentation->SetPolys(surfaceCells);
+
+  // Clean the surface in case of duplicate points (closed surface)
+  vtkNew(vtkCleanPolyData, cleaner);
+  cleaner->SetInputData(this->SurfaceRepresentation);
+  cleaner->Update();
+
+  // Get clean output and build links
+  this->SurfaceRepresentation->DeepCopy(cleaner->GetOutput());
   this->SurfaceRepresentation->BuildLinks();
 
   return SV_OK;

@@ -499,7 +499,10 @@ proc polysolid_c_create_vessel_from_group {grp vecFlag useLinearSampleAlongLengt
       set kvType $guiPYLOFTvars(kvType)
       set puType $guiPYLOFTvars(puType)
       set pvType $guiPYLOFTvars(pvType)
-      geom_loftSolidWithNURBS -srclist $all_segs -uDegree $uDeg -vDegree $vDeg -uSpacing 0.05 -vSpacing 0.05 -uKnotSpanType $kuType -vKnotSpanType $kvType -uParametricSpanType $puType -vParametricSpanType $pvType -result $unorientedPD
+
+      set uSpacing [expr 1.0/$numOutPtsInSegs]
+      set vSpacing [expr 1.0/$numOutPtsAlongLength]
+      geom_loftSolidWithNURBS -srclist $all_segs -vDegree $uDeg -uDegree $vDeg -uSpacing $vSpacing -vSpacing $uSpacing -uKnotSpanType $kvType -vKnotSpanType $kuType -uParametricSpanType $pvType -vParametricSpanType $puType -result $unorientedPD
     } else {
       geom_loftSolid -srclist $all_segs -numOutInSegs $numOutPtsInSegs -numOutAlongLength $numOutPtsAlongLength -numLinearPtsAlongLength $numPtsInLinearSampleAlongLength -numModes $numModes -useFFT $useFFT -useLinearSampleAlongLength $useLinearSampleAlongLength -result $unorientedPD -splineType $splineType -bias $bias -tension $tension -continuity $continuity
     }
