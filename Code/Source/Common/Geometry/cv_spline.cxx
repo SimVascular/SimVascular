@@ -474,7 +474,7 @@ int sys_geom_NormalizeVector(vtkFloatingPointType *input, vtkFloatingPointType *
   if (magnitude == 0)
     {
       fprintf(stderr, "Vector cannot be normalized.  Magnitude of 0.\n");
-      return 0;
+      return SV_ERROR;
     }
 
   for (j = 0; j < sizeVector; j++)

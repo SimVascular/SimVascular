@@ -331,15 +331,15 @@ int cvLevelSetVelocityKGI::GetKTol( double *t )
 int cvLevelSetVelocityKGI::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( image_ == NULL ) return 0;
-  if ( ! eKvalid_ ) return 0;
-  if ( ! eIvalid_ ) return 0;
-  if ( ! balloonFvalid_ ) return 0;
-  if ( ! gradIPowValid_ ) return 0;
-  if ( ! betaValid_ ) return 0;
-  return 1;
+  if ( image_ == NULL ) return SV_ERROR;
+  if ( ! eKvalid_ ) return SV_ERROR;
+  if ( ! eIvalid_ ) return SV_ERROR;
+  if ( ! balloonFvalid_ ) return SV_ERROR;
+  if ( ! gradIPowValid_ ) return SV_ERROR;
+  if ( ! betaValid_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -349,7 +349,7 @@ int cvLevelSetVelocityKGI::Valid()
 
 int cvLevelSetVelocityKGI::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 
   // Old as of 2/6/00:
   // ---
@@ -363,7 +363,7 @@ int cvLevelSetVelocityKGI::StopCondition()
   /*
   ls_->GetSimTime( &simTime );
   if ( currTime > simTime ) {
-    return 1;
+    return SV_OK;
   }
   */
 
@@ -372,10 +372,10 @@ int cvLevelSetVelocityKGI::StopCondition()
     //    return( fabs(maxV) < fabs(stopV_) );
     if ( maxV < stopV_ ) {
       printf("STOP: curr maxV [%f] < stopV [%f]\n", maxV, stopV_);
-      return 1;
+      return SV_OK;
     }
   }
-  return 0;
+  return SV_ERROR;
 }
 
 

@@ -199,7 +199,7 @@ int cvIntArrayList::InitIterator()
 int cvIntArrayList::GetNextElem( int *elem )
 {
   if ( curr_ == tail_ ) {
-    return 0;
+    return SV_ERROR;
   }
   *elem = arr_[curr_];
   curr_ = ( curr_ + 1 ) % maxSize_;

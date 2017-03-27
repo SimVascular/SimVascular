@@ -70,7 +70,7 @@ public:
   double GetStopV() { return stopV_; }
 
   virtual int Valid();
-  virtual int StopCondition() { return 0; };
+  virtual int StopCondition() { return SV_ERROR; };
 
   virtual int Evaluate( double pos[], double *f0, double *f1,
 			double v[], int *forceFlag, double toDot[] ) = 0;

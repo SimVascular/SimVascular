@@ -354,9 +354,9 @@ int cvMeshSimMeshObject::InitTraversal() {
   int eid = 1;
   // need to tag the element numbers
   initRegionTraversal();
-  while (getNextRegion() == 1) {
+  while (getNextRegion() == SV_OK) {
     initElementTraversal();
-    while (getNextElement() == 1) {
+    while (getNextElement() == SV_OK) {
       //EN_setID(pCurrentMeshRegion_,eid);
       eid++;
     }
@@ -673,9 +673,9 @@ cvUnstructuredGrid* cvMeshSimMeshObject::GetUnstructuredGrid() {
 
   // only for linear tets
   initRegionTraversal();
-  while (getNextRegion() == 1) {
+  while (getNextRegion() == SV_OK) {
     initElementTraversal();
-    while (getNextElement() == 1) {
+    while (getNextElement() == SV_OK) {
         ptids->SetId(0,connID_[0]-1);ptids->SetId(1,connID_[1]-1);
         ptids->SetId(2,connID_[2]-1);ptids->SetId(3,connID_[3]-1);
         grid->InsertNextCell(VTK_TETRA,ptids);
@@ -735,9 +735,9 @@ int cvMeshSimMeshObject::getNextNode () {
 
   pPoint point;
 
-  if (iterNodes_ >= numNodes_) return 0;
+  if (iterNodes_ >= numNodes_) return SV_ERROR;
 
-  if (iterNodes_ >= numLinearNodes_ && quadElem_ == 0) return 0;
+  if (iterNodes_ >= numLinearNodes_ && quadElem_ == 0) return SV_ERROR;
 
   if (iterNodes_ < numLinearNodes_) {
     vertex = VIter_next(ptrNodes_);
@@ -754,7 +754,7 @@ int cvMeshSimMeshObject::getNextNode () {
 
     if (E_numPoints(edge) != 1) {
       fprintf(stderr,"ERROR:  no interior point!\n");
-      return 0;
+      return SV_ERROR;
     }
 
     point = E_point(edge,0);
@@ -767,7 +767,7 @@ int cvMeshSimMeshObject::getNextNode () {
 
   iterNodes_++;
 
-  return 1;
+  return SV_OK;
 
 }
 
@@ -779,11 +779,11 @@ int cvMeshSimMeshObject::getNextNode () {
 int cvMeshSimMeshObject::getNextRegion () {
 
   fprintf(stdout,"iterModelRegions_ %i\n",iterModelRegions_);
-  if (iterModelRegions_ >= numModelRegions_) return 0;
+  if (iterModelRegions_ >= numModelRegions_) return SV_ERROR;
 
   curMdlRegID_ = regionID_[iterModelRegions_++];
   fprintf(stdout,"curMdlRegID_ %i\n",curMdlRegID_);
-  return 1;
+  return SV_OK;
 }
 
 
@@ -828,20 +828,20 @@ int cvMeshSimMeshObject::getNextElement () {
           pEdge xedge = (pEdge)PList_item (edge_list, i);
           if (E_numPoints(xedge) != 1) {
             fprintf(stderr,"ERROR:  no interior point!\n");
-            return 0;
+            return SV_ERROR;
   	  }
           connID_[num_elem_verts+i] = P_id(E_point(xedge,0));
         }
         PList_delete(edge_list);
       } // quadElem_
 
-      return 1;
+      return SV_OK;
 
     } // if mytag
 
   } // end-while
 
-  return 0;
+  return SV_ERROR;
 
 }
 
@@ -859,7 +859,7 @@ int cvMeshSimMeshObject::getNeighborMdlRegIds () {
 
   // In case mesh is just a surface, then its on the interface
   if (numModelRegions_ == 0) {
-          return 1;
+          return SV_OK;
   }
 
   pPList face_list = R_faces(pCurrentMeshRegion_,MY_MESHSIM_FACE_ORDERING);
@@ -870,7 +870,7 @@ int cvMeshSimMeshObject::getNeighborMdlRegIds () {
       num_faces = 4;
   }
 
-  int returnValue = 0;
+  int returnValue = SV_ERROR;
 
   for (int i = 0;i < num_faces; i++) {
 
@@ -892,7 +892,7 @@ int cvMeshSimMeshObject::getNeighborMdlRegIds () {
     curElemNe_[i][1]=tag1;
 
     if (tag0 != tag1 || (tag0 == -1 && tag1 == -1)) {
-        returnValue = 1;
+        returnValue = SV_OK;
     }
 
   }

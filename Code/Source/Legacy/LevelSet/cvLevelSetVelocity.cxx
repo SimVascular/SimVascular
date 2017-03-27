@@ -157,8 +157,8 @@ int cvLevelSetVelocity::UpdateTolerance()
 int cvLevelSetVelocity::Valid()
 {
   if ( ls_ == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
-    return 1;
+    return SV_OK;
   }
 }

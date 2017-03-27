@@ -125,7 +125,7 @@ public:
 
   // Get grid-dependent info:
   virtual cvPolyData *CreateGridPolyData();
-  virtual int GridModified() const { return 0; };
+  virtual int GridModified() const { return SV_ERROR; };
   virtual char *StatString() = 0;  // should return a dynamically-alloc'd str
   inline int GetDim();
   inline int GetHv( double *hx, double *hy, double *hz );
@@ -237,9 +237,9 @@ int cvLevelSetStructuredGrid::IxWithinExtent( int i, int j, int k )
   if ( ( i >= 0 ) && ( i < I_ ) &&
        ( j >= 0 ) && ( j < J_ ) &&
        ( k >= 0 ) && ( k < K_ ) ) {
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 

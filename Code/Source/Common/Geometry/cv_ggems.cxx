@@ -84,7 +84,7 @@ int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n )
      return SV_OK;
     }
  else
-     return 0;
+     return SV_ERROR;
 }
 
 /*=========================  ggemsgeo_solid_angle  =========================*/

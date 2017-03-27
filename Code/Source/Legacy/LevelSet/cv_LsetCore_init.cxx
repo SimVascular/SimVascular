@@ -243,9 +243,9 @@ static int NewName( CONST84 char *name )
   Tcl_HashEntry *entryPtr;
   entryPtr = Tcl_FindHashEntry( &gLsetCoreTable, name );
   if ( entryPtr != NULL ) {
-    return 0;
+    return SV_ERROR;
   }
-  return 1;
+  return SV_OK;
 }
 
 
@@ -259,12 +259,12 @@ static int NewName( CONST84 char *name, Tcl_Interp *interp )
 
   code = Tcl_VarEval( interp, "info commands ", name, (char *)NULL );
   if ( code != TCL_OK ) {
-    return 0;
+    return SV_ERROR;
   }
   if ( strlen( Tcl_GetStringResult(interp) ) == 0 ) {
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 

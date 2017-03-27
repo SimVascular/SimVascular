@@ -2238,11 +2238,11 @@ int cvLevelSetStructuredGrid::CheckProjectCoverage()
   while ( currNode = GetNext() ) {
     if ( ! ( currNode->state_ & CV_NODE_ACTIVE ) &&
 	 ! ( currNode->state_ & CV_NODE_COVERED ) ) {
-      return 0;
+      return SV_ERROR;
     }
   }
 
-  return 1;
+  return SV_OK;
 }
 
 

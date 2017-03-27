@@ -120,19 +120,19 @@ int cvLevelSetNode::Contains( GridScalarT t )
 {
   switch (t) {
   case GS_PHI:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE_3Dm:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE_3Dg:
-    return 1;
+    return SV_OK;
   case GS_CURVATURE_3Dk1:
-    return 0;
+    return SV_ERROR;
   case GS_CURVATURE_3Dk2:
-    return 0;
+    return SV_ERROR;
   default:
-    return 0;
+    return SV_ERROR;
   }
 }
 

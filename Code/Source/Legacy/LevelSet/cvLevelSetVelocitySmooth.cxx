@@ -138,10 +138,10 @@ int cvLevelSetVelocitySmooth::Get3DKType( cvLevelSetVelocitySmooth3DKT *kt )
 int cvLevelSetVelocitySmooth::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( ! ktsValid_ ) return 0;
-  return 1;
+  if ( ! ktsValid_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -151,7 +151,7 @@ int cvLevelSetVelocitySmooth::Valid()
 
 int cvLevelSetVelocitySmooth::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 }
 
 

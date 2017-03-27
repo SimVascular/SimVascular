@@ -2133,7 +2133,7 @@ int cvLevelSetSparseGrid::IJKPresentInHT( int i, int j, int k,
   if ( (i < 0) || (i >= I_) ||
        (j < 0) || (j >= J_) ||
        (k < 0) || (k >= K_) ) {
-    return 0;
+    return SV_ERROR;
   }
 
   hashIx = ComputeHashIx( i, j, k );
@@ -2150,14 +2150,14 @@ int cvLevelSetSparseGrid::IJKPresentInHT( int i, int j, int k,
     } else if ( tag == tagToMatch ) {
       (*entry) = htEntry;
       delete iter;
-      return 1;
+      return SV_OK;
     } else {
       delete iter;
-      return 0;
+      return SV_ERROR;
     }
   }
   delete iter;
-  return 0;
+  return SV_ERROR;
 }
 
 

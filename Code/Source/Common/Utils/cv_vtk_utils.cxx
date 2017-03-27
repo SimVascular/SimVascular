@@ -697,7 +697,7 @@ static int SearchComplete( int *state, int stateSz )
 
   for (i = 0; i < stateSz; i++) {
     if ( ( state[i] == START ) || ( state[i] == INTERMED ) ) {
-      return 0;
+      return SV_ERROR;
     }
   }
   return SV_OK;
@@ -1086,7 +1086,7 @@ static int SomeFalse( int *arr, int sz )
       return SV_OK;
     }
   }
-  return 0;
+  return SV_ERROR;
 }
 
 

@@ -216,10 +216,10 @@ void cvLevelSetVelocityExponentialDecay::SetExpand( int f )
 int cvLevelSetVelocityExponentialDecay::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( image_ == NULL ) return 0;
-  return 1;
+  if ( image_ == NULL ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -229,7 +229,7 @@ int cvLevelSetVelocityExponentialDecay::Valid()
 
 int cvLevelSetVelocityExponentialDecay::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 }
 
 

@@ -117,12 +117,12 @@ int cvLevelSetVelocityThreshold::GetThreshold( double *t )
 int cvLevelSetVelocityThreshold::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( image_ == NULL ) return 0;
-  if ( thr_ <= 0.0 ) return 0;
-  if ( ! balloonFvalid_ ) return 0;
-  return 1;
+  if ( image_ == NULL ) return SV_ERROR;
+  if ( thr_ <= 0.0 ) return SV_ERROR;
+  if ( ! balloonFvalid_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -132,7 +132,7 @@ int cvLevelSetVelocityThreshold::Valid()
 
 int cvLevelSetVelocityThreshold::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 
   // Old as of 2/6/00:
   // ---
@@ -145,10 +145,10 @@ int cvLevelSetVelocityThreshold::StopCondition()
     maxV = ls_->GetGrid()->GetMaxF();
     if ( maxV <= 0.0 ) {
       printf("STOP: curr maxV [%f]\n", maxV);
-      return 1;
+      return SV_OK;
     }
   }
-  return 0;
+  return SV_ERROR;
 }
 
 

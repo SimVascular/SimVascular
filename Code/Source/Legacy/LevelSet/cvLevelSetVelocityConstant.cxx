@@ -89,10 +89,10 @@ int cvLevelSetVelocityConstant::GetV( double *v )
 int cvLevelSetVelocityConstant::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( ! vValid_ ) return 0;
-  return 1;
+  if ( ! vValid_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -115,11 +115,11 @@ int cvLevelSetVelocityConstant::StopCondition()
   /*
   ls_->GetSimTime( &simTime );
   if ( currTime > simTime ) {
-    return 1;
+    return SV_OK;
   }
   */
 
-  return 0;
+  return SV_ERROR;
 }
 
 

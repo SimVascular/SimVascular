@@ -121,11 +121,11 @@ int cvLevelSetVelocityPotential::SetKupp( double d )
 int cvLevelSetVelocityPotential::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( image_ == NULL ) return 0;
-  if ( Klow_ > Kupp_ ) return 0;
-  return 1;
+  if ( image_ == NULL ) return SV_ERROR;
+  if ( Klow_ > Kupp_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -135,7 +135,7 @@ int cvLevelSetVelocityPotential::Valid()
 
 int cvLevelSetVelocityPotential::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 }
 
 
