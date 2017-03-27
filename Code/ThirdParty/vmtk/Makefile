@@ -75,7 +75,13 @@ HDRS	= cv_VMTK_utils.h \
 	  vtkvmtkCenterlineUtilities.h \
 	  vtkvmtkCenterlineSplittingAndGroupingFilter.h \
 	  vtkvmtkPolyDataCenterlineGroupsClipper.h \
-          vtkvmtkPolyDataCenterlines.h
+          vtkvmtkPolyDataCenterlines.h \
+	  vtkvmtkCenterlineUtilities.h \
+          vtkvmtkCenterlineSplittingAndGroupingFilter.h \
+          vtkvmtkPolyDataCenterlineGroupsClipper.h \
+          vtkvmtkMergeCenterlines.h \
+          vtkvmtkCenterlineBifurcationReferenceSystems.h \
+          vtkvmtkReferenceSystemUtilities.h
 
 CXXSRCS	=  cv_VMTK_utils.cxx \
            vtkvmtkBoundaryLayerGenerator.cxx \
@@ -112,7 +118,10 @@ CXXSRCS	=  cv_VMTK_utils.cxx \
 	   vtkvmtkCenterlineUtilities.cxx \
 	   vtkvmtkCenterlineSplittingAndGroupingFilter.cxx \
 	   vtkvmtkPolyDataCenterlineGroupsClipper.cxx \
-           vtkvmtkPolyDataCenterlines.cxx
+           vtkvmtkPolyDataCenterlines.cxx \
+           vtkvmtkMergeCenterlines.cxx \
+           vtkvmtkCenterlineBifurcationReferenceSystems.cxx \
+           vtkvmtkReferenceSystemUtilities.cxx
 
 DLLHDRS =
 

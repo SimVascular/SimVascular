@@ -50,6 +50,7 @@ HDRS	= \
     svTableSolverDelegate.h \
     svSimulationView.h \
     svSimulationPreferencePage.h \
+    svSimJobStopAction.h \
     svSimulationPluginActivator.h
 
 CXXSRCS	= \
@@ -60,6 +61,7 @@ CXXSRCS	= \
     svTableSolverDelegate.cxx \
     svSimulationView.cxx \
     svSimulationPreferencePage.cxx \
+    svSimJobStopAction.cxx \
     svSimulationPluginActivator.cxx
 
 UIFILES = \

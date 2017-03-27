@@ -56,6 +56,8 @@ HDRS	= \
     svLevelSet2DWidget.h \
     svLoftParamWidget.h \
     svSegmentation2D.h \
+    svContourGroupPoint2DSizeAction.h \
+    svContourGroupPoint3DSizeAction.h \
     svSegmentationPluginActivator.h
 
 CXXSRCS	= \
@@ -66,6 +68,8 @@ CXXSRCS	= \
     svLevelSet2DWidget.cxx \
     svLoftParamWidget.cxx \
     svSegmentation2D.cxx \
+    svContourGroupPoint2DSizeAction.cxx \
+    svContourGroupPoint3DSizeAction.cxx \
     svSegmentationPluginActivator.cxx
 
 UIFILES = \
