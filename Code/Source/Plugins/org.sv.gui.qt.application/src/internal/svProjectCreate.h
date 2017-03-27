@@ -35,9 +35,7 @@ private:
 
     mitk::DataStorage::Pointer m_DataStorage;
 
-    static QString m_LastPath;
-
-//    mitk::DataNode::Pointer m_SelectedDataNode;
+    QString m_LastPath;
 };
 
 #endif // SVPROJECTCREATE_H

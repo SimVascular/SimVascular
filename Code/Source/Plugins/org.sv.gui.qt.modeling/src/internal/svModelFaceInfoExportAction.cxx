@@ -1,4 +1,4 @@
-#include "svModelLegacySaveAction.h"
+#include "svModelFaceInfoExportAction.h"
 
 #include "svModel.h"
 #include "svModelLegacyIO.h"
@@ -10,15 +10,15 @@
 
 #include <QFileDialog>
 
-svModelLegacySaveAction::svModelLegacySaveAction()
+svModelFaceInfoExportAction::svModelFaceInfoExportAction()
 {
 }
 
-svModelLegacySaveAction::~svModelLegacySaveAction()
+svModelFaceInfoExportAction::~svModelFaceInfoExportAction()
 {
 }
 
-void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
+void svModelFaceInfoExportAction::Run(const QList<mitk::DataNode::Pointer> &selectedNodes)
 {
     mitk::DataNode::Pointer selectedNode = selectedNodes[0];
 
@@ -30,14 +30,7 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
     svModelElement* modelElement=model->GetModelElement();
     if(!modelElement) return;
 
-    QString fileFilter;
-    std::string modelType=model->GetType();
-    if(modelType=="PolyData")
-        fileFilter=tr("VTK PolyData (*.vtp);; VTK Legacy PolyData (*.vtk);; Stereolithography (*.stl);; Stanford PLY (*.ply)");
-    else if(modelType=="OpenCASCADE")
-        fileFilter=tr("OpenCASCADE (*.brep);; Stereolithography (*.stl);; STEP (*.step);; IGES (*.iges)");
-    else if(modelType=="Parasolid")
-        fileFilter=tr("Parasolid (*.xmt_txt)");
+    std::string modelName=selectedNode->GetName();
 
     try
     {
@@ -62,9 +55,9 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
             lastFileSavePath=QDir::homePath();
 
         QString fileName = QFileDialog::getSaveFileName(NULL
-                                                        ,tr("Export as Legacy Model")
+                                                        ,tr("Export Cap Info")
                                                         ,lastFileSavePath
-                                                        ,fileFilter
+                                                        ,tr("All Files (*)")
                                                         ,NULL
                                                         ,QFileDialog::DontUseNativeDialog
                                                         );
@@ -72,22 +65,26 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
         fileName=fileName.trimmed();
         if(fileName.isEmpty()) return;
 
-        if(modelType=="PolyData")
+        QFile infoFile(fileName);
+        if(infoFile.open(QIODevice::WriteOnly | QIODevice::Text))
         {
-            if(!fileName.endsWith(".vtp") && !fileName.endsWith(".vtk") && !fileName.endsWith(".stl") && !fileName.endsWith(".ply"))
-                fileName=fileName+".vtp";
+            QTextStream out(&infoFile);
+            out<<"#Face_Name\tArea\n";
+
+            std::vector<int> capIDs=modelElement->GetCapFaceIDs();
+            std::map<std::string,int> capMap;
+            for(int i=0;i<capIDs.size();i++)
+                capMap[modelElement->GetFaceName(capIDs[i])]=capIDs[i];
+
+            auto it=capMap.begin();
+            while(it!=capMap.end())
+            {
+                out<<it->first.c_str()<<"\t"<<QString::number(modelElement->GetFaceArea(it->second))<<"\n";
+                it++;
+            }
+
+            infoFile.close();
         }
-        else if(modelType=="OpenCASCADE")
-        {
-            if(!fileName.endsWith(".brep") && !fileName.endsWith(".step") && !fileName.endsWith(".stl") && !fileName.endsWith(".iges"))
-                fileName=fileName+".brep";
-        }
-        else if(modelType=="Parasolid")
-        {
-            if(fileName.endsWith(".xmt_txt"))
-                fileName=fileName.remove(".xmt_txt");
-        }
-        svModelLegacyIO::WriteFile(selectedNode, fileName);
 
         if(prefs.IsNotNull())
         {
@@ -97,11 +94,11 @@ void svModelLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selected
     }
     catch(...)
     {
-        MITK_ERROR << "Legacy Model Saving Error!";
+        MITK_ERROR << "Faied to expor face info for model "<<modelName.c_str() <<"!";
     }
 }
 
-void svModelLegacySaveAction::SetDataStorage(mitk::DataStorage *dataStorage)
+void svModelFaceInfoExportAction::SetDataStorage(mitk::DataStorage *dataStorage)
 {
     m_DataStorage = dataStorage;
 }

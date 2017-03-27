@@ -733,6 +733,8 @@ void svModelEdit::UpdateFaceData(QStandardItem* item)
 
 void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*selected*/, const QItemSelection & /*deselected*/ )
 {
+    mitk::StatusBar::GetInstance()->DisplayText("");
+
     if(!m_Model)
         return;
 
@@ -747,6 +749,7 @@ void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*select
 
     modelElement->ClearFaceSelection();
 
+    bool useFirst=true;
     for (QModelIndexList::iterator it = indexesOfSelectedRows.begin()
          ; it != indexesOfSelectedRows.end(); it++)
     {
@@ -756,6 +759,14 @@ void svModelEdit::TableFaceListSelectionChanged( const QItemSelection & /*select
         int id=itemID->text().toInt();
 
         modelElement->SelectFace(id);
+
+        if(useFirst)
+        {
+            double faceArea=modelElement->GetFaceArea(id);
+            QString info="Face "+QString::fromStdString(modelElement->GetFaceName(id))+": Area="+QString::number(faceArea);
+            mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
+            useFirst=false;
+        }
     }
 
     mitk::RenderingManager::GetInstance()->RequestUpdateAll();

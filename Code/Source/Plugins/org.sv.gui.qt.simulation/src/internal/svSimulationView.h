@@ -73,7 +73,6 @@ public slots:
 
     void UpdateGUIWall();
 
-
     void UpdateGUISolver();
 
     void UpdateGUIJob();
@@ -95,6 +94,12 @@ public slots:
     void ExportResults();
 
     void UpdateJobStatus();
+
+    void UpdateSimJob();
+
+    void UdpateSimJobMeshName();
+
+    void UpdateSimJobNumProcs();
 
 public:
 
@@ -118,7 +123,7 @@ public:
 
     virtual void OnPreferencesChanged(const berry::IBerryPreferences* prefs) override;
 
-    svSimJob* CreateJob(std::string& msg);
+    svSimJob* CreateJob(std::string& msg, bool checkValidity = true);
 
     bool CreateDataFiles(QString outputDir, bool outputAllFiles, bool updateJob, bool createFolder);
 
@@ -131,6 +136,8 @@ public:
     void EnableTool(bool able);
 
     QString GetJobPath();
+
+    void EnableConnection(bool able = true);
 
 #if defined(Q_OS_WIN)
     QString GetRegistryValue(QString key);
@@ -181,6 +188,8 @@ private:
     QString m_SolverTemplatePath;
     QString m_ExternalPostsolverPath;
     QString m_ExternalMPIExecPath;
+
+    bool m_ConnectionEnabled;
 };
 
 class svProcessHandler : public QObject

@@ -11,6 +11,7 @@ set(INTERNAL_CPP_FILES
     svSegSelectionWidget.cxx
     svModelEdit.cxx
     svFaceListDelegate.cxx
+    svModelFaceInfoExportAction.cxx
     svModelingPluginActivator.cxx
 )
 
@@ -23,6 +24,7 @@ set(MOC_H_FILES
     src/internal/svSegSelectionWidget.h
     src/internal/svModelEdit.h
     src/internal/svFaceListDelegate.h
+    src/internal/svModelFaceInfoExportAction.h
     src/internal/svModelingPluginActivator.h
 )
 

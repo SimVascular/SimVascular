@@ -68,19 +68,22 @@ void svMeshLegacySaveAction::Run(const QList<mitk::DataNode::Pointer> &selectedN
             prefs = berry::IPreferences::Pointer(0);
         }
 
-        QString lastFileSavePath=QString();
+        QString lastFileSavePath="";
         if(prefs.IsNotNull())
         {
             lastFileSavePath = prefs->Get("LastFileSavePath", "");
         }
+        if(lastFileSavePath=="")
+            lastFileSavePath=QDir::homePath();
 
         QString dir = QFileDialog::getExistingDirectory(NULL
-                                                        , tr("Choose Directory")
+                                                        , tr("Export as Legacy Mesh (Choose Directory)")
                                                         , lastFileSavePath
                                                         , QFileDialog::DontResolveSymlinks
                                                         | QFileDialog::DontUseNativeDialog
                                                         );
 
+        dir=dir.trimmed();
         if(dir.isEmpty()) return;
 
         QString outputDir=dir+"/"+QString::fromStdString(meshNode->GetName()+"-mesh-complete");

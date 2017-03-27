@@ -48,7 +48,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     if (!document.LoadFile(fileName))
     {
         mitkThrow() << "Could not open/read/parse " << fileName;
-        //        MITK_ERROR << "Could not open/read/parse " << fileName;
+//        MITK_ERROR << "Could not open/read/parse " << fileName;
         return result;
     }
 
@@ -57,7 +57,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
     TiXmlElement* modelElement = document.FirstChildElement("model");
 
     if(!modelElement){
-        //        MITK_ERROR << "No Model data in "<< fileName;
+//        MITK_ERROR << "No Model data in "<< fileName;
         mitkThrow() << "No Model data in "<< fileName;
         return result;
     }
@@ -87,6 +87,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             if(type=="")
             {
                 mitkThrow() << "No type info available when trying to load the model ";
+//                MITK_ERROR << "No type info available when trying to load the model ";
                 return result;
             }
 
@@ -104,9 +105,16 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
                 reader->SetFileName(dataFileName.c_str());
                 reader->Update();
                 vtkSmartPointer<vtkPolyData> pd=reader->GetOutput();
+                pd->BuildLinks();
 
-                mepd->SetWholeVtkPolyData(pd);
+                vtkSmartPointer<vtkCleanPolyData> cleaner =vtkSmartPointer<vtkCleanPolyData>::New();
+                cleaner->SetInputData(pd);
+                cleaner->Update();
 
+                vtkSmartPointer<vtkPolyData> cleanpd=cleaner->GetOutput();
+                cleanpd->BuildLinks();
+
+                mepd->SetWholeVtkPolyData(cleanpd);
             }
 
 #ifdef SV_USE_OpenCASCADE_QT_GUI
@@ -154,6 +162,7 @@ std::vector<mitk::BaseData::Pointer> svModelIO::Read()
             if(me==NULL)
             {
                 mitkThrow() << "No support in reading file of "<< type;
+//                MITK_ERROR << "No support in reading file of "<< type;
                 return result;
             }
 

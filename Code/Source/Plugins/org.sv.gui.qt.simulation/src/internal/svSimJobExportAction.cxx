@@ -63,21 +63,28 @@ void svSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
             prefs = berry::IPreferences::Pointer(0);
         }
 
-        QString lastFileSavePath=QString();
+        QString lastFileSavePath="";
         if(prefs.IsNotNull())
         {
             lastFileSavePath = prefs->Get("LastFileSavePath", "");
         }
+        if(lastFileSavePath=="")
+            lastFileSavePath=QDir::homePath();
 
         QString dir = QFileDialog::getExistingDirectory(NULL
-                                                        , tr("Choose Directory")
+                                                        , tr("Export Simulation Data Files (Choose Directory)")
                                                         , lastFileSavePath
                                                         , QFileDialog::DontResolveSymlinks
                                                         | QFileDialog::DontUseNativeDialog
                                                         );
 
+        dir=dir.trimmed();
         if(dir.isEmpty()) return;
-
+        if(prefs.IsNotNull())
+         {
+             prefs->Put("LastFileSavePath", dir);
+             prefs->Flush();
+         }
 
         mitk::NodePredicateDataType::Pointer isProjFolder = mitk::NodePredicateDataType::New("svProjectFolder");
         mitk::DataStorage::SetOfObjects::ConstPointer rs=m_DataStorage->GetSources (selectedNode,isProjFolder,false);
@@ -151,7 +158,6 @@ void svSimJobExportAction::Run(const QList<mitk::DataNode::Pointer> &selectedNod
         else
         {
             QMessageBox::warning(NULL,"Missing File","Failed to create numstart.dat");
-            return;
         }
 
     }

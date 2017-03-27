@@ -3,5 +3,6 @@
         <file>icon.png</file>
         <file>CloseSV.png</file>
         <file>SaveAllSV.png</file>
+        <file>remove.png</file>
     </qresource>
 </RCC>

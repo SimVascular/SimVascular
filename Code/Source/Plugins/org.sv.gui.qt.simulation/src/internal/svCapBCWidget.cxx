@@ -186,19 +186,22 @@ void svCapBCWidget::LoadFlowrateFromFile()
         prefs = berry::IPreferences::Pointer(0);
     }
 
-    QString lastFileOpenPath=QString();
+    QString lastFileOpenPath="";
     if(prefs.IsNotNull())
     {
         lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
     }
+    if(lastFileOpenPath=="")
+        lastFileOpenPath=QDir::homePath();
 
     QString flowrateFilePath = QFileDialog::getOpenFileName(this, tr("Load Flow File")
                                                             , lastFileOpenPath
-                                                            , tr("All Files (*.*)")
+                                                            , tr("All Files (*)")
                                                             , NULL
                                                             , QFileDialog::DontUseNativeDialog);
 
-    if (flowrateFilePath.isEmpty())
+    flowrateFilePath=flowrateFilePath.trimmed();
+    if(flowrateFilePath.isEmpty())
         return;
 
     if(prefs.IsNotNull())

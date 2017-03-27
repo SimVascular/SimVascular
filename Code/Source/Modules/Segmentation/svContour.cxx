@@ -824,3 +824,22 @@ double svContour::GetArea()
 
     return A;
 }
+
+double svContour::GetPerimeter()
+{
+    double L=0;
+
+    for(int i=0;i<m_ContourPoints.size();i++)
+    {
+        mitk::Point2D point1,point2;
+        m_PlaneGeometry->Map(m_ContourPoints[i], point1);
+        if(i==m_ContourPoints.size()-1)
+            m_PlaneGeometry->Map(m_ContourPoints[0], point2);
+        else
+            m_PlaneGeometry->Map(m_ContourPoints[i+1], point2);
+
+        L+=point1.EuclideanDistanceTo(point2);
+    }
+
+    return L;
+}

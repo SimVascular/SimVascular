@@ -56,6 +56,7 @@ svSegmentation2D::svSegmentation2D() :
 
     m_ManualMenu=NULL;
     m_CopyContour=NULL;
+    m_ContourGroupCreateWidget=NULL;
 }
 
 svSegmentation2D::~svSegmentation2D()
@@ -65,12 +66,17 @@ svSegmentation2D::~svSegmentation2D()
     if(m_LoftWidget) delete m_LoftWidget;
 
 //    if(m_LSParamWidget) delete m_LSParamWidget;
+
+    if(m_ContourGroupCreateWidget)
+        delete m_ContourGroupCreateWidget;
 }
 
 void svSegmentation2D::CreateQtPartControl( QWidget *parent )
 {
     m_Parent=parent;
     ui->setupUi(parent);
+
+    connect(ui->btnNewGroup,SIGNAL(clicked()), this, SLOT(NewGroup()));
 
     m_DisplayWidget=GetActiveStdMultiWidget();
 
@@ -1012,6 +1018,8 @@ void svSegmentation2D::SelectItem(const QModelIndex & idx)
 {
     int index=idx.row();
 
+    mitk::StatusBar::GetInstance()->DisplayText("");
+
     if(m_ContourGroup)
     {
         if(m_ContourGroup->GetSelectedContourIndex()==-2 || !m_ContourGroup->IsContourSelected(index))
@@ -1026,6 +1034,12 @@ void svSegmentation2D::SelectItem(const QModelIndex & idx)
             if(contour)
             {
                 ui->resliceSlider->moveToPathPosPoint(contour->GetPathPosPoint());
+
+                mitk::Point3D centerPoint=contour->GetCenterPoint();
+                QString info="Contour Geometry Info: Area="+QString::number(contour->GetArea())
+                        +", Perimeter="+QString::number(contour->GetPerimeter())
+                        +", Center Point=("+QString::number(centerPoint[0])+","+QString::number(centerPoint[1])+","+QString::number(centerPoint[2])+")";
+                mitk::StatusBar::GetInstance()->DisplayText(info.toStdString().c_str());
             }
         }
         else
@@ -1084,7 +1098,7 @@ void svSegmentation2D::ClearAll()
         m_EndChangingContourObserverTag=-1;
     }
 
-    if(m_ContourGroupNode)
+    if(m_ContourGroupNode.IsNotNull())
     {
         m_ContourGroupNode->SetDataInteractor(NULL);
         m_DataInteractor=NULL;
@@ -1565,4 +1579,19 @@ void svSegmentation2D::PasteContour()
     InsertContourByPathPosPoint(contour);
 
     LoftContourGroup();
+}
+
+void svSegmentation2D::NewGroup()
+{
+    if(m_ContourGroupNode.IsNull())
+        return;
+
+    if(m_ContourGroupCreateWidget)
+    {
+        delete m_ContourGroupCreateWidget;
+    }
+
+    m_ContourGroupCreateWidget=new svContourGroupCreate(GetDataStorage(), m_ContourGroupNode,0);
+    m_ContourGroupCreateWidget->show();
+    m_ContourGroupCreateWidget->SetFocus();
 }

@@ -13,6 +13,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QApplication>
+#include <QInputDialog>
 
 svProjectAddImageAction::svProjectAddImageAction()
 {
@@ -46,11 +47,14 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
             prefs = berry::IPreferences::Pointer(0);
         }
 
-        QString lastFileOpenPath=QString();
+        QString lastFileOpenPath="";
         if(prefs.IsNotNull())
         {
             lastFileOpenPath = prefs->Get("LastFileOpenPath", "");
         }
+
+        if(lastFileOpenPath=="")
+            lastFileOpenPath=QDir::homePath();
 
         QString imageFilePath = QFileDialog::getOpenFileName(NULL, tr("Open Image File")
                                                              , lastFileOpenPath
@@ -75,10 +79,20 @@ void svProjectAddImageAction::Run(const QList<mitk::DataNode::Pointer> &selected
             copy=true;
         }
 
+        double scaleFactor=0;
+        if(copy)
+        {
+            bool ok;
+            double factor = QInputDialog::getDouble(NULL, tr("Scale image?"),
+                                                 tr("Do you want to scale the image (for unit conversion)?\nScaling Factor:"), 0, 0, 1000, 3, &ok);
+            if (ok)
+                scaleFactor=factor;
+        }
+
         mitk::StatusBar::GetInstance()->DisplayText("Adding or replacing image");
         QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
 
-        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode,copy);
+        svProjectManager::AddImage(m_DataStorage, imageFilePath, selectedNode, copy, scaleFactor);
 
         mitk::StatusBar::GetInstance()->DisplayText("Imaged Added");
         QApplication::restoreOverrideCursor();

@@ -14,6 +14,9 @@ class SV_QT_PROJECTMANAGER svProjectManagerPluginActivator :
 
 public:
 
+    svProjectManagerPluginActivator();
+    ~svProjectManagerPluginActivator();
+
 //    static ctkPluginContext* GetContext();
 //    static svProjectManagerPluginActivator* GetInstance();
 
@@ -23,7 +26,6 @@ public:
 private:
 //    static svProjectManagerPluginActivator* m_Instance;
 //    static ctkPluginContext* m_Context;
-
 };
 
 #endif // SVPROJECTMANAGERPLUGINACTIVATOR_H

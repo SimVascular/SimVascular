@@ -6,6 +6,7 @@
 #include "svContourGroup.h"
 #include "svContourModel.h"
 #include "svContourGroupDataInteractor.h"
+#include "svContourGroupCreate.h"
 
 #include "svResliceSlider.h"
 #include "svLevelSet2DWidget.h"
@@ -139,6 +140,8 @@ public slots:
 
     void PasteContour();
 
+    void NewGroup();
+
 public:
 
     int GetTimeStep();
@@ -220,6 +223,8 @@ protected:
     QMenu* m_ManualMenu;
 
     svContour* m_CopyContour;
+
+    svContourGroupCreate* m_ContourGroupCreateWidget;
 };
 
 #endif // SVSEGMENTATION2D_H

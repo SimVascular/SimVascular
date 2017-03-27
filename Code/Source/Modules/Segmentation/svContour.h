@@ -202,6 +202,8 @@ public:
 
     double GetArea();
 
+    double GetPerimeter();
+
   protected:
 
     bool m_Selected;

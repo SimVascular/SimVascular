@@ -5,9 +5,9 @@
 #include "svPathCreate.h"
 #include "svPath.h"
 #include "svPathDataInteractor.h"
+#include "svPathCreate.h"
 
 #include <QmitkFunctionality.h>
-//#include <QmitkPointListView.h>
 #include <QmitkStdMultiWidget.h>
 
 #include <mitkDataStorage.h>
@@ -59,6 +59,8 @@ public slots:
 
     void UpdateAddingMode(int mode);
 
+    void NewPath();
+
 public:
 
     int GetTimeStep();
@@ -109,6 +111,7 @@ protected:
     svPathSmooth* m_SmoothWidget;
 
     svPathCreate* m_PathCreateWidget;
+    svPathCreate* m_PathCreateWidget2;
 
     mitk::Image* m_Image;
 

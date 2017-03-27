@@ -8,6 +8,14 @@
 #include "svFileOpenProjectAction.h"
 #include "svFileSaveProjectAction.h"
 #include "svAboutDialog.h"
+#include "svDataFolder.h"
+#include "svDataNodeOperation.h"
+#include "svProjectManager.h"
+#include "svPath.h"
+#include "svContourGroup.h"
+#include "svModel.h"
+#include "svMitkMesh.h"
+#include "svMitkSimJob.h"
 
 #include <QMenu>
 #include <QMenuBar>
@@ -19,6 +27,11 @@
 #include <QTextStream>
 #include <QSettings>
 #include <QTreeView>
+#include <QToolBar>
+#include <QMessageBox>
+#include <QLabel>
+#include <QInputDialog>
+#include <QLineEdit>
 
 #include <ctkPluginException.h>
 #include <service/event/ctkEventAdmin.h>
@@ -56,20 +69,20 @@
 
 #include <itkConfigure.h>
 #include <vtkConfigure.h>
+#include <vtkVersionMacros.h>
+
 #include <mitkVersion.h>
 #include <mitkIDataStorageService.h>
 #include <mitkIDataStorageReference.h>
 #include <mitkDataStorageEditorInput.h>
 #include <mitkNodePredicateDataType.h>
 #include <mitkWorkbenchUtil.h>
-#include <vtkVersionMacros.h>
-
+#include <mitkOperationEvent.h>
+#include <QmitkNodeDescriptorManager.h>
 #include <mitkImage.h>
 #include <mitkUndoController.h>
 #include <mitkVerboseLimitedLinearUndo.h>
-#include <QToolBar>
-#include <QMessageBox>
-#include <QLabel>
+#include <mitkDataNodeSelection.h>
 
 svWorkbenchWindowAdvisorHack *svWorkbenchWindowAdvisorHack::undohack = new svWorkbenchWindowAdvisorHack();
 
@@ -408,7 +421,10 @@ svWorkbenchWindowAdvisor::svWorkbenchWindowAdvisor(berry::WorkbenchAdvisor* wbAd
     showClosePerspectiveMenuItem(true),
     viewNavigatorFound(false),
     showMemoryIndicator(true),
-    dropTargetListener(new QmitkDefaultDropTargetListener)
+    dropTargetListener(new QmitkDefaultDropTargetListener),
+    m_UndoEnabled(true),
+    m_Interface(new svDataNodeOperationInterface),
+    m_CopyDataNode(NULL)
 {
     productName = QCoreApplication::applicationName();
     viewExcludeList.push_back("org.mitk.views.viewnavigatorview");
@@ -416,6 +432,10 @@ svWorkbenchWindowAdvisor::svWorkbenchWindowAdvisor(berry::WorkbenchAdvisor* wbAd
 
 svWorkbenchWindowAdvisor::~svWorkbenchWindowAdvisor()
 {
+    for (std::vector< std::pair< QmitkNodeDescriptor*, QAction* > >::iterator it = m_DescriptorActionList.begin();it != m_DescriptorActionList.end(); it++)
+    {
+        (it->first)->RemoveAction(it->second);
+    }
 }
 
 berry::ActionBarAdvisor::Pointer svWorkbenchWindowAdvisor::CreateActionBarAdvisor(
@@ -981,6 +1001,7 @@ void svWorkbenchWindowAdvisor::PostWindowOpen()
         }
     }
 
+    AddCustomMenuItemsForDataManager();
     SetupDataManagerDoubleClick();
 
 }
@@ -1583,4 +1604,375 @@ void svWorkbenchWindowAdvisor::ExitApplication()
     }
 
     berry::PlatformUI::GetWorkbench()->Close();
+}
+
+void svWorkbenchWindowAdvisor::AddCustomMenuItemsForDataManager()
+{
+    QmitkNodeDescriptor* unknownDataNodeDescriptor =  QmitkNodeDescriptorManager::GetInstance()->GetUnknownDataNodeDescriptor();
+    QAction* removeAction = new QAction(QIcon(":remove.png"), "Remove", this);
+    QObject::connect( removeAction, SIGNAL( triggered(bool) ) , this, SLOT( RemoveSelectedNodes(bool) ) );
+    unknownDataNodeDescriptor->AddAction(removeAction);
+    m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,removeAction));
+
+    QAction* renameAction = new QAction(QIcon(":rename.png"), "Rename", this);
+    QObject::connect( renameAction, SIGNAL( triggered(bool) ) , this, SLOT( RenameSelectedNode(bool) ) );
+    unknownDataNodeDescriptor->AddAction(renameAction,false);
+    m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,renameAction));
+
+    QAction* copyAction = new QAction(QIcon(":copy.png"), "Copy", this);
+    QObject::connect( copyAction, SIGNAL( triggered(bool) ) , this, SLOT( CopyDataNode(bool) ) );
+    unknownDataNodeDescriptor->AddAction(copyAction,false);
+    m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,copyAction));
+
+    QAction* pasteAction = new QAction(QIcon(":paste.png"), "Paste", this);
+    QObject::connect( pasteAction, SIGNAL( triggered(bool) ) , this, SLOT( PasteDataNode(bool) ) );
+    unknownDataNodeDescriptor->AddAction(pasteAction,false);
+    m_DescriptorActionList.push_back(std::pair<QmitkNodeDescriptor*, QAction*>(unknownDataNodeDescriptor,pasteAction));
+}
+
+void svWorkbenchWindowAdvisor::RemoveSelectedNodes( bool )
+{
+    mitk::DataStorage::Pointer dataStorage=GetDataStorage();
+    if(dataStorage.IsNull())
+        return;
+
+    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
+    if(list.size()==0)
+        return;
+
+    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+
+    if(nodes.size() < 1)
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer node = 0;
+
+    std::vector<mitk::DataNode::Pointer> selectedNodes;
+
+    QString question = tr("Do you really want to remove ");
+
+    mitk::TNodePredicateDataType<svDataFolder>::Pointer isDataFolder= mitk::TNodePredicateDataType<svDataFolder>::New();
+
+    for (int i=0;i<nodes.size();i++)
+    {
+        node = nodes[i];
+        if ( node.IsNotNull() && !isDataFolder->CheckNode(node) )
+        {
+            selectedNodes.push_back(node);
+            question.append(QString::fromStdString(node->GetName()));
+            question.append(", ");
+        }
+    }
+    // remove the last two characters = ", "
+    question = question.remove(question.size()-2, 2);
+    question.append(" from data storage?");
+
+    if(selectedNodes.size()==0)
+    {
+        return;
+    }
+
+    QMessageBox::StandardButton answerButton = QMessageBox::question( NULL
+                                                                      , tr("DataManager")
+                                                                      , question
+                                                                      , QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
+
+    if(answerButton == QMessageBox::Yes)
+    {
+
+        bool incCurrEventId=false;
+        for (std::vector<mitk::DataNode::Pointer>::iterator it = selectedNodes.begin()
+             ; it != selectedNodes.end(); it++)
+        {
+            node = *it;
+            if( !isDataFolder->CheckNode(node))
+            {
+                bool running=false;
+                node->GetBoolProperty("running",running);
+                if(running)
+                    continue;
+
+//                dataStorage->Remove(node);
+                if(!incCurrEventId&&m_UndoEnabled)
+                {
+                    mitk::OperationEvent::IncCurrObjectEventId();
+                    incCurrEventId=true;
+                }
+
+                mitk::DataNode::Pointer parentNode=NULL;
+                mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources (node);
+                if(rs.IsNotNull()&&rs->size()>0)
+                    parentNode=rs->GetElement(0);
+
+                svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,dataStorage,node,parentNode);
+                if(m_UndoEnabled)
+                {
+                    svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,dataStorage,node,parentNode);
+                    mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Remove DataNode");
+                    mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+                }
+
+                m_Interface->ExecuteOperation(doOp);
+            }
+            //      if (m_GlobalReinitOnNodeDelete)
+            //          this->GlobalReinit(false);
+        }
+    }
+}
+
+void svWorkbenchWindowAdvisor::RenameSelectedNode( bool )
+{
+    mitk::DataStorage::Pointer dataStorage=GetDataStorage();
+    if(dataStorage.IsNull())
+        return;
+
+    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
+    if(list.size()==0)
+        return;
+
+    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+
+    if(nodes.size() < 1)
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer node = nodes.front();
+
+    if ( node.IsNotNull())
+    {
+        mitk::TNodePredicateDataType<svDataFolder>::Pointer isDataFolder= mitk::TNodePredicateDataType<svDataFolder>::New();
+        if( isDataFolder->CheckNode(node))
+        {
+            return;
+        }
+
+        bool running=false;
+        node->GetBoolProperty("running",running);
+        if(running)
+        {
+            QMessageBox::warning(NULL,"Job Running","You can't rename it since it has a job running.");
+            return;
+        }
+
+        bool ok;
+        QString text = QInputDialog::getText(NULL, tr("Rename"),
+                                             tr("New Name:"), QLineEdit::Normal,
+                                             QString::fromStdString(node->GetName()), &ok);
+        QString newName=text.trimmed();
+        if (ok && !newName.isEmpty())
+        {
+            mitk::DataNode::Pointer parentNode=NULL;
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs.IsNotNull()&&rs->size()>0)
+                parentNode=rs->GetElement(0);
+
+
+            bool alreadyExists=false;
+            if(parentNode.IsNull() && dataStorage->GetNamedNode(newName.toStdString()))
+                alreadyExists=true;
+            else if(parentNode.IsNotNull() && dataStorage->GetNamedDerivedNode(newName.toStdString().c_str(),parentNode))
+                alreadyExists=true;
+
+            if(alreadyExists)
+            {
+                QMessageBox::warning(NULL,"Name Conflict","Please use a name different from other existing nodes under the parent node.");
+                return;
+            }
+
+            svProjectManager::RenameDataNode(dataStorage,node,newName.toStdString());
+
+        }
+    }
+}
+
+void svWorkbenchWindowAdvisor::CopyDataNode( bool )
+{
+    mitk::DataStorage::Pointer dataStorage=GetDataStorage();
+    if(dataStorage.IsNull())
+        return;
+
+    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
+    if(list.size()==0)
+        return;
+
+    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+
+    if(nodes.size() < 1)
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer node = nodes.front();
+
+    m_CopyDataNode=node;
+}
+
+void svWorkbenchWindowAdvisor::PasteDataNode( bool )
+{
+    if(m_CopyDataNode.IsNull())
+        return;
+
+    mitk::DataStorage::Pointer dataStorage=GetDataStorage();
+    if(dataStorage.IsNull())
+        return;
+
+    std::list< mitk::DataNode::Pointer > list=GetSelectedDataNodes();
+    if(list.size()==0)
+        return;
+
+    QList<mitk::DataNode::Pointer> nodes=QList<mitk::DataNode::Pointer>::fromStdList(list);
+
+    if(nodes.size() < 1)
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer node = nodes.front();
+
+    mitk::NodePredicateDataType::Pointer isPathFolder = mitk::NodePredicateDataType::New("svPathFolder");
+    mitk::NodePredicateDataType::Pointer isSegFolder = mitk::NodePredicateDataType::New("svSegmentationFolder");
+    mitk::NodePredicateDataType::Pointer isModelFolder = mitk::NodePredicateDataType::New("svModelFolder");
+    mitk::NodePredicateDataType::Pointer isMeshFolder = mitk::NodePredicateDataType::New("svMeshFolder");
+    mitk::NodePredicateDataType::Pointer isSimFolder = mitk::NodePredicateDataType::New("svSimulationFolder");
+
+    mitk::NodePredicateDataType::Pointer isPath = mitk::NodePredicateDataType::New("svPath");
+    mitk::NodePredicateDataType::Pointer isContourGroup = mitk::NodePredicateDataType::New("svContourGroup");
+    mitk::NodePredicateDataType::Pointer isModel = mitk::NodePredicateDataType::New("svModel");
+    mitk::NodePredicateDataType::Pointer isMesh = mitk::NodePredicateDataType::New("svMitkMesh");
+    mitk::NodePredicateDataType::Pointer isSimJob = mitk::NodePredicateDataType::New("svMitkSimJob");
+
+    mitk::DataNode::Pointer parentNode=NULL;
+
+    if(isPath->CheckNode(m_CopyDataNode))
+    {
+        if(isPathFolder->CheckNode(node))
+            parentNode=node;
+        else if(isPath->CheckNode(node))
+        {
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs->size()>0)
+                parentNode=rs->GetElement(0);
+        }
+        else
+            return;
+    }
+    else if(isContourGroup->CheckNode(m_CopyDataNode))
+    {
+        if(isSegFolder->CheckNode(node))
+            parentNode=node;
+        else if(isContourGroup->CheckNode(node))
+        {
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs->size()>0)
+                parentNode=rs->GetElement(0);
+        }
+        else
+            return;
+    }
+    else if(isModel->CheckNode(m_CopyDataNode))
+    {
+        if(isModelFolder->CheckNode(node))
+            parentNode=node;
+        else if(isModel->CheckNode(node))
+        {
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs->size()>0)
+                parentNode=rs->GetElement(0);
+        }
+        else
+            return;
+    }
+    else if(isMesh->CheckNode(m_CopyDataNode))
+    {
+        if(isMeshFolder->CheckNode(node))
+            parentNode=node;
+        else if(isMesh->CheckNode(node))
+        {
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs->size()>0)
+                parentNode=rs->GetElement(0);
+        }
+        else
+            return;
+    }
+    else if(isSimJob->CheckNode(m_CopyDataNode))
+    {
+        if(isSimFolder->CheckNode(node))
+            parentNode=node;
+        else if(isSimJob->CheckNode(node))
+        {
+            mitk::DataStorage::SetOfObjects::ConstPointer rs=dataStorage->GetSources(node);
+            if(rs->size()>0)
+                parentNode=rs->GetElement(0);
+        }
+        else
+            return;
+    }
+    else
+    {
+        return;
+    }
+
+    mitk::DataNode::Pointer newNode = mitk::DataNode::New();
+
+    svPath* path=dynamic_cast<svPath*>(m_CopyDataNode->GetData());
+    if(path)
+    {
+        newNode->SetData(path->Clone());
+    }
+
+    svContourGroup* group=dynamic_cast<svContourGroup*>(m_CopyDataNode->GetData());
+    if(group)
+    {
+        newNode->SetData(group->Clone());
+    }
+
+    svModel* model=dynamic_cast<svModel*>(m_CopyDataNode->GetData());
+    if(model)
+    {
+        newNode->SetData(model->Clone());
+    }
+
+    svMitkMesh* mesh=dynamic_cast<svMitkMesh*>(m_CopyDataNode->GetData());
+    if(mesh)
+    {
+        newNode->SetData(mesh->Clone());
+    }
+
+    svMitkSimJob* simJob=dynamic_cast<svMitkSimJob*>(m_CopyDataNode->GetData());
+    if(simJob)
+    {
+        svMitkSimJob::Pointer copyJob=simJob->Clone();
+        copyJob->SetStatus("No Data Files");
+        newNode->SetData(copyJob);
+    }
+
+    std::string copyName=m_CopyDataNode->GetName()+"_copy";
+    int i=1;
+    while(i<10)
+    {
+        if(parentNode.IsNull() && !dataStorage->GetNamedNode(copyName))
+            break;
+        else if(parentNode.IsNotNull() && !dataStorage->GetNamedDerivedNode(copyName.c_str(),parentNode))
+            break;
+
+        i++;
+        copyName=m_CopyDataNode->GetName()+"_copy"+std::to_string(i);
+    }
+
+    newNode->SetName(copyName);
+
+    mitk::OperationEvent::IncCurrObjectEventId();
+
+    svDataNodeOperation* doOp = new svDataNodeOperation(svDataNodeOperation::OpADDDATANODE,dataStorage,newNode,parentNode);
+    if(m_UndoEnabled)
+    {
+        svDataNodeOperation* undoOp = new svDataNodeOperation(svDataNodeOperation::OpREMOVEDATANODE,dataStorage,newNode,parentNode);
+        mitk::OperationEvent *operationEvent = new mitk::OperationEvent(m_Interface, doOp, undoOp, "Paste DataNode");
+        mitk::UndoController::GetCurrentUndoModel()->SetOperationEvent( operationEvent );
+    }
+    m_Interface->ExecuteOperation(doOp);
 }
