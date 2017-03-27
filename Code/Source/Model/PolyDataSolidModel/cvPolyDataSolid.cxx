@@ -122,22 +122,22 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
   cvPolyDataSolid *solidPtr;
 
   if (geom_ != NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (src.GetKernelT() != SM_KT_POLYDATA) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   solidPtr = (cvPolyDataSolid *)( &src );
   if ( solidPtr->geom_ == NULL ) {
-    return CV_OK;
+    return SV_OK;
   }
 
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(solidPtr->geom_);
   numBoundaryRegions = solidPtr->numBoundaryRegions;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------
@@ -147,7 +147,7 @@ int cvPolyDataSolid::Copy(const cvSolidModel& src )
  * @brief Function to set the PolyData member object
  * @param *newPolyData Pointer to vtkPolyData object that you want to be
  * set as the class member data
- * @return CV_OK if executed correctly
+ * @return SV_OK if executed correctly
  */
 
 int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
@@ -160,14 +160,14 @@ int cvPolyDataSolid::SetVtkPolyDataObject(vtkPolyData *newPolyData)
   geom_ = vtkPolyData::New();
   geom_->DeepCopy(newPolyData);
 
-  if (VtkUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom_,1,"ModelFaceID") == SV_OK)
   {
     int *faceIds;
     int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, &faceIds);
     delete [] faceIds;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----
@@ -186,7 +186,7 @@ cvSolidModel *cvPolyDataSolid::Copy() const
 /**
  * @brief Function to load in a solid file
  * @param *filename Pointer to a char filename of the file to read in
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is not NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is not NULL
  * or the read function does not return properly.
  * @note Current accepted filetypes include:
  * @note STL
@@ -198,12 +198,12 @@ cvSolidModel *cvPolyDataSolid::Copy() const
 int cvPolyDataSolid::ReadNative( char *filename )
 {
   if ( geom_ != NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
-  if ( PlyDtaUtils_ReadNative( filename, geom_) != CV_OK) {
-    return CV_ERROR;
+  if ( PlyDtaUtils_ReadNative( filename, geom_) != SV_OK) {
+    return SV_ERROR;
   }
 
   vtkSmartPointer<vtkCleanPolyData> cleaner =
@@ -215,7 +215,7 @@ int cvPolyDataSolid::ReadNative( char *filename )
   geom_->DeepCopy(cleaner->GetOutput());
   geom_->BuildLinks();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -226,7 +226,7 @@ int cvPolyDataSolid::ReadNative( char *filename )
  * @brief Function to write the polydata
  * @param file_version int for filetype (UNUSED CURRENTLY)
  * @param *filename Pointer to a char filename of the file to write
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the write function does not return properly.
  */
 
@@ -234,14 +234,14 @@ int cvPolyDataSolid::WriteNative( int file_version, char *filename ) const
 {
   //Procdure calls PolyData Utils to write the file using vtkWriters
   if ( geom_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if (PlyDtaUtils_WriteNative(geom_, file_version, filename ) != CV_OK) {
-    return CV_ERROR;
+  if (PlyDtaUtils_WriteNative(geom_, file_version, filename ) != SV_OK) {
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -285,10 +285,10 @@ cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist, double 
     return NULL;
   }
 
-  if (PlyDtaUtils_GetFacePolyData(geom_, &faceid, facepd) != CV_OK)
+  if (PlyDtaUtils_GetFacePolyData(geom_, &faceid, facepd) != SV_OK)
   {
    fprintf(stderr,"ERROR: Failed to get Face of PolyData");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //fprintf(stderr,"Check num Points: %d\n",facepd->GetNumberOfPoints());
@@ -312,21 +312,21 @@ cvPolyData *cvPolyDataSolid::GetFacePolyData(int faceid, int useMaxDist, double 
  * @param angle double that specifies the extraction angle. Any faces
  * with a difference between face normals larger than this angle will be
  * considered a separate face
- * @return *result: CV_ERROR is member data hasn't been loaded, or if the
- * GetBoundaryFaces function does not work properly. CV_OK is executed
+ * @return *result: SV_ERROR is member data hasn't been loaded, or if the
+ * GetBoundaryFaces function does not work properly. SV_OK is executed
  * properly
  */
 
 int cvPolyDataSolid::GetBoundaryFaces(double angle)
 {
   if (geom_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if (PlyDtaUtils_GetBoundaryFaces(geom_,angle,&numBoundaryRegions) != CV_OK)
-    return CV_ERROR;
+  if (PlyDtaUtils_GetBoundaryFaces(geom_,angle,&numBoundaryRegions) != SV_OK)
+    return SV_ERROR;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------
@@ -337,7 +337,7 @@ int cvPolyDataSolid::GetBoundaryFaces(double angle)
  * @param *numFaces Pointer to the number of faces the poly should have
  * @param **faceIds Pointer to a pointer of vector containing the numerical
  * values corresponding to each face region
- * @return *result: CV_ERROR is member data hasn't been loaded, if the number
+ * @return *result: SV_ERROR is member data hasn't been loaded, if the number
  * of faces is zero or faceIds don't exist
  */
 
@@ -347,7 +347,7 @@ int cvPolyDataSolid::GetFaceIds(int *numFaces,int **faceIds)
   if ( geom_ == NULL ) {
       *numFaces = 0;
       faceIds = NULL;
-      return CV_OK;
+      return SV_OK;
   }
 
   int result = PlyDtaUtils_GetFaceIds( geom_, &numBoundaryRegions, faceIds);
@@ -365,11 +365,11 @@ int cvPolyDataSolid::GetFaceAttribute(char *attr,int faceid, char **value)
   //Not sure if this procedure is needed currently
   if ( geom_ == NULL ) {
       *value = NULL;
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   *value = NULL;
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 
@@ -383,11 +383,11 @@ int cvPolyDataSolid::SetFaceAttribute(char *attr,int faceid, char *value)
 
   if ( geom_ == NULL ) {
       *value = NULL;
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   *value = NULL;
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 // ----------------
@@ -396,7 +396,7 @@ int cvPolyDataSolid::SetFaceAttribute(char *attr,int faceid, char *value)
 /**
  * @brief Function to delete a region in the polydata
  * @param regionid this is the region id to delete all of the cells in
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
 
@@ -405,24 +405,24 @@ int cvPolyDataSolid::DeleteRegion(int regionid)
 
   if ( geom_ == NULL ) {
       fprintf(stderr,"Solid must exist in order to delete regions\n");
-      return CV_ERROR;
+      return SV_ERROR;
   }
   if (numBoundaryRegions == 0) {
       fprintf(stderr,"Must have extracted boundaries in order to delete region\n");
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
-  if (PlyDtaUtils_DeleteRegion(geom_,&regionid) != CV_OK)
+  if (PlyDtaUtils_DeleteRegion(geom_,&regionid) != SV_OK)
   {
     fprintf(stderr,"Error: Faces were not deleted correctly\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Must update the number of regions
   numBoundaryRegions = numBoundaryRegions - 1;
 
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------------
@@ -432,7 +432,7 @@ int cvPolyDataSolid::DeleteRegion(int regionid)
  * @brief Function to intersect two PolyData using the vtk Booleans filter
  * @param *a Pointer to the first object to be intersected
  * @param *b Pointer to the second object to be intersected
- * @return CV_ERROR if the objects don't exist of the filter doesn't work
+ * @return SV_ERROR if the objects don't exist of the filter doesn't work
  * correctly
  */
 
@@ -442,22 +442,22 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
   //Geometry should be empty prior to boolean
   if (geom_ != NULL)
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Need both objects to create an intersection
   if (a == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (a->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (b == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (b->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   vtkSVLoopBooleanPolyDataFilter *intersectPolyData;
   vtkPolyData *pd1;
@@ -484,7 +484,7 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
 
   intersectPolyData->Delete();
 
-  return CV_OK;
+  return SV_OK;
 
 
 }
@@ -495,7 +495,7 @@ int cvPolyDataSolid::Intersect( cvSolidModel *a, cvSolidModel *b,
  * @brief Function to union two PolyData using the vtk Booleans filter
  * @param *a Pointer to the first object to be unioned
  * @param *b Pointer to the second object to be unioned
- * @return CV_ERROR if the objects don't exist of the filter doesn't work
+ * @return SV_ERROR if the objects don't exist of the filter doesn't work
  * correctly
  */
 
@@ -505,21 +505,21 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
   //Geometry should be empty prior to boolean
   if (geom_ != NULL)
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Need both objects to create a union
   if (a == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (a->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (b == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (b->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   vtkSVLoopBooleanPolyDataFilter *unionPolyData;
@@ -547,7 +547,7 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
 
   unionPolyData->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 // ----------------
 // Subtract
@@ -557,7 +557,7 @@ int cvPolyDataSolid::Union( cvSolidModel *a, cvSolidModel *b,
  * vtk Booleans filter
  * @param *a Pointer to the first object to be subtracted
  * @param *b Pointer to the second object to be subtracted
- * @return CV_ERROR if the objects don't exist of the filter doesn't work
+ * @return SV_ERROR if the objects don't exist of the filter doesn't work
  * correctly
  */
 
@@ -567,22 +567,22 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
   //Geometry should be empty prior to boolean
   if (geom_ != NULL)
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Need both objects to create a subtraction
   if (a == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (a->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (b == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (b->GetKernelT() != SM_KT_POLYDATA ) {
     fprintf(stderr,"Model not of type POLYDATA\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   vtkSVLoopBooleanPolyDataFilter *subtractPolyData;
   vtkPolyData *pd1;
@@ -609,7 +609,7 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
 
   subtractPolyData->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -619,7 +619,7 @@ int cvPolyDataSolid::Subtract( cvSolidModel *a, cvSolidModel *b,
  * @brief Function to delete the cells in the polydata
  * @param numfaces this is the number of cells to delete from the polydata
  * @param faces this is an array containing the ids of the cells to delete
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
 int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
@@ -627,18 +627,18 @@ int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
   if (geom_ == NULL)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if (PlyDtaUtils_DeleteCells(geom_,&numfaces,faces) != CV_OK)
+  if (PlyDtaUtils_DeleteCells(geom_,&numfaces,faces) != SV_OK)
   {
     fprintf(stderr,"Error: Faces were not deleted correctly\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
 
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -648,7 +648,7 @@ int cvPolyDataSolid::DeleteFaces( int numfaces, int *faces)
  * @brief Function to combine the ids of two faces in the polydata
  * @param targetface id of the face to set the two faces to have new id of
  * @param loseface id of the second face, id will be lost
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
 int cvPolyDataSolid::CombineFaces( int targetface, int loseface)
@@ -656,19 +656,19 @@ int cvPolyDataSolid::CombineFaces( int targetface, int loseface)
   if (geom_ == NULL)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if (PlyDtaUtils_CombineFaces(geom_,&targetface,&loseface) != CV_OK)
+  if (PlyDtaUtils_CombineFaces(geom_,&targetface,&loseface) != SV_OK)
   {
     fprintf(stderr,"Error: Faces were not combined correctly\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Must update the number of regions
   numBoundaryRegions = numBoundaryRegions - 1;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
@@ -677,7 +677,7 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
   if (geom_ == NULL)
   {
     fprintf(stderr,"Need PolyData to perform operation\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int i;
@@ -699,17 +699,17 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
 
   if (VMTKUtils_SurfaceRemeshing(geom_,size,meshcaps,preserveedges,
 	trianglesplitfactor,collapseanglethreshold,excluded,
-	markerListName,useSizeFunction,NULL) != CV_OK)
+	markerListName,useSizeFunction,NULL) != SV_OK)
   {
     fprintf(stderr,"Issue while remeshing surface\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
 
-  return CV_OK;
+  return SV_OK;
 #else
   fprintf(stderr,"Must have VMTK to be able to remesh caps\n");
-  return CV_ERROR;
+  return SV_ERROR;
 #endif
 }
 
@@ -726,7 +726,7 @@ int cvPolyDataSolid::RemeshFace(int numfaces,int *excludedFaces,double size)
 int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
 {
   if ( geom_ != NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
@@ -744,7 +744,7 @@ int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
 
   geom_->DeepCopy(triangulator->GetOutput());
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------------
@@ -760,7 +760,7 @@ int cvPolyDataSolid::MakeBox3d(double dims[], double ctr[])
 int cvPolyDataSolid::MakeSphere(double r, double ctr[])
 {
   if ( geom_ != NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
@@ -779,7 +779,7 @@ int cvPolyDataSolid::MakeSphere(double r, double ctr[])
 
   geom_->DeepCopy(triangulator->GetOutput());
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------------
@@ -798,7 +798,7 @@ int cvPolyDataSolid::MakeCylinder(double r, double length, double ctr[],
     				  double axis[] )
 {
   if ( geom_ != NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   geom_ = vtkPolyData::New();
 
@@ -834,6 +834,6 @@ int cvPolyDataSolid::MakeCylinder(double r, double length, double ctr[],
 
   geom_->DeepCopy(triangulator->GetOutput());
 
-  return CV_OK;
+  return SV_OK;
 }
 

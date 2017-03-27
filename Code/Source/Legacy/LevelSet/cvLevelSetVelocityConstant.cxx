@@ -64,7 +64,7 @@ int cvLevelSetVelocityConstant::SetV( double v )
 {
   v_ = v;
   vValid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -75,10 +75,10 @@ int cvLevelSetVelocityConstant::SetV( double v )
 int cvLevelSetVelocityConstant::GetV( double *v )
 {
   if ( ! vValid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *v = v_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -132,8 +132,8 @@ int cvLevelSetVelocityConstant::Evaluate( double pos[], double *f0, double *f1, 
 {
   double n[3];
 
-  if ( ! Valid() ) return CV_ERROR;
-  if ( ls_->GetGrid()->InterpN( pos, n ) != CV_OK ) return CV_ERROR;
+  if ( ! Valid() ) return SV_ERROR;
+  if ( ls_->GetGrid()->InterpN( pos, n ) != SV_OK ) return SV_ERROR;
 
   *f0 = v_;
   *f1 = 0.0;
@@ -145,5 +145,5 @@ int cvLevelSetVelocityConstant::Evaluate( double pos[], double *f0, double *f1, 
     v[2] = n[2] * v_;
   }
 
-  return CV_OK;
+  return SV_OK;
 }

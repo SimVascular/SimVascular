@@ -125,7 +125,7 @@ int charToInt(const char *in)
  * array. Used to set labels on faces
  * @param &array the new string array in which to put the char array
  * @param &charstr the character to put in array
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
     char *charstr)
@@ -138,7 +138,7 @@ int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
     array->SetValue(i,charstr[i]);
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------------
@@ -148,7 +148,7 @@ int OCCTUtils_SetExtStringArrayFromChar(Handle(TDataStd_ExtStringArray) &array,
  * @brief Helper function get a character array from an occt string array.
  * @param &array the string array to be extracted
  * @param &charstr the char array to put in the information
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     char *charstr)
@@ -162,7 +162,7 @@ int OCCTUtils_GetExtStringArrayAsChar(Handle(TDataStd_ExtStringArray) &array,
     std::string outstr = streamer.str();
     sprintf(charstr,"%s",outstr.c_str());
 
-    return CV_OK;
+    return SV_OK;
 }
 
 // ---------------------
@@ -217,7 +217,7 @@ Standard_Real LinearFunc::GetY(Standard_Real x)
  * around the fillet edge. The new fillet radius value will be somehwere
  * between the maximum and minimum radius values given.
  * @param blendname Name to be given the new face created for the shape
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -272,7 +272,7 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
       //if (!uAbs.IsDone())
       //{
       //  fprintf(stderr,"Could not create points on edge\n");
-      //  return CV_ERROR;
+      //  return SV_ERROR;
       //}
       //TopoDS_Face face1ForCurve = TopoDS::Face(faces.First());
       //TopoDS_Face face2ForCurve = TopoDS::Face(faces.Last());
@@ -331,7 +331,7 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
   if (found == 0)
   {
     fprintf(stderr,"No edges between faces\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   sprintf(blendname,"wall_blend_%s_%s",nameA,nameB);
 
@@ -343,7 +343,7 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
   catch (Standard_Failure)
   {
     fprintf(stderr,"Try different radius\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   try
   {
@@ -352,17 +352,17 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
   catch (StdFail_NotDone)
   {
     fprintf(stderr,"Try different radius\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (filletmaker.IsDone() != 1)
   {
     fprintf(stderr,"Not done\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   fprintf(stderr,"Number faulty contours: %d\n",filletmaker.NbFaultyContours());
   shape = tmpShape;
 
-  return CV_OK;
+  return SV_OK;
 }
 // ---------------------
 // OCCTUtils_CreateEdgeBlend
@@ -382,7 +382,7 @@ int OCCTUtils_CreateEdgeBlend(TopoDS_Shape &shape,
  * around the fillet edge. The new fillet radius value will be somehwere
  * between the maximum and minimum radius values given.
  * @param blendname Name to be given the new face created for the shape
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
     BRepBuilderAPI_Sewing &attacher,int &numFilled)
@@ -391,7 +391,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
   {
     geom = shape;
     fprintf(stdout,"Shape is closed, nothing to be done\n");
-    return CV_OK;
+    return SV_OK;
   }
 
   //Attacher!
@@ -421,7 +421,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
     catch (Standard_Failure)
     {
       fprintf(stderr,"Failure when filling holes\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     TopoDS_Face newFace = filler.Face();
@@ -437,7 +437,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
   if (numFilled == 0)
   {
     fprintf(stderr,"No holes found\n");
-    return CV_OK;
+    return SV_OK;
   }
   attacher.Perform();
 
@@ -447,7 +447,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
   }
   catch (Standard_TypeMismatch) {
     fprintf(stderr,"No open boundaries found\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   BRepBuilderAPI_MakeSolid solidmaker(tmpShell);
@@ -472,7 +472,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
 
   //solid.Closed(Standard_True);
   //geom = solid;
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------------
@@ -493,7 +493,7 @@ int OCCTUtils_CapShapeToSolid(TopoDS_Shape &shape,TopoDS_Shape &geom,
  * @param w2, second weighting to be used only if smoothing
  * @param w3, third weighting to be used only if smoothing
  * @param smoothing indicates whether smoothing should be used
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
 		int numCurves,int continuity,
@@ -516,7 +516,7 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     if (checkDegenerate == Standard_True)
     {
       fprintf(stderr,"Degenerate wire detected\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     Handle(Geom_BSplineCurve) curvBS = OCCTUtils_EdgeToBSpline(tmpEdge);
 
@@ -551,7 +551,7 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     catch (std::bad_alloc)
     {
       fprintf(stderr,"Not enough memory for this smoothing\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else
@@ -630,13 +630,13 @@ int OCCTUtils_MakeLoftedSurf(TopoDS_Wire *curves, TopoDS_Shape &shape,
     //fprintf(stdout,"_________________________________________________________\n");
   }
 
-  if (OCCTUtils_ShapeFromBSplineSurface(surface,shape,curves[0],curves[numCurves-1],pres3d) != CV_OK)
+  if (OCCTUtils_ShapeFromBSplineSurface(surface,shape,curves[0],curves[numCurves-1],pres3d) != SV_OK)
   {
     fprintf(stderr,"Error in conversion from bspline surface to shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------------
@@ -655,7 +655,7 @@ int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
 
   if(surface.IsNull()) {
     fprintf(stderr,"Lofting did not complete\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // create the new surface
@@ -785,7 +785,7 @@ int OCCTUtils_ShapeFromBSplineSurface(const Handle(Geom_BSplineSurface) surface,
   TopoDS_Face first,last;
   shape = OCCTUtils_MakeShell(shell, newW1, newW2, pres3d, first, last);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------------
@@ -1106,7 +1106,7 @@ Handle(Geom_BSplineCurve) OCCTUtils_EdgeToBSpline(const TopoDS_Edge& theEdge)
  * @param *v_num_faces int that contains the number of total face regions
  * @param **v_faces vector containing the array of numerical values
  * corresponding to each face region
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -1124,7 +1124,7 @@ int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
 
   *v_num_faces = num;
 
-  if (num == 0) return CV_ERROR;
+  if (num == 0) return SV_ERROR;
 
   (*v_faces) = new int [num];
 
@@ -1141,7 +1141,7 @@ int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
     j++;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------
@@ -1152,7 +1152,7 @@ int OCCTUtils_GetFaceIds( const TopoDS_Shape &geom,
  * @param *geom input TopoDS_Shape on which to get the face ids
  * @param id is the scalar of the face region
  * @param returns input value and an error if the face does not have id
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
 		const Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -1163,21 +1163,21 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
   if (tmpLabel.IsNull())
   {
     //fprintf(stderr,"Face does not have label\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   TDF_Label idLabel = tmpLabel.FindChild(0);
   if (idLabel.IsNull())
   {
     fprintf(stderr,"Face does not have id\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   //Retrive attribute
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
   idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
   id = INT->Get();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1185,7 +1185,7 @@ int OCCTUtils_GetFaceLabel(const TopoDS_Shape &geom,
 // -------------------
 /**
  * @brief Procedure to renumber faces (not used)
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel)
@@ -1233,16 +1233,16 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
   for (int i=0;anExp.More();anExp.Next(),i++)
   {
     TopoDS_Face tmpFace = TopoDS::Face(anExp.Current());
-    if (OCCTUtils_ReLabelFace(tmpFace,shapetool,shapelabel,newmap[i]) != CV_OK)
+    if (OCCTUtils_ReLabelFace(tmpFace,shapetool,shapelabel,newmap[i]) != SV_OK)
     {
       fprintf(stderr,"Could not label face\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
   delete [] newmap;
   delete [] faces;
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------------
@@ -1251,7 +1251,7 @@ int OCCTUtils_RenumberFaces(TopoDS_Shape &shape,
 /**
  * @brief Procedure to get the range of id values on a shape
  * @param face_range the returned range of faces
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -1268,7 +1268,7 @@ int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
       face_range = faceid;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1278,12 +1278,12 @@ int OCCTUtils_GetFaceRange(const TopoDS_Shape &shape,
 /**
  * @brief Procedure to get a shape orientation
  * @param *geom input TopoDS_Shape on which to get orientation
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
 {
   orientation = (int) shape.Orientation();
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1293,7 +1293,7 @@ int OCCTUtils_GetOrientation(const TopoDS_Shape &shape,int &orientation)
  * @brief Procedure to set a face orientation
  * @param shape input TopoDS_Shape on which to set a faces orientation
  * @param face the face on which to set the orientation
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orientation)
 {
@@ -1305,7 +1305,7 @@ int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orienta
   TopoDS_Shape tmpShape = reshaper->Apply(shape,TopAbs_FACE);
   shape = tmpShape;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1315,7 +1315,7 @@ int OCCTUtils_SetOrientation(TopoDS_Shape &shape,TopoDS_Shape &face,int &orienta
  * @brief Procedure to relabel the face of a shape
  * @param shape input TopoDS_Shape face that needs to be relabled
  * @param id desired id for face
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -1324,7 +1324,7 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
   if (shape.IsNull())
   {
     fprintf(stderr,"Face is NULL, cannot add\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   TDF_Label tmpLabel;
@@ -1332,19 +1332,19 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
   if (tmpLabel.IsNull())
   {
     fprintf(stderr,"Face has not been given a label\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   TDF_Label idLabel = tmpLabel.FindChild(0);
   if (idLabel.IsNull())
   {
     fprintf(stderr,"Face has not been given an id\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   Handle(TDataStd_Integer) INT = new TDataStd_Integer();
   idLabel.FindAttribute(TDataStd_Integer::GetID(),INT);
   INT->Set(id);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1354,7 +1354,7 @@ int OCCTUtils_ReLabelFace( TopoDS_Shape &shape,
  * @brief Procedure to return the number of faces in shape
  * @param shape input TopoDS_Shape to find number of faces
  * @param num_faces returns the number of faces found
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
 {
@@ -1363,7 +1363,7 @@ int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
   for (int i=0;anExp.More();anExp.Next())
     num_faces++;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1375,7 +1375,7 @@ int OCCTUtils_GetNumberOfFaces(const TopoDS_Shape &shape,int &num_faces)
  * @param shapetool the XDEDoc manager that contains attribute info
  * @param shapelabel the label for the shape registered in XDEDoc
  * @note attributes includ id, gdscName, and parent
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -1387,7 +1387,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
   if (tmpLabel.IsNull())
   {
     fprintf(stderr,"Face is not labelled and thus has no attribute\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (!strncmp(attr,"gdscName",4))
   {
@@ -1395,7 +1395,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     if (nameLabel.IsNull())
     {
       fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     Handle(TDataStd_ExtStringArray) NSTRING = new
       TDataStd_ExtStringArray();
@@ -1403,7 +1403,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     if (isLabel == 0)
     {
       fprintf(stderr,"gdscName attribute does not exist on face\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     returnString[0]='\0';
     OCCTUtils_GetExtStringArrayAsChar(NSTRING,returnString);
@@ -1415,7 +1415,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     if (parentLabel.IsNull())
     {
       fprintf(stderr,"gdscName label doesn't exist, cannot retrive name\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     Handle(TDataStd_ExtStringArray) PSTRING = new
       TDataStd_ExtStringArray();
@@ -1423,7 +1423,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     if (isLabel == 0)
     {
       fprintf(stderr,"parent attribute does not exist on face\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     returnString[0]='\0';
     OCCTUtils_GetExtStringArrayAsChar(PSTRING,returnString);
@@ -1437,7 +1437,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
     if (isLabel == 0)
     {
       fprintf(stderr,"id attribute does not exist on face\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     fprintf(stderr,"Inside id and want to check the actual id!! %d\n",INT->Get());
     returnString[0]='\0';
@@ -1447,10 +1447,10 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
   else
   {
     fprintf(stderr,"Attribute %s is not attribute of shape. Options are gdscName, parent, id\n",attr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1462,7 +1462,7 @@ int OCCTUtils_GetFaceAttribute(const TopoDS_Shape &face,
  * @param shapetool the XDEDoc manager that contains attribute info
  * @param shapelabel the label for the shape registered in XDEDoc
  * @note attributes include id, name, and parent
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &shapelabel,
@@ -1473,7 +1473,7 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
   if (tmpLabel.IsNull())
   {
     fprintf(stderr,"Face is not labelled and thus has no attribute\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (!strncmp(attr,"gdscName",4))
   {
@@ -1504,10 +1504,10 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
   else
   {
     fprintf(stderr,"Attribute %s is not attribute of shape. Options are gdscName, parent, id\n",attr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1519,7 +1519,7 @@ int OCCTUtils_SetFaceAttribute(const TopoDS_Shape &face,
  * @param shapetool the XDEDoc manager that contains attribute info
  * @param shapelabel the label for the shape registered in XDEDoc
  * @note attributes includ id, name, and parent
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
 		Handle(XCAFDoc_ShapeTool) &shapetool,TDF_Label &labelSrc,
@@ -1528,33 +1528,33 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
   //Pass the face names first
   char *name;
   if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,labelSrc,"gdscName",&name) != CV_OK)
+	faceSrc,shapetool,labelSrc,"gdscName",&name) != SV_OK)
   {
     fprintf(stderr,"Failure in getting gdscName for shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,labelDst,"gdscName",name) != CV_OK)
+	faceDst,shapetool,labelDst,"gdscName",name) != SV_OK)
   {
     fprintf(stderr,"Failure in setting gdscName for shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Now parent name
   char *parent;
   if (OCCTUtils_GetFaceAttribute(
-	faceSrc,shapetool,labelSrc,"parent",&parent) != CV_OK)
+	faceSrc,shapetool,labelSrc,"parent",&parent) != SV_OK)
   {
     fprintf(stderr,"Failure in getting parent for shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (OCCTUtils_SetFaceAttribute(
-	faceDst,shapetool,labelDst,"parent",parent) != CV_OK)
+	faceDst,shapetool,labelDst,"parent",parent) != SV_OK)
   {
     fprintf(stderr,"Failure in setting parent for shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1564,7 +1564,7 @@ int OCCTUtils_PassFaceAttributes(TopoDS_Shape &faceSrc,TopoDS_Shape &faceDst,
  * @brief Procedure to check and see if it is solid
  * @param shape input TopoDS_Shape to check
  * @param issue contains integer for issue. BRepCheck_Status doc of occt
- * @return CV_OK if solid, CV_ERROR if it is not solid
+ * @return SV_OK if solid, SV_ERROR if it is not solid
  */
 int OCCTUtils_CheckIsSolid(const TopoDS_Shape &shape,int &issue)
 {
@@ -1580,15 +1580,15 @@ int OCCTUtils_CheckIsSolid(const TopoDS_Shape &shape,int &issue)
       {
 	issue = checker;
 	fprintf(stderr,"Shape is not solid!\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
     }
     issue = 0;
   }
   catch (Standard_TypeMismatch) {
     fprintf(stderr,"Shape caused error in solid check\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }

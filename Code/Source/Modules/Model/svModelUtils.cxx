@@ -31,7 +31,7 @@ vtkPolyData* svModelUtils::CreatePolyData(std::vector<svContourGroup*> segs, int
     cvPolyData *dst=NULL;
 
     int status=sys_geom_all_union(srcs, groupNumber, noInterOut, tol, &dst);
-    if(status!=CV_OK) return NULL;
+    if(status!=SV_OK) return NULL;
 
     for(int i=0;i<groupNumber;i++)
     {
@@ -64,7 +64,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     cvPolyData *src=new cvPolyData(solidvpd);
     cvPolyData *dst = NULL;
 
-    if(sys_geom_checksurface(src,stats,tol)!=CV_OK)
+    if(sys_geom_checksurface(src,stats,tol)!=SV_OK)
     {
       solidvpd->Delete();
       return NULL;
@@ -73,7 +73,7 @@ svModelElementPolyData* svModelUtils::CreateModelElementPolyData(std::vector<mit
     int *doublecaps;
     int numfaces=0;
 
-    if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != CV_OK)
+    if (sys_geom_set_ids_for_caps(src, &dst,  &doublecaps,&numfaces) != SV_OK)
     {
       solidvpd->Delete();
       return NULL;
@@ -170,7 +170,7 @@ vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID
     vals[1]=faceID2;
 
     if ( sys_geom_set_array_for_local_op_face_blend(src,&dst, "ModelFaceID", vals, 2, radius, "ActiveCells", 1)
-         != CV_OK )
+         != SV_OK )
     {
         MITK_ERROR << "poly blend (using radius) error ";
         return NULL;
@@ -184,7 +184,7 @@ vtkPolyData* svModelUtils::CreatePolyDataByBlend(vtkPolyData* vpdsrc, int faceID
                                param->targetdecimation,
                                NULL, "ActiveCells")
 
-         != CV_OK )
+         != SV_OK )
     {
         MITK_ERROR << "poly blend error ";
         return NULL;
@@ -338,7 +338,7 @@ vtkPolyData* svModelUtils::CreateLoftSurface(std::vector<svContour*> contourSet,
                              param->numOutPtsAlongLength,newNumSamplingPts,
                              param->numPtsInLinearSampleAlongLength,param->numModes,param->splineType,param->bias,param->tension,param->continuity,
                              &dst )
-         != CV_OK )
+         != SV_OK )
     {
         MITK_ERROR << "poly manipulation error ";
         outpd=NULL;
@@ -454,7 +454,7 @@ vtkPolyData* svModelUtils::FillHolesWithIDs(vtkPolyData* inpd, int fillID, int f
     cvPolyData* cvpd=new cvPolyData(inpd);
     int numFilled=0;
     cvPolyData* tmpcvpd;
-    if(sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType)!=CV_OK)
+    if(sys_geom_cap_with_ids(cvpd,&tmpcvpd,fillID,numFilled,fillType)!=SV_OK)
         return NULL;
 
     if(tmpcvpd==NULL)
@@ -538,7 +538,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::MarkCells(vtkSmartPointer<vtkPolyData
 
     int* cellIDArray = &cellIDs[0];
 
-    if ( sys_geom_set_array_for_local_op_cells(src, &dst, cellIDArray, cellIDs.size(), "ActiveCells", 1) != CV_OK )
+    if ( sys_geom_set_array_for_local_op_cells(src, &dst, cellIDArray, cellIDs.size(), "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by cell ids) error ";
         return NULL;
@@ -556,7 +556,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsBySphere(vtkSmartPointer<vtk
     cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *dst = NULL;
 
-    if ( sys_geom_set_array_for_local_op_sphere(src, &dst, radius, center, "ActiveCells", 1) != CV_OK )
+    if ( sys_geom_set_array_for_local_op_sphere(src, &dst, radius, center, "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by sphere) error ";
         return NULL;
@@ -575,7 +575,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::MarkCellsByFaces(vtkSmartPointer<vtkP
 
     int* faceIDArray = &faceIDs[0];
 
-    if ( sys_geom_set_array_for_local_op_face(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), "ActiveCells", 1) != CV_OK )
+    if ( sys_geom_set_array_for_local_op_face(src, &dst, "ModelFaceID", faceIDArray, faceIDs.size(), "ActiveCells", 1) != SV_OK )
     {
         MITK_ERROR << "poly marking cells (by face ids) error ";
         return NULL;
@@ -592,7 +592,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::DecimateLocal(vtkSmartPointer<vtkPoly
     cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *dst = NULL;
 
-    if ( sys_geom_local_quadric_decimation(src, &dst, targetRate, NULL, "ActiveCells") != CV_OK )
+    if ( sys_geom_local_quadric_decimation(src, &dst, targetRate, NULL, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local decimation error ";
         return NULL;
@@ -609,7 +609,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::LaplacianSmoothLocal(vtkSmartPointer<
     cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *dst = NULL;
 
-    if ( sys_geom_local_laplacian_smooth(src, &dst, numIters, relaxFactor, NULL, "ActiveCells") != CV_OK )
+    if ( sys_geom_local_laplacian_smooth(src, &dst, numIters, relaxFactor, NULL, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local Laplacian smooth error ";
         return NULL;
@@ -626,7 +626,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::ConstrainSmoothLocal(vtkSmartPointer<
     cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *dst = NULL;
 
-    if ( sys_geom_local_constrain_smooth(src, &dst, numIters, constrainFactor, numCGSolves, NULL, "ActiveCells") != CV_OK )
+    if ( sys_geom_local_constrain_smooth(src, &dst, numIters, constrainFactor, numCGSolves, NULL, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local constrain smooth error ";
         return NULL;
@@ -643,7 +643,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::LinearSubdivideLocal(vtkSmartPointer<
     cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *dst = NULL;
 
-    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
+    if ( sys_geom_local_linear_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local linear subdivision error ";
         return NULL;
@@ -660,7 +660,7 @@ vtkSmartPointer<vtkPolyData> svModelUtils::LoopSubdivideLocal(vtkSmartPointer<vt
     cvPolyData *src=new cvPolyData(inpd);
     cvPolyData *dst = NULL;
 
-    if ( sys_geom_local_loop_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != CV_OK )
+    if ( sys_geom_local_loop_subdivision(src, &dst, numDivs, NULL, "ActiveCells") != SV_OK )
     {
         MITK_ERROR << "poly local loop subdivision error ";
         return NULL;
@@ -803,7 +803,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
     cleaned = sys_geom_Clean(src);
     delete src;
 
-    if ( sys_geom_cap(cleaned, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != CV_OK || numCapCenterIDs<2)
+    if ( sys_geom_cap(cleaned, &capped, &numCapCenterIDs, &capCenterIDs, 1 ) != SV_OK || numCapCenterIDs<2)
     {
         //        delete capped;
         delete cleaned;
@@ -823,7 +823,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
     for(int i=1;i<numCapCenterIDs;i++)
         targets[i-1]= capCenterIDs[i];
 
-    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != CV_OK )
+    if ( sys_geom_centerlines(capped, sources, 1, targets, numCapCenterIDs-1, &tempCenterlines, &voronoi) != SV_OK )
     {
         delete capped;
         return NULL;
@@ -831,7 +831,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
     delete capped;
 
     cvPolyData *temp2Centerlines=NULL;
-    if ( sys_geom_separatecenterlines(tempCenterlines, &temp2Centerlines) != CV_OK )
+    if ( sys_geom_separatecenterlines(tempCenterlines, &temp2Centerlines) != SV_OK )
     {
         delete tempCenterlines;
         return NULL;
@@ -840,7 +840,7 @@ vtkPolyData* svModelUtils::CreateCenterlines(vtkPolyData* vpd)
 
     cvPolyData *centerlines=NULL;
     int mergeblanked = 1;
-    if (sys_geom_mergecenterlines(temp2Centerlines, mergeblanked, &centerlines) != CV_OK )
+    if (sys_geom_mergecenterlines(temp2Centerlines, mergeblanked, &centerlines) != SV_OK )
     {
       delete temp2Centerlines;
       return NULL;
@@ -858,7 +858,7 @@ vtkPolyData* svModelUtils::CalculateDistanceToCenterlines(vtkPolyData* centerlin
     cvPolyData *src=new cvPolyData(original);
     cvPolyData *lines=new cvPolyData(centerlines);
     cvPolyData *distance = NULL;
-    if ( sys_geom_distancetocenterlines(src, lines, &distance) != CV_OK )
+    if ( sys_geom_distancetocenterlines(src, lines, &distance) != SV_OK )
     {
         return NULL;
     }
@@ -954,7 +954,7 @@ double svModelUtils::CalculateVpdArea(vtkPolyData* vpd)
     double area=0;
     cvPolyData *src=new cvPolyData(vpd);
 
-    if ( sys_geom_SurfArea(src, &area) != CV_OK )
+    if ( sys_geom_SurfArea(src, &area) != SV_OK )
     {
         return 0;
     }
@@ -1056,7 +1056,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
 
         //        delete sampledContours[i];
 
-        if ( status != CV_OK )
+        if ( status != SV_OK )
         {
             //            delete curve;
             MITK_ERROR << "error in curve loop construction ";
@@ -1073,7 +1073,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     int partype=0;
     int smoothing=0;
     double w1=1.0,w2=1.0,w3=1.0;
-    if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != CV_OK )
+    if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != SV_OK )
     {
         MITK_ERROR << "error in lofting surface. ";
         return NULL;
@@ -1084,7 +1084,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
     if(addCaps)
     {
         cvOCCTSolidModel* surfCapped=new cvOCCTSolidModel();
-        if ( surfCapped->CapSurfToSolid(surf) != CV_OK )
+        if ( surfCapped->CapSurfToSolid(surf) != SV_OK )
         {
             MITK_ERROR << "error in cap / bound operation ";
             return NULL;
@@ -1095,7 +1095,7 @@ cvOCCTSolidModel* svModelUtils::CreateLoftSurfaceOCCT(std::vector<svContour*> co
 
     int numFaces;
     int *faces;
-    if(surfFinal->GetFaceIds( &numFaces, &faces) != CV_OK )
+    if(surfFinal->GetFaceIds( &numFaces, &faces) != SV_OK )
     {
         MITK_ERROR << "GetFaceIds: error on object";
         return NULL;
@@ -1149,7 +1149,7 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCT(std::vector<mitk::DataN
     int numFaces;
     int *ids;
     int status=unionSolid->GetFaceIds( &numFaces, &ids);
-    if(status != CV_OK )
+    if(status != SV_OK )
     {
         //        delete unionSolid;
         MITK_ERROR << "GetFaceIds: error on object";
@@ -1246,7 +1246,7 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOC
             int faceID2=meocctdst->GetFaceIDFromInnerSolid(blendRadii[i]->faceName2);
             double radius=blendRadii[i]->radius;
 
-            if(occtSolid->CreateEdgeBlend(faceID1,faceID2,radius,0)!=CV_OK)
+            if(occtSolid->CreateEdgeBlend(faceID1,faceID2,radius,0)!=SV_OK)
             {
                 delete meocctdst;
                 MITK_ERROR << "OpenCASCADE model blending failed";
@@ -1258,7 +1258,7 @@ svModelElementOCCT* svModelUtils::CreateModelElementOCCTByBlend(svModelElementOC
     int numFaces;
     int *ids;
     int status=occtSolid->GetFaceIds( &numFaces, &ids);
-    if(status != CV_OK )
+    if(status != SV_OK )
     {
         delete meocctdst;
         MITK_ERROR << "OpenCASCADE model GetFaceIds: error on object";
@@ -1415,7 +1415,7 @@ cvParasolidSolidModel* svModelUtils::CreateLoftSurfaceParasolid(std::vector<svCo
 
         //        delete sampledContours[i];
 
-        if ( status != CV_OK )
+        if ( status != SV_OK )
         {
             //            delete curve;
             MITK_ERROR << "error in curve loop construction ";
@@ -1432,7 +1432,7 @@ cvParasolidSolidModel* svModelUtils::CreateLoftSurfaceParasolid(std::vector<svCo
     int partype=0;
     int smoothing=0;
     double w1=0.4,w2=0.2,w3=0.4;
-    if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != CV_OK )
+    if ( surf->MakeLoftedSurf(curveList,contourNumber,"dummy_name",continuity,partype,w1,w2,w3,smoothing) != SV_OK )
     {
         MITK_ERROR << "error in lofting surface. ";
         return NULL;
@@ -1443,7 +1443,7 @@ cvParasolidSolidModel* svModelUtils::CreateLoftSurfaceParasolid(std::vector<svCo
     if(addCaps)
     {
         cvParasolidSolidModel* surfCapped=new cvParasolidSolidModel();
-        if ( surfCapped->CapSurfToSolid(surf) != CV_OK )
+        if ( surfCapped->CapSurfToSolid(surf) != SV_OK )
         {
             MITK_ERROR << "error in cap / bound operation ";
             return NULL;
@@ -1454,7 +1454,7 @@ cvParasolidSolidModel* svModelUtils::CreateLoftSurfaceParasolid(std::vector<svCo
 
     int numFaces;
     int *faces;
-    if(surfFinal->GetFaceIds( &numFaces, &faces) != CV_OK )
+    if(surfFinal->GetFaceIds( &numFaces, &faces) != SV_OK )
     {
         MITK_ERROR << "GetFaceIds: error on object";
         return NULL;
@@ -1519,7 +1519,7 @@ svModelElementParasolid* svModelUtils::CreateModelElementParasolid(std::vector<m
     int numFaces;
     int *ids;
     int status=unionSolid->GetFaceIds( &numFaces, &ids);
-    if(status != CV_OK )
+    if(status != SV_OK )
     {
         //        delete unionSolid;
         MITK_ERROR << "GetFaceIds: error on object";
@@ -1620,7 +1620,7 @@ svModelElementParasolid* svModelUtils::CreateModelElementParasolidByBlend(svMode
             int *idsOld;
             parasolid->GetFaceIds( &numFacesOld, &idsOld);
 
-            if(parasolid->CreateEdgeBlend(faceID1,faceID2,radius,0)!=CV_OK)
+            if(parasolid->CreateEdgeBlend(faceID1,faceID2,radius,0)!=SV_OK)
             {
                 delete mepsdst;
                 MITK_ERROR << "Parasolid model blending failed";
@@ -1683,7 +1683,7 @@ svModelElementParasolid* svModelUtils::CreateModelElementParasolidByBlend(svMode
     int numFaces;
     int *ids;
     int status=parasolid->GetFaceIds( &numFaces, &ids);
-    if(status != CV_OK )
+    if(status != SV_OK )
     {
         delete mepsdst;
         MITK_ERROR << "Parasolid model GetFaceIds: error on object";

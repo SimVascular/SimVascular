@@ -495,7 +495,7 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
   cvLevelSet *dummy;
 
   if ( v == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( velocity_ != NULL ) {
@@ -506,12 +506,12 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
 
   v->GetLevelSet( &dummy );
   if ( dummy != this ) {
-    if ( v->LinkLevelSet( this ) != CV_OK ) {
-      return CV_ERROR;
+    if ( v->LinkLevelSet( this ) != SV_OK ) {
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -522,13 +522,13 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
 int cvLevelSet::UnlinkVelocity()
 {
   if ( velocity_ == NULL ) {
-    return CV_OK;
+    return SV_OK;
   }
 
   //  velocity_->UnlinkLevelSet();
   velocity_->ls_ = NULL;
   velocity_ = NULL;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -539,7 +539,7 @@ int cvLevelSet::UnlinkVelocity()
 int cvLevelSet::GetVelocity( cvLevelSetVelocity **v )
 {
   *v = velocity_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -600,7 +600,7 @@ int cvLevelSet::Init()
 	return 0;
       }
       if ( grid_->SetBandParams( bandExt_[0], bandExt_[1], mineWd_ )
-	   != CV_OK ) {
+	   != SV_OK ) {
 	delete grid_;
 	return 0;
       }
@@ -625,7 +625,7 @@ int cvLevelSet::Init()
       assert(0);
     }
 
-    if ( initStatus != CV_OK ) {
+    if ( initStatus != SV_OK ) {
       delete grid_;
       grid_ = NULL;
       return 0;
@@ -688,7 +688,7 @@ int cvLevelSet::EvolveOneTimeStep()
     if (timers_) {
       cpuTimer.reset();
     }
-    if ( grid_->EvaluateV( velocity_, dtFactor_ ) != CV_OK ) {
+    if ( grid_->EvaluateV( velocity_, dtFactor_ ) != SV_OK ) {
 	printf("ERR: EvaluateV failure\n");
 	cpuTimer.reset();
 	return 0;
@@ -705,7 +705,7 @@ int cvLevelSet::EvolveOneTimeStep()
       if (timers_) {
 	cpuTimer.reset();
       }
-      if ( grid_->ProjectV( saveProjectionSets_ ) != CV_OK ) {
+      if ( grid_->ProjectV( saveProjectionSets_ ) != SV_OK ) {
 	printf("ERR: ProjectV failure\n");
 	zlsVanished_ = 1;
 	return 0;
@@ -737,7 +737,7 @@ int cvLevelSet::EvolveOneTimeStep()
     if ( StopCondition() ) {
       return 0;
     }
-    if ( grid_->UpdatePhi() != CV_OK ) {
+    if ( grid_->UpdatePhi() != SV_OK ) {
       printf("ERR: update error\n");
       return 0;
     }
@@ -797,7 +797,7 @@ int cvLevelSet::RebuildPhi()
     }
   }
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     return 0;
   } else {
     return 1;
@@ -945,10 +945,10 @@ cvPolyData *cvLevelSet::ExtractActiveNodes()
 int cvLevelSet::SetVExtension( ExtensionT etype )
 {
   if ( etype == INVALID_V ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     etype_ = etype;
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -960,7 +960,7 @@ int cvLevelSet::SetVExtension( ExtensionT etype )
 int cvLevelSet::GetVExtension( ExtensionT *etype )
 {
   *etype = etype_;
-  return CV_OK;
+  return SV_OK;
 }
 
 

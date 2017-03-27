@@ -114,7 +114,7 @@ int cvRepository::Register( char *name, cvRepositoryData *obj )
     Tcl_SetHashValue( entryPtr, obj );
     obj->SetName( name );
     iterValid_ = 0;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -141,7 +141,7 @@ int cvRepository::UnRegister( char *name )
     Tcl_DeleteHashEntry( entryPtr );
     delete obj;
     iterValid_ = 0;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -158,7 +158,7 @@ int cvRepository::Exists( char *name )
   if ( entryPtr == NULL ) {
     return 0;
   } else {
-    return 1;
+    return SV_OK;
   }
 }
 

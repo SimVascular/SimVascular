@@ -128,8 +128,8 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
 
   // Routines promoted to abstract class from concrete implementation
   int LoadModel(char *filename);
-  int LoadModel(vtkPolyData *pd){return CV_ERROR;}
-  int GetBoundaryFaces(double angle) {return CV_ERROR;}
+  int LoadModel(vtkPolyData *pd){return SV_ERROR;}
+  int GetBoundaryFaces(double angle) {return SV_ERROR;}
   int LoadMesh(char *filename,char *surfilename);
   int NewMesh();
 
@@ -138,14 +138,14 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
 
   //Set boundary layer and/or specify wall faces
   int SetBoundaryLayer(int type, int id, int side, int nL, double* H);
-  int SetWalls(int numWalls, int *walls) {return CV_ERROR;}
+  int SetWalls(int numWalls, int *walls) {return SV_ERROR;}
 
   //Set refinement options
   int SetCylinderRefinement(double size, double radius, double length,
                             double* center, double *normal);
   int SetSphereRefinement(double size, double radius, double* center);
   int SetSizeFunctionBasedMesh(double size, char *filename)
-    {return CV_ERROR;}
+    {return SV_ERROR;}
 
   //Meshing operation and post-meshing cleanup/stats functions
   int GenerateMesh();
@@ -158,15 +158,15 @@ class SV_EXPORT_MESHSIM_MESH cvMeshSimMeshObject : public cvMeshObject {
   // general queries
   int GetNodeCoords(int node);
   cvPolyData *GetPolyData();
-  cvPolyData *GetSolid() {return CV_ERROR;}
+  cvPolyData *GetSolid() {return SV_ERROR;}
   cvUnstructuredGrid *GetUnstructuredGrid();
 
   // queries for bc's
   cvPolyData* GetFacePolyData (int orgfaceid);
   int GetModelFaceInfo(char rtnstr[99999]);
 
-  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
-  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return CV_ERROR;}
+  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return SV_ERROR;}
+  int SetInputUnstructuredGrid(vtkUnstructuredGrid *ug) {return SV_ERROR;}
 
   //Adapt functions
   int Adapt();

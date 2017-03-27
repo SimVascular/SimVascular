@@ -67,7 +67,7 @@ cvLevelSetVelocityExponentialDecay::~cvLevelSetVelocityExponentialDecay()
 int cvLevelSetVelocityExponentialDecay::SetEI( double d )
 {
   eI_ = d;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -89,7 +89,7 @@ int cvLevelSetVelocityExponentialDecay::SetEIneg( double d )
 {
   eIneg_ = d;
   eInegValid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -105,9 +105,9 @@ int cvLevelSetVelocityExponentialDecay::GetEIneg( double *d )
 {
   if ( eInegValid_ ) {
     *d = eIneg_;
-    return CV_OK;
+    return SV_OK;
   }
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 
@@ -118,10 +118,10 @@ int cvLevelSetVelocityExponentialDecay::GetEIneg( double *d )
 int cvLevelSetVelocityExponentialDecay::SetKt( double d )
 {
   if ( d <= 0.0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   Kt_ = d;
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------
@@ -145,10 +145,10 @@ int cvLevelSetVelocityExponentialDecay::Set3DKType( cvLevelSetVelocityExponentia
 {
   if ( kt == VED_Invalid_K ) {
     printf("ERR: invalid curvature type\n");
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     ktype_ = kt;
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -160,7 +160,7 @@ int cvLevelSetVelocityExponentialDecay::Set3DKType( cvLevelSetVelocityExponentia
 int cvLevelSetVelocityExponentialDecay::Get3DKType( cvLevelSetVelocityExponentialDecay3DKT *kt )
 {
   *kt = ktype_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -251,29 +251,29 @@ int cvLevelSetVelocityExponentialDecay::Evaluate( double pos[], double *f0, doub
   double mag;
   double grad_dir;
 
-  if ( !Valid() ) return CV_ERROR;
+  if ( !Valid() ) return SV_ERROR;
  
-  if ( ls_->GetGrid()->InterpN( pos, n ) != CV_OK ) return CV_ERROR;
+  if ( ls_->GetGrid()->InterpN( pos, n ) != SV_OK ) return SV_ERROR;
 
   if ( ls_->GetGrid()->GetDim() == 3 ) {
     switch (ktype_) {
     case VED_Default_K:
-      if ( ls_->GetGrid()->InterpK( pos, &K ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpK( pos, &K ) != SV_OK ) return SV_ERROR;
     case VED_Mean_K:
-      if ( ls_->GetGrid()->InterpKm( pos, &K ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKm( pos, &K ) != SV_OK ) return SV_ERROR;
       break;
     case VED_Gaussian_K:
-      if ( ls_->GetGrid()->InterpKg( pos, &K ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKg( pos, &K ) != SV_OK ) return SV_ERROR;
       break;
     case VED_PrincipleK1_K:
-      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != CV_OK ) return CV_ERROR;
-      if ( ls_->GetGrid()->InterpKm( pos, &km ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != SV_OK ) return SV_ERROR;
+      if ( ls_->GetGrid()->InterpKm( pos, &km ) != SV_OK ) return SV_ERROR;
       Compute3dks( kg, km, tol_, ks );
       K = ks[0];
       break;
     case VED_PrincipleK2_K:
-      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != CV_OK ) return CV_ERROR;
-      if ( ls_->GetGrid()->InterpKm( pos, &km ) != CV_OK ) return CV_ERROR;
+      if ( ls_->GetGrid()->InterpKg( pos, &kg ) != SV_OK ) return SV_ERROR;
+      if ( ls_->GetGrid()->InterpKm( pos, &km ) != SV_OK ) return SV_ERROR;
       Compute3dks( kg, km, tol_, ks );
       K = ks[1];
       break;
@@ -281,7 +281,7 @@ int cvLevelSetVelocityExponentialDecay::Evaluate( double pos[], double *f0, doub
       assert(0);
     }
   } else {
-    if ( ls_->GetGrid()->InterpK( pos, &K ) != CV_OK ) return CV_ERROR;
+    if ( ls_->GetGrid()->InterpK( pos, &K ) != SV_OK ) return SV_ERROR;
   }
 
   // This closed-image business is anachronistic now that
@@ -298,19 +298,19 @@ int cvLevelSetVelocityExponentialDecay::Evaluate( double pos[], double *f0, doub
       v[1] = 0.0;
       v[2] = 0.0;
     }
-    return CV_OK; 
+    return SV_OK; 
   }
 
   // Look up intensity gradient:
   if ( ! GetGradIx( image_, pos, &(gradI[0]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( ! GetGradIy( image_, pos, &(gradI[1]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( image_->dim == 3 ) {
     if ( ! GetGradIz( image_, pos, &(gradI[2]) ) ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
   } else {
     gradI[2] = 0.0;
@@ -395,7 +395,7 @@ int cvLevelSetVelocityExponentialDecay::Evaluate( double pos[], double *f0, doub
     v[2] = n[2] * mag;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

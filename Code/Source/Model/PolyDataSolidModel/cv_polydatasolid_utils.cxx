@@ -78,7 +78,7 @@
 
 int PlyDtaUtils_Init()
 {
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -92,7 +92,7 @@ int PlyDtaUtils_Init()
  * @param *v_num_faces int that contains the number of total face regions
  * @param **v_faces vector containing the array of numerical values 
  * corresponding to each face region
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
@@ -111,12 +111,12 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
   *v_faces = NULL;
 
   boundaryScalars = vtkSmartPointer<vtkIntArray>::New();
-  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified");
     fprintf(stderr," and named 'ModelFaceID' prior to this function call\n");
     *v_num_faces = 0;
-    return CV_OK;
+    return SV_OK;
   }
   boundaryScalars = vtkIntArray::SafeDownCast(geom->GetCellData()->GetArray("ModelFaceID"));
 //  boundaryScalars = static_cast<vtkIntArray*>(geom->GetCellData()->GetArray("ModelFaceID"));
@@ -154,7 +154,7 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
 
   delete [] checkNums;
 
-  return CV_OK;
+  return SV_OK;
   //}
 }
 
@@ -169,7 +169,7 @@ int PlyDtaUtils_GetFaceIds( vtkPolyData *geom, int *v_num_faces, int **v_faces)
  * @param angle double that specifies the extraction angle. Any faces
  * with a difference between face normals larger than this angle will be 
  * considered a separate face
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  */
 
 int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions)
@@ -194,7 +194,7 @@ int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions
 
   *numRegions = boundFacs->GetNumberOfRegions();
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -208,7 +208,7 @@ int PlyDtaUtils_GetBoundaryFaces( vtkPolyData *geom,double angle,int *numRegions
  * @param angle double that specifies the extraction angle. Any faces
  * with a difference between face normals larger than this angle will be 
  * considered a separate face
- * @return CV_OK if function completes properly
+ * @return SV_OK if function completes properly
  * @note There is another method to do this that does not retain id 
  * information. It may be faster, but doesn't reatain info
  */
@@ -240,9 +240,9 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
   if (facepd->GetNumberOfPoints() != tempGrid->GetNumberOfPoints())
   {
     fprintf(stderr,"Transfer to Face PolyData was ineffective");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -253,7 +253,7 @@ int PlyDtaUtils_GetFacePolyData(vtkPolyData *geom, int *faceid, vtkPolyData *fac
  * @brief Function to load in a solid file
  * @param *filename Pointer to a char filename of the file to read in
  * @param *result vtkPolyData that is to store input file info
- * @return CV_OK if executed correctly
+ * @return SV_OK if executed correctly
  * @note Current accepted filetypes include:
  * @note STL
  * @note VTP
@@ -307,9 +307,9 @@ int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
 
   else {
     fprintf(stderr,"Filetype is not supported");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
   
 // -------------------
@@ -320,7 +320,7 @@ int PlyDtaUtils_ReadNative( char *filename, vtkPolyData *result)
  * @param *filename Pointer to a char filename of the file to write
  * @param file_version int for filetype
  * @param *geom vtkPolyData that contains the info to be written to file
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the write function does not return properly.
  */
     
@@ -397,10 +397,10 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
   else
   {
     fprintf(stderr,"File version is not accepted\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -410,7 +410,7 @@ int PlyDtaUtils_WriteNative( vtkPolyData *geom, int file_version, char *filename
  * @brief Function to combine the ids of two faces in the polydata
  * @param targetface id of the face to set the two faces to have new id of
  * @param loseface id of the second face, id will be lost
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
     
@@ -425,11 +425,11 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
   id1 = *targetface;
   id2 = *loseface;
 
-  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   boundaryRegions = vtkIntArray::SafeDownCast(geom->GetCellData()->
 		    GetScalars("ModelFaceID"));
@@ -446,7 +446,7 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
   geom->GetCellData()->AddArray(boundaryRegions);
   geom->GetCellData()->SetActiveScalars("ModelFaceID");
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -456,7 +456,7 @@ int PlyDtaUtils_CombineFaces(vtkPolyData *geom,int *targetface,int *loseface )
  * @brief Function to delete the cells in the polydata
  * @param numfaces this is the number of cells to delete from the polydata
  * @param faces this is an array containing the ids of the cells to delete
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
     
@@ -474,7 +474,7 @@ int PlyDtaUtils_DeleteCells(vtkPolyData *geom,int *numcells,int *cells )
 
   geom->RemoveDeletedCells();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -483,7 +483,7 @@ int PlyDtaUtils_DeleteCells(vtkPolyData *geom,int *numcells,int *cells )
 /** 
  * @brief Function to delete a region in the polydata
  * @param regionid this is the region id to delete all of the cells in
- * @return CV_OK if executed correctly, CV_ERROR if the geometry is NULL
+ * @return SV_OK if executed correctly, SV_ERROR if the geometry is NULL
  * or the function does not return properly.
  */
     
@@ -494,11 +494,11 @@ int PlyDtaUtils_DeleteRegion(vtkPolyData *geom,int *regionid)
   vtkSmartPointer<vtkIntArray> boundaryRegions =
     vtkSmartPointer<vtkIntArray>::New();
 
-  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   boundaryRegions = vtkIntArray::SafeDownCast(geom->GetCellData()->
 		    GetScalars("ModelFaceID"));
@@ -514,6 +514,6 @@ int PlyDtaUtils_DeleteRegion(vtkPolyData *geom,int *regionid)
 
   geom->RemoveDeletedCells();
 
-  return CV_OK;
+  return SV_OK;
 }
 

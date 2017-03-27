@@ -89,7 +89,7 @@ int Tetgenmesh_Init( Tcl_Interp *interp )
 	
   if (pMeshKernelRegistryMethod != NULL) {
     cvMeshSystem* tetGenSystem = new cvTetGenMeshSystem();
-    if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) == CV_OK)) {
+    if ((cvMeshSystem::RegisterKernel(cvMeshObject::KERNEL_TETGEN,tetGenSystem) == SV_OK)) {
       //printf("  TetGen module registered\n");
       Tcl_CreateCommand( interp, "tetgen_mesh_available", TetGenMesh_AvailableCmd,
 		         (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
@@ -100,7 +100,7 @@ int Tetgenmesh_Init( Tcl_Interp *interp )
   }
 
   //Initialize Tetgenutils
-  if (TGenUtils_Init() != CV_OK) {
+  if (TGenUtils_Init() != SV_OK) {
     return TCL_ERROR;
   }
 

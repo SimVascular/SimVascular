@@ -172,12 +172,12 @@ double cvLevelSetNode::ComputeDoubleDatum( GridScalarT t, double tol )
 
   switch (t) {
   case GS_CURVATURE_3Dk1:
-    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != CV_OK ) {
+    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != SV_OK ) {
       return 0.0;
     }
     return ks[0];
   case GS_CURVATURE_3Dk2:
-    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != CV_OK ) {
+    if ( Compute3dks( K3dg_, K3dm_, tol, ks ) != SV_OK ) {
       return 0.0;
     }
     return ks[1];

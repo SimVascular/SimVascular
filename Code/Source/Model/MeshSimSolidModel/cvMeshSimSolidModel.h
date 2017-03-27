@@ -62,72 +62,72 @@ public:
   void Print() const;
   void Check( int *nerr ) const;
   cvSolidModel *Copy() const {return (cvSolidModel*)NULL;}
-  int Copy( const cvSolidModel& src ) {return CV_ERROR;}
+  int Copy( const cvSolidModel& src ) {return SV_ERROR;}
 
   // 2D methods:
-  int MakePoly2d( cvPolyData *pd ) {return CV_ERROR;}
-  int MakePoly2dPts( cvPolyData *pd ) {return CV_ERROR;}
-  int MakeCircle( double radius, double ctr[] ) {return CV_ERROR;}
-  int MakeEllipse( double xr, double yr, double ctr[] ) {return CV_ERROR;}
-  int MakeBox2d( double dims[], double ctr[] ) {return CV_ERROR;}
+  int MakePoly2d( cvPolyData *pd ) {return SV_ERROR;}
+  int MakePoly2dPts( cvPolyData *pd ) {return SV_ERROR;}
+  int MakeCircle( double radius, double ctr[] ) {return SV_ERROR;}
+  int MakeEllipse( double xr, double yr, double ctr[] ) {return SV_ERROR;}
+  int MakeBox2d( double dims[], double ctr[] ) {return SV_ERROR;}
 
   // 3D methods:
-  int MakeBox3d( double dims[], double ctr[] ) {return CV_ERROR;}
-  int MakeSphere( double r, double ctr[] ) {return CV_ERROR;}
-  int MakePoly3dSolid( cvPolyData *pd , double angle ) {return CV_ERROR;} 
-  int MakePoly3dSurface( cvPolyData *pd ) {return CV_ERROR;}
-  int SetPoly3dFacetMethod( SolidModel_FacetT code ) {return CV_OK;}
-  int MakeCylinder( double r, double length, double ctr[], double axis[] ) {return CV_ERROR;}
-  int ExtrudeZ( cvSolidModel *in, double dist ) {return CV_ERROR;}
-  int Extrude( cvSolidModel *in, double **dist ) {return CV_ERROR;}
-  int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return CV_ERROR;}
+  int MakeBox3d( double dims[], double ctr[] ) {return SV_ERROR;}
+  int MakeSphere( double r, double ctr[] ) {return SV_ERROR;}
+  int MakePoly3dSolid( cvPolyData *pd , double angle ) {return SV_ERROR;} 
+  int MakePoly3dSurface( cvPolyData *pd ) {return SV_ERROR;}
+  int SetPoly3dFacetMethod( SolidModel_FacetT code ) {return SV_OK;}
+  int MakeCylinder( double r, double length, double ctr[], double axis[] ) {return SV_ERROR;}
+  int ExtrudeZ( cvSolidModel *in, double dist ) {return SV_ERROR;}
+  int Extrude( cvSolidModel *in, double **dist ) {return SV_ERROR;}
+  int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) {return SV_ERROR;}
  
-  int MakeInterpCurveLoop( cvPolyData *pd, int closed ) { return CV_ERROR; }
-  int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) { return CV_ERROR; }
+  int MakeInterpCurveLoop( cvPolyData *pd, int closed ) { return SV_ERROR; }
+  int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) { return SV_ERROR; }
   int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
-     int continuity,int partype,double w1,double w2,double w3 ,int smoothing) { return CV_ERROR; }
+     int continuity,int partype,double w1,double w2,double w3 ,int smoothing) { return SV_ERROR; }
   
   // Booleans:
-  int Intersect( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
-  int Union( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
-  int Subtract( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return CV_ERROR;}
+  int Intersect( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return SV_ERROR;}
+  int Union( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return SV_ERROR;}
+  int Subtract( cvSolidModel *a, cvSolidModel *b, SolidModel_SimplifyT st ) {return SV_ERROR;}
 
   // Transformations:
-  int Translate( double vec[], int ndim ) {return CV_ERROR;}
-  int Rotate( double axis[], int ndim, double rad ) {return CV_ERROR;}
-  int Scale( double factor ) {return CV_ERROR;}
-  int Reflect( double pos[], double nrm[] ) { return CV_ERROR; }
-  int Apply4x4( double mat[][4] ) { return CV_ERROR; }
+  int Translate( double vec[], int ndim ) {return SV_ERROR;}
+  int Rotate( double axis[], int ndim, double rad ) {return SV_ERROR;}
+  int Scale( double factor ) {return SV_ERROR;}
+  int Reflect( double pos[], double nrm[] ) { return SV_ERROR; }
+  int Apply4x4( double mat[][4] ) { return SV_ERROR; }
 
   // Geometric computations:
-  int FindExtent( double *extent ) {return  CV_ERROR;}
-  int FindCentroid( double *centroid ) {return CV_ERROR;}
-  int GetTopoDim( int *tdim ) const {return CV_ERROR;}
-  int GetSpatialDim( int *sdim ) const {return CV_ERROR;}
-  int ClassifyPt( double pt[], int v, int *ans ) const {return CV_ERROR;}
-  int ClassifyPt( double x, double y, int v, int *ans ) const {return CV_ERROR;}
-  int ClassifyPt( double x, double y, double z, int v, int *ans ) const {return CV_ERROR;}
+  int FindExtent( double *extent ) {return  SV_ERROR;}
+  int FindCentroid( double *centroid ) {return SV_ERROR;}
+  int GetTopoDim( int *tdim ) const {return SV_ERROR;}
+  int GetSpatialDim( int *sdim ) const {return SV_ERROR;}
+  int ClassifyPt( double pt[], int v, int *ans ) const {return SV_ERROR;}
+  int ClassifyPt( double x, double y, int v, int *ans ) const {return SV_ERROR;}
+  int ClassifyPt( double x, double y, double z, int v, int *ans ) const {return SV_ERROR;}
   int DistanceAlongVec( double start[], double end[], int v,
-			double *ans ) const {return CV_ERROR;}
-  int Distance( double pos[], double upperLimit, double *dist ) {return CV_ERROR;};
-  int GetFaceNormal (int faceid, double u, double v, double normal[]) {return CV_ERROR;}
+			double *ans ) const {return SV_ERROR;}
+  int Distance( double pos[], double upperLimit, double *dist ) {return SV_ERROR;};
+  int GetFaceNormal (int faceid, double u, double v, double normal[]) {return SV_ERROR;}
   
   // Attribute related & required methods:
-  int GetBoundaryFaces (double angle) {return CV_ERROR;}
+  int GetBoundaryFaces (double angle) {return SV_ERROR;}
   int GetFaceIds (int *numFaces, int **faceIds);
   cvPolyData *GetFacePolyData(int faceid, int useMaxDist, double max_dist) const;
-  int GetFaceAttribute(char *attr,int faceid, char **value) {return CV_ERROR;}
-  int SetFaceAttribute(char *attr,int faceid, char *value) {return CV_ERROR;}
-  int GetRegionIds (int *numRegions, int **regionIds) {return CV_ERROR;}
-  int GetRegionAttribute(char *attr,int regionid, char **value) {return CV_ERROR;}
-  int SetRegionAttribute(char *attr,int regionid, char *value) {return CV_ERROR;}
-  int DeleteRegion (int regionid) {return CV_ERROR;}
+  int GetFaceAttribute(char *attr,int faceid, char **value) {return SV_ERROR;}
+  int SetFaceAttribute(char *attr,int faceid, char *value) {return SV_ERROR;}
+  int GetRegionIds (int *numRegions, int **regionIds) {return SV_ERROR;}
+  int GetRegionAttribute(char *attr,int regionid, char **value) {return SV_ERROR;}
+  int SetRegionAttribute(char *attr,int regionid, char *value) {return SV_ERROR;}
+  int DeleteRegion (int regionid) {return SV_ERROR;}
   
   // File I/O:
   int ReadNative( char *filename );
   int WriteNative( int file_version, char *filename ) const;
-  int WriteVtkPolyData( char *filename ) {return CV_ERROR;}
-  int WriteGeomSim( char *filename ) {return CV_ERROR; }
+  int WriteVtkPolyData( char *filename ) {return SV_ERROR;}
+  int WriteGeomSim( char *filename ) {return SV_ERROR; }
 
   cvPolyData *GetPolyData(int useMaxDist, double max_dist) const;
 
@@ -135,13 +135,13 @@ public:
   cvSolidModel *GetAxialIsoparametricCurve( double p ) const { return NULL; }
 
   // geometric manipulation
-  virtual int DeleteFaces (int numfaces, int *faces) {return CV_ERROR;}
+  virtual int DeleteFaces (int numfaces, int *faces) {return SV_ERROR;}
   int CreateEdgeBlend(int faceA, int faceB, double radius,
-      int filletshape) {return CV_ERROR;}
-  int CombineFaces(int targetface, int loseface) {return CV_ERROR;}
-  int RemeshFace (int numfaces,int *excludedFaces, double size) {return CV_ERROR;}
+      int filletshape) {return SV_ERROR;}
+  int CombineFaces(int targetface, int loseface) {return SV_ERROR;}
+  int RemeshFace (int numfaces,int *excludedFaces, double size) {return SV_ERROR;}
 
-  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return CV_ERROR;}
+  int SetVtkPolyDataObject(vtkPolyData *newPolyData) {return SV_ERROR;}
  
   // hack for now to get access in the meshing layer
    pGModel geom_;

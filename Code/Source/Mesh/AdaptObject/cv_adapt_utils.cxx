@@ -182,7 +182,7 @@ int AdaptUtils_SmoothHessians(vtkUnstructuredGrid *mesh)
 
   delete [] pointOnSurface;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -210,7 +210,7 @@ int AdaptUtils_getHessiansFromPhasta(double *hessiansFromPhasta,
    }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 //
 // -----------------------------
@@ -237,7 +237,7 @@ int AdaptUtils_getHessian(vtkDoubleArray *Hessians,vtkIdType v, double T[3][3])
   T[1][2] = T[2][1] = Hessians->GetComponent(v,4);
   T[2][2] = Hessians->GetComponent(v,5);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------------------------
@@ -290,17 +290,17 @@ int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin,
     char press_step[80];
     sprintf(vel_step,"%s_%05i","velocity",step_num);
     sprintf(press_step,"%s_%05i","pressure",step_num);
-    if (AdaptUtils_checkArrayExists(mesh,0,vel_step) != CV_OK)
+    if (AdaptUtils_checkArrayExists(mesh,0,vel_step) != SV_OK)
     {
       fprintf(stderr,"Array %s not existent on mesh\n",vel_step);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     tmpVelArray = vtkDoubleArray::SafeDownCast(
 	mesh->GetPointData()->GetArray(vel_step));
-    if (AdaptUtils_checkArrayExists(mesh,0,press_step) != CV_OK)
+    if (AdaptUtils_checkArrayExists(mesh,0,press_step) != SV_OK)
     {
       fprintf(stderr,"Array %s not existent on mesh\n",press_step);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     tmpPressureArray = vtkDoubleArray::SafeDownCast(
 	mesh->GetPointData()->GetArray(press_step));
@@ -340,7 +340,7 @@ int AdaptUtils_averageSolutionsOnMesh(vtkUnstructuredGrid *mesh, int begin,
   }
 
   mesh->GetPointData()->AddArray(averageArray);
-  return CV_OK;
+  return SV_OK;
 }
 
 //
@@ -362,7 +362,7 @@ int AdaptUtils_attachArray( double *valueArray,
   if (valueArray == NULL)
   {
     fprintf(stderr,"Array to attach is NULL\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   int nem = (poly > 1) ? (poly - 1) : 0;
   int nfm = (poly > 3) ? ((poly-3)*(poly-2)/2.0) : 0;
@@ -405,7 +405,7 @@ int AdaptUtils_attachArray( double *valueArray,
   mesh->GetPointData()->AddArray(nodeDataArray);
   mesh->GetPointData()->SetActiveScalars(dataName.c_str());
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -430,7 +430,7 @@ int AdaptUtils_getAttachedArray( double *&valueArray,
   if(poly!=1) {
       fprintf(stderr,"\nError in getAttachedData()\n");
       fprintf(stderr,"Polynomial order %d NOT supported\n",poly);
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   int i;
@@ -473,7 +473,7 @@ int AdaptUtils_getAttachedArray( double *&valueArray,
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -508,15 +508,15 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
   char press[80];
   sprintf(vel,"%s_%05i","velocity",outstep);
   sprintf(press,"%s_%05i","pressure",outstep);
-  if (AdaptUtils_checkArrayExists(inmesh,0,vel) != CV_OK)
+  if (AdaptUtils_checkArrayExists(inmesh,0,vel) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",vel);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (AdaptUtils_checkArrayExists(inmesh,0,press) != CV_OK)
+  if (AdaptUtils_checkArrayExists(inmesh,0,press) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",press);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   outSol->SetNumberOfComponents(5);
   outSol->Allocate(numVerts,10000);
@@ -547,7 +547,7 @@ int AdaptUtils_fix4SolutionTransfer(vtkUnstructuredGrid *inmesh,vtkUnstructuredG
   outmesh->GetPointData()->AddArray(outSol);
   outmesh->GetPointData()->SetActiveScalars("solution");
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
@@ -622,7 +622,7 @@ int AdaptUtils_modelFaceIDTransfer(vtkPolyData *inpd,vtkPolyData *outpd)
 
   delete [] mapper;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -644,10 +644,10 @@ int AdaptUtils_splitSpeedFromAvgSols(vtkUnstructuredGrid *mesh)
 
   numPoints = mesh->GetNumberOfPoints();
 
-  if (AdaptUtils_checkArrayExists(mesh,0,"avg_sols") != CV_OK)
+  if (AdaptUtils_checkArrayExists(mesh,0,"avg_sols") != SV_OK)
   {
     fprintf(stderr,"Array named avg_sols is not on mesh\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   avg_sols = vtkDoubleArray::SafeDownCast(mesh->GetPointData()->GetArray("avg_sols"));
@@ -665,7 +665,7 @@ int AdaptUtils_splitSpeedFromAvgSols(vtkUnstructuredGrid *mesh)
   mesh->GetPointData()->AddArray(speed);
   mesh->GetPointData()->SetActiveScalars("average_speed");
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -684,7 +684,7 @@ int AdaptUtils_gradientsFromFilter(vtkUnstructuredGrid *mesh)
 
   numPoints = mesh->GetNumberOfPoints();
 
-  if (AdaptUtils_checkArrayExists(mesh,0,"average_speed") != CV_OK)
+  if (AdaptUtils_checkArrayExists(mesh,0,"average_speed") != SV_OK)
   {
     fprintf(stderr,"Array named average_speed is not on mesh\n");
   }
@@ -700,7 +700,7 @@ int AdaptUtils_gradientsFromFilter(vtkUnstructuredGrid *mesh)
   mesh->GetCellData()->RemoveArray("average_speed");
   mesh->DeepCopy(calcGradient->GetOutput());
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -745,7 +745,7 @@ int AdaptUtils_hessiansFromFilter(vtkUnstructuredGrid *mesh)
   mesh->GetPointData()->AddArray(Hessians);
   mesh->GetPointData()->SetActiveScalars("hessians");
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -764,18 +764,18 @@ int AdaptUtils_hessiansFromSolution(vtkUnstructuredGrid *mesh)
   //nodalgradientID  =  MD_newMeshDataId( "gradient");
   //nodalhessianID  =  MD_newMeshDataId( "hessian");
 
-  //if (AdaptUtils_splitSpeedFromYbar(mesh) != CV_OK)
+  //if (AdaptUtils_splitSpeedFromYbar(mesh) != SV_OK)
   //{
   //  fprintf(stderr,"Error in setting getting speed array\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
   // recover gradients from vtk filter
   // attaches gradient to vertices
   // gradient attached via nodalgradientID
-  if (AdaptUtils_gradientsFromFilter(mesh) != CV_OK)
+  if (AdaptUtils_gradientsFromFilter(mesh) != SV_OK)
   {
     fprintf(stderr,"Error in setting gradients\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // recover hessians from vtk filter
@@ -783,19 +783,19 @@ int AdaptUtils_hessiansFromSolution(vtkUnstructuredGrid *mesh)
   // hessian attached via  nodalhessianID
   // hessian  attached : 6-component (symmetric)
   // u_xx, u_xy, u_xz, u_yy, u_yz, u_zz
-  if (AdaptUtils_hessiansFromFilter(mesh) != CV_OK)
+  if (AdaptUtils_hessiansFromFilter(mesh) != SV_OK)
   {
     fprintf(stderr,"Error in setting hessians\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if (AdaptUtils_SmoothHessians(mesh) != CV_OK)
+  if (AdaptUtils_SmoothHessians(mesh) != SV_OK)
   {
     fprintf(stderr,"Error in setting hessians\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // option is to decide how to compute the error value
@@ -892,7 +892,7 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   else
   {
     fprintf(stderr,"Strategy does not exist\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   errorMetricArray->Allocate(nshg,10000);
   errorMetricArray->SetNumberOfTuples(nshg);
@@ -903,10 +903,10 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   {
     mesh->GetPoint(pointId,xyz);
 
-    if (AdaptUtils_getHessian(averageHessians,pointId,T) != CV_OK)
+    if (AdaptUtils_getHessian(averageHessians,pointId,T) != SV_OK)
     {
       fprintf(stderr,"Error when getting hessian\n");
-      return CV_OK;
+      return SV_OK;
     }
 
     double eigenVals[3];
@@ -1096,7 +1096,7 @@ int AdaptUtils_setSizeFieldUsingHessians(vtkUnstructuredGrid *mesh,
   mesh->GetPointData()->AddArray(errorMetricArray);
   mesh->GetPointData()->SetActiveScalars("errormetric");
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // max relative interpolation error at a vertex
@@ -1230,7 +1230,7 @@ int AdaptUtils_getSurfaceBooleans(vtkUnstructuredGrid *mesh,bool *pointOnSurface
     pointOnSurface[surfacePt] = true;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------------
@@ -1380,7 +1380,7 @@ int AdaptUtils_convertToVTK(vtkUnstructuredGrid *mesh,vtkPolyData *surfaceMesh,t
   delete [] pointMapping;
   delete [] pointOnSurface;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // to read parameters from a phasta file (filename)
@@ -1417,12 +1417,12 @@ int AdaptUtils_readParametersFromFile(char *filename,
   if (nshg == -1)
   {
     fprintf(stderr,"No %s found on mesh\n",fieldName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   numVars=iarray[1];
 
   closefile_(&restart, "read");
-  return CV_OK;
+  return SV_OK;
 }
 
 // to read array from a phasta file (filename)
@@ -1458,7 +1458,7 @@ int AdaptUtils_readArrayFromFile( char *filename,
   {
     fprintf(stderr,"No %s found in file\n",fieldName);
     closefile_(&restart, "read");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   int numVars=iarray[1];
   fprintf(stdout,"Number of vars found in %s: %d\n",fieldName,numVars);
@@ -1480,7 +1480,7 @@ int AdaptUtils_readArrayFromFile( char *filename,
   delete [] q;
 
   closefile_(&restart, "read");
-  return CV_OK;
+  return SV_OK;
 }
 
 // to write array to a phasta file (filename)
@@ -1594,10 +1594,10 @@ int AdaptUtils_checkArrayExists(vtkUnstructuredGrid *object,int datatype,std::st
 
   if (exists == 1)
   {
-    return CV_OK;
+    return SV_OK;
   }
   else
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 }

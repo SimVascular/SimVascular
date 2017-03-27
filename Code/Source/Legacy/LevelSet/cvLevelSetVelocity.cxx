@@ -73,7 +73,7 @@ int cvLevelSetVelocity::LinkLevelSet( cvLevelSet *ls )
   cvLevelSetVelocity *dummy;
 
   if ( ls == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( ls_ != NULL ) {
@@ -84,14 +84,14 @@ int cvLevelSetVelocity::LinkLevelSet( cvLevelSet *ls )
 
   ls->GetVelocity( &dummy );
   if ( dummy != this ) {
-    if ( ls->LinkVelocity( this ) != CV_OK ) {
-      return CV_ERROR;
+    if ( ls->LinkVelocity( this ) != SV_OK ) {
+      return SV_ERROR;
     }
   }
 
   UpdateTolerance();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -102,14 +102,14 @@ int cvLevelSetVelocity::LinkLevelSet( cvLevelSet *ls )
 int cvLevelSetVelocity::UnlinkLevelSet()
 {
   if ( ls_ == NULL ) {
-    return CV_OK;
+    return SV_OK;
   }
 
   //  ls_->UnlinkVelocity();
   ls_->velocity_ = NULL;
   ls_ = NULL;
   tol_ = CV_PHI_TOL;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -120,7 +120,7 @@ int cvLevelSetVelocity::UnlinkLevelSet()
 int cvLevelSetVelocity::GetLevelSet( cvLevelSet **ls )
 {
   *ls = ls_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -135,18 +135,18 @@ int cvLevelSetVelocity::UpdateTolerance()
   double hv[3];
 
   if ( ls_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   grid = ls_->GetGrid();
   if ( grid == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   grid->GetHv( &hv[0], &hv[1], &hv[2] );
   minh = minimum( hv[0], hv[1] );
   minh = minimum( minh, hv[2] );
   tol_ = minh * CV_PHI_TOL;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

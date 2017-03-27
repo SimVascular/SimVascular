@@ -173,7 +173,7 @@ int Image_ReadHeaderCmd( ClientData clientData, Tcl_Interp *interp,
                               &magWeightFlag, &examNumber, nrm_RAS, 
                               &acquisitionTime,&heart_rate,&im_no,&im_seno);
 
-  if ( status == CV_ERROR ) {
+  if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "Problem reading header for ", filename, (char *)NULL );
     return TCL_ERROR;
   }
@@ -371,7 +371,7 @@ int Image_DecodeCmd( ClientData clientData, Tcl_Interp *interp,
     status = mr_decode_masked (vtkspMag,vtkspPhase,venc,vencscale,&obj);
   }
 
-  if ( status == CV_ERROR ) {
+  if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "Problem decoding ", magname, " and ",phasename,(char *)NULL );
     return TCL_ERROR;
   }
@@ -536,7 +536,7 @@ int Image_CalcCorrectionEqnCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] listImg;
   ARG_FreeListArgvs( table_sz, arg_table );
 
-  if ( status == CV_ERROR ) {
+  if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "error finding correction equation ", (char *)NULL );
     return TCL_ERROR;
   } 
@@ -726,7 +726,7 @@ int Image_CalcCorrectionEqnAutoCmd( ClientData clientData, Tcl_Interp *interp,
   delete [] listImg;
   ARG_FreeListArgvs( table_sz, arg_table );
 
-  if ( status == CV_ERROR ) {
+  if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "error finding correction equation ", (char *)NULL );
     return TCL_ERROR;
   } 
@@ -839,7 +839,7 @@ int Image_ThresholdCmd( ClientData clientData, Tcl_Interp *interp,
   cvPolyData *obj = NULL;
   int status = img_threshold(vtksp, thrMin, thrMax, max_num_pts, &obj);
 
-  if ( status == CV_ERROR || obj == NULL) {
+  if ( status == SV_ERROR || obj == NULL) {
     Tcl_AppendResult( interp, "Problem thresholding ", imagename,(char *)NULL );
     return TCL_ERROR;
   }
@@ -1053,7 +1053,7 @@ int Image_CreateDistanceMapCmd( ClientData clientData, Tcl_Interp *interp,
   }
   int status = distmap->createDistanceMap(sp,thrval,start);
 
-  if ( status == CV_ERROR ) {
+  if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "Problem creating distance map for ", srcName,(char *)NULL );
     return TCL_ERROR;
   }
@@ -1274,7 +1274,7 @@ int Image_MaskInPlaceCmd( ClientData clientData, Tcl_Interp *interp,
 
   int status = MaskImageInPlace(imgsp,masksp,replaceVal,notval);
 
-  if ( status == CV_ERROR ) {
+  if ( status == SV_ERROR ) {
     Tcl_AppendResult( interp, "Problem masking in place for ", objName,(char *)NULL );
     return TCL_ERROR;
   }

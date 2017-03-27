@@ -136,7 +136,7 @@ RegistersvModelObjectFactory::RegistersvModelObjectFactory()
 #endif
 
 #ifdef SV_USE_PARASOLID_QT_GUI
-    if (PsdUtils_Init() != CV_OK) {
+    if (PsdUtils_Init() != SV_OK) {
       MITK_ERROR<<"Parasolid Uitls init error";
     }
 #endif

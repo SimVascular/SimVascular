@@ -70,7 +70,7 @@ int CalcU(double xx[3][5], double *d, double r, double s, double *u) {
 
   *u = uval;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -136,11 +136,11 @@ int CalcJacDet(double xx[3][5], double r, double s, double *determinant) {
   if (det < 0.0) {
     //fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n"
     //     ,det);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *determinant = det;
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -181,7 +181,7 @@ int IntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uval
 
   // calculate a sample determinant, and rearrange points
   // if det. is negative.
-  if (CalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
+  if (CalcJacDet(xx,a[1],a[1],&det) == SV_ERROR) {
       double swapd,swapxx[3];
       // swap point 1 -> 4
       swapxx[1] = xx[1][1] ; swapxx[2] = xx[2][1];
@@ -205,19 +205,19 @@ int IntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uval
   qflow = 0.0;
   for (i = 1; i <= 2; i++) {
     for (j = 1; j <= 2; j++) {
-      if (CalcU(xx,d,a[i],a[j],&u) == CV_ERROR) {
+      if (CalcU(xx,d,a[i],a[j],&u) == SV_ERROR) {
         fprintf(stderr,"ERROR: Problem calculating u.\n");
-        return CV_ERROR;
+        return SV_ERROR;
       }
-      if (CalcJacDet(xx,a[i],a[j],&det) == CV_ERROR) {
+      if (CalcJacDet(xx,a[i],a[j],&det) == SV_ERROR) {
         fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n",det);
-        return CV_ERROR;
+        return SV_ERROR;
       }
       if (det < 1E-6) {
           fprintf(stderr,"Warning: ignoring small element with det of (%e).\n",det);
           qflow = 0.0;
           *q = qflow;
-          return CV_OK;
+          return SV_OK;
       } else {
         qflow = qflow + u*det;
       }
@@ -225,7 +225,7 @@ int IntegrateSurfElem(vtkFloatingPointType crd[4][3], vtkFloatingPointType *uval
   }
 
   *q = qflow;
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -253,29 +253,29 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
 
   if (tensorType < 0 || tensorType > 1) {
       fprintf(stderr,"ERROR:  Invalid tensorType (%i).\n",tensorType);
-      return CV_ERROR;
+      return SV_ERROR;
   }
   if (tensorType == 0) {
     scalars = pd->GetPointData()->GetScalars();
     if (scalars == NULL) {
         fprintf(stderr,"ERROR: No scalars!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
   } else {
     vectors = pd->GetPointData()->GetVectors();
     if (vectors == NULL) {
         fprintf(stderr,"ERROR: No vectors!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
   }
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int polyIndex = 0;
@@ -285,7 +285,7 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
       int nElemNodes = polys[polyIndex++];
       if (nElemNodes < 3 || nElemNodes > 4) {
           fprintf(stderr,"ERROR:  Invalid number of nodes in element (%i).\n",nElemNodes);
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       conn[0]=polys[polyIndex++];
@@ -319,17 +319,17 @@ int sys_geom_IntegrateSurface( cvPolyData *src, int tensorType, double *nrm, dou
       }
 
       qflow = 0.0;
-      if (IntegrateSurfElem(crd, uvalues, &qflow) == CV_ERROR) {
+      if (IntegrateSurfElem(crd, uvalues, &qflow) == SV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *q = 0.0;
-          return CV_ERROR;
+          return SV_ERROR;
       }
       qtotal = qtotal + qflow;
   }
 
   *q = qtotal;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -357,19 +357,19 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
 
   if (tensorType < 0 || tensorType > 1) {
       fprintf(stderr,"ERROR:  Invalid tensorType (%i).\n",tensorType);
-      return CV_ERROR;
+      return SV_ERROR;
   }
   if (tensorType == 0) {
     scalars = pd->GetPointData()->GetScalars();
     if (scalars == NULL) {
         fprintf(stderr,"ERROR: No scalars!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
   } else {
     vectors = pd->GetPointData()->GetVectors();
     if (vectors == NULL) {
         fprintf(stderr,"ERROR: No vectors!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
   }
 
@@ -393,11 +393,11 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
     answer = integrateAtts->GetOutput();
     if ( !((answer->GetPointData())->HasArray( ((pd->GetPointData())->GetScalars())->GetName()))) {
       fprintf(stderr,"ERROR:  no scalar point data!\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if (!((answer->GetCellData())->HasArray("Area"))) {
       fprintf(stderr,"ERROR:  no area cell data!\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     qtotal = ((answer->GetPointData())->GetArray( ((pd->GetPointData())->GetScalars())->GetName()))->GetTuple1(0);
     areatotal = ((answer->GetCellData())->GetArray("Area"))->GetTuple1(0);
@@ -407,7 +407,7 @@ int sys_geom_IntegrateSurface2( cvPolyData *src, int tensorType, double *q, doub
   *q = qtotal;
   *area = areatotal;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -450,20 +450,20 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
 
   if (pd == NULL) {
     fprintf(stderr,"ERROR: No polydata!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   scalars = pd->GetPointData()->GetScalars();
 
   if (scalars == NULL) {
     fprintf(stderr,"ERROR: No scalars!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   numPolys = pd->GetNumberOfPolys();
   if (numPolys == 0) {
     fprintf(stderr,"ERROR: No polys!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   vtkCellArray *polys = pd->GetPolys();
@@ -471,7 +471,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
   int numCells = polys->GetNumberOfCells();
   if (numCells != numPolys) {
     fprintf(stderr,"ERROR: num cells not equal to num polys!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // dummy id list
@@ -496,7 +496,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
       fprintf(stderr,"ERROR: invalid cell type (%i)\n",celltype);
       myids->Delete();
       mypts->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     double xx[3][3];
@@ -542,7 +542,7 @@ int sys_geom_IntegrateScalarSurf( cvPolyData *src, double *q )
   myids->Delete();
   mypts->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -587,20 +587,20 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
 
   if (pd == NULL) {
     fprintf(stderr,"ERROR: No polydata!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   scalars = pd->GetPointData()->GetScalars();
 
   if (scalars == NULL) {
     fprintf(stderr,"ERROR: No scalars!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   numPolys = pd->GetNumberOfPolys();
   if (numPolys == 0) {
     fprintf(stderr,"ERROR: No polys!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   vtkCellArray *polys = pd->GetPolys();
@@ -608,7 +608,7 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
   int numCells = polys->GetNumberOfCells();
   if (numCells != numPolys) {
     fprintf(stderr,"ERROR: num cells not equal to num polys!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // dummy id list
@@ -631,7 +631,7 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
       fprintf(stderr,"ERROR: invalid cell type (%i)\n",celltype);
       myids->Delete();
       mypts->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     double xx[3][3];
@@ -677,7 +677,7 @@ int sys_geom_IntegrateScalarThresh( cvPolyData *src, double wssthresh, double *q
   myids->Delete();
   mypts->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -705,21 +705,21 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
   scalars = pd->GetPointData()->GetScalars();
   if (scalars == NULL) {
         fprintf(stderr,"ERROR: No scalars!\n");
-        return CV_ERROR;
+        return SV_ERROR;
   }
   vectors = pd->GetPointData()->GetVectors();
   if (vectors == NULL) {
         fprintf(stderr,"ERROR: No vectors!\n");
-        return CV_ERROR;
+        return SV_ERROR;
   }
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int polyIndex = 0;
@@ -729,7 +729,7 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
       int nElemNodes = polys[polyIndex++];
       if (nElemNodes < 3 || nElemNodes > 4) {
           fprintf(stderr,"ERROR:  Invalid number of nodes in element (%i).\n",nElemNodes);
-          return CV_ERROR;
+          return SV_ERROR;
       }
 
       conn[0]=polys[polyIndex++];
@@ -760,17 +760,17 @@ int sys_geom_IntegrateEnergy ( cvPolyData *src, double rho, double *nrm, double 
       }
 
       energyElem = 0.0;
-      if (IntegrateSurfElem(crd, uvalues, &energyElem) == CV_ERROR) {
+      if (IntegrateSurfElem(crd, uvalues, &energyElem) == SV_ERROR) {
           fprintf(stderr,"ERROR:  Problem calculating surface integral.\n");
           *energy = 0.0;
-          return CV_ERROR;
+          return SV_ERROR;
       }
       energyTotal = energyTotal + energyElem;
   }
 
   *energy = energyTotal;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 

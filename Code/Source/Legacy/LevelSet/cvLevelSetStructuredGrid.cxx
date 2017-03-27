@@ -168,7 +168,7 @@ int cvLevelSetStructuredGrid::CloseHoles()
     }
   }
   phiVtkValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -185,7 +185,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
   int adjIxs[6];
   char c;
   double f0, f1, mag;
-  int status = CV_OK;
+  int status = SV_OK;
   double zls[3];
   double v[3];
   int forceMinVFlag;
@@ -202,7 +202,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
   vtkFloatingPointType vf[3];
 
   if ( ! vfn->Valid() ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   tol = relTol_ * minh_;
@@ -223,7 +223,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
       zls[1] = currNode->pos_[1];
       zls[2] = currNode->pos_[2];
       status = vfn->Evaluate( zls, &f0, &f1, v, &forceMinVFlag, toDot );
-      if ( status != CV_OK ) {
+      if ( status != SV_OK ) {
 	break;  // i.e. out of global node loop
       }
       mag = fabs( f0 + f1 );
@@ -268,7 +268,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
 	  }
 	  InterpZLS( currNode, adjNode, c, zls );
 	  status = vfn->Evaluate( zls, &f0, &f1, v, &forceMinVFlag, toDot );
-	  if ( status != CV_OK ) {
+	  if ( status != SV_OK ) {
 	    break;  // i.e. out of local radiating edge loop
 	  }
 	  mag = fabs( f0 + f1 );
@@ -292,18 +292,18 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
 	}
       }
     }
-    if ( status != CV_OK ) {
+    if ( status != SV_OK ) {
       break;  // i.e. out of global node loop
     }
   }
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
 
     pts->Delete();
     vec->Delete();
     pd->Delete();
 
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   pd->SetPoints( pts );
@@ -318,7 +318,7 @@ int cvLevelSetStructuredGrid::EvaluateV( cvLevelSetVelocity *vfn, double factor 
 
   deltaPhiValid_ = 0;
   
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -447,7 +447,7 @@ int cvLevelSetStructuredGrid::UpdatePhi()
 
   if ( ! deltaPhiValid_ ) {
     printf("ERR: unexpected call to UpdatePhi\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   InitIter();
@@ -559,7 +559,7 @@ int cvLevelSetStructuredGrid::UpdatePhi()
   k3dgValid_ = 0;
   phiVtkValid_ = 0;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1366,7 +1366,7 @@ int cvLevelSetStructuredGrid::GetAnchorIx( double pos[], int *ix )
 
   *ix = IJKToIndex( logicalIxs[0], logicalIxs[1], logicalIxs[2] );
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1389,12 +1389,12 @@ int cvLevelSetStructuredGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLeve
   *a = NULL;
   *b = NULL;
 
-  if ( GetAnchorIx( pos, &anchorIx ) != CV_OK ) {
-    return CV_ERROR;
+  if ( GetAnchorIx( pos, &anchorIx ) != SV_OK ) {
+    return SV_ERROR;
   }
 
   if ( anchorIx < 0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   tol = relTol_ * minh_;
@@ -1417,12 +1417,12 @@ int cvLevelSetStructuredGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLeve
       default:
 	*a = NULL;
 	*b = NULL;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       *a = anchor;
       nextIx = adjIxs[2*i + 1];
       *b = &( grid_[nextIx] );
-      return CV_OK;
+      return SV_OK;
     }
   }
 
@@ -1431,7 +1431,7 @@ int cvLevelSetStructuredGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLeve
   *a = anchor;
   *b = NULL;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1447,13 +1447,13 @@ int cvLevelSetStructuredGrid::InterpZLS( cvLevelSetNode *a, cvLevelSetNode *b, c
   tol = relTol_ * minh_;
   phia = a->phi_;
 
-  if ( a == NULL ) return CV_ERROR;
+  if ( a == NULL ) return SV_ERROR;
 
   if ( b == NULL ) {
 
     // If b is NULL, then phi at a is expected to be ~0:
     if ( fabs(phia) >= tol ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // ZLS passes through node a:
@@ -1467,7 +1467,7 @@ int cvLevelSetStructuredGrid::InterpZLS( cvLevelSetNode *a, cvLevelSetNode *b, c
 
     // Check that phia and phib have opposite signs:
     if ( (phia*phib) >= 0.0 ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     switch (code) {
@@ -1487,11 +1487,11 @@ int cvLevelSetStructuredGrid::InterpZLS( cvLevelSetNode *a, cvLevelSetNode *b, c
       LinInterp1D_dbl( phia, phib, a->pos_[2], b->pos_[2], 0.0, &(zls[2]) );
       break;
     default:
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1506,15 +1506,15 @@ int cvLevelSetStructuredGrid::InterpK( double pos[], double *k )
   cvLevelSetNode *a, *b;
   char dir;
 
-  if ( FindEdge( pos, &a, &b, &dir ) != CV_OK ) {
-    return CV_ERROR;
+  if ( FindEdge( pos, &a, &b, &dir ) != SV_OK ) {
+    return SV_ERROR;
   }
   if ( a == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( b == NULL ) {
     *k = a->K_;
-    return CV_OK;
+    return SV_OK;
   }
   switch (dir) {
   case 'x':
@@ -1527,9 +1527,9 @@ int cvLevelSetStructuredGrid::InterpK( double pos[], double *k )
     LinInterp1D_dbl( a->pos_[2], b->pos_[2], a->K_, b->K_, pos[2], k );
     break;
   default:
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1542,15 +1542,15 @@ int cvLevelSetStructuredGrid::InterpKm( double pos[], double *k )
   cvLevelSetNode *a, *b;
   char dir;
 
-  if ( FindEdge( pos, &a, &b, &dir ) != CV_OK ) {
-    return CV_ERROR;
+  if ( FindEdge( pos, &a, &b, &dir ) != SV_OK ) {
+    return SV_ERROR;
   }
   if ( a == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( b == NULL ) {
     *k = a->K3dm_;
-    return CV_OK;
+    return SV_OK;
   }
   switch (dir) {
   case 'x':
@@ -1563,9 +1563,9 @@ int cvLevelSetStructuredGrid::InterpKm( double pos[], double *k )
     LinInterp1D_dbl( a->pos_[2], b->pos_[2], a->K3dm_, b->K3dm_, pos[2], k );
     break;
   default:
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1578,15 +1578,15 @@ int cvLevelSetStructuredGrid::InterpKg( double pos[], double *k )
   cvLevelSetNode *a, *b;
   char dir;
 
-  if ( FindEdge( pos, &a, &b, &dir ) != CV_OK ) {
-    return CV_ERROR;
+  if ( FindEdge( pos, &a, &b, &dir ) != SV_OK ) {
+    return SV_ERROR;
   }
   if ( a == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( b == NULL ) {
     *k = a->K3dg_;
-    return CV_OK;
+    return SV_OK;
   }
   switch (dir) {
   case 'x':
@@ -1599,9 +1599,9 @@ int cvLevelSetStructuredGrid::InterpKg( double pos[], double *k )
     LinInterp1D_dbl( a->pos_[2], b->pos_[2], a->K3dg_, b->K3dg_, pos[2], k );
     break;
   default:
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1616,13 +1616,13 @@ int cvLevelSetStructuredGrid::InterpN( double pos[], double n[] )
 
   FindEdge( pos, &a, &b, &dir );
   if ( a == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( b == NULL ) {
     n[0] = a->n_[0];
     n[1] = a->n_[1];
     n[2] = a->n_[2];
-    return CV_OK;
+    return SV_OK;
   }
   switch (dir) {
   case 'x':
@@ -1650,9 +1650,9 @@ int cvLevelSetStructuredGrid::InterpN( double pos[], double n[] )
 		     pos[2], &(n[2]) );
     break;
   default:
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1727,7 +1727,7 @@ cvPolyData *cvLevelSetStructuredGrid::GetActiveNodes()
   int i;
 
   SaveActiveNodes();
-  if ( GetNodeSets( &nodeSets, &numSets ) != CV_OK ) {
+  if ( GetNodeSets( &nodeSets, &numSets ) != SV_OK ) {
     return NULL;
   }
 
@@ -1803,7 +1803,7 @@ cvPolyData *cvLevelSetStructuredGrid::GetBoundaryData( GridScalarT t )
     pt[0] = ptf[0];
     pt[1] = ptf[1];
     pt[2] = ptf[2];
-    if ( ( FindEdge( pt, &a, &b, &dir ) != CV_OK ) ||
+    if ( ( FindEdge( pt, &a, &b, &dir ) != SV_OK ) ||
 	 ( a == NULL ) ) {
       data->Delete();
       delete zls;
@@ -1864,7 +1864,7 @@ int cvLevelSetStructuredGrid::SaveActiveNodes()
     }
   }
   pSetsValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1904,7 +1904,7 @@ int cvLevelSetStructuredGrid::SaveCoveredNodes()
     }
   }
   pSetsValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1926,7 +1926,7 @@ int cvLevelSetStructuredGrid::SaveUncoveredNodes()
     }
   }
   pSetsValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1947,7 +1947,7 @@ int cvLevelSetStructuredGrid::SaveForceMinVNodes()
     }
   }
   pSetsValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1968,7 +1968,7 @@ int cvLevelSetStructuredGrid::SaveMineNodes()
     }
   }
   pSetsValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2113,7 +2113,7 @@ int cvLevelSetStructuredGrid::ProjectV( int posFlag, int save )
   pSetsValid_ = 0;
 
   if ( ( save ) && ( nodeSets_ == NULL ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // For each Grid node:
@@ -2134,8 +2134,8 @@ int cvLevelSetStructuredGrid::ProjectV( int posFlag, int save )
 
 	  // Retrieve the next index from which to project:
 	  status = ixList.RemoveFromHead( &currIx );
-	  if ( status != CV_OK ) {
-	    return CV_ERROR;
+	  if ( status != SV_OK ) {
+	    return SV_ERROR;
 	  }
 
 	  // Save current index into the nodeSets_ array:
@@ -2183,14 +2183,14 @@ int cvLevelSetStructuredGrid::ProjectV( int posFlag, int save )
 
 	      neighborNode->state_ |= CV_NODE_COVERED;
 	      status = ixList.Append( neighborIx );
-	      if ( status != CV_OK ) {
-		return CV_ERROR;
+	      if ( status != SV_OK ) {
+		return SV_ERROR;
 	      }
 	      stranded = 0;
 	    } else {
 	      if ( neighborDstIx == -1 ) {
 		printf("ERR: steepest descent/ascent error\n");
-		return CV_ERROR;
+		return SV_ERROR;
 	      }
 	    }
 	  }
@@ -2218,7 +2218,7 @@ int cvLevelSetStructuredGrid::ProjectV( int posFlag, int save )
     pSetsValid_ = 1;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2398,7 +2398,7 @@ int cvLevelSetStructuredGrid::GetNodeSets( cvPolyData ***nodeSets, int *numSets 
 
   *nodeSets = result;
   *numSets = num;
-  return CV_OK;
+  return SV_OK;
 }
 
 

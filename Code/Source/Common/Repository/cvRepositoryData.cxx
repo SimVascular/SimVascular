@@ -233,7 +233,7 @@ int cvRepositoryData::IsLabelPresent( char *key )
   if ( entryPtr == NULL ) {
     return 0;
   }
-  return 1;
+  return SV_OK;
 }
 
 
@@ -254,7 +254,7 @@ int cvRepositoryData::GetLabel( char *key, char **value )
 
   dsPtr = (Tcl_DString *) Tcl_GetHashValue( entryPtr );
   (*value) = Tcl_DStringValue( dsPtr );
-  return 1;
+  return SV_OK;
 }
 
 
@@ -278,7 +278,7 @@ int cvRepositoryData::SetLabel( char *key, char *value )
   Tcl_DStringInit( dsPtr );
   Tcl_SetHashValue( entryPtr, dsPtr );
   Tcl_DStringAppend( dsPtr, value, -1 );
-  return 1;
+  return SV_OK;
 }
 
 

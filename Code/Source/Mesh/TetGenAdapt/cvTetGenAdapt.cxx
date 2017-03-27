@@ -140,7 +140,7 @@ int cvTetGenAdapt::Copy( const cvAdaptObject& src)
 
   adaptPtr = (cvTetGenAdapt *)( &src );
 
-  return CV_OK;
+  return SV_OK;
 }
 
 #ifdef NOT_ADAMS_CREATEINTERNALMESHOBJECT_CODE
@@ -157,7 +157,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   if (meshobject_ != NULL)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   char* mesh_name = "/adapt/internal/meshobject";
@@ -166,7 +166,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
   if ( gRepository->Exists(mesh_name) ) {
     fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   /*
@@ -175,12 +175,12 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if(strcmp(Tcl_GetStringResult(interp),"1")) {
     fprintf(stderr,"Object %s already exists\n",mesh_name);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   */
 
@@ -189,7 +189,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   evalmestr[0]='\0';
@@ -197,7 +197,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
   if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
     fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (solidFileName != NULL)
@@ -208,7 +208,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
       fprintf(stderr,"Error loading solid model in internal object creation\n");
       fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
@@ -220,13 +220,13 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
     if (Tcl_Eval( interp,evalmestr ) == TCL_ERROR) {
       fprintf(stderr,"Error loading mesh in internal object creation\n");
       fprintf(stderr,"Error evaluating command (%s)\n",evalmestr);
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
   meshobject_ = dynamic_cast<cvTetGenMeshObject*>(gRepository->GetObject(mesh_name));
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -242,7 +242,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   if (meshobject_ != NULL)
   {
     fprintf(stderr,"Cannot create a mesh object, one already exists\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   char* mesh_name = "/adapt/internal/meshobject";
@@ -254,7 +254,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
   meshobject_ = cvMeshSystem::DefaultInstantiateMeshObject( interp,meshFileName,solidFileName);
   if ( meshobject_ == NULL ) {
     fprintf(stderr,"Mesh Object is null after instantiation!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int reg_status = gRepository->Register(mesh_name, meshobject_ );
@@ -264,7 +264,7 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
         	      " in repository", (char *)NULL );
     fprintf(stderr,"Error when registering\n");
     delete meshobject_;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   meshobject_->SetName(mesh_name);
   Tcl_SetResult( interp, meshobject_->GetName(), TCL_VOLATILE );
@@ -273,22 +273,22 @@ int cvTetGenAdapt::CreateInternalMeshObject(Tcl_Interp *interp,
 
   if (solidFileName != NULL)
   {
-    if (this->LoadModel(solidFileName) != CV_OK)
+    if (this->LoadModel(solidFileName) != SV_OK)
     {
       fprintf(stderr,"Error loading solid model in internal object creation\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   if (meshFileName != NULL)
   {
-    if (this->LoadMesh(meshFileName) != CV_OK)
+    if (this->LoadMesh(meshFileName) != SV_OK)
     {
       fprintf(stderr,"Error loading mesh in internal object creation\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
- return CV_OK;
+ return SV_OK;
 }
 
 #endif
@@ -301,7 +301,7 @@ int cvTetGenAdapt::LoadModel(char *fileName)
   if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (insurface_mesh_ != NULL)
@@ -322,18 +322,18 @@ int cvTetGenAdapt::LoadModel(char *fileName)
   if (meshobject_ == NULL)
   {
     fprintf(stderr,"Mesh object must first be created with CreateInternalMeshObject before loading\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (meshobject_->LoadModel(fileName) != CV_OK)
-    return CV_ERROR;
+  if (meshobject_->LoadModel(fileName) != SV_OK)
+    return SV_ERROR;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int cvTetGenAdapt::LoadModel(vtkPolyData *pd)
 {
   if (pd==NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   if (insurface_mesh_ != NULL)
     insurface_mesh_->Delete();
@@ -349,12 +349,12 @@ int cvTetGenAdapt::LoadModel(vtkPolyData *pd)
   if (meshobject_ == NULL)
   {
     fprintf(stderr,"Mesh object must first be created before loading\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (meshobject_->LoadModel(pd) != CV_OK)
-    return CV_ERROR;
+  if (meshobject_->LoadModel(pd) != SV_OK)
+    return SV_ERROR;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -366,7 +366,7 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
   if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (inmesh_ != NULL)
@@ -383,13 +383,13 @@ int cvTetGenAdapt::LoadMesh(char *fileName)
   printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
   inmesh_->BuildLinks();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int cvTetGenAdapt::LoadMesh(vtkUnstructuredGrid* ug)
 {
   if (ug==NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   if (inmesh_ != NULL)
     inmesh_->Delete();
@@ -401,7 +401,7 @@ int cvTetGenAdapt::LoadMesh(vtkUnstructuredGrid* ug)
   printf(" Total # of vertices: %d\n", inmesh_->GetNumberOfPoints());
   inmesh_->BuildLinks();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -412,25 +412,25 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
   if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (sol_ != NULL)
     delete [] sol_;
 
-  if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != CV_OK)
+  if (AdaptUtils_readArrayFromFile(fileName,"solution",sol_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read solution from file\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (inmesh_ != NULL)
   {
     int nVar = 5;//Number of variables in solution
-    if (AdaptUtils_attachArray(sol_,inmesh_,"solution",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(sol_,inmesh_,"solution",nVar,options.poly_) != SV_OK)
     {
       fprintf(stderr,"Error: Error when attaching solution to mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else
@@ -438,7 +438,7 @@ int cvTetGenAdapt::LoadSolutionFromFile(char *fileName)
     fprintf(stderr,"Must load a mesh to attach solution to mesh\n");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // Retain Loading of Ybar for old solver versions
@@ -450,30 +450,30 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
   if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (ybar_ != NULL)
     delete [] ybar_;
 
-  if (AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_) != CV_OK)
+  if (AdaptUtils_readArrayFromFile(fileName,"ybar",ybar_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read ybar from file\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (inmesh_ != NULL)
   {
     int nVar=5; //Number of variables in average speed
-    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != SV_OK)
     {
       fprintf(stderr,"Error: Error when attaching speed to mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
-    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
+    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != SV_OK)
     {
       fprintf(stderr,"Error: Error getting speed from ybar\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else
@@ -481,7 +481,7 @@ int cvTetGenAdapt::LoadYbarFromFile(char *fileName)
     fprintf(stderr,"Must load a mesh to attach average speed to mesh\n");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -492,33 +492,33 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
   if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (avgspeed_ != NULL)
     delete [] avgspeed_;
-  if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != CV_OK)
+  if (AdaptUtils_readArrayFromFile(fileName,"average speed",avgspeed_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read average speed from file\n");
-    if (this->LoadYbarFromFile(fileName) != CV_OK)
+    if (this->LoadYbarFromFile(fileName) != SV_OK)
     {
       fprintf(stderr,"Attempted to find ybar, couldn't read ybar from file either\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     else
     {
       fprintf(stdout,"Note: Couldn't find average speed, but found ybar\n");
-      return CV_OK;
+      return SV_OK;
     }
   }
 
   if (inmesh_ != NULL)
   {
     int nVar=1; //Number of variables in average speed
-    if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != SV_OK)
     {
       fprintf(stderr,"Error: Error when attaching speed to mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else
@@ -526,7 +526,7 @@ int cvTetGenAdapt::LoadAvgSpeedFromFile(char *fileName)
     fprintf(stderr,"Must load a mesh to attach average speed to mesh\n");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -537,25 +537,25 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
   if (!AdaptUtils_file_exists(fileName))
   {
     fprintf(stderr,"File %s does not exist\n",fileName);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (hessians_ != NULL)
     delete [] hessians_;
 
-  if (AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_) != CV_OK)
+  if (AdaptUtils_readArrayFromFile(fileName,"hessians",hessians_) != SV_OK)
   {
     fprintf(stderr,"Error: Couldn't read hessians from file\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (inmesh_ != NULL)
   {
     int nVar=9;
-    if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(hessians_,inmesh_,"hessians",nVar,options.poly_) != SV_OK)
     {
       fprintf(stderr,"Error: Error when attaching error to mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else
@@ -563,7 +563,7 @@ int cvTetGenAdapt::LoadHessianFromFile(char *fileName)
     fprintf(stderr,"Must load a mesh to attach hessian to mesh\n");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -574,7 +574,7 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
   if (inmesh_ == NULL)
   {
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (sol_ != NULL)
@@ -583,16 +583,16 @@ int cvTetGenAdapt::ReadSolutionFromMesh()
   fprintf(stdout,"Getting solution from step %d to step %d in increments of %d\n",
       options.instep_,options.outstep_,options.step_incr_);
   if (AdaptUtils_averageSolutionsOnMesh(inmesh_,options.instep_,
-	options.outstep_,options.step_incr_) != CV_OK)
-    return CV_ERROR;
+	options.outstep_,options.step_incr_) != SV_OK)
+    return SV_ERROR;
 
-  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK) 
+  if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != SV_OK) 
   {
     fprintf(stderr,"Could not converate solution into average speed array\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 //Retain for old solver versions for now
@@ -604,43 +604,43 @@ int cvTetGenAdapt::ReadYbarFromMesh()
   if (inmesh_ == NULL)
   {
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (ybar_ != NULL)
     delete [] ybar_;
   char ybar_step[80];
   sprintf(ybar_step,"%s_%05i","ybar",options.outstep_);
-  if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != CV_OK)
+  if (AdaptUtils_checkArrayExists(inmesh_,0,ybar_step) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",ybar_step);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int nVar = 5; //Number of variables in average speed
   if (AdaptUtils_getAttachedArray(ybar_,inmesh_,ybar_step,nVar,
-	options.poly_) != CV_OK)
+	options.poly_) != SV_OK)
   {
     fprintf(stderr,"Error when retrieving ybar array on mesh\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (inmesh_ != NULL)
   {
     int nVar = 5; //Number of variables in average speed
-    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(ybar_,inmesh_,"avg_sols",nVar,options.poly_) != SV_OK)
     {
       fprintf(stderr,"Error: Error when attaching ybar to mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
-    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != CV_OK)
+    if (AdaptUtils_splitSpeedFromAvgSols(inmesh_) != SV_OK)
     {
       fprintf(stderr,"Error: Error getting speed from average sols\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -651,47 +651,47 @@ int cvTetGenAdapt::ReadAvgSpeedFromMesh()
   if (inmesh_ == NULL)
   {
     fprintf(stderr,"Must load mesh before checking to see if solution exists\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (avgspeed_ != NULL)
     delete [] avgspeed_;
   char avgspeed_step[80];
   sprintf(avgspeed_step,"%s_%05i","average_speed",options.outstep_);
-  if (AdaptUtils_checkArrayExists(inmesh_,0,avgspeed_step) != CV_OK)
+  if (AdaptUtils_checkArrayExists(inmesh_,0,avgspeed_step) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",avgspeed_step);
-    if (this->ReadYbarFromMesh() != CV_OK)
+    if (this->ReadYbarFromMesh() != SV_OK)
     {
       fprintf(stderr,"Attempted to find ybar, couldn't find ybar on mesh either\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     else
     {
       fprintf(stdout,"Found ybar array on mesh\n");
-      return CV_OK;
+      return SV_OK;
     }
   }
 
   int nVar = 1; //Number of variables in average speed
   if (AdaptUtils_getAttachedArray(avgspeed_,inmesh_,avgspeed_step,nVar,
-	options.poly_) != CV_OK)
+	options.poly_) != SV_OK)
   {
     fprintf(stderr,"Error when retrieving average speed array on mesh\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (inmesh_ != NULL)
   {
     int nVar = 1; //Number of variables in average speed
-    if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != CV_OK)
+    if (AdaptUtils_attachArray(avgspeed_,inmesh_,"average_speed",nVar,options.poly_) != SV_OK)
     {
       fprintf(stderr,"Error: Error when attaching average speed to mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -703,7 +703,7 @@ int cvTetGenAdapt::ReadAvgSpeedFromMesh()
  * @param *flag char containing the flag to set
  * @param value if the flag requires a value, this double contains that
  * value to be set
- * @return *result: CV_ERROR if the flag doesn't exist. Else return CV_OK
+ * @return *result: SV_ERROR if the flag doesn't exist. Else return SV_OK
  */
 int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
 {
@@ -736,10 +736,10 @@ int cvTetGenAdapt::SetAdaptOptions(char *flag,double value)
   }
   else {
     fprintf(stderr,"Flag given is not a valid adapt option\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -754,7 +754,7 @@ int cvTetGenAdapt::CheckOptions()
   fprintf(stderr,"Hmax: %.4f\n",options.hmax_);
   fprintf(stderr,"Hmin: %.4f\n",options.hmin_);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -770,7 +770,7 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
   if (inmesh_ == NULL)
   {
     fprintf(stderr,"Error: Mesh must be loaded to set hessians\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   int numPoints = inmesh_->GetNumberOfPoints();
 
@@ -785,44 +785,44 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
 	if (avgspeed_ == NULL)
 	{
 	  if (input == NULL)
-	    return CV_ERROR;
-	  if (this->LoadAvgSpeedFromFile(input) != CV_OK)
+	    return SV_ERROR;
+	  if (this->LoadAvgSpeedFromFile(input) != SV_OK)
 	  {
 	    fprintf(stderr,"Could not load avg apeed or ybar from file\n");
-	    return CV_ERROR;
+	    return SV_ERROR;
 	  }
 	}
       }
       else if (options.metric_option_ == 2)
       {
-	if (this->ReadAvgSpeedFromMesh() != CV_OK)
-	  return CV_ERROR;
+	if (this->ReadAvgSpeedFromMesh() != SV_OK)
+	  return SV_ERROR;
       }
       else if (options.metric_option_ == 3)
       {
-	if (this->ReadSolutionFromMesh() != CV_OK)
-	  return CV_ERROR;
+	if (this->ReadSolutionFromMesh() != SV_OK)
+	  return SV_ERROR;
       }
 
       //Compute hessian and attach to mesh!
-      if (AdaptUtils_hessiansFromSolution(inmesh_) != CV_OK)
+      if (AdaptUtils_hessiansFromSolution(inmesh_) != SV_OK)
       {
 	fprintf(stderr,"Error: Error when calculating hessians from solution\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
       if (AdaptUtils_setSizeFieldUsingHessians(inmesh_,
 	    options.ratio_,options.hmax_,options.hmin_,
-	    options.sphere_,options.strategy_) != CV_OK)
+	    options.sphere_,options.strategy_) != SV_OK)
       {
 	  fprintf(stderr,"Error: Error when setting size field with hessians\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
       }
   }
   break;
   case 4: { //Read some other array from the mesh to set on mesh
       if (input != NULL)
       {
-	if (AdaptUtils_checkArrayExists(inmesh_,0,input) != CV_OK)
+	if (AdaptUtils_checkArrayExists(inmesh_,0,input) != SV_OK)
 	{
 	  fprintf(stderr,"Given array name is not on input mesh!\n");
 	}
@@ -830,19 +830,19 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
       else
       {
 	fprintf(stderr,"Must give name of array to use as metric on mesh\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
       double *tmp;
-      if (AdaptUtils_getAttachedArray(tmp,inmesh_,input,1,options.poly_) != CV_OK)
+      if (AdaptUtils_getAttachedArray(tmp,inmesh_,input,1,options.poly_) != SV_OK)
       {
 	fprintf(stderr,"Error when retrieving array from mesh!\n");
-	return CV_ERROR;
+	return SV_ERROR;
 
       }
-      if (AdaptUtils_attachArray(tmp,inmesh_,"errormetric",1,options.poly_) != CV_OK)
+      if (AdaptUtils_attachArray(tmp,inmesh_,"errormetric",1,options.poly_) != SV_OK)
       {
 	fprintf(stderr,"Error when attaching array to mesh!\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
       delete [] tmp;
   }
@@ -862,12 +862,12 @@ int cvTetGenAdapt::SetMetric(char *input,int option, int strategy)
       cout<<"	then calculated from avg. magnitude of velocity."<<endl;
       cout<<"4: Read array from mesh, and specify mesh metric with this array."<<endl;
 
-      return CV_ERROR;
+      return SV_ERROR;
   }
   break;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -878,27 +878,27 @@ int cvTetGenAdapt::SetupMesh()
   if (inmesh_ == NULL || insurface_mesh_ == NULL)
   {
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (meshobject_ == NULL)
   {
     fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   int nVar;
   if (options.strategy_ == 1)
     nVar = 1;
   else if (options.strategy_ == 2)
     nVar = 9;
-  if (AdaptUtils_checkArrayExists(inmesh_,0,"errormetric") != CV_OK)
+  if (AdaptUtils_checkArrayExists(inmesh_,0,"errormetric") != SV_OK)
   {
     fprintf(stderr,"Error metric must be incident on mesh. Created in SetMetric\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,options.poly_) != CV_OK)
+  if (AdaptUtils_getAttachedArray(errormetric_,inmesh_,"errormetric",nVar,options.poly_) != SV_OK)
   {
     fprintf(stderr,"Error in getting error metric off mesh\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   double dummy=0;
@@ -908,7 +908,7 @@ int cvTetGenAdapt::SetupMesh()
       options.instep_,options.ratio_,options.hmax_,
       options.hmin_,options.strategy_);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -919,17 +919,17 @@ int cvTetGenAdapt::RunAdaptor()
   if (meshobject_ == NULL)
   {
     fprintf(stderr,"Must create internal mesh object with CreateInternalMeshObject()\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (inmesh_ == NULL || insurface_mesh_ == NULL)
   {
     fprintf(stderr,"ERROR: Mesh and model must be loaded prior to running the adaptor\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   meshobject_->Adapt();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -938,7 +938,7 @@ int cvTetGenAdapt::RunAdaptor()
 int cvTetGenAdapt::PrintStats()
 {
   fprintf(stdout,"TODO\n");
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -955,12 +955,12 @@ int cvTetGenAdapt::GetAdaptedMesh()
   if (meshobject_ == NULL)
   {
     fprintf(stderr,"Mesh Object is null!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   outmesh_ = vtkUnstructuredGrid::New();
   outsurface_mesh_ = vtkPolyData::New();
   meshobject_->GetAdaptedMesh(outmesh_,outsurface_mesh_);
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -971,20 +971,20 @@ int cvTetGenAdapt::TransferSolution()
   if (inmesh_ == NULL)
   {
     fprintf(stderr,"Inmesh is NULL!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (outmesh_ == NULL)
   {
     fprintf(stderr,"Outmesh is NULL!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   int nVar = 5;// Number of variables in sol
-  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.outstep_) != CV_OK)
+  if (AdaptUtils_fix4SolutionTransfer(inmesh_,outmesh_,options.outstep_) != SV_OK)
   {
     fprintf(stderr,"ERROR: Solution was not transferred\n");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -995,21 +995,21 @@ int cvTetGenAdapt::TransferRegions()
   if (insurface_mesh_ == NULL)
   {
     fprintf(stderr,"In surfacemesh is NULL!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (outsurface_mesh_ == NULL)
   {
     fprintf(stderr,"Out surfacemesh is NULL!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if (AdaptUtils_modelFaceIDTransfer(insurface_mesh_,outsurface_mesh_) != CV_OK)
+  if (AdaptUtils_modelFaceIDTransfer(insurface_mesh_,outsurface_mesh_) != SV_OK)
   {
     fprintf(stderr,"ERROR: Regions were not transferred\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -1022,7 +1022,7 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
     if (meshobject_ == NULL)
     {
       fprintf(stderr,"Mesh Object is null!\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     this->GetAdaptedMesh();
@@ -1033,7 +1033,7 @@ int cvTetGenAdapt::WriteAdaptedModel(char *fileName)
   writer->SetInputData(outsurface_mesh_);
   writer->SetFileName(fileName);
   writer->Update();
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -1046,16 +1046,16 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
     if (meshobject_ == NULL)
     {
       fprintf(stderr,"Mesh Object is null!\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
   }
   vtkSmartPointer<vtkPolyData> face =
     vtkSmartPointer<vtkPolyData>::New();
-  if (TGenUtils_GetFacePolyData(faceid,outsurface_mesh_,face)  != CV_OK)
+  if (TGenUtils_GetFacePolyData(faceid,outsurface_mesh_,face)  != SV_OK)
   {
     fprintf(stderr,"Error getting face on output surface mesh\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   vtkSmartPointer<vtkXMLPolyDataWriter> writer =
@@ -1063,7 +1063,7 @@ int cvTetGenAdapt::WriteAdaptedModelFace(int faceid, char *fileName)
   writer->SetInputData(face);
   writer->SetFileName(fileName);
   writer->Update();
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -1076,7 +1076,7 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
     if (meshobject_ == NULL)
     {
       fprintf(stderr,"Mesh Object is null!\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     this->GetAdaptedMesh();
   }
@@ -1087,7 +1087,7 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
   writer->SetFileName(fileName);
   writer->Update();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------------------
@@ -1095,7 +1095,7 @@ int cvTetGenAdapt::WriteAdaptedMesh(char *fileName)
 // -----------------------
 int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 {
-  if (AdaptUtils_checkArrayExists(outmesh_,0,"solution") != CV_OK)
+  if (AdaptUtils_checkArrayExists(outmesh_,0,"solution") != SV_OK)
   {
     fprintf(stderr,"Array solution does not exist, must transfer solution prior to writing solution file\n");
   }
@@ -1106,10 +1106,10 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 
     int nVar = 5; //Number of variables in solution
     if (AdaptUtils_getAttachedArray(sol_,outmesh_,"solution",nVar,
-	  options.poly_,true) != CV_OK)
+	  options.poly_,true) != SV_OK)
     {
       fprintf(stderr,"Could not get solution from mesh\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     int numPoints = outmesh_->GetNumberOfPoints();
@@ -1117,6 +1117,6 @@ int cvTetGenAdapt::WriteAdaptedSolution(char *fileName)
 	nVar,options.outstep_,sol_);
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 

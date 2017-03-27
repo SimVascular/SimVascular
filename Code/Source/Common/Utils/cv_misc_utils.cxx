@@ -107,7 +107,7 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
 
   tmp = (4 * Km * Km) - (4 * Kg);
   if ( tmp < 0.0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   tmp = sqrt( tmp );
 
@@ -126,7 +126,7 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
        ( (cvSign( Km, tol ) == 0.0) && (k1a <= 0.0 ) ) ) {
     ks[0] = k1a;
     ks[1] = k2a;
-    return CV_OK;
+    return SV_OK;
   }
 
   if ( ( (Km > 0.0) && (k2b > 0.0) ) ||
@@ -134,10 +134,10 @@ int Compute3dks( double Kg, double Km, double tol, double ks[] )
        ( (cvSign( Km, tol ) == 0.0) && (k1b <= 0.0 ) ) ) {
     ks[0] = k1b;
     ks[1] = k2b;
-    return CV_OK;
+    return SV_OK;
   }
 
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 

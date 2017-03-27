@@ -122,11 +122,11 @@ public:
   virtual int MakeBox3d( double dims[], double ctr[] ) = 0;
   virtual int MakeSphere( double r, double ctr[] ) = 0;
   virtual int MakeEllipsoid( double r[], double ctr[] )
-    { return CV_ERROR; }
+    { return SV_ERROR; }
   virtual int MakeCylinder( double r, double length, double ctr[],
 			    double axis[] ) = 0;
   virtual int MakeTorus( double rmaj, double rmin, double ctr[],
-			 double axis[] ) { return CV_ERROR; }
+			 double axis[] ) { return SV_ERROR; }
   virtual int MakeTruncatedCone( double pt[], double dir[], double r1, double r2) = 0;
 
   virtual int SetPoly3dFacetMethod( SolidModel_FacetT code ) = 0;
@@ -139,7 +139,7 @@ public:
   virtual int MakeApproxCurveLoop( cvPolyData *pd, double tol, int closed ) = 0;
   virtual int MakeLoftedSurf( cvSolidModel **curves, int numCurves , char *name,
      int continuity,int partype,double w1,double w2,double w3 ,int smoothing) = 0;
-  virtual int CapSurfToSolid( cvSolidModel *surf ) { return CV_ERROR; }
+  virtual int CapSurfToSolid( cvSolidModel *surf ) { return SV_ERROR; }
 
   // Booleans are compatible only between like-typed concrete objects:
   virtual int Intersect( cvSolidModel *a, cvSolidModel *b,

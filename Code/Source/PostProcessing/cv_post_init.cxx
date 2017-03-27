@@ -142,7 +142,7 @@ int Post_readVisMeshCmd( ClientData clientData, Tcl_Interp *interp,
   cvConvertVisFiles *myconverter = new cvConvertVisFiles();
 
   // read in the mesh file
-  if (myconverter->ReadVisMesh(fileName) == CV_ERROR) {
+  if (myconverter->ReadVisMesh(fileName) == SV_ERROR) {
       delete myconverter;
       Tcl_AppendResult( interp, "error reading ", fileName, (char *)NULL);
       return TCL_ERROR;
@@ -303,7 +303,7 @@ int Post_readVisResCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // read in the results file
-  if (myconverter->ReadVisRes(fileName) == CV_ERROR) {
+  if (myconverter->ReadVisRes(fileName) == SV_ERROR) {
       delete myconverter;
       Tcl_AppendResult( interp, "error reading ", fileName, (char *)NULL);
       return TCL_ERROR;
@@ -538,13 +538,13 @@ int Post_calcWallShearCmd( ClientData clientData, Tcl_Interp *interp,
 
   // read in the results file
   if (tensorsName != NULL) {
-    if (wallshear->CalcWallShearFromStresses() == CV_ERROR) {
+    if (wallshear->CalcWallShearFromStresses() == SV_ERROR) {
       delete wallshear;
       Tcl_AppendResult( interp, "error calculating wall shear ", (char *)NULL);
       return TCL_ERROR;
     }
   } else {
-    if (wallshear->CalcWallShearFromTractions() == CV_ERROR) {
+    if (wallshear->CalcWallShearFromTractions() == SV_ERROR) {
       delete wallshear;
       Tcl_AppendResult( interp, "error calculating wall shear ", (char *)NULL);
       return TCL_ERROR;

@@ -761,7 +761,7 @@ int Solid_PolyPtsCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Create the polygon solid:
-  if ( geom->MakePoly2dPts( (cvPolyData *)pd ) != CV_OK ) {
+  if ( geom->MakePoly2dPts( (cvPolyData *)pd ) != SV_OK ) {
     Tcl_SetResult( interp, "polygon solid creation error",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -843,7 +843,7 @@ int Solid_PolyCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Create the polygon solid:
-  if ( geom->MakePoly2d( (cvPolyData *)pd ) != CV_OK ) {
+  if ( geom->MakePoly2d( (cvPolyData *)pd ) != SV_OK ) {
     Tcl_SetResult( interp, "polygon solid creation error",
 		   TCL_STATIC );
     return TCL_ERROR;
@@ -926,7 +926,7 @@ int Solid_CircleCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeCircle( radius, ctr ) != CV_OK ) {
+  if ( geom->MakeCircle( radius, ctr ) != SV_OK ) {
     Tcl_SetResult( interp, "circle solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1008,7 +1008,7 @@ int Solid_EllipseCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeEllipse( xr, yr, ctr ) != CV_OK ) {
+  if ( geom->MakeEllipse( xr, yr, ctr ) != SV_OK ) {
     Tcl_SetResult( interp, "ellipse solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1093,7 +1093,7 @@ int Solid_Box2dCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeBox2d( boxDims, ctr ) != CV_OK ) {
+  if ( geom->MakeBox2d( boxDims, ctr ) != SV_OK ) {
     Tcl_SetResult( interp, "box solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1190,7 +1190,7 @@ int Solid_Box3dCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeBox3d( dims, ctr ) != CV_OK ) {
+  if ( geom->MakeBox3d( dims, ctr ) != SV_OK ) {
     Tcl_SetResult( interp, "box solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1277,7 +1277,7 @@ int Solid_SphereCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeSphere( r, ctr ) != CV_OK ) {
+  if ( geom->MakeSphere( r, ctr ) != SV_OK ) {
     Tcl_SetResult( interp, "sphere solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1374,7 +1374,7 @@ int Solid_EllipsoidCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeEllipsoid( r, ctr ) != CV_OK ) {
+  if ( geom->MakeEllipsoid( r, ctr ) != SV_OK ) {
     Tcl_SetResult( interp, "sphere solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1472,7 +1472,7 @@ int Solid_CylinderCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeCylinder( r, l, ctr, axis ) != CV_OK ) {
+  if ( geom->MakeCylinder( r, l, ctr, axis ) != SV_OK ) {
     Tcl_SetResult( interp, "cylinder solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1570,7 +1570,7 @@ int Solid_TruncatedConeCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeTruncatedCone( pt, dir, r1, r2 ) != CV_OK ) {
+  if ( geom->MakeTruncatedCone( pt, dir, r1, r2 ) != SV_OK ) {
     Tcl_SetResult( interp, "cylinder solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1668,7 +1668,7 @@ int Solid_TorusCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeTorus( rmaj, rmin, ctr, axis ) != CV_OK ) {
+  if ( geom->MakeTorus( rmaj, rmin, ctr, axis ) != SV_OK ) {
     Tcl_SetResult( interp, "torus solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1762,13 +1762,13 @@ int Solid_Poly3dSolidCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->SetPoly3dFacetMethod( facetMethod ) != CV_OK ) {
+  if ( geom->SetPoly3dFacetMethod( facetMethod ) != SV_OK ) {
     Tcl_AppendResult( interp, "error selecting facet method ",
 		      facetMethodName, (char *) NULL );
     delete geom;
     return TCL_ERROR;
   }
-  if ( geom->MakePoly3dSolid( (cvPolyData*)pd , angle ) != CV_OK ) {
+  if ( geom->MakePoly3dSolid( (cvPolyData*)pd , angle ) != SV_OK ) {
     Tcl_SetResult( interp, "polygonal solid creation error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -1860,13 +1860,13 @@ int Solid_Poly3dSurfaceCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->SetPoly3dFacetMethod( facetMethod ) != CV_OK ) {
+  if ( geom->SetPoly3dFacetMethod( facetMethod ) != SV_OK ) {
     Tcl_AppendResult( interp, "error selecting facet method ",
 		      facetMethodName, (char *) NULL );
     delete geom;
     return TCL_ERROR;
   }
-  if ( geom->MakePoly3dSurface( (cvPolyData*)pd ) != CV_OK ) {
+  if ( geom->MakePoly3dSurface( (cvPolyData*)pd ) != SV_OK ) {
     Tcl_SetResult( interp, "solid polygonal surface creation error",
 		   TCL_STATIC );
     delete geom;
@@ -1950,7 +1950,7 @@ int Solid_ExtrudeZCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->ExtrudeZ( (cvSolidModel *)src, dist ) != CV_OK ) {
+  if ( geom->ExtrudeZ( (cvSolidModel *)src, dist ) != SV_OK ) {
     Tcl_SetResult( interp, "error in solid extrusion", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -2056,7 +2056,7 @@ int Solid_ExtrudeCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->Extrude( (cvSolidModel *)src, dist ) != CV_OK ) {
+  if ( geom->Extrude( (cvSolidModel *)src, dist ) != SV_OK ) {
     Tcl_SetResult( interp, "error in solid extrusion", TCL_STATIC );
     delete geom;
     delete dist;
@@ -2144,7 +2144,7 @@ int Solid_MakeApproxCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeApproxCurveLoop( (cvPolyData *)src, tol, closed ) != CV_OK ) {
+  if ( geom->MakeApproxCurveLoop( (cvPolyData *)src, tol, closed ) != SV_OK ) {
     Tcl_SetResult( interp, "error in curve loop construction", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -2228,7 +2228,7 @@ int Solid_MakeInterpCurveLoopCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->MakeInterpCurveLoop( (cvPolyData *)src, closed ) != CV_OK ) {
+  if ( geom->MakeInterpCurveLoop( (cvPolyData *)src, closed ) != SV_OK ) {
     Tcl_SetResult( interp, "error in curve loop construction", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -2350,7 +2350,7 @@ int Solid_MakeLoftedSurfCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( geom->MakeLoftedSurf( srcs, numSrcs , dstName,
-	continuity,partype,w1,w2,w3,smoothing) != CV_OK ) {
+	continuity,partype,w1,w2,w3,smoothing) != SV_OK ) {
     Tcl_SetResult( interp, "error in curve loop construction", TCL_STATIC );
     delete [] srcs;
     delete geom;
@@ -2435,7 +2435,7 @@ int Solid_CapSurfToSolidCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->CapSurfToSolid( (cvSolidModel *)src ) != CV_OK ) {
+  if ( geom->CapSurfToSolid( (cvSolidModel *)src ) != SV_OK ) {
     Tcl_SetResult( interp, "error in cap / bound operation", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -2507,7 +2507,7 @@ int Solid_ReadNativeCmd( ClientData clientData, Tcl_Interp *interp,
 	    return TCL_ERROR;
 	  }
 
-	  if ( geom->ReadNative( fileName ) != CV_OK ) {
+	  if ( geom->ReadNative( fileName ) != SV_OK ) {
 	    Tcl_SetResult( interp, "file read error", TCL_STATIC );
 	    delete geom;
 	    return TCL_ERROR;
@@ -2594,7 +2594,7 @@ int Solid_CopyCmd( ClientData clientData, Tcl_Interp *interp,
   if ( dstGeom == NULL ) {
     return TCL_ERROR;
   }
-  if ( dstGeom->Copy( *((cvSolidModel *)srcGeom) ) != CV_OK ) {
+  if ( dstGeom->Copy( *((cvSolidModel *)srcGeom) ) != SV_OK ) {
     Tcl_SetResult( interp, "cvSolidModel copy error", TCL_STATIC );
     delete dstGeom;
     return TCL_ERROR;
@@ -2704,7 +2704,7 @@ int Solid_IntersectCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( geom->Intersect( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != CV_OK ) {
+  if ( geom->Intersect( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != SV_OK ) {
     Tcl_SetResult( interp, "intersection error", TCL_STATIC );
     delete geom;
     return TCL_ERROR;
@@ -2814,7 +2814,7 @@ int Solid_UnionCmd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( result->Union( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != CV_OK ) {
+  if ( result->Union( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp ) != SV_OK ) {
     Tcl_SetResult( interp, "union error", TCL_STATIC );
     delete result;
     return TCL_ERROR;
@@ -2925,7 +2925,7 @@ int Solid_SubtractCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   if ( result->Subtract( (cvSolidModel*)gmA, (cvSolidModel*)gmB, smp )
-       != CV_OK ) {
+       != SV_OK ) {
     Tcl_SetResult( interp, "subtract error", TCL_STATIC );
     delete result;
     return TCL_ERROR;
@@ -3358,7 +3358,7 @@ static int Solid_FindExtentMtd( ClientData clientData, Tcl_Interp *interp,
   double extent;
 
   status = geom->FindExtent( &extent);
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%f", extent );
@@ -3385,7 +3385,7 @@ static int Solid_FindCentroidMtd( ClientData clientData, Tcl_Interp *interp,
   char tmp[CV_STRLEN];
   int tdim;
 
-  if ( geom->GetSpatialDim( &tdim ) != CV_OK ) {
+  if ( geom->GetSpatialDim( &tdim ) != SV_OK ) {
     Tcl_AppendResult( interp, "couldn't get spatial dim of object ",
 		      geom->GetName(), (char *)NULL );
     return TCL_ERROR;
@@ -3397,7 +3397,7 @@ static int Solid_FindCentroidMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
   status = geom->FindCentroid( centroid );
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     sprintf( tmp, "%f", centroid[0] );
     Tcl_AppendElement( interp, tmp );
     sprintf( tmp, "%f", centroid[1] );
@@ -3427,7 +3427,7 @@ static int Solid_GetTopoDimMtd( ClientData clientData, Tcl_Interp *interp,
   int tdim;
 
   status = geom->GetTopoDim( &tdim );
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%d", tdim );
@@ -3453,7 +3453,7 @@ static int Solid_GetSpatialDimMtd( ClientData clientData, Tcl_Interp *interp,
   int sdim;
 
   status = geom->GetSpatialDim( &sdim );
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%d", sdim );
@@ -3522,7 +3522,7 @@ static int Solid_ClassifyPtMtd( ClientData clientData, Tcl_Interp *interp,
     }
   }
 
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%d", ans );
@@ -3583,7 +3583,7 @@ static int Solid_DistanceMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Check validity of given pos:
   status = geom->GetSpatialDim( &sdim );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error retrieving spatial dim of obj ",
 		      geom->GetName(), (char *) NULL );
     return TCL_ERROR;
@@ -3600,7 +3600,7 @@ static int Solid_DistanceMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->Distance( pos, upperLimit, &dist );
 
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     char rtnstr[255];
     rtnstr[0]='\0';
     sprintf( rtnstr, "%f", dist );
@@ -3658,7 +3658,7 @@ static int Solid_TranslateMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->Translate( vec, nvec );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Translate: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -3714,7 +3714,7 @@ static int Solid_RotateMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->Rotate( axis, naxis, rad );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Rotate: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -3755,7 +3755,7 @@ static int Solid_ScaleMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->Scale( factor );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Scale: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -3821,7 +3821,7 @@ static int Solid_ReflectMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->Reflect( pos, nrm );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Reflect: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -3892,7 +3892,7 @@ static int Solid_Apply4x4Mtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->Apply4x4( mat );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Apply4x4: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -3971,7 +3971,7 @@ static int Solid_WriteNativeMtd( ClientData clientData, Tcl_Interp *interp,
 
   // Do work of command:
   status = geom->WriteNative( file_version , fn );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
 		      " to file ", fn, (char *)NULL );
     return TCL_ERROR;
@@ -4012,7 +4012,7 @@ static int Solid_WriteVtkPolyDataMtd( ClientData clientData,
 
   // Do work of command:
   status = geom->WriteVtkPolyData( fn );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
 		      " to file ", fn, (char *)NULL );
     return TCL_ERROR;
@@ -4053,7 +4053,7 @@ static int Solid_WriteGeomSimMtd( ClientData clientData,
 
   // Do work of command:
   status = geom->WriteGeomSim( fn );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "error writing object ", geom->GetName(),
 		      " to file ", fn, (char *)NULL );
     return TCL_ERROR;
@@ -4287,7 +4287,7 @@ static int Solid_GetFaceNormalMtd( ClientData clientData, Tcl_Interp *interp,
 
   double normal[3];
 
-  if ( geom->GetFaceNormal(faceid,u,v,normal) == CV_ERROR ) {
+  if ( geom->GetFaceNormal(faceid,u,v,normal) == SV_ERROR ) {
     Tcl_AppendResult( interp, "error getting Normal for face. ", (char *)NULL );
     return TCL_ERROR;
   }
@@ -4628,7 +4628,7 @@ static int Solid_GetFaceIdsMtd( ClientData clientData, Tcl_Interp *interp,
   char facestring[256];
 
   int status = geom->GetFaceIds( &numFaces, &faces);
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     if (numFaces == 0) return TCL_OK;
     for (int i = 0; i < numFaces; i++) {
 	  sprintf(facestring, "%i", faces[i]);
@@ -4673,7 +4673,7 @@ int Solid_GetBoundaryFacesMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   int status = geom->GetBoundaryFaces(angle);
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     return TCL_OK;
   } else {
     Tcl_AppendResult( interp, "GetBoundaryFaces: error on object ",
@@ -4695,7 +4695,7 @@ static int Solid_GetRegionIdsMtd( ClientData clientData, Tcl_Interp *interp,
   char regionstring[256];
 
   int status = geom->GetRegionIds( &numRegions, &regions);
-  if ( status == CV_OK ) {
+  if ( status == SV_OK ) {
     if (numRegions == 0) return TCL_OK;
     for (int i = 0; i < numRegions; i++) {
 	  sprintf(regionstring, "%i", regions[i]);
@@ -4908,7 +4908,7 @@ static int Solid_DeleteFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   if (faceList.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int nfaces = 0;
@@ -4928,7 +4928,7 @@ static int Solid_DeleteFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   delete [] faces;
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "DeleteFaces: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -4968,7 +4968,7 @@ static int Solid_DeleteRegionMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->DeleteRegion( regionid );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "DeleteRegion: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -5013,7 +5013,7 @@ static int Solid_CreateEdgeBlendMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->CreateEdgeBlend( faceA, faceB, radius, filletshape );
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "CreateEdgeBlend: error on object ", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -5050,7 +5050,7 @@ static int Solid_CombineFacesMtd( ClientData clientData, Tcl_Interp *interp,
 
   status = geom->CombineFaces( faceid1, faceid2);
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Combine Faces: Error", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;
@@ -5087,7 +5087,7 @@ static int Solid_RemeshFaceMtd( ClientData clientData, Tcl_Interp *interp,
 
   if (excludeList.argc == 0) {
       ARG_FreeListArgvs( table_size, arg_table);
-      return CV_OK;
+      return SV_OK;
   }
 
   int nfaces = 0;
@@ -5104,7 +5104,7 @@ static int Solid_RemeshFaceMtd( ClientData clientData, Tcl_Interp *interp,
 
   delete [] faces;
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     Tcl_AppendResult( interp, "Remesh Face: Error", geom->GetName(),
 		      (char *)NULL );
     return TCL_ERROR;

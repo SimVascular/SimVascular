@@ -65,13 +65,13 @@ bool svMeshTetGen::SetModelElement(svModelElement* modelElement)
     vtkpd->DeepCopy(cleaner->GetOutput());
     vtkpd->BuildLinks();
 
-    if(m_cvTetGetMesh->LoadModel(vtkpd)!=CV_OK)
+    if(m_cvTetGetMesh->LoadModel(vtkpd)!=SV_OK)
         return false;
 
 //    //set walls
 //    //m_cvTetGetMesh->SetMeshOptions("MeshWallFirst",0,NULL) //not nessary, because in "SetWalls" it'll be set at 1 again.
 //    std::vector<int> wallFaceIDs=modelElement->GetWallFaceIDs();
-//    if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=CV_OK)
+//    if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
 //        return false;
 
     return true;
@@ -111,7 +111,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
             values[1]=egdeSize;
         }
         char *mflag = const_cast<char *>(flag.c_str());
-        if(m_cvTetGetMesh->SetMeshOptions(mflag, 10, values)!=CV_OK)
+        if(m_cvTetGetMesh->SetMeshOptions(mflag, 10, values)!=SV_OK)
         {
             msg="Failed in setting walls";
             return false;
@@ -126,7 +126,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
         }
 
         std::vector<int> wallFaceIDs=m_ModelElement->GetWallFaceIDs();
-        if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=CV_OK)
+        if(m_cvTetGetMesh->SetWalls(wallFaceIDs.size(),&wallFaceIDs[0])!=SV_OK)
         {
             msg="Failed ot set walls";
             return false;
@@ -157,7 +157,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     else if(flag=="functionBasedMeshing")
     {
         char *strv = const_cast<char *>(strValues[0].c_str());
-        if(m_cvTetGetMesh->SetSizeFunctionBasedMesh(values[0],strv)!=CV_OK)
+        if(m_cvTetGetMesh->SetSizeFunctionBasedMesh(values[0],strv)!=SV_OK)
         {
             msg="Failed in function based meshing, such as radius based";
             return false;
@@ -166,7 +166,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     else if(flag=="boundaryLayer")
     {
         double H[2]={values[1],values[2]};
-        if(m_cvTetGetMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=CV_OK)
+        if(m_cvTetGetMesh->SetBoundaryLayer(0, 0, 0, values[0], H)!=SV_OK)
         {
             msg="Failed in boudnary layer meshing";
             return false;
@@ -175,7 +175,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     else if(flag=="sphereRefinement")
     {
         double center[3]={values[2],values[3],values[4]};
-        if(m_cvTetGetMesh->SetSphereRefinement(values[0],values[1],center)!=CV_OK)
+        if(m_cvTetGetMesh->SetSphereRefinement(values[0],values[1],center)!=SV_OK)
         {
             msg="Failed in sphere refinement";
             return false;
@@ -183,7 +183,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="generateMesh")
     {
-        if(m_cvTetGetMesh->GenerateMesh()!=CV_OK)
+        if(m_cvTetGetMesh->GenerateMesh()!=SV_OK)
         {
             msg="Failed in generating mesh";
             return false;
@@ -191,7 +191,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="getBoundaries")
     {
-        if(m_cvTetGetMesh->GetBoundaryFaces(50)!=CV_OK)
+        if(m_cvTetGetMesh->GetBoundaryFaces(50)!=SV_OK)
         {
             msg="Failed in getting boundary after boundary layer meshing";
             return false;
@@ -199,7 +199,7 @@ bool svMeshTetGen::Execute(std::string flag, double values[20], std::string strV
     }
     else if(flag=="writeMesh")
     {
-        if(m_cvTetGetMesh->WriteMesh(NULL,0)==CV_OK)
+        if(m_cvTetGetMesh->WriteMesh(NULL,0)==SV_OK)
         {
             vtkPolyData* surfaceMesh=m_cvTetGetMesh->GetPolyData()->GetVtkPolyData();
             vtkUnstructuredGrid* volumeMesh=m_cvTetGetMesh->GetUnstructuredGrid()->GetVtkUnstructuredGrid();

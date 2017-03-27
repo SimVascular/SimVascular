@@ -178,37 +178,37 @@ int sys_geom_NumClosedLineRegions( cvPolyData *src, int *num )
 
   merged_pd = sys_geom_MergePts( src );
   if ( merged_pd == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
     delete merged_pd;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     printf("ERR: VtkUtils_GetLines failed\n");
     delete merged_pd;
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( VtkUtils_FindClosedLineRegions( lines, numLines, numPts,
-				       &startIxs, &numRegions ) != CV_OK ) {
+				       &startIxs, &numRegions ) != SV_OK ) {
     printf("ERR: VtkUtils_FindClosedLineRegions failed\n");
     delete merged_pd;
     delete [] pts;
     delete [] lines;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *num = numRegions;
   delete merged_pd;
   delete [] pts;
   delete [] lines;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -229,31 +229,31 @@ int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst )
   int numRegions;
   int *regionLines;
   int numRegionLines;
-  int status = CV_ERROR;
+  int status = SV_ERROR;
 
   merged_pd = sys_geom_MergePts( src );
   if ( merged_pd == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     printf("ERR: VtkUtils_GetLines failed\n");
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( VtkUtils_FindClosedLineRegions( lines, numLines, numPts,
-				       &startIxs, &numRegions ) != CV_OK ) {
+				       &startIxs, &numRegions ) != SV_OK ) {
     printf("ERR: VtkUtils_FindClosedLineRegions failed\n");
     delete [] pts;
     delete [] lines;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( ( id < 0 ) || ( id >= numRegions ) ) {
@@ -261,27 +261,27 @@ int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst )
     delete [] pts;
     delete [] lines;
     delete [] startIxs;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( VtkUtils_GetClosedLineRegion( lines, numLines, startIxs[id],
 				     &regionLines, &numRegionLines )
-       != CV_OK ) {
+       != SV_OK ) {
     printf("ERR: VtkUtils_GetClosedLineRegion failed\n");
     delete [] pts;
     delete [] lines;
     delete [] startIxs;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( VtkUtils_MakePolyDataFromLineIds( pts, numPts, lines, regionLines,
-					 numRegionLines, &tmp ) != CV_OK ) {
+					 numRegionLines, &tmp ) != SV_OK ) {
     printf("ERR: VtkUtils_MakePolyDataFromLineIds failed\n");
     delete [] pts;
     delete [] lines;
     delete [] startIxs;
     delete [] regionLines;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   (*dst) = new cvPolyData( tmp );
@@ -290,7 +290,7 @@ int sys_geom_GetClosedLineRegion( cvPolyData *src, int id, cvPolyData **dst )
   delete [] startIxs;
   delete [] regionLines;
   tmp->Delete();
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -313,40 +313,40 @@ int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst )
   int *regionLines = NULL;
   int numRegionLines;
   int i, classification;
-  int status = CV_ERROR;
+  int status = SV_ERROR;
   cvSolidModel *solid = NULL;
   int foundOne = 0;
 
   solid = cvSolidModel::DefaultInstantiateSolidModel();
   if ( solid == NULL ) {
     printf("ERR: default instantiate solid model failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   merged_pd = sys_geom_MergePts( src );
   if ( merged_pd == NULL ) {
     printf("ERR: merge points failed failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     printf("ERR: VtkUtils_GetLines failed\n");
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( VtkUtils_FindClosedLineRegions( lines, numLines, numPts,
-				       &startIxs, &numRegions ) != CV_OK ) {
+				       &startIxs, &numRegions ) != SV_OK ) {
     printf("ERR: VtkUtils_FindClosedLineRegions failed\n");
     delete [] pts;
     delete [] lines;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Now, foreach closed region, get an ordered list of segments,
@@ -360,12 +360,12 @@ int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst )
 
     if ( VtkUtils_GetClosedLineRegion( lines, numLines, startIxs[i],
 				       &regionLines, &numRegionLines )
-	 != CV_OK ) {
+	 != SV_OK ) {
       printf("ERR: VtkUtils_GetClosedLineRegion failed\n");
       delete [] pts;
       delete [] lines;
       delete [] startIxs;
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     if ( tmp != NULL ) {
@@ -374,22 +374,22 @@ int sys_geom_Pick( cvPolyData *src, double pos[], cvPolyData **dst )
     }
 
     if ( VtkUtils_MakePolyDataFromLineIds( pts, numPts, lines, regionLines,
-					   numRegionLines, &tmp ) != CV_OK ) {
+					   numRegionLines, &tmp ) != SV_OK ) {
       printf("ERR: VtkUtils_MakePolyDataFromLineIds failed\n");
       delete [] pts;
       delete [] lines;
       delete [] startIxs;
       delete [] regionLines;
-      return CV_ERROR;
+      return SV_ERROR;
     } else {
       solid->Clear();
       tmpPd = new cvPolyData( tmp );
-      if ( solid->MakePoly2d( tmpPd ) == CV_OK ) {
+      if ( solid->MakePoly2d( tmpPd ) == SV_OK ) {
 	if ( solid->ClassifyPt( pos[0], pos[1], 0, &classification )
-	     == CV_OK ) {
+	     == SV_OK ) {
 	  if ( classification >= 0 ) {
 	    *dst = tmpPd;
-	    status = CV_OK;
+	    status = SV_OK;
 	    printf("  >>>>>>  picked region lines [%d]\n", numRegionLines);
 	    foundOne = 1;
 	    break;
@@ -431,20 +431,20 @@ int sys_geom_Reduce( cvPolyData *src, double tol, cvPolyData **dst )
 
   merged_pd = sys_geom_MergePts( src );
   if ( merged_pd == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
 
   status = VtkUtils_FixTopology( pd, tol );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     delete merged_pd;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *dst = new cvPolyData( pd );
   delete merged_pd;  // virtual destructor calls Delete on vtk data obj
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -469,14 +469,14 @@ int sys_geom_MakePolysConsistent( cvPolyData *src, cvPolyData **dst )
   result = new cvPolyData( pdCopy );
 
   status = VtkUtils_MakePolysConsistent( result->GetVtkPolyData() );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     delete result;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -504,9 +504,9 @@ int sys_geom_union( cvPolyData *srcA, cvPolyData *srcB, double tolerance, cvPoly
   catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -536,13 +536,13 @@ int sys_geom_all_union( cvPolyData **srcs,int numSrcs,int nointerbool,double tol
   catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (vesselInter->GetStatus() == 0)
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -610,7 +610,7 @@ int sys_geom_assign_ids_based_on_faces( cvPolyData *model, cvPolyData **faces,in
   result = new cvPolyData( fullPd);
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* ------------------ */
@@ -638,9 +638,9 @@ int sys_geom_intersect( cvPolyData *srcA, cvPolyData *srcB,double tolerance, cvP
   catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 /* ----------------- */
@@ -668,9 +668,9 @@ int sys_geom_subtract( cvPolyData *srcA, cvPolyData *srcB, double tolerance,cvPo
   catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
@@ -695,9 +695,9 @@ int sys_geom_checksurface( cvPolyData *src, int stats[],double tolerance)
   catch (...) {
     fprintf(stderr,"ERROR in checking of surface.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 /* ----------------- */
@@ -757,14 +757,14 @@ int sys_geom_ReverseAllCells( cvPolyData *src, cvPolyData **dst )
   result = new cvPolyData( pdCopy );
 
   status = VtkUtils_ReverseAllCells( result->GetVtkPolyData() );
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     delete result;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -785,23 +785,23 @@ int sys_geom_GetOrderedPts( cvPolyData *src, double **ord_pts, int *num )
   int *lineVisited;
   int targetIx;
   int i, lineA, lineB, a, b, c, d;
-  int status = CV_ERROR;
+  int status = SV_ERROR;
   double x, y, z;
   int startIx;
 
   merged_pd = sys_geom_MergePts( src );
   if ( merged_pd == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
-    return CV_ERROR;
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   /*
@@ -814,11 +814,11 @@ int sys_geom_GetOrderedPts( cvPolyData *src, double **ord_pts, int *num )
     fprintf(stderr,"ERROR:  no points or lines in polydata object!\n");
     // don't know if I should free pts & lines here or not, but to be
     // safe I wont
-    return CV_ERROR;
+    return SV_ERROR;
   } else if (numPts < 3 || numLines < 3) {
     // assume we need at least 3 pts and 3 lines to define a contour.
     fprintf(stderr,"ERROR:  not enough pts (%i) or lines (%i)\n", numPts, numLines);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   lineVisited = new int [numLines];
@@ -913,7 +913,7 @@ int sys_geom_GetOrderedPts( cvPolyData *src, double **ord_pts, int *num )
     }
 
     if ( targetIx == startIx ) {
-      status = CV_OK;
+      status = SV_OK;
       break;
     }
 
@@ -958,10 +958,10 @@ int sys_geom_Get2DPgon( cvPolyData *src, double **pgon, int *num )
   sys_geom_BBox( src, bbox );
   if ( ( fabs(bbox[4]) > tol ) || ( fabs(bbox[5]) > tol ) ) {
     printf("ERR: sys_geom_Get2DPgon called with non-planar input cvPolyData\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( sys_geom_GetOrderedPts( src, &ord_pts, num ) != CV_OK ) {
-    return CV_ERROR;
+  if ( sys_geom_GetOrderedPts( src, &ord_pts, num ) != SV_OK ) {
+    return SV_ERROR;
   }
 
   // We want pgon to have points in CCW order:
@@ -986,7 +986,7 @@ int sys_geom_Get2DPgon( cvPolyData *src, double **pgon, int *num )
     delete [] rev_pts;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1007,7 +1007,7 @@ int sys_geom_ReversePtList( int num, double ptsIn[], double *ptsOut[] )
     (*ptsOut)[3*i+2] = ptsIn[3*rev+2];
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1022,20 +1022,20 @@ int sys_geom_WriteOrderedPts( cvPolyData *src, char *fn )
   int i;
   FILE *fp;
 
-  if ( sys_geom_GetOrderedPts( src, &pts, &num_pts ) != CV_OK ) {
-    return CV_ERROR;
+  if ( sys_geom_GetOrderedPts( src, &pts, &num_pts ) != SV_OK ) {
+    return SV_ERROR;
   }
   fp = fopen( fn, "w" );
   if ( fp == NULL ) {
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   for ( i = 0; i < num_pts; i++ ) {
     fprintf( fp, "%f %f %f\n", pts[3*i], pts[3*i+1], pts[3*i+2] );
   }
   fclose( fp );
   delete [] pts;
-  return CV_OK;
+  return SV_OK;
 
 
   /*
@@ -1049,25 +1049,25 @@ int sys_geom_WriteOrderedPts( cvPolyData *src, char *fn )
   int *lineVisited;
   int targetIx;
   int i, lineA, lineB, a, b, c, d;
-  int status = CV_ERROR;
+  int status = SV_ERROR;
   FILE *fp;
   double x, y;
 
   pd = src->GetVtkPolyData();
   fp = fopen( fn, "w" );
   if ( fp == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     fclose( fp );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     delete [] pts;
     fclose( fp );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   lineVisited = new int [numLines];
@@ -1106,7 +1106,7 @@ int sys_geom_WriteOrderedPts( cvPolyData *src, char *fn )
       d = lines[ (lineB * 2) + 1 ];
 
       if ( ( lineVisited[ lineA ] ) && ( lineVisited[ lineB ] ) ) {
-	status = CV_OK;
+	status = SV_OK;
 	break;
       }
 
@@ -1158,18 +1158,18 @@ int sys_geom_WriteLines( cvPolyData *src, char *fn )
   pd = src->GetVtkPolyData();
   fp = fopen( fn, "w" );
   if ( fp == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     fclose( fp );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     delete [] pts;
     fclose( fp );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   for (i = 0; i < numLines; i++) {
@@ -1183,7 +1183,7 @@ int sys_geom_WriteLines( cvPolyData *src, char *fn )
   fclose( fp );
   delete [] pts;
   delete [] lines;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1200,18 +1200,18 @@ int sys_geom_PolysClosed( cvPolyData *src, int *closed )
 
   pd = src->GetVtkPolyData();
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   cgeom_PolysClosed( numPts, pts, numPolys, polys, closed );
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1235,15 +1235,15 @@ int sys_geom_SurfArea( cvPolyData *src, double *area )
   tri->Update();
   pd = tri->GetOutput();
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
     tri->Delete();
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
     tri->Delete();
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   cgeom_CompArea( numPts, pts, numPolys, polys, &fArea );
@@ -1251,7 +1251,7 @@ int sys_geom_SurfArea( cvPolyData *src, double *area )
 
   tri->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1277,22 +1277,22 @@ int sys_geom_getPolyCentroid( cvPolyData *src, double centroid[])
   tri->Update();
   pd = tri->GetOutput();
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
     tri->Delete();
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
     tri->Delete();
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   cgeom_GetPolyCentroid ( numPts, pts, numPolys, polys, centroid);
 
   tri->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1322,14 +1322,14 @@ int sys_geom_PrintTriStats( cvPolyData *surf )
 
   pd = surf->GetVtkPolyData();
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   printf( "\n\n  ------ sys_geom_PrintTriStats ------\n" );
@@ -1404,7 +1404,7 @@ int sys_geom_PrintTriStats( cvPolyData *surf )
   printf( "  >>>>>> min height id [%d]\n", min_h_id );
   printf( "\n\n" );
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1422,14 +1422,14 @@ int sys_geom_PrintSmallPolys( cvPolyData *src, double sideTol )
 
   pd = src->GetVtkPolyData();
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   printf ( "\n\n  ------ sys_geom_PrintSmallPolys ------\n" );
@@ -1444,7 +1444,7 @@ int sys_geom_PrintSmallPolys( cvPolyData *src, double sideTol )
   delete [] pts;
   delete [] polys;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1466,14 +1466,14 @@ int sys_geom_RmSmallPolys( cvPolyData *src, double sideTol, cvPolyData **dst )
 
   pd = src->GetVtkPolyData();
 
-  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPointsFloat( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != CV_OK ) {
+  if ( VtkUtils_GetAllPolys( pd, &numPolys, &polys ) != SV_OK ) {
     printf("ERR: VtkUtils_GetAllPolys failed\n");
     delete [] pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   printf ( "\n\n  ------ sys_geom_RmSmallPolys ------\n" );
@@ -1493,13 +1493,13 @@ int sys_geom_RmSmallPolys( cvPolyData *src, double sideTol, cvPolyData **dst )
   printf ( "\n\n" );
 
   if ( VtkUtils_NewVtkPolyData( &result, numNewPts, newPts, numNewPolys,
-				newPolys ) != CV_OK ) {
+				newPolys ) != SV_OK ) {
     printf("ERR: VtkUtils_NewVtkPolyData failed\n");
     delete [] pts;
     delete [] polys;
     delete [] newPts;
     delete [] newPolys;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   (*dst) = new cvPolyData( result );
@@ -1510,7 +1510,7 @@ int sys_geom_RmSmallPolys( cvPolyData *src, double sideTol, cvPolyData **dst )
   delete [] newPts;
   delete [] newPolys;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1535,9 +1535,9 @@ int sys_geom_BBox( cvPolyData *obj, double bbox[] )
 
   pd = obj->GetVtkPolyData();
 
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     printf("ERR: VtkUtils_GetPoints failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   for ( i = 0; i < numPts; i++ ) {
@@ -1558,7 +1558,7 @@ int sys_geom_BBox( cvPolyData *obj, double bbox[] )
   }
 
   delete [] pts;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1607,7 +1607,7 @@ int sys_geom_OrientProfile( cvPolyData *src, double ppt[], double ptan[],
 
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1682,7 +1682,7 @@ int sys_geom_DisorientProfile( cvPolyData *src, double ppt[], double ptan[],
     pts->Delete();
     pd->Delete();
     *dst = NULL;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   coeff = 1.0 / ( a*d - b*c );
 
@@ -1726,7 +1726,7 @@ int sys_geom_DisorientProfile( cvPolyData *src, double ppt[], double ptan[],
 
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1753,7 +1753,7 @@ int sys_geom_Translate( cvPolyData *src, double translate[], cvPolyData **dst )
   }
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1784,7 +1784,7 @@ int sys_geom_ScaleAvg( cvPolyData *src, double factor, cvPolyData **dst )
   }
   *dst = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1808,12 +1808,12 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
   double currScore, maxScore;
   int posId;
 
-  if ( sys_geom_PolygonNormal( ref, refNrm ) != CV_OK ) {
+  if ( sys_geom_PolygonNormal( ref, refNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for reference polygon failed\n" );
     return NULL;
   }
 
-  if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != SV_OK ) {
     printf( "ERR: get ref ordered points failed\n" );
     return NULL;
   }
@@ -1833,7 +1833,7 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
 	 &(refCross[0]), &(refCross[1]), &(refCross[2]) );
   NormVector( &(refCross[0]), &(refCross[1]), &(refCross[2]) );
 
-  if ( sys_geom_PolygonNormal( src, srcNrm ) != CV_OK ) {
+  if ( sys_geom_PolygonNormal( src, srcNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for source polygon failed\n" );
     return NULL;
   }
@@ -1846,7 +1846,7 @@ cvPolyData *sys_geom_Align( cvPolyData *ref, cvPolyData *src )
     VtkUtils_ReverseAllCells( src->GetVtkPolyData() );
   }
 
-  if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     printf( "ERR: get src ordered points failed\n" );
     return NULL;
   }
@@ -1911,7 +1911,7 @@ cvPolyData *sys_geom_ReorderPolygon( cvPolyData *src, int startIx )
   cvPolyData *dst;
   int i, j;
 
-  if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     printf( "ERR: get src ordered points failed\n" );
     return NULL;
   }
@@ -1937,7 +1937,7 @@ cvPolyData *sys_geom_ReorderPolygon( cvPolyData *src, int startIx )
   }
   delete [] srcPts;
   if ( VtkUtils_NewVtkPolyDataLines( &pd, numSrcPts, alignedPts, numSrcPts,
-				     cells ) != CV_OK ) {
+				     cells ) != SV_OK ) {
     printf( "ERR: poly data creation failed\n" );
     delete [] alignedPts;
     delete [] cells;
@@ -1968,11 +1968,11 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
   cvPolyData *dst;
 
   // not sure this normal stuff makes sense? nw.
-  if ( sys_geom_PolygonNormal( ref, refNrm ) != CV_OK ) {
+  if ( sys_geom_PolygonNormal( ref, refNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for reference polygon failed\n" );
     return NULL;
   }
-  if ( sys_geom_PolygonNormal( src, srcNrm ) != CV_OK ) {
+  if ( sys_geom_PolygonNormal( src, srcNrm ) != SV_OK ) {
     printf( "ERR: normal calculation for source polygon failed\n" );
     return NULL;
   }
@@ -1989,11 +1989,11 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
   }
 
   // Get ref and src points:
-  if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( ref, &refPts, &numRefPts ) != SV_OK ) {
     printf( "ERR: get ref ordered points failed\n" );
     return NULL;
   }
-  if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( src, &srcPts, &numSrcPts ) != SV_OK ) {
     delete [] refPts;
     printf( "ERR: get src ordered points failed\n" );
     return NULL;
@@ -2009,7 +2009,7 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
       fprintf(stderr,"ERROR:  must have equal number of pts to align curves by distance~\n");
       delete [] srcPts;
       delete [] refPts;
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   double d2 = 0;
@@ -2047,7 +2047,7 @@ cvPolyData *sys_geom_AlignByDist( cvPolyData *ref, cvPolyData *src )
   // check for error condition
   if (refPtId < 0) {
       fprintf(stderr,"ERROR:  could not find min distance between curves?!\n");
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   // No re-alignment:
@@ -2101,7 +2101,7 @@ int sys_geom_Classify( cvPolyData *obj, double pt[], int *result )
 
   verts = new ggemsGeoPoint [maxVerts];
   if ( verts == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   p.x = pt[0];
@@ -2134,7 +2134,7 @@ int sys_geom_Classify( cvPolyData *obj, double pt[], int *result )
   }
 
   delete [] verts;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2158,10 +2158,10 @@ int sys_geom_PtInPoly( cvPolyData *obj, double pt[], int usePrevPoly, int *resul
      if ( ggems_CrossingsMultiplyTest(g_sys_geom_PtInPoly_pgon ,
                                  g_sys_geom_PtInPoly_num, pt ) ) {
       *result = 1;
-      return CV_OK;
+      return SV_OK;
     } else {
       *result = -1;
-      return CV_OK;
+      return SV_OK;
     }
   }
 
@@ -2196,20 +2196,20 @@ int sys_geom_PtInPoly( cvPolyData *obj, double pt[], int usePrevPoly, int *resul
       int status = sys_geom_Get2DPgon( tmppd, &pgon, &num );
       delete tmppd;
       edgeFilter->Delete();
-      if (status != CV_OK ) {
-        return CV_ERROR;
+      if (status != SV_OK ) {
+        return SV_ERROR;
       }
 
   } else {
 
-      if ( sys_geom_Get2DPgon( obj, &pgon, &num ) != CV_OK ) {
-        return CV_ERROR;
+      if ( sys_geom_Get2DPgon( obj, &pgon, &num ) != SV_OK ) {
+        return SV_ERROR;
       }
 
   }
 
   if (num == 0 || pgon == NULL) {
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   if ( ggems_CrossingsMultiplyTest( pgon, num, pt ) ) {
@@ -2223,7 +2223,7 @@ int sys_geom_PtInPoly( cvPolyData *obj, double pt[], int usePrevPoly, int *resul
   g_sys_geom_PtInPoly_pgon = pgon;
   g_sys_geom_PtInPoly_num = num;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2255,17 +2255,17 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
 
   merged_pd = sys_geom_MergePts( src );
   if ( merged_pd == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   pd = merged_pd->GetVtkPolyData();
 
   // First, we just want to count the number of closed loops:
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     delete merged_pd;
     return NULL;
   }
 
-  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != CV_OK ) {
+  if ( VtkUtils_GetLines( pd, &lines, &numLines ) != SV_OK ) {
     delete merged_pd;
     delete [] pts;
     return NULL;
@@ -2273,7 +2273,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
   delete merged_pd;
 
   if ( VtkUtils_FindClosedLineRegions( lines, numLines, numPts,
-				       &startIxs, &numRegions ) != CV_OK ) {
+				       &startIxs, &numRegions ) != SV_OK ) {
     delete [] pts;
     delete [] lines;
     return NULL;
@@ -2288,7 +2288,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
   }
 
   // Now get an ordered point list:
-  if ( sys_geom_GetOrderedPts( src, &pts, &numPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( src, &pts, &numPts ) != SV_OK ) {
     return NULL;
   }
 
@@ -2307,7 +2307,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
 
   double **outPts = NULL;
   int closed = 1;
-  if ((mathobj->linearInterpolateCurve(nwpts, numPts, closed, targetNumPts, &outPts)) == CV_ERROR) {
+  if ((mathobj->linearInterpolateCurve(nwpts, numPts, closed, targetNumPts, &outPts)) == SV_ERROR) {
       mathobj->deleteArray(nwpts,numPts,3);
       delete mathobj;
       fprintf(stderr,"ERROR:  problems sampling curve.\n");
@@ -2338,7 +2338,7 @@ cvPolyData *sys_geom_sampleLoop( cvPolyData *src, int targetNumPts )
   }
 
   if ( VtkUtils_NewVtkPolyDataLines( &pdOut, targetNumPts, ptsOut,
-				     targetNumPts, linesOut ) != CV_OK ) {
+				     targetNumPts, linesOut ) != SV_OK ) {
     delete [] ptsOut;
     delete [] linesOut;
     return NULL;
@@ -2388,10 +2388,10 @@ int sys_geom_loft_solid( cvPolyData **srcs,int numSrcs,int useLinearSampleAlongL
   catch (...) {
     fprintf(stderr,"ERROR in boolean operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -2448,10 +2448,10 @@ int sys_geom_loft_solid_with_nurbs(cvPolyData **srcs, int numSrcs, int uDegree,
   catch (...) {
     fprintf(stderr,"ERROR in creating solid with nurbs lofting.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------------
@@ -2486,7 +2486,7 @@ int sys_geom_2DWindingNum( cvPolyData *pgn )
   VtkUtils_GetPoints( pd, &pts, &numPts );
 
   if ( VtkUtils_GetClosedLineRegion( lines, numLines, 0,
-				     &lineIds, &numLineIds ) != CV_OK ) {
+				     &lineIds, &numLineIds ) != SV_OK ) {
     delete tmp;
     delete [] lines;
     delete [] pts;
@@ -2549,9 +2549,9 @@ int sys_geom_PolygonNormal( cvPolyData *pgn, double n[] )
   double v0[3], v1[3], v2[3];
   double ax, ay, az, bx, by, bz;
 
-  if ( sys_geom_GetOrderedPts( pgn, &pts, &numPts ) != CV_OK ) {
+  if ( sys_geom_GetOrderedPts( pgn, &pts, &numPts ) != SV_OK ) {
     printf( "ERR: get ordered points failed\n" );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Adapted from vtk-3.1-beta/common/vtkPolygon.cxx:
@@ -2601,7 +2601,7 @@ int sys_geom_PolygonNormal( cvPolyData *pgn, double n[] )
 
   NormVector( &(n[0]), &(n[1]), &(n[2]) );
   delete [] pts;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2620,10 +2620,10 @@ int sys_geom_AvgPt( cvPolyData *src, double pt[] )
 
   tmp = sys_geom_MergePts( src );
   pd = tmp->GetVtkPolyData();
-  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != CV_OK ) {
+  if ( VtkUtils_GetPoints( pd, &pts, &numPts ) != SV_OK ) {
     printf( "ERR: get points failed\n" );
     delete tmp;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   pt[0] = pt[1] = pt[2] = 0.0;
@@ -2639,7 +2639,7 @@ int sys_geom_AvgPt( cvPolyData *src, double pt[] )
 
   delete tmp;
   delete [] pts;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2681,7 +2681,7 @@ int sys_geom_InterpolateScalar( cvPolyData *src, double pt[], double *scalar )
       fprintf(stderr,"ERROR:  Point is not inside of generic cell!\n");
       locator->Delete();
       cell->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   //fprintf(stdout,"pcoords: %f %f %f cellId: %i subId; %i dist: %f\n",
@@ -2698,7 +2698,7 @@ int sys_geom_InterpolateScalar( cvPolyData *src, double pt[], double *scalar )
       ids->Delete();
       locator->Delete();
       cell->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   vtkDataArray *vScalars = pd->GetPointData()->GetScalars();
@@ -2718,7 +2718,7 @@ int sys_geom_InterpolateScalar( cvPolyData *src, double pt[], double *scalar )
 
   *scalar = s;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2768,7 +2768,7 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
      fprintf(stderr,"ERROR:  Point is not inside of generic cell!\n");
      locator->Delete();
      cell->Delete();
-     return CV_ERROR;
+     return SV_ERROR;
   }
 
   //  fprintf(stdout,"pcoords: %f %f %f cellId: %i subId; %i dist: %f\n",
@@ -2786,7 +2786,7 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
       ids->Delete();
       locator->Delete();
       cell->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   vtkDataArray *vVectors= pd->GetPointData()->GetVectors();
@@ -2810,7 +2810,7 @@ int sys_geom_InterpolateVector( cvPolyData *src, double pt[], double vect[] )
   vect[0] = vx;
   vect[1] = vy;
   vect[2] = vz;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2863,7 +2863,7 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
       fprintf(stderr,"ERROR:  Line does not intersect vtkPolyData!\n");
       locator->Delete();
       cell->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
   }
   intersectionPoints->GetPoint(0,x);
 
@@ -2872,7 +2872,7 @@ int sys_geom_IntersectWithLine( cvPolyData *src, double p0[], double p1[], doubl
 
   intersect[0]=x[0];intersect[1]=x[1];intersect[2]=x[2];
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2958,11 +2958,11 @@ int sys_geom_mathPointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_sc
     int numPtsB = srcB->GetVtkPolyData()->GetNumberOfPoints();
     int numPts = numPtsA;
     if (numPtsA != numPtsB) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     if (scflag == SYS_GEOM_NO_SCALAR && vflag == SYS_GEOM_NO_VECTOR) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // get pointers to data
@@ -2987,7 +2987,7 @@ int sys_geom_mathPointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_sc
            s = s / tmps;
         } else {
           fprintf(stdout,"invalid flag!\n");
-          return CV_ERROR;
+          return SV_ERROR;
         }
         scalar->InsertNextTuple1(s);
       }
@@ -3023,7 +3023,7 @@ int sys_geom_mathPointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_sc
           myvec[2] = myvec[2]/tmpvec[2];
         } else {
           fprintf(stdout,"invalid flag!\n");
-          return CV_ERROR;
+          return SV_ERROR;
         }
         vec->InsertNextTuple3(myvec[0],myvec[1],myvec[2]);
       }
@@ -3043,7 +3043,7 @@ int sys_geom_mathPointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_sc
     *dst =  reposobj;
     pd->Delete();
 
-    return CV_OK;
+    return SV_OK;
 }
 
 
@@ -3083,7 +3083,7 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
     int numPtsB = pdB->GetNumberOfPoints();
 
     if (scflag == SYS_GEOM_NO_SCALAR && vflag == SYS_GEOM_NO_VECTOR) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // build a locator to find closest points in A
@@ -3146,7 +3146,7 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
         if (vec != NULL) {
           vec->Delete();
         }
-        return CV_ERROR;
+        return SV_ERROR;
       }
 
       vtkFloatingPointType *nodeVector;
@@ -3191,7 +3191,7 @@ int sys_geom_Project( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math_scalar s
     if (scalar != NULL) scalar->Delete();
     if (vec != NULL) vec->Delete();
 
-    return CV_OK;
+    return SV_OK;
 }
 
 
@@ -3222,7 +3222,7 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     int numPtsB = pdB->GetNumberOfPoints();
 
     if (scflag == SYS_GEOM_NO_SCALAR && vflag == SYS_GEOM_NO_VECTOR) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // must have scalars on srcB
@@ -3230,7 +3230,7 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     scalarsB=srcB->GetVtkPolyData()->GetPointData()->GetScalars();
     if (scalarsB == NULL) {
         fprintf(stderr,"ERROR:  no scalars on srcB!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     vtkDataArray *scalarsA;
@@ -3303,7 +3303,7 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
     if (scalar != NULL) scalar->Delete();
     if (vec != NULL) vec->Delete();
 
-    return CV_OK;
+    return SV_OK;
 }
 
 /* -------------- */
@@ -3325,7 +3325,7 @@ int sys_geom_ReplacePointData( cvPolyData *srcA, cvPolyData *srcB, sys_geom_math
  *  @param *outarray This contains the arrayname holding the boolean array
  *  @param datatype This indicates whether the input array is point data (0)
  *  or cell data (1)
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,double radius,double *center,char *outarrayname,int datatype)
@@ -3348,7 +3348,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
   {
     double pt[3];
     int numPoints = tmp->GetNumberOfPoints();
-    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != SV_OK)
     {
       newArray->SetNumberOfTuples(numPoints);
       for (vtkIdType id=0;id < numPoints;id++)
@@ -3365,7 +3365,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
       if (dist <= radius)
 	newArray->InsertValue(id,1);
     }
-    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == SV_OK)
       tmp->GetPointData()->RemoveArray(outarrayname);
     tmp->GetPointData()->AddArray(newArray);
   }
@@ -3374,7 +3374,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
     double centroid[3];
     vtkIdType npts,*pts;
     int numCells = tmp->GetNumberOfCells();
-    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != SV_OK)
     {
       newArray->SetNumberOfTuples(numCells);
       for (vtkIdType id=0;id < numCells;id++)
@@ -3399,14 +3399,14 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
       if (dist <= radius)
 	newArray->InsertValue(id,1);
     }
-    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == SV_OK)
       tmp->GetCellData()->RemoveArray(outarrayname);
     tmp->GetCellData()->AddArray(newArray);
   }
   result = new cvPolyData(tmp);
   *outpd = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3429,7 +3429,7 @@ int sys_geom_set_array_for_local_op_sphere( cvPolyData *pd,cvPolyData **outpd,do
  *  @param datatype This indicates whether the input array is point data (0)
  *  or cell data (1)
  *  values indication with cells to decimate
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char *inarrayname,int *vals,int nvals,char *outarrayname,int datatype)
@@ -3453,13 +3453,13 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
   newArray->SetName(outarrayname);
   if (datatype == 0)
   {
-    if (VtkUtils_PDCheckArrayName(tmp,0,inarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,inarrayname) != SV_OK)
     {
       fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     int numPoints = tmp->GetNumberOfPoints();
-    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != SV_OK)
     {
       newArray->SetNumberOfTuples(numPoints);
       for (vtkIdType id=0;id< numPoints;id++)
@@ -3482,20 +3482,20 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
       if (wantval[value-1])
 	newArray->InsertValue(id,1);
     }
-    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == SV_OK)
       tmp->GetPointData()->RemoveArray(outarrayname);
     tmp->GetPointData()->AddArray(newArray);
     delete [] wantval;
   }
   else
   {
-    if (VtkUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,inarrayname) != SV_OK)
     {
       fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     int numCells = tmp->GetNumberOfCells();
-    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != SV_OK)
     {
       newArray->SetNumberOfTuples(numCells);
       for (vtkIdType id=0;id< numCells;id++)
@@ -3518,7 +3518,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
       if (wantval[value-1])
 	newArray->InsertValue(id,1);
     }
-    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == SV_OK)
       tmp->GetCellData()->RemoveArray(outarrayname);
     tmp->GetCellData()->AddArray(newArray);
     delete [] wantval;
@@ -3526,7 +3526,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
   result = new cvPolyData(tmp);
   *outpd = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3547,7 +3547,7 @@ int sys_geom_set_array_for_local_op_face( cvPolyData *pd,cvPolyData **outpd,char
  *  @param datatype This indicates whether the input array is point data (0)
  *  or cell data (1)
  *  values indication with cells to decimate
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int *vals,int nvals,char *outarrayname,int datatype)
@@ -3568,7 +3568,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
   if (datatype == 0)
   {
     int numPoints = tmp->GetNumberOfPoints();
-    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) != SV_OK)
     {
       newArray->SetNumberOfTuples(numPoints);
       for (vtkIdType id=0;id< numPoints;id++)
@@ -3587,7 +3587,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
       if (wantval[id-1])
 	newArray->InsertValue(id,1);
     }
-    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,0,outarrayname) == SV_OK)
       tmp->GetPointData()->RemoveArray(outarrayname);
     tmp->GetPointData()->AddArray(newArray);
     delete [] wantval;
@@ -3595,7 +3595,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
   else
   {
     int numCells = tmp->GetNumberOfCells();
-    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) != SV_OK)
     {
       newArray->SetNumberOfTuples(numCells);
       for (vtkIdType id=0;id< numCells;id++)
@@ -3614,7 +3614,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
       if (wantval[id-1])
 	newArray->InsertValue(id,1);
     }
-    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,outarrayname) == SV_OK)
       tmp->GetCellData()->RemoveArray(outarrayname);
     tmp->GetCellData()->AddArray(newArray);
     delete [] wantval;
@@ -3622,7 +3622,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
   result = new cvPolyData(tmp);
   *outpd = result;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3645,7 +3645,7 @@ int sys_geom_set_array_for_local_op_cells( cvPolyData *pd,cvPolyData **outpd,int
  *  @param datatype This indicates whether the input array is point data (0)
  *  or cell data (1)
  *  values indication with cells to decimate
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outpd,char *inarrayname,int *vals,int nvals,double radius,char *outarrayname,int datatype)
@@ -3673,10 +3673,10 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
   }
   else
   {
-    if (VtkUtils_PDCheckArrayName(tmp,1,inarrayname) != CV_OK)
+    if (VtkUtils_PDCheckArrayName(tmp,1,inarrayname) != SV_OK)
     {
       fprintf(stderr,"%s Array is not on the surface\n",inarrayname);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     vtkNew(vtkIdList,targetCells);
     for (int i=0; i< nvals; i++)
@@ -3700,7 +3700,7 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
     *outpd = result;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -3721,7 +3721,7 @@ int sys_geom_set_array_for_local_op_face_blend( cvPolyData *pd,cvPolyData **outp
  *  values indication with points to decimate
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to decimate
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double target,
@@ -3756,10 +3756,10 @@ int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double
   catch (...) {
     fprintf(stderr,"ERROR in local decimation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3781,7 +3781,7 @@ int sys_geom_local_quadric_decimation( cvPolyData *pd,cvPolyData **outpd, double
  *  values indication with points to smooth
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to smooth
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numiters,
@@ -3825,10 +3825,10 @@ int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
   catch (...) {
     fprintf(stderr,"ERROR in local smoothing.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3852,7 +3852,7 @@ int sys_geom_local_laplacian_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
  *  values indication with points to smooth
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to smooth
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numiters,
@@ -3897,10 +3897,10 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
   catch (...) {
     fprintf(stderr,"ERROR in local smoothing.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3921,7 +3921,7 @@ int sys_geom_local_constrain_smooth( cvPolyData *pd,cvPolyData **outpd, int numi
  *  values indication with points to subdivide
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to subdivide
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
@@ -3956,10 +3956,10 @@ int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int nu
   catch (...) {
     fprintf(stderr,"ERROR in local subdivision.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -3980,7 +3980,7 @@ int sys_geom_local_linear_subdivision( cvPolyData *pd,cvPolyData **outpd, int nu
  *  values indication with points to subdivide
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to subdivide
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
@@ -4015,10 +4015,10 @@ int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int
   catch (...) {
     fprintf(stderr,"ERROR in local subdivision.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4039,7 +4039,7 @@ int sys_geom_local_butterfly_subdivision( cvPolyData *pd,cvPolyData **outpd, int
  *  values indication with points to subdivide
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to subdivide
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numiters,
@@ -4074,10 +4074,10 @@ int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numi
   catch (...) {
     fprintf(stderr,"ERROR in local subdivision.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4098,7 +4098,7 @@ int sys_geom_local_loop_subdivision( cvPolyData *pd,cvPolyData **outpd, int numi
  *  values indication with points to do blend on
  *  @param *cellarrayname This contains the arrayname holding the boolean
  *  values indication with cells to do blend on
- *  @return CV_OK if the function executes properly
+ *  @return SV_OK if the function executes properly
  */
 
 int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
@@ -4146,10 +4146,10 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
   catch (...) {
     fprintf(stderr,"ERROR in local subdivision.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 #ifdef SV_USE_VMTK
@@ -4172,7 +4172,7 @@ int sys_geom_local_blend( cvPolyData *pd,cvPolyData **outpd, int numblenditers,
  *  @param ntargets number of target cap ids
  *  @param **lines returned center lines as vtkPolyData
  *  @param ** voronoi returned voronoi diagram as vtkPolyData
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
@@ -4225,10 +4225,10 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
   catch (...) {
     fprintf(stderr,"ERROR in centerline operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4249,7 +4249,7 @@ int sys_geom_centerlines( cvPolyData *polydata,int *sources,int nsources,
  *  @param ntargets number of target cap ids
  *  @param **lines returned center lines as vtkPolyData
  *  @param ** voronoi returned voronoi diagram as vtkPolyData
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
@@ -4277,12 +4277,12 @@ int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
   catch (...) {
     fprintf(stderr,"ERROR in centerline merging.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4300,7 +4300,7 @@ int sys_geom_mergecenterlines( cvPolyData *lines, int mergeblanked,
  *  @note  simply applies cell data to the lines that describe the bifurcation regions.
  *  @note  The cell array names are "Blanking","GroupIds","CenterlineIds",and "TractIds"
  *  @param **separate vtkPolyData with cell arrays discribing branchin attached
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_separatecenterlines( cvPolyData *lines,
@@ -4327,10 +4327,10 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
   catch (...) {
     fprintf(stderr,"ERROR in centerline separation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4346,7 +4346,7 @@ int sys_geom_separatecenterlines( cvPolyData *lines,
  *  @param *polydata The polydata to find distance form lines on
  *  @param *lines from centerline extraction, the centerlines to be used
  *  @param **distance vtkPolyData with distance functiona attached returned
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
@@ -4378,9 +4378,9 @@ int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
   catch (...) {
     fprintf(stderr,"ERROR in centerline operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4396,7 +4396,7 @@ int sys_geom_grouppolydata( cvPolyData *polydata,cvPolyData *lines,
  *  @param *polydata The polydata to find distance form lines on
  *  @param *lines from centerline extraction, the centerlines to be used
  *  @param **distance vtkPolyData with distance functiona attached returned
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
@@ -4426,9 +4426,9 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
   catch (...) {
     fprintf(stderr,"ERROR in centerline operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4448,7 +4448,7 @@ int sys_geom_distancetocenterlines( cvPolyData *polydata,cvPolyData *lines,
  *  Then this centerpoint id is return in this object
  *  @param type This determines whether to cap regularly or cap with a point
  *  in the center. 0 - regular, 1 - point in center
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_cap( cvPolyData *polydata,cvPolyData **cappedpolydata,int *numcenterids,int **centerids,int type)
@@ -4500,7 +4500,7 @@ int sys_geom_cap( cvPolyData *polydata,cvPolyData **cappedpolydata,int *numcente
   catch (...) {
     fprintf(stderr,"ERROR in capping operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   numids = capCenterIds->GetNumberOfIds();
@@ -4513,7 +4513,7 @@ int sys_geom_cap( cvPolyData *polydata,cvPolyData **cappedpolydata,int *numcente
   *numcenterids = numids;
   *centerids = allids;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4535,7 +4535,7 @@ int sys_geom_cap( cvPolyData *polydata,cvPolyData **cappedpolydata,int *numcente
  *  2 - start from fillid and give each new cap a value increasing from this
  *  @param type This determines whether to cap regularly or cap with a point
  *  in the center. 0 - regular, 1 - point in center
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
@@ -4568,15 +4568,15 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
       vtkNew(vtkIntArray, currentCapArray);
       vtkNew(vtkIntArray, currentFaceArray);
       vtkNew(vtkIntArray, newFaceArray);
-      if (VtkUtils_PDCheckArrayName(capout,1,"CapID") != CV_OK)
+      if (VtkUtils_PDCheckArrayName(capout,1,"CapID") != SV_OK)
       {
 	fprintf(stderr,"CapID Array is not on the surface\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
-      if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+      if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
       {
 	fprintf(stderr,"ModelFaceID Array is not on the surface\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
       currentCapArray = vtkIntArray::SafeDownCast(capout->GetCellData()->
 	  GetArray("CapID"));
@@ -4599,10 +4599,10 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
   catch (...) {
     fprintf(stderr,"ERROR in capping operation.\n");
     fflush(stderr);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4622,7 +4622,7 @@ int sys_geom_cap_with_ids( cvPolyData *polydata,cvPolyData **cappedpolydata,
  *  @param **polydata The returned polydata with everything all set
  *  @param *originalarray original id array name on the surface to correct
  *  @param *newarray new id array name to give to the corrected ids
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd, cvPolyData **polydata,char *originalarray, char *newarray)
@@ -4733,7 +4733,7 @@ int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd, cvPoly
   *polydata = result;
 
   delete [] mapper;
-  return CV_OK;
+  return SV_OK;
 }
 
 /* -------------- */
@@ -4751,7 +4751,7 @@ int sys_geom_mapandcorrectids( cvPolyData *originalpd, cvPolyData *newpd, cvPoly
  *  @param **outpd The polydata with the full ModelFaceIDs on it
  *  @param **doublecaps This returns the faces that have two caps on it
  *  @param *numfaces This is the number of total faces on the object
- *  @return CV_OK if the VTMK function executes properly
+ *  @return SV_OK if the VTMK function executes properly
  */
 
 int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecaps,
@@ -4767,15 +4767,15 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
   double facerange[2],caprange[2];
   vtkNew(vtkIntArray,capids);
   vtkNew(vtkIntArray,faceids);
-  if (VtkUtils_PDCheckArrayName(geom,1,"CapID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"CapID") != SV_OK)
   {
     fprintf(stderr,"CapID Array is not on the surface\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(geom,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"ModelFaceID Array is not on the surface\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   capids = vtkIntArray::SafeDownCast(geom->GetCellData()->
@@ -4809,13 +4809,13 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
 
     vtkNew(vtkIntArray,modelfacecaps);
 
-    if (VtkUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(surfacer->GetOutput(),1,"CapID") != SV_OK)
     {
       fprintf(stderr,"Second\n");
       fprintf(stderr,"CapID Array is not on the surface\n");
       delete [] capone;
       delete [] captwo;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     modelfacecaps = vtkIntArray::SafeDownCast(surfacer->GetOutput()->
 	GetCellData()->GetArray("CapID"));
@@ -4864,6 +4864,6 @@ int sys_geom_set_ids_for_caps( cvPolyData *pd,cvPolyData **outpd,int **doublecap
 
   delete [] capone;
   delete [] captwo;
-  return CV_OK;
+  return SV_OK;
 }
 #endif

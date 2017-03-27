@@ -55,13 +55,13 @@ cvTetGenMeshSystem::~cvTetGenMeshSystem()
 int cvTetGenMeshSystem::LogOn( char *const filename )
 {
   //Sim_logOn(filename);
-  return CV_OK;
+  return SV_OK;
 }
 
 int cvTetGenMeshSystem::LogOff()
 {
   //Sim_logOff();
-  return CV_OK;
+  return SV_OK;
 }
 
 /** 

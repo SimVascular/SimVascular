@@ -87,10 +87,10 @@ void cvLevelSetVelocityKGI::PostSetImageAction()
 int cvLevelSetVelocityKGI::GetMaxImageIGrad( double *maxGrad )
 {
   if ( image_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   (*maxGrad) = GetMaxGrad( image_ );
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -149,7 +149,7 @@ int cvLevelSetVelocityKGI::SetEK( double d )
 {
   eK_ = d;
   eKvalid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -160,10 +160,10 @@ int cvLevelSetVelocityKGI::SetEK( double d )
 int cvLevelSetVelocityKGI::GetEK( double *d )
 {
   if ( ! eKvalid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *d = eK_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -175,7 +175,7 @@ int cvLevelSetVelocityKGI::SetEI( double d )
 {
   eI_ = d;
   eIvalid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -186,10 +186,10 @@ int cvLevelSetVelocityKGI::SetEI( double d )
 int cvLevelSetVelocityKGI::GetEI( double *d )
 {
   if ( ! eIvalid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *d = eI_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -201,7 +201,7 @@ int cvLevelSetVelocityKGI::SetBalloonF( double b )
 {
   balloonF_ = b;
   balloonFvalid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -212,10 +212,10 @@ int cvLevelSetVelocityKGI::SetBalloonF( double b )
 int cvLevelSetVelocityKGI::GetBalloonF( double *b )
 {
   if ( ! balloonFvalid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *b = balloonF_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -227,7 +227,7 @@ int cvLevelSetVelocityKGI::SetGradIPow( double p )
 {
   gradIPow_ = p;
   gradIPowValid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -238,10 +238,10 @@ int cvLevelSetVelocityKGI::SetGradIPow( double p )
 int cvLevelSetVelocityKGI::GetGradIPow( double *p )
 {
   if ( ! gradIPowValid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *p = gradIPow_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -255,7 +255,7 @@ int cvLevelSetVelocityKGI::SetBeta( double b )
 	 "beta is not currently in place.\n");
   beta_ = b;
   betaValid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -266,10 +266,10 @@ int cvLevelSetVelocityKGI::SetBeta( double b )
 int cvLevelSetVelocityKGI::GetBeta( double *b )
 {
   if ( ! betaValid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *b = beta_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -284,7 +284,7 @@ int cvLevelSetVelocityKGI::SetApplyLocalStop( int flag )
   } else {
     localStop_ = 0;
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -295,7 +295,7 @@ int cvLevelSetVelocityKGI::SetApplyLocalStop( int flag )
 int cvLevelSetVelocityKGI::GetApplyLocalStop( int *flag )
 {
   *flag = localStop_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -306,10 +306,10 @@ int cvLevelSetVelocityKGI::GetApplyLocalStop( int *flag )
 int cvLevelSetVelocityKGI::SetKTol( double t )
 {
   if ( t == 0.0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   ktol_ = t;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -320,7 +320,7 @@ int cvLevelSetVelocityKGI::SetKTol( double t )
 int cvLevelSetVelocityKGI::GetKTol( double *t )
 {
   *t = ktol_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -394,10 +394,10 @@ int cvLevelSetVelocityKGI::Evaluate( double pos[], double *f0, double *f1, doubl
   double signK;
   double gradg[3];
 
-  if ( !Valid() ) return CV_ERROR;
+  if ( !Valid() ) return SV_ERROR;
 
-  if ( ls_->GetGrid()->InterpK( pos, &K ) != CV_OK ) return CV_ERROR;
-  if ( ls_->GetGrid()->InterpN( pos, n ) != CV_OK ) return CV_ERROR;
+  if ( ls_->GetGrid()->InterpK( pos, &K ) != SV_OK ) return SV_ERROR;
+  if ( ls_->GetGrid()->InterpN( pos, n ) != SV_OK ) return SV_ERROR;
 
   if ( GetImageClosed( image_ ) && InBorder( image_, pos, 1 ) ) {
     toDot[0] = 0.0;
@@ -410,19 +410,19 @@ int cvLevelSetVelocityKGI::Evaluate( double pos[], double *f0, double *f1, doubl
       v[1] = 0.0;
       v[2] = 0.0;
     }
-    return CV_OK; 
+    return SV_OK; 
   }
 
   // Look up intensity gradient:
   if ( ! GetGradIx( image_, pos, &(gradI[0]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( ! GetGradIy( image_, pos, &(gradI[1]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( image_->dim == 3 ) {
     if ( ! GetGradIz( image_, pos, &(gradI[2]) ) ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
   } else {
     gradI[2] = 0.0;
@@ -430,14 +430,14 @@ int cvLevelSetVelocityKGI::Evaluate( double pos[], double *f0, double *f1, doubl
 
   // Look up potential gradient:
   if ( ! GetGradIx( potential_, pos, &(gradg[0]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( ! GetGradIy( potential_, pos, &(gradg[1]) ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( image_->dim == 3 ) {
     if ( ! GetGradIz( potential_, pos, &(gradg[2]) ) ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
   } else {
     gradg[2] = 0.0;
@@ -495,7 +495,7 @@ int cvLevelSetVelocityKGI::Evaluate( double pos[], double *f0, double *f1, doubl
     v[2] = n[2] * mag;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

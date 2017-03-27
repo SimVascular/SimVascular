@@ -113,7 +113,7 @@ double cvPolyData::FindDistance2( double x, double y, double z )
   vtkFloatingPointType dist2;
   double result;
 
-  if ( InitDistance() != CV_OK ) {
+  if ( InitDistance() != SV_OK ) {
     return -1.0;
   }
 
@@ -149,7 +149,7 @@ double cvPolyData::FindDistance( double x, double y, double z )
 {
   double dist;
 
-  if ( InitDistance() != CV_OK ) {
+  if ( InitDistance() != SV_OK ) {
     return -1.0;
   }
 
@@ -183,7 +183,7 @@ double cvPolyData::FindDistance2( double x, double y, double z, double radius )
   vtkFloatingPointType dist2;
   double result;
 
-  if ( InitDistance() != CV_OK ) {
+  if ( InitDistance() != SV_OK ) {
     return -1.0;
   }
 
@@ -222,7 +222,7 @@ double cvPolyData::FindDistance( double x, double y, double z, double radius )
 {
   double dist2;
 
-  if ( InitDistance() != CV_OK ) {
+  if ( InitDistance() != SV_OK ) {
     return -1.0;
   }
 
@@ -264,7 +264,7 @@ int cvPolyData::BuildVtkCellLocator()
   if ( locator_ == NULL ) {
     locator_ = vtkCellLocator::New();
     if ( locator_ == NULL ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
     locator_->DebugOff();
     locator_->GlobalWarningDisplayOff();
@@ -277,10 +277,10 @@ int cvPolyData::BuildVtkCellLocator()
   if ( genericCell_ == NULL ) {
     genericCell_ = vtkGenericCell::New();
     if ( genericCell_ == NULL ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
