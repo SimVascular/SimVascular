@@ -52,7 +52,7 @@ int vtkSVIOUtils::CheckDirectoryExists(std::string dirname)
 {
   if (dirname.empty() || dirname == "" || dirname == "/0")
     return SV_OK;
-  if (stat(dirname.c_str(), &info) == 0 && S_ISDIR(info.st_mode))
+  if (stat(dirname.c_str(), &info) == 0)
     return SV_OK;
 
   return SV_ERROR;

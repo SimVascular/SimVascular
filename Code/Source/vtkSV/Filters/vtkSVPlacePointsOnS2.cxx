@@ -215,9 +215,9 @@ int vtkSVPlacePointsOnS2::ConvertTextureFieldToPolyData()
 
     // Convert tuple to a 3d point using spherical coordinates
     double pt[3];
-    pt[0] = std::sin(M_PI * tPt[1]) * std::cos(2.0 * M_PI * tPt[0]);
-    pt[1] = std::sin(M_PI * tPt[1]) * std::sin(2.0 * M_PI * tPt[0]);
-    pt[2] = std::cos(M_PI * tPt[1]);
+    pt[0] = std::sin(SV_PI * tPt[1]) * std::cos(2.0 * SV_PI * tPt[0]);
+    pt[1] = std::sin(SV_PI * tPt[1]) * std::sin(2.0 * SV_PI * tPt[0]);
+    pt[2] = std::cos(SV_PI * tPt[1]);
 
     // Set point
     this->WorkPd->GetPoints()->SetPoint(i, pt);

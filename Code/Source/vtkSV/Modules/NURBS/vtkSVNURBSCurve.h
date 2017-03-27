@@ -109,7 +109,7 @@ public:
   /** \brief Set the control points using a point set. */
   void SetControlPoints(vtkPoints *points1d);
 
-  void SetControlPoints(vtkDenseArray<double[3]> *points2d) {} /**< \brief Unimplemented */
+  //void SetControlPoints(vtkDenseArray<double[3]> *points2d) {} /**< \brief Unimplemented */
 
   /** \brief Set the knot vector with a double array. */
   void SetKnotVector(vtkDoubleArray *knotVector);
