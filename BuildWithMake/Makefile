@@ -233,6 +233,11 @@ shared-pre-build: common-pre-build
 	cd ../Code/Source/Modules;$(MAKE) create_exports_h us-init-module create_cppmicroservices_file
 	cd ../Code/Source/UI;$(MAKE) moc
 	cd ../Code/Source/vtkSV;$(MAKE) create_exports_outname_h
+	for i in ${SHARED_LIBDIRS}; do ( \
+	  echo "creating exports for shared directory ($$i)"; \
+	  if [ -e $$i ];then \
+	  cd $$i; \
+	  $(MAKE) shared;fi ) ; done
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
