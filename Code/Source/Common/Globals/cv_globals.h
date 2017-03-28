@@ -32,6 +32,7 @@
 #ifndef CV_GLOBALS_H
 
 #include "SimVascular.h"
+#include "svGlobalsExports.h" // For exports
 #include "cv_arg.h"
 #include "cv_misc_utils.h"
 #include "cvRepository.h"

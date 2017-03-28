@@ -45,6 +45,7 @@
 #define __CVTETGENADAPT_H
 
 #include "SimVascular.h"
+#include "svTetGenAdaptorExports.h"
 
 #include "cvAdaptObject.h"
 //#include "cvRepositoryData.h"

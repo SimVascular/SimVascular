@@ -33,6 +33,7 @@
 #define __CVMATH_INIT_H
 
 #include "SimVascular.h"
+#include "svUtilsExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_UTILS int Math_Init( Tcl_Interp *interp );

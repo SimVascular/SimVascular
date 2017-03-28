@@ -38,6 +38,7 @@
 #define CVLEVELSETUTILS_H_
 
 #include "SimVascular.h"
+#include "svSegITKExports.h" // For exports
 #include "cvPolyData.h"
 #include "cvStrPts.h"
 

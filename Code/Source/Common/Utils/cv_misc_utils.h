@@ -52,6 +52,7 @@
 // ---
 
 #include "SimVascular.h"
+#include "svUtilsExports.h" // For exports
 
 // Misc
 // ----

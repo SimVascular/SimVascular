@@ -29,10 +29,11 @@
  #=========================================================================#
 
 set(lib ${SV_LIB_MESHSIM_SOLID_NAME})
+set(export_directive meshsim_solid)
+set(export_file_name svMeshSimSolidExports.h)
+
 SET(CXXSRCS cvMeshSimSolidModel.cxx)
 SET(HDRS cvMeshSimSolidModel.h)
-
-add_definitions("-DSV_EXPORT_MESHSIM_SOLID_COMPILE")
 
 if(MESHSIM_MESHSIMSOLID_USE_SHARED_LIBRARIES)
   add_library(${lib} SHARED ${CXXSRCS} cv_meshsimsolid_init.cxx)
@@ -44,6 +45,20 @@ target_link_libraries(${lib}
 	${VTK_LIBRARIES} ${TCL_LIBRARY} ${TK_LIBRARY}
 	${MESHSIM_LIBRARIES})
 
+# Set up for exports
+string(TOUPPER ${export_directive} EXPORT_NAME)
+set(_export_macro_names
+  EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}
+  NO_EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_EXPORT
+  DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_DEPRECATED
+  NO_DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_DEPRECATED
+  )
+
+# Generate export headers
+generate_export_header(${lib}
+  ${_export_macro_names}
+  EXPORT_FILE_NAME ${export_file_name})
+
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
 		RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT PluginExecutables
@@ -52,7 +67,7 @@ if(SV_INSTALL_LIBS)
 		)
 endif()
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
+  install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT PluginHeaders
 		)
 endif()

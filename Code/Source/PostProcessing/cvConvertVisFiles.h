@@ -38,6 +38,7 @@
 #define MAXVISLINELENGTH 4096
 
 #include "SimVascular.h"
+#include "svPostExports.h" // For exports
 
 #include "cvRepositoryData.h"
 #include "cvUnstructuredGrid.h"

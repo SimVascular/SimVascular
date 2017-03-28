@@ -44,6 +44,7 @@
 #define __CV_POLYDATASOLID_INIT_H
 
 #include "SimVascular.h"
+#include "svPolyDataSolidExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_POLYDATASOLID int Polydatasolid_Init( Tcl_Interp *interp );

@@ -46,6 +46,7 @@
 #define __CVOPENCASCADE_SOLID_H
 
 #include "SimVascular.h"
+#include "svOpenCASCADEExports.h" // For exports
 #include "cvRepositoryData.h"
 #include "cvSolidModel.h"
 #include "cvPolyData.h"

@@ -1,9 +1,10 @@
 #include "SimVascular.h"
+#include "svAdaptorExports.h" // For exports
 
 SV_EXPORT_ADAPTOR int bakvec ( int n, double t[], double e[], int m, double z[] );
-SV_EXPORT_ADAPTOR void cbabk2 ( int n, int low, int igh, double scale[], int m, double zr[], 
+SV_EXPORT_ADAPTOR void cbabk2 ( int n, int low, int igh, double scale[], int m, double zr[],
   double zi[] );
-SV_EXPORT_ADAPTOR void bandr ( int n, int mb, double a[], double d[], double e[], double e2[], 
+SV_EXPORT_ADAPTOR void bandr ( int n, int mb, double a[], double d[], double e[], double e2[],
   int matz, double z[] );
 SV_EXPORT_ADAPTOR void csroot ( double xr, double xi, double &yr, double &yi );
 SV_EXPORT_ADAPTOR int i4_max ( int i1, int i2 );

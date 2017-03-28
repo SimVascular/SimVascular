@@ -33,6 +33,7 @@
 #define __CVMESHSIMMESHOBJECT_H
 
 #include "SimVascular.h"
+#include "svMeshSimMeshExports.h" // For exports
 
 #define MY_MESHSIM_VERTEX_ORDERING 1
 #define MY_MESHSIM_EDGE_ORDERING 1

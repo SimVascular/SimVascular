@@ -46,6 +46,7 @@
 #define __CV_TETGENMESH_UTILS_H
 
 #include "SimVascular.h"
+#include "svTetGenMeshExports.h" // For exports
 
 #include "vtkPolyData.h"
 #include "vtkUnstructuredGrid.h"

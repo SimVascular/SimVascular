@@ -17,6 +17,7 @@
 
 #include <tinyxml.h>
 
+#include <vtkCleanPolyData.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkErrorCode.h>

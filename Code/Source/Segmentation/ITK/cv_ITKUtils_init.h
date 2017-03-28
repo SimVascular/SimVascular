@@ -37,6 +37,8 @@
 #ifndef CV_ITKUTILS_INIT_H_
 #define CV_ITKUTILS_INIT_H_
 
+#include "SimVascular.h"
+#include "svSegITKExports.h" // For exports
 
 extern "C" SV_EXPORT_SEGITK int Itkutils_Init( Tcl_Interp *interp );
 

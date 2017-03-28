@@ -34,6 +34,7 @@
 #define __CVGEOM_INIT_H
 
 #include "SimVascular.h"
+#include "svGeometryExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_SYSGEOM int Geom_Init( Tcl_Interp *interp );

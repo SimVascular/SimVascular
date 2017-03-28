@@ -38,6 +38,7 @@
 #define CV_ITKLSET_INIT_H_
 
 #include "SimVascular.h"
+#include "svSegITKExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_SEGITK int Itklset_Init( Tcl_Interp *interp );

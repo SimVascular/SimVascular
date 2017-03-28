@@ -33,6 +33,7 @@
 #define __CVPOST_INIT_H
 
 #include "SimVascular.h"
+#include "svPostExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_POST int Post_Init( Tcl_Interp *interp );

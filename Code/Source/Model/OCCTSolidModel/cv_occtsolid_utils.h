@@ -45,6 +45,9 @@
 #ifndef __CV_OCCTSOLID_UTILS_H
 #define __CV_OCCTSOLID_UTILS_H
 
+#include "SimVascular.h"
+#include "svOpenCASCADEExports.h"
+
 #include "cvSolidModel.h"
 #include "cvOCCTSolidModel.h"
 

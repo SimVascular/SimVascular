@@ -43,6 +43,7 @@
 #define CVITKLEVELSETBASE_H_
 
 #include "SimVascular.h"
+#include "svSegITKExports.h" // For exports
 #include "cvSolidModel.h"
 #include "cvPolyData.h"
 #include "cvStrPts.h"

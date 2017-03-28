@@ -32,6 +32,7 @@
 #define __CVMMG_MESH_UTILS_H
 
 #include "SimVascular.h"
+#include "svMMGExports.h" // For exports
 
 #include "cvPolyData.h"
 #include "vtkPolyData.h"

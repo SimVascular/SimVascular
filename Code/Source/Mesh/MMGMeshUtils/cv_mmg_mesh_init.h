@@ -43,6 +43,7 @@
 #define __CVMMG_MESH_INIT_H
 
 #include "SimVascular.h"
+#include "svMMGExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_MMG int Mmgmesh_Init( Tcl_Interp *interp );

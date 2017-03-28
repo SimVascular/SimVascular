@@ -33,6 +33,7 @@
 #define __CV_SYS_GEOM_H
 
 #include "SimVascular.h"
+#include "svGeometryExports.h" // For exports
 
 #include "tcl.h"
 

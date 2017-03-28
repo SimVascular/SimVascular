@@ -44,6 +44,7 @@
 #define __CV_TETGENADAPT_INIT_H
 
 #include "SimVascular.h"
+#include "svTetGenAdaptorExports.h"
 #include "tcl.h"
 
 extern "C" SV_EXPORT_TETGEN_ADAPTOR int Tetgenadapt_Init( Tcl_Interp *interp );
