@@ -63,6 +63,8 @@ HDRS	= \
     svMitkMeshMapper2D.h \
     svMitkMeshIO.h \
     svMeshLegacyIO.h \
+    svMeshAdaptor.h \
+    svMeshTetGenAdaptor.h \
     svMitkMeshObjectFactory.h
 
 CXXSRCS	= \
@@ -74,6 +76,7 @@ CXXSRCS	= \
     svMitkMeshMapper2D.cxx \
     svMitkMeshIO.cxx \
     svMeshLegacyIO.cxx \
+    svMeshTetGenAdaptor.cxx \
     svMitkMeshObjectFactory.cxx
 
 CXXSRCS += us_init.cxx

@@ -114,7 +114,8 @@ DLLLIBS += \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
-          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT)
+          $(SVLIBFLAG)_simvascular_globals$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT)
 
 TARGET_LIB_NAME = simvascular_qtgui_module_segmentation
 

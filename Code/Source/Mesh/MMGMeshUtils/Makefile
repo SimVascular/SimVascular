@@ -64,6 +64,7 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
 	  $(SV_MMG_LIBS)
 
 include $(TOP)/targetlib.mk

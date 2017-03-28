@@ -727,6 +727,13 @@ ifneq ($(SV_USE_SHARED),1)
               $(SVLIBFLAG)_simvascular_polydata_solid$(LIBLINKEXT)
 endif
 
+SV_LIB_VTKSVCOMMON_NAME=_simvascular_vtksvcommon
+SV_LIB_VTKSVFILTERS_NAME=_simvascular_vtksvfilters
+SV_LIB_VTKSVGEOMETRY_NAME=_simvascular_vtksvgeometry
+SV_LIB_VTKSVBOOLEAN_NAME=_simvascular_vtksvboolean
+SV_LIB_VTKSVNURBS_NAME=_simvascular_vtksvnurbs
+SV_LIB_VTKSVPARAMETERIZATION_NAME=_simvascular_vtksvparameterization
+
 #
 # ThirdParty software that must be built
 # from source if used.

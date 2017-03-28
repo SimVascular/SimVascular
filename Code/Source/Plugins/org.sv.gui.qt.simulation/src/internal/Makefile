@@ -51,6 +51,7 @@ HDRS	= \
     svSimulationView.h \
     svSimulationPreferencePage.h \
     svSimJobStopAction.h \
+    svSimJobExportAction.h \
     svSimulationPluginActivator.h
 
 CXXSRCS	= \
@@ -62,6 +63,7 @@ CXXSRCS	= \
     svSimulationView.cxx \
     svSimulationPreferencePage.cxx \
     svSimJobStopAction.cxx \
+    svSimJobExportAction.cxx \
     svSimulationPluginActivator.cxx
 
 UIFILES = \

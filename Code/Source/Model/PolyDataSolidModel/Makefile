@@ -53,6 +53,7 @@ DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
 	  $(SVLIBFLAG)_simvascular_geom$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
 	  $(VMTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_polydata_solid

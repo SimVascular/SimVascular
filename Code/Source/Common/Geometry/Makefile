@@ -53,43 +53,15 @@ endif
 
 CXXFLAGS += -DSV_EXPORT_SYSGEOM_COMPILE
 
-HDRS	= cv_sys_geom.h cv_ggems.h \
-	cv_spline.h cv_integrate_surface.h \
-	vtkIntegrateAttributes.h vtkIntegrateFlowThroughSurface.h \
-	vtkSurfaceVectors.h vtkIntersectionPolyDataFilter2.h \
-	vtkBooleanOperationPolyDataFilter2.h \
-	vtkMultiplePolyDataIntersectionFilter.h \
-	vtkFillHolesFilterWithIds.h \
-	vtkLoftPolyDataSolid.h \
-	vtkLocalApproximatingSubdivisionFilter.h \
-	vtkLocalButterflySubdivisionFilter.h \
-	vtkLocalInterpolatingSubdivisionFilter.h \
-	vtkLocalLinearSubdivisionFilter.h \
-	vtkLocalLoopSubdivisionFilter.h \
-	vtkLocalQuadricDecimation.h \
-	vtkLocalSmoothPolyDataFilter.h \
-	vtkCGSmooth.h svMath.h sparse_matrix.h \
-	vtkFindSeparateRegions.h vtkGetSphereRegions.h \
-        vtkDelaunay2D_60.h vtkConstrainedBlend.h
+HDRS	= \
+  cv_sys_geom.h \
+  cv_ggems.h \
+  cv_spline.h \
+  cv_integrate_surface.h
 
-CXXSRCS	= cv_sys_geom.cxx cv_ggems.cxx \
-	cv_spline.cxx cv_integrate_surface.cxx \
-	vtkIntegrateAttributes.cxx vtkIntegrateFlowThroughSurface.cxx \
-	vtkSurfaceVectors.cxx vtkIntersectionPolyDataFilter2.cxx \
-	vtkBooleanOperationPolyDataFilter2.cxx \
-	vtkMultiplePolyDataIntersectionFilter.cxx \
-	vtkFillHolesFilterWithIds.cxx \
-	vtkLoftPolyDataSolid.cxx \
-	vtkLocalApproximatingSubdivisionFilter.cxx \
-	vtkLocalButterflySubdivisionFilter.cxx \
-	vtkLocalInterpolatingSubdivisionFilter.cxx \
-	vtkLocalLinearSubdivisionFilter.cxx \
-	vtkLocalLoopSubdivisionFilter.cxx \
-	vtkLocalQuadricDecimation.cxx \
-	vtkLocalSmoothPolyDataFilter.cxx \
-	vtkCGSmooth.cxx svMath.cxx sparse_matrix.cxx \
-	vtkFindSeparateRegions.cxx vtkGetSphereRegions.cxx \
-        vtkDelaunay2D_60.cxx vtkConstrainedBlend.cxx
+CXXSRCS	= \
+  cv_sys_geom.cxx cv_ggems.cxx \
+  cv_spline.cxx cv_integrate_surface.cxx
 
 DLLHDRS = cv_geom_init.h
 
@@ -98,6 +70,10 @@ DLLSRCS = cv_geom_init.cxx
 DLLLIBS = $(SVLIBFLAG)_simvascular_solid$(LIBLINKEXT) \
 	  $(SVLIBFLAG)_simvascular_repository$(LIBLINKEXT) \
           $(SVLIBFLAG)_simvascular_utils$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVBOOLEAN_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVGEOMETRY_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVFILTERS_NAME)$(LIBLINKEXT) \
+          $(SVLIBFLAG)$(SV_LIB_VTKSVNURBS_NAME)$(LIBLINKEXT) \
           $(VMTK_LIBS)
 
 TARGET_LIB_NAME = simvascular_geom
