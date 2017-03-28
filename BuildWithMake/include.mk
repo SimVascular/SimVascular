@@ -496,14 +496,14 @@ endif
 
 ifeq ($(SV_USE_SHARED),1)
   SHARED_LIBDIRS += \
+          ../Code/Source/Common/Utils \
+	  ../Code/Source/Common/Repository \
           ../Code/Source/vtkSV/Common \
           ../Code/Source/vtkSV/Filters \
           ../Code/Source/vtkSV/Modules/Boolean \
           ../Code/Source/vtkSV/Modules/Geometry \
           ../Code/Source/vtkSV/Modules/NURBS \
           ../Code/Source/vtkSV/Modules/Parameterization \
-          ../Code/Source/Common/Utils \
-	  ../Code/Source/Common/Repository \
 	  ../Code/Source/Model/SolidModel \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \
@@ -513,14 +513,14 @@ ifeq ($(SV_USE_SHARED),1)
 	  ../Code/Source/Legacy/LevelSet
 else
   LIBDIRS += \
+          ../Code/Source/Common/Utils \
+	  ../Code/Source/Common/Repository \
           ../Code/Source/vtkSV/Common \
           ../Code/Source/vtkSV/Filters \
           ../Code/Source/vtkSV/Modules/Boolean \
           ../Code/Source/vtkSV/Modules/Geometry \
           ../Code/Source/vtkSV/Modules/NURBS \
           ../Code/Source/vtkSV/Modules/Parameterization \
-          ../Code/Source/Common/Utils \
-	  ../Code/Source/Common/Repository \
 	  ../Code/Source/Model/SolidModel \
 	  ../Code/Source/Mesh/MeshObject \
 	  ../Code/Source/Common/Geometry \

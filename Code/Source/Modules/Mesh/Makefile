@@ -125,6 +125,9 @@ endif
 ifeq ($(SV_USE_OPENCASCADE_QT_GUI),1)
     DLLLIBS += $(SVLIBFLAG)_simvascular_opencascade_solid$(LIBLINKEXT)
 endif
+ifeq ($(SV_USE_TETGEN_ADAPTOR),1)
+    DLLLIBS += $(SVLIBFLAG)_simvascular_tetgen_adaptor$(LIBLINKEXT)
+endif
 
 DLLLIBS += $(PARASOLID_LIBS) $(MESHSIM_LIBS)
 
