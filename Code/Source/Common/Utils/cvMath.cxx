@@ -86,12 +86,12 @@ int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0,
     int i,j;
 
     if (numOrgPts <= 0 || numOutPts <= 0) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     double **outPts = createArray(numOutPts,2);
     if (*outPts == NULL) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     double t;
@@ -124,7 +124,7 @@ int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0,
       if (j == numOrgPts) {
           fprintf(stdout,"Error interpolating point %i.\n",i);
           deleteArray(outPts,numOutPts,2);
-          return CV_ERROR;
+          return SV_ERROR;
       }
     }
 
@@ -135,7 +135,7 @@ int cvMath::linearInterpolate(double **orgPts, int numOrgPts, double t0,
 
     *rtnOutPts = outPts;
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -194,13 +194,13 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
     int i;
 
     if (numInterpPts <= 0 || numDesiredTerms <= 0 || numPts <= 0) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     double **terms = createArray(numDesiredTerms,2);
 
     if (*terms == NULL) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
    
     // here we calculate dt so that our time series will go from
@@ -210,8 +210,8 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
     double dt = (pts[numPts-1][0]-t0)/numInterpPts;
     double **outPts = NULL;
 
-    if (linearInterpolate(pts, numPts, t0, dt, numInterpPts, &outPts) == CV_ERROR) {
-        return CV_ERROR;
+    if (linearInterpolate(pts, numPts, t0, dt, numInterpPts, &outPts) == SV_ERROR) {
+        return SV_ERROR;
     }
 
     // create a real-imaginary array to do fft
@@ -236,7 +236,7 @@ int cvMath::FFT(double **pts, int numPts, int numInterpPts, int numDesiredTerms,
 
     *rtnterms = terms;
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -248,7 +248,7 @@ int cvMath::inverseFFT(double **terms, int numTerms, double t0, double dt, doubl
 
   double **pts = createArray(numRtnPts,2);
   if (pts == NULL) {
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   for (i=0;i<numRtnPts;i++) {
@@ -262,7 +262,7 @@ int cvMath::inverseFFT(double **terms, int numTerms, double t0, double dt, doubl
 
   *rtnPts = pts;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -290,7 +290,7 @@ int cvMath::compute_v_womersley(double **terms, int numTerms, double viscosity, 
 
   *vel = v;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -448,7 +448,7 @@ int cvMath::curveLength(double **pts, int numPts, int closed, double *length) {
 
     if (numPts <= 1) {
         *length = 0;
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     int numSegments;
@@ -470,7 +470,7 @@ int cvMath::curveLength(double **pts, int numPts, int closed, double *length) {
     }
 
     *length = result;
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -484,7 +484,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
     // of the 3D curve is used.
 
     if (numOrgPts <= 1 || numOutPts <= 2) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // find the length of the curve
@@ -526,23 +526,23 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
     double **yout = createArray(numOutPts,2);
     double **zout = createArray(numOutPts,2);
 
-    if (linearInterpolate(xin, numPts, 0, dt, numOutPts, &xout) == CV_ERROR) {
+    if (linearInterpolate(xin, numPts, 0, dt, numOutPts, &xout) == SV_ERROR) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (linearInterpolate(yin, numPts, 0, dt, numOutPts, &yout) == CV_ERROR) {
+    if (linearInterpolate(yin, numPts, 0, dt, numOutPts, &yout) == SV_ERROR) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
-    if (linearInterpolate(zin, numPts, 0, dt, numOutPts, &zout) == CV_ERROR) {
+    if (linearInterpolate(zin, numPts, 0, dt, numOutPts, &zout) == SV_ERROR) {
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2);
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // put it all back together
@@ -551,7 +551,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2); 
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     for (i = 0; i < numOutPts;i++) {
         outPts[i][0]=xout[i][1];
@@ -571,7 +571,7 @@ int cvMath::linearInterpolateCurve(double **orgPts, int numOrgPts, int closed,
 
     *rtnOutPts = outPts;
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -581,10 +581,10 @@ int cvMath::fitLeastSquares(int numberOfSamples,double **xt,int xOrder,double **
     // this wrapper around the vtk method to do a least squares fit
     vtkMath *vmathobj = vtkMath::New();
     if (vmathobj->SolveLeastSquares(numberOfSamples,xt,xOrder,yt,yOrder,mt) == 0) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
     vmathobj->Delete(); 
-    return CV_OK;
+    return SV_OK;
  
 }  
 
@@ -599,11 +599,11 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     // and only the requested number of modes are maintained.
 
     if (numOrgPts <= 1 || numOutPts <= 2) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     if (keepNumModes < 1) {
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // find the length of the curve
@@ -648,25 +648,25 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     // need to unhardcore this
     int numInterpPts = 2048;
 
-    if (FFT(xin, numPts, numInterpPts, keepNumModes, &xmodes) == CV_ERROR) {
+    if (FFT(xin, numPts, numInterpPts, keepNumModes, &xmodes) == SV_ERROR) {
         deleteArray(xin,numOrgPts+1,2);
         deleteArray(yin,numOrgPts+1,2);
         deleteArray(zin,numOrgPts+1,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     deleteArray(xin,numOrgPts+1,2);
-    if (FFT(yin, numPts, numInterpPts, keepNumModes, &ymodes) == CV_ERROR) {
+    if (FFT(yin, numPts, numInterpPts, keepNumModes, &ymodes) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);
         deleteArray(yin,numOrgPts+1,2);
         deleteArray(zin,numOrgPts+1,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     deleteArray(yin,numOrgPts+1,2);
-    if (FFT(zin, numPts, numInterpPts, keepNumModes, &zmodes) == CV_ERROR) {
+    if (FFT(zin, numPts, numInterpPts, keepNumModes, &zmodes) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);
         deleteArray(ymodes,keepNumModes,2);
         deleteArray(zin,numOrgPts+1,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     deleteArray(zin,numOrgPts+1,2);
 
@@ -679,25 +679,25 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
     double omega = 2.0*Pi/length;
 
     if (inverseFFT(xmodes, keepNumModes, t0, dt, omega, 
-                   numOutPts, &xout) == CV_ERROR) {
+                   numOutPts, &xout) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);
         deleteArray(ymodes,keepNumModes,2);
         deleteArray(zmodes,keepNumModes,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     if (inverseFFT(ymodes, keepNumModes, t0, dt, omega, 
-                   numOutPts, &yout) == CV_ERROR) {
+                   numOutPts, &yout) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);deleteArray(xout,numOutPts,2);
         deleteArray(ymodes,keepNumModes,2);
         deleteArray(zmodes,keepNumModes,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     if (inverseFFT(zmodes, keepNumModes, t0, dt, omega, 
-                   numOutPts, &zout) == CV_ERROR) {
+                   numOutPts, &zout) == SV_ERROR) {
         deleteArray(xmodes,keepNumModes,2);deleteArray(xout,numOutPts,2);
         deleteArray(ymodes,keepNumModes,2);deleteArray(yout,numOutPts,2);
         deleteArray(zmodes,keepNumModes,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // put it all back together
@@ -706,7 +706,7 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
         deleteArray(xin,numOrgPts+1,2); deleteArray(xout,numOutPts,2);
         deleteArray(yin,numOrgPts+1,2); deleteArray(yout,numOutPts,2); 
         deleteArray(zin,numOrgPts+1,2); deleteArray(zout,numOutPts,2);
-        return CV_ERROR;
+        return SV_ERROR;
     }
     for (i = 0; i < numOutPts;i++) {
         outPts[i][0]=xout[i][1];
@@ -726,6 +726,6 @@ int cvMath::smoothCurve(double **orgPts, int numOrgPts, int closed, int keepNumM
 
     *rtnOutPts = outPts;
 
-    return CV_OK;
+    return SV_OK;
 
 }

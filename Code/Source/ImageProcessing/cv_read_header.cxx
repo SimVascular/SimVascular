@@ -45,19 +45,19 @@ int mrRead_unsigned_short_int(FILE *in,int offset,unsigned short int *value) {
     // set file position
     if (fseek(in, offset, SEEK_SET)) { 
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // read bytes from file    
     if (fread(value, sizeof(unsigned short int), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read unsigned short int!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // correct for platform dependence
     vtkByteSwap::Swap2BE((short*)value);
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -66,19 +66,19 @@ int mrRead_short_int(FILE *in,int offset,short int *value) {
     // set file position
     if (fseek(in, offset, SEEK_SET)) { 
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // read bytes from file    
     if (fread(value, sizeof(short int), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read unsigned short int!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // correct for platform dependence
     vtkByteSwap::Swap2BE(value);
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -87,19 +87,19 @@ int mrRead_int(FILE *in,int offset,int *value) {
     // set file position
     if (fseek(in, offset, SEEK_SET)) { 
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // read bytes from file    
     if (fread(value, sizeof(int), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read unsigned short int!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // correct for platform dependence
     vtkByteSwap::Swap4BE((char*)value);
 
-    return CV_OK;
+    return SV_OK;
 
 }
 int mrRead_float(FILE *in,int offset,float *value) {
@@ -107,19 +107,19 @@ int mrRead_float(FILE *in,int offset,float *value) {
     // set file position
     if (fseek(in, offset, SEEK_SET)) { 
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // read bytes from file    
     if (fread(value, sizeof(float), 1, in) != 1) {
         fprintf(stderr,"ERROR: Could not read float!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // correct for platform dependence
     vtkByteSwap::Swap4BE((char*)value);
 
-    return CV_OK;
+    return SV_OK;
 }
 
 int mrRead_char(FILE *in,int offset,int numBytes, char *value) {
@@ -127,18 +127,18 @@ int mrRead_char(FILE *in,int offset,int numBytes, char *value) {
     // set file position
     if (fseek(in, offset, SEEK_SET)) { 
       fprintf(stderr,"ERROR: Could not set seek position to %i.\n",offset);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // read bytes from file    
     if (fread(value, sizeof(char), numBytes, in) != numBytes) {
         fprintf(stderr,"ERROR: Could not read float!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // no platform dependence for characters
 
-    return CV_OK;
+    return SV_OK;
 }
 
 int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
@@ -160,7 +160,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     in = fopen(filename,"rb");
     if ( in  == NULL) {
         fprintf(stderr,"ERROR:  Could not open file %s!\n",filename);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // check magic number
@@ -169,7 +169,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     if (img_magic != 1229801286) {
         fprintf(stdout,"ERROR:  This file does not appear to be in Genesis format!\n");
         fclose(in);
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     // get offsets
@@ -199,7 +199,7 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     if (ex_typ[0] != 'M' || ex_typ[1] != 'R') {
       fprintf(stdout,"Exam type (%s) apparently not MR!\n",ex_typ);
       fclose(in);
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // read in a couple of params
@@ -347,5 +347,5 @@ int mrRead_Header (char *filename, float *vdims_x, float *vdims_y,
     *examNumber = im_exno;
     *acquisitionTime = im_actual_dt;
 
-    return CV_OK;
+    return SV_OK;
 }

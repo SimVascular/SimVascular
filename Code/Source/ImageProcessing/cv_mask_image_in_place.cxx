@@ -50,7 +50,7 @@ int MaskImageInPlace(vtkStructuredPoints *imgsp,
 
     if (numPtsImg != numPtsMask) {
         fprintf(stderr,"ERROR:  number of points in image and mask must match!\n");
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     int numBlanked = 0;
@@ -73,6 +73,6 @@ int MaskImageInPlace(vtkStructuredPoints *imgsp,
 
     fprintf(stdout,"  %i pixels changed out of %i\n",numBlanked,numPtsImg);
 
-    return CV_OK;
+    return SV_OK;
       
 }

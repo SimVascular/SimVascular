@@ -177,7 +177,7 @@ int Math_FFTCmd( ClientData clientData, Tcl_Interp *interp,
   //}
 
   double **terms = NULL;
-  if ((mathobj->FFT(pts, nlistpts, numInterpPoints, nterms, &terms)) == CV_ERROR) {
+  if ((mathobj->FFT(pts, nlistpts, numInterpPoints, nterms, &terms)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in fft", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indpts;
@@ -289,7 +289,7 @@ int Math_inverseFFTCmd( ClientData clientData, Tcl_Interp *interp,
   //}
 
   double **pts = NULL;
-  if ( (mathobj->inverseFFT(terms, nlistterms, t0, dt, omega, numPts, &pts)) == CV_ERROR) {
+  if ( (mathobj->inverseFFT(terms, nlistterms, t0, dt, omega, numPts, &pts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in inverse fft", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indterms;
@@ -407,7 +407,7 @@ int Math_computeWomersleyCmd( ClientData clientData, Tcl_Interp *interp,
 
   double velocity = 0;
   if ((mathobj->compute_v_womersley(terms, nlistterms, viscosity, density,
-                     omega, radmax, radius, time, &velocity)) == CV_ERROR) {
+                     omega, radmax, radius, time, &velocity)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in calculate worm", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indterms;
@@ -510,7 +510,7 @@ int Math_linearInterpCmd( ClientData clientData, Tcl_Interp *interp,
   double dt = (pts[nlistpts-1][0]-t0)/(numInterpPoints-1);
   double **outPts = NULL;
 
-  if ((mathobj->linearInterpolate(pts, nlistpts, t0, dt, numInterpPoints, &outPts)) == CV_ERROR) {
+  if ((mathobj->linearInterpolate(pts, nlistpts, t0, dt, numInterpPoints, &outPts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in linear interpolation", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indpts;
@@ -612,7 +612,7 @@ int Math_curveLengthCmd( ClientData clientData, Tcl_Interp *interp,
   //}
 
   double length = 0;
-  if ((mathobj->curveLength(pts, nlistpts, closed, &length)) == CV_ERROR) {
+  if ((mathobj->curveLength(pts, nlistpts, closed, &length)) == SV_ERROR) {
      Tcl_SetResult( interp, "error finding curve length", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indpts;
@@ -713,7 +713,7 @@ int Math_linearInterpolateCurveCmd( ClientData clientData, Tcl_Interp *interp,
   //}
 
   double **outPts = NULL;
-  if ((mathobj->linearInterpolateCurve(pts, nlistpts, closed, numInterpPoints, &outPts)) == CV_ERROR) {
+  if ((mathobj->linearInterpolateCurve(pts, nlistpts, closed, numInterpPoints, &outPts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in linear interpolation", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indpts;
@@ -868,7 +868,7 @@ int Math_fitLeastSquaresCmd( ClientData clientData, Tcl_Interp *interp,
   }
 
   double **mt = mathobj->createArray(xOrder,yOrder);
-  if ( (mathobj->fitLeastSquares(numberOfSamples,xt,xOrder,yt,yOrder,mt)) == CV_ERROR) {
+  if ( (mathobj->fitLeastSquares(numberOfSamples,xt,xOrder,yt,yOrder,mt)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in least squares fit", TCL_VOLATILE );
       mathobj->deleteArray(xt,numberOfSamples,xOrder);
       mathobj->deleteArray(yt,numberOfSamples,yOrder);
@@ -975,7 +975,7 @@ int Math_smoothCurveCmd( ClientData clientData, Tcl_Interp *interp,
   //}
 
   double **outPts = NULL;
-  if ((mathobj->smoothCurve(pts, nlistpts, closed, numModes, numInterpPoints, &outPts)) == CV_ERROR) {
+  if ((mathobj->smoothCurve(pts, nlistpts, closed, numModes, numInterpPoints, &outPts)) == SV_ERROR) {
      Tcl_SetResult( interp, "error in smoothing curve", TCL_VOLATILE );
      ARG_FreeListArgvs( table_sz, arg_table );
      delete indpts;

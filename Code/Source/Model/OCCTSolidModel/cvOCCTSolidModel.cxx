@@ -220,10 +220,10 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
   cvOCCTSolidModel *solidPtr;
 
   if (geom_ != NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (src.GetKernelT() != SM_KT_OCCT) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   Handle(TDocStd_Document) doc;
@@ -248,16 +248,16 @@ int cvOCCTSolidModel::Copy(const cvSolidModel& src )
       TopoDS_Face newFace = TopoDS::Face(newExp.Current());
 
       if (OCCTUtils_PassFaceAttributes(oldFace,newFace,shapetool_,
-	    *(solidPtr->shapelabel_),*shapelabel_) != CV_OK)
+	    *(solidPtr->shapelabel_),*shapelabel_) != SV_OK)
       {
 	fprintf(stderr,"Could not pass face attributes to copy\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
     }
 
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----
@@ -320,7 +320,7 @@ int cvOCCTSolidModel::MakeBox3d( double dims[], double ctr[])
   *geom_ = boxmaker.Shape();
   this->AddShape();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------
@@ -340,7 +340,7 @@ int cvOCCTSolidModel::MakeSphere( double r, double ctr[])
   *geom_ = spheremaker.Shape();
   this->AddShape();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -----------
@@ -367,7 +367,7 @@ int cvOCCTSolidModel::MakeCylinder( double r, double length, double ctr[],
   *geom_ = cylindermaker.Shape();
   this->AddShape();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -382,7 +382,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   //  this->RemoveShape();
 
   //if ( numCurves < 2 ) {
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
 
   //cvOCCTSolidModel *shapePtr;
@@ -419,7 +419,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   //for ( int i = 0; i < numCurves; i++ ) {
   //  if ( curves[i]->GetKernelT() != SM_KT_OCCT ) {
   //    fprintf(stderr,"Solid kernel should be OCCT\n");
-  //    return CV_ERROR;
+  //    return SV_ERROR;
   //  }
   //  shapePtr = (cvOCCTSolidModel *) curves[i];
 
@@ -433,7 +433,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   //catch (Standard_Failure)
   //{
   //  fprintf(stderr,"Failure in lofting\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
 
   //this->NewShape();
@@ -445,17 +445,17 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
   //catch (StdFail_NotDone)
   //{
   //  fprintf(stderr,"Difficulty in lofting, try changing parameters\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
   //this->AddShape();
 
-  //return CV_OK;
+  //return SV_OK;
 
   if (geom_ != NULL)
     this->RemoveShape();
 
   if ( numCurves < 2 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   cvOCCTSolidModel *shapePtr;
@@ -467,18 +467,18 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
     {
       delete [] bcurves;
       fprintf(stderr,"Curves must be of type OCCT\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     shapePtr = (cvOCCTSolidModel *) curves[i];
     bcurves[i] = TopoDS::Wire(*(shapePtr->geom_));
   }
   this->NewShape();
   if (OCCTUtils_MakeLoftedSurf(bcurves,*geom_,numCurves,continuity,partype,
-        		  w1,w2,w3,smoothing) != CV_OK)
+        		  w1,w2,w3,smoothing) != SV_OK)
   {
     delete [] bcurves;
     fprintf(stderr,"Error while lofting surface\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   this->AddShape();
@@ -495,7 +495,7 @@ int cvOCCTSolidModel::MakeLoftedSurf( cvSolidModel **curves, int numCurves,
 
   fprintf(stdout,"Lofting Vessel Done\n");
   delete [] bcurves;
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -511,13 +511,13 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
 
   // We're assuming / requiring that the given cvPolyData describes a
   // closed loop.  Get those points in their connected order.
-  if ( sys_geom_GetOrderedPts( pd, &ord_pts, &num_pts ) != CV_OK ) {
-    return CV_ERROR;
+  if ( sys_geom_GetOrderedPts( pd, &ord_pts, &num_pts ) != SV_OK ) {
+    return SV_ERROR;
   }
 
   if ( num_pts < 3 ) {
     delete [] ord_pts;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   Handle(TColgp_HArray1OfPnt) hArray =
@@ -542,7 +542,7 @@ int cvOCCTSolidModel::MakeInterpCurveLoop( cvPolyData *pd, int closed)
   *geom_ = wiremaker.Shape();
   this->AddShape();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -560,10 +560,10 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   int numFilled=0;
   BRepBuilderAPI_Sewing attacher;
   this->NewShape();
-  if (OCCTUtils_CapShapeToSolid(shape,*geom_,attacher,numFilled) != CV_OK)
+  if (OCCTUtils_CapShapeToSolid(shape,*geom_,attacher,numFilled) != SV_OK)
   {
     fprintf(stderr,"Error capping shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   this->AddShape();
 
@@ -598,18 +598,18 @@ int cvOCCTSolidModel::CapSurfToSolid( cvSolidModel *surf)
   }
 
   int issue=0;
-  if (OCCTUtils_CheckIsSolid(*geom_,issue) != CV_OK)
+  if (OCCTUtils_CheckIsSolid(*geom_,issue) != SV_OK)
   {
     fprintf(stderr,"Shape is not solid after cap\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (issue != 0)
   {
     fprintf(stderr,"Shape is not solid after cap\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -623,21 +623,21 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   cvOCCTSolidModel *occtPtrB;
 
   if (geom_ != NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   //Need both objects to create a union
   if (a == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (a->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (b == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (b->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   occtPtrA = (cvOCCTSolidModel *)( a );
@@ -666,10 +666,10 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
       }
     }
@@ -689,10 +689,10 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
       }
     }
@@ -704,7 +704,7 @@ int cvOCCTSolidModel::Union( cvSolidModel *a, cvSolidModel *b,
   //fprintf(stderr,"HAS MODIFIED? %d\n",unionOCCT.HasModified());
   //fprintf(stderr,"HAS DELETED? %d\n",unionOCCT.HasDeleted());
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -717,21 +717,21 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
   cvOCCTSolidModel *occtPtrB;
 
   if (geom_ != NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   //Need both objects to create an intersection
   if (a == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (a->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (b == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (b->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   occtPtrA = (cvOCCTSolidModel *)( a );
@@ -760,10 +760,10 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
       }
     }
@@ -783,16 +783,16 @@ int cvOCCTSolidModel::Intersect( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
       }
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -805,21 +805,21 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
   cvOCCTSolidModel *occtPtrB;
 
   if (geom_ != NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   //Need both objects to create a subtraction
   if (a == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (a->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (b == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
   if (b->GetKernelT() != SM_KT_OCCT ) {
     fprintf(stderr,"Model not of type OCCT\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   occtPtrA = (cvOCCTSolidModel *)( a );
@@ -848,10 +848,10 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
       }
     }
@@ -871,16 +871,16 @@ int cvOCCTSolidModel::Subtract( cvSolidModel *a, cvSolidModel *b,
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
       }
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -893,7 +893,7 @@ cvPolyData *cvOCCTSolidModel::GetPolyData(int useMaxDist, double max_dist) const
   if (geom_ == NULL)
   {
     fprintf(stderr,"Solid is null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   cvPolyData *result;
   vtkPolyData *pd;
@@ -935,16 +935,16 @@ int cvOCCTSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   if (geom_ == NULL)
   {
     fprintf(stderr,"Solid is null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (OCCTUtils_GetFaceIds(*geom_,shapetool_,*shapelabel_, numFaces,faceIds) != CV_OK)
+  if (OCCTUtils_GetFaceIds(*geom_,shapetool_,*shapelabel_, numFaces,faceIds) != SV_OK)
   {
     fprintf(stderr,"Error in retrieving Ids\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -956,7 +956,7 @@ int cvOCCTSolidModel::GetFaceAttribute (char *attr,int faceid,char **value)
   if (geom_ == NULL)
   {
     fprintf(stderr,"solid is null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int found =0;
@@ -968,10 +968,10 @@ int cvOCCTSolidModel::GetFaceAttribute (char *attr,int faceid,char **value)
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,id);
     if (id == faceid)
     {
-      if (OCCTUtils_GetFaceAttribute(tmpFace,shapetool_,*shapelabel_,attr,value) != CV_OK)
+      if (OCCTUtils_GetFaceAttribute(tmpFace,shapetool_,*shapelabel_,attr,value) != SV_OK)
       {
 	fprintf(stderr,"Could not get face attribute\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
       found=1;
     }
@@ -980,10 +980,10 @@ int cvOCCTSolidModel::GetFaceAttribute (char *attr,int faceid,char **value)
   if (found == 0)
   {
     fprintf(stderr,"Face not found on shape, so attribute cannot be found\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ------------
@@ -994,7 +994,7 @@ int cvOCCTSolidModel::SetFaceAttribute (char *attr,int faceid,char *value)
   if (geom_ == NULL)
   {
     fprintf(stderr,"solid is null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int found =0;
@@ -1006,10 +1006,10 @@ int cvOCCTSolidModel::SetFaceAttribute (char *attr,int faceid,char *value)
     OCCTUtils_GetFaceLabel(tmpFace,shapetool_,*shapelabel_,id);
     if (id == faceid)
     {
-      if (OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,attr,value) != CV_OK)
+      if (OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,attr,value) != SV_OK)
       {
 	fprintf(stderr,"Could not set face attribute\n");
-	return CV_ERROR;
+	return SV_ERROR;
       }
       found=1;
     }
@@ -1018,11 +1018,11 @@ int cvOCCTSolidModel::SetFaceAttribute (char *attr,int faceid,char *value)
   if (found == 0)
   {
     fprintf(stderr,"Face not found on shape, so attribute cannot be set\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1033,7 +1033,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
   if (geom_ == NULL)
   {
     fprintf(stderr,"Solid is null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   cvPolyData *result;
   vtkPolyData *pd;
@@ -1061,7 +1061,7 @@ cvPolyData *cvOCCTSolidModel::GetFacePolyData(int faceid, int useMaxDist, double
 
   if (!foundFace) {
     fprintf(stderr,"ERROR: face not found!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //const TopoDS_Face& useFace = TopoDS::Face (anExp.Current());
@@ -1132,7 +1132,7 @@ int cvOCCTSolidModel::MakeEllipsoid( double r[], double ctr[])
   *geom_ = facemaker.Shape();
   this->AddShape();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1143,7 +1143,7 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
   if (geom_ == NULL)
   {
     fprintf(stderr,"Solid is null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int *deleteFace = new int[numFaces_];
@@ -1166,7 +1166,7 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
    if (faceId == -1)
    {
      fprintf(stderr,"Face not found\n");
-     return CV_ERROR;
+     return SV_ERROR;
    }
    if (deleteFace[faceId] == 1) {
      BRepTools_ReShape remover;
@@ -1186,7 +1186,7 @@ int cvOCCTSolidModel::DeleteFaces(int numfaces, int *faces )
   //this->AddShape();
 
   delete [] deleteFace;
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1197,7 +1197,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
   if (geom_ == NULL)
   {
     fprintf(stderr,"Solid is Null\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   //Fillet shape can be three things
@@ -1207,7 +1207,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
   if ((filletshape < 0) || (filletshape > 2))
   {
     fprintf(stderr,"Invalid shape type\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   TopoDS_Shape geomtmp = *geom_;
@@ -1215,10 +1215,10 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
   char blendname[255];
   BRepFilletAPI_MakeFillet filletmaker(geompass,(ChFi3d_FilletShape) filletshape);
   if (OCCTUtils_CreateEdgeBlend(geompass,shapetool_,*shapelabel_,
-	filletmaker,faceA,faceB,radius,blendname) != CV_OK)
+	filletmaker,faceA,faceB,radius,blendname) != SV_OK)
   {
     fprintf(stderr,"Fillet creation didn't complete\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   this->RemoveShape();
   this->NewShape();
@@ -1238,10 +1238,10 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
       {
         TopoDS_Face newFace = TopoDS::Face(modFaceIt.Value());
 	if (OCCTUtils_PassFaceAttributes(oldFace,newFace,
-	      shapetool_,*shapelabel_,*shapelabel_) != CV_OK)
+	      shapetool_,*shapelabel_,*shapelabel_) != SV_OK)
 	{
 	  fprintf(stderr,"Could not pass face info\n");
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 	fprintf(stderr,"Also checking masses\n");
       	GProp_GProps oldFaceProps;
@@ -1285,7 +1285,7 @@ int cvOCCTSolidModel::CreateEdgeBlend(int faceA, int faceB, double radius, int f
   }
 
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1312,7 +1312,7 @@ int cvOCCTSolidModel::ReadNative( char *filename )
     else
     {
       fprintf(stderr,"File was not read\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     this->AddShape();
   }
@@ -1348,10 +1348,10 @@ int cvOCCTSolidModel::ReadNative( char *filename )
   }
   else {
     fprintf(stderr,"File can only be read with .brep extension\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1362,7 +1362,7 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
   if (geom_ == NULL)
   {
     fprintf(stderr,"Need geometry to write file\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   const char *extension = strrchr(filename,'.');
   extension = extension+1;
@@ -1377,7 +1377,7 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
     else
     {
       fprintf(stderr,"File was not written\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else if (!strncmp(extension,"step",4)) {
@@ -1389,7 +1389,7 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
     if (ret == IFSelect_RetError || ret == IFSelect_RetFail || ret == IFSelect_RetStop)
     {
       fprintf(stderr,"File could not be opened\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   else if (!strncmp(extension,"iges",4)) {
@@ -1410,10 +1410,10 @@ int cvOCCTSolidModel::WriteNative(int file_version, char *filename ) const
   }
   else {
     fprintf(stderr,"File type not excepted\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1424,7 +1424,7 @@ int cvOCCTSolidModel::RegisterShapeFaces()
   if (geom_ == NULL)
   {
     fprintf(stderr,"Geometry is NULL, cannot register faces\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   TopExp_Explorer FaceExp;
   FaceExp.Init(*geom_,TopAbs_FACE);
@@ -1435,7 +1435,7 @@ int cvOCCTSolidModel::RegisterShapeFaces()
     AddFaceLabel(tmpFace,faceid);
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1448,18 +1448,18 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
   if (shape.IsNull())
   {
     fprintf(stderr,"Face is NULL, cannot add\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   int checkid=-1;
   OCCTUtils_GetFaceLabel(shape,shapetool_,*shapelabel_,checkid);
   if (checkid != -1)
   {
-    if (OCCTUtils_ReLabelFace(shape,shapetool_,*shapelabel_,id) != CV_OK)
+    if (OCCTUtils_ReLabelFace(shape,shapetool_,*shapelabel_,id) != SV_OK)
     {
       fprintf(stderr,"Face has no label, which doesn't make sense\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
-    return CV_OK;
+    return SV_OK;
   }
   ////Create or find child label with a tag
   //TDF_Label topoLabels=shapelabel_->FindChild(topotype,Standard_True);
@@ -1472,7 +1472,7 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
   if (tmpLabel.IsNull())
   {
     fprintf(stderr,"Face is not part of shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   TNaming_Builder builder(tmpLabel);
   builder.Generated(shape);
@@ -1504,7 +1504,7 @@ int cvOCCTSolidModel::AddFaceLabel(TopoDS_Shape &shape, int &id)
   TDataStd_Name::Set(idLabel,"PARENT");
   OCCTUtils_SetExtStringArrayFromChar(PSTRING,"noparent");
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1518,7 +1518,7 @@ int cvOCCTSolidModel::NewShape()
   geom_ = new TopoDS_Shape;
   shapelabel_ = new TDF_Label;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1527,13 +1527,13 @@ int cvOCCTSolidModel::NewShape()
 int cvOCCTSolidModel::AddShape()
 {
   if (geom_ == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   *shapelabel_ = shapetool_->NewShape();
   shapetool_->SetShape(*shapelabel_,*geom_);
   this->RegisterShapeFaces();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1546,7 +1546,7 @@ int cvOCCTSolidModel::RemoveShape()
     if (shapelabel_->IsNull())
     {
       fprintf(stderr,"Shape was not regsitered, cannot remove\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     //Want to remove shape, but shape isn't being copied over correctly
     //Full shape info for new shape cannot be retrieved if removed currently
@@ -1566,10 +1566,10 @@ int cvOCCTSolidModel::RemoveShape()
   else
   {
       fprintf(stderr,"Shape has already been deleted, cannot remove\n");
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // -------------------
@@ -1638,7 +1638,7 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
   catch (Standard_ConstructionError)
   {
     fprintf(stderr,"Construction Error\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   BRepBuilderAPI_MakeShell shellBuilder(aSurf);
@@ -1665,10 +1665,10 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
   }
 
   Standard_Real pres3d = 1.0e-6;
-  if (OCCTUtils_ShapeFromBSplineSurface(surface,*geom_,wires[0],wires[1],pres3d) != CV_OK)
+  if (OCCTUtils_ShapeFromBSplineSurface(surface,*geom_,wires[0],wires[1],pres3d) != SV_OK)
   {
     fprintf(stderr,"Error in conversion from bspline surface to shape\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   //TopoDS_Face firstFace,lastFace;
   //*geom_ = OCCTUtils_MakeSolid(shellBuilder.Shell(),wires[0],wires[1],firstFace,lastFace,pres3d);
@@ -1683,7 +1683,7 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
     OCCTUtils_SetFaceAttribute(tmpFace,shapetool_,*shapelabel_,"gdscName","wall");
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ---------------
@@ -1692,7 +1692,7 @@ int cvOCCTSolidModel::CreateBSplineSurface(double **CX,double **CY,double **CZ,
 int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
 {
   if (pd == NULL)
-    return CV_ERROR;
+    return SV_ERROR;
 
   if (VtkUtils_PDCheckArrayName(pd,1,"MESH_TYPES"))
   {
@@ -1730,6 +1730,6 @@ int cvOCCTSolidModel::GetOnlyPD(vtkPolyData *pd,double &max_dist) const
     //fprintf(stderr,"Num Points now! %d\n",pd->GetNumberOfPoints());
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 

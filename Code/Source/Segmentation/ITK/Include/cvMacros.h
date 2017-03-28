@@ -40,10 +40,10 @@
 #define cvGetRepoObjMacro(name,type)																\
 		virtual inline int Get##name(type **value){ 											\
 			if(m_cv##name == NULL){ 															\
-				return 0; 																		\
+                                return SV_ERROR; 																		\
 			} else { 																			\
 				*value = m_cv##name;															\
-				return 1; 																		\
+                                return SV_OK; 																		\
 			} 																					\
 		}																						\
 
@@ -55,7 +55,7 @@
 			}																					\
 			m_cv##name = new cvtype ( (baseType*)value->GetVtkPtr() );							\
 			m_cv##name->SetName( value->GetName() ); 											\
-			return 1;																			\
+                        return SV_OK;																			\
 		}																						\
 
 

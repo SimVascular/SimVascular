@@ -53,11 +53,11 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     vtkSmartPointer<vtkIntArray>::New();
   vtkSmartPointer<vtkIntArray> refineIDs =
     vtkSmartPointer<vtkIntArray>::New();
-  if (VtkUtils_PDCheckArrayName(polydatasolid,1,"ModelFaceID") != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid,1,"ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified");
     fprintf(stderr," and named 'ModelFaceID' prior to this function call\n");
-    return CV_OK;
+    return SV_OK;
   }
   boundaryScalars = vtkIntArray::SafeDownCast(polydatasolid->GetCellData()->GetArray("ModelFaceID"));
   double minmax[2];
@@ -67,7 +67,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   if (useSizingFunction && meshSizingFunction == NULL)
   {
     fprintf(stderr,"Cannot use sizing function without a function!");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   vtkSmartPointer<vtkSVFindSeparateRegions> separator =
     vtkSmartPointer<vtkSVFindSeparateRegions>::New();
@@ -78,10 +78,10 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   polydatasolid->DeepCopy(separator->GetOutput());
 
   vtkSmartPointer<vtkEdgeTable> ridges = vtkSmartPointer<vtkEdgeTable>::New();
-  if (MMGUtils_BuildRidgeTable(polydatasolid, ridges, "ModelFaceBoundaryPts") != CV_OK)
+  if (MMGUtils_BuildRidgeTable(polydatasolid, ridges, "ModelFaceBoundaryPts") != SV_OK)
   {
     fprintf(stderr,"Problem creating ridge table from ModelFaceID boundaries");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   int numPts   = polydatasolid->GetNumberOfPoints();
@@ -89,17 +89,17 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   int numEdges = ridges->GetNumberOfEdges();
   int *faces;
   int numFaces = 0;
-  if (PlyDtaUtils_GetFaceIds(polydatasolid,&numFaces,&faces) != CV_OK)
+  if (PlyDtaUtils_GetFaceIds(polydatasolid,&numFaces,&faces) != SV_OK)
   {
     fprintf(stderr,"Could not get face ids\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (numAddedRefines != 0)
   {
-    if (VtkUtils_PDCheckArrayName(polydatasolid,0,"RefineID") != CV_OK)
+    if (VtkUtils_PDCheckArrayName(polydatasolid,0,"RefineID") != SV_OK)
     {
       fprintf(stderr,"Array %s does not exist on mesh\n","RefineID");
-      return CV_ERROR;
+      return SV_ERROR;
     }
     refineIDs = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray("RefineID"));
   }
@@ -108,42 +108,42 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   if (!MMGS_Set_iparameter(mesh, sol, MMGS_IPARAM_numberOfLocalParam, numSizes))
   {
     fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmax, hmax))
   //{
   //  fprintf(stderr,"Error in mmgs\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
   //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hmin, hmin))
   //{
   //  fprintf(stderr,"Error in mmgs\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
   //if (!MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hgrad, hgrad))
   //{
   //  fprintf(stderr,"Error in mmgs\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
   //if ( !MMGS_Set_dparameter(mesh, sol, MMGS_DPARAM_hausd, hausd))
   //{
   //  fprintf(stderr,"Error in mmgs\n");
-  //  return CV_ERROR;
+  //  return SV_ERROR;
   //}
   if (!MMGS_Set_meshSize(mesh, numPts, numTris, numEdges))
   {
     fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (!MMGS_Set_solSize(mesh, sol, MMG5_Vertex, numPts, MMG5_Scalar))
   {
     fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (!MMGS_Set_iparameter(mesh, sol, MMGS_IPARAM_angle,0))
   {
     fprintf(stderr,"Error in mmgs\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   MMG5_pPoint ppt;
@@ -174,7 +174,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     if (!MMGS_Set_scalarSol(sol, ptsize, i+1))
     {
       fprintf(stderr,"Error in mmgs\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
@@ -217,7 +217,7 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     if (!MMGS_Set_localParameter(mesh, sol, MMG5_Triangle, tria->ref, newmin, newmax, hausd))
     {
       fprintf(stderr,"Error in mmgs\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   MMG5_pEdge edge;
@@ -234,11 +234,11 @@ int MMGUtils_ConvertToMMG(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
     if (!MMGS_Set_ridge(mesh, i+1))
     {
       fprintf(stderr,"Error in mmgs\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatasolid)
@@ -303,7 +303,7 @@ int MMGUtils_ConvertToVTK(MMG5_pMesh mesh, MMG5_pSol sol, vtkPolyData *polydatas
   polydatasolid->BuildCells();
   polydatasolid->BuildLinks();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, double hausd, double angle, double hgrad, int useSizingFunction, vtkDoubleArray *meshSizingFunction, int numAddedRefines)
@@ -318,7 +318,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   if (hmax < hmin)
   {
     fprintf(stderr,"Max edge size is smaller than min edge size!\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   MMG5_pMesh mesh;
   MMG5_pSol  sol;
@@ -335,13 +335,13 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   surface->BuildCells();
   surface->BuildLinks();
   if (MMGUtils_ConvertToMMG(mesh, sol, surface, hmin, hmax,
-	hausd, angle, hgrad, useSizingFunction, meshSizingFunction, numAddedRefines) != CV_OK)
+	hausd, angle, hgrad, useSizingFunction, meshSizingFunction, numAddedRefines) != SV_OK)
   {
     fprintf(stderr,"Error converting to MMG\n");
     MMGS_Free_all(MMG5_ARG_start,
 		  MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
 		  MMG5_ARG_end);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if (MMGS_Chk_meshData(mesh,sol) != 1)
@@ -350,7 +350,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
     MMGS_Free_all(MMG5_ARG_start,
 		  MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
 		  MMG5_ARG_end);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   fprintf(stderr,"Remeshing surface with MMG...\n");
@@ -361,51 +361,51 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
   catch (int ier)
   {
     fprintf(stderr,"Remeshing exited with status ier %d...\n",ier);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   vtkPolyData *pd = vtkPolyData::New();
 
-  if (MMGUtils_ConvertToVTK(mesh, sol, pd) != CV_OK)
+  if (MMGUtils_ConvertToVTK(mesh, sol, pd) != SV_OK)
   {
     fprintf(stderr,"Error converting to VTK\n");
     MMGS_Free_all(MMG5_ARG_start,
 		  MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
 		  MMG5_ARG_end);
     pd->Delete();
-    return CV_ERROR;
+    return SV_ERROR;
   }
-  if (MMGUtils_PassCellArray(pd, surface, "ModelFaceID", "ModelFaceID") != CV_OK)
+  if (MMGUtils_PassCellArray(pd, surface, "ModelFaceID", "ModelFaceID") != SV_OK)
   {
     fprintf(stderr,"Error resetting regions\n");
     MMGS_Free_all(MMG5_ARG_start,
 		  MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
 		  MMG5_ARG_end);
     pd->Delete();
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if (useSizingFunction)
   {
-    if (MMGUtils_PassPointArray(pd, surface, "MeshSizingFunction", "MeshSizingFunction") != CV_OK)
+    if (MMGUtils_PassPointArray(pd, surface, "MeshSizingFunction", "MeshSizingFunction") != SV_OK)
     {
       fprintf(stderr,"Error resetting regions\n");
       MMGS_Free_all(MMG5_ARG_start,
 		    MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
 		    MMG5_ARG_end);
       pd->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
     }
   }
   if (VtkUtils_PDCheckArrayName(surface,1,"WallID"))
   {
-    if (MMGUtils_PassCellArray(pd,surface,"WallID","WallID") != CV_OK)
+    if (MMGUtils_PassCellArray(pd,surface,"WallID","WallID") != SV_OK)
     {
       fprintf(stderr,"Error passing walls\n");
       MMGS_Free_all(MMG5_ARG_start,
 		    MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
 		    MMG5_ARG_end);
       pd->Delete();
-      return CV_ERROR;
+      return SV_ERROR;
     }
     vtkSmartPointer<vtkThreshold> thresholder =
       vtkSmartPointer<vtkThreshold>::New();
@@ -444,7 +444,7 @@ int MMGUtils_SurfaceRemeshing(vtkPolyData *surface, double hmin, double hmax, do
         	MMG5_ARG_ppMesh,&mesh,MMG5_ARG_ppMet,&sol,
         	MMG5_ARG_end);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int MMGUtils_PassCellArray(vtkPolyData *newgeom,
@@ -476,11 +476,11 @@ int MMGUtils_PassCellArray(vtkPolyData *newgeom,
   locator->SetDataSet(originalgeom);
   locator->BuildLocator();
 
-  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(originalgeom,1,originalName) != SV_OK)
   {
     fprintf(stderr,"Array name 'ModelFaceID' does not exist. Regions must be identified \
 		    and named 'ModelFaceID' prior to this function call\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   realRegions = static_cast<vtkIntArray*>(originalgeom->GetCellData()->GetScalars(originalName.c_str()));
@@ -518,7 +518,7 @@ int MMGUtils_PassCellArray(vtkPolyData *newgeom,
   newgeom->GetCellData()->SetActiveScalars(originalName.c_str());
 
   delete [] mapper;
-  return CV_OK;
+  return SV_OK;
 }
 
 int MMGUtils_PassPointArray(vtkPolyData *newgeom,
@@ -539,10 +539,10 @@ int MMGUtils_PassPointArray(vtkPolyData *newgeom,
 
   numVerts = newgeom->GetNumberOfPoints();
 
-  if (VtkUtils_PDCheckArrayName(originalgeom,0,originalName) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(originalgeom,0,originalName) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",originalName.c_str());
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   inArray = vtkDoubleArray::SafeDownCast(originalgeom->GetPointData()->GetArray(originalName.c_str()));
@@ -569,16 +569,16 @@ int MMGUtils_PassPointArray(vtkPolyData *newgeom,
 
   newgeom->GetPointData()->AddArray(outArray);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, std::string ridgePtArrayName)
 {
   vtkIntArray *ridgePtArray;
-  if (VtkUtils_PDCheckArrayName(polydatasolid,0,ridgePtArrayName) != CV_OK)
+  if (VtkUtils_PDCheckArrayName(polydatasolid,0,ridgePtArrayName) != SV_OK)
   {
     fprintf(stderr,"Array %s does not exist on mesh\n",ridgePtArrayName.c_str());
-    return CV_ERROR;
+    return SV_ERROR;
   }
   ridgePtArray = vtkIntArray::SafeDownCast(polydatasolid->GetPointData()->GetArray(ridgePtArrayName.c_str()));
 
@@ -605,5 +605,5 @@ int MMGUtils_BuildRidgeTable(vtkPolyData *polydatasolid, vtkEdgeTable *ridges, s
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }

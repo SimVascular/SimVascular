@@ -251,7 +251,7 @@ int LinInterp1D_dbl( double domA, double domB,
   factor = ( domTarget - domA ) / domDelta;
   *rangeTarget = rangeA + ( factor * rangeDelta );
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

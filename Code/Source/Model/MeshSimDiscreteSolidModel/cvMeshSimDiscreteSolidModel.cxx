@@ -101,7 +101,7 @@ void cvMeshSimDiscreteSolidModel::Print() const
 int cvMeshSimDiscreteSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
   if ( geom_ == NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
 
@@ -118,7 +118,7 @@ int cvMeshSimDiscreteSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
 
   *numFaces = num;
 
-  if (num == 0) return CV_ERROR;
+  if (num == 0) return SV_ERROR;
 
   (*faceIds) = new int [num];
 
@@ -129,7 +129,7 @@ int cvMeshSimDiscreteSolidModel::GetFaceIds (int *numFaces, int **faceIds) {
   }  
   GFIter_delete(myFiter);
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -313,13 +313,13 @@ int cvMeshSimDiscreteSolidModel::ReadNative( char *filename )
 {
  
   if (geom_ != NULL) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // read discrete model
   geom_ = DM_load(filename, progress_);
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -329,11 +329,11 @@ int cvMeshSimDiscreteSolidModel::ReadNative( char *filename )
 
 int cvMeshSimDiscreteSolidModel::WriteNative( int file_version, char *filename ) const
 {
-  if ( geom_ == NULL ) return CV_ERROR;
+  if ( geom_ == NULL ) return SV_ERROR;
 
   DM_write(geom_,filename,file_version,progress_);
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -351,7 +351,7 @@ cvPolyData *cvMeshSimDiscreteSolidModel::GetPolyData(int useMaxDist, double max_
   cvPolyData *result;
  
   if ( geom_ == NULL ) return NULL;
-  if ( DiscreteUtils_GetVtkPolyData( geom_, useMaxDist, max_dist, &bound ) != CV_OK ) {
+  if ( DiscreteUtils_GetVtkPolyData( geom_, useMaxDist, max_dist, &bound ) != SV_OK ) {
     return NULL;
   }
  
@@ -368,16 +368,16 @@ int cvMeshSimDiscreteSolidModel::MakePoly3dSolid( cvPolyData *pd , double angle 
   int code;
 
   if ( geom_ != NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   code = DiscreteUtils_MakePoly3dSolidVtk( pd->GetVtkPolyData(), 0, angle, &geom_);
-  if ( code != CV_OK ) {
+  if ( code != SV_OK ) {
     this->Clear();
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

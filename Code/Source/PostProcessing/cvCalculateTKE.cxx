@@ -99,7 +99,7 @@ int cvCalculateTKE::SetInputData(int numPds, cvPolyData **inputPds) {
 
     points_=inputPds[0]->GetVtkPolyData()->GetPoints();
 
-    return CV_OK; 
+    return SV_OK; 
 
 }
 
@@ -134,7 +134,7 @@ int cvCalculateTKE::CalculateAverageVelocity() {
         averageU_->InsertNextTuple3(v0,v1,v2);
     }
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -185,7 +185,7 @@ int cvCalculateTKE::CalculateTKE() {
         KE_->InsertNextTuple1(s);
     }
 
-    return CV_OK;
+    return SV_OK;
 
 }
 

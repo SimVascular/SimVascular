@@ -411,7 +411,7 @@ int vtkGenerateFeatureImage(vtkStructuredPoints* vtkInputImage,
 	ImgInfo outInfo = ImgInfo(vtkInputImage);
 	itk2vtkRecastAndRescale<TImageType,TExternalImageType>(tempImg2,vtkOuputImage,&outInfo);
 
-	return 1;
+        return SV_OK;
 }
 
 template <typename TImageType,typename TExternalImageType>
@@ -430,7 +430,7 @@ int vtkGenerateFeatureImageNoGrad(vtkStructuredPoints* vtkInputImage,
 	ImgInfo outInfo = ImgInfo(vtkInputImage);
 	itk2vtkRecastAndRescale<TImageType,TExternalImageType>(tempImg2,vtkOuputImage,&outInfo);
 
-	return 1;
+        return SV_OK;
 }
 
 template <typename TImageType,typename TExternalImageType>
@@ -449,7 +449,7 @@ int vtkGenerateFeatureImageDistance(vtkStructuredPoints* vtkInputImage,
 	ImgInfo outInfo = ImgInfo(vtkInputImage);
 	itk2vtkRecastAndRescale<TImageType,TExternalImageType>(tempImg2,vtkOuputImage,&outInfo);
 
-	return 1;
+        return SV_OK;
 }
 
 template <typename TImageType,typename TExternalImageType>
@@ -468,7 +468,7 @@ int vtkGenerateEdgeProxImage(vtkStructuredPoints* vtkInputImage,
 	ImgInfo outInfo = ImgInfo(vtkInputImage);
 	itk2vtkRecastAndRescale<TImageType,TExternalImageType>(tempImg2,vtkOuputImage,&outInfo);
 
-	return 1;
+        return SV_OK;
 }
 
 template <typename TImageType,typename TExternalImageType>
@@ -487,7 +487,7 @@ int vtkGenerateFeatureImageThreshold(vtkStructuredPoints* vtkInputImage,
 	ImgInfo outInfo = ImgInfo(vtkInputImage);
 	itk2vtkRecastAndRescale<TImageType,TExternalImageType>(tempImg2,vtkOuputImage,&outInfo);
 
-	return 1;
+        return SV_OK;
 }
 
 template < typename TImageType, typename TExternalImageType >

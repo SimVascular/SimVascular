@@ -48,6 +48,6 @@ int img_threshold (vtkStructuredPoints *image, vtkFloatingPointType thrMin, vtkF
     //pd->Delete();
     throbj->Delete();
 
-    return CV_OK;
+    return SV_OK;
  
 }

@@ -78,9 +78,9 @@ int DiscreteUtils_Init()
   catch (...)
     {
       fprintf(stdout,"  ERROR in SimDiscrete_start.  Not available.\n");
-      return CV_ERROR;
+      return SV_ERROR;
     }
-  return CV_OK;
+  return SV_OK;
 }
 
  
@@ -145,7 +145,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPolyData,
   refDerefSurfMesh(mesh, 15, 90.01, 15, 165, 15, 15, 0, 0, 0);
   */
 
-  return CV_OK;
+  return SV_OK;
 }
 
 #else
@@ -214,10 +214,10 @@ int discreteCalcJacDet(double xx[2][4], double r, double s, double *determinant)
   if (det < 0.0) {
     //fprintf(stderr,"ERROR: Jacobian determinant negative! (%lf)\n"
     //     ,det);
-    return CV_ERROR;
+    return SV_ERROR;
   }  
 
-  return CV_OK;
+  return SV_OK;
 
 }
 
@@ -288,7 +288,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
 
      // calculate a sample determinant, and rearrange points 
      // if det. is negative.
-     if (discreteCalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
+     if (discreteCalcJacDet(xx,a[1],a[1],&det) == SV_ERROR) {
        numSwitched++;
        elementData[pos+0]=pts[2];
        elementData[pos+1]=pts[1];
@@ -301,7 +301,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
        xx[0][1]=v2[0] ; xx[1][1]=v2[1] ;
        xx[0][2]=v3[0] ; xx[1][2]=v3[1] ;
        xx[0][3]=v3[0] ; xx[1][3]=v3[1] ;
-       if (discreteCalcJacDet(xx,a[1],a[1],&det) == CV_ERROR) {
+       if (discreteCalcJacDet(xx,a[1],a[1],&det) == SV_ERROR) {
          numNegDet++;
        }
      }
@@ -313,7 +313,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
         delete [] elementData;
         delete [] elementType;
         delete [] coords;
-        return CV_ERROR;
+        return SV_ERROR;
      }
 
    }
@@ -333,7 +333,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
         delete [] coords;
 	delete [] eReturn;
         Progress_delete(progress);
-        return CV_ERROR;
+        return SV_ERROR;
   }
   Progress_delete(progress);
 
@@ -365,7 +365,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
       }
        fprintf(stdout,"nums: %i %i %i\n",numVerts,numEdges,numFaces);
        Progress_delete(progress);
-       return CV_ERROR;    
+       return SV_ERROR;    
   }
   Progress_delete(progress);
 
@@ -379,7 +379,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
 
     fprintf(stdout,"NOTE:  no ModelFaceID data for discrete model\n");
     
-    //return CV_ERROR;
+    //return SV_ERROR;
 
     progress = Progress_new();
     model = DM_createFromMesh(mesh,0,progress);
@@ -438,7 +438,7 @@ int DiscreteUtils_MakePoly3dSolidVtk( vtkPolyData *inputPD,
   
   *result = model;
  
-  return CV_OK;
+  return SV_OK;
 }
 
 #endif
@@ -549,7 +549,7 @@ int DiscreteUtils_GetVtkPolyData( pDiscreteModel model, int useMaxDist, double m
 
   *out = mycvPolyData;
 
-  return CV_OK;
+  return SV_OK;
 
 }
 

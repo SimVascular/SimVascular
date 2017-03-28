@@ -64,7 +64,7 @@ int cvLevelSetVelocityThreshold::SetBalloonF( double b )
 {
   balloonF_ = b;
   balloonFvalid_ = 1;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -75,10 +75,10 @@ int cvLevelSetVelocityThreshold::SetBalloonF( double b )
 int cvLevelSetVelocityThreshold::GetBalloonF( double *b )
 {
   if ( ! balloonFvalid_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *b = balloonF_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -89,10 +89,10 @@ int cvLevelSetVelocityThreshold::GetBalloonF( double *b )
 int cvLevelSetVelocityThreshold::SetThreshold( double t )
 {
   if ( t <= 0.0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   thr_ = t;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -103,10 +103,10 @@ int cvLevelSetVelocityThreshold::SetThreshold( double t )
 int cvLevelSetVelocityThreshold::GetThreshold( double *t )
 {
   if ( thr_ <= 0.0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *t = thr_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -117,12 +117,12 @@ int cvLevelSetVelocityThreshold::GetThreshold( double *t )
 int cvLevelSetVelocityThreshold::Valid()
 {
   if ( ! (this->cvLevelSetVelocity::Valid()) ) {
-    return 0;
+    return SV_ERROR;
   }
-  if ( image_ == NULL ) return 0;
-  if ( thr_ <= 0.0 ) return 0;
-  if ( ! balloonFvalid_ ) return 0;
-  return 1;
+  if ( image_ == NULL ) return SV_ERROR;
+  if ( thr_ <= 0.0 ) return SV_ERROR;
+  if ( ! balloonFvalid_ ) return SV_ERROR;
+  return SV_OK;
 }
 
 
@@ -132,7 +132,7 @@ int cvLevelSetVelocityThreshold::Valid()
 
 int cvLevelSetVelocityThreshold::StopCondition()
 {
-  return 0;
+  return SV_ERROR;
 
   // Old as of 2/6/00:
   // ---
@@ -145,10 +145,10 @@ int cvLevelSetVelocityThreshold::StopCondition()
     maxV = ls_->GetGrid()->GetMaxF();
     if ( maxV <= 0.0 ) {
       printf("STOP: curr maxV [%f]\n", maxV);
-      return 1;
+      return SV_OK;
     }
   }
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -164,12 +164,12 @@ int cvLevelSetVelocityThreshold::Evaluate( double pos[], double *f0, double *f1,
   double tmpF0;
   double mag;
 
-  if ( !Valid() ) return CV_ERROR;
-  if ( ls_->GetGrid()->InterpN( pos, n ) != CV_OK ) return CV_ERROR;
+  if ( !Valid() ) return SV_ERROR;
+  if ( ls_->GetGrid()->InterpN( pos, n ) != SV_OK ) return SV_ERROR;
 
   // Look up intensity gradient:
   if ( ! GetIntensity( image_, pos, &intensity ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( balloonF_ < 0.0 ) {
@@ -201,7 +201,7 @@ int cvLevelSetVelocityThreshold::Evaluate( double pos[], double *f0, double *f1,
     v[2] = n[2] * mag;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 

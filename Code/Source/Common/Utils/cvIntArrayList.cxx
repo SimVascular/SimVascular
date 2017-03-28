@@ -103,12 +103,12 @@ cvIntArrayList::~cvIntArrayList()
 int cvIntArrayList::Prepend( int elem )
 {
   if ( IsFull() ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   head_ = ( head_ - 1 + maxSize_ ) % maxSize_;
   arr_[head_] = elem;
   num_++;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -119,12 +119,12 @@ int cvIntArrayList::Prepend( int elem )
 int cvIntArrayList::Append( int elem )
 {
   if ( IsFull() ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   arr_[tail_] = elem;
   tail_ = ( tail_ + 1 ) % maxSize_;
   num_++;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -135,12 +135,12 @@ int cvIntArrayList::Append( int elem )
 int cvIntArrayList::RemoveFromHead( int *elem )
 {
   if ( IsEmpty() ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *elem = arr_[head_];
   head_ = ( head_ + 1 ) % maxSize_;
   num_--;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -151,12 +151,12 @@ int cvIntArrayList::RemoveFromHead( int *elem )
 int cvIntArrayList::RemoveFromTail( int *elem )
 {
   if ( IsEmpty() ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   tail_ = ( tail_ - 1 + maxSize_ ) % maxSize_;
   *elem = arr_[tail_];
   num_--;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -187,7 +187,7 @@ int cvIntArrayList::IsFull()
 int cvIntArrayList::InitIterator()
 {
   curr_ = head_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -199,9 +199,9 @@ int cvIntArrayList::InitIterator()
 int cvIntArrayList::GetNextElem( int *elem )
 {
   if ( curr_ == tail_ ) {
-    return 0;
+    return SV_ERROR;
   }
   *elem = arr_[curr_];
   curr_ = ( curr_ + 1 ) % maxSize_;
-  return 1;
+  return SV_OK;
 }

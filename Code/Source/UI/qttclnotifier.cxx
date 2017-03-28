@@ -120,7 +120,7 @@ int QtTclNotifier::WaitForEvent(Tcl_Time const* timePtr) {
     if (timeout == 0) {
       if (!QCoreApplication::hasPendingEvents()) {
 	// timeout 0 means "do not block". There are no events, so return without processing
-	return 0;
+        return SV_ERROR;
       }
     } else {
       // there are no events now, but maybe there will be some after we sleep the specified interval
@@ -129,7 +129,7 @@ int QtTclNotifier::WaitForEvent(Tcl_Time const* timePtr) {
   }
   // block if necessary until we have some events
   QCoreApplication::processEvents(QEventLoop::WaitForMoreEvents);
-  return 1;
+  return SV_OK;
 }
 
 // Singleton class implementation trick
@@ -155,7 +155,7 @@ QtTclNotifier::~QtTclNotifier() {}
 
 // we don't use the client data information for this notifier
 // This could be helpful for multi-thread support, though. TBD
-void* QtTclNotifier::InitNotifier() { return 0; }
+void* QtTclNotifier::InitNotifier() { return SV_ERROR; }
 void QtTclNotifier::FinalizeNotifier(ClientData) {}
 void QtTclNotifier::AlertNotifier(ClientData) {}
 

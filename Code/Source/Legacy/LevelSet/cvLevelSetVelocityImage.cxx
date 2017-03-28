@@ -62,15 +62,15 @@ cvLevelSetVelocityImage::~cvLevelSetVelocityImage()
 int cvLevelSetVelocityImage::SetImage( Image_T *i, int closed )
 {
   if ( image_ != NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else if ( i == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     image_ = i;
     ComputeImageGrad( image_ );
     SetImageClosed( image_, closed );
     PostSetImageAction();
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -86,7 +86,7 @@ int cvLevelSetVelocityImage::SetImage( char *filebase, int fileNumRange[], int i
 
   tmp = ReadImage( filebase, fileNumRange, "-short", imgDims, pixDims );
   if ( tmp == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( image_ ) {
     ClearImage();
@@ -95,7 +95,7 @@ int cvLevelSetVelocityImage::SetImage( char *filebase, int fileNumRange[], int i
   ComputeImageGrad( image_ );
   SetImageClosed( image_, closed );
   PostSetImageAction();
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -114,7 +114,7 @@ int cvLevelSetVelocityImage::SetImage( short *imgData, int numData, int imgDims[
 
   tmp = CreateImage( imgData, numData, "-short", imgDims, pixDims );
   if ( tmp == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   SetLowerLeft( tmp, origin );
   if ( image_ ) {
@@ -124,7 +124,7 @@ int cvLevelSetVelocityImage::SetImage( short *imgData, int numData, int imgDims[
   ComputeImageGrad( image_ );
   SetImageClosed( image_, closed );
   PostSetImageAction();
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -139,7 +139,7 @@ int cvLevelSetVelocityImage::SetImage( double *imgData, int numData, int imgDims
 
   tmp = CreateImage( imgData, numData, "-double", imgDims, pixDims );
   if ( tmp == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   SetLowerLeft( tmp, origin );
   if ( image_ ) {
@@ -149,7 +149,7 @@ int cvLevelSetVelocityImage::SetImage( double *imgData, int numData, int imgDims
   ComputeImageGrad( image_ );
   SetImageClosed( image_, closed );
   PostSetImageAction();
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -164,7 +164,7 @@ int cvLevelSetVelocityImage::SetImage( float *imgData, int numData, int imgDims[
 
   tmp = CreateImage( (void*)imgData, numData, "-float", imgDims, pixDims );
   if ( tmp == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   SetLowerLeft( tmp, origin );
   if ( image_ ) {
@@ -174,7 +174,7 @@ int cvLevelSetVelocityImage::SetImage( float *imgData, int numData, int imgDims[
   ComputeImageGrad( image_ );
   SetImageClosed( image_, closed );
   PostSetImageAction();
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -185,10 +185,10 @@ int cvLevelSetVelocityImage::SetImage( float *imgData, int numData, int imgDims[
 int cvLevelSetVelocityImage::GetImage( Image_T **i )
 {
   if ( image_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     *i = image_;
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -200,10 +200,10 @@ int cvLevelSetVelocityImage::GetImage( Image_T **i )
 int cvLevelSetVelocityImage::GetMagGradRange( double rng[] )
 {
   if ( image_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     Img_GetMagGradRange( image_, rng );
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -215,10 +215,10 @@ int cvLevelSetVelocityImage::GetMagGradRange( double rng[] )
 int cvLevelSetVelocityImage::GetXYMagGradRange( double rng[] )
 {
   if ( image_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     Img_GetXYMagGradRange( image_, rng );
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -230,10 +230,10 @@ int cvLevelSetVelocityImage::GetXYMagGradRange( double rng[] )
 int cvLevelSetVelocityImage::GetZMagGradRange( double rng[] )
 {
   if ( image_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     Img_GetZMagGradRange( image_, rng );
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -245,10 +245,10 @@ int cvLevelSetVelocityImage::GetZMagGradRange( double rng[] )
 int cvLevelSetVelocityImage::GetIntensityRange( double rng[] )
 {
   if ( image_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     Img_GetIntensityRange( image_, rng );
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -263,5 +263,5 @@ int cvLevelSetVelocityImage::ClearImage()
     Image_Delete( image_ );
   }
   image_ = NULL;
-  return CV_OK;
+  return SV_OK;
 }

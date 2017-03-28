@@ -92,14 +92,14 @@ int cvPolyData::InitDistance()
     if ( ( locator_ == NULL ) || ( genericCell_ == NULL ) ) {
       return BuildVtkCellLocator();
     } else {
-      return CV_OK;
+      return SV_OK;
     }
     break;
 
   default:
     break;
   }
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 

@@ -98,14 +98,14 @@ int M_writeSTS(pMesh mesh, char *fname, char *mname) {
 
    if (nr_g == 0) {
      /* for 2D meshes only */
-     return CV_ERROR;
+     return SV_ERROR;
    }
 
   /* for 3D meshes only */
 
    if (!(fp = fopen(fname,"w"))) {
      fprintf(stderr,"Could not open statistics file in M_writeSTS");
-     return CV_ERROR;
+     return SV_ERROR;
    }
 
    fprintf(fp," Model Name:\t%s\n\n",mname);
@@ -283,7 +283,7 @@ int M_writeSTS(pMesh mesh, char *fname, char *mname) {
   /* close file */
    fclose(fp);
 
-   return CV_OK;
+   return SV_OK;
 
 }
 

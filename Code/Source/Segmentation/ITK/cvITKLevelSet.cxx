@@ -128,7 +128,7 @@ int cvITKLevelSet::SetInputImage(cvStrPts *s)
 	m_cvInputImage = new cvStrPts( s->GetVtkStructuredPoints() );
 	m_cvInputImage->SetName( s->GetName() );
 
-	return 1;
+    return SV_OK;
 }
 int cvITKLevelSet::SetFeatureImage(cvStrPts *s)
 {
@@ -140,15 +140,15 @@ int cvITKLevelSet::SetFeatureImage(cvStrPts *s)
 	//m_cvInputImage = new cvStrPts( s->GetVtkStructuredPoints() );
 	//m_cvInputImage->SetName( s->GetName() );
 
-	return 1;
+    return SV_OK;
 }
 int cvITKLevelSet::GetFeatureImage( cvStrPts **s)
 {
 	if ( m_cvInputImage == NULL ) {
-		return 0;
+        return SV_ERROR;
 	} else {
 		*s = m_cvInputImage;
-		return 1;
+        return SV_OK;
 	}
 }
 
@@ -188,9 +188,9 @@ int cvITKLevelSet::GetFront(cvPolyData** front)
 
 	*front = this->GetFront();
 	if(front != 0)
-		return 1;
+        return SV_OK;
 	else
-		return 0;
+        return SV_ERROR;
 }
 
 cvPolyData* cvITKLevelSet::GetFront()
@@ -726,7 +726,7 @@ int cvITKLevelSet::GenerateFeatureImage()
 	// Debug only, vtk image not used
 	cvITKLSUtil::itk2vtkRecastAndRescale<ITKInternalImageType,ITKExternalImageType>(m_itkFeatureImage,m_vtkFeatureImage,&ExternalImgInfo);
 
-	return 1;
+    return SV_OK;
 }
 
 
@@ -741,7 +741,7 @@ int cvITKLevelSet::GenerateSeedImage()
 	//cvITKLSUtil::WriteImage2(m_itkSeedImage.GetPointer(),"seedimage.mha");
 	vtkImg->Delete();
 
-	return 1;
+    return SV_OK;
 }
 
 

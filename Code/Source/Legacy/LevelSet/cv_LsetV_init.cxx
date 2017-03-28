@@ -271,12 +271,12 @@ static int NewName( CONST84 char *name, Tcl_Interp *interp )
 
   code = Tcl_VarEval( interp, "info commands ", name, (char *)NULL );
   if ( code != TCL_OK ) {
-    return 0;
+    return SV_ERROR;
   }
   if ( strlen( Tcl_GetStringResult(interp) ) == 0 ) {
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 
@@ -1141,7 +1141,7 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
   switch ( vtksp->GetScalarType() ) {
   case VTK_SHORT:
     if ( VtkUtils_MakeShortArray( vtksp->GetPointData()->GetScalars(),
-				  &numImgData, &imgData ) != CV_OK ) {
+				  &numImgData, &imgData ) != SV_OK ) {
       Tcl_AppendResult( interp, "error accessing short data in object ",
 			imgName, (char *)NULL );
       return TCL_ERROR;
@@ -1153,7 +1153,7 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     if ( v->SetImage( imgData, numImgData, imgDims, pixDimsD, originD, closed )
-	 != CV_OK ) {
+	 != SV_OK ) {
       Tcl_SetResult( interp, "error setting image", TCL_STATIC );
       delete [] imgData;
       return TCL_ERROR;
@@ -1162,7 +1162,7 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
 
   case VTK_FLOAT:
     if ( VtkUtils_MakeFloatArray( vtksp->GetPointData()->GetScalars(),
-				  &numImgData, &fimgData ) != CV_OK ) {
+				  &numImgData, &fimgData ) != SV_OK ) {
       Tcl_AppendResult( interp, "error accessing float data in object ",
 			imgName, (char *)NULL );
       return TCL_ERROR;
@@ -1174,7 +1174,7 @@ int LsetVImage_SetImageObjMtd( ClientData clientData, Tcl_Interp *interp,
       return TCL_ERROR;
     }
     if ( v->SetImage( fimgData, numImgData, imgDims, pixDimsD, originD,
-		      closed ) != CV_OK ) {
+		      closed ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting image", TCL_STATIC );
       delete [] fimgData;
       return TCL_ERROR;
@@ -1408,29 +1408,29 @@ static int LsetVKGI_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  if ( v->SetEK( eK ) != CV_OK ) {
+  if ( v->SetEK( eK ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting eK", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( v->SetEI( eI ) != CV_OK ) {
+  if ( v->SetEI( eI ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting eI", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( v->SetBalloonF( balloon ) != CV_OK ) {
+  if ( v->SetBalloonF( balloon ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting balloon force", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( v->SetGradIPow( gradIPow ) != CV_OK ) {
+  if ( v->SetGradIPow( gradIPow ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting grad(I) power", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( v->SetBeta( beta ) != CV_OK ) {
+  if ( v->SetBeta( beta ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting beta (geodesic control)",
 		   TCL_STATIC );
     return TCL_ERROR;
   }
   if ( arg_table[5].valid ) {
-    if ( v->SetApplyLocalStop( localStop ) != CV_OK ) {
+    if ( v->SetApplyLocalStop( localStop ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting local stop flag", TCL_STATIC );
       return TCL_ERROR;
     }
@@ -1460,37 +1460,37 @@ static int LsetVKGI_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( v->GetEK( &eK ) == CV_OK ) {
+  if ( v->GetEK( &eK ) == SV_OK ) {
     sprintf( dummyStr, "%f", eK );
     Tcl_AppendElement( interp, "-eK" );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->GetEI( &eI ) == CV_OK ) {
+  if ( v->GetEI( &eI ) == SV_OK ) {
     sprintf( dummyStr, "%f", eI );
     Tcl_AppendElement( interp, "-eI" );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->GetBalloonF( &balloon ) == CV_OK ) {
+  if ( v->GetBalloonF( &balloon ) == SV_OK ) {
     sprintf( dummyStr, "%f", balloon );
     Tcl_AppendElement( interp, "-balloon" );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->GetGradIPow( &gradIPow ) == CV_OK ) {
+  if ( v->GetGradIPow( &gradIPow ) == SV_OK ) {
     sprintf( dummyStr, "%f", gradIPow );
     Tcl_AppendElement( interp, "-gradIPow" );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->GetBeta( &beta ) == CV_OK ) {
+  if ( v->GetBeta( &beta ) == SV_OK ) {
     sprintf( dummyStr, "%f", beta );
     Tcl_AppendElement( interp, "-beta" );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->GetApplyLocalStop( &localStop ) == CV_OK ) {
+  if ( v->GetApplyLocalStop( &localStop ) == SV_OK ) {
     sprintf( dummyStr, "%d", localStop );
     Tcl_AppendElement( interp, "-localStop" );
     Tcl_AppendElement( interp, dummyStr );
@@ -1518,7 +1518,7 @@ static int LsetVImage_GetMagGradRangeMtd( ClientData clientData,
     return TCL_ERROR;
   }
 
-  if ( (v->GetMagGradRange( rng )) != CV_OK ) {
+  if ( (v->GetMagGradRange( rng )) != SV_OK ) {
     Tcl_SetResult( interp, "error querying image gradient", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1550,7 +1550,7 @@ static int LsetVImage_GetXYMagGradRangeMtd( ClientData clientData,
     return TCL_ERROR;
   }
 
-  if ( (v->GetXYMagGradRange( rng )) != CV_OK ) {
+  if ( (v->GetXYMagGradRange( rng )) != SV_OK ) {
     Tcl_SetResult( interp, "error querying image gradient", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1582,7 +1582,7 @@ static int LsetVImage_GetZMagGradRangeMtd( ClientData clientData,
     return TCL_ERROR;
   }
 
-  if ( (v->GetZMagGradRange( rng )) != CV_OK ) {
+  if ( (v->GetZMagGradRange( rng )) != SV_OK ) {
     Tcl_SetResult( interp, "error querying image gradient", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1614,7 +1614,7 @@ static int LsetVImage_GetIntensityRangeMtd( ClientData clientData,
     return TCL_ERROR;
   }
 
-  if ( (v->GetIntensityRange( rng )) != CV_OK ) {
+  if ( (v->GetIntensityRange( rng )) != SV_OK ) {
     Tcl_SetResult( interp, "error querying image data", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1694,7 +1694,7 @@ static int LsetVConst_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  if ( v->SetV( vel ) != CV_OK ) {
+  if ( v->SetV( vel ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting v", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1721,7 +1721,7 @@ static int LsetVConst_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( (v->GetV( &vel )) != CV_OK ) {
+  if ( (v->GetV( &vel )) != SV_OK ) {
     Tcl_SetResult( interp, "error getting v", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1800,11 +1800,11 @@ static int LsetVThr_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  if ( v->SetBalloonF( balloon ) != CV_OK ) {
+  if ( v->SetBalloonF( balloon ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting balloon force", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( v->SetThreshold( thr ) != CV_OK ) {
+  if ( v->SetThreshold( thr ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting threshold", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -1832,13 +1832,13 @@ static int LsetVThr_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( v->GetBalloonF( &balloon ) == CV_OK ) {
+  if ( v->GetBalloonF( &balloon ) == SV_OK ) {
     sprintf( dummyStr, "%f", balloon );
     Tcl_AppendElement( interp, "-balloon" );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->GetThreshold( &thr ) == CV_OK ) {
+  if ( v->GetThreshold( &thr ) == SV_OK ) {
     sprintf( dummyStr, "%f", thr );
     Tcl_AppendElement( interp, "-threshold" );
     Tcl_AppendElement( interp, dummyStr );
@@ -1921,31 +1921,31 @@ static int LsetVPotential_SetConstMtd( ClientData clientData,
   }
 
   // Do work of command:
-  if ( v->SetEP( eP ) != CV_OK ) {
+  if ( v->SetEP( eP ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting eP", TCL_STATIC );
     return TCL_ERROR;
   }
   if ( arg_table[1].valid ) {
-    if ( v->SetEK( eK ) != CV_OK ) {
+    if ( v->SetEK( eK ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting eK", TCL_STATIC );
       return TCL_ERROR;
     }
   }
   if ( arg_table[2].valid ) {
-    if ( v->SetKlow( Klow ) != CV_OK ) {
+    if ( v->SetKlow( Klow ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting Klow", TCL_STATIC );
       return TCL_ERROR;
     }
   }
   if ( arg_table[3].valid ) {
-    if ( v->SetKupp( Kupp ) != CV_OK ) {
+    if ( v->SetKupp( Kupp ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting Kupp", TCL_STATIC );
       return TCL_ERROR;
     }
   }
   /*
   if ( arg_table[4].valid ) {
-    if ( v->SetBalloonF( balloon ) != CV_OK ) {
+    if ( v->SetBalloonF( balloon ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting balloon force", TCL_STATIC );
       return TCL_ERROR;
     }
@@ -2074,11 +2074,11 @@ static int LsetVExpDecay_SetConstMtd( ClientData clientData,
   }
 
   // Do work of command:
-  if ( v->SetEI( eI ) != CV_OK ) {
+  if ( v->SetEI( eI ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting eI", TCL_STATIC );
     return TCL_ERROR;
   }
-  if ( v->SetKt( Kt ) != CV_OK ) {
+  if ( v->SetKt( Kt ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting Kt", TCL_STATIC );
     return TCL_ERROR;
   }
@@ -2092,7 +2092,7 @@ static int LsetVExpDecay_SetConstMtd( ClientData clientData,
     v->SetEIneg( eIneg );
   }
   if ( arg_table[5].valid ) {
-    if ( v->Set3DKType( kt_name ) != CV_OK ) {
+    if ( v->Set3DKType( kt_name ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting 3d curvature type", TCL_STATIC );
       return TCL_ERROR;
     }
@@ -2157,13 +2157,13 @@ static int LsetVExpDecay_GetConstMtd( ClientData clientData,
     Tcl_AppendElement( interp, "false" );
   }
 
-  if ( v->GetEIneg( &eIneg ) == CV_OK ) {
+  if ( v->GetEIneg( &eIneg ) == SV_OK ) {
     Tcl_AppendElement( interp, "-eIneg" );
     sprintf( dummyStr, "%f", eIneg );
     Tcl_AppendElement( interp, dummyStr );
   }
 
-  if ( v->Get3DKType( &ktype ) == CV_OK ) {
+  if ( v->Get3DKType( &ktype ) == SV_OK ) {
     sprintf( dummyStr, "%s", DKT_EnumToStr( ktype ) );
     Tcl_AppendElement( interp, "-3d_curv" );
     Tcl_AppendElement( interp, dummyStr );
@@ -2257,7 +2257,7 @@ static int LsetVImage_SetImageMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( v->SetImage( expFn, numRange, imgDims, pixDims ) != CV_OK ) {
+  if ( v->SetImage( expFn, numRange, imgDims, pixDims ) != SV_OK ) {
     Tcl_AppendResult( interp, "error reading image ", expFn, (char *)NULL );
     return TCL_ERROR;
   }
@@ -2381,12 +2381,12 @@ static int LsetVSmooth_SetConstMtd( ClientData clientData, Tcl_Interp *interp,
   }
 
   // Do work of command:
-  if ( v->SetKts( upper_kt, lower_kt ) != CV_OK ) {
+  if ( v->SetKts( upper_kt, lower_kt ) != SV_OK ) {
     Tcl_SetResult( interp, "error setting curvature bounds", TCL_STATIC );
     return TCL_ERROR;
   }
   if ( arg_table[2].valid ) {
-    if ( v->Set3DKType( kt_name ) != CV_OK ) {
+    if ( v->Set3DKType( kt_name ) != SV_OK ) {
       Tcl_SetResult( interp, "error setting 3d curvature type", TCL_STATIC );
       return TCL_ERROR;
     }
@@ -2416,7 +2416,7 @@ static int LsetVSmooth_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
     return TCL_ERROR;
   }
 
-  if ( v->GetKts( &upper_kt, &lower_kt ) == CV_OK ) {
+  if ( v->GetKts( &upper_kt, &lower_kt ) == SV_OK ) {
     sprintf( dummyStr, "%f", lower_kt );
     Tcl_AppendElement( interp, "-lower_Kt" );
     Tcl_AppendElement( interp, dummyStr );
@@ -2424,7 +2424,7 @@ static int LsetVSmooth_GetConstMtd( ClientData clientData, Tcl_Interp *interp,
     Tcl_AppendElement( interp, "-upper_Kt" );
     Tcl_AppendElement( interp, dummyStr );
   }
-  if ( v->Get3DKType( &ktype ) == CV_OK ) {
+  if ( v->Get3DKType( &ktype ) == SV_OK ) {
     sprintf( dummyStr, "%s", KT_EnumToStr( ktype ) );
     Tcl_AppendElement( interp, "-3d_curv" );
     Tcl_AppendElement( interp, dummyStr );

@@ -92,7 +92,7 @@ int svModelElementParasolid::GetFaceIDFromInnerSolid(std::string faceName)
     int numFaces;
     int *ids;
     int status=m_InnerSolid->GetFaceIds( &numFaces, &ids);
-    if(status!=CV_OK)
+    if(status!=SV_OK)
         return id;
 
     for(int i=0;i<numFaces;i++)
@@ -187,7 +187,7 @@ svModelElementPolyData* svModelElementParasolid::ConverToPolyDataModel()
     }
 
     cvPolyData *dst=NULL;
-    if ( sys_geom_assign_ids_based_on_faces(src,facevpds,numFaces,ids,&dst ) != CV_OK ) {
+    if ( sys_geom_assign_ids_based_on_faces(src,facevpds,numFaces,ids,&dst ) != SV_OK ) {
         if(dst!=NULL)
             delete dst;
 

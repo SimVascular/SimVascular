@@ -112,11 +112,11 @@ int cvLevelSet::SetDtFactor( double dtf )
 {
   if ( ( dtf <= 0.0 ) || ( dtf > ( 1.0 + fabs(1e6*FindMachineEpsilon()) ) ) ) {
     printf("ERR: cfl factor f must satisfy 0.0 < f <= 1.0\n");
-    return 0;
+    return SV_ERROR;
   } else {
     dtf = minimum( dtf, 1.0 );
     dtFactor_ = dtf;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -128,7 +128,7 @@ int cvLevelSet::SetDtFactor( double dtf )
 int cvLevelSet::GetDtFactor( double *dtf )
 {
   *dtf = dtFactor_;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -143,7 +143,7 @@ int cvLevelSet::SetSimTime( double simTime )
   } else {
     simTime_ = simTime;
   }
-  return 1;
+  return SV_OK;
 }
 
 
@@ -154,7 +154,7 @@ int cvLevelSet::SetSimTime( double simTime )
 int cvLevelSet::GetSimTime( double *simTime )
 {
   *simTime = simTime_;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -166,9 +166,9 @@ int cvLevelSet::SetGridType( GridT gt )
 {
   if ( gt != Invalid_GridT ) {
     gridType_ = gt;
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 
@@ -180,12 +180,12 @@ int cvLevelSet::SetGridType( GridT gt )
 int cvLevelSet::SetGridSpacing( double hv[] )
 {
   if ( ( hv[0] < 0.0 ) || ( hv[1] < 0.0 ) || ( hv[2] < 0.0 ) ) {
-    return 0;
+    return SV_ERROR;
   } else {
     hx_ = hv[0];
     hy_ = hv[1];
     hz_ = hv[2];
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -197,12 +197,12 @@ int cvLevelSet::SetGridSpacing( double hv[] )
 int cvLevelSet::GetGridSpacing( double hv[] )
 {
   if ( ( hx_ < 0.0 ) || ( hy_ < 0.0 ) || ( hz_ < 0.0 ) ) {
-    return 0;
+    return SV_ERROR;
   } else {
     hv[0] = hx_;
     hv[1] = hy_;
     hv[2] = hz_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -214,12 +214,12 @@ int cvLevelSet::GetGridSpacing( double hv[] )
 int cvLevelSet::SetGridSize( int gsize[] )
 {
   if ( ( gsize[0] <= 0 ) || ( gsize[1] <= 0 ) || ( gsize[2] <= 0 ) ) {
-    return 0;
+    return SV_ERROR;
   } else {
     gridx_ = gsize[0];
     gridy_ = gsize[1];
     gridz_ = gsize[2];
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -231,12 +231,12 @@ int cvLevelSet::SetGridSize( int gsize[] )
 int cvLevelSet::GetGridSize( int gsize[] )
 {
   if ( ( gridx_ <= 0 ) || ( gridy_ <= 0 ) || ( gridz_ <= 0 ) ) {
-    return 0;
+    return SV_ERROR;
   } else {
     gsize[0] = gridx_;
     gsize[1] = gridy_;
     gsize[2] = gridz_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -251,7 +251,7 @@ int cvLevelSet::SetGridOrigin( double origin[] )
   origin_[1] = origin[1];
   origin_[2] = origin[2];
   originValid_ = 1;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -262,12 +262,12 @@ int cvLevelSet::SetGridOrigin( double origin[] )
 int cvLevelSet::GetGridOrigin( double origin[] )
 {
   if ( ! originValid_ ) {
-    return 0;
+    return SV_ERROR;
   } else {
     origin[0] = origin_[0];
     origin[1] = origin_[1];
     origin[2] = origin_[2];
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -279,12 +279,12 @@ int cvLevelSet::GetGridOrigin( double origin[] )
 int cvLevelSet::SetGridBandParams( double bandExt[], double mineWd )
 {
   if ( ( bandExt[0] >= 0.0 ) || ( bandExt[1] <= 0.0 ) ) {
-    return 0;
+    return SV_ERROR;
   } else {
     bandExt_[0] = bandExt[0];
     bandExt_[1] = bandExt[1];
     mineWd_ = mineWd;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -296,12 +296,12 @@ int cvLevelSet::SetGridBandParams( double bandExt[], double mineWd )
 int cvLevelSet::GetGridBandParams( double bandExt[], double *mineWd )
 {
   if ( ( bandExt_[0] >= 0.0 ) || ( bandExt_[1] <= 0.0 ) ) {
-    return 0;
+    return SV_ERROR;
   } else {
     bandExt[0] = bandExt_[0];
     bandExt[1] = bandExt_[1];
     *mineWd = mineWd_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -313,7 +313,7 @@ int cvLevelSet::GetGridBandParams( double bandExt[], double *mineWd )
 int cvLevelSet::GetCurrTime( double *currTime )
 {
   *currTime = currTime_;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -349,9 +349,9 @@ void cvLevelSet::DeallocateSeedObjs()
 int cvLevelSet::ValidSeedExists()
 {
   if ( imgSeed_ || smSeed_ || pdSeed_ || seed_ ) {
-    return 1;
+    return SV_OK;
   } else {
-    return 0;
+    return SV_ERROR;
   }
 }
 
@@ -370,7 +370,7 @@ int cvLevelSet::SetSeed( Seed_T *s )
     seed_ = new Seed_T;
   }
   *seed_ = *s;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -382,10 +382,10 @@ int cvLevelSet::SetSeed( Seed_T *s )
 int cvLevelSet::GetSeed( Seed_T *s )
 {
   if ( seed_ == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
     *s = *seed_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -401,7 +401,7 @@ int cvLevelSet::SetSeed( cvPolyData *s )
 
   pdSeed_ = new cvPolyData( s );
   pdSeed_->SetName( s->GetName() );
-  return 1;
+  return SV_OK;
 }
 
 
@@ -412,10 +412,10 @@ int cvLevelSet::SetSeed( cvPolyData *s )
 int cvLevelSet::GetSeed( cvPolyData **s )
 {
   if ( pdSeed_ == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
     *s = pdSeed_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -431,7 +431,7 @@ int cvLevelSet::SetSeed( cvSolidModel *s )
 
   smSeed_ = s->Copy();
   smSeed_->SetName( s->GetName() );
-  return 1;
+  return SV_OK;
 }
 
 
@@ -442,10 +442,10 @@ int cvLevelSet::SetSeed( cvSolidModel *s )
 int cvLevelSet::GetSeed( cvSolidModel **s )
 {
   if ( smSeed_ == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
     *s = smSeed_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -461,7 +461,7 @@ int cvLevelSet::SetSeed( cvStrPts *s, double thr )
   imgSeed_ = new cvStrPts( s->GetVtkStructuredPoints() );
   imgSeed_->SetName( s->GetName() );
   imgSeedThr_ = thr;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -472,11 +472,11 @@ int cvLevelSet::SetSeed( cvStrPts *s, double thr )
 int cvLevelSet::GetSeed( cvStrPts **s, double *thr )
 {
   if ( imgSeed_ == NULL ) {
-    return 0;
+    return SV_ERROR;
   } else {
     *s = imgSeed_;
     *thr = imgSeedThr_;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -495,7 +495,7 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
   cvLevelSet *dummy;
 
   if ( v == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( velocity_ != NULL ) {
@@ -506,12 +506,12 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
 
   v->GetLevelSet( &dummy );
   if ( dummy != this ) {
-    if ( v->LinkLevelSet( this ) != CV_OK ) {
-      return CV_ERROR;
+    if ( v->LinkLevelSet( this ) != SV_OK ) {
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -522,13 +522,13 @@ int cvLevelSet::LinkVelocity( cvLevelSetVelocity *v )
 int cvLevelSet::UnlinkVelocity()
 {
   if ( velocity_ == NULL ) {
-    return CV_OK;
+    return SV_OK;
   }
 
   //  velocity_->UnlinkLevelSet();
   velocity_->ls_ = NULL;
   velocity_ = NULL;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -539,7 +539,7 @@ int cvLevelSet::UnlinkVelocity()
 int cvLevelSet::GetVelocity( cvLevelSetVelocity **v )
 {
   *v = velocity_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -555,19 +555,19 @@ int cvLevelSet::Init()
   int initStatus;
 
   if ( (hx_ < 0.0) || (hy_ < 0.0) || (hz_ < 0.0) ) {
-    return 0;
+    return SV_ERROR;
 
   } else if ( (gridx_ <= 0) || (gridy_ <= 0) || (gridz_ <= 0) ) {
-    return 0;
+    return SV_ERROR;
 
   } else if ( ! originValid_ ) {
-    return 0;
+    return SV_ERROR;
 
   } else if ( ! ValidSeedExists() ) {
-    return 0;
+    return SV_ERROR;
 
   } else if ( ! velocity_ ) {
-    return 0;
+    return SV_ERROR;
 
   } else {
     h[0] = hx_;
@@ -587,27 +587,27 @@ int cvLevelSet::Init()
       grid_ = new cvLevelSetDenseGrid( h, dims, origin_ );
       if ( grid_ == NULL ) {
 	printf( "ERR: Couldn't allocate cvLevelSetDenseGrid.\n" );
-	return 0;
+    return SV_ERROR;
       }
       break;
     case Sparse_GridT:
       if ( ( bandExt_[0] >= 0.0 ) || ( bandExt_[1] <= 0.0 ) ) {
-	return 0;
+    return SV_ERROR;
       }
       grid_ = new cvLevelSetSparseGrid( h, dims, origin_ );
       if ( grid_ == NULL ) {
 	printf( "ERR: Couldn't allocate cvLevelSetSparseGrid.\n" );
-	return 0;
+    return SV_ERROR;
       }
       if ( grid_->SetBandParams( bandExt_[0], bandExt_[1], mineWd_ )
-	   != CV_OK ) {
+	   != SV_OK ) {
 	delete grid_;
-	return 0;
+    return SV_ERROR;
       }
       break;
     default:
       grid_ = NULL;
-      return 0;
+      return SV_ERROR;
     }
 
     if (timers_) {
@@ -625,10 +625,10 @@ int cvLevelSet::Init()
       assert(0);
     }
 
-    if ( initStatus != CV_OK ) {
+    if ( initStatus != SV_OK ) {
       delete grid_;
       grid_ = NULL;
-      return 0;
+      return SV_ERROR;
     }
     if (timers_) {
       printf("InitPhi:\t %lf sec\n", cpuTimer.seconds());
@@ -645,7 +645,7 @@ int cvLevelSet::Init()
 
   status_ = 1;
   zlsVanished_ = 0;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -675,11 +675,11 @@ int cvLevelSet::EvolveOneTimeStep()
 {
   if ( zlsVanished_ ) {
     printf("ERR: Zero level set has no geometry.\n");
-    return 0;
+    return SV_ERROR;
 
   } else if ( velocity_ == NULL ) {
     printf("ERR: no velocity currently associated with %s\n", tclName_);
-    return 0;
+    return SV_ERROR;
 
   } else {
 
@@ -688,10 +688,10 @@ int cvLevelSet::EvolveOneTimeStep()
     if (timers_) {
       cpuTimer.reset();
     }
-    if ( grid_->EvaluateV( velocity_, dtFactor_ ) != CV_OK ) {
+    if ( grid_->EvaluateV( velocity_, dtFactor_ ) != SV_OK ) {
 	printf("ERR: EvaluateV failure\n");
 	cpuTimer.reset();
-	return 0;
+    return SV_ERROR;
     }
     if (timers_) {
       printf("EvaluateV:\t %lf sec\n", cpuTimer.seconds());
@@ -705,10 +705,10 @@ int cvLevelSet::EvolveOneTimeStep()
       if (timers_) {
 	cpuTimer.reset();
       }
-      if ( grid_->ProjectV( saveProjectionSets_ ) != CV_OK ) {
+      if ( grid_->ProjectV( saveProjectionSets_ ) != SV_OK ) {
 	printf("ERR: ProjectV failure\n");
 	zlsVanished_ = 1;
-	return 0;
+    return SV_ERROR;
       }
       if (timers_) {
 	printf("ProjectV:\t %lf sec\n", cpuTimer.seconds());
@@ -724,7 +724,7 @@ int cvLevelSet::EvolveOneTimeStep()
       break;
     default:
       printf("Invalid etype_ member.\n");
-      return 0;
+      return SV_ERROR;
       break;
     }
 
@@ -735,11 +735,11 @@ int cvLevelSet::EvolveOneTimeStep()
     }
     dt_ = grid_->ComputeDeltaPhi( dtFactor_ );
     if ( StopCondition() ) {
-      return 0;
+      return SV_ERROR;
     }
-    if ( grid_->UpdatePhi() != CV_OK ) {
+    if ( grid_->UpdatePhi() != SV_OK ) {
       printf("ERR: update error\n");
-      return 0;
+      return SV_ERROR;
     }
     if (timers_) {
       printf("Level set update:\t %lf sec\n", cpuTimer.seconds());
@@ -749,7 +749,7 @@ int cvLevelSet::EvolveOneTimeStep()
     tn_++;
     currTime_ += dt_;
     rebuildPhiValid_ = 0;
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -797,10 +797,10 @@ int cvLevelSet::RebuildPhi()
     }
   }
 
-  if ( status != CV_OK ) {
-    return 0;
+  if ( status != SV_OK ) {
+    return SV_ERROR;
   } else {
-    return 1;
+    return SV_OK;
   }
 }
 
@@ -817,10 +817,10 @@ int cvLevelSet::StopCondition()
 
   if ( ( simTime_ > 0.0 ) && ( currTime_ > simTime_ ) ) {
     printf("STOP: currTime [%f] > simTime [%f]\n", currTime_, simTime_);
-    return 1;
+    return SV_OK;
   } else if ( dt_ < 0.0 ) {
     printf("STOP: max velocity [%g] --> 0\n", grid_->GetMaxF());
-    return 1;
+    return SV_OK;
   } else {
 
     //    if ( currTime_ > 0.0) {
@@ -849,7 +849,7 @@ int cvLevelSet::StopCondition()
     stopV = velocity_->GetStopV();
     if ( maxF < stopV ) {
       printf("STOP: curr max velocity [%f] < stopV [%f]\n", maxF, stopV);
-      return 1;
+      return SV_OK;
     }
     return( velocity_->StopCondition() );
   }
@@ -945,10 +945,10 @@ cvPolyData *cvLevelSet::ExtractActiveNodes()
 int cvLevelSet::SetVExtension( ExtensionT etype )
 {
   if ( etype == INVALID_V ) {
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     etype_ = etype;
-    return CV_OK;
+    return SV_OK;
   }
 }
 
@@ -960,7 +960,7 @@ int cvLevelSet::SetVExtension( ExtensionT etype )
 int cvLevelSet::GetVExtension( ExtensionT *etype )
 {
   *etype = etype_;
-  return CV_OK;
+  return SV_OK;
 }
 
 

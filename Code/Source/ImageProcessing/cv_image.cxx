@@ -597,7 +597,7 @@ int InBorder( Image_T *image, double pos[], int borderWd )
   double ppos[3];
 
   if ( borderWd <= 0 ) {
-    return 0;
+    return SV_ERROR;
   }
 
   ppos[0] = pos[0] - image->lowerleft[0];
@@ -615,9 +615,9 @@ int InBorder( Image_T *image, double pos[], int borderWd )
   if ( ( ppos[0] <= border[0] ) || ( ppos[0] >= ( side[0] - border[0] ) ) ||
        ( ppos[1] <= border[1] ) || ( ppos[1] >= ( side[1] - border[1] ) ) ||
        ( ppos[2] <= border[2] ) || ( ppos[2] >= ( side[2] - border[2] ) ) ) {
-    return 1;
+    return SV_OK;
   }
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -821,7 +821,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
   ppos[2] = z;
 
   if ( !InRange( image, ppos ) ) {
-    return 0;
+    return SV_ERROR;
   }
 
   xBdWidth = image->pixelDims[0] / 2.0;
@@ -863,19 +863,19 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     switch (code) {
     case IMG_INTENSITY:
       *value = (image->pixels[pixelIx].intensity);
-      return 1;
+      return SV_OK;
     case IMG_GRADIX:
       *value = (image->pixels[pixelIx].gradX);
-      return 1;
+      return SV_OK;
     case IMG_GRADIY:
       *value = (image->pixels[pixelIx].gradY);
-      return 1;
+      return SV_OK;
     case IMG_GRADIZ:
       *value = (image->pixels[pixelIx].gradZ);
-      return 1;
+      return SV_OK;
     default:
       fprintf(stderr, "ERR: ImageData_T not handled correctly.\n");
-      return 0;
+      return SV_ERROR;
     }
   }
 
@@ -1022,7 +1022,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     break;
 
   default:
-    return 0;
+    return SV_ERROR;
     break;
   }
 
@@ -1089,7 +1089,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
     break;
   default:
     fprintf(stderr, "ERR: ImageData_T not handled correctly.\n");
-    return 0;
+    return SV_ERROR;
     break;
   }
 
@@ -1151,7 +1151,7 @@ int LinearInterp( Image_T *image, ImageData_T code, double pos[],
   }
 
   *value = result;
-  return 1;
+  return SV_OK;
 }
 
 
@@ -1292,24 +1292,24 @@ int InRange( Image_T *image, double pos[] )
   x = pos[0];
   maxx = image->pixelDims[0] * image->imgDims[0];
   if ( (x < 0.0) || (x > maxx) ) {
-    return 0;
+    return SV_ERROR;
   }
 
   y = pos[1];
   maxy = image->pixelDims[1] * image->imgDims[1];
   if ( (y < 0.0) || (y > maxy) ) {
-    return 0;
+    return SV_ERROR;
   }
 
   if ( image->dim == 3 ) {
     z = pos[2];
     maxz = image->pixelDims[2] * image->imgDims[2];
     if ( (z < 0.0) || (z > maxz) ) {
-      return 0;
+      return SV_ERROR;
     }
   }
 
-  return 1;
+  return SV_OK;
 }
 
 

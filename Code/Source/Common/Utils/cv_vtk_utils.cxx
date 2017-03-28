@@ -115,7 +115,7 @@ int VtkUtils_NewVtkPolyData( vtkPolyData **pd, int numPts, vtkFloatingPointType 
   (*pd)->SetPolys( tmpPolys );
   tmpPolys->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -155,7 +155,7 @@ int VtkUtils_NewVtkPolyDataLines( vtkPolyData **pd, int numPts, vtkFloatingPoint
   (*pd)->SetLines( tmpLines );
   tmpLines->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -240,7 +240,7 @@ static int UpdateCells( int *cells, int numCells,
 
   *newCells = tmpNewCells;
   *numNewCells = numTmpNewCells;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -271,7 +271,7 @@ int VtkUtils_FixTopology( vtkPolyData *pd, double tol )
   int oldId, mappedId;
   vtkPoints *compressedPts;
 
-  if ( pd == NULL ) return CV_ERROR;
+  if ( pd == NULL ) return SV_ERROR;
 
   preNumPts = pd->GetNumberOfPoints();
   preNumElems = pd->GetNumberOfLines() + pd->GetNumberOfPolys();
@@ -466,7 +466,7 @@ int VtkUtils_FixTopology( vtkPolyData *pd, double tol )
   delete [] prePtList;
   delete [] postPtList;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -481,7 +481,7 @@ int VtkUtils_GetPoints( vtkPolyData *pd, double **pts, int *numPts )
 
   *numPts = pd->GetNumberOfPoints();
   if (pd->GetNumberOfPoints() == 0) {
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   *pts = new double [(*numPts) * 3];
@@ -493,7 +493,7 @@ int VtkUtils_GetPoints( vtkPolyData *pd, double **pts, int *numPts )
     (*pts)[3*i+2] = tmp[2];
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -508,7 +508,7 @@ int VtkUtils_GetPointsFloat( vtkPolyData *pd, vtkFloatingPointType **pts, int *n
 
   *numPts = pd->GetNumberOfPoints();
   if (pd->GetNumberOfPoints() == 0) {
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   *pts = new vtkFloatingPointType [(*numPts) * 3];
@@ -520,7 +520,7 @@ int VtkUtils_GetPointsFloat( vtkPolyData *pd, vtkFloatingPointType **pts, int *n
     (*pts)[3*i+2] = tmp[2];
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -554,10 +554,10 @@ int VtkUtils_GetAllLines( vtkPolyData *pd, int *numLines, vtkIdType **lines )
   if ( pos > size ) {
     printf("ERR [VtkUtils_GetAllLines]: unexpected vtkCellArray result\n");
     delete [] (*lines);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -597,10 +597,10 @@ int VtkUtils_GetAllPolys( vtkPolyData *pd, int *numPgns, vtkIdType **pgns )
   if ( pos > size ) {
     printf("ERR [VtkUtils_GetAllPolys]: unexpected vtkCellArray result\n");
     delete [] (*pgns);
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -620,7 +620,7 @@ int VtkUtils_GetLines( vtkPolyData *pd, vtkIdType **lines, int *numLines )
 
   *numLines = pd->GetNumberOfLines();
   if (pd->GetNumberOfLines() == 0) {
-      return CV_ERROR;
+      return SV_ERROR;
   }
 
   pdLines = pd->GetLines();
@@ -635,14 +635,14 @@ int VtkUtils_GetLines( vtkPolyData *pd, vtkIdType **lines, int *numLines )
     if ( npts != 2 ) {
       printf("ERR: unexpected polyline encountered\n");
       delete [] (*lines);
-      return CV_ERROR;
+      return SV_ERROR;
     }
     (*lines)[2*pos] = pts[0];
     (*lines)[2*pos+1] = pts[1];
     pos++;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -697,10 +697,10 @@ static int SearchComplete( int *state, int stateSz )
 
   for (i = 0; i < stateSz; i++) {
     if ( ( state[i] == START ) || ( state[i] == INTERMED ) ) {
-      return 0;
+      return SV_ERROR;
     }
   }
-  return 1;
+  return SV_OK;
 }
 
 
@@ -833,12 +833,12 @@ int VtkUtils_FindClosedLineRegions( vtkIdType *lines, int numLines, int numPts,
 {
   int *state;
   int prev, curr, next;
-  int status = CV_OK;
+  int status = SV_OK;
   int i;
 
   if ( ( numLines == 0 ) || ( numPts == 0 ) ) {
     *numRegions = 0;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Init:
@@ -919,12 +919,12 @@ int VtkUtils_FindClosedLineRegions( vtkIdType *lines, int numLines, int numPts,
 
     case CLOSED:
       printf("ERR: Unexpected node state transition.\n");
-      status = CV_ERROR;
+      status = SV_ERROR;
       break;
 
     default:
       printf("RUH-ROH...\n");
-      status = CV_ERROR;
+      status = SV_ERROR;
       break;
     }
 
@@ -970,7 +970,7 @@ int VtkUtils_GetClosedLineRegion( vtkIdType *lines, int numLines, int startIx,
       delete [] tmpLines;
       delete [] lineVisited;
       delete [] linkedLineIxs;
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // Weird connection (e.g. triple point?):
@@ -979,7 +979,7 @@ int VtkUtils_GetClosedLineRegion( vtkIdType *lines, int numLines, int startIx,
       delete [] tmpLines;
       delete [] lineVisited;
       delete [] linkedLineIxs;
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     // Normal case:
@@ -1031,7 +1031,7 @@ int VtkUtils_GetClosedLineRegion( vtkIdType *lines, int numLines, int startIx,
   delete [] tmpLines;
   delete [] lineVisited;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1068,7 +1068,7 @@ int VtkUtils_MakePolyDataFromLineIds( double *pts, int numPts, vtkIdType *lines,
   pdPts->Delete();
   pdLines->Delete();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1083,10 +1083,10 @@ static int SomeFalse( int *arr, int sz )
 
   for (i = 0; i < sz; i++) {
     if ( ! (arr[i]) ) {
-      return 1;
+      return SV_OK;
     }
   }
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -1119,13 +1119,13 @@ int VtkUtils_MakeShortArray( vtkDataArray *s, int *num, short **dataOut )
 
   // Data types are set in vtk/common/vtkSetGet.h.
   if ( s->GetDataType() != VTK_SHORT ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   sz = s->GetNumberOfTuples();
   *dataOut = new short [sz];
   if ( *dataOut == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *num = sz;
@@ -1133,7 +1133,7 @@ int VtkUtils_MakeShortArray( vtkDataArray *s, int *num, short **dataOut )
     (*dataOut)[i] = (short)s->GetTuple1(i);
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1149,13 +1149,13 @@ int VtkUtils_MakeFloatArray( vtkDataArray *s, int *num, float **dataOut )
 
   // Data types are set in vtk/common/vtkSetGet.h.
   if ( s->GetDataType() != VTK_FLOAT ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   sz = s->GetNumberOfTuples();
   *dataOut = new float [sz];
   if ( *dataOut == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *num = sz;
@@ -1163,7 +1163,7 @@ int VtkUtils_MakeFloatArray( vtkDataArray *s, int *num, float **dataOut )
     (*dataOut)[i] = (float)s->GetTuple1(i);
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1239,7 +1239,7 @@ int VtkUtils_MakePolysConsistent( vtkPolyData *pd )
   pd->CopyStructure( tmp );
   nrm->Delete();
 
-  return CV_OK;
+  return SV_OK;
 
   /* I give up! [12/14/99]
    * ---
@@ -1378,7 +1378,7 @@ int VtkUtils_MakePolysConsistent( vtkPolyData *pd )
   neighborIds->Delete();
   delete [] visited;
 
-  return CV_OK;
+  return SV_OK;
 
   * --- */
 }
@@ -1397,7 +1397,7 @@ int VtkUtils_ReverseAllCells( vtkPolyData *pd )
     pd->ReverseCell( i );
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1511,7 +1511,7 @@ int VtkUtils_GetOrderedPoints(vtkPolyData *inputData, int direction,  double **o
   delete [] orderedLineIndices;
   delete [] formattedLines;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1605,7 +1605,7 @@ int VtkUtils_CalcDirection(double *pts, int numPts, int *currentDirection)
   //delete [] centroid;
   //delete [] tmpPt;
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1626,7 +1626,7 @@ int VtkUtils_ReversePtList( int num, double ptsIn[], double *ptsOut[] )
     (*ptsOut)[3*i+2] = ptsIn[3*rev+2];
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 // ----------------------
@@ -1672,11 +1672,11 @@ int VtkUtils_PDCheckArrayName(vtkPolyData *object,int datatype,std::string array
 
   if (exists == 1)
   {
-    return CV_OK;
+    return SV_OK;
   }
   else
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 }
 
@@ -1723,10 +1723,10 @@ int VtkUtils_UGCheckArrayName(vtkUnstructuredGrid *object,int datatype,std::stri
 
   if (exists == 1)
   {
-    return CV_OK;
+    return SV_OK;
   }
   else
   {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 }

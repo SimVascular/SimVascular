@@ -501,7 +501,7 @@ void svModelIO::Write()
             if(meocct&&meocct->GetInnerSolid())
             {
                char* df=const_cast<char*>(dataFileName.c_str());
-                if (meocct->GetInnerSolid()->WriteNative(0,df) != CV_OK )
+                if (meocct->GetInnerSolid()->WriteNative(0,df) != SV_OK )
                 {
                     mitkThrow() << "OpenCASCADE model writing error: ";
                 }
@@ -519,7 +519,7 @@ void svModelIO::Write()
             if(meps&&meps->GetInnerSolid())
             {
                char* df=const_cast<char*>(dataFileName.c_str());
-                if (meps->GetInnerSolid()->WriteNative(0,df) != CV_OK )
+                if (meps->GetInnerSolid()->WriteNative(0,df) != SV_OK )
                 {
                     mitkThrow() << "Parasolid model writing error: ";
                 }

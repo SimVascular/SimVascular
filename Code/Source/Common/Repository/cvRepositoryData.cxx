@@ -231,9 +231,9 @@ int cvRepositoryData::IsLabelPresent( char *key )
 
   entryPtr = Tcl_FindHashEntry( &labels_, key );
   if ( entryPtr == NULL ) {
-    return 0;
+    return SV_ERROR;
   }
-  return 1;
+  return SV_OK;
 }
 
 
@@ -249,12 +249,12 @@ int cvRepositoryData::GetLabel( char *key, char **value )
 
   entryPtr = Tcl_FindHashEntry( &labels_, key );
   if ( entryPtr == NULL ) {
-    return 0;
+    return SV_ERROR;
   }
 
   dsPtr = (Tcl_DString *) Tcl_GetHashValue( entryPtr );
   (*value) = Tcl_DStringValue( dsPtr );
-  return 1;
+  return SV_OK;
 }
 
 
@@ -271,14 +271,14 @@ int cvRepositoryData::SetLabel( char *key, char *value )
 
   entryPtr = Tcl_CreateHashEntry( &labels_, key, &newFlag );
   if ( ! newFlag ) {
-    return 0;
+    return SV_ERROR;
   }
 
   dsPtr = new Tcl_DString;
   Tcl_DStringInit( dsPtr );
   Tcl_SetHashValue( entryPtr, dsPtr );
   Tcl_DStringAppend( dsPtr, value, -1 );
-  return 1;
+  return SV_OK;
 }
 
 

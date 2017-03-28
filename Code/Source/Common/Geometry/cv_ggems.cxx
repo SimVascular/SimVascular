@@ -81,10 +81,10 @@ int ggemsGeoPolyNormal ( int	n_verts, ggemsGeoPoint *verts, ggemsGeoPoint *n )
  if (n_size > 0.0)
     {
      ggemsGeoMultVec ( 1/n_size, *n, *n );
-     return 1;
+     return SV_OK;
     }
  else
-     return 0;
+     return SV_ERROR;
 }
 
 /*=========================  ggemsgeo_solid_angle  =========================*/

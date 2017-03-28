@@ -106,7 +106,7 @@ int Polydatasolid_Init( Tcl_Interp *interp )
 		     (ClientData)NULL, (Tcl_CmdDeleteProc *)NULL );
 
   // Initialize parasolid_utils
-  if (PlyDtaUtils_Init() != CV_OK) {
+  if (PlyDtaUtils_Init() != SV_OK) {
     return TCL_ERROR;
   }
 

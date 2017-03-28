@@ -76,7 +76,7 @@ mitk::DataNode::Pointer svModelLegacyIO::ReadFile(QString filePath)
         }
 
         vtkSmartPointer<vtkPolyData> pd1=vtkSmartPointer<vtkPolyData>::New();
-        if(PlyDtaUtils_ReadNative(const_cast<char*>(filePath.toStdString().c_str()),pd1) != CV_OK)
+        if(PlyDtaUtils_ReadNative(const_cast<char*>(filePath.toStdString().c_str()),pd1) != SV_OK)
         {
           return modelNode;
         }
@@ -311,7 +311,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
 
         if(mepd->GetWholeVtkPolyData())
         {
-            if (PlyDtaUtils_WriteNative(mepd->GetWholeVtkPolyData(), 0, const_cast<char*>(filePath.toStdString().c_str()) ) != CV_OK) {
+            if (PlyDtaUtils_WriteNative(mepd->GetWholeVtkPolyData(), 0, const_cast<char*>(filePath.toStdString().c_str()) ) != SV_OK) {
                 mitkThrow() << "PolyData model writing error.";
             }
         }
@@ -325,7 +325,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
         if(meocct->GetInnerSolid())
         {
             char* fpath=const_cast<char*>(filePath.toStdString().c_str());
-            if (meocct->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
+            if (meocct->GetInnerSolid()->WriteNative(0,fpath) != SV_OK )
              {
                  mitkThrow() << "OpenCASCADE model writing error.";
              }
@@ -341,7 +341,7 @@ void svModelLegacyIO::WriteFile(mitk::DataNode::Pointer node, QString filePath)
         if(meps->GetInnerSolid())
         {
             char* fpath=const_cast<char*>(filePath.toStdString().c_str());
-            if (meps->GetInnerSolid()->WriteNative(0,fpath) != CV_OK )
+            if (meps->GetInnerSolid()->WriteNative(0,fpath) != SV_OK )
              {
                  mitkThrow() << "Parasolid model writing error.";
              }

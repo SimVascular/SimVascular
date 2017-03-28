@@ -72,7 +72,7 @@ cvCalculateWallShearStress::~cvCalculateWallShearStress() {
 int cvCalculateWallShearStress::SetSurfaceMesh(cvPolyData* surfaceMesh) {
     surfaceMesh_ = NULL;
     surfaceMesh_ = surfaceMesh->GetVtkPolyData();
-    return CV_OK; 
+    return SV_OK; 
 }
 
 // --------------
@@ -82,7 +82,7 @@ int cvCalculateWallShearStress::SetSurfaceMesh(cvPolyData* surfaceMesh) {
 int cvCalculateWallShearStress::SetTensors(cvPolyData* tensors) {
     tensors_ = NULL;
     tensors_ = tensors->GetVtkPolyData();
-    return CV_OK; 
+    return SV_OK; 
 }
 
 // ---------------
@@ -92,7 +92,7 @@ int cvCalculateWallShearStress::SetTensors(cvPolyData* tensors) {
 int cvCalculateWallShearStress::SetTractions(cvPolyData* tractions) {
     tractions_ = NULL;
     tractions_ = tractions->GetVtkPolyData();
-    return CV_OK; 
+    return SV_OK; 
 }
 
 // -----------------------------
@@ -128,7 +128,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
         polys->GetNextCell(celltype,ids);
         //fprintf(stdout,"checking cell: %i type: %i\n",i,celltype);
         if (celltype != 3) {
-            return CV_ERROR;
+            return SV_ERROR;
         }
         ptOnSurf[ids[0]] = 1;
         ptOnSurf[ids[1]] = 1;
@@ -157,7 +157,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
 
     if (stresses->GetNumberOfComponents() != 9) {
         wallshear_->Delete();
-        return CV_ERROR;
+        return SV_ERROR;
     }
 
     for (i = 0; i < numPts; i++) {
@@ -178,7 +178,7 @@ int cvCalculateWallShearStress::CalcWallShearFromStresses() {
         }
     }
 
-    return CV_OK;
+    return SV_OK;
 
 }
 
@@ -216,7 +216,7 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
         polys->GetNextCell(celltype,ids);
         //fprintf(stdout,"checking cell: %i type: %i\n",i,celltype);
         if (celltype != 3) {
-            return CV_ERROR;
+            return SV_ERROR;
         }
         ptOnSurf[ids[0]] = 1;
         ptOnSurf[ids[1]] = 1;
@@ -261,7 +261,7 @@ int cvCalculateWallShearStress::CalcWallShearFromTractions() {
         }
     }
 
-    return CV_OK;
+    return SV_OK;
 
 }
 

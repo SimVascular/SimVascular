@@ -240,10 +240,10 @@ int cvLevelSetSparseGrid::SetBandParams( double innerPhi, double outerPhi,
   // innerPhi must be NEGATIVE:
   if ( innerPhi >= 0.0 ) {
     printf("ERR: inner band extent must be negative\n");
-    return CV_ERROR;
+    return SV_ERROR;
   } else if ( fabs(innerPhi) < mineWidth ) {
     printf("ERR: fabs( inner band extent ) must be >= mine width\n");
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     innerExtent_ = innerPhi;
     innerExtent2_ = innerPhi * innerPhi;
@@ -252,17 +252,17 @@ int cvLevelSetSparseGrid::SetBandParams( double innerPhi, double outerPhi,
   // outerPhi must be POSITIVE
   if ( outerPhi <= 0.0 ) {
     printf("ERR: outer band extent must be positive\n");
-    return CV_ERROR;
+    return SV_ERROR;
   } else if ( fabs(outerPhi) < mineWidth ) {
     printf("ERR: outer band extent must be >= mine width\n");
-    return CV_ERROR;
+    return SV_ERROR;
   } else {
     outerExtent_ = outerPhi;
     outerExtent2_ = outerPhi * outerPhi;
   }
 
   gridState_ = SGST_ExtentDefined;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -274,12 +274,12 @@ int cvLevelSetSparseGrid::GetBandParams( double *innerPhi, double *outerPhi,
 			       double *mineWidth )
 {
   if ( gridState_ < SGST_ExtentDefined ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *innerPhi = innerExtent_;
   *outerPhi = outerExtent_;
   *mineWidth = mineWidth_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -289,14 +289,14 @@ int cvLevelSetSparseGrid::GetBandParams( double *innerPhi, double *outerPhi,
 
 int cvLevelSetSparseGrid::InitPhi( double ctr[], double radius )
 {
-  if ( ConstructHT( ctr, radius ) != CV_OK ) {
+  if ( ConstructHT( ctr, radius ) != SV_OK ) {
     init_ = 0;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   init_ = 1;
   phiVtkValid_ = 0;
   closedPhiVtkValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -337,8 +337,8 @@ int cvLevelSetSparseGrid::InitPhi( double ctr[], double radius )
 int cvLevelSetSparseGrid::InitPhi( cvPolyData *front )
 {
   if ( ! init_ ) {
-    if ( InitSign_Internal( front ) != CV_OK ) {  // on success, init_ --> 1
-      return CV_ERROR;
+    if ( InitSign_Internal( front ) != SV_OK ) {  // on success, init_ --> 1
+      return SV_ERROR;
     }
   }
   return InitPhi_Internal( front );
@@ -382,7 +382,7 @@ int cvLevelSetSparseGrid::InitSign_Internal( cvPolyData *front )
 
 	if ( ! status ) {
 	  printf( "ERR: pt-in-{polygon/polyhedron} error\n" );
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 
 	if ( clsfy < 0 ) {
@@ -394,7 +394,7 @@ int cvLevelSetSparseGrid::InitSign_Internal( cvPolyData *front )
     }
   }
   init_ = 1;
-  return CV_OK;
+  return SV_OK;
 
 
   // cvSolidModel-based sign initialization:
@@ -402,7 +402,7 @@ int cvLevelSetSparseGrid::InitSign_Internal( cvPolyData *front )
   cvSolidModel *sm;
   sm = cvSolidModel::DefaultInstantiateSolidModel();
   if ( sm == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( dim_ == 3 ) {
     sm->MakePoly3dSolid( front , 0 );
@@ -432,40 +432,40 @@ int cvLevelSetSparseGrid::InitSign_Internal( cvPolyData *front )
 int cvLevelSetSparseGrid::InitPhi_Internal( cvPolyData *front )
 {
   if ( ! init_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   switch (bandMethod_) {
 
   case BAND_SDIST:
-    if ( ConstructHT( front ) != CV_OK ) {
+    if ( ConstructHT( front ) != SV_OK ) {
       init_ = 0;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     init_ = 1;
     phiVtkValid_ = 0;
     closedPhiVtkValid_ = 0;
-    return CV_OK;
+    return SV_OK;
 
   case BAND_SWEEP:
 
     // Currently, init_ has to be true for ConstructHT_Sweep to
     // succeed.
 
-    if ( ConstructHT_Sweep( front ) != CV_OK ) {
+    if ( ConstructHT_Sweep( front ) != SV_OK ) {
       init_ = 0;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     init_ = 1;
     phiVtkValid_ = 0;
     closedPhiVtkValid_ = 0;
-    return CV_OK;
+    return SV_OK;
 
   default:
     break;
   }
 
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 
@@ -475,14 +475,14 @@ int cvLevelSetSparseGrid::InitPhi_Internal( cvPolyData *front )
 
 int cvLevelSetSparseGrid::InitPhi( cvSolidModel *solid )
 {
-  if ( ConstructHT( solid ) != CV_OK ) {
+  if ( ConstructHT( solid ) != SV_OK ) {
     init_ = 0;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   init_ = 1;
   phiVtkValid_ = 0;
   closedPhiVtkValid_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -524,7 +524,7 @@ int cvLevelSetSparseGrid::InitPhi( cvStrPts *img, double thr )
   vtkdata = vtksp->GetPointData()->GetScalars();
   if ( vtkdata == NULL ) {
     printf( "ERR: cvStrPts used for lset init needs to have scalar data\n" );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Copy vtk scalars into a local array so we can make an Image_T
@@ -554,7 +554,7 @@ int cvLevelSetSparseGrid::InitPhi( cvStrPts *img, double thr )
   delete [] fdata;
   if ( local_img == NULL ) {
     printf( "ERR: couldn't create scalar map from given cvStrPts\n" );
-    return CV_ERROR;
+    return SV_ERROR;
   }
   SetLowerLeft( local_img, orig );
 
@@ -572,7 +572,7 @@ int cvLevelSetSparseGrid::InitPhi( cvStrPts *img, double thr )
 	if ( ! status ) {
 	  printf( "ERR: image query error\n" );
 	  Image_Delete( local_img );
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 
 	delta = thr - intensity;
@@ -655,9 +655,9 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
   boxCtr[2] = origin_[2] + boxDims[2] / 2;
 
   seedPd = seed->GetPolyData(0,0);
-  if ( sys_geom_BBox( seedPd, bboxSeed ) != CV_OK ) {
+  if ( sys_geom_BBox( seedPd, bboxSeed ) != SV_OK ) {
     delete seedPd;
-    return CV_ERROR;
+    return SV_ERROR;
   }
   bboxGrid[0] = origin_[0];
   bboxGrid[1] = origin_[0] + boxDims[0];
@@ -670,7 +670,7 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
        ( bboxSeed[2] > bboxGrid[2] ) && ( bboxSeed[3] < bboxGrid[3] ) &&
        ( bboxSeed[4] > bboxGrid[4] ) && ( bboxSeed[5] < bboxGrid[5] ) ) {
     seedInterface_ = seedPd;
-    return CV_OK;
+    return SV_OK;
   }
 
   logicalSolid = cvSolidModel::DefaultInstantiateSolidModel();
@@ -679,7 +679,7 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
 
   if ( ( logicalSolid == NULL ) || ( seedBound == NULL ) ||
        ( seedIntfSolid == NULL ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   ClearSeedInterface();
@@ -694,7 +694,7 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
     seedBound->MakePoly3dSurface( seedPd );
 
   } else {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   status = seedIntfSolid->Intersect( logicalSolid, seedBound );
@@ -703,9 +703,9 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
   delete seedPd;
   delete seedBound;
 
-  if ( status != CV_OK ) {
+  if ( status != SV_OK ) {
     delete seedIntfSolid;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   seedInterface_ = seedIntfSolid->GetPolyData(0,0);
@@ -713,10 +713,10 @@ int cvLevelSetSparseGrid::BuildSeedInterface( cvSolidModel *seed )
   delete seedIntfSolid;
 
   if ( seedInterface_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -734,14 +734,14 @@ int cvLevelSetSparseGrid::ReinitPhi()
   int sign;
 
   if ( gridState_ < SGST_CSR ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   front = GetFront();
   if ( front->GetVtkPolyData()->GetNumberOfCells() < 1 ) {
     printf("ERR: Current zero level set has no geometry.\n");
     delete front;
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   InitIter();
@@ -750,7 +750,7 @@ int cvLevelSetSparseGrid::ReinitPhi()
 				currNode->pos_[2] );
     if ( dist < 0.0 ) {
       delete front;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if ( fabs( currNode->phi_ ) < tol_ ) {
       sign = 0;
@@ -763,7 +763,7 @@ int cvLevelSetSparseGrid::ReinitPhi()
   }
 
   delete front;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -839,7 +839,7 @@ int cvLevelSetSparseGrid::ConstructHT( double ctr[], double radius )
   double irsq, orsq;
 
   if ( gridState_ < SGST_ExtentDefined ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   DeallocateNodes();
@@ -993,13 +993,13 @@ int cvLevelSetSparseGrid::ConstructHT( cvSolidModel *sm )
   int sign;
 
   if ( gridState_ < SGST_ExtentDefined ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   DeallocateNodes();
-  if ( BuildSeedInterface( sm ) != CV_OK ) {
+  if ( BuildSeedInterface( sm ) != SV_OK ) {
     printf("  ERR (cvLevelSetSparseGrid::ConstructHT): BuildSeedInterface error.\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Compute a fairly arbitrary limit on distance calculations.  That
@@ -1030,11 +1030,11 @@ int cvLevelSetSparseGrid::ConstructHT( cvSolidModel *sm )
 	// constructor as a multiple of machine "epsilon", or the
 	// smallest interval which the machine can distinguish.
 
-	if ( sm->Distance( pos, distLimit, &dist ) != CV_OK ) {
+	if ( sm->Distance( pos, distLimit, &dist ) != SV_OK ) {
 	  printf("  ERR (cvLevelSetSparseGrid::ConstructHT): "
 		 "cvSolidModel::Distance error.\n");
 	  init_ = 0;
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 	*/
 
@@ -1050,14 +1050,14 @@ int cvLevelSetSparseGrid::ConstructHT( cvSolidModel *sm )
 	  printf( "  ERR (cvLevelSetSparseGrid::ConstructHT): "
 		  "cvPolyData::FindDistance error.\n" );
 	  init_ = 0;
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 
-	if ( sm->ClassifyPt( pos, 0, &cls ) != CV_OK ) {
+	if ( sm->ClassifyPt( pos, 0, &cls ) != SV_OK ) {
 	  printf( "  ERR (cvLevelSetSparseGrid::ConstructHT): "
 		  "cvSolidModel::ClassifyPt error.\n" );
 	  init_ = 0;
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 
 	if ( cls > 0 ) {
@@ -1149,7 +1149,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvPolyData *front )
   if ( ! init_ ) {
     sm = cvSolidModel::DefaultInstantiateSolidModel();
     if ( sm == NULL ) {
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if ( dim_ == 3 ) {
       sm->MakePoly3dSolid( front , 0 );
@@ -1167,7 +1167,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvPolyData *front )
 
 
   if ( gridState_ < SGST_ExtentDefined ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   TopoUpdate();
@@ -1187,7 +1187,7 @@ int cvLevelSetSparseGrid::ConstructHT( cvPolyData *front )
 	udist2 = front->FindDistance2( pos[0], pos[1], pos[2] );
 	if ( udist2 < 0.0 ) {
 	  init_ = 0;
-	  return CV_ERROR;
+	  return SV_ERROR;
 	}
 
 	// See the comments for topoOverlay_ in cvLevelSetSparseGrid.h.  This
@@ -1294,13 +1294,13 @@ int cvLevelSetSparseGrid::ConstructHT_Sweep( cvPolyData *front )
 
   // This should now be impossible:
   if ( ! init_ ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   // End impossibility.
 
 
   if ( gridState_ < SGST_ExtentDefined ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   TopoUpdate();
@@ -1309,17 +1309,17 @@ int cvLevelSetSparseGrid::ConstructHT_Sweep( cvPolyData *front )
   Sweep_MarkActiveNodes();
   numActive = topoOverlay_->GetNumActive();
   if ( numActive == 0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   /*
   levels = ceil( fabs( innerExtent_ / minh_ ) );
-  if ( Sweep( sign = 1, levels ) != CV_OK ) {
-    return CV_ERROR;
+  if ( Sweep( sign = 1, levels ) != SV_OK ) {
+    return SV_ERROR;
   }
   levels = ceil( fabs( outerExtent_ / minh_ ) );
-  if ( Sweep( sign = -1, levels ) != CV_OK ) {
-    return CV_ERROR;
+  if ( Sweep( sign = -1, levels ) != SV_OK ) {
+    return SV_ERROR;
   }
   */
 
@@ -1327,8 +1327,8 @@ int cvLevelSetSparseGrid::ConstructHT_Sweep( cvPolyData *front )
 			 ceil( fabs( outerExtent_ / minh_ ) ) ) + 1;
   blotDims[1] = blotDims[0];
   blotDims[2] = blotDims[0];
-  if ( Blot( blotDims ) != CV_OK ) {
-    return CV_ERROR;
+  if ( Blot( blotDims ) != SV_OK ) {
+    return SV_ERROR;
   }
 
   numSparseNodes_ = 0;
@@ -1550,11 +1550,11 @@ int cvLevelSetSparseGrid::Sweep( int sign, int levels )
   int status;
 
   if ( ( sign != 1 ) && ( sign != -1 ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   if ( levels < 1 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // We might think about allocating a sweep buffer at the time of
@@ -1579,10 +1579,10 @@ int cvLevelSetSparseGrid::Sweep( int sign, int levels )
 	ixList.Append( currIx );
 	while ( ( ! ( ixList.IsEmpty() ) ) && ( l < levels ) ) {
 	  status = ixList.RemoveFromHead( &currIx );
-	  if ( status != CV_OK ) {
+	  if ( status != SV_OK ) {
 	    printf( "ERR: index list access error\n" );
 	    delete [] buffer;
-	    return CV_ERROR;
+	    return SV_ERROR;
 	  }
 	  GetAdjacentIxs( currIx, adjIxs );
 	  for (n = 0; n < 6; n++) {
@@ -1595,10 +1595,10 @@ int cvLevelSetSparseGrid::Sweep( int sign, int levels )
 		 ( ! ( (*topoOverlay_)[neighborIx] & STATE_NODE_SWEPT ) ) ) {
 	      topoOverlay_->SetSwept( neighborIx );
 	      status = ixList.Append( neighborIx );
-	      if ( status != CV_OK ) {
+	      if ( status != SV_OK ) {
 		printf( "ERR: index list overflow\n" );
 		delete [] buffer;
-		return CV_ERROR;
+		return SV_ERROR;
 	      }
 	    }
 	  }
@@ -1613,7 +1613,7 @@ int cvLevelSetSparseGrid::Sweep( int sign, int levels )
     }
   }
   delete [] buffer;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1661,7 +1661,7 @@ int cvLevelSetSparseGrid::Blot( int dim[3] )
       }
     }
   }
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1684,7 +1684,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
   int xprevIx, xnextIx, yprevIx, ynextIx, zprevIx, znextIx;
 
   if ( gridState_ < SGST_HashTable ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   DeallocateCSR();
@@ -1692,7 +1692,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
   //  color_ = new int [numSparseNodes_];
   if ( grid_ == NULL ) {
     DeallocateCSR();
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Now go back through hash table and fill out the cvLevelSetNode list:
@@ -1747,9 +1747,9 @@ int cvLevelSetSparseGrid::ConstructCSR()
 
   // Debug:
   /*
-  if ( SanityCheckCSR() != CV_OK ) {
+  if ( SanityCheckCSR() != SV_OK ) {
     printf("ERR: sanity check failed\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
   */
 
@@ -1760,7 +1760,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
 
   if ( (edgeCnt % 2) != 0 ) {
     DeallocateCSR();
-    return CV_ERROR;
+    return SV_ERROR;
   }
   numSparseEdges_ = edgeCnt / 2;
   adjIa_ = new int [numSparseNodes_ + 1];
@@ -1770,7 +1770,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
 
   if ( (adjIa_ == NULL) || (adjJa_ == NULL) ) {
     DeallocateCSR();
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // The reason I'm not using the cvLevelSetNode iterator in the following loop
@@ -1820,7 +1820,7 @@ int cvLevelSetSparseGrid::ConstructCSR()
   InitIxBuffer();
   InitNodeSets();
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -1902,7 +1902,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
   int status;
 
   if ( grid_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   edgeArr = new int [numSparseNodes_ * numSparseNodes_];
@@ -1923,22 +1923,22 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	 ( k < 0 ) || ( k >= K_ ) ) {
       printf("ERR: (i,j,k) out of range (%d,%d,%d)\n", i, j, k);
       delete [] edgeArr;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if ( IJKPresentInCSR( i, j, k ) == NULL ) {
       printf("ERR: self-lookup in CSR failed\n");
       delete [] edgeArr;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if( currNode->index_ != IJKToIndex( i, j, k ) ) {
       printf("ERR: sparse index mismatch\n");
       delete [] edgeArr;
-      return CV_ERROR;
+      return SV_ERROR;
     }
     if( currNode->logicalIx_ != IJKToDenseIx( i, j, k ) ) {
       printf("ERR: logical index mismatch\n");
       delete [] edgeArr;
-      return CV_ERROR;
+      return SV_ERROR;
     }
 
     GetNeighborSparseIxs( currNode, nixs );
@@ -1969,7 +1969,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
       if ( ! foundMatch ) {
 	printf("ERR: no matching connection for %d --> %d\n", a, nixs[m]);
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
     }
 
@@ -1980,7 +1980,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	   ( neighbor->k_ != k ) ) {
 	printf("ERR: index inconsistency\n");
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       edgeCnt++;
     }
@@ -1991,7 +1991,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	   ( neighbor->k_ != k ) ) {
 	printf("ERR: index inconsistency\n");
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       edgeCnt++;
     }
@@ -2003,7 +2003,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	   ( neighbor->k_ != k ) ) {
 	printf("ERR: index inconsistency\n");
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       edgeCnt++;
     }
@@ -2013,7 +2013,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	   ( neighbor->k_ != k ) ) {
 	printf("ERR: index inconsistency\n");
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       edgeCnt++;
     }
@@ -2025,7 +2025,7 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	   ( neighbor->k_ != (k-1) ) ) {
 	printf("ERR: index inconsistency\n");
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       edgeCnt++;
     }
@@ -2035,13 +2035,13 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
 	   ( neighbor->k_ != (k+1) ) ) {
 	printf("ERR: index inconsistency\n");
 	delete [] edgeArr;
-	return CV_ERROR;
+	return SV_ERROR;
       }
       edgeCnt++;
     }
   }
 
-  status = CV_OK;
+  status = SV_OK;
   cnt = 0;
   for ( i = 0; i < numSparseNodes_; i++ ) {
     for ( j = 0; j < numSparseNodes_; j++ ) {
@@ -2052,23 +2052,23 @@ int cvLevelSetSparseGrid::SanityCheckCSR()
       if ( edgeArr[i*numSparseNodes_+j] == 1 ) {
 	if ( edgeArr[j*numSparseNodes_+i] != 1 ) {
 	  printf("ERR: odd # references to edge %d --> %d\n", i, j);
-	  status = CV_ERROR;
+	  status = SV_ERROR;
 	}
       }
       if ( edgeArr[i*numSparseNodes_+j] > 1 ) {
 	printf("ERR: unexpected # references to edge %d --> %d\n", i, j);
-	status = CV_ERROR;
+	status = SV_ERROR;
       }
     }
   }
 
   delete [] edgeArr;
-  if ( status != CV_OK ) {
-    return CV_ERROR;
+  if ( status != SV_OK ) {
+    return SV_ERROR;
   }
 
   printf("OK: %d connections checked\n", edgeCnt);
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2133,7 +2133,7 @@ int cvLevelSetSparseGrid::IJKPresentInHT( int i, int j, int k,
   if ( (i < 0) || (i >= I_) ||
        (j < 0) || (j >= J_) ||
        (k < 0) || (k >= K_) ) {
-    return 0;
+    return SV_ERROR;
   }
 
   hashIx = ComputeHashIx( i, j, k );
@@ -2150,14 +2150,14 @@ int cvLevelSetSparseGrid::IJKPresentInHT( int i, int j, int k,
     } else if ( tag == tagToMatch ) {
       (*entry) = htEntry;
       delete iter;
-      return 1;
+      return SV_OK;
     } else {
       delete iter;
-      return 0;
+      return SV_ERROR;
     }
   }
   delete iter;
-  return 0;
+  return SV_ERROR;
 }
 
 
@@ -2339,12 +2339,12 @@ cvLevelSetNode *cvLevelSetSparseGrid::IJKPresentInCSR( int i, int j, int k )
 int cvLevelSetSparseGrid::ProjectV( int save )
 {
   if ( gridState_ < SGST_CSR ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // If the front has left the grid everywhere, return an error:
   if ( NumActiveNodes() == 0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   ClearCovered();  // turns covered bit off in cvLevelSetNode::state_
@@ -2355,11 +2355,11 @@ int cvLevelSetSparseGrid::ProjectV( int save )
   // the plus-phi direction (outwards from front), and then we project
   // in the minus-phi direction (inwards from front).
 
-  if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != CV_OK ) {
-    return CV_ERROR;
+  if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != SV_OK ) {
+    return SV_ERROR;
   }
-  if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != CV_OK ) {
-    return CV_ERROR;
+  if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != SV_OK ) {
+    return SV_ERROR;
   }
 
   // Now, if projection did not achieve full coverage, then
@@ -2368,11 +2368,11 @@ int cvLevelSetSparseGrid::ProjectV( int save )
   if ( ! CheckProjectCoverage() ) {  // inherited from cvLevelSetStructuredGrid
     ReinitPhi();
     ClearCovered();
-    if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != CV_OK ) {
-      return CV_ERROR;
+    if ( this->cvLevelSetStructuredGrid::ProjectV( 1, save ) != SV_OK ) {
+      return SV_ERROR;
     }
-    if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != CV_OK ) {
-      return CV_ERROR;
+    if ( this->cvLevelSetStructuredGrid::ProjectV( 0, save ) != SV_OK ) {
+      return SV_ERROR;
     }
 
     // At this point, if full coverage has still not been achieved, we
@@ -2392,7 +2392,7 @@ int cvLevelSetSparseGrid::ProjectV( int save )
 
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2407,14 +2407,14 @@ int cvLevelSetSparseGrid::ProjectV( int save )
 int cvLevelSetSparseGrid::InitIxBuffer()
 {
   if ( gridState_ < SGST_CSR ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( ixBuffer_ != NULL ) {
     delete [] ixBuffer_;
   }
   ixBuffer_ = new int [numSparseNodes_];
   ixBufferSz_ = numSparseNodes_;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2425,7 +2425,7 @@ int cvLevelSetSparseGrid::InitIxBuffer()
 int cvLevelSetSparseGrid::InitNodeSets()
 {
   if ( gridState_ < SGST_CSR ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( nodeSets_ != NULL ) {
     delete [] nodeSets_;
@@ -2433,7 +2433,7 @@ int cvLevelSetSparseGrid::InitNodeSets()
   nodeSetsSize_ = 2 * numSparseNodes_;
   nodeSets_ = new int [nodeSetsSize_];
   nodeSetsPos_ = 0;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2574,7 +2574,7 @@ int cvLevelSetSparseGrid::UpdatePhi()
 
   if ( ! deltaPhiValid_ ) {
     printf("ERR: unexpected call to UpdatePhi\n");
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   mineHit_ = 0;
@@ -2615,12 +2615,12 @@ int cvLevelSetSparseGrid::UpdatePhi()
     UndoTimeStep();
     front = GetFront();
     bandMethod_ = BAND_SWEEP;
-    if ( InitPhi( front ) != CV_OK ) {
-      return CV_ERROR;
+    if ( InitPhi( front ) != SV_OK ) {
+      return SV_ERROR;
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -2662,7 +2662,7 @@ void cvLevelSetSparseGrid::UndoTimeStep()
 
 int cvLevelSetSparseGrid::FindEdge( double pos[], cvLevelSetNode **a, cvLevelSetNode **b, char *dir )
 {
-  return CV_ERROR;
+  return SV_ERROR;
 }
 */
 
@@ -2954,7 +2954,7 @@ cvDataObject *cvLevelSetSparseGrid::GetPhi()
 
 cvStrPts *cvLevelSetSparseGrid::GetCurvature()
 {
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 
@@ -3023,10 +3023,10 @@ int cvLevelSetSparseGrid::BuildL1Map()
   int prevIx = -1;
 
   if ( gridState_ < SGST_CSR ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( L1map_ != NULL ) {
-    return CV_OK;
+    return SV_OK;
   }
 
   L1map_ = new int [numSparseNodes_];
@@ -3046,7 +3046,7 @@ int cvLevelSetSparseGrid::BuildL1Map()
     prevIx = L1map_[i];
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -3061,7 +3061,7 @@ int cvLevelSetSparseGrid::BuildL1Map()
 
 int cvLevelSetSparseGrid::BuildL2Map()
 {
-  return CV_ERROR;
+  return SV_ERROR;
 }
 
 
@@ -3080,14 +3080,14 @@ int cvLevelSetSparseGrid::BuildGlobalToLocalMap( int partNum, int **map )
   int localIx = 0;
 
   if ( ( color_ == NULL ) || ( partNum >= numParts_ ) ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   *map = new int [numSparseNodes_];
   if ( *map == NULL ) {
     printf( "ERR: Memory allocation failure [cvLevelSetSparseGrid::"
 	    "BuildGlobalToLocalMap].\n" );
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   for ( i = 0; i < numSparseNodes_; i++ ) {
@@ -3099,7 +3099,7 @@ int cvLevelSetSparseGrid::BuildGlobalToLocalMap( int partNum, int **map )
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -3121,7 +3121,7 @@ int cvLevelSetSparseGrid::BuildLocalToGlobalMap( int g2lMap[], int **l2gMap, int
   int partPos = 0;
 
   if ( color_ == NULL ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   for ( i = 0; i < numSparseNodes_; i++ ) {
@@ -3134,7 +3134,7 @@ int cvLevelSetSparseGrid::BuildLocalToGlobalMap( int g2lMap[], int **l2gMap, int
   if ( *l2gMap == NULL ) {
     printf( "ERR: Memory allocation failure [cvLevelSetSparseGrid::"
 	    "BuildLocalToGlobalMap].\n" );
-    return CV_ERROR;
+    return SV_ERROR;
   }
   *l2gSz = partSz;
 
@@ -3145,7 +3145,7 @@ int cvLevelSetSparseGrid::BuildLocalToGlobalMap( int g2lMap[], int **l2gMap, int
     }
   }
 
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -3190,14 +3190,14 @@ cvPolyData *cvLevelSetSparseGrid::PartitionToPolyData( int partNum )
   cvPolyData *result;
 
   if ( gridState_ < SGST_Partitioned ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( partNum < 0 ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
-  if ( BuildGlobalToLocalMap( partNum, &g2lMap ) != CV_OK ) {
-    return CV_ERROR;
+  if ( BuildGlobalToLocalMap( partNum, &g2lMap ) != SV_OK ) {
+    return SV_ERROR;
   }
   partSz = GetPartSize( partNum );
   pd = vtkPolyData::New();
@@ -3397,10 +3397,10 @@ int cvLevelSetSparseGrid::PartitionGraph( int numParts )
   int i;
 
   if ( gridState_ < SGST_CSR ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
   if ( gridState_ == SGST_Partitioned ) {
-    return CV_OK;
+    return SV_OK;
   }
 
   // Prepare weightings:
@@ -3424,7 +3424,7 @@ int cvLevelSetSparseGrid::PartitionGraph( int numParts )
 
   gridState_ = SGST_Partitioned;
   numParts_ = numParts;
-  return CV_OK;
+  return SV_OK;
 }
 
 
@@ -3446,7 +3446,7 @@ int cvLevelSetSparseGrid::PartitionGraph( int numParts )
 int cvLevelSetSparseGrid::PackagePartition( int partNum )
 {
   if ( gridState_ < SGST_Partitioned ) {
-    return CV_ERROR;
+    return SV_ERROR;
   }
 
   // Serial: no packaging needed.
@@ -3455,5 +3455,5 @@ int cvLevelSetSparseGrid::PackagePartition( int partNum )
 
   gridState_ = SGST_PackagingComplete;
 
-  return CV_OK;
+  return SV_OK;
 }
