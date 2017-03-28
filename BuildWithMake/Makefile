@@ -237,7 +237,7 @@ shared-pre-build: common-pre-build
 	  echo "creating exports for shared directory ($$i)"; \
 	  if [ -e $$i ];then \
 	  cd $$i; \
-	  $(MAKE) shared;fi ) ; done
+	  $(MAKE) create_exports_cv_h;fi ) ; done
 
 static-pre-build: common-pre-build
 	cd ../Code/Source/UI;$(MAKE) SV_STATIC_BUILD=1 pre
