@@ -43,6 +43,7 @@
 #define CVITKLEVELSET_H_
 
 #include "SimVascular.h"
+#include "svSegITKExports.h" // For exports
 #include "cvSolidModel.h"
 #include "cvPolyData.h"
 #include "cvStrPts.h"
@@ -197,7 +198,7 @@ public:
 
 	}
 #endif
-	
+
 	void WriteFrontImages()
 	{
 		std::stringstream filenameBase;

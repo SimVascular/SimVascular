@@ -7,19 +7,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -70,8 +70,8 @@ typedef struct EdgeList {
 typedef struct EdgeVertexList {
   int node;
   int loc;
-  struct EdgeVertexList *next; 
-  } EdgeVertexList; 
+  struct EdgeVertexList *next;
+  } EdgeVertexList;
 
 
 typedef struct PolyConnList {
@@ -81,13 +81,14 @@ typedef struct PolyConnList {
   } PolyConnList;
 
 #include "SimVascular.h"
+#include "svUtilsExports.h" // For exports
 
-void SV_EXPORT_UTILS 
-cgeom_VertsCompact (int num_verts, vtkFloatingPointType *verts, int num_polys, int *conn, 
+void SV_EXPORT_UTILS
+cgeom_VertsCompact (int num_verts, vtkFloatingPointType *verts, int num_polys, int *conn,
                     int *num_new_verts, vtkFloatingPointType **new_verts);
 
 void SV_EXPORT_UTILS
-cgeom_CompArea (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn, 
+cgeom_CompArea (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
                 vtkFloatingPointType *p_area);
 
 void SV_EXPORT_UTILS
@@ -98,7 +99,7 @@ cgeom_CompVol (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdT
                double *p_vol);
 
 void SV_EXPORT_UTILS
-cgeom_PolysClosed (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn, 
+cgeom_PolysClosed (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
                    int *closed);
 
 void SV_EXPORT_UTILS
@@ -115,15 +116,15 @@ cgeom_FindVert (int num_cvs, int cv_list[][10], int *vert_stat, int v,
 
 void SV_EXPORT_UTILS
 cgeom_FixDegen (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
-                vtkFloatingPointType tol, int *p_num_verts, vtkFloatingPointType **p_verts, int *p_num_polys, 
+                vtkFloatingPointType tol, int *p_num_verts, vtkFloatingPointType **p_verts, int *p_num_polys,
                 vtkIdType **p_conn);
 
 void SV_EXPORT_UTILS
-cgeom_PolysManifold (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn, 
+cgeom_PolysManifold (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
                      int *manifold);
 
 void SV_EXPORT_UTILS
-cgeom_PolysEdgeTab (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn, 
+cgeom_PolysEdgeTab (int num_verts, vtkFloatingPointType *verts, int num_polys, vtkIdType *conn,
                     EdgeList ***p_edge_table);
 
 void SV_EXPORT_UTILS

@@ -37,6 +37,7 @@
 #define __CVMESH_INIT_H
 
 #include "SimVascular.h"
+#include "svMeshObjectExports.h"
 #include "tcl.h"
 
 extern "C" SV_EXPORT_MESH int Mesh_Init( Tcl_Interp *interp );

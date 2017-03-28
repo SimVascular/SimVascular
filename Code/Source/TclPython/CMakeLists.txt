@@ -29,6 +29,9 @@
  #=========================================================================#
 
 set(lib ${SV_LIB_PYTHON_INTERP_NAME})
+set(export_directive tclpython)
+set(export_file_name svTclPythonExports.h)
+
 include_directories(${PYTHON_INCLUDE_PATH}
   ${PYTHON_INCLUDE_DIR}
   ${PYTHON_INCLUDE_DIRS}
@@ -37,13 +40,25 @@ include_directories(${PYTHON_INCLUDE_PATH}
 set(CSRCS tclpython.c tclthread.c)
 set(HDRS  tclpython.h symcat.h)
 
-add_definitions("-DSV_EXPORT_TCLPYTHON_COMPILE")
-
 add_library(${lib} ${SV_LIBRARY_TYPE} cv_pythoninterp_init.cxx ${CSRCS})
 
 target_link_libraries(${lib} ${SV_LIB_REPOSITORY_NAME}
   ${SV_LIB_GLOBALS_NAME} ${PYTHON_LIBRARY}
   ${TCL_LIBRARY} ${TK_LIBRARY})
+
+# Set up for exports
+string(TOUPPER ${export_directive} EXPORT_NAME)
+set(_export_macro_names
+  EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}
+  NO_EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_EXPORT
+  DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_DEPRECATED
+  NO_DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_DEPRECATED
+  )
+
+# Generate export headers
+generate_export_header(${lib}
+  ${_export_macro_names}
+  EXPORT_FILE_NAME ${export_file_name})
 
 if(SV_INSTALL_LIBS)
   install(TARGETS ${lib}
@@ -53,7 +68,7 @@ if(SV_INSTALL_LIBS)
     )
 endif()
 if(SV_INSTALL_HEADERS)
-  install(FILES ${HDRS}
+  install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
     DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
     )
 endif()

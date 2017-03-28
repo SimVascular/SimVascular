@@ -33,6 +33,9 @@
 #-----------------------------------------------------------------------------
 
 set(lib ${SV_LIB_SOLID_NAME})
+set(export_directive solid)
+set(export_file_name svSolidModelExports.h)
+
 list(APPEND CORELIBS ${lib})
 
 include_directories(${TETGEN_INCLUDE_DIR})
@@ -45,8 +48,6 @@ endif()
 set(CXXSRCS cvSolidModel.cxx)
 set(HDRS    cvSolidModel.h)
 
-add_definitions("-DSV_EXPORT_SOLID_COMPILE")
-
 add_library(${lib} ${SV_LIBRARY_TYPE} ${CXXSRCS} cv_solid_init.cxx)
 
 target_link_libraries(${lib}
@@ -58,6 +59,20 @@ if(SV_USE_PYTHON)
   target_link_libraries(${lib} ${PYTHON_LIBRARY})
 endif()
 
+# Set up for exports
+string(TOUPPER ${export_directive} EXPORT_NAME)
+set(_export_macro_names
+  EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}
+  NO_EXPORT_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_EXPORT
+  DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_DEPRECATED
+  NO_DEPRECATED_MACRO_NAME SV_EXPORT_${EXPORT_NAME}_NO_DEPRECATED
+  )
+
+# Generate export headers
+generate_export_header(${lib}
+  ${_export_macro_names}
+  EXPORT_FILE_NAME ${export_file_name})
+
 if(SV_INSTALL_LIBS)
 	install(TARGETS ${lib}
 	  RUNTIME DESTINATION ${SV_INSTALL_RUNTIME_DIR} COMPONENT CoreExecutables
@@ -66,7 +81,7 @@ if(SV_INSTALL_LIBS)
 		)
 endif()
 if(SV_INSTALL_HEADERS)
-	install(FILES ${HDRS}
+  install(FILES ${HDRS} ${CMAKE_CURRENT_BINARY_DIR}/${export_file_name}
 		DESTINATION ${SV_INSTALL_INCLUDE_DIR}/core COMPONENT CoreHeaders
 		)
 endif()

@@ -6,15 +6,15 @@
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
  * IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
  * TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
@@ -32,13 +32,14 @@
 #define __CVDISTANCEMAP_H
 
 #include "SimVascular.h"
+#include "svImageExports.h"
 #include "cvVTK.h"
 
 // use ints for distance map
 typedef int distanceMapType;
 #define DISTANCEMAPVTKTYPE vtkIntArray
 #define MAX_DISTANCE_VAL 999999999
-// should be more like   2147483647 
+// should be more like   2147483647
 // use shorts
 //typedef short distanceMapType;
 //#define DISTANCEMAPVTKTYPE vtkShortArray
@@ -54,22 +55,22 @@ class SV_EXPORT_IMAGE cvDistanceMap {
                           vtkFloatingPointType thrval,
                           int start[3]);
     vtkStructuredPoints* getDistanceMap();
-    void setDistanceMap(vtkStructuredPoints *sp); 
+    void setDistanceMap(vtkStructuredPoints *sp);
 
     vtkPolyData* getPath(int stop[3], int minqstop);
     vtkPolyData* getPathByThinning(int stop[3], int minqstop, int maxIterNum);
     vtkPolyData* getPathOld(int stop[3]);
-    
+
     void setUseCityBlockDistance();
     void setUse26ConnectivityDistance();
-    
+
   private:
 
     int getCityBlockNeighbors(int p);
     int get26ConnectivityNeighbors(int p);
     int createInitMask();
     int thinMask(int *numPixelsRemoved);
-        
+
     vtkStructuredPoints *map_;
     vtkStructuredPoints *mask_;
     vtkPolyData *path_;
@@ -79,9 +80,9 @@ class SV_EXPORT_IMAGE cvDistanceMap {
     int neighbors_[26];
     int numNeighbors_;
     // 26 connectivity index lookup table
-    int b_[3][26]; 
+    int b_[3][26];
     int useCityBlock_;
-        
+
     int imgDims_[3];
 
 };

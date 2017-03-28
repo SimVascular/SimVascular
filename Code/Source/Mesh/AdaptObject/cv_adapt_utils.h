@@ -46,6 +46,7 @@
 #define __CV_ADAPT_UTILS_H
 
 #include "SimVascular.h"
+#include "svAdaptorExports.h" // For exports
 #include "cv_misc_utils.h"
 
 #include "vtkUnstructuredGrid.h"

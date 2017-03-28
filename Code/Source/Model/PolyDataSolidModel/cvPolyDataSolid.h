@@ -46,6 +46,7 @@
 #define __CVPOLYDATA_SOLID_H
 
 #include "SimVascular.h"
+#include "svPolyDataSolidExports.h" // For exports
 #include "cvRepositoryData.h"
 #include "cvSolidModel.h"
 #include "cvPolyData.h"

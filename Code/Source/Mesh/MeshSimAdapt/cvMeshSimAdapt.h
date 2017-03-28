@@ -45,6 +45,7 @@
 #define __CVMESHSIMADAPT_H
 
 #include "SimVascular.h"
+#include "svMeshSimAdaptorExports.h" // For exports
 
 #include "cvAdaptObject.h"
 //#include "cvRepositoryData.h"

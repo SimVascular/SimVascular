@@ -37,6 +37,7 @@
 #define __CVSOLID_MODEL_H
 
 #include "SimVascular.h"
+#include "svSolidModelExports.h"
 #include "cvRepositoryData.h"
 #include "cvPolyData.h"
 #include "cvFactoryRegistrar.h"

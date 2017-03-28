@@ -34,6 +34,7 @@
 #define __CV_PYTHONINTERP_INIT_H
 
 #include "SimVascular.h"
+#include "svTclPythonExports.h"
 #include "tcl.h"
 
 extern "C" SV_EXPORT_TCLPYTHON int Pythoninterp_Init( Tcl_Interp *interp );

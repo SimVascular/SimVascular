@@ -37,6 +37,7 @@
 #define __CVMESHOBJECT_H
 
 #include "SimVascular.h"
+#include "svMeshObjectExports.h"
 
 //#include "sys/param.h"
 #define MAXPATHLEN 1024

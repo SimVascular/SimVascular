@@ -44,6 +44,7 @@
 #define __CV_OCCT_INIT_H
 
 #include "SimVascular.h"
+#include "svOpenCASCADEExports.h" // For exports
 #include "tcl.h"
 
 extern "C" SV_EXPORT_OPENCASCADE int Occtsolid_Init( Tcl_Interp *interp );

@@ -1,7 +1,7 @@
 /*=========================================================================
  *
  * Copyright (c) 2014-2015 The Regents of the University of California.
- * All Rights Reserved. 
+ * All Rights Reserved.
  *
  * Copyright (c) 2009-2011 Open Source Medical Software Corporation,
  *                         University of California, San Diego.
@@ -10,19 +10,19 @@
  * Charles Taylor, Nathan Wilson, Ken Wang.
  *
  * See SimVascular Acknowledgements file for additional
- * contributors to the source code. 
+ * contributors to the source code.
  *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
- * "Software"), to deal in the Software without restriction, including 
- * without limitation the rights to use, copy, modify, merge, publish, 
+ * "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish,
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject
  * to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included 
+ *
+ * The above copyright notice and this permission notice shall be included
  * in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
  * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -37,12 +37,13 @@
 #define __CVMESHSYSTEM_H
 
 #include "SimVascular.h"
+#include "svMeshObjectExports.h"
 #include "cvMeshObject.h"
 
 class SV_EXPORT_MESH cvMeshSystem {
 
 public:
-  cvMeshSystem();  
+  cvMeshSystem();
   virtual ~cvMeshSystem();
 
   static cvMeshSystem* GetCurrentKernel();
@@ -52,9 +53,9 @@ public:
 
   static int RegisterKernel( cvMeshObject::KernelType kernel_type, cvMeshSystem* pKernel );
 
-  // Mesh object factory method that delegates creation of meshes to the 
+  // Mesh object factory method that delegates creation of meshes to the
   //  concrete implementations.
-  static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = NULL, 
+  static cvMeshObject* DefaultInstantiateMeshObject( Tcl_Interp *interp = NULL,
     char *const meshFileName = NULL, char *const solidFileName = NULL );
 
   // Methods that concrete implementations must provide for meshing system abstraction.

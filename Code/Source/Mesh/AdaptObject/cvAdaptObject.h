@@ -37,6 +37,7 @@
 #define __CVADAPTOBJECT_H
 
 #include "SimVascular.h"
+#include "svAdaptorExports.h" // For exports
 
 //#include "sys/param.h"
 #define MAXPATHLEN 1024

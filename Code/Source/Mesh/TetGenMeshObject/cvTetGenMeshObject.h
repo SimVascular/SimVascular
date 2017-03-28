@@ -47,6 +47,7 @@
 #define __CVTETGENMESHOBJECT_H
 
 #include "SimVascular.h"
+#include "svTetGenMeshExports.h" // For exports
 
 #include <math.h>
 
