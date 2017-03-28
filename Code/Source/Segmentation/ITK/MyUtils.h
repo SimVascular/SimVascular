@@ -518,7 +518,7 @@ template<typename TImage>
 		catch(itk::ExceptionObject &e)
 		{
 			std::cerr << e.what() << std::endl;
-			return 0;
+                        return SV_ERROR;
 		}
  *
  */
